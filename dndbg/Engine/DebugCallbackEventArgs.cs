@@ -352,11 +352,11 @@ namespace dndbg.Engine {
 
 		public ICorDebugAppDomain AppDomain { get; private set; }
 		public ICorDebugThread Thread { get; private set; }
-		public int Level { get; private set; }
+		public LoggingLevelEnum Level { get; private set; }
 		public string LowSwitchName { get; private set; }
 		public string Message { get; private set; }
 
-		public LogMessageDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, int lLevel, string pLogSwitchName, string pMessage)
+		public LogMessageDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, LoggingLevelEnum lLevel, string pLogSwitchName, string pMessage)
 			: base(pAppDomain) {
 			this.AppDomain = pAppDomain;
 			this.Thread = pThread;
@@ -373,12 +373,12 @@ namespace dndbg.Engine {
 
 		public ICorDebugAppDomain AppDomain { get; private set; }
 		public ICorDebugThread Thread { get; private set; }
-		public int Level { get; private set; }
-		public uint Reason { get; private set; }
+		public LoggingLevelEnum Level { get; private set; }
+		public LogSwitchCallReason Reason { get; private set; }
 		public string LowSwitchName { get; private set; }
 		public string ParentName { get; private set; }
 
-		public LogSwitchDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, int lLevel, uint ulReason, string pLogSwitchName, string pParentName)
+		public LogSwitchDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, LoggingLevelEnum lLevel, LogSwitchCallReason ulReason, string pLogSwitchName, string pParentName)
 			: base(pAppDomain) {
 			this.AppDomain = pAppDomain;
 			this.Thread = pThread;

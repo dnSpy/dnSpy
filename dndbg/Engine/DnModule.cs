@@ -132,6 +132,10 @@ namespace dndbg.Engine {
 			get { return new SerializedDnModule(Name, IsDynamic, IsInMemory); }
 		}
 
+		public SerializedDnModuleWithAssembly SerializedDnModuleWithAssembly {
+			get { return new SerializedDnModuleWithAssembly(Assembly.Name, SerializedDnModule); }
+		}
+
 		internal DnModule(DnAssembly ownerAssembly, ICorDebugModule module, int incrementedId) {
 			this.ownerAssembly = ownerAssembly;
 			this.module = module;
@@ -153,6 +157,42 @@ namespace dndbg.Engine {
 			this.isDynamic = hr >= 0 && b != 0;
 			hr = module.IsInMemory(out b);
 			this.isInMemory = hr >= 0 && b != 0;
+		}
+
+		internal static SerializedDnModule? GetSerializedDnModule(ICorDebugModule module) {
+			if (module == null)
+				return null;
+
+			int b;
+			int hr = module.IsDynamic(out b);
+			if (hr < 0)
+				return null;
+			bool isDynamic = b != 0;
+
+			hr = module.IsInMemory(out b);
+			if (hr < 0)
+				return null;
+			bool isInMemory = b != 0;
+
+			var name = DnModule.GetName(module);
+			if (name == null)
+				return null;
+
+			return new SerializedDnModule(name, isDynamic, isInMemory);
+		}
+
+		internal static SerializedDnModuleWithAssembly? GetSerializedDnModuleWithAssembly(ICorDebugModule module) {
+			var sm = GetSerializedDnModule(module);
+			if (sm == null)
+				return null;
+
+			ICorDebugAssembly asm;
+			int hr = module.GetAssembly(out asm);
+			if (hr < 0)
+				return null;
+			string asmName = DnAssembly.GetName(asm);
+
+			return new SerializedDnModuleWithAssembly(asmName, sm.Value);
 		}
 
 		static string GetName(ICorDebugModule module) {

@@ -47,6 +47,11 @@ namespace dndbg.Engine {
 		Step,
 
 		/// <summary>
+		/// TryBreakProcesses() was called
+		/// </summary>
+		UserBreak,
+
+		/// <summary>
 		/// Start of user stop reasons
 		/// </summary>
 		UserReason = 0x10000000,
@@ -64,24 +69,24 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class DebugEventBreakpointStopState : DebuggerStopState {
-		public DebugEventBreakpoint Breakpoint {
+		public DnDebugEventBreakpoint Breakpoint {
 			get { return bp; }
 		}
-		readonly DebugEventBreakpoint bp;
+		readonly DnDebugEventBreakpoint bp;
 
-		public DebugEventBreakpointStopState(DebugEventBreakpoint bp)
+		public DebugEventBreakpointStopState(DnDebugEventBreakpoint bp)
 			: base(DebuggerStopReason.DebugEventBreakpoint) {
 			this.bp = bp;
 		}
 	}
 
 	public sealed class ILCodeBreakpointStopState : DebuggerStopState {
-		public ILCodeBreakpoint Breakpoint {
+		public DnILCodeBreakpoint Breakpoint {
 			get { return bp; }
 		}
-		readonly ILCodeBreakpoint bp;
+		readonly DnILCodeBreakpoint bp;
 
-		public ILCodeBreakpointStopState(ILCodeBreakpoint bp)
+		public ILCodeBreakpointStopState(DnILCodeBreakpoint bp)
 			: base(DebuggerStopReason.ILCodeBreakpoint) {
 			this.bp = bp;
 		}

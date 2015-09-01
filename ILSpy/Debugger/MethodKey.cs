@@ -19,49 +19,54 @@
 
 using System;
 using System.IO;
+using dndbg.Engine;
 using dnlib.DotNet;
 
 namespace dnSpy.Debugger {
 	public struct MethodKey : IEquatable<MethodKey> {
-		readonly int token;
-		readonly string moduleFullPath;
+		readonly uint token;
+		/*readonly*/ SerializedDnModule module;
 
-		public string ModuleFullPath {
-			get { return moduleFullPath; }
+		public SerializedDnModule Module {
+			get { return module; }
 		}
 
-		public int Token {
+		public uint Token {
 			get { return token; }
 		}
 
-		public MethodKey(int token, string moduleFullPath) {
-			this.token = token;
-			this.moduleFullPath = moduleFullPath;
+		public static MethodKey Create(uint token, SerializedDnModule module) {
+			return new MethodKey(token, module);
 		}
 
 		public static MethodKey? Create(IMemberRef member) {
 			if (member == null)
 				return null;
-			return Create(member.MDToken.ToInt32(), member.Module);
+			return Create(member.MDToken.Raw, member.Module);
 		}
 
-		public static MethodKey? Create(int token, IOwnerModule ownerModule) {
+		public static MethodKey? Create(uint token, IOwnerModule ownerModule) {
 			if (ownerModule == null)
 				return null;
 			return Create(token, ownerModule.Module);
 		}
 
-		public static MethodKey? Create(int token, ModuleDef module) {
+		public static MethodKey? Create(uint token, ModuleDef module) {
 			if (module == null || string.IsNullOrEmpty(module.Location))
 				return null;
 			return new MethodKey(token, module);
 		}
 
-		MethodKey(int token, ModuleDef module) {
+		MethodKey(uint token, SerializedDnModule module) {
+			this.module = module;
+			this.token = token;
+		}
+
+		MethodKey(uint token, ModuleDef module) {
 			this.token = token;
 			if (string.IsNullOrEmpty(module.Location))
 				throw new ArgumentException("Module has no path");
-			this.moduleFullPath = Path.GetFullPath(module.Location);
+			this.module = new SerializedDnModule(Path.GetFullPath(module.Location));
 		}
 
 		public static bool operator ==(MethodKey a, MethodKey b) {
@@ -75,11 +80,7 @@ namespace dnSpy.Debugger {
 		public bool Equals(MethodKey other) {
 			if (token != other.token)
 				return false;
-			if (moduleFullPath == other.moduleFullPath)
-				return true;
-			if (moduleFullPath == null || other.moduleFullPath == null)
-				return false;
-			return moduleFullPath.Equals(other.moduleFullPath, StringComparison.OrdinalIgnoreCase);
+			return module == other.module;
 		}
 
 		public override bool Equals(object obj) {
@@ -89,15 +90,11 @@ namespace dnSpy.Debugger {
 		}
 
 		public override int GetHashCode() {
-			return token ^ (moduleFullPath == null ? 0 : StringComparer.OrdinalIgnoreCase.GetHashCode(moduleFullPath));
+			return (int)token ^ module.GetHashCode();
 		}
 
 		public override string ToString() {
-			return string.Format("{0:X8} {1}", token, moduleFullPath);
-		}
-
-		public bool IsSameModule(string moduleFullPath) {
-			return StringComparer.OrdinalIgnoreCase.Equals(this.moduleFullPath, moduleFullPath);
+			return string.Format("{0:X8} {1}", token, module);
 		}
 	}
 }

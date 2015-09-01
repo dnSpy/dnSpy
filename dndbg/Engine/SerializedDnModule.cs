@@ -65,6 +65,14 @@ namespace dndbg.Engine {
 			this.isInMemory = isInMemory;
 		}
 
+		public static bool operator ==(SerializedDnModule a, SerializedDnModule b) {
+			return a.Equals(b);
+		}
+
+		public static bool operator !=(SerializedDnModule a, SerializedDnModule b) {
+			return !a.Equals(b);
+		}
+
 		public bool Equals(SerializedDnModule other) {
 			return isDynamic == other.isDynamic &&
 				isInMemory == other.isInMemory &&

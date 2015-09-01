@@ -38,34 +38,38 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Engine\Breakpoint.cs" />
     <Compile Include="Engine\BreakpointList.cs" />
     <Compile Include="Engine\COM\CorDebug.cs" />
     <Compile Include="Engine\COM\MetaHost.cs" />
     <Compile Include="Engine\CorDebugManagedCallback.cs" />
-    <Compile Include="Engine\CurrentDebuggerState.cs" />
     <Compile Include="Engine\DebugCallbackEventArgs.cs" />
-    <Compile Include="Engine\DebugEventBreakpoint.cs" />
     <Compile Include="Engine\DebugEventBreakpointList.cs" />
     <Compile Include="Engine\DebuggeeVersionDetector.cs" />
     <Compile Include="Engine\DebuggerCollection.cs" />
     <Compile Include="Engine\DebuggerEventArgs.cs" />
     <Compile Include="Engine\DebuggerProcessState.cs" />
+    <Compile Include="Engine\DebuggerState.cs" />
     <Compile Include="Engine\DebuggerStopState.cs" />
     <Compile Include="Engine\DebugOptions.cs" />
     <Compile Include="Engine\DebugProcessOptions.cs" />
     <Compile Include="Engine\DnAppDomain.cs" />
     <Compile Include="Engine\DnAssembly.cs" />
+    <Compile Include="Engine\DnBreakpoint.cs" />
+    <Compile Include="Engine\DnChain.cs" />
+    <Compile Include="Engine\DnDebugEventBreakpoint.cs" />
     <Compile Include="Engine\DnDebugger.cs" />
+    <Compile Include="Engine\DnFrame.cs" />
+    <Compile Include="Engine\DnILCodeBreakpoint.cs" />
     <Compile Include="Engine\DnModule.cs" />
     <Compile Include="Engine\DnProcess.cs" />
     <Compile Include="Engine\DnThread.cs" />
     <Compile Include="Engine\IBreakpointCondition.cs" />
     <Compile Include="Engine\IDebugMessageDispatcher.cs" />
-    <Compile Include="Engine\ILCodeBreakpoint.cs" />
+    <Compile Include="Engine\ILFrameIP.cs" />
     <Compile Include="Engine\NativeMethods.cs" />
     <Compile Include="Engine\ProcessCreationFlags.cs" />
     <Compile Include="Engine\SerializedDnModule.cs" />
+    <Compile Include="Engine\SerializedDnModuleWithAssembly.cs" />
     <Compile Include="Engine\StepRange.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

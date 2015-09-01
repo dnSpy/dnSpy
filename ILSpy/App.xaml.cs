@@ -116,12 +116,6 @@ namespace ICSharpCode.ILSpy {
 			                                  new RequestNavigateEventHandler(Window_RequestNavigate));
 
 			FixEditorContextMenuStyle();
-			
-			try {
-				DebuggerService.SetDebugger(compositionContainer.GetExport<IDebugger>());
-			} catch {
-				// unable to find a IDebugger
-			}
 		}
 
 		// The text editor creates an EditorContextMenu which derives from ContextMenu. This

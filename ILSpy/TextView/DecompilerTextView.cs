@@ -38,7 +38,6 @@ using dnlib.DotNet.Emit;
 using dnSpy;
 using dnSpy.AsmEditor;
 using dnSpy.AvalonEdit;
-using dnSpy.Bookmarks;
 using dnSpy.Debugger;
 using dnSpy.Decompiler;
 using dnSpy.dntheme;
@@ -78,7 +77,6 @@ namespace ICSharpCode.ILSpy.TextView {
 		TextSegmentCollection<ReferenceSegment> references;
 		CancellationTokenSource currentCancellationTokenSource;
 		
-		internal readonly IconBarManager manager;
 		readonly IconBarMargin iconMargin;
 		readonly TextMarkerService textMarkerService;
 		readonly List<ITextMarker> markedReferences = new List<ITextMarker>();
@@ -126,7 +124,7 @@ namespace ICSharpCode.ILSpy.TextView {
 			textEditor.SetBinding(Control.FontSizeProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFontSize") });
 			
 			// add marker service & margin
-			iconMargin = new IconBarMargin(manager = new IconBarManager(), this);
+			iconMargin = new IconBarMargin(this);
 			textMarkerService = new TextMarkerService(this);
 			textEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
 			textEditor.ShowLineNumbers = true;
@@ -1037,7 +1035,7 @@ namespace ICSharpCode.ILSpy.TextView {
 				var r = tmp;
 				if (RefSegEquals(referenceSegment, r)) {
 					var mark = textMarkerService.Create(r.StartOffset, r.Length);
-					mark.ZOrder = (int)TextMarkerZOrder.SearchResult;
+					mark.ZOrder = (int)TextLineObjectZOrder.SearchResult;
 					mark.HighlightingColor = () => {
 						return (r.IsLocalTarget ?
 							Themes.Theme.GetColor(dnSpy.dntheme.ColorType.LocalDefinition) :

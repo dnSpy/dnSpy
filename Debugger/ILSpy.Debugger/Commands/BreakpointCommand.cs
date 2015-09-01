@@ -16,8 +16,8 @@ using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.ILSpy.Debugger.Commands
 {
-	[ExportBookmarkActionEntry(Icon = "BreakpointMenu", Category = "Debug")]
-	public class BreakpointCommand : IBookmarkActionEntry
+	[ExportIconBarActionEntry(Icon = "BreakpointMenu", Category = "Debug")]
+	public class BreakpointCommand : IIconBarActionEntry
 	{
 		public bool IsEnabled(DecompilerTextView textView)
 		{
@@ -98,29 +98,29 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 
-	[ExportBookmarkContextMenuEntry(InputGestureText = "Ctrl+F9",
+	[ExportIconBarContextMenuEntry(InputGestureText = "Ctrl+F9",
 									Category = "Debug",
 									Order = 110)]
-	public class EnableAndDisableBreakpointCommand : IBookmarkContextMenuEntry2
+	public class EnableAndDisableBreakpointCommand : IIconBarContextMenuEntry2
 	{
-		public bool IsVisible(IBookmark bookmark)
+		public bool IsVisible(IIconBarObject bookmark)
 		{
 			return bookmark is BreakpointBookmark;
 		}
 
-		public bool IsEnabled(IBookmark bookmark)
+		public bool IsEnabled(IIconBarObject bookmark)
 		{
 			return IsVisible(bookmark);
 		}
 
-		public void Execute(IBookmark bookmark)
+		public void Execute(IIconBarObject bookmark)
 		{
 			var bpm = bookmark as BreakpointBookmark;
 			if (bpm != null)
 				bpm.IsEnabled = !bpm.IsEnabled;
 		}
 
-		public void Initialize(IBookmark bookmark, MenuItem menuItem)
+		public void Initialize(IIconBarObject bookmark, MenuItem menuItem)
 		{
 			var bpm = bookmark as BreakpointBookmark;
 			if (bpm != null)
@@ -141,23 +141,23 @@ namespace ICSharpCode.ILSpy.Debugger.Commands
 		}
 	}
 
-	[ExportBookmarkContextMenuEntry(Header = "D_elete Breakpoint",
+	[ExportIconBarContextMenuEntry(Header = "D_elete Breakpoint",
 									Icon = "BreakpointMenu",
 									Category = "Debug",
 									Order = 100)]
-	public class DeleteBreakpointCommand : IBookmarkContextMenuEntry
+	public class DeleteBreakpointCommand : IIconBarContextMenuEntry
 	{
-		public bool IsVisible(IBookmark bookmark)
+		public bool IsVisible(IIconBarObject bookmark)
 		{
 			return bookmark is BreakpointBookmark;
 		}
 
-		public bool IsEnabled(IBookmark bookmark)
+		public bool IsEnabled(IIconBarObject bookmark)
 		{
 			return IsVisible(bookmark);
 		}
 
-		public void Execute(IBookmark bookmark)
+		public void Execute(IIconBarObject bookmark)
 		{
 			var bpm = bookmark as BreakpointBookmark;
 			if (bpm != null)

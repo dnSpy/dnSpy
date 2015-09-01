@@ -96,7 +96,7 @@ namespace dndbg.Engine {
 			return new DnModule(this, comModule, id);
 		}
 
-		static string GetName(ICorDebugAssembly assembly) {
+		internal static string GetName(ICorDebugAssembly assembly) {
 			uint cchName = 0;
 			int hr = assembly.GetName(0, out cchName, null);
 			if (hr < 0)

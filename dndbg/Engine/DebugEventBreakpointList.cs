@@ -21,17 +21,17 @@ using System.Collections.Generic;
 
 namespace dndbg.Engine {
 	sealed class DebugEventBreakpointList {
-		readonly List<DebugEventBreakpoint> bps = new List<DebugEventBreakpoint>();
+		readonly List<DnDebugEventBreakpoint> bps = new List<DnDebugEventBreakpoint>();
 
-		public DebugEventBreakpoint[] Breakpoints {
+		public DnDebugEventBreakpoint[] Breakpoints {
 			get { return bps.ToArray(); }
 		}
 
-		public void Add(DebugEventBreakpoint bp) {
+		public void Add(DnDebugEventBreakpoint bp) {
 			bps.Add(bp);
 		}
 
-		public void Remove(DebugEventBreakpoint bp) {
+		public void Remove(DnDebugEventBreakpoint bp) {
 			bps.Remove(bp);
 		}
 	}

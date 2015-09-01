@@ -17,75 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Interop;
-using dndbg.Engine;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger {
 	[Export(typeof(IPlugin))]
 	sealed class DebuggerPluginLoader : IPlugin {
-		[DllImport("user32")]
-		static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
-
 		void IPlugin.OnLoaded() {
 			MainWindow.Instance.SetMenuAlwaysRegenerate("_Debug");
 			InstallRoutedCommands();
 			InstallKeyboardShortcutCommands();
-			MainWindow.Instance.Closing += OnClosing;
-			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
-			new BringDebuggedProgramWindowToFront();
-		}
-
-		public static IAskDebugAssembly CreateAskDebugAssembly() {
-			return new AskDebugAssembly();
-		}
-
-		static void SetRunningStatusMessage() {
-			MainWindow.Instance.SetStatus("Running…");
-		}
-
-		static void SetReadyStatusMessage() {
-			MainWindow.Instance.SetStatus("Ready");
-		}
-
-		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
-			switch (DebugManager.Instance.ProcessState) {
-			case DebuggerProcessState.Starting:
-				MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
-				SetRunningStatusMessage();
-				MainWindow.Instance.SetDebugging();
-				break;
-
-			case DebuggerProcessState.Running:
-				SetRunningStatusMessage();
-				break;
-
-			case DebuggerProcessState.Stopped:
-				SetWindowPos(new WindowInteropHelper(MainWindow.Instance).Handle, IntPtr.Zero, 0, 0, 0, 0, 3);
-				MainWindow.Instance.Activate();
-
-				SetReadyStatusMessage();
-				break;
-
-			case DebuggerProcessState.Terminated:
-				MainWindow.Instance.HideStatus();
-				MainWindow.Instance.ClearDebugging();
-				break;
-			}
-		}
-
-		void OnClosing(object sender, CancelEventArgs e) {
-			if (DebugManager.Instance.IsDebugging) {
-				var result = MainWindow.Instance.ShowIgnorableMessageBox("debug: exit program", "Do you want to stop debugging?", MessageBoxButton.YesNo);
-				if (result == MsgBoxButton.None || result == MsgBoxButton.No)
-					e.Cancel = true;
-			}
+			DebugManager.Instance.OnLoaded();
+			ToolbarDebugCommand.OnLoaded();
+			BreakpointManager.Instance.OnLoaded();
+			StackFrameManager.Instance.OnLoaded();
 		}
 
 		void InstallRoutedCommands() {
@@ -100,9 +47,9 @@ namespace dnSpy.Debugger {
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.StepInto, DebugManager.Instance.StepIntoCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.StepOver, DebugManager.Instance.StepOverCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.StepOut, DebugManager.Instance.StepOutCommand);
-			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DeleteAllBreakpoints, DebugManager.Instance.DeleteAllBreakpointsCommand);
-			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ToggleBreakpoint, DebugManager.Instance.ToggleBreakpointCommand);
-			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DisableBreakpoint, DebugManager.Instance.DisableBreakpointCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DeleteAllBreakpoints, BreakpointManager.Instance.ClearCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ToggleBreakpoint, BreakpointManager.Instance.ToggleBreakpointCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DisableBreakpoint, BreakpointManager.Instance.DisableBreakpointCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowNextStatement, DebugManager.Instance.ShowNextStatementCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.SetNextStatement, DebugManager.Instance.SetNextStatementCommand);
 		}

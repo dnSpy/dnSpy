@@ -38,9 +38,12 @@ namespace dndbg.Engine {
 		readonly ICorDebug corDebug;
 		readonly DebuggerCollection<ICorDebugProcess, DnProcess> processes;
 		readonly DebugEventBreakpointList debugEventBreakpointList = new DebugEventBreakpointList();
-		readonly BreakpointList<ILCodeBreakpoint> ilCodeBreakpointList = new BreakpointList<ILCodeBreakpoint>();
+		readonly BreakpointList<DnILCodeBreakpoint> ilCodeBreakpointList = new BreakpointList<DnILCodeBreakpoint>();
 		readonly Dictionary<ICorDebugStepper, StepInfo> stepInfos = new Dictionary<ICorDebugStepper, StepInfo>();
 		DebugOptions debugOptions;
+
+		const int CORDBG_E_PROCESS_TERMINATED = unchecked((int)0x80131301);
+		const int CORDBG_E_OBJECT_NEUTERED = unchecked((int)0x8013134F);
 
 		sealed class StepInfo {
 			public readonly Action<DnDebugger, StepCompleteDebugCallbackEventArgs> OnCompleted;
@@ -75,21 +78,36 @@ namespace dndbg.Engine {
 				OnProcessStateChanged(this, DebuggerEventArgs.Empty);
 		}
 
-		public DebugEventBreakpoint[] DebugEventBreakpoints {
+		public DnDebugEventBreakpoint[] DebugEventBreakpoints {
 			get { DebugVerifyThread(); return debugEventBreakpointList.Breakpoints; }
 		}
 
-		public IEnumerable<ILCodeBreakpoint> ILCodeBreakpoints {
+		public IEnumerable<DnILCodeBreakpoint> ILCodeBreakpoints {
 			get { DebugVerifyThread(); return ilCodeBreakpointList.GetBreakpoints(); }
 		}
 
 		/// <summary>
-		/// Gets the current state
+		/// Gets the last debugger state in <see cref="DebuggerStates"/>. This is never null even if
+		/// <see cref="DebuggerStates"/> is empty.
 		/// </summary>
-		public CurrentDebuggerState Current {
-			get { DebugVerifyThread(); return currentDebuggerState; }
+		public DebuggerState Current {
+			get {
+				DebugVerifyThread();
+				if (debuggerStates.Count == 0)
+					return new DebuggerState(null);
+				return debuggerStates[debuggerStates.Count - 1];
+			}
 		}
-		CurrentDebuggerState currentDebuggerState;
+
+		/// <summary>
+		/// All collected debugger states. It usually contains just one element, but can contain
+		/// more if multiple CLR debugger events were queued, eg. an exception was caught or
+		/// we stepped over a breakpoint (Step event + breakpoint hit event).
+		/// </summary>
+		public DebuggerState[] DebuggerStates {
+			get { DebugVerifyThread(); return debuggerStates.ToArray(); }
+		}
+		readonly List<DebuggerState> debuggerStates = new List<DebuggerState>();
 
 		readonly int debuggerManagedThreadId;
 
@@ -100,11 +118,18 @@ namespace dndbg.Engine {
 			this.processes = new DebuggerCollection<ICorDebugProcess, DnProcess>(CreateDnProcess);
 			this.debugMessageDispatcher = debugMessageDispatcher;
 			this.corDebug = corDebug;
-			this.currentDebuggerState = new CurrentDebuggerState();
 			this.debugOptions = debugOptions ?? new DebugOptions();
 
 			corDebug.Initialize();
 			corDebug.SetManagedHandler(new CorDebugManagedCallback(this));
+		}
+
+		void ResetDebuggerStates() {
+			debuggerStates.Clear();
+		}
+
+		void AddDebuggerState(DebuggerState debuggerState) {
+			debuggerStates.Add(debuggerState);
 		}
 
 		DnProcess CreateDnProcess(ICorDebugProcess comProcess, int id) {
@@ -151,26 +176,47 @@ namespace dndbg.Engine {
 			}
 			catch (Exception ex) {
 				Debug.WriteLine(string.Format("dndbg: EX:\n\n{0}", ex));
-				currentDebuggerState = new CurrentDebuggerState();
+				ResetDebuggerStates();
 				throw;
 			}
 
-			if (e.Stop) {
-				currentDebuggerState.StopStates = e.StopStates;
+			Current.StopStates = e.StopStates;
+			if (HasQueuedCallbacks(e))
+				ContinueAndDecrementCounter(e);
+			else if (ShouldStopQueued())
 				CallOnProcessStateChanged();
-			}
 			else {
-				currentDebuggerState = new CurrentDebuggerState();
-
-				if (e.Type != DebugCallbackType.ExitProcess) {
-					if (Continue(e.CorDebugController))
-						managedCallbackCounter--;
-				}
-				else
-					managedCallbackCounter--;
+				ResetDebuggerStates();
+				ContinueAndDecrementCounter(e);
 			}
 		}
 		int managedCallbackCounter;
+
+		bool ShouldStopQueued() {
+			foreach (var state in debuggerStates) {
+				if (state.StopStates.Length != 0)
+					return true;
+			}
+			return false;
+		}
+
+		void ContinueAndDecrementCounter(DebugCallbackEventArgs e) {
+			if (e.Type != DebugCallbackType.ExitProcess) {
+				if (Continue(e.CorDebugController))
+					managedCallbackCounter--;
+			}
+			else
+				managedCallbackCounter--;
+		}
+
+		bool HasQueuedCallbacks(DebugCallbackEventArgs e) {
+			var thread = Current.Thread;
+			if (thread == null)
+				return false;
+			int qcbs;
+			int hr = e.CorDebugController.HasQueuedCallbacks(thread.RawObject, out qcbs);
+			return hr >= 0 && qcbs != 0;
+		}
 
 		bool Continue(ICorDebugController controller) {
 			Debug.Assert(controller != null);
@@ -178,8 +224,7 @@ namespace dndbg.Engine {
 				return false;
 
 			int hr = controller.Continue(0);
-			const int CORDBG_E_PROCESS_TERMINATED = unchecked((int)0x80131301);
-			bool success = hr >= 0 || hr == CORDBG_E_PROCESS_TERMINATED;
+			bool success = hr >= 0 || hr == CORDBG_E_PROCESS_TERMINATED || hr == CORDBG_E_OBJECT_NEUTERED;
 			Debug.WriteLineIf(!success, string.Format("dndbg: ICorDebugController::Continue() failed: 0x{0:X8}", hr));
 			return success;
 		}
@@ -202,12 +247,12 @@ namespace dndbg.Engine {
 			if (managedCallbackCounter <= 0)
 				return;
 
-			var controller = currentDebuggerState.Controller;
+			var controller = Current.Controller;
 			Debug.Assert(controller != null);
 			if (controller == null)
 				return;
 
-			currentDebuggerState = new CurrentDebuggerState();
+			ResetDebuggerStates();
 			while (managedCallbackCounter > 0) {
 				if (!Continue(controller))
 					return;
@@ -221,24 +266,24 @@ namespace dndbg.Engine {
 		/// true if we can step into, step out or step over
 		/// </summary>
 		public bool CanStep() {
-			return CanStep(Current.Thread);
+			return CanStep(Current.ILFrame);
 		}
 
 		/// <summary>
 		/// true if we can step into, step out or step over
 		/// </summary>
-		/// <param name="thread">Thread</param>
-		public bool CanStep(DnThread thread) {
+		/// <param name="frame">Frame</param>
+		public bool CanStep(DnFrame frame) {
 			DebugVerifyThread();
-			return ProcessState == DebuggerProcessState.Stopped && thread != null;
+			return ProcessState == DebuggerProcessState.Stopped && frame != null;
 		}
 
-		ICorDebugStepper CreateStepper(DnThread thread) {
-			if (thread == null)
+		ICorDebugStepper CreateStepper(DnFrame frame) {
+			if (frame == null)
 				return null;
 
 			ICorDebugStepper stepper;
-			if (thread.RawObject.CreateStepper(out stepper) < 0)
+			if (frame.RawObject.CreateStepper(out stepper) < 0)
 				return null;
 			if (stepper.SetInterceptMask(debugOptions.StepperInterceptMask) < 0)
 				return null;
@@ -254,32 +299,33 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
-		/// Step out of current method in the current thread
+		/// Step out of current method in the current IL frame
 		/// </summary>
 		/// <param name="action">Delegate to call when completed or null</param>
 		/// <returns></returns>
 		public bool StepOut(Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
-			return StepOut(Current.Thread, action);
+			return StepOut(Current.ILFrame, action);
 		}
 
 		/// <summary>
-		/// Step out of current method in the selected thread
+		/// Step out of current method in the selected frame
 		/// </summary>
-		/// <param name="thread">Thread</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="action">Delegate to call when completed or null</param>
 		/// <returns></returns>
-		public bool StepOut(DnThread thread, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public bool StepOut(DnFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
-			if (!CanStep(thread))
+			if (!CanStep(frame))
 				return false;
 
-			var stepper = CreateStepper(thread);
+			var stepper = CreateStepper(frame);
 			if (stepper == null)
 				return false;
 			if (stepper.StepOut() < 0)
 				return false;
 
 			stepInfos.Add(stepper, new StepInfo(action));
+			Continue();
 			return true;
 		}
 
@@ -290,18 +336,18 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public bool StepInto(Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
-			return StepInto(Current.Thread, action);
+			return StepInto(Current.ILFrame, action);
 		}
 
 		/// <summary>
 		/// Step into
 		/// </summary>
-		/// <param name="thread">Thread</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="action">Delegate to call when completed or null</param>
 		/// <returns></returns>
-		public bool StepInto(DnThread thread, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public bool StepInto(DnFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
-			return StepIntoOver(thread, true, action);
+			return StepIntoOver(frame, true, action);
 		}
 
 		/// <summary>
@@ -311,31 +357,32 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public bool StepOver(Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
-			return StepOver(Current.Thread, action);
+			return StepOver(Current.ILFrame, action);
 		}
 
 		/// <summary>
 		/// Step over
 		/// </summary>
-		/// <param name="thread">Thread</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="action">Delegate to call when completed or null</param>
 		/// <returns></returns>
-		public bool StepOver(DnThread thread, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public bool StepOver(DnFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
-			return StepIntoOver(thread, false, action);
+			return StepIntoOver(frame, false, action);
 		}
 
-		bool StepIntoOver(DnThread thread, bool stepInto, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
-			if (!CanStep(thread))
+		bool StepIntoOver(DnFrame frame, bool stepInto, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+			if (!CanStep(frame))
 				return false;
 
-			var stepper = CreateStepper(thread);
+			var stepper = CreateStepper(frame);
 			if (stepper == null)
 				return false;
 			if (stepper.Step(stepInto ? 1 : 0) < 0)
 				return false;
 
 			stepInfos.Add(stepper, new StepInfo(action));
+			Continue();
 			return true;
 		}
 
@@ -347,19 +394,19 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public bool StepInto(StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
-			return StepInto(Current.Thread, ranges, action);
+			return StepInto(Current.ILFrame, ranges, action);
 		}
 
 		/// <summary>
 		/// Step into
 		/// </summary>
-		/// <param name="thread">Thread</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="ranges">Ranges to step over</param>
 		/// <param name="action">Delegate to call when completed or null</param>
 		/// <returns></returns>
-		public bool StepInto(DnThread thread, StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public bool StepInto(DnFrame frame, StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
-			return StepIntoOver(thread, ranges, true, action);
+			return StepIntoOver(frame, ranges, true, action);
 		}
 
 		/// <summary>
@@ -370,28 +417,28 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public bool StepOver(StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
-			return StepOver(Current.Thread, ranges, action);
+			return StepOver(Current.ILFrame, ranges, action);
 		}
 
 		/// <summary>
 		/// Step over
 		/// </summary>
-		/// <param name="thread">Thread</param>
+		/// <param name="frame">Frame</param>
 		/// <param name="ranges">Ranges to step over</param>
 		/// <param name="action">Delegate to call when completed or null</param>
 		/// <returns></returns>
-		public bool StepOver(DnThread thread, StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public bool StepOver(DnFrame frame, StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
-			return StepIntoOver(thread, ranges, false, action);
+			return StepIntoOver(frame, ranges, false, action);
 		}
 
-		bool StepIntoOver(DnThread thread, StepRange[] ranges, bool stepInto, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
-			if (!CanStep(thread))
-				return false;
+		bool StepIntoOver(DnFrame frame, StepRange[] ranges, bool stepInto, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			if (ranges == null)
-				throw new ArgumentNullException();
+				return StepIntoOver(frame, stepInto, action);
+			if (!CanStep(frame))
+				return false;
 
-			var stepper = CreateStepper(thread);
+			var stepper = CreateStepper(frame);
 			if (stepper == null)
 				return false;
 			var rs = new uint[ranges.Length * 2];
@@ -407,15 +454,16 @@ namespace dndbg.Engine {
 			}
 
 			stepInfos.Add(stepper, new StepInfo(action));
+			Continue();
 			return true;
 		}
 
-		void SetDefaultCurrentProcess() {
+		void SetDefaultCurrentProcess(DebugCallbackEventArgs e) {
 			var ps = GetProcesses();
-			currentDebuggerState = new CurrentDebuggerState(ps.Length == 0 ? null : ps[0], null, null);
+			AddDebuggerState(new DebuggerState(e, ps.Length == 0 ? null : ps[0], null, null));
 		}
 
-		void InitializeCurrentDebuggerState(ICorDebugProcess comProcess, ICorDebugAppDomain comAppDomain, ICorDebugThread comThread) {
+		void InitializeCurrentDebuggerState(DebugCallbackEventArgs e, ICorDebugProcess comProcess, ICorDebugAppDomain comAppDomain, ICorDebugThread comThread) {
 			if (comThread != null) {
 				if (comProcess == null)
 					comThread.GetProcess(out comProcess);
@@ -441,18 +489,18 @@ namespace dndbg.Engine {
 			}
 
 			if (process == null)
-				SetDefaultCurrentProcess();
+				SetDefaultCurrentProcess(e);
 			else
-				currentDebuggerState = new CurrentDebuggerState(process, appDomain, thread);
+				AddDebuggerState(new DebuggerState(e, process, appDomain, thread));
 		}
 
-		void InitializeCurrentDebuggerState(DnProcess process) {
+		void InitializeCurrentDebuggerState(DebugCallbackEventArgs e, DnProcess process) {
 			if (process == null) {
-				SetDefaultCurrentProcess();
+				SetDefaultCurrentProcess(e);
 				return;
 			}
 
-			currentDebuggerState = new CurrentDebuggerState(process, null, null);
+			AddDebuggerState(new DebuggerState(e, process, null, null));
 		}
 
 		void OnProcessTerminated(DnProcess process) {
@@ -502,12 +550,12 @@ namespace dndbg.Engine {
 			switch (e.Type) {
 			case DebugCallbackType.Breakpoint:
 				var bpArgs = (BreakpointDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, bpArgs.AppDomain, bpArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, bpArgs.AppDomain, bpArgs.Thread);
 				break;
 
 			case DebugCallbackType.StepComplete:
 				var scArgs = (StepCompleteDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, scArgs.AppDomain, scArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, scArgs.AppDomain, scArgs.Thread);
 				StepInfo stepInfo;
 				bool calledStepInfoOnCompleted = false;
 				if (stepInfos.TryGetValue(scArgs.Stepper, out stepInfo)) {
@@ -523,22 +571,22 @@ namespace dndbg.Engine {
 
 			case DebugCallbackType.Break:
 				var bArgs = (BreakDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, bArgs.AppDomain, bArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, bArgs.AppDomain, bArgs.Thread);
 				break;
 
 			case DebugCallbackType.Exception:
 				var ex1Args = (ExceptionDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, ex1Args.AppDomain, ex1Args.Thread);
+				InitializeCurrentDebuggerState(e, null, ex1Args.AppDomain, ex1Args.Thread);
 				break;
 
 			case DebugCallbackType.EvalComplete:
 				var ecArgs = (EvalCompleteDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, ecArgs.AppDomain, ecArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, ecArgs.AppDomain, ecArgs.Thread);
 				break;
 
 			case DebugCallbackType.EvalException:
 				var eeArgs = (EvalExceptionDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, eeArgs.AppDomain, eeArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, eeArgs.AppDomain, eeArgs.Thread);
 				break;
 
 			case DebugCallbackType.CreateProcess:
@@ -551,13 +599,13 @@ namespace dndbg.Engine {
 					process.SetWriteableMetadataUpdateMode(WriteableMetadataUpdateMode.AlwaysShowUpdates);
 					process.EnableExceptionCallbacksOutsideOfMyCode(debugOptions.ExceptionCallbacksOutsideOfMyCode);
 				}
-				InitializeCurrentDebuggerState(process);
+				InitializeCurrentDebuggerState(e, process);
 				break;
 
 			case DebugCallbackType.ExitProcess:
 				var epArgs = (ExitProcessDebugCallbackEventArgs)e;
 				process = processes.TryGet(epArgs.Process);
-				InitializeCurrentDebuggerState(process);
+				InitializeCurrentDebuggerState(e, process);
 				if (process != null)
 					process.SetHasExited();
 				processes.Remove(epArgs.Process);
@@ -573,12 +621,12 @@ namespace dndbg.Engine {
 					process.TryAdd(ctArgs.Thread);
 					//TODO: ICorDebugThread::SetDebugState
 				}
-				InitializeCurrentDebuggerState(null, ctArgs.AppDomain, ctArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, ctArgs.AppDomain, ctArgs.Thread);
 				break;
 
 			case DebugCallbackType.ExitThread:
 				var etArgs = (ExitThreadDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, etArgs.AppDomain, etArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, etArgs.AppDomain, etArgs.Thread);
 				process = TryGetValidProcess(etArgs.Thread);
 				if (process != null)
 					process.ThreadExited(etArgs.Thread);
@@ -586,7 +634,7 @@ namespace dndbg.Engine {
 
 			case DebugCallbackType.LoadModule:
 				var lmArgs = (LoadModuleDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, lmArgs.AppDomain, null);
+				InitializeCurrentDebuggerState(e, null, lmArgs.AppDomain, null);
 				assembly = TryGetValidAssembly(lmArgs.AppDomain, lmArgs.Module);
 				if (assembly != null) {
 					var module = assembly.TryAdd(lmArgs.Module);
@@ -605,7 +653,7 @@ namespace dndbg.Engine {
 
 			case DebugCallbackType.UnloadModule:
 				var umArgs = (UnloadModuleDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, umArgs.AppDomain, null);
+				InitializeCurrentDebuggerState(e, null, umArgs.AppDomain, null);
 				assembly = TryGetValidAssembly(umArgs.AppDomain, umArgs.Module);
 				if (assembly != null) {
 					var module = assembly.TryGetModule(umArgs.Module);
@@ -616,27 +664,27 @@ namespace dndbg.Engine {
 
 			case DebugCallbackType.LoadClass:
 				var lcArgs = (LoadClassDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, lcArgs.AppDomain, null);
+				InitializeCurrentDebuggerState(e, null, lcArgs.AppDomain, null);
 				break;
 
 			case DebugCallbackType.UnloadClass:
 				var ucArgs = (UnloadClassDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, ucArgs.AppDomain, null);
+				InitializeCurrentDebuggerState(e, null, ucArgs.AppDomain, null);
 				break;
 
 			case DebugCallbackType.DebuggerError:
 				var deArgs = (DebuggerErrorDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(deArgs.Process, null, null);
+				InitializeCurrentDebuggerState(e, deArgs.Process, null, null);
 				break;
 
 			case DebugCallbackType.LogMessage:
 				var lmsgArgs = (LogMessageDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, lmsgArgs.AppDomain, lmsgArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, lmsgArgs.AppDomain, lmsgArgs.Thread);
 				break;
 
 			case DebugCallbackType.LogSwitch:
 				var lsArgs = (LogSwitchDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, lsArgs.AppDomain, lsArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, lsArgs.AppDomain, lsArgs.Thread);
 				break;
 
 			case DebugCallbackType.CreateAppDomain:
@@ -648,12 +696,12 @@ namespace dndbg.Engine {
 					if (b)
 						process.TryAdd(cadArgs.AppDomain);
 				}
-				InitializeCurrentDebuggerState(cadArgs.Process, cadArgs.AppDomain, null);
+				InitializeCurrentDebuggerState(e, cadArgs.Process, cadArgs.AppDomain, null);
 				break;
 
 			case DebugCallbackType.ExitAppDomain:
 				var eadArgs = (ExitAppDomainDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(eadArgs.Process, eadArgs.AppDomain, null);
+				InitializeCurrentDebuggerState(e, eadArgs.Process, eadArgs.AppDomain, null);
 				process = processes.TryGet(eadArgs.Process);
 				if (process != null) {
 					OnAppDomainUnloaded(process.TryGetAppDomain(eadArgs.AppDomain));
@@ -663,7 +711,7 @@ namespace dndbg.Engine {
 
 			case DebugCallbackType.LoadAssembly:
 				var laArgs = (LoadAssemblyDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, laArgs.AppDomain, null);
+				InitializeCurrentDebuggerState(e, null, laArgs.AppDomain, null);
 				appDomain = TryGetValidAppDomain(laArgs.AppDomain);
 				if (appDomain != null)
 					appDomain.TryAdd(laArgs.Assembly);
@@ -671,7 +719,7 @@ namespace dndbg.Engine {
 
 			case DebugCallbackType.UnloadAssembly:
 				var uaArgs = (UnloadAssemblyDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, uaArgs.AppDomain, null);
+				InitializeCurrentDebuggerState(e, null, uaArgs.AppDomain, null);
 				appDomain = TryGetAppDomain(uaArgs.AppDomain);
 				if (appDomain != null) {
 					OnAssemblyUnloaded(appDomain.TryGetAssembly(uaArgs.Assembly));
@@ -681,12 +729,12 @@ namespace dndbg.Engine {
 
 			case DebugCallbackType.ControlCTrap:
 				var cctArgs = (ControlCTrapDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(cctArgs.Process, null, null);
+				InitializeCurrentDebuggerState(e, cctArgs.Process, null, null);
 				break;
 
 			case DebugCallbackType.NameChange:
 				var ncArgs = (NameChangeDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, ncArgs.AppDomain, ncArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, ncArgs.AppDomain, ncArgs.Thread);
 				if (ncArgs.AppDomain != null) {
 					appDomain = TryGetValidAppDomain(ncArgs.AppDomain);
 					if (appDomain != null)
@@ -701,73 +749,73 @@ namespace dndbg.Engine {
 
 			case DebugCallbackType.UpdateModuleSymbols:
 				var umsArgs = (UpdateModuleSymbolsDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, umsArgs.AppDomain, null);
+				InitializeCurrentDebuggerState(e, null, umsArgs.AppDomain, null);
 				break;
 
 			case DebugCallbackType.EditAndContinueRemap:
 				var encrArgs = (EditAndContinueRemapDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, encrArgs.AppDomain, encrArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, encrArgs.AppDomain, encrArgs.Thread);
 				break;
 
 			case DebugCallbackType.BreakpointSetError:
 				var bpseArgs = (BreakpointSetErrorDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, bpseArgs.AppDomain, bpseArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, bpseArgs.AppDomain, bpseArgs.Thread);
 				break;
 
 			case DebugCallbackType.FunctionRemapOpportunity:
 				var froArgs = (FunctionRemapOpportunityDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, froArgs.AppDomain, froArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, froArgs.AppDomain, froArgs.Thread);
 				break;
 
 			case DebugCallbackType.CreateConnection:
 				var ccArgs = (CreateConnectionDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(ccArgs.Process, null, null);
+				InitializeCurrentDebuggerState(e, ccArgs.Process, null, null);
 				break;
 
 			case DebugCallbackType.ChangeConnection:
 				var cc2Args = (ChangeConnectionDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(cc2Args.Process, null, null);
+				InitializeCurrentDebuggerState(e, cc2Args.Process, null, null);
 				break;
 
 			case DebugCallbackType.DestroyConnection:
 				var dcArgs = (DestroyConnectionDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(dcArgs.Process, null, null);
+				InitializeCurrentDebuggerState(e, dcArgs.Process, null, null);
 				break;
 
 			case DebugCallbackType.Exception2:
 				var ex2Args = (Exception2DebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, ex2Args.AppDomain, ex2Args.Thread);
+				InitializeCurrentDebuggerState(e, null, ex2Args.AppDomain, ex2Args.Thread);
 				break;
 
 			case DebugCallbackType.ExceptionUnwind:
 				var euArgs = (ExceptionUnwindDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, euArgs.AppDomain, euArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, euArgs.AppDomain, euArgs.Thread);
 				break;
 
 			case DebugCallbackType.FunctionRemapComplete:
 				var frcArgs = (FunctionRemapCompleteDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, frcArgs.AppDomain, frcArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, frcArgs.AppDomain, frcArgs.Thread);
 				break;
 
 			case DebugCallbackType.MDANotification:
 				var mdanArgs = (MDANotificationDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(mdanArgs.Controller as ICorDebugProcess, mdanArgs.Controller as ICorDebugAppDomain, mdanArgs.Thread);
+				InitializeCurrentDebuggerState(e, mdanArgs.Controller as ICorDebugProcess, mdanArgs.Controller as ICorDebugAppDomain, mdanArgs.Thread);
 				break;
 
 			case DebugCallbackType.CustomNotification:
 				var cnArgs = (CustomNotificationDebugCallbackEventArgs)e;
-				InitializeCurrentDebuggerState(null, cnArgs.AppDomain, cnArgs.Thread);
+				InitializeCurrentDebuggerState(e, null, cnArgs.AppDomain, cnArgs.Thread);
 				break;
 
 			default:
-				InitializeCurrentDebuggerState(null);
+				InitializeCurrentDebuggerState(e, null);
 				Debug.Fail(string.Format("Unknown debug callback type: {0}", e.Type));
 				break;
 			}
 		}
 
 		void CheckBreakpoints(DebugCallbackEventArgs e) {
-			var type = DebugEventBreakpoint.GetDebugEventBreakpointType(e);
+			var type = DnDebugEventBreakpoint.GetDebugEventBreakpointType(e);
 			if (type != null) {
 				foreach (var bp in DebugEventBreakpoints) {
 					if (bp.IsEnabled && bp.EventType == type.Value && bp.Condition.Hit(new DebugEventBreakpointConditionContext(this, bp)))
@@ -800,6 +848,7 @@ namespace dndbg.Engine {
 			if (!hasTerminated) {
 				hasTerminated = true;
 				corDebug.Terminate();
+				ResetDebuggerStates();
 				CallOnProcessStateChanged();
 			}
 		}
@@ -964,7 +1013,7 @@ namespace dndbg.Engine {
 		/// <param name="eventType">Debug event</param>
 		/// <param name="cond">Condition</param>
 		/// <returns></returns>
-		public DebugEventBreakpoint CreateBreakpoint(DebugEventBreakpointType eventType, Predicate<BreakpointConditionContext> cond) {
+		public DnDebugEventBreakpoint CreateBreakpoint(DebugEventBreakpointType eventType, Predicate<BreakpointConditionContext> cond) {
 			DebugVerifyThread();
 			return CreateBreakpoint(eventType, new DelegateBreakpointCondition(cond));
 		}
@@ -975,9 +1024,9 @@ namespace dndbg.Engine {
 		/// <param name="eventType">Debug event</param>
 		/// <param name="bpCond">Condition or null</param>
 		/// <returns></returns>
-		public DebugEventBreakpoint CreateBreakpoint(DebugEventBreakpointType eventType, IBreakpointCondition bpCond = null) {
+		public DnDebugEventBreakpoint CreateBreakpoint(DebugEventBreakpointType eventType, IBreakpointCondition bpCond = null) {
 			DebugVerifyThread();
-			var bp = new DebugEventBreakpoint(eventType, bpCond);
+			var bp = new DnDebugEventBreakpoint(eventType, bpCond);
 			debugEventBreakpointList.Add(bp);
 			return bp;
 		}
@@ -990,7 +1039,7 @@ namespace dndbg.Engine {
 		/// <param name="ilOffset">IL offset</param>
 		/// <param name="cond">Condition</param>
 		/// <returns></returns>
-		public ILCodeBreakpoint CreateBreakpoint(SerializedDnModule module, uint token, uint ilOffset, Predicate<BreakpointConditionContext> cond) {
+		public DnILCodeBreakpoint CreateBreakpoint(SerializedDnModule module, uint token, uint ilOffset, Predicate<BreakpointConditionContext> cond) {
 			DebugVerifyThread();
 			return CreateBreakpoint(module, token, ilOffset, new DelegateBreakpointCondition(cond));
 		}
@@ -1003,9 +1052,9 @@ namespace dndbg.Engine {
 		/// <param name="ilOffset">IL offset</param>
 		/// <param name="bpCond">Condition or null</param>
 		/// <returns></returns>
-		public ILCodeBreakpoint CreateBreakpoint(SerializedDnModule module, uint token, uint ilOffset, IBreakpointCondition bpCond = null) {
+		public DnILCodeBreakpoint CreateBreakpoint(SerializedDnModule module, uint token, uint ilOffset, IBreakpointCondition bpCond = null) {
 			DebugVerifyThread();
-			var bp = new ILCodeBreakpoint(module, token, ilOffset, bpCond);
+			var bp = new DnILCodeBreakpoint(module, token, ilOffset, bpCond);
 			ilCodeBreakpointList.Add(module, bp);
 			foreach (var dnMod in GetLoadedDnModules(module))
 				bp.AddBreakpoint(dnMod);
@@ -1025,21 +1074,107 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public void RemoveBreakpoint(Breakpoint bp) {
+		public void RemoveBreakpoint(DnBreakpoint bp) {
 			DebugVerifyThread();
-			var debp = bp as DebugEventBreakpoint;
+			var debp = bp as DnDebugEventBreakpoint;
 			if (debp != null) {
 				debugEventBreakpointList.Remove(debp);
 				debp.OnRemoved();
 				return;
 			}
 
-			var ilbp = bp as ILCodeBreakpoint;
+			var ilbp = bp as DnILCodeBreakpoint;
 			if (ilbp != null) {
 				ilCodeBreakpointList.Remove(ilbp.Module, ilbp);
 				ilbp.OnRemoved();
 				return;
 			}
+		}
+
+		public int TryBreakProcesses() {
+			return TryBreakProcesses(true);
+		}
+
+		int TryBreakProcesses(bool callProcessStopped) {
+			if (ProcessState != DebuggerProcessState.Starting && ProcessState != DebuggerProcessState.Running)
+				return -1;
+
+			int errorHR = 0;
+			foreach (var process in processes.GetAll()) {
+				try {
+					int hr = process.RawObject.Stop(uint.MaxValue);
+					if (hr < 0)
+						errorHR = hr;
+					else
+						ProcessStopped(process, callProcessStopped);
+				}
+				catch {
+					if (errorHR == 0)
+						errorHR = -1;
+				}
+            }
+
+			return errorHR;
+		}
+
+		void ProcessStopped(DnProcess process, bool addStopState) {
+			this.managedCallbackCounter++;
+			if (!addStopState)
+				return;
+
+			DnThread thread = process.GetMainThread();
+			DnAppDomain appDomain = thread == null ? process.GetMainAppDomain() : thread.AppDomainOrNull;
+			AddDebuggerState(new DebuggerState(null, process, appDomain, thread) {
+				StopStates = new DebuggerStopState[] {
+					new DebuggerStopState(DebuggerStopReason.UserBreak),
+				}
+			});
+
+			CallOnProcessStateChanged();
+		}
+
+		public void TerminateProcesses() {
+			TerminateAllProcessesInternal();
+			Continue();
+		}
+
+		public int TryDetach() {
+			if (ProcessState == DebuggerProcessState.Starting || ProcessState == DebuggerProcessState.Running) {
+				int hr = TryBreakProcesses(false);
+				if (hr < 0)
+					return hr;
+			}
+
+			foreach (var bp in ilCodeBreakpointList.GetBreakpoints())
+				bp.OnRemoved();
+
+			foreach (var kv in stepInfos) {
+				int active;
+				int hr = kv.Key.IsActive(out active);
+				if (hr < 0)
+					return hr;
+				if (active != 0) {
+					hr = kv.Key.Deactivate();
+					if (hr < 0)
+						return hr;
+				}
+			}
+
+			foreach (var process in processes.GetAll()) {
+				try {
+					int hr = process.RawObject.Detach();
+					if (hr < 0)
+						return hr;
+				}
+				catch (InvalidComObjectException) {
+				}
+			}
+
+			hasTerminated = true;
+			ResetDebuggerStates();
+			CallOnProcessStateChanged();
+
+			return 0;
 		}
 
 		~DnDebugger() {
@@ -1052,13 +1187,18 @@ namespace dndbg.Engine {
 		}
 
 		void Dispose(bool disposing) {
+			TerminateAllProcessesInternal();
+		}
+
+		void TerminateAllProcessesInternal() {
 			foreach (var process in processes.GetAll()) {
 				try {
-					process.RawObject.Terminate(uint.MaxValue);
+					int hr = process.RawObject.Stop(uint.MaxValue);
+					hr = process.RawObject.Terminate(uint.MaxValue);
 				}
 				catch (InvalidComObjectException) {
 				}
-            }
+			}
 		}
 	}
 }

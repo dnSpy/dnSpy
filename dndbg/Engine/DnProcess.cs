@@ -275,6 +275,30 @@ namespace dndbg.Engine {
 			threads.Remove(comThread);
 		}
 
+		/// <summary>
+		/// Gets the main thread in the main AppDomain, if an AppDomain with threads exist, else
+		/// it returns a thread or null
+		/// </summary>
+		/// <returns></returns>
+		public DnThread GetMainThread() {
+			var threads = GetThreads();
+			var appDomain = GetMainAppDomain();
+			foreach (var thread in threads) {
+				if (thread.AppDomainOrNull == appDomain)
+					return thread;
+			}
+			return threads.Length == 0 ? null : threads[0];
+		}
+
+		/// <summary>
+		/// Gets the main AppDomain or null
+		/// </summary>
+		/// <returns></returns>
+		public DnAppDomain GetMainAppDomain() {
+			var appDomains = GetAppDomains();
+			return appDomains.Length == 0 ? null : appDomains[0];
+		}
+
 		public override string ToString() {
 			return string.Format("{0} {1} {2}", IncrementedId, ProcessId, Filename);
 		}

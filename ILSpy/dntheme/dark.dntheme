@@ -62,7 +62,7 @@
 		<color name="localreference" fg="#ADC0D3" bg="#0E4583" />
 		<color name="currentstatement" fg="Black" bg="#7EFFEE62" />
 		<color name="breakpointstatement" fg="White" bg="#8C2F2F" />
-		<color name="disabledbreakpointstatement" bg="#308C2F2F" />
+		<color name="disabledbreakpointstatement" bg="#708C2F2F" />
 		<color name="specialcharacterbox" fg="#FFF1F1F1" bg="#FF666699" />
 		<color name="searchresultmarker" bg="#FFFFB7" />
 		<color name="currentline" fg="#282828" bg="#0F0F0F" />

@@ -19,7 +19,7 @@
 
 namespace dndbg.Engine {
 	public abstract class BreakpointConditionContext {
-		public abstract Breakpoint Breakpoint { get; }
+		public abstract DnBreakpoint Breakpoint { get; }
 
 		public DnDebugger Debugger {
 			get { return debugger; }
@@ -31,11 +31,16 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public abstract class Breakpoint {
+	public abstract class DnBreakpoint {
 		public IBreakpointCondition Condition {
 			get { return bpCond; }
 		}
 		readonly IBreakpointCondition bpCond;
+
+		/// <summary>
+		/// The user can set this property to any value. It's not used by the debugger.
+		/// </summary>
+		public object Tag { get; set; }
 
 		public bool IsEnabled {
 			get { return isEnabled; }
@@ -51,7 +56,7 @@ namespace dndbg.Engine {
 		protected virtual void OnIsEnabledChanged() {
 		}
 
-		protected Breakpoint(IBreakpointCondition bpCond) {
+		protected DnBreakpoint(IBreakpointCondition bpCond) {
 			this.bpCond = bpCond ?? AlwaysBreakpointCondition.Instance;
 		}
 

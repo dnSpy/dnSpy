@@ -41,28 +41,28 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class DebugEventBreakpointConditionContext : BreakpointConditionContext {
-		public override Breakpoint Breakpoint {
+		public override DnBreakpoint Breakpoint {
 			get { return bp; }
 		}
 
-		public DebugEventBreakpoint DebugEventBreakpoint {
+		public DnDebugEventBreakpoint DebugEventBreakpoint {
 			get { return bp; }
 		}
-		readonly DebugEventBreakpoint bp;
+		readonly DnDebugEventBreakpoint bp;
 
-		public DebugEventBreakpointConditionContext(DnDebugger debugger, DebugEventBreakpoint bp)
+		public DebugEventBreakpointConditionContext(DnDebugger debugger, DnDebugEventBreakpoint bp)
 			: base(debugger) {
 			this.bp = bp;
 		}
 	}
 
-	public sealed class DebugEventBreakpoint : Breakpoint {
+	public sealed class DnDebugEventBreakpoint : DnBreakpoint {
 		public DebugEventBreakpointType EventType {
 			get { return eventType; }
 		}
 		readonly DebugEventBreakpointType eventType;
 
-		internal DebugEventBreakpoint(DebugEventBreakpointType eventType, IBreakpointCondition bpCond)
+		internal DnDebugEventBreakpoint(DebugEventBreakpointType eventType, IBreakpointCondition bpCond)
 			: base(bpCond) {
 			this.eventType = eventType;
 		}

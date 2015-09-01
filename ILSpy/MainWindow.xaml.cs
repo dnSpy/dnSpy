@@ -35,6 +35,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
+using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy;
@@ -53,7 +54,6 @@ using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.Controls;
-using ICSharpCode.ILSpy.Debugger.Services;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.ILSpy.XmlDoc;
@@ -689,7 +689,7 @@ namespace ICSharpCode.ILSpy
 			}
 
 			public void Add(ICommand command, ICommand realCommand, ModifierKeys modifiers1, Key key1, ModifierKeys modifiers2 = ModifierKeys.None, Key key2 = Key.None, ModifierKeys modifiers3 = ModifierKeys.None, Key key3 = Key.None) {
-				Add(command, (s, e) => realCommand.Execute(null), (s, e) => e.CanExecute = realCommand.CanExecute(null), modifiers1, key1, modifiers2, key2, modifiers3, key3);
+				Add(command, (s, e) => realCommand.Execute(e.Parameter), (s, e) => e.CanExecute = realCommand.CanExecute(e.Parameter), modifiers1, key1, modifiers2, key2, modifiers3, key3);
 			}
 
 			public void Add(ICommand command, ExecutedRoutedEventHandler exec, CanExecuteRoutedEventHandler canExec, ModifierKeys modifiers1, Key key1, ModifierKeys modifiers2 = ModifierKeys.None, Key key2 = Key.None, ModifierKeys modifiers3 = ModifierKeys.None, Key key3 = Key.None) {
@@ -2035,9 +2035,29 @@ namespace ICSharpCode.ILSpy
 
 		internal bool ReloadListCanExecute()
 		{
-			var cd = DebuggerService.CurrentDebugger;
-			return cd == null || !cd.IsDebugging;
+			if (CanExecuteEvent != null) {
+				var ea = new CanExecuteEventArgs(CanExecuteType.ReloadList, true);
+				CanExecuteEvent(this, ea);
+				if (ea.Result is bool)
+					return (bool)ea.Result;
+			}
+			return true;
 		}
+
+		public enum CanExecuteType {
+			ReloadList,
+		}
+
+		public class CanExecuteEventArgs : EventArgs {
+			public readonly CanExecuteType Type;
+			public object Result;
+
+			public CanExecuteEventArgs(CanExecuteType type, object defaultResult) {
+				this.Type = type;
+				this.Result = defaultResult;
+			}
+		}
+		public event EventHandler<CanExecuteEventArgs> CanExecuteEvent;
 		
 		void SearchCommandExecuted(object sender, ExecutedRoutedEventArgs e)
 		{
@@ -2600,14 +2620,28 @@ namespace ICSharpCode.ILSpy
 			this.statusBar.Visibility = Visibility.Collapsed;
 		}
 
-		public LoadedAssembly LoadAssembly(string asmFilename, string moduleFilename)
+		public LoadedAssembly TryLoadAssembly(string asmName, SerializedDnModule module)
 		{
+			return LoadAssembly(asmName, module, false);
+		}
+
+		public LoadedAssembly LoadAssembly(string asmName, SerializedDnModule module)
+		{
+			return LoadAssembly(asmName, module, true);
+		}
+
+		LoadedAssembly LoadAssembly(string asmName, SerializedDnModule module, bool open)
+		{
+			if (module.IsInMemory)
+				return null;//TODO: Support in-memory modules
+			string moduleFilename = module.Name;
 			lock (assemblyList.GetLockObj()) {
-				// Get or create the assembly
-				var loadedAsm = assemblyList.OpenAssemblyDelay(asmFilename, true);
+				var loadedAsm = open ? assemblyList.OpenAssemblyDelay(asmName, true) : assemblyList.FindAssemblyByFileName(asmName);
+				if (loadedAsm == null)
+					return null;
 
 				// Common case is a one-file assembly or first module of a multifile assembly
-				if (asmFilename.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
+				if (asmName.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
 					return loadedAsm;
 
 				var loadedMod = assemblyListTreeNode.FindModule(loadedAsm, moduleFilename);
@@ -2615,7 +2649,7 @@ namespace ICSharpCode.ILSpy
 					return loadedMod;
 
 				Debug.Fail("Shouldn't be here.");
-				return assemblyList.OpenAssemblyDelay(moduleFilename, true);
+				return open ? assemblyList.OpenAssemblyDelay(moduleFilename, true) : null;
 			}
 		}
 

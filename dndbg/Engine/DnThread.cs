@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
 using dndbg.Engine.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -102,6 +104,37 @@ namespace dndbg.Engine {
 			get { return ownerProcess; }
 		}
 		readonly DnProcess ownerProcess;
+
+		/// <summary>
+		/// Gets all chains
+		/// </summary>
+		public IEnumerable<DnChain> Chains {
+			get {
+				ICorDebugChainEnum chainEnum;
+				int hr = thread.EnumerateChains(out chainEnum);
+				if (hr < 0)
+					yield break;
+				for (;;) {
+					ICorDebugChain chain = null;
+					hr = chainEnum.Next(1, out chain, IntPtr.Zero);
+					if (hr != 0 || chain == null)
+						break;
+					yield return new DnChain(chain);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets all frames in all chains
+		/// </summary>
+		public IEnumerable<DnFrame> AllFrames {
+			get {
+				foreach (var chain in Chains) {
+					foreach (var frame in chain.Frames)
+						yield return frame;
+				}
+			}
+		}
 
 		internal DnThread(DnProcess ownerProcess, ICorDebugThread thread, int incrementedId) {
 			this.ownerProcess = ownerProcess;

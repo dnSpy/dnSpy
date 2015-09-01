@@ -95,11 +95,11 @@ namespace dndbg.Engine {
 			dbg.OnManagedCallbackFromAnyThread(() => new DebuggerErrorDebugCallbackEventArgs(I<ICorDebugProcess>(pProcess), errorHR, errorCode));
 		}
 
-		void ICorDebugManagedCallback.LogMessage(IntPtr pAppDomain, IntPtr pThread, int lLevel, string pLogSwitchName, string pMessage) {
+		void ICorDebugManagedCallback.LogMessage(IntPtr pAppDomain, IntPtr pThread, LoggingLevelEnum lLevel, string pLogSwitchName, string pMessage) {
 			dbg.OnManagedCallbackFromAnyThread(() => new LogMessageDebugCallbackEventArgs(I<ICorDebugAppDomain>(pAppDomain), I<ICorDebugThread>(pThread), lLevel, pLogSwitchName, pMessage));
 		}
 
-		void ICorDebugManagedCallback.LogSwitch(IntPtr pAppDomain, IntPtr pThread, int lLevel, uint ulReason, string pLogSwitchName, string pParentName) {
+		void ICorDebugManagedCallback.LogSwitch(IntPtr pAppDomain, IntPtr pThread, LoggingLevelEnum lLevel, LogSwitchCallReason ulReason, string pLogSwitchName, string pParentName) {
 			dbg.OnManagedCallbackFromAnyThread(() => new LogSwitchDebugCallbackEventArgs(I<ICorDebugAppDomain>(pAppDomain), I<ICorDebugThread>(pThread), lLevel, ulReason, pLogSwitchName, pParentName));
 		}
 

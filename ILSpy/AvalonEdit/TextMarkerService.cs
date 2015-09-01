@@ -26,10 +26,11 @@ using dnSpy.Tabs;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
-using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy.AvalonEdit {
+	using System.Diagnostics;
+	using dnSpy.AvalonEdit;
 	using TextView = ICSharpCode.AvalonEdit.Rendering.TextView;
 	/// <summary>
 	/// Handles the text markers for a code editor.
@@ -38,6 +39,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 	{
 		TextSegmentCollection<TextMarker> markers;
 		DecompilerTextView textView;
+		readonly Dictionary<ITextMarkerObject, ITextMarker> objToMarker = new Dictionary<ITextMarkerObject, ITextMarker>();
 
 		public TextView TextView {
 			get { return textView.TextEditor.TextArea.TextView; }
@@ -49,8 +51,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 				throw new ArgumentNullException("textView");
 			this.textView = textView;
 			TextView.DocumentChanged += OnDocumentChanged;
-			BookmarkManager.Added += BookmarkManager_Added;
-			BookmarkManager.Removed += BookmarkManager_Removed;
+			TextLineObjectManager.Instance.OnListModified += TextLineObjectManager_OnListModified;
 			MainWindow.Instance.ExecuteWhenLoaded(() => {
 				MainWindow.Instance.OnTabStateRemoved += OnTabStateRemoved;
 				this.textView.OnShowOutput += textView_OnShowOutput;
@@ -71,64 +72,76 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 				return;
 
 			TextView.DocumentChanged -= OnDocumentChanged;
-			BookmarkManager.Added -= BookmarkManager_Added;
-			BookmarkManager.Removed -= BookmarkManager_Removed;
+			TextLineObjectManager.Instance.OnListModified -= TextLineObjectManager_OnListModified;
 			MainWindow.Instance.OnTabStateRemoved -= OnTabStateRemoved;
 			textView.OnShowOutput -= textView_OnShowOutput;
-			foreach (var bm in BookmarkManager.Bookmarks) {
-				var mbm = bm as MarkerBookmark;
-				if (mbm != null)
-					mbm.Markers.Remove(this);
-			}
+			ClearMarkers();
+		}
+
+		void ClearMarkers()
+		{
+			foreach (var obj in objToMarker.Keys.ToArray())
+				RemoveMarker(obj);
 		}
 
 		void OnDocumentChanged(object sender, EventArgs e)
 		{
-			foreach (var bm in BookmarkManager.Bookmarks) {
-				var mbm = bm as MarkerBookmark;
-				if (mbm != null) {
-					ITextMarker marker;
-					if (mbm.Markers.TryGetValue(this, out marker))
-						Remove(marker);
-					mbm.Markers.Remove(this);
-				}
-			}
+			ClearMarkers();
 			if (TextView.Document != null)
 				markers = new TextSegmentCollection<TextMarker>(TextView.Document);
 			else
 				markers = null;
 		}
-		
-		void BookmarkManager_Removed(object sender, BookmarkEventArgs e)
+
+		void TextLineObjectManager_OnListModified(object sender, TextLineObjectListModifiedEventArgs e)
 		{
-			if (e.Bookmark is MarkerBookmark) {
-				var mbm = (MarkerBookmark)e.Bookmark;
-				ITextMarker marker;
-				if (mbm.Markers.TryGetValue(this, out marker))
-					Remove(marker);
-				mbm.Markers.Remove(this);
-			}
+			if (e.Added)
+				CreateMarker(e.TextLineObject as ITextMarkerObject);
+			else
+				RemoveMarker(e.TextLineObject as ITextMarkerObject);
 		}
 
-		void BookmarkManager_Added(object sender, BookmarkEventArgs e)
+		void RecreateMarkers()
 		{
-			CreateMarker(e.Bookmark as MarkerBookmark);
+			foreach (var tmo in TextLineObjectManager.Instance.GetObjectsOfType<ITextMarkerObject>())
+				CreateMarker(tmo);
 		}
 
-		public void RecreateMarkers()
+		void CreateMarker(ITextMarkerObject tmo)
 		{
-			foreach (var bm in BookmarkManager.Bookmarks)
-				CreateMarker(bm as MarkerBookmark);
-		}
-
-		void CreateMarker(MarkerBookmark mbm)
-		{
-			if (mbm == null || !mbm.IsVisible(textView))
+			if (tmo == null || !tmo.IsVisible(textView))
 				return;
 
 			ITextMarker marker;
-			if (!mbm.Markers.TryGetValue(this, out marker) || marker == null)
-				mbm.Markers[this] = mbm.CreateMarker(this, textView);
+			if (!objToMarker.TryGetValue(tmo, out marker)) {
+				objToMarker.Add(tmo, marker = tmo.CreateMarker(textView, this));
+				tmo.ObjPropertyChanged += TextMarkerObject_ObjPropertyChanged;
+			}
+			Debug.Assert(marker != null);
+		}
+
+		void RemoveMarker(ITextMarkerObject tmo)
+		{
+			if (tmo == null)
+				return;
+
+			tmo.ObjPropertyChanged -= TextMarkerObject_ObjPropertyChanged;
+
+			ITextMarker marker;
+			if (objToMarker.TryGetValue(tmo, out marker)) {
+				objToMarker.Remove(tmo);
+				Remove(marker);
+			}
+		}
+
+		void TextMarkerObject_ObjPropertyChanged(object sender, TextLineObjectEventArgs e)
+		{
+			if (e.Property == TextLineObjectEventArgs.RedrawProperty) {
+				var tmo = (ITextMarkerObject)sender;
+				ITextMarker marker;
+				if (objToMarker.TryGetValue(tmo, out marker))
+					marker.Redraw();
+			}
 		}
 
 		#region ITextMarkerService
@@ -147,30 +160,6 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 			markers.Add(m);
 			// no need to mark segment for redraw: the text marker is invisible until a property is set
 			return m;
-		}
-		
-		public IEnumerable<ITextMarker> GetMarkersAtOffset(int offset)
-		{
-			if (markers == null)
-				return Enumerable.Empty<ITextMarker>();
-			else
-				return markers.FindSegmentsContaining(offset);
-		}
-		
-		public IEnumerable<ITextMarker> TextMarkers {
-			get { return markers ?? Enumerable.Empty<ITextMarker>(); }
-		}
-		
-		public void RemoveAll(Predicate<ITextMarker> predicate)
-		{
-			if (predicate == null)
-				throw new ArgumentNullException("predicate");
-			if (markers != null) {
-				foreach (TextMarker m in markers.ToArray()) {
-					if (predicate(m))
-						Remove(m);
-				}
-			}
 		}
 		
 		public void Remove(ITextMarker marker)
@@ -214,7 +203,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 			int lineStart = line.Offset;
 			int lineEnd = lineStart + line.Length;
 			foreach (TextMarker marker in GetSortedTextMarkers(lineStart, line.Length)) {
-				if (marker.Bookmark != null && !marker.IsVisible(marker.Bookmark))
+				if (marker.TextMarkerObject != null && !marker.IsVisible(marker.TextMarkerObject))
 					continue;
 				
 				Brush foregroundBrush = null;
@@ -264,7 +253,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 			int viewStart = visualLines.First().FirstDocumentLine.Offset;
 			int viewEnd = visualLines.Last().LastDocumentLine.EndOffset;
 			foreach (TextMarker marker in GetSortedTextMarkers(viewStart, viewEnd - viewStart)) {
-				if (marker.Bookmark != null && !marker.IsVisible(marker.Bookmark))
+				if (marker.TextMarkerObject != null && !marker.IsVisible(marker.TextMarkerObject))
 					continue;
 				
 				if (marker.BackgroundColor != null) {
@@ -394,8 +383,6 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 			get { var hl = HighlightingColor(); return hl == null ? null : hl.FontStyle; }
 		}
 		
-		public object Tag { get; set; }
-		
 		TextMarkerTypes markerTypes;
 		
 		public TextMarkerTypes MarkerTypes {
@@ -419,16 +406,14 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 				}
 			}
 		}
-		/// <inheritdoc/>
-		public object ToolTip { get; set; }
 		
 		/// <inheritdoc/>
 		public Predicate<object> IsVisible { get; set; }
 		
 		/// <inheritdoc/>
-		public IBookmark Bookmark { get; set; }
+		public ITextMarkerObject TextMarkerObject { get; set; }
 
 		/// <inheritdoc/>
-		public int ZOrder { get; set; }
+		public double ZOrder { get; set; }
 	}
 }

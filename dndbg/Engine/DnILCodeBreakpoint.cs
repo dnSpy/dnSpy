@@ -22,16 +22,16 @@ using dndbg.Engine.COM.CorDebug;
 
 namespace dndbg.Engine {
 	public sealed class ILCodeBreakpointConditionContext : BreakpointConditionContext {
-		public override Breakpoint Breakpoint {
+		public override DnBreakpoint Breakpoint {
 			get { return bp; }
 		}
 
-		public ILCodeBreakpoint ILCodeBreakpoint {
+		public DnILCodeBreakpoint ILCodeBreakpoint {
 			get { return bp; }
 		}
-		readonly ILCodeBreakpoint bp;
+		readonly DnILCodeBreakpoint bp;
 
-		public ILCodeBreakpointConditionContext(DnDebugger debugger, ILCodeBreakpoint bp)
+		public ILCodeBreakpointConditionContext(DnDebugger debugger, DnILCodeBreakpoint bp)
 			: base(debugger) {
 			this.bp = bp;
 		}
@@ -54,7 +54,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class ILCodeBreakpoint : Breakpoint {
+	public sealed class DnILCodeBreakpoint : DnBreakpoint {
 		public SerializedDnModule Module {
 			get { return module; }
 		}
@@ -72,7 +72,7 @@ namespace dndbg.Engine {
 
 		readonly List<ModuleILCodeBreakpoint> rawBps = new List<ModuleILCodeBreakpoint>();
 
-		internal ILCodeBreakpoint(SerializedDnModule module, uint token, uint ilOffset, IBreakpointCondition bpCond)
+		internal DnILCodeBreakpoint(SerializedDnModule module, uint token, uint ilOffset, IBreakpointCondition bpCond)
 			: base(bpCond) {
 			this.module = module;
 			this.token = token;

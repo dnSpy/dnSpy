@@ -19,10 +19,28 @@
 
 using System.Windows.Controls;
 using System.Windows.Input;
+using dndbg.Engine;
+using dnSpy.AvalonEdit;
+using dnSpy.Images;
 using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.AvalonEdit;
+using ICSharpCode.ILSpy.TextView;
 
 namespace dnSpy.Debugger {
 	abstract class ToolbarDebugCommand : CommandWrapper, IToolbarCommand {
+		internal static void OnLoaded() {
+			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
+		}
+
+		static void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+			bool newIsDebugging = DebugManager.Instance.IsDebugging;
+			if (newIsDebugging != prevIsDebugging) {
+				prevIsDebugging = newIsDebugging;
+				MainWindow.Instance.UpdateToolbar();
+			}
+		}
+		static bool? prevIsDebugging = null;
+
 		protected ToolbarDebugCommand(ICommand command)
 			: base(command) {
 		}
@@ -107,7 +125,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public void Execute(ContextMenuEntryContext context) {
-			realCmd.Execute(null);
+			realCmd.Execute(context);
 		}
 
 		public virtual void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
@@ -118,14 +136,21 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool IsVisible(ContextMenuEntryContext context) {
-			return realCmd.CanExecute(null);
+			return context.Element is DecompilerTextView && realCmd.CanExecute(context);
 		}
 	}
 
 	[ExportContextMenuEntry(Header = "_Debug Assembly", Icon = "StartDebugging", Order = 200, Category = "Debug")]
 	sealed class DebugAssemblyDebugCtxMenuCommand : DebugCtxMenuCommand {
 		public DebugAssemblyDebugCtxMenuCommand()
-			: base(DebugRoutedCommands.DebugAssembly) {
+			: base(DebugRoutedCommands.DebugCurrentAssembly) {
+		}
+
+		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
+			var asm = DebugManager.Instance.GetCurrentAssembly(context);
+			if (asm == null)
+				return;
+			menuItem.Header = string.Format("_Debug {0}", UIUtils.EscapeMenuItemHeader(asm.ShortName));
 		}
 	}
 
@@ -136,7 +161,15 @@ namespace dnSpy.Debugger {
 		}
 
 		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
-			//TODO:
+			int count;
+			bool? enabled = BreakpointManager.Instance.GetAddRemoveBreakpointsInfo(out count);
+
+			if (enabled == null)
+				menuItem.Header = "_Add Breakpoint";
+			else if (enabled.Value)
+				menuItem.Header = count == 1 ? "D_elete Breakpoint" : "D_elete Breakpoints";
+			else
+				menuItem.Header = count == 1 ? "_Enable Breakpoint" : "_Enable Breakpoints";
 		}
 	}
 
@@ -147,7 +180,18 @@ namespace dnSpy.Debugger {
 		}
 
 		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
-			//TODO:
+			int count;
+			bool enabled = BreakpointManager.Instance.GetEnableDisableBreakpointsInfo(out count);
+			InitializeMenuItem(this, enabled, count, menuItem, BackgroundType.ContextMenuItem);
+		}
+
+		internal static void InitializeMenuItem(object obj, bool enabled, int count, MenuItem menuItem, BackgroundType bgType) {
+			menuItem.IsEnabled = count > 0;
+			if (enabled)
+				menuItem.Header = count <= 1 ? "_Disable Breakpoint" : "_Disable Breakpoints";
+			else
+				menuItem.Header = count <= 1 ? "Enab_le Breakpoint" : "Enab_le Breakpoints";
+			MainWindow.CreateMenuItemImage(menuItem, obj, "DisableEnableBreakpoint", bgType);
 		}
 	}
 
@@ -259,6 +303,57 @@ namespace dnSpy.Debugger {
 	sealed class DeleteAllBreakpointsDebugMainMenuCommand : DebugMainMenuCommand {
 		public DeleteAllBreakpointsDebugMainMenuCommand()
 			: base(DebugRoutedCommands.DeleteAllBreakpoints, null) {
+		}
+	}
+
+	[ExportIconBarActionEntry(Icon = "BreakpointMenu", Category = "Debug")]
+	public class BreakpointCommand : IIconBarActionEntry {
+		public bool IsEnabled(DecompilerTextView textView) {
+			return true;
+		}
+
+		public void Execute(DecompilerTextView textView, int line) {
+			BreakpointManager.Instance.Toggle(textView, line);
+		}
+	}
+
+	[ExportIconBarContextMenuEntry(Header = "D_elete Breakpoint", Icon = "BreakpointMenu", Category = "Debug", Order = 100)]
+	public class DeleteBreakpointCommand : IIconBarContextMenuEntry {
+		public bool IsVisible(IIconBarObject context) {
+			return context is ILCodeBreakpoint;
+		}
+
+		public bool IsEnabled(IIconBarObject context) {
+			return IsVisible(context);
+		}
+
+		public void Execute(IIconBarObject context) {
+			var bpm = context as ILCodeBreakpoint;
+			if (bpm != null)
+				BreakpointManager.Instance.Remove(bpm);
+		}
+	}
+
+	[ExportIconBarContextMenuEntry(InputGestureText = "Ctrl+F9", Category = "Debug", Order = 110)]
+	public class EnableAndDisableBreakpointCommand : IIconBarContextMenuEntry2 {
+		public bool IsVisible(IIconBarObject context) {
+			return context is ILCodeBreakpoint;
+		}
+
+		public bool IsEnabled(IIconBarObject context) {
+			return IsVisible(context);
+		}
+
+		public void Execute(IIconBarObject context) {
+			var bpm = context as ILCodeBreakpoint;
+			if (bpm != null)
+				bpm.IsEnabled = !bpm.IsEnabled;
+		}
+
+		public void Initialize(IIconBarObject context, MenuItem menuItem) {
+			var bpm = context as ILCodeBreakpoint;
+			if (bpm != null)
+				EnableDisableBreakpointDebugCtxMenuCommand.InitializeMenuItem(this, bpm.IsEnabled, 1, menuItem, BackgroundType.ContextMenuItem);
 		}
 	}
 }

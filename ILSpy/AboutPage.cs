@@ -102,9 +102,6 @@ namespace ICSharpCode.ILSpy {
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("COPYING", "resource:COPYING"));
 			textView.ShowText(output);
 			MainWindow.Instance.SetTitle(textView, "About");
-			
-			//reset icon bar
-			textView.manager.Bookmarks.Clear();
 		}
 		
 		sealed class MyLinkElementGenerator : LinkElementGenerator

@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ICSharpCode.ILSpy</RootNamespace>
+    <RootNamespace>dnSpy</RootNamespace>
     <AssemblyName>dnSpy</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -526,22 +526,14 @@
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="AvalonEdit\EditorPositionState.cs" />
-    <Compile Include="AvalonEdit\IconBarManager.cs" />
     <Compile Include="AvalonEdit\IconBarMargin.cs" />
     <Compile Include="AvalonEdit\IconMarginActionsProvider.cs" />
+    <Compile Include="AvalonEdit\IMarkedTextLine.cs" />
     <Compile Include="AvalonEdit\ITextEditorListener.cs" />
     <Compile Include="AvalonEdit\ITextMarker.cs" />
     <Compile Include="AvalonEdit\TextEditorWeakEventManager.cs" />
+    <Compile Include="AvalonEdit\TextLineObjectManager.cs" />
     <Compile Include="AvalonEdit\TextMarkerService.cs" />
-    <Compile Include="Bookmarks\BookmarkBase.cs" />
-    <Compile Include="Bookmarks\BookmarkEventHandler.cs" />
-    <Compile Include="Bookmarks\BookmarkManager.cs" />
-    <Compile Include="Bookmarks\BreakpointBookmark.cs" />
-    <Compile Include="Bookmarks\BreakpointBookmarkEventArgs.cs" />
-    <Compile Include="Bookmarks\IBookmark.cs" />
-    <Compile Include="Bookmarks\MarkerBookmark.cs" />
-    <Compile Include="Bookmarks\StackFrameStatementBookmark.cs" />
-    <Compile Include="Bookmarks\TextMarkerZOrder.cs" />
     <Compile Include="Commands\AboutCommands.cs" />
     <Compile Include="Commands\BrowseBackCommand.cs" />
     <Compile Include="Commands\BrowseForwardCommand.cs" />
@@ -556,19 +548,26 @@
     <Compile Include="Controls\SysMenuButton.cs" />
     <Compile Include="Controls\TabButton.cs" />
     <Compile Include="Controls\WinSysButton.cs" />
-    <Compile Include="Debugger\AskDebugAssembly.cs" />
+    <Compile Include="Debugger\Breakpoint.cs" />
+    <Compile Include="Debugger\BreakpointManager.cs" />
+    <Compile Include="Debugger\BreakpointSettings.cs" />
     <Compile Include="Debugger\BringDebuggedProgramWindowToFront.cs" />
     <Compile Include="Debugger\DebugCommands.cs" />
+    <Compile Include="Debugger\DebugEventBreakpoint.cs" />
+    <Compile Include="Debugger\DebuggerColors.cs" />
     <Compile Include="Debugger\DebuggerPluginLoader.cs" />
     <Compile Include="Debugger\DebugManager.cs" />
     <Compile Include="Debugger\DebugRoutedCommands.cs" />
-    <Compile Include="Debugger\IAskDebugAssembly.cs" />
+    <Compile Include="Debugger\ILCodeBreakpoint.cs" />
+    <Compile Include="Debugger\MarkedTextLine.cs" />
+    <Compile Include="Debugger\MethodKey.cs" />
+    <Compile Include="Debugger\StackFrameLine.cs" />
+    <Compile Include="Debugger\StackFrameManager.cs" />
     <Compile Include="Debugger\WpfDebugMessageDispatcher.cs" />
     <Compile Include="DecompilerTabsWindow.xaml.cs">
       <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="dntheme\FileTabBackgroundConverter.cs" />
-    <Compile Include="MethodKey.cs" />
     <Compile Include="Search\FilterSearcher.cs" />
     <Compile Include="HexEditor\AsciiEncoding.cs" />
     <Compile Include="HexEditor\ByteArrayHexStream.cs" />
@@ -704,7 +703,6 @@
     <Compile Include="Languages\Language.cs" />
     <Compile Include="Languages\Languages.cs" />
     <Compile Include="LoadedAssembly.cs" />
-    <Compile Include="Models\ToolTipRequestEventArgs.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="NavigationHistory.cs" />
     <Compile Include="NavigationState.cs" />
@@ -729,9 +727,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands\SimpleCommand.cs" />
-    <Compile Include="Services\DebuggerService.cs" />
-    <Compile Include="Services\IDebugger.cs" />
-    <Compile Include="Services\ParserService.cs" />
     <Compile Include="TaskHelper.cs" />
     <Compile Include="TextView\EditorCommands.cs" />
     <Compile Include="TextView\FoldingCommands.cs" />

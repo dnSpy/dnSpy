@@ -17,12 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Bookmarks {
-	enum TextMarkerZOrder {
-		Breakpoint,
-		ReturnStatement,
-		SelectedReturnStatement,
-		CurrentStatement,
-		SearchResult,
+namespace dnSpy.Debugger {
+	public sealed class DebugEventBreakpoint : Breakpoint {
+		public override BreakpointType Type {
+			get { return BreakpointType.DebugEvent; }
+		}
+
+		public DebugEventBreakpoint(bool isEnabled = true)
+			: base(isEnabled) {
+		}
 	}
 }

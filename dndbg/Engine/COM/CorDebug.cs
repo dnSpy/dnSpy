@@ -123,19 +123,59 @@ namespace dndbg.Engine.COM.CorDebug {
 	[ComImport]
 	public interface CorDebug : ICorDebug {
 	}
+	[Flags]
 	public enum CorDebugChainReason {
+		/// <summary>
+		/// No call chain has been initiated.
+		/// </summary>
 		CHAIN_NONE,
+		/// <summary>
+		/// The chain was initiated by a constructor.
+		/// </summary>
 		CHAIN_CLASS_INIT,
+		/// <summary>
+		/// The chain was initiated by an exception filter.
+		/// </summary>
 		CHAIN_EXCEPTION_FILTER,
+		/// <summary>
+		/// The chain was initiated by code that enforces security.
+		/// </summary>
 		CHAIN_SECURITY = 4,
+		/// <summary>
+		/// The chain was initiated by a context policy.
+		/// </summary>
 		CHAIN_CONTEXT_POLICY = 8,
+		/// <summary>
+		/// Not used.
+		/// </summary>
 		CHAIN_INTERCEPTION = 16,
+		/// <summary>
+		/// Not used.
+		/// </summary>
 		CHAIN_PROCESS_START = 32,
+		/// <summary>
+		/// The chain was initiated by the start of a thread execution.
+		/// </summary>
 		CHAIN_THREAD_START = 64,
+		/// <summary>
+		/// The chain was initiated by entry into managed code.
+		/// </summary>
 		CHAIN_ENTER_MANAGED = 128,
+		/// <summary>
+		/// The chain was initiated by entry into unmanaged code.
+		/// </summary>
 		CHAIN_ENTER_UNMANAGED = 256,
+		/// <summary>
+		/// Not used.
+		/// </summary>
 		CHAIN_DEBUGGER_EVAL = 512,
+		/// <summary>
+		/// Not used.
+		/// </summary>
 		CHAIN_CONTEXT_SWITCH = 1024,
+		/// <summary>
+		/// The chain was initiated by a function evaluation.
+		/// </summary>
 		CHAIN_FUNC_EVAL = 2048
 	}
 	[ClassInterface(ClassInterfaceType.None), Guid("6FEF44D0-39E7-4C77-BE8E-C9F8CF988630"), TypeLibType(TypeLibTypeFlags.FCanCreate)]
@@ -233,24 +273,76 @@ namespace dndbg.Engine.COM.CorDebug {
 		INTERCEPT_ALL = 65535
 	}
 	public enum CorDebugInternalFrameType {
+		/// <summary>
+		/// A null value. The ICorDebugInternalFrame::GetFrameType method never returns this value.
+		/// </summary>
 		STUBFRAME_NONE,
+		/// <summary>
+		/// A managed-to-unmanaged stub frame.
+		/// </summary>
 		STUBFRAME_M2U,
+		/// <summary>
+		/// An unmanaged-to-managed stub frame.
+		/// </summary>
 		STUBFRAME_U2M,
+		/// <summary>
+		/// A transition between application domains.
+		/// </summary>
 		STUBFRAME_APPDOMAIN_TRANSITION,
+		/// <summary>
+		/// A lightweight method call.
+		/// </summary>
 		STUBFRAME_LIGHTWEIGHT_FUNCTION,
+		/// <summary>
+		/// The start of function evaluation.
+		/// </summary>
 		STUBFRAME_FUNC_EVAL,
+		/// <summary>
+		/// An internal call into the common language runtime.
+		/// </summary>
 		STUBFRAME_INTERNALCALL,
+		/// <summary>
+		/// The start of a class initialization.
+		/// </summary>
 		STUBFRAME_CLASS_INIT,
+		/// <summary>
+		/// An exception that is thrown.
+		/// </summary>
 		STUBFRAME_EXCEPTION,
+		/// <summary>
+		/// A frame used for code access security.
+		/// </summary>
 		STUBFRAME_SECURITY,
+		/// <summary>
+		/// The runtime is JIT-compiling a method.
+		/// </summary>
 		STUBFRAME_JIT_COMPILATION
 	}
+	[Flags]
 	public enum CorDebugMappingResult {
+		/// <summary>
+		/// The native code is in the prolog, so the value of the IP is 0.
+		/// </summary>
 		MAPPING_PROLOG = 1,
+		/// <summary>
+		/// The native code is in an epilog, so the value of the IP is the address of the last instruction of the method.
+		/// </summary>
 		MAPPING_EPILOG,
+		/// <summary>
+		/// No mapping information is available for the method, so the value of the IP is 0.
+		/// </summary>
 		MAPPING_NO_INFO = 4,
+		/// <summary>
+		/// Although there is mapping information for the method, the current address cannot be mapped to Microsoft intermediate language (MSIL) code. The value of the IP is 0.
+		/// </summary>
 		MAPPING_UNMAPPED_ADDRESS = 8,
+		/// <summary>
+		/// Either the method maps exactly to MSIL code or the frame has been interpreted, so the value of the IP is accurate.
+		/// </summary>
 		MAPPING_EXACT = 16,
+		/// <summary>
+		/// The method was successfully mapped, but the value of the IP may be approximate.
+		/// </summary>
 		MAPPING_APPROXIMATE = 32
 	}
 	public enum CorDebugMDAFlags {
@@ -528,7 +620,7 @@ namespace dndbg.Engine.COM.CorDebug {
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
-		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugAppDomainEnum values, out uint pceltFetched);
+		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugAppDomain values, out uint pceltFetched);
 	}
 	[Guid("0405B0DF-A660-11D2-BD02-0000F80849BD"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -576,7 +668,7 @@ namespace dndbg.Engine.COM.CorDebug {
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
-		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugAssemblyEnum values, out uint pceltFetched);
+		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugAssembly values, out uint pceltFetched);
 	}
 	[Guid("976A6278-134A-4A81-81A3-8F277943F4C3"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -611,23 +703,32 @@ namespace dndbg.Engine.COM.CorDebug {
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
-		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugBreakpointEnum breakpoints, out uint pceltFetched);
+		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugBreakpoint breakpoints, out uint pceltFetched);
 	}
 	[Guid("CC7BCAEE-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugChain {
 		void GetThread([MarshalAs(UnmanagedType.Interface)] out ICorDebugThread ppThread);
-		void GetStackRange(out ulong pStart, out ulong pEnd);
+		[PreserveSig]
+		int GetStackRange(out ulong pStart, out ulong pEnd);
 		void GetContext([MarshalAs(UnmanagedType.Interface)] out ICorDebugContext ppContext);
-		void GetCaller([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
-		void GetCallee([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
-		void GetPrevious([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
-		void GetNext([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
-		void IsManaged(out int pManaged);
-		void EnumerateFrames([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrameEnum ppFrames);
-		void GetActiveFrame([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
+		[PreserveSig]
+		int GetCaller([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
+		[PreserveSig]
+		int GetCallee([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
+		[PreserveSig]
+		int GetPrevious([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
+		[PreserveSig]
+		int GetNext([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
+		[PreserveSig]
+		int IsManaged(out int pManaged);
+		[PreserveSig]
+		int EnumerateFrames([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrameEnum ppFrames);
+		[PreserveSig]
+		int GetActiveFrame([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
 		void GetRegisterSet([MarshalAs(UnmanagedType.Interface)] out ICorDebugRegisterSet ppRegisters);
-		void GetReason(out CorDebugChainReason pReason);
+		[PreserveSig]
+		int GetReason(out CorDebugChainReason pReason);
 	}
 	[Guid("CC7BCB08-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -636,7 +737,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
-		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugChainEnum chains, out uint pceltFetched);
+		[PreserveSig]
+		int Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] out ICorDebugChain chains, IntPtr pceltFetched);
 	}
 	[Guid("CC7BCAF5-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -683,7 +785,7 @@ namespace dndbg.Engine.COM.CorDebug {
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
-		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCodeEnum values, out uint pceltFetched);
+		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode values, out uint pceltFetched);
 	}
 	[Guid("5F69C5E5-3E12-42DF-B371-F9D761D6EE24"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -714,7 +816,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		int Continue([In] int fIsOutOfBand);
 		[PreserveSig]
 		int IsRunning(out int pbRunning);
-		void HasQueuedCallbacks([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, out int pbQueued);
+		[PreserveSig]
+		int HasQueuedCallbacks([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, out int pbQueued);
 		void EnumerateThreads([MarshalAs(UnmanagedType.Interface)] out ICorDebugThreadEnum ppThreads);
 		void SetAllThreadsDebugState([In] CorDebugThreadState state, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pExceptThisThread);
 		void Detach();
@@ -784,7 +887,7 @@ namespace dndbg.Engine.COM.CorDebug {
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
-		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugErrorInfoEnum errors, out uint pceltFetched);
+		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugEditAndContinueErrorInfo errors, out uint pceltFetched);
 	}
 	[Guid("CC7BCAF6-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -837,14 +940,21 @@ namespace dndbg.Engine.COM.CorDebug {
 	[Guid("CC7BCAEF-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugFrame {
-		void GetChain([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
+		[PreserveSig]
+		int GetChain([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
 		void GetCode([MarshalAs(UnmanagedType.Interface)] out ICorDebugCode ppCode);
-		void GetFunction([MarshalAs(UnmanagedType.Interface)] out ICorDebugFunction ppFunction);
-		void GetFunctionToken(out uint pToken);
-		void GetStackRange(out ulong pStart, out ulong pEnd);
-		void GetCaller([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
-		void GetCallee([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
-		void CreateStepper([MarshalAs(UnmanagedType.Interface)] out ICorDebugStepper ppStepper);
+		[PreserveSig]
+		int GetFunction([MarshalAs(UnmanagedType.Interface)] out ICorDebugFunction ppFunction);
+		[PreserveSig]
+		int GetFunctionToken(out uint pToken);
+		[PreserveSig]
+		int GetStackRange(out ulong pStart, out ulong pEnd);
+		[PreserveSig]
+		int GetCaller([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
+		[PreserveSig]
+		int GetCallee([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
+		[PreserveSig]
+		int CreateStepper([MarshalAs(UnmanagedType.Interface)] out ICorDebugStepper ppStepper);
 	}
 	[Guid("CC7BCB07-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -853,12 +963,14 @@ namespace dndbg.Engine.COM.CorDebug {
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
-		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugFrameEnum frames, out uint pceltFetched);
+		[PreserveSig]
+		int Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] out ICorDebugFrame frames, IntPtr pceltFetched);
 	}
 	[Guid("CC7BCAF3-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugFunction {
-		void GetModule([MarshalAs(UnmanagedType.Interface)] out ICorDebugModule ppModule);
+		[PreserveSig]
+		int GetModule([MarshalAs(UnmanagedType.Interface)] out ICorDebugModule ppModule);
 		void GetClass([MarshalAs(UnmanagedType.Interface)] out ICorDebugClass ppClass);
 		void GetToken(out uint pMethodDef);
 		[PreserveSig]
@@ -994,15 +1106,18 @@ namespace dndbg.Engine.COM.CorDebug {
 		void GetCaller([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
 		void GetCallee([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
 		void CreateStepper([MarshalAs(UnmanagedType.Interface)] out ICorDebugStepper ppStepper);
-		void GetIP(out uint pnOffset, out CorDebugMappingResult pMappingResult);
-		void SetIP([In] uint nOffset);
+		[PreserveSig]
+		int GetIP(out uint pnOffset, out CorDebugMappingResult pMappingResult);
+		[PreserveSig]
+		int SetIP([In] uint nOffset);
 		void EnumerateLocalVariables([MarshalAs(UnmanagedType.Interface)] out ICorDebugValueEnum ppValueEnum);
 		void GetLocalVariable([In] uint dwIndex, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
 		void EnumerateArguments([MarshalAs(UnmanagedType.Interface)] out ICorDebugValueEnum ppValueEnum);
 		void GetArgument([In] uint dwIndex, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
 		void GetStackDepth(out uint pDepth);
 		void GetStackValue([In] uint dwIndex, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
-		void CanSetIP([In] uint nOffset);
+		[PreserveSig]
+		int CanSetIP([In] uint nOffset);
 	}
 	[Guid("5D88A994-6C30-479B-890F-BCEF88B129A5"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -1040,7 +1155,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		void GetCaller([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
 		void GetCallee([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
 		void CreateStepper([MarshalAs(UnmanagedType.Interface)] out ICorDebugStepper ppStepper);
-		void GetFrameType(out CorDebugInternalFrameType pType);
+		[PreserveSig]
+		int GetFrameType(out CorDebugInternalFrameType pType);
 	}
 	[Guid("C0815BDC-CFAB-447E-A779-C116B454EB5B"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -1054,6 +1170,26 @@ namespace dndbg.Engine.COM.CorDebug {
 		void GetBaseAddress(out ulong pAddress);
 		void GetName([In] uint cchName, out uint pcchName, [Out] [MarshalAs(UnmanagedType.LPWStr)] StringBuilder szName);
 		void GetSize(out uint pcBytes);
+	}
+	public enum LoggingLevelEnum {
+		LTraceLevel0 = 0,
+		LTraceLevel1,
+		LTraceLevel2,
+		LTraceLevel3,
+		LTraceLevel4,
+		LStatusLevel0 = 20,
+		LStatusLevel1,
+		LStatusLevel2,
+		LStatusLevel3,
+		LStatusLevel4,
+		LWarningLevel = 40,
+		LErrorLevel = 50,
+		LPanicLevel = 100
+	}
+	public enum LogSwitchCallReason {
+		SWITCH_CREATE,
+		SWITCH_MODIFY,
+		SWITCH_DELETE
 	}
 	[Guid("3D6F5F60-7538-11D3-8D5B-00104B35E7EF"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -1073,8 +1209,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		void LoadClass([In] IntPtr pAppDomain, [In] IntPtr c);
 		void UnloadClass([In] IntPtr pAppDomain, [In] IntPtr c);
 		void DebuggerError([In] IntPtr pProcess, [MarshalAs(UnmanagedType.Error)] [In] int errorHR, [In] uint errorCode);
-		void LogMessage([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] int lLevel, [In] [MarshalAs(UnmanagedType.LPWStr)] string pLogSwitchName, [In] [MarshalAs(UnmanagedType.LPWStr)] string pMessage);
-		void LogSwitch([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] int lLevel, [In] uint ulReason, [In] [MarshalAs(UnmanagedType.LPWStr)] string pLogSwitchName, [In] [MarshalAs(UnmanagedType.LPWStr)] string pParentName);
+		void LogMessage([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] LoggingLevelEnum lLevel, [In] [MarshalAs(UnmanagedType.LPWStr)] string pLogSwitchName, [In] [MarshalAs(UnmanagedType.LPWStr)] string pMessage);
+		void LogSwitch([In] IntPtr pAppDomain, [In] IntPtr pThread, [In] LoggingLevelEnum lLevel, [In] LogSwitchCallReason ulReason, [In] [MarshalAs(UnmanagedType.LPWStr)] string pLogSwitchName, [In] [MarshalAs(UnmanagedType.LPWStr)] string pParentName);
 		void CreateAppDomain([In] IntPtr pProcess, [In] IntPtr pAppDomain);
 		void ExitAppDomain([In] IntPtr pProcess, [In] IntPtr pAppDomain);
 		void LoadAssembly([In] IntPtr pAppDomain, [In] IntPtr pAssembly);
@@ -1200,7 +1336,7 @@ namespace dndbg.Engine.COM.CorDebug {
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
-		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugModuleEnum modules, out uint pceltFetched);
+		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugModule modules, out uint pceltFetched);
 	}
 	[Guid("A1B8A756-3CB6-4CCB-979F-3DF999673A59"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -1223,15 +1359,18 @@ namespace dndbg.Engine.COM.CorDebug {
 		void GetCaller([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
 		void GetCallee([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
 		void CreateStepper([MarshalAs(UnmanagedType.Interface)] out ICorDebugStepper ppStepper);
-		void GetIP(out uint pnOffset);
-		void SetIP([In] uint nOffset);
+		[PreserveSig]
+		int GetIP(out uint pnOffset);
+		[PreserveSig]
+		int SetIP([In] uint nOffset);
 		void GetRegisterSet([MarshalAs(UnmanagedType.Interface)] out ICorDebugRegisterSet ppRegisters);
 		void GetLocalRegisterValue([In] CorDebugRegister reg, [In] uint cbSigBlob, [In] UIntPtr pvSigBlob, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
 		void GetLocalDoubleRegisterValue([In] CorDebugRegister highWordReg, [In] CorDebugRegister lowWordReg, [In] uint cbSigBlob, [In] UIntPtr pvSigBlob, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
 		void GetLocalMemoryValue([In] ulong address, [In] uint cbSigBlob, [In] UIntPtr pvSigBlob, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
 		void GetLocalRegisterMemoryValue([In] CorDebugRegister highWordReg, [In] ulong lowWordAddress, [In] uint cbSigBlob, [In] UIntPtr pvSigBlob, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
 		void GetLocalMemoryRegisterValue([In] ulong highWordAddress, [In] CorDebugRegister lowWordRegister, [In] uint cbSigBlob, [In] UIntPtr pvSigBlob, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
-		void CanSetIP([In] uint nOffset);
+		[PreserveSig]
+		int CanSetIP([In] uint nOffset);
 	}
 	[Guid("35389FF1-3684-4C55-A2EE-210F26C60E5E"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -1272,7 +1411,8 @@ namespace dndbg.Engine.COM.CorDebug {
 	[Guid("3D6F5F64-7538-11D3-8D5B-00104B35E7EF"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugProcess : ICorDebugController {
-		void Stop([In] uint dwTimeoutIgnored);
+		[PreserveSig]
+		int Stop([In] uint dwTimeoutIgnored);
 		[PreserveSig]
 		int Continue([In] int fIsOutOfBand);
 		[PreserveSig]
@@ -1280,7 +1420,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		void HasQueuedCallbacks([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pThread, out int pbQueued);
 		void EnumerateThreads([MarshalAs(UnmanagedType.Interface)] out ICorDebugThreadEnum ppThreads);
 		void SetAllThreadsDebugState([In] CorDebugThreadState state, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugThread pExceptThisThread);
-		void Detach();
+		[PreserveSig]
+		int Detach();
 		[PreserveSig]
 		int Terminate([In] uint exitCode);
 		void CanCommitChanges([In] uint cSnapshots, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugEditAndContinueSnapshot pSnapshots, [MarshalAs(UnmanagedType.Interface)] out ICorDebugErrorInfoEnum pError);
@@ -1368,7 +1509,7 @@ namespace dndbg.Engine.COM.CorDebug {
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
-		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugProcessEnum processes, out uint pceltFetched);
+		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugProcess processes, out uint pceltFetched);
 	}
 	[Guid("CC7BCAF9-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -1440,8 +1581,10 @@ namespace dndbg.Engine.COM.CorDebug {
 	[Guid("CC7BCAEC-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugStepper {
-		void IsActive(out int pbActive);
-		void Deactivate();
+		[PreserveSig]
+		int IsActive(out int pbActive);
+		[PreserveSig]
+		int Deactivate();
 		[PreserveSig]
 		int SetInterceptMask([In] CorDebugIntercept mask);
 		[PreserveSig]
@@ -1467,7 +1610,7 @@ namespace dndbg.Engine.COM.CorDebug {
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
-		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugStepperEnum steppers, out uint pceltFetched);
+		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugStepper steppers, out uint pceltFetched);
 	}
 	[Guid("CC7BCAFD-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -1519,7 +1662,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		void ClearCurrentException();
 		[PreserveSig]
 		int CreateStepper([MarshalAs(UnmanagedType.Interface)] out ICorDebugStepper ppStepper);
-		void EnumerateChains([MarshalAs(UnmanagedType.Interface)] out ICorDebugChainEnum ppChains);
+		[PreserveSig]
+		int EnumerateChains([MarshalAs(UnmanagedType.Interface)] out ICorDebugChainEnum ppChains);
 		void GetActiveChain([MarshalAs(UnmanagedType.Interface)] out ICorDebugChain ppChain);
 		void GetActiveFrame([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
 		void GetRegisterSet([MarshalAs(UnmanagedType.Interface)] out ICorDebugRegisterSet ppRegisters);
@@ -1556,7 +1700,7 @@ namespace dndbg.Engine.COM.CorDebug {
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
-		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugThreadEnum threads, out uint pceltFetched);
+		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugThread threads, out uint pceltFetched);
 	}
 	[Guid("D613F0BB-ACE1-4C19-BD72-E4C08D5DA7F5"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -1576,7 +1720,7 @@ namespace dndbg.Engine.COM.CorDebug {
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
-		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugTypeEnum values, out uint pceltFetched);
+		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugType values, out uint pceltFetched);
 	}
 	[Guid("5263E909-8CB5-11D3-BD2F-0000F80849BD"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -1615,7 +1759,7 @@ namespace dndbg.Engine.COM.CorDebug {
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
-		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugValueEnum values, out uint pceltFetched);
+		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugValue values, out uint pceltFetched);
 	}
 	[Guid("707E8932-1163-48D9-8A93-F5B1F480FBB7"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]

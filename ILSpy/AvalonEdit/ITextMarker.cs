@@ -17,12 +17,10 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Media;
-
+using dnSpy.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.ILSpy.Bookmarks;
 
 namespace ICSharpCode.ILSpy.AvalonEdit {
 	/// <summary>
@@ -96,29 +94,19 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 		Color MarkerColor { get; set; }
 		
 		/// <summary>
-		/// Gets/Sets an object with additional data for this text marker.
-		/// </summary>
-		object Tag { get; set; }
-		
-		/// <summary>
-		/// Gets/Sets an object that will be displayed as tooltip in the text editor.
-		/// </summary>
-		object ToolTip { get; set; }
-		
-		/// <summary>
 		/// Gets or sets if the marker is visible or not.
 		/// </summary>
 		Predicate<object> IsVisible { get; set; }
 		
 		/// <summary>
-		/// Gets or sets the bookmark.
+		/// Gets or sets the text obj
 		/// </summary>
-		IBookmark Bookmark { get; set; }
+		ITextMarkerObject TextMarkerObject { get; set; }
 
 		/// <summary>
 		/// Gets or sets the Z-order
 		/// </summary>
-		int ZOrder { get; set; }
+		double ZOrder { get; set; }
 
 		/// <summary>
 		/// Forces a redraw
@@ -178,23 +166,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 		ITextMarker Create(int startOffset, int length);
 		
 		/// <summary>
-		/// Gets the list of text markers.
-		/// </summary>
-		IEnumerable<ITextMarker> TextMarkers { get; }
-		
-		/// <summary>
 		/// Removes the specified text marker.
 		/// </summary>
 		void Remove(ITextMarker marker);
-		
-		/// <summary>
-		/// Removes all text markers that match the condition.
-		/// </summary>
-		void RemoveAll(Predicate<ITextMarker> predicate);
-		
-		/// <summary>
-		/// Finds all text markers at the specified offset.
-		/// </summary>
-		IEnumerable<ITextMarker> GetMarkersAtOffset(int offset);
 	}
 }

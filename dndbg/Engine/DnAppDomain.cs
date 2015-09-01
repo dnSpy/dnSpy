@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Linq;
 using System.Text;
 using dndbg.Engine.COM.CorDebug;
 
@@ -156,6 +157,14 @@ namespace dndbg.Engine {
 				return;
 			assembly.SetHasUnloaded();
 			assemblies.Remove(comAssembly);
+		}
+
+		/// <summary>
+		/// Gets all threads, sorted on the order they were created
+		/// </summary>
+		/// <returns></returns>
+		public DnThread[] GetThreads() {
+			return Process.GetThreads().Where(t => t.AppDomainOrNull == this).ToArray();
 		}
 
 		public override string ToString() {
