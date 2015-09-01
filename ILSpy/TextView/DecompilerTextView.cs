@@ -95,7 +95,7 @@ namespace ICSharpCode.ILSpy.TextView {
 			HighlightingManager.Instance.RegisterHighlighting(
 				"ILAsm", new string[] { ".il" },
 				delegate {
-					using (Stream s = typeof(DecompilerTextView).Assembly.GetManifestResourceStream(typeof(DecompilerTextView), "ILAsm-Mode.xshd")) {
+					using (Stream s = typeof(DecompilerTextView).Assembly.GetManifestResourceStream(typeof(dnSpy.StartUpClass), "ILAsm-Mode.xshd")) {
 						using (XmlTextReader reader = new XmlTextReader(s)) {
 							return HighlightingLoader.Load(reader, HighlightingManager.Instance);
 						}

@@ -56,7 +56,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>ICSharpCode.ILSpy.StartUpClass</StartupObject>
+    <StartupObject>dnSpy.StartUpClass</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>

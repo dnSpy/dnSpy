@@ -32,9 +32,8 @@ using System.Windows.Threading;
 using dnSpy.NRefactory;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy {
-	public static class StartUpClass
-	{
+namespace dnSpy {
+	public static class StartUpClass {
 		[STAThread]
 		public static void Main() {
 			if (!dnlib.Settings.IsThreadSafe) {
@@ -42,10 +41,12 @@ namespace ICSharpCode.ILSpy {
 				Environment.Exit(1);
 			}
 
-			App.Main();
+			ICSharpCode.ILSpy.App.Main();
 		}
 	}
+}
 
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Interaction logic for App.xaml
 	/// </summary>
@@ -224,7 +225,7 @@ namespace ICSharpCode.ILSpy {
 		{
 			if (e.Uri.Scheme == "resource") {
 				AvalonEditTextOutput output = new AvalonEditTextOutput();
-				using (Stream s = typeof(App).Assembly.GetManifestResourceStream(typeof(App), e.Uri.AbsolutePath)) {
+				using (Stream s = typeof(App).Assembly.GetManifestResourceStream(typeof(dnSpy.StartUpClass), e.Uri.AbsolutePath)) {
 					using (StreamReader r = new StreamReader(s)) {
 						string line;
 						while ((line = r.ReadLine()) != null) {
