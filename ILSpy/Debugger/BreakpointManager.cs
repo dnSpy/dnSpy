@@ -26,7 +26,6 @@ using System.Windows;
 using System.Windows.Input;
 using dndbg.Engine;
 using dnlib.DotNet;
-using dnSpy.AsmEditor;
 using dnSpy.AvalonEdit;
 using dnSpy.MVVM;
 using ICSharpCode.Decompiler;

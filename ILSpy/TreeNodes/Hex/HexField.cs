@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using dnSpy.AsmEditor;
 using dnSpy.AsmEditor.Hex;
 using dnSpy.HexEditor;
 using dnSpy.MVVM;

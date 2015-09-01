@@ -36,7 +36,6 @@ using System.Xml;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy;
-using dnSpy.AsmEditor;
 using dnSpy.AvalonEdit;
 using dnSpy.Debugger;
 using dnSpy.Decompiler;

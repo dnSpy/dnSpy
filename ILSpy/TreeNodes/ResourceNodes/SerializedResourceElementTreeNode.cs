@@ -23,7 +23,6 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Input;
 using dnlib.DotNet.Resources;
-using dnSpy.AsmEditor;
 using dnSpy.AsmEditor.Resources;
 using dnSpy.MVVM;
 using dnSpy.Options;
