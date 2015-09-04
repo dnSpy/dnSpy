@@ -17,20 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.MVVM;
-using ICSharpCode.ILSpy;
+using System.Windows;
 
-namespace dnSpy.AsmEditor {
-	sealed class TreeViewCommandProxy : ContextMenuEntryCommandProxy {
-		public TreeViewCommandProxy(IContextMenuEntry cmd)
-			: base(cmd) {
-		}
-
-		protected override ContextMenuEntryContext CreateContext() {
-			var treeView = MainWindow.Instance.treeView;
-			if (treeView.IsKeyboardFocusWithin)
-				return ContextMenuEntryContext.Create(treeView);
-			return null;
-		}
+namespace dnSpy.MVVM {
+	interface IInitializeDataTemplate {
+		void Initialize(DependencyObject d);
 	}
 }

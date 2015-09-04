@@ -39,9 +39,23 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Engine\BreakpointList.cs" />
+    <Compile Include="Engine\COMObject.cs" />
     <Compile Include="Engine\COM\CorDebug.cs" />
     <Compile Include="Engine\COM\MetaHost.cs" />
+    <Compile Include="Engine\CorAppDomain.cs" />
+    <Compile Include="Engine\CorAssembly.cs" />
+    <Compile Include="Engine\CorChain.cs" />
+    <Compile Include="Engine\CorClass.cs" />
+    <Compile Include="Engine\CorCode.cs" />
     <Compile Include="Engine\CorDebugManagedCallback.cs" />
+    <Compile Include="Engine\CorFrame.cs" />
+    <Compile Include="Engine\CorFunction.cs" />
+    <Compile Include="Engine\CorFunctionBreakpoint.cs" />
+    <Compile Include="Engine\CorModule.cs" />
+    <Compile Include="Engine\CorProcess.cs" />
+    <Compile Include="Engine\CorStepper.cs" />
+    <Compile Include="Engine\CorThread.cs" />
+    <Compile Include="Engine\CorType.cs" />
     <Compile Include="Engine\DebugCallbackEventArgs.cs" />
     <Compile Include="Engine\DebugEventBreakpointList.cs" />
     <Compile Include="Engine\DebuggeeVersionDetector.cs" />
@@ -55,10 +69,8 @@
     <Compile Include="Engine\DnAppDomain.cs" />
     <Compile Include="Engine\DnAssembly.cs" />
     <Compile Include="Engine\DnBreakpoint.cs" />
-    <Compile Include="Engine\DnChain.cs" />
     <Compile Include="Engine\DnDebugEventBreakpoint.cs" />
     <Compile Include="Engine\DnDebugger.cs" />
-    <Compile Include="Engine\DnFrame.cs" />
     <Compile Include="Engine\DnILCodeBreakpoint.cs" />
     <Compile Include="Engine\DnModule.cs" />
     <Compile Include="Engine\DnProcess.cs" />

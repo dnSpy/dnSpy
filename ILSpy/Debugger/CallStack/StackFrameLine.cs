@@ -24,7 +24,7 @@ using dnSpy.Images;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
 
-namespace dnSpy.Debugger {
+namespace dnSpy.Debugger.CallStack {
 	enum StackFrameLineType {
 		/// <summary>
 		/// This is the statement that will be executed next

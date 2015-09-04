@@ -43,12 +43,12 @@ namespace dndbg.Engine {
 		}
 		readonly DnModule module;
 
-		public ICorDebugFunctionBreakpoint FunctionBreakpoint {
+		public CorFunctionBreakpoint FunctionBreakpoint {
 			get { return funcBp; }
 		}
-		readonly ICorDebugFunctionBreakpoint funcBp;
+		readonly CorFunctionBreakpoint funcBp;
 
-		public ModuleILCodeBreakpoint(DnModule module, ICorDebugFunctionBreakpoint funcBp) {
+		public ModuleILCodeBreakpoint(DnModule module, CorFunctionBreakpoint funcBp) {
 			this.module = module;
 			this.funcBp = funcBp;
 		}
@@ -81,41 +81,38 @@ namespace dndbg.Engine {
 
 		protected override void OnIsEnabledChanged() {
 			foreach (var bp in rawBps)
-				bp.FunctionBreakpoint.Activate(IsEnabled ? 1 : 0);
+				bp.FunctionBreakpoint.IsActive = IsEnabled;
 		}
 
 		internal bool AddBreakpoint(DnModule module) {
-			ICorDebugFunction func;
-			int hr = module.RawObject.GetFunctionFromToken(Token, out func);
-			if (hr < 0 || func == null)
+			var func = module.CorModule.GetFunctionFromToken(Token);
+			if (func == null)
 				return false;
 
-			ICorDebugCode ilCode;
-			hr = func.GetILCode(out ilCode);
-			if (hr < 0 || ilCode == null)
+			var ilCode = func.ILCode;
+			if (ilCode == null)
 				return false;
 
-			ICorDebugFunctionBreakpoint funcBp;
-			hr = ilCode.CreateBreakpoint(ILOffset, out funcBp);
-			if (hr < 0 || funcBp == null)
+			var funcBp = ilCode.CreateBreakpoint(ILOffset);
+			if (funcBp == null)
 				return false;
 
 			var modIlBp = new ModuleILCodeBreakpoint(module, funcBp);
 			rawBps.Add(modIlBp);
-			hr = funcBp.Activate(IsEnabled ? 1 : 0);
+			funcBp.IsActive = IsEnabled;
 
 			return true;
 		}
 
 		internal override void OnRemoved() {
 			foreach (var bp in rawBps)
-				bp.FunctionBreakpoint.Activate(0);
+				bp.FunctionBreakpoint.IsActive = false;
 			rawBps.Clear();
 		}
 
 		public bool IsBreakpoint(ICorDebugBreakpoint comBp) {
 			foreach (var bp in rawBps) {
-				if (bp.FunctionBreakpoint == comBp)
+				if (bp.FunctionBreakpoint.RawObject == comBp)
 					return true;
 			}
 			return false;

@@ -21,45 +21,37 @@ using System;
 using dndbg.Engine.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public sealed class DnFrame : IEquatable<DnFrame> {
-		/// <summary>
-		/// Gets the COM object
-		/// </summary>
-		public ICorDebugFrame RawObject {
-			get { return frame; }
-		}
-		readonly ICorDebugFrame frame;
-
+	public sealed class CorFrame : COMObject<ICorDebugFrame>, IEquatable<CorFrame> {
 		/// <summary>
 		/// Gets the frame that this frame called or null
 		/// </summary>
-		public DnFrame Callee {
+		public CorFrame Callee {
 			get {
 				ICorDebugFrame calleeFrame;
-				int hr = frame.GetCallee(out calleeFrame);
-				return hr < 0 || calleeFrame == null ? null : new DnFrame(calleeFrame);
+				int hr = obj.GetCallee(out calleeFrame);
+				return hr < 0 || calleeFrame == null ? null : new CorFrame(calleeFrame);
 			}
 		}
 
 		/// <summary>
 		/// Gets the frame that called this frame or null
 		/// </summary>
-		public DnFrame Caller {
+		public CorFrame Caller {
 			get {
 				ICorDebugFrame callerFrame;
-				int hr = frame.GetCaller(out callerFrame);
-				return hr < 0 || callerFrame == null ? null : new DnFrame(callerFrame);
+				int hr = obj.GetCaller(out callerFrame);
+				return hr < 0 || callerFrame == null ? null : new CorFrame(callerFrame);
 			}
 		}
 
 		/// <summary>
 		/// Gets the chain that this frame is part of
 		/// </summary>
-		public DnChain Chain {
+		public CorChain Chain {
 			get {
 				ICorDebugChain chain;
-				int hr = frame.GetChain(out chain);
-				return hr < 0 || chain == null ? null : new DnChain(chain);
+				int hr = obj.GetChain(out chain);
+				return hr < 0 || chain == null ? null : new CorChain(chain);
 			}
 		}
 
@@ -91,7 +83,7 @@ namespace dndbg.Engine {
 		/// true if this is an IL frame (<see cref="ICorDebugILFrame"/>)
 		/// </summary>
 		public bool IsILFrame {
-			get { return frame is ICorDebugILFrame; }
+			get { return obj is ICorDebugILFrame; }
 		}
 
 		/// <summary>
@@ -99,7 +91,7 @@ namespace dndbg.Engine {
 		/// even if <see cref="IsILFrame"/> is true (it's a JIT-compiled frame).
 		/// </summary>
 		public bool IsNativeFrame {
-			get { return frame is ICorDebugNativeFrame; }
+			get { return obj is ICorDebugNativeFrame; }
 		}
 
 		/// <summary>
@@ -114,14 +106,14 @@ namespace dndbg.Engine {
 		/// true if this is an internal frame (<see cref="ICorDebugInternalFrame"/>)
 		/// </summary>
 		public bool IsInternalFrame {
-			get { return frame is ICorDebugInternalFrame; }
+			get { return obj is ICorDebugInternalFrame; }
 		}
 
 		/// <summary>
 		/// true if this is a runtime unwindable frame (<see cref="ICorDebugRuntimeUnwindableFrame"/>)
 		/// </summary>
 		public bool IsRuntimeUnwindableFrame {
-			get { return frame is ICorDebugRuntimeUnwindableFrame; }
+			get { return obj is ICorDebugRuntimeUnwindableFrame; }
 		}
 
 		/// <summary>
@@ -129,7 +121,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public ILFrameIP ILFrameIP {
 			get {
-				var ilf = frame as ICorDebugILFrame;
+				var ilf = obj as ICorDebugILFrame;
 				if (ilf == null)
 					return new ILFrameIP();
 				uint offset;
@@ -144,7 +136,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public uint NativeFrameIP {
 			get {
-				var nf = frame as ICorDebugNativeFrame;
+				var nf = obj as ICorDebugNativeFrame;
 				if (nf == null)
 					return 0;
 				uint offset;
@@ -159,7 +151,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorDebugInternalFrameType InternalFrameType {
 			get {
-				var @if = frame as ICorDebugInternalFrame;
+				var @if = obj as ICorDebugInternalFrame;
 				if (@if == null)
 					return CorDebugInternalFrameType.STUBFRAME_NONE;
 				CorDebugInternalFrameType type;
@@ -168,9 +160,30 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal DnFrame(ICorDebugFrame frame) {
-			this.frame = frame;
+		/// <summary>
+		/// Gets the function or null
+		/// </summary>
+		public CorFunction Function {
+			get {
+				ICorDebugFunction func;
+				int hr = obj.GetFunction(out func);
+				return hr < 0 || func == null ? null : new CorFunction(func);
+			}
+		}
 
+		/// <summary>
+		/// Gets the code or null
+		/// </summary>
+		public CorCode Code {
+			get {
+				ICorDebugCode code;
+				int hr = obj.GetCode(out code);
+				return hr < 0 || code == null ? null : new CorCode(code);
+			}
+		}
+
+		internal CorFrame(ICorDebugFrame frame)
+			: base(frame) {
 			int hr = frame.GetFunctionToken(out this.token);
 			if (hr < 0)
 				this.token = 0;
@@ -179,29 +192,31 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				this.rangeStart = this.rangeEnd = 0;
 
-			//TODO: ICorDebugFrame::GetCode
-			//TODO: ICorDebugFrame::GetFunction
 			//TODO: ICorDebugILFrame, ICorDebugILFrame2, ICorDebugILFrame3, ICorDebugILFrame4
 			//TODO: ICorDebugInternalFrame, ICorDebugInternalFrame2
 			//TODO: ICorDebugNativeFrame, ICorDebugNativeFrame2
 			//TODO: ICorDebugRuntimeUnwindableFrame
 		}
 
+		public CorStepper CreateStepper() {
+			ICorDebugStepper stepper;
+			int hr = obj.CreateStepper(out stepper);
+			return hr < 0 || stepper == null ? null : new CorStepper(stepper);
+		}
+
 		/// <summary>
 		/// Gets the module of the function or null
 		/// </summary>
 		public SerializedDnModuleWithAssembly? GetSerializedDnModuleWithAssembly() {
-			ICorDebugFunction func;
-			int hr = frame.GetFunction(out func);
-			if (hr < 0)
+			var func = Function;
+			if (func == null)
 				return null;
 
-			ICorDebugModule module;
-			hr = func.GetModule(out module);
-			if (hr < 0)
+			var module = func.Module;
+			if (module == null)
 				return null;
 
-			return DnModule.GetSerializedDnModuleWithAssembly(module);
+			return module.SerializedDnModuleWithAssembly;
 		}
 
 		/// <summary>
@@ -211,7 +226,7 @@ namespace dndbg.Engine {
 		/// <param name="ilOffset">New IL offset</param>
 		/// <returns></returns>
 		public bool SetILFrameIP(uint ilOffset) {
-			var ilf = frame as ICorDebugILFrame;
+			var ilf = obj as ICorDebugILFrame;
 			if (ilf == null)
 				return false;
 			int hr = ilf.SetIP(ilOffset);
@@ -226,7 +241,7 @@ namespace dndbg.Engine {
 		/// <param name="ilOffset">IL offset</param>
 		/// <returns></returns>
 		public bool CanSetILFrameIP(uint ilOffset) {
-			var ilf = frame as ICorDebugILFrame;
+			var ilf = obj as ICorDebugILFrame;
 			if (ilf == null)
 				return false;
 			return ilf.CanSetIP(ilOffset) == 0;
@@ -239,7 +254,7 @@ namespace dndbg.Engine {
 		/// <param name="offset">New offset</param>
 		/// <returns></returns>
 		public bool SetNativeFrameIP(uint offset) {
-			var nf = frame as ICorDebugNativeFrame;
+			var nf = obj as ICorDebugNativeFrame;
 			if (nf == null)
 				return false;
 			int hr = nf.SetIP(offset);
@@ -254,13 +269,13 @@ namespace dndbg.Engine {
 		/// <param name="offset">Offset</param>
 		/// <returns></returns>
 		public bool CanSetNativeFrameIP(uint offset) {
-			var nf = frame as ICorDebugNativeFrame;
+			var nf = obj as ICorDebugNativeFrame;
 			if (nf == null)
 				return false;
 			return nf.CanSetIP(offset) == 0;
 		}
 
-		public static bool operator ==(DnFrame a, DnFrame b) {
+		public static bool operator ==(CorFrame a, CorFrame b) {
 			if (ReferenceEquals(a, b))
 				return true;
 			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
@@ -268,17 +283,17 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(DnFrame a, DnFrame b) {
+		public static bool operator !=(CorFrame a, CorFrame b) {
 			return !(a == b);
 		}
 
-		public bool Equals(DnFrame other) {
-			return other != null &&
+		public bool Equals(CorFrame other) {
+			return !ReferenceEquals(other, null) &&
 				RawObject == other.RawObject;
 		}
 
 		public override bool Equals(object obj) {
-			return Equals(obj as DnFrame);
+			return Equals(obj as CorFrame);
 		}
 
 		public override int GetHashCode() {

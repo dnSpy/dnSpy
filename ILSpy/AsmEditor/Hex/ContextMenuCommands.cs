@@ -55,20 +55,20 @@ namespace dnSpy.AsmEditor.Hex {
 		protected static ContextMenuEntryContext CreateContext() {
 			var textView = MainWindow.Instance.ActiveTextView;
 			if (textView != null && textView.IsKeyboardFocusWithin)
-				return ContextMenuEntryContext.Create(textView, true);
+				return ContextMenuEntryContext.Create(textView);
 
 			if (MainWindow.Instance.treeView.IsKeyboardFocusWithin)
-				return ContextMenuEntryContext.Create(MainWindow.Instance.treeView, true);
+				return ContextMenuEntryContext.Create(MainWindow.Instance.treeView);
 
 			if (MainWindow.Instance.treeView.SelectedItems.Count != 0) {
 				bool teFocus = textView != null && textView.TextEditor.TextArea.IsFocused;
 				if (teFocus)
-					return ContextMenuEntryContext.Create(textView, true);
+					return ContextMenuEntryContext.Create(textView);
 				if (UIUtils.HasSelectedChildrenFocus(MainWindow.Instance.treeView))
-					return ContextMenuEntryContext.Create(MainWindow.Instance.treeView, true);
+					return ContextMenuEntryContext.Create(MainWindow.Instance.treeView);
 			}
 
-			return ContextMenuEntryContext.Create(null, true);
+			return ContextMenuEntryContext.Create(null);
 		}
 
 		event EventHandler ICommand.CanExecuteChanged {
@@ -1320,49 +1320,49 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Cop_y", Order = 600, Category = "Copy", Icon = "Copy", InputGestureText = "Ctrl+C")]
+	[ExportContextMenuEntry(Header = "Cop_y", Order = 600, Category = "HexCopy2", Icon = "Copy", InputGestureText = "Ctrl+C")]
 	sealed class CopyHexBoxContextMenuEntry : CopyBaseHexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {
 			tabState.HexBox.Copy();
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Copy UTF-8 String", Order = 610, Category = "Copy", InputGestureText = "Ctrl+Shift+8")]
+	[ExportContextMenuEntry(Header = "Copy UTF-8 String", Order = 610, Category = "HexCopy2", InputGestureText = "Ctrl+Shift+8")]
 	sealed class CopyUtf8StringHexBoxContextMenuEntry : CopyBaseHexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {
 			tabState.HexBox.CopyUTF8String();
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Copy Unicode String", Order = 620, Category = "Copy", InputGestureText = "Ctrl+Shift+U")]
+	[ExportContextMenuEntry(Header = "Copy Unicode String", Order = 620, Category = "HexCopy2", InputGestureText = "Ctrl+Shift+U")]
 	sealed class CopyUnicodeStringHexBoxContextMenuEntry : CopyBaseHexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {
 			tabState.HexBox.CopyUnicodeString();
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Copy C# Array", Order = 630, Category = "Copy", InputGestureText = "Ctrl+Shift+P")]
+	[ExportContextMenuEntry(Header = "Copy C# Array", Order = 630, Category = "HexCopy2", InputGestureText = "Ctrl+Shift+P")]
 	sealed class CopyCSharpArrayHexBoxContextMenuEntry : CopyBaseHexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {
 			tabState.HexBox.CopyCSharpArray();
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Copy VB Array", Order = 640, Category = "Copy", InputGestureText = "Ctrl+Shift+B")]
+	[ExportContextMenuEntry(Header = "Copy VB Array", Order = 640, Category = "HexCopy2", InputGestureText = "Ctrl+Shift+B")]
 	sealed class CopyVBArrayHexBoxContextMenuEntry : CopyBaseHexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {
 			tabState.HexBox.CopyVBArray();
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Copy UI Contents", Order = 650, Category = "Copy", InputGestureText = "Ctrl+Shift+C")]
+	[ExportContextMenuEntry(Header = "Copy UI Contents", Order = 650, Category = "HexCopy2", InputGestureText = "Ctrl+Shift+C")]
 	sealed class CopyUIContentsHexBoxContextMenuEntry : CopyBaseHexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {
 			tabState.HexBox.CopyUIContents();
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Copy Offset", Order = 660, Category = "Copy", InputGestureText = "Ctrl+Alt+O")]
+	[ExportContextMenuEntry(Header = "Copy Offset", Order = 660, Category = "HexCopy2", InputGestureText = "Ctrl+Alt+O")]
 	sealed class CopyOffsetHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {
 			tabState.HexBox.CopyOffset();
@@ -1373,7 +1373,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Paste", Order = 670, Category = "Copy", Icon = "Paste", InputGestureText = "Ctrl+V")]
+	[ExportContextMenuEntry(Header = "_Paste", Order = 670, Category = "HexCopy2", Icon = "Paste", InputGestureText = "Ctrl+V")]
 	sealed class PasteHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {
 			tabState.HexBox.Paste();
@@ -1388,7 +1388,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Paste (UTF-8)", Order = 680, Category = "Copy", InputGestureText = "Ctrl+8")]
+	[ExportContextMenuEntry(Header = "_Paste (UTF-8)", Order = 680, Category = "HexCopy2", InputGestureText = "Ctrl+8")]
 	sealed class PasteUtf8HexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {
 			tabState.HexBox.PasteUtf8();
@@ -1403,7 +1403,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Paste (Unicode)", Order = 690, Category = "Copy", InputGestureText = "Ctrl+U")]
+	[ExportContextMenuEntry(Header = "_Paste (Unicode)", Order = 690, Category = "HexCopy2", InputGestureText = "Ctrl+U")]
 	sealed class PasteUnicodeHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(HexTabState tabState) {
 			tabState.HexBox.PasteUnicode();
@@ -1418,7 +1418,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Paste (#Blob Data)", Order = 7000, Category = "Copy", InputGestureText = "Ctrl+B")]
+	[ExportContextMenuEntry(Header = "_Paste (#Blob Data)", Order = 7000, Category = "HexCopy2", InputGestureText = "Ctrl+B")]
 	sealed class PasteBlobDataHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		internal static void OnLoaded() {
 			MainWindow.Instance.HexBindings.Add(new RoutedCommand("PasteBlobData", typeof(PasteBlobDataHexBoxContextMenuEntry)),

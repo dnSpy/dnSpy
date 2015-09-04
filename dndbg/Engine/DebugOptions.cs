@@ -169,6 +169,20 @@ namespace dndbg.Engine {
 		}
 		bool exceptionCallbacksOutsideOfMyCode = true;
 
+		/// <summary>
+		/// Passed to ICorDebugProcess5::EnableNGENPolicy 
+		/// </summary>
+		public CorDebugNGENPolicy NGENPolicy {
+			get { return ngenPolicy; }
+			set {
+				if (ngenPolicy != value) {
+					ngenPolicy = value;
+					OnPropertyChanged("NGENPolicy");
+				}
+			}
+		}
+		CorDebugNGENPolicy ngenPolicy;
+
 		public DebugOptions CopyTo(DebugOptions other) {
 			other.StepperInterceptMask = this.StepperInterceptMask;
 			other.StepperUnmappedStopMask = this.StepperUnmappedStopMask;
@@ -180,6 +194,7 @@ namespace dndbg.Engine {
 			other.IgnoreBreakInstructions = this.IgnoreBreakInstructions;
 			other.LogMessages = this.LogMessages;
 			other.ExceptionCallbacksOutsideOfMyCode = this.ExceptionCallbacksOutsideOfMyCode;
+			other.NGENPolicy = this.NGENPolicy;
 			return other;
 		}
 

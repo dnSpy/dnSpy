@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Text;
 using dndbg.Engine.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -28,13 +27,10 @@ namespace dndbg.Engine {
 	public sealed class DnAssembly {
 		readonly DebuggerCollection<ICorDebugModule, DnModule> modules;
 
-		/// <summary>
-		/// Gets the COM object
-		/// </summary>
-		public ICorDebugAssembly RawObject {
+		public CorAssembly CorAssembly {
 			get { return assembly; }
 		}
-		readonly ICorDebugAssembly assembly;
+		readonly CorAssembly assembly;
 
 		/// <summary>
 		/// Unique id per AppDomain. Each new created assembly gets an incremented value.
@@ -47,12 +43,10 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Assembly name, and is usually the full path to the manifest (first) module on disk
 		/// (the EXE or DLL file).
-		/// If it's a dynamic assembly, the name is eg. "&lt;unknown&gt;" but don't rely on it.
 		/// </summary>
 		public string Name {
-			get { return name; }
+			get { return assembly.Name; }
 		}
-		readonly string name;
 
 		/// <summary>
 		/// true if the assembly has been unloaded
@@ -87,25 +81,12 @@ namespace dndbg.Engine {
 		internal DnAssembly(DnAppDomain appDomain, ICorDebugAssembly assembly, int incrementedId) {
 			this.appDomain = appDomain;
 			this.modules = new DebuggerCollection<ICorDebugModule, DnModule>(CreateModule);
-			this.assembly = assembly;
+			this.assembly = new CorAssembly(assembly);
 			this.incrementedId = incrementedId;
-			this.name = GetName(assembly) ?? string.Empty;
 		}
 
 		DnModule CreateModule(ICorDebugModule comModule, int id) {
 			return new DnModule(this, comModule, id);
-		}
-
-		internal static string GetName(ICorDebugAssembly assembly) {
-			uint cchName = 0;
-			int hr = assembly.GetName(0, out cchName, null);
-			if (hr < 0)
-				return null;
-			var sb = new StringBuilder((int)cchName);
-			hr = assembly.GetName(cchName, out cchName, sb);
-			if (hr < 0)
-				return null;
-			return sb.ToString();
 		}
 
 		internal void SetHasUnloaded() {

@@ -19,7 +19,6 @@
 
 using System;
 using System.Linq;
-using System.Text;
 using dndbg.Engine.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -29,13 +28,10 @@ namespace dndbg.Engine {
 	public sealed class DnAppDomain {
 		readonly DebuggerCollection<ICorDebugAssembly, DnAssembly> assemblies;
 
-		/// <summary>
-		/// Gets the COM object
-		/// </summary>
-		public ICorDebugAppDomain RawObject {
+		public CorAppDomain CorAppDomain {
 			get { return appDomain; }
 		}
-		readonly ICorDebugAppDomain appDomain;
+		readonly CorAppDomain appDomain;
 
 		/// <summary>
 		/// Unique id per process. Each new created AppDomain gets an incremented value.
@@ -49,9 +45,8 @@ namespace dndbg.Engine {
 		/// AppDomain Id
 		/// </summary>
 		public int Id {
-			get { return id; }
+			get { return appDomain.Id; }
 		}
-		readonly int id;
 
 		/// <summary>
 		/// true if the AppDomain has exited
@@ -65,9 +60,8 @@ namespace dndbg.Engine {
 		/// AppDomain name
 		/// </summary>
 		public string Name {
-			get { return name; }
+			get { return appDomain.Name ?? string.Empty; }
 		}
-		string name;
 
 		/// <summary>
 		/// Gets the owner debugger
@@ -87,11 +81,8 @@ namespace dndbg.Engine {
 		internal DnAppDomain(DnProcess ownerProcess, ICorDebugAppDomain appDomain, int incrementedId) {
 			this.ownerProcess = ownerProcess;
 			this.assemblies = new DebuggerCollection<ICorDebugAssembly, DnAssembly>(CreateAssembly);
-			this.appDomain = appDomain;
+			this.appDomain = new CorAppDomain(appDomain);
 			this.incrementedId = incrementedId;
-			int hr = appDomain.GetID(out this.id);
-			if (hr < 0)
-				this.id = -1;
 			NameChanged();
 		}
 
@@ -100,19 +91,6 @@ namespace dndbg.Engine {
 		}
 
 		internal void NameChanged() {
-			this.name = GetName(appDomain) ?? string.Empty;
-		}
-
-		static string GetName(ICorDebugAppDomain appDomain) {
-			uint cchName = 0;
-			int hr = appDomain.GetName(0, out cchName, null);
-			if (hr < 0)
-				return null;
-			var sb = new StringBuilder((int)cchName);
-			hr = appDomain.GetName(cchName, out cchName, sb);
-			if (hr < 0)
-				return null;
-			return sb.ToString();
 		}
 
 		internal void SetHasExited() {
@@ -123,7 +101,7 @@ namespace dndbg.Engine {
 			if (HasExited)
 				return false;
 			int running;
-			return appDomain.IsRunning(out running) >= 0;
+			return appDomain.RawObject.IsRunning(out running) >= 0;
 		}
 
 		internal DnAssembly TryAdd(ICorDebugAssembly comAssembly) {

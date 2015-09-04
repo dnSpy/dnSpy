@@ -28,7 +28,6 @@ using dnSpy.Decompiler;
 using dnSpy.HexEditor;
 using dnSpy.MVVM;
 using dnSpy.Tabs;
-using dnSpy.TreeNodes;
 using dnSpy.TreeNodes.Hex;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
@@ -95,10 +94,10 @@ namespace dnSpy.AsmEditor.Hex {
 			if (tabState != null) {
 				var listView = FindListView(tabState);
 				if (listView != null && UIUtils.HasSelectedChildrenFocus(listView))
-					return ContextMenuEntryContext.Create(listView, true);
+					return ContextMenuEntryContext.Create(listView);
 			}
 
-			return ContextMenuEntryContext.Create(null, true);
+			return ContextMenuEntryContext.Create(null);
 		}
 
 		static ListView FindListView(DecompileTabState tabState) {

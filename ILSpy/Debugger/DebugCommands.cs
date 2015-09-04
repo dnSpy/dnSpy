@@ -21,6 +21,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.AvalonEdit;
+using dnSpy.Debugger.Breakpoints;
 using dnSpy.Images;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.AvalonEdit;
@@ -303,6 +304,13 @@ namespace dnSpy.Debugger {
 	sealed class DeleteAllBreakpointsDebugMainMenuCommand : DebugMainMenuCommand {
 		public DeleteAllBreakpointsDebugMainMenuCommand()
 			: base(DebugRoutedCommands.DeleteAllBreakpoints, null) {
+		}
+	}
+
+	[ExportMainMenuCommand(MenuIcon = "CallStackWindow", Menu = "_Debug", MenuInputGestureText = "Ctrl+Alt+C", MenuHeader = "_Show Call Stack", MenuCategory = "View", MenuOrder = 5400)]
+	class CallstackPanelcommand : DebugMainMenuCommand {
+		public CallstackPanelcommand()
+			: base(DebugRoutedCommands.ShowCallStack, true) {
 		}
 	}
 

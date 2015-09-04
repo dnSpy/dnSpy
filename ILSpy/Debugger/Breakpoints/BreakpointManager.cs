@@ -33,7 +33,7 @@ using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
-namespace dnSpy.Debugger {
+namespace dnSpy.Debugger.Breakpoints {
 	public class BreakpointListModifiedEventArgs : EventArgs {
 		/// <summary>
 		/// Added/removed breakpoint

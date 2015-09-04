@@ -223,9 +223,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		static ContextMenuEntryContext CreateContext() {
 			var textView = MainWindow.Instance.ActiveTextView;
 			if (textView != null && textView.IsKeyboardFocusWithin)
-				return ContextMenuEntryContext.Create(textView, true);
+				return ContextMenuEntryContext.Create(textView);
 
-			return ContextMenuEntryContext.Create(null, true);
+			return ContextMenuEntryContext.Create(null);
 		}
 
 		void ICommand.Execute(object parameter) {

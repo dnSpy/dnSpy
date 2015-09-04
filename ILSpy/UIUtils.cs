@@ -124,5 +124,34 @@ namespace dnSpy {
 		public static void AddCommandBinding(this UIElement elem, ICommand cmd, ICommand realCmd) {
 			elem.CommandBindings.Add(new CommandBinding(cmd, (s, e) => realCmd.Execute(e.Parameter), (s, e) => e.CanExecute = realCmd.CanExecute(e.Parameter)));
 		}
+
+		public static void AddCommandBinding(this UIElement elem, ICommand cmd, ModifierKeys modifiers, Key key) {
+			elem.CommandBindings.Add(new CommandBinding(cmd));
+			elem.InputBindings.Add(new KeyBinding(cmd, key, modifiers));
+		}
+
+		public static void FocusSelector(Selector selector) {
+			if (!selector.IsVisible)
+				selector.IsVisibleChanged += selector_IsVisibleChanged;
+			else
+				FocusSelectorInternal(selector);
+		}
+
+		static void selector_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+			var selector = (Selector)sender;
+			selector.IsVisibleChanged -= selector_IsVisibleChanged;
+			FocusSelectorInternal(selector);
+		}
+
+		static void FocusSelectorInternal(Selector selector) {
+			bool focused = false;
+			var item = selector.SelectedItem as UIElement;
+			if (item == null && selector.SelectedItem != null)
+				item = selector.ItemContainerGenerator.ContainerFromItem(selector.SelectedItem) as UIElement;
+			if (item != null)
+				focused = item.Focus();
+			if (!focused)
+				selector.Focus();
+		}
 	}
 }

@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Diagnostics;
 using dndbg.Engine.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -29,13 +28,10 @@ namespace dndbg.Engine {
 		readonly DebuggerCollection<ICorDebugAppDomain, DnAppDomain> appDomains;
 		readonly DebuggerCollection<ICorDebugThread, DnThread> threads;
 
-		/// <summary>
-		/// Gets the COM object
-		/// </summary>
-		public ICorDebugProcess RawObject {
+		public CorProcess CorProcess {
 			get { return process; }
 		}
-		readonly ICorDebugProcess process;
+		readonly CorProcess process;
 
 		/// <summary>
 		/// Unique id per debugger. Each new created process gets an incremented value.
@@ -49,9 +45,8 @@ namespace dndbg.Engine {
 		/// Gets the process id (pid) of the process
 		/// </summary>
 		public int ProcessId {
-			get { return pid; }
+			get { return process.ProcessId; }
 		}
-		readonly int pid;
 
 		/// <summary>
 		/// true if the process has exited
@@ -92,11 +87,7 @@ namespace dndbg.Engine {
 		/// it can change. 0 is returned if the thread doesn't exist.
 		/// </summary>
 		public uint HelperThreadId {
-			get {
-				uint threadId;
-				int hr = process.GetHelperThreadID(out threadId);
-				return hr < 0 ? 0 : threadId;
-			}
+			get { return process.HelperThreadId; }
 		}
 
 		/// <summary>
@@ -111,11 +102,8 @@ namespace dndbg.Engine {
 			this.ownerDebugger = ownerDebugger;
 			this.appDomains = new DebuggerCollection<ICorDebugAppDomain, DnAppDomain>(CreateAppDomain);
 			this.threads = new DebuggerCollection<ICorDebugThread, DnThread>(CreateThread);
-			this.process = process;
+			this.process = new CorProcess(process);
 			this.incrementedId = incrementedId;
-			int hr = this.process.GetID(out this.pid);
-			if (hr < 0)
-				this.pid = 0;
 		}
 
 		DnAppDomain CreateAppDomain(ICorDebugAppDomain appDomain, int id) {
@@ -127,7 +115,7 @@ namespace dndbg.Engine {
 		}
 
 		public bool Terminate(int exitCode) {
-			return process.Terminate((uint)exitCode) >= 0;
+			return process.Terminate(exitCode);
 		}
 
 		internal void Initialize(string filename, string cwd, string cmdLine) {
@@ -135,48 +123,6 @@ namespace dndbg.Engine {
 			this.cwd = cwd;
 			this.cmdLine = cmdLine;
 			this.hasInitialized = true;
-		}
-
-		/// <summary>
-		/// Enable or disable log messages. Must be called after CreateProcess event has occurred
-		/// </summary>
-		/// <param name="enable"></param>
-		public void EnableLogMessages(bool enable) {
-			int hr = process.EnableLogMessages(enable ? 1 : 0);
-			Debug.Assert(hr >= 0);
-		}
-
-		/// <summary>
-		/// Calls ICorDebugProcess2::SetDesiredNGENCompilerFlags() if the iface is available
-		/// </summary>
-		/// <param name="flags">Flags</param>
-		public void SetDesiredNGENCompilerFlags(CorDebugJITCompilerFlags flags) {
-			var dbg2 = process as ICorDebugProcess2;
-			if (dbg2 != null) {
-				int hr = dbg2.SetDesiredNGENCompilerFlags(flags);
-			}
-		}
-
-		/// <summary>
-		/// Calls ICorDebugProcess7::SetWriteableMetadataUpdateMode() if the iface is available
-		/// </summary>
-		/// <param name="mode"></param>
-		public void SetWriteableMetadataUpdateMode(WriteableMetadataUpdateMode mode) {
-			var dbg7 = process as ICorDebugProcess7;
-			if (dbg7 != null) {
-				int hr = dbg7.SetWriteableMetadataUpdateMode(mode);
-				// 0x80131c4e: CORDBG_E_UNSUPPORTED
-			}
-		}
-
-		/// <summary>
-		/// Calls ICorDebugProcess7::SetWriteableMetadataUpdateMode() if the iface is available
-		/// </summary>
-		/// <param name="mode"></param>
-		public void EnableExceptionCallbacksOutsideOfMyCode(bool value) {
-			var dbg8 = process as ICorDebugProcess8;
-			if (dbg8 != null)
-				dbg8.EnableExceptionCallbacksOutsideOfMyCode(value ? 1 : 0);
 		}
 
 		internal void SetHasExited() {
@@ -187,7 +133,7 @@ namespace dndbg.Engine {
 			if (HasExited)
 				return false;
 			int running;
-			return process.IsRunning(out running) >= 0;
+			return process.RawObject.IsRunning(out running) >= 0;
 		}
 
 		internal DnAppDomain TryAdd(ICorDebugAppDomain comAppDomain) {

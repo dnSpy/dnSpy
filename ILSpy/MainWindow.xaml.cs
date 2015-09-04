@@ -2598,8 +2598,34 @@ namespace ICSharpCode.ILSpy
 				pane.Closed();
 		}
 
-		public object BottomPaneContent {
-			get { return bottomPane.Content; }
+		public bool IsTopPaneContent(object content)
+		{
+			return IsPaneContent(topPane, content);
+		}
+
+		public bool IsBottomPaneContent(object content)
+		{
+			return IsPaneContent(bottomPane, content);
+		}
+
+		bool IsPaneContent(DockedPane pane, object content)
+		{
+			return pane.Content == content;
+		}
+
+		public bool IsTopPaneVisible(object content)
+		{
+			return IsPaneVisible(topPane, content);
+		}
+
+		public bool IsBottomPaneVisible(object content)
+		{
+			return IsPaneVisible(bottomPane, content);
+		}
+
+		bool IsPaneVisible(DockedPane pane, object content)
+		{
+			return pane.IsVisible && IsPaneContent(pane, content);
 		}
 		#endregion
 		
@@ -2623,6 +2649,11 @@ namespace ICSharpCode.ILSpy
 		public LoadedAssembly TryLoadAssembly(string asmName, SerializedDnModule module)
 		{
 			return LoadAssembly(asmName, module, false);
+		}
+
+		public LoadedAssembly LoadAssembly(SerializedDnModuleWithAssembly serAsm)
+		{
+			return LoadAssembly(serAsm.Assembly, serAsm.Module);
 		}
 
 		public LoadedAssembly LoadAssembly(string asmName, SerializedDnModule module)

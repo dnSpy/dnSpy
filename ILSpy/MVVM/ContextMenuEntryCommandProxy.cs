@@ -17,29 +17,34 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
+using System;
+using System.Windows.Input;
 using ICSharpCode.ILSpy;
 
-namespace dnSpy.TreeNodes {
-	[Export(typeof(IInitializeDataTemplate))]
-	sealed class InitializeDataTemplateContextMenu : IInitializeDataTemplate {
-		public void Initialize(DependencyObject d) {
-			var fwe = d as FrameworkElement;
-			if (fwe == null)
-				return;
+namespace dnSpy.MVVM {
+	abstract class ContextMenuEntryCommandProxy : ICommand {
+		readonly IContextMenuEntry cmd;
 
-			if (fwe is ListView)
-				ContextMenuProvider.Add(fwe, ListViewIgnore);
-			else
-				ContextMenuProvider.Add(fwe);
+		protected ContextMenuEntryCommandProxy(IContextMenuEntry cmd) {
+			this.cmd = cmd;
 		}
 
-		static bool ListViewIgnore(DependencyObject o) {
-			return o is GridViewHeaderRowPresenter ||
-					o is ScrollBar;
+		protected abstract ContextMenuEntryContext CreateContext();
+
+		public event EventHandler CanExecuteChanged {
+			add { CommandManager.RequerySuggested += value; }
+			remove { CommandManager.RequerySuggested -= value; }
+		}
+
+		public bool CanExecute(object parameter) {
+			var ctx = CreateContext();
+			return ctx != null && cmd.IsVisible(ctx) && cmd.IsEnabled(ctx);
+		}
+
+		public void Execute(object parameter) {
+			var ctx = CreateContext();
+			if (ctx != null)
+				cmd.Execute(ctx);
 		}
 	}
 }

@@ -22,14 +22,17 @@ using System.Collections.Generic;
 using dndbg.Engine.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public sealed class DnChain : IEquatable<DnChain> {
+	public sealed class CorChain : COMObject<ICorDebugChain>, IEquatable<CorChain> {
 		/// <summary>
-		/// Gets the COM object
+		/// Gets the thread or null
 		/// </summary>
-		public ICorDebugChain RawObject {
-			get { return chain; }
+		public CorThread Thread {
+			get {
+				ICorDebugThread thread;
+				int hr = obj.GetThread(out thread);
+				return hr < 0 || thread == null ? null : new CorThread(thread);
+			}
 		}
-		readonly ICorDebugChain chain;
 
 		/// <summary>
 		/// true if this is a managed chain
@@ -66,65 +69,65 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the active frame or null
 		/// </summary>
-		public DnFrame ActiveFrame {
+		public CorFrame ActiveFrame {
 			get {
 				ICorDebugFrame frame;
-				int hr = chain.GetActiveFrame(out frame);
-				return hr < 0 || frame == null ? null : new DnFrame(frame);
+				int hr = obj.GetActiveFrame(out frame);
+				return hr < 0 || frame == null ? null : new CorFrame(frame);
 			}
 		}
 
 		/// <summary>
 		/// Gets the callee or null
 		/// </summary>
-		public DnChain Callee {
+		public CorChain Callee {
 			get {
 				ICorDebugChain callee;
-				int hr = chain.GetCallee(out callee);
-				return hr < 0 || callee == null ? null : new DnChain(callee);
+				int hr = obj.GetCallee(out callee);
+				return hr < 0 || callee == null ? null : new CorChain(callee);
 			}
 		}
 
 		/// <summary>
 		/// Gets the caller or null
 		/// </summary>
-		public DnChain Caller {
+		public CorChain Caller {
 			get {
 				ICorDebugChain caller;
-				int hr = chain.GetCaller(out caller);
-				return hr < 0 || caller == null ? null : new DnChain(caller);
+				int hr = obj.GetCaller(out caller);
+				return hr < 0 || caller == null ? null : new CorChain(caller);
 			}
 		}
 
 		/// <summary>
 		/// Gets the next chain or null
 		/// </summary>
-		public DnChain Next {
+		public CorChain Next {
 			get {
 				ICorDebugChain next;
-				int hr = chain.GetNext(out next);
-				return hr < 0 || next == null ? null : new DnChain(next);
+				int hr = obj.GetNext(out next);
+				return hr < 0 || next == null ? null : new CorChain(next);
 			}
 		}
 
 		/// <summary>
 		/// Gets the previous chain or null
 		/// </summary>
-		public DnChain Previous {
+		public CorChain Previous {
 			get {
 				ICorDebugChain prev;
-				int hr = chain.GetPrevious(out prev);
-				return hr < 0 || prev == null ? null : new DnChain(prev);
+				int hr = obj.GetPrevious(out prev);
+				return hr < 0 || prev == null ? null : new CorChain(prev);
 			}
 		}
 
 		/// <summary>
 		/// Gets all frames
 		/// </summary>
-		public IEnumerable<DnFrame> Frames {
+		public IEnumerable<CorFrame> Frames {
 			get {
 				ICorDebugFrameEnum frameEnum;
-				int hr = chain.EnumerateFrames(out frameEnum);
+				int hr = obj.EnumerateFrames(out frameEnum);
 				if (hr < 0)
 					yield break;
 				for (;;) {
@@ -132,14 +135,13 @@ namespace dndbg.Engine {
 					hr = frameEnum.Next(1, out frame, IntPtr.Zero);
 					if (hr != 0 || frame == null)
 						break;
-					yield return new DnFrame(frame);
+					yield return new CorFrame(frame);
 				}
 			}
 		}
 
-		internal DnChain(ICorDebugChain chain) {
-			this.chain = chain;
-
+		internal CorChain(ICorDebugChain chain)
+			: base(chain) {
 			int isManaged;
 			int hr = chain.IsManaged(out isManaged);
 			this.isManaged = hr >= 0 && isManaged != 0;
@@ -152,10 +154,11 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				this.rangeStart = this.rangeEnd = 0;
 
+			//TODO: ICorDebugChain::GetContext
 			//TODO: ICorDebugChain::GetRegisterSet
 		}
 
-		public static bool operator==(DnChain a, DnChain b) {
+		public static bool operator ==(CorChain a, CorChain b) {
 			if (ReferenceEquals(a, b))
 				return true;
 			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
@@ -163,17 +166,17 @@ namespace dndbg.Engine {
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(DnChain a, DnChain b) {
+		public static bool operator !=(CorChain a, CorChain b) {
 			return !(a == b);
 		}
 
-		public bool Equals(DnChain other) {
-			return other != null &&
+		public bool Equals(CorChain other) {
+			return !ReferenceEquals(other, null) &&
 				RawObject == other.RawObject;
 		}
 
 		public override bool Equals(object obj) {
-			return Equals(obj as DnChain);
+			return Equals(obj as CorChain);
 		}
 
 		public override int GetHashCode() {

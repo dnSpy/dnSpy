@@ -27,6 +27,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Debugger.CallStack;
 using dnSpy.MVVM;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
@@ -138,6 +139,7 @@ namespace dnSpy.Debugger {
 		DnDebugger debugger;
 
 		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged;
+		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged2;
 
 		static void SetRunningStatusMessage() {
 			MainWindow.Instance.SetStatus("Running…");
@@ -228,6 +230,8 @@ namespace dnSpy.Debugger {
 		void CallOnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			if (OnProcessStateChanged != null)
 				OnProcessStateChanged(sender, e ?? DebuggerEventArgs.Empty);
+			if (OnProcessStateChanged2 != null)
+				OnProcessStateChanged2(sender, e ?? DebuggerEventArgs.Empty);
 		}
 
 		void DnDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
@@ -422,24 +426,7 @@ namespace dnSpy.Debugger {
 		bool MoveCaretToCurrentStatement(DecompilerTextView textView) {
 			if (currentLocation == null)
 				return false;
-			return MoveCaretTo(textView, currentLocation.Value.MethodKey, currentLocation.Value.ILFrameIP.Offset);
-		}
-
-		bool MoveCaretTo(DecompilerTextView textView, MethodKey key, uint ilOffset) {
-			if (textView == null)
-				return false;
-			TextLocation location, endLocation;
-			var cm = textView.CodeMappings;
-			if (cm == null || !cm.ContainsKey(key))
-				return false;
-			if (!cm[key].GetInstructionByTokenAndOffset(ilOffset, out location, out endLocation)) {
-				//TODO: Missing IL ranges
-				return false;
-			}
-			else {
-				textView.ScrollAndMoveCaretTo(location.Line, location.Column);
-				return true;
-			}
+			return DebugUtils.MoveCaretTo(textView, currentLocation.Value.MethodKey, currentLocation.Value.ILFrameIP.Offset);
 		}
 
 		struct CodeLocation {
@@ -501,7 +488,7 @@ namespace dnSpy.Debugger {
 			return GetCodeLocation(Debugger.Current.ILFrame);
 		}
 
-		CodeLocation? GetCodeLocation(DnFrame frame) {
+		CodeLocation? GetCodeLocation(CorFrame frame) {
 			if (ProcessState != DebuggerProcessState.Stopped)
 				return null;
 			if (frame == null)
@@ -516,7 +503,7 @@ namespace dnSpy.Debugger {
 			return new CodeLocation(sma.Value, token, frame.ILFrameIP);
 		}
 
-		StepRange[] GetStepRanges(DnDebugger debugger, DnFrame frame, bool isStepInto) {
+		StepRange[] GetStepRanges(DnDebugger debugger, CorFrame frame, bool isStepInto) {
 			if (frame == null)
 				return null;
 			if (!frame.IsILFrame)
@@ -564,7 +551,7 @@ namespace dnSpy.Debugger {
 			return stepRanges;
 		}
 
-		static MethodKey? CreateMethodKey(DnDebugger debugger, DnFrame frame) {
+		static MethodKey? CreateMethodKey(DnDebugger debugger, CorFrame frame) {
 			var sma = frame.GetSerializedDnModuleWithAssembly();
 			if (sma == null)
 				return null;
@@ -572,11 +559,11 @@ namespace dnSpy.Debugger {
 			return MethodKey.Create(frame.Token, sma.Value.Module);
 		}
 
-		DnFrame GetCurrentILFrame() {
+		CorFrame GetCurrentILFrame() {
 			return debugger.Current.ILFrame;
 		}
 
-		DnFrame GetCurrentMethodILFrame() {
+		CorFrame GetCurrentMethodILFrame() {
 			return debugger.Current.ILFrame;
 		}
 
@@ -613,6 +600,17 @@ namespace dnSpy.Debugger {
 				return;
 
 			debugger.StepOut(GetCurrentILFrame());
+		}
+
+		public bool CanRunTo(CorFrame frame) {
+			return ProcessState == DebuggerProcessState.Stopped && Debugger.CanRunTo(frame);
+		}
+
+		public void RunTo(CorFrame frame) {
+			if (!CanRunTo(frame))
+				return;
+
+			Debugger.RunTo(frame);
 		}
 
 		public bool CanShowNextStatement {

@@ -20,21 +20,22 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.AvalonEdit;
+using dnSpy.MVVM;
 using dnSpy.Tabs;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
-namespace dnSpy.Debugger {
-	sealed class StackFrameManager {
+namespace dnSpy.Debugger.CallStack {
+	sealed class StackFrameManager : ViewModelBase {
 		public static readonly StackFrameManager Instance = new StackFrameManager();
 
-		const int MAX_SHOWN_FRAMES = 128;
+		// VS2015 shows at most 5000 frames, so let's use that number as well
+		const int MAX_SHOWN_FRAMES = 5000;
 
 		readonly List<StackFrameLine> stackFrameLines = new List<StackFrameLine>();
 
@@ -66,8 +67,8 @@ namespace dnSpy.Debugger {
 				break;
 
 			case DebuggerProcessState.Stopped:
-				currentState.FrameNumber = 0;
 				currentState.Thread = DebugManager.Instance.Debugger.Current.Thread;
+				SelectedFrame = 0;
 				foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
 					UpdateReturnStatementBookmarks(textView, false);
 				break;
@@ -116,9 +117,11 @@ namespace dnSpy.Debugger {
 			set {
 				VerifyDebuggeeStopped();
 				if (value != currentState.FrameNumber) {
+					var old = currentState.FrameNumber;
 					currentState.FrameNumber = value;
 					foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
 						UpdateReturnStatementBookmarks(textView);
+					OnPropertyChanged(new VMPropertyChangedEventArgs<int>("SelectedFrame", old, currentState.FrameNumber));
 				}
 			}
 		}
@@ -142,7 +145,8 @@ namespace dnSpy.Debugger {
 			bool updateReturnStatements = cm != null && DebugManager.Instance.ProcessState == DebuggerProcessState.Stopped;
 			if (updateReturnStatements) {
 				int frameNo = -1;
-				foreach (var frame in GetFrames().Take(MAX_SHOWN_FRAMES)) {
+				bool tooManyFrames;
+				foreach (var frame in GetFrames(out tooManyFrames)) {
 					frameNo++;
 					if (!frame.IsILFrame)
 						continue;
@@ -180,12 +184,22 @@ namespace dnSpy.Debugger {
 			return movedCaret;
 		}
 
-		IEnumerable<DnFrame> GetFrames() {
+		public List<CorFrame> GetFrames(out bool tooManyFrames) {
+			tooManyFrames = false;
+			var list = new List<CorFrame>();
+
 			var thread = currentState.Thread;
-			if (thread == null)
-				yield break;
-			foreach (var frame in thread.AllFrames)
-				yield return frame;
+			if (thread != null) {
+				foreach (var frame in thread.AllFrames) {
+					if (list.Count >= MAX_SHOWN_FRAMES) {
+						tooManyFrames = true;
+						break;
+					}
+					list.Add(frame);
+				}
+			}
+
+			return list;
 		}
 	}
 }

@@ -93,7 +93,7 @@ namespace ICSharpCode.ILSpy {
 
 		public bool OpenedFromKeyboard { get; private set; }
 		
-		public static ContextMenuEntryContext Create(FrameworkElement elem, bool openedFromKeyboard = false)
+		public static ContextMenuEntryContext Create(FrameworkElement elem, bool openedFromKeyboard = true)
 		{
 			TextViewPosition? position = null;
 			var textView = elem as DecompilerTextView;

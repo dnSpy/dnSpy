@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Debugger {
+namespace dnSpy.Debugger.Breakpoints {
 	public sealed class DebugEventBreakpoint : Breakpoint {
 		public override BreakpointType Type {
 			get { return BreakpointType.DebugEvent; }

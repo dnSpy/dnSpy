@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using dndbg.Engine.COM.CorDebug;
 
@@ -26,13 +25,10 @@ namespace dndbg.Engine {
 	/// A debugged .NET thread
 	/// </summary>
 	public sealed class DnThread {
-		/// <summary>
-		/// Gets the COM object
-		/// </summary>
-		public ICorDebugThread RawObject {
+		public CorThread CorThread {
 			get { return thread; }
 		}
-		readonly ICorDebugThread thread;
+		readonly CorThread thread;
 
 		/// <summary>
 		/// Unique id per process. Each new created thread gets an incremented value.
@@ -47,11 +43,7 @@ namespace dndbg.Engine {
 		/// thread ID in V2 or later, see <see cref="VolatileThreadId"/>
 		/// </summary>
 		public int ThreadId {
-			get {
-				int tid;
-				int hr = thread.GetID(out tid);
-				return hr < 0 ? -1 : tid;
-			}
+			get { return thread.ThreadId; }
 		}
 
 		/// <summary>
@@ -59,14 +51,7 @@ namespace dndbg.Engine {
 		/// can change during execution of the thread.
 		/// </summary>
 		public int VolatileThreadId {
-			get {
-				var th2 = thread as ICorDebugThread2;
-				if (th2 == null)
-					return -1;
-				int tid;
-				int hr = th2.GetVolatileOSThreadID(out tid);
-				return hr < 0 ? -1 : tid;
-			}
+			get { return thread.VolatileThreadId; }
 		}
 
 		/// <summary>
@@ -82,11 +67,8 @@ namespace dndbg.Engine {
 		/// </summary>
 		public DnAppDomain AppDomainOrNull {
 			get {
-				ICorDebugAppDomain comAppDomain;
-				int hr = thread.GetAppDomain(out comAppDomain);
-				if (hr < 0)
-					return null;
-				return Process.TryGetValidAppDomain(comAppDomain);
+				var comAppDomain = thread.AppDomain;
+				return comAppDomain == null ? null : Process.TryGetValidAppDomain(comAppDomain.RawObject);
 			}
 		}
 
@@ -108,37 +90,20 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets all chains
 		/// </summary>
-		public IEnumerable<DnChain> Chains {
-			get {
-				ICorDebugChainEnum chainEnum;
-				int hr = thread.EnumerateChains(out chainEnum);
-				if (hr < 0)
-					yield break;
-				for (;;) {
-					ICorDebugChain chain = null;
-					hr = chainEnum.Next(1, out chain, IntPtr.Zero);
-					if (hr != 0 || chain == null)
-						break;
-					yield return new DnChain(chain);
-				}
-			}
+		public IEnumerable<CorChain> Chains {
+			get { return thread.Chains; }
 		}
 
 		/// <summary>
 		/// Gets all frames in all chains
 		/// </summary>
-		public IEnumerable<DnFrame> AllFrames {
-			get {
-				foreach (var chain in Chains) {
-					foreach (var frame in chain.Frames)
-						yield return frame;
-				}
-			}
+		public IEnumerable<CorFrame> AllFrames {
+			get { return thread.AllFrames; }
 		}
 
 		internal DnThread(DnProcess ownerProcess, ICorDebugThread thread, int incrementedId) {
 			this.ownerProcess = ownerProcess;
-			this.thread = thread;
+			this.thread = new CorThread(thread);
 			this.incrementedId = incrementedId;
 		}
 

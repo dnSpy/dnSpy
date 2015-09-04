@@ -39,7 +39,7 @@ namespace dndbg.Engine {
 		readonly DebuggerCollection<ICorDebugProcess, DnProcess> processes;
 		readonly DebugEventBreakpointList debugEventBreakpointList = new DebugEventBreakpointList();
 		readonly BreakpointList<DnILCodeBreakpoint> ilCodeBreakpointList = new BreakpointList<DnILCodeBreakpoint>();
-		readonly Dictionary<ICorDebugStepper, StepInfo> stepInfos = new Dictionary<ICorDebugStepper, StepInfo>();
+		readonly Dictionary<CorStepper, StepInfo> stepInfos = new Dictionary<CorStepper, StepInfo>();
 		DebugOptions debugOptions;
 
 		const int CORDBG_E_PROCESS_TERMINATED = unchecked((int)0x80131301);
@@ -214,7 +214,7 @@ namespace dndbg.Engine {
 			if (thread == null)
 				return false;
 			int qcbs;
-			int hr = e.CorDebugController.HasQueuedCallbacks(thread.RawObject, out qcbs);
+			int hr = e.CorDebugController.HasQueuedCallbacks(thread.CorThread.RawObject, out qcbs);
 			return hr >= 0 && qcbs != 0;
 		}
 
@@ -273,27 +273,24 @@ namespace dndbg.Engine {
 		/// true if we can step into, step out or step over
 		/// </summary>
 		/// <param name="frame">Frame</param>
-		public bool CanStep(DnFrame frame) {
+		public bool CanStep(CorFrame frame) {
 			DebugVerifyThread();
 			return ProcessState == DebuggerProcessState.Stopped && frame != null;
 		}
 
-		ICorDebugStepper CreateStepper(DnFrame frame) {
+		CorStepper CreateStepper(CorFrame frame) {
 			if (frame == null)
 				return null;
 
-			ICorDebugStepper stepper;
-			if (frame.RawObject.CreateStepper(out stepper) < 0)
+			var stepper = frame.CreateStepper();
+			if (stepper == null)
 				return null;
-			if (stepper.SetInterceptMask(debugOptions.StepperInterceptMask) < 0)
+			if (!stepper.SetInterceptMask(debugOptions.StepperInterceptMask))
 				return null;
-			if (stepper.SetUnmappedStopMask(debugOptions.StepperUnmappedStopMask) < 0)
+			if (!stepper.SetUnmappedStopMask(debugOptions.StepperUnmappedStopMask))
 				return null;
-			var stepper2 = stepper as ICorDebugStepper2;
-			if (stepper2 != null) {
-				if (stepper2.SetJMC(debugOptions.StepperJMC ? 1 : 0) < 0)
-					return null;
-			}
+			if (!stepper.SetJMC(debugOptions.StepperJMC))
+				return null;
 
 			return stepper;
 		}
@@ -313,15 +310,19 @@ namespace dndbg.Engine {
 		/// <param name="frame">Frame</param>
 		/// <param name="action">Delegate to call when completed or null</param>
 		/// <returns></returns>
-		public bool StepOut(DnFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public bool StepOut(CorFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
+			return StepOutInternal(frame, action);
+		}
+
+		bool StepOutInternal(CorFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action) {
 			if (!CanStep(frame))
 				return false;
 
 			var stepper = CreateStepper(frame);
 			if (stepper == null)
 				return false;
-			if (stepper.StepOut() < 0)
+			if (!stepper.StepOut())
 				return false;
 
 			stepInfos.Add(stepper, new StepInfo(action));
@@ -345,7 +346,7 @@ namespace dndbg.Engine {
 		/// <param name="frame">Frame</param>
 		/// <param name="action">Delegate to call when completed or null</param>
 		/// <returns></returns>
-		public bool StepInto(DnFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public bool StepInto(CorFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
 			return StepIntoOver(frame, true, action);
 		}
@@ -366,19 +367,19 @@ namespace dndbg.Engine {
 		/// <param name="frame">Frame</param>
 		/// <param name="action">Delegate to call when completed or null</param>
 		/// <returns></returns>
-		public bool StepOver(DnFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public bool StepOver(CorFrame frame, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
 			return StepIntoOver(frame, false, action);
 		}
 
-		bool StepIntoOver(DnFrame frame, bool stepInto, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		bool StepIntoOver(CorFrame frame, bool stepInto, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			if (!CanStep(frame))
 				return false;
 
 			var stepper = CreateStepper(frame);
 			if (stepper == null)
 				return false;
-			if (stepper.Step(stepInto ? 1 : 0) < 0)
+			if (!stepper.Step(stepInto))
 				return false;
 
 			stepInfos.Add(stepper, new StepInfo(action));
@@ -404,7 +405,7 @@ namespace dndbg.Engine {
 		/// <param name="ranges">Ranges to step over</param>
 		/// <param name="action">Delegate to call when completed or null</param>
 		/// <returns></returns>
-		public bool StepInto(DnFrame frame, StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public bool StepInto(CorFrame frame, StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
 			return StepIntoOver(frame, ranges, true, action);
 		}
@@ -427,12 +428,12 @@ namespace dndbg.Engine {
 		/// <param name="ranges">Ranges to step over</param>
 		/// <param name="action">Delegate to call when completed or null</param>
 		/// <returns></returns>
-		public bool StepOver(DnFrame frame, StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		public bool StepOver(CorFrame frame, StepRange[] ranges, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			DebugVerifyThread();
 			return StepIntoOver(frame, ranges, false, action);
 		}
 
-		bool StepIntoOver(DnFrame frame, StepRange[] ranges, bool stepInto, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
+		bool StepIntoOver(CorFrame frame, StepRange[] ranges, bool stepInto, Action<DnDebugger, StepCompleteDebugCallbackEventArgs> action = null) {
 			if (ranges == null)
 				return StepIntoOver(frame, stepInto, action);
 			if (!CanStep(frame))
@@ -441,21 +442,42 @@ namespace dndbg.Engine {
 			var stepper = CreateStepper(frame);
 			if (stepper == null)
 				return false;
-			var rs = new uint[ranges.Length * 2];
-			for (int i = 0; i < ranges.Length; i++) {
-				rs[i * 2 + 0] = ranges[i].StartOffset;
-				rs[i * 2 + 1] = ranges[i].EndOffset;
-			}
-			unsafe {
-				fixed (uint* p = &rs[0]) {
-					if (stepper.StepRange(stepInto ? 1 : 0, new IntPtr(p), (uint)ranges.Length) < 0)
-						return false;
-				}
-			}
+			if (!stepper.StepRange(stepInto, ranges))
+				return false;
 
 			stepInfos.Add(stepper, new StepInfo(action));
 			Continue();
 			return true;
+		}
+
+		CorFrame GetRunToCallee(CorFrame frame) {
+			if (!CanStep(frame))
+				return null;
+			if (frame == null)
+				return null;
+			if (!frame.IsILFrame)
+				return null;
+			var callee = frame.Callee;
+			if (callee == null)
+				return null;
+			if (!callee.IsILFrame)
+				return null;
+
+			return callee;
+		}
+
+		public bool CanRunTo(CorFrame frame) {
+			DebugVerifyThread();
+			return GetRunToCallee(frame) != null;
+		}
+
+		public bool RunTo(CorFrame frame) {
+			DebugVerifyThread();
+			var callee = GetRunToCallee(frame);
+			if (callee == null)
+				return false;
+
+			return StepOutInternal(callee, null);
 		}
 
 		void SetDefaultCurrentProcess(DebugCallbackEventArgs e) {
@@ -509,7 +531,7 @@ namespace dndbg.Engine {
 
 			foreach (var appDomain in process.GetAppDomains()) {
 				OnAppDomainUnloaded(appDomain);
-				process.AppDomainExited(appDomain.RawObject);
+				process.AppDomainExited(appDomain.CorAppDomain.RawObject);
 			}
 		}
 
@@ -518,7 +540,7 @@ namespace dndbg.Engine {
 				return;
 			foreach (var assembly in appDomain.GetAssemblies()) {
 				OnAssemblyUnloaded(assembly);
-				appDomain.AssemblyUnloaded(assembly.RawObject);
+				appDomain.AssemblyUnloaded(assembly.CorAssembly.RawObject);
 			}
 		}
 
@@ -527,7 +549,7 @@ namespace dndbg.Engine {
 				return;
 			foreach (var module in assembly.GetModules()) {
 				OnModuleUnloaded(module);
-				assembly.ModuleUnloaded(module.RawObject);
+				assembly.ModuleUnloaded(module.CorModule.RawObject);
 			}
 		}
 
@@ -558,8 +580,9 @@ namespace dndbg.Engine {
 				InitializeCurrentDebuggerState(e, null, scArgs.AppDomain, scArgs.Thread);
 				StepInfo stepInfo;
 				bool calledStepInfoOnCompleted = false;
-				if (stepInfos.TryGetValue(scArgs.Stepper, out stepInfo)) {
-					stepInfos.Remove(scArgs.Stepper);
+				var stepperKey = new CorStepper(scArgs.Stepper);
+				if (stepInfos.TryGetValue(stepperKey, out stepInfo)) {
+					stepInfos.Remove(stepperKey);
 					if (stepInfo.OnCompleted != null) {
 						calledStepInfoOnCompleted = true;
 						stepInfo.OnCompleted(this, scArgs);
@@ -594,10 +617,11 @@ namespace dndbg.Engine {
 				hasReceivedCreateProcessEvent = true;
 				process = TryAdd(cpArgs.Process);
 				if (process != null) {
-					process.EnableLogMessages(debugOptions.LogMessages);
-					process.SetDesiredNGENCompilerFlags(debugOptions.JITCompilerFlags);
-					process.SetWriteableMetadataUpdateMode(WriteableMetadataUpdateMode.AlwaysShowUpdates);
-					process.EnableExceptionCallbacksOutsideOfMyCode(debugOptions.ExceptionCallbacksOutsideOfMyCode);
+					process.CorProcess.EnableLogMessages(debugOptions.LogMessages);
+					process.CorProcess.DesiredNGENCompilerFlags = debugOptions.JITCompilerFlags;
+					process.CorProcess.SetWriteableMetadataUpdateMode(WriteableMetadataUpdateMode.AlwaysShowUpdates);
+					process.CorProcess.EnableExceptionCallbacksOutsideOfMyCode(debugOptions.ExceptionCallbacksOutsideOfMyCode);
+					process.CorProcess.EnableNGENPolicy(debugOptions.NGENPolicy);
 				}
 				InitializeCurrentDebuggerState(e, process);
 				break;
@@ -638,13 +662,10 @@ namespace dndbg.Engine {
 				assembly = TryGetValidAssembly(lmArgs.AppDomain, lmArgs.Module);
 				if (assembly != null) {
 					var module = assembly.TryAdd(lmArgs.Module);
-					module.RawObject.EnableJITDebugging(debugOptions.ModuleTrackJITInfo ? 1 : 0, debugOptions.ModuleAllowJitOptimizations ? 1 : 0);
-					module.RawObject.EnableClassLoadCallbacks(debugOptions.ModuleClassLoadCallbacks ? 1 : 0);
-					var mod2 = module.RawObject as ICorDebugModule2;
-					if (mod2 != null) {
-						mod2.SetJITCompilerFlags(debugOptions.JITCompilerFlags);
-						mod2.SetJMCStatus(1, 0, IntPtr.Zero);
-					}
+					module.CorModule.EnableJITDebugging(debugOptions.ModuleTrackJITInfo, debugOptions.ModuleAllowJitOptimizations);
+					module.CorModule.EnableClassLoadCallbacks(debugOptions.ModuleClassLoadCallbacks);
+					module.CorModule.JITCompilerFlags = debugOptions.JITCompilerFlags;
+					module.CorModule.SetJMCStatus(true);
 
 					foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.SerializedDnModule))
 						bp.AddBreakpoint(module);
@@ -1102,7 +1123,7 @@ namespace dndbg.Engine {
 			int errorHR = 0;
 			foreach (var process in processes.GetAll()) {
 				try {
-					int hr = process.RawObject.Stop(uint.MaxValue);
+					int hr = process.CorProcess.RawObject.Stop(uint.MaxValue);
 					if (hr < 0)
 						errorHR = hr;
 					else
@@ -1149,20 +1170,13 @@ namespace dndbg.Engine {
 				bp.OnRemoved();
 
 			foreach (var kv in stepInfos) {
-				int active;
-				int hr = kv.Key.IsActive(out active);
-				if (hr < 0)
-					return hr;
-				if (active != 0) {
-					hr = kv.Key.Deactivate();
-					if (hr < 0)
-						return hr;
-				}
+				if (kv.Key.IsActive)
+					kv.Key.Deactivate();
 			}
 
 			foreach (var process in processes.GetAll()) {
 				try {
-					int hr = process.RawObject.Detach();
+					int hr = process.CorProcess.RawObject.Detach();
 					if (hr < 0)
 						return hr;
 				}
@@ -1193,8 +1207,8 @@ namespace dndbg.Engine {
 		void TerminateAllProcessesInternal() {
 			foreach (var process in processes.GetAll()) {
 				try {
-					int hr = process.RawObject.Stop(uint.MaxValue);
-					hr = process.RawObject.Terminate(uint.MaxValue);
+					int hr = process.CorProcess.RawObject.Stop(uint.MaxValue);
+					hr = process.CorProcess.RawObject.Terminate(uint.MaxValue);
 				}
 				catch (InvalidComObjectException) {
 				}

@@ -29,6 +29,11 @@ namespace dnSpy.MVVM {
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
 
+		protected void OnPropertyChanged(PropertyChangedEventArgs e) {
+			if (PropertyChanged != null)
+				PropertyChanged(this, e);
+		}
+
 		public string Error {
 			get { throw new NotImplementedException(); }
 		}

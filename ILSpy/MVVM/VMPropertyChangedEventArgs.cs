@@ -17,10 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
+using System.ComponentModel;
 
-namespace dnSpy.TreeNodes {
-	interface IInitializeDataTemplate {
-		void Initialize(DependencyObject d);
+namespace dnSpy.MVVM {
+	public sealed class VMPropertyChangedEventArgs<T> : PropertyChangedEventArgs {
+		public readonly T OldValue;
+		public readonly T NewValue;
+
+		public VMPropertyChangedEventArgs(string propName, T oldValue, T newValue)
+			: base(propName) {
+			this.OldValue = oldValue;
+			this.NewValue = newValue;
+		}
 	}
 }

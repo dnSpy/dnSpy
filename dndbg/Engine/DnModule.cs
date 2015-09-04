@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Text;
 using dndbg.Engine.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -25,13 +24,10 @@ namespace dndbg.Engine {
 	/// A loaded module
 	/// </summary>
 	public sealed class DnModule {
-		/// <summary>
-		/// Gets the COM object
-		/// </summary>
-		public ICorDebugModule RawObject {
+		public CorModule CorModule {
 			get { return module; }
 		}
-		readonly ICorDebugModule module;
+		readonly CorModule module;
 
 		/// <summary>
 		/// Unique id per Assembly. Each new created module gets an incremented value.
@@ -42,14 +38,13 @@ namespace dndbg.Engine {
 		readonly int incrementedId;
 
 		/// <summary>
-		/// Module name, and is usually the full path to the manifest (first) module on disk
-		/// (the EXE or DLL file).
-		/// If it's a dynamic module, the name is eg. "&lt;unknown&gt;" but don't rely on it.
+		/// For on-disk modules this is a full path. For dynamic modules this is just the filename
+		/// if one was provided. Otherwise, and for other in-memory modules, this is just the simple
+		/// name stored in the module's metadata.
 		/// </summary>
 		public string Name {
-			get { return name; }
+			get { return module.Name; }
 		}
-		readonly string name;
 
 		/// <summary>
 		/// true if the module has been unloaded
@@ -63,41 +58,36 @@ namespace dndbg.Engine {
 		/// Gets the base address of the module or 0
 		/// </summary>
 		public ulong Address {
-			get { return address; }
+			get { return module.Address; }
 		}
-		readonly ulong address;
 
 		/// <summary>
 		/// Gets the size of the module or 0
 		/// </summary>
 		public uint Size {
-			get { return size; }
+			get { return module.Size; }
 		}
-		readonly uint size;
 
 		/// <summary>
 		/// Gets the token or 0
 		/// </summary>
 		public uint Token {
-			get { return token; }
+			get { return module.Token; }
 		}
-		readonly uint token;
 
 		/// <summary>
 		/// true if it's a dynamic module that can add/remove types
 		/// </summary>
 		public bool IsDynamic {
-			get { return isDynamic; }
+			get { return module.IsDynamic; }
 		}
-		readonly bool isDynamic;
 
 		/// <summary>
 		/// true if this is an in-memory module
 		/// </summary>
 		public bool IsInMemory {
-			get { return isInMemory; }
+			get { return module.IsInMemory; }
 		}
-		readonly bool isInMemory;
 
 		/// <summary>
 		/// Gets the owner debugger
@@ -129,7 +119,7 @@ namespace dndbg.Engine {
 		readonly DnAssembly ownerAssembly;
 
 		public SerializedDnModule SerializedDnModule {
-			get { return new SerializedDnModule(Name, IsDynamic, IsInMemory); }
+			get { return module.SerializedDnModule; }
 		}
 
 		public SerializedDnModuleWithAssembly SerializedDnModuleWithAssembly {
@@ -138,73 +128,8 @@ namespace dndbg.Engine {
 
 		internal DnModule(DnAssembly ownerAssembly, ICorDebugModule module, int incrementedId) {
 			this.ownerAssembly = ownerAssembly;
-			this.module = module;
+			this.module = new CorModule(module);
 			this.incrementedId = incrementedId;
-			this.name = GetName(module) ?? string.Empty;
-
-			int hr = module.GetBaseAddress(out this.address);
-			if (hr < 0)
-				this.address = 0;
-			hr = module.GetSize(out this.size);
-			if (hr < 0)
-				this.size = 0;
-			hr = module.GetToken(out this.token);
-			if (hr < 0)
-				this.token = 0;
-
-			int b;
-			hr = module.IsDynamic(out b);
-			this.isDynamic = hr >= 0 && b != 0;
-			hr = module.IsInMemory(out b);
-			this.isInMemory = hr >= 0 && b != 0;
-		}
-
-		internal static SerializedDnModule? GetSerializedDnModule(ICorDebugModule module) {
-			if (module == null)
-				return null;
-
-			int b;
-			int hr = module.IsDynamic(out b);
-			if (hr < 0)
-				return null;
-			bool isDynamic = b != 0;
-
-			hr = module.IsInMemory(out b);
-			if (hr < 0)
-				return null;
-			bool isInMemory = b != 0;
-
-			var name = DnModule.GetName(module);
-			if (name == null)
-				return null;
-
-			return new SerializedDnModule(name, isDynamic, isInMemory);
-		}
-
-		internal static SerializedDnModuleWithAssembly? GetSerializedDnModuleWithAssembly(ICorDebugModule module) {
-			var sm = GetSerializedDnModule(module);
-			if (sm == null)
-				return null;
-
-			ICorDebugAssembly asm;
-			int hr = module.GetAssembly(out asm);
-			if (hr < 0)
-				return null;
-			string asmName = DnAssembly.GetName(asm);
-
-			return new SerializedDnModuleWithAssembly(asmName, sm.Value);
-		}
-
-		static string GetName(ICorDebugModule module) {
-			uint cchName = 0;
-			int hr = module.GetName(0, out cchName, null);
-			if (hr < 0)
-				return null;
-			var sb = new StringBuilder((int)cchName);
-			hr = module.GetName(cchName, out cchName, sb);
-			if (hr < 0)
-				return null;
-			return sb.ToString();
 		}
 
 		internal void SetHasUnloaded() {

@@ -22,7 +22,7 @@ using System.Xml.Linq;
 using dndbg.Engine;
 using ICSharpCode.ILSpy;
 
-namespace dnSpy.Debugger {
+namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointSettings {
 		public static readonly BreakpointSettings Instance = new BreakpointSettings();
 		int disableSaveCounter;

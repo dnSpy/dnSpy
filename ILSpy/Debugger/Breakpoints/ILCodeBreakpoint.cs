@@ -26,7 +26,7 @@ using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
-namespace dnSpy.Debugger {
+namespace dnSpy.Debugger.Breakpoints {
 	public sealed class ILCodeBreakpoint : Breakpoint, IMarkedTextLine {
 		sealed class MyMarkedTextLine : MarkedTextLine {
 			readonly ILCodeBreakpoint ilbp;

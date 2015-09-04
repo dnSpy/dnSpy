@@ -46,7 +46,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the first IL frame in <see cref="Thread"/> or null if none
 		/// </summary>
-		public DnFrame ILFrame {
+		public CorFrame ILFrame {
 			get {
 				if (Thread == null)
 					return null;
@@ -67,9 +67,9 @@ namespace dndbg.Engine {
 				if (controller == null && EventArgs != null)
 					controller = EventArgs.CorDebugController;
 				if (controller == null && AppDomain != null)
-					controller = AppDomain.RawObject;
+					controller = AppDomain.CorAppDomain.RawObject;
 				if (controller == null && Process != null)
-					controller = Process.RawObject;
+					controller = Process.CorProcess.RawObject;
 				return controller;
 			}
 		}

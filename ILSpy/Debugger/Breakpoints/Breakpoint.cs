@@ -21,7 +21,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using dndbg.Engine;
 
-namespace dnSpy.Debugger {
+namespace dnSpy.Debugger.Breakpoints {
 	public enum BreakpointType {
 		ILCode,
 		DebugEvent,

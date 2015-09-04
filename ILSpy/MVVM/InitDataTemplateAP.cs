@@ -18,11 +18,10 @@
 */
 
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Windows;
 using ICSharpCode.ILSpy;
 
-namespace dnSpy.TreeNodes.Hex {
+namespace dnSpy.MVVM {
 	sealed class InitDataTemplateAP : DependencyObject {
 		public static readonly DependencyProperty InitializeProperty = DependencyProperty.RegisterAttached(
 			"Initialize", typeof(bool), typeof(InitDataTemplateAP), new UIPropertyMetadata(false, InitializePropertyChangedCallback));
@@ -49,12 +48,10 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		static void InitializePropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-			Debug.Assert(!(bool)e.OldValue);
-			if (!(bool)e.NewValue)
-				return;
-
-			foreach (var elem in MefState.Instance.entries)
-				elem.Initialize(d);
+			if ((bool)e.NewValue) {
+				foreach (var elem in MefState.Instance.entries)
+					elem.Initialize(d);
+			}
 		}
 	}
 }

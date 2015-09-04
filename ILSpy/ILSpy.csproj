@@ -122,13 +122,23 @@
       <DependentUpon>AssemblyOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
-    <Compile Include="AsmEditor\ContextMenuEntryCommandProxy.cs" />
+    <Compile Include="Debugger\CallStack\FrameUtils.cs" />
+    <Compile Include="Debugger\DebugUtils.cs" />
+    <Compile Include="MVVM\ContextMenuEntryBase.cs" />
+    <Compile Include="MVVM\ContextMenuEntryCommandProxy.cs" />
     <Compile Include="AsmEditor\ContextMenuHandler.cs" />
     <Compile Include="AsmEditor\Converters\BooleanToGridrowLengthConverter.cs" />
     <Compile Include="AsmEditor\Converters\CilObjectConverter.cs" />
     <Compile Include="AsmEditor\Converters\InstructionOperandTextBoxStyleConverter.cs" />
     <Compile Include="AsmEditor\Converters\NegateBooleanConverter.cs" />
     <Compile Include="AsmEditor\Converters\RadioButtonConverter.cs" />
+    <Compile Include="Debugger\CallStack\CallStackControl.xaml.cs">
+      <DependentUpon>CallStackControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\CallStack\CallStackFrameVM.cs" />
+    <Compile Include="Debugger\CallStack\CallStackVM.cs" />
+    <Compile Include="Debugger\CallStack\Commands.cs" />
+    <Compile Include="Debugger\CallStack\SelectedCallStackFrameToImage.cs" />
     <Compile Include="MVVM\DataFieldVM.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\CAArgumentVM.cs" />
@@ -522,6 +532,7 @@
     <Compile Include="AsmEditor\ViewHelpers\ShowWarningMessage.cs" />
     <Compile Include="AsmEditor\ViewHelpers\TypeSigCreator.cs" />
     <Compile Include="MVVM\ViewModelBase.cs" />
+    <Compile Include="MVVM\VMPropertyChangedEventArgs.cs" />
     <Compile Include="MVVM\WindowBase.cs" />
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
@@ -548,21 +559,21 @@
     <Compile Include="Controls\SysMenuButton.cs" />
     <Compile Include="Controls\TabButton.cs" />
     <Compile Include="Controls\WinSysButton.cs" />
-    <Compile Include="Debugger\Breakpoint.cs" />
-    <Compile Include="Debugger\BreakpointManager.cs" />
-    <Compile Include="Debugger\BreakpointSettings.cs" />
+    <Compile Include="Debugger\Breakpoints\Breakpoint.cs" />
+    <Compile Include="Debugger\Breakpoints\BreakpointManager.cs" />
+    <Compile Include="Debugger\Breakpoints\BreakpointSettings.cs" />
     <Compile Include="Debugger\BringDebuggedProgramWindowToFront.cs" />
     <Compile Include="Debugger\DebugCommands.cs" />
-    <Compile Include="Debugger\DebugEventBreakpoint.cs" />
+    <Compile Include="Debugger\Breakpoints\DebugEventBreakpoint.cs" />
     <Compile Include="Debugger\DebuggerColors.cs" />
     <Compile Include="Debugger\DebuggerPluginLoader.cs" />
     <Compile Include="Debugger\DebugManager.cs" />
     <Compile Include="Debugger\DebugRoutedCommands.cs" />
-    <Compile Include="Debugger\ILCodeBreakpoint.cs" />
+    <Compile Include="Debugger\Breakpoints\ILCodeBreakpoint.cs" />
     <Compile Include="Debugger\MarkedTextLine.cs" />
     <Compile Include="Debugger\MethodKey.cs" />
-    <Compile Include="Debugger\StackFrameLine.cs" />
-    <Compile Include="Debugger\StackFrameManager.cs" />
+    <Compile Include="Debugger\CallStack\StackFrameLine.cs" />
+    <Compile Include="Debugger\CallStack\StackFrameManager.cs" />
     <Compile Include="Debugger\WpfDebugMessageDispatcher.cs" />
     <Compile Include="DecompilerTabsWindow.xaml.cs">
       <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
@@ -649,7 +660,7 @@
     <Compile Include="TreeNodes\Hex\ImageOptionalHeaderVM.cs" />
     <Compile Include="TreeNodes\Hex\ImageSectionHeaderTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\ImageSectionHeaderVM.cs" />
-    <Compile Include="TreeNodes\Hex\InitDataTemplateAP.cs" />
+    <Compile Include="MVVM\InitDataTemplateAP.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableRecordTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableRecordVM.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableTreeNode.cs" />
@@ -664,8 +675,8 @@
     <Compile Include="TreeNodes\Hex\TablesStreamTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\TablesStreamVM.cs" />
     <Compile Include="TreeNodes\Hex\VirtualizedList.cs" />
-    <Compile Include="TreeNodes\IInitializeDataTemplate.cs" />
-    <Compile Include="TreeNodes\InitializeDataTemplateContextMenu.cs" />
+    <Compile Include="MVVM\IInitializeDataTemplate.cs" />
+    <Compile Include="MVVM\InitializeDataTemplateContextMenu.cs" />
     <Compile Include="TreeNodes\ITokenTreeNode.cs" />
     <Compile Include="TreeNodes\ITreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\NodePathName.cs" />
@@ -1135,6 +1146,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Debugger\CallStack\CallStackControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\wpf.styles.templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="DecompilerTabsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1206,6 +1225,7 @@
     <Resource Include="Images\CSharpFile.png" />
     <Resource Include="Images\CurrentLine.png" />
     <Resource Include="Images\CurrentLineToolBar.png" />
+    <Resource Include="Images\Cursor.png" />
     <Resource Include="Images\Cut.png" />
     <Resource Include="Images\Delegate.png" />
     <Resource Include="Images\DelegateInternal.png" />
@@ -1217,6 +1237,7 @@
     <Resource Include="Images\DeleteHistory.png" />
     <Resource Include="Images\DisabledBreakpoint.png" />
     <Resource Include="Images\DisableEnableBreakpoint.png" />
+    <Resource Include="Images\DisassemblyWindow.png" />
     <Resource Include="Images\dnSpy.ico" />
     <Resource Include="Images\dnSpy-Big.png" />
     <Resource Include="Images\EntryPoint.png" />
@@ -1272,6 +1293,7 @@
     <Resource Include="Images\GenericPrivate.png" />
     <Resource Include="Images\GenericProtected.png" />
     <Resource Include="Images\GenericProtectedInternal.png" />
+    <Resource Include="Images\GoToSourceCode.png" />
     <Resource Include="Images\HorizontalTabGroup.png" />
     <Resource Include="Images\ILEditor.png" />
     <Resource Include="Images\ImageFile.png" />
@@ -1344,6 +1366,7 @@
     <Resource Include="Images\Save.png" />
     <Resource Include="Images\SaveAll.png" />
     <Resource Include="Images\Search.png" />
+    <Resource Include="Images\Select.png" />
     <Resource Include="Images\SelectedReturnLine.png" />
     <Resource Include="Images\SetNextStatement.png" />
     <Resource Include="Images\Settings.png" />

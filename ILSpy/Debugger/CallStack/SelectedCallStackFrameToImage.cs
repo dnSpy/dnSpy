@@ -18,33 +18,20 @@
 */
 
 using System;
-using System.Windows.Input;
-using ICSharpCode.ILSpy;
+using System.Globalization;
+using System.Windows.Data;
+using dnSpy.Images;
 
-namespace dnSpy.AsmEditor {
-	abstract class ContextMenuEntryCommandProxy : ICommand {
-		readonly IContextMenuEntry cmd;
-
-		protected ContextMenuEntryCommandProxy(IContextMenuEntry cmd) {
-			this.cmd = cmd;
+namespace dnSpy.Debugger.CallStack {
+	sealed class SelectedCallStackFrameToImage : IValueConverter {
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
+			if (!(bool)value)
+				return null;
+			return ImageCache.Instance.GetImage("SelectedReturnLine", BackgroundType.GridViewItem);
 		}
 
-		protected abstract ContextMenuEntryContext CreateContext();
-
-		public event EventHandler CanExecuteChanged {
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
-		}
-
-		public bool CanExecute(object parameter) {
-			var ctx = CreateContext();
-			return ctx != null && cmd.IsVisible(ctx) && cmd.IsEnabled(ctx);
-		}
-
-		public void Execute(object parameter) {
-			var ctx = CreateContext();
-			if (ctx != null)
-				cmd.Execute(ctx);
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+			throw new NotImplementedException();
 		}
 	}
 }

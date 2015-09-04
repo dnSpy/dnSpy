@@ -31,8 +31,8 @@ namespace dnSpy.Debugger {
 			InstallKeyboardShortcutCommands();
 			DebugManager.Instance.OnLoaded();
 			ToolbarDebugCommand.OnLoaded();
-			BreakpointManager.Instance.OnLoaded();
-			StackFrameManager.Instance.OnLoaded();
+			Breakpoints.BreakpointManager.Instance.OnLoaded();
+			CallStack.StackFrameManager.Instance.OnLoaded();
 		}
 
 		void InstallRoutedCommands() {
@@ -47,11 +47,12 @@ namespace dnSpy.Debugger {
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.StepInto, DebugManager.Instance.StepIntoCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.StepOver, DebugManager.Instance.StepOverCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.StepOut, DebugManager.Instance.StepOutCommand);
-			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DeleteAllBreakpoints, BreakpointManager.Instance.ClearCommand);
-			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ToggleBreakpoint, BreakpointManager.Instance.ToggleBreakpointCommand);
-			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DisableBreakpoint, BreakpointManager.Instance.DisableBreakpointCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DeleteAllBreakpoints, Breakpoints.BreakpointManager.Instance.ClearCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ToggleBreakpoint, Breakpoints.BreakpointManager.Instance.ToggleBreakpointCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DisableBreakpoint, Breakpoints.BreakpointManager.Instance.DisableBreakpointCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowNextStatement, DebugManager.Instance.ShowNextStatementCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.SetNextStatement, DebugManager.Instance.SetNextStatementCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowCallStack, CallStack.CallStackPaneCreator.CallStackControlInstance.ShowCommand);
 		}
 
 		void InstallKeyboardShortcutCommands() {
@@ -68,6 +69,9 @@ namespace dnSpy.Debugger {
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.DisableBreakpoint, ModifierKeys.Control, Key.F9);
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowNextStatement, ModifierKeys.Alt, Key.Multiply);
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.SetNextStatement, ModifierKeys.Control | ModifierKeys.Shift, Key.F10);
+			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowCallStack, ModifierKeys.Control | ModifierKeys.Alt, Key.C);
+			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowCallStack, ModifierKeys.Alt, Key.D7);
+			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowCallStack, ModifierKeys.Alt, Key.NumPad7);
 		}
 
 		void AddCommand(UIElement elem, ICommand routedCommand, ModifierKeys modifiers, Key key) {

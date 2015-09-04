@@ -17,20 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.MVVM;
+using System.ComponentModel.Composition;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using ICSharpCode.ILSpy;
 
-namespace dnSpy.AsmEditor {
-	sealed class TreeViewCommandProxy : ContextMenuEntryCommandProxy {
-		public TreeViewCommandProxy(IContextMenuEntry cmd)
-			: base(cmd) {
+namespace dnSpy.MVVM {
+	[Export(typeof(IInitializeDataTemplate))]
+	sealed class InitializeDataTemplateContextMenu : IInitializeDataTemplate {
+		public void Initialize(DependencyObject d) {
+			var fwe = d as FrameworkElement;
+			if (fwe == null)
+				return;
+
+			if (fwe is ListView)
+				ContextMenuProvider.Add(fwe, ListViewIgnore);
+			else
+				ContextMenuProvider.Add(fwe);
 		}
 
-		protected override ContextMenuEntryContext CreateContext() {
-			var treeView = MainWindow.Instance.treeView;
-			if (treeView.IsKeyboardFocusWithin)
-				return ContextMenuEntryContext.Create(treeView);
-			return null;
+		static bool ListViewIgnore(DependencyObject o) {
+			return o is GridViewHeaderRowPresenter ||
+					o is ScrollBar;
 		}
 	}
 }
