@@ -65,7 +65,8 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					ICorDebugThread thread = null;
-					hr = threadEnum.Next(1, out thread, IntPtr.Zero);
+					uint count;
+					hr = threadEnum.Next(1, out thread, out count);
 					if (hr != 0 || thread == null)
 						break;
 					yield return new CorThread(thread);
@@ -84,7 +85,8 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					ICorDebugAppDomain appDomain = null;
-					hr = appDomainEnum.Next(1, out appDomain, IntPtr.Zero);
+					uint count;
+					hr = appDomainEnum.Next(1, out appDomain, out count);
 					if (hr != 0 || appDomain == null)
 						break;
 					yield return new CorAppDomain(appDomain);

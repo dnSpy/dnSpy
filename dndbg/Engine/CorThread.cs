@@ -105,7 +105,8 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					ICorDebugChain chain = null;
-					hr = chainEnum.Next(1, out chain, IntPtr.Zero);
+					uint count;
+					hr = chainEnum.Next(1, out chain, out count);
 					if (hr != 0 || chain == null)
 						break;
 					yield return new CorChain(chain);

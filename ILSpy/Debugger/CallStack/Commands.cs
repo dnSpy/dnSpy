@@ -21,6 +21,7 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using dndbg.Engine;
 using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
@@ -153,6 +154,127 @@ namespace dnSpy.Debugger.CallStack {
 		protected override bool IsEnabled(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			return vm != null && DebugManager.Instance.CanRunTo(vm.Frame);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "_Hexadecimal Display", Order = 400, Category = "CSMiscOptions")]
+	sealed class HexadecimalDisplayCallStackCtxMenuCommand : CallStackCtxMenuCommand {
+		protected override void Execute(CallStackCtxMenuContext context) {
+			DebuggerSettings.Instance.UseHexadecimal = !DebuggerSettings.Instance.UseHexadecimal;
+		}
+
+		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
+			menuItem.IsChecked = DebuggerSettings.Instance.UseHexadecimal;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show _Module Names", Order = 500, Category = "CSNameOptions")]
+	sealed class ShowModuleNamesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
+		protected override void Execute(CallStackCtxMenuContext context) {
+			CallStackSettings.Instance.ShowModuleNames = !CallStackSettings.Instance.ShowModuleNames;
+		}
+
+		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
+			menuItem.IsChecked = CallStackSettings.Instance.ShowModuleNames;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show Parameter _Types", Order = 510, Category = "CSNameOptions")]
+	sealed class ShowParameterTypesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
+		protected override void Execute(CallStackCtxMenuContext context) {
+			CallStackSettings.Instance.ShowParameterTypes = !CallStackSettings.Instance.ShowParameterTypes;
+		}
+
+		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
+			menuItem.IsChecked = CallStackSettings.Instance.ShowParameterTypes;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show _Parameter Names", Order = 520, Category = "CSNameOptions")]
+	sealed class ShowParameterNamesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
+		protected override void Execute(CallStackCtxMenuContext context) {
+			CallStackSettings.Instance.ShowParameterNames = !CallStackSettings.Instance.ShowParameterNames;
+		}
+
+		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
+			menuItem.IsChecked = CallStackSettings.Instance.ShowParameterNames;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show Parameter _Values", Order = 530, Category = "CSNameOptions")]
+	sealed class ShowParameterValuesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
+		protected override void Execute(CallStackCtxMenuContext context) {
+			CallStackSettings.Instance.ShowParameterValues = !CallStackSettings.Instance.ShowParameterValues;
+		}
+
+		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
+			menuItem.IsChecked = CallStackSettings.Instance.ShowParameterValues;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show IP", Order = 550, Category = "CSNameOptions")]
+	sealed class ShowIPCallStackCtxMenuCommand : CallStackCtxMenuCommand {
+		protected override void Execute(CallStackCtxMenuContext context) {
+			CallStackSettings.Instance.ShowIP = !CallStackSettings.Instance.ShowIP;
+		}
+
+		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
+			menuItem.IsChecked = CallStackSettings.Instance.ShowIP;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show Owner Types", Order = 560, Category = "CSNameOptions")]
+	sealed class ShowOwnerTypesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
+		protected override void Execute(CallStackCtxMenuContext context) {
+			CallStackSettings.Instance.ShowOwnerTypes = !CallStackSettings.Instance.ShowOwnerTypes;
+		}
+
+		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
+			menuItem.IsChecked = CallStackSettings.Instance.ShowOwnerTypes;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show Namespaces", Order = 570, Category = "CSNameOptions")]
+	sealed class ShowNamespacesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
+		protected override void Execute(CallStackCtxMenuContext context) {
+			CallStackSettings.Instance.ShowNamespaces = !CallStackSettings.Instance.ShowNamespaces;
+		}
+
+		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
+			menuItem.IsChecked = CallStackSettings.Instance.ShowNamespaces;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show Return Types", Order = 580, Category = "CSNameOptions")]
+	sealed class ShowReturnTypesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
+		protected override void Execute(CallStackCtxMenuContext context) {
+			CallStackSettings.Instance.ShowReturnTypes = !CallStackSettings.Instance.ShowReturnTypes;
+		}
+
+		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
+			menuItem.IsChecked = CallStackSettings.Instance.ShowReturnTypes;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show Type Keywords", Order = 590, Category = "CSNameOptions")]
+	sealed class ShowTypeKeywordsCallStackCtxMenuCommand : CallStackCtxMenuCommand {
+		protected override void Execute(CallStackCtxMenuContext context) {
+			CallStackSettings.Instance.ShowTypeKeywords = !CallStackSettings.Instance.ShowTypeKeywords;
+		}
+
+		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
+			menuItem.IsChecked = CallStackSettings.Instance.ShowTypeKeywords;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show Tokens", Order = 600, Category = "CSNameOptions")]
+	sealed class ShowTokensCallStackCtxMenuCommand : CallStackCtxMenuCommand {
+		protected override void Execute(CallStackCtxMenuContext context) {
+			CallStackSettings.Instance.ShowTokens = !CallStackSettings.Instance.ShowTokens;
+		}
+
+		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
+			menuItem.IsChecked = CallStackSettings.Instance.ShowTokens;
 		}
 	}
 }

@@ -757,7 +757,7 @@ namespace dnSpy.MVVM {
 		}
 
 		static string ParseStringPart(bool canHaveNull, string s, ref int index, out string error) {
-			return ParseString(s, (bool)canHaveNull, ref index, out error);
+			return ParseString(s, canHaveNull, ref index, out error);
 		}
 	}
 }

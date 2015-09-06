@@ -37,7 +37,8 @@
             SelectedItem="{Binding SelectedItem}">
             <ListView.Resources>
                 <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource DbgTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
-                <local:SelectedCallStackFrameToImage x:Key="selectedCallStackFrameToImage" />
+                <local:CallStackFrameImageConverter x:Key="callStackFrameImageConverter" />
+                <local:CallStackFrameConverter x:Key="CallStackFrameConverter" />
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
@@ -45,14 +46,14 @@
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <!-- Fix hard coded 6,0,6,0 margin -->
-                                <Image Margin="-6 0" Source="{Binding IsCurrentFrame, Converter={StaticResource selectedCallStackFrameToImage}}" Stretch="None" />
+                                <Image Margin="-6 0" Source="{Binding ImageObject, Mode=OneWay, Converter={StaticResource callStackFrameImageConverter}}" Stretch="None" Height="16" Width="16" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="Name">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Name, Mode=OneTime}" />
+                                <ContentPresenter Content="{Binding NameObject, Converter={StaticResource CallStackFrameConverter}}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

@@ -39,6 +39,8 @@ namespace dnSpy.Debugger.CallStack {
 
 		readonly List<StackFrameLine> stackFrameLines = new List<StackFrameLine>();
 
+		public event EventHandler StackFramesUpdated;
+
 		sealed class CurrentState {
 			public int FrameNumber;
 			public DnThread Thread;
@@ -81,6 +83,9 @@ namespace dnSpy.Debugger.CallStack {
 			default:
 				throw new InvalidOperationException();
 			}
+
+			if (StackFramesUpdated != null)
+				StackFramesUpdated(this, EventArgs.Empty);
 		}
 
 		void OnTabStateChanged(TabState oldTabState, TabState newTabState) {

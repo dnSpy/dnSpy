@@ -31,15 +31,14 @@ namespace dnSpy.MVVM {
 			if (fwe == null)
 				return;
 
-			if (fwe is ListView)
-				ContextMenuProvider.Add(fwe, ListViewIgnore);
+			if (fwe is ListBox)
+				ContextMenuProvider.Add(fwe, ListBoxIgnore);
 			else
 				ContextMenuProvider.Add(fwe);
 		}
 
-		static bool ListViewIgnore(DependencyObject o) {
-			return o is GridViewHeaderRowPresenter ||
-					o is ScrollBar;
+		static bool ListBoxIgnore(DependencyObject o) {
+			return o is ScrollBar;
 		}
 	}
 }

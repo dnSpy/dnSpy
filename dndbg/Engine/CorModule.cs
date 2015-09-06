@@ -56,6 +56,18 @@ namespace dndbg.Engine {
 		readonly string name;
 
 		/// <summary>
+		/// Gets the name of the module. If it's an in-memory module, the hash code is included to
+		/// make it uniquer since <see cref="Name"/> could have any value.
+		/// </summary>
+		public string UniquerName {
+			get {
+				if (IsInMemory)
+					return string.Format("{0}[{1:X8}]", Name, GetHashCode());
+				return Name;
+			}
+		}
+
+		/// <summary>
 		/// Gets the base address of the module or 0
 		/// </summary>
 		public ulong Address {
@@ -147,9 +159,8 @@ namespace dndbg.Engine {
 			hr = module.IsInMemory(out b);
 			this.isInMemory = hr >= 0 && b != 0;
 
-			//TODO: ICorDebugModule::GetMetaDataInterface
 			//TODO: ICorDebugModule::GetGlobalVariableValue
-			//TODO: ICorDebugModule2::ApplyChanges 
+			//TODO: ICorDebugModule2::ApplyChanges
 		}
 
 		static string GetName(ICorDebugModule module) {
@@ -209,6 +220,18 @@ namespace dndbg.Engine {
 			ICorDebugAssembly asm;
 			int hr = m2.ResolveAssembly(asmRefToken, out asm);
 			return hr < 0 || asm == null ? null : new CorAssembly(asm);
+		}
+
+		/// <summary>
+		/// Gets a metadata interface, eg. <see cref="IMetaDataImport"/> or <see cref="IMetaDataImport2"/>
+		/// </summary>
+		/// <typeparam name="T">Type of COM metadata interface</typeparam>
+		/// <returns></returns>
+		public T GetMetaDataInterface<T>() where T : class {
+			object o;
+			var riid = typeof(T).GUID;
+			int hr = obj.GetMetaDataInterface(ref riid, out o);
+			return o as T;
 		}
 
 		public static bool operator ==(CorModule a, CorModule b) {

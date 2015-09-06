@@ -57,7 +57,8 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					ICorDebugModule module = null;
-					hr = moduleEnum.Next(1, out module, IntPtr.Zero);
+					uint count;
+					hr = moduleEnum.Next(1, out module, out count);
 					if (hr != 0 || module == null)
 						break;
 					yield return new CorModule(module);

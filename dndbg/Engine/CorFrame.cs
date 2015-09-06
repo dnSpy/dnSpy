@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using dndbg.Engine.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -182,6 +183,53 @@ namespace dndbg.Engine {
 			}
 		}
 
+		/// <summary>
+		/// Gets all arguments
+		/// </summary>
+		public IEnumerable<CorValue> ILArguments {
+			get {
+				var ilf = obj as ICorDebugILFrame;
+				if (ilf == null)
+					yield break;
+				ICorDebugValueEnum valueEnum;
+				int hr = ilf.EnumerateArguments(out valueEnum);
+				if (hr < 0)
+					yield break;
+				for (;;) {
+					ICorDebugValue value = null;
+					uint count;
+					hr = valueEnum.Next(1, out value, out count);
+					if (hr != 0 || value == null)
+						break;
+					yield return new CorValue(value);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets all type and/or method generic parameters. The first returned values are the generic
+		/// type params, followed by the generic method params.
+		/// </summary>
+		public IEnumerable<CorType> TypeParameters {
+			get {
+				var ilf2 = obj as ICorDebugILFrame2;
+				if (ilf2 == null)
+					yield break;
+				ICorDebugTypeEnum valueEnum;
+				int hr = ilf2.EnumerateTypeParameters(out valueEnum);
+				if (hr < 0)
+					yield break;
+				for (;;) {
+					ICorDebugType value = null;
+					uint count;
+					hr = valueEnum.Next(1, out value, out count);
+					if (hr != 0 || value == null)
+						break;
+					yield return new CorType(value);
+				}
+			}
+		}
+
 		internal CorFrame(ICorDebugFrame frame)
 			: base(frame) {
 			int hr = frame.GetFunctionToken(out this.token);
@@ -273,6 +321,10 @@ namespace dndbg.Engine {
 			if (nf == null)
 				return false;
 			return nf.CanSetIP(offset) == 0;
+		}
+
+		public void Write(ITypeOutput output, TypePrinterFlags flags) {
+			new TypePrinter(output, flags).Write(this);
 		}
 
 		public static bool operator ==(CorFrame a, CorFrame b) {

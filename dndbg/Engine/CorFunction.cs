@@ -124,8 +124,11 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
-		/// Gets the native code or null
+		/// Gets the native code or null. If it's a generic method that's been JITed more than once,
+		/// the returned code could be any one of the JITed codes.
 		/// </summary>
+		/// <remarks><c>EnumerateNativeCode()</c> should be called but that method hasn't been
+		/// implemented by the CLR debugger yet.</remarks>
 		public CorCode NativeCode {
 			get {
 				ICorDebugCode code;

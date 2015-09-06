@@ -122,8 +122,13 @@
       <DependentUpon>AssemblyOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
+    <Compile Include="Debugger\CallStack\CallStackFrameConverter.cs" />
+    <Compile Include="Debugger\CallStack\CallStackFrameImageConverter.cs" />
+    <Compile Include="Debugger\CallStack\CallStackSettings.cs" />
     <Compile Include="Debugger\CallStack\FrameUtils.cs" />
+    <Compile Include="Debugger\DebuggerSettings.cs" />
     <Compile Include="Debugger\DebugUtils.cs" />
+    <Compile Include="Debugger\OutputConverter.cs" />
     <Compile Include="MVVM\ContextMenuEntryBase.cs" />
     <Compile Include="MVVM\ContextMenuEntryCommandProxy.cs" />
     <Compile Include="AsmEditor\ContextMenuHandler.cs" />
@@ -138,7 +143,6 @@
     <Compile Include="Debugger\CallStack\CallStackFrameVM.cs" />
     <Compile Include="Debugger\CallStack\CallStackVM.cs" />
     <Compile Include="Debugger\CallStack\Commands.cs" />
-    <Compile Include="Debugger\CallStack\SelectedCallStackFrameToImage.cs" />
     <Compile Include="MVVM\DataFieldVM.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\CAArgumentVM.cs" />

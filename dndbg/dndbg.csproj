@@ -41,6 +41,7 @@
     <Compile Include="Engine\BreakpointList.cs" />
     <Compile Include="Engine\COMObject.cs" />
     <Compile Include="Engine\COM\CorDebug.cs" />
+    <Compile Include="Engine\COM\MetaData.cs" />
     <Compile Include="Engine\COM\MetaHost.cs" />
     <Compile Include="Engine\CorAppDomain.cs" />
     <Compile Include="Engine\CorAssembly.cs" />
@@ -56,6 +57,8 @@
     <Compile Include="Engine\CorStepper.cs" />
     <Compile Include="Engine\CorThread.cs" />
     <Compile Include="Engine\CorType.cs" />
+    <Compile Include="Engine\CorValue.cs" />
+    <Compile Include="Engine\CorValueReader.cs" />
     <Compile Include="Engine\DebugCallbackEventArgs.cs" />
     <Compile Include="Engine\DebugEventBreakpointList.cs" />
     <Compile Include="Engine\DebuggeeVersionDetector.cs" />
@@ -69,6 +72,7 @@
     <Compile Include="Engine\DnAppDomain.cs" />
     <Compile Include="Engine\DnAssembly.cs" />
     <Compile Include="Engine\DnBreakpoint.cs" />
+    <Compile Include="Engine\DndbgSignatureReader.cs" />
     <Compile Include="Engine\DnDebugEventBreakpoint.cs" />
     <Compile Include="Engine\DnDebugger.cs" />
     <Compile Include="Engine\DnILCodeBreakpoint.cs" />
@@ -77,16 +81,25 @@
     <Compile Include="Engine\DnThread.cs" />
     <Compile Include="Engine\IBreakpointCondition.cs" />
     <Compile Include="Engine\IDebugMessageDispatcher.cs" />
+    <Compile Include="Engine\IdentifierEscaper.cs" />
     <Compile Include="Engine\ILFrameIP.cs" />
+    <Compile Include="Engine\MetaDataUtils.cs" />
     <Compile Include="Engine\NativeMethods.cs" />
     <Compile Include="Engine\ProcessCreationFlags.cs" />
     <Compile Include="Engine\SerializedDnModule.cs" />
     <Compile Include="Engine\SerializedDnModuleWithAssembly.cs" />
     <Compile Include="Engine\StepRange.cs" />
+    <Compile Include="Engine\TypePrinter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\dnlib\src\dnlib.csproj">
+      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -76,7 +76,8 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					ICorDebugThread thread = null;
-					hr = threadEnum.Next(1, out thread, IntPtr.Zero);
+					uint count;
+					hr = threadEnum.Next(1, out thread, out count);
 					if (hr != 0 || thread == null)
 						break;
 					yield return new CorThread(thread);
@@ -95,7 +96,8 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					ICorDebugAssembly assembly = null;
-					hr = assemblyEnum.Next(1, out assembly, IntPtr.Zero);
+					uint count;
+					hr = assemblyEnum.Next(1, out assembly, out count);
 					if (hr != 0 || assembly == null)
 						break;
 					yield return new CorAssembly(assembly);
@@ -114,7 +116,8 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					ICorDebugStepper stepper = null;
-					hr = stepperEnum.Next(1, out stepper, IntPtr.Zero);
+					uint count;
+					hr = stepperEnum.Next(1, out stepper, out count);
 					if (hr != 0 || stepper == null)
 						break;
 					yield return new CorStepper(stepper);

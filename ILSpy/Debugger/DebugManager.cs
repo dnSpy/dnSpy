@@ -139,7 +139,6 @@ namespace dnSpy.Debugger {
 		DnDebugger debugger;
 
 		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged;
-		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged2;
 
 		static void SetRunningStatusMessage() {
 			MainWindow.Instance.SetStatus("Running…");
@@ -230,8 +229,6 @@ namespace dnSpy.Debugger {
 		void CallOnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			if (OnProcessStateChanged != null)
 				OnProcessStateChanged(sender, e ?? DebuggerEventArgs.Empty);
-			if (OnProcessStateChanged2 != null)
-				OnProcessStateChanged2(sender, e ?? DebuggerEventArgs.Empty);
 		}
 
 		void DnDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
@@ -667,8 +664,9 @@ namespace dnSpy.Debugger {
 			if (!DebugGetSourceCodeMappingForSetNextStatement(ctx == null ? null : ctx.Element as DecompilerTextView, out errMsg, out mapping))
 				return false;
 
-			return currentLocation == null ||
-				(currentLocation.Value.ILFrameIP.IsExact && currentLocation.Value.ILFrameIP.Offset != mapping.ILInstructionOffset.From);
+			if (currentLocation != null && currentLocation.Value.ILFrameIP.IsExact)
+				return currentLocation.Value.ILFrameIP.Offset != mapping.ILInstructionOffset.From;
+			return true;
 		}
 
 		public bool SetNextStatement(object parameter) {

@@ -18,16 +18,43 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
-using dnSpy.Images;
+using dnSpy.TextView;
 
 namespace dnSpy.Debugger.CallStack {
-	sealed class SelectedCallStackFrameToImage : IValueConverter {
+	sealed class CallStackFrameConverter : IValueConverter {
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-			if (!(bool)value)
-				return null;
-			return ImageCache.Instance.GetImage("SelectedReturnLine", BackgroundType.GridViewItem);
+			var vm = value as CallStackFrameVM;
+			if (vm == null) {
+				var vm2 = value as ICallStackFrameVM;
+				Debug.Assert(vm2 != null);
+				if (vm2 != null) {
+					return new TextBlock {
+						Text = vm2.Name,
+						TextTrimming = TextTrimming.CharacterEllipsis,
+					};
+				}
+				return string.Empty;
+			}
+
+			try {
+				var gen = new SimpleHighlighter();
+				vm.Frame.Write(new OutputConverter(gen.TextOutput), vm.TypePrinterFlags);
+				var tb = gen.Create();
+				tb.TextTrimming = TextTrimming.CharacterEllipsis;
+				return tb;
+			}
+			catch (Exception ex) {
+				Debug.Fail(ex.ToString());
+			}
+
+			if (value == null)
+				return string.Empty;
+			return value.ToString();
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

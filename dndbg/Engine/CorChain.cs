@@ -132,7 +132,8 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					ICorDebugFrame frame = null;
-					hr = frameEnum.Next(1, out frame, IntPtr.Zero);
+					uint count;
+					hr = frameEnum.Next(1, out frame, out count);
 					if (hr != 0 || frame == null)
 						break;
 					yield return new CorFrame(frame);

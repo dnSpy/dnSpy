@@ -518,7 +518,9 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			for (int i = 0; i < parts.Length; i++) {
 				if (i > 0)
 					writer.Write('.', TextTokenType.Operator);
-				writer.Write(IdentifierEscaper.Escape(parts[i]), TextTokenType.NamespacePart);
+				var nsPart = parts[i];
+				if (!string.IsNullOrEmpty(nsPart))
+					writer.Write(IdentifierEscaper.Escape(nsPart), TextTokenType.NamespacePart);
 			}
 		}
 

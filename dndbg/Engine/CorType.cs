@@ -67,7 +67,8 @@ namespace dndbg.Engine {
 					yield break;
 				for (;;) {
 					ICorDebugType type = null;
-					hr = typeEnum.Next(1, out type, IntPtr.Zero);
+					uint count;
+					hr = typeEnum.Next(1, out type, out count);
 					if (hr != 0 || type == null)
 						break;
 					yield return new CorType(type);

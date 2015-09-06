@@ -17,18 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dndbg.Engine;
-using dndbg.Engine.COM.CorDebug;
-using dnlib.DotNet;
 using dnSpy.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.CallStack {
 	interface ICallStackFrameVM {
 		int Index { get; }
 		bool IsCurrentFrame { get; }
 		string Name { get; }
-		void RefreshIconFields();
+		object NameObject { get; }
+		object ImageObject { get; }
 	}
 
 	sealed class MessageCallStackFrameVM : ICallStackFrameVM {
@@ -44,14 +43,20 @@ namespace dnSpy.Debugger.CallStack {
 		public string Name {
 			get { return name; }
 		}
+
+		public object NameObject {
+			get { return this; }
+		}
+
+		public object ImageObject {
+			get { return this; }
+		}
+
 		readonly string name;
 
 		public MessageCallStackFrameVM(int index, string name) {
 			this.index = index;
 			this.name = name;
-		}
-
-		public void RefreshIconFields() {
 		}
 	}
 
@@ -78,109 +83,59 @@ namespace dnSpy.Debugger.CallStack {
 				if (isCurrentFrame != value) {
 					isCurrentFrame = value;
 					OnPropertyChanged("IsCurrentFrame");
+					RefreshImage();
 				}
 			}
 		}
 		bool isCurrentFrame;
 
-		public string Name {
-			get { return name ?? (name = CreateName()); }
+		public TypePrinterFlags TypePrinterFlags {
+			get { return owner.TypePrinterFlags; }
 		}
-		string name;
+
+		public object NameObject {
+			get { return this; }
+		}
+
+		public object ImageObject {
+			get { return this; }
+		}
+
+		public string Name {
+			get { return ComputeName(); }
+		}
 
 		public CorFrame Frame {
 			get { return frame; }
 		}
 		readonly CorFrame frame;
 
-		public CallStackFrameVM(int index, CorFrame frame) {
+		readonly CallStackVM owner;
+
+		public CallStackFrameVM(CallStackVM owner, int index, CorFrame frame) {
+			this.owner = owner;
 			this.index = index;
 			this.frame = frame;
 		}
 
-		string CreateName() {
-			if (frame.IsILFrame)
-				return CreateNameIL();
-			if (frame.IsNativeFrame)
-				return CreateNameNative();
-			if (frame.IsInternalFrame)
-				return CreateNameInternal();
-			return CreateDefaultName();
+		string ComputeName() {
+			var output = new StringBuilderTypeOutput();
+			frame.Write(output, TypePrinterFlags);
+			return output.ToString();
 		}
 
-		string CreateNameIL() {
-			//TODO: Call a CorFrame method to get the string since it could be in an in-memory module
-
-			var serAsm = frame.GetSerializedDnModuleWithAssembly();
-			if (serAsm == null)
-				return CreateDefaultName();
-
-			var loadedAsm = MainWindow.Instance.LoadAssembly(serAsm.Value);
-			if (loadedAsm == null)
-				return CreateDefaultName();
-
-			var mod = loadedAsm.ModuleDefinition as ModuleDefMD;
-			if (mod == null)
-				return CreateDefaultName();
-
-			var md = mod.ResolveToken(frame.Token) as MethodDef;
-			if (md == null)
-				return CreateDefaultName();
-
-			return md.ToString();
+		public void RefreshThemeFields() {
+			if (Index == 0 || IsCurrentFrame)
+				RefreshImage();
+			RefreshName();
 		}
 
-		string CreateNameNative() {
-			//TODO:
-			return CreateDefaultName();
+		public void RefreshName() {
+			OnPropertyChanged("NameObject");
 		}
 
-		string CreateNameInternal() {
-			switch (frame.InternalFrameType) {
-			case CorDebugInternalFrameType.STUBFRAME_M2U:
-				return "[Managed to Native Transition]";
-
-			case CorDebugInternalFrameType.STUBFRAME_U2M:
-				return "[Native to Managed Transition]";
-
-			case CorDebugInternalFrameType.STUBFRAME_APPDOMAIN_TRANSITION:
-				return "[Appdomain Transition]";
-
-			case CorDebugInternalFrameType.STUBFRAME_LIGHTWEIGHT_FUNCTION:
-				return "[Lightweight Function]";
-
-			case CorDebugInternalFrameType.STUBFRAME_FUNC_EVAL:
-				return "[Function Evaluation]";
-
-			case CorDebugInternalFrameType.STUBFRAME_INTERNALCALL:
-				return "[Internal Call]";
-
-			case CorDebugInternalFrameType.STUBFRAME_CLASS_INIT:
-				return "[Class Init]";
-
-			case CorDebugInternalFrameType.STUBFRAME_EXCEPTION:
-				return "[Exception]";
-
-			case CorDebugInternalFrameType.STUBFRAME_SECURITY:
-				return "[Security]";
-
-			case CorDebugInternalFrameType.STUBFRAME_JIT_COMPILATION:
-				return "[JIT Compilation]";
-
-			case CorDebugInternalFrameType.STUBFRAME_NONE:
-			default:
-				return string.Format("[Internal Frame 0x{0:X}]", (int)frame.InternalFrameType);
-			}
-		}
-
-		string CreateDefaultName() {
-			return string.Format("Frame #{0}", index);
-		}
-
-		public void RefreshIconFields() {
-			// theme got changed, refresh icon
-			if (IsCurrentFrame)
-				OnPropertyChanged("IsCurrentFrame");
+		void RefreshImage() {
+			OnPropertyChanged("ImageObject");
 		}
 	}
 }
