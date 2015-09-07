@@ -26,6 +26,12 @@ using dnSpy.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class CallStackVM : ViewModelBase {
+		internal ICallStackObjectCreator CallStackObjectCreator {
+			get { return callStackObjectCreator; }
+			set { callStackObjectCreator = value; }
+		}
+		ICallStackObjectCreator callStackObjectCreator;
+
 		public ObservableCollection<ICallStackFrameVM> Collection {
 			get { return framesList; }
 		}
@@ -115,27 +121,72 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		void StackFrameManager_StackFramesUpdated(object sender, EventArgs e) {
-			InitializeStackFrames();
+			// InitializeStackFrames() is called by CallStackPaneCreator when the process has been
+			// running for a little while. Speeds up stepping.
+			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Running)
+				InitializeStackFrames();
 		}
 
-		void InitializeStackFrames() {
-			framesList.Clear();
-
-			if (!IsEnabled)
+		internal void InitializeStackFrames() {
+			if (!IsEnabled) {
+				framesList.Clear();
 				return;
+			}
 
 			bool tooManyFrames;
-			int frameNo = 0;
-			foreach (var frame in StackFrameManager.Instance.GetFrames(out tooManyFrames)) {
-				var vm = new CallStackFrameVM(this, frameNo, frame);
-				vm.IsCurrentFrame = frameNo == StackFrameManager.Instance.SelectedFrame;
-				vm.IsUserCode = IsUserCode(frame);
-				framesList.Add(vm);
+			var newFrames = StackFrameManager.Instance.GetFrames(out tooManyFrames);
 
-				frameNo++;
+			bool oldHadTooManyFrames = framesList.Count > 0 && framesList[framesList.Count - 1] is MessageCallStackFrameVM;
+			int oldVisibleFramesCount = framesList.Count - (oldHadTooManyFrames ? 1 : 0);
+
+			int framesToAdd = newFrames.Count - oldVisibleFramesCount;
+			const int MAX_FRAMES_DIFF = 50;
+			if (Math.Abs(framesToAdd) > MAX_FRAMES_DIFF) {
+				oldHadTooManyFrames = false;
+				oldVisibleFramesCount = 0;
+				framesToAdd = newFrames.Count;
+				framesList.Clear();
 			}
-			if (tooManyFrames)
-				framesList.Add(new MessageCallStackFrameVM(frameNo, "The maximum number of stack frames supported by dnSpy has been exceeded."));
+
+			if (framesToAdd > 0) {
+				for (int i = 0; i < framesToAdd; i++) {
+					var frame = newFrames[i];
+					var vm = new CallStackFrameVM(this, i, frame);
+					vm.IsCurrentFrame = i == StackFrameManager.Instance.SelectedFrame;
+					vm.IsUserCode = IsUserCode(frame);
+
+					if (framesList.Count == i)
+						framesList.Add(vm);
+					else
+						framesList.Insert(i, vm);
+				}
+			}
+			else if (framesToAdd < 0) {
+				int frames = framesToAdd;
+				while (frames++ < 0)
+					framesList.RemoveAt(0);
+			}
+
+			for (int i = framesToAdd >= 0 ? framesToAdd : 0; i < newFrames.Count; i++) {
+				var vm = (CallStackFrameVM)framesList[i];
+				var frame = newFrames[i];
+
+				vm.Index = i;
+				vm.IsCurrentFrame = i == StackFrameManager.Instance.SelectedFrame;
+				vm.IsUserCode = IsUserCode(frame);
+				vm.Frame = frame;
+			}
+
+			if (oldHadTooManyFrames == tooManyFrames) {
+			}
+			else if (oldHadTooManyFrames && !tooManyFrames) {
+				bool b = framesList.Count > 0 && framesList[framesList.Count - 1] is MessageCallStackFrameVM;
+				Debug.Assert(b);
+				if (b)
+					framesList.RemoveAt(framesList.Count - 1);
+			}
+			else if (!oldHadTooManyFrames && tooManyFrames)
+				framesList.Add(new MessageCallStackFrameVM(this, newFrames.Count, "The maximum number of stack frames supported by dnSpy has been exceeded."));
 		}
 
 		bool IsUserCode(CorFrame frame) {

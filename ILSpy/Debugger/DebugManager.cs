@@ -39,14 +39,33 @@ using ICSharpCode.TreeView;
 namespace dnSpy.Debugger {
 	public sealed class DebugManager {
 		public static readonly DebugManager Instance = new DebugManager();
+		DebuggedProcessRunningNotifier debuggedProcessRunningNotifier;
 
 		[DllImport("user32")]
 		static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
+		[return: MarshalAs(UnmanagedType.Bool)]
+		[DllImport("user32")]
+		static extern bool SetForegroundWindow(IntPtr hWnd);
+
 		internal void OnLoaded() {
 			MainWindow.Instance.Closing += OnClosing;
-			new BringDebuggedProgramWindowToFront();
 			MainWindow.Instance.CanExecuteEvent += MainWindow_CanExecuteEvent;
+			debuggedProcessRunningNotifier = new DebuggedProcessRunningNotifier();
+			debuggedProcessRunningNotifier.ProcessRunning += DebuggedProcessRunningNotifier_ProcessRunning;
+		}
+
+		void DebuggedProcessRunningNotifier_ProcessRunning(object sender, DebuggedProcessRunningEventArgs e) {
+			try {
+				var hWnd = e.Process.MainWindowHandle;
+				if (hWnd != IntPtr.Zero)
+					SetForegroundWindow(hWnd);
+			}
+			catch {
+			}
+
+			if (ProcessRunning != null)
+				ProcessRunning(this, EventArgs.Empty);
 		}
 
 		void MainWindow_CanExecuteEvent(object sender, MainWindow.CanExecuteEventArgs e) {
@@ -139,6 +158,12 @@ namespace dnSpy.Debugger {
 		DnDebugger debugger;
 
 		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged;
+
+		/// <summary>
+		/// Called when the process has been running for a short amount of time. Usually won't
+		/// get called when stepping since it normally doesn't take a long time.
+		/// </summary>
+		public event EventHandler ProcessRunning;
 
 		static void SetRunningStatusMessage() {
 			MainWindow.Instance.SetStatus("Running…");

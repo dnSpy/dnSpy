@@ -175,8 +175,23 @@ namespace dndbg.Engine {
 			return sb.ToString();
 		}
 
-		static string FilterIdentifier(string id) {
-			return IdentifierEscaper.Escape(id);
+		static readonly HashSet<string> isKeyword = new HashSet<string>(StringComparer.Ordinal) {
+			"abstract", "as", "base", "bool", "break", "byte", "case", "catch",
+			"char", "checked", "class", "const", "continue", "decimal", "default", "delegate",
+			"do", "double", "else", "enum", "event", "explicit", "extern", "false",
+			"finally", "fixed", "float", "for", "foreach", "goto", "if", "implicit",
+			"in", "int", "interface", "internal", "is", "lock", "long", "namespace",
+			"new", "null", "object", "operator", "out", "override", "params", "private",
+			"protected", "public", "readonly", "ref", "return", "sbyte", "sealed", "short",
+			"sizeof", "stackalloc", "static", "string", "struct", "switch", "this", "throw",
+			"true", "try", "typeof", "uint", "ulong", "unchecked", "unsafe", "ushort",
+			"using", "virtual", "void", "volatile", "while",
+		};
+
+		void WriteIdentifier(string id, TypeColor color) {
+			if (isKeyword.Contains(id))
+				OutputWrite("@", TypeColor.Operator);
+			OutputWrite(IdentifierEscaper.Escape(id), color);
 		}
 
 		static string RemoveGenericTick(string s) {
@@ -337,11 +352,11 @@ namespace dndbg.Engine {
 			var parts = name.Split(dot);
 			if (ShowNamespaces) {
 				for (int i = 1; i < parts.Length; i++) {
-					OutputWrite(FilterIdentifier(parts[i - 1]), TypeColor.NamespacePart);
+					WriteIdentifier(parts[i - 1], TypeColor.NamespacePart);
 					OutputWrite(".", TypeColor.Operator);
 				}
 			}
-			OutputWrite(FilterIdentifier(RemoveGenericTick(parts[parts.Length - 1])), TypeColor.Type);
+			WriteIdentifier(RemoveGenericTick(parts[parts.Length - 1]), TypeColor.Type);
 			WriteTokenComment(token);
 		}
 		static readonly char[] dot = new char[1] { '.' };
@@ -849,7 +864,7 @@ namespace dndbg.Engine {
 				if (name == null)
 					WriteDefaultFuncName(token);
 				else
-					WriteMethodName(FilterIdentifier(name), token);
+					WriteMethodName(name, token);
 			}
 		}
 
@@ -867,7 +882,7 @@ namespace dndbg.Engine {
 					Write(genArgs[i]);
 				else {
 					var gp = gps[i];
-					WriteGenericParameterName(FilterIdentifier(gp.Name), gp.Token, isMethod);
+					WriteGenericParameterName(gp.Name, gp.Token, isMethod);
 				}
 			}
 			OutputWrite(">", TypeColor.Operator);
@@ -937,7 +952,7 @@ namespace dndbg.Engine {
 					if (needSpace)
 						WriteSpace();
 
-					OutputWrite(FilterIdentifier(paramInfo == null ? string.Format("A_{0}", mi) : paramInfo.Value.Name), TypeColor.Parameter);
+					WriteIdentifier(paramInfo == null ? string.Format("A_{0}", mi) : paramInfo.Value.Name, TypeColor.Parameter);
 					needSpace = true;
 				}
 
@@ -973,7 +988,7 @@ namespace dndbg.Engine {
 		}
 
 		void WriteGenericParameterName(string name, uint token, bool isMethod) {
-			OutputWrite(name, isMethod ? TypeColor.MethodGenericParameter : TypeColor.TypeGenericParameter);
+			WriteIdentifier(name, isMethod ? TypeColor.MethodGenericParameter : TypeColor.TypeGenericParameter);
 			WriteTokenComment(token);
 		}
 
@@ -982,7 +997,7 @@ namespace dndbg.Engine {
 		}
 
 		void WriteMethodName(string name, uint token) {
-			OutputWrite(name, TypeColor.Method);
+			WriteIdentifier(name, TypeColor.Method);
 			WriteTokenComment(token);
 		}
 

@@ -22,32 +22,45 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows.Threading;
 using dndbg.Engine;
+using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger {
-	sealed class BringDebuggedProgramWindowToFront {
-		// Millisecs to wait before we bring the debugged process' window to the front
+	sealed class DebuggedProcessRunningEventArgs : EventArgs {
+		public Process Process {
+			get { return process; }
+		}
+		readonly Process process;
+
+		public DebuggedProcessRunningEventArgs(Process process) {
+			this.process = process;
+		}
+	}
+
+	sealed class DebuggedProcessRunningNotifier {
 		const int WAIT_TIME_MS = 1000;
 
 		[return: MarshalAs(UnmanagedType.Bool)]
 		[DllImport("user32")]
 		static extern bool SetForegroundWindow(IntPtr hWnd);
 
-		public BringDebuggedProgramWindowToFront() {
+		internal DebuggedProcessRunningNotifier() {
 			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
 		}
+
+		public event EventHandler<DebuggedProcessRunningEventArgs> ProcessRunning;
 
 		bool isRunning;
 		int isRunningId;
 
 		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
-			var debugger = DebugManager.Instance.Debugger;
-			if (debugger == null)
+			if (DebugManager.Instance.Debugger == null)
 				return;
-			bool newIsRunning = debugger.ProcessState == DebuggerProcessState.Running;
+			bool newIsRunning = DebugManager.Instance.ProcessState == DebuggerProcessState.Running;
 			if (newIsRunning == isRunning)
 				return;
-			var dnProcess = debugger.GetProcesses().FirstOrDefault();
+			var dnProcess = DebugManager.Instance.Debugger.GetProcesses().FirstOrDefault();
 			if (dnProcess == null)
 				return;
 
@@ -63,8 +76,17 @@ namespace dnSpy.Debugger {
 			Timer timer = null;
 			timer = new Timer(a => {
 				timer.Dispose();
-				if (id == isRunningId)
-					SwitchToDebuggedProcessWindow(process);
+				if (id == isRunningId) {
+					var cur = App.Current;
+					if (cur == null)
+						return;
+					cur.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
+						if (id == isRunningId) {
+							if (ProcessRunning != null)
+								ProcessRunning(this, new DebuggedProcessRunningEventArgs(process));
+						}
+					}));
+				}
 			}, null, WAIT_TIME_MS, Timeout.Infinite);
 		}
 
@@ -75,16 +97,6 @@ namespace dnSpy.Debugger {
 			catch {
 			}
 			return null;
-		}
-
-		void SwitchToDebuggedProcessWindow(Process process) {
-			try {
-				var hWnd = process.MainWindowHandle;
-				if (hWnd != IntPtr.Zero)
-					SetForegroundWindow(hWnd);
-			}
-			catch {
-			}
 		}
 	}
 }

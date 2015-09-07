@@ -24,6 +24,10 @@ namespace dnSpy.MVVM {
 	public abstract class ViewModelBase : INotifyPropertyChanged, IDataErrorInfo {
 		public event PropertyChangedEventHandler PropertyChanged;
 
+		protected bool HasPropertyChangedHandlers {
+			get { return PropertyChanged != null; }
+		}
+
 		protected void OnPropertyChanged(string propName) {
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));

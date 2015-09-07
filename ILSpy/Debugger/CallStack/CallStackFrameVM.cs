@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.MVVM;
 
@@ -28,6 +28,7 @@ namespace dnSpy.Debugger.CallStack {
 		string Name { get; }
 		object NameObject { get; }
 		object ImageObject { get; }
+		CachedOutput CachedOutput { get; }
 	}
 
 	sealed class MessageCallStackFrameVM : ICallStackFrameVM {
@@ -41,30 +42,45 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		public string Name {
-			get { return name; }
+			get { return cachedOutput.ToString(); }
 		}
 
 		public object NameObject {
-			get { return this; }
+			get { return owner.CallStackObjectCreator.CreateName(this); }
 		}
 
 		public object ImageObject {
 			get { return this; }
 		}
 
-		readonly string name;
+		public CachedOutput CachedOutput {
+			get { return cachedOutput; }
+		}
+		readonly CachedOutput cachedOutput;
 
-		public MessageCallStackFrameVM(int index, string name) {
+		readonly CallStackVM owner;
+
+		public MessageCallStackFrameVM(CallStackVM owner, int index, string name) {
+			this.owner = owner;
 			this.index = index;
-			this.name = name;
+			this.cachedOutput = CachedOutput.Create(name, TypeColor.Error);
 		}
 	}
 
 	sealed class CallStackFrameVM : ViewModelBase, ICallStackFrameVM {
 		public int Index {
 			get { return index; }
+			internal set {
+				if (index != value) {
+					int oldIndex = index;
+					index = value;
+					OnPropertyChanged("Index");
+					if (index == 0 || oldIndex == 0)
+						RefreshImage();
+				}
+			}
 		}
-		readonly int index;
+		int index;
 
 		public bool IsUserCode {
 			get { return isUserCode; }
@@ -94,7 +110,17 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		public object NameObject {
-			get { return this; }
+			get {
+				if (cachedOutput == null)
+					cachedOutput = CachedOutput.Create(frame, TypePrinterFlags);
+
+				return owner.CallStackObjectCreator.CreateName(this);
+			}
+		}
+		CachedOutput? cachedOutput;
+
+		public CachedOutput CachedOutput {
+			get { return cachedOutput.Value; }
 		}
 
 		public object ImageObject {
@@ -107,8 +133,24 @@ namespace dnSpy.Debugger.CallStack {
 
 		public CorFrame Frame {
 			get { return frame; }
+			internal set {
+				frame = value;
+
+				if (cachedOutput == null || !HasPropertyChangedHandlers) {
+					cachedOutput = null;
+					OnPropertyChanged("NameObject");
+				}
+				else {
+					var newCachedOutput = CachedOutput.Create(frame, TypePrinterFlags);
+					if (newCachedOutput.Equals(cachedOutput.Value))
+						return;
+
+					cachedOutput = newCachedOutput;
+					OnPropertyChanged("NameObject");
+				}
+			}
 		}
-		readonly CorFrame frame;
+		CorFrame frame;
 
 		readonly CallStackVM owner;
 
@@ -131,6 +173,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		public void RefreshName() {
+			cachedOutput = null;
 			OnPropertyChanged("NameObject");
 		}
 

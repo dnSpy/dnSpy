@@ -122,10 +122,12 @@
       <DependentUpon>AssemblyOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
-    <Compile Include="Debugger\CallStack\CallStackFrameConverter.cs" />
+    <Compile Include="Debugger\CallStack\CachedOutput.cs" />
     <Compile Include="Debugger\CallStack\CallStackFrameImageConverter.cs" />
     <Compile Include="Debugger\CallStack\CallStackSettings.cs" />
     <Compile Include="Debugger\CallStack\FrameUtils.cs" />
+    <Compile Include="Debugger\CallStack\ICallStackObjectCreator.cs" />
+    <Compile Include="Debugger\DebuggedProcessRunningNotifier.cs" />
     <Compile Include="Debugger\DebuggerSettings.cs" />
     <Compile Include="Debugger\DebugUtils.cs" />
     <Compile Include="Debugger\OutputConverter.cs" />
@@ -566,7 +568,6 @@
     <Compile Include="Debugger\Breakpoints\Breakpoint.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointManager.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointSettings.cs" />
-    <Compile Include="Debugger\BringDebuggedProgramWindowToFront.cs" />
     <Compile Include="Debugger\DebugCommands.cs" />
     <Compile Include="Debugger\Breakpoints\DebugEventBreakpoint.cs" />
     <Compile Include="Debugger\DebuggerColors.cs" />

@@ -19,9 +19,11 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.MVVM;
+using dnSpy.TextView;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.CallStack {
@@ -36,16 +38,42 @@ namespace dnSpy.Debugger.CallStack {
 			return null;
 		}
 
+		sealed class CallStackObjectCreator : ICallStackObjectCreator {
+			public object CreateName(ICallStackFrameVM vm) {
+				return CreateTextBlock(vm.CachedOutput);
+			}
+
+			static TextBlock CreateTextBlock(CachedOutput cachedOutput) {
+				var gen = new SimpleHighlighter();
+				var conv = new OutputConverter(gen.TextOutput);
+				foreach (var t in cachedOutput.data)
+					conv.Write(t.Item1, t.Item2);
+				var tb = gen.Create();
+				tb.TextTrimming = TextTrimming.CharacterEllipsis;
+				return tb;
+			}
+		}
+
 		internal static CallStackControl CallStackControlInstance {
 			get {
 				if (callStackControl == null) {
 					callStackControl = new CallStackControl();
-					callStackControl.DataContext = new CallStackVM();
+					var vm = new CallStackVM();
+					vm.CallStackObjectCreator = new CallStackObjectCreator();
+					callStackControl.DataContext = vm;
 					InitializeCommandShortcuts(callStackControl.listView);
+					DebugManager.Instance.ProcessRunning += DebugManager_ProcessRunning;
 				}
 				return callStackControl;
 			}
 		}
+
+		static void DebugManager_ProcessRunning(object sender, EventArgs e) {
+			var vm = CallStackControlInstance.DataContext as CallStackVM;
+			if (vm != null)
+				vm.InitializeStackFrames();
+		}
+
 		static CallStackControl callStackControl;
 
 		static void InitializeCommandShortcuts(ListView listView) {

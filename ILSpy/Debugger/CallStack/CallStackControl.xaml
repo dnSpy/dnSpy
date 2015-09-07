@@ -38,7 +38,6 @@
             <ListView.Resources>
                 <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource DbgTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
                 <local:CallStackFrameImageConverter x:Key="callStackFrameImageConverter" />
-                <local:CallStackFrameConverter x:Key="CallStackFrameConverter" />
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
@@ -53,7 +52,7 @@
                     <GridViewColumn Header="Name">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding NameObject, Converter={StaticResource CallStackFrameConverter}}" />
+                                <ContentPresenter Content="{Binding NameObject}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
