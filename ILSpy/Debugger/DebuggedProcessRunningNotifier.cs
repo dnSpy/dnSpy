@@ -60,7 +60,7 @@ namespace dnSpy.Debugger {
 			bool newIsRunning = DebugManager.Instance.ProcessState == DebuggerProcessState.Running;
 			if (newIsRunning == isRunning)
 				return;
-			var dnProcess = DebugManager.Instance.Debugger.GetProcesses().FirstOrDefault();
+			var dnProcess = DebugManager.Instance.Debugger.Processes.FirstOrDefault();
 			if (dnProcess == null)
 				return;
 

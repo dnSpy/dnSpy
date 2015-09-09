@@ -17,22 +17,32 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-
 namespace dndbg.Engine {
-	sealed class DebugEventBreakpointList<TBP> where TBP : DnBreakpoint {
-		readonly List<TBP> bps = new List<TBP>();
-
-		public TBP[] Breakpoints {
-			get { return bps.ToArray(); }
+	public sealed class AnyDebugEventBreakpointConditionContext : BreakpointConditionContext {
+		public override DnBreakpoint Breakpoint {
+			get { return bp; }
 		}
 
-		public void Add(TBP bp) {
-			bps.Add(bp);
+		public DnAnyDebugEventBreakpoint DebugEventBreakpoint {
+			get { return bp; }
 		}
+		readonly DnAnyDebugEventBreakpoint bp;
 
-		public void Remove(TBP bp) {
-			bps.Remove(bp);
+		public DebugCallbackEventArgs EventArgs {
+			get { return e; }
+		}
+		readonly DebugCallbackEventArgs e;
+
+		public AnyDebugEventBreakpointConditionContext(DnDebugger debugger, DnAnyDebugEventBreakpoint bp, DebugCallbackEventArgs e)
+			: base(debugger) {
+			this.bp = bp;
+			this.e = e;
+		}
+	}
+
+	public sealed class DnAnyDebugEventBreakpoint : DnBreakpoint {
+		internal DnAnyDebugEventBreakpoint(IBreakpointCondition bpCond)
+			: base(bpCond) {
 		}
 	}
 }

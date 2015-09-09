@@ -55,7 +55,7 @@ namespace dndbg.Engine {
 		}
 		readonly uint offset;
 
-		internal CorFunctionBreakpoint(ICorDebugFunctionBreakpoint functionBreakpoint)
+		public CorFunctionBreakpoint(ICorDebugFunctionBreakpoint functionBreakpoint)
 			: base(functionBreakpoint) {
 			int hr = functionBreakpoint.GetOffset(out this.offset);
 			if (hr < 0)

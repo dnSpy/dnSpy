@@ -27,9 +27,14 @@ namespace dndbg.Engine {
 		Other,
 
 		/// <summary>
-		/// A debug event breakpoint got triggered
+		/// A <see cref="DnDebugEventBreakpoint"/> breakpoint got triggered
 		/// </summary>
 		DebugEventBreakpoint,
+
+		/// <summary>
+		/// A <see cref="DnAnyDebugEventBreakpoint"/> breakpoint got triggered
+		/// </summary>
+		AnyDebugEventBreakpoint,
 
 		/// <summary>
 		/// A 'break' IL instruction was executed
@@ -76,6 +81,18 @@ namespace dndbg.Engine {
 
 		public DebugEventBreakpointStopState(DnDebugEventBreakpoint bp)
 			: base(DebuggerStopReason.DebugEventBreakpoint) {
+			this.bp = bp;
+		}
+	}
+
+	public sealed class AnyDebugEventBreakpointStopState : DebuggerStopState {
+		public DnAnyDebugEventBreakpoint Breakpoint {
+			get { return bp; }
+		}
+		readonly DnAnyDebugEventBreakpoint bp;
+
+		public AnyDebugEventBreakpointStopState(DnAnyDebugEventBreakpoint bp)
+			: base(DebuggerStopReason.AnyDebugEventBreakpoint) {
 			this.bp = bp;
 		}
 	}

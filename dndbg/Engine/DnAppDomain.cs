@@ -112,11 +112,13 @@ namespace dndbg.Engine {
 		/// Gets all Assemblies, sorted on the order they were created
 		/// </summary>
 		/// <returns></returns>
-		public DnAssembly[] GetAssemblies() {
-			Debugger.DebugVerifyThread();
-			var list = assemblies.GetAll();
-			Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
-			return list;
+		public DnAssembly[] Assemblies {
+			get {
+				Debugger.DebugVerifyThread();
+				var list = assemblies.GetAll();
+				Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
+				return list;
+			}
 		}
 
 		/// <summary>
@@ -142,7 +144,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <returns></returns>
 		public DnThread[] GetThreads() {
-			return Process.GetThreads().Where(t => t.AppDomainOrNull == this).ToArray();
+			return Process.Threads.Where(t => t.AppDomainOrNull == this).ToArray();
 		}
 
 		public override string ToString() {

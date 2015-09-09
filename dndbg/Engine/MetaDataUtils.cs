@@ -224,10 +224,18 @@ namespace dndbg.Engine {
 		}
 
 		public static unsafe string GetMethodDefName(IMetaDataImport mdi, uint token) {
+			MethodAttributes attrs;
+			MethodImplAttributes implAttrs;
+			return GetMethodDefName(mdi, token, out attrs, out implAttrs);
+		}
+
+		public static unsafe string GetMethodDefName(IMetaDataImport mdi, uint token, out MethodAttributes dwAttr, out MethodImplAttributes dwImplFlags) {
+			dwAttr = 0;
+			dwImplFlags = 0;
 			if (mdi == null)
 				return null;
 			char[] nameBuf = null;
-			uint chMethod, dwAttr, cbSigBlob, dwImplFlags;
+			uint chMethod, cbSigBlob;
 			IntPtr pvSigBlob;
 			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chMethod, out dwAttr, out pvSigBlob, out cbSigBlob, IntPtr.Zero, out dwImplFlags);
 			if (hr >= 0) {
@@ -328,15 +336,70 @@ namespace dndbg.Engine {
 		public static MethodSig GetMethodSignature(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
 				return null;
-			uint chMethod, dwAttr, cbSigBlob, dwImplFlags;
+			MethodAttributes attrs;
+			MethodImplAttributes implAttrs;
+			uint chMethod, cbSigBlob;
 			IntPtr pvSigBlob;
-			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chMethod, out dwAttr, out pvSigBlob, out cbSigBlob, IntPtr.Zero, out dwImplFlags);
+			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chMethod, out attrs, out pvSigBlob, out cbSigBlob, IntPtr.Zero, out implAttrs);
 			if (hr < 0)
 				return null;
 
 			byte[] sig = new byte[cbSigBlob];
 			Marshal.Copy(pvSigBlob, sig, 0, sig.Length);
 			return new DebugSignatureReader().ReadSignature(mdi, sig) as MethodSig;
+		}
+
+		public static uint GetGlobalStaticConstructor(IMetaDataImport mdi) {
+			var mdTokens = GetMethods(mdi, 0x02000001);
+			if (mdTokens == null)
+				return 0;
+
+			foreach (uint mdToken in mdTokens) {
+				MethodAttributes attrs;
+				MethodImplAttributes implAttrs;
+				string name = GetMethodDefName(mdi, mdToken, out attrs, out implAttrs);
+				if (name != ".cctor")
+					continue;
+				if ((attrs & MethodAttributes.RTSpecialName) == 0)
+					continue;
+				if ((attrs & MethodAttributes.Static) == 0)
+					continue;
+
+				return mdToken;
+			}
+
+			return 0;
+		}
+
+		public unsafe static uint[] GetMethods(IMetaDataImport mdi, uint token) {
+			IntPtr iter = IntPtr.Zero;
+			try {
+				uint cTokens;
+				int hr = mdi.EnumMethods(ref iter, token, IntPtr.Zero, 0, out cTokens);
+				if (hr < 0)
+					return new uint[0];
+
+				uint ulCount = 0;
+				hr = mdi.CountEnum(iter, ref ulCount);
+				if (hr < 0 || ulCount == 0)
+					return new uint[0];
+
+				hr = mdi.ResetEnum(iter, 0);
+				if (hr < 0)
+					return new uint[0];
+
+				uint[] tokens = new uint[ulCount];
+				fixed (uint* p = &tokens[0]) {
+					hr = mdi.EnumMethods(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
+				}
+				if (hr < 0)
+					return new uint[0];
+				return tokens;
+			}
+			finally {
+				if (iter != IntPtr.Zero)
+					mdi.CloseEnum(iter);
+			}
 		}
 	}
 }

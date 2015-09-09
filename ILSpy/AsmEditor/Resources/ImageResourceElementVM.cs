@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.Resources {
 		void FillData() {
 			if (openFile == null)
 				throw new InvalidOperationException();
-			var newBytes = openFile.Open("Images|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico;*.cur|All files (*.*)|*.*");
+			var newBytes = openFile.Open(PickFilenameConstants.ImagesFilter);
 			if (newBytes != null)
 				Data = newBytes;
 		}

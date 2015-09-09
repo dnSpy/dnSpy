@@ -101,11 +101,13 @@ namespace dndbg.Engine {
 		/// Gets all modules, sorted on the order they were created
 		/// </summary>
 		/// <returns></returns>
-		public DnModule[] GetModules() {
-			Debugger.DebugVerifyThread();
-			var list = modules.GetAll();
-			Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
-			return list;
+		public DnModule[] Modules {
+			get {
+				Debugger.DebugVerifyThread();
+				var list = modules.GetAll();
+				Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
+				return list;
+			}
 		}
 
 		/// <summary>

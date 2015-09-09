@@ -108,7 +108,9 @@ namespace ICSharpCode.ILSpy.TextView {
 		{
 			this.Loaded += DecompilerTextView_Loaded;
 			InitializeComponent();
-			
+
+			this.CodeMappings = new Dictionary<MethodKey, MemberMapping>();
+
 			textEditor.TextArea.SelectionCornerRadius = 0;
 			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
 			// Add the ref elem generator first in case one of the refs looks like a http link etc
@@ -729,6 +731,7 @@ namespace ICSharpCode.ILSpy.TextView {
 		internal void CancelDecompileAsync()
 		{
 			SetNextDecompilationRun(null);
+			this.CodeMappings = new Dictionary<MethodKey, MemberMapping>();
 		}
 
 		bool CancelDecompileAsyncIf(DecompilationContext context)

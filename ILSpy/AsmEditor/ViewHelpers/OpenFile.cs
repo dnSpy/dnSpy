@@ -21,6 +21,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Forms;
+using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
@@ -37,7 +38,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public byte[] Open(string filter) {
 			var dialog = new OpenFileDialog() {
-				Filter = filter ?? "All files (*.*)|*.*",
+				Filter = filter ?? PickFilenameConstants.AnyFilenameFilter,
 				RestoreDirectory = true,
 			};
 			if (dialog.ShowDialog() != DialogResult.OK)

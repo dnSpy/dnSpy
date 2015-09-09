@@ -28,6 +28,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
+using dnSpy.MVVM;
 using dnSpy.Options;
 using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
@@ -1140,7 +1141,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var dlg = new WF.OpenFileDialog {
 				RestoreDirectory = true,
 				Multiselect = true,
-				Filter = "Images|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico;*.cur|All files (*.*)|*.*",
+				Filter = PickFilenameConstants.ImagesFilter,
 			};
 			if (dlg.ShowDialog() != WF.DialogResult.OK)
 				return;
@@ -1336,7 +1337,7 @@ namespace dnSpy.AsmEditor.Resources {
 			var dlg = new WF.OpenFileDialog {
 				RestoreDirectory = true,
 				Multiselect = true,
-				Filter = "All files (*.*)|*.*",
+				Filter = PickFilenameConstants.AnyFilenameFilter,
 			};
 			if (dlg.ShowDialog() != WF.DialogResult.OK)
 				return;

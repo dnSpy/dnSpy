@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 
 namespace dndbg.Engine {
 	public abstract class COMObject<T> : IEquatable<COMObject<T>> where T : class {
@@ -27,6 +28,9 @@ namespace dndbg.Engine {
 		protected readonly T obj;
 
 		protected COMObject(T obj) {
+			Debug.Assert(obj != null);
+			if (obj == null)
+				throw new ArgumentNullException();
 			this.obj = obj;
 		}
 

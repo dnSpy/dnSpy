@@ -60,7 +60,7 @@ namespace dndbg.Engine {
 		}
 
 		void ICorDebugManagedCallback.CreateProcess(IntPtr pProcess) {
-			dbg.OnManagedCallbackFromAnyThread(() => new CreateProcessDebugCallbackEventArgs(I<ICorDebugProcess>(pProcess)));
+			dbg.OnManagedCallbackFromAnyThread2(() => new CreateProcessDebugCallbackEventArgs(I<ICorDebugProcess>(pProcess)));
 		}
 
 		void ICorDebugManagedCallback.ExitProcess(IntPtr pProcess) {
@@ -76,7 +76,7 @@ namespace dndbg.Engine {
 		}
 
 		void ICorDebugManagedCallback.LoadModule(IntPtr pAppDomain, IntPtr pModule) {
-			dbg.OnManagedCallbackFromAnyThread(() => new LoadModuleDebugCallbackEventArgs(I<ICorDebugAppDomain>(pAppDomain), I<ICorDebugModule>(pModule)));
+			dbg.OnManagedCallbackFromAnyThread2(() => new LoadModuleDebugCallbackEventArgs(I<ICorDebugAppDomain>(pAppDomain), I<ICorDebugModule>(pModule)));
 		}
 
 		void ICorDebugManagedCallback.UnloadModule(IntPtr pAppDomain, IntPtr pModule) {
@@ -104,7 +104,7 @@ namespace dndbg.Engine {
 		}
 
 		void ICorDebugManagedCallback.CreateAppDomain(IntPtr pProcess, IntPtr pAppDomain) {
-			dbg.OnManagedCallbackFromAnyThread(() => new CreateAppDomainDebugCallbackEventArgs(I<ICorDebugProcess>(pProcess), I<ICorDebugAppDomain>(pAppDomain)));
+			dbg.OnManagedCallbackFromAnyThread2(() => new CreateAppDomainDebugCallbackEventArgs(I<ICorDebugProcess>(pProcess), I<ICorDebugAppDomain>(pAppDomain)));
 		}
 
 		void ICorDebugManagedCallback.ExitAppDomain(IntPtr pProcess, IntPtr pAppDomain) {

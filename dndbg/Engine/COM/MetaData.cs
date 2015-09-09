@@ -19,11 +19,12 @@
 
 using System;
 using System.Runtime.InteropServices;
+using dnlib.DotNet;
 
 #pragma warning disable 0108 // Member hides inherited member; missing new keyword
 namespace dndbg.Engine.COM.MetaData {
 	[Guid("7DAC8207-D3AE-4C75-9B67-92801A497D44"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), ComImport]
-	interface IMetaDataImport {
+	public interface IMetaDataImport {
 		[PreserveSig]
 		int CloseEnum(IntPtr hEnum);
 		[PreserveSig]
@@ -44,7 +45,8 @@ namespace dndbg.Engine.COM.MetaData {
 		void ResolveTypeRef(uint tr, ref Guid riid, [MarshalAs(UnmanagedType.IUnknown)] out object ppIScope, out uint ptd);
 		void EnumMembers([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] uint[] rMembers, [In] uint cMax, [Out] out uint pcTokens);
 		void EnumMembersWithName([In, Out] ref IntPtr phEnum, [In] uint cl, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] uint[] rMembers, [In] uint cMax, [Out] out uint pcTokens);
-		void EnumMethods([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] uint[] rMethods, [In] uint cMax, [Out] out uint pcTokens);
+		[PreserveSig]
+		int EnumMethods([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] IntPtr rMethods, [In] uint cMax, [Out] out uint pcTokens);
 		void EnumMethodsWithName([In, Out] ref IntPtr phEnum, [In] uint cl, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, uint[] rMethods, [In] uint cMax, [Out] out uint pcTokens);
 		void EnumFields([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] uint[] rFields, [In] uint cMax, [Out] out uint pcTokens);
 		void EnumFieldsWithName([In, Out] ref IntPtr phEnum, [In] uint cl, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] uint[] rFields, [In] uint cMax, [Out] out uint pcTokens);
@@ -58,7 +60,7 @@ namespace dndbg.Engine.COM.MetaData {
 		void FindField([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
 		void FindMemberRef([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmr);
 		[PreserveSig]
-		int GetMethodProps(uint mb, IntPtr pClass, [In] IntPtr szMethod, uint cchMethod, out uint pchMethod, out uint pdwAttr, out IntPtr ppvSigBlob, out uint pcbSigBlob, [Out] IntPtr pulCodeRVA, out uint pdwImplFlags);
+		int GetMethodProps(uint mb, IntPtr pClass, [In] IntPtr szMethod, uint cchMethod, out uint pchMethod, out MethodAttributes pdwAttr, out IntPtr ppvSigBlob, out uint pcbSigBlob, [Out] IntPtr pulCodeRVA, out MethodImplAttributes pdwImplFlags);
 		void GetMemberRefProps([In] uint mr, [Out] out uint ptk, [Out] IntPtr szMember, [In] uint cchMember, [Out] out uint pchMember, [Out] out IntPtr ppvSigBlob, [Out] out uint pbSig);
 		void EnumProperties([In, Out] ref IntPtr phEnum, [In] uint td, [Out] uint[] rProperties, [In] uint cMax, [Out] out uint pcProperties);
 		void EnumEvents([In, Out] ref IntPtr phEnum, [In] uint td, [Out] uint[] rEvents, [In] uint cMax, [Out] out uint pcEvents);
@@ -97,7 +99,7 @@ namespace dndbg.Engine.COM.MetaData {
 		void IsGlobal([In] uint pd, [Out] out int pbGlobal);
 	}
 	[Guid("FCE5EFA0-8BBA-4f8e-A036-8F2022B08466"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown), ComImport]
-	interface IMetaDataImport2 : IMetaDataImport {
+	public interface IMetaDataImport2 : IMetaDataImport {
 		// IMetaDataImport members
 		[PreserveSig]
 		int CloseEnum(IntPtr hEnum);
@@ -119,7 +121,8 @@ namespace dndbg.Engine.COM.MetaData {
 		void ResolveTypeRef(uint tr, ref Guid riid, [MarshalAs(UnmanagedType.IUnknown)] out object ppIScope, out uint ptd);
 		void EnumMembers([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] uint[] rMembers, [In] uint cMax, [Out] out uint pcTokens);
 		void EnumMembersWithName([In, Out] ref IntPtr phEnum, [In] uint cl, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] uint[] rMembers, [In] uint cMax, [Out] out uint pcTokens);
-		void EnumMethods([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] uint[] rMethods, [In] uint cMax, [Out] out uint pcTokens);
+		[PreserveSig]
+		int EnumMethods([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] IntPtr rMethods, [In] uint cMax, [Out] out uint pcTokens);
 		void EnumMethodsWithName([In, Out] ref IntPtr phEnum, [In] uint cl, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, uint[] rMethods, [In] uint cMax, [Out] out uint pcTokens);
 		void EnumFields([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] uint[] rFields, [In] uint cMax, [Out] out uint pcTokens);
 		void EnumFieldsWithName([In, Out] ref IntPtr phEnum, [In] uint cl, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] uint[] rFields, [In] uint cMax, [Out] out uint pcTokens);
@@ -133,7 +136,7 @@ namespace dndbg.Engine.COM.MetaData {
 		void FindField([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
 		void FindMemberRef([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmr);
 		[PreserveSig]
-		int GetMethodProps(uint mb, IntPtr pClass, [In] IntPtr szMethod, uint cchMethod, out uint pchMethod, out uint pdwAttr, out IntPtr ppvSigBlob, out uint pcbSigBlob, [Out] IntPtr pulCodeRVA, out uint pdwImplFlags);
+		int GetMethodProps(uint mb, IntPtr pClass, [In] IntPtr szMethod, uint cchMethod, out uint pchMethod, out MethodAttributes pdwAttr, out IntPtr ppvSigBlob, out uint pcbSigBlob, [Out] IntPtr pulCodeRVA, out MethodImplAttributes pdwImplFlags);
 		void GetMemberRefProps([In] uint mr, [Out] out uint ptk, [Out] IntPtr szMember, [In] uint cchMember, [Out] out uint pchMember, [Out] out IntPtr ppvSigBlob, [Out] out uint pbSig);
 		void EnumProperties([In, Out] ref IntPtr phEnum, [In] uint td, [Out] uint[] rProperties, [In] uint cMax, [Out] out uint pcProperties);
 		void EnumEvents([In, Out] ref IntPtr phEnum, [In] uint td, [Out] uint[] rEvents, [In] uint cMax, [Out] out uint pcEvents);

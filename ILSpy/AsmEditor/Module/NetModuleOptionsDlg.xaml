@@ -22,13 +22,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:winlocal="clr-namespace:dnSpy.MVVM"
-             xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
+             xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters"
              Height="195" Width="400"
              Title="Create NetModule"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="195" MinWidth="400">
 	<winlocal:WindowBase.Resources>
-		<vc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
+		<mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
 	</winlocal:WindowBase.Resources>
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
 		<Grid.RowDefinitions>

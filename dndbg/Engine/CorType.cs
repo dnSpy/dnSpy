@@ -107,7 +107,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal CorType(ICorDebugType type)
+		public CorType(ICorDebugType type)
 			: base(type) {
 			int hr = type.GetType(out this.elemType);
 			if (hr < 0)
@@ -145,10 +145,17 @@ namespace dndbg.Engine {
 			return RawObject.GetHashCode();
 		}
 
+		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
+			new TypePrinter(output, flags).Write(this);
+			return output;
+		}
+
+		public string ToString(TypePrinterFlags flags) {
+			return Write(new StringBuilderTypeOutput(), flags).ToString();
+		}
+
 		public override string ToString() {
-			if (HasClass)
-				return string.Format("[Type] {0} {1}", ElementType, Class);
-			return string.Format("[Type] {0}", ElementType);
+			return ToString(TypePrinterFlags.Default);
 		}
 	}
 }

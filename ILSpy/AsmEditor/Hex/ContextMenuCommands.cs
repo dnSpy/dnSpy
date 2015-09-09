@@ -1052,7 +1052,7 @@ namespace dnSpy.AsmEditor.Hex {
 				return;
 
 			var dialog = new WF.SaveFileDialog() {
-				Filter = "All files (*.*)|*.*",
+				Filter = PickFilenameConstants.AnyFilenameFilter,
 				RestoreDirectory = true,
 				ValidateNames = true,
 			};

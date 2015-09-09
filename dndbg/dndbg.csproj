@@ -39,6 +39,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Engine\BreakpointList.cs" />
+    <Compile Include="Engine\BreakProcessHelper.cs" />
+    <Compile Include="Engine\BreakProcessType.cs" />
     <Compile Include="Engine\COMObject.cs" />
     <Compile Include="Engine\COM\CorDebug.cs" />
     <Compile Include="Engine\COM\MetaData.cs" />
@@ -69,6 +71,7 @@
     <Compile Include="Engine\DebuggerStopState.cs" />
     <Compile Include="Engine\DebugOptions.cs" />
     <Compile Include="Engine\DebugProcessOptions.cs" />
+    <Compile Include="Engine\DnAnyDebugEventBreakpoint.cs" />
     <Compile Include="Engine\DnAppDomain.cs" />
     <Compile Include="Engine\DnAssembly.cs" />
     <Compile Include="Engine\DnBreakpoint.cs" />

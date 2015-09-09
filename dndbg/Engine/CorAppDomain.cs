@@ -144,7 +144,7 @@ namespace dndbg.Engine {
 			return sb.ToString();
 		}
 
-		internal CorAppDomain(ICorDebugAppDomain appDomain)
+		public CorAppDomain(ICorDebugAppDomain appDomain)
 			: base(appDomain) {
 			int hr = appDomain.GetID(out this.id);
 			if (hr < 0)

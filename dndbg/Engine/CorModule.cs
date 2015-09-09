@@ -139,7 +139,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal CorModule(ICorDebugModule module)
+		public CorModule(ICorDebugModule module)
 			: base(module) {
 			this.name = GetName(module) ?? string.Empty;
 

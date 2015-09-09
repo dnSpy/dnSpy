@@ -49,6 +49,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		internal void OnLoaded() {
 			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
+			DebugManager.Instance.ProcessRunning += DebugManager_ProcessRunning;
 			MainWindow.Instance.ExecuteWhenLoaded(() => {
 				MainWindow.Instance.OnTabStateChanged += (sender, e) => OnTabStateChanged(e.OldTabState, e.NewTabState);
 				foreach (var tabState in MainWindow.Instance.AllVisibleDecompileTabStates)
@@ -72,12 +73,11 @@ namespace dnSpy.Debugger.CallStack {
 				currentState.Thread = DebugManager.Instance.Debugger.Current.Thread;
 				SelectedFrame = 0;
 				foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
-					UpdateReturnStatementBookmarks(textView, false);
+					UpdateStackFrameLines(textView, false);
 				break;
 
 			case DebuggerProcessState.Terminated:
-				foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
-					Remove(textView);
+				ClearStackFrameLines();
 				break;
 
 			default:
@@ -86,6 +86,15 @@ namespace dnSpy.Debugger.CallStack {
 
 			if (StackFramesUpdated != null)
 				StackFramesUpdated(this, EventArgs.Empty);
+		}
+
+		void DebugManager_ProcessRunning(object sender, EventArgs e) {
+			ClearStackFrameLines();
+		}
+
+		void ClearStackFrameLines() {
+			foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
+				Remove(textView);
 		}
 
 		void OnTabStateChanged(TabState oldTabState, TabState newTabState) {
@@ -103,7 +112,7 @@ namespace dnSpy.Debugger.CallStack {
 			if (oldTsd != null)
 				Remove(oldTsd.TextView);
 			if (newTsd != null)
-				UpdateReturnStatementBookmarks(newTsd.TextView);
+				UpdateStackFrameLines(newTsd.TextView);
 		}
 
 		void DecompilerTextView_OnBeforeShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e) {
@@ -111,7 +120,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		void DecompilerTextView_OnShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e) {
-			e.HasMovedCaret |= UpdateReturnStatementBookmarks((DecompilerTextView)sender, !e.HasMovedCaret);
+			e.HasMovedCaret |= UpdateStackFrameLines((DecompilerTextView)sender, !e.HasMovedCaret);
 		}
 
 		/// <summary>
@@ -125,7 +134,7 @@ namespace dnSpy.Debugger.CallStack {
 					var old = currentState.FrameNumber;
 					currentState.FrameNumber = value;
 					foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
-						UpdateReturnStatementBookmarks(textView);
+						UpdateStackFrameLines(textView);
 					OnPropertyChanged(new VMPropertyChangedEventArgs<int>("SelectedFrame", old, currentState.FrameNumber));
 				}
 			}
@@ -143,7 +152,7 @@ namespace dnSpy.Debugger.CallStack {
 		/// <summary>
 		/// Should be called each time the IL offset has been updated
 		/// </summary>
-		bool UpdateReturnStatementBookmarks(DecompilerTextView decompilerTextView, bool moveCaret = false) {
+		bool UpdateStackFrameLines(DecompilerTextView decompilerTextView, bool moveCaret = false) {
 			Remove(decompilerTextView);
 			bool movedCaret = false;
 			var cm = decompilerTextView == null ? null : decompilerTextView.CodeMappings;

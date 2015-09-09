@@ -96,6 +96,7 @@ namespace dndbg.Engine {
 		int recursionCounter;
 		int lineLength;
 		bool outputLengthExceeded;
+		bool forceWrite;
 
 		readonly ITypeOutput output;
 		readonly TypePrinterFlags flags;
@@ -152,6 +153,7 @@ namespace dndbg.Engine {
 			this.recursionCounter = 0;
 			this.lineLength = 0;
 			this.outputLengthExceeded = false;
+			this.forceWrite = false;
 		}
 
 		static string FilterName(string s) {
@@ -212,12 +214,14 @@ namespace dndbg.Engine {
 		}
 
 		void OutputWrite(string s, TypeColor color) {
-			if (outputLengthExceeded)
-				return;
-			if (lineLength + s.Length > MAX_OUTPUT_LEN) {
-				s = s.Substring(0, MAX_OUTPUT_LEN - lineLength);
-				s += "[…]";
-				outputLengthExceeded = true;
+			if (!forceWrite) {
+				if (outputLengthExceeded)
+					return;
+				if (lineLength + s.Length > MAX_OUTPUT_LEN) {
+					s = s.Substring(0, MAX_OUTPUT_LEN - lineLength);
+					s += "[…]";
+					outputLengthExceeded = true;
+				}
 			}
 			output.Write(s, color);
 			lineLength += s.Length;
@@ -771,57 +775,59 @@ namespace dndbg.Engine {
 			if (frame == null)
 				return;
 
-			if (frame.IsILFrame || frame.IsNativeFrame) {
-				WriteSpace();
-				OutputWrite("(", TypeColor.Operator);
-				bool needComma = false;
-				if (frame.IsILFrame) {
-					var ip = frame.ILFrameIP;
-					OutputWrite("IL", TypeColor.Text);
-					OutputWrite("=", TypeColor.Operator);
-					if (ip.IsExact)
-						WriteILOffset(ip.Offset);
-					else if (ip.IsApproximate) {
-						OutputWrite("~", TypeColor.Operator);
-						WriteILOffset(ip.Offset);
-					}
-					else if (ip.IsProlog)
-						OutputWrite("Prolog", TypeColor.Text);
-					else if (ip.IsEpilog)
-						OutputWrite("Epilog", TypeColor.Text);
-					else
-						OutputWrite("???", TypeColor.Error);
-					needComma = true;
-				}
-				if (frame.IsNativeFrame) {
-					if (needComma)
-						WriteCommaSpace();
-					OutputWrite("Native", TypeColor.Text);
-					OutputWrite("=", TypeColor.Operator);
+			// Always show the IP even if the line is too long
+			var old = forceWrite;
+			try {
+				forceWrite = true;
 
-					var nativeCode = code != null && !code.IsIL ? code : null;
-					if (nativeCode == null) {
-						var func = frame.Function;
-						//TODO: This can be a random JITed method if it's a generic method
-						nativeCode = func == null ? null : func.NativeCode;
+				if (frame.IsILFrame || frame.IsNativeFrame) {
+					WriteSpace();
+					OutputWrite("(", TypeColor.Operator);
+					bool needComma = false;
+					if (frame.IsILFrame) {
+						var ip = frame.ILFrameIP;
+						OutputWrite("IL", TypeColor.Text);
+						OutputWrite("=", TypeColor.Operator);
+						if (ip.IsExact)
+							WriteILOffset(ip.Offset);
+						else if (ip.IsApproximate) {
+							OutputWrite("~", TypeColor.Operator);
+							WriteILOffset(ip.Offset);
+						}
+						else if (ip.IsProlog)
+							OutputWrite("Prolog", TypeColor.Text);
+						else if (ip.IsEpilog)
+							OutputWrite("Epilog", TypeColor.Text);
+						else
+							OutputWrite("???", TypeColor.Error);
+						needComma = true;
 					}
+					if (frame.IsNativeFrame) {
+						if (needComma)
+							WriteCommaSpace();
+						OutputWrite("Native", TypeColor.Text);
+						OutputWrite("=", TypeColor.Operator);
 
-					uint ip = frame.NativeFrameIP;
-					if (nativeCode != null && !nativeCode.IsIL)
-						WriteNativeAddress(nativeCode.Address);
-					else {
-						OutputWrite("???", TypeColor.Error);
+						var nativeCode = code != null && !code.IsIL ? code : null;
+						if (nativeCode == null) {
+							var func = frame.Function;
+							//TODO: This can be a random JITed method if it's a generic method
+							nativeCode = func == null ? null : func.NativeCode;
+						}
+
+						uint ip = frame.NativeFrameIP;
+						if (nativeCode != null && !nativeCode.IsIL)
+							WriteNativeAddress(nativeCode.Address);
+						else {
+							OutputWrite("???", TypeColor.Error);
+						}
+						WriteRelativeOffset((int)ip);
 					}
-					int ip2 = (int)ip;
-					if (ip2 < 0) {
-						ip2 = -ip2;
-						OutputWrite("-", TypeColor.Operator);
-					}
-					else
-						OutputWrite("+", TypeColor.Operator);
-					WriteNumber(ConvertRelativeOffset(ip2));
+					OutputWrite(")", TypeColor.Operator);
 				}
-				OutputWrite(")", TypeColor.Operator);
+			}
+			finally {
+				forceWrite = old;
 			}
 		}
 
@@ -1216,6 +1222,20 @@ namespace dndbg.Engine {
 		static string ConvertTokenToString(uint token) {
 			// Tokens are always in hex
 			return string.Format("0x{0:X8}", token);
+		}
+
+		void WriteRelativeOffset(int offset) {
+			long offset2 = offset;
+			if (offset2 < 0) {
+				offset2 = -offset2;
+				OutputWrite("-", TypeColor.Operator);
+			}
+			else
+				OutputWrite("+", TypeColor.Operator);
+			if (UseDecimal)
+				WriteNumber(offset2);
+			else
+				output.Write(string.Format("0x{0:X}", offset2), TypeColor.Number);
 		}
 
 		static object ConvertRelativeOffset(long offset) {

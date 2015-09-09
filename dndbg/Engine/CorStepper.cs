@@ -33,7 +33,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal CorStepper(ICorDebugStepper stepper)
+		public CorStepper(ICorDebugStepper stepper)
 			: base(stepper) {
 		}
 

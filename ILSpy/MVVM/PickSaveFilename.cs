@@ -20,11 +20,23 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace dnSpy.AsmEditor.ViewHelpers {
-	sealed class PickNetExecutableFileName : IPickNetExecutableFileName {
-		public string GetFileName(string currentFileName, string extension) {
+namespace dnSpy.MVVM {
+	/// <summary>
+	/// Lets the user pick a new filename. Returns null if the user didn't pick a new filename.
+	/// </summary>
+	/// <param name="currentFileName">Current filename or null</param>
+	/// <param name="defaultExtension">Default extension. It must not contain a period. Eg. valid
+	/// extensions are "exe" and "dll" but not ".exe"</param>
+	/// <param name="filter">Filename filter or null</param>
+	/// <returns></returns>
+	public interface IPickSaveFilename {
+		string GetFilename(string currentFileName, string defaultExtension, string filter = null);
+	}
+
+	public sealed class PickSaveFilename : IPickSaveFilename {
+		public string GetFilename(string currentFileName, string extension, string filter) {
 			var dialog = new SaveFileDialog() {
-				Filter = ".NET Executables (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|All files (*.*)|*.*",
+				Filter = string.IsNullOrEmpty(filter) ? PickFilenameConstants.AnyFilenameFilter : filter,
 				RestoreDirectory = true,
 				DefaultExt = extension,
 				ValidateNames = true,

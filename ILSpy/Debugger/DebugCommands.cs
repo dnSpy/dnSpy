@@ -137,7 +137,11 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool IsVisible(ContextMenuEntryContext context) {
-			return context.Element is DecompilerTextView && realCmd.CanExecute(context);
+			return IsValidElement(context.Element) && realCmd.CanExecute(context);
+		}
+
+		protected virtual bool IsValidElement(object element) {
+			return element is DecompilerTextView;
 		}
 	}
 
@@ -152,6 +156,10 @@ namespace dnSpy.Debugger {
 			if (asm == null)
 				return;
 			menuItem.Header = string.Format("_Debug {0}", UIUtils.EscapeMenuItemHeader(asm.ShortName));
+		}
+
+		protected override bool IsValidElement(object element) {
+			return true;
 		}
 	}
 
@@ -223,7 +231,7 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "StartDebugging", MenuCategory = "Start", MenuHeader = "Debug an _Executable…", MenuOrder = 5000)]
+	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "StartDebugging", MenuCategory = "Start", MenuHeader = "Debug an Assembl_y…", MenuOrder = 5000)]
 	sealed class DebugAssemblyDebugMainMenuCommand : DebugMainMenuCommand {
 		public DebugAssemblyDebugMainMenuCommand()
 			: base(DebugRoutedCommands.DebugAssembly, false) {

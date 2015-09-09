@@ -41,7 +41,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal CorClass(ICorDebugClass cls)
+		public CorClass(ICorDebugClass cls)
 			: base(cls) {
 			int hr = cls.GetToken(out this.token);
 			if (hr < 0)
@@ -89,8 +89,17 @@ namespace dndbg.Engine {
 			return RawObject.GetHashCode();
 		}
 
+		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
+			new TypePrinter(output, flags).Write(this);
+			return output;
+		}
+
+		public string ToString(TypePrinterFlags flags) {
+			return Write(new StringBuilderTypeOutput(), flags).ToString();
+		}
+
 		public override string ToString() {
-			return string.Format("[Class] Token: {0:X8} {1}", Token, Module);
+			return ToString(TypePrinterFlags.Default);
 		}
 	}
 }

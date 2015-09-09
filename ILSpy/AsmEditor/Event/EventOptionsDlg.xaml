@@ -23,13 +23,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:dnSpy.MVVM"
-             xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
+             xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters"
              Height="400" Width="500"
              Title="Edit Event"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="400" MinWidth="500">
 	<winlocal:WindowBase.Resources>
-		<vc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
+		<mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
 	</winlocal:WindowBase.Resources>
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
 		<Grid.ColumnDefinitions>

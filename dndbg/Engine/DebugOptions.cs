@@ -41,7 +41,7 @@ namespace dndbg.Engine {
 				}
 			}
 		}
-		CorDebugIntercept stepperInterceptMask = CorDebugIntercept.INTERCEPT_ALL;
+		CorDebugIntercept stepperInterceptMask = CorDebugIntercept.INTERCEPT_NONE;
 
 		/// <summary>
 		/// Stepper unmapped stop mask

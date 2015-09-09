@@ -2646,6 +2646,11 @@ namespace ICSharpCode.ILSpy
 			this.statusBar.Visibility = Visibility.Collapsed;
 		}
 
+		public LoadedAssembly LoadAssembly(string asmFilename)
+		{
+			return assemblyList.OpenAssemblyDelay(asmFilename, false);
+		}
+
 		public LoadedAssembly TryLoadAssembly(string asmName, SerializedDnModule module)
 		{
 			return LoadAssembly(asmName, module, false);

@@ -23,6 +23,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mbody="clr-namespace:dnSpy.AsmEditor.MethodBody"
              xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
+             xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">
 	<UserControl.Resources>

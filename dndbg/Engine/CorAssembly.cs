@@ -89,7 +89,7 @@ namespace dndbg.Engine {
 		}
 		readonly string name;
 
-		internal CorAssembly(ICorDebugAssembly assembly)
+		public CorAssembly(ICorDebugAssembly assembly)
 			: base(assembly) {
 			this.name = GetName(assembly) ?? string.Empty;
 		}

@@ -20,6 +20,7 @@
 using System.Windows;
 using System.Windows.Forms;
 using dnlib.DotNet;
+using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
@@ -36,7 +37,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public PublicKey Open() {
 			var dialog = new OpenFileDialog() {
-				Filter = "Strong Name Key Files (*.snk)|*.snk|All files (*.*)|*.*",
+				Filter = PickFilenameConstants.StrongNameKeyFilter,
 				RestoreDirectory = true,
 			};
 			if (dialog.ShowDialog() != DialogResult.OK)

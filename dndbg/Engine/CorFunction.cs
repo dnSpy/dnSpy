@@ -137,7 +137,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal CorFunction(ICorDebugFunction func)
+		public CorFunction(ICorDebugFunction func)
 			: base(func) {
 			//TODO: ICorDebugFunction2::EnumerateNativeCode
 			//TODO: ICorDebugFunction3::GetActiveReJitRequestILCode
@@ -178,8 +178,17 @@ namespace dndbg.Engine {
 			return RawObject.GetHashCode();
 		}
 
+		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
+			new TypePrinter(output, flags).Write(this);
+			return output;
+		}
+
+		public string ToString(TypePrinterFlags flags) {
+			return Write(new StringBuilderTypeOutput(), flags).ToString();
+		}
+
 		public override string ToString() {
-			return string.Format("[Function] Token: {0:X8}", Token);
+			return ToString(TypePrinterFlags.Default);
 		}
 	}
 }

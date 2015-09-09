@@ -17,20 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.MVVM;
+using System.Windows.Forms;
 
-namespace dnSpy.AsmEditor.SaveModule {
-	/// <summary>
-	/// Interaction logic for SaveHexOptionsDlg.xaml
-	/// </summary>
-	public partial class SaveHexOptionsDlg : WindowBase {
-		public SaveHexOptionsDlg() {
-			InitializeComponent();
-			DataContextChanged += (s, e) => {
-				var data = DataContext as SaveHexOptionsVM;
-				if (data != null)
-					data.PickSaveFilename = new PickSaveFilename();
-			};
+namespace dnSpy.MVVM {
+	public interface IPickDirectory {
+		/// <summary>
+		/// Lets the user pick a directory. Returns null if user canceled.
+		/// </summary>
+		/// <param name="currentDir">Current directory or null</param>
+		/// <returns></returns>
+		string GetDirectory(string currentDir = null);
+	}
+
+	public class PickDirectory : IPickDirectory {
+		public string GetDirectory(string currentDir) {
+			var dlg = new FolderBrowserDialog();
+			dlg.SelectedPath = currentDir ?? string.Empty;
+			if (dlg.ShowDialog() != DialogResult.OK)
+				return null;
+
+			return dlg.SelectedPath;
 		}
 	}
 }

@@ -23,7 +23,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.MVVM;
-using dnSpy.TextView;
+using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.CallStack {
@@ -40,15 +40,15 @@ namespace dnSpy.Debugger.CallStack {
 
 		sealed class CallStackObjectCreator : ICallStackObjectCreator {
 			public object CreateName(ICallStackFrameVM vm) {
-				return CreateTextBlock(vm.CachedOutput);
+				return CreateTextBlock(vm.CachedOutput, DebuggerSettings.Instance.SyntaxHighlightCallStack);
 			}
 
-			static TextBlock CreateTextBlock(CachedOutput cachedOutput) {
-				var gen = new SimpleHighlighter();
+			static TextBlock CreateTextBlock(CachedOutput cachedOutput, bool highlight) {
+				var gen = UISyntaxHighlighter.Create(highlight);
 				var conv = new OutputConverter(gen.TextOutput);
 				foreach (var t in cachedOutput.data)
 					conv.Write(t.Item1, t.Item2);
-				var tb = gen.Create();
+				var tb = gen.CreateTextBlock();
 				tb.TextTrimming = TextTrimming.CharacterEllipsis;
 				return tb;
 			}

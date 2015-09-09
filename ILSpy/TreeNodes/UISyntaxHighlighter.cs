@@ -23,7 +23,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
 
 namespace dnSpy.TreeNodes {
-	struct UISyntaxHighlighter {
+	public struct UISyntaxHighlighter {
 		SimpleHighlighter simpleHighlighter;
 		PlainTextOutput output;
 
@@ -45,6 +45,10 @@ namespace dnSpy.TreeNodes {
 
 		public static UISyntaxHighlighter CreateSearchList() {
 			return new UISyntaxHighlighter(DisplaySettingsPanel.CurrentDisplaySettings.SyntaxHighlightSearchListUI);
+		}
+
+		public static UISyntaxHighlighter Create(bool highlight) {
+			return new UISyntaxHighlighter(highlight);
 		}
 
 		UISyntaxHighlighter(bool highlight) {

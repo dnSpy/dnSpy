@@ -386,7 +386,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal CorValue(ICorDebugValue value)
+		public CorValue(ICorDebugValue value)
 			: base(value) {
 			int hr = value.GetType(out this.elemType);
 			if (hr < 0)

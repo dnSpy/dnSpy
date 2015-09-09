@@ -144,11 +144,13 @@ namespace dndbg.Engine {
 		/// Gets all AppDomains, sorted on the order they were created
 		/// </summary>
 		/// <returns></returns>
-		public DnAppDomain[] GetAppDomains() {
-			Debugger.DebugVerifyThread();
-			var list = appDomains.GetAll();
-			Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
-			return list;
+		public DnAppDomain[] AppDomains {
+			get {
+				Debugger.DebugVerifyThread();
+				var list = appDomains.GetAll();
+				Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
+				return list;
+			}
 		}
 
 		internal DnAppDomain TryGetAppDomain(ICorDebugAppDomain comAppDomain) {
@@ -186,11 +188,13 @@ namespace dndbg.Engine {
 		/// Gets all threads, sorted on the order they were created
 		/// </summary>
 		/// <returns></returns>
-		public DnThread[] GetThreads() {
-			Debugger.DebugVerifyThread();
-			var list = threads.GetAll();
-			Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
-			return list;
+		public DnThread[] Threads {
+			get {
+				Debugger.DebugVerifyThread();
+				var list = threads.GetAll();
+				Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
+				return list;
+			}
 		}
 
 		internal DnThread TryGetThread(ICorDebugThread comThread) {
@@ -227,7 +231,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <returns></returns>
 		public DnThread GetMainThread() {
-			var threads = GetThreads();
+			var threads = Threads;
 			var appDomain = GetMainAppDomain();
 			foreach (var thread in threads) {
 				if (thread.AppDomainOrNull == appDomain)
@@ -241,7 +245,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <returns></returns>
 		public DnAppDomain GetMainAppDomain() {
-			var appDomains = GetAppDomains();
+			var appDomains = AppDomains;
 			return appDomains.Length == 0 ? null : appDomains[0];
 		}
 

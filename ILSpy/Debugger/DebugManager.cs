@@ -22,12 +22,16 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using dndbg.Engine;
+using dndbg.Engine.COM.CorDebug;
 using dnlib.DotNet;
+using dnlib.PE;
 using dnSpy.Debugger.CallStack;
+using dnSpy.Debugger.Dialogs;
 using dnSpy.MVVM;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
@@ -169,8 +173,11 @@ namespace dnSpy.Debugger {
 			MainWindow.Instance.SetStatus("Running…");
 		}
 
-		static void SetReadyStatusMessage() {
-			MainWindow.Instance.SetStatus("Ready");
+		static void SetReadyStatusMessage(string msg) {
+			if (string.IsNullOrEmpty(msg))
+				MainWindow.Instance.SetStatus("Ready");
+			else
+				MainWindow.Instance.SetStatus(string.Format("Ready - {0}", msg));
 		}
 
 		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
@@ -195,7 +202,7 @@ namespace dnSpy.Debugger {
 				if (currentMethod != null && currentLocation != null)
 					JumpToCurrentStatement(MainWindow.Instance.SafeActiveTextView);
 
-				SetReadyStatusMessage();
+				SetReadyStatusMessage(new StoppedMessageCreator().GetMessage(Debugger));
 				break;
 
 			case DebuggerProcessState.Terminated:
@@ -208,6 +215,161 @@ namespace dnSpy.Debugger {
 		}
 		CodeLocation? currentLocation = null;
 
+		struct StoppedMessageCreator {
+			StringBuilder sb;
+
+			public string GetMessage(DnDebugger debugger) {
+				if (debugger == null || debugger.ProcessState != DebuggerProcessState.Stopped)
+					return null;
+
+				sb = new StringBuilder();
+
+				bool seenIlbp = false;
+				foreach (var state in debugger.DebuggerStates) {
+					foreach (var stopState in state.StopStates) {
+						switch (stopState.Reason) {
+						case DebuggerStopReason.Other:
+							Append("Unknown Reason");
+							break;
+
+						case DebuggerStopReason.DebugEventBreakpoint:
+							if (state.EventArgs != null)
+								Append(GetEventDescription(state.EventArgs));
+							else
+								Append("DebugEvent");
+							break;
+
+						case DebuggerStopReason.AnyDebugEventBreakpoint:
+							if (state.EventArgs != null)
+								Append(GetEventDescription(state.EventArgs));
+							else
+								Append("Any DebugEvent");
+							break;
+
+						case DebuggerStopReason.Break:
+							Append("Break Instruction");
+							break;
+
+						case DebuggerStopReason.ILCodeBreakpoint:
+							if (seenIlbp)
+								break;
+							seenIlbp = true;
+							Append("IL Breakpoint");
+							break;
+
+						case DebuggerStopReason.Step:
+							break;
+						}
+					}
+				}
+
+				return sb.ToString();
+			}
+
+			string GetEventDescription(DebugCallbackEventArgs e) {
+				CorModule mod;
+				switch (e.Type) {
+				case DebugCallbackType.Exception:
+					var ex1Args = (ExceptionDebugCallbackEventArgs)e;
+					return ex1Args.Unhandled ? "Unhandled Exception" : "Exception";
+
+				case DebugCallbackType.CreateProcess:
+					var cpArgs = (CreateProcessDebugCallbackEventArgs)e;
+					var p = cpArgs.Process == null ? null : new CorProcess(cpArgs.Process);
+					if (p == null)
+						break;
+					return string.Format("CreateProcess PID={0} CLR v{1}", p.ProcessId, p.CLRVersion);
+
+				case DebugCallbackType.CreateThread:
+					var ctArgs = (CreateThreadDebugCallbackEventArgs)e;
+					var t = ctArgs.Thread == null ? null : new CorThread(ctArgs.Thread);
+					if (t == null)
+						break;
+					return string.Format("CreateThread TID={0} VTID={1}", t.ThreadId, t.VolatileThreadId);
+
+				case DebugCallbackType.LoadModule:
+					var lmArgs = (LoadModuleDebugCallbackEventArgs)e;
+					mod = lmArgs.Module == null ? null : new CorModule(lmArgs.Module);
+					if (mod == null)
+						break;
+					if (mod.IsDynamic || mod.IsInMemory)
+						return string.Format("LoadModule DYN={0} MEM={1} {2}", mod.IsDynamic ? 1 : 0, mod.IsInMemory ? 1 : 0, mod.Name);
+					return string.Format("LoadModule {0}", mod.Name);
+
+				case DebugCallbackType.LoadClass:
+					var lcArgs = (LoadClassDebugCallbackEventArgs)e;
+					var cls = lcArgs.Class == null ? null : new CorClass(lcArgs.Class);
+					mod = cls == null ? null : cls.Module;
+					if (mod == null)
+						break;
+					return string.Format("LoadClass 0x{0:X8} {1} {2}", cls.Token, FilterLongName(cls.ToString()), mod.Name);
+
+				case DebugCallbackType.DebuggerError:
+					var deArgs = (DebuggerErrorDebugCallbackEventArgs)e;
+					return string.Format("DebuggerError hr=0x{0:X8} error=0x{1:X8}", deArgs.HError, deArgs.ErrorCode);
+
+				case DebugCallbackType.CreateAppDomain:
+					var cadArgs = (CreateAppDomainDebugCallbackEventArgs)e;
+					var ad = cadArgs.AppDomain == null ? null : new CorAppDomain(cadArgs.AppDomain);
+					if (ad == null)
+						break;
+					return string.Format("CreateAppDomain {0} {1}", ad.Id, ad.Name);
+
+				case DebugCallbackType.LoadAssembly:
+					var laArgs = (LoadAssemblyDebugCallbackEventArgs)e;
+					var asm = laArgs.Assembly == null ? null : new CorAssembly(laArgs.Assembly);
+					if (asm == null)
+						break;
+					return string.Format("LoadAssembly {0}", asm.Name);
+
+				case DebugCallbackType.ControlCTrap:
+					return "Ctrl+C";
+
+				case DebugCallbackType.BreakpointSetError:
+					var bpseArgs = (BreakpointSetErrorDebugCallbackEventArgs)e;
+					return string.Format("BreakpointSetError error=0x{0:X8}", bpseArgs.Error);
+
+				case DebugCallbackType.Exception2:
+					var ex2Args = (Exception2DebugCallbackEventArgs)e;
+					var sb = new StringBuilder();
+					sb.Append(string.Format("Exception Offset={0:X4} ", ex2Args.Offset));
+					switch (ex2Args.EventType) {
+					case CorDebugExceptionCallbackType.DEBUG_EXCEPTION_FIRST_CHANCE:
+						sb.Append("FirstChance");
+						break;
+					case CorDebugExceptionCallbackType.DEBUG_EXCEPTION_USER_FIRST_CHANCE:
+						sb.Append("UserFirstChance");
+						break;
+					case CorDebugExceptionCallbackType.DEBUG_EXCEPTION_CATCH_HANDLER_FOUND:
+						sb.Append("CatchHandlerFound");
+						break;
+					case CorDebugExceptionCallbackType.DEBUG_EXCEPTION_UNHANDLED:
+						sb.Append("Unhandled");
+						break;
+					default:
+						sb.Append("Unknown");
+						break;
+					}
+					return sb.ToString();
+				}
+
+				return e.Type.ToString();
+			}
+
+			void Append(string msg) {
+				if (sb.Length > 0)
+					sb.Append(", ");
+				sb.Append(msg);
+			}
+
+			static string FilterLongName(string s) {
+				const int MAX_LEN = 128;
+				if (s.Length <= MAX_LEN)
+					return s;
+				return s.Substring(0, MAX_LEN / 2) + "…" + s.Substring(s.Length - (MAX_LEN - MAX_LEN / 2));
+			}
+		}
+
 		void OnClosing(object sender, CancelEventArgs e) {
 			if (IsDebugging) {
 				var result = MainWindow.Instance.ShowIgnorableMessageBox("debug: exit program", "Do you want to stop debugging?", MessageBoxButton.YesNo);
@@ -216,7 +378,7 @@ namespace dnSpy.Debugger {
 			}
 		}
 
-		public bool DebugProcess(DebugProcessOptions options) {
+		bool DebugProcess(DebugProcessOptions options) {
 			if (IsDebugging)
 				return false;
 			if (options == null)
@@ -266,6 +428,11 @@ namespace dnSpy.Debugger {
 				lastDebugProcessOptions = null;
 				RemoveDebugger();
 			}
+
+			// This is sometimes needed. Press Ctrl+Shift+F5 a couple of times and the toolbar
+			// debugger icons aren't updated until you release Ctrl+Shift.
+			if (ProcessState == DebuggerProcessState.Stopped || !IsDebugging)
+				CommandManager.InvalidateRequerySuggested();
 		}
 
 		void RemoveDebugger() {
@@ -291,7 +458,7 @@ namespace dnSpy.Debugger {
 			var asm = GetCurrentAssembly(parameter as ContextMenuEntryContext);
 			if (asm == null)
 				return;
-			DebugAssembly(GetDebugCurrentAssemblyOptions(asm));
+			DebugAssembly(GetDebugAssemblyOptions(CreateDebugProcessVM(asm)));
 		}
 
 		internal LoadedAssembly GetCurrentAssembly(ContextMenuEntryContext context) {
@@ -333,8 +500,18 @@ namespace dnSpy.Debugger {
 			return loadedAsm;
 		}
 
-		DebugProcessOptions GetDebugCurrentAssemblyOptions(LoadedAssembly asm) {
-			return null;//TODO:
+		DebugProcessVM CreateDebugProcessVM(LoadedAssembly asm = null) {
+			// Re-use the previous one if it's the same file
+			if (lastDebugProcessVM != null && asm != null) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(lastDebugProcessVM.Filename, asm.FileName))
+					return lastDebugProcessVM.Clone();
+			}
+
+			var vm = new DebugProcessVM();
+			if (asm != null)
+				vm.Filename = asm.FileName;
+			vm.BreakProcessType = DebuggerSettings.Instance.BreakProcessType;
+			return vm;
 		}
 
 		public bool CanDebugAssembly {
@@ -344,11 +521,40 @@ namespace dnSpy.Debugger {
 		public void DebugAssembly() {
 			if (!CanDebugAssembly)
 				return;
-			DebugAssembly(GetDebugAssemblyOptions());
+			DebugProcessVM vm = null;
+			if (vm == null) {
+				var asm = ILSpyTreeNode.GetNode<AssemblyTreeNode>(MainWindow.Instance.treeView.SelectedItem as ILSpyTreeNode);
+				if (asm != null) {
+					var loadedAsm = asm.LoadedAssembly;
+					var mod = loadedAsm == null ? null : loadedAsm.ModuleDefinition;
+					if (mod != null && (mod.Characteristics & Characteristics.Dll) == 0)
+						vm = CreateDebugProcessVM(loadedAsm);
+				}
+			}
+			if (vm == null)
+				vm = lastDebugProcessVM ?? CreateDebugProcessVM();
+			DebugAssembly(GetDebugAssemblyOptions(vm.Clone()));
 		}
+		DebugProcessVM lastDebugProcessVM;
 
-		DebugProcessOptions GetDebugAssemblyOptions() {
-			return null;//TODO:
+		DebugProcessOptions GetDebugAssemblyOptions(DebugProcessVM vm, bool askUser = true) {
+			var opts = new DebugProcessOptions();
+			opts.DebugMessageDispatcher = WpfDebugMessageDispatcher.Instance;
+
+			if (askUser) {
+				var win = new DebugProcessDlg();
+				win.DataContext = vm;
+				win.Owner = MainWindow.Instance;
+				if (win.ShowDialog() != true)
+					return null;
+			}
+
+			opts.CurrentDirectory = vm.CurrentDirectory;
+			opts.Filename = vm.Filename;
+			opts.CommandLine = vm.CommandLine;
+			opts.BreakProcessType = vm.BreakProcessType;
+			lastDebugProcessVM = vm;
+			return opts;
 		}
 
 		public bool CanRestart {
@@ -590,7 +796,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool CanStepInto {
-			get { return ProcessState == DebuggerProcessState.Stopped; }
+			get { return ProcessState == DebuggerProcessState.Stopped && GetCurrentILFrame() != null; }
 		}
 
 		public void StepInto() {
@@ -602,7 +808,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool CanStepOver {
-			get { return ProcessState == DebuggerProcessState.Stopped; }
+			get { return ProcessState == DebuggerProcessState.Stopped && GetCurrentILFrame() != null; }
 		}
 
 		public void StepOver() {
@@ -614,7 +820,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool CanStepOut {
-			get { return ProcessState == DebuggerProcessState.Stopped; }
+			get { return ProcessState == DebuggerProcessState.Stopped && GetCurrentILFrame() != null; }
 		}
 
 		public void StepOut() {

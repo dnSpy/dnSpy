@@ -163,7 +163,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal CorThread(ICorDebugThread thread)
+		public CorThread(ICorDebugThread thread)
 			: base(thread) {
 			//TODO: ICorDebugThread3
 			//TODO: ICorDebugThread4

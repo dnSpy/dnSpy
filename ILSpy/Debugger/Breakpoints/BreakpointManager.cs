@@ -241,7 +241,10 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		public bool CanToggleBreakpoint {
-			get { return MainWindow.Instance.ActiveTextView != null; }
+			get {
+				var textView = MainWindow.Instance.ActiveTextView;
+				return textView != null && textView.CodeMappings.Count != 0;
+			}
 		}
 
 		public bool ToggleBreakpoint() {

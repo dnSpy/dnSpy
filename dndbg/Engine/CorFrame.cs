@@ -230,7 +230,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal CorFrame(ICorDebugFrame frame)
+		public CorFrame(ICorDebugFrame frame)
 			: base(frame) {
 			int hr = frame.GetFunctionToken(out this.token);
 			if (hr < 0)
@@ -323,10 +323,6 @@ namespace dndbg.Engine {
 			return nf.CanSetIP(offset) == 0;
 		}
 
-		public void Write(ITypeOutput output, TypePrinterFlags flags) {
-			new TypePrinter(output, flags).Write(this);
-		}
-
 		public static bool operator ==(CorFrame a, CorFrame b) {
 			if (ReferenceEquals(a, b))
 				return true;
@@ -352,8 +348,17 @@ namespace dndbg.Engine {
 			return RawObject.GetHashCode();
 		}
 
+		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
+			new TypePrinter(output, flags).Write(this);
+			return output;
+		}
+
+		public string ToString(TypePrinterFlags flags) {
+			return Write(new StringBuilderTypeOutput(), flags).ToString();
+		}
+
 		public override string ToString() {
-			return string.Format("[Frame] Token: {0:X8} {1:X8}-{2:X8}", Token, StackStart, StackEnd);
+			return ToString(TypePrinterFlags.Default);
 		}
 	}
 }

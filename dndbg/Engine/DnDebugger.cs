@@ -22,6 +22,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading;
 using dndbg.Engine.COM.CorDebug;
@@ -37,7 +38,8 @@ namespace dndbg.Engine {
 		readonly IDebugMessageDispatcher debugMessageDispatcher;
 		readonly ICorDebug corDebug;
 		readonly DebuggerCollection<ICorDebugProcess, DnProcess> processes;
-		readonly DebugEventBreakpointList debugEventBreakpointList = new DebugEventBreakpointList();
+		readonly DebugEventBreakpointList<DnDebugEventBreakpoint> debugEventBreakpointList = new DebugEventBreakpointList<DnDebugEventBreakpoint>();
+		readonly DebugEventBreakpointList<DnAnyDebugEventBreakpoint> anyDebugEventBreakpointList = new DebugEventBreakpointList<DnAnyDebugEventBreakpoint>();
 		readonly BreakpointList<DnILCodeBreakpoint> ilCodeBreakpointList = new BreakpointList<DnILCodeBreakpoint>();
 		readonly Dictionary<CorStepper, StepInfo> stepInfos = new Dictionary<CorStepper, StepInfo>();
 		DebugOptions debugOptions;
@@ -80,6 +82,10 @@ namespace dndbg.Engine {
 
 		public DnDebugEventBreakpoint[] DebugEventBreakpoints {
 			get { DebugVerifyThread(); return debugEventBreakpointList.Breakpoints; }
+		}
+
+		public DnAnyDebugEventBreakpoint[] AnyDebugEventBreakpoints {
+			get { DebugVerifyThread(); return anyDebugEventBreakpointList.Breakpoints; }
 		}
 
 		public IEnumerable<DnILCodeBreakpoint> ILCodeBreakpoints {
@@ -159,6 +165,22 @@ namespace dndbg.Engine {
 		// Could be called from any thread
 		internal void OnManagedCallbackFromAnyThread(Func<DebugCallbackEventArgs> func) {
 			debugMessageDispatcher.ExecuteAsync(() => OnManagedCallbackInDebuggerThread(func()));
+		}
+
+		// Same as above method but called by CreateProcess, LoadModule, CreateAppDomain because
+		// certain methods must be called before we return to the CLR debugger.
+		internal void OnManagedCallbackFromAnyThread2(Func<DebugCallbackEventArgs> func) {
+			using (var ev = new ManualResetEvent(false)) {
+				debugMessageDispatcher.ExecuteAsync(() => {
+					try {
+						OnManagedCallbackInDebuggerThread(func());
+					}
+					finally {
+						ev.Set();
+					}
+				});
+				ev.WaitOne();
+			}
 		}
 
 		// Called in our dndbg thread
@@ -481,7 +503,7 @@ namespace dndbg.Engine {
 		}
 
 		void SetDefaultCurrentProcess(DebugCallbackEventArgs e) {
-			var ps = GetProcesses();
+			var ps = Processes;
 			AddDebuggerState(new DebuggerState(e, ps.Length == 0 ? null : ps[0], null, null));
 		}
 
@@ -501,13 +523,22 @@ namespace dndbg.Engine {
 			var process = TryGetValidProcess(comProcess);
 			DnAppDomain appDomain;
 			DnThread thread;
-			if (processes != null) {
+			if (process != null) {
 				appDomain = process.TryGetAppDomain(comAppDomain);
 				thread = process.TryGetThread(comThread);
 			}
 			else {
 				appDomain = null;
 				thread = null;
+			}
+
+			if (thread == null && appDomain == null && process != null)
+				appDomain = process.AppDomains.FirstOrDefault();
+			if (thread == null) {
+				if (appDomain != null)
+					thread = appDomain.GetThreads().FirstOrDefault();
+				else if (process != null)
+					thread = process.Threads.FirstOrDefault();
 			}
 
 			if (process == null)
@@ -529,7 +560,7 @@ namespace dndbg.Engine {
 			if (process == null)
 				return;
 
-			foreach (var appDomain in process.GetAppDomains()) {
+			foreach (var appDomain in process.AppDomains) {
 				OnAppDomainUnloaded(appDomain);
 				process.AppDomainExited(appDomain.CorAppDomain.RawObject);
 			}
@@ -538,7 +569,7 @@ namespace dndbg.Engine {
 		void OnAppDomainUnloaded(DnAppDomain appDomain) {
 			if (appDomain == null)
 				return;
-			foreach (var assembly in appDomain.GetAssemblies()) {
+			foreach (var assembly in appDomain.Assemblies) {
 				OnAssemblyUnloaded(assembly);
 				appDomain.AssemblyUnloaded(assembly.CorAssembly.RawObject);
 			}
@@ -547,7 +578,7 @@ namespace dndbg.Engine {
 		void OnAssemblyUnloaded(DnAssembly assembly) {
 			if (assembly == null)
 				return;
-			foreach (var module in assembly.GetModules()) {
+			foreach (var module in assembly.Modules) {
 				OnModuleUnloaded(module);
 				assembly.ModuleUnloaded(module.CorModule.RawObject);
 			}
@@ -580,8 +611,8 @@ namespace dndbg.Engine {
 				InitializeCurrentDebuggerState(e, null, scArgs.AppDomain, scArgs.Thread);
 				StepInfo stepInfo;
 				bool calledStepInfoOnCompleted = false;
-				var stepperKey = new CorStepper(scArgs.Stepper);
-				if (stepInfos.TryGetValue(stepperKey, out stepInfo)) {
+				var stepperKey = scArgs.Stepper == null ? null : new CorStepper(scArgs.Stepper);
+				if (stepperKey != null && stepInfos.TryGetValue(stepperKey, out stepInfo)) {
 					stepInfos.Remove(stepperKey);
 					if (stepInfo.OnCompleted != null) {
 						calledStepInfoOnCompleted = true;
@@ -711,7 +742,7 @@ namespace dndbg.Engine {
 			case DebugCallbackType.CreateAppDomain:
 				var cadArgs = (CreateAppDomainDebugCallbackEventArgs)e;
 				process = TryGetValidProcess(cadArgs.Process);
-				if (process != null) {
+				if (process != null && cadArgs.AppDomain != null) {
 					b = cadArgs.AppDomain.Attach() >= 0;
 					Debug.WriteLineIf(!b, string.Format("CreateAppDomain: could not attach to AppDomain: {0:X8}", cadArgs.AppDomain.GetHashCode()));
 					if (b)
@@ -756,16 +787,12 @@ namespace dndbg.Engine {
 			case DebugCallbackType.NameChange:
 				var ncArgs = (NameChangeDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, ncArgs.AppDomain, ncArgs.Thread);
-				if (ncArgs.AppDomain != null) {
-					appDomain = TryGetValidAppDomain(ncArgs.AppDomain);
-					if (appDomain != null)
-						appDomain.NameChanged();
-				}
-				if (ncArgs.Thread != null) {
-					var thread = TryGetValidThread(ncArgs.Thread);
-					if (thread != null)
-						thread.NameChanged();
-				}
+				appDomain = TryGetValidAppDomain(ncArgs.AppDomain);
+				if (appDomain != null)
+					appDomain.NameChanged();
+				var thread = TryGetValidThread(ncArgs.Thread);
+				if (thread != null)
+					thread.NameChanged();
 				break;
 
 			case DebugCallbackType.UpdateModuleSymbols:
@@ -839,24 +866,27 @@ namespace dndbg.Engine {
 			var type = DnDebugEventBreakpoint.GetDebugEventBreakpointType(e);
 			if (type != null) {
 				foreach (var bp in DebugEventBreakpoints) {
-					if (bp.IsEnabled && bp.EventType == type.Value && bp.Condition.Hit(new DebugEventBreakpointConditionContext(this, bp)))
+					if (bp.IsEnabled && bp.EventType == type.Value && bp.Condition.Hit(new DebugEventBreakpointConditionContext(this, bp, e)))
 						e.AddStopState(new DebugEventBreakpointStopState(bp));
 				}
 			}
 
+			foreach (var bp in AnyDebugEventBreakpoints) {
+				if (bp.IsEnabled && bp.Condition.Hit(new AnyDebugEventBreakpointConditionContext(this, bp, e)))
+					e.AddStopState(new AnyDebugEventBreakpointStopState(bp));
+			}
+
 			if (e.Type == DebugCallbackType.Breakpoint) {
 				var bpArgs = (BreakpointDebugCallbackEventArgs)e;
-				bool foundBp = false;
+				//TODO: Use a dictionary instead of iterating over all breakpoints
 				foreach (var bp in ilCodeBreakpointList.GetBreakpoints()) {
 					if (!bp.IsBreakpoint(bpArgs.Breakpoint))
 						continue;
 
-					foundBp = true;
 					if (bp.IsEnabled && bp.Condition.Hit(new ILCodeBreakpointConditionContext(this, bp)))
 						e.AddStopState(new ILCodeBreakpointStopState(bp));
 					break;
 				}
-				Debug.WriteLineIf(!foundBp, "BP got triggered but no BP was found");
 			}
 
 			if (e.Type == DebugCallbackType.Break && !debugOptions.IgnoreBreakInstructions)
@@ -881,6 +911,8 @@ namespace dndbg.Engine {
 
 			var debuggeeVersion = options.DebuggeeVersion ?? DebuggeeVersionDetector.GetVersion(options.Filename);
 			var dbg = new DnDebugger(CreateCorDebug(debuggeeVersion), options.DebugOptions, options.DebugMessageDispatcher);
+			if (options.BreakProcessType != BreakProcessType.None)
+				new BreakProcessHelper(dbg, options.BreakProcessType, options.Filename);
 			dbg.CreateProcess(options);
 			return dbg;
 		}
@@ -892,7 +924,7 @@ namespace dndbg.Engine {
 				var si = new STARTUPINFO();
 				si.cb = (uint)(4 * 1 + IntPtr.Size * 3 + 4 * 8 + 2 * 2 + IntPtr.Size * 4);
 				var pi = new PROCESS_INFORMATION();
-				corDebug.CreateProcess(options.Filename, options.CommandLine, IntPtr.Zero, IntPtr.Zero,
+				corDebug.CreateProcess(options.Filename ?? string.Empty, options.CommandLine ?? string.Empty, IntPtr.Zero, IntPtr.Zero,
 							options.InheritHandles ? 1 : 0, dwCreationFlags, IntPtr.Zero, options.CurrentDirectory,
 							ref si, ref pi, CorDebugCreateProcessFlags.DEBUG_NO_SPECIAL_OPTIONS, out comProcess);
 				// We don't need these
@@ -915,6 +947,9 @@ namespace dndbg.Engine {
 		}
 
 		DnProcess TryAdd(ICorDebugProcess comProcess) {
+			if (comProcess == null)
+				return null;
+
 			// This method is called twice, once from DebugProcess() and once from the CreateProcess
 			// handler. It's possible that it's been terminated before DebugProcess() calls this method.
 
@@ -930,11 +965,13 @@ namespace dndbg.Engine {
 		/// Gets all processes, sorted on the order they were created
 		/// </summary>
 		/// <returns></returns>
-		public DnProcess[] GetProcesses() {
-			DebugVerifyThread();
-			var list = processes.GetAll();
-			Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
-			return list;
+		public DnProcess[] Processes {
+			get {
+				DebugVerifyThread();
+				var list = processes.GetAll();
+				Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
+				return list;
+			}
 		}
 
 		/// <summary>
@@ -1053,6 +1090,28 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
+		/// Creates a debug event breakpoint that gets hit on all debug events
+		/// </summary>
+		/// <param name="cond">Condition</param>
+		/// <returns></returns>
+		public DnAnyDebugEventBreakpoint CreateAnyDebugEventBreakpoint(Predicate<BreakpointConditionContext> cond) {
+			DebugVerifyThread();
+			return CreateAnyDebugEventBreakpoint(new DelegateBreakpointCondition(cond));
+		}
+
+		/// <summary>
+		/// Creates a debug event breakpoint that gets hit on all debug events
+		/// </summary>
+		/// <param name="bpCond">Condition or null</param>
+		/// <returns></returns>
+		public DnAnyDebugEventBreakpoint CreateAnyDebugEventBreakpoint(IBreakpointCondition bpCond = null) {
+			DebugVerifyThread();
+			var bp = new DnAnyDebugEventBreakpoint(bpCond);
+			anyDebugEventBreakpointList.Add(bp);
+			return bp;
+		}
+
+		/// <summary>
 		/// Creates an IL instruction breakpoint
 		/// </summary>
 		/// <param name="module">Module</param>
@@ -1084,9 +1143,9 @@ namespace dndbg.Engine {
 
 		IEnumerable<DnModule> GetLoadedDnModules(SerializedDnModule module) {
 			foreach (var process in processes.GetAll()) {
-				foreach (var appDomain in process.GetAppDomains()) {
-					foreach (var assembly in appDomain.GetAssemblies()) {
-						foreach (var dnMod in assembly.GetModules()) {
+				foreach (var appDomain in process.AppDomains) {
+					foreach (var assembly in appDomain.Assemblies) {
+						foreach (var dnMod in assembly.Modules) {
 							if (dnMod.SerializedDnModule.Equals(module))
 								yield return dnMod;
 						}
@@ -1101,6 +1160,13 @@ namespace dndbg.Engine {
 			if (debp != null) {
 				debugEventBreakpointList.Remove(debp);
 				debp.OnRemoved();
+				return;
+			}
+
+			var adebp = bp as DnAnyDebugEventBreakpoint;
+			if (adebp != null) {
+				anyDebugEventBreakpointList.Remove(adebp);
+				adebp.OnRemoved();
 				return;
 			}
 

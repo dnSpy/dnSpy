@@ -141,7 +141,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal CorChain(ICorDebugChain chain)
+		public CorChain(ICorDebugChain chain)
 			: base(chain) {
 			int isManaged;
 			int hr = chain.IsManaged(out isManaged);

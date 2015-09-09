@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
@@ -30,7 +29,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			DataContextChanged += (s, e) => {
 				var data = DataContext as SaveModuleOptionsVM;
 				if (data != null)
-					data.PickNetExecutableFileName = new PickNetExecutableFileName();
+					data.PickSaveFilename = new PickSaveFilename();
 			};
 		}
 	}

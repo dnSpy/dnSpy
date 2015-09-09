@@ -18,10 +18,11 @@
 */
 
 using System.Xml.Linq;
+using dndbg.Engine;
 using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 
-namespace dnSpy.Debugger.CallStack {
+namespace dnSpy.Debugger {
 	sealed class DebuggerSettings : ViewModelBase {
 		public static readonly DebuggerSettings Instance = new DebuggerSettings();
 		int disableSaveCounter;
@@ -42,6 +43,30 @@ namespace dnSpy.Debugger.CallStack {
 		}
 		bool useHexadecimal;
 
+		public bool SyntaxHighlightCallStack {
+			get { return syntaxHighlightCallStack; }
+			set {
+				if (syntaxHighlightCallStack != value) {
+					syntaxHighlightCallStack = value;
+					SaveSettings();
+					OnPropertyChanged("SyntaxHighlightCallStack");
+				}
+			}
+		}
+		bool syntaxHighlightCallStack;
+
+		public BreakProcessType BreakProcessType {
+			get { return breakProcessType; }
+			set {
+				if (breakProcessType != value) {
+					breakProcessType = value;
+					SaveSettings();
+					OnPropertyChanged("BreakProcessType");
+				}
+			}
+		}
+		BreakProcessType breakProcessType;
+
 		const string SETTINGS_NAME = "Debugger";
 
 		void LoadSettings() {
@@ -51,6 +76,8 @@ namespace dnSpy.Debugger.CallStack {
 				var settings = ILSpySettings.Load();
 				var csx = settings[SETTINGS_NAME];
 				UseHexadecimal = (bool?)csx.Attribute("UseHexadecimal") ?? true;
+				SyntaxHighlightCallStack = (bool?)csx.Attribute("SyntaxHighlightCallStack") ?? true;
+				BreakProcessType = (BreakProcessType)((int?)csx.Attribute("BreakProcessType") ?? (int)BreakProcessType.ModuleCctorOrEntryPoint);
 			}
 			finally {
 				disableSaveCounter--;
@@ -73,6 +100,8 @@ namespace dnSpy.Debugger.CallStack {
 				root.Add(csx);
 
 			csx.SetAttributeValue("UseHexadecimal", UseHexadecimal);
+			csx.SetAttributeValue("SyntaxHighlightCallStack", SyntaxHighlightCallStack);
+			csx.SetAttributeValue("BreakProcessType", (int)BreakProcessType);
 		}
 	}
 }

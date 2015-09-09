@@ -17,15 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.AsmEditor.ViewHelpers {
-	interface IPickNetExecutableFileName {
-		/// <summary>
-		/// Lets the user pick a new filename. Returns null if the user didn't pick a new filename.
-		/// </summary>
-		/// <param name="currentFileName">Current filename or null</param>
-		/// <param name="defaultExtension">Default extension. It must not contain a period. Eg. valid
-		/// extensions are "exe" and "dll" but not ".exe"</param>
-		/// <returns></returns>
-		string GetFileName(string currentFileName, string defaultExtension);
+using dnSpy.MVVM;
+
+namespace dnSpy.Debugger.Dialogs {
+	/// <summary>
+	/// Interaction logic for DebugProcessDlg.xaml
+	/// </summary>
+	public partial class DebugProcessDlg : WindowBase {
+		public DebugProcessDlg() {
+			InitializeComponent();
+			DataContextChanged += (s, e) => {
+				var data = DataContext as DebugProcessVM;
+				if (data != null) {
+					data.PickDirectory = new PickDirectory();
+					data.PickFilename = new PickFilename();
+				}
+			};
+		}
 	}
 }

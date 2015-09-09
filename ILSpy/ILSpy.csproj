@@ -130,15 +130,19 @@
     <Compile Include="Debugger\DebuggedProcessRunningNotifier.cs" />
     <Compile Include="Debugger\DebuggerSettings.cs" />
     <Compile Include="Debugger\DebugUtils.cs" />
+    <Compile Include="Debugger\Dialogs\DebugProcessDlg.xaml.cs">
+      <DependentUpon>DebugProcessDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Dialogs\DebugProcessVM.cs" />
     <Compile Include="Debugger\OutputConverter.cs" />
     <Compile Include="MVVM\ContextMenuEntryBase.cs" />
     <Compile Include="MVVM\ContextMenuEntryCommandProxy.cs" />
     <Compile Include="AsmEditor\ContextMenuHandler.cs" />
-    <Compile Include="AsmEditor\Converters\BooleanToGridrowLengthConverter.cs" />
+    <Compile Include="MVVM\Converters\BooleanToGridrowLengthConverter.cs" />
     <Compile Include="AsmEditor\Converters\CilObjectConverter.cs" />
     <Compile Include="AsmEditor\Converters\InstructionOperandTextBoxStyleConverter.cs" />
-    <Compile Include="AsmEditor\Converters\NegateBooleanConverter.cs" />
-    <Compile Include="AsmEditor\Converters\RadioButtonConverter.cs" />
+    <Compile Include="MVVM\Converters\NegateBooleanConverter.cs" />
+    <Compile Include="MVVM\Converters\RadioButtonConverter.cs" />
     <Compile Include="Debugger\CallStack\CallStackControl.xaml.cs">
       <DependentUpon>CallStackControl.xaml</DependentUpon>
     </Compile>
@@ -468,6 +472,10 @@
     <Compile Include="AsmEditor\SaveModule\MmapUtils.cs" />
     <Compile Include="AsmEditor\SaveModule\ModuleSaver.cs" />
     <Compile Include="AsmEditor\Namespace\NamespaceCommands.cs" />
+    <Compile Include="MVVM\PathUtils.cs" />
+    <Compile Include="MVVM\PickDirectory.cs" />
+    <Compile Include="MVVM\PickFilename.cs" />
+    <Compile Include="MVVM\PickSaveFilename.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="AsmEditor\SaveModule\SaveHexOptionsDlg.xaml.cs">
       <DependentUpon>SaveHexOptionsDlg.xaml</DependentUpon>
@@ -527,14 +535,12 @@
     <Compile Include="AsmEditor\ViewHelpers\IOpenAssembly.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenPublicKeyFile.cs" />
-    <Compile Include="AsmEditor\ViewHelpers\IPickNetExecutableFileName.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ISelectItems.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IShowWarningMessage.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ITypeSigCreator.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenAssembly.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenPublicKeyFile.cs" />
-    <Compile Include="AsmEditor\ViewHelpers\PickNetExecutableFileName.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ShowWarningMessage.cs" />
     <Compile Include="AsmEditor\ViewHelpers\TypeSigCreator.cs" />
     <Compile Include="MVVM\ViewModelBase.cs" />
@@ -1152,6 +1158,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Debugger\CallStack\CallStackControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\Dialogs\DebugProcessDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -349,11 +349,11 @@ namespace ICSharpCode.Decompiler.Disassembler {
 		public static string Escape(string identifier)
 		{
 			if (!MustEscape(identifier)) {
-				return identifier;
+				return IdentifierEscaper.LimitIdentifierLength(identifier);
 			} else {
 				// The ECMA specification says that ' inside SQString should be ecaped using an octal escape sequence,
 				// but we follow Microsoft's ILDasm and use \'.
-				return "'" + NRefactory.CSharp.TextWriterTokenWriter.ConvertString(identifier).Replace("'", "\\'") + "'";
+				return "'" + IdentifierEscaper.LimitIdentifierLength(NRefactory.CSharp.TextWriterTokenWriter.ConvertString(identifier).Replace("'", "\\'")) + "'";
 			}
 		}
 		

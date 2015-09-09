@@ -83,7 +83,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal CorCode(ICorDebugCode code)
+		public CorCode(ICorDebugCode code)
 			: base(code) {
 			int i;
 			int hr = code.IsIL(out i);
@@ -139,8 +139,17 @@ namespace dndbg.Engine {
 			return RawObject.GetHashCode();
 		}
 
+		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
+			new TypePrinter(output, flags).Write(this);
+			return output;
+		}
+
+		public string ToString(TypePrinterFlags flags) {
+			return Write(new StringBuilderTypeOutput(), flags).ToString();
+		}
+
 		public override string ToString() {
-			return string.Format("[Code] IL={0} A={1:X8} S={2:X8} Ver={3} {4}", IsIL ? 1 : 0, Address, Size, VersionNumber, Function);
+			return ToString(TypePrinterFlags.Default);
 		}
 	}
 }

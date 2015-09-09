@@ -50,9 +50,15 @@ namespace dndbg.Engine {
 		}
 		readonly DnDebugEventBreakpoint bp;
 
-		public DebugEventBreakpointConditionContext(DnDebugger debugger, DnDebugEventBreakpoint bp)
+		public DebugCallbackEventArgs EventArgs {
+			get { return e; }
+		}
+		readonly DebugCallbackEventArgs e;
+
+		public DebugEventBreakpointConditionContext(DnDebugger debugger, DnDebugEventBreakpoint bp, DebugCallbackEventArgs e)
 			: base(debugger) {
 			this.bp = bp;
+			this.e = e;
 		}
 	}
 

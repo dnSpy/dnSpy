@@ -142,7 +142,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal CorProcess(ICorDebugProcess process)
+		public CorProcess(ICorDebugProcess process)
 			: base(process) {
 			int hr = process.GetID(out this.pid);
 			if (hr < 0)
@@ -206,6 +206,8 @@ namespace dndbg.Engine {
 			if (p7 != null) {
 				int hr = p7.SetWriteableMetadataUpdateMode(mode);
 				// 0x80131c4e: CORDBG_E_UNSUPPORTED
+				// Not supported in V2 debuggers (when shim is used). Supported in V3, which we're
+				// not using.
 			}
 		}
 
