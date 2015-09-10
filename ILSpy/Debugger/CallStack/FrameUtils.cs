@@ -21,8 +21,8 @@ using dndbg.Engine;
 
 namespace dnSpy.Debugger.CallStack {
 	static class FrameUtils {
-		public static bool GoTo(CorFrame frame) {
-			if (GoToIL(frame))
+		public static bool GoTo(CorFrame frame, bool newTab) {
+			if (GoToIL(frame, newTab))
 				return true;
 
 			//TODO: eg. native frame or internal frame
@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.CallStack {
 			return true;
 		}
 
-		public static bool GoToIL(CorFrame frame) {
+		public static bool GoToIL(CorFrame frame, bool newTab) {
 			if (!CanGoToIL(frame))
 				return false;
 
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.CallStack {
 			if (serAsm == null)
 				return false;
 
-			return DebugUtils.GoToIL(serAsm.Value, frame.Token, frame.ILFrameIP.Offset);
+			return DebugUtils.GoToIL(serAsm.Value, frame.Token, frame.ILFrameIP.Offset, newTab);
 		}
 
 		public static bool CanGoToDisasm(CorFrame frame) {

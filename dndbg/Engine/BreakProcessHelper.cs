@@ -76,13 +76,13 @@ namespace dndbg.Engine {
 				CreateStartupAnyDebugBreakEvent(ctx => {
 					if (ctx.EventArgs.Type == DebugCallbackType.LoadModule) {
 						var lm = (LoadModuleDebugCallbackEventArgs)ctx.EventArgs;
-						var mod = lm == null ? null : new CorModule(lm.Module);
+						var mod = lm.CorModule;
 						if (IsOurModule(mod))
 							mod.EnableClassLoadCallbacks(true);
 					}
 					else if (ctx.EventArgs.Type == DebugCallbackType.LoadClass) {
 						var lc = (LoadClassDebugCallbackEventArgs)ctx.EventArgs;
-						var cls = lc.Class == null ? null : new CorClass(lc.Class);
+						var cls = lc.CorClass;
 						var mod = cls == null ? null : cls.Module;
 						return IsOurModule(mod);
 					}
@@ -94,7 +94,7 @@ namespace dndbg.Engine {
 			case BreakProcessType.ExeLoadModule:
 				CreateStartupDebugBreakEvent(DebugEventBreakpointType.LoadModule, ctx => {
 					var e = (LoadModuleDebugCallbackEventArgs)ctx.EventArgs;
-					var mod = e.Module == null ? null : new CorModule(e.Module);
+					var mod = e.CorModule;
 					if (mod == null)
 						return false;
 					return IsOurModule(mod);
@@ -156,7 +156,7 @@ namespace dndbg.Engine {
 		bool OnLoadModule(BreakpointConditionContext context) {
 			var ctx = (DebugEventBreakpointConditionContext)context;
 			var lmArgs = (LoadModuleDebugCallbackEventArgs)ctx.EventArgs;
-			var mod = lmArgs.Module == null ? null : new CorModule(lmArgs.Module);
+			var mod = lmArgs.CorModule;
 			if (!IsOurModule(mod))
 				return false;
 			debugger.RemoveBreakpoint(breakpoint);
@@ -198,7 +198,7 @@ namespace dndbg.Engine {
 		bool OnLoadOtherModule(BreakpointConditionContext context) {
 			var ctx = (DebugEventBreakpointConditionContext)context;
 			var lmArgs = (LoadModuleDebugCallbackEventArgs)ctx.EventArgs;
-			var mod = lmArgs.Module == null ? null : new CorModule(lmArgs.Module);
+			var mod = lmArgs.CorModule;
 			if (!IsModule(mod, otherModuleFullName) || mod.Assembly != thisAssembly)
 				return false;
 			debugger.RemoveBreakpoint(breakpoint);

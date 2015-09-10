@@ -43,5 +43,6 @@ namespace dnSpy.Debugger {
 		public static readonly RoutedCommand SetNextStatement = new RoutedCommand("SetNextStatement", typeof(DebugRoutedCommands));
 
 		public static readonly RoutedCommand ShowCallStack = new RoutedCommand("ShowCallStack", typeof(DebugRoutedCommands));
+		public static readonly RoutedCommand ShowBreakpoints = new RoutedCommand("ShowBreakpoints", typeof(DebugRoutedCommands));
 	}
 }

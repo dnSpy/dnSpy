@@ -611,7 +611,7 @@ namespace dndbg.Engine {
 				InitializeCurrentDebuggerState(e, null, scArgs.AppDomain, scArgs.Thread);
 				StepInfo stepInfo;
 				bool calledStepInfoOnCompleted = false;
-				var stepperKey = scArgs.Stepper == null ? null : new CorStepper(scArgs.Stepper);
+				var stepperKey = scArgs.CorStepper;
 				if (stepperKey != null && stepInfos.TryGetValue(stepperKey, out stepInfo)) {
 					stepInfos.Remove(stepperKey);
 					if (stepInfo.OnCompleted != null) {

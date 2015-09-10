@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,8 +29,8 @@ using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.CallStack {
 	[Export(typeof(IPaneCreator))]
-	sealed class CallStackPaneCreator : IPaneCreator {
-		CallStackPaneCreator() {
+	sealed class CallStackControlCreator : IPaneCreator {
+		CallStackControlCreator() {
 		}
 
 		public IPane Create(string name) {
@@ -48,9 +49,7 @@ namespace dnSpy.Debugger.CallStack {
 				var conv = new OutputConverter(gen.TextOutput);
 				foreach (var t in cachedOutput.data)
 					conv.Write(t.Item1, t.Item2);
-				var tb = gen.CreateTextBlock();
-				tb.TextTrimming = TextTrimming.CharacterEllipsis;
-				return tb;
+				return gen.CreateTextBlock(true);
 			}
 		}
 
@@ -63,8 +62,17 @@ namespace dnSpy.Debugger.CallStack {
 					callStackControl.DataContext = vm;
 					InitializeCommandShortcuts(callStackControl.listView);
 					DebugManager.Instance.ProcessRunning += DebugManager_ProcessRunning;
+					DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
 				}
 				return callStackControl;
+			}
+		}
+
+		static void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if (e.PropertyName == "SyntaxHighlightCallStack") {
+				var vm = CallStackControlInstance.DataContext as CallStackVM;
+				if (vm != null)
+					vm.RefreshFrameNames();
 			}
 		}
 
@@ -79,6 +87,9 @@ namespace dnSpy.Debugger.CallStack {
 		static void InitializeCommandShortcuts(ListView listView) {
 			listView.AddCommandBinding(ApplicationCommands.Copy, new CallStackCtxMenuCommandProxy(new CopyCallStackCtxMenuCommand()));
 			listView.AddCommandBinding(new CallStackCtxMenuCommandProxy(new RunToCursorCallStackCtxMenuCommand()), ModifierKeys.Control, Key.F10);
+			listView.InputBindings.Add(new KeyBinding(new CallStackCtxMenuCommandProxy(new GoToSourceCallStackCtxMenuCommand()), Key.Enter, ModifierKeys.None));
+			listView.InputBindings.Add(new KeyBinding(new CallStackCtxMenuCommandProxy(new GoToSourceNewTabCallStackCtxMenuCommand()), Key.Enter, ModifierKeys.Control));
+			listView.InputBindings.Add(new KeyBinding(new CallStackCtxMenuCommandProxy(new GoToSourceNewTabCallStackCtxMenuCommand()), Key.Enter, ModifierKeys.Shift));
 		}
 	}
 
@@ -97,7 +108,7 @@ namespace dnSpy.Debugger.CallStack {
 		void Themes_ThemeChanged(object sender, EventArgs e) {
 			var vm = DataContext as CallStackVM;
 			if (vm != null)
-				vm.RefreshIconFields();
+				vm.RefreshThemeFields();
 		}
 
 		string IPane.PaneName {
@@ -121,7 +132,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		bool CanShow {
-			get { return DebugManager.Instance.IsDebugging && !MainWindow.Instance.IsBottomPaneContent(this); }
+			get { return DebugManager.Instance.IsDebugging; }
 		}
 
 		void Show() {
@@ -133,7 +144,8 @@ namespace dnSpy.Debugger.CallStack {
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
-			SwitchToFrameCallStackCtxMenuCommand.Execute(listView.SelectedItem as CallStackFrameVM);
+			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
+			SwitchToFrameCallStackCtxMenuCommand.Execute(listView.SelectedItem as CallStackFrameVM, newTab);
 		}
 	}
 }

@@ -26,7 +26,11 @@ using ICSharpCode.NRefactory;
 
 namespace dnSpy.Debugger {
 	static class DebugUtils {
-		public static bool GoToIL(SerializedDnModuleWithAssembly serAsm, uint token, uint ilOffset) {
+		public static bool GoToIL(string asmName, MethodKey key, uint ilOffset, bool newTab) {
+			return GoToIL(new SerializedDnModuleWithAssembly(asmName, key.Module), key.Token, ilOffset, newTab);
+		}
+
+		public static bool GoToIL(SerializedDnModuleWithAssembly serAsm, uint token, uint ilOffset, bool newTab) {
 			var loadedAsm = MainWindow.Instance.LoadAssembly(serAsm);
 			if (loadedAsm == null)
 				return false;
@@ -39,6 +43,8 @@ namespace dnSpy.Debugger {
 			if (md == null)
 				return false;
 
+			if (newTab)
+				MainWindow.Instance.OpenNewEmptyTab();
 			return JumpToStatement(md, ilOffset);
 		}
 

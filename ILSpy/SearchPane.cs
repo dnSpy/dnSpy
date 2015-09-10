@@ -601,7 +601,7 @@ namespace ICSharpCode.ILSpy {
 		{
 			var ns = o as NamespaceSearchResult;
 			if (ns != null) {
-				NamespaceTreeNode.Write(output, ns.Namespace);
+				output.WriteNamespace(ns.Namespace);
 				return;
 			}
 
@@ -638,25 +638,25 @@ namespace ICSharpCode.ILSpy {
 
 			var asm = o as AssemblyDef;
 			if (asm != null) {
-				Write(output, asm);
+				output.Write(asm);
 				return;
 			}
 
 			var mod = o as ModuleDef;
 			if (mod != null) {
-				output.Write(mod.FullName, TextTokenType.Module);
+				output.WriteModule(mod.FullName);
 				return;
 			}
 
 			var asmRef = o as AssemblyRef;
 			if (asmRef != null) {
-				Write(output, asmRef);
+				output.Write(asmRef);
 				return;
 			}
 
 			var modRef = o as ModuleRef;
 			if (modRef != null) {
-				output.Write(modRef.FullName, TextTokenType.Module);
+				output.WriteModule(modRef.FullName);
 				return;
 			}
 
@@ -669,13 +669,13 @@ namespace ICSharpCode.ILSpy {
 
 			var resNode = o as ResourceTreeNode;
 			if (resNode != null) {
-				ResourceTreeNode.WriteFileName(output, resNode.Name);
+				output.WriteFileName(resNode.Name);
 				return;
 			}
 
 			var resElNode = o as ResourceElementTreeNode;
 			if (resElNode != null) {
-				ResourceTreeNode.WriteFileName(output, resElNode.Name);
+				output.WriteFileName(resElNode.Name);
 				return;
 			}
 
@@ -686,62 +686,6 @@ namespace ICSharpCode.ILSpy {
 			}
 
 			Debug.Assert(s == null);
-		}
-
-		static void Write(ITextOutput output, IAssembly asm)
-		{
-			var asmDef = asm as AssemblyDef;
-			bool isExe = asmDef != null &&
-				asmDef.ManifestModule != null &&
-				(asmDef.ManifestModule.Characteristics & dnlib.PE.Characteristics.Dll) == 0;
-			output.Write(asm.Name, isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
-
-			output.Write(',', TextTokenType.Operator);
-			output.WriteSpace();
-
-			output.Write("Version", TextTokenType.InstanceProperty);
-			output.Write('=', TextTokenType.Operator);
-			output.Write(asm.Version.Major.ToString(), TextTokenType.Number);
-			output.Write('.', TextTokenType.Operator);
-			output.Write(asm.Version.Minor.ToString(), TextTokenType.Number);
-			output.Write('.', TextTokenType.Operator);
-			output.Write(asm.Version.Build.ToString(), TextTokenType.Number);
-			output.Write('.', TextTokenType.Operator);
-			output.Write(asm.Version.Revision.ToString(), TextTokenType.Number);
-
-			output.Write(',', TextTokenType.Operator);
-			output.WriteSpace();
-
-			output.Write("Culture", TextTokenType.InstanceProperty);
-			output.Write('=', TextTokenType.Operator);
-			output.Write(UTF8String.IsNullOrEmpty(asm.Culture) ? "neutral" : asm.Culture.String, TextTokenType.EnumField);
-
-			output.Write(',', TextTokenType.Operator);
-			output.WriteSpace();
-
-			var publicKey = PublicKeyBase.ToPublicKeyToken(asm.PublicKeyOrToken);
-			output.Write(publicKey == null || publicKey is PublicKeyToken ? "PublicKeyToken" : "PublicKey", TextTokenType.InstanceProperty);
-			output.Write('=', TextTokenType.Operator);
-			if (PublicKeyBase.IsNullOrEmpty2(publicKey))
-				output.Write("null", TextTokenType.Keyword);
-			else
-				output.Write(publicKey.ToString(), TextTokenType.Number);
-
-			if ((asm.Attributes & AssemblyAttributes.Retargetable) != 0) {
-				output.Write(',', TextTokenType.Operator);
-				output.WriteSpace();
-				output.Write("Retargetable", TextTokenType.InstanceProperty);
-				output.Write('=', TextTokenType.Operator);
-				output.Write("Yes", TextTokenType.EnumField);
-			}
-
-			if ((asm.Attributes & AssemblyAttributes.ContentType_Mask) == AssemblyAttributes.ContentType_WindowsRuntime) {
-				output.Write(',', TextTokenType.Operator);
-				output.WriteSpace();
-				output.Write("ContentType", TextTokenType.InstanceProperty);
-				output.Write('=', TextTokenType.Operator);
-				output.Write("WindowsRuntime", TextTokenType.EnumField);
-			}
 		}
 
 		internal void OnThemeChanged()

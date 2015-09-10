@@ -52,7 +52,8 @@ namespace dnSpy.Debugger {
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DisableBreakpoint, Breakpoints.BreakpointManager.Instance.DisableBreakpointCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowNextStatement, DebugManager.Instance.ShowNextStatementCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.SetNextStatement, DebugManager.Instance.SetNextStatementCommand);
-			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowCallStack, CallStack.CallStackPaneCreator.CallStackControlInstance.ShowCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowCallStack, CallStack.CallStackControlCreator.CallStackControlInstance.ShowCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowBreakpoints, Breakpoints.BreakpointsControlCreator.BreakpointsControlInstance.ShowCommand);
 		}
 
 		void InstallKeyboardShortcutCommands() {
@@ -72,7 +73,9 @@ namespace dnSpy.Debugger {
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowCallStack, ModifierKeys.Control | ModifierKeys.Alt, Key.C);
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowCallStack, ModifierKeys.Alt, Key.D7);
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowCallStack, ModifierKeys.Alt, Key.NumPad7);
-		}
+			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowBreakpoints, ModifierKeys.Control | ModifierKeys.Alt, Key.B);
+			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowBreakpoints, ModifierKeys.Alt, Key.F9);
+        }
 
 		void AddCommand(UIElement elem, ICommand routedCommand, ModifierKeys modifiers, Key key) {
 			elem.InputBindings.Add(new KeyBinding(routedCommand, key, modifiers));

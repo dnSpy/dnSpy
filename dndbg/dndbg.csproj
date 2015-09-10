@@ -93,6 +93,7 @@
     <Compile Include="Engine\SerializedDnModuleWithAssembly.cs" />
     <Compile Include="Engine\StepRange.cs" />
     <Compile Include="Engine\TypePrinter.cs" />
+    <Compile Include="Engine\Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

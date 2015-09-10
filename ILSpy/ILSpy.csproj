@@ -122,6 +122,13 @@
       <DependentUpon>AssemblyOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
+    <Compile Include="Debugger\Breakpoints\BreakpointColumnConverter.cs" />
+    <Compile Include="Debugger\Breakpoints\BreakpointsControl.xaml.cs">
+      <DependentUpon>BreakpointsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Breakpoints\BreakpointsVM.cs" />
+    <Compile Include="Debugger\Breakpoints\BreakpointVM.cs" />
+    <Compile Include="Debugger\Breakpoints\Commands.cs" />
     <Compile Include="Debugger\CallStack\CachedOutput.cs" />
     <Compile Include="Debugger\CallStack\CallStackFrameImageConverter.cs" />
     <Compile Include="Debugger\CallStack\CallStackSettings.cs" />
@@ -129,6 +136,7 @@
     <Compile Include="Debugger\CallStack\ICallStackObjectCreator.cs" />
     <Compile Include="Debugger\DebuggedProcessRunningNotifier.cs" />
     <Compile Include="Debugger\DebuggerSettings.cs" />
+    <Compile Include="Debugger\DebuggerSettingsVM.cs" />
     <Compile Include="Debugger\DebugUtils.cs" />
     <Compile Include="Debugger\Dialogs\DebugProcessDlg.xaml.cs">
       <DependentUpon>DebugProcessDlg.xaml</DependentUpon>
@@ -641,6 +649,7 @@
     <Compile Include="Tabs\TabGroupsManager.cs" />
     <Compile Include="Tabs\TabManager.cs" />
     <Compile Include="Tabs\TabState.cs" />
+    <Compile Include="TextOutputUtils.cs" />
     <Compile Include="TextView\SimpleHighlighter.cs" />
     <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />
     <Compile Include="Search\ChainTreeViewNodeFilter.cs" />
@@ -1154,6 +1163,10 @@
       <DependentUpon>SearchBox.cs</DependentUpon>
     </Page>
     <Page Include="CreateListDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\Breakpoints\BreakpointsControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

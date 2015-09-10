@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Windows;
 using System.Windows.Controls;
 using dnSpy.TextView;
 using ICSharpCode.Decompiler;
@@ -77,14 +78,18 @@ namespace dnSpy.TreeNodes {
 		/// <summary>
 		/// Creates a <see cref="TextBlock"/> containing the resulting text
 		/// </summary>
+		/// <param name="useEllipsis">true to add <see cref="TextTrimming.CharacterEllipsis"/> to the <see cref="TextBlock"/></param>
 		/// <returns></returns>
-		public TextBlock CreateTextBlock() {
+		public TextBlock CreateTextBlock(bool useEllipsis = false) {
 			if (simpleHighlighter != null)
 				return simpleHighlighter.Create();
 
-			return new TextBlock {
+			var tb = new TextBlock {
 				Text = output.ToString(),
 			};
+			if (useEllipsis)
+				tb.TextTrimming = TextTrimming.CharacterEllipsis;
+			return tb;
 		}
 	}
 }

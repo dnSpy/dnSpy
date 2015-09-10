@@ -23,10 +23,6 @@ using dndbg.Engine.COM.MetaData;
 
 namespace dndbg.Engine {
 	struct CorValueReader {
-		static int DebuggeeIntPtrSize {
-			get { return IntPtr.Size; }
-		}
-
 		public struct Result {
 			public readonly object Value;
 			public readonly bool IsValueValid;
@@ -52,7 +48,7 @@ namespace dndbg.Engine {
 				if (value.IsNull)
 					return new Result(null);
 				if (value.Type == CorElementType.Ptr) {
-					if (DebuggeeIntPtrSize == 4)
+					if (Utils.DebuggeeIntPtrSize == 4)
 						return new Result((uint)value.ReferenceAddress);
 					return new Result(value.ReferenceAddress);
 				}
@@ -222,23 +218,23 @@ namespace dndbg.Engine {
 				break;//TODO:
 
 			case CorElementType.I:
-				if (value.Size != (uint)DebuggeeIntPtrSize)
+				if (value.Size != (uint)Utils.DebuggeeIntPtrSize)
 					break;
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
-				if (DebuggeeIntPtrSize == 4)
+				if (Utils.DebuggeeIntPtrSize == 4)
 					return new Result(BitConverter.ToInt32(data, 0));
 				return new Result(BitConverter.ToInt64(data, 0));
 
 			case CorElementType.U:
 			case CorElementType.Ptr:
-				if (value.Size != (uint)DebuggeeIntPtrSize)
+				if (value.Size != (uint)Utils.DebuggeeIntPtrSize)
 					break;
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
-				if (DebuggeeIntPtrSize == 4)
+				if (Utils.DebuggeeIntPtrSize == 4)
 					return new Result(BitConverter.ToUInt32(data, 0));
 				return new Result(BitConverter.ToUInt64(data, 0));
 

@@ -275,30 +275,30 @@ namespace dnSpy.Debugger {
 
 				case DebugCallbackType.CreateProcess:
 					var cpArgs = (CreateProcessDebugCallbackEventArgs)e;
-					var p = cpArgs.Process == null ? null : new CorProcess(cpArgs.Process);
+					var p = cpArgs.CorProcess;
 					if (p == null)
 						break;
 					return string.Format("CreateProcess PID={0} CLR v{1}", p.ProcessId, p.CLRVersion);
 
 				case DebugCallbackType.CreateThread:
 					var ctArgs = (CreateThreadDebugCallbackEventArgs)e;
-					var t = ctArgs.Thread == null ? null : new CorThread(ctArgs.Thread);
+					var t = ctArgs.CorThread;
 					if (t == null)
 						break;
 					return string.Format("CreateThread TID={0} VTID={1}", t.ThreadId, t.VolatileThreadId);
 
 				case DebugCallbackType.LoadModule:
 					var lmArgs = (LoadModuleDebugCallbackEventArgs)e;
-					mod = lmArgs.Module == null ? null : new CorModule(lmArgs.Module);
+					mod = lmArgs.CorModule;
 					if (mod == null)
 						break;
 					if (mod.IsDynamic || mod.IsInMemory)
-						return string.Format("LoadModule DYN={0} MEM={1} {2}", mod.IsDynamic ? 1 : 0, mod.IsInMemory ? 1 : 0, mod.Name);
-					return string.Format("LoadModule {0}", mod.Name);
+						return string.Format("LoadModule DYN={0} MEM={1} {2:X8} {3:X8} {4}", mod.IsDynamic ? 1 : 0, mod.IsInMemory ? 1 : 0, mod.Address, mod.Size, mod.Name);
+					return string.Format("LoadModule A={0:X8} S={1:X8} {2}", mod.Address, mod.Size, mod.Name);
 
 				case DebugCallbackType.LoadClass:
 					var lcArgs = (LoadClassDebugCallbackEventArgs)e;
-					var cls = lcArgs.Class == null ? null : new CorClass(lcArgs.Class);
+					var cls = lcArgs.CorClass;
 					mod = cls == null ? null : cls.Module;
 					if (mod == null)
 						break;
@@ -310,14 +310,14 @@ namespace dnSpy.Debugger {
 
 				case DebugCallbackType.CreateAppDomain:
 					var cadArgs = (CreateAppDomainDebugCallbackEventArgs)e;
-					var ad = cadArgs.AppDomain == null ? null : new CorAppDomain(cadArgs.AppDomain);
+					var ad = cadArgs.CorAppDomain;
 					if (ad == null)
 						break;
 					return string.Format("CreateAppDomain {0} {1}", ad.Id, ad.Name);
 
 				case DebugCallbackType.LoadAssembly:
 					var laArgs = (LoadAssemblyDebugCallbackEventArgs)e;
-					var asm = laArgs.Assembly == null ? null : new CorAssembly(laArgs.Assembly);
+					var asm = laArgs.CorAssembly;
 					if (asm == null)
 						break;
 					return string.Format("LoadAssembly {0}", asm.Name);
@@ -842,7 +842,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool CanShowNextStatement {
-			get { return ProcessState == DebuggerProcessState.Stopped; }
+			get { return ProcessState == DebuggerProcessState.Stopped && GetCurrentILFrame() != null; }
 		}
 
 		public void ShowNextStatement() {

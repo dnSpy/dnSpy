@@ -10,7 +10,7 @@ Binaries
 ========
 Latest release: https://github.com/0xd4d/dnSpy/releases
 
-Latest build (unstable): https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts
+Latest build (possibly unstable): https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts
 
 Features
 ========

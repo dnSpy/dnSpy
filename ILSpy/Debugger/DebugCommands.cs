@@ -315,9 +315,16 @@ namespace dnSpy.Debugger {
 		}
 	}
 
+	[ExportMainMenuCommand(MenuIcon = "BreakpointsWindow", Menu = "_Debug", MenuInputGestureText = "Ctrl+Alt+B", MenuHeader = "Show _Breakpoints", MenuCategory = "Breakpoints", MenuOrder = 5320)]
+	class BreakpointsWindowCommand : DebugMainMenuCommand {
+		public BreakpointsWindowCommand()
+			: base(DebugRoutedCommands.ShowBreakpoints, null) {
+		}
+	}
+
 	[ExportMainMenuCommand(MenuIcon = "CallStackWindow", Menu = "_Debug", MenuInputGestureText = "Ctrl+Alt+C", MenuHeader = "_Show Call Stack", MenuCategory = "View", MenuOrder = 5400)]
-	class CallstackPanelcommand : DebugMainMenuCommand {
-		public CallstackPanelcommand()
+	class CallStackWindowCommand : DebugMainMenuCommand {
+		public CallStackWindowCommand()
 			: base(DebugRoutedCommands.ShowCallStack, true) {
 		}
 	}

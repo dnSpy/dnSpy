@@ -41,21 +41,21 @@ namespace dnSpy.Commands {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "_Issues", MenuOrder = 99910)]
+	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "Latest _Build", MenuOrder = 99910)]
+	sealed class OpenLatestBuildUrlCommand : SimpleCommand {
+		public override void Execute(object parameter) {
+			AboutHelpers.OpenWebPage("https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts");
+		}
+	}
+
+	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "_Issues", MenuOrder = 99920)]
 	sealed class OpenIssuesUrlCommand : SimpleCommand {
 		public override void Execute(object parameter) {
 			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"issues");
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "_Wiki", MenuOrder = 99920)]
-	sealed class OpenWikiUrlCommand : SimpleCommand {
-		public override void Execute(object parameter) {
-			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"wiki");
-		}
-	}
-
-	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "_Source Code", MenuOrder = 99930)]
+	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "_Source Code", MenuOrder = 99940)]
 	sealed class OpenSourceCodeUrlCommand : SimpleCommand {
 		public override void Execute(object parameter) {
 			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL);

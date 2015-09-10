@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		protected override ContextMenuEntryContext CreateContext() {
-			return ContextMenuEntryContext.Create(CallStackPaneCreator.CallStackControlInstance.listView);
+			return ContextMenuEntryContext.Create(CallStackControlCreator.CallStackControlInstance.listView);
 		}
 	}
 
@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.CallStack {
 		protected override CallStackCtxMenuContext CreateContext(ContextMenuEntryContext context) {
 			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Stopped)
 				return null;
-			var ui = CallStackPaneCreator.CallStackControlInstance;
+			var ui = CallStackControlCreator.CallStackControlInstance;
 			if (context.Element != ui.listView)
 				return null;
 			var vm = ui.DataContext as CallStackVM;
@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.CallStack {
 	[ExportContextMenuEntry(Header = "Select _All", Order = 110, Category = "CopyCS", Icon = "Select", InputGestureText = "Ctrl+A")]
 	sealed class SelectAllCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		protected override void Execute(CallStackCtxMenuContext context) {
-			CallStackPaneCreator.CallStackControlInstance.listView.SelectAll();
+			CallStackControlCreator.CallStackControlInstance.listView.SelectAll();
 		}
 	}
 
@@ -100,13 +100,13 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		protected override void Execute(CallStackCtxMenuContext context) {
-			Execute(GetFrame(context));
+			Execute(GetFrame(context), false);
 		}
 
-		internal static void Execute(CallStackFrameVM vm) {
+		internal static void Execute(CallStackFrameVM vm, bool newTab) {
 			if (vm != null) {
 				StackFrameManager.Instance.SelectedFrame = vm.Index;
-				FrameUtils.GoTo(vm.Frame);
+				FrameUtils.GoTo(vm.Frame, newTab);
 			}
 		}
 
@@ -115,12 +115,12 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Go To Source Code", Order = 220, Category = "Frame", Icon = "GoToSourceCode")]
+	[ExportContextMenuEntry(Header = "_Go To Source Code", Order = 220, Category = "Frame", Icon = "GoToSourceCode", InputGestureText = "Enter")]
 	sealed class GoToSourceCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		protected override void Execute(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			if (vm != null)
-				FrameUtils.GoToIL(vm.Frame);
+				FrameUtils.GoToIL(vm.Frame, false);
 		}
 
 		protected override bool IsEnabled(CallStackCtxMenuContext context) {
@@ -129,12 +129,30 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Go To _Disassembly", Order = 230, Category = "Frame", Icon = "DisassemblyWindow")]
+	[ExportContextMenuEntry(Header = "Go To Source Code (New _Tab)", Order = 230, Category = "Frame", Icon = "GoToSourceCode", InputGestureText = "Ctrl+Enter")]
+	sealed class GoToSourceNewTabCallStackCtxMenuCommand : CallStackCtxMenuCommand {
+		protected override void Execute(CallStackCtxMenuContext context) {
+			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
+			if (vm != null)
+				FrameUtils.GoToIL(vm.Frame, true);
+		}
+
+		protected override bool IsEnabled(CallStackCtxMenuContext context) {
+			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
+			return vm != null && FrameUtils.CanGoToIL(vm.Frame);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Go To _Disassembly", Order = 240, Category = "Frame", Icon = "DisassemblyWindow")]
 	sealed class GoToDisassemblyCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		protected override void Execute(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			if (vm != null)
 				FrameUtils.GoToDisasm(vm.Frame);
+		}
+
+		protected override bool IsVisible(CallStackCtxMenuContext context) {
+			return false;//TODO:
 		}
 
 		protected override bool IsEnabled(CallStackCtxMenuContext context) {
@@ -143,7 +161,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Ru_n To Cursor", Order = 240, Category = "Frame", Icon = "Cursor", InputGestureText = "Ctrl+F10")]
+	[ExportContextMenuEntry(Header = "Ru_n To Cursor", Order = 250, Category = "Frame", Icon = "Cursor", InputGestureText = "Ctrl+F10")]
 	sealed class RunToCursorCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		protected override void Execute(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);

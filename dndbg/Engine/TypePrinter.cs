@@ -1255,16 +1255,12 @@ namespace dndbg.Engine {
 				OutputWrite(string.Format("0x{0:X8}", offset), TypeColor.Number);
 		}
 
-		static bool IsDebuggee32Bit {
-			get { return IntPtr.Size == 4; }// Debugger and debuggee must both be 32-bit or both 64-bit
-		}
-
 		static object ConvertAddressToDebuggeeIntPtr(ulong addr) {
-			return IsDebuggee32Bit ? (object)(uint)addr : addr;
+			return Utils.IsDebuggee32Bit ? (object)(uint)addr : addr;
 		}
 
 		void WriteNativeAddress(ulong address) {
-			if (IsDebuggee32Bit)
+			if (Utils.IsDebuggee32Bit)
 				OutputWrite(string.Format("0x{0:X8}", address), TypeColor.Number);
 			else
 				OutputWrite(string.Format("0x{0:X16}", address), TypeColor.Number);

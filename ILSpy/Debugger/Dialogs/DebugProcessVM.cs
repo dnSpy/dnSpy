@@ -43,7 +43,7 @@ namespace dnSpy.Debugger.Dialogs {
 			get { return new RelayCommand(a => PickNewCurrentDirectory()); }
 		}
 
-		static readonly EnumVM[] breakProcessTypeList = new EnumVM[(int)BreakProcessType.Last] {
+		public static readonly EnumVM[] breakProcessTypeList = new EnumVM[(int)BreakProcessType.Last] {
 			new EnumVM(BreakProcessType.None, "Don't Break"),
 			new EnumVM(BreakProcessType.CreateProcess, "CreateProcess Event"),
 			new EnumVM(BreakProcessType.CreateAppDomain, "First CreateAppDomain Event"),

@@ -19,9 +19,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:mvvm="clr-namespace:dnSpy.MVVM"
-                    xmlns:dbg="clr-namespace:dnSpy.Debugger"
-                    xmlns:dbgcs="clr-namespace:dnSpy.Debugger.CallStack">
+                    xmlns:dbg="clr-namespace:dnSpy.Debugger">
 
     <Style x:Key="DbgTableGridViewScrollViewerStyle"
            BasedOn="{StaticResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
@@ -29,5 +27,32 @@
         <Setter Property="Focusable" Value="True"/>
         <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
     </Style>
+
+    <DataTemplate DataType="{x:Type dbg:DebuggerSettingsVM}">
+        <Grid Margin="10">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 5 0" Content="_Break At" Target="{Binding ElementName=breakComboBox}" />
+            <ComboBox Grid.Row="0" Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" Name="breakComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BreakProcessTypeVM.Items}" SelectedIndex="{Binding BreakProcessTypeVM.SelectedIndex}" VerticalContentAlignment="Center" />
+
+            <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0 5 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Content="Syntax highlight:" />
+                <CheckBox Grid.Column="1" Margin="0 0 0 0" IsChecked="{Binding Settings.SyntaxHighlightCallStack}" Content="Call Stack" />
+                <CheckBox Grid.Column="2" Margin="5 0 0 0" IsChecked="{Binding Settings.SyntaxHighlightBreakpoints}" Content="Breakpoints" />
+            </Grid>
+
+        </Grid>
+    </DataTemplate>
 
 </ResourceDictionary>

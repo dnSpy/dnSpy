@@ -210,7 +210,7 @@ namespace dnSpy.Debugger.CallStack {
 				vm.IsCurrentFrame = value;
 		}
 
-		internal void RefreshIconFields() {
+		internal void RefreshThemeFields() {
 			foreach (var vm in framesList) {
 				var vm2 = vm as CallStackFrameVM;
 				if (vm2 != null)
@@ -218,7 +218,7 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 
-		void RefreshFrameNames() {
+		internal void RefreshFrameNames() {
 			foreach (var vm in framesList) {
 				var vm2 = vm as CallStackFrameVM;
 				if (vm2 != null)

@@ -55,6 +55,18 @@ namespace dnSpy.Debugger {
 		}
 		bool syntaxHighlightCallStack;
 
+		public bool SyntaxHighlightBreakpoints {
+			get { return syntaxHighlightBreakpoints; }
+			set {
+				if (syntaxHighlightBreakpoints != value) {
+					syntaxHighlightBreakpoints = value;
+					SaveSettings();
+					OnPropertyChanged("SyntaxHighlightBreakpoints");
+				}
+			}
+		}
+		bool syntaxHighlightBreakpoints;
+
 		public BreakProcessType BreakProcessType {
 			get { return breakProcessType; }
 			set {
@@ -67,28 +79,36 @@ namespace dnSpy.Debugger {
 		}
 		BreakProcessType breakProcessType;
 
-		const string SETTINGS_NAME = "Debugger";
+		const string SETTINGS_NAME = "DebuggerSettings";
 
 		void LoadSettings() {
 			try {
 				disableSaveCounter++;
 
-				var settings = ILSpySettings.Load();
-				var csx = settings[SETTINGS_NAME];
-				UseHexadecimal = (bool?)csx.Attribute("UseHexadecimal") ?? true;
-				SyntaxHighlightCallStack = (bool?)csx.Attribute("SyntaxHighlightCallStack") ?? true;
-				BreakProcessType = (BreakProcessType)((int?)csx.Attribute("BreakProcessType") ?? (int)BreakProcessType.ModuleCctorOrEntryPoint);
+				Load(ILSpySettings.Load());
 			}
 			finally {
 				disableSaveCounter--;
 			}
 		}
 
-		void SaveSettings() {
-			ILSpySettings.Update(root => SaveSettings(root));
+		void Load(ILSpySettings settings) {
+			var csx = settings[SETTINGS_NAME];
+			UseHexadecimal = (bool?)csx.Attribute("UseHexadecimal") ?? true;
+			SyntaxHighlightCallStack = (bool?)csx.Attribute("SyntaxHighlightCallStack") ?? true;
+			SyntaxHighlightBreakpoints = (bool?)csx.Attribute("SyntaxHighlightBreakpoints") ?? true;
+			BreakProcessType = (BreakProcessType)((int?)csx.Attribute("BreakProcessType") ?? (int)BreakProcessType.ModuleCctorOrEntryPoint);
 		}
 
-		void SaveSettings(XElement root) {
+		void SaveSettings() {
+			if (this != Instance)
+				return;
+			ILSpySettings.Update(root => Save(root));
+		}
+
+		void Save(XElement root) {
+			if (this != Instance)
+				return;
 			if (disableSaveCounter != 0)
 				return;
 
@@ -101,7 +121,31 @@ namespace dnSpy.Debugger {
 
 			csx.SetAttributeValue("UseHexadecimal", UseHexadecimal);
 			csx.SetAttributeValue("SyntaxHighlightCallStack", SyntaxHighlightCallStack);
+			csx.SetAttributeValue("SyntaxHighlightBreakpoints", SyntaxHighlightBreakpoints);
 			csx.SetAttributeValue("BreakProcessType", (int)BreakProcessType);
+		}
+
+		public DebuggerSettings CopyTo(DebuggerSettings other) {
+			other.UseHexadecimal = this.UseHexadecimal;
+			other.SyntaxHighlightCallStack = this.SyntaxHighlightCallStack;
+			other.SyntaxHighlightBreakpoints = this.SyntaxHighlightBreakpoints;
+			other.BreakProcessType = this.BreakProcessType;
+			return other;
+		}
+
+		public DebuggerSettings Clone() {
+			return CopyTo(new DebuggerSettings());
+		}
+
+		internal static void WriteNewSettings(XElement root, DebuggerSettings settings) {
+			try {
+				DebuggerSettings.Instance.disableSaveCounter++;
+				settings.CopyTo(DebuggerSettings.Instance);
+			}
+			finally {
+				DebuggerSettings.Instance.disableSaveCounter--;
+			}
+			DebuggerSettings.Instance.Save(root);
 		}
 	}
 }
