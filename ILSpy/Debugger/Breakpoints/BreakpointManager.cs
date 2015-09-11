@@ -70,6 +70,14 @@ namespace dnSpy.Debugger.Breakpoints {
 			get { return new RelayCommand(a => DisableBreakpoint(), a => CanDisableBreakpoint); }
 		}
 
+		public ICommand DisableAllBreakpointsCommand {
+			get { return new RelayCommand(a => DisableAllBreakpoints(), a => CanDisableAllBreakpoints); }
+		}
+
+		public ICommand EnableAllBreakpointsCommand {
+			get { return new RelayCommand(a => EnableAllBreakpoints(), a => CanEnableAllBreakpoints); }
+		}
+
 		public Breakpoint[] Breakpoints {
 			get {
 				var bps = new List<Breakpoint>(TextLineObjectManager.Instance.GetObjectsOfType<ILCodeBreakpoint>());
@@ -112,7 +120,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		internal void OnLoaded() {
-			BreakpointSettings.Instance.OnLoaded();
+			BreakpointListSettings.Instance.OnLoaded();
 			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_CurrentAssemblyListChanged;
 			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
 			if (DebugManager.Instance.IsDebugging)
@@ -306,6 +314,24 @@ namespace dnSpy.Debugger.Breakpoints {
 			var ilbps = BreakpointHelper.GetILCodeBreakpoints(textView, location.Line, location.Column);
 			count = ilbps.Count;
 			return BreakpointHelper.IsEnabled(ilbps);
+		}
+
+		public bool CanDisableAllBreakpoints {
+			get { return Breakpoints.Any(b => b.IsEnabled); }
+		}
+
+		public void DisableAllBreakpoints() {
+			foreach (var bp in Breakpoints)
+				bp.IsEnabled = false;
+		}
+
+		public bool CanEnableAllBreakpoints {
+			get { return Breakpoints.Any(b => !b.IsEnabled); }
+		}
+
+		public void EnableAllBreakpoints() {
+			foreach (var bp in Breakpoints)
+				bp.IsEnabled = true;
 		}
 
 		internal void Toggle(DecompilerTextView textView, int line, int column = 0) {

@@ -67,10 +67,11 @@ namespace dnSpy.TreeNodes {
 		/// Creates the object. If it's syntax highlighted, it's a <see cref="TextBlock"/>, else
 		/// it's just a <see cref="string"/>. See also <see cref="CreateTextBlock()"/>
 		/// </summary>
+		/// <param name="useEllipsis">true to add <see cref="TextTrimming.CharacterEllipsis"/> to the <see cref="TextBlock"/></param>
 		/// <returns></returns>
-		public object CreateObject() {
+		public object CreateObject(bool useEllipsis = false) {
 			if (simpleHighlighter != null)
-				return simpleHighlighter.Create();
+				return simpleHighlighter.Create(useEllipsis);
 
 			return output.ToString();
 		}
@@ -82,7 +83,7 @@ namespace dnSpy.TreeNodes {
 		/// <returns></returns>
 		public TextBlock CreateTextBlock(bool useEllipsis = false) {
 			if (simpleHighlighter != null)
-				return simpleHighlighter.Create();
+				return simpleHighlighter.Create(useEllipsis);
 
 			var tb = new TextBlock {
 				Text = output.ToString(),

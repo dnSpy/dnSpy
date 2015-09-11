@@ -17,110 +17,66 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel;
 using System.Xml.Linq;
-using dndbg.Engine;
+using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.Breakpoints {
-	sealed class BreakpointSettings {
+	sealed class BreakpointSettings : ViewModelBase {
 		public static readonly BreakpointSettings Instance = new BreakpointSettings();
 		int disableSaveCounter;
 
 		BreakpointSettings() {
-			BreakpointManager.Instance.OnListModified += BreakpointManager_OnListModified;
+			Load();
 		}
 
-		void BreakpointManager_OnListModified(object sender, BreakpointListModifiedEventArgs e) {
-			if (e.Added)
-				e.Breakpoint.PropertyChanged += Breakpoint_PropertyChanged;
-			else
-				e.Breakpoint.PropertyChanged -= Breakpoint_PropertyChanged;
-
-			Save();
+		public bool ShowTokens {
+			get { return showTokens; }
+			set {
+				if (showTokens != value) {
+					showTokens = value;
+					Save();
+					OnPropertyChanged("ShowTokens");
+				}
+			}
 		}
+		bool showTokens;
 
-		void Breakpoint_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "IsEnabled")
-				Save();
-		}
+		const string SETTINGS_NAME = "BreakpointSettings";
 
-		void Save() {
-			ILSpySettings.Update(root => Save(root));
-		}
-
-		internal void OnLoaded() {
-			disableSaveCounter++;
+		void Load() {
 			try {
-				LoadInternal();
+				disableSaveCounter++;
+
+				var settings = ILSpySettings.Load();
+				var csx = settings[SETTINGS_NAME];
+				ShowTokens = (bool?)csx.Attribute("ShowTokens") ?? true;
 			}
 			finally {
 				disableSaveCounter--;
 			}
 		}
 
-		public void LoadInternal() {
-			ILSpySettings settings = ILSpySettings.Load();
-			var bpsx = settings["Breakpoints"];
-			BreakpointManager.Instance.Clear();
-			foreach (var bpx in bpsx.Elements("Breakpoint")) {
-				uint? token = (uint?)bpx.Attribute("Token");
-				string assemblyFullPath = SessionSettings.Unescape((string)bpx.Attribute("AssemblyFullPath"));
-				string moduleFullPath = SessionSettings.Unescape((string)bpx.Attribute("ModuleFullPath"));
-				bool isDynamic = (bool?)bpx.Attribute("IsDynamic") ?? false;
-				bool isInMemory = (bool?)bpx.Attribute("IsInMemory") ?? false;
-				uint? ilOffset = (uint?)bpx.Attribute("ILOffset") ?? (uint?)bpx.Attribute("From");//TODO: Remove "From" some time after this commit
-				bool? isEnabled = (bool?)bpx.Attribute("IsEnabled");
-
-				if (token == null)
-					continue;
-				if (string.IsNullOrEmpty(moduleFullPath))
-					continue;
-				if (ilOffset == null)
-					continue;
-				if (isEnabled == null)
-					continue;
-
-				var snModule = new SerializedDnModule(moduleFullPath, isDynamic, isInMemory);
-				var key = MethodKey.Create(token.Value, snModule);
-				var bp = new ILCodeBreakpoint(assemblyFullPath, key, ilOffset.Value, isEnabled.Value);
-				BreakpointManager.Instance.Add(bp);
-			}
+		void Save() {
+			if (this != BreakpointSettings.Instance)
+				return;
+			ILSpySettings.Update(root => Save(root));
 		}
 
-		public void Save(XElement root) {
-			// Prevent Load() from saving the settings every time a new BP is added
+		void Save(XElement root) {
+			if (this != BreakpointSettings.Instance)
+				return;
 			if (disableSaveCounter != 0)
 				return;
 
-			var bps = new XElement("Breakpoints");
-			var existingElement = root.Element("Breakpoints");
+			var csx = new XElement(SETTINGS_NAME);
+			var existingElement = root.Element(SETTINGS_NAME);
 			if (existingElement != null)
-				existingElement.ReplaceWith(bps);
+				existingElement.ReplaceWith(csx);
 			else
-				root.Add(bps);
+				root.Add(csx);
 
-			foreach (var bp in BreakpointManager.Instance.Breakpoints) {
-				var ilbp = bp as ILCodeBreakpoint;
-				if (ilbp != null) {
-					var bpx = new XElement("Breakpoint");
-					bpx.SetAttributeValue("Token", ilbp.MethodKey.Token);
-					bpx.SetAttributeValue("AssemblyFullPath", SessionSettings.Escape(ilbp.Assembly));
-					bpx.SetAttributeValue("ModuleFullPath", SessionSettings.Escape(ilbp.MethodKey.Module.Name));
-					bpx.SetAttributeValue("IsDynamic", ilbp.MethodKey.Module.IsDynamic);
-					bpx.SetAttributeValue("IsInMemory", ilbp.MethodKey.Module.IsInMemory);
-					bpx.SetAttributeValue("ILOffset", ilbp.ILOffset);
-					bpx.SetAttributeValue("IsEnabled", ilbp.IsEnabled);
-					bps.Add(bpx);
-					continue;
-				}
-
-				var debp = bp as DebugEventBreakpoint;
-				if (debp != null) {
-					//TODO:
-					continue;
-				}
-			}
+			csx.SetAttributeValue("ShowTokens", ShowTokens);
 		}
 	}
 }

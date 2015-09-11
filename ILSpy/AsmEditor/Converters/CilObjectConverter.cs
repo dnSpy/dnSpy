@@ -41,9 +41,7 @@ namespace dnSpy.AsmEditor.Converters {
 
 				var gen = new SimpleHighlighter();
 				BodyUtils.WriteObject(gen.TextOutput, value, flags);
-				var tb = gen.Create();
-				tb.TextTrimming = TextTrimming.CharacterEllipsis;
-				return tb;
+				return gen.Create(true);
 			}
 			catch (Exception ex) {
 				Debug.Fail(ex.ToString());

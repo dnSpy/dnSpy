@@ -123,9 +123,11 @@
     </Compile>
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointColumnConverter.cs" />
+    <Compile Include="Debugger\Breakpoints\BreakpointListSettings.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointsControl.xaml.cs">
       <DependentUpon>BreakpointsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Debugger\Breakpoints\BreakpointSettings.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointsVM.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointVM.cs" />
     <Compile Include="Debugger\Breakpoints\Commands.cs" />
@@ -138,10 +140,16 @@
     <Compile Include="Debugger\DebuggerSettings.cs" />
     <Compile Include="Debugger\DebuggerSettingsVM.cs" />
     <Compile Include="Debugger\DebugUtils.cs" />
+    <Compile Include="Debugger\Dialogs\AttachProcessDlg.xaml.cs">
+      <DependentUpon>AttachProcessDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Dialogs\AttachProcessVM.cs" />
     <Compile Include="Debugger\Dialogs\DebugProcessDlg.xaml.cs">
       <DependentUpon>DebugProcessDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Debugger\Dialogs\DebugProcessVM.cs" />
+    <Compile Include="Debugger\Dialogs\ManagedProcessesFinder.cs" />
+    <Compile Include="Debugger\Dialogs\ProcessVM.cs" />
     <Compile Include="Debugger\OutputConverter.cs" />
     <Compile Include="MVVM\ContextMenuEntryBase.cs" />
     <Compile Include="MVVM\ContextMenuEntryCommandProxy.cs" />
@@ -581,7 +589,6 @@
     <Compile Include="Controls\WinSysButton.cs" />
     <Compile Include="Debugger\Breakpoints\Breakpoint.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointManager.cs" />
-    <Compile Include="Debugger\Breakpoints\BreakpointSettings.cs" />
     <Compile Include="Debugger\DebugCommands.cs" />
     <Compile Include="Debugger\Breakpoints\DebugEventBreakpoint.cs" />
     <Compile Include="Debugger\DebuggerColors.cs" />
@@ -1171,6 +1178,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Debugger\CallStack\CallStackControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\Dialogs\AttachProcessDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

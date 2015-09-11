@@ -35,7 +35,8 @@ namespace dndbg.Engine.COM.MetaHost {
 	[Guid("00000100-0000-0000-C000-000000000046"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface IEnumUnknown {
-		void RemoteNext([In] uint celt, [MarshalAs(UnmanagedType.IUnknown)] out object rgelt, out uint pceltFetched);
+		[PreserveSig]
+		int Next([In] uint celt, [MarshalAs(UnmanagedType.IUnknown)] out object rgelt, out uint pceltFetched);
 		void Skip([In] uint celt);
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out IEnumUnknown ppenum);
@@ -48,8 +49,8 @@ namespace dndbg.Engine.COM.MetaHost {
 		void GetVersionFromFile([MarshalAs(UnmanagedType.LPWStr)] [In] string pwzFilePath, [MarshalAs(UnmanagedType.LPWStr)] [Out] StringBuilder pwzBuffer, [In] [Out] ref uint pcchBuffer);
 		[return: MarshalAs(UnmanagedType.Interface)]
 		IEnumUnknown EnumerateInstalledRuntimes();
-		[return: MarshalAs(UnmanagedType.Interface)]
-		IEnumUnknown EnumerateLoadedRuntimes([In] IntPtr hndProcess);
+		[PreserveSig]
+		int EnumerateLoadedRuntimes([In] IntPtr hndProcess, [MarshalAs(UnmanagedType.Interface)] out IEnumUnknown ppEnumerator);
 		void RequestRuntimeLoadedNotification([MarshalAs(UnmanagedType.Interface)] [In] ICLRMetaHost pCallbackFunction);
 		IntPtr QueryLegacyV2RuntimeBinding([In] ref Guid riid);
 		void ExitProcess([In] int iExitCode);
@@ -57,7 +58,8 @@ namespace dndbg.Engine.COM.MetaHost {
 	[Guid("BD39D1D2-BA2F-486A-89B0-B4B0CB466891"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICLRRuntimeInfo {
-		void GetVersionString([MarshalAs(UnmanagedType.LPWStr)] [Out] StringBuilder pwzBuffer, [In] [Out] ref uint pcchBuffer);
+		[PreserveSig]
+		int GetVersionString([MarshalAs(UnmanagedType.LPWStr)] [Out] StringBuilder pwzBuffer, [In] [Out] ref uint pcchBuffer);
 		void GetRuntimeDirectory([MarshalAs(UnmanagedType.LPWStr)] [Out] StringBuilder pwzBuffer, [In] [Out] ref uint pcchBuffer);
 		int IsLoaded([In] IntPtr hndProcess);
 		[LCIDConversion(3)]

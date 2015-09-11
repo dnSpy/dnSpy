@@ -67,13 +67,13 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		internal void RefreshThemeFields() {
 			RefreshImage();
-			RefreshLanguageFields();
+			RefreshNameField();
 			OnPropertyChanged("AssemblyObject");
 			OnPropertyChanged("ModuleObject");
 			OnPropertyChanged("FileObject");
 		}
 
-		internal void RefreshLanguageFields() {
+		internal void RefreshNameField() {
 			OnPropertyChanged("NameObject");
 		}
 

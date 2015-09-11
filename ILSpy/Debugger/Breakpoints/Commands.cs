@@ -18,6 +18,7 @@
 */
 
 using System.Linq;
+using System.Windows.Controls;
 using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 
@@ -75,7 +76,29 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Go To Source Code", Order = 200, Category = "CodeBP", Icon = "GoToSourceCode", InputGestureText = "Enter")]
+	[ExportContextMenuEntry(Header = "Enable All Breakpoi_nts", Order = 120, Category = "CopyBP")]
+	sealed class EnableAllBPsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
+		protected override void Execute(BreakpointCtxMenuContext context) {
+			DebugRoutedCommands.EnableAllBreakpoints.Execute(null, MainWindow.Instance);
+		}
+
+		protected override bool IsVisible(BreakpointCtxMenuContext context) {
+			return DebugRoutedCommands.EnableAllBreakpoints.CanExecute(null, MainWindow.Instance);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Disable All Breakpoi_nts", Order = 130, Category = "CopyBP")]
+	sealed class DisableAllBPsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
+		protected override void Execute(BreakpointCtxMenuContext context) {
+			DebugRoutedCommands.DisableAllBreakpoints.Execute(null, MainWindow.Instance);
+		}
+
+		protected override bool IsVisible(BreakpointCtxMenuContext context) {
+			return DebugRoutedCommands.DisableAllBreakpoints.CanExecute(null, MainWindow.Instance);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "_Go To Code", Order = 200, Category = "CodeBP", Icon = "GoToSourceCode", InputGestureText = "Enter")]
 	sealed class GoToSourceBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		protected override void Execute(BreakpointCtxMenuContext context) {
 			if (context.SelectedItems.Length == 1)
@@ -96,7 +119,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Go To Source Code (New _Tab)", Order = 210, Category = "CodeBP", Icon = "GoToSourceCode", InputGestureText = "Ctrl+Enter")]
+	[ExportContextMenuEntry(Header = "Go To Code (New _Tab)", Order = 210, Category = "CodeBP", Icon = "GoToSourceCode", InputGestureText = "Ctrl+Enter")]
 	sealed class GoToSourceNewTabBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		protected override void Execute(BreakpointCtxMenuContext context) {
 			if (context.SelectedItems.Length == 1)
@@ -127,6 +150,17 @@ namespace dnSpy.Debugger.Breakpoints {
 		protected override void Execute(BreakpointCtxMenuContext context) {
 			foreach (var bp in context.SelectedItems)
 				bp.IsEnabled = !bp.IsEnabled;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show Tokens", Order = 600, Category = "BPNameOptions")]
+	sealed class ShowTokensBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
+		protected override void Execute(BreakpointCtxMenuContext context) {
+			BreakpointSettings.Instance.ShowTokens = !BreakpointSettings.Instance.ShowTokens;
+		}
+
+		protected override void Initialize(BreakpointCtxMenuContext context, MenuItem menuItem) {
+			menuItem.IsChecked = BreakpointSettings.Instance.ShowTokens;
 		}
 	}
 }

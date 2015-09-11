@@ -38,6 +38,8 @@ namespace dnSpy.Debugger {
 		public static readonly RoutedCommand DeleteAllBreakpoints = new RoutedCommand("DeleteAllBreakpoints", typeof(DebugRoutedCommands));
 		public static readonly RoutedCommand ToggleBreakpoint = new RoutedCommand("ToggleBreakpoint", typeof(DebugRoutedCommands));
 		public static readonly RoutedCommand DisableBreakpoint = new RoutedCommand("DisableBreakpoint", typeof(DebugRoutedCommands));
+		public static readonly RoutedCommand DisableAllBreakpoints = new RoutedCommand("DisableAllBreakpoints", typeof(DebugRoutedCommands));
+		public static readonly RoutedCommand EnableAllBreakpoints = new RoutedCommand("EnableAllBreakpoints", typeof(DebugRoutedCommands));
 
 		public static readonly RoutedCommand ShowNextStatement = new RoutedCommand("ShowNextStatement", typeof(DebugRoutedCommands));
 		public static readonly RoutedCommand SetNextStatement = new RoutedCommand("SetNextStatement", typeof(DebugRoutedCommands));

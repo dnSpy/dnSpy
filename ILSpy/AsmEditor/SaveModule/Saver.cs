@@ -83,7 +83,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 					options = optsData;
 				}
 
-				var data = new SaveMultiModuleVM(options);
+				var data = new SaveMultiModuleVM(MainWindow.Instance.Dispatcher, options);
 				var win = new SaveSingleModuleDlg();
 				win.Owner = MainWindow.Instance;
 				win.DataContext = data;
@@ -92,7 +92,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				return MarkAsSaved(data, objsAry);
 			}
 			else {
-				var data = new SaveMultiModuleVM(objsAry);
+				var data = new SaveMultiModuleVM(MainWindow.Instance.Dispatcher, objsAry);
 				var win = new SaveMultiModuleDlg();
 				win.Owner = MainWindow.Instance;
 				win.DataContext = data;

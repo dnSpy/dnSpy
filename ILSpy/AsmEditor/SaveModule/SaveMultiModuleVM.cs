@@ -228,11 +228,15 @@ namespace dnSpy.AsmEditor.SaveModule {
 			get { return modules; }
 		}
 
-		public SaveMultiModuleVM(SaveOptionsVM options) {
+		readonly Dispatcher dispatcher;
+
+		public SaveMultiModuleVM(Dispatcher dispatcher, SaveOptionsVM options) {
+			this.dispatcher = dispatcher;
 			this.modules.Add(options);
 		}
 
-		public SaveMultiModuleVM(IEnumerable<IUndoObject> objs) {
+		public SaveMultiModuleVM(Dispatcher dispatcher, IEnumerable<IUndoObject> objs) {
+			this.dispatcher = dispatcher;
 			this.modules.AddRange(objs.Select(m => Create(m)));
 		}
 
@@ -281,9 +285,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		void ExecInOldThread(Action action) {
-			var disp = App.Current.Dispatcher;
-			if (disp != null)
-				disp.BeginInvoke(DispatcherPriority.Background, action);
+			if (dispatcher.HasShutdownStarted || dispatcher.HasShutdownFinished)
+				return;
+			dispatcher.BeginInvoke(DispatcherPriority.Background, action);
 		}
 
 		ModuleSaver moduleSaver;

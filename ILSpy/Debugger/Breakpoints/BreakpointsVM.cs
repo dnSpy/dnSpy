@@ -19,6 +19,7 @@
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using dnSpy.MVVM;
 
@@ -42,9 +43,15 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		public BreakpointsVM() {
 			this.breakpointList = new ObservableCollection<BreakpointVM>();
+			BreakpointSettings.Instance.PropertyChanged += BreakpointSettings_PropertyChanged;
 			BreakpointManager.Instance.OnListModified += BreakpointManager_OnListModified;
 			foreach (var bp in BreakpointManager.Instance.Breakpoints)
 				AddBreakpoint(bp);
+		}
+
+		void BreakpointSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if (e.PropertyName == "ShowTokens")
+				RefreshNameField();
 		}
 
 		public void Remove(IEnumerable<BreakpointVM> bps) {
@@ -81,8 +88,12 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		internal void RefreshLanguageFields() {
+			RefreshNameField();
+		}
+
+		void RefreshNameField() {
 			foreach (var vm in breakpointList)
-				vm.RefreshLanguageFields();
+				vm.RefreshNameField();
 		}
 	}
 }

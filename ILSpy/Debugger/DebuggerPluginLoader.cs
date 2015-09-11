@@ -50,6 +50,8 @@ namespace dnSpy.Debugger {
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DeleteAllBreakpoints, Breakpoints.BreakpointManager.Instance.ClearCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ToggleBreakpoint, Breakpoints.BreakpointManager.Instance.ToggleBreakpointCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DisableBreakpoint, Breakpoints.BreakpointManager.Instance.DisableBreakpointCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DisableAllBreakpoints, Breakpoints.BreakpointManager.Instance.DisableAllBreakpointsCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.EnableAllBreakpoints, Breakpoints.BreakpointManager.Instance.EnableAllBreakpointsCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowNextStatement, DebugManager.Instance.ShowNextStatementCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.SetNextStatement, DebugManager.Instance.SetNextStatementCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowCallStack, CallStack.CallStackControlCreator.CallStackControlInstance.ShowCommand);

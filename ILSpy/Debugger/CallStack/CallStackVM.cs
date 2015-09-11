@@ -32,11 +32,6 @@ namespace dnSpy.Debugger.CallStack {
 		}
 		ICallStackObjectCreator callStackObjectCreator;
 
-		public ObservableCollection<ICallStackFrameVM> Collection {
-			get { return framesList; }
-		}
-		readonly ObservableCollection<ICallStackFrameVM> framesList;
-
 		internal bool IsEnabled {
 			get { return isEnabled; }
 			set {
@@ -48,6 +43,11 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 		bool isEnabled;
+
+		public ObservableCollection<ICallStackFrameVM> Collection {
+			get { return framesList; }
+		}
+		readonly ObservableCollection<ICallStackFrameVM> framesList;
 
 		public object SelectedItem {
 			get { return selectedItem; }

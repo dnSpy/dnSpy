@@ -23,7 +23,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:winlocal="clr-namespace:dnSpy.MVVM"
              xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters"
-             Height="180" Width="500"
+             Height="180" Width="800"
              Title="Debug Assembly"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="180" MinWidth="300">

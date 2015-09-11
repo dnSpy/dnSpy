@@ -122,8 +122,10 @@ namespace dnSpy.Debugger.Breakpoints {
 			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
 			if (ilbp != null) {
 				var module = GetModule(ilbp) as ModuleDefMD;
-				WriteToken(gen.TextOutput, ilbp.MethodKey.Token);
-				gen.TextOutput.WriteSpace();
+				if (BreakpointSettings.Instance.ShowTokens) {
+					WriteToken(gen.TextOutput, ilbp.MethodKey.Token);
+					gen.TextOutput.WriteSpace();
+				}
 				var method = module == null ? null : module.ResolveToken(ilbp.MethodKey.Token) as IMemberRef;
 				if (method == null)
 					gen.TextOutput.Write(string.Format("0x{0:X8}", ilbp.MethodKey.Token), TextTokenType.Number);

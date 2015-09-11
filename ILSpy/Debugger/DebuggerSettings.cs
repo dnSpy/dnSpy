@@ -28,7 +28,7 @@ namespace dnSpy.Debugger {
 		int disableSaveCounter;
 
 		DebuggerSettings() {
-			LoadSettings();
+			Load();
 		}
 
 		public bool UseHexadecimal {
@@ -36,7 +36,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (useHexadecimal != value) {
 					useHexadecimal = value;
-					SaveSettings();
+					Save();
 					OnPropertyChanged("UseHexadecimal");
 				}
 			}
@@ -48,7 +48,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (syntaxHighlightCallStack != value) {
 					syntaxHighlightCallStack = value;
-					SaveSettings();
+					Save();
 					OnPropertyChanged("SyntaxHighlightCallStack");
 				}
 			}
@@ -60,7 +60,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (syntaxHighlightBreakpoints != value) {
 					syntaxHighlightBreakpoints = value;
-					SaveSettings();
+					Save();
 					OnPropertyChanged("SyntaxHighlightBreakpoints");
 				}
 			}
@@ -72,7 +72,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (breakProcessType != value) {
 					breakProcessType = value;
-					SaveSettings();
+					Save();
 					OnPropertyChanged("BreakProcessType");
 				}
 			}
@@ -81,7 +81,7 @@ namespace dnSpy.Debugger {
 
 		const string SETTINGS_NAME = "DebuggerSettings";
 
-		void LoadSettings() {
+		void Load() {
 			try {
 				disableSaveCounter++;
 
@@ -100,14 +100,14 @@ namespace dnSpy.Debugger {
 			BreakProcessType = (BreakProcessType)((int?)csx.Attribute("BreakProcessType") ?? (int)BreakProcessType.ModuleCctorOrEntryPoint);
 		}
 
-		void SaveSettings() {
-			if (this != Instance)
+		void Save() {
+			if (this != DebuggerSettings.Instance)
 				return;
 			ILSpySettings.Update(root => Save(root));
 		}
 
 		void Save(XElement root) {
-			if (this != Instance)
+			if (this != DebuggerSettings.Instance)
 				return;
 			if (disableSaveCounter != 0)
 				return;

@@ -38,6 +38,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Engine\AttachProcessOptions.cs" />
     <Compile Include="Engine\BreakpointList.cs" />
     <Compile Include="Engine\BreakProcessHelper.cs" />
     <Compile Include="Engine\BreakProcessType.cs" />

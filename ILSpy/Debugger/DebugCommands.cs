@@ -226,7 +226,7 @@ namespace dnSpy.Debugger {
 			this.mustBeDebugging = mustBeDebugging;
 		}
 
-		public bool IsVisible {
+		public virtual bool IsVisible {
 			get { return mustBeDebugging == null || DebugManager.Instance.IsDebugging == mustBeDebugging; }
 		}
 	}
@@ -315,7 +315,29 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[ExportMainMenuCommand(MenuIcon = "BreakpointsWindow", Menu = "_Debug", MenuInputGestureText = "Ctrl+Alt+B", MenuHeader = "Show _Breakpoints", MenuCategory = "Breakpoints", MenuOrder = 5320)]
+	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "Breakpoints", MenuHeader = "Enable All Breakpoi_nts", MenuOrder = 5320)]
+	sealed class EnableAllBreakpointsDebugMainMenuCommand : DebugMainMenuCommand {
+		public EnableAllBreakpointsDebugMainMenuCommand()
+			: base(DebugRoutedCommands.EnableAllBreakpoints, null) {
+		}
+
+		public override bool IsVisible {
+			get { return DebugRoutedCommands.EnableAllBreakpoints.CanExecute(null, MainWindow.Instance); }
+		}
+	}
+
+	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "Breakpoints", MenuHeader = "Disable All Breakpoi_nts", MenuOrder = 5330)]
+	sealed class DisableAllBreakpointsDebugMainMenuCommand : DebugMainMenuCommand {
+		public DisableAllBreakpointsDebugMainMenuCommand()
+			: base(DebugRoutedCommands.DisableAllBreakpoints, null) {
+		}
+
+		public override bool IsVisible {
+			get { return DebugRoutedCommands.DisableAllBreakpoints.CanExecute(null, MainWindow.Instance); }
+		}
+	}
+
+	[ExportMainMenuCommand(MenuIcon = "BreakpointsWindow", Menu = "_Debug", MenuInputGestureText = "Ctrl+Alt+B", MenuHeader = "Show _Breakpoints", MenuCategory = "Breakpoints", MenuOrder = 5340)]
 	class BreakpointsWindowCommand : DebugMainMenuCommand {
 		public BreakpointsWindowCommand()
 			: base(DebugRoutedCommands.ShowBreakpoints, null) {

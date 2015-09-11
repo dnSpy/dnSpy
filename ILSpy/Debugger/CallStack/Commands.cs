@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Go To Source Code", Order = 220, Category = "Frame", Icon = "GoToSourceCode", InputGestureText = "Enter")]
+	[ExportContextMenuEntry(Header = "_Go To Code", Order = 220, Category = "Frame", Icon = "GoToSourceCode", InputGestureText = "Enter")]
 	sealed class GoToSourceCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		protected override void Execute(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
@@ -129,7 +129,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Go To Source Code (New _Tab)", Order = 230, Category = "Frame", Icon = "GoToSourceCode", InputGestureText = "Ctrl+Enter")]
+	[ExportContextMenuEntry(Header = "Go To Code (New _Tab)", Order = 230, Category = "Frame", Icon = "GoToSourceCode", InputGestureText = "Ctrl+Enter")]
 	sealed class GoToSourceNewTabCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		protected override void Execute(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);

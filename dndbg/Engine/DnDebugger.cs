@@ -24,6 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using dndbg.Engine.COM.CorDebug;
 using dndbg.Engine.COM.MetaHost;
@@ -941,9 +942,56 @@ namespace dndbg.Engine {
 				process.Initialize(options.Filename, options.CurrentDirectory, options.CommandLine);
 		}
 
-		public static DnDebugger Attach(uint pid) {
-			//TODO:
-			throw new NotImplementedException();
+		public static DnDebugger Attach(AttachProcessOptions options) {
+			ICLRRuntimeInfo rtInfo = null;
+			var process = Process.GetProcessById(options.ProcessId);
+			var filename = process.MainModule.FileName;
+			foreach (var t in GetCLRRuntimeInfos(process)) {
+				if (string.IsNullOrEmpty(options.DebuggeeVersion) || t.Item1 == options.DebuggeeVersion) {
+					rtInfo = t.Item2;
+					break;
+				}
+			}
+			if (rtInfo == null)
+				throw new Exception("Couldn't find a .NET runtime or the correct .NET runtime");
+
+			var clsid = new Guid("DF8395B5-A4BA-450B-A77C-A9A47762C520");
+			var riid = typeof(ICorDebug).GUID;
+			var corDebug = (ICorDebug)rtInfo.GetInterface(ref clsid, ref riid);
+			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher);
+			ICorDebugProcess comProcess;
+			corDebug.DebugActiveProcess(options.ProcessId, 0, out comProcess);
+			var dnProcess = dbg.TryAdd(comProcess);
+			if (dnProcess != null)
+				dnProcess.Initialize(filename, string.Empty, string.Empty);
+			return dbg;
+		}
+
+		static IEnumerable<Tuple<string, ICLRRuntimeInfo>> GetCLRRuntimeInfos(Process process) {
+			var clsid = new Guid("9280188D-0E8E-4867-B30C-7FA83884E8DE");
+			var riid = typeof(ICLRMetaHost).GUID;
+			var mh = (ICLRMetaHost)NativeMethods.CLRCreateInstance(ref clsid, ref riid);
+
+			IEnumUnknown iter;
+			int hr = mh.EnumerateLoadedRuntimes(process.Handle, out iter);
+			if (hr < 0)
+				yield break;
+			for (;;) {
+				object obj;
+				uint fetched;
+				hr = iter.Next(1, out obj, out fetched);
+				if (hr < 0 || fetched == 0)
+					break;
+
+				var rtInfo = (ICLRRuntimeInfo)obj;
+				uint chBuffer = 0;
+				var sb = new StringBuilder(300);
+				hr = rtInfo.GetVersionString(sb, ref chBuffer);
+				sb.EnsureCapacity((int)chBuffer);
+				hr = rtInfo.GetVersionString(sb, ref chBuffer);
+
+				yield return Tuple.Create(sb.ToString(), rtInfo);
+			}
 		}
 
 		DnProcess TryAdd(ICorDebugProcess comProcess) {
@@ -1276,7 +1324,7 @@ namespace dndbg.Engine {
 					int hr = process.CorProcess.RawObject.Stop(uint.MaxValue);
 					hr = process.CorProcess.RawObject.Terminate(uint.MaxValue);
 				}
-				catch (InvalidComObjectException) {
+				catch {
 				}
 			}
 		}

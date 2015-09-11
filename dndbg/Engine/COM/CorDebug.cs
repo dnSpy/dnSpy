@@ -167,10 +167,6 @@ namespace dndbg.Engine.COM.CorDebug {
 		public ulong token1;
 		public ulong token2;
 	}
-	[CoClass(typeof(CorDebugClass)), Guid("3D6F5F61-7538-11D3-8D5B-00104B35E7EF")]
-	[ComImport]
-	public interface CorDebug : ICorDebug {
-	}
 	[Flags]
 	public enum CorDebugChainReason {
 		/// <summary>
@@ -225,19 +221,6 @@ namespace dndbg.Engine.COM.CorDebug {
 		/// The chain was initiated by a function evaluation.
 		/// </summary>
 		CHAIN_FUNC_EVAL = 2048
-	}
-	[ClassInterface(ClassInterfaceType.None), Guid("6FEF44D0-39E7-4C77-BE8E-C9F8CF988630"), TypeLibType(TypeLibTypeFlags.FCanCreate)]
-	[ComImport]
-	public class CorDebugClass : ICorDebug, CorDebug {
-		public virtual extern void Initialize();
-		public virtual extern int Terminate();
-		public virtual extern void SetManagedHandler([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugManagedCallback pCallback);
-		public virtual extern void SetUnmanagedHandler([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugUnmanagedCallback pCallback);
-		public virtual extern void CreateProcess([MarshalAs(UnmanagedType.LPWStr)] [In] string lpApplicationName, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, [In] int bInheritHandles, [In] ProcessCreationFlags dwCreationFlags, [In] IntPtr lpEnvironment, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, [In] ref PROCESS_INFORMATION lpProcessInformation, [In] CorDebugCreateProcessFlags debuggingFlags, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
-		public virtual extern void DebugActiveProcess([In] uint id, [In] int win32Attach, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
-		public virtual extern void EnumerateProcesses([MarshalAs(UnmanagedType.Interface)] out ICorDebugProcessEnum ppProcess);
-		public virtual extern void GetProcess([In] uint dwProcessId, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
-		public virtual extern void CanLaunchOrAttach([In] uint dwProcessId, [In] int win32DebuggingEnabled);
 	}
 	public enum CorDebugCodeInvokeKind {
 		CODE_INVOKE_KIND_NONE,
@@ -625,23 +608,6 @@ namespace dndbg.Engine.COM.CorDebug {
 		CorHandleWeakOnly = 540,
 		CorHandleAll = 2147483647
 	}
-	[CoClass(typeof(EmbeddedCLRCorDebugClass)), Guid("3D6F5F61-7538-11D3-8D5B-00104B35E7EF")]
-	[ComImport]
-	public interface EmbeddedCLRCorDebug : ICorDebug {
-	}
-	[ClassInterface(ClassInterfaceType.None), Guid("211F1254-BC7E-4AF5-B9AA-067308D83DD1"), TypeLibType(TypeLibTypeFlags.FCanCreate)]
-	[ComImport]
-	public class EmbeddedCLRCorDebugClass : ICorDebug, EmbeddedCLRCorDebug {
-		public virtual extern void Initialize();
-		public virtual extern int Terminate();
-		public virtual extern void SetManagedHandler([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugManagedCallback pCallback);
-		public virtual extern void SetUnmanagedHandler([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugUnmanagedCallback pCallback);
-		public virtual extern void CreateProcess([MarshalAs(UnmanagedType.LPWStr)] [In] string lpApplicationName, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, [In] int bInheritHandles, [In] ProcessCreationFlags dwCreationFlags, [In] IntPtr lpEnvironment, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, [In] ref PROCESS_INFORMATION lpProcessInformation, [In] CorDebugCreateProcessFlags debuggingFlags, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
-		public virtual extern void DebugActiveProcess([In] uint id, [In] int win32Attach, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
-		public virtual extern void EnumerateProcesses([MarshalAs(UnmanagedType.Interface)] out ICorDebugProcessEnum ppProcess);
-		public virtual extern void GetProcess([In] uint dwProcessId, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
-		public virtual extern void CanLaunchOrAttach([In] uint dwProcessId, [In] int win32DebuggingEnabled);
-	}
 	[Guid("3D6F5F61-7538-11D3-8D5B-00104B35E7EF"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebug {
@@ -651,7 +617,7 @@ namespace dndbg.Engine.COM.CorDebug {
 		void SetManagedHandler([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugManagedCallback pCallback);
 		void SetUnmanagedHandler([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugUnmanagedCallback pCallback);
 		void CreateProcess([MarshalAs(UnmanagedType.LPWStr)] [In] string lpApplicationName, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCommandLine, IntPtr lpProcessAttributes, IntPtr lpThreadAttributes, [In] int bInheritHandles, [In] ProcessCreationFlags dwCreationFlags, [In] IntPtr lpEnvironment, [MarshalAs(UnmanagedType.LPWStr)] [In] string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, [In] ref PROCESS_INFORMATION lpProcessInformation, [In] CorDebugCreateProcessFlags debuggingFlags, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
-		void DebugActiveProcess([In] uint id, [In] int win32Attach, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
+		void DebugActiveProcess([In] int id, [In] int win32Attach, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
 		void EnumerateProcesses([MarshalAs(UnmanagedType.Interface)] out ICorDebugProcessEnum ppProcess);
 		void GetProcess([In] uint dwProcessId, [MarshalAs(UnmanagedType.Interface)] out ICorDebugProcess ppProcess);
 		void CanLaunchOrAttach([In] uint dwProcessId, [In] int win32DebuggingEnabled);

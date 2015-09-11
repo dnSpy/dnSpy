@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.CallStack {
 		int disableSaveCounter;
 
 		CallStackSettings() {
-			LoadSettings();
+			Load();
 		}
 
 		public bool ShowModuleNames {
@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showModuleNames != value) {
 					showModuleNames = value;
-					SaveSettings();
+					Save();
 					OnPropertyChanged("ShowModuleNames");
 				}
 			}
@@ -47,7 +47,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showParameterTypes != value) {
 					showParameterTypes = value;
-					SaveSettings();
+					Save();
 					OnPropertyChanged("ShowParameterTypes");
 				}
 			}
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showParameterNames != value) {
 					showParameterNames = value;
-					SaveSettings();
+					Save();
 					OnPropertyChanged("ShowParameterNames");
 				}
 			}
@@ -71,7 +71,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showParameterValues != value) {
 					showParameterValues = value;
-					SaveSettings();
+					Save();
 					OnPropertyChanged("ShowParameterValues");
 				}
 			}
@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showIP != value) {
 					showIP = value;
-					SaveSettings();
+					Save();
 					OnPropertyChanged("ShowIP");
 				}
 			}
@@ -95,7 +95,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showOwnerTypes != value) {
 					showOwnerTypes = value;
-					SaveSettings();
+					Save();
 					OnPropertyChanged("ShowOwnerTypes");
 				}
 			}
@@ -107,7 +107,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showNamespaces != value) {
 					showNamespaces = value;
-					SaveSettings();
+					Save();
 					OnPropertyChanged("ShowNamespaces");
 				}
 			}
@@ -119,7 +119,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showTypeKeywords != value) {
 					showTypeKeywords = value;
-					SaveSettings();
+					Save();
 					OnPropertyChanged("ShowTypeKeywords");
 				}
 			}
@@ -131,7 +131,7 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showTokens != value) {
 					showTokens = value;
-					SaveSettings();
+					Save();
 					OnPropertyChanged("ShowTokens");
 				}
 			}
@@ -143,16 +143,16 @@ namespace dnSpy.Debugger.CallStack {
 			set {
 				if (showReturnTypes != value) {
 					showReturnTypes = value;
-					SaveSettings();
+					Save();
 					OnPropertyChanged("ShowReturnTypes");
 				}
 			}
 		}
 		bool showReturnTypes;
 
-		const string SETTINGS_NAME = "CallStack";
+		const string SETTINGS_NAME = "CallStackSettings";
 
-		void LoadSettings() {
+		void Load() {
 			try {
 				disableSaveCounter++;
 
@@ -174,11 +174,15 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 
-		void SaveSettings() {
-			ILSpySettings.Update(root => SaveSettings(root));
+		void Save() {
+			if (this != CallStackSettings.Instance)
+				return;
+			ILSpySettings.Update(root => Save(root));
 		}
 
-		void SaveSettings(XElement root) {
+		void Save(XElement root) {
+			if (this != CallStackSettings.Instance)
+				return;
 			if (disableSaveCounter != 0)
 				return;
 

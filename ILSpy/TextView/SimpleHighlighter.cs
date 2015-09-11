@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Xml.Linq;
@@ -158,7 +159,7 @@ namespace dnSpy.TextView {
 			}
 		}
 
-		public TextBlock Create() {
+		public TextBlock Create(bool useEllipsis = false) {
 			var textBlockText = output.Text;
 			var tokens = output.LanguageTokens;
 			tokens.Finish();
@@ -207,6 +208,8 @@ namespace dnSpy.TextView {
 				Debug.Assert(offs <= textBlockText.Length);
 			}
 
+			if (useEllipsis)
+				textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
 			return textBlock;
 		}
 

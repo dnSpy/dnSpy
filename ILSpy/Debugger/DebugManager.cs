@@ -402,6 +402,7 @@ namespace dnSpy.Debugger {
 					MainWindow.Instance.ShowMessageBox(string.Format("Could not start debugger. Make sure you have access to the file '{0}'\n\nError: {1}", options.Filename, ex.Message));
 				return false;
 			}
+			hasAttached = false;
 			AddDebugger(newDebugger);
 			Debug.Assert(debugger == newDebugger);
 			CallOnProcessStateChanged();
@@ -558,7 +559,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool CanRestart {
-			get { return IsDebugging && lastDebugProcessOptions != null; }
+			get { return IsDebugging && lastDebugProcessOptions != null && !hasAttached; }
 		}
 
 		public void Restart() {
@@ -584,6 +585,8 @@ namespace dnSpy.Debugger {
 		}
 		DebugProcessOptions lastDebugProcessOptions = null;
 
+		bool hasAttached;
+
 		public bool CanAttach {
 			get { return !IsDebugging; }
 		}
@@ -591,7 +594,49 @@ namespace dnSpy.Debugger {
 		public void Attach() {
 			if (!CanAttach)
 				return;
-			//TODO:
+
+			var data = new AttachProcessVM(MainWindow.Instance.Dispatcher);
+			var win = new AttachProcessDlg();
+			win.DataContext = data;
+			win.Owner = MainWindow.Instance;
+			var res = win.ShowDialog();
+			data.Dispose();
+			if (res != true)
+				return;
+
+			var processVM = data.SelectedProcess;
+			if (processVM == null)
+				return;
+
+			var options = new AttachProcessOptions();
+			options.DebuggeeVersion = processVM.CLRVersion;
+			options.ProcessId = processVM.PID;
+			options.DebugMessageDispatcher = WpfDebugMessageDispatcher.Instance;
+			Attach(options);
+		}
+
+		bool Attach(AttachProcessOptions options) {
+			if (IsDebugging)
+				return false;
+			if (options == null)
+				return false;
+
+			RemoveDebugger();
+
+			DnDebugger newDebugger;
+			try {
+				newDebugger = DnDebugger.Attach(options);
+			}
+			catch (Exception ex) {
+				MainWindow.Instance.ShowMessageBox(string.Format("Could not start debugger.\n\nError: {0}", ex.Message));
+				return false;
+			}
+			hasAttached = true;
+			AddDebugger(newDebugger);
+			Debug.Assert(debugger == newDebugger);
+			CallOnProcessStateChanged();
+
+			return true;
 		}
 
 		public bool CanBreak {
