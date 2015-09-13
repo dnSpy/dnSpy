@@ -57,7 +57,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public void Remove(IEnumerable<BreakpointVM> bps) {
 			foreach (var bp in bps)
 				BreakpointManager.Instance.Remove(bp.Breakpoint);
-        }
+		}
 
 		void BreakpointManager_OnListModified(object sender, BreakpointListModifiedEventArgs e) {
 			if (e.Added)

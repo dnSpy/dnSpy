@@ -1289,7 +1289,7 @@ namespace dndbg.Engine {
 					if (errorHR == 0)
 						errorHR = -1;
 				}
-            }
+			}
 
 			return errorHR;
 		}
