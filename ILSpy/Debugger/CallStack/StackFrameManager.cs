@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.AvalonEdit;
@@ -71,7 +72,7 @@ namespace dnSpy.Debugger.CallStack {
 
 			case DebuggerProcessState.Stopped:
 				currentState.Thread = DebugManager.Instance.Debugger.Current.Thread;
-				SelectedFrame = 0;
+				SelectedFrameNumber = 0;
 				foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
 					UpdateStackFrameLines(textView, false);
 				break;
@@ -123,21 +124,69 @@ namespace dnSpy.Debugger.CallStack {
 			e.HasMovedCaret |= UpdateStackFrameLines((DecompilerTextView)sender, !e.HasMovedCaret);
 		}
 
+		CorFrame GetFrameByNumber(int number) {
+			var thread = currentState.Thread;
+			if (thread == null)
+				return null;
+			foreach (var frame in thread.AllFrames) {
+				if (number-- == 0)
+					return frame;
+			}
+			return null;
+		}
+
+		public CorFrame SelectedFrame {
+			get {
+				VerifyDebuggeeStopped();
+				return GetFrameByNumber(SelectedFrameNumber);
+			}
+		}
+
+		public CorFrame FirstILFrame {
+			get {
+				VerifyDebuggeeStopped();
+				var thread = currentState.Thread;
+				if (thread == null)
+					return null;
+				return thread.AllFrames.FirstOrDefault(f => f.IsILFrame);
+			}
+		}
+
+		public DnThread SelectedThread {
+			get { VerifyDebuggeeStopped(); return currentState.Thread; }
+			set {
+				VerifyDebuggeeStopped();
+				if (currentState.Thread != value) {
+					var oldThread = currentState.Thread;
+					currentState.Thread = value;
+					currentState.FrameNumber = 0;
+					UpdateStackFrameLinesInTextViews();
+					DebugManager.Instance.UpdateCurrentLocation(FirstILFrame);
+					OnPropertyChanged(new VMPropertyChangedEventArgs<DnThread>("SelectedThread", oldThread, currentState.Thread));
+					OnPropertyChanged(new VMPropertyChangedEventArgs<int>("SelectedFrameNumber", -1, currentState.FrameNumber));
+				}
+			}
+		}
+
 		/// <summary>
 		/// Gets/sets the selected frame number. 0 is the current frame.
 		/// </summary>
-		public int SelectedFrame {
+		public int SelectedFrameNumber {
 			get { VerifyDebuggeeStopped(); return currentState.FrameNumber; }
 			set {
 				VerifyDebuggeeStopped();
 				if (value != currentState.FrameNumber) {
 					var old = currentState.FrameNumber;
 					currentState.FrameNumber = value;
-					foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
-						UpdateStackFrameLines(textView);
-					OnPropertyChanged(new VMPropertyChangedEventArgs<int>("SelectedFrame", old, currentState.FrameNumber));
+					UpdateStackFrameLinesInTextViews();
+					OnPropertyChanged(new VMPropertyChangedEventArgs<int>("SelectedFrameNumber", old, currentState.FrameNumber));
 				}
 			}
+		}
+
+		void UpdateStackFrameLinesInTextViews() {
+			foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
+				UpdateStackFrameLines(textView);
 		}
 
 		void Remove(DecompilerTextView decompilerTextView) {
@@ -164,7 +213,8 @@ namespace dnSpy.Debugger.CallStack {
 					frameNo++;
 					if (!frame.IsILFrame)
 						continue;
-					if (!frame.ILFrameIP.IsExact && !frame.ILFrameIP.IsApproximate)
+					var ip = frame.ILFrameIP;
+					if (!ip.IsExact && !ip.IsApproximate && !ip.IsProlog && !ip.IsEpilog)
 						continue;
 					uint token = frame.Token;
 					if (token == 0)
@@ -179,7 +229,7 @@ namespace dnSpy.Debugger.CallStack {
 					else
 						type = currentState.FrameNumber == frameNo ? StackFrameLineType.SelectedReturnStatement : StackFrameLineType.ReturnStatement;
 					var key = MethodKey.Create(token, serAsm.Value.Module);
-					uint offset = frame.ILFrameIP.Offset;
+					uint offset = frame.GetILOffset();
 					MethodDef methodDef;
 					TextLocation location, endLocation;
 					if (cm != null && cm.ContainsKey(key) &&

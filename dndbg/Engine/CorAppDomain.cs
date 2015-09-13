@@ -144,6 +144,17 @@ namespace dndbg.Engine {
 			return sb.ToString();
 		}
 
+		/// <summary>
+		/// Gets the CLR AppDomain object or null if it hasn't been constructed yet
+		/// </summary>
+		public CorValue Object {
+			get {
+				ICorDebugValue value;
+				int hr = obj.GetObject(out value);
+				return hr < 0 || value == null ? null : new CorValue(value);
+			}
+		}
+
 		public CorAppDomain(ICorDebugAppDomain appDomain)
 			: base(appDomain) {
 			int hr = appDomain.GetID(out this.id);

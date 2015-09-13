@@ -153,6 +153,54 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
+		/// Reads memory. Returns a HRESULT.
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="index">Index into <paramref name="buffer"/></param>
+		/// <param name="size">Size to read</param>
+		/// <param name="sizeRead">Number of bytes read</param>
+		/// <returns></returns>
+		public unsafe int ReadMemory(ulong address, byte[] buffer, int index, int size, out int sizeRead) {
+			IntPtr sizeRead2 = IntPtr.Zero;
+			int hr;
+			fixed (byte* p = &buffer[index])
+				hr = this.obj.ReadMemory(address, (uint)size, new IntPtr(p), out sizeRead2);
+			const int ERROR_PARTIAL_COPY = unchecked((int)0x8007012B);
+			if (hr < 0 && hr != ERROR_PARTIAL_COPY) {
+				sizeRead = 0;
+				return hr;
+			}
+
+			sizeRead = (int)sizeRead2.ToInt64();
+			return 0;
+		}
+
+		/// <summary>
+		/// Writes memory. Returns a HRESULT.
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="buffer">Buffer</param>
+		/// <param name="index">Index into <paramref name="buffer"/></param>
+		/// <param name="size">Size to write</param>
+		/// <param name="sizeWritten">Number of bytes written</param>
+		/// <returns></returns>
+		public unsafe int WriteMemory(ulong address, byte[] buffer, int index, int size, out int sizeWritten) {
+			IntPtr sizeWritten2 = IntPtr.Zero;
+			int hr;
+			fixed (byte* p = &buffer[index])
+				hr = this.obj.WriteMemory(address, (uint)size, new IntPtr(p), out sizeWritten2);
+			const int ERROR_PARTIAL_COPY = unchecked((int)0x8007012B);
+			if (hr < 0 && hr != ERROR_PARTIAL_COPY) {
+				sizeWritten = 0;
+				return hr;
+			}
+
+			sizeWritten = (int)sizeWritten2.ToInt64();
+			return 0;
+		}
+
+		/// <summary>
 		/// Sets the debug state of all managed threads
 		/// </summary>
 		/// <param name="state">New state</param>
@@ -252,6 +300,21 @@ namespace dndbg.Engine {
 			ICorDebugThread thread;
 			int hr = obj.ThreadForFiberCookie(fiberCookie, out thread);
 			return hr < 0 || thread == null ? null : new CorThread(thread);
+		}
+
+		/// <summary>
+		/// Converts an object address to a <see cref="CorValue"/>. Return value is null or
+		/// a <see cref="ICorDebugObjectValue"/>.
+		/// </summary>
+		/// <param name="address">Address of object</param>
+		/// <returns></returns>
+		public CorValue GetObject(ulong address) {
+			var p5 = obj as ICorDebugProcess5;
+			if (p5 == null)
+				return null;
+			ICorDebugObjectValue value;
+			int hr = p5.GetObject(address, out value);
+			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
 		public static bool operator ==(CorProcess a, CorProcess b) {

@@ -38,11 +38,13 @@ namespace dnSpy.MVVM {
 			var dialog = new SaveFileDialog() {
 				Filter = string.IsNullOrEmpty(filter) ? PickFilenameConstants.AnyFilenameFilter : filter,
 				RestoreDirectory = true,
-				DefaultExt = extension,
+				DefaultExt = extension ?? string.Empty,
 				ValidateNames = true,
 			};
-			if (!string.IsNullOrWhiteSpace(currentFileName))
+			if (!string.IsNullOrWhiteSpace(currentFileName)) {
 				dialog.InitialDirectory = Path.GetDirectoryName(currentFileName);
+				dialog.FileName = Path.GetFileName(currentFileName);
+			}
 
 			if (dialog.ShowDialog() != DialogResult.OK)
 				return null;

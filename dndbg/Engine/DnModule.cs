@@ -38,6 +38,14 @@ namespace dndbg.Engine {
 		readonly int incrementedId;
 
 		/// <summary>
+		/// Unique id per debugger. Incremented each time a new module is created.
+		/// </summary>
+		public int ModuleOrder {
+			get { return moduleOrder; }
+		}
+		readonly int moduleOrder;
+
+		/// <summary>
 		/// For on-disk modules this is a full path. For dynamic modules this is just the filename
 		/// if one was provided. Otherwise, and for other in-memory modules, this is just the simple
 		/// name stored in the module's metadata.
@@ -126,10 +134,24 @@ namespace dndbg.Engine {
 			get { return new SerializedDnModuleWithAssembly(Assembly.Name, SerializedDnModule); }
 		}
 
-		internal DnModule(DnAssembly ownerAssembly, ICorDebugModule module, int incrementedId) {
+		/// <summary>
+		/// Gets the JIT compiler flags. This is a cached value and never gets updated
+		/// </summary>
+		public CorDebugJITCompilerFlags CachedJITCompilerFlags {
+			get { return jitFlags; }
+		}
+		CorDebugJITCompilerFlags jitFlags;
+
+		internal DnModule(DnAssembly ownerAssembly, ICorDebugModule module, int incrementedId, int moduleOrder) {
 			this.ownerAssembly = ownerAssembly;
 			this.module = new CorModule(module);
 			this.incrementedId = incrementedId;
+			this.moduleOrder = moduleOrder;
+		}
+
+		internal void InitializeCachedValues() {
+			// Cache the value so it's possible to read it even when the process is running
+			jitFlags = module.JITCompilerFlags;
 		}
 
 		internal void SetHasUnloaded() {

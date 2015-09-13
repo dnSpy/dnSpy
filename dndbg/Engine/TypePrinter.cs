@@ -85,7 +85,6 @@ namespace dndbg.Engine {
 			ShowParameterTypes |
 			ShowParameterNames |
 			ShowOwnerTypes |
-			ShowReturnTypes |
 			ShowNamespaces |
 			ShowTypeKeywords,
 	}

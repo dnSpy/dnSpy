@@ -154,6 +154,13 @@ namespace dnSpy.Debugger {
 		}
 
 		/// <summary>
+		/// true if we've attached to a process
+		/// </summary>
+		public bool HasAttached {
+			get { return IsDebugging && Debugger.HasAttached; }
+		}
+
+		/// <summary>
 		/// Gets the current debugger. This is null if we're not debugging anything
 		/// </summary>
 		public DnDebugger Debugger {
@@ -402,7 +409,6 @@ namespace dnSpy.Debugger {
 					MainWindow.Instance.ShowMessageBox(string.Format("Could not start debugger. Make sure you have access to the file '{0}'\n\nError: {1}", options.Filename, ex.Message));
 				return false;
 			}
-			hasAttached = false;
 			AddDebugger(newDebugger);
 			Debug.Assert(debugger == newDebugger);
 			CallOnProcessStateChanged();
@@ -410,8 +416,8 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		void CallOnProcessStateChanged() {
-			CallOnProcessStateChanged(debugger, DebuggerEventArgs.Empty);
+		void CallOnProcessStateChanged(DnDebugger dbg = null) {
+			CallOnProcessStateChanged(dbg ?? debugger, DebuggerEventArgs.Empty);
 		}
 
 		void CallOnProcessStateChanged(object sender, DebuggerEventArgs e) {
@@ -559,7 +565,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool CanRestart {
-			get { return IsDebugging && lastDebugProcessOptions != null && !hasAttached; }
+			get { return IsDebugging && lastDebugProcessOptions != null && !HasAttached; }
 		}
 
 		public void Restart() {
@@ -568,8 +574,9 @@ namespace dnSpy.Debugger {
 
 			Stop();
 			if (debugger != null) {
+				var dbg = debugger;
 				RemoveDebugger();
-				CallOnProcessStateChanged();
+				CallOnProcessStateChanged(dbg);
 			}
 
 			DebugAssembly(lastDebugProcessOptions);
@@ -584,8 +591,6 @@ namespace dnSpy.Debugger {
 			lastDebugProcessOptions = optionsCopy;
 		}
 		DebugProcessOptions lastDebugProcessOptions = null;
-
-		bool hasAttached;
 
 		public bool CanAttach {
 			get { return !IsDebugging; }
@@ -631,7 +636,6 @@ namespace dnSpy.Debugger {
 				MainWindow.Instance.ShowMessageBox(string.Format("Could not start debugger.\n\nError: {0}", ex.Message));
 				return false;
 			}
-			hasAttached = true;
 			AddDebugger(newDebugger);
 			Debug.Assert(debugger == newDebugger);
 			CallOnProcessStateChanged();
@@ -699,22 +703,28 @@ namespace dnSpy.Debugger {
 		bool MoveCaretToCurrentStatement(DecompilerTextView textView) {
 			if (currentLocation == null)
 				return false;
-			return DebugUtils.MoveCaretTo(textView, currentLocation.Value.MethodKey, currentLocation.Value.ILFrameIP.Offset);
+			return DebugUtils.MoveCaretTo(textView, currentLocation.Value.MethodKey, currentLocation.Value.Offset);
 		}
 
 		struct CodeLocation {
 			public SerializedDnModuleWithAssembly ModuleAssembly;
 			public readonly uint Token;
-			public ILFrameIP ILFrameIP;
+			public uint Offset;
+			public CorDebugMappingResult Mapping;
+
+			public bool IsExact {
+				get { return (Mapping & CorDebugMappingResult.MAPPING_EXACT) != 0; }
+			}
 
 			public MethodKey MethodKey {
 				get { return MethodKey.Create(Token, ModuleAssembly.Module); }
 			}
 
-			public CodeLocation(SerializedDnModuleWithAssembly moduleAssembly, uint token, ILFrameIP ip) {
+			public CodeLocation(SerializedDnModuleWithAssembly moduleAssembly, uint token, uint offset, CorDebugMappingResult mapping) {
 				this.ModuleAssembly = moduleAssembly;
 				this.Token = token;
-				this.ILFrameIP = ip;
+				this.Offset = offset;
+				this.Mapping = mapping;
 			}
 
 			public static bool SameMethod(CodeLocation a, CodeLocation b) {
@@ -723,7 +733,11 @@ namespace dnSpy.Debugger {
 		}
 
 		void UpdateCurrentLocation() {
-			var newLoc = GetCurrentCodeLocation();
+			UpdateCurrentLocation(Debugger.Current.ILFrame);
+		}
+
+		internal void UpdateCurrentLocation(CorFrame frame) {
+			var newLoc = GetCodeLocation(frame);
 
 			if (currentLocation == null || newLoc == null) {
 				currentLocation = newLoc;
@@ -755,12 +769,6 @@ namespace dnSpy.Debugger {
 		}
 		MethodDef currentMethod;
 
-		CodeLocation? GetCurrentCodeLocation() {
-			if (ProcessState != DebuggerProcessState.Stopped)
-				return null;
-			return GetCodeLocation(Debugger.Current.ILFrame);
-		}
-
 		CodeLocation? GetCodeLocation(CorFrame frame) {
 			if (ProcessState != DebuggerProcessState.Stopped)
 				return null;
@@ -773,7 +781,7 @@ namespace dnSpy.Debugger {
 			if (token == 0)
 				return null;
 
-			return new CodeLocation(sma.Value, token, frame.ILFrameIP);
+			return new CodeLocation(sma.Value, token, frame.GetILOffset(), frame.ILFrameIP.Mapping);
 		}
 
 		StepRange[] GetStepRanges(DnDebugger debugger, CorFrame frame, bool isStepInto) {
@@ -803,7 +811,7 @@ namespace dnSpy.Debugger {
 			}
 
 			bool isMatch;
-			var scm = mapping.GetInstructionByOffset(frame.ILFrameIP.Offset, out isMatch);
+			var scm = mapping.GetInstructionByOffset(frame.GetILOffset(), out isMatch);
 			uint[] ilRanges;
 			if (scm == null)
 				ilRanges = mapping.ToArray(null, false);
@@ -833,11 +841,11 @@ namespace dnSpy.Debugger {
 		}
 
 		CorFrame GetCurrentILFrame() {
-			return debugger.Current.ILFrame;
+			return StackFrameManager.Instance.FirstILFrame;
 		}
 
 		CorFrame GetCurrentMethodILFrame() {
-			return debugger.Current.ILFrame;
+			return StackFrameManager.Instance.SelectedFrame;
 		}
 
 		public bool CanStepInto {
@@ -901,7 +909,7 @@ namespace dnSpy.Debugger {
 
 		bool TryShowNextStatement(DecompilerTextView textView) {
 			// Always reset the selected frame
-			StackFrameManager.Instance.SelectedFrame = 0;
+			StackFrameManager.Instance.SelectedFrameNumber = 0;
 
 			if (textView == null)
 				return false;
@@ -912,7 +920,7 @@ namespace dnSpy.Debugger {
 			var currentKey = currentLocation.Value.MethodKey;
 
 			TextLocation location, endLocation;
-			if (!cm[currentKey].GetInstructionByTokenAndOffset(currentLocation.Value.ILFrameIP.Offset, out location, out endLocation))
+			if (!cm[currentKey].GetInstructionByTokenAndOffset(currentLocation.Value.Offset, out location, out endLocation))
 				return false;
 
 			textView.ScrollAndMoveCaretTo(location.Line, location.Column);
@@ -940,8 +948,8 @@ namespace dnSpy.Debugger {
 			if (!DebugGetSourceCodeMappingForSetNextStatement(ctx == null ? null : ctx.Element as DecompilerTextView, out errMsg, out mapping))
 				return false;
 
-			if (currentLocation != null && currentLocation.Value.ILFrameIP.IsExact)
-				return currentLocation.Value.ILFrameIP.Offset != mapping.ILInstructionOffset.From;
+			if (currentLocation != null && currentLocation.Value.IsExact)
+				return currentLocation.Value.Offset != mapping.ILInstructionOffset.From;
 			return true;
 		}
 

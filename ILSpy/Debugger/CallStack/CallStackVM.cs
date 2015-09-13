@@ -116,12 +116,16 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		void StackFrameManager_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "SelectedFrame")
+			if (e.PropertyName == "SelectedThread") {
+				framesList.Clear();
+				InitializeStackFrames();
+			}
+			else if (e.PropertyName == "SelectedFrameNumber")
 				UpdateSelectedFrame(e as VMPropertyChangedEventArgs<int>);
 		}
 
 		void StackFrameManager_StackFramesUpdated(object sender, EventArgs e) {
-			// InitializeStackFrames() is called by CallStackPaneCreator when the process has been
+			// InitializeStackFrames() is called by CallStackControlCreator when the process has been
 			// running for a little while. Speeds up stepping.
 			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Running)
 				InitializeStackFrames();
@@ -152,7 +156,7 @@ namespace dnSpy.Debugger.CallStack {
 				for (int i = 0; i < framesToAdd; i++) {
 					var frame = newFrames[i];
 					var vm = new CallStackFrameVM(this, i, frame);
-					vm.IsCurrentFrame = i == StackFrameManager.Instance.SelectedFrame;
+					vm.IsCurrentFrame = i == StackFrameManager.Instance.SelectedFrameNumber;
 					vm.IsUserCode = IsUserCode(frame);
 
 					if (framesList.Count == i)
@@ -172,7 +176,7 @@ namespace dnSpy.Debugger.CallStack {
 				var frame = newFrames[i];
 
 				vm.Index = i;
-				vm.IsCurrentFrame = i == StackFrameManager.Instance.SelectedFrame;
+				vm.IsCurrentFrame = i == StackFrameManager.Instance.SelectedFrameNumber;
 				vm.IsUserCode = IsUserCode(frame);
 				vm.Frame = frame;
 			}

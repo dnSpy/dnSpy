@@ -124,6 +124,7 @@
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointColumnConverter.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointListSettings.cs" />
+    <Compile Include="Debugger\Breakpoints\BreakpointPrinter.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointsControl.xaml.cs">
       <DependentUpon>BreakpointsControl.xaml</DependentUpon>
     </Compile>
@@ -139,6 +140,7 @@
     <Compile Include="Debugger\DebuggedProcessRunningNotifier.cs" />
     <Compile Include="Debugger\DebuggerSettings.cs" />
     <Compile Include="Debugger\DebuggerSettingsVM.cs" />
+    <Compile Include="Debugger\DebugOutputUtils.cs" />
     <Compile Include="Debugger\DebugUtils.cs" />
     <Compile Include="Debugger\Dialogs\AttachProcessDlg.xaml.cs">
       <DependentUpon>AttachProcessDlg.xaml</DependentUpon>
@@ -150,7 +152,23 @@
     <Compile Include="Debugger\Dialogs\DebugProcessVM.cs" />
     <Compile Include="Debugger\Dialogs\ManagedProcessesFinder.cs" />
     <Compile Include="Debugger\Dialogs\ProcessVM.cs" />
+    <Compile Include="Debugger\Modules\Commands.cs" />
+    <Compile Include="Debugger\Modules\ModuleColumnConverter.cs" />
+    <Compile Include="Debugger\Modules\ModulePrinter.cs" />
+    <Compile Include="Debugger\Modules\ModulesControl.xaml.cs">
+      <DependentUpon>ModulesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Modules\ModulesVM.cs" />
+    <Compile Include="Debugger\Modules\ModuleVM.cs" />
     <Compile Include="Debugger\OutputConverter.cs" />
+    <Compile Include="Debugger\Threads\Commands.cs" />
+    <Compile Include="Debugger\Threads\ThreadColumnConverter.cs" />
+    <Compile Include="Debugger\Threads\ThreadPrinter.cs" />
+    <Compile Include="Debugger\Threads\ThreadsControl.xaml.cs">
+      <DependentUpon>ThreadsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Threads\ThreadsVM.cs" />
+    <Compile Include="Debugger\Threads\ThreadVM.cs" />
     <Compile Include="MVVM\ContextMenuEntryBase.cs" />
     <Compile Include="MVVM\ContextMenuEntryCommandProxy.cs" />
     <Compile Include="AsmEditor\ContextMenuHandler.cs" />
@@ -1189,6 +1207,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Debugger\Modules\ModulesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\Threads\ThreadsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Debugger\wpf.styles.templates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1279,6 +1305,7 @@
     <Resource Include="Images\DisassemblyWindow.png" />
     <Resource Include="Images\dnSpy.ico" />
     <Resource Include="Images\dnSpy-Big.png" />
+    <Resource Include="Images\DraggedCurrentInstructionPointer.png" />
     <Resource Include="Images\EntryPoint.png" />
     <Resource Include="Images\Enum.png" />
     <Resource Include="Images\EnumInternal.png" />
@@ -1357,6 +1384,7 @@
     <Resource Include="Images\MethodProtectedInternal.png" />
     <Resource Include="Images\ModuleFile.png" />
     <Resource Include="Images\ModuleReference.png" />
+    <Resource Include="Images\ModulesWindow.png" />
     <Resource Include="Images\ModuleToAssembly.png" />
     <Resource Include="Images\NameSpace.png" />
     <Resource Include="Images\NewAssembly.png" />
@@ -1396,6 +1424,7 @@
     <Resource Include="Images\PropertyPrivate.png" />
     <Resource Include="Images\PropertyProtected.png" />
     <Resource Include="Images\PropertyProtectedInternal.png" />
+    <Resource Include="Images\QuestionMark.png" />
     <Resource Include="Images\Redo.png" />
     <Resource Include="Images\ReferenceFolderClosed.png" />
     <Resource Include="Images\ReferenceFolderOpen.png" />
@@ -1444,6 +1473,7 @@
     <Resource Include="Images\SuperTypes.png" />
     <Resource Include="Images\SuperTypesOpen.png" />
     <Resource Include="Images\TextFile.png" />
+    <Resource Include="Images\Thread.png" />
     <Resource Include="Images\ToUncondBranch.png" />
     <Resource Include="Images\Undo.png" />
     <Resource Include="Images\UserDefinedDataType.png" />

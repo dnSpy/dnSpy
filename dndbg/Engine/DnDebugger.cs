@@ -75,6 +75,18 @@ namespace dndbg.Engine {
 		}
 		bool hasReceivedCreateProcessEvent = false;
 
+		public event EventHandler<ModuleDebuggerEventArgs> OnModuleAdded;
+		void CallOnModuleAdded(DnModule module, bool added) {
+			if (OnModuleAdded != null)
+				OnModuleAdded(this, new ModuleDebuggerEventArgs(module, added));
+		}
+
+		public event EventHandler<NameChangedDebuggerEventArgs> OnNameChanged;
+		void CallOnNameChanged(DnAppDomain appDomain, DnThread thread) {
+			if (OnNameChanged != null)
+				OnNameChanged(this, new NameChangedDebuggerEventArgs(appDomain, thread));
+		}
+
 		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged;
 		void CallOnProcessStateChanged() {
 			if (OnProcessStateChanged != null)
@@ -115,6 +127,13 @@ namespace dndbg.Engine {
 			get { DebugVerifyThread(); return debuggerStates.ToArray(); }
 		}
 		readonly List<DebuggerState> debuggerStates = new List<DebuggerState>();
+
+		/// <summary>
+		/// true if we attached to a process, false if we started all processes
+		/// </summary>
+		public bool HasAttached {
+			get { return processes.GetAll().Any(p => p.WasAttached); }
+		}
 
 		readonly int debuggerManagedThreadId;
 
@@ -165,7 +184,17 @@ namespace dndbg.Engine {
 
 		// Could be called from any thread
 		internal void OnManagedCallbackFromAnyThread(Func<DebugCallbackEventArgs> func) {
-			debugMessageDispatcher.ExecuteAsync(() => OnManagedCallbackInDebuggerThread(func()));
+			debugMessageDispatcher.ExecuteAsync(() => {
+				DebugCallbackEventArgs e;
+				try {
+					e = func();
+				}
+				catch {
+					// most likely debugger has already stopped
+					return;
+				}
+				OnManagedCallbackInDebuggerThread(e);
+			});
 		}
 
 		// Same as above method but called by CreateProcess, LoadModule, CreateAppDomain because
@@ -174,7 +203,15 @@ namespace dndbg.Engine {
 			using (var ev = new ManualResetEvent(false)) {
 				debugMessageDispatcher.ExecuteAsync(() => {
 					try {
-						OnManagedCallbackInDebuggerThread(func());
+						DebugCallbackEventArgs e;
+						try {
+							e = func();
+						}
+						catch {
+							// most likely debugger has already stopped
+							return;
+						}
+						OnManagedCallbackInDebuggerThread(e);
 					}
 					finally {
 						ev.Set();
@@ -586,6 +623,7 @@ namespace dndbg.Engine {
 		}
 
 		void OnModuleUnloaded(DnModule module) {
+			CallOnModuleAdded(module, false);
 			RemoveModuleFromBreakpoints(module);
 		}
 
@@ -699,8 +737,11 @@ namespace dndbg.Engine {
 					module.CorModule.JITCompilerFlags = debugOptions.JITCompilerFlags;
 					module.CorModule.SetJMCStatus(true);
 
+					module.InitializeCachedValues();
 					foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.SerializedDnModule))
 						bp.AddBreakpoint(module);
+
+					CallOnModuleAdded(module, true);
 				}
 				break;
 
@@ -794,6 +835,7 @@ namespace dndbg.Engine {
 				var thread = TryGetValidThread(ncArgs.Thread);
 				if (thread != null)
 					thread.NameChanged();
+				CallOnNameChanged(appDomain, thread);
 				break;
 
 			case DebugCallbackType.UpdateModuleSymbols:
@@ -939,7 +981,7 @@ namespace dndbg.Engine {
 
 			var process = TryAdd(comProcess);
 			if (process != null)
-				process.Initialize(options.Filename, options.CurrentDirectory, options.CommandLine);
+				process.Initialize(false, options.Filename, options.CurrentDirectory, options.CommandLine);
 		}
 
 		public static DnDebugger Attach(AttachProcessOptions options) {
@@ -963,7 +1005,7 @@ namespace dndbg.Engine {
 			corDebug.DebugActiveProcess(options.ProcessId, 0, out comProcess);
 			var dnProcess = dbg.TryAdd(comProcess);
 			if (dnProcess != null)
-				dnProcess.Initialize(filename, string.Empty, string.Empty);
+				dnProcess.Initialize(true, filename, string.Empty, string.Empty);
 			return dbg;
 		}
 
@@ -1328,5 +1370,10 @@ namespace dndbg.Engine {
 				}
 			}
 		}
+
+		internal int GetNextModuleId() {
+			return moduleOrder++;
+		}
+		int moduleOrder;
 	}
 }

@@ -118,7 +118,16 @@ namespace dndbg.Engine {
 			return process.Terminate(exitCode);
 		}
 
-		internal void Initialize(string filename, string cwd, string cmdLine) {
+		/// <summary>
+		/// true if we attached to the process, false if we created the process
+		/// </summary>
+		public bool WasAttached {
+			get { return attached; }
+		}
+		bool attached;
+
+		internal void Initialize(bool attached, string filename, string cwd, string cmdLine) {
+			this.attached = attached;
 			this.filename = filename;
 			this.cwd = cwd;
 			this.cmdLine = cmdLine;

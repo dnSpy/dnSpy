@@ -30,7 +30,7 @@ namespace dnSpy.MVVM {
 	}
 
 	public class PickDirectory : IPickDirectory {
-		public string GetDirectory(string currentDir) {
+		public string GetDirectory(string currentDir = null) {
 			var dlg = new FolderBrowserDialog();
 			dlg.SelectedPath = currentDir ?? string.Empty;
 			if (dlg.ShowDialog() != DialogResult.OK)

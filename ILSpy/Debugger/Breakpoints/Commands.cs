@@ -18,8 +18,11 @@
 */
 
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using dnSpy.MVVM;
+using dnSpy.NRefactory;
+using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.Breakpoints {
@@ -58,14 +61,46 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Delete", Order = 100, Category = "CopyBP", Icon = "Delete", InputGestureText = "Del")]
+	[ExportContextMenuEntry(Header = "Cop_y", Order = 100, Category = "CopyBP", Icon = "Copy", InputGestureText = "Ctrl+C")]
+	sealed class CopyBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
+		protected override void Execute(BreakpointCtxMenuContext context) {
+			var output = new PlainTextOutput();
+			foreach (var vm in context.SelectedItems) {
+				var printer = new BreakpointPrinter(output, DebuggerSettings.Instance.UseHexadecimal);
+				printer.WriteName(vm);
+				output.Write('\t', TextTokenType.Text);
+				printer.WriteAssembly(vm);
+				output.Write('\t', TextTokenType.Text);
+				printer.WriteModule(vm);
+				output.Write('\t', TextTokenType.Text);
+				printer.WriteFile(vm);
+				output.WriteLine();
+			}
+			var s = output.ToString();
+			if (s.Length > 0)
+				Clipboard.SetText(s);
+		}
+
+		protected override bool IsEnabled(BreakpointCtxMenuContext context) {
+			return context.SelectedItems.Length > 0;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Select _All", Order = 110, Category = "CopyBP", Icon = "Select", InputGestureText = "Ctrl+A")]
+	sealed class SelectAllBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
+		protected override void Execute(BreakpointCtxMenuContext context) {
+			BreakpointsControlCreator.BreakpointsControlInstance.listView.SelectAll();
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "_Delete", Order = 120, Category = "CopyBP", Icon = "Delete", InputGestureText = "Del")]
 	sealed class DeleteBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		protected override void Execute(BreakpointCtxMenuContext context) {
 			context.VM.Remove(context.SelectedItems);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Delete _All Breakpoints", Order = 110, Category = "CopyBP", Icon = "DeleteAllBreakpoints", InputGestureText = "Ctrl+Shift+F9")]
+	[ExportContextMenuEntry(Header = "Delete _All Breakpoints", Order = 130, Category = "CopyBP", Icon = "DeleteAllBreakpoints", InputGestureText = "Ctrl+Shift+F9")]
 	sealed class DeleteAllBPsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		protected override void Execute(BreakpointCtxMenuContext context) {
 			DebugRoutedCommands.DeleteAllBreakpoints.Execute(null, MainWindow.Instance);
@@ -76,7 +111,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Enable All Breakpoi_nts", Order = 120, Category = "CopyBP")]
+	[ExportContextMenuEntry(Header = "Enable All Breakpoi_nts", Order = 140, Category = "CopyBP")]
 	sealed class EnableAllBPsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		protected override void Execute(BreakpointCtxMenuContext context) {
 			DebugRoutedCommands.EnableAllBreakpoints.Execute(null, MainWindow.Instance);
@@ -87,7 +122,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Disable All Breakpoi_nts", Order = 130, Category = "CopyBP")]
+	[ExportContextMenuEntry(Header = "Disable All Breakpoi_nts", Order = 150, Category = "CopyBP")]
 	sealed class DisableAllBPsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		protected override void Execute(BreakpointCtxMenuContext context) {
 			DebugRoutedCommands.DisableAllBreakpoints.Execute(null, MainWindow.Instance);

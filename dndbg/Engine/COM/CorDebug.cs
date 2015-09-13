@@ -658,7 +658,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		int IsAttached(out int pbAttached);
 		[PreserveSig]
 		int GetName([In] uint cchName, out uint pcchName, [Out] [MarshalAs(UnmanagedType.LPWStr)] StringBuilder szName);
-		void GetObject([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppObject);
+		[PreserveSig]
+		int GetObject([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppObject);
 		[PreserveSig]
 		int Attach();
 		[PreserveSig]
@@ -1567,8 +1568,10 @@ namespace dndbg.Engine.COM.CorDebug {
 		int IsOSSuspended([In] uint threadID, out int pbSuspended);
 		void GetThreadContext([In] uint threadID, [In] uint contextSize, [MarshalAs(UnmanagedType.Interface)] [In] [Out] ICorDebugProcess context);
 		void SetThreadContext([In] uint threadID, [In] uint contextSize, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugProcess context);
-		void ReadMemory([In] ulong address, [In] uint size, [In] IntPtr buffer, out IntPtr read);
-		void WriteMemory([In] ulong address, [In] uint size, [In] IntPtr buffer, out IntPtr written);
+		[PreserveSig]
+		int ReadMemory([In] ulong address, [In] uint size, [In] IntPtr buffer, out IntPtr read);
+		[PreserveSig]
+		int WriteMemory([In] ulong address, [In] uint size, [In] IntPtr buffer, out IntPtr written);
 		[PreserveSig]
 		int ClearCurrentException([In] uint threadID);
 		[PreserveSig]
@@ -1608,7 +1611,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		void GetGCHeapInformation(out COR_HEAPINFO pHeapInfo);
 		void EnumerateHeap([MarshalAs(UnmanagedType.Interface)] out ICorDebugHeapEnum ppObjects);
 		void EnumerateHeapRegions([MarshalAs(UnmanagedType.Interface)] out ICorDebugHeapSegmentEnum ppRegions);
-		void GetObject([In] ulong addr, [MarshalAs(UnmanagedType.Interface)] out ICorDebugObjectValue pObject);
+		[PreserveSig]
+		int GetObject([In] ulong addr, [MarshalAs(UnmanagedType.Interface)] out ICorDebugObjectValue pObject);
 		void EnumerateGCReferences([In] int enumerateWeakReferences, [MarshalAs(UnmanagedType.Interface)] out ICorDebugGCReferenceEnum ppEnum);
 		void EnumerateHandles([In] CorGCReferenceType types, [MarshalAs(UnmanagedType.Interface)] out ICorDebugGCReferenceEnum ppEnum);
 		void GetTypeID([In] ulong obj, out COR_TYPEID pId);
@@ -1821,14 +1825,16 @@ namespace dndbg.Engine.COM.CorDebug {
 		int GetActiveFrame([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
 		void GetRegisterSet([MarshalAs(UnmanagedType.Interface)] out ICorDebugRegisterSet ppRegisters);
 		void CreateEval([MarshalAs(UnmanagedType.Interface)] out ICorDebugEval ppEval);
-		void GetObject([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppObject);
+		[PreserveSig]
+		int GetObject([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppObject);
 	}
 	[Guid("2BD956D9-7B07-4BEF-8A98-12AA862417C5"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugThread2 {
 		void GetActiveFunctions([In] uint cFunctions, out uint pcFunctions, [MarshalAs(UnmanagedType.Interface)] [In] [Out] ICorDebugThread2 pFunctions);
 		void GetConnectionID(out uint pdwConnectionId);
-		void GetTaskID(out ulong pTaskId);
+		[PreserveSig]
+		int GetTaskID(out ulong pTaskId);
 		[PreserveSig]
 		int GetVolatileOSThreadID(out int pdwTid);
 		[PreserveSig]

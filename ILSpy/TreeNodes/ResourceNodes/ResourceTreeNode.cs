@@ -47,7 +47,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		protected sealed override void Write(ITextOutput output, Language language) {
-			output.WriteFileName(r.Name);
+			output.WriteFilename(r.Name);
 		}
 
 		public sealed override object Icon {

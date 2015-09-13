@@ -70,6 +70,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		static void InitializeCommandShortcuts(ListView listView) {
+			listView.AddCommandBinding(ApplicationCommands.Copy, new BreakpointCtxMenuCommandProxy(new CopyBreakpointCtxMenuCommand()));
 			listView.AddCommandBinding(ApplicationCommands.Delete, new BreakpointCtxMenuCommandProxy(new DeleteBreakpointCtxMenuCommand()));
 			listView.InputBindings.Add(new KeyBinding(new BreakpointCtxMenuCommandProxy(new GoToSourceBreakpointCtxMenuCommand()), Key.Enter, ModifierKeys.None));
 			listView.InputBindings.Add(new KeyBinding(new BreakpointCtxMenuCommandProxy(new GoToSourceNewTabBreakpointCtxMenuCommand()), Key.Enter, ModifierKeys.Control));
@@ -79,7 +80,7 @@ namespace dnSpy.Debugger.Breakpoints {
 	}
 
 	public partial class BreakpointsControl : UserControl, IPane {
-		public static readonly string PANE_TYPE_NAME = "breakpoint window";
+		public static readonly string PANE_TYPE_NAME = "breakpoints window";
 
 		public BreakpointsControl() {
 			InitializeComponent();

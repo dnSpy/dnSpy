@@ -164,7 +164,7 @@ namespace dnSpy.TreeNodes {
 		}
 
 		protected sealed override void Write(ITextOutput output, Language language) {
-			output.WriteFileName(resElem.Name);
+			output.WriteFilename(resElem.Name);
 		}
 
 		public sealed override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {

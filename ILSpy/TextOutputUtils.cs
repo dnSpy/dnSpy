@@ -17,12 +17,41 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnlib.DotNet;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy {
 	static class TextOutputUtils {
+		public static T WriteCommaSpace<T>(this T output) where T : ITextOutput {
+			output.Write(',', TextTokenType.Operator);
+			output.WriteSpace();
+			return output;
+		}
+
+		public static T Write<T>(this T output, Version version) where T : ITextOutput {
+			if (version == null) {
+				output.Write('?', TextTokenType.Error);
+				output.Write('.', TextTokenType.Operator);
+				output.Write('?', TextTokenType.Error);
+				output.Write('.', TextTokenType.Operator);
+				output.Write('?', TextTokenType.Error);
+				output.Write('.', TextTokenType.Operator);
+				output.Write('?', TextTokenType.Error);
+			}
+			else {
+				output.Write(version.Major.ToString(), TextTokenType.Number);
+				output.Write('.', TextTokenType.Operator);
+				output.Write(version.Minor.ToString(), TextTokenType.Number);
+				output.Write('.', TextTokenType.Operator);
+				output.Write(version.Build.ToString(), TextTokenType.Number);
+				output.Write('.', TextTokenType.Operator);
+				output.Write(version.Revision.ToString(), TextTokenType.Number);
+			}
+			return output;
+		}
+
 		public static T Write<T>(this T output, IAssembly asm) where T : ITextOutput {
 			if (asm == null)
 				return output;
@@ -32,28 +61,19 @@ namespace dnSpy {
 				(asmDef.ManifestModule.Characteristics & dnlib.PE.Characteristics.Dll) == 0;
 			output.Write(asm.Name, isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
 
-			output.Write(',', TextTokenType.Operator);
-			output.WriteSpace();
+			output.WriteCommaSpace();
 
 			output.Write("Version", TextTokenType.InstanceProperty);
 			output.Write('=', TextTokenType.Operator);
-			output.Write(asm.Version.Major.ToString(), TextTokenType.Number);
-			output.Write('.', TextTokenType.Operator);
-			output.Write(asm.Version.Minor.ToString(), TextTokenType.Number);
-			output.Write('.', TextTokenType.Operator);
-			output.Write(asm.Version.Build.ToString(), TextTokenType.Number);
-			output.Write('.', TextTokenType.Operator);
-			output.Write(asm.Version.Revision.ToString(), TextTokenType.Number);
+			output.Write(asm.Version);
 
-			output.Write(',', TextTokenType.Operator);
-			output.WriteSpace();
+			output.WriteCommaSpace();
 
 			output.Write("Culture", TextTokenType.InstanceProperty);
 			output.Write('=', TextTokenType.Operator);
 			output.Write(UTF8String.IsNullOrEmpty(asm.Culture) ? "neutral" : asm.Culture.String, TextTokenType.EnumField);
 
-			output.Write(',', TextTokenType.Operator);
-			output.WriteSpace();
+			output.WriteCommaSpace();
 
 			var publicKey = PublicKeyBase.ToPublicKeyToken(asm.PublicKeyOrToken);
 			output.Write(publicKey == null || publicKey is PublicKeyToken ? "PublicKeyToken" : "PublicKey", TextTokenType.InstanceProperty);
@@ -64,16 +84,14 @@ namespace dnSpy {
 				output.Write(publicKey.ToString(), TextTokenType.Number);
 
 			if ((asm.Attributes & AssemblyAttributes.Retargetable) != 0) {
-				output.Write(',', TextTokenType.Operator);
-				output.WriteSpace();
+				output.WriteCommaSpace();
 				output.Write("Retargetable", TextTokenType.InstanceProperty);
 				output.Write('=', TextTokenType.Operator);
 				output.Write("Yes", TextTokenType.EnumField);
 			}
 
 			if ((asm.Attributes & AssemblyAttributes.ContentType_Mask) == AssemblyAttributes.ContentType_WindowsRuntime) {
-				output.Write(',', TextTokenType.Operator);
-				output.WriteSpace();
+				output.WriteCommaSpace();
 				output.Write("ContentType", TextTokenType.InstanceProperty);
 				output.Write('=', TextTokenType.Operator);
 				output.Write("WindowsRuntime", TextTokenType.EnumField);
@@ -103,7 +121,7 @@ namespace dnSpy {
 			return output;
 		}
 
-		public static T WriteFileName<T>(this T output, string name) where T : ITextOutput {
+		public static T WriteFilename<T>(this T output, string name) where T : ITextOutput {
 			if (name == null)
 				return output;
 			name = UIUtils.CleanUpName(name);

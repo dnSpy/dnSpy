@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		internal static void Execute(CallStackFrameVM vm, bool newTab) {
 			if (vm != null) {
-				StackFrameManager.Instance.SelectedFrame = vm.Index;
+				StackFrameManager.Instance.SelectedFrameNumber = vm.Index;
 				FrameUtils.GoTo(vm.Frame, newTab);
 			}
 		}

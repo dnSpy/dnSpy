@@ -337,17 +337,31 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[ExportMainMenuCommand(MenuIcon = "BreakpointsWindow", Menu = "_Debug", MenuInputGestureText = "Ctrl+Alt+B", MenuHeader = "Show _Breakpoints", MenuCategory = "Breakpoints", MenuOrder = 5340)]
+	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "Breakpoints", MenuHeader = "Show _Breakpoints", MenuIcon = "BreakpointsWindow", MenuInputGestureText = "Ctrl+Alt+B", MenuOrder = 5340)]
 	class BreakpointsWindowCommand : DebugMainMenuCommand {
 		public BreakpointsWindowCommand()
 			: base(DebugRoutedCommands.ShowBreakpoints, null) {
 		}
 	}
 
-	[ExportMainMenuCommand(MenuIcon = "CallStackWindow", Menu = "_Debug", MenuInputGestureText = "Ctrl+Alt+C", MenuHeader = "_Show Call Stack", MenuCategory = "View", MenuOrder = 5400)]
+	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "_Show Call Stack", MenuIcon = "CallStackWindow", MenuInputGestureText = "Ctrl+Alt+C", MenuOrder = 5400)]
 	class CallStackWindowCommand : DebugMainMenuCommand {
 		public CallStackWindowCommand()
 			: base(DebugRoutedCommands.ShowCallStack, true) {
+		}
+	}
+
+	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "Show T_hreads", MenuIcon = "Thread", MenuInputGestureText = "Ctrl+Alt+H", MenuOrder = 5410)]
+	class ThreadsWindowCommand : DebugMainMenuCommand {
+		public ThreadsWindowCommand()
+			: base(DebugRoutedCommands.ShowThreads, true) {
+		}
+	}
+
+	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "Show Mod_ules", MenuIcon = "ModulesWindow", MenuInputGestureText = "Ctrl+Alt+U", MenuOrder = 5420)]
+	class ModulesWindowCommand : DebugMainMenuCommand {
+		public ModulesWindowCommand()
+			: base(DebugRoutedCommands.ShowModules, true) {
 		}
 	}
 

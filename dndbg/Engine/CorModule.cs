@@ -120,7 +120,8 @@ namespace dndbg.Engine {
 
 		/// <summary>
 		/// Gets/sets the JIT compiler flags. The setter can only be called from the
-		/// ICorDebugManagedCallback::LoadModule handler.
+		/// ICorDebugManagedCallback::LoadModule handler. The getter can only be called when the
+		/// debugged process is synchronized (paused).
 		/// </summary>
 		public CorDebugJITCompilerFlags JITCompilerFlags {
 			get {

@@ -86,7 +86,7 @@ namespace dndbg.Engine {
 		}
 
 		DnModule CreateModule(ICorDebugModule comModule, int id) {
-			return new DnModule(this, comModule, id);
+			return new DnModule(this, comModule, id, Debugger.GetNextModuleId());
 		}
 
 		internal void SetHasUnloaded() {

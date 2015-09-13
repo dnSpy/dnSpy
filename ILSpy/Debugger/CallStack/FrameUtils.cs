@@ -18,6 +18,8 @@
 */
 
 using dndbg.Engine;
+using dnlib.DotNet;
+using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.CallStack {
 	static class FrameUtils {
@@ -35,7 +37,8 @@ namespace dnSpy.Debugger.CallStack {
 				return false;
 			if (!frame.IsILFrame)
 				return false;
-			if (!frame.ILFrameIP.IsExact && !frame.ILFrameIP.IsApproximate)
+			var ip = frame.ILFrameIP;
+			if (!ip.IsExact && !ip.IsApproximate && !ip.IsProlog && !ip.IsEpilog)
 				return false;
 			if (frame.Token == 0)
 				return false;
@@ -51,7 +54,7 @@ namespace dnSpy.Debugger.CallStack {
 			if (serAsm == null)
 				return false;
 
-			return DebugUtils.GoToIL(serAsm.Value, frame.Token, frame.ILFrameIP.Offset, newTab);
+			return DebugUtils.GoToIL(serAsm.Value, frame.Token, frame.GetILOffset(), newTab);
 		}
 
 		public static bool CanGoToDisasm(CorFrame frame) {
@@ -68,6 +71,27 @@ namespace dnSpy.Debugger.CallStack {
 				return false;
 
 			return false;//TODO:
+		}
+
+		public static uint GetILOffset(this CorFrame frame) {
+			var ip = frame.ILFrameIP;
+			if (ip.IsExact || ip.IsApproximate)
+				return ip.Offset;
+			if (ip.IsProlog)
+				return 0;
+
+			if (ip.IsEpilog) {
+				var asm = frame.GetSerializedDnModuleWithAssembly();
+				if (asm != null) {
+					var loadedAsm = MainWindow.Instance.LoadAssembly(asm.Value.Assembly, asm.Value.Module);
+					var mod = loadedAsm == null ? null : loadedAsm.ModuleDefinition as ModuleDefMD;
+					var md = mod == null ? null : mod.ResolveToken(frame.Token) as MethodDef;
+					if (md != null && md.Body != null && md.Body.Instructions.Count > 0)
+						return md.Body.Instructions[md.Body.Instructions.Count - 1].Offset;
+				}
+			}
+
+			return uint.MaxValue;
 		}
 	}
 }

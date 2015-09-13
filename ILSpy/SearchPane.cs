@@ -669,13 +669,13 @@ namespace ICSharpCode.ILSpy {
 
 			var resNode = o as ResourceTreeNode;
 			if (resNode != null) {
-				output.WriteFileName(resNode.Name);
+				output.WriteFilename(resNode.Name);
 				return;
 			}
 
 			var resElNode = o as ResourceElementTreeNode;
 			if (resElNode != null) {
-				output.WriteFileName(resElNode.Name);
+				output.WriteFilename(resElNode.Name);
 				return;
 			}
 

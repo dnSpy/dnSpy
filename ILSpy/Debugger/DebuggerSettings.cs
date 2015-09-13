@@ -67,6 +67,30 @@ namespace dnSpy.Debugger {
 		}
 		bool syntaxHighlightBreakpoints;
 
+		public bool SyntaxHighlightThreads {
+			get { return syntaxHighlightThreads; }
+			set {
+				if (syntaxHighlightThreads != value) {
+					syntaxHighlightThreads = value;
+					Save();
+					OnPropertyChanged("SyntaxHighlightThreads");
+				}
+			}
+		}
+		bool syntaxHighlightThreads;
+
+		public bool SyntaxHighlightModules {
+			get { return syntaxHighlightModules; }
+			set {
+				if (syntaxHighlightModules != value) {
+					syntaxHighlightModules = value;
+					Save();
+					OnPropertyChanged("SyntaxHighlightModules");
+				}
+			}
+		}
+		bool syntaxHighlightModules;
+
 		public BreakProcessType BreakProcessType {
 			get { return breakProcessType; }
 			set {
@@ -97,6 +121,8 @@ namespace dnSpy.Debugger {
 			UseHexadecimal = (bool?)csx.Attribute("UseHexadecimal") ?? true;
 			SyntaxHighlightCallStack = (bool?)csx.Attribute("SyntaxHighlightCallStack") ?? true;
 			SyntaxHighlightBreakpoints = (bool?)csx.Attribute("SyntaxHighlightBreakpoints") ?? true;
+			SyntaxHighlightThreads = (bool?)csx.Attribute("SyntaxHighlightThreads") ?? true;
+			SyntaxHighlightModules = (bool?)csx.Attribute("SyntaxHighlightModules") ?? true;
 			BreakProcessType = (BreakProcessType)((int?)csx.Attribute("BreakProcessType") ?? (int)BreakProcessType.ModuleCctorOrEntryPoint);
 		}
 
@@ -122,6 +148,8 @@ namespace dnSpy.Debugger {
 			csx.SetAttributeValue("UseHexadecimal", UseHexadecimal);
 			csx.SetAttributeValue("SyntaxHighlightCallStack", SyntaxHighlightCallStack);
 			csx.SetAttributeValue("SyntaxHighlightBreakpoints", SyntaxHighlightBreakpoints);
+			csx.SetAttributeValue("SyntaxHighlightThreads", SyntaxHighlightThreads);
+			csx.SetAttributeValue("SyntaxHighlightModules", SyntaxHighlightModules);
 			csx.SetAttributeValue("BreakProcessType", (int)BreakProcessType);
 		}
 
@@ -129,6 +157,8 @@ namespace dnSpy.Debugger {
 			other.UseHexadecimal = this.UseHexadecimal;
 			other.SyntaxHighlightCallStack = this.SyntaxHighlightCallStack;
 			other.SyntaxHighlightBreakpoints = this.SyntaxHighlightBreakpoints;
+			other.SyntaxHighlightThreads = this.SyntaxHighlightThreads;
+			other.SyntaxHighlightModules = this.SyntaxHighlightModules;
 			other.BreakProcessType = this.BreakProcessType;
 			return other;
 		}
