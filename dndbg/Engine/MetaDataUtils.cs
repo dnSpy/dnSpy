@@ -350,7 +350,7 @@ namespace dndbg.Engine {
 		}
 
 		public static uint GetGlobalStaticConstructor(IMetaDataImport mdi) {
-			var mdTokens = GetMethods(mdi, 0x02000001);
+			var mdTokens = GetMethodTokens(mdi, 0x02000001);
 			if (mdTokens == null)
 				return 0;
 
@@ -371,7 +371,7 @@ namespace dndbg.Engine {
 			return 0;
 		}
 
-		public unsafe static uint[] GetMethods(IMetaDataImport mdi, uint token) {
+		public unsafe static uint[] GetMethodTokens(IMetaDataImport mdi, uint token) {
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;
@@ -391,6 +391,72 @@ namespace dndbg.Engine {
 				uint[] tokens = new uint[ulCount];
 				fixed (uint* p = &tokens[0]) {
 					hr = mdi.EnumMethods(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
+				}
+				if (hr < 0)
+					return new uint[0];
+				return tokens;
+			}
+			finally {
+				if (iter != IntPtr.Zero)
+					mdi.CloseEnum(iter);
+			}
+		}
+
+		public static List<TokenAndName> GetFields(IMetaDataImport mdi, uint token) {
+			var fdTokens = GetFieldTokens(mdi, token);
+			var list = new List<TokenAndName>(fdTokens.Length);
+
+			foreach (var fdToken in fdTokens) {
+				var name = GetFieldName(mdi, fdToken);
+				if (name == null)
+					continue;
+				list.Add(new TokenAndName(name, fdToken));
+			}
+
+			list.Reverse();
+			return list;
+		}
+
+		static unsafe string GetFieldName(IMetaDataImport mdi, uint token) {
+			if (mdi == null)
+				return null;
+			uint chField, dwAttr;
+			char[] nameBuf = null;
+			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chField, out dwAttr, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			if (hr >= 0) {
+				nameBuf = new char[chField];
+				fixed (char* p = &nameBuf[0]) {
+					hr = mdi.GetFieldProps(token, IntPtr.Zero, new IntPtr(p), (uint)nameBuf.Length, out chField, out dwAttr, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+				}
+			}
+			if (hr < 0)
+				return null;
+
+			if (chField <= 1)
+				return string.Empty;
+			return new string(nameBuf, 0, (int)chField - 1);
+		}
+
+		public unsafe static uint[] GetFieldTokens(IMetaDataImport mdi, uint token) {
+			IntPtr iter = IntPtr.Zero;
+			try {
+				uint cTokens;
+				int hr = mdi.EnumFields(ref iter, token, IntPtr.Zero, 0, out cTokens);
+				if (hr < 0)
+					return new uint[0];
+
+				uint ulCount = 0;
+				hr = mdi.CountEnum(iter, ref ulCount);
+				if (hr < 0 || ulCount == 0)
+					return new uint[0];
+
+				hr = mdi.ResetEnum(iter, 0);
+				if (hr < 0)
+					return new uint[0];
+
+				uint[] tokens = new uint[ulCount];
+				fixed (uint* p = &tokens[0]) {
+					hr = mdi.EnumFields(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
 				}
 				if (hr < 0)
 					return new uint[0];

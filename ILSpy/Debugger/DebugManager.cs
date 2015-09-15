@@ -26,6 +26,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
+using System.Windows.Threading;
 using dndbg.Engine;
 using dndbg.Engine.COM.CorDebug;
 using dnlib.DotNet;
@@ -190,6 +191,7 @@ namespace dnSpy.Debugger {
 		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			switch (DebugManager.Instance.ProcessState) {
 			case DebuggerProcessState.Starting:
+				stoppedEval = null;
 				currentLocation = null;
 				currentMethod = null;
 				MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
@@ -198,10 +200,19 @@ namespace dnSpy.Debugger {
 				break;
 
 			case DebuggerProcessState.Running:
+				if (Debugger.IsEvaluating)
+					break;
+				stoppedEval = null;
 				SetRunningStatusMessage();
 				break;
 
 			case DebuggerProcessState.Stopped:
+				// If we're evaluating, or if eval has completed, don't do a thing. This code
+				// should only be executed when a BP hits or if a stepping operation has completed.
+				if (Debugger.IsEvaluating || Debugger.EvalCompleted)
+					break;
+
+				stoppedEval = null;
 				SetWindowPos(new WindowInteropHelper(MainWindow.Instance).Handle, IntPtr.Zero, 0, 0, 0, 0, 3);
 				MainWindow.Instance.Activate();
 
@@ -213,6 +224,7 @@ namespace dnSpy.Debugger {
 				break;
 
 			case DebuggerProcessState.Terminated:
+				stoppedEval = null;
 				currentLocation = null;
 				currentMethod = null;
 				MainWindow.Instance.HideStatus();
@@ -1061,6 +1073,44 @@ namespace dnSpy.Debugger {
 			if (asm == null)
 				return null;
 			return new SerializedDnModuleWithAssembly(asm.ManifestModule.Location, new SerializedDnModule(mod.Location));
+		}
+
+		public DnEval GetStoppedEval() {
+			Debug.Assert(ProcessState == DebuggerProcessState.Stopped);
+			if (ProcessState != DebuggerProcessState.Stopped)
+				throw new EvalException(-1, "Can't evaluate unless debugger is stopped");
+			if (stoppedEval == null) {
+				stoppedEval = Debugger.CreateEval();
+				stoppedEval.EvalEvent += DnEval_EvalEvent;
+			}
+
+			return stoppedEval;
+		}
+		DnEval stoppedEval;
+
+		void DnEval_EvalEvent(object sender, EvalEventArgs e) {
+			if (stoppedEval == null || sender != stoppedEval)
+				return;
+			if (callingEvalComplete)
+				return;
+			callingEvalComplete = true;
+			var app = App.Current.Dispatcher;
+			if (app != null && !app.HasShutdownStarted && !app.HasShutdownFinished) {
+				app.BeginInvoke(DispatcherPriority.Send, new Action(() => {
+					callingEvalComplete = false;
+					if (ProcessState == DebuggerProcessState.Stopped)
+						Debugger.SignalEvalComplete();
+				}));
+			}
+		}
+		volatile bool callingEvalComplete;
+
+		public bool CanEvaluate {
+			get { return Debugger != null && !Debugger.IsEvaluating; }
+		}
+
+		public bool EvalCompleted {
+			get { return Debugger != null && Debugger.EvalCompleted; }
 		}
 	}
 }

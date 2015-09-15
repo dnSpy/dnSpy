@@ -48,7 +48,8 @@ namespace dndbg.Engine.COM.MetaData {
 		[PreserveSig]
 		int EnumMethods([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] IntPtr rMethods, [In] uint cMax, [Out] out uint pcTokens);
 		void EnumMethodsWithName([In, Out] ref IntPtr phEnum, [In] uint cl, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, uint[] rMethods, [In] uint cMax, [Out] out uint pcTokens);
-		void EnumFields([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] uint[] rFields, [In] uint cMax, [Out] out uint pcTokens);
+		[PreserveSig]
+		int EnumFields([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] IntPtr rFields, [In] uint cMax, [Out] out uint pcTokens);
 		void EnumFieldsWithName([In, Out] ref IntPtr phEnum, [In] uint cl, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] uint[] rFields, [In] uint cMax, [Out] out uint pcTokens);
 		[PreserveSig]
 		int EnumParams([In, Out] ref IntPtr phEnum, [In] uint mb, [Out] IntPtr rParams, [In] uint cMax, [Out] out uint pcTokens);
@@ -56,7 +57,8 @@ namespace dndbg.Engine.COM.MetaData {
 		void EnumMethodImpls([In, Out] ref IntPtr phEnum, [In] uint td, [Out] uint[] rMethodBody, [Out] uint[] rMethodDecl, [In] uint cMax, [Out] out uint pcTokens);
 		void EnumPermissionSets([In, Out] ref IntPtr phEnum, [In] uint tk, [In] uint dwActions, [Out] uint[] rPermission, [In] uint cMax, [Out] out uint pcTokens);
 		void FindMember([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
-		void FindMethod([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
+		[PreserveSig]
+		int FindMethod([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
 		void FindField([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
 		void FindMemberRef([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmr);
 		[PreserveSig]
@@ -87,7 +89,8 @@ namespace dndbg.Engine.COM.MetaData {
 		void GetCustomAttributeProps([In] uint cv, [Out] out uint ptkObj, [Out] out uint ptkType, [Out] out IntPtr ppBlob, [Out] out uint pcbSize);
 		void FindTypeRef([In] uint tkResolutionScope, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] out uint ptr);
 		void GetMemberProps(uint mb, out uint pClass, IntPtr szMember, uint cchMember, out uint pchMember, out uint pdwAttr, [Out] out IntPtr ppvSigBlob, [Out] out uint pcbSigBlob, [Out] out uint pulCodeRVA, [Out] out uint pdwImplFlags, [Out] out uint pdwCPlusTypeFlag, [Out] out IntPtr ppValue, [Out] out uint pcchValue);
-		void GetFieldProps(uint mb, out uint pClass, IntPtr szField, uint cchField, out uint pchField, out uint pdwAttr, [Out] out IntPtr ppvSigBlob, [Out] out uint pcbSigBlob, [Out] out uint pdwCPlusTypeFlag, [Out] out IntPtr ppValue, [Out] out uint pcchValue);
+		[PreserveSig]
+		int GetFieldProps(uint mb, IntPtr pClass, IntPtr szField, uint cchField, out uint pchField, out uint pdwAttr, [Out] IntPtr ppvSigBlob, [Out] IntPtr pcbSigBlob, [Out] IntPtr pdwCPlusTypeFlag, [Out] IntPtr ppValue, [Out] IntPtr pcchValue);
 		void GetPropertyProps([In] uint prop, [Out] out uint pClass, [Out] IntPtr szProperty, [In] uint cchProperty, [Out] out uint pchProperty, [Out] out uint pdwPropFlags, [Out] out IntPtr ppvSig, [Out] out uint pbSig, [Out] out uint pdwCPlusTypeFlag, [Out] out IntPtr ppDefaultValue, [Out] out uint pcchDefaultValue, [Out] out uint pmdSetter, [Out] out uint pmdGetter, [In, Out] uint[] rmdOtherMethod, [In] uint cMax, [Out] out uint pcOtherMethod);
 		[PreserveSig]
 		int GetParamProps([In] uint tk, [Out] IntPtr pmd, [Out] out uint pulSequence, [Out] IntPtr szName, [Out] uint cchName, [Out] out uint pchName, [Out] out uint pdwAttr, [Out] IntPtr pdwCPlusTypeFlag, [Out] IntPtr ppValue, [Out] IntPtr pcchValue);
@@ -124,7 +127,8 @@ namespace dndbg.Engine.COM.MetaData {
 		[PreserveSig]
 		int EnumMethods([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] IntPtr rMethods, [In] uint cMax, [Out] out uint pcTokens);
 		void EnumMethodsWithName([In, Out] ref IntPtr phEnum, [In] uint cl, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, uint[] rMethods, [In] uint cMax, [Out] out uint pcTokens);
-		void EnumFields([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] uint[] rFields, [In] uint cMax, [Out] out uint pcTokens);
+		[PreserveSig]
+		int EnumFields([In, Out] ref IntPtr phEnum, [In] uint cl, [Out] IntPtr rFields, [In] uint cMax, [Out] out uint pcTokens);
 		void EnumFieldsWithName([In, Out] ref IntPtr phEnum, [In] uint cl, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] uint[] rFields, [In] uint cMax, [Out] out uint pcTokens);
 		[PreserveSig]
 		int EnumParams([In, Out] ref IntPtr phEnum, [In] uint mb, [Out] IntPtr rParams, [In] uint cMax, [Out] out uint pcTokens);
@@ -132,7 +136,8 @@ namespace dndbg.Engine.COM.MetaData {
 		void EnumMethodImpls([In, Out] ref IntPtr phEnum, [In] uint td, [Out] uint[] rMethodBody, [Out] uint[] rMethodDecl, [In] uint cMax, [Out] out uint pcTokens);
 		void EnumPermissionSets([In, Out] ref IntPtr phEnum, [In] uint tk, [In] uint dwActions, [Out] uint[] rPermission, [In] uint cMax, [Out] out uint pcTokens);
 		void FindMember([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
-		void FindMethod([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
+		[PreserveSig]
+		int FindMethod([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
 		void FindField([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
 		void FindMemberRef([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmr);
 		[PreserveSig]
@@ -163,7 +168,8 @@ namespace dndbg.Engine.COM.MetaData {
 		void GetCustomAttributeProps([In] uint cv, [Out] out uint ptkObj, [Out] out uint ptkType, [Out] out IntPtr ppBlob, [Out] out uint pcbSize);
 		void FindTypeRef([In] uint tkResolutionScope, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] out uint ptr);
 		void GetMemberProps(uint mb, out uint pClass, IntPtr szMember, uint cchMember, out uint pchMember, out uint pdwAttr, [Out] out IntPtr ppvSigBlob, [Out] out uint pcbSigBlob, [Out] out uint pulCodeRVA, [Out] out uint pdwImplFlags, [Out] out uint pdwCPlusTypeFlag, [Out] out IntPtr ppValue, [Out] out uint pcchValue);
-		void GetFieldProps(uint mb, out uint pClass, IntPtr szField, uint cchField, out uint pchField, out uint pdwAttr, [Out] out IntPtr ppvSigBlob, [Out] out uint pcbSigBlob, [Out] out uint pdwCPlusTypeFlag, [Out] out IntPtr ppValue, [Out] out uint pcchValue);
+		[PreserveSig]
+		int GetFieldProps(uint mb, IntPtr pClass, IntPtr szField, uint cchField, out uint pchField, out uint pdwAttr, [Out] IntPtr ppvSigBlob, [Out] IntPtr pcbSigBlob, [Out] IntPtr pdwCPlusTypeFlag, [Out] IntPtr ppValue, [Out] IntPtr pcchValue);
 		void GetPropertyProps([In] uint prop, [Out] out uint pClass, [Out] IntPtr szProperty, [In] uint cchProperty, [Out] out uint pchProperty, [Out] out uint pdwPropFlags, [Out] out IntPtr ppvSig, [Out] out uint pbSig, [Out] out uint pdwCPlusTypeFlag, [Out] out IntPtr ppDefaultValue, [Out] out uint pcchDefaultValue, [Out] out uint pmdSetter, [Out] out uint pmdGetter, [In, Out] uint[] rmdOtherMethod, [In] uint cMax, [Out] out uint pcOtherMethod);
 		[PreserveSig]
 		int GetParamProps([In] uint tk, [Out] IntPtr pmd, [Out] out uint pulSequence, [Out] IntPtr szName, [Out] uint cchName, [Out] out uint pchName, [Out] out uint pdwAttr, [Out] IntPtr pdwCPlusTypeFlag, [Out] IntPtr ppValue, [Out] IntPtr pcchValue);

@@ -58,7 +58,7 @@ namespace dnSpy.Debugger {
 				if (HasSameNameAsProcess(appDomain))
 					output.WriteFilename(filteredName);
 				else
-					output.Write(filteredName, TextTokenType.Text);
+					output.Write(filteredName, TextTokenType.String);
 			}
 			return output;
 		}

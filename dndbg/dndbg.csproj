@@ -51,7 +51,9 @@
     <Compile Include="Engine\CorChain.cs" />
     <Compile Include="Engine\CorClass.cs" />
     <Compile Include="Engine\CorCode.cs" />
+    <Compile Include="Engine\CorDebugExtensions.cs" />
     <Compile Include="Engine\CorDebugManagedCallback.cs" />
+    <Compile Include="Engine\CorEval.cs" />
     <Compile Include="Engine\CorFrame.cs" />
     <Compile Include="Engine\CorFunction.cs" />
     <Compile Include="Engine\CorFunctionBreakpoint.cs" />
@@ -79,6 +81,7 @@
     <Compile Include="Engine\DndbgSignatureReader.cs" />
     <Compile Include="Engine\DnDebugEventBreakpoint.cs" />
     <Compile Include="Engine\DnDebugger.cs" />
+    <Compile Include="Engine\DnEval.cs" />
     <Compile Include="Engine\DnILCodeBreakpoint.cs" />
     <Compile Include="Engine\DnModule.cs" />
     <Compile Include="Engine\DnProcess.cs" />

@@ -658,7 +658,8 @@ namespace dndbg.Engine {
 						stepInfo.OnCompleted(this, scArgs);
 					}
 				}
-				if (!calledStepInfoOnCompleted)
+				// Don't stop on step/breakpoints when we're evaluating
+				if (!calledStepInfoOnCompleted && !IsEvaluating)
 					scArgs.AddStopState(new StepStopState(scArgs.Reason));
 				break;
 
@@ -906,6 +907,10 @@ namespace dndbg.Engine {
 		}
 
 		void CheckBreakpoints(DebugCallbackEventArgs e) {
+			// Never check breakpoints when we're evaluating
+			if (IsEvaluating)
+				return;
+
 			var type = DnDebugEventBreakpoint.GetDebugEventBreakpointType(e);
 			if (type != null) {
 				foreach (var bp in DebugEventBreakpoints) {
@@ -1375,5 +1380,48 @@ namespace dndbg.Engine {
 			return moduleOrder++;
 		}
 		int moduleOrder;
+
+		public DnEval CreateEval() {
+			DebugVerifyThread();
+			Debug.Assert(ProcessState == DebuggerProcessState.Stopped);
+
+			return new DnEval(this, debugMessageDispatcher);
+		}
+
+		public bool IsEvaluating {
+			get { return evalCounter != 0 && ProcessState != DebuggerProcessState.Terminated; }
+		}
+
+		public bool EvalCompleted {
+			get { return evalCompletedCounter != 0; }
+		}
+
+		internal void EvalStarted() {
+			DebugVerifyThread();
+			Debug.Assert(ProcessState == DebuggerProcessState.Stopped);
+
+			evalCounter++;
+			Continue();
+		}
+		int evalCounter;
+
+		internal void EvalStopped() {
+			DebugVerifyThread();
+
+			evalCounter--;
+		}
+
+		public void SignalEvalComplete() {
+			DebugVerifyThread();
+			Debug.Assert(!IsEvaluating && ProcessState == DebuggerProcessState.Stopped);
+			evalCompletedCounter++;
+			try {
+				CallOnProcessStateChanged();
+			}
+			finally {
+				evalCompletedCounter--;
+			}
+		}
+		int evalCompletedCounter;
 	}
 }

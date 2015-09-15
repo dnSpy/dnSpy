@@ -28,6 +28,8 @@ using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger.Threads {
 	sealed class ThreadPrinter {
+		const int MAX_THREAD_NAME = 128;
+
 		readonly ITextOutput output;
 		readonly bool useHex;
 
@@ -52,7 +54,13 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		public void WriteManagedId(ThreadVM vm) {
-			WriteInt32(vm.ManagedId);
+			var id = vm.ManagedId;
+			if (id != null)
+				WriteInt32(id.Value);
+			else {
+				output.Write("???", TextTokenType.Error);
+				WriteInt32(vm.Thread.IncrementedId + 1);
+			}
 		}
 
 		public void WriteCategory(ThreadVM vm) {
@@ -83,10 +91,11 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		public void WriteName(ThreadVM vm) {
-			if (vm.Name == null)
-				output.Write("???", TextTokenType.Error);
+			var name = vm.Name;
+			if (name == null)
+				output.Write("<No Name>", TextTokenType.Text);
 			else
-				output.Write(vm.Name, TextTokenType.Text);
+				output.Write(DebugOutputUtils.FilterName(name, MAX_THREAD_NAME), TextTokenType.String);
 		}
 
 		public void WriteLocation(ThreadVM vm) {

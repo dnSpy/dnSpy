@@ -20,7 +20,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dndbg.Engine.COM.CorDebug;
+using dndbg.Engine.COM.MetaData;
 
 namespace dndbg.Engine {
 	public sealed class CorValue : COMObject<ICorDebugValue>, IEquatable<CorValue> {
@@ -386,6 +388,14 @@ namespace dndbg.Engine {
 			}
 		}
 
+		/// <summary>
+		/// Gets the value. Only values of simple types are currently returned: integers, floating points,
+		/// decimal, string and null.
+		/// </summary>
+		public CorValueResult Value {
+			get { return CorValueReader.ReadSimpleTypeValue(this); }
+		}
+
 		public CorValue(ICorDebugValue value)
 			: base(value) {
 			int hr = value.GetType(out this.elemType);
@@ -467,6 +477,36 @@ namespace dndbg.Engine {
 			ICorDebugValue value;
 			int hr = o.GetFieldValue(cls.RawObject, token, out value);
 			return hr < 0 || value == null ? null : new CorValue(value);
+		}
+
+		/// <summary>
+		/// Gets the value of a field. Returns null if field wasn't found or there was another error
+		/// </summary>
+		/// <param name="name">Name of field</param>
+		/// <returns></returns>
+		public CorValue GetFieldValue(string name) {
+			var self = this;
+			if (self.IsReference) {
+				self = self.DereferencedValue;
+				if (self == null)
+					return null;
+			}
+
+			var cls = self.Class;
+			if (cls == null) {
+				var type = self.ExactType;
+				if (type != null)
+					cls = type.Class;
+				if (cls == null)
+					return null;
+			}
+			var module = cls.Module;
+			if (module == null)
+				return null;
+			var info = MetaDataUtils.GetFields(module.GetMetaDataInterface<IMetaDataImport>(), cls.Token).FirstOrDefault(i => i.Name == name);
+			if (info.Name == null)
+				return null;
+			return self.GetFieldValue(cls, info.Token);
 		}
 
 		/// <summary>

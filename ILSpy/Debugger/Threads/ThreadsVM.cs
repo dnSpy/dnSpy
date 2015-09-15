@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Threading;
 using dndbg.Engine;
 using dnSpy.Debugger.CallStack;
 using dnSpy.MVVM;
@@ -34,6 +35,13 @@ namespace dnSpy.Debugger.Threads {
 					// Don't call OnPropertyChanged() since it's only used internally by the View
 					isEnabled = value;
 					InitializeThreads();
+					var dbg = DebugManager.Instance.Debugger;
+					if (dbg != null) {
+						if (isEnabled)
+							InstallDebuggerHooks(dbg);
+						else
+							UninstallDebuggerHooks(dbg);
+					}
 				}
 			}
 		}
@@ -55,10 +63,46 @@ namespace dnSpy.Debugger.Threads {
 		}
 		object selectedItem;
 
-		public ThreadsVM() {
+		readonly Dispatcher dispatcher;
+
+		public ThreadsVM(Dispatcher dispatcher) {
+			this.dispatcher = dispatcher;
 			this.threadsList = new ObservableCollection<ThreadVM>();
 			StackFrameManager.Instance.StackFramesUpdated += StackFrameManager_StackFramesUpdated;
 			StackFrameManager.Instance.PropertyChanged += StackFrameManager_PropertyChanged;
+			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
+		}
+
+		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+			var dbg = (DnDebugger)sender;
+			switch (dbg.ProcessState) {
+			case DebuggerProcessState.Starting:
+				InstallDebuggerHooks(dbg);
+				break;
+
+			case DebuggerProcessState.Running:
+			case DebuggerProcessState.Stopped:
+				break;
+
+			case DebuggerProcessState.Terminated:
+				UninstallDebuggerHooks(dbg);
+				break;
+			}
+		}
+
+		void InstallDebuggerHooks(DnDebugger dbg) {
+			dbg.OnNameChanged += DnDebugger_OnNameChanged;
+		}
+
+		void UninstallDebuggerHooks(DnDebugger dbg) {
+			dbg.OnNameChanged -= DnDebugger_OnNameChanged;
+		}
+
+		void DnDebugger_OnNameChanged(object sender, NameChangedDebuggerEventArgs e) {
+			if (e.Thread != null) {
+				foreach (var vm in Collection)
+					vm.NameChanged(e.Thread);
+			}
 		}
 
 		private void StackFrameManager_PropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -66,7 +110,9 @@ namespace dnSpy.Debugger.Threads {
 				UpdateSelectedThread();
 		}
 
-		private void StackFrameManager_StackFramesUpdated(object sender, System.EventArgs e) {
+		void StackFrameManager_StackFramesUpdated(object sender, StackFramesUpdatedEventArgs e) {
+			if (e.Debugger.IsEvaluating)
+				return;
 			// InitializeStackFrames() is called by ThreadsControlCreator when the process has been
 			// running for a little while. Speeds up stepping.
 			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Running)

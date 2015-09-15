@@ -57,6 +57,8 @@ namespace dnSpy.Debugger {
 		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			if (DebugManager.Instance.Debugger == null)
 				return;
+			if (DebugManager.Instance.Debugger.IsEvaluating)
+				return;
 			bool newIsRunning = DebugManager.Instance.ProcessState == DebuggerProcessState.Running;
 			if (newIsRunning == isRunning)
 				return;

@@ -221,229 +221,206 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class EvalCompleteDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public abstract class EvalDebugCallbackEventArgs : DebugCallbackEventArgs {
+		public bool CompletedSuccessfully {
+			get { return Type == DebugCallbackType.EvalComplete; }
+		}
+
+		public bool WasException {
+			get { return Type == DebugCallbackType.EvalException; }
+		}
+
+		public ICorDebugAppDomain AppDomain { get; private set; }
+		public ICorDebugThread Thread { get; private set; }
+		public ICorDebugEval Eval { get; private set; }
+
+		public CorAppDomain CorAppDomain {
+			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
+		}
+
+		public CorThread CorThread {
+			get { return Thread == null ? null : new CorThread(Thread); }
+		}
+
+		public CorEval CorEval {
+			get { return Eval == null ? null : new CorEval(Eval); }
+		}
+
+		protected EvalDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugEval pEval)
+			: base(pAppDomain) {
+			this.AppDomain = pAppDomain;
+			this.Thread = pThread;
+			this.Eval = pEval;
+		}
+	}
+
+	public sealed class EvalCompleteDebugCallbackEventArgs : EvalDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.EvalComplete; }
 		}
 
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public ICorDebugEval Eval { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
-
-		//TODO: CorEval prop
-
 		public EvalCompleteDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugEval pEval)
-			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
-			this.Eval = pEval;
+			: base(pAppDomain, pThread, pEval) {
 		}
 	}
 
-	public sealed class EvalExceptionDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public sealed class EvalExceptionDebugCallbackEventArgs : EvalDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.EvalException; }
 		}
 
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-		public ICorDebugEval Eval { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
-
-		//TODO: CorEval prop
-
 		public EvalExceptionDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread pThread, ICorDebugEval pEval)
-			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = pThread;
-			this.Eval = pEval;
+			: base(pAppDomain, pThread, pEval) {
 		}
 	}
 
-	public sealed class CreateProcessDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public abstract class ProcessDebugCallbackEventArgs : DebugCallbackEventArgs {
+		public ICorDebugProcess Process { get; private set; }
+
+		public CorProcess CorProcess {
+			get { return Process == null ? null : new CorProcess(Process); }
+		}
+
+		protected ProcessDebugCallbackEventArgs(ICorDebugProcess pProcess)
+			: base(pProcess) {
+			this.Process = pProcess;
+		}
+	}
+
+	public sealed class CreateProcessDebugCallbackEventArgs : ProcessDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.CreateProcess; }
 		}
 
-		public ICorDebugProcess Process { get; private set; }
-
-		public CorProcess CorProcess {
-			get { return Process == null ? null : new CorProcess(Process); }
-		}
-
 		public CreateProcessDebugCallbackEventArgs(ICorDebugProcess pProcess)
 			: base(pProcess) {
-			this.Process = pProcess;
 		}
 	}
 
-	public sealed class ExitProcessDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public sealed class ExitProcessDebugCallbackEventArgs : ProcessDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.ExitProcess; }
 		}
 
-		public ICorDebugProcess Process { get; private set; }
-
-		public CorProcess CorProcess {
-			get { return Process == null ? null : new CorProcess(Process); }
-		}
-
 		public ExitProcessDebugCallbackEventArgs(ICorDebugProcess pProcess)
 			: base(pProcess) {
-			this.Process = pProcess;
 		}
 	}
 
-	public sealed class CreateThreadDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public abstract class ThreadDebugCallbackEventArgs : DebugCallbackEventArgs {
+		public ICorDebugAppDomain AppDomain { get; private set; }
+		public ICorDebugThread Thread { get; private set; }
+
+		public CorAppDomain CorAppDomain {
+			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
+		}
+
+		public CorThread CorThread {
+			get { return Thread == null ? null : new CorThread(Thread); }
+		}
+
+		protected ThreadDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
+			: base(pAppDomain) {
+			this.AppDomain = pAppDomain;
+			this.Thread = thread;
+		}
+	}
+
+	public sealed class CreateThreadDebugCallbackEventArgs : ThreadDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.CreateThread; }
 		}
 
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
-		}
-
 		public CreateThreadDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
-			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Thread = thread;
+			: base(pAppDomain, thread) {
 		}
 	}
 
-	public sealed class ExitThreadDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public sealed class ExitThreadDebugCallbackEventArgs : ThreadDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.ExitThread; }
 		}
 
+		public ExitThreadDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
+			: base(pAppDomain, thread) {
+		}
+	}
+
+	public abstract class ModuleDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugThread Thread { get; private set; }
+		public ICorDebugModule Module { get; private set; }
 
 		public CorAppDomain CorAppDomain {
 			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
 		}
 
-		public CorThread CorThread {
-			get { return Thread == null ? null : new CorThread(Thread); }
+		public CorModule CorModule {
+			get { return Module == null ? null : new CorModule(Module); }
 		}
 
-		public ExitThreadDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugThread thread)
+		protected ModuleDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule)
 			: base(pAppDomain) {
 			this.AppDomain = pAppDomain;
-			this.Thread = thread;
+			this.Module = pModule;
 		}
 	}
 
-	public sealed class LoadModuleDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public sealed class LoadModuleDebugCallbackEventArgs : ModuleDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.LoadModule; }
 		}
 
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugModule Module { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorModule CorModule {
-			get { return Module == null ? null : new CorModule(Module); }
-		}
-
 		public LoadModuleDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule)
-			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Module = pModule;
+			: base(pAppDomain, pModule) {
 		}
 	}
 
-	public sealed class UnloadModuleDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public sealed class UnloadModuleDebugCallbackEventArgs : ModuleDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.UnloadModule; }
 		}
 
+		public UnloadModuleDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule)
+			: base(pAppDomain, pModule) {
+		}
+	}
+
+	public abstract class ClassDebugCallbackEventArgs : DebugCallbackEventArgs {
 		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugModule Module { get; private set; }
+		public ICorDebugClass Class { get; private set; }
 
 		public CorAppDomain CorAppDomain {
 			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
 		}
 
-		public CorModule CorModule {
-			get { return Module == null ? null : new CorModule(Module); }
+		public CorClass CorClass {
+			get { return Class == null ? null : new CorClass(Class); }
 		}
 
-		public UnloadModuleDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugModule pModule)
+		protected ClassDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugClass c)
 			: base(pAppDomain) {
 			this.AppDomain = pAppDomain;
-			this.Module = pModule;
+			this.Class = c;
 		}
 	}
 
-	public sealed class LoadClassDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public sealed class LoadClassDebugCallbackEventArgs : ClassDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.LoadClass; }
 		}
 
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugClass Class { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorClass CorClass {
-			get { return Class == null ? null : new CorClass(Class); }
-		}
-
 		public LoadClassDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugClass c)
-			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Class = c;
+			: base(pAppDomain, c) {
 		}
 	}
 
-	public sealed class UnloadClassDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public sealed class UnloadClassDebugCallbackEventArgs : ClassDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.UnloadClass; }
 		}
 
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugClass Class { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorClass CorClass {
-			get { return Class == null ? null : new CorClass(Class); }
-		}
-
 		public UnloadClassDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugClass c)
-			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Class = c;
+			: base(pAppDomain, c) {
 		}
 	}
 
@@ -528,95 +505,81 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class CreateAppDomainDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public abstract class AppDomainDebugCallbackEventArgs : DebugCallbackEventArgs {
+		public ICorDebugProcess Process { get; private set; }
+		public ICorDebugAppDomain AppDomain { get; private set; }
+
+		public CorProcess CorProcess {
+			get { return Process == null ? null : new CorProcess(Process); }
+		}
+
+		public CorAppDomain CorAppDomain {
+			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
+		}
+
+		protected AppDomainDebugCallbackEventArgs(ICorDebugProcess pProcess, ICorDebugAppDomain pAppDomain)
+			: base(pProcess) {
+			this.Process = pProcess;
+			this.AppDomain = pAppDomain;
+		}
+	}
+
+	public sealed class CreateAppDomainDebugCallbackEventArgs : AppDomainDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.CreateAppDomain; }
 		}
 
-		public ICorDebugProcess Process { get; private set; }
-		public ICorDebugAppDomain AppDomain { get; private set; }
-
-		public CorProcess CorProcess {
-			get { return Process == null ? null : new CorProcess(Process); }
-		}
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
 		public CreateAppDomainDebugCallbackEventArgs(ICorDebugProcess pProcess, ICorDebugAppDomain pAppDomain)
-			: base(pProcess) {
-			this.Process = pProcess;
-			this.AppDomain = pAppDomain;
+			: base(pProcess, pAppDomain) {
 		}
 	}
 
-	public sealed class ExitAppDomainDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public sealed class ExitAppDomainDebugCallbackEventArgs : AppDomainDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.ExitAppDomain; }
 		}
 
-		public ICorDebugProcess Process { get; private set; }
-		public ICorDebugAppDomain AppDomain { get; private set; }
-
-		public CorProcess CorProcess {
-			get { return Process == null ? null : new CorProcess(Process); }
+		public ExitAppDomainDebugCallbackEventArgs(ICorDebugProcess pProcess, ICorDebugAppDomain pAppDomain)
+			: base(pProcess, pAppDomain) {
 		}
+	}
+
+	public abstract class AssemblyDebugCallbackEventArgs : DebugCallbackEventArgs {
+		public ICorDebugAppDomain AppDomain { get; private set; }
+		public ICorDebugAssembly Assembly { get; private set; }
 
 		public CorAppDomain CorAppDomain {
 			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
 		}
 
-		public ExitAppDomainDebugCallbackEventArgs(ICorDebugProcess pProcess, ICorDebugAppDomain pAppDomain)
-			: base(pProcess) {
-			this.Process = pProcess;
+		public CorAssembly CorAssembly {
+			get { return Assembly == null ? null : new CorAssembly(Assembly); }
+		}
+
+		protected AssemblyDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugAssembly pAssembly)
+			: base(pAppDomain) {
 			this.AppDomain = pAppDomain;
+			this.Assembly = pAssembly;
 		}
 	}
 
-	public sealed class LoadAssemblyDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public sealed class LoadAssemblyDebugCallbackEventArgs : AssemblyDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.LoadAssembly; }
 		}
 
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugAssembly Assembly { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorAssembly CorAssembly {
-			get { return Assembly == null ? null : new CorAssembly(Assembly); }
-		}
-
 		public LoadAssemblyDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugAssembly pAssembly)
-			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Assembly = pAssembly;
+			: base(pAppDomain, pAssembly) {
 		}
 	}
 
-	public sealed class UnloadAssemblyDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public sealed class UnloadAssemblyDebugCallbackEventArgs : AssemblyDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.UnloadAssembly; }
 		}
 
-		public ICorDebugAppDomain AppDomain { get; private set; }
-		public ICorDebugAssembly Assembly { get; private set; }
-
-		public CorAppDomain CorAppDomain {
-			get { return AppDomain == null ? null : new CorAppDomain(AppDomain); }
-		}
-
-		public CorAssembly CorAssembly {
-			get { return Assembly == null ? null : new CorAssembly(Assembly); }
-		}
-
 		public UnloadAssemblyDebugCallbackEventArgs(ICorDebugAppDomain pAppDomain, ICorDebugAssembly pAssembly)
-			: base(pAppDomain) {
-			this.AppDomain = pAppDomain;
-			this.Assembly = pAssembly;
+			: base(pAppDomain, pAssembly) {
 		}
 	}
 
@@ -794,62 +757,51 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class CreateConnectionDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public abstract class ConnectionDebugCallbackEventArgs : DebugCallbackEventArgs {
+		public ICorDebugProcess Process { get; private set; }
+		public uint Id { get; private set; }
+
+		public CorProcess CorProcess {
+			get { return Process == null ? null : new CorProcess(Process); }
+		}
+
+		protected ConnectionDebugCallbackEventArgs(ICorDebugProcess pProcess, uint dwConnectionId)
+			: base(pProcess) {
+			this.Process = pProcess;
+			this.Id = dwConnectionId;
+		}
+	}
+
+	public sealed class CreateConnectionDebugCallbackEventArgs : ConnectionDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.CreateConnection; }
 		}
 
-		public ICorDebugProcess Process { get; private set; }
-		public uint Id { get; private set; }
 		public string Name { get; private set; }
 
-		public CorProcess CorProcess {
-			get { return Process == null ? null : new CorProcess(Process); }
-		}
-
 		public CreateConnectionDebugCallbackEventArgs(ICorDebugProcess pProcess, uint dwConnectionId, string pConnName)
-			: base(pProcess) {
-			this.Process = pProcess;
-			this.Id = dwConnectionId;
+			: base(pProcess, dwConnectionId) {
 			this.Name = pConnName;
 		}
 	}
 
-	public sealed class ChangeConnectionDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public sealed class ChangeConnectionDebugCallbackEventArgs : ConnectionDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.ChangeConnection; }
 		}
 
-		public ICorDebugProcess Process { get; private set; }
-		public uint Id { get; private set; }
-
-		public CorProcess CorProcess {
-			get { return Process == null ? null : new CorProcess(Process); }
-		}
-
 		public ChangeConnectionDebugCallbackEventArgs(ICorDebugProcess pProcess, uint dwConnectionId)
-			: base(pProcess) {
-			this.Process = pProcess;
-			this.Id = dwConnectionId;
+			: base(pProcess, dwConnectionId) {
 		}
 	}
 
-	public sealed class DestroyConnectionDebugCallbackEventArgs : DebugCallbackEventArgs {
+	public sealed class DestroyConnectionDebugCallbackEventArgs : ConnectionDebugCallbackEventArgs {
 		public override DebugCallbackType Type {
 			get { return DebugCallbackType.DestroyConnection; }
 		}
 
-		public ICorDebugProcess Process { get; private set; }
-		public uint Id { get; private set; }
-
-		public CorProcess CorProcess {
-			get { return Process == null ? null : new CorProcess(Process); }
-		}
-
 		public DestroyConnectionDebugCallbackEventArgs(ICorDebugProcess pProcess, uint dwConnectionId)
-			: base(pProcess) {
-			this.Process = pProcess;
-			this.Id = dwConnectionId;
+			: base(pProcess, dwConnectionId) {
 		}
 	}
 

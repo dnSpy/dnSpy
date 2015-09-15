@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.Threads {
 			get {
 				if (threadsControl == null) {
 					threadsControl = new ThreadsControl();
-					var vm = new ThreadsVM();
+					var vm = new ThreadsVM(threadsControl.Dispatcher);
 					threadsControl.DataContext = vm;
 					DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
 					DebugManager.Instance.ProcessRunning += DebugManager_ProcessRunning;

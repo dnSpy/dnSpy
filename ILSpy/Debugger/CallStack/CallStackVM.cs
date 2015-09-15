@@ -124,7 +124,9 @@ namespace dnSpy.Debugger.CallStack {
 				UpdateSelectedFrame(e as VMPropertyChangedEventArgs<int>);
 		}
 
-		void StackFrameManager_StackFramesUpdated(object sender, EventArgs e) {
+		void StackFrameManager_StackFramesUpdated(object sender, StackFramesUpdatedEventArgs e) {
+			if (e.Debugger.IsEvaluating)
+				return;
 			// InitializeStackFrames() is called by CallStackControlCreator when the process has been
 			// running for a little while. Speeds up stepping.
 			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Running)

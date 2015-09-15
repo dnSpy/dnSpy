@@ -32,6 +32,14 @@ using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
 namespace dnSpy.Debugger.CallStack {
+	class StackFramesUpdatedEventArgs : EventArgs {
+		public readonly DnDebugger Debugger;
+
+		public StackFramesUpdatedEventArgs(DnDebugger debugger) {
+			this.Debugger = debugger;
+		}
+	}
+
 	sealed class StackFrameManager : ViewModelBase {
 		public static readonly StackFrameManager Instance = new StackFrameManager();
 
@@ -40,7 +48,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		readonly List<StackFrameLine> stackFrameLines = new List<StackFrameLine>();
 
-		public event EventHandler StackFramesUpdated;
+		public event EventHandler<StackFramesUpdatedEventArgs> StackFramesUpdated;
 
 		sealed class CurrentState {
 			public int FrameNumber;
@@ -65,12 +73,15 @@ namespace dnSpy.Debugger.CallStack {
 
 		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			currentState = new CurrentState();
+			var dbg = (DnDebugger)sender;
 			switch (DebugManager.Instance.ProcessState) {
 			case DebuggerProcessState.Starting:
 			case DebuggerProcessState.Running:
 				break;
 
 			case DebuggerProcessState.Stopped:
+				if (dbg.IsEvaluating)
+					break;
 				currentState.Thread = DebugManager.Instance.Debugger.Current.Thread;
 				SelectedFrameNumber = 0;
 				foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
@@ -86,7 +97,7 @@ namespace dnSpy.Debugger.CallStack {
 			}
 
 			if (StackFramesUpdated != null)
-				StackFramesUpdated(this, EventArgs.Empty);
+				StackFramesUpdated(this, new StackFramesUpdatedEventArgs(dbg));
 		}
 
 		void DebugManager_ProcessRunning(object sender, EventArgs e) {

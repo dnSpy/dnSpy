@@ -18,6 +18,8 @@
 */
 
 using System;
+using System.Collections.Concurrent;
+using System.Threading;
 using System.Windows.Threading;
 using dndbg.Engine;
 using ICSharpCode.ILSpy;
@@ -26,8 +28,100 @@ namespace dnSpy.Debugger {
 	sealed class WpfDebugMessageDispatcher : IDebugMessageDispatcher {
 		public static readonly WpfDebugMessageDispatcher Instance = new WpfDebugMessageDispatcher();
 
+		readonly ConcurrentQueue<Action> queue = new ConcurrentQueue<Action>();
+		volatile int callingEmptyQueue;
+
+		Dispatcher Dispatcher {
+			get {
+				var disp = App.Current.Dispatcher;
+				return disp != null && !disp.HasShutdownFinished && !disp.HasShutdownStarted ? disp : null;
+			}
+		}
+
 		public void ExecuteAsync(Action action) {
-			App.Current.Dispatcher.BeginInvoke(DispatcherPriority.Send, action);
+			var disp = Dispatcher;
+			if (disp == null)
+				return;
+			queue.Enqueue(action);
+			dispatchQueueEvent.Set();
+			if (disp.CheckAccess())
+				EmptyQueue();
+			else if (callingEmptyQueue == 0) {
+				Interlocked.Increment(ref callingEmptyQueue);
+				disp.BeginInvoke(DispatcherPriority.Send, new Action(() => {
+					Interlocked.Decrement(ref callingEmptyQueue);
+					EmptyQueue();
+				}));
+			}
+		}
+
+		void EmptyQueue() {
+			var disp = Dispatcher;
+			if (disp == null)
+				return;
+			disp.VerifyAccess();
+
+			Action action;
+			while (queue.TryDequeue(out action))
+				action();
+		}
+
+		public object DispatchQueue(TimeSpan waitTime, out bool timedOut) {
+			var disp = Dispatcher;
+			if (disp == null) {
+				timedOut = true;
+				return null;
+			}
+			disp.VerifyAccess();
+			try {
+				if (Interlocked.Increment(ref counterDispatchQueue) != 1)
+					throw new InvalidOperationException("DispatchQueue can't be nested");
+
+				timedOut = false;
+				resultDispatchQueue = null;
+				cancelDispatchQueue = false;
+				var startTime = DateTime.UtcNow;
+				var infTime = TimeSpan.FromMilliseconds(-1);
+				var endTime = startTime + waitTime;
+				while (!cancelDispatchQueue) {
+					Action action;
+					while (queue.TryDequeue(out action))
+						action();
+					if (cancelDispatchQueue)
+						break;
+
+					var wait = waitTime;
+					if (waitTime != infTime) {
+						var now = DateTime.UtcNow;
+						if (now >= endTime)
+							wait = TimeSpan.Zero;
+						else
+							wait = endTime - now;
+					}
+					bool signaled = dispatchQueueEvent.WaitOne(waitTime);
+					if (!signaled) {
+						timedOut = true;
+						return null;
+					}
+				}
+
+				return resultDispatchQueue;
+			}
+			finally {
+				Interlocked.Decrement(ref counterDispatchQueue);
+				// Make sure we don't hold onto stuff that the caller might want to get GC'd
+				resultDispatchQueue = null;
+			}
+		}
+		readonly AutoResetEvent dispatchQueueEvent = new AutoResetEvent(false);
+		volatile object resultDispatchQueue;
+		volatile bool cancelDispatchQueue;
+		int counterDispatchQueue;
+
+		public void CancelDispatchQueue(object result) {
+			resultDispatchQueue = result;
+			cancelDispatchQueue = true;
+			dispatchQueueEvent.Set();
 		}
 	}
 }

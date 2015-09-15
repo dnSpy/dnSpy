@@ -22,62 +22,69 @@ using dndbg.Engine.COM.CorDebug;
 using dndbg.Engine.COM.MetaData;
 
 namespace dndbg.Engine {
-	struct CorValueReader {
-		public struct Result {
-			public readonly object Value;
-			public readonly bool IsValueValid;
+	public struct CorValueResult {
+		/// <summary>
+		/// The value. Only valid if <see cref="IsValueValid"/> is true, else it shouldn't be used
+		/// </summary>
+		public readonly object Value;
 
-			public Result(object value) {
-				this.Value = value;
-				this.IsValueValid = true;
-			}
+		/// <summary>
+		/// true if <see cref="Value"/> is valid
+		/// </summary>
+		public readonly bool IsValueValid;
+
+		public CorValueResult(object value) {
+			this.Value = value;
+			this.IsValueValid = true;
 		}
+	}
 
-		public static Result ReadSimpleTypeValue(CorValue value) {
+	struct CorValueReader {
+		public static CorValueResult ReadSimpleTypeValue(CorValue value) {
 			if (value == null)
-				return new Result();
+				return new CorValueResult();
 
 			if (value.IsReference && value.Type == CorElementType.ByRef) {
 				if (value.IsNull)
-					return new Result(null);
+					return new CorValueResult(null);
 				value = value.DereferencedValue;
 				if (value == null)
-					return new Result();
+					return new CorValueResult();
 			}
 			if (value.IsReference) {
 				if (value.IsNull)
-					return new Result(null);
+					return new CorValueResult(null);
 				if (value.Type == CorElementType.Ptr) {
 					if (Utils.DebuggeeIntPtrSize == 4)
-						return new Result((uint)value.ReferenceAddress);
-					return new Result(value.ReferenceAddress);
+						return new CorValueResult((uint)value.ReferenceAddress);
+					return new CorValueResult(value.ReferenceAddress);
 				}
 				value = value.DereferencedValue;
 				if (value == null)
-					return new Result();
+					return new CorValueResult();
 			}
 			if (value.IsBox) {
 				value = value.BoxedValue;
 				if (value == null)
-					return new Result();
+					return new CorValueResult();
 				var cls = value.Class;
 				if (cls == null)
-					return new Result();
+					return new CorValueResult();
 				var etype = GetValueClassElementType(cls);
 				var vres = GetSimpleResult(value, etype);
-				return vres ?? new Result();
+				return vres ?? new CorValueResult();
 			}
 			if (value.IsReference)
-				return new Result();
+				return new CorValueResult();
 			if (value.IsBox)
-				return new Result();
+				return new CorValueResult();
 			if (value.IsArray)
-				return new Result();
+				return new CorValueResult();
 			if (value.IsString)
-				return new Result(value.String);
+				return new CorValueResult(value.String);
 
 			var res = GetSimpleResult(value, value.Type);
-			return res ?? new Result();
+			return res ?? new CorValueResult();
 		}
 
 		static CorElementType GetValueClassElementType(CorClass cls) {
@@ -115,7 +122,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		static Result? GetSimpleResult(CorValue value, CorElementType etype) {
+		static CorValueResult? GetSimpleResult(CorValue value, CorElementType etype) {
 			byte[] data;
 			switch (etype) {
 			case CorElementType.Boolean:
@@ -124,7 +131,7 @@ namespace dndbg.Engine {
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
-				return new Result(data[0] != 0);
+				return new CorValueResult(data[0] != 0);
 
 			case CorElementType.Char:
 				if (value.Size != 2)
@@ -132,7 +139,7 @@ namespace dndbg.Engine {
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
-				return new Result(BitConverter.ToChar(data, 0));
+				return new CorValueResult(BitConverter.ToChar(data, 0));
 
 			case CorElementType.I1:
 				if (value.Size != 1)
@@ -140,7 +147,7 @@ namespace dndbg.Engine {
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
-				return new Result((sbyte)data[0]);
+				return new CorValueResult((sbyte)data[0]);
 
 			case CorElementType.U1:
 				if (value.Size != 1)
@@ -148,7 +155,7 @@ namespace dndbg.Engine {
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
-				return new Result(data[0]);
+				return new CorValueResult(data[0]);
 
 			case CorElementType.I2:
 				if (value.Size != 2)
@@ -156,7 +163,7 @@ namespace dndbg.Engine {
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
-				return new Result(BitConverter.ToInt16(data, 0));
+				return new CorValueResult(BitConverter.ToInt16(data, 0));
 
 			case CorElementType.U2:
 				if (value.Size != 2)
@@ -164,7 +171,7 @@ namespace dndbg.Engine {
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
-				return new Result(BitConverter.ToUInt16(data, 0));
+				return new CorValueResult(BitConverter.ToUInt16(data, 0));
 
 			case CorElementType.I4:
 				if (value.Size != 4)
@@ -172,7 +179,7 @@ namespace dndbg.Engine {
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
-				return new Result(BitConverter.ToInt32(data, 0));
+				return new CorValueResult(BitConverter.ToInt32(data, 0));
 
 			case CorElementType.U4:
 				if (value.Size != 4)
@@ -180,7 +187,7 @@ namespace dndbg.Engine {
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
-				return new Result(BitConverter.ToUInt32(data, 0));
+				return new CorValueResult(BitConverter.ToUInt32(data, 0));
 
 			case CorElementType.I8:
 				if (value.Size != 8)
@@ -188,7 +195,7 @@ namespace dndbg.Engine {
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
-				return new Result(BitConverter.ToInt64(data, 0));
+				return new CorValueResult(BitConverter.ToInt64(data, 0));
 
 			case CorElementType.U8:
 				if (value.Size != 8)
@@ -196,7 +203,7 @@ namespace dndbg.Engine {
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
-				return new Result(BitConverter.ToUInt64(data, 0));
+				return new CorValueResult(BitConverter.ToUInt64(data, 0));
 
 			case CorElementType.R4:
 				if (value.Size != 4)
@@ -204,7 +211,7 @@ namespace dndbg.Engine {
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
-				return new Result(BitConverter.ToSingle(data, 0));
+				return new CorValueResult(BitConverter.ToSingle(data, 0));
 
 			case CorElementType.R8:
 				if (value.Size != 8)
@@ -212,7 +219,7 @@ namespace dndbg.Engine {
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
-				return new Result(BitConverter.ToDouble(data, 0));
+				return new CorValueResult(BitConverter.ToDouble(data, 0));
 
 			case CorElementType.TypedByRef:
 				break;//TODO:
@@ -224,8 +231,8 @@ namespace dndbg.Engine {
 				if (data == null)
 					break;
 				if (Utils.DebuggeeIntPtrSize == 4)
-					return new Result(BitConverter.ToInt32(data, 0));
-				return new Result(BitConverter.ToInt64(data, 0));
+					return new CorValueResult(BitConverter.ToInt32(data, 0));
+				return new CorValueResult(BitConverter.ToInt64(data, 0));
 
 			case CorElementType.U:
 			case CorElementType.Ptr:
@@ -235,8 +242,8 @@ namespace dndbg.Engine {
 				if (data == null)
 					break;
 				if (Utils.DebuggeeIntPtrSize == 4)
-					return new Result(BitConverter.ToUInt32(data, 0));
-				return new Result(BitConverter.ToUInt64(data, 0));
+					return new CorValueResult(BitConverter.ToUInt32(data, 0));
+				return new CorValueResult(BitConverter.ToUInt64(data, 0));
 
 			case CorElementType.ValueType:
 				var cls = value.Class;
@@ -262,7 +269,7 @@ namespace dndbg.Engine {
 				decimalBits[0] = BitConverter.ToInt32(data, 8);
 				decimalBits[1] = BitConverter.ToInt32(data, 12);
 				try {
-					return new Result(new decimal(decimalBits));
+					return new CorValueResult(new decimal(decimalBits));
 				}
 				catch (ArgumentException) {
 				}

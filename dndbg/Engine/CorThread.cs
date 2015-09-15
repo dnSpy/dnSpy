@@ -281,6 +281,16 @@ namespace dndbg.Engine {
 			return hr >= 0;
 		}
 
+		/// <summary>
+		/// Returns a new <see cref="CorEval"/> or null if there was an error
+		/// </summary>
+		/// <returns></returns>
+		public CorEval CreateEval() {
+			ICorDebugEval eval;
+			int hr = obj.CreateEval(out eval);
+			return hr < 0 || eval == null ? null : new CorEval(eval);
+		}
+
 		public static bool operator ==(CorThread a, CorThread b) {
 			if (ReferenceEquals(a, b))
 				return true;

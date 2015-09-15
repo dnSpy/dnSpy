@@ -986,27 +986,44 @@ namespace dndbg.Engine.COM.CorDebug {
 	[Guid("CC7BCAF6-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugEval {
-		void CallFunction([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFunction pFunction, [In] uint nArgs, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugValue ppArgs);
-		void NewObject([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFunction pConstructor, [In] uint nArgs, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugValue ppArgs);
-		void NewObjectNoConstructor([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugClass pClass);
-		void NewString([MarshalAs(UnmanagedType.LPWStr)] [In] string @string);
-		void NewArray([In] CorElementType elementType, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugClass pElementClass, [In] uint rank, [In] ref uint dims, [In] ref uint lowBounds);
-		void IsActive(out int pbActive);
-		void Abort();
-		void GetResult([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppResult);
-		void GetThread([MarshalAs(UnmanagedType.Interface)] out ICorDebugThread ppThread);
-		void CreateValue([In] CorElementType elementType, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugClass pElementClass, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
+		[PreserveSig]
+		int CallFunction([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFunction pFunction, [In] int nArgs, [MarshalAs(UnmanagedType.LPArray)] [In] ICorDebugValue[] ppArgs);
+		[PreserveSig]
+		int NewObject([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFunction pConstructor, [In] int nArgs, [MarshalAs(UnmanagedType.LPArray)] [In] ICorDebugValue[] ppArgs);
+		[PreserveSig]
+		int NewObjectNoConstructor([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugClass pClass);
+		[PreserveSig]
+		int NewString([MarshalAs(UnmanagedType.LPWStr)] [In] string @string);
+		[PreserveSig]
+		int NewArray([In] CorElementType elementType, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugClass pElementClass, [In] int rank, [MarshalAs(UnmanagedType.LPArray)] [In] uint[] dims, [MarshalAs(UnmanagedType.LPArray)] [In] int[] lowBounds);
+		[PreserveSig]
+		int IsActive(out int pbActive);
+		[PreserveSig]
+		int Abort();
+		[PreserveSig]
+		int GetResult([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppResult);
+		[PreserveSig]
+		int GetThread([MarshalAs(UnmanagedType.Interface)] out ICorDebugThread ppThread);
+		[PreserveSig]
+		int CreateValue([In] CorElementType elementType, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugClass pElementClass, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
 	}
 	[Guid("FB0D9CE7-BE66-4683-9D32-A42A04E2FD91"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugEval2 {
-		void CallParameterizedFunction([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFunction pFunction, [In] uint nTypeArgs, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugType ppTypeArgs, [In] uint nArgs, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugValue ppArgs);
-		void CreateValueForType([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugType pType, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
-		void NewParameterizedObject([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFunction pConstructor, [In] uint nTypeArgs, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugType ppTypeArgs, [In] uint nArgs, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugValue ppArgs);
-		void NewParameterizedObjectNoConstructor([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugClass pClass, [In] uint nTypeArgs, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugType ppTypeArgs);
-		void NewParameterizedArray([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugType pElementType, [In] uint rank, [In] ref uint dims, [In] ref uint lowBounds);
-		void NewStringWithLength([MarshalAs(UnmanagedType.LPWStr)] [In] string @string, [In] uint uiLength);
-		void RudeAbort();
+		[PreserveSig]
+		int CallParameterizedFunction([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFunction pFunction, [In] int nTypeArgs, [MarshalAs(UnmanagedType.LPArray)] [In] ICorDebugType[] ppTypeArgs, [In] int nArgs, [MarshalAs(UnmanagedType.LPArray)] [In] ICorDebugValue[] ppArgs);
+		[PreserveSig]
+		int CreateValueForType([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugType pType, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
+		[PreserveSig]
+		int NewParameterizedObject([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFunction pConstructor, [In] int nTypeArgs, [MarshalAs(UnmanagedType.LPArray)] [In] ICorDebugType[] ppTypeArgs, [In] int nArgs, [MarshalAs(UnmanagedType.LPArray)] [In] ICorDebugValue[] ppArgs);
+		[PreserveSig]
+		int NewParameterizedObjectNoConstructor([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugClass pClass, [In] int nTypeArgs, [MarshalAs(UnmanagedType.LPArray)] [In] ICorDebugType[] ppTypeArgs);
+		[PreserveSig]
+		int NewParameterizedArray([MarshalAs(UnmanagedType.Interface)] [In] ICorDebugType pElementType, [In] int rank, [MarshalAs(UnmanagedType.LPArray)] [In] uint[] dims, [MarshalAs(UnmanagedType.LPArray)] [In] int[] lowBounds);
+		[PreserveSig]
+		int NewStringWithLength([MarshalAs(UnmanagedType.LPWStr)] [In] string @string, [In] int uiLength);
+		[PreserveSig]
+		int RudeAbort();
 	}
 	[Guid("AF79EC94-4752-419C-A626-5FB1CC1A5AB7"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -1824,7 +1841,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		[PreserveSig]
 		int GetActiveFrame([MarshalAs(UnmanagedType.Interface)] out ICorDebugFrame ppFrame);
 		void GetRegisterSet([MarshalAs(UnmanagedType.Interface)] out ICorDebugRegisterSet ppRegisters);
-		void CreateEval([MarshalAs(UnmanagedType.Interface)] out ICorDebugEval ppEval);
+		[PreserveSig]
+		int CreateEval([MarshalAs(UnmanagedType.Interface)] out ICorDebugEval ppEval);
 		[PreserveSig]
 		int GetObject([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppObject);
 	}

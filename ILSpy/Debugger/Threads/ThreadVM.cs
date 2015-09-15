@@ -139,29 +139,58 @@ namespace dnSpy.Debugger.Threads {
 		}
 		int id;
 
-		public int ManagedId {
-			get { return managedId; }
-			set {
-				if (managedId != value) {
-					managedId = value;
-					OnPropertyChanged("ManagedId");
-					OnPropertyChanged("ManagedIdObject");
-				}
+		bool HasValidThreadObject {
+			get {
+				var obj = thread.CorThread.Object;
+				return obj != null && !obj.IsNull && obj.DereferencedValue != null;
 			}
 		}
-		int managedId;
+
+		public int? ManagedId {
+			get {
+				if (reinitManagedId)
+					reinitManagedId = !EvalUtils.ReflectionReadValue(thread.CorThread.Object, "m_ManagedThreadId", ref managedId);
+
+				if (!DebugManager.Instance.EvalCompleted && reinitManagedId) {
+					if (DebugManager.Instance.CanEvaluate) {
+						if (HasValidThreadObject) {
+							reinitManagedId = false;
+							managedId = EvalUtils.EvaluateCallMethod<int?>(thread, thread.CorThread.Object, "get_ManagedThreadId");
+						}
+					}
+					else {
+						managedId = null;
+						reinitManagedId = false;
+					}
+				}
+				return managedId;
+			}
+		}
+		int? managedId = null;
+		bool reinitManagedId = true;
 
 		public string Name {
-			get { return name; }
-			set {
-				if (name != value) {
-					name = value;
-					OnPropertyChanged("Name");
-					OnPropertyChanged("NameObject");
+			get {
+				if (reinitName)
+					reinitName = !EvalUtils.ReflectionReadValue(thread.CorThread.Object, "m_Name", ref name);
+
+				if (!DebugManager.Instance.EvalCompleted && reinitName) {
+					if (DebugManager.Instance.CanEvaluate) {
+						if (HasValidThreadObject) {
+							reinitName = false;
+							name = EvalUtils.EvaluateCallMethod<string>(thread, thread.CorThread.Object, "get_Name");
+						}
+					}
+					else {
+						name = "???";
+						reinitName = false;
+					}
 				}
+				return name;
 			}
 		}
 		string name;
+		bool reinitName = true;
 
 		public IntPtr AffinityMask {
 			get {
@@ -193,19 +222,23 @@ namespace dnSpy.Debugger.Threads {
 			this.thread = thread;
 		}
 
+		internal void NameChanged(DnThread thread) {
+			if (thread == this.thread)
+				reinitName = true;
+		}
+
 		internal void UpdateFields() {
 			Type = CalculateType();
 			Id = thread.VolatileThreadId;
 
-			//TODO: Use thread.CorThread.Object and call various Thread props to get the info you need below
+			if (reinitManagedId) {
+				OnPropertyChanged("ManagedId");
+				OnPropertyChanged("ManagedIdObject");
+			}
 
-			//TODO: Use System.Threading.Thread.ManagedThreadId
-			ManagedId = thread.IncrementedId + 1;
-
-			// Name is only settable once
-			if (Name != null) {
-				//TODO: Use System.Threading.Thread.Name
-				Name = null;
+			if (reinitName) {
+				OnPropertyChanged("Name");
+				OnPropertyChanged("NameObject");
 			}
 
 			if (affinityMask != null) {

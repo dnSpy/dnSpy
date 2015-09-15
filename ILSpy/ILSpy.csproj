@@ -152,6 +152,7 @@
     <Compile Include="Debugger\Dialogs\DebugProcessVM.cs" />
     <Compile Include="Debugger\Dialogs\ManagedProcessesFinder.cs" />
     <Compile Include="Debugger\Dialogs\ProcessVM.cs" />
+    <Compile Include="Debugger\EvalUtils.cs" />
     <Compile Include="Debugger\Modules\Commands.cs" />
     <Compile Include="Debugger\Modules\ModuleColumnConverter.cs" />
     <Compile Include="Debugger\Modules\ModulePrinter.cs" />

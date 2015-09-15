@@ -57,6 +57,11 @@ namespace dndbg.Engine {
 		UserBreak,
 
 		/// <summary>
+		/// Evaluation completed
+		/// </summary>
+		Eval,
+
+		/// <summary>
 		/// Start of user stop reasons
 		/// </summary>
 		UserReason = 0x10000000,

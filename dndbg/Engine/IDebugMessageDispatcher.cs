@@ -27,5 +27,21 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="action">Code to execute in the dndbg thread</param>
 		void ExecuteAsync(Action action);
+
+		/// <summary>
+		/// Empty the queue and wait for <see cref="CancelDispatchQueue(object)"/> to get called.
+		/// The return value is the input to <see cref="CancelDispatchQueue(object)"/> unless it
+		/// timed out.
+		/// </summary>
+		/// <param name="waitTime">Time to wait or -1 to wait forever</param>
+		/// <param name="timedOut">Set to true if it timed out</param>
+		/// <returns></returns>
+		object DispatchQueue(TimeSpan waitTime, out bool timedOut);
+
+		/// <summary>
+		/// Cancels <see cref="DispatchQueue(TimeSpan,out bool)"/>
+		/// </summary>
+		/// <param name="result">Result</param>
+		void CancelDispatchQueue(object result);
 	}
 }
