@@ -91,6 +91,10 @@ namespace dnSpy.Debugger.Breakpoints {
 		protected override void Execute(BreakpointCtxMenuContext context) {
 			BreakpointsControlCreator.BreakpointsControlInstance.listView.SelectAll();
 		}
+
+		protected override bool IsEnabled(BreakpointCtxMenuContext context) {
+			return BreakpointsControlCreator.BreakpointsControlInstance.listView.Items.Count > 0;
+		}
 	}
 
 	[ExportContextMenuEntry(Header = "_Delete", Order = 120, Category = "CopyBP", Icon = "Delete", InputGestureText = "Del")]

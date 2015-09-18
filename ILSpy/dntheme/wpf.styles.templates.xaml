@@ -4934,6 +4934,10 @@
                 Value="Transparent" />
         <Setter Property="VerticalContentAlignment"
                 Value="Center" />
+        <Setter Property="HorizontalContentAlignment"
+                Value="Stretch" />
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type ListViewItem}">
@@ -4948,26 +4952,21 @@
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected"
-                                 Value="true">
+                                 Value="True">
                             <Setter TargetName="Bd"
                                     Property="Background"
-                                    Value="{DynamicResource SystemColorsHighlight}" />
+                                    Value="{DynamicResource TreeViewItemSelectedBackground}" />
                             <Setter Property="Foreground"
-                                    Value="{DynamicResource SystemColorsHighlightText}" />
+                                    Value="{DynamicResource TreeViewItemSelectedForeground}" />
                         </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsSelected"
-                                           Value="true" />
-                                <Condition Property="Selector.IsSelectionActive"
-                                           Value="false" />
-                            </MultiTrigger.Conditions>
+                        <Trigger Property="IsMouseOver"
+                                 Value="True">
                             <Setter TargetName="Bd"
                                     Property="Background"
-                                    Value="{DynamicResource SystemColorsInactiveSelectionHighlight}" />
+                                    Value="{DynamicResource TreeViewItemMouseOverTextBackground}" />
                             <Setter Property="Foreground"
-                                    Value="{DynamicResource SystemColorsInactiveSelectionHighlightText}" />
-                        </MultiTrigger>
+                                    Value="{DynamicResource TreeViewItemMouseOverForeground}" />
+                        </Trigger>
                         <Trigger Property="IsEnabled"
                                  Value="false">
                             <Setter Property="Foreground"
@@ -4994,15 +4993,6 @@
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver"
-                                 Value="True">
-                            <Setter TargetName="nodeView"
-                                    Property="TextBackground"
-                                    Value="{DynamicResource TreeViewItemMouseOverTextBackground}" />
-                            <Setter TargetName="nodeView"
-                                    Property="Foreground"
-                                    Value="{DynamicResource TreeViewItemMouseOverForeground}" />
-                        </Trigger>
                         <Trigger Property="IsSelected"
                                  Value="True">
                             <Setter TargetName="nodeView"
@@ -5011,6 +5001,15 @@
                             <Setter TargetName="nodeView"
                                     Property="Foreground"
                                     Value="{DynamicResource TreeViewItemSelectedForeground}" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver"
+                                 Value="True">
+                            <Setter TargetName="nodeView"
+                                    Property="TextBackground"
+                                    Value="{DynamicResource TreeViewItemMouseOverTextBackground}" />
+                            <Setter TargetName="nodeView"
+                                    Property="Foreground"
+                                    Value="{DynamicResource TreeViewItemMouseOverForeground}" />
                         </Trigger>
                         <!--<MultiTrigger>
                             <MultiTrigger.Conditions>
@@ -5094,6 +5093,80 @@
                                     Property="Visibility"
                                     Value="Collapsed" />
                         </DataTrigger>
+                    	  <DataTrigger Binding="{Binding ShowIcon}"
+                                     Value="False">
+                    		  <Setter TargetName="icon"
+                                    Property="Visibility"
+                                   Value="Collapsed" />
+ 						  </DataTrigger>
+                        <DataTrigger Binding="{Binding IsExpanded}"
+                                     Value="True">
+                            <Setter TargetName="icon"
+                                    Property="Content"
+                                    Value="{Binding ExpandedIcon}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ShowExpander}"
+                                     Value="True">
+                            <Setter TargetName="expander"
+                                    Property="Visibility"
+                                    Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsCheckable}"
+                                     Value="True">
+                            <Setter TargetName="checkBoxContainer"
+                                    Property="Visibility"
+                                    Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsCut}"
+                                     Value="True">
+                            <Setter TargetName="icon"
+                                    Property="Opacity"
+                                    Value="0.5" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+	<!-- Same as above except that Text and ToolTip aren't used. Used by eg. locals window -->
+    <Style x:Key="SharpTreeNodeView_GridView" TargetType="{x:Type shtv:SharpTreeNodeView}">
+        <Setter Property="Focusable"
+                Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type shtv:SharpTreeNodeView}">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <FrameworkElement Name="spacer" />
+                            <ToggleButton Name="expander"
+                                          Style="{StaticResource ExpandCollapseToggleStyle}"
+                                          IsChecked="{Binding IsExpanded}"
+                                          Visibility="Hidden"
+                                          VerticalAlignment="Center" />
+                            <Border Name="checkBoxContainer"
+                                    Width="16"
+                                    Margin="0 0 3 0"
+                                    Visibility="Collapsed">
+                                <CheckBox IsChecked="{Binding IsChecked}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                            </Border>
+                            <ContentPresenter Name="icon"
+                                                  Content="{Binding Icon}"
+                                                  Width="16"
+                                                  Height="16"
+                                                  Margin="0 0 5 1"
+                                                  VerticalAlignment="Center"
+                                                  Focusable="False">
+                                <ContentPresenter.ContentTemplate>
+                                    <DataTemplate>
+                                        <Image Source="{Binding}"/>
+                                    </DataTemplate>
+                                </ContentPresenter.ContentTemplate>
+                            </ContentPresenter>
+                        </StackPanel>
+                    </Grid>
+                    <ControlTemplate.Triggers>
                     	  <DataTrigger Binding="{Binding ShowIcon}"
                                      Value="False">
                     		  <Setter TargetName="icon"

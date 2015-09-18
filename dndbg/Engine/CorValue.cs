@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine.COM.CorDebug;
 using dndbg.Engine.COM.MetaData;
+using dnlib.DotNet;
 
 namespace dndbg.Engine {
 	public sealed class CorValue : COMObject<ICorDebugValue>, IEquatable<CorValue> {
@@ -545,17 +546,17 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="data">Data</param>
 		/// <returns></returns>
-		public unsafe bool WriteGenericValue(byte[] data) {
+		public unsafe int WriteGenericValue(byte[] data) {
 			if (data == null || (uint)data.Length != Size)
-				return false;
+				return -1;
 			var g = obj as ICorDebugGenericValue;
 			if (g == null)
-				return false;
+				return -1;
 			int hr;
 			fixed (byte* p = &data[0]) {
 				hr = g.SetValue(new IntPtr(p));
 			}
-			return hr >= 0;
+			return hr;
 		}
 
 		/// <summary>
@@ -600,15 +601,22 @@ namespace dndbg.Engine {
 			return RawObject.GetHashCode();
 		}
 
+		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
+			new TypePrinter(output, flags).Write(this);
+			return output;
+		}
+
+		public T WriteType<T>(T output, TypeSig ts, List<CorType> typeArgs, List<CorType> methodArgs, TypePrinterFlags flags) where T : ITypeOutput {
+			new TypePrinter(output, flags).Write(ts, typeArgs, methodArgs);
+			return output;
+		}
+
+		public string ToString(TypePrinterFlags flags) {
+			return Write(new StringBuilderTypeOutput(), flags).ToString();
+		}
+
 		public override string ToString() {
-			if (IsReference)
-				return string.Format("[Value] {0} Dereferenced: {1}", Type, IsNull ? (object)"null" : DereferencedValue);
-			if (IsString)
-				return string.Format("[Value] {0} {1}", Type, TypePrinter.ToCSharpString(String));
-			if (IsBox)
-				return string.Format("[Value] {0} Boxed: {1}", Type, BoxedValue);
-			var type = (object)ExactType ?? Class;
-			return string.Format("[Value] {0} A={1:X8} S={2:X4} {3}", Type, Address, Size, type);
+			return ToString(TypePrinterFlags.Default);
 		}
 	}
 }

@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		internal TypePrinterFlags TypePrinterFlags {
 			get {
-				TypePrinterFlags flags = 0;
+				TypePrinterFlags flags = TypePrinterFlags.ShowArrayValueSizes;
 				if (!DebuggerSettings.Instance.UseHexadecimal) flags |= TypePrinterFlags.UseDecimal;
 				if (CallStackSettings.Instance.ShowModuleNames) flags |= TypePrinterFlags.ShowModuleNames;
 				if (CallStackSettings.Instance.ShowParameterTypes) flags |= TypePrinterFlags.ShowParameterTypes;

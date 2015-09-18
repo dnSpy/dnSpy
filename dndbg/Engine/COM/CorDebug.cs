@@ -1242,11 +1242,14 @@ namespace dndbg.Engine.COM.CorDebug {
 		int GetIP(out uint pnOffset, out CorDebugMappingResult pMappingResult);
 		[PreserveSig]
 		int SetIP([In] uint nOffset);
-		void EnumerateLocalVariables([MarshalAs(UnmanagedType.Interface)] out ICorDebugValueEnum ppValueEnum);
-		void GetLocalVariable([In] uint dwIndex, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
+		[PreserveSig]
+		int EnumerateLocalVariables([MarshalAs(UnmanagedType.Interface)] out ICorDebugValueEnum ppValueEnum);
+		[PreserveSig]
+		int GetLocalVariable([In] uint dwIndex, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
 		[PreserveSig]
 		int EnumerateArguments([MarshalAs(UnmanagedType.Interface)] out ICorDebugValueEnum ppValueEnum);
-		void GetArgument([In] uint dwIndex, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
+		[PreserveSig]
+		int GetArgument([In] uint dwIndex, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
 		void GetStackDepth(out uint pDepth);
 		void GetStackValue([In] uint dwIndex, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
 		[PreserveSig]
@@ -1267,9 +1270,12 @@ namespace dndbg.Engine.COM.CorDebug {
 	[Guid("AD914A30-C6D1-4AC5-9C5E-577F3BAA8A45"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugILFrame4 {
-		void EnumerateLocalVariablesEx([In] ILCodeKind flags, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValueEnum ppValueEnum);
-		void GetLocalVariableEx([In] ILCodeKind flags, [In] uint dwIndex, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
-		void GetCodeEx([In] ILCodeKind flags, [MarshalAs(UnmanagedType.Interface)] out ICorDebugCode ppCode);
+		[PreserveSig]
+		int EnumerateLocalVariablesEx([In] ILCodeKind flags, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValueEnum ppValueEnum);
+		[PreserveSig]
+		int GetLocalVariableEx([In] ILCodeKind flags, [In] uint dwIndex, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
+		[PreserveSig]
+		int GetCodeEx([In] ILCodeKind flags, [MarshalAs(UnmanagedType.Interface)] out ICorDebugCode ppCode);
 	}
 	[Guid("A074096B-3ADC-4485-81DA-68C7A4EA52DB"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]

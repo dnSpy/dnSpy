@@ -21,8 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using dndbg.Engine;
+using dnlib.DotNet;
 
-namespace dnSpy.Debugger.CallStack {
+namespace dnSpy.Debugger {
 	struct CachedOutput : IEquatable<CachedOutput> {
 		public readonly List<Tuple<string, TypeColor>> data;
 
@@ -82,6 +83,62 @@ namespace dnSpy.Debugger.CallStack {
 			var output = new TypeOutput();
 			frame.Write(output, flags);
 			return output.cachedOutput;
+		}
+
+		public static CachedOutput CreateValue(CorValue value, TypePrinterFlags flags) {
+			var output = new TypeOutput();
+			if (value == null)
+				output.Write("???", TypeColor.Error);
+			else
+				value.Write(output, flags);
+			return output.cachedOutput;
+		}
+
+		public static CachedOutput CreateType(CorValue value, TypePrinterFlags flags) {
+			return CreateType(new TypeOutput(), value, flags).cachedOutput;
+		}
+
+		static TypeOutput CreateType(TypeOutput output, CorValue value, TypePrinterFlags flags) {
+			if (value == null)
+				output.Write("???", TypeColor.Error);
+			else {
+				if (value.IsReference && value.Type == dndbg.Engine.COM.CorDebug.CorElementType.ByRef)
+					value = value.DereferencedValue ?? value;
+
+				var type = value.ExactType;
+				if (type != null)
+					type.Write(output, flags);
+				else {
+					var cls = value.Class;
+					if (cls != null)
+						cls.Write(output, flags);
+					else
+						output.Write("???", TypeColor.Error);
+				}
+			}
+			return output;
+		}
+
+		public static CachedOutput CreateType(CorValue value, TypeSig ts, List<CorType> typeArgs, List<CorType> methodArgs, TypePrinterFlags flags) {
+			// This code doesn't compare the types to see if they're identical, it just compares
+			// the output. This should be good enough.
+
+			var valueOutput = CreateType(new TypeOutput(), value, flags);
+			if (ts == null || value == null)
+				return valueOutput.cachedOutput;
+
+			if (ts is ByRefSig)
+				ts = ts.Next ?? ts;
+
+			var typeOutput = value.WriteType(new TypeOutput(), ts, typeArgs, methodArgs, flags);
+			if (typeOutput.cachedOutput.Equals(valueOutput.cachedOutput))
+				return valueOutput.cachedOutput;
+
+			typeOutput.Write(" ", TypeColor.Text);
+			typeOutput.Write("{", TypeColor.Error);
+			typeOutput.cachedOutput.data.AddRange(valueOutput.cachedOutput.data);
+			typeOutput.Write("}", TypeColor.Error);
+			return typeOutput.cachedOutput;
 		}
 	}
 }

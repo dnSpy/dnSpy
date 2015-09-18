@@ -224,7 +224,7 @@ namespace ICSharpCode.TreeView
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			SharpTreeViewItem container = e.OriginalSource as SharpTreeViewItem;
-			if (container.Node != null) switch (e.Key) {
+			if (container != null && container.Node != null) switch (e.Key) {
 				case Key.Left:
 					if (container != null && ItemsControl.ItemsControlFromItemContainer(container) == this) {
 						if (container.Node.IsExpanded) {

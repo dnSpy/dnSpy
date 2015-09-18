@@ -417,7 +417,7 @@
 		<color name="avaloneditsearchdropdownbuttonactivebackground" bg="#06273D" />
 		<color name="listarrowbackground" bg="#F1F1F1" />
 		<color name="treeviewitemmouseover" fg="#FFF1F1F1" bg="#505050" />
-		<color name="treeviewitemselected" fg="#FFF1F1F1" bg="#FF505050" />
+		<color name="treeviewitemselected" fg="#FFF1F1F1" bg="#FF404040" />
 		<color name="treeview" fg="#FFF1F1F1" bg="#FF252526" />
 		<color name="treeviewborder" bg="#3F3F46" />
 		<color name="treeviewglyph" bg="#FFF1F1F1" />

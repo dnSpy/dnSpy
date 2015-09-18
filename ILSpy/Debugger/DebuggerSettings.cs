@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using System.Xml.Linq;
 using dndbg.Engine;
 using dnSpy.MVVM;
@@ -43,6 +44,34 @@ namespace dnSpy.Debugger {
 		}
 		bool useHexadecimal;
 
+		public bool? SyntaxHighlight {
+			get {
+				int count =
+					(SyntaxHighlightCallStack ? 1 : 0) +
+					(SyntaxHighlightBreakpoints ? 1 : 0) +
+					(SyntaxHighlightThreads ? 1 : 0) +
+					(SyntaxHighlightModules ? 1 : 0) +
+					(SyntaxHighlightLocals ? 1 : 0) +
+					0;
+				if (count == 0)
+					return false;
+				const int MAX = 5;
+				if (count == MAX)
+					return true;
+				Debug.Assert(count < MAX);
+				return null;
+			}
+			set {
+				if (value != null) {
+					SyntaxHighlightCallStack = value.Value;
+					SyntaxHighlightBreakpoints = value.Value;
+					SyntaxHighlightThreads = value.Value;
+					SyntaxHighlightModules = value.Value;
+					SyntaxHighlightLocals = value.Value;
+				}
+			}
+		}
+
 		public bool SyntaxHighlightCallStack {
 			get { return syntaxHighlightCallStack; }
 			set {
@@ -50,6 +79,7 @@ namespace dnSpy.Debugger {
 					syntaxHighlightCallStack = value;
 					Save();
 					OnPropertyChanged("SyntaxHighlightCallStack");
+					OnPropertyChanged("SyntaxHighlight");
 				}
 			}
 		}
@@ -62,6 +92,7 @@ namespace dnSpy.Debugger {
 					syntaxHighlightBreakpoints = value;
 					Save();
 					OnPropertyChanged("SyntaxHighlightBreakpoints");
+					OnPropertyChanged("SyntaxHighlight");
 				}
 			}
 		}
@@ -74,6 +105,7 @@ namespace dnSpy.Debugger {
 					syntaxHighlightThreads = value;
 					Save();
 					OnPropertyChanged("SyntaxHighlightThreads");
+					OnPropertyChanged("SyntaxHighlight");
 				}
 			}
 		}
@@ -86,10 +118,24 @@ namespace dnSpy.Debugger {
 					syntaxHighlightModules = value;
 					Save();
 					OnPropertyChanged("SyntaxHighlightModules");
+					OnPropertyChanged("SyntaxHighlight");
 				}
 			}
 		}
 		bool syntaxHighlightModules;
+
+		public bool SyntaxHighlightLocals {
+			get { return syntaxHighlightLocals; }
+			set {
+				if (syntaxHighlightLocals != value) {
+					syntaxHighlightLocals = value;
+					Save();
+					OnPropertyChanged("SyntaxHighlightLocals");
+					OnPropertyChanged("SyntaxHighlight");
+				}
+			}
+		}
+		bool syntaxHighlightLocals;
 
 		public BreakProcessType BreakProcessType {
 			get { return breakProcessType; }
@@ -123,6 +169,7 @@ namespace dnSpy.Debugger {
 			SyntaxHighlightBreakpoints = (bool?)csx.Attribute("SyntaxHighlightBreakpoints") ?? true;
 			SyntaxHighlightThreads = (bool?)csx.Attribute("SyntaxHighlightThreads") ?? true;
 			SyntaxHighlightModules = (bool?)csx.Attribute("SyntaxHighlightModules") ?? true;
+			SyntaxHighlightLocals = (bool?)csx.Attribute("SyntaxHighlightLocals") ?? true;
 			BreakProcessType = (BreakProcessType)((int?)csx.Attribute("BreakProcessType") ?? (int)BreakProcessType.ModuleCctorOrEntryPoint);
 		}
 
@@ -150,6 +197,7 @@ namespace dnSpy.Debugger {
 			csx.SetAttributeValue("SyntaxHighlightBreakpoints", SyntaxHighlightBreakpoints);
 			csx.SetAttributeValue("SyntaxHighlightThreads", SyntaxHighlightThreads);
 			csx.SetAttributeValue("SyntaxHighlightModules", SyntaxHighlightModules);
+			csx.SetAttributeValue("SyntaxHighlightLocals", SyntaxHighlightLocals);
 			csx.SetAttributeValue("BreakProcessType", (int)BreakProcessType);
 		}
 
@@ -159,6 +207,7 @@ namespace dnSpy.Debugger {
 			other.SyntaxHighlightBreakpoints = this.SyntaxHighlightBreakpoints;
 			other.SyntaxHighlightThreads = this.SyntaxHighlightThreads;
 			other.SyntaxHighlightModules = this.SyntaxHighlightModules;
+			other.SyntaxHighlightLocals = this.SyntaxHighlightLocals;
 			other.BreakProcessType = this.BreakProcessType;
 			return other;
 		}

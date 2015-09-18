@@ -89,6 +89,10 @@ namespace dnSpy.Debugger.CallStack {
 		protected override void Execute(CallStackCtxMenuContext context) {
 			CallStackControlCreator.CallStackControlInstance.listView.SelectAll();
 		}
+
+		protected override bool IsEnabled(CallStackCtxMenuContext context) {
+			return CallStackControlCreator.CallStackControlInstance.listView.Items.Count > 0;
+		}
 	}
 
 	[ExportContextMenuEntry(Header = "_Switch To Frame", Order = 210, Category = "Frame")]

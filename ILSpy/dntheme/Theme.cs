@@ -1724,7 +1724,7 @@ namespace dnSpy.dntheme {
 				ForegroundResourceKey = "TreeViewItemMouseOverForeground",
 			},
 			new BrushColorInfo(ColorType.TreeViewItemSelected, "TreeViewItem Selected") {
-				DefaultBackground = "#FFD8D8D8",
+				DefaultBackground = "#FFD0D0D0",
 				BackgroundResourceKey = "TreeViewItemSelectedBackground",
 				DefaultForeground = "Black",
 				ForegroundResourceKey = "TreeViewItemSelectedForeground",

@@ -19,7 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dndbg.Engine.COM.CorDebug;
+using dndbg.Engine.COM.MetaData;
+using dnlib.DotNet;
 
 namespace dndbg.Engine {
 	public sealed class CorFrame : COMObject<ICorDebugFrame>, IEquatable<CorFrame> {
@@ -207,8 +210,31 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
+		/// Gets all locals
+		/// </summary>
+		public IEnumerable<CorValue> ILLocals {
+			get {
+				var ilf = obj as ICorDebugILFrame;
+				if (ilf == null)
+					yield break;
+				ICorDebugValueEnum valueEnum;
+				int hr = ilf.EnumerateLocalVariables(out valueEnum);
+				if (hr < 0)
+					yield break;
+				for (;;) {
+					ICorDebugValue value = null;
+					uint count;
+					hr = valueEnum.Next(1, out value, out count);
+					if (hr != 0 || value == null)
+						break;
+					yield return new CorValue(value);
+				}
+			}
+		}
+
+		/// <summary>
 		/// Gets all type and/or method generic parameters. The first returned values are the generic
-		/// type params, followed by the generic method params.
+		/// type params, followed by the generic method params. See also <see cref="GetTypeAndMethodGenericParameters"/>
 		/// </summary>
 		public IEnumerable<CorType> TypeParameters {
 			get {
@@ -240,7 +266,7 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				this.rangeStart = this.rangeEnd = 0;
 
-			//TODO: ICorDebugILFrame, ICorDebugILFrame2, ICorDebugILFrame3, ICorDebugILFrame4
+			//TODO: ICorDebugILFrame2, ICorDebugILFrame3
 			//TODO: ICorDebugInternalFrame, ICorDebugInternalFrame2
 			//TODO: ICorDebugNativeFrame, ICorDebugNativeFrame2
 			//TODO: ICorDebugRuntimeUnwindableFrame
@@ -321,6 +347,163 @@ namespace dndbg.Engine {
 			if (nf == null)
 				return false;
 			return nf.CanSetIP(offset) == 0;
+		}
+
+		/// <summary>
+		/// Gets a local variable or null if it's not an <see cref="ICorDebugILFrame"/> or if there
+		/// was an error
+		/// </summary>
+		/// <param name="index">Index of local</param>
+		/// <returns></returns>
+		public CorValue GetILLocal(uint index) {
+			var ilf = obj as ICorDebugILFrame;
+			if (ilf == null)
+				return null;
+			ICorDebugValue value;
+			int hr = ilf.GetLocalVariable(index, out value);
+			return hr < 0 || value == null ? null : new CorValue(value);
+		}
+
+		/// <summary>
+		/// Gets an argument or null if it's not an <see cref="ICorDebugILFrame"/> or if there
+		/// was an error
+		/// </summary>
+		/// <param name="index">Index of argument</param>
+		/// <returns></returns>
+		public CorValue GetILArgument(uint index) {
+			var ilf = obj as ICorDebugILFrame;
+			if (ilf == null)
+				return null;
+			ICorDebugValue value;
+			int hr = ilf.GetArgument(index, out value);
+			return hr < 0 || value == null ? null : new CorValue(value);
+		}
+
+		/// <summary>
+		/// Gets all locals
+		/// </summary>
+		/// <param name="kind">Kind</param>
+		public IEnumerable<CorValue> GetILLocals(ILCodeKind kind) {
+			var ilf4 = obj as ICorDebugILFrame4;
+			if (ilf4 == null)
+				yield break;
+			ICorDebugValueEnum valueEnum;
+			int hr = ilf4.EnumerateLocalVariablesEx(kind, out valueEnum);
+			if (hr < 0)
+				yield break;
+			for (;;) {
+				ICorDebugValue value = null;
+				uint count;
+				hr = valueEnum.Next(1, out value, out count);
+				if (hr != 0 || value == null)
+					break;
+				yield return new CorValue(value);
+			}
+		}
+
+		/// <summary>
+		/// Gets a local variable or null if it's not an <see cref="ICorDebugILFrame4"/> or if there
+		/// was an error
+		/// </summary>
+		/// <param name="kind">Kind</param>
+		/// <param name="index">Index of local</param>
+		/// <returns></returns>
+		public CorValue GetILLocal(ILCodeKind kind, uint index) {
+			var ilf4 = obj as ICorDebugILFrame4;
+			if (ilf4 == null)
+				return null;
+			ICorDebugValue value;
+			int hr = ilf4.GetLocalVariableEx(kind, index, out value);
+			return hr < 0 || value == null ? null : new CorValue(value);
+		}
+
+		/// <summary>
+		/// Gets the code or null if it's not an <see cref="ICorDebugILFrame4"/> or if there was an
+		/// error
+		/// </summary>
+		/// <param name="kind">Kind</param>
+		/// <param name="index">Index of local</param>
+		/// <returns></returns>
+		public CorCode GetCode(ILCodeKind kind, uint index) {
+			var ilf4 = obj as ICorDebugILFrame4;
+			if (ilf4 == null)
+				return null;
+			ICorDebugCode code;
+			int hr = ilf4.GetCodeEx(kind, out code);
+			return hr < 0 || code == null ? null : new CorCode(code);
+		}
+
+		/// <summary>
+		/// Splits up <see cref="TypeParameters"/> into type and method generic arguments
+		/// </summary>
+		/// <param name="typeGenArgs">Gets updated with a list containing all generic type arguments</param>
+		/// <param name="methGenArgs">Gets updated with a list containing all generic method arguments</param>
+		/// <returns></returns>
+		public bool GetTypeAndMethodGenericParameters(out List<CorType> typeGenArgs, out List<CorType> methGenArgs) {
+			typeGenArgs = new List<CorType>();
+			methGenArgs = new List<CorType>();
+
+			var func = Function;
+			if (func == null)
+				return false;
+			var module = func.Module;
+			if (module == null)
+				return false;
+
+			var mdi = module.GetMetaDataInterface<IMetaDataImport>();
+			var gas = new List<CorType>(TypeParameters);
+			var cls = func.Class;
+			int typeGenArgsCount = cls == null ? 0 : MetaDataUtils.GetCountGenericParameters(mdi, cls.Token);
+			int methGenArgsCount = MetaDataUtils.GetCountGenericParameters(mdi, func.Token);
+			Debug.Assert(typeGenArgsCount + methGenArgsCount == gas.Count);
+			int j = 0;
+			for (int i = 0; j < gas.Count && i < typeGenArgsCount; i++, j++)
+				typeGenArgs.Add(gas[j]);
+			for (int i = 0; j < gas.Count && i < methGenArgsCount; i++, j++)
+				methGenArgs.Add(gas[j]);
+
+			return true;
+		}
+
+		/// <summary>
+		/// Gets all argument and local types
+		/// </summary>
+		/// <param name="argTypes">Gets updated with all argument types. If there's a hidden this
+		/// parameter, it's the first type. This type can be null.</param>
+		/// <param name="localTypes">Gets updated with all local types</param>
+		/// <returns></returns>
+		public bool GetArgAndLocalTypes(out List<TypeSig> argTypes, out List<TypeSig> localTypes) {
+			argTypes = new List<TypeSig>();
+			localTypes = new List<TypeSig>();
+
+			var func = Function;
+			if (func == null)
+				return false;
+			var module = func.Module;
+			if (module == null)
+				return false;
+
+			var mdi = module.GetMetaDataInterface<IMetaDataImport>();
+
+			var methodSig = MetaDataUtils.GetMethodSignature(mdi, func.Token);
+			if (methodSig != null) {
+				if (methodSig.HasThis)
+					argTypes.Add(null);//TODO: Add correct 'this' type
+				argTypes.AddRange(methodSig.Params);
+				if (methodSig.ParamsAfterSentinel != null)
+					argTypes.AddRange(methodSig.ParamsAfterSentinel);
+			}
+
+			ushort flags, maxStack;
+			uint codeSize, localVarSigTok, headerSize;
+			MetaDataUtils.GetBodyInfo(module, func.Token, out flags, out maxStack, out codeSize, out localVarSigTok, out headerSize);
+			if (localVarSigTok != 0) {
+				var localSig = MetaDataUtils.ReadCallingConventionSig(mdi, localVarSigTok) as LocalSig;
+				if (localSig != null)
+					localTypes.AddRange(localSig.Locals);
+			}
+
+			return true;
 		}
 
 		public static bool operator ==(CorFrame a, CorFrame b) {

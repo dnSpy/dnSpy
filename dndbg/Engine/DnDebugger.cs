@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// CLR error codes: https://github.com/dotnet/coreclr/blob/master/src/inc/corerror.xml
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -44,9 +42,6 @@ namespace dndbg.Engine {
 		readonly BreakpointList<DnILCodeBreakpoint> ilCodeBreakpointList = new BreakpointList<DnILCodeBreakpoint>();
 		readonly Dictionary<CorStepper, StepInfo> stepInfos = new Dictionary<CorStepper, StepInfo>();
 		DebugOptions debugOptions;
-
-		const int CORDBG_E_PROCESS_TERMINATED = unchecked((int)0x80131301);
-		const int CORDBG_E_OBJECT_NEUTERED = unchecked((int)0x8013134F);
 
 		sealed class StepInfo {
 			public readonly Action<DnDebugger, StepCompleteDebugCallbackEventArgs> OnCompleted;
@@ -221,6 +216,14 @@ namespace dndbg.Engine {
 			}
 		}
 
+		/// <summary>
+		/// Gets incremented each time Continue() is called
+		/// </summary>
+		public uint ContinueCounter {
+			get { return continueCounter; }
+		}
+		uint continueCounter;
+
 		// Called in our dndbg thread
 		void OnManagedCallbackInDebuggerThread(DebugCallbackEventArgs e) {
 			DebugVerifyThread();
@@ -284,7 +287,8 @@ namespace dndbg.Engine {
 				return false;
 
 			int hr = controller.Continue(0);
-			bool success = hr >= 0 || hr == CORDBG_E_PROCESS_TERMINATED || hr == CORDBG_E_OBJECT_NEUTERED;
+			continueCounter++;
+			bool success = hr >= 0 || hr == CordbgErrors.CORDBG_E_PROCESS_TERMINATED || hr == CordbgErrors.CORDBG_E_OBJECT_NEUTERED;
 			Debug.WriteLineIf(!success, string.Format("dndbg: ICorDebugController::Continue() failed: 0x{0:X8}", hr));
 			return success;
 		}

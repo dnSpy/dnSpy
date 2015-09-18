@@ -343,10 +343,14 @@ namespace ICSharpCode.ILSpy
 			App.Current.Resources["TextEditorFontFamily"] = Options.DisplaySettingsPanel.CurrentDisplaySettings.SelectedFont;
 		}
 
-		internal static void InitializeTreeView(SharpTreeView treeView)
+		internal static void InitializeTreeView(SharpTreeView treeView, bool isGridView = false)
 		{
-			// Clear the value set by the constructor. This is required or our style won't be used.
-			treeView.ClearValue(ItemsControl.ItemContainerStyleProperty);
+			if (isGridView)
+				treeView.ItemContainerStyle = (Style)App.Current.TryFindResource(SharpGridView.ItemContainerStyleKey);
+			else {
+				// Clear the value set by the constructor. This is required or our style won't be used.
+				treeView.ClearValue(ItemsControl.ItemContainerStyleProperty);
+			}
 
 			treeView.GetPreviewInsideTextBackground = () => Themes.Theme.GetColor(ColorType.SystemColorsHighlight).InheritedColor.Background.GetBrush(null);
 			treeView.GetPreviewInsideForeground = () => Themes.Theme.GetColor(ColorType.SystemColorsHighlightText).InheritedColor.Foreground.GetBrush(null);

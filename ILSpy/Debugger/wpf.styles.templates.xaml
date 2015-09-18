@@ -19,6 +19,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
                     xmlns:dbg="clr-namespace:dnSpy.Debugger">
 
     <Style x:Key="DbgTableGridViewScrollViewerStyle"
@@ -41,22 +42,34 @@
             <Label Grid.Row="0" Grid.Column="0" Margin="0 0 5 0" Content="_Break At" Target="{Binding ElementName=breakComboBox}" />
             <ComboBox Grid.Row="0" Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" Name="breakComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BreakProcessTypeVM.Items}" SelectedIndex="{Binding BreakProcessTypeVM.SelectedIndex}" VerticalContentAlignment="Center" />
 
-            <Grid Grid.Row="1" Grid.ColumnSpan="2" Margin="0 5 0 0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
-                <Label Grid.Column="0" Content="Syntax highlight:" />
-                <CheckBox Grid.Column="1" Margin="0 0 0 0" IsChecked="{Binding Settings.SyntaxHighlightBreakpoints}" Content="Breakpoints" />
-                <CheckBox Grid.Column="2" Margin="5 0 0 0" IsChecked="{Binding Settings.SyntaxHighlightCallStack}" Content="Call Stack" />
-                <CheckBox Grid.Column="3" Margin="5 0 0 0" IsChecked="{Binding Settings.SyntaxHighlightThreads}" Content="Threads" />
-                <CheckBox Grid.Column="4" Margin="5 0 0 0" IsChecked="{Binding Settings.SyntaxHighlightModules}" Content="Modules" />
-            </Grid>
-
+            <GroupBox Grid.Row="1" Grid.ColumnSpan="2" Margin="0 5 0 0">
+                <GroupBox.Header>
+                    <CheckBox Content="_Syntax highlight" IsThreeState="False" IsChecked="{Binding Settings.SyntaxHighlight}" />
+				</GroupBox.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightBreakpoints}" Content="B_reakpoints" />
+                    <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightCallStack}" Content="C_all Stack" />
+                    <CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightThreads}" Content="_Threads" />
+                    <CheckBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightModules}" Content="_Modules" />
+                    <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightLocals}" Content="_Locals" />
+                </Grid>
+            </GroupBox>
         </Grid>
     </DataTemplate>
+
+    <Style x:Key="SharpTreeViewGridViewStyle"
+           BasedOn="{StaticResource {x:Static GridView.GridViewStyleKey}}"
+           TargetType="{x:Type tv:SharpTreeView}">
+    </Style>
 
 </ResourceDictionary>

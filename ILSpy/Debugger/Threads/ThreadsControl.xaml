@@ -40,7 +40,7 @@
                 <local:ThreadColumnConverter x:Key="threadColumnConverter" />
             </ListView.Resources>
             <ListView.View>
-                <GridView AllowsColumnReorder="False">
+                <GridView AllowsColumnReorder="True">
                     <GridViewColumn Header="" Width="16">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>

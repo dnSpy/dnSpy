@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Text;
 using dndbg.Engine.COM.MetaData;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
@@ -35,24 +36,24 @@ namespace dndbg.Engine {
 		}
 	}
 
-	sealed class Parameters {
-		readonly Dictionary<uint, ParamInfo> dict = new Dictionary<uint, ParamInfo>();
+	public sealed class MDParameters {
+		readonly Dictionary<uint, MDParamInfo> dict = new Dictionary<uint, MDParamInfo>();
 
-		public void Add(ParamInfo info) {
+		public void Add(MDParamInfo info) {
 			if (dict.ContainsKey(info.Sequence))
 				return;
 			dict.Add(info.Sequence, info);
 		}
 
-		public ParamInfo? Get(uint seq) {
-			ParamInfo info;
+		public MDParamInfo? Get(uint seq) {
+			MDParamInfo info;
 			if (dict.TryGetValue(seq, out info))
 				return info;
 			return null;
 		}
 	}
 
-	struct ParamInfo {
+	public struct MDParamInfo {
 		public readonly string Name;
 		public readonly uint Token;
 		public readonly uint Sequence;
@@ -66,7 +67,7 @@ namespace dndbg.Engine {
 			get { return (Flags & ParamAttributes.Out) != 0; }
 		}
 
-		public ParamInfo(string name, uint token, uint seq, uint flags) {
+		public MDParamInfo(string name, uint token, uint seq, uint flags) {
 			this.Name = name;
 			this.Token = token;
 			this.Sequence = seq;
@@ -75,8 +76,8 @@ namespace dndbg.Engine {
 	}
 
 	static class MetaDataUtils {
-		public static Parameters GetParameters(IMetaDataImport mdi, uint token) {
-			var ps = new Parameters();
+		public static MDParameters GetParameters(IMetaDataImport mdi, uint token) {
+			var ps = new MDParameters();
 
 			var tokens = GetParameterTokens(mdi, token);
 			foreach (var ptok in tokens) {
@@ -121,7 +122,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		unsafe static ParamInfo? GetParameterInfo(IMetaDataImport mdi, uint token) {
+		unsafe static MDParamInfo? GetParameterInfo(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
 				return null;
 			char[] nameBuf = null;
@@ -137,7 +138,7 @@ namespace dndbg.Engine {
 				return null;
 
 			var name = chName <= 1 ? string.Empty : new string(nameBuf, 0, (int)chName - 1);
-			return new ParamInfo(name, token, ulSequence, dwAttr);
+			return new MDParamInfo(name, token, ulSequence, dwAttr);
 		}
 
 		public static List<TokenAndName> GetTypeRefFullNames(IMetaDataImport mdi, uint token) {
@@ -178,6 +179,19 @@ namespace dndbg.Engine {
 			if (chName <= 1)
 				return string.Empty;
 			return new string(nameBuf, 0, (int)chName - 1);
+		}
+
+		public static string GetTypeDefFullName(IMetaDataImport mdi, uint token) {
+			var list = GetTypeDefFullNames(mdi, token);
+			var sb = new StringBuilder();
+
+			for (int i = 0; i < list.Count; i++) {
+				if (i > 0)
+					sb.Append('.');
+				sb.Append(list[i].Name);
+			}
+
+			return sb.ToString();
 		}
 
 		public static List<TokenAndName> GetTypeDefFullNames(IMetaDataImport mdi, uint token) {
@@ -235,13 +249,13 @@ namespace dndbg.Engine {
 			if (mdi == null)
 				return null;
 			char[] nameBuf = null;
-			uint chMethod, cbSigBlob;
+			uint chMethod, cbSigBlob, ulCodeRVA;
 			IntPtr pvSigBlob;
-			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chMethod, out dwAttr, out pvSigBlob, out cbSigBlob, IntPtr.Zero, out dwImplFlags);
+			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chMethod, out dwAttr, out pvSigBlob, out cbSigBlob, out ulCodeRVA, out dwImplFlags);
 			if (hr >= 0) {
 				nameBuf = new char[chMethod];
 				fixed (char* p = &nameBuf[0]) {
-					hr = mdi.GetMethodProps(token, IntPtr.Zero, new IntPtr(p), (uint)nameBuf.Length, out chMethod, out dwAttr, out pvSigBlob, out cbSigBlob, IntPtr.Zero, out dwImplFlags);
+					hr = mdi.GetMethodProps(token, IntPtr.Zero, new IntPtr(p), (uint)nameBuf.Length, out chMethod, out dwAttr, out pvSigBlob, out cbSigBlob, out ulCodeRVA, out dwImplFlags);
 				}
 			}
 			if (hr < 0)
@@ -338,15 +352,102 @@ namespace dndbg.Engine {
 				return null;
 			MethodAttributes attrs;
 			MethodImplAttributes implAttrs;
-			uint chMethod, cbSigBlob;
+			uint chMethod, cbSigBlob, ulCodeRVA;
 			IntPtr pvSigBlob;
-			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chMethod, out attrs, out pvSigBlob, out cbSigBlob, IntPtr.Zero, out implAttrs);
+			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chMethod, out attrs, out pvSigBlob, out cbSigBlob, out ulCodeRVA, out implAttrs);
 			if (hr < 0)
 				return null;
 
 			byte[] sig = new byte[cbSigBlob];
 			Marshal.Copy(pvSigBlob, sig, 0, sig.Length);
 			return new DebugSignatureReader().ReadSignature(mdi, sig) as MethodSig;
+		}
+
+		public static unsafe CallingConventionSig ReadCallingConventionSig(IMetaDataImport mdi, uint token) {
+			if (mdi == null)
+				return null;
+
+			IntPtr pvSig;
+			uint cbSig;
+			int hr = mdi.GetSigFromToken(token, out pvSig, out cbSig);
+			if (hr < 0)
+				return null;
+			var sig = new byte[cbSig];
+			Marshal.Copy(pvSig, sig, 0, sig.Length);
+			return new DebugSignatureReader().ReadSignature(mdi, sig);
+		}
+
+		public static void GetBodyInfo(CorModule module, uint token, out ushort flags, out ushort maxStack, out uint codeSize, out uint localVarSigTok, out uint headerSize) {
+			flags = 0;
+			maxStack = 0;
+			codeSize = 0;
+			localVarSigTok = 0;
+			headerSize = 0;
+			//TODO: Support dynamic modules (module.Address == 0)
+			if (module == null || module.Address == 0)
+				return;
+			var process = module.Process;
+			if (process == null)
+				return;
+			var mdi = module.GetMetaDataInterface<IMetaDataImport>();
+			if (mdi == null)
+				return;
+			MethodAttributes attrs;
+			MethodImplAttributes implAttrs;
+			uint chMethod, cbSigBlob, ulCodeRVA;
+			IntPtr pvSigBlob;
+			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chMethod, out attrs, out pvSigBlob, out cbSigBlob, out ulCodeRVA, out implAttrs);
+			if (hr < 0)
+				return;
+			if ((implAttrs & MethodImplAttributes.CodeTypeMask) != MethodImplAttributes.IL)
+				return;
+			if (ulCodeRVA == 0)
+				return;
+
+			var bodyAddr = ConvertRVA(module, ulCodeRVA);
+			if (bodyAddr == 0)
+				return;
+
+			var buf = new byte[12];
+			int sizeRead;
+			hr = process.ReadMemory(bodyAddr, buf, 0, buf.Length, out sizeRead);
+			if (hr < 0 || sizeRead < 1)
+				return;
+			switch (buf[0] & 7) {
+			case 2:
+			case 6:
+				flags = 2;
+				maxStack = 8;
+				codeSize = (uint)(buf[0] >> 2);
+				localVarSigTok = 0;
+				headerSize = 1;
+				break;
+
+			case 3:
+				if (sizeRead < 12)
+					return;
+				flags = BitConverter.ToUInt16(buf, 0);
+				headerSize = (byte)(flags >> 12);
+				maxStack = BitConverter.ToUInt16(buf, 2);
+				codeSize = BitConverter.ToUInt32(buf, 4);
+				localVarSigTok = BitConverter.ToUInt32(buf, 8);
+
+				if (headerSize < 3)
+					flags &= 0xFFF7;
+				headerSize *= 4;
+				break;
+			}
+		}
+
+		static ulong ConvertRVA(CorModule module, uint rva) {
+			if (module == null || module.Address == 0)
+				return 0;
+			if (module.IsInMemory) {
+				//TODO: Support in-memory modules. You must convert 'rva' to a file offset
+				return 0;
+			}
+
+			return module.Address + rva;
 		}
 
 		public static uint GetGlobalStaticConstructor(IMetaDataImport mdi) {
@@ -372,6 +473,8 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetMethodTokens(IMetaDataImport mdi, uint token) {
+			if (mdi == null)
+				return new uint[0];
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;
@@ -413,7 +516,6 @@ namespace dndbg.Engine {
 				list.Add(new TokenAndName(name, fdToken));
 			}
 
-			list.Reverse();
 			return list;
 		}
 
@@ -438,6 +540,8 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetFieldTokens(IMetaDataImport mdi, uint token) {
+			if (mdi == null)
+				return new uint[0];
 			IntPtr iter = IntPtr.Zero;
 			try {
 				uint cTokens;

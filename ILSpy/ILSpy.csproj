@@ -132,7 +132,7 @@
     <Compile Include="Debugger\Breakpoints\BreakpointsVM.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointVM.cs" />
     <Compile Include="Debugger\Breakpoints\Commands.cs" />
-    <Compile Include="Debugger\CallStack\CachedOutput.cs" />
+    <Compile Include="Debugger\CachedOutput.cs" />
     <Compile Include="Debugger\CallStack\CallStackFrameImageConverter.cs" />
     <Compile Include="Debugger\CallStack\CallStackSettings.cs" />
     <Compile Include="Debugger\CallStack\FrameUtils.cs" />
@@ -153,6 +153,19 @@
     <Compile Include="Debugger\Dialogs\ManagedProcessesFinder.cs" />
     <Compile Include="Debugger\Dialogs\ProcessVM.cs" />
     <Compile Include="Debugger\EvalUtils.cs" />
+    <Compile Include="Debugger\Locals\Commands.cs" />
+    <Compile Include="Debugger\Locals\EditValueControl.xaml.cs">
+      <DependentUpon>EditValueControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Locals\LocalColumnConverter.cs" />
+    <Compile Include="Debugger\Locals\LocalsControl.xaml.cs">
+      <DependentUpon>LocalsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Locals\LocalsSettings.cs" />
+    <Compile Include="Debugger\Locals\LocalsVM.cs" />
+    <Compile Include="Debugger\Locals\ValueContext.cs" />
+    <Compile Include="Debugger\Locals\ValuePrinter.cs" />
+    <Compile Include="Debugger\Locals\ValueVM.cs" />
     <Compile Include="Debugger\Modules\Commands.cs" />
     <Compile Include="Debugger\Modules\ModuleColumnConverter.cs" />
     <Compile Include="Debugger\Modules\ModulePrinter.cs" />
@@ -1208,6 +1221,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Debugger\Locals\EditValueControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\Locals\LocalsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Debugger\Modules\ModulesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1376,6 +1397,7 @@
     <Resource Include="Images\LiteralProtected.png" />
     <Resource Include="Images\LiteralProtectedInternal.png" />
     <Resource Include="Images\Local.png" />
+    <Resource Include="Images\LocalsWindow.png" />
     <Resource Include="Images\MetaData.png" />
     <Resource Include="Images\Method.png" />
     <Resource Include="Images\MethodCompilerControlled.png" />
@@ -1402,6 +1424,7 @@
     <Resource Include="Images\NewWindow.png" />
     <Resource Include="Images\NOP.png" />
     <Resource Include="Images\OK.png" />
+    <Resource Include="Images\OneLevelUp.png" />
     <Resource Include="Images\Open.png" />
     <Resource Include="Images\Operator.png" />
     <Resource Include="Images\OperatorCompilerControlled.png" />
@@ -1499,6 +1522,7 @@
     <Resource Include="Images\VirtualPropertyProtected.png" />
     <Resource Include="Images\VirtualPropertyProtectedInternal.png" />
     <Resource Include="Images\VisualBasicFile.png" />
+    <Resource Include="Images\Watch.png" />
     <Resource Include="Images\WordWrap.png" />
     <Resource Include="Images\XamlFile.png" />
     <Resource Include="Images\XmlFile.png" />

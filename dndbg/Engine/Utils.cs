@@ -18,6 +18,9 @@
 */
 
 using System;
+using System.Linq;
+using dndbg.Engine.COM.MetaData;
+using dnlib.DotNet;
 
 namespace dndbg.Engine {
 	static class Utils {
@@ -27,6 +30,65 @@ namespace dndbg.Engine {
 
 		public static int DebuggeeIntPtrSize {
 			get { return IntPtr.Size; }
+		}
+
+		public static bool IsSystemNullable(this CorType type) {
+			TokenAndName hasValueInfo, valueInfo;
+			return IsSystemNullable(type, out hasValueInfo, out valueInfo);
+		}
+
+		public static bool IsSystemNullable(this CorType type, out TokenAndName hasValueInfo, out TokenAndName valueInfo) {
+			hasValueInfo = new TokenAndName();
+			valueInfo = new TokenAndName();
+			if (type == null)
+				return false;
+			var cls = type.Class;
+			if (cls == null)
+				return false;
+			var mod = cls.Module;
+			if (mod == null)
+				return false;
+			//TODO: verify that module is the corlib
+			if (type.TypeParameters.Count() != 1)
+				return false;
+			var mdi = mod.GetMetaDataInterface<IMetaDataImport>();
+			if (MetaDataUtils.GetTypeDefFullName(mdi, cls.Token) != "System.Nullable`1")
+				return false;
+			var fields = MetaDataUtils.GetFields(mdi, cls.Token);
+			if (fields.Count != 2)
+				return false;
+			if (fields[0].Name != "hasValue")
+				return false;
+			if (fields[1].Name != "value")
+				return false;
+
+			hasValueInfo = fields[0];
+			valueInfo = fields[1];
+			return true;
+		}
+
+		public static bool IsSystemNullable(this GenericInstSig gis) {
+			if (gis == null)
+				return false;
+			if (gis.GenericArguments.Count != 1)
+				return false;
+			var type = gis.GenericType as ValueTypeSig;
+			if (type == null)
+				return false;
+			var tdr = type.TypeDefOrRef;
+			if (tdr == null || tdr.DeclaringType != null || tdr.FullName != "System.Nullable`1")
+				return false;
+			var td = tdr.ResolveTypeDef();
+			if (td != null) {
+				if (td.Fields.Count != 2)
+					return false;
+				if (td.Fields[0].Name != "hasValue")
+					return false;
+				if (td.Fields[1].Name != "value")
+					return false;
+			}
+
+			return true;
 		}
 	}
 }

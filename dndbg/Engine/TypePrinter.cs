@@ -79,6 +79,7 @@ namespace dndbg.Engine {
 		UseDecimal					= 0x00000100,
 		ShowTokens					= 0x00000200,
 		ShowIP						= 0x00000400,
+		ShowArrayValueSizes			= 0x00000800,
 
 		Default =
 			ShowModuleNames |
@@ -86,7 +87,8 @@ namespace dndbg.Engine {
 			ShowParameterNames |
 			ShowOwnerTypes |
 			ShowNamespaces |
-			ShowTypeKeywords,
+			ShowTypeKeywords |
+			ShowArrayValueSizes,
 	}
 
 	struct TypePrinter {
@@ -143,6 +145,10 @@ namespace dndbg.Engine {
 
 		bool ShowIP {
 			get { return (flags & TypePrinterFlags.ShowIP) != 0; }
+		}
+
+		bool ShowArrayValueSizes {
+			get { return (flags & TypePrinterFlags.ShowArrayValueSizes) != 0; }
 		}
 
 		public TypePrinter(ITypeOutput output, TypePrinterFlags flags) {
@@ -377,6 +383,10 @@ namespace dndbg.Engine {
 		}
 
 		public void Write(CorType type) {
+			Write(type, null);
+		}
+
+		void Write(CorType type, CorValue value) {
 			try {
 				if (recursionCounter++ >= MAX_RECURSION)
 					return;
@@ -384,39 +394,69 @@ namespace dndbg.Engine {
 					OutputWrite("null type", TypeColor.Error);
 					return;
 				}
-	
+
+				if (value != null && value.IsReference && (value.Type == CorElementType.SZArray || value.Type == CorElementType.Array))
+					value = value.DereferencedValue ?? value;
+
 				// It's shown reverse in C# so need to collect all array types here
-				List<CorType> list = null;
+				List<Tuple<CorType, CorValue>> list = null;
 				while (type != null && (type.ElementType == CorElementType.SZArray || type.ElementType == CorElementType.Array)) {
 					if (list == null)
-						list = new List<CorType>();
-					list.Add(type);
+						list = new List<Tuple<CorType, CorValue>>();
+					list.Add(Tuple.Create(type, value));
+					value = value == null ? null : value.DereferencedValue;
 					type = type.FirstTypeParameter;
 				}
 				if (list != null) {
-					Write(list[list.Count - 1].FirstTypeParameter);
-					foreach (var aryType in list) {
+					var t = list[list.Count - 1];
+					Write(t.Item1.FirstTypeParameter, t.Item2 == null ? null : t.Item2.DereferencedValue);
+					foreach (var tuple in list) {
+						var aryType = tuple.Item1;
+						var aryValue = tuple.Item2;
 						if (aryType.ElementType == CorElementType.Array) {
 							OutputWrite("[", TypeColor.Operator);
 							uint rank = aryType.Rank;
 							if (rank == 0)
 								OutputWrite("<RANK0>", TypeColor.Error);
-							else if (rank == 1)
-								OutputWrite("*", TypeColor.Operator);
 							else {
-								for (uint i = 1; i < rank; i++)
-									OutputWrite(",", TypeColor.Operator);
+								if (rank == 1)
+									OutputWrite("*", TypeColor.Operator);
+								var indexes = aryValue == null ? null : aryValue.BaseIndicies;
+								var dims = aryValue == null ? null : aryValue.Dimensions;
+								if (ShowArrayValueSizes && indexes != null && dims != null && (uint)indexes.Length == rank && (uint)dims.Length == rank) {
+									for (uint i = 0; i < rank; i++) {
+										if (i > 0) {
+											OutputWrite(",", TypeColor.Operator);
+											OutputWrite(" ", TypeColor.Text);
+										}
+										if (indexes[i] == 0)
+											WriteNumber(dims[i]);
+										else {
+											//TODO: How does VS print these arrays?
+											WriteNumber((int)indexes[0]);
+											OutputWrite("..", TypeColor.Operator);
+											WriteNumber((int)(indexes[0] + dims[0]));
+										}
+									}
+								}
+								else {
+									for (uint i = 1; i < rank; i++)
+										OutputWrite(",", TypeColor.Operator);
+								}
 							}
 							OutputWrite("]", TypeColor.Operator);
 						}
 						else {
 							Debug.Assert(aryType.ElementType == CorElementType.SZArray);
-							OutputWrite("[]", TypeColor.Operator);
+							OutputWrite("[", TypeColor.Operator);
+							if (ShowArrayValueSizes && aryValue != null)
+								WriteNumber(aryValue.ArrayCount);
+							OutputWrite("]", TypeColor.Operator);
 						}
 					}
 					return;
 				}
-	
+
 				switch (type.ElementType) {
 				case CorElementType.Void:		WriteSystemTypeKeyword("Void", "void"); break;
 				case CorElementType.Boolean:	WriteSystemTypeKeyword("Boolean", "bool"); break;
@@ -433,33 +473,39 @@ namespace dndbg.Engine {
 				case CorElementType.R8:			WriteSystemTypeKeyword("Double", "double"); break;
 				case CorElementType.String:		WriteSystemTypeKeyword("String", "string"); break;
 				case CorElementType.Object:		WriteSystemTypeKeyword("Object", "object"); break;
-	
+
 				case CorElementType.TypedByRef:	WriteSystemType("TypedReference"); break;
 				case CorElementType.I:			WriteSystemType("IntPtr"); break;
 				case CorElementType.U:			WriteSystemType("UIntPtr"); break;
-	
+
 				case CorElementType.Ptr:
-					Write(type.FirstTypeParameter);
+					Write(type.FirstTypeParameter, value == null ? null : value.DereferencedValue);
 					OutputWrite("*", TypeColor.Operator);
 					break;
-	
+
 				case CorElementType.ByRef:
-					Write(type.FirstTypeParameter);
+					Write(type.FirstTypeParameter, value == null ? null : value.DereferencedValue);
 					OutputWrite("&", TypeColor.Operator);
 					break;
-	
+
 				case CorElementType.ValueType:
+					if (type.IsSystemNullable()) {
+						Write(type.FirstTypeParameter);
+						OutputWrite("?", TypeColor.Operator);
+						break;
+					}
+					goto case CorElementType.Class;
 				case CorElementType.Class:
 					var cls = type.Class;
 					Write(cls);
 					if (cls != null)
 						WriteGenericParameters(cls.Module, cls.Token, new List<CorType>(type.TypeParameters), false);
 					break;
-	
+
 				case CorElementType.FnPtr:
 					OutputWrite("fnptr", TypeColor.Keyword);
 					break;
-	
+
 				case CorElementType.End:
 				case CorElementType.Var:
 				case CorElementType.Array:		// handled above
@@ -490,7 +536,7 @@ namespace dndbg.Engine {
 			return list[index];
 		}
 
-		void Write(TypeSig type, List<CorType> typeGenArgs, List<CorType> methGenArgs) {
+		public void Write(TypeSig type, List<CorType> typeGenArgs, List<CorType> methGenArgs) {
 			try {
 				if (recursionCounter++ >= MAX_RECURSION)
 					return;
@@ -498,7 +544,7 @@ namespace dndbg.Engine {
 					OutputWrite("null type", TypeColor.Error);
 					return;
 				}
-	
+
 				// It's shown reverse in C# so need to collect all array types here
 				List<ArraySigBase> list = null;
 				while (type != null && (type.ElementType == ElementType.SZArray || type.ElementType == ElementType.Array)) {
@@ -515,9 +561,9 @@ namespace dndbg.Engine {
 							uint rank = aryType.Rank;
 							if (rank == 0)
 								OutputWrite("<RANK0>", TypeColor.Error);
-							else if (rank == 1)
-								OutputWrite("*", TypeColor.Operator);
 							else {
+								if (rank == 1)
+									OutputWrite("*", TypeColor.Operator);
 								for (uint i = 1; i < rank; i++)
 									OutputWrite(",", TypeColor.Operator);
 							}
@@ -525,7 +571,11 @@ namespace dndbg.Engine {
 						}
 						else {
 							Debug.Assert(aryType.ElementType == ElementType.SZArray);
-							OutputWrite("[]", TypeColor.Operator);
+							// Use two strings so we produce the exact same output as the other
+							// Write() that writes CorType arrays. There's code that compares the
+							// output to detect different types, so we must generate the same text.
+							OutputWrite("[", TypeColor.Operator);
+							OutputWrite("]", TypeColor.Operator);
 						}
 					}
 					return;
@@ -565,13 +615,19 @@ namespace dndbg.Engine {
 				case ElementType.ValueType:
 				case ElementType.Class:
 					var cvt = (TypeDefOrRefSig)type;
-					Write(cvt.TypeDefOrRef as IMetaDataImportProvider);
+					var mdip = cvt.TypeDefOrRef as IMetaDataImportProvider;
+					if (mdip != null)
+						Write(mdip);
+					else {
+						//TODO:
+						Debug.Fail("NYI");
+					}
 					break;
 
 				case ElementType.Var:
 					Write(Read(typeGenArgs, (int)((GenericSig)type).Number));
 					break;
-	
+
 				case ElementType.MVar:
 					Write(Read(methGenArgs, (int)((GenericSig)type).Number));
 					break;
@@ -579,14 +635,18 @@ namespace dndbg.Engine {
 				case ElementType.GenericInst:
 					var gis = (GenericInstSig)type;
 					Write(gis.GenericType, typeGenArgs, methGenArgs);
-					OutputWrite("<", TypeColor.Operator);
-					var emptyList = new List<CorType>();
-					for (int i = 0; i < gis.GenericArguments.Count; i++) {
-						if (i > 0)
-							WriteCommaSpace();
-						Write(gis.GenericArguments[i], typeGenArgs, methGenArgs);
+					if (gis.IsSystemNullable())
+						OutputWrite("?", TypeColor.Operator);
+					else {
+						OutputWrite("<", TypeColor.Operator);
+						var emptyList = new List<CorType>();
+						for (int i = 0; i < gis.GenericArguments.Count; i++) {
+							if (i > 0)
+								WriteCommaSpace();
+							Write(gis.GenericArguments[i], typeGenArgs, methGenArgs);
+						}
+						OutputWrite(">", TypeColor.Operator);
 					}
-					OutputWrite(">", TypeColor.Operator);
 					break;
 
 				case ElementType.FnPtr:
@@ -738,17 +798,7 @@ namespace dndbg.Engine {
 				var methGenArgs = new List<CorType>();
 				if (frame != null) {
 					args.AddRange(frame.ILArguments);
-					var gas = new List<CorType>(frame.TypeParameters);
-					var mdi = GetMetaDataImport(func.Module);
-					var cls = func.Class;
-					int typeGenArgsCount = cls == null ? 0 : MetaDataUtils.GetCountGenericParameters(mdi, cls.Token);
-					int methGenArgsCount = MetaDataUtils.GetCountGenericParameters(mdi, func.Token);
-					Debug.Assert(typeGenArgsCount + methGenArgsCount == gas.Count);
-					int j = 0;
-					for (int i = 0; j < gas.Count && i < typeGenArgsCount; i++, j++)
-						typeGenArgs.Add(gas[j]);
-					for (int i = 0; j < gas.Count && i < methGenArgsCount; i++, j++)
-						methGenArgs.Add(gas[j]);
+					frame.GetTypeAndMethodGenericParameters(out typeGenArgs, out methGenArgs);
 				}
 
 				MethodSig methodSig = null;
@@ -968,24 +1018,7 @@ namespace dndbg.Engine {
 						WriteSpace();
 					}
 
-					var result = CorValueReader.ReadSimpleTypeValue(arg);
-					if (result.IsValueValid)
-						WriteSimpleValue(result.Value);
-					else {
-						output.Write("{", TypeColor.Error);
-						var type = arg.ExactType;
-						if (type != null)
-							Write(type);
-						else {
-							var cls = arg.Class;
-							if (cls != null)
-								Write(cls);
-							else
-								output.Write("???", TypeColor.Error);
-						}
-						output.Write("}", TypeColor.Error);
-					}
-
+					Write(arg);
 					needSpace = true;
 				}
 			}
@@ -1102,6 +1135,42 @@ namespace dndbg.Engine {
 
 		void WriteNumber(object value) {
 			OutputWrite(ConvertNumberToString(value), TypeColor.Number);
+		}
+
+		public void Write(CorValue value) {
+			if (value == null) {
+				output.Write("???", TypeColor.Error);
+				return;
+			}
+
+			Write(value, value.Value);
+		}
+
+		public void Write(CorValue value, CorValueResult result) {
+			if (result.IsValueValid)
+				WriteSimpleValue(result.Value);
+			else {
+				if (value == null) {
+					output.Write("???", TypeColor.Error);
+					return;
+				}
+
+				//TODO: Option to evaluate the value, eg. using ToString() or DebuggerDisplay attrs.
+				output.Write("{", TypeColor.Error);
+				if (value.IsReference && value.Type == CorElementType.ByRef)
+					value = value.DereferencedValue ?? value;
+				var type = value.ExactType;
+				if (type != null)
+					Write(type, value);
+				else {
+					var cls = value.Class;
+					if (cls != null)
+						Write(cls);
+					else
+						output.Write("???", TypeColor.Error);
+				}
+				output.Write("}", TypeColor.Error);
+			}
 		}
 
 		void WriteSimpleValue(object value) {

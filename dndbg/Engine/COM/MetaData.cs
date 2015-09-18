@@ -62,7 +62,7 @@ namespace dndbg.Engine.COM.MetaData {
 		void FindField([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
 		void FindMemberRef([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmr);
 		[PreserveSig]
-		int GetMethodProps(uint mb, IntPtr pClass, [In] IntPtr szMethod, uint cchMethod, out uint pchMethod, out MethodAttributes pdwAttr, out IntPtr ppvSigBlob, out uint pcbSigBlob, [Out] IntPtr pulCodeRVA, out MethodImplAttributes pdwImplFlags);
+		int GetMethodProps(uint mb, IntPtr pClass, [In] IntPtr szMethod, uint cchMethod, out uint pchMethod, out MethodAttributes pdwAttr, out IntPtr ppvSigBlob, out uint pcbSigBlob, out uint pulCodeRVA, out MethodImplAttributes pdwImplFlags);
 		void GetMemberRefProps([In] uint mr, [Out] out uint ptk, [Out] IntPtr szMember, [In] uint cchMember, [Out] out uint pchMember, [Out] out IntPtr ppvSigBlob, [Out] out uint pbSig);
 		void EnumProperties([In, Out] ref IntPtr phEnum, [In] uint td, [Out] uint[] rProperties, [In] uint cMax, [Out] out uint pcProperties);
 		void EnumEvents([In, Out] ref IntPtr phEnum, [In] uint td, [Out] uint[] rEvents, [In] uint cMax, [Out] out uint pcEvents);
@@ -73,7 +73,8 @@ namespace dndbg.Engine.COM.MetaData {
 		void GetFieldMarshal([In] uint tk, [Out] out IntPtr ppvNativeType, [Out] out uint pcbNativeType);
 		void GetRVA(uint tk, out uint pulCodeRVA, out uint pdwImplFlags);
 		void GetPermissionSetProps([In] uint pm, [Out] out uint pdwAction, [Out] out IntPtr ppvPermission, [Out] out uint pcbPermission);
-		void GetSigFromToken([In] uint mdSig, [Out] out IntPtr ppvSig, [Out] out uint pcbSig);
+		[PreserveSig]
+		int GetSigFromToken([In] uint mdSig, [Out] out IntPtr ppvSig, [Out] out uint pcbSig);
 		void GetModuleRefProps([In] uint mur, [Out] IntPtr szName, [In] uint cchName, [Out] out uint pchName);
 		void EnumModuleRefs([In, Out] ref IntPtr phEnum, [Out] uint[] rModuleRefs, [In] uint cmax, [Out] out uint pcModuleRefs);
 		void GetTypeSpecFromToken([In] uint typespec, [Out] out IntPtr ppvSig, [Out] out uint pcbSig);
@@ -141,7 +142,7 @@ namespace dndbg.Engine.COM.MetaData {
 		void FindField([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmb);
 		void FindMemberRef([In] uint td, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [In] IntPtr pvSigBlob, [In] uint cbSigBlob, [Out] out uint pmr);
 		[PreserveSig]
-		int GetMethodProps(uint mb, IntPtr pClass, [In] IntPtr szMethod, uint cchMethod, out uint pchMethod, out MethodAttributes pdwAttr, out IntPtr ppvSigBlob, out uint pcbSigBlob, [Out] IntPtr pulCodeRVA, out MethodImplAttributes pdwImplFlags);
+		int GetMethodProps(uint mb, IntPtr pClass, [In] IntPtr szMethod, uint cchMethod, out uint pchMethod, out MethodAttributes pdwAttr, out IntPtr ppvSigBlob, out uint pcbSigBlob, out uint pulCodeRVA, out MethodImplAttributes pdwImplFlags);
 		void GetMemberRefProps([In] uint mr, [Out] out uint ptk, [Out] IntPtr szMember, [In] uint cchMember, [Out] out uint pchMember, [Out] out IntPtr ppvSigBlob, [Out] out uint pbSig);
 		void EnumProperties([In, Out] ref IntPtr phEnum, [In] uint td, [Out] uint[] rProperties, [In] uint cMax, [Out] out uint pcProperties);
 		void EnumEvents([In, Out] ref IntPtr phEnum, [In] uint td, [Out] uint[] rEvents, [In] uint cMax, [Out] out uint pcEvents);
@@ -152,7 +153,8 @@ namespace dndbg.Engine.COM.MetaData {
 		void GetFieldMarshal([In] uint tk, [Out] out IntPtr ppvNativeType, [Out] out uint pcbNativeType);
 		void GetRVA(uint tk, out uint pulCodeRVA, out uint pdwImplFlags);
 		void GetPermissionSetProps([In] uint pm, [Out] out uint pdwAction, [Out] out IntPtr ppvPermission, [Out] out uint pcbPermission);
-		void GetSigFromToken([In] uint mdSig, [Out] out IntPtr ppvSig, [Out] out uint pcbSig);
+		[PreserveSig]
+		int GetSigFromToken([In] uint mdSig, [Out] out IntPtr ppvSig, [Out] out uint pcbSig);
 		void GetModuleRefProps([In] uint mur, [Out] IntPtr szName, [In] uint cchName, [Out] out uint pchName);
 		void EnumModuleRefs([In, Out] ref IntPtr phEnum, [Out] uint[] rModuleRefs, [In] uint cmax, [Out] out uint pcModuleRefs);
 		void GetTypeSpecFromToken([In] uint typespec, [Out] out IntPtr ppvSig, [Out] out uint pcbSig);

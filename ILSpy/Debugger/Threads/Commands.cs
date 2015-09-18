@@ -113,6 +113,10 @@ namespace dnSpy.Debugger.Threads {
 		protected override void Execute(ThreadsCtxMenuContext context) {
 			ThreadsControlCreator.ThreadsControlInstance.listView.SelectAll();
 		}
+
+		protected override bool IsEnabled(ThreadsCtxMenuContext context) {
+			return ThreadsControlCreator.ThreadsControlInstance.listView.Items.Count > 0;
+		}
 	}
 
 	[ExportContextMenuEntry(Header = "_Hexadecimal Display", Order = 200, Category = "THMiscOptions")]

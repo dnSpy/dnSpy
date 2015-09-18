@@ -19,6 +19,8 @@
 
 using System;
 using dndbg.Engine.COM.CorDebug;
+using dndbg.Engine.COM.MetaData;
+using dnlib.DotNet;
 
 namespace dndbg.Engine {
 	public sealed class CorFunction : COMObject<ICorDebugFunction>, IEquatable<CorFunction> {
@@ -151,6 +153,27 @@ namespace dndbg.Engine {
 			ICorDebugFunctionBreakpoint fnbp;
 			int hr = obj.CreateBreakpoint(out fnbp);
 			return hr < 0 || fnbp == null ? null : new CorFunctionBreakpoint(fnbp);
+		}
+
+		/// <summary>
+		/// Gets method parameters and method flags
+		/// </summary>
+		/// <param name="methodAttrs">Method attributes</param>
+		/// <param name="methodImplAttrs">Method implementation attributes</param>
+		/// <returns></returns>
+		public MDParameters GetMDParameters(out MethodAttributes methodAttrs, out MethodImplAttributes methodImplAttrs) {
+			methodAttrs = 0;
+			methodImplAttrs = 0;
+			var mod = Module;
+			if (mod == null)
+				return null;
+			var mdi = mod.GetMetaDataInterface<IMetaDataImport>();
+			if (mdi == null)
+				return null;
+			var name = MetaDataUtils.GetMethodDefName(mdi, Token, out methodAttrs, out methodImplAttrs);
+			if (name == null)
+				return null;
+			return MetaDataUtils.GetParameters(mdi, Token);
 		}
 
 		public static bool operator ==(CorFunction a, CorFunction b) {

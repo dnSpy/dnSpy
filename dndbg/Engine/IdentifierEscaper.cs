@@ -21,7 +21,7 @@ using System.Text;
 using System.Globalization;
 
 namespace dndbg.Engine {
-	public static class IdentifierEscaper {
+	static class IdentifierEscaper {
 		const int MAX_IDENTIFIER_LENGTH = 128;
 		const string EMPTY_NAME = "<<EMPTY_NAME>>";
 

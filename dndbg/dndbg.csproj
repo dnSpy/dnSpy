@@ -51,6 +51,7 @@
     <Compile Include="Engine\CorChain.cs" />
     <Compile Include="Engine\CorClass.cs" />
     <Compile Include="Engine\CorCode.cs" />
+    <Compile Include="Engine\CordbgErrors.cs" />
     <Compile Include="Engine\CorDebugExtensions.cs" />
     <Compile Include="Engine\CorDebugManagedCallback.cs" />
     <Compile Include="Engine\CorEval.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="Engine\CorThread.cs" />
     <Compile Include="Engine\CorType.cs" />
     <Compile Include="Engine\CorValue.cs" />
+    <Compile Include="Engine\CorValueHolder.cs" />
     <Compile Include="Engine\CorValueReader.cs" />
     <Compile Include="Engine\DebugCallbackEventArgs.cs" />
     <Compile Include="Engine\DebugEventBreakpointList.cs" />

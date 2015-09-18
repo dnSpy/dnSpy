@@ -22,7 +22,7 @@ using dndbg.Engine.COM.CorDebug;
 using dndbg.Engine.COM.MetaData;
 
 namespace dndbg.Engine {
-	public struct CorValueResult {
+	public struct CorValueResult : IEquatable<CorValueResult> {
 		/// <summary>
 		/// The value. Only valid if <see cref="IsValueValid"/> is true, else it shouldn't be used
 		/// </summary>
@@ -36,6 +36,47 @@ namespace dndbg.Engine {
 		public CorValueResult(object value) {
 			this.Value = value;
 			this.IsValueValid = true;
+		}
+
+		public T Write<T>(T output, CorValue value, TypePrinterFlags flags) where T : ITypeOutput {
+			new TypePrinter(output, flags).Write(value, this);
+			return output;
+		}
+
+		public string ToString(CorValue value, TypePrinterFlags flags) {
+			return Write(new StringBuilderTypeOutput(), value, flags).ToString();
+		}
+
+		public bool Equals(CorValueResult other) {
+			if (IsValueValid != other.IsValueValid)
+				return false;
+			if (!IsValueValid)
+				return true;
+			if (ReferenceEquals(Value, other.Value))
+				return true;
+			if (Value == null || other.Value == null)
+				return false;
+			if (Value.GetType() != other.Value.GetType())
+				return false;
+			return Value.Equals(other.Value);
+		}
+
+		public override bool Equals(object obj) {
+			return obj is CorValueResult && Equals((CorValueResult)obj);
+		}
+
+		public override int GetHashCode() {
+			if (!IsValueValid)
+				return 0x12345678;
+			return Value == null ? 0 : Value.GetHashCode();
+		}
+
+		public override string ToString() {
+			if (!IsValueValid)
+				return "<invalid>";
+			if (Value == null)
+				return "null";
+			return Value.ToString();
 		}
 	}
 
@@ -246,37 +287,77 @@ namespace dndbg.Engine {
 				return new CorValueResult(BitConverter.ToUInt64(data, 0));
 
 			case CorElementType.ValueType:
-				var cls = value.Class;
-				if (cls == null)
-					break;
-				var module = cls.Module;
-				if (module == null)
-					break;
-				var list = MetaDataUtils.GetTypeDefFullNames(module.GetMetaDataInterface<IMetaDataImport>(), cls.Token);
-				if (list.Count != 1)
-					break;
-				if (list[0].Name != "System.Decimal")
-					break;
-				if (value.Size != 16)
-					break;
-				data = value.ReadGenericValue();
-				if (data == null)
-					break;
-
-				var decimalBits = new int[4];
-				decimalBits[3] = BitConverter.ToInt32(data, 0);
-				decimalBits[2] = BitConverter.ToInt32(data, 4);
-				decimalBits[0] = BitConverter.ToInt32(data, 8);
-				decimalBits[1] = BitConverter.ToInt32(data, 12);
-				try {
-					return new CorValueResult(new decimal(decimalBits));
-				}
-				catch (ArgumentException) {
-				}
+				var res = GetDecimalResult(value);
+				if (res != null)
+					return res;
+				res = GetNullableResult(value);
+				if (res != null)
+					return res;
 				break;
 			}
 
 			return null;
+		}
+
+		static CorValueResult? GetDecimalResult(CorValue value) {
+			var cls = value.Class;
+			if (cls == null)
+				return null;
+			var module = cls.Module;
+			if (module == null)
+				return null;
+			var list = MetaDataUtils.GetTypeDefFullNames(module.GetMetaDataInterface<IMetaDataImport>(), cls.Token);
+			if (list.Count != 1)
+				return null;
+			if (list[0].Name != "System.Decimal")
+				return null;
+			if (value.Size != 16)
+				return null;
+			var data = value.ReadGenericValue();
+			if (data == null)
+				return null;
+
+			var decimalBits = new int[4];
+			decimalBits[3] = BitConverter.ToInt32(data, 0);
+			decimalBits[2] = BitConverter.ToInt32(data, 4);
+			decimalBits[0] = BitConverter.ToInt32(data, 8);
+			decimalBits[1] = BitConverter.ToInt32(data, 12);
+			try {
+				return new CorValueResult(new decimal(decimalBits));
+			}
+			catch (ArgumentException) {
+			}
+
+			return null;
+		}
+
+		static CorValueResult? GetNullableResult(CorValue value) {
+			TokenAndName hasValueInfo, valueInfo;
+			if (!Utils.IsSystemNullable(value.ExactType, out hasValueInfo, out valueInfo))
+				return null;
+			var type = value.ExactType;
+			if (type == null)
+				return null;
+			var cls = type.Class;
+			if (cls == null)
+				return null;
+
+			var hasValueValue = value.GetFieldValue(cls, hasValueInfo.Token);
+			if (hasValueValue == null)
+				return null;
+			var hasValueRes = hasValueValue.Value;
+			if (!hasValueRes.IsValueValid || !(hasValueRes.Value is bool))
+				return null;
+			if (!(bool)hasValueRes.Value)
+				return new CorValueResult(null);
+
+			var valueValue = value.GetFieldValue(cls, valueInfo.Token);
+			if (valueValue == null)
+				return null;
+			var valueRes = valueValue.Value;
+			if (!valueRes.IsValueValid)
+				return null;
+			return valueRes;
 		}
 	}
 }

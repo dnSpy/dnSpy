@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.Threads {
 			}
 		}
 
-		private void StackFrameManager_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void StackFrameManager_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "SelectedThread")
 				UpdateSelectedThread();
 		}

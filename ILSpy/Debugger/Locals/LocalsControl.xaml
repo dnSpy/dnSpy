@@ -16,70 +16,64 @@
     You should have received a copy of the GNU General Public License
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 -->
-<UserControl x:Class="dnSpy.Debugger.Breakpoints.BreakpointsControl"
+<UserControl x:Class="dnSpy.Debugger.Locals.LocalsControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:dnSpy.Debugger.Breakpoints"
+             xmlns:local="clr-namespace:dnSpy.Debugger.Locals"
+             xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
              xmlns:mvvm="clr-namespace:dnSpy.MVVM"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="100" d:DesignWidth="1000">
     <Grid>
-        <ListView
-            Name="listView"
-            MouseDoubleClick="listView_MouseDoubleClick"
+        <tv:SharpTreeView
+            Name="treeView"
             VirtualizingStackPanel.IsVirtualizing="True"
             VirtualizingStackPanel.VirtualizationMode="Recycling"
             mvvm:InitDataTemplateAP.Initialize="True"
             SelectionMode="Extended"
-            ItemsSource="{Binding Collection}"
-            SelectedItem="{Binding SelectedItem}">
-            <ListView.Resources>
+            ShowRoot="False"
+            Style="{StaticResource SharpTreeViewGridViewStyle}"
+            Root="{Binding Root}">
+            <tv:SharpTreeView.Resources>
+                <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
                 <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource DbgTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
-                <local:BreakpointColumnConverter x:Key="breakpointColumnConverter" />
-            </ListView.Resources>
-            <ListView.View>
-                <GridView AllowsColumnReorder="True">
-                    <GridViewColumn Header="Name">
+                <local:LocalColumnConverter x:Key="localColumnConverter" />
+            </tv:SharpTreeView.Resources>
+            <tv:SharpTreeView.View>
+                <tv:SharpGridView AllowsColumnReorder="False">
+                    <!-- TODO: Use an attached prop to fix the column widths. Last one is fixed size, first two share the remaining space -->
+                    <GridViewColumn Header="Name" Width="400">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="Auto" />
+										<ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <CheckBox IsChecked="{Binding IsEnabled}" />
-                                    <Image Grid.Column="1" Margin="5 0 0 0" Source="{Binding ImageObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Image}" Stretch="None" Height="16" Width="16" />
-                                    <ContentPresenter Grid.Column="2" Margin="5 0 0 0" Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Name}" />
+                                    <tv:SharpTreeNodeView Grid.Column="0" Style="{StaticResource SharpTreeNodeView_GridView}" />
+                                    <ContentPresenter Grid.Column="1" Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource localColumnConverter}, ConverterParameter=Name}" />
                                 </Grid>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Assembly">
+                    <GridViewColumn Header="Value" Width="400">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding AssemblyObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Assembly}" />
+                                <local:EditValueControl ReadOnlyContent="{Binding ValueObject, Mode=OneWay, Converter={StaticResource localColumnConverter}, ConverterParameter=Value}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Module">
+                    <GridViewColumn Header="Type" Width="200">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding ModuleObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Module}" />
+                                <ContentPresenter Content="{Binding TypeObject, Mode=OneWay, Converter={StaticResource localColumnConverter}, ConverterParameter=Type}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="File">
-                        <GridViewColumn.CellTemplate>
-                            <DataTemplate>
-                                <ContentPresenter Content="{Binding FileObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=File}" />
-                            </DataTemplate>
-                        </GridViewColumn.CellTemplate>
-                    </GridViewColumn>
-                </GridView>
-            </ListView.View>
-        </ListView>
+                </tv:SharpGridView>
+            </tv:SharpTreeView.View>
+        </tv:SharpTreeView>
     </Grid>
 </UserControl>

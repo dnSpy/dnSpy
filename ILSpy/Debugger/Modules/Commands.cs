@@ -112,6 +112,10 @@ namespace dnSpy.Debugger.Modules {
 		protected override void Execute(ModulesCtxMenuContext context) {
 			ModulesControlCreator.ModulesControlInstance.listView.SelectAll();
 		}
+
+		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+			return ModulesControlCreator.ModulesControlInstance.listView.Items.Count > 0;
+		}
 	}
 
 	[ExportContextMenuEntry(Header = "_Hexadecimal Display", Order = 200, Category = "MODMiscOptions")]
