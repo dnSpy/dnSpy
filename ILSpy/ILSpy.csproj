@@ -151,6 +151,8 @@
     </Compile>
     <Compile Include="Debugger\Dialogs\DebugProcessVM.cs" />
     <Compile Include="Debugger\Dialogs\ManagedProcessesFinder.cs" />
+    <Compile Include="Debugger\Dialogs\ProcessColumnConverter.cs" />
+    <Compile Include="Debugger\Dialogs\ProcessPrinter.cs" />
     <Compile Include="Debugger\Dialogs\ProcessVM.cs" />
     <Compile Include="Debugger\EvalUtils.cs" />
     <Compile Include="Debugger\Locals\Commands.cs" />

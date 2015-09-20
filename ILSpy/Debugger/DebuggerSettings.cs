@@ -52,10 +52,11 @@ namespace dnSpy.Debugger {
 					(SyntaxHighlightThreads ? 1 : 0) +
 					(SyntaxHighlightModules ? 1 : 0) +
 					(SyntaxHighlightLocals ? 1 : 0) +
+					(SyntaxHighlightAttach ? 1 : 0) +
 					0;
 				if (count == 0)
 					return false;
-				const int MAX = 5;
+				const int MAX = 6;
 				if (count == MAX)
 					return true;
 				Debug.Assert(count < MAX);
@@ -68,6 +69,7 @@ namespace dnSpy.Debugger {
 					SyntaxHighlightThreads = value.Value;
 					SyntaxHighlightModules = value.Value;
 					SyntaxHighlightLocals = value.Value;
+					SyntaxHighlightAttach = value.Value;
 				}
 			}
 		}
@@ -137,6 +139,19 @@ namespace dnSpy.Debugger {
 		}
 		bool syntaxHighlightLocals;
 
+		public bool SyntaxHighlightAttach {
+			get { return syntaxHighlightAttach; }
+			set {
+				if (syntaxHighlightAttach != value) {
+					syntaxHighlightAttach = value;
+					Save();
+					OnPropertyChanged("SyntaxHighlightAttach");
+					OnPropertyChanged("SyntaxHighlight");
+				}
+			}
+		}
+		bool syntaxHighlightAttach;
+
 		public BreakProcessType BreakProcessType {
 			get { return breakProcessType; }
 			set {
@@ -170,6 +185,7 @@ namespace dnSpy.Debugger {
 			SyntaxHighlightThreads = (bool?)csx.Attribute("SyntaxHighlightThreads") ?? true;
 			SyntaxHighlightModules = (bool?)csx.Attribute("SyntaxHighlightModules") ?? true;
 			SyntaxHighlightLocals = (bool?)csx.Attribute("SyntaxHighlightLocals") ?? true;
+			SyntaxHighlightAttach = (bool?)csx.Attribute("SyntaxHighlightAttach") ?? true;
 			BreakProcessType = (BreakProcessType)((int?)csx.Attribute("BreakProcessType") ?? (int)BreakProcessType.ModuleCctorOrEntryPoint);
 		}
 
@@ -198,6 +214,7 @@ namespace dnSpy.Debugger {
 			csx.SetAttributeValue("SyntaxHighlightThreads", SyntaxHighlightThreads);
 			csx.SetAttributeValue("SyntaxHighlightModules", SyntaxHighlightModules);
 			csx.SetAttributeValue("SyntaxHighlightLocals", SyntaxHighlightLocals);
+			csx.SetAttributeValue("SyntaxHighlightAttach", SyntaxHighlightAttach);
 			csx.SetAttributeValue("BreakProcessType", (int)BreakProcessType);
 		}
 
@@ -208,6 +225,7 @@ namespace dnSpy.Debugger {
 			other.SyntaxHighlightThreads = this.SyntaxHighlightThreads;
 			other.SyntaxHighlightModules = this.SyntaxHighlightModules;
 			other.SyntaxHighlightLocals = this.SyntaxHighlightLocals;
+			other.SyntaxHighlightAttach = this.SyntaxHighlightAttach;
 			other.BreakProcessType = this.BreakProcessType;
 			return other;
 		}

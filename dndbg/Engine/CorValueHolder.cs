@@ -65,16 +65,18 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public sealed class DummyCorValueHolder : CorValueHolderBase {
-		protected override bool HasDebuggeeExecuted {
+	public sealed class DummyCorValueHolder : ICorValueHolder {
+		public CorValue CorValue {
+			get { return value; }
+		}
+		readonly CorValue value;
+
+		public bool IsNeutered {
 			get { return false; }
 		}
 
-		protected override void OnNewCorValue(bool failed) {
-		}
-
-		public DummyCorValueHolder(CorValue value)
-			: base(value, () => value) {
+		public DummyCorValueHolder(CorValue value) {
+			this.value = value;
 		}
 	}
 

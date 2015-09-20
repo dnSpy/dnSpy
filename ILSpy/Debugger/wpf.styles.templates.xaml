@@ -62,6 +62,7 @@
                     <CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightThreads}" Content="_Threads" />
                     <CheckBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightModules}" Content="_Modules" />
                     <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightLocals}" Content="_Locals" />
+                    <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightAttach}" Content="Attac_h" />
                 </Grid>
             </GroupBox>
         </Grid>

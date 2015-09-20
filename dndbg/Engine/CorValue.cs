@@ -120,7 +120,7 @@ namespace dndbg.Engine {
 		public ulong Address {
 			get { return address; }
 		}
-		ulong address;
+		readonly ulong address;
 
 		/// <summary>
 		/// Gets the class or null if it's not a <see cref="ICorDebugObjectValue"/> or

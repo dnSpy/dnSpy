@@ -209,7 +209,7 @@ namespace dndbg.Engine {
 			var now = DateTime.UtcNow;
 			if (now >= endTime)
 				throw new TimeoutException("Evaluation timed out");
-			var timeLeft = now - startTime.Value;
+			var timeLeft = endTime - now;
 
 			var infos = new ThreadInfos(thread, SuspendOtherThreads);
 			object dispResult;

@@ -414,11 +414,13 @@ namespace dnSpy.Debugger {
 				const int ERROR_NOT_SUPPORTED = unchecked((int)0x80070032);
 				const int CORDBG_E_UNCOMPATIBLE_PLATFORMS = unchecked((int)0x80131C30);
 				if (cex != null && cex.ErrorCode == ERROR_NOT_SUPPORTED)
-					MainWindow.Instance.ShowMessageBox("Could not start debugger. Use dnSpy.exe to debug 64-bit applications.");
+					MainWindow.Instance.ShowMessageBox("Could not start the debugger. Use dnSpy.exe to debug 64-bit applications.");
 				else if (cex != null && cex.ErrorCode == CORDBG_E_UNCOMPATIBLE_PLATFORMS)
-					MainWindow.Instance.ShowMessageBox("Could not start debugger. Use dnSpy-x86.exe to debug 32-bit applications.");
+					MainWindow.Instance.ShowMessageBox("Could not start the debugger. Use dnSpy-x86.exe to debug 32-bit applications.");
+				else if (cex != null && cex.ErrorCode == unchecked((int)0x800702E4))
+					MainWindow.Instance.ShowMessageBox("Could not start the debugger. The debugged program requires admin privileges. Restart dnSpy with admin rights and try again.");
 				else
-					MainWindow.Instance.ShowMessageBox(string.Format("Could not start debugger. Make sure you have access to the file '{0}'\n\nError: {1}", options.Filename, ex.Message));
+					MainWindow.Instance.ShowMessageBox(string.Format("Could not start the debugger. Make sure you have access to the file '{0}'\n\nError: {1}", options.Filename, ex.Message));
 				return false;
 			}
 			AddDebugger(newDebugger);

@@ -22,12 +22,13 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:winlocal="clr-namespace:dnSpy.MVVM"
+             xmlns:local="clr-namespace:dnSpy.Debugger.Dialogs"
              xmlns:mvvm="clr-namespace:dnSpy.MVVM"
              xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters"
              Height="500" Width="1000"
              Title="{Binding Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
-             MinHeight="300" MinWidth="400">
+             MinHeight="150" MinWidth="300">
     <winlocal:WindowBase.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
@@ -51,41 +52,49 @@
             SelectedItem="{Binding SelectedItem}">
             <ListView.Resources>
                 <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource DbgTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                <local:ProcessColumnConverter x:Key="processColumnConverter" />
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
                     <GridViewColumn Header="Process">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Filename, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                                <ContentPresenter Content="{Binding FilenameObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=Filename}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="ID">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding PID, Mode=OneWay}" TextTrimming="CharacterEllipsis" HorizontalAlignment="Right" />
+                                <ContentPresenter Content="{Binding PIDObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=PID}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="Title">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Title, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                                <ContentPresenter Content="{Binding TitleObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=Title}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Type">
+                    <GridViewColumn Header="CLR">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Type, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                                <ContentPresenter Content="{Binding CLRVersionObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=CLRVersion}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="CPU">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding MachineObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=Machine}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="Filename">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding FullPath, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                                <ContentPresenter Content="{Binding FullPathObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=FullPath}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

@@ -131,14 +131,8 @@ namespace dnSpy.Debugger.Dialogs {
 				infoList.Clear();
 			}
 
-			foreach (var info in list) {
-				var type = info.CLRVersion;
-				if (!string.IsNullOrEmpty(type))
-					type += ", ";
-				type += info.IntPtrSize == 4 ? "32-bit" : "64-bit";
-				var vm = new ProcessVM(info.ProcessId, info.Title, type, info.CLRVersion, info.FullPath);
-				Collection.Add(vm);
-			}
+			foreach (var info in list)
+				Collection.Add(new ProcessVM(info.ProcessId, info.Title, info.Machine, info.CLRVersion, info.FullPath));
 		}
 
 		void RefreshAsync() {

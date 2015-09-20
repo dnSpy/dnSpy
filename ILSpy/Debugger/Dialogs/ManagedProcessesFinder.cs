@@ -24,6 +24,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using dndbg.Engine.COM.MetaHost;
+using dnlib.PE;
 using Microsoft.Win32.SafeHandles;
 
 namespace dnSpy.Debugger.Dialogs {
@@ -45,7 +46,7 @@ namespace dnSpy.Debugger.Dialogs {
 		public sealed class Info {
 			public int ProcessId;
 			public string CLRVersion;
-			public int IntPtrSize;
+			public Machine Machine;
 			public string Title;
 			public string FullPath;
 		}
@@ -100,7 +101,7 @@ namespace dnSpy.Debugger.Dialogs {
 
 					var info = new Info();
 					info.ProcessId = pid;
-					info.IntPtrSize = IntPtr.Size;
+					info.Machine = IntPtr.Size == 4 ? Machine.I386 : Machine.AMD64;
 					info.CLRVersion = sb.ToString();
 					info.Title = string.Empty;
 					info.FullPath = string.Empty;
