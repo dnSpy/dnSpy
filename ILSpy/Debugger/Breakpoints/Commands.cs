@@ -176,12 +176,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			//TODO:
 		}
 
-		protected override bool IsVisible(BreakpointCtxMenuContext context) {
-			return false;//TODO:
-		}
-
 		protected override bool IsEnabled(BreakpointCtxMenuContext context) {
-			return context.SelectedItems.Length == 1;
+			return false;//TODO:
 		}
 	}
 

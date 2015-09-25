@@ -59,7 +59,7 @@ namespace dndbg.Engine {
 	public class EvalEventArgs : EventArgs {
 	}
 
-	public sealed class DnEval {
+	public sealed class DnEval : IDisposable {
 		readonly DnDebugger debugger;
 		readonly IDebugMessageDispatcher debugMessageDispatcher;
 		CorThread thread;
@@ -70,6 +70,11 @@ namespace dndbg.Engine {
 		const int TIMEOUT_MS = 1000;
 		const int ABORT_TIMEOUT_MS = 3000;
 		const int RUDE_ABORT_TIMEOUT_MS = 1000;
+
+		public bool EvalTimedOut {
+			get { return evalTimedOut; }
+		}
+		bool evalTimedOut;
 
 		public bool SuspendOtherThreads {
 			get { return suspendOtherThreads; }
@@ -99,6 +104,10 @@ namespace dndbg.Engine {
 				throw new EvalException(hr, string.Format("Could not create an evaluator, HR=0x{0:X8}", hr));
 			this.thread = thread;
 			this.eval = new CorEval(ce);
+		}
+
+		public CorValue CreateNull() {
+			return eval.CreateValue(CorElementType.Class);
 		}
 
 		public CorValueResult CallResult(CorFunction func, CorValue[] args) {
@@ -133,6 +142,15 @@ namespace dndbg.Engine {
 
 		public EvalResult? Call(CorFunction func, CorType[] typeArgs, CorValue[] args, out int hr) {
 			hr = eval.CallParameterizedFunction(func, typeArgs, args);
+			if (hr < 0)
+				return null;
+			InitializeStartTime();
+
+			return SyncWait();
+		}
+
+		public EvalResult? CreateString(string s, out int hr) {
+			hr = eval.NewString(s);
 			if (hr < 0)
 				return null;
 			InitializeStartTime();
@@ -232,6 +250,7 @@ namespace dndbg.Engine {
 								debugMessageDispatcher.DispatchQueue(TimeSpan.FromMilliseconds(RUDE_ABORT_TIMEOUT_MS), out timedOutTmp);
 						}
 					}
+					evalTimedOut = true;
 					throw new TimeoutException();
 				}
 			}
@@ -263,6 +282,10 @@ namespace dndbg.Engine {
 			var e = EvalEvent;
 			if (e != null)
 				e(this, new EvalEventArgs());
+		}
+
+		public void Dispose() {
+			SignalEvalComplete();
 		}
 	}
 }

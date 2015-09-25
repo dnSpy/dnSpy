@@ -2164,7 +2164,7 @@
                 Value="5,2,5,2"/>
         <Setter Property="VerticalContentAlignment"
                 Value="Center"/>
-		<Setter Property="HorizontalContentAlignment"
+        <Setter Property="HorizontalContentAlignment"
                 Value="Stretch"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -4933,7 +4933,7 @@
         <Setter Property="Background"
                 Value="Transparent" />
         <Setter Property="VerticalContentAlignment"
-                Value="Center" />
+                Value="Stretch" />
         <Setter Property="HorizontalContentAlignment"
                 Value="Stretch" />
         <Setter Property="FocusVisualStyle"

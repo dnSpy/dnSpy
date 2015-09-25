@@ -155,10 +155,6 @@ namespace dnSpy.Debugger.CallStack {
 				FrameUtils.GoToDisasm(vm.Frame);
 		}
 
-		protected override bool IsVisible(CallStackCtxMenuContext context) {
-			return false;//TODO:
-		}
-
 		protected override bool IsEnabled(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			return vm != null && FrameUtils.CanGoToDisasm(vm.Frame);

@@ -164,6 +164,7 @@
 		<color name="toolbardisabledfill" bg="#FFDADADA" />
 		<color name="toolbardisabledborder" bg="#FFDADADA" />
 		<color name="environmentcommandbarmenumouseoversubmenuglyph" bg="#FF000000" />
+		<color name="environmentcommandbarmenuseparator" bg="#FFF0F0F0" />
 		<color name="commoncontrolsbuttoniconbackground" bg="#FFECECF0" />
 		<color name="commoncontrolsbutton" fg="#FF1E1E1E" bg="#FFECECF0" />
 		<color name="commoncontrolsbuttonborder" bg="#FFACACAC" />

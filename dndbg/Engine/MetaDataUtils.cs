@@ -19,14 +19,66 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using dndbg.Engine.COM.CorDebug;
 using dndbg.Engine.COM.MetaData;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
 namespace dndbg.Engine {
-	struct TokenAndName {
+	public struct CorFieldInfo {
+		public CorType OwnerType;
+		public uint Token;
+		public string Name;
+		public TypeSig FieldType;
+		public FieldAttributes Attributes;
+		public object Constant;
+		public CorElementType ConstantType;
+
+		public CorFieldInfo(CorType ownerType, uint token, string name, TypeSig fieldType, FieldAttributes attrs, object constant, CorElementType constantType) {
+			this.OwnerType = ownerType;
+			this.Token = token;
+			this.Name = name;
+			this.FieldType = fieldType;
+			this.Attributes = attrs;
+			this.Constant = constant;
+			this.ConstantType = constantType;
+		}
+
+		public override string ToString() {
+			return string.Format("{0:X8} {1} {2} {3}", Token, TypePrinterUtils.ToString(FieldType), Name, OwnerType);
+		}
+	}
+
+	public struct CorPropertyInfo {
+		public CorType OwnerType;
+		public uint Token;
+		public uint GetToken;
+		public uint SetToken;
+		public string Name;
+		public MethodSig GetSig;
+		public MethodSig SetSig;
+		public MethodAttributes GetMethodAttributes;
+
+		public CorPropertyInfo(CorType ownerType, uint token, uint getToken, uint setToken, string name, MethodSig getSig, MethodSig setSig, MethodAttributes getMethodAttributes) {
+			this.OwnerType = ownerType;
+			this.Token = token;
+			this.GetToken = getToken;
+			this.SetToken = setToken;
+			this.Name = name;
+			this.GetSig = getSig;
+			this.SetSig = setSig;
+			this.GetMethodAttributes = getMethodAttributes;
+		}
+
+		public override string ToString() {
+			return string.Format("{0:X8} {1} {2}", Token, Name, OwnerType);
+		}
+	}
+
+	public struct TokenAndName {
 		public readonly string Name;
 		public readonly uint Token;
 
@@ -377,79 +429,6 @@ namespace dndbg.Engine {
 			return new DebugSignatureReader().ReadSignature(mdi, sig);
 		}
 
-		public static void GetBodyInfo(CorModule module, uint token, out ushort flags, out ushort maxStack, out uint codeSize, out uint localVarSigTok, out uint headerSize) {
-			flags = 0;
-			maxStack = 0;
-			codeSize = 0;
-			localVarSigTok = 0;
-			headerSize = 0;
-			//TODO: Support dynamic modules (module.Address == 0)
-			if (module == null || module.Address == 0)
-				return;
-			var process = module.Process;
-			if (process == null)
-				return;
-			var mdi = module.GetMetaDataInterface<IMetaDataImport>();
-			if (mdi == null)
-				return;
-			MethodAttributes attrs;
-			MethodImplAttributes implAttrs;
-			uint chMethod, cbSigBlob, ulCodeRVA;
-			IntPtr pvSigBlob;
-			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chMethod, out attrs, out pvSigBlob, out cbSigBlob, out ulCodeRVA, out implAttrs);
-			if (hr < 0)
-				return;
-			if ((implAttrs & MethodImplAttributes.CodeTypeMask) != MethodImplAttributes.IL)
-				return;
-			if (ulCodeRVA == 0)
-				return;
-
-			var bodyAddr = ConvertRVA(module, ulCodeRVA);
-			if (bodyAddr == 0)
-				return;
-
-			var buf = new byte[12];
-			int sizeRead;
-			hr = process.ReadMemory(bodyAddr, buf, 0, buf.Length, out sizeRead);
-			if (hr < 0 || sizeRead < 1)
-				return;
-			switch (buf[0] & 7) {
-			case 2:
-			case 6:
-				flags = 2;
-				maxStack = 8;
-				codeSize = (uint)(buf[0] >> 2);
-				localVarSigTok = 0;
-				headerSize = 1;
-				break;
-
-			case 3:
-				if (sizeRead < 12)
-					return;
-				flags = BitConverter.ToUInt16(buf, 0);
-				headerSize = (byte)(flags >> 12);
-				maxStack = BitConverter.ToUInt16(buf, 2);
-				codeSize = BitConverter.ToUInt32(buf, 4);
-				localVarSigTok = BitConverter.ToUInt32(buf, 8);
-
-				if (headerSize < 3)
-					flags &= 0xFFF7;
-				headerSize *= 4;
-				break;
-			}
-		}
-
-		static ulong ConvertRVA(CorModule module, uint rva) {
-			if (module == null || module.Address == 0)
-				return 0;
-			if (module.IsInMemory) {
-				//TODO: Support in-memory modules. You must convert 'rva' to a file offset
-				return 0;
-			}
-
-			return module.Address + rva;
-		}
-
 		public static uint GetGlobalStaticConstructor(IMetaDataImport mdi) {
 			var mdTokens = GetMethodTokens(mdi, 0x02000001);
 			if (mdTokens == null)
@@ -570,6 +549,307 @@ namespace dndbg.Engine {
 				if (iter != IntPtr.Zero)
 					mdi.CloseEnum(iter);
 			}
+		}
+
+		public unsafe static uint[] GetPropertyTokens(IMetaDataImport mdi, uint token) {
+			if (mdi == null)
+				return new uint[0];
+			IntPtr iter = IntPtr.Zero;
+			try {
+				uint cTokens;
+				int hr = mdi.EnumProperties(ref iter, token, IntPtr.Zero, 0, out cTokens);
+				if (hr < 0)
+					return new uint[0];
+
+				uint ulCount = 0;
+				hr = mdi.CountEnum(iter, ref ulCount);
+				if (hr < 0 || ulCount == 0)
+					return new uint[0];
+
+				hr = mdi.ResetEnum(iter, 0);
+				if (hr < 0)
+					return new uint[0];
+
+				uint[] tokens = new uint[ulCount];
+				fixed (uint* p = &tokens[0]) {
+					hr = mdi.EnumProperties(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
+				}
+				if (hr < 0)
+					return new uint[0];
+				return tokens;
+			}
+			finally {
+				if (iter != IntPtr.Zero)
+					mdi.CloseEnum(iter);
+			}
+		}
+
+		static unsafe byte[] GetFieldSignature(IMetaDataImport mdi, uint token) {
+			if (mdi == null)
+				return null;
+
+			uint chField, dwAttr, sigLen = 0;
+			IntPtr sigAddr;
+			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chField, out dwAttr, new IntPtr(&sigAddr), new IntPtr(&sigLen), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			if (hr < 0)
+				return null;
+
+			var buf = new byte[sigLen];
+			Marshal.Copy(sigAddr, buf, 0, buf.Length);
+			return buf;
+		}
+
+		static TypeSig GetFieldTypeSig(IMetaDataImport mdi, uint token) {
+			var buf = GetFieldSignature(mdi, token);
+			if (buf == null)
+				return null;
+			var sig = new DebugSignatureReader().ReadSignature(mdi, buf) as FieldSig;
+			return sig == null ? null : sig.Type;
+		}
+
+		static FieldAttributes GetFieldAttributes(IMetaDataImport mdi, uint token) {
+			uint chField, dwAttr;
+			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chField, out dwAttr, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
+			return hr < 0 ? 0 : (FieldAttributes)dwAttr;
+		}
+
+		unsafe static object GetFieldConstant(IMetaDataImport mdi, uint token, out CorElementType constantType) {
+			constantType = CorElementType.End;
+			if (mdi == null)
+				return null;
+			uint chField, dwAttr, cchValue;
+			IntPtr pValue;
+			CorElementType constantTypeTmp;
+			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chField, out dwAttr, IntPtr.Zero, IntPtr.Zero, new IntPtr(&constantTypeTmp), new IntPtr(&pValue), new IntPtr(&cchValue));
+			if (hr < 0 || pValue == IntPtr.Zero)
+				return null;
+			constantType = constantTypeTmp;
+			return ReadConstant(pValue, cchValue, constantType);
+		}
+
+		unsafe static object ReadConstant(IntPtr addr, uint size, CorElementType elementType) {
+			byte* p = (byte*)addr;
+			if (p == null)
+				return null;
+
+			// size is always 0 unless it's a string...
+			switch (elementType) {
+			case CorElementType.Boolean:	return *p != 0;
+			case CorElementType.Char:		return *(char*)p;
+			case CorElementType.I1:			return *(sbyte*)p;
+			case CorElementType.U1:			return *p;
+			case CorElementType.I2:			return *(short*)p;
+			case CorElementType.U2:			return *(ushort*)p;
+			case CorElementType.I4:			return *(int*)p;
+			case CorElementType.U4:			return *(uint*)p;
+			case CorElementType.I8:			return *(long*)p;
+			case CorElementType.U8:			return *(ulong*)p;
+			case CorElementType.R4:			return *(float*)p;
+			case CorElementType.R8:			return *(double*)p;
+			case CorElementType.String:		return new string((char*)p, 0, (int)size);
+			default:						return null;
+			}
+		}
+
+		static CorFieldInfo? ReadFieldInfo(IMetaDataImport mdi, uint token, CorType type) {
+			if (mdi == null)
+				return null;
+			var name = GetFieldName(mdi, token);
+			if (name == null)
+				return null;
+			var fieldType = GetFieldTypeSig(mdi, token);
+			if (fieldType == null)
+				return null;
+			var attrs = GetFieldAttributes(mdi, token);
+			CorElementType constantType;
+			var constant = GetFieldConstant(mdi, token, out constantType);
+			return new CorFieldInfo(type, token, name, fieldType, attrs, constant, constantType);
+		}
+
+		public static IEnumerable<CorFieldInfo> GetFieldInfos(CorType type, bool checkBaseClasses = true) {
+			for (; type != null; type = type.Base) {
+				var cls = type.Class;
+				var mod = cls == null ? null : cls.Module;
+				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				var fdTokens = GetFieldTokens(mdi, cls == null ? 0 : cls.Token);
+				foreach (var fdToken in fdTokens) {
+					var info = ReadFieldInfo(mdi, fdToken, type);
+					Debug.Assert(info != null);
+					if (info != null)
+						yield return info.Value;
+				}
+				if (!checkBaseClasses)
+					break;
+			}
+		}
+
+		public static IEnumerable<CorFieldInfo> GetFieldInfos(IMetaDataImport mdi, uint token) {
+			var fdTokens = GetFieldTokens(mdi, token);
+			foreach (var fdToken in fdTokens) {
+				var info = ReadFieldInfo(mdi, fdToken, null);
+				Debug.Assert(info != null);
+				if (info != null)
+					yield return info.Value;
+			}
+		}
+
+		unsafe static CorPropertyInfo? ReadPropertyInfo(IMetaDataImport mdi, uint token, CorType type) {
+			if (mdi == null)
+				return null;
+
+			uint chProperty, dwPropFlags, mdSetter, mdGetter;
+			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chProperty, out dwPropFlags, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, out mdSetter, out mdGetter, IntPtr.Zero, 0, IntPtr.Zero);
+			char[] nameBuf = null;
+			if (hr >= 0) {
+				nameBuf = new char[chProperty];
+				fixed (char* p = &nameBuf[0]) {
+					hr = mdi.GetPropertyProps(token, IntPtr.Zero, new IntPtr(p), (uint)nameBuf.Length, out chProperty, out dwPropFlags, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, out mdSetter, out mdGetter, IntPtr.Zero, 0, IntPtr.Zero);
+				}
+			}
+			if (hr < 0)
+				return null;
+
+			string name = chProperty <= 1 ? string.Empty : new string(nameBuf, 0, (int)chProperty - 1);
+
+			var getSig = GetMethodSignature(mdi, mdGetter);
+			var setSig = GetMethodSignature(mdi, mdSetter);
+
+			if (getSig == null)
+				return null;
+			if (getSig.ParamsAfterSentinel != null)
+				return null;
+			if (getSig.GenParamCount != 0)
+				return null;
+			if (getSig.Params.Count != 0)
+				return null;
+			if (getSig.RetType.RemovePinnedAndModifiers().GetElementType() == ElementType.Void)
+				return null;
+
+			if (setSig != null && setSig.ParamsAfterSentinel != null)
+				setSig = null;
+			if (setSig != null && setSig.GenParamCount != 0)
+				setSig = null;
+			if (setSig != null && setSig.Params.Count != 1)
+				setSig = null;
+			if (setSig != null && setSig.RetType.RemovePinnedAndModifiers().GetElementType() != ElementType.Void)
+				setSig = null;
+
+			if (setSig != null && getSig.HasThis != setSig.HasThis)
+				setSig = null;
+			if (setSig != null && !Equals(getSig.RetType.RemovePinnedAndModifiers(), setSig.Params[0].RemovePinnedAndModifiers()))
+				setSig = null;
+
+			if (setSig == null)
+				mdSetter = 0;
+
+			MethodAttributes getMethodAttrs;
+			MethodImplAttributes dwImplAttrs;
+			IntPtr pvSigBlob;
+			hr = mdi.GetMethodProps(mdGetter, IntPtr.Zero, IntPtr.Zero, 0, out chProperty, out getMethodAttrs, out pvSigBlob, out chProperty, out chProperty, out dwImplAttrs);
+			if (hr < 0)
+				return null;
+
+			return new CorPropertyInfo(type, token, mdGetter, mdSetter, name, getSig, setSig, getMethodAttrs);
+		}
+
+		static bool Equals(TypeSig ts1, TypeSig ts2) {
+			return new TypeComparer().Equals(ts1, ts2);
+		}
+
+		public static IEnumerable<CorPropertyInfo> GetProperties(CorType type, bool checkBaseClasses = true) {
+			for (; type != null; type = type.Base) {
+				var cls = type.Class;
+				var mod = cls == null ? null : cls.Module;
+				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				var fdTokens = GetPropertyTokens(mdi, cls == null ? 0 : cls.Token);
+				foreach (var fdToken in fdTokens) {
+					var info = ReadPropertyInfo(mdi, fdToken, type);
+					if (info != null)
+						yield return info.Value;
+				}
+				if (!checkBaseClasses)
+					break;
+			}
+		}
+
+		static uint GetTypeDefExtends(IMetaDataImport mdi, uint token) {
+			uint chTypeDef, dwTypeDefFlags, tkExtends;
+			int hr = mdi.GetTypeDefProps(token, IntPtr.Zero, 0, out chTypeDef, out dwTypeDefFlags, out tkExtends);
+			return hr < 0 ? 0 : tkExtends;
+		}
+
+		public static bool IsEnum(IMetaDataImport mdi, uint token) {
+			switch ((Table)(token >> 24)) {
+			case Table.TypeDef: return IsEnumTypeDef(mdi, token);
+			case Table.TypeRef: return false;	//TODO: need to resolve it...
+			case Table.TypeSpec:return false;
+			default:			return false;
+			}
+		}
+
+		static bool IsEnumTypeDef(IMetaDataImport mdi, uint token) {
+			if (mdi == null)
+				return false;
+
+			return IsSystemEnum(mdi, GetTypeDefExtends(mdi, token));
+		}
+
+		public static bool IsSystemEnum(IMetaDataImport mdi, uint token) {
+			switch ((Table)(token >> 24)) {
+			case Table.TypeDef: return IsSystemEnumTypeDef(mdi, token);
+			case Table.TypeRef: return IsSystemEnumTypeRef(mdi, token);
+			case Table.TypeSpec:return false;
+			default:			return false;
+			}
+		}
+
+		static bool IsSystemEnumTypeDef(IMetaDataImport mdi, uint token) {
+			var names = GetTypeDefFullNames(mdi, token);
+			//TODO: Verify that it's in the corlib
+			return names.Count == 1 && names[0].Name == "System.Enum";
+		}
+
+		static bool IsSystemEnumTypeRef(IMetaDataImport mdi, uint token) {
+			var names = GetTypeRefFullNames(mdi, token);
+			//TODO: Verify that it's in the corlib
+			return names.Count == 1 && names[0].Name == "System.Enum";
+		}
+
+		public static bool IsSystemNullable(IMetaDataImport mdi, uint token) {
+			switch ((Table)(token >> 24)) {
+			case Table.TypeDef: return IsSystemNullableTypeDef(mdi, token);
+			case Table.TypeRef: return IsSystemNullableTypeRef(mdi, token);
+			case Table.TypeSpec:return false;
+			default:			return false;
+			}
+		}
+
+		static bool IsSystemNullableTypeDef(IMetaDataImport mdi, uint token) {
+			var names = GetTypeDefFullNames(mdi, token);
+			if (names.Count != 1 || names[0].Name != "System.Nullable`1")
+				return false;
+			var fields = GetFields(mdi, token);
+			if (fields.Count != 2)
+				return false;
+			if (fields[0].Name != "hasValue")
+				return false;
+			if (fields[1].Name != "value")
+				return false;
+
+			return true;
+		}
+
+		static bool IsSystemNullableTypeRef(IMetaDataImport mdi, uint token) {
+			var names = GetTypeRefFullNames(mdi, token);
+			if (names.Count != 1 || names[0].Name != "System.Nullable`1")
+				return false;
+			return true;
+		}
+
+		public static bool HasAttribute(IMetaDataImport mdi, uint token, string attributeName) {
+			if (mdi == null)
+				return false;
+			return mdi.GetCustomAttributeByName(token, attributeName, IntPtr.Zero, IntPtr.Zero) == 0;
 		}
 	}
 }

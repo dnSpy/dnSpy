@@ -54,6 +54,8 @@ namespace dnSpy.Debugger.Modules {
 		void DebuggerSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
 			if (e.PropertyName == "UseHexadecimal")
 				RefreshHexFields();
+			else if (e.PropertyName == "SyntaxHighlightModules")
+				RefreshThemeFields();
 		}
 
 		void InstallDebuggerHooks(DnDebugger dbg) {

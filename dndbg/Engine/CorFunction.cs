@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using dndbg.Engine.COM.CorDebug;
 using dndbg.Engine.COM.MetaData;
 using dnlib.DotNet;
@@ -174,6 +175,26 @@ namespace dndbg.Engine {
 			if (name == null)
 				return null;
 			return MetaDataUtils.GetParameters(mdi, Token);
+		}
+
+		/// <summary>
+		/// Gets method generic parameters
+		/// </summary>
+		/// <returns></returns>
+		public List<TokenAndName> GetGenericParameters() {
+			var module = Module;
+			return MetaDataUtils.GetGenericParameterNames(module == null ? null : module.GetMetaDataInterface<IMetaDataImport>(), Token);
+		}
+
+		/// <summary>
+		/// Gets type and method generic parameters
+		/// </summary>
+		/// <param name="typeParams">Updated with type params</param>
+		/// <param name="methodParams">Updated with method params</param>
+		public void GetGenericParameters(out List<TokenAndName> typeParams, out List<TokenAndName> methodParams) {
+			methodParams = GetGenericParameters();
+			var cls = Class;
+			typeParams = cls == null ? new List<TokenAndName>() : cls.GetGenericParameters();
 		}
 
 		public static bool operator ==(CorFunction a, CorFunction b) {

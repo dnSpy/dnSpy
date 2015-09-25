@@ -164,6 +164,28 @@ namespace dnSpy.Debugger {
 		}
 		BreakProcessType breakProcessType;
 
+		public bool PropertyEvalAndFunctionCalls {
+			get { return propertyEvalAndFunctionCalls; }
+			set {
+				if (propertyEvalAndFunctionCalls != value) {
+					propertyEvalAndFunctionCalls = value;
+					OnPropertyChanged("PropertyEvalAndFunctionCalls");
+				}
+			}
+		}
+		bool propertyEvalAndFunctionCalls;
+
+		public bool UseStringConversionFunction {
+			get { return useStringConversionFunction; }
+			set {
+				if (useStringConversionFunction != value) {
+					useStringConversionFunction = value;
+					OnPropertyChanged("UseStringConversionFunction");
+				}
+			}
+		}
+		bool useStringConversionFunction;
+
 		const string SETTINGS_NAME = "DebuggerSettings";
 
 		void Load() {
@@ -187,6 +209,8 @@ namespace dnSpy.Debugger {
 			SyntaxHighlightLocals = (bool?)csx.Attribute("SyntaxHighlightLocals") ?? true;
 			SyntaxHighlightAttach = (bool?)csx.Attribute("SyntaxHighlightAttach") ?? true;
 			BreakProcessType = (BreakProcessType)((int?)csx.Attribute("BreakProcessType") ?? (int)BreakProcessType.ModuleCctorOrEntryPoint);
+			PropertyEvalAndFunctionCalls = (bool?)csx.Attribute("PropertyEvalAndFunctionCalls") ?? true;
+			UseStringConversionFunction = (bool?)csx.Attribute("UseStringConversionFunction") ?? true;
 		}
 
 		void Save() {
@@ -216,6 +240,8 @@ namespace dnSpy.Debugger {
 			csx.SetAttributeValue("SyntaxHighlightLocals", SyntaxHighlightLocals);
 			csx.SetAttributeValue("SyntaxHighlightAttach", SyntaxHighlightAttach);
 			csx.SetAttributeValue("BreakProcessType", (int)BreakProcessType);
+			csx.SetAttributeValue("PropertyEvalAndFunctionCalls", PropertyEvalAndFunctionCalls);
+			csx.SetAttributeValue("UseStringConversionFunction", UseStringConversionFunction);
 		}
 
 		public DebuggerSettings CopyTo(DebuggerSettings other) {
@@ -227,6 +253,8 @@ namespace dnSpy.Debugger {
 			other.SyntaxHighlightLocals = this.SyntaxHighlightLocals;
 			other.SyntaxHighlightAttach = this.SyntaxHighlightAttach;
 			other.BreakProcessType = this.BreakProcessType;
+			other.PropertyEvalAndFunctionCalls = this.PropertyEvalAndFunctionCalls;
+			other.UseStringConversionFunction = this.UseStringConversionFunction;
 			return other;
 		}
 

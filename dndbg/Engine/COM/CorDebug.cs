@@ -66,6 +66,14 @@ namespace dndbg.Engine.COM.CorDebug {
 		Sentinel	= 0x41,
 		Pinned		= 0x45,
 	}
+	[StructLayout(LayoutKind.Sequential)]
+	public struct CorDebugExceptionObjectStackFrame {
+		[MarshalAs(UnmanagedType.Interface)]
+		public ICorDebugModule pModule;
+		public ulong ip;
+		public uint methodDef;
+		public bool isLastForeignExceptionFrame;
+	}
 	public enum CorDebugJITCompilerFlags : uint {
 		/// <summary>
 		/// Specifies that the compiler should track compilation data, and allows optimizations.
@@ -832,7 +840,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		int GetModule([MarshalAs(UnmanagedType.Interface)] out ICorDebugModule pModule);
 		[PreserveSig]
 		int GetToken(out uint pTypeDef);
-		void GetStaticFieldValue([In] uint fieldDef, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFrame pFrame, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
+		[PreserveSig]
+		int GetStaticFieldValue([In] uint fieldDef, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFrame pFrame, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
 	}
 	[Guid("B008EA8D-7AB1-43F7-BB20-FBB5A04038AE"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -1041,12 +1050,14 @@ namespace dndbg.Engine.COM.CorDebug {
 		void Reset();
 		void Clone([MarshalAs(UnmanagedType.Interface)] out ICorDebugEnum ppEnum);
 		void GetCount(out uint pcelt);
-		void Next([In] uint celt, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugExceptionObjectCallStackEnum values, out uint pceltFetched);
+		[PreserveSig]
+		int Next([In] uint celt, out CorDebugExceptionObjectStackFrame values, out uint pceltFetched);
 	}
 	[Guid("AE4CA65D-59DD-42A2-83A5-57E8A08D8719"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugExceptionObjectValue {
-		void EnumerateExceptionCallStack([MarshalAs(UnmanagedType.Interface)] out ICorDebugExceptionObjectCallStackEnum ppCallStackEnum);
+		[PreserveSig]
+		int EnumerateExceptionCallStack([MarshalAs(UnmanagedType.Interface)] out ICorDebugExceptionObjectCallStackEnum ppCallStackEnum);
 	}
 	[Guid("CC7BCAEF-8A68-11D2-983C-0000F808342D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
@@ -1762,7 +1773,7 @@ namespace dndbg.Engine.COM.CorDebug {
 		[PreserveSig]
 		int Step([In] int bStepIn);
 		[PreserveSig]
-		int StepRange([In] int bStepIn, [In] IntPtr ranges, [In] uint cRangeCount);
+		int StepRange([In] int bStepIn, [MarshalAs(UnmanagedType.LPArray)] [In] StepRange[] ranges, [In] uint cRangeCount);
 		[PreserveSig]
 		int StepOut();
 		[PreserveSig]
@@ -1836,7 +1847,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		int GetDebugState(out CorDebugThreadState pState);
 		[PreserveSig]
 		int GetUserState(out CorDebugUserState pState);
-		void GetCurrentException([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppExceptionObject);
+		[PreserveSig]
+		int GetCurrentException([MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppExceptionObject);
 		void ClearCurrentException();
 		[PreserveSig]
 		int CreateStepper([MarshalAs(UnmanagedType.Interface)] out ICorDebugStepper ppStepper);
@@ -1900,7 +1912,8 @@ namespace dndbg.Engine.COM.CorDebug {
 		int GetFirstTypeParameter([MarshalAs(UnmanagedType.Interface)] out ICorDebugType value);
 		[PreserveSig]
 		int GetBase([MarshalAs(UnmanagedType.Interface)] out ICorDebugType pBase);
-		void GetStaticFieldValue([In] uint fieldDef, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFrame pFrame, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
+		[PreserveSig]
+		int GetStaticFieldValue([In] uint fieldDef, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugFrame pFrame, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
 		[PreserveSig]
 		int GetRank(out uint pnRank);
 	}

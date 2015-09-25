@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -71,6 +72,21 @@ namespace dnSpy.Debugger.Threads {
 			StackFrameManager.Instance.StackFramesUpdated += StackFrameManager_StackFramesUpdated;
 			StackFrameManager.Instance.PropertyChanged += StackFrameManager_PropertyChanged;
 			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
+			DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
+			DebugManager.Instance.ProcessRunning += DebugManager_ProcessRunning;
+		}
+
+		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if (e.PropertyName == "SyntaxHighlightThreads")
+				RefreshThemeFields();
+			else if (e.PropertyName == "UseHexadecimal")
+				RefreshHexFields();
+			else if (e.PropertyName == "PropertyEvalAndFunctionCalls")
+				RefreshEvalFields();
+		}
+
+		void DebugManager_ProcessRunning(object sender, EventArgs e) {
+			InitializeThreads();
 		}
 
 		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
@@ -113,13 +129,12 @@ namespace dnSpy.Debugger.Threads {
 		void StackFrameManager_StackFramesUpdated(object sender, StackFramesUpdatedEventArgs e) {
 			if (e.Debugger.IsEvaluating)
 				return;
-			// InitializeStackFrames() is called by ThreadsControlCreator when the process has been
-			// running for a little while. Speeds up stepping.
+			// InitializeThreads() is called when the process has been running for a little while. Speeds up stepping.
 			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Running)
 				InitializeThreads();
 		}
 
-		internal void InitializeThreads() {
+		void InitializeThreads() {
 			if (!IsEnabled || DebugManager.Instance.ProcessState != DebuggerProcessState.Stopped) {
 				Collection.Clear();
 				return;
@@ -160,6 +175,11 @@ namespace dnSpy.Debugger.Threads {
 		internal void RefreshHexFields() {
 			foreach (var vm in Collection)
 				vm.RefreshHexFields();
+		}
+
+		void RefreshEvalFields() {
+			foreach (var vm in Collection)
+				vm.RefreshEvalFields();
 		}
 	}
 }

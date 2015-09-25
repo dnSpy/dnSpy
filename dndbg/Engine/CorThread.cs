@@ -181,6 +181,17 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
+		/// Gets the current exception or null
+		/// </summary>
+		public CorValue CurrentException {
+			get {
+				ICorDebugValue value;
+				int hr = obj.GetCurrentException(out value);
+				return hr < 0 || value == null ? null : new CorValue(value);
+			}
+		}
+
+		/// <summary>
 		/// true if a termination of the thread has been requested.
 		/// </summary>
 		public bool StopRequested {

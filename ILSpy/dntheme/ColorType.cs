@@ -570,6 +570,7 @@ namespace dnSpy.dntheme {
 		ToolBarDisabledFill,
 		ToolBarDisabledBorder,
 		EnvironmentCommandBarMenuMouseOverSubmenuGlyph,
+		EnvironmentCommandBarMenuSeparator,
 		CommonControlsButtonIconBackground,
 		CommonControlsButton,
 		CommonControlsButtonBorder,

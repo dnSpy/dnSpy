@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -60,25 +59,9 @@ namespace dnSpy.Debugger.CallStack {
 					vm.CallStackObjectCreator = new CallStackObjectCreator();
 					callStackControl.DataContext = vm;
 					InitializeCommandShortcuts(callStackControl.listView);
-					DebugManager.Instance.ProcessRunning += DebugManager_ProcessRunning;
-					DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
 				}
 				return callStackControl;
 			}
-		}
-
-		static void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "SyntaxHighlightCallStack") {
-				var vm = CallStackControlInstance.DataContext as CallStackVM;
-				if (vm != null)
-					vm.RefreshFrameNames();
-			}
-		}
-
-		static void DebugManager_ProcessRunning(object sender, EventArgs e) {
-			var vm = CallStackControlInstance.DataContext as CallStackVM;
-			if (vm != null)
-				vm.InitializeStackFrames();
 		}
 
 		static CallStackControl callStackControl;

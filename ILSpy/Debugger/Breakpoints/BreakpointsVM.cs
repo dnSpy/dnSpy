@@ -45,8 +45,14 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.breakpointList = new ObservableCollection<BreakpointVM>();
 			BreakpointSettings.Instance.PropertyChanged += BreakpointSettings_PropertyChanged;
 			BreakpointManager.Instance.OnListModified += BreakpointManager_OnListModified;
+			DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
 			foreach (var bp in BreakpointManager.Instance.Breakpoints)
 				AddBreakpoint(bp);
+		}
+
+		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if (e.PropertyName == "SyntaxHighlightBreakpoints")
+				RefreshThemeFields();
 		}
 
 		void BreakpointSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {

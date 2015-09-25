@@ -73,6 +73,29 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
+	sealed class ToggleCollapsedLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		protected override void Execute(LocalsCtxMenuContext context) {
+			var vm = GetValueVM(context);
+			if (vm != null)
+				vm.IsExpanded = !vm.IsExpanded;
+		}
+
+		static ValueVM GetValueVM(LocalsCtxMenuContext context) {
+			if (context.SelectedItems.Length != 1)
+				return null;
+			var vm = context.SelectedItems[0];
+			if (vm.LazyLoading)
+				return vm;
+			if (vm.Children.Count > 0)
+				return vm;
+			return null;
+		}
+
+		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+			return GetValueVM(context) != null;
+		}
+	}
+
 	[ExportContextMenuEntry(Header = "Cop_y", Order = 100, Category = "CopyLOC", Icon = "Copy", InputGestureText = "Ctrl+C")]
 	sealed class CopyLocalsCtxMenuCommand : LocalsCtxMenuCommand {
 		protected override void Execute(LocalsCtxMenuContext context) {
@@ -80,6 +103,10 @@ namespace dnSpy.Debugger.Locals {
 			foreach (var vm in context.SelectedItems) {
 				//TODO: Break if it takes too long and the user cancels
 				var printer = new ValuePrinter(output, DebuggerSettings.Instance.UseHexadecimal);
+				printer.WriteExpander(vm);
+				output.Write('\t', TextTokenType.Text);
+				// Add an extra here to emulate VS output
+				output.Write('\t', TextTokenType.Text);
 				printer.WriteName(vm);
 				output.Write('\t', TextTokenType.Text);
 				printer.WriteValue(vm);
@@ -216,7 +243,29 @@ namespace dnSpy.Debugger.Locals {
 		static CorValue GetValue(LocalsCtxMenuContext context) {
 			if (context.SelectedItems.Length != 1)
 				return null;
-			return GetValue(context.SelectedItems[0].Value);
+			var nv = context.SelectedItems[0] as NormalValueVM;
+			var value = nv == null ? null : nv.ReadOnlyCorValue;
+			if (value == null)
+				return null;
+			for (int i = 0; i < 2; i++) {
+				if (!value.IsReference)
+					break;
+				if (value.IsNull)
+					return null;
+				if (value.Type == CorElementType.Ptr || value.Type == CorElementType.FnPtr)
+					return null;
+				value = value.DereferencedValue;
+				if (value == null)
+					return null;
+			}
+			if (value.IsReference)
+				return null;
+			if (value.IsBox) {
+				value = value.BoxedValue;
+				if (value == null)
+					return null;
+			}
+			return value;
 		}
 
 		static CorValue GetValue(CorValue value) {

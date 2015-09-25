@@ -43,7 +43,6 @@ namespace dnSpy.Debugger.Breakpoints {
 					breakpointsControl = new BreakpointsControl();
 					var vm = new BreakpointsVM();
 					breakpointsControl.DataContext = vm;
-					DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
 					MainWindow.Instance.SessionSettings.FilterSettings.PropertyChanged += FilterSettings_PropertyChanged;
 					InitializeCommandShortcuts(breakpointsControl.listView);
 				}
@@ -60,14 +59,6 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		static BreakpointsControl breakpointsControl;
-
-		static void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "SyntaxHighlightBreakpoints") {
-				var vm = BreakpointsControlInstance.DataContext as BreakpointsVM;
-				if (vm != null)
-					vm.RefreshThemeFields();
-			}
-		}
 
 		static void InitializeCommandShortcuts(ListView listView) {
 			listView.AddCommandBinding(ApplicationCommands.Copy, new BreakpointCtxMenuCommandProxy(new CopyBreakpointCtxMenuCommand()));

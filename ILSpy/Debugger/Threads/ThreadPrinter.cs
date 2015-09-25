@@ -92,7 +92,9 @@ namespace dnSpy.Debugger.Threads {
 
 		public void WriteName(ThreadVM vm) {
 			var name = vm.Name;
-			if (name == null)
+			if (vm.UnknownName)
+				output.Write("???", TextTokenType.Error);
+			else if (name == null)
 				output.Write("<No Name>", TextTokenType.Text);
 			else
 				output.Write(DebugOutputUtils.FilterName(name, MAX_THREAD_NAME), TextTokenType.String);

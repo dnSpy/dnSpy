@@ -19,7 +19,6 @@
 
 using System;
 using dndbg.Engine.COM.CorDebug;
-using dndbg.Engine.COM.MetaData;
 
 namespace dndbg.Engine {
 	public struct CorValueResult : IEquatable<CorValueResult> {
@@ -95,7 +94,7 @@ namespace dndbg.Engine {
 			if (value.IsReference) {
 				if (value.IsNull)
 					return new CorValueResult(null);
-				if (value.Type == CorElementType.Ptr) {
+				if (value.Type == CorElementType.Ptr || value.Type == CorElementType.FnPtr) {
 					if (Utils.DebuggeeIntPtrSize == 4)
 						return new CorValueResult((uint)value.ReferenceAddress);
 					return new CorValueResult(value.ReferenceAddress);
@@ -108,11 +107,10 @@ namespace dndbg.Engine {
 				value = value.BoxedValue;
 				if (value == null)
 					return new CorValueResult();
-				var cls = value.Class;
-				if (cls == null)
+				var type = value.ExactType;
+				if (type == null)
 					return new CorValueResult();
-				var etype = GetValueClassElementType(cls);
-				var vres = GetSimpleResult(value, etype);
+				var vres = GetSimpleResult(value, type.TryGetPrimitiveType, type);
 				return vres ?? new CorValueResult();
 			}
 			if (value.IsReference)
@@ -124,43 +122,17 @@ namespace dndbg.Engine {
 			if (value.IsString)
 				return new CorValueResult(value.String);
 
-			var res = GetSimpleResult(value, value.Type);
+			var res = GetSimpleResult(value, value.Type, value.ExactType);
 			return res ?? new CorValueResult();
 		}
 
-		static CorElementType GetValueClassElementType(CorClass cls) {
-			const CorElementType DEFAULT_VALUE = CorElementType.ValueType;
-
-			if (cls == null)
-				return CorElementType.End;
-			var module = cls.Module;
-			if (module == null)
-				return DEFAULT_VALUE;
-			var list = MetaDataUtils.GetTypeDefFullNames(module.GetMetaDataInterface<IMetaDataImport>(), cls.Token);
-			if (list.Count != 1)
-				return DEFAULT_VALUE;
-
-			switch (list[0].Name) {
-			case "System.Boolean":	return CorElementType.Boolean;
-			case "System.Byte":		return CorElementType.U1;
-			case "System.Char":		return CorElementType.Char;
-			case "System.Double":	return CorElementType.R8;
-			case "System.Int16":	return CorElementType.I2;
-			case "System.Int32":	return CorElementType.I4;
-			case "System.Int64":	return CorElementType.I8;
-			case "System.IntPtr":	return CorElementType.I;
-			case "System.Object":	return CorElementType.Object;
-			case "System.SByte":	return CorElementType.I1;
-			case "System.Single":	return CorElementType.R4;
-			case "System.String":	return CorElementType.String;
-			case "System.TypedReference": return CorElementType.TypedByRef;
-			case "System.UInt16":	return CorElementType.U2;
-			case "System.UInt32":	return CorElementType.U4;
-			case "System.UInt64":	return CorElementType.U8;
-			case "System.UIntPtr":	return CorElementType.U;
-			case "System.Void":		return CorElementType.Void;
-			default: return DEFAULT_VALUE;
-			}
+		static CorValueResult? GetSimpleResult(CorValue value, CorElementType etype, CorType type) {
+			var res = GetSimpleResult(value, etype);
+			if (res != null)
+				return res;
+			if (type == null || !type.IsEnum)
+				return res;
+			return GetSimpleResult(value, type.EnumUnderlyingType);
 		}
 
 		static CorValueResult? GetSimpleResult(CorValue value, CorElementType etype) {
@@ -277,6 +249,7 @@ namespace dndbg.Engine {
 
 			case CorElementType.U:
 			case CorElementType.Ptr:
+			case CorElementType.FnPtr:
 				if (value.Size != (uint)Utils.DebuggeeIntPtrSize)
 					break;
 				data = value.ReadGenericValue();
@@ -300,16 +273,8 @@ namespace dndbg.Engine {
 		}
 
 		static CorValueResult? GetDecimalResult(CorValue value) {
-			var cls = value.Class;
-			if (cls == null)
-				return null;
-			var module = cls.Module;
-			if (module == null)
-				return null;
-			var list = MetaDataUtils.GetTypeDefFullNames(module.GetMetaDataInterface<IMetaDataImport>(), cls.Token);
-			if (list.Count != 1)
-				return null;
-			if (list[0].Name != "System.Decimal")
+			var et = value.ExactType;
+			if (et == null || !et.IsSystemDecimal)
 				return null;
 			if (value.Size != 16)
 				return null;
@@ -333,7 +298,7 @@ namespace dndbg.Engine {
 
 		static CorValueResult? GetNullableResult(CorValue value) {
 			TokenAndName hasValueInfo, valueInfo;
-			if (!Utils.IsSystemNullable(value.ExactType, out hasValueInfo, out valueInfo))
+			if (!Utils.GetSystemNullableFields(value.ExactType, out hasValueInfo, out valueInfo))
 				return null;
 			var type = value.ExactType;
 			if (type == null)

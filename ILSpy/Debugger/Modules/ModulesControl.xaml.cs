@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -43,7 +42,6 @@ namespace dnSpy.Debugger.Modules {
 					modulesControl = new ModulesControl();
 					var vm = new ModulesVM();
 					modulesControl.DataContext = vm;
-					DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
 					InitializeCommandShortcuts(modulesControl.listView);
 				}
 				return modulesControl;
@@ -51,14 +49,6 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		static ModulesControl modulesControl;
-
-		static void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "SyntaxHighlightModules") {
-				var vm = ModulesControlInstance.DataContext as ModulesVM;
-				if (vm != null)
-					vm.RefreshThemeFields();
-			}
-		}
 
 		static void InitializeCommandShortcuts(ListView listView) {
 			listView.AddCommandBinding(ApplicationCommands.Copy, new ModulesCtxMenuCommandProxy(new CopyCallModulesCtxMenuCommand()));

@@ -43,6 +43,10 @@ namespace dnSpy.Debugger {
 
 		public static T EvaluateCallMethod<T>(DnThread thread, CorValue thisObj, string methodName) {
 			try {
+				if (!DebuggerSettings.Instance.PropertyEvalAndFunctionCalls)
+					return default(T);
+				if (DebugManager.Instance.EvalDisabled)
+					return default(T);
 				if (thisObj == null || thisObj.IsNull)
 					return default(T);
 				var derefThisObj = thisObj.DereferencedValue;
@@ -65,24 +69,14 @@ namespace dnSpy.Debugger {
 				if (func == null)
 					return default(T);
 
-				var eval = DebugManager.Instance.GetStoppedEval();
-				eval.SetThread(thread);
 				CorValueResult res;
-				try {
+				using (var eval = DebugManager.Instance.CreateEval(thread.CorThread))
 					res = eval.CallResult(func, null, new CorValue[] { thisObj }, out hr);
-				}
-				finally {
-					eval.SignalEvalComplete();
-				}
 				if (hr < 0)
 					return default(T);
 				return (T)res.Value;
 			}
-			catch (InvalidCastException) {
-			}
-			catch (EvalException) {
-			}
-			catch (TimeoutException) {
+			catch {
 			}
 			return default(T);
 		}

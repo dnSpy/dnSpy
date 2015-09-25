@@ -18,7 +18,7 @@
 */
 
 using System;
-using System.Linq;
+using System.Diagnostics;
 using dndbg.Engine.COM.MetaData;
 using dnlib.DotNet;
 
@@ -32,29 +32,15 @@ namespace dndbg.Engine {
 			get { return IntPtr.Size; }
 		}
 
-		public static bool IsSystemNullable(this CorType type) {
-			TokenAndName hasValueInfo, valueInfo;
-			return IsSystemNullable(type, out hasValueInfo, out valueInfo);
-		}
-
-		public static bool IsSystemNullable(this CorType type, out TokenAndName hasValueInfo, out TokenAndName valueInfo) {
+		public static bool GetSystemNullableFields(this CorType type, out TokenAndName hasValueInfo, out TokenAndName valueInfo) {
 			hasValueInfo = new TokenAndName();
 			valueInfo = new TokenAndName();
-			if (type == null)
+			if (type == null || !type.IsSystemNullable)
 				return false;
 			var cls = type.Class;
-			if (cls == null)
-				return false;
-			var mod = cls.Module;
-			if (mod == null)
-				return false;
-			//TODO: verify that module is the corlib
-			if (type.TypeParameters.Count() != 1)
-				return false;
-			var mdi = mod.GetMetaDataInterface<IMetaDataImport>();
-			if (MetaDataUtils.GetTypeDefFullName(mdi, cls.Token) != "System.Nullable`1")
-				return false;
-			var fields = MetaDataUtils.GetFields(mdi, cls.Token);
+			var mod = cls == null ? null : cls.Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			var fields = MetaDataUtils.GetFields(mdi, cls == null ? 0 : cls.Token);
 			if (fields.Count != 2)
 				return false;
 			if (fields[0].Name != "hasValue")
@@ -67,6 +53,14 @@ namespace dndbg.Engine {
 			return true;
 		}
 
+		public static bool GetSystemNullableFields(this CorType type, out TokenAndName hasValueInfo, out TokenAndName valueInfo, out CorType nullableElemType) {
+			nullableElemType = null;
+			if (!type.GetSystemNullableFields(out hasValueInfo, out valueInfo))
+				return false;
+			nullableElemType = type.FirstTypeParameter;
+			return nullableElemType != null;
+		}
+
 		public static bool IsSystemNullable(this GenericInstSig gis) {
 			if (gis == null)
 				return false;
@@ -75,20 +69,60 @@ namespace dndbg.Engine {
 			var type = gis.GenericType as ValueTypeSig;
 			if (type == null)
 				return false;
-			var tdr = type.TypeDefOrRef;
-			if (tdr == null || tdr.DeclaringType != null || tdr.FullName != "System.Nullable`1")
-				return false;
-			var td = tdr.ResolveTypeDef();
-			if (td != null) {
-				if (td.Fields.Count != 2)
-					return false;
-				if (td.Fields[0].Name != "hasValue")
-					return false;
-				if (td.Fields[1].Name != "value")
-					return false;
-			}
 
-			return true;
+			var mdip = type.TypeDefOrRef as IMetaDataImportProvider;
+			if (mdip == null)
+				return false;
+			return MetaDataUtils.IsSystemNullable(mdip.MetaDataImport, mdip.MDToken.Raw);
+		}
+
+		public static ulong? IntegerToUInt64ZeroExtend(object o) {
+			if (o == null)
+				return null;
+			switch (Type.GetTypeCode(o.GetType())) {
+			case TypeCode.Boolean:	return (bool)o ? 1UL : 0UL;
+			case TypeCode.Char:		return (char)o;
+			case TypeCode.SByte:	return (byte)(sbyte)o;
+			case TypeCode.Int16:	return (ushort)(short)o;
+			case TypeCode.Int32:	return (uint)(int)o;
+			case TypeCode.Int64:	return (ulong)(long)o;
+			case TypeCode.Byte:		return (byte)o;
+			case TypeCode.UInt16:	return (ushort)o;
+			case TypeCode.UInt32:	return (uint)o;
+			case TypeCode.UInt64:	return (ulong)o;
+			}
+			if (o is IntPtr)
+				return (ulong)((IntPtr)o).ToInt64();
+			if (o is UIntPtr)
+				return ((UIntPtr)o).ToUInt64();
+			return null;
+		}
+
+		public static object ConvertValue(ulong value, Type type) {
+			switch (Type.GetTypeCode(type)) {
+			case TypeCode.Boolean:	return value != 0;
+			case TypeCode.Char:		return (char)value;
+			case TypeCode.SByte:	return (sbyte)value;
+			case TypeCode.Int16:	return (short)value;
+			case TypeCode.Int32:	return (int)value;
+			case TypeCode.Int64:	return (long)value;
+			case TypeCode.Byte:		return (byte)value;
+			case TypeCode.UInt16:	return (ushort)value;
+			case TypeCode.UInt32:	return (uint)value;
+			case TypeCode.UInt64:	return value;
+			}
+			if (type == typeof(IntPtr)) {
+				if (IntPtr.Size == 4)
+					return new IntPtr((int)value);
+				return new IntPtr((long)value);
+			}
+			if (type == typeof(UIntPtr)) {
+				if (IntPtr.Size == 4)
+					return new UIntPtr((uint)value);
+				return new UIntPtr(value);
+			}
+			Debug.Fail("Unsupported type");
+			return null;
 		}
 	}
 }

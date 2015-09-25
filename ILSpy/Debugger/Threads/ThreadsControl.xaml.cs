@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -43,8 +42,6 @@ namespace dnSpy.Debugger.Threads {
 					threadsControl = new ThreadsControl();
 					var vm = new ThreadsVM(threadsControl.Dispatcher);
 					threadsControl.DataContext = vm;
-					DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
-					DebugManager.Instance.ProcessRunning += DebugManager_ProcessRunning;
 					InitializeCommandShortcuts(threadsControl.listView);
 				}
 				return threadsControl;
@@ -52,25 +49,6 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		static ThreadsControl threadsControl;
-
-		static void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "SyntaxHighlightThreads") {
-				var vm = ThreadsControlInstance.DataContext as ThreadsVM;
-				if (vm != null)
-					vm.RefreshThemeFields();
-			}
-			else if (e.PropertyName == "UseHexadecimal") {
-				var vm = ThreadsControlInstance.DataContext as ThreadsVM;
-				if (vm != null)
-					vm.RefreshHexFields();
-			}
-		}
-
-		static void DebugManager_ProcessRunning(object sender, EventArgs e) {
-			var vm = ThreadsControlInstance.DataContext as ThreadsVM;
-			if (vm != null)
-				vm.InitializeThreads();
-		}
 
 		static void InitializeCommandShortcuts(ListView listView) {
 			listView.AddCommandBinding(ApplicationCommands.Copy, new ThreadsCtxMenuCommandProxy(new CopyCallThreadsCtxMenuCommand()));

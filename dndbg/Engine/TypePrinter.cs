@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using dndbg.Engine.COM.CorDebug;
 using dndbg.Engine.COM.MetaData;
@@ -48,6 +49,7 @@ namespace dndbg.Engine {
 		Parameter,
 		String,
 		Char,
+		EnumField,
 	}
 
 	public interface ITypeOutput {
@@ -309,7 +311,7 @@ namespace dndbg.Engine {
 			WriteTypeList(list, token);
 		}
 
-		void WriteTypeList(List<TokenAndName> list, uint token) {
+		void WriteTypeList(IList<TokenAndName> list, uint token) {
 			if (list.Count == 0) {
 				WriteDefaultType(token);
 				return;
@@ -333,7 +335,7 @@ namespace dndbg.Engine {
 			OutputWrite(string.Format("type_{0:X8}", token), TypeColor.Error);
 		}
 
-		static string GetTypeKeyword(List<TokenAndName> list, int index) {
+		static string GetTypeKeyword(IList<TokenAndName> list, int index) {
 			if (list.Count != 1)
 				return null;
 
@@ -489,7 +491,7 @@ namespace dndbg.Engine {
 					break;
 
 				case CorElementType.ValueType:
-					if (type.IsSystemNullable()) {
+					if (type.IsSystemNullable) {
 						Write(type.FirstTypeParameter);
 						OutputWrite("?", TypeColor.Operator);
 						break;
@@ -536,7 +538,7 @@ namespace dndbg.Engine {
 			return list[index];
 		}
 
-		public void Write(TypeSig type, List<CorType> typeGenArgs, List<CorType> methGenArgs) {
+		public void Write(TypeSig type, IList<CorType> typeGenArgs = null, IList<CorType> methGenArgs = null) {
 			try {
 				if (recursionCounter++ >= MAX_RECURSION)
 					return;
@@ -544,6 +546,11 @@ namespace dndbg.Engine {
 					OutputWrite("null type", TypeColor.Error);
 					return;
 				}
+
+				if (typeGenArgs == null)
+					typeGenArgs = new CorType[0];
+				if (methGenArgs == null)
+					methGenArgs = new CorType[0];
 
 				// It's shown reverse in C# so need to collect all array types here
 				List<ArraySigBase> list = null;
@@ -634,10 +641,12 @@ namespace dndbg.Engine {
 
 				case ElementType.GenericInst:
 					var gis = (GenericInstSig)type;
-					Write(gis.GenericType, typeGenArgs, methGenArgs);
-					if (gis.IsSystemNullable())
+					if (gis.IsSystemNullable()) {
+						Write(gis.GenericArguments[0], typeGenArgs, methGenArgs);
 						OutputWrite("?", TypeColor.Operator);
+					}
 					else {
+						Write(gis.GenericType, typeGenArgs, methGenArgs);
 						OutputWrite("<", TypeColor.Operator);
 						var emptyList = new List<CorType>();
 						for (int i = 0; i < gis.GenericArguments.Count; i++) {
@@ -794,8 +803,8 @@ namespace dndbg.Engine {
 				Debug.Assert(func != null);
 
 				var args = new List<CorValue>();
-				var typeGenArgs = new List<CorType>();
-				var methGenArgs = new List<CorType>();
+				IList<CorType> typeGenArgs = new List<CorType>();
+				IList<CorType> methGenArgs = new List<CorType>();
 				if (frame != null) {
 					args.AddRange(frame.ILArguments);
 					frame.GetTypeAndMethodGenericParameters(out typeGenArgs, out methGenArgs);
@@ -889,7 +898,7 @@ namespace dndbg.Engine {
 			return true;
 		}
 
-		bool WriteReturnType(ref MethodSig methodSig, CorModule module, uint token, List<CorType> typeGenArgs, List<CorType> methGenArgs) {
+		bool WriteReturnType(ref MethodSig methodSig, CorModule module, uint token, IList<CorType> typeGenArgs, IList<CorType> methGenArgs) {
 			if (!ShowReturnTypes)
 				return false;
 
@@ -900,7 +909,7 @@ namespace dndbg.Engine {
 			return true;
 		}
 
-		bool WriteTypeOwner(CorClass cls, List<CorType> typeGenArgs) {
+		bool WriteTypeOwner(CorClass cls, IList<CorType> typeGenArgs) {
 			if (!ShowOwnerTypes)
 				return false;
 
@@ -923,7 +932,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		bool WriteGenericParameters(CorModule module, uint token, List<CorType> genArgs, bool isMethod) {
+		bool WriteGenericParameters(CorModule module, uint token, IList<CorType> genArgs, bool isMethod) {
 			var mdi = GetMetaDataImport(module);
 			var gps = MetaDataUtils.GetGenericParameterNames(mdi, token);
 			if (gps.Count == 0)
@@ -950,7 +959,7 @@ namespace dndbg.Engine {
 			methodSig = MetaDataUtils.GetMethodSignature(mdi, token);
 		}
 
-		void WriteMethodParameterList(ref MethodSig methodSig, CorModule module, uint token, List<CorValue> args, List<CorType> typeGenArgs, List<CorType> methGenArgs) {
+		void WriteMethodParameterList(ref MethodSig methodSig, CorModule module, uint token, IList<CorValue> args, IList<CorType> typeGenArgs, IList<CorType> methGenArgs) {
 			if (!ShowParameterTypes && !ShowParameterNames && !ShowParameterValues)
 				return;
 
@@ -1014,7 +1023,7 @@ namespace dndbg.Engine {
 				if (ShowParameterValues) {
 					if (needSpace) {
 						WriteSpace();
-						output.Write("=", TypeColor.Operator);
+						OutputWrite("=", TypeColor.Operator);
 						WriteSpace();
 					}
 
@@ -1139,7 +1148,7 @@ namespace dndbg.Engine {
 
 		public void Write(CorValue value) {
 			if (value == null) {
-				output.Write("???", TypeColor.Error);
+				OutputWrite("???", TypeColor.Error);
 				return;
 			}
 
@@ -1147,16 +1156,21 @@ namespace dndbg.Engine {
 		}
 
 		public void Write(CorValue value, CorValueResult result) {
-			if (result.IsValueValid)
-				WriteSimpleValue(result.Value);
+			if (result.IsValueValid) {
+				var et = value == null ? null : value.ExactType;
+				if (et != null && et.IsEnum)
+					WriteEnum(et, result.Value);
+				else
+					WriteSimpleValue(result.Value);
+			}
 			else {
 				if (value == null) {
-					output.Write("???", TypeColor.Error);
+					OutputWrite("???", TypeColor.Error);
 					return;
 				}
 
 				//TODO: Option to evaluate the value, eg. using ToString() or DebuggerDisplay attrs.
-				output.Write("{", TypeColor.Error);
+				OutputWrite("{", TypeColor.Error);
 				if (value.IsReference && value.Type == CorElementType.ByRef)
 					value = value.DereferencedValue ?? value;
 				var type = value.ExactType;
@@ -1167,15 +1181,115 @@ namespace dndbg.Engine {
 					if (cls != null)
 						Write(cls);
 					else
-						output.Write("???", TypeColor.Error);
+						OutputWrite("???", TypeColor.Error);
 				}
-				output.Write("}", TypeColor.Error);
+				OutputWrite("}", TypeColor.Error);
 			}
+		}
+
+		public void WriteConstant(TypeSig type, object c) {
+			if (!TryWriteEnum(type, c))
+				WriteConstant(c);
+		}
+
+		bool TryWriteEnum(TypeSig type, object c) {
+			if (type == null)
+				return false;
+			var cts = type.RemovePinnedAndModifiers() as ClassOrValueTypeSig;
+			var mdip = cts == null ? null : cts.TypeDefOrRef as IMetaDataImportProvider;
+			if (mdip == null || mdip.MDToken.Table == Table.TypeSpec)
+				return false;
+
+			var mdi = mdip.MetaDataImport;
+			uint token = mdip.MDToken.Raw;
+
+			if (!MetaDataUtils.IsEnum(mdi, token))
+				return false;
+
+			WriteEnum(mdi, token, c, MetaDataUtils.GetFieldInfos(mdi, token));
+			return true;
+		}
+
+		public void WriteConstant(object c) {
+			if (c == null)
+				OutputWrite("null", TypeColor.Keyword);
+			else if (c is bool)
+				OutputWrite((bool)c ? "true" : "false", TypeColor.Keyword);
+			else if (c is char)
+				WriteCharValue((char)c);
+			else if (c is string)
+				WriteStringValue((string)c);
+			else
+				WriteNumber(c);
+		}
+
+		void WriteEnum(CorType type, object value) {
+			if (type == null || value == null) {
+				OutputWrite("???", TypeColor.Error);
+				return;
+			}
+			Debug.Assert(type.IsEnum);
+
+			uint token;
+			var mdi = type.GetMetaDataImport(out token);
+			WriteEnum(mdi, token, value, MetaDataUtils.GetFieldInfos(type, false));
+		}
+
+		void WriteEnum(IMetaDataImport mdi, uint token, object value, IEnumerable<CorFieldInfo> typeFields) {
+			bool hasFlagsAttr = MetaDataUtils.HasAttribute(mdi, token, "System.FlagsAttribute");
+			var fields = typeFields.Where(a => (a.Attributes & (FieldAttributes.Literal | FieldAttributes.Static)) == (FieldAttributes.Literal | FieldAttributes.Static) && a.Constant != null);
+			var input = Utils.IntegerToUInt64ZeroExtend(value);
+			if (hasFlagsAttr && input != null && input.Value != 0) {
+				ulong f = input.Value;
+				Debug.Assert(f != 0);
+				bool needSep = false;
+				foreach (var field in fields) {
+					var flag = Utils.IntegerToUInt64ZeroExtend(field.Constant);
+					if (flag == null || flag.Value == 0)
+						continue;
+					if ((f & flag) == 0)
+						continue;
+					if (needSep)
+						WriteEnumSeperator();
+					needSep = true;
+					WriteEnumField(mdi, token, field.Name);
+					f &= ~flag.Value;
+					if (f == 0)
+						break;
+				}
+				if (f != 0) {
+					if (needSep)
+						WriteEnumSeperator();
+					WriteSimpleValue(Utils.ConvertValue(f, value.GetType()));
+				}
+			}
+			else {
+				bool printed = false;
+				foreach (var field in fields) {
+					if (field.Constant.Equals(value)) {
+						WriteEnumField(mdi, token, field.Name);
+						printed = true;
+						break;
+					}
+				}
+				if (!printed)
+					WriteSimpleValue(value);
+			}
+		}
+
+		void WriteEnumSeperator() {
+			OutputWrite(" ", TypeColor.Text);
+			OutputWrite("|", TypeColor.Operator);
+			OutputWrite(" ", TypeColor.Text);
+		}
+
+		void WriteEnumField(IMetaDataImport mdi, uint token, string name) {
+			WriteIdentifier(name, TypeColor.EnumField);
 		}
 
 		void WriteSimpleValue(object value) {
 			if (value == null) {
-				output.Write("null", TypeColor.Keyword);
+				OutputWrite("null", TypeColor.Keyword);
 				return;
 			}
 
@@ -1212,15 +1326,15 @@ namespace dndbg.Engine {
 				return;
 			}
 
-			output.Write(value.ToString(), TypeColor.Text);
+			OutputWrite(value.ToString(), TypeColor.Text);
 		}
 
 		void WriteBooleanValue(bool b) {
-			output.Write(b ? "true" : "false", TypeColor.Keyword);
+			OutputWrite(b ? "true" : "false", TypeColor.Keyword);
 		}
 
 		void WriteCharValue(char c) {
-			output.Write(ToCSharpChar(c), TypeColor.Char);
+			OutputWrite(ToCSharpChar(c), TypeColor.Char);
 		}
 
 		static string ToCSharpChar(char value) {
@@ -1250,11 +1364,11 @@ namespace dndbg.Engine {
 
 		void WriteStringValue(string s) {
 			if (s == null) {
-				output.Write("null", TypeColor.Keyword);
+				OutputWrite("null", TypeColor.Keyword);
 				return;
 			}
 
-			output.Write(ToCSharpString(s), TypeColor.String);
+			OutputWrite(ToCSharpString(s), TypeColor.String);
 		}
 
 		internal static string ToCSharpString(string s) {
@@ -1303,7 +1417,7 @@ namespace dndbg.Engine {
 			if (UseDecimal)
 				WriteNumber(offset2);
 			else
-				output.Write(string.Format("0x{0:X}", offset2), TypeColor.Number);
+				OutputWrite(string.Format("0x{0:X}", offset2), TypeColor.Number);
 		}
 
 		static object ConvertRelativeOffset(long offset) {

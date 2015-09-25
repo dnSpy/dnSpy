@@ -51,7 +51,7 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Debug an Executable", ToolbarIcon = "StartDebugging", ToolbarCategory = "Debug1", ToolbarOrder = 6000)]
+	[ExportToolbarCommand(ToolTip = "Debug an Executable", ToolbarIconText = "Start", ToolbarIcon = "StartDebugging", ToolbarCategory = "Debug1", ToolbarOrder = 6000)]
 	sealed class DebugAssemblyToolbarCommand : ToolbarDebugCommand {
 		public DebugAssemblyToolbarCommand()
 			: base(DebugRoutedCommands.DebugAssembly) {
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Continue (F5)", ToolbarIcon = "ContinueDebugging", ToolbarCategory = "Debug2", ToolbarOrder = 7000)]
+	[ExportToolbarCommand(ToolTip = "Continue (F5)", ToolbarIconText = "Continue", ToolbarIcon = "ContinueDebugging", ToolbarCategory = "Debug2", ToolbarOrder = 7000)]
 	sealed class ContinueToolbarDebugCommand : ToolbarDebugCommand {
 		public ContinueToolbarDebugCommand()
 			: base(DebugRoutedCommands.Continue) {

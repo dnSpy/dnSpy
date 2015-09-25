@@ -68,7 +68,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Margin="0 0 5 0" Content="_Break At" Target="{Binding ElementName=breakComboBox}" />
+            <Label Grid.Column="0" Margin="0 0 5 0" Content="_Break at" Target="{Binding ElementName=breakComboBox}" />
             <ComboBox Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" Name="breakComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BreakProcessTypeVM.Items}" SelectedIndex="{Binding BreakProcessTypeVM.SelectedIndex}" VerticalContentAlignment="Center" />
             <Button Grid.Column="2" Content="_OK" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Click="okButton_Click" />
             <Button Grid.Column="3" Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" />

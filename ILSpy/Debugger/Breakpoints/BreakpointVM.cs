@@ -28,25 +28,11 @@ namespace dnSpy.Debugger.Breakpoints {
 			set { bp.IsEnabled = value; }
 		}
 
-		public object ImageObject {
-			get { return this; }
-		}
-
-		public object NameObject {
-			get { return this; }
-		}
-
-		public object AssemblyObject {
-			get { return this; }
-		}
-
-		public object ModuleObject {
-			get { return this; }
-		}
-
-		public object FileObject {
-			get { return this; }
-		}
+		public object ImageObject { get { return this; } }
+		public object NameObject { get { return this; } }
+		public object AssemblyObject { get { return this; } }
+		public object ModuleObject { get { return this; } }
+		public object FileObject { get { return this; } }
 
 		public Breakpoint Breakpoint {
 			get { return bp; }

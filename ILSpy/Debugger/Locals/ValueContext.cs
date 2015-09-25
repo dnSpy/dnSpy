@@ -21,33 +21,52 @@ using System.Collections.Generic;
 using dndbg.Engine;
 
 namespace dnSpy.Debugger.Locals {
+	interface ILocalsOwner {
+		void Refresh(NormalValueVM vm);
+		bool AskUser(string msg);
+	}
+
 	sealed class ValueContext {
-		public readonly CorFrame Frame;
+		/// <summary>
+		/// The current frame but could be neutered if Continue() has been called
+		/// </summary>
+		public readonly CorFrame FrameCouldBeNeutered;
+		public readonly CorFunction Function;
+		public readonly DnThread Thread;
+		public readonly DnProcess Process;
+		public readonly ILocalsOwner LocalsOwner;
 
-		public List<CorType> GenericTypeArguments {
-			get {
-				if (genericTypeArguments == null)
-					InitializeTypeArguments();
-				return genericTypeArguments;
-			}
+		public IList<CorType> GenericTypeArguments {
+			get { return genericTypeArguments; }
+		}
+		readonly IList<CorType> genericTypeArguments;
+
+		public IList<CorType> GenericMethodArguments {
+			get { return genericMethodArguments; }
+		}
+		readonly IList<CorType> genericMethodArguments;
+
+		public ValueContext(ILocalsOwner localsOwner, CorFrame frame, DnThread thread) {
+			this.LocalsOwner = localsOwner;
+			this.Thread = thread;
+			this.Process = thread.Process;
+
+			// Read everything immediately since the frame will be neutered when Continue() is called
+			this.FrameCouldBeNeutered = frame;
+			frame.GetTypeAndMethodGenericParameters(out genericTypeArguments, out genericMethodArguments);
+			this.Function = frame.Function;
 		}
 
-		public List<CorType> GenericMethodArguments {
-			get {
-				if (genericMethodArguments == null)
-					InitializeTypeArguments();
-				return genericMethodArguments;
-			}
-		}
+		public ValueContext(ILocalsOwner localsOwner, CorFrame frame, DnThread thread, IList<CorType> genericTypeArguments) {
+			this.LocalsOwner = localsOwner;
+			this.Thread = thread;
+			this.Process = thread.Process;
 
-		void InitializeTypeArguments() {
-			Frame.GetTypeAndMethodGenericParameters(out genericTypeArguments, out genericMethodArguments);
-		}
-		List<CorType> genericTypeArguments;
-		List<CorType> genericMethodArguments;
-
-		public ValueContext(CorFrame frame) {
-			this.Frame = frame;
+			// Read everything immediately since the frame will be neutered when Continue() is called
+			this.FrameCouldBeNeutered = frame;
+			this.genericTypeArguments = genericTypeArguments;
+			this.genericMethodArguments = new CorType[0];
+			this.Function = frame.Function;
 		}
 	}
 }

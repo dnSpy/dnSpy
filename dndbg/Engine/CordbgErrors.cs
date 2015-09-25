@@ -20,8 +20,9 @@
 // CLR error codes: https://github.com/dotnet/coreclr/blob/master/src/inc/corerror.xml
 
 namespace dndbg.Engine {
-	static class CordbgErrors {
+	public static class CordbgErrors {
 		public const int CORDBG_E_PROCESS_TERMINATED = unchecked((int)0x80131301);
 		public const int CORDBG_E_OBJECT_NEUTERED = unchecked((int)0x8013134F);
+		public const int CORDBG_E_STATIC_VAR_NOT_AVAILABLE = unchecked((int)0x8013131A);
 	}
 }

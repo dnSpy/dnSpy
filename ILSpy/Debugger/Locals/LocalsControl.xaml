@@ -47,28 +47,40 @@
                     <GridViewColumn Header="Name" Width="400">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-										<ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <tv:SharpTreeNodeView Grid.Column="0" Style="{StaticResource SharpTreeNodeView_GridView}" />
-                                    <ContentPresenter Grid.Column="1" Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource localColumnConverter}, ConverterParameter=Name}" />
-                                </Grid>
+                                <Border BorderBrush="{DynamicResource EnvironmentCommandBarMenuSeparator}"
+                                        BorderThickness="0 0 1 1"
+                                        Margin="-8 0">
+                                    <Grid Margin="6 0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <tv:SharpTreeNodeView Grid.Column="0" Style="{StaticResource SharpTreeNodeView_GridView}" />
+                                        <ContentPresenter Grid.Column="1" Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource localColumnConverter}, ConverterParameter=Name}" />
+                                    </Grid>
+                                </Border>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="Value" Width="400">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <local:EditValueControl ReadOnlyContent="{Binding ValueObject, Mode=OneWay, Converter={StaticResource localColumnConverter}, ConverterParameter=Value}" />
+                                <Border BorderBrush="{DynamicResource EnvironmentCommandBarMenuSeparator}"
+                                        BorderThickness="0 0 1 1"
+                                        Margin="-8 0">
+                                    <local:EditValueControl Margin="6 0" ReadOnlyContent="{Binding ValueObject, Mode=OneWay, Converter={StaticResource localColumnConverter}, ConverterParameter=Value}" />
+                                </Border>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
                     <GridViewColumn Header="Type" Width="200">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ContentPresenter Content="{Binding TypeObject, Mode=OneWay, Converter={StaticResource localColumnConverter}, ConverterParameter=Type}" />
+                                <Border BorderBrush="{DynamicResource EnvironmentCommandBarMenuSeparator}"
+                                        BorderThickness="0 0 1 1"
+                                        Margin="-8 0">
+                                    <ContentPresenter Margin="6 0" Content="{Binding TypeObject, Mode=OneWay, Converter={StaticResource localColumnConverter}, ConverterParameter=Type}" />
+                                </Border>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>

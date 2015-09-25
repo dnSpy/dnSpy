@@ -18,8 +18,8 @@
 		<color name="enum" fg="#B8D7A3" />
 		<color name="interface" fg="#9B9B82" />
 		<color name="valuetype" fg="#009933" />
-		<color name="typegenericparameter" fg="#1E667A" />
-		<color name="methodgenericparameter" fg="#1E667A" />
+		<color name="typegenericparameter" fg="#4B8595" />
+		<color name="methodgenericparameter" fg="#4B8595" />
 		<color name="instancemethod" fg="#FF8000" />
 		<color name="staticmethod" fg="#E67300" />
 		<color name="extensionmethod" fg="#CC6600" italics="true" />
@@ -164,6 +164,7 @@
 		<color name="toolbardisabledfill" bg="#383838" />
 		<color name="toolbardisabledborder" bg="#484848" />
 		<color name="environmentcommandbarmenumouseoversubmenuglyph" bg="#FF007ACC" />
+		<color name="environmentcommandbarmenuseparator" bg="#FF000000" />
 		<color name="commoncontrolsbuttoniconbackground" bg="#FF3F3F46" />
 		<color name="commoncontrolsbutton" fg="#FFF1F1F1" bg="#FF3F3F46" />
 		<color name="commoncontrolsbuttonborder" bg="#FF555555" />

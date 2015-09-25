@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Controls;
@@ -115,28 +114,13 @@ namespace dnSpy.Debugger.Locals {
 			get {
 				if (localsControl == null) {
 					localsControl = new LocalsControl();
-					var vm = new LocalsVM(MethodLocalProvider.Instance);
+					var vm = new LocalsVM(localsControl.Dispatcher, MethodLocalProvider.Instance);
+					vm.AskUser = new AskUser();
 					localsControl.DataContext = vm;
 					InitializeCommandShortcuts(localsControl.treeView);
-					DebugManager.Instance.ProcessRunning += DebugManager_ProcessRunning;
-					DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
 				}
 				return localsControl;
 			}
-		}
-
-		static void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "SyntaxHighlightLocals") {
-				var vm = LocalsControlInstance.DataContext as LocalsVM;
-				if (vm != null)
-					vm.RefreshSyntaxHighlightFields();
-			}
-		}
-
-		static void DebugManager_ProcessRunning(object sender, EventArgs e) {
-			var vm = LocalsControlInstance.DataContext as LocalsVM;
-			if (vm != null)
-				vm.InitializeLocals();
 		}
 
 		static LocalsControl localsControl;
@@ -145,6 +129,7 @@ namespace dnSpy.Debugger.Locals {
 			listView.AddCommandBinding(ApplicationCommands.Copy, new LocalsCtxMenuCommandProxy(new CopyLocalsCtxMenuCommand()));
 			listView.InputBindings.Add(new KeyBinding(new LocalsCtxMenuCommandProxy(new EditValueLocalsCtxMenuCommand()), Key.F2, ModifierKeys.None));
 			listView.InputBindings.Add(new KeyBinding(new LocalsCtxMenuCommandProxy(new CopyValueLocalsCtxMenuCommand()), Key.C, ModifierKeys.Control | ModifierKeys.Shift));
+			listView.InputBindings.Add(new KeyBinding(new LocalsCtxMenuCommandProxy(new ToggleCollapsedLocalsCtxMenuCommand()), Key.Enter, ModifierKeys.None));
 		}
 	}
 

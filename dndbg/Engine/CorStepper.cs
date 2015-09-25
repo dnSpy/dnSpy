@@ -58,17 +58,8 @@ namespace dndbg.Engine {
 		}
 
 		public bool StepRange(bool stepInto, StepRange[] ranges) {
-			var rs = new uint[ranges.Length * 2];
-			for (int i = 0; i < ranges.Length; i++) {
-				rs[i * 2 + 0] = ranges[i].StartOffset;
-				rs[i * 2 + 1] = ranges[i].EndOffset;
-			}
-			unsafe {
-				fixed (uint* p = &rs[0]) {
-					int hr = obj.StepRange(stepInto ? 1 : 0, new IntPtr(p), (uint)ranges.Length);
-					return hr >= 0;
-				}
-			}
+			int hr = obj.StepRange(stepInto ? 1 : 0, ranges, (uint)ranges.Length);
+			return hr >= 0;
 		}
 
 		public bool StepOut() {

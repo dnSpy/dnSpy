@@ -167,6 +167,7 @@
     <Compile Include="Debugger\Locals\LocalsVM.cs" />
     <Compile Include="Debugger\Locals\ValueContext.cs" />
     <Compile Include="Debugger\Locals\ValuePrinter.cs" />
+    <Compile Include="Debugger\Locals\ValueStringParser.cs" />
     <Compile Include="Debugger\Locals\ValueVM.cs" />
     <Compile Include="Debugger\Modules\Commands.cs" />
     <Compile Include="Debugger\Modules\ModuleColumnConverter.cs" />
@@ -185,6 +186,7 @@
     </Compile>
     <Compile Include="Debugger\Threads\ThreadsVM.cs" />
     <Compile Include="Debugger\Threads\ThreadVM.cs" />
+    <Compile Include="MVVM\AskUser.cs" />
     <Compile Include="MVVM\ContextMenuEntryBase.cs" />
     <Compile Include="MVVM\ContextMenuEntryCommandProxy.cs" />
     <Compile Include="AsmEditor\ContextMenuHandler.cs" />
@@ -408,6 +410,7 @@
     <Compile Include="AsmEditor\IUndoCommand.cs" />
     <Compile Include="AsmEditor\IUndoObject.cs" />
     <Compile Include="AsmEditor\ListBoxHelperBase.cs" />
+    <Compile Include="MVVM\IAskUser.cs" />
     <Compile Include="MVVM\ListVM.cs" />
     <Compile Include="AsmEditor\MethodBody\BodyUtils.cs" />
     <Compile Include="AsmEditor\MethodBody\CilBodyOptions.cs" />
@@ -1484,6 +1487,7 @@
     <Resource Include="Images\StaticPropertyPrivate.png" />
     <Resource Include="Images\StaticPropertyProtected.png" />
     <Resource Include="Images\StaticPropertyProtectedInternal.png" />
+    <Resource Include="Images\StatusError.png" />
     <Resource Include="Images\StepInto.png" />
     <Resource Include="Images\StepOut.png" />
     <Resource Include="Images\StepOver.png" />

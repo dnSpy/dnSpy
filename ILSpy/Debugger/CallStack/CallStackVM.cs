@@ -84,11 +84,20 @@ namespace dnSpy.Debugger.CallStack {
 			this.framesList = new ObservableCollection<ICallStackFrameVM>();
 			CallStackSettings.Instance.PropertyChanged += CallStackSettings_PropertyChanged;
 			DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
+			DebugManager.Instance.ProcessRunning += DebugManager_ProcessRunning;
+			DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
+		}
+
+		void DebugManager_ProcessRunning(object sender, EventArgs e) {
+			InitializeStackFrames();
 		}
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {
 			case "UseHexadecimal":
+			case "SyntaxHighlightCallStack":
+			case "PropertyEvalAndFunctionCalls":
+			case "UseStringConversionFunction":
 				RefreshFrameNames();
 				break;
 			default:
@@ -127,8 +136,7 @@ namespace dnSpy.Debugger.CallStack {
 		void StackFrameManager_StackFramesUpdated(object sender, StackFramesUpdatedEventArgs e) {
 			if (e.Debugger.IsEvaluating)
 				return;
-			// InitializeStackFrames() is called by CallStackControlCreator when the process has been
-			// running for a little while. Speeds up stepping.
+			// InitializeStackFrames() is called when the process has been running for a little while. Speeds up stepping.
 			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Running)
 				InitializeStackFrames();
 		}
@@ -224,7 +232,7 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 
-		internal void RefreshFrameNames() {
+		void RefreshFrameNames() {
 			foreach (var vm in framesList) {
 				var vm2 = vm as CallStackFrameVM;
 				if (vm2 != null)

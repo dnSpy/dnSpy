@@ -152,7 +152,7 @@ namespace dnSpy.Debugger.Threads {
 					reinitManagedId = !EvalUtils.ReflectionReadValue(thread.CorThread.Object, "m_ManagedThreadId", ref managedId);
 
 				if (!DebugManager.Instance.EvalCompleted && reinitManagedId) {
-					if (DebugManager.Instance.CanEvaluate) {
+					if (DebugManager.Instance.CanEvaluate && DebuggerSettings.Instance.PropertyEvalAndFunctionCalls) {
 						if (HasValidThreadObject) {
 							reinitManagedId = false;
 							managedId = EvalUtils.EvaluateCallMethod<int?>(thread, thread.CorThread.Object, "get_ManagedThreadId");
@@ -169,26 +169,39 @@ namespace dnSpy.Debugger.Threads {
 		int? managedId = null;
 		bool reinitManagedId = true;
 
+		public bool UnknownName {
+			get {
+				var n = Name;	// Will init unknownName
+				return unknownName;
+			}
+		}
+
 		public string Name {
 			get {
-				if (reinitName)
+				if (reinitName) {
 					reinitName = !EvalUtils.ReflectionReadValue(thread.CorThread.Object, "m_Name", ref name);
+					if (!reinitName)
+						unknownName = false;
+				}
 
 				if (!DebugManager.Instance.EvalCompleted && reinitName) {
-					if (DebugManager.Instance.CanEvaluate) {
+					if (DebugManager.Instance.CanEvaluate && DebuggerSettings.Instance.PropertyEvalAndFunctionCalls) {
 						if (HasValidThreadObject) {
 							reinitName = false;
+							unknownName = false;
 							name = EvalUtils.EvaluateCallMethod<string>(thread, thread.CorThread.Object, "get_Name");
 						}
 					}
 					else {
-						name = "???";
+						unknownName = true;
+						name = null;
 						reinitName = false;
 					}
 				}
 				return name;
 			}
 		}
+		bool unknownName = true;
 		string name;
 		bool reinitName = true;
 
@@ -329,6 +342,18 @@ namespace dnSpy.Debugger.Threads {
 			OnPropertyChanged("ManagedIdObject");
 			OnPropertyChanged("LocationObject");
 			OnPropertyChanged("ProcessObject");
+		}
+
+		internal void RefreshEvalFields() {
+			if (unknownName) {
+				name = null;
+				reinitName = true;
+				OnPropertyChanged("NameObject");
+			}
+			if (managedId == null) {
+				reinitManagedId = true;
+				OnPropertyChanged("ManagedIdObject");
+			}
 		}
 	}
 }

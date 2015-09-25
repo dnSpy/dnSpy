@@ -635,6 +635,10 @@ namespace dnSpy.dntheme {
 				DefaultBackground = "#FF007ACC",
 				BackgroundResourceKey = "EnvironmentCommandBarMenuMouseOverSubmenuGlyph",
 			},
+			new BrushColorInfo(ColorType.EnvironmentCommandBarMenuSeparator, "Grid view item border color") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "EnvironmentCommandBarMenuSeparator",
+			},
 			new BrushColorInfo(ColorType.CommonControlsButtonIconBackground, "Button icon background. Makes sure icons look good with this background color.") {
 				DefaultBackground = "#FFECECF0",
 			},

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
@@ -139,7 +140,13 @@ namespace dnSpy.Debugger.Locals {
 			if (!canceled) {
 				var newText = textBox.Text;
 				if (newText != originalText) {
-					var error = ev.SetValueAsText(newText);
+					string error;
+					try {
+						error = ev.SetValueAsText(newText);
+					}
+					catch (Exception ex) {
+						error = string.Format("Could not set value: {0}", ex.Message);
+					}
 					if (!string.IsNullOrEmpty(error))
 						MainWindow.Instance.ShowMessageBox(error);
 				}

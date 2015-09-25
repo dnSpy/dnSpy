@@ -976,7 +976,11 @@ namespace dndbg.Engine {
 				var si = new STARTUPINFO();
 				si.cb = (uint)(4 * 1 + IntPtr.Size * 3 + 4 * 8 + 2 * 2 + IntPtr.Size * 4);
 				var pi = new PROCESS_INFORMATION();
-				corDebug.CreateProcess(options.Filename ?? string.Empty, options.CommandLine ?? string.Empty, IntPtr.Zero, IntPtr.Zero,
+				// We must add the space here if the beginning of the command line appears to be
+				// the path to a file, eg. "/someOption" or "c:blah" or it won't be passed to the
+				// debugged program.
+				var cmdline = " " + (options.CommandLine ?? string.Empty);
+				corDebug.CreateProcess(options.Filename ?? string.Empty, cmdline, IntPtr.Zero, IntPtr.Zero,
 							options.InheritHandles ? 1 : 0, dwCreationFlags, IntPtr.Zero, options.CurrentDirectory,
 							ref si, ref pi, CorDebugCreateProcessFlags.DEBUG_NO_SPECIAL_OPTIONS, out comProcess);
 				// We don't need these

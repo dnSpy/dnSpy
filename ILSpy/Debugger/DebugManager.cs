@@ -191,7 +191,7 @@ namespace dnSpy.Debugger {
 		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			switch (DebugManager.Instance.ProcessState) {
 			case DebuggerProcessState.Starting:
-				stoppedEval = null;
+				evalDisabled = false;
 				currentLocation = null;
 				currentMethod = null;
 				MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
@@ -202,7 +202,6 @@ namespace dnSpy.Debugger {
 			case DebuggerProcessState.Running:
 				if (Debugger.IsEvaluating)
 					break;
-				stoppedEval = null;
 				SetRunningStatusMessage();
 				break;
 
@@ -212,7 +211,7 @@ namespace dnSpy.Debugger {
 				if (Debugger.IsEvaluating || Debugger.EvalCompleted)
 					break;
 
-				stoppedEval = null;
+				evalDisabled = false;
 				SetWindowPos(new WindowInteropHelper(MainWindow.Instance).Handle, IntPtr.Zero, 0, 0, 0, 0, 3);
 				MainWindow.Instance.Activate();
 
@@ -224,7 +223,7 @@ namespace dnSpy.Debugger {
 				break;
 
 			case DebuggerProcessState.Terminated:
-				stoppedEval = null;
+				evalDisabled = false;
 				currentLocation = null;
 				currentMethod = null;
 				MainWindow.Instance.HideStatus();
@@ -1077,22 +1076,26 @@ namespace dnSpy.Debugger {
 			return new SerializedDnModuleWithAssembly(asm.ManifestModule.Location, new SerializedDnModule(mod.Location));
 		}
 
-		public DnEval GetStoppedEval() {
+		/// <summary>
+		/// Creates an eval. Don't call this if <see cref="EvalDisabled"/> is true
+		/// </summary>
+		/// <param name="thread">Thread to use</param>
+		/// <returns></returns>
+		public DnEval CreateEval(CorThread thread) {
 			Debug.Assert(ProcessState == DebuggerProcessState.Stopped);
 			if (ProcessState != DebuggerProcessState.Stopped)
 				throw new EvalException(-1, "Can't evaluate unless debugger is stopped");
-			if (stoppedEval == null) {
-				stoppedEval = Debugger.CreateEval();
-				stoppedEval.EvalEvent += DnEval_EvalEvent;
-			}
-
-			return stoppedEval;
+			var eval = Debugger.CreateEval();
+			eval.EvalEvent += (s, e) => DnEval_EvalEvent(s, e, eval);
+			eval.SetThread(thread);
+			return eval;
 		}
-		DnEval stoppedEval;
 
-		void DnEval_EvalEvent(object sender, EvalEventArgs e) {
-			if (stoppedEval == null || sender != stoppedEval)
+		void DnEval_EvalEvent(object sender, EvalEventArgs e, DnEval eval) {
+			if (eval == null || sender != eval)
 				return;
+			if (eval.EvalTimedOut)
+				evalDisabled = true;
 			if (callingEvalComplete)
 				return;
 			callingEvalComplete = true;
@@ -1114,5 +1117,10 @@ namespace dnSpy.Debugger {
 		public bool EvalCompleted {
 			get { return Debugger != null && Debugger.EvalCompleted; }
 		}
+
+		public bool EvalDisabled {
+			get { return evalDisabled; }
+		}
+		bool evalDisabled;
 	}
 }

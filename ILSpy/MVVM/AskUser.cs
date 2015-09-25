@@ -17,29 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dndbg.Engine {
-	/// <summary>
-	/// Identical to <c>COR_DEBUG_STEP_RANGE</c>
-	/// </summary>
-	public struct StepRange {
-		/// <summary>
-		/// Start offset relative to the beginning of the method
-		/// </summary>
-		public uint StartOffset;	// must be first
+using System.Windows;
+using ICSharpCode.ILSpy;
 
-		/// <summary>
-		/// End offset (exclusive)
-		/// </summary>
-		public uint EndOffset;		// must be 2nd and last
+namespace dnSpy.MVVM {
+	sealed class AskUser : IAskUser {
+		MsgBoxButton IAskUser.AskUser(string msg, AskUserButton buttons) {
+			return MainWindow.Instance.ShowMessageBox(msg, Convert(buttons));
+		}
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="start">Start offset relative to the beginning of the method</param>
-		/// <param name="end">End offset (exclusive)</param>
-		public StepRange(uint start, uint end) {
-			this.StartOffset = start;
-			this.EndOffset = end;
+		static MessageBoxButton Convert(AskUserButton buttons) {
+			switch (buttons) {
+			default:
+			case AskUserButton.OK:			return MessageBoxButton.OK;
+			case AskUserButton.OKCancel:	return MessageBoxButton.OKCancel;
+			case AskUserButton.YesNoCancel:	return MessageBoxButton.YesNoCancel;
+			case AskUserButton.YesNo:		return MessageBoxButton.YesNo;
+			}
 		}
 	}
 }

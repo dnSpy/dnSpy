@@ -64,7 +64,8 @@ namespace dndbg.Engine.COM.MetaData {
 		[PreserveSig]
 		int GetMethodProps(uint mb, IntPtr pClass, [In] IntPtr szMethod, uint cchMethod, out uint pchMethod, out MethodAttributes pdwAttr, out IntPtr ppvSigBlob, out uint pcbSigBlob, out uint pulCodeRVA, out MethodImplAttributes pdwImplFlags);
 		void GetMemberRefProps([In] uint mr, [Out] out uint ptk, [Out] IntPtr szMember, [In] uint cchMember, [Out] out uint pchMember, [Out] out IntPtr ppvSigBlob, [Out] out uint pbSig);
-		void EnumProperties([In, Out] ref IntPtr phEnum, [In] uint td, [Out] uint[] rProperties, [In] uint cMax, [Out] out uint pcProperties);
+		[PreserveSig]
+		int EnumProperties([In, Out] ref IntPtr phEnum, [In] uint td, [Out] IntPtr rProperties, [In] uint cMax, [Out] out uint pcProperties);
 		void EnumEvents([In, Out] ref IntPtr phEnum, [In] uint td, [Out] uint[] rEvents, [In] uint cMax, [Out] out uint pcEvents);
 		void GetEventProps([In] uint ev, [Out] out uint pClass, [Out] [MarshalAs(UnmanagedType.LPWStr)] string szEvent, [In] uint cchEvent, [Out] out uint pchEvent, [Out] out uint pdwEventFlags, [Out] out uint ptkEventType, [Out] out uint pmdAddOn, [Out] out uint pmdRemoveOn, [Out] out uint pmdFire, [In, Out] uint[] rmdOtherMethod, [In] uint cMax, [Out] out uint pcOtherMethod);
 		void EnumMethodSemantics([In, Out] ref IntPtr phEnum, [In] uint mb, [In, Out] uint[] rEventProp, [In] uint cMax, [Out] out uint pcEventProp);
@@ -92,10 +93,12 @@ namespace dndbg.Engine.COM.MetaData {
 		void GetMemberProps(uint mb, out uint pClass, IntPtr szMember, uint cchMember, out uint pchMember, out uint pdwAttr, [Out] out IntPtr ppvSigBlob, [Out] out uint pcbSigBlob, [Out] out uint pulCodeRVA, [Out] out uint pdwImplFlags, [Out] out uint pdwCPlusTypeFlag, [Out] out IntPtr ppValue, [Out] out uint pcchValue);
 		[PreserveSig]
 		int GetFieldProps(uint mb, IntPtr pClass, IntPtr szField, uint cchField, out uint pchField, out uint pdwAttr, [Out] IntPtr ppvSigBlob, [Out] IntPtr pcbSigBlob, [Out] IntPtr pdwCPlusTypeFlag, [Out] IntPtr ppValue, [Out] IntPtr pcchValue);
-		void GetPropertyProps([In] uint prop, [Out] out uint pClass, [Out] IntPtr szProperty, [In] uint cchProperty, [Out] out uint pchProperty, [Out] out uint pdwPropFlags, [Out] out IntPtr ppvSig, [Out] out uint pbSig, [Out] out uint pdwCPlusTypeFlag, [Out] out IntPtr ppDefaultValue, [Out] out uint pcchDefaultValue, [Out] out uint pmdSetter, [Out] out uint pmdGetter, [In, Out] uint[] rmdOtherMethod, [In] uint cMax, [Out] out uint pcOtherMethod);
+		[PreserveSig]
+		int GetPropertyProps([In] uint prop, [Out] IntPtr pClass, [Out] IntPtr szProperty, [In] uint cchProperty, [Out] out uint pchProperty, [Out] out uint pdwPropFlags, [Out] IntPtr ppvSig, [Out] IntPtr pbSig, [Out] IntPtr pdwCPlusTypeFlag, [Out] IntPtr ppDefaultValue, [Out] IntPtr pcchDefaultValue, [Out] out uint pmdSetter, [Out] out uint pmdGetter, [In, Out] IntPtr rmdOtherMethod, [In] uint cMax, [Out] IntPtr pcOtherMethod);
 		[PreserveSig]
 		int GetParamProps([In] uint tk, [Out] IntPtr pmd, [Out] out uint pulSequence, [Out] IntPtr szName, [Out] uint cchName, [Out] out uint pchName, [Out] out uint pdwAttr, [Out] IntPtr pdwCPlusTypeFlag, [Out] IntPtr ppValue, [Out] IntPtr pcchValue);
-		void GetCustomAttributeByName([In] uint tkObj, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] out IntPtr ppData, [Out] out uint pcbData);
+		[PreserveSig]
+		int GetCustomAttributeByName([In] uint tkObj, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] IntPtr ppData, [Out] IntPtr pcbData);
 		bool IsValidToken([In] uint tk);
 		[PreserveSig]
 		int GetNestedClassProps([In] uint tdNestedClass, out uint ptdEnclosingClass);
@@ -144,7 +147,8 @@ namespace dndbg.Engine.COM.MetaData {
 		[PreserveSig]
 		int GetMethodProps(uint mb, IntPtr pClass, [In] IntPtr szMethod, uint cchMethod, out uint pchMethod, out MethodAttributes pdwAttr, out IntPtr ppvSigBlob, out uint pcbSigBlob, out uint pulCodeRVA, out MethodImplAttributes pdwImplFlags);
 		void GetMemberRefProps([In] uint mr, [Out] out uint ptk, [Out] IntPtr szMember, [In] uint cchMember, [Out] out uint pchMember, [Out] out IntPtr ppvSigBlob, [Out] out uint pbSig);
-		void EnumProperties([In, Out] ref IntPtr phEnum, [In] uint td, [Out] uint[] rProperties, [In] uint cMax, [Out] out uint pcProperties);
+		[PreserveSig]
+		int EnumProperties([In, Out] ref IntPtr phEnum, [In] uint td, [Out] IntPtr rProperties, [In] uint cMax, [Out] out uint pcProperties);
 		void EnumEvents([In, Out] ref IntPtr phEnum, [In] uint td, [Out] uint[] rEvents, [In] uint cMax, [Out] out uint pcEvents);
 		void GetEventProps([In] uint ev, [Out] out uint pClass, [Out] [MarshalAs(UnmanagedType.LPWStr)] string szEvent, [In] uint cchEvent, [Out] out uint pchEvent, [Out] out uint pdwEventFlags, [Out] out uint ptkEventType, [Out] out uint pmdAddOn, [Out] out uint pmdRemoveOn, [Out] out uint pmdFire, [In, Out] uint[] rmdOtherMethod, [In] uint cMax, [Out] out uint pcOtherMethod);
 		void EnumMethodSemantics([In, Out] ref IntPtr phEnum, [In] uint mb, [In, Out] uint[] rEventProp, [In] uint cMax, [Out] out uint pcEventProp);
@@ -172,10 +176,12 @@ namespace dndbg.Engine.COM.MetaData {
 		void GetMemberProps(uint mb, out uint pClass, IntPtr szMember, uint cchMember, out uint pchMember, out uint pdwAttr, [Out] out IntPtr ppvSigBlob, [Out] out uint pcbSigBlob, [Out] out uint pulCodeRVA, [Out] out uint pdwImplFlags, [Out] out uint pdwCPlusTypeFlag, [Out] out IntPtr ppValue, [Out] out uint pcchValue);
 		[PreserveSig]
 		int GetFieldProps(uint mb, IntPtr pClass, IntPtr szField, uint cchField, out uint pchField, out uint pdwAttr, [Out] IntPtr ppvSigBlob, [Out] IntPtr pcbSigBlob, [Out] IntPtr pdwCPlusTypeFlag, [Out] IntPtr ppValue, [Out] IntPtr pcchValue);
-		void GetPropertyProps([In] uint prop, [Out] out uint pClass, [Out] IntPtr szProperty, [In] uint cchProperty, [Out] out uint pchProperty, [Out] out uint pdwPropFlags, [Out] out IntPtr ppvSig, [Out] out uint pbSig, [Out] out uint pdwCPlusTypeFlag, [Out] out IntPtr ppDefaultValue, [Out] out uint pcchDefaultValue, [Out] out uint pmdSetter, [Out] out uint pmdGetter, [In, Out] uint[] rmdOtherMethod, [In] uint cMax, [Out] out uint pcOtherMethod);
+		[PreserveSig]
+		int GetPropertyProps([In] uint prop, [Out] IntPtr pClass, [Out] IntPtr szProperty, [In] uint cchProperty, [Out] out uint pchProperty, [Out] out uint pdwPropFlags, [Out] IntPtr ppvSig, [Out] IntPtr pbSig, [Out] IntPtr pdwCPlusTypeFlag, [Out] IntPtr ppDefaultValue, [Out] IntPtr pcchDefaultValue, [Out] out uint pmdSetter, [Out] out uint pmdGetter, [In, Out] IntPtr rmdOtherMethod, [In] uint cMax, [Out] IntPtr pcOtherMethod);
 		[PreserveSig]
 		int GetParamProps([In] uint tk, [Out] IntPtr pmd, [Out] out uint pulSequence, [Out] IntPtr szName, [Out] uint cchName, [Out] out uint pchName, [Out] out uint pdwAttr, [Out] IntPtr pdwCPlusTypeFlag, [Out] IntPtr ppValue, [Out] IntPtr pcchValue);
-		void GetCustomAttributeByName([In] uint tkObj, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] out IntPtr ppData, [Out] out uint pcbData);
+		[PreserveSig]
+		int GetCustomAttributeByName([In] uint tkObj, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] IntPtr ppData, [Out] IntPtr pcbData);
 		bool IsValidToken([In] uint tk);
 		[PreserveSig]
 		int GetNestedClassProps([In] uint tdNestedClass, out uint ptdEnclosingClass);

@@ -439,7 +439,7 @@ namespace dndbg.Engine {
 		/// <param name="typeGenArgs">Gets updated with a list containing all generic type arguments</param>
 		/// <param name="methGenArgs">Gets updated with a list containing all generic method arguments</param>
 		/// <returns></returns>
-		public bool GetTypeAndMethodGenericParameters(out List<CorType> typeGenArgs, out List<CorType> methGenArgs) {
+		public bool GetTypeAndMethodGenericParameters(out IList<CorType> typeGenArgs, out IList<CorType> methGenArgs) {
 			typeGenArgs = new List<CorType>();
 			methGenArgs = new List<CorType>();
 
@@ -494,10 +494,8 @@ namespace dndbg.Engine {
 					argTypes.AddRange(methodSig.ParamsAfterSentinel);
 			}
 
-			ushort flags, maxStack;
-			uint codeSize, localVarSigTok, headerSize;
-			MetaDataUtils.GetBodyInfo(module, func.Token, out flags, out maxStack, out codeSize, out localVarSigTok, out headerSize);
-			if (localVarSigTok != 0) {
+			uint localVarSigTok = func.LocalVarSigToken;
+			if ((localVarSigTok & 0x00FFFFFF) != 0) {
 				var localSig = MetaDataUtils.ReadCallingConventionSig(mdi, localVarSigTok) as LocalSig;
 				if (localSig != null)
 					localTypes.AddRange(localSig.Locals);

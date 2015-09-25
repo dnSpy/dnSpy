@@ -969,12 +969,22 @@ namespace ICSharpCode.ILSpy
 			var button = new Button {
 				Command = CommandWrapper.Unwrap(command.Value),
 				ToolTip = command.Metadata.ToolTip,
-				Content = new Image {
-					Width = 16,
-					Height = 16,
-					Source = ImageCache.Instance.GetImage(command.Value, command.Metadata.ToolbarIcon, BackgroundType.Toolbar),
-				}
 			};
+			var image = new Image {
+				Width = 16,
+				Height = 16,
+				Source = ImageCache.Instance.GetImage(command.Value, command.Metadata.ToolbarIcon, BackgroundType.Toolbar),
+			};
+			var iconText = command.Metadata.ToolbarIconText;
+			if (string.IsNullOrEmpty(iconText))
+				button.Content = image;
+			else {
+				var sp = new StackPanel() { Orientation = Orientation.Horizontal };
+				sp.Children.Add(image);
+				sp.Children.Add(new TextBlock() { Text = iconText, Margin = new Thickness(5, 0, 5, 0) });
+				button.Content = sp;
+			}
+
 			ToolTipService.SetShowOnDisabled(button, true);
 			return button;
 		}

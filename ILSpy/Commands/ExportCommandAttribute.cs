@@ -28,10 +28,11 @@ namespace ICSharpCode.ILSpy
 	#region Toolbar
 	public interface IToolbarCommandMetadata
 	{
-		string ToolbarIcon { get; }
 		string ToolTip { get; }
+		string ToolbarIcon { get; }
 		string ToolbarCategory { get; }
 		double ToolbarOrder { get; }
+		string ToolbarIconText { get; }
 	}
 
 	public interface IToolbarCommand : ICommand
@@ -60,6 +61,7 @@ namespace ICSharpCode.ILSpy
 		public string ToolbarIcon { get; set; }
 		public string ToolbarCategory { get; set; }
 		public double ToolbarOrder { get; set; }
+		public string ToolbarIconText { get; set; }
 	}
 	#endregion
 	

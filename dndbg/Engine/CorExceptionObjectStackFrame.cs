@@ -17,29 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dndbg.Engine.COM.CorDebug;
+
 namespace dndbg.Engine {
-	/// <summary>
-	/// Identical to <c>COR_DEBUG_STEP_RANGE</c>
-	/// </summary>
-	public struct StepRange {
-		/// <summary>
-		/// Start offset relative to the beginning of the method
-		/// </summary>
-		public uint StartOffset;	// must be first
+	public struct CorExceptionObjectStackFrame {
+		public CorModule Module;
+		public ulong IP;
+		public uint Token;
+		public bool IsLastForeignExceptionFrame;
 
-		/// <summary>
-		/// End offset (exclusive)
-		/// </summary>
-		public uint EndOffset;		// must be 2nd and last
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="start">Start offset relative to the beginning of the method</param>
-		/// <param name="end">End offset (exclusive)</param>
-		public StepRange(uint start, uint end) {
-			this.StartOffset = start;
-			this.EndOffset = end;
+		public CorExceptionObjectStackFrame(CorDebugExceptionObjectStackFrame other) {
+			this.Module = other.pModule == null ? null : new CorModule(other.pModule);
+			this.IP = other.ip;
+			this.Token = other.methodDef;
+			this.IsLastForeignExceptionFrame = other.isLastForeignExceptionFrame;
 		}
 	}
 }

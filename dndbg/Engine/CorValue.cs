@@ -99,12 +99,29 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
+		/// true if it's a <see cref="ICorDebugExceptionObjectValue"/>
+		/// </summary>
+		public bool IsExceptionObject {
+			get { return obj is ICorDebugExceptionObjectValue; }
+		}
+
+		/// <summary>
 		/// Gets the element type of this value
 		/// </summary>
 		public CorElementType Type {
 			get { return elemType; }
 		}
 		readonly CorElementType elemType;
+
+		/// <summary>
+		/// Returns the enum underlying type if it's an enum, else <see cref="Type"/> is returned
+		/// </summary>
+		public CorElementType TypeOrEnumUnderlyingType {
+			get {
+				var et = ExactType;
+				return et == null ? Type : et.TypeOrEnumUnderlyingType;
+			}
+		}
 
 		/// <summary>
 		/// Gets the size of the value
@@ -390,11 +407,60 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
+		/// Gets all <see cref="CorExceptionObjectStackFrame"/>s if <see cref="IsExceptionObject"/> is true
+		/// </summary>
+		public IEnumerable<CorExceptionObjectStackFrame> ExceptionObjectStackFrames {
+			get {
+				var dex = obj as ICorDebugExceptionObjectValue;
+				if (dex == null)
+					yield break;
+				ICorDebugExceptionObjectCallStackEnum exEnum;
+				int hr = dex.EnumerateExceptionCallStack(out exEnum);
+				if (hr < 0 || exEnum == null)
+					yield break;
+				for (;;) {
+					CorDebugExceptionObjectStackFrame objStackFrame;
+					uint count;
+					hr = exEnum.Next(1, out objStackFrame, out count);
+					if (hr != 0)
+						break;
+					yield return new CorExceptionObjectStackFrame(objStackFrame);
+				}
+			}
+		}
+
+		/// <summary>
 		/// Gets the value. Only values of simple types are currently returned: integers, floating points,
 		/// decimal, string and null.
 		/// </summary>
 		public CorValueResult Value {
 			get { return CorValueReader.ReadSimpleTypeValue(this); }
+		}
+
+		/// <summary>
+		/// true if the value has been neutered, eg. because Continue() was called
+		/// </summary>
+		public bool IsNeutered {
+			get {
+				// If it's neutered, at least one of these (most likely GetType()) should fail.
+				CorElementType type;
+				int hr = obj.GetType(out type);
+				if (hr == CordbgErrors.CORDBG_E_OBJECT_NEUTERED)
+					return true;
+				Debug.Assert(hr == 0);
+				ulong addr;
+				hr = obj.GetAddress(out addr);
+				if (hr == CordbgErrors.CORDBG_E_OBJECT_NEUTERED)
+					return true;
+				Debug.Assert(hr == 0);
+				uint size;
+				hr = obj.GetSize(out size);
+				if (hr == CordbgErrors.CORDBG_E_OBJECT_NEUTERED)
+					return true;
+				Debug.Assert(hr == 0);
+
+				return false;
+			}
 		}
 
 		public CorValue(ICorDebugValue value)
@@ -429,7 +495,9 @@ namespace dndbg.Engine {
 			if (h == null)
 				return false;
 			int hr = h.Dispose();
-			return hr >= 0;
+			bool success = hr == 0 || hr == CordbgErrors.CORDBG_E_OBJECT_NEUTERED;
+			Debug.Assert(success);
+			return success;
 		}
 
 		/// <summary>
@@ -472,11 +540,25 @@ namespace dndbg.Engine {
 		/// <param name="token">Token of field in <paramref name="cls"/></param>
 		/// <returns></returns>
 		public CorValue GetFieldValue(CorClass cls, uint token) {
+			int hr;
+			return GetFieldValue(cls, token, out hr);
+		}
+
+		/// <summary>
+		/// Gets the value of a field or null if it's not a <see cref="ICorDebugObjectValue"/>
+		/// </summary>
+		/// <param name="cls">Class</param>
+		/// <param name="token">Token of field in <paramref name="cls"/></param>
+		/// <param name="hr">Updated with HRESULT</param>
+		/// <returns></returns>
+		public CorValue GetFieldValue(CorClass cls, uint token, out int hr) {
 			var o = obj as ICorDebugObjectValue;
-			if (o == null)
+			if (o == null || cls == null) {
+				hr = -1;
 				return null;
+			}
 			ICorDebugValue value;
-			int hr = o.GetFieldValue(cls.RawObject, token, out value);
+			hr = o.GetFieldValue(cls.RawObject, token, out value);
 			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
@@ -606,8 +688,18 @@ namespace dndbg.Engine {
 			return output;
 		}
 
-		public T WriteType<T>(T output, TypeSig ts, List<CorType> typeArgs, List<CorType> methodArgs, TypePrinterFlags flags) where T : ITypeOutput {
+		public T WriteType<T>(T output, TypeSig ts, IList<CorType> typeArgs, IList<CorType> methodArgs, TypePrinterFlags flags) where T : ITypeOutput {
 			new TypePrinter(output, flags).Write(ts, typeArgs, methodArgs);
+			return output;
+		}
+
+		public T WriteType<T>(T output, CorType type, TypePrinterFlags flags) where T : ITypeOutput {
+			new TypePrinter(output, flags).Write(type);
+			return output;
+		}
+
+		public T WriteType<T>(T output, CorClass cls, TypePrinterFlags flags) where T : ITypeOutput {
+			new TypePrinter(output, flags).Write(cls);
 			return output;
 		}
 

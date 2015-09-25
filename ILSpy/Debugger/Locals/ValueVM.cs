@@ -18,15 +18,17 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using dndbg.Engine;
 using dndbg.Engine.COM.CorDebug;
 using dnlib.DotNet;
 using dnSpy.Images;
-using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.Debugger.Locals {
@@ -37,7 +39,7 @@ namespace dnSpy.Debugger.Locals {
 		string SetValueAsText(string newText);
 	}
 
-	abstract class ValueVM : SharpTreeNode, IEditableValue {
+	abstract class ValueVM : SharpTreeNode, IEditableValue, IDisposable {
 		public object NameObject { get { return this; } }
 		public object ValueObject { get { return this; } }
 		public object TypeObject { get { return this; } }
@@ -53,10 +55,18 @@ namespace dnSpy.Debugger.Locals {
 		}
 		bool isEditingValue;
 
-		public bool CanEdit {
-			get {
-				return true;//TODO:
-			}
+		public virtual bool CanEdit {
+			get { return false; }
+		}
+
+		protected abstract string IconName { get; }
+
+		public sealed override object Icon {
+			get { return ImageCache.Instance.GetImage(IconName, BackgroundType.TreeNode); }
+		}
+
+		public sealed override bool ShowIcon {
+			get { return true; }
 		}
 
 		public CachedOutput CachedOutputValue {
@@ -77,32 +87,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 		CachedOutput? cachedOutputType;
 
-		CachedOutput CreateCachedOutputValue() {
-			return CachedOutput.CreateValue(value.CorValue, LocalsVM.TypePrinterFlags);
-		}
-
-		CachedOutput CreateCachedOutputType() {
-			var ts = type as TypeSig;
-			if (ts != null)
-				return CachedOutput.CreateType(value.CorValue, ts, context.GenericTypeArguments, context.GenericMethodArguments, LocalsVM.TypePrinterFlags);
-			return CachedOutput.CreateType(value.CorValue, LocalsVM.TypePrinterFlags);
-		}
-
-		public sealed override object Icon {
-			get { return ImageCache.Instance.GetImage(IconName, BackgroundType.TreeNode); }
-		}
-
-		public override bool ShowIcon {
-			get { return true; }
-		}
-
-		public abstract void WriteName(ITextOutput output);
-
-		public void Reinitialize(ValueContext newContext, ICorValueHolder newValue, object newType) {
-			context = newContext;
-			value = newValue;
-			type = newType;
-
+		protected void UpdateCachedOutputValue() {
 			if (cachedOutputValue == null || !HasPropertyChangedHandlers)
 				InvalidateValueObject();
 			else {
@@ -113,7 +98,9 @@ namespace dnSpy.Debugger.Locals {
 				cachedOutputValue = newCachedOutputValue;
 				RaisePropertyChanged("ValueObject");
 			}
+		}
 
+		protected void UpdateCachedOutputType() {
 			if (cachedOutputType == null || !HasPropertyChangedHandlers)
 				InvalidateTypeObject();
 			else {
@@ -124,32 +111,19 @@ namespace dnSpy.Debugger.Locals {
 				cachedOutputType = newCachedOutputType;
 				RaisePropertyChanged("TypeObject");
 			}
-
-			if (Children.Count > 0) {
-				//TODO: foreach child => child.Reinitialize(newContext, newChildValue, new ChildType)
-			}
 		}
 
-		protected abstract string IconName { get; }
-
-		public CorValue Value {
-			get { return value.CorValue; }
+		protected virtual CachedOutput CreateCachedOutputValue() {
+			return CachedOutput.Create();
 		}
-		ICorValueHolder value;
 
-		// This is the arg/local/field type, and doesn't have to be the same type as the value type.
-		// Eg. this could be a System.Object and the value type could be a System.String, or any other
-		// type that is a sub class of this type or implement this interface (if this is an iface type)
-		object type;
-
-		public ValueContext Context {
-			get { return context; }
+		protected virtual CachedOutput CreateCachedOutputType() {
+			return CachedOutput.Create();
 		}
-		ValueContext context;
 
-		protected ValueVM(ValueContext context, ICorValueHolder value, object type) {
-			this.Reinitialize(context, value, type);
-		}
+		public abstract void WriteName(ITextOutput output);
+
+		protected ValueContext context;
 
 		internal void RefreshTypeFields() {
 			InvalidateValueObject();
@@ -173,12 +147,16 @@ namespace dnSpy.Debugger.Locals {
 			RefreshThemeFields();
 		}
 
-		void InvalidateValueObject() {
+		internal void RefreshToStringFields() {
+			InvalidateValueObject();
+		}
+
+		protected void InvalidateValueObject() {
 			cachedOutputValue = null;
 			RaisePropertyChanged("ValueObject");
 		}
 
-		void InvalidateTypeObject() {
+		protected void InvalidateTypeObject() {
 			cachedOutputType = null;
 			RaisePropertyChanged("TypeObject");
 		}
@@ -191,24 +169,669 @@ namespace dnSpy.Debugger.Locals {
 			return CachedOutputValue.ToString();
 		}
 
-		public string SetValueAsText(string newText) {
-			var res = SetValueAsTextInternal(newText);
-			InvalidateValueObject();
-			InvalidateTypeObject();
+		public virtual string SetValueAsText(string newText) {
+			return "This field can't be edited";
+		}
+
+		protected void ClearAndDisposeChildren() {
+			ClearAndDisposeChildren(this);
+		}
+
+		internal static void ClearAndDisposeChildren(SharpTreeNode node, bool includeSelf = false) {
+			var nodes = (includeSelf ? node.DescendantsAndSelf() : node.Descendants()).ToArray();
+			node.Children.Clear();
+			foreach (var n in nodes) {
+				var id = n as IDisposable;
+				if (id != null)
+					id.Dispose();
+			}
+		}
+
+		internal static void DisposeAndRemoveAt(SharpTreeNode node, int index) {
+			var child = node.Children[index];
+			node.Children.RemoveAt(index);
+			ClearAndDisposeChildren(child, true);
+		}
+
+		public virtual void Dispose() {
+		}
+	}
+
+	sealed class MessageValueVM : ValueVM {
+		protected override string IconName {
+			get { return "StatusError"; }
+		}
+
+		public static MessageValueVM CreateError(string msg) {
+			return new MessageValueVM(msg);
+		}
+
+		readonly string msg;
+
+		MessageValueVM(string msg) {
+			this.msg = msg;
+		}
+
+		public override void WriteName(ITextOutput output) {
+			output.Write(msg, TextTokenType.Error);
+		}
+	}
+
+	sealed class LiteralFieldValueVM : ValueVM {
+		protected override string IconName {
+			get { return FieldValueType.GetIconName(info.OwnerType, info.Attributes); }
+		}
+
+		public object Constant {
+			get { return info.Constant; }
+		}
+
+		/*readonly*/ CorFieldInfo info;
+		readonly bool overridden;
+
+		public LiteralFieldValueVM(ValueContext context, CorFieldInfo info, bool overridden) {
+			this.info = info;
+			this.overridden = overridden;
+			Reinitialize(context);
+		}
+
+		public void Reinitialize(ValueContext context) {
+			this.context = context;
+		}
+
+		protected override CachedOutput CreateCachedOutputValue() {
+			return CachedOutput.CreateConstant(info.FieldType, info.Constant, LocalsVM.TypePrinterFlags);
+		}
+
+		protected override CachedOutput CreateCachedOutputType() {
+			return CachedOutput.Create(info.FieldType, LocalsVM.TypePrinterFlags);
+		}
+
+		public override void WriteName(ITextOutput output) {
+			FieldValueType.WriteName(output, info.Name, TextTokenType.LiteralField, info.OwnerType, overridden);
+		}
+	}
+
+	/// <summary>
+	/// Base class of classes that can read and possibly write <see cref="CorValue"/>s, i.e.,
+	/// used by locals, args, exception objects, array elements, fields etc... The derived classes
+	/// are the only classes allowed to write to the <see cref="CorValue"/>.
+	/// </summary>
+	abstract class NormalValueVM : ValueVM {
+		protected const int ERROR_PropertyEvalDisabled = -2;
+		protected const int ERROR_EvalTimedOut = -3;
+		protected const int ERROR_EvalDisabledTimedOut = -4;
+
+		public override bool CanEdit {
+			get { return ReadOnlyCorValue != null && valueType.CanEdit; }
+		}
+
+		protected override string IconName {
+			get { return CorValueError ? "StatusError" : valueType.IconName; }
+		}
+
+		bool CorValueError {
+			get { return corValueError; }
+			set {
+				if (corValueError != value) {
+					corValueError = value;
+					RaisePropertyChanged("Icon");
+					RaisePropertyChanged("ExpandedIcon");
+				}
+			}
+		}
+		bool corValueError;
+
+		public static bool IsType<T>(SharpTreeNode node) where T : NormalValueType {
+			var vm = node as NormalValueVM;
+			return vm != null && vm.NormalValueType is T;
+		}
+
+		/// <summary>
+		/// Gets a read-only <see cref="CorValue"/> object. The caller must not write to the value
+		/// since it could be the return value of a property method call.
+		/// </summary>
+		public CorValue ReadOnlyCorValue {
+			get {
+				CorValue value;
+				hr_ReadOnlyCorValue = GetReadOnlyCorValue(out value);
+				CorValueError = hr_ReadOnlyCorValue != 0 || value == null;
+				return value;
+			}
+		}
+		int hr_ReadOnlyCorValue;
+
+		bool GetReadOnlyCorValueNullable(CorValue value, out CorValue nullableValue, out bool nullableIsNull) {
+			nullableValue = null;
+			nullableIsNull = false;
+			if (value == null)
+				return false;
+			var et = value.ExactType;
+			if (et == null)
+				return false;
+			TokenAndName hasValueInfo, valueInfo;
+			CorType nullableElemType;
+			if (!et.GetSystemNullableFields(out hasValueInfo, out valueInfo, out nullableElemType))
+				return false;
+			var hasValueValue = value.GetFieldValue(et.Class, hasValueInfo.Token);
+			var valueValue = value.GetFieldValue(et.Class, valueInfo.Token);
+			if (hasValueValue == null || valueValue == null || hasValueValue.Type != CorElementType.Boolean || hasValueValue.Size != 1)
+				return false;
+			var res = hasValueValue.Value;
+			if (!res.IsValueValid || !(res.Value is bool))
+				return false;
+
+			nullableIsNull = !(bool)res.Value;
+			nullableValue = valueValue;
+			return true;
+		}
+
+		protected abstract int GetReadOnlyCorValue(out CorValue value);
+
+		protected sealed override CachedOutput CreateCachedOutputValue() {
+			return CachedOutput.CreateValue(ReadOnlyCorValue, LocalsVM.TypePrinterFlags);
+		}
+
+		protected sealed override CachedOutput CreateCachedOutputType() {
+			var value = ReadOnlyCorValue;
+			var ts = type as TypeSig;
+			if (ts != null)
+				return CachedOutput.CreateType(value, ts, context.GenericTypeArguments, context.GenericMethodArguments, LocalsVM.TypePrinterFlags);
+			var ct = type as CorType;
+			if (ct != null)
+				return CachedOutput.CreateType(value, ct, LocalsVM.TypePrinterFlags);
+			var cc = type as CorClass;
+			if (cc != null)
+				return CachedOutput.CreateType(value, cc, LocalsVM.TypePrinterFlags);
+			return CachedOutput.CreateType(value, LocalsVM.TypePrinterFlags);
+		}
+
+		// Called only if we should keep the field/property type, i.e., should be called by
+		// FieldValueVM and PropertyValueVM only.
+		protected void ReinitializeInternal(ValueContext newContext) {
+			ReinitializeInternal(newContext, type);
+		}
+
+		protected void ReinitializeInternal(ValueContext newContext, object newType) {
+			context = newContext;
+			type = newType;
+
+			UpdateCachedOutputValue();
+			UpdateCachedOutputType();
+
+			InitializeChildren();
+			Debug.Assert((LazyLoading && loadChildrenDel != null) || (!LazyLoading && loadChildrenDel == null));
+			Debug.Assert(!LazyLoading || Children.Count == 0);
+		}
+
+		protected void WriteLazyLoading(bool value) {
+			if (LazyLoading != value)
+				LazyLoading = value;
+		}
+
+		protected override void LoadChildren() {
+			Debug.Assert(loadChildrenDel != null);
+			var del = loadChildrenDel;
+			loadChildrenDel = null;
+			if (del != null)
+				del();
+		}
+
+		void InitializeChildren() {
+			var v = ReadOnlyCorValue;
+			CorValue nullableValue;
+			bool nullableIsNull;
+			bool isNullable = GetReadOnlyCorValueNullable(v, out nullableValue, out nullableIsNull);
+			loadChildrenDel = null;
+
+			// If eg. the array has been collapsed, forget about all the children. This speeds up
+			// the code when stepping, and will save some memory if it's a big array or a class with
+			// many children.
+			if (Children.Count > 0 && !IsExpanded)
+				ClearAndDisposeChildren();
+
+			if (v == null) {
+				ClearAndDisposeChildren();
+				var msg = "Could not re-create the value";
+				if (hr_ReadOnlyCorValue == CordbgErrors.CORDBG_E_STATIC_VAR_NOT_AVAILABLE)
+					msg = "Static field is not yet available";//TODO: Do something about it. VS has no problem showing the value
+				else if (hr_ReadOnlyCorValue == ERROR_PropertyEvalDisabled)
+					msg = "Property/function evaluation has been disabled in the settings";
+				else if (hr_ReadOnlyCorValue == ERROR_EvalTimedOut)
+					msg = "Evaluation timed out";
+				else if (hr_ReadOnlyCorValue == ERROR_EvalDisabledTimedOut)
+					msg = EVAL_DISABLED_TIMEDOUT_ERROR_MSG;
+				Children.Add(MessageValueVM.CreateError(msg));
+				WriteLazyLoading(false);
+				childrenState = null;
+				return;
+			}
+
+			if (isNullable) {
+				if (nullableIsNull) {
+					InitializeNullReference(nullableValue);
+					return;
+				}
+				// Don't show the nullable's value and hasValue fields
+				v = nullableValue;
+				Debug.Assert(v != null);
+			}
+
+			// Check if it's a simple type: integer, floating point number, ptr, decimal, string
+			var res = v.Value;
+			if (res.IsValueValid && res.Value != null) {
+				ClearAndDisposeChildren();
+				WriteLazyLoading(false);
+				childrenState = null;
+				return;
+			}
+
+			if (v.IsReference) {
+				if (v.IsNull) {
+					InitializeNullReference(v);
+					return;
+				}
+				v = v.DereferencedValue ?? v;
+			}
+			if (v.IsReference) {
+				if (v.IsNull) {
+					InitializeNullReference(v);
+					return;
+				}
+				v = v.DereferencedValue ?? v;
+			}
+			if (v.IsBox)
+				v = v.BoxedValue ?? v;
+
+			if (v.IsArray) {
+				InitializeArray(v);
+				return;
+			}
+			if (v.IsObject) {
+				InitializeObject(v);
+				return;
+			}
+
+			Debug.Fail(string.Format("Unknown type: {0} ({1})", v, (object)v.ExactType ?? v.Class));
+			ClearAndDisposeChildren();
+			WriteLazyLoading(false);
+			childrenState = null;
+		}
+		object childrenState = null;
+		Action loadChildrenDel = null;
+
+		void InitializeNullReference(CorValue v) {
+			// Input is either a reference whose IsNull prop is true or it's a nullable's value
+			// field which is a value type and not null
+			ClearAndDisposeChildren();
+			WriteLazyLoading(false);
+			childrenState = null;
+		}
+
+		void InitializeObject(CorValue v) {
+			Debug.Assert(v.IsObject);
+			var et = v.ExactType;
+			Debug.Assert(et != null);	// Should only be null if CLR 1.x debugger, unless it's been neutered
+
+			var newState = new ObjectState(et);
+			if (!newState.Equals(childrenState))
+				ClearAndDisposeChildren();
+			childrenState = newState;
+
+			if (Children.Count == 0) {
+				if (et.GetFields().Any() || et.GetProperties().Any()) {
+					loadChildrenDel = LoadObjectChildren;
+					WriteLazyLoading(true);
+				}
+				else {
+					loadChildrenDel = null;
+					WriteLazyLoading(false);
+				}
+			}
+			else {
+				Debug.Assert(!LazyLoading && loadChildrenDel == null);
+				foreach (var child in Children) {
+					var field = child as FieldValueVM;
+					if (field != null) {
+						field.Reinitialize(context);
+						continue;
+					}
+
+					var lfield = child as LiteralFieldValueVM;
+					if (lfield != null) {
+						lfield.Reinitialize(context);
+						continue;
+					}
+
+					var prop = child as PropertyValueVM;
+					if (prop != null) {
+						prop.Reinitialize(context);
+						continue;
+					}
+
+					Debug.Fail("Unknown type");
+				}
+			}
+		}
+
+		internal CorValue GetFieldInstanceObject() {
+			return GetObjectCorValue();
+		}
+
+		CorValue GetObjectCorValue() {
+			var v = ReadOnlyCorValue;
+			CorValue nullableValue;
+			bool nullableIsNull;
+			if (GetReadOnlyCorValueNullable(v, out nullableValue, out nullableIsNull)) {
+				Debug.Assert(!nullableIsNull);
+				if (!nullableIsNull)
+					v = nullableValue;
+			}
+			if (v != null && v.IsReference)
+				v = v.DereferencedValue;
+			if (v != null && v.IsReference)
+				v = v.DereferencedValue;
+			if (v != null && v.IsBox)
+				v = v.BoxedValue;
+			return v != null && v.IsObject ? v : null;
+		}
+
+		static readonly StringComparer ObjectNameComparer = StringComparer.Ordinal;
+		sealed class ObjectValueInfo {
+			public string Name;
+			public bool Overridden; // true if some derived class has a prop/field with the same name
+			public int Index;
+			public object CorInfo;	// CorFieldInfo / CorPropertyInfo
+
+			public ObjectValueInfo(int index, string name, object corInfo) {
+				this.Name = name;
+				this.Overridden = false;
+				this.Index = index;
+				this.CorInfo = corInfo;
+			}
+
+			public static int SortFunc(ObjectValueInfo a, ObjectValueInfo b) {
+				int c = ObjectNameComparer.Compare(a.Name, b.Name);
+				if (c != 0)
+					return c;
+				// The most derived one has a smaller index, sort it after base class' field/prop
+				return b.Index.CompareTo(a.Index);
+			}
+
+			public static void SortAndMarkOverridden(List<ObjectValueInfo> list) {
+				list.Sort(SortFunc);
+
+				for (int i = 1; i < list.Count; i++) {
+					var prev = list[i - 1];
+					var curr = list[i];
+					if (prev.Name == curr.Name)
+						prev.Overridden = true;
+				}
+			}
+		}
+
+		List<ObjectValueInfo> GetObjectValueInfos(CorType et) {
+			var list = new List<ObjectValueInfo>();
+
+			var flist = new List<ObjectValueInfo>();
+			int index = 0;
+			foreach (var info in et.GetFields())
+				flist.Add(new ObjectValueInfo(index++, info.Name, info));
+			ObjectValueInfo.SortAndMarkOverridden(flist);
+
+			var hash = new HashSet<string>(StringComparer.Ordinal);
+			var plist = new List<ObjectValueInfo>();
+			index = 0;
+			foreach (var info in et.GetProperties()) {
+				bool isVirtual = (info.GetMethodAttributes & MethodAttributes.Virtual) != 0;
+				if (isVirtual && hash.Contains(info.Name))
+					continue;
+				plist.Add(new ObjectValueInfo(index++, info.Name, info));
+				if (isVirtual)
+					hash.Add(info.Name);
+			}
+			ObjectValueInfo.SortAndMarkOverridden(plist);
+
+			list.AddRange(flist);
+			list.AddRange(plist);
+			list.Sort(ObjectValueInfo.SortFunc);
+
+			return list;
+		}
+
+		void LoadObjectChildren() {
+			var v = GetObjectCorValue();
+			Debug.Assert(v != null);
+			if (v == null)
+				return;
+			var et = v.ExactType;
+			Debug.Assert(et != null);
+			if (et == null)
+				return;
+
+			foreach (var info in GetObjectValueInfos(et)) {
+				if (info.CorInfo is CorFieldInfo) {
+					var finfo = (CorFieldInfo)info.CorInfo;
+					if ((finfo.Attributes & FieldAttributes.Literal) != 0)
+						Children.Add(new LiteralFieldValueVM(context, finfo, info.Overridden));
+					else {
+						var vm = new FieldValueVM(context, finfo, info.Overridden);
+						Children.Add(vm);
+						vm.Reinitialize(context);
+					}
+				}
+				else if (info.CorInfo is CorPropertyInfo) {
+					var vm = new PropertyValueVM(context, (CorPropertyInfo)info.CorInfo, info.Overridden);
+					Children.Add(vm);
+					vm.Reinitialize(context);
+				}
+				else {
+					Debug.Fail("Unknown type");
+				}
+			}
+		}
+
+		void InitializeArray(CorValue v) {
+			Debug.Assert(v.IsArray);
+
+			var newState = new ArrayState(v);
+			if (!newState.Equals(childrenState))
+				ClearAndDisposeChildren();
+			childrenState = newState;
+
+			if (Children.Count == 0) {
+				if (v.ArrayCount == 0) {
+					loadChildrenDel = null;
+					WriteLazyLoading(false);
+				}
+				else {
+					loadChildrenDel = LoadArrayElements;
+					WriteLazyLoading(true);
+				}
+			}
+			else {
+				Debug.Assert(!LazyLoading && loadChildrenDel == null);
+				var et = v.ExactType;
+				Debug.Assert(et != null);
+				object elemType = et == null ? null : et.FirstTypeParameter;
+				for (int i = 0; i < Children.Count; i++) {
+					var vmElem = Children[i] as CorValueVM;
+					if (vmElem == null) {
+						Debug.Assert(i + 1 == Children.Count && i == MAX_ARRAY_ELEMS && Children[i] is MessageValueVM);
+						continue;
+					}
+					uint pos = (uint)i;
+					var holder = new CorValueHolder(null, () => {
+						var v2 = GetArrayCorValue();
+						return v2 == null ? null : v2.GetElementAtPosition(pos);
+					});
+					vmElem.Reinitialize(context, holder, elemType);
+				}
+			}
+		}
+
+		//TODO: This should be 1000000 but has been lowered because the Children array isn't virtualized at the moment.
+		const uint MAX_ARRAY_ELEMS = 10000;
+		CorValue GetArrayCorValue() {
+			var v = ReadOnlyCorValue;
+			if (v != null && v.IsReference)
+				v = v.DereferencedValue;
+			if (v != null && v.IsReference)
+				v = v.DereferencedValue;
+			return v != null && v.IsArray ? v : null;
+		}
+
+		void LoadArrayElements() {
+			var state = childrenState as ArrayState;
+			Debug.Assert(state != null);
+			var v = GetArrayCorValue();
+			if (state == null)
+				Children.Add(MessageValueVM.CreateError("State is not ArrayState"));
+			else if (ReadOnlyCorValue == null)
+				Children.Add(MessageValueVM.CreateError("Array has been neutered but couldn't be recreated"));
+			else if (v == null || !v.IsArray)
+				Children.Add(MessageValueVM.CreateError("Could not find the array"));
+			else {
+				Debug.Assert(new ArrayState(v).Equals(state));
+
+				uint count = state.Count;
+				if (count > MAX_ARRAY_ELEMS) {
+					bool showElems = AskUserShowAllArrayElements();
+					if (!showElems) {
+						loadChildrenDel = LoadArrayElements;
+						WriteLazyLoading(true);
+						return;
+					}
+					count = MAX_ARRAY_ELEMS;
+				}
+
+				var et = v.ExactType;
+				Debug.Assert(et != null);
+				object elemType = et == null ? null : et.FirstTypeParameter;
+
+				for (uint i = 0; i < count; i++) {
+					uint pos = i;
+					var holder = new CorValueHolder(null, () => {
+						var v2 = GetArrayCorValue();
+						return v2 == null ? null : v2.GetElementAtPosition(pos);
+					});
+					Children.Add(new CorValueVM(context, holder, elemType, new ArrayElementValueType(i, state)));
+				}
+				if (state.Count != count)
+					Children.Add(MessageValueVM.CreateError("..."));
+			}
+		}
+
+		bool AskUserShowAllArrayElements() {
+			var q = string.Format("This item contains more than {0} child items and will be limited to displaying that number of items when expanded.\n\nAre you sure you want to expand it?", MAX_ARRAY_ELEMS);
+			return context.LocalsOwner.AskUser(q);
+		}
+
+		// This is the arg/local/field type, and doesn't have to be the same type as the value type.
+		// Eg. this could be a System.Object and the value type could be a System.String, or any other
+		// type that is a sub class of this type or implements this interface (if this is an iface type)
+		object type;
+
+		public NormalValueType NormalValueType {
+			get { return valueType; }
+		}
+		/*readonly*/ NormalValueType valueType;
+
+		protected NormalValueVM() {
+		}
+
+		protected NormalValueVM(ValueContext context, object type, NormalValueType valueType) {
+			InitializeFromConstructor(context, type, valueType);
+		}
+
+		protected void InitializeFromConstructor(ValueContext context, object type, NormalValueType valueType) {
+			this.valueType = valueType;
+			Debug.Assert(this.valueType.Owner == null);
+			this.valueType.Owner = this;
+			this.type = type;
+		}
+
+		internal void RaisePropertyChangedInternal(string propName) {
+			RaisePropertyChanged(propName);
+		}
+
+		public override void WriteName(ITextOutput output) {
+			valueType.WriteName(output);
+		}
+
+		public override string SetValueAsText(string newText) {
+			if (!CanEdit)
+				return "This value can't be edited";
+			var res = SetValueAsTextInternal(new ValueStringParser(newText));
+			if (string.IsNullOrEmpty(res))
+				context.LocalsOwner.Refresh(this);
 			return res;
 		}
 
-		string SetValueAsTextInternal(string newText) {
-			if (!CanEdit)
-				return "This value can't be edited";
+		protected abstract string SetValueAsTextInternal(ValueStringParser parser);
 
-			var value = Value;
-			if (value == null)
+		public sealed override void Dispose() {
+			CleanUpCorValue();
+		}
+
+		protected abstract void CleanUpCorValue();
+
+		protected string WriteNewValue(ValueStringParser parser, Func<CorValue> getValue) {
+			var value = getValue();
+			if (value == null || value.IsNeutered)
 				return "The value has been neutered and couldn't be recreated";
+
+			if (value.IsReference && value.Type == CorElementType.ByRef) {
+				var v = value.DereferencedValue;
+				if (v != null)
+					value = v;
+			}
+
+			var et = value.ExactType;
+			TokenAndName hasValueInfo, valueInfo;
+			CorType nullableElemType;
+			if (et.GetSystemNullableFields(out hasValueInfo, out valueInfo, out nullableElemType)) {
+				var hasValueValue = value.GetFieldValue(et.Class, hasValueInfo.Token);
+				var valueValue = value.GetFieldValue(et.Class, valueInfo.Token);
+				Debug.Assert(hasValueValue != null && valueValue != null);
+				if (hasValueValue != null && valueValue != null && hasValueValue.Type == CorElementType.Boolean && hasValueValue.Size == 1) {
+					if (valueValue.Size > 0x00100000)
+						return "Value type is too big";
+					byte[] newHasValueBuf, newValueBuf;
+					if (parser.IsNull) {
+						newHasValueBuf = new byte[1] { 0 };
+						newValueBuf = new byte[valueValue.Size];
+					}
+					else {
+						newHasValueBuf = new byte[1] { 1 };
+						var error = parser.GetPrimitiveValue(nullableElemType, out newValueBuf);
+						if (!string.IsNullOrEmpty(error))
+							return error;
+					}
+
+					if (newValueBuf != null && (uint)newValueBuf.Length == valueValue.Size) {
+						int hr = hasValueValue.WriteGenericValue(newHasValueBuf);
+						if (hr >= 0)
+							hr = valueValue.WriteGenericValue(newValueBuf);
+						if (hr < 0)
+							return string.Format("Error writing null to nullable type: 0x{0:X8}", hr);
+						return null;
+					}
+				}
+			}
+
+			if (value.IsReference && !parser.IsNull) {
+				var v = value.DereferencedValue;
+				if (v != null && v.IsBox) {
+					v = v.BoxedValue;
+					if (v != null)
+						value = v;
+				}
+			}
 
 			if (value.IsGeneric) {
 				byte[] bytes;
-				var error = GetNewSimpleValue(value, newText, out bytes);
+				var error = parser.GetPrimitiveValue(value.ExactType, out bytes);
 				if (!string.IsNullOrEmpty(error))
 					return error;
 				if (bytes != null) {
@@ -219,161 +842,419 @@ namespace dnSpy.Debugger.Locals {
 				}
 			}
 
+			if (value.IsReference && (value.Type == CorElementType.Ptr || value.Type == CorElementType.FnPtr)) {
+				byte[] bytes;
+				var error = parser.GetPrimitiveValue(value.ExactType, out bytes);
+				if (!string.IsNullOrEmpty(error))
+					return error;
+				if (bytes != null) {
+					if ((uint)bytes.Length != value.Size)
+						return "Wrong buffer size";
+					int sizeWritten;
+					int hr = context.Process.CorProcess.WriteMemory(value.Address, bytes, 0, bytes.Length, out sizeWritten);
+					if (sizeWritten == bytes.Length)
+						return null;
+					return string.Format("Could not write the value. Error: 0x{0:X8}", hr);
+				}
+			}
+
+			if (value.IsReference && value.Type == CorElementType.String) {
+				string s;
+				var error = parser.GetString(out s);
+				if (!string.IsNullOrEmpty(error))
+					return error;
+				if (s == null) {
+					value.ReferenceAddress = 0;
+					return null;
+				}
+
+				CorValue newStringValue;
+				error = CreateString(s, out newStringValue);
+				if (!string.IsNullOrEmpty(error))
+					return error;
+				value = getValue();
+				if (value == null || value.IsNeutered)
+					return "The value has been neutered and couldn't be recreated";
+				if (value.IsReference && value.Type == CorElementType.ByRef)
+					value = value.DereferencedValue;
+				if (value == null || value.IsNeutered)
+					return "The value has been neutered and couldn't be recreated";
+				value.ReferenceAddress = newStringValue.ReferenceAddress;
+				return null;
+			}
+
 			if (value.IsReference &&
 				(value.Type == CorElementType.Class || value.Type == CorElementType.Array ||
-				value.Type == CorElementType.SZArray || value.Type == CorElementType.String)) {
-				if (newText.Trim() != "null")
+				value.Type == CorElementType.SZArray || value.Type == CorElementType.String ||
+				value.Type == CorElementType.Object)) {
+				if (!parser.IsNull)
 					return "You can only set it to null";
 				value.ReferenceAddress = 0;
 				return null;
 			}
 
-			return "NYI! Can't write a new value to this type.";//TODO:
+			return "Can't write a new value to this type.";
 		}
 
-		static string GetNewSimpleValue(CorValue value, string newText, out byte[] bytes) {
-			//TODO: Use the C# parser to parse the value
-			bytes = null;
-			string error;
-			switch (value.Type) {
-			case CorElementType.Boolean:
-				{
-					var v = NumberVMUtils.ParseBoolean(newText, out error);
-					if (!string.IsNullOrEmpty(error))
-						return error;
-					bytes = BitConverter.GetBytes(v);
-					break;
-				}
+		protected const string EVAL_DISABLED_TIMEDOUT_ERROR_MSG = "Evaluation timed out and has been disabled until you continue the debugged program.";
+		protected string CreateString(string s, out CorValue newString) {
+			newString = null;
 
-			case CorElementType.Char:
-				{
-					var v = NumberVMUtils.ParseChar(newText, out error);
-					if (!string.IsNullOrEmpty(error))
-						return error;
-					bytes = BitConverter.GetBytes(v);
-					break;
-				}
+			if (DebugManager.Instance.EvalDisabled)
+				return "Evaluation timed out and it's not possible to create new strings until you continue the debugged program";
 
-			case CorElementType.I1:
-				{
-					var v = NumberVMUtils.ParseSByte(newText, sbyte.MinValue, sbyte.MaxValue, out error);
-					if (!string.IsNullOrEmpty(error))
-						return error;
-					bytes = BitConverter.GetBytes(v);
-					break;
-				}
+			int hr;
+			EvalResult? res;
+			using (var eval = DebugManager.Instance.CreateEval(context.Thread.CorThread))
+				res = eval.CreateString(s, out hr);
+			if (res == null)
+				return string.Format("Couldn't create a string. Error: 0x{0:X8}", hr);
+			if (res.Value.WasException)
+				return "An exception occurred in the debugged program and the string couldn't be created";
 
-			case CorElementType.U1:
-				{
-					var v = NumberVMUtils.ParseByte(newText, byte.MinValue, byte.MaxValue, out error);
-					if (!string.IsNullOrEmpty(error))
-						return error;
-					bytes = BitConverter.GetBytes(v);
-					break;
-				}
-
-			case CorElementType.I2:
-				{
-					var v = NumberVMUtils.ParseInt16(newText, short.MinValue, short.MaxValue, out error);
-					if (!string.IsNullOrEmpty(error))
-						return error;
-					bytes = BitConverter.GetBytes(v);
-					break;
-				}
-
-			case CorElementType.U2:
-				{
-					var v = NumberVMUtils.ParseUInt16(newText, ushort.MinValue, ushort.MaxValue, out error);
-					if (!string.IsNullOrEmpty(error))
-						return error;
-					bytes = BitConverter.GetBytes(v);
-					break;
-				}
-
-			case CorElementType.I4:
-				{
-					var v = NumberVMUtils.ParseInt32(newText, int.MinValue, int.MaxValue, out error);
-					if (!string.IsNullOrEmpty(error))
-						return error;
-					bytes = BitConverter.GetBytes(v);
-					break;
-				}
-
-			case CorElementType.U4:
-				{
-					var v = NumberVMUtils.ParseUInt32(newText, uint.MinValue, uint.MaxValue, out error);
-					if (!string.IsNullOrEmpty(error))
-						return error;
-					bytes = BitConverter.GetBytes(v);
-					break;
-				}
-
-			case CorElementType.I8:
-				{
-					var v = NumberVMUtils.ParseInt64(newText, long.MinValue, long.MaxValue, out error);
-					if (!string.IsNullOrEmpty(error))
-						return error;
-					bytes = BitConverter.GetBytes(v);
-					break;
-				}
-
-			case CorElementType.U8:
-				{
-					var v = NumberVMUtils.ParseUInt64(newText, ulong.MinValue, ulong.MaxValue, out error);
-					if (!string.IsNullOrEmpty(error))
-						return error;
-					bytes = BitConverter.GetBytes(v);
-					break;
-				}
-
-			case CorElementType.R4:
-				{
-					var v = NumberVMUtils.ParseSingle(newText, out error);
-					if (!string.IsNullOrEmpty(error))
-						return error;
-					bytes = BitConverter.GetBytes(v);
-					break;
-				}
-
-			case CorElementType.R8:
-				{
-					var v = NumberVMUtils.ParseDouble(newText, out error);
-					if (!string.IsNullOrEmpty(error))
-						return error;
-					bytes = BitConverter.GetBytes(v);
-					break;
-				}
-
-			case CorElementType.I:
-			case CorElementType.U:
-			case CorElementType.Ptr:
-				{
-					if (IntPtr.Size == 4) {
-						uint v = (uint)NumberVMUtils.ParseInt32(newText, int.MinValue, int.MaxValue, out error);
-						if (!string.IsNullOrEmpty(error))
-							v = NumberVMUtils.ParseUInt32(newText, uint.MinValue, uint.MaxValue, out error);
-						if (!string.IsNullOrEmpty(error))
-							return error;
-						bytes = BitConverter.GetBytes(v);
-					}
-					else {
-						ulong v = (ulong)NumberVMUtils.ParseInt64(newText, long.MinValue, long.MaxValue, out error);
-						if (!string.IsNullOrEmpty(error))
-							v = NumberVMUtils.ParseUInt64(newText, ulong.MinValue, ulong.MaxValue, out error);
-						if (!string.IsNullOrEmpty(error))
-							return error;
-						bytes = BitConverter.GetBytes(v);
-					}
-				}
-				break;
-			}
+			newString = res.Value.ResultOrException;
+			if (newString == null)
+				return "Couldn't create the new string";
 
 			return null;
 		}
+
+		protected static ValueContext CreateValueContext(ValueContext context, CorType type) {
+			return new ValueContext(context.LocalsOwner, context.FrameCouldBeNeutered, context.Thread, type.TypeParameters.ToArray());
+		}
 	}
 
-	sealed class LocalValueVM : ValueVM {
-		protected override string IconName {
+	/// <summary>
+	/// Base class that allows writing to <see cref="ReadOnlyCorValue"/>. Used by locals, args,
+	/// exception objects, fields.
+	/// </summary>
+	abstract class WritableCorValueVM : NormalValueVM {
+		protected WritableCorValueVM() {
+		}
+
+		protected WritableCorValueVM(ValueContext context, object type, NormalValueType valueType)
+			: base(context, type, valueType) {
+		}
+
+		protected override string SetValueAsTextInternal(ValueStringParser parser) {
+			return WriteNewValue(parser, () => ReadOnlyCorValue);
+		}
+	}
+
+	sealed class CorValueVM : WritableCorValueVM {
+		public ICorValueHolder Holder {
+			get { return valueHolder; }
+		}
+		ICorValueHolder valueHolder;
+
+		public CorValueVM(ValueContext context, ICorValueHolder value, object type, NormalValueType valueType)
+			: base(context, type, valueType) {
+			Reinitialize(context, value, type);
+		}
+
+		public void Reinitialize(ValueContext newContext, ICorValueHolder newValue, object newType) {
+			if (valueHolder != null && valueHolder != newValue)
+				valueHolder.Dispose();
+			valueHolder = newValue;
+			base.ReinitializeInternal(newContext, newType);
+		}
+
+		protected override int GetReadOnlyCorValue(out CorValue value) {
+			value = valueHolder.CorValue;
+			return 0;
+		}
+
+		protected override void CleanUpCorValue() {
+			valueHolder.InvalidateCorValue();
+		}
+	}
+
+	sealed class FieldValueVM : WritableCorValueVM {
+		public FieldAttributes FieldAttributes {
+			get { return attrs; }
+		}
+		readonly FieldAttributes attrs;
+
+		public CorType OwnerType {
+			get { return ownerType; }
+		}
+		readonly CorType ownerType;
+
+		public uint Token {
+			get { return token; }
+		}
+		readonly uint token;
+
+		public bool Overridden {
+			get { return overridden; }
+		}
+		readonly bool overridden;
+
+		public FieldValueVM(ValueContext context, CorFieldInfo info, bool overridden) {
+			var valueType = new FieldValueType(info.Name, this);
+			this.attrs = info.Attributes;
+			this.ownerType = info.OwnerType;
+			this.token = info.Token;
+			this.overridden = overridden;
+			InitializeFromConstructor(CreateValueContext(context, ownerType), info.FieldType, valueType);
+		}
+
+		public void Reinitialize(ValueContext newContext) {
+			CleanUpCorValue();
+			ReinitializeInternal(CreateValueContext(newContext, ownerType));
+		}
+
+		protected override int GetReadOnlyCorValue(out CorValue value) {
+			if (this.value == null || this.value.IsNeutered)
+				hr_value = InitializeValue();
+			value = this.value;
+			return hr_value;
+		}
+		int hr_value;
+		CorValue value;
+
+		int InitializeValue() {
+			CleanUpCorValue();
+			if ((FieldAttributes & FieldAttributes.Static) != 0) {
+				int hr;
+				value = OwnerType.GetStaticFieldValue(Token, context.FrameCouldBeNeutered, out hr);
+				return hr;
+			}
+			else {
+				var parent = Parent as NormalValueVM;
+				Debug.Assert(parent != null);
+				if (parent == null)
+					return -1;
+
+				var parentValue = parent.GetFieldInstanceObject();
+				if (parentValue == null)
+					return -1;
+
+				int hr;
+				value = parentValue.GetFieldValue(OwnerType.Class, Token, out hr);
+				return hr;
+			}
+		}
+
+		protected override void CleanUpCorValue() {
+			if (value != null) {
+				value.DisposeHandle();
+				value = null;
+			}
+		}
+	}
+
+	sealed class PropertyValueVM : NormalValueVM {
+		public override bool CanEdit {
+			get { return setToken != 0 && base.CanEdit; }
+		}
+
+		public CorType OwnerType {
+			get { return ownerType; }
+		}
+		readonly CorType ownerType;
+
+		public string Name {
+			get { return name; }
+		}
+		readonly string name;
+
+		public TypeSig PropertyType {
+			get { return propType; }
+		}
+		readonly TypeSig propType;
+
+		public MethodAttributes GetMethodAttributes {
+			get { return getMethodAttributes; }
+		}
+		readonly MethodAttributes getMethodAttributes;
+
+		public bool Overridden {
+			get { return overridden; }
+		}
+		readonly bool overridden;
+
+		readonly uint getToken;
+		readonly uint setToken;
+
+		public PropertyValueVM(ValueContext context, CorPropertyInfo info, bool overridden) {
+			var valueType = new PropertyValueType(info.Name, this);
+			this.ownerType = info.OwnerType;
+			this.name = info.Name;
+			this.propType = info.GetSig.RetType;
+			this.getMethodAttributes = info.GetMethodAttributes;
+			this.overridden = overridden;
+			this.getToken = info.GetToken;
+			this.setToken = info.SetToken;
+			InitializeFromConstructor(CreateValueContext(context, ownerType), info.GetSig.RetType, valueType);
+		}
+
+		public void Reinitialize(ValueContext newContext) {
+			CleanUpCorValue();
+			ReinitializeInternal(CreateValueContext(newContext, ownerType));
+		}
+
+		protected override int GetReadOnlyCorValue(out CorValue value) {
+			if (this.value == null || this.value.IsNeutered)
+				hr_value = InitializeValue();
+			value = this.value;
+			return hr_value;
+		}
+		int hr_value;
+		CorValue value;
+
+		CorValue GetOwnerCorValue() {
+			var p = Parent as NormalValueVM;
+			if (p == null)
+				return null;
+			return p.ReadOnlyCorValue;
+		}
+
+		CorValue GetThisArg() {
+			Debug.Assert((GetMethodAttributes & MethodAttributes.Static) == 0);
+			return GetOwnerCorValue();
+		}
+
+		CorType[] GetTypeArgs() {
+			return ownerType.TypeParameters.ToArray();
+		}
+
+		int InitializeValue() {
+			CleanUpCorValue();
+
+			if (!DebuggerSettings.Instance.PropertyEvalAndFunctionCalls)
+				return ERROR_PropertyEvalDisabled;
+			if (DebugManager.Instance.EvalDisabled)
+				return ERROR_EvalDisabledTimedOut;
+
+			try {
+				int hr;
+				using (var eval = DebugManager.Instance.CreateEval(context.Thread.CorThread)) {
+					var func = ownerType.Class.Module.GetFunctionFromToken(getToken);
+					CorValue[] args;
+					if ((GetMethodAttributes & MethodAttributes.Static) != 0)
+						args = new CorValue[0];
+					else
+						args = new CorValue[1] { GetThisArg() };
+					var res = eval.Call(func, GetTypeArgs(), args, out hr);
+					if (res == null)
+						return hr;
+					if (res.Value.WasException) {
+						value = res.Value.ResultOrException;
+						return -1;
+					}
+					value = res.Value.ResultOrException;
+					return 0;
+				}
+			}
+			catch (TimeoutException) {
+				return ERROR_EvalTimedOut;
+			}
+			catch (Exception ex) {
+				Debug.WriteLine("EX: {0}", ex);
+				return -1;
+			}
+		}
+
+		protected override void CleanUpCorValue() {
+			if (value != null) {
+				value.DisposeHandle();
+				value = null;
+			}
+		}
+
+		protected override string SetValueAsTextInternal(ValueStringParser parser) {
+			if (DebugManager.Instance.EvalDisabled)
+				return EVAL_DISABLED_TIMEDOUT_ERROR_MSG;
+
+			var v = ReadOnlyCorValue;
+
+			bool createNull = false;
+			if (v.IsReference && parser.IsNull)
+				createNull = true;
+			else if (v.IsReference && v.Type == CorElementType.String) {
+				string s;
+				var error = parser.GetString(out s);
+				if (!string.IsNullOrEmpty(error))
+					return error;
+				CorValue newStringValue;
+				error = CreateString(s, out newStringValue);
+				if (!string.IsNullOrEmpty(error))
+					return error;
+				v = newStringValue;
+			}
+			else {
+				var error = WriteNewValue(parser, () => v);
+				if (!string.IsNullOrEmpty(error))
+					return error;
+			}
+
+			try {
+				if (IsValueType(propType)) {
+					if (v.IsReference)
+						v = v.DereferencedValue;
+					if (v != null && v.IsBox)
+						v = v.BoxedValue;
+					if (v == null || !v.IsGeneric)
+						return "Internal error: Can't get a value type";
+				}
+
+				int hr;
+				using (var eval = DebugManager.Instance.CreateEval(context.Thread.CorThread)) {
+					if (createNull)
+						v = eval.CreateNull();
+
+					var func = ownerType.Class.Module.GetFunctionFromToken(setToken);
+					CorValue[] args;
+					if ((GetMethodAttributes & MethodAttributes.Static) != 0)
+						args = new CorValue[1] { v };
+					else
+						args = new CorValue[2] { GetThisArg(), v };
+					var res = eval.Call(func, GetTypeArgs(), args, out hr);
+					if (res == null)
+						return string.Format("Error calling property setter: 0x{0:X8}", hr);
+					if (res.Value.WasException) {
+						var ex = res.Value.ResultOrException;
+						var et = ex == null ? null : ex.ExactType;
+						return string.Format("An exception occurred in the debugged process: {0}", et);
+					}
+					return null;
+				}
+			}
+			catch (Exception ex) {
+				return string.Format("Could not write the value\nERROR: {0}", ex.Message);
+			}
+		}
+
+		static bool IsValueType(TypeSig ts) {
+			ts = ts.RemovePinnedAndModifiers();
+			if (ts.GetElementType().IsValueType())
+				return true;
+			var gis = ts as GenericInstSig;
+			if (gis != null)
+				return gis.GenericType is ValueTypeSig;
+			return false;
+		}
+	}
+
+	abstract class NormalValueType {
+		public virtual bool CanEdit {
+			get { return true; }
+		}
+		public abstract string IconName { get; }
+		public abstract void WriteName(ITextOutput output);
+		public NormalValueVM Owner {
+			get { return owner; }
+			set {
+				Debug.Assert(owner == null);
+				owner = value;
+			}
+		}
+		NormalValueVM owner;
+	}
+
+	sealed class LocalValueType : NormalValueType {
+		public override string IconName {
 			get { return "Field"; }
 		}
 
@@ -382,15 +1263,14 @@ namespace dnSpy.Debugger.Locals {
 		}
 		readonly int index;
 
-		public LocalValueVM(ValueContext context, ICorValueHolder value, object type, int index)
-			: base(context, value, type) {
+		public LocalValueType(int index) {
 			this.index = index;
 		}
 
 		public void InitializeName(string name) {
 			if (this.name != name) {
 				this.name = name;
-				RaisePropertyChanged("NameObject");
+				Owner.RaisePropertyChangedInternal("NameObject");
 			}
 		}
 		string name;
@@ -403,8 +1283,8 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
-	sealed class ArgumentValueVM : ValueVM {
-		protected override string IconName {
+	sealed class ArgumentValueType : NormalValueType {
+		public override string IconName {
 			get { return "Field"; }
 		}
 
@@ -413,8 +1293,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 		readonly int index;
 
-		public ArgumentValueVM(ValueContext context, ICorValueHolder value, object type, int index)
-			: base(context, value, type) {
+		public ArgumentValueType(int index) {
 			this.index = index;
 		}
 
@@ -422,7 +1301,7 @@ namespace dnSpy.Debugger.Locals {
 			if (this.name != name || this.isThis != isThis) {
 				this.isThis = isThis;
 				this.name = name;
-				RaisePropertyChanged("NameObject");
+				Owner.RaisePropertyChangedInternal("NameObject");
 			}
 		}
 		bool isThis;
@@ -437,6 +1316,429 @@ namespace dnSpy.Debugger.Locals {
 					n = string.Format("A_{0}", index);
 				output.Write(IdentifierEscaper.Escape(n), TextTokenType.Parameter);
 			}
+		}
+	}
+
+	sealed class ExceptionValueType : NormalValueType {
+		public override string IconName {
+			get { return "Exception"; }
+		}
+
+		public override bool CanEdit {
+			// It's not possible to write a new exception
+			get { return false; }
+		}
+
+		public override void WriteName(ITextOutput output) {
+			output.Write("$exception", TextTokenType.Local);
+		}
+	}
+
+	sealed class ArrayElementValueType : NormalValueType {
+		public override string IconName {
+			get { return "Field"; }
+		}
+
+		readonly uint index;
+		readonly ArrayState state;
+
+		public ArrayElementValueType(uint index, ArrayState state) {
+			this.index = index;
+			this.state = state;
+		}
+
+		public override void WriteName(ITextOutput output) {
+			output.Write("[", TextTokenType.Operator);
+
+			if (state.Dimensions.Length == 1 && state.Indices.Length == 1 && state.Indices[0] == 0) {
+				long i2 = (long)index + (int)state.Indices[0];
+				// It's always in decimal
+				output.Write(i2.ToString(), TextTokenType.Number);
+			}
+			else {
+				var ary = new uint[state.Dimensions.Length];
+				uint index2 = index;
+				for (int i = ary.Length - 1; i >= 0; i--) {
+					uint d = state.Dimensions[i];
+					if (d != 0) {
+						ary[i] = index2 % d;
+						index2 /= d;
+					}
+				}
+				for (int i = 0; i < ary.Length; i++) {
+					if (i > 0) {
+						output.Write(",", TextTokenType.Operator);
+						output.Write(" ", TextTokenType.Text);
+					}
+					long i2 = (long)ary[i] + (int)state.Indices[i];
+					// It's always in decimal
+					output.Write(i2.ToString(), TextTokenType.Number);
+				}
+			}
+
+			output.Write("]", TextTokenType.Operator);
+		}
+	}
+
+	sealed class FieldValueType : NormalValueType {
+		public override string IconName {
+			get { return GetIconName(vm.OwnerType, vm.FieldAttributes); }
+		}
+
+		bool IsEnum {
+			get { return vm.OwnerType.IsEnum; }
+		}
+
+		readonly string name;
+		readonly FieldValueVM vm;
+
+		public FieldValueType(string name, FieldValueVM vm) {
+			this.name = name;
+			this.vm = vm;
+		}
+
+		internal static string GetIconName(CorType ownerType, FieldAttributes attrs) {
+			var access = FieldTreeNode.GetMemberAccess(attrs);
+
+			if ((attrs & FieldAttributes.SpecialName) == 0 && ownerType.IsEnum) {
+				switch (access) {
+				case MemberAccess.Public:				return "EnumValue";
+				case MemberAccess.Private:				return "EnumValuePrivate";
+				case MemberAccess.Protected:			return "EnumValueProtected";
+				case MemberAccess.Internal:				return "EnumValueInternal";
+				case MemberAccess.CompilerControlled:	return "EnumValueCompilerControlled";
+				case MemberAccess.ProtectedInternal:	return "EnumValueProtectedInternal";
+				default:
+					Debug.Fail("Invalid MemberAccess");
+					goto case MemberAccess.Public;
+				}
+			}
+			else if ((attrs & FieldAttributes.Literal) != 0) {
+				switch (access) {
+				case MemberAccess.Public:				return "Literal";
+				case MemberAccess.Private:				return "LiteralPrivate";
+				case MemberAccess.Protected:			return "LiteralProtected";
+				case MemberAccess.Internal:				return "LiteralInternal";
+				case MemberAccess.CompilerControlled:	return "LiteralCompilerControlled";
+				case MemberAccess.ProtectedInternal:	return "LiteralProtectedInternal";
+				default:
+					Debug.Fail("Invalid MemberAccess");
+					goto case MemberAccess.Public;
+				}
+			}
+			else if ((attrs & FieldAttributes.InitOnly) != 0) {
+				switch (access) {
+				case MemberAccess.Public:				return "FieldReadOnly";
+				case MemberAccess.Private:				return "FieldReadOnlyPrivate";
+				case MemberAccess.Protected:			return "FieldReadOnlyProtected";
+				case MemberAccess.Internal:				return "FieldReadOnlyInternal";
+				case MemberAccess.CompilerControlled:	return "FieldReadOnlyCompilerControlled";
+				case MemberAccess.ProtectedInternal:	return "FieldReadOnlyProtectedInternal";
+				default:
+					Debug.Fail("Invalid MemberAccess");
+					goto case MemberAccess.Public;
+				}
+			}
+			else {
+				switch (access) {
+				case MemberAccess.Public:				return "Field";
+				case MemberAccess.Private:				return "FieldPrivate";
+				case MemberAccess.Protected:			return "FieldProtected";
+				case MemberAccess.Internal:				return "FieldInternal";
+				case MemberAccess.CompilerControlled:	return "FieldCompilerControlled";
+				case MemberAccess.ProtectedInternal:	return "FieldProtectedInternal";
+				default:
+					Debug.Fail("Invalid MemberAccess");
+					goto case MemberAccess.Public;
+				}
+			}
+		}
+
+		public override void WriteName(ITextOutput output) {
+			WriteName(output, name, GetTextTokenType(), vm.OwnerType, vm.Overridden);
+		}
+
+		internal static void WriteName(ITextOutput output, string name, TextTokenType type, CorType ownerType, bool overridden) {
+			output.Write(IdentifierEscaper.Escape(name), type);
+			if (overridden) {
+				output.Write(" ", TextTokenType.Text);
+				output.Write("(", TextTokenType.Operator);
+				ownerType.Write(new OutputConverter(output), TypePrinterFlags.Default);
+				output.Write(")", TextTokenType.Operator);
+			}
+		}
+
+		TextTokenType GetTextTokenType() {
+			if (IsEnum)
+				return TextTokenType.EnumField;
+			if ((vm.FieldAttributes & FieldAttributes.Literal) != 0)
+				return TextTokenType.LiteralField;
+			if ((vm.FieldAttributes & FieldAttributes.Static) != 0)
+				return TextTokenType.StaticField;
+			return TextTokenType.InstanceField;
+		}
+	}
+
+	sealed class PropertyValueType : NormalValueType {
+		public override string IconName {
+			get { return GetIconName(vm.OwnerType, vm.GetMethodAttributes); }
+		}
+
+		readonly string name;
+		readonly PropertyValueVM vm;
+
+		public PropertyValueType(string name, PropertyValueVM vm) {
+			this.name = name;
+			this.vm = vm;
+		}
+
+		internal static string GetIconName(CorType ownerType, MethodAttributes attrs) {
+			var access = MethodTreeNode.GetMemberAccess(attrs);
+
+			if ((attrs & MethodAttributes.Static) != 0) {
+				switch (access) {
+				case MemberAccess.Public:			return "StaticProperty";
+				case MemberAccess.Private:			return "StaticPropertyPrivate";
+				case MemberAccess.Protected:		return "StaticPropertyProtected";
+				case MemberAccess.Internal:			return "StaticPropertyInternal";
+				case MemberAccess.CompilerControlled:return "StaticPropertyCompilerControlled";
+				case MemberAccess.ProtectedInternal:return "StaticPropertyProtectedInternal";
+				default:
+					Debug.Fail("Invalid MemberAccess");
+					goto case MemberAccess.Public;
+				}
+			}
+
+			if ((attrs & MethodAttributes.Virtual) != 0) {
+				switch (access) {
+				case MemberAccess.Public:			return "VirtualProperty";
+				case MemberAccess.Private:			return "VirtualPropertyPrivate";
+				case MemberAccess.Protected:		return "VirtualPropertyProtected";
+				case MemberAccess.Internal:			return "VirtualPropertyInternal";
+				case MemberAccess.CompilerControlled:return "VirtualPropertyCompilerControlled";
+				case MemberAccess.ProtectedInternal:return "VirtualPropertyProtectedInternal";
+				default:
+					Debug.Fail("Invalid MemberAccess");
+					goto case MemberAccess.Public;
+				}
+			}
+
+			switch (access) {
+			case MemberAccess.Public:				return "Property";
+			case MemberAccess.Private:				return "PropertyPrivate";
+			case MemberAccess.Protected:			return "PropertyProtected";
+			case MemberAccess.Internal:				return "PropertyInternal";
+			case MemberAccess.CompilerControlled:	return "PropertyCompilerControlled";
+			case MemberAccess.ProtectedInternal:	return "PropertyProtectedInternal";
+			default:
+				Debug.Fail("Invalid MemberAccess");
+				goto case MemberAccess.Public;
+			}
+		}
+
+		public override void WriteName(ITextOutput output) {
+			FieldValueType.WriteName(output, name, GetTextTokenType(), vm.OwnerType, vm.Overridden);
+		}
+
+		TextTokenType GetTextTokenType() {
+			if ((vm.GetMethodAttributes & MethodAttributes.Static) != 0)
+				return TextTokenType.StaticProperty;
+			return TextTokenType.InstanceProperty;
+		}
+	}
+
+	sealed class ArrayState : IEquatable<ArrayState> {
+		public readonly CorElementType ArrayElementType;
+		public readonly CorElementType ElementType;
+		public readonly uint[] Dimensions;
+		public readonly uint[] Indices;
+		public readonly uint Count;
+
+		public ArrayState(CorValue v) {
+			Debug.Assert(v.IsArray);
+			this.ArrayElementType = v.Type;
+			this.ElementType = v.ArrayElementType;
+			this.Dimensions = v.Dimensions;
+			this.Indices = v.BaseIndicies;
+			this.Count = v.ArrayCount;
+		}
+
+		public bool Equals(ArrayState other) {
+			if (other == null)
+				return false;
+
+			if (Count != other.Count)
+				return false;
+			if (ArrayElementType != other.ArrayElementType)
+				return false;
+			if (ElementType != other.ElementType)
+				return false;
+			if (!Equals(Dimensions, other.Dimensions))
+				return false;
+			if (!Equals(Indices, other.Indices))
+				return false;
+
+			return true;
+		}
+
+		static bool Equals(uint[] a, uint[] b) {
+			if (a == b)
+				return true;
+			if (a == null || b == null)
+				return false;
+			if (a.Length != b.Length)
+				return false;
+			for (int i = 0; i < a.Length; i++) {
+				if (a[i] != b[i])
+					return false;
+			}
+			return true;
+		}
+
+		public override bool Equals(object obj) {
+			return Equals(obj as ArrayState);
+		}
+
+		public override int GetHashCode() {
+			return (int)ArrayElementType ^ (int)ElementType ^ Dimensions.Length ^ Indices.Length ^ (int)Count;
+		}
+	}
+
+	sealed class ObjectState : IEquatable<ObjectState> {
+		readonly CorType Type;
+
+		public ObjectState(CorType type) {
+			this.Type = type;
+		}
+
+		public bool Equals(ObjectState other) {
+			return other != null && Type == other.Type;
+		}
+
+		public override bool Equals(object obj) {
+			return Equals(obj as ObjectState);
+		}
+
+		public override int GetHashCode() {
+			return Type.GetHashCode();
+		}
+	}
+
+	sealed class GenericVariableValueVM : ValueVM {
+		protected override string IconName {
+			get { return "GenericParameter"; }
+		}
+
+		protected sealed override CachedOutput CreateCachedOutputValue() {
+			return CachedOutput.Create(type, LocalsVM.TypePrinterFlags);
+		}
+
+		protected sealed override CachedOutput CreateCachedOutputType() {
+			return CreateCachedOutputValue();
+		}
+
+		public void Reinitialize(ValueContext newContext, CorType type) {
+			this.context = newContext;
+			this.type = type;
+
+			UpdateCachedOutputValue();
+			UpdateCachedOutputType();
+		}
+
+		public bool IsTypeVar {
+			get { return isTypeVar; }
+		}
+
+		public bool IsMethodVar {
+			get { return !isTypeVar; }
+		}
+
+		readonly string name;
+		CorType type;
+		readonly bool isTypeVar;
+		readonly int index;
+
+		public GenericVariableValueVM(ValueContext context, string name, CorType type, bool isTypeVar, int index) {
+			this.name = name;
+			this.isTypeVar = isTypeVar;
+			this.index = index;
+			Reinitialize(context, type);
+		}
+
+		public override void WriteName(ITextOutput output) {
+			if (!string.IsNullOrEmpty(name))
+				output.Write(IdentifierEscaper.Escape(name), isTypeVar ? TextTokenType.TypeGenericParameter : TextTokenType.MethodGenericParameter);
+			else if (isTypeVar) {
+				output.Write("!", TextTokenType.Operator);
+				output.Write(string.Format("{0}", index), TextTokenType.Number);
+			}
+			else {
+				output.Write("!!", TextTokenType.Operator);
+				output.Write(string.Format("{0}", index), TextTokenType.Number);
+			}
+		}
+	}
+
+	sealed class TypeVariablesValueVM : ValueVM {
+		protected override string IconName {
+			get { return "GenericParameter"; }
+		}
+
+		static string Read(List<TokenAndName> list, int index) {
+			if ((uint)index >= (uint)list.Count)
+				return null;
+			return list[index].Name;
+		}
+
+		public void Reinitialize(ValueContext newContext) {
+			var oldFunc = context == null ? null : context.Function;
+			context = newContext;
+
+			if (oldFunc != context.Function || !CanReuseChildren())
+				ClearAndDisposeChildren();
+
+			if (Children.Count == 0) {
+				List<TokenAndName> typeParams, methodParams;
+				context.Function.GetGenericParameters(out typeParams, out methodParams);
+				for (int i = 0; i < context.GenericTypeArguments.Count; i++)
+					Children.Add(new GenericVariableValueVM(newContext, Read(typeParams, i), context.GenericTypeArguments[i], true, i));
+				for (int i = 0; i < context.GenericMethodArguments.Count; i++)
+					Children.Add(new GenericVariableValueVM(newContext, Read(methodParams, i), context.GenericMethodArguments[i], false, i));
+			}
+			else {
+				int index = 0;
+				for (int i = 0; i < context.GenericTypeArguments.Count; i++, index++)
+					((GenericVariableValueVM)Children[index]).Reinitialize(newContext, context.GenericTypeArguments[i]);
+				for (int i = 0; i < context.GenericMethodArguments.Count; i++, index++)
+					((GenericVariableValueVM)Children[index]).Reinitialize(newContext, context.GenericMethodArguments[i]);
+				Debug.Assert(index == Children.Count);
+			}
+		}
+
+		bool CanReuseChildren() {
+			int index = 0;
+
+			if (index + context.GenericTypeArguments.Count + context.GenericMethodArguments.Count > Children.Count)
+				return false;
+
+			for (int i = 0; i < context.GenericTypeArguments.Count; i++, index++) {
+				if (!((GenericVariableValueVM)Children[index]).IsTypeVar)
+					return false;
+			}
+			for (int i = 0; i < context.GenericMethodArguments.Count; i++, index++) {
+				if (!((GenericVariableValueVM)Children[index]).IsMethodVar)
+					return false;
+			}
+
+			return index == Children.Count;
+		}
+
+		public TypeVariablesValueVM(ValueContext context) {
+			Reinitialize(context);
+		}
+
+		public override void WriteName(ITextOutput output) {
+			output.Write("Type variables", TextTokenType.TypeGenericParameter);
 		}
 	}
 }

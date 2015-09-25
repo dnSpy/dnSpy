@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger.Locals {
@@ -27,6 +28,18 @@ namespace dnSpy.Debugger.Locals {
 		public ValuePrinter(ITextOutput output, bool useHex) {
 			this.output = output;
 			this.useHex = useHex;
+		}
+
+		public void WriteExpander(ValueVM vm) {
+			if (vm.LazyLoading)
+				output.Write("+", TextTokenType.Text);
+			else if (vm.Children.Count == 0) {
+				// VS prints nothing
+			}
+			else if (vm.IsExpanded)
+				output.Write("-", TextTokenType.Text);
+			else
+				output.Write("+", TextTokenType.Text);
 		}
 
 		public void WriteName(ValueVM vm) {

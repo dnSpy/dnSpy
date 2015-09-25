@@ -27,6 +27,10 @@ namespace dnSpy.Debugger {
 	struct CachedOutput : IEquatable<CachedOutput> {
 		public readonly List<Tuple<string, TypeColor>> data;
 
+		public static CachedOutput Create() {
+			return new CachedOutput(false);
+		}
+
 		public CachedOutput(bool dummy) {
 			this.data = new List<Tuple<string, TypeColor>>();
 		}
@@ -79,6 +83,17 @@ namespace dnSpy.Debugger {
 			return output;
 		}
 
+		public static CachedOutput CreateConstant(TypeSig type, object c, TypePrinterFlags flags) {
+			return TypePrinterUtils.WriteConstant(new TypeOutput(), type, c, flags).cachedOutput;
+		}
+
+		public static CachedOutput Create(TypeSig fieldType, TypePrinterFlags flags) {
+			if (fieldType is ByRefSig)
+				fieldType = fieldType.Next ?? fieldType;
+			var typeOutput = TypePrinterUtils.Write(new TypeOutput(), fieldType, flags);
+			return typeOutput.cachedOutput;
+		}
+
 		public static CachedOutput Create(CorFrame frame, TypePrinterFlags flags) {
 			var output = new TypeOutput();
 			frame.Write(output, flags);
@@ -119,10 +134,9 @@ namespace dnSpy.Debugger {
 			return output;
 		}
 
-		public static CachedOutput CreateType(CorValue value, TypeSig ts, List<CorType> typeArgs, List<CorType> methodArgs, TypePrinterFlags flags) {
-			// This code doesn't compare the types to see if they're identical, it just compares
-			// the output. This should be good enough.
-
+		public static CachedOutput CreateType(CorValue value, TypeSig ts, IList<CorType> typeArgs, IList<CorType> methodArgs, TypePrinterFlags flags) {
+			if (value == null && ts != null)
+				return TypePrinterUtils.Write(new TypeOutput(), ts, flags, typeArgs, methodArgs).cachedOutput;
 			var valueOutput = CreateType(new TypeOutput(), value, flags);
 			if (ts == null || value == null)
 				return valueOutput.cachedOutput;
@@ -131,6 +145,13 @@ namespace dnSpy.Debugger {
 				ts = ts.Next ?? ts;
 
 			var typeOutput = value.WriteType(new TypeOutput(), ts, typeArgs, methodArgs, flags);
+			return CreateTypeInternal(valueOutput, typeOutput);
+		}
+
+		static CachedOutput CreateTypeInternal(TypeOutput valueOutput, TypeOutput typeOutput) {
+			// This code doesn't compare the types to see if they're identical, it just compares
+			// the output. This should be good enough.
+
 			if (typeOutput.cachedOutput.Equals(valueOutput.cachedOutput))
 				return valueOutput.cachedOutput;
 
@@ -139,6 +160,33 @@ namespace dnSpy.Debugger {
 			typeOutput.cachedOutput.data.AddRange(valueOutput.cachedOutput.data);
 			typeOutput.Write("}", TypeColor.Error);
 			return typeOutput.cachedOutput;
+		}
+
+		public static CachedOutput CreateType(CorValue value, CorType type, TypePrinterFlags flags) {
+			var valueOutput = CreateType(new TypeOutput(), value, flags);
+			if (type == null || value == null)
+				return valueOutput.cachedOutput;
+
+			var typeOutput = value.WriteType(new TypeOutput(), type, flags);
+			return CreateTypeInternal(valueOutput, typeOutput);
+		}
+
+		public static CachedOutput CreateType(CorValue value, CorClass cls, TypePrinterFlags flags) {
+			var valueOutput = CreateType(new TypeOutput(), value, flags);
+			if (cls == null || value == null)
+				return valueOutput.cachedOutput;
+
+			var typeOutput = value.WriteType(new TypeOutput(), cls, flags);
+			return CreateTypeInternal(valueOutput, typeOutput);
+		}
+
+		public static CachedOutput Create(CorType type, TypePrinterFlags flags) {
+			var output = new TypeOutput();
+			if (type == null)
+				output.Write("???", TypeColor.Error);
+			else
+				type.Write(output, flags);
+			return output.cachedOutput;
 		}
 	}
 }

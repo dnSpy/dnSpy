@@ -18,7 +18,9 @@
 */
 
 using System;
+using System.Collections.Generic;
 using dndbg.Engine.COM.CorDebug;
+using dndbg.Engine.COM.MetaData;
 
 namespace dndbg.Engine {
 	public sealed class CorClass : COMObject<ICorDebugClass>, IEquatable<CorClass> {
@@ -41,14 +43,85 @@ namespace dndbg.Engine {
 			}
 		}
 
+		/// <summary>
+		/// true if this is <c>System.Enum</c>
+		/// </summary>
+		public bool IsSystemEnum {
+			get { return IsSystem("Enum"); }
+		}
+
+		/// <summary>
+		/// true if this is <c>System.ValueType</c>
+		/// </summary>
+		public bool IsSystemValueType {
+			get { return IsSystem("ValueType"); }
+		}
+
+		/// <summary>
+		/// true if this is <c>System.Object</c>
+		/// </summary>
+		public bool IsSystemObject {
+			get { return IsSystem("Object"); }
+		}
+
+		/// <summary>
+		/// true if this is <c>System.Decimal</c>
+		/// </summary>
+		public bool IsSystemDecimal {
+			get { return IsSystem("Decimal"); }
+		}
+
 		public CorClass(ICorDebugClass cls)
 			: base(cls) {
 			int hr = cls.GetToken(out this.token);
 			if (hr < 0)
 				this.token = 0;
 
-			//TODO: ICorDebugClass::GetStaticFieldValue
 			//TODO: ICorDebugClass2::GetParameterizedType
+		}
+
+		/// <summary>
+		/// Returns true if it's a System.XXX type in the corlib (eg. mscorlib)
+		/// </summary>
+		/// <param name="name">Name (not including namespace)</param>
+		/// <returns></returns>
+		public bool IsSystem(string name) {
+			var mod = Module;
+			if (mod == null)
+				return false;
+			var names = MetaDataUtils.GetTypeDefFullNames(mod.GetMetaDataInterface<IMetaDataImport>(), Token);
+			if (names.Count != 1)
+				return false;
+			if (names[0].Name != "System." + name)
+				return false;
+
+			//TODO: Check if it's mscorlib
+
+			return true;
+		}
+
+		/// <summary>
+		/// Reads a static field
+		/// </summary>
+		/// <param name="token">Token of field</param>
+		/// <param name="frame">Frame</param>
+		/// <returns></returns>
+		public CorValue GetStaticFieldValue(uint token, CorFrame frame) {
+			int hr;
+			return GetStaticFieldValue(token, frame, out hr);
+		}
+
+		/// <summary>
+		/// Reads a static field
+		/// </summary>
+		/// <param name="token">Token of field</param>
+		/// <param name="frame">Frame</param>
+		/// <param name="hr">Updated with HRESULT</param>
+		/// <returns></returns>
+		public CorValue GetStaticFieldValue(uint token, CorFrame frame, out int hr) {
+			ICorDebugValue value;
+			hr = obj.GetStaticFieldValue(token, frame == null ? null : frame.RawObject, out value);
+			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
 		/// <summary>
@@ -62,6 +135,26 @@ namespace dndbg.Engine {
 				return false;
 			int hr = c2.SetJMCStatus(jmc ? 1 : 0);
 			return hr >= 0;
+		}
+
+		/// <summary>
+		/// Gets type generic parameters
+		/// </summary>
+		/// <returns></returns>
+		public List<TokenAndName> GetGenericParameters() {
+			var module = Module;
+			return MetaDataUtils.GetGenericParameterNames(module == null ? null : module.GetMetaDataInterface<IMetaDataImport>(), Token);
+		}
+
+		/// <summary>
+		/// Returns true if an attribute is present
+		/// </summary>
+		/// <param name="attributeName">Full name of attribute type</param>
+		/// <returns></returns>
+		public bool HasAttribute(string attributeName) {
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			return MetaDataUtils.HasAttribute(mdi, Token, attributeName);
 		}
 
 		public static bool operator ==(CorClass a, CorClass b) {

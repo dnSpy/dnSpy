@@ -56,6 +56,7 @@ namespace dnSpy.Debugger {
 			case TypeColor.Parameter:			return TextTokenType.Parameter;
 			case TypeColor.String:				return TextTokenType.String;
 			case TypeColor.Char:				return TextTokenType.Char;
+			case TypeColor.EnumField:			return TextTokenType.EnumField;
 			default:
 				Debug.Fail(string.Format("Unknown color: {0}", color));
 				return TextTokenType.Text;

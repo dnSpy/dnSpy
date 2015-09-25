@@ -17,29 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dndbg.Engine {
-	/// <summary>
-	/// Identical to <c>COR_DEBUG_STEP_RANGE</c>
-	/// </summary>
-	public struct StepRange {
-		/// <summary>
-		/// Start offset relative to the beginning of the method
-		/// </summary>
-		public uint StartOffset;	// must be first
+namespace dnSpy.MVVM {
+	enum AskUserButton {
+		OK,
+		OKCancel,
+		YesNoCancel,
+		YesNo,
+	}
 
-		/// <summary>
-		/// End offset (exclusive)
-		/// </summary>
-		public uint EndOffset;		// must be 2nd and last
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="start">Start offset relative to the beginning of the method</param>
-		/// <param name="end">End offset (exclusive)</param>
-		public StepRange(uint start, uint end) {
-			this.StartOffset = start;
-			this.EndOffset = end;
-		}
+	interface IAskUser {
+		MsgBoxButton AskUser(string msg, AskUserButton buttons);
 	}
 }

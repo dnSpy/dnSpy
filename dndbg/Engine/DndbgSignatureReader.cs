@@ -27,7 +27,7 @@ namespace dndbg.Engine {
 	struct DebugSignatureReader {
 		static readonly CorLibTypes corLibTypes = new CorLibTypes();
 
-		sealed class CorLibTypes : ICorLibTypes {
+		internal sealed class CorLibTypes : ICorLibTypes {
 			static readonly ITypeDefOrRef dummyRef = new TypeDefUser(UTF8String.Empty);
 			static readonly CorLibTypeSig sigVoid = new CorLibTypeSig(dummyRef, ElementType.Void);
 			static readonly CorLibTypeSig sigBoolean = new CorLibTypeSig(dummyRef, ElementType.Boolean);
