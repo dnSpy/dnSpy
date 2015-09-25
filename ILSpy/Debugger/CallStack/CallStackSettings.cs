@@ -162,7 +162,7 @@ namespace dnSpy.Debugger.CallStack {
 				ShowParameterTypes = (bool?)csx.Attribute("ShowParameterTypes") ?? true;
 				ShowParameterNames = (bool?)csx.Attribute("ShowParameterNames") ?? true;
 				ShowParameterValues = (bool?)csx.Attribute("ShowParameterValues") ?? false;
-				ShowIP = (bool?)csx.Attribute("ShowIP") ?? false;
+				ShowIP = (bool?)csx.Attribute("ShowIP") ?? true;
 				ShowOwnerTypes = (bool?)csx.Attribute("ShowOwnerTypes") ?? true;
 				ShowNamespaces = (bool?)csx.Attribute("ShowNamespaces") ?? true;
 				ShowTypeKeywords = (bool?)csx.Attribute("ShowTypeKeywords") ?? true;
