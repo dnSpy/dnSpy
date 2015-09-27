@@ -2323,6 +2323,9 @@ namespace ICSharpCode.ILSpy
 		protected override void OnClosing(CancelEventArgs e)
 		{
 			base.OnClosing(e);
+			if (e.Cancel)
+				return;
+
 			sessionSettings.ThemeName = Themes.Theme.Name;
 			sessionSettings.ActiveAssemblyList = assemblyList.ListName;
 			sessionSettings.WindowBounds = this.RestoreBounds;

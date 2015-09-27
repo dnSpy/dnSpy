@@ -36,6 +36,9 @@ namespace dnSpy.Debugger {
 
 		static TextTokenType Convert(TypeColor color) {
 			switch (color) {
+			case TypeColor.Unknown:				return TextTokenType.Text;
+			case TypeColor.Space:				return TextTokenType.Text;
+			case TypeColor.IPType:				return TextTokenType.Text;
 			case TypeColor.Operator:			return TextTokenType.Operator;
 			case TypeColor.NativeFrame:			return TextTokenType.Text;
 			case TypeColor.InternalFrame:		return TextTokenType.Text;
@@ -43,7 +46,6 @@ namespace dnSpy.Debugger {
 			case TypeColor.Number:				return TextTokenType.Number;
 			case TypeColor.Error:				return TextTokenType.Error;
 			case TypeColor.Module:				return TextTokenType.Module;
-			case TypeColor.Text:				return TextTokenType.Text;
 			case TypeColor.Token:				return TextTokenType.Number;
 			case TypeColor.NamespacePart:		return TextTokenType.NamespacePart;
 			case TypeColor.Type:				return TextTokenType.Type;
@@ -57,6 +59,9 @@ namespace dnSpy.Debugger {
 			case TypeColor.String:				return TextTokenType.String;
 			case TypeColor.Char:				return TextTokenType.Char;
 			case TypeColor.EnumField:			return TextTokenType.EnumField;
+			case TypeColor.TypeStringBrace:		return TextTokenType.Error;
+			case TypeColor.ToStringBrace:		return TextTokenType.ToStringEval;
+			case TypeColor.ToStringResult:		return TextTokenType.ToStringEval;
 			default:
 				Debug.Fail(string.Format("Unknown color: {0}", color));
 				return TextTokenType.Text;

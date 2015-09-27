@@ -105,28 +105,43 @@ namespace dnSpy.Debugger.Modules {
 				return;
 			exeFieldsInitialized = true;
 
-			if (module.IsDynamic || module.IsInMemory) {
-				//TODO: Support dynamic and in-memory modules
-				isExe = false;
-				timestamp = null;
-				version = null;
+			isExe = false;
+			timestamp = null;
+			version = null;
+
+			if (!module.IsDynamic && module.IsInMemory) {
+				var bytes = module.Process.CorProcess.ReadMemory(module.Address, (int)module.Size);
+				if (bytes != null) {
+					try {
+						using (var peImage = new PEImage(bytes))
+							InitializeExeFieldsFrom(peImage);
+					}
+					catch {
+					}
+				}
+			}
+			else if (module.IsDynamic || module.IsInMemory) {
+				//TODO: Support dynamic modules
 			}
 			else {
 				try {
-					using (var peImage = new PEImage(module.Name)) {
-						isExe = (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
-						timestamp = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
-
-						using (var mod = ModuleDefMD.Load(peImage)) {
-							var asm = mod.Assembly;
-							version = asm == null ? null : asm.Version;
-						}
-					}
+					using (var peImage = new PEImage(module.Name))
+						InitializeExeFieldsFrom(peImage);
 				}
 				catch {
 				}
 			}
 		}
 		bool exeFieldsInitialized = false;
+
+		void InitializeExeFieldsFrom(IPEImage peImage) {
+			isExe = (peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
+			timestamp = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
+
+			using (var mod = ModuleDefMD.Load(peImage)) {
+				var asm = mod.Assembly;
+				version = asm == null ? null : asm.Version;
+			}
+		}
 	}
 }

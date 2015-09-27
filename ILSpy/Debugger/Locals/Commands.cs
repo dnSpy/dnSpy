@@ -254,7 +254,7 @@ namespace dnSpy.Debugger.Locals {
 					return null;
 				if (value.Type == CorElementType.Ptr || value.Type == CorElementType.FnPtr)
 					return null;
-				value = value.DereferencedValue;
+				value = value.NeuterCheckDereferencedValue;
 				if (value == null)
 					return null;
 			}
@@ -272,12 +272,12 @@ namespace dnSpy.Debugger.Locals {
 			if (value == null)
 				return null;
 			if (value.IsReference && value.Type == CorElementType.ByRef) {
-				value = value.DereferencedValue;
+				value = value.NeuterCheckDereferencedValue;
 				if (value == null)
 					return null;
 			}
 			if (value.IsReference) {
-				value = value.DereferencedValue;
+				value = value.NeuterCheckDereferencedValue;
 				if (value == null)
 					return null;
 			}

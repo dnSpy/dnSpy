@@ -88,6 +88,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public static CachedOutput Create(TypeSig fieldType, TypePrinterFlags flags) {
+			fieldType = fieldType.RemovePinnedAndModifiers() ?? fieldType;
 			if (fieldType is ByRefSig)
 				fieldType = fieldType.Next ?? fieldType;
 			var typeOutput = TypePrinterUtils.Write(new TypeOutput(), fieldType, flags);
@@ -100,12 +101,12 @@ namespace dnSpy.Debugger {
 			return output.cachedOutput;
 		}
 
-		public static CachedOutput CreateValue(CorValue value, TypePrinterFlags flags) {
+		public static CachedOutput CreateValue(CorValue value, TypePrinterFlags flags, Func<DnEval> getEval = null) {
 			var output = new TypeOutput();
 			if (value == null)
 				output.Write("???", TypeColor.Error);
 			else
-				value.Write(output, flags);
+				value.Write(output, flags, getEval);
 			return output.cachedOutput;
 		}
 
@@ -118,7 +119,7 @@ namespace dnSpy.Debugger {
 				output.Write("???", TypeColor.Error);
 			else {
 				if (value.IsReference && value.Type == dndbg.Engine.COM.CorDebug.CorElementType.ByRef)
-					value = value.DereferencedValue ?? value;
+					value = value.NeuterCheckDereferencedValue ?? value;
 
 				var type = value.ExactType;
 				if (type != null)
@@ -141,6 +142,7 @@ namespace dnSpy.Debugger {
 			if (ts == null || value == null)
 				return valueOutput.cachedOutput;
 
+			ts = ts.RemovePinnedAndModifiers() ?? ts;
 			if (ts is ByRefSig)
 				ts = ts.Next ?? ts;
 
@@ -155,7 +157,7 @@ namespace dnSpy.Debugger {
 			if (typeOutput.cachedOutput.Equals(valueOutput.cachedOutput))
 				return valueOutput.cachedOutput;
 
-			typeOutput.Write(" ", TypeColor.Text);
+			typeOutput.Write(" ", TypeColor.Space);
 			typeOutput.Write("{", TypeColor.Error);
 			typeOutput.cachedOutput.data.AddRange(valueOutput.cachedOutput.data);
 			typeOutput.Write("}", TypeColor.Error);

@@ -230,6 +230,21 @@ namespace dndbg.Engine {
 			}
 		}
 
+		public CorValue NeuterCheckDereferencedValue {
+			get {
+				Debug.Assert(!IsNeutered);
+				var v = DereferencedValue;
+				if (v == null || !v.IsNeutered)
+					return v;
+				//TODO: HACKFIX: CLR 2.x caches the value which gets neutered when Continue() gets
+				// called. This will clear the cached value. CLR 4.x doesn't cache the referenced value.
+				this.ReferenceAddress = this.ReferenceAddress;
+				v = DereferencedValue;
+				Debug.Assert(v != null && !v.IsNeutered);
+				return v;
+			}
+		}
+
 		/// <summary>
 		/// Gets the type of the array's elements or <see cref="CorElementType.End"/> if it's not an array
 		/// </summary>
@@ -570,7 +585,7 @@ namespace dndbg.Engine {
 		public CorValue GetFieldValue(string name) {
 			var self = this;
 			if (self.IsReference) {
-				self = self.DereferencedValue;
+				self = self.NeuterCheckDereferencedValue;
 				if (self == null)
 					return null;
 			}
@@ -658,6 +673,41 @@ namespace dndbg.Engine {
 			return hr < 0 ? null : data;
 		}
 
+		/// <summary>
+		/// Gets the nullable value's value field. Returns true if it's a nullable type, false if
+		/// it's not a nullable type.
+		/// </summary>
+		/// <param name="value">Updated with the value of the nullable field or null if the nullable
+		/// is null or if it's not a nullable value</param>
+		/// <returns></returns>
+		public bool GetNullableValue(out CorValue value) {
+			value = null;
+			TokenAndName hasValueInfo, valueInfo;
+			if (!Utils.GetSystemNullableFields(ExactType, out hasValueInfo, out valueInfo))
+				return false;
+			var type = ExactType;
+			if (type == null)
+				return false;
+			var cls = type.Class;
+			if (cls == null)
+				return false;
+
+			var hasValueValue = GetFieldValue(cls, hasValueInfo.Token);
+			if (hasValueValue == null)
+				return false;
+			var hasValueRes = hasValueValue.Value;
+			if (!hasValueRes.IsValueValid || !(hasValueRes.Value is bool))
+				return false;
+			if (!(bool)hasValueRes.Value)
+				return true;
+
+			var valueValue = GetFieldValue(cls, valueInfo.Token);
+			if (valueValue == null)
+				return false;
+			value = valueValue;
+			return true;
+		}
+
 		public static bool operator ==(CorValue a, CorValue b) {
 			if (ReferenceEquals(a, b))
 				return true;
@@ -683,28 +733,32 @@ namespace dndbg.Engine {
 			return RawObject.GetHashCode();
 		}
 
-		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
-			new TypePrinter(output, flags).Write(this);
+		public T Write<T>(T output, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
+			new TypePrinter(output, flags, getEval).Write(this);
 			return output;
 		}
 
-		public T WriteType<T>(T output, TypeSig ts, IList<CorType> typeArgs, IList<CorType> methodArgs, TypePrinterFlags flags) where T : ITypeOutput {
-			new TypePrinter(output, flags).Write(ts, typeArgs, methodArgs);
+		public T WriteType<T>(T output, TypeSig ts, IList<CorType> typeArgs, IList<CorType> methodArgs, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
+			new TypePrinter(output, flags, getEval).Write(ts, typeArgs, methodArgs);
 			return output;
 		}
 
-		public T WriteType<T>(T output, CorType type, TypePrinterFlags flags) where T : ITypeOutput {
-			new TypePrinter(output, flags).Write(type);
+		public T WriteType<T>(T output, CorType type, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
+			new TypePrinter(output, flags, getEval).Write(type);
 			return output;
 		}
 
-		public T WriteType<T>(T output, CorClass cls, TypePrinterFlags flags) where T : ITypeOutput {
-			new TypePrinter(output, flags).Write(cls);
+		public T WriteType<T>(T output, CorClass cls, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
+			new TypePrinter(output, flags, getEval).Write(cls);
 			return output;
 		}
 
-		public string ToString(TypePrinterFlags flags) {
-			return Write(new StringBuilderTypeOutput(), flags).ToString();
+		public string ToString(TypePrinterFlags flags, Func<DnEval> getEval = null) {
+			return Write(new StringBuilderTypeOutput(), flags, getEval).ToString();
+		}
+
+		public string ToString(Func<DnEval> getEval) {
+			return ToString(TypePrinterFlags.Default, getEval);
 		}
 
 		public override string ToString() {

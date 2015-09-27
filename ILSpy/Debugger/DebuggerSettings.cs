@@ -186,6 +186,32 @@ namespace dnSpy.Debugger {
 		}
 		bool useStringConversionFunction;
 
+		public bool CanEvaluateToString {
+			get { return PropertyEvalAndFunctionCalls && UseStringConversionFunction; }
+		}
+
+		public bool DebuggerBrowsableAttributesCanHidePropsFields {
+			get { return debuggerBrowsableAttributesCanHidePropsFields; }
+			set {
+				if (debuggerBrowsableAttributesCanHidePropsFields != value) {
+					debuggerBrowsableAttributesCanHidePropsFields = value;
+					OnPropertyChanged("DebuggerBrowsableAttributesCanHidePropsFields");
+				}
+			}
+		}
+		bool debuggerBrowsableAttributesCanHidePropsFields;
+
+		public bool CompilerGeneratedAttributesCanHideFields {
+			get { return compilerGeneratedAttributesCanHideFields; }
+			set {
+				if (compilerGeneratedAttributesCanHideFields != value) {
+					compilerGeneratedAttributesCanHideFields = value;
+					OnPropertyChanged("CompilerGeneratedAttributesCanHideFields");
+				}
+			}
+		}
+		bool compilerGeneratedAttributesCanHideFields;
+
 		const string SETTINGS_NAME = "DebuggerSettings";
 
 		void Load() {
@@ -211,6 +237,8 @@ namespace dnSpy.Debugger {
 			BreakProcessType = (BreakProcessType)((int?)csx.Attribute("BreakProcessType") ?? (int)BreakProcessType.ModuleCctorOrEntryPoint);
 			PropertyEvalAndFunctionCalls = (bool?)csx.Attribute("PropertyEvalAndFunctionCalls") ?? true;
 			UseStringConversionFunction = (bool?)csx.Attribute("UseStringConversionFunction") ?? true;
+			DebuggerBrowsableAttributesCanHidePropsFields = (bool?)csx.Attribute("DebuggerBrowsableAttributesCanHidePropsFields") ?? true;
+			CompilerGeneratedAttributesCanHideFields = (bool?)csx.Attribute("CompilerGeneratedAttributesCanHideFields") ?? true;
 		}
 
 		void Save() {
@@ -242,6 +270,8 @@ namespace dnSpy.Debugger {
 			csx.SetAttributeValue("BreakProcessType", (int)BreakProcessType);
 			csx.SetAttributeValue("PropertyEvalAndFunctionCalls", PropertyEvalAndFunctionCalls);
 			csx.SetAttributeValue("UseStringConversionFunction", UseStringConversionFunction);
+			csx.SetAttributeValue("DebuggerBrowsableAttributesCanHidePropsFields", DebuggerBrowsableAttributesCanHidePropsFields);
+			csx.SetAttributeValue("CompilerGeneratedAttributesCanHideFields", CompilerGeneratedAttributesCanHideFields);
 		}
 
 		public DebuggerSettings CopyTo(DebuggerSettings other) {
@@ -255,6 +285,8 @@ namespace dnSpy.Debugger {
 			other.BreakProcessType = this.BreakProcessType;
 			other.PropertyEvalAndFunctionCalls = this.PropertyEvalAndFunctionCalls;
 			other.UseStringConversionFunction = this.UseStringConversionFunction;
+			other.DebuggerBrowsableAttributesCanHidePropsFields = this.DebuggerBrowsableAttributesCanHidePropsFields;
+			other.CompilerGeneratedAttributesCanHideFields = this.CompilerGeneratedAttributesCanHideFields;
 			return other;
 		}
 

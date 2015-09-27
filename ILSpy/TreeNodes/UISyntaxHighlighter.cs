@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using dnSpy.TextView;
@@ -63,30 +64,44 @@ namespace dnSpy.TreeNodes {
 			}
 		}
 
+		static string ToString(string s, bool filterOutNewLines) {
+			if (!filterOutNewLines)
+				return s;
+			var sb = new StringBuilder(s.Length);
+			foreach (var c in s) {
+				if (c == '\r' || c == '\n')
+					continue;
+				sb.Append(c);
+			}
+			return sb.ToString();
+		}
+
 		/// <summary>
 		/// Creates the object. If it's syntax highlighted, it's a <see cref="TextBlock"/>, else
 		/// it's just a <see cref="string"/>. See also <see cref="CreateTextBlock()"/>
 		/// </summary>
 		/// <param name="useEllipsis">true to add <see cref="TextTrimming.CharacterEllipsis"/> to the <see cref="TextBlock"/></param>
+		/// <param name="filterOutNewLines">true to filter out newline characters</param>
 		/// <returns></returns>
-		public object CreateObject(bool useEllipsis = false) {
+		public object CreateObject(bool useEllipsis = false, bool filterOutNewLines = true) {
 			if (simpleHighlighter != null)
-				return simpleHighlighter.Create(useEllipsis);
+				return simpleHighlighter.Create(useEllipsis, filterOutNewLines);
 
-			return output.ToString();
+			return ToString(output.ToString(), filterOutNewLines);
 		}
 
 		/// <summary>
 		/// Creates a <see cref="TextBlock"/> containing the resulting text
 		/// </summary>
 		/// <param name="useEllipsis">true to add <see cref="TextTrimming.CharacterEllipsis"/> to the <see cref="TextBlock"/></param>
+		/// <param name="filterOutNewLines">true to filter out newline characters</param>
 		/// <returns></returns>
-		public TextBlock CreateTextBlock(bool useEllipsis = false) {
+		public TextBlock CreateTextBlock(bool useEllipsis = false, bool filterOutNewLines = true) {
 			if (simpleHighlighter != null)
-				return simpleHighlighter.Create(useEllipsis);
+				return simpleHighlighter.Create(useEllipsis, filterOutNewLines);
 
 			var tb = new TextBlock {
-				Text = output.ToString(),
+				Text = ToString(output.ToString(), filterOutNewLines),
 			};
 			if (useEllipsis)
 				tb.TextTrimming = TextTrimming.CharacterEllipsis;

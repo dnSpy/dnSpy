@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dndbg.Engine.COM.CorDebug;
 using dndbg.Engine.COM.MetaData;
 
@@ -76,8 +77,22 @@ namespace dndbg.Engine {
 			int hr = cls.GetToken(out this.token);
 			if (hr < 0)
 				this.token = 0;
+		}
 
-			//TODO: ICorDebugClass2::GetParameterizedType
+		/// <summary>
+		/// Creates a <see cref="CorType"/>
+		/// </summary>
+		/// <param name="etype">Element type, must be <see cref="CorElementType.Class"/> or <see cref="CorElementType.ValueType"/></param>
+		/// <param name="typeArgs">Generic type arguments or null</param>
+		/// <returns></returns>
+		public CorType GetParameterizedType(CorElementType etype, CorType[] typeArgs = null) {
+			Debug.Assert(etype == CorElementType.Class || etype == CorElementType.ValueType);
+			var c2 = obj as ICorDebugClass2;
+			if (c2 == null)
+				return null;
+			ICorDebugType value;
+			int hr = c2.GetParameterizedType(etype, typeArgs == null ? 0 : typeArgs.Length, typeArgs.ToCorDebugArray(), out value);
+			return hr < 0 || value == null ? null : new CorType(value);
 		}
 
 		/// <summary>

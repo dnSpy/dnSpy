@@ -392,7 +392,11 @@ namespace dndbg.Engine.COM.CorDebug {
 		/// </summary>
 		MAPPING_APPROXIMATE = 32
 	}
+	[Flags]
 	public enum CorDebugMDAFlags {
+		/// <summary>
+		/// The thread on which the MDA was fired has slipped since the MDA was fired.
+		/// </summary>
 		MDA_FLAG_SLIP = 2
 	}
 	public enum CorDebugNGENPolicy {
@@ -846,7 +850,8 @@ namespace dndbg.Engine.COM.CorDebug {
 	[Guid("B008EA8D-7AB1-43F7-BB20-FBB5A04038AE"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugClass2 {
-		void GetParameterizedType([In] CorElementType elementType, [In] uint nTypeArgs, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugType ppTypeArgs, [MarshalAs(UnmanagedType.Interface)] out ICorDebugType ppType);
+		[PreserveSig]
+		int GetParameterizedType([In] CorElementType elementType, [In] int nTypeArgs, [MarshalAs(UnmanagedType.LPArray)] [In] ICorDebugType[] ppTypeArgs, [MarshalAs(UnmanagedType.Interface)] out ICorDebugType ppType);
 		[PreserveSig]
 		int SetJMCStatus([In] int bIsJustMyCode);
 	}
@@ -1392,11 +1397,16 @@ namespace dndbg.Engine.COM.CorDebug {
 	[Guid("CC726F2F-1DB7-459B-B0EC-05F01D841B42"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugMDA {
-		void GetName([In] uint cchName, out uint pcchName, [Out] [MarshalAs(UnmanagedType.LPWStr)] StringBuilder szName);
-		void GetDescription([In] uint cchName, out uint pcchName, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugMDA szName);
-		void GetXML([In] uint cchName, out uint pcchName, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugMDA szName);
-		void GetFlags([In] ref CorDebugMDAFlags pFlags);
-		void GetOSThreadId(out uint pOsTid);
+		[PreserveSig]
+		int GetName([In] uint cchName, out uint pcchName, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder szName);
+		[PreserveSig]
+		int GetDescription([In] uint cchName, out uint pcchName, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder szName);
+		[PreserveSig]
+		int GetXML([In] uint cchName, out uint pcchName, [MarshalAs(UnmanagedType.LPWStr)] StringBuilder szName);
+		[PreserveSig]
+		int GetFlags([In] ref CorDebugMDAFlags pFlags);
+		[PreserveSig]
+		int GetOSThreadId(out uint pOsTid);
 	}
 	[Guid("677888B3-D160-4B8C-A73B-D79E6AAA1D13"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]

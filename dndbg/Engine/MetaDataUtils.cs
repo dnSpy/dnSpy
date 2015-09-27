@@ -28,7 +28,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
 namespace dndbg.Engine {
-	public struct CorFieldInfo {
+	public class CorFieldInfo {
 		public CorType OwnerType;
 		public uint Token;
 		public string Name;
@@ -36,8 +36,10 @@ namespace dndbg.Engine {
 		public FieldAttributes Attributes;
 		public object Constant;
 		public CorElementType ConstantType;
+		public DebuggerBrowsableState? DebuggerBrowsableState;
+		public bool CompilerGeneratedAttribute;
 
-		public CorFieldInfo(CorType ownerType, uint token, string name, TypeSig fieldType, FieldAttributes attrs, object constant, CorElementType constantType) {
+		public CorFieldInfo(CorType ownerType, uint token, string name, TypeSig fieldType, FieldAttributes attrs, object constant, CorElementType constantType, DebuggerBrowsableState? debuggerBrowsableState, bool compilerGeneratedAttribute) {
 			this.OwnerType = ownerType;
 			this.Token = token;
 			this.Name = name;
@@ -45,6 +47,8 @@ namespace dndbg.Engine {
 			this.Attributes = attrs;
 			this.Constant = constant;
 			this.ConstantType = constantType;
+			this.DebuggerBrowsableState = debuggerBrowsableState;
+			this.CompilerGeneratedAttribute = compilerGeneratedAttribute;
 		}
 
 		public override string ToString() {
@@ -52,7 +56,7 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public struct CorPropertyInfo {
+	public class CorPropertyInfo {
 		public CorType OwnerType;
 		public uint Token;
 		public uint GetToken;
@@ -61,8 +65,9 @@ namespace dndbg.Engine {
 		public MethodSig GetSig;
 		public MethodSig SetSig;
 		public MethodAttributes GetMethodAttributes;
+		public DebuggerBrowsableState? DebuggerBrowsableState;
 
-		public CorPropertyInfo(CorType ownerType, uint token, uint getToken, uint setToken, string name, MethodSig getSig, MethodSig setSig, MethodAttributes getMethodAttributes) {
+		public CorPropertyInfo(CorType ownerType, uint token, uint getToken, uint setToken, string name, MethodSig getSig, MethodSig setSig, MethodAttributes getMethodAttributes, DebuggerBrowsableState? debuggerBrowsableState) {
 			this.OwnerType = ownerType;
 			this.Token = token;
 			this.GetToken = getToken;
@@ -71,10 +76,31 @@ namespace dndbg.Engine {
 			this.GetSig = getSig;
 			this.SetSig = setSig;
 			this.GetMethodAttributes = getMethodAttributes;
+			this.DebuggerBrowsableState = debuggerBrowsableState;
 		}
 
 		public override string ToString() {
 			return string.Format("{0:X8} {1} {2}", Token, Name, OwnerType);
+		}
+	}
+
+	public class CorMethodInfo {
+		public CorType OwnerType;
+		public uint Token;
+		public string Name;
+		public MethodSig MethodSig;
+		public MethodAttributes MethodAttributes;
+		public MethodImplAttributes MethodImplAttributes;
+		public bool CompilerGeneratedAttribute;
+
+		public CorMethodInfo(CorType ownerType, uint token, string name, MethodSig methodSig, MethodAttributes attrs, MethodImplAttributes implAttrs, bool compilerGeneratedAttribute) {
+			this.OwnerType = ownerType;
+			this.Token = token;
+			this.Name = name;
+			this.MethodSig = methodSig;
+			this.MethodAttributes = attrs;
+			this.MethodImplAttributes = implAttrs;
+			this.CompilerGeneratedAttribute = compilerGeneratedAttribute;
 		}
 	}
 
@@ -161,9 +187,8 @@ namespace dndbg.Engine {
 					return new uint[0];
 
 				uint[] tokens = new uint[ulCount];
-				fixed (uint* p = &tokens[0]) {
+				fixed (uint* p = &tokens[0])
 					hr = mdi.EnumParams(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
-				}
 				if (hr < 0)
 					return new uint[0];
 				return tokens;
@@ -180,11 +205,10 @@ namespace dndbg.Engine {
 			char[] nameBuf = null;
 			uint ulSequence,chName,dwAttr;
 			int hr = mdi.GetParamProps(token, IntPtr.Zero, out ulSequence, IntPtr.Zero, 0, out chName, out dwAttr, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-			if (hr >= 0) {
+			if (hr >= 0 && chName != 0) {
 				nameBuf = new char[chName];
-				fixed (char* p = &nameBuf[0]) {
+				fixed (char* p = &nameBuf[0])
 					hr = mdi.GetParamProps(token, IntPtr.Zero, out ulSequence, new IntPtr(p), (uint)nameBuf.Length, out chName, out dwAttr, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-				}
 			}
 			if (hr < 0)
 				return null;
@@ -216,11 +240,10 @@ namespace dndbg.Engine {
 			uint tkResolutionScope, chName;
 			char[] nameBuf = null;
 			int hr = mdi.GetTypeRefProps(token, out tkResolutionScope, IntPtr.Zero, 0, out chName);
-			if (hr >= 0) {
+			if (hr >= 0 && chName != 0) {
 				nameBuf = new char[chName];
-				fixed (char* p = &nameBuf[0]) {
+				fixed (char* p = &nameBuf[0])
 					hr = mdi.GetTypeRefProps(token, out tkResolutionScope, new IntPtr(p), (uint)nameBuf.Length, out chName);
-				}
 			}
 			if (hr < 0)
 				return null;
@@ -269,11 +292,10 @@ namespace dndbg.Engine {
 			uint chTypeDef, dwTypeDefFlags, tkExtends;
 			char[] nameBuf = null;
 			int hr = mdi.GetTypeDefProps(token, IntPtr.Zero, 0, out chTypeDef, out dwTypeDefFlags, out tkExtends);
-			if (hr >= 0) {
+			if (hr >= 0 && chTypeDef != 0) {
 				nameBuf = new char[chTypeDef];
-				fixed (char* p = &nameBuf[0]) {
+				fixed (char* p = &nameBuf[0])
 					hr = mdi.GetTypeDefProps(token, new IntPtr(p), (uint)nameBuf.Length, out chTypeDef, out dwTypeDefFlags, out tkExtends);
-				}
 			}
 			if (hr < 0)
 				return null;
@@ -304,11 +326,10 @@ namespace dndbg.Engine {
 			uint chMethod, cbSigBlob, ulCodeRVA;
 			IntPtr pvSigBlob;
 			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chMethod, out dwAttr, out pvSigBlob, out cbSigBlob, out ulCodeRVA, out dwImplFlags);
-			if (hr >= 0) {
+			if (hr >= 0 && chMethod != 0) {
 				nameBuf = new char[chMethod];
-				fixed (char* p = &nameBuf[0]) {
+				fixed (char* p = &nameBuf[0])
 					hr = mdi.GetMethodProps(token, IntPtr.Zero, new IntPtr(p), (uint)nameBuf.Length, out chMethod, out dwAttr, out pvSigBlob, out cbSigBlob, out ulCodeRVA, out dwImplFlags);
-				}
 			}
 			if (hr < 0)
 				return null;
@@ -346,11 +367,10 @@ namespace dndbg.Engine {
 			char[] nameBuf = null;
 			uint ulParamSeq, dwParamFlags, tOwner, reserved, chName;
 			int hr = mdi2.GetGenericParamProps(token, out ulParamSeq, out dwParamFlags, out tOwner, out reserved, IntPtr.Zero, 0, out chName);
-			if (hr >= 0) {
+			if (hr >= 0 && chName != 0) {
 				nameBuf = new char[chName];
-				fixed (char* p = &nameBuf[0]) {
+				fixed (char* p = &nameBuf[0])
 					hr = mdi2.GetGenericParamProps(token, out ulParamSeq, out dwParamFlags, out tOwner, out reserved, new IntPtr(p), (uint)nameBuf.Length, out chName);
-				}
 			}
 			if (hr < 0)
 				return null;
@@ -383,9 +403,8 @@ namespace dndbg.Engine {
 					return list;
 
 				uint[] gpTokens = new uint[ulCount];
-				fixed (uint* p = &gpTokens[0]) {
+				fixed (uint* p = &gpTokens[0])
 					hr = mdi2.EnumGenericParams(ref iter, token, new IntPtr(p), (uint)gpTokens.Length, out cGenericParams);
-				}
 				if (hr < 0)
 					return list;
 				for (uint i = 0; i < cGenericParams; i++)
@@ -471,9 +490,8 @@ namespace dndbg.Engine {
 					return new uint[0];
 
 				uint[] tokens = new uint[ulCount];
-				fixed (uint* p = &tokens[0]) {
+				fixed (uint* p = &tokens[0])
 					hr = mdi.EnumMethods(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
-				}
 				if (hr < 0)
 					return new uint[0];
 				return tokens;
@@ -504,11 +522,10 @@ namespace dndbg.Engine {
 			uint chField, dwAttr;
 			char[] nameBuf = null;
 			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chField, out dwAttr, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-			if (hr >= 0) {
+			if (hr >= 0 && chField != 0) {
 				nameBuf = new char[chField];
-				fixed (char* p = &nameBuf[0]) {
+				fixed (char* p = &nameBuf[0])
 					hr = mdi.GetFieldProps(token, IntPtr.Zero, new IntPtr(p), (uint)nameBuf.Length, out chField, out dwAttr, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-				}
 			}
 			if (hr < 0)
 				return null;
@@ -538,9 +555,8 @@ namespace dndbg.Engine {
 					return new uint[0];
 
 				uint[] tokens = new uint[ulCount];
-				fixed (uint* p = &tokens[0]) {
+				fixed (uint* p = &tokens[0])
 					hr = mdi.EnumFields(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
-				}
 				if (hr < 0)
 					return new uint[0];
 				return tokens;
@@ -571,9 +587,8 @@ namespace dndbg.Engine {
 					return new uint[0];
 
 				uint[] tokens = new uint[ulCount];
-				fixed (uint* p = &tokens[0]) {
+				fixed (uint* p = &tokens[0])
 					hr = mdi.EnumProperties(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
-				}
 				if (hr < 0)
 					return new uint[0];
 				return tokens;
@@ -651,7 +666,33 @@ namespace dndbg.Engine {
 			}
 		}
 
-		static CorFieldInfo? ReadFieldInfo(IMetaDataImport mdi, uint token, CorType type) {
+		static DebuggerBrowsableState? GetDebuggerBrowsableState(IMetaDataImport mdi, uint token) {
+			Debug.Assert(new MDToken(token).Table == Table.Field || new MDToken(token).Table == Table.Property);
+			if (mdi == null)
+				return null;
+
+			IntPtr addr;
+			uint size;
+			int hr = mdi.GetCustomAttributeByName(token, "System.Diagnostics.DebuggerBrowsableAttribute", out addr, out size);
+			const int expectedLength = 8;
+			if (hr < 0 || addr == IntPtr.Zero || size != expectedLength)
+				return null;
+			var data = new byte[expectedLength];
+			Marshal.Copy(addr, data, 0, data.Length);
+			if (BitConverter.ToUInt16(data, 0) != 1)
+				return null;
+			var state = (DebuggerBrowsableState)BitConverter.ToInt32(data, 2);
+			if (BitConverter.ToUInt16(data, 6) != 0)
+				return null;
+
+			return state;
+		}
+
+		static bool GetCompilerGeneratedAttribute(IMetaDataImport mdi, uint token) {
+			return HasAttribute(mdi, token, "System.Runtime.CompilerServices.CompilerGeneratedAttribute");
+		}
+
+		static CorFieldInfo ReadFieldInfo(IMetaDataImport mdi, uint token, CorType type) {
 			if (mdi == null)
 				return null;
 			var name = GetFieldName(mdi, token);
@@ -663,7 +704,9 @@ namespace dndbg.Engine {
 			var attrs = GetFieldAttributes(mdi, token);
 			CorElementType constantType;
 			var constant = GetFieldConstant(mdi, token, out constantType);
-			return new CorFieldInfo(type, token, name, fieldType, attrs, constant, constantType);
+			var browseState = GetDebuggerBrowsableState(mdi, token);
+			bool compilerGeneratedAttribute = GetCompilerGeneratedAttribute(mdi, token);
+			return new CorFieldInfo(type, token, name, fieldType, attrs, constant, constantType, browseState, compilerGeneratedAttribute);
 		}
 
 		public static IEnumerable<CorFieldInfo> GetFieldInfos(CorType type, bool checkBaseClasses = true) {
@@ -676,7 +719,7 @@ namespace dndbg.Engine {
 					var info = ReadFieldInfo(mdi, fdToken, type);
 					Debug.Assert(info != null);
 					if (info != null)
-						yield return info.Value;
+						yield return info;
 				}
 				if (!checkBaseClasses)
 					break;
@@ -689,22 +732,21 @@ namespace dndbg.Engine {
 				var info = ReadFieldInfo(mdi, fdToken, null);
 				Debug.Assert(info != null);
 				if (info != null)
-					yield return info.Value;
+					yield return info;
 			}
 		}
 
-		unsafe static CorPropertyInfo? ReadPropertyInfo(IMetaDataImport mdi, uint token, CorType type) {
+		unsafe static CorPropertyInfo ReadPropertyInfo(IMetaDataImport mdi, uint token, CorType type) {
 			if (mdi == null)
 				return null;
 
 			uint chProperty, dwPropFlags, mdSetter, mdGetter;
 			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chProperty, out dwPropFlags, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, out mdSetter, out mdGetter, IntPtr.Zero, 0, IntPtr.Zero);
 			char[] nameBuf = null;
-			if (hr >= 0) {
+			if (hr >= 0 && chProperty != 0) {
 				nameBuf = new char[chProperty];
-				fixed (char* p = &nameBuf[0]) {
+				fixed (char* p = &nameBuf[0])
 					hr = mdi.GetPropertyProps(token, IntPtr.Zero, new IntPtr(p), (uint)nameBuf.Length, out chProperty, out dwPropFlags, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, out mdSetter, out mdGetter, IntPtr.Zero, 0, IntPtr.Zero);
-				}
 			}
 			if (hr < 0)
 				return null;
@@ -749,7 +791,9 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				return null;
 
-			return new CorPropertyInfo(type, token, mdGetter, mdSetter, name, getSig, setSig, getMethodAttrs);
+			var browseState = GetDebuggerBrowsableState(mdi, token);
+
+			return new CorPropertyInfo(type, token, mdGetter, mdSetter, name, getSig, setSig, getMethodAttrs, browseState);
 		}
 
 		static bool Equals(TypeSig ts1, TypeSig ts2) {
@@ -758,18 +802,70 @@ namespace dndbg.Engine {
 
 		public static IEnumerable<CorPropertyInfo> GetProperties(CorType type, bool checkBaseClasses = true) {
 			for (; type != null; type = type.Base) {
-				var cls = type.Class;
-				var mod = cls == null ? null : cls.Module;
-				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-				var fdTokens = GetPropertyTokens(mdi, cls == null ? 0 : cls.Token);
-				foreach (var fdToken in fdTokens) {
-					var info = ReadPropertyInfo(mdi, fdToken, type);
+				uint token;
+				var mdi = type.GetMetaDataImport(out token);
+				var pdTokens = GetPropertyTokens(mdi, token);
+				foreach (var pdToken in pdTokens) {
+					var info = ReadPropertyInfo(mdi, pdToken, type);
 					if (info != null)
-						yield return info.Value;
+						yield return info;
 				}
 				if (!checkBaseClasses)
 					break;
 			}
+		}
+
+		static CorMethodInfo ReadMethodInfo(IMetaDataImport mdi, uint token, CorType type) {
+			if (mdi == null)
+				return null;
+
+			MethodAttributes attrs;
+			MethodImplAttributes implAttrs;
+
+			var name = GetMethodDefName(mdi, token, out attrs, out implAttrs);
+			if (name == null)
+				return null;
+
+			var sig = GetMethodSignature(mdi, token);
+			if (sig == null)
+				return null;
+
+			bool compilerGeneratedAttribute = GetCompilerGeneratedAttribute(mdi, token);
+
+			return new CorMethodInfo(type, token, name, sig, attrs, implAttrs, compilerGeneratedAttribute);
+		}
+
+		public static CorMethodInfo GetToStringMethod(CorType type) {
+			//TODO: Check for method overrides!
+			for (; type != null; type = type.Base) {
+				uint token;
+				var mdi = type.GetMetaDataImport(out token);
+				var mdTokens = GetMethodTokens(mdi, token);
+				foreach (var mdToken in mdTokens) {
+					var info = ReadMethodInfo(mdi, mdToken, type);
+					if (info == null)
+						continue;
+					if (IsToString(info))
+						return info;
+				}
+			}
+			return null;
+		}
+
+		static bool IsToString(CorMethodInfo info) {
+			if ((info.MethodAttributes & (MethodAttributes.Virtual | MethodAttributes.Static)) != MethodAttributes.Virtual)
+				return false;
+			if (info.Name != "ToString")
+				return false;
+			var sig = info.MethodSig;
+			if (sig == null || sig.Generic || !sig.HasThis || sig.ExplicitThis)
+				return false;
+			if (sig.GenParamCount != 0 || sig.Params.Count != 0 || sig.ParamsAfterSentinel != null)
+				return false;
+			if (sig.RetType.GetElementType() != ElementType.String)
+				return false;
+
+			return true;
 		}
 
 		static uint GetTypeDefExtends(IMetaDataImport mdi, uint token) {
@@ -849,7 +945,9 @@ namespace dndbg.Engine {
 		public static bool HasAttribute(IMetaDataImport mdi, uint token, string attributeName) {
 			if (mdi == null)
 				return false;
-			return mdi.GetCustomAttributeByName(token, attributeName, IntPtr.Zero, IntPtr.Zero) == 0;
+			IntPtr addr;
+			uint size;
+			return mdi.GetCustomAttributeByName(token, attributeName, out addr, out size) == 0;
 		}
 	}
 }

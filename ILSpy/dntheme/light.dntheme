@@ -46,6 +46,7 @@
 		<color name="filenamenoextension" fg="#990000" />
 		<color name="fileextension" fg="#3366CC" />
 		<color name="error" fg="Red" />
+		<color name="tostringeval" fg="#2E387C" />
 		<color name="linenumber" fg="#2B91AF" />
 		<color name="xmlcomment" fg="#FF008000" italics="true" />
 		<color name="xmlcdata" fg="#FF808080" />

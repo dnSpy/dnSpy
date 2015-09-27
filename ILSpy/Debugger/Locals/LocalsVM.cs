@@ -67,7 +67,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 		readonly SharpTreeNode rootNode;
 
-		public static TypePrinterFlags TypePrinterFlags {
+		public TypePrinterFlags TypePrinterFlags {
 			get {
 				TypePrinterFlags flags = TypePrinterFlags.ShowArrayValueSizes;
 				if (LocalsSettings.Instance.ShowNamespaces) flags |= TypePrinterFlags.ShowNamespaces;
@@ -76,6 +76,14 @@ namespace dnSpy.Debugger.Locals {
 				if (!DebuggerSettings.Instance.UseHexadecimal) flags |= TypePrinterFlags.UseDecimal;
 				return flags;
 			}
+		}
+
+		public bool DebuggerBrowsableAttributesCanHidePropsFields {
+			get { return DebuggerSettings.Instance.DebuggerBrowsableAttributesCanHidePropsFields; }
+		}
+
+		public bool CompilerGeneratedAttributesCanHideFields {
+			get { return DebuggerSettings.Instance.CompilerGeneratedAttributesCanHideFields; }
 		}
 
 		readonly IMethodLocalProvider methodLocalProvider;
@@ -113,14 +121,22 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "UseHexadecimal")
+			switch (e.PropertyName) {
+			case "UseHexadecimal":
 				RefreshHexFields();
-			else if (e.PropertyName == "SyntaxHighlightLocals")
+				break;
+			case "SyntaxHighlightLocals":
 				RefreshSyntaxHighlightFields();
-			else if (e.PropertyName == "PropertyEvalAndFunctionCalls")
+				break;
+			case "PropertyEvalAndFunctionCalls":
+			case "DebuggerBrowsableAttributesCanHidePropsFields":
+			case "CompilerGeneratedAttributesCanHideFields":
 				RecreateLocals();
-			else if (e.PropertyName == "UseStringConversionFunction")
+				break;
+			case "UseStringConversionFunction":
 				RefreshToStringFields();
+				break;
+			}
 		}
 
 		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
@@ -315,17 +331,22 @@ namespace dnSpy.Debugger.Locals {
 			if (ps == null)
 				return;
 
+			bool isStatic = (methodAttrs & MethodAttributes.Static) != 0;
 			foreach (var vm in rootNode.Children.OfType<NormalValueVM>()) {
 				var vt = vm.NormalValueType as ArgumentValueType;
 				if (vt == null)
 					continue;
-				var info = ps.Get((uint)vt.Index);
 
-				bool isThis = vt.Index == 0 && (methodAttrs & MethodAttributes.Static) == 0;
+				bool isThis = vt.Index == 0 && !isStatic;
 				if (isThis)
 					vt.InitializeName(string.Empty, isThis);
-				else if (info != null)
-					vt.InitializeName(info.Value.Name, isThis);
+				else {
+					uint index = (uint)vt.Index + (isStatic ? 1U : 0);
+					var info = ps.Get(index);
+
+					if (info != null)
+						vt.InitializeName(info.Value.Name, isThis);
+				}
 			}
 		}
 
@@ -456,6 +477,22 @@ namespace dnSpy.Debugger.Locals {
 			if (askUser == null)
 				throw new InvalidOperationException();
 			return askUser.AskUser(msg, AskUserButton.YesNo) == MsgBoxButton.OK;
+		}
+
+		DnEval ILocalsOwner.CreateEval(ValueContext context) {
+			Debug.Assert(context != null && context.Thread != null);
+			if (context == null || context.Thread == null)
+				return null;
+			if (!DebuggerSettings.Instance.CanEvaluateToString)
+				return null;
+			if (!DebugManager.Instance.CanEvaluate) {
+				Debug.Fail("Can't evaluate");
+				return null;
+			}
+			if (DebugManager.Instance.EvalDisabled)
+				return null;
+
+			return DebugManager.Instance.CreateEval(context.Thread.CorThread);
 		}
 
 		sealed class LocArgCorValueHolder : ICorValueHolder {

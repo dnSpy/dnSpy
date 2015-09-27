@@ -1468,6 +1468,7 @@
     <Resource Include="Images\SetNextStatement.png" />
     <Resource Include="Images\Settings.png" />
     <Resource Include="Images\StartDebugging.png" />
+    <Resource Include="Images\StartWithoutDebugging.png" />
     <Resource Include="Images\StaticClass.png" />
     <Resource Include="Images\StaticEvent.png" />
     <Resource Include="Images\StaticEventCompilerControlled.png" />

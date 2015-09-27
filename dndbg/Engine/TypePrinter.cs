@@ -29,6 +29,9 @@ using dnlib.DotNet.MD;
 
 namespace dndbg.Engine {
 	public enum TypeColor {
+		Unknown,
+		Space,
+		IPType,
 		Operator,
 		NativeFrame,
 		InternalFrame,
@@ -36,7 +39,6 @@ namespace dndbg.Engine {
 		Number,
 		Error,
 		Module,
-		Text,
 		Token,
 		NamespacePart,
 		Type,
@@ -50,6 +52,9 @@ namespace dndbg.Engine {
 		String,
 		Char,
 		EnumField,
+		TypeStringBrace,
+		ToStringBrace,
+		ToStringResult,
 	}
 
 	public interface ITypeOutput {
@@ -100,6 +105,7 @@ namespace dndbg.Engine {
 		int lineLength;
 		bool outputLengthExceeded;
 		bool forceWrite;
+		readonly Func<DnEval> getEval;
 
 		readonly ITypeOutput output;
 		readonly TypePrinterFlags flags;
@@ -153,7 +159,7 @@ namespace dndbg.Engine {
 			get { return (flags & TypePrinterFlags.ShowArrayValueSizes) != 0; }
 		}
 
-		public TypePrinter(ITypeOutput output, TypePrinterFlags flags) {
+		public TypePrinter(ITypeOutput output, TypePrinterFlags flags, Func<DnEval> getEval = null) {
 			this.output = output;
 			this.flags = flags;
 			this.dictMetaDataImport = null;
@@ -161,6 +167,7 @@ namespace dndbg.Engine {
 			this.lineLength = 0;
 			this.outputLengthExceeded = false;
 			this.forceWrite = false;
+			this.getEval = getEval;
 		}
 
 		static string FilterName(string s) {
@@ -235,7 +242,7 @@ namespace dndbg.Engine {
 		}
 
 		void WriteSpace() {
-			OutputWrite(" ", TypeColor.Text);
+			OutputWrite(" ", TypeColor.Space);
 		}
 
 		void WriteCommaSpace() {
@@ -378,7 +385,7 @@ namespace dndbg.Engine {
 		}
 
 		void WriteDefaultType(uint token) {
-			OutputWrite("Type", TypeColor.Text);
+			OutputWrite("Type", TypeColor.Unknown);
 			OutputWrite("[", TypeColor.Operator);
 			WriteToken(token);
 			OutputWrite("]", TypeColor.Operator);
@@ -398,7 +405,7 @@ namespace dndbg.Engine {
 				}
 
 				if (value != null && value.IsReference && (value.Type == CorElementType.SZArray || value.Type == CorElementType.Array))
-					value = value.DereferencedValue ?? value;
+					value = value.NeuterCheckDereferencedValue ?? value;
 
 				// It's shown reverse in C# so need to collect all array types here
 				List<Tuple<CorType, CorValue>> list = null;
@@ -406,12 +413,12 @@ namespace dndbg.Engine {
 					if (list == null)
 						list = new List<Tuple<CorType, CorValue>>();
 					list.Add(Tuple.Create(type, value));
-					value = value == null ? null : value.DereferencedValue;
+					value = value == null ? null : value.NeuterCheckDereferencedValue;
 					type = type.FirstTypeParameter;
 				}
 				if (list != null) {
 					var t = list[list.Count - 1];
-					Write(t.Item1.FirstTypeParameter, t.Item2 == null ? null : t.Item2.DereferencedValue);
+					Write(t.Item1.FirstTypeParameter, t.Item2 == null ? null : t.Item2.NeuterCheckDereferencedValue);
 					foreach (var tuple in list) {
 						var aryType = tuple.Item1;
 						var aryValue = tuple.Item2;
@@ -429,7 +436,7 @@ namespace dndbg.Engine {
 									for (uint i = 0; i < rank; i++) {
 										if (i > 0) {
 											OutputWrite(",", TypeColor.Operator);
-											OutputWrite(" ", TypeColor.Text);
+											OutputWrite(" ", TypeColor.Space);
 										}
 										if (indexes[i] == 0)
 											WriteNumber(dims[i]);
@@ -481,12 +488,12 @@ namespace dndbg.Engine {
 				case CorElementType.U:			WriteSystemType("UIntPtr"); break;
 
 				case CorElementType.Ptr:
-					Write(type.FirstTypeParameter, value == null ? null : value.DereferencedValue);
+					Write(type.FirstTypeParameter, value == null ? null : value.NeuterCheckDereferencedValue);
 					OutputWrite("*", TypeColor.Operator);
 					break;
 
 				case CorElementType.ByRef:
-					Write(type.FirstTypeParameter, value == null ? null : value.DereferencedValue);
+					Write(type.FirstTypeParameter, value == null ? null : value.NeuterCheckDereferencedValue);
 					OutputWrite("&", TypeColor.Operator);
 					break;
 
@@ -844,7 +851,7 @@ namespace dndbg.Engine {
 					bool needComma = false;
 					if (frame.IsILFrame) {
 						var ip = frame.ILFrameIP;
-						OutputWrite("IL", TypeColor.Text);
+						OutputWrite("IL", TypeColor.IPType);
 						OutputWrite("=", TypeColor.Operator);
 						if (ip.IsExact)
 							WriteILOffset(ip.Offset);
@@ -853,9 +860,9 @@ namespace dndbg.Engine {
 							WriteILOffset(ip.Offset);
 						}
 						else if (ip.IsProlog)
-							OutputWrite("Prolog", TypeColor.Text);
+							OutputWrite("Prolog", TypeColor.IPType);
 						else if (ip.IsEpilog)
-							OutputWrite("Epilog", TypeColor.Text);
+							OutputWrite("Epilog", TypeColor.IPType);
 						else
 							OutputWrite("???", TypeColor.Error);
 						needComma = true;
@@ -863,7 +870,7 @@ namespace dndbg.Engine {
 					if (frame.IsNativeFrame) {
 						if (needComma)
 							WriteCommaSpace();
-						OutputWrite("Native", TypeColor.Text);
+						OutputWrite("Native", TypeColor.IPType);
 						OutputWrite("=", TypeColor.Operator);
 
 						var nativeCode = code != null && !code.IsIL ? code : null;
@@ -983,10 +990,10 @@ namespace dndbg.Engine {
 				bool needSpace = false;
 				if (ShowParameterTypes) {
 					if (ma != null) {
-						if (ma.ElementType == ElementType.ByRef) {
+						if (ma.RemovePinnedAndModifiers().GetElementType() == ElementType.ByRef) {
 							OutputWrite(isCSharpOut ? "out" : "ref", TypeColor.Keyword);
 							WriteSpace();
-							ma = ma.Next;
+							ma = ma.RemovePinnedAndModifiers().GetNext();
 						}
 						Write(ma, typeGenArgs, methGenArgs);
 					}
@@ -1169,22 +1176,130 @@ namespace dndbg.Engine {
 					return;
 				}
 
-				//TODO: Option to evaluate the value, eg. using ToString() or DebuggerDisplay attrs.
-				OutputWrite("{", TypeColor.Error);
-				if (value.IsReference && value.Type == CorElementType.ByRef)
-					value = value.DereferencedValue ?? value;
-				var type = value.ExactType;
-				if (type != null)
-					Write(type, value);
-				else {
-					var cls = value.Class;
-					if (cls != null)
-						Write(cls);
-					else
-						OutputWrite("???", TypeColor.Error);
+				if (getEval == null) {
+					WriteTypeOfValue(value);
+					return;
 				}
-				OutputWrite("}", TypeColor.Error);
+
+				CorValue nullableValue;
+				if (value.GetNullableValue(out nullableValue) && nullableValue != null)
+					value = nullableValue;
+
+				//TODO: Support DebuggerDisplayAttribute
+
+				var info = FindToStringMethodIfOverridden(value);
+				if (info == null) {
+					WriteTypeOfValue(value);
+					return;
+				}
+
+				var func = GetFunction(info.OwnerType, info.Token);
+				if (func == null) {
+					WriteTypeOfValue(value);
+					return;
+				}
+
+				WriteToStringData(value, info, func);
 			}
+		}
+
+		static CorFunction GetFunction(CorType type, uint token) {
+			var cls = type.Class;
+			var mod = cls == null ? null : cls.Module;
+			return mod == null ? null : mod.GetFunctionFromToken(token);
+		}
+
+		CorMethodInfo FindToStringMethodIfOverridden(CorValue value) {
+			var et = value.ExactType;
+			if (et == null)
+				return null;
+			var ts = et.GetToStringMethod();
+			if (ts == null)
+				return null;
+			if (ts.OwnerType.IsSystemObject || ts.OwnerType.IsSystemValueType)
+				return null;
+			return et.GetSystemObjectToStringMethod();
+		}
+
+		void WriteToStringData(CorValue value, CorMethodInfo info, CorFunction func) {
+			Debug.Assert(value != null && func != null && getEval != null);
+
+			try {
+				var eval = getEval();
+				if (eval == null) {
+					WriteTypeOfValue(value);
+					return;
+				}
+
+				using (eval) {
+					var v = value;
+					if (v != null && v.IsReference && v.Type == CorElementType.ByRef)
+						v = v.NeuterCheckDereferencedValue;
+					if (v != null && v.IsGeneric && !v.IsHeap && v.ExactType.IsValueType)
+						v = eval.Box(v);
+					if (v == null) {
+						WriteToStringFailed("null value");
+						return;
+					}
+					var res = eval.Call(func, new CorValue[1] { v });
+					if (res.WasException) {
+						WriteToStringFailed(string.Format("ToString() threw: {0}", res.ResultOrException));
+						return;
+					}
+					var rv = res.ResultOrException;
+					if (rv != null && rv.IsReference)
+						rv = rv.NeuterCheckDereferencedValue;
+					if (rv == null || !rv.IsString) {
+						WriteToStringFailed("return value isn't a string");
+						return;
+					}
+					if (rv.IsNull) {
+						WriteTypeOfValue(value);
+						return;
+					}
+					OutputWrite("{", TypeColor.ToStringBrace);
+					OutputWrite(CleanUpEvaluatedToStringString(rv.String), TypeColor.ToStringResult);
+					OutputWrite("}", TypeColor.ToStringBrace);
+				}
+			}
+			catch (TimeoutException ex) {
+				WriteToStringFailed("timed out!");
+			}
+			catch (Exception ex) {
+				WriteToStringFailed(ex.Message);
+			}
+		}
+
+		static string CleanUpEvaluatedToStringString(string s) {
+			// VS calls wsprintf("{%s}") and if the string has a zero in it, anything
+			// after that isn't shown, including the final '}'. We'll show the full string.
+			return s;
+		}
+
+		void WriteToStringFailed(string msg) {
+			OutputWrite(string.Format("{{ToString() failed: {0}}}", msg), TypeColor.Error);
+		}
+
+		void WriteTypeOfValue(CorValue value) {
+			if (value == null) {
+				OutputWrite("???", TypeColor.Error);
+				return;
+			}
+
+			OutputWrite("{", TypeColor.TypeStringBrace);
+			if (value.IsReference && value.Type == CorElementType.ByRef)
+				value = value.NeuterCheckDereferencedValue ?? value;
+			var type = value.ExactType;
+			if (type != null)
+				Write(type, value);
+			else {
+				var cls = value.Class;
+				if (cls != null)
+					Write(cls);
+				else
+					OutputWrite("???", TypeColor.Error);
+			}
+			OutputWrite("}", TypeColor.TypeStringBrace);
 		}
 
 		public void WriteConstant(TypeSig type, object c) {
@@ -1278,9 +1393,9 @@ namespace dndbg.Engine {
 		}
 
 		void WriteEnumSeperator() {
-			OutputWrite(" ", TypeColor.Text);
+			OutputWrite(" ", TypeColor.Space);
 			OutputWrite("|", TypeColor.Operator);
-			OutputWrite(" ", TypeColor.Text);
+			OutputWrite(" ", TypeColor.Space);
 		}
 
 		void WriteEnumField(IMetaDataImport mdi, uint token, string name) {
@@ -1326,7 +1441,7 @@ namespace dndbg.Engine {
 				return;
 			}
 
-			OutputWrite(value.ToString(), TypeColor.Text);
+			OutputWrite(value.ToString(), TypeColor.Unknown);
 		}
 
 		void WriteBooleanValue(bool b) {
@@ -1371,12 +1486,13 @@ namespace dndbg.Engine {
 			OutputWrite(ToCSharpString(s), TypeColor.String);
 		}
 
-		internal static string ToCSharpString(string s) {
+		internal static string ToCSharpString(string s, bool useQuotes = true) {
 			if (s == null)
 				return string.Empty;
 
 			var sb = new StringBuilder(s.Length + 10);
-			sb.Append('"');
+			if (useQuotes)
+				sb.Append('"');
 			foreach (var c in s) {
 				switch (c) {
 				case '\a': sb.Append(@"\a"); break;
@@ -1397,7 +1513,8 @@ namespace dndbg.Engine {
 					break;
 				}
 			}
-			sb.Append('"');
+			if (useQuotes)
+				sb.Append('"');
 			return sb.ToString();
 		}
 

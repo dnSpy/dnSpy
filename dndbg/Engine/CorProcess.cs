@@ -201,6 +201,29 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
+		/// Reads memory from the debugged process. Returns null if we failed to read all bytes
+		/// or if <paramref name="addr"/> is null
+		/// </summary>
+		/// <param name="addr">Address</param>
+		/// <param name="size">Size</param>
+		/// <returns></returns>
+		public byte[] ReadMemory(ulong addr, int size) {
+			if (addr == 0 || size < 0)
+				return null;
+			var buf = new byte[size];
+			for (int index = 0; index < size;) {
+				int sizeRead;
+				int sizeLeft = size - index;
+				int hr = ReadMemory(addr, buf, index, sizeLeft, out sizeRead);
+				if (hr < 0 || sizeRead <= 0)
+					return null;
+				index += sizeRead;
+				addr += (ulong)sizeRead;
+			}
+			return buf;
+		}
+
+		/// <summary>
 		/// Sets the debug state of all managed threads
 		/// </summary>
 		/// <param name="state">New state</param>

@@ -200,6 +200,19 @@ namespace dndbg.Engine {
 			}
 		}
 
+		/// <summary>
+		/// Returns <see cref="System.Object"/> or null if it wasn't found in the class hierarchy.
+		/// Can only be called if this is a class or a value type but not an interface
+		/// </summary>
+		public CorType SystemObject {
+			get {
+				var t = this;
+				while (t != null && !t.IsSystemObject)
+					t = t.Base;
+				return t;
+			}
+		}
+
 		internal IMetaDataImport MetaDataImport {
 			get {
 				uint token;
@@ -406,6 +419,24 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public IEnumerable<CorPropertyInfo> GetProperties(bool checkBaseClasses = true) {
 			return MetaDataUtils.GetProperties(this, checkBaseClasses);
+		}
+
+		/// <summary>
+		/// Gets the ToString() method or null if there was an error
+		/// </summary>
+		/// <returns></returns>
+		public CorMethodInfo GetToStringMethod() {
+			return MetaDataUtils.GetToStringMethod(this);
+		}
+
+		/// <summary>
+		/// Gets the <see cref="System.Object"/>'s <c>ToString()</c> method or null if there was
+		/// an error.
+		/// </summary>
+		/// <returns></returns>
+		public CorMethodInfo GetSystemObjectToStringMethod() {
+			var t = SystemObject;
+			return t == null ? null : t.GetToStringMethod();
 		}
 
 		/// <summary>

@@ -125,6 +125,10 @@ namespace dnSpy.Debugger.Locals {
 
 		protected ValueContext context;
 
+		protected TypePrinterFlags TypePrinterFlags {
+			get { return context.LocalsOwner.TypePrinterFlags; }
+		}
+
 		internal void RefreshTypeFields() {
 			InvalidateValueObject();
 			InvalidateTypeObject();
@@ -202,13 +206,14 @@ namespace dnSpy.Debugger.Locals {
 			get { return "StatusError"; }
 		}
 
-		public static MessageValueVM CreateError(string msg) {
-			return new MessageValueVM(msg);
+		public static MessageValueVM CreateError(ValueContext context, string msg) {
+			return new MessageValueVM(context, msg);
 		}
 
 		readonly string msg;
 
-		MessageValueVM(string msg) {
+		MessageValueVM(ValueContext context, string msg) {
+			this.context = context;
 			this.msg = msg;
 		}
 
@@ -240,11 +245,11 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		protected override CachedOutput CreateCachedOutputValue() {
-			return CachedOutput.CreateConstant(info.FieldType, info.Constant, LocalsVM.TypePrinterFlags);
+			return CachedOutput.CreateConstant(info.FieldType, info.Constant, TypePrinterFlags);
 		}
 
 		protected override CachedOutput CreateCachedOutputType() {
-			return CachedOutput.Create(info.FieldType, LocalsVM.TypePrinterFlags);
+			return CachedOutput.Create(info.FieldType, TypePrinterFlags);
 		}
 
 		public override void WriteName(ITextOutput output) {
@@ -329,21 +334,21 @@ namespace dnSpy.Debugger.Locals {
 		protected abstract int GetReadOnlyCorValue(out CorValue value);
 
 		protected sealed override CachedOutput CreateCachedOutputValue() {
-			return CachedOutput.CreateValue(ReadOnlyCorValue, LocalsVM.TypePrinterFlags);
+			return CachedOutput.CreateValue(ReadOnlyCorValue, TypePrinterFlags, () => context.LocalsOwner.CreateEval(context));
 		}
 
 		protected sealed override CachedOutput CreateCachedOutputType() {
 			var value = ReadOnlyCorValue;
 			var ts = type as TypeSig;
 			if (ts != null)
-				return CachedOutput.CreateType(value, ts, context.GenericTypeArguments, context.GenericMethodArguments, LocalsVM.TypePrinterFlags);
+				return CachedOutput.CreateType(value, ts, context.GenericTypeArguments, context.GenericMethodArguments, TypePrinterFlags);
 			var ct = type as CorType;
 			if (ct != null)
-				return CachedOutput.CreateType(value, ct, LocalsVM.TypePrinterFlags);
+				return CachedOutput.CreateType(value, ct, TypePrinterFlags);
 			var cc = type as CorClass;
 			if (cc != null)
-				return CachedOutput.CreateType(value, cc, LocalsVM.TypePrinterFlags);
-			return CachedOutput.CreateType(value, LocalsVM.TypePrinterFlags);
+				return CachedOutput.CreateType(value, cc, TypePrinterFlags);
+			return CachedOutput.CreateType(value, TypePrinterFlags);
 		}
 
 		// Called only if we should keep the field/property type, i.e., should be called by
@@ -401,7 +406,7 @@ namespace dnSpy.Debugger.Locals {
 					msg = "Evaluation timed out";
 				else if (hr_ReadOnlyCorValue == ERROR_EvalDisabledTimedOut)
 					msg = EVAL_DISABLED_TIMEDOUT_ERROR_MSG;
-				Children.Add(MessageValueVM.CreateError(msg));
+				Children.Add(MessageValueVM.CreateError(context, msg));
 				WriteLazyLoading(false);
 				childrenState = null;
 				return;
@@ -431,14 +436,14 @@ namespace dnSpy.Debugger.Locals {
 					InitializeNullReference(v);
 					return;
 				}
-				v = v.DereferencedValue ?? v;
+				v = v.NeuterCheckDereferencedValue ?? v;
 			}
 			if (v.IsReference) {
 				if (v.IsNull) {
 					InitializeNullReference(v);
 					return;
 				}
-				v = v.DereferencedValue ?? v;
+				v = v.NeuterCheckDereferencedValue ?? v;
 			}
 			if (v.IsBox)
 				v = v.BoxedValue ?? v;
@@ -479,7 +484,7 @@ namespace dnSpy.Debugger.Locals {
 			childrenState = newState;
 
 			if (Children.Count == 0) {
-				if (et.GetFields().Any() || et.GetProperties().Any()) {
+				if (GetFields(et).Any() || GetProperties(et).Any()) {
 					loadChildrenDel = LoadObjectChildren;
 					WriteLazyLoading(true);
 				}
@@ -528,9 +533,9 @@ namespace dnSpy.Debugger.Locals {
 					v = nullableValue;
 			}
 			if (v != null && v.IsReference)
-				v = v.DereferencedValue;
+				v = v.NeuterCheckDereferencedValue;
 			if (v != null && v.IsReference)
-				v = v.DereferencedValue;
+				v = v.NeuterCheckDereferencedValue;
 			if (v != null && v.IsBox)
 				v = v.BoxedValue;
 			return v != null && v.IsObject ? v : null;
@@ -570,19 +575,37 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
+		IEnumerable<CorFieldInfo> GetFields(CorType et) {
+			return et.GetFields().Where(a => {
+				// VS2015 adds this to property backing store fields
+				if (context.LocalsOwner.DebuggerBrowsableAttributesCanHidePropsFields && a.DebuggerBrowsableState == DebuggerBrowsableState.Never)
+					return false;
+				// All VS compilers probably add this to all property backing store fields
+				if (context.LocalsOwner.CompilerGeneratedAttributesCanHideFields && a.CompilerGeneratedAttribute)
+					return false;
+				return true;
+            });
+		}
+
+		IEnumerable<CorPropertyInfo> GetProperties(CorType et) {
+			if (!context.LocalsOwner.DebuggerBrowsableAttributesCanHidePropsFields)
+				return et.GetProperties();
+			return et.GetProperties().Where(a => a.DebuggerBrowsableState == null || a.DebuggerBrowsableState.Value != DebuggerBrowsableState.Never);
+		}
+
 		List<ObjectValueInfo> GetObjectValueInfos(CorType et) {
 			var list = new List<ObjectValueInfo>();
 
 			var flist = new List<ObjectValueInfo>();
 			int index = 0;
-			foreach (var info in et.GetFields())
+			foreach (var info in GetFields(et))
 				flist.Add(new ObjectValueInfo(index++, info.Name, info));
 			ObjectValueInfo.SortAndMarkOverridden(flist);
 
 			var hash = new HashSet<string>(StringComparer.Ordinal);
 			var plist = new List<ObjectValueInfo>();
 			index = 0;
-			foreach (var info in et.GetProperties()) {
+			foreach (var info in GetProperties(et)) {
 				bool isVirtual = (info.GetMethodAttributes & MethodAttributes.Virtual) != 0;
 				if (isVirtual && hash.Contains(info.Name))
 					continue;
@@ -675,9 +698,9 @@ namespace dnSpy.Debugger.Locals {
 		CorValue GetArrayCorValue() {
 			var v = ReadOnlyCorValue;
 			if (v != null && v.IsReference)
-				v = v.DereferencedValue;
+				v = v.NeuterCheckDereferencedValue;
 			if (v != null && v.IsReference)
-				v = v.DereferencedValue;
+				v = v.NeuterCheckDereferencedValue;
 			return v != null && v.IsArray ? v : null;
 		}
 
@@ -686,11 +709,11 @@ namespace dnSpy.Debugger.Locals {
 			Debug.Assert(state != null);
 			var v = GetArrayCorValue();
 			if (state == null)
-				Children.Add(MessageValueVM.CreateError("State is not ArrayState"));
+				Children.Add(MessageValueVM.CreateError(context, "State is not ArrayState"));
 			else if (ReadOnlyCorValue == null)
-				Children.Add(MessageValueVM.CreateError("Array has been neutered but couldn't be recreated"));
+				Children.Add(MessageValueVM.CreateError(context, "Array has been neutered but couldn't be recreated"));
 			else if (v == null || !v.IsArray)
-				Children.Add(MessageValueVM.CreateError("Could not find the array"));
+				Children.Add(MessageValueVM.CreateError(context, "Could not find the array"));
 			else {
 				Debug.Assert(new ArrayState(v).Equals(state));
 
@@ -718,7 +741,7 @@ namespace dnSpy.Debugger.Locals {
 					Children.Add(new CorValueVM(context, holder, elemType, new ArrayElementValueType(i, state)));
 				}
 				if (state.Count != count)
-					Children.Add(MessageValueVM.CreateError("..."));
+					Children.Add(MessageValueVM.CreateError(context, "..."));
 			}
 		}
 
@@ -782,7 +805,7 @@ namespace dnSpy.Debugger.Locals {
 				return "The value has been neutered and couldn't be recreated";
 
 			if (value.IsReference && value.Type == CorElementType.ByRef) {
-				var v = value.DereferencedValue;
+				var v = value.NeuterCheckDereferencedValue;
 				if (v != null)
 					value = v;
 			}
@@ -821,7 +844,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 
 			if (value.IsReference && !parser.IsNull) {
-				var v = value.DereferencedValue;
+				var v = value.NeuterCheckDereferencedValue;
 				if (v != null && v.IsBox) {
 					v = v.BoxedValue;
 					if (v != null)
@@ -876,7 +899,7 @@ namespace dnSpy.Debugger.Locals {
 				if (value == null || value.IsNeutered)
 					return "The value has been neutered and couldn't be recreated";
 				if (value.IsReference && value.Type == CorElementType.ByRef)
-					value = value.DereferencedValue;
+					value = value.NeuterCheckDereferencedValue;
 				if (value == null || value.IsNeutered)
 					return "The value has been neutered and couldn't be recreated";
 				value.ReferenceAddress = newStringValue.ReferenceAddress;
@@ -1192,7 +1215,7 @@ namespace dnSpy.Debugger.Locals {
 			try {
 				if (IsValueType(propType)) {
 					if (v.IsReference)
-						v = v.DereferencedValue;
+						v = v.NeuterCheckDereferencedValue;
 					if (v != null && v.IsBox)
 						v = v.BoxedValue;
 					if (v == null || !v.IsGeneric)
@@ -1630,7 +1653,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		protected sealed override CachedOutput CreateCachedOutputValue() {
-			return CachedOutput.Create(type, LocalsVM.TypePrinterFlags);
+			return CachedOutput.Create(type, TypePrinterFlags);
 		}
 
 		protected sealed override CachedOutput CreateCachedOutputType() {

@@ -139,8 +139,8 @@ namespace dndbg.Engine {
 			return RawObject.GetHashCode();
 		}
 
-		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
-			new TypePrinter(output, flags).Write(this);
+		public T Write<T>(T output, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
+			new TypePrinter(output, flags, getEval).Write(this);
 			return output;
 		}
 

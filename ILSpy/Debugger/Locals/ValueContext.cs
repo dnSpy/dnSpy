@@ -22,8 +22,12 @@ using dndbg.Engine;
 
 namespace dnSpy.Debugger.Locals {
 	interface ILocalsOwner {
+		TypePrinterFlags TypePrinterFlags { get; }
+		bool DebuggerBrowsableAttributesCanHidePropsFields { get; }
+		bool CompilerGeneratedAttributesCanHideFields { get; }
 		void Refresh(NormalValueVM vm);
 		bool AskUser(string msg);
+		DnEval CreateEval(ValueContext context);
 	}
 
 	sealed class ValueContext {

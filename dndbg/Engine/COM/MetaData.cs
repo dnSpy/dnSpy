@@ -98,7 +98,7 @@ namespace dndbg.Engine.COM.MetaData {
 		[PreserveSig]
 		int GetParamProps([In] uint tk, [Out] IntPtr pmd, [Out] out uint pulSequence, [Out] IntPtr szName, [Out] uint cchName, [Out] out uint pchName, [Out] out uint pdwAttr, [Out] IntPtr pdwCPlusTypeFlag, [Out] IntPtr ppValue, [Out] IntPtr pcchValue);
 		[PreserveSig]
-		int GetCustomAttributeByName([In] uint tkObj, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, [Out] IntPtr ppData, [Out] IntPtr pcbData);
+		int GetCustomAttributeByName([In] uint tkObj, [In] [MarshalAs(UnmanagedType.LPWStr)] string szName, out IntPtr ppData, out uint pcbData);
 		bool IsValidToken([In] uint tk);
 		[PreserveSig]
 		int GetNestedClassProps([In] uint tdNestedClass, out uint ptdEnclosingClass);

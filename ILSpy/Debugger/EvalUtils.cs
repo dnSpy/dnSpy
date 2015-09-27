@@ -49,7 +49,7 @@ namespace dnSpy.Debugger {
 					return default(T);
 				if (thisObj == null || thisObj.IsNull)
 					return default(T);
-				var derefThisObj = thisObj.DereferencedValue;
+				var derefThisObj = thisObj.NeuterCheckDereferencedValue;
 				if (derefThisObj == null)
 					return default(T);
 				var cls = derefThisObj.Class;

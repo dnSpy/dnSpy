@@ -159,7 +159,7 @@ namespace dnSpy.TextView {
 			}
 		}
 
-		public TextBlock Create(bool useEllipsis = false) {
+		public TextBlock Create(bool useEllipsis = false, bool filterOutNewLines = false) {
 			var textBlockText = output.Text;
 			var tokens = output.LanguageTokens;
 			tokens.Finish();
@@ -168,7 +168,7 @@ namespace dnSpy.TextView {
 
 			int offs = 0;
 			foreach (var line in GetLines(textBlockText)) {
-				if (offs != 0)
+				if (offs != 0 && !filterOutNewLines)
 					textBlock.Inlines.Add(new LineBreak());
 				int endOffs = offs + line.Item1.Length;
 				Debug.Assert(offs <= textBlockText.Length);

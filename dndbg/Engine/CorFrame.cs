@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dndbg.Engine.COM.CorDebug;
 using dndbg.Engine.COM.MetaData;
 using dnlib.DotNet;
@@ -56,6 +57,17 @@ namespace dndbg.Engine {
 				ICorDebugChain chain;
 				int hr = obj.GetChain(out chain);
 				return hr < 0 || chain == null ? null : new CorChain(chain);
+			}
+		}
+
+		/// <summary>
+		/// true if it has been neutered
+		/// </summary>
+		public bool IsNeutered {
+			get {
+				ICorDebugChain chain;
+				int hr = obj.GetChain(out chain);
+				return hr == CordbgErrors.CORDBG_E_OBJECT_NEUTERED;
 			}
 		}
 
@@ -469,7 +481,8 @@ namespace dndbg.Engine {
 		/// Gets all argument and local types
 		/// </summary>
 		/// <param name="argTypes">Gets updated with all argument types. If there's a hidden this
-		/// parameter, it's the first type. This type can be null.</param>
+		/// parameter, it's the first type. This type can be null. If it's not null, ignore any
+		/// <see cref="ClassSig"/> since it might still be a value type</param>
 		/// <param name="localTypes">Gets updated with all local types</param>
 		/// <returns></returns>
 		public bool GetArgAndLocalTypes(out List<TypeSig> argTypes, out List<TypeSig> localTypes) {
@@ -488,7 +501,7 @@ namespace dndbg.Engine {
 			var methodSig = MetaDataUtils.GetMethodSignature(mdi, func.Token);
 			if (methodSig != null) {
 				if (methodSig.HasThis)
-					argTypes.Add(null);//TODO: Add correct 'this' type
+					argTypes.Add(GetThisType(func));
 				argTypes.AddRange(methodSig.Params);
 				if (methodSig.ParamsAfterSentinel != null)
 					argTypes.AddRange(methodSig.ParamsAfterSentinel);
@@ -502,6 +515,30 @@ namespace dndbg.Engine {
 			}
 
 			return true;
+		}
+
+		TypeSig GetThisType(CorFunction func) {
+			if (func == null)
+				return null;
+			var funcClass = func.Class;
+			var mod = funcClass == null ? null : funcClass.Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			if (mdi == null)
+				return null;
+
+			int numTypeGenArgs = MetaDataUtils.GetCountGenericParameters(mdi, funcClass.Token);
+			var genTypeArgs = this.TypeParameters.Take(numTypeGenArgs).ToArray();
+
+			var td = DebugSignatureReader.CreateTypeDef(mdi, funcClass.Token);
+			// Assume it's a class for now. The code should ignore ClassSig and just use the TypeDef
+			var sig = new ClassSig(td);
+			if (genTypeArgs.Length == 0)
+				return sig;
+
+			var genArgs = new List<TypeSig>(genTypeArgs.Length);
+			for (int i = 0; i < genTypeArgs.Length; i++)
+				genArgs.Add(new GenericVar(i));
+			return new GenericInstSig(sig, genArgs);
 		}
 
 		public static bool operator ==(CorFrame a, CorFrame b) {
@@ -529,8 +566,8 @@ namespace dndbg.Engine {
 			return RawObject.GetHashCode();
 		}
 
-		public T Write<T>(T output, TypePrinterFlags flags) where T : ITypeOutput {
-			new TypePrinter(output, flags).Write(this);
+		public T Write<T>(T output, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
+			new TypePrinter(output, flags, getEval).Write(this);
 			return output;
 		}
 

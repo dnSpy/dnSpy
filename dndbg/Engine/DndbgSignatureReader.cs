@@ -164,6 +164,10 @@ namespace dndbg.Engine {
 		public CallingConventionSig ReadSignature(IMetaDataImport mdi, byte[] data) {
 			return SignatureReader.ReadSig(new SignatureReaderHelper(mdi), corLibTypes, data);
 		}
+
+		public static TypeDef CreateTypeDef(IMetaDataImport mdi, uint rid) {
+			return new TypeDefDndbg(mdi) { Rid = rid };
+		}
 	}
 
 	interface IMetaDataImportProvider : IMDTokenProvider {

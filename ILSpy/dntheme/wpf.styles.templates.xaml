@@ -26,7 +26,7 @@
     <Geometry x:Key="UpArrow">   M 0,4 L 3.5,0 L 7,4 Z</Geometry>
     <Geometry x:Key="RightArrow">M 0,0 L 4,3.5 L 0,7 Z</Geometry>
 	<Geometry x:Key="ScrollBarRightArrow">M0,0 0,9 1,9 1,8 2,8 2,7 3,7 3,6 4,6 4,5 5,5 5,4 4,4 4,3 3,3 3,2 2,2 2,1 1,1 1,0z</Geometry>
-    <Geometry x:Key="ToolBarCheckmark"> M 0,2.5 L 2.5,5 L 7,0.5</Geometry>
+    <Geometry x:Key="Checkmark">F1M5,11L3,7 5,7 6,9 9,3 11,3 7,11 5,11z</Geometry>
 	<Geometry x:Key="ListUpArrow16x16">M4.999,8L4.999,15 10.999,15 10.999,8 14.999,8 7.999,1 1,8z</Geometry>
 	<SolidColorBrush x:Key="TransparentBrush" Color="Transparent" />
 
@@ -2254,7 +2254,6 @@
         </Setter>
     </Style>
 
-    <Geometry x:Key="Checkmark">M 0,5.1 L 1.7,5.2 L 3.4,7.1 L 8,0.4 L 9.2,0 L 3.3,10.8 Z</Geometry>
     <ControlTemplate x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type MenuItem}, ResourceId=SubmenuItemTemplateKey}"
                      TargetType="{x:Type MenuItem}">
         <Grid SnapsToDevicePixels="true">
@@ -2282,18 +2281,18 @@
                                   ContentSource="Icon"
                                   SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                 <Border x:Name="GlyphPanel"
-                        Background="{DynamicResource MenuItemGlyphPanelBackground}"
-                        BorderBrush="{DynamicResource MenuItemGlyphPanelBorderBrush}"
-                        BorderThickness="1"
-                        Margin="1"
+                        Background="{DynamicResource EnvironmentCommandBarSelectedIcon}"
+                        BorderThickness="0"
+                        Margin="3 2"
                         Visibility="Hidden"
-                        Width="22"
-                        Height="22">
+                        Width="18"
+                        Height="18">
                     <Path Name="Glyph"
-                          Width="9"
-                          Height="11"
-                          Fill="{DynamicResource MenuItemGlyphFill}"
+                          Width="16"
+                          Height="16"
+                          Fill="{DynamicResource EnvironmentCommandBarCheckBox}"
                           FlowDirection="LeftToRight"
+                          StrokeThickness="1"
                           Data="{StaticResource Checkmark}"/>
                 </Border>
                 <ContentPresenter Grid.Column="2"
@@ -2328,13 +2327,19 @@
                      Value="true">
                 <Setter TargetName="Bg"
                         Property="Fill"
-                        Value="{DynamicResource MenuItemSelectionFill}"/>
+                        Value="{DynamicResource EnvironmentCommandBarMenuItemMouseOver}"/>
                 <Setter TargetName="Bg"
                         Property="Stroke"
-                        Value="{DynamicResource MenuItemHighlightedStroke}"/>
+                        Value="{DynamicResource EnvironmentCommandBarMenuItemMouseOver}"/>
                 <Setter TargetName="InnerBorder"
                         Property="Stroke"
-                        Value="{DynamicResource MenuItemHighlightedInnerBorder}"/>
+                        Value="{DynamicResource EnvironmentCommandBarMenuItemMouseOver}"/>
+                <Setter TargetName="GlyphPanel"
+                        Property="Background"
+                        Value="{DynamicResource EnvironmentCommandBarHoverOverSelectedIcon}"/>
+                <Setter TargetName="Glyph"
+                        Property="Fill"
+                        Value="{DynamicResource EnvironmentCommandBarCheckBoxMouseOver}"/>
             </Trigger>
             <Trigger Property="IsEnabled"
                      Value="false">
@@ -2343,9 +2348,6 @@
                 <Setter TargetName="GlyphPanel"
                         Property="Background"
                         Value="{DynamicResource MenuItemDisabledGlyphPanelBackground}"/>
-                <Setter TargetName="GlyphPanel"
-                        Property="BorderBrush"
-                        Value="{DynamicResource MenuItemDisabledGlyphPanelBorderBrush}"/>
                 <Setter TargetName="Glyph"
                         Property="Fill"
                         Value="{DynamicResource MenuItemDisabledGlyphFill}"/>
@@ -2381,18 +2383,18 @@
                                   ContentSource="Icon"
                                   SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                 <Border x:Name="GlyphPanel"
-                        Background="{DynamicResource MenuItemGlyphPanelBackground}"
-                        BorderBrush="{DynamicResource MenuItemGlyphPanelBorderBrush}"
-                        BorderThickness="1"
-                        Margin="1"
+                        Background="{DynamicResource EnvironmentCommandBarSelectedIcon}"
+                        BorderThickness="0"
+                        Margin="3 2"
                         Visibility="Hidden"
-                        Width="22"
-                        Height="22">
+                        Width="18"
+                        Height="18">
                     <Path Name="Glyph"
-                          Width="9"
-                          Height="11"
-                          Fill="{DynamicResource MenuItemGlyphFill}"
+                          Width="16"
+                          Height="16"
+                          Fill="{DynamicResource EnvironmentCommandBarCheckBox}"
                           FlowDirection="LeftToRight"
+                          StrokeThickness="1"
                           Data="{StaticResource Checkmark}"/>
                 </Border>
                 <ContentPresenter Grid.Column="2"
@@ -2504,10 +2506,19 @@
                      Value="true">
                 <Setter TargetName="Bg"
                         Property="Fill"
-                        Value="{DynamicResource MenuItemSelectionFill}"/>
+                        Value="{DynamicResource EnvironmentCommandBarMenuItemMouseOver}"/>
                 <Setter TargetName="Bg"
                         Property="Stroke"
-                        Value="{DynamicResource MenuItemHighlightedStroke}"/>
+                        Value="{DynamicResource EnvironmentCommandBarMenuItemMouseOver}"/>
+                <Setter TargetName="InnerBorder"
+                        Property="Stroke"
+                        Value="{DynamicResource EnvironmentCommandBarMenuItemMouseOver}"/>
+                <Setter TargetName="GlyphPanel"
+                        Property="Background"
+                        Value="{DynamicResource EnvironmentCommandBarHoverOverSelectedIcon}"/>
+                <Setter TargetName="Glyph"
+                        Property="Fill"
+                        Value="{DynamicResource EnvironmentCommandBarCheckBoxMouseOver}"/>
             </Trigger>
             <Trigger Property="IsEnabled"
                      Value="false">
@@ -2516,9 +2527,6 @@
                 <Setter TargetName="GlyphPanel"
                         Property="Background"
                         Value="{DynamicResource MenuItemDisabledGlyphPanelBackground}"/>
-                <Setter TargetName="GlyphPanel"
-                        Property="BorderBrush"
-                        Value="{DynamicResource MenuItemDisabledGlyphPanelBorderBrush}"/>
                 <Setter TargetName="Glyph"
                         Property="Fill"
                         Value="{DynamicResource MenuItemDisabledGlyphFill}"/>
@@ -3919,19 +3927,20 @@
                                                   ContentSource="Icon"
                                                   SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                                 <Border Name="GlyphPanel"
-                                        Margin="0"
-                                        Width="20"
-                                        Height="20"
+                                        Margin="3 2"
+                                        Width="18"
+                                        Height="18"
                                         Visibility="Hidden"
-                                        BorderBrush="{DynamicResource ToolBarButtonHoverBorder}"
-                                        Background="{DynamicResource ToolBarMenuCheckFill}"
-                                        BorderThickness="1">
-                                    <Path VerticalAlignment="Center"
+                                        Background="{DynamicResource EnvironmentCommandBarSelectedIcon}"
+                                        BorderThickness="0">
+                                    <Path Name="GlyphPanelPath"
+                                          VerticalAlignment="Center"
                                           HorizontalAlignment="Center"
                                           FlowDirection="LeftToRight"
-                                          Stroke="{TemplateBinding Foreground}"
-                                          StrokeThickness="1.2"
-                                          Data="{StaticResource ToolBarCheckmark}"/>
+                                          Fill="{DynamicResource EnvironmentCommandBarCheckBox}"
+                                          StrokeThickness="1"
+                                          Width="16" Height="16"
+                                          Data="{StaticResource Checkmark}"/>
                                 </Border>
 
                                 <ContentPresenter Grid.Column="1"
@@ -3966,16 +3975,16 @@
                                          Value="true">
                                     <Setter TargetName="Border"
                                             Property="BorderBrush"
-                                            Value="{DynamicResource ToolBarButtonHover}"/>
+                                            Value="{DynamicResource EnvironmentCommandBarMenuItemMouseOver}"/>
                                     <Setter TargetName="Border"
                                             Property="Background"
-                                            Value="{DynamicResource ToolBarButtonHover}"/>
-                                    <Setter TargetName="GlyphPanel"
-                                            Property="BorderBrush"
-                                            Value="{DynamicResource ToolBarButtonPressedBorder}"/>
+                                            Value="{DynamicResource EnvironmentCommandBarMenuItemMouseOver}"/>
                                     <Setter TargetName="GlyphPanel"
                                             Property="Background"
-                                            Value="{DynamicResource ToolBarDarkFill}"/>
+                                            Value="{DynamicResource EnvironmentCommandBarHoverOverSelectedIcon}"/>
+                                    <Setter TargetName="GlyphPanelPath"
+                                            Property="Fill"
+                                            Value="{DynamicResource EnvironmentCommandBarCheckBoxMouseOver}"/>
                                 </Trigger>
                                 <Trigger Property="IsEnabled"
                                          Value="false">
@@ -4012,9 +4021,10 @@
                                                   Visibility="Collapsed"
                                                   VerticalAlignment="Center"
                                                   FlowDirection="LeftToRight"
-                                                  Stroke="{TemplateBinding Foreground}"
-                                                  StrokeThickness="1.2"
-                                                  Data="{StaticResource ToolBarCheckmark}"/>
+                                                  Fill="{TemplateBinding Foreground}"
+                                                  StrokeThickness="1"
+                                                  Width="16" Height="16"
+                                                  Data="{StaticResource Checkmark}"/>
                                             <ContentPresenter ContentSource="Header"
                                                               Margin="{TemplateBinding Padding}"
                                                               RecognizesAccessKey="True"
@@ -4154,8 +4164,8 @@
                             <Setter.Value>
                                 <ControlTemplate TargetType="{x:Type MenuItem}">
                                     <Border Name="Border"
-                                            Background="{TemplateBinding Background}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            Background="Red"
+                                            BorderBrush="Blue"
                                             BorderThickness="1"
                                             SnapsToDevicePixels="true">
                                         <DockPanel>
@@ -4169,9 +4179,10 @@
                                                   Visibility="Collapsed"
                                                   VerticalAlignment="Center"
                                                   FlowDirection="LeftToRight"
-                                                  Stroke="{TemplateBinding Foreground}"
-                                                  StrokeThickness="1.2"
-                                                  Data="{StaticResource ToolBarCheckmark}"/>
+                                                  Fill="{TemplateBinding Foreground}"
+                                                  StrokeThickness="1"
+                                                  Width="16" Height="16"
+                                                  Data="{StaticResource Checkmark}"/>
                                             <ContentPresenter ContentSource="Header"
                                                               Margin="{TemplateBinding Padding}"
                                                               RecognizesAccessKey="True"
@@ -4247,19 +4258,20 @@
                                                           ContentSource="Icon"
                                                           SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                                         <Border Name="GlyphPanel"
-                                                Margin="0"
-                                                Width="20"
-                                                Height="20"
+                                                Margin="3 2"
+                                                Width="18"
+                                                Height="18"
                                                 Visibility="Hidden"
-                                                BorderBrush="{DynamicResource ToolBarButtonHoverBorder}"
-                                                Background="{DynamicResource ToolBarMenuCheckFill}"
-                                                BorderThickness="1">
-                                            <Path VerticalAlignment="Center"
+                                                Background="{DynamicResource EnvironmentCommandBarSelectedIcon}"
+                                                BorderThickness="0">
+                                            <Path Name="GlyphPanelPath"
+                                                  VerticalAlignment="Center"
                                                   HorizontalAlignment="Center"
                                                   FlowDirection="LeftToRight"
-                                                  Stroke="{TemplateBinding Foreground}"
-                                                  StrokeThickness="1.2"
-                                                  Data="{StaticResource ToolBarCheckmark}"/>
+                                                  Fill="{DynamicResource EnvironmentCommandBarCheckBox}"
+                                                  StrokeThickness="1"
+                                                  Width="16" Height="16"
+                                                  Data="{StaticResource Checkmark}"/>
                                         </Border>
                                         <ContentPresenter Grid.Column="1"
                                                           ContentSource="Header"
@@ -4342,16 +4354,16 @@
                                                  Value="true">
                                             <Setter TargetName="Border"
                                                     Property="BorderBrush"
-                                                    Value="{DynamicResource ToolBarButtonHoverBorder}"/>
+                                                    Value="{DynamicResource EnvironmentCommandBarMenuItemMouseOver}"/>
                                             <Setter TargetName="Border"
                                                     Property="Background"
-                                                    Value="{DynamicResource ToolBarButtonHover}"/>
-                                            <Setter TargetName="GlyphPanel"
-                                                    Property="BorderBrush"
-                                                    Value="{DynamicResource ToolBarButtonPressedBorder}"/>
+                                                    Value="{DynamicResource EnvironmentCommandBarMenuItemMouseOver}"/>
                                             <Setter TargetName="GlyphPanel"
                                                     Property="Background"
-                                                    Value="{DynamicResource ToolBarDarkFill}"/>
+                                                    Value="{DynamicResource EnvironmentCommandBarHoverOverSelectedIcon}"/>
+                                            <Setter TargetName="GlyphPanelPath"
+                                                    Property="Fill"
+                                                    Value="{DynamicResource EnvironmentCommandBarCheckBoxMouseOver}"/>
                                         </Trigger>
                                         <Trigger SourceName="PART_Popup"
                                                   Property="Popup.HasDropShadow"

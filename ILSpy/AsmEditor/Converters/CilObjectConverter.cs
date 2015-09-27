@@ -40,7 +40,7 @@ namespace dnSpy.AsmEditor.Converters {
 
 				var gen = new SimpleHighlighter();
 				BodyUtils.WriteObject(gen.TextOutput, value, flags);
-				return gen.Create(true);
+				return gen.Create(true, true);
 			}
 			catch (Exception ex) {
 				Debug.Fail(ex.ToString());

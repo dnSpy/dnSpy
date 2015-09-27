@@ -353,7 +353,10 @@ namespace dnSpy.Debugger.Locals {
 					bytes = GetBytes(value);
 					return null;
 				}
-				break;
+				return null;
+
+			case CorElementType.Class:
+				return null;
 
 			case CorElementType.I:
 			case CorElementType.U:

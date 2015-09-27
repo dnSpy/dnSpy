@@ -37,8 +37,8 @@ namespace dndbg.Engine {
 			this.IsValueValid = true;
 		}
 
-		public T Write<T>(T output, CorValue value, TypePrinterFlags flags) where T : ITypeOutput {
-			new TypePrinter(output, flags).Write(value, this);
+		public T Write<T>(T output, CorValue value, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
+			new TypePrinter(output, flags, getEval).Write(value, this);
 			return output;
 		}
 
@@ -87,7 +87,7 @@ namespace dndbg.Engine {
 			if (value.IsReference && value.Type == CorElementType.ByRef) {
 				if (value.IsNull)
 					return new CorValueResult(null);
-				value = value.DereferencedValue;
+				value = value.NeuterCheckDereferencedValue;
 				if (value == null)
 					return new CorValueResult();
 			}
@@ -99,7 +99,7 @@ namespace dndbg.Engine {
 						return new CorValueResult((uint)value.ReferenceAddress);
 					return new CorValueResult(value.ReferenceAddress);
 				}
-				value = value.DereferencedValue;
+				value = value.NeuterCheckDereferencedValue;
 				if (value == null)
 					return new CorValueResult();
 			}
@@ -107,11 +107,6 @@ namespace dndbg.Engine {
 				value = value.BoxedValue;
 				if (value == null)
 					return new CorValueResult();
-				var type = value.ExactType;
-				if (type == null)
-					return new CorValueResult();
-				var vres = GetSimpleResult(value, type.TryGetPrimitiveType, type);
-				return vres ?? new CorValueResult();
 			}
 			if (value.IsReference)
 				return new CorValueResult();
@@ -122,8 +117,11 @@ namespace dndbg.Engine {
 			if (value.IsString)
 				return new CorValueResult(value.String);
 
-			var res = GetSimpleResult(value, value.Type, value.ExactType);
-			return res ?? new CorValueResult();
+			var type = value.ExactType;
+			if (type == null)
+				return new CorValueResult();
+			var vres = GetSimpleResult(value, type.TryGetPrimitiveType, type);
+			return vres ?? new CorValueResult();
 		}
 
 		static CorValueResult? GetSimpleResult(CorValue value, CorElementType etype, CorType type) {
@@ -297,29 +295,13 @@ namespace dndbg.Engine {
 		}
 
 		static CorValueResult? GetNullableResult(CorValue value) {
-			TokenAndName hasValueInfo, valueInfo;
-			if (!Utils.GetSystemNullableFields(value.ExactType, out hasValueInfo, out valueInfo))
+			CorValue nullableValue;
+			if (!value.GetNullableValue(out nullableValue))
 				return null;
-			var type = value.ExactType;
-			if (type == null)
-				return null;
-			var cls = type.Class;
-			if (cls == null)
-				return null;
-
-			var hasValueValue = value.GetFieldValue(cls, hasValueInfo.Token);
-			if (hasValueValue == null)
-				return null;
-			var hasValueRes = hasValueValue.Value;
-			if (!hasValueRes.IsValueValid || !(hasValueRes.Value is bool))
-				return null;
-			if (!(bool)hasValueRes.Value)
+			if (nullableValue == null)
 				return new CorValueResult(null);
 
-			var valueValue = value.GetFieldValue(cls, valueInfo.Token);
-			if (valueValue == null)
-				return null;
-			var valueRes = valueValue.Value;
+			var valueRes = nullableValue.Value;
 			if (!valueRes.IsValueValid)
 				return null;
 			return valueRes;

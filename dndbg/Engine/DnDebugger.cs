@@ -130,9 +130,26 @@ namespace dndbg.Engine {
 			get { return processes.GetAll().Any(p => p.WasAttached); }
 		}
 
+		public bool IsDebuggeeV1 {
+			get { return debuggeeVersion.StartsWith("v1.", StringComparison.OrdinalIgnoreCase); }
+		}
+
+		public bool IsDebuggeeV2 {
+			get { return debuggeeVersion.StartsWith("v2.", StringComparison.OrdinalIgnoreCase); }
+		}
+
+		public bool IsDebuggeeV4 {
+			get { return debuggeeVersion.StartsWith("v4.", StringComparison.OrdinalIgnoreCase); }
+		}
+
+		public string DebuggeeVersion {
+			get { return debuggeeVersion; }
+		}
+		readonly string debuggeeVersion;
+
 		readonly int debuggerManagedThreadId;
 
-		DnDebugger(ICorDebug corDebug, DebugOptions debugOptions, IDebugMessageDispatcher debugMessageDispatcher) {
+		DnDebugger(ICorDebug corDebug, DebugOptions debugOptions, IDebugMessageDispatcher debugMessageDispatcher, string debuggeeVersion) {
 			if (debugMessageDispatcher == null)
 				throw new ArgumentNullException("debugMessageDispatcher");
 			this.debuggerManagedThreadId = Thread.CurrentThread.ManagedThreadId;
@@ -140,6 +157,7 @@ namespace dndbg.Engine {
 			this.debugMessageDispatcher = debugMessageDispatcher;
 			this.corDebug = corDebug;
 			this.debugOptions = debugOptions ?? new DebugOptions();
+			this.debuggeeVersion = debuggeeVersion ?? string.Empty;
 
 			corDebug.Initialize();
 			corDebug.SetManagedHandler(new CorDebugManagedCallback(this));
@@ -962,7 +980,7 @@ namespace dndbg.Engine {
 				throw new ArgumentException("DebugMessageDispatcher is null");
 
 			var debuggeeVersion = options.DebuggeeVersion ?? DebuggeeVersionDetector.GetVersion(options.Filename);
-			var dbg = new DnDebugger(CreateCorDebug(debuggeeVersion), options.DebugOptions, options.DebugMessageDispatcher);
+			var dbg = new DnDebugger(CreateCorDebug(debuggeeVersion), options.DebugOptions, options.DebugMessageDispatcher, debuggeeVersion);
 			if (options.BreakProcessType != BreakProcessType.None)
 				new BreakProcessHelper(dbg, options.BreakProcessType, options.Filename);
 			dbg.CreateProcess(options);
@@ -1013,7 +1031,7 @@ namespace dndbg.Engine {
 			var clsid = new Guid("DF8395B5-A4BA-450B-A77C-A9A47762C520");
 			var riid = typeof(ICorDebug).GUID;
 			var corDebug = (ICorDebug)rtInfo.GetInterface(ref clsid, ref riid);
-			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher);
+			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher, options.DebuggeeVersion);
 			ICorDebugProcess comProcess;
 			corDebug.DebugActiveProcess(options.ProcessId, 0, out comProcess);
 			var dnProcess = dbg.TryAdd(comProcess);

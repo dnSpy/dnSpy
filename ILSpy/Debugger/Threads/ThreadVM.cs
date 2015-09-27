@@ -142,7 +142,7 @@ namespace dnSpy.Debugger.Threads {
 		bool HasValidThreadObject {
 			get {
 				var obj = thread.CorThread.Object;
-				return obj != null && !obj.IsNull && obj.DereferencedValue != null;
+				return obj != null && !obj.IsNull && obj.NeuterCheckDereferencedValue != null;
 			}
 		}
 

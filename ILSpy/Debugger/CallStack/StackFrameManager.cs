@@ -72,23 +72,40 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+			var oldState = currentState;
 			currentState = new CurrentState();
 			var dbg = (DnDebugger)sender;
 			switch (DebugManager.Instance.ProcessState) {
 			case DebuggerProcessState.Starting:
+				savedEvalState = null;
+				break;
+
 			case DebuggerProcessState.Running:
+				if (dbg.IsEvaluating && savedEvalState == null)
+					savedEvalState = oldState;
+				if (!dbg.IsEvaluating)
+					ClearStackFrameLines();
 				break;
 
 			case DebuggerProcessState.Stopped:
 				if (dbg.IsEvaluating)
 					break;
-				currentState.Thread = DebugManager.Instance.Debugger.Current.Thread;
-				SelectedFrameNumber = 0;
+
+				// Don't update the selected thread if we just evaluated something
+				if (UpdateState(savedEvalState)) {
+					currentState.Thread = DebugManager.Instance.Debugger.Current.Thread;
+					SelectedFrameNumber = 0;
+				}
+				else
+					currentState = savedEvalState;
+				savedEvalState = null;
+
 				foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
 					UpdateStackFrameLines(textView, false);
 				break;
 
 			case DebuggerProcessState.Terminated:
+				savedEvalState = null;
 				ClearStackFrameLines();
 				break;
 
@@ -98,6 +115,18 @@ namespace dnSpy.Debugger.CallStack {
 
 			if (StackFramesUpdated != null)
 				StackFramesUpdated(this, new StackFramesUpdatedEventArgs(dbg));
+		}
+		CurrentState savedEvalState;
+
+		bool UpdateState(CurrentState state) {
+			if (state == null)
+				return true;
+			if (state.Thread == null)
+				return true;
+			if (!state.Thread.Process.Threads.Contains(state.Thread))
+				return true;
+
+			return false;
 		}
 
 		void DebugManager_ProcessRunning(object sender, EventArgs e) {

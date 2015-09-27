@@ -40,6 +40,8 @@ ESC			| (Text view) Remove selected markers or close search box
 Backspace	| Navigate back in history
 Alt+Left Arrow | Navigate back in history
 Alt+Right Arrow | Navigate forward in history
+F5			| (Debugger) Debug an assembly
+Ctrl+F5		| (Debugger) Start without debugging
 F5			| (Debugger) Continue debugging
 Shift+F5	| (Debugger) Stop debugging
 Ctrl+Shift+F5 | (Debugger) Restart debugged program

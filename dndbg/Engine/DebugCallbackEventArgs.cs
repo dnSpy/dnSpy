@@ -923,7 +923,9 @@ namespace dndbg.Engine {
 			get { return Thread == null ? null : new CorThread(Thread); }
 		}
 
-		//TODO: CorMDA prop
+		public CorMDA CorMDA {
+			get { return MDA == null ? null : new CorMDA(MDA); }
+		}
 
 		public MDANotificationDebugCallbackEventArgs(ICorDebugController pController, ICorDebugThread pThread, ICorDebugMDA pMDA)
 			: base(pController) {

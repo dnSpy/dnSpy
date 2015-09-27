@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -90,6 +91,10 @@ namespace dnSpy.Debugger {
 
 		public ICommand DebugAssemblyCommand {
 			get { return new RelayCommand(a => DebugAssembly(), a => CanDebugAssembly); }
+		}
+
+		public ICommand StartWithoutDebuggingCommand {
+			get { return new RelayCommand(a => StartWithoutDebugging(), a => CanStartWithoutDebugging); }
 		}
 
 		public ICommand AttachCommand {
@@ -471,17 +476,17 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool CanDebugCurrentAssembly(object parameter) {
-			return GetCurrentAssembly(parameter as ContextMenuEntryContext) != null;
+			return GetCurrentExecutableAssembly(parameter as ContextMenuEntryContext) != null;
 		}
 
 		public void DebugCurrentAssembly(object parameter) {
-			var asm = GetCurrentAssembly(parameter as ContextMenuEntryContext);
+			var asm = GetCurrentExecutableAssembly(parameter as ContextMenuEntryContext);
 			if (asm == null)
 				return;
 			DebugAssembly(GetDebugAssemblyOptions(CreateDebugProcessVM(asm)));
 		}
 
-		internal LoadedAssembly GetCurrentAssembly(ContextMenuEntryContext context) {
+		internal LoadedAssembly GetCurrentExecutableAssembly(ContextMenuEntryContext context) {
 			if (context == null)
 				return null;
 			if (IsDebugging)
@@ -504,20 +509,51 @@ namespace dnSpy.Debugger {
 			else
 				return null;
 
+			return GetCurrentExecutableAssembly(node, true);
+		}
+
+		LoadedAssembly GetCurrentExecutableAssembly(SharpTreeNode node, bool mustBeNetExe) {
 			var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
 			if (asmNode == null)
 				return null;
 
 			var loadedAsm = asmNode.LoadedAssembly;
-			var mod = loadedAsm.ModuleDefinition;
-			if (mod == null)
+			var peImage = loadedAsm.PEImage;
+			if (peImage == null)
 				return null;
-			if (mod.Assembly == null || mod.Assembly.ManifestModule != mod)
+			if ((peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) != 0)
 				return null;
-			if (mod.ManagedEntryPoint == null && mod.NativeEntryPoint == 0)
-				return null;
+			if (mustBeNetExe) {
+				var mod = loadedAsm.ModuleDefinition;
+				if (mod == null)
+					return null;
+				if (mod.Assembly == null || mod.Assembly.ManifestModule != mod)
+					return null;
+				if (mod.ManagedEntryPoint == null && mod.NativeEntryPoint == 0)
+					return null;
+			}
 
 			return loadedAsm;
+		}
+
+		LoadedAssembly GetCurrentExecutableAssembly(bool mustBeNetExe) {
+			return GetCurrentExecutableAssembly(MainWindow.Instance.treeView.SelectedItem as SharpTreeNode, mustBeNetExe);
+		}
+
+		public bool CanStartWithoutDebugging {
+			get { return !IsDebugging && GetCurrentExecutableAssembly(false) != null; }
+		}
+
+		public void StartWithoutDebugging() {
+			var asm = GetCurrentExecutableAssembly(false);
+			if (asm == null || !File.Exists(asm.FileName))
+				return;
+			try {
+				Process.Start(asm.FileName);
+			}
+			catch (Exception ex) {
+				MainWindow.Instance.ShowMessageBox(string.Format("Could not start '{0}'\n:ERROR: {0}", asm.FileName, ex.Message));
+			}
 		}
 
 		DebugProcessVM CreateDebugProcessVM(LoadedAssembly asm = null) {
@@ -543,13 +579,9 @@ namespace dnSpy.Debugger {
 				return;
 			DebugProcessVM vm = null;
 			if (vm == null) {
-				var asm = ILSpyTreeNode.GetNode<AssemblyTreeNode>(MainWindow.Instance.treeView.SelectedItem as ILSpyTreeNode);
-				if (asm != null) {
-					var loadedAsm = asm.LoadedAssembly;
-					var mod = loadedAsm == null ? null : loadedAsm.ModuleDefinition;
-					if (mod != null && (mod.Characteristics & Characteristics.Dll) == 0)
-						vm = CreateDebugProcessVM(loadedAsm);
-				}
+				var asm = GetCurrentExecutableAssembly(true);
+				if (asm != null)
+					vm = CreateDebugProcessVM(asm);
 			}
 			if (vm == null)
 				vm = lastDebugProcessVM ?? CreateDebugProcessVM();

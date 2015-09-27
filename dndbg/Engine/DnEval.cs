@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dndbg.Engine.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -110,6 +111,24 @@ namespace dndbg.Engine {
 			return eval.CreateValue(CorElementType.Class);
 		}
 
+		public CorValue Box(CorValue value) {
+			Debug.Assert(value != null && value.IsGeneric && !value.IsBox && !value.IsHeap && value.ExactType.IsValueType);
+			if (value == null || !value.IsGeneric || value.IsBox || value.IsHeap || !value.ExactType.IsValueType)
+				return value;
+			var res = WaitForResult(eval.NewParameterizedObjectNoConstructor(value.ExactType.Class, value.ExactType.TypeParameters.ToArray()));
+			if (res == null || res.Value.WasException)
+				return null;
+			var newObj = res.Value.ResultOrException;
+			var r = newObj.NeuterCheckDereferencedValue;
+			var vb = r == null ? null : r.BoxedValue;
+			if (vb == null)
+				return null;
+			int hr = vb.WriteGenericValue(value.ReadGenericValue());
+			if (hr < 0)
+				return null;
+			return newObj;
+		}
+
 		public CorValueResult CallResult(CorFunction func, CorValue[] args) {
 			return CallResult(func, null, args);
 		}
@@ -141,16 +160,14 @@ namespace dndbg.Engine {
 		}
 
 		public EvalResult? Call(CorFunction func, CorType[] typeArgs, CorValue[] args, out int hr) {
-			hr = eval.CallParameterizedFunction(func, typeArgs, args);
-			if (hr < 0)
-				return null;
-			InitializeStartTime();
-
-			return SyncWait();
+			return WaitForResult(hr = eval.CallParameterizedFunction(func, typeArgs, args));
 		}
 
 		public EvalResult? CreateString(string s, out int hr) {
-			hr = eval.NewString(s);
+			return WaitForResult(hr = eval.NewString(s));
+		}
+
+		EvalResult? WaitForResult(int hr) {
 			if (hr < 0)
 				return null;
 			InitializeStartTime();
@@ -226,7 +243,7 @@ namespace dndbg.Engine {
 
 			var now = DateTime.UtcNow;
 			if (now >= endTime)
-				throw new TimeoutException("Evaluation timed out");
+				now = endTime;
 			var timeLeft = endTime - now;
 
 			var infos = new ThreadInfos(thread, SuspendOtherThreads);

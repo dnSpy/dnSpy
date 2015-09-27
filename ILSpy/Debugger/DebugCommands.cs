@@ -51,7 +51,7 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Debug an Executable", ToolbarIconText = "Start", ToolbarIcon = "StartDebugging", ToolbarCategory = "Debug1", ToolbarOrder = 6000)]
+	[ExportToolbarCommand(ToolTip = "Debug an Assembly (F5)", ToolbarIconText = "Start", ToolbarIcon = "StartDebugging", ToolbarCategory = "Debug1", ToolbarOrder = 6000)]
 	sealed class DebugAssemblyToolbarCommand : ToolbarDebugCommand {
 		public DebugAssemblyToolbarCommand()
 			: base(DebugRoutedCommands.DebugAssembly) {
@@ -145,14 +145,14 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Debug Assembly", Icon = "StartDebugging", Order = 200, Category = "Debug")]
+	[ExportContextMenuEntry(Header = "_Debug Assembly", Icon = "StartDebugging", Order = 200, InputGestureText = "F5", Category = "Debug")]
 	sealed class DebugAssemblyDebugCtxMenuCommand : DebugCtxMenuCommand {
 		public DebugAssemblyDebugCtxMenuCommand()
 			: base(DebugRoutedCommands.DebugCurrentAssembly) {
 		}
 
 		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
-			var asm = DebugManager.Instance.GetCurrentAssembly(context);
+			var asm = DebugManager.Instance.GetCurrentExecutableAssembly(context);
 			if (asm == null)
 				return;
 			menuItem.Header = string.Format("_Debug {0}", UIUtils.EscapeMenuItemHeader(asm.ShortName));
@@ -231,14 +231,21 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "StartDebugging", MenuCategory = "Start", MenuHeader = "Debug an Assembl_y…", MenuOrder = 5000)]
+	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "StartDebugging", MenuCategory = "Start", MenuHeader = "Debug an Assembl_y…", MenuInputGestureText = "F5", MenuOrder = 5000)]
 	sealed class DebugAssemblyDebugMainMenuCommand : DebugMainMenuCommand {
 		public DebugAssemblyDebugMainMenuCommand()
 			: base(DebugRoutedCommands.DebugAssembly, false) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "Process", MenuCategory = "Start", MenuHeader = "Attach to _Process…", MenuInputGestureText = "Ctrl+Alt+P", MenuOrder = 5010)]
+	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "StartWithoutDebugging", MenuCategory = "Start", MenuHeader = "Start Wit_hout Debugging", MenuInputGestureText = "Ctrl+F5", MenuOrder = 5010)]
+	sealed class StartWithoutDegbuggingDebugMainMenuCommand : DebugMainMenuCommand {
+		public StartWithoutDegbuggingDebugMainMenuCommand()
+			: base(DebugRoutedCommands.StartWithoutDebugging, false) {
+		}
+	}
+
+	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "Process", MenuCategory = "Start", MenuHeader = "Attach to _Process…", MenuInputGestureText = "Ctrl+Alt+P", MenuOrder = 5020)]
 	sealed class AttachDebugMainMenuCommand : DebugMainMenuCommand {
 		public AttachDebugMainMenuCommand()
 			: base(DebugRoutedCommands.Attach, false) {

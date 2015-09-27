@@ -59,6 +59,7 @@
     <Compile Include="Engine\CorFrame.cs" />
     <Compile Include="Engine\CorFunction.cs" />
     <Compile Include="Engine\CorFunctionBreakpoint.cs" />
+    <Compile Include="Engine\CorMDA.cs" />
     <Compile Include="Engine\CorModule.cs" />
     <Compile Include="Engine\CorProcess.cs" />
     <Compile Include="Engine\CorStepper.cs" />

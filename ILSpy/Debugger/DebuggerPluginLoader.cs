@@ -38,6 +38,7 @@ namespace dnSpy.Debugger {
 		void InstallRoutedCommands() {
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DebugCurrentAssembly, DebugManager.Instance.DebugCurrentAssemblyCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DebugAssembly, DebugManager.Instance.DebugAssemblyCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.StartWithoutDebugging, DebugManager.Instance.StartWithoutDebuggingCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.Attach, DebugManager.Instance.AttachCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.Break, DebugManager.Instance.BreakCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.Restart, DebugManager.Instance.RestartCommand);
@@ -59,9 +60,13 @@ namespace dnSpy.Debugger {
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowThreads, Threads.ThreadsControlCreator.ThreadsControlInstance.ShowCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowModules, Modules.ModulesControlCreator.ModulesControlInstance.ShowCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowLocals, Locals.LocalsControlCreator.LocalsControlInstance.ShowCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.Continue, DebugManager.Instance.DebugAssemblyCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.StepInto, DebugManager.Instance.DebugAssemblyCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.StepOver, DebugManager.Instance.DebugAssemblyCommand);
 		}
 
 		void InstallKeyboardShortcutCommands() {
+			AddCommand(MainWindow.Instance, DebugRoutedCommands.StartWithoutDebugging, ModifierKeys.Control, Key.F5);
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.Attach, ModifierKeys.Control | ModifierKeys.Alt, Key.P);
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.Break, ModifierKeys.Control, Key.Cancel);
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.Restart, ModifierKeys.Control | ModifierKeys.Shift, Key.F5);

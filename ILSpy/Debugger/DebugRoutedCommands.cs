@@ -24,6 +24,7 @@ namespace dnSpy.Debugger {
 		public static readonly RoutedCommand DebugCurrentAssembly = new RoutedCommand("DebugCurrentAssembly", typeof(DebugRoutedCommands));
 		public static readonly RoutedCommand DebugAssembly = new RoutedCommand("DebugAssembly", typeof(DebugRoutedCommands));
 		public static readonly RoutedCommand Attach = new RoutedCommand("Attach", typeof(DebugRoutedCommands));
+		public static readonly RoutedCommand StartWithoutDebugging = new RoutedCommand("StartWithoutDebugging", typeof(DebugRoutedCommands));
 
 		public static readonly RoutedCommand Break = new RoutedCommand("Break", typeof(DebugRoutedCommands));
 		public static readonly RoutedCommand Restart = new RoutedCommand("Restart", typeof(DebugRoutedCommands));

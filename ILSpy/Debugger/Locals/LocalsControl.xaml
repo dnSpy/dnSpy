@@ -68,7 +68,7 @@
                                 <Border BorderBrush="{DynamicResource EnvironmentCommandBarMenuSeparator}"
                                         BorderThickness="0 0 1 1"
                                         Margin="-8 0">
-                                    <local:EditValueControl Margin="6 0" ReadOnlyContent="{Binding ValueObject, Mode=OneWay, Converter={StaticResource localColumnConverter}, ConverterParameter=Value}" />
+                                    <local:EditValueControl Margin="8 0 4 0" ReadOnlyContent="{Binding ValueObject, Mode=OneWay, Converter={StaticResource localColumnConverter}, ConverterParameter=Value}" />
                                 </Border>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
