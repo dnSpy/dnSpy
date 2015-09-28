@@ -248,7 +248,6 @@ namespace dndbg.Engine {
 
 			var infos = new ThreadInfos(thread, SuspendOtherThreads);
 			object dispResult;
-			var oldThreadState = thread.State;
 			debugger.DebugCallbackEvent += Debugger_DebugCallbackEvent;
 			bool timedOut;
 			try {
@@ -267,6 +266,8 @@ namespace dndbg.Engine {
 								debugMessageDispatcher.DispatchQueue(TimeSpan.FromMilliseconds(RUDE_ABORT_TIMEOUT_MS), out timedOutTmp);
 						}
 					}
+					hr = debugger.TryBreakProcesses();
+					Debug.WriteLineIf(hr != 0, string.Format("Eval timed out and TryBreakProcesses() failed: hr=0x{0:X8}", hr));
 					evalTimedOut = true;
 					throw new TimeoutException();
 				}
