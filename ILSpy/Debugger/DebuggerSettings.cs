@@ -212,6 +212,17 @@ namespace dnSpy.Debugger {
 		}
 		bool compilerGeneratedAttributesCanHideFields;
 
+		public bool DisableManagedDebuggerDetection {
+			get { return disableManagedDebuggerDetection; }
+			set {
+				if (disableManagedDebuggerDetection != value) {
+					disableManagedDebuggerDetection = value;
+					OnPropertyChanged("DisableManagedDebuggerDetection");
+				}
+			}
+		}
+		bool disableManagedDebuggerDetection;
+
 		const string SETTINGS_NAME = "DebuggerSettings";
 
 		void Load() {
@@ -239,6 +250,7 @@ namespace dnSpy.Debugger {
 			UseStringConversionFunction = (bool?)csx.Attribute("UseStringConversionFunction") ?? true;
 			DebuggerBrowsableAttributesCanHidePropsFields = (bool?)csx.Attribute("DebuggerBrowsableAttributesCanHidePropsFields") ?? true;
 			CompilerGeneratedAttributesCanHideFields = (bool?)csx.Attribute("CompilerGeneratedAttributesCanHideFields") ?? true;
+			DisableManagedDebuggerDetection = (bool?)csx.Attribute("DisableManagedDebuggerDetection") ?? true;
 		}
 
 		void Save() {
@@ -272,6 +284,7 @@ namespace dnSpy.Debugger {
 			csx.SetAttributeValue("UseStringConversionFunction", UseStringConversionFunction);
 			csx.SetAttributeValue("DebuggerBrowsableAttributesCanHidePropsFields", DebuggerBrowsableAttributesCanHidePropsFields);
 			csx.SetAttributeValue("CompilerGeneratedAttributesCanHideFields", CompilerGeneratedAttributesCanHideFields);
+			csx.SetAttributeValue("DisableManagedDebuggerDetection", DisableManagedDebuggerDetection);
 		}
 
 		public DebuggerSettings CopyTo(DebuggerSettings other) {
@@ -287,6 +300,7 @@ namespace dnSpy.Debugger {
 			other.UseStringConversionFunction = this.UseStringConversionFunction;
 			other.DebuggerBrowsableAttributesCanHidePropsFields = this.DebuggerBrowsableAttributesCanHidePropsFields;
 			other.CompilerGeneratedAttributesCanHideFields = this.CompilerGeneratedAttributesCanHideFields;
+			other.DisableManagedDebuggerDetection = this.DisableManagedDebuggerDetection;
 			return other;
 		}
 

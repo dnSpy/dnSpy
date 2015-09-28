@@ -29,5 +29,9 @@ namespace dndbg.Engine {
 		[DllImport("kernel32", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		public static extern bool CloseHandle(IntPtr hObject);
+
+		[DllImport("kernel32")]
+		public static extern bool VirtualProtect(IntPtr lpAddress, int dwSize, uint flNewProtect, out uint lpflOldProtect);
+		public const uint PAGE_EXECUTE_READWRITE = 0x40;
 	}
 }

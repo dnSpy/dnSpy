@@ -38,6 +38,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -45,12 +46,13 @@
             </Grid.ColumnDefinitions>
             <Label Grid.Row="0" Grid.Column="0" Margin="0 0 5 0" Content="_Break at" Target="{Binding ElementName=breakComboBox}" />
             <ComboBox Grid.Row="0" Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" Name="breakComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BreakProcessTypeVM.Items}" SelectedIndex="{Binding BreakProcessTypeVM.SelectedIndex}" VerticalContentAlignment="Center" />
-            <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.PropertyEvalAndFunctionCalls}" Content="Enable property evaluation and other implicit function calls" />
-            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.UseStringConversionFunction}" Content="Call string-conversion function on objects in variables windows" IsEnabled="{Binding Settings.PropertyEvalAndFunctionCalls}" />
-            <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.DebuggerBrowsableAttributesCanHidePropsFields}" Content="DebuggerBrowsableAttributes can hide fields and properties" />
-            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.CompilerGeneratedAttributesCanHideFields}" Content="CompilerGeneratedAttributes can hide fields" />
+            <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.DisableManagedDebuggerDetection}" Content="Prevent code from detecting a managed debugger" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.PropertyEvalAndFunctionCalls}" Content="Enable property evaluation and other implicit function calls" />
+            <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.UseStringConversionFunction}" Content="Call string-conversion function on objects in variables windows" IsEnabled="{Binding Settings.PropertyEvalAndFunctionCalls}" />
+            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.DebuggerBrowsableAttributesCanHidePropsFields}" Content="DebuggerBrowsableAttributes can hide fields and properties" />
+            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.CompilerGeneratedAttributesCanHideFields}" Content="CompilerGeneratedAttributes can hide fields" />
 
-            <GroupBox Grid.Row="5" Grid.ColumnSpan="2" Margin="0 5 0 0">
+            <GroupBox Grid.Row="6" Grid.ColumnSpan="2" Margin="0 5 0 0">
                 <GroupBox.Header>
                     <CheckBox Content="_Syntax highlight" IsThreeState="False" IsChecked="{Binding Settings.SyntaxHighlight}" />
 				</GroupBox.Header>

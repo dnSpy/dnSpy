@@ -1262,7 +1262,7 @@ namespace dndbg.Engine {
 					OutputWrite("}", TypeColor.ToStringBrace);
 				}
 			}
-			catch (TimeoutException ex) {
+			catch (TimeoutException) {
 				WriteToStringFailed("timed out!");
 			}
 			catch (Exception ex) {

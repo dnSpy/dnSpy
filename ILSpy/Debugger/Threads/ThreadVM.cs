@@ -79,7 +79,8 @@ namespace dnSpy.Debugger.Threads {
 			set {
 				if (isSuspended != value) {
 					thread.CorThread.State = value ? CorDebugThreadState.THREAD_SUSPEND : CorDebugThreadState.THREAD_RUN;
-					isSuspended = value;
+					// Read the value again because there could've been an error
+					isSuspended = thread.CorThread.State == CorDebugThreadState.THREAD_SUSPEND;
 					OnPropertyChanged("IsSuspended");
 					OnPropertyChanged("SuspendedObject");
 				}

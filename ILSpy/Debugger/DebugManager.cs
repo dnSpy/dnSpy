@@ -427,11 +427,17 @@ namespace dnSpy.Debugger {
 					MainWindow.Instance.ShowMessageBox(string.Format("Could not start the debugger. Make sure you have access to the file '{0}'\n\nError: {1}", options.Filename, ex.Message));
 				return false;
 			}
+			Initialize(newDebugger);
+
+			return true;
+		}
+
+		void Initialize(DnDebugger newDebugger) {
+			if (DebuggerSettings.Instance.DisableManagedDebuggerDetection)
+				DisableSystemDebuggerDetection.Initialize(newDebugger);
 			AddDebugger(newDebugger);
 			Debug.Assert(debugger == newDebugger);
 			CallOnProcessStateChanged();
-
-			return true;
 		}
 
 		void CallOnProcessStateChanged(DnDebugger dbg = null) {
@@ -681,9 +687,7 @@ namespace dnSpy.Debugger {
 				MainWindow.Instance.ShowMessageBox(string.Format("Could not start debugger.\n\nError: {0}", ex.Message));
 				return false;
 			}
-			AddDebugger(newDebugger);
-			Debug.Assert(debugger == newDebugger);
-			CallOnProcessStateChanged();
+			Initialize(newDebugger);
 
 			return true;
 		}
