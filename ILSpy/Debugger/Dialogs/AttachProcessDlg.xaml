@@ -84,7 +84,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="CPU">
+                    <GridViewColumn Header="Arch">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding MachineObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=Machine}" />

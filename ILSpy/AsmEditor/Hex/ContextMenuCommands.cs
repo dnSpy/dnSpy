@@ -218,12 +218,23 @@ namespace dnSpy.AsmEditor.Hex {
 
 			var rsrc = context.Reference.Reference as IResourceNode;
 			if (rsrc != null && rsrc.FileOffset != 0) {
-				var mod = ILSpyTreeNode.GetModule((ILSpyTreeNode)rsrc);
-				if (mod != null && !string.IsNullOrEmpty(mod.Location))
-					return new AddressReference(mod.Location, false, rsrc.FileOffset, rsrc.Length);
+				var name = GetFilename((ILSpyTreeNode)rsrc);
+				if (!string.IsNullOrEmpty(name))
+					return new AddressReference(name, false, rsrc.FileOffset, rsrc.Length);
 			}
 
 			return null;
+		}
+
+		internal static string GetFilename(ILSpyTreeNode node) {
+			var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
+			if (asmNode == null)
+				return null;
+			var mod = asmNode.LoadedAssembly.ModuleDefinition;
+			if (mod != null)
+				return mod.Location;
+			var peImage = asmNode.LoadedAssembly.PEImage;
+			return peImage == null ? null : peImage.FileName;
 		}
 	}
 
@@ -317,11 +328,11 @@ namespace dnSpy.AsmEditor.Hex {
 			if (hexNode == null)
 				return null;
 
-			var mod = ILSpyTreeNode.GetModule(hexNode);
-			if (mod == null)
+			var name = ShowAddressReferenceInHexEditorCommand.GetFilename(hexNode);
+			if (string.IsNullOrEmpty(name))
 				return null;
 
-			return new AddressReference(mod.Location, false, hexNode.StartOffset, hexNode.StartOffset == 0 && hexNode.EndOffset == ulong.MaxValue ? ulong.MaxValue : hexNode.EndOffset - hexNode.StartOffset + 1);
+			return new AddressReference(name, false, hexNode.StartOffset, hexNode.StartOffset == 0 && hexNode.EndOffset == ulong.MaxValue ? ulong.MaxValue : hexNode.EndOffset - hexNode.StartOffset + 1);
 		}
 	}
 

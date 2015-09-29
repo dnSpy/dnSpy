@@ -27,7 +27,7 @@ using dnlib.IO;
 using dnlib.PE;
 
 namespace dndbg.Engine {
-	public sealed class ECallManager {
+	sealed class ECallManager {
 		/// <summary>
 		/// true if we found the CLR module (mscorwks/clr.dll)
 		/// </summary>
@@ -39,6 +39,10 @@ namespace dndbg.Engine {
 		readonly Dictionary<string, ECFunc[]> classToFuncsDict = new Dictionary<string, ECFunc[]>(StringComparer.Ordinal);
 		ulong clrDllBaseAddress;
 
+		/// <summary>
+		/// Constructor that can be used to test this class on some random clr file
+		/// </summary>
+		/// <param name="filename"></param>
 		public ECallManager(string filename) {
 			foundClrModule = true;
 			Initialize(filename);
@@ -87,7 +91,7 @@ namespace dndbg.Engine {
 			try {
 				using (var reader = new ECallListReader(filename)) {
 					foreach (var ecc in reader.List) {
-						var fname = ecc.Namespace == string.Empty ? ecc.Name : ecc.Namespace + "." + ecc.Name;
+						var fname = ecc.FullName;
 						bool b = classToFuncsDict.ContainsKey(fname);
 						Debug.Assert(!b);
 						if (!b)
@@ -121,11 +125,14 @@ namespace dndbg.Engine {
 		QCall = 0x08, // QCall - mscorlib.dll to mscorwks.dll transition implemented as PInvoke
 	}
 
-	[DebuggerDisplay("{Namespace}.{Name}")]
+	[DebuggerDisplay("{FullName}")]
 	struct ECClass {
 		public readonly string Namespace;
 		public readonly string Name;
 		public readonly ECFunc[] Functions;
+		public string FullName {
+			get { return string.IsNullOrEmpty(Namespace) ? Name : Namespace + "." + Name; }
+		}
 
 		public ECClass(string ns, string name, ECFunc[] funcs) {
 			this.Namespace = ns;
@@ -136,6 +143,7 @@ namespace dndbg.Engine {
 
 	// Unfortunately this enum is different from sscli20's CorInfoIntrinsics
 	enum CorInfoIntrinsics : byte {
+		Illegal = byte.MaxValue,
 	}
 
 	enum DynamicID : byte {
@@ -146,10 +154,10 @@ namespace dndbg.Engine {
 		CtorCharPtrManaged,
 		CtorCharPtrStartLengthManaged,
 		InternalGetCurrentThread,
-		InvalidDynamicFCallId = 0xFF,
+		InvalidDynamicFCallId = byte.MaxValue,
 	}
 
-	[DebuggerDisplay("{RVA} {Name}")]
+	[DebuggerDisplay("{FunctionRVA} {Name}")]
 	struct ECFunc {
 		public readonly uint RecordRVA;
 		public readonly uint Flags;
