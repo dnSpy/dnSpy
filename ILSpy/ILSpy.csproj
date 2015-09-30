@@ -146,6 +146,10 @@
       <DependentUpon>AttachProcessDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Debugger\Dialogs\AttachProcessVM.cs" />
+    <Compile Include="Debugger\Dialogs\DebugCoreCLRDlg.xaml.cs">
+      <DependentUpon>DebugCoreCLRDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Dialogs\DebugCoreCLRVM.cs" />
     <Compile Include="Debugger\Dialogs\DebugProcessDlg.xaml.cs">
       <DependentUpon>DebugProcessDlg.xaml</DependentUpon>
     </Compile>
@@ -1219,6 +1223,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Debugger\Dialogs\AttachProcessDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\Dialogs\DebugCoreCLRDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

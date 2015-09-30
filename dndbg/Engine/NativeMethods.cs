@@ -19,19 +19,43 @@
 
 using System;
 using System.Runtime.InteropServices;
+using dndbg.Engine.COM.CorDebug;
 
 namespace dndbg.Engine {
 	static class NativeMethods {
 		[DllImport("mscoree", PreserveSig = false)]
 		[return: MarshalAs(UnmanagedType.Interface)]
-		public static extern object CLRCreateInstance(ref Guid clsid, ref Guid riid);
+		public static extern object CLRCreateInstance([In] ref Guid clsid, [In] ref Guid riid);
 
 		[DllImport("kernel32", SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
-		public static extern bool CloseHandle(IntPtr hObject);
+		public static extern bool CloseHandle([In] IntPtr hObject);
 
 		[DllImport("kernel32", SetLastError = true)]
-		public static extern bool VirtualProtectEx(IntPtr hProcess, IntPtr lpAddress, int dwSize, uint flNewProtect, out uint lpflOldProtect);
+		public static extern bool VirtualProtectEx([In] IntPtr hProcess, [In] IntPtr lpAddress, [In] int dwSize, [In] uint flNewProtect, out uint lpflOldProtect);
 		public const uint PAGE_EXECUTE_READWRITE = 0x40;
+
+		[DllImport("kernel32", CharSet = CharSet.Ansi, SetLastError = true)]
+		public static extern IntPtr LoadLibraryEx([In, MarshalAs(UnmanagedType.LPStr)] string lpFileName, IntPtr hFile, uint dwFlags);
+		public const uint LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR = 0x00000100;
+		public const uint LOAD_LIBRARY_SEARCH_DEFAULT_DIRS = 0x00001000;
+
+		[DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
+		public static extern IntPtr GetProcAddress([In] IntPtr hModule, [In, MarshalAs(UnmanagedType.LPStr)] string lpProcName);
+
+		[DllImport("kernel32", SetLastError = true)]
+		public static extern bool FreeLibrary([In] IntPtr hModule);
+
+		[DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
+		public static extern bool CreateProcess([In] string lpApplicationName, [In, Out] string lpCommandLine, [In] IntPtr lpProcessAttributes, [In] IntPtr lpThreadAttributes, [In] bool bInheritHandles, [In] ProcessCreationFlags dwCreationFlags, [In] IntPtr lpEnvironment, [In] string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
+
+		[DllImport("kernel32", SetLastError = true)]
+		public static extern uint ResumeThread(IntPtr hThread);
+
+		[DllImport("kernel32", SetLastError = true)]
+		public static extern uint WaitForSingleObject([In] IntPtr hHandle, [In] uint dwMilliseconds);
+
+		[DllImport("kernel32", SetLastError = true)]
+		public static extern bool SetEvent([In] IntPtr hEvent);
 	}
 }

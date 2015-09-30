@@ -18,12 +18,56 @@
 */
 
 namespace dndbg.Engine {
-	public sealed class AttachProcessOptions {
+	public enum CLRType {
+		Desktop,
+		CoreCLR,
+	}
+
+	public abstract class CLRTypeAttachInfo {
+		public abstract CLRType CLRType { get; }
+		public abstract string Version { get; }
+	}
+
+	public sealed class DesktopCLRTypeAttachInfo : CLRTypeAttachInfo {
+		public override CLRType CLRType {
+			get { return CLRType.Desktop; }
+		}
+
+		public override string Version {
+			get { return DebuggeeVersion; }
+		}
+
 		/// <summary>
 		/// null if we should auto detect the version, else it should be a version of an already
 		/// installed CLR, eg. "v2.0.50727" etc.
 		/// </summary>
-		public string DebuggeeVersion { get; set; }
+		public string DebuggeeVersion { get; private set; }
+
+		public DesktopCLRTypeAttachInfo(string debuggeeVersion) {
+			this.DebuggeeVersion = debuggeeVersion;
+		}
+	}
+
+	public sealed class CoreCLRTypeAttachInfo : CLRTypeAttachInfo {
+		public override CLRType CLRType {
+			get { return CLRType.CoreCLR; }
+		}
+
+		public override string Version {
+			get { return version; }
+		}
+		readonly string version;
+
+		public CoreCLRTypeAttachInfo(string version) {
+			this.version = version;
+		}
+	}
+
+	public sealed class AttachProcessOptions {
+		/// <summary>
+		/// Info needed to attach to the CLR
+		/// </summary>
+		public CLRTypeAttachInfo CLRTypeAttachInfo { get; private set; }
 
 		/// <summary>
 		/// Process ID of the process that will be debugged
@@ -40,19 +84,9 @@ namespace dndbg.Engine {
 		/// </summary>
 		public DebugOptions DebugOptions { get; set; }
 
-		public AttachProcessOptions() {
+		public AttachProcessOptions(CLRTypeAttachInfo info) {
 			this.DebugOptions = new DebugOptions();
-		}
-
-		public DebugProcessOptions CopyTo(DebugProcessOptions other) {
-			other.DebuggeeVersion = this.DebuggeeVersion;
-			other.DebugMessageDispatcher = this.DebugMessageDispatcher;
-			other.DebugOptions = this.DebugOptions == null ? null : this.DebugOptions.Clone();
-			return other;
-		}
-
-		public DebugProcessOptions Clone() {
-			return CopyTo(new DebugProcessOptions());
+			this.CLRTypeAttachInfo = info;
 		}
 	}
 }

@@ -20,9 +20,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using dndbg.Engine;
 using dndbg.Engine.COM.MetaHost;
 using dnlib.PE;
 using Microsoft.Win32.SafeHandles;
@@ -45,10 +48,24 @@ namespace dnSpy.Debugger.Dialogs {
 
 		public sealed class Info {
 			public int ProcessId;
-			public string CLRVersion;
 			public Machine Machine;
 			public string Title;
 			public string FullPath;
+			public CLRTypeAttachInfo Type;
+
+			public Info(Process process, string clrVersion, CLRTypeAttachInfo type) {
+				ProcessId = process.Id;
+				Machine = IntPtr.Size == 4 ? Machine.I386 : Machine.AMD64;
+				Title = string.Empty;
+				FullPath = string.Empty;
+				Type = type;
+				try {
+					Title = process.MainWindowTitle;
+				} catch { }
+				try {
+					FullPath = process.MainModule.FileName;
+				} catch { }
+			}
 		}
 
 		public IEnumerable<Info> FindAll(CancellationToken cancellationToken) {
@@ -57,6 +74,7 @@ namespace dnSpy.Debugger.Dialogs {
 			var mh = (ICLRMetaHost)CLRCreateInstance(ref clsid, ref riid);
 
 			int ourPid = Process.GetCurrentProcess().Id;
+			var processes = new List<Process>();
 			foreach (var process in Process.GetProcesses()) {
 				cancellationToken.ThrowIfCancellationRequested();
 				int pid;
@@ -80,40 +98,69 @@ namespace dnSpy.Debugger.Dialogs {
 				}
 				if (process.HasExited)
 					continue;
+				processes.Add(process);
 
 				IEnumUnknown iter;
 				int hr = mh.EnumerateLoadedRuntimes(process.Handle, out iter);
-				if (hr < 0)
-					continue;
-				for (;;) {
-					object obj;
-					uint fetched;
-					hr = iter.Next(1, out obj, out fetched);
-					if (hr < 0 || fetched == 0)
-						break;
+				if (hr >= 0) {
+					for (;;) {
+						object obj;
+						uint fetched;
+						hr = iter.Next(1, out obj, out fetched);
+						if (hr < 0 || fetched == 0)
+							break;
 
-					var rtInfo = (ICLRRuntimeInfo)obj;
-					uint chBuffer = 0;
-					var sb = new StringBuilder(300);
-					hr = rtInfo.GetVersionString(sb, ref chBuffer);
-					sb.EnsureCapacity((int)chBuffer);
-					hr = rtInfo.GetVersionString(sb, ref chBuffer);
+						var rtInfo = (ICLRRuntimeInfo)obj;
+						uint chBuffer = 0;
+						var sb = new StringBuilder(300);
+						hr = rtInfo.GetVersionString(sb, ref chBuffer);
+						sb.EnsureCapacity((int)chBuffer);
+						hr = rtInfo.GetVersionString(sb, ref chBuffer);
 
-					var info = new Info();
-					info.ProcessId = pid;
-					info.Machine = IntPtr.Size == 4 ? Machine.I386 : Machine.AMD64;
-					info.CLRVersion = sb.ToString();
-					info.Title = string.Empty;
-					info.FullPath = string.Empty;
-					try {
-						info.Title = process.MainWindowTitle;
-					} catch { }
-					try {
-						info.FullPath = process.MainModule.FileName;
-					} catch { }
-					yield return info;
+						var info = new Info(process, sb.ToString(), new DesktopCLRTypeAttachInfo(sb.ToString()));
+
+						yield return info;
+					}
 				}
 			}
+
+			// Finding CoreCLR assemblies is much slower so do it last
+			if (CoreCLRHelper.TryInitializeDbgShim()) {
+				foreach (var process in processes) {
+					if (process.HasExited)
+						continue;
+					foreach (var info in TryGetCoreCLRInfos(process, null))
+						yield return info;
+				}
+			}
+			else {
+				foreach (var process in processes) {
+					if (process.HasExited)
+						continue;
+
+					ProcessModule[] modules;
+					try {
+						modules = process.Modules.Cast<ProcessModule>().ToArray();
+					}
+					catch {
+						continue;
+					}
+					foreach (var module in modules) {
+						var moduleFilename = module.FileName;
+						var dllName = Path.GetFileName(moduleFilename);
+						if (dllName.Equals("coreclr.dll", StringComparison.OrdinalIgnoreCase)) {
+							foreach (var info in TryGetCoreCLRInfos(process, moduleFilename))
+								yield return info;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		IEnumerable<Info> TryGetCoreCLRInfos(Process process, string coreclrFilename) {
+			foreach (var ccInfo in CoreCLRHelper.GetCoreCLRInfos(process.Id, coreclrFilename))
+				yield return new Info(process, ccInfo.CoreCLRTypeInfo.Version, ccInfo.CoreCLRTypeInfo);
 		}
 	}
 }

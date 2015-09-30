@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.Dialogs {
 			}
 
 			foreach (var info in list)
-				Collection.Add(new ProcessVM(info.ProcessId, info.Title, info.Machine, info.CLRVersion, info.FullPath));
+				Collection.Add(new ProcessVM(info.ProcessId, info.Title, info.Machine, info.Type, info.FullPath));
 		}
 
 		void RefreshAsync() {

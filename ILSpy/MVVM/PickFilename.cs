@@ -40,6 +40,7 @@ namespace dnSpy.MVVM {
 		public static readonly string DotNetExecutableFilter = ".NET Executables (*.exe)|*.exe|All files (*.*)|*.*";
 		public static readonly string DotNetAssemblyOrModuleFilter = ".NET Executables (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|All files (*.*)|*.*";
 		public static readonly string NetModuleFilter = ".NET NetModules (*.netmodule)|*.netmodule|All files (*.*)|*.*";
+		public static readonly string ExecutableFilter = "Executables (*.exe)|*.exe|All files (*.*)|*.*";
 	}
 
 	public sealed class PickFilename : IPickFilename {

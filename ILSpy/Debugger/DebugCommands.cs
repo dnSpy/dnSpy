@@ -245,7 +245,14 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "Process", MenuCategory = "Start", MenuHeader = "Attach to _Process…", MenuInputGestureText = "Ctrl+Alt+P", MenuOrder = 5020)]
+	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "StartDebugging", MenuCategory = "Start", MenuHeader = "Debug a CoreCLR Assembl_y…", MenuOrder = 5020)]
+	sealed class DebugCoreCLRAssemblyDebugMainMenuCommand : DebugMainMenuCommand {
+		public DebugCoreCLRAssemblyDebugMainMenuCommand()
+			: base(DebugRoutedCommands.DebugCoreCLRAssembly, false) {
+		}
+	}
+
+	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "Process", MenuCategory = "Start", MenuHeader = "Attach to _Process…", MenuInputGestureText = "Ctrl+Alt+P", MenuOrder = 5030)]
 	sealed class AttachDebugMainMenuCommand : DebugMainMenuCommand {
 		public AttachDebugMainMenuCommand()
 			: base(DebugRoutedCommands.Attach, false) {

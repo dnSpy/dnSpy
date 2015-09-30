@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
+using dndbg.Engine;
 using dnlib.PE;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
@@ -52,6 +54,20 @@ namespace dnSpy.Debugger.Dialogs {
 
 		public void WriteCLRVersion(ProcessVM vm) {
 			output.Write(vm.CLRVersion, TextTokenType.Number);
+		}
+
+		public void WriteType(ProcessVM vm) {
+			output.Write(TypeToString(vm.CLRTypeInfo.CLRType), TextTokenType.EnumField);
+		}
+
+		static string TypeToString(CLRType type) {
+			switch (type) {
+			case CLRType.Desktop:	return "Desktop";
+			case CLRType.CoreCLR:	return "CoreCLR";
+			default:
+				Debug.Fail("Unknown CLR type");
+				return "???";
+			}
 		}
 
 		public void WriteMachine(ProcessVM vm) {

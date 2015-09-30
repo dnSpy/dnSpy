@@ -93,6 +93,10 @@ namespace dnSpy.Debugger {
 			get { return new RelayCommand(a => DebugAssembly(), a => CanDebugAssembly); }
 		}
 
+		public ICommand DebugCoreCLRAssemblyCommand {
+			get { return new RelayCommand(a => DebugCoreCLRAssembly(), a => CanDebugCoreCLRAssembly); }
+		}
+
 		public ICommand StartWithoutDebuggingCommand {
 			get { return new RelayCommand(a => StartWithoutDebugging(), a => CanStartWithoutDebugging); }
 		}
@@ -562,6 +566,58 @@ namespace dnSpy.Debugger {
 			}
 		}
 
+		DebugCoreCLRVM CreateDebugCoreCLRVM(LoadedAssembly asm = null) {
+			// Re-use the previous one if it's the same file
+			if (lastDebugCoreCLRVM != null && asm != null) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(lastDebugCoreCLRVM.Filename, asm.FileName))
+					return lastDebugCoreCLRVM.Clone();
+			}
+
+			var vm = new DebugCoreCLRVM();
+			if (asm != null)
+				vm.Filename = asm.FileName;
+			vm.BreakProcessType = DebuggerSettings.Instance.BreakProcessType;
+			return vm;
+		}
+
+		public bool CanDebugCoreCLRAssembly {
+			get { return !IsDebugging; }
+		}
+
+		public void DebugCoreCLRAssembly() {
+			if (!CanDebugAssembly)
+				return;
+			DebugCoreCLRVM vm = null;
+			if (vm == null) {
+				var asm = GetCurrentExecutableAssembly(true);
+				if (asm != null)
+					vm = CreateDebugCoreCLRVM(asm);
+			}
+			if (vm == null)
+				vm = lastDebugCoreCLRVM ?? CreateDebugCoreCLRVM();
+			DebugAssembly(GetDebugAssemblyOptions(vm.Clone()));
+		}
+		DebugCoreCLRVM lastDebugCoreCLRVM;
+
+		DebugProcessOptions GetDebugAssemblyOptions(DebugCoreCLRVM vm, bool askUser = true) {
+			if (askUser) {
+				var win = new DebugCoreCLRDlg();
+				win.DataContext = vm;
+				win.Owner = MainWindow.Instance;
+				if (win.ShowDialog() != true)
+					return null;
+			}
+
+			var opts = new DebugProcessOptions(new CoreCLRTypeDebugInfo(vm.DbgShimFilename, vm.HostFilename, vm.HostCommandLine));
+			opts.DebugMessageDispatcher = WpfDebugMessageDispatcher.Instance;
+			opts.CurrentDirectory = vm.CurrentDirectory;
+			opts.Filename = vm.Filename;
+			opts.CommandLine = vm.CommandLine;
+			opts.BreakProcessType = vm.BreakProcessType;
+			lastDebugCoreCLRVM = vm;
+			return opts;
+		}
+
 		DebugProcessVM CreateDebugProcessVM(LoadedAssembly asm = null) {
 			// Re-use the previous one if it's the same file
 			if (lastDebugProcessVM != null && asm != null) {
@@ -596,9 +652,6 @@ namespace dnSpy.Debugger {
 		DebugProcessVM lastDebugProcessVM;
 
 		DebugProcessOptions GetDebugAssemblyOptions(DebugProcessVM vm, bool askUser = true) {
-			var opts = new DebugProcessOptions();
-			opts.DebugMessageDispatcher = WpfDebugMessageDispatcher.Instance;
-
 			if (askUser) {
 				var win = new DebugProcessDlg();
 				win.DataContext = vm;
@@ -607,6 +660,8 @@ namespace dnSpy.Debugger {
 					return null;
 			}
 
+			var opts = new DebugProcessOptions(new DesktopCLRTypeDebugInfo());
+			opts.DebugMessageDispatcher = WpfDebugMessageDispatcher.Instance;
 			opts.CurrentDirectory = vm.CurrentDirectory;
 			opts.Filename = vm.Filename;
 			opts.CommandLine = vm.CommandLine;
@@ -664,8 +719,7 @@ namespace dnSpy.Debugger {
 			if (processVM == null)
 				return;
 
-			var options = new AttachProcessOptions();
-			options.DebuggeeVersion = processVM.CLRVersion;
+			var options = new AttachProcessOptions(processVM.CLRTypeInfo);
 			options.ProcessId = processVM.PID;
 			options.DebugMessageDispatcher = WpfDebugMessageDispatcher.Instance;
 			Attach(options);

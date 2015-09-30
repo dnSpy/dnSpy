@@ -84,7 +84,7 @@ namespace dndbg.Engine {
 		};
 
 		static bool IsCLR2OrEarlier(string debuggeeVersion) {
-			return debuggeeVersion.StartsWith("v1.") || debuggeeVersion.StartsWith("v2.");
+			return debuggeeVersion != null && (debuggeeVersion.StartsWith("v1.") || debuggeeVersion.StartsWith("v2."));
 		}
 
 		void Initialize(string filename) {

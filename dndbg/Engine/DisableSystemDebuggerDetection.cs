@@ -50,8 +50,9 @@ namespace dndbg.Engine {
 				bool error = false, b;
 
 				bool isClrV2OrOlder =
-					debuggeeVersion.StartsWith("v1.", StringComparison.OrdinalIgnoreCase) ||
-					debuggeeVersion.StartsWith("v2.", StringComparison.OrdinalIgnoreCase);
+					debuggeeVersion != null &&
+					(debuggeeVersion.StartsWith("v1.", StringComparison.OrdinalIgnoreCase) ||
+					debuggeeVersion.StartsWith("v2.", StringComparison.OrdinalIgnoreCase));
 
 				// Launch() returns true in CLR 4.x and false in earlier CLR versions when there's
 				// no debugger. At least on my system...

@@ -23,6 +23,7 @@ namespace dnSpy.Debugger {
 	public static class DebugRoutedCommands {
 		public static readonly RoutedCommand DebugCurrentAssembly = new RoutedCommand("DebugCurrentAssembly", typeof(DebugRoutedCommands));
 		public static readonly RoutedCommand DebugAssembly = new RoutedCommand("DebugAssembly", typeof(DebugRoutedCommands));
+		public static readonly RoutedCommand DebugCoreCLRAssembly = new RoutedCommand("DebugCoreCLRAssembly", typeof(DebugRoutedCommands));
 		public static readonly RoutedCommand Attach = new RoutedCommand("Attach", typeof(DebugRoutedCommands));
 		public static readonly RoutedCommand StartWithoutDebugging = new RoutedCommand("StartWithoutDebugging", typeof(DebugRoutedCommands));
 

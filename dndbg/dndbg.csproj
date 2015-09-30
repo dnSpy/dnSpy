@@ -54,6 +54,7 @@
     <Compile Include="Engine\CordbgErrors.cs" />
     <Compile Include="Engine\CorDebugExtensions.cs" />
     <Compile Include="Engine\CorDebugManagedCallback.cs" />
+    <Compile Include="Engine\CoreCLRHelper.cs" />
     <Compile Include="Engine\CorEval.cs" />
     <Compile Include="Engine\CorExceptionObjectStackFrame.cs" />
     <Compile Include="Engine\CorFrame.cs" />

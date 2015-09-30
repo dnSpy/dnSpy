@@ -18,6 +18,7 @@
 */
 
 using System.IO;
+using dndbg.Engine;
 using dnlib.PE;
 using dnSpy.MVVM;
 
@@ -33,6 +34,7 @@ namespace dnSpy.Debugger.Dialogs {
 		public object CLRVersionObject { get { return this; } }
 		public object MachineObject { get { return this; } }
 		public object TitleObject { get { return this; } }
+		public object TypeObject { get { return this; } }
 
 		public string FullPath {
 			get { return fullPath; }
@@ -59,12 +61,18 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 		readonly string clrVersion;
 
-		public ProcessVM(int pid, string title, Machine machine, string clrVersion, string fullPath) {
+		public CLRTypeAttachInfo CLRTypeInfo {
+			get { return type; }
+		}
+		readonly CLRTypeAttachInfo type;
+
+		public ProcessVM(int pid, string title, Machine machine, CLRTypeAttachInfo type, string fullPath) {
 			this.fullPath = fullPath;
 			this.pid = pid;
 			this.title = title;
 			this.machine = machine;
-			this.clrVersion = clrVersion;
+			this.clrVersion = type.Version;
+			this.type = type;
 		}
 	}
 }

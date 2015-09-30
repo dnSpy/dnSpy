@@ -44,6 +44,8 @@ namespace dnSpy.Debugger.Dialogs {
 			}
 			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "CLRVersion"))
 				printer.WriteCLRVersion(vm);
+			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Type"))
+				printer.WriteType(vm);
 			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Machine"))
 				printer.WriteMachine(vm);
 			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Title"))

@@ -84,6 +84,13 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
+                    <GridViewColumn Header="Type">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding TypeObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=Type}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
                     <GridViewColumn Header="Arch">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>

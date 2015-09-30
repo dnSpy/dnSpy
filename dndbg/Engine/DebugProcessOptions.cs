@@ -18,12 +18,70 @@
 */
 
 namespace dndbg.Engine {
-	public sealed class DebugProcessOptions {
+	public abstract class CLRTypeDebugInfo {
+		public abstract CLRType CLRType { get; }
+		public abstract CLRTypeDebugInfo Clone();
+	}
+
+	public sealed class DesktopCLRTypeDebugInfo : CLRTypeDebugInfo {
+		public override CLRType CLRType {
+			get { return CLRType.Desktop; }
+		}
+
 		/// <summary>
 		/// null if we should auto detect the version, else it should be a version of an already
 		/// installed CLR, eg. "v2.0.50727" etc.
 		/// </summary>
 		public string DebuggeeVersion { get; set; }
+
+		public DesktopCLRTypeDebugInfo()
+			: this(null) {
+		}
+
+		public DesktopCLRTypeDebugInfo(string debuggeeVersion) {
+			this.DebuggeeVersion = debuggeeVersion;
+		}
+
+		public override CLRTypeDebugInfo Clone() {
+			return new DesktopCLRTypeDebugInfo(DebuggeeVersion);
+		}
+	}
+
+	public sealed class CoreCLRTypeDebugInfo : CLRTypeDebugInfo {
+		/// <summary>
+		/// dbgshim.dll filename or null
+		/// </summary>
+		public string DbgShimFilename { get; set; }
+
+		/// <summary>
+		/// Host filename
+		/// </summary>
+		public string HostFilename { get; set; }
+
+		/// <summary>
+		/// Host command line
+		/// </summary>
+		public string HostCommandLine { get; set; }
+
+		public override CLRType CLRType {
+			get { return CLRType.CoreCLR; }
+		}
+
+		public CoreCLRTypeDebugInfo(string dbgShimFilename, string hostFilename, string hostCommandLine) {
+			this.HostFilename = hostFilename;
+			this.HostCommandLine = hostCommandLine;
+		}
+
+		public override CLRTypeDebugInfo Clone() {
+			return new CoreCLRTypeDebugInfo(DbgShimFilename, HostFilename, HostCommandLine);
+		}
+	}
+
+	public sealed class DebugProcessOptions {
+		/// <summary>
+		/// Use desktop or CoreCLR?
+		/// </summary>
+		public CLRTypeDebugInfo CLRTypeDebugInfo { get; private set; }
 
 		/// <summary>
 		/// File to debug
@@ -67,13 +125,14 @@ namespace dndbg.Engine {
 
 		public static readonly ProcessCreationFlags DefaultProcessCreationFlags = Engine.ProcessCreationFlags.CREATE_NEW_CONSOLE;
 
-		public DebugProcessOptions() {
+		public DebugProcessOptions(CLRTypeDebugInfo info) {
+			this.CLRTypeDebugInfo = info;
 			this.DebugOptions = new DebugOptions();
 			this.BreakProcessType = BreakProcessType.None;
 		}
 
 		public DebugProcessOptions CopyTo(DebugProcessOptions other) {
-			other.DebuggeeVersion = this.DebuggeeVersion;
+			other.CLRTypeDebugInfo = this.CLRTypeDebugInfo.Clone();
 			other.Filename = this.Filename;
 			other.CommandLine = this.CommandLine;
 			other.CurrentDirectory = this.CurrentDirectory;
@@ -86,7 +145,7 @@ namespace dndbg.Engine {
 		}
 
 		public DebugProcessOptions Clone() {
-			return CopyTo(new DebugProcessOptions());
+			return CopyTo(new DebugProcessOptions(this.CLRTypeDebugInfo));
 		}
 	}
 }

@@ -38,6 +38,7 @@ namespace dnSpy.Debugger {
 		void InstallRoutedCommands() {
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DebugCurrentAssembly, DebugManager.Instance.DebugCurrentAssemblyCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DebugAssembly, DebugManager.Instance.DebugAssemblyCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.DebugCoreCLRAssembly, DebugManager.Instance.DebugCoreCLRAssemblyCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.StartWithoutDebugging, DebugManager.Instance.StartWithoutDebuggingCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.Attach, DebugManager.Instance.AttachCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.Break, DebugManager.Instance.BreakCommand);
