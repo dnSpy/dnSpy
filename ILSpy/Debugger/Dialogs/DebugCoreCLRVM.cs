@@ -66,7 +66,11 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 
 		public string DbgShimFilename {
-			get { return dbgShimFilename; }
+			get {
+				if (CoreCLRHelper.DbgShimInitialized)
+					return CoreCLRHelper.CurrentDbgShimPath;
+				return dbgShimFilename;
+			}
 			set {
 				if (dbgShimFilename != value) {
 					dbgShimFilename = value;

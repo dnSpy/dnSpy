@@ -23,10 +23,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:winlocal="clr-namespace:dnSpy.MVVM"
              xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters"
-             Height="180" Width="800"
+             Width="800"
              Title="Debug Assembly"
+             SizeToContent="Height"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
-             MinHeight="180" MinWidth="300">
+             MinHeight="150" MinWidth="300">
     <winlocal:WindowBase.Resources>
         <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
     </winlocal:WindowBase.Resources>

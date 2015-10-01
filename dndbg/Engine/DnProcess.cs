@@ -80,7 +80,7 @@ namespace dndbg.Engine {
 		public string CommandLine {
 			get { return cmdLine; }
 		}
-		string cmdLine;
+		string cmdLine = string.Empty;
 
 		/// <summary>
 		/// Returns the value of ICorDebugProcess::GetHelperThreadID(). Don't cache this value since
@@ -128,9 +128,9 @@ namespace dndbg.Engine {
 
 		internal void Initialize(bool attached, string filename, string cwd, string cmdLine) {
 			this.attached = attached;
-			this.filename = filename;
-			this.cwd = cwd;
-			this.cmdLine = cmdLine;
+			this.filename = filename ?? string.Empty;
+			this.cwd = cwd ?? string.Empty;
+			this.cmdLine = cmdLine ?? string.Empty;
 			this.hasInitialized = true;
 		}
 

@@ -1238,15 +1238,16 @@ namespace dndbg.Engine {
 					if (v != null && v.IsGeneric && !v.IsHeap && v.ExactType.IsValueType)
 						v = eval.Box(v);
 					if (v == null) {
-						WriteToStringFailed("null value");
+						WriteTypeOfValue(value);
 						return;
 					}
-					var res = eval.Call(func, new CorValue[1] { v });
-					if (res.WasException) {
-						WriteToStringFailed(string.Format("ToString() threw: {0}", res.ResultOrException));
+					int hr;
+					var res = eval.Call(func, null, new CorValue[1] { v }, out hr);
+					if (res == null || CordbgErrors.IsCantEvaluateError(hr) || res.Value.WasException) {
+						WriteTypeOfValue(value);
 						return;
 					}
-					var rv = res.ResultOrException;
+					var rv = res.Value.ResultOrException;
 					if (rv != null && rv.IsReference)
 						rv = rv.NeuterCheckDereferencedValue;
 					if (rv == null || !rv.IsString) {

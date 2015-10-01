@@ -39,6 +39,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -51,8 +52,9 @@
             <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.UseStringConversionFunction}" Content="Call string-conversion function on objects in variables windows" IsEnabled="{Binding Settings.PropertyEvalAndFunctionCalls}" />
             <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.DebuggerBrowsableAttributesCanHidePropsFields}" Content="DebuggerBrowsableAttributes can hide fields and properties" />
             <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.CompilerGeneratedAttributesCanHideFields}" Content="CompilerGeneratedAttributes can hide fields" />
+            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.IgnoreBreakInstructions}" Content="Ignore Debugger.Break() and break instructions" />
 
-            <GroupBox Grid.Row="6" Grid.ColumnSpan="2" Margin="0 5 0 0">
+            <GroupBox Grid.Row="7" Grid.ColumnSpan="2" Margin="0 5 0 0">
                 <GroupBox.Header>
                     <CheckBox Content="_Syntax highlight" IsThreeState="False" IsChecked="{Binding Settings.SyntaxHighlight}" />
 				</GroupBox.Header>

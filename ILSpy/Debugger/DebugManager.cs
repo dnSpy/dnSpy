@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
@@ -59,6 +60,14 @@ namespace dnSpy.Debugger {
 			MainWindow.Instance.CanExecuteEvent += MainWindow_CanExecuteEvent;
 			debuggedProcessRunningNotifier = new DebuggedProcessRunningNotifier();
 			debuggedProcessRunningNotifier.ProcessRunning += DebuggedProcessRunningNotifier_ProcessRunning;
+			DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
+		}
+
+		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			if (e.PropertyName == "IgnoreBreakInstructions") {
+				if (Debugger != null)
+					Debugger.Options.IgnoreBreakInstructions = DebuggerSettings.Instance.IgnoreBreakInstructions;
+			}
 		}
 
 		void DebuggedProcessRunningNotifier_ProcessRunning(object sender, DebuggedProcessRunningEventArgs e) {
@@ -221,8 +230,7 @@ namespace dnSpy.Debugger {
 					break;
 
 				evalDisabled = false;
-				SetWindowPos(new WindowInteropHelper(MainWindow.Instance).Handle, IntPtr.Zero, 0, 0, 0, 0, 3);
-				MainWindow.Instance.Activate();
+				BringMainWindowToFrontAndActivate();
 
 				UpdateCurrentLocation();
 				if (currentMethod != null && currentLocation != null)
@@ -242,6 +250,11 @@ namespace dnSpy.Debugger {
 		}
 		CodeLocation? currentLocation = null;
 
+		static void BringMainWindowToFrontAndActivate() {
+			SetWindowPos(new WindowInteropHelper(MainWindow.Instance).Handle, IntPtr.Zero, 0, 0, 0, 0, 3);
+			MainWindow.Instance.Activate();
+		}
+
 		struct StoppedMessageCreator {
 			StringBuilder sb;
 
@@ -257,6 +270,10 @@ namespace dnSpy.Debugger {
 						switch (stopState.Reason) {
 						case DebuggerStopReason.Other:
 							Append("Unknown Reason");
+							break;
+
+						case DebuggerStopReason.UnhandledException:
+							Append("Unhandled Exception");
 							break;
 
 						case DebuggerStopReason.DebugEventBreakpoint:
@@ -482,7 +499,66 @@ namespace dnSpy.Debugger {
 			RemoveDebugger();
 
 			debugger = newDebugger;
+			DebugCallbackEvent_counter = 0;
 			newDebugger.OnProcessStateChanged += DnDebugger_OnProcessStateChanged;
+			newDebugger.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
+		}
+
+		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
+			try {
+				DebugCallbackEvent_counter++;
+
+				if (DebugCallbackEvent_counter > 1)
+					return;
+				if (e.Type == DebugCallbackType.Exception2) {
+					var ee = (Exception2DebugCallbackEventArgs)e;
+					if (ee.EventType == CorDebugExceptionCallbackType.DEBUG_EXCEPTION_UNHANDLED)
+						UnhandledException(ee);
+				}
+			}
+			finally {
+				DebugCallbackEvent_counter--;
+			}
+		}
+		int DebugCallbackEvent_counter = 0;
+
+		void UnhandledException(Exception2DebugCallbackEventArgs e) {
+			if (UnhandledException_counter != 0)
+				return;
+			try {
+				UnhandledException_counter++;
+
+				Debug.Assert(e.EventType == CorDebugExceptionCallbackType.DEBUG_EXCEPTION_UNHANDLED);
+				var thread = e.CorThread;
+				var exValue = thread == null ? null : thread.CurrentException;
+
+				var sb = new StringBuilder();
+				AddExceptionInfo(sb, exValue, "Exception");
+				var innerExValue = EvalUtils.ReflectionReadExceptionInnerException(exValue);
+				if (innerExValue != null && innerExValue.IsReference && !innerExValue.IsNull)
+					AddExceptionInfo(sb, innerExValue, "\n\nInner Exception");
+
+				var process = DebugManager.Instance.Debugger.Processes.FirstOrDefault(p => p.Threads.Any(t => t.CorThread == thread));
+				CorProcess cp;
+				var processName = process != null ? Path.GetFileName(process.Filename) : string.Format("pid {0}", (cp = thread.Process) == null ? 0 : cp.ProcessId);
+				BringMainWindowToFrontAndActivate();
+				var res = MainWindow.Instance.ShowMessageBox(string.Format("An unhandled exception occurred in {0}\n\n{1}\n\nPress OK to stop, and Cancel to let the program run.", processName, sb), MessageBoxButton.OKCancel);
+				if (res != MsgBoxButton.Cancel)
+					e.AddStopReason(DebuggerStopReason.UnhandledException);
+			}
+			finally {
+				UnhandledException_counter--;
+			}
+		}
+		int UnhandledException_counter = 0;
+
+		static void AddExceptionInfo(StringBuilder sb, CorValue exValue, string msg) {
+			var exType = exValue == null ? null : exValue.ExactType;
+			int? hr = EvalUtils.ReflectionReadExceptionHResult(exValue);
+			string exMsg = EvalUtils.ReflectionReadExceptionMessage(exValue);
+			string exTypeString = exType == null ? "<Unknown Exception Type>" : exType.ToString();
+			var s = string.Format("{0}: {1}\n\nMessage: {2}\n\nHResult: 0x{3:X8}", msg, exTypeString, exMsg, hr ?? -1);
+			sb.Append(s);
 		}
 
 		public bool CanDebugCurrentAssembly(object parameter) {
@@ -1172,9 +1248,11 @@ namespace dnSpy.Debugger {
 		/// <param name="thread">Thread to use</param>
 		/// <returns></returns>
 		public DnEval CreateEval(CorThread thread) {
-			Debug.Assert(ProcessState == DebuggerProcessState.Stopped);
+			Debug.WriteLineIf(ProcessState != DebuggerProcessState.Stopped, "Can't evaluate unless debugger is stopped");
 			if (ProcessState != DebuggerProcessState.Stopped)
 				throw new EvalException(-1, "Can't evaluate unless debugger is stopped");
+			if (UnhandledException_counter != 0)
+				throw new EvalException(-1, "Can't evaluate when an unhandled exception has occurred");
 			var eval = Debugger.CreateEval();
 			eval.EvalEvent += (s, e) => DnEval_EvalEvent(s, e, eval);
 			eval.SetThread(thread);
@@ -1201,7 +1279,7 @@ namespace dnSpy.Debugger {
 		volatile bool callingEvalComplete;
 
 		public bool CanEvaluate {
-			get { return Debugger != null && !Debugger.IsEvaluating; }
+			get { return Debugger != null && !Debugger.IsEvaluating && UnhandledException_counter == 0; }
 		}
 
 		public bool EvalCompleted {

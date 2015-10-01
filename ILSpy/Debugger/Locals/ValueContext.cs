@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using dndbg.Engine;
 
 namespace dnSpy.Debugger.Locals {
@@ -50,15 +51,22 @@ namespace dnSpy.Debugger.Locals {
 		}
 		readonly IList<CorType> genericMethodArguments;
 
-		public ValueContext(ILocalsOwner localsOwner, CorFrame frame, DnThread thread) {
+		public ValueContext(ILocalsOwner localsOwner, CorFrame frame, DnThread thread, DnProcess process) {
 			this.LocalsOwner = localsOwner;
 			this.Thread = thread;
-			this.Process = thread.Process;
+			this.Process = process;
+			Debug.Assert(thread == null || thread.Process == process);
 
 			// Read everything immediately since the frame will be neutered when Continue() is called
 			this.FrameCouldBeNeutered = frame;
-			frame.GetTypeAndMethodGenericParameters(out genericTypeArguments, out genericMethodArguments);
-			this.Function = frame.Function;
+			if (frame == null) {
+				genericTypeArguments = genericMethodArguments = new List<CorType>();
+				this.Function = null;
+			}
+			else {
+				frame.GetTypeAndMethodGenericParameters(out genericTypeArguments, out genericMethodArguments);
+				this.Function = frame.Function;
+			}
 		}
 
 		public ValueContext(ILocalsOwner localsOwner, CorFrame frame, DnThread thread, IList<CorType> genericTypeArguments) {
@@ -70,7 +78,7 @@ namespace dnSpy.Debugger.Locals {
 			this.FrameCouldBeNeutered = frame;
 			this.genericTypeArguments = genericTypeArguments;
 			this.genericMethodArguments = new CorType[0];
-			this.Function = frame.Function;
+			this.Function = frame == null ? null : frame.Function;
 		}
 	}
 }
