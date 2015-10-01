@@ -52,6 +52,9 @@ namespace dnSpy.Debugger.Modules {
 
 		static void InitializeCommandShortcuts(ListView listView) {
 			listView.AddCommandBinding(ApplicationCommands.Copy, new ModulesCtxMenuCommandProxy(new CopyCallModulesCtxMenuCommand()));
+			listView.InputBindings.Add(new KeyBinding(new ModulesCtxMenuCommandProxy(new GoToModuleModulesCtxMenuCommand()), Key.Enter, ModifierKeys.None));
+			listView.InputBindings.Add(new KeyBinding(new ModulesCtxMenuCommandProxy(new GoToModuleNewTabModulesCtxMenuCommand()), Key.Enter, ModifierKeys.Control));
+			listView.InputBindings.Add(new KeyBinding(new ModulesCtxMenuCommandProxy(new GoToModuleNewTabModulesCtxMenuCommand()), Key.Enter, ModifierKeys.Shift));
 		}
 	}
 
@@ -95,6 +98,13 @@ namespace dnSpy.Debugger.Modules {
 			if (!MainWindow.Instance.IsBottomPaneVisible(this))
 				MainWindow.Instance.ShowInBottomPane(((IPane)this).PaneTitle, this);
 			UIUtils.FocusSelector(listView);
+		}
+
+		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
+				return;
+			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
+			GoToModuleModulesCtxMenuCommand.ExecuteInternal(listView.SelectedItem as ModuleVM, newTab);
 		}
 	}
 }

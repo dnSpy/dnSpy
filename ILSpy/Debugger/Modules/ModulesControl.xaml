@@ -28,6 +28,7 @@
     <Grid>
         <ListView
             Name="listView"
+            MouseDoubleClick="listView_MouseDoubleClick"
             VirtualizingStackPanel.IsVirtualizing="True"
             VirtualizingStackPanel.VirtualizationMode="Recycling"
             mvvm:InitDataTemplateAP.Initialize="True"

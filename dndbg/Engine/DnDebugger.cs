@@ -1006,7 +1006,7 @@ namespace dndbg.Engine {
 				cd.DebugActiveProcess((int)pid, 0, out comProcess);
 				var dnProcess = dbg.TryAdd(comProcess);
 				if (dnProcess != null)
-					dnProcess.Initialize(false, options.Filename, string.Empty, string.Empty);
+					dnProcess.Initialize(false, options.Filename, options.CurrentDirectory, options.CommandLine);
 				return dbg;
 			});
 			if (dbg2 == null)

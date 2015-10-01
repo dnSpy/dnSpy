@@ -223,6 +223,17 @@ namespace dnSpy.Debugger {
 		}
 		bool disableManagedDebuggerDetection;
 
+		public bool IgnoreBreakInstructions {
+			get { return ignoreBreakInstructions; }
+			set {
+				if (ignoreBreakInstructions != value) {
+					ignoreBreakInstructions = value;
+					OnPropertyChanged("IgnoreBreakInstructions");
+				}
+			}
+		}
+		bool ignoreBreakInstructions;
+
 		const string SETTINGS_NAME = "DebuggerSettings";
 
 		void Load() {
@@ -251,6 +262,7 @@ namespace dnSpy.Debugger {
 			DebuggerBrowsableAttributesCanHidePropsFields = (bool?)csx.Attribute("DebuggerBrowsableAttributesCanHidePropsFields") ?? true;
 			CompilerGeneratedAttributesCanHideFields = (bool?)csx.Attribute("CompilerGeneratedAttributesCanHideFields") ?? true;
 			DisableManagedDebuggerDetection = (bool?)csx.Attribute("DisableManagedDebuggerDetection") ?? true;
+			IgnoreBreakInstructions = (bool?)csx.Attribute("IgnoreBreakInstructions") ?? false;
 		}
 
 		void Save() {
@@ -285,6 +297,7 @@ namespace dnSpy.Debugger {
 			csx.SetAttributeValue("DebuggerBrowsableAttributesCanHidePropsFields", DebuggerBrowsableAttributesCanHidePropsFields);
 			csx.SetAttributeValue("CompilerGeneratedAttributesCanHideFields", CompilerGeneratedAttributesCanHideFields);
 			csx.SetAttributeValue("DisableManagedDebuggerDetection", DisableManagedDebuggerDetection);
+			csx.SetAttributeValue("IgnoreBreakInstructions", IgnoreBreakInstructions);
 		}
 
 		public DebuggerSettings CopyTo(DebuggerSettings other) {
@@ -301,6 +314,7 @@ namespace dnSpy.Debugger {
 			other.DebuggerBrowsableAttributesCanHidePropsFields = this.DebuggerBrowsableAttributesCanHidePropsFields;
 			other.CompilerGeneratedAttributesCanHideFields = this.CompilerGeneratedAttributesCanHideFields;
 			other.DisableManagedDebuggerDetection = this.DisableManagedDebuggerDetection;
+			other.IgnoreBreakInstructions = this.IgnoreBreakInstructions;
 			return other;
 		}
 

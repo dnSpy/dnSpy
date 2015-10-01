@@ -581,8 +581,9 @@ namespace dndbg.Engine {
 		/// Gets the value of a field. Returns null if field wasn't found or there was another error
 		/// </summary>
 		/// <param name="name">Name of field</param>
+		/// <param name="checkBaseClasses">true to check base classes</param>
 		/// <returns></returns>
-		public CorValue GetFieldValue(string name) {
+		public CorValue GetFieldValue(string name, bool checkBaseClasses = true) {
 			var self = this;
 			if (self.IsReference) {
 				self = self.NeuterCheckDereferencedValue;
@@ -590,21 +591,13 @@ namespace dndbg.Engine {
 					return null;
 			}
 
-			var cls = self.Class;
-			if (cls == null) {
-				var type = self.ExactType;
-				if (type != null)
-					cls = type.Class;
-				if (cls == null)
-					return null;
-			}
-			var module = cls.Module;
-			if (module == null)
+			var type = self.ExactType;
+			if (type == null)
 				return null;
-			var info = MetaDataUtils.GetFields(module.GetMetaDataInterface<IMetaDataImport>(), cls.Token).FirstOrDefault(i => i.Name == name);
-			if (info.Name == null)
+			var info = type.GetFields(checkBaseClasses).FirstOrDefault(a => a.Name == name);
+			if (info == null)
 				return null;
-			return self.GetFieldValue(cls, info.Token);
+			return self.GetFieldValue(info.OwnerType == null ? null : info.OwnerType.Class, info.Token);
 		}
 
 		/// <summary>

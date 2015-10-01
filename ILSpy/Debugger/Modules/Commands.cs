@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using dndbg.Engine;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
@@ -118,7 +119,64 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Hexadecimal Display", Order = 200, Category = "MODMiscOptions")]
+	[ExportContextMenuEntry(Header = "_Go To Module", Order = 200, Category = "MODGoTo", Icon = "AssemblyModule", InputGestureText = "Enter")]
+	sealed class GoToModuleModulesCtxMenuCommand : ModulesCtxMenuCommand {
+		protected override void Execute(ModulesCtxMenuContext context) {
+			ExecuteInternal(context, false);
+		}
+
+		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+			return CanGoToModule(context);
+		}
+
+		internal static bool CanGoToModule(ModulesCtxMenuContext context) {
+			if (context == null || context.SelectedItems.Length == 0)
+				return false;
+			var vm = context.SelectedItems[0];
+			//TODO: Support dynamic and in-memory modules
+			return !vm.Module.IsDynamic && !vm.Module.IsInMemory;
+		}
+
+		internal static void ExecuteInternal(ModulesCtxMenuContext context, bool newTab) {
+			if (context == null || context.SelectedItems.Length == 0)
+				return;
+			ExecuteInternal(context.SelectedItems[0], newTab);
+		}
+
+		internal static void ExecuteInternal(ModuleVM vm, bool newTab) {
+			if (vm == null)
+				return;
+			if (vm.Module.IsDynamic || vm.Module.IsInMemory)
+				return;//TODO: Support dynamic and in-memory modules
+
+			var serAsm = vm.Module.SerializedDnModuleWithAssembly;
+			var asm = MainWindow.Instance.LoadAssembly(serAsm.Assembly, serAsm.Module);
+			if (asm == null)
+				return;
+			var mod = asm.ModuleDefinition;
+			if (mod == null)
+				return;
+			// The asm could've been added lazily to the list so add a short delay before we select it
+			MainWindow.Instance.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+				if (newTab)
+					MainWindow.Instance.OpenNewEmptyTab();
+				MainWindow.Instance.JumpToReference(mod);
+			}));
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Go To Module (New _Tab)", Order = 210, Category = "MODGoTo", Icon = "AssemblyModule", InputGestureText = "Ctrl+Enter")]
+	sealed class GoToModuleNewTabModulesCtxMenuCommand : ModulesCtxMenuCommand {
+		protected override void Execute(ModulesCtxMenuContext context) {
+			GoToModuleModulesCtxMenuCommand.ExecuteInternal(context, true);
+		}
+
+		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+			return GoToModuleModulesCtxMenuCommand.CanGoToModule(context);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "_Hexadecimal Display", Order = 300, Category = "MODMiscOptions")]
 	sealed class HexadecimalDisplayModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		protected override void Execute(ModulesCtxMenuContext context) {
 			DebuggerSettings.Instance.UseHexadecimal = !DebuggerSettings.Instance.UseHexadecimal;
@@ -129,7 +187,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Open Containing Folder", Order = 300, Category = "MOD1")]
+	[ExportContextMenuEntry(Header = "_Open Containing Folder", Order = 400, Category = "MOD1")]
 	sealed class OpenContainingFolderModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		protected override void Execute(ModulesCtxMenuContext context) {
 			if (context.SelectedItems.Length > 0)
@@ -153,7 +211,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Copy Filename", Order = 310, Category = "MOD1")]
+	[ExportContextMenuEntry(Header = "Copy Filename", Order = 410, Category = "MOD1")]
 	sealed class CopyFilenameModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		protected override void Execute(ModulesCtxMenuContext context) {
 			if (context.SelectedItems.Length > 0)
@@ -165,7 +223,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportContextMenuEntry(Order = 400, Category = "MOD2")]
+	[ExportContextMenuEntry(Order = 500, Category = "MOD2")]
 	sealed class SaveModuleToDiskModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		protected override void Execute(ModulesCtxMenuContext context) {
 			Save(GetSavableFiles(context.SelectedItems));

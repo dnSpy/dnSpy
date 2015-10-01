@@ -266,6 +266,7 @@ namespace dnSpy.Debugger.Locals {
 		protected const int ERROR_PropertyEvalDisabled = -2;
 		protected const int ERROR_EvalTimedOut = -3;
 		protected const int ERROR_EvalDisabledTimedOut = -4;
+		protected const int ERROR_CantEvaluate = -5;
 
 		public override bool CanEdit {
 			get { return ReadOnlyCorValue != null && valueType.CanEdit; }
@@ -406,6 +407,10 @@ namespace dnSpy.Debugger.Locals {
 					msg = "Evaluation timed out";
 				else if (hr_ReadOnlyCorValue == ERROR_EvalDisabledTimedOut)
 					msg = EVAL_DISABLED_TIMEDOUT_ERROR_MSG;
+				else if (hr_ReadOnlyCorValue == ERROR_CantEvaluate)
+					msg = EVAL_DISABLED_CANT_CALL_PROPS_METHS;
+				else if (CordbgErrors.IsCantEvaluateError(hr_ReadOnlyCorValue))
+					msg = "Can't evaluate when the thread is at an unsafe point. Step once or run until a breakpoint hits.";
 				Children.Add(MessageValueVM.CreateError(context, msg));
 				WriteLazyLoading(false);
 				childrenState = null;
@@ -920,11 +925,14 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		protected const string EVAL_DISABLED_TIMEDOUT_ERROR_MSG = "Evaluation timed out and has been disabled until you continue the debugged program.";
+		protected const string EVAL_DISABLED_CANT_CALL_PROPS_METHS = "It's currently not possible to call properties and methods";
 		protected string CreateString(string s, out CorValue newString) {
 			newString = null;
 
 			if (DebugManager.Instance.EvalDisabled)
 				return "Evaluation timed out and it's not possible to create new strings until you continue the debugged program";
+			if (!DebugManager.Instance.CanEvaluate)
+				return "It's currently not possible to create new strings";
 
 			int hr;
 			EvalResult? res;
@@ -1149,6 +1157,8 @@ namespace dnSpy.Debugger.Locals {
 				return ERROR_PropertyEvalDisabled;
 			if (DebugManager.Instance.EvalDisabled)
 				return ERROR_EvalDisabledTimedOut;
+			if (!DebugManager.Instance.CanEvaluate)
+				return ERROR_CantEvaluate;
 
 			try {
 				int hr;
@@ -1189,6 +1199,8 @@ namespace dnSpy.Debugger.Locals {
 		protected override string SetValueAsTextInternal(ValueStringParser parser) {
 			if (DebugManager.Instance.EvalDisabled)
 				return EVAL_DISABLED_TIMEDOUT_ERROR_MSG;
+			if (!DebugManager.Instance.CanEvaluate)
+				return EVAL_DISABLED_CANT_CALL_PROPS_METHS;
 
 			var v = ReadOnlyCorValue;
 
@@ -1722,7 +1734,10 @@ namespace dnSpy.Debugger.Locals {
 
 			if (Children.Count == 0) {
 				List<TokenAndName> typeParams, methodParams;
-				context.Function.GetGenericParameters(out typeParams, out methodParams);
+				if (context.Function != null)
+					context.Function.GetGenericParameters(out typeParams, out methodParams);
+				else
+					typeParams = methodParams = new List<TokenAndName>();
 				for (int i = 0; i < context.GenericTypeArguments.Count; i++)
 					Children.Add(new GenericVariableValueVM(newContext, Read(typeParams, i), context.GenericTypeArguments[i], true, i));
 				for (int i = 0; i < context.GenericMethodArguments.Count; i++)

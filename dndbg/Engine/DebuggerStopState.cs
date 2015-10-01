@@ -27,6 +27,11 @@ namespace dndbg.Engine {
 		Other,
 
 		/// <summary>
+		/// An unhandled exception
+		/// </summary>
+		UnhandledException,
+
+		/// <summary>
 		/// A <see cref="DnDebugEventBreakpoint"/> breakpoint got triggered
 		/// </summary>
 		DebugEventBreakpoint,

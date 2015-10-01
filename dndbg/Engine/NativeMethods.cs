@@ -50,10 +50,15 @@ namespace dndbg.Engine {
 		public static extern bool CreateProcess([In] string lpApplicationName, [In, Out] string lpCommandLine, [In] IntPtr lpProcessAttributes, [In] IntPtr lpThreadAttributes, [In] bool bInheritHandles, [In] ProcessCreationFlags dwCreationFlags, [In] IntPtr lpEnvironment, [In] string lpCurrentDirectory, [In] ref STARTUPINFO lpStartupInfo, out PROCESS_INFORMATION lpProcessInformation);
 
 		[DllImport("kernel32", SetLastError = true)]
+		public static extern bool TerminateProcess([In] IntPtr hProcess, [In] uint uExitCode);
+
+		[DllImport("kernel32", SetLastError = true)]
 		public static extern uint ResumeThread(IntPtr hThread);
 
 		[DllImport("kernel32", SetLastError = true)]
 		public static extern uint WaitForSingleObject([In] IntPtr hHandle, [In] uint dwMilliseconds);
+		public const uint WAIT_FAILED = 0xFFFFFFFF;
+		public const uint WAIT_TIMEOUT = 0x00000102;
 
 		[DllImport("kernel32", SetLastError = true)]
 		public static extern bool SetEvent([In] IntPtr hEvent);

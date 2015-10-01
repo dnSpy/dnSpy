@@ -173,8 +173,8 @@ namespace dnSpy.Debugger.Locals {
 				}
 			}
 
-			public FrameInfo(ILocalsOwner localsOwner, DnThread thread, CorFrame frame, int frameNo) {
-				this.ValueContext = new ValueContext(localsOwner, frame, thread);
+			public FrameInfo(ILocalsOwner localsOwner, DnThread thread, DnProcess process, CorFrame frame, int frameNo) {
+				this.ValueContext = new ValueContext(localsOwner, frame, thread, process);
 			}
 
 			public bool Equals(FrameInfo other) {
@@ -231,18 +231,26 @@ namespace dnSpy.Debugger.Locals {
 			var thread = StackFrameManager.Instance.SelectedThread;
 			var frame = StackFrameManager.Instance.SelectedFrame;
 			int frameNo = StackFrameManager.Instance.SelectedFrameNumber;
-			if (frame == null) {
-				ClearAllLocals();
-				return;
+			DnProcess process;
+			if (thread == null) {
+				process = DebugManager.Instance.Debugger.Processes.FirstOrDefault();
+				thread = process == null ? null : process.Threads.FirstOrDefault();
 			}
+			else
+				process = thread.Process;
 
-			var newFrameInfo = new FrameInfo(this, thread, frame, frameNo);
+			var newFrameInfo = new FrameInfo(this, thread, process, frame, frameNo);
 			if (frameInfo == null || !frameInfo.Equals(newFrameInfo))
 				ClearAndDisposeChildren();
 			frameInfo = newFrameInfo;
 
-			var corArgs = frame.ILArguments.ToArray();
-			var corLocals = frame.ILLocals.ToArray();
+			CorValue[] corArgs, corLocals;
+			if (frame != null) {
+				corArgs = frame.ILArguments.ToArray();
+				corLocals = frame.ILLocals.ToArray();
+			}
+			else
+				corArgs = corLocals = new CorValue[0];
 			var args = new List<ICorValueHolder>(corArgs.Length);
 			var locals = new List<ICorValueHolder>(corLocals.Length);
 			for (int i = 0; i < corArgs.Length; i++)
@@ -250,7 +258,7 @@ namespace dnSpy.Debugger.Locals {
 			for (int i = 0; i < corLocals.Length; i++)
 				locals.Add(new LocArgCorValueHolder(false, this, corLocals[i], i));
 
-			var exValue = thread.CorThread.CurrentException;
+			var exValue = thread == null ? null : thread.CorThread.CurrentException;
 			var exValueHolder = exValue == null ? null : new DummyCorValueHolder(exValue);
 
 			int numGenArgs = frameInfo.ValueContext.GenericTypeArguments.Count + frameInfo.ValueContext.GenericMethodArguments.Count;
@@ -267,7 +275,10 @@ namespace dnSpy.Debugger.Locals {
 
 			List<TypeSig> argTypes;
 			List<TypeSig> localTypes;
-			frame.GetArgAndLocalTypes(out argTypes, out localTypes);
+			if (frame != null)
+				frame.GetArgAndLocalTypes(out argTypes, out localTypes);
+			else
+				argTypes = localTypes = new List<TypeSig>();
 
 			if (rootNode.Children.Count == 0) {
 				if (exValueHolder != null)
@@ -485,10 +496,8 @@ namespace dnSpy.Debugger.Locals {
 				return null;
 			if (!DebuggerSettings.Instance.CanEvaluateToString)
 				return null;
-			if (!DebugManager.Instance.CanEvaluate) {
-				Debug.Fail("Can't evaluate");
+			if (!DebugManager.Instance.CanEvaluate)
 				return null;
-			}
 			if (DebugManager.Instance.EvalDisabled)
 				return null;
 
@@ -532,6 +541,8 @@ namespace dnSpy.Debugger.Locals {
 				if (locals.frameInfo == null)
 					return null;
 				var frame = locals.frameInfo.ValueContext.FrameCouldBeNeutered;
+				if (frame == null)
+					return null;
 				var newValue = isArg ? frame.GetILArgument((uint)index) : frame.GetILLocal((uint)index);
 				Debug.Assert(newValue != null && !newValue.IsNeutered);
 				return newValue;

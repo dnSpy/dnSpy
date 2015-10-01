@@ -43,8 +43,12 @@ namespace dnSpy.Debugger.CallStack {
 	sealed class StackFrameManager : ViewModelBase {
 		public static readonly StackFrameManager Instance = new StackFrameManager();
 
-		// VS2015 shows at most 5000 frames, so let's use that number as well
-		const int MAX_SHOWN_FRAMES = 5000;
+		// VS2015 shows at most 5000 frames but we can increase that to 50000, dnSpy had no trouble
+		// showing 12K frames, which was the total number of frames until I got a SO in the test app.
+		const int MAX_SHOWN_FRAMES = 50000;
+		// We don't need to show all return lines above, a much smaller number should be enough.
+		// A large number will only make everything slow down to a crawl.
+		const int MAX_STACKFRAME_LINES = 500;
 
 		readonly List<StackFrameLine> stackFrameLines = new List<StackFrameLine>();
 
@@ -249,7 +253,7 @@ namespace dnSpy.Debugger.CallStack {
 			if (updateReturnStatements) {
 				int frameNo = -1;
 				bool tooManyFrames;
-				foreach (var frame in GetFrames(out tooManyFrames)) {
+				foreach (var frame in GetFrames(MAX_STACKFRAME_LINES, out tooManyFrames)) {
 					frameNo++;
 					if (!frame.IsILFrame)
 						continue;
@@ -289,13 +293,17 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		public List<CorFrame> GetFrames(out bool tooManyFrames) {
+			return GetFrames(MAX_SHOWN_FRAMES, out tooManyFrames);
+		}
+
+		List<CorFrame> GetFrames(int max, out bool tooManyFrames) {
 			tooManyFrames = false;
 			var list = new List<CorFrame>();
 
 			var thread = currentState.Thread;
 			if (thread != null) {
 				foreach (var frame in thread.AllFrames) {
-					if (list.Count >= MAX_SHOWN_FRAMES) {
+					if (list.Count >= max) {
 						tooManyFrames = true;
 						break;
 					}

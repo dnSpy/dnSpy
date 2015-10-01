@@ -23,6 +23,34 @@ using dndbg.Engine.COM.MetaData;
 
 namespace dnSpy.Debugger {
 	static class EvalUtils {
+		const string Field_Exception_HResult = "_HResult";
+		const string Field_Exception_Message = "_message";
+		const string Field_Exception_InnerException = "_innerException";
+
+		public static int? ReflectionReadExceptionHResult(CorValue thisRef) {
+			if (thisRef == null)
+				return null;
+			int? res = null;
+			if (ReflectionReadValue(thisRef, Field_Exception_HResult, ref res))
+				return res;
+			return null;
+		}
+
+		public static string ReflectionReadExceptionMessage(CorValue thisRef) {
+			if (thisRef == null)
+				return null;
+			string res = null;
+			if (ReflectionReadValue(thisRef, Field_Exception_Message, ref res))
+				return res;
+			return null;
+		}
+
+		public static CorValue ReflectionReadExceptionInnerException(CorValue thisRef) {
+			if (thisRef == null)
+				return null;
+			return thisRef.GetFieldValue(Field_Exception_InnerException);
+		}
+
 		public static bool ReflectionReadValue<T>(CorValue thisRef, string fieldName, ref T value) {
 			if (thisRef == null)
 				return false;
@@ -46,6 +74,8 @@ namespace dnSpy.Debugger {
 				if (!DebuggerSettings.Instance.PropertyEvalAndFunctionCalls)
 					return default(T);
 				if (DebugManager.Instance.EvalDisabled)
+					return default(T);
+				if (!DebugManager.Instance.CanEvaluate)
 					return default(T);
 				if (thisObj == null || thisObj.IsNull)
 					return default(T);
