@@ -21,15 +21,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:winlocal="clr-namespace:dnSpy.AsmEditor"
+             xmlns:winlocal="clr-namespace:dnSpy.MVVM"
              xmlns:mbody="clr-namespace:dnSpy.AsmEditor.MethodBody"
-             xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
+             xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters"
              Height="500" Width="800"
              Title="Edit Switch Operand"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="300" MinWidth="500">
 	<winlocal:WindowBase.Resources>
-		<vc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
+		<mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
 	</winlocal:WindowBase.Resources>
 	<Grid>
 		<Grid.ColumnDefinitions>

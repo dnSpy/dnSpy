@@ -25,6 +25,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -478,7 +479,7 @@ namespace dnSpy.AsmEditor.Module {
 				return;
 
 			var dialog = new System.Windows.Forms.OpenFileDialog() {
-				Filter = ".NET NetModules (*.netmodule)|*.netmodule|All files (*.*)|*.*",
+				Filter = PickFilenameConstants.NetModuleFilter,
 				RestoreDirectory = true,
 			};
 			if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK)

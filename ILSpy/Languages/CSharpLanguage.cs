@@ -29,7 +29,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using dnSpy.AsmEditor;
+using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;

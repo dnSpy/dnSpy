@@ -271,7 +271,12 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		static MemberAccess GetMemberAccess(FieldDef field)
 		{
-			switch (field.Access) {
+			return GetMemberAccess(field.Access);
+		}
+
+		internal static MemberAccess GetMemberAccess(FieldAttributes attrs)
+		{
+			switch (attrs & FieldAttributes.FieldAccessMask) {
 			case FieldAttributes.Public:
 				return MemberAccess.Public;
 			case FieldAttributes.Assembly:

@@ -196,13 +196,9 @@
       <Project>{6c55b776-26d4-4db3-a6ab-87e783b2f3d1}</Project>
       <Name>ICSharpCode.AvalonEdit</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Debugger\Debugger.Core\Debugger.Core.csproj">
-      <Project>{1d18d788-f7ee-4585-a23b-34dc8ec63cb8}</Project>
-      <Name>Debugger.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Debugger\ILSpy.Debugger\ILSpy.Debugger.csproj">
-      <Project>{6d3d0f0d-348d-456a-a6ed-e9bd5efabb6a}</Project>
-      <Name>ILSpy.Debugger</Name>
+    <ProjectReference Include="..\dndbg\dndbg.csproj">
+      <Project>{989a5c51-8c4c-4f4d-90a2-042cd1846075}</Project>
+      <Name>dndbg</Name>
     </ProjectReference>
     <ProjectReference Include="..\dnspc\dnspc.csproj">
       <Project>{da111693-97c8-413b-9102-4dcbee8885b7}</Project>

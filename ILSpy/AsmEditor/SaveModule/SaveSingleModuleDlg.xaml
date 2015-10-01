@@ -22,14 +22,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.AsmEditor.SaveModule"
-             xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
+             xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters"
              Height="200" Width="400"
              Title="Save Module"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="200" MinWidth="400">
 	<local:SaveModuleWindow.Resources>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-		<vc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
+		<mvvmvc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
 	</local:SaveModuleWindow.Resources>
     <Grid>
 		<Grid.ColumnDefinitions>

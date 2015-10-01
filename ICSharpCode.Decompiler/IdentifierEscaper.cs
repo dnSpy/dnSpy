@@ -30,6 +30,13 @@ namespace ICSharpCode.Decompiler {
 		const int MAX_IDENTIFIER_LENGTH = 512;
 		const string EMPTY_NAME = "<<EMPTY_NAME>>";
 
+		public static string LimitIdentifierLength(string s) {
+			if (s == null || s.Length <= MAX_IDENTIFIER_LENGTH)
+				return s;
+
+			return s.Substring(0, MAX_IDENTIFIER_LENGTH) + "…";
+		}
+
 		public static string Escape(string id) {
 			if (string.IsNullOrEmpty(id))
 				return EMPTY_NAME;

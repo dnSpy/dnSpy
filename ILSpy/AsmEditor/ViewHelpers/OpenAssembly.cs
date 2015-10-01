@@ -18,13 +18,14 @@
 */
 
 using System.Windows.Forms;
+using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class OpenAssembly : IOpenAssembly {
 		public LoadedAssembly Open() {
 			var dialog = new OpenFileDialog() {
-				Filter = ".NET Executables (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|All files (*.*)|*.*",
+				Filter = PickFilenameConstants.DotNetAssemblyOrModuleFilter,
 				RestoreDirectory = true,
 			};
 			if (dialog.ShowDialog() != DialogResult.OK)

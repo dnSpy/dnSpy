@@ -22,20 +22,20 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.AvalonEdit;
 using dnSpy.Images;
-using ICSharpCode.ILSpy.Bookmarks;
 using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy.AvalonEdit {
 	#region Context menu extensibility
-	public interface IBookmarkContextMenuEntry : IContextMenuEntry<IBookmark>
+	public interface IIconBarContextMenuEntry : IContextMenuEntry<IIconBarObject>
 	{
 	}
-	public interface IBookmarkContextMenuEntry2 : IBookmarkContextMenuEntry, IContextMenuEntry2<IBookmark>
+	public interface IIconBarContextMenuEntry2 : IIconBarContextMenuEntry, IContextMenuEntry2<IIconBarObject>
 	{
 	}
 	
-	public interface IBookmarkContextMenuEntryMetadata
+	public interface IconBarContextMenuEntryMetadata
 	{
 		string Icon { get; }
 		string Header { get; }
@@ -46,10 +46,10 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 	
 	[MetadataAttribute]
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
-	public class ExportBookmarkContextMenuEntryAttribute : ExportAttribute, IBookmarkContextMenuEntryMetadata
+	public class ExportIconBarContextMenuEntryAttribute : ExportAttribute, IconBarContextMenuEntryMetadata
 	{
-		public ExportBookmarkContextMenuEntryAttribute()
-			: base(typeof(IBookmarkContextMenuEntry))
+		public ExportIconBarContextMenuEntryAttribute()
+			: base(typeof(IIconBarContextMenuEntry))
 		{
 		}
 		
@@ -63,13 +63,13 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 	
 	#region Actions (simple clicks) - this will be used for creating bookmarks (e.g. Breakpoint bookmarks)
 	
-	public interface IBookmarkActionEntry
+	public interface IIconBarActionEntry
 	{
 		bool IsEnabled(DecompilerTextView textView);
 		void Execute(DecompilerTextView textView, int line);
 	}
 	
-	public interface IBookmarkActionMetadata
+	public interface IIconBarActionMetadata
 	{
 		string Category { get; }
 		
@@ -78,10 +78,10 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 	
 	[MetadataAttribute]
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
-	public class ExportBookmarkActionEntryAttribute : ExportAttribute, IBookmarkActionMetadata
+	public class ExportIconBarActionEntryAttribute : ExportAttribute, IIconBarActionMetadata
 	{
-		public ExportBookmarkActionEntryAttribute()
-			: base(typeof(IBookmarkActionEntry))
+		public ExportIconBarActionEntryAttribute()
+			: base(typeof(IIconBarActionEntry))
 		{
 		}
 		
@@ -119,11 +119,11 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 				App.CompositionContainer.ComposeParts(this);
 			}
 
-			[ImportMany(typeof(IBookmarkContextMenuEntry))]
-			public Lazy<IBookmarkContextMenuEntry, IBookmarkContextMenuEntryMetadata>[] contextEntries = null;
+			[ImportMany(typeof(IIconBarContextMenuEntry))]
+			public Lazy<IIconBarContextMenuEntry, IconBarContextMenuEntryMetadata>[] contextEntries = null;
 
-			[ImportMany(typeof(IBookmarkActionEntry))]
-			public Lazy<IBookmarkActionEntry, IBookmarkActionMetadata>[] actionEntries = null;
+			[ImportMany(typeof(IIconBarActionEntry))]
+			public Lazy<IIconBarActionEntry, IIconBarActionMetadata>[] actionEntries = null;
 		}
 		
 		private IconMarginActionsProvider(IconBarMargin margin, DecompilerTextView textView)
@@ -132,15 +132,15 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 			this.textView = textView;
 		}
 
-		List<IBookmark> GetBookmark(IList<IBookmark> bookmarks, int line)
+		List<IIconBarObject> GetIconBarObjects(IList<IIconBarObject> objects, int line)
 		{
-			var list = new List<IBookmark>();
-			foreach (var b in bookmarks) {
-				if (BookmarkBase.GetLineNumber(b, textView) != line)
+			var list = new List<IIconBarObject>();
+			foreach (var obj in objects) {
+				if (obj.GetLineNumber(textView) != line)
 					continue;
-				if (!b.HasImage)
+				if (!obj.HasImage)
 					continue;
-				list.Add(b);
+				list.Add(obj);
 			}
 			list.Sort((a, b) => b.ZOrder.CompareTo(a.ZOrder));
 			return list;
@@ -153,7 +153,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 			if (e.ChangedButton == MouseButton.Left) {
 				foreach (var category in MefState.Instance.actionEntries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
 					foreach (var entryPair in category) {
-						IBookmarkActionEntry entry = entryPair.Value;
+						IIconBarActionEntry entry = entryPair.Value;
 
 						if (entryPair.Value.IsEnabled(textView)) {
 							entry.Execute(textView, line);
@@ -163,9 +163,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 			}
 			
 			// context menu entries
-			var bookmarks = new List<IBookmark>(margin.Manager.Bookmarks);
-			bookmarks.AddRange(BookmarkManager.Bookmarks);
-			if (bookmarks.Count == 0) {
+			var objects = new List<IIconBarObject>(TextLineObjectManager.Instance.GetObjectsOfType<IIconBarObject>());
+			if (objects.Count == 0) {
 				// don't show the menu
 				e.Handled = true;
 				this.margin.ContextMenu = null;
@@ -174,21 +173,21 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 			
 			if (e.ChangedButton == MouseButton.Right) {
 				// check if we are on a Member
-				var bms = GetBookmark(bookmarks, line);
-				if (bms.Count == 0) {
+				var filteredObjects = GetIconBarObjects(objects, line);
+				if (filteredObjects.Count == 0) {
 					// don't show the menu
 					e.Handled = true;
 					this.margin.ContextMenu = null;
 					return;
 				}
 
-				foreach (var bookmark in bms) {
+				foreach (var bjmark in filteredObjects) {
 					ContextMenu menu = new ContextMenu();
 					foreach (var category in MefState.Instance.contextEntries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
 						bool hasAddedSep = menu.Items.Count == 0;
 						foreach (var entryPair in category) {
-							IBookmarkContextMenuEntry entry = entryPair.Value;
-							if (entry.IsVisible(bookmark)) {
+							IIconBarContextMenuEntry entry = entryPair.Value;
+							if (entry.IsVisible(bjmark)) {
 								if (!hasAddedSep) {
 									menu.Items.Add(new Separator());
 									hasAddedSep = true;
@@ -197,8 +196,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 								MenuItem menuItem = new MenuItem();
 								menuItem.Header = entryPair.Metadata.Header;
 								bool isEnabled;
-								if (entryPair.Value.IsEnabled(bookmark)) {
-									menuItem.Click += delegate { entry.Execute(bookmark); };
+								if (entryPair.Value.IsEnabled(bjmark)) {
+									menuItem.Click += delegate { entry.Execute(bjmark); };
 									isEnabled = true;
 								} else {
 									menuItem.IsEnabled = false;
@@ -207,9 +206,9 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 								if (!string.IsNullOrEmpty(entryPair.Metadata.Icon))
 									MainWindow.CreateMenuItemImage(menuItem, entry, entryPair.Metadata.Icon, BackgroundType.ContextMenuItem, isEnabled);
 								menuItem.InputGestureText = entryPair.Metadata.InputGestureText ?? string.Empty;
-								var entry2 = entry as IBookmarkContextMenuEntry2;
+								var entry2 = entry as IIconBarContextMenuEntry2;
 								if (entry2 != null)
-									entry2.Initialize(bookmark, menuItem);
+									entry2.Initialize(bjmark, menuItem);
 								menu.Items.Add(menuItem);
 							}
 						}

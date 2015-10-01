@@ -19,8 +19,8 @@
 using System;
 using System.Diagnostics;
 using System.Linq;
+using dnSpy;
 using dnSpy.Images;
-using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
@@ -47,22 +47,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		
 		protected override void Write(ITextOutput output, Language language)
 		{
-			Write(output, name);
-		}
-
-		public static ITextOutput Write(ITextOutput output, string name)
-		{
-			if (name.Length == 0)
-				output.Write('-', TextTokenType.Operator);
-			else {
-				var parts = name.Split('.');
-				for (int i = 0; i < parts.Length; i++) {
-					if (i > 0)
-						output.Write('.', TextTokenType.Operator);
-					output.Write(IdentifierEscaper.Escape(parts[i]), TextTokenType.NamespacePart);
-				}
-			}
-			return output;
+			output.WriteNamespace(name);
 		}
 		
 		public override object Icon {

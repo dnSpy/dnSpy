@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	enum ConstantType {

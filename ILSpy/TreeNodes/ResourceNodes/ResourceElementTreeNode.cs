@@ -23,8 +23,8 @@ using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnlib.IO;
-using dnSpy.AsmEditor;
 using dnSpy.Images;
+using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
@@ -164,7 +164,7 @@ namespace dnSpy.TreeNodes {
 		}
 
 		protected sealed override void Write(ITextOutput output, Language language) {
-			ResourceTreeNode.WriteFileName(output, resElem.Name);
+			output.WriteFilename(resElem.Name);
 		}
 
 		public sealed override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {

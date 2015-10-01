@@ -19,6 +19,7 @@
 
 using System.Windows.Input;
 using dnSpy.HexEditor;
+using dnSpy.MVVM;
 
 namespace dnSpy.AsmEditor.Hex {
 	sealed class LocalSettingsVM : ViewModelBase {

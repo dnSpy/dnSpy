@@ -23,6 +23,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	abstract class TypeVMBase<T> : DataFieldVM<T> where T : IType {

@@ -36,13 +36,12 @@ using System.Xml;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy;
-using dnSpy.AsmEditor;
 using dnSpy.AvalonEdit;
-using dnSpy.Bookmarks;
 using dnSpy.Debugger;
 using dnSpy.Decompiler;
 using dnSpy.dntheme;
 using dnSpy.Images;
+using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using dnSpy.TextView;
 using ICSharpCode.AvalonEdit;
@@ -78,7 +77,6 @@ namespace ICSharpCode.ILSpy.TextView {
 		TextSegmentCollection<ReferenceSegment> references;
 		CancellationTokenSource currentCancellationTokenSource;
 		
-		internal readonly IconBarManager manager;
 		readonly IconBarMargin iconMargin;
 		readonly TextMarkerService textMarkerService;
 		readonly List<ITextMarker> markedReferences = new List<ITextMarker>();
@@ -97,7 +95,7 @@ namespace ICSharpCode.ILSpy.TextView {
 			HighlightingManager.Instance.RegisterHighlighting(
 				"ILAsm", new string[] { ".il" },
 				delegate {
-					using (Stream s = typeof(DecompilerTextView).Assembly.GetManifestResourceStream(typeof(DecompilerTextView), "ILAsm-Mode.xshd")) {
+					using (Stream s = typeof(DecompilerTextView).Assembly.GetManifestResourceStream(typeof(dnSpy.StartUpClass), "ILAsm-Mode.xshd")) {
 						using (XmlTextReader reader = new XmlTextReader(s)) {
 							return HighlightingLoader.Load(reader, HighlightingManager.Instance);
 						}
@@ -110,7 +108,9 @@ namespace ICSharpCode.ILSpy.TextView {
 		{
 			this.Loaded += DecompilerTextView_Loaded;
 			InitializeComponent();
-			
+
+			this.CodeMappings = new Dictionary<MethodKey, MemberMapping>();
+
 			textEditor.TextArea.SelectionCornerRadius = 0;
 			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
 			// Add the ref elem generator first in case one of the refs looks like a http link etc
@@ -126,7 +126,7 @@ namespace ICSharpCode.ILSpy.TextView {
 			textEditor.SetBinding(Control.FontSizeProperty, new Binding { Source = DisplaySettingsPanel.CurrentDisplaySettings, Path = new PropertyPath("SelectedFontSize") });
 			
 			// add marker service & margin
-			iconMargin = new IconBarMargin(manager = new IconBarManager(), this);
+			iconMargin = new IconBarMargin(this);
 			textMarkerService = new TextMarkerService(this);
 			textEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
 			textEditor.ShowLineNumbers = true;
@@ -731,6 +731,7 @@ namespace ICSharpCode.ILSpy.TextView {
 		internal void CancelDecompileAsync()
 		{
 			SetNextDecompilationRun(null);
+			this.CodeMappings = new Dictionary<MethodKey, MemberMapping>();
 		}
 
 		bool CancelDecompileAsyncIf(DecompilationContext context)
@@ -1037,7 +1038,7 @@ namespace ICSharpCode.ILSpy.TextView {
 				var r = tmp;
 				if (RefSegEquals(referenceSegment, r)) {
 					var mark = textMarkerService.Create(r.StartOffset, r.Length);
-					mark.ZOrder = (int)TextMarkerZOrder.SearchResult;
+					mark.ZOrder = (int)TextLineObjectZOrder.SearchResult;
 					mark.HighlightingColor = () => {
 						return (r.IsLocalTarget ?
 							Themes.Theme.GetColor(dnSpy.dntheme.ColorType.LocalDefinition) :

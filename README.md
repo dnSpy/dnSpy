@@ -10,7 +10,7 @@ Binaries
 ========
 Latest release: https://github.com/0xd4d/dnSpy/releases
 
-Latest build (unstable): https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts
+Latest build (possibly unstable): https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts
 
 Features
 ========
@@ -40,6 +40,8 @@ ESC			| (Text view) Remove selected markers or close search box
 Backspace	| Navigate back in history
 Alt+Left Arrow | Navigate back in history
 Alt+Right Arrow | Navigate forward in history
+F5			| (Debugger) Debug an assembly
+Ctrl+F5		| (Debugger) Start without debugging
 F5			| (Debugger) Continue debugging
 Shift+F5	| (Debugger) Stop debugging
 Ctrl+Shift+F5 | (Debugger) Restart debugged program
@@ -95,6 +97,8 @@ Ctrl+Alt+B	| Show Breakpoints window
 Alt+F9		| Show Breakpoints window
 Ctrl+Alt+C	| Show Call Stack window
 Alt+7		| Show Call Stack window
+Ctrl+Alt+H	| Show Threads window
+Ctrl+Alt+U	| Show Modules window
 Shift+Alt+Enter | Toggle full screen mode
 Tab			| (Text view) Move to the next reference. Does nothing if the caret is not on a reference.
 Shift+Tab	| (Text view) Move to the previous reference. Does nothing if the caret is not on a reference.

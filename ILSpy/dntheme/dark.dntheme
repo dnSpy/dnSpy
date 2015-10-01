@@ -18,8 +18,8 @@
 		<color name="enum" fg="#B8D7A3" />
 		<color name="interface" fg="#9B9B82" />
 		<color name="valuetype" fg="#009933" />
-		<color name="typegenericparameter" fg="#1E667A" />
-		<color name="methodgenericparameter" fg="#1E667A" />
+		<color name="typegenericparameter" fg="#4B8595" />
+		<color name="methodgenericparameter" fg="#4B8595" />
 		<color name="instancemethod" fg="#FF8000" />
 		<color name="staticmethod" fg="#E67300" />
 		<color name="extensionmethod" fg="#CC6600" italics="true" />
@@ -46,6 +46,7 @@
 		<color name="filenamenoextension" fg="#569CD6" />
 		<color name="fileextension" fg="#9B9B82" />
 		<color name="error" fg="Red" />
+		<color name="tostringeval" fg="#6BF0FF" />
 		<color name="linenumber" fg="#2B91AF" />
 		<color name="xmlcomment" fg="#FF57A64A" italics="true" />
 		<color name="xmlcdata" fg="#FFE9D585" />
@@ -62,7 +63,7 @@
 		<color name="localreference" fg="#ADC0D3" bg="#0E4583" />
 		<color name="currentstatement" fg="Black" bg="#7EFFEE62" />
 		<color name="breakpointstatement" fg="White" bg="#8C2F2F" />
-		<color name="disabledbreakpointstatement" bg="#308C2F2F" />
+		<color name="disabledbreakpointstatement" bg="#708C2F2F" />
 		<color name="specialcharacterbox" fg="#FFF1F1F1" bg="#FF666699" />
 		<color name="searchresultmarker" bg="#FFFFB7" />
 		<color name="currentline" fg="#282828" bg="#0F0F0F" />
@@ -136,17 +137,11 @@
 		<color name="toplevelmenuheaderhover" bg="#FF3E3E40" />
 		<color name="menuitemseparatorfilltop" bg="#333337" />
 		<color name="menuitemseparatorfillbottom" bg="Transparent" />
-		<color name="menuitemselectionfill" fg="#333334" bg="#333334" />
-		<color name="menuitemglyphpanelbackground" bg="#3E3E40" />
 		<color name="menuitemglyphpanelborderbrush" bg="#3E3E40" />
-		<color name="menuitemglyphfill" bg="#F1F1F1" />
-		<color name="menuitemhighlightedstroke" bg="#333334" />
 		<color name="menuitemhighlightedinnerborder" bg="#333334" />
 		<color name="menuitemdisabledforeground" fg="#505050" />
 		<color name="menuitemdisabledglyphpanelbackground" bg="#5690B7" />
-		<color name="menuitemdisabledglyphpanelborderbrush" bg="#B7D0E0" />
 		<color name="menuitemdisabledglyphfill" bg="#C0C0C0" />
-		<color name="toolbardarkfill" bg="#3E3E40" />
 		<color name="toolbarbuttonpressed" bg="#505050" />
 		<color name="toolbarseparatorfill" bg="#333337" />
 		<color name="toolbarbuttonhover" bg="#333334" />
@@ -154,7 +149,6 @@
 		<color name="toolbarbuttonpressedborder" bg="#808080" />
 		<color name="toolbarmenuborder" bg="#333337" />
 		<color name="toolbarsubmenubackground" bg="#1B1B1C" />
-		<color name="toolbarmenucheckfill" bg="#3E3E40" />
 		<color name="toolbarbuttonchecked" fg="#FFF1F1F1" bg="#FF1E1E1E" />
 		<color name="toolbaropenheaderbackground" fg="#1B1B1C" bg="#1B1B1C" color3="#1B1B1C" />
 		<color name="toolbariconverticalbackground" bg="#1B1B1C" />
@@ -164,6 +158,12 @@
 		<color name="toolbardisabledfill" bg="#383838" />
 		<color name="toolbardisabledborder" bg="#484848" />
 		<color name="environmentcommandbarmenumouseoversubmenuglyph" bg="#FF007ACC" />
+		<color name="environmentcommandbarmenuseparator" bg="#FF000000" />
+		<color name="environmentcommandbarcheckbox" bg="#FF999999" />
+		<color name="environmentcommandbarselectedicon" bg="#FF2D2D30" />
+		<color name="environmentcommandbarcheckboxmouseover" bg="#FFF1F1F1" />
+		<color name="environmentcommandbarhoveroverselectedicon" bg="#FF3E3E40" />
+		<color name="environmentcommandbarmenuitemmouseover" fg="#FFF1F1F1" bg="#FF333334" />
 		<color name="commoncontrolsbuttoniconbackground" bg="#FF3F3F46" />
 		<color name="commoncontrolsbutton" fg="#FFF1F1F1" bg="#FF3F3F46" />
 		<color name="commoncontrolsbuttonborder" bg="#FF555555" />
@@ -417,7 +417,7 @@
 		<color name="avaloneditsearchdropdownbuttonactivebackground" bg="#06273D" />
 		<color name="listarrowbackground" bg="#F1F1F1" />
 		<color name="treeviewitemmouseover" fg="#FFF1F1F1" bg="#505050" />
-		<color name="treeviewitemselected" fg="#FFF1F1F1" bg="#FF505050" />
+		<color name="treeviewitemselected" fg="#FFF1F1F1" bg="#FF404040" />
 		<color name="treeview" fg="#FFF1F1F1" bg="#FF252526" />
 		<color name="treeviewborder" bg="#3F3F46" />
 		<color name="treeviewglyph" bg="#FFF1F1F1" />

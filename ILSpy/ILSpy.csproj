@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>ICSharpCode.ILSpy</RootNamespace>
+    <RootNamespace>dnSpy</RootNamespace>
     <AssemblyName>dnSpy</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -19,7 +19,7 @@
     <RunCodeAnalysis>False</RunCodeAnalysis>
     <StartArguments>/separate</StartArguments>
     <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\NRefactory\ICSharpCode.NRefactory.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\dnSpy.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <AssemblyOriginatorKeyMode>File</AssemblyOriginatorKeyMode>
   </PropertyGroup>
@@ -56,7 +56,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>ICSharpCode.ILSpy.StartUpClass</StartupObject>
+    <StartupObject>dnSpy.StartUpClass</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -122,14 +122,90 @@
       <DependentUpon>AssemblyOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
-    <Compile Include="AsmEditor\ContextMenuEntryCommandProxy.cs" />
+    <Compile Include="Debugger\Breakpoints\BreakpointColumnConverter.cs" />
+    <Compile Include="Debugger\Breakpoints\BreakpointListSettings.cs" />
+    <Compile Include="Debugger\Breakpoints\BreakpointPrinter.cs" />
+    <Compile Include="Debugger\Breakpoints\BreakpointsControl.xaml.cs">
+      <DependentUpon>BreakpointsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Breakpoints\BreakpointSettings.cs" />
+    <Compile Include="Debugger\Breakpoints\BreakpointsVM.cs" />
+    <Compile Include="Debugger\Breakpoints\BreakpointVM.cs" />
+    <Compile Include="Debugger\Breakpoints\Commands.cs" />
+    <Compile Include="Debugger\CachedOutput.cs" />
+    <Compile Include="Debugger\CallStack\CallStackFrameImageConverter.cs" />
+    <Compile Include="Debugger\CallStack\CallStackSettings.cs" />
+    <Compile Include="Debugger\CallStack\FrameUtils.cs" />
+    <Compile Include="Debugger\CallStack\ICallStackObjectCreator.cs" />
+    <Compile Include="Debugger\DebuggedProcessRunningNotifier.cs" />
+    <Compile Include="Debugger\DebuggerSettings.cs" />
+    <Compile Include="Debugger\DebuggerSettingsVM.cs" />
+    <Compile Include="Debugger\DebugOutputUtils.cs" />
+    <Compile Include="Debugger\DebugUtils.cs" />
+    <Compile Include="Debugger\Dialogs\AttachProcessDlg.xaml.cs">
+      <DependentUpon>AttachProcessDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Dialogs\AttachProcessVM.cs" />
+    <Compile Include="Debugger\Dialogs\DebugCoreCLRDlg.xaml.cs">
+      <DependentUpon>DebugCoreCLRDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Dialogs\DebugCoreCLRVM.cs" />
+    <Compile Include="Debugger\Dialogs\DebugProcessDlg.xaml.cs">
+      <DependentUpon>DebugProcessDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Dialogs\DebugProcessVM.cs" />
+    <Compile Include="Debugger\Dialogs\ManagedProcessesFinder.cs" />
+    <Compile Include="Debugger\Dialogs\ProcessColumnConverter.cs" />
+    <Compile Include="Debugger\Dialogs\ProcessPrinter.cs" />
+    <Compile Include="Debugger\Dialogs\ProcessVM.cs" />
+    <Compile Include="Debugger\EvalUtils.cs" />
+    <Compile Include="Debugger\Locals\Commands.cs" />
+    <Compile Include="Debugger\Locals\EditValueControl.xaml.cs">
+      <DependentUpon>EditValueControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Locals\LocalColumnConverter.cs" />
+    <Compile Include="Debugger\Locals\LocalsControl.xaml.cs">
+      <DependentUpon>LocalsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Locals\LocalsSettings.cs" />
+    <Compile Include="Debugger\Locals\LocalsVM.cs" />
+    <Compile Include="Debugger\Locals\ValueContext.cs" />
+    <Compile Include="Debugger\Locals\ValuePrinter.cs" />
+    <Compile Include="Debugger\Locals\ValueStringParser.cs" />
+    <Compile Include="Debugger\Locals\ValueVM.cs" />
+    <Compile Include="Debugger\Modules\Commands.cs" />
+    <Compile Include="Debugger\Modules\ModuleColumnConverter.cs" />
+    <Compile Include="Debugger\Modules\ModulePrinter.cs" />
+    <Compile Include="Debugger\Modules\ModulesControl.xaml.cs">
+      <DependentUpon>ModulesControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Modules\ModulesVM.cs" />
+    <Compile Include="Debugger\Modules\ModuleVM.cs" />
+    <Compile Include="Debugger\OutputConverter.cs" />
+    <Compile Include="Debugger\Threads\Commands.cs" />
+    <Compile Include="Debugger\Threads\ThreadColumnConverter.cs" />
+    <Compile Include="Debugger\Threads\ThreadPrinter.cs" />
+    <Compile Include="Debugger\Threads\ThreadsControl.xaml.cs">
+      <DependentUpon>ThreadsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Threads\ThreadsVM.cs" />
+    <Compile Include="Debugger\Threads\ThreadVM.cs" />
+    <Compile Include="MVVM\AskUser.cs" />
+    <Compile Include="MVVM\ContextMenuEntryBase.cs" />
+    <Compile Include="MVVM\ContextMenuEntryCommandProxy.cs" />
     <Compile Include="AsmEditor\ContextMenuHandler.cs" />
-    <Compile Include="AsmEditor\Converters\BooleanToGridrowLengthConverter.cs" />
+    <Compile Include="MVVM\Converters\BooleanToGridrowLengthConverter.cs" />
     <Compile Include="AsmEditor\Converters\CilObjectConverter.cs" />
     <Compile Include="AsmEditor\Converters\InstructionOperandTextBoxStyleConverter.cs" />
-    <Compile Include="AsmEditor\Converters\NegateBooleanConverter.cs" />
-    <Compile Include="AsmEditor\Converters\RadioButtonConverter.cs" />
-    <Compile Include="AsmEditor\DataFieldVM.cs" />
+    <Compile Include="MVVM\Converters\NegateBooleanConverter.cs" />
+    <Compile Include="MVVM\Converters\RadioButtonConverter.cs" />
+    <Compile Include="Debugger\CallStack\CallStackControl.xaml.cs">
+      <DependentUpon>CallStackControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\CallStack\CallStackFrameVM.cs" />
+    <Compile Include="Debugger\CallStack\CallStackVM.cs" />
+    <Compile Include="Debugger\CallStack\Commands.cs" />
+    <Compile Include="MVVM\DataFieldVM.cs" />
     <Compile Include="AsmEditor\DeletableNodes.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\CAArgumentVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\CANamedArgumentControl.xaml.cs">
@@ -295,7 +371,7 @@
     <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\TypeSigVM.cs" />
     <Compile Include="AsmEditor\EditCommand.cs" />
-    <Compile Include="AsmEditor\EnumVM.cs" />
+    <Compile Include="MVVM\EnumVM.cs" />
     <Compile Include="AsmEditor\Event\EventDefCommands.cs" />
     <Compile Include="AsmEditor\Event\EventDefOptions.cs" />
     <Compile Include="AsmEditor\Event\EventOptionsDlg.xaml.cs">
@@ -338,7 +414,8 @@
     <Compile Include="AsmEditor\IUndoCommand.cs" />
     <Compile Include="AsmEditor\IUndoObject.cs" />
     <Compile Include="AsmEditor\ListBoxHelperBase.cs" />
-    <Compile Include="AsmEditor\ListVM.cs" />
+    <Compile Include="MVVM\IAskUser.cs" />
+    <Compile Include="MVVM\ListVM.cs" />
     <Compile Include="AsmEditor\MethodBody\BodyUtils.cs" />
     <Compile Include="AsmEditor\MethodBody\CilBodyOptions.cs" />
     <Compile Include="AsmEditor\MethodBody\CilBodyVM.cs" />
@@ -403,7 +480,7 @@
       <DependentUpon>NamespaceDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Namespace\NamespaceVM.cs" />
-    <Compile Include="AsmEditor\NumberVMUtils.cs" />
+    <Compile Include="MVVM\NumberVMUtils.cs" />
     <Compile Include="AsmEditor\Property\PropertyDefCommands.cs" />
     <Compile Include="AsmEditor\Property\PropertyDefOptions.cs" />
     <Compile Include="AsmEditor\Property\PropertyOptionsDlg.xaml.cs">
@@ -452,7 +529,11 @@
     <Compile Include="AsmEditor\SaveModule\MmapUtils.cs" />
     <Compile Include="AsmEditor\SaveModule\ModuleSaver.cs" />
     <Compile Include="AsmEditor\Namespace\NamespaceCommands.cs" />
-    <Compile Include="AsmEditor\RelayCommand.cs" />
+    <Compile Include="MVVM\PathUtils.cs" />
+    <Compile Include="MVVM\PickDirectory.cs" />
+    <Compile Include="MVVM\PickFilename.cs" />
+    <Compile Include="MVVM\PickSaveFilename.cs" />
+    <Compile Include="MVVM\RelayCommand.cs" />
     <Compile Include="AsmEditor\SaveModule\SaveHexOptionsDlg.xaml.cs">
       <DependentUpon>SaveHexOptionsDlg.xaml</DependentUpon>
     </Compile>
@@ -511,37 +592,28 @@
     <Compile Include="AsmEditor\ViewHelpers\IOpenAssembly.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IOpenPublicKeyFile.cs" />
-    <Compile Include="AsmEditor\ViewHelpers\IPickNetExecutableFileName.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ISelectItems.cs" />
     <Compile Include="AsmEditor\ViewHelpers\IShowWarningMessage.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ITypeSigCreator.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenAssembly.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenFile.cs" />
     <Compile Include="AsmEditor\ViewHelpers\OpenPublicKeyFile.cs" />
-    <Compile Include="AsmEditor\ViewHelpers\PickNetExecutableFileName.cs" />
     <Compile Include="AsmEditor\ViewHelpers\ShowWarningMessage.cs" />
     <Compile Include="AsmEditor\ViewHelpers\TypeSigCreator.cs" />
-    <Compile Include="AsmEditor\ViewModelBase.cs" />
-    <Compile Include="AsmEditor\WindowBase.cs" />
+    <Compile Include="MVVM\ViewModelBase.cs" />
+    <Compile Include="MVVM\VMPropertyChangedEventArgs.cs" />
+    <Compile Include="MVVM\WindowBase.cs" />
     <Compile Include="AssemblyList.cs" />
     <Compile Include="AssemblyListManager.cs" />
     <Compile Include="AvalonEdit\EditorPositionState.cs" />
-    <Compile Include="AvalonEdit\IconBarManager.cs" />
     <Compile Include="AvalonEdit\IconBarMargin.cs" />
     <Compile Include="AvalonEdit\IconMarginActionsProvider.cs" />
+    <Compile Include="AvalonEdit\IMarkedTextLine.cs" />
     <Compile Include="AvalonEdit\ITextEditorListener.cs" />
     <Compile Include="AvalonEdit\ITextMarker.cs" />
     <Compile Include="AvalonEdit\TextEditorWeakEventManager.cs" />
+    <Compile Include="AvalonEdit\TextLineObjectManager.cs" />
     <Compile Include="AvalonEdit\TextMarkerService.cs" />
-    <Compile Include="Bookmarks\BookmarkBase.cs" />
-    <Compile Include="Bookmarks\BookmarkEventHandler.cs" />
-    <Compile Include="Bookmarks\BookmarkManager.cs" />
-    <Compile Include="Bookmarks\BreakpointBookmark.cs" />
-    <Compile Include="Bookmarks\BreakpointBookmarkEventArgs.cs" />
-    <Compile Include="Bookmarks\IBookmark.cs" />
-    <Compile Include="Bookmarks\MarkerBookmark.cs" />
-    <Compile Include="Bookmarks\StackFrameStatementBookmark.cs" />
-    <Compile Include="Bookmarks\TextMarkerZOrder.cs" />
     <Compile Include="Commands\AboutCommands.cs" />
     <Compile Include="Commands\BrowseBackCommand.cs" />
     <Compile Include="Commands\BrowseForwardCommand.cs" />
@@ -556,11 +628,24 @@
     <Compile Include="Controls\SysMenuButton.cs" />
     <Compile Include="Controls\TabButton.cs" />
     <Compile Include="Controls\WinSysButton.cs" />
+    <Compile Include="Debugger\Breakpoints\Breakpoint.cs" />
+    <Compile Include="Debugger\Breakpoints\BreakpointManager.cs" />
+    <Compile Include="Debugger\DebugCommands.cs" />
+    <Compile Include="Debugger\Breakpoints\DebugEventBreakpoint.cs" />
+    <Compile Include="Debugger\DebuggerColors.cs" />
+    <Compile Include="Debugger\DebuggerPluginLoader.cs" />
+    <Compile Include="Debugger\DebugManager.cs" />
+    <Compile Include="Debugger\DebugRoutedCommands.cs" />
+    <Compile Include="Debugger\Breakpoints\ILCodeBreakpoint.cs" />
+    <Compile Include="Debugger\MarkedTextLine.cs" />
+    <Compile Include="Debugger\MethodKey.cs" />
+    <Compile Include="Debugger\CallStack\StackFrameLine.cs" />
+    <Compile Include="Debugger\CallStack\StackFrameManager.cs" />
+    <Compile Include="Debugger\WpfDebugMessageDispatcher.cs" />
     <Compile Include="DecompilerTabsWindow.xaml.cs">
       <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="dntheme\FileTabBackgroundConverter.cs" />
-    <Compile Include="MethodKey.cs" />
     <Compile Include="Search\FilterSearcher.cs" />
     <Compile Include="HexEditor\AsciiEncoding.cs" />
     <Compile Include="HexEditor\ByteArrayHexStream.cs" />
@@ -612,6 +697,7 @@
     <Compile Include="Tabs\TabGroupsManager.cs" />
     <Compile Include="Tabs\TabManager.cs" />
     <Compile Include="Tabs\TabState.cs" />
+    <Compile Include="TextOutputUtils.cs" />
     <Compile Include="TextView\SimpleHighlighter.cs" />
     <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />
     <Compile Include="Search\ChainTreeViewNodeFilter.cs" />
@@ -642,7 +728,7 @@
     <Compile Include="TreeNodes\Hex\ImageOptionalHeaderVM.cs" />
     <Compile Include="TreeNodes\Hex\ImageSectionHeaderTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\ImageSectionHeaderVM.cs" />
-    <Compile Include="TreeNodes\Hex\InitDataTemplateAP.cs" />
+    <Compile Include="MVVM\InitDataTemplateAP.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableRecordTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableRecordVM.cs" />
     <Compile Include="TreeNodes\Hex\MetaDataTableTreeNode.cs" />
@@ -657,8 +743,8 @@
     <Compile Include="TreeNodes\Hex\TablesStreamTreeNode.cs" />
     <Compile Include="TreeNodes\Hex\TablesStreamVM.cs" />
     <Compile Include="TreeNodes\Hex\VirtualizedList.cs" />
-    <Compile Include="TreeNodes\IInitializeDataTemplate.cs" />
-    <Compile Include="TreeNodes\InitializeDataTemplateContextMenu.cs" />
+    <Compile Include="MVVM\IInitializeDataTemplate.cs" />
+    <Compile Include="MVVM\InitializeDataTemplateContextMenu.cs" />
     <Compile Include="TreeNodes\ITokenTreeNode.cs" />
     <Compile Include="TreeNodes\ITreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\NodePathName.cs" />
@@ -696,7 +782,6 @@
     <Compile Include="Languages\Language.cs" />
     <Compile Include="Languages\Languages.cs" />
     <Compile Include="LoadedAssembly.cs" />
-    <Compile Include="Models\ToolTipRequestEventArgs.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="NavigationHistory.cs" />
     <Compile Include="NavigationState.cs" />
@@ -721,9 +806,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Commands\SimpleCommand.cs" />
-    <Compile Include="Services\DebuggerService.cs" />
-    <Compile Include="Services\IDebugger.cs" />
-    <Compile Include="Services\ParserService.cs" />
     <Compile Include="TaskHelper.cs" />
     <Compile Include="TextView\EditorCommands.cs" />
     <Compile Include="TextView\FoldingCommands.cs" />
@@ -1132,6 +1214,46 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Debugger\Breakpoints\BreakpointsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\CallStack\CallStackControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\Dialogs\AttachProcessDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\Dialogs\DebugCoreCLRDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\Dialogs\DebugProcessDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\Locals\EditValueControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\Locals\LocalsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\Modules\ModulesControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\Threads\ThreadsControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\wpf.styles.templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="DecompilerTabsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1179,7 +1301,11 @@
     <Resource Include="Images\Binary.png" />
     <Resource Include="Images\BinaryFile.png" />
     <Resource Include="Images\Branch.png" />
+    <Resource Include="Images\Break.png" />
     <Resource Include="Images\Breakpoint.png" />
+    <Resource Include="Images\BreakpointMenu.png" />
+    <Resource Include="Images\BreakpointsWindow.png" />
+    <Resource Include="Images\CallStackWindow.png" />
     <Resource Include="Images\Class.png" />
     <Resource Include="Images\ClassInternal.png" />
     <Resource Include="Images\ClassPrivate.png" />
@@ -1194,9 +1320,12 @@
     <Resource Include="Images\ConstructorPrivate.png" />
     <Resource Include="Images\ConstructorProtected.png" />
     <Resource Include="Images\ConstructorProtectedInternal.png" />
+    <Resource Include="Images\ContinueDebugging.png" />
     <Resource Include="Images\Copy.png" />
     <Resource Include="Images\CSharpFile.png" />
     <Resource Include="Images\CurrentLine.png" />
+    <Resource Include="Images\CurrentLineToolBar.png" />
+    <Resource Include="Images\Cursor.png" />
     <Resource Include="Images\Cut.png" />
     <Resource Include="Images\Delegate.png" />
     <Resource Include="Images\DelegateInternal.png" />
@@ -1204,10 +1333,14 @@
     <Resource Include="Images\DelegateProtected.png" />
     <Resource Include="Images\DelegateProtectedInternal.png" />
     <Resource Include="Images\Delete.png" />
+    <Resource Include="Images\DeleteAllBreakpoints.png" />
     <Resource Include="Images\DeleteHistory.png" />
     <Resource Include="Images\DisabledBreakpoint.png" />
+    <Resource Include="Images\DisableEnableBreakpoint.png" />
+    <Resource Include="Images\DisassemblyWindow.png" />
     <Resource Include="Images\dnSpy.ico" />
     <Resource Include="Images\dnSpy-Big.png" />
+    <Resource Include="Images\DraggedCurrentInstructionPointer.png" />
     <Resource Include="Images\EntryPoint.png" />
     <Resource Include="Images\Enum.png" />
     <Resource Include="Images\EnumInternal.png" />
@@ -1261,6 +1394,7 @@
     <Resource Include="Images\GenericPrivate.png" />
     <Resource Include="Images\GenericProtected.png" />
     <Resource Include="Images\GenericProtectedInternal.png" />
+    <Resource Include="Images\GoToSourceCode.png" />
     <Resource Include="Images\HorizontalTabGroup.png" />
     <Resource Include="Images\ILEditor.png" />
     <Resource Include="Images\ImageFile.png" />
@@ -1276,6 +1410,7 @@
     <Resource Include="Images\LiteralProtected.png" />
     <Resource Include="Images\LiteralProtectedInternal.png" />
     <Resource Include="Images\Local.png" />
+    <Resource Include="Images\LocalsWindow.png" />
     <Resource Include="Images\MetaData.png" />
     <Resource Include="Images\Method.png" />
     <Resource Include="Images\MethodCompilerControlled.png" />
@@ -1285,6 +1420,7 @@
     <Resource Include="Images\MethodProtectedInternal.png" />
     <Resource Include="Images\ModuleFile.png" />
     <Resource Include="Images\ModuleReference.png" />
+    <Resource Include="Images\ModulesWindow.png" />
     <Resource Include="Images\ModuleToAssembly.png" />
     <Resource Include="Images\NameSpace.png" />
     <Resource Include="Images\NewAssembly.png" />
@@ -1301,6 +1437,7 @@
     <Resource Include="Images\NewWindow.png" />
     <Resource Include="Images\NOP.png" />
     <Resource Include="Images\OK.png" />
+    <Resource Include="Images\OneLevelUp.png" />
     <Resource Include="Images\Open.png" />
     <Resource Include="Images\Operator.png" />
     <Resource Include="Images\OperatorCompilerControlled.png" />
@@ -1317,22 +1454,29 @@
     <Resource Include="Images\PInvokeMethodProtected.png" />
     <Resource Include="Images\PInvokeMethodProtectedInternal.png" />
     <Resource Include="Images\PrivateInternal.png" />
+    <Resource Include="Images\Process.png" />
     <Resource Include="Images\Property.png" />
     <Resource Include="Images\PropertyCompilerControlled.png" />
     <Resource Include="Images\PropertyInternal.png" />
     <Resource Include="Images\PropertyPrivate.png" />
     <Resource Include="Images\PropertyProtected.png" />
     <Resource Include="Images\PropertyProtectedInternal.png" />
+    <Resource Include="Images\QuestionMark.png" />
     <Resource Include="Images\Redo.png" />
     <Resource Include="Images\ReferenceFolderClosed.png" />
     <Resource Include="Images\ReferenceFolderOpen.png" />
     <Resource Include="Images\Resource.png" />
     <Resource Include="Images\ResourcesFile.png" />
+    <Resource Include="Images\RestartProcess.png" />
     <Resource Include="Images\Save.png" />
     <Resource Include="Images\SaveAll.png" />
     <Resource Include="Images\Search.png" />
+    <Resource Include="Images\Select.png" />
     <Resource Include="Images\SelectedReturnLine.png" />
+    <Resource Include="Images\SetNextStatement.png" />
     <Resource Include="Images\Settings.png" />
+    <Resource Include="Images\StartDebugging.png" />
+    <Resource Include="Images\StartWithoutDebugging.png" />
     <Resource Include="Images\StaticClass.png" />
     <Resource Include="Images\StaticEvent.png" />
     <Resource Include="Images\StaticEventCompilerControlled.png" />
@@ -1352,6 +1496,11 @@
     <Resource Include="Images\StaticPropertyPrivate.png" />
     <Resource Include="Images\StaticPropertyProtected.png" />
     <Resource Include="Images\StaticPropertyProtectedInternal.png" />
+    <Resource Include="Images\StatusError.png" />
+    <Resource Include="Images\StepInto.png" />
+    <Resource Include="Images\StepOut.png" />
+    <Resource Include="Images\StepOver.png" />
+    <Resource Include="Images\StopProcess.png" />
     <Resource Include="Images\Strings.png" />
     <Resource Include="Images\Struct.png" />
     <Resource Include="Images\StructInternal.png" />
@@ -1363,6 +1512,7 @@
     <Resource Include="Images\SuperTypes.png" />
     <Resource Include="Images\SuperTypesOpen.png" />
     <Resource Include="Images\TextFile.png" />
+    <Resource Include="Images\Thread.png" />
     <Resource Include="Images\ToUncondBranch.png" />
     <Resource Include="Images\Undo.png" />
     <Resource Include="Images\UserDefinedDataType.png" />
@@ -1387,6 +1537,7 @@
     <Resource Include="Images\VirtualPropertyProtected.png" />
     <Resource Include="Images\VirtualPropertyProtectedInternal.png" />
     <Resource Include="Images\VisualBasicFile.png" />
+    <Resource Include="Images\Watch.png" />
     <Resource Include="Images\WordWrap.png" />
     <Resource Include="Images\XamlFile.png" />
     <Resource Include="Images\XmlFile.png" />
@@ -1394,6 +1545,10 @@
     <Resource Include="Images\XsltFile.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\dndbg\dndbg.csproj">
+      <Project>{989a5c51-8c4c-4f4d-90a2-042cd1846075}</Project>
+      <Name>dndbg</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
       <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
       <Name>ICSharpCode.Decompiler</Name>

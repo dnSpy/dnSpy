@@ -20,7 +20,6 @@
 using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Windows;
 using System.Windows.Data;
 using dnSpy.AsmEditor.MethodBody;
 using dnSpy.TextView;
@@ -41,9 +40,7 @@ namespace dnSpy.AsmEditor.Converters {
 
 				var gen = new SimpleHighlighter();
 				BodyUtils.WriteObject(gen.TextOutput, value, flags);
-				var tb = gen.Create();
-				tb.TextTrimming = TextTrimming.CharacterEllipsis;
-				return tb;
+				return gen.Create(true, true);
 			}
 			catch (Exception ex) {
 				Debug.Fail(ex.ToString());

@@ -23,9 +23,9 @@ using System.Text;
 using dnlib.DotNet;
 using dnlib.IO;
 using dnSpy;
-using dnSpy.AsmEditor;
 using dnSpy.AsmEditor.Resources;
 using dnSpy.Images;
+using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -47,31 +47,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		protected sealed override void Write(ITextOutput output, Language language) {
-			WriteFileName(output, r.Name);
-		}
-
-		public static void WriteFileName(ITextOutput output, string name) {
-			name = UIUtils.CleanUpName(name);
-			var s = name.Replace('\\', '/');
-			var parts = s.Split('/');
-			int slashIndex = 0;
-			for (int i = 0; i < parts.Length - 1; i++) {
-				output.Write(parts[i], TextTokenType.DirectoryPart);
-				slashIndex += parts[i].Length;
-				output.Write(name[slashIndex], TextTokenType.Text);
-				slashIndex++;
-			}
-			var fn = parts[parts.Length - 1];
-			int index = fn.LastIndexOf('.');
-			if (index < 0)
-				output.Write(fn, TextTokenType.FileNameNoExtension);
-			else {
-				string ext = fn.Substring(index + 1);
-				fn = fn.Substring(0, index);
-				output.Write(fn, TextTokenType.FileNameNoExtension);
-				output.Write(".", TextTokenType.Text);
-				output.Write(ext, TextTokenType.FileExtension);
-			}
+			output.WriteFilename(r.Name);
 		}
 
 		public sealed override object Icon {

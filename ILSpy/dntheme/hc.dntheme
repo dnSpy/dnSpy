@@ -78,17 +78,11 @@
 		<color name="toplevelmenuheaderhover" bg="#FF800080" />
 		<color name="menuitemseparatorfilltop" bg="#FF808080" />
 		<color name="menuitemseparatorfillbottom" bg="Transparent" />
-		<color name="menuitemselectionfill" fg="#FF800080" bg="#FF800080" />
-		<color name="menuitemglyphpanelbackground" bg="#FF000000" />
 		<color name="menuitemglyphpanelborderbrush" bg="#FFFFFFFF" />
-		<color name="menuitemglyphfill" bg="#FFFFFFFF" />
-		<color name="menuitemhighlightedstroke" bg="#FF800080" />
 		<color name="menuitemhighlightedinnerborder" bg="#FF800080" />
 		<color name="menuitemdisabledforeground" fg="#FF00FF00" />
 		<color name="menuitemdisabledglyphpanelbackground" bg="#FF000000" />
-		<color name="menuitemdisabledglyphpanelborderbrush" bg="#FF000000" />
 		<color name="menuitemdisabledglyphfill" bg="#FF00FF00" />
-		<color name="toolbardarkfill" bg="#FF800080" />
 		<color name="toolbarbuttonpressed" bg="#FF00FF00" />
 		<color name="toolbarseparatorfill" bg="#FF808080" />
 		<color name="toolbarbuttonhover" bg="#FF800080" />
@@ -96,7 +90,6 @@
 		<color name="toolbarbuttonpressedborder" bg="#FFFFFFFF" />
 		<color name="toolbarmenuborder" bg="#FFFFFFFF" />
 		<color name="toolbarsubmenubackground" bg="#FF000000" />
-		<color name="toolbarmenucheckfill" bg="#FF000000" />
 		<color name="toolbarbuttonchecked" fg="#FF000000" bg="#FF00FF00" />
 		<color name="toolbaropenheaderbackground" fg="#FF000000" bg="#FF000000" color3="#FF000000" />
 		<color name="toolbariconverticalbackground" bg="#FF000000" />
@@ -106,6 +99,12 @@
 		<color name="toolbardisabledfill" bg="#FF008000" />
 		<color name="toolbardisabledborder" bg="#FFFFFFFF" />
 		<color name="environmentcommandbarmenumouseoversubmenuglyph" bg="#FFFFFFFF" />
+		<color name="environmentcommandbarmenuseparator" bg="#FF000000" />
+		<color name="environmentcommandbarcheckbox" bg="#FFFFFFFF" />
+		<color name="environmentcommandbarselectedicon" bg="#FF000000" />
+		<color name="environmentcommandbarcheckboxmouseover" bg="#FFFFFFFF" />
+		<color name="environmentcommandbarhoveroverselectedicon" bg="#FF800080" />
+		<color name="environmentcommandbarmenuitemmouseover" fg="#FFFFFFFF" bg="#FF800080" />
 		<color name="commoncontrolsbuttoniconbackground" bg="#FF000000" />
 		<color name="commoncontrolsbutton" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="commoncontrolsbuttonborder" bg="#FFFFFFFF" />

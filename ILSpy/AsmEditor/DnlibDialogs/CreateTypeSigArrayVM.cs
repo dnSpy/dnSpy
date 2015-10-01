@@ -20,6 +20,7 @@
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CreateTypeSigArrayVM : ViewModelBase {

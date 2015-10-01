@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Images;
+using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor {

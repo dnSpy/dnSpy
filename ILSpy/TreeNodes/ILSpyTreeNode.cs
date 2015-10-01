@@ -77,7 +77,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			get {
 				var gen = UISyntaxHighlighter.CreateTreeView();
 				Write(gen.TextOutput, Language);
-				return gen.CreateObject();
+				return gen.CreateObject(filterOutNewLines: true);
 			}
 		}
 
@@ -92,7 +92,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			get {
 				var gen = UISyntaxHighlighter.CreateTreeView();
 				Write(gen.TextOutput, Language);
-				return gen.CreateObject();
+				return gen.CreateObject(filterOutNewLines: false);
 			}
 		}
 

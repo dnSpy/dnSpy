@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.Threading;
+using dnSpy.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CAArgumentVM : ViewModelBase {

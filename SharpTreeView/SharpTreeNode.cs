@@ -663,6 +663,10 @@ namespace ICSharpCode.TreeView
 		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
+		protected bool HasPropertyChangedHandlers {
+			get { return PropertyChanged != null; }
+		}
+
 		public void RaisePropertyChanged(string name)
 		{
 			if (PropertyChanged != null) {

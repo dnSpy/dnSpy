@@ -517,26 +517,9 @@ namespace dnSpy.dntheme {
 				DefaultBackground = "Transparent",
 				BackgroundResourceKey = "MenuItemSeparatorFillBottom",
 			},
-			new LinearGradientColorInfo(ColorType.MenuItemSelectionFill, new Point(0, 1), "MenuItem selection fill", 0, 1) {
-				ResourceKey = "MenuItemSelectionFill",
-				DefaultForeground = "#C9DEF5",
-				DefaultBackground = "#C9DEF5",
-			},
-			new BrushColorInfo(ColorType.MenuItemGlyphPanelBackground, "MenuItem glyph panel background") {
-				DefaultBackground = "#EEEEF2",
-				BackgroundResourceKey = "MenuItemGlyphPanelBackground",
-			},
 			new BrushColorInfo(ColorType.MenuItemGlyphPanelBorderBrush, "MenuItem glyph panel border brush") {
 				DefaultBackground = "#CCCCCC",
 				BackgroundResourceKey = "MenuItemGlyphPanelBorderBrush",
-			},
-			new BrushColorInfo(ColorType.MenuItemGlyphFill, "MenuItem glyph fill") {
-				DefaultBackground = "#FF000000",
-				BackgroundResourceKey = "MenuItemGlyphFill",
-			},
-			new BrushColorInfo(ColorType.MenuItemHighlightedStroke, "MenuItem highlighted stroke") {
-				DefaultBackground = "#C9DEF5",
-				BackgroundResourceKey = "MenuItemHighlightedStroke",
 			},
 			new BrushColorInfo(ColorType.MenuItemHighlightedInnerBorder, "MenuItem highlighted inner border") {
 				DefaultBackground = "#C9DEF5",
@@ -550,17 +533,9 @@ namespace dnSpy.dntheme {
 				DefaultBackground = "#EEE9E9",
 				BackgroundResourceKey = "MenuItemDisabledGlyphPanelBackground",
 			},
-			new BrushColorInfo(ColorType.MenuItemDisabledGlyphPanelBorderBrush, "MenuItem disabled glyph panel border brush") {
-				DefaultBackground = "#DBD6D6",
-				BackgroundResourceKey = "MenuItemDisabledGlyphPanelBorderBrush",
-			},
 			new BrushColorInfo(ColorType.MenuItemDisabledGlyphFill, "MenuItem disabled glyph fill") {
 				DefaultBackground = "#848589",
 				BackgroundResourceKey = "MenuItemDisabledGlyphFill",
-			},
-			new BrushColorInfo(ColorType.ToolBarDarkFill, "Selected color of menu item's checkbox") {
-				DefaultBackground = "#C9DEF5",
-				BackgroundResourceKey = "ToolBarDarkFill",
 			},
 			new BrushColorInfo(ColorType.ToolBarButtonPressed, "Toolbar button pressed") {
 				DefaultBackground = "#99CCFF",
@@ -589,10 +564,6 @@ namespace dnSpy.dntheme {
 			new BrushColorInfo(ColorType.ToolBarSubMenuBackground, "Toolbar sub menu") {
 				DefaultBackground = "#F6F6F6",
 				BackgroundResourceKey = "ToolBarSubMenuBackground",
-			},
-			new BrushColorInfo(ColorType.ToolBarMenuCheckFill, "Toolbar menu check fill") {
-				DefaultBackground = "#EEEEF2",
-				BackgroundResourceKey = "ToolBarMenuCheckFill",
 			},
 			new BrushColorInfo(ColorType.ToolBarButtonChecked, "Toolbar button checked") {
 				DefaultForeground = "#FF000000",
@@ -634,6 +605,32 @@ namespace dnSpy.dntheme {
 			new BrushColorInfo(ColorType.EnvironmentCommandBarMenuMouseOverSubmenuGlyph, "Submenu opened glyph color") {
 				DefaultBackground = "#FF007ACC",
 				BackgroundResourceKey = "EnvironmentCommandBarMenuMouseOverSubmenuGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentCommandBarMenuSeparator, "Grid view item border color") {
+				DefaultBackground = "#FFF0F0F0",
+				BackgroundResourceKey = "EnvironmentCommandBarMenuSeparator",
+			},
+			new BrushColorInfo(ColorType.EnvironmentCommandBarCheckBox, "CommandBar CheckBox") {
+				DefaultBackground = "#FF717171",
+				BackgroundResourceKey = "EnvironmentCommandBarCheckBox",
+			},
+			new BrushColorInfo(ColorType.EnvironmentCommandBarSelectedIcon, "CommandBar Selected Icon") {
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "EnvironmentCommandBarSelectedIcon",
+			},
+			new BrushColorInfo(ColorType.EnvironmentCommandBarCheckBoxMouseOver, "CommandBar CheckBox Mouse Over") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "EnvironmentCommandBarCheckBoxMouseOver",
+			},
+			new BrushColorInfo(ColorType.EnvironmentCommandBarHoverOverSelectedIcon, "CommandBar Hover Over Selected Icon") {
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "EnvironmentCommandBarHoverOverSelectedIcon",
+			},
+			new BrushColorInfo(ColorType.EnvironmentCommandBarMenuItemMouseOver, "CommandBar MenuItem Mouse Over") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "EnvironmentCommandBarMenuItemMouseOverText",
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "EnvironmentCommandBarMenuItemMouseOver",
 			},
 			new BrushColorInfo(ColorType.CommonControlsButtonIconBackground, "Button icon background. Makes sure icons look good with this background color.") {
 				DefaultBackground = "#FFECECF0",
@@ -1724,7 +1721,7 @@ namespace dnSpy.dntheme {
 				ForegroundResourceKey = "TreeViewItemMouseOverForeground",
 			},
 			new BrushColorInfo(ColorType.TreeViewItemSelected, "TreeViewItem Selected") {
-				DefaultBackground = "#FFD8D8D8",
+				DefaultBackground = "#FFD0D0D0",
 				BackgroundResourceKey = "TreeViewItemSelectedBackground",
 				DefaultForeground = "Black",
 				ForegroundResourceKey = "TreeViewItemSelectedForeground",
@@ -2017,6 +2014,7 @@ namespace dnSpy.dntheme {
 							new BrushColorInfo(ColorType.FileNameNoExtension, "Filename without extension"),
 							new BrushColorInfo(ColorType.FileExtension, "File extension"),
 							new BrushColorInfo(ColorType.Error, "Error"),
+							new BrushColorInfo(ColorType.ToStringEval, "ToString() Eval"),
 						},
 					},
 					new BrushColorInfo(ColorType.HexText, "Default text color in hex view") {

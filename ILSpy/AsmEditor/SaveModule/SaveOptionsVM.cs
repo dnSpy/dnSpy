@@ -19,7 +19,7 @@
 
 using System;
 using System.Windows.Input;
-using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	abstract class SaveOptionsVM : ViewModelBase {
@@ -38,19 +38,19 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		string filename = string.Empty;
 
-		public IPickNetExecutableFileName PickNetExecutableFileName {
-			set { pickNetExecutableFileName = value; }
+		public IPickSaveFilename PickSaveFilename {
+			set { pickSaveFilename = value; }
 		}
-		IPickNetExecutableFileName pickNetExecutableFileName;
+		IPickSaveFilename pickSaveFilename;
 
 		public ICommand PickNetExecutableFileNameCommand {
 			get { return new RelayCommand(a => OnPickNetExecutableFileName()); }
 		}
 
 		void OnPickNetExecutableFileName() {
-			if (pickNetExecutableFileName == null)
+			if (pickSaveFilename == null)
 				throw new InvalidOperationException();
-			var newFileName = pickNetExecutableFileName.GetFileName(FileName, GetExtension(FileName));
+			var newFileName = pickSaveFilename.GetFilename(FileName, GetExtension(FileName), PickFilenameConstants.DotNetAssemblyOrModuleFilter);
 			if (newFileName == null)
 				return;
 			FileName = newFileName;

@@ -24,6 +24,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.MVVM;
 using dnSpy.Search;
 using ICSharpCode.ILSpy;
 

@@ -20,14 +20,18 @@
 using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnlib.DotNet;
-using dnSpy.AsmEditor;
+using dnSpy.MVVM;
 using dnSpy.Tabs;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
+<<<<<<< HEAD
 using dnlib.IO;
 using System.Windows;
 using System.Windows.Controls;
+=======
+using ICSharpCode.ILSpy.TreeNodes.Analyzer;
+>>>>>>> 0xd4d/master
 
 namespace dnSpy.TreeNodes {
 	[Export(typeof(IPlugin))]
@@ -47,8 +51,14 @@ namespace dnSpy.TreeNodes {
 	[ExportContextMenuEntryAttribute(Header = "Go to M_D Token…", Order = 400, Category = "Tokens", InputGestureText = "Ctrl+D")]
 	sealed class GoToTokenContextMenuEntry : IContextMenuEntry {
 		public bool IsVisible(ContextMenuEntryContext context) {
-			return CanExecute() &&
-				(context.SelectedTreeNodes != null || context.Element is DecompilerTextView);
+			if (!CanExecute())
+				return false;
+			if (context.Element is DecompilerTextView)
+				return true;
+			if (context.SelectedTreeNodes == null || context.SelectedTreeNodes.Length == 0)
+				return false;
+			var elem = context.SelectedTreeNodes[0];
+			return elem is ILSpyTreeNode || elem is AnalyzerTreeNode;
 		}
 
 		public bool IsEnabled(ContextMenuEntryContext context) {

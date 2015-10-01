@@ -24,6 +24,7 @@ using dnlib.DotNet.MD;
 using dnlib.DotNet.Writer;
 using dnlib.PE;
 using dnlib.W32Resources;
+using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.SaveModule {

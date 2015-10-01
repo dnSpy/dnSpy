@@ -39,7 +39,8 @@ namespace ICSharpCode.TreeView
 //					}
 					break;
 				case Key.Escape:
-					Node.IsEditing = false;
+					if (Node != null)
+						Node.IsEditing = false;
 					break;
 			}
 		}
@@ -75,7 +76,7 @@ namespace ICSharpCode.TreeView
 				    Math.Abs(currentPoint.Y - startPoint.Y) >= SystemParameters.MinimumVerticalDragDistance) {
 
 					var selection = ParentTreeView.GetTopLevelSelection().ToArray();
-					if (Node.CanDrag(selection)) {
+					if (Node != null && Node.CanDrag(selection)) {
 						Node.StartDrag(this, selection);
 					}
 				}
@@ -84,7 +85,10 @@ namespace ICSharpCode.TreeView
 
 		protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
 		{
-			if (wasDoubleClick) {
+			if (Node == null) {
+				// Ignore it: Node is sometimes null
+			}
+			else if (wasDoubleClick) {
 				wasDoubleClick = false;
 				Node.ActivateItem(e);
 				if (!e.Handled) {

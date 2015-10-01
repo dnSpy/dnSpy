@@ -40,7 +40,6 @@ namespace dnSpy.Images {
 		MainMenuMenuItem,
 		ContextMenuItem,
 		GridViewItem,
-		DebuggerToolTip,
 		CodeToolTip,
 		TitleAreaActive,
 		TitleAreaInactive,
@@ -94,7 +93,6 @@ namespace dnSpy.Images {
 			case BackgroundType.MainMenuMenuItem: return GetColorBackground(dntheme.ColorType.ToolBarIconVerticalBackground);
 			case BackgroundType.ContextMenuItem: return GetColorBackground(dntheme.ColorType.ContextMenuRectangleFill);
 			case BackgroundType.GridViewItem: return GetColorBackground(dntheme.ColorType.GridViewBackground);
-			case BackgroundType.DebuggerToolTip: return Colors.White;//TODO: Update this when the debugger tooltips have been fixed
 			case BackgroundType.CodeToolTip: return GetColorBackground(dntheme.ColorType.CodeToolTip);
 			case BackgroundType.TitleAreaActive: return GetColorBackground(dntheme.ColorType.EnvironmentMainWindowActiveCaption);
 			case BackgroundType.TitleAreaInactive: return GetColorBackground(dntheme.ColorType.EnvironmentMainWindowInactiveCaption);

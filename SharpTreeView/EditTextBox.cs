@@ -33,7 +33,8 @@ namespace ICSharpCode.TreeView
 
 		void Init()
 		{
-			Text = Node.LoadEditText();
+			if (Node != null)
+				Text = Node.LoadEditText();
 			Focus();
 			SelectAll();
 		}
@@ -43,13 +44,14 @@ namespace ICSharpCode.TreeView
 			if (e.Key == Key.Enter) {
 				Commit();
 			} else if (e.Key == Key.Escape) {
-				Node.IsEditing = false;
+				if (Node != null)
+					Node.IsEditing = false;
 			}
 		}
 
 		protected override void OnLostKeyboardFocus(KeyboardFocusChangedEventArgs e)
 		{
-			if (Node.IsEditing) {
+			if (Node != null && Node.IsEditing) {
 				Commit();
 			}
 		}
@@ -61,11 +63,13 @@ namespace ICSharpCode.TreeView
 			if (!commiting) {
 				commiting = true;
 
-				Node.IsEditing = false;
-				if (!Node.SaveEditText(Text)) {
-					Item.Focus();
+				if (Node != null) {
+					Node.IsEditing = false;
+					if (!Node.SaveEditText(Text)) {
+						Item.Focus();
+					}
+					Node.RaisePropertyChanged("Text");
 				}
-				Node.RaisePropertyChanged("Text");
 
 				//if (Node.SaveEditText(Text)) {
 				//    Node.IsEditing = false;

@@ -17,13 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Text;
+using System.Windows;
 using System.Windows.Controls;
 using dnSpy.TextView;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
 
 namespace dnSpy.TreeNodes {
-	struct UISyntaxHighlighter {
+	public struct UISyntaxHighlighter {
 		SimpleHighlighter simpleHighlighter;
 		PlainTextOutput output;
 
@@ -47,6 +49,10 @@ namespace dnSpy.TreeNodes {
 			return new UISyntaxHighlighter(DisplaySettingsPanel.CurrentDisplaySettings.SyntaxHighlightSearchListUI);
 		}
 
+		public static UISyntaxHighlighter Create(bool highlight) {
+			return new UISyntaxHighlighter(highlight);
+		}
+
 		UISyntaxHighlighter(bool highlight) {
 			if (highlight) {
 				this.simpleHighlighter = new SimpleHighlighter();
@@ -58,29 +64,48 @@ namespace dnSpy.TreeNodes {
 			}
 		}
 
+		static string ToString(string s, bool filterOutNewLines) {
+			if (!filterOutNewLines)
+				return s;
+			var sb = new StringBuilder(s.Length);
+			foreach (var c in s) {
+				if (c == '\r' || c == '\n')
+					continue;
+				sb.Append(c);
+			}
+			return sb.ToString();
+		}
+
 		/// <summary>
 		/// Creates the object. If it's syntax highlighted, it's a <see cref="TextBlock"/>, else
 		/// it's just a <see cref="string"/>. See also <see cref="CreateTextBlock()"/>
 		/// </summary>
+		/// <param name="useEllipsis">true to add <see cref="TextTrimming.CharacterEllipsis"/> to the <see cref="TextBlock"/></param>
+		/// <param name="filterOutNewLines">true to filter out newline characters</param>
 		/// <returns></returns>
-		public object CreateObject() {
+		public object CreateObject(bool useEllipsis = false, bool filterOutNewLines = true) {
 			if (simpleHighlighter != null)
-				return simpleHighlighter.Create();
+				return simpleHighlighter.Create(useEllipsis, filterOutNewLines);
 
-			return output.ToString();
+			return ToString(output.ToString(), filterOutNewLines);
 		}
 
 		/// <summary>
 		/// Creates a <see cref="TextBlock"/> containing the resulting text
 		/// </summary>
+		/// <param name="useEllipsis">true to add <see cref="TextTrimming.CharacterEllipsis"/> to the <see cref="TextBlock"/></param>
+		/// <param name="filterOutNewLines">true to filter out newline characters</param>
 		/// <returns></returns>
-		public TextBlock CreateTextBlock() {
+		public TextBlock CreateTextBlock(bool useEllipsis = false, bool filterOutNewLines = true) {
 			if (simpleHighlighter != null)
-				return simpleHighlighter.Create();
+				return simpleHighlighter.Create(useEllipsis, filterOutNewLines);
 
-			return new TextBlock {
-				Text = output.ToString(),
+			var tb = new TextBlock {
+				Text = ToString(output.ToString(), filterOutNewLines),
 			};
+			if (useEllipsis)
+				tb.TextTrimming = TextTrimming.CharacterEllipsis;
+			return tb;
 		}
 	}
 }

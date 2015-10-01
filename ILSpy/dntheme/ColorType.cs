@@ -310,6 +310,11 @@ namespace dnSpy.dntheme {
 		Error,
 
 		/// <summary>
+		/// ToString() eval text
+		/// </summary>
+		ToStringEval,
+
+		/// <summary>
 		/// Default text in all windows
 		/// </summary>
 		DefaultText,
@@ -542,17 +547,11 @@ namespace dnSpy.dntheme {
 		TopLevelMenuHeaderHover,
 		MenuItemSeparatorFillTop,
 		MenuItemSeparatorFillBottom,
-		MenuItemSelectionFill,
-		MenuItemGlyphPanelBackground,
 		MenuItemGlyphPanelBorderBrush,
-		MenuItemGlyphFill,
-		MenuItemHighlightedStroke,
 		MenuItemHighlightedInnerBorder,
 		MenuItemDisabledForeground,
 		MenuItemDisabledGlyphPanelBackground,
-		MenuItemDisabledGlyphPanelBorderBrush,
 		MenuItemDisabledGlyphFill,
-		ToolBarDarkFill,
 		ToolBarButtonPressed,
 		ToolBarSeparatorFill,
 		ToolBarButtonHover,
@@ -560,7 +559,6 @@ namespace dnSpy.dntheme {
 		ToolBarButtonPressedBorder,
 		ToolBarMenuBorder,
 		ToolBarSubMenuBackground,
-		ToolBarMenuCheckFill,
 		ToolBarButtonChecked,
 		ToolBarOpenHeaderBackground,
 		ToolBarIconVerticalBackground,
@@ -570,6 +568,12 @@ namespace dnSpy.dntheme {
 		ToolBarDisabledFill,
 		ToolBarDisabledBorder,
 		EnvironmentCommandBarMenuMouseOverSubmenuGlyph,
+		EnvironmentCommandBarMenuSeparator,
+		EnvironmentCommandBarCheckBox,
+		EnvironmentCommandBarSelectedIcon,
+		EnvironmentCommandBarCheckBoxMouseOver,
+		EnvironmentCommandBarHoverOverSelectedIcon,
+		EnvironmentCommandBarMenuItemMouseOver,
 		CommonControlsButtonIconBackground,
 		CommonControlsButton,
 		CommonControlsButtonBorder,

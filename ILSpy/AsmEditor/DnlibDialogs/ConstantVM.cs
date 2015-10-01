@@ -19,6 +19,7 @@
 
 using System.ComponentModel;
 using dnlib.DotNet;
+using dnSpy.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ConstantVM : ViewModelBase {

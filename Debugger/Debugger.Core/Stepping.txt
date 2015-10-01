@@ -1,7 +1,0 @@
-== Notes ==
-- During evaluation some chains may be temporarly removed
-- When two events are invoked and JMC is active, step out skips the second function
-- Step out and step over works properly for exceptions
-- Evaluation kills stepper overs on active frame
-- StepRange callbacks go first (probably in order), StepOut callback are called after that
-- StepRange is much slower then StepOut

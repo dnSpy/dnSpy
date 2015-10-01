@@ -18,6 +18,7 @@
 */
 
 using System.Windows;
+using dnSpy.MVVM;
 
 namespace dnSpy.AsmEditor.Hex {
 	/// <summary>

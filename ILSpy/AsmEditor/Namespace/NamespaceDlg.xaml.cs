@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.MVVM;
+
 namespace dnSpy.AsmEditor.Namespace {
 	/// <summary>
 	/// Interaction logic for NamespaceDlg.xaml

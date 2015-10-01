@@ -88,7 +88,7 @@ namespace ICSharpCode.ILSpy {
 			foreach (var plugin in App.CompositionContainer.GetExportedValues<IAboutPageAddition>())
 				plugin.Write(output);
 			output.WriteLine();
-			using (Stream s = typeof(AboutPage).Assembly.GetManifestResourceStream(typeof(AboutPage), "README.txt")) {
+			using (Stream s = typeof(AboutPage).Assembly.GetManifestResourceStream(typeof(dnSpy.StartUpClass), "README.txt")) {
 				using (StreamReader r = new StreamReader(s)) {
 					string line;
 					while ((line = r.ReadLine()) != null) {
@@ -102,9 +102,6 @@ namespace ICSharpCode.ILSpy {
 			output.AddVisualLineElementGenerator(new MyLinkElementGenerator("COPYING", "resource:COPYING"));
 			textView.ShowText(output);
 			MainWindow.Instance.SetTitle(textView, "About");
-			
-			//reset icon bar
-			textView.manager.Bookmarks.Clear();
 		}
 		
 		sealed class MyLinkElementGenerator : LinkElementGenerator

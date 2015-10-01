@@ -22,7 +22,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.AsmEditor.SaveModule"
-             xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
+             xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters"
              Height="300" Width="600"
              Title="Save Modules"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
@@ -30,7 +30,7 @@
 	<local:SaveModuleWindow.Resources>
 		<RoutedUICommand x:Key="OptionsCommand" Text="Options…" />
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-		<vc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
+		<mvvmvc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
 	</local:SaveModuleWindow.Resources>
 	<local:SaveModuleWindow.CommandBindings>
 		<CommandBinding

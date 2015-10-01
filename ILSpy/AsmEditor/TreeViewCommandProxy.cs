@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor {
@@ -28,7 +29,7 @@ namespace dnSpy.AsmEditor {
 		protected override ContextMenuEntryContext CreateContext() {
 			var treeView = MainWindow.Instance.treeView;
 			if (treeView.IsKeyboardFocusWithin)
-				return ContextMenuEntryContext.Create(treeView, true);
+				return ContextMenuEntryContext.Create(treeView);
 			return null;
 		}
 	}

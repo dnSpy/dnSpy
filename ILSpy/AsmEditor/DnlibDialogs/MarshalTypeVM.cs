@@ -21,9 +21,22 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using dnlib.DotNet;
+using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
+	sealed class NullableCompressedUInt32 : NullableUInt32VM {
+		public NullableCompressedUInt32(Action<DataFieldVM> onUpdated)
+			: this(null, onUpdated) {
+		}
+
+		public NullableCompressedUInt32(uint? value, Action<DataFieldVM> onUpdated)
+			: base(value, onUpdated) {
+			Min = ModelUtils.COMPRESSED_UINT32_MIN;
+			Max = ModelUtils.COMPRESSED_UINT32_MAX;
+		}
+	}
+
 	sealed class MarshalTypeVM : ViewModelBase {
 		const string NOT_INITIALIZED_ENUM_VALUE = "<Not Initialized>";
 
