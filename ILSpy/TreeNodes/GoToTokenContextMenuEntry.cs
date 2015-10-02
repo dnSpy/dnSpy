@@ -25,13 +25,10 @@ using dnSpy.Tabs;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
-<<<<<<< HEAD
 using dnlib.IO;
 using System.Windows;
 using System.Windows.Controls;
-=======
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
->>>>>>> 0xd4d/master
 
 namespace dnSpy.TreeNodes {
 	[Export(typeof(IPlugin))]
@@ -133,18 +130,18 @@ namespace dnSpy.TreeNodes {
     [ExportContextMenuEntry(Header = "Go to File O_ffset", Order = 401, Category = "Offset", InputGestureText = "Ctrl+Alt+G")]
     sealed class GoToOffsetContextMenuEntry : IContextMenuEntry
     {
-        public bool IsVisible(TextViewContext context)
+        public bool IsVisible(ContextMenuEntryContext context)
         {
             return CanExecute() &&
-                (context.SelectedTreeNodes != null || context.TextView != null);
+                (context.SelectedTreeNodes != null/* || context.TextView != null*/);
         }
 
-        public bool IsEnabled(TextViewContext context)
+        public bool IsEnabled(ContextMenuEntryContext context)
         {
             return true;
         }
 
-        public void Execute(TextViewContext context)
+        public void Execute(ContextMenuEntryContext context)
         {
             Execute();
         }
