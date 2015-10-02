@@ -33,7 +33,7 @@
 			<Label Name="label" Target="{Binding ElementName=textBox}" Margin="0,0,5,0" VerticalAlignment="Center" />
 			<TextBox Name="textBox" Height="23" VerticalAlignment="Center" />
 		</DockPanel>
-		<StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Name="CheckRVA" Orientation="Horizontal" HorizontalAlignment="Right">
 			<Button Content="_OK" Click="okButton_Click" IsDefault="True" Style="{StaticResource DialogButton}" Name="okButton" Margin="0,0,5,0" />
 			<Button Content="_Cancel" Click="cancelButton_Click" IsCancel="True" Style="{StaticResource DialogButton}" Name="cancelButton" Margin="0,0,0,0" />
 		</StackPanel>
