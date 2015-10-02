@@ -58,8 +58,14 @@ namespace dndbg.Engine {
 		}
 		readonly string version;
 
-		public CoreCLRTypeAttachInfo(string version) {
+		public string DbgShimFilename {
+			get { return dbgShimFilename; }
+		}
+		readonly string dbgShimFilename;
+
+		public CoreCLRTypeAttachInfo(string version, string dbgShimFilename) {
 			this.version = version;
+			this.dbgShimFilename = dbgShimFilename;
 		}
 	}
 

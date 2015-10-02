@@ -1127,7 +1127,7 @@ namespace dnSpy.dntheme {
 				BackgroundResourceKey = "ContextMenuBackground",
 			},
 			new BrushColorInfo(ColorType.ContextMenuBorderBrush, "Context menu border brush") {
-				DefaultBackground = "#FF959595",
+				DefaultBackground = "#FFCCCEDB",
 				BackgroundResourceKey = "ContextMenuBorderBrush",
 			},
 			new BrushColorInfo(ColorType.ContextMenuRectangleFill, "Context menu rectangle fill. It's the vertical rectangle on the left side.") {

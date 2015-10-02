@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -31,14 +32,15 @@ namespace dndbg.Engine {
 		public CoreCLRTypeAttachInfo CoreCLRTypeInfo;
 		public string CoreCLRFilename;
 
-		public CoreCLRInfo(int pid, string filename, string version) {
+		public CoreCLRInfo(int pid, string filename, string version, string dbgShimFilename) {
 			this.ProcessId = pid;
-			this.CoreCLRTypeInfo = new CoreCLRTypeAttachInfo(version);
+			this.CoreCLRTypeInfo = new CoreCLRTypeAttachInfo(version, dbgShimFilename);
 			this.CoreCLRFilename = filename;
 		}
 	}
 
 	public static class CoreCLRHelper {
+		const string DBGSHIM_FILENAME = "dbgshim.dll";
 		delegate int GetStartupNotificationEvent(uint debuggeePID, out IntPtr phStartupEvent);
 		delegate int CloseCLREnumeration(IntPtr pHandleArray, IntPtr pStringArray, uint dwArrayLength);
 		delegate int EnumerateCLRs(uint debuggeePID, out IntPtr ppHandleArrayOut, out IntPtr ppStringArrayOut, out uint pdwArrayLengthOut);
@@ -48,37 +50,22 @@ namespace dndbg.Engine {
 
 		/// <summary>
 		/// Path to <c>dbgshim.dll</c> that will be used to initialize <c>dbgshim.dll</c> if it hasn't
-		/// been initialized yet. See also <see cref="CurrentDbgShimPath"/>
+		/// been initialized yet.
 		/// </summary>
 		public static string DbgShimPath { get; set; }
-
-		/// <summary>
-		/// Path to the loaded <c>dbgshim.dll</c>
-		/// </summary>
-		public static string CurrentDbgShimPath {
-			get { return dbgShimState.Filename; }
-		}
-
-		public static bool DbgShimInitialized {
-			get { return dbgShimState.Handle != IntPtr.Zero; }
-		}
-
-		public static bool TryInitializeDbgShim() {
-			return GetDbgShimHandle(null) != IntPtr.Zero;
-		}
 
 		/// <summary>
 		/// Searches for CoreCLR runtimes in a process
 		/// </summary>
 		/// <param name="pid">Process ID</param>
 		/// <param name="runtimePath">Path of CoreCLR.dll or path of the CoreCLR runtime. This is
-		/// used to find <c>dbgshim.dll</c> and is only needed if it hasn't been loaded yet. This
-		/// value isn't needed if the path to <c>dbgshim.dll</c> exists in the registry or if
-		/// <see cref="DbgShimPath"/> has been initialized.</param>
+		/// used to find <c>dbgshim.dll</c> if <paramref name="dbgshimPath"/> is null</param>
+		/// <param name="dbgshimPath">Filename of dbgshim.dll or null if we should look in
+		/// <paramref name="runtimePath"/></param>
 		/// <returns></returns>
-		public unsafe static CoreCLRInfo[] GetCoreCLRInfos(int pid, string runtimePath) {
-			var dbgshimHandle = GetDbgShimHandle(runtimePath);
-			if (dbgshimHandle == IntPtr.Zero)
+		public unsafe static CoreCLRInfo[] GetCoreCLRInfos(int pid, string runtimePath, string dbgshimPath) {
+			var dbgShimState = GetOrCreateDbgShimState(runtimePath, dbgshimPath);
+			if (dbgShimState == null)
 				return new CoreCLRInfo[0];
 
 			IntPtr pHandleArray, pStringArray;
@@ -91,8 +78,8 @@ namespace dndbg.Engine {
 				var psa = (IntPtr*)pStringArray;
 				for (int i = 0; i < ary.Length; i++) {
 					string moduleFilename;
-					var version = GetVersionStringFromModule((uint)pid, psa[i], out moduleFilename);
-					ary[i] = new CoreCLRInfo(pid, moduleFilename, version);
+					var version = GetVersionStringFromModule(dbgShimState, (uint)pid, psa[i], out moduleFilename);
+					ary[i] = new CoreCLRInfo(pid, moduleFilename, version, dbgShimState.Filename);
 				}
 
 				return ary;
@@ -103,7 +90,7 @@ namespace dndbg.Engine {
 			}
 		}
 
-		static string GetVersionStringFromModule(uint pid, IntPtr ps, out string moduleFilename) {
+		static string GetVersionStringFromModule(DbgShimState dbgShimState, uint pid, IntPtr ps, out string moduleFilename) {
 			var sb = new StringBuilder(0x1000);
 			moduleFilename = Marshal.PtrToStringUni(ps);
 			uint verLen;
@@ -115,46 +102,62 @@ namespace dndbg.Engine {
 			return hr < 0 ? null : sb.ToString();
 		}
 
-		static IntPtr GetDbgShimHandle(string runtimePath, bool useFullPath = false) {
-			if (dbgShimState.Handle != IntPtr.Zero)
-				return dbgShimState.Handle;
-
-			var path = DbgShimPath;
-			if (!File.Exists(path)) {
-				path = GetDbgShimPathFromRegistry();
-				if (!File.Exists(path)) {
-					path = useFullPath ? runtimePath : GetDbgShimPathFromRuntimePath(runtimePath);
-					if (!File.Exists(path))
-						return IntPtr.Zero;
-				}
+		static List<string> GetDbgShimPaths(string runtimePath, string dbgshimPath) {
+			var list = new List<string>(3);
+			if (File.Exists(dbgshimPath))
+				list.Add(dbgshimPath);
+			if (!string.IsNullOrEmpty(runtimePath)) {
+				var dbgshimPathTemp = GetDbgShimPathFromRuntimePath(runtimePath);
+				if (File.Exists(dbgshimPathTemp))
+					list.Add(dbgshimPathTemp);
 			}
+			if (File.Exists(DbgShimPath))
+				list.Add(DbgShimPath);
+			var s = GetDbgShimPathFromRegistry();
+			if (File.Exists(s))
+				list.Add(s);
+			return list;
+		}
+
+		static DbgShimState GetOrCreateDbgShimState(string runtimePath, string dbgshimPath) {
+			var paths = GetDbgShimPaths(runtimePath, dbgshimPath);
+			DbgShimState dbgShimState;
+			foreach (var path in paths) {
+				if (dbgShimStateDict.TryGetValue(path, out dbgShimState))
+					return dbgShimState;
+			}
+
+			if (paths.Count == 0)
+				return null;
+			dbgshimPath = paths[0];
 
 			// Use the same flags as dbgshim.dll uses when it loads mscordbi.dll
-			var handle = NativeMethods.LoadLibraryEx(path, IntPtr.Zero, NativeMethods.LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | NativeMethods.LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
-			Debug.Assert(handle != IntPtr.Zero);
+			var handle = NativeMethods.LoadLibraryEx(dbgshimPath, IntPtr.Zero, NativeMethods.LOAD_LIBRARY_SEARCH_DLL_LOAD_DIR | NativeMethods.LOAD_LIBRARY_SEARCH_DEFAULT_DIRS);
+			if (handle == IntPtr.Zero)
+				return null;	// eg. it's x86 but we're x64 or vice versa, or it's not a valid PE file
 
-			var newState = new DbgShimState();
-			newState.Filename = path;
-			newState.Handle = handle;
-			newState.GetStartupNotificationEvent = GetDelegate<GetStartupNotificationEvent>(handle, "GetStartupNotificationEvent");
-			newState.CloseCLREnumeration = GetDelegate<CloseCLREnumeration>(handle, "CloseCLREnumeration");
-			newState.EnumerateCLRs = GetDelegate<EnumerateCLRs>(handle, "EnumerateCLRs");
-			newState.CreateVersionStringFromModule = GetDelegate<CreateVersionStringFromModule>(handle, "CreateVersionStringFromModule");
-			newState.CreateDebuggingInterfaceFromVersionEx = GetDelegate<CreateDebuggingInterfaceFromVersionEx>(handle, "CreateDebuggingInterfaceFromVersionEx");
-			if (newState.GetStartupNotificationEvent == null ||
-				newState.CloseCLREnumeration == null ||
-				newState.EnumerateCLRs == null ||
-				newState.CreateVersionStringFromModule == null ||
-				newState.CreateDebuggingInterfaceFromVersionEx == null) {
+			dbgShimState = new DbgShimState();
+			dbgShimState.Filename = dbgshimPath;
+			dbgShimState.Handle = handle;
+			dbgShimState.GetStartupNotificationEvent = GetDelegate<GetStartupNotificationEvent>(handle, "GetStartupNotificationEvent");
+			dbgShimState.CloseCLREnumeration = GetDelegate<CloseCLREnumeration>(handle, "CloseCLREnumeration");
+			dbgShimState.EnumerateCLRs = GetDelegate<EnumerateCLRs>(handle, "EnumerateCLRs");
+			dbgShimState.CreateVersionStringFromModule = GetDelegate<CreateVersionStringFromModule>(handle, "CreateVersionStringFromModule");
+			dbgShimState.CreateDebuggingInterfaceFromVersionEx = GetDelegate<CreateDebuggingInterfaceFromVersionEx>(handle, "CreateDebuggingInterfaceFromVersionEx");
+			if (dbgShimState.GetStartupNotificationEvent == null ||
+				dbgShimState.CloseCLREnumeration == null ||
+				dbgShimState.EnumerateCLRs == null ||
+				dbgShimState.CreateVersionStringFromModule == null ||
+				dbgShimState.CreateDebuggingInterfaceFromVersionEx == null) {
 				NativeMethods.FreeLibrary(handle);
-				return IntPtr.Zero;
+				return null;
 			}
 
-			dbgShimState = newState;
-			return dbgShimState.Handle;
+			dbgShimStateDict.Add(dbgShimState.Filename, dbgShimState);
+			return dbgShimState;
 		}
-		static DbgShimState dbgShimState;
-		struct DbgShimState {
+		static readonly Dictionary<string, DbgShimState> dbgShimStateDict = new Dictionary<string, DbgShimState>(StringComparer.OrdinalIgnoreCase);
+		sealed class DbgShimState {
 			public string Filename;
 			public IntPtr Handle;
 			public GetStartupNotificationEvent GetStartupNotificationEvent;
@@ -171,7 +174,12 @@ namespace dndbg.Engine {
 			return (T)(object)Marshal.GetDelegateForFunctionPointer(addr, typeof(T));
 		}
 
+		// We'd most likely find the Silverlight dbgshim.dll in the registry (check the Wow6432Node
+		// path), so disable this method.
+		static readonly bool enable_GetDbgShimPathFromRegistry = false;
 		static string GetDbgShimPathFromRegistry() {
+			if (!enable_GetDbgShimPathFromRegistry)
+				return null;
 			try {
 				using (var key = Registry.LocalMachine.OpenSubKey(@"Software\Microsoft\.NETFramework"))
 					return key.GetValue("DbgPackShimPath") as string;
@@ -183,7 +191,7 @@ namespace dndbg.Engine {
 
 		static string GetDbgShimPathFromRuntimePath(string path) {
 			try {
-				return Path.GetDirectoryName(path) + @"\dbgshim.dll";
+				return Path.Combine(Path.GetDirectoryName(path), DBGSHIM_FILENAME);
 			}
 			catch {
 			}
@@ -191,8 +199,8 @@ namespace dndbg.Engine {
 		}
 
 		public static ICorDebug CreateCorDebug(CoreCLRTypeAttachInfo info) {
-			// If it's null, we haven't created a CoreCLRTypeInfo...
-			if (dbgShimState.Handle == null)
+			var dbgShimState = GetOrCreateDbgShimState(null, info.DbgShimFilename);
+			if (dbgShimState == null)
 				return null;
 
 			object obj;
@@ -201,14 +209,9 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static DnDebugger CreateDnDebugger(DebugProcessOptions options, CoreCLRTypeDebugInfo info, Func<bool> keepWaiting, Func<ICorDebug, uint, DnDebugger> createDnDebugger) {
-			var f = info.DbgShimFilename;
-			bool useFullPath = true;
-			if (string.IsNullOrEmpty(f)) {
-				f = info.HostFilename;
-				useFullPath = false;
-			}
-			if (GetDbgShimHandle(f, useFullPath) == IntPtr.Zero)
-				throw new Exception(string.Format("Could not load dbgshim.dll: '{0}'", f));
+			var dbgShimState = GetOrCreateDbgShimState(info.HostFilename, info.DbgShimFilename);
+			if (dbgShimState == null)
+				throw new Exception(string.Format("Could not load dbgshim.dll: '{0}'", info.DbgShimFilename));
 
 			IntPtr startupEvent = IntPtr.Zero;
 			IntPtr hThread = IntPtr.Zero;
@@ -261,7 +264,7 @@ namespace dndbg.Engine {
 				var pha = (IntPtr*)pHandleArray;
 				string moduleFilename;
 				const int index = 0;
-				version = GetVersionStringFromModule(pi.dwProcessId, psa[index], out moduleFilename);
+				version = GetVersionStringFromModule(dbgShimState, pi.dwProcessId, psa[index], out moduleFilename);
 				object obj;
 				hr = dbgShimState.CreateDebuggingInterfaceFromVersionEx(CorDebugInterfaceVersion.CorDebugVersion_4_0, version, out obj);
 				var corDebug = obj as ICorDebug;

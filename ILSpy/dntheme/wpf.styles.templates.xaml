@@ -977,7 +977,7 @@
         <Setter Property="BorderBrush"
                 Value="{DynamicResource ContextMenuBorderBrush}"/>
         <Setter Property="Padding"
-                Value="0"/>
+                Value="2"/>
         <Setter Property="Grid.IsSharedSizeScope"
                 Value="true"/>
         <Setter Property="HasDropShadow"
@@ -997,7 +997,7 @@
                                 BorderThickness="{TemplateBinding BorderThickness}">
                             <ScrollViewer Name="ContextMenuScrollViewer"
                                           FocusVisualStyle="{x:Null}"
-                                          Grid.ColumnSpan="2" Margin="2"
+                                          Grid.ColumnSpan="2" Margin="0"
                                           Style="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=MenuScrollViewer}}">
                               <Grid RenderOptions.ClearTypeHint="Enabled">
                                 <Canvas Height="0" Width="0" HorizontalAlignment="Left" VerticalAlignment="Top">
@@ -4049,7 +4049,6 @@
                                                                        Height="1"
                                                                        Width="{Binding ElementName=Header, Path=ActualWidth}" />
                                                             <ScrollViewer Name="SubMenuScrollViewer"
-                                                                          Margin="2"
                                                                           FocusVisualStyle="{x:Null}"
                                                                           Style="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=MenuScrollViewer}}">
                                                               <Grid RenderOptions.ClearTypeHint="Enabled" Grid.IsSharedSizeScope="true">
@@ -4071,7 +4070,7 @@
                                                                 <ItemsPresenter Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle"
                                                                                 Grid.ColumnSpan="2"
                                                                                 KeyboardNavigation.TabNavigation="Cycle"
-                                                                                Margin="0"
+                                                                                Margin="2"
                                                                                 SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                                                               </Grid>
                                                             </ScrollViewer>
@@ -4298,7 +4297,6 @@
                                                         BorderThickness="1"
                                                         Grid.IsSharedSizeScope="true">
                                                     <ScrollViewer Name="SubMenuScrollViewer"
-                                                                  Margin="2"
                                                                   FocusVisualStyle="{x:Null}"
                                                                   Style="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=MenuScrollViewer}}">
                                                       <Grid RenderOptions.ClearTypeHint="Enabled">
@@ -4320,7 +4318,7 @@
                                                         <ItemsPresenter Name="ItemsPresenter" KeyboardNavigation.DirectionalNavigation="Cycle"
                                                                         Grid.ColumnSpan="2"
                                                                         KeyboardNavigation.TabNavigation="Cycle"
-                                                                        Margin="0"
+                                                                        Margin="2"
                                                                         SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
                                                       </Grid>
                                                     </ScrollViewer>

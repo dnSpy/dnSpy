@@ -66,7 +66,9 @@ namespace ICSharpCode.ILSpy.Options {
 				TabItem tabItem = new TabItem();
 				tabItem.Header = creators[i].Metadata.Title;
 				tabItem.Content = new ScrollViewer {
-					HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+					// Disable the horizontal scrollbar since some pages have textboxes and they
+					// will grow if the text doesn't fit and there's a horizontal scrollbar.
+					HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
 					VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
 					Content = optionPages[i],
 				};

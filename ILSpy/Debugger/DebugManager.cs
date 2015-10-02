@@ -422,6 +422,12 @@ namespace dnSpy.Debugger {
 			}
 		}
 
+		static string GetIncompatiblePlatformErrorMessage() {
+			if (IntPtr.Size == 4)
+				return "Use dnSpy.exe to debug 64-bit applications.";
+			return "Use dnSpy-x86.exe to debug 32-bit applications.";
+		}
+
 		bool DebugProcess(DebugProcessOptions options) {
 			if (IsDebugging)
 				return false;
@@ -437,11 +443,10 @@ namespace dnSpy.Debugger {
 			catch (Exception ex) {
 				var cex = ex as COMException;
 				const int ERROR_NOT_SUPPORTED = unchecked((int)0x80070032);
-				const int CORDBG_E_UNCOMPATIBLE_PLATFORMS = unchecked((int)0x80131C30);
 				if (cex != null && cex.ErrorCode == ERROR_NOT_SUPPORTED)
-					MainWindow.Instance.ShowMessageBox("Could not start the debugger. Use dnSpy.exe to debug 64-bit applications.");
-				else if (cex != null && cex.ErrorCode == CORDBG_E_UNCOMPATIBLE_PLATFORMS)
-					MainWindow.Instance.ShowMessageBox("Could not start the debugger. Use dnSpy-x86.exe to debug 32-bit applications.");
+					MainWindow.Instance.ShowMessageBox(string.Format("Could not start the debugger. {0}", GetIncompatiblePlatformErrorMessage()));
+				else if (cex != null && cex.ErrorCode == CordbgErrors.CORDBG_E_UNCOMPATIBLE_PLATFORMS)
+					MainWindow.Instance.ShowMessageBox(string.Format("Could not start the debugger. {0}", GetIncompatiblePlatformErrorMessage()));
 				else if (cex != null && cex.ErrorCode == unchecked((int)0x800702E4))
 					MainWindow.Instance.ShowMessageBox("Could not start the debugger. The debugged program requires admin privileges. Restart dnSpy with admin rights and try again.");
 				else
@@ -515,6 +520,8 @@ namespace dnSpy.Debugger {
 					if (ee.EventType == CorDebugExceptionCallbackType.DEBUG_EXCEPTION_UNHANDLED)
 						UnhandledException(ee);
 				}
+				else if (e.Type == DebugCallbackType.DebuggerError)
+					OnDebuggerError((DebuggerErrorDebugCallbackEventArgs)e);
 			}
 			finally {
 				DebugCallbackEvent_counter--;
@@ -551,6 +558,15 @@ namespace dnSpy.Debugger {
 			}
 		}
 		int UnhandledException_counter = 0;
+
+		void OnDebuggerError(DebuggerErrorDebugCallbackEventArgs e) {
+			string msg;
+			if (e.HError == CordbgErrors.CORDBG_E_UNCOMPATIBLE_PLATFORMS)
+				msg = GetIncompatiblePlatformErrorMessage();
+			else
+				msg = string.Format("There was a CLR debugger error\n\nHR: 0x{0:X8}\n\nError: 0x{1:X8}", e.HError, e.ErrorCode);
+			MainWindow.Instance.ShowMessageBox(msg);
+		}
 
 		static void AddExceptionInfo(StringBuilder sb, CorValue exValue, string msg) {
 			var exType = exValue == null ? null : exValue.ExactType;
@@ -652,6 +668,7 @@ namespace dnSpy.Debugger {
 			var vm = new DebugCoreCLRVM();
 			if (asm != null)
 				vm.Filename = asm.FileName;
+			vm.DbgShimFilename = DebuggerSettings.Instance.CoreCLRDbgShimFilename;
 			vm.BreakProcessType = DebuggerSettings.Instance.BreakProcessType;
 			return vm;
 		}

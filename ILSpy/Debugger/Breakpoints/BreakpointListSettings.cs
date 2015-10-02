@@ -20,6 +20,7 @@
 using System.ComponentModel;
 using System.Xml.Linq;
 using dndbg.Engine;
+using dnlib.DotNet;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.Breakpoints {
@@ -83,6 +84,13 @@ namespace dnSpy.Debugger.Breakpoints {
 
 				var snModule = new SerializedDnModule(moduleFullPath, isDynamic, isInMemory);
 				var key = MethodKey.Create(token.Value, snModule);
+
+				if (!isInMemory) {
+					var s = SessionSettings.Unescape((string)bpx.Attribute("Method"));
+					if (s == null || s != GetMethodAsString(assemblyFullPath, key))
+						continue;
+				}
+
 				var bp = new ILCodeBreakpoint(assemblyFullPath, key, ilOffset.Value, isEnabled.Value);
 				BreakpointManager.Instance.Add(bp);
 			}
@@ -111,6 +119,12 @@ namespace dnSpy.Debugger.Breakpoints {
 					bpx.SetAttributeValue("IsInMemory", ilbp.MethodKey.Module.IsInMemory);
 					bpx.SetAttributeValue("ILOffset", ilbp.ILOffset);
 					bpx.SetAttributeValue("IsEnabled", ilbp.IsEnabled);
+					if (!ilbp.MethodKey.Module.IsInMemory) {
+						var s = GetMethodAsString(ilbp.Assembly, ilbp.MethodKey);
+						if (s == null)
+							continue;
+						bpx.SetAttributeValue("Method", SessionSettings.Escape(s));
+					}
 					bps.Add(bpx);
 					continue;
 				}
@@ -121,6 +135,13 @@ namespace dnSpy.Debugger.Breakpoints {
 					continue;
 				}
 			}
+		}
+
+		static string GetMethodAsString(string asmName, MethodKey key) {
+			var loadedAsm = MainWindow.Instance.LoadAssembly(asmName, key.Module);
+			var mod = loadedAsm.ModuleDefinition as ModuleDefMD;
+			var method = mod == null ? null : mod.ResolveToken(key.Token) as MethodDef;
+			return method == null ? null : method.ToString();
 		}
 	}
 }

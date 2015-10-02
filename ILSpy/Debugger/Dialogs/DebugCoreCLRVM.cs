@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.Dialogs {
 		IPickDirectory pickDirectory;
 
 		public ICommand PickDbgShimFilenameCommand {
-			get { return new RelayCommand(a => PickNewDbgShimFilename(), a => CanPickNewDbgShimFilename); }
+			get { return new RelayCommand(a => PickNewDbgShimFilename()); }
 		}
 
 		public ICommand PickHostFilenameCommand {
@@ -56,21 +56,13 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 		readonly EnumListVM breakProcessTypeVM = new EnumListVM(DebugProcessVM.breakProcessTypeList);
 
-		public bool DbgShimIsEnabled {
-			get { return !CoreCLRHelper.DbgShimInitialized; }
-		}
-
 		public BreakProcessType BreakProcessType {
 			get { return (BreakProcessType)BreakProcessTypeVM.SelectedItem; }
 			set { BreakProcessTypeVM.SelectedItem = value; }
 		}
 
 		public string DbgShimFilename {
-			get {
-				if (CoreCLRHelper.DbgShimInitialized)
-					return CoreCLRHelper.CurrentDbgShimPath;
-				return dbgShimFilename;
-			}
+			get { return dbgShimFilename; }
 			set {
 				if (dbgShimFilename != value) {
 					dbgShimFilename = value;
@@ -153,15 +145,11 @@ namespace dnSpy.Debugger.Dialogs {
 			return null;
 		}
 
-		bool CanPickNewDbgShimFilename {
-			get { return DbgShimIsEnabled; }
-		}
-
 		void PickNewDbgShimFilename() {
 			if (pickFilename == null)
 				throw new InvalidOperationException();
 
-			var newFilename = pickFilename.GetFilename(filename, "exe", PickFilenameConstants.ExecutableFilter);
+			var newFilename = pickFilename.GetFilename(DbgShimFilename, "exe", PickFilenameConstants.ExecutableFilter);
 			if (newFilename == null)
 				return;
 
@@ -172,7 +160,7 @@ namespace dnSpy.Debugger.Dialogs {
 			if (pickFilename == null)
 				throw new InvalidOperationException();
 
-			var newFilename = pickFilename.GetFilename(filename, "exe", PickFilenameConstants.ExecutableFilter);
+			var newFilename = pickFilename.GetFilename(HostFilename, "exe", PickFilenameConstants.ExecutableFilter);
 			if (newFilename == null)
 				return;
 
@@ -183,7 +171,7 @@ namespace dnSpy.Debugger.Dialogs {
 			if (pickFilename == null)
 				throw new InvalidOperationException();
 
-			var newFilename = pickFilename.GetFilename(filename, "exe", PickFilenameConstants.DotNetExecutableFilter);
+			var newFilename = pickFilename.GetFilename(Filename, "exe", PickFilenameConstants.DotNetExecutableFilter);
 			if (newFilename == null)
 				return;
 
@@ -226,15 +214,12 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 
 		protected override string Verify(string columnName) {
-			if (columnName == "DbgShimFilename") {
-				if (string.IsNullOrEmpty(DbgShimFilename))
-					return string.Empty;
-				return VerifyFilename(DbgShimFilename);
-			}
 			if (columnName == "HostFilename")
 				return VerifyFilename(HostFilename);
 			if (columnName == "Filename")
 				return VerifyFilename(Filename);
+			if (columnName == "DbgShimFilename")
+				return VerifyFilename(DbgShimFilename);
 
 			return string.Empty;
 		}

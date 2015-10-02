@@ -118,7 +118,7 @@ namespace dnSpy.Debugger.Dialogs {
 			if (pickFilename == null)
 				throw new InvalidOperationException();
 
-			var newFilename = pickFilename.GetFilename(filename, "exe", PickFilenameConstants.DotNetExecutableFilter);
+			var newFilename = pickFilename.GetFilename(Filename, "exe", PickFilenameConstants.DotNetExecutableFilter);
 			if (newFilename == null)
 				return;
 

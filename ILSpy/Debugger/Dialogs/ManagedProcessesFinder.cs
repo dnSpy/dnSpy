@@ -91,10 +91,12 @@ namespace dnSpy.Debugger.Dialogs {
 					if (fh.IsInvalid)
 						continue;
 				}
-				bool isWow64Process;
-				if (IsWow64Process(process.Handle, out isWow64Process)) {
-					if (IntPtr.Size == 4 && !isWow64Process)
-						continue;
+				if (Environment.Is64BitOperatingSystem) {
+					bool isWow64Process;
+					if (IsWow64Process(process.Handle, out isWow64Process)) {
+						if (IntPtr.Size == 4 && !isWow64Process)
+							continue;
+					}
 				}
 				if (process.HasExited)
 					continue;
@@ -125,41 +127,30 @@ namespace dnSpy.Debugger.Dialogs {
 			}
 
 			// Finding CoreCLR assemblies is much slower so do it last
-			if (CoreCLRHelper.TryInitializeDbgShim()) {
-				foreach (var process in processes) {
-					if (process.HasExited)
-						continue;
-					foreach (var info in TryGetCoreCLRInfos(process, null))
-						yield return info;
+			foreach (var process in processes) {
+				if (process.HasExited)
+					continue;
+				ProcessModule[] modules;
+				try {
+					modules = process.Modules.Cast<ProcessModule>().ToArray();
 				}
-			}
-			else {
-				foreach (var process in processes) {
-					if (process.HasExited)
-						continue;
-
-					ProcessModule[] modules;
-					try {
-						modules = process.Modules.Cast<ProcessModule>().ToArray();
-					}
-					catch {
-						continue;
-					}
-					foreach (var module in modules) {
-						var moduleFilename = module.FileName;
-						var dllName = Path.GetFileName(moduleFilename);
-						if (dllName.Equals("coreclr.dll", StringComparison.OrdinalIgnoreCase)) {
-							foreach (var info in TryGetCoreCLRInfos(process, moduleFilename))
-								yield return info;
-							break;
-						}
+				catch {
+					continue;
+				}
+				foreach (var module in modules) {
+					var moduleFilename = module.FileName;
+					var dllName = Path.GetFileName(moduleFilename);
+					if (dllName.Equals("coreclr.dll", StringComparison.OrdinalIgnoreCase)) {
+						foreach (var info in TryGetCoreCLRInfos(process, moduleFilename))
+							yield return info;
+						break;
 					}
 				}
 			}
 		}
 
 		IEnumerable<Info> TryGetCoreCLRInfos(Process process, string coreclrFilename) {
-			foreach (var ccInfo in CoreCLRHelper.GetCoreCLRInfos(process.Id, coreclrFilename))
+			foreach (var ccInfo in CoreCLRHelper.GetCoreCLRInfos(process.Id, coreclrFilename, null))
 				yield return new Info(process, ccInfo.CoreCLRTypeInfo.Version, ccInfo.CoreCLRTypeInfo);
 		}
 	}

@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Windows.Input;
 using System.Xml.Linq;
 using dndbg.Engine;
 using dnSpy.Debugger.Dialogs;
@@ -28,11 +30,13 @@ namespace dnSpy.Debugger {
 	[ExportOptionPage(Title = "Debugger", Order = 4)]
 	sealed class DebuggerSettingsVMCreator : IOptionPageCreator {
 		public OptionPage Create() {
-			return new DebuggerSettingsVM();
+			return new DebuggerSettingsVM(new PickFilename());
 		}
 	}
 
 	sealed class DebuggerSettingsVM : OptionPage {
+		readonly IPickFilename pickFilename;
+
 		public DebuggerSettings Settings {
 			get { return settings; }
 		}
@@ -46,6 +50,25 @@ namespace dnSpy.Debugger {
 		public BreakProcessType BreakProcessType {
 			get { return (BreakProcessType)BreakProcessTypeVM.SelectedItem; }
 			set { BreakProcessTypeVM.SelectedItem = value; }
+		}
+
+		public ICommand PickCoreCLRDbgShimFilenameCommand {
+			get { return new RelayCommand(a => PickNewCoreCLRDbgShimFilename()); }
+		}
+
+		public DebuggerSettingsVM(IPickFilename pickFilename) {
+			if (pickFilename == null)
+				throw new ArgumentNullException();
+			this.pickFilename = pickFilename;
+		}
+
+		void PickNewCoreCLRDbgShimFilename() {
+			const string filter = "dbgshim.dll|dbgshim.dll|All files (*.*)|*.*"; ;
+			var newFilename = pickFilename.GetFilename(Settings.CoreCLRDbgShimFilename, "exe", filter);
+			if (newFilename == null)
+				return;
+
+			Settings.CoreCLRDbgShimFilename = newFilename;
 		}
 
 		public override void Load(ILSpySettings settings) {

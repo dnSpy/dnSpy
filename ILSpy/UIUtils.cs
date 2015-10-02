@@ -114,7 +114,6 @@ namespace dnSpy {
 			selector.Dispatcher.BeginInvoke(prio, new Action(delegate {
 				if (selector.SelectedItem == obj) {
 					var item = selector.ItemContainerGenerator.ContainerFromItem(obj) as UIElement;
-					Debug.Assert(item != null);
 					if (item != null)
 						item.Focus();
 				}

@@ -969,8 +969,10 @@ namespace dndbg.Engine {
 		public static DnDebugger DebugProcess(DebugProcessOptions options) {
 			if (options.DebugMessageDispatcher == null)
 				throw new ArgumentException("DebugMessageDispatcher is null");
-
-			return CreateDnDebugger(options);
+			var dbg = CreateDnDebugger(options);
+			if (dbg == null)
+				throw new Exception("Couldn't create a debugger instance");
+			return dbg;
 		}
 
 		static DnDebugger CreateDnDebugger(DebugProcessOptions options) {
@@ -988,7 +990,7 @@ namespace dndbg.Engine {
 			var debuggeeVersion = clrType.DebuggeeVersion ?? DebuggeeVersionDetector.GetVersion(options.Filename);
 			var corDebug = CreateCorDebug(debuggeeVersion);
 			if (corDebug == null)
-				throw new Exception("Could not create a ICorDebug instance");
+				throw new Exception("Could not create an ICorDebug instance");
 			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher, debuggeeVersion);
 			if (options.BreakProcessType != BreakProcessType.None)
 				new BreakProcessHelper(dbg, options.BreakProcessType, options.Filename);
@@ -1048,6 +1050,8 @@ namespace dndbg.Engine {
 
 			string debuggeeVersion;
 			var corDebug = CreateCorDebug(options, out debuggeeVersion);
+			if (corDebug == null)
+				throw new Exception("An ICorDebug instance couldn't be created");
 			var dbg = new DnDebugger(corDebug, options.DebugOptions, options.DebugMessageDispatcher, debuggeeVersion);
 			ICorDebugProcess comProcess;
 			corDebug.DebugActiveProcess(options.ProcessId, 0, out comProcess);

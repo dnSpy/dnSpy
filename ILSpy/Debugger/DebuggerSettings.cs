@@ -234,6 +234,17 @@ namespace dnSpy.Debugger {
 		}
 		bool ignoreBreakInstructions;
 
+		public string CoreCLRDbgShimFilename {
+			get { return coreCLRDbgShimFilename; }
+			set {
+				if (coreCLRDbgShimFilename != value) {
+					coreCLRDbgShimFilename = value;
+					OnPropertyChanged("CoreCLRDbgShimFilename");
+				}
+			}
+		}
+		string coreCLRDbgShimFilename;
+
 		const string SETTINGS_NAME = "DebuggerSettings";
 
 		void Load() {
@@ -263,6 +274,7 @@ namespace dnSpy.Debugger {
 			CompilerGeneratedAttributesCanHideFields = (bool?)csx.Attribute("CompilerGeneratedAttributesCanHideFields") ?? true;
 			DisableManagedDebuggerDetection = (bool?)csx.Attribute("DisableManagedDebuggerDetection") ?? true;
 			IgnoreBreakInstructions = (bool?)csx.Attribute("IgnoreBreakInstructions") ?? false;
+			CoreCLRDbgShimFilename = SessionSettings.Unescape((string)csx.Attribute("CoreCLRDbgShimFilename") ?? string.Empty);
 		}
 
 		void Save() {
@@ -298,6 +310,7 @@ namespace dnSpy.Debugger {
 			csx.SetAttributeValue("CompilerGeneratedAttributesCanHideFields", CompilerGeneratedAttributesCanHideFields);
 			csx.SetAttributeValue("DisableManagedDebuggerDetection", DisableManagedDebuggerDetection);
 			csx.SetAttributeValue("IgnoreBreakInstructions", IgnoreBreakInstructions);
+			csx.SetAttributeValue("CoreCLRDbgShimFilename", SessionSettings.Escape(CoreCLRDbgShimFilename));
 		}
 
 		public DebuggerSettings CopyTo(DebuggerSettings other) {
@@ -315,6 +328,7 @@ namespace dnSpy.Debugger {
 			other.CompilerGeneratedAttributesCanHideFields = this.CompilerGeneratedAttributesCanHideFields;
 			other.DisableManagedDebuggerDetection = this.DisableManagedDebuggerDetection;
 			other.IgnoreBreakInstructions = this.IgnoreBreakInstructions;
+			other.CoreCLRDbgShimFilename = this.CoreCLRDbgShimFilename;
 			return other;
 		}
 

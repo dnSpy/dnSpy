@@ -68,6 +68,7 @@ namespace dndbg.Engine {
 		}
 
 		public CoreCLRTypeDebugInfo(string dbgShimFilename, string hostFilename, string hostCommandLine) {
+			this.DbgShimFilename = dbgShimFilename;
 			this.HostFilename = hostFilename;
 			this.HostCommandLine = hostCommandLine;
 		}
