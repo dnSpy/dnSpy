@@ -322,6 +322,69 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
+	[ExportContextMenuEntry(Header = "E_xpand Children", Order = 310, Category = "LOCTree", Icon = "SuperTypesOpen")]
+	sealed class ExpandChildrenLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		protected override void Execute(LocalsCtxMenuContext context) {
+			var vm = GetLocalParent(context);
+			if (vm != null) {
+				vm.IsExpanded = true;
+				foreach (ValueVM child in vm.Children) {
+					if (CanExpand(child))
+						child.IsExpanded = true;
+				}
+			}
+		}
+
+		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+			var p = GetLocalParent(context);
+			if (p == null)
+				return false;
+			if (!p.IsExpanded)
+				return true;
+			return p.Children.Any(c => CanExpand((ValueVM)c));
+		}
+
+		static bool CanExpand(ValueVM vm) {
+			return vm != null && !vm.IsExpanded && (vm.LazyLoading || vm.Children.Count > 0);
+		}
+
+		static ValueVM GetLocalParent(LocalsCtxMenuContext context) {
+			if (context.SelectedItems.Length == 0)
+				return null;
+			var vm = context.SelectedItems[0];
+			if (vm.LazyLoading)
+				return vm;
+			return vm.Children.Count == 0 ? null : vm;
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "_Collapse Children", Order = 320, Category = "LOCTree", Icon = "SuperTypes")]
+	sealed class CollapseChildrenLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		protected override void Execute(LocalsCtxMenuContext context) {
+			var vm = GetLocalParent(context);
+			if (vm != null) {
+				foreach (var child in vm.Children)
+					child.IsExpanded = false;
+			}
+		}
+
+		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+			var p = GetLocalParent(context);
+			if (p == null)
+				return false;
+			if (!p.IsExpanded)
+				return false;
+			return p.Children.Any(c => c.IsExpanded);
+		}
+
+		static ValueVM GetLocalParent(LocalsCtxMenuContext context) {
+			if (context.SelectedItems.Length == 0)
+				return null;
+			var vm = context.SelectedItems[0];
+			return vm.Children.Count == 0 ? null : vm;
+		}
+	}
+
 	[ExportContextMenuEntry(Header = "Show Namespaces", Order = 570, Category = "LOCDispOptions")]
 	sealed class ShowNamespacesLocalsCtxMenuCommand : LocalsCtxMenuCommand {
 		protected override void Execute(LocalsCtxMenuContext context) {

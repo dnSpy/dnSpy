@@ -1,6 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:ctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
+	xmlns:ctrls2="clr-namespace:dnSpy.Controls"
 >
 	<ResourceDictionary.MergedDictionaries>
 		<ResourceDictionary Source="pack://application:,,,/dnSpy;component/Controls/SearchBoxStyle.xaml" />
@@ -39,63 +40,42 @@
 
 	<!-- DockedPane -->
 	<Style TargetType="{x:Type ctrls:DockedPane}">
-		<Style.Resources>
-			<Style x:Key="CloseButtonStyle" TargetType="{x:Type Button}">
-				<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-				<Setter Property="Background" Value="{DynamicResource DockedPaneCloseButtonBackground}" />
-				<Setter Property="BorderBrush" Value="{DynamicResource DockedPaneCloseButtonBorder}" />
-				<Setter Property="BorderThickness" Value="1"/>
-				<Setter Property="Foreground" Value="{DynamicResource SystemColorsControlText}"/>
-				<Setter Property="HorizontalContentAlignment" Value="Center"/>
-				<Setter Property="VerticalContentAlignment" Value="Center"/>
-				<Setter Property="Padding" Value="4"/>
-				<Setter Property="Template">
-					<Setter.Value>
-						<ControlTemplate TargetType="{x:Type Button}">
-							<Grid>
-								<Border SnapsToDevicePixels="true" x:Name="buttonBorder" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="2" />
-								<ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
-							</Grid>
-							<ControlTemplate.Triggers>
-								<Trigger Property="IsMouseOver" Value="True">
-									<Setter Property="Background" TargetName="buttonBorder" Value="{DynamicResource DockedPaneCloseButtonMouseOverBackground}" />
-								</Trigger>
-								<Trigger Property="IsPressed" Value="True">
-									<Setter Property="Background" TargetName="buttonBorder" Value="{DynamicResource DockedPaneCloseButtonPressedBackground}" />
-								</Trigger>
-							</ControlTemplate.Triggers>
-						</ControlTemplate>
-					</Setter.Value>
-				</Setter>
-			</Style>
-		</Style.Resources>
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ctrls:DockedPane}">
 					<Border
+						Background="{DynamicResource DockedPaneBackground}"
 						BorderThickness="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness}"
 						BorderBrush="{DynamicResource PaneBorder}">
 							<DockPanel>
 							<Border BorderThickness="0,0,0,0" BorderBrush="{DynamicResource PaneBorder}"
-									Background="{DynamicResource SystemColorsInactiveCaption}" DockPanel.Dock="Top">
+									Padding="0 2 0 2" TextBlock.Foreground="{DynamicResource EnvironmentTitleBarActiveText}" Background="{DynamicResource EnvironmentTitleBarActive}"
+									DockPanel.Dock="Top">
 								<Grid>
 									<Grid.ColumnDefinitions>
 										<ColumnDefinition Width="1*"/>
 										<ColumnDefinition Width="Auto" />
 									</Grid.ColumnDefinitions>
-									<TextBlock Text="{TemplateBinding Title}" Margin="3,0"
-											   Foreground="{DynamicResource DockedPaneTitleForeground}"
-											   VerticalAlignment="Center"/>
-									<Button x:Name="PART_Close" Grid.Column="2" VerticalAlignment="Center" Width="16" Height="16" DockPanel.Dock="Right" Style="{DynamicResource CloseButtonStyle}" ToolTip="Close" Margin="1">
-										<Path x:Name="Path"
-											  Stretch="Fill"
-											  StrokeThickness="0.5"
-											  Stroke="{DynamicResource DockedPaneCloseButtonPathStroke}"
-											  Fill="{DynamicResource DockedPaneCloseButtonPathFill}"
-											  Data="F1 M 0,1.3333L 1.33333,0L 4,2.6666L 6.6666,0 8,1.3333L 5.3333,4L 8,6.6666L 6.6666,8L 4,5.3333L 1.3333,8L 0,6.6666L 2.6666,4L 0,1.3333 Z "
-											  HorizontalAlignment="Stretch"
-											  VerticalAlignment="Stretch"/>
-									</Button>
+									<TextBlock Text="{TemplateBinding Title}" Margin="3,0" VerticalAlignment="Center"/>
+									<ctrls2:TabButton x:Name="PART_Close"
+													 Grid.Column="1"
+													 Margin="3 0 3 0"
+													 GlyphForeground="{DynamicResource EnvironmentFileTabButtonSelectedActiveGlyph}"
+													 HoverBackground="{DynamicResource EnvironmentFileTabButtonHoverSelectedActive}"
+													 HoverBorderBrush="{DynamicResource EnvironmentFileTabButtonHoverSelectedActiveBorder}"
+													 HoverForeground="{DynamicResource EnvironmentFileTabButtonHoverSelectedActiveGlyph}"
+													 HoverBorderThickness="1"
+													 PressedBackground="{DynamicResource EnvironmentFileTabButtonDownSelectedActive}"
+													 PressedBorderBrush="{DynamicResource EnvironmentFileTabButtonDownSelectedActiveBorder}"
+													 PressedForeground="{DynamicResource EnvironmentFileTabButtonDownSelectedActiveGlyph}"
+													 PressedBorderThickness="1"
+													 ToolTip="Close">
+										<Path x:Name="CloseButtonCross"
+											  Width="10" Height="8"
+											  Stretch="Uniform"
+											  Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
+											  Fill="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource Self}}" />
+									</ctrls2:TabButton>
 								</Grid>
 							</Border>
 							<ContentPresenter Content="{TemplateBinding Content}" />

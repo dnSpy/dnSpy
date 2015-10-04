@@ -276,6 +276,10 @@ namespace dnSpy.Debugger {
 							Append("Unhandled Exception");
 							break;
 
+						case DebuggerStopReason.Exception:
+							Append("Exception");
+							break;
+
 						case DebuggerStopReason.DebugEventBreakpoint:
 							if (state.EventArgs != null)
 								Append(GetEventDescription(state.EventArgs));
@@ -395,6 +399,13 @@ namespace dnSpy.Debugger {
 						break;
 					}
 					return sb.ToString();
+
+				case DebugCallbackType.MDANotification:
+					var mdan = (MDANotificationDebugCallbackEventArgs)e;
+					var mda = mdan.CorMDA;
+					if (mda == null)
+						return "MDA Notification";
+					return string.Format("MDA Notification: TID={0} {1} {2}", mda.OSThreadId, mda.Name, mda.Description);
 				}
 
 				return e.Type.ToString();
@@ -488,8 +499,29 @@ namespace dnSpy.Debugger {
 
 			// This is sometimes needed. Press Ctrl+Shift+F5 a couple of times and the toolbar
 			// debugger icons aren't updated until you release Ctrl+Shift.
-			if (ProcessState == DebuggerProcessState.Stopped || !IsDebugging)
+			if (ProcessState == DebuggerProcessState.Stopped || !IsDebugging) {
 				CommandManager.InvalidateRequerySuggested();
+				ShowExceptionMessage();
+			}
+		}
+
+		void ShowExceptionMessage() {
+			var dbg = Debugger;
+			if (dbg == null)
+				return;
+			if (dbg.Current.GetStopState(DebuggerStopReason.Exception) == null)
+				return;
+			var thread = dbg.Current.Thread;
+			if (thread == null)
+				return;
+			var exValue = thread.CorThread.CurrentException;
+			if (exValue == null)
+				return;
+			var exType = exValue.ExactType;
+			var name = exType == null ? null : exType.ToString(TypePrinterFlags.ShowNamespaces);
+			var msg = string.Format("Exception thrown: '{0}' in {1}\n\nIf there is a handler for this exception, the program may be safely continued.", name, Path.GetFileName(thread.Process.Filename));
+			BringMainWindowToFrontAndActivate();
+			MainWindow.Instance.ShowMessageBox(msg);
 		}
 
 		void RemoveDebugger() {
@@ -564,7 +596,8 @@ namespace dnSpy.Debugger {
 			if (e.HError == CordbgErrors.CORDBG_E_UNCOMPATIBLE_PLATFORMS)
 				msg = GetIncompatiblePlatformErrorMessage();
 			else
-				msg = string.Format("There was a CLR debugger error\n\nHR: 0x{0:X8}\n\nError: 0x{1:X8}", e.HError, e.ErrorCode);
+				msg = string.Format("A CLR debugger error occurred. Terminate the debugged process and try again.\n\nHR: 0x{0:X8}\nError: 0x{1:X8}", e.HError, e.ErrorCode);
+			BringMainWindowToFrontAndActivate();
 			MainWindow.Instance.ShowMessageBox(msg);
 		}
 

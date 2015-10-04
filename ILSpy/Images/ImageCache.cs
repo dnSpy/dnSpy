@@ -43,6 +43,7 @@ namespace dnSpy.Images {
 		CodeToolTip,
 		TitleAreaActive,
 		TitleAreaInactive,
+		DockedPane,
 	}
 
 	public struct ImageInfo {
@@ -96,6 +97,7 @@ namespace dnSpy.Images {
 			case BackgroundType.CodeToolTip: return GetColorBackground(dntheme.ColorType.CodeToolTip);
 			case BackgroundType.TitleAreaActive: return GetColorBackground(dntheme.ColorType.EnvironmentMainWindowActiveCaption);
 			case BackgroundType.TitleAreaInactive: return GetColorBackground(dntheme.ColorType.EnvironmentMainWindowInactiveCaption);
+			case BackgroundType.DockedPane: return GetColorBackground(dntheme.ColorType.DockedPaneBackground);
 			default:
 				Debug.Fail("Invalid bg type");
 				return GetColorBackground(dntheme.ColorType.SystemColorsWindow);

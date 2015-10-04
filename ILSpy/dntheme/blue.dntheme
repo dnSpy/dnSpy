@@ -405,13 +405,7 @@
 		<color name="gridviewlistitemselectedinactivefill" bg="#FFF0F0F0" />
 		<color name="gridviewlistviewitemfocusvisualstroke" bg="#FFE8E8E8" />
 		<color name="paneborder" bg="#828790" />
-		<color name="dockedpaneclosebuttonbackground" fg="#F4F4F4" bg="#EBEBEB" color3="#DEDEDE" color4="#D0D0D0" />
-		<color name="dockedpaneclosebuttonborder" bg="#FF989898" />
-		<color name="dockedpaneclosebuttonmouseoverbackground" fg="#D7E3FC" bg="#B5C8ED" />
-		<color name="dockedpaneclosebuttonpressedbackground" fg="#E1E1E1" bg="#F8F8F8" />
-		<color name="dockedpaneclosebuttonpathstroke" bg="#FF333333" />
-		<color name="dockedpaneclosebuttonpathfill" bg="#FF969696" />
-		<color name="dockedpanetitleforeground" fg="#FF000000" />
+		<color name="dockedpanebackground" bg="#FFCFD6E5" />
 		<color name="decompilertextviewwaitadorner" fg="Black" bg="#C0FFFFFF" />
 		<color name="avaloneditsearchdropdownbuttonactiveborder" bg="#FF0A246A" />
 		<color name="avaloneditsearchdropdownbuttonactivebackground" bg="#FFB6BDD2" />
@@ -458,6 +452,7 @@
 		<color name="environmentfiletabhotborder" bg="#FF5B7199" />
 		<color name="environmentfiletabhottext" bg="#FFFFFFFF" />
 		<color name="environmentfiletabhotglyph" bg="#FFCED4DD" />
+		<color name="environmenttitlebaractive" fg="#FF000000" bg="#FFFFF29D" />
 		<color name="searchboxwatermark" fg="#FF6D6D6D" />
 		<color name="nodeautoloaded" fg="SteelBlue" />
 		<color name="nodepublic" fg="#FF000000" />

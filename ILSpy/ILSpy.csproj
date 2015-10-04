@@ -159,6 +159,22 @@
     <Compile Include="Debugger\Dialogs\ProcessPrinter.cs" />
     <Compile Include="Debugger\Dialogs\ProcessVM.cs" />
     <Compile Include="Debugger\EvalUtils.cs" />
+    <Compile Include="Debugger\Exceptions\Commands.cs" />
+    <Compile Include="Debugger\Exceptions\DefaultExceptionSettings.cs" />
+    <Compile Include="Debugger\Exceptions\ExceptionColumnConverter.cs" />
+    <Compile Include="Debugger\Exceptions\ExceptionInfo.cs" />
+    <Compile Include="Debugger\Exceptions\ExceptionInfoKey.cs" />
+    <Compile Include="Debugger\Exceptions\ExceptionListSettings.cs" />
+    <Compile Include="Debugger\Exceptions\ExceptionManager.cs" />
+    <Compile Include="Debugger\Exceptions\ExceptionPrinter.cs" />
+    <Compile Include="Debugger\Exceptions\ExceptionControl.xaml.cs">
+      <DependentUpon>ExceptionControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\Exceptions\ExceptionState.cs" />
+    <Compile Include="Debugger\Exceptions\ExceptionsVM.cs" />
+    <Compile Include="Debugger\Exceptions\ExceptionType.cs" />
+    <Compile Include="Debugger\Exceptions\ExceptionVM.cs" />
+    <Compile Include="Debugger\Exceptions\IGetNewExceptionName.cs" />
     <Compile Include="Debugger\Locals\Commands.cs" />
     <Compile Include="Debugger\Locals\EditValueControl.xaml.cs">
       <DependentUpon>EditValueControl.xaml</DependentUpon>
@@ -197,6 +213,7 @@
     <Compile Include="MVVM\Converters\BooleanToGridrowLengthConverter.cs" />
     <Compile Include="AsmEditor\Converters\CilObjectConverter.cs" />
     <Compile Include="AsmEditor\Converters\InstructionOperandTextBoxStyleConverter.cs" />
+    <Compile Include="MVVM\Converters\ImageConverter.cs" />
     <Compile Include="MVVM\Converters\NegateBooleanConverter.cs" />
     <Compile Include="MVVM\Converters\RadioButtonConverter.cs" />
     <Compile Include="Debugger\CallStack\CallStackControl.xaml.cs">
@@ -415,6 +432,7 @@
     <Compile Include="AsmEditor\IUndoObject.cs" />
     <Compile Include="AsmEditor\ListBoxHelperBase.cs" />
     <Compile Include="MVVM\IAskUser.cs" />
+    <Compile Include="MVVM\ISelectedItemsProvider.cs" />
     <Compile Include="MVVM\ListVM.cs" />
     <Compile Include="AsmEditor\MethodBody\BodyUtils.cs" />
     <Compile Include="AsmEditor\MethodBody\CilBodyOptions.cs" />
@@ -1234,6 +1252,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Debugger\Exceptions\ExceptionControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Debugger\Locals\EditValueControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1283,6 +1305,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\Add.png" />
     <Resource Include="Images\AddException.png" />
     <Resource Include="Images\AddLocal.png" />
     <Resource Include="Images\AddNewItem.png" />
@@ -1364,6 +1387,7 @@
     <Resource Include="Images\ExceptionPrivate.png" />
     <Resource Include="Images\ExceptionProtected.png" />
     <Resource Include="Images\ExceptionProtectedInternal.png" />
+    <Resource Include="Images\ExceptionSettings.png" />
     <Resource Include="Images\ExtensionMethod.png" />
     <Resource Include="Images\ExtensionMethodCompilerControlled.png" />
     <Resource Include="Images\ExtensionMethodInternal.png" />
@@ -1383,6 +1407,7 @@
     <Resource Include="Images\FieldReadOnlyProtected.png" />
     <Resource Include="Images\FieldReadOnlyProtectedInternal.png" />
     <Resource Include="Images\Fill.png" />
+    <Resource Include="Images\Filter.png" />
     <Resource Include="Images\Find.png" />
     <Resource Include="Images\FolderClosed.png" />
     <Resource Include="Images\FolderOpen.png" />
@@ -1465,6 +1490,7 @@
     <Resource Include="Images\Redo.png" />
     <Resource Include="Images\ReferenceFolderClosed.png" />
     <Resource Include="Images\ReferenceFolderOpen.png" />
+    <Resource Include="Images\RemoveCommand.png" />
     <Resource Include="Images\Resource.png" />
     <Resource Include="Images\ResourcesFile.png" />
     <Resource Include="Images\RestartProcess.png" />
@@ -1515,6 +1541,7 @@
     <Resource Include="Images\Thread.png" />
     <Resource Include="Images\ToUncondBranch.png" />
     <Resource Include="Images\Undo.png" />
+    <Resource Include="Images\UndoCheckBoxList.png" />
     <Resource Include="Images\UserDefinedDataType.png" />
     <Resource Include="Images\VerticalTabGroup.png" />
     <Resource Include="Images\ViewCode.png" />

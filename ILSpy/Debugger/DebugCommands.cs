@@ -386,6 +386,13 @@ namespace dnSpy.Debugger {
 		}
 	}
 
+	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "E_xception Settings", MenuIcon = "ExceptionSettings", MenuInputGestureText = "Ctrl+Alt+E", MenuOrder = 5440)]
+	sealed class ExceptionSettingsWindowCommand : DebugMainMenuCommand {
+		public ExceptionSettingsWindowCommand()
+			: base(DebugRoutedCommands.ShowExceptions, null) {
+		}
+	}
+
 	[ExportIconBarActionEntry(Icon = "BreakpointMenu", Category = "Debug")]
 	sealed class BreakpointCommand : IIconBarActionEntry {
 		public bool IsEnabled(DecompilerTextView textView) {

@@ -253,13 +253,16 @@ namespace dndbg.Engine {
 			}
 
 			Current.StopStates = e.StopStates;
-			if (HasQueuedCallbacks(e))
+			if (HasQueuedCallbacks(e)) {
 				ContinueAndDecrementCounter(e);
+				// DON'T call anything, DON'T write any fields now, the CLR debugger could've already called us again when Continue() was called
+			}
 			else if (ShouldStopQueued())
 				CallOnProcessStateChanged();
 			else {
 				ResetDebuggerStates();
 				ContinueAndDecrementCounter(e);
+				// DON'T call anything, DON'T write any fields now, the CLR debugger could've already called us again when Continue() was called
 			}
 		}
 		int managedCallbackCounter;
@@ -272,11 +275,12 @@ namespace dndbg.Engine {
 			return false;
 		}
 
+		// This method must be called just before returning to the caller. No fields can be accessed
+		// and no methods can be called because the CLR debugger could call us before this method
+		// returns.
 		void ContinueAndDecrementCounter(DebugCallbackEventArgs e) {
-			if (e.Type != DebugCallbackType.ExitProcess) {
-				if (Continue(e.CorDebugController))
-					managedCallbackCounter--;
-			}
+			if (e.Type != DebugCallbackType.ExitProcess)
+				Continue(e.CorDebugController, false);	// Also decrements managedCallbackCounter
 			else
 				managedCallbackCounter--;
 		}
@@ -290,13 +294,24 @@ namespace dndbg.Engine {
 			return hr >= 0 && qcbs != 0;
 		}
 
-		bool Continue(ICorDebugController controller) {
+		// This method must be called just before returning to the caller. No fields can be accessed
+		// and no methods can be called because the CLR debugger could call us before this method
+		// returns.
+		bool Continue(ICorDebugController controller, bool callOnProcessStateChanged) {
 			Debug.Assert(controller != null);
 			if (controller == null)
 				return false;
 
-			int hr = controller.Continue(0);
+			managedCallbackCounter--;
 			continueCounter++;
+
+			if (callOnProcessStateChanged && managedCallbackCounter == 0)
+				CallOnProcessStateChanged();
+
+			// As soon as we call Continue(), the CLR debugger could send us another message so it's
+			// important that we don't access any of our fields and don't call any methods after
+			// Continue() has been called!
+			int hr = controller.Continue(0);
 			bool success = hr >= 0 || hr == CordbgErrors.CORDBG_E_PROCESS_TERMINATED || hr == CordbgErrors.CORDBG_E_OBJECT_NEUTERED;
 			Debug.WriteLineIf(!success, string.Format("dndbg: ICorDebugController::Continue() failed: 0x{0:X8}", hr));
 			return success;
@@ -327,12 +342,9 @@ namespace dndbg.Engine {
 
 			ResetDebuggerStates();
 			while (managedCallbackCounter > 0) {
-				if (!Continue(controller))
+				if (!Continue(controller, true))	// Also decrements managedCallbackCounter
 					return;
-				managedCallbackCounter--;
 			}
-
-			CallOnProcessStateChanged();
 		}
 
 		/// <summary>

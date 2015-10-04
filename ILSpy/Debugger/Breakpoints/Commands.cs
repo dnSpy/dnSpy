@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -55,7 +57,11 @@ namespace dnSpy.Debugger.Breakpoints {
 			if (vm == null)
 				return null;
 
+			var dict = new Dictionary<object, int>(ui.listView.Items.Count);
+			for (int i = 0; i < ui.listView.Items.Count; i++)
+				dict[ui.listView.Items[i]] = i;
 			var elems = ui.listView.SelectedItems.OfType<BreakpointVM>().ToArray();
+			Array.Sort(elems, (a, b) => dict[a].CompareTo(dict[b]));
 
 			return new BreakpointCtxMenuContext(vm, elems);
 		}

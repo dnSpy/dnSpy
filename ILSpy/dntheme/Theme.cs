@@ -1663,38 +1663,9 @@ namespace dnSpy.dntheme {
 				DefaultBackground = "#828790",
 				BackgroundResourceKey = "PaneBorder",
 			},
-			new LinearGradientColorInfo(ColorType.DockedPaneCloseButtonBackground, new Point(0, 1), "DockedPane close button background", 0, 0.5, 0.5, 1) {
-				ResourceKey = "DockedPaneCloseButtonBackground",
-				DefaultForeground = "#F4F4F4",
-				DefaultBackground = "#EBEBEB",
-				DefaultColor3 = "#DEDEDE",
-				DefaultColor4 = "#D0D0D0",
-			},
-			new BrushColorInfo(ColorType.DockedPaneCloseButtonBorder, "DockedPane close button border") {
-				DefaultBackground = "#FF989898",
-				BackgroundResourceKey = "DockedPaneCloseButtonBorder",
-			},
-			new LinearGradientColorInfo(ColorType.DockedPaneCloseButtonMouseOverBackground, new Point(0, 1), "DockedPane close button mouse over background", 0, 1) {
-				ResourceKey = "DockedPaneCloseButtonMouseOverBackground",
-				DefaultForeground = "#D7E3FC",
-				DefaultBackground = "#B5C8ED",
-			},
-			new LinearGradientColorInfo(ColorType.DockedPaneCloseButtonPressedBackground, new Point(0, 1), "DockedPane close button pressed background", 0, 1) {
-				ResourceKey = "DockedPaneCloseButtonPressedBackground",
-				DefaultForeground = "#E1E1E1",
-				DefaultBackground = "#F8F8F8",
-			},
-			new BrushColorInfo(ColorType.DockedPaneCloseButtonPathStroke, "DockedPane close button path stroke") {
-				DefaultBackground = "#FF333333",
-				BackgroundResourceKey = "DockedPaneCloseButtonPathStroke",
-			},
-			new BrushColorInfo(ColorType.DockedPaneCloseButtonPathFill, "DockedPane close button path fill") {
-				DefaultBackground = "#FF969696",
-				BackgroundResourceKey = "DockedPaneCloseButtonPathFill",
-			},
-			new BrushColorInfo(ColorType.DockedPaneTitleForeground, "DockedPane title foreground") {
-				DefaultForeground = "#FF000000",
-				ForegroundResourceKey = "DockedPaneTitleForeground",
+			new BrushColorInfo(ColorType.DockedPaneBackground, "Pane background") {
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "DockedPaneBackground",
 			},
 			new BrushColorInfo(ColorType.DecompilerTextViewWaitAdorner, "DecompilerTextView wait adorner") {
 				DefaultForeground = "Black",
@@ -1890,6 +1861,12 @@ namespace dnSpy.dntheme {
 			new BrushColorInfo(ColorType.EnvironmentFileTabHotGlyph, "FileTab hot glyph") {
 				DefaultBackground = "#FFD0E6F5",
 				BackgroundResourceKey = "EnvironmentFileTabHotGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentTitleBarActive, "TitleBar Active") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "EnvironmentTitleBarActive",
+				DefaultForeground = "#FFFFFFFF",
+				ForegroundResourceKey = "EnvironmentTitleBarActiveText",
 			},
 			new BrushColorInfo(ColorType.SearchBoxWatermark, "SearchBox Watermark") {
 				DefaultForeground = "#FF6D6D6D",

@@ -33,6 +33,7 @@ namespace dnSpy.Debugger {
 			ToolbarDebugCommand.OnLoaded();
 			Breakpoints.BreakpointManager.Instance.OnLoaded();
 			CallStack.StackFrameManager.Instance.OnLoaded();
+			Exceptions.ExceptionManager.Instance.OnLoaded();
 		}
 
 		void InstallRoutedCommands() {
@@ -61,6 +62,7 @@ namespace dnSpy.Debugger {
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowThreads, Threads.ThreadsControlCreator.ThreadsControlInstance.ShowCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowModules, Modules.ModulesControlCreator.ModulesControlInstance.ShowCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowLocals, Locals.LocalsControlCreator.LocalsControlInstance.ShowCommand);
+			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowExceptions, Exceptions.ExceptionsControlCreator.ExceptionsControlInstance.ShowCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.Continue, DebugManager.Instance.DebugAssemblyCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.StepInto, DebugManager.Instance.DebugAssemblyCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.StepOver, DebugManager.Instance.DebugAssemblyCommand);
@@ -89,6 +91,7 @@ namespace dnSpy.Debugger {
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowThreads, ModifierKeys.Control | ModifierKeys.Alt, Key.H);
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowModules, ModifierKeys.Control | ModifierKeys.Alt, Key.U);
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowLocals, ModifierKeys.Alt, Key.D4);
+			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowExceptions, ModifierKeys.Control | ModifierKeys.Alt, Key.E);
 		}
 
 		void AddCommand(UIElement elem, ICommand routedCommand, ModifierKeys modifiers, Key key) {

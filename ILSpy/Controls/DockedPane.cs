@@ -19,6 +19,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy.Controls
@@ -49,7 +50,7 @@ namespace ICSharpCode.ILSpy.Controls
 		public override void OnApplyTemplate()
 		{
 			base.OnApplyTemplate();
-			Button closeButton = (Button)this.Template.FindName("PART_Close", this);
+			var closeButton = this.Template.FindName("PART_Close", this) as ButtonBase;
 			if (closeButton != null) {
 				closeButton.Click += closeButton_Click;
 			}

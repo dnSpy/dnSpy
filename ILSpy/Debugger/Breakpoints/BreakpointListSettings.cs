@@ -26,6 +26,7 @@ using ICSharpCode.ILSpy;
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointListSettings {
 		public static readonly BreakpointListSettings Instance = new BreakpointListSettings();
+		const string SETTINGS_NAME = "Breakpoints";
 		int disableSaveCounter;
 
 		BreakpointListSettings() {
@@ -60,9 +61,9 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		public void LoadInternal() {
+		void LoadInternal() {
 			ILSpySettings settings = ILSpySettings.Load();
-			var bpsx = settings["Breakpoints"];
+			var bpsx = settings[SETTINGS_NAME];
 			BreakpointManager.Instance.Clear();
 			foreach (var bpx in bpsx.Elements("Breakpoint")) {
 				uint? token = (uint?)bpx.Attribute("Token");
@@ -96,13 +97,13 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		public void Save(XElement root) {
+		void Save(XElement root) {
 			// Prevent Load() from saving the settings every time a new BP is added
 			if (disableSaveCounter != 0)
 				return;
 
-			var bps = new XElement("Breakpoints");
-			var existingElement = root.Element("Breakpoints");
+			var bps = new XElement(SETTINGS_NAME);
+			var existingElement = root.Element(SETTINGS_NAME);
 			if (existingElement != null)
 				existingElement.ReplaceWith(bps);
 			else

@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine.COM.CorDebug;
-using dndbg.Engine.COM.MetaData;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {

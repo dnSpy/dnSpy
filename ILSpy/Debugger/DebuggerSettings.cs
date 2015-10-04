@@ -53,10 +53,11 @@ namespace dnSpy.Debugger {
 					(SyntaxHighlightModules ? 1 : 0) +
 					(SyntaxHighlightLocals ? 1 : 0) +
 					(SyntaxHighlightAttach ? 1 : 0) +
+					(SyntaxHighlightExceptions ? 1 : 0) +
 					0;
 				if (count == 0)
 					return false;
-				const int MAX = 6;
+				const int MAX = 7;
 				if (count == MAX)
 					return true;
 				Debug.Assert(count < MAX);
@@ -70,6 +71,7 @@ namespace dnSpy.Debugger {
 					SyntaxHighlightModules = value.Value;
 					SyntaxHighlightLocals = value.Value;
 					SyntaxHighlightAttach = value.Value;
+					SyntaxHighlightExceptions = value.Value;
 				}
 			}
 		}
@@ -151,6 +153,19 @@ namespace dnSpy.Debugger {
 			}
 		}
 		bool syntaxHighlightAttach;
+
+		public bool SyntaxHighlightExceptions {
+			get { return syntaxHighlightExceptions; }
+			set {
+				if (syntaxHighlightExceptions != value) {
+					syntaxHighlightExceptions = value;
+					Save();
+					OnPropertyChanged("SyntaxHighlightExceptions");
+					OnPropertyChanged("SyntaxHighlight");
+				}
+			}
+		}
+		bool syntaxHighlightExceptions;
 
 		public BreakProcessType BreakProcessType {
 			get { return breakProcessType; }
@@ -267,6 +282,7 @@ namespace dnSpy.Debugger {
 			SyntaxHighlightModules = (bool?)csx.Attribute("SyntaxHighlightModules") ?? true;
 			SyntaxHighlightLocals = (bool?)csx.Attribute("SyntaxHighlightLocals") ?? true;
 			SyntaxHighlightAttach = (bool?)csx.Attribute("SyntaxHighlightAttach") ?? true;
+			SyntaxHighlightExceptions = (bool?)csx.Attribute("SyntaxHighlightExceptions") ?? true;
 			BreakProcessType = (BreakProcessType)((int?)csx.Attribute("BreakProcessType") ?? (int)BreakProcessType.ModuleCctorOrEntryPoint);
 			PropertyEvalAndFunctionCalls = (bool?)csx.Attribute("PropertyEvalAndFunctionCalls") ?? true;
 			UseStringConversionFunction = (bool?)csx.Attribute("UseStringConversionFunction") ?? true;
@@ -303,6 +319,7 @@ namespace dnSpy.Debugger {
 			csx.SetAttributeValue("SyntaxHighlightModules", SyntaxHighlightModules);
 			csx.SetAttributeValue("SyntaxHighlightLocals", SyntaxHighlightLocals);
 			csx.SetAttributeValue("SyntaxHighlightAttach", SyntaxHighlightAttach);
+			csx.SetAttributeValue("SyntaxHighlightExceptions", SyntaxHighlightExceptions);
 			csx.SetAttributeValue("BreakProcessType", (int)BreakProcessType);
 			csx.SetAttributeValue("PropertyEvalAndFunctionCalls", PropertyEvalAndFunctionCalls);
 			csx.SetAttributeValue("UseStringConversionFunction", UseStringConversionFunction);
@@ -321,6 +338,7 @@ namespace dnSpy.Debugger {
 			other.SyntaxHighlightModules = this.SyntaxHighlightModules;
 			other.SyntaxHighlightLocals = this.SyntaxHighlightLocals;
 			other.SyntaxHighlightAttach = this.SyntaxHighlightAttach;
+			other.SyntaxHighlightExceptions = this.SyntaxHighlightExceptions;
 			other.BreakProcessType = this.BreakProcessType;
 			other.PropertyEvalAndFunctionCalls = this.PropertyEvalAndFunctionCalls;
 			other.UseStringConversionFunction = this.UseStringConversionFunction;

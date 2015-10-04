@@ -50,7 +50,7 @@
                                         <ColumnDefinition Width="Auto" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <CheckBox IsChecked="{Binding IsEnabled}" />
+                                    <CheckBox Grid.Column="0" Focusable="False" IsChecked="{Binding IsEnabled}" />
                                     <Image Grid.Column="1" Margin="5 0 0 0" Source="{Binding ImageObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Image}" Stretch="None" Height="16" Width="16" />
                                     <ContentPresenter Grid.Column="2" Margin="5 0 0 0" Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Name}" />
                                 </Grid>

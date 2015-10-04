@@ -381,7 +381,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return type.BaseType != null && type.BaseType.FullName == typeof(MulticastDelegate).FullName && type.BaseType.DefinitionAssembly.IsCorLib();
 		}
 
-		static bool IsException(TypeDef type)
+		internal static bool IsException(TypeDef type)
 		{
 			if (IsSystemException(type))
 				return true;
