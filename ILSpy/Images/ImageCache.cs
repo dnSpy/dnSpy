@@ -43,7 +43,7 @@ namespace dnSpy.Images {
 		CodeToolTip,
 		TitleAreaActive,
 		TitleAreaInactive,
-		DockedPane,
+		CommandBar,
 	}
 
 	public struct ImageInfo {
@@ -97,7 +97,7 @@ namespace dnSpy.Images {
 			case BackgroundType.CodeToolTip: return GetColorBackground(dntheme.ColorType.CodeToolTip);
 			case BackgroundType.TitleAreaActive: return GetColorBackground(dntheme.ColorType.EnvironmentMainWindowActiveCaption);
 			case BackgroundType.TitleAreaInactive: return GetColorBackground(dntheme.ColorType.EnvironmentMainWindowInactiveCaption);
-			case BackgroundType.DockedPane: return GetColorBackground(dntheme.ColorType.DockedPaneBackground);
+			case BackgroundType.CommandBar: return GetColorBackground(dntheme.ColorType.EnvironmentCommandBarIcon);
 			default:
 				Debug.Fail("Invalid bg type");
 				return GetColorBackground(dntheme.ColorType.SystemColorsWindow);
@@ -105,7 +105,9 @@ namespace dnSpy.Images {
 		}
 
 		static Color GetColorBackground(dntheme.ColorType colorType) {
-			return dntheme.Themes.Theme.GetColor(colorType).InheritedColor.Background.GetColor(null).Value;
+			var c = dntheme.Themes.Theme.GetColor(colorType).InheritedColor.Background.GetColor(null);
+			Debug.WriteLineIf(c == null, string.Format("Background color is null: {0}", colorType));
+			return c.Value;
 		}
 
 		static string GetUri(object part, string icon) {

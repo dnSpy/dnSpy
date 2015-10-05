@@ -30,6 +30,28 @@ namespace ICSharpCode.ILSpy.Controls
 		{
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(DockedPane), new FrameworkPropertyMetadata(typeof(DockedPane)));
 		}
+
+		public DockedPane() {
+			AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(_GotKeyboardFocus), true);
+			AddHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(_LostKeyboardFocus), true);
+			IsActive = IsKeyboardFocusWithin;
+		}
+
+		void _GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+			IsActive = true;
+		}
+
+		void _LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+			IsActive = false;
+		}
+
+		public static readonly DependencyProperty IsActiveProperty =
+			DependencyProperty.Register("IsActive", typeof(bool), typeof(DockedPane), new UIPropertyMetadata(true));
+
+		public bool IsActive {
+			get { return (bool)GetValue(IsActiveProperty); }
+			set { SetValue(IsActiveProperty, value); }
+		}
 		
 		public static readonly DependencyProperty TitleProperty =
 			DependencyProperty.Register("Title", typeof(string), typeof(DockedPane));

@@ -231,16 +231,13 @@ namespace dndbg.Engine {
 
 		public CorValue NeuterCheckDereferencedValue {
 			get {
-				Debug.Assert(!IsNeutered);
 				var v = DereferencedValue;
 				if (v == null || !v.IsNeutered)
 					return v;
 				//TODO: HACKFIX: CLR 2.x caches the value which gets neutered when Continue() gets
 				// called. This will clear the cached value. CLR 4.x doesn't cache the referenced value.
 				this.ReferenceAddress = this.ReferenceAddress;
-				v = DereferencedValue;
-				Debug.Assert(v != null && !v.IsNeutered);
-				return v;
+				return DereferencedValue;
 			}
 		}
 

@@ -157,6 +157,8 @@
 		<color name="toolbarhorizontalbackground" fg="#2D2D30" bg="#2D2D30" color3="#2D2D30" />
 		<color name="toolbardisabledfill" bg="#383838" />
 		<color name="toolbardisabledborder" bg="#484848" />
+		<color name="environmentcommandbar" fg="#FF2D2D30" bg="#FF2D2D30" color3="#FF2D2D30" />
+		<color name="environmentcommandbaricon" bg="#FF2D2D30" />
 		<color name="environmentcommandbarmenumouseoversubmenuglyph" bg="#FF007ACC" />
 		<color name="environmentcommandbarmenuseparator" bg="#FF000000" />
 		<color name="environmentcommandbarcheckbox" bg="#FF999999" />
@@ -404,8 +406,6 @@
 		<color name="gridviewlistitemselectedhoverfill" bg="#FF3E3E42" />
 		<color name="gridviewlistitemselectedinactivefill" bg="#FF3E3E42" />
 		<color name="gridviewlistviewitemfocusvisualstroke" bg="#FF505050" />
-		<color name="paneborder" bg="#505050" />
-		<color name="dockedpanebackground" bg="#FF2D2D30" />
 		<color name="decompilertextviewwaitadorner" fg="#F1F1F1" bg="#A0404040" />
 		<color name="avaloneditsearchdropdownbuttonactiveborder" bg="#3E81AD" />
 		<color name="avaloneditsearchdropdownbuttonactivebackground" bg="#06273D" />
@@ -453,6 +453,26 @@
 		<color name="environmentfiletabhottext" bg="#FFFFFFFF" />
 		<color name="environmentfiletabhotglyph" bg="#FFD0E6F5" />
 		<color name="environmenttitlebaractive" fg="#FFFFFFFF" bg="#FF007ACC" />
+		<color name="environmenttitlebaractiveborder" bg="#FF007ACC" />
+		<color name="environmenttitlebaractivegradient" fg="#FF007ACC" bg="#FF007ACC" color3="#FF007ACC" color4="#FF007ACC" />
+		<color name="environmenttitlebardraghandle" bg="#FF46464A" />
+		<color name="environmenttitlebardraghandleactive" bg="#FF59A8DE" />
+		<color name="environmenttitlebarinactive" fg="#FFD0D0D0" bg="#FF2D2D30" />
+		<color name="environmenttitlebarinactiveborder" bg="#FF2D2D30" />
+		<color name="environmenttitlebarinactivegradient" fg="#FF2D2D30" bg="#FF2D2D30" />
+		<color name="environmenttoolwindow" bg="#FF252526" />
+		<color name="environmenttoolwindowborder" bg="#FF3F3F46" />
+		<color name="environmenttoolwindowbuttonactiveglyph" bg="#FFFFFFFF" />
+		<color name="environmenttoolwindowbuttondown" bg="#FF0E6198" />
+		<color name="environmenttoolwindowbuttondownactiveglyph" bg="#FFFFFFFF" />
+		<color name="environmenttoolwindowbuttondownborder" bg="#FF0E6198" />
+		<color name="environmenttoolwindowbuttonhoveractive" bg="#FF52B0EF" />
+		<color name="environmenttoolwindowbuttonhoveractiveborder" bg="#FF52B0EF" />
+		<color name="environmenttoolwindowbuttonhoveractiveglyph" bg="#FFFFFFFF" />
+		<color name="environmenttoolwindowbuttonhoverinactive" bg="#FF393939" />
+		<color name="environmenttoolwindowbuttonhoverinactiveborder" bg="#FF393939" />
+		<color name="environmenttoolwindowbuttonhoverinactiveglyph" bg="#FFF1F1F1" />
+		<color name="environmenttoolwindowbuttoninactiveglyph" bg="#FFF1F1F1" />
 		<color name="searchboxwatermark" fg="#FFA0A0A0" />
 		<color name="nodeautoloaded" fg="SteelBlue" />
 		<color name="nodepublic" fg="#F1F1F1" />

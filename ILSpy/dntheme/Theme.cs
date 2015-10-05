@@ -126,6 +126,7 @@ namespace dnSpy.dntheme {
 				else {
 					var color = hlColor.Foreground.GetColor(null).Value;
 					var brush = new SolidColorBrush(color) { Opacity = ForegroundOpacity.Value };
+					brush.Freeze();
 					yield return new Tuple<object, object>(ForegroundResourceKey, brush);
 				}
 			}
@@ -136,9 +137,71 @@ namespace dnSpy.dntheme {
 				else {
 					var color = hlColor.Background.GetColor(null).Value;
 					var brush = new SolidColorBrush(color) { Opacity = BackgroundOpacity.Value };
+					brush.Freeze();
 					yield return new Tuple<object, object>(BackgroundResourceKey, brush);
 				}
 			}
+		}
+	}
+
+	public sealed class DrawingBrushColorInfo : ColorInfo {
+		public object BackgroundResourceKey;
+		public object ForegroundResourceKey;
+		public bool IsHorizontal;
+
+		public DrawingBrushColorInfo(ColorType colorType, string description)
+			: base(colorType, description) {
+		}
+
+		public override IEnumerable<Tuple<object, object>> GetResourceKeyValues(MyHighlightingColor hlColor) {
+			if (ForegroundResourceKey != null) {
+				Debug.Assert(hlColor.Foreground != null);
+				var brush = hlColor.Foreground.GetBrush(null);
+				yield return new Tuple<object, object>(ForegroundResourceKey, CreateDrawingBrush(brush));
+			}
+			if (BackgroundResourceKey != null) {
+				Debug.Assert(hlColor.Background != null);
+				var brush = hlColor.Background.GetBrush(null);
+				yield return new Tuple<object, object>(BackgroundResourceKey, CreateDrawingBrush(brush));
+			}
+		}
+
+		DrawingBrush CreateDrawingBrush(Brush brush) {
+			DrawingBrush db = new DrawingBrush() {
+				TileMode = TileMode.Tile,
+				ViewboxUnits = BrushMappingMode.Absolute,
+				ViewportUnits = BrushMappingMode.Absolute,
+			};
+			if (IsHorizontal) {
+				db.Viewbox = new Rect(0, 0, 4, 5);
+				db.Viewport = new Rect(0, 0, 4, 5);
+				db.Drawing = new GeometryDrawing {
+					Brush = brush,
+					Geometry = new GeometryGroup {
+						Children = {
+							new RectangleGeometry(new Rect(0, 0, 1, 1)),
+							new RectangleGeometry(new Rect(0, 4, 1, 1)),
+							new RectangleGeometry(new Rect(2, 2, 1, 1))
+						}
+					}
+				};
+			}
+			else {
+				db.Viewbox = new Rect(0, 0, 5, 4);
+				db.Viewport = new Rect(0, 0, 5, 4);
+				db.Drawing = new GeometryDrawing {
+					Brush = brush,
+					Geometry = new GeometryGroup {
+						Children = {
+							new RectangleGeometry(new Rect(0, 0, 1, 1)),
+							new RectangleGeometry(new Rect(4, 0, 1, 1)),
+							new RectangleGeometry(new Rect(2, 2, 1, 1))
+						}
+					}
+				};
+			}
+			db.Freeze();
+			return db;
 		}
 	}
 
@@ -167,8 +230,11 @@ namespace dnSpy.dntheme {
 			};
 			if (MappingMode != null)
 				br.MappingMode = MappingMode.Value;
-			for (int i = 0; i < GradientOffsets.Length; i++)
-				br.GradientStops.Add(new GradientStop(((SolidColorBrush)hlColor.GetHighlightingBrush(i).GetBrush(null)).Color, GradientOffsets[i]));
+			for (int i = 0; i < GradientOffsets.Length; i++) {
+				var gs = new GradientStop(((SolidColorBrush)hlColor.GetHighlightingBrush(i).GetBrush(null)).Color, GradientOffsets[i]);
+				gs.Freeze();
+				br.GradientStops.Add(gs);
+			}
 			br.Freeze();
 			yield return new Tuple<object, object>(ResourceKey, br);
 		}
@@ -601,6 +667,16 @@ namespace dnSpy.dntheme {
 			new BrushColorInfo(ColorType.ToolBarDisabledBorder, "Toolbar disabled border (combobox & textbox)") {
 				DefaultBackground = "#FFDADADA",
 				BackgroundResourceKey = "ToolBarDisabledBorder",
+			},
+			new LinearGradientColorInfo(ColorType.EnvironmentCommandBar, new Point(0, 1), "CommandBar", 0, 0.5, 1) {
+				ResourceKey = "EnvironmentCommandBar",
+				DefaultForeground = "#FFEEEEF2",// Environment.CommandBarGradientBegin
+				DefaultBackground = "#FFEEEEF2",// Environment.CommandBarGradientMiddle
+				DefaultColor3 = "#FFEEEEF2",// Environment.CommandBarGradientEnd
+			},
+			new BrushColorInfo(ColorType.EnvironmentCommandBarIcon, "CommandBar (bg for icons)") {
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "EnvironmentCommandBarIcon",
 			},
 			new BrushColorInfo(ColorType.EnvironmentCommandBarMenuMouseOverSubmenuGlyph, "Submenu opened glyph color") {
 				DefaultBackground = "#FF007ACC",
@@ -1659,14 +1735,6 @@ namespace dnSpy.dntheme {
 				DefaultBackground = "#FFD8D8D8",
 				BackgroundResourceKey = "GridViewListViewItemFocusVisualStroke",
 			},
-			new BrushColorInfo(ColorType.PaneBorder, "Pane border") {
-				DefaultBackground = "#828790",
-				BackgroundResourceKey = "PaneBorder",
-			},
-			new BrushColorInfo(ColorType.DockedPaneBackground, "Pane background") {
-				DefaultBackground = "#FFEEEEF2",
-				BackgroundResourceKey = "DockedPaneBackground",
-			},
 			new BrushColorInfo(ColorType.DecompilerTextViewWaitAdorner, "DecompilerTextView wait adorner") {
 				DefaultForeground = "Black",
 				ForegroundResourceKey = "DecompilerTextViewWaitAdornerForeground",
@@ -1867,6 +1935,94 @@ namespace dnSpy.dntheme {
 				BackgroundResourceKey = "EnvironmentTitleBarActive",
 				DefaultForeground = "#FFFFFFFF",
 				ForegroundResourceKey = "EnvironmentTitleBarActiveText",
+			},
+			new BrushColorInfo(ColorType.EnvironmentTitleBarActiveBorder, "TitleBar Active Border") {
+				DefaultBackground = "#FF007ACC",
+				BackgroundResourceKey = "EnvironmentTitleBarActiveBorder",
+			},
+			new LinearGradientColorInfo(ColorType.EnvironmentTitleBarActiveGradient, new Point(0, 1), "TitleBar Active Gradient", 0, 0.5, 0.5, 1) {
+				ResourceKey = "EnvironmentTitleBarActiveGradient",
+				DefaultForeground = "#FF007ACC",// Environment.TitleBarActiveGradientBegin
+				DefaultBackground = "#FF007ACC",// Environment.TitleBarActiveGradientMiddle1
+				DefaultColor3 = "#FF007ACC",// Environment.TitleBarActiveGradientMiddle2
+				DefaultColor4 = "#FF007ACC",// Environment.TitleBarActiveGradientEnd
+			},
+			new DrawingBrushColorInfo(ColorType.EnvironmentTitleBarDragHandle, "TitleBar Drag Handle") {
+				IsHorizontal = true,
+				DefaultBackground = "#FF999999",
+				BackgroundResourceKey = "EnvironmentTitleBarDragHandle",
+			},
+			new DrawingBrushColorInfo(ColorType.EnvironmentTitleBarDragHandleActive, "TitleBar Drag Handle Active") {
+				IsHorizontal = true,
+				DefaultBackground = "#FF59A8DE",
+				BackgroundResourceKey = "EnvironmentTitleBarDragHandleActive",
+			},
+			new BrushColorInfo(ColorType.EnvironmentTitleBarInactive, "TitleBar Inactive") {
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "EnvironmentTitleBarInactive",
+				DefaultForeground = "#FF444444",
+				ForegroundResourceKey = "EnvironmentTitleBarInactiveText",
+			},
+			new BrushColorInfo(ColorType.EnvironmentTitleBarInactiveBorder, "TitleBar Inactive Border") {
+				DefaultBackground = "#FFEEEEF2",//Environment.TitleBarInactiveGradientBegin
+				BackgroundResourceKey = "EnvironmentTitleBarInactiveBorder",
+			},
+			new LinearGradientColorInfo(ColorType.EnvironmentTitleBarInactiveGradient, new Point(0, 1), "TitleBar Inactive Gradient", 0, 1) {
+				ResourceKey = "EnvironmentTitleBarInactiveGradient",
+				DefaultForeground = "#FFEEEEF2",// Environment.TitleBarInactiveGradientBegin
+				DefaultBackground = "#FFEEEEF2",// Environment.TitleBarInactiveGradientEnd
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindow, "ToolWindow") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "EnvironmentToolWindow",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowBorder, "ToolWindow Border") {
+				DefaultBackground = "#FFCCCEDB",
+				BackgroundResourceKey = "EnvironmentToolWindowBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowButtonActiveGlyph, "ToolWindow Button Active Glyph") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "EnvironmentToolWindowButtonActiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowButtonDown, "ToolWindow Button Down") {
+				DefaultBackground = "#FF0E6198",
+				BackgroundResourceKey = "EnvironmentToolWindowButtonDown",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowButtonDownActiveGlyph, "ToolWindow Button Down Active Glyph") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "EnvironmentToolWindowButtonDownActiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowButtonDownBorder, "ToolWindow Button Down Border") {
+				DefaultBackground = "#FF0E6198",
+				BackgroundResourceKey = "EnvironmentToolWindowButtonDownBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowButtonHoverActive, "ToolWindow Button Hover Active") {
+				DefaultBackground = "#FF52B0EF",
+				BackgroundResourceKey = "EnvironmentToolWindowButtonHoverActive",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowButtonHoverActiveBorder, "ToolWindow Button Hover Active Border") {
+				DefaultBackground = "#FF52B0EF",
+				BackgroundResourceKey = "EnvironmentToolWindowButtonHoverActiveBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowButtonHoverActiveGlyph, "ToolWindow Button Hover Active Glyph") {
+				DefaultBackground = "#FFFFFFFF",
+				BackgroundResourceKey = "EnvironmentToolWindowButtonHoverActiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowButtonHoverInactive, "ToolWindow Button Hover Inactive") {
+				DefaultBackground = "#FFF7F7F9",
+				BackgroundResourceKey = "EnvironmentToolWindowButtonHoverInactive",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowButtonHoverInactiveBorder, "ToolWindow Button Hover Inactive Border") {
+				DefaultBackground = "#FFF7F7F9",
+				BackgroundResourceKey = "EnvironmentToolWindowButtonHoverInactiveBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowButtonHoverInactiveGlyph, "ToolWindow Button Hover Inactive Glyph") {
+				DefaultBackground = "#FF717171",
+				BackgroundResourceKey = "EnvironmentToolWindowButtonHoverInactiveGlyph",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowButtonInactiveGlyph, "ToolWindow Button Inactive Glyph") {
+				DefaultBackground = "#FF1E1E1E",
+				BackgroundResourceKey = "EnvironmentToolWindowButtonInactiveGlyph",
 			},
 			new BrushColorInfo(ColorType.SearchBoxWatermark, "SearchBox Watermark") {
 				DefaultForeground = "#FF6D6D6D",

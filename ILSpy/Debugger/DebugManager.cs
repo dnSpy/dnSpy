@@ -499,10 +499,11 @@ namespace dnSpy.Debugger {
 
 			// This is sometimes needed. Press Ctrl+Shift+F5 a couple of times and the toolbar
 			// debugger icons aren't updated until you release Ctrl+Shift.
-			if (ProcessState == DebuggerProcessState.Stopped || !IsDebugging) {
+			if (ProcessState == DebuggerProcessState.Stopped || !IsDebugging)
 				CommandManager.InvalidateRequerySuggested();
+
+			if (ProcessState == DebuggerProcessState.Stopped)
 				ShowExceptionMessage();
-			}
 		}
 
 		void ShowExceptionMessage() {

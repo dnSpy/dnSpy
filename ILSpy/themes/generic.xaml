@@ -44,30 +44,38 @@
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ctrls:DockedPane}">
 					<Border
-						Background="{DynamicResource DockedPaneBackground}"
+						Background="{DynamicResource EnvironmentToolWindow}"
 						BorderThickness="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=BorderThickness}"
-						BorderBrush="{DynamicResource PaneBorder}">
+						BorderBrush="{DynamicResource EnvironmentToolWindowBorder}">
 							<DockPanel>
-							<Border BorderThickness="0,0,0,0" BorderBrush="{DynamicResource PaneBorder}"
-									Padding="0 2 0 2" TextBlock.Foreground="{DynamicResource EnvironmentTitleBarActiveText}" Background="{DynamicResource EnvironmentTitleBarActive}"
+							<Border Name="Bd"
+									BorderThickness="0,0,0,0"
+									MinHeight="19"
+									Padding="1,3,1,3"
+									Focusable="False"
+									BorderBrush="{DynamicResource EnvironmentTitleBarInactiveBorder}"
+									Background="{DynamicResource EnvironmentTitleBarInactiveGradient}"
+									TextBlock.Foreground="{DynamicResource EnvironmentTitleBarInactiveText}"
 									DockPanel.Dock="Top">
 								<Grid>
 									<Grid.ColumnDefinitions>
-										<ColumnDefinition Width="1*"/>
+										<ColumnDefinition Width="Auto"/>
+										<ColumnDefinition Width="*"/>
 										<ColumnDefinition Width="Auto" />
 									</Grid.ColumnDefinitions>
 									<TextBlock Text="{TemplateBinding Title}" Margin="3,0" VerticalAlignment="Center"/>
+									<Rectangle Grid.Column="1" Name="Rect" Height="5" VerticalAlignment="Center" Margin="8 0 4 0" Fill="{DynamicResource EnvironmentTitleBarDragHandle}" />
 									<ctrls2:TabButton x:Name="PART_Close"
-													 Grid.Column="1"
-													 Margin="3 0 3 0"
-													 GlyphForeground="{DynamicResource EnvironmentFileTabButtonSelectedActiveGlyph}"
-													 HoverBackground="{DynamicResource EnvironmentFileTabButtonHoverSelectedActive}"
-													 HoverBorderBrush="{DynamicResource EnvironmentFileTabButtonHoverSelectedActiveBorder}"
-													 HoverForeground="{DynamicResource EnvironmentFileTabButtonHoverSelectedActiveGlyph}"
+													 Grid.Column="2"
+													 Margin="3 -1 3 0"
+													 GlyphForeground="{DynamicResource EnvironmentToolWindowButtonInactiveGlyph}"
+													 HoverBackground="{DynamicResource EnvironmentToolWindowButtonHoverInactive}"
+													 HoverBorderBrush="{DynamicResource EnvironmentToolWindowButtonHoverInactiveBorder}"
+													 HoverForeground="{DynamicResource EnvironmentToolWindowButtonHoverInactiveGlyph}"
 													 HoverBorderThickness="1"
-													 PressedBackground="{DynamicResource EnvironmentFileTabButtonDownSelectedActive}"
-													 PressedBorderBrush="{DynamicResource EnvironmentFileTabButtonDownSelectedActiveBorder}"
-													 PressedForeground="{DynamicResource EnvironmentFileTabButtonDownSelectedActiveGlyph}"
+													 PressedBackground="{DynamicResource EnvironmentToolWindowButtonDown}"
+													 PressedBorderBrush="{DynamicResource EnvironmentToolWindowButtonDownBorder}"
+													 PressedForeground="{DynamicResource EnvironmentToolWindowButtonDownActiveGlyph}"
 													 PressedBorderThickness="1"
 													 ToolTip="Close">
 										<Path x:Name="CloseButtonCross"
@@ -81,9 +89,20 @@
 							<ContentPresenter Content="{TemplateBinding Content}" />
 						</DockPanel>
 					</Border>
+					<ControlTemplate.Triggers>
+						<DataTrigger Value="True" Binding="{Binding IsActive, RelativeSource={RelativeSource Self}}">
+							<Setter TargetName="Bd" Value="{DynamicResource EnvironmentTitleBarActiveGradient}" Property="Background" />
+							<Setter TargetName="Bd" Value="{DynamicResource EnvironmentTitleBarActiveBorder}" Property="BorderBrush" />
+							<Setter TargetName="Bd" Value="{DynamicResource EnvironmentTitleBarActiveText}" Property="TextElement.Foreground" />
+							<Setter TargetName="PART_Close" Value="{DynamicResource EnvironmentToolWindowButtonHoverActive}" Property="HoverBackground" />
+							<Setter TargetName="PART_Close" Value="{DynamicResource EnvironmentToolWindowButtonHoverActiveBorder}" Property="HoverBorderBrush" />
+							<Setter TargetName="PART_Close" Value="{DynamicResource EnvironmentToolWindowButtonHoverActiveGlyph}" Property="HoverForeground" />
+							<Setter TargetName="PART_Close" Value="{DynamicResource EnvironmentToolWindowButtonActiveGlyph}" Property="GlyphForeground" />
+							<Setter TargetName="Rect" Value="{DynamicResource EnvironmentTitleBarDragHandleActive}" Property="Fill" />
+						</DataTrigger>
+					</ControlTemplate.Triggers>
 				</ControlTemplate>
 			</Setter.Value>
 		</Setter>
-		<Setter Property="Control.BorderBrush" Value="{DynamicResource PaneBorder}" />
 	</Style>
 </ResourceDictionary>
