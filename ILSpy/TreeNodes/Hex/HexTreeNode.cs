@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Images;
 using ICSharpCode.Decompiler;
@@ -64,11 +65,13 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		public sealed override object GetViewObject(DecompilerTextView textView) {
-			var obj = uiObjRef == null ? null : uiObjRef.Target;
-			if (obj != null)
+			var obj = uiObjRef == null ? null : (FrameworkElement)uiObjRef.Target;
+			// The element is cached but could be opened in two different tab groups. Only return
+			// the cached one if it's not in use.
+			if (obj != null && obj.Parent == null)
 				return obj;
 
-			object newObj;
+			FrameworkElement newObj;
 			if (IsVirtualizingCollectionVM)
 				newObj = new ContentPresenter() { Content = ViewObject, Focusable = true };
 			else {

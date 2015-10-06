@@ -162,6 +162,9 @@ namespace dnSpy.Tabs {
 		public abstract SavedTabState CreateSavedTabState();
 
 		public void Dispose() {
+			// Clear the content so that any cached UI elements can be reused (code could check
+			// TabItem.Content.Parent to see if it's still being used)
+			TabItem.Content = null;
 			Dispose(true);
 		}
 
