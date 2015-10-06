@@ -33,6 +33,7 @@
             VirtualizingStackPanel.VirtualizationMode="Recycling"
             mvvm:InitDataTemplateAP.Initialize="True"
             SelectionMode="Extended"
+            CanDragAndDrop="False"
             ShowRoot="False"
             Style="{StaticResource SharpTreeViewGridViewStyle}"
             Root="{Binding Root}">

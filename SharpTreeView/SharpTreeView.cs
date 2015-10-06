@@ -47,6 +47,13 @@ namespace ICSharpCode.TreeView
 			SetResourceReference(ItemContainerStyleProperty, DefaultItemContainerStyleKey);
 		}
 
+		public static readonly DependencyProperty CanDragAndDropProperty =
+			DependencyProperty.Register("CanDragAndDrop", typeof(bool), typeof(SharpTreeView), new PropertyMetadata(true));
+		public bool CanDragAndDrop {
+			get { return (bool)GetValue(CanDragAndDropProperty); }
+			set { SetValue(CanDragAndDropProperty, value); }
+		}
+
 		public static readonly DependencyProperty RootProperty =
 			DependencyProperty.Register("Root", typeof(SharpTreeNode), typeof(SharpTreeView));
 

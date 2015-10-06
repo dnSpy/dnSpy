@@ -51,6 +51,17 @@ namespace ICSharpCode.TreeView
 		bool wasSelected;
 		bool wasDoubleClick;
 
+		protected override void OnMouseDoubleClick(MouseButtonEventArgs e)
+		{
+			if (!ParentTreeView.CanDragAndDrop) {
+				OnDoubleClick(e);
+				e.Handled = true;
+				return;
+			}
+
+			base.OnMouseDoubleClick(e);
+		}
+
 		protected override void OnMouseLeftButtonDown(MouseButtonEventArgs e)
 		{
 			wasSelected = IsSelected;
@@ -58,7 +69,9 @@ namespace ICSharpCode.TreeView
 				base.OnMouseLeftButtonDown(e);
 			}
 
-			if (Mouse.LeftButton == MouseButtonState.Pressed) {
+			if (!ParentTreeView.CanDragAndDrop)
+				wasDoubleClick = false;
+			else if (Mouse.LeftButton == MouseButtonState.Pressed) {
 				startPoint = e.GetPosition(null);
 				CaptureMouse();
 
@@ -90,12 +103,7 @@ namespace ICSharpCode.TreeView
 			}
 			else if (wasDoubleClick) {
 				wasDoubleClick = false;
-				Node.ActivateItem(e);
-				if (!e.Handled) {
-					if (!Node.IsRoot || ParentTreeView.ShowRootExpander) {
-						Node.IsExpanded = !Node.IsExpanded;
-					}
-				}
+				OnDoubleClick(e);
 			}
 			else if (!Node.IsExpanded && Node.SingleClickExpandsChildren) {
 				if (!Node.IsRoot || ParentTreeView.ShowRootExpander) {
@@ -106,6 +114,18 @@ namespace ICSharpCode.TreeView
 			ReleaseMouseCapture();
 			if (wasSelected) {
 				base.OnMouseLeftButtonDown(e);
+			}
+		}
+
+		void OnDoubleClick(RoutedEventArgs e)
+		{
+			if (Node == null)
+				return;
+			Node.ActivateItem(e);
+			if (!e.Handled) {
+				if (!Node.IsRoot || ParentTreeView.ShowRootExpander) {
+					Node.IsExpanded = !Node.IsExpanded;
+				}
 			}
 		}
 
