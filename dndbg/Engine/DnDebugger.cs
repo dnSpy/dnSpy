@@ -242,6 +242,12 @@ namespace dndbg.Engine {
 				return;
 			managedCallbackCounter++;
 
+			if (disposeValues.Count != 0) {
+				foreach (var value in disposeValues)
+					value.DisposeHandle();
+				disposeValues.Clear();
+			}
+
 			try {
 				HandleManagedCallback(e);
 				CheckBreakpoints(e);
@@ -1530,5 +1536,15 @@ namespace dndbg.Engine {
 			}
 		}
 		int evalCompletedCounter;
+
+		public void DisposeHandle(CorValue value) {
+			if (value == null || !value.IsHandle)
+				return;
+			if (ProcessState != DebuggerProcessState.Running)
+				value.DisposeHandle();
+			else
+				disposeValues.Add(value);
+		}
+		readonly List<CorValue> disposeValues = new List<CorValue>();
 	}
 }

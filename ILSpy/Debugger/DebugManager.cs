@@ -1337,5 +1337,11 @@ namespace dnSpy.Debugger {
 			get { return evalDisabled; }
 		}
 		bool evalDisabled;
+
+		public void DisposeHandle(CorValue value) {
+			var dbg = Debugger;
+			if (dbg != null)
+				dbg.DisposeHandle(value);
+		}
 	}
 }

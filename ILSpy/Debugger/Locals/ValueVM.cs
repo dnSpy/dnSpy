@@ -1068,10 +1068,8 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		protected override void CleanUpCorValue() {
-			if (value != null) {
-				value.DisposeHandle();
-				value = null;
-			}
+			DebugManager.Instance.DisposeHandle(value);
+			value = null;
 		}
 	}
 
@@ -1190,10 +1188,8 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		protected override void CleanUpCorValue() {
-			if (value != null) {
-				value.DisposeHandle();
-				value = null;
-			}
+			DebugManager.Instance.DisposeHandle(value);
+			value = null;
 		}
 
 		protected override string SetValueAsTextInternal(ValueStringParser parser) {

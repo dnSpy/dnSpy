@@ -533,8 +533,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 
 			public void InvalidateCorValue() {
-				if (value != null)
-					value.DisposeHandle();
+				DebugManager.Instance.DisposeHandle(value);
 				value = null;
 			}
 
