@@ -106,7 +106,11 @@ namespace dnSpy.Debugger.Exceptions {
 
 		void Show() {
 			if (!MainWindow.Instance.IsBottomPaneVisible(this))
-				MainWindow.Instance.ShowInBottomPane(((IPane)this).PaneTitle, this);
+				MainWindow.Instance.ShowInBottomPane(this);
+			FocusPane();
+		}
+
+		public void FocusPane() {
 			UIUtils.FocusSelector(listBox);
 		}
 	}

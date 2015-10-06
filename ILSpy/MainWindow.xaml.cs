@@ -1408,12 +1408,12 @@ namespace ICSharpCode.ILSpy
 				if (topPane.Content == null) {
 					var pane = GetPane(topPane, sessionSettings.TopPaneSettings.Name);
 					if (pane != null)
-						ShowInTopPane(pane.PaneTitle, pane);
+						ShowInTopPane(pane);
 				}
 				if (bottomPane.Content == null) {
 					var pane = GetPane(bottomPane, sessionSettings.BottomPaneSettings.Name);
 					if (pane != null)
-						ShowInBottomPane(pane.PaneTitle, pane);
+						ShowInBottomPane(pane);
 				}
 				break;
 
@@ -2524,7 +2524,7 @@ namespace ICSharpCode.ILSpy
 
 		static string GetPaneName(DockedPane dockedPane)
 		{
-			var pane = dockedPane.Content as IPane;
+			var pane = dockedPane.Content;
 			return pane == null ? string.Empty : pane.PaneName;
 		}
 
@@ -2541,23 +2541,40 @@ namespace ICSharpCode.ILSpy
 		}
 		
 		#region Top/Bottom Pane management
-		public void ShowInTopPane(string title, object content)
+		public void ShowInTopPane(IPane content)
 		{
-			topPaneRow.MinHeight = 100;
-			if (sessionSettings.TopPaneSettings.Height > 0)
-				topPaneRow.Height = new GridLength(sessionSettings.TopPaneSettings.Height, GridUnitType.Pixel);
-			topPane.Title = title;
-			if (topPane.Content != content) {
-				IPane pane = topPane.Content as IPane;
+			ShowPane(topPane, content, topPaneRow, sessionSettings.TopPaneSettings);
+		}
+
+		static void ShowPane(DockedPane dockedPane, IPane content, RowDefinition paneRow, SessionSettings.PaneSettings paneSettings)
+		{
+			paneRow.MinHeight = 100;
+			if (paneSettings.Height > 0 && (paneRow.Height == null || paneRow.Height.Value == 0))
+				paneRow.Height = new GridLength(paneSettings.Height, GridUnitType.Pixel);
+			dockedPane.Title = content.PaneTitle;
+			if (dockedPane.Content != content) {
+				var pane = dockedPane.Content;
 				if (pane != null)
 					pane.Closed();
-				topPane.Content = content;
+				dockedPane.Content = content;
 			}
-			topPane.Visibility = Visibility.Visible;
-			if (content is IPane)
-				((IPane)content).Opened();
+			dockedPane.Visibility = Visibility.Visible;
+			content.Opened();
 		}
-		
+
+		static void ClosePane(DockedPane dockedPane, RowDefinition paneRow, ref SessionSettings.PaneSettings paneSettings)
+		{
+			paneSettings.Height = paneRow.Height.Value;
+			paneRow.MinHeight = 0;
+			paneRow.Height = new GridLength(0);
+			dockedPane.Visibility = Visibility.Collapsed;
+
+			var pane = dockedPane.Content;
+			dockedPane.Content = null;
+			if (pane != null)
+				pane.Closed();
+		}
+
 		void TopPane_CloseButtonClicked(object sender, EventArgs e)
 		{
 			CloseTopPane();
@@ -2565,36 +2582,16 @@ namespace ICSharpCode.ILSpy
 
 		public void CloseTopPane()
 		{
-			sessionSettings.TopPaneSettings.Height = topPaneRow.Height.Value;
-			topPaneRow.MinHeight = 0;
-			topPaneRow.Height = new GridLength(0);
-			topPane.Visibility = Visibility.Collapsed;
-			
-			IPane pane = topPane.Content as IPane;
-			topPane.Content = null;
-			if (pane != null)
-				pane.Closed();
+			ClosePane(topPane, topPaneRow, ref sessionSettings.TopPaneSettings);
 		}
 
-		public object TopPaneContent {
+		public IPane TopPaneContent {
 			get { return topPane.Content; }
 		}
 		
-		public void ShowInBottomPane(string title, object content)
+		public void ShowInBottomPane(IPane content)
 		{
-			bottomPaneRow.MinHeight = 100;
-			if (sessionSettings.BottomPaneSettings.Height > 0)
-				bottomPaneRow.Height = new GridLength(sessionSettings.BottomPaneSettings.Height, GridUnitType.Pixel);
-			bottomPane.Title = title;
-			if (bottomPane.Content != content) {
-				IPane pane = bottomPane.Content as IPane;
-				if (pane != null)
-					pane.Closed();
-				bottomPane.Content = content;
-			}
-			bottomPane.Visibility = Visibility.Visible;
-			if (content is IPane)
-				((IPane)content).Opened();
+			ShowPane(bottomPane, content, bottomPaneRow, sessionSettings.BottomPaneSettings);
 		}
 		
 		void BottomPane_CloseButtonClicked(object sender, EventArgs e)
@@ -2604,43 +2601,35 @@ namespace ICSharpCode.ILSpy
 
 		public void CloseBottomPane()
 		{
-			sessionSettings.BottomPaneSettings.Height = bottomPaneRow.Height.Value;
-			bottomPaneRow.MinHeight = 0;
-			bottomPaneRow.Height = new GridLength(0);
-			bottomPane.Visibility = Visibility.Collapsed;
-			
-			IPane pane = bottomPane.Content as IPane;
-			bottomPane.Content = null;
-			if (pane != null)
-				pane.Closed();
+			ClosePane(bottomPane, bottomPaneRow, ref sessionSettings.BottomPaneSettings);
 		}
 
-		public bool IsTopPaneContent(object content)
+		public bool IsTopPaneContent(IPane content)
 		{
 			return IsPaneContent(topPane, content);
 		}
 
-		public bool IsBottomPaneContent(object content)
+		public bool IsBottomPaneContent(IPane content)
 		{
 			return IsPaneContent(bottomPane, content);
 		}
 
-		bool IsPaneContent(DockedPane pane, object content)
+		bool IsPaneContent(DockedPane pane, IPane content)
 		{
 			return pane.Content == content;
 		}
 
-		public bool IsTopPaneVisible(object content)
+		public bool IsTopPaneVisible(IPane content)
 		{
 			return IsPaneVisible(topPane, content);
 		}
 
-		public bool IsBottomPaneVisible(object content)
+		public bool IsBottomPaneVisible(IPane content)
 		{
 			return IsPaneVisible(bottomPane, content);
 		}
 
-		bool IsPaneVisible(DockedPane pane, object content)
+		bool IsPaneVisible(DockedPane pane, IPane content)
 		{
 			return pane.IsVisible && IsPaneContent(pane, content);
 		}

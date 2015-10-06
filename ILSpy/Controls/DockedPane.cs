@@ -45,6 +45,20 @@ namespace ICSharpCode.ILSpy.Controls
 			IsActive = false;
 		}
 
+		protected override void OnMouseDown(MouseButtonEventArgs e) {
+			base.OnMouseDown(e);
+			if (!e.Handled) {
+				var pane = Content;
+				if (pane != null) {
+					var uiElem = pane as UIElement;
+					if (uiElem == null || !uiElem.IsKeyboardFocusWithin) {
+						pane.FocusPane();
+						e.Handled = true;
+					}
+				}
+			}
+		}
+
 		public static readonly DependencyProperty IsActiveProperty =
 			DependencyProperty.Register("IsActive", typeof(bool), typeof(DockedPane), new UIPropertyMetadata(true));
 
@@ -62,10 +76,10 @@ namespace ICSharpCode.ILSpy.Controls
 		}
 		
 		public static readonly DependencyProperty ContentProperty =
-			DependencyProperty.Register("Content", typeof(object), typeof(DockedPane));
+			DependencyProperty.Register("Content", typeof(IPane), typeof(DockedPane));
 		
-		public object Content {
-			get { return GetValue(ContentProperty); }
+		public IPane Content {
+			get { return (IPane)GetValue(ContentProperty); }
 			set { SetValue(ContentProperty, value); }
 		}
 		

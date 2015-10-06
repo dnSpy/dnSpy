@@ -24,6 +24,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using dnSpy;
 using dnSpy.dntheme;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
@@ -109,6 +110,11 @@ namespace ICSharpCode.ILSpy
 			base.OnKeyDown(e);
 		}
 
+		public void FocusPane()
+		{
+			UIUtils.FocusSelector(this);
+		}
+
 		void Themes_ThemeChanged(object sender, EventArgs e)
 		{
 			UpdateUIColors();
@@ -152,7 +158,7 @@ namespace ICSharpCode.ILSpy
 		public void Show()
 		{
 			if (!IsVisible)
-				MainWindow.Instance.ShowInBottomPane(PaneTitle, this);
+				MainWindow.Instance.ShowInBottomPane(this);
 		}
 
 		public void Opened()
