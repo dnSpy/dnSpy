@@ -64,7 +64,7 @@
                     <Image Source="{Binding RestoreDefaultsImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_UndoCheckBoxList}" Width="16" Height="16"/>
                 </Button>
             </StackPanel>
-            <Label Grid.Column="1" Margin="5 0 0 0" Content="Search" ToolTip="Search for an exception (Ctrl+F)" />
+            <Label Grid.Column="1" Margin="5 0 0 0" Content="Search" ToolTip="Search for an exception (Ctrl+F)" mvvm:ClickFocusAP.Target="{Binding ElementName=searchTextBox}" />
             <TextBox Grid.Column="2" Name="searchTextBox" Margin="5 0 0 0" Text="{Binding FilterText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="Search for an exception (Ctrl+F)" />
         </Grid>
         <ListBox
