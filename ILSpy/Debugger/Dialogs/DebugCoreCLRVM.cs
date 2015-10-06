@@ -214,8 +214,11 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 
 		protected override string Verify(string columnName) {
-			if (columnName == "HostFilename")
+			if (columnName == "HostFilename") {
+				if (string.IsNullOrWhiteSpace(HostFilename))
+					return "The host eg. CoreRun.exe";
 				return VerifyFilename(HostFilename);
+			}
 			if (columnName == "Filename")
 				return VerifyFilename(Filename);
 			if (columnName == "DbgShimFilename")
