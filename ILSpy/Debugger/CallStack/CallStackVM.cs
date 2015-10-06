@@ -137,7 +137,7 @@ namespace dnSpy.Debugger.CallStack {
 			if (e.Debugger.IsEvaluating)
 				return;
 			// InitializeStackFrames() is called when the process has been running for a little while. Speeds up stepping.
-			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Running)
+			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Continuing && DebugManager.Instance.ProcessState != DebuggerProcessState.Running)
 				InitializeStackFrames();
 		}
 

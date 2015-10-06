@@ -25,6 +25,11 @@ namespace dndbg.Engine {
 		Starting,
 
 		/// <summary>
+		/// Process is about to run after having been stopped
+		/// </summary>
+		Continuing,
+
+		/// <summary>
 		/// Process is running
 		/// </summary>
 		Running,

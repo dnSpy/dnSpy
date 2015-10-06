@@ -61,6 +61,8 @@ namespace dndbg.Engine {
 				DebugVerifyThread();
 				if (hasTerminated)
 					return DebuggerProcessState.Terminated;
+				if (continuing)
+					return DebuggerProcessState.Continuing;
 				if (managedCallbackCounter != 0)
 					return DebuggerProcessState.Stopped;
 				if (!hasReceivedCreateProcessEvent)
@@ -302,6 +304,15 @@ namespace dndbg.Engine {
 			if (controller == null)
 				return false;
 
+			if (callOnProcessStateChanged && managedCallbackCounter == 1) {
+				try {
+					continuing = true;
+					CallOnProcessStateChanged();
+				}
+				finally {
+					continuing = false;
+				}
+			}
 			managedCallbackCounter--;
 			continueCounter++;
 
@@ -316,6 +327,7 @@ namespace dndbg.Engine {
 			Debug.WriteLineIf(!success, string.Format("dndbg: ICorDebugController::Continue() failed: 0x{0:X8}", hr));
 			return success;
 		}
+		bool continuing = false;
 
 		/// <summary>
 		/// true if <see cref="Continue()"/> can be called

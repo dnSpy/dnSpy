@@ -166,13 +166,6 @@ namespace dnSpy.Debugger {
 		}
 
 		/// <summary>
-		/// true if debugged process is running
-		/// </summary>
-		public bool IsProcessRunning {
-			get { return ProcessState == DebuggerProcessState.Running; }
-		}
-
-		/// <summary>
 		/// true if we've attached to a process
 		/// </summary>
 		public bool HasAttached {
@@ -215,6 +208,9 @@ namespace dnSpy.Debugger {
 				MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
 				SetRunningStatusMessage();
 				MainWindow.Instance.SetDebugging();
+				break;
+
+			case DebuggerProcessState.Continuing:
 				break;
 
 			case DebuggerProcessState.Running:
@@ -897,7 +893,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool CanDetach {
-			get { return ProcessState != DebuggerProcessState.Terminated; }
+			get { return ProcessState != DebuggerProcessState.Continuing && ProcessState != DebuggerProcessState.Terminated; }
 		}
 
 		public void Detach() {
@@ -1224,7 +1220,7 @@ namespace dnSpy.Debugger {
 				errMsg = "We're not debugging";
 				return false;
 			}
-			if (ProcessState == DebuggerProcessState.Starting || ProcessState == DebuggerProcessState.Running) {
+			if (ProcessState == DebuggerProcessState.Starting || ProcessState == DebuggerProcessState.Continuing || ProcessState == DebuggerProcessState.Running) {
 				errMsg = "Can't set next statement when the process is running";
 				return false;
 			}

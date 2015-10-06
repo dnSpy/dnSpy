@@ -96,6 +96,7 @@ namespace dnSpy.Debugger.Threads {
 				InstallDebuggerHooks(dbg);
 				break;
 
+			case DebuggerProcessState.Continuing:
 			case DebuggerProcessState.Running:
 			case DebuggerProcessState.Stopped:
 				break;
@@ -130,7 +131,7 @@ namespace dnSpy.Debugger.Threads {
 			if (e.Debugger.IsEvaluating)
 				return;
 			// InitializeThreads() is called when the process has been running for a little while. Speeds up stepping.
-			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Running)
+			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Continuing && DebugManager.Instance.ProcessState != DebuggerProcessState.Running)
 				InitializeThreads();
 		}
 

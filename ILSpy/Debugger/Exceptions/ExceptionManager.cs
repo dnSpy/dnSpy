@@ -69,6 +69,7 @@ namespace dnSpy.Debugger.Exceptions {
 				dbg.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
 				break;
 
+			case DebuggerProcessState.Continuing:
 			case DebuggerProcessState.Running:
 			case DebuggerProcessState.Stopped:
 				break;

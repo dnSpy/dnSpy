@@ -145,6 +145,7 @@ namespace dnSpy.Debugger.Locals {
 				frameInfo = null;
 				break;
 
+			case DebuggerProcessState.Continuing:
 			case DebuggerProcessState.Running:
 				break;
 
@@ -199,7 +200,7 @@ namespace dnSpy.Debugger.Locals {
 			if (e.Debugger.IsEvaluating)
 				return;
 			// InitializeLocals() is called when the process has been running for a little while. Speeds up stepping.
-			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Running)
+			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Continuing && DebugManager.Instance.ProcessState != DebuggerProcessState.Running)
 				InitializeLocals(e.Debugger.EvalCompleted ? LocalInitType.Simple : LocalInitType.Full);
 		}
 

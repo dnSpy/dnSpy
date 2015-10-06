@@ -103,6 +103,7 @@ namespace dnSpy.Debugger.Modules {
 				InstallDebuggerHooks(dbg);
 				break;
 
+			case DebuggerProcessState.Continuing:
 			case DebuggerProcessState.Running:
 			case DebuggerProcessState.Stopped:
 				break;

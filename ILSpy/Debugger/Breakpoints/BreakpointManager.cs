@@ -148,6 +148,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				AddDebuggerBreakpoints();
 				break;
 
+			case DebuggerProcessState.Continuing:
 			case DebuggerProcessState.Running:
 			case DebuggerProcessState.Stopped:
 				break;

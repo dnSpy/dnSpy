@@ -84,9 +84,12 @@ namespace dnSpy.Debugger.CallStack {
 				savedEvalState = null;
 				break;
 
-			case DebuggerProcessState.Running:
+			case DebuggerProcessState.Continuing:
 				if (dbg.IsEvaluating && savedEvalState == null)
 					savedEvalState = oldState;
+				break;
+
+			case DebuggerProcessState.Running:
 				if (!dbg.IsEvaluating)
 					ClearStackFrameLines();
 				break;
