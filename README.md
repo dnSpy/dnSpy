@@ -159,10 +159,6 @@ to build it once you have all dependencies. You probably don't need Visual Studi
 installed to run the `*.bat` files. The C# compiler is usually installed if you
 have the .NET Framework installed. Otherwise, download and install `Microsoft Build Tools`.
 
-You need the Visual Studio SDK to build ILSpy.AddIn. [NOTE: ILSpy.AddIn is
-currently disabled in **Release** mode because the build server fails to build it
-due to a missing dependency. You must enable it in VS: Build|Configuration Manager]
-
 Dependencies
 ============
 

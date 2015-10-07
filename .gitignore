@@ -2,13 +2,13 @@ bin/
 obj/
 
 /ICSharpCode.Decompiler/Properties/AssemblyInfo.cs
-/ILSpy/Properties/AssemblyInfo.cs
+/dnSpy/Properties/AssemblyInfo.cs
 /dnSpy-x86/Properties/AssemblyInfo.cs
-/ILSpy/app.config
+/dnSpyc/Properties/AssemblyInfo.cs
+/dnSpy/app.config
 /dnSpy-x86/app.config
 *.suo
 *.user
-/Resharper-ILSpy-Style.xml
 _ReSharper*/
 *.ReSharper
 *.patch
