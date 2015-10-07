@@ -186,7 +186,7 @@ namespace ICSharpCode.ILSpy {
 						Debug.WriteLine("Found {0:x4}: {1}", hWnd, windowTitle);
 						IntPtr result = Send(hWnd, message);
 						Debug.WriteLine("WM_COPYDATA result: {0:x8}", result);
-						if (result == (IntPtr)1) {
+						if (result == (IntPtr)0x2E9A5913) {
 							if (activate)
 								NativeMethods.SetForegroundWindow(hWnd);
 							success = true;

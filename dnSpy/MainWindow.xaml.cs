@@ -1235,7 +1235,7 @@ namespace ICSharpCode.ILSpy
 							WindowUtils.SetState(this, WindowState.Normal);
 						HandleCommandLineArgumentsAfterShowList(args);
 						handled = true;
-						return (IntPtr)1;
+						return (IntPtr)0x2E9A5913;
 					}
 				}
 			}
