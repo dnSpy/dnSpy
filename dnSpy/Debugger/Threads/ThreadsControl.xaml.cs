@@ -40,7 +40,7 @@ namespace dnSpy.Debugger.Threads {
 			get {
 				if (threadsControl == null) {
 					threadsControl = new ThreadsControl();
-					var vm = new ThreadsVM(threadsControl.Dispatcher);
+					var vm = new ThreadsVM();
 					threadsControl.DataContext = vm;
 					InitializeCommandShortcuts(threadsControl.listView);
 				}

@@ -890,6 +890,7 @@ namespace dnSpy.dntheme {
 		NodePublic,
 		NodeNotPublic,
 		XmlDocToolTipDescriptionText,
+		MemoryWindowDisabled,
 
 		/// <summary>
 		/// Must be last

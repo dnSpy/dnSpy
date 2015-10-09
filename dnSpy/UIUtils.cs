@@ -128,6 +128,19 @@ namespace dnSpy {
 			elem.InputBindings.Add(new KeyBinding(cmd, key, modifiers));
 		}
 
+		public static void Focus(UIElement elem) {
+			if (!elem.IsVisible)
+				elem.IsVisibleChanged += UIElement_IsVisibleChanged;
+			else
+				elem.Focus();
+		}
+
+		static void UIElement_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+			var elem = (UIElement)sender;
+			elem.IsVisibleChanged -= UIElement_IsVisibleChanged;
+			elem.Focus();
+		}
+
 		public static void FocusSelector(Selector selector) {
 			if (!selector.IsVisible)
 				selector.IsVisibleChanged += selector_IsVisibleChanged;

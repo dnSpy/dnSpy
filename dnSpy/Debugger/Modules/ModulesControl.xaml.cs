@@ -55,6 +55,9 @@ namespace dnSpy.Debugger.Modules {
 			listView.InputBindings.Add(new KeyBinding(new ModulesCtxMenuCommandProxy(new GoToModuleModulesCtxMenuCommand()), Key.Enter, ModifierKeys.None));
 			listView.InputBindings.Add(new KeyBinding(new ModulesCtxMenuCommandProxy(new GoToModuleNewTabModulesCtxMenuCommand()), Key.Enter, ModifierKeys.Control));
 			listView.InputBindings.Add(new KeyBinding(new ModulesCtxMenuCommandProxy(new GoToModuleNewTabModulesCtxMenuCommand()), Key.Enter, ModifierKeys.Shift));
+			listView.InputBindings.Add(new KeyBinding(new ModulesCtxMenuCommandProxy(new ShowInMemoryModulesCtxMenuCommand()), Key.X, ModifierKeys.Control));
+			for (int i = 0; i < Memory.MemoryControlCreator.NUMBER_OF_MEMORY_WINDOWS && i < 10; i++)
+				listView.InputBindings.Add(new KeyBinding(new ModulesCtxMenuCommandProxy(new ShowInMemoryWindowModulesCtxMenuCommand(i + 1)), Key.D0 + (i + 1) % 10, ModifierKeys.Control));
 		}
 	}
 

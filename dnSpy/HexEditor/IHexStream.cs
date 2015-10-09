@@ -88,7 +88,8 @@ namespace dnSpy.HexEditor {
 		ulong ReadUInt64(ulong offset);
 
 		/// <summary>
-		/// Reads bytes
+		/// Reads bytes. If an offset isn't readable, a 0 is written to the corresponding position
+		/// in <paramref name="array"/>
 		/// </summary>
 		/// <param name="offset">Offset</param>
 		/// <param name="array">Array</param>

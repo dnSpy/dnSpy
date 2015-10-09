@@ -17,11 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.AvalonEdit;
 using dnSpy.Debugger.Breakpoints;
+using dnSpy.Debugger.Memory;
 using dnSpy.Images;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.AvalonEdit;
@@ -329,7 +331,7 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "Breakpoints", MenuHeader = "Enable All Breakpoi_nts", MenuOrder = 5320)]
+	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "EnableAllBreakpoints", MenuCategory = "Breakpoints", MenuHeader = "Enable All Breakpoi_nts", MenuOrder = 5320)]
 	sealed class EnableAllBreakpointsDebugMainMenuCommand : DebugMainMenuCommand {
 		public EnableAllBreakpointsDebugMainMenuCommand()
 			: base(DebugRoutedCommands.EnableAllBreakpoints, null) {
@@ -340,7 +342,7 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "Breakpoints", MenuHeader = "Disable All Breakpoi_nts", MenuOrder = 5330)]
+	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "DisableAllBreakpoints", MenuCategory = "Breakpoints", MenuHeader = "Disable All Breakpoi_nts", MenuOrder = 5330)]
 	sealed class DisableAllBreakpointsDebugMainMenuCommand : DebugMainMenuCommand {
 		public DisableAllBreakpointsDebugMainMenuCommand()
 			: base(DebugRoutedCommands.DisableAllBreakpoints, null) {
@@ -390,6 +392,62 @@ namespace dnSpy.Debugger {
 	sealed class ExceptionSettingsWindowCommand : DebugMainMenuCommand {
 		public ExceptionSettingsWindowCommand()
 			: base(DebugRoutedCommands.ShowExceptions, null) {
+		}
+	}
+
+	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "_Memory", MenuIcon = "MemoryWindow", MenuOrder = 5450)]
+	sealed class MemoryWindowCommand : ICommand, IMainMenuCommand, IMainMenuCommandInitialize {
+		public MemoryWindowCommand() {
+		}
+
+		public bool IsVisible {
+			get { return DebugManager.Instance.IsDebugging; }
+		}
+
+		event EventHandler ICommand.CanExecuteChanged {
+			add { }
+			remove { }
+		}
+
+		static MemoryWindowCommand() {
+			subCmds = new Tuple<ICommand, string, string>[DebugRoutedCommands.ShowMemoryCommands.Length];
+			for (int i = 0; i < subCmds.Length; i++) {
+				var inputGestureText = GetInputGestureText(i);
+				var headerText = MemoryControlCreator.GetHeaderText(i);
+				var cmd = DebugRoutedCommands.ShowMemoryCommands[i];
+				subCmds[i] = Tuple.Create((ICommand)cmd, headerText, inputGestureText);
+			}
+		}
+
+		static string GetInputGestureText(int i) {
+			if (i == 0)
+				return "Alt+6";
+			if (1 <= i && i <= 9)
+				return string.Format("Ctrl+Alt+{0}", (i + 1) % 10);
+			return string.Empty;
+		}
+
+		static readonly Tuple<ICommand, string, string>[] subCmds;
+
+		bool ICommand.CanExecute(object parameter) {
+			return IsVisible;
+		}
+
+		void ICommand.Execute(object parameter) {
+		}
+
+		void IMainMenuCommandInitialize.Initialize(MenuItem menuItem) {
+			foreach (var tuple in subCmds) {
+				var mi = new MenuItem {
+					Command = tuple.Item1,
+					CommandTarget = menuItem.CommandTarget,
+					Header = tuple.Item2,
+				};
+				if (!string.IsNullOrEmpty(tuple.Item3))
+					mi.InputGestureText = tuple.Item3;
+				MainWindow.CreateMenuItemImage(mi, this, "MemoryWindow", BackgroundType.MainMenuMenuItem);
+				menuItem.Items.Add(mi);
+			}
 		}
 	}
 

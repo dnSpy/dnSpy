@@ -44,6 +44,7 @@ using dnSpy.AvalonEdit;
 using dnSpy.Controls;
 using dnSpy.Decompiler;
 using dnSpy.dntheme;
+using dnSpy.Hex;
 using dnSpy.Images;
 using dnSpy.NRefactory;
 using dnSpy.Options;
@@ -882,7 +883,7 @@ namespace ICSharpCode.ILSpy
 			UpdateSystemMenuImage();
 			UpdateControlColors();
 			NewTextEditor.OnThemeUpdatedStatic();
-			HexTabState.OnThemeUpdatedStatic();
+			HexBoxThemeHelper.OnThemeUpdatedStatic();
 			foreach (var view in AllTextViews)
 				view.OnThemeUpdated();
 			UpdateToolbar();
@@ -1021,9 +1022,12 @@ namespace ICSharpCode.ILSpy
 						state.CachedMenuItems.Add(new MenuItem());
 				}
 				var stateTmp = state;
-				state.TopLevelMenuItem.SubmenuOpened += (s, e) => InitializeMainSubMenu(stateTmp);
+				state.TopLevelMenuItem.SubmenuOpened += (s, e) => {
+					if (e.Source == stateTmp.TopLevelMenuItem)
+						InitializeMainSubMenu(stateTmp);
+				};
 				state.TopLevelMenuItem.SubmenuClosed += (s, e) => {
-					if (stateTmp.AlwaysRecreate)
+					if (e.Source == stateTmp.TopLevelMenuItem && stateTmp.AlwaysRecreate)
 						ClearMainSubMenu(stateTmp);
 				};
 
@@ -1085,6 +1089,7 @@ namespace ICSharpCode.ILSpy
 				item.ClearValue(MenuItem.IsCheckableProperty);
 				item.ClearValue(MenuItem.IsCheckedProperty);
 				BindingOperations.ClearBinding(item, MenuItem.IsCheckedProperty);
+				item.Items.Clear();
 			}
 		}
 
@@ -3489,7 +3494,7 @@ namespace ICSharpCode.ILSpy
 				return null;
 			var tabState = CreateNewHexTabState(tabGroupsManager.ActiveTabGroup);
 			InitializeHexDocument(tabState, filename);
-			tabState.InitializeStartEndOffset();
+			tabState.HexBox.InitializeStartEndOffsetToDocument();
 			return tabState;
 		}
 
@@ -3547,7 +3552,7 @@ namespace ICSharpCode.ILSpy
 				return;
 
 			SetActiveTab(tabState);
-			tabState.SelectAndMoveCaret(fileOffset, @ref.Length);
+			tabState.HexBox.SelectAndMoveCaret(fileOffset, @ref.Length);
 		}
 	}
 }

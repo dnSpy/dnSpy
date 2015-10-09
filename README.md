@@ -93,12 +93,19 @@ Alt+Click	| (Text view) Don't follow the clicked reference so it's possible to s
 F7			| Give text editor keyboard focus
 Ctrl+Alt+0	| Give text editor keyboard focus
 Ctrl+Alt+L	| Give tree view keyboard focus
-Ctrl+Alt+B	| Show Breakpoints window
-Alt+F9		| Show Breakpoints window
-Ctrl+Alt+C	| Show Call Stack window
-Alt+7		| Show Call Stack window
-Ctrl+Alt+H	| Show Threads window
-Ctrl+Alt+U	| Show Modules window
+Ctrl+Alt+B	| (Debugger) Show Breakpoints window
+Alt+F9		| (Debugger) Show Breakpoints window
+Ctrl+Alt+C	| (Debugger) Show Call Stack window
+Alt+7		| (Debugger) Show Call Stack window
+Ctrl+Alt+H	| (Debugger) Show Threads window
+Ctrl+Alt+U	| (Debugger) Show Modules window
+Ctrl+Alt+E	| (Debugger) Show Exceptions window
+Alt+4		| (Debugger) Show Locals window
+Alt+6		| (Debugger) Show Memory 1 window
+Ctrl+Alt+1	| (Debugger) Show Memory 1 window
+Ctrl+Alt+2	| (Debugger) Show Memory 2 window
+Ctrl+Alt+3	| (Debugger) Show Memory 3 window
+Ctrl+Alt+4	| (Debugger) Show Memory 4 window
 Shift+Alt+Enter | Toggle full screen mode
 Tab			| (Text view) Move to the next reference. Does nothing if the caret is not on a reference.
 Shift+Tab	| (Text view) Move to the previous reference. Does nothing if the caret is not on a reference.

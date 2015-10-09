@@ -161,7 +161,7 @@ namespace dndbg.Engine {
 		/// <param name="size">Size to read</param>
 		/// <param name="sizeRead">Number of bytes read</param>
 		/// <returns></returns>
-		public unsafe int ReadMemory(ulong address, byte[] buffer, int index, int size, out int sizeRead) {
+		public unsafe int ReadMemory(ulong address, byte[] buffer, long index, int size, out int sizeRead) {
 			IntPtr sizeRead2 = IntPtr.Zero;
 			int hr;
 			fixed (byte* p = &buffer[index])
@@ -185,7 +185,7 @@ namespace dndbg.Engine {
 		/// <param name="size">Size to write</param>
 		/// <param name="sizeWritten">Number of bytes written</param>
 		/// <returns></returns>
-		public unsafe int WriteMemory(ulong address, byte[] buffer, int index, int size, out int sizeWritten) {
+		public unsafe int WriteMemory(ulong address, byte[] buffer, long index, int size, out int sizeWritten) {
 			IntPtr sizeWritten2 = IntPtr.Zero;
 			int hr;
 			fixed (byte* p = &buffer[index])

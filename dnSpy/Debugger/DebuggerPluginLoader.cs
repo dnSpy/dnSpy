@@ -63,6 +63,8 @@ namespace dnSpy.Debugger {
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowModules, Modules.ModulesControlCreator.ModulesControlInstance.ShowCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowLocals, Locals.LocalsControlCreator.LocalsControlInstance.ShowCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowExceptions, Exceptions.ExceptionsControlCreator.ExceptionsControlInstance.ShowCommand);
+			for (int i = 0; i < DebugRoutedCommands.ShowMemoryCommands.Length; i++)
+				MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.ShowMemoryCommands[i], Memory.MemoryControlCreator.GetMemoryControlInstance(i).ShowCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.Continue, DebugManager.Instance.DebugAssemblyCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.StepInto, DebugManager.Instance.DebugAssemblyCommand);
 			MainWindow.Instance.AddCommandBinding(DebugRoutedCommands.StepOver, DebugManager.Instance.DebugAssemblyCommand);
@@ -92,6 +94,12 @@ namespace dnSpy.Debugger {
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowModules, ModifierKeys.Control | ModifierKeys.Alt, Key.U);
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowLocals, ModifierKeys.Alt, Key.D4);
 			AddCommand(MainWindow.Instance, DebugRoutedCommands.ShowExceptions, ModifierKeys.Control | ModifierKeys.Alt, Key.E);
+			for (int i = 0; i < DebugRoutedCommands.ShowMemoryCommands.Length && i < 10; i++) {
+				var cmd = DebugRoutedCommands.ShowMemoryCommands[i];
+				if (i == 0)
+					AddCommand(MainWindow.Instance, cmd, ModifierKeys.Alt, Key.D6);
+				AddCommand(MainWindow.Instance, cmd, ModifierKeys.Control | ModifierKeys.Alt, Key.D0 + (i + 1) % 10);
+			}
 		}
 
 		void AddCommand(UIElement elem, ICommand routedCommand, ModifierKeys modifiers, Key key) {

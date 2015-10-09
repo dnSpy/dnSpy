@@ -21,7 +21,7 @@ using System.Windows.Input;
 using dnSpy.HexEditor;
 using dnSpy.MVVM;
 
-namespace dnSpy.AsmEditor.Hex {
+namespace dnSpy.Hex {
 	sealed class LocalSettingsVM : ViewModelBase {
 		readonly LocalHexSettings origOptions;
 

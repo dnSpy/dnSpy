@@ -17,25 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Windows;
 using dnSpy.MVVM;
 
-namespace dnSpy.AsmEditor.Hex {
-	sealed class GoToOffsetVM : ViewModelBase {
-
-		public UInt64VM OffsetVM {
-			get { return offsetVM; }
-		}
-		UInt64VM offsetVM;
-
-		public GoToOffsetVM(ulong offset, ulong min, ulong max) {
-			this.offsetVM = new UInt64VM(offset, a => HasErrorUpdated()) {
-				Min = min,
-				Max = max,
-			};
+namespace dnSpy.Hex {
+	/// <summary>
+	/// Interaction logic for GoToOffsetDlg.xaml
+	/// </summary>
+	public partial class GoToOffsetDlg : WindowBase {
+		public GoToOffsetDlg() {
+			InitializeComponent();
+			Loaded += OnLoaded;
 		}
 
-		public override bool HasError {
-			get { return OffsetVM.HasError; }
+		void OnLoaded(object sender, RoutedEventArgs e) {
+			Loaded -= OnLoaded;
+			this.offsetTextBox.SelectAll();
 		}
 	}
 }

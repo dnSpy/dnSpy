@@ -418,5 +418,6 @@
 		<color name="nodeautoloaded" fg="SteelBlue" />
 		<color name="nodepublic" fg="#FFFFFFFF" />
 		<color name="nodenotpublic" fg="#FF00FF00" />
+		<color name="memorywindowdisabled" bg="#40FFFFFF" />
 	</colors>
 </theme>

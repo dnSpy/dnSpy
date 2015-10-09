@@ -189,6 +189,12 @@
     <Compile Include="Debugger\Locals\ValuePrinter.cs" />
     <Compile Include="Debugger\Locals\ValueStringParser.cs" />
     <Compile Include="Debugger\Locals\ValueVM.cs" />
+    <Compile Include="Debugger\Memory\DnProcessHexStream.cs" />
+    <Compile Include="Debugger\Memory\MemoryUtils.cs" />
+    <Compile Include="Debugger\Memory\MemoryVM.cs" />
+    <Compile Include="Debugger\Memory\MemoryControl.xaml.cs">
+      <DependentUpon>MemoryControl.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Debugger\Modules\Commands.cs" />
     <Compile Include="Debugger\Modules\ModuleColumnConverter.cs" />
     <Compile Include="Debugger\Modules\ModulePrinter.cs" />
@@ -206,6 +212,11 @@
     </Compile>
     <Compile Include="Debugger\Threads\ThreadsVM.cs" />
     <Compile Include="Debugger\Threads\ThreadVM.cs" />
+    <Compile Include="HexEditor\CachedHexStream.cs" />
+    <Compile Include="HexEditor\ISimpleHexStream.cs" />
+    <Compile Include="Hex\DnHexBox.cs" />
+    <Compile Include="Hex\HexBoxCommands.cs" />
+    <Compile Include="Hex\HexBoxThemeHelper.cs" />
     <Compile Include="MVVM\AskUser.cs" />
     <Compile Include="MVVM\ClickFocusAP.cs" />
     <Compile Include="MVVM\ContextMenuEntryBase.cs" />
@@ -405,25 +416,25 @@
     <Compile Include="AsmEditor\Field\FieldOptionsVM.cs" />
     <Compile Include="AsmEditor\HexDocumentManager.cs" />
     <Compile Include="AsmEditor\Hex\ContextMenuCommands.cs" />
-    <Compile Include="AsmEditor\Hex\GoToOffsetDlg.xaml.cs">
+    <Compile Include="Hex\GoToOffsetDlg.xaml.cs">
       <DependentUpon>GoToOffsetDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AsmEditor\Hex\GoToOffsetVM.cs" />
+    <Compile Include="Hex\GoToOffsetVM.cs" />
     <Compile Include="AsmEditor\Hex\HexBoxUndo.cs" />
     <Compile Include="AsmEditor\Hex\HexBoxUndoCommand.cs" />
-    <Compile Include="AsmEditor\Hex\HexSettings.cs" />
+    <Compile Include="Hex\HexSettings.cs" />
     <Compile Include="AsmEditor\Hex\InstructionUtils.cs" />
-    <Compile Include="AsmEditor\Hex\LocalHexSettings.cs" />
-    <Compile Include="AsmEditor\Hex\LocalSettingsDlg.xaml.cs">
+    <Compile Include="Hex\LocalHexSettings.cs" />
+    <Compile Include="Hex\LocalSettingsDlg.xaml.cs">
       <DependentUpon>LocalSettingsDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AsmEditor\Hex\LocalSettingsVM.cs" />
+    <Compile Include="Hex\LocalSettingsVM.cs" />
     <Compile Include="AsmEditor\Hex\MDTableContextMenuCommands.cs" />
-    <Compile Include="AsmEditor\Hex\MDUtils.cs" />
-    <Compile Include="AsmEditor\Hex\SelectDlg.xaml.cs">
+    <Compile Include="Hex\MDUtils.cs" />
+    <Compile Include="Hex\SelectDlg.xaml.cs">
       <DependentUpon>SelectDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="AsmEditor\Hex\SelectVM.cs" />
+    <Compile Include="Hex\SelectVM.cs" />
     <Compile Include="AsmEditor\Hex\TableSorter.cs" />
     <Compile Include="AsmEditor\Hex\WriteHexUndoCommand.cs" />
     <Compile Include="AsmEditor\IIndexedItem.cs" />
@@ -1122,15 +1133,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AsmEditor\Hex\GoToOffsetDlg.xaml">
+    <Page Include="Hex\GoToOffsetDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AsmEditor\Hex\LocalSettingsDlg.xaml">
+    <Page Include="Hex\LocalSettingsDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="AsmEditor\Hex\SelectDlg.xaml">
+    <Page Include="Hex\SelectDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1265,6 +1276,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Debugger\Memory\MemoryControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Debugger\Modules\ModulesControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -1359,12 +1374,14 @@
     <Resource Include="Images\Delete.png" />
     <Resource Include="Images\DeleteAllBreakpoints.png" />
     <Resource Include="Images\DeleteHistory.png" />
+    <Resource Include="Images\DisableAllBreakpoints.png" />
     <Resource Include="Images\DisabledBreakpoint.png" />
     <Resource Include="Images\DisableEnableBreakpoint.png" />
     <Resource Include="Images\DisassemblyWindow.png" />
     <Resource Include="Images\dnSpy.ico" />
     <Resource Include="Images\dnSpy-Big.png" />
     <Resource Include="Images\DraggedCurrentInstructionPointer.png" />
+    <Resource Include="Images\EnableAllBreakpoints.png" />
     <Resource Include="Images\EntryPoint.png" />
     <Resource Include="Images\Enum.png" />
     <Resource Include="Images\EnumInternal.png" />
@@ -1437,6 +1454,7 @@
     <Resource Include="Images\LiteralProtectedInternal.png" />
     <Resource Include="Images\Local.png" />
     <Resource Include="Images\LocalsWindow.png" />
+    <Resource Include="Images\MemoryWindow.png" />
     <Resource Include="Images\MetaData.png" />
     <Resource Include="Images\Method.png" />
     <Resource Include="Images\MethodCompilerControlled.png" />

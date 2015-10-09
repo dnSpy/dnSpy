@@ -34,6 +34,10 @@ namespace ICSharpCode.ILSpy.Controls
 		public DockedPane() {
 			AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(_GotKeyboardFocus), true);
 			AddHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(_LostKeyboardFocus), true);
+			this.IsVisibleChanged += OnIsVisibleChanged;
+		}
+
+		void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			IsActive = IsKeyboardFocusWithin;
 		}
 
@@ -76,8 +80,15 @@ namespace ICSharpCode.ILSpy.Controls
 		}
 		
 		public static readonly DependencyProperty ContentProperty =
-			DependencyProperty.Register("Content", typeof(IPane), typeof(DockedPane));
-		
+			DependencyProperty.Register("Content", typeof(IPane), typeof(DockedPane), new PropertyMetadata(null, OnContentPropertyChanged));
+
+		static void OnContentPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
+			var dp = (DockedPane)d;
+			var newUiElem = e.NewValue as UIElement;
+			if (newUiElem != null)
+				dp.IsActive = newUiElem.IsKeyboardFocusWithin;
+		}
+
 		public IPane Content {
 			get { return (IPane)GetValue(ContentProperty); }
 			set { SetValue(ContentProperty, value); }

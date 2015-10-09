@@ -19,7 +19,7 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:hex="clr-namespace:dnSpy.AsmEditor.Hex"
+                    xmlns:hex="clr-namespace:dnSpy.Hex"
                     xmlns:options2="clr-namespace:ICSharpCode.ILSpy.Options"
                     xmlns:mbody="clr-namespace:dnSpy.AsmEditor.MethodBody">
 

@@ -17,15 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Windows;
 using dnSpy.MVVM;
 
-namespace dnSpy.AsmEditor.Hex {
+namespace dnSpy.Hex {
 	/// <summary>
-	/// Interaction logic for LocalSettingsDlg.xaml
+	/// Interaction logic for SelectDlg.xaml
 	/// </summary>
-	public partial class LocalSettingsDlg : WindowBase {
-		public LocalSettingsDlg() {
+	public partial class SelectDlg : WindowBase {
+		public SelectDlg() {
 			InitializeComponent();
+			Loaded += OnLoaded;
+		}
+
+		void OnLoaded(object sender, RoutedEventArgs e) {
+			Loaded -= OnLoaded;
+			this.startTextBox.SelectAll();
+			this.endTextBox.SelectAll();
 		}
 	}
 }

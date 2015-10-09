@@ -24,8 +24,11 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using dndbg.Engine;
 using dndbg.Engine.COM.CorDebug;
+using dnSpy.Debugger.Memory;
+using dnSpy.Images;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
@@ -240,7 +243,7 @@ namespace dnSpy.Debugger.Locals {
 			return GetValue(context) != null;
 		}
 
-		static CorValue GetValue(LocalsCtxMenuContext context) {
+		internal static CorValue GetValue(LocalsCtxMenuContext context) {
 			if (context.SelectedItems.Length != 1)
 				return null;
 			var nv = context.SelectedItems[0] as NormalValueVM;
@@ -267,27 +270,96 @@ namespace dnSpy.Debugger.Locals {
 			}
 			return value;
 		}
+	}
 
-		static CorValue GetValue(CorValue value) {
+	[ExportContextMenuEntry(Header = "Show in Memory Window", Order = 220, Category = "LOCValues", Icon = "MemoryWindow")]
+	sealed class ShowInMemoryXLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		protected override void Execute(LocalsCtxMenuContext context) {
+		}
+
+		static ShowInMemoryXLocalsCtxMenuCommand() {
+			subCmds = new Tuple<ICommand, string, string>[MemoryControlCreator.NUMBER_OF_MEMORY_WINDOWS];
+			for (int i = 0; i < subCmds.Length; i++)
+				subCmds[i] = Tuple.Create((ICommand)new LocalsCtxMenuCommandProxy(new ShowInMemoryWindowLocalsCtxMenuCommand(i + 1)), MemoryControlCreator.GetHeaderText(i), MemoryControlCreator.GetCtrlInputGestureText(i));
+		}
+
+		static readonly Tuple<ICommand, string, string>[] subCmds;
+
+		protected override void Initialize(LocalsCtxMenuContext context, MenuItem menuItem) {
+			foreach (var tuple in subCmds) {
+				var mi = new MenuItem {
+					Command = tuple.Item1,
+					Header = tuple.Item2,
+				};
+				if (!string.IsNullOrEmpty(tuple.Item3))
+					mi.InputGestureText = tuple.Item3;
+				MainWindow.CreateMenuItemImage(mi, this, "MemoryWindow", BackgroundType.ContextMenuItem);
+				menuItem.Items.Add(mi);
+			}
+		}
+	}
+
+	sealed class ShowInMemoryLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		protected override void Execute(LocalsCtxMenuContext context) {
+			var addrRange = ShowInMemoryWindowLocalsCtxMenuCommand.GetValue(context);
+			if (addrRange != null)
+				MemoryUtils.ShowInMemoryWindow(addrRange.Value.Address, addrRange.Value.Size);
+		}
+
+		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+			return ShowInMemoryWindowLocalsCtxMenuCommand.GetValue(context) != null;
+		}
+	}
+
+	sealed class ShowInMemoryWindowLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		readonly int windowNumber;
+
+		internal struct AddrRange {
+			public ulong Address;
+			public ulong Size;
+			public AddrRange(ulong addr, ulong size) {
+				this.Address = addr;
+				this.Size = size;
+			}
+		}
+
+		public ShowInMemoryWindowLocalsCtxMenuCommand(int windowNumber) {
+			this.windowNumber = windowNumber;
+		}
+
+		protected override void Execute(LocalsCtxMenuContext context) {
+			var addrRange = GetValue(context);
+			if (addrRange != null)
+				MemoryUtils.ShowInMemoryWindow(windowNumber, addrRange.Value.Address, addrRange.Value.Size);
+		}
+
+		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+			return GetValue(context) != null;
+		}
+
+		internal static AddrRange? GetValue(LocalsCtxMenuContext context) {
+			var value = SaveDataLocalsCtxMenuCommand.GetValue(context);
+
 			if (value == null)
 				return null;
-			if (value.IsReference && value.Type == CorElementType.ByRef) {
-				value = value.NeuterCheckDereferencedValue;
-				if (value == null)
+
+			if (value.IsArray) {
+				if (value.ArrayCount == 0)
+					return new AddrRange(value.Address, 0);
+
+				var elemValue = value.GetElementAtPosition(0);
+				ulong elemSize = elemValue == null ? 0 : elemValue.Size;
+				ulong elemAddr = elemValue == null ? 0 : elemValue.Address;
+				ulong addr = value.Address;
+				ulong totalSize = elemSize * value.ArrayCount;
+				if (elemAddr == 0 || elemAddr < addr || elemAddr - addr > int.MaxValue || totalSize > int.MaxValue)
 					return null;
-			}
-			if (value.IsReference) {
-				value = value.NeuterCheckDereferencedValue;
-				if (value == null)
-					return null;
-			}
-			if (value.IsBox) {
-				value = value.BoxedValue;
-				if (value == null)
-					return null;
+
+				ulong dataIndex = elemAddr - addr;
+				return new AddrRange(value.Address + dataIndex, totalSize);
 			}
 
-			return value.IsGeneric ? value : null;
+			return new AddrRange(value.Address, value.Size);
 		}
 	}
 

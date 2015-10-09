@@ -23,8 +23,11 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 using dndbg.Engine;
+using dnSpy.Debugger.Memory;
+using dnSpy.Images;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
@@ -173,6 +176,72 @@ namespace dnSpy.Debugger.Modules {
 
 		protected override bool IsEnabled(ModulesCtxMenuContext context) {
 			return GoToModuleModulesCtxMenuCommand.CanGoToModule(context);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show in Memory Window", Order = 220, Category = "MODGoTo", Icon = "MemoryWindow")]
+	sealed class ShowInMemoryXModulesCtxMenuCommand : ModulesCtxMenuCommand {
+		protected override void Execute(ModulesCtxMenuContext context) {
+		}
+
+		static ShowInMemoryXModulesCtxMenuCommand() {
+			subCmds = new Tuple<ICommand, string, string>[MemoryControlCreator.NUMBER_OF_MEMORY_WINDOWS];
+			for (int i = 0; i < subCmds.Length; i++)
+				subCmds[i] = Tuple.Create((ICommand)new ModulesCtxMenuCommandProxy(new ShowInMemoryWindowModulesCtxMenuCommand(i + 1)), MemoryControlCreator.GetHeaderText(i), MemoryControlCreator.GetCtrlInputGestureText(i));
+		}
+
+		static readonly Tuple<ICommand, string, string>[] subCmds;
+
+		protected override void Initialize(ModulesCtxMenuContext context, MenuItem menuItem) {
+			foreach (var tuple in subCmds) {
+				var mi = new MenuItem {
+					Command = tuple.Item1,
+					Header = tuple.Item2,
+				};
+				if (!string.IsNullOrEmpty(tuple.Item3))
+					mi.InputGestureText = tuple.Item3;
+				MainWindow.CreateMenuItemImage(mi, this, "MemoryWindow", BackgroundType.ContextMenuItem);
+				menuItem.Items.Add(mi);
+			}
+		}
+	}
+
+	sealed class ShowInMemoryModulesCtxMenuCommand : ModulesCtxMenuCommand {
+		protected override void Execute(ModulesCtxMenuContext context) {
+			var vm = ShowInMemoryWindowModulesCtxMenuCommand.GetModule(context);
+			if (vm != null)
+				MemoryUtils.ShowInMemoryWindow(vm.Module.Address, vm.Module.Size);
+		}
+
+		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+			return ShowInMemoryWindowModulesCtxMenuCommand.GetModule(context) != null;
+		}
+	}
+
+	sealed class ShowInMemoryWindowModulesCtxMenuCommand : ModulesCtxMenuCommand {
+		readonly int windowNumber;
+
+		public ShowInMemoryWindowModulesCtxMenuCommand(int windowNumber) {
+			this.windowNumber = windowNumber;
+		}
+
+		protected override void Execute(ModulesCtxMenuContext context) {
+			var vm = GetModule(context);
+			if (vm != null)
+				MemoryUtils.ShowInMemoryWindow(windowNumber, vm.Module.Address, vm.Module.Size);
+		}
+
+		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+			return GetModule(context) != null;
+		}
+
+		internal static ModuleVM GetModule(ModulesCtxMenuContext context) {
+			if (context.SelectedItems.Length != 1)
+				return null;
+			var vm = context.SelectedItems[0];
+			if (vm.Module.Address == 0 || vm.Module.Size == 0)
+				return null;
+			return vm;
 		}
 	}
 

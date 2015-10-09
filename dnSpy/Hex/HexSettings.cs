@@ -29,7 +29,7 @@ using dnSpy.Options;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
 
-namespace dnSpy.AsmEditor.Hex {
+namespace dnSpy.Hex {
 	[ExportOptionPage(Title = "Hex Editor", Order = 2)]
 	sealed class HexSettingsCreator : IOptionPageCreator {
 		public OptionPage Create() {

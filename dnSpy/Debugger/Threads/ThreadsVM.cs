@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows.Threading;
 using dndbg.Engine;
 using dnSpy.Debugger.CallStack;
 using dnSpy.MVVM;
@@ -64,10 +63,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 		object selectedItem;
 
-		readonly Dispatcher dispatcher;
-
-		public ThreadsVM(Dispatcher dispatcher) {
-			this.dispatcher = dispatcher;
+		public ThreadsVM() {
 			this.threadsList = new ObservableCollection<ThreadVM>();
 			StackFrameManager.Instance.StackFramesUpdated += StackFrameManager_StackFramesUpdated;
 			StackFrameManager.Instance.PropertyChanged += StackFrameManager_PropertyChanged;

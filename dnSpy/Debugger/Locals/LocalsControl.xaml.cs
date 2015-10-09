@@ -130,6 +130,9 @@ namespace dnSpy.Debugger.Locals {
 			listView.InputBindings.Add(new KeyBinding(new LocalsCtxMenuCommandProxy(new EditValueLocalsCtxMenuCommand()), Key.F2, ModifierKeys.None));
 			listView.InputBindings.Add(new KeyBinding(new LocalsCtxMenuCommandProxy(new CopyValueLocalsCtxMenuCommand()), Key.C, ModifierKeys.Control | ModifierKeys.Shift));
 			listView.InputBindings.Add(new KeyBinding(new LocalsCtxMenuCommandProxy(new ToggleCollapsedLocalsCtxMenuCommand()), Key.Enter, ModifierKeys.None));
+			listView.InputBindings.Add(new KeyBinding(new LocalsCtxMenuCommandProxy(new ShowInMemoryLocalsCtxMenuCommand()), Key.X, ModifierKeys.Control));
+			for (int i = 0; i < Memory.MemoryControlCreator.NUMBER_OF_MEMORY_WINDOWS && i < 10; i++)
+				listView.InputBindings.Add(new KeyBinding(new LocalsCtxMenuCommandProxy(new ShowInMemoryWindowLocalsCtxMenuCommand(i + 1)), Key.D0 + (i + 1) % 10, ModifierKeys.Control));
 		}
 	}
 

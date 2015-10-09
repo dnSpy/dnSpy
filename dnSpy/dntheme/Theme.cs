@@ -2037,6 +2037,10 @@ namespace dnSpy.dntheme {
 			new BrushColorInfo(ColorType.NodeNotPublic, "TreeView node not public") {
 				DefaultForeground = "#FF6D6D6D",
 			},
+			new BrushColorInfo(ColorType.MemoryWindowDisabled, "Memory Window Disabled") {
+				DefaultBackground = "#40000000",
+				BackgroundResourceKey = "MemoryWindowDisabled",
+			},
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",
 				DefaultBackground = "White",

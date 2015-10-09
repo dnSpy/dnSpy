@@ -52,5 +52,12 @@ namespace dnSpy.Debugger {
 		public static readonly RoutedCommand ShowModules = new RoutedCommand("ShowModules", typeof(DebugRoutedCommands));
 		public static readonly RoutedCommand ShowLocals = new RoutedCommand("ShowLocals", typeof(DebugRoutedCommands));
 		public static readonly RoutedCommand ShowExceptions = new RoutedCommand("ShowExceptions", typeof(DebugRoutedCommands));
+
+		static DebugRoutedCommands() {
+			ShowMemoryCommands = new RoutedCommand[Memory.MemoryControlCreator.NUMBER_OF_MEMORY_WINDOWS];
+			for (int i = 0; i < ShowMemoryCommands.Length; i++)
+				ShowMemoryCommands[i] = new RoutedCommand(string.Format("ShowMemory{0}", i + 1), typeof(DebugRoutedCommands));
+		}
+		public static readonly RoutedCommand[] ShowMemoryCommands;
 	}
 }

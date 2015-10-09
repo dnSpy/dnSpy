@@ -31,13 +31,14 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
+using System.Windows.Threading;
 
 namespace dnSpy.HexEditor {
 	/// <summary>
 	/// Hex editor. Should only be used with a monospaced font! Variable sized fonts are not supported.
 	/// It only uses ASCII characters 0x20-0x7E so those characters must have the same width and height.
 	/// </summary>
-	public sealed class HexBox : Control, IScrollInfo {
+	public class HexBox : Control, IScrollInfo {
 		TextFormatter textFormatter;
 		ulong topOffset;
 		readonly SelectionLayer selectionLayer;
@@ -109,6 +110,9 @@ namespace dnSpy.HexEditor {
 		public static readonly DependencyProperty AsciiEncodingProperty =
 			DependencyProperty.Register("AsciiEncoding", typeof(AsciiEncoding), typeof(HexBox),
 			new FrameworkPropertyMetadata(AsciiEncoding.UTF8));
+		public static readonly DependencyProperty CacheLineBytesProperty =
+			DependencyProperty.Register("CacheLineBytes", typeof(bool), typeof(HexBox),
+			new FrameworkPropertyMetadata(false));
 
 		public HexDocument Document {
 			get { return (HexDocument)GetValue(DocumentProperty); }
@@ -208,6 +212,11 @@ namespace dnSpy.HexEditor {
 		public AsciiEncoding AsciiEncoding {
 			get { return (AsciiEncoding)GetValue(AsciiEncodingProperty); }
 			set { SetValue(AsciiEncodingProperty, value); }
+		}
+
+		public bool CacheLineBytes {
+			get { return (bool)GetValue(CacheLineBytesProperty); }
+			set { SetValue(CacheLineBytesProperty, value); }
 		}
 
 		static void OnDocumentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
@@ -892,7 +901,14 @@ namespace dnSpy.HexEditor {
 				sb2.Clear();
 			}
 
-			return new HexLine(offset, offset + (ulong)(bytes == 0 ? 0 : bytes - 1), sb.ToString(), parts.ToArray());
+			short[] originalBytes;
+			if (!CacheLineBytes)
+				originalBytes = null;
+			else {
+				originalBytes = new short[bytes];
+				Array.Copy(bytesAry, originalBytes, originalBytes.Length);
+			}
+			return new HexLine(offset, offset + (ulong)(bytes == 0 ? 0 : bytes - 1), sb.ToString(), parts.ToArray(), originalBytes);
 		}
 
 		HexLine GetHexLine(ulong offset, List<HexLinePart> parts, TextRunProperties textRunProps, TextParagraphProperties paraProps, StringBuilder sb, StringBuilder sb2, double width, short[] bytesAry) {
@@ -1582,7 +1598,12 @@ namespace dnSpy.HexEditor {
 		}
 
 		public void BringCaretIntoView() {
-			BringIntoView(CaretPosition);
+			// Need to delay this sometimes, eg. x64 and the HexBox hasn't been shown yet
+			var caretPos = CaretPosition;
+			Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(delegate {
+				BringIntoView(caretPos);
+			}));
+			BringIntoView(caretPos);
 		}
 
 		void BringIntoView(HexBoxPosition position) {
@@ -1916,6 +1937,47 @@ namespace dnSpy.HexEditor {
 				}
 			}
 			return linesCount != offsetToLine.Count;
+		}
+
+		/// <summary>
+		/// Redraws modified lines. Should only be called if <see cref="CacheLineBytes"/> is true
+		/// since only then are the original bytes remembered.
+		/// </summary>
+		public void RedrawModifiedLines() {
+			if (RedrawModifiedLinesInternal())
+				InvalidateMeasure();
+		}
+
+		bool RedrawModifiedLinesInternal() {
+			int linesCount = offsetToLine.Count;
+			foreach (var kv in offsetToLine.ToArray()) {
+				var line = kv.Value;
+				if (!CompareBytes(line)) {
+					bool b = offsetToLine.Remove(kv.Key);
+					Debug.Assert(b);
+				}
+			}
+			return linesCount != offsetToLine.Count;
+		}
+
+		bool CompareBytes(HexLine line) {
+			// Assume it's been modified if the array is null. It'll be null if CacheLineBytes
+			// was false, the HexLine was created, then CacheLineBytes was set to true.
+			if (line.OriginalBytes == null)
+				return false;
+
+			var doc = Document;
+			if (doc == null)
+				return false;
+
+			int i = 0;
+			for (ulong addr = line.StartOffset; addr <= line.EndOffset && i < line.OriginalBytes.Length; addr++, i++) {
+				int b = doc.ReadByte(addr);
+				if (line.OriginalBytes[i] != b)
+					return false;
+			}
+
+			return true;
 		}
 
 		public void PasteUtf8() {
