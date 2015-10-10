@@ -144,6 +144,9 @@ Ctrl+8		| (Hex editor) Paste (UTF-8)
 Ctrl+U		| (Hex editor) Paste (Unicode)
 Ctrl+B		| (Hex editor) Paste (#Blob data with compressed length)
 Ctrl+L		| (Hex editor) Show 'Select' dialog box
+Ctrl+D		| (Hex editor) Show only the selected bytes
+Ctrl+Shift+D| (Hex editor) Show all bytes
+Ctrl+Alt+S	| (Hex editor) Save selection
 
 Credits
 =======

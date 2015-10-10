@@ -249,6 +249,17 @@ namespace dnSpy.Debugger {
 		}
 		bool ignoreBreakInstructions;
 
+		public bool AutoOpenLocalsWindow {
+			get { return autoOpenLocalsWindow; }
+			set {
+				if (autoOpenLocalsWindow != value) {
+					autoOpenLocalsWindow = value;
+					OnPropertyChanged("AutoOpenLocalsWindow");
+				}
+			}
+		}
+		bool autoOpenLocalsWindow;
+
 		public string CoreCLRDbgShimFilename {
 			get { return coreCLRDbgShimFilename; }
 			set {
@@ -290,6 +301,7 @@ namespace dnSpy.Debugger {
 			CompilerGeneratedAttributesCanHideFields = (bool?)csx.Attribute("CompilerGeneratedAttributesCanHideFields") ?? true;
 			DisableManagedDebuggerDetection = (bool?)csx.Attribute("DisableManagedDebuggerDetection") ?? true;
 			IgnoreBreakInstructions = (bool?)csx.Attribute("IgnoreBreakInstructions") ?? false;
+			AutoOpenLocalsWindow = (bool?)csx.Attribute("AutoOpenLocalsWindow") ?? true;
 			CoreCLRDbgShimFilename = SessionSettings.Unescape((string)csx.Attribute("CoreCLRDbgShimFilename") ?? string.Empty);
 		}
 
@@ -327,6 +339,7 @@ namespace dnSpy.Debugger {
 			csx.SetAttributeValue("CompilerGeneratedAttributesCanHideFields", CompilerGeneratedAttributesCanHideFields);
 			csx.SetAttributeValue("DisableManagedDebuggerDetection", DisableManagedDebuggerDetection);
 			csx.SetAttributeValue("IgnoreBreakInstructions", IgnoreBreakInstructions);
+			csx.SetAttributeValue("AutoOpenLocalsWindow", AutoOpenLocalsWindow);
 			csx.SetAttributeValue("CoreCLRDbgShimFilename", SessionSettings.Escape(CoreCLRDbgShimFilename));
 		}
 
@@ -346,6 +359,7 @@ namespace dnSpy.Debugger {
 			other.CompilerGeneratedAttributesCanHideFields = this.CompilerGeneratedAttributesCanHideFields;
 			other.DisableManagedDebuggerDetection = this.DisableManagedDebuggerDetection;
 			other.IgnoreBreakInstructions = this.IgnoreBreakInstructions;
+			other.AutoOpenLocalsWindow = this.AutoOpenLocalsWindow;
 			other.CoreCLRDbgShimFilename = this.CoreCLRDbgShimFilename;
 			return other;
 		}

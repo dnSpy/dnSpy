@@ -44,7 +44,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=offsetTextBox}" Content="O_ffset" />
+            <Label Name="offsetLabel" Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=offsetTextBox}" Content="O_ffset" />
             <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="offsetTextBox" Text="{Binding OffsetVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 

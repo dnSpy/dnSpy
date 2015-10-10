@@ -126,6 +126,17 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			}
 		}
 
+		public bool TooManyResults {
+			get { return tooManyResults; }
+			set {
+				if (tooManyResults != value) {
+					tooManyResults = value;
+					OnPropertyChanged("TooManyResults");
+				}
+			}
+		}
+		bool tooManyResults;
+
 		public string SearchText {
 			get { return searchText; }
 			set {
@@ -289,6 +300,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		RunningSearch currentSearch;
 		void StartSearch(string searchTerm) {
+			TooManyResults = false;
 			if (currentSearch != null)
 				currentSearch.Cancel();
 			if (string.IsNullOrEmpty(searchTerm)) {
@@ -298,8 +310,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			else {
 				currentSearch = new RunningSearch(AssemblyListTreeNode.Children.Cast<AssemblyTreeNode>(), RunningSearch.CreateSearchComparer(searchTerm), filter, Language);
 				SearchItemsSource = currentSearch.Results;
+				currentSearch.OnSearchEnded += RunningSearch_OnSearchEnded;
 				new Thread(currentSearch.Run).Start();
 			}
+		}
+
+		void RunningSearch_OnSearchEnded(object sender, EventArgs e) {
+			if (currentSearch == null || currentSearch != sender)
+				return;
+
+			TooManyResults = currentSearch.TooManyResults;
 		}
 
 		void RestartSearch() {

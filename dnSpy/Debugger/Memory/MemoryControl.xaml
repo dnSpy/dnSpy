@@ -32,7 +32,7 @@
     </UserControl.Resources>
     <Grid>
         <ScrollViewer CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <hex:DnHexBox x:Name="hexBox" Document="{Binding HexDocument}" CacheLineBytes="True" />
+            <hex:DnHexBox x:Name="hexBox" Document="{Binding HexDocument}" CacheLineBytes="True" IsMemory="True" />
         </ScrollViewer>
         <Border Background="{DynamicResource MemoryWindowDisabled}" Visibility="{Binding CanNotEditMemory, Converter={StaticResource BooleanToVisibilityConverter}}" />
     </Grid>

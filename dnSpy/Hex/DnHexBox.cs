@@ -55,6 +55,12 @@ namespace dnSpy.Hex {
 			InstallBindings();
 		}
 
+		public bool IsMemory {
+			get { return isMemory; }
+			set { isMemory = value; }
+		}
+		bool isMemory;
+
 		void InstallBindings() {
 			Add(new RoutedCommand("GoToOffset", typeof(GoToOffsetHexBoxContextMenuEntry)),
 				(s, e) => GoToOffsetHexBoxContextMenuEntry.Execute2(this),
@@ -68,6 +74,18 @@ namespace dnSpy.Hex {
 				(s, e) => SelectRangeHexBoxContextMenuEntry.Execute2(this),
 				(s, e) => e.CanExecute = SelectRangeHexBoxContextMenuEntry.CanExecute(this),
 				ModifierKeys.Control, Key.L);
+			Add(new RoutedCommand("ShowOnlySelectedBytes", typeof(ShowSelectionHexBoxContextMenuEntry)),
+				(s, e) => ShowSelectionHexBoxContextMenuEntry.Execute2(this),
+				(s, e) => e.CanExecute = ShowSelectionHexBoxContextMenuEntry.CanExecute(this),
+				ModifierKeys.Control, Key.D);
+			Add(new RoutedCommand("ShowAllBytes", typeof(ShowWholeDocumentHexBoxContextMenuEntry)),
+				(s, e) => ShowWholeDocumentHexBoxContextMenuEntry.Execute2(this),
+				(s, e) => e.CanExecute = ShowWholeDocumentHexBoxContextMenuEntry.CanExecute(this),
+				ModifierKeys.Control | ModifierKeys.Shift, Key.D);
+			Add(new RoutedCommand("SaveSelection", typeof(SaveSelectionHexBoxContextMenuEntry)),
+				(s, e) => SaveSelectionHexBoxContextMenuEntry.Execute2(this),
+				(s, e) => e.CanExecute = SaveSelectionHexBoxContextMenuEntry.CanExecute(this),
+				ModifierKeys.Control | ModifierKeys.Alt, Key.S);
 		}
 
 		void Add(ICommand command, ExecutedRoutedEventHandler exec, CanExecuteRoutedEventHandler canExec, ModifierKeys modifiers, Key key) {

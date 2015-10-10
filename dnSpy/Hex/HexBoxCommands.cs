@@ -70,7 +70,7 @@ namespace dnSpy.Hex {
 		protected abstract bool IsVisible(DnHexBox dnHexBox);
 	}
 
-	[ExportContextMenuEntry(Header = "Go to Offset…", Order = 100, Category = "Misc", InputGestureText = "Ctrl+G")]
+	[ExportContextMenuEntry(Order = 100, Category = "Misc", InputGestureText = "Ctrl+G")]
 	sealed class GoToOffsetHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(DnHexBox dnHexBox) {
 			Execute2(dnHexBox);
@@ -92,10 +92,22 @@ namespace dnSpy.Hex {
 			var win = new GoToOffsetDlg();
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
+			if (dnHexBox.IsMemory) {
+				win.Title = "Go to Address";
+				win.offsetLabel.Content = "_Address";
+			}
+			else {
+				win.Title = "Go to Offset";
+				win.offsetLabel.Content = "O_ffset";
+			}
 			if (win.ShowDialog() != true)
 				return;
 
 			dnHexBox.CaretPosition = new HexBoxPosition(dnHexBox.VisibleToPhysicalOffset(data.OffsetVM.Value), dnHexBox.CaretPosition.Kind, 0);
+		}
+
+		protected override void Initialize(DnHexBox dnHexBox, MenuItem menuItem) {
+			menuItem.Header = dnHexBox.IsMemory ? "Go to Address…" : "Go to Offset…";
 		}
 	}
 
@@ -142,9 +154,17 @@ namespace dnSpy.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Save Se_lection…", Order = 120, Category = "Misc")]
+	[ExportContextMenuEntry(Header = "Save Se_lection…", Order = 120, Category = "Misc", InputGestureText = "Ctrl+Alt+S")]
 	sealed class SaveSelectionHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(DnHexBox dnHexBox) {
+			Execute2(dnHexBox);
+		}
+
+		protected override bool IsVisible(DnHexBox dnHexBox) {
+			return CanExecute(dnHexBox);
+		}
+
+		internal static void Execute2(DnHexBox dnHexBox) {
 			var doc = dnHexBox.Document;
 			if (doc == null)
 				return;
@@ -171,7 +191,7 @@ namespace dnSpy.Hex {
 			}
 		}
 
-		protected override bool IsVisible(DnHexBox dnHexBox) {
+		internal static bool CanExecute(DnHexBox dnHexBox) {
 			return dnHexBox.Document != null && dnHexBox.Selection != null;
 		}
 
@@ -194,9 +214,17 @@ namespace dnSpy.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show Only Selected Bytes", Order = 130, Category = "Misc")]
+	[ExportContextMenuEntry(Header = "Show Only Selected Bytes", Order = 130, Category = "Misc", InputGestureText = "Ctrl+D")]
 	sealed class ShowSelectionHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(DnHexBox dnHexBox) {
+			Execute2(dnHexBox);
+		}
+
+		protected override bool IsVisible(DnHexBox dnHexBox) {
+			return CanExecute(dnHexBox);
+		}
+
+		internal static void Execute2(DnHexBox dnHexBox) {
 			var sel = dnHexBox.Selection;
 			if (sel == null)
 				return;
@@ -205,16 +233,24 @@ namespace dnSpy.Hex {
 			dnHexBox.EndOffset = sel.Value.EndOffset;
 		}
 
-		protected override bool IsVisible(DnHexBox dnHexBox) {
+		internal static bool CanExecute(DnHexBox dnHexBox) {
 			return dnHexBox.Selection != null &&
 				(dnHexBox.StartOffset != dnHexBox.Selection.Value.StartOffset ||
 				dnHexBox.EndOffset != dnHexBox.Selection.Value.EndOffset);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show All Bytes", Order = 140, Category = "Misc")]
-	sealed class ShowHoleDocumentHexBoxContextMenuEntry : HexBoxContextMenuEntry {
+	[ExportContextMenuEntry(Header = "Show All Bytes", Order = 140, Category = "Misc", InputGestureText = "Ctrl+Shift+D")]
+	sealed class ShowWholeDocumentHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(DnHexBox dnHexBox) {
+			Execute2(dnHexBox);
+		}
+
+		protected override bool IsVisible(DnHexBox dnHexBox) {
+			return CanExecute(dnHexBox);
+		}
+
+		internal static void Execute2(DnHexBox dnHexBox) {
 			dnHexBox.StartOffset = dnHexBox.DocumentStartOffset;
 			dnHexBox.EndOffset = dnHexBox.DocumentEndOffset;
 			var sel = dnHexBox.Selection;
@@ -226,7 +262,7 @@ namespace dnSpy.Hex {
 			}));
 		}
 
-		protected override bool IsVisible(DnHexBox dnHexBox) {
+		internal static bool CanExecute(DnHexBox dnHexBox) {
 			return dnHexBox.StartOffset != dnHexBox.DocumentStartOffset ||
 				dnHexBox.EndOffset != dnHexBox.DocumentEndOffset;
 		}

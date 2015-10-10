@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Enable All Breakpoi_nts", Order = 140, Category = "CopyBP")]
+	[ExportContextMenuEntry(Header = "Enable All Breakpoi_nts", Order = 140, Category = "CopyBP", Icon = "EnableAllBreakpoints")]
 	sealed class EnableAllBPsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		protected override void Execute(BreakpointCtxMenuContext context) {
 			DebugRoutedCommands.EnableAllBreakpoints.Execute(null, MainWindow.Instance);
@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Disable All Breakpoi_nts", Order = 150, Category = "CopyBP")]
+	[ExportContextMenuEntry(Header = "Disable All Breakpoi_nts", Order = 150, Category = "CopyBP", Icon = "DisableAllBreakpoints")]
 	sealed class DisableAllBPsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		protected override void Execute(BreakpointCtxMenuContext context) {
 			DebugRoutedCommands.DisableAllBreakpoints.Execute(null, MainWindow.Instance);

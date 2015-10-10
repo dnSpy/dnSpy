@@ -35,6 +35,7 @@ using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy;
 using dnSpy.Images;
+using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using dnSpy.Search;
 using dnSpy.TreeNodes;
@@ -173,6 +174,7 @@ namespace ICSharpCode.ILSpy {
 
 			dnSpy.dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
 			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
+			TooManyResults = false;
 		}
 
 		void Themes_ThemeChanged(object sender, EventArgs e)
@@ -265,6 +267,7 @@ namespace ICSharpCode.ILSpy {
 		
 		void StartSearch(string searchTerm)
 		{
+			TooManyResults = false;
 			if (currentSearch != null) {
 				currentSearch.Cancel();
 			}
@@ -280,7 +283,22 @@ namespace ICSharpCode.ILSpy {
 					new FlagsTreeViewNodeFilter(searchType.Flags),
 					mainWindow.CurrentLanguage);
 				listBox.ItemsSource = currentSearch.Results;
+				currentSearch.OnSearchEnded += RunningSearch_OnSearchEnded;
 				new Thread(currentSearch.Run).Start();
+			}
+		}
+
+		void RunningSearch_OnSearchEnded(object sender, EventArgs e) {
+			if (currentSearch == null || currentSearch != sender)
+				return;
+
+			TooManyResults = currentSearch.TooManyResults;
+		}
+
+		bool TooManyResults {
+			set {
+				// We could also use binding + a converter but that's not worth it at the moment
+				listBox.BorderThickness = value ? new Thickness(1) : new Thickness(0);
 			}
 		}
 
@@ -431,6 +449,13 @@ namespace ICSharpCode.ILSpy {
 		public readonly ObservableCollection<SearchResult> Results = new ObservableCollection<SearchResult>();
 		int resultCount;
 
+		public bool TooManyResults {
+			get { return tooManyResults; }
+		}
+		bool tooManyResults;
+
+		public event EventHandler OnSearchEnded;
+
 		public void OnThemeChanged()
 		{
 			foreach (var result in Results)
@@ -492,21 +517,35 @@ namespace ICSharpCode.ILSpy {
 			catch (OperationCanceledException) {
 				// ignore cancellation
 			}
-			// remove the 'Searching…' entry
 			dispatcher.BeginInvoke(
 				DispatcherPriority.Normal,
-				new Action(delegate { this.Results.RemoveAt(this.Results.Count - 1); }));
+				new Action(() => {
+					// remove the 'Searching…' entry
+					this.Results.RemoveAt(this.Results.Count - 1);
+					if (OnSearchEnded != null)
+						OnSearchEnded(this, EventArgs.Empty);
+				})
+			);
 		}
 
 		void AddResult(SearchResult result)
 		{
+			bool sortResult = true;
 			if (++resultCount > 1000) {
+				sortResult = false;
+				tooManyResults = true;
 				result = new SearchResult { NameObject = "Search aborted, more than 1000 results found." };
 				cts.Cancel();
 			}
 			dispatcher.BeginInvoke(
 				DispatcherPriority.Normal,
-				new Action(delegate { this.Results.Insert(this.Results.Count - 1, result); }));
+				new Action(() => {
+					if (sortResult)
+						ListSorter.Insert(this.Results, 0, this.Results.Count - 1, result);
+					else
+						this.Results.Insert(this.Results.Count - 1, result);
+				})
+			);
 			cts.Token.ThrowIfCancellationRequested();
 		}
 	}
@@ -521,7 +560,7 @@ namespace ICSharpCode.ILSpy {
 		}
 	}
 
-	sealed class SearchResult : IMemberTreeNode, INotifyPropertyChanged
+	sealed class SearchResult : IMemberTreeNode, INotifyPropertyChanged, IComparable<SearchResult>
 	{
 		public IMemberRef Member {
 			get { return MDTokenProvider as IMemberRef; }
@@ -545,6 +584,9 @@ namespace ICSharpCode.ILSpy {
 				var ns = Object as string;
 				if (ns != null)
 					return new NamespaceRef(LoadedAssembly, ns);
+				var node = Object as ILSpyTreeNode;
+				if (node != null)
+					return node;
 				return MDTokenProvider;
 			}
 		}
@@ -591,6 +633,23 @@ namespace ICSharpCode.ILSpy {
 		}
 		public object LocationUI {
 			get { return CreateUI(LocationObject, true); }
+		}
+
+		public int CompareTo(SearchResult other) {
+			if (other == null)
+				return -1;
+			return StringComparer.CurrentCultureIgnoreCase.Compare(GetCompareString(), other.GetCompareString());
+		}
+
+		string GetCompareString() {
+			return compareString ?? (compareString = ToString());
+		}
+		string compareString = null;
+
+		public override string ToString() {
+			var output = new PlainTextOutput();
+			CreateUI(output, NameObject, false);
+			return output.ToString();
 		}
 
 		object CreateUI(object o, bool includeNamespace)

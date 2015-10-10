@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
+using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.MVVM;
@@ -104,6 +105,15 @@ namespace dnSpy.Debugger.Locals {
 		LocalsControlCreator() {
 		}
 
+		internal static void OnLoaded() {
+			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
+		}
+
+		static void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+			if (DebuggerSettings.Instance.AutoOpenLocalsWindow && DebugManager.Instance.ProcessState == DebuggerProcessState.Starting)
+				LocalsControlInstance.Show();
+		}
+
 		public IPane Create(string name) {
 			if (name == LocalsControl.PANE_TYPE_NAME)
 				return LocalsControlInstance;
@@ -179,7 +189,7 @@ namespace dnSpy.Debugger.Locals {
 			get { return DebugManager.Instance.IsDebugging; }
 		}
 
-		void Show() {
+		internal void Show() {
 			if (!MainWindow.Instance.IsBottomPaneVisible(this))
 				MainWindow.Instance.ShowInBottomPane(this);
 			FocusPane();

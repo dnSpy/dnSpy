@@ -53,7 +53,7 @@
 				</Grid>
 			</Grid>
 		</Border>
-		<ListBox Grid.Row="1" BorderThickness="0,0,0,0" HorizontalContentAlignment="Stretch" KeyDown="ListBox_KeyDown"
+		<ListBox Grid.Row="1" BorderThickness="0,0,0,0" BorderBrush="{DynamicResource CommonControlsTextBoxBorderError}" HorizontalContentAlignment="Stretch" KeyDown="ListBox_KeyDown"
 				MouseDoubleClick="ListBox_MouseDoubleClick" Name="listBox" SelectionMode="Single"/>
 	</Grid>
 </UserControl>

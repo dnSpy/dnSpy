@@ -34,6 +34,7 @@ namespace dnSpy.Debugger {
 			Breakpoints.BreakpointManager.Instance.OnLoaded();
 			CallStack.StackFrameManager.Instance.OnLoaded();
 			Exceptions.ExceptionManager.Instance.OnLoaded();
+			Locals.LocalsControlCreator.OnLoaded();
 		}
 
 		void InstallRoutedCommands() {

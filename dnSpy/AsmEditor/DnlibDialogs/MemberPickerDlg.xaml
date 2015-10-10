@@ -72,6 +72,7 @@
 		</Grid>
 
 		<ListBox Grid.Row="1"
+				 Name="listBox"
 				 Margin="5 0 5 5"
 				 HorizontalContentAlignment="Stretch"
 				 SelectionMode="Single"

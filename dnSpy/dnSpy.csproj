@@ -445,6 +445,7 @@
     <Compile Include="AsmEditor\ListBoxHelperBase.cs" />
     <Compile Include="MVVM\IAskUser.cs" />
     <Compile Include="MVVM\ISelectedItemsProvider.cs" />
+    <Compile Include="MVVM\ListSorter.cs" />
     <Compile Include="MVVM\ListVM.cs" />
     <Compile Include="AsmEditor\MethodBody\BodyUtils.cs" />
     <Compile Include="AsmEditor\MethodBody\CilBodyOptions.cs" />
@@ -838,7 +839,6 @@
     <Compile Include="Commands\SimpleCommand.cs" />
     <Compile Include="TaskHelper.cs" />
     <Compile Include="TextView\EditorCommands.cs" />
-    <Compile Include="TextView\FoldingCommands.cs" />
     <Compile Include="TextView\LanguageTokens.cs" />
     <Compile Include="TextView\NewTextEditor.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />

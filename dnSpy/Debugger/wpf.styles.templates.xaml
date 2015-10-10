@@ -41,6 +41,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -54,7 +55,8 @@
             <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.DebuggerBrowsableAttributesCanHidePropsFields}" Content="DebuggerBrowsableAttributes can hide fields and properties" />
             <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.CompilerGeneratedAttributesCanHideFields}" Content="CompilerGeneratedAttributes can hide fields" />
             <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.IgnoreBreakInstructions}" Content="Ignore Debugger.Break() and break instructions" />
-            <Grid Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="-5 5 0 0">
+            <CheckBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.AutoOpenLocalsWindow}" Content="Show the Locals window when the debugger starts" />
+            <Grid Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="-5 5 0 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
@@ -65,7 +67,7 @@
                 <Button Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickCoreCLRDbgShimFilenameCommand}" />
             </Grid>
 
-            <GroupBox Grid.Row="8" Grid.ColumnSpan="3" Margin="0 5 0 0">
+            <GroupBox Grid.Row="9" Grid.ColumnSpan="3" Margin="0 5 0 0">
                 <GroupBox.Header>
                     <CheckBox Content="_Syntax highlight" IsThreeState="False" IsChecked="{Binding Settings.SyntaxHighlight}" />
                 </GroupBox.Header>

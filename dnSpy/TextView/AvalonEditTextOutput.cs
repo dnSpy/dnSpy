@@ -25,7 +25,6 @@ using System.Windows;
 using dnSpy.NRefactory;
 using dnSpy.TextView;
 using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
 
@@ -90,12 +89,6 @@ namespace ICSharpCode.ILSpy.TextView {
 		
 		/// <summary>List of all references that were written to the output</summary>
 		TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
-		
-		/// <summary>Stack of the fold markers that are open but not closed yet</summary>
-		Stack<NewFolding> openFoldings = new Stack<NewFolding>();
-		
-		/// <summary>List of all foldings that were written to the output</summary>
-		internal readonly List<NewFolding> Foldings = new List<NewFolding>();
 		
 		internal readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
 		
@@ -237,27 +230,12 @@ namespace ICSharpCode.ILSpy.TextView {
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = isLocal });
 		}
 		
-		static readonly bool USE_FOLDING = false;
 		public void MarkFoldStart(string collapsedText, bool defaultCollapsed)
 		{
-			if (!USE_FOLDING)
-				return;
-			WriteIndent();
-			openFoldings.Push(
-				new NewFolding {
-					StartOffset = this.TextLength,
-					Name = collapsedText,
-					DefaultClosed = defaultCollapsed
-				});
 		}
 		
 		public void MarkFoldEnd()
 		{
-			if (!USE_FOLDING)
-				return;
-			NewFolding f = openFoldings.Pop();
-			f.EndOffset = this.TextLength;
-			this.Foldings.Add(f);
 		}
 		
 		public void AddUIElement(Func<UIElement> element)

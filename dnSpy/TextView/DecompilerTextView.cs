@@ -47,7 +47,6 @@ using dnSpy.TextView;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
-using ICSharpCode.AvalonEdit.Folding;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
@@ -71,7 +70,6 @@ namespace ICSharpCode.ILSpy.TextView {
 		readonly ReferenceElementGenerator referenceElementGenerator;
 		readonly UIElementGenerator uiElementGenerator;
 		List<VisualLineElementGenerator> activeCustomElementGenerators = new List<VisualLineElementGenerator>();
-		FoldingManager foldingManager;
 		
 		DefinitionLookup definitionLookup;
 		TextSegmentCollection<ReferenceSegment> references;
@@ -640,10 +638,6 @@ namespace ICSharpCode.ILSpy.TextView {
 
 			ClearMarkedReferences();
 			textEditor.ScrollToHome();
-			if (foldingManager != null) {
-				FoldingManager.Uninstall(foldingManager);
-				foldingManager = null;
-			}
 			textEditor.Document = null; // clear old document while we're changing the highlighting
 			uiElementGenerator.UIElements = textOutput.UIElements;
 			referenceElementGenerator.References = textOutput.References;
@@ -658,17 +652,7 @@ namespace ICSharpCode.ILSpy.TextView {
 				activeCustomElementGenerators.Add(elementGenerator);
 			}
 			
-			//Debug.WriteLine("  Set-up: {0}", w.Elapsed); w.Restart();
 			textEditor.Document = textOutput.GetDocument();
-			//Debug.WriteLine("  Assigning document: {0}", w.Elapsed); w.Restart();
-			if (textOutput.Foldings.Count > 0) {
-				if (state != null) {
-					state.RestoreFoldings(textOutput.Foldings);
-				}
-				foldingManager = FoldingManager.Install(textEditor.TextArea);
-				foldingManager.UpdateFoldings(textOutput.Foldings.OrderBy(f => f.StartOffset), -1);
-				//Debug.WriteLine("  Updating folding: {0}", w.Elapsed); w.Restart();
-			}
 			if (state != null)
 				EditorPositionState = state.EditorPositionState;
 			
@@ -1210,8 +1194,6 @@ namespace ICSharpCode.ILSpy.TextView {
 				return null;
 
 			var state = new DecompilerTextViewState();
-			if (foldingManager != null)
-				state.SaveFoldingsState(foldingManager.AllFoldings);
 			state.EditorPositionState = new EditorPositionState(textEditor);
 			state.DecompiledNodes = nodes;
 			return state;
@@ -1610,24 +1592,8 @@ namespace ICSharpCode.ILSpy.TextView {
 
 	public class DecompilerTextViewState : IEquatable<DecompilerTextViewState>
 	{
-		private List<Tuple<int, int>> ExpandedFoldings;
-		private int FoldingsChecksum;
 		public EditorPositionState EditorPositionState;
 		public ILSpyTreeNode[] DecompiledNodes;
-
-		public void SaveFoldingsState(IEnumerable<FoldingSection> foldings)
-		{
-			ExpandedFoldings = foldings.Where(f => !f.IsFolded).Select(f => Tuple.Create(f.StartOffset, f.EndOffset)).ToList();
-			FoldingsChecksum = unchecked(foldings.Select(f => f.StartOffset * 3 - f.EndOffset).Aggregate((a, b) => a + b));
-		}
-
-		internal void RestoreFoldings(List<NewFolding> list)
-		{
-			var checksum = unchecked(list.Select(f => f.StartOffset * 3 - f.EndOffset).Aggregate((a, b) => a + b));
-			if (FoldingsChecksum == checksum)
-				foreach (var folding in list)
-					folding.DefaultClosed = !ExpandedFoldings.Any(f => f.Item1 == folding.StartOffset && f.Item2 == folding.EndOffset);
-		}
 
 		public bool Equals(DecompilerTextViewState other)
 		{
