@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using dndbg.Engine.COM.CorDebug;
+using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	public sealed class CorAppDomain : COMObject<ICorDebugAppDomain>, IEquatable<CorAppDomain> {

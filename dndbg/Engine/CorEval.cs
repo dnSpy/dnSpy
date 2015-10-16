@@ -19,7 +19,7 @@
 
 using System;
 using System.Diagnostics;
-using dndbg.Engine.COM.CorDebug;
+using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	public sealed class CorEval : COMObject<ICorDebugEval>, IEquatable<CorEval> {

@@ -20,9 +20,9 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using dndbg.Engine.COM.CorDebug;
+using dndbg.COM.CorDebug;
 
-namespace dndbg.Engine.COM.MetaHost {
+namespace dndbg.COM.MetaHost {
 	public enum METAHOST_POLICY_FLAGS {
 		METAHOST_POLICY_HIGHCOMPAT,
 		METAHOST_POLICY_APPLY_UPGRADE_POLICY = 8,

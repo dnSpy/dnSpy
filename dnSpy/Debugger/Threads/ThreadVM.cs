@@ -19,8 +19,8 @@
 
 using System;
 using System.Runtime.InteropServices;
+using dndbg.COM.CorDebug;
 using dndbg.Engine;
-using dndbg.Engine.COM.CorDebug;
 using dnSpy.MVVM;
 
 namespace dnSpy.Debugger.Threads {

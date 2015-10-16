@@ -24,9 +24,10 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using dndbg.Engine;
 
 #pragma warning disable 0108 // Member hides inherited member; missing new keyword
-namespace dndbg.Engine.COM.CorDebug {
+namespace dndbg.COM.CorDebug {
 	public enum CorDebugInterfaceVersion {
 		CorDebugInvalidVersion = 0,
 		CorDebugVersion_1_0 = CorDebugInvalidVersion + 1,

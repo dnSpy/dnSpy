@@ -18,7 +18,7 @@
 */
 
 using System.ComponentModel;
-using dndbg.Engine.COM.CorDebug;
+using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	public class DebugOptions : INotifyPropertyChanged {

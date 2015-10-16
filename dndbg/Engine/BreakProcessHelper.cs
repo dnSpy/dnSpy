@@ -20,7 +20,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using dndbg.Engine.COM.MetaData;
+using dndbg.COM.MetaData;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.IO;

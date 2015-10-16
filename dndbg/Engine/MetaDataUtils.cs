@@ -17,13 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// This file contains helper methods that are used by the CorDebug classes. It uses MDAPI.
+
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
-using System.Text;
-using dndbg.Engine.COM.CorDebug;
-using dndbg.Engine.COM.MetaData;
+using dndbg.COM.CorDebug;
+using dndbg.COM.MetaData;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
@@ -145,11 +145,20 @@ namespace dndbg.Engine {
 			get { return (Flags & ParamAttributes.Out) != 0; }
 		}
 
-		public MDParamInfo(string name, uint token, uint seq, uint flags) {
+		public MDParamInfo(string name, uint token, uint seq, ParamAttributes flags) {
 			this.Name = name;
 			this.Token = token;
 			this.Sequence = seq;
-			this.Flags = (ParamAttributes)flags;
+			this.Flags = flags;
+		}
+	}
+
+	struct MethodOverrideInfo {
+		public readonly uint BodyToken;
+		public readonly uint DeclToken;
+		public MethodOverrideInfo(uint b, uint d) {
+			this.BodyToken = b;
+			this.DeclToken = d;
 		}
 	}
 
@@ -157,7 +166,7 @@ namespace dndbg.Engine {
 		public static MDParameters GetParameters(IMetaDataImport mdi, uint token) {
 			var ps = new MDParameters();
 
-			var tokens = GetParameterTokens(mdi, token);
+			var tokens = MDAPI.GetParamTokens(mdi, token);
 			foreach (var ptok in tokens) {
 				var info = GetParameterInfo(mdi, ptok);
 				if (info != null)
@@ -167,297 +176,97 @@ namespace dndbg.Engine {
 			return ps;
 		}
 
-		unsafe static uint[] GetParameterTokens(IMetaDataImport mdi, uint token) {
-			if (mdi == null)
-				return new uint[0];
-			IntPtr iter = IntPtr.Zero;
-			try {
-				uint cTokens;
-				int hr = mdi.EnumParams(ref iter, token, IntPtr.Zero, 0, out cTokens);
-				if (hr < 0)
-					return new uint[0];
-
-				uint ulCount = 0;
-				hr = mdi.CountEnum(iter, ref ulCount);
-				if (hr < 0 || ulCount == 0)
-					return new uint[0];
-
-				hr = mdi.ResetEnum(iter, 0);
-				if (hr < 0)
-					return new uint[0];
-
-				uint[] tokens = new uint[ulCount];
-				fixed (uint* p = &tokens[0])
-					hr = mdi.EnumParams(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
-				if (hr < 0)
-					return new uint[0];
-				return tokens;
-			}
-			finally {
-				if (iter != IntPtr.Zero)
-					mdi.CloseEnum(iter);
-			}
-		}
-
 		unsafe static MDParamInfo? GetParameterInfo(IMetaDataImport mdi, uint token) {
 			if (mdi == null)
 				return null;
-			char[] nameBuf = null;
-			uint ulSequence,chName,dwAttr;
-			int hr = mdi.GetParamProps(token, IntPtr.Zero, out ulSequence, IntPtr.Zero, 0, out chName, out dwAttr, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-			if (hr >= 0 && chName != 0) {
-				nameBuf = new char[chName];
-				fixed (char* p = &nameBuf[0])
-					hr = mdi.GetParamProps(token, IntPtr.Zero, out ulSequence, new IntPtr(p), (uint)nameBuf.Length, out chName, out dwAttr, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-			}
-			if (hr < 0)
+
+			uint seq;
+			ParamAttributes attrs;
+			if (!MDAPI.GetParamSeqAndAttrs(mdi, token, out seq, out attrs))
+				return null;
+			var name = MDAPI.GetParamName(mdi, token);
+			if (name == null)
 				return null;
 
-			var name = chName <= 1 ? string.Empty : new string(nameBuf, 0, (int)chName - 1);
-			return new MDParamInfo(name, token, ulSequence, dwAttr);
+			return new MDParamInfo(name, token, seq, attrs);
 		}
 
 		public static List<TokenAndName> GetTypeRefFullNames(IMetaDataImport mdi, uint token) {
 			var list = new List<TokenAndName>(4);
 
-			while (token != 0) {
-				uint enclType;
-				var name = GetTypeRefName(mdi, token, out enclType);
+			while ((token & 0x00FFFFFF) != 0) {
+				var name = MDAPI.GetTypeRefName(mdi, token);
 				if (name == null)
 					break;
 				list.Add(new TokenAndName(name, token));
-				token = enclType;
+				uint tkResolutionScope = MDAPI.GetTypeRefResolutionScope(mdi, token);
+				if ((tkResolutionScope >> 24) != (int)Table.TypeRef)
+					break;
+				token = tkResolutionScope;
 			}
 
 			list.Reverse();
 			return list;
-		}
-
-		static unsafe string GetTypeRefName(IMetaDataImport mdi, uint token, out uint enclType) {
-			enclType = 0;
-			if (mdi == null)
-				return null;
-			uint tkResolutionScope, chName;
-			char[] nameBuf = null;
-			int hr = mdi.GetTypeRefProps(token, out tkResolutionScope, IntPtr.Zero, 0, out chName);
-			if (hr >= 0 && chName != 0) {
-				nameBuf = new char[chName];
-				fixed (char* p = &nameBuf[0])
-					hr = mdi.GetTypeRefProps(token, out tkResolutionScope, new IntPtr(p), (uint)nameBuf.Length, out chName);
-			}
-			if (hr < 0)
-				return null;
-
-			if ((tkResolutionScope >> 24) == (int)Table.TypeRef)
-				enclType = tkResolutionScope;
-
-			if (chName <= 1)
-				return string.Empty;
-			return new string(nameBuf, 0, (int)chName - 1);
-		}
-
-		public static string GetTypeDefFullName(IMetaDataImport mdi, uint token) {
-			var list = GetTypeDefFullNames(mdi, token);
-			var sb = new StringBuilder();
-
-			for (int i = 0; i < list.Count; i++) {
-				if (i > 0)
-					sb.Append('.');
-				sb.Append(list[i].Name);
-			}
-
-			return sb.ToString();
 		}
 
 		public static List<TokenAndName> GetTypeDefFullNames(IMetaDataImport mdi, uint token) {
 			var list = new List<TokenAndName>(4);
 
-			while (token != 0) {
-				uint enclType;
-				var name = GetTypeDefName(mdi, token, out enclType);
+			while ((token & 0x00FFFFFF) != 0) {
+				var name = MDAPI.GetTypeDefName(mdi, token);
 				if (name == null)
 					break;
 				list.Add(new TokenAndName(name, token));
-				token = enclType;
+				token = MDAPI.GetTypeDefEnclosingType(mdi, token);
 			}
 
 			list.Reverse();
 			return list;
 		}
 
-		static unsafe string GetTypeDefName(IMetaDataImport mdi, uint token, out uint enclType) {
-			enclType = 0;
-			if (mdi == null)
-				return null;
-			uint chTypeDef, dwTypeDefFlags, tkExtends;
-			char[] nameBuf = null;
-			int hr = mdi.GetTypeDefProps(token, IntPtr.Zero, 0, out chTypeDef, out dwTypeDefFlags, out tkExtends);
-			if (hr >= 0 && chTypeDef != 0) {
-				nameBuf = new char[chTypeDef];
-				fixed (char* p = &nameBuf[0])
-					hr = mdi.GetTypeDefProps(token, new IntPtr(p), (uint)nameBuf.Length, out chTypeDef, out dwTypeDefFlags, out tkExtends);
-			}
-			if (hr < 0)
-				return null;
-
-			if ((dwTypeDefFlags & 7) >= 2) {
-				hr = mdi.GetNestedClassProps(token, out enclType);
-				if (hr < 0)
-					enclType = 0;
-			}
-
-			if (chTypeDef <= 1)
-				return string.Empty;
-			return new string(nameBuf, 0, (int)chTypeDef - 1);
-		}
-
-		public static unsafe string GetMethodDefName(IMetaDataImport mdi, uint token) {
-			MethodAttributes attrs;
-			MethodImplAttributes implAttrs;
-			return GetMethodDefName(mdi, token, out attrs, out implAttrs);
-		}
-
-		public static unsafe string GetMethodDefName(IMetaDataImport mdi, uint token, out MethodAttributes dwAttr, out MethodImplAttributes dwImplFlags) {
-			dwAttr = 0;
-			dwImplFlags = 0;
-			if (mdi == null)
-				return null;
-			char[] nameBuf = null;
-			uint chMethod, cbSigBlob, ulCodeRVA;
-			IntPtr pvSigBlob;
-			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chMethod, out dwAttr, out pvSigBlob, out cbSigBlob, out ulCodeRVA, out dwImplFlags);
-			if (hr >= 0 && chMethod != 0) {
-				nameBuf = new char[chMethod];
-				fixed (char* p = &nameBuf[0])
-					hr = mdi.GetMethodProps(token, IntPtr.Zero, new IntPtr(p), (uint)nameBuf.Length, out chMethod, out dwAttr, out pvSigBlob, out cbSigBlob, out ulCodeRVA, out dwImplFlags);
-			}
-			if (hr < 0)
-				return null;
-
-			if (chMethod <= 1)
-				return string.Empty;
-			return new string(nameBuf, 0, (int)chMethod - 1);
-		}
-
 		public static int GetCountGenericParameters(IMetaDataImport mdi, uint token) {
-			return GetGenericParameterTokens(mdi, token).Count;
+			return MDAPI.GetGenericParamTokens(mdi as IMetaDataImport2, token).Length;
 		}
 
 		public static List<TokenAndName> GetGenericParameterNames(IMetaDataImport mdi, uint token) {
-			var gpTokens = GetGenericParameterTokens(mdi, token);
-			var list = new List<TokenAndName>(gpTokens.Count);
+			var gpTokens = MDAPI.GetGenericParamTokens(mdi as IMetaDataImport2, token);
+			var list = new List<TokenAndName>(gpTokens.Length);
 
 			var mdi2 = mdi as IMetaDataImport2;
 			if (mdi2 == null)
 				return list;
 
 			foreach (var gpTok in gpTokens) {
-				var name = GetGenericParameterName(mdi, gpTok);
+				var name = MDAPI.GetGenericParamName(mdi as IMetaDataImport2, gpTok);
 				list.Add(new TokenAndName(name ?? string.Empty, gpTok));
 			}
 
 			return list;
 		}
 
-		public static unsafe string GetGenericParameterName(IMetaDataImport mdi, uint token) {
-			var mdi2 = mdi as IMetaDataImport2;
-			if (mdi2 == null)
+		public unsafe static MethodSig GetMethodSignature(IMetaDataImport mdi, uint token) {
+			var sig = MDAPI.GetMethodSignatureBlob(mdi, token);
+			if (sig == null)
 				return null;
-
-			char[] nameBuf = null;
-			uint ulParamSeq, dwParamFlags, tOwner, reserved, chName;
-			int hr = mdi2.GetGenericParamProps(token, out ulParamSeq, out dwParamFlags, out tOwner, out reserved, IntPtr.Zero, 0, out chName);
-			if (hr >= 0 && chName != 0) {
-				nameBuf = new char[chName];
-				fixed (char* p = &nameBuf[0])
-					hr = mdi2.GetGenericParamProps(token, out ulParamSeq, out dwParamFlags, out tOwner, out reserved, new IntPtr(p), (uint)nameBuf.Length, out chName);
-			}
-			if (hr < 0)
-				return null;
-
-			if (chName <= 1)
-				return string.Empty;
-			return new string(nameBuf, 0, (int)chName - 1);
-		}
-
-		public unsafe static List<uint> GetGenericParameterTokens(IMetaDataImport mdi, uint token) {
-			var list = new List<uint>();
-			var mdi2 = mdi as IMetaDataImport2;
-			if (mdi2 == null)
-				return list;
-
-			IntPtr iter = IntPtr.Zero;
-			try {
-				uint cGenericParams;
-				int hr = mdi2.EnumGenericParams(ref iter, token, IntPtr.Zero, 0, out cGenericParams);
-				if (hr < 0)
-					return list;
-
-				uint ulCount = 0;
-				hr = mdi2.CountEnum(iter, ref ulCount);
-				if (hr < 0 || ulCount == 0)
-					return list;
-
-				hr = mdi2.ResetEnum(iter, 0);
-				if (hr < 0)
-					return list;
-
-				uint[] gpTokens = new uint[ulCount];
-				fixed (uint* p = &gpTokens[0])
-					hr = mdi2.EnumGenericParams(ref iter, token, new IntPtr(p), (uint)gpTokens.Length, out cGenericParams);
-				if (hr < 0)
-					return list;
-				for (uint i = 0; i < cGenericParams; i++)
-					list.Add(gpTokens[i]);
-			}
-			finally {
-				if (iter != IntPtr.Zero)
-					mdi2.CloseEnum(iter);
-			}
-
-			return list;
-		}
-
-		public static MethodSig GetMethodSignature(IMetaDataImport mdi, uint token) {
-			if (mdi == null)
-				return null;
-			MethodAttributes attrs;
-			MethodImplAttributes implAttrs;
-			uint chMethod, cbSigBlob, ulCodeRVA;
-			IntPtr pvSigBlob;
-			int hr = mdi.GetMethodProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chMethod, out attrs, out pvSigBlob, out cbSigBlob, out ulCodeRVA, out implAttrs);
-			if (hr < 0)
-				return null;
-
-			byte[] sig = new byte[cbSigBlob];
-			Marshal.Copy(pvSigBlob, sig, 0, sig.Length);
 			return new DebugSignatureReader().ReadSignature(mdi, sig) as MethodSig;
 		}
 
 		public static unsafe CallingConventionSig ReadCallingConventionSig(IMetaDataImport mdi, uint token) {
-			if (mdi == null)
+			var sig = MDAPI.GetStandAloneSigBlob(mdi, token);
+			if (sig == null)
 				return null;
-
-			IntPtr pvSig;
-			uint cbSig;
-			int hr = mdi.GetSigFromToken(token, out pvSig, out cbSig);
-			if (hr < 0)
-				return null;
-			var sig = new byte[cbSig];
-			Marshal.Copy(pvSig, sig, 0, sig.Length);
 			return new DebugSignatureReader().ReadSignature(mdi, sig);
 		}
 
 		public static uint GetGlobalStaticConstructor(IMetaDataImport mdi) {
-			var mdTokens = GetMethodTokens(mdi, 0x02000001);
-			if (mdTokens == null)
-				return 0;
-
+			var mdTokens = MDAPI.GetMethodTokens(mdi, 0x02000001);
 			foreach (uint mdToken in mdTokens) {
+				string name = MDAPI.GetMethodName(mdi, mdToken);
+				if (name != ".cctor")
+					continue;
 				MethodAttributes attrs;
 				MethodImplAttributes implAttrs;
-				string name = GetMethodDefName(mdi, mdToken, out attrs, out implAttrs);
-				if (name != ".cctor")
+				if (!MDAPI.GetMethodAttributes(mdi, mdToken, out attrs, out implAttrs))
 					continue;
 				if ((attrs & MethodAttributes.RTSpecialName) == 0)
 					continue;
@@ -470,44 +279,12 @@ namespace dndbg.Engine {
 			return 0;
 		}
 
-		public unsafe static uint[] GetMethodTokens(IMetaDataImport mdi, uint token) {
-			if (mdi == null)
-				return new uint[0];
-			IntPtr iter = IntPtr.Zero;
-			try {
-				uint cTokens;
-				int hr = mdi.EnumMethods(ref iter, token, IntPtr.Zero, 0, out cTokens);
-				if (hr < 0)
-					return new uint[0];
-
-				uint ulCount = 0;
-				hr = mdi.CountEnum(iter, ref ulCount);
-				if (hr < 0 || ulCount == 0)
-					return new uint[0];
-
-				hr = mdi.ResetEnum(iter, 0);
-				if (hr < 0)
-					return new uint[0];
-
-				uint[] tokens = new uint[ulCount];
-				fixed (uint* p = &tokens[0])
-					hr = mdi.EnumMethods(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
-				if (hr < 0)
-					return new uint[0];
-				return tokens;
-			}
-			finally {
-				if (iter != IntPtr.Zero)
-					mdi.CloseEnum(iter);
-			}
-		}
-
 		public static List<TokenAndName> GetFields(IMetaDataImport mdi, uint token) {
-			var fdTokens = GetFieldTokens(mdi, token);
+			var fdTokens = MDAPI.GetFieldTokens(mdi, token);
 			var list = new List<TokenAndName>(fdTokens.Length);
 
 			foreach (var fdToken in fdTokens) {
-				var name = GetFieldName(mdi, fdToken);
+				var name = MDAPI.GetFieldName(mdi, fdToken);
 				if (name == null)
 					continue;
 				list.Add(new TokenAndName(name, fdToken));
@@ -516,154 +293,12 @@ namespace dndbg.Engine {
 			return list;
 		}
 
-		static unsafe string GetFieldName(IMetaDataImport mdi, uint token) {
-			if (mdi == null)
-				return null;
-			uint chField, dwAttr;
-			char[] nameBuf = null;
-			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chField, out dwAttr, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-			if (hr >= 0 && chField != 0) {
-				nameBuf = new char[chField];
-				fixed (char* p = &nameBuf[0])
-					hr = mdi.GetFieldProps(token, IntPtr.Zero, new IntPtr(p), (uint)nameBuf.Length, out chField, out dwAttr, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-			}
-			if (hr < 0)
-				return null;
-
-			if (chField <= 1)
-				return string.Empty;
-			return new string(nameBuf, 0, (int)chField - 1);
-		}
-
-		public unsafe static uint[] GetFieldTokens(IMetaDataImport mdi, uint token) {
-			if (mdi == null)
-				return new uint[0];
-			IntPtr iter = IntPtr.Zero;
-			try {
-				uint cTokens;
-				int hr = mdi.EnumFields(ref iter, token, IntPtr.Zero, 0, out cTokens);
-				if (hr < 0)
-					return new uint[0];
-
-				uint ulCount = 0;
-				hr = mdi.CountEnum(iter, ref ulCount);
-				if (hr < 0 || ulCount == 0)
-					return new uint[0];
-
-				hr = mdi.ResetEnum(iter, 0);
-				if (hr < 0)
-					return new uint[0];
-
-				uint[] tokens = new uint[ulCount];
-				fixed (uint* p = &tokens[0])
-					hr = mdi.EnumFields(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
-				if (hr < 0)
-					return new uint[0];
-				return tokens;
-			}
-			finally {
-				if (iter != IntPtr.Zero)
-					mdi.CloseEnum(iter);
-			}
-		}
-
-		public unsafe static uint[] GetPropertyTokens(IMetaDataImport mdi, uint token) {
-			if (mdi == null)
-				return new uint[0];
-			IntPtr iter = IntPtr.Zero;
-			try {
-				uint cTokens;
-				int hr = mdi.EnumProperties(ref iter, token, IntPtr.Zero, 0, out cTokens);
-				if (hr < 0)
-					return new uint[0];
-
-				uint ulCount = 0;
-				hr = mdi.CountEnum(iter, ref ulCount);
-				if (hr < 0 || ulCount == 0)
-					return new uint[0];
-
-				hr = mdi.ResetEnum(iter, 0);
-				if (hr < 0)
-					return new uint[0];
-
-				uint[] tokens = new uint[ulCount];
-				fixed (uint* p = &tokens[0])
-					hr = mdi.EnumProperties(ref iter, token, new IntPtr(p), (uint)tokens.Length, out cTokens);
-				if (hr < 0)
-					return new uint[0];
-				return tokens;
-			}
-			finally {
-				if (iter != IntPtr.Zero)
-					mdi.CloseEnum(iter);
-			}
-		}
-
-		static unsafe byte[] GetFieldSignature(IMetaDataImport mdi, uint token) {
-			if (mdi == null)
-				return null;
-
-			uint chField, dwAttr, sigLen = 0;
-			IntPtr sigAddr;
-			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chField, out dwAttr, new IntPtr(&sigAddr), new IntPtr(&sigLen), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-			if (hr < 0)
-				return null;
-
-			var buf = new byte[sigLen];
-			Marshal.Copy(sigAddr, buf, 0, buf.Length);
-			return buf;
-		}
-
 		static TypeSig GetFieldTypeSig(IMetaDataImport mdi, uint token) {
-			var buf = GetFieldSignature(mdi, token);
+			var buf = MDAPI.GetFieldSignatureBlob(mdi, token);
 			if (buf == null)
 				return null;
 			var sig = new DebugSignatureReader().ReadSignature(mdi, buf) as FieldSig;
 			return sig == null ? null : sig.Type;
-		}
-
-		static FieldAttributes GetFieldAttributes(IMetaDataImport mdi, uint token) {
-			uint chField, dwAttr;
-			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chField, out dwAttr, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
-			return hr < 0 ? 0 : (FieldAttributes)dwAttr;
-		}
-
-		unsafe static object GetFieldConstant(IMetaDataImport mdi, uint token, out CorElementType constantType) {
-			constantType = CorElementType.End;
-			if (mdi == null)
-				return null;
-			uint chField, dwAttr, cchValue;
-			IntPtr pValue;
-			CorElementType constantTypeTmp;
-			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chField, out dwAttr, IntPtr.Zero, IntPtr.Zero, new IntPtr(&constantTypeTmp), new IntPtr(&pValue), new IntPtr(&cchValue));
-			if (hr < 0 || pValue == IntPtr.Zero)
-				return null;
-			constantType = constantTypeTmp;
-			return ReadConstant(pValue, cchValue, constantType);
-		}
-
-		unsafe static object ReadConstant(IntPtr addr, uint size, CorElementType elementType) {
-			byte* p = (byte*)addr;
-			if (p == null)
-				return null;
-
-			// size is always 0 unless it's a string...
-			switch (elementType) {
-			case CorElementType.Boolean:	return *p != 0;
-			case CorElementType.Char:		return *(char*)p;
-			case CorElementType.I1:			return *(sbyte*)p;
-			case CorElementType.U1:			return *p;
-			case CorElementType.I2:			return *(short*)p;
-			case CorElementType.U2:			return *(ushort*)p;
-			case CorElementType.I4:			return *(int*)p;
-			case CorElementType.U4:			return *(uint*)p;
-			case CorElementType.I8:			return *(long*)p;
-			case CorElementType.U8:			return *(ulong*)p;
-			case CorElementType.R4:			return *(float*)p;
-			case CorElementType.R8:			return *(double*)p;
-			case CorElementType.String:		return new string((char*)p, 0, (int)size);
-			default:						return null;
-			}
 		}
 
 		static DebuggerBrowsableState? GetDebuggerBrowsableState(IMetaDataImport mdi, uint token) {
@@ -671,14 +306,10 @@ namespace dndbg.Engine {
 			if (mdi == null)
 				return null;
 
-			IntPtr addr;
-			uint size;
-			int hr = mdi.GetCustomAttributeByName(token, "System.Diagnostics.DebuggerBrowsableAttribute", out addr, out size);
+			var data = MDAPI.GetCustomAttributeByName(mdi, token, "System.Diagnostics.DebuggerBrowsableAttribute");
 			const int expectedLength = 8;
-			if (hr < 0 || addr == IntPtr.Zero || size != expectedLength)
+			if (data == null || data.Length != expectedLength)
 				return null;
-			var data = new byte[expectedLength];
-			Marshal.Copy(addr, data, 0, data.Length);
 			if (BitConverter.ToUInt16(data, 0) != 1)
 				return null;
 			var state = (DebuggerBrowsableState)BitConverter.ToInt32(data, 2);
@@ -689,21 +320,21 @@ namespace dndbg.Engine {
 		}
 
 		static bool GetCompilerGeneratedAttribute(IMetaDataImport mdi, uint token) {
-			return HasAttribute(mdi, token, "System.Runtime.CompilerServices.CompilerGeneratedAttribute");
+			return MDAPI.HasAttribute(mdi, token, "System.Runtime.CompilerServices.CompilerGeneratedAttribute");
 		}
 
 		static CorFieldInfo ReadFieldInfo(IMetaDataImport mdi, uint token, CorType type) {
 			if (mdi == null)
 				return null;
-			var name = GetFieldName(mdi, token);
+			var name = MDAPI.GetFieldName(mdi, token);
 			if (name == null)
 				return null;
 			var fieldType = GetFieldTypeSig(mdi, token);
 			if (fieldType == null)
 				return null;
-			var attrs = GetFieldAttributes(mdi, token);
+			var attrs = MDAPI.GetFieldAttributes(mdi, token);
 			CorElementType constantType;
-			var constant = GetFieldConstant(mdi, token, out constantType);
+			var constant = MDAPI.GetFieldConstant(mdi, token, out constantType);
 			var browseState = GetDebuggerBrowsableState(mdi, token);
 			bool compilerGeneratedAttribute = GetCompilerGeneratedAttribute(mdi, token);
 			return new CorFieldInfo(type, token, name, fieldType, attrs, constant, constantType, browseState, compilerGeneratedAttribute);
@@ -714,7 +345,7 @@ namespace dndbg.Engine {
 				var cls = type.Class;
 				var mod = cls == null ? null : cls.Module;
 				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-				var fdTokens = GetFieldTokens(mdi, cls == null ? 0 : cls.Token);
+				var fdTokens = MDAPI.GetFieldTokens(mdi, cls == null ? 0 : cls.Token);
 				foreach (var fdToken in fdTokens) {
 					var info = ReadFieldInfo(mdi, fdToken, type);
 					Debug.Assert(info != null);
@@ -727,7 +358,7 @@ namespace dndbg.Engine {
 		}
 
 		public static IEnumerable<CorFieldInfo> GetFieldInfos(IMetaDataImport mdi, uint token) {
-			var fdTokens = GetFieldTokens(mdi, token);
+			var fdTokens = MDAPI.GetFieldTokens(mdi, token);
 			foreach (var fdToken in fdTokens) {
 				var info = ReadFieldInfo(mdi, fdToken, null);
 				Debug.Assert(info != null);
@@ -740,18 +371,12 @@ namespace dndbg.Engine {
 			if (mdi == null)
 				return null;
 
-			uint chProperty, dwPropFlags, mdSetter, mdGetter;
-			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, out chProperty, out dwPropFlags, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, out mdSetter, out mdGetter, IntPtr.Zero, 0, IntPtr.Zero);
-			char[] nameBuf = null;
-			if (hr >= 0 && chProperty != 0) {
-				nameBuf = new char[chProperty];
-				fixed (char* p = &nameBuf[0])
-					hr = mdi.GetPropertyProps(token, IntPtr.Zero, new IntPtr(p), (uint)nameBuf.Length, out chProperty, out dwPropFlags, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, out mdSetter, out mdGetter, IntPtr.Zero, 0, IntPtr.Zero);
-			}
-			if (hr < 0)
+			var name = MDAPI.GetPropertyName(mdi, token);
+			if (name == null)
 				return null;
-
-			string name = chProperty <= 1 ? string.Empty : new string(nameBuf, 0, (int)chProperty - 1);
+			uint mdSetter, mdGetter;
+			if (!MDAPI.GetPropertyGetterSetter(mdi, token, out mdGetter, out mdSetter))
+				return null;
 
 			var getSig = GetMethodSignature(mdi, mdGetter);
 			var setSig = GetMethodSignature(mdi, mdSetter);
@@ -785,10 +410,8 @@ namespace dndbg.Engine {
 				mdSetter = 0;
 
 			MethodAttributes getMethodAttrs;
-			MethodImplAttributes dwImplAttrs;
-			IntPtr pvSigBlob;
-			hr = mdi.GetMethodProps(mdGetter, IntPtr.Zero, IntPtr.Zero, 0, out chProperty, out getMethodAttrs, out pvSigBlob, out chProperty, out chProperty, out dwImplAttrs);
-			if (hr < 0)
+			MethodImplAttributes getMethodImplAttrs;
+			if (!MDAPI.GetMethodAttributes(mdi, mdGetter, out getMethodAttrs, out getMethodImplAttrs))
 				return null;
 
 			var browseState = GetDebuggerBrowsableState(mdi, token);
@@ -804,7 +427,7 @@ namespace dndbg.Engine {
 			for (; type != null; type = type.Base) {
 				uint token;
 				var mdi = type.GetMetaDataImport(out token);
-				var pdTokens = GetPropertyTokens(mdi, token);
+				var pdTokens = MDAPI.GetPropertyTokens(mdi, token);
 				foreach (var pdToken in pdTokens) {
 					var info = ReadPropertyInfo(mdi, pdToken, type);
 					if (info != null)
@@ -819,11 +442,13 @@ namespace dndbg.Engine {
 			if (mdi == null)
 				return null;
 
+			var name = MDAPI.GetMethodName(mdi, token);
+			if (name == null)
+				return null;
+
 			MethodAttributes attrs;
 			MethodImplAttributes implAttrs;
-
-			var name = GetMethodDefName(mdi, token, out attrs, out implAttrs);
-			if (name == null)
+			if (!MDAPI.GetMethodAttributes(mdi, token, out attrs, out implAttrs))
 				return null;
 
 			var sig = GetMethodSignature(mdi, token);
@@ -840,7 +465,7 @@ namespace dndbg.Engine {
 			for (; type != null; type = type.Base) {
 				uint token;
 				var mdi = type.GetMetaDataImport(out token);
-				var mdTokens = GetMethodTokens(mdi, token);
+				var mdTokens = MDAPI.GetMethodTokens(mdi, token);
 				foreach (var mdToken in mdTokens) {
 					var info = ReadMethodInfo(mdi, mdToken, type);
 					if (info == null)
@@ -868,12 +493,6 @@ namespace dndbg.Engine {
 			return true;
 		}
 
-		static uint GetTypeDefExtends(IMetaDataImport mdi, uint token) {
-			uint chTypeDef, dwTypeDefFlags, tkExtends;
-			int hr = mdi.GetTypeDefProps(token, IntPtr.Zero, 0, out chTypeDef, out dwTypeDefFlags, out tkExtends);
-			return hr < 0 ? 0 : tkExtends;
-		}
-
 		public static bool IsEnum(IMetaDataImport mdi, uint token) {
 			switch ((Table)(token >> 24)) {
 			case Table.TypeDef: return IsEnumTypeDef(mdi, token);
@@ -887,7 +506,7 @@ namespace dndbg.Engine {
 			if (mdi == null)
 				return false;
 
-			return IsSystemEnum(mdi, GetTypeDefExtends(mdi, token));
+			return IsSystemEnum(mdi, MDAPI.GetTypeDefExtends(mdi, token));
 		}
 
 		public static bool IsSystemEnum(IMetaDataImport mdi, uint token) {
@@ -940,14 +559,6 @@ namespace dndbg.Engine {
 			if (names.Count != 1 || names[0].Name != "System.Nullable`1")
 				return false;
 			return true;
-		}
-
-		public static bool HasAttribute(IMetaDataImport mdi, uint token, string attributeName) {
-			if (mdi == null)
-				return false;
-			IntPtr addr;
-			uint size;
-			return mdi.GetCustomAttributeByName(token, attributeName, out addr, out size) == 0;
 		}
 	}
 }

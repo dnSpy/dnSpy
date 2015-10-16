@@ -118,7 +118,7 @@ namespace dnSpy.Debugger {
 			if (value == null)
 				output.Write("???", TypeColor.Error);
 			else {
-				if (value.IsReference && value.Type == dndbg.Engine.COM.CorDebug.CorElementType.ByRef)
+				if (value.IsReference && value.Type == dndbg.COM.CorDebug.CorElementType.ByRef)
 					value = value.NeuterCheckDereferencedValue ?? value;
 
 				var type = value.ExactType;

@@ -17,13 +17,42 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dndbg.Engine.COM.CorDebug;
+using dndbg.COM.CorDebug;
+using dndbg.COM.MetaData;
+using dndbg.DotNet;
 
 namespace dndbg.Engine {
 	/// <summary>
 	/// A loaded module
 	/// </summary>
 	public sealed class DnModule {
+		/// <summary>
+		/// Gets the created module or null if none has been created
+		/// </summary>
+		public CorModuleDef CorModuleDef {
+			get { return corModuleDef; }
+		}
+		CorModuleDef corModuleDef;
+
+		/// <summary>
+		/// Returns the created module or creates one if none has been created
+		/// </summary>
+		/// <returns></returns>
+		public CorModuleDef GetOrCreateCorModuleDef() {
+			Debugger.DebugVerifyThread();
+			if (corModuleDef != null)
+				return corModuleDef;
+
+			// No lock needed, must be called on debugger thread
+
+			corModuleDef = new CorModuleDef(CorModule.GetMetaDataInterface<IMetaDataImport>(), new CorModuleDefHelper(this));
+			var asm = Assembly.GetOrCreateCorAssemblyDef(this, corModuleDef);
+			asm.Modules.Add(corModuleDef);
+			corModuleDef.Initialize();
+
+			return corModuleDef;
+		}
+
 		public CorModule CorModule {
 			get { return module; }
 		}

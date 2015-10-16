@@ -19,7 +19,7 @@
 
 using System;
 using System.Text;
-using dndbg.Engine.COM.CorDebug;
+using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	public sealed class CorModule : COMObject<ICorDebugModule>, IEquatable<CorModule> {

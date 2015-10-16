@@ -22,8 +22,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using dndbg.Engine.COM.CorDebug;
-using dndbg.Engine.COM.MetaData;
+using dndbg.COM.CorDebug;
+using dndbg.COM.MetaData;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
@@ -931,7 +931,7 @@ namespace dndbg.Engine {
 			if (mdi == null)
 				WriteDefaultFuncName(token);
 			else {
-				var name = MetaDataUtils.GetMethodDefName(mdi, token);
+				var name = MDAPI.GetMethodName(mdi, token);
 				if (name == null)
 					WriteDefaultFuncName(token);
 				else
@@ -1352,7 +1352,7 @@ namespace dndbg.Engine {
 		}
 
 		void WriteEnum(IMetaDataImport mdi, uint token, object value, IEnumerable<CorFieldInfo> typeFields) {
-			bool hasFlagsAttr = MetaDataUtils.HasAttribute(mdi, token, "System.FlagsAttribute");
+			bool hasFlagsAttr = MDAPI.HasAttribute(mdi, token, "System.FlagsAttribute");
 			var fields = typeFields.Where(a => (a.Attributes & (FieldAttributes.Literal | FieldAttributes.Static)) == (FieldAttributes.Literal | FieldAttributes.Static) && a.Constant != null);
 			var input = Utils.IntegerToUInt64ZeroExtend(value);
 			if (hasFlagsAttr && input != null && input.Value != 0) {

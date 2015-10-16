@@ -23,7 +23,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;THREAD_SAFE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -32,20 +32,47 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>TRACE;THREAD_SAFE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="COM\CorDebug.cs" />
+    <Compile Include="COM\MetaData.cs" />
+    <Compile Include="COM\MetaHost.cs" />
+    <Compile Include="DotNet\CorAssemblyDef.cs" />
+    <Compile Include="DotNet\CorAssemblyRef.cs" />
+    <Compile Include="DotNet\CorDeclSecurity.cs" />
+    <Compile Include="DotNet\CorEventDef.cs" />
+    <Compile Include="DotNet\CorExportedType.cs" />
+    <Compile Include="DotNet\CorFieldDef.cs" />
+    <Compile Include="DotNet\CorFileDef.cs" />
+    <Compile Include="DotNet\CorGenericParam.cs" />
+    <Compile Include="DotNet\CorGenericParamConstraint.cs" />
+    <Compile Include="DotNet\CorInterfaceImpl.cs" />
+    <Compile Include="DotNet\CorManifestResource.cs" />
+    <Compile Include="DotNet\CorMemberRef.cs" />
+    <Compile Include="DotNet\CorMethodDef.cs" />
+    <Compile Include="DotNet\CorMethodSpec.cs" />
+    <Compile Include="DotNet\CorModuleDef.cs" />
+    <Compile Include="DotNet\CorModuleRef.cs" />
+    <Compile Include="DotNet\CorParamDef.cs" />
+    <Compile Include="DotNet\CorPropertyDef.cs" />
+    <Compile Include="DotNet\CorStandAloneSig.cs" />
+    <Compile Include="DotNet\CorTypeDef.cs" />
+    <Compile Include="DotNet\CorTypeRef.cs" />
+    <Compile Include="DotNet\CorTypeSpec.cs" />
+    <Compile Include="DotNet\ICorMDTokenProvider.cs" />
+    <Compile Include="DotNet\ICorModuleDefHelper.cs" />
+    <Compile Include="DotNet\IProcessReader.cs" />
+    <Compile Include="DotNet\ProcessBinaryReader.cs" />
+    <Compile Include="DotNet\Utils.cs" />
     <Compile Include="Engine\AttachProcessOptions.cs" />
     <Compile Include="Engine\BreakpointList.cs" />
     <Compile Include="Engine\BreakProcessHelper.cs" />
     <Compile Include="Engine\BreakProcessType.cs" />
     <Compile Include="Engine\COMObject.cs" />
-    <Compile Include="Engine\COM\CorDebug.cs" />
-    <Compile Include="Engine\COM\MetaData.cs" />
-    <Compile Include="Engine\COM\MetaHost.cs" />
     <Compile Include="Engine\CorAppDomain.cs" />
     <Compile Include="Engine\CorAssembly.cs" />
     <Compile Include="Engine\CorChain.cs" />
@@ -62,7 +89,9 @@
     <Compile Include="Engine\CorFunctionBreakpoint.cs" />
     <Compile Include="Engine\CorMDA.cs" />
     <Compile Include="Engine\CorModule.cs" />
+    <Compile Include="Engine\CorModuleDefHelper.cs" />
     <Compile Include="Engine\CorProcess.cs" />
+    <Compile Include="Engine\CorProcessReader.cs" />
     <Compile Include="Engine\CorStepper.cs" />
     <Compile Include="Engine\CorThread.cs" />
     <Compile Include="Engine\CorType.cs" />
@@ -97,6 +126,7 @@
     <Compile Include="Engine\IDebugMessageDispatcher.cs" />
     <Compile Include="Engine\IdentifierEscaper.cs" />
     <Compile Include="Engine\ILFrameIP.cs" />
+    <Compile Include="Engine\MDAPI.cs" />
     <Compile Include="Engine\MetaDataUtils.cs" />
     <Compile Include="Engine\NativeMethods.cs" />
     <Compile Include="Engine\ProcessCreationFlags.cs" />

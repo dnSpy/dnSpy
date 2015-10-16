@@ -23,8 +23,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using dndbg.COM.CorDebug;
 using dndbg.Engine;
-using dndbg.Engine.COM.CorDebug;
 using dnlib.DotNet;
 using dnSpy.MVVM;
 

@@ -21,8 +21,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using dndbg.COM.CorDebug;
 using dndbg.Engine;
-using dndbg.Engine.COM.CorDebug;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 

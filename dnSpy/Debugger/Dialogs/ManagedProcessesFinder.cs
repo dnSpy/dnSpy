@@ -25,8 +25,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using dndbg.COM.MetaHost;
 using dndbg.Engine;
-using dndbg.Engine.COM.MetaHost;
 using dnlib.PE;
 using Microsoft.Win32.SafeHandles;
 

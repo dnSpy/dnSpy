@@ -19,7 +19,7 @@
 
 using System;
 using System.Linq;
-using dndbg.Engine.COM.CorDebug;
+using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	/// <summary>

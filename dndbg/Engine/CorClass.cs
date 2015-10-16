@@ -20,8 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using dndbg.Engine.COM.CorDebug;
-using dndbg.Engine.COM.MetaData;
+using dndbg.COM.CorDebug;
+using dndbg.COM.MetaData;
 
 namespace dndbg.Engine {
 	public sealed class CorClass : COMObject<ICorDebugClass>, IEquatable<CorClass> {
@@ -169,7 +169,7 @@ namespace dndbg.Engine {
 		public bool HasAttribute(string attributeName) {
 			var mod = Module;
 			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
-			return MetaDataUtils.HasAttribute(mdi, Token, attributeName);
+			return MDAPI.HasAttribute(mdi, Token, attributeName);
 		}
 
 		public static bool operator ==(CorClass a, CorClass b) {

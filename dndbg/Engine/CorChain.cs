@@ -19,7 +19,7 @@
 
 using System;
 using System.Collections.Generic;
-using dndbg.Engine.COM.CorDebug;
+using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
 	public sealed class CorChain : COMObject<ICorDebugChain>, IEquatable<CorChain> {

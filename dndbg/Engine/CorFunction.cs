@@ -19,8 +19,8 @@
 
 using System;
 using System.Collections.Generic;
-using dndbg.Engine.COM.CorDebug;
-using dndbg.Engine.COM.MetaData;
+using dndbg.COM.CorDebug;
+using dndbg.COM.MetaData;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {
@@ -171,7 +171,9 @@ namespace dndbg.Engine {
 			var mdi = mod.GetMetaDataInterface<IMetaDataImport>();
 			if (mdi == null)
 				return null;
-			var name = MetaDataUtils.GetMethodDefName(mdi, Token, out methodAttrs, out methodImplAttrs);
+			if (!MDAPI.GetMethodAttributes(mdi, Token, out methodAttrs, out methodImplAttrs))
+				return null;
+			var name = MDAPI.GetMethodName(mdi, Token);
 			if (name == null)
 				return null;
 			return MetaDataUtils.GetParameters(mdi, Token);

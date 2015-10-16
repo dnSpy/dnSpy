@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using dndbg.Engine.COM.CorDebug;
+using dndbg.COM.CorDebug;
 using Microsoft.Win32;
 
 namespace dndbg.Engine {

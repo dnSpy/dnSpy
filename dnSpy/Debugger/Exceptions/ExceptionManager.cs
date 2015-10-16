@@ -20,8 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using dndbg.COM.CorDebug;
 using dndbg.Engine;
-using dndbg.Engine.COM.CorDebug;
 
 namespace dnSpy.Debugger.Exceptions {
 	enum ExceptionManagerEventType {

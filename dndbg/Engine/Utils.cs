@@ -19,7 +19,7 @@
 
 using System;
 using System.Diagnostics;
-using dndbg.Engine.COM.MetaData;
+using dndbg.COM.MetaData;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {

@@ -24,8 +24,8 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using dndbg.Engine.COM.CorDebug;
-using dndbg.Engine.COM.MetaHost;
+using dndbg.COM.CorDebug;
+using dndbg.COM.MetaHost;
 
 namespace dndbg.Engine {
 	public delegate void DebugCallbackEventHandler(DnDebugger dbg, DebugCallbackEventArgs e);
@@ -803,6 +803,13 @@ namespace dndbg.Engine {
 			case DebugCallbackType.LoadClass:
 				var lcArgs = (LoadClassDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, lcArgs.AppDomain, null);
+
+				var cls = lcArgs.CorClass;
+				if (cls != null) {
+					var module = TryGetModule(lcArgs.CorAppDomain, lcArgs.CorClass);
+					if (module != null && module.CorModuleDef != null)
+						module.CorModuleDef.LoadClass(cls.Token);
+				}
 				break;
 
 			case DebugCallbackType.UnloadClass:
@@ -1271,6 +1278,22 @@ namespace dndbg.Engine {
 			DebugVerifyThread();
 			var process = TryGetValidProcess(comThread);
 			return process == null ? null : process.TryGetValidThread(comThread);
+		}
+
+		public DnModule TryGetModule(CorAppDomain appDomain, CorClass cls) {
+			if (appDomain == null || cls == null)
+				return null;
+			var clsMod = cls.Module;
+			if (clsMod == null)
+				return null;
+			var ad = TryGetAppDomain(appDomain.RawObject);
+			if (ad == null)
+				return null;
+
+			var asm = TryGetValidAssembly(appDomain.RawObject, clsMod.RawObject);
+			if (asm == null)
+				return null;
+			return asm.TryGetModule(clsMod.RawObject);
 		}
 
 		/// <summary>

@@ -18,7 +18,9 @@
 */
 
 using System;
-using dndbg.Engine.COM.CorDebug;
+using System.Diagnostics;
+using dndbg.COM.CorDebug;
+using dndbg.DotNet;
 
 namespace dndbg.Engine {
 	/// <summary>
@@ -127,6 +129,20 @@ namespace dndbg.Engine {
 			module.SetHasUnloaded();
 			modules.Remove(comModule);
 		}
+
+		internal CorAssemblyDef GetOrCreateCorAssemblyDef(DnModule module, CorModuleDef corModuleDef) {
+			Debugger.DebugVerifyThread();
+			if (corAssemblyDef != null)
+				return corAssemblyDef;
+
+			// No lock needed, must be called on debugger thread
+
+			Debug.Assert(module.IncrementedId == 0);
+			Debug.Assert(module.CorModuleDef == corModuleDef);
+			corAssemblyDef = new CorAssemblyDef(corModuleDef, 1);
+			return corAssemblyDef;
+		}
+		CorAssemblyDef corAssemblyDef;
 
 		public override string ToString() {
 			return string.Format("{0} {1}", IncrementedId, Name);

@@ -18,7 +18,7 @@
 */
 
 using System.Collections.Generic;
-using dndbg.Engine.COM.CorDebug;
+using dndbg.COM.CorDebug;
 using dnlib.DotNet;
 
 namespace dndbg.Engine {

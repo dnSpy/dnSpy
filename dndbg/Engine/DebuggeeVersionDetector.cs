@@ -20,8 +20,8 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
-using dndbg.Engine.COM.CorDebug;
-using dndbg.Engine.COM.MetaHost;
+using dndbg.COM.CorDebug;
+using dndbg.COM.MetaHost;
 
 namespace dndbg.Engine {
 	public static class DebuggeeVersionDetector {

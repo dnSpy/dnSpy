@@ -18,8 +18,8 @@
 */
 
 using System;
+using dndbg.COM.MetaData;
 using dndbg.Engine;
-using dndbg.Engine.COM.MetaData;
 
 namespace dnSpy.Debugger {
 	static class EvalUtils {
