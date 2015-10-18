@@ -50,7 +50,7 @@ namespace dndbg.DotNet {
 		protected override void InitializeSecurityAttributes() {
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
-			var data = MDAPI.GetPermissionSetBlob(mdi, token);
+			var data = MDAPI.GetPermissionSetBlob(mdi, token) ?? new byte[0];
 			var gpContext = new GenericParamContext();
 			var tmp = DeclSecurityReader.Read(readerModule, data, gpContext);
 			Interlocked.CompareExchange(ref securityAttributes, tmp, null);
@@ -61,7 +61,7 @@ namespace dndbg.DotNet {
 				return blob;
 			var mdi = readerModule.MetaDataImport;
 			uint token = OriginalToken.Raw;
-			Interlocked.CompareExchange(ref blob, MDAPI.GetPermissionSetBlob(mdi, token), null);
+			Interlocked.CompareExchange(ref blob, MDAPI.GetPermissionSetBlob(mdi, token) ?? new byte[0], null);
 			return blob;
 		}
 		byte[] blob;

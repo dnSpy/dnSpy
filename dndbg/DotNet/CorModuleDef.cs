@@ -109,6 +109,13 @@ namespace dndbg.DotNet {
 
 		uint lastExportedTypeRidInList;
 		uint lastManifestResourceRidInList;
+		uint lastTriedTypeRid;
+
+		/// <summary>
+		/// Gets notified when a new type is added/updated. If this isn't a dynamic module, this
+		/// event is never raised.
+		/// </summary>
+		public event EventHandler<TypeUpdatedEventArgs> TypeUpdated;
 
 		public MDToken OriginalToken {
 			get { return new MDToken(MDToken.Table, origRid); }
@@ -257,10 +264,12 @@ namespace dndbg.DotNet {
 				return null;
 			if (!corModuleDefHelper.IsDynamic)
 				return ResolveTypeDef(mdToken.Rid);
-			return InitializeTypeDef(mdToken.Rid, true);
+			bool created;
+			return InitializeTypeDef(mdToken.Rid, true, out created);
 		}
 
-		CorTypeDef InitializeTypeDef(uint rid, bool calledFromLoadClass) {
+		CorTypeDef InitializeTypeDef(uint rid, bool calledFromLoadClass, out bool created) {
+			created = false;
 			if (!IsValidToken(Table.TypeDef, rid))
 				return null;
 			CorTypeDef td;
@@ -269,11 +278,17 @@ namespace dndbg.DotNet {
 				return td;
 
 			if (td == null) {
+				created = true;
 				td = new CorTypeDef(this, rid);
 				ridToType.Add(rid, td);
 				UpdateTypeTables(td);
 			}
 			td.Initialize(corModuleDefHelper.IsDynamic ? calledFromLoadClass : true);
+			if (corModuleDefHelper.IsDynamic) {
+				var ev = TypeUpdated;
+				if (ev != null)
+					ev(this, new TypeUpdatedEventArgs(td, created, calledFromLoadClass));
+			}
 			return td;
 		}
 
@@ -585,7 +600,8 @@ namespace dndbg.DotNet {
 		internal TypeDef ResolveTypeDef(uint rid) {
 			if (!IsValidToken(Table.TypeDef, rid))
 				return null;
-			return InitializeTypeDef(rid, false);
+			bool created;
+			return InitializeTypeDef(rid, false, out created);
 		}
 
 		FieldDef ResolveField(uint rid) {
@@ -1025,7 +1041,13 @@ namespace dndbg.DotNet {
 				if (nestedListInitd.Contains(enclTypeRid)) {
 					td.DeclaringType = null;
 					td.DeclaringType2 = null;
-					ridToType[enclTypeRid].NestedTypes.Add(td);
+					var enclType = ridToType[enclTypeRid];
+					enclType.NestedTypes.Add(td);
+					if (corModuleDefHelper.IsDynamic) {
+						var ev = TypeUpdated;
+						if (ev != null)
+							ev(this, new TypeUpdatedEventArgs(enclType, false, false));
+					}
 				}
 			}
 			else
@@ -1148,6 +1170,41 @@ namespace dndbg.DotNet {
 
 		IImageStream CreateResourceStream(uint offset) {
 			return corModuleDefHelper.CreateResourceStream(offset) ?? MemoryImageStream.CreateEmpty();
+		}
+
+		/// <summary>
+		/// Add all new types that have been added to the module. Returns true if at least one new
+		/// type was discovered.
+		/// </summary>
+		/// <returns></returns>
+		public bool UpdateTypes() {
+			bool added = false;
+			if (!corModuleDefHelper.IsDynamic)
+				return added;
+
+			for (uint rid = lastTriedTypeRid + 1; ; rid++) {
+				if (!IsValidToken(new MDToken(Table.TypeDef, rid).Raw))
+					break;
+				bool created;
+				InitializeTypeDef(rid, false, out created);
+				lastTriedTypeRid = rid;
+				added |= created;
+			}
+
+			return added;
+		}
+
+		/// <summary>
+		/// Add any new types, resources, etc that have been added to the module. Returns true if
+		/// something new was found.
+		/// </summary>
+		/// <returns></returns>
+		public bool UpdateAll() {
+			bool b = false;
+			b |= UpdateExportedTypes();
+			b |= UpdateResources();
+			b |= UpdateTypes();
+			return b;
 		}
 	}
 }

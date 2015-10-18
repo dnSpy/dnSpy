@@ -41,7 +41,7 @@ namespace dndbg.DotNet {
 		void Initialize_NoLock() {
 			this.module = readerModule;
 			InitName_NoLock();
-			InitClass_NoLock();
+			InitClass_NoLock();	// Must be called before InitSignature_NoLock()
 			InitSignature_NoLock();
 		}
 
@@ -69,7 +69,7 @@ namespace dndbg.DotNet {
 			uint token = OriginalToken.Raw;
 
 			var sig = MDAPI.GetMemberRefSignatureBlob(mdi, token);
-			Signature = readerModule.ReadSignature(sig, gpContext);
+			Signature = readerModule.ReadSignature(sig, GetSignatureGenericParamContext(gpContext, this.@class));
 		}
 	}
 }

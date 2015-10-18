@@ -67,6 +67,7 @@
     <Compile Include="DotNet\ICorModuleDefHelper.cs" />
     <Compile Include="DotNet\IProcessReader.cs" />
     <Compile Include="DotNet\ProcessBinaryReader.cs" />
+    <Compile Include="DotNet\TypeUpdatedEventArgs.cs" />
     <Compile Include="DotNet\Utils.cs" />
     <Compile Include="Engine\AttachProcessOptions.cs" />
     <Compile Include="Engine\BreakpointList.cs" />
