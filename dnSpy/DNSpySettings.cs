@@ -45,7 +45,11 @@ namespace ICSharpCode.ILSpy {
 				return root.Element(section) ?? new XElement(section);
 			}
 		}
-		
+
+		public XElement GetElement(XName section) {
+			return root.Element(section);
+		}
+
 		/// <summary>
 		/// Loads the settings file from disk.
 		/// </summary>

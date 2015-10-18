@@ -25,6 +25,7 @@ using System.Windows;
 using dnlib.DotNet;
 using dnSpy;
 using dnSpy.Decompiler;
+using dnSpy.Files;
 using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
 using dnSpy.TreeNodes.Hex;
@@ -33,36 +34,36 @@ using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
-	/// Represents a list of assemblies.
+	/// Represents a list of files.
 	/// This is used as (invisible) root node of the tree view.
 	/// </summary>
-	sealed class AssemblyListTreeNode : ILSpyTreeNode
+	sealed class DnSpyFileListTreeNode : ILSpyTreeNode
 	{
-		readonly AssemblyList assemblyList;
+		readonly DnSpyFileList dnspyFileList;
 
 		public object OwnerTreeView { get; set; }
 
-		public AssemblyListTreeNode(AssemblyList assemblyList)
+		public DnSpyFileListTreeNode(DnSpyFileList dnspyFileList)
 		{
-			if (assemblyList == null)
-				throw new ArgumentNullException("assemblyList");
-			this.assemblyList = assemblyList;
+			if (dnspyFileList == null)
+				throw new ArgumentNullException("dnspyFileList");
+			this.dnspyFileList = dnspyFileList;
 			BindToObservableCollection();
 		}
 
 		protected override void Write(ITextOutput output, Language language)
 		{
-			output.Write(UIUtils.CleanUpName(assemblyList.ListName), TextTokenType.Text);
+			output.Write(UIUtils.CleanUpName(dnspyFileList.Name), TextTokenType.Text);
 		}
 
 		void BindToObservableCollection()
 		{
 			this.Children.Clear();
-			this.Children.AddRange(assemblyList.GetAssemblies().Select(a => CreateAssemblyTreeNode(a)));
-			assemblyList.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e) {
+			this.Children.AddRange(dnspyFileList.GetDnSpyFiles().Select(a => CreateAssemblyTreeNode(a)));
+			dnspyFileList.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e) {
 				switch (e.Action) {
 					case NotifyCollectionChangedAction.Add:
-					this.Children.InsertRange(e.NewStartingIndex, e.NewItems.Cast<LoadedAssembly>().Select(a => CreateAssemblyTreeNode(a)));
+					this.Children.InsertRange(e.NewStartingIndex, e.NewItems.Cast<DnSpyFile>().Select(a => CreateAssemblyTreeNode(a)));
 						break;
 					case NotifyCollectionChangedAction.Remove:
 						this.Children.RemoveRange(e.OldStartingIndex, e.OldItems.Count);
@@ -72,7 +73,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 						throw new NotImplementedException();
 					case NotifyCollectionChangedAction.Reset:
 						this.Children.Clear();
-						this.Children.AddRange(assemblyList.GetAssemblies().Select(a => CreateAssemblyTreeNode(a)));
+						this.Children.AddRange(dnspyFileList.GetDnSpyFiles().Select(a => CreateAssemblyTreeNode(a)));
 						break;
 					default:
 						throw new NotSupportedException("Invalid value for NotifyCollectionChangedAction");
@@ -80,17 +81,17 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			};
 		}
 
-		AssemblyTreeNode CreateAssemblyTreeNode(LoadedAssembly asm)
+		AssemblyTreeNode CreateAssemblyTreeNode(DnSpyFile file)
 		{
 			CachedAssemblyTreeNode cachedInfo;
-			if (cachedAsmTreeNodes.TryGetValue(asm, out cachedInfo)) {
+			if (cachedAsmTreeNodes.TryGetValue(file, out cachedInfo)) {
 				var asmNode = cachedInfo.AssemblyTreeNode;
 				Debug.Assert(asmNode.Parent == null);
 				if (asmNode.Parent != null)
 					throw new InvalidOperationException();
 				return asmNode;
 			}
-			return new AssemblyTreeNode(asm);
+			return new AssemblyTreeNode(file);
 		}
 
 		sealed class CachedAssemblyTreeNode
@@ -104,13 +105,13 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		readonly Dictionary<LoadedAssembly, CachedAssemblyTreeNode> cachedAsmTreeNodes = new Dictionary<LoadedAssembly, CachedAssemblyTreeNode>();
+		readonly Dictionary<DnSpyFile, CachedAssemblyTreeNode> cachedAsmTreeNodes = new Dictionary<DnSpyFile, CachedAssemblyTreeNode>();
 
-		public void RegisterCached(LoadedAssembly asm, AssemblyTreeNode asmNode)
+		public void RegisterCached(DnSpyFile file, AssemblyTreeNode asmNode)
 		{
 			CachedAssemblyTreeNode cachedInfo;
-			if (!cachedAsmTreeNodes.TryGetValue(asm, out cachedInfo))
-				cachedAsmTreeNodes.Add(asm, cachedInfo = new CachedAssemblyTreeNode(asmNode));
+			if (!cachedAsmTreeNodes.TryGetValue(file, out cachedInfo))
+				cachedAsmTreeNodes.Add(file, cachedInfo = new CachedAssemblyTreeNode(asmNode));
 			else {
 				Debug.Assert(cachedInfo.AssemblyTreeNode == asmNode);
 				if (cachedInfo.AssemblyTreeNode != asmNode)
@@ -119,7 +120,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			cachedInfo.Counter++;
 		}
 
-		public void UnregisterCached(LoadedAssembly asm)
+		public void UnregisterCached(DnSpyFile asm)
 		{
 			var cachedInfo = cachedAsmTreeNodes[asm];
 			if (cachedInfo.Counter-- == 1)
@@ -155,23 +156,23 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			if (files == null)
 				files = e.Data.GetData(DataFormats.FileDrop) as string[];
 			if (files != null && files.Length > 0) {
-				LoadedAssembly newSelectedAsm = null;
+				DnSpyFile newSelectedAsm = null;
 				bool newSelectedAsmExisted = false;
 				var oldIgnoreSelChg = MainWindow.Instance.TreeView_SelectionChanged_ignore;
 				try {
-					lock (assemblyList.GetLockObj()) {
-						int numFiles = assemblyList.Count_NoLock;
-						var old = assemblyList.IsReArranging;
+					lock (dnspyFileList.GetLockObj()) {
+						int numFiles = dnspyFileList.Count_NoLock;
+						var old = dnspyFileList.IsReArranging;
 						try {
 							MainWindow.Instance.TreeView_SelectionChanged_ignore = true;
 							var assemblies = (from file in files
 											  where file != null
-											  select assemblyList.OpenAssembly(file) into node
+											  select dnspyFileList.OpenFile(file) into node
 											  where node != null
 											  select node).Distinct().ToList();
-							var oldAsm = new Dictionary<LoadedAssembly, bool>(assemblies.Count);
-							foreach (LoadedAssembly asm in assemblies) {
-								int nodeIndex = assemblyList.IndexOf_NoLock(asm);
+							var oldAsm = new Dictionary<DnSpyFile, bool>(assemblies.Count);
+							foreach (var asm in assemblies) {
+								int nodeIndex = dnspyFileList.IndexOf_NoLock(asm);
 								oldAsm[asm] = nodeIndex < numFiles;
 								if (newSelectedAsm == null) {
 									newSelectedAsm = asm;
@@ -180,26 +181,26 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 								if (nodeIndex < index)
 									index--;
 								numFiles--;
-								assemblyList.IsReArranging = oldAsm[asm];
-								assemblyList.RemoveAt_NoLock(nodeIndex);
-								assemblyList.IsReArranging = old;
+								dnspyFileList.IsReArranging = oldAsm[asm];
+								dnspyFileList.RemoveAt_NoLock(nodeIndex);
+								dnspyFileList.IsReArranging = old;
 							}
 							assemblies.Reverse();
-							foreach (LoadedAssembly asm in assemblies) {
-								assemblyList.IsReArranging = oldAsm[asm];
-								assemblyList.Insert_NoLock(index, asm);
-								assemblyList.IsReArranging = old;
+							foreach (var asm in assemblies) {
+								dnspyFileList.IsReArranging = oldAsm[asm];
+								dnspyFileList.Insert_NoLock(index, asm);
+								dnspyFileList.IsReArranging = old;
 							}
 						}
 						finally {
-							assemblyList.IsReArranging = old;
+							dnspyFileList.IsReArranging = old;
 						}
 					}
 					if (newSelectedAsm != null) {
 						if (!newSelectedAsmExisted)
 							MainWindow.Instance.TreeView_SelectionChanged_ignore = oldIgnoreSelChg;
-						var node = MainWindow.Instance.FindTreeNode(newSelectedAsm.AssemblyDefinition) ??
-							MainWindow.Instance.FindTreeNode(newSelectedAsm.ModuleDefinition);
+						var node = MainWindow.Instance.FindTreeNode(newSelectedAsm.AssemblyDef) ??
+							MainWindow.Instance.FindTreeNode(newSelectedAsm.ModuleDef);
 						if (node != null) {
 							MainWindow.Instance.treeView.FocusNode(node);
 							MainWindow.Instance.treeView.SelectedItem = node;
@@ -216,7 +217,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			language.WriteCommentLine(output, "List: " + assemblyList.ListName);
+			language.WriteCommentLine(output, "List: " + dnspyFileList.Name);
 			output.WriteLine();
 			foreach (AssemblyTreeNode asm in this.Children) {
 				language.WriteCommentLine(output, new string('-', 60));
@@ -233,18 +234,16 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				return null;
 			App.Current.Dispatcher.VerifyAccess();
 			foreach (AssemblyTreeNode node in this.Children) {
-				if (!node.LoadedAssembly.IsLoaded)
-					continue;
 				if (!node.IsDotNetFile)
 					continue;
 				if (node.IsNetModule) {
-					if (node.LoadedAssembly.ModuleDefinition == module)
+					if (node.DnSpyFile.ModuleDef == module)
 						return node;
 				}
 				else {
 					node.EnsureChildrenFiltered();
 					foreach (var asmNode in node.Children.OfType<AssemblyTreeNode>()) {
-						if (asmNode.LoadedAssembly.IsLoaded && asmNode.LoadedAssembly.ModuleDefinition == module)
+						if (asmNode.DnSpyFile.ModuleDef == module)
 							return asmNode;
 					}
 				}
@@ -254,10 +253,10 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		internal MetaDataTableRecordTreeNode FindTokenNode(TokenReference @ref)
 		{
-			var asm = assemblyList.FindAssemblyByFileName(@ref.Filename);
+			var asm = dnspyFileList.Find(@ref.Filename);
 			if (asm == null)
 				return null;
-			var modNode = FindModuleNode(asm.ModuleDefinition);
+			var modNode = FindModuleNode(asm.ModuleDef);
 			return modNode == null ? null : modNode.FindTokenNode(@ref.Token);
 		}
 
@@ -267,19 +266,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				return null;
 			App.Current.Dispatcher.VerifyAccess();
 			foreach (AssemblyTreeNode node in this.Children) {
-				if (node.LoadedAssembly.IsLoaded && node.LoadedAssembly.AssemblyDefinition == asm)
+				if (node.DnSpyFile.AssemblyDef == asm)
 					return node;
 			}
 			return null;
 		}
 
-		public AssemblyTreeNode FindAssemblyNode(LoadedAssembly asm)
+		public AssemblyTreeNode FindAssemblyNode(DnSpyFile asm)
 		{
 			if (asm == null)
 				return null;
 			App.Current.Dispatcher.VerifyAccess();
 			foreach (AssemblyTreeNode node in this.Children) {
-				if (node.LoadedAssembly == asm)
+				if (node.DnSpyFile == asm)
 					return node;
 			}
 			return null;
@@ -381,21 +380,21 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 		#endregion
 
-		public LoadedAssembly FindModule(LoadedAssembly asm, string moduleFilename)
+		public DnSpyFile FindModule(DnSpyFile asm, string moduleFilename)
 		{
 			App.Current.Dispatcher.VerifyAccess();
 			foreach (AssemblyTreeNode node in this.Children) {
-				if (node.LoadedAssembly != asm)
+				if (node.DnSpyFile != asm)
 					continue;
 				if (!node.IsDotNetFile || node.IsNetModule)
 					continue;
 
 				node.EnsureChildrenFiltered();
 				foreach (var asmNode in node.Children.OfType<AssemblyTreeNode>()) {
-					if (string.IsNullOrWhiteSpace(asmNode.LoadedAssembly.FileName))
+					if (string.IsNullOrWhiteSpace(asmNode.DnSpyFile.Filename))
 						continue;
-					if (asmNode.LoadedAssembly.FileName.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
-						return asmNode.LoadedAssembly;
+					if (asmNode.DnSpyFile.Filename.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
+						return asmNode.DnSpyFile;
 				}
 			}
 

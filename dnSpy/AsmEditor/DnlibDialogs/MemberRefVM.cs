@@ -23,9 +23,9 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Files;
 using dnSpy.MVVM;
 using dnSpy.Search;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MemberRefVM : ViewModelBase {
@@ -200,9 +200,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickModuleRef() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var loadedAsm = dnlibTypePicker.GetDnlibType<LoadedAssembly>(new SameAssemblyTreeViewNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsTreeViewNodeFilter(VisibleMembersFlags.ModuleDef)), null, typeSigCreatorOptions.OwnerModule);
-			if (loadedAsm != null) {
-				var module = loadedAsm.ModuleDefinition;
+			var file = dnlibTypePicker.GetDnlibType<DnSpyFile>(new SameAssemblyTreeViewNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsTreeViewNodeFilter(VisibleMembersFlags.ModuleDef)), null, typeSigCreatorOptions.OwnerModule);
+			if (file != null) {
+				var module = file.ModuleDef;
 				if (module != null) {
 					var modRef = new ModuleRefUser(typeSigCreatorOptions.OwnerModule, module.Name);
 					Class = typeSigCreatorOptions.OwnerModule.UpdateRowId(modRef);

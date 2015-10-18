@@ -38,18 +38,18 @@ namespace dnSpy.Debugger.Breakpoints {
 			var asmName = bp.Assembly;
 			if (string.IsNullOrEmpty(asmName))
 				return null;
-			var loadedAsm = MainWindow.Instance.CurrentAssemblyList.FindAssemblyByFileName(asmName);
-			if (loadedAsm != null)
-				return loadedAsm.AssemblyDefinition;
+			var file = MainWindow.Instance.DnSpyFileList.Find(asmName);
+			if (file != null)
+				return file.AssemblyDef;
 			if (!File.Exists(asmName))
 				return null;
-			loadedAsm = MainWindow.Instance.LoadAssembly(asmName);
-			return loadedAsm == null ? null : loadedAsm.AssemblyDefinition;
+			file = MainWindow.Instance.LoadAssembly(asmName);
+			return file == null ? null : file.AssemblyDef;
 		}
 
 		static ModuleDef GetModule(ILCodeBreakpoint bp) {
-			var loadedAsm = MainWindow.Instance.LoadAssembly(bp.Assembly, bp.MethodKey.Module);
-			return loadedAsm == null ? null : loadedAsm.ModuleDefinition;
+			var file = MainWindow.Instance.LoadAssembly(bp.Assembly, bp.MethodKey.Module);
+			return file == null ? null : file.ModuleDef;
 		}
 
 		static Language Language {

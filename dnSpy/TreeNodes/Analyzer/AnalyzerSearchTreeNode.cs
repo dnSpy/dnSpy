@@ -18,6 +18,7 @@
 
 using System.Collections.Generic;
 using System.Threading;
+using dnSpy.Files;
 using dnSpy.Images;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
@@ -55,7 +56,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 		
-		public override bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies)
+		public override bool HandleAssemblyListChanged(ICollection<DnSpyFile> removedAssemblies, ICollection<DnSpyFile> addedAssemblies)
 		{
 			// only cancel a running analysis if user has manually added/removed assemblies
 			bool manualAdd = false;
@@ -71,7 +72,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			return true;
 		}
 
-		public override bool HandleModelUpdated(LoadedAssembly asm)
+		public override bool HandleModelUpdated(DnSpyFile asm)
 		{
 			this.LazyLoading = true;
 			threading.Cancel();

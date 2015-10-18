@@ -27,6 +27,7 @@ namespace dnSpy {
 		readonly IImageStream stream;
 
 		public OriginalInstructionBytesReader(MethodDef method) {
+			//TODO: This fails and returns null if it's a CorMethodDef!
 			this.stream = method.Module.GetImageStream((uint)method.RVA + method.Body.HeaderSize);
 		}
 

@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using ICSharpCode.ILSpy;
+using dnSpy.Files;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	interface IOpenAssembly {
@@ -25,6 +25,6 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		/// Asks user to pick a file and returns it or null if user canceled.
 		/// </summary>
 		/// <returns></returns>
-		LoadedAssembly Open();
+		DnSpyFile Open();
 	}
 }

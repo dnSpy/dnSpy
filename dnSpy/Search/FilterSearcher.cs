@@ -27,6 +27,7 @@ using System.Windows.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.Resources;
+using dnSpy.Files;
 using dnSpy.Images;
 using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
@@ -282,29 +283,29 @@ namespace dnSpy.Search {
 		public void SearchAssemblies(IEnumerable<AssemblyTreeNode> asmNodes) {
 			foreach (var asmNode in asmNodes) {
 				cancellationToken.ThrowIfCancellationRequested();
-				if (asmNode.LoadedAssembly.AssemblyDefinition != null)
+				if (asmNode.DnSpyFile.AssemblyDef != null)
 					SearchAssemblyInternal(asmNode);
 				else
-					SearchModule(asmNode.LoadedAssembly);
+					SearchModule(asmNode.DnSpyFile);
 			}
 		}
 
 		void SearchAssemblyInternal(AssemblyTreeNode asmNode) {
 			if (asmNode == null)
 				return;
-			var res = filter.GetFilterResult(asmNode.LoadedAssembly, AssemblyFilterType.Assembly);
+			var res = filter.GetFilterResult(asmNode.DnSpyFile, AssemblyFilterType.Assembly);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
 
-			if (res.IsMatch && IsMatch(asmNode.LoadedAssembly.AssemblyDefinition.FullName, asmNode.LoadedAssembly)) {
+			if (res.IsMatch && IsMatch(asmNode.DnSpyFile.AssemblyDef.FullName, asmNode.DnSpyFile)) {
 				onMatch(new SearchResult {
 					Language = language,
 					Object = asmNode,
-					NameObject = asmNode.LoadedAssembly.AssemblyDefinition,
-					TypeImageInfo = GetAssemblyImage(asmNode.LoadedAssembly.ModuleDefinition),
+					NameObject = asmNode.DnSpyFile.AssemblyDef,
+					TypeImageInfo = GetAssemblyImage(asmNode.DnSpyFile.ModuleDef),
 					LocationObject = null,
 					LocationImageInfo = new ImageInfo(),
-					LoadedAssembly = asmNode.LoadedAssembly,
+					DnSpyFile = asmNode.DnSpyFile,
 				});
 			}
 
@@ -313,7 +314,7 @@ namespace dnSpy.Search {
 				throw new InvalidOperationException("Assembly's children haven't been loaded yet. Load them in the UI thread.");
 			foreach (AssemblyTreeNode modNode in asmNode.Children) {
 				cancellationToken.ThrowIfCancellationRequested();
-				SearchModule(modNode.LoadedAssembly);
+				SearchModule(modNode.DnSpyFile);
 			}
 		}
 
@@ -328,10 +329,10 @@ namespace dnSpy.Search {
 			return new ImageInfo(name, BackgroundType.Search);
 		}
 
-		void SearchModule(LoadedAssembly module) {
+		void SearchModule(DnSpyFile module) {
 			if (module == null)
 				return;
-			var mod = module.ModuleDefinition;
+			var mod = module.ModuleDef;
 			if (mod == null) {
 				SearchNonNetFile(module);
 				return;
@@ -349,7 +350,7 @@ namespace dnSpy.Search {
 					TypeImageInfo = GetImage("AssemblyModule"),
 					LocationObject = mod.Assembly != null ? mod.Assembly : null,
 					LocationImageInfo = mod.Assembly != null ? GetAssemblyImage(mod.Assembly.ManifestModule) : new ImageInfo(),
-					LoadedAssembly = module,
+					DnSpyFile = module,
 				});
 			}
 
@@ -362,8 +363,8 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void SearchModAsmReferences(LoadedAssembly module) {
-			var mod = module.ModuleDefinition as ModuleDefMD;
+		void SearchModAsmReferences(DnSpyFile module) {
+			var mod = module.ModuleDef as ModuleDefMD;
 			if (mod == null)
 				return;
 
@@ -382,9 +383,9 @@ namespace dnSpy.Search {
 						Object = asmRef,
 						NameObject = asmRef,
 						TypeImageInfo = GetImage("AssemblyReference"),
-						LocationObject = module.ModuleDefinition,
+						LocationObject = module.ModuleDef,
 						LocationImageInfo = GetImage("AssemblyModule"),
-						LoadedAssembly = module,
+						DnSpyFile = module,
 					});
 				}
 			}
@@ -400,15 +401,15 @@ namespace dnSpy.Search {
 						Object = modRef,
 						NameObject = modRef,
 						TypeImageInfo = GetImage("ModuleReference"),
-						LocationObject = module.ModuleDefinition,
+						LocationObject = module.ModuleDef,
 						LocationImageInfo = GetImage("AssemblyModule"),
-						LoadedAssembly = module,
+						DnSpyFile = module,
 					});
 				}
 			}
 		}
 
-		void SearchResources(LoadedAssembly module) {
+		void SearchResources(DnSpyFile module) {
 			var res = filter.GetFilterResult((ResourceListTreeNode)null);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -419,7 +420,7 @@ namespace dnSpy.Search {
 
 			var resNodes = new List<ResourceTreeNode>();
 			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(() => {
-				var modNode = MainWindow.Instance.AssemblyListTreeNode.FindModuleNode(module.ModuleDefinition);
+				var modNode = MainWindow.Instance.DnSpyFileListTreeNode.FindModuleNode(module.ModuleDef);
 				if (modNode == null)
 					return;
 				modNode.EnsureChildrenFiltered();
@@ -434,7 +435,7 @@ namespace dnSpy.Search {
 				SearchResourceTreeNodes(module, node);
 		}
 
-		void SearchResourceTreeNodes(LoadedAssembly module, ResourceTreeNode resTreeNode) {
+		void SearchResourceTreeNodes(DnSpyFile module, ResourceTreeNode resTreeNode) {
 			var res = filter.GetFilterResult(resTreeNode);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -445,9 +446,9 @@ namespace dnSpy.Search {
 					Object = resTreeNode,
 					NameObject = resTreeNode,
 					TypeImageInfo = GetImage(resTreeNode.IconName),
-					LocationObject = module.ModuleDefinition,
+					LocationObject = module.ModuleDef,
 					LocationImageInfo = GetImage("AssemblyModule"),
-					LoadedAssembly = module,
+					DnSpyFile = module,
 				});
 			}
 
@@ -465,7 +466,7 @@ namespace dnSpy.Search {
 				SearchResourceElementTreeNode(module, resTreeNode, resElNode);
 		}
 
-		void SearchResourceElementTreeNode(LoadedAssembly module, ResourceTreeNode resTreeNode, ResourceElementTreeNode resElNode) {
+		void SearchResourceElementTreeNode(DnSpyFile module, ResourceTreeNode resTreeNode, ResourceElementTreeNode resElNode) {
 			var res = filter.GetFilterResult(resElNode);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -491,7 +492,7 @@ namespace dnSpy.Search {
 						TypeImageInfo = GetImage(resElNode.IconName),
 						LocationObject = resTreeNode,
 						LocationImageInfo = GetImage(resTreeNode.IconName),
-						LoadedAssembly = module,
+						DnSpyFile = module,
 					});
 				}
 			}
@@ -510,7 +511,7 @@ namespace dnSpy.Search {
 			return ns;
 		}
 
-		void SearchNonNetFile(LoadedAssembly nonNetFile) {
+		void SearchNonNetFile(DnSpyFile nonNetFile) {
 			if (nonNetFile == null)
 				return;
 			var res = filter.GetFilterResult(nonNetFile, AssemblyFilterType.NonNetFile);
@@ -525,12 +526,12 @@ namespace dnSpy.Search {
 					TypeImageInfo = GetImage("AssemblyWarning"),
 					LocationObject = null,
 					LocationImageInfo = new ImageInfo(),
-					LoadedAssembly = nonNetFile,
+					DnSpyFile = nonNetFile,
 				});
 			}
 		}
 
-		void Search(LoadedAssembly ownerModule, string ns, List<TypeDef> types) {
+		void Search(DnSpyFile ownerModule, string ns, List<TypeDef> types) {
 			var res = filter.GetFilterResult(ns, ownerModule);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -541,9 +542,9 @@ namespace dnSpy.Search {
 					Object = ns,
 					NameObject = new NamespaceSearchResult(ns),
 					TypeImageInfo = GetImage("Namespace"),
-					LocationObject = ownerModule.ModuleDefinition,
+					LocationObject = ownerModule.ModuleDef,
 					LocationImageInfo = GetImage("AssemblyModule"),
-					LoadedAssembly = ownerModule,
+					DnSpyFile = ownerModule,
 				});
 			}
 
@@ -553,7 +554,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void Search(LoadedAssembly ownerModule, string nsOwner, TypeDef type) {
+		void Search(DnSpyFile ownerModule, string nsOwner, TypeDef type) {
 			var res = filter.GetFilterResult(type);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -566,7 +567,7 @@ namespace dnSpy.Search {
 					TypeImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 					LocationObject = new NamespaceSearchResult(nsOwner),
 					LocationImageInfo = GetImage("Namespace"),
-					LoadedAssembly = ownerModule,
+					DnSpyFile = ownerModule,
 				});
 			}
 
@@ -578,7 +579,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void Search(LoadedAssembly ownerModule, TypeDef type) {
+		void Search(DnSpyFile ownerModule, TypeDef type) {
 			var res = filter.GetFilterResult(type);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -591,14 +592,14 @@ namespace dnSpy.Search {
 					TypeImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
 					LocationObject = type.DeclaringType,
 					LocationImageInfo = TypeTreeNode.GetImageInfo(type.DeclaringType, BackgroundType.Search),
-					LoadedAssembly = ownerModule,
+					DnSpyFile = ownerModule,
 				});
 			}
 
 			SearchMembers(ownerModule, type);
 		}
 
-		void SearchMembers(LoadedAssembly ownerModule, TypeDef type) {
+		void SearchMembers(DnSpyFile ownerModule, TypeDef type) {
 			foreach (var method in type.Methods)
 				Search(ownerModule, type, method);
 			cancellationToken.ThrowIfCancellationRequested();
@@ -612,7 +613,7 @@ namespace dnSpy.Search {
 				Search(ownerModule, type, evt);
 		}
 
-		void Search(LoadedAssembly ownerModule, TypeDef type, MethodDef method) {
+		void Search(DnSpyFile ownerModule, TypeDef type, MethodDef method) {
 			var res = filter.GetFilterResult(method);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -626,7 +627,7 @@ namespace dnSpy.Search {
 					TypeImageInfo = MethodTreeNode.GetImageInfo(method, BackgroundType.Search),
 					LocationObject = type,
 					LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
-					LoadedAssembly = ownerModule,
+					DnSpyFile = ownerModule,
 				});
 				return;
 			}
@@ -645,7 +646,7 @@ namespace dnSpy.Search {
 							TypeImageInfo = MethodTreeNode.GetImageInfo(method, BackgroundType.Search),
 							LocationObject = type,
 							LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
-							LoadedAssembly = ownerModule,
+							DnSpyFile = ownerModule,
 						});
 						return;
 					}
@@ -655,14 +656,14 @@ namespace dnSpy.Search {
 			SearchBody(ownerModule, type, method);
 		}
 
-		void SearchBody(LoadedAssembly ownerModule, TypeDef type, MethodDef method) {
+		void SearchBody(DnSpyFile ownerModule, TypeDef type, MethodDef method) {
 			bool loadedBody;
 			SearchBody(ownerModule, type, method, out loadedBody);
 			if (loadedBody)
 				ICSharpCode.ILSpy.TreeNodes.Analyzer.Helpers.FreeMethodBody(method);
 		}
 
-		void SearchBody(LoadedAssembly ownerModule, TypeDef type, MethodDef method, out bool loadedBody) {
+		void SearchBody(DnSpyFile ownerModule, TypeDef type, MethodDef method, out bool loadedBody) {
 			loadedBody = false;
 			CilBody body;
 
@@ -685,7 +686,7 @@ namespace dnSpy.Search {
 							TypeImageInfo = MethodTreeNode.GetImageInfo(method, BackgroundType.Search),
 							LocationObject = type,
 							LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
-							LoadedAssembly = ownerModule,
+							DnSpyFile = ownerModule,
 						});
 						return;
 					}
@@ -731,14 +732,14 @@ namespace dnSpy.Search {
 						TypeImageInfo = MethodTreeNode.GetImageInfo(method, BackgroundType.Search),
 						LocationObject = type,
 						LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
-						LoadedAssembly = ownerModule,
+						DnSpyFile = ownerModule,
 					});
 					break;
 				}
 			}
 		}
 
-		void Search(LoadedAssembly ownerModule, TypeDef type, FieldDef field) {
+		void Search(DnSpyFile ownerModule, TypeDef type, FieldDef field) {
 			var res = filter.GetFilterResult(field);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -752,12 +753,12 @@ namespace dnSpy.Search {
 					TypeImageInfo = FieldTreeNode.GetImageInfo(field, BackgroundType.Search),
 					LocationObject = type,
 					LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
-					LoadedAssembly = ownerModule,
+					DnSpyFile = ownerModule,
 				});
 			}
 		}
 
-		void Search(LoadedAssembly ownerModule, TypeDef type, PropertyDef prop) {
+		void Search(DnSpyFile ownerModule, TypeDef type, PropertyDef prop) {
 			var res = filter.GetFilterResult(prop);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -770,12 +771,12 @@ namespace dnSpy.Search {
 					TypeImageInfo = PropertyTreeNode.GetImageInfo(prop, BackgroundType.Search),
 					LocationObject = type,
 					LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
-					LoadedAssembly = ownerModule,
+					DnSpyFile = ownerModule,
 				});
 			}
 		}
 
-		void Search(LoadedAssembly ownerModule, TypeDef type, EventDef evt) {
+		void Search(DnSpyFile ownerModule, TypeDef type, EventDef evt) {
 			var res = filter.GetFilterResult(evt);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -788,7 +789,7 @@ namespace dnSpy.Search {
 					TypeImageInfo = EventTreeNode.GetImageInfo(evt, BackgroundType.Search),
 					LocationObject = type,
 					LocationImageInfo = TypeTreeNode.GetImageInfo(type, BackgroundType.Search),
-					LoadedAssembly = ownerModule,
+					DnSpyFile = ownerModule,
 				});
 			}
 		}

@@ -263,7 +263,7 @@ namespace dnSpy.AsmEditor.Types {
 			if (modNode == null)
 				throw new InvalidOperationException();
 			this.nsNodeCreator = new NamespaceTreeNodeCreator(options.Namespace, modNode);
-			this.typeNode = new TypeTreeNode(options.CreateTypeDef(modNode.LoadedAssembly.ModuleDefinition), modNode.Parent as AssemblyTreeNode ?? modNode);
+			this.typeNode = new TypeTreeNode(options.CreateTypeDef(modNode.DnSpyFile.ModuleDef), modNode.Parent as AssemblyTreeNode ?? modNode);
 		}
 
 		public string Description {
@@ -380,7 +380,7 @@ namespace dnSpy.AsmEditor.Types {
 			Debug.Assert(modNode != null);
 			if (modNode == null)
 				throw new InvalidOperationException();
-			this.nestedType = new TypeTreeNode(options.CreateTypeDef(modNode.LoadedAssembly.ModuleDefinition), modNode.Parent as AssemblyTreeNode ?? modNode);
+			this.nestedType = new TypeTreeNode(options.CreateTypeDef(modNode.DnSpyFile.ModuleDef), modNode.Parent as AssemblyTreeNode ?? modNode);
 		}
 
 		public string Description {

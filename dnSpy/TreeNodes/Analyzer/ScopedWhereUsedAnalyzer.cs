@@ -257,19 +257,19 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foreach (var m in mod.Assembly.Modules.GetSafeEnumerable())
 				yield return m;
 
-			IEnumerable<LoadedAssembly> assemblies = MainWindow.Instance.CurrentAssemblyList.GetAssemblies().Where(assy => assy.AssemblyDefinition != null);
+			var assemblies = MainWindow.Instance.DnSpyFileList.GetDnSpyFiles().Where(assy => assy.AssemblyDef != null);
 
 			foreach (var assembly in assemblies) {
 				ct.ThrowIfCancellationRequested();
 				bool found = false;
-				foreach (var reference in assembly.AssemblyDefinition.Modules.GetSafeEnumerable().OfType<ModuleDefMD>().SelectMany(module => module.GetAssemblyRefs())) {
+				foreach (var reference in assembly.AssemblyDef.Modules.GetSafeEnumerable().OfType<ModuleDefMD>().SelectMany(module => module.GetAssemblyRefs())) {
 					if (AssemblyNameComparer.CompareAll.CompareTo(asm, reference) == 0) {
 						found = true;
 						break;
 					}
 				}
-				if (found && AssemblyReferencesScopeType(assembly.AssemblyDefinition)) {
-					foreach (var m in assembly.AssemblyDefinition.Modules.GetSafeEnumerable())
+				if (found && AssemblyReferencesScopeType(assembly.AssemblyDef)) {
+					foreach (var m in assembly.AssemblyDef.Modules.GetSafeEnumerable())
 						yield return m;
 				}
 			}
@@ -300,12 +300,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 				}
 
 				if (friendAssemblies.Count > 0) {
-					IEnumerable<LoadedAssembly> assemblies = MainWindow.Instance.CurrentAssemblyList.GetAssemblies().Where(assy => assy.AssemblyDefinition != null);
+					var assemblies = MainWindow.Instance.DnSpyFileList.GetDnSpyFiles().Where(assy => assy.AssemblyDef != null);
 
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();
-						if (friendAssemblies.Contains(assembly.AssemblyDefinition.Name) && AssemblyReferencesScopeType(assembly.AssemblyDefinition)) {
-							foreach (var m in assembly.AssemblyDefinition.Modules.GetSafeEnumerable())
+						if (friendAssemblies.Contains(assembly.AssemblyDef.Name) && AssemblyReferencesScopeType(assembly.AssemblyDef)) {
+							foreach (var m in assembly.AssemblyDef.Modules.GetSafeEnumerable())
 								yield return m;
 						}
 					}

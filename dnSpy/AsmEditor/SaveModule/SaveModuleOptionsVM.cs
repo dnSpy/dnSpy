@@ -24,8 +24,8 @@ using dnlib.DotNet.MD;
 using dnlib.DotNet.Writer;
 using dnlib.PE;
 using dnlib.W32Resources;
+using dnSpy.Files;
 using dnSpy.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	sealed class SaveModuleOptionsVM : SaveOptionsVM {
@@ -39,9 +39,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 		readonly ModuleDef module;
 
 		public override IUndoObject UndoObject {
-			get { return loadedAssembly; }
+			get { return dnSpyFile; }
 		}
-		readonly LoadedAssembly loadedAssembly;
+		readonly DnSpyFile dnSpyFile;
 
 		public ICommand ReinitializeCommand {
 			get { return new RelayCommand(a => Reinitialize()); }
@@ -174,9 +174,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		readonly MetaDataOptionsVM metaDataOptions;
 
-		public SaveModuleOptionsVM(LoadedAssembly asm) {
-			this.loadedAssembly = asm;
-			this.module = asm.ModuleDefinition;
+		public SaveModuleOptionsVM(DnSpyFile dnSpyFile) {
+			this.dnSpyFile = dnSpyFile;
+			this.module = dnSpyFile.ModuleDef;
 			this.peHeadersOptions = new PEHeadersOptionsVM(module.Machine, GetSubsystem(module.Kind));
 			this.cor20HeaderOptions = new Cor20HeaderOptionsVM();
 			this.metaDataOptions = new MetaDataOptionsVM();
@@ -246,7 +246,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public SaveModuleOptionsVM Clone() {
-			return CopyTo(new SaveModuleOptionsVM(loadedAssembly));
+			return CopyTo(new SaveModuleOptionsVM(dnSpyFile));
 		}
 
 		public SaveModuleOptionsVM CopyTo(SaveModuleOptionsVM other) {

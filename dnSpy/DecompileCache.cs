@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
+using dnSpy.Files;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
@@ -186,11 +187,11 @@ namespace dnSpy {
 				cachedItems.Clear();
 		}
 
-		public void Clear(LoadedAssembly asm) {
-			Clear(new HashSet<LoadedAssembly>(new[] { asm }));
+		public void Clear(DnSpyFile asm) {
+			Clear(new HashSet<DnSpyFile>(new[] { asm }));
 		}
 
-		public void Clear(HashSet<LoadedAssembly> asms) {
+		public void Clear(HashSet<DnSpyFile> asms) {
 			lock (lockObj) {
 				foreach (var kv in cachedItems.ToArray()) {
 					if (IsInModifiedAssembly(asms, kv.Key.TreeNodes) ||
@@ -202,17 +203,17 @@ namespace dnSpy {
 			}
 		}
 
-		internal static bool IsInModifiedAssembly(HashSet<LoadedAssembly> asms, ILSpyTreeNode[] nodes) {
+		internal static bool IsInModifiedAssembly(HashSet<DnSpyFile> asms, ILSpyTreeNode[] nodes) {
 			foreach (var node in nodes) {
 				var asmNode = MainWindow.GetAssemblyTreeNode(node);
-				if (asmNode == null || asms.Contains(asmNode.LoadedAssembly))
+				if (asmNode == null || asms.Contains(asmNode.DnSpyFile))
 					return true;
 			}
 
 			return false;
 		}
 
-		static bool IsInModifiedAssembly(HashSet<LoadedAssembly> asms, Item item) {
+		static bool IsInModifiedAssembly(HashSet<DnSpyFile> asms, Item item) {
 			var textOutput = item.TextOutput;
 			if (textOutput == null && item.WeakTextOutput != null)
 				textOutput = (AvalonEditTextOutput)item.WeakTextOutput.Target;
@@ -222,7 +223,7 @@ namespace dnSpy {
 			return IsInModifiedAssembly(asms, textOutput.References);
 		}
 
-		internal static bool IsInModifiedAssembly(HashSet<LoadedAssembly> asms, TextSegmentCollection<ReferenceSegment> references) {
+		internal static bool IsInModifiedAssembly(HashSet<DnSpyFile> asms, TextSegmentCollection<ReferenceSegment> references) {
 			if (references == null)
 				return false;
 			var checkedAsmRefs = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
@@ -238,7 +239,7 @@ namespace dnSpy {
 				}
 				if (asmRef != null && !checkedAsmRefs.Contains(asmRef)) {
 					checkedAsmRefs.Add(asmRef);
-					var asm = MainWindow.Instance.CurrentAssemblyList.FindAssemblyByAssemblyName(asmRef.FullName);
+					var asm = MainWindow.Instance.DnSpyFileList.FindAssembly(asmRef);
 					if (asm != null && asms.Contains(asm))
 						return true;
 				}

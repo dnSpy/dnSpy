@@ -19,8 +19,8 @@
 
 using System.Diagnostics;
 using dnlib.DotNet;
+using dnSpy.Files;
 using dnSpy.TreeNodes;
-using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.Search {
@@ -37,34 +37,34 @@ namespace dnSpy.Search {
 			this.assembly = module.Assembly;
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type) {
+		public override TreeViewNodeFilterResult GetFilterResult(DnSpyFile file, AssemblyFilterType type) {
 			if (type == AssemblyFilterType.NonNetFile)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 
 			if (type == AssemblyFilterType.Assembly) {
-				if (assembly == null || asm.AssemblyDefinition != assembly)
+				if (assembly == null || file.AssemblyDef != assembly)
 					return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 				return new TreeViewNodeFilterResult(FilterResult.Match, false);
 			}
 
 			if (type == AssemblyFilterType.NetModule) {
-				if (asm.AssemblyDefinition != assembly)
+				if (file.AssemblyDef != assembly)
 					return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 				if (assembly == null || assembly.ManifestModule != module) {
-					if (asm.ModuleDefinition != module)
+					if (file.ModuleDef != module)
 						return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 					return new TreeViewNodeFilterResult(FilterResult.Match, false);
 				}
 				else
-					return new TreeViewNodeFilterResult(FilterResult.Match, asm.ModuleDefinition != assembly.ManifestModule);
+					return new TreeViewNodeFilterResult(FilterResult.Match, file.ModuleDef != assembly.ManifestModule);
 			}
 
 			Debug.Fail("Invalid AssemblyFilterType value");
 			return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(string ns, LoadedAssembly owner) {
-			if (owner.ModuleDefinition != module)
+		public override TreeViewNodeFilterResult GetFilterResult(string ns, DnSpyFile owner) {
+			if (owner.ModuleDef != module)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 			return new TreeViewNodeFilterResult(FilterResult.Match, false);
 		}

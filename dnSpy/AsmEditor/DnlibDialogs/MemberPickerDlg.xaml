@@ -89,7 +89,7 @@
 						  ShowRoot="False"
 						  AllowDrop="False"
 						  SelectionMode="Single"
-						  Root="{Binding AssemblyListTreeNode}"
+						  Root="{Binding DnSpyFileListTreeNode}"
 						  SelectedItem="{Binding SelectedItem, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}"/>
 
 		<StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">

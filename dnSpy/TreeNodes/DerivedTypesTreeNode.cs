@@ -19,6 +19,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using dnlib.DotNet;
+using dnSpy.Files;
 using dnSpy.Images;
 using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
@@ -31,11 +32,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// </summary>
 	sealed class DerivedTypesTreeNode : ILSpyTreeNode
 	{
-		readonly AssemblyList list;
+		readonly DnSpyFileList list;
 		readonly TypeDef type;
 		readonly ThreadingSupport threading;
 
-		public DerivedTypesTreeNode(AssemblyList list, TypeDef type)
+		public DerivedTypesTreeNode(DnSpyFileList list, TypeDef type)
 		{
 			this.list = list;
 			this.type = type;

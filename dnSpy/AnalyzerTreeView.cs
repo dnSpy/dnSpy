@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Input;
 using dnSpy;
 using dnSpy.dntheme;
+using dnSpy.Files;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.TreeView;
@@ -85,7 +86,7 @@ namespace ICSharpCode.ILSpy
 
 		void MainWindow_OnModuleModified(object sender, MainWindow.ModuleModifiedEventArgs e)
 		{
-			((AnalyzerRootNode)Root).HandleModelUpdated(e.LoadedAssembly);
+			((AnalyzerRootNode)Root).HandleModelUpdated(e.DnSpyFile);
 		}
 
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -140,17 +141,17 @@ namespace ICSharpCode.ILSpy
 
 		void MainWindow_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (MainWindow.Instance.CurrentAssemblyList.IsReArranging)
+			if (MainWindow.Instance.DnSpyFileList.IsReArranging)
 				return;
 			if (e.Action == NotifyCollectionChangedAction.Reset) {
 				this.Root.Children.Clear();
 			} else {
-				List<LoadedAssembly> removedAssemblies = new List<LoadedAssembly>();
+				List<DnSpyFile> removedAssemblies = new List<DnSpyFile>();
 				if (e.OldItems != null)
-					removedAssemblies.AddRange(e.OldItems.Cast<LoadedAssembly>());
-				List<LoadedAssembly> addedAssemblies = new List<LoadedAssembly>();
+					removedAssemblies.AddRange(e.OldItems.Cast<DnSpyFile>());
+				List<DnSpyFile> addedAssemblies = new List<DnSpyFile>();
 				if (e.NewItems != null)
-					addedAssemblies.AddRange(e.NewItems.Cast<LoadedAssembly>());
+					addedAssemblies.AddRange(e.NewItems.Cast<DnSpyFile>());
 				((AnalyzerRootNode)this.Root).HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
 			}
 		}
@@ -204,7 +205,7 @@ namespace ICSharpCode.ILSpy
 			{
 			}
 
-			public override bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies)
+			public override bool HandleAssemblyListChanged(ICollection<DnSpyFile> removedAssemblies, ICollection<DnSpyFile> addedAssemblies)
 			{
 				this.Children.RemoveAll(
 					delegate(SharpTreeNode n) {
@@ -214,7 +215,7 @@ namespace ICSharpCode.ILSpy
 				return true;
 			}
 
-			public override bool HandleModelUpdated(LoadedAssembly asm)
+			public override bool HandleModelUpdated(DnSpyFile asm)
 			{
 				this.Children.RemoveAll(
 					delegate(SharpTreeNode n) {

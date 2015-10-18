@@ -180,7 +180,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				return;
 
 			var method = list[0].MemberMapping.MethodDefinition;
-			var methodNode = MainWindow.Instance.AssemblyListTreeNode.FindMethodNode(method);
+			var methodNode = MainWindow.Instance.DnSpyFileListTreeNode.FindMethodNode(method);
 			if (methodNode == null) {
 				MainWindow.Instance.ShowMessageBox(string.Format("Could not find method: {0}", method));
 				return;

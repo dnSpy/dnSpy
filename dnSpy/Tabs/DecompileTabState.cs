@@ -208,11 +208,11 @@ namespace dnSpy.Tabs {
 			var assyNode = MainWindow.GetAssemblyTreeNode(node);
 			if (assyNode == null)
 				return null;
-			var loadedAssy = assyNode.LoadedAssembly;
-			if (!(loadedAssy.IsLoaded && loadedAssy.IsAutoLoaded))
+			var loadedAssy = assyNode.DnSpyFile;
+			if (!loadedAssy.IsAutoLoaded)
 				return null;
 
-			return loadedAssy.FileName;
+			return loadedAssy.Filename;
 		}
 	}
 }

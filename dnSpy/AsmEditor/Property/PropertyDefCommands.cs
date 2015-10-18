@@ -287,7 +287,7 @@ namespace dnSpy.AsmEditor.Property {
 
 		CreatePropertyDefCommand(TypeTreeNode ownerNode, PropertyDefOptions options) {
 			this.ownerNode = ownerNode;
-			this.propNode = new PropertyTreeNode(options.CreatePropertyDef(ownerNode.TypeDefinition.Module));
+			this.propNode = new PropertyTreeNode(options.CreatePropertyDef(ownerNode.TypeDefinition.Module), ownerNode);
 		}
 
 		public string Description {

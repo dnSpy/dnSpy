@@ -83,8 +83,8 @@ namespace dnSpy.Debugger.CallStack {
 			if (ip.IsEpilog) {
 				var asm = frame.GetSerializedDnModuleWithAssembly();
 				if (asm != null) {
-					var loadedAsm = MainWindow.Instance.LoadAssembly(asm.Value.Assembly, asm.Value.Module);
-					var mod = loadedAsm == null ? null : loadedAsm.ModuleDefinition as ModuleDefMD;
+					var file = MainWindow.Instance.LoadAssembly(asm.Value.Assembly, asm.Value.Module);
+					var mod = file == null ? null : file.ModuleDef as ModuleDefMD;
 					var md = mod == null ? null : mod.ResolveToken(frame.Token) as MethodDef;
 					if (md != null && md.Body != null && md.Body.Instructions.Count > 0)
 						return md.Body.Instructions[md.Body.Instructions.Count - 1].Offset;

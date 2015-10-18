@@ -18,8 +18,8 @@
 */
 
 using dnlib.DotNet;
+using dnSpy.Files;
 using dnSpy.TreeNodes;
-using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.Search {
@@ -33,12 +33,12 @@ namespace dnSpy.Search {
 			this.allowedMod = allowedMod;
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type) {
-			if (asm.AssemblyDefinition != allowedAsm)
+		public override TreeViewNodeFilterResult GetFilterResult(DnSpyFile file, AssemblyFilterType type) {
+			if (file.AssemblyDef != allowedAsm)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-			if (allowedAsm == null && asm.ModuleDefinition != allowedMod)
+			if (allowedAsm == null && file.ModuleDef != allowedMod)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-			return base.GetFilterResult(asm, type);
+			return base.GetFilterResult(file, type);
 		}
 	}
 }

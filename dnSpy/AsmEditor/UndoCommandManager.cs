@@ -25,6 +25,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.Files;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -260,7 +261,7 @@ namespace dnSpy.AsmEditor {
 			if (callGc)
 				CallGc();
 
-			foreach (var asm in MainWindow.Instance.GetAllLoadedAssemblyInstances()) {
+			foreach (var asm in MainWindow.Instance.GetAllDnSpyFileInstances()) {
 				if (!IsModified(asm))
 					asm.SavedCommand = 0;
 			}
@@ -332,7 +333,7 @@ namespace dnSpy.AsmEditor {
 		}
 
 		public IEnumerable<IUndoObject> GetModifiedObjects() {
-			foreach (var asm in MainWindow.Instance.GetAllLoadedAssemblyInstances()) {
+			foreach (var asm in MainWindow.Instance.GetAllDnSpyFileInstances()) {
 				if (IsModified(asm))
 					yield return asm;
 			}
@@ -413,7 +414,7 @@ namespace dnSpy.AsmEditor {
 				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
 				Debug.Assert(asmNode != null);
 				if (asmNode != null)
-					return asmNode.LoadedAssembly;
+					return asmNode.DnSpyFile;
 				return null;
 			}
 
@@ -430,9 +431,9 @@ namespace dnSpy.AsmEditor {
 				if (obj.SavedCommand == 0)
 					obj.SavedCommand = group.PrevCommandCounter;
 
-				var asm = obj as LoadedAssembly;
+				var asm = obj as DnSpyFile;
 				if (asm != null) {
-					var module = asm.ModuleDefinition;
+					var module = asm.ModuleDef;
 					if (module != null)
 						module.ResetTypeDefFindCache();
 					Utils.NotifyModifiedAssembly(asm);
@@ -456,16 +457,16 @@ namespace dnSpy.AsmEditor {
 		}
 
 		public IEnumerable<UndoRedoInfo> GetUndoRedoInfo(IEnumerable<AssemblyTreeNode> nodes) {
-			var modifiedUndoAsms = new HashSet<LoadedAssembly>(undoCommands.SelectMany(a => a.ModifiedObjects.Where(b => b is LoadedAssembly).Cast<LoadedAssembly>()));
-			var modifiedRedoAsms = new HashSet<LoadedAssembly>(redoCommands.SelectMany(a => a.ModifiedObjects.Where(b => b is LoadedAssembly).Cast<LoadedAssembly>()));
+			var modifiedUndoAsms = new HashSet<DnSpyFile>(undoCommands.SelectMany(a => a.ModifiedObjects.Where(b => b is DnSpyFile).Cast<DnSpyFile>()));
+			var modifiedRedoAsms = new HashSet<DnSpyFile>(redoCommands.SelectMany(a => a.ModifiedObjects.Where(b => b is DnSpyFile).Cast<DnSpyFile>()));
 			foreach (var node in nodes) {
-				bool isInUndo = modifiedUndoAsms.Contains(node.LoadedAssembly);
-				bool isInRedo = modifiedRedoAsms.Contains(node.LoadedAssembly);
+				bool isInUndo = modifiedUndoAsms.Contains(node.DnSpyFile);
+				bool isInRedo = modifiedRedoAsms.Contains(node.DnSpyFile);
 				yield return new UndoRedoInfo(node, isInUndo, isInRedo);
 			}
 		}
 
-		public IEnumerable<LoadedAssembly> GetAssemblies() {
+		public IEnumerable<DnSpyFile> GetAssemblies() {
 			var list = new List<UndoState>(undoCommands);
 			list.AddRange(redoCommands);
 			foreach (var grp in list) {
@@ -474,13 +475,13 @@ namespace dnSpy.AsmEditor {
 					if (cmd2 == null)
 						continue;
 					foreach (var obj in cmd2.NonModifiedObjects) {
-						var asm = GetUndoObject(obj) as LoadedAssembly;
+						var asm = GetUndoObject(obj) as DnSpyFile;
 						if (asm != null)
 							yield return asm;
 					}
 				}
 				foreach (var obj in grp.ModifiedObjects) {
-					var asm = obj as LoadedAssembly;
+					var asm = obj as DnSpyFile;
 					if (asm != null)
 						yield return asm;
 				}

@@ -53,20 +53,20 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 				bool added = false;
 
-				if (asmNode.LoadedAssembly.ModuleDefinition != null && UndoCommandManager.Instance.IsModified(asmNode.LoadedAssembly)) {
-					hash.Add(asmNode.LoadedAssembly);
+				if (asmNode.DnSpyFile.ModuleDef != null && UndoCommandManager.Instance.IsModified(asmNode.DnSpyFile)) {
+					hash.Add(asmNode.DnSpyFile);
 					added = true;
 				}
 
-				var doc = HexDocumentManager.Instance.TryGet(asmNode.LoadedAssembly.FileName);
+				var doc = HexDocumentManager.Instance.TryGet(asmNode.DnSpyFile.Filename);
 				if (doc != null && UndoCommandManager.Instance.IsModified(doc)) {
 					hash.Add(doc);
 					added = true;
 				}
 
 				// If nothing was modified, just include the selected module
-				if (!added && asmNode.LoadedAssembly.ModuleDefinition != null)
-					hash.Add(asmNode.LoadedAssembly);
+				if (!added && asmNode.DnSpyFile.ModuleDef != null)
+					hash.Add(asmNode.DnSpyFile);
 			}
 			return hash;
 		}

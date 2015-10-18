@@ -18,12 +18,13 @@
 */
 
 using System.Windows.Forms;
+using dnSpy.Files;
 using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class OpenAssembly : IOpenAssembly {
-		public LoadedAssembly Open() {
+		public DnSpyFile Open() {
 			var dialog = new OpenFileDialog() {
 				Filter = PickFilenameConstants.DotNetAssemblyOrModuleFilter,
 				RestoreDirectory = true,
@@ -33,11 +34,11 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			if (string.IsNullOrEmpty(dialog.FileName))
 				return null;
 
-			var asm = MainWindow.Instance.CurrentAssemblyList.FindAssemblyByFileName(dialog.FileName);
+			var asm = MainWindow.Instance.DnSpyFileList.Find(dialog.FileName);
 			if (asm != null)
 				return null;
 
-			return MainWindow.Instance.CurrentAssemblyList.OpenAssembly(dialog.FileName);
+			return MainWindow.Instance.DnSpyFileList.OpenFile(dialog.FileName);
 		}
 	}
 }

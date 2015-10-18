@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		}
 
 		public T GetDnlibType<T>(ITreeViewNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class {
-			var data = new MemberPickerVM(MainWindow.Instance.CurrentLanguage, filter, MainWindow.Instance.CurrentAssemblyList.GetAssemblies());
+			var data = new MemberPickerVM(MainWindow.Instance.DnSpyFileListManager.DnSpyFileListOptions, MainWindow.Instance.CurrentLanguage, filter, MainWindow.Instance.DnSpyFileList.GetDnSpyFiles());
 			var win = new MemberPickerDlg();
 			win.DataContext = data;
 			win.Owner = ownerWindow ?? MainWindow.Instance;

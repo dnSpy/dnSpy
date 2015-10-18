@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Files;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
@@ -309,26 +310,26 @@ namespace ICSharpCode.ILSpy {
 			return null;
 		}
 		
-		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
+		public override void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
 		{
 			if (options.FullDecompilation && options.SaveAsProjectDirectory != null) {
 				HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-				var files = WriteCodeFilesInProject(assembly.ModuleDefinition, options, directories).ToList();
-				files.AddRange(WriteResourceFilesInProject(assembly, options, directories));
-				WriteProjectFile(new TextOutputWriter(output), files, assembly, options);
+				var files = WriteCodeFilesInProject(dnSpyFileList, file.ModuleDef, options, directories).ToList();
+				files.AddRange(WriteResourceFilesInProject(file, options, directories));
+				WriteProjectFile(dnSpyFileList, new TextOutputWriter(output), files, file, options);
 			} else {
 				bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
 				bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
-				base.DecompileAssembly(assembly, output, options, flags);
+				base.DecompileAssembly(dnSpyFileList, file, output, options, flags);
 				output.WriteLine();
-				ModuleDef mainModule = assembly.ModuleDefinition;
+				ModuleDef mainModule = file.ModuleDef;
 				if (decompileMod && mainModule.Types.Count > 0) {
 					output.Write("// Global type: ", TextTokenType.Comment);
 					output.WriteReference(IdentifierEscaper.Escape(mainModule.GlobalType.FullName), mainModule.GlobalType, TextTokenType.Comment);
 					output.WriteLine();
 				}
 				if (decompileMod || decompileAsm)
-					PrintEntryPoint(assembly, output);
+					PrintEntryPoint(file, output);
 				if (decompileMod) {
 					output.WriteLine("// Architecture: " + GetPlatformDisplayName(mainModule), TextTokenType.Comment);
 					if (!mainModule.IsILOnly) {
@@ -343,9 +344,9 @@ namespace ICSharpCode.ILSpy {
 					output.WriteLine();
 				
 				// don't automatically load additional assemblies when an assembly node is selected in the tree view
-				using (options.FullDecompilation ? null : LoadedAssembly.DisableAssemblyLoad()) {
-					AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: assembly.ModuleDefinition);
-					codeDomBuilder.AddAssembly(assembly.ModuleDefinition, !options.FullDecompilation, decompileAsm, decompileMod);
+				using (options.FullDecompilation ? null : dnSpyFileList.DisableAssemblyLoad()) {
+					AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: file.ModuleDef);
+					codeDomBuilder.AddAssembly(file.ModuleDef, !options.FullDecompilation, decompileAsm, decompileMod);
 					codeDomBuilder.RunTransformations(transformAbortCondition);
 					codeDomBuilder.GenerateCode(output);
 				}
@@ -353,14 +354,14 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		#region WriteProjectFile
-		void WriteProjectFile(TextWriter writer, IEnumerable<Tuple<string, string>> files, LoadedAssembly assembly, DecompilationOptions options)
+		void WriteProjectFile(DnSpyFileList dnSpyFileList, TextWriter writer, IEnumerable<Tuple<string, string>> files, DnSpyFile assembly, DecompilationOptions options)
 		{
-			var module = assembly.ModuleDefinition;
+			var module = assembly.ModuleDef;
 			const string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 			string platformName = GetPlatformName(module);
 			Guid guid = (App.CommandLineArguments == null ? null : App.CommandLineArguments.FixedGuid) ?? Guid.NewGuid();
 			using (XmlTextWriter w = new XmlTextWriter(writer)) {
-				var asmRefs = GetAssemblyRefs(options, assembly);
+				var asmRefs = GetAssemblyRefs(dnSpyFileList, options, assembly);
 
 				w.Formatting = Formatting.Indented;
 				w.WriteStartDocument();
@@ -460,8 +461,8 @@ namespace ICSharpCode.ILSpy {
 				w.WriteStartElement("ItemGroup"); // References
 				foreach (var r in asmRefs) {
 					if (r.Name != "mscorlib") {
-						var asm = assembly.LookupReferencedAssembly(r, module);
-						if (asm != null && ExistsInProject(options, asm.FileName))
+						var asm = dnSpyFileList.AssemblyResolver.Resolve(r, module);
+						if (asm != null && ExistsInProject(options, asm.Filename))
 							continue;
 						w.WriteStartElement("Reference");
 						w.WriteAttributeString("Include", IdentifierEscaper.Escape(r.Name));
@@ -488,10 +489,10 @@ namespace ICSharpCode.ILSpy {
 
 				w.WriteStartElement("ItemGroup"); // ProjectReference
 				foreach (var r in asmRefs) {
-					var asm = assembly.LookupReferencedAssembly(r, module);
+					var asm = dnSpyFileList.AssemblyResolver.Resolve(r, module);
 					if (asm == null)
 						continue;
-					var otherProj = FindOtherProject(options, asm.FileName);
+					var otherProj = FindOtherProject(options, asm.Filename);
 					if (otherProj != null) {
 						var relPath = GetRelativePath(options.SaveAsProjectDirectory, otherProj.ProjectFileName);
 						w.WriteStartElement("ProjectReference");
@@ -515,19 +516,19 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		internal static List<IAssembly> GetAssemblyRefs(DecompilationOptions options, LoadedAssembly assembly)
+		internal static List<IAssembly> GetAssemblyRefs(DnSpyFileList dnSpyFileList, DecompilationOptions options, DnSpyFile assembly)
 		{
-			return new RealAssemblyReferencesFinder(options, assembly).Find();
+			return new RealAssemblyReferencesFinder(options, assembly).Find(dnSpyFileList);
 		}
 
 		class RealAssemblyReferencesFinder
 		{
 			readonly DecompilationOptions options;
-			readonly LoadedAssembly assembly;
+			readonly DnSpyFile assembly;
 			readonly List<IAssembly> allReferences = new List<IAssembly>();
 			readonly HashSet<IAssembly> checkedAsms = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
 
-			public RealAssemblyReferencesFinder(DecompilationOptions options, LoadedAssembly assembly)
+			public RealAssemblyReferencesFinder(DecompilationOptions options, DnSpyFile assembly)
 			{
 				this.options = options;
 				this.assembly = assembly;
@@ -538,90 +539,90 @@ namespace ICSharpCode.ILSpy {
 				return options.ProjectFiles != null && options.DontReferenceStdLib;
 			}
 
-			public List<IAssembly> Find()
+			public List<IAssembly> Find(DnSpyFileList dnSpyFileList)
 			{
 				if (!ShouldFindRealAsms()) {
-					var mod = assembly.ModuleDefinition as ModuleDefMD;
+					var mod = assembly.ModuleDef as ModuleDefMD;
 					if (mod != null)
 						allReferences.AddRange(mod.GetAssemblyRefs());
 				}
 				else {
-					Find(assembly.ModuleDefinition.CorLibTypes.Object.TypeRef);
-					var mod = assembly.ModuleDefinition as ModuleDefMD;
+					Find(dnSpyFileList, assembly.ModuleDef.CorLibTypes.Object.TypeRef);
+					var mod = assembly.ModuleDef as ModuleDefMD;
 					if (mod != null) {
 						// Some types might've been moved to assembly A and some other types to
 						// assembly B. Therefore we must check every type reference and we can't
 						// just loop over all asm refs.
 						foreach (var tr in mod.GetTypeRefs())
-							Find(tr);
+							Find(dnSpyFileList, tr);
 						for (uint rid = 1; ; rid++) {
 							var et = mod.ResolveExportedType(rid);
 							if (et == null)
 								break;
-							Find(et);
+							Find(dnSpyFileList, et);
 						}
 					}
 				}
 				return allReferences;
 			}
 
-			void Find(ExportedType et)
+			void Find(DnSpyFileList dnSpyFileList, ExportedType et)
 			{
 				if (et == null)
 					return;
 				// The type might've been moved, so always resolve it instead of using DefinitionAssembly
-				var td = et.Resolve(assembly.ModuleDefinition);
+				var td = et.Resolve(assembly.ModuleDef);
 				if (td == null)
-					Find(et.DefinitionAssembly);
+					Find(dnSpyFileList, et.DefinitionAssembly);
 				else
-					Find(td.DefinitionAssembly ?? et.DefinitionAssembly);
+					Find(dnSpyFileList, td.DefinitionAssembly ?? et.DefinitionAssembly);
 			}
 
-			void Find(TypeRef typeRef)
+			void Find(DnSpyFileList dnSpyFileList, TypeRef typeRef)
 			{
 				if (typeRef == null)
 					return;
 				// The type might've been moved, so always resolve it instead of using DefinitionAssembly
-				var td = typeRef.Resolve(assembly.ModuleDefinition);
+				var td = typeRef.Resolve(assembly.ModuleDef);
 				if (td == null)
-					Find(typeRef.DefinitionAssembly);
+					Find(dnSpyFileList, typeRef.DefinitionAssembly);
 				else
-					Find(td.DefinitionAssembly ?? typeRef.DefinitionAssembly);
+					Find(dnSpyFileList, td.DefinitionAssembly ?? typeRef.DefinitionAssembly);
 			}
 
-			void Find(IAssembly asmRef)
+			void Find(DnSpyFileList dnSpyFileList, IAssembly asmRef)
 			{
 				if (asmRef == null)
 					return;
 				if (checkedAsms.Contains(asmRef))
 					return;
 				checkedAsms.Add(asmRef);
-				var asm = assembly.LookupReferencedAssembly(asmRef, assembly.ModuleDefinition);
+				var asm = dnSpyFileList.AssemblyResolver.Resolve(asmRef, assembly.ModuleDef);
 				if (asm == null)
 					allReferences.Add(asmRef);
 				else
 					AddKnown(asm);
 			}
 
-			void AddKnown(LoadedAssembly asm)
+			void AddKnown(DnSpyFile asm)
 			{
-				if (asm.FileName.Equals(assembly.FileName, StringComparison.OrdinalIgnoreCase))
+				if (asm.Filename.Equals(assembly.Filename, StringComparison.OrdinalIgnoreCase))
 					return;
-				if (asm.ModuleDefinition.Assembly != null)
-					allReferences.Add(asm.ModuleDefinition.Assembly);
+				if (asm.ModuleDef.Assembly != null)
+					allReferences.Add(asm.ModuleDef.Assembly);
 			}
 		}
 
-		internal static string GetHintPath(DecompilationOptions options, LoadedAssembly asmRef)
+		internal static string GetHintPath(DecompilationOptions options, DnSpyFile asmRef)
 		{
 			if (asmRef == null || options.ProjectFiles == null || options.SaveAsProjectDirectory == null)
 				return null;
-			if (asmRef.IsGAC)
+			if (GacInfo.IsGacPath(asmRef.Filename))
 				return null;
-			if (ExistsInProject(options, asmRef.FileName))
+			if (ExistsInProject(options, asmRef.Filename))
 				return null;
 
-			return GetRelativePath(options.SaveAsProjectDirectory, asmRef.FileName);
+			return GetRelativePath(options.SaveAsProjectDirectory, asmRef.Filename);
 		}
 
 		// ("C:\dir1\dir2\dir3", "d:\Dir1\Dir2\Dir3\file.dll") = "d:\Dir1\Dir2\Dir3\file.dll"
@@ -687,10 +688,10 @@ namespace ICSharpCode.ILSpy {
 			return true;
 		}
 
-		IEnumerable<Tuple<string, string>> WriteAssemblyInfo(ModuleDef module, DecompilationOptions options, HashSet<string> directories)
+		IEnumerable<Tuple<string, string>> WriteAssemblyInfo(DnSpyFileList dnSpyFileList, ModuleDef module, DecompilationOptions options, HashSet<string> directories)
 		{
 			// don't automatically load additional assemblies when an assembly node is selected in the tree view
-			using (LoadedAssembly.DisableAssemblyLoad())
+			using (dnSpyFileList.DisableAssemblyLoad())
 			{
 				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: module);
 				codeDomBuilder.AddAssembly(module, true, true, true);
@@ -706,7 +707,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		IEnumerable<Tuple<string, string>> WriteCodeFilesInProject(ModuleDef module, DecompilationOptions options, HashSet<string> directories)
+		IEnumerable<Tuple<string, string>> WriteCodeFilesInProject(DnSpyFileList dnSpyFileList, ModuleDef module, DecompilationOptions options, HashSet<string> directories)
 		{
 			var files = module.Types.Where(t => IncludeTypeWhenDecompilingProject(t, options)).GroupBy(
 				delegate(TypeDef type) {
@@ -735,16 +736,16 @@ namespace ICSharpCode.ILSpy {
 					}
 				});
 			AstMethodBodyBuilder.PrintNumberOfUnhandledOpcodes();
-			return files.Select(f => Tuple.Create("Compile", f.Key)).Concat(WriteAssemblyInfo(module, options, directories));
+			return files.Select(f => Tuple.Create("Compile", f.Key)).Concat(WriteAssemblyInfo(dnSpyFileList, module, options, directories));
 		}
 		#endregion
 
 		#region WriteResourceFilesInProject
-		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(LoadedAssembly assembly, DecompilationOptions options, HashSet<string> directories)
+		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(DnSpyFile assembly, DecompilationOptions options, HashSet<string> directories)
 		{
 			//AppDomain bamlDecompilerAppDomain = null;
 			//try {
-				foreach (EmbeddedResource r in assembly.ModuleDefinition.Resources.OfType<EmbeddedResource>()) {
+				foreach (EmbeddedResource r in assembly.ModuleDef.Resources.OfType<EmbeddedResource>()) {
 					string fileName;
 					Stream s = r.GetResourceStream();
 					s.Position = 0;

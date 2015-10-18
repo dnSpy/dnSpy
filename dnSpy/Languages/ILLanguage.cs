@@ -21,6 +21,7 @@ using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy;
+using dnSpy.Files;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
@@ -165,27 +166,27 @@ namespace ICSharpCode.ILSpy {
 			dis.DisassembleType(type);
 		}
 		
-		public override void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
+		public override void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
 		{
 			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
 			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
-			output.WriteLine("// " + assembly.FileName, TextTokenType.Comment);
+			output.WriteLine("// " + file.Filename, TextTokenType.Comment);
 			if (decompileMod || decompileAsm)
-				PrintEntryPoint(assembly, output);
+				PrintEntryPoint(file, output);
 			output.WriteLine();
 			
-			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options, assembly.ModuleDefinition);
+			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options, file.ModuleDef);
 			if (decompileMod && options.FullDecompilation)
-				rd.WriteAssemblyReferences(assembly.ModuleDefinition as ModuleDefMD);
-			if (decompileAsm && assembly.AssemblyDefinition != null)
-				rd.WriteAssemblyHeader(assembly.AssemblyDefinition);
+				rd.WriteAssemblyReferences(file.ModuleDef as ModuleDefMD);
+			if (decompileAsm && file.AssemblyDef != null)
+				rd.WriteAssemblyHeader(file.AssemblyDef);
 			if (decompileMod) {
 				output.WriteLine();
-				rd.WriteModuleHeader(assembly.ModuleDefinition);
+				rd.WriteModuleHeader(file.ModuleDef);
 				if (options.FullDecompilation) {
 					output.WriteLine();
 					output.WriteLine();
-					rd.WriteModuleContents(assembly.ModuleDefinition);
+					rd.WriteModuleContents(file.ModuleDef);
 				}
 			}
 		}

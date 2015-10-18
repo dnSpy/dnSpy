@@ -156,7 +156,7 @@ namespace dnSpy.Debugger.Modules {
 			var asm = MainWindow.Instance.LoadAssembly(serAsm.Assembly, serAsm.Module);
 			if (asm == null)
 				return;
-			var mod = asm.ModuleDefinition;
+			var mod = asm.ModuleDef;
 			if (mod == null)
 				return;
 			// The asm could've been added lazily to the list so add a short delay before we select it

@@ -20,9 +20,9 @@
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Files;
 using dnSpy.TreeNodes;
 using dnSpy.TreeNodes.Hex;
-using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.Search {
@@ -44,7 +44,7 @@ namespace dnSpy.Search {
 			return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(LoadedAssembly asm, AssemblyFilterType type) {
+		public override TreeViewNodeFilterResult GetFilterResult(DnSpyFile file, AssemblyFilterType type) {
 			VisibleMembersFlags thisFlag, visibleFlags;
 			switch (type) {
 			case AssemblyFilterType.Assembly:
@@ -152,7 +152,7 @@ namespace dnSpy.Search {
 			return new TreeViewNodeFilterResult(FilterResult.Match, isMatch);
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(string ns, LoadedAssembly owner) {
+		public override TreeViewNodeFilterResult GetFilterResult(string ns, DnSpyFile owner) {
 			var visibleFlags = VisibleMembersFlags.Namespace | VisibleMembersFlags.AnyTypeDef |
 					VisibleMembersFlags.FieldDef | VisibleMembersFlags.MethodDef |
 					VisibleMembersFlags.InstanceConstructor | VisibleMembersFlags.PropertyDef |

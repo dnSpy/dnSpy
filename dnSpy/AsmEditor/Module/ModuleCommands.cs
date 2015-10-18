@@ -25,6 +25,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Files;
 using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -89,7 +90,7 @@ namespace dnSpy.AsmEditor.Module {
 
 		CreateNetModuleCommand(NetModuleOptions options) {
 			var module = ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion);
-			this.asmNodeCreator = new AssemblyTreeNodeCreator(new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, module));
+			this.asmNodeCreator = new AssemblyTreeNodeCreator(MainWindow.Instance.DnSpyFileList.CreateDnSpyFile(module));
 		}
 
 		public string Description {
@@ -98,7 +99,7 @@ namespace dnSpy.AsmEditor.Module {
 
 		public void Execute() {
 			asmNodeCreator.Add();
-			UndoCommandManager.Instance.MarkAsModified(asmNodeCreator.AssemblyTreeNode.LoadedAssembly);
+			UndoCommandManager.Instance.MarkAsModified(asmNodeCreator.AssemblyTreeNode.DnSpyFile);
 		}
 
 		public void Undo() {
@@ -179,7 +180,7 @@ namespace dnSpy.AsmEditor.Module {
 				var node = nodes[i];
 				var savedState = savedStates[i];
 
-				var module = node.LoadedAssembly.ModuleDefinition;
+				var module = node.DnSpyFile.ModuleDef;
 				bool b = module != null && module.Assembly == null;
 				Debug.Assert(b);
 				if (!b)
@@ -200,7 +201,7 @@ namespace dnSpy.AsmEditor.Module {
 			for (int i = nodes.Length - 1; i >= 0; i--) {
 				var node = nodes[i];
 				var savedState = savedStates[i];
-				var module = node.LoadedAssembly.ModuleDefinition;
+				var module = node.DnSpyFile.ModuleDef;
 				bool b = module != null && module.Assembly != null &&
 						module.Assembly.Modules.Count == 1 &&
 						module.Assembly.ManifestModule == module;
@@ -259,7 +260,7 @@ namespace dnSpy.AsmEditor.Module {
 			return nodes != null &&
 				nodes.Length > 0 &&
 				nodes.All(n => n is AssemblyTreeNode && ((AssemblyTreeNode)n).IsAssembly &&
-					((AssemblyTreeNode)n).LoadedAssembly.AssemblyDefinition.Modules.Count == 1);
+					((AssemblyTreeNode)n).DnSpyFile.AssemblyDef.Modules.Count == 1);
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes) {
@@ -295,7 +296,7 @@ namespace dnSpy.AsmEditor.Module {
 				var node = nodes[i];
 				savedStates[i] = new SavedState();
 				var savedState = savedStates[i];
-				var module = node.LoadedAssembly.ModuleDefinition;
+				var module = node.DnSpyFile.ModuleDef;
 				bool b = module != null && module.Assembly != null &&
 						module.Assembly.Modules.Count == 1 &&
 						module.Assembly.ManifestModule == module;
@@ -320,7 +321,7 @@ namespace dnSpy.AsmEditor.Module {
 				var node = nodes[i];
 				var savedState = savedStates[i];
 
-				var module = node.LoadedAssembly.ModuleDefinition;
+				var module = node.DnSpyFile.ModuleDef;
 				bool b = module != null && module.Assembly == null;
 				Debug.Assert(b);
 				if (!b)
@@ -371,17 +372,17 @@ namespace dnSpy.AsmEditor.Module {
 			if (modNode.Parent != null)
 				throw new InvalidOperationException();
 			asmNode.EnsureChildrenFiltered();
-			asmNode.LoadedAssembly.AssemblyDefinition.Modules.Add(modNode.LoadedAssembly.ModuleDefinition);
+			asmNode.DnSpyFile.AssemblyDef.Modules.Add(modNode.DnSpyFile.ModuleDef);
 			asmNode.Children.Add(modNode);
 			if (modNodeWasCreated)
-				UndoCommandManager.Instance.MarkAsModified(modNode.LoadedAssembly);
+				UndoCommandManager.Instance.MarkAsModified(modNode.DnSpyFile);
 		}
 
 		public void Undo() {
 			Debug.Assert(modNode.Parent != null);
 			if (modNode.Parent == null)
 				throw new InvalidOperationException();
-			asmNode.LoadedAssembly.AssemblyDefinition.Modules.Remove(modNode.LoadedAssembly.ModuleDefinition);
+			asmNode.DnSpyFile.AssemblyDef.Modules.Remove(modNode.DnSpyFile.ModuleDef);
 			bool b = asmNode.Children.Remove(modNode);
 			Debug.Assert(b);
 			if (!b)
@@ -433,7 +434,7 @@ namespace dnSpy.AsmEditor.Module {
 				asmNode = (AssemblyTreeNode)asmNode.Parent;
 
 			var win = new NetModuleOptionsDlg();
-			var data = new NetModuleOptionsVM(asmNode.LoadedAssembly.ModuleDefinition);
+			var data = new NetModuleOptionsVM(asmNode.DnSpyFile.ModuleDef);
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
 			if (win.ShowDialog() != true)
@@ -445,7 +446,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		AddNewNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, NetModuleOptions options)
-			: base(asmNode, new AssemblyTreeNode(new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion))), true) {
+			: base(asmNode, new AssemblyTreeNode(MainWindow.Instance.DnSpyFileList.CreateDnSpyFile(ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion))), true) {
 		}
 
 		public override string Description {
@@ -487,10 +488,10 @@ namespace dnSpy.AsmEditor.Module {
 			if (string.IsNullOrEmpty(dialog.FileName))
 				return;
 
-			var asm = new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, dialog.FileName);
-			if (asm.ModuleDefinition == null || asm.AssemblyDefinition != null) {
-				MainWindow.Instance.ShowMessageBox(string.Format("{0} is not a NetModule", asm.FileName), System.Windows.MessageBoxButton.OK);
-				asm.TheLoadedFile.Dispose();
+			var asm = MainWindow.Instance.DnSpyFileList.CreateDnSpyFile(dialog.FileName);
+			if (asm.ModuleDef == null || asm.AssemblyDef != null) {
+				MainWindow.Instance.ShowMessageBox(string.Format("{0} is not a NetModule", asm.Filename), System.Windows.MessageBoxButton.OK);
+				asm.Dispose();
 				return;
 			}
 
@@ -499,7 +500,7 @@ namespace dnSpy.AsmEditor.Module {
 			MainWindow.Instance.JumpToReference(cmd.modNode);
 		}
 
-		AddExistingNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, LoadedAssembly asm)
+		AddExistingNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, DnSpyFile asm)
 			: base(asmNode, new AssemblyTreeNode(asm), false) {
 		}
 
@@ -570,8 +571,8 @@ namespace dnSpy.AsmEditor.Module {
 			this.modNode = modNode;
 			this.removeIndex = asmNode.Children.IndexOf(modNode);
 			Debug.Assert(this.removeIndex > 0);
-			Debug.Assert(asmNode.LoadedAssembly.AssemblyDefinition != null &&
-				asmNode.LoadedAssembly.AssemblyDefinition.Modules.IndexOf(modNode.LoadedAssembly.ModuleDefinition) == this.removeIndex);
+			Debug.Assert(asmNode.DnSpyFile.AssemblyDef != null &&
+				asmNode.DnSpyFile.AssemblyDef.Modules.IndexOf(modNode.DnSpyFile.ModuleDef) == this.removeIndex);
 		}
 
 		public string Description {
@@ -583,21 +584,21 @@ namespace dnSpy.AsmEditor.Module {
 			if (modNode.Parent == null)
 				throw new InvalidOperationException();
 			bool b = removeIndex < asmNode.Children.Count && asmNode.Children[removeIndex] == modNode &&
-				removeIndex < asmNode.LoadedAssembly.AssemblyDefinition.Modules.Count &&
-				asmNode.LoadedAssembly.AssemblyDefinition.Modules[removeIndex] == modNode.LoadedAssembly.ModuleDefinition;
+				removeIndex < asmNode.DnSpyFile.AssemblyDef.Modules.Count &&
+				asmNode.DnSpyFile.AssemblyDef.Modules[removeIndex] == modNode.DnSpyFile.ModuleDef;
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
-			asmNode.LoadedAssembly.AssemblyDefinition.Modules.RemoveAt(removeIndex);
+			asmNode.DnSpyFile.AssemblyDef.Modules.RemoveAt(removeIndex);
 			asmNode.Children.RemoveAt(removeIndex);
-			UndoCommandManager.Instance.MarkAsModified(asmNode.LoadedAssembly);
+			UndoCommandManager.Instance.MarkAsModified(asmNode.DnSpyFile);
 		}
 
 		public void Undo() {
 			Debug.Assert(modNode.Parent == null);
 			if (modNode.Parent != null)
 				throw new InvalidOperationException();
-			asmNode.LoadedAssembly.AssemblyDefinition.Modules.Insert(removeIndex, modNode.LoadedAssembly.ModuleDefinition);
+			asmNode.DnSpyFile.AssemblyDef.Modules.Insert(removeIndex, modNode.DnSpyFile.ModuleDef);
 			asmNode.Children.Insert(removeIndex, modNode);
 		}
 
@@ -650,7 +651,7 @@ namespace dnSpy.AsmEditor.Module {
 
 			var asmNode = (AssemblyTreeNode)nodes[0];
 
-			var module = asmNode.LoadedAssembly.ModuleDefinition;
+			var module = asmNode.DnSpyFile.ModuleDef;
 			var data = new ModuleOptionsVM(module, new ModuleOptions(module), MainWindow.Instance.CurrentLanguage);
 			var win = new ModuleOptionsDlg();
 			win.DataContext = data;
@@ -668,7 +669,7 @@ namespace dnSpy.AsmEditor.Module {
 		ModuleSettingsCommand(AssemblyTreeNode modNode, ModuleOptions newOptions) {
 			this.modNode = modNode;
 			this.newOptions = newOptions;
-			this.origOptions = new ModuleOptions(modNode.LoadedAssembly.ModuleDefinition);
+			this.origOptions = new ModuleOptions(modNode.DnSpyFile.ModuleDef);
 		}
 
 		public string Description {
@@ -676,7 +677,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		void WriteModuleOptions(ModuleOptions theOptions) {
-			theOptions.CopyTo(modNode.LoadedAssembly.ModuleDefinition);
+			theOptions.CopyTo(modNode.DnSpyFile.ModuleDef);
 			modNode.RaiseUIPropsChanged();
 		}
 

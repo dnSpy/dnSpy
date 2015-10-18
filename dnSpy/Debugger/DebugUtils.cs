@@ -31,11 +31,11 @@ namespace dnSpy.Debugger {
 		}
 
 		public static bool GoToIL(SerializedDnModuleWithAssembly serAsm, uint token, uint ilOffset, bool newTab) {
-			var loadedAsm = MainWindow.Instance.LoadAssembly(serAsm);
-			if (loadedAsm == null)
+			var file = MainWindow.Instance.LoadAssembly(serAsm);
+			if (file == null)
 				return false;
 
-			var mod = loadedAsm.ModuleDefinition as ModuleDefMD;
+			var mod = file.ModuleDef as ModuleDefMD;
 			if (mod == null)
 				return false;
 

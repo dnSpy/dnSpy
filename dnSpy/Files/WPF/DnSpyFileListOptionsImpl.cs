@@ -17,24 +17,32 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnlib.DotNet;
-using dnSpy.Files;
-using dnSpy.TreeNodes;
-using ICSharpCode.ILSpy.TreeNodes;
+using System.Windows.Threading;
+using dnSpy.Options;
+using ICSharpCode.ILSpy.Options;
 
-namespace dnSpy.Search {
-	sealed class SameModuleTreeViewNodeFilter : ChainTreeViewNodeFilter {
-		readonly ModuleDef allowedModule;
-
-		public SameModuleTreeViewNodeFilter(ModuleDef allowedModule, ITreeViewNodeFilter filter)
-			: base(filter) {
-			this.allowedModule = allowedModule;
+namespace dnSpy.Files.WPF {
+	sealed class DnSpyFileListOptionsImpl : IDnSpyFileListOptions {
+		public bool UseDebugSymbols {
+			get { return DecompilerSettingsPanel.CurrentDecompilerSettings.UseDebugSymbols; }
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(DnSpyFile file, AssemblyFilterType type) {
-			if (file.ModuleDef != allowedModule)
-				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-			return base.GetFilterResult(file, type);
+		public bool UseMemoryMappedIO {
+			get { return OtherSettings.Instance.UseMemoryMappedIO; }
+		}
+
+		public IDispatcher Dispatcher {
+			get { return dispatcher; }
+		}
+
+		public bool UseGAC {
+			get { return true; }
+		}
+
+		readonly IDispatcher dispatcher;
+
+		public DnSpyFileListOptionsImpl(Dispatcher disp) {
+			this.dispatcher = new DispatcherImpl(disp);
 		}
 	}
 }

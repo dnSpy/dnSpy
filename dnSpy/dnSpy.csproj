@@ -212,6 +212,16 @@
     </Compile>
     <Compile Include="Debugger\Threads\ThreadsVM.cs" />
     <Compile Include="Debugger\Threads\ThreadVM.cs" />
+    <Compile Include="Files\AssemblyResolver.cs" />
+    <Compile Include="Files\DnSpyFile.cs" />
+    <Compile Include="Files\DnSpyFileList.cs" />
+    <Compile Include="Files\FilenameKey.cs" />
+    <Compile Include="Files\GacInfo.cs" />
+    <Compile Include="Files\IDispatcher.cs" />
+    <Compile Include="Files\IDnSpyFileListOptions.cs" />
+    <Compile Include="Files\IDnSpyFilenameKey.cs" />
+    <Compile Include="Files\WPF\DispatcherImpl.cs" />
+    <Compile Include="Files\WPF\DnSpyFileListOptionsImpl.cs" />
     <Compile Include="HexEditor\CachedHexStream.cs" />
     <Compile Include="HexEditor\ISimpleHexStream.cs" />
     <Compile Include="Hex\DnHexBox.cs" />
@@ -634,8 +644,7 @@
     <Compile Include="MVVM\ViewModelBase.cs" />
     <Compile Include="MVVM\VMPropertyChangedEventArgs.cs" />
     <Compile Include="MVVM\WindowBase.cs" />
-    <Compile Include="AssemblyList.cs" />
-    <Compile Include="AssemblyListManager.cs" />
+    <Compile Include="DnSpyFileListManager.cs" />
     <Compile Include="AvalonEdit\EditorPositionState.cs" />
     <Compile Include="AvalonEdit\IconBarMargin.cs" />
     <Compile Include="AvalonEdit\IconMarginActionsProvider.cs" />
@@ -812,7 +821,6 @@
     <Compile Include="ISmartTextOutput.cs" />
     <Compile Include="Languages\Language.cs" />
     <Compile Include="Languages\Languages.cs" />
-    <Compile Include="LoadedAssembly.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="NavigationHistory.cs" />
     <Compile Include="NavigationState.cs" />
@@ -941,7 +949,7 @@
     <Compile Include="TreeNodes\Analyzer\AnalyzedMethodUsesTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzerTreeNode.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedMethodOverridesTreeNode.cs" />
-    <Compile Include="TreeNodes\AssemblyListTreeNode.cs" />
+    <Compile Include="TreeNodes\DnSpyFileListTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyReferenceTreeNode.cs" />
     <Compile Include="TreeNodes\AssemblyTreeNode.cs" />
     <Compile Include="TreeNodes\BaseTypesTreeNode.cs" />
@@ -1331,7 +1339,6 @@
     <Resource Include="Images\AssemblyExe.png" />
     <Resource Include="Images\AssemblyList.png" />
     <Resource Include="Images\AssemblyListGAC.png" />
-    <Resource Include="Images\AssemblyLoading.png" />
     <Resource Include="Images\AssemblyModule.png" />
     <Resource Include="Images\AssemblyReference.png" />
     <Resource Include="Images\AssemblyToModule.png" />

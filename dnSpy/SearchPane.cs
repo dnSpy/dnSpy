@@ -34,6 +34,7 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy;
+using dnSpy.Files;
 using dnSpy.Images;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
@@ -199,11 +200,11 @@ namespace ICSharpCode.ILSpy {
 		
 		void MainWindow_Instance_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)
 		{
-			if (MainWindow.Instance.CurrentAssemblyList.IsReArranging)
+			if (MainWindow.Instance.DnSpyFileList.IsReArranging)
 				return;
 			if (IsVisible) {
 				bool canRestart = (e.OldItems != null && e.OldItems.Count > 0) ||
-								  (e.NewItems != null && e.NewItems.Cast<LoadedAssembly>().Any(a => !a.IsAutoLoaded));
+								  (e.NewItems != null && e.NewItems.Cast<DnSpyFile>().Any(a => !a.IsAutoLoaded));
 				if (canRestart)
 					RestartSearch();
 			} else {
@@ -278,7 +279,7 @@ namespace ICSharpCode.ILSpy {
 				MainWindow mainWindow = MainWindow.Instance;
 				var searchType = (SearchType)searchModeComboBox.SelectedItem;
 				currentSearch = new RunningSearch(
-					mainWindow.AssemblyListTreeNode.Children.Cast<AssemblyTreeNode>(),
+					mainWindow.DnSpyFileListTreeNode.Children.Cast<AssemblyTreeNode>(),
 					CreateSearchComparer(searchType, searchTerm),
 					new FlagsTreeViewNodeFilter(searchType.Flags),
 					mainWindow.CurrentLanguage);
@@ -571,10 +572,10 @@ namespace ICSharpCode.ILSpy {
 				var obj = Object;
 				var asmNode = obj as AssemblyTreeNode;
 				if (asmNode != null)
-					obj = asmNode.LoadedAssembly.AssemblyDefinition;
-				var asm = obj as LoadedAssembly;
+					obj = asmNode.DnSpyFile.AssemblyDef;
+				var asm = obj as DnSpyFile;
 				if (asm != null)
-					obj = asm.ModuleDefinition;
+					obj = asm.ModuleDef;
 				return obj as IMDTokenProvider;	// returns null if it's a namespace (a string)
 			}
 		}
@@ -583,7 +584,7 @@ namespace ICSharpCode.ILSpy {
 			get {
 				var ns = Object as string;
 				if (ns != null)
-					return new NamespaceRef(LoadedAssembly, ns);
+					return new NamespaceRef(DnSpyFile, ns);
 				var node = Object as ILSpyTreeNode;
 				if (node != null)
 					return node;
@@ -593,7 +594,7 @@ namespace ICSharpCode.ILSpy {
 
 		/// <summary>
 		/// <see cref="AssemblyTreeNode"/> if it's an assembly. If it's a module, it's a
-		/// <see cref="LoadedAssembly"/> reference. If it's a <see cref="IMemberRef"/>,
+		/// <see cref="DnSpyFile"/> reference. If it's a <see cref="IMemberRef"/>,
 		/// <see cref="AssemblyRef"/> or a <see cref="ModuleRef"/>, it's that reference. If it's a
 		/// namespace, it's a <see cref="string"/>.
 		/// </summary>
@@ -608,16 +609,16 @@ namespace ICSharpCode.ILSpy {
 		}
 		public ImageInfo TypeImageInfo { get; set; }
 		public ImageInfo LocationImageInfo { get; set; }
-		public LoadedAssembly LoadedAssembly { get; set; }
+		public DnSpyFile DnSpyFile { get; set; }
 		public Language Language { get; set; }
 		public string ToolTip {
 			get {
-				var loadedAsm = LoadedAssembly;
-				if (loadedAsm == null)
+				var dnSpyFile = DnSpyFile;
+				if (dnSpyFile == null)
 					return null;
-				var module = loadedAsm.ModuleDefinition;
+				var module = dnSpyFile.ModuleDef;
 				if (module == null)
-					return loadedAsm.FileName;
+					return dnSpyFile.Filename;
 				if (!string.IsNullOrWhiteSpace(module.Location))
 					return module.Location;
 				if (!string.IsNullOrWhiteSpace(module.Name))
@@ -724,9 +725,9 @@ namespace ICSharpCode.ILSpy {
 			}
 
 			// non-.NET file
-			var loadedAsm = o as LoadedAssembly;
-			if (loadedAsm != null) {
-				output.Write(loadedAsm.ShortName, TextTokenType.Text);
+			var file = o as DnSpyFile;
+			if (file != null) {
+				output.Write(file.ShortName, TextTokenType.Text);
 				return;
 			}
 

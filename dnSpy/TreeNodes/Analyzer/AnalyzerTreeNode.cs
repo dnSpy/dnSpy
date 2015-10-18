@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using dnSpy.dntheme;
+using dnSpy.Files;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
@@ -110,9 +111,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		/// <summary>
 		/// Handles changes to the assembly list.
 		/// </summary>
-		public abstract bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies);
+		public abstract bool HandleAssemblyListChanged(ICollection<DnSpyFile> removedAssemblies, ICollection<DnSpyFile> addedAssemblies);
 
-		public abstract bool HandleModelUpdated(LoadedAssembly asm);
+		public abstract bool HandleModelUpdated(DnSpyFile asm);
 
 		public void Dispose()
 		{

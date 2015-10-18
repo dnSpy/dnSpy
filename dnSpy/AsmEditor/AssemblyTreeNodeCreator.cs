@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using dnSpy.Files;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -35,18 +36,18 @@ namespace dnSpy.AsmEditor {
 			get { return asmNode; }
 		}
 
-		public AssemblyTreeNodeCreator(LoadedAssembly asm)
+		public AssemblyTreeNodeCreator(DnSpyFile asm)
 			: this(asm, null, false) {
 		}
 
 		public AssemblyTreeNodeCreator(AssemblyTreeNode asmNode)
-			: this(asmNode.LoadedAssembly, asmNode, true) {
+			: this(asmNode.DnSpyFile, asmNode, true) {
 		}
 
-		AssemblyTreeNodeCreator(LoadedAssembly asm, AssemblyTreeNode asmNode, bool restoreIndex) {
+		AssemblyTreeNodeCreator(DnSpyFile asm, AssemblyTreeNode asmNode, bool restoreIndex) {
 			this.asmNode = asmNode ?? new AssemblyTreeNode(asm);
 			this.restoreIndex = restoreIndex;
-			MainWindow.Instance.AssemblyListTreeNode.RegisterCached(asm, this.asmNode);
+			MainWindow.Instance.DnSpyFileListTreeNode.RegisterCached(asm, this.asmNode);
 		}
 
 		public void Add() {
@@ -55,13 +56,13 @@ namespace dnSpy.AsmEditor {
 				throw new InvalidOperationException();
 			Debug.Assert(!restoreIndex || origIndex >= 0);
 
-			MainWindow.Instance.CurrentAssemblyList.ForceAddAssemblyToList(asmNode.LoadedAssembly, true, false, origIndex, false);
+			MainWindow.Instance.DnSpyFileList.ForceAddFileToList(asmNode.DnSpyFile, true, false, origIndex, false);
 
-			bool b = asmNode.LoadedAssembly.ModuleDefinition == null ||
+			bool b = asmNode.DnSpyFile.ModuleDef == null ||
 				(MainWindow.Instance.FindTreeNode(
-				asmNode.LoadedAssembly.AssemblyDefinition != null ?
-				(object)asmNode.LoadedAssembly.AssemblyDefinition :
-				asmNode.LoadedAssembly.ModuleDefinition) == asmNode);
+				asmNode.DnSpyFile.AssemblyDef != null ?
+				(object)asmNode.DnSpyFile.AssemblyDef :
+				asmNode.DnSpyFile.ModuleDef) == asmNode);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
@@ -73,7 +74,7 @@ namespace dnSpy.AsmEditor {
 				throw new InvalidOperationException();
 
 			if (restoreIndex && origIndex == -1) {
-				origIndex = MainWindow.Instance.AssemblyListTreeNode.Children.IndexOf(asmNode);
+				origIndex = MainWindow.Instance.DnSpyFileListTreeNode.Children.IndexOf(asmNode);
 				Debug.Assert(origIndex >= 0);
 				if (origIndex < 0)
 					throw new InvalidOperationException();
@@ -84,7 +85,7 @@ namespace dnSpy.AsmEditor {
 
 		public void Dispose() {
 			if (asmNode != null)
-				MainWindow.Instance.AssemblyListTreeNode.UnregisterCached(asmNode.LoadedAssembly);
+				MainWindow.Instance.DnSpyFileListTreeNode.UnregisterCached(asmNode.DnSpyFile);
 			asmNode = null;
 		}
 	}

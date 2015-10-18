@@ -56,7 +56,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			var res = settings.Filter.GetFilterResult(this.Name, ((AssemblyTreeNode)Parent).LoadedAssembly);
+			var res = settings.Filter.GetFilterResult(this.Name, ((AssemblyTreeNode)Parent).DnSpyFile);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
 			if (settings.SearchTermMatches(name))

@@ -17,24 +17,33 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnlib.DotNet;
-using dnSpy.Files;
-using dnSpy.TreeNodes;
-using ICSharpCode.ILSpy.TreeNodes;
+using System;
 
-namespace dnSpy.Search {
-	sealed class SameModuleTreeViewNodeFilter : ChainTreeViewNodeFilter {
-		readonly ModuleDef allowedModule;
+namespace dnSpy.Files {
+	public enum DispatcherPrio {
+		ContextIdle,
+		Background,
+		Loaded,
+		Send,
+	}
 
-		public SameModuleTreeViewNodeFilter(ModuleDef allowedModule, ITreeViewNodeFilter filter)
-			: base(filter) {
-			this.allowedModule = allowedModule;
-		}
+	public interface IDispatcher {
+		/// <summary>
+		/// Execute code asynchronously in the dispatcher thread
+		/// </summary>
+		/// <param name="priority"></param>
+		/// <param name="method"></param>
+		void BeginInvoke(DispatcherPrio priority, Action method);
 
-		public override TreeViewNodeFilterResult GetFilterResult(DnSpyFile file, AssemblyFilterType type) {
-			if (file.ModuleDef != allowedModule)
-				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-			return base.GetFilterResult(file, type);
-		}
+		/// <summary>
+		/// true if the current thread is the dispatcher thread
+		/// </summary>
+		/// <returns></returns>
+		bool CheckAccess();
+
+		/// <summary>
+		/// Throws <see cref="InvalidOperationException"/> if this method is called on the wrong thread
+		/// </summary>
+		void VerifyAccess();
 	}
 }

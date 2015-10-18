@@ -33,13 +33,13 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	{
 		readonly ModuleDefMD module;
 		readonly AssemblyTreeNode parentAssembly;
-		readonly AssemblyListTreeNode assemblyListTreeNode;
+		readonly DnSpyFileListTreeNode dnSpyFileListTreeNode;
 		
-		public ReferenceFolderTreeNode(ModuleDefMD module, AssemblyTreeNode parentAssembly, AssemblyListTreeNode assemblyListTreeNode)
+		public ReferenceFolderTreeNode(ModuleDefMD module, AssemblyTreeNode parentAssembly, DnSpyFileListTreeNode dnSpyFileListTreeNode)
 		{
 			this.module = module;
 			this.parentAssembly = parentAssembly;
-			this.assemblyListTreeNode = assemblyListTreeNode;
+			this.dnSpyFileListTreeNode = dnSpyFileListTreeNode;
 			this.LazyLoading = true;
 		}
 		
@@ -67,7 +67,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		protected override void LoadChildren()
 		{
 			foreach (var r in module.GetAssemblyRefs().OrderBy(r => r.Name.String))
-				this.Children.Add(new AssemblyReferenceTreeNode(r, parentAssembly, assemblyListTreeNode));
+				this.Children.Add(new AssemblyReferenceTreeNode(r, parentAssembly, dnSpyFileListTreeNode));
 			foreach (var r in module.GetModuleRefs().OrderBy(r => r.Name.String))
 				this.Children.Add(new ModuleReferenceTreeNode(r));
 		}
@@ -77,7 +77,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureChildrenFiltered));
 			// Show metadata order of references
 			foreach (var r in module.GetAssemblyRefs())
-				new AssemblyReferenceTreeNode(r, parentAssembly, assemblyListTreeNode).Decompile(language, output, options);
+				new AssemblyReferenceTreeNode(r, parentAssembly, dnSpyFileListTreeNode).Decompile(language, output, options);
 			foreach (var r in module.GetModuleRefs())
 				language.WriteCommentLine(output, IdentifierEscaper.Escape(r.Name));
 		}

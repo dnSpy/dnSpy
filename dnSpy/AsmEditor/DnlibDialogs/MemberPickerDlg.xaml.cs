@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (data != null) {
 					data.OpenAssembly = new OpenAssembly();
 					data.MakeVisible = this;
-					data.AssemblyListTreeNode.OwnerTreeView = treeView;
+					data.DnSpyFileListTreeNode.OwnerTreeView = treeView;
 					data.PropertyChanged += MemberPickerVM_PropertyChanged;
 				}
 			};

@@ -28,6 +28,7 @@ using System.Threading;
 using dnlib.DotNet;
 using ICSharpCode.ILSpy;
 using ICSharpCode.Decompiler;
+using dnSpy.Files;
 
 namespace dnSpyc {
 	[Serializable]
@@ -408,17 +409,42 @@ namespace dnSpyc {
 			return null;
 		}
 
+		sealed class Dispatcher : IDispatcher {
+			public void BeginInvoke(DispatcherPrio priority, Action method) {
+				method();
+			}
+
+			public bool CheckAccess() {
+				return true;
+			}
+
+			public void VerifyAccess() {
+			}
+		}
+
+		sealed class DnSpyFileListOptionsImpl : IDnSpyFileListOptions {
+			public IDispatcher Dispatcher {
+				get { return dispatcher; }
+			}
+			readonly Dispatcher dispatcher = new Dispatcher();
+
+			public bool UseDebugSymbols { get; set; }
+			public bool UseGAC { get; set; }
+			public bool UseMemoryMappedIO { get; set; }
+		}
+
 		static void DumpNetModule(ProjectInfo info, List<ProjectInfo> projectFiles) {
 			var fileName = info.AssemblyFileName;
 			if (string.IsNullOrEmpty(fileName))
 				throw new Exception(".NET module filename is empty or null");
 
-			var asmList = new AssemblyList("dnspc.exe", false);
-			asmList.UseGAC = !noGac;
-			asmList.AddSearchPath(Path.GetDirectoryName(fileName));
+			var listOpts = new DnSpyFileListOptionsImpl();
+			listOpts.UseGAC = !noGac;
+			var fileList = new DnSpyFileList(listOpts, string.Empty);
+			fileList.AssemblyResolver.AddSearchPath(Path.GetDirectoryName(fileName));
 			foreach (var path in asmPaths)
-				asmList.AddSearchPath(path);
-			var lasm = new LoadedAssembly(asmList, fileName);
+				fileList.AssemblyResolver.AddSearchPath(path);
+			var file = fileList.OpenFile(fileName);
 			var opts = new DecompilationOptions {
 				FullDecompilation = true,
 				CancellationToken = new CancellationToken(),
@@ -442,7 +468,7 @@ namespace dnSpyc {
 					Console.WriteLine("Saving {0} to {1}", fileName, baseDir);
 				}
 
-				lang.DecompileAssembly(lasm, new PlainTextOutput(writer), opts);
+				lang.DecompileAssembly(fileList, file, new PlainTextOutput(writer), opts);
 			}
 			finally {
 				if (!useStdout && writer != null)

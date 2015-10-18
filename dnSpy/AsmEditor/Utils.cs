@@ -19,11 +19,12 @@
 
 using System.Linq;
 using System.Windows.Input;
+using dnSpy.Files;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor {
 	static class Utils {
-		public static void NotifyModifiedAssembly(LoadedAssembly asm) {
+		public static void NotifyModifiedAssembly(DnSpyFile asm) {
 			MainWindow.Instance.ModuleModified(asm);
 		}
 

@@ -20,17 +20,18 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using dnSpy.Files;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	static class Saver {
 		public static bool AskUserToSaveIfModified(AssemblyTreeNode asmNode) {
-			return AskUserToSaveIfModified(new[] { asmNode.LoadedAssembly });
+			return AskUserToSaveIfModified(new[] { asmNode.DnSpyFile });
 		}
 
 		public static bool AskUserToSaveIfModified(IEnumerable<AssemblyTreeNode> asmNodes) {
-			return AskUserToSaveIfModified(asmNodes.Select(n => n.LoadedAssembly));
+			return AskUserToSaveIfModified(asmNodes.Select(n => n.DnSpyFile));
 		}
 
 		public static bool AskUserToSaveIfModified(IEnumerable<IUndoObject> objs) {
@@ -60,7 +61,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			if (objsAry.Length == 1) {
 				SaveOptionsVM options;
 
-				var asm = objsAry[0] as LoadedAssembly;
+				var asm = objsAry[0] as DnSpyFile;
 				if (asm != null) {
 					var optsData = new SaveModuleOptionsVM(asm);
 					var optsWin = new SaveModuleOptionsDlg();
@@ -109,14 +110,14 @@ namespace dnSpy.AsmEditor.SaveModule {
 					allSaved = false;
 				else {
 					UndoCommandManager.Instance.MarkAsSaved(obj);
-					var asm = obj as LoadedAssembly;
-					if (asm != null && string.IsNullOrEmpty(asm.FileName)) {
+					var asm = obj as DnSpyFile;
+					if (asm != null && string.IsNullOrEmpty(asm.Filename)) {
 						var filename = vm.GetSavedFileName(asm);
-						if (!string.IsNullOrWhiteSpace(filename) && asm.ModuleDefinition != null) {
-							asm.ModuleDefinition.Location = filename;
-							asm.FileName = filename;
+						if (!string.IsNullOrWhiteSpace(filename) && asm.ModuleDef != null) {
+							asm.ModuleDef.Location = filename;
+							asm.Filename = filename;
 							setNewFileName = true;
-							var asmNode = MainWindow.Instance.FindTreeNode(asm.ModuleDefinition) as AssemblyTreeNode;
+							var asmNode = MainWindow.Instance.FindTreeNode(asm.ModuleDef) as AssemblyTreeNode;
 							Debug.Assert(asmNode != null);
 							if (asmNode != null) {
 								asmNode.OnFileNameChanged();
@@ -127,7 +128,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				}
 			}
 			if (setNewFileName)
-				MainWindow.Instance.CurrentAssemblyList.RefreshSave();
+				MainWindow.Instance.DnSpyFileListManager.RefreshSave(MainWindow.Instance.DnSpyFileList);
 			return allSaved;
 		}
 	}

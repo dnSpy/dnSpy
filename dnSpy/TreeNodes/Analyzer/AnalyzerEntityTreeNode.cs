@@ -20,6 +20,7 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using ICSharpCode.TreeView;
 using dnlib.DotNet;
+using dnSpy.Files;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	/// <summary>
@@ -38,10 +39,10 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			MainWindow.Instance.JumpToReference(this.Member);
 		}
 		
-		public override bool HandleAssemblyListChanged(ICollection<LoadedAssembly> removedAssemblies, ICollection<LoadedAssembly> addedAssemblies)
+		public override bool HandleAssemblyListChanged(ICollection<DnSpyFile> removedAssemblies, ICollection<DnSpyFile> addedAssemblies)
 		{
-			foreach (LoadedAssembly asm in removedAssemblies) {
-				if (this.Member.Module == asm.ModuleDefinition)
+			foreach (DnSpyFile asm in removedAssemblies) {
+				if (this.Member.Module == asm.ModuleDef)
 					return false; // remove this node
 			}
 			this.Children.RemoveAll(
@@ -52,7 +53,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			return true;
 		}
 
-		public override bool HandleModelUpdated(LoadedAssembly asm)
+		public override bool HandleModelUpdated(DnSpyFile asm)
 		{
 			if (this.Member.Module == null)
 				return false; // remove this node

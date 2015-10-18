@@ -20,6 +20,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Media;
 using dnlib.DotNet;
+using dnSpy.Files;
 using dnSpy.Images;
 using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
@@ -34,12 +35,22 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		readonly PropertyDef property;
 		readonly bool isIndexer;
 
-		public PropertyTreeNode(PropertyDef property)
+		static DnSpyFileList GetDnSpyFileList(ILSpyTreeNode node) {
+			if (node == null)
+				return null;
+			var asmNode = GetNode<AssemblyTreeNode>(node);
+			if (asmNode == null)
+				return null;
+			return asmNode.DnSpyFileList;
+		}
+
+		public PropertyTreeNode(PropertyDef property, ILSpyTreeNode owner)
 		{
 			if (property == null)
 				throw new ArgumentNullException("property");
 			this.property = property;
-			using (LoadedAssembly.DisableAssemblyLoad()) {
+			var list = GetDnSpyFileList(owner ?? this);
+			using (list == null ? null : list.DisableAssemblyLoad()) {
 				this.isIndexer = property.IsIndexer();
 			}
 

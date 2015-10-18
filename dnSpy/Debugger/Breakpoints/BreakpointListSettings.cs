@@ -139,8 +139,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		static string GetMethodAsString(string asmName, MethodKey key) {
-			var loadedAsm = MainWindow.Instance.LoadAssembly(asmName, key.Module);
-			var mod = loadedAsm.ModuleDefinition as ModuleDefMD;
+			var file = MainWindow.Instance.LoadAssembly(asmName, key.Module);
+			var mod = file.ModuleDef as ModuleDefMD;
 			var method = mod == null ? null : mod.ResolveToken(key.Token) as MethodDef;
 			return method == null ? null : method.ToString();
 		}

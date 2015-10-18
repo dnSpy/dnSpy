@@ -28,6 +28,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.Files;
 using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 
@@ -241,7 +242,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		static SaveOptionsVM Create(IUndoObject obj) {
-			var asm = obj as LoadedAssembly;
+			var asm = obj as DnSpyFile;
 			if (asm != null)
 				return new SaveModuleOptionsVM(asm);
 

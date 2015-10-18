@@ -35,6 +35,7 @@ using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Dialogs;
+using dnSpy.Files;
 using dnSpy.MVVM;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
@@ -618,7 +619,7 @@ namespace dnSpy.Debugger {
 			DebugAssembly(GetDebugAssemblyOptions(CreateDebugProcessVM(asm)));
 		}
 
-		internal LoadedAssembly GetCurrentExecutableAssembly(ContextMenuEntryContext context) {
+		internal DnSpyFile GetCurrentExecutableAssembly(ContextMenuEntryContext context) {
 			if (context == null)
 				return null;
 			if (IsDebugging)
@@ -644,19 +645,19 @@ namespace dnSpy.Debugger {
 			return GetCurrentExecutableAssembly(node, true);
 		}
 
-		LoadedAssembly GetCurrentExecutableAssembly(SharpTreeNode node, bool mustBeNetExe) {
+		DnSpyFile GetCurrentExecutableAssembly(SharpTreeNode node, bool mustBeNetExe) {
 			var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
 			if (asmNode == null)
 				return null;
 
-			var loadedAsm = asmNode.LoadedAssembly;
-			var peImage = loadedAsm.PEImage;
+			var file = asmNode.DnSpyFile;
+			var peImage = file.PEImage;
 			if (peImage == null)
 				return null;
 			if ((peImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) != 0)
 				return null;
 			if (mustBeNetExe) {
-				var mod = loadedAsm.ModuleDefinition;
+				var mod = file.ModuleDef;
 				if (mod == null)
 					return null;
 				if (mod.Assembly == null || mod.Assembly.ManifestModule != mod)
@@ -665,10 +666,10 @@ namespace dnSpy.Debugger {
 					return null;
 			}
 
-			return loadedAsm;
+			return file;
 		}
 
-		LoadedAssembly GetCurrentExecutableAssembly(bool mustBeNetExe) {
+		DnSpyFile GetCurrentExecutableAssembly(bool mustBeNetExe) {
 			return GetCurrentExecutableAssembly(MainWindow.Instance.treeView.SelectedItem as SharpTreeNode, mustBeNetExe);
 		}
 
@@ -678,26 +679,26 @@ namespace dnSpy.Debugger {
 
 		public void StartWithoutDebugging() {
 			var asm = GetCurrentExecutableAssembly(false);
-			if (asm == null || !File.Exists(asm.FileName))
+			if (asm == null || !File.Exists(asm.Filename))
 				return;
 			try {
-				Process.Start(asm.FileName);
+				Process.Start(asm.Filename);
 			}
 			catch (Exception ex) {
-				MainWindow.Instance.ShowMessageBox(string.Format("Could not start '{0}'\n:ERROR: {0}", asm.FileName, ex.Message));
+				MainWindow.Instance.ShowMessageBox(string.Format("Could not start '{0}'\n:ERROR: {0}", asm.Filename, ex.Message));
 			}
 		}
 
-		DebugCoreCLRVM CreateDebugCoreCLRVM(LoadedAssembly asm = null) {
+		DebugCoreCLRVM CreateDebugCoreCLRVM(DnSpyFile asm = null) {
 			// Re-use the previous one if it's the same file
 			if (lastDebugCoreCLRVM != null && asm != null) {
-				if (StringComparer.OrdinalIgnoreCase.Equals(lastDebugCoreCLRVM.Filename, asm.FileName))
+				if (StringComparer.OrdinalIgnoreCase.Equals(lastDebugCoreCLRVM.Filename, asm.Filename))
 					return lastDebugCoreCLRVM.Clone();
 			}
 
 			var vm = new DebugCoreCLRVM();
 			if (asm != null)
-				vm.Filename = asm.FileName;
+				vm.Filename = asm.Filename;
 			vm.DbgShimFilename = DebuggerSettings.Instance.CoreCLRDbgShimFilename;
 			vm.BreakProcessType = DebuggerSettings.Instance.BreakProcessType;
 			return vm;
@@ -741,16 +742,16 @@ namespace dnSpy.Debugger {
 			return opts;
 		}
 
-		DebugProcessVM CreateDebugProcessVM(LoadedAssembly asm = null) {
+		DebugProcessVM CreateDebugProcessVM(DnSpyFile asm = null) {
 			// Re-use the previous one if it's the same file
 			if (lastDebugProcessVM != null && asm != null) {
-				if (StringComparer.OrdinalIgnoreCase.Equals(lastDebugProcessVM.Filename, asm.FileName))
+				if (StringComparer.OrdinalIgnoreCase.Equals(lastDebugProcessVM.Filename, asm.Filename))
 					return lastDebugProcessVM.Clone();
 			}
 
 			var vm = new DebugProcessVM();
 			if (asm != null)
-				vm.Filename = asm.FileName;
+				vm.Filename = asm.Filename;
 			vm.BreakProcessType = DebuggerSettings.Instance.BreakProcessType;
 			return vm;
 		}
@@ -985,7 +986,7 @@ namespace dnSpy.Debugger {
 				return;
 			}
 
-			var loadedMod = MainWindow.Instance.LoadAssembly(currentLocation.Value.ModuleAssembly.Assembly, currentLocation.Value.MethodKey.Module).ModuleDefinition as ModuleDefMD;
+			var loadedMod = MainWindow.Instance.LoadAssembly(currentLocation.Value.ModuleAssembly.Assembly, currentLocation.Value.MethodKey.Module).ModuleDef as ModuleDefMD;
 			if (loadedMod == null) {
 				currentMethod = null;
 				return;

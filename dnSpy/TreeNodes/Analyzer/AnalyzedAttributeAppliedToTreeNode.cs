@@ -311,21 +311,21 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			foreach (var m in asm.Modules.GetSafeEnumerable())
 				yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, this.analyzedType);
 
-			IEnumerable<LoadedAssembly> assemblies = MainWindow.Instance.CurrentAssemblyList.GetAssemblies().Where(assy => assy.AssemblyDefinition != null);
+			var assemblies = MainWindow.Instance.DnSpyFileList.GetDnSpyFiles().Where(assy => assy.AssemblyDef != null);
 
 			foreach (var assembly in assemblies) {
 				ct.ThrowIfCancellationRequested();
 				bool found = false;
-				foreach (var reference in assembly.AssemblyDefinition.Modules.GetSafeEnumerable().OfType<ModuleDefMD>().SelectMany(module => module.GetAssemblyRefs())) {
+				foreach (var reference in assembly.AssemblyDef.Modules.GetSafeEnumerable().OfType<ModuleDefMD>().SelectMany(module => module.GetAssemblyRefs())) {
 					if (AssemblyNameComparer.CompareAll.CompareTo(asm, reference) == 0) {
 						found = true;
 						break;
 					}
 				}
 				if (found) {
-					var typeref = GetScopeTypeReferenceInAssembly(assembly.AssemblyDefinition);
+					var typeref = GetScopeTypeReferenceInAssembly(assembly.AssemblyDef);
 					if (typeref != null) {
-						foreach (var m in assembly.AssemblyDefinition.Modules.GetSafeEnumerable())
+						foreach (var m in assembly.AssemblyDef.Modules.GetSafeEnumerable())
 							yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, typeref);
 					}
 				}
@@ -358,14 +358,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 				}
 
 				if (friendAssemblies.Count > 0) {
-					IEnumerable<LoadedAssembly> assemblies = MainWindow.Instance.CurrentAssemblyList.GetAssemblies().Where(assy => assy.AssemblyDefinition != null);
+					var assemblies = MainWindow.Instance.DnSpyFileList.GetDnSpyFiles().Where(assy => assy.AssemblyDef != null);
 
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();
-						if (friendAssemblies.Contains(assembly.AssemblyDefinition.Name)) {
-							var typeref = GetScopeTypeReferenceInAssembly(assembly.AssemblyDefinition);
+						if (friendAssemblies.Contains(assembly.AssemblyDef.Name)) {
+							var typeref = GetScopeTypeReferenceInAssembly(assembly.AssemblyDef);
 							if (typeref != null) {
-								foreach (var m in assembly.AssemblyDefinition.Modules.GetSafeEnumerable())
+								foreach (var m in assembly.AssemblyDef.Modules.GetSafeEnumerable())
 									yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, typeref);
 							}
 						}

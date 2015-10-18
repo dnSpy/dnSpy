@@ -143,12 +143,12 @@ namespace dnSpy.AsmEditor.Hex {
 		internal static void ExecuteInternal(ContextMenuEntryContext context) {
 			var node = GetNode(context);
 			if (node != null)
-				MainWindow.Instance.OpenOrShowHexBox(node.LoadedAssembly.FileName);
+				MainWindow.Instance.OpenOrShowHexBox(node.DnSpyFile.Filename);
 		}
 
 		static bool IsVisibleInternal(ContextMenuEntryContext context) {
 			var node = GetNode(context);
-			return node != null && !string.IsNullOrEmpty(node.LoadedAssembly.FileName);
+			return node != null && !string.IsNullOrEmpty(node.DnSpyFile.Filename);
 		}
 
 		static AssemblyTreeNode GetAssemblyTreeNode(ContextMenuEntryContext context) {
@@ -223,10 +223,10 @@ namespace dnSpy.AsmEditor.Hex {
 			var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
 			if (asmNode == null)
 				return null;
-			var mod = asmNode.LoadedAssembly.ModuleDefinition;
+			var mod = asmNode.DnSpyFile.ModuleDef;
 			if (mod != null)
 				return mod.Location;
-			var peImage = asmNode.LoadedAssembly.PEImage;
+			var peImage = asmNode.DnSpyFile.PEImage;
 			return peImage == null ? null : peImage.FileName;
 		}
 	}
@@ -893,7 +893,7 @@ namespace dnSpy.AsmEditor.Hex {
 				return;
 
 			var tokRef = new TokenReference(module.Location, token.Value);
-			if (MainWindow.Instance.AssemblyListTreeNode.FindTokenNode(tokRef) == null) {
+			if (MainWindow.Instance.DnSpyFileListTreeNode.FindTokenNode(tokRef) == null) {
 				MainWindow.Instance.ShowMessageBox(string.Format("Token {0:X8} doesn't exist in the metadata", token.Value));
 				return;
 			}

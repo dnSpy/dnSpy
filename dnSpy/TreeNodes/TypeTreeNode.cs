@@ -147,7 +147,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				if (t == typeof(BaseTypesTreeNode))
 					this.Children.Add(new BaseTypesTreeNode(type));
 				else if (t == typeof(DerivedTypesTreeNode))
-					this.Children.Add(new DerivedTypesTreeNode(parentAssemblyNode.AssemblyList, type));
+					this.Children.Add(new DerivedTypesTreeNode(parentAssemblyNode.DnSpyFileList, type));
 				else if (t == typeof(TypeTreeNode)) {
 					foreach (TypeDef nestedType in type.GetNestedTypes(true))
 						this.Children.Add(new TypeTreeNode(nestedType, parentAssemblyNode));
@@ -158,7 +158,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				}
 				else if (t == typeof(PropertyTreeNode)) {
 					foreach (PropertyDef property in type.GetProperties(true))
-						this.Children.Add(new PropertyTreeNode(property));
+						this.Children.Add(new PropertyTreeNode(property, this));
 				}
 				else if (t == typeof(EventTreeNode)) {
 					foreach (EventDef ev in type.GetEvents(true))

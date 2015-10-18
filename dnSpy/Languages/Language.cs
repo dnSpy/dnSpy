@@ -22,6 +22,7 @@ using System.IO;
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Files;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
@@ -95,25 +96,25 @@ namespace ICSharpCode.ILSpy {
 			WriteCommentLine(output, string.IsNullOrEmpty(nameSpace) ? string.Empty : IdentifierEscaper.Escape(nameSpace));
 		}
 
-		public virtual void DecompileAssembly(LoadedAssembly assembly, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
+		public virtual void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
 		{
 			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
 			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
-			WriteCommentLine(output, assembly.FileName);
-			if (decompileAsm && assembly.AssemblyDefinition != null) {
-				if (assembly.AssemblyDefinition.IsContentTypeWindowsRuntime) {
-					WriteCommentLine(output, assembly.AssemblyDefinition.Name + " [WinRT]");
+			WriteCommentLine(output, file.Filename);
+			if (decompileAsm && file.AssemblyDef != null) {
+				if (file.AssemblyDef.IsContentTypeWindowsRuntime) {
+					WriteCommentLine(output, file.AssemblyDef.Name + " [WinRT]");
 				} else {
-					WriteCommentLine(output, assembly.AssemblyDefinition.FullName);
+					WriteCommentLine(output, file.AssemblyDef.FullName);
 				}
 			} else if (decompileMod) {
-				WriteCommentLine(output, assembly.ModuleDefinition.Name);
+				WriteCommentLine(output, file.ModuleDef.Name);
 			}
 		}
 
-		protected void PrintEntryPoint(LoadedAssembly assembly, ITextOutput output)
+		protected void PrintEntryPoint(DnSpyFile assembly, ITextOutput output)
 		{
-			var ep = GetEntryPoint(assembly.ModuleDefinition);
+			var ep = GetEntryPoint(assembly.ModuleDef);
 			if (ep is uint)
 				WriteCommentLine(output, string.Format("Native Entry point: 0x{0:x8}", (uint)ep));
 			else if (ep is MethodDef) {

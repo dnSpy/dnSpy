@@ -102,7 +102,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 		internal static bool ActivateItem(SharpTreeNode node, TypeDef def)
 		{
 			if (def != null) {
-				var assemblyListNode = node.Ancestors().OfType<AssemblyListTreeNode>().FirstOrDefault();
+				var assemblyListNode = node.Ancestors().OfType<DnSpyFileListTreeNode>().FirstOrDefault();
 				if (assemblyListNode != null) {
 					assemblyListNode.Select(assemblyListNode.FindTypeNode(def));
 					return true;

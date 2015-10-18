@@ -20,6 +20,7 @@ using System;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy;
+using dnSpy.Files;
 using dnSpy.Images;
 using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
@@ -32,19 +33,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	public sealed class AssemblyReferenceTreeNode : ILSpyTreeNode, ITokenTreeNode
 	{
 		readonly AssemblyRef r;
-		readonly AssemblyListTreeNode assemblyListTreeNode;
+		readonly DnSpyFileListTreeNode dnSpyFileListTreeNode;
 		readonly AssemblyTreeNode parentAssembly;
 		
-		internal AssemblyReferenceTreeNode(AssemblyRef r, AssemblyTreeNode parentAssembly, AssemblyListTreeNode assemblyListTreeNode)
+		internal AssemblyReferenceTreeNode(AssemblyRef r, AssemblyTreeNode parentAssembly, DnSpyFileListTreeNode dnSpyFileListTreeNode)
 		{
 			if (parentAssembly == null)
 				throw new ArgumentNullException("parentAssembly");
-			if (assemblyListTreeNode == null)
-				throw new ArgumentNullException("assemblyListTreeNode");
+			if (dnSpyFileListTreeNode == null)
+				throw new ArgumentNullException("dnSpyFileListTreeNode");
 			if (r == null)
 				throw new ArgumentNullException("r");
 			this.r = r;
-			this.assemblyListTreeNode = assemblyListTreeNode;
+			this.dnSpyFileListTreeNode = dnSpyFileListTreeNode;
 			this.parentAssembly = parentAssembly;
 			this.LazyLoading = true;
 		}
@@ -81,28 +82,33 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				return res.FilterResult.Value;
 			return base.Filter(settings);
 		}
-		
+
+		static AssemblyDef LookupReferencedAssembly(DnSpyFile file, IAssembly asm) {
+			var mod = file.ModuleDef;
+			return mod == null ? null : mod.Context.AssemblyResolver.Resolve(asm, mod);
+		}
+
 		protected override void ActivateItemInternal(System.Windows.RoutedEventArgs e)
 		{
-			var assemblyListNode = assemblyListTreeNode;
+			var assemblyListNode = dnSpyFileListTreeNode;
 			Debug.Assert(assemblyListNode != null);
 			if (assemblyListNode != null) {
-				assemblyListNode.Select(assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r)));
+				assemblyListNode.Select(assemblyListNode.FindAssemblyNode(LookupReferencedAssembly(parentAssembly.DnSpyFile, r)));
 				e.Handled = true;
 			}
 		}
 		
 		protected override void LoadChildren()
 		{
-			var assemblyListNode = assemblyListTreeNode;
+			var assemblyListNode = dnSpyFileListTreeNode;
 			Debug.Assert(assemblyListNode != null);
 			if (assemblyListNode != null) {
-				var refNode = assemblyListNode.FindAssemblyNode(parentAssembly.LoadedAssembly.LookupReferencedAssembly(r));
+				var refNode = assemblyListNode.FindAssemblyNode(LookupReferencedAssembly(parentAssembly.DnSpyFile, r));
 				if (refNode != null) {
-					ModuleDef module = refNode.LoadedAssembly.ModuleDefinition;
+					ModuleDef module = refNode.DnSpyFile.ModuleDef;
 					if (module is ModuleDefMD) {
 						foreach (var childRef in ((ModuleDefMD)module).GetAssemblyRefs())
-							this.Children.Add(new AssemblyReferenceTreeNode(childRef, refNode, assemblyListTreeNode));
+							this.Children.Add(new AssemblyReferenceTreeNode(childRef, refNode, dnSpyFileListTreeNode));
 					}
 				}
 			}

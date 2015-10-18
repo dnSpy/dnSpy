@@ -25,6 +25,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Files;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
@@ -45,18 +46,18 @@ namespace dnSpy.AsmEditor.Assembly {
 				context.SelectedTreeNodes.Any(a => GetLoadedAssembly(a) != null);
 		}
 
-		static LoadedAssembly GetLoadedAssembly(SharpTreeNode node) {
+		static DnSpyFile GetLoadedAssembly(SharpTreeNode node) {
 			var asmNode = node as AssemblyTreeNode;
 			if (asmNode == null)
 				return null;
 
-			var module = asmNode.LoadedAssembly.ModuleDefinition as ModuleDefMD;
+			var module = asmNode.DnSpyFile.ModuleDef as ModuleDefMD;
 			if (module == null)
 				return null;
 			if (!module.MetaData.PEImage.IsMemoryMappedIO)
 				return null;
 
-			return asmNode.LoadedAssembly;
+			return asmNode.DnSpyFile;
 		}
 
 		public bool IsEnabled(ContextMenuEntryContext context) {
@@ -66,11 +67,11 @@ namespace dnSpy.AsmEditor.Assembly {
 		public void Execute(ContextMenuEntryContext context) {
 			if (context.Element != MainWindow.Instance.treeView)
 				return;
-			var asms = new List<LoadedAssembly>();
+			var asms = new List<DnSpyFile>();
 			foreach (var node in context.SelectedTreeNodes) {
-				var loadedAsm = GetLoadedAssembly(node);
-				if (loadedAsm != null)
-					asms.Add(loadedAsm);
+				var file = GetLoadedAssembly(node);
+				if (file != null)
+					asms.Add(file);
 			}
 			if (asms.Count > 0)
 				MainWindow.Instance.DisableMemoryMappedIO(asms);
@@ -257,9 +258,9 @@ namespace dnSpy.AsmEditor.Assembly {
 				return;
 
 			var asmNode = (AssemblyTreeNode)nodes[0];
-			var module = asmNode.LoadedAssembly.ModuleDefinition;
+			var module = asmNode.DnSpyFile.ModuleDef;
 
-			var data = new AssemblyOptionsVM(new AssemblyOptions(asmNode.LoadedAssembly.AssemblyDefinition), module, MainWindow.Instance.CurrentLanguage);
+			var data = new AssemblyOptionsVM(new AssemblyOptions(asmNode.DnSpyFile.AssemblyDef), module, MainWindow.Instance.CurrentLanguage);
 			var win = new AssemblyOptionsDlg();
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
@@ -289,10 +290,10 @@ namespace dnSpy.AsmEditor.Assembly {
 		AssemblySettingsCommand(AssemblyTreeNode asmNode, AssemblyOptions newOptions) {
 			this.asmNode = asmNode;
 			this.newOptions = newOptions;
-			this.origOptions = new AssemblyOptions(asmNode.LoadedAssembly.AssemblyDefinition);
+			this.origOptions = new AssemblyOptions(asmNode.DnSpyFile.AssemblyDef);
 
 			if (newOptions.Name != origOptions.Name)
-				this.assemblyRefInfos = RefFinder.FindAssemblyRefsToThisModule(asmNode.LoadedAssembly.ModuleDefinition).Where(a => AssemblyNameComparer.NameAndPublicKeyTokenOnly.Equals(a, asmNode.LoadedAssembly.AssemblyDefinition)).Select(a => new AssemblyRefInfo(a)).ToArray();
+				this.assemblyRefInfos = RefFinder.FindAssemblyRefsToThisModule(asmNode.DnSpyFile.ModuleDef).Where(a => AssemblyNameComparer.NameAndPublicKeyTokenOnly.Equals(a, asmNode.DnSpyFile.AssemblyDef)).Select(a => new AssemblyRefInfo(a)).ToArray();
 		}
 
 		public string Description {
@@ -300,7 +301,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		public void Execute() {
-			newOptions.CopyTo(asmNode.LoadedAssembly.AssemblyDefinition);
+			newOptions.CopyTo(asmNode.DnSpyFile.AssemblyDef);
 			if (assemblyRefInfos != null) {
 				var pkt = newOptions.PublicKey.Token;
 				foreach (var info in assemblyRefInfos) {
@@ -315,7 +316,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		public void Undo() {
-			origOptions.CopyTo(asmNode.LoadedAssembly.AssemblyDefinition);
+			origOptions.CopyTo(asmNode.DnSpyFile.AssemblyDef);
 			if (assemblyRefInfos != null) {
 				foreach (var info in assemblyRefInfos) {
 					info.AssemblyRef.Name = info.OrigName;
@@ -389,7 +390,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		CreateAssemblyCommand(ModuleDef newModule, AssemblyOptions options) {
 			var module = Module.ModuleUtils.CreateModule(options.Name, Guid.NewGuid(), options.ClrVersion, ModuleKind.Dll, newModule);
 			options.CreateAssemblyDef(module).Modules.Add(module);
-			this.asmNodeCreator = new AssemblyTreeNodeCreator(new LoadedAssembly(MainWindow.Instance.CurrentAssemblyList, module));
+			this.asmNodeCreator = new AssemblyTreeNodeCreator(MainWindow.Instance.DnSpyFileList.CreateDnSpyFile(module));
 		}
 
 		public string Description {
@@ -398,7 +399,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 		public void Execute() {
 			asmNodeCreator.Add();
-			UndoCommandManager.Instance.MarkAsModified(asmNodeCreator.AssemblyTreeNode.LoadedAssembly);
+			UndoCommandManager.Instance.MarkAsModified(asmNodeCreator.AssemblyTreeNode.DnSpyFile);
 		}
 
 		public void Undo() {

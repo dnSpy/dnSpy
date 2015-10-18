@@ -30,7 +30,7 @@ namespace dnSpy.TreeNodes {
 			return context.SelectedTreeNodes != null &&
 				context.SelectedTreeNodes.Length == 1 &&
 				context.SelectedTreeNodes[0] is AssemblyTreeNode &&
-				!string.IsNullOrWhiteSpace(((AssemblyTreeNode)context.SelectedTreeNodes[0]).LoadedAssembly.FileName);
+				!string.IsNullOrWhiteSpace(((AssemblyTreeNode)context.SelectedTreeNodes[0]).DnSpyFile.Filename);
 		}
 
 		public bool IsEnabled(ContextMenuEntryContext context) {
@@ -40,7 +40,7 @@ namespace dnSpy.TreeNodes {
 		public void Execute(ContextMenuEntryContext context) {
 			// Known problem: explorer can't show files in the .NET 2.0 GAC.
 			var asmNode = (AssemblyTreeNode)context.SelectedTreeNodes[0];
-			var filename = asmNode.LoadedAssembly.FileName;
+			var filename = asmNode.DnSpyFile.Filename;
 			var args = string.Format("/select,{0}", filename);
 			try {
 				Process.Start(new ProcessStartInfo("explorer.exe", args));

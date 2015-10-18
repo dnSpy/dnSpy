@@ -44,7 +44,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		{
 			ActivateItemInternal(e);
 			if (!e.Handled) {
-				var asmList = GetNode<AssemblyListTreeNode>(this);
+				var asmList = GetNode<DnSpyFileListTreeNode>(this);
 				var inputElem = asmList == null ? null : asmList.OwnerTreeView as IInputElement;
 				if (inputElem != null) {
 					if (TreeNodeActivatedEvent.CanExecute(this, inputElem))
@@ -283,7 +283,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		internal static ModuleDef GetModule(SharpTreeNode node)
 		{
 			var asmNode = GetNode<AssemblyTreeNode>(node);
-			return asmNode == null ? null : asmNode.LoadedAssembly.ModuleDefinition;
+			return asmNode == null ? null : asmNode.DnSpyFile.ModuleDef;
 		}
 
 		public static T GetNode<T>(SharpTreeNode node) where T : SharpTreeNode

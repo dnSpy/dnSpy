@@ -17,14 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using ICSharpCode.ILSpy;
+using dnSpy.Files;
 
 namespace dnSpy.Search {
 	sealed class NamespaceRef {
-		public readonly LoadedAssembly Module;
+		public readonly DnSpyFile Module;
 		public readonly string Namespace;
 
-		public NamespaceRef(LoadedAssembly mod, string ns) {
+		public NamespaceRef(DnSpyFile mod, string ns) {
 			this.Module = mod;
 			this.Namespace = ns;
 		}
