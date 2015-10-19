@@ -28,7 +28,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnSpy.Files;
 using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 
@@ -242,11 +241,11 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		static SaveOptionsVM Create(IUndoObject obj) {
-			var asm = obj as DnSpyFile;
-			if (asm != null)
-				return new SaveModuleOptionsVM(asm);
+			var file = UndoCommandManager.Instance.TryGetDnSpyFile(obj);
+			if (file != null)
+				return new SaveModuleOptionsVM(file);
 
-			var doc = obj as AsmEdHexDocument;
+			var doc = UndoCommandManager.Instance.TryGetAsmEdHexDocument(obj);
 			if (doc != null)
 				return new SaveHexOptionsVM(doc);
 

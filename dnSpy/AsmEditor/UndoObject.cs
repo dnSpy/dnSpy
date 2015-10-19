@@ -17,24 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.HexEditor;
-
 namespace dnSpy.AsmEditor {
-	//TODO: This class should be removed once the UndoObject prop has been removed
-	sealed class AsmEdHexDocument : HexDocument {
-		public AsmEdHexDocument(string filename)
-			: base(filename) {
-			this.undoObject = new UndoObject(this);
+	//TODO: This object is attached to AsmEdHexDocument and DnSpyFile. The UndoCommandManager should
+	//		internally store this state so this class (and AsmEdHexDocument) can be removed.
+	sealed class UndoObject : IUndoObject {
+		public bool IsDirty { get; set; }
+		public int SavedCommand { get; set; }
+		public object Value { get; set; }
+
+		public UndoObject() {
 		}
 
-		public AsmEdHexDocument(byte[] data, string filename)
-			: base(data, filename) {
-			this.undoObject = new UndoObject(this);
+		public UndoObject(object value) {
+			this.Value = value;
 		}
-
-		public UndoObject UndoObject {
-			get { return undoObject; }
-		}
-		readonly UndoObject undoObject;
 	}
 }

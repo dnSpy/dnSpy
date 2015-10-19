@@ -18,18 +18,14 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using dnlib.DotNet;
 using dnlib.PE;
-using dnSpy.AsmEditor;
 
 namespace dnSpy.Files {
-	public abstract class DnSpyFile : IDisposable, IUndoObject {
-		//TODO: Remove these
-		public bool IsDirty { get; set; }
-		public int SavedCommand { get; set; }
-
+	public abstract class DnSpyFile : IDisposable {
 		/// <summary>
 		/// Gets a key for this file. Eg. a <see cref="FilenameKey"/> instance if it's a
 		/// file loaded from disk.
@@ -140,6 +136,27 @@ namespace dnSpy.Files {
 			// defaults to projecting WinMD types.
 			moduleCtx.Resolver = new Resolver(moduleCtx.AssemblyResolver) { ProjectWinMDRefs = false };
 			return moduleCtx;
+		}
+
+		readonly Dictionary<object, object> dict = new Dictionary<object, object>();
+		public TValue GetOrCreateAnnotation<TKey, TValue>(TKey key) where TValue : new() {
+			object value;
+			if (dict.TryGetValue(key, out value))
+				return (TValue)value;
+			var t = new TValue();
+			dict.Add(key, t);
+			return t;
+		}
+
+		public TValue GetAnnotation<TKey, TValue>(TKey key) where TValue : new() {
+			object value;
+			if (dict.TryGetValue(key, out value))
+				return (TValue)value;
+			return default(TValue);
+		}
+
+		public void RemoveAnnotation<TKey>(TKey key) {
+			dict.Remove(key);
 		}
 
 		public virtual void Dispose() {

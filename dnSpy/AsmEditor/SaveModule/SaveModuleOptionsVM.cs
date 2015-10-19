@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		readonly ModuleDef module;
 
 		public override IUndoObject UndoObject {
-			get { return dnSpyFile; }
+			get { return UndoCommandManager.Instance.GetUndoObject(dnSpyFile); }
 		}
 		readonly DnSpyFile dnSpyFile;
 

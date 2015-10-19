@@ -20,18 +20,17 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using dnSpy.Files;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	static class Saver {
 		public static bool AskUserToSaveIfModified(AssemblyTreeNode asmNode) {
-			return AskUserToSaveIfModified(new[] { asmNode.DnSpyFile });
+			return AskUserToSaveIfModified(new[] { UndoCommandManager.Instance.GetUndoObject(asmNode.DnSpyFile) });
 		}
 
 		public static bool AskUserToSaveIfModified(IEnumerable<AssemblyTreeNode> asmNodes) {
-			return AskUserToSaveIfModified(asmNodes.Select(n => n.DnSpyFile));
+			return AskUserToSaveIfModified(asmNodes.Select(n => UndoCommandManager.Instance.GetUndoObject(n.DnSpyFile)));
 		}
 
 		public static bool AskUserToSaveIfModified(IEnumerable<IUndoObject> objs) {
@@ -61,9 +60,9 @@ namespace dnSpy.AsmEditor.SaveModule {
 			if (objsAry.Length == 1) {
 				SaveOptionsVM options;
 
-				var asm = objsAry[0] as DnSpyFile;
-				if (asm != null) {
-					var optsData = new SaveModuleOptionsVM(asm);
+				var file = UndoCommandManager.Instance.TryGetDnSpyFile(objsAry[0]);
+				if (file != null) {
+					var optsData = new SaveModuleOptionsVM(file);
 					var optsWin = new SaveModuleOptionsDlg();
 					optsWin.Owner = MainWindow.Instance;
 					optsWin.DataContext = optsData;
@@ -73,7 +72,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 					options = optsData;
 				}
 				else {
-					var doc = (AsmEdHexDocument)objsAry[0];
+					var doc = UndoCommandManager.Instance.TryGetAsmEdHexDocument(objsAry[0]);
+					Debug.Assert(doc != null);
 					var optsData = new SaveHexOptionsVM(doc);
 					var optsWin = new SaveHexOptionsDlg();
 					optsWin.Owner = MainWindow.Instance;
@@ -110,18 +110,18 @@ namespace dnSpy.AsmEditor.SaveModule {
 					allSaved = false;
 				else {
 					UndoCommandManager.Instance.MarkAsSaved(obj);
-					var asm = obj as DnSpyFile;
-					if (asm != null && string.IsNullOrEmpty(asm.Filename)) {
-						var filename = vm.GetSavedFileName(asm);
-						if (!string.IsNullOrWhiteSpace(filename) && asm.ModuleDef != null) {
-							asm.ModuleDef.Location = filename;
-							asm.Filename = filename;
+					var file = UndoCommandManager.Instance.TryGetDnSpyFile(obj);
+					if (file != null && string.IsNullOrEmpty(file.Filename)) {
+						var filename = vm.GetSavedFileName(obj);
+						if (!string.IsNullOrWhiteSpace(filename) && file.ModuleDef != null) {
+							file.ModuleDef.Location = filename;
+							file.Filename = filename;
 							setNewFileName = true;
-							var asmNode = MainWindow.Instance.FindTreeNode(asm.ModuleDef) as AssemblyTreeNode;
+							var asmNode = MainWindow.Instance.FindTreeNode(file.ModuleDef) as AssemblyTreeNode;
 							Debug.Assert(asmNode != null);
 							if (asmNode != null) {
 								asmNode.OnFileNameChanged();
-								Utils.NotifyModifiedAssembly(asm);
+								Utils.NotifyModifiedAssembly(file);
 							}
 						}
 					}

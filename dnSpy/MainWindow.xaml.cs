@@ -2221,7 +2221,7 @@ namespace ICSharpCode.ILSpy
 
 			var hexTabState = tabState as HexTabState;
 			if (hexTabState != null && hexTabState.HexBox.Document is AsmEdHexDocument) {
-				dnSpy.AsmEditor.SaveModule.Saver.SaveAssemblies(new[] { (AsmEdHexDocument)hexTabState.HexBox.Document });
+				dnSpy.AsmEditor.SaveModule.Saver.SaveAssemblies(new[] { UndoCommandManager.Instance.GetUndoObject((AsmEdHexDocument)hexTabState.HexBox.Document) });
 				return;
 			}
 		}
@@ -3123,15 +3123,15 @@ namespace ICSharpCode.ILSpy
 			DisableMemoryMappedIO(GetAllDnSpyFileInstances());
 		}
 
-		internal void DisableMemoryMappedIO(IEnumerable<DnSpyFile> asms)
+		internal void DisableMemoryMappedIO(IEnumerable<DnSpyFile> files)
 		{
 			foreach (var tabState in AllDecompileTabStates) {
 				// Make sure that the code doesn't try to reference memory that will be moved.
 				tabState.TextView.CancelDecompilation();
 			}
 
-			foreach (var asm in asms) {
-				var mod = asm.ModuleDef as ModuleDefMD;
+			foreach (var file in files) {
+				var mod = file.ModuleDef as ModuleDefMD;
 				if (mod != null)
 					mod.MetaData.PEImage.UnsafeDisableMemoryMappedIO();
 			}

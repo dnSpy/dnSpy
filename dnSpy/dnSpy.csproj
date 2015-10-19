@@ -122,6 +122,7 @@
       <DependentUpon>AssemblyOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
+    <Compile Include="AsmEditor\UndoObject.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointColumnConverter.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointListSettings.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointPrinter.cs" />

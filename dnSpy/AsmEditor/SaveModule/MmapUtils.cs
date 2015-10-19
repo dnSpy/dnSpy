@@ -28,16 +28,16 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public static void DisableMemoryMappedIO(IEnumerable<string> filenames) {
 			var hash = new HashSet<string>(filenames, StringComparer.OrdinalIgnoreCase);
 
-			foreach (var asm in MainWindow.Instance.GetAllDnSpyFileInstances()) {
-				DisableMemoryMappedIO(hash, asm.ModuleDef as ModuleDefMD);
-				DisableMemoryMappedIO(hash, asm.PEImage);
+			foreach (var file in MainWindow.Instance.GetAllDnSpyFileInstances()) {
+				DisableMemoryMappedIO(hash, file.ModuleDef as ModuleDefMD);
+				DisableMemoryMappedIO(hash, file.PEImage);
 			}
 
 			foreach (var mod in MainWindow.Instance.DnSpyFileList.GetAllModules())
 				DisableMemoryMappedIO(hash, mod as ModuleDefMD);
 
-			foreach (var asm in UndoCommandManager.Instance.GetAssemblies())
-				DisableMemoryMappedIO(hash, asm.ModuleDef as ModuleDefMD);
+			foreach (var file in UndoCommandManager.Instance.GetDnSpyFiles())
+				DisableMemoryMappedIO(hash, file.ModuleDef as ModuleDefMD);
 		}
 
 		static void DisableMemoryMappedIO(HashSet<string> filenames, ModuleDefMD mod) {

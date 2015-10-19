@@ -38,7 +38,7 @@ namespace dnSpy.AsmEditor {
 		}
 
 		void UndoCommandManager_OnEvent(object sender, UndoCommandManagerEventArgs e) {
-			var doc = e.UndoObject as AsmEdHexDocument;
+			var doc = UndoCommandManager.Instance.TryGetAsmEdHexDocument(e.UndoObject);
 			if (doc == null)
 				return;
 

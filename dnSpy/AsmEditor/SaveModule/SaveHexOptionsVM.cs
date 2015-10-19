@@ -28,7 +28,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public override IUndoObject UndoObject {
-			get { return doc; }
+			get { return UndoCommandManager.Instance.GetUndoObject(doc); }
 		}
 
 		public HexDocument Document {

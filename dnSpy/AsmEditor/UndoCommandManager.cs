@@ -166,6 +166,26 @@ namespace dnSpy.AsmEditor {
 			get { return currentCommands != null; }
 		}
 
+		public IUndoObject GetUndoObject(DnSpyFile file) {
+			var uo = file.GetOrCreateAnnotation<Type, UndoObject>(typeof(UndoObject));
+			uo.Value = file;
+			return uo;
+		}
+
+		public DnSpyFile TryGetDnSpyFile(IUndoObject iuo) {
+			var uo = iuo as UndoObject;
+			return uo == null ? null : uo.Value as DnSpyFile;
+		}
+
+		internal IUndoObject GetUndoObject(AsmEdHexDocument file) {
+			return file.UndoObject;
+		}
+
+		internal AsmEdHexDocument TryGetAsmEdHexDocument(IUndoObject iuo) {
+			var uo = iuo as UndoObject;
+			return uo == null ? null : uo.Value as AsmEdHexDocument;
+		}
+
 		/// <summary>
 		/// Adds a command and executes it
 		/// </summary>
@@ -261,9 +281,10 @@ namespace dnSpy.AsmEditor {
 			if (callGc)
 				CallGc();
 
-			foreach (var asm in MainWindow.Instance.GetAllDnSpyFileInstances()) {
-				if (!IsModified(asm))
-					asm.SavedCommand = 0;
+			foreach (var file in MainWindow.Instance.GetAllDnSpyFileInstances()) {
+				var uo = GetUndoObject(file);
+				if (!IsModified(uo))
+					uo.SavedCommand = 0;
 			}
 		}
 
@@ -333,14 +354,16 @@ namespace dnSpy.AsmEditor {
 		}
 
 		public IEnumerable<IUndoObject> GetModifiedObjects() {
-			foreach (var asm in MainWindow.Instance.GetAllDnSpyFileInstances()) {
-				if (IsModified(asm))
-					yield return asm;
+			foreach (var file in MainWindow.Instance.GetAllDnSpyFileInstances()) {
+				var uo = GetUndoObject(file);
+				if (IsModified(uo))
+					yield return uo;
 			}
 
 			foreach (var doc in HexDocumentManager.Instance.GetDocuments()) {
-				if (IsModified(doc))
-					yield return doc;
+				var uo = GetUndoObject(doc);
+				if (IsModified(uo))
+					yield return uo;
 			}
 		}
 
@@ -352,7 +375,11 @@ namespace dnSpy.AsmEditor {
 			return obj.SavedCommand != 0 && obj.SavedCommand != counter;
 		}
 
-		internal void MarkAsModified(IUndoObject obj) {
+		internal void MarkAsModified(DnSpyFile file) {
+			MarkAsModified(GetUndoObject(file));
+		}
+
+		void MarkAsModified(IUndoObject obj) {
 			if (obj.SavedCommand == 0)
 				obj.SavedCommand = currentCommandCounter;
 			WriteIsDirty(obj, true);
@@ -400,7 +427,7 @@ namespace dnSpy.AsmEditor {
 			}
 		}
 
-		static IEnumerable<IUndoObject> GetModifiedObjects(IUndoCommand command) {
+		IEnumerable<IUndoObject> GetModifiedObjects(IUndoCommand command) {
 			foreach (var obj in command.ModifiedObjects) {
 				var uo = GetUndoObject(obj);
 				if (uo != null)
@@ -408,19 +435,19 @@ namespace dnSpy.AsmEditor {
 			}
 		}
 
-		static IUndoObject GetUndoObject(object obj) {
+		IUndoObject GetUndoObject(object obj) {
 			var node = obj as ILSpyTreeNode;
 			if (node != null) {
 				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
 				Debug.Assert(asmNode != null);
 				if (asmNode != null)
-					return asmNode.DnSpyFile;
+					return GetUndoObject(asmNode.DnSpyFile);
 				return null;
 			}
 
 			var doc = obj as AsmEdHexDocument;
 			if (doc != null)
-				return doc;
+				return GetUndoObject(doc);
 
 			Debug.Fail(string.Format("Unknown modified object: {0}: {1}", obj == null ? null : obj.GetType(), obj));
 			return null;
@@ -431,16 +458,16 @@ namespace dnSpy.AsmEditor {
 				if (obj.SavedCommand == 0)
 					obj.SavedCommand = group.PrevCommandCounter;
 
-				var asm = obj as DnSpyFile;
-				if (asm != null) {
-					var module = asm.ModuleDef;
+				var file = TryGetDnSpyFile(obj);
+				if (file != null) {
+					var module = file.ModuleDef;
 					if (module != null)
 						module.ResetTypeDefFindCache();
-					Utils.NotifyModifiedAssembly(asm);
+					Utils.NotifyModifiedAssembly(file);
 					continue;
 				}
 
-				Debug.Assert(obj is AsmEdHexDocument, string.Format("Unknown modified object: {0}: {1}", obj == null ? null : obj.GetType(), obj));
+				Debug.Assert(TryGetAsmEdHexDocument(obj) != null, string.Format("Unknown modified object: {0}: {1}", obj == null ? null : obj.GetType(), obj));
 			}
 		}
 
@@ -457,8 +484,8 @@ namespace dnSpy.AsmEditor {
 		}
 
 		public IEnumerable<UndoRedoInfo> GetUndoRedoInfo(IEnumerable<AssemblyTreeNode> nodes) {
-			var modifiedUndoAsms = new HashSet<DnSpyFile>(undoCommands.SelectMany(a => a.ModifiedObjects.Where(b => b is DnSpyFile).Cast<DnSpyFile>()));
-			var modifiedRedoAsms = new HashSet<DnSpyFile>(redoCommands.SelectMany(a => a.ModifiedObjects.Where(b => b is DnSpyFile).Cast<DnSpyFile>()));
+			var modifiedUndoAsms = new HashSet<DnSpyFile>(undoCommands.SelectMany(a => a.ModifiedObjects.Where(b => TryGetDnSpyFile(b) != null).Select(b => TryGetDnSpyFile(b))));
+			var modifiedRedoAsms = new HashSet<DnSpyFile>(redoCommands.SelectMany(a => a.ModifiedObjects.Where(b => TryGetDnSpyFile(b) != null).Select(b => TryGetDnSpyFile(b))));
 			foreach (var node in nodes) {
 				bool isInUndo = modifiedUndoAsms.Contains(node.DnSpyFile);
 				bool isInRedo = modifiedRedoAsms.Contains(node.DnSpyFile);
@@ -466,7 +493,7 @@ namespace dnSpy.AsmEditor {
 			}
 		}
 
-		public IEnumerable<DnSpyFile> GetAssemblies() {
+		public IEnumerable<DnSpyFile> GetDnSpyFiles() {
 			var list = new List<UndoState>(undoCommands);
 			list.AddRange(redoCommands);
 			foreach (var grp in list) {
@@ -475,15 +502,15 @@ namespace dnSpy.AsmEditor {
 					if (cmd2 == null)
 						continue;
 					foreach (var obj in cmd2.NonModifiedObjects) {
-						var asm = GetUndoObject(obj) as DnSpyFile;
-						if (asm != null)
-							yield return asm;
+						var file = TryGetDnSpyFile(GetUndoObject(obj));
+						if (file != null)
+							yield return file;
 					}
 				}
 				foreach (var obj in grp.ModifiedObjects) {
-					var asm = obj as DnSpyFile;
-					if (asm != null)
-						yield return asm;
+					var file = TryGetDnSpyFile(obj);
+					if (file != null)
+						yield return file;
 				}
 			}
 		}

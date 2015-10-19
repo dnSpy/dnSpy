@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				if (hex != null) {
 					var doc = hex.HexBox.Document as AsmEdHexDocument;
 					if (doc != null)
-						hash.Add(doc);
+						hash.Add(UndoCommandManager.Instance.GetUndoObject(doc));
 				}
 			}
 
@@ -53,20 +53,26 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 				bool added = false;
 
-				if (asmNode.DnSpyFile.ModuleDef != null && UndoCommandManager.Instance.IsModified(asmNode.DnSpyFile)) {
-					hash.Add(asmNode.DnSpyFile);
-					added = true;
+				if (asmNode.DnSpyFile.ModuleDef != null) {
+					var uo = UndoCommandManager.Instance.GetUndoObject(asmNode.DnSpyFile);
+					if (UndoCommandManager.Instance.IsModified(uo)) {
+						hash.Add(uo);
+						added = true;
+					}
 				}
 
 				var doc = HexDocumentManager.Instance.TryGet(asmNode.DnSpyFile.Filename);
-				if (doc != null && UndoCommandManager.Instance.IsModified(doc)) {
-					hash.Add(doc);
-					added = true;
+				if (doc != null) {
+					var uo = UndoCommandManager.Instance.GetUndoObject(doc);
+					if (UndoCommandManager.Instance.IsModified(uo)) {
+						hash.Add(uo);
+						added = true;
+					}
 				}
 
 				// If nothing was modified, just include the selected module
 				if (!added && asmNode.DnSpyFile.ModuleDef != null)
-					hash.Add(asmNode.DnSpyFile);
+					hash.Add(UndoCommandManager.Instance.GetUndoObject(asmNode.DnSpyFile));
 			}
 			return hash;
 		}
