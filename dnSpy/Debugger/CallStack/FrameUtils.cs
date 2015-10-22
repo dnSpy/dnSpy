@@ -19,7 +19,6 @@
 
 using dndbg.Engine;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.CallStack {
 	static class FrameUtils {
@@ -50,11 +49,11 @@ namespace dnSpy.Debugger.CallStack {
 			if (!CanGoToIL(frame))
 				return false;
 
-			var serAsm = frame.GetSerializedDnModuleWithAssembly();
-			if (serAsm == null)
+			var func = frame.Function;
+			if (func == null)
 				return false;
 
-			return DebugUtils.GoToIL(serAsm.Value, frame.Token, frame.GetILOffset(), newTab);
+			return DebugUtils.GoToIL(AssemblyLoader.Instance.LoadAssembly(func.Module), frame.Token, frame.GetILOffset(), newTab);
 		}
 
 		public static bool CanGoToDisasm(CorFrame frame) {
@@ -81,14 +80,12 @@ namespace dnSpy.Debugger.CallStack {
 				return 0;
 
 			if (ip.IsEpilog) {
-				var asm = frame.GetSerializedDnModuleWithAssembly();
-				if (asm != null) {
-					var file = MainWindow.Instance.LoadAssembly(asm.Value.Assembly, asm.Value.Module);
-					var mod = file == null ? null : file.ModuleDef as ModuleDefMD;
-					var md = mod == null ? null : mod.ResolveToken(frame.Token) as MethodDef;
-					if (md != null && md.Body != null && md.Body.Instructions.Count > 0)
-						return md.Body.Instructions[md.Body.Instructions.Count - 1].Offset;
-				}
+				var func = frame.Function;
+				var file = func == null ? null : AssemblyLoader.Instance.LoadAssembly(func.Module);
+				var mod = file == null ? null : file.ModuleDef;
+				var md = mod == null ? null : mod.ResolveToken(frame.Token) as MethodDef;
+				if (md != null && md.Body != null && md.Body.Instructions.Count > 0)
+					return md.Body.Instructions[md.Body.Instructions.Count - 1].Offset;
 			}
 
 			return uint.MaxValue;

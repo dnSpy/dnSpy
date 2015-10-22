@@ -262,8 +262,8 @@ namespace dnSpy.AsmEditor.Hex {
 			if (mappings == null || mappings.Count == 0)
 				return null;
 
-			var method = mappings[0].MemberMapping.MethodDefinition;
-			var mod = mappings[0].MemberMapping.MethodDefinition.Module as ModuleDefMD;
+			var method = mappings[0].MemberMapping.MethodDef;
+			var mod = mappings[0].MemberMapping.MethodDef.Module as ModuleDefMD;
 			if (mod == null || string.IsNullOrEmpty(mod.Location))
 				return null;
 
@@ -808,7 +808,7 @@ namespace dnSpy.AsmEditor.Hex {
 				if (node != null && node.MDTokenProvider != null) {
 					var mod = ILSpyTreeNode.GetModule((SharpTreeNode)node);
 					if (mod != null)
-						return new TokenReference(mod.Location, node.MDTokenProvider.MDToken.Raw);
+						return new TokenReference(mod, node.MDTokenProvider.MDToken.Raw);
 				}
 			}
 
@@ -818,14 +818,11 @@ namespace dnSpy.AsmEditor.Hex {
 		static TokenReference CreateTokenReference(ModuleDef module, IMDTokenProvider @ref) {
 			if (module == null || @ref == null)
 				return null;
-			var mod = module as ModuleDefMD;
-			if (mod == null)
-				return null;
 			// Make sure it's not a created method/field/etc
-			var res = mod.ResolveToken(@ref.MDToken.Raw);
+			var res = module.ResolveToken(@ref.MDToken.Raw);
 			if (res == null)
 				return null;
-			return new TokenReference(module.Location, @ref.MDToken.Raw);
+			return new TokenReference(module, @ref.MDToken.Raw);
 		}
 	}
 
@@ -864,7 +861,7 @@ namespace dnSpy.AsmEditor.Hex {
 			return GetModule(context, out tabState) != null;
 		}
 
-		static ModuleDefMD GetModule(ContextMenuEntryContext context, out DecompileTabState tabState) {
+		static ModuleDef GetModule(ContextMenuEntryContext context, out DecompileTabState tabState) {
 			tabState = null;
 			if (context == null)
 				return null;
@@ -873,11 +870,11 @@ namespace dnSpy.AsmEditor.Hex {
 			if (textView != null) {
 				tabState = DecompileTabState.GetDecompileTabState(textView);
 				if (tabState != null)
-					return ILSpyTreeNode.GetModule(tabState.DecompiledNodes) as ModuleDefMD;
+					return ILSpyTreeNode.GetModule(tabState.DecompiledNodes);
 			}
 
 			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1)
-				return ILSpyTreeNode.GetModule(context.SelectedTreeNodes[0]) as ModuleDefMD;
+				return ILSpyTreeNode.GetModule(context.SelectedTreeNodes[0]);
 
 			return null;
 		}
@@ -892,7 +889,7 @@ namespace dnSpy.AsmEditor.Hex {
 			if (token == null)
 				return;
 
-			var tokRef = new TokenReference(module.Location, token.Value);
+			var tokRef = new TokenReference(module, token.Value);
 			if (MainWindow.Instance.DnSpyFileListTreeNode.FindTokenNode(tokRef) == null) {
 				MainWindow.Instance.ShowMessageBox(string.Format("Token {0:X8} doesn't exist in the metadata", token.Value));
 				return;

@@ -25,7 +25,6 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using dndbg.Engine;
-using dnlib.DotNet;
 using dnSpy.AvalonEdit;
 using dnSpy.Files;
 using dnSpy.MVVM;
@@ -35,7 +34,7 @@ using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
 namespace dnSpy.Debugger.Breakpoints {
-	public class BreakpointListModifiedEventArgs : EventArgs {
+	sealed class BreakpointListModifiedEventArgs : EventArgs {
 		/// <summary>
 		/// Added/removed breakpoint
 		/// </summary>
@@ -52,7 +51,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	public sealed class BreakpointManager {
+	sealed class BreakpointManager {
 		public static readonly BreakpointManager Instance = new BreakpointManager();
 
 		public event EventHandler<BreakpointListModifiedEventArgs> OnListModified;
@@ -131,16 +130,10 @@ namespace dnSpy.Debugger.Breakpoints {
 		void MainWindow_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (e.OldItems != null) {
 				foreach (var ilbp in ILCodeBreakpoints) {
-					if (e.OldItems.Cast<DnSpyFile>().Any(n => GetSerializedDnModule(n.ModuleDef) == ilbp.MethodKey.Module))
+					if (e.OldItems.Cast<DnSpyFile>().Any(n => n.ModuleDef.ToSerializedDnSpyModule().Equals(ilbp.SerializedDnSpyToken.Module)))
 						Remove(ilbp);
 				}
 			}
-		}
-
-		static SerializedDnModule GetSerializedDnModule(ModuleDef module) {
-			if (module == null)
-				return new SerializedDnModule();
-			return new SerializedDnModule(module.Location);
 		}
 
 		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
@@ -181,7 +174,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				var ilbp = (ILCodeBreakpoint)bp;
 				cond = AlwaysBreakpointCondition.Instance;//TODO: Let user pick what cond to use
 				Debug.Assert(ilbp.DnBreakpoint == null);
-				ilbp.DnBreakpoint = debugger.CreateBreakpoint(ilbp.MethodKey.Module, ilbp.MethodKey.Token, ilbp.ILOffset, cond);
+				ilbp.DnBreakpoint = debugger.CreateBreakpoint(ilbp.SerializedDnSpyToken.Module.ToSerializedDnModuleWithAssembly(), ilbp.SerializedDnSpyToken.Token, ilbp.ILOffset, cond);
 				break;
 
 			case BreakpointType.DebugEvent:
@@ -386,13 +379,10 @@ namespace dnSpy.Debugger.Breakpoints {
 				}
 				else if (bps.Count > 0) {
 					foreach (var bp in bps) {
-						var md = bp.MemberMapping.MethodDefinition;
-						var key = MethodKey.Create(md);
-						if (key == null)
-							continue;
-						var asm = md.Module == null ? null : md.Module.Assembly;
-						var asmName = asm == null ? null : asm.ManifestModule.Location;
-						BreakpointManager.Instance.Add(new ILCodeBreakpoint(asmName, key.Value, bp.ILInstructionOffset.From));
+						var md = bp.MemberMapping.MethodDef;
+						var serMod = md.Module.ToSerializedDnSpyModule();
+						var key = new SerializedDnSpyToken(serMod, md.MDToken);
+						BreakpointManager.Instance.Add(new ILCodeBreakpoint(key, bp.ILInstructionOffset.From));
 					}
 					textView.ScrollAndMoveCaretTo(bps[0].StartLocation.Line, bps[0].StartLocation.Column);
 				}

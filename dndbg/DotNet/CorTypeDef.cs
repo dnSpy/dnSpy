@@ -315,7 +315,14 @@ namespace dndbg.DotNet {
 		}
 
 		protected override ModuleDef GetModule2_NoLock() {
-			return null;
+			return DeclaringType2_NoLock != null ? null : readerModule;
+		}
+
+		internal void PrepareAutoInsert() {
+			DeclaringType = null;
+			DeclaringType2 = null;
+			module2 = null;
+			module2_isInitialized = true;
 		}
 
 		internal ThreadSafe.IList<MethodOverride> GetMethodOverrides(CorMethodDef cmd) {

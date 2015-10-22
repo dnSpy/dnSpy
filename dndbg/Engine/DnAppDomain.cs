@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using dndbg.COM.CorDebug;
 
@@ -143,8 +144,21 @@ namespace dndbg.Engine {
 		/// Gets all threads, sorted on the order they were created
 		/// </summary>
 		/// <returns></returns>
-		public DnThread[] GetThreads() {
-			return Process.Threads.Where(t => t.AppDomainOrNull == this).ToArray();
+		public DnThread[] Threads {
+			get { return Process.Threads.Where(t => t.AppDomainOrNull == this).ToArray(); }
+		}
+
+		/// <summary>
+		/// Gets all modules in this app domain
+		/// </summary>
+		public IEnumerable<DnModule> Modules {
+			get {
+				Debugger.DebugVerifyThread();
+				foreach (var asm in Assemblies) {
+					foreach (var mod in asm.Modules)
+						yield return mod;
+				}
+			}
 		}
 
 		public override string ToString() {

@@ -268,6 +268,23 @@ namespace dndbg.Engine {
 			}
 		}
 
+		/// <summary>
+		/// Gets the module of the function or null
+		/// </summary>
+		public SerializedDnModuleWithAssembly? SerializedDnModuleWithAssembly {
+			get {
+				var func = Function;
+				if (func == null)
+					return null;
+
+				var module = func.Module;
+				if (module == null)
+					return null;
+
+				return module.SerializedDnModuleWithAssembly;
+			}
+		}
+
 		public CorFrame(ICorDebugFrame frame)
 			: base(frame) {
 			int hr = frame.GetFunctionToken(out this.token);
@@ -288,21 +305,6 @@ namespace dndbg.Engine {
 			ICorDebugStepper stepper;
 			int hr = obj.CreateStepper(out stepper);
 			return hr < 0 || stepper == null ? null : new CorStepper(stepper);
-		}
-
-		/// <summary>
-		/// Gets the module of the function or null
-		/// </summary>
-		public SerializedDnModuleWithAssembly? GetSerializedDnModuleWithAssembly() {
-			var func = Function;
-			if (func == null)
-				return null;
-
-			var module = func.Module;
-			if (module == null)
-				return null;
-
-			return module.SerializedDnModuleWithAssembly;
 		}
 
 		/// <summary>

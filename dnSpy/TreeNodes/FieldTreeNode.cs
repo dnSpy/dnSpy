@@ -34,7 +34,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	{
 		readonly FieldDef field;
 
-		public FieldDef FieldDefinition
+		public FieldDef FieldDef
 		{
 			get { return field; }
 		}
@@ -297,7 +297,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			var res = settings.Filter.GetFilterResult(this.FieldDefinition);
+			var res = settings.Filter.GetFilterResult(this.FieldDef);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
 			if (settings.SearchTermMatches(field.Name) && settings.Language.ShowMember(field))

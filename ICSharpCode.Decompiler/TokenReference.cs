@@ -22,22 +22,22 @@ using dnlib.DotNet;
 
 namespace dnSpy.Decompiler {
 	public class TokenReference : IEquatable<TokenReference> {
-		public readonly string Filename;
+		public readonly ModuleDef ModuleDef;
 		public readonly uint Token;
 
 		public TokenReference(IMemberRef mr)
-			: this(mr.Module == null ? null : mr.Module.Location, mr.MDToken.Raw) {
+			: this(mr.Module, mr.MDToken.Raw) {
 		}
 
-		public TokenReference(string filename, uint token) {
-			this.Filename = filename;
+		public TokenReference(ModuleDef module, uint token) {
+			this.ModuleDef = module;
 			this.Token = token;
 		}
 
 		public bool Equals(TokenReference other) {
 			return other != null &&
 				Token == other.Token &&
-				StringComparer.OrdinalIgnoreCase.Equals(Filename, other.Filename);
+				ModuleDef == other.ModuleDef;
 		}
 
 		public override bool Equals(object obj) {
@@ -45,7 +45,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		public override int GetHashCode() {
-			return (Filename ?? string.Empty).GetHashCode() ^ (int)Token;
+			return (ModuleDef == null ? 0 : ModuleDef.GetHashCode()) ^ (int)Token;
 		}
 	}
 }

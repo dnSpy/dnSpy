@@ -18,13 +18,14 @@
 */
 
 using System;
+using dndbg.DotNet;
 
 namespace dndbg.Engine {
 	public class DebuggerEventArgs : EventArgs {
 		public new static readonly DebuggerEventArgs Empty = new DebuggerEventArgs();
 	}
 
-	public class ModuleDebuggerEventArgs : DebuggerEventArgs {
+	public sealed class ModuleDebuggerEventArgs : DebuggerEventArgs {
 		public readonly DnModule Module;
 		public readonly bool Added;
 
@@ -34,13 +35,23 @@ namespace dndbg.Engine {
 		}
 	}
 
-	public class NameChangedDebuggerEventArgs : DebuggerEventArgs {
+	public sealed class NameChangedDebuggerEventArgs : DebuggerEventArgs {
 		public readonly DnAppDomain AppDomain;
 		public readonly DnThread Thread;
 
 		public NameChangedDebuggerEventArgs(DnAppDomain appDomain, DnThread thread) {
 			this.AppDomain = appDomain;
 			this.Thread = thread;
+		}
+	}
+
+	public sealed class CorModuleDefCreatedEventArgs : DebuggerEventArgs {
+		public DnModule Module { get; private set; }
+		public CorModuleDef CorModuleDef { get; private set; }
+
+		public CorModuleDefCreatedEventArgs(DnModule module, CorModuleDef corModuleDef) {
+			this.Module = module;
+			this.CorModuleDef = corModuleDef;
 		}
 	}
 }

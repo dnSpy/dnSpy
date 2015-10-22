@@ -62,7 +62,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			if (method != null && method.IsMethod)
 				return importer.Import(method);
 
-			// LoadedAssembly, namespace, PropertyDef, EventDef, AssemblyRef, ModuleRef
+			// DnSpyFile, namespace, PropertyDef, EventDef, AssemblyRef, ModuleRef
 			return obj;
 		}
 	}

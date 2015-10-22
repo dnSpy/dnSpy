@@ -18,8 +18,11 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using dndbg.COM.CorDebug;
+using dndbg.COM.MetaData;
 using dndbg.DotNet;
 
 namespace dndbg.Engine {
@@ -49,6 +52,23 @@ namespace dndbg.Engine {
 		public string Name {
 			get { return assembly.Name; }
 		}
+
+		/// <summary>
+		/// Gets the full name, identical to the dnlib assembly full name
+		/// </summary>
+		public string FullName {
+			get {
+				if (fullName == null) {
+					var ms = modules.GetAll();
+					Debug.Assert(ms.Length != 0);
+					if (ms.Length == 0)
+						return Name;
+					Interlocked.CompareExchange(ref fullName, CorAssembly.CalculateFullName(ms[0].CorModule), null);
+				}
+				return fullName;
+			}
+		}
+		string fullName;
 
 		/// <summary>
 		/// true if the assembly has been unloaded
@@ -130,17 +150,29 @@ namespace dndbg.Engine {
 			modules.Remove(comModule);
 		}
 
-		internal CorAssemblyDef GetOrCreateCorAssemblyDef(DnModule module, CorModuleDef corModuleDef) {
+		internal void InitializeAssemblyAndModules() {
 			Debugger.DebugVerifyThread();
-			if (corAssemblyDef != null)
-				return corAssemblyDef;
 
 			// No lock needed, must be called on debugger thread
 
-			Debug.Assert(module.IncrementedId == 0);
-			Debug.Assert(module.CorModuleDef == corModuleDef);
-			corAssemblyDef = new CorAssemblyDef(corModuleDef, 1);
-			return corAssemblyDef;
+			var created = new List<DnModule>();
+			var modules = this.modules.GetAll();
+			for (int i = 0; i < modules.Length; i++) {
+				var module = modules[i];
+				if (module.CorModuleDef != null) {
+					Debug.Assert(corAssemblyDef != null);
+					continue;
+				}
+				module.CorModuleDef = new CorModuleDef(module.CorModule.GetMetaDataInterface<IMetaDataImport>(), new CorModuleDefHelper(module));
+				if (corAssemblyDef == null)
+					corAssemblyDef = new CorAssemblyDef(module.CorModuleDef, 1);
+				corAssemblyDef.Modules.Add(module.CorModuleDef);
+				module.CorModuleDef.Initialize();
+				created.Add(module);
+			}
+			Debug.Assert(created.Count != 0);
+			foreach (var m in created)
+				Debugger.CorModuleDefCreated(m);
 		}
 		CorAssemblyDef corAssemblyDef;
 

@@ -21,6 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using dndbg.COM.CorDebug;
+using dndbg.COM.MetaData;
+using dnlib.DotNet;
+using dnlib.DotNet.MD;
 
 namespace dndbg.Engine {
 	public sealed class CorAssembly : COMObject<ICorDebugAssembly>, IEquatable<CorAssembly> {
@@ -88,6 +91,49 @@ namespace dndbg.Engine {
 			get { return name; }
 		}
 		readonly string name;
+
+		/// <summary>
+		/// Gets the full name, identical to the dnlib assembly full name
+		/// </summary>
+		public string FullName {
+			get {
+				var module = ManifestModule;
+				if (module == null)
+					return Name;
+				return CalculateFullName(module);
+			}
+		}
+
+		internal static string CalculateFullName(CorModule manifestModule) {
+			var mdai = manifestModule.GetMetaDataInterface<IMetaDataAssemblyImport>();
+			uint token = new MDToken(Table.Assembly, 1).Raw;
+
+			var asm = new AssemblyNameInfo();
+			asm.Name = MDAPI.GetAssemblySimpleName(mdai, token) ?? string.Empty;
+			string locale;
+			asm.Version = MDAPI.GetAssemblyVersionAndLocale(mdai, token, out locale) ?? new Version(0, 0, 0, 0);
+			asm.Culture = locale ?? string.Empty;
+			asm.HashAlgId = MDAPI.GetAssemblyHashAlgorithm(mdai, token) ?? AssemblyHashAlgorithm.SHA1;
+			asm.Attributes = MDAPI.GetAssemblyAttributes(mdai, token) ?? AssemblyAttributes.None;
+			asm.PublicKeyOrToken = MDAPI.GetAssemblyPublicKey(mdai, token) ?? new PublicKey((byte[])null);
+			return asm.FullName;
+		}
+
+		/// <summary>
+		/// Gets the manifest module or null
+		/// </summary>
+		public CorModule ManifestModule {
+			get {
+				CorModule firstModule = null;
+				foreach (var module in Modules) {
+					if (module.IsManifestModule)
+						return module;
+					if (firstModule == null)
+						firstModule = module;
+				}
+				return firstModule;
+			}
+		}
 
 		public CorAssembly(ICorDebugAssembly assembly)
 			: base(assembly) {

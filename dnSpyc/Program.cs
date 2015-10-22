@@ -440,6 +440,8 @@ namespace dnSpyc {
 
 			var listOpts = new DnSpyFileListOptionsImpl();
 			listOpts.UseGAC = !noGac;
+			listOpts.UseDebugSymbols = true;
+			listOpts.UseMemoryMappedIO = true;
 			var fileList = new DnSpyFileList(listOpts, string.Empty);
 			fileList.AssemblyResolver.AddSearchPath(Path.GetDirectoryName(fileName));
 			foreach (var path in asmPaths)

@@ -56,7 +56,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				output.WriteLine(string.Format("// Code Size: {0} (0x{0:X}) {1}", codeSize, codeSize == 1 ? "byte" : "bytes"), TextTokenType.Comment);
 				if (body.LocalVarSigTok != 0) {
 					output.Write("// LocalVarSig Token: ", TextTokenType.Comment);
-					output.WriteReference(string.Format("0x{0:X8}", body.LocalVarSigTok), new TokenReference(method.Module == null ? null : method.Module.Location, body.LocalVarSigTok), TextTokenType.Comment, false);
+					output.WriteReference(string.Format("0x{0:X8}", body.LocalVarSigTok), new TokenReference(method.Module, body.LocalVarSigTok), TextTokenType.Comment, false);
 					output.Write(string.Format(" RID: {0}", body.LocalVarSigTok & 0xFFFFFF), TextTokenType.Comment);
 					output.WriteLine();
 				}

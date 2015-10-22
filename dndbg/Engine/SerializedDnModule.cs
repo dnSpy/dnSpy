@@ -76,7 +76,7 @@ namespace dndbg.Engine {
 		public bool Equals(SerializedDnModule other) {
 			return isDynamic == other.isDynamic &&
 				isInMemory == other.isInMemory &&
-				StringComparer.OrdinalIgnoreCase.Equals(name, other.name);
+				StringComparer.OrdinalIgnoreCase.Equals(name ?? string.Empty, other.name ?? string.Empty);
 		}
 
 		public override bool Equals(object obj) {
@@ -84,13 +84,13 @@ namespace dndbg.Engine {
 		}
 
 		public override int GetHashCode() {
-			return StringComparer.OrdinalIgnoreCase.GetHashCode(name) ^
+			return StringComparer.OrdinalIgnoreCase.GetHashCode(name ?? string.Empty) ^
 					(isDynamic ? int.MinValue : 0) ^
 					(isInMemory ? 0x40000000 : 0);
 		}
 
 		public override string ToString() {
-			return string.Format("DYN={0} MEM={1} {2}", isDynamic ? 1 : 0, isInMemory ? 1 : 0, name);
+			return string.Format("DYN={0} MEM={1} {2}", isDynamic ? 1 : 0, isInMemory ? 1 : 0, name ?? string.Empty);
 		}
 	}
 }

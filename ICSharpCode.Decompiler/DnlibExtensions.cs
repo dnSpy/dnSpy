@@ -95,7 +95,7 @@ namespace ICSharpCode.Decompiler
 
 		public static IImageStream GetImageStream(this ModuleDef module, uint rva)
 		{
-			var m = module as ModuleDefMD;
+			var m = module as ModuleDefMD;//TODO: Support CorModuleDef
 			if (m == null)
 				return null;
 
@@ -104,7 +104,7 @@ namespace ICSharpCode.Decompiler
 
 		public static long ToFileOffset(this ModuleDef module, uint rva)
 		{
-			var m = module as ModuleDefMD;
+			var m = module as ModuleDefMD;//TODO: Support CorModuleDef
 			if (m == null)
 				return (uint)rva;
 			return (long)m.MetaData.PEImage.ToFileOffset((RVA)rva);

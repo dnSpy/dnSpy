@@ -146,7 +146,7 @@ namespace dnSpy.AsmEditor.Event {
 				for (int i = 0; i < infos.Length; i++) {
 					var node = nodes[i];
 
-					var info = new ModelInfo(node.EventDefinition);
+					var info = new ModelInfo(node.EventDef);
 					infos[i] = info;
 					info.OwnerType.Events.RemoveAt(info.EventIndex);
 
@@ -172,7 +172,7 @@ namespace dnSpy.AsmEditor.Event {
 				for (int i = infos.Length - 1; i >= 0; i--) {
 					var node = nodes[i];
 					var info = infos[i];
-					info.OwnerType.Events.Insert(info.EventIndex, node.EventDefinition);
+					info.OwnerType.Events.Insert(info.EventIndex, node.EventDef);
 
 					for (int j = info.Methods.Length - 1; j >= 0; j--)
 						info.OwnerType.Methods.Insert(info.MethodIndexes[j], info.Methods[j]);
@@ -272,7 +272,7 @@ namespace dnSpy.AsmEditor.Event {
 				throw new InvalidOperationException();
 			var options = EventDefOptions.Create("MyEvent", module.CorLibTypes.GetTypeRef("System", "EventHandler"));
 
-			var data = new EventOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition);
+			var data = new EventOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDef);
 			var win = new EventOptionsDlg();
 			win.Title = CMD_NAME;
 			win.DataContext = data;
@@ -290,7 +290,7 @@ namespace dnSpy.AsmEditor.Event {
 
 		CreateEventDefCommand(TypeTreeNode ownerNode, EventDefOptions options) {
 			this.ownerNode = ownerNode;
-			this.eventNode = new EventTreeNode(options.CreateEventDef(ownerNode.TypeDefinition.Module));
+			this.eventNode = new EventTreeNode(options.CreateEventDef(ownerNode.TypeDef.Module));
 		}
 
 		public string Description {
@@ -299,13 +299,13 @@ namespace dnSpy.AsmEditor.Event {
 
 		public void Execute() {
 			ownerNode.EnsureChildrenFiltered();
-			ownerNode.TypeDefinition.Events.Add(eventNode.EventDefinition);
+			ownerNode.TypeDef.Events.Add(eventNode.EventDef);
 			ownerNode.AddToChildren(eventNode);
 		}
 
 		public void Undo() {
 			bool b = ownerNode.Children.Remove(eventNode) &&
-					ownerNode.TypeDefinition.Events.Remove(eventNode.EventDefinition);
+					ownerNode.TypeDef.Events.Remove(eventNode.EventDef);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
@@ -374,7 +374,7 @@ namespace dnSpy.AsmEditor.Event {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var data = new EventOptionsVM(new EventDefOptions(eventNode.EventDefinition), module, MainWindow.Instance.CurrentLanguage, eventNode.EventDefinition.DeclaringType);
+			var data = new EventOptionsVM(new EventDefOptions(eventNode.EventDef), module, MainWindow.Instance.CurrentLanguage, eventNode.EventDef.DeclaringType);
 			var win = new EventOptionsDlg();
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
@@ -394,7 +394,7 @@ namespace dnSpy.AsmEditor.Event {
 		EventDefSettingsCommand(EventTreeNode eventNode, EventDefOptions options) {
 			this.eventNode = eventNode;
 			this.newOptions = options;
-			this.origOptions = new EventDefOptions(eventNode.EventDefinition);
+			this.origOptions = new EventDefOptions(eventNode.EventDef);
 
 			this.origParentNode = (ILSpyTreeNode)eventNode.Parent;
 			this.origParentChildIndex = this.origParentNode.Children.IndexOf(eventNode);
@@ -416,12 +416,12 @@ namespace dnSpy.AsmEditor.Event {
 				if (!b)
 					throw new InvalidOperationException();
 				origParentNode.Children.RemoveAt(origParentChildIndex);
-				newOptions.CopyTo(eventNode.EventDefinition);
+				newOptions.CopyTo(eventNode.EventDef);
 
 				origParentNode.AddToChildren(eventNode);
 			}
 			else
-				newOptions.CopyTo(eventNode.EventDefinition);
+				newOptions.CopyTo(eventNode.EventDef);
 			eventNode.RaiseUIPropsChanged();
 		}
 
@@ -432,11 +432,11 @@ namespace dnSpy.AsmEditor.Event {
 				if (!b)
 					throw new InvalidOperationException();
 
-				origOptions.CopyTo(eventNode.EventDefinition);
+				origOptions.CopyTo(eventNode.EventDef);
 				origParentNode.Children.Insert(origParentChildIndex, eventNode);
 			}
 			else
-				origOptions.CopyTo(eventNode.EventDefinition);
+				origOptions.CopyTo(eventNode.EventDef);
 			eventNode.RaiseUIPropsChanged();
 		}
 

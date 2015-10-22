@@ -27,6 +27,7 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Debugger.CallStack;
+using dnSpy.Files;
 using dnSpy.MVVM;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.TreeView;
@@ -163,14 +164,14 @@ namespace dnSpy.Debugger.Locals {
 		sealed class FrameInfo : IEquatable<FrameInfo> {
 			public readonly ValueContext ValueContext;
 
-			public MethodKey? Key {
+			public SerializedDnSpyToken? Key {
 				get {
 					if (ValueContext.Function == null)
 						return null;
 					var mod = ValueContext.Function.Module;
 					if (mod == null)
 						return null;
-					return MethodKey.Create(ValueContext.Function.Token, mod.SerializedDnModule);
+					return new SerializedDnSpyToken(mod.SerializedDnModuleWithAssembly.ToSerializedDnSpyModule(), ValueContext.Function.Token);
 				}
 			}
 

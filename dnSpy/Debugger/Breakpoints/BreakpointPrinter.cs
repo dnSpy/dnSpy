@@ -34,21 +34,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.useHex = useHex;
 		}
 
-		static AssemblyDef GetAssembly(ILCodeBreakpoint bp) {
-			var asmName = bp.Assembly;
-			if (string.IsNullOrEmpty(asmName))
-				return null;
-			var file = MainWindow.Instance.DnSpyFileList.Find(asmName);
-			if (file != null)
-				return file.AssemblyDef;
-			if (!File.Exists(asmName))
-				return null;
-			file = MainWindow.Instance.LoadAssembly(asmName);
-			return file == null ? null : file.AssemblyDef;
-		}
-
 		static ModuleDef GetModule(ILCodeBreakpoint bp) {
-			var file = MainWindow.Instance.LoadAssembly(bp.Assembly, bp.MethodKey.Module);
+			var file = AssemblyLoader.Instance.LoadAssembly(bp.SerializedDnSpyToken.Module);
 			return file == null ? null : file.ModuleDef;
 		}
 
@@ -96,14 +83,14 @@ namespace dnSpy.Debugger.Breakpoints {
 		public void WriteName(BreakpointVM vm) {
 			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
 			if (ilbp != null) {
-				var module = GetModule(ilbp) as ModuleDefMD;
+				var module = GetModule(ilbp);
 				if (BreakpointSettings.Instance.ShowTokens) {
-					WriteToken(output, ilbp.MethodKey.Token);
+					WriteToken(output, ilbp.SerializedDnSpyToken.Token);
 					output.WriteSpace();
 				}
-				var method = module == null ? null : module.ResolveToken(ilbp.MethodKey.Token) as IMemberRef;
+				var method = module == null ? null : module.ResolveToken(ilbp.SerializedDnSpyToken.Token) as IMemberRef;
 				if (method == null)
-					output.Write(string.Format("0x{0:X8}", ilbp.MethodKey.Token), TextTokenType.Number);
+					output.Write(string.Format("0x{0:X8}", ilbp.SerializedDnSpyToken.Token), TextTokenType.Number);
 				else
 					MethodLanguage.WriteToolTip(output, method, null);
 				output.WriteSpace();
@@ -125,11 +112,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public void WriteAssembly(BreakpointVM vm) {
 			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
 			if (ilbp != null) {
-				var asm = GetAssembly(ilbp);
-				if (asm != null)
-					output.Write(asm);
-				else
-					output.WriteFilename(ilbp.Assembly);
+				output.Write(new AssemblyNameInfo(ilbp.SerializedDnSpyToken.Module.AssemblyFullName));
 				return;
 			}
 
@@ -154,7 +137,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			if (ilbp != null) {
 				// Always use the filename since it matches the module names in the call stack and
 				// modules windows
-				output.WriteModule(ModulePathToModuleName(ilbp.MethodKey.Module.Name));
+				output.WriteModule(ModulePathToModuleName(ilbp.SerializedDnSpyToken.Module.ModuleName));
 				return;
 			}
 
@@ -168,7 +151,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public void WriteFile(BreakpointVM vm) {
 			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
 			if (ilbp != null) {
-				output.WriteFilename(ilbp.MethodKey.Module.Name);
+				output.WriteFilename(ilbp.SerializedDnSpyToken.Module.ModuleName);
 				return;
 			}
 

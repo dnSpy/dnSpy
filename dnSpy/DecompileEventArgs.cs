@@ -36,9 +36,9 @@ namespace ICSharpCode.ILSpy {
 		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; internal set; }
 		
 		/// <summary>
-		/// Gets the list of MembeReferences that are decompiled (TypeDefinitions, MethodDefinitions, etc)
+		/// Gets the list of MembeReferences that are decompiled (TypeDefs, MethodDefs, etc)
 		/// </summary>
-		public Dictionary<int, IMemberRef> DecompiledMemberReferences { get; internal set; }
+		public Dictionary<int, IMemberRef> DecompiledMemberRefs { get; internal set; }
 		
 		/// <summary>
 		/// Gets (or internal sets) the AST nodes.

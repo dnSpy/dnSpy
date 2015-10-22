@@ -29,20 +29,23 @@ namespace dnSpy.Files.WPF {
 			this.disp = disp;
 		}
 
-		System.Windows.Threading.DispatcherPriority Convert(DispatcherPrio priority) {
+		DispatcherPriority Convert(DispatcherPrio priority) {
 			switch (priority) {
-			case DispatcherPrio.ContextIdle: return System.Windows.Threading.DispatcherPriority.ContextIdle;
-			case DispatcherPrio.Background: return System.Windows.Threading.DispatcherPriority.Background;
-			case DispatcherPrio.Loaded: return System.Windows.Threading.DispatcherPriority.Loaded;
-			case DispatcherPrio.Send: return System.Windows.Threading.DispatcherPriority.Send;
+			case DispatcherPrio.ContextIdle: return DispatcherPriority.ContextIdle;
+			case DispatcherPrio.Background: return DispatcherPriority.Background;
+			case DispatcherPrio.Loaded: return DispatcherPriority.Loaded;
+			case DispatcherPrio.Send: return DispatcherPriority.Send;
 			default:
 				Debug.Fail("Unknown prio");
-				return System.Windows.Threading.DispatcherPriority.Background;
+				return DispatcherPriority.Background;
 			}
 		}
 
 		public void BeginInvoke(DispatcherPrio priority, Action method) {
-			if (disp.HasShutdownFinished || disp.HasShutdownStarted || disp.CheckAccess())
+			// Don't call method() here if disp.CheckAccess() is true. That could lead to some
+			// problems, eg. a file gets removed, the BP list gets saved and a file gets added,
+			// causing an exception.
+			if (disp.HasShutdownFinished || disp.HasShutdownStarted)
 				method();
 			else
 				disp.BeginInvoke(Convert(priority), method);

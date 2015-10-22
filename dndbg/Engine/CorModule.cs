@@ -20,6 +20,9 @@
 using System;
 using System.Text;
 using dndbg.COM.CorDebug;
+using dndbg.COM.MetaData;
+using dnlib.DotNet;
+using dnlib.DotNet.MD;
 
 namespace dndbg.Engine {
 	public sealed class CorModule : COMObject<ICorDebugModule>, IEquatable<CorModule> {
@@ -42,6 +45,17 @@ namespace dndbg.Engine {
 				ICorDebugAssembly assembly;
 				int hr = obj.GetAssembly(out assembly);
 				return hr < 0 || assembly == null ? null : new CorAssembly(assembly);
+			}
+		}
+
+		/// <summary>
+		/// true if this is the manifest module
+		/// </summary>
+		public bool IsManifestModule {
+			get {
+				var mdi = this.GetMetaDataInterface<IMetaDataImport>();
+				// Only the manifest module should have an assembly row
+				return mdi.IsValidToken(new MDToken(Table.Assembly, 1).Raw);
 			}
 		}
 
@@ -114,7 +128,7 @@ namespace dndbg.Engine {
 		public SerializedDnModuleWithAssembly SerializedDnModuleWithAssembly {
 			get {
 				var asm = Assembly;
-				return new SerializedDnModuleWithAssembly(asm == null ? string.Empty : asm.Name, SerializedDnModule);
+				return new SerializedDnModuleWithAssembly(asm == null ? string.Empty : asm.FullName, SerializedDnModule);
 			}
 		}
 

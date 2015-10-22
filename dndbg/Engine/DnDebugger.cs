@@ -90,6 +90,14 @@ namespace dndbg.Engine {
 				OnProcessStateChanged(this, DebuggerEventArgs.Empty);
 		}
 
+		public event EventHandler<CorModuleDefCreatedEventArgs> OnCorModuleDefCreated;
+		internal void CorModuleDefCreated(DnModule module) {
+			DebugVerifyThread();
+			Debug.Assert(module.CorModuleDef != null);
+			if (OnCorModuleDefCreated != null)
+				OnCorModuleDefCreated(this, new CorModuleDefCreatedEventArgs(module, module.CorModuleDef));
+		}
+
 		public DnDebugEventBreakpoint[] DebugEventBreakpoints {
 			get { DebugVerifyThread(); return debugEventBreakpointList.Breakpoints; }
 		}
@@ -617,7 +625,7 @@ namespace dndbg.Engine {
 				appDomain = process.AppDomains.FirstOrDefault();
 			if (thread == null) {
 				if (appDomain != null)
-					thread = appDomain.GetThreads().FirstOrDefault();
+					thread = appDomain.Threads.FirstOrDefault();
 				else if (process != null)
 					thread = process.Threads.FirstOrDefault();
 			}
@@ -673,7 +681,7 @@ namespace dndbg.Engine {
 		void RemoveModuleFromBreakpoints(DnModule module) {
 			if (module == null)
 				return;
-			foreach (var bp in this.ilCodeBreakpointList.GetBreakpoints(module.SerializedDnModule))
+			foreach (var bp in this.ilCodeBreakpointList.GetBreakpoints(module.SerializedDnModuleWithAssembly))
 				bp.RemoveModule(module);
 		}
 
@@ -682,6 +690,7 @@ namespace dndbg.Engine {
 			DnProcess process;
 			DnAppDomain appDomain;
 			DnAssembly assembly;
+			CorClass cls;
 			switch (e.Type) {
 			case DebugCallbackType.Breakpoint:
 				var bpArgs = (BreakpointDebugCallbackEventArgs)e;
@@ -782,7 +791,7 @@ namespace dndbg.Engine {
 					module.CorModule.SetJMCStatus(true);
 
 					module.InitializeCachedValues();
-					foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.SerializedDnModule))
+					foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.SerializedDnModuleWithAssembly))
 						bp.AddBreakpoint(module);
 
 					CallOnModuleAdded(module, true);
@@ -804,9 +813,9 @@ namespace dndbg.Engine {
 				var lcArgs = (LoadClassDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, lcArgs.AppDomain, null);
 
-				var cls = lcArgs.CorClass;
+				cls = lcArgs.CorClass;
 				if (cls != null) {
-					var module = TryGetModule(lcArgs.CorAppDomain, lcArgs.CorClass);
+					var module = TryGetModule(lcArgs.CorAppDomain, cls);
 					if (module != null && module.CorModuleDef != null)
 						module.CorModuleDef.LoadClass(cls.Token);
 				}
@@ -815,6 +824,13 @@ namespace dndbg.Engine {
 			case DebugCallbackType.UnloadClass:
 				var ucArgs = (UnloadClassDebugCallbackEventArgs)e;
 				InitializeCurrentDebuggerState(e, null, ucArgs.AppDomain, null);
+
+				cls = ucArgs.CorClass;
+				if (cls != null) {
+					var module = TryGetModule(ucArgs.CorAppDomain, cls);
+					if (module != null && module.CorModuleDef != null)
+						module.CorModuleDef.UnloadClass(cls.Token);
+				}
 				break;
 
 			case DebugCallbackType.DebuggerError:
@@ -1350,7 +1366,7 @@ namespace dndbg.Engine {
 		/// <param name="ilOffset">IL offset</param>
 		/// <param name="cond">Condition</param>
 		/// <returns></returns>
-		public DnILCodeBreakpoint CreateBreakpoint(SerializedDnModule module, uint token, uint ilOffset, Predicate<BreakpointConditionContext> cond) {
+		public DnILCodeBreakpoint CreateBreakpoint(SerializedDnModuleWithAssembly module, uint token, uint ilOffset, Predicate<BreakpointConditionContext> cond) {
 			DebugVerifyThread();
 			return CreateBreakpoint(module, token, ilOffset, new DelegateBreakpointCondition(cond));
 		}
@@ -1363,7 +1379,7 @@ namespace dndbg.Engine {
 		/// <param name="ilOffset">IL offset</param>
 		/// <param name="bpCond">Condition or null</param>
 		/// <returns></returns>
-		public DnILCodeBreakpoint CreateBreakpoint(SerializedDnModule module, uint token, uint ilOffset, IBreakpointCondition bpCond = null) {
+		public DnILCodeBreakpoint CreateBreakpoint(SerializedDnModuleWithAssembly module, uint token, uint ilOffset, IBreakpointCondition bpCond = null) {
 			DebugVerifyThread();
 			var bp = new DnILCodeBreakpoint(module, token, ilOffset, bpCond);
 			ilCodeBreakpointList.Add(module, bp);
@@ -1372,12 +1388,12 @@ namespace dndbg.Engine {
 			return bp;
 		}
 
-		IEnumerable<DnModule> GetLoadedDnModules(SerializedDnModule module) {
+		IEnumerable<DnModule> GetLoadedDnModules(SerializedDnModuleWithAssembly module) {
 			foreach (var process in processes.GetAll()) {
 				foreach (var appDomain in process.AppDomains) {
 					foreach (var assembly in appDomain.Assemblies) {
 						foreach (var dnMod in assembly.Modules) {
-							if (dnMod.SerializedDnModule.Equals(module))
+							if (dnMod.SerializedDnModuleWithAssembly.Equals(module))
 								yield return dnMod;
 						}
 					}
@@ -1569,5 +1585,37 @@ namespace dndbg.Engine {
 				disposeValues.Add(value);
 		}
 		readonly List<CorValue> disposeValues = new List<CorValue>();
+
+		/// <summary>
+		/// Gets all modules from all processes and app domains
+		/// </summary>
+		public IEnumerable<DnModule> Modules {
+			get {
+				DebugVerifyThread();
+				foreach (var p in Processes) {
+					foreach (var ad in p.AppDomains) {
+						foreach (var asm in ad.Assemblies) {
+							foreach (var mod in asm.Modules)
+								yield return mod;
+						}
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets all assemblies from all processes and app domains
+		/// </summary>
+		public IEnumerable<DnAssembly> Assemblies {
+			get {
+				DebugVerifyThread();
+				foreach (var p in Processes) {
+					foreach (var ad in p.AppDomains) {
+						foreach (var asm in ad.Assemblies)
+							yield return asm;
+					}
+				}
+			}
+		}
 	}
 }

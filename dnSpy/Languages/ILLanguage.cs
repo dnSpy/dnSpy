@@ -177,7 +177,7 @@ namespace ICSharpCode.ILSpy {
 			
 			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options, file.ModuleDef);
 			if (decompileMod && options.FullDecompilation)
-				rd.WriteAssemblyReferences(file.ModuleDef as ModuleDefMD);
+				rd.WriteAssemblyReferences(file.ModuleDef);
 			if (decompileAsm && file.AssemblyDef != null)
 				rd.WriteAssemblyHeader(file.AssemblyDef);
 			if (decompileMod) {

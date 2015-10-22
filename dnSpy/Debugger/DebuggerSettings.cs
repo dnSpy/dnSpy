@@ -260,6 +260,17 @@ namespace dnSpy.Debugger {
 		}
 		bool autoOpenLocalsWindow;
 
+		public bool UseMemoryModules {
+			get { return useMemoryModules; }
+			set {
+				if (useMemoryModules != value) {
+					useMemoryModules = value;
+					OnPropertyChanged("UseMemoryModules");
+				}
+			}
+		}
+		bool useMemoryModules;
+
 		public string CoreCLRDbgShimFilename {
 			get { return coreCLRDbgShimFilename; }
 			set {
@@ -302,6 +313,7 @@ namespace dnSpy.Debugger {
 			DisableManagedDebuggerDetection = (bool?)csx.Attribute("DisableManagedDebuggerDetection") ?? true;
 			IgnoreBreakInstructions = (bool?)csx.Attribute("IgnoreBreakInstructions") ?? false;
 			AutoOpenLocalsWindow = (bool?)csx.Attribute("AutoOpenLocalsWindow") ?? true;
+			UseMemoryModules = (bool?)csx.Attribute("UseMemoryModules") ?? false;
 			CoreCLRDbgShimFilename = SessionSettings.Unescape((string)csx.Attribute("CoreCLRDbgShimFilename") ?? string.Empty);
 		}
 
@@ -340,6 +352,7 @@ namespace dnSpy.Debugger {
 			csx.SetAttributeValue("DisableManagedDebuggerDetection", DisableManagedDebuggerDetection);
 			csx.SetAttributeValue("IgnoreBreakInstructions", IgnoreBreakInstructions);
 			csx.SetAttributeValue("AutoOpenLocalsWindow", AutoOpenLocalsWindow);
+			csx.SetAttributeValue("UseMemoryModules", UseMemoryModules);
 			csx.SetAttributeValue("CoreCLRDbgShimFilename", SessionSettings.Escape(CoreCLRDbgShimFilename));
 		}
 
@@ -360,6 +373,7 @@ namespace dnSpy.Debugger {
 			other.DisableManagedDebuggerDetection = this.DisableManagedDebuggerDetection;
 			other.IgnoreBreakInstructions = this.IgnoreBreakInstructions;
 			other.AutoOpenLocalsWindow = this.AutoOpenLocalsWindow;
+			other.UseMemoryModules = this.UseMemoryModules;
 			other.CoreCLRDbgShimFilename = this.CoreCLRDbgShimFilename;
 			return other;
 		}

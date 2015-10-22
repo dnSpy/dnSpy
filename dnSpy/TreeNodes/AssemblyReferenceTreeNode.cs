@@ -105,11 +105,8 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			if (assemblyListNode != null) {
 				var refNode = assemblyListNode.FindAssemblyNode(LookupReferencedAssembly(parentAssembly.DnSpyFile, r));
 				if (refNode != null) {
-					ModuleDef module = refNode.DnSpyFile.ModuleDef;
-					if (module is ModuleDefMD) {
-						foreach (var childRef in ((ModuleDefMD)module).GetAssemblyRefs())
-							this.Children.Add(new AssemblyReferenceTreeNode(childRef, refNode, dnSpyFileListTreeNode));
-					}
+					foreach (var childRef in refNode.DnSpyFile.ModuleDef.GetAssemblyRefs())
+						this.Children.Add(new AssemblyReferenceTreeNode(childRef, refNode, dnSpyFileListTreeNode));
 				}
 			}
 		}

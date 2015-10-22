@@ -188,7 +188,7 @@ namespace dnSpy.Files {
 			return GetOrCreate(file, true, isAutoLoaded, true);
 		}
 
-		internal DnSpyFile GetOrCreate(string file, bool canAdd, bool isAutoLoaded, bool delay) {
+		internal DnSpyFile GetOrCreate(string file, bool canAdd, bool isAutoLoaded, bool delayLoad) {
 			var key = new FilenameKey(file);
 
 			lock (lockObj) {
@@ -198,11 +198,11 @@ namespace dnSpy.Files {
 
 				var newFile = CreateDnSpyFile(file, options.UseMemoryMappedIO, options.UseDebugSymbols);
 				newFile.IsAutoLoaded = isAutoLoaded;
-				return ForceAddFileToList_NoLock(newFile, canAdd, delay, -1, true);
+				return ForceAddFileToList_NoLock(newFile, canAdd, delayLoad, -1, true);
 			}
 		}
 
-		internal DnSpyFile AddFile(DnSpyFile newFile, bool canAdd, bool delay, bool canDispose = true) {
+		internal DnSpyFile AddFile(DnSpyFile newFile, bool canAdd, bool delayLoad, bool canDispose = true) {
 			lock (lockObj) {
 				var file = FindByKey_NoLock(newFile.Key);
 				if (file != null) {
@@ -211,7 +211,7 @@ namespace dnSpy.Files {
 					return file;
 				}
 
-				return ForceAddFileToList_NoLock(newFile, canAdd, delay, -1, canDispose);
+				return ForceAddFileToList_NoLock(newFile, canAdd, delayLoad, -1, canDispose);
 			}
 		}
 

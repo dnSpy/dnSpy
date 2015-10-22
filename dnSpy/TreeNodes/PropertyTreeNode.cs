@@ -65,7 +65,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			
 		}
 
-		public PropertyDef PropertyDefinition {
+		public PropertyDef PropertyDef {
 			get { return property; }
 		}
 
@@ -187,7 +187,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			var res = settings.Filter.GetFilterResult(this.PropertyDefinition);
+			var res = settings.Filter.GetFilterResult(this.PropertyDef);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
 			if (settings.SearchTermMatches(property.Name) && settings.Language.ShowMember(property))

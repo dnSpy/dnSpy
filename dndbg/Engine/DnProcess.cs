@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -256,6 +257,34 @@ namespace dndbg.Engine {
 		public DnAppDomain GetMainAppDomain() {
 			var appDomains = AppDomains;
 			return appDomains.Length == 0 ? null : appDomains[0];
+		}
+
+		/// <summary>
+		/// Gets all modules from all app domains
+		/// </summary>
+		public IEnumerable<DnModule> Modules {
+			get {
+				Debugger.DebugVerifyThread();
+				foreach (var ad in AppDomains) {
+					foreach (var asm in ad.Assemblies) {
+						foreach (var mod in asm.Modules)
+							yield return mod;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets all assemblies from all app domains
+		/// </summary>
+		public IEnumerable<DnAssembly> Assemblies {
+			get {
+				Debugger.DebugVerifyThread();
+				foreach (var ad in AppDomains) {
+					foreach (var asm in ad.Assemblies)
+						yield return asm;
+				}
+			}
 		}
 
 		public override string ToString() {

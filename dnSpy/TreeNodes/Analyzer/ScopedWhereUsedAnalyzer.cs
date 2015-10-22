@@ -262,7 +262,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			foreach (var assembly in assemblies) {
 				ct.ThrowIfCancellationRequested();
 				bool found = false;
-				foreach (var reference in assembly.AssemblyDef.Modules.GetSafeEnumerable().OfType<ModuleDefMD>().SelectMany(module => module.GetAssemblyRefs())) {
+				foreach (var reference in assembly.AssemblyDef.Modules.GetSafeEnumerable().SelectMany(module => module.GetAssemblyRefs())) {
 					if (AssemblyNameComparer.CompareAll.CompareTo(asm, reference) == 0) {
 						found = true;
 						break;
@@ -315,10 +315,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 		private bool AssemblyReferencesScopeType(AssemblyDef asm)
 		{
-			foreach (var tmp in asm.Modules.GetSafeEnumerable()) {
-				var mod = tmp as ModuleDefMD;
-				if (mod == null)
-					continue;
+			foreach (var mod in asm.Modules.GetSafeEnumerable()) {
 				foreach (var typeref in mod.GetTypeRefs()) {
 					if (new SigComparer().Equals(typeScope, typeref))
 						return true;

@@ -18,7 +18,7 @@
 */
 
 namespace dnSpy.Debugger.Breakpoints {
-	public sealed class DebugEventBreakpoint : Breakpoint {
+	sealed class DebugEventBreakpoint : Breakpoint {
 		public override BreakpointType Type {
 			get { return BreakpointType.DebugEvent; }
 		}

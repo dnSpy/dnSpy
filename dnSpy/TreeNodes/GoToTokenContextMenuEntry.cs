@@ -59,29 +59,29 @@ namespace dnSpy.TreeNodes {
 			Execute();
 		}
 
-		static ModuleDefMD GetModule(out DecompileTabState tabState) {
+		static ITokenResolver GetResolver(out DecompileTabState tabState) {
 			tabState = MainWindow.Instance.GetActiveDecompileTabState();
 			if (tabState == null)
 				return null;
-			return ILSpyTreeNode.GetModule(tabState.DecompiledNodes) as ModuleDefMD;
+			return ILSpyTreeNode.GetModule(tabState.DecompiledNodes) as ITokenResolver;
 		}
 
 		internal static bool CanExecute() {
 			DecompileTabState tabState;
-			return GetModule(out tabState) != null;
+			return GetResolver(out tabState) != null;
 		}
 
 		internal static void Execute() {
 			DecompileTabState tabState;
-			var module = GetModule(out tabState);
-			if (module == null)
+			var resolver = GetResolver(out tabState);
+			if (resolver == null)
 				return;
 
 			uint? token = AskForToken("Go to MD Token");
 			if (token == null)
 				return;
 
-			var memberRef = module.ResolveToken(token.Value) as IMemberRef;
+			var memberRef = resolver.ResolveToken(token.Value) as IMemberRef;
 			var member = MainWindow.ResolveReference(memberRef);
 			if (member == null) {
 				if (memberRef == null)

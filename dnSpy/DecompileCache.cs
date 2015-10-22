@@ -187,15 +187,15 @@ namespace dnSpy {
 				cachedItems.Clear();
 		}
 
-		public void Clear(DnSpyFile asm) {
-			Clear(new HashSet<DnSpyFile>(new[] { asm }));
+		public void Clear(DnSpyFile mod) {
+			Clear(new HashSet<DnSpyFile>(new[] { mod }));
 		}
 
-		public void Clear(HashSet<DnSpyFile> asms) {
+		public void Clear(HashSet<DnSpyFile> mods) {
 			lock (lockObj) {
 				foreach (var kv in cachedItems.ToArray()) {
-					if (IsInModifiedAssembly(asms, kv.Key.TreeNodes) ||
-						IsInModifiedAssembly(asms, kv.Value)) {
+					if (IsInModifiedModule(mods, kv.Key.TreeNodes) ||
+						IsInModifiedModule(mods, kv.Value)) {
 						cachedItems.Remove(kv.Key);
 						continue;
 					}
@@ -203,27 +203,27 @@ namespace dnSpy {
 			}
 		}
 
-		internal static bool IsInModifiedAssembly(HashSet<DnSpyFile> asms, ILSpyTreeNode[] nodes) {
+		internal static bool IsInModifiedModule(HashSet<DnSpyFile> mods, ILSpyTreeNode[] nodes) {
 			foreach (var node in nodes) {
-				var asmNode = MainWindow.GetAssemblyTreeNode(node);
-				if (asmNode == null || asms.Contains(asmNode.DnSpyFile))
+				var modNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
+				if (modNode == null || mods.Contains(modNode.DnSpyFile))
 					return true;
 			}
 
 			return false;
 		}
 
-		static bool IsInModifiedAssembly(HashSet<DnSpyFile> asms, Item item) {
+		static bool IsInModifiedModule(HashSet<DnSpyFile> mods, Item item) {
 			var textOutput = item.TextOutput;
 			if (textOutput == null && item.WeakTextOutput != null)
 				textOutput = (AvalonEditTextOutput)item.WeakTextOutput.Target;
 			if (textOutput == null)
 				return true;
 
-			return IsInModifiedAssembly(asms, textOutput.References);
+			return IsInModifiedModule(mods, textOutput.References);
 		}
 
-		internal static bool IsInModifiedAssembly(HashSet<DnSpyFile> asms, TextSegmentCollection<ReferenceSegment> references) {
+		internal static bool IsInModifiedModule(HashSet<DnSpyFile> mods, TextSegmentCollection<ReferenceSegment> references) {
 			if (references == null)
 				return false;
 			var checkedAsmRefs = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
@@ -240,7 +240,7 @@ namespace dnSpy {
 				if (asmRef != null && !checkedAsmRefs.Contains(asmRef)) {
 					checkedAsmRefs.Add(asmRef);
 					var asm = MainWindow.Instance.DnSpyFileList.FindAssembly(asmRef);
-					if (asm != null && asms.Contains(asm))
+					if (asm != null && mods.Contains(asm))
 						return true;
 				}
 			}

@@ -52,7 +52,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 		
-		public EventDef EventDefinition
+		public EventDef EventDef
 		{
 			get { return ev; }
 		}
@@ -138,7 +138,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			var res = settings.Filter.GetFilterResult(this.EventDefinition);
+			var res = settings.Filter.GetFilterResult(this.EventDef);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
 			if (settings.SearchTermMatches(ev.Name) && settings.Language.ShowMember(ev))

@@ -37,9 +37,9 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy;
 using dnSpy.AvalonEdit;
-using dnSpy.Debugger;
 using dnSpy.Decompiler;
 using dnSpy.dntheme;
+using dnSpy.Files;
 using dnSpy.Images;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
@@ -107,7 +107,7 @@ namespace ICSharpCode.ILSpy.TextView {
 			this.Loaded += DecompilerTextView_Loaded;
 			InitializeComponent();
 
-			this.CodeMappings = new Dictionary<MethodKey, MemberMapping>();
+			this.CodeMappings = new Dictionary<SerializedDnSpyToken, MemberMapping>();
 
 			textEditor.TextArea.SelectionCornerRadius = 0;
 			this.referenceElementGenerator = new ReferenceElementGenerator(this.JumpToReference, this.IsLink);
@@ -656,18 +656,26 @@ namespace ICSharpCode.ILSpy.TextView {
 			if (state != null)
 				EditorPositionState = state.EditorPositionState;
 			
-			var cm = new Dictionary<MethodKey, MemberMapping>();
+			var cm = new Dictionary<SerializedDnSpyToken, MemberMapping>();
+			var dict = new Dictionary<ModuleDef, SerializedDnSpyModule>();
 			foreach (var m in textOutput.DebuggerMemberMappings) {
-				var key = MethodKey.Create(m.MethodDefinition);
-				if (key == null)
+				var module = m.MethodDef.Module;
+				if (module == null)
 					continue;
+
+				SerializedDnSpyModule serMod;
+				if (!dict.TryGetValue(module, out serMod)) {
+					serMod = MainWindow.Instance.DnSpyFileListTreeNode.GetSerializedDnSpyModule(module);
+					dict.Add(module, serMod);
+				}
+				var key = new SerializedDnSpyToken(serMod, m.MethodDef.MDToken);
 				MemberMapping oldMm;
 				// If a dupe is found, use the one with the most member mappings
-				if (cm.TryGetValue(key.Value, out oldMm)) {
+				if (cm.TryGetValue(key, out oldMm)) {
 					if (m.MemberCodeMappings.Count < oldMm.MemberCodeMappings.Count)
 						continue;
 				}
-				cm[key.Value] = m;
+				cm[key] = m;
 			}
 			CodeMappings = cm;
 
@@ -675,7 +683,7 @@ namespace ICSharpCode.ILSpy.TextView {
 			if (evt != null)
 				evt(this, new ShowOutputEventArgs(nodes, highlighting, state));
 		}
-		public Dictionary<MethodKey, MemberMapping> CodeMappings { get; private set; }
+		internal Dictionary<SerializedDnSpyToken, MemberMapping> CodeMappings { get; private set; }
 		public event EventHandler<ShowOutputEventArgs> OnBeforeShowOutput;
 		public event EventHandler<ShowOutputEventArgs> OnShowOutput;
 		public class ShowOutputEventArgs : EventArgs
@@ -715,7 +723,7 @@ namespace ICSharpCode.ILSpy.TextView {
 		internal void CancelDecompileAsync()
 		{
 			SetNextDecompilationRun(null);
-			this.CodeMappings = new Dictionary<MethodKey, MemberMapping>();
+			this.CodeMappings = new Dictionary<SerializedDnSpyToken, MemberMapping>();
 		}
 
 		bool CancelDecompileAsyncIf(DecompilationContext context)
@@ -866,37 +874,16 @@ namespace ICSharpCode.ILSpy.TextView {
 			
 			Thread thread = new Thread(new ThreadStart(
 				delegate {
-					#if DEBUG
-					if (System.Diagnostics.Debugger.IsAttached) {
-						try {
-							AvalonEditTextOutput textOutput = new AvalonEditTextOutput();
-							textOutput.LengthLimit = outputLengthLimit;
-							DecompileNodes(context, textOutput);
-							textOutput.PrepareDocument();
-							tcs.SetResult(textOutput);
-						} catch (OutputLengthExceededException ex) {
-							tcs.SetException(ex);
-						} catch (AggregateException ex) {
-							tcs.SetException(ex.InnerExceptions);
-						} catch (InvalidOperationException ex) {
-							tcs.SetException(ex);
-						} catch (OperationCanceledException) {
-							tcs.SetCanceled();
-						}
-					} else
-						#endif
-					{
-						try {
-							AvalonEditTextOutput textOutput = new AvalonEditTextOutput();
-							textOutput.LengthLimit = outputLengthLimit;
-							DecompileNodes(context, textOutput);
-							textOutput.PrepareDocument();
-							tcs.SetResult(textOutput);
-						} catch (OperationCanceledException) {
-							tcs.SetCanceled();
-						} catch (Exception ex) {
-							tcs.SetException(ex);
-						}
+					try {
+						AvalonEditTextOutput textOutput = new AvalonEditTextOutput();
+						textOutput.LengthLimit = outputLengthLimit;
+						DecompileNodes(context, textOutput);
+						textOutput.PrepareDocument();
+						tcs.SetResult(textOutput);
+					} catch (OperationCanceledException) {
+						tcs.SetCanceled();
+					} catch (Exception ex) {
+						tcs.SetException(ex);
 					}
 				}));
 			thread.Start();
@@ -1215,7 +1202,7 @@ namespace ICSharpCode.ILSpy.TextView {
 			uiElementGenerator.UIElements = null;
 			referenceElementGenerator.References = null;
 			references = new TextSegmentCollection<ReferenceSegment>();
-			CodeMappings = new Dictionary<MethodKey, MemberMapping>();
+			CodeMappings = new Dictionary<SerializedDnSpyToken, MemberMapping>();
 		}
 
 		public void ScrollAndMoveCaretTo(int line, int column, bool focus = true)
@@ -1569,8 +1556,9 @@ namespace ICSharpCode.ILSpy.TextView {
 			if (CodeMappings != null && pos.SourceCodeMappings != null && pos.SourceCodeMappings.Count > 0) {
 				var mapping = pos.SourceCodeMappings[0];
 				MemberMapping mm;
-				var key = MethodKey.Create(mapping.MemberMapping.MethodDefinition);
-				if (key != null && CodeMappings.TryGetValue(key.Value, out mm)) {
+				var serMod = MainWindow.Instance.DnSpyFileListTreeNode.GetSerializedDnSpyModule(mapping.MemberMapping.MethodDef.Module);
+				var key = new SerializedDnSpyToken(serMod, mapping.MemberMapping.MethodDef.MDToken);
+				if (CodeMappings.TryGetValue(key, out mm)) {
 					bool isMatch;
 					var scm = mm.GetInstructionByOffset(mapping.ILInstructionOffset.From, out isMatch);
 					if (scm != null) {

@@ -95,7 +95,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var data = new MethodBodyVM(new MethodBodyOptions(methodNode.MethodDefinition), module, MainWindow.Instance.CurrentLanguage, methodNode.MethodDefinition.DeclaringType, methodNode.MethodDefinition);
+			var data = new MethodBodyVM(new MethodBodyOptions(methodNode.MethodDef), module, MainWindow.Instance.CurrentLanguage, methodNode.MethodDef.DeclaringType, methodNode.MethodDef);
 			var win = new MethodBodyDlg();
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
@@ -118,7 +118,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		MethodBodySettingsCommand(MethodTreeNode methodNode, MethodBodyOptions options) {
 			this.methodNode = methodNode;
 			this.newOptions = options;
-			this.origMethodBody = methodNode.MethodDefinition.MethodBody;
+			this.origMethodBody = methodNode.MethodDef.MethodBody;
 		}
 
 		public string Description {
@@ -126,14 +126,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public void Execute() {
-			isBodyModified = MethodAnnotations.Instance.IsBodyModified(methodNode.MethodDefinition);
-			MethodAnnotations.Instance.SetBodyModified(methodNode.MethodDefinition, true);
-			newOptions.CopyTo(methodNode.MethodDefinition);
+			isBodyModified = MethodAnnotations.Instance.IsBodyModified(methodNode.MethodDef);
+			MethodAnnotations.Instance.SetBodyModified(methodNode.MethodDef, true);
+			newOptions.CopyTo(methodNode.MethodDef);
 		}
 
 		public void Undo() {
-			methodNode.MethodDefinition.MethodBody = origMethodBody;
-			MethodAnnotations.Instance.SetBodyModified(methodNode.MethodDefinition, isBodyModified);
+			methodNode.MethodDef.MethodBody = origMethodBody;
+			MethodAnnotations.Instance.SetBodyModified(methodNode.MethodDef, isBodyModified);
 		}
 
 		public IEnumerable<object> ModifiedObjects {
@@ -154,9 +154,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var list = GetMappings(context);
 			return list != null &&
 				list.Count != 0 &&
-				list[0].MemberMapping.MethodDefinition != null &&
-				list[0].MemberMapping.MethodDefinition.Body != null &&
-				list[0].MemberMapping.MethodDefinition.Body.Instructions.Count > 0;
+				list[0].MemberMapping.MethodDef != null &&
+				list[0].MemberMapping.MethodDef.Body != null &&
+				list[0].MemberMapping.MethodDef.Body.Instructions.Count > 0;
 		}
 
 		internal static IList<SourceCodeMapping> GetMappings(ContextMenuEntryContext context) {
@@ -179,7 +179,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (list == null)
 				return;
 
-			var method = list[0].MemberMapping.MethodDefinition;
+			var method = list[0].MemberMapping.MethodDef;
 			var methodNode = MainWindow.Instance.DnSpyFileListTreeNode.FindMethodNode(method);
 			if (methodNode == null) {
 				MainWindow.Instance.ShowMessageBox(string.Format("Could not find method: {0}", method));

@@ -25,14 +25,14 @@ using ICSharpCode.Decompiler.Disassembler;
 
 namespace dnSpy {
 	sealed class ModifiedInstructionBytesReader : IInstructionBytesReader {
-		readonly ModuleDefMD module;
+		readonly ITokenResolver resolver;
 		readonly IList<Instruction> instrs;
 		int instrIndex;
 		readonly List<short> instrBytes = new List<short>(10);
 		int byteIndex;
 
 		public ModifiedInstructionBytesReader(MethodDef method) {
-			this.module = method.Module as ModuleDefMD;
+			this.resolver = method.Module;
 			this.instrs = method.Body.Instructions;
 		}
 
@@ -51,7 +51,7 @@ namespace dnSpy {
 			instrBytes.Clear();
 
 			InstructionUtils.AddOpCode(instrBytes, instr.OpCode.Code);
-			InstructionUtils.AddOperand(instrBytes, module, instr.Offset + (uint)instr.OpCode.Size, instr.OpCode, instr.Operand);
+			InstructionUtils.AddOperand(instrBytes, resolver, instr.Offset + (uint)instr.OpCode.Size, instr.OpCode, instr.Operand);
 		}
 
 		public void SetInstruction(int index, uint offset) {

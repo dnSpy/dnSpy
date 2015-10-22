@@ -34,7 +34,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	{
 		readonly MethodDef method;
 
-		public MethodDef MethodDefinition
+		public MethodDef MethodDef
 		{
 			get { return method; }
 		}
@@ -228,7 +228,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			var res = settings.Filter.GetFilterResult(this.MethodDefinition);
+			var res = settings.Filter.GetFilterResult(this.MethodDef);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
 			if (settings.SearchTermMatches(method.Name) && settings.Language.ShowMember(method))

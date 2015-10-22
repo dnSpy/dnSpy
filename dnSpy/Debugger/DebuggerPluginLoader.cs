@@ -35,6 +35,7 @@ namespace dnSpy.Debugger {
 			CallStack.StackFrameManager.Instance.OnLoaded();
 			Exceptions.ExceptionManager.Instance.OnLoaded();
 			Locals.LocalsControlCreator.OnLoaded();
+			IMModules.InMemoryModuleManager.Instance.OnLoaded();
 		}
 
 		void InstallRoutedCommands() {

@@ -364,15 +364,11 @@ namespace dnSpy.Search {
 		}
 
 		void SearchModAsmReferences(DnSpyFile module) {
-			var mod = module.ModuleDef as ModuleDefMD;
-			if (mod == null)
-				return;
-
 			var res = filter.GetFilterResult((ReferenceFolderTreeNode)null);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
 
-			foreach (var asmRef in mod.GetAssemblyRefs()) {
+			foreach (var asmRef in module.ModuleDef.GetAssemblyRefs()) {
 				res = filter.GetFilterResult(asmRef);
 				if (res.FilterResult == FilterResult.Hidden)
 					continue;
@@ -390,7 +386,7 @@ namespace dnSpy.Search {
 				}
 			}
 
-			foreach (var modRef in mod.GetModuleRefs()) {
+			foreach (var modRef in module.ModuleDef.GetModuleRefs()) {
 				res = filter.GetFilterResult(modRef);
 				if (res.FilterResult == FilterResult.Hidden)
 					continue;

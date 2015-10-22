@@ -82,22 +82,16 @@ namespace ICSharpCode.Decompiler
 		IEnumerable<ILRange> invertedList;
 		
 		public MemberMapping(MethodDef method)
-			: this(method, null)
-		{
-		}
-		
-		public MemberMapping(MethodDef method, IEnumerable<ILVariable> localVariables)
 		{
 			this.MemberCodeMappings = new List<SourceCodeMapping>();
-			this.MethodDefinition = method;
+			this.MethodDef = method;
 			this.CodeSize = method.Body.GetCodeSize();
-			this.LocalVariables = localVariables;
 		}
 		
 		/// <summary>
 		/// Gets or sets the type of the mapping.
 		/// </summary>
-		public MethodDef MethodDefinition { get; internal set; }
+		public MethodDef MethodDef { get; internal set; }
 		
 		/// <summary>
 		/// Gets or sets the code size for the member mapping.
@@ -289,7 +283,7 @@ namespace ICSharpCode.Decompiler
 				}
 			}
 			
-			methodDef = mapping.MethodDefinition;
+			methodDef = mapping.MethodDef;
 			location = codeMapping.StartLocation;
 			endLocation = codeMapping.EndLocation;
 			return true;

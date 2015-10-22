@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using dnlib.DotNet;
 using dnlib.PE;
@@ -32,6 +31,13 @@ namespace dnSpy.Files {
 		/// </summary>
 		public virtual IDnSpyFilenameKey Key {
 			get { return new FilenameKey(Filename); }
+		}
+
+		public virtual SerializedDnSpyModule? SerializedDnSpyModule {
+			get {
+				var mod = ModuleDef;
+				return mod == null ? (SerializedDnSpyModule?)null : Files.SerializedDnSpyModule.CreateFromFile(mod);
+			}
 		}
 
 		/// <summary>
@@ -61,7 +67,21 @@ namespace dnSpy.Files {
 		/// <summary>
 		/// Gets the filename.
 		/// </summary>
-		public abstract string Filename { get; set; }
+		public string Filename {
+			get { return filename; }
+			set {
+				this.filename = value;
+				InitShortName(filename, DefaultShortName);
+			}
+		}
+		string filename;
+
+		string DefaultShortName {
+			get {
+				var m = ModuleDef;
+				return m == null ? null : m.Name;
+			}
+		}
 
 		public string ShortName {
 			get { return shortName; }
@@ -74,11 +94,17 @@ namespace dnSpy.Files {
 			get { return true; }
 		}
 
-		protected DnSpyFile() {
-			InitShortName(Filename, string.Empty);
+		/// <summary>
+		/// true if the file can't be edited, eg. it's an in-memory module and we're debugging it
+		/// </summary>
+		public virtual bool IsReadOnly {
+			get { return false; }
 		}
 
-		protected void InitShortName(string filename, string defaultName) {
+		protected DnSpyFile() {
+		}
+
+		void InitShortName(string filename, string defaultName) {
 			this.shortName = GetShortName(filename);
 			if (string.IsNullOrEmpty(this.shortName))
 				this.shortName = defaultName ?? string.Empty;
@@ -101,6 +127,10 @@ namespace dnSpy.Files {
 
 		public static DnSpyFile CreateFromFile(string filename, bool useMemoryMappedIO, bool loadSyms, IAssemblyResolver asmResolver) {
 			try {
+				// Quick check to prevent exceptions being thrown
+				if (!File.Exists(filename))
+					return new UnknownFile(filename);
+
 				IPEImage peImage;
 
 				if (useMemoryMappedIO)
@@ -127,7 +157,7 @@ namespace dnSpy.Files {
 			return new UnknownFile(filename);
 		}
 
-		static ModuleContext CreateModuleContext(IAssemblyResolver asmResolver) {
+		internal static ModuleContext CreateModuleContext(IAssemblyResolver asmResolver) {
 			ModuleContext moduleCtx = new ModuleContext();
 			moduleCtx.AssemblyResolver = asmResolver;
 			// Disable WinMD projection since the user probably expects that clicking on a type
@@ -159,40 +189,21 @@ namespace dnSpy.Files {
 			dict.Remove(key);
 		}
 
+		public virtual DnSpyFile CreateDnSpyFile(ModuleDef module) {
+			return null;
+		}
+
 		public virtual void Dispose() {
 		}
 	}
 
 	sealed class UnknownFile : DnSpyFile {
-		public override string Filename {
-			get { return filename; }
-			set {
-				Debug.Assert(string.IsNullOrEmpty(this.filename));
-				Debug.Assert(!string.IsNullOrEmpty(value));
-				this.filename = value;
-				InitShortName(filename, string.Empty);
-			}
-		}
-		string filename;
-
 		public UnknownFile(string filename) {
-			this.filename = filename;
-			InitShortName(this.filename, string.Empty);
+			Filename = filename;
 		}
 	}
 
 	sealed class PEFile : DnSpyFile {
-		public override string Filename {
-			get { return filename; }
-			set {
-				Debug.Assert(string.IsNullOrEmpty(this.filename));
-				Debug.Assert(!string.IsNullOrEmpty(value));
-				this.filename = value;
-				InitShortName(filename, string.Empty);
-			}
-		}
-		string filename;
-
 		public override IPEImage PEImage {
 			get { return peImage; }
 		}
@@ -200,8 +211,7 @@ namespace dnSpy.Files {
 
 		public PEFile(IPEImage peImage) {
 			this.peImage = peImage;
-			this.filename = peImage.FileName ?? string.Empty;
-			InitShortName(this.filename, string.Empty);
+			Filename = peImage.FileName ?? string.Empty;
 		}
 
 		public override void Dispose() {
@@ -209,27 +219,15 @@ namespace dnSpy.Files {
 		}
 	}
 
-	sealed class DotNetFile : DnSpyFile {
-		public override string Filename {
-			get { return filename; }
-			set {
-				Debug.Assert(string.IsNullOrEmpty(this.filename));
-				Debug.Assert(!string.IsNullOrEmpty(value));
-				this.filename = value;
-				InitShortName(filename, module.Name);
-			}
-		}
-		string filename;
-
+	abstract class DotNetFileBase : DnSpyFile {
 		public override ModuleDef ModuleDef {
 			get { return module; }
 		}
-		readonly ModuleDef module;
+		protected readonly ModuleDef module;
 
-		public DotNetFile(ModuleDef module, bool loadSyms) {
+		protected DotNetFileBase(ModuleDef module, bool loadSyms) {
 			this.module = module;
-			this.filename = module.Location;
-			InitShortName(this.filename, module.Name);
+			Filename = module.Location;
 			module.EnableTypeDefFindCache = true;
 			if (loadSyms)
 				LoadSymbols(module.Location);
@@ -254,6 +252,12 @@ namespace dnSpy.Files {
 			}
 			catch {
 			}
+		}
+	}
+
+	sealed class DotNetFile : DotNetFileBase {
+		public DotNetFile(ModuleDef module, bool loadSyms)
+			: base(module, loadSyms) {
 		}
 
 		public override void Dispose() {

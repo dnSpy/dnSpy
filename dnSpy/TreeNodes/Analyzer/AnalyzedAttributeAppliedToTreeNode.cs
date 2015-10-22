@@ -316,14 +316,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			foreach (var assembly in assemblies) {
 				ct.ThrowIfCancellationRequested();
 				bool found = false;
-				foreach (var reference in assembly.AssemblyDef.Modules.GetSafeEnumerable().OfType<ModuleDefMD>().SelectMany(module => module.GetAssemblyRefs())) {
+				foreach (var reference in assembly.AssemblyDef.Modules.GetSafeEnumerable().SelectMany(module => module.GetAssemblyRefs())) {
 					if (AssemblyNameComparer.CompareAll.CompareTo(asm, reference) == 0) {
 						found = true;
 						break;
 					}
 				}
 				if (found) {
-					var typeref = GetScopeTypeReferenceInAssembly(assembly.AssemblyDef);
+					var typeref = GetScopeTypeRefInAssembly(assembly.AssemblyDef);
 					if (typeref != null) {
 						foreach (var m in assembly.AssemblyDef.Modules.GetSafeEnumerable())
 							yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, typeref);
@@ -363,7 +363,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 					foreach (var assembly in assemblies) {
 						ct.ThrowIfCancellationRequested();
 						if (friendAssemblies.Contains(assembly.AssemblyDef.Name)) {
-							var typeref = GetScopeTypeReferenceInAssembly(assembly.AssemblyDef);
+							var typeref = GetScopeTypeRefInAssembly(assembly.AssemblyDef);
 							if (typeref != null) {
 								foreach (var m in assembly.AssemblyDef.Modules.GetSafeEnumerable())
 									yield return new Tuple<ModuleDef, ITypeDefOrRef>(m, typeref);
@@ -374,12 +374,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		private ITypeDefOrRef GetScopeTypeReferenceInAssembly(AssemblyDef asm)
+		private ITypeDefOrRef GetScopeTypeRefInAssembly(AssemblyDef asm)
 		{
-			foreach (var tmp in asm.Modules.GetSafeEnumerable()) {
-				var mod = tmp as ModuleDefMD;
-				if (mod == null)
-					continue;
+			foreach (var mod in asm.Modules.GetSafeEnumerable()) {
 				foreach (var typeref in mod.GetTypeRefs()) {
 					if (new SigComparer().Equals(analyzedType, typeref))
 						return typeref;

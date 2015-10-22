@@ -20,6 +20,7 @@
 using System;
 using System.Windows.Media;
 using dnSpy.AvalonEdit;
+using dnSpy.Files;
 using dnSpy.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
@@ -27,11 +28,11 @@ using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
 namespace dnSpy.Debugger.Breakpoints {
-	public sealed class ILCodeBreakpoint : Breakpoint, IMarkedTextLine {
+	sealed class ILCodeBreakpoint : Breakpoint, IMarkedTextLine {
 		sealed class MyMarkedTextLine : MarkedTextLine {
 			readonly ILCodeBreakpoint ilbp;
 
-			public MyMarkedTextLine(ILCodeBreakpoint ilbp, MethodKey methodKey, uint ilOffset)
+			public MyMarkedTextLine(ILCodeBreakpoint ilbp, SerializedDnSpyToken methodKey, uint ilOffset)
 				: base(methodKey, ilOffset, ilbp) {
 				this.ilbp = ilbp;
 			}
@@ -43,9 +44,9 @@ namespace dnSpy.Debugger.Breakpoints {
 			public override bool IsVisible(DecompilerTextView textView) {
 				TextLocation location, endLocation;
 				var cm = textView == null ? null : textView.CodeMappings;
-				if (cm == null || !cm.ContainsKey(MethodKey))
+				if (cm == null || !cm.ContainsKey(SerializedDnSpyToken))
 					return false;
-				if (!cm[MethodKey].GetInstructionByTokenAndOffset(ILOffset, out location, out endLocation))
+				if (!cm[SerializedDnSpyToken].GetInstructionByTokenAndOffset(ILOffset, out location, out endLocation))
 					return false;
 
 				return true;
@@ -79,8 +80,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			get { return BreakpointType.ILCode; }
 		}
 
-		public MethodKey MethodKey {
-			get { return myMarkedTextLine.MethodKey; }
+		public SerializedDnSpyToken SerializedDnSpyToken {
+			get { return myMarkedTextLine.SerializedDnSpyToken; }
 		}
 
 		public uint ILOffset {
@@ -101,14 +102,8 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		readonly MyMarkedTextLine myMarkedTextLine;
 
-		public string Assembly {
-			get { return asmName; }
-		}
-		readonly string asmName;
-
-		public ILCodeBreakpoint(string asmName, MethodKey methodKey, uint ilOffset, bool isEnabled = true)
+		public ILCodeBreakpoint(SerializedDnSpyToken methodKey, uint ilOffset, bool isEnabled = true)
 			: base(isEnabled) {
-			this.asmName = asmName;
 			this.myMarkedTextLine = new MyMarkedTextLine(this, methodKey, ilOffset);
 		}
 

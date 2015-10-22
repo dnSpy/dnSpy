@@ -121,8 +121,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 				if (!method.HasOverrides)
 					return false;
 				var methDecl = method.Overrides[0].MethodDeclaration;
-				var typeDefinition = methDecl == null ? null : methDecl.DeclaringType.ResolveTypeDef();
-				if (typeDefinition != null && !typeDefinition.IsInterface)
+				var typeDef = methDecl == null ? null : methDecl.DeclaringType.ResolveTypeDef();
+				if (typeDef != null && !typeDef.IsInterface)
 					return false;
 			}
 

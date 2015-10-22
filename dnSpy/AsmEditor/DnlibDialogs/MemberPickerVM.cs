@@ -107,16 +107,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 						return ((AssemblyTreeNode)item).DnSpyFile;
 					if (item is NamespaceTreeNode && filter.GetFilterResult((item as NamespaceTreeNode).Name, ((item as NamespaceTreeNode).Parent as AssemblyTreeNode).DnSpyFile).IsMatch)
 						return ((NamespaceTreeNode)item).Name;
-					if (item is TypeTreeNode && filter.GetFilterResult((item as TypeTreeNode).TypeDefinition).IsMatch)
-						return ((TypeTreeNode)item).TypeDefinition;
-					if (item is FieldTreeNode && filter.GetFilterResult((item as FieldTreeNode).FieldDefinition).IsMatch)
-						return ((FieldTreeNode)item).FieldDefinition;
-					if (item is MethodTreeNode && filter.GetFilterResult((item as MethodTreeNode).MethodDefinition).IsMatch)
-						return ((MethodTreeNode)item).MethodDefinition;
-					if (item is PropertyTreeNode && filter.GetFilterResult((item as PropertyTreeNode).PropertyDefinition).IsMatch)
-						return ((PropertyTreeNode)item).PropertyDefinition;
-					if (item is EventTreeNode && filter.GetFilterResult((item as EventTreeNode).EventDefinition).IsMatch)
-						return ((EventTreeNode)item).EventDefinition;
+					if (item is TypeTreeNode && filter.GetFilterResult((item as TypeTreeNode).TypeDef).IsMatch)
+						return ((TypeTreeNode)item).TypeDef;
+					if (item is FieldTreeNode && filter.GetFilterResult((item as FieldTreeNode).FieldDef).IsMatch)
+						return ((FieldTreeNode)item).FieldDef;
+					if (item is MethodTreeNode && filter.GetFilterResult((item as MethodTreeNode).MethodDef).IsMatch)
+						return ((MethodTreeNode)item).MethodDef;
+					if (item is PropertyTreeNode && filter.GetFilterResult((item as PropertyTreeNode).PropertyDef).IsMatch)
+						return ((PropertyTreeNode)item).PropertyDef;
+					if (item is EventTreeNode && filter.GetFilterResult((item as EventTreeNode).EventDef).IsMatch)
+						return ((EventTreeNode)item).EventDef;
 					if (item is AssemblyReferenceTreeNode && filter.GetFilterResult((item as AssemblyReferenceTreeNode).AssemblyNameReference).IsMatch)
 						return ((AssemblyReferenceTreeNode)item).AssemblyNameReference;
 					if (item is ModuleReferenceTreeNode && filter.GetFilterResult((item as ModuleReferenceTreeNode).ModuleReference).IsMatch)

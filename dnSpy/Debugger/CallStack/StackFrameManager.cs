@@ -24,6 +24,7 @@ using System.Linq;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.AvalonEdit;
+using dnSpy.Files;
 using dnSpy.MVVM;
 using dnSpy.Tabs;
 using ICSharpCode.Decompiler;
@@ -266,7 +267,7 @@ namespace dnSpy.Debugger.CallStack {
 					uint token = frame.Token;
 					if (token == 0)
 						continue;
-					var serAsm = frame.GetSerializedDnModuleWithAssembly();
+					var serAsm = frame.SerializedDnModuleWithAssembly;
 					if (serAsm == null)
 						continue;
 
@@ -275,7 +276,7 @@ namespace dnSpy.Debugger.CallStack {
 						type = StackFrameLineType.CurrentStatement;
 					else
 						type = currentState.FrameNumber == frameNo ? StackFrameLineType.SelectedReturnStatement : StackFrameLineType.ReturnStatement;
-					var key = MethodKey.Create(token, serAsm.Value.Module);
+					var key = new SerializedDnSpyToken(serAsm.Value.ToSerializedDnSpyModule(), token);
 					uint offset = frame.GetILOffset();
 					MethodDef methodDef;
 					TextLocation location, endLocation;

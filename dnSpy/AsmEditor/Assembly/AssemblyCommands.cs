@@ -43,10 +43,10 @@ namespace dnSpy.AsmEditor.Assembly {
 	sealed class DisableMemoryMappedIOCommand : IContextMenuEntry {
 		public bool IsVisible(ContextMenuEntryContext context) {
 			return context.Element == MainWindow.Instance.treeView &&
-				context.SelectedTreeNodes.Any(a => GetLoadedAssembly(a) != null);
+				context.SelectedTreeNodes.Any(a => GetDnSpyFile(a) != null);
 		}
 
-		static DnSpyFile GetLoadedAssembly(SharpTreeNode node) {
+		static DnSpyFile GetDnSpyFile(SharpTreeNode node) {
 			var asmNode = node as AssemblyTreeNode;
 			if (asmNode == null)
 				return null;
@@ -69,7 +69,7 @@ namespace dnSpy.AsmEditor.Assembly {
 				return;
 			var asms = new List<DnSpyFile>();
 			foreach (var node in context.SelectedTreeNodes) {
-				var file = GetLoadedAssembly(node);
+				var file = GetDnSpyFile(node);
 				if (file != null)
 					asms.Add(file);
 			}

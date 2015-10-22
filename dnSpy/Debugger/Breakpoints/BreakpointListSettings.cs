@@ -19,8 +19,8 @@
 
 using System.ComponentModel;
 using System.Xml.Linq;
-using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Files;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.Breakpoints {
@@ -67,32 +67,36 @@ namespace dnSpy.Debugger.Breakpoints {
 			BreakpointManager.Instance.Clear();
 			foreach (var bpx in bpsx.Elements("Breakpoint")) {
 				uint? token = (uint?)bpx.Attribute("Token");
-				string assemblyFullPath = SessionSettings.Unescape((string)bpx.Attribute("AssemblyFullPath"));
-				string moduleFullPath = SessionSettings.Unescape((string)bpx.Attribute("ModuleFullPath"));
-				bool isDynamic = (bool?)bpx.Attribute("IsDynamic") ?? false;
-				bool isInMemory = (bool?)bpx.Attribute("IsInMemory") ?? false;
-				uint? ilOffset = (uint?)bpx.Attribute("ILOffset") ?? (uint?)bpx.Attribute("From");//TODO: Remove "From" some time after this commit
+				string asmFullName = SessionSettings.Unescape((string)bpx.Attribute("AssemblyFullName"));
+				string moduleName = SessionSettings.Unescape((string)bpx.Attribute("ModuleName"));
+				bool? isDynamic = (bool?)bpx.Attribute("IsDynamic");
+				bool? isInMemory = (bool?)bpx.Attribute("IsInMemory");
+				uint? ilOffset = (uint?)bpx.Attribute("ILOffset");
 				bool? isEnabled = (bool?)bpx.Attribute("IsEnabled");
 
 				if (token == null)
 					continue;
-				if (string.IsNullOrEmpty(moduleFullPath))
+				if (isDynamic == null || isInMemory == null)
+					continue;
+				if (string.IsNullOrEmpty(asmFullName))
+					continue;
+				if (string.IsNullOrEmpty(moduleName))
 					continue;
 				if (ilOffset == null)
 					continue;
 				if (isEnabled == null)
 					continue;
 
-				var snModule = new SerializedDnModule(moduleFullPath, isDynamic, isInMemory);
-				var key = MethodKey.Create(token.Value, snModule);
+				var snModule = SerializedDnSpyModule.Create(asmFullName, moduleName, isDynamic.Value, isInMemory.Value);
+				var key = new SerializedDnSpyToken(snModule, token.Value);
 
-				if (!isInMemory) {
+				if (!isInMemory.Value && !isDynamic.Value) {
 					var s = SessionSettings.Unescape((string)bpx.Attribute("Method"));
-					if (s == null || s != GetMethodAsString(assemblyFullPath, key))
+					if (s == null || s != GetMethodAsString(key))
 						continue;
 				}
 
-				var bp = new ILCodeBreakpoint(assemblyFullPath, key, ilOffset.Value, isEnabled.Value);
+				var bp = new ILCodeBreakpoint(key, ilOffset.Value, isEnabled.Value);
 				BreakpointManager.Instance.Add(bp);
 			}
 		}
@@ -113,15 +117,15 @@ namespace dnSpy.Debugger.Breakpoints {
 				var ilbp = bp as ILCodeBreakpoint;
 				if (ilbp != null) {
 					var bpx = new XElement("Breakpoint");
-					bpx.SetAttributeValue("Token", ilbp.MethodKey.Token);
-					bpx.SetAttributeValue("AssemblyFullPath", SessionSettings.Escape(ilbp.Assembly));
-					bpx.SetAttributeValue("ModuleFullPath", SessionSettings.Escape(ilbp.MethodKey.Module.Name));
-					bpx.SetAttributeValue("IsDynamic", ilbp.MethodKey.Module.IsDynamic);
-					bpx.SetAttributeValue("IsInMemory", ilbp.MethodKey.Module.IsInMemory);
+					bpx.SetAttributeValue("Token", ilbp.SerializedDnSpyToken.Token);
+					bpx.SetAttributeValue("AssemblyFullName", SessionSettings.Escape(ilbp.SerializedDnSpyToken.Module.AssemblyFullName));
+					bpx.SetAttributeValue("ModuleName", SessionSettings.Escape(ilbp.SerializedDnSpyToken.Module.ModuleName));
+					bpx.SetAttributeValue("IsDynamic", ilbp.SerializedDnSpyToken.Module.IsDynamic);
+					bpx.SetAttributeValue("IsInMemory", ilbp.SerializedDnSpyToken.Module.IsInMemory);
 					bpx.SetAttributeValue("ILOffset", ilbp.ILOffset);
 					bpx.SetAttributeValue("IsEnabled", ilbp.IsEnabled);
-					if (!ilbp.MethodKey.Module.IsInMemory) {
-						var s = GetMethodAsString(ilbp.Assembly, ilbp.MethodKey);
+					if (!ilbp.SerializedDnSpyToken.Module.IsInMemory && !ilbp.SerializedDnSpyToken.Module.IsDynamic) {
+						var s = GetMethodAsString(ilbp.SerializedDnSpyToken);
 						if (s == null)
 							continue;
 						bpx.SetAttributeValue("Method", SessionSettings.Escape(s));
@@ -138,10 +142,9 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		static string GetMethodAsString(string asmName, MethodKey key) {
-			var file = MainWindow.Instance.LoadAssembly(asmName, key.Module);
-			var mod = file.ModuleDef as ModuleDefMD;
-			var method = mod == null ? null : mod.ResolveToken(key.Token) as MethodDef;
+		static string GetMethodAsString(SerializedDnSpyToken key) {
+			var file = AssemblyLoader.Instance.LoadAssembly(key.Module);
+			var method = file == null ? null : file.ModuleDef.ResolveToken(key.Token) as MethodDef;
 			return method == null ? null : method.ToString();
 		}
 	}

@@ -22,12 +22,12 @@ using System.Diagnostics;
 using dndbg.Engine;
 
 namespace dnSpy.Debugger.Breakpoints {
-	public enum BreakpointType {
+	enum BreakpointType {
 		ILCode,
 		DebugEvent,
 	}
 
-	public abstract class Breakpoint : INotifyPropertyChanged {
+	abstract class Breakpoint : INotifyPropertyChanged {
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		protected void OnPropertyChanged(string propName) {

@@ -20,6 +20,7 @@
 using System;
 using System.Windows.Media;
 using dnSpy.AvalonEdit;
+using dnSpy.Files;
 using dnSpy.Images;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
@@ -69,7 +70,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 		readonly DecompilerTextView decompilerTextView;
 
-		public StackFrameLine(StackFrameLineType type, DecompilerTextView decompilerTextView, MethodKey methodKey, uint ilOffset)
+		public StackFrameLine(StackFrameLineType type, DecompilerTextView decompilerTextView, SerializedDnSpyToken methodKey, uint ilOffset)
 			: base(methodKey, ilOffset) {
 			this.type = type;
 			this.decompilerTextView = decompilerTextView;

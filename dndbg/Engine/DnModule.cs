@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using dndbg.COM.CorDebug;
-using dndbg.COM.MetaData;
 using dndbg.DotNet;
 
 namespace dndbg.Engine {
@@ -31,6 +31,7 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorModuleDef CorModuleDef {
 			get { return corModuleDef; }
+			internal set { corModuleDef = value; }
 		}
 		CorModuleDef corModuleDef;
 
@@ -43,13 +44,8 @@ namespace dndbg.Engine {
 			if (corModuleDef != null)
 				return corModuleDef;
 
-			// No lock needed, must be called on debugger thread
-
-			corModuleDef = new CorModuleDef(CorModule.GetMetaDataInterface<IMetaDataImport>(), new CorModuleDefHelper(this));
-			var asm = Assembly.GetOrCreateCorAssemblyDef(this, corModuleDef);
-			asm.Modules.Add(corModuleDef);
-			corModuleDef.Initialize();
-
+			Assembly.InitializeAssemblyAndModules();
+			Debug.Assert(corModuleDef != null);
 			return corModuleDef;
 		}
 
@@ -160,7 +156,7 @@ namespace dndbg.Engine {
 		}
 
 		public SerializedDnModuleWithAssembly SerializedDnModuleWithAssembly {
-			get { return new SerializedDnModuleWithAssembly(Assembly.Name, SerializedDnModule); }
+			get { return new SerializedDnModuleWithAssembly(Assembly.FullName, SerializedDnModule); }
 		}
 
 		/// <summary>

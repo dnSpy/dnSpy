@@ -30,6 +30,9 @@ namespace dnSpy.Files {
 
 		static string GetFullPath(string filename) {
 			try {
+				// Prevent slow exceptions
+				if (string.IsNullOrEmpty(filename))
+					return filename;
 				return Path.GetFullPath(filename);
 			}
 			catch {

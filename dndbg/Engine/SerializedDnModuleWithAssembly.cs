@@ -22,14 +22,12 @@ using System;
 namespace dndbg.Engine {
 	public struct SerializedDnModuleWithAssembly : IEquatable<SerializedDnModuleWithAssembly> {
 		/// <summary>
-		/// Gets the assembly name. This is identical to <see cref="DnAssembly.Name"/>, i.e., it's
-		/// usually the path to the assembly file on disk, unless it's an in-memory assembly, in
-		/// which case it's the name of the assembly.
+		/// Gets the full name, identical to the dnlib assembly full name
 		/// </summary>
-		public string Assembly {
-			get { return asmName; }
+		public string AssemblyFullName {
+			get { return asmFullName; }
 		}
-		readonly string asmName;
+		readonly string asmFullName;
 
 		/// <summary>
 		/// Gets the module
@@ -42,10 +40,10 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		/// <param name="assembly">Assembly</param>
+		/// <param name="asmFullName">Assembly full name</param>
 		/// <param name="module">Module</param>
-		public SerializedDnModuleWithAssembly(string assembly, SerializedDnModule module) {
-			this.asmName = assembly;
+		public SerializedDnModuleWithAssembly(string asmFullName, SerializedDnModule module) {
+			this.asmFullName = asmFullName;
 			this.module = module;
 		}
 
@@ -58,7 +56,7 @@ namespace dndbg.Engine {
 		}
 
 		public bool Equals(SerializedDnModuleWithAssembly other) {
-			return StringComparer.OrdinalIgnoreCase.Equals(Assembly, other.Assembly) &&
+			return StringComparer.OrdinalIgnoreCase.Equals(AssemblyFullName, other.AssemblyFullName) &&
 					Module == other.Module;
 		}
 
@@ -67,11 +65,11 @@ namespace dndbg.Engine {
 		}
 
 		public override int GetHashCode() {
-			return StringComparer.OrdinalIgnoreCase.GetHashCode(Assembly) ^ Module.GetHashCode();
+			return StringComparer.OrdinalIgnoreCase.GetHashCode(AssemblyFullName) ^ Module.GetHashCode();
 		}
 
 		public override string ToString() {
-			return string.Format("{0} ASM={1}", Module, Assembly);
+			return string.Format("{0} ASM={1}", Module, AssemblyFullName);
 		}
 	}
 }

@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Files;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
@@ -26,20 +26,16 @@ using ICSharpCode.NRefactory;
 
 namespace dnSpy.Debugger {
 	static class DebugUtils {
-		public static bool GoToIL(string asmName, MethodKey key, uint ilOffset, bool newTab) {
-			return GoToIL(new SerializedDnModuleWithAssembly(asmName, key.Module), key.Token, ilOffset, newTab);
+		public static bool GoToIL(SerializedDnSpyModule serAsm, uint token, uint ilOffset, bool newTab) {
+			var file = AssemblyLoader.Instance.LoadAssembly(serAsm);
+			return GoToIL(file, token, ilOffset, newTab);
 		}
 
-		public static bool GoToIL(SerializedDnModuleWithAssembly serAsm, uint token, uint ilOffset, bool newTab) {
-			var file = MainWindow.Instance.LoadAssembly(serAsm);
+		public static bool GoToIL(DnSpyFile file, uint token, uint ilOffset, bool newTab) {
 			if (file == null)
 				return false;
 
-			var mod = file.ModuleDef as ModuleDefMD;
-			if (mod == null)
-				return false;
-
-			var md = mod.ResolveToken(token) as MethodDef;
+			var md = file.ModuleDef.ResolveToken(token) as MethodDef;
 			if (md == null)
 				return false;
 
@@ -51,19 +47,18 @@ namespace dnSpy.Debugger {
 		public static bool JumpToStatement(MethodDef method, uint ilOffset, DecompilerTextView textView = null) {
 			if (method == null)
 				return false;
-			var key = MethodKey.Create(method);
-			if (key == null)
-				return false;
+			var serMod = method.Module.ToSerializedDnSpyModule();
+			var key = new SerializedDnSpyToken(serMod, method.MDToken);
 			if (textView == null)
 				textView = MainWindow.Instance.SafeActiveTextView;
 			return MainWindow.Instance.JumpToReference(textView, method, (success, hasMovedCaret) => {
 				if (success)
-					return MoveCaretTo(textView, key.Value, ilOffset);
+					return MoveCaretTo(textView, key, ilOffset);
 				return false;
 			});
 		}
 
-		public static bool MoveCaretTo(DecompilerTextView textView, MethodKey key, uint ilOffset) {
+		public static bool MoveCaretTo(DecompilerTextView textView, SerializedDnSpyToken key, uint ilOffset) {
 			if (textView == null)
 				return false;
 			TextLocation location, endLocation;

@@ -63,20 +63,18 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 
 			if (context.CurrentModule != null) {
 				FindAmbiguousTypeNames(context.CurrentModule.Types, internalsVisible: true);
-				if (context.CurrentModule is ModuleDefMD) {
-					var asmDict = new Dictionary<AssemblyDef, List<AssemblyDef>>(AssemblyEqualityComparer.Instance);
-					foreach (var r in ((ModuleDefMD)context.CurrentModule).GetAssemblyRefs()) {
-						AssemblyDef d = context.CurrentModule.Context.AssemblyResolver.Resolve(r, context.CurrentModule);
-						if (d == null)
-							continue;
-						List<AssemblyDef> list;
-						if (!asmDict.TryGetValue(d, out list))
-							asmDict.Add(d, list = new List<AssemblyDef>());
-						list.Add(d);
-					}
-					foreach (var list in asmDict.Values) {
-						FindAmbiguousTypeNames(GetTypes(list), internalsVisible: false);
-					}
+				var asmDict = new Dictionary<AssemblyDef, List<AssemblyDef>>(AssemblyEqualityComparer.Instance);
+				foreach (var r in context.CurrentModule.GetAssemblyRefs()) {
+					AssemblyDef d = context.CurrentModule.Context.AssemblyResolver.Resolve(r, context.CurrentModule);
+					if (d == null)
+						continue;
+					List<AssemblyDef> list;
+					if (!asmDict.TryGetValue(d, out list))
+						asmDict.Add(d, list = new List<AssemblyDef>());
+					list.Add(d);
+				}
+				foreach (var list in asmDict.Values) {
+					FindAmbiguousTypeNames(GetTypes(list), internalsVisible: false);
 				}
 			}
 			

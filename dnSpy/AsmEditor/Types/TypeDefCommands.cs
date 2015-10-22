@@ -106,7 +106,7 @@ namespace dnSpy.AsmEditor.Types {
 		}
 
 		static ILSpyTreeNode[] FilterOutGlobalTypes(ILSpyTreeNode[] nodes) {
-			return nodes.Where(a => a is TypeTreeNode && !((TypeTreeNode)a).TypeDefinition.IsGlobalModuleType).ToArray();
+			return nodes.Where(a => a is TypeTreeNode && !((TypeTreeNode)a).TypeDef.IsGlobalModuleType).ToArray();
 		}
 
 		static void Execute(ILSpyTreeNode[] nodes) {
@@ -144,7 +144,7 @@ namespace dnSpy.AsmEditor.Types {
 				for (int i = 0; i < infos.Length; i++) {
 					var node = nodes[i];
 
-					var info = new ModelInfo(node.TypeDefinition);
+					var info = new ModelInfo(node.TypeDef);
 					infos[i] = info;
 					info.OwnerList.RemoveAt(info.Index);
 				}
@@ -161,7 +161,7 @@ namespace dnSpy.AsmEditor.Types {
 				for (int i = infos.Length - 1; i >= 0; i--) {
 					var node = nodes[i];
 					var info = infos[i];
-					info.OwnerList.Insert(info.Index, node.TypeDefinition);
+					info.OwnerList.Insert(info.Index, node.TypeDef);
 				}
 
 				infos = null;
@@ -273,7 +273,7 @@ namespace dnSpy.AsmEditor.Types {
 		public void Execute() {
 			nsNodeCreator.Add();
 			nsNodeCreator.NamespaceTreeNode.EnsureChildrenFiltered();
-			ownerList.Add(typeNode.TypeDefinition);
+			ownerList.Add(typeNode.TypeDef);
 			nsNodeCreator.NamespaceTreeNode.AddToChildren(typeNode);
 			typeNode.OnReadded();
 		}
@@ -281,7 +281,7 @@ namespace dnSpy.AsmEditor.Types {
 		public void Undo() {
 			typeNode.OnBeforeRemoved();
 			bool b = nsNodeCreator.NamespaceTreeNode.Children.Remove(typeNode) &&
-					ownerList.Remove(typeNode.TypeDefinition);
+					ownerList.Remove(typeNode.TypeDef);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
@@ -389,7 +389,7 @@ namespace dnSpy.AsmEditor.Types {
 
 		public void Execute() {
 			ownerType.EnsureChildrenFiltered();
-			ownerType.TypeDefinition.NestedTypes.Add(nestedType.TypeDefinition);
+			ownerType.TypeDef.NestedTypes.Add(nestedType.TypeDef);
 			ownerType.AddToChildren(nestedType);
 			nestedType.OnReadded();
 		}
@@ -397,7 +397,7 @@ namespace dnSpy.AsmEditor.Types {
 		public void Undo() {
 			nestedType.OnBeforeRemoved();
 			bool b = ownerType.Children.Remove(nestedType) &&
-					ownerType.TypeDefinition.NestedTypes.Remove(nestedType.TypeDefinition);
+					ownerType.TypeDef.NestedTypes.Remove(nestedType.TypeDef);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
@@ -466,7 +466,7 @@ namespace dnSpy.AsmEditor.Types {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var data = new TypeOptionsVM(new TypeDefOptions(typeNode.TypeDefinition), module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition);
+			var data = new TypeOptionsVM(new TypeDefOptions(typeNode.TypeDef), module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDef);
 			var win = new TypeOptionsDlg();
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
@@ -502,7 +502,7 @@ namespace dnSpy.AsmEditor.Types {
 			this.module = module;
 			this.typeNode = typeNode;
 			this.newOptions = options;
-			this.origOptions = new TypeDefOptions(typeNode.TypeDefinition);
+			this.origOptions = new TypeDefOptions(typeNode.TypeDef);
 
 			this.origParentNode = (ILSpyTreeNode)typeNode.Parent;
 			this.origParentChildIndex = this.origParentNode.Children.IndexOf(typeNode);
@@ -518,7 +518,7 @@ namespace dnSpy.AsmEditor.Types {
 			}
 
 			if (this.nameChanged || origOptions.Namespace != newOptions.Namespace)
-				this.typeRefInfos = RefFinder.FindTypeRefsToThisModule(module).Where(a => RefFinder.TypeEqualityComparerInstance.Equals(a, typeNode.TypeDefinition)).Select(a => new TypeRefInfo(a)).ToArray();
+				this.typeRefInfos = RefFinder.FindTypeRefsToThisModule(module).Where(a => RefFinder.TypeEqualityComparerInstance.Equals(a, typeNode.TypeDef)).Select(a => new TypeRefInfo(a)).ToArray();
 		}
 
 		public string Description {
@@ -533,7 +533,7 @@ namespace dnSpy.AsmEditor.Types {
 				if (!b)
 					throw new InvalidOperationException();
 				origParentNode.Children.RemoveAt(origParentChildIndex);
-				newOptions.CopyTo(typeNode.TypeDefinition, module);
+				newOptions.CopyTo(typeNode.TypeDef, module);
 
 				nsNodeCreator.Add();
 				nsNodeCreator.NamespaceTreeNode.AddToChildren(typeNode);
@@ -546,17 +546,17 @@ namespace dnSpy.AsmEditor.Types {
 				if (!b)
 					throw new InvalidOperationException();
 				origParentNode.Children.RemoveAt(origParentChildIndex);
-				newOptions.CopyTo(typeNode.TypeDefinition, module);
+				newOptions.CopyTo(typeNode.TypeDef, module);
 
 				origParentNode.AddToChildren(typeNode);
 				typeNode.OnReadded();
 			}
 			else
-				newOptions.CopyTo(typeNode.TypeDefinition, module);
+				newOptions.CopyTo(typeNode.TypeDef, module);
 			if (typeRefInfos != null) {
 				foreach (var info in typeRefInfos) {
-					info.TypeRef.Namespace = typeNode.TypeDefinition.Namespace;
-					info.TypeRef.Name = typeNode.TypeDefinition.Name;
+					info.TypeRef.Namespace = typeNode.TypeDef.Namespace;
+					info.TypeRef.Name = typeNode.TypeDef.Name;
 				}
 			}
 			typeNode.RaiseUIPropsChanged();
@@ -572,7 +572,7 @@ namespace dnSpy.AsmEditor.Types {
 					throw new InvalidOperationException();
 				nsNodeCreator.Remove();
 
-				origOptions.CopyTo(typeNode.TypeDefinition, module);
+				origOptions.CopyTo(typeNode.TypeDef, module);
 				origParentNode.Children.Insert(origParentChildIndex, typeNode);
 				typeNode.OnReadded();
 			}
@@ -583,12 +583,12 @@ namespace dnSpy.AsmEditor.Types {
 				if (!b)
 					throw new InvalidOperationException();
 
-				origOptions.CopyTo(typeNode.TypeDefinition, module);
+				origOptions.CopyTo(typeNode.TypeDef, module);
 				origParentNode.Children.Insert(origParentChildIndex, typeNode);
 				typeNode.OnReadded();
 			}
 			else
-				origOptions.CopyTo(typeNode.TypeDefinition, module);
+				origOptions.CopyTo(typeNode.TypeDef, module);
 			if (typeRefInfos != null) {
 				foreach (var info in typeRefInfos) {
 					info.TypeRef.Namespace = info.OrigNamespace;

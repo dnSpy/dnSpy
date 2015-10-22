@@ -32,15 +32,19 @@ namespace dnSpy {
 		}
 
 		public int ReadByte() {
-			return stream.ReadByte();
+			if (stream != null)
+				return stream.ReadByte();
+			return -1;
 		}
 
 		public void SetInstruction(int index, uint offset) {
-			stream.Position = offset;
+			if (stream != null)
+				stream.Position = offset;
 		}
 
 		public void Dispose() {
-			stream.Dispose();
+			if (stream != null)
+				stream.Dispose();
 		}
 	}
 }

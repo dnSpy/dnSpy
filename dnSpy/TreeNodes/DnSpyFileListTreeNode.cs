@@ -226,9 +226,33 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-        #region Find*Node
+		public SerializedDnSpyModule GetSerializedDnSpyModule(ModuleDef module) {
+			if (module == null)
+				return new SerializedDnSpyModule();
+			var modNode = MainWindow.Instance.DnSpyFileListTreeNode.FindModuleNode(module);
+			if (modNode == null)
+				return SerializedDnSpyModule.CreateFromFile(module);
+			return modNode.DnSpyFile.SerializedDnSpyModule ?? SerializedDnSpyModule.CreateFromFile(module);
+		}
 
-        public AssemblyTreeNode FindModuleNode(ModuleDef module)
+		#region Find*Node
+
+		public IEnumerable<AssemblyTreeNode> GetAllModuleNodes() {
+			App.Current.Dispatcher.VerifyAccess();
+			foreach (AssemblyTreeNode node in this.Children) {
+				if (!node.IsDotNetFile)
+					continue;
+				if (node.IsNetModule)
+					yield return node;
+				else {
+					node.EnsureChildrenFiltered();
+					foreach (var asmNode in node.Children.OfType<AssemblyTreeNode>())
+						yield return asmNode;
+				}
+			}
+		}
+
+		public AssemblyTreeNode FindModuleNode(ModuleDef module)
 		{
 			if (module == null)
 				return null;
@@ -253,10 +277,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		internal MetaDataTableRecordTreeNode FindTokenNode(TokenReference @ref)
 		{
-			var asm = dnspyFileList.Find(@ref.Filename);
-			if (asm == null)
-				return null;
-			var modNode = FindModuleNode(asm.ModuleDef);
+			var modNode = FindModuleNode(@ref.ModuleDef);
 			return modNode == null ? null : modNode.FindTokenNode(@ref.Token);
 		}
 
@@ -296,12 +317,12 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				TypeTreeNode decl = FindTypeNode(def.DeclaringType);
 				if (decl != null) {
 					decl.EnsureChildrenFiltered();
-					return decl.Children.OfType<TypeTreeNode>().FirstOrDefault(t => t.TypeDefinition == def);
+					return decl.Children.OfType<TypeTreeNode>().FirstOrDefault(t => t.TypeDef == def);
 				}
 			} else {
 				AssemblyTreeNode asm = FindModuleNode(def.Module);
 				if (asm != null) {
-					return asm.FindTypeNode(def);
+					return asm.FindNonNestedTypeNode(def);
 				}
 			}
 			return null;
@@ -319,13 +340,13 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			if (typeNode == null)
 				return null;
 			typeNode.EnsureChildrenFiltered();
-			MethodTreeNode methodNode = typeNode.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def);
+			MethodTreeNode methodNode = typeNode.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDef == def);
 			if (methodNode != null)
 				return methodNode;
 			foreach (var p in typeNode.Children.OfType<ILSpyTreeNode>()) {
 				if (p is PropertyTreeNode || p is EventTreeNode) {
 					p.EnsureChildrenFiltered();
-					methodNode = p.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDefinition == def);
+					methodNode = p.Children.OfType<MethodTreeNode>().FirstOrDefault(m => m.MethodDef == def);
 					if (methodNode != null)
 						return methodNode;
 				}
@@ -346,7 +367,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			if (typeNode == null)
 				return null;
 			typeNode.EnsureChildrenFiltered();
-			return typeNode.Children.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDefinition == def);
+			return typeNode.Children.OfType<FieldTreeNode>().FirstOrDefault(m => m.FieldDef == def);
 		}
 
 		/// <summary>
@@ -361,7 +382,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			if (typeNode == null)
 				return null;
 			typeNode.EnsureChildrenFiltered();
-			return typeNode.Children.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDefinition == def);
+			return typeNode.Children.OfType<PropertyTreeNode>().FirstOrDefault(m => m.PropertyDef == def);
 		}
 
 		/// <summary>
@@ -376,7 +397,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			if (typeNode == null)
 				return null;
 			typeNode.EnsureChildrenFiltered();
-			return typeNode.Children.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDefinition == def);
+			return typeNode.Children.OfType<EventTreeNode>().FirstOrDefault(m => m.EventDef == def);
 		}
 		#endregion
 

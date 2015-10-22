@@ -123,6 +123,7 @@
     </Compile>
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
     <Compile Include="AsmEditor\UndoObject.cs" />
+    <Compile Include="Debugger\AssemblyLoader.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointColumnConverter.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointListSettings.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointPrinter.cs" />
@@ -176,6 +177,16 @@
     <Compile Include="Debugger\Exceptions\ExceptionType.cs" />
     <Compile Include="Debugger\Exceptions\ExceptionVM.cs" />
     <Compile Include="Debugger\Exceptions\IGetNewExceptionName.cs" />
+    <Compile Include="Debugger\IMModules\ClassLoader.cs" />
+    <Compile Include="Debugger\IMModules\CorModuleDefFile.cs" />
+    <Compile Include="Debugger\IMModules\InMemoryModuleManager.cs" />
+    <Compile Include="Debugger\IMModules\LastValidRids.cs" />
+    <Compile Include="Debugger\IMModules\LoadEverythingDlg.xaml.cs">
+      <DependentUpon>LoadEverythingDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Debugger\IMModules\LoadEverythingVM.cs" />
+    <Compile Include="Debugger\IMModules\MemoryModuleDefFile.cs" />
+    <Compile Include="Debugger\IMModules\TreeViewUpdater.cs" />
     <Compile Include="Debugger\Locals\Commands.cs" />
     <Compile Include="Debugger\Locals\EditValueControl.xaml.cs">
       <DependentUpon>EditValueControl.xaml</DependentUpon>
@@ -205,6 +216,8 @@
     <Compile Include="Debugger\Modules\ModulesVM.cs" />
     <Compile Include="Debugger\Modules\ModuleVM.cs" />
     <Compile Include="Debugger\OutputConverter.cs" />
+    <Compile Include="Debugger\ProcessMemoryUtils.cs" />
+    <Compile Include="Debugger\SerializedModuleExtensions.cs" />
     <Compile Include="Debugger\Threads\Commands.cs" />
     <Compile Include="Debugger\Threads\ThreadColumnConverter.cs" />
     <Compile Include="Debugger\Threads\ThreadPrinter.cs" />
@@ -221,6 +234,8 @@
     <Compile Include="Files\IDispatcher.cs" />
     <Compile Include="Files\IDnSpyFileListOptions.cs" />
     <Compile Include="Files\IDnSpyFilenameKey.cs" />
+    <Compile Include="Files\SerializedDnSpyModule.cs" />
+    <Compile Include="Files\SerializedDnSpyToken.cs" />
     <Compile Include="Files\WPF\DispatcherImpl.cs" />
     <Compile Include="Files\WPF\DnSpyFileListOptionsImpl.cs" />
     <Compile Include="HexEditor\CachedHexStream.cs" />
@@ -679,7 +694,6 @@
     <Compile Include="Debugger\DebugRoutedCommands.cs" />
     <Compile Include="Debugger\Breakpoints\ILCodeBreakpoint.cs" />
     <Compile Include="Debugger\MarkedTextLine.cs" />
-    <Compile Include="Debugger\MethodKey.cs" />
     <Compile Include="Debugger\CallStack\StackFrameLine.cs" />
     <Compile Include="Debugger\CallStack\StackFrameManager.cs" />
     <Compile Include="Debugger\WpfDebugMessageDispatcher.cs" />
@@ -799,7 +813,6 @@
     <Compile Include="CreateListDialog.xaml.cs">
       <DependentUpon>CreateListDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DebugInformation.cs" />
     <Compile Include="DecompileCache.cs" />
     <Compile Include="dntheme\ColorType.cs" />
     <Compile Include="dntheme\Theme.cs" />
@@ -1139,6 +1152,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="AsmEditor\Field\FieldOptionsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Debugger\IMModules\LoadEverythingDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -1637,5 +1654,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

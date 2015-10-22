@@ -141,7 +141,7 @@ namespace dnSpy.AsmEditor.Property {
 				for (int i = 0; i < infos.Length; i++) {
 					var node = nodes[i];
 
-					var info = new ModelInfo(node.PropertyDefinition);
+					var info = new ModelInfo(node.PropertyDef);
 					infos[i] = info;
 					info.OwnerType.Properties.RemoveAt(info.PropertyIndex);
 
@@ -167,7 +167,7 @@ namespace dnSpy.AsmEditor.Property {
 				for (int i = infos.Length - 1; i >= 0; i--) {
 					var node = nodes[i];
 					var info = infos[i];
-					info.OwnerType.Properties.Insert(info.PropertyIndex, node.PropertyDefinition);
+					info.OwnerType.Properties.Insert(info.PropertyIndex, node.PropertyDef);
 
 					for (int j = info.Methods.Length - 1; j >= 0; j--)
 						info.OwnerType.Methods.Insert(info.MethodIndexes[j], info.Methods[j]);
@@ -266,10 +266,10 @@ namespace dnSpy.AsmEditor.Property {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			bool isInstance = !(typeNode.TypeDefinition.IsAbstract && typeNode.TypeDefinition.IsSealed);
+			bool isInstance = !(typeNode.TypeDef.IsAbstract && typeNode.TypeDef.IsSealed);
 			var options = PropertyDefOptions.Create(module, "MyProperty", isInstance);
 
-			var data = new PropertyOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition);
+			var data = new PropertyOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDef);
 			var win = new PropertyOptionsDlg();
 			win.Title = CMD_NAME;
 			win.DataContext = data;
@@ -287,7 +287,7 @@ namespace dnSpy.AsmEditor.Property {
 
 		CreatePropertyDefCommand(TypeTreeNode ownerNode, PropertyDefOptions options) {
 			this.ownerNode = ownerNode;
-			this.propNode = new PropertyTreeNode(options.CreatePropertyDef(ownerNode.TypeDefinition.Module), ownerNode);
+			this.propNode = new PropertyTreeNode(options.CreatePropertyDef(ownerNode.TypeDef.Module), ownerNode);
 		}
 
 		public string Description {
@@ -296,13 +296,13 @@ namespace dnSpy.AsmEditor.Property {
 
 		public void Execute() {
 			ownerNode.EnsureChildrenFiltered();
-			ownerNode.TypeDefinition.Properties.Add(propNode.PropertyDefinition);
+			ownerNode.TypeDef.Properties.Add(propNode.PropertyDef);
 			ownerNode.AddToChildren(propNode);
 		}
 
 		public void Undo() {
 			bool b = ownerNode.Children.Remove(propNode) &&
-					ownerNode.TypeDefinition.Properties.Remove(propNode.PropertyDefinition);
+					ownerNode.TypeDef.Properties.Remove(propNode.PropertyDef);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
@@ -371,7 +371,7 @@ namespace dnSpy.AsmEditor.Property {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var data = new PropertyOptionsVM(new PropertyDefOptions(propNode.PropertyDefinition), module, MainWindow.Instance.CurrentLanguage, propNode.PropertyDefinition.DeclaringType);
+			var data = new PropertyOptionsVM(new PropertyDefOptions(propNode.PropertyDef), module, MainWindow.Instance.CurrentLanguage, propNode.PropertyDef.DeclaringType);
 			var win = new PropertyOptionsDlg();
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
@@ -391,7 +391,7 @@ namespace dnSpy.AsmEditor.Property {
 		PropertyDefSettingsCommand(PropertyTreeNode propNode, PropertyDefOptions options) {
 			this.propNode = propNode;
 			this.newOptions = options;
-			this.origOptions = new PropertyDefOptions(propNode.PropertyDefinition);
+			this.origOptions = new PropertyDefOptions(propNode.PropertyDef);
 
 			this.origParentNode = (ILSpyTreeNode)propNode.Parent;
 			this.origParentChildIndex = this.origParentNode.Children.IndexOf(propNode);
@@ -413,12 +413,12 @@ namespace dnSpy.AsmEditor.Property {
 				if (!b)
 					throw new InvalidOperationException();
 				origParentNode.Children.RemoveAt(origParentChildIndex);
-				newOptions.CopyTo(propNode.PropertyDefinition);
+				newOptions.CopyTo(propNode.PropertyDef);
 
 				origParentNode.AddToChildren(propNode);
 			}
 			else
-				newOptions.CopyTo(propNode.PropertyDefinition);
+				newOptions.CopyTo(propNode.PropertyDef);
 			propNode.RaiseUIPropsChanged();
 		}
 
@@ -429,11 +429,11 @@ namespace dnSpy.AsmEditor.Property {
 				if (!b)
 					throw new InvalidOperationException();
 
-				origOptions.CopyTo(propNode.PropertyDefinition);
+				origOptions.CopyTo(propNode.PropertyDef);
 				origParentNode.Children.Insert(origParentChildIndex, propNode);
 			}
 			else
-				origOptions.CopyTo(propNode.PropertyDefinition);
+				origOptions.CopyTo(propNode.PropertyDef);
 			propNode.RaiseUIPropsChanged();
 		}
 

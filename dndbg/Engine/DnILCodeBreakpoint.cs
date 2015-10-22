@@ -55,10 +55,10 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class DnILCodeBreakpoint : DnBreakpoint {
-		public SerializedDnModule Module {
+		public SerializedDnModuleWithAssembly Module {
 			get { return module; }
 		}
-		readonly SerializedDnModule module;
+		readonly SerializedDnModuleWithAssembly module;
 
 		public uint Token {
 			get { return token; }
@@ -72,7 +72,7 @@ namespace dndbg.Engine {
 
 		readonly List<ModuleILCodeBreakpoint> rawBps = new List<ModuleILCodeBreakpoint>();
 
-		internal DnILCodeBreakpoint(SerializedDnModule module, uint token, uint ilOffset, IBreakpointCondition bpCond)
+		internal DnILCodeBreakpoint(SerializedDnModuleWithAssembly module, uint token, uint ilOffset, IBreakpointCondition bpCond)
 			: base(bpCond) {
 			this.module = module;
 			this.token = token;

@@ -26,7 +26,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dndbg.Engine;
+using dnSpy.Debugger.IMModules;
 using dnSpy.Debugger.Memory;
+using dnSpy.Files;
 using dnSpy.Images;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
@@ -133,11 +135,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		internal static bool CanGoToModule(ModulesCtxMenuContext context) {
-			if (context == null || context.SelectedItems.Length == 0)
-				return false;
-			var vm = context.SelectedItems[0];
-			//TODO: Support dynamic and in-memory modules
-			return !vm.Module.IsDynamic && !vm.Module.IsInMemory;
+			return context != null && context.SelectedItems.Length != 0;
 		}
 
 		internal static void ExecuteInternal(ModulesCtxMenuContext context, bool newTab) {
@@ -149,17 +147,25 @@ namespace dnSpy.Debugger.Modules {
 		internal static void ExecuteInternal(ModuleVM vm, bool newTab) {
 			if (vm == null)
 				return;
-			if (vm.Module.IsDynamic || vm.Module.IsInMemory)
-				return;//TODO: Support dynamic and in-memory modules
+			if (ShowErrorIfDynamic(vm.Module))
+				GoToFile(AssemblyLoader.Instance.LoadAssembly(vm.Module), newTab);
+		}
 
-			var serAsm = vm.Module.SerializedDnModuleWithAssembly;
-			var asm = MainWindow.Instance.LoadAssembly(serAsm.Assembly, serAsm.Module);
-			if (asm == null)
+		internal static bool ShowErrorIfDynamic(DnModule module) {
+			if (module.IsDynamic && DebugManager.Instance.ProcessState != DebuggerProcessState.Stopped) {
+				MainWindow.Instance.ShowMessageBox("You must break the process before dynamic modules can be loaded.");
+				return false;
+			}
+			return true;
+		}
+
+		internal static void GoToFile(DnSpyFile file, bool newTab) {
+			if (file == null)
 				return;
-			var mod = asm.ModuleDef;
+			var mod = file.ModuleDef;
 			if (mod == null)
 				return;
-			// The asm could've been added lazily to the list so add a short delay before we select it
+			// The file could've been added lazily to the list so add a short delay before we select it
 			MainWindow.Instance.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 				if (newTab)
 					MainWindow.Instance.OpenNewEmptyTab();
@@ -179,7 +185,47 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show in Memory Window", Order = 220, Category = "MODGoTo", Icon = "MemoryWindow")]
+	[ExportContextMenuEntry(Header = "Open Module from Memory", Order = 220, Category = "MODGoTo", Icon = "AssemblyModule")]
+	sealed class OpenModuleFromMemoryModulesCtxMenuCommand : ModulesCtxMenuCommand {
+		protected override void Execute(ModulesCtxMenuContext context) {
+			ExecuteInternal(context, false);
+		}
+
+		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+			return CanGoToModule(context);
+		}
+
+		internal static bool CanGoToModule(ModulesCtxMenuContext context) {
+			return context != null && context.SelectedItems.Length > 0;
+		}
+
+		internal static void ExecuteInternal(ModulesCtxMenuContext context, bool newTab) {
+			if (context == null || context.SelectedItems.Length == 0)
+				return;
+			ExecuteInternal(context.SelectedItems[0], newTab);
+		}
+
+		static void ExecuteInternal(ModuleVM vm, bool newTab) {
+			if (vm == null)
+				return;
+
+			if (GoToModuleModulesCtxMenuCommand.ShowErrorIfDynamic(vm.Module))
+				GoToModuleModulesCtxMenuCommand.GoToFile(InMemoryModuleManager.Instance.LoadFile(vm.Module), newTab);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Open Module from Memory (New Tab)", Order = 230, Category = "MODGoTo", Icon = "AssemblyModule")]
+	sealed class OpenModuleFromMemoryNewTabModulesCtxMenuCommand : ModulesCtxMenuCommand {
+		protected override void Execute(ModulesCtxMenuContext context) {
+			OpenModuleFromMemoryModulesCtxMenuCommand.ExecuteInternal(context, true);
+		}
+
+		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+			return OpenModuleFromMemoryModulesCtxMenuCommand.CanGoToModule(context);
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Show in Memory Window", Order = 240, Category = "MODGoTo", Icon = "MemoryWindow")]
 	sealed class ShowInMemoryXModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		protected override void Execute(ModulesCtxMenuContext context) {
 		}

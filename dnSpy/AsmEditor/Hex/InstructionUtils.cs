@@ -25,7 +25,7 @@ namespace dnSpy.AsmEditor.Hex {
 		public static ulong GetTotalMethodBodyLength(MethodDef md) {
 			if (md == null || md.RVA == 0)
 				return 0;
-			var mod = md.Module as ModuleDefMD;
+			var mod = md.Module as ModuleDefMD;//TODO: Support CorModuleDef
 			if (mod == null)
 				return 0;
 

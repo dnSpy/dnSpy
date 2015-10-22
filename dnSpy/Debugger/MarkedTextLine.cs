@@ -20,6 +20,7 @@
 using System;
 using System.Windows.Media;
 using dnSpy.AvalonEdit;
+using dnSpy.Files;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
@@ -29,16 +30,16 @@ namespace dnSpy.Debugger {
 	abstract class MarkedTextLine : IMarkedTextLine {
 		readonly IMarkedTextLine senderObj;
 
-		protected MarkedTextLine(MethodKey methodKey, uint ilOffset, IMarkedTextLine senderObj = null) {
+		protected MarkedTextLine(SerializedDnSpyToken methodKey, uint ilOffset, IMarkedTextLine senderObj = null) {
 			this.methodKey = methodKey;
 			this.ilOffset = ilOffset;
 			this.senderObj = senderObj ?? this;
 		}
 
-		public MethodKey MethodKey {
+		public SerializedDnSpyToken SerializedDnSpyToken {
 			get { return methodKey; }
 		}
-		MethodKey methodKey;
+		SerializedDnSpyToken methodKey;
 
 		public uint ILOffset {
 			get { return ilOffset; }
@@ -87,7 +88,7 @@ namespace dnSpy.Debugger {
 			var marker = CreateMarkerInternal(markerService, textView);
 			var cm = textView == null ? null : textView.CodeMappings;
 			marker.ZOrder = ZOrder;
-			marker.IsVisible = b => cm != null && cm.ContainsKey(MethodKey);
+			marker.IsVisible = b => cm != null && cm.ContainsKey(SerializedDnSpyToken);
 			marker.TextMarkerObject = this;
 			Initialize(textView, markerService, marker);
 			return marker;

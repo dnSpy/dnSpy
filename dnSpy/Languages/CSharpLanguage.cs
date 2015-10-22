@@ -29,6 +29,7 @@ using System.Threading.Tasks;
 using System.Xml;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnlib.DotNet.MD;
 using dnSpy.Files;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
@@ -541,26 +542,20 @@ namespace ICSharpCode.ILSpy {
 
 			public List<IAssembly> Find(DnSpyFileList dnSpyFileList)
 			{
-				if (!ShouldFindRealAsms()) {
-					var mod = assembly.ModuleDef as ModuleDefMD;
-					if (mod != null)
-						allReferences.AddRange(mod.GetAssemblyRefs());
-				}
+				if (!ShouldFindRealAsms())
+					allReferences.AddRange(assembly.ModuleDef.GetAssemblyRefs());
 				else {
 					Find(dnSpyFileList, assembly.ModuleDef.CorLibTypes.Object.TypeRef);
-					var mod = assembly.ModuleDef as ModuleDefMD;
-					if (mod != null) {
-						// Some types might've been moved to assembly A and some other types to
-						// assembly B. Therefore we must check every type reference and we can't
-						// just loop over all asm refs.
-						foreach (var tr in mod.GetTypeRefs())
-							Find(dnSpyFileList, tr);
-						for (uint rid = 1; ; rid++) {
-							var et = mod.ResolveExportedType(rid);
-							if (et == null)
-								break;
-							Find(dnSpyFileList, et);
-						}
+					// Some types might've been moved to assembly A and some other types to
+					// assembly B. Therefore we must check every type reference and we can't
+					// just loop over all asm refs.
+					foreach (var tr in assembly.ModuleDef.GetTypeRefs())
+						Find(dnSpyFileList, tr);
+					for (uint rid = 1; ; rid++) {
+						var et = assembly.ModuleDef.ResolveToken(new MDToken(Table.ExportedType, rid)) as ExportedType;
+						if (et == null)
+							break;
+						Find(dnSpyFileList, et);
 					}
 				}
 				return allReferences;

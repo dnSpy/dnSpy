@@ -67,7 +67,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		
 		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
 		{
-			language.DecompileNamespace(name, this.Children.OfType<TypeTreeNode>().Select(t => t.TypeDefinition), output, options);
+			language.DecompileNamespace(name, this.Children.OfType<TypeTreeNode>().Select(t => t.TypeDef), output, options);
 		}
 
 		internal void OnBeforeRemoved()
@@ -103,7 +103,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		protected override int GetNewChildIndex(SharpTreeNode node)
 		{
 			if (node is TypeTreeNode)
-				return GetNewChildIndex(node, (a, b) => AssemblyTreeNode.TypeStringComparer.Compare(((TypeTreeNode)a).TypeDefinition.FullName, ((TypeTreeNode)b).TypeDefinition.FullName));
+				return GetNewChildIndex(node, (a, b) => AssemblyTreeNode.TypeStringComparer.Compare(((TypeTreeNode)a).TypeDef.FullName, ((TypeTreeNode)b).TypeDef.FullName));
 			return base.GetNewChildIndex(node);
 		}
 

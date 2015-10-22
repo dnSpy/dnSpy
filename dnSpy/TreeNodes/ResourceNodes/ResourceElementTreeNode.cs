@@ -144,7 +144,7 @@ namespace dnSpy.TreeNodes {
 		ModuleDefMD GetModuleOffset(out FileOffset fileOffset) {
 			fileOffset = 0;
 
-			var module = GetModule(this) as ModuleDefMD;
+			var module = GetModule(this) as ModuleDefMD;//TODO: Support CorModuleDef
 			if (module == null)
 				return null;
 

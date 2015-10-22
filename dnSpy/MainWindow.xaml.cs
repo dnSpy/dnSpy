@@ -35,7 +35,6 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
-using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy;
@@ -64,8 +63,7 @@ using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 using Microsoft.Win32;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// The main window of the application.
 	/// </summary>
@@ -1675,7 +1673,15 @@ namespace ICSharpCode.ILSpy
 						default: throw new InvalidOperationException();
 						}
 					}
-					DecompileCache.Instance.Clear(oldAssemblies);
+					var oldModules = new HashSet<DnSpyFile>(oldAssemblies);
+					foreach (var asm in oldAssemblies) {
+						var node = dnSpyFileListTreeNode.FindAssemblyNode(asm);
+						if (node != null) {
+							foreach (var asmNode in node.Children.OfType<AssemblyTreeNode>())
+								oldModules.Add(asmNode.DnSpyFile);
+						}
+					}
+					DecompileCache.Instance.Clear(oldModules);
 				}
 			}
 		}
@@ -1961,12 +1967,9 @@ namespace ICSharpCode.ILSpy
 									continue;
 
 								// Found the module
-								var modDef = asmMod as ModuleDefMD;
-								if (modDef != null) {
-									member = modDef.ResolveToken(member.MDToken) as IMemberDef;
-									if (member != null) // should never fail
-										return JumpToReferenceAsyncInternal(tabState, false, member, onDecompileFinished);
-								}
+								member = asmMod.ResolveToken(member.MDToken.Raw) as IMemberDef;
+								if (member != null) // should never fail
+									return JumpToReferenceAsyncInternal(tabState, false, member, onDecompileFinished);
 
 								break;
 							}
@@ -2660,49 +2663,6 @@ namespace ICSharpCode.ILSpy
 			this.statusBar.Visibility = Visibility.Collapsed;
 		}
 
-		public DnSpyFile LoadAssembly(string asmFilename)
-		{
-			return dnspyFileList.OpenFileDelay(asmFilename, false);
-		}
-
-		public DnSpyFile TryLoadAssembly(string asmFilename, SerializedDnModule module)
-		{
-			return LoadAssembly(asmFilename, module, false);
-		}
-
-		public DnSpyFile LoadAssembly(SerializedDnModuleWithAssembly serAsm)
-		{
-			return LoadAssembly(serAsm.Assembly, serAsm.Module);
-		}
-
-		public DnSpyFile LoadAssembly(string asmFilename, SerializedDnModule module)
-		{
-			return LoadAssembly(asmFilename, module, true);
-		}
-
-		DnSpyFile LoadAssembly(string asmFilename, SerializedDnModule module, bool open)
-		{
-			if (module.IsInMemory)
-				return null;//TODO: Support in-memory modules
-			string moduleFilename = module.Name;
-			lock (dnspyFileList.GetLockObj()) {
-				var file = open ? dnspyFileList.OpenFileDelay(asmFilename, true) : dnspyFileList.Find(asmFilename);
-				if (file == null)
-					return null;
-
-				// Common case is a one-file assembly or first module of a multifile assembly
-				if (asmFilename.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
-					return file;
-
-				var loadedMod = dnSpyFileListTreeNode.FindModule(file, moduleFilename);
-				if (loadedMod != null)
-					return loadedMod;
-
-				Debug.Fail("Shouldn't be here.");
-				return open ? dnspyFileList.OpenFileDelay(moduleFilename, true) : null;
-			}
-		}
-
 		private void GoToLineExecutedCanExecute(object sender, CanExecuteRoutedEventArgs e)
 		{
 			var tabState = GetActiveDecompileTabState();
@@ -3086,17 +3046,17 @@ namespace ICSharpCode.ILSpy
 			return ActiveTabState != null;
 		}
 
-		internal void ModuleModified(DnSpyFile asm)
+		internal void ModuleModified(DnSpyFile mod)
 		{
-			DecompileCache.Instance.Clear(asm);
+			DecompileCache.Instance.Clear(mod);
 
 			foreach (var tabState in AllDecompileTabStates) {
-				if (MustRefresh(tabState, asm))
+				if (MustRefresh(tabState, mod))
 					ForceDecompile(tabState);
 			}
 
 			if (OnModuleModified != null)
-				OnModuleModified(null, new ModuleModifiedEventArgs(asm));
+				OnModuleModified(null, new ModuleModifiedEventArgs(mod));
 		}
 
 		public event EventHandler<ModuleModifiedEventArgs> OnModuleModified;
@@ -3110,12 +3070,12 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		static bool MustRefresh(DecompileTabState tabState, DnSpyFile asm)
+		static bool MustRefresh(DecompileTabState tabState, DnSpyFile mod)
 		{
 			var asms = new HashSet<DnSpyFile>();
-			asms.Add(asm);
-			return DecompileCache.IsInModifiedAssembly(asms, tabState.DecompiledNodes) ||
-				DecompileCache.IsInModifiedAssembly(asms, tabState.TextView.References);
+			asms.Add(mod);
+			return DecompileCache.IsInModifiedModule(asms, tabState.DecompiledNodes) ||
+				DecompileCache.IsInModifiedModule(asms, tabState.TextView.References);
 		}
 
 		internal void DisableMemoryMappedIO()

@@ -59,13 +59,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			if (type == analyzedType)
 				yield break;
 
-			if (IsUsedInTypeDefinition(type))
+			if (IsUsedInTypeDef(type))
 				yield return new AnalyzedTypeTreeNode(type) { Language = Language };
 
-			foreach (var field in type.Fields.Where(IsUsedInFieldReference))
+			foreach (var field in type.Fields.Where(IsUsedInFieldRef))
 				yield return new AnalyzedFieldTreeNode(field) { Language = Language };
 
-			foreach (var method in type.Methods.Where(IsUsedInMethodDefinition))
+			foreach (var method in type.Methods.Where(IsUsedInMethodDef))
 				yield return HandleSpecialMethodNode(method);
 		}
 
@@ -78,12 +78,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			return new AnalyzedMethodTreeNode(method) { Language = Language };
 		}
 
-		private bool IsUsedInTypeReferences(IEnumerable<ITypeDefOrRef> types)
+		private bool IsUsedInTypeRefs(IEnumerable<ITypeDefOrRef> types)
 		{
-			return types.Any(IsUsedInTypeReference);
+			return types.Any(IsUsedInTypeRef);
 		}
 
-		private bool IsUsedInTypeReference(ITypeDefOrRef type)
+		private bool IsUsedInTypeRef(ITypeDefOrRef type)
 		{
 			if (type == null)
 				return false;
@@ -92,17 +92,17 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 				|| TypeMatches(type);
 		}
 
-		private bool IsUsedInTypeDefinition(TypeDef type)
+		private bool IsUsedInTypeDef(TypeDef type)
 		{
 			if (type == null)
 				return false;
 
-			return IsUsedInTypeReference(type)
+			return IsUsedInTypeRef(type)
 				   || TypeMatches(type.BaseType)
-				   || IsUsedInTypeReferences(type.Interfaces.Select(ii => ii.Interface));
+				   || IsUsedInTypeRefs(type.Interfaces.Select(ii => ii.Interface));
 		}
 
-		private bool IsUsedInFieldReference(IField field)
+		private bool IsUsedInFieldRef(IField field)
 		{
 			if (field == null || !field.IsField)
 				return false;
@@ -111,7 +111,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 				|| TypeMatches(field.FieldSig.GetFieldType());
 		}
 
-		private bool IsUsedInMethodReference(IMethod method)
+		private bool IsUsedInMethodRef(IMethod method)
 		{
 			if (method == null || !method.IsMethod)
 				return false;
@@ -121,9 +121,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 				   || IsUsedInMethodParameters(method.GetParameters());
 		}
 
-		private bool IsUsedInMethodDefinition(MethodDef method)
+		private bool IsUsedInMethodDef(MethodDef method)
 		{
-			return IsUsedInMethodReference(method)
+			return IsUsedInMethodRef(method)
 				   || IsUsedInMethodBody(method);
 		}
 
@@ -138,17 +138,17 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 
 			foreach (var instruction in method.Body.Instructions) {
 				ITypeDefOrRef tr = instruction.Operand as ITypeDefOrRef;
-				if (IsUsedInTypeReference(tr)) {
+				if (IsUsedInTypeRef(tr)) {
 					found = true;
 					break;
 				}
 				IField fr = instruction.Operand as IField;
-				if (IsUsedInFieldReference(fr)) {
+				if (IsUsedInFieldRef(fr)) {
 					found = true;
 					break;
 				}
 				IMethod mr = instruction.Operand as IMethod;
-				if (IsUsedInMethodReference(mr)) {
+				if (IsUsedInMethodRef(mr)) {
 					found = true;
 					break;
 				}

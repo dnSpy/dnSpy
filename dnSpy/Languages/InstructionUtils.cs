@@ -93,14 +93,14 @@ namespace dnSpy {
 				instrs.Add(b);
 		}
 
-		static void AddToken(this IList<short> instrs, ModuleDefMD module, uint token) {
-			if (module == null || module.ResolveToken(token) == null)
+		static void AddToken(this IList<short> instrs, ITokenResolver resolver, uint token) {
+			if (resolver == null || resolver.ResolveToken(token) == null)
 				instrs.AddUnknownInt32();
 			else
 				instrs.AddInt32(unchecked((int)token));
 		}
 
-		public static void AddOperand(IList<short> instrs, ModuleDefMD module, uint offset, OpCode opCode, object operand) {
+		public static void AddOperand(IList<short> instrs, ITokenResolver resolver, uint offset, OpCode opCode, object operand) {
 			Instruction target;
 			IVariable variable;
 			switch (opCode.OperandType) {
@@ -117,12 +117,12 @@ namespace dnSpy {
 			case OperandType.InlineTok:
 			case OperandType.InlineType:
 				var tok = operand as ITokenOperand;
-				instrs.AddToken(module, tok == null ? 0 : tok.MDToken.Raw);
+				instrs.AddToken(resolver, tok == null ? 0 : tok.MDToken.Raw);
 				break;
 
 			case OperandType.InlineSig:
 				var msig = operand as MethodSig;
-				instrs.AddToken(module, msig == null ? 0 : msig.OriginalToken);
+				instrs.AddToken(resolver, msig == null ? 0 : msig.OriginalToken);
 				break;
 
 			case OperandType.InlineString:

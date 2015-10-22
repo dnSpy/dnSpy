@@ -117,12 +117,12 @@ namespace dnSpy.AsmEditor.Namespace {
 
 					for (int j = 0; j < node.Children.Count; j++) {
 						var typeNode = (TypeTreeNode)node.Children[j];
-						int index = module.Types.IndexOf(typeNode.TypeDefinition);
+						int index = module.Types.IndexOf(typeNode.TypeDef);
 						Debug.Assert(index >= 0);
 						if (index < 0)
 							throw new InvalidOperationException();
 						module.Types.RemoveAt(index);
-						info.Types[j] = typeNode.TypeDefinition;
+						info.Types[j] = typeNode.TypeDef;
 						info.Indexes[j] = index;
 					}
 				}
@@ -272,8 +272,8 @@ namespace dnSpy.AsmEditor.Namespace {
 
 				for (int j = 0; j < info.Namespaces.Length; j++) {
 					var typeNode = info.TypeNodes.Nodes[j];
-					info.Namespaces[j] = typeNode.TypeDefinition.Namespace;
-					typeNode.TypeDefinition.Namespace = UTF8String.Empty;
+					info.Namespaces[j] = typeNode.TypeDef.Namespace;
+					typeNode.TypeDef.Namespace = UTF8String.Empty;
 					nsTarget.Append(typeNode);
 				}
 			}
@@ -296,7 +296,7 @@ namespace dnSpy.AsmEditor.Namespace {
 					Debug.Assert(b);
 					if (!b)
 						throw new InvalidOperationException();
-					typeNode.TypeDefinition.Namespace = info.Namespaces[j];
+					typeNode.TypeDef.Namespace = info.Namespaces[j];
 				}
 
 				info.TypeNodes.Restore();
@@ -383,7 +383,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			var types = new HashSet<ITypeDefOrRef>(RefFinder.TypeEqualityComparerInstance);
 			foreach (var nsNode in nsNodes) {
 				foreach (TypeTreeNode typeNode in nsNode.Children)
-					types.Add(typeNode.TypeDefinition);
+					types.Add(typeNode.TypeDef);
 			}
 			var typeRefs = RefFinder.FindTypeRefsToThisModule(module);
 			return typeRefs.Where(a => types.Contains(a)).Select(a => new TypeRefInfo(a)).ToArray();
@@ -412,7 +412,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			this.origChildren = nsNode.Children.Cast<TypeTreeNode>().ToArray();
 			this.typeNamespaces = new UTF8String[nsNode.Children.Count];
 			for (int i = 0; i < this.typeNamespaces.Length; i++)
-				this.typeNamespaces[i] = origChildren[i].TypeDefinition.Namespace;
+				this.typeNamespaces[i] = origChildren[i].TypeDef.Namespace;
 
 			this.typeRefInfos = GetTypeRefInfos(module, new[] { nsNode });
 		}
@@ -429,7 +429,7 @@ namespace dnSpy.AsmEditor.Namespace {
 					typeNode.OnBeforeRemoved();
 				nsNode.Children.Clear();
 				foreach (var typeNode in origChildren) {
-					typeNode.TypeDefinition.Namespace = newNamespace;
+					typeNode.TypeDef.Namespace = newNamespace;
 					existingNsNode.AddToChildren(typeNode);
 					typeNode.OnReadded();
 				}
@@ -444,7 +444,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				nsNode.Name = newName;
 
 				foreach (var typeNode in origChildren)
-					typeNode.TypeDefinition.Namespace = newNamespace;
+					typeNode.TypeDef.Namespace = newNamespace;
 
 				origParentNode.AddToChildren(nsNode);
 				nsNode.OnReadded();
@@ -466,7 +466,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				}
 				for (int i = 0; i < origChildren.Length; i++) {
 					var typeNode = origChildren[i];
-					typeNode.TypeDefinition.Namespace = typeNamespaces[i];
+					typeNode.TypeDef.Namespace = typeNamespaces[i];
 					nsNode.Children.Add(typeNode);
 					typeNode.OnReadded();
 				}
@@ -479,7 +479,7 @@ namespace dnSpy.AsmEditor.Namespace {
 					throw new InvalidOperationException();
 
 				for (int i = 0; i < origChildren.Length; i++)
-					origChildren[i].TypeDefinition.Namespace = typeNamespaces[i];
+					origChildren[i].TypeDef.Namespace = typeNamespaces[i];
 
 				nsNode.Name = origName;
 				origParentNode.Children.Insert(origParentChildIndex, nsNode);

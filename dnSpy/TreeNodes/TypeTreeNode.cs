@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Media;
 using dnlib.DotNet;
 using dnSpy.Images;
@@ -53,7 +54,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			this.LazyLoading = true;
 		}
 		
-		public TypeDef TypeDefinition {
+		public TypeDef TypeDef {
 			get { return type; }
 		}
 		
@@ -100,7 +101,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		
 		public override FilterResult Filter(FilterSettings settings)
 		{
-			var res = settings.Filter.GetFilterResult(this.TypeDefinition);
+			var res = settings.Filter.GetFilterResult(this.TypeDef);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
 			if (settings.SearchTermMatches(type.Name)) {
@@ -177,15 +178,15 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		protected override int GetNewChildIndex(SharpTreeNode node)
 		{
 			if (node is TypeTreeNode)
-				return GetNewChildIndex(node, (a, b) => TypeDefComparer.Instance.Compare(((TypeTreeNode)a).TypeDefinition, ((TypeTreeNode)b).TypeDefinition));
+				return GetNewChildIndex(node, (a, b) => TypeDefComparer.Instance.Compare(((TypeTreeNode)a).TypeDef, ((TypeTreeNode)b).TypeDef));
 			if (node is FieldTreeNode)
-				return GetNewChildIndex(node, (a, b) => FieldDefComparer.Instance.Compare(((FieldTreeNode)a).FieldDefinition, ((FieldTreeNode)b).FieldDefinition));
+				return GetNewChildIndex(node, (a, b) => FieldDefComparer.Instance.Compare(((FieldTreeNode)a).FieldDef, ((FieldTreeNode)b).FieldDef));
 			if (node is PropertyTreeNode)
-				return GetNewChildIndex(node, (a, b) => PropertyDefComparer.Instance.Compare(((PropertyTreeNode)a).PropertyDefinition, ((PropertyTreeNode)b).PropertyDefinition));
+				return GetNewChildIndex(node, (a, b) => PropertyDefComparer.Instance.Compare(((PropertyTreeNode)a).PropertyDef, ((PropertyTreeNode)b).PropertyDef));
 			if (node is EventTreeNode)
-				return GetNewChildIndex(node, (a, b) => EventDefComparer.Instance.Compare(((EventTreeNode)a).EventDefinition, ((EventTreeNode)b).EventDefinition));
+				return GetNewChildIndex(node, (a, b) => EventDefComparer.Instance.Compare(((EventTreeNode)a).EventDef, ((EventTreeNode)b).EventDef));
 			if (node is MethodTreeNode)
-				return GetNewChildIndex(node, (a, b) => MethodDefComparer.Instance.Compare(((MethodTreeNode)a).MethodDefinition, ((MethodTreeNode)b).MethodDefinition));
+				return GetNewChildIndex(node, (a, b) => MethodDefComparer.Instance.Compare(((MethodTreeNode)a).MethodDef, ((MethodTreeNode)b).MethodDef));
 			return base.GetNewChildIndex(node);
 		}
 		
@@ -451,6 +452,17 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			if (!(Children[0] is BaseTypesTreeNode))
 				throw new InvalidOperationException();
 			Children[0] = new BaseTypesTreeNode(type);
+		}
+
+		internal TypeTreeNode GetOrCreateNestedTypeTreeNode(TypeDef nestedType) {
+			Debug.Assert(nestedType != null && nestedType.DeclaringType == type);
+			EnsureChildrenFiltered();
+			var typeNode = Children.OfType<TypeTreeNode>().FirstOrDefault(n => n.type == nestedType);
+			if (typeNode != null)
+				return typeNode;
+			typeNode = new TypeTreeNode(nestedType, parentAssemblyNode);
+			AddToChildren(typeNode);
+			return typeNode;
 		}
 	}
 }

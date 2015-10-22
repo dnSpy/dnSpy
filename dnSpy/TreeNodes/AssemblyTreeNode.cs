@@ -271,7 +271,9 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 					if (mod == dnSpyFile.ModuleDef)
 						this.Children.Add(new AssemblyTreeNode(dnSpyFile));
 					else {
-						var file = DnSpyFileList.CreateDnSpyFile(mod);
+						var file = dnSpyFile.CreateDnSpyFile(mod);
+						if (file == null)
+							file = DnSpyFileList.CreateDnSpyFile(mod);
 						file.IsAutoLoaded = dnSpyFile.IsAutoLoaded;
 						this.Children.Add(new AssemblyTreeNode(file));
 					}
@@ -292,8 +294,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			if (peImage != null)
 				this.Children.Add(new PETreeNode(peImage, module as ModuleDefMD));
 			if (module != null) {
-				if (module is ModuleDefMD)
-					this.Children.Add(new ReferenceFolderTreeNode((ModuleDefMD)module, this, asmListTreeNode));
+				this.Children.Add(new ReferenceFolderTreeNode(module, this, asmListTreeNode));
 				this.Children.Add(new ResourceListTreeNode(module));
 				foreach (NamespaceTreeNode ns in namespaces.Values) {
 					ns.Children.Clear();
@@ -344,7 +345,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		internal void OnRemoved(TypeTreeNode typeNode)
 		{
-			bool b = typeDict.Remove(typeNode.TypeDefinition);
+			bool b = typeDict.Remove(typeNode.TypeDef);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
@@ -352,8 +353,32 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		internal void OnReadded(TypeTreeNode typeNode)
 		{
-			Debug.Assert(!typeDict.ContainsKey(typeNode.TypeDefinition));
-			typeDict.Add(typeNode.TypeDefinition, typeNode);
+			Debug.Assert(!typeDict.ContainsKey(typeNode.TypeDef));
+			typeDict.Add(typeNode.TypeDef, typeNode);
+		}
+
+		internal TypeTreeNode GetOrCreateNonNestedTypeTreeNode(TypeDef td) {
+			Debug.Assert(td != null && td.DeclaringType == null);
+			Debug.Assert(!LazyLoading);
+			TypeTreeNode typeNode;
+			if (typeDict.TryGetValue(td, out typeNode))
+				return typeNode;
+			var nsNode = GetOrCreateNamespaceNode(td.Namespace);
+			typeNode = new TypeTreeNode(td, this);
+			typeDict.Add(td, typeNode);
+			nsNode.AddToChildren(typeNode);
+			return typeNode;
+		}
+
+		NamespaceTreeNode GetOrCreateNamespaceNode(string ns) {
+			EnsureChildrenFiltered();
+			NamespaceTreeNode nsNode;
+			if (namespaces.TryGetValue(ns, out nsNode))
+				return nsNode;
+			nsNode = new NamespaceTreeNode(ns);
+			namespaces.Add(nsNode.Name, nsNode);
+			AddToChildren(nsNode);
+			return nsNode;
 		}
 
 		/// <summary>
@@ -435,7 +460,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// <summary>
 		/// Finds the node for a top-level type.
 		/// </summary>
-		public TypeTreeNode FindTypeNode(TypeDef def)
+		public TypeTreeNode FindNonNestedTypeNode(TypeDef def)
 		{
 			if (def == null)
 				return null;
@@ -446,7 +471,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 			if (!(Parent is AssemblyTreeNode)) {
 				foreach (var asmNode in Children.OfType<AssemblyTreeNode>()) {
-					node = asmNode.FindTypeNode(def);
+					node = asmNode.FindNonNestedTypeNode(def);
 					if (node != null)
 						return node;
 				}
@@ -605,10 +630,8 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				return;
 			foreach (var node in context.SelectedTreeNodes) {
 				var la = ((AssemblyTreeNode)node).DnSpyFile;
-				if (la.ModuleDef is ModuleDefMD) {
-					foreach (var assyRef in ((ModuleDefMD)la.ModuleDef).GetAssemblyRefs()) {
-						MainWindow.Instance.DnSpyFileList.AssemblyResolver.Resolve(assyRef, la.ModuleDef);
-					}
+				foreach (var assyRef in la.ModuleDef.GetAssemblyRefs()) {
+					MainWindow.Instance.DnSpyFileList.AssemblyResolver.Resolve(assyRef, la.ModuleDef);
 				}
 			}
 		}

@@ -930,7 +930,7 @@ namespace dnSpy.Debugger {
 		bool MoveCaretToCurrentStatement(DecompilerTextView textView) {
 			if (currentLocation == null)
 				return false;
-			return DebugUtils.MoveCaretTo(textView, currentLocation.Value.MethodKey, currentLocation.Value.Offset);
+			return DebugUtils.MoveCaretTo(textView, currentLocation.Value.SerializedDnSpyToken, currentLocation.Value.Offset);
 		}
 
 		struct CodeLocation {
@@ -943,8 +943,8 @@ namespace dnSpy.Debugger {
 				get { return (Mapping & CorDebugMappingResult.MAPPING_EXACT) != 0; }
 			}
 
-			public MethodKey MethodKey {
-				get { return MethodKey.Create(Token, ModuleAssembly.Module); }
+			public SerializedDnSpyToken SerializedDnSpyToken {
+				get { return new SerializedDnSpyToken(ModuleAssembly.ToSerializedDnSpyModule(), Token); }
 			}
 
 			public CodeLocation(SerializedDnModuleWithAssembly moduleAssembly, uint token, uint offset, CorDebugMappingResult mapping) {
@@ -986,13 +986,14 @@ namespace dnSpy.Debugger {
 				return;
 			}
 
-			var loadedMod = MainWindow.Instance.LoadAssembly(currentLocation.Value.ModuleAssembly.Assembly, currentLocation.Value.MethodKey.Module).ModuleDef as ModuleDefMD;
+			var file = AssemblyLoader.Instance.LoadAssembly(currentLocation.Value.SerializedDnSpyToken.Module);
+			var loadedMod = file == null ? null : file.ModuleDef;
 			if (loadedMod == null) {
 				currentMethod = null;
 				return;
 			}
 
-			currentMethod = loadedMod.ResolveToken(currentLocation.Value.MethodKey.Token) as MethodDef;
+			currentMethod = loadedMod.ResolveToken(currentLocation.Value.SerializedDnSpyToken.Token) as MethodDef;
 		}
 		MethodDef currentMethod;
 
@@ -1001,7 +1002,7 @@ namespace dnSpy.Debugger {
 				return null;
 			if (frame == null)
 				return null;
-			var sma = frame.GetSerializedDnModuleWithAssembly();
+			var sma = frame.SerializedDnModuleWithAssembly;
 			if (sma == null)
 				return null;
 			uint token = frame.Token;
@@ -1059,12 +1060,12 @@ namespace dnSpy.Debugger {
 			return stepRanges;
 		}
 
-		static MethodKey? CreateMethodKey(DnDebugger debugger, CorFrame frame) {
-			var sma = frame.GetSerializedDnModuleWithAssembly();
+		static SerializedDnSpyToken? CreateMethodKey(DnDebugger debugger, CorFrame frame) {
+			var sma = frame.SerializedDnModuleWithAssembly;
 			if (sma == null)
 				return null;
 
-			return MethodKey.Create(frame.Token, sma.Value.Module);
+			return new SerializedDnSpyToken(sma.Value.ToSerializedDnSpyModule(), frame.Token);
 		}
 
 		CorFrame GetCurrentILFrame() {
@@ -1141,10 +1142,10 @@ namespace dnSpy.Debugger {
 			if (textView == null)
 				return false;
 
-			Dictionary<MethodKey, MemberMapping> cm;
+			Dictionary<SerializedDnSpyToken, MemberMapping> cm;
 			if (!VerifyAndGetCurrentDebuggedMethod(textView, out cm))
 				return false;
-			var currentKey = currentLocation.Value.MethodKey;
+			var currentKey = currentLocation.Value.SerializedDnSpyToken;
 
 			TextLocation location, endLocation;
 			if (!cm[currentKey].GetInstructionByTokenAndOffset(currentLocation.Value.Offset, out location, out endLocation))
@@ -1154,11 +1155,11 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		bool VerifyAndGetCurrentDebuggedMethod(DecompilerTextView textView, out Dictionary<MethodKey, MemberMapping> codeMappings) {
+		bool VerifyAndGetCurrentDebuggedMethod(DecompilerTextView textView, out Dictionary<SerializedDnSpyToken, MemberMapping> codeMappings) {
 			codeMappings = textView == null ? null : textView.CodeMappings;
 			if (currentLocation == null)
 				return false;
-			if (codeMappings == null || !codeMappings.ContainsKey(currentLocation.Value.MethodKey))
+			if (codeMappings == null || !codeMappings.ContainsKey(currentLocation.Value.SerializedDnSpyToken))
 				return false;
 
 			return true;
@@ -1234,7 +1235,7 @@ namespace dnSpy.Debugger {
 				}
 			}
 
-			Dictionary<MethodKey, MemberMapping> cm;
+			Dictionary<SerializedDnSpyToken, MemberMapping> cm;
 			if (!VerifyAndGetCurrentDebuggedMethod(textView, out cm)) {
 				errMsg = "No debug information found. Make sure that only the debugged method is selected in the treeview (press 'Alt+Num *' to go to current statement)";
 				return false;
@@ -1253,15 +1254,13 @@ namespace dnSpy.Debugger {
 			}
 
 			if (currentLocation != null) {
-				var currentKey = currentLocation.Value.MethodKey;
+				var currentKey = currentLocation.Value.SerializedDnSpyToken;
 
 				foreach (var bp in bps) {
-					var md = bp.MemberMapping.MethodDefinition;
+					var md = bp.MemberMapping.MethodDef;
 					if (currentLocation.Value.Token != md.MDToken.Raw)
 						continue;
-					var serAsm = GetSerializedDnModuleWithAssembly(md);
-					if (serAsm == null)
-						continue;
+					var serAsm = md.ToSerializedDnModuleWithAssembly();
 					if (serAsm != currentLocation.Value.ModuleAssembly)
 						continue;
 
@@ -1275,19 +1274,6 @@ namespace dnSpy.Debugger {
 			}
 
 			return true;
-		}
-
-		static SerializedDnModuleWithAssembly? GetSerializedDnModuleWithAssembly(IMemberDef md) {
-			if (md == null)
-				return null;
-			//TODO: Method doesn't work with in-memory modules or assemblies
-			var mod = md.Module;
-			if (mod == null)
-				return null;
-			var asm = mod.Assembly;
-			if (asm == null)
-				return null;
-			return new SerializedDnModuleWithAssembly(asm.ManifestModule.Location, new SerializedDnModule(mod.Location));
 		}
 
 		/// <summary>

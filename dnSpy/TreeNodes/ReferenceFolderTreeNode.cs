@@ -31,11 +31,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// </summary>
 	sealed class ReferenceFolderTreeNode : ILSpyTreeNode
 	{
-		readonly ModuleDefMD module;
+		readonly ModuleDef module;
 		readonly AssemblyTreeNode parentAssembly;
 		readonly DnSpyFileListTreeNode dnSpyFileListTreeNode;
 		
-		public ReferenceFolderTreeNode(ModuleDefMD module, AssemblyTreeNode parentAssembly, DnSpyFileListTreeNode dnSpyFileListTreeNode)
+		public ReferenceFolderTreeNode(ModuleDef module, AssemblyTreeNode parentAssembly, DnSpyFileListTreeNode dnSpyFileListTreeNode)
 		{
 			this.module = module;
 			this.parentAssembly = parentAssembly;

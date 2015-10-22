@@ -175,29 +175,29 @@ namespace dnSpy.AsmEditor.Method {
 				for (int i = 0; i < infos.Length; i++) {
 					var node = nodes[i];
 
-					var info = new ModelInfo(node.MethodDefinition);
+					var info = new ModelInfo(node.MethodDef);
 					infos[i] = info;
 
 					foreach (var prop in info.OwnerType.Properties) {
-						info.AddMethods(prop, ModelInfo.PropEventType.PropertyGetter, prop.GetMethods, node.MethodDefinition);
-						info.AddMethods(prop, ModelInfo.PropEventType.PropertySetter, prop.SetMethods, node.MethodDefinition);
-						info.AddMethods(prop, ModelInfo.PropEventType.PropertyOther, prop.OtherMethods, node.MethodDefinition);
+						info.AddMethods(prop, ModelInfo.PropEventType.PropertyGetter, prop.GetMethods, node.MethodDef);
+						info.AddMethods(prop, ModelInfo.PropEventType.PropertySetter, prop.SetMethods, node.MethodDef);
+						info.AddMethods(prop, ModelInfo.PropEventType.PropertyOther, prop.OtherMethods, node.MethodDef);
 					}
 
 					foreach (var evt in info.OwnerType.Events) {
-						if (evt.AddMethod == node.MethodDefinition) {
+						if (evt.AddMethod == node.MethodDef) {
 							evt.AddMethod = null;
 							info.PropEventInfos.Add(new ModelInfo.PropEventInfo(evt, ModelInfo.PropEventType.EventAdd, -1));
 						}
-						if (evt.InvokeMethod == node.MethodDefinition) {
+						if (evt.InvokeMethod == node.MethodDef) {
 							evt.InvokeMethod = null;
 							info.PropEventInfos.Add(new ModelInfo.PropEventInfo(evt, ModelInfo.PropEventType.EventInvoke, -1));
 						}
-						if (evt.RemoveMethod == node.MethodDefinition) {
+						if (evt.RemoveMethod == node.MethodDef) {
 							evt.RemoveMethod = null;
 							info.PropEventInfos.Add(new ModelInfo.PropEventInfo(evt, ModelInfo.PropEventType.EventRemove, -1));
 						}
-						info.AddMethods(evt, ModelInfo.PropEventType.EventOther, evt.OtherMethods, node.MethodDefinition);
+						info.AddMethods(evt, ModelInfo.PropEventType.EventOther, evt.OtherMethods, node.MethodDef);
 					}
 
 					info.OwnerType.Methods.RemoveAt(info.MethodIndex);
@@ -216,22 +216,22 @@ namespace dnSpy.AsmEditor.Method {
 					var node = nodes[i];
 					var info = infos[i];
 
-					info.OwnerType.Methods.Insert(info.MethodIndex, node.MethodDefinition);
+					info.OwnerType.Methods.Insert(info.MethodIndex, node.MethodDef);
 
 					for (int j = info.PropEventInfos.Count - 1; j >= 0; j--) {
 						var pinfo = info.PropEventInfos[i];
 						EventDef evt;
 						switch (pinfo.PropEventType) {
 						case ModelInfo.PropEventType.PropertyGetter:
-							((PropertyDef)pinfo.PropOrEvent).GetMethods.Insert(pinfo.Index, node.MethodDefinition);
+							((PropertyDef)pinfo.PropOrEvent).GetMethods.Insert(pinfo.Index, node.MethodDef);
 							break;
 
 						case ModelInfo.PropEventType.PropertySetter:
-							((PropertyDef)pinfo.PropOrEvent).SetMethods.Insert(pinfo.Index, node.MethodDefinition);
+							((PropertyDef)pinfo.PropOrEvent).SetMethods.Insert(pinfo.Index, node.MethodDef);
 							break;
 
 						case ModelInfo.PropEventType.PropertyOther:
-							((PropertyDef)pinfo.PropOrEvent).OtherMethods.Insert(pinfo.Index, node.MethodDefinition);
+							((PropertyDef)pinfo.PropOrEvent).OtherMethods.Insert(pinfo.Index, node.MethodDef);
 							break;
 
 						case ModelInfo.PropEventType.EventAdd:
@@ -239,7 +239,7 @@ namespace dnSpy.AsmEditor.Method {
 							Debug.Assert(evt.AddMethod == null);
 							if (evt.AddMethod != null)
 								throw new InvalidOperationException();
-							evt.AddMethod = node.MethodDefinition;
+							evt.AddMethod = node.MethodDef;
 							break;
 
 						case ModelInfo.PropEventType.EventInvoke:
@@ -247,7 +247,7 @@ namespace dnSpy.AsmEditor.Method {
 							Debug.Assert(evt.InvokeMethod == null);
 							if (evt.InvokeMethod != null)
 								throw new InvalidOperationException();
-							evt.InvokeMethod = node.MethodDefinition;
+							evt.InvokeMethod = node.MethodDef;
 							break;
 
 						case ModelInfo.PropEventType.EventRemove:
@@ -255,11 +255,11 @@ namespace dnSpy.AsmEditor.Method {
 							Debug.Assert(evt.RemoveMethod == null);
 							if (evt.RemoveMethod != null)
 								throw new InvalidOperationException();
-							evt.RemoveMethod = node.MethodDefinition;
+							evt.RemoveMethod = node.MethodDef;
 							break;
 
 						case ModelInfo.PropEventType.EventOther:
-							((EventDef)pinfo.PropOrEvent).OtherMethods.Insert(pinfo.Index, node.MethodDefinition);
+							((EventDef)pinfo.PropOrEvent).OtherMethods.Insert(pinfo.Index, node.MethodDef);
 							break;
 
 						default:
@@ -361,13 +361,13 @@ namespace dnSpy.AsmEditor.Method {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			bool isInstance = !(typeNode.TypeDefinition.IsAbstract && typeNode.TypeDefinition.IsSealed);
+			bool isInstance = !(typeNode.TypeDef.IsAbstract && typeNode.TypeDef.IsSealed);
 			var sig = isInstance ? MethodSig.CreateInstance(module.CorLibTypes.Void) : MethodSig.CreateStatic(module.CorLibTypes.Void);
 			var options = MethodDefOptions.Create("MyMethod", sig);
-			if (typeNode.TypeDefinition.IsInterface)
+			if (typeNode.TypeDef.IsInterface)
 				options.Attributes |= MethodAttributes.Abstract | MethodAttributes.Virtual | MethodAttributes.NewSlot;
 
-			var data = new MethodOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDefinition, null);
+			var data = new MethodOptionsVM(options, module, MainWindow.Instance.CurrentLanguage, typeNode.TypeDef, null);
 			var win = new MethodOptionsDlg();
 			win.Title = CMD_NAME;
 			win.DataContext = data;
@@ -385,7 +385,7 @@ namespace dnSpy.AsmEditor.Method {
 
 		CreateMethodDefCommand(TypeTreeNode ownerNode, MethodDefOptions options) {
 			this.ownerNode = ownerNode;
-			this.methodNode = new MethodTreeNode(options.CreateMethodDef(ownerNode.TypeDefinition.Module));
+			this.methodNode = new MethodTreeNode(options.CreateMethodDef(ownerNode.TypeDef.Module));
 		}
 
 		public string Description {
@@ -394,13 +394,13 @@ namespace dnSpy.AsmEditor.Method {
 
 		public void Execute() {
 			ownerNode.EnsureChildrenFiltered();
-			ownerNode.TypeDefinition.Methods.Add(methodNode.MethodDefinition);
+			ownerNode.TypeDef.Methods.Add(methodNode.MethodDef);
 			ownerNode.AddToChildren(methodNode);
 		}
 
 		public void Undo() {
 			bool b = ownerNode.Children.Remove(methodNode) &&
-					ownerNode.TypeDefinition.Methods.Remove(methodNode.MethodDefinition);
+					ownerNode.TypeDef.Methods.Remove(methodNode.MethodDef);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
@@ -469,7 +469,7 @@ namespace dnSpy.AsmEditor.Method {
 			if (module == null)
 				throw new InvalidOperationException();
 
-			var data = new MethodOptionsVM(new MethodDefOptions(methodNode.MethodDefinition), module, MainWindow.Instance.CurrentLanguage, methodNode.MethodDefinition.DeclaringType, methodNode.MethodDefinition);
+			var data = new MethodOptionsVM(new MethodDefOptions(methodNode.MethodDef), module, MainWindow.Instance.CurrentLanguage, methodNode.MethodDef.DeclaringType, methodNode.MethodDef);
 			var win = new MethodOptionsDlg();
 			win.DataContext = data;
 			win.Owner = MainWindow.Instance;
@@ -490,7 +490,7 @@ namespace dnSpy.AsmEditor.Method {
 		MethodDefSettingsCommand(MethodTreeNode methodNode, MethodDefOptions options) {
 			this.methodNode = methodNode;
 			this.newOptions = options;
-			this.origOptions = new MethodDefOptions(methodNode.MethodDefinition);
+			this.origOptions = new MethodDefOptions(methodNode.MethodDef);
 
 			this.origParentNode = (ILSpyTreeNode)methodNode.Parent;
 			this.origParentChildIndex = this.origParentNode.Children.IndexOf(methodNode);
@@ -500,7 +500,7 @@ namespace dnSpy.AsmEditor.Method {
 
 			this.nameChanged = origOptions.Name != newOptions.Name;
 			if (this.nameChanged)
-				this.memberRefInfos = RefFinder.FindMemberRefsToThisModule(ILSpyTreeNode.GetModule(methodNode)).Where(a => RefFinder.MethodEqualityComparerInstance.Equals(a, methodNode.MethodDefinition)).Select(a => new Field.MemberRefInfo(a)).ToArray();
+				this.memberRefInfos = RefFinder.FindMemberRefsToThisModule(ILSpyTreeNode.GetModule(methodNode)).Where(a => RefFinder.MethodEqualityComparerInstance.Equals(a, methodNode.MethodDef)).Select(a => new Field.MemberRefInfo(a)).ToArray();
 		}
 
 		public string Description {
@@ -514,15 +514,15 @@ namespace dnSpy.AsmEditor.Method {
 				if (!b)
 					throw new InvalidOperationException();
 				origParentNode.Children.RemoveAt(origParentChildIndex);
-				newOptions.CopyTo(methodNode.MethodDefinition);
+				newOptions.CopyTo(methodNode.MethodDef);
 
 				origParentNode.AddToChildren(methodNode);
 			}
 			else
-				newOptions.CopyTo(methodNode.MethodDefinition);
+				newOptions.CopyTo(methodNode.MethodDef);
 			if (memberRefInfos != null) {
 				foreach (var info in memberRefInfos)
-					info.MemberRef.Name = methodNode.MethodDefinition.Name;
+					info.MemberRef.Name = methodNode.MethodDef.Name;
 			}
 			methodNode.RaiseUIPropsChanged();
 		}
@@ -534,11 +534,11 @@ namespace dnSpy.AsmEditor.Method {
 				if (!b)
 					throw new InvalidOperationException();
 
-				origOptions.CopyTo(methodNode.MethodDefinition);
+				origOptions.CopyTo(methodNode.MethodDef);
 				origParentNode.Children.Insert(origParentChildIndex, methodNode);
 			}
 			else
-				origOptions.CopyTo(methodNode.MethodDefinition);
+				origOptions.CopyTo(methodNode.MethodDef);
 			if (memberRefInfos != null) {
 				foreach (var info in memberRefInfos)
 					info.MemberRef.Name = info.OrigName;

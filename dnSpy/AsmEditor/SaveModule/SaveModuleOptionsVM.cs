@@ -317,6 +317,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 				Characteristics = CharacteristicsHelper.GetCharacteristics(Characteristics ?? 0, (dnlib.PE.Machine)Machine.SelectedItem);
 			});
 			this.timeDateStamp = new NullableUInt32VM(a => HasErrorUpdated());
+			this.pointerToSymbolTable = new NullableUInt32VM(a => HasErrorUpdated());
+			this.numberOfSymbols = new NullableUInt32VM(a => HasErrorUpdated());
 			this.majorLinkerVersion = new NullableByteVM(a => HasErrorUpdated());
 			this.minorLinkerVersion = new NullableByteVM(a => HasErrorUpdated());
 			this.imageBase = new NullableUInt64VM(a => HasErrorUpdated());
@@ -347,6 +349,16 @@ namespace dnSpy.AsmEditor.SaveModule {
 			get { return timeDateStamp; }
 		}
 		NullableUInt32VM timeDateStamp;
+
+		public NullableUInt32VM PointerToSymbolTable {
+			get { return pointerToSymbolTable; }
+		}
+		NullableUInt32VM pointerToSymbolTable;
+
+		public NullableUInt32VM NumberOfSymbols {
+			get { return numberOfSymbols; }
+		}
+		NullableUInt32VM numberOfSymbols;
 
 		public Characteristics? Characteristics {
 			get { return characteristics; }
@@ -687,6 +699,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public void CopyTo(PEHeadersOptions options) {
 			options.Machine = (dnlib.PE.Machine)machineVM.SelectedItem;
 			options.TimeDateStamp = TimeDateStamp.Value;
+			options.PointerToSymbolTable = PointerToSymbolTable.Value;
+			options.NumberOfSymbols = NumberOfSymbols.Value;
 			options.Characteristics = Characteristics;
 			options.MajorLinkerVersion = MajorLinkerVersion.Value;
 			options.MinorLinkerVersion = MinorLinkerVersion.Value;
@@ -713,6 +727,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public void InitializeFrom(PEHeadersOptions options) {
 			machineVM.SelectedItem = options.Machine ?? defaultMachine;
 			TimeDateStamp.Value = options.TimeDateStamp;
+			PointerToSymbolTable.Value = options.PointerToSymbolTable;
+			NumberOfSymbols.Value = options.NumberOfSymbols;
 			Characteristics = options.Characteristics;
 			MajorLinkerVersion.Value = options.MajorLinkerVersion;
 			MinorLinkerVersion.Value = options.MinorLinkerVersion;
@@ -739,6 +755,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public override bool HasError {
 			get {
 				return timeDateStamp.HasError ||
+					pointerToSymbolTable.HasError ||
+					numberOfSymbols.HasError ||
 					majorLinkerVersion.HasError ||
 					minorLinkerVersion.HasError ||
 					imageBase.HasError ||

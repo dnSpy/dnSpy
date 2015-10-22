@@ -25,6 +25,7 @@ using System.Windows.Input;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Files;
 using dnSpy.MVVM;
 using dnSpy.Tabs;
 using ICSharpCode.Decompiler;
@@ -34,7 +35,7 @@ using ICSharpCode.ILSpy.TextView;
 
 namespace dnSpy.Debugger.Locals {
 	interface IMethodLocalProvider {
-		void GetMethodInfo(MethodKey method, out Parameter[] parameters, out Local[] locals, out ILVariable[] decLocals);
+		void GetMethodInfo(SerializedDnSpyToken method, out Parameter[] parameters, out Local[] locals, out ILVariable[] decLocals);
 		event EventHandler NewMethodInfoAvailable;
 	}
 
@@ -67,7 +68,7 @@ namespace dnSpy.Debugger.Locals {
 
 			public event EventHandler NewMethodInfoAvailable;
 
-			public void GetMethodInfo(MethodKey key, out Parameter[] parameters, out Local[] locals, out ILVariable[] decLocals) {
+			public void GetMethodInfo(SerializedDnSpyToken key, out Parameter[] parameters, out Local[] locals, out ILVariable[] decLocals) {
 				parameters = null;
 				locals = null;
 				decLocals = null;
@@ -82,7 +83,7 @@ namespace dnSpy.Debugger.Locals {
 					MemberMapping mapping;
 					if (!cm.TryGetValue(key, out mapping))
 						continue;
-					var method = mapping.MethodDefinition;
+					var method = mapping.MethodDef;
 					if (mapping.LocalVariables != null && method.Body != null) {
 						locals = method.Body.Variables.ToArray();
 						decLocals = new ILVariable[method.Body.Variables.Count];
