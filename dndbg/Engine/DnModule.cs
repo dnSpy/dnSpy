@@ -80,6 +80,13 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
+		/// Gets the name from the MD, which is the same as <see cref="ModuleDef.Name"/>
+		/// </summary>
+		public string DnlibName {
+			get { return CorModule.DnlibName; }
+		}
+
+		/// <summary>
 		/// true if the module has been unloaded
 		/// </summary>
 		public bool HasUnloaded {

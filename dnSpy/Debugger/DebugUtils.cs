@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy.Files;
 using ICSharpCode.Decompiler;
@@ -26,9 +28,9 @@ using ICSharpCode.NRefactory;
 
 namespace dnSpy.Debugger {
 	static class DebugUtils {
-		public static bool GoToIL(SerializedDnSpyModule serAsm, uint token, uint ilOffset, bool newTab) {
-			var file = AssemblyLoader.Instance.LoadAssembly(serAsm);
-			return GoToIL(file, token, ilOffset, newTab);
+		public static void GoToIL(SerializedDnSpyModule serAsm, uint token, uint ilOffset, bool newTab) {
+			var file = ModuleLoader.Instance.LoadModule(serAsm, true);
+			GoToIL(file, token, ilOffset, newTab);
 		}
 
 		public static bool GoToIL(DnSpyFile file, uint token, uint ilOffset, bool newTab) {
@@ -41,21 +43,34 @@ namespace dnSpy.Debugger {
 
 			if (newTab)
 				MainWindow.Instance.OpenNewEmptyTab();
-			return JumpToStatement(md, ilOffset);
+			return JumpToStatement(md, ilOffset, null);
 		}
 
-		public static bool JumpToStatement(MethodDef method, uint ilOffset, DecompilerTextView textView = null) {
+		static bool JumpToStatement(MethodDef method, uint ilOffset, DecompilerTextView textView) {
 			if (method == null)
 				return false;
 			var serMod = method.Module.ToSerializedDnSpyModule();
 			var key = new SerializedDnSpyToken(serMod, method.MDToken);
 			if (textView == null)
 				textView = MainWindow.Instance.SafeActiveTextView;
-			return MainWindow.Instance.JumpToReference(textView, method, (success, hasMovedCaret) => {
-				if (success)
-					return MoveCaretTo(textView, key, ilOffset);
-				return false;
-			});
+
+			bool found = MainWindow.Instance.DnSpyFileListTreeNode.FindModuleNode(method.Module) != null;
+			if (found) {
+				return MainWindow.Instance.JumpToReference(textView, method, (success, hasMovedCaret) => {
+					if (success)
+						return MoveCaretTo(textView, key, ilOffset);
+					return false;
+				});
+			}
+
+			MainWindow.Instance.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+				MainWindow.Instance.JumpToReference(textView, method, (success, hasMovedCaret) => {
+					if (success)
+						return MoveCaretTo(textView, key, ilOffset);
+					return false;
+				});
+			}));
+			return true;
 		}
 
 		public static bool MoveCaretTo(DecompilerTextView textView, SerializedDnSpyToken key, uint ilOffset) {

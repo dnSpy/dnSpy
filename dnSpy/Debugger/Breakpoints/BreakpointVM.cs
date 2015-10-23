@@ -19,6 +19,8 @@
 
 using System;
 using System.ComponentModel;
+using dndbg.Engine;
+using dnlib.DotNet;
 using dnSpy.MVVM;
 
 namespace dnSpy.Debugger.Breakpoints {
@@ -34,12 +36,26 @@ namespace dnSpy.Debugger.Breakpoints {
 		public object ModuleObject { get { return this; } }
 		public object FileObject { get { return this; } }
 
+		internal bool NameError {
+			get { return nameError; }
+			set {
+				if (nameError != value) {
+					nameError = value;
+					owner.OnNameErrorChanged(this);
+				}
+			}
+		}
+		bool nameError;
+
 		public Breakpoint Breakpoint {
 			get { return bp; }
 		}
 		readonly Breakpoint bp;
 
-		public BreakpointVM(Breakpoint bp) {
+		readonly BreakpointsVM owner;
+
+		public BreakpointVM(BreakpointsVM owner, Breakpoint bp) {
+			this.owner = owner;
 			this.bp = bp;
 			bp.PropertyChanged += Breakpoint_PropertyChanged;
 		}
@@ -67,7 +83,34 @@ namespace dnSpy.Debugger.Breakpoints {
 			OnPropertyChanged("ImageObject");
 		}
 
+		internal void RefreshIfNameError(SerializedDnModuleWithAssembly serMod) {
+			if (!NameError)
+				return;
+
+			var dnbp = Breakpoint.DnBreakpoint as DnILCodeBreakpoint;
+			if (dnbp == null)
+				return;
+			if (dnbp.Module != serMod)
+				return;
+
+			// If we still can't resolve the method, there's no need to refresh the name field
+			if (GetMethodDef(true) == null)
+				return;
+
+			RefreshNameField();
+		}
+
+		internal MethodDef GetMethodDef(bool canLoadDynFile) {
+			var bp = Breakpoint as ILCodeBreakpoint;
+			if (bp == null)
+				return null;
+			var file = ModuleLoader.Instance.LoadModule(bp.SerializedDnSpyToken.Module, canLoadDynFile);
+			var mod = file == null ? null : file.ModuleDef;
+			return mod == null ? null : mod.ResolveToken(bp.SerializedDnSpyToken.Token) as MethodDef;
+		}
+
 		public void Dispose() {
+			NameError = false;	// will notify owner if necessary
 			bp.PropertyChanged -= Breakpoint_PropertyChanged;
 		}
 	}

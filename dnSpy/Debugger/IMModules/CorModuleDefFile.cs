@@ -55,7 +55,7 @@ namespace dnSpy.Debugger.IMModules {
 		}
 
 		public override SerializedDnSpyModule? SerializedDnSpyModule {
-			get { return Files.SerializedDnSpyModule.CreateDynamic(ModuleDef, dnModule.IsInMemory); }
+			get { return Files.SerializedDnSpyModule.Create(ModuleDef, DnModule.IsDynamic, DnModule.IsInMemory); }
 		}
 
 		public override bool IsReadOnly {

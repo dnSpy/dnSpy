@@ -71,7 +71,11 @@ namespace dnSpy.Debugger.IMModules {
 		}
 		bool autoUpdateMemory;
 
+		public DnProcess Process {
+			get { return process; }
+		}
 		readonly DnProcess process;
+
 		readonly ulong address;
 		readonly byte[] data;
 		readonly bool isInMemory;

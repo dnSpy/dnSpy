@@ -353,35 +353,35 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "Breakpoints", MenuHeader = "Show _Breakpoints", MenuIcon = "BreakpointsWindow", MenuInputGestureText = "Ctrl+Alt+B", MenuOrder = 5340)]
+	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "Breakpoints", MenuHeader = "_Breakpoints", MenuIcon = "BreakpointsWindow", MenuInputGestureText = "Ctrl+Alt+B", MenuOrder = 5340)]
 	sealed class BreakpointsWindowCommand : DebugMainMenuCommand {
 		public BreakpointsWindowCommand()
 			: base(DebugRoutedCommands.ShowBreakpoints, null) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "Show _Locals", MenuIcon = "LocalsWindow", MenuInputGestureText = "Alt+4", MenuOrder = 5400)]
+	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "_Locals", MenuIcon = "LocalsWindow", MenuInputGestureText = "Alt+4", MenuOrder = 5400)]
 	sealed class LocalsWindowCommand : DebugMainMenuCommand {
 		public LocalsWindowCommand()
 			: base(DebugRoutedCommands.ShowLocals, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "_Show Call Stack", MenuIcon = "CallStackWindow", MenuInputGestureText = "Ctrl+Alt+C", MenuOrder = 5410)]
+	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "Call _Stack", MenuIcon = "CallStackWindow", MenuInputGestureText = "Ctrl+Alt+C", MenuOrder = 5410)]
 	sealed class CallStackWindowCommand : DebugMainMenuCommand {
 		public CallStackWindowCommand()
 			: base(DebugRoutedCommands.ShowCallStack, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "Show T_hreads", MenuIcon = "Thread", MenuInputGestureText = "Ctrl+Alt+H", MenuOrder = 5420)]
+	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "T_hreads", MenuIcon = "Thread", MenuInputGestureText = "Ctrl+Alt+H", MenuOrder = 5420)]
 	sealed class ThreadsWindowCommand : DebugMainMenuCommand {
 		public ThreadsWindowCommand()
 			: base(DebugRoutedCommands.ShowThreads, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "Show Mod_ules", MenuIcon = "ModulesWindow", MenuInputGestureText = "Ctrl+Alt+U", MenuOrder = 5430)]
+	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "Mod_ules", MenuIcon = "ModulesWindow", MenuInputGestureText = "Ctrl+Alt+U", MenuOrder = 5430)]
 	sealed class ModulesWindowCommand : DebugMainMenuCommand {
 		public ModulesWindowCommand()
 			: base(DebugRoutedCommands.ShowModules, true) {

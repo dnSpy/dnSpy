@@ -22,7 +22,7 @@ using dnlib.DotNet;
 
 namespace dnSpy.Files {
 	public struct SerializedDnSpyModule : IEquatable<SerializedDnSpyModule> {
-        [Flags]
+		[Flags]
 		enum Flags : byte {
 			IsDynamic		= 1,
 			IsInMemory		= 2,
@@ -36,7 +36,7 @@ namespace dnSpy.Files {
 		}
 
 		/// <summary>
-		/// Name of module. This is the filename if <see cref="IsInMemory"/> is false
+		/// Name of module. This is the filename if <see cref="IsInMemory"/> is false, else it's <see cref="ModuleDef.Name"/>
 		/// </summary>
 		public string ModuleName {
 			get { return moduleName; }
@@ -83,9 +83,10 @@ namespace dnSpy.Files {
 			return new SerializedDnSpyModule(asm == null ? string.Empty : asm.FullName, module.Name, false, true);
 		}
 
-		public static SerializedDnSpyModule CreateDynamic(ModuleDef module, bool isInMemory) {
+		public static SerializedDnSpyModule Create(ModuleDef module, bool isDynamic, bool isInMemory) {
 			var asm = module.Assembly;
-			return new SerializedDnSpyModule(asm == null ? string.Empty : asm.FullName, module.Name, true, isInMemory);
+			var name = !isInMemory ? module.Location : module.Name.String;
+			return new SerializedDnSpyModule(asm == null ? string.Empty : asm.FullName, name, isDynamic, isInMemory);
 		}
 
 		public static SerializedDnSpyModule Create(string asmFullName, string moduleName, bool isDynamic, bool isInMemory) {

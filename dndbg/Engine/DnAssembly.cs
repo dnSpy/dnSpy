@@ -59,11 +59,10 @@ namespace dndbg.Engine {
 		public string FullName {
 			get {
 				if (fullName == null) {
-					var ms = modules.GetAll();
-					Debug.Assert(ms.Length != 0);
-					if (ms.Length == 0)
+					Debug.Assert(modules.Count != 0);
+					if (modules.Count == 0)
 						return Name;
-					Interlocked.CompareExchange(ref fullName, CorAssembly.CalculateFullName(ms[0].CorModule), null);
+					Interlocked.CompareExchange(ref fullName, CorAssembly.FullName, null);
 				}
 				return fullName;
 			}

@@ -21,6 +21,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using dndbg.Engine;
+using dnSpy.Debugger.IMModules;
 using dnSpy.MVVM;
 
 namespace dnSpy.Debugger.Breakpoints {
@@ -46,9 +48,60 @@ namespace dnSpy.Debugger.Breakpoints {
 			BreakpointSettings.Instance.PropertyChanged += BreakpointSettings_PropertyChanged;
 			BreakpointManager.Instance.OnListModified += BreakpointManager_OnListModified;
 			DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
+			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
+			InMemoryModuleManager.Instance.DynamicModulesLoaded += InMemoryModuleManager_DynamicModulesLoaded;
 			foreach (var bp in BreakpointManager.Instance.Breakpoints)
 				AddBreakpoint(bp);
 		}
+
+		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+			var dbg = (DnDebugger)sender;
+			switch (dbg.ProcessState) {
+			case DebuggerProcessState.Starting:
+				dbg.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
+				break;
+
+			case DebuggerProcessState.Continuing:
+			case DebuggerProcessState.Running:
+			case DebuggerProcessState.Stopped:
+				break;
+
+			case DebuggerProcessState.Terminated:
+				dbg.DebugCallbackEvent -= DnDebugger_DebugCallbackEvent;
+				break;
+			}
+		}
+
+		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
+			if (nameErrorCounter != 0 && e.Type == DebugCallbackType.LoadClass) {
+				var lcArgs = (LoadClassDebugCallbackEventArgs)e;
+				var module = dbg.TryGetModule(lcArgs.CorAppDomain, lcArgs.CorClass);
+				Debug.Assert(module != null);
+				if (module != null && module.IsDynamic)
+					pendingModules.Add(module.SerializedDnModuleWithAssembly);
+			}
+		}
+
+		void InMemoryModuleManager_DynamicModulesLoaded(object sender, System.EventArgs e) {
+			if (nameErrorCounter != 0) {
+				foreach (var serMod in pendingModules) {
+					foreach (var vm in breakpointList)
+						vm.RefreshIfNameError(serMod);
+				}
+			}
+			pendingModules.Clear();
+		}
+
+		internal void OnNameErrorChanged(BreakpointVM vm) {
+			// Also called by vm.Dispose() when it's already been removed so don't add an Assert() here
+			if (vm.NameError)
+				nameErrorCounter++;
+			else
+				nameErrorCounter--;
+			Debug.Assert(0 <= nameErrorCounter && nameErrorCounter <= breakpointList.Count);
+		}
+		int nameErrorCounter;
+		readonly HashSet<SerializedDnModuleWithAssembly> pendingModules = new HashSet<SerializedDnModuleWithAssembly>();
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "SyntaxHighlightBreakpoints")
@@ -73,7 +126,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		void AddBreakpoint(Breakpoint bp) {
-			Collection.Add(new BreakpointVM(bp));
+			Collection.Add(new BreakpointVM(this, bp));
 		}
 
 		void RemoveBreakpoint(Breakpoint bp) {

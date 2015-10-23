@@ -22,7 +22,7 @@ using System;
 namespace dndbg.Engine {
 	public struct SerializedDnModule : IEquatable<SerializedDnModule> {
 		/// <summary>
-		/// Full path of module if it's a file on disk, else it's the name of the in-memory module
+		/// Name of module. This is the filename if <see cref="IsInMemory"/> is false, else it's <see cref="dnlib.DotNet.ModuleDef.Name"/>
 		/// </summary>
 		public string Name {
 			get { return name; }

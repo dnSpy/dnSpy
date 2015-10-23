@@ -123,7 +123,6 @@
     </Compile>
     <Compile Include="AsmEditor\Assembly\AssemblyOptionsVM.cs" />
     <Compile Include="AsmEditor\UndoObject.cs" />
-    <Compile Include="Debugger\AssemblyLoader.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointColumnConverter.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointListSettings.cs" />
     <Compile Include="Debugger\Breakpoints\BreakpointPrinter.cs" />
@@ -207,6 +206,7 @@
     <Compile Include="Debugger\Memory\MemoryControl.xaml.cs">
       <DependentUpon>MemoryControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Debugger\ModuleLoader.cs" />
     <Compile Include="Debugger\Modules\Commands.cs" />
     <Compile Include="Debugger\Modules\ModuleColumnConverter.cs" />
     <Compile Include="Debugger\Modules\ModulePrinter.cs" />

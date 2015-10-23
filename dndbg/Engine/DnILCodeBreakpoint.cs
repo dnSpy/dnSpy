@@ -85,6 +85,11 @@ namespace dndbg.Engine {
 		}
 
 		internal bool AddBreakpoint(DnModule module) {
+			foreach (var bp in rawBps) {
+				if (bp.Module == module)
+					return true;
+			}
+
 			var func = module.CorModule.GetFunctionFromToken(Token);
 			if (func == null)
 				return false;

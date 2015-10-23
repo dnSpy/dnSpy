@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -60,10 +61,12 @@ namespace dnSpy.Debugger.IMModules {
 		}
 
 		internal void OnLoaded() {
-			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
+			DebugManager.Instance.OnProcessStateChanged2 += DebugManager_OnProcessStateChanged2;
 		}
 
-		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+		public event EventHandler DynamicModulesLoaded;
+
+		void DebugManager_OnProcessStateChanged2(object sender, DebuggerEventArgs e) {
 			var dbg = (DnDebugger)sender;
 			switch (DebugManager.Instance.ProcessState) {
 			case DebuggerProcessState.Starting:
@@ -83,6 +86,8 @@ namespace dnSpy.Debugger.IMModules {
 
 				LoadNewClasses();
 				ReloadInMemoryModulesFromMemory();
+				if (DynamicModulesLoaded != null)
+					DynamicModulesLoaded(this, EventArgs.Empty);
 				break;
 
 			case DebuggerProcessState.Terminated:
@@ -150,6 +155,7 @@ namespace dnSpy.Debugger.IMModules {
 						Debug.Assert(newFile != null);
 						if (newFile != null) {
 							UpdateResolver(newFile.ModuleDef);
+							manifestNode.DnSpyFile.ModuleDef.Assembly.Modules.Add(newFile.ModuleDef);
 							manifestNode.Children.Add(new AssemblyTreeNode(newFile));
 						}
 					}
@@ -285,21 +291,23 @@ namespace dnSpy.Debugger.IMModules {
 			UpdateResolver(e.CorModuleDef);
 		}
 
-		public DnSpyFile LoadFile(DnModule dnModule) {
+		public DnSpyFile LoadFile(DnModule dnModule, bool canLoadDynFile) {
 			if (dnModule == null)
 				return null;
 
 			if (dnModule.IsDynamic)
-				return LoadDynamic(dnModule);
-			return LoadFromMemory(dnModule);
+				return LoadDynamic(dnModule, canLoadDynFile);
+			return LoadFromMemory(dnModule, canLoadDynFile);
 		}
 
-		DnSpyFile LoadDynamic(DnModule dnModule) {
+		DnSpyFile LoadDynamic(DnModule dnModule, bool canLoadDynFile) {
 			var file = FindDynamic(dnModule);
 			if (file != null)
 				return file;
 
 			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Stopped)
+				return null;
+			if (!canLoadDynFile)
 				return null;
 
 			var manifestDnModule = dnModule.Assembly.Modules[0];
@@ -336,7 +344,7 @@ namespace dnSpy.Debugger.IMModules {
 			return null;
 		}
 
-		DnSpyFile LoadFromMemory(DnModule dnModule) {
+		DnSpyFile LoadFromMemory(DnModule dnModule, bool canLoadDynFile) {
 			Debug.Assert(!dnModule.IsDynamic);
 			if (dnModule.Address == 0)
 				return null;
@@ -371,7 +379,7 @@ namespace dnSpy.Debugger.IMModules {
 				}
 				catch {
 					// The PE headers and/or .NET headers are probably corrupt
-					return LoadDynamic(dnModule);
+					return LoadDynamic(dnModule, canLoadDynFile);
 				}
 				files.Add(mfile);
 				dict.Add(mfile.ModuleDef, mfile);

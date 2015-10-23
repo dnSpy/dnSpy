@@ -34,11 +34,6 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.useHex = useHex;
 		}
 
-		static ModuleDef GetModule(ILCodeBreakpoint bp) {
-			var file = AssemblyLoader.Instance.LoadAssembly(bp.SerializedDnSpyToken.Module);
-			return file == null ? null : file.ModuleDef;
-		}
-
 		static Language Language {
 			get { return MainWindow.Instance.CurrentLanguage; }
 		}
@@ -83,14 +78,26 @@ namespace dnSpy.Debugger.Breakpoints {
 		public void WriteName(BreakpointVM vm) {
 			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
 			if (ilbp != null) {
-				var module = GetModule(ilbp);
+				vm.NameError = false;
+				bool printedToken = false;
 				if (BreakpointSettings.Instance.ShowTokens) {
 					WriteToken(output, ilbp.SerializedDnSpyToken.Token);
 					output.WriteSpace();
+					printedToken = true;
 				}
-				var method = module == null ? null : module.ResolveToken(ilbp.SerializedDnSpyToken.Token) as IMemberRef;
-				if (method == null)
-					output.Write(string.Format("0x{0:X8}", ilbp.SerializedDnSpyToken.Token), TextTokenType.Number);
+				// If this is a method in a dynamic module and the module hasn't been loaded yet,
+				// this call will try to load it, and then open a dialog box showing the progress.
+				// But in rare cases we can't show the dialog box because of Dispatcher limitations,
+				// so if we must load the module, fail. Passing in false will prevent loading
+				// dynamic modules.
+				var method = vm.GetMethodDef(false);
+				if (method == null) {
+					vm.NameError = true;
+					if (printedToken)
+						output.Write("???", TextTokenType.Error);
+					else
+						output.Write(string.Format("0x{0:X8}", ilbp.SerializedDnSpyToken.Token), TextTokenType.Number);
+				}
 				else
 					MethodLanguage.WriteToolTip(output, method, null);
 				output.WriteSpace();

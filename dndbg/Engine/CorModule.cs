@@ -19,6 +19,7 @@
 
 using System;
 using System.Text;
+using System.Threading;
 using dndbg.COM.CorDebug;
 using dndbg.COM.MetaData;
 using dnlib.DotNet;
@@ -68,6 +69,25 @@ namespace dndbg.Engine {
 			get { return name; }
 		}
 		readonly string name;
+
+		/// <summary>
+		/// Gets the name from the MD, which is the same as <see cref="ModuleDef.Name"/>
+		/// </summary>
+		public string DnlibName {
+			get {
+				if (dnlibName == null)
+					Interlocked.CompareExchange(ref dnlibName, CalculateDnlibName(this), null);
+				return dnlibName;
+			}
+		}
+		string dnlibName;
+
+		internal UTF8String CalculateDnlibName(CorModule module) {
+			var mdi = this.GetMetaDataInterface<IMetaDataImport>();
+			uint token = new MDToken(Table.Module, 1).Raw;
+
+			return DotNet.Utils.GetUTF8String(MDAPI.GetUtf8Name(mdi, token), MDAPI.GetModuleName(mdi) ?? string.Empty);
+		}
 
 		/// <summary>
 		/// Gets the name of the module. If it's an in-memory module, the hash code is included to
@@ -122,7 +142,15 @@ namespace dndbg.Engine {
 		readonly bool isInMemory;
 
 		public SerializedDnModule SerializedDnModule {
-			get { return new SerializedDnModule(Name, IsDynamic, IsInMemory); }
+			get { return new SerializedDnModule(SerializedName, IsDynamic, IsInMemory); }
+		}
+
+		string SerializedName {
+			get {
+				if (!IsInMemory)
+					return Name;	// filename
+				return DnlibName;
+			}
 		}
 
 		public SerializedDnModuleWithAssembly SerializedDnModuleWithAssembly {

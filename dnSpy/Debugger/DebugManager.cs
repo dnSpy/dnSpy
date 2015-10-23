@@ -200,7 +200,14 @@ namespace dnSpy.Debugger {
 				MainWindow.Instance.SetStatus(string.Format("Ready - {0}", msg));
 		}
 
+		internal event EventHandler<DebuggerEventArgs> OnProcessStateChanged2;
 		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+			// InMemoryModuleManager should be notified here. It needs to execute first so it can
+			// call LoadEverything() and load all dynamic modules so ResolveToken() of new methods
+			// and types work.
+			if (OnProcessStateChanged2 != null)
+				OnProcessStateChanged2(sender, e);
+
 			switch (DebugManager.Instance.ProcessState) {
 			case DebuggerProcessState.Starting:
 				evalDisabled = false;
@@ -915,16 +922,20 @@ namespace dnSpy.Debugger {
 			Debugger.Continue();
 		}
 
-		public bool JumpToCurrentStatement(DecompilerTextView textView) {
+		public void JumpToCurrentStatement(DecompilerTextView textView) {
 			if (textView == null)
-				return false;
+				return;
 			if (currentMethod == null)
-				return false;
-			return MainWindow.Instance.JumpToReference(textView, currentMethod, (success, hasMovedCaret) => {
-				if (success)
-					return MoveCaretToCurrentStatement(textView);
-				return false;
-			});
+				return;
+
+			// The file could've been added lazily to the list so add a short delay before we select it
+			MainWindow.Instance.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+				MainWindow.Instance.JumpToReference(textView, currentMethod, (success, hasMovedCaret) => {
+					if (success)
+						return MoveCaretToCurrentStatement(textView);
+					return false;
+				});
+			}));
 		}
 
 		bool MoveCaretToCurrentStatement(DecompilerTextView textView) {
@@ -934,28 +945,35 @@ namespace dnSpy.Debugger {
 		}
 
 		struct CodeLocation {
-			public SerializedDnModuleWithAssembly ModuleAssembly;
-			public readonly uint Token;
+			public readonly CorFunction Function;
 			public uint Offset;
 			public CorDebugMappingResult Mapping;
+
+			public uint Token {
+				get { return Function.Token; }
+			}
 
 			public bool IsExact {
 				get { return (Mapping & CorDebugMappingResult.MAPPING_EXACT) != 0; }
 			}
 
 			public SerializedDnSpyToken SerializedDnSpyToken {
-				get { return new SerializedDnSpyToken(ModuleAssembly.ToSerializedDnSpyModule(), Token); }
+				get {
+					var mod = Function.Module;
+					if (mod == null)
+						return new SerializedDnSpyToken();
+					return new SerializedDnSpyToken(mod.SerializedDnModuleWithAssembly.ToSerializedDnSpyModule(), Function.Token);
+				}
 			}
 
-			public CodeLocation(SerializedDnModuleWithAssembly moduleAssembly, uint token, uint offset, CorDebugMappingResult mapping) {
-				this.ModuleAssembly = moduleAssembly;
-				this.Token = token;
+			public CodeLocation(CorFunction func, uint offset, CorDebugMappingResult mapping) {
+				this.Function = func;
 				this.Offset = offset;
 				this.Mapping = mapping;
 			}
 
 			public static bool SameMethod(CodeLocation a, CodeLocation b) {
-				return a.ModuleAssembly == b.ModuleAssembly && a.Token == b.Token;
+				return a.Function == b.Function;
 			}
 		}
 
@@ -986,14 +1004,16 @@ namespace dnSpy.Debugger {
 				return;
 			}
 
-			var file = AssemblyLoader.Instance.LoadAssembly(currentLocation.Value.SerializedDnSpyToken.Module);
+			var file = ModuleLoader.Instance.LoadModule(currentLocation.Value.Function.Module, true);
+			Debug.Assert(file != null);
 			var loadedMod = file == null ? null : file.ModuleDef;
 			if (loadedMod == null) {
 				currentMethod = null;
 				return;
 			}
 
-			currentMethod = loadedMod.ResolveToken(currentLocation.Value.SerializedDnSpyToken.Token) as MethodDef;
+			currentMethod = loadedMod.ResolveToken(currentLocation.Value.Token) as MethodDef;
+			Debug.Assert(currentMethod != null);
 		}
 		MethodDef currentMethod;
 
@@ -1002,14 +1022,11 @@ namespace dnSpy.Debugger {
 				return null;
 			if (frame == null)
 				return null;
-			var sma = frame.SerializedDnModuleWithAssembly;
-			if (sma == null)
-				return null;
-			uint token = frame.Token;
-			if (token == 0)
+			var func = frame.Function;
+			if (func == null)
 				return null;
 
-			return new CodeLocation(sma.Value, token, frame.GetILOffset(), frame.ILFrameIP.Mapping);
+			return new CodeLocation(func, frame.GetILOffset(), frame.ILFrameIP.Mapping);
 		}
 
 		StepRange[] GetStepRanges(DnDebugger debugger, CorFrame frame, bool isStepInto) {
@@ -1254,14 +1271,12 @@ namespace dnSpy.Debugger {
 			}
 
 			if (currentLocation != null) {
-				var currentKey = currentLocation.Value.SerializedDnSpyToken;
-
 				foreach (var bp in bps) {
 					var md = bp.MemberMapping.MethodDef;
-					if (currentLocation.Value.Token != md.MDToken.Raw)
+					if (currentLocation.Value.Function.Token != md.MDToken.Raw)
 						continue;
-					var serAsm = md.ToSerializedDnModuleWithAssembly();
-					if (serAsm != currentLocation.Value.ModuleAssembly)
+					var serAsm = md.Module.ToSerializedDnSpyModule();
+					if (!serAsm.Equals(currentLocation.Value.SerializedDnSpyToken.Module))
 						continue;
 
 					mapping = bp;

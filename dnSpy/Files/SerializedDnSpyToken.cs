@@ -22,7 +22,7 @@ using dnlib.DotNet;
 
 namespace dnSpy.Files {
 	struct SerializedDnSpyToken : IEquatable<SerializedDnSpyToken> {
-        public SerializedDnSpyModule Module {
+		public SerializedDnSpyModule Module {
 			get { return module; }
 		}
 		/*readonly*/ SerializedDnSpyModule module;

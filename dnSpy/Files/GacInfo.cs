@@ -71,7 +71,7 @@ namespace dnSpy.Files {
 		}
 
 		public static bool IsGacPath(string filename) {
-			if (string.IsNullOrWhiteSpace(filename))
+			if (!File.Exists(filename))
 				return false;
 			foreach (var p in GacInfo.GacPaths) {
 				if (IsSubPath(p, filename))

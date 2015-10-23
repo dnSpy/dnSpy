@@ -148,7 +148,7 @@ namespace dnSpy.Debugger.Modules {
 			if (vm == null)
 				return;
 			if (ShowErrorIfDynamic(vm.Module))
-				GoToFile(AssemblyLoader.Instance.LoadAssembly(vm.Module), newTab);
+				GoToFile(ModuleLoader.Instance.LoadModule(vm.Module, true), newTab);
 		}
 
 		internal static bool ShowErrorIfDynamic(DnModule module) {
@@ -210,7 +210,7 @@ namespace dnSpy.Debugger.Modules {
 				return;
 
 			if (GoToModuleModulesCtxMenuCommand.ShowErrorIfDynamic(vm.Module))
-				GoToModuleModulesCtxMenuCommand.GoToFile(InMemoryModuleManager.Instance.LoadFile(vm.Module), newTab);
+				GoToModuleModulesCtxMenuCommand.GoToFile(InMemoryModuleManager.Instance.LoadFile(vm.Module, true), newTab);
 		}
 	}
 

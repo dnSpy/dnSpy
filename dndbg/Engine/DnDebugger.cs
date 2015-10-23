@@ -816,8 +816,12 @@ namespace dndbg.Engine {
 				cls = lcArgs.CorClass;
 				if (cls != null) {
 					var module = TryGetModule(lcArgs.CorAppDomain, cls);
-					if (module != null && module.CorModuleDef != null)
-						module.CorModuleDef.LoadClass(cls.Token);
+					if (module != null) {
+						if (module.CorModuleDef != null)
+							module.CorModuleDef.LoadClass(cls.Token);
+						foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.SerializedDnModuleWithAssembly))
+							bp.AddBreakpoint(module);
+					}
 				}
 				break;
 
