@@ -20,35 +20,30 @@ using System.ComponentModel;
 using System.Windows.Media;
 using dnSpy.Options;
 
-namespace ICSharpCode.ILSpy.Options
-{
+namespace ICSharpCode.ILSpy.Options {
 	/// <summary>
 	/// Description of DisplaySettings.
 	/// </summary>
-	public class DisplaySettings : INotifyPropertyChanged
-	{
-		public DisplaySettings()
-		{
+	public class DisplaySettings : INotifyPropertyChanged {
+		public DisplaySettings() {
 		}
-		
+
 		#region INotifyPropertyChanged implementation
 		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
-		{
+
+		protected virtual void OnPropertyChanged(PropertyChangedEventArgs e) {
 			if (PropertyChanged != null) {
 				PropertyChanged(this, e);
 			}
 		}
-		
-		protected void OnPropertyChanged(string propertyName)
-		{
+
+		protected void OnPropertyChanged(string propertyName) {
 			OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
 		}
 		#endregion
-		
+
 		FontFamily selectedFont;
-		
+
 		public FontFamily SelectedFont {
 			get { return selectedFont; }
 			set {
@@ -58,9 +53,9 @@ namespace ICSharpCode.ILSpy.Options
 				}
 			}
 		}
-		
+
 		double selectedFontSize;
-		
+
 		public double SelectedFontSize {
 			get { return selectedFontSize; }
 			set {
@@ -70,9 +65,9 @@ namespace ICSharpCode.ILSpy.Options
 				}
 			}
 		}
-		
+
 		bool showLineNumbers;
-		
+
 		public bool ShowLineNumbers {
 			get { return showLineNumbers; }
 			set {
@@ -85,8 +80,7 @@ namespace ICSharpCode.ILSpy.Options
 
 		bool showMetadataTokens;
 
-		public bool ShowMetadataTokens
-		{
+		public bool ShowMetadataTokens {
 			get { return showMetadataTokens; }
 			set {
 				if (showMetadataTokens != value) {
@@ -98,8 +92,7 @@ namespace ICSharpCode.ILSpy.Options
 
 		bool showAssemblyVersion;
 
-		public bool ShowAssemblyVersion
-		{
+		public bool ShowAssemblyVersion {
 			get { return showAssemblyVersion; }
 			set {
 				if (showAssemblyVersion != value) {
@@ -111,8 +104,7 @@ namespace ICSharpCode.ILSpy.Options
 
 		bool showAssemblyPublicKeyToken;
 
-		public bool ShowAssemblyPublicKeyToken
-		{
+		public bool ShowAssemblyPublicKeyToken {
 			get { return showAssemblyPublicKeyToken; }
 			set {
 				if (showAssemblyPublicKeyToken != value) {
@@ -124,8 +116,7 @@ namespace ICSharpCode.ILSpy.Options
 
 		bool decompileFullType;
 
-		public bool DecompileFullType
-		{
+		public bool DecompileFullType {
 			get { return decompileFullType; }
 			set {
 				if (decompileFullType != value) {
@@ -137,8 +128,7 @@ namespace ICSharpCode.ILSpy.Options
 
 		bool newEmptyTabs;
 
-		public bool NewEmptyTabs
-		{
+		public bool NewEmptyTabs {
 			get { return newEmptyTabs; }
 			set {
 				if (newEmptyTabs != value) {
@@ -150,8 +140,7 @@ namespace ICSharpCode.ILSpy.Options
 
 		bool restoreTabsAtStartup;
 
-		public bool RestoreTabsAtStartup
-		{
+		public bool RestoreTabsAtStartup {
 			get { return restoreTabsAtStartup; }
 			set {
 				if (restoreTabsAtStartup != value) {
@@ -163,8 +152,7 @@ namespace ICSharpCode.ILSpy.Options
 
 		bool autoHighlightRefs;
 
-		public bool AutoHighlightRefs
-		{
+		public bool AutoHighlightRefs {
 			get { return autoHighlightRefs; }
 			set {
 				if (autoHighlightRefs != value) {
@@ -222,8 +210,7 @@ namespace ICSharpCode.ILSpy.Options
 			}
 		}
 
-		public void CopyValues(DisplaySettings s)
-		{
+		public void CopyValues(DisplaySettings s) {
 			this.SelectedFont = s.selectedFont;
 			this.SelectedFontSize = s.selectedFontSize;
 			this.ShowLineNumbers = s.showLineNumbers;

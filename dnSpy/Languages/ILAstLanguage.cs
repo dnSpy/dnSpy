@@ -30,20 +30,18 @@ namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Represents the ILAst "language" used for debugging purposes.
 	/// </summary>
-	sealed class ILAstLanguage : Language
-	{
+	sealed class ILAstLanguage : Language {
 		string name;
 		bool inlineVariables = true;
 		ILAstOptimizationStep? abortBeforeStep;
-		
+
 		public override string Name {
 			get {
 				return name;
 			}
 		}
-		
-		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options) {
 			WriteComment(output, "Method: ");
 			output.WriteDefinition(IdentifierEscaper.Escape(method.FullName), method, TextTokenType.Comment, false);
 			output.WriteLine();
@@ -51,24 +49,24 @@ namespace ICSharpCode.ILSpy {
 			if (!method.HasBody) {
 				return;
 			}
-			
+
 			StartKeywordBlock(output, ".body", method);
 
 			ILAstBuilder astBuilder = new ILAstBuilder();
 			ILBlock ilMethod = new ILBlock();
 			DecompilerContext context = new DecompilerContext(method.Module) { CurrentType = method.DeclaringType, CurrentMethod = method };
 			ilMethod.Body = astBuilder.Build(method, inlineVariables, context);
-			
+
 			if (abortBeforeStep != null) {
 				new ILAstOptimizer().Optimize(context, ilMethod, abortBeforeStep.Value);
 			}
-			
+
 			if (context.CurrentMethodIsAsync) {
 				output.Write("async", TextTokenType.Keyword);
 				output.Write('/', TextTokenType.Operator);
 				output.WriteLine("await", TextTokenType.Keyword);
 			}
-			
+
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
 				.Where(v => v != null && !v.IsParameter).Distinct();
 			foreach (ILVariable v in allVariables) {
@@ -91,7 +89,7 @@ namespace ICSharpCode.ILSpy {
 				}
 				output.WriteLine();
 			}
-			
+
 			var memberMapping = new MemberMapping(method);
 			foreach (ILNode node in ilMethod.Body) {
 				node.WriteTo(output, memberMapping);
@@ -102,8 +100,7 @@ namespace ICSharpCode.ILSpy {
 			EndKeywordBlock(output);
 		}
 
-		void StartKeywordBlock(ITextOutput output, string keyword, IMemberDef member)
-		{
+		void StartKeywordBlock(ITextOutput output, string keyword, IMemberDef member) {
 			output.Write(keyword, TextTokenType.Keyword);
 			output.WriteSpace();
 			output.WriteDefinition(IdentifierEscaper.Escape(member.Name), member, TextTokenHelper.GetTextTokenType(member), false);
@@ -113,15 +110,13 @@ namespace ICSharpCode.ILSpy {
 			output.Indent();
 		}
 
-		void EndKeywordBlock(ITextOutput output)
-		{
+		void EndKeywordBlock(ITextOutput output) {
 			output.Unindent();
 			output.WriteRightBrace();
 			output.WriteLine();
 		}
 
-		public override void DecompileEvent(EventDef ev, ITextOutput output, DecompilationOptions options)
-		{
+		public override void DecompileEvent(EventDef ev, ITextOutput output, DecompilationOptions options) {
 			StartKeywordBlock(output, ".event", ev);
 
 			if (ev.AddMethod != null) {
@@ -142,8 +137,7 @@ namespace ICSharpCode.ILSpy {
 			EndKeywordBlock(output);
 		}
 
-		public override void DecompileField(FieldDef field, ITextOutput output, DecompilationOptions options)
-		{
+		public override void DecompileField(FieldDef field, ITextOutput output, DecompilationOptions options) {
 			output.WriteReference(IdentifierEscaper.Escape(field.FieldType.GetFullName()), field.FieldType.ToTypeDefOrRef(), TextTokenHelper.GetTextTokenType(field.FieldType));
 			output.WriteSpace();
 			output.WriteDefinition(IdentifierEscaper.Escape(field.Name), field, TextTokenHelper.GetTextTokenType(field), false);
@@ -194,8 +188,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		public override void DecompileProperty(PropertyDef property, ITextOutput output, DecompilationOptions options)
-		{
+		public override void DecompileProperty(PropertyDef property, ITextOutput output, DecompilationOptions options) {
 			StartKeywordBlock(output, ".property", property);
 
 			foreach (var getter in property.GetMethods) {
@@ -216,8 +209,7 @@ namespace ICSharpCode.ILSpy {
 			EndKeywordBlock(output);
 		}
 
-		public override void DecompileType(TypeDef type, ITextOutput output, DecompilationOptions options)
-		{
+		public override void DecompileType(TypeDef type, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLine(output, string.Format("Type: {0}", type.FullName));
 			if (type.BaseType != null) {
 				WriteComment(output, string.Format("Base type: "));
@@ -249,28 +241,26 @@ namespace ICSharpCode.ILSpy {
 				output.WriteLine();
 			}
 		}
-		
-		internal static IEnumerable<ILAstLanguage> GetDebugLanguages()
-		{
+
+		internal static IEnumerable<ILAstLanguage> GetDebugLanguages() {
 			yield return new ILAstLanguage { name = "ILAst (unoptimized)", inlineVariables = false };
 			string nextName = "ILAst (variable splitting)";
 			foreach (ILAstOptimizationStep step in Enum.GetValues(typeof(ILAstOptimizationStep))) {
 				yield return new ILAstLanguage { name = nextName, abortBeforeStep = step };
 				nextName = "ILAst (after " + step + ")";
-				
+
 			}
 		}
-		
+
 		public override string FileExtension {
 			get {
 				return ".il";
 			}
 		}
 
-		public override void TypeToString(ITextOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null)
-		{
+		public override void TypeToString(ITextOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) {
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
 		}
 	}
-	#endif
+#endif
 }

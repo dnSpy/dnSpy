@@ -27,16 +27,14 @@ using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal sealed class AnalyzedEventFiredByTreeNode : AnalyzerSearchTreeNode
-	{
+	internal sealed class AnalyzedEventFiredByTreeNode : AnalyzerSearchTreeNode {
 		private readonly EventDef analyzedEvent;
 		private readonly FieldDef eventBackingField;
 		private readonly MethodDef eventFiringMethod;
 
 		private ConcurrentDictionary<MethodDef, int> foundMethods;
 
-		public AnalyzedEventFiredByTreeNode(EventDef analyzedEvent)
-		{
+		public AnalyzedEventFiredByTreeNode(EventDef analyzedEvent) {
 			if (analyzedEvent == null)
 				throw new ArgumentNullException("analyzedEvent");
 
@@ -48,13 +46,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 				this.eventFiringMethod = eventType.Methods.First(md => md.Name == "Invoke");
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Raised By", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
 
 			foreach (var child in FindReferencesInType(analyzedEvent.DeclaringType).OrderBy(n => n.ToString(Language))) {
@@ -64,8 +60,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			foundMethods = null;
 		}
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type) {
 			// HACK: in lieu of proper flow analysis, I'm going to use a simple heuristic
 			// If the method accesses the event's backing field, and calls invoke on a delegate 
 			// with the same signature, then it is (most likely) raise the given event.
@@ -105,14 +100,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		private bool HasAlreadyBeenFound(MethodDef method)
-		{
+		private bool HasAlreadyBeenFound(MethodDef method) {
 			return !foundMethods.TryAdd(method, 0);
 		}
 
 		// HACK: we should probably examine add/remove methods to determine this
-		private static FieldDef GetBackingField(EventDef ev)
-		{
+		private static FieldDef GetBackingField(EventDef ev) {
 			var fieldName = ev.Name;
 			var vbStyleFieldName = fieldName + "Event";
 			var fieldType = ev.EventType;
@@ -129,8 +122,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		}
 
 
-		public static bool CanShow(EventDef ev)
-		{
+		public static bool CanShow(EventDef ev) {
 			return GetBackingField(ev) != null;
 		}
 	}

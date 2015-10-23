@@ -26,33 +26,32 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 	/// <summary>
 	/// Represents a text marker.
 	/// </summary>
-	public interface ITextMarker
-	{
+	public interface ITextMarker {
 		/// <summary>
 		/// Gets the start offset of the marked text region.
 		/// </summary>
 		int StartOffset { get; }
-		
+
 		/// <summary>
 		/// Gets the end offset of the marked text region.
 		/// </summary>
 		int EndOffset { get; }
-		
+
 		/// <summary>
 		/// Gets the length of the marked region.
 		/// </summary>
 		int Length { get; }
-		
+
 		/// <summary>
 		/// Deletes the text marker.
 		/// </summary>
 		void Delete();
-		
+
 		/// <summary>
 		/// Gets whether the text marker was deleted.
 		/// </summary>
 		bool IsDeleted { get; }
-		
+
 		/// <summary>
 		/// Event that occurs when the text marker is deleted.
 		/// </summary>
@@ -62,42 +61,42 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 		/// Gets the highlighting color
 		/// </summary>
 		Func<HighlightingColor> HighlightingColor { get; set; }
-		
+
 		/// <summary>
 		/// Gets/Sets the background color.
 		/// </summary>
 		Color? BackgroundColor { get; }
-		
+
 		/// <summary>
 		/// Gets/Sets the foreground color.
 		/// </summary>
 		Color? ForegroundColor { get; }
-		
+
 		/// <summary>
 		/// Gets/Sets the font weight.
 		/// </summary>
 		FontWeight? FontWeight { get; }
-		
+
 		/// <summary>
 		/// Gets/Sets the font style.
 		/// </summary>
 		FontStyle? FontStyle { get; }
-		
+
 		/// <summary>
 		/// Gets/Sets the type of the marker. Use TextMarkerType.None for normal markers.
 		/// </summary>
 		TextMarkerTypes MarkerTypes { get; set; }
-		
+
 		/// <summary>
 		/// Gets/Sets the color of the marker.
 		/// </summary>
 		Color MarkerColor { get; set; }
-		
+
 		/// <summary>
 		/// Gets or sets if the marker is visible or not.
 		/// </summary>
 		Predicate<object> IsVisible { get; set; }
-		
+
 		/// <summary>
 		/// Gets or sets the text obj
 		/// </summary>
@@ -113,10 +112,9 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 		/// </summary>
 		void Redraw();
 	}
-	
+
 	[Flags]
-	public enum TextMarkerTypes
-	{
+	public enum TextMarkerTypes {
 		/// <summary>
 		/// Use no marker
 		/// </summary>
@@ -133,7 +131,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 		/// Dotted underline.
 		/// </summary>
 		DottedUnderline = 0x004,
-		
+
 		/// <summary>
 		/// Horizontal line in the scroll bar.
 		/// </summary>
@@ -151,9 +149,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 		/// </summary>
 		CircleInScrollBar = 0x1000
 	}
-	
-	public interface ITextMarkerService
-	{
+
+	public interface ITextMarkerService {
 		/// <summary>
 		/// Gets the text view
 		/// </summary>
@@ -164,7 +161,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 		/// you need to set one of the Color properties to make it visible.
 		/// </summary>
 		ITextMarker Create(int startOffset, int length);
-		
+
 		/// <summary>
 		/// Removes the specified text marker.
 		/// </summary>

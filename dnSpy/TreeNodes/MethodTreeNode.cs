@@ -30,29 +30,24 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Tree Node representing a field, method, property, or event.
 	/// </summary>
-	public sealed class MethodTreeNode : ILSpyTreeNode, IMemberTreeNode
-	{
+	public sealed class MethodTreeNode : ILSpyTreeNode, IMemberTreeNode {
 		readonly MethodDef method;
 
-		public MethodDef MethodDef
-		{
+		public MethodDef MethodDef {
 			get { return method; }
 		}
 
-		public MethodTreeNode(MethodDef method)
-		{
+		public MethodTreeNode(MethodDef method) {
 			if (method == null)
 				throw new ArgumentNullException("method");
 			this.method = method;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			Write(output, method, language);
 		}
 
-		public static ITextOutput Write(ITextOutput output, MethodDef method, Language language)
-		{
+		public static ITextOutput Write(ITextOutput output, MethodDef method, Language language) {
 			output.Write(UIUtils.CleanUpIdentifier(method.Name), TextTokenHelper.GetTextTokenType(method));
 			output.Write('(', TextTokenType.Operator);
 			for (int i = 0; i < method.Parameters.Count; i++) {
@@ -80,23 +75,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return output;
 		}
 
-		public override object Icon
-		{
+		public override object Icon {
 			get { return GetIcon(method, BackgroundType.TreeNode); }
 		}
 
-		public static ImageSource GetIcon(MethodDef method, BackgroundType bgType)
-		{
+		public static ImageSource GetIcon(MethodDef method, BackgroundType bgType) {
 			return FieldTreeNode.GetIcon(GetMemberIcon(method), bgType);
 		}
 
-		internal static ImageInfo GetImageInfo(MethodDef method, BackgroundType bgType)
-		{
+		internal static ImageInfo GetImageInfo(MethodDef method, BackgroundType bgType) {
 			return FieldTreeNode.GetImageInfo(GetMemberIcon(method), bgType);
 		}
 
-		static MemberIcon GetMemberIcon(MethodDef method)
-		{
+		static MemberIcon GetMemberIcon(MethodDef method) {
 			var access = GetMemberAccess(method);
 
 			if (method.IsSpecialName && method.Name.StartsWith("op_", StringComparison.Ordinal)) {
@@ -195,13 +186,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		internal static MemberAccess GetMemberAccess(MethodDef method)
-		{
+		internal static MemberAccess GetMemberAccess(MethodDef method) {
 			return GetMemberAccess(method.Access);
 		}
 
-		internal static MemberAccess GetMemberAccess(MethodAttributes attrs)
-		{
+		internal static MemberAccess GetMemberAccess(MethodAttributes attrs) {
 			switch (attrs & MethodAttributes.MemberAccessMask) {
 			case MethodAttributes.Public:
 				return MemberAccess.Public;
@@ -221,13 +210,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			language.DecompileMethod(method, output, options);
 		}
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this.MethodDef);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
@@ -241,13 +228,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			get { return IsPublicAPIInternal(method); }
 		}
 
-		internal static bool IsPublicAPIInternal(MethodDef method)
-		{
+		internal static bool IsPublicAPIInternal(MethodDef method) {
 			return method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly;
 		}
-		
-		IMemberRef IMemberTreeNode.Member
-		{
+
+		IMemberRef IMemberTreeNode.Member {
 			get { return method; }
 		}
 

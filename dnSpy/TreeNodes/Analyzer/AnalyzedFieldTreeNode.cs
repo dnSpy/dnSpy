@@ -23,32 +23,27 @@ using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal class AnalyzedFieldTreeNode : AnalyzerEntityTreeNode
-	{
+	internal class AnalyzedFieldTreeNode : AnalyzerEntityTreeNode {
 		private readonly FieldDef analyzedField;
 
-		public AnalyzedFieldTreeNode(FieldDef analyzedField)
-		{
+		public AnalyzedFieldTreeNode(FieldDef analyzedField) {
 			if (analyzedField == null)
 				throw new ArgumentNullException("analyzedField");
 			this.analyzedField = analyzedField;
 			this.LazyLoading = true;
 		}
 
-		public override object Icon
-		{
+		public override object Icon {
 			get { return FieldTreeNode.GetIcon(analyzedField, BackgroundType.TreeNode); }
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			Language.TypeToString(output, analyzedField.DeclaringType, true);
 			output.Write('.', TextTokenType.Operator);
 			FieldTreeNode.Write(output, analyzedField, Language);
 		}
 
-		protected override void LoadChildren()
-		{
+		protected override void LoadChildren() {
 			this.Children.Add(new AnalyzedFieldAccessTreeNode(analyzedField, false));
 			if (!analyzedField.IsLiteral)
 				this.Children.Add(new AnalyzedFieldAccessTreeNode(analyzedField, true));

@@ -24,16 +24,13 @@ using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
-	sealed class BaseTypesEntryNode : ILSpyTreeNode, IMemberTreeNode
-	{
+namespace ICSharpCode.ILSpy.TreeNodes {
+	sealed class BaseTypesEntryNode : ILSpyTreeNode, IMemberTreeNode {
 		private readonly ITypeDefOrRef tr;
 		private TypeDef def;
 		private readonly bool isInterface;
 
-		public BaseTypesEntryNode(ITypeDefOrRef tr, bool isInterface)
-		{
+		public BaseTypesEntryNode(ITypeDefOrRef tr, bool isInterface) {
 			if (tr == null)
 				throw new ArgumentNullException("tr");
 			this.tr = tr;
@@ -42,27 +39,22 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			this.LazyLoading = true;
 		}
 
-		public override bool ShowExpander
-		{
+		public override bool ShowExpander {
 			get { return def != null && (def.BaseType != null || def.HasInterfaces); }
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			Write(output, tr, language);
 		}
 
-		public static ITextOutput Write(ITextOutput output, ITypeDefOrRef tr, Language language)
-		{
+		public static ITextOutput Write(ITextOutput output, ITypeDefOrRef tr, Language language) {
 			language.TypeToString(output, tr, true);
 			tr.MDToken.WriteSuffixString(output);
 			return output;
 		}
 
-		public override object Icon
-		{
-			get
-			{
+		public override object Icon {
+			get {
 				if (def != null)
 					return TypeTreeNode.GetIcon(def, BackgroundType.TreeNode);
 				else
@@ -72,22 +64,19 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			}
 		}
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
 			return base.Filter(settings);
 		}
 
-		protected override void LoadChildren()
-		{
+		protected override void LoadChildren() {
 			if (def != null)
 				BaseTypesTreeNode.AddBaseTypes(this.Children, def);
 		}
 
-		protected override void ActivateItemInternal(System.Windows.RoutedEventArgs e)
-		{
+		protected override void ActivateItemInternal(System.Windows.RoutedEventArgs e) {
 			// on item activation, try to resolve once again (maybe the user loaded the assembly in the meantime)
 			if (def == null) {
 				def = tr.ResolveTypeDef();
@@ -99,8 +88,7 @@ namespace ICSharpCode.ILSpy.TreeNodes
 				e.Handled = true;
 		}
 
-		internal static bool ActivateItem(SharpTreeNode node, TypeDef def)
-		{
+		internal static bool ActivateItem(SharpTreeNode node, TypeDef def) {
 			if (def != null) {
 				var assemblyListNode = node.Ancestors().OfType<DnSpyFileListTreeNode>().FirstOrDefault();
 				if (assemblyListNode != null) {
@@ -111,13 +99,11 @@ namespace ICSharpCode.ILSpy.TreeNodes
 			return false;
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			language.WriteCommentLine(output, language.TypeToString(tr, true));
 		}
 
-		IMemberRef IMemberTreeNode.Member
-		{
+		IMemberRef IMemberTreeNode.Member {
 			get { return tr; }
 		}
 

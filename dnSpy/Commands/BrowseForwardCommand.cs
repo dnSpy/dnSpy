@@ -20,11 +20,9 @@ using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy {
 	[ExportToolbarCommand(ToolTip = "Forward", ToolbarIcon = "Forward", ToolbarCategory = "Navigation", ToolbarOrder = 1100)]
-	sealed class BrowseForwardCommand : CommandWrapper
-	{
+	sealed class BrowseForwardCommand : CommandWrapper {
 		public BrowseForwardCommand()
-			: base(NavigationCommands.BrowseForward)
-		{
+			: base(NavigationCommands.BrowseForward) {
 		}
 	}
 }

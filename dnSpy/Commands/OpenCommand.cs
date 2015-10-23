@@ -21,11 +21,9 @@ using System.Windows.Input;
 namespace ICSharpCode.ILSpy {
 	[ExportToolbarCommand(ToolTip = "Open (Ctrl+O)", ToolbarIcon = "Open", ToolbarCategory = "Open", ToolbarOrder = 2000)]
 	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "_Open…", MenuIcon = "Open", MenuCategory = "Open", MenuOrder = 1100)]
-	sealed class OpenCommand : CommandWrapper
-	{
+	sealed class OpenCommand : CommandWrapper {
 		public OpenCommand()
-			: base(ApplicationCommands.Open)
-		{
+			: base(ApplicationCommands.Open) {
 		}
 	}
 }

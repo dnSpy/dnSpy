@@ -22,24 +22,21 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace ICSharpCode.ILSpy.Controls
-{
+namespace ICSharpCode.ILSpy.Controls {
 	/// <summary>
 	/// Allows to automatically sort a grid view.
 	/// </summary>
-	public class SortableGridViewColumn : GridViewColumn
-	{
+	public class SortableGridViewColumn : GridViewColumn {
 		// This class was copied from ICSharpCode.Core.Presentation.
-		
+
 		static readonly ComponentResourceKey headerTemplateKey = new ComponentResourceKey(typeof(SortableGridViewColumn), "ColumnHeaderTemplate");
-		
-		public SortableGridViewColumn()
-		{
+
+		public SortableGridViewColumn() {
 			this.SetValueToExtension(HeaderTemplateProperty, new DynamicResourceExtension(headerTemplateKey));
 		}
-		
+
 		string sortBy;
-		
+
 		public string SortBy {
 			get { return sortBy; }
 			set {
@@ -49,29 +46,26 @@ namespace ICSharpCode.ILSpy.Controls
 				}
 			}
 		}
-		
+
 		#region SortDirection property
 		public static readonly DependencyProperty SortDirectionProperty =
 			DependencyProperty.RegisterAttached("SortDirection", typeof(ColumnSortDirection), typeof(SortableGridViewColumn),
-			                                    new FrameworkPropertyMetadata(ColumnSortDirection.None, OnSortDirectionChanged));
-		
+												new FrameworkPropertyMetadata(ColumnSortDirection.None, OnSortDirectionChanged));
+
 		public ColumnSortDirection SortDirection {
 			get { return (ColumnSortDirection)GetValue(SortDirectionProperty); }
 			set { SetValue(SortDirectionProperty, value); }
 		}
-		
-		public static ColumnSortDirection GetSortDirection(ListView listView)
-		{
+
+		public static ColumnSortDirection GetSortDirection(ListView listView) {
 			return (ColumnSortDirection)listView.GetValue(SortDirectionProperty);
 		}
-		
-		public static void SetSortDirection(ListView listView, ColumnSortDirection value)
-		{
+
+		public static void SetSortDirection(ListView listView, ColumnSortDirection value) {
 			listView.SetValue(SortDirectionProperty, value);
 		}
-		
-		static void OnSortDirectionChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-		{
+
+		static void OnSortDirectionChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args) {
 			ListView grid = sender as ListView;
 			if (grid != null) {
 				SortableGridViewColumn col = GetCurrentSortColumn(grid);
@@ -81,24 +75,21 @@ namespace ICSharpCode.ILSpy.Controls
 			}
 		}
 		#endregion
-		
+
 		#region CurrentSortColumn property
 		public static readonly DependencyProperty CurrentSortColumnProperty =
 			DependencyProperty.RegisterAttached("CurrentSortColumn", typeof(SortableGridViewColumn), typeof(SortableGridViewColumn),
-			                                    new FrameworkPropertyMetadata(OnCurrentSortColumnChanged));
-		
-		public static SortableGridViewColumn GetCurrentSortColumn(ListView listView)
-		{
+												new FrameworkPropertyMetadata(OnCurrentSortColumnChanged));
+
+		public static SortableGridViewColumn GetCurrentSortColumn(ListView listView) {
 			return (SortableGridViewColumn)listView.GetValue(CurrentSortColumnProperty);
 		}
-		
-		public static void SetCurrentSortColumn(ListView listView, SortableGridViewColumn value)
-		{
+
+		public static void SetCurrentSortColumn(ListView listView, SortableGridViewColumn value) {
 			listView.SetValue(CurrentSortColumnProperty, value);
 		}
-		
-		static void OnCurrentSortColumnChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-		{
+
+		static void OnCurrentSortColumnChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args) {
 			ListView grid = sender as ListView;
 			if (grid != null) {
 				SortableGridViewColumn oldColumn = (SortableGridViewColumn)args.OldValue;
@@ -112,24 +103,21 @@ namespace ICSharpCode.ILSpy.Controls
 			}
 		}
 		#endregion
-		
+
 		#region SortMode property
 		public static readonly DependencyProperty SortModeProperty =
 			DependencyProperty.RegisterAttached("SortMode", typeof(ListViewSortMode), typeof(SortableGridViewColumn),
-			                                    new FrameworkPropertyMetadata(ListViewSortMode.None, OnSortModeChanged));
-		
-		public static ListViewSortMode GetSortMode(ListView listView)
-		{
+												new FrameworkPropertyMetadata(ListViewSortMode.None, OnSortModeChanged));
+
+		public static ListViewSortMode GetSortMode(ListView listView) {
 			return (ListViewSortMode)listView.GetValue(SortModeProperty);
 		}
-		
-		public static void SetSortMode(ListView listView, ListViewSortMode value)
-		{
+
+		public static void SetSortMode(ListView listView, ListViewSortMode value) {
 			listView.SetValue(SortModeProperty, value);
 		}
-		
-		static void OnSortModeChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args)
-		{
+
+		static void OnSortModeChanged(DependencyObject sender, DependencyPropertyChangedEventArgs args) {
 			ListView grid = sender as ListView;
 			if (grid != null) {
 				if ((ListViewSortMode)args.NewValue != ListViewSortMode.None)
@@ -138,9 +126,8 @@ namespace ICSharpCode.ILSpy.Controls
 					grid.RemoveHandler(GridViewColumnHeader.ClickEvent, new RoutedEventHandler(GridViewColumnHeaderClickHandler));
 			}
 		}
-		
-		static void GridViewColumnHeaderClickHandler(object sender, RoutedEventArgs e)
-		{
+
+		static void GridViewColumnHeaderClickHandler(object sender, RoutedEventArgs e) {
 			ListView grid = sender as ListView;
 			GridViewColumnHeader headerClicked = e.OriginalSource as GridViewColumnHeader;
 			if (grid != null && headerClicked != null && headerClicked.Role != GridViewColumnHeaderRole.Padding) {
@@ -149,21 +136,21 @@ namespace ICSharpCode.ILSpy.Controls
 						SetSortDirection(grid, ColumnSortDirection.Descending);
 					else
 						SetSortDirection(grid, ColumnSortDirection.Ascending);
-				} else {
+				}
+				else {
 					SetSortDirection(grid, ColumnSortDirection.Ascending);
 					SetCurrentSortColumn(grid, headerClicked.Column as SortableGridViewColumn);
 				}
 			}
 		}
 		#endregion
-		
-		static void Sort(ListView grid)
-		{
+
+		static void Sort(ListView grid) {
 			ColumnSortDirection currentDirection = GetSortDirection(grid);
 			SortableGridViewColumn column = GetCurrentSortColumn(grid);
 			if (column != null && GetSortMode(grid) == ListViewSortMode.Automatic && currentDirection != ColumnSortDirection.None) {
 				ICollectionView dataView = CollectionViewSource.GetDefaultView(grid.ItemsSource);
-				
+
 				string sortBy = column.SortBy;
 				if (sortBy == null) {
 					Binding binding = column.DisplayMemberBinding as Binding;
@@ -171,7 +158,7 @@ namespace ICSharpCode.ILSpy.Controls
 						sortBy = binding.Path.Path;
 					}
 				}
-				
+
 				dataView.SortDescriptions.Clear();
 				if (sortBy != null) {
 					ListSortDirection direction;
@@ -185,16 +172,14 @@ namespace ICSharpCode.ILSpy.Controls
 			}
 		}
 	}
-	
-	public enum ColumnSortDirection
-	{
+
+	public enum ColumnSortDirection {
 		None,
 		Ascending,
 		Descending
 	}
-	
-	public enum ListViewSortMode
-	{
+
+	public enum ListViewSortMode {
 		/// <summary>
 		/// Disable automatic sorting when sortable columns are clicked.
 		/// </summary>
@@ -209,16 +194,13 @@ namespace ICSharpCode.ILSpy.Controls
 		/// </summary>
 		HalfAutomatic
 	}
-	
-	sealed class ColumnSortDirectionToVisibilityConverter : IValueConverter
-	{
-		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
+
+	sealed class ColumnSortDirectionToVisibilityConverter : IValueConverter {
+		public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
 			return Equals(value, parameter) ? Visibility.Visible : Visibility.Collapsed;
 		}
-		
-		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-		{
+
+		public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture) {
 			throw new NotSupportedException();
 		}
 	}

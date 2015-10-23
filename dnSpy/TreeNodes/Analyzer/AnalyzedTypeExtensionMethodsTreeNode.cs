@@ -25,31 +25,26 @@ using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal class AnalyzedTypeExtensionMethodsTreeNode : AnalyzerSearchTreeNode
-	{
+	internal class AnalyzedTypeExtensionMethodsTreeNode : AnalyzerSearchTreeNode {
 		private readonly TypeDef analyzedType;
 
-		public AnalyzedTypeExtensionMethodsTreeNode(TypeDef analyzedType)
-		{
+		public AnalyzedTypeExtensionMethodsTreeNode(TypeDef analyzedType) {
 			if (analyzedType == null)
 				throw new ArgumentNullException("analyzedType");
 
 			this.analyzedType = analyzedType;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Extension Methods", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedType, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Language));
 		}
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type) {
 			if (!HasExtensionAttribute(type))
 				yield break;
 			foreach (MethodDef method in type.Methods) {
@@ -63,15 +58,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 				}
 			}
 		}
-		
-		bool HasExtensionAttribute(IHasCustomAttribute p)
-		{
+
+		bool HasExtensionAttribute(IHasCustomAttribute p) {
 			return p.CustomAttributes.Find("System.Runtime.CompilerServices.ExtensionAttribute") != null;
 		}
-		
 
-		public static bool CanShow(TypeDef type)
-		{
+
+		public static bool CanShow(TypeDef type) {
 			// show on all types except static classes
 			return !(type.IsAbstract && type.IsSealed);
 		}

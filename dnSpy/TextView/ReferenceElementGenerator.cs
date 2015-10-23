@@ -21,23 +21,20 @@ using System.Windows.Input;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView {
 	/// <summary>
 	/// Creates hyperlinks in the text view.
 	/// </summary>
-	sealed class ReferenceElementGenerator : VisualLineElementGenerator
-	{
+	sealed class ReferenceElementGenerator : VisualLineElementGenerator {
 		readonly Action<ReferenceSegment, MouseEventArgs> referenceClicked;
 		readonly Predicate<ReferenceSegment> isLink;
-		
+
 		/// <summary>
 		/// The collection of references (hyperlinks).
 		/// </summary>
 		public TextSegmentCollection<ReferenceSegment> References { get; set; }
-		
-		public ReferenceElementGenerator(Action<ReferenceSegment, MouseEventArgs> referenceClicked, Predicate<ReferenceSegment> isLink)
-		{
+
+		public ReferenceElementGenerator(Action<ReferenceSegment, MouseEventArgs> referenceClicked, Predicate<ReferenceSegment> isLink) {
 			if (referenceClicked == null)
 				throw new ArgumentNullException("referenceClicked");
 			if (isLink == null)
@@ -45,18 +42,16 @@ namespace ICSharpCode.ILSpy.TextView
 			this.referenceClicked = referenceClicked;
 			this.isLink = isLink;
 		}
-		
-		public override int GetFirstInterestedOffset(int startOffset)
-		{
+
+		public override int GetFirstInterestedOffset(int startOffset) {
 			if (this.References == null)
 				return -1;
 			// inform AvalonEdit about the next position where we want to build a hyperlink
 			var segment = this.References.FindFirstSegmentWithStartAfter(startOffset);
 			return segment != null ? segment.StartOffset : -1;
 		}
-		
-		public override VisualLineElement ConstructElement(int offset)
-		{
+
+		public override VisualLineElement ConstructElement(int offset) {
 			if (this.References == null)
 				return null;
 			foreach (var segment in this.References.FindSegmentsContaining(offset)) {
@@ -72,35 +67,31 @@ namespace ICSharpCode.ILSpy.TextView
 			}
 			return null;
 		}
-		
-		internal void JumpToReference(ReferenceSegment referenceSegment, MouseEventArgs e)
-		{
+
+		internal void JumpToReference(ReferenceSegment referenceSegment, MouseEventArgs e) {
 			referenceClicked(referenceSegment, e);
 		}
 	}
-	
+
 	/// <summary>
 	/// VisualLineElement that represents a piece of text and is a clickable link.
 	/// </summary>
-	sealed class VisualLineReferenceText : VisualLineText
-	{
+	sealed class VisualLineReferenceText : VisualLineText {
 		readonly ReferenceElementGenerator parent;
 		readonly ReferenceSegment referenceSegment;
-		
+
 		/// <summary>
 		/// Creates a visual line text element with the specified length.
 		/// It uses the <see cref="ITextRunConstructionContext.VisualLine"/> and its
 		/// <see cref="VisualLineElement.RelativeTextOffset"/> to find the actual text string.
 		/// </summary>
-		public VisualLineReferenceText(VisualLine parentVisualLine, int length, ReferenceElementGenerator parent, ReferenceSegment referenceSegment) : base(parentVisualLine, length)
-		{
+		public VisualLineReferenceText(VisualLine parentVisualLine, int length, ReferenceElementGenerator parent, ReferenceSegment referenceSegment) : base(parentVisualLine, length) {
 			this.parent = parent;
 			this.referenceSegment = referenceSegment;
 		}
-		
+
 		/// <inheritdoc/>
-		protected override void OnQueryCursor(QueryCursorEventArgs e)
-		{
+		protected override void OnQueryCursor(QueryCursorEventArgs e) {
 			// See comment in OnMouseDown()
 			if (!(Keyboard.Modifiers == ModifierKeys.None || Keyboard.Modifiers == ModifierKeys.Control))
 				return;
@@ -108,10 +99,9 @@ namespace ICSharpCode.ILSpy.TextView
 			e.Handled = true;
 			e.Cursor = referenceSegment.IsLocal ? Cursors.Arrow : Cursors.Hand;
 		}
-		
+
 		/// <inheritdoc/>
-		protected override void OnMouseDown(MouseButtonEventArgs e)
-		{
+		protected override void OnMouseDown(MouseButtonEventArgs e) {
 			// Only allow left click or ctrl + left click, nothing else. That way the user can eg.
 			// hold down shift or alt or shift+ctrl etc and select text where a reference is located
 			// without being taken to the definition.
@@ -120,10 +110,9 @@ namespace ICSharpCode.ILSpy.TextView
 				parent.JumpToReference(referenceSegment, e);
 			}
 		}
-		
+
 		/// <inheritdoc/>
-		protected override VisualLineText CreateInstance(int length)
-		{
+		protected override VisualLineText CreateInstance(int length) {
 			return new VisualLineReferenceText(ParentVisualLine, length, parent, referenceSegment);
 		}
 	}

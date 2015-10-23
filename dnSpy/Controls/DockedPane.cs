@@ -22,12 +22,9 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy.Controls
-{
-	class DockedPane : Control
-	{
-		static DockedPane()
-		{
+namespace ICSharpCode.ILSpy.Controls {
+	class DockedPane : Control {
+		static DockedPane() {
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(DockedPane), new FrameworkPropertyMetadata(typeof(DockedPane)));
 		}
 
@@ -70,15 +67,15 @@ namespace ICSharpCode.ILSpy.Controls
 			get { return (bool)GetValue(IsActiveProperty); }
 			set { SetValue(IsActiveProperty, value); }
 		}
-		
+
 		public static readonly DependencyProperty TitleProperty =
 			DependencyProperty.Register("Title", typeof(string), typeof(DockedPane));
-		
+
 		public string Title {
 			get { return (string)GetValue(TitleProperty); }
 			set { SetValue(TitleProperty, value); }
 		}
-		
+
 		public static readonly DependencyProperty ContentProperty =
 			DependencyProperty.Register("Content", typeof(IPane), typeof(DockedPane), new PropertyMetadata(null, OnContentPropertyChanged));
 
@@ -93,26 +90,23 @@ namespace ICSharpCode.ILSpy.Controls
 			get { return (IPane)GetValue(ContentProperty); }
 			set { SetValue(ContentProperty, value); }
 		}
-		
-		public override void OnApplyTemplate()
-		{
+
+		public override void OnApplyTemplate() {
 			base.OnApplyTemplate();
 			var closeButton = this.Template.FindName("PART_Close", this) as ButtonBase;
 			if (closeButton != null) {
 				closeButton.Click += closeButton_Click;
 			}
 		}
-		
-		void closeButton_Click(object sender, RoutedEventArgs e)
-		{
+
+		void closeButton_Click(object sender, RoutedEventArgs e) {
 			if (CloseButtonClicked != null)
 				CloseButtonClicked(this, e);
 		}
-		
+
 		public event EventHandler CloseButtonClicked;
-		
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
+
+		protected override void OnKeyDown(KeyEventArgs e) {
 			base.OnKeyDown(e);
 			if (e.Key == Key.F4 && e.KeyboardDevice.Modifiers == ModifierKeys.Control || e.Key == Key.Escape) {
 				if (CloseButtonClicked != null)

@@ -22,8 +22,7 @@ using System.Xml.Linq;
 using dnSpy.Search;
 using dnSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Represents the filters applied to the tree view.
 	/// </summary>
@@ -32,10 +31,8 @@ namespace ICSharpCode.ILSpy
 	/// Thus, the main window will use one mutable instance (for data-binding), and will assign a new
 	/// clone to the ILSpyTreeNodes whenever the main mutable instance changes.
 	/// </remarks>
-	public class FilterSettings : INotifyPropertyChanged
-	{
-		internal FilterSettings(ITreeViewNodeFilter filter, Language language, bool showInternalApi)
-		{
+	public class FilterSettings : INotifyPropertyChanged {
+		internal FilterSettings(ITreeViewNodeFilter filter, Language language, bool showInternalApi) {
 			this.filter = filter;
 			this.origFilter = this.filter;
 			InitializeFilter();
@@ -43,17 +40,15 @@ namespace ICSharpCode.ILSpy
 			this.Language = language ?? Languages.GetLanguage("C#");
 		}
 
-		public FilterSettings(XElement element)
-		{
+		public FilterSettings(XElement element) {
 			this.filter = FilterNothingTreeViewNodeFilter.Instance;
 			this.origFilter = this.filter;
 			InitializeFilter();
 			this.ShowInternalApi = (bool?)element.Element("ShowInternalApi") ?? true;
 			this.Language = Languages.GetLanguage("C#");
 		}
-		
-		public XElement SaveAsXml()
-		{
+
+		public XElement SaveAsXml() {
 			return new XElement(
 				"FilterSettings",
 				new XElement("ShowInternalApi", this.ShowInternalApi)
@@ -65,9 +60,9 @@ namespace ICSharpCode.ILSpy
 		}
 		ITreeViewNodeFilter filter;
 		readonly ITreeViewNodeFilter origFilter;
-		
+
 		string searchTerm;
-		
+
 		/// <summary>
 		/// Gets/Sets the search term.
 		/// Only tree nodes containing the search term will be shown.
@@ -81,19 +76,18 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 		}
-		
+
 		/// <summary>
 		/// Gets whether a node with the specified text is matched by the current search term.
 		/// </summary>
-		public bool SearchTermMatches(string text)
-		{
+		public bool SearchTermMatches(string text) {
 			if (string.IsNullOrEmpty(searchTerm))
 				return true;
 			return text.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0;
 		}
-		
+
 		bool showInternalApi;
-		
+
 		/// <summary>
 		/// Gets/Sets whether internal API members should be shown.
 		/// </summary>
@@ -108,16 +102,15 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void InitializeFilter()
-		{
+		void InitializeFilter() {
 			if (ShowInternalApi)
 				filter = origFilter;
 			else
 				filter = new PublicApiTreeViewNodeFilter(origFilter, () => !ShowInternalApi);
 		}
-		
+
 		Language language;
-		
+
 		/// <summary>
 		/// Gets/Sets the current language.
 		/// </summary>
@@ -134,18 +127,16 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 		}
-		
+
 		public event PropertyChangedEventHandler PropertyChanged;
-		
-		protected virtual void OnPropertyChanged(string propertyName)
-		{
+
+		protected virtual void OnPropertyChanged(string propertyName) {
 			if (PropertyChanged != null) {
 				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 			}
 		}
-		
-		public FilterSettings Clone()
-		{
+
+		public FilterSettings Clone() {
 			FilterSettings f = (FilterSettings)MemberwiseClone();
 			f.PropertyChanged = null;
 			return f;

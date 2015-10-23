@@ -26,16 +26,13 @@ namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// ExtensionMethods used in ILSpy.
 	/// </summary>
-	public static class ExtensionMethods
-	{
-		public static void AddRange<T>(this ICollection<T> list, IEnumerable<T> items)
-		{
+	public static class ExtensionMethods {
+		public static void AddRange<T>(this ICollection<T> list, IEnumerable<T> items) {
 			foreach (T item in items)
 				list.Add(item);
 		}
 
-		public static bool IsCustomAttribute(this TypeDef type)
-		{
+		public static bool IsCustomAttribute(this TypeDef type) {
 			while (type.FullName != "System.Object") {
 				var resolvedBaseType = type.BaseType.ResolveTypeDef();
 				if (resolvedBaseType == null)
@@ -46,9 +43,8 @@ namespace ICSharpCode.ILSpy {
 			}
 			return false;
 		}
-		
-		public static void WriteSuffixString(this MDToken token, ITextOutput output)
-		{
+
+		public static void WriteSuffixString(this MDToken token, ITextOutput output) {
 			if (!DisplaySettingsPanel.CurrentDisplaySettings.ShowMetadataTokens)
 				return;
 

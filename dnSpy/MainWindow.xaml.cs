@@ -67,11 +67,10 @@ namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// The main window of the application.
 	/// </summary>
-	partial class MainWindow : MetroWindow
-	{
+	partial class MainWindow : MetroWindow {
 		DNSpySettings spySettings;
 		internal readonly SessionSettings sessionSettings;
-		
+
 		internal DnSpyFileListManager DnSpyFileListManager {
 			get { return dnSpyFileListManager; }
 		}
@@ -89,13 +88,13 @@ namespace ICSharpCode.ILSpy {
 
 		[ImportMany(typeof(ITextEditorListener))]
 		public IEnumerable<ITextEditorListener> textEditorListeners = null;
-		
+
 		static MainWindow instance;
-		
+
 		public static MainWindow Instance {
 			get { return instance; }
 		}
-		
+
 		public ImageSource BigLoadingImage { get; private set; }
 
 		public SessionSettings SessionSettings {
@@ -221,9 +220,8 @@ namespace ICSharpCode.ILSpy {
 					yield return tabState.TextView;
 			}
 		}
-		
-		public MainWindow()
-		{
+
+		public MainWindow() {
 			instance = this;
 			mainMenu = new Menu();
 			spySettings = DNSpySettings.Load();
@@ -245,11 +243,11 @@ namespace ICSharpCode.ILSpy {
 			languageComboBox.SetBinding(ComboBox.SelectedItemProperty, new Binding("FilterSettings.Language") {
 				Source = sessionSettings,
 			});
-			
+
 			InitializeComponent();
 			AddTitleInfo(IntPtr.Size == 4 ? "x86" : "x64");
 			App.CompositionContainer.ComposeParts(this);
-			
+
 			if (sessionSettings.LeftColumnWidth > 0)
 				leftColumn.Width = new GridLength(sessionSettings.LeftColumnWidth, GridUnitType.Pixel);
 			sessionSettings.FilterSettings.PropertyChanged += filterSettings_PropertyChanged;
@@ -286,16 +284,14 @@ namespace ICSharpCode.ILSpy {
 			base.OnKeyDown(e);
 		}
 
-		void OtherSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void OtherSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "DeserializeResources") {
 				if (OtherSettings.Instance.DeserializeResources)
 					OnDeserializeResources();
 			}
 		}
 
-		void OnDeserializeResources()
-		{
+		void OnDeserializeResources() {
 			var modifiedResourceNodes = new HashSet<ILSpyTreeNode>();
 			foreach (var node in this.dnSpyFileListTreeNode.Descendants().OfType<SerializedResourceElementTreeNode>()) {
 				if (node.DeserializeCanExecute()) {
@@ -307,8 +303,7 @@ namespace ICSharpCode.ILSpy {
 			RefreshResources(modifiedResourceNodes);
 		}
 
-		void RefreshResources(HashSet<ILSpyTreeNode> modifiedResourceNodes)
-		{
+		void RefreshResources(HashSet<ILSpyTreeNode> modifiedResourceNodes) {
 			if (modifiedResourceNodes.Count == 0)
 				return;
 
@@ -330,26 +325,22 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		void CurrentDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void CurrentDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "SelectedFont")
 				InitializeTextEditorFontResource();
 			else if (e.PropertyName == "SyntaxHighlightTreeViewUI")
 				OnSyntaxHighlightTreeViewUIChanged();
 		}
 
-		void OnSyntaxHighlightTreeViewUIChanged()
-		{
+		void OnSyntaxHighlightTreeViewUIChanged() {
 			RefreshTreeViewFilter();
 		}
 
-		void InitializeTextEditorFontResource()
-		{
+		void InitializeTextEditorFontResource() {
 			App.Current.Resources["TextEditorFontFamily"] = Options.DisplaySettingsPanel.CurrentDisplaySettings.SelectedFont;
 		}
 
-		internal static void InitializeTreeView(SharpTreeView treeView, bool isGridView = false)
-		{
+		internal static void InitializeTreeView(SharpTreeView treeView, bool isGridView = false) {
 			if (isGridView)
 				treeView.ItemContainerStyle = (Style)App.Current.TryFindResource(SharpGridView.ItemContainerStyleKey);
 			else {
@@ -361,8 +352,7 @@ namespace ICSharpCode.ILSpy {
 			treeView.GetPreviewInsideForeground = () => Themes.Theme.GetColor(ColorType.SystemColorsHighlightText).InheritedColor.Foreground.GetBrush(null);
 		}
 
-		internal static void InitializeAssemblyTreeView(SharpTreeView treeView)
-		{
+		internal static void InitializeAssemblyTreeView(SharpTreeView treeView) {
 			InitializeTreeView(treeView);
 
 			VirtualizingStackPanel.SetIsVirtualizing(treeView, true);
@@ -378,21 +368,18 @@ namespace ICSharpCode.ILSpy {
 			VirtualizingStackPanel.SetVirtualizationMode(treeView, VirtualizationMode.Standard);
 		}
 
-		internal bool IsDecompilerTabControl(TabControl tabControl)
-		{
+		internal bool IsDecompilerTabControl(TabControl tabControl) {
 			return tabGroupsManager.IsTabGroup(tabControl);
 		}
 
-		void sessionSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void sessionSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "HighlightCurrentLine") {
 				foreach (var textView in AllTextViews)
 					textView.TextEditor.Options.HighlightCurrentLine = sessionSettings.HighlightCurrentLine;
 			}
 		}
 
-		static void RemoveCommands(DecompilerTextView view)
-		{
+		static void RemoveCommands(DecompilerTextView view) {
 			var handler = view.TextEditor.TextArea.DefaultInputHandler;
 
 			RemoveCommands(handler.Editing);
@@ -400,8 +387,7 @@ namespace ICSharpCode.ILSpy {
 			RemoveCommands(handler.CommandBindings);
 		}
 
-		static void RemoveCommands(ICSharpCode.AvalonEdit.Editing.TextAreaInputHandler handler)
-		{
+		static void RemoveCommands(ICSharpCode.AvalonEdit.Editing.TextAreaInputHandler handler) {
 			var commands = new HashSet<ICommand>();
 			var inputList = (IList<InputBinding>)handler.InputBindings;
 			for (int i = inputList.Count - 1; i >= 0; i--) {
@@ -427,8 +413,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		static void RemoveCommands(ICollection<CommandBinding> commandBindings)
-		{
+		static void RemoveCommands(ICollection<CommandBinding> commandBindings) {
 			var bindingList = (IList<CommandBinding>)commandBindings;
 			for (int i = bindingList.Count - 1; i >= 0; i--) {
 				var binding = bindingList[i];
@@ -443,8 +428,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		void tabManager_OnAddRemoveTabState(TabManager<TabState> tabManager, TabManagerAddType addType, TabState tabState)
-		{
+		void tabManager_OnAddRemoveTabState(TabManager<TabState> tabManager, TabManagerAddType addType, TabState tabState) {
 			if (addType == TabManagerAddType.Add) {
 				tabState.PropertyChanged += tabState_PropertyChanged;
 
@@ -477,8 +461,7 @@ namespace ICSharpCode.ILSpy {
 				throw new InvalidOperationException();
 		}
 
-		void tabState_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void tabState_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "Header") {
 				if (OnTabHeaderChanged != null)
 					OnTabHeaderChanged(sender, e);
@@ -490,12 +473,10 @@ namespace ICSharpCode.ILSpy {
 		public event EventHandler<TabStateEventArgs> OnTabStateRemoved;
 		public event EventHandler<TabStateEventArgs> OnTabStateAttached;
 		public event EventHandler<TabStateEventArgs> OnTabStateDetached;
-		public class TabStateEventArgs : EventArgs
-		{
+		public class TabStateEventArgs : EventArgs {
 			public readonly TabState TabState;
 
-			public TabStateEventArgs(TabState tabState)
-			{
+			public TabStateEventArgs(TabState tabState) {
 				this.TabState = tabState;
 			}
 		}
@@ -525,13 +506,11 @@ namespace ICSharpCode.ILSpy {
 			remove { tabGroupsManager.OnOrientationChanged -= value; }
 		}
 
-		bool IsActiveTab(TabState tabState)
-		{
+		bool IsActiveTab(TabState tabState) {
 			return tabGroupsManager.ActiveTabGroup.ActiveTabState == tabState;
 		}
 
-		void SelectTreeViewNodes(DecompileTabState tabState, ILSpyTreeNode[] nodes)
-		{
+		void SelectTreeViewNodes(DecompileTabState tabState, ILSpyTreeNode[] nodes) {
 			if (!IsActiveTab(tabState))
 				return;
 
@@ -573,16 +552,14 @@ namespace ICSharpCode.ILSpy {
 
 		//TODO: HACK alert
 		Dictionary<TabManagerBase, bool> tabManager_dontSelectHack = new Dictionary<TabManagerBase, bool>();
-		internal bool IgnoreSelectionChanged_HACK(TabState tabState)
-		{
+		internal bool IgnoreSelectionChanged_HACK(TabState tabState) {
 			var tabManager = tabState.Owner;
 			bool value;
 			tabManager_dontSelectHack.TryGetValue(tabManager, out value);
 			tabManager_dontSelectHack[tabManager] = true;
 			return value;
 		}
-		internal void RestoreIgnoreSelectionChanged_HACK(TabState tabState, bool oldValue)
-		{
+		internal void RestoreIgnoreSelectionChanged_HACK(TabState tabState, bool oldValue) {
 			var tabManager = tabState.Owner;
 			if (!oldValue)
 				tabManager_dontSelectHack.Remove(tabManager);
@@ -590,8 +567,7 @@ namespace ICSharpCode.ILSpy {
 				tabManager_dontSelectHack[tabManager] = oldValue;
 		}
 
-		void InitializeActiveTab(TabState tabState, bool forceIsInActiveTabGroup)
-		{
+		void InitializeActiveTab(TabState tabState, bool forceIsInActiveTabGroup) {
 			var tabManager = tabState == null ? null : tabState.Owner as TabManager<TabState>;
 			bool isInActiveTabGroup = tabGroupsManager.ActiveTabGroup == tabManager || forceIsInActiveTabGroup;
 
@@ -630,8 +606,7 @@ namespace ICSharpCode.ILSpy {
 				InstallTextEditorListeners(newView);
 		}
 
-		void UninitializeActiveTab(TabState tabState, bool forceIsInActiveTabGroup)
-		{
+		void UninitializeActiveTab(TabState tabState, bool forceIsInActiveTabGroup) {
 			var tabManager = tabState == null ? null : tabState.Owner as TabManager<TabState>;
 			bool isInActiveTabGroup = tabGroupsManager.ActiveTabGroup == tabManager || forceIsInActiveTabGroup;
 
@@ -711,8 +686,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		void InstallCommands()
-		{
+		void InstallCommands() {
 			CodeBindings.Add(new RoutedCommand("GoToLine", typeof(MainWindow)), GoToLineExecuted, GoToLineExecutedCanExecute, ModifierKeys.Control, Key.G);
 
 			var bindings = new TabBindings();
@@ -735,21 +709,18 @@ namespace ICSharpCode.ILSpy {
 			bindings.Install(this);
 		}
 
-		void AddCommandBindings(TabBindings bindings, UIElement elem)
-		{
+		void AddCommandBindings(TabBindings bindings, UIElement elem) {
 			bindings.Install(this);
 			this.CommandBindings.AddRange(elem.CommandBindings);
 		}
 
-		void RemoveCommandBindings(TabBindings bindings, UIElement elem)
-		{
+		void RemoveCommandBindings(TabBindings bindings, UIElement elem) {
 			bindings.Uninstall(this);
 			foreach (CommandBinding binding in elem.CommandBindings)
 				this.CommandBindings.Remove(binding);
 		}
 
-		internal void tabManager_OnSelectionChanged(TabManager<TabState> tabManager, TabState oldState, TabState newState)
-		{
+		internal void tabManager_OnSelectionChanged(TabManager<TabState> tabManager, TabState oldState, TabState newState) {
 			UninitializeActiveTab(oldState, false);
 			InitializeActiveTab(newState, false);
 
@@ -760,8 +731,7 @@ namespace ICSharpCode.ILSpy {
 				OnTabStateChanged(this, new TabStateChangedEventArgs(oldState, newState));
 		}
 
-		void tabGroupsManager_OnTabGroupSelected(object sender, TabGroupSelectedEventArgs e)
-		{
+		void tabGroupsManager_OnTabGroupSelected(object sender, TabGroupSelectedEventArgs e) {
 			var oldTabManager = tabGroupsManager.AllTabGroups[e.OldIndex];
 			var newTabManager = tabGroupsManager.AllTabGroups[e.NewIndex];
 
@@ -776,13 +746,11 @@ namespace ICSharpCode.ILSpy {
 				OnActiveTabStateChanged(this, new TabStateChangedEventArgs(oldTabManager.ActiveTabState, newTabManager.ActiveTabState));
 		}
 
-		public void SetTextEditorFocus(DecompilerTextView textView)
-		{
+		public void SetTextEditorFocus(DecompilerTextView textView) {
 			SetTabFocus(DecompileTabState.GetDecompileTabState(textView));
 		}
 
-		void SetTabFocus(TabState tabState)
-		{
+		void SetTabFocus(TabState tabState) {
 			if (disable_SetTabFocus)
 				return;
 			if (tabState == null)
@@ -804,20 +772,17 @@ namespace ICSharpCode.ILSpy {
 		}
 		bool disable_SetTabFocus = false;
 
-		class SetFocusWhenVisible
-		{
+		class SetFocusWhenVisible {
 			readonly TabState tabState;
 			readonly UIElement uiElem;
 
-			public SetFocusWhenVisible(TabState tabState, UIElement uiElem)
-			{
+			public SetFocusWhenVisible(TabState tabState, UIElement uiElem) {
 				this.tabState = tabState;
 				this.uiElem = uiElem;
 				uiElem.IsVisibleChanged += uiElem_IsVisibleChanged;
 			}
 
-			void uiElem_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-			{
+			void uiElem_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 				uiElem.IsVisibleChanged -= uiElem_IsVisibleChanged;
 				if (MainWindow.Instance.IsActiveTab(tabState))
 					SetFocusIfNoMenuIsOpened(uiElem);
@@ -826,8 +791,7 @@ namespace ICSharpCode.ILSpy {
 
 		public event EventHandler<TabStateChangedEventArgs> OnTabStateChanged;
 		public event EventHandler<TabStateChangedEventArgs> OnActiveTabStateChanged;
-		public class TabStateChangedEventArgs : EventArgs
-		{
+		public class TabStateChangedEventArgs : EventArgs {
 			/// <summary>
 			/// Old tab state. Can be null
 			/// </summary>
@@ -838,15 +802,13 @@ namespace ICSharpCode.ILSpy {
 			/// </summary>
 			public readonly TabState NewTabState;
 
-			public TabStateChangedEventArgs(TabState oldTabState, TabState newTabState)
-			{
+			public TabStateChangedEventArgs(TabState oldTabState, TabState newTabState) {
 				this.OldTabState = oldTabState;
 				this.NewTabState = newTabState;
 			}
 		}
 
-		void InstallTextEditorListeners(DecompilerTextView textView)
-		{
+		void InstallTextEditorListeners(DecompilerTextView textView) {
 			if (textEditorListeners == null)
 				return;
 			foreach (var listener in textEditorListeners) {
@@ -856,8 +818,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		void UninstallTextEditorListeners(DecompilerTextView textView)
-		{
+		void UninstallTextEditorListeners(DecompilerTextView textView) {
 			if (textEditorListeners == null)
 				return;
 			foreach (var listener in textEditorListeners) {
@@ -867,22 +828,19 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		internal void SetTitle(DecompilerTextView textView, string title)
-		{
+		internal void SetTitle(DecompilerTextView textView, string title) {
 			var tabState = DecompileTabState.GetDecompileTabState(textView);
 			tabState.Title = title;
 		}
 
-		internal void ClosePopups()
-		{
+		internal void ClosePopups() {
 			if (textEditorListeners == null)
 				return;
 			foreach (var listener in textEditorListeners)
 				listener.ClosePopup();
 		}
 
-		void Themes_ThemeChanged(object sender, EventArgs e)
-		{
+		void Themes_ThemeChanged(object sender, EventArgs e) {
 			ImageCache.Instance.OnThemeChanged();
 			UpdateSystemMenuImage();
 			UpdateControlColors();
@@ -895,41 +853,37 @@ namespace ICSharpCode.ILSpy {
 			RefreshTreeViewFilter();
 		}
 
-		void UpdateSystemMenuImage()
-		{
+		void UpdateSystemMenuImage() {
 			if (IsActive)
 				SystemMenuImage = ImageCache.Instance.GetImage("Assembly", BackgroundType.TitleAreaActive);
 			else
 				SystemMenuImage = ImageCache.Instance.GetImage("Assembly", BackgroundType.TitleAreaInactive);
 		}
 
-		void UpdateControlColors()
-		{
+		void UpdateControlColors() {
 			var resources = App.Current.Resources;
 			foreach (var color in Themes.Theme.Colors) {
 				foreach (var kv in color.ColorInfo.GetResourceKeyValues(color.InheritedColor))
 					resources[kv.Item1] = kv.Item2;
 			}
 		}
-		
-		void SetWindowBounds(Rect bounds)
-		{
+
+		void SetWindowBounds(Rect bounds) {
 			this.Left = bounds.Left;
 			this.Top = bounds.Top;
 			this.Width = bounds.Width;
 			this.Height = bounds.Height;
 		}
-		
+
 		#region Toolbar extensibility
 		[ImportMany("ToolbarCommand", typeof(ICommand))]
 		Lazy<ICommand, IToolbarCommandMetadata>[] toolbarCommands = null;
-		
+
 		/// <summary>
 		/// Call this when a toolbar button's visibility has changed. The toolbar items will be
 		/// re-created.
 		/// </summary>
-		public void UpdateToolbar()
-		{
+		public void UpdateToolbar() {
 			// Clear the Command property so they can unhook the event handlers
 			foreach (DependencyObject item in toolBar.Items)
 				item.ClearValue(System.Windows.Controls.Primitives.ButtonBase.CommandProperty);
@@ -958,19 +912,16 @@ namespace ICSharpCode.ILSpy {
 			CommandManager.InvalidateRequerySuggested();
 		}
 
-		class MainToolbarState
-		{
+		class MainToolbarState {
 			public IGrouping<string, Lazy<ICommand, IToolbarCommandMetadata>>[] Groupings = new IGrouping<string, Lazy<ICommand, IToolbarCommandMetadata>>[0];
 		}
 		MainToolbarState mtbState = new MainToolbarState();
-		void InitToolbar()
-		{
+		void InitToolbar() {
 			mtbState.Groupings = toolbarCommands.OrderBy(c => c.Metadata.ToolbarOrder).GroupBy(c => c.Metadata.ToolbarCategory).ToArray();
 			UpdateToolbar();
 		}
-		
-		Button MakeToolbarItem(Lazy<ICommand, IToolbarCommandMetadata> command)
-		{
+
+		Button MakeToolbarItem(Lazy<ICommand, IToolbarCommandMetadata> command) {
 			var button = new Button {
 				Command = CommandWrapper.Unwrap(command.Value),
 				ToolTip = command.Metadata.ToolTip,
@@ -994,13 +945,12 @@ namespace ICSharpCode.ILSpy {
 			return button;
 		}
 		#endregion
-		
+
 		#region Main Menu extensibility
 		[ImportMany("MainMenuCommand", typeof(ICommand))]
 		Lazy<ICommand, IMainMenuCommandMetadata>[] mainMenuCommands = null;
-		
-		class MainSubMenuState
-		{
+
+		class MainSubMenuState {
 			public MenuItem TopLevelMenuItem;
 			public IGrouping<string, Lazy<ICommand, IMainMenuCommandMetadata>>[] Groupings;
 			public List<MenuItem> CachedMenuItems = new List<MenuItem>();
@@ -1008,8 +958,7 @@ namespace ICSharpCode.ILSpy {
 			public bool AlwaysRecreate = false;
 		}
 		readonly Dictionary<string, MainSubMenuState> subMenusDict = new Dictionary<string, MainSubMenuState>();
-		void InitMainMenu()
-		{
+		void InitMainMenu() {
 			foreach (var topLevelMenu in mainMenuCommands.OrderBy(c => c.Metadata.MenuOrder).GroupBy(c => c.Metadata.Menu)) {
 				var topLevelMenuItem = mainMenu.Items.OfType<MenuItem>().FirstOrDefault(m => (m.Header as string) == topLevelMenu.Key);
 				var state = new MainSubMenuState();
@@ -1041,8 +990,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		bool IsAnyMenuOpened()
-		{
+		bool IsAnyMenuOpened() {
 			if (ContextMenuProvider.IsMenuOpened)
 				return true;
 			foreach (var item in mainMenu.Items) {
@@ -1053,14 +1001,12 @@ namespace ICSharpCode.ILSpy {
 			return false;
 		}
 
-		public static void SetFocusIfNoMenuIsOpened(UIElement elem)
-		{
+		public static void SetFocusIfNoMenuIsOpened(UIElement elem) {
 			if (!Instance.IsAnyMenuOpened())
 				elem.Focus();
 		}
 
-		void InvalidateMainMenu()
-		{
+		void InvalidateMainMenu() {
 			foreach (var state in subMenusDict.Values)
 				state.Recreate = true;
 		}
@@ -1069,19 +1015,16 @@ namespace ICSharpCode.ILSpy {
 		/// If a menu item gets hidden, this method should be called to re-create the sub menu.
 		/// </summary>
 		/// <param name="menuHeader">The exact display name of the sub menu (eg. "_Debug")</param>
-		public void UpdateMainSubMenu(string menuHeader)
-		{
+		public void UpdateMainSubMenu(string menuHeader) {
 			subMenusDict[menuHeader].Recreate = true;
 		}
 
-		public void SetMenuAlwaysRegenerate(string menuHeader)
-		{
+		public void SetMenuAlwaysRegenerate(string menuHeader) {
 			UpdateMainSubMenu(menuHeader);
 			subMenusDict[menuHeader].AlwaysRecreate = true;
 		}
 
-		static void ClearMainSubMenu(MainSubMenuState state)
-		{
+		static void ClearMainSubMenu(MainSubMenuState state) {
 			// Clear all properties that are set by our code
 			foreach (var item in state.CachedMenuItems) {
 				item.ClearValue(MenuItem.CommandProperty);
@@ -1097,8 +1040,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		static void InitializeMainSubMenu(MainSubMenuState state)
-		{
+		static void InitializeMainSubMenu(MainSubMenuState state) {
 			if (!state.Recreate)
 				return;
 			state.Recreate = state.AlwaysRecreate;
@@ -1177,13 +1119,11 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		internal static void CreateMenuItemImage(MenuItem menuItem, object part, string icon, BackgroundType bgType, bool? enable = null)
-		{
+		internal static void CreateMenuItemImage(MenuItem menuItem, object part, string icon, BackgroundType bgType, bool? enable = null) {
 			CreateMenuItemImage(menuItem, part.GetType().Assembly, icon, bgType, enable);
 		}
 
-		internal static void CreateMenuItemImage(MenuItem menuItem, Assembly asm, string icon, BackgroundType bgType, bool? enable = null)
-		{
+		internal static void CreateMenuItemImage(MenuItem menuItem, Assembly asm, string icon, BackgroundType bgType, bool? enable = null) {
 			var image = new Image {
 				Width = 16,
 				Height = 16,
@@ -1194,10 +1134,9 @@ namespace ICSharpCode.ILSpy {
 				image.Opacity = 0.3;
 		}
 		#endregion
-		
+
 		#region Message Hook
-		protected override void OnSourceInitialized(EventArgs e)
-		{
+		protected override void OnSourceInitialized(EventArgs e) {
 			base.OnSourceInitialized(e);
 			PresentationSource source = PresentationSource.FromVisual(this);
 			HwndSource hwndSource = source as HwndSource;
@@ -1224,9 +1163,8 @@ namespace ICSharpCode.ILSpy {
 				this.Height = SessionSettings.DefaultWindowBounds.Height;
 			}
 		}
-		
-		unsafe IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
-		{
+
+		unsafe IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
 			if (msg == NativeMethods.WM_COPYDATA) {
 				CopyDataStruct* copyData = (CopyDataStruct*)lParam;
 				string data = new string((char*)copyData->Buffer, 0, copyData->Size / sizeof(char));
@@ -1251,17 +1189,16 @@ namespace ICSharpCode.ILSpy {
 			return IntPtr.Zero;
 		}
 		#endregion
-		
+
 		internal DnSpyFileList DnSpyFileList {
 			get { return dnspyFileList; }
 		}
 
 		public event NotifyCollectionChangedEventHandler CurrentAssemblyListChanged;
-		
+
 		List<DnSpyFile> commandLineLoadedFiles = new List<DnSpyFile>();
-		
-		bool HandleCommandLineArguments(CommandLineArguments args)
-		{
+
+		bool HandleCommandLineArguments(CommandLineArguments args) {
 			foreach (string file in args.AssembliesToLoad) {
 				commandLineLoadedFiles.Add(dnspyFileList.OpenFile(file));
 			}
@@ -1269,9 +1206,8 @@ namespace ICSharpCode.ILSpy {
 				sessionSettings.FilterSettings.Language = Languages.GetLanguage(args.Language);
 			return true;
 		}
-		
-		void HandleCommandLineArgumentsAfterShowList(CommandLineArguments args)
-		{
+
+		void HandleCommandLineArgumentsAfterShowList(CommandLineArguments args) {
 			if (args.NavigateTo != null) {
 				bool found = false;
 				if (args.NavigateTo.StartsWith("N:", StringComparison.Ordinal)) {
@@ -1287,7 +1223,8 @@ namespace ICSharpCode.ILSpy {
 							}
 						}
 					}
-				} else {
+				}
+				else {
 					foreach (DnSpyFile asm in commandLineLoadedFiles) {
 						ModuleDef def = asm.ModuleDef;
 						if (def != null) {
@@ -1305,13 +1242,13 @@ namespace ICSharpCode.ILSpy {
 					output.Write(string.Format("Cannot find '{0}' in command line specified assemblies.", args.NavigateTo), TextTokenType.Text);
 					SafeActiveTextView.ShowText(output);
 				}
-			} else if (commandLineLoadedFiles.Count == 1) {
+			}
+			else if (commandLineLoadedFiles.Count == 1) {
 				// NavigateTo == null and an assembly was given on the command-line:
 				// Select the newly loaded assembly
 				JumpToReference(commandLineLoadedFiles[0].ModuleDef);
 			}
-			if (args.Search != null)
-			{
+			if (args.Search != null) {
 				SearchPane.Instance.SearchTerm = args.Search;
 				SearchPane.Instance.Show();
 			}
@@ -1321,9 +1258,8 @@ namespace ICSharpCode.ILSpy {
 			}
 			commandLineLoadedFiles.Clear(); // clear references once we don't need them anymore
 		}
-		
-		void OnExportAssembly(DnSpyFile dnSpyFile, string path)
-		{
+
+		void OnExportAssembly(DnSpyFile dnSpyFile, string path) {
 			var textView = ActiveTextView;
 			if (textView == null)
 				return;
@@ -1342,8 +1278,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		public void ExecuteWhenLoaded(Action func)
-		{
+		public void ExecuteWhenLoaded(Action func) {
 			if (callWhenLoaded == null)
 				func();
 			else
@@ -1351,8 +1286,7 @@ namespace ICSharpCode.ILSpy {
 		}
 		List<Action> callWhenLoaded = new List<Action>();
 
-		void MainWindow_ContentRendered(object sender, EventArgs e)
-		{
+		void MainWindow_ContentRendered(object sender, EventArgs e) {
 			this.ContentRendered -= MainWindow_ContentRendered;
 			if (!sessionSettings.IsFullScreen)
 				WindowUtils.SetState(this, sessionSettings.WindowState);
@@ -1360,15 +1294,13 @@ namespace ICSharpCode.ILSpy {
 			StartLoadingHandler(0);
 		}
 
-		void StartLoadingHandler(int i)
-		{
+		void StartLoadingHandler(int i) {
 			this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
 				LoadingHandler(i);
 			}));
 		}
 
-		void LoadingHandler(int i)
-		{
+		void LoadingHandler(int i) {
 			switch (i) {
 			case 0:
 				this.CommandBindings.Add(new CommandBinding(ILSpyTreeNode.TreeNodeActivatedEvent, TreeNodeActivatedExecuted));
@@ -1460,8 +1392,7 @@ namespace ICSharpCode.ILSpy {
 			StartLoadingHandler(i + 1);
 		}
 
-		void MainWindow_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
-		{
+		void MainWindow_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			if (e.NewFocus == this) {
 				var tabState = ActiveTabState;
 				if (tabState != null) {
@@ -1472,8 +1403,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		IPane GetPane(DockedPane dockedPane, string name)
-		{
+		IPane GetPane(DockedPane dockedPane, string name) {
 			if (string.IsNullOrEmpty(name))
 				return null;
 			foreach (var creator in paneCreators) {
@@ -1483,12 +1413,12 @@ namespace ICSharpCode.ILSpy {
 			}
 			return null;
 		}
-		
-		bool FormatExceptions(App.ExceptionData[] exceptions, ITextOutput output)
-		{
-			if (exceptions.Length == 0) return false;
+
+		bool FormatExceptions(App.ExceptionData[] exceptions, ITextOutput output) {
+			if (exceptions.Length == 0)
+				return false;
 			bool first = true;
-			
+
 			foreach (var item in exceptions) {
 				if (first)
 					first = false;
@@ -1501,18 +1431,18 @@ namespace ICSharpCode.ILSpy {
 						output.WriteLine(ex.ToString(), TextTokenType.Text);
 						output.WriteLine();
 					}
-				} else
+				}
+				else
 					output.WriteLine(item.Exception.ToString(), TextTokenType.Text);
 			}
-			
+
 			return true;
 		}
-		
+
 		#region Update Check
 		string updateAvailableDownloadUrl;
-		
-		void ShowMessageIfUpdatesAvailableAsync(DNSpySettings spySettings)
-		{
+
+		void ShowMessageIfUpdatesAvailableAsync(DNSpySettings spySettings) {
 			AboutPage.CheckForUpdatesIfEnabledAsync(spySettings).ContinueWith(
 				delegate (Task<string> task) {
 					if (task.Result != null) {
@@ -1523,36 +1453,30 @@ namespace ICSharpCode.ILSpy {
 				TaskScheduler.FromCurrentSynchronizationContext()
 			);
 		}
-		
-		void updateAvailablePanelCloseButtonClick(object sender, RoutedEventArgs e)
-		{
+
+		void updateAvailablePanelCloseButtonClick(object sender, RoutedEventArgs e) {
 			updateAvailablePanel.Visibility = Visibility.Collapsed;
 		}
-		
-		void downloadUpdateButtonClick(object sender, RoutedEventArgs e)
-		{
+
+		void downloadUpdateButtonClick(object sender, RoutedEventArgs e) {
 			Process.Start(updateAvailableDownloadUrl);
 		}
 		#endregion
-		
-		public void ShowAssemblyList(string name)
-		{
+
+		public void ShowAssemblyList(string name) {
 			DNSpySettings settings = this.spySettings;
-			if (settings == null)
-			{
+			if (settings == null) {
 				settings = DNSpySettings.Load();
 			}
 			DnSpyFileList list = this.dnSpyFileListManager.LoadList(settings, name);
 			//Only load a new list when it is a different one
-			if (list.Name != DnSpyFileList.Name)
-			{
+			if (list.Name != DnSpyFileList.Name) {
 				if (AskUserReloadAssemblyListIfModified("Are you sure you want to load new assemblies and lose all changes?"))
 					ShowAssemblyListDontAskUser(list);
 			}
 		}
 
-		bool AskUserReloadAssemblyListIfModified(string question)
-		{
+		bool AskUserReloadAssemblyListIfModified(string question) {
 			int count = UndoCommandManager.Instance.GetModifiedObjects().Count();
 			if (count == 0)
 				return true;
@@ -1562,8 +1486,7 @@ namespace ICSharpCode.ILSpy {
 			return res == MsgBoxButton.OK;
 		}
 
-		void ShowAssemblyListDontAskUser(DnSpyFileList dnspyFileList)
-		{
+		void ShowAssemblyListDontAskUser(DnSpyFileList dnspyFileList) {
 			// Clear the cache since the keys contain tree nodes which get recreated now. The keys
 			// will never match again so shouldn't be in the cache.
 			DecompileCache.Instance.ClearAll();
@@ -1577,7 +1500,7 @@ namespace ICSharpCode.ILSpy {
 			// new stuff, but the GC doesn't bother to reclaim that memory for a long time.
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
-			
+
 			dnspyFileList.CollectionChanged += assemblyList_Assemblies_CollectionChanged;
 			dnSpyFileListTreeNode = new DnSpyFileListTreeNode(dnspyFileList);
 			// Make sure CurrentAssemblyListChanged() is called after the treenodes have been created
@@ -1590,13 +1513,11 @@ namespace ICSharpCode.ILSpy {
 			UpdateTitle();
 		}
 
-		void UpdateTitle()
-		{
+		void UpdateTitle() {
 			this.Title = GetDefaultTitle();
 		}
 
-		string GetDefaultTitle()
-		{
+		string GetDefaultTitle() {
 			// If this string gets updated, App.xaml.cs (SendToPreviousInstance()) needs to be updated too
 			var t = string.Format("dnSpy ({0})", string.Join(", ", titleInfos.ToArray()));
 			if (dnspyFileList != null && dnspyFileList.Name != DnSpyFileListManager.DefaultListName)
@@ -1605,35 +1526,30 @@ namespace ICSharpCode.ILSpy {
 		}
 		List<string> titleInfos = new List<string>();
 
-		public void AddTitleInfo(string info)
-		{
+		public void AddTitleInfo(string info) {
 			if (!titleInfos.Contains(info)) {
 				titleInfos.Add(info);
 				UpdateTitle();
 			}
 		}
 
-		public void RemoveTitleInfo(string info)
-		{
+		public void RemoveTitleInfo(string info) {
 			if (titleInfos.Remove(info))
 				UpdateTitle();
 		}
 
 		const string DebuggingTitleInfo = "Debugging";
-		public void SetDebugging()
-		{
+		public void SetDebugging() {
 			AddTitleInfo(DebuggingTitleInfo);
 			App.Current.Resources["IsDebuggingKey"] = true;
 		}
 
-		public void ClearDebugging()
-		{
+		public void ClearDebugging() {
 			RemoveTitleInfo(DebuggingTitleInfo);
 			App.Current.Resources["IsDebuggingKey"] = false;
 		}
-		
-		void assemblyList_Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
+
+		void assemblyList_Assemblies_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (!dnspyFileList.IsReArranging) {
 				if (e.Action == NotifyCollectionChangedAction.Reset) {
 					foreach (var tabManager in tabGroupsManager.AllTabGroups)
@@ -1670,7 +1586,8 @@ namespace ICSharpCode.ILSpy {
 						case TabStateType.HexEditor:
 							break;
 
-						default: throw new InvalidOperationException();
+						default:
+							throw new InvalidOperationException();
 						}
 					}
 					var oldModules = new HashSet<DnSpyFile>(oldAssemblies);
@@ -1686,14 +1603,12 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		void assemblyList_Assemblies_CollectionChanged2(object sender, NotifyCollectionChangedEventArgs e)
-		{
+		void assemblyList_Assemblies_CollectionChanged2(object sender, NotifyCollectionChangedEventArgs e) {
 			if (CurrentAssemblyListChanged != null)
 				CurrentAssemblyListChanged(this, e);
 		}
-		
-		void LoadInitialAssemblies()
-		{
+
+		void LoadInitialAssemblies() {
 			// Called when loading an empty assembly list; so that
 			// the user can see something initially.
 			System.Reflection.Assembly[] initialAssemblies = {
@@ -1715,8 +1630,7 @@ namespace ICSharpCode.ILSpy {
 				dnspyFileList.OpenFile(asm.Location);
 		}
 
-		void filterSettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void filterSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			RefreshTreeViewFilter();
 			if (e.PropertyName == "Language") {
 				var tabState = GetActiveDecompileTabState();
@@ -1734,48 +1648,44 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		void SetLanguage(Language language)
-		{
+		void SetLanguage(Language language) {
 			languageComboBox.SelectedItem = language;
 		}
-		
-		public void RefreshTreeViewFilter()
-		{
+
+		public void RefreshTreeViewFilter() {
 			// filterSettings is mutable; but the ILSpyTreeNode filtering assumes that filter settings are immutable.
 			// Thus, the main window will use one mutable instance (for data-binding), and assign a new clone to the ILSpyTreeNodes whenever the main
 			// mutable instance changes.
 			if (dnSpyFileListTreeNode != null)
 				dnSpyFileListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
 		}
-		
+
 		internal DnSpyFileListTreeNode DnSpyFileListTreeNode {
 			get { return dnSpyFileListTreeNode; }
 		}
-		
+
 		#region Node Selection
 
-		public void SelectNode(SharpTreeNode obj)
-		{
+		public void SelectNode(SharpTreeNode obj) {
 			if (obj != null) {
 				if (!obj.AncestorsAndSelf().Any(node => node.IsHidden)) {
 					// Set both the selection and focus to ensure that keyboard navigation works as expected.
 					treeView.FocusNode(obj);
 					treeView.SelectedItem = obj;
-				} else {
+				}
+				else {
 					MainWindow.Instance.ShowMessageBox("Navigation failed because the target is hidden or a compiler-generated class.\n" +
 						"Please disable all filters that might hide the item (i.e. activate " +
 						"\"View > Show Internal Types and Members\") and try again.");
 				}
 			}
 		}
-		
-		public ILSpyTreeNode FindTreeNode(object reference)
-		{
+
+		public ILSpyTreeNode FindTreeNode(object reference) {
 			return dnSpyFileListTreeNode.FindTreeNode(reference);
 		}
 
-		internal static IMemberDef ResolveReference(object reference)
-		{
+		internal static IMemberDef ResolveReference(object reference) {
 			if (reference is ITypeDefOrRef)
 				return ((ITypeDefOrRef)reference).ResolveTypeDef();
 			else if (reference is IMethod && ((IMethod)reference).MethodSig != null)
@@ -1789,8 +1699,7 @@ namespace ICSharpCode.ILSpy {
 			return null;
 		}
 
-		object FixReference(object reference)
-		{
+		object FixReference(object reference) {
 			IMemberDef member = ResolveReference(reference);
 			if (member != null && ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.DecompileFullType) {
 				var type = member.DeclaringType;
@@ -1810,15 +1719,13 @@ namespace ICSharpCode.ILSpy {
 			return reference;
 		}
 
-		bool JumpToNamespace(DecompilerTextView textView, NamespaceRef nsRef, bool canRecordHistory = true)
-		{
+		bool JumpToNamespace(DecompilerTextView textView, NamespaceRef nsRef, bool canRecordHistory = true) {
 			if (nsRef == null)
 				return false;
 			return JumpToNamespace(textView, nsRef.Module, nsRef.Namespace, canRecordHistory);
 		}
 
-		bool JumpToNamespace(DecompilerTextView textView, DnSpyFile asm, string ns, bool canRecordHistory = true)
-		{
+		bool JumpToNamespace(DecompilerTextView textView, DnSpyFile asm, string ns, bool canRecordHistory = true) {
 			if (asm == null || ns == null)
 				return false;
 			var asmNode = FindTreeNode(asm.ModuleDef) as AssemblyTreeNode;
@@ -1838,8 +1745,7 @@ namespace ICSharpCode.ILSpy {
 			return true;
 		}
 
-		public bool JumpToReference(object reference, bool canRecordHistory = true)
-		{
+		public bool JumpToReference(object reference, bool canRecordHistory = true) {
 			var nsRef = reference as NamespaceRef;
 			if (nsRef != null)
 				return JumpToNamespace(null, nsRef);
@@ -1849,8 +1755,7 @@ namespace ICSharpCode.ILSpy {
 			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), (success, hasMovedCaret) => GoToLocation(tabState.TextView, success, hasMovedCaret, ResolveReference(reference)));
 		}
 
-		public bool JumpToReference(DecompilerTextView textView, object reference, bool canRecordHistory = true)
-		{
+		public bool JumpToReference(DecompilerTextView textView, object reference, bool canRecordHistory = true) {
 			var nsRef = reference as NamespaceRef;
 			if (nsRef != null)
 				return JumpToNamespace(textView, nsRef);
@@ -1860,8 +1765,7 @@ namespace ICSharpCode.ILSpy {
 			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), (success, hasMovedCaret) => GoToLocation(tabState.TextView, success, hasMovedCaret, ResolveReference(reference)));
 		}
 
-		public bool JumpToReference(DecompilerTextView textView, object reference, Func<TextLocation> getLocation, bool canRecordHistory = true)
-		{
+		public bool JumpToReference(DecompilerTextView textView, object reference, Func<TextLocation> getLocation, bool canRecordHistory = true) {
 			var nsRef = reference as NamespaceRef;
 			if (nsRef != null)
 				return JumpToNamespace(textView, nsRef);
@@ -1871,8 +1775,7 @@ namespace ICSharpCode.ILSpy {
 			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), (success, hasMovedCaret) => GoToLocation(tabState.TextView, success, hasMovedCaret, getLocation()));
 		}
 
-		public bool JumpToReference(DecompilerTextView textView, object reference, Func<bool, bool, bool> onDecompileFinished, bool canRecordHistory = true)
-		{
+		public bool JumpToReference(DecompilerTextView textView, object reference, Func<bool, bool, bool> onDecompileFinished, bool canRecordHistory = true) {
 			var nsRef = reference as NamespaceRef;
 			if (nsRef != null)
 				return JumpToNamespace(textView, nsRef);
@@ -1882,36 +1785,31 @@ namespace ICSharpCode.ILSpy {
 			return JumpToReferenceAsyncInternal(tabState, true, FixReference(reference), onDecompileFinished);
 		}
 
-		bool GoToLocation(DecompilerTextView decompilerTextView, bool success, bool hasMovedCaret, object destLoc)
-		{
+		bool GoToLocation(DecompilerTextView decompilerTextView, bool success, bool hasMovedCaret, object destLoc) {
 			if (!success || destLoc == null)
 				return false;
 			return decompilerTextView.GoToLocation(destLoc);
 		}
 
-		sealed class OnShowOutputHelper
-		{
+		sealed class OnShowOutputHelper {
 			DecompilerTextView decompilerTextView;
 			readonly Func<bool, bool, bool> onDecompileFinished;
 			readonly ILSpyTreeNode[] nodes;
-			public OnShowOutputHelper(DecompilerTextView decompilerTextView, Func<bool, bool, bool> onDecompileFinished, ILSpyTreeNode[] nodes)
-			{
+			public OnShowOutputHelper(DecompilerTextView decompilerTextView, Func<bool, bool, bool> onDecompileFinished, ILSpyTreeNode[] nodes) {
 				this.decompilerTextView = decompilerTextView;
 				this.onDecompileFinished = onDecompileFinished;
 				this.nodes = nodes;
 				decompilerTextView.OnShowOutput += OnShowOutput;
 			}
 
-			public void OnShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e)
-			{
+			public void OnShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e) {
 				decompilerTextView.OnShowOutput -= OnShowOutput;
 				bool success = Equals(e.Nodes, nodes);
 				if (onDecompileFinished != null)
 					e.HasMovedCaret |= onDecompileFinished(success, e.HasMovedCaret);
 			}
 
-			static bool Equals(ILSpyTreeNode[] a, ILSpyTreeNode[] b)
-			{
+			static bool Equals(ILSpyTreeNode[] a, ILSpyTreeNode[] b) {
 				if (a == b)
 					return true;
 				if (a == null || b == null)
@@ -1925,35 +1823,36 @@ namespace ICSharpCode.ILSpy {
 				return true;
 			}
 
-			public void Abort()
-			{
+			public void Abort() {
 				decompilerTextView.OnShowOutput -= OnShowOutput;
 			}
 		}
 
 		// Returns true if we could decompile the reference
-		bool JumpToReferenceAsyncInternal(DecompileTabState tabState, bool canLoad, object reference, Func<bool, bool, bool> onDecompileFinished)
-		{
+		bool JumpToReferenceAsyncInternal(DecompileTabState tabState, bool canLoad, object reference, Func<bool, bool, bool> onDecompileFinished) {
 			ILSpyTreeNode treeNode = FindTreeNode(reference);
 			if (treeNode != null) {
 				var nodes = new[] { treeNode };
 				DecompileNodes(tabState, nodes, false, onDecompileFinished);
 				SelectTreeViewNodes(tabState, nodes);
 				return true;
-			} else if (reference is dnlib.DotNet.Emit.OpCode) {
+			}
+			else if (reference is dnlib.DotNet.Emit.OpCode) {
 				string link = "http://msdn.microsoft.com/library/system.reflection.emit.opcodes." + ((dnlib.DotNet.Emit.OpCode)reference).Code.ToString().ToLowerInvariant() + ".aspx";
 				try {
 					Process.Start(link);
-				} catch {
-					
+				}
+				catch {
+
 				}
 				return true;
-			} else if (canLoad && reference is IMemberDef) {
+			}
+			else if (canLoad && reference is IMemberDef) {
 				// Here if the module was removed. It's possible that the user has re-added it.
 
 				var member = (IMemberDef)reference;
 				var module = member.Module;
-				if (module == null)	// Check if it has been deleted
+				if (module == null) // Check if it has been deleted
 					return false;
 				var mainModule = module;
 				if (module.Assembly != null)
@@ -1989,8 +1888,7 @@ namespace ICSharpCode.ILSpy {
 				return false;
 		}
 
-		IEnumerable<ModuleDef> GetAssemblyModules(ModuleDef module)
-		{
+		IEnumerable<ModuleDef> GetAssemblyModules(ModuleDef module) {
 			if (module == null)
 				yield break;
 			var asm = module.Assembly;
@@ -2002,10 +1900,9 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 		#endregion
-		
+
 		#region Open/Refresh
-		void OpenCommandExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		void OpenCommandExecuted(object sender, ExecutedRoutedEventArgs e) {
 			e.Handled = true;
 			OpenFileDialog dlg = new OpenFileDialog();
 			dlg.Filter = ".NET Executables (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|All files (*.*)|*.*";
@@ -2015,15 +1912,14 @@ namespace ICSharpCode.ILSpy {
 				OpenFiles(dlg.FileNames);
 			}
 		}
-		
-		public void OpenFiles(string[] fileNames, bool focusNode = true)
-		{
+
+		public void OpenFiles(string[] fileNames, bool focusNode = true) {
 			if (fileNames == null)
 				throw new ArgumentNullException("fileNames");
-			
+
 			if (focusNode)
 				treeView.UnselectAll();
-			
+
 			SharpTreeNode lastNode = null;
 			foreach (string file in fileNames) {
 				var asm = dnspyFileList.OpenFile(file);
@@ -2038,9 +1934,8 @@ namespace ICSharpCode.ILSpy {
 					treeView.FocusNode(lastNode);
 			}
 		}
-		
-		internal void ReloadList()
-		{
+
+		internal void ReloadList() {
 			if (!ReloadListCanExecute())
 				return;
 			if (!AskUserReloadAssemblyListIfModified("Are you sure you want to reload all assemblies and lose all changes?"))
@@ -2058,8 +1953,7 @@ namespace ICSharpCode.ILSpy {
 			RestoreTabGroups(savedState);
 		}
 
-		internal bool ReloadListCanExecute()
-		{
+		internal bool ReloadListCanExecute() {
 			if (CanExecuteEvent != null) {
 				var ea = new CanExecuteEventArgs(CanExecuteType.ReloadList, true);
 				CanExecuteEvent(this, ea);
@@ -2083,18 +1977,16 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 		public event EventHandler<CanExecuteEventArgs> CanExecuteEvent;
-		
-		void SearchCommandExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+
+		void SearchCommandExecuted(object sender, ExecutedRoutedEventArgs e) {
 			SearchPane.Instance.Show();
 		}
 		#endregion
-		
+
 		#region Decompile (TreeView_SelectionChanged)
 		//TODO: HACK alert
 		internal bool TreeView_SelectionChanged_ignore = false;
-		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
+		void TreeView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
 			if (TreeView_SelectionChanged_ignore)
 				return;
 			// New nodes could be selected so grab the current selected nodes now
@@ -2121,24 +2013,20 @@ namespace ICSharpCode.ILSpy {
 				SelectionChanged(sender, e);
 		}
 
-		static ILSpyTreeNode[] FilterOutDeletedNodes(IEnumerable<ILSpyTreeNode> nodes)
-		{
+		static ILSpyTreeNode[] FilterOutDeletedNodes(IEnumerable<ILSpyTreeNode> nodes) {
 			return nodes.Where(a => ILSpyTreeNode.GetNode<DnSpyFileListTreeNode>(a) != null).ToArray();
 		}
 
-		void DecompileNodes(DecompileTabState tabState, ILSpyTreeNode[] nodes, bool recordHistory, Func<bool, bool, bool> onDecompileFinished)
-		{
+		void DecompileNodes(DecompileTabState tabState, ILSpyTreeNode[] nodes, bool recordHistory, Func<bool, bool, bool> onDecompileFinished) {
 			DecompileNodes(tabState, nodes, recordHistory, tabState.Language, onDecompileFinished);
 		}
 
-		void DecompileRestoreLocation(DecompileTabState tabState, ILSpyTreeNode[] nodes, Language language = null, bool forceDecompile = false)
-		{
+		void DecompileRestoreLocation(DecompileTabState tabState, ILSpyTreeNode[] nodes, Language language = null, bool forceDecompile = false) {
 			var pos = tabState.TextView.GetRefPos();
 			DecompileNodes(tabState, nodes, false, language ?? tabState.Language, (a, b) => tabState.TextView.GoTo(pos), forceDecompile);
 		}
 
-		void DecompileNodes(DecompileTabState tabState, ILSpyTreeNode[] nodes, bool recordHistory, Language language, Func<bool, bool, bool> onDecompileFinished, bool forceDecompile = false)
-		{
+		void DecompileNodes(DecompileTabState tabState, ILSpyTreeNode[] nodes, bool recordHistory, Language language, Func<bool, bool, bool> onDecompileFinished, bool forceDecompile = false) {
 			var helper = new OnShowOutputHelper(tabState.TextView, onDecompileFinished, nodes);
 			bool? decompiled = DecompileNodes(tabState, null, recordHistory, language, nodes, forceDecompile);
 			if (decompiled == false) {
@@ -2147,8 +2035,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		bool? DecompileNodes(DecompileTabState tabState, DecompilerTextViewState state, bool recordHistory, Language language, ILSpyTreeNode[] nodes, bool forceDecompile = false)
-		{
+		bool? DecompileNodes(DecompileTabState tabState, DecompilerTextViewState state, bool recordHistory, Language language, ILSpyTreeNode[] nodes, bool forceDecompile = false) {
 			if (tabState.ignoreDecompilationRequests)
 				return null;
 
@@ -2189,13 +2076,11 @@ namespace ICSharpCode.ILSpy {
 			return true;
 		}
 
-		internal void RecordHistory(DecompilerTextView textView)
-		{
+		internal void RecordHistory(DecompilerTextView textView) {
 			RecordHistory(DecompileTabState.GetDecompileTabState(textView));
 		}
 
-		void RecordHistory(DecompileTabState tabState)
-		{
+		void RecordHistory(DecompileTabState tabState) {
 			if (tabState == null)
 				return;
 			var dtState = tabState.TextView.GetState(tabState.DecompiledNodes);
@@ -2203,19 +2088,16 @@ namespace ICSharpCode.ILSpy {
 				tabState.History.UpdateCurrent(new NavigationState(dtState, tabState.Language));
 			tabState.History.Record(new NavigationState(tabState.DecompiledNodes, tabState.Language));
 		}
-		
-		void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+
+		void SaveCommandExecuted(object sender, ExecutedRoutedEventArgs e) {
 			Save(ActiveTabState);
 		}
 
-		void SaveCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		void SaveCommandCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = ActiveTabState != null;
 		}
 
-		internal void Save(TabState tabState)
-		{
+		internal void Save(TabState tabState) {
 			var decompileTabState = tabState as DecompileTabState;
 			if (decompileTabState != null) {
 				SaveCode(decompileTabState);
@@ -2229,8 +2111,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		void SaveCode(DecompileTabState tabState)
-		{
+		void SaveCode(DecompileTabState tabState) {
 			if (tabState == null)
 				return;
 			var textView = tabState.TextView;
@@ -2242,7 +2123,7 @@ namespace ICSharpCode.ILSpy {
 				tabState.DecompiledNodes,
 				new DecompilationOptions() { FullDecompilation = true });
 		}
-		
+
 		public Language CurrentLanguage {
 			get {
 				var tabState = GetActiveDecompileTabState();
@@ -2258,28 +2139,24 @@ namespace ICSharpCode.ILSpy {
 			get { return treeView.GetTopLevelSelection().OfType<ILSpyTreeNode>().ToArray(); }
 		}
 		#endregion
-		
+
 		#region Back/Forward navigation
-		void BackCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		void BackCommandCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			var tabState = GetActiveDecompileTabState();
 			e.Handled = true;
 			e.CanExecute = tabState != null && tabState.History.CanNavigateBack;
 		}
-		
-		void BackCommandExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+
+		void BackCommandExecuted(object sender, ExecutedRoutedEventArgs e) {
 			if (BackCommand(GetActiveDecompileTabState()))
 				e.Handled = true;
 		}
 
-		internal void BackCommand(DecompilerTextView textView)
-		{
+		internal void BackCommand(DecompilerTextView textView) {
 			BackCommand(DecompileTabState.GetDecompileTabState(textView));
 		}
 
-		bool BackCommand(DecompileTabState tabState)
-		{
+		bool BackCommand(DecompileTabState tabState) {
 			if (tabState == null)
 				return false;
 			if (tabState.History.CanNavigateBack) {
@@ -2288,16 +2165,14 @@ namespace ICSharpCode.ILSpy {
 			}
 			return false;
 		}
-		
-		void ForwardCommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+
+		void ForwardCommandCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			var tabState = GetActiveDecompileTabState();
 			e.Handled = true;
 			e.CanExecute = tabState != null && tabState.History.CanNavigateForward;
 		}
-		
-		void ForwardCommandExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+
+		void ForwardCommandExecuted(object sender, ExecutedRoutedEventArgs e) {
 			var tabState = GetActiveDecompileTabState();
 			if (tabState == null)
 				return;
@@ -2306,11 +2181,10 @@ namespace ICSharpCode.ILSpy {
 				NavigateHistory(tabState, true);
 			}
 		}
-		
-		void NavigateHistory(DecompileTabState tabState, bool forward)
-		{
+
+		void NavigateHistory(DecompileTabState tabState, bool forward) {
 			var dtState = tabState.TextView.GetState(tabState.DecompiledNodes);
-			if(dtState != null)
+			if (dtState != null)
 				tabState.History.UpdateCurrent(new NavigationState(dtState, tabState.Language));
 			var newState = forward ? tabState.History.GoForward() : tabState.History.GoBack();
 			var nodes = newState.TreeNodes.Cast<ILSpyTreeNode>().ToArray();
@@ -2318,11 +2192,10 @@ namespace ICSharpCode.ILSpy {
 			DecompileNodes(tabState, newState.ViewState, false, newState.Language, nodes);
 			SetLanguage(newState.Language);
 		}
-		
+
 		#endregion
-		
-		protected override void OnStateChanged(EventArgs e)
-		{
+
+		protected override void OnStateChanged(EventArgs e) {
 			base.OnStateChanged(e);
 			// store window state in settings only if it's not minimized
 			if (this.WindowState != System.Windows.WindowState.Minimized) {
@@ -2330,9 +2203,8 @@ namespace ICSharpCode.ILSpy {
 				sessionSettings.IsFullScreen = this.IsFullScreen;
 			}
 		}
-		
-		protected override void OnClosing(CancelEventArgs e)
-		{
+
+		protected override void OnClosing(CancelEventArgs e) {
 			base.OnClosing(e);
 			if (e.Cancel)
 				return;
@@ -2350,8 +2222,7 @@ namespace ICSharpCode.ILSpy {
 				tabState.Dispose();
 		}
 
-		void RestoreTabGroups(SavedTabGroupsState savedGroups)
-		{
+		void RestoreTabGroups(SavedTabGroupsState savedGroups) {
 			Debug.Assert(tabGroupsManager.AllTabGroups.Count == 1);
 			bool first = true;
 			foreach (var savedGroupState in savedGroups.Groups) {
@@ -2383,8 +2254,7 @@ namespace ICSharpCode.ILSpy {
 			tabGroupsManager.SetSelectedIndex(savedGroups.Index);
 		}
 
-		SavedTabGroupsState CreateSavedTabGroupsState()
-		{
+		SavedTabGroupsState CreateSavedTabGroupsState() {
 			var state = new SavedTabGroupsState();
 			state.IsHorizontal = tabGroupsManager.IsHorizontal;
 			state.Index = tabGroupsManager.ActiveIndex;
@@ -2393,8 +2263,7 @@ namespace ICSharpCode.ILSpy {
 			return state;
 		}
 
-		static SavedTabGroupState CreateSavedTabGroupState(TabManager<TabState> tabManager)
-		{
+		static SavedTabGroupState CreateSavedTabGroupState(TabManager<TabState> tabManager) {
 			var savedState = new SavedTabGroupState();
 
 			savedState.Index = tabManager.ActiveIndex;
@@ -2405,32 +2274,27 @@ namespace ICSharpCode.ILSpy {
 			return savedState;
 		}
 
-		DecompileTabState CreateNewDecompileTabState(Language language = null)
-		{
+		DecompileTabState CreateNewDecompileTabState(Language language = null) {
 			return CreateNewDecompileTabState(tabGroupsManager.ActiveTabGroup, language);
 		}
 
-		DecompileTabState CreateEmptyDecompileTabState(Language language = null)
-		{
+		DecompileTabState CreateEmptyDecompileTabState(Language language = null) {
 			var tabState = CreateNewDecompileTabState(tabGroupsManager.ActiveTabGroup, language);
 			DecompileNodes(tabState, null, false, tabState.Language, new ILSpyTreeNode[0]);
 			return tabState;
 		}
 
-		DecompileTabState CreateNewDecompileTabState(TabManager<TabState> tabManager, Language language = null)
-		{
+		DecompileTabState CreateNewDecompileTabState(TabManager<TabState> tabManager, Language language = null) {
 			var tabState = new DecompileTabState(language ?? sessionSettings.FilterSettings.Language);
 			return (DecompileTabState)tabManager.AddNewTabState(tabState);
 		}
 
-		DecompileTabState CreateDecompileTabState(SavedDecompileTabState savedState, IList<ILSpyTreeNode> newNodes = null, bool decompile = true)
-		{
+		DecompileTabState CreateDecompileTabState(SavedDecompileTabState savedState, IList<ILSpyTreeNode> newNodes = null, bool decompile = true) {
 			var tabState = CreateNewDecompileTabState(Languages.GetLanguage(savedState.Language));
 			return CreateDecompileTabState(tabState, savedState, newNodes, decompile);
 		}
 
-		DecompileTabState CreateDecompileTabState(DecompileTabState tabState, SavedDecompileTabState savedState, IList<ILSpyTreeNode> newNodes = null, bool decompile = true)
-		{
+		DecompileTabState CreateDecompileTabState(DecompileTabState tabState, SavedDecompileTabState savedState, IList<ILSpyTreeNode> newNodes = null, bool decompile = true) {
 			var nodes = new List<ILSpyTreeNode>(savedState.Paths.Count);
 			if (newNodes != null)
 				nodes.AddRange(newNodes);
@@ -2458,8 +2322,7 @@ namespace ICSharpCode.ILSpy {
 			return tabState;
 		}
 
-		bool decompilerTextView_OnShowOutput(bool success, bool hasMovedCaret, DecompilerTextView textView, SavedDecompileTabState savedState)
-		{
+		bool decompilerTextView_OnShowOutput(bool success, bool hasMovedCaret, DecompilerTextView textView, SavedDecompileTabState savedState) {
 			if (!success)
 				return false;
 
@@ -2471,28 +2334,24 @@ namespace ICSharpCode.ILSpy {
 			return false;
 		}
 
-		HexTabState CreateNewHexTabState(TabManager<TabState> tabManager)
-		{
+		HexTabState CreateNewHexTabState(TabManager<TabState> tabManager) {
 			var tabState = new HexTabState();
 			return (HexTabState)tabManager.AddNewTabState(tabState);
 		}
 
-		HexTabState CreateHexTabState(SavedHexTabState savedState)
-		{
+		HexTabState CreateHexTabState(SavedHexTabState savedState) {
 			if (!File.Exists(savedState.FileName))
 				return null;
 			var tabState = CreateNewHexTabState(tabGroupsManager.ActiveTabGroup);
 			return CreateHexTabState(tabState, savedState);
 		}
 
-		HexTabState CreateHexTabState(HexTabState tabState, SavedHexTabState savedHexTabState)
-		{
+		HexTabState CreateHexTabState(HexTabState tabState, SavedHexTabState savedHexTabState) {
 			tabState.Restore(savedHexTabState);
 			return InitializeHexDocument(tabState, savedHexTabState.FileName);
 		}
 
-		HexTabState InitializeHexDocument(HexTabState tabState, string filename)
-		{
+		HexTabState InitializeHexDocument(HexTabState tabState, string filename) {
 			var doc = HexDocumentManager.Instance.GetOrCreate(filename);
 			tabState.SetDocument(doc);
 			if (doc == null)
@@ -2500,8 +2359,7 @@ namespace ICSharpCode.ILSpy {
 			return tabState;
 		}
 
-		bool IsValid(DecompilerTextView decompilerTextView, EditorPositionState state)
-		{
+		bool IsValid(DecompilerTextView decompilerTextView, EditorPositionState state) {
 			if (state.VerticalOffset < 0 || state.HorizontalOffset < 0)
 				return false;
 			if (state.DesiredXPos < 0)
@@ -2517,8 +2375,7 @@ namespace ICSharpCode.ILSpy {
 			return true;
 		}
 
-		static SessionSettings.PaneSettings GetPaneSettings(DockedPane dockedPane, RowDefinition row)
-		{
+		static SessionSettings.PaneSettings GetPaneSettings(DockedPane dockedPane, RowDefinition row) {
 			var settings = new SessionSettings.PaneSettings();
 
 			if (dockedPane.Visibility == Visibility.Visible)
@@ -2533,14 +2390,12 @@ namespace ICSharpCode.ILSpy {
 			return settings;
 		}
 
-		static string GetPaneName(DockedPane dockedPane)
-		{
+		static string GetPaneName(DockedPane dockedPane) {
 			var pane = dockedPane.Content;
 			return pane == null ? string.Empty : pane.PaneName;
 		}
 
-		internal static AssemblyTreeNode GetAssemblyTreeNode(SharpTreeNode node)
-		{
+		internal static AssemblyTreeNode GetAssemblyTreeNode(SharpTreeNode node) {
 			if (node == null)
 				return null;
 			while (!(node is TreeNodes.AssemblyTreeNode) && node.Parent != null) {
@@ -2550,15 +2405,13 @@ namespace ICSharpCode.ILSpy {
 				node = node.Parent;
 			return node as AssemblyTreeNode;
 		}
-		
+
 		#region Top/Bottom Pane management
-		public void ShowInTopPane(IPane content)
-		{
+		public void ShowInTopPane(IPane content) {
 			ShowPane(topPane, content, topPaneRow, sessionSettings.TopPaneSettings);
 		}
 
-		static void ShowPane(DockedPane dockedPane, IPane content, RowDefinition paneRow, SessionSettings.PaneSettings paneSettings)
-		{
+		static void ShowPane(DockedPane dockedPane, IPane content, RowDefinition paneRow, SessionSettings.PaneSettings paneSettings) {
 			paneRow.MinHeight = 100;
 			if (paneSettings.Height > 0 && (paneRow.Height == null || paneRow.Height.Value == 0))
 				paneRow.Height = new GridLength(paneSettings.Height, GridUnitType.Pixel);
@@ -2573,8 +2426,7 @@ namespace ICSharpCode.ILSpy {
 			content.Opened();
 		}
 
-		static void ClosePane(DockedPane dockedPane, RowDefinition paneRow, ref SessionSettings.PaneSettings paneSettings)
-		{
+		static void ClosePane(DockedPane dockedPane, RowDefinition paneRow, ref SessionSettings.PaneSettings paneSettings) {
 			paneSettings.Height = paneRow.Height.Value;
 			paneRow.MinHeight = 0;
 			paneRow.Height = new GridLength(0);
@@ -2586,91 +2438,75 @@ namespace ICSharpCode.ILSpy {
 				pane.Closed();
 		}
 
-		void TopPane_CloseButtonClicked(object sender, EventArgs e)
-		{
+		void TopPane_CloseButtonClicked(object sender, EventArgs e) {
 			CloseTopPane();
 		}
 
-		public void CloseTopPane()
-		{
+		public void CloseTopPane() {
 			ClosePane(topPane, topPaneRow, ref sessionSettings.TopPaneSettings);
 		}
 
 		public IPane TopPaneContent {
 			get { return topPane.Content; }
 		}
-		
-		public void ShowInBottomPane(IPane content)
-		{
+
+		public void ShowInBottomPane(IPane content) {
 			ShowPane(bottomPane, content, bottomPaneRow, sessionSettings.BottomPaneSettings);
 		}
-		
-		void BottomPane_CloseButtonClicked(object sender, EventArgs e)
-		{
+
+		void BottomPane_CloseButtonClicked(object sender, EventArgs e) {
 			CloseBottomPane();
 		}
 
-		public void CloseBottomPane()
-		{
+		public void CloseBottomPane() {
 			ClosePane(bottomPane, bottomPaneRow, ref sessionSettings.BottomPaneSettings);
 		}
 
-		public bool IsTopPaneContent(IPane content)
-		{
+		public bool IsTopPaneContent(IPane content) {
 			return IsPaneContent(topPane, content);
 		}
 
-		public bool IsBottomPaneContent(IPane content)
-		{
+		public bool IsBottomPaneContent(IPane content) {
 			return IsPaneContent(bottomPane, content);
 		}
 
-		bool IsPaneContent(DockedPane pane, IPane content)
-		{
+		bool IsPaneContent(DockedPane pane, IPane content) {
 			return pane.Content == content;
 		}
 
-		public bool IsTopPaneVisible(IPane content)
-		{
+		public bool IsTopPaneVisible(IPane content) {
 			return IsPaneVisible(topPane, content);
 		}
 
-		public bool IsBottomPaneVisible(IPane content)
-		{
+		public bool IsBottomPaneVisible(IPane content) {
 			return IsPaneVisible(bottomPane, content);
 		}
 
-		bool IsPaneVisible(DockedPane pane, IPane content)
-		{
+		bool IsPaneVisible(DockedPane pane, IPane content) {
 			return pane.IsVisible && IsPaneContent(pane, content);
 		}
 		#endregion
-		
-		public void UnselectAll()
-		{
+
+		public void UnselectAll() {
 			treeView.UnselectAll();
 		}
-		
-		public void SetStatus(string status)
-		{
+
+		public void SetStatus(string status) {
 			if (this.statusBar.Visibility == Visibility.Collapsed)
 				this.statusBar.Visibility = Visibility.Visible;
 			this.StatusLabel.Text = status;
 		}
 
-		public void HideStatus()
-		{
+		public void HideStatus() {
 			this.statusBar.Visibility = Visibility.Collapsed;
 		}
 
-		private void GoToLineExecutedCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void GoToLineExecutedCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			var tabState = GetActiveDecompileTabState();
 			e.CanExecute = tabState != null && tabState.IsTextViewInVisualTree;
 		}
 
-		private void GoToLineExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void GoToLineExecuted(object sender, ExecutedRoutedEventArgs e) {
 			var decompilerTextView = ActiveTextView;
 			if (decompilerTextView == null)
 				return;
@@ -2705,24 +2541,20 @@ namespace ICSharpCode.ILSpy {
 		static readonly Regex goToLineRegex1 = new Regex(@"^\s*(\d+)\s*(,\s*(\d+))?\s*$");
 		static readonly Regex goToLineRegex2 = new Regex(@"^\s*,\s*(\d+)\s*$");
 
-		static int? TryParse(string valText)
-		{
+		static int? TryParse(string valText) {
 			int val;
 			return int.TryParse(valText, out val) ? (int?)val : null;
 		}
 
-		internal Language GetLanguage(DecompilerTextView textView)
-		{
+		internal Language GetLanguage(DecompilerTextView textView) {
 			return DecompileTabState.GetDecompileTabState(textView).Language;
 		}
 
-		void TreeNodeActivatedExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		void TreeNodeActivatedExecuted(object sender, ExecutedRoutedEventArgs e) {
 			DelaySetFocus(GetActiveDecompileTabState());
 		}
 
-		void DelaySetFocus(TabState tabState)
-		{
+		void DelaySetFocus(TabState tabState) {
 			if (tabState != null) {
 				// The TreeView steals the focus so we can't just set the focus to the text view
 				// right here, we have to wait a little bit.
@@ -2741,63 +2573,51 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		private void OpenNewTabExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void OpenNewTabExecuted(object sender, ExecutedRoutedEventArgs e) {
 			OpenNewTab();
 		}
 
-		private void CloseActiveTabExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void CloseActiveTabExecuted(object sender, ExecutedRoutedEventArgs e) {
 			CloseActiveTab();
 		}
 
-		private void CloseActiveTabCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void CloseActiveTabCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = CloseActiveTabCanExecute();
 		}
 
-		private void SelectNextTabExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void SelectNextTabExecuted(object sender, ExecutedRoutedEventArgs e) {
 			tabGroupsManager.ActiveTabGroup.SelectNextTab();
 		}
 
-		private void SelectNextTabCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void SelectNextTabCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = tabGroupsManager.ActiveTabGroup.SelectNextTabCanExecute();
 		}
 
-		private void SelectPrevTabExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void SelectPrevTabExecuted(object sender, ExecutedRoutedEventArgs e) {
 			tabGroupsManager.ActiveTabGroup.SelectPreviousTab();
 		}
 
-		private void SelectPrevTabCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void SelectPrevTabCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = tabGroupsManager.ActiveTabGroup.SelectPreviousTabCanExecute();
 		}
 
-		private void WordWrapExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void WordWrapExecuted(object sender, ExecutedRoutedEventArgs e) {
 			sessionSettings.WordWrap = !sessionSettings.WordWrap;
 		}
 
-		private void WordWrapCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void WordWrapCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = true;
 		}
 
-		private void FullScreenExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void FullScreenExecuted(object sender, ExecutedRoutedEventArgs e) {
 			IsFullScreen = !IsFullScreen;
 		}
 
-		private void FullScreenCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void FullScreenCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = true;
 		}
 
-		private void FocusTreeViewExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void FocusTreeViewExecuted(object sender, ExecutedRoutedEventArgs e) {
 			var node = (SharpTreeNode)treeView.SelectedItem;
 			if (node != null)
 				treeView.FocusNode(node);
@@ -2808,58 +2628,48 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		private void FocusTreeViewCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void FocusTreeViewCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = treeView.HasItems;
 		}
 
-		private void FocusCodeExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void FocusCodeExecuted(object sender, ExecutedRoutedEventArgs e) {
 			var tabState = ActiveTabState;
 			if (tabState != null)
 				SetTabFocus(tabState);
 		}
 
-		private void FocusCodeCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void FocusCodeCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = ActiveTabState != null;
 		}
 
-		private void ZoomIncreaseExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void ZoomIncreaseExecuted(object sender, ExecutedRoutedEventArgs e) {
 			ZoomIncrease(ActiveTabState);
 		}
 
-		private void ZoomIncreaseCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void ZoomIncreaseCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = ActiveTabState != null;
 		}
 
-		private void ZoomDecreaseExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void ZoomDecreaseExecuted(object sender, ExecutedRoutedEventArgs e) {
 			ZoomDecrease(ActiveTabState);
 		}
 
-		private void ZoomDecreaseCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void ZoomDecreaseCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = ActiveTabState != null;
 		}
 
-		private void ZoomResetExecuted(object sender, ExecutedRoutedEventArgs e)
-		{
+		private void ZoomResetExecuted(object sender, ExecutedRoutedEventArgs e) {
 			ZoomReset(ActiveTabState);
 		}
 
-		private void ZoomResetCanExecute(object sender, CanExecuteRoutedEventArgs e)
-		{
+		private void ZoomResetCanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = ActiveTabState != null;
 		}
 
 		const double MIN_ZOOM = 0.2;
 		const double MAX_ZOOM = 4.0;
 
-		void ZoomIncrease(TabState tabState)
-		{
+		void ZoomIncrease(TabState tabState) {
 			if (tabState == null)
 				return;
 
@@ -2868,8 +2678,7 @@ namespace ICSharpCode.ILSpy {
 			SetScaleValue(tabState, scale);
 		}
 
-		void ZoomDecrease(TabState tabState)
-		{
+		void ZoomDecrease(TabState tabState) {
 			if (tabState == null)
 				return;
 
@@ -2878,16 +2687,14 @@ namespace ICSharpCode.ILSpy {
 			SetScaleValue(tabState, scale);
 		}
 
-		void ZoomReset(TabState tabState)
-		{
+		void ZoomReset(TabState tabState) {
 			if (tabState == null)
 				return;
 
 			SetScaleValue(tabState, 1);
 		}
 
-		double GetScaleValue(TabState tabState)
-		{
+		double GetScaleValue(TabState tabState) {
 			var scaleElem = tabState.ScaleElement;
 			if (scaleElem == null)
 				return 1;
@@ -2897,8 +2704,7 @@ namespace ICSharpCode.ILSpy {
 			return 1;
 		}
 
-		void SetScaleValue(TabState tabState, double scale)
-		{
+		void SetScaleValue(TabState tabState, double scale) {
 			var scaleElem = tabState.ScaleElement;
 			if (scaleElem == null)
 				return;
@@ -2921,16 +2727,14 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		internal void ZoomMouseWheel(TabState tabState, int delta)
-		{
+		internal void ZoomMouseWheel(TabState tabState, int delta) {
 			if (delta > 0)
 				ZoomIncrease(tabState);
 			else if (delta < 0)
 				ZoomDecrease(tabState);
 		}
 
-		internal TabState CloneTab(TabState tabState, bool decompile = true)
-		{
+		internal TabState CloneTab(TabState tabState, bool decompile = true) {
 			if (tabState == null)
 				return null;
 
@@ -2948,16 +2752,14 @@ namespace ICSharpCode.ILSpy {
 			return null;
 		}
 
-		internal TabState CloneTabMakeActive(TabState tabState, bool decompile = true)
-		{
+		internal TabState CloneTabMakeActive(TabState tabState, bool decompile = true) {
 			var clonedTabState = CloneTab(tabState, decompile);
 			if (clonedTabState != null)
 				tabGroupsManager.ActiveTabGroup.SetSelectedTab(clonedTabState);
 			return clonedTabState;
 		}
 
-		internal void OpenNewTab()
-		{
+		internal void OpenNewTab() {
 			TabState tabState;
 			var currenTabState = ActiveTabState;
 
@@ -2975,13 +2777,11 @@ namespace ICSharpCode.ILSpy {
 			tabGroupsManager.ActiveTabGroup.SetSelectedTab(tabState);
 		}
 
-		public void OpenNewEmptyTab()
-		{
+		public void OpenNewEmptyTab() {
 			tabGroupsManager.ActiveTabGroup.SetSelectedTab(CreateEmptyDecompileTabState());
 		}
 
-		internal void OpenReferenceInNewTab(DecompilerTextView textView, ReferenceSegment reference)
-		{
+		internal void OpenReferenceInNewTab(DecompilerTextView textView, ReferenceSegment reference) {
 			if (reference == null)
 				return;
 			if (reference.Reference is AddressReference) {
@@ -3006,48 +2806,39 @@ namespace ICSharpCode.ILSpy {
 			DecompileNodes(clonedTabState, tabState.DecompiledNodes, false, (success, hasMovedCaret) => clonedTabState.TextView.GoToTarget(reference, true, false));
 		}
 
-		internal void CloseActiveTab()
-		{
+		internal void CloseActiveTab() {
 			tabGroupsManager.ActiveTabGroup.CloseActiveTab();
 		}
 
-		internal bool CloseActiveTabCanExecute()
-		{
+		internal bool CloseActiveTabCanExecute() {
 			return tabGroupsManager.ActiveTabGroup.CloseActiveTabCanExecute();
 		}
 
-		internal void CloseAllButActiveTab()
-		{
+		internal void CloseAllButActiveTab() {
 			tabGroupsManager.ActiveTabGroup.CloseAllButActiveTab();
 		}
 
-		internal bool CloseAllButActiveTabCanExecute()
-		{
+		internal bool CloseAllButActiveTabCanExecute() {
 			return tabGroupsManager.ActiveTabGroup.CloseAllButActiveTabCanExecute();
 		}
 
-		internal bool CloseAllTabsCanExecute()
-		{
+		internal bool CloseAllTabsCanExecute() {
 			return tabGroupsManager.CloseAllTabsCanExecute();
 		}
 
-		internal void CloseAllTabs()
-		{
+		internal void CloseAllTabs() {
 			tabGroupsManager.CloseAllTabs();
 		}
 
-		internal void CloneActiveTab()
-		{
+		internal void CloneActiveTab() {
 			CloneTabMakeActive(ActiveTabState);
 		}
 
-		internal bool CloneActiveTabCanExecute()
-		{
+		internal bool CloneActiveTabCanExecute() {
 			return ActiveTabState != null;
 		}
 
-		internal void ModuleModified(DnSpyFile mod)
-		{
+		internal void ModuleModified(DnSpyFile mod) {
 			DecompileCache.Instance.Clear(mod);
 
 			foreach (var tabState in AllDecompileTabStates) {
@@ -3060,31 +2851,26 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		public event EventHandler<ModuleModifiedEventArgs> OnModuleModified;
-		public class ModuleModifiedEventArgs : EventArgs
-		{
+		public class ModuleModifiedEventArgs : EventArgs {
 			public DnSpyFile DnSpyFile { get; private set; }
 
-			public ModuleModifiedEventArgs(DnSpyFile asm)
-			{
+			public ModuleModifiedEventArgs(DnSpyFile asm) {
 				this.DnSpyFile = asm;
 			}
 		}
 
-		static bool MustRefresh(DecompileTabState tabState, DnSpyFile mod)
-		{
+		static bool MustRefresh(DecompileTabState tabState, DnSpyFile mod) {
 			var asms = new HashSet<DnSpyFile>();
 			asms.Add(mod);
 			return DecompileCache.IsInModifiedModule(asms, tabState.DecompiledNodes) ||
 				DecompileCache.IsInModifiedModule(asms, tabState.TextView.References);
 		}
 
-		internal void DisableMemoryMappedIO()
-		{
+		internal void DisableMemoryMappedIO() {
 			DisableMemoryMappedIO(GetAllDnSpyFileInstances());
 		}
 
-		internal void DisableMemoryMappedIO(IEnumerable<DnSpyFile> files)
-		{
+		internal void DisableMemoryMappedIO(IEnumerable<DnSpyFile> files) {
 			foreach (var tabState in AllDecompileTabStates) {
 				// Make sure that the code doesn't try to reference memory that will be moved.
 				tabState.TextView.CancelDecompilation();
@@ -3097,8 +2883,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		public IEnumerable<DnSpyFile> GetAllDnSpyFileInstances()
-		{
+		public IEnumerable<DnSpyFile> GetAllDnSpyFileInstances() {
 			if (dnSpyFileListTreeNode == null)
 				yield break;
 			foreach (AssemblyTreeNode asmNode in dnSpyFileListTreeNode.Children) {
@@ -3111,8 +2896,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		internal void RefreshCodeCSharp(bool disassembleIL, bool decompileILAst, bool decompileCSharp, bool decompileVB)
-		{
+		internal void RefreshCodeCSharp(bool disassembleIL, bool decompileILAst, bool decompileCSharp, bool decompileVB) {
 			if (decompileILAst)
 				decompileCSharp = decompileVB = true;
 			if (decompileCSharp)
@@ -3127,180 +2911,147 @@ namespace ICSharpCode.ILSpy {
 				RefreshCodeVB();
 		}
 
-		void RefreshCodeIL()
-		{
+		void RefreshCodeIL() {
 			foreach (var tabState in AllDecompileTabStates) {
 				if (tabState.Language.Name == "IL")
 					ForceDecompile(tabState);
 			}
 		}
 
-		void RefreshCodeILAst()
-		{
+		void RefreshCodeILAst() {
 			foreach (var tabState in AllDecompileTabStates) {
 				if (tabState.Language.Name.StartsWith("ILAst (") && tabState.Language.Name.EndsWith(")"))
 					ForceDecompile(tabState);
 			}
 		}
 
-		void RefreshCodeCSharp()
-		{
+		void RefreshCodeCSharp() {
 			foreach (var tabState in AllDecompileTabStates) {
 				if (tabState.Language.Name == "C#" || tabState.Language.Name.StartsWith("C# - "))
 					ForceDecompile(tabState);
 			}
 		}
 
-		void RefreshCodeVB()
-		{
+		void RefreshCodeVB() {
 			foreach (var tabState in AllDecompileTabStates) {
 				if (tabState.Language.Name == "VB")
 					ForceDecompile(tabState);
 			}
 		}
 
-		void ForceDecompile(DecompileTabState tabState)
-		{
+		void ForceDecompile(DecompileTabState tabState) {
 			DecompileRestoreLocation(tabState, tabState.DecompiledNodes, null, true);
 		}
 
-		internal void RefreshTreeViewNodes()
-		{
+		internal void RefreshTreeViewNodes() {
 			RefreshTreeViewFilter();
 		}
 
-		internal bool NewHorizontalTabGroupCanExecute()
-		{
+		internal bool NewHorizontalTabGroupCanExecute() {
 			return tabGroupsManager.NewHorizontalTabGroupCanExecute();
 		}
 
-		internal void NewHorizontalTabGroup()
-		{
+		internal void NewHorizontalTabGroup() {
 			tabGroupsManager.NewHorizontalTabGroup();
 		}
 
-		internal bool NewVerticalTabGroupCanExecute()
-		{
+		internal bool NewVerticalTabGroupCanExecute() {
 			return tabGroupsManager.NewVerticalTabGroupCanExecute();
 		}
 
-		internal void NewVerticalTabGroup()
-		{
+		internal void NewVerticalTabGroup() {
 			tabGroupsManager.NewVerticalTabGroup();
 		}
 
-		internal bool MoveToNextTabGroupCanExecute()
-		{
+		internal bool MoveToNextTabGroupCanExecute() {
 			return tabGroupsManager.MoveToNextTabGroupCanExecute();
 		}
 
-		internal void MoveToNextTabGroup()
-		{
+		internal void MoveToNextTabGroup() {
 			tabGroupsManager.MoveToNextTabGroup();
 		}
 
-		internal bool MoveToPreviousTabGroupCanExecute()
-		{
+		internal bool MoveToPreviousTabGroupCanExecute() {
 			return tabGroupsManager.MoveToPreviousTabGroupCanExecute();
 		}
 
-		internal void MoveToPreviousTabGroup()
-		{
+		internal void MoveToPreviousTabGroup() {
 			tabGroupsManager.MoveToPreviousTabGroup();
 		}
 
-		internal bool MoveAllToNextTabGroupCanExecute()
-		{
+		internal bool MoveAllToNextTabGroupCanExecute() {
 			return tabGroupsManager.MoveAllToNextTabGroupCanExecute();
 		}
 
-		internal void MoveAllToNextTabGroup()
-		{
+		internal void MoveAllToNextTabGroup() {
 			tabGroupsManager.MoveAllToNextTabGroup();
 		}
 
-		internal bool MoveAllToPreviousTabGroupCanExecute()
-		{
+		internal bool MoveAllToPreviousTabGroupCanExecute() {
 			return tabGroupsManager.MoveAllToPreviousTabGroupCanExecute();
 		}
 
-		internal void MoveAllToPreviousTabGroup()
-		{
+		internal void MoveAllToPreviousTabGroup() {
 			tabGroupsManager.MoveAllToPreviousTabGroup();
 		}
 
-		internal bool MergeAllTabGroupsCanExecute()
-		{
+		internal bool MergeAllTabGroupsCanExecute() {
 			return tabGroupsManager.MergeAllTabGroupsCanExecute();
 		}
 
-		internal void MergeAllTabGroups()
-		{
+		internal void MergeAllTabGroups() {
 			tabGroupsManager.MergeAllTabGroups();
 		}
 
-		internal bool UseVerticalTabGroupsCanExecute()
-		{
+		internal bool UseVerticalTabGroupsCanExecute() {
 			return tabGroupsManager.UseVerticalTabGroupsCanExecute();
 		}
 
-		internal void UseVerticalTabGroups()
-		{
+		internal void UseVerticalTabGroups() {
 			tabGroupsManager.UseVerticalTabGroups();
 		}
 
-		internal bool UseHorizontalTabGroupsCanExecute()
-		{
+		internal bool UseHorizontalTabGroupsCanExecute() {
 			return tabGroupsManager.UseHorizontalTabGroupsCanExecute();
 		}
 
-		internal void UseHorizontalTabGroups()
-		{
+		internal void UseHorizontalTabGroups() {
 			tabGroupsManager.UseHorizontalTabGroups();
 		}
 
-		internal bool CloseTabGroupCanExecute()
-		{
+		internal bool CloseTabGroupCanExecute() {
 			return tabGroupsManager.CloseTabGroupCanExecute();
 		}
 
-		internal void CloseTabGroup()
-		{
+		internal void CloseTabGroup() {
 			tabGroupsManager.CloseTabGroup();
 		}
 
-		internal bool CloseAllTabGroupsButThisCanExecute()
-		{
+		internal bool CloseAllTabGroupsButThisCanExecute() {
 			return tabGroupsManager.CloseAllTabGroupsButThisCanExecute();
 		}
 
-		internal void CloseAllTabGroupsButThis()
-		{
+		internal void CloseAllTabGroupsButThis() {
 			tabGroupsManager.CloseAllTabGroupsButThis();
 		}
 
-		internal bool MoveTabGroupAfterNextTabGroupCanExecute()
-		{
+		internal bool MoveTabGroupAfterNextTabGroupCanExecute() {
 			return tabGroupsManager.MoveTabGroupAfterNextTabGroupCanExecute();
 		}
 
-		internal void MoveTabGroupAfterNextTabGroup()
-		{
+		internal void MoveTabGroupAfterNextTabGroup() {
 			tabGroupsManager.MoveTabGroupAfterNextTabGroup();
 		}
 
-		internal bool MoveTabGroupBeforePreviousTabGroupCanExecute()
-		{
+		internal bool MoveTabGroupBeforePreviousTabGroupCanExecute() {
 			return tabGroupsManager.MoveTabGroupBeforePreviousTabGroupCanExecute();
 		}
 
-		internal void MoveTabGroupBeforePreviousTabGroup()
-		{
+		internal void MoveTabGroupBeforePreviousTabGroup() {
 			tabGroupsManager.MoveTabGroupBeforePreviousTabGroup();
 		}
 
-		internal IEnumerable<TabState> GetTabStateInOrder()
-		{
+		internal IEnumerable<TabState> GetTabStateInOrder() {
 			var tabGroups = tabGroupsManager.AllTabGroups.ToArray();
 			int active = tabGroupsManager.ActiveIndex;
 			for (int i = 0; i < tabGroups.Length; i++) {
@@ -3315,8 +3066,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		internal bool SetActiveView(DecompilerTextView view)
-		{
+		internal bool SetActiveView(DecompilerTextView view) {
 			var tabState = TabState.GetTabState(view);
 			if (tabState == null)
 				return false;
@@ -3325,8 +3075,7 @@ namespace ICSharpCode.ILSpy {
 			return true;
 		}
 
-		internal bool SetActiveTab(TabState tabState)
-		{
+		internal bool SetActiveTab(TabState tabState) {
 			if (tabGroupsManager.SetActiveTab(tabState)) {
 				SetTabFocus(tabState);
 				return true;
@@ -3334,14 +3083,12 @@ namespace ICSharpCode.ILSpy {
 			return false;
 		}
 
-		internal void CloseTab(TabState tabState)
-		{
+		internal void CloseTab(TabState tabState) {
 			var tabManager = (TabManager<TabState>)tabState.Owner;
 			tabManager.CloseTab(tabState);
 		}
 
-		internal void ShowDecompilerTabsWindow()
-		{
+		internal void ShowDecompilerTabsWindow() {
 			var win = new DecompilerTabsWindow();
 			win.Owner = this;
 			win.LastActivatedTabState = ActiveTabState;
@@ -3357,14 +3104,12 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		protected override void OnDeactivated(EventArgs e)
-		{
+		protected override void OnDeactivated(EventArgs e) {
 			ClosePopups();
 			base.OnDeactivated(e);
 		}
 
-		public MsgBoxButton? ShowIgnorableMessageBox(string id, string msg, MessageBoxButton buttons, Window ownerWindow = null)
-		{
+		public MsgBoxButton? ShowIgnorableMessageBox(string id, string msg, MessageBoxButton buttons, Window ownerWindow = null) {
 			if (sessionSettings.IgnoredWarnings.Contains(id))
 				return null;
 
@@ -3376,14 +3121,12 @@ namespace ICSharpCode.ILSpy {
 			return button;
 		}
 
-		public MsgBoxButton ShowMessageBox(string msg, MessageBoxButton buttons = MessageBoxButton.OK, Window ownerWindow = null)
-		{
+		public MsgBoxButton ShowMessageBox(string msg, MessageBoxButton buttons = MessageBoxButton.OK, Window ownerWindow = null) {
 			bool? dontShowIsChecked;
 			return ShowMessageBoxInternal(ownerWindow, msg, buttons, false, out dontShowIsChecked);
 		}
 
-		MsgBoxButton ShowMessageBoxInternal(Window ownerWindow, string msg, MessageBoxButton buttons, bool showDontShowCheckBox, out bool? dontShowIsChecked)
-		{
+		MsgBoxButton ShowMessageBoxInternal(Window ownerWindow, string msg, MessageBoxButton buttons, bool showDontShowCheckBox, out bool? dontShowIsChecked) {
 			var msgBox = new MsgBox();
 			msgBox.textBlock.Text = msg;
 			msgBox.Owner = ownerWindow ?? this;

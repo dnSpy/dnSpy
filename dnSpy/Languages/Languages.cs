@@ -22,27 +22,22 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Composition.Hosting;
 using System.Linq;
 
-namespace ICSharpCode.ILSpy
-{
-	public static class Languages
-	{
+namespace ICSharpCode.ILSpy {
+	public static class Languages {
 		private static ReadOnlyCollection<Language> allLanguages;
 
 		/// <summary>
 		/// A list of all languages.
 		/// </summary>
-		public static ReadOnlyCollection<Language> AllLanguages
-		{
+		public static ReadOnlyCollection<Language> AllLanguages {
 			get { return allLanguages; }
 		}
 
-		public static void Initialize()
-		{
+		public static void Initialize() {
 			Initialize(null);
 		}
 
-		internal static void Initialize(CompositionContainer composition)
-		{
+		internal static void Initialize(CompositionContainer composition) {
 			List<Language> languages = new List<Language>();
 			if (composition != null)
 				languages.AddRange(composition.GetExportedValues<Language>());
@@ -67,10 +62,10 @@ namespace ICSharpCode.ILSpy
 			for (int i = 0; i < langs2.Count; i++)
 				languages.Insert(i, langs2[i]);
 
-			#if DEBUG
+#if DEBUG
 			languages.AddRange(ILAstLanguage.GetDebugLanguages());
 			languages.AddRange(CSharpLanguage.GetDebugLanguages());
-			#endif
+#endif
 			allLanguages = languages.AsReadOnly();
 		}
 
@@ -78,8 +73,7 @@ namespace ICSharpCode.ILSpy
 		/// Gets a language using its name.
 		/// If the language is not found, C# is returned instead.
 		/// </summary>
-		public static Language GetLanguage(string name)
-		{
+		public static Language GetLanguage(string name) {
 			return AllLanguages.FirstOrDefault(l => l.Name.Equals(name, StringComparison.OrdinalIgnoreCase)) ?? AllLanguages.First();
 		}
 	}

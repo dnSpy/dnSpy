@@ -31,13 +31,10 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	[Export(typeof(IPaneCreator))]
-	public class AnalyzerTreeViewCreator : IPaneCreator
-	{
-		public IPane Create(string name)
-		{
+	public class AnalyzerTreeViewCreator : IPaneCreator {
+		public IPane Create(string name) {
 			if (name == AnalyzerTreeView.Instance.PaneName)
 				return AnalyzerTreeView.Instance;
 			return null;
@@ -47,14 +44,11 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Analyzer tree view.
 	/// </summary>
-	public class AnalyzerTreeView : SharpTreeView, IPane
-	{
+	public class AnalyzerTreeView : SharpTreeView, IPane {
 		static AnalyzerTreeView instance;
 
-		public static AnalyzerTreeView Instance
-		{
-			get
-			{
+		public static AnalyzerTreeView Instance {
+			get {
 				if (instance == null) {
 					App.Current.VerifyAccess();
 					instance = new AnalyzerTreeView();
@@ -72,8 +66,7 @@ namespace ICSharpCode.ILSpy
 			get { return "Analyzer"; }
 		}
 
-		private AnalyzerTreeView()
-		{
+		private AnalyzerTreeView() {
 			this.ShowRoot = false;
 			this.Root = new AnalyzerRootNode { Language = MainWindow.Instance.CurrentLanguage };
 			this.BorderThickness = new Thickness(0);
@@ -84,13 +77,11 @@ namespace ICSharpCode.ILSpy
 			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 		}
 
-		void MainWindow_OnModuleModified(object sender, MainWindow.ModuleModifiedEventArgs e)
-		{
+		void MainWindow_OnModuleModified(object sender, MainWindow.ModuleModifiedEventArgs e) {
 			((AnalyzerRootNode)Root).HandleModelUpdated(e.DnSpyFile);
 		}
 
-		protected override void OnKeyDown(KeyEventArgs e)
-		{
+		protected override void OnKeyDown(KeyEventArgs e) {
 			if (e.Key == Key.Delete) {
 				var nodes = this.GetTopLevelSelection().ToArray();
 				if (nodes.Length > 0 && nodes.All(n => n.CanDelete())) {
@@ -111,24 +102,20 @@ namespace ICSharpCode.ILSpy
 			base.OnKeyDown(e);
 		}
 
-		public void FocusPane()
-		{
+		public void FocusPane() {
 			UIUtils.FocusSelector(this);
 		}
 
-		void Themes_ThemeChanged(object sender, EventArgs e)
-		{
+		void Themes_ThemeChanged(object sender, EventArgs e) {
 			UpdateUIColors();
 		}
 
-		void CurrentDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e)
-		{
+		void CurrentDisplaySettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "SyntaxHighlightAnalyzerTreeViewUI" || e.PropertyName == "ShowMetadataTokens")
 				UpdateUIColors();
 		}
 
-		void UpdateUIColors()
-		{
+		void UpdateUIColors() {
 			foreach (var c in this.Root.DescendantsAndSelf()) {
 				var atv = c as AnalyzerTreeNode;
 				if (atv != null)
@@ -139,13 +126,13 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		void MainWindow_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e)
-		{
+		void MainWindow_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (MainWindow.Instance.DnSpyFileList.IsReArranging)
 				return;
 			if (e.Action == NotifyCollectionChangedAction.Reset) {
 				this.Root.Children.Clear();
-			} else {
+			}
+			else {
 				List<DnSpyFile> removedAssemblies = new List<DnSpyFile>();
 				if (e.OldItems != null)
 					removedAssemblies.AddRange(e.OldItems.Cast<DnSpyFile>());
@@ -156,18 +143,15 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		public void Show()
-		{
+		public void Show() {
 			if (!IsVisible)
 				MainWindow.Instance.ShowInBottomPane(this);
 		}
 
-		public void Opened()
-		{
+		public void Opened() {
 		}
 
-		public void Show(AnalyzerTreeNode node)
-		{
+		public void Show(AnalyzerTreeNode node) {
 			Show();
 
 			node.IsExpanded = true;
@@ -175,15 +159,14 @@ namespace ICSharpCode.ILSpy
 			this.SelectedItem = node;
 			this.FocusNode(node);
 		}
-		
-		public void ShowOrFocus(AnalyzerTreeNode node)
-		{
+
+		public void ShowOrFocus(AnalyzerTreeNode node) {
 			if (node is AnalyzerEntityTreeNode) {
 				var an = node as AnalyzerEntityTreeNode;
 				var found = this.Root.Children.OfType<AnalyzerEntityTreeNode>().FirstOrDefault(n => n.Member == an.Member);
 				if (found != null) {
 					Show();
-					
+
 					found.IsExpanded = true;
 					this.SelectedItem = found;
 					this.FocusNode(found);
@@ -193,32 +176,27 @@ namespace ICSharpCode.ILSpy
 			Show(node);
 		}
 
-		void IPane.Closed()
-		{
+		void IPane.Closed() {
 			((AnalyzerRootNode)this.Root).DisposeSelfAndChildren();
 			this.Root.Children.Clear();
 		}
-		
-		sealed class AnalyzerRootNode : AnalyzerTreeNode
-		{
-			protected override void Write(ITextOutput output, Language language)
-			{
+
+		sealed class AnalyzerRootNode : AnalyzerTreeNode {
+			protected override void Write(ITextOutput output, Language language) {
 			}
 
-			public override bool HandleAssemblyListChanged(ICollection<DnSpyFile> removedAssemblies, ICollection<DnSpyFile> addedAssemblies)
-			{
+			public override bool HandleAssemblyListChanged(ICollection<DnSpyFile> removedAssemblies, ICollection<DnSpyFile> addedAssemblies) {
 				this.Children.RemoveAll(
-					delegate(SharpTreeNode n) {
+					delegate (SharpTreeNode n) {
 						AnalyzerTreeNode an = n as AnalyzerTreeNode;
 						return an == null || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
 					});
 				return true;
 			}
 
-			public override bool HandleModelUpdated(DnSpyFile asm)
-			{
+			public override bool HandleModelUpdated(DnSpyFile asm) {
 				this.Children.RemoveAll(
-					delegate(SharpTreeNode n) {
+					delegate (SharpTreeNode n) {
 						AnalyzerTreeNode an = n as AnalyzerTreeNode;
 						return an == null || !an.HandleModelUpdated(asm);
 					});

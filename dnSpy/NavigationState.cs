@@ -21,32 +21,27 @@ using System.Collections.Generic;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy
-{
-	public class NavigationState : IEquatable<NavigationState>
-	{
+namespace ICSharpCode.ILSpy {
+	public class NavigationState : IEquatable<NavigationState> {
 		private readonly HashSet<SharpTreeNode> treeNodes;
 
 		public IEnumerable<SharpTreeNode> TreeNodes { get { return treeNodes; } }
 		public DecompilerTextViewState ViewState { get; private set; }
 		public Language Language { get; private set; }
 
-		public NavigationState(DecompilerTextViewState viewState, Language language)
-		{
+		public NavigationState(DecompilerTextViewState viewState, Language language) {
 			this.treeNodes = new HashSet<SharpTreeNode>(viewState.DecompiledNodes);
 			ViewState = viewState;
 			Language = language;
 		}
 
-		public NavigationState(IEnumerable<SharpTreeNode> treeNodes, Language language)
-		{
+		public NavigationState(IEnumerable<SharpTreeNode> treeNodes, Language language) {
 			this.treeNodes = new HashSet<SharpTreeNode>(treeNodes);
 			Language = language;
 		}
 
 
-		public bool Equals(NavigationState other)
-		{
+		public bool Equals(NavigationState other) {
 			if (Language != other.Language)
 				return false;
 			if (ViewState == other.ViewState)

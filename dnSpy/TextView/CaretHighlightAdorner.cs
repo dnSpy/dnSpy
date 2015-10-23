@@ -25,40 +25,36 @@ using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using ICSharpCode.AvalonEdit.Editing;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView {
 	/// <summary>
 	/// Animated rectangle around the caret.
 	/// This is used after clicking links that lead to another location within the text view.
 	/// </summary>
-	sealed class CaretHighlightAdorner : Adorner
-	{
+	sealed class CaretHighlightAdorner : Adorner {
 		readonly Pen pen;
 		readonly RectangleGeometry geometry;
-		
+
 		public CaretHighlightAdorner(TextArea textArea)
-			: base(textArea.TextView)
-		{
+			: base(textArea.TextView) {
 			Rect min = textArea.Caret.CalculateCaretRectangle();
 			min.Offset(-textArea.TextView.ScrollOffset);
-			
+
 			Rect max = min;
 			double size = Math.Max(min.Width, min.Height) * 0.25;
 			max.Inflate(size, size);
-			
+
 			pen = new Pen(TextBlock.GetForeground(textArea.TextView).Clone(), 1);
-			
+
 			geometry = new RectangleGeometry(min, 2, 2);
 			geometry.BeginAnimation(RectangleGeometry.RectProperty, new RectAnimation(min, max, new Duration(TimeSpan.FromMilliseconds(300))) { AutoReverse = true });
 			pen.Brush.BeginAnimation(Brush.OpacityProperty, new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(200))) { BeginTime = TimeSpan.FromMilliseconds(450) });
 		}
-		
-		public static void DisplayCaretHighlightAnimation(TextArea textArea)
-		{
+
+		public static void DisplayCaretHighlightAnimation(TextArea textArea) {
 			AdornerLayer layer = AdornerLayer.GetAdornerLayer(textArea.TextView);
 			CaretHighlightAdorner adorner = new CaretHighlightAdorner(textArea);
 			layer.Add(adorner);
-			
+
 			DispatcherTimer timer = new DispatcherTimer();
 			timer.Interval = TimeSpan.FromSeconds(1);
 			timer.Tick += delegate {
@@ -67,9 +63,8 @@ namespace ICSharpCode.ILSpy.TextView
 			};
 			timer.Start();
 		}
-		
-		protected override void OnRender(DrawingContext drawingContext)
-		{
+
+		protected override void OnRender(DrawingContext drawingContext) {
 			drawingContext.DrawGeometry(null, pen, geometry);
 		}
 	}

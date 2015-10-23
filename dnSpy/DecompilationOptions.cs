@@ -23,17 +23,14 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TextView;
 
-namespace ICSharpCode.ILSpy
-{
-	public class ProjectInfo : IEquatable<ProjectInfo>
-	{
+namespace ICSharpCode.ILSpy {
+	public class ProjectInfo : IEquatable<ProjectInfo> {
 		public string AssemblyFileName { get; set; }
 		public string AssemblySimpleName { get; set; }
 		public string ProjectFileName { get; set; }
 		public Guid ProjectGuid { get; set; }
 
-		public bool Equals(ProjectInfo other)
-		{
+		public bool Equals(ProjectInfo other) {
 			if (other == null)
 				return false;
 			return (AssemblyFileName ?? string.Empty).ToUpperInvariant() == (other.AssemblyFileName ?? string.Empty).ToUpperInvariant() &&
@@ -42,13 +39,11 @@ namespace ICSharpCode.ILSpy
 				ProjectGuid == other.ProjectGuid;
 		}
 
-		public override bool Equals(object obj)
-		{
+		public override bool Equals(object obj) {
 			return Equals(obj as ProjectInfo);
 		}
 
-		public override int GetHashCode()
-		{
+		public override int GetHashCode() {
 			return (AssemblyFileName ?? string.Empty).ToUpperInvariant().GetHashCode() ^
 				(AssemblySimpleName ?? string.Empty).ToUpperInvariant().GetHashCode() ^
 				(ProjectFileName ?? string.Empty).ToUpperInvariant().GetHashCode() ^
@@ -59,8 +54,7 @@ namespace ICSharpCode.ILSpy
 	/// <summary>
 	/// Options passed to the decompiler.
 	/// </summary>
-	public class DecompilationOptions : IEquatable<DecompilationOptions>
-	{
+	public class DecompilationOptions : IEquatable<DecompilationOptions> {
 		/// <summary>
 		/// Gets the active text view
 		/// </summary>
@@ -71,7 +65,7 @@ namespace ICSharpCode.ILSpy
 		/// If this option is false, language bindings are allowed to show the only headers of the decompiled element's children.
 		/// </summary>
 		public bool FullDecompilation { get; set; }
-		
+
 		/// <summary>
 		/// Gets/Sets the directory into which the project is saved.
 		/// </summary>
@@ -99,7 +93,7 @@ namespace ICSharpCode.ILSpy
 		/// let the exception pass through (the decompile operation will fail of course).
 		/// </summary>
 		public bool DontShowCreateMethodBodyExceptions { get; set; }
-		
+
 		/// <summary>
 		/// Gets the cancellation token that is used to abort the decompiler.
 		/// </summary>
@@ -108,7 +102,7 @@ namespace ICSharpCode.ILSpy
 		/// to allow for cooperative cancellation of the decompilation task.
 		/// </remarks>
 		public CancellationToken CancellationToken { get; set; }
-		
+
 		/// <summary>
 		/// Gets the settings for the decompiler.
 		/// </summary>
@@ -122,13 +116,11 @@ namespace ICSharpCode.ILSpy
 		/// </remarks>
 		public TextView.DecompilerTextViewState TextViewState { get; set; }
 
-		public DecompilationOptions()
-		{
+		public DecompilationOptions() {
 			this.DecompilerSettings = DecompilerSettingsPanel.CurrentDecompilerSettings;
 		}
 
-		public bool Equals(DecompilationOptions other)
-		{
+		public bool Equals(DecompilationOptions other) {
 			if (other == null)
 				return false;
 
@@ -162,13 +154,11 @@ namespace ICSharpCode.ILSpy
 			return true;
 		}
 
-		public override bool Equals(object obj)
-		{
+		public override bool Equals(object obj) {
 			return Equals(obj as DecompilationOptions);
 		}
 
-		public override int GetHashCode()
-		{
+		public override int GetHashCode() {
 			unchecked {
 				uint h = 0;
 
@@ -190,8 +180,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		internal DecompilationOptions SimpleClone()
-		{
+		internal DecompilationOptions SimpleClone() {
 			return (DecompilationOptions)this.MemberwiseClone();
 		}
 	}

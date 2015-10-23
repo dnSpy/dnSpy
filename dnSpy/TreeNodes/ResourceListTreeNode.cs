@@ -30,21 +30,18 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Lists the embedded resources in an assembly.
 	/// </summary>
-	sealed class ResourceListTreeNode : ILSpyTreeNode
-	{
+	sealed class ResourceListTreeNode : ILSpyTreeNode {
 		readonly ModuleDef module;
-		
-		public ResourceListTreeNode(ModuleDef module)
-		{
+
+		public ResourceListTreeNode(ModuleDef module) {
 			this.LazyLoading = true;
 			this.module = module;
 		}
-		
-		protected override void Write(ITextOutput output, Language language)
-		{
+
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Resources", TextTokenType.Text);
 		}
-		
+
 		public override object Icon {
 			get { return ImageCache.Instance.GetImage("FolderClosed", BackgroundType.TreeNode); }
 		}
@@ -52,17 +49,15 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		public override object ExpandedIcon {
 			get { return ImageCache.Instance.GetImage("FolderOpen", BackgroundType.TreeNode); }
 		}
-		
-		protected override void LoadChildren()
-		{
+
+		protected override void LoadChildren() {
 			var ary = module.Resources.ToArray();
 			Array.Sort(ary, ResourceComparer.Instance);
 			foreach (var r in ary)
 				this.Children.Add(ResourceFactory.Create(module, r));
 		}
 
-		protected override int GetNewChildIndex(SharpTreeNode node)
-		{
+		protected override int GetNewChildIndex(SharpTreeNode node) {
 			if (node is ResourceTreeNode)
 				return GetNewChildIndex(node, (a, b) => ResourceComparer.Instance.Compare(((ResourceTreeNode)a).Resource, ((ResourceTreeNode)b).Resource));
 			return base.GetNewChildIndex(node);
@@ -72,8 +67,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			get { return false; }
 		}
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
@@ -82,9 +76,8 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			else
 				return FilterResult.Recurse;
 		}
-		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureChildrenFiltered));
 			foreach (ResourceTreeNode child in this.Children) {
 				child.Decompile(language, output);

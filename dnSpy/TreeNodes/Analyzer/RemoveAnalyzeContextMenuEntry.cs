@@ -18,28 +18,23 @@
 
 using System.Linq;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	[ExportContextMenuEntryAttribute(Header = "_Remove", Icon = "Delete", Order = 940, Category = "Other", InputGestureText = "Del")]
-	internal sealed class RemoveAnalyzeContextMenuEntry : IContextMenuEntry
-	{
-		public bool IsVisible(ContextMenuEntryContext context)
-		{
+	internal sealed class RemoveAnalyzeContextMenuEntry : IContextMenuEntry {
+		public bool IsVisible(ContextMenuEntryContext context) {
 			if (context.Element is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))
 				return true;
-            return false;
+			return false;
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context)
-		{
-            return true;
+		public bool IsEnabled(ContextMenuEntryContext context) {
+			return true;
 		}
 
-		public void Execute(ContextMenuEntryContext context)
-		{
-			if (context.SelectedTreeNodes != null) {                
+		public void Execute(ContextMenuEntryContext context) {
+			if (context.SelectedTreeNodes != null) {
 				foreach (var node in context.SelectedTreeNodes) {
-                    node.Parent.Children.Remove(node);
+					node.Parent.Children.Remove(node);
 				}
 			}
 		}

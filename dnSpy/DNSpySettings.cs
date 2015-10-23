@@ -26,20 +26,17 @@ namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Manages dnSpy settings.
 	/// </summary>
-	public class DNSpySettings
-	{
+	public class DNSpySettings {
 		readonly XElement root;
-		
-		DNSpySettings()
-		{
+
+		DNSpySettings() {
 			this.root = new XElement("dnSpy");
 		}
-		
-		DNSpySettings(XElement root)
-		{
+
+		DNSpySettings(XElement root) {
 			this.root = root;
 		}
-		
+
 		public XElement this[XName section] {
 			get {
 				return root.Element(section) ?? new XElement(section);
@@ -56,30 +53,29 @@ namespace ICSharpCode.ILSpy {
 		/// <returns>
 		/// An instance used to access the loaded settings.
 		/// </returns>
-		public static DNSpySettings Load()
-		{
+		public static DNSpySettings Load() {
 			using (new MutexProtector(ConfigFileMutex)) {
 				try {
 					XDocument doc = LoadWithoutCheckingCharacters(GetConfigFile());
 					return new DNSpySettings(doc.Root);
-				} catch (IOException) {
+				}
+				catch (IOException) {
 					return new DNSpySettings();
-				} catch (XmlException) {
+				}
+				catch (XmlException) {
 					return new DNSpySettings();
 				}
 			}
 		}
-		
-		static XDocument LoadWithoutCheckingCharacters(string fileName)
-		{
+
+		static XDocument LoadWithoutCheckingCharacters(string fileName) {
 			return XDocument.Load(fileName, LoadOptions.None);
 		}
-		
+
 		/// <summary>
 		/// Saves a setting section.
 		/// </summary>
-		public static void SaveSettings(XElement section)
-		{
+		public static void SaveSettings(XElement section) {
 			Update(
 				delegate (XElement root) {
 					XElement existingElement = root.Element(section.Name);
@@ -89,24 +85,25 @@ namespace ICSharpCode.ILSpy {
 						root.Add(section);
 				});
 		}
-		
+
 		/// <summary>
 		/// Updates the saved settings.
 		/// We always reload the file on updates to ensure we aren't overwriting unrelated changes performed
 		/// by another dnSpy instance.
 		/// </summary>
-		public static void Update(Action<XElement> action)
-		{
+		public static void Update(Action<XElement> action) {
 			using (new MutexProtector(ConfigFileMutex)) {
 				string config = GetConfigFile();
 				XDocument doc;
 				try {
 					doc = LoadWithoutCheckingCharacters(config);
-				} catch (IOException) {
+				}
+				catch (IOException) {
 					// ensure the directory exists
 					Directory.CreateDirectory(Path.GetDirectoryName(config));
 					doc = new XDocument(new XElement("dnSpy"));
-				} catch (XmlException) {
+				}
+				catch (XmlException) {
 					doc = new XDocument(new XElement("dnSpy"));
 				}
 				doc.Root.SetAttributeValue("version", typeof(MainWindow).Assembly.GetName().Version.ToString());
@@ -114,35 +111,32 @@ namespace ICSharpCode.ILSpy {
 				doc.Save(config, SaveOptions.None);
 			}
 		}
-		
-		static string GetConfigFile()
-		{
+
+		static string GetConfigFile() {
 			return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "dnSpy", "dnSpy.xml");
 		}
-		
+
 		const string ConfigFileMutex = "D37A50B7-7071-4727-886E-A69D4F24AFA4";
-		
+
 		/// <summary>
 		/// Helper class for serializing access to the config file when multiple dnSpy instances are running.
 		/// </summary>
-		sealed class MutexProtector : IDisposable
-		{
+		sealed class MutexProtector : IDisposable {
 			readonly Mutex mutex;
-			
-			public MutexProtector(string name)
-			{
+
+			public MutexProtector(string name) {
 				bool createdNew;
 				this.mutex = new Mutex(true, name, out createdNew);
 				if (!createdNew) {
 					try {
 						mutex.WaitOne();
-					} catch (AbandonedMutexException) {
+					}
+					catch (AbandonedMutexException) {
 					}
 				}
 			}
-			
-			public void Dispose()
-			{
+
+			public void Dispose() {
 				mutex.ReleaseMutex();
 				mutex.Dispose();
 			}

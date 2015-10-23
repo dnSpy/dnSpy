@@ -27,15 +27,13 @@ using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal sealed class AnalyzedFieldAccessTreeNode : AnalyzerSearchTreeNode
-	{
+	internal sealed class AnalyzedFieldAccessTreeNode : AnalyzerSearchTreeNode {
 		private readonly bool showWrites; // true: show writes; false: show read access
 		private readonly FieldDef analyzedField;
 		private Lazy<Hashtable> foundMethods;
 		private readonly object hashLock = new object();
 
-		public AnalyzedFieldAccessTreeNode(FieldDef analyzedField, bool showWrites)
-		{
+		public AnalyzedFieldAccessTreeNode(FieldDef analyzedField, bool showWrites) {
 			if (analyzedField == null)
 				throw new ArgumentNullException("analyzedField");
 
@@ -43,13 +41,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			this.showWrites = showWrites;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write(showWrites ? "Assigned By" : "Read By", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			foundMethods = new Lazy<Hashtable>(LazyThreadSafetyMode.ExecutionAndPublication);
 
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedField, FindReferencesInType);
@@ -60,8 +56,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			foundMethods = null;
 		}
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type) {
 			foreach (MethodDef method in type.Methods) {
 				bool found = false;
 				if (!method.HasBody)
@@ -90,30 +85,29 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		private bool CanBeReference(Code code)
-		{
+		private bool CanBeReference(Code code) {
 			switch (code) {
-				case Code.Ldfld:
-				case Code.Ldsfld:
-					return !showWrites;
-				case Code.Stfld:
-				case Code.Stsfld:
-					return showWrites;
-				case Code.Ldflda:
-				case Code.Ldsflda:
-					return true; // always show address-loading
-				default:
-					return false;
+			case Code.Ldfld:
+			case Code.Ldsfld:
+				return !showWrites;
+			case Code.Stfld:
+			case Code.Stsfld:
+				return showWrites;
+			case Code.Ldflda:
+			case Code.Ldsflda:
+				return true; // always show address-loading
+			default:
+				return false;
 			}
 		}
 
-		private bool HasAlreadyBeenFound(MethodDef method)
-		{
+		private bool HasAlreadyBeenFound(MethodDef method) {
 			Hashtable hashtable = foundMethods.Value;
 			lock (hashLock) {
 				if (hashtable.Contains(method)) {
 					return true;
-				} else {
+				}
+				else {
 					hashtable.Add(method, null);
 					return false;
 				}

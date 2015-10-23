@@ -28,13 +28,11 @@ namespace ICSharpCode.ILSpy.XmlDoc {
 	/// <summary>
 	/// Helps finding and loading .xml documentation.
 	/// </summary>
-	public static class XmlDocLoader
-	{
+	public static class XmlDocLoader {
 		static readonly Lazy<XmlDocumentationProvider> mscorlibDocumentation = new Lazy<XmlDocumentationProvider>(LoadMscorlibDocumentation);
 		static readonly ConditionalWeakTable<ModuleDef, XmlDocumentationProvider> cache = new ConditionalWeakTable<ModuleDef, XmlDocumentationProvider>();
-		
-		static XmlDocumentationProvider LoadMscorlibDocumentation()
-		{
+
+		static XmlDocumentationProvider LoadMscorlibDocumentation() {
 			string xmlDocFile = FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_40)
 				?? FindXmlDocumentation("mscorlib.dll", MDHeaderRuntimeVersion.MS_CLR_20);
 			if (xmlDocFile != null)
@@ -42,13 +40,12 @@ namespace ICSharpCode.ILSpy.XmlDoc {
 			else
 				return null;
 		}
-		
+
 		public static XmlDocumentationProvider MscorlibDocumentation {
 			get { return mscorlibDocumentation.Value; }
 		}
-		
-		public static XmlDocumentationProvider LoadDocumentation(ModuleDef module)
-		{
+
+		public static XmlDocumentationProvider LoadDocumentation(ModuleDef module) {
 			if (module == null)
 				throw new ArgumentNullException("module");
 			lock (cache) {
@@ -64,12 +61,11 @@ namespace ICSharpCode.ILSpy.XmlDoc {
 				return xmlDoc;
 			}
 		}
-		
+
 		static readonly string referenceAssembliesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Reference Assemblies", "Microsoft", "Framework");
 		static readonly string frameworkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Microsoft.NET", "Framework");
-		
-		static string FindXmlDocumentation(string assemblyFileName, string runtime)
-		{
+
+		static string FindXmlDocumentation(string assemblyFileName, string runtime) {
 			if (string.IsNullOrEmpty(assemblyFileName))
 				return null;
 			if (runtime.StartsWith(MDHeaderRuntimeVersion.MS_CLR_10_PREFIX_X86RETAIL) ||
@@ -92,7 +88,7 @@ namespace ICSharpCode.ILSpy.XmlDoc {
 					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, "v3.0", assemblyFileName))
 					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, ".NETFramework", "v3.5", "Profile", "Client", assemblyFileName));
 			}
-			else {	// .NET 4.0
+			else {  // .NET 4.0
 				fileName = LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, ".NETFramework", "v4.5.1", assemblyFileName))
 					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, ".NETFramework", "v4.5", assemblyFileName))
 					?? LookupLocalizedXmlDoc(Path.Combine(referenceAssembliesPath, ".NETFramework", "v4.0", assemblyFileName))
@@ -119,16 +115,15 @@ namespace ICSharpCode.ILSpy.XmlDoc {
 				return runtime;
 			return runtime.Substring(0, min);
 		}
-		
-		static string LookupLocalizedXmlDoc(string fileName)
-		{
+
+		static string LookupLocalizedXmlDoc(string fileName) {
 			if (string.IsNullOrEmpty(fileName))
 				return null;
-			
+
 			string xmlFileName = Path.ChangeExtension(fileName, ".xml");
 			string currentCulture = System.Threading.Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName;
 			string localizedXmlDocFile = GetLocalizedName(xmlFileName, currentCulture);
-			
+
 			//Debug.WriteLine("Try find XMLDoc @" + localizedXmlDocFile);
 			if (File.Exists(localizedXmlDocFile)) {
 				return localizedXmlDocFile;
@@ -146,9 +141,8 @@ namespace ICSharpCode.ILSpy.XmlDoc {
 			}
 			return null;
 		}
-		
-		static string GetLocalizedName(string fileName, string language)
-		{
+
+		static string GetLocalizedName(string fileName, string language) {
 			string localizedXmlDocFile = Path.GetDirectoryName(fileName);
 			localizedXmlDocFile = Path.Combine(localizedXmlDocFile, language);
 			localizedXmlDocFile = Path.Combine(localizedXmlDocFile, Path.GetFileName(fileName));

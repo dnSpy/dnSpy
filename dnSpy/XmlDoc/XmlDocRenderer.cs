@@ -24,8 +24,7 @@ using System.Xml;
 using dnSpy.NRefactory;
 
 namespace ICSharpCode.ILSpy.XmlDoc {
-	public interface IXmlDocOutput
-	{
+	public interface IXmlDocOutput {
 		void WriteNewLine();
 		void WriteSpace();
 		void Write(string s, TextTokenType tokenType);
@@ -34,52 +33,45 @@ namespace ICSharpCode.ILSpy.XmlDoc {
 	/// <summary>
 	/// Renders XML documentation into a WPF <see cref="TextBlock"/>.
 	/// </summary>
-	public class XmlDocRenderer : IXmlDocOutput
-	{
+	public class XmlDocRenderer : IXmlDocOutput {
 		readonly StringBuilder ret = new StringBuilder();
 
-		void IXmlDocOutput.WriteNewLine()
-		{
+		void IXmlDocOutput.WriteNewLine() {
 			ret.AppendLine();
 		}
 
-		void IXmlDocOutput.WriteSpace()
-		{
+		void IXmlDocOutput.WriteSpace() {
 			ret.Append(' ');
 		}
 
-		void IXmlDocOutput.Write(string s, TextTokenType tokenType)
-		{
+		void IXmlDocOutput.Write(string s, TextTokenType tokenType) {
 			ret.Append(s);
 		}
-		
-		public void AppendText(string text)
-		{
+
+		public void AppendText(string text) {
 			ret.Append(text);
 		}
-		
-		public void AddXmlDocumentation(string xmlDocumentation)
-		{
+
+		public void AddXmlDocumentation(string xmlDocumentation) {
 			WriteXmlDoc(this, xmlDocumentation);
 		}
 
-		internal static bool WriteXmlDoc(IXmlDocOutput output, string xmlDocumentation)
-		{
+		internal static bool WriteXmlDoc(IXmlDocOutput output, string xmlDocumentation) {
 			if (xmlDocumentation == null)
 				return false;
 			try {
 				XmlTextReader r = new XmlTextReader(new StringReader("<docroot>" + xmlDocumentation + "</docroot>"));
 				r.XmlResolver = null;
 				AddXmlDocumentation(output, r);
-			} catch (XmlException) {
+			}
+			catch (XmlException) {
 			}
 			return true;
 		}
-		
+
 		internal static readonly Regex whitespace = new Regex(@"\s+");
 
-		static void AddXmlDocumentation(IXmlDocOutput output, XmlReader xml)
-		{
+		static void AddXmlDocumentation(IXmlDocOutput output, XmlReader xml) {
 			string lastElemName = string.Empty;
 			bool isNewLine = true;
 			while (xml.Read()) {
@@ -88,78 +80,79 @@ namespace ICSharpCode.ILSpy.XmlDoc {
 					if (!xml.IsEmptyElement)
 						lastElemName = elname;
 					switch (elname) {
-						case "filterpriority":
-						case "remarks":
-							xml.Skip();
-							break;
-						case "example":
-							output.WriteNewLine();
-							output.Write("Example", TextTokenType.XmlDocToolTipExample);
-							output.Write(":", TextTokenType.XmlDocToolTipColon);
-							output.WriteNewLine();
-							isNewLine = true;
-							break;
-						case "exception":
-							output.WriteNewLine();
-							output.Write(GetCref(xml["cref"]), TextTokenType.XmlDocToolTipExceptionCref);
-							output.Write(":", TextTokenType.XmlDocToolTipColon);
-							output.WriteSpace();
-							isNewLine = false;
-							break;
-						case "returns":
-							output.WriteNewLine();
-							output.Write("Returns", TextTokenType.XmlDocToolTipReturns);
-							output.Write(":", TextTokenType.XmlDocToolTipColon);
-							output.WriteSpace();
-							isNewLine = false;
-							break;
-						case "see":
-							output.Write(GetCref(xml["cref"]), TextTokenType.XmlDocToolTipSeeCref);
-							output.Write((xml["langword"] ?? string.Empty).Trim(), TextTokenType.XmlDocToolTipSeeLangword);
-							isNewLine = false;
-							break;
-						case "seealso":
-							output.WriteNewLine();
-							output.Write("See also", TextTokenType.XmlDocToolTipSeeAlso);
-							output.Write(":", TextTokenType.XmlDocToolTipColon);
-							output.WriteSpace();
-							output.Write(GetCref(xml["cref"]), TextTokenType.XmlDocToolTipSeeAlsoCref);
-							isNewLine = false;
-							break;
-						case "paramref":
-							output.Write((xml["name"] ?? string.Empty).Trim(), TextTokenType.XmlDocToolTipParamRefName);
-							isNewLine = false;
-							break;
-						case "param":
-							output.WriteNewLine();
-							output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), TextTokenType.XmlDocToolTipParamName);
-							output.Write(":", TextTokenType.XmlDocToolTipColon);
-							output.WriteSpace();
-							isNewLine = false;
-							break;
-						case "typeparam":
-							output.WriteNewLine();
-							output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), TextTokenType.XmlDocToolTipTypeParamName);
-							output.Write(":", TextTokenType.XmlDocToolTipColon);
-							output.WriteSpace();
-							isNewLine = false;
-							break;
-						case "value":
-							output.WriteNewLine();
-							output.Write("Value", TextTokenType.XmlDocToolTipValue);
-							output.Write(":", TextTokenType.XmlDocToolTipColon);
-							output.WriteNewLine();
-							isNewLine = true;
-							break;
-						case "br":
-						case "para":
-							output.WriteNewLine();
-							isNewLine = true;
-							break;
-						default:
-							break;
+					case "filterpriority":
+					case "remarks":
+						xml.Skip();
+						break;
+					case "example":
+						output.WriteNewLine();
+						output.Write("Example", TextTokenType.XmlDocToolTipExample);
+						output.Write(":", TextTokenType.XmlDocToolTipColon);
+						output.WriteNewLine();
+						isNewLine = true;
+						break;
+					case "exception":
+						output.WriteNewLine();
+						output.Write(GetCref(xml["cref"]), TextTokenType.XmlDocToolTipExceptionCref);
+						output.Write(":", TextTokenType.XmlDocToolTipColon);
+						output.WriteSpace();
+						isNewLine = false;
+						break;
+					case "returns":
+						output.WriteNewLine();
+						output.Write("Returns", TextTokenType.XmlDocToolTipReturns);
+						output.Write(":", TextTokenType.XmlDocToolTipColon);
+						output.WriteSpace();
+						isNewLine = false;
+						break;
+					case "see":
+						output.Write(GetCref(xml["cref"]), TextTokenType.XmlDocToolTipSeeCref);
+						output.Write((xml["langword"] ?? string.Empty).Trim(), TextTokenType.XmlDocToolTipSeeLangword);
+						isNewLine = false;
+						break;
+					case "seealso":
+						output.WriteNewLine();
+						output.Write("See also", TextTokenType.XmlDocToolTipSeeAlso);
+						output.Write(":", TextTokenType.XmlDocToolTipColon);
+						output.WriteSpace();
+						output.Write(GetCref(xml["cref"]), TextTokenType.XmlDocToolTipSeeAlsoCref);
+						isNewLine = false;
+						break;
+					case "paramref":
+						output.Write((xml["name"] ?? string.Empty).Trim(), TextTokenType.XmlDocToolTipParamRefName);
+						isNewLine = false;
+						break;
+					case "param":
+						output.WriteNewLine();
+						output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), TextTokenType.XmlDocToolTipParamName);
+						output.Write(":", TextTokenType.XmlDocToolTipColon);
+						output.WriteSpace();
+						isNewLine = false;
+						break;
+					case "typeparam":
+						output.WriteNewLine();
+						output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), TextTokenType.XmlDocToolTipTypeParamName);
+						output.Write(":", TextTokenType.XmlDocToolTipColon);
+						output.WriteSpace();
+						isNewLine = false;
+						break;
+					case "value":
+						output.WriteNewLine();
+						output.Write("Value", TextTokenType.XmlDocToolTipValue);
+						output.Write(":", TextTokenType.XmlDocToolTipColon);
+						output.WriteNewLine();
+						isNewLine = true;
+						break;
+					case "br":
+					case "para":
+						output.WriteNewLine();
+						isNewLine = true;
+						break;
+					default:
+						break;
 					}
-				} else if (xml.NodeType == XmlNodeType.Text) {
+				}
+				else if (xml.NodeType == XmlNodeType.Text) {
 					var s = whitespace.Replace(xml.Value, " ");
 					if (isNewLine)
 						s = s.TrimStart();
@@ -168,9 +161,8 @@ namespace ICSharpCode.ILSpy.XmlDoc {
 				}
 			}
 		}
-		
-		internal static string GetCref(string cref)
-		{
+
+		internal static string GetCref(string cref) {
 			if (string.IsNullOrWhiteSpace(cref))
 				return string.Empty;
 			if (cref.Length < 2) {
@@ -181,14 +173,12 @@ namespace ICSharpCode.ILSpy.XmlDoc {
 			}
 			return cref.Trim();
 		}
-		
-		public TextBlock CreateTextBlock()
-		{
+
+		public TextBlock CreateTextBlock() {
 			return new TextBlock { Text = ret.ToString() };
 		}
 
-		public override string ToString()
-		{
+		public override string ToString() {
 			return ret.ToString();
 		}
 	}

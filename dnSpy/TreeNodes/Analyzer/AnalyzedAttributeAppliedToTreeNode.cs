@@ -28,8 +28,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory.Utils;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal sealed class AnalyzedAttributeAppliedToTreeNode : AnalyzerSearchTreeNode
-	{
+	internal sealed class AnalyzedAttributeAppliedToTreeNode : AnalyzerSearchTreeNode {
 		private readonly TypeDef analyzedType;
 		private readonly string attributeName;
 
@@ -38,13 +37,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		private bool inherited = true;
 		private ConcurrentDictionary<MethodDef, int> foundMethods;
 
-		public static bool CanShow(TypeDef type)
-		{
+		public static bool CanShow(TypeDef type) {
 			return type.IsClass && type.IsCustomAttribute();
 		}
 
-		public AnalyzedAttributeAppliedToTreeNode(TypeDef analyzedType)
-		{
+		public AnalyzedAttributeAppliedToTreeNode(TypeDef analyzedType) {
 			if (analyzedType == null)
 				throw new ArgumentNullException("analyzedType");
 
@@ -53,8 +50,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			GetAttributeUsage();
 		}
 
-		private void GetAttributeUsage()
-		{
+		private void GetAttributeUsage() {
 			if (analyzedType.HasCustomAttributes) {
 				foreach (CustomAttribute ca in analyzedType.CustomAttributes) {
 					ITypeDefOrRef t = ca.AttributeType;
@@ -70,14 +66,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 						}
 						foreach (var namedArgument in ca.Properties) {
 							switch (namedArgument.Name) {
-								case "AllowMultiple":
-									if (namedArgument.Argument.Value is bool)
-										this.allowMutiple = (bool)namedArgument.Argument.Value;
-									break;
-								case "Inherited":
-									if (namedArgument.Argument.Value is bool)
-										this.inherited = (bool)namedArgument.Argument.Value;
-									break;
+							case "AllowMultiple":
+								if (namedArgument.Argument.Value is bool)
+									this.allowMutiple = (bool)namedArgument.Argument.Value;
+								break;
+							case "Inherited":
+								if (namedArgument.Argument.Value is bool)
+									this.inherited = (bool)namedArgument.Argument.Value;
+								break;
 							}
 						}
 					}
@@ -85,13 +81,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Applied To", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
 
 			//get the assemblies to search
@@ -109,8 +103,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 
 		#region standard custom attributes
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInModule(IEnumerable<ModuleDef> modules, ITypeDefOrRef tr, CancellationToken ct)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInModule(IEnumerable<ModuleDef> modules, ITypeDefOrRef tr, CancellationToken ct) {
 			foreach (var module in modules) {
 				//since we do not display modules as separate entities, coalesce the assembly and module searches
 				bool foundInAssyOrModule = false;
@@ -160,8 +153,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesWithinInType(TypeDef type, ITypeDefOrRef attrTypeRef)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesWithinInType(TypeDef type, ITypeDefOrRef attrTypeRef) {
 
 			bool searchRequired = (type.IsClass && usage.HasFlag(AttributeTargets.Class))
 				|| (type.IsEnum && usage.HasFlag(AttributeTargets.Enum))
@@ -291,8 +283,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		private bool HasAlreadyBeenFound(MethodDef method)
-		{
+		private bool HasAlreadyBeenFound(MethodDef method) {
 			return !foundMethods.TryAdd(method, 0);
 		}
 
@@ -300,8 +291,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 
 		#region search scope
 
-		private IEnumerable<Tuple<ModuleDef, ITypeDefOrRef>> GetReferencingModules(ModuleDef mod, CancellationToken ct)
-		{
+		private IEnumerable<Tuple<ModuleDef, ITypeDefOrRef>> GetReferencingModules(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
 			if (asm == null) {
 				yield return new Tuple<ModuleDef, ITypeDefOrRef>(mod, this.analyzedType);
@@ -332,8 +322,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		private IEnumerable<Tuple<ModuleDef, ITypeDefOrRef>> GetModuleAndAnyFriends(ModuleDef mod, CancellationToken ct)
-		{
+		private IEnumerable<Tuple<ModuleDef, ITypeDefOrRef>> GetModuleAndAnyFriends(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
 			if (asm == null) {
 				yield return new Tuple<ModuleDef, ITypeDefOrRef>(mod, this.analyzedType);
@@ -374,8 +363,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		private ITypeDefOrRef GetScopeTypeRefInAssembly(AssemblyDef asm)
-		{
+		private ITypeDefOrRef GetScopeTypeRefInAssembly(AssemblyDef asm) {
 			foreach (var mod in asm.Modules.GetSafeEnumerable()) {
 				foreach (var typeref in mod.GetTypeRefs()) {
 					if (new SigComparer().Equals(analyzedType, typeref))
@@ -387,10 +375,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 
 		#endregion
 	}
-	internal static class ExtensionMethods
-	{
-		public static bool HasCustomAttribute(this IMemberRef member, string attributeTypeName)
-		{
+	internal static class ExtensionMethods {
+		public static bool HasCustomAttribute(this IMemberRef member, string attributeTypeName) {
 			return false;
 		}
 	}

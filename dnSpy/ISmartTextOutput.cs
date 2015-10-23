@@ -24,13 +24,11 @@ using System.Windows.Media;
 
 using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Adds additional WPF-specific output features to <see cref="ITextOutput"/>.
 	/// </summary>
-	public interface ISmartTextOutput : ITextOutput
-	{
+	public interface ISmartTextOutput : ITextOutput {
 		/// <summary>
 		/// Inserts an interactive UI element at the current position in the text output.
 		/// </summary>
@@ -38,14 +36,12 @@ namespace ICSharpCode.ILSpy
 
 		void MarkAsNonCached();
 	}
-	
-	public static class SmartTextOutputExtensions
-	{
+
+	public static class SmartTextOutputExtensions {
 		/// <summary>
 		/// Creates a button.
 		/// </summary>
-		public static void AddButton(this ISmartTextOutput output, ImageSource icon, string text, RoutedEventHandler click)
-		{
+		public static void AddButton(this ISmartTextOutput output, ImageSource icon, string text, RoutedEventHandler click) {
 			output.AddUIElement(
 				delegate {
 					Button button = new Button();
@@ -61,7 +57,8 @@ namespace ICSharpCode.ILSpy
 								new TextBlock { Text = text }
 							}
 						};
-					} else {
+					}
+					else {
 						button.Content = text;
 					}
 					button.Click += click;

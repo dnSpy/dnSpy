@@ -19,61 +19,53 @@
 using System;
 using System.Collections.Generic;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Stores the navigation history.
 	/// </summary>
 	internal sealed class NavigationHistory<T>
-		where T : class, IEquatable<T>
-	{
+		where T : class, IEquatable<T> {
 		T current;
 		List<T> back = new List<T>();
 		List<T> forward = new List<T>();
-		
+
 		public bool CanNavigateBack {
 			get { return back.Count > 0; }
 		}
-		
+
 		public bool CanNavigateForward {
 			get { return forward.Count > 0; }
 		}
-		
-		public T GoBack()
-		{
+
+		public T GoBack() {
 			forward.Add(current);
 			current = back[back.Count - 1];
 			back.RemoveAt(back.Count - 1);
 			return current;
 		}
-		
-		public T GoForward()
-		{
+
+		public T GoForward() {
 			back.Add(current);
 			current = forward[forward.Count - 1];
 			forward.RemoveAt(forward.Count - 1);
 			return current;
 		}
 
-		public void RemoveAll(Predicate<T> predicate)
-		{
+		public void RemoveAll(Predicate<T> predicate) {
 			back.RemoveAll(predicate);
 			forward.RemoveAll(predicate);
 		}
-		
-		public void Clear()
-		{
+
+		public void Clear() {
 			back.Clear();
 			forward.Clear();
 		}
 
-		public void UpdateCurrent(T node)
-		{
+		public void UpdateCurrent(T node) {
 			current = node;
 		}
-		
-		public void Record(T node)
-		{
+
+		public void Record(T node) {
 			if (current != null)
 				back.Add(current);
 

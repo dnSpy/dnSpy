@@ -37,52 +37,47 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// Represents a list of files.
 	/// This is used as (invisible) root node of the tree view.
 	/// </summary>
-	sealed class DnSpyFileListTreeNode : ILSpyTreeNode
-	{
+	sealed class DnSpyFileListTreeNode : ILSpyTreeNode {
 		readonly DnSpyFileList dnspyFileList;
 
 		public object OwnerTreeView { get; set; }
 
-		public DnSpyFileListTreeNode(DnSpyFileList dnspyFileList)
-		{
+		public DnSpyFileListTreeNode(DnSpyFileList dnspyFileList) {
 			if (dnspyFileList == null)
 				throw new ArgumentNullException("dnspyFileList");
 			this.dnspyFileList = dnspyFileList;
 			BindToObservableCollection();
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write(UIUtils.CleanUpName(dnspyFileList.Name), TextTokenType.Text);
 		}
 
-		void BindToObservableCollection()
-		{
+		void BindToObservableCollection() {
 			this.Children.Clear();
 			this.Children.AddRange(dnspyFileList.GetDnSpyFiles().Select(a => CreateAssemblyTreeNode(a)));
-			dnspyFileList.CollectionChanged += delegate(object sender, NotifyCollectionChangedEventArgs e) {
+			dnspyFileList.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e) {
 				switch (e.Action) {
-					case NotifyCollectionChangedAction.Add:
+				case NotifyCollectionChangedAction.Add:
 					this.Children.InsertRange(e.NewStartingIndex, e.NewItems.Cast<DnSpyFile>().Select(a => CreateAssemblyTreeNode(a)));
-						break;
-					case NotifyCollectionChangedAction.Remove:
-						this.Children.RemoveRange(e.OldStartingIndex, e.OldItems.Count);
-						break;
-					case NotifyCollectionChangedAction.Replace:
-					case NotifyCollectionChangedAction.Move:
-						throw new NotImplementedException();
-					case NotifyCollectionChangedAction.Reset:
-						this.Children.Clear();
-						this.Children.AddRange(dnspyFileList.GetDnSpyFiles().Select(a => CreateAssemblyTreeNode(a)));
-						break;
-					default:
-						throw new NotSupportedException("Invalid value for NotifyCollectionChangedAction");
+					break;
+				case NotifyCollectionChangedAction.Remove:
+					this.Children.RemoveRange(e.OldStartingIndex, e.OldItems.Count);
+					break;
+				case NotifyCollectionChangedAction.Replace:
+				case NotifyCollectionChangedAction.Move:
+					throw new NotImplementedException();
+				case NotifyCollectionChangedAction.Reset:
+					this.Children.Clear();
+					this.Children.AddRange(dnspyFileList.GetDnSpyFiles().Select(a => CreateAssemblyTreeNode(a)));
+					break;
+				default:
+					throw new NotSupportedException("Invalid value for NotifyCollectionChangedAction");
 				}
 			};
 		}
 
-		AssemblyTreeNode CreateAssemblyTreeNode(DnSpyFile file)
-		{
+		AssemblyTreeNode CreateAssemblyTreeNode(DnSpyFile file) {
 			CachedAssemblyTreeNode cachedInfo;
 			if (cachedAsmTreeNodes.TryGetValue(file, out cachedInfo)) {
 				var asmNode = cachedInfo.AssemblyTreeNode;
@@ -94,21 +89,18 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return new AssemblyTreeNode(file);
 		}
 
-		sealed class CachedAssemblyTreeNode
-		{
+		sealed class CachedAssemblyTreeNode {
 			public AssemblyTreeNode AssemblyTreeNode;
 			public int Counter;
 
-			public CachedAssemblyTreeNode(AssemblyTreeNode asmNode)
-			{
+			public CachedAssemblyTreeNode(AssemblyTreeNode asmNode) {
 				this.AssemblyTreeNode = asmNode;
 			}
 		}
 
 		readonly Dictionary<DnSpyFile, CachedAssemblyTreeNode> cachedAsmTreeNodes = new Dictionary<DnSpyFile, CachedAssemblyTreeNode>();
 
-		public void RegisterCached(DnSpyFile file, AssemblyTreeNode asmNode)
-		{
+		public void RegisterCached(DnSpyFile file, AssemblyTreeNode asmNode) {
 			CachedAssemblyTreeNode cachedInfo;
 			if (!cachedAsmTreeNodes.TryGetValue(file, out cachedInfo))
 				cachedAsmTreeNodes.Add(file, cachedInfo = new CachedAssemblyTreeNode(asmNode));
@@ -120,8 +112,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			cachedInfo.Counter++;
 		}
 
-		public void UnregisterCached(DnSpyFile asm)
-		{
+		public void UnregisterCached(DnSpyFile asm) {
 			var cachedInfo = cachedAsmTreeNodes[asm];
 			if (cachedInfo.Counter-- == 1)
 				cachedAsmTreeNodes.Remove(asm);
@@ -129,8 +120,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		internal bool DisableDrop { get; set; }
 
-		public override bool CanDrop(DragEventArgs e, int index)
-		{
+		public override bool CanDrop(DragEventArgs e, int index) {
 			if (DisableDrop) {
 				e.Effects = DragDropEffects.None;
 				return false;
@@ -147,8 +137,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		public override void Drop(DragEventArgs e, int index)
-		{
+		public override void Drop(DragEventArgs e, int index) {
 			Debug.Assert(!DisableDrop);
 			if (DisableDrop)
 				return;
@@ -215,8 +204,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		public Action<SharpTreeNode> Select = delegate { };
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			language.WriteCommentLine(output, "List: " + dnspyFileList.Name);
 			output.WriteLine();
 			foreach (AssemblyTreeNode asm in this.Children) {
@@ -252,8 +240,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		public AssemblyTreeNode FindModuleNode(ModuleDef module)
-		{
+		public AssemblyTreeNode FindModuleNode(ModuleDef module) {
 			if (module == null)
 				return null;
 			App.Current.Dispatcher.VerifyAccess();
@@ -275,14 +262,12 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return null;
 		}
 
-		internal MetaDataTableRecordTreeNode FindTokenNode(TokenReference @ref)
-		{
+		internal MetaDataTableRecordTreeNode FindTokenNode(TokenReference @ref) {
 			var modNode = FindModuleNode(@ref.ModuleDef);
 			return modNode == null ? null : modNode.FindTokenNode(@ref.Token);
 		}
 
-		public AssemblyTreeNode FindAssemblyNode(AssemblyDef asm)
-		{
+		public AssemblyTreeNode FindAssemblyNode(AssemblyDef asm) {
 			if (asm == null)
 				return null;
 			App.Current.Dispatcher.VerifyAccess();
@@ -293,8 +278,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return null;
 		}
 
-		public AssemblyTreeNode FindAssemblyNode(DnSpyFile asm)
-		{
+		public AssemblyTreeNode FindAssemblyNode(DnSpyFile asm) {
 			if (asm == null)
 				return null;
 			App.Current.Dispatcher.VerifyAccess();
@@ -309,8 +293,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// Looks up the type node corresponding to the type definition.
 		/// Returns null if no matching node is found.
 		/// </summary>
-		public TypeTreeNode FindTypeNode(TypeDef def)
-		{
+		public TypeTreeNode FindTypeNode(TypeDef def) {
 			if (def == null)
 				return null;
 			if (def.DeclaringType != null) {
@@ -319,7 +302,8 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 					decl.EnsureChildrenFiltered();
 					return decl.Children.OfType<TypeTreeNode>().FirstOrDefault(t => t.TypeDef == def);
 				}
-			} else {
+			}
+			else {
 				AssemblyTreeNode asm = FindModuleNode(def.Module);
 				if (asm != null) {
 					return asm.FindNonNestedTypeNode(def);
@@ -332,8 +316,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// Looks up the method node corresponding to the method definition.
 		/// Returns null if no matching node is found.
 		/// </summary>
-		public ILSpyTreeNode FindMethodNode(MethodDef def)
-		{
+		public ILSpyTreeNode FindMethodNode(MethodDef def) {
 			if (def == null)
 				return null;
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
@@ -359,8 +342,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// Looks up the field node corresponding to the field definition.
 		/// Returns null if no matching node is found.
 		/// </summary>
-		public FieldTreeNode FindFieldNode(FieldDef def)
-		{
+		public FieldTreeNode FindFieldNode(FieldDef def) {
 			if (def == null)
 				return null;
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
@@ -374,8 +356,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// Looks up the property node corresponding to the property definition.
 		/// Returns null if no matching node is found.
 		/// </summary>
-		public PropertyTreeNode FindPropertyNode(PropertyDef def)
-		{
+		public PropertyTreeNode FindPropertyNode(PropertyDef def) {
 			if (def == null)
 				return null;
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
@@ -389,8 +370,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// Looks up the event node corresponding to the event definition.
 		/// Returns null if no matching node is found.
 		/// </summary>
-		public EventTreeNode FindEventNode(EventDef def)
-		{
+		public EventTreeNode FindEventNode(EventDef def) {
 			if (def == null)
 				return null;
 			TypeTreeNode typeNode = FindTypeNode(def.DeclaringType);
@@ -401,8 +381,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 		#endregion
 
-		public DnSpyFile FindModule(DnSpyFile asm, string moduleFilename)
-		{
+		public DnSpyFile FindModule(DnSpyFile asm, string moduleFilename) {
 			App.Current.Dispatcher.VerifyAccess();
 			foreach (AssemblyTreeNode node in this.Children) {
 				if (node.DnSpyFile != asm)
@@ -425,8 +404,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// <summary>
 		/// Retrieves a node using the NodePathName property of its ancestors.
 		/// </summary>
-		public ILSpyTreeNode FindNodeByPath(FullNodePathName fullPath)
-		{
+		public ILSpyTreeNode FindNodeByPath(FullNodePathName fullPath) {
 			ILSpyTreeNode node = this;
 			foreach (var name in fullPath.Names) {
 				if (node == null)
@@ -437,8 +415,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return node == this ? null : node;
 		}
 
-		public ILSpyTreeNode FindTreeNode(object reference)
-		{
+		public ILSpyTreeNode FindTreeNode(object reference) {
 			if (reference is ITypeDefOrRef)
 				return FindTypeNode(((ITypeDefOrRef)reference).ResolveTypeDef());
 			else if (reference is IMethod && ((IMethod)reference).MethodSig != null)

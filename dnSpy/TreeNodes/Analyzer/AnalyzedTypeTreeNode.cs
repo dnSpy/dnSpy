@@ -22,31 +22,26 @@ using dnSpy.Images;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal class AnalyzedTypeTreeNode : AnalyzerEntityTreeNode
-	{
+	internal class AnalyzedTypeTreeNode : AnalyzerEntityTreeNode {
 		private readonly TypeDef analyzedType;
 
-		public AnalyzedTypeTreeNode(TypeDef analyzedType)
-		{
+		public AnalyzedTypeTreeNode(TypeDef analyzedType) {
 			if (analyzedType == null)
 				throw new ArgumentNullException("analyzedType");
 			this.analyzedType = analyzedType;
 			this.LazyLoading = true;
 		}
 
-		public override object Icon
-		{
+		public override object Icon {
 			get { return TypeTreeNode.GetIcon(analyzedType, BackgroundType.TreeNode); }
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			Language.TypeToString(output, analyzedType, true);
 			analyzedType.MDToken.WriteSuffixString(output);
 		}
 
-		protected override void LoadChildren()
-		{
+		protected override void LoadChildren() {
 			if (AnalyzedAttributeAppliedToTreeNode.CanShow(analyzedType))
 				this.Children.Add(new AnalyzedAttributeAppliedToTreeNode(analyzedType));
 

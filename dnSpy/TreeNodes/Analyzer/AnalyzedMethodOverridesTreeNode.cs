@@ -29,31 +29,26 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	/// <summary>
 	/// Searches for overrides of the analyzed method.
 	/// </summary>
-	internal sealed class AnalyzedMethodOverridesTreeNode : AnalyzerSearchTreeNode
-	{
+	internal sealed class AnalyzedMethodOverridesTreeNode : AnalyzerSearchTreeNode {
 		private readonly MethodDef analyzedMethod;
 
-		public AnalyzedMethodOverridesTreeNode(MethodDef analyzedMethod)
-		{
+		public AnalyzedMethodOverridesTreeNode(MethodDef analyzedMethod) {
 			if (analyzedMethod == null)
 				throw new ArgumentNullException("analyzedMethod");
 
 			this.analyzedMethod = analyzedMethod;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Overridden By", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedMethod, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Language));
 		}
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type) {
 			AnalyzerTreeNode newNode = null;
 			try {
 				if (!TypesHierarchyHelpers.IsBaseType(analyzedMethod.DeclaringType, type, resolveTypeArguments: false))
@@ -76,12 +71,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		public static bool CanShow(MethodDef method)
-		{
+		public static bool CanShow(MethodDef method) {
 			return method.IsVirtual &&
 				!method.IsFinal &&
 				!method.DeclaringType.IsSealed &&
-				!method.DeclaringType.IsInterface;	// interface methods are definitions not implementations - cannot be overridden
+				!method.DeclaringType.IsInterface;  // interface methods are definitions not implementations - cannot be overridden
 		}
 	}
 }

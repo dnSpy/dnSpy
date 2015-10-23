@@ -21,18 +21,15 @@ using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal class AnalyzedPropertyAccessorTreeNode : AnalyzedMethodTreeNode
-	{
+	internal class AnalyzedPropertyAccessorTreeNode : AnalyzedMethodTreeNode {
 		private readonly string name;
 
 		public AnalyzedPropertyAccessorTreeNode(MethodDef analyzedMethod, string name)
-			: base(analyzedMethod)
-		{
+			: base(analyzedMethod) {
 			this.name = name;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			if (name != null)
 				output.Write(name, TextTokenType.Keyword);
 			else

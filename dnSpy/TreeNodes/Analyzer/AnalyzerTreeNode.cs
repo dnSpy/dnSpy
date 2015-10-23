@@ -27,15 +27,12 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	public abstract class AnalyzerTreeNode : SharpTreeNode, IDisposable
-	{
+	public abstract class AnalyzerTreeNode : SharpTreeNode, IDisposable {
 		private Language language;
 
-		public Language Language
-		{
+		public Language Language {
 			get { return language; }
-			set
-			{
+			set {
 				if (language != value) {
 					language = value;
 					foreach (var child in this.Children.OfType<AnalyzerTreeNode>())
@@ -56,15 +53,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		public string ToString(Language language)
-		{
+		public string ToString(Language language) {
 			var output = new PlainTextOutput();
 			Write(output, language);
 			return output.ToString();
 		}
 
-		public override string ToString()
-		{
+		public override string ToString() {
 			return ToString(Language);
 		}
 
@@ -74,8 +69,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			get { return Themes.Theme.GetColor(ColorType.NodePublic).InheritedColor.Foreground.GetBrush(null); }
 		}
 
-		public void RaiseUIPropsChanged()
-		{
+		public void RaiseUIPropsChanged() {
 			RaisePropertyChanged("Icon");
 			RaisePropertyChanged("ExpandedIcon");
 			RaisePropertyChanged("ToolTip");
@@ -83,31 +77,27 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			RaisePropertyChanged("Foreground");
 		}
 
-		public override bool CanDelete()
-		{
+		public override bool CanDelete() {
 			return Parent != null && Parent.IsRoot;
 		}
 
-		public override void DeleteCore()
-		{
+		public override void DeleteCore() {
 			DisposeSelfAndChildren();
 			Parent.Children.Remove(this);
 		}
 
-		public override void Delete()
-		{
+		public override void Delete() {
 			DeleteCore();
 		}
 
-		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
-		{
+		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e) {
 			if (e.NewItems != null) {
 				foreach (AnalyzerTreeNode a in e.NewItems.OfType<AnalyzerTreeNode>())
 					a.Language = this.Language;
 			}
 			base.OnChildrenChanged(e);
 		}
-		
+
 		/// <summary>
 		/// Handles changes to the assembly list.
 		/// </summary>
@@ -115,17 +105,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 
 		public abstract bool HandleModelUpdated(DnSpyFile asm);
 
-		public void Dispose()
-		{
+		public void Dispose() {
 			Dispose(true);
 		}
 
-		protected virtual void Dispose(bool disposing)
-		{
+		protected virtual void Dispose(bool disposing) {
 		}
 
-		public void DisposeSelfAndChildren()
-		{
+		public void DisposeSelfAndChildren() {
 			foreach (var c in this.DescendantsAndSelf()) {
 				var id = c as IDisposable;
 				if (id != null)

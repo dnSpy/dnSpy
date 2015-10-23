@@ -22,24 +22,21 @@ using System.Windows;
 
 using ICSharpCode.AvalonEdit.Rendering;
 
-namespace ICSharpCode.ILSpy.TextView
-{
+namespace ICSharpCode.ILSpy.TextView {
 	using Pair = KeyValuePair<int, Lazy<UIElement>>;
-	
+
 	/// <summary>
 	/// Embeds UIElements in the text output.
 	/// </summary>
-	sealed class UIElementGenerator : VisualLineElementGenerator, IComparer<Pair>
-	{
+	sealed class UIElementGenerator : VisualLineElementGenerator, IComparer<Pair> {
 		/// <summary>
 		/// The list of embedded UI elements to be displayed.
 		/// We store this as a sorted list of (offset, Lazy&lt;UIElement&gt;) pairs.
 		/// The "Lazy" part is used to create UIElements on demand (and thus on the UI thread, not on the decompiler thread).
 		/// </summary>
 		public List<Pair> UIElements;
-		
-		public override int GetFirstInterestedOffset(int startOffset)
-		{
+
+		public override int GetFirstInterestedOffset(int startOffset) {
 			if (this.UIElements == null)
 				return -1;
 			int r = this.UIElements.BinarySearch(new Pair(startOffset, null), this);
@@ -52,9 +49,8 @@ namespace ICSharpCode.ILSpy.TextView
 			else
 				return -1;
 		}
-		
-		public override VisualLineElement ConstructElement(int offset)
-		{
+
+		public override VisualLineElement ConstructElement(int offset) {
 			if (this.UIElements == null)
 				return null;
 			int r = UIElements.BinarySearch(new Pair(offset, null), this);
@@ -63,9 +59,8 @@ namespace ICSharpCode.ILSpy.TextView
 			else
 				return null;
 		}
-		
-		int IComparer<Pair>.Compare(Pair x, Pair y)
-		{
+
+		int IComparer<Pair>.Compare(Pair x, Pair y) {
 			// Compare (offset,Lazy<UIElement>) pairs by the offset.
 			// Used in BinarySearch()
 			return x.Key.CompareTo(y.Key);

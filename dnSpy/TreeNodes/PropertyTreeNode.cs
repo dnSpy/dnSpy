@@ -30,8 +30,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Represents a property in the TreeView.
 	/// </summary>
-	public sealed class PropertyTreeNode : ILSpyTreeNode, IMemberTreeNode
-	{
+	public sealed class PropertyTreeNode : ILSpyTreeNode, IMemberTreeNode {
 		readonly PropertyDef property;
 		readonly bool isIndexer;
 
@@ -44,8 +43,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return asmNode.DnSpyFileList;
 		}
 
-		public PropertyTreeNode(PropertyDef property, ILSpyTreeNode owner)
-		{
+		public PropertyTreeNode(PropertyDef property, ILSpyTreeNode owner) {
 			if (property == null)
 				throw new ArgumentNullException("property");
 			this.property = property;
@@ -62,20 +60,18 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				foreach (var m in property.OtherMethods)
 					this.Children.Add(new MethodTreeNode(m));
 			}
-			
+
 		}
 
 		public PropertyDef PropertyDef {
 			get { return property; }
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			Write(output, property, language);
 		}
 
-		public static ITextOutput Write(ITextOutput output, PropertyDef property, Language language, bool? isIndexer = null)
-		{
+		public static ITextOutput Write(ITextOutput output, PropertyDef property, Language language, bool? isIndexer = null) {
 			language.FormatPropertyName(output, property, isIndexer);
 			output.WriteSpace();
 			output.Write(':', TextTokenType.Operator);
@@ -84,24 +80,20 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			property.MDToken.WriteSuffixString(output);
 			return output;
 		}
-		
-		public override object Icon
-		{
+
+		public override object Icon {
 			get { return GetIcon(property, BackgroundType.TreeNode); }
 		}
 
-		internal static ImageInfo GetImageInfo(PropertyDef property, BackgroundType bgType)
-		{
+		internal static ImageInfo GetImageInfo(PropertyDef property, BackgroundType bgType) {
 			return FieldTreeNode.GetImageInfo(GetMemberIcon(property), bgType);
 		}
 
-		public static ImageSource GetIcon(PropertyDef property, BackgroundType bgType)
-		{
+		public static ImageSource GetIcon(PropertyDef property, BackgroundType bgType) {
 			return FieldTreeNode.GetIcon(GetMemberIcon(property), bgType);
 		}
 
-		static MemberIcon GetMemberIcon(PropertyDef property)
-		{
+		static MemberIcon GetMemberIcon(PropertyDef property) {
 			MethodDef method = GetMostAccessibleMethod(property);
 			if (method == null)
 				return MemberIcon.Property;
@@ -148,8 +140,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		private static MethodDef GetMostAccessibleMethod(PropertyDef property)
-		{
+		private static MethodDef GetMostAccessibleMethod(PropertyDef property) {
 			MethodDef result = null;
 
 			// Method access is defined from inaccessible (lowest) to public (highest)
@@ -185,8 +176,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return result;
 		}
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this.PropertyDef);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
@@ -196,17 +186,15 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				return FilterResult.Hidden;
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			language.DecompileProperty(property, output, options);
 		}
-		
+
 		public override bool IsPublicAPI {
 			get { return IsPublicAPIInternal(property); }
 		}
 
-		internal static bool IsPublicAPIInternal(PropertyDef property)
-		{
+		internal static bool IsPublicAPIInternal(PropertyDef property) {
 			var m = GetMostAccessibleMethod(property);
 			var attr = m == null ? 0 : m.Attributes;
 			switch (attr & MethodAttributes.MemberAccessMask) {
@@ -219,8 +207,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		IMemberRef IMemberTreeNode.Member
-		{
+		IMemberRef IMemberTreeNode.Member {
 			get { return property; }
 		}
 

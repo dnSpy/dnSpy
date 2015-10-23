@@ -23,11 +23,9 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	#region Toolbar
-	public interface IToolbarCommandMetadata
-	{
+	public interface IToolbarCommandMetadata {
 		string ToolTip { get; }
 		string ToolbarIcon { get; }
 		string ToolbarCategory { get; }
@@ -35,28 +33,24 @@ namespace ICSharpCode.ILSpy
 		string ToolbarIconText { get; }
 	}
 
-	public interface IToolbarCommand : ICommand
-	{
+	public interface IToolbarCommand : ICommand {
 		/// <summary>
 		/// true if it should be added to the toolbar
 		/// </summary>
 		bool IsVisible { get; }
 	}
 
-	public interface IToolbarItemCreator
-	{
+	public interface IToolbarItemCreator {
 		object CreateToolbarItem();
 	}
-	
+
 	[MetadataAttribute]
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
-	public class ExportToolbarCommandAttribute : ExportAttribute, IToolbarCommandMetadata
-	{
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+	public class ExportToolbarCommandAttribute : ExportAttribute, IToolbarCommandMetadata {
 		public ExportToolbarCommandAttribute()
-			: base("ToolbarCommand", typeof(ICommand))
-		{
+			: base("ToolbarCommand", typeof(ICommand)) {
 		}
-		
+
 		public string ToolTip { get; set; }
 		public string ToolbarIcon { get; set; }
 		public string ToolbarCategory { get; set; }
@@ -64,10 +58,9 @@ namespace ICSharpCode.ILSpy
 		public string ToolbarIconText { get; set; }
 	}
 	#endregion
-	
+
 	#region Main Menu
-	public interface IMainMenuCommandMetadata
-	{
+	public interface IMainMenuCommandMetadata {
 		string MenuIcon { get; }
 		string MenuHeader { get; }
 		string Menu { get; }
@@ -76,16 +69,14 @@ namespace ICSharpCode.ILSpy
 		double MenuOrder { get; }
 	}
 
-	public interface IMainMenuCommand
-	{
+	public interface IMainMenuCommand {
 		/// <summary>
 		/// true if it should be added to the menu
 		/// </summary>
 		bool IsVisible { get; }
 	}
 
-	public interface IMainMenuCheckableCommand
-	{
+	public interface IMainMenuCheckableCommand {
 		/// <summary>
 		/// null if it's not checkable. Else it returns the checked state
 		/// </summary>
@@ -97,13 +88,11 @@ namespace ICSharpCode.ILSpy
 		Binding Binding { get; }
 	}
 
-	public interface IMainMenuCommandInitialize
-	{
+	public interface IMainMenuCommandInitialize {
 		void Initialize(MenuItem menuItem);
 	}
 
-	public interface IMenuItemProvider
-	{
+	public interface IMenuItemProvider {
 		/// <summary>
 		/// Creates all menu items
 		/// </summary>
@@ -115,16 +104,14 @@ namespace ICSharpCode.ILSpy
 		/// <returns></returns>
 		IEnumerable<MenuItem> CreateMenuItems(MenuItem cachedMenuItem);
 	}
-	
+
 	[MetadataAttribute]
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
-	public class ExportMainMenuCommandAttribute : ExportAttribute, IMainMenuCommandMetadata
-	{
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+	public class ExportMainMenuCommandAttribute : ExportAttribute, IMainMenuCommandMetadata {
 		public ExportMainMenuCommandAttribute()
-			: base("MainMenuCommand", typeof(ICommand))
-		{
+			: base("MainMenuCommand", typeof(ICommand)) {
 		}
-		
+
 		public string MenuIcon { get; set; }
 		public string MenuHeader { get; set; }
 		public string Menu { get; set; }

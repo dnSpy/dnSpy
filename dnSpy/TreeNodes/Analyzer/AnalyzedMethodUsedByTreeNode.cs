@@ -27,26 +27,22 @@ using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal sealed class AnalyzedMethodUsedByTreeNode : AnalyzerSearchTreeNode
-	{
+	internal sealed class AnalyzedMethodUsedByTreeNode : AnalyzerSearchTreeNode {
 		private readonly MethodDef analyzedMethod;
 		private ConcurrentDictionary<MethodDef, int> foundMethods;
 
-		public AnalyzedMethodUsedByTreeNode(MethodDef analyzedMethod)
-		{
+		public AnalyzedMethodUsedByTreeNode(MethodDef analyzedMethod) {
 			if (analyzedMethod == null)
 				throw new ArgumentNullException("analyzedMethod");
 
 			this.analyzedMethod = analyzedMethod;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Used By", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
 
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedMethod, FindReferencesInType);
@@ -57,8 +53,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			foundMethods = null;
 		}
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type) {
 			string name = analyzedMethod.Name;
 			foreach (MethodDef method in type.Methods) {
 				bool found = false;
@@ -79,7 +74,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 				if (found) {
 					MethodDef codeLocation = this.Language.GetOriginalCodeLocation(method) as MethodDef;
 					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
-						var node= new AnalyzedMethodTreeNode(codeLocation);
+						var node = new AnalyzedMethodTreeNode(codeLocation);
 						node.Language = this.Language;
 						yield return node;
 					}
@@ -87,8 +82,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		private bool HasAlreadyBeenFound(MethodDef method)
-		{
+		private bool HasAlreadyBeenFound(MethodDef method) {
 			return !foundMethods.TryAdd(method, 0);
 		}
 	}

@@ -23,39 +23,36 @@ using System.Text;
 
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Interop with the .NET GAC.
 	/// </summary>
-	static class GacInterop
-	{
+	static class GacInterop {
 		/// <summary>
 		/// Gets the names of all assemblies in the GAC.
 		/// </summary>
-		public static IEnumerable<AssemblyNameInfo> GetGacAssemblyFullNames()
-		{
+		public static IEnumerable<AssemblyNameInfo> GetGacAssemblyFullNames() {
 			IApplicationContext applicationContext = null;
 			IAssemblyEnum assemblyEnum = null;
 			IAssemblyName assemblyName = null;
-			
+
 			Fusion.CreateAssemblyEnum(out assemblyEnum, null, null, 2, 0);
 			while (assemblyEnum.GetNextAssembly(out applicationContext, out assemblyName, 0) == 0) {
 				uint nChars = 0;
 				assemblyName.GetDisplayName(null, ref nChars, 0);
-				
+
 				StringBuilder name = new StringBuilder((int)nChars);
 				assemblyName.GetDisplayName(name, ref nChars, 0);
-				
+
 				var r = new AssemblyNameInfo(name.ToString());
 				if (r.Version != null)
 					yield return r;
 			}
 		}
-		
+
 		#region FindAssemblyInGac
 		// This region is based on code from Mono.Cecil:
-		
+
 		// Author:
 		//   Jb Evain (jbevain@gmail.com)
 		//
@@ -84,42 +81,40 @@ namespace ICSharpCode.ILSpy
 		static readonly string[] gac_paths = { Fusion.GetGacPath(false), Fusion.GetGacPath(true) };
 		static readonly string[] gacs = { "GAC_MSIL", "GAC_32", "GAC" };
 		static readonly string[] prefixes = { string.Empty, "v4.0_" };
-		
+
 		/// <summary>
 		/// Gets the file name for an assembly stored in the GAC.
 		/// </summary>
-		public static string FindAssemblyInNetGac (IAssembly reference)
-		{
+		public static string FindAssemblyInNetGac(IAssembly reference) {
 			// without public key, it can't be in the GAC
 			if (PublicKeyBase.IsNullOrEmpty2(reference.PublicKeyOrToken))
 				return null;
-			
+
 			for (int i = 0; i < 2; i++) {
 				for (int j = 0; j < gacs.Length; j++) {
-					if (string.IsNullOrEmpty(gac_paths [i]))
+					if (string.IsNullOrEmpty(gac_paths[i]))
 						continue;
-					var gac = Path.Combine (gac_paths [i], gacs [j]);
-					var file = GetAssemblyFile (reference, prefixes [i], gac);
-					if (File.Exists (file))
+					var gac = Path.Combine(gac_paths[i], gacs[j]);
+					var file = GetAssemblyFile(reference, prefixes[i], gac);
+					if (File.Exists(file))
 						return file;
 				}
 			}
 
 			return null;
 		}
-		
-		static string GetAssemblyFile (IAssembly reference, string prefix, string gac)
-		{
-			var gac_folder = new StringBuilder ()
-				.Append (prefix)
-				.Append (reference.Version)
-				.Append ("__");
 
-			var pkt = PublicKeyBase.ToPublicKeyToken (reference.PublicKeyOrToken);
+		static string GetAssemblyFile(IAssembly reference, string prefix, string gac) {
+			var gac_folder = new StringBuilder()
+				.Append(prefix)
+				.Append(reference.Version)
+				.Append("__");
+
+			var pkt = PublicKeyBase.ToPublicKeyToken(reference.PublicKeyOrToken);
 			if (PublicKeyBase.IsNullOrEmpty2(pkt))
-				pkt = new PublicKeyToken (new byte[8]);
+				pkt = new PublicKeyToken(new byte[8]);
 			for (int i = 0; i < pkt.Data.Length; i++)
-				gac_folder.Append (pkt.Data [i].ToString ("x2"));
+				gac_folder.Append(pkt.Data[i].ToString("x2"));
 
 			try {
 				return Path.Combine(

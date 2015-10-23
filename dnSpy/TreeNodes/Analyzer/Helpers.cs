@@ -23,15 +23,12 @@ using dnSpy;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal static class Helpers
-	{
-		public static bool IsReferencedBy(TypeDef type, ITypeDefOrRef typeRef)
-		{
+	internal static class Helpers {
+		public static bool IsReferencedBy(TypeDef type, ITypeDefOrRef typeRef) {
 			return IsReferencedBy(type, typeRef, 0);
 		}
 
-		static bool IsReferencedBy(TypeDef type, ITypeDefOrRef typeRef, int depth)
-		{
+		static bool IsReferencedBy(TypeDef type, ITypeDefOrRef typeRef, int depth) {
 			if (depth >= 30)
 				return false;
 			// TODO: move it to a better place after adding support for more cases.
@@ -57,15 +54,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			return true;
 		}
 
-		public static IMemberRef GetOriginalCodeLocation(IMemberRef member)
-		{
+		public static IMemberRef GetOriginalCodeLocation(IMemberRef member) {
 			if (member is MethodDef)
 				return GetOriginalCodeLocation((MethodDef)member);
 			return member;
 		}
 
-		public static MethodDef GetOriginalCodeLocation(MethodDef method)
-		{
+		public static MethodDef GetOriginalCodeLocation(MethodDef method) {
 			if (method.IsCompilerGenerated()) {
 				return FindMethodUsageInType(method.DeclaringType, method) ?? method;
 			}
@@ -74,19 +69,19 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 
 			return typeUsage ?? method;
 		}
-		
+
 		/// <summary>
 		/// Given a compiler-generated type, returns the method where that type is used.
 		/// Used to detect the 'parent method' for a lambda/iterator/async state machine.
 		/// </summary>
-		public static MethodDef GetOriginalCodeLocation(TypeDef type)
-		{
+		public static MethodDef GetOriginalCodeLocation(TypeDef type) {
 			if (type != null && type.DeclaringType != null && type.IsCompilerGenerated()) {
 				if (type.IsValueType) {
 					// Value types might not have any constructor; but they must be stored in a local var
 					// because 'initobj' (or 'call .ctor') expects a managed ref.
 					return FindVariableOfTypeUsageInType(type.DeclaringType, type);
-				} else {
+				}
+				else {
 					MethodDef constructor = GetTypeConstructor(type);
 					if (constructor == null)
 						return null;
@@ -96,13 +91,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			return null;
 		}
 
-		private static MethodDef GetTypeConstructor(TypeDef type)
-		{
+		private static MethodDef GetTypeConstructor(TypeDef type) {
 			return type.FindConstructors().FirstOrDefault();
 		}
 
-		private static MethodDef FindMethodUsageInType(TypeDef type, MethodDef analyzedMethod)
-		{
+		private static MethodDef FindMethodUsageInType(TypeDef type, MethodDef analyzedMethod) {
 			string name = analyzedMethod.Name;
 			foreach (MethodDef method in type.Methods) {
 				bool found = false;
@@ -125,9 +118,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 			return null;
 		}
-		
-		private static MethodDef FindVariableOfTypeUsageInType(TypeDef type, TypeDef variableType)
-		{
+
+		private static MethodDef FindVariableOfTypeUsageInType(TypeDef type, TypeDef variableType) {
 			foreach (MethodDef method in type.Methods) {
 				bool found = false;
 				if (!method.HasBody)
@@ -148,8 +140,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		}
 
 		//TODO: Move this method
-		public static void FreeMethodBody(MethodDef method)
-		{
+		public static void FreeMethodBody(MethodDef method) {
 			if (method != null) {
 				if (!MethodAnnotations.Instance.IsBodyModified(method))
 					method.FreeMethodBody();

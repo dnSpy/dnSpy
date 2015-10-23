@@ -30,16 +30,14 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Represents an event in the TreeView.
 	/// </summary>
-	public sealed class EventTreeNode : ILSpyTreeNode, IMemberTreeNode
-	{
+	public sealed class EventTreeNode : ILSpyTreeNode, IMemberTreeNode {
 		readonly EventDef ev;
-		
-		public EventTreeNode(EventDef ev)
-		{
+
+		public EventTreeNode(EventDef ev) {
 			if (ev == null)
 				throw new ArgumentNullException("ev");
 			this.ev = ev;
-			
+
 			if (ev.AddMethod != null)
 				this.Children.Add(new MethodTreeNode(ev.AddMethod));
 			if (ev.RemoveMethod != null)
@@ -51,19 +49,16 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 					this.Children.Add(new MethodTreeNode(m));
 			}
 		}
-		
-		public EventDef EventDef
-		{
+
+		public EventDef EventDef {
 			get { return ev; }
 		}
-		
-		protected override void Write(ITextOutput output, Language language)
-		{
+
+		protected override void Write(ITextOutput output, Language language) {
 			Write(output, ev, language);
 		}
 
-		public static ITextOutput Write(ITextOutput output, EventDef ev, Language language)
-		{
+		public static ITextOutput Write(ITextOutput output, EventDef ev, Language language) {
 			output.Write(UIUtils.CleanUpIdentifier(ev.Name), TextTokenHelper.GetTextTokenType(ev));
 			output.WriteSpace();
 			output.Write(':', TextTokenType.Operator);
@@ -72,24 +67,20 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			ev.MDToken.WriteSuffixString(output);
 			return output;
 		}
-		
-		public override object Icon
-		{
+
+		public override object Icon {
 			get { return GetIcon(ev, BackgroundType.TreeNode); }
 		}
 
-		public static ImageSource GetIcon(EventDef eventDef, BackgroundType bgType)
-		{
+		public static ImageSource GetIcon(EventDef eventDef, BackgroundType bgType) {
 			return FieldTreeNode.GetIcon(GetMemberIcon(eventDef), bgType);
 		}
 
-		internal static ImageInfo GetImageInfo(EventDef eventDef, BackgroundType bgType)
-		{
+		internal static ImageInfo GetImageInfo(EventDef eventDef, BackgroundType bgType) {
 			return FieldTreeNode.GetImageInfo(GetMemberIcon(eventDef), bgType);
 		}
 
-		static MemberIcon GetMemberIcon(EventDef eventDef)
-		{
+		static MemberIcon GetMemberIcon(EventDef eventDef) {
 			MethodDef method = eventDef.AddMethod ?? eventDef.RemoveMethod;
 			if (method == null)
 				return MemberIcon.Event;
@@ -136,8 +127,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this.EventDef);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
@@ -146,25 +136,22 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			else
 				return FilterResult.Hidden;
 		}
-		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			language.DecompileEvent(ev, output, options);
 		}
-		
-		
+
+
 		public override bool IsPublicAPI {
 			get { return IsPublicAPIInternal(ev); }
 		}
 
-		internal static bool IsPublicAPIInternal(EventDef ev)
-		{
+		internal static bool IsPublicAPIInternal(EventDef ev) {
 			MethodDef accessor = ev.AddMethod ?? ev.RemoveMethod;
 			return accessor != null && (accessor.IsPublic || accessor.IsFamilyOrAssembly || accessor.IsFamily);
 		}
-		
-		IMemberRef IMemberTreeNode.Member
-		{
+
+		IMemberRef IMemberTreeNode.Member {
 			get { return ev; }
 		}
 

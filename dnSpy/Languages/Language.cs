@@ -28,8 +28,7 @@ using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy {
 	[Flags]
-	public enum DecompileAssemblyFlags
-	{
+	public enum DecompileAssemblyFlags {
 		Assembly = 1,
 		Module = 2,
 		AssemblyAndModule = Assembly | Module,
@@ -38,8 +37,7 @@ namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Base class for language-specific decompiler implementations.
 	/// </summary>
-	public abstract class Language
-	{
+	public abstract class Language {
 		/// <summary>
 		/// Gets the name of the language (as shown in the UI)
 		/// </summary>
@@ -50,70 +48,61 @@ namespace ICSharpCode.ILSpy {
 		/// </summary>
 		public abstract string FileExtension { get; }
 
-		public virtual string ProjectFileExtension
-		{
+		public virtual string ProjectFileExtension {
 			get { return null; }
 		}
 
 		/// <summary>
 		/// Gets the syntax highlighting used for this language.
 		/// </summary>
-		public virtual ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition SyntaxHighlighting
-		{
-			get
-			{
+		public virtual ICSharpCode.AvalonEdit.Highlighting.IHighlightingDefinition SyntaxHighlighting {
+			get {
 				return ICSharpCode.AvalonEdit.Highlighting.HighlightingManager.Instance.GetDefinitionByExtension(this.FileExtension);
 			}
 		}
 
-		public virtual void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options)
-		{
+		public virtual void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLine(output, TypeToString(method.DeclaringType, true) + "." + method.Name);
 		}
 
-		public virtual void DecompileProperty(PropertyDef property, ITextOutput output, DecompilationOptions options)
-		{
+		public virtual void DecompileProperty(PropertyDef property, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLine(output, TypeToString(property.DeclaringType, true) + "." + property.Name);
 		}
 
-		public virtual void DecompileField(FieldDef field, ITextOutput output, DecompilationOptions options)
-		{
+		public virtual void DecompileField(FieldDef field, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLine(output, TypeToString(field.DeclaringType, true) + "." + field.Name);
 		}
 
-		public virtual void DecompileEvent(EventDef ev, ITextOutput output, DecompilationOptions options)
-		{
+		public virtual void DecompileEvent(EventDef ev, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLine(output, TypeToString(ev.DeclaringType, true) + "." + ev.Name);
 		}
 
-		public virtual void DecompileType(TypeDef type, ITextOutput output, DecompilationOptions options)
-		{
+		public virtual void DecompileType(TypeDef type, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLine(output, TypeToString(type, true));
 		}
 
-		public virtual void DecompileNamespace(string nameSpace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationOptions options)
-		{
+		public virtual void DecompileNamespace(string nameSpace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLine(output, string.IsNullOrEmpty(nameSpace) ? string.Empty : IdentifierEscaper.Escape(nameSpace));
 		}
 
-		public virtual void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
-		{
+		public virtual void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
 			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
 			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 			WriteCommentLine(output, file.Filename);
 			if (decompileAsm && file.AssemblyDef != null) {
 				if (file.AssemblyDef.IsContentTypeWindowsRuntime) {
 					WriteCommentLine(output, file.AssemblyDef.Name + " [WinRT]");
-				} else {
+				}
+				else {
 					WriteCommentLine(output, file.AssemblyDef.FullName);
 				}
-			} else if (decompileMod) {
+			}
+			else if (decompileMod) {
 				WriteCommentLine(output, file.ModuleDef.Name);
 			}
 		}
 
-		protected void PrintEntryPoint(DnSpyFile assembly, ITextOutput output)
-		{
+		protected void PrintEntryPoint(DnSpyFile assembly, ITextOutput output) {
 			var ep = GetEntryPoint(assembly.ModuleDef);
 			if (ep is uint)
 				WriteCommentLine(output, string.Format("Native Entry point: 0x{0:x8}", (uint)ep));
@@ -129,8 +118,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		object GetEntryPoint(ModuleDef module)
-		{
+		object GetEntryPoint(ModuleDef module) {
 			int maxIters = 1;
 			for (int i = 0; module != null && i < maxIters; i++) {
 				var rva = module.NativeEntryPoint;
@@ -157,36 +145,31 @@ namespace ICSharpCode.ILSpy {
 			return null;
 		}
 
-		public void WriteCommentLineDeclaringType(ITextOutput output, IMemberDef member)
-		{
+		public void WriteCommentLineDeclaringType(ITextOutput output, IMemberDef member) {
 			WriteComment(output, string.Empty);
 			output.WriteReference(TypeToString(member.DeclaringType, includeNamespace: true), member.DeclaringType, TextTokenType.Comment);
 			output.WriteLine();
 		}
 
-		public virtual void WriteCommentLine(ITextOutput output, string comment)
-		{
+		public virtual void WriteCommentLine(ITextOutput output, string comment) {
 			output.WriteLine("// " + comment, TextTokenType.Comment);
 		}
 
-		public virtual void WriteComment(ITextOutput output, string comment)
-		{
+		public virtual void WriteComment(ITextOutput output, string comment) {
 			output.Write("// " + comment, TextTokenType.Comment);
 		}
 
 		/// <summary>
 		/// Converts a type reference into a string. This method is used by the member tree node for parameter and return types.
 		/// </summary>
-		public string TypeToString(ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null)
-		{
+		public string TypeToString(ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
 			var writer = new StringWriter();
 			var output = new PlainTextOutput(writer);
 			TypeToString(output, type, includeNamespace, typeAttributes);
 			return writer.ToString();
 		}
 
-		public virtual void TypeToString(ITextOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null)
-		{
+		public virtual void TypeToString(ITextOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
 			if (type == null)
 				return;
 			if (includeNamespace)
@@ -199,8 +182,7 @@ namespace ICSharpCode.ILSpy {
 		/// Converts a member signature to a string.
 		/// This is used for displaying the tooltip on a member reference.
 		/// </summary>
-		public virtual void WriteToolTip(ITextOutput output, IMemberRef member, IHasCustomAttribute typeAttributes)
-		{
+		public virtual void WriteToolTip(ITextOutput output, IMemberRef member, IHasCustomAttribute typeAttributes) {
 			if (member is ITypeDefOrRef)
 				TypeToString(output, (ITypeDefOrRef)member, true, typeAttributes);
 			else if (member is GenericParam) {
@@ -218,8 +200,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		public virtual void WriteToolTip(ITextOutput output, IVariable variable, string name)
-		{
+		public virtual void WriteToolTip(ITextOutput output, IVariable variable, string name) {
 			output.Write(variable is Local ? "(local variable)" : "(parameter)", TextTokenType.Text);
 			output.WriteSpace();
 			WriteToolTip(output, variable.Type.ToTypeDefOrRef(), variable is Parameter ? ((Parameter)variable).ParamDef : null);
@@ -227,8 +208,7 @@ namespace ICSharpCode.ILSpy {
 			output.Write(IdentifierEscaper.Escape(GetName(variable, name)), variable is Local ? TextTokenType.Local : TextTokenType.Parameter);
 		}
 
-		protected static string GetName(IVariable variable, string name)
-		{
+		protected static string GetName(IVariable variable, string name) {
 			if (!string.IsNullOrWhiteSpace(name))
 				return name;
 			var n = variable.Name;
@@ -237,15 +217,13 @@ namespace ICSharpCode.ILSpy {
 			return string.Format("#{0}", variable.Index);
 		}
 
-		public virtual void FormatPropertyName(ITextOutput output, PropertyDef property, bool? isIndexer = null)
-		{
+		public virtual void FormatPropertyName(ITextOutput output, PropertyDef property, bool? isIndexer = null) {
 			if (property == null)
 				throw new ArgumentNullException("property");
 			output.Write(IdentifierEscaper.Escape(property.Name), TextTokenHelper.GetTextTokenType(property));
 		}
-		
-		public virtual void FormatTypeName(ITextOutput output, TypeDef type)
-		{
+
+		public virtual void FormatTypeName(ITextOutput output, TypeDef type) {
 			if (type == null)
 				throw new ArgumentNullException("type");
 			output.Write(IdentifierEscaper.Escape(type.Name), TextTokenHelper.GetTextTokenType(type));
@@ -254,21 +232,18 @@ namespace ICSharpCode.ILSpy {
 		/// <summary>
 		/// Used for WPF keyboard navigation.
 		/// </summary>
-		public override string ToString()
-		{
+		public override string ToString() {
 			return Name;
 		}
 
-		public virtual bool ShowMember(IMemberRef member)
-		{
+		public virtual bool ShowMember(IMemberRef member) {
 			return true;
 		}
 
 		/// <summary>
 		/// Used by the analyzer to map compiler generated code back to the original code's location
 		/// </summary>
-		public virtual IMemberRef GetOriginalCodeLocation(IMemberRef member)
-		{
+		public virtual IMemberRef GetOriginalCodeLocation(IMemberRef member) {
 			return member;
 		}
 	}

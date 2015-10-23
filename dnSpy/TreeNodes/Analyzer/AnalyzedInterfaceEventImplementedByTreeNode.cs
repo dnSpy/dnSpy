@@ -26,13 +26,11 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal sealed class AnalyzedInterfaceEventImplementedByTreeNode : AnalyzerSearchTreeNode
-	{
+	internal sealed class AnalyzedInterfaceEventImplementedByTreeNode : AnalyzerSearchTreeNode {
 		private readonly EventDef analyzedEvent;
 		private readonly MethodDef analyzedMethod;
 
-		public AnalyzedInterfaceEventImplementedByTreeNode(EventDef analyzedEvent)
-		{
+		public AnalyzedInterfaceEventImplementedByTreeNode(EventDef analyzedEvent) {
 			if (analyzedEvent == null)
 				throw new ArgumentNullException("analyzedEvent");
 
@@ -40,13 +38,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			this.analyzedMethod = this.analyzedEvent.AddMethod ?? this.analyzedEvent.RemoveMethod;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Implemented By", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			if (analyzedMethod == null)
 				yield break;
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedMethod, FindReferencesInType);
@@ -55,8 +51,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type) {
 			if (!type.HasInterfaces || analyzedMethod == null)
 				yield break;
 			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface, analyzedMethod.DeclaringType));
@@ -86,8 +81,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		public static bool CanShow(EventDef ev)
-		{
+		public static bool CanShow(EventDef ev) {
 			return ev.DeclaringType.IsInterface;
 		}
 	}

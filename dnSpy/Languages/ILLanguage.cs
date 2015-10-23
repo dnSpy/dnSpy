@@ -35,30 +35,26 @@ namespace ICSharpCode.ILSpy {
 	/// Currently comes in two versions:
 	/// flat IL (detectControlStructure=false) and structured IL (detectControlStructure=true).
 	/// </remarks>
-	public class ILLanguage : Language
-	{
+	public class ILLanguage : Language {
 		private readonly bool detectControlStructure;
-		
-		public ILLanguage(bool detectControlStructure)
-		{
+
+		public ILLanguage(bool detectControlStructure) {
 			this.detectControlStructure = detectControlStructure;
 		}
-		
+
 		public override string Name {
 			get { return "IL"; }
 		}
-		
+
 		public override string FileExtension {
 			get { return ".il"; }
 		}
 
-		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationOptions options, IMemberDef member)
-		{
+		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationOptions options, IMemberDef member) {
 			return CreateReflectionDisassembler(output, options, member.Module);
 		}
 
-		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationOptions options, ModuleDef ownerModule)
-		{
+		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationOptions options, ModuleDef ownerModule) {
 			var disOpts = new DisassemblerOptions(options.CancellationToken, ownerModule);
 			if (options.DecompilerSettings.ShowILComments)
 				disOpts.GetOpCodeDocumentation = GetOpCodeDocumentation;
@@ -72,8 +68,7 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		static readonly string[] cachedOpCodeDocs = new string[0x200];
-		public static string GetOpCodeDocumentation(OpCode code)
-		{
+		public static string GetOpCodeDocumentation(OpCode code) {
 			int index = (int)code.Code;
 			int hi = index >> 8;
 			if (hi == 0xFE)
@@ -97,8 +92,7 @@ namespace ICSharpCode.ILSpy {
 			return null;
 		}
 
-		static IEnumerable<string> GetXmlDocComments(IMemberRef mr)
-		{
+		static IEnumerable<string> GetXmlDocComments(IMemberRef mr) {
 			if (mr == null || mr.Module == null)
 				yield break;
 			var xmldoc = XmlDocLoader.LoadDocumentation(mr.Module);
@@ -111,21 +105,18 @@ namespace ICSharpCode.ILSpy {
 			foreach (var line in AddXmlDocTransform.GetXmlDocLines(new StringReader(doc)))
 				yield return line;
 		}
-		
-		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options) {
 			var dis = CreateReflectionDisassembler(output, options, method);
 			dis.DisassembleMethod(method);
 		}
-		
-		public override void DecompileField(FieldDef field, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void DecompileField(FieldDef field, ITextOutput output, DecompilationOptions options) {
 			var dis = CreateReflectionDisassembler(output, options, field);
 			dis.DisassembleField(field);
 		}
-		
-		public override void DecompileProperty(PropertyDef property, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void DecompileProperty(PropertyDef property, ITextOutput output, DecompilationOptions options) {
 			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options, property);
 			rd.DisassembleProperty(property);
 			if (property.GetMethod != null) {
@@ -141,9 +132,8 @@ namespace ICSharpCode.ILSpy {
 				rd.DisassembleMethod(m);
 			}
 		}
-		
-		public override void DecompileEvent(EventDef ev, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void DecompileEvent(EventDef ev, ITextOutput output, DecompilationOptions options) {
 			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options, ev);
 			rd.DisassembleEvent(ev);
 			if (ev.AddMethod != null) {
@@ -159,22 +149,20 @@ namespace ICSharpCode.ILSpy {
 				rd.DisassembleMethod(m);
 			}
 		}
-		
-		public override void DecompileType(TypeDef type, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void DecompileType(TypeDef type, ITextOutput output, DecompilationOptions options) {
 			var dis = CreateReflectionDisassembler(output, options, type);
 			dis.DisassembleType(type);
 		}
-		
-		public override void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
-		{
+
+		public override void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
 			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
 			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 			output.WriteLine("// " + file.Filename, TextTokenType.Comment);
 			if (decompileMod || decompileAsm)
 				PrintEntryPoint(file, output);
 			output.WriteLine();
-			
+
 			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options, file.ModuleDef);
 			if (decompileMod && options.FullDecompilation)
 				rd.WriteAssemblyReferences(file.ModuleDef);
@@ -191,21 +179,18 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		public override void TypeToString(ITextOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null)
-		{
+		public override void TypeToString(ITextOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) {
 			t.WriteTo(output, includeNamespace ? ILNameSyntax.TypeName : ILNameSyntax.ShortTypeName);
 		}
 
-		public override void WriteToolTip(ITextOutput output, IMemberRef member, IHasCustomAttribute typeAttributes)
-		{
+		public override void WriteToolTip(ITextOutput output, IMemberRef member, IHasCustomAttribute typeAttributes) {
 			if (!(member is ITypeDefOrRef) && Write(output, member))
 				return;
 
 			base.WriteToolTip(output, member, typeAttributes);
 		}
 
-		public static bool Write(ITextOutput output, IMemberRef member)
-		{
+		public static bool Write(ITextOutput output, IMemberRef member) {
 			var method = member as IMethod;
 			if (method != null && method.IsMethod) {
 				method.WriteMethodTo(output);

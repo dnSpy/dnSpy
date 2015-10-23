@@ -28,31 +28,26 @@ using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy.AvalonEdit {
 	#region Context menu extensibility
-	public interface IIconBarContextMenuEntry : IContextMenuEntry<IIconBarObject>
-	{
+	public interface IIconBarContextMenuEntry : IContextMenuEntry<IIconBarObject> {
 	}
-	public interface IIconBarContextMenuEntry2 : IIconBarContextMenuEntry, IContextMenuEntry2<IIconBarObject>
-	{
+	public interface IIconBarContextMenuEntry2 : IIconBarContextMenuEntry, IContextMenuEntry2<IIconBarObject> {
 	}
-	
-	public interface IconBarContextMenuEntryMetadata
-	{
+
+	public interface IconBarContextMenuEntryMetadata {
 		string Icon { get; }
 		string Header { get; }
 		string Category { get; }
 		string InputGestureText { get; }
 		double Order { get; }
 	}
-	
+
 	[MetadataAttribute]
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
-	public class ExportIconBarContextMenuEntryAttribute : ExportAttribute, IconBarContextMenuEntryMetadata
-	{
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+	public class ExportIconBarContextMenuEntryAttribute : ExportAttribute, IconBarContextMenuEntryMetadata {
 		public ExportIconBarContextMenuEntryAttribute()
-			: base(typeof(IIconBarContextMenuEntry))
-		{
+			: base(typeof(IIconBarContextMenuEntry)) {
 		}
-		
+
 		public string Icon { get; set; }
 		public string Header { get; set; }
 		public string Category { get; set; }
@@ -60,62 +55,54 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 		public double Order { get; set; }
 	}
 	#endregion
-	
+
 	#region Actions (simple clicks) - this will be used for creating bookmarks (e.g. Breakpoint bookmarks)
-	
-	public interface IIconBarActionEntry
-	{
+
+	public interface IIconBarActionEntry {
 		bool IsEnabled(DecompilerTextView textView);
 		void Execute(DecompilerTextView textView, int line);
 	}
-	
-	public interface IIconBarActionMetadata
-	{
+
+	public interface IIconBarActionMetadata {
 		string Category { get; }
-		
+
 		double Order { get; }
 	}
-	
+
 	[MetadataAttribute]
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
-	public class ExportIconBarActionEntryAttribute : ExportAttribute, IIconBarActionMetadata
-	{
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+	public class ExportIconBarActionEntryAttribute : ExportAttribute, IIconBarActionMetadata {
 		public ExportIconBarActionEntryAttribute()
-			: base(typeof(IIconBarActionEntry))
-		{
+			: base(typeof(IIconBarActionEntry)) {
 		}
-		
+
 		public string Icon { get; set; }
 		public string Header { get; set; }
 		public string Category { get; set; }
 		public double Order { get; set; }
 	}
-	
+
 	#endregion
-	
-	internal class IconMarginActionsProvider
-	{
+
+	internal class IconMarginActionsProvider {
 		/// <summary>
 		/// Enables extensible context menu support for the specified icon margin.
 		/// </summary>
-		public static void Add(IconBarMargin margin, DecompilerTextView textView)
-		{
+		public static void Add(IconBarMargin margin, DecompilerTextView textView) {
 			var provider = new IconMarginActionsProvider(margin, textView);
 			margin.MouseUp += provider.HandleMouseEvent;
 			margin.ContextMenu = new ContextMenu();
 		}
-		
+
 		readonly IconBarMargin margin;
 		readonly DecompilerTextView textView;
 
 		// Prevent big memory leaks (text editor) because the data is put into some MEF data structure.
 		// All created instances in this class are shared so this one can be shared as well.
-		sealed class MefState
-		{
+		sealed class MefState {
 			public static readonly MefState Instance = new MefState();
 
-			MefState()
-			{
+			MefState() {
 				App.CompositionContainer.ComposeParts(this);
 			}
 
@@ -125,15 +112,13 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 			[ImportMany(typeof(IIconBarActionEntry))]
 			public Lazy<IIconBarActionEntry, IIconBarActionMetadata>[] actionEntries = null;
 		}
-		
-		private IconMarginActionsProvider(IconBarMargin margin, DecompilerTextView textView)
-		{
+
+		private IconMarginActionsProvider(IconBarMargin margin, DecompilerTextView textView) {
 			this.margin = margin;
 			this.textView = textView;
 		}
 
-		List<IIconBarObject> GetIconBarObjects(IList<IIconBarObject> objects, int line)
-		{
+		List<IIconBarObject> GetIconBarObjects(IList<IIconBarObject> objects, int line) {
 			var list = new List<IIconBarObject>();
 			foreach (var obj in objects) {
 				if (obj.GetLineNumber(textView) != line)
@@ -145,11 +130,10 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 			list.Sort((a, b) => b.ZOrder.CompareTo(a.ZOrder));
 			return list;
 		}
-		
-		void HandleMouseEvent(object sender, MouseButtonEventArgs e)
-		{
+
+		void HandleMouseEvent(object sender, MouseButtonEventArgs e) {
 			int line = margin.GetLineFromMousePosition(e);
-			
+
 			if (e.ChangedButton == MouseButton.Left) {
 				foreach (var category in MefState.Instance.actionEntries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
 					foreach (var entryPair in category) {
@@ -161,7 +145,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 					}
 				}
 			}
-			
+
 			// context menu entries
 			var objects = new List<IIconBarObject>(TextLineObjectManager.Instance.GetObjectsOfType<IIconBarObject>());
 			if (objects.Count == 0) {
@@ -170,7 +154,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 				this.margin.ContextMenu = null;
 				return;
 			}
-			
+
 			if (e.ChangedButton == MouseButton.Right) {
 				// check if we are on a Member
 				var filteredObjects = GetIconBarObjects(objects, line);
@@ -199,7 +183,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 								if (entryPair.Value.IsEnabled(bjmark)) {
 									menuItem.Click += delegate { entry.Execute(bjmark); };
 									isEnabled = true;
-								} else {
+								}
+								else {
 									menuItem.IsEnabled = false;
 									isEnabled = false;
 								}

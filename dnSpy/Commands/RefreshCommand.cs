@@ -19,15 +19,12 @@
 
 namespace ICSharpCode.ILSpy {
 	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "_Reload All Assemblies", MenuCategory = "Open", MenuOrder = 1140)]
-	sealed class ReloadCommand : SimpleCommand
-	{
-		public override bool CanExecute(object parameter)
-		{
+	sealed class ReloadCommand : SimpleCommand {
+		public override bool CanExecute(object parameter) {
 			return MainWindow.Instance.ReloadListCanExecute();
 		}
 
-		public override void Execute(object parameter)
-		{
+		public override void Execute(object parameter) {
 			MainWindow.Instance.ReloadList();
 		}
 	}

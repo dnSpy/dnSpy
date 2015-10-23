@@ -19,15 +19,13 @@
 using dnlib.DotNet;
 using dnSpy.TreeNodes;
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
+namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Interface implemented by all tree nodes
 	/// (both in main tree view and in analyzer)
 	/// that represent Cecil members.
 	/// </summary>
-	public interface IMemberTreeNode : ITokenTreeNode
-	{
+	public interface IMemberTreeNode : ITokenTreeNode {
 		IMemberRef Member { get; }
 	}
 }

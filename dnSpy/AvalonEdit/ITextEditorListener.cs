@@ -4,10 +4,8 @@
 using System;
 using System.Windows;
 
-namespace ICSharpCode.ILSpy.AvalonEdit
-{
-	public interface ITextEditorListener : IWeakEventListener
-	{
+namespace ICSharpCode.ILSpy.AvalonEdit {
+	public interface ITextEditorListener : IWeakEventListener {
 		new bool ReceiveWeakEvent(Type managerType, object sender, EventArgs e);
 		void ClosePopup();
 	}

@@ -23,13 +23,11 @@ using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal sealed class AnalyzedEventTreeNode : AnalyzerEntityTreeNode
-	{
+	internal sealed class AnalyzedEventTreeNode : AnalyzerEntityTreeNode {
 		private readonly EventDef analyzedEvent;
 		private readonly bool hidesParent;
 
-		public AnalyzedEventTreeNode(EventDef analyzedEvent, bool hidesParent = false)
-		{
+		public AnalyzedEventTreeNode(EventDef analyzedEvent, bool hidesParent = false) {
 			if (analyzedEvent == null)
 				throw new ArgumentNullException("analyzedEvent");
 			this.analyzedEvent = analyzedEvent;
@@ -45,13 +43,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			get { return analyzedEvent; }
 		}
 
-		public override object Icon
-		{
+		public override object Icon {
 			get { return EventTreeNode.GetIcon(analyzedEvent, BackgroundType.TreeNode); }
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			if (hidesParent) {
 				output.Write('(', TextTokenType.Operator);
 				output.Write("hides", TextTokenType.Text);
@@ -63,14 +59,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			EventTreeNode.Write(output, analyzedEvent, Language);
 		}
 
-		protected override void LoadChildren()
-		{
+		protected override void LoadChildren() {
 			if (analyzedEvent.AddMethod != null)
 				this.Children.Add(new AnalyzedEventAccessorTreeNode(analyzedEvent.AddMethod, "add"));
-			
+
 			if (analyzedEvent.RemoveMethod != null)
 				this.Children.Add(new AnalyzedEventAccessorTreeNode(analyzedEvent.RemoveMethod, "remove"));
-			
+
 			foreach (var accessor in analyzedEvent.OtherMethods)
 				this.Children.Add(new AnalyzedEventAccessorTreeNode(accessor, null));
 
@@ -79,21 +74,19 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 
 			if (AnalyzedEventOverridesTreeNode.CanShow(analyzedEvent))
 				this.Children.Add(new AnalyzedEventOverridesTreeNode(analyzedEvent));
-			
+
 			if (AnalyzedInterfaceEventImplementedByTreeNode.CanShow(analyzedEvent))
 				this.Children.Add(new AnalyzedInterfaceEventImplementedByTreeNode(analyzedEvent));
 		}
 
-		public static AnalyzerTreeNode TryCreateAnalyzer(IMemberRef member)
-		{
+		public static AnalyzerTreeNode TryCreateAnalyzer(IMemberRef member) {
 			if (CanShow(member))
 				return new AnalyzedEventTreeNode(member as EventDef);
 			else
 				return null;
 		}
 
-		public static bool CanShow(IMemberRef member)
-		{
+		public static bool CanShow(IMemberRef member) {
 			var eventDef = member as EventDef;
 			if (eventDef == null)
 				return false;

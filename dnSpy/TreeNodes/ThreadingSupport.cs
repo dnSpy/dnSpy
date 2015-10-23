@@ -31,31 +31,28 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Adds threading support to nodes
 	/// </summary>
-	class ThreadingSupport
-	{
+	class ThreadingSupport {
 		Task<List<SharpTreeNode>> loadChildrenTask;
 		CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
-		
+
 		public bool IsRunning {
 			get { return loadChildrenTask != null && !loadChildrenTask.IsCompleted; }
 		}
-		
-		public void Cancel()
-		{
+
+		public void Cancel() {
 			cancellationTokenSource.Cancel();
 			loadChildrenTask = null;
 			cancellationTokenSource = new CancellationTokenSource();
 		}
-		
+
 		/// <summary>
 		/// Starts loading the children of the specified node.
 		/// </summary>
-		public void LoadChildren(SharpTreeNode node, Func<CancellationToken, IEnumerable<SharpTreeNode>> fetchChildren)
-		{
+		public void LoadChildren(SharpTreeNode node, Func<CancellationToken, IEnumerable<SharpTreeNode>> fetchChildren) {
 			node.Children.Add(new LoadingTreeNode());
-			
+
 			CancellationToken ct = cancellationTokenSource.Token;
-			
+
 			var fetchChildrenEnumerable = fetchChildren(ct);
 			Task<List<SharpTreeNode>> thisTask = null;
 			thisTask = new Task<List<SharpTreeNode>>(
@@ -98,9 +95,8 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			// from showing up for very short waits.
 			thisTask.Wait(TimeSpan.FromMilliseconds(200));
 		}
-		
-		public void Decompile(Language language, ITextOutput output, DecompilationOptions options, Action ensureLazyChildren)
-		{
+
+		public void Decompile(Language language, ITextOutput output, DecompilationOptions options, Action ensureLazyChildren) {
 			var loadChildrenTask = this.loadChildrenTask;
 			if (loadChildrenTask == null) {
 				App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, ensureLazyChildren);
@@ -112,49 +108,40 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				}
 			}
 		}
-		
-		sealed class LoadingTreeNode : ILSpyTreeNode
-		{
-			protected override void Write(ITextOutput output, Language language)
-			{
+
+		sealed class LoadingTreeNode : ILSpyTreeNode {
+			protected override void Write(ITextOutput output, Language language) {
 				output.Write("Loading…", TextTokenType.Text);
 			}
-			
-			public override FilterResult Filter(FilterSettings settings)
-			{
+
+			public override FilterResult Filter(FilterSettings settings) {
 				return FilterResult.Match;
 			}
-			
-			public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-			{
+
+			public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			}
 
 			public override NodePathName NodePathName {
 				get { return new NodePathName("ld"); }
 			}
 		}
-		
-		sealed class ErrorTreeNode : ILSpyTreeNode
-		{
+
+		sealed class ErrorTreeNode : ILSpyTreeNode {
 			readonly string text;
-			
-			protected override void Write(ITextOutput output, Language language)
-			{
+
+			protected override void Write(ITextOutput output, Language language) {
 				output.Write(text, TextTokenType.Text);
 			}
-			
-			public ErrorTreeNode(string text)
-			{
+
+			public ErrorTreeNode(string text) {
 				this.text = text;
 			}
-			
-			public override FilterResult Filter(FilterSettings settings)
-			{
+
+			public override FilterResult Filter(FilterSettings settings) {
 				return FilterResult.Match;
 			}
-			
-			public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-			{
+
+			public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			}
 
 			public override NodePathName NodePathName {

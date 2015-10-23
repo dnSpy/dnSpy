@@ -26,13 +26,11 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal sealed class AnalyzedInterfacePropertyImplementedByTreeNode : AnalyzerSearchTreeNode
-	{
+	internal sealed class AnalyzedInterfacePropertyImplementedByTreeNode : AnalyzerSearchTreeNode {
 		private readonly PropertyDef analyzedProperty;
 		private readonly MethodDef analyzedMethod;
 
-		public AnalyzedInterfacePropertyImplementedByTreeNode(PropertyDef analyzedProperty)
-		{
+		public AnalyzedInterfacePropertyImplementedByTreeNode(PropertyDef analyzedProperty) {
 			if (analyzedProperty == null)
 				throw new ArgumentNullException("analyzedProperty");
 
@@ -40,21 +38,18 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			this.analyzedMethod = this.analyzedProperty.GetMethod ?? this.analyzedProperty.SetMethod;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Implemented By", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			if (analyzedMethod == null)
 				return new List<AnalyzerTreeNode>();
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedMethod, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Language));
 		}
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type) {
 			if (analyzedMethod == null)
 				yield break;
 			if (!type.HasInterfaces)
@@ -85,8 +80,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		public static bool CanShow(PropertyDef property)
-		{
+		public static bool CanShow(PropertyDef property) {
 			return property.DeclaringType.IsInterface;
 		}
 	}

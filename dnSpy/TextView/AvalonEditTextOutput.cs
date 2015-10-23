@@ -32,41 +32,36 @@ namespace ICSharpCode.ILSpy.TextView {
 	/// <summary>
 	/// A text segment that references some object. Used for hyperlinks in the editor.
 	/// </summary>
-	public sealed class ReferenceSegment : TextSegment
-	{
+	public sealed class ReferenceSegment : TextSegment {
 		public object Reference;
 		public bool IsLocal;
 		public bool IsLocalTarget;
 	}
-	
+
 	/// <summary>
 	/// Stores the positions of the definitions that were written to the text output.
 	/// </summary>
-	sealed class DefinitionLookup
-	{
+	sealed class DefinitionLookup {
 		internal Dictionary<object, int> definitions = new Dictionary<object, int>();
-		
-		public int GetDefinitionPosition(object definition)
-		{
+
+		public int GetDefinitionPosition(object definition) {
 			int val;
 			if (definition != null && definitions.TryGetValue(definition, out val))
 				return val;
 			else
 				return -1;
 		}
-		
-		public void AddDefinition(object definition, int offset)
-		{
+
+		public void AddDefinition(object definition, int offset) {
 			if (definition != null)
 				definitions[definition] = offset;
 		}
 	}
-	
+
 	/// <summary>
 	/// Text output implementation for AvalonEdit.
 	/// </summary>
-	public sealed class AvalonEditTextOutput : ISmartTextOutput
-	{
+	public sealed class AvalonEditTextOutput : ISmartTextOutput {
 		public bool CanBeCached {
 			get { return canBeCached; }
 			private set { canBeCached = value; }
@@ -79,47 +74,45 @@ namespace ICSharpCode.ILSpy.TextView {
 		int lastLineStart = 0;
 		int lineNumber = 1;
 		readonly StringBuilder b = new StringBuilder();
-		
+
 		/// <summary>Current indentation level</summary>
 		int indent;
 		/// <summary>Whether indentation should be inserted on the next write</summary>
 		bool needsIndent;
-		
+
 		internal readonly List<VisualLineElementGenerator> elementGenerators = new List<VisualLineElementGenerator>();
-		
+
 		/// <summary>List of all references that were written to the output</summary>
 		TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
-		
+
 		internal readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
-		
+
 		/// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
 		internal readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
-		
+
 		internal readonly List<MemberMapping> DebuggerMemberMappings = new List<MemberMapping>();
-		
-		public AvalonEditTextOutput()
-		{
+
+		public AvalonEditTextOutput() {
 		}
-		
+
 		/// <summary>
 		/// Gets the list of references (hyperlinks).
 		/// </summary>
 		internal TextSegmentCollection<ReferenceSegment> References {
 			get { return references; }
 		}
-		
-		public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator)
-		{
+
+		public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator) {
 			elementGenerators.Add(elementGenerator);
 		}
-		
+
 		/// <summary>
 		/// Controls the maximum length of the text.
 		/// When this length is exceeded, an <see cref="OutputLengthExceededException"/> will be thrown,
 		/// thus aborting the decompilation.
 		/// </summary>
 		public int LengthLimit = int.MaxValue;
-		
+
 		public int TextLength {
 			get { return b.Length; }
 		}
@@ -127,16 +120,16 @@ namespace ICSharpCode.ILSpy.TextView {
 		internal string Text {
 			get { return b.ToString(); }
 		}
-		
+
 		public ICSharpCode.NRefactory.TextLocation Location {
 			get {
 				return new ICSharpCode.NRefactory.TextLocation(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
 			}
 		}
-		
+
 		#region Text Document
 		TextDocument textDocument;
-		
+
 		/// <summary>
 		/// Prepares the TextDocument.
 		/// This method may be called by the background thread writing to the output.
@@ -146,38 +139,33 @@ namespace ICSharpCode.ILSpy.TextView {
 		/// Calling this method on the background thread ensures the TextDocument's line tokenization
 		/// runs in the background and does not block the GUI.
 		/// </remarks>
-		public void PrepareDocument()
-		{
+		public void PrepareDocument() {
 			if (textDocument == null) {
 				textDocument = new TextDocument(b.ToString());
 				textDocument.SetOwnerThread(null); // release ownership
 			}
 		}
-		
+
 		/// <summary>
 		/// Retrieves the TextDocument.
 		/// Once the document is retrieved, it can no longer be written to.
 		/// </summary>
-		public TextDocument GetDocument()
-		{
+		public TextDocument GetDocument() {
 			PrepareDocument();
 			textDocument.SetOwnerThread(System.Threading.Thread.CurrentThread); // acquire ownership
 			return textDocument;
 		}
 		#endregion
-		
-		public void Indent()
-		{
+
+		public void Indent() {
 			indent++;
 		}
-		
-		public void Unindent()
-		{
+
+		public void Unindent() {
 			indent--;
 		}
-		
-		void WriteIndent()
-		{
+
+		void WriteIndent() {
 			Debug.Assert(textDocument == null);
 			if (needsIndent) {
 				needsIndent = false;
@@ -186,21 +174,18 @@ namespace ICSharpCode.ILSpy.TextView {
 				}
 			}
 		}
-		
-		public void Write(char ch, TextTokenType tokenType)
-		{
+
+		public void Write(char ch, TextTokenType tokenType) {
 			WriteIndent();
 			Append(tokenType, ch);
 		}
-		
-		public void Write(string text, TextTokenType tokenType)
-		{
+
+		public void Write(string text, TextTokenType tokenType) {
 			WriteIndent();
 			Append(tokenType, text);
 		}
-		
-		public void WriteLine()
-		{
+
+		public void WriteLine() {
 			Debug.Assert(textDocument == null);
 			AppendLine();
 			needsIndent = true;
@@ -210,9 +195,8 @@ namespace ICSharpCode.ILSpy.TextView {
 				throw new OutputLengthExceededException();
 			}
 		}
-		
-		public void WriteDefinition(string text, object definition, TextTokenType tokenType, bool isLocal)
-		{
+
+		public void WriteDefinition(string text, object definition, TextTokenType tokenType, bool isLocal) {
 			WriteIndent();
 			int start = this.TextLength;
 			Append(tokenType, text);
@@ -220,26 +204,22 @@ namespace ICSharpCode.ILSpy.TextView {
 			this.DefinitionLookup.AddDefinition(definition, this.TextLength);
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = definition, IsLocal = isLocal, IsLocalTarget = true });
 		}
-		
-		public void WriteReference(string text, object reference, TextTokenType tokenType, bool isLocal)
-		{
+
+		public void WriteReference(string text, object reference, TextTokenType tokenType, bool isLocal) {
 			WriteIndent();
 			int start = this.TextLength;
 			Append(tokenType, text);
 			int end = this.TextLength;
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = isLocal });
 		}
-		
-		public void MarkFoldStart(string collapsedText, bool defaultCollapsed)
-		{
+
+		public void MarkFoldStart(string collapsedText, bool defaultCollapsed) {
 		}
-		
-		public void MarkFoldEnd()
-		{
+
+		public void MarkFoldEnd() {
 		}
-		
-		public void AddUIElement(Func<UIElement> element)
-		{
+
+		public void AddUIElement(Func<UIElement> element) {
 			if (element != null) {
 				if (this.UIElements.Count > 0 && this.UIElements.Last().Key == this.TextLength)
 					throw new InvalidOperationException("Only one UIElement is allowed for each position in the document");
@@ -247,35 +227,30 @@ namespace ICSharpCode.ILSpy.TextView {
 				MarkAsNonCached();
 			}
 		}
-		
-		public void AddDebugSymbols(MemberMapping methodDebugSymbols)
-		{
+
+		public void AddDebugSymbols(MemberMapping methodDebugSymbols) {
 			DebuggerMemberMappings.Add(methodDebugSymbols);
 		}
 
-		void Append(TextTokenType tokenType, char c)
-		{
+		void Append(TextTokenType tokenType, char c) {
 			tokens.Append(tokenType, c);
 			b.Append(c);
 			Debug.Assert(b.Length == tokens.Length);
 		}
 
-		void Append(TextTokenType tokenType, string s)
-		{
+		void Append(TextTokenType tokenType, string s) {
 			tokens.Append(tokenType, s);
 			b.Append(s);
 			Debug.Assert(b.Length == tokens.Length);
 		}
 
-		void AppendLine()
-		{
+		void AppendLine() {
 			tokens.AppendLine();
 			b.AppendLine();
 			Debug.Assert(b.Length == tokens.Length);
 		}
 
-		public void MarkAsNonCached()
-		{
+		public void MarkAsNonCached() {
 			CanBeCached = false;
 		}
 	}

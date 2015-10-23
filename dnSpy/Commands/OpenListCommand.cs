@@ -19,10 +19,8 @@
 
 namespace ICSharpCode.ILSpy {
 	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "Open L_ist…", MenuIcon = "AssemblyList", MenuCategory = "Open", MenuOrder = 1130)]
-	sealed class OpenListCommand : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
+	sealed class OpenListCommand : SimpleCommand {
+		public override void Execute(object parameter) {
 			OpenListDialog dlg = new OpenListDialog();
 			dlg.Owner = MainWindow.Instance;
 			if (dlg.ShowDialog() == true)

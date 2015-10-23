@@ -31,24 +31,21 @@ namespace ICSharpCode.ILSpy.VB {
 	/// <summary>
 	/// Description of VBTextOutputFormatter.
 	/// </summary>
-	public class VBTextOutputFormatter : IOutputFormatter
-	{
+	public class VBTextOutputFormatter : IOutputFormatter {
 		readonly ITextOutput output;
 		readonly Stack<AstNode> nodeStack = new Stack<AstNode>();
-		
-		public VBTextOutputFormatter(ITextOutput output)
-		{
+
+		public VBTextOutputFormatter(ITextOutput output) {
 			if (output == null)
 				throw new ArgumentNullException("output");
 			this.output = output;
 		}
-		
+
 		MemberMapping currentMemberMapping;
 		Stack<MemberMapping> parentMemberMappings = new Stack<MemberMapping>();
 		List<Tuple<MemberMapping, List<ILRange>>> multiMappings;
-		
-		public void StartNode(AstNode node)
-		{
+
+		public void StartNode(AstNode node) {
 //			var ranges = node.Annotation<List<ILRange>>();
 //			if (ranges != null && ranges.Count > 0)
 //			{
@@ -70,9 +67,9 @@ namespace ICSharpCode.ILSpy.VB {
 //					}
 //				}
 //			}
-			
+
 			nodeStack.Push(node);
-			
+
 			MemberMapping mapping = node.Annotation<MemberMapping>();
 			if (mapping != null) {
 				parentMemberMappings.Push(currentMemberMapping);
@@ -85,12 +82,11 @@ namespace ICSharpCode.ILSpy.VB {
 				multiMappings = mms;
 			}
 		}
-		
-		public void EndNode(AstNode node)
-		{
+
+		public void EndNode(AstNode node) {
 			if (nodeStack.Pop() != node)
 				throw new InvalidOperationException();
-			
+
 			if (node.Annotation<MemberMapping>() != null) {
 				output.AddDebugSymbols(currentMemberMapping);
 				currentMemberMapping = parentMemberMappings.Pop();
@@ -105,15 +101,14 @@ namespace ICSharpCode.ILSpy.VB {
 				}
 			}
 		}
-		
-		public void WriteIdentifier(string identifier, TextTokenType tokenType)
-		{
+
+		public void WriteIdentifier(string identifier, TextTokenType tokenType) {
 			var definition = GetCurrentDefinition();
 			if (definition != null) {
 				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, tokenType);
 				return;
 			}
-			
+
 			object memberRef = GetCurrentMemberReference();
 			if (memberRef != null) {
 				output.WriteReference(IdentifierEscaper.Escape(identifier), memberRef, tokenType);
@@ -135,8 +130,7 @@ namespace ICSharpCode.ILSpy.VB {
 			output.Write(IdentifierEscaper.Escape(identifier), tokenType);
 		}
 
-		IMemberRef GetCurrentMemberReference()
-		{
+		IMemberRef GetCurrentMemberReference() {
 			AstNode node = nodeStack.Peek();
 			IMemberRef memberRef = node.Annotation<IMemberRef>();
 			if (memberRef == null && node.Role == AstNode.Roles.TargetExpression && (node.Parent is InvocationExpression || node.Parent is ObjectCreationExpression)) {
@@ -145,8 +139,7 @@ namespace ICSharpCode.ILSpy.VB {
 			return memberRef;
 		}
 
-		object GetCurrentLocalReference()
-		{
+		object GetCurrentLocalReference() {
 			AstNode node = nodeStack.Peek();
 			ILVariable variable = node.Annotation<ILVariable>();
 			if (variable != null) {
@@ -159,8 +152,7 @@ namespace ICSharpCode.ILSpy.VB {
 			return null;
 		}
 
-		object GetCurrentLocalDefinition()
-		{
+		object GetCurrentLocalDefinition() {
 			AstNode node = nodeStack.Peek();
 			var parameterDef = node.Annotation<Parameter>();
 			if (parameterDef != null)
@@ -174,32 +166,31 @@ namespace ICSharpCode.ILSpy.VB {
 					//if (variable.OriginalVariable != null)
 					//    return variable.OriginalVariable;
 					return variable;
-				} else {
+				}
+				else {
 
 				}
 			}
 
 			return null;
 		}
-		
-		object GetCurrentDefinition()
-		{
+
+		object GetCurrentDefinition() {
 			if (nodeStack == null || nodeStack.Count == 0)
 				return null;
-			
-			var node = nodeStack.Peek();			
+
+			var node = nodeStack.Peek();
 			if (IsDefinition(node))
 				return node.Annotation<IMemberRef>();
-			
+
 			node = node.Parent;
 			if (IsDefinition(node))
 				return node.Annotation<IMemberRef>();
 
 			return null;
 		}
-		
-		public void WriteKeyword(string keyword)
-		{
+
+		public void WriteKeyword(string keyword) {
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
 			if (memberRef != null && node is PrimitiveType)
@@ -207,9 +198,8 @@ namespace ICSharpCode.ILSpy.VB {
 			else
 				output.Write(keyword, TextTokenType.Keyword);
 		}
-		
-		public void WriteToken(string token, TextTokenType tokenType)
-		{
+
+		public void WriteToken(string token, TextTokenType tokenType) {
 			// Attach member reference to token only if there's no identifier in the current node.
 			IMemberRef memberRef = GetCurrentMemberReference();
 			if (memberRef != null && nodeStack.Peek().GetChildByRole(AstNode.Roles.Identifier).IsNull)
@@ -217,29 +207,24 @@ namespace ICSharpCode.ILSpy.VB {
 			else
 				output.Write(token, tokenType);
 		}
-		
-		public void Space()
-		{
+
+		public void Space() {
 			output.WriteSpace();
 		}
-		
-		public void Indent()
-		{
+
+		public void Indent() {
 			output.Indent();
 		}
-		
-		public void Unindent()
-		{
+
+		public void Unindent() {
 			output.Unindent();
 		}
-		
-		public void NewLine()
-		{
+
+		public void NewLine() {
 			output.WriteLine();
 		}
-		
-		public void WriteComment(bool isDocumentation, string content)
-		{
+
+		public void WriteComment(bool isDocumentation, string content) {
 			if (isDocumentation) {
 				output.Write("'''", TextTokenType.XmlDocTag);
 				output.WriteXmlDoc(content);
@@ -248,43 +233,37 @@ namespace ICSharpCode.ILSpy.VB {
 			else
 				output.WriteLine("'" + content, TextTokenType.Comment);
 		}
-		
-		public void MarkFoldStart()
-		{
+
+		public void MarkFoldStart() {
 			output.MarkFoldStart();
 		}
-		
-		public void MarkFoldEnd()
-		{
+
+		public void MarkFoldEnd() {
 			output.MarkFoldEnd();
 		}
-		
-		private static bool IsDefinition(AstNode node)
-		{
+
+		private static bool IsDefinition(AstNode node) {
 			return
 				node is FieldDeclaration ||
 				node is ConstructorDeclaration ||
 				node is EventDeclaration ||
 				node is DelegateDeclaration ||
-				node is OperatorDeclaration||
+				node is OperatorDeclaration ||
 				node is MemberDeclaration ||
 				node is TypeDeclaration;
 		}
 
-		class DebugState
-		{
+		class DebugState {
 			public List<AstNode> Nodes = new List<AstNode>();
 			public List<ILRange> ExtraILRanges = new List<ILRange>();
 			public TextLocation StartLocation;
 		}
 		readonly Stack<DebugState> debugStack = new Stack<DebugState>();
-		public void DebugStart(AstNode node)
-		{
+		public void DebugStart(AstNode node) {
 			debugStack.Push(new DebugState { StartLocation = output.Location });
 		}
 
-		public void DebugHidden(object hiddenILRanges)
-		{
+		public void DebugHidden(object hiddenILRanges) {
 			var list = hiddenILRanges as IList<ILRange>;
 			if (list != null) {
 				if (debugStack.Count > 0)
@@ -292,15 +271,13 @@ namespace ICSharpCode.ILSpy.VB {
 			}
 		}
 
-		public void DebugExpression(AstNode node)
-		{
+		public void DebugExpression(AstNode node) {
 			if (debugStack.Count > 0)
 				debugStack.Peek().Nodes.Add(node);
 		}
 
 		static readonly IEnumerable<ILRange> emptyILRange = new ILRange[0];
-		public void DebugEnd(AstNode node)
-		{
+		public void DebugEnd(AstNode node) {
 			var state = debugStack.Pop();
 			if (currentMemberMapping != null) {
 				foreach (var range in ILRange.OrderAndJoin(GetILRanges(state))) {
@@ -328,8 +305,7 @@ namespace ICSharpCode.ILSpy.VB {
 			}
 		}
 
-		static IEnumerable<ILRange> GetILRanges(DebugState state)
-		{
+		static IEnumerable<ILRange> GetILRanges(DebugState state) {
 			foreach (var node in state.Nodes) {
 				foreach (var ann in node.Annotations) {
 					var list = ann as IList<ILRange>;

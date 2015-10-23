@@ -25,29 +25,24 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	/// <summary>
 	/// Base class for analyzer nodes that perform a search.
 	/// </summary>
-	public abstract class AnalyzerSearchTreeNode : AnalyzerTreeNode
-	{
+	public abstract class AnalyzerSearchTreeNode : AnalyzerTreeNode {
 		private readonly ThreadingSupport threading = new ThreadingSupport();
-		
-		protected AnalyzerSearchTreeNode()
-		{
+
+		protected AnalyzerSearchTreeNode() {
 			this.LazyLoading = true;
 		}
-		
-		public override object Icon
-		{
+
+		public override object Icon {
 			get { return ImageCache.Instance.GetImage("Search", BackgroundType.TreeNode); }
 		}
-		
-		protected override void LoadChildren()
-		{
+
+		protected override void LoadChildren() {
 			threading.LoadChildren(this, FetchChildren);
 		}
-		
+
 		protected abstract IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct);
-		
-		protected override void OnIsVisibleChanged()
-		{
+
+		protected override void OnIsVisibleChanged() {
 			base.OnIsVisibleChanged();
 			if (!this.IsVisible && threading.IsRunning) {
 				this.LazyLoading = true;
@@ -55,9 +50,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 				this.Children.Clear();
 			}
 		}
-		
-		public override bool HandleAssemblyListChanged(ICollection<DnSpyFile> removedAssemblies, ICollection<DnSpyFile> addedAssemblies)
-		{
+
+		public override bool HandleAssemblyListChanged(ICollection<DnSpyFile> removedAssemblies, ICollection<DnSpyFile> addedAssemblies) {
 			// only cancel a running analysis if user has manually added/removed assemblies
 			bool manualAdd = false;
 			foreach (var asm in addedAssemblies) {
@@ -72,16 +66,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			return true;
 		}
 
-		public override bool HandleModelUpdated(DnSpyFile asm)
-		{
+		public override bool HandleModelUpdated(DnSpyFile asm) {
 			this.LazyLoading = true;
 			threading.Cancel();
 			this.Children.Clear();
 			return true;
 		}
 
-		protected override void Dispose(bool disposing)
-		{
+		protected override void Dispose(bool disposing) {
 			threading.Cancel();
 		}
 	}

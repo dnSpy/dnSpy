@@ -42,45 +42,41 @@ namespace ICSharpCode.ILSpy.VB {
 	/// Decompiler logic for VB.
 	/// </summary>
 	[Export(typeof(Language))]
-	public class VBLanguage : Language
-	{
+	public class VBLanguage : Language {
 		readonly Predicate<IAstTransform> transformAbortCondition = null;
 		bool showAllMembers = false;
-		
-		public VBLanguage()
-		{
+
+		public VBLanguage() {
 		}
-		
+
 		public override string Name {
 			get { return "VB"; }
 		}
-		
+
 		public override string FileExtension {
 			get { return ".vb"; }
 		}
-		
+
 		public override string ProjectFileExtension {
 			get { return ".vbproj"; }
 		}
-		
-		public override void WriteCommentLine(ITextOutput output, string comment)
-		{
+
+		public override void WriteCommentLine(ITextOutput output, string comment) {
 			output.WriteLine("' " + comment, TextTokenType.Comment);
 		}
-		
-		public override void WriteComment(ITextOutput output, string comment)
-		{
+
+		public override void WriteComment(ITextOutput output, string comment) {
 			output.Write("' " + comment, TextTokenType.Comment);
 		}
-		
-		public override void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
-		{
+
+		public override void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
 			if (options.FullDecompilation && options.SaveAsProjectDirectory != null) {
 				HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 				var files = WriteCodeFilesInProject(dnSpyFileList, file.ModuleDef, options, directories).ToList();
 				files.AddRange(WriteResourceFilesInProject(file, options, directories));
 				WriteProjectFile(dnSpyFileList, new TextOutputWriter(output), files, file, options);
-			} else {
+			}
+			else {
 				bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
 				bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 				base.DecompileAssembly(dnSpyFileList, file, output, options, flags);
@@ -105,7 +101,7 @@ namespace ICSharpCode.ILSpy.VB {
 				}
 				if (decompileMod || decompileAsm)
 					output.WriteLine();
-				
+
 				// don't automatically load additional assemblies when an assembly node is selected in the tree view
 				using (options.FullDecompilation ? null : dnSpyFileList.DisableAssemblyLoad()) {
 					AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: file.ModuleDef);
@@ -114,7 +110,7 @@ namespace ICSharpCode.ILSpy.VB {
 				}
 			}
 		}
-		
+
 		static readonly string[] projectImports = new[] {
 			"System.Diagnostics",
 			"Microsoft.VisualBasic",
@@ -122,10 +118,9 @@ namespace ICSharpCode.ILSpy.VB {
 			"System.Collections",
 			"System.Collections.Generic"
 		};
-		
+
 		#region WriteProjectFile
-		void WriteProjectFile(DnSpyFileList dnSpyFileList, TextWriter writer, IEnumerable<Tuple<string, string>> files, DnSpyFile assembly, DecompilationOptions options)
-		{
+		void WriteProjectFile(DnSpyFileList dnSpyFileList, TextWriter writer, IEnumerable<Tuple<string, string>> files, DnSpyFile assembly, DecompilationOptions options) {
 			var module = assembly.ModuleDef;
 			const string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 			string platformName = CSharpLanguage.GetPlatformName(module);
@@ -153,15 +148,15 @@ namespace ICSharpCode.ILSpy.VB {
 				w.WriteEndElement(); // </Platform>
 
 				switch (module.Kind) {
-					case ModuleKind.Windows:
-						w.WriteElementString("OutputType", "WinExe");
-						break;
-					case ModuleKind.Console:
-						w.WriteElementString("OutputType", "Exe");
-						break;
-					default:
-						w.WriteElementString("OutputType", "Library");
-						break;
+				case ModuleKind.Windows:
+					w.WriteElementString("OutputType", "WinExe");
+					break;
+				case ModuleKind.Console:
+					w.WriteElementString("OutputType", "Exe");
+					break;
+				default:
+					w.WriteElementString("OutputType", "Library");
+					break;
 				}
 
 				if (module.Assembly != null)
@@ -183,12 +178,15 @@ namespace ICSharpCode.ILSpy.VB {
 				if (!useTargetFrameworkAttribute) {
 					if (module.IsClr10) {
 						w.WriteElementString("TargetFrameworkVersion", "v1.0");
-					} else if (module.IsClr11) {
+					}
+					else if (module.IsClr11) {
 						w.WriteElementString("TargetFrameworkVersion", "v1.1");
-					} else if (module.IsClr20) {
+					}
+					else if (module.IsClr20) {
 						w.WriteElementString("TargetFrameworkVersion", "v2.0");
 						// TODO: Detect when .NET 3.0/3.5 is required
-					} else {
+					}
+					else {
 						w.WriteElementString("TargetFrameworkVersion", "v4.0");
 					}
 				}
@@ -277,7 +275,7 @@ namespace ICSharpCode.ILSpy.VB {
 					}
 				}
 				w.WriteEndElement(); // </ItemGroup> (ProjectReference)
-				
+
 				w.WriteStartElement("ItemGroup"); // Imports
 				foreach (var import in projectImports.OrderBy(x => x)) {
 					w.WriteStartElement("Import");
@@ -296,8 +294,7 @@ namespace ICSharpCode.ILSpy.VB {
 		#endregion
 
 		#region WriteCodeFilesInProject
-		bool IncludeTypeWhenDecompilingProject(TypeDef type, DecompilationOptions options)
-		{
+		bool IncludeTypeWhenDecompilingProject(TypeDef type, DecompilationOptions options) {
 			if (type.IsGlobalModuleType || AstBuilder.MemberIsHidden(type, options.DecompilerSettings))
 				return false;
 			if (type.Namespace == "XamlGeneratedNamespace" && type.Name == "GeneratedInternalTypeHelper")
@@ -305,11 +302,9 @@ namespace ICSharpCode.ILSpy.VB {
 			return true;
 		}
 
-		IEnumerable<Tuple<string, string>> WriteAssemblyInfo(DnSpyFileList dnSpyFileList, ModuleDef module, DecompilationOptions options, HashSet<string> directories)
-		{
+		IEnumerable<Tuple<string, string>> WriteAssemblyInfo(DnSpyFileList dnSpyFileList, ModuleDef module, DecompilationOptions options, HashSet<string> directories) {
 			// don't automatically load additional assemblies when an assembly node is selected in the tree view
-			using (dnSpyFileList.DisableAssemblyLoad())
-			{
+			using (dnSpyFileList.DisableAssemblyLoad()) {
 				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: module);
 				codeDomBuilder.AddAssembly(module, true, true, true);
 				codeDomBuilder.RunTransformations(transformAbortCondition);
@@ -324,14 +319,14 @@ namespace ICSharpCode.ILSpy.VB {
 			}
 		}
 
-		IEnumerable<Tuple<string, string>> WriteCodeFilesInProject(DnSpyFileList dnSpyFileList, ModuleDef module, DecompilationOptions options, HashSet<string> directories)
-		{
+		IEnumerable<Tuple<string, string>> WriteCodeFilesInProject(DnSpyFileList dnSpyFileList, ModuleDef module, DecompilationOptions options, HashSet<string> directories) {
 			var files = module.Types.Where(t => IncludeTypeWhenDecompilingProject(t, options)).GroupBy(
-				delegate(TypeDef type) {
+				delegate (TypeDef type) {
 					string file = TextView.DecompilerTextView.CleanUpName(type.Name) + this.FileExtension;
 					if (string.IsNullOrEmpty(type.Namespace)) {
 						return file;
-					} else {
+					}
+					else {
 						string dir = TextView.DecompilerTextView.CleanUpName(type.Namespace);
 						if (directories.Add(dir))
 							Directory.CreateDirectory(Path.Combine(options.SaveAsProjectDirectory, dir));
@@ -342,7 +337,7 @@ namespace ICSharpCode.ILSpy.VB {
 			Parallel.ForEach(
 				files,
 				new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
-				delegate(IGrouping<string, TypeDef> file) {
+				delegate (IGrouping<string, TypeDef> file) {
 					using (StreamWriter w = new StreamWriter(Path.Combine(options.SaveAsProjectDirectory, file.Key))) {
 						AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: module);
 						foreach (TypeDef type in file) {
@@ -357,34 +352,33 @@ namespace ICSharpCode.ILSpy.VB {
 		#endregion
 
 		#region WriteResourceFilesInProject
-		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(DnSpyFile assembly, DecompilationOptions options, HashSet<string> directories)
-		{
+		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(DnSpyFile assembly, DecompilationOptions options, HashSet<string> directories) {
 			//AppDomain bamlDecompilerAppDomain = null;
 			//try {
-				foreach (EmbeddedResource r in assembly.ModuleDef.Resources.OfType<EmbeddedResource>()) {
-					string fileName;
-					Stream s = r.GetResourceStream();
-					s.Position = 0;
-					if (r.Name.EndsWith(".g.resources", StringComparison.OrdinalIgnoreCase)) {
-						IEnumerable<DictionaryEntry> rs = null;
-						try {
-							rs = new ResourceSet(s).Cast<DictionaryEntry>();
-						}
-						catch (ArgumentException) {
-						}
-						if (rs != null && rs.All(e => e.Value is Stream)) {
-							foreach (var pair in rs) {
-								fileName = Path.Combine(((string)pair.Key).Split('/').Select(p => TextView.DecompilerTextView.CleanUpName(p)).ToArray());
-								string dirName = Path.GetDirectoryName(fileName);
-								if (!string.IsNullOrEmpty(dirName) && directories.Add(dirName)) {
-									Directory.CreateDirectory(Path.Combine(options.SaveAsProjectDirectory, dirName));
-								}
-								Stream entryStream = (Stream)pair.Value;
-								entryStream.Position = 0;
-								if (fileName.EndsWith(".baml", StringComparison.OrdinalIgnoreCase)) {
-									//MemoryStream ms = new MemoryStream();
-									//entryStream.CopyTo(ms);
-									// TODO implement extension point
+			foreach (EmbeddedResource r in assembly.ModuleDef.Resources.OfType<EmbeddedResource>()) {
+				string fileName;
+				Stream s = r.GetResourceStream();
+				s.Position = 0;
+				if (r.Name.EndsWith(".g.resources", StringComparison.OrdinalIgnoreCase)) {
+					IEnumerable<DictionaryEntry> rs = null;
+					try {
+						rs = new ResourceSet(s).Cast<DictionaryEntry>();
+					}
+					catch (ArgumentException) {
+					}
+					if (rs != null && rs.All(e => e.Value is Stream)) {
+						foreach (var pair in rs) {
+							fileName = Path.Combine(((string)pair.Key).Split('/').Select(p => TextView.DecompilerTextView.CleanUpName(p)).ToArray());
+							string dirName = Path.GetDirectoryName(fileName);
+							if (!string.IsNullOrEmpty(dirName) && directories.Add(dirName)) {
+								Directory.CreateDirectory(Path.Combine(options.SaveAsProjectDirectory, dirName));
+							}
+							Stream entryStream = (Stream)pair.Value;
+							entryStream.Position = 0;
+							if (fileName.EndsWith(".baml", StringComparison.OrdinalIgnoreCase)) {
+								//MemoryStream ms = new MemoryStream();
+								//entryStream.CopyTo(ms);
+// TODO implement extension point
 //									var decompiler = Baml.BamlResourceEntryNode.CreateBamlDecompilerInAppDomain(ref bamlDecompilerAppDomain, assembly.FileName);
 //									string xaml = null;
 //									try {
@@ -396,21 +390,21 @@ namespace ICSharpCode.ILSpy.VB {
 //										yield return Tuple.Create("Page", Path.ChangeExtension(fileName, ".xaml"));
 //										continue;
 //									}
-								}
-								using (FileStream fs = new FileStream(Path.Combine(options.SaveAsProjectDirectory, fileName), FileMode.Create, FileAccess.Write)) {
-									entryStream.CopyTo(fs);
-								}
-								yield return Tuple.Create("Resource", fileName);
 							}
-							continue;
+							using (FileStream fs = new FileStream(Path.Combine(options.SaveAsProjectDirectory, fileName), FileMode.Create, FileAccess.Write)) {
+								entryStream.CopyTo(fs);
+							}
+							yield return Tuple.Create("Resource", fileName);
 						}
+						continue;
 					}
-					fileName = GetFileNameForResource(r.Name, directories);
-					using (FileStream fs = new FileStream(Path.Combine(options.SaveAsProjectDirectory, fileName), FileMode.Create, FileAccess.Write)) {
-						s.CopyTo(fs);
-					}
-					yield return Tuple.Create("EmbeddedResource", fileName);
 				}
+				fileName = GetFileNameForResource(r.Name, directories);
+				using (FileStream fs = new FileStream(Path.Combine(options.SaveAsProjectDirectory, fileName), FileMode.Create, FileAccess.Write)) {
+					s.CopyTo(fs);
+				}
+				yield return Tuple.Create("EmbeddedResource", fileName);
+			}
 			//}
 			//finally {
 			//    if (bamlDecompilerAppDomain != null)
@@ -418,8 +412,7 @@ namespace ICSharpCode.ILSpy.VB {
 			//}
 		}
 
-		string GetFileNameForResource(string fullName, HashSet<string> directories)
-		{
+		string GetFileNameForResource(string fullName, HashSet<string> directories) {
 			string[] splitName = fullName.Split('.');
 			string fileName = TextView.DecompilerTextView.CleanUpName(fullName);
 			for (int i = splitName.Length - 1; i > 0; i--) {
@@ -433,58 +426,52 @@ namespace ICSharpCode.ILSpy.VB {
 			return fileName;
 		}
 		#endregion
-		
-		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLineDeclaringType(output, method);
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: method.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddMethod(method);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options, method.Module);
 		}
-		
-		public override void DecompileProperty(PropertyDef property, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void DecompileProperty(PropertyDef property, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLineDeclaringType(output, property);
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: property.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddProperty(property);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options, property.Module);
 		}
-		
-		public override void DecompileField(FieldDef field, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void DecompileField(FieldDef field, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLineDeclaringType(output, field);
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: field.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddField(field);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options, field.Module);
 		}
-		
-		public override void DecompileEvent(EventDef ev, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void DecompileEvent(EventDef ev, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLineDeclaringType(output, ev);
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: ev.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddEvent(ev);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options, ev.Module);
 		}
-		
-		public override void DecompileType(TypeDef type, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void DecompileType(TypeDef type, ITextOutput output, DecompilationOptions options) {
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: type);
 			codeDomBuilder.AddType(type);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options, type.Module);
 		}
-		
-		public override bool ShowMember(IMemberRef member)
-		{
+
+		public override bool ShowMember(IMemberRef member) {
 			return showAllMembers || !AstBuilder.MemberIsHidden(member, new DecompilationOptions().DecompilerSettings);
 		}
-		
-		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationOptions options, ModuleDef module)
-		{
+
+		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationOptions options, ModuleDef module) {
 			astBuilder.RunTransformations(transformAbortCondition);
 			if (options.DecompilerSettings.ShowXmlDocumentation) {
 				try {
 					AddXmlDocTransform.Run(astBuilder.SyntaxTree);
-				} catch (XmlException ex) {
+				}
+				catch (XmlException ex) {
 					string[] msg = (" Exception while reading XmlDoc: " + ex.ToString()).Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 					var insertionPoint = astBuilder.SyntaxTree.FirstChild;
 					for (int i = 0; i < msg.Length; i++)
@@ -498,9 +485,8 @@ namespace ICSharpCode.ILSpy.VB {
 			var formattingPolicy = new VBFormattingOptions();
 			unit.AcceptVisitor(new OutputVisitor(outputFormatter, formattingPolicy), null);
 		}
-		
-		AstBuilder CreateAstBuilder(DecompilationOptions options, ModuleDef currentModule = null, TypeDef currentType = null, bool isSingleMember = false)
-		{
+
+		AstBuilder CreateAstBuilder(DecompilationOptions options, ModuleDef currentModule = null, TypeDef currentType = null, bool isSingleMember = false) {
 			if (currentModule == null)
 				currentModule = currentType.Module;
 			DecompilerSettings settings = options.DecompilerSettings;
@@ -520,17 +506,15 @@ namespace ICSharpCode.ILSpy.VB {
 				DontShowCreateMethodBodyExceptions = options.DontShowCreateMethodBodyExceptions,
 			};
 		}
-		
-		public override void FormatTypeName(ITextOutput output, TypeDef type)
-		{
+
+		public override void FormatTypeName(ITextOutput output, TypeDef type) {
 			if (type == null)
 				throw new ArgumentNullException("type");
 
 			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
 		}
 
-		public override void TypeToString(ITextOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null)
-		{
+		public override void TypeToString(ITextOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
 			ConvertTypeOptions options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
 			if (includeNamespace)
 				options |= ConvertTypeOptions.IncludeNamespace;
@@ -538,8 +522,7 @@ namespace ICSharpCode.ILSpy.VB {
 			TypeToString(output, options, type, typeAttributes);
 		}
 
-		void TypeToString(ITextOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null)
-		{
+		void TypeToString(ITextOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null) {
 			var envProvider = new ILSpyEnvironmentProvider();
 			var converter = new CSharpToVBConverterVisitor(envProvider);
 			var astType = AstBuilder.ConvertType(type, typeAttributes, options);
@@ -550,14 +533,13 @@ namespace ICSharpCode.ILSpy.VB {
 				if (astType is NRefactory.CSharp.ComposedType && ((NRefactory.CSharp.ComposedType)astType).PointerRank > 0)
 					((NRefactory.CSharp.ComposedType)astType).PointerRank--;
 			}
-			
+
 			var vbAstType = astType.AcceptVisitor(converter, null);
-			
+
 			vbAstType.AcceptVisitor(new OutputVisitor(new VBTextOutputFormatter(output), new VBFormattingOptions()), null);
 		}
 
-		public override void WriteToolTip(ITextOutput output, dnlib.DotNet.IVariable variable, string name)
-		{
+		public override void WriteToolTip(ITextOutput output, dnlib.DotNet.IVariable variable, string name) {
 			output.Write(variable is Local ? "(local variable)" : "(parameter)", TextTokenType.Text);
 			output.WriteSpace();
 			output.Write(IdentifierEscaper.Escape(GetName(variable, name)), variable is Local ? TextTokenType.Local : TextTokenType.Parameter);

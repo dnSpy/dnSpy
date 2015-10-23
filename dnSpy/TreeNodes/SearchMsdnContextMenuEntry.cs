@@ -22,12 +22,10 @@ using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
 	[ExportContextMenuEntryAttribute(Header = "Search _MSDN", Icon = "Search", Order = 910, Category = "Other")]
-	internal sealed class SearchMsdnContextMenuEntry : IContextMenuEntry
-	{
+	internal sealed class SearchMsdnContextMenuEntry : IContextMenuEntry {
 		private static string msdnAddress = "http://msdn.microsoft.com/en-us/library/{0}";
 
-		public bool IsVisible(ContextMenuEntryContext context)
-		{
+		public bool IsVisible(ContextMenuEntryContext context) {
 			if (context.SelectedTreeNodes != null)
 				return context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n is NamespaceTreeNode || n is IMemberTreeNode);
 
@@ -37,8 +35,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return false;
 		}
 
-		static IMemberDef Resolve(IMemberRef memberRef)
-		{
+		static IMemberDef Resolve(IMemberRef memberRef) {
 			var member = MainWindow.ResolveReference(memberRef);
 			var md = member as MethodDef;
 			if (md == null)
@@ -81,8 +78,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return member;
 		}
 
-		static bool IsPublic(IMemberRef memberRef)
-		{
+		static bool IsPublic(IMemberRef memberRef) {
 			var def = Resolve(memberRef);
 			if (def is TypeDef)
 				return IsAccessible((TypeDef)def);
@@ -112,8 +108,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return false;
 		}
 
-		static bool IsAccessible(TypeDef type)
-		{
+		static bool IsAccessible(TypeDef type) {
 			if (type == null)
 				return false;
 			while (true) {
@@ -140,33 +135,28 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return type.IsPublic;
 		}
 
-		static bool IsAccessible(MethodDef method)
-		{
+		static bool IsAccessible(MethodDef method) {
 			return method != null && (method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly);
 		}
 
-		static bool IsAccessible(FieldDef field)
-		{
+		static bool IsAccessible(FieldDef field) {
 			return field != null && (field.IsPublic || field.IsFamily || field.IsFamilyOrAssembly);
 		}
 
-		static bool IsAccessible(PropertyDef prop)
-		{
+		static bool IsAccessible(PropertyDef prop) {
 			return prop.GetMethods.Any(m => IsAccessible(m)) ||
 				prop.SetMethods.Any(m => IsAccessible(m)) ||
 				prop.OtherMethods.Any(m => IsAccessible(m));
 		}
 
-		static bool IsAccessible(EventDef evt)
-		{
+		static bool IsAccessible(EventDef evt) {
 			return IsAccessible(evt.AddMethod) ||
 				IsAccessible(evt.InvokeMethod) ||
 				IsAccessible(evt.RemoveMethod) ||
 				evt.OtherMethods.Any(m => IsAccessible(m));
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context)
-		{
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			if (context.SelectedTreeNodes != null) {
 				foreach (var node in context.SelectedTreeNodes) {
 					var mrNode = node as IMemberTreeNode;
@@ -184,8 +174,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return context.Reference != null && context.Reference.Reference is IMemberRef;
 		}
 
-		public void Execute(ContextMenuEntryContext context)
-		{
+		public void Execute(ContextMenuEntryContext context) {
 			if (context.SelectedTreeNodes != null) {
 				foreach (var node in context.SelectedTreeNodes) {
 					var nsNode = node as NamespaceTreeNode;
@@ -206,8 +195,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				SearchMsdn(context.Reference.Reference as IMemberRef);
 		}
 
-		static string GetAddress(IMemberRef memberRef)
-		{
+		static string GetAddress(IMemberRef memberRef) {
 			var member = Resolve(memberRef);
 			if (member == null)
 				return string.Empty;
@@ -216,7 +204,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			//	- generic types, eg. IEnumerable<T>
 			//	- constructors
 			if (member is MethodDef && ((MethodDef)member).IsConstructor)
-				member = member.DeclaringType;	//TODO: Use declaring type until we can search for constructors
+				member = member.DeclaringType;  //TODO: Use declaring type until we can search for constructors
 
 			if (member.DeclaringType != null && member.DeclaringType.IsEnum && member is FieldDef && ((FieldDef)member).IsLiteral)
 				member = member.DeclaringType;
@@ -230,13 +218,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return string.Format(msdnAddress, memberName.Replace('/', '.'));
 		}
 
-		public static void SearchMsdn(IMemberRef memberRef)
-		{
+		public static void SearchMsdn(IMemberRef memberRef) {
 			SearchMsdn(GetAddress(memberRef));
 		}
 
-		static void SearchMsdn(string address)
-		{
+		static void SearchMsdn(string address) {
 			address = address.ToLower();
 			if (!string.IsNullOrEmpty(address))
 				Process.Start(address);

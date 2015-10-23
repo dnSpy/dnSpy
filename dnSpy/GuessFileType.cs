@@ -21,42 +21,42 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Static methods for determining the type of a file.
 	/// </summary>
-	static class GuessFileType
-	{
-		public static FileType DetectFileType(Stream stream)
-		{
+	static class GuessFileType {
+		public static FileType DetectFileType(Stream stream) {
 			StreamReader reader;
 			if (stream.Length >= 2) {
 				int firstByte = stream.ReadByte();
 				int secondByte = stream.ReadByte();
 				switch ((firstByte << 8) | secondByte) {
-					case 0xfffe: // UTF-16 LE BOM / UTF-32 LE BOM
-					case 0xfeff: // UTF-16 BE BOM
-						stream.Position -= 2;
-						reader = new StreamReader(stream, detectEncodingFromByteOrderMarks: true);
+				case 0xfffe: // UTF-16 LE BOM / UTF-32 LE BOM
+				case 0xfeff: // UTF-16 BE BOM
+					stream.Position -= 2;
+					reader = new StreamReader(stream, detectEncodingFromByteOrderMarks: true);
+					break;
+				case 0xefbb: // start of UTF-8 BOM
+					if (stream.ReadByte() == 0xbf) {
+						reader = new StreamReader(stream, Encoding.UTF8);
 						break;
-					case 0xefbb: // start of UTF-8 BOM
-						if (stream.ReadByte() == 0xbf) {
-							reader = new StreamReader(stream, Encoding.UTF8);
-							break;
-						} else {
-							return FileType.Binary;
-						}
-					default:
-						if (IsUTF8(stream, (byte)firstByte, (byte)secondByte)) {
-							stream.Position = 0;
-							reader = new StreamReader(stream, Encoding.UTF8);
-							break;
-						} else {
-							return FileType.Binary;
-						}
+					}
+					else {
+						return FileType.Binary;
+					}
+				default:
+					if (IsUTF8(stream, (byte)firstByte, (byte)secondByte)) {
+						stream.Position = 0;
+						reader = new StreamReader(stream, Encoding.UTF8);
+						break;
+					}
+					else {
+						return FileType.Binary;
+					}
 				}
-			} else {
+			}
+			else {
 				return FileType.Binary;
 			}
 			// Now we got a StreamReader with the correct encoding
@@ -66,17 +66,17 @@ namespace ICSharpCode.ILSpy
 				xmlReader.XmlResolver = null;
 				xmlReader.MoveToContent();
 				return FileType.Xml;
-			} catch (XmlException) {
+			}
+			catch (XmlException) {
 				return FileType.Text;
 			}
 		}
-		
-		static bool IsUTF8(Stream fs, byte firstByte, byte secondByte)
-		{
+
+		static bool IsUTF8(Stream fs, byte firstByte, byte secondByte) {
 			int max = (int)Math.Min(fs.Length, 500000); // look at max. 500 KB
 			const int ASCII = 0;
 			const int Error = 1;
-			const int UTF8  = 2;
+			const int UTF8 = 2;
 			const int UTF8Sequence = 3;
 			int state = ASCII;
 			int sequenceLength = 0;
@@ -84,9 +84,11 @@ namespace ICSharpCode.ILSpy
 			for (int i = 0; i < max; i++) {
 				if (i == 0) {
 					b = firstByte;
-				} else if (i == 1) {
+				}
+				else if (i == 1) {
 					b = secondByte;
-				} else {
+				}
+				else {
 					b = (byte)fs.ReadByte();
 				}
 				if (b < 0x80) {
@@ -95,36 +97,44 @@ namespace ICSharpCode.ILSpy
 						state = Error;
 						break;
 					}
-				} else if (b < 0xc0) {
+				}
+				else if (b < 0xc0) {
 					// 10xxxxxx : continues UTF8 byte sequence
 					if (state == UTF8Sequence) {
 						--sequenceLength;
 						if (sequenceLength < 0) {
 							state = Error;
 							break;
-						} else if (sequenceLength == 0) {
+						}
+						else if (sequenceLength == 0) {
 							state = UTF8;
 						}
-					} else {
+					}
+					else {
 						state = Error;
 						break;
 					}
-				} else if (b >= 0xc2 && b < 0xf5) {
+				}
+				else if (b >= 0xc2 && b < 0xf5) {
 					// beginning of byte sequence
 					if (state == UTF8 || state == ASCII) {
 						state = UTF8Sequence;
 						if (b < 0xe0) {
 							sequenceLength = 1; // one more byte following
-						} else if (b < 0xf0) {
+						}
+						else if (b < 0xf0) {
 							sequenceLength = 2; // two more bytes following
-						} else {
+						}
+						else {
 							sequenceLength = 3; // three more bytes following
 						}
-					} else {
+					}
+					else {
 						state = Error;
 						break;
 					}
-				} else {
+				}
+				else {
 					// 0xc0, 0xc1, 0xf5 to 0xff are invalid in UTF-8 (see RFC 3629)
 					state = Error;
 					break;
@@ -133,9 +143,8 @@ namespace ICSharpCode.ILSpy
 			return state != Error;
 		}
 	}
-	
-	enum FileType
-	{
+
+	enum FileType {
 		Binary,
 		Text,
 		Xml

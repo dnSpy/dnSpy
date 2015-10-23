@@ -34,14 +34,12 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Base class of all ILSpy tree nodes.
 	/// </summary>
-	public abstract class ILSpyTreeNode : SharpTreeNode
-	{
+	public abstract class ILSpyTreeNode : SharpTreeNode {
 		public static readonly RoutedUICommand TreeNodeActivatedEvent = new RoutedUICommand("TreeNodeActivated", "TreeNodeActivated", typeof(ILSpyTreeNode));
 		FilterSettings filterSettings;
 		bool childrenNeedFiltering;
 
-		public sealed override void ActivateItem(RoutedEventArgs e)
-		{
+		public sealed override void ActivateItem(RoutedEventArgs e) {
 			ActivateItemInternal(e);
 			if (!e.Handled) {
 				var asmList = GetNode<DnSpyFileListTreeNode>(this);
@@ -53,19 +51,16 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		protected virtual void ActivateItemInternal(RoutedEventArgs e)
-		{
+		protected virtual void ActivateItemInternal(RoutedEventArgs e) {
 		}
 
 		public override bool SingleClickExpandsChildren {
 			get { return Options.DisplaySettingsPanel.CurrentDisplaySettings.SingleClickExpandsChildren; }
 		}
 
-		public FilterSettings FilterSettings
-		{
+		public FilterSettings FilterSettings {
 			get { return filterSettings; }
-			set
-			{
+			set {
 				if (filterSettings != value) {
 					filterSettings = value;
 					OnFilterSettingsChanged();
@@ -83,8 +78,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		protected abstract void Write(ITextOutput output, Language language);
 
-		public Language Language
-		{
+		public Language Language {
 			get { return filterSettings != null ? filterSettings.Language : Languages.AllLanguages[0]; }
 		}
 
@@ -96,20 +90,17 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		public override string ToString()
-		{
+		public override string ToString() {
 			return ToString(Language);
 		}
 
-		public string ToString(Language language)
-		{
+		public string ToString(Language language) {
 			var output = new PlainTextOutput();
 			Write(output, language);
 			return output.ToString();
 		}
 
-		public virtual FilterResult Filter(FilterSettings settings)
-		{
+		public virtual FilterResult Filter(FilterSettings settings) {
 			if (string.IsNullOrEmpty(settings.SearchTerm))
 				return FilterResult.Match;
 			else
@@ -118,8 +109,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		public abstract void Decompile(Language language, ITextOutput output, DecompilationOptions options);
 
-		public virtual object GetViewObject(TextView.DecompilerTextView textView)
-		{
+		public virtual object GetViewObject(TextView.DecompilerTextView textView) {
 			return null;
 		}
 
@@ -128,8 +118,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// This method is called on the main thread when only a single item is selected.
 		/// If it returns false, normal decompilation is used to view the item.
 		/// </summary>
-		public virtual bool View(TextView.DecompilerTextView textView)
-		{
+		public virtual bool View(TextView.DecompilerTextView textView) {
 			return false;
 		}
 
@@ -138,13 +127,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// This method is called on the main thread when only a single item is selected.
 		/// If it returns false, normal decompilation is used to save the item.
 		/// </summary>
-		public virtual bool Save(TextView.DecompilerTextView textView)
-		{
+		public virtual bool Save(TextView.DecompilerTextView textView) {
 			return false;
 		}
 
-		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e)
-		{
+		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e) {
 			// Make sure to call the base before executing the other code. ApplyFilterToChild()
 			// could result in an assembly resolve which could then add a new assembly to the
 			// assembly list and trigger a new OnChildrenChanged(). This would then lead to an
@@ -171,46 +158,43 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		void ReapplyFilter()
-		{
+		void ReapplyFilter() {
 			var parent = this.Parent as ILSpyTreeNode ?? this;
 			parent.ApplyFilterToChild(this);
 		}
 
-		void ApplyFilterToChild(ILSpyTreeNode child)
-		{
+		void ApplyFilterToChild(ILSpyTreeNode child) {
 			FilterResult r;
 			if (this.FilterSettings == null)
 				r = FilterResult.Match;
 			else
 				r = child.Filter(this.FilterSettings);
 			switch (r) {
-				case FilterResult.Hidden:
-					child.IsHidden = true;
-					break;
-				case FilterResult.Match:
-					child.FilterSettings = StripSearchTerm(this.FilterSettings);
-					child.IsHidden = false;
-					if (child.childrenNeedFiltering && child.Children.Count > 0)
-						child.EnsureChildrenFiltered();
-					break;
-				case FilterResult.Recurse:
-					child.FilterSettings = this.FilterSettings;
+			case FilterResult.Hidden:
+				child.IsHidden = true;
+				break;
+			case FilterResult.Match:
+				child.FilterSettings = StripSearchTerm(this.FilterSettings);
+				child.IsHidden = false;
+				if (child.childrenNeedFiltering && child.Children.Count > 0)
 					child.EnsureChildrenFiltered();
-					child.IsHidden = child.Children.All(c => c.IsHidden);
-					break;
-				case FilterResult.MatchAndRecurse:
-					child.FilterSettings = StripSearchTerm(this.FilterSettings);
-					child.EnsureChildrenFiltered();
-					child.IsHidden = child.Children.All(c => c.IsHidden);
-					break;
-				default:
-					throw new InvalidEnumArgumentException();
+				break;
+			case FilterResult.Recurse:
+				child.FilterSettings = this.FilterSettings;
+				child.EnsureChildrenFiltered();
+				child.IsHidden = child.Children.All(c => c.IsHidden);
+				break;
+			case FilterResult.MatchAndRecurse:
+				child.FilterSettings = StripSearchTerm(this.FilterSettings);
+				child.EnsureChildrenFiltered();
+				child.IsHidden = child.Children.All(c => c.IsHidden);
+				break;
+			default:
+				throw new InvalidEnumArgumentException();
 			}
 		}
 
-		static FilterSettings StripSearchTerm(FilterSettings filterSettings)
-		{
+		static FilterSettings StripSearchTerm(FilterSettings filterSettings) {
 			if (filterSettings == null)
 				return null;
 			if (!string.IsNullOrEmpty(filterSettings.SearchTerm)) {
@@ -220,26 +204,24 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return filterSettings;
 		}
 
-		protected virtual void OnFilterSettingsChanged()
-		{
+		protected virtual void OnFilterSettingsChanged() {
 			RaiseUIPropsChanged();
 			if (IsVisible) {
 				foreach (ILSpyTreeNode node in this.Children.OfType<ILSpyTreeNode>())
 					ApplyFilterToChild(node);
-			} else {
+			}
+			else {
 				childrenNeedFiltering = true;
 			}
 		}
 
-		protected override void OnIsVisibleChanged()
-		{
+		protected override void OnIsVisibleChanged() {
 			base.OnIsVisibleChanged();
 			if (childrenNeedFiltering && Children.Count > 0)
 				EnsureChildrenFiltered();
 		}
 
-		public void EnsureChildrenFiltered()
-		{
+		public void EnsureChildrenFiltered() {
 			EnsureLazyChildren();
 			if (childrenNeedFiltering) {
 				childrenNeedFiltering = false;
@@ -247,16 +229,15 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 					ApplyFilterToChild(node);
 			}
 		}
-		
+
 		public virtual bool IsPublicAPI {
 			get { return true; }
 		}
 
-		public virtual bool IsAutoLoaded
-		{
+		public virtual bool IsAutoLoaded {
 			get { return false; }
 		}
-		
+
 		public override System.Windows.Media.Brush Foreground {
 			get {
 				if (IsPublicAPI)
@@ -273,21 +254,18 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		public abstract NodePathName NodePathName { get; }
 
-		internal static ModuleDef GetModule(IList<SharpTreeNode> nodes)
-		{
+		internal static ModuleDef GetModule(IList<SharpTreeNode> nodes) {
 			if (nodes == null || nodes.Count < 1)
 				return null;
 			return GetModule(nodes[0]);
 		}
 
-		internal static ModuleDef GetModule(SharpTreeNode node)
-		{
+		internal static ModuleDef GetModule(SharpTreeNode node) {
 			var asmNode = GetNode<AssemblyTreeNode>(node);
 			return asmNode == null ? null : asmNode.DnSpyFile.ModuleDef;
 		}
 
-		public static T GetNode<T>(SharpTreeNode node) where T : SharpTreeNode
-		{
+		public static T GetNode<T>(SharpTreeNode node) where T : SharpTreeNode {
 			while (node != null) {
 				var foundNode = node as T;
 				if (foundNode != null)
@@ -297,8 +275,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return null;
 		}
 
-		protected void GetStartIndex(SharpTreeNode node, out int start, out int end)
-		{
+		protected void GetStartIndex(SharpTreeNode node, out int start, out int end) {
 			EnsureChildrenFiltered();
 
 			if (!SortOnNodeType) {
@@ -351,15 +328,13 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			get { return null; }
 		}
 
-		protected int GetNewChildIndex(SharpTreeNode node, Func<SharpTreeNode, SharpTreeNode, int> comparer)
-		{
+		protected int GetNewChildIndex(SharpTreeNode node, Func<SharpTreeNode, SharpTreeNode, int> comparer) {
 			int start, end;
 			GetStartIndex(node, out start, out end);
 			return GetNewChildIndex(start, end, node, comparer);
 		}
 
-		protected int GetNewChildIndex(int start, int end, SharpTreeNode node, Func<SharpTreeNode, SharpTreeNode, int> comparer)
-		{
+		protected int GetNewChildIndex(int start, int end, SharpTreeNode node, Func<SharpTreeNode, SharpTreeNode, int> comparer) {
 			for (int i = start; i < end; i++) {
 				if (comparer(node, Children[i]) < 0)
 					return i;
@@ -372,8 +347,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// </summary>
 		/// <param name="node">New child node</param>
 		/// <returns></returns>
-		protected virtual int GetNewChildIndex(SharpTreeNode node)
-		{
+		protected virtual int GetNewChildIndex(SharpTreeNode node) {
 			return -1;
 		}
 
@@ -382,8 +356,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// implementation adds <paramref name="node"/> to the end but it could be added anywhere.
 		/// </summary>
 		/// <param name="node">Node to add</param>
-		public void AddToChildren(SharpTreeNode node)
-		{
+		public void AddToChildren(SharpTreeNode node) {
 			EnsureChildrenFiltered();
 			int index = GetNewChildIndex(node);
 			if (index < 0 || index > Children.Count)
@@ -392,8 +365,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				Children.Insert(index, node);
 		}
 
-		public virtual void RaiseUIPropsChanged()
-		{
+		public virtual void RaiseUIPropsChanged() {
 			RaisePropertyChanged("Icon");
 			RaisePropertyChanged("ExpandedIcon");
 			RaisePropertyChanged("ToolTip");
@@ -404,8 +376,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// <summary>
 		/// Gets full node path name of the node's ancestors.
 		/// </summary>
-		public FullNodePathName CreateFullNodePathName()
-		{
+		public FullNodePathName CreateFullNodePathName() {
 			var fullPath = new FullNodePathName();
 			ILSpyTreeNode node = this;
 			while (node.Parent != null) {

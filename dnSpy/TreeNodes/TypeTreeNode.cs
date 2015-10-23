@@ -28,8 +28,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
-	enum MemberAccess
-	{
+	enum MemberAccess {
 		Public,
 		Private,
 		Protected,
@@ -38,13 +37,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		ProtectedInternal,
 	}
 
-	public sealed class TypeTreeNode : ILSpyTreeNode, IMemberTreeNode
-	{
+	public sealed class TypeTreeNode : ILSpyTreeNode, IMemberTreeNode {
 		readonly TypeDef type;
 		readonly AssemblyTreeNode parentAssemblyNode;
-		
-		public TypeTreeNode(TypeDef type, AssemblyTreeNode parentAssemblyNode)
-		{
+
+		public TypeTreeNode(TypeDef type, AssemblyTreeNode parentAssemblyNode) {
 			if (parentAssemblyNode == null)
 				throw new ArgumentNullException("parentAssemblyNode");
 			if (type == null)
@@ -53,41 +50,38 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			this.parentAssemblyNode = parentAssemblyNode;
 			this.LazyLoading = true;
 		}
-		
+
 		public TypeDef TypeDef {
 			get { return type; }
 		}
-		
+
 		public AssemblyTreeNode ParentAssemblyNode {
 			get { return parentAssemblyNode; }
 		}
-		
+
 		public string Name {
 			get { return type.Name; }
 		}
-		
+
 		public string Namespace {
 			get { return type.Namespace; }
 		}
-		
-		protected override void Write(ITextOutput output, Language language)
-		{
+
+		protected override void Write(ITextOutput output, Language language) {
 			Write(output, type, language);
 		}
 
-		public static ITextOutput Write(ITextOutput output, TypeDef type, Language language)
-		{
+		public static ITextOutput Write(ITextOutput output, TypeDef type, Language language) {
 			language.FormatTypeName(output, type);
 			type.MDToken.WriteSuffixString(output);
 			return output;
 		}
-		
+
 		public override bool IsPublicAPI {
 			get { return IsPublicAPIInternal(type); }
 		}
 
-		internal static bool IsPublicAPIInternal(TypeDef type)
-		{
+		internal static bool IsPublicAPIInternal(TypeDef type) {
 			switch (type.Attributes & TypeAttributes.VisibilityMask) {
 			case TypeAttributes.Public:
 			case TypeAttributes.NestedPublic:
@@ -98,9 +92,8 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				return false;
 			}
 		}
-		
-		public override FilterResult Filter(FilterSettings settings)
-		{
+
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this.TypeDef);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
@@ -109,20 +102,20 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 					return FilterResult.Match;
 				else
 					return FilterResult.Hidden;
-			} else {
+			}
+			else {
 				return FilterResult.Recurse;
 			}
 		}
-		
+
 		protected override Type[] ChildTypeOrder {
 			get { return typeOrder; }
 		}
 
-		static TypeTreeNode()
-		{
+		static TypeTreeNode() {
 			var list = new List<Type>(7);
 
-			list.Add(typeof(BaseTypesTreeNode));	// InvalidateInterfacesNode() assumes this is first
+			list.Add(typeof(BaseTypesTreeNode));    // InvalidateInterfacesNode() assumes this is first
 			list.Add(typeof(DerivedTypesTreeNode));
 
 			// The typeOrder array can't be changed at runtime because there are asm editor commands
@@ -142,8 +135,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 		static readonly Type[] typeOrder;
 
-		protected override void LoadChildren()
-		{
+		protected override void LoadChildren() {
 			foreach (var t in typeOrder) {
 				if (t == typeof(BaseTypesTreeNode))
 					this.Children.Add(new BaseTypesTreeNode(type));
@@ -175,8 +167,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		protected override int GetNewChildIndex(SharpTreeNode node)
-		{
+		protected override int GetNewChildIndex(SharpTreeNode node) {
 			if (node is TypeTreeNode)
 				return GetNewChildIndex(node, (a, b) => TypeDefComparer.Instance.Compare(((TypeTreeNode)a).TypeDef, ((TypeTreeNode)b).TypeDef));
 			if (node is FieldTreeNode)
@@ -189,35 +180,29 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				return GetNewChildIndex(node, (a, b) => MethodDefComparer.Instance.Compare(((MethodTreeNode)a).MethodDef, ((MethodTreeNode)b).MethodDef));
 			return base.GetNewChildIndex(node);
 		}
-		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			language.DecompileType(type, output, options);
 		}
 
 		#region Icon
-		public override object Icon
-		{
+		public override object Icon {
 			get { return GetIcon(type, BackgroundType.TreeNode); }
 		}
 
-		public static ImageSource GetIcon(TypeDef type, BackgroundType bgType)
-		{
+		public static ImageSource GetIcon(TypeDef type, BackgroundType bgType) {
 			return GetIcon(GetTypeIcon(type), bgType);
 		}
 
-		internal static ImageSource GetIcon(TypeIcon typeIcon, BackgroundType bgType)
-		{
+		internal static ImageSource GetIcon(TypeIcon typeIcon, BackgroundType bgType) {
 			return ImageCache.Instance.GetImage(GetImageInfo(typeIcon, bgType));
 		}
 
-		internal static ImageInfo GetImageInfo(TypeDef type, BackgroundType bgType)
-		{
+		internal static ImageInfo GetImageInfo(TypeDef type, BackgroundType bgType) {
 			return GetImageInfo(GetTypeIcon(type), bgType);
 		}
 
-		internal static ImageInfo GetImageInfo(TypeIcon typeIcon, BackgroundType bgType)
-		{
+		internal static ImageInfo GetImageInfo(TypeIcon typeIcon, BackgroundType bgType) {
 			switch (typeIcon) {
 			case TypeIcon.StaticClass:				return new ImageInfo("StaticClass", bgType);
 			case TypeIcon.Class:					return new ImageInfo("Class", bgType);
@@ -261,8 +246,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		static TypeIcon GetTypeIcon(TypeDef type)
-		{
+		static TypeIcon GetTypeIcon(TypeDef type) {
 			var memType = GetMemberAccess(type);
 			if (Decompiler.DnlibExtensions.IsValueType(type)) {
 				if (type.IsEnum) {
@@ -356,8 +340,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		static MemberAccess GetMemberAccess(TypeDef type)
-		{
+		static MemberAccess GetMemberAccess(TypeDef type) {
 			switch (type.Visibility) {
 			case TypeAttributes.Public:
 			case TypeAttributes.NestedPublic:
@@ -377,13 +360,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		internal static bool IsDelegate(TypeDef type)
-		{
+		internal static bool IsDelegate(TypeDef type) {
 			return type.BaseType != null && type.BaseType.FullName == typeof(MulticastDelegate).FullName && type.BaseType.DefinitionAssembly.IsCorLib();
 		}
 
-		internal static bool IsException(TypeDef type)
-		{
+		internal static bool IsException(TypeDef type) {
 			if (IsSystemException(type))
 				return true;
 			while (type != null) {
@@ -394,8 +375,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return false;
 		}
 
-		static bool IsSystemException(ITypeDefOrRef type)
-		{
+		static bool IsSystemException(ITypeDefOrRef type) {
 			return type != null &&
 				type.DeclaringType == null &&
 				type.Namespace == "System" &&
@@ -403,13 +383,12 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				type.DefinitionAssembly.IsCorLib();
 		}
 
-		private static bool IsStaticClass(TypeDef type)
-		{
+		private static bool IsStaticClass(TypeDef type) {
 			return type.IsSealed && type.IsAbstract;
 		}
 
 		#endregion
-		
+
 		IMemberRef IMemberTreeNode.Member {
 			get { return type; }
 		}
@@ -422,30 +401,26 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			get { return new NodePathName("type", type.Namespace + "." + type.Name); }
 		}
 
-		AssemblyTreeNode GetAssemblyIfNonNestedType()
-		{
+		AssemblyTreeNode GetAssemblyIfNonNestedType() {
 			var nsNode = Parent as NamespaceTreeNode;
 			if (nsNode == null)
 				return null;
 			return nsNode.Parent as AssemblyTreeNode;
 		}
 
-		internal void OnBeforeRemoved()
-		{
+		internal void OnBeforeRemoved() {
 			var asmNode = GetAssemblyIfNonNestedType();
 			if (asmNode != null)
 				asmNode.OnRemoved(this);
 		}
 
-		internal void OnReadded()
-		{
+		internal void OnReadded() {
 			var asmNode = GetAssemblyIfNonNestedType();
 			if (asmNode != null)
 				asmNode.OnReadded(this);
 		}
 
-		internal void InvalidateInterfacesNode()
-		{
+		internal void InvalidateInterfacesNode() {
 			if (Children.Count == 0)
 				return;
 			Debug.Assert(Children[0] is BaseTypesTreeNode);

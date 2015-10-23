@@ -24,13 +24,11 @@ using ICSharpCode.NRefactory.Utils;
 using dnlib.DotNet;
 using dnlib.Threading;
 
-namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
-{
+namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	/// <summary>
 	/// Determines the accessibility domain of a member for where-used analysis.
 	/// </summary>
-	internal class ScopedWhereUsedAnalyzer<T>
-	{
+	internal class ScopedWhereUsedAnalyzer<T> {
 		private readonly ModuleDef moduleScope;
 		private TypeDef typeScope;
 
@@ -38,92 +36,85 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		private Accessibility typeAccessibility = Accessibility.Public;
 		private readonly Func<TypeDef, IEnumerable<T>> typeAnalysisFunction;
 
-		public ScopedWhereUsedAnalyzer(TypeDef type, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-		{
+		public ScopedWhereUsedAnalyzer(TypeDef type, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction) {
 			this.typeScope = type;
 			this.moduleScope = type.Module;
 			this.typeAnalysisFunction = typeAnalysisFunction;
 		}
 
 		public ScopedWhereUsedAnalyzer(MethodDef method, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(method.DeclaringType, typeAnalysisFunction)
-		{
+			: this(method.DeclaringType, typeAnalysisFunction) {
 			this.memberAccessibility = GetMethodAccessibility(method);
 		}
 
 		public ScopedWhereUsedAnalyzer(PropertyDef property, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(property.DeclaringType, typeAnalysisFunction)
-		{
+			: this(property.DeclaringType, typeAnalysisFunction) {
 			Accessibility getterAccessibility = (property.GetMethod == null) ? Accessibility.Private : GetMethodAccessibility(property.GetMethod);
 			Accessibility setterAccessibility = (property.SetMethod == null) ? Accessibility.Private : GetMethodAccessibility(property.SetMethod);
 			this.memberAccessibility = (Accessibility)Math.Max((int)getterAccessibility, (int)setterAccessibility);
 		}
 
 		public ScopedWhereUsedAnalyzer(EventDef eventDef, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(eventDef.DeclaringType, typeAnalysisFunction)
-		{
+			: this(eventDef.DeclaringType, typeAnalysisFunction) {
 			// we only have to check the accessibility of the the get method
 			// [CLS Rule 30: The accessibility of an event and of its accessors shall be identical.]
 			this.memberAccessibility = GetMethodAccessibility(eventDef.AddMethod);
 		}
 
 		public ScopedWhereUsedAnalyzer(FieldDef field, Func<TypeDef, IEnumerable<T>> typeAnalysisFunction)
-			: this(field.DeclaringType, typeAnalysisFunction)
-		{
+			: this(field.DeclaringType, typeAnalysisFunction) {
 			switch (field.Attributes & FieldAttributes.FieldAccessMask) {
-				case FieldAttributes.Private:
-				default:
-					memberAccessibility = Accessibility.Private;
-					break;
-				case FieldAttributes.FamANDAssem:
-					memberAccessibility = Accessibility.FamilyAndInternal;
-					break;
-				case FieldAttributes.Assembly:
-					memberAccessibility = Accessibility.Internal;
-					break;
-				case FieldAttributes.Family:
-					memberAccessibility = Accessibility.Family;
-					break;
-				case FieldAttributes.FamORAssem:
-					memberAccessibility = Accessibility.FamilyOrInternal;
-					break;
-				case FieldAttributes.Public:
-					memberAccessibility = Accessibility.Public;
-					break;
+			case FieldAttributes.Private:
+			default:
+				memberAccessibility = Accessibility.Private;
+				break;
+			case FieldAttributes.FamANDAssem:
+				memberAccessibility = Accessibility.FamilyAndInternal;
+				break;
+			case FieldAttributes.Assembly:
+				memberAccessibility = Accessibility.Internal;
+				break;
+			case FieldAttributes.Family:
+				memberAccessibility = Accessibility.Family;
+				break;
+			case FieldAttributes.FamORAssem:
+				memberAccessibility = Accessibility.FamilyOrInternal;
+				break;
+			case FieldAttributes.Public:
+				memberAccessibility = Accessibility.Public;
+				break;
 			}
 		}
 
-		private Accessibility GetMethodAccessibility(MethodDef method)
-		{
+		private Accessibility GetMethodAccessibility(MethodDef method) {
 			if (method == null)
 				return 0;
 			Accessibility accessibility;
 			switch (method.Attributes & MethodAttributes.MemberAccessMask) {
-				case MethodAttributes.Private:
-				default:
-					accessibility = Accessibility.Private;
-					break;
-				case MethodAttributes.FamANDAssem:
-					accessibility = Accessibility.FamilyAndInternal;
-					break;
-				case MethodAttributes.Family:
-					accessibility = Accessibility.Family;
-					break;
-				case MethodAttributes.Assembly:
-					accessibility = Accessibility.Internal;
-					break;
-				case MethodAttributes.FamORAssem:
-					accessibility = Accessibility.FamilyOrInternal;
-					break;
-				case MethodAttributes.Public:
-					accessibility = Accessibility.Public;
-					break;
+			case MethodAttributes.Private:
+			default:
+				accessibility = Accessibility.Private;
+				break;
+			case MethodAttributes.FamANDAssem:
+				accessibility = Accessibility.FamilyAndInternal;
+				break;
+			case MethodAttributes.Family:
+				accessibility = Accessibility.Family;
+				break;
+			case MethodAttributes.Assembly:
+				accessibility = Accessibility.Internal;
+				break;
+			case MethodAttributes.FamORAssem:
+				accessibility = Accessibility.FamilyOrInternal;
+				break;
+			case MethodAttributes.Public:
+				accessibility = Accessibility.Public;
+				break;
 			}
 			return accessibility;
 		}
 
-		public IEnumerable<T> PerformAnalysis(CancellationToken ct)
-		{
+		public IEnumerable<T> PerformAnalysis(CancellationToken ct) {
 			if (memberAccessibility == Accessibility.Private) {
 				return FindReferencesInTypeScope(ct);
 			}
@@ -142,9 +133,8 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 
 			return FindReferencesGlobal(ct);
 		}
-		
-		private void DetermineTypeAccessibility()
-		{
+
+		private void DetermineTypeAccessibility() {
 			while (typeScope.IsNested) {
 				Accessibility accessibility = GetNestedTypeAccessibility(typeScope);
 				if ((int)typeAccessibility > (int)accessibility) {
@@ -161,30 +151,29 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		private static Accessibility GetNestedTypeAccessibility(TypeDef type)
-		{
+		private static Accessibility GetNestedTypeAccessibility(TypeDef type) {
 			Accessibility result;
 			switch (type.Attributes & TypeAttributes.VisibilityMask) {
-				case TypeAttributes.NestedPublic:
-					result = Accessibility.Public;
-					break;
-				case TypeAttributes.NestedPrivate:
-					result = Accessibility.Private;
-					break;
-				case TypeAttributes.NestedFamily:
-					result = Accessibility.Family;
-					break;
-				case TypeAttributes.NestedAssembly:
-					result = Accessibility.Internal;
-					break;
-				case TypeAttributes.NestedFamANDAssem:
-					result = Accessibility.FamilyAndInternal;
-					break;
-				case TypeAttributes.NestedFamORAssem:
-					result = Accessibility.FamilyOrInternal;
-					break;
-				default:
-					throw new InvalidOperationException();
+			case TypeAttributes.NestedPublic:
+				result = Accessibility.Public;
+				break;
+			case TypeAttributes.NestedPrivate:
+				result = Accessibility.Private;
+				break;
+			case TypeAttributes.NestedFamily:
+				result = Accessibility.Family;
+				break;
+			case TypeAttributes.NestedAssembly:
+				result = Accessibility.Internal;
+				break;
+			case TypeAttributes.NestedFamANDAssem:
+				result = Accessibility.FamilyAndInternal;
+				break;
+			case TypeAttributes.NestedFamORAssem:
+				result = Accessibility.FamilyOrInternal;
+				break;
+			default:
+				throw new InvalidOperationException();
 			}
 			return result;
 		}
@@ -192,8 +181,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 		/// <summary>
 		/// The effective accessibility of a member
 		/// </summary>
-		private enum Accessibility
-		{
+		private enum Accessibility {
 			Private,
 			FamilyAndInternal,
 			Internal,
@@ -202,20 +190,17 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			Public
 		}
 
-		private IEnumerable<T> FindReferencesInAssemblyAndFriends(CancellationToken ct)
-		{
+		private IEnumerable<T> FindReferencesInAssemblyAndFriends(CancellationToken ct) {
 			var modules = GetModuleAndAnyFriends(moduleScope, ct);
 			return modules.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInModule(a, ct));
 		}
 
-		private IEnumerable<T> FindReferencesGlobal(CancellationToken ct)
-		{
+		private IEnumerable<T> FindReferencesGlobal(CancellationToken ct) {
 			var modules = GetReferencingModules(moduleScope, ct);
 			return modules.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInModule(a, ct));
 		}
 
-		private IEnumerable<T> FindReferencesInModule(ModuleDef mod, CancellationToken ct)
-		{
+		private IEnumerable<T> FindReferencesInModule(ModuleDef mod, CancellationToken ct) {
 			foreach (TypeDef type in TreeTraversal.PreOrder(mod.Types, t => t.NestedTypes)) {
 				ct.ThrowIfCancellationRequested();
 				foreach (var result in typeAnalysisFunction(type)) {
@@ -225,8 +210,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		private IEnumerable<T> FindReferencesInTypeScope(CancellationToken ct)
-		{
+		private IEnumerable<T> FindReferencesInTypeScope(CancellationToken ct) {
 			foreach (TypeDef type in TreeTraversal.PreOrder(typeScope, t => t.NestedTypes)) {
 				ct.ThrowIfCancellationRequested();
 				foreach (var result in typeAnalysisFunction(type)) {
@@ -236,8 +220,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		private IEnumerable<T> FindReferencesInEnclosingTypeScope(CancellationToken ct)
-		{
+		private IEnumerable<T> FindReferencesInEnclosingTypeScope(CancellationToken ct) {
 			foreach (TypeDef type in TreeTraversal.PreOrder(typeScope.DeclaringType, t => t.NestedTypes)) {
 				ct.ThrowIfCancellationRequested();
 				foreach (var result in typeAnalysisFunction(type)) {
@@ -247,8 +230,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		private IEnumerable<ModuleDef> GetReferencingModules(ModuleDef mod, CancellationToken ct)
-		{
+		private IEnumerable<ModuleDef> GetReferencingModules(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
 			if (asm == null) {
 				yield return mod;
@@ -275,8 +257,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		private IEnumerable<ModuleDef> GetModuleAndAnyFriends(ModuleDef mod, CancellationToken ct)
-		{
+		private IEnumerable<ModuleDef> GetModuleAndAnyFriends(ModuleDef mod, CancellationToken ct) {
 			var asm = mod.Assembly;
 			if (asm == null) {
 				yield return mod;
@@ -313,8 +294,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer
 			}
 		}
 
-		private bool AssemblyReferencesScopeType(AssemblyDef asm)
-		{
+		private bool AssemblyReferencesScopeType(AssemblyDef asm) {
 			foreach (var mod in asm.Modules.GetSafeEnumerable()) {
 				foreach (var typeref in mod.GetTypeRefs()) {
 					if (new SigComparer().Equals(typeScope, typeref))

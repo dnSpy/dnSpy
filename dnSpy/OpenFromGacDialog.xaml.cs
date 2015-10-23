@@ -32,20 +32,17 @@ using dnSpy;
 using dnSpy.Controls;
 using ICSharpCode.ILSpy.Controls;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Interaction logic for OpenFromGacDialog.xaml
 	/// </summary>
-	public partial class OpenFromGacDialog : MetroWindow
-	{
+	public partial class OpenFromGacDialog : MetroWindow {
 		ObservableCollection<GacEntry> gacEntries = new ObservableCollection<GacEntry>();
 		ObservableCollection<GacEntry> filteredEntries = new ObservableCollection<GacEntry>();
 		Predicate<GacEntry> filterMethod = _ => true;
 		volatile bool cancelFetchThread;
 
-		public OpenFromGacDialog()
-		{
+		public OpenFromGacDialog() {
 			InitializeComponent();
 			listView.ItemsSource = filteredEntries;
 			SortableGridViewColumn.SetCurrentSortColumn(listView, nameColumn);
@@ -54,21 +51,18 @@ namespace ICSharpCode.ILSpy
 			new Thread(new ThreadStart(FetchGacContents)).Start();
 		}
 
-		protected override void OnClosing(CancelEventArgs e)
-		{
+		protected override void OnClosing(CancelEventArgs e) {
 			base.OnClosing(e);
 			cancelFetchThread = true;
 		}
 
 		#region Fetch Gac Contents
-		sealed class GacEntry
-		{
+		sealed class GacEntry {
 			readonly AssemblyNameInfo r;
 			readonly string fileName;
 			string formattedVersion;
 
-			public GacEntry(AssemblyNameInfo r, string fileName)
-			{
+			public GacEntry(AssemblyNameInfo r, string fileName) {
 				this.r = r;
 				this.fileName = fileName;
 			}
@@ -113,14 +107,12 @@ namespace ICSharpCode.ILSpy
 				}
 			}
 
-			public override string ToString()
-			{
+			public override string ToString() {
 				return r.FullName;
 			}
 		}
 
-		void FetchGacContents()
-		{
+		void FetchGacContents() {
 			HashSet<string> fullNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 			UpdateProgressBar(pg => { pg.Visibility = System.Windows.Visibility.Visible; pg.IsIndeterminate = true; });
 			var list = GacInterop.GetGacAssemblyFullNames().TakeWhile(_ => !cancelFetchThread).ToList();
@@ -139,21 +131,18 @@ namespace ICSharpCode.ILSpy
 			UpdateProgressBar(pg => { pg.Visibility = System.Windows.Visibility.Hidden; });
 		}
 
-		void UpdateProgressBar(Action<ProgressBar> updateAction)
-		{
+		void UpdateProgressBar(Action<ProgressBar> updateAction) {
 			Dispatcher.BeginInvoke(DispatcherPriority.Normal, (Action)(() => updateAction(gacReadingProgressBar)));
 		}
 
-		void AddNewEntry(GacEntry entry)
-		{
+		void AddNewEntry(GacEntry entry) {
 			gacEntries.Add(entry);
 			if (filterMethod(entry))
 				filteredEntries.Add(entry);
 		}
 		#endregion
 
-		void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e)
-		{
+		void FilterTextBox_TextChanged(object sender, TextChangedEventArgs e) {
 			string filterString = filterTextBox.Text.Trim();
 			if (filterString.Length == 0)
 				filterMethod = _ => true;
@@ -166,18 +155,15 @@ namespace ICSharpCode.ILSpy
 			filteredEntries.AddRange(gacEntries.Where(entry => filterMethod(entry)));
 		}
 
-		static bool Contains(string s, string subString)
-		{
+		static bool Contains(string s, string subString) {
 			return s.IndexOf(subString, StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 
-		void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
+		void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
 			okButton.IsEnabled = listView.SelectedItems.Count > 0;
 		}
 
-		void OKButton_Click(object sender, RoutedEventArgs e)
-		{
+		void OKButton_Click(object sender, RoutedEventArgs e) {
 			this.DialogResult = true;
 			Close();
 		}
@@ -188,8 +174,7 @@ namespace ICSharpCode.ILSpy
 			}
 		}
 
-		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
+		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			if (listView.SelectedItems.Count > 0) {

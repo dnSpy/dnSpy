@@ -24,38 +24,32 @@ using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal class AnalyzedAssemblyTreeNode : AnalyzerEntityTreeNode
-	{
+	internal class AnalyzedAssemblyTreeNode : AnalyzerEntityTreeNode {
 		private readonly ModuleDef analyzedAssembly;
 
-		public AnalyzedAssemblyTreeNode(ModuleDef analyzedAssembly)
-		{
+		public AnalyzedAssemblyTreeNode(ModuleDef analyzedAssembly) {
 			if (analyzedAssembly == null)
 				throw new ArgumentNullException("analyzedAssembly");
 			this.analyzedAssembly = analyzedAssembly;
 			//this.LazyLoading = true;
 		}
 
-		public override object Icon
-		{
+		public override object Icon {
 			get { return ImageCache.Instance.GetImage("Assembly", BackgroundType.TreeNode); }
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			var isExe = analyzedAssembly.Assembly != null &&
 				analyzedAssembly.IsManifestModule &&
 				(analyzedAssembly.Characteristics & dnlib.PE.Characteristics.Dll) == 0;
 			output.Write(UIUtils.CleanUpIdentifier(analyzedAssembly.Name), isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
 		}
 
-		protected override void LoadChildren()
-		{
+		protected override void LoadChildren() {
 			//this.Children.Add(new AnalyzedAssemblyReferencedByTreeNode(analyzedAssembly));
 		}
 
-		public override IMemberRef Member
-		{
+		public override IMemberRef Member {
 			get { return null; }
 		}
 

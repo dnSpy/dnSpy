@@ -28,18 +28,17 @@ namespace ICSharpCode.ILSpy {
 	/// Decompilation event arguments.
 	/// </summary>
 	[Obsolete]
-	public sealed class DecompileEventArgs : EventArgs
-	{
+	public sealed class DecompileEventArgs : EventArgs {
 		/// <summary>
 		/// Gets or sets the local variables.
 		/// </summary>
 		public ConcurrentDictionary<int, IEnumerable<ILVariable>> LocalVariables { get; internal set; }
-		
+
 		/// <summary>
 		/// Gets the list of MembeReferences that are decompiled (TypeDefs, MethodDefs, etc)
 		/// </summary>
 		public Dictionary<int, IMemberRef> DecompiledMemberRefs { get; internal set; }
-		
+
 		/// <summary>
 		/// Gets (or internal sets) the AST nodes.
 		/// </summary>

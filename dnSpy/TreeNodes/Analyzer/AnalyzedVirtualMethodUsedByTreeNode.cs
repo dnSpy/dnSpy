@@ -28,28 +28,24 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal sealed class AnalyzedVirtualMethodUsedByTreeNode : AnalyzerSearchTreeNode
-	{
+	internal sealed class AnalyzedVirtualMethodUsedByTreeNode : AnalyzerSearchTreeNode {
 		private readonly MethodDef analyzedMethod;
 		private ConcurrentDictionary<MethodDef, int> foundMethods;
 		private MethodDef baseMethod;
 		private List<ITypeDefOrRef> possibleTypes;
 
-		public AnalyzedVirtualMethodUsedByTreeNode(MethodDef analyzedMethod)
-		{
+		public AnalyzedVirtualMethodUsedByTreeNode(MethodDef analyzedMethod) {
 			if (analyzedMethod == null)
 				throw new ArgumentNullException("analyzedMethod");
 
 			this.analyzedMethod = analyzedMethod;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Used By", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			InitializeAnalyzer();
 
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedMethod, FindReferencesInType);
@@ -60,14 +56,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			ReleaseAnalyzer();
 		}
 
-		private void InitializeAnalyzer()
-		{
+		private void InitializeAnalyzer() {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
 
 			var baseMethods = TypesHierarchyHelpers.FindBaseMethods(analyzedMethod).ToArray();
 			if (baseMethods.Length > 0) {
 				baseMethod = baseMethods[baseMethods.Length - 1];
-			} else
+			}
+			else
 				baseMethod = analyzedMethod;
 
 			possibleTypes = new List<ITypeDefOrRef>();
@@ -80,14 +76,12 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		private void ReleaseAnalyzer()
-		{
+		private void ReleaseAnalyzer() {
 			foundMethods = null;
 			baseMethod = null;
 		}
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type) {
 			string name = analyzedMethod.Name;
 			foreach (MethodDef method in type.Methods) {
 				bool found = false;
@@ -133,8 +127,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		private bool HasAlreadyBeenFound(MethodDef method)
-		{
+		private bool HasAlreadyBeenFound(MethodDef method) {
 			return !foundMethods.TryAdd(method, 0);
 		}
 	}

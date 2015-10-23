@@ -26,42 +26,38 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	/// <summary>
 	/// Base class for entity nodes.
 	/// </summary>
-	public abstract class AnalyzerEntityTreeNode : AnalyzerTreeNode, IMemberTreeNode
-	{
+	public abstract class AnalyzerEntityTreeNode : AnalyzerTreeNode, IMemberTreeNode {
 		public abstract IMemberRef Member { get; }
 		public abstract IMDTokenProvider MDTokenProvider { get; }
-		
-		public override void ActivateItem(System.Windows.RoutedEventArgs e)
-		{
+
+		public override void ActivateItem(System.Windows.RoutedEventArgs e) {
 			e.Handled = true;
 			if (Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift)
 				MainWindow.Instance.OpenNewEmptyTab();
 			MainWindow.Instance.JumpToReference(this.Member);
 		}
-		
-		public override bool HandleAssemblyListChanged(ICollection<DnSpyFile> removedAssemblies, ICollection<DnSpyFile> addedAssemblies)
-		{
+
+		public override bool HandleAssemblyListChanged(ICollection<DnSpyFile> removedAssemblies, ICollection<DnSpyFile> addedAssemblies) {
 			foreach (DnSpyFile asm in removedAssemblies) {
 				if (this.Member.Module == asm.ModuleDef)
 					return false; // remove this node
 			}
 			this.Children.RemoveAll(
-				delegate(SharpTreeNode n) {
+				delegate (SharpTreeNode n) {
 					AnalyzerTreeNode an = n as AnalyzerTreeNode;
 					return an == null || !an.HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
 				});
 			return true;
 		}
 
-		public override bool HandleModelUpdated(DnSpyFile asm)
-		{
+		public override bool HandleModelUpdated(DnSpyFile asm) {
 			if (this.Member.Module == null)
 				return false; // remove this node
 			if ((this.Member is IField || this.Member is IMethod || this.Member is PropertyDef || this.Member is EventDef) &&
 				this.Member.DeclaringType == null)
 				return false;
 			this.Children.RemoveAll(
-				delegate(SharpTreeNode n) {
+				delegate (SharpTreeNode n) {
 					AnalyzerTreeNode an = n as AnalyzerTreeNode;
 					return an == null || !an.HandleModelUpdated(asm);
 				});

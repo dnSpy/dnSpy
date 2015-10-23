@@ -30,8 +30,7 @@ using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy {
-	public interface IContextMenuEntry<TContext>
-	{
+	public interface IContextMenuEntry<TContext> {
 		/// <summary>
 		/// Returns true if it should be visible in the context menu
 		/// </summary>
@@ -54,8 +53,7 @@ namespace ICSharpCode.ILSpy {
 		void Execute(TContext context);
 	}
 
-	public interface IContextMenuEntry2<TContext> : IContextMenuEntry<TContext>
-	{
+	public interface IContextMenuEntry2<TContext> : IContextMenuEntry<TContext> {
 		/// <summary>
 		/// Called before the context menu is shown. Can be used to update the menu item before it's
 		/// shown.
@@ -65,16 +63,13 @@ namespace ICSharpCode.ILSpy {
 		void Initialize(TContext context, MenuItem menuItem);
 	}
 
-	public interface IContextMenuEntry : IContextMenuEntry<ContextMenuEntryContext>
-	{
+	public interface IContextMenuEntry : IContextMenuEntry<ContextMenuEntryContext> {
 	}
 
-	public interface IContextMenuEntry2 : IContextMenuEntry, IContextMenuEntry2<ContextMenuEntryContext>
-	{
+	public interface IContextMenuEntry2 : IContextMenuEntry, IContextMenuEntry2<ContextMenuEntryContext> {
 	}
-	
-	public class ContextMenuEntryContext
-	{
+
+	public class ContextMenuEntryContext {
 		public SharpTreeNode[] SelectedTreeNodes { get; private set; }
 
 		public FrameworkElement Element {
@@ -88,13 +83,12 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		public ReferenceSegment Reference { get; private set; }
-		
+
 		public TextViewPosition? Position { get; private set; }
 
 		public bool OpenedFromKeyboard { get; private set; }
-		
-		public static ContextMenuEntryContext Create(FrameworkElement elem, bool openedFromKeyboard = true)
-		{
+
+		public static ContextMenuEntryContext Create(FrameworkElement elem, bool openedFromKeyboard = true) {
 			TextViewPosition? position = null;
 			var textView = elem as DecompilerTextView;
 			var listBox = elem as ListBox;
@@ -119,72 +113,62 @@ namespace ICSharpCode.ILSpy {
 			};
 		}
 	}
-	
-	public interface IContextMenuEntryMetadata
-	{
+
+	public interface IContextMenuEntryMetadata {
 		string Icon { get; }
 		string Header { get; }
 		string Category { get; }
 		double Order { get; }
 		string InputGestureText { get; }
 	}
-	
+
 	[MetadataAttribute]
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
-	public class ExportContextMenuEntryAttribute : ExportAttribute, IContextMenuEntryMetadata
-	{
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+	public class ExportContextMenuEntryAttribute : ExportAttribute, IContextMenuEntryMetadata {
 		public ExportContextMenuEntryAttribute()
-			: base(typeof(IContextMenuEntry))
-		{
+			: base(typeof(IContextMenuEntry)) {
 		}
-		
+
 		public string Icon { get; set; }
 		public string Header { get; set; }
 		public string Category { get; set; }
 		public double Order { get; set; }
 		public string InputGestureText { get; set; }
 	}
-	
-	internal class ContextMenuProvider : IDisposable
-	{
+
+	internal class ContextMenuProvider : IDisposable {
 		readonly Predicate<DependencyObject> isIgnored;
 
-		ContextMenuProvider(FrameworkElement elem, Predicate<DependencyObject> isIgnored)
-		{
+		ContextMenuProvider(FrameworkElement elem, Predicate<DependencyObject> isIgnored) {
 			this.elem = elem;
 			this.isIgnored = isIgnored;
 			this.elem.ContextMenu = new ContextMenu();
 		}
 
-		public static ContextMenuProvider Add(FrameworkElement elem, Predicate<DependencyObject> isIgnored = null)
-		{
+		public static ContextMenuProvider Add(FrameworkElement elem, Predicate<DependencyObject> isIgnored = null) {
 			var provider = new ContextMenuProvider(elem, isIgnored);
 			elem.ContextMenuOpening += provider.elem_ContextMenuOpening;
 			return provider;
 		}
 
-		public static ContextMenuProvider Add(DecompilerTextView textView, Predicate<DependencyObject> isIgnored = null)
-		{
+		public static ContextMenuProvider Add(DecompilerTextView textView, Predicate<DependencyObject> isIgnored = null) {
 			var provider = new ContextMenuProvider(textView, isIgnored);
 			textView.ContextMenuOpening += provider.textView_ContextMenuOpening;
 			return provider;
 		}
 
-		public static ContextMenuProvider Add(HexBox hexBox, Predicate<DependencyObject> isIgnored = null)
-		{
+		public static ContextMenuProvider Add(HexBox hexBox, Predicate<DependencyObject> isIgnored = null) {
 			var provider = new ContextMenuProvider(hexBox, isIgnored);
 			hexBox.ContextMenuOpening += provider.hexBox_ContextMenuOpening;
 			return provider;
 		}
 
 		// Make sure there are no more refs to modules so the GC can collect removed modules
-		void ClearReferences()
-		{
+		void ClearReferences() {
 			elem.ContextMenu = new ContextMenu();
 		}
 
-		public void Dispose()
-		{
+		public void Dispose() {
 			elem.ContextMenuOpening -= this.elem_ContextMenuOpening;
 			elem.ContextMenuOpening -= this.textView_ContextMenuOpening;
 			elem.ContextMenuOpening -= this.hexBox_ContextMenuOpening;
@@ -194,12 +178,10 @@ namespace ICSharpCode.ILSpy {
 
 		// Prevent big memory leaks (text editor) because the data is put into some MEF data structure.
 		// All created instances in this class are shared so this one can be shared as well.
-		sealed class MefState
-		{
+		sealed class MefState {
 			public static readonly MefState Instance = new MefState();
 
-			MefState()
-			{
+			MefState() {
 				App.CompositionContainer.ComposeParts(this);
 			}
 
@@ -211,8 +193,7 @@ namespace ICSharpCode.ILSpy {
 			return ContextMenuEntryContext.Create(elem, e.CursorLeft == -1 && e.CursorTop == -1);
 		}
 
-		bool IsIgnored(object sender, ContextMenuEventArgs e)
-		{
+		bool IsIgnored(object sender, ContextMenuEventArgs e) {
 			if (isIgnored == null)
 				return false;
 
@@ -222,7 +203,7 @@ namespace ICSharpCode.ILSpy {
 					return false;
 
 				if (isIgnored(o))
-					return true;	// Don't set e.Handled
+					return true;    // Don't set e.Handled
 
 				o = UIUtils.GetParent(o);
 			}
@@ -231,8 +212,7 @@ namespace ICSharpCode.ILSpy {
 			return true;
 		}
 
-		void elem_ContextMenuOpening(object sender, ContextMenuEventArgs e)
-		{
+		void elem_ContextMenuOpening(object sender, ContextMenuEventArgs e) {
 			if (IsIgnored(sender, e))
 				return;
 
@@ -243,9 +223,8 @@ namespace ICSharpCode.ILSpy {
 			else
 				e.Handled = true;
 		}
-		
-		void textView_ContextMenuOpening(object sender, ContextMenuEventArgs e)
-		{
+
+		void textView_ContextMenuOpening(object sender, ContextMenuEventArgs e) {
 			if (IsIgnored(sender, e))
 				return;
 
@@ -277,8 +256,7 @@ namespace ICSharpCode.ILSpy {
 				e.Handled = true;
 		}
 
-		void hexBox_ContextMenuOpening(object sender, ContextMenuEventArgs e)
-		{
+		void hexBox_ContextMenuOpening(object sender, ContextMenuEventArgs e) {
 			if (IsIgnored(sender, e))
 				return;
 
@@ -308,8 +286,7 @@ namespace ICSharpCode.ILSpy {
 				e.Handled = true;
 		}
 
-		bool ShowContextMenu(ContextMenuEntryContext context, out ContextMenu menu)
-		{
+		bool ShowContextMenu(ContextMenuEntryContext context, out ContextMenu menu) {
 			menu = new ContextMenu();
 			foreach (var category in MefState.Instance.entries.OrderBy(c => c.Metadata.Order).GroupBy(c => c.Metadata.Category)) {
 				bool needSeparatorForCategory = menu.Items.Count > 0;
@@ -332,7 +309,8 @@ namespace ICSharpCode.ILSpy {
 								entry.Execute(context);
 							};
 							isEnabled = true;
-						} else {
+						}
+						else {
 							menuItem.IsEnabled = false;
 							isEnabled = false;
 						}

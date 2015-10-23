@@ -26,31 +26,26 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal sealed class AnalyzedEventOverridesTreeNode : AnalyzerSearchTreeNode
-	{
+	internal sealed class AnalyzedEventOverridesTreeNode : AnalyzerSearchTreeNode {
 		private readonly EventDef analyzedEvent;
 
-		public AnalyzedEventOverridesTreeNode(EventDef analyzedEvent)
-		{
+		public AnalyzedEventOverridesTreeNode(EventDef analyzedEvent) {
 			if (analyzedEvent == null)
 				throw new ArgumentNullException("analyzedEvent");
 
 			this.analyzedEvent = analyzedEvent;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Overridden By", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedEvent, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Language));
 		}
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type) {
 			if (!TypesHierarchyHelpers.IsBaseType(analyzedEvent.DeclaringType, type, resolveTypeArguments: false))
 				yield break;
 
@@ -67,8 +62,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		public static bool CanShow(EventDef property)
-		{
+		public static bool CanShow(EventDef property) {
 			var accessor = property.AddMethod ?? property.RemoveMethod;
 			return accessor != null && accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
 		}

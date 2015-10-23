@@ -27,13 +27,11 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal sealed class AnalyzedTypeInstantiationsTreeNode : AnalyzerSearchTreeNode
-	{
+	internal sealed class AnalyzedTypeInstantiationsTreeNode : AnalyzerSearchTreeNode {
 		private readonly TypeDef analyzedType;
 		private readonly bool isSystemObject;
 
-		public AnalyzedTypeInstantiationsTreeNode(TypeDef analyzedType)
-		{
+		public AnalyzedTypeInstantiationsTreeNode(TypeDef analyzedType) {
 			if (analyzedType == null)
 				throw new ArgumentNullException("analyzedType");
 
@@ -42,19 +40,16 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			this.isSystemObject = analyzedType.DefinitionAssembly.IsCorLib() && analyzedType.FullName == "System.Object";
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Instantiated By", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedType, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Language));
 		}
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type) {
 			foreach (MethodDef method in type.Methods) {
 				bool found = false;
 				if (!method.HasBody)
@@ -86,8 +81,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		public static bool CanShow(TypeDef type)
-		{
+		public static bool CanShow(TypeDef type) {
 			return (type.IsClass && !(type.IsAbstract && type.IsSealed) && !type.IsEnum);
 		}
 	}

@@ -26,31 +26,26 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal sealed class AnalyzedInterfaceMethodImplementedByTreeNode : AnalyzerSearchTreeNode
-	{
+	internal sealed class AnalyzedInterfaceMethodImplementedByTreeNode : AnalyzerSearchTreeNode {
 		private readonly MethodDef analyzedMethod;
 
-		public AnalyzedInterfaceMethodImplementedByTreeNode(MethodDef analyzedMethod)
-		{
+		public AnalyzedInterfaceMethodImplementedByTreeNode(MethodDef analyzedMethod) {
 			if (analyzedMethod == null)
 				throw new ArgumentNullException("analyzedMethod");
 
 			this.analyzedMethod = analyzedMethod;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Implemented By", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedMethod, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Language));
 		}
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type) {
 			if (!type.HasInterfaces)
 				yield break;
 			var iff = type.Interfaces.FirstOrDefault(i => new SigComparer().Equals(i.Interface, analyzedMethod.DeclaringType));
@@ -70,15 +65,14 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 
 			foreach (MethodDef method in type.Methods) {
 				if (method.HasOverrides && method.Overrides.Any(m => new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(m.MethodDeclaration, analyzedMethod))) {
-					var node =  new AnalyzedMethodTreeNode(method);
+					var node = new AnalyzedMethodTreeNode(method);
 					node.Language = this.Language;
 					yield return node;
 				}
 			}
 		}
 
-		public static bool CanShow(MethodDef method)
-		{
+		public static bool CanShow(MethodDef method) {
 			return method.DeclaringType.IsInterface;
 		}
 	}

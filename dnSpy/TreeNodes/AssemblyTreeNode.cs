@@ -43,16 +43,14 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// Tree node representing an assembly.
 	/// This class is responsible for loading both namespace and type nodes.
 	/// </summary>
-	public sealed class AssemblyTreeNode : ILSpyTreeNode
-	{
+	public sealed class AssemblyTreeNode : ILSpyTreeNode {
 		readonly DnSpyFile dnSpyFile;
 		internal static readonly StringComparer NamespaceStringEqualsComparer = StringComparer.Ordinal;
 		internal static readonly StringComparer NamespaceStringSortComparer = StringComparer.OrdinalIgnoreCase;
 		internal static readonly StringComparer TypeStringComparer = StringComparer.OrdinalIgnoreCase;
 		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>(NamespaceStringEqualsComparer);
 
-		internal AssemblyTreeNode(DnSpyFile dnSpyFile)
-		{
+		internal AssemblyTreeNode(DnSpyFile dnSpyFile) {
 			if (dnSpyFile == null)
 				throw new ArgumentNullException("assembly");
 
@@ -62,13 +60,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			OnAssemblyLoaded();
 		}
 
-		internal DnSpyFileList DnSpyFileList
-		{
+		internal DnSpyFileList DnSpyFileList {
 			get { return MainWindow.Instance.DnSpyFileList; }
 		}
 
-		internal DnSpyFile DnSpyFile
-		{
+		internal DnSpyFile DnSpyFile {
 			get { return dnSpyFile; }
 		}
 
@@ -104,15 +100,13 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			get { return dnSpyFile.ModuleDef != null; }
 		}
 
-		public override bool IsAutoLoaded
-		{
-			get { 
-				return dnSpyFile.IsAutoLoaded; 
+		public override bool IsAutoLoaded {
+			get {
+				return dnSpyFile.IsAutoLoaded;
 			}
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			if (dnSpyFile.ModuleDef == null) {
 				var filename = Path.GetFileName(dnSpyFile.Filename);
 				if (string.IsNullOrEmpty(filename))
@@ -177,23 +171,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		internal void OnFileNameChanged()
-		{
+		internal void OnFileNameChanged() {
 			OnFileNameChangedInternal(this);
 			if (Children.Count > 0 && Children[0] is AssemblyTreeNode)
 				OnFileNameChangedInternal((AssemblyTreeNode)Children[0]);
 		}
 
-		static void OnFileNameChangedInternal(AssemblyTreeNode node)
-		{
+		static void OnFileNameChangedInternal(AssemblyTreeNode node) {
 			node.RaisePropertyChanged("Text");
 			node.RaisePropertyChanged("ToolTip");
 		}
 
-		public override object Icon
-		{
-			get
-			{
+		public override object Icon {
+			get {
 				if (dnSpyFile is UnknownFile)
 					return ImageCache.Instance.GetImage("AssemblyWarning", BackgroundType.TreeNode);
 				if (Parent is AssemblyTreeNode || (dnSpyFile.ModuleDef != null && dnSpyFile.AssemblyDef == null))
@@ -211,8 +201,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		public override object ToolTip
-		{
+		public override object ToolTip {
 			get {
 				var tooltip = new TextBlock();
 				tooltip.Inlines.Add(new Bold(new Run("Name: ")));
@@ -247,8 +236,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			get { return !(dnSpyFile is UnknownFile) && base.ShowExpander; }
 		}
 
-		void OnAssemblyLoaded()
-		{
+		void OnAssemblyLoaded() {
 			// change from "Loading" icon to final icon
 			RaisePropertyChanged("Icon");
 			RaisePropertyChanged("ExpandedIcon");
@@ -260,8 +248,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		readonly Dictionary<TypeDef, TypeTreeNode> typeDict = new Dictionary<TypeDef, TypeTreeNode>();
 
-		protected override void LoadChildren()
-		{
+		protected override void LoadChildren() {
 			if (Parent is AssemblyTreeNode || dnSpyFile.AssemblyDef == null) {
 				LoadModuleChildren(dnSpyFile.PEImage, dnSpyFile.ModuleDef);
 			}
@@ -287,8 +274,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return peNode == null ? null : peNode.FindTokenNode(token);
 		}
 
-		void LoadModuleChildren(IPEImage peImage, ModuleDef module)
-		{
+		void LoadModuleChildren(IPEImage peImage, ModuleDef module) {
 			var asmListTreeNode = this.Ancestors().OfType<DnSpyFileListTreeNode>().FirstOrDefault();
 			Debug.Assert(asmListTreeNode != null);
 			if (peImage != null)
@@ -316,15 +302,13 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		protected override int GetNewChildIndex(SharpTreeNode node)
-		{
+		protected override int GetNewChildIndex(SharpTreeNode node) {
 			if (node is NamespaceTreeNode)
 				return GetNewChildIndex(node, (a, b) => NamespaceStringSortComparer.Compare(((NamespaceTreeNode)a).Name, ((NamespaceTreeNode)b).Name));
 			return base.GetNewChildIndex(node);
 		}
 
-		internal void OnRemoved(NamespaceTreeNode nsNode)
-		{
+		internal void OnRemoved(NamespaceTreeNode nsNode) {
 			bool b = namespaces.Remove(nsNode.Name);
 			Debug.Assert(b);
 			if (!b)
@@ -334,8 +318,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				OnRemoved(typeNode);
 		}
 
-		internal void OnReadded(NamespaceTreeNode nsNode)
-		{
+		internal void OnReadded(NamespaceTreeNode nsNode) {
 			Debug.Assert(!namespaces.ContainsKey(nsNode.Name));
 			namespaces.Add(nsNode.Name, nsNode);
 
@@ -343,16 +326,14 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				OnReadded(typeNode);
 		}
 
-		internal void OnRemoved(TypeTreeNode typeNode)
-		{
+		internal void OnRemoved(TypeTreeNode typeNode) {
 			bool b = typeDict.Remove(typeNode.TypeDef);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
 		}
 
-		internal void OnReadded(TypeTreeNode typeNode)
-		{
+		internal void OnReadded(TypeTreeNode typeNode) {
 			Debug.Assert(!typeDict.ContainsKey(typeNode.TypeDef));
 			typeDict.Add(typeNode.TypeDef, typeNode);
 		}
@@ -385,8 +366,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// Called when it's been converted to an assembly
 		/// </summary>
 		/// <param name="modNode">Old child as returned by <see cref="OnConvertedToNetModule()"/></param>
-		internal void OnConvertedToAssembly(AssemblyTreeNode modNode = null)
-		{
+		internal void OnConvertedToAssembly(AssemblyTreeNode modNode = null) {
 			Debug.Assert(Children.Count == 0 || !(Children[0] is AssemblyTreeNode));
 			Debug.Assert(!(Parent is AssemblyTreeNode));
 
@@ -420,8 +400,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			RaiseUIPropsChanged();
 		}
 
-		public override void RaiseUIPropsChanged()
-		{
+		public override void RaiseUIPropsChanged() {
 			base.RaiseUIPropsChanged();
 			var parent = Parent as AssemblyTreeNode;
 			if (parent != null && parent.Children[0] == this)
@@ -432,8 +411,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// Converts it to a netmodule and returns the old <see cref="AssemblyTreeNode"/> child
 		/// </summary>
 		/// <returns></returns>
-		internal AssemblyTreeNode OnConvertedToNetModule()
-		{
+		internal AssemblyTreeNode OnConvertedToNetModule() {
 			bool b = !LazyLoading &&
 					!(Parent is AssemblyTreeNode) &&
 					Children.Count == 1 && Children[0] is AssemblyTreeNode &&
@@ -460,8 +438,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// <summary>
 		/// Finds the node for a top-level type.
 		/// </summary>
-		public TypeTreeNode FindNonNestedTypeNode(TypeDef def)
-		{
+		public TypeTreeNode FindNonNestedTypeNode(TypeDef def) {
 			if (def == null)
 				return null;
 			EnsureChildrenFiltered();
@@ -482,8 +459,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// <summary>
 		/// Finds the node for a namespace.
 		/// </summary>
-		public NamespaceTreeNode FindNamespaceNode(string namespaceName)
-		{
+		public NamespaceTreeNode FindNamespaceNode(string namespaceName) {
 			if (namespaceName == null)
 				return null;
 			EnsureChildrenFiltered();
@@ -492,46 +468,38 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				return node;
 			return null;
 		}
-		
-		public override bool CanDrag(SharpTreeNode[] nodes)
-		{
+
+		public override bool CanDrag(SharpTreeNode[] nodes) {
 			return nodes.All(n => n is AssemblyTreeNode);
 		}
 
-		public override void StartDrag(DependencyObject dragSource, SharpTreeNode[] nodes)
-		{
+		public override void StartDrag(DependencyObject dragSource, SharpTreeNode[] nodes) {
 			DragDrop.DoDragDrop(dragSource, Copy(nodes), DragDropEffects.All);
 		}
 
-		public override bool CanDelete()
-		{
+		public override bool CanDelete() {
 			return true;
 		}
 
-		public override void Delete()
-		{
+		public override void Delete() {
 			DeleteCore();
 		}
 
-		public void Delete(bool canDispose)
-		{
+		public void Delete(bool canDispose) {
 			DeleteCore(canDispose);
 		}
 
-		public override void DeleteCore()
-		{
+		public override void DeleteCore() {
 			DeleteCore(true);
 		}
 
-		public void DeleteCore(bool canDispose)
-		{
+		public void DeleteCore(bool canDispose) {
 			DnSpyFileList.Remove(dnSpyFile, canDispose);
 		}
 
 		internal const string DataFormat = "ILSpyAssemblies";
 
-		public override IDataObject Copy(SharpTreeNode[] nodes)
-		{
+		public override IDataObject Copy(SharpTreeNode[] nodes) {
 			DataObject dataObject = new DataObject();
 			dataObject.SetData(DataFormat, nodes.OfType<AssemblyTreeNode>().Where(n => !string.IsNullOrEmpty(n.DnSpyFile.Filename)).Select(n => n.DnSpyFile.Filename).ToArray());
 			return dataObject;
@@ -547,8 +515,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this.DnSpyFile, AssemblyFilterType);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
@@ -558,8 +525,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				return FilterResult.Recurse;
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			if (dnSpyFile.ModuleDef == null) {
 				language.WriteCommentLine(output, "This file does not contain a managed assembly.");
 				return;
@@ -572,8 +538,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			language.DecompileAssembly(DnSpyFileList, dnSpyFile, output, options, flags);
 		}
 
-		public override bool Save(DecompilerTextView textView)
-		{
+		public override bool Save(DecompilerTextView textView) {
 			if (dnSpyFile.ModuleDef == null)
 				return false;
 			Language language = this.Language;
@@ -610,22 +575,18 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	}
 
 	[ExportContextMenuEntryAttribute(Header = "_Load Dependencies", Order = 930, Category = "Other")]
-	sealed class LoadDependencies : IContextMenuEntry
-	{
-		public bool IsVisible(ContextMenuEntryContext context)
-		{
+	sealed class LoadDependencies : IContextMenuEntry {
+		public bool IsVisible(ContextMenuEntryContext context) {
 			if (context.SelectedTreeNodes == null)
 				return false;
 			return context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n is AssemblyTreeNode && ((AssemblyTreeNode)n).DnSpyFile.ModuleDef != null);
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context)
-		{
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return true;
 		}
 
-		public void Execute(ContextMenuEntryContext context)
-		{
+		public void Execute(ContextMenuEntryContext context) {
 			if (context.SelectedTreeNodes == null)
 				return;
 			foreach (var node in context.SelectedTreeNodes) {
@@ -638,22 +599,18 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	}
 
 	[ExportContextMenuEntryAttribute(Header = "_Add to Main List", Order = 950, Category = "Other")]
-	sealed class AddToMainList : IContextMenuEntry
-	{
-		public bool IsVisible(ContextMenuEntryContext context)
-		{
+	sealed class AddToMainList : IContextMenuEntry {
+		public bool IsVisible(ContextMenuEntryContext context) {
 			if (context.SelectedTreeNodes == null)
 				return false;
-			return context.SelectedTreeNodes.Where(n => n is AssemblyTreeNode).Any(n=>((AssemblyTreeNode)n).IsAutoLoaded);
+			return context.SelectedTreeNodes.Where(n => n is AssemblyTreeNode).Any(n => ((AssemblyTreeNode)n).IsAutoLoaded);
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context)
-		{
+		public bool IsEnabled(ContextMenuEntryContext context) {
 			return true;
 		}
 
-		public void Execute(ContextMenuEntryContext context)
-		{
+		public void Execute(ContextMenuEntryContext context) {
 			if (context.SelectedTreeNodes == null)
 				return;
 			foreach (var node in context.SelectedTreeNodes) {
@@ -666,8 +623,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			MainWindow.Instance.DnSpyFileListManager.RefreshSave(MainWindow.Instance.DnSpyFileList);
 		}
 
-		static IEnumerable<AssemblyTreeNode> GetAllRelatedNodes(AssemblyTreeNode node)
-		{
+		static IEnumerable<AssemblyTreeNode> GetAllRelatedNodes(AssemblyTreeNode node) {
 			if (node.Parent is AssemblyTreeNode)
 				node = (AssemblyTreeNode)node.Parent;
 			yield return node;

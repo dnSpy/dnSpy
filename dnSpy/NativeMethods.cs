@@ -20,50 +20,45 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace ICSharpCode.ILSpy
-{
-	static class NativeMethods
-	{
+namespace ICSharpCode.ILSpy {
+	static class NativeMethods {
 		public const uint WM_COPYDATA = 0x4a;
-		
+
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
-		
+
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		static extern int GetWindowText(IntPtr hWnd, [Out] StringBuilder title, int size);
-		
-		public static string GetWindowText(IntPtr hWnd, int maxLength)
-		{
+
+		public static string GetWindowText(IntPtr hWnd, int maxLength) {
 			StringBuilder b = new StringBuilder(maxLength + 1);
 			if (GetWindowText(hWnd, b, b.Capacity) != 0)
 				return b.ToString();
 			else
 				return string.Empty;
 		}
-		
+
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		internal static extern IntPtr SendMessageTimeout(
 			IntPtr hWnd, uint msg, IntPtr wParam, ref CopyDataStruct lParam,
 			uint flags, uint timeout, out IntPtr result);
-		
+
 		[DllImport("user32.dll", CharSet = CharSet.Auto)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		internal static extern bool SetForegroundWindow(IntPtr hWnd);
 	}
-	
+
 	[return: MarshalAs(UnmanagedType.Bool)]
 	delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
-	
+
 	[StructLayout(LayoutKind.Sequential)]
-	struct CopyDataStruct
-	{
+	struct CopyDataStruct {
 		public IntPtr Padding;
 		public int Size;
 		public IntPtr Buffer;
 
-		public CopyDataStruct(IntPtr padding, int size, IntPtr buffer)
-		{
+		public CopyDataStruct(IntPtr padding, int size, IntPtr buffer) {
 			this.Padding = padding;
 			this.Size = size;
 			this.Buffer = buffer;

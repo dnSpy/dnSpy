@@ -19,20 +19,16 @@
 using System;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy
-{
-	public abstract class SimpleCommand : ICommand
-	{
-		public event EventHandler CanExecuteChanged
-		{
+namespace ICSharpCode.ILSpy {
+	public abstract class SimpleCommand : ICommand {
+		public event EventHandler CanExecuteChanged {
 			add { CommandManager.RequerySuggested += value; }
 			remove { CommandManager.RequerySuggested -= value; }
 		}
 
 		public abstract void Execute(object parameter);
 
-		public virtual bool CanExecute(object parameter)
-		{
+		public virtual bool CanExecute(object parameter) {
 			return true;
 		}
 	}

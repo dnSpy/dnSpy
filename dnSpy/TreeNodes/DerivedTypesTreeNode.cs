@@ -30,56 +30,47 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Lists the super types of a class.
 	/// </summary>
-	sealed class DerivedTypesTreeNode : ILSpyTreeNode
-	{
+	sealed class DerivedTypesTreeNode : ILSpyTreeNode {
 		readonly DnSpyFileList list;
 		readonly TypeDef type;
 		readonly ThreadingSupport threading;
 
-		public DerivedTypesTreeNode(DnSpyFileList list, TypeDef type)
-		{
+		public DerivedTypesTreeNode(DnSpyFileList list, TypeDef type) {
 			this.list = list;
 			this.type = type;
 			this.LazyLoading = true;
 			this.threading = new ThreadingSupport();
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Derived Types", TextTokenType.Text);
 		}
 
-		public override object Icon
-		{
+		public override object Icon {
 			get { return ImageCache.Instance.GetImage("SubTypes", BackgroundType.TreeNode); }
 		}
 
-		public override object ExpandedIcon
-		{
+		public override object ExpandedIcon {
 			get { return ImageCache.Instance.GetImage("SubTypesOpen", BackgroundType.TreeNode); }
 		}
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
 			return base.Filter(settings);
 		}
 
-		protected override void LoadChildren()
-		{
+		protected override void LoadChildren() {
 			threading.LoadChildren(this, FetchChildren);
 		}
 
-		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken cancellationToken)
-		{
+		IEnumerable<ILSpyTreeNode> FetchChildren(CancellationToken cancellationToken) {
 			// FetchChildren() runs on the main thread; but the enumerator will be consumed on a background thread
 			return FindDerivedTypes(type, list.GetAllModules(), cancellationToken);
 		}
 
-		internal static IEnumerable<DerivedTypesEntryNode> FindDerivedTypes(TypeDef type, ModuleDef[] modules, CancellationToken cancellationToken)
-		{
+		internal static IEnumerable<DerivedTypesEntryNode> FindDerivedTypes(TypeDef type, ModuleDef[] modules, CancellationToken cancellationToken) {
 			foreach (ModuleDef module in modules) {
 				foreach (TypeDef td in TreeTraversal.PreOrder(module.Types, t => t.NestedTypes)) {
 					cancellationToken.ThrowIfCancellationRequested();
@@ -88,20 +79,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 							if (IsSameType(typeRef.Interface.ResolveTypeDef() ?? typeRef.Interface, type))
 								yield return new DerivedTypesEntryNode(td, modules);
 						}
-					} else if (!type.IsInterface && td.BaseType != null && IsSameType(td.BaseType.ResolveTypeDef() ?? td.BaseType, type)) {
+					}
+					else if (!type.IsInterface && td.BaseType != null && IsSameType(td.BaseType.ResolveTypeDef() ?? td.BaseType, type)) {
 						yield return new DerivedTypesEntryNode(td, modules);
 					}
 				}
 			}
 		}
 
-		static bool IsSameType(ITypeDefOrRef typeRef, TypeDef type)
-		{
+		static bool IsSameType(ITypeDefOrRef typeRef, TypeDef type) {
 			return new SigComparer().Equals(typeRef, type);
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			threading.Decompile(language, output, options, EnsureChildrenFiltered);
 		}
 

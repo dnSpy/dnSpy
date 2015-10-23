@@ -29,51 +29,45 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// References folder.
 	/// </summary>
-	sealed class ReferenceFolderTreeNode : ILSpyTreeNode
-	{
+	sealed class ReferenceFolderTreeNode : ILSpyTreeNode {
 		readonly ModuleDef module;
 		readonly AssemblyTreeNode parentAssembly;
 		readonly DnSpyFileListTreeNode dnSpyFileListTreeNode;
-		
-		public ReferenceFolderTreeNode(ModuleDef module, AssemblyTreeNode parentAssembly, DnSpyFileListTreeNode dnSpyFileListTreeNode)
-		{
+
+		public ReferenceFolderTreeNode(ModuleDef module, AssemblyTreeNode parentAssembly, DnSpyFileListTreeNode dnSpyFileListTreeNode) {
 			this.module = module;
 			this.parentAssembly = parentAssembly;
 			this.dnSpyFileListTreeNode = dnSpyFileListTreeNode;
 			this.LazyLoading = true;
 		}
-		
-		protected override void Write(ITextOutput output, Language language)
-		{
+
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("References", TextTokenType.Text);
 		}
-		
+
 		public override object Icon {
 			get { return ImageCache.Instance.GetImage("ReferenceFolderClosed", BackgroundType.TreeNode); }
 		}
-		
+
 		public override object ExpandedIcon {
 			get { return ImageCache.Instance.GetImage("ReferenceFolderOpen", BackgroundType.TreeNode); }
 		}
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
 			return base.Filter(settings);
 		}
-		
-		protected override void LoadChildren()
-		{
+
+		protected override void LoadChildren() {
 			foreach (var r in module.GetAssemblyRefs().OrderBy(r => r.Name.String))
 				this.Children.Add(new AssemblyReferenceTreeNode(r, parentAssembly, dnSpyFileListTreeNode));
 			foreach (var r in module.GetModuleRefs().OrderBy(r => r.Name.String))
 				this.Children.Add(new ModuleReferenceTreeNode(r));
 		}
-		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureChildrenFiltered));
 			// Show metadata order of references
 			foreach (var r in module.GetAssemblyRefs())

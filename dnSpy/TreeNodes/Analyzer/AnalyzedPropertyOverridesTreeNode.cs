@@ -26,31 +26,26 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal sealed class AnalyzedPropertyOverridesTreeNode : AnalyzerSearchTreeNode
-	{
+	internal sealed class AnalyzedPropertyOverridesTreeNode : AnalyzerSearchTreeNode {
 		private readonly PropertyDef analyzedProperty;
 
-		public AnalyzedPropertyOverridesTreeNode(PropertyDef analyzedProperty)
-		{
+		public AnalyzedPropertyOverridesTreeNode(PropertyDef analyzedProperty) {
 			if (analyzedProperty == null)
 				throw new ArgumentNullException("analyzedProperty");
 
 			this.analyzedProperty = analyzedProperty;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Overridden By", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedProperty, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Language));
 		}
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type) {
 			if (!TypesHierarchyHelpers.IsBaseType(analyzedProperty.DeclaringType, type, resolveTypeArguments: false))
 				yield break;
 
@@ -68,8 +63,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		public static bool CanShow(PropertyDef property)
-		{
+		public static bool CanShow(PropertyDef property) {
 			var accessor = property.GetMethod ?? property.SetMethod;
 			return accessor != null && accessor.IsVirtual && !accessor.IsFinal && !accessor.DeclaringType.IsInterface;
 		}

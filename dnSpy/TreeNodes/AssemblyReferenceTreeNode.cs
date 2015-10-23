@@ -30,14 +30,12 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Node within assembly reference list.
 	/// </summary>
-	public sealed class AssemblyReferenceTreeNode : ILSpyTreeNode, ITokenTreeNode
-	{
+	public sealed class AssemblyReferenceTreeNode : ILSpyTreeNode, ITokenTreeNode {
 		readonly AssemblyRef r;
 		readonly DnSpyFileListTreeNode dnSpyFileListTreeNode;
 		readonly AssemblyTreeNode parentAssembly;
-		
-		internal AssemblyReferenceTreeNode(AssemblyRef r, AssemblyTreeNode parentAssembly, DnSpyFileListTreeNode dnSpyFileListTreeNode)
-		{
+
+		internal AssemblyReferenceTreeNode(AssemblyRef r, AssemblyTreeNode parentAssembly, DnSpyFileListTreeNode dnSpyFileListTreeNode) {
 			if (parentAssembly == null)
 				throw new ArgumentNullException("parentAssembly");
 			if (dnSpyFileListTreeNode == null)
@@ -50,33 +48,29 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			this.LazyLoading = true;
 		}
 
-		public AssemblyRef AssemblyNameReference
-		{
+		public AssemblyRef AssemblyNameReference {
 			get { return r; }
 		}
 
 		public IMDTokenProvider MDTokenProvider {
 			get { return r; }
 		}
-		
-		protected override void Write(ITextOutput output, Language language)
-		{
+
+		protected override void Write(ITextOutput output, Language language) {
 			Write(output, r, language);
 		}
 
-		public static ITextOutput Write(ITextOutput output, AssemblyRef r, Language language)
-		{
+		public static ITextOutput Write(ITextOutput output, AssemblyRef r, Language language) {
 			output.Write(UIUtils.CleanUpIdentifier(r.Name), TextTokenType.Text);
 			r.MDToken.WriteSuffixString(output);
 			return output;
 		}
-		
+
 		public override object Icon {
 			get { return ImageCache.Instance.GetImage("AssemblyReference", BackgroundType.TreeNode); }
 		}
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this.r);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
@@ -88,8 +82,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return mod == null ? null : mod.Context.AssemblyResolver.Resolve(asm, mod);
 		}
 
-		protected override void ActivateItemInternal(System.Windows.RoutedEventArgs e)
-		{
+		protected override void ActivateItemInternal(System.Windows.RoutedEventArgs e) {
 			var assemblyListNode = dnSpyFileListTreeNode;
 			Debug.Assert(assemblyListNode != null);
 			if (assemblyListNode != null) {
@@ -97,9 +90,8 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				e.Handled = true;
 			}
 		}
-		
-		protected override void LoadChildren()
-		{
+
+		protected override void LoadChildren() {
 			var assemblyListNode = dnSpyFileListTreeNode;
 			Debug.Assert(assemblyListNode != null);
 			if (assemblyListNode != null) {
@@ -110,12 +102,12 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				}
 			}
 		}
-		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			if (r.IsContentTypeWindowsRuntime) {
 				language.WriteCommentLine(output, r.Name + " [WinRT]");
-			} else {
+			}
+			else {
 				language.WriteCommentLine(output, r.FullName);
 			}
 		}

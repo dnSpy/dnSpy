@@ -25,31 +25,26 @@ using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal sealed class AnalyzedTypeExposedByTreeNode : AnalyzerSearchTreeNode
-	{
+	internal sealed class AnalyzedTypeExposedByTreeNode : AnalyzerSearchTreeNode {
 		private readonly TypeDef analyzedType;
 
-		public AnalyzedTypeExposedByTreeNode(TypeDef analyzedType)
-		{
+		public AnalyzedTypeExposedByTreeNode(TypeDef analyzedType) {
 			if (analyzedType == null)
 				throw new ArgumentNullException("analyzedType");
 
 			this.analyzedType = analyzedType;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Exposed By", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<AnalyzerTreeNode>(analyzedType, FindReferencesInType);
 			return analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Language));
 		}
 
-		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type)
-		{
+		private IEnumerable<AnalyzerTreeNode> FindReferencesInType(TypeDef type) {
 			if (analyzedType.IsEnum && type == analyzedType)
 				yield break;
 
@@ -89,32 +84,28 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		private bool TypeIsExposedBy(FieldDef field)
-		{
+		private bool TypeIsExposedBy(FieldDef field) {
 			if (field.IsPrivate)
 				return false;
 
 			return new SigComparer().Equals(analyzedType, field.FieldType);
 		}
 
-		private bool TypeIsExposedBy(PropertyDef property)
-		{
+		private bool TypeIsExposedBy(PropertyDef property) {
 			if (IsPrivate(property))
 				return false;
 
 			return new SigComparer().Equals(analyzedType, property.PropertySig.GetRetType());
 		}
 
-		private bool TypeIsExposedBy(EventDef eventDef)
-		{
+		private bool TypeIsExposedBy(EventDef eventDef) {
 			if (IsPrivate(eventDef))
 				return false;
 
 			return new SigComparer().Equals(eventDef.EventType, analyzedType);
 		}
 
-		private bool TypeIsExposedBy(MethodDef method)
-		{
+		private bool TypeIsExposedBy(MethodDef method) {
 			// if the method has overrides, it is probably an explicit interface member
 			// and should be considered part of the public API even though it is marked private.
 			if (method.IsPrivate) {
@@ -144,22 +135,19 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			return false;
 		}
 
-		private static bool IsPrivate(PropertyDef property)
-		{
+		private static bool IsPrivate(PropertyDef property) {
 			bool isGetterPublic = (property.GetMethod != null && !property.GetMethod.IsPrivate);
 			bool isSetterPublic = (property.SetMethod != null && !property.SetMethod.IsPrivate);
 			return !(isGetterPublic || isSetterPublic);
 		}
 
-		private static bool IsPrivate(EventDef eventDef)
-		{
+		private static bool IsPrivate(EventDef eventDef) {
 			bool isAdderPublic = (eventDef.AddMethod != null && !eventDef.AddMethod.IsPrivate);
 			bool isRemoverPublic = (eventDef.RemoveMethod != null && !eventDef.RemoveMethod.IsPrivate);
 			return !(isAdderPublic || isRemoverPublic);
 		}
 
-		public static bool CanShow(TypeDef type)
-		{
+		public static bool CanShow(TypeDef type) {
 			return true;
 		}
 	}

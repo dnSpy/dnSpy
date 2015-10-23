@@ -29,33 +29,29 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Namespace node. The loading of the type nodes is handled by the parent AssemblyTreeNode.
 	/// </summary>
-	public sealed class NamespaceTreeNode : ILSpyTreeNode
-	{
+	public sealed class NamespaceTreeNode : ILSpyTreeNode {
 		string name;
 
 		public string Name {
 			get { return name; }
 			set { name = value; }
 		}
-		
-		public NamespaceTreeNode(string name)
-		{
+
+		public NamespaceTreeNode(string name) {
 			if (name == null)
 				throw new ArgumentNullException("name");
 			this.name = name;
 		}
-		
-		protected override void Write(ITextOutput output, Language language)
-		{
+
+		protected override void Write(ITextOutput output, Language language) {
 			output.WriteNamespace(name);
 		}
-		
+
 		public override object Icon {
 			get { return ImageCache.Instance.GetImage("Namespace", BackgroundType.TreeNode); }
 		}
-		
-		public override FilterResult Filter(FilterSettings settings)
-		{
+
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this.Name, ((AssemblyTreeNode)Parent).DnSpyFile);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
@@ -64,24 +60,20 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			else
 				return FilterResult.Recurse;
 		}
-		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			language.DecompileNamespace(name, this.Children.OfType<TypeTreeNode>().Select(t => t.TypeDef), output, options);
 		}
 
-		internal void OnBeforeRemoved()
-		{
+		internal void OnBeforeRemoved() {
 			((AssemblyTreeNode)Parent).OnRemoved(this);
 		}
 
-		internal void OnReadded()
-		{
+		internal void OnReadded() {
 			((AssemblyTreeNode)Parent).OnReadded(this);
 		}
 
-		internal void Append(TypeTreeNode typeNode)
-		{
+		internal void Append(TypeTreeNode typeNode) {
 			bool b = name.Equals(typeNode.Namespace, StringComparison.Ordinal);
 			Debug.Assert(b);
 			if (!b)
@@ -90,8 +82,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			((AssemblyTreeNode)Parent).OnReadded(typeNode);
 		}
 
-		internal TypeTreeNode RemoveLast()
-		{
+		internal TypeTreeNode RemoveLast() {
 			Debug.Assert(Children.Count > 0);
 			int index = Children.Count - 1;
 			var typeNode = (TypeTreeNode)Children[index];
@@ -100,8 +91,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return typeNode;
 		}
 
-		protected override int GetNewChildIndex(SharpTreeNode node)
-		{
+		protected override int GetNewChildIndex(SharpTreeNode node) {
 			if (node is TypeTreeNode)
 				return GetNewChildIndex(node, (a, b) => AssemblyTreeNode.TypeStringComparer.Compare(((TypeTreeNode)a).TypeDef.FullName, ((TypeTreeNode)b).TypeDef.FullName));
 			return base.GetNewChildIndex(node);

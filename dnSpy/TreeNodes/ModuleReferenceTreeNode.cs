@@ -28,8 +28,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Module reference in ReferenceFolderTreeNode.
 	/// </summary>
-	sealed class ModuleReferenceTreeNode : ILSpyTreeNode, ITokenTreeNode
-	{
+	sealed class ModuleReferenceTreeNode : ILSpyTreeNode, ITokenTreeNode {
 		readonly ModuleRef r;
 
 		public ModuleRef ModuleReference {
@@ -39,40 +38,35 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		public IMDTokenProvider MDTokenProvider {
 			get { return r; }
 		}
-		
-		public ModuleReferenceTreeNode(ModuleRef r)
-		{
+
+		public ModuleReferenceTreeNode(ModuleRef r) {
 			if (r == null)
 				throw new ArgumentNullException("r");
 			this.r = r;
 		}
-		
-		protected override void Write(ITextOutput output, Language language)
-		{
+
+		protected override void Write(ITextOutput output, Language language) {
 			Write(output, r, language);
 		}
 
-		public static ITextOutput Write(ITextOutput output, ModuleRef r, Language language)
-		{
+		public static ITextOutput Write(ITextOutput output, ModuleRef r, Language language) {
 			output.Write(UIUtils.CleanUpIdentifier(r.Name), TextTokenType.Text);
 			r.MDToken.WriteSuffixString(output);
 			return output;
 		}
-		
+
 		public override object Icon {
 			get { return ImageCache.Instance.GetImage("ModuleReference", BackgroundType.TreeNode); }
 		}
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this.r);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
 			return base.Filter(settings);
 		}
-		
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			language.WriteCommentLine(output, IdentifierEscaper.Escape(r.Name));
 		}
 

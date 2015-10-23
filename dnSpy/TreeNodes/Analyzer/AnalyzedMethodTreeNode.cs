@@ -23,13 +23,11 @@ using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	internal class AnalyzedMethodTreeNode : AnalyzerEntityTreeNode
-	{
+	internal class AnalyzedMethodTreeNode : AnalyzerEntityTreeNode {
 		private readonly MethodDef analyzedMethod;
 		private readonly bool hidesParent;
 
-		public AnalyzedMethodTreeNode(MethodDef analyzedMethod, bool hidesParent = false)
-		{
+		public AnalyzedMethodTreeNode(MethodDef analyzedMethod, bool hidesParent = false) {
 			if (analyzedMethod == null)
 				throw new ArgumentNullException("analyzedMethod");
 			this.analyzedMethod = analyzedMethod;
@@ -37,13 +35,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			this.LazyLoading = true;
 		}
 
-		public override object Icon
-		{
+		public override object Icon {
 			get { return MethodTreeNode.GetIcon(analyzedMethod, BackgroundType.TreeNode); }
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			if (hidesParent) {
 				output.Write('(', TextTokenType.Operator);
 				output.Write("hides", TextTokenType.Text);
@@ -55,8 +51,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			MethodTreeNode.Write(output, analyzedMethod, Language);
 		}
 
-		protected override void LoadChildren()
-		{
+		protected override void LoadChildren() {
 			if (analyzedMethod.HasBody)
 				this.Children.Add(new AnalyzedMethodUsesTreeNode(analyzedMethod));
 

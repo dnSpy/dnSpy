@@ -16,10 +16,8 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-namespace ICSharpCode.ILSpy.TreeNodes
-{
-	public enum FilterResult
-	{
+namespace ICSharpCode.ILSpy.TreeNodes {
+	public enum FilterResult {
 		/// <summary>
 		/// Hides the node.
 		/// </summary>

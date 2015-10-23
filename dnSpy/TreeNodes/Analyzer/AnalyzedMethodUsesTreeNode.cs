@@ -29,25 +29,21 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	/// <summary>
 	/// Shows the methods that are used by this method.
 	/// </summary>
-	internal sealed class AnalyzedMethodUsesTreeNode : AnalyzerSearchTreeNode
-	{
+	internal sealed class AnalyzedMethodUsesTreeNode : AnalyzerSearchTreeNode {
 		private readonly MethodDef analyzedMethod;
 
-		public AnalyzedMethodUsesTreeNode(MethodDef analyzedMethod)
-		{
+		public AnalyzedMethodUsesTreeNode(MethodDef analyzedMethod) {
 			if (analyzedMethod == null)
 				throw new ArgumentNullException("analyzedMethod");
 
 			this.analyzedMethod = analyzedMethod;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Uses", TextTokenType.Text);
 		}
 
-		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct)
-		{
+		protected override IEnumerable<AnalyzerTreeNode> FetchChildren(CancellationToken ct) {
 			foreach (var f in GetUsedFields().Distinct()) {
 				var node = new AnalyzedFieldTreeNode(f);
 				node.Language = this.Language;
@@ -60,8 +56,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		private IEnumerable<MethodDef> GetUsedMethods()
-		{
+		private IEnumerable<MethodDef> GetUsedMethods() {
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
 				IMethod mr = instr.Operand as IMethod;
 				if (mr != null && !mr.IsField) {
@@ -72,8 +67,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			}
 		}
 
-		private IEnumerable<FieldDef> GetUsedFields()
-		{
+		private IEnumerable<FieldDef> GetUsedFields() {
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
 				IField fr = instr.Operand as IField;
 				if (fr != null && !fr.IsMethod) {

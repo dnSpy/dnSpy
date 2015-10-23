@@ -24,13 +24,11 @@ using dnSpy;
 using dnSpy.Controls;
 using dnSpy.Files;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Interaction logic for OpenListDialog.xaml
 	/// </summary>
-	public partial class OpenListDialog : MetroWindow
-	{
+	public partial class OpenListDialog : MetroWindow {
 
 		public const string DotNet4List = ".NET 4 (WPF)";
 		public const string DotNet35List = ".NET 3.5";
@@ -38,41 +36,33 @@ namespace ICSharpCode.ILSpy
 
 		readonly DnSpyFileListManager manager;
 
-		public OpenListDialog()
-		{
+		public OpenListDialog() {
 			InitializeComponent();
 			manager = MainWindow.Instance.DnSpyFileListManager;
 		}
 
-		private void listView_Loaded(object sender, RoutedEventArgs e)
-		{
+		private void listView_Loaded(object sender, RoutedEventArgs e) {
 			listView.ItemsSource = manager.FileLists;
 			CreateDefaultAssemblyLists();
 		}
 
-		void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
+		void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
 			okButton.IsEnabled = listView.SelectedItem != null;
 			removeButton.IsEnabled = listView.SelectedItem != null;
 		}
 
-		void OKButton_Click(object sender, RoutedEventArgs e)
-		{
+		void OKButton_Click(object sender, RoutedEventArgs e) {
 			this.DialogResult = true;
 		}
 
-		public string SelectedListName
-		{
-			get
-			{
+		public string SelectedListName {
+			get {
 				return listView.SelectedItem.ToString();
 			}
 		}
 
-		private void CreateDefaultAssemblyLists()
-		{
-			if (!manager.FileLists.Contains(DotNet4List))
-			{
+		private void CreateDefaultAssemblyLists() {
+			if (!manager.FileLists.Contains(DotNet4List)) {
 				var dotnet4 = new DnSpyFileList(manager.DnSpyFileListOptions, DotNet4List);
 				AddToList(dotnet4, "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(dotnet4, "System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
@@ -87,14 +77,12 @@ namespace ICSharpCode.ILSpy
 				AddToList(dotnet4, "PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 				AddToList(dotnet4, "WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 
-				if (dotnet4.GetDnSpyFiles().Length > 0)
-				{
+				if (dotnet4.GetDnSpyFiles().Length > 0) {
 					manager.CreateList(dotnet4);
 				}
 			}
 
-			if (!manager.FileLists.Contains(DotNet35List))
-			{
+			if (!manager.FileLists.Contains(DotNet35List)) {
 				var dotnet35 = new DnSpyFileList(manager.DnSpyFileListOptions, DotNet35List);
 				AddToList(dotnet35, "mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(dotnet35, "System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
@@ -107,14 +95,12 @@ namespace ICSharpCode.ILSpy
 				AddToList(dotnet35, "PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 				AddToList(dotnet35, "WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 
-				if (dotnet35.GetDnSpyFiles().Length > 0)
-				{
+				if (dotnet35.GetDnSpyFiles().Length > 0) {
 					manager.CreateList(dotnet35);
 				}
 			}
 
-			if (!manager.FileLists.Contains(ASPDotNetMVC3List))
-			{
+			if (!manager.FileLists.Contains(ASPDotNetMVC3List)) {
 				var mvc = new DnSpyFileList(manager.DnSpyFileListOptions, ASPDotNetMVC3List);
 				AddToList(mvc, "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(mvc, "System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
@@ -141,51 +127,42 @@ namespace ICSharpCode.ILSpy
 				AddToList(mvc, "System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
 				AddToList(mvc, "Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
 
-				if (mvc.GetDnSpyFiles().Length > 0)
-				{
+				if (mvc.GetDnSpyFiles().Length > 0) {
 					manager.CreateList(mvc);
 				}
 			}
 		}
 
-		private void AddToList(DnSpyFileList list, string FullName)
-		{
+		private void AddToList(DnSpyFileList list, string FullName) {
 			AssemblyNameInfo reference = new AssemblyNameInfo(FullName);
 			string file = GacInterop.FindAssemblyInNetGac(reference);
 			if (file != null)
 				list.OpenFile(file);
 		}
 
-		private void CreateButton_Click(object sender, RoutedEventArgs e)
-		{
+		private void CreateButton_Click(object sender, RoutedEventArgs e) {
 			CreateListDialog dlg = new CreateListDialog();
 			dlg.Owner = this;
-			dlg.Closing += (s, args) =>
-			{
-				if (dlg.DialogResult == true)
-				{
-					if (manager.FileLists.Contains(dlg.NewListName))
-					{
+			dlg.Closing += (s, args) => {
+				if (dlg.DialogResult == true) {
+					if (manager.FileLists.Contains(dlg.NewListName)) {
 						args.Cancel = true;
 						MainWindow.Instance.ShowMessageBox("A list with the same name was found.");
 					}
 				}
 			};
-			if (dlg.ShowDialog() == true)
-			{
+			if (dlg.ShowDialog() == true) {
 				manager.CreateList(new DnSpyFileList(manager.DnSpyFileListOptions, dlg.NewListName));
 			}
 
 		}
 
-		private void RemoveButton_Click(object sender, RoutedEventArgs e)
-		{
+		private void RemoveButton_Click(object sender, RoutedEventArgs e) {
 			if (listView.SelectedItem != null)
 				manager.DeleteList(listView.SelectedItem.ToString());
 		}
 
-		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e)
-		{
+		private void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
 			if (listView.SelectedItem != null) {

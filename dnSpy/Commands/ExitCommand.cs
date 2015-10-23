@@ -19,10 +19,8 @@
 
 namespace ICSharpCode.ILSpy {
 	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "E_xit", MenuIcon = "Close", MenuOrder = 1999, MenuCategory = "Exit", MenuInputGestureText = "Alt+F4")]
-	sealed class ExitCommand : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
+	sealed class ExitCommand : SimpleCommand {
+		public override void Execute(object parameter) {
 			MainWindow.Instance.Close();
 		}
 	}

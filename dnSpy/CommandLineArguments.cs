@@ -19,10 +19,8 @@
 using System;
 using System.Collections.Generic;
 
-namespace ICSharpCode.ILSpy
-{
-	sealed class CommandLineArguments
-	{
+namespace ICSharpCode.ILSpy {
+	sealed class CommandLineArguments {
 		// see /doc/Command Line.txt for details
 		public List<string> AssembliesToLoad = new List<string>();
 		public bool? SingleInstance;
@@ -32,9 +30,8 @@ namespace ICSharpCode.ILSpy
 		public bool NoActivate;
 		public Guid? FixedGuid;
 		public string SaveDirectory;
-		
-		public CommandLineArguments(IEnumerable<string> arguments)
-		{
+
+		public CommandLineArguments(IEnumerable<string> arguments) {
 			foreach (string arg in arguments) {
 				if (arg.Length == 0)
 					continue;
@@ -58,9 +55,11 @@ namespace ICSharpCode.ILSpy
 						Guid fixedGuid;
 						if (Guid.TryParse(guid, out fixedGuid))
 							this.FixedGuid = fixedGuid;
-					} else if (arg.StartsWith("/saveDir:", StringComparison.OrdinalIgnoreCase))
+					}
+					else if (arg.StartsWith("/saveDir:", StringComparison.OrdinalIgnoreCase))
 						this.SaveDirectory = arg.Substring("/saveDir:".Length);
-				} else {
+				}
+				else {
 					this.AssembliesToLoad.Add(arg);
 				}
 			}

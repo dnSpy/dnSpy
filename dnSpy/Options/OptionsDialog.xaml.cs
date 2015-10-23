@@ -29,14 +29,11 @@ namespace ICSharpCode.ILSpy.Options {
 	/// <summary>
 	/// Interaction logic for OptionsDialog.xaml
 	/// </summary>
-	public partial class OptionsDialog : MetroWindow
-	{
-		sealed class MefState
-		{
+	public partial class OptionsDialog : MetroWindow {
+		sealed class MefState {
 			public static readonly MefState Instance = new MefState();
 
-			MefState()
-			{
+			MefState() {
 				App.CompositionContainer.ComposeParts(this);
 			}
 
@@ -51,13 +48,11 @@ namespace ICSharpCode.ILSpy.Options {
 			get { return optionPages.Any(a => a.HasError); }
 		}
 
-		void HasErrorUpdated()
-		{
+		void HasErrorUpdated() {
 			this.okButton.IsEnabled = !HasError;
 		}
 
-		public OptionsDialog()
-		{
+		public OptionsDialog() {
 			InitializeComponent();
 			DNSpySettings settings = DNSpySettings.Load();
 			var creators = MefState.Instance.optionPages.OrderBy(p => p.Metadata.Order).ToArray();
@@ -73,7 +68,7 @@ namespace ICSharpCode.ILSpy.Options {
 					Content = optionPages[i],
 				};
 				tabControl.Items.Add(tabItem);
-				
+
 				optionPages[i].Load(settings);
 			}
 
@@ -81,9 +76,8 @@ namespace ICSharpCode.ILSpy.Options {
 				page.PropertyChanged += (s, e) => HasErrorUpdated();
 			HasErrorUpdated();
 		}
-		
-		void OKButton_Click(object sender, RoutedEventArgs e)
-		{
+
+		void OKButton_Click(object sender, RoutedEventArgs e) {
 			RefreshFlags = RefreshFlags.None;
 			DNSpySettings.Update(
 				delegate (XElement root) {
@@ -95,81 +89,73 @@ namespace ICSharpCode.ILSpy.Options {
 		}
 	}
 
-	public interface IOptionPageCreator
-	{
+	public interface IOptionPageCreator {
 		OptionPage Create();
 	}
-	
-	public interface IOptionPageCreatorMetadata
-	{
+
+	public interface IOptionPageCreatorMetadata {
 		string Title { get; }
 		int Order { get; }
 	}
-	
-	public abstract class OptionPage : ViewModelBase
-	{
+
+	public abstract class OptionPage : ViewModelBase {
 		public abstract void Load(DNSpySettings settings);
 		public abstract RefreshFlags Save(XElement root);
 	}
 
 	[Flags]
-	public enum RefreshFlags
-	{
+	public enum RefreshFlags {
 		/// <summary>
 		/// Nothing needs to be refreshed
 		/// </summary>
-		None				= 0,
+		None = 0,
 
 		/// <summary>
 		/// Tree view nodes need to be updated
 		/// </summary>
-		TreeViewNodes		= 0x00000001,
+		TreeViewNodes = 0x00000001,
 
 		/// <summary>
 		/// Text editor needs to re-disassemble IL
 		/// </summary>
-		IL					= 0x00000002,
+		IL = 0x00000002,
 
 		/// <summary>
 		/// Text editor needs to re-decompile ILAst, C# and VB code
 		/// </summary>
-		ILAst				= 0x00000004,
+		ILAst = 0x00000004,
 
 		/// <summary>
 		/// Text editor needs to re-decompile C# and VB code
 		/// </summary>
-		CSharp				= 0x00000008,
+		CSharp = 0x00000008,
 
 		/// <summary>
 		/// Text editor needs to re-decompile VB code
 		/// </summary>
-		VB					= 0x00000010,
+		VB = 0x00000010,
 
 		/// <summary>
 		/// Disable memory mapped I/O
 		/// </summary>
-		DisableMmap			= 0x00000020,
+		DisableMmap = 0x00000020,
 
 		DecompileAll = IL | ILAst | CSharp | VB,
 	}
-	
+
 	[MetadataAttribute]
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple=false)]
-	public class ExportOptionPageAttribute : ExportAttribute, IOptionPageCreatorMetadata
-	{
-		public ExportOptionPageAttribute() : base(typeof(IOptionPageCreator))
-		{ }
-		
+	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+	public class ExportOptionPageAttribute : ExportAttribute, IOptionPageCreatorMetadata {
+		public ExportOptionPageAttribute() : base(typeof(IOptionPageCreator)) { }
+
 		public string Title { get; set; }
-		
+
 		public int Order { get; set; }
 	}
 
 	[ExportMainMenuCommand(Menu = "_View", MenuHeader = "_Options…", MenuIcon = "Settings", MenuCategory = "Options", MenuOrder = 3999)]
-	sealed class ShowOptionsCommand : SimpleCommand
-	{
-		public override void Execute(object parameter)
-		{
+	sealed class ShowOptionsCommand : SimpleCommand {
+		public override void Execute(object parameter) {
 			OptionsDialog dlg = new OptionsDialog();
 			dlg.Owner = MainWindow.Instance;
 			if (dlg.ShowDialog() == true) {

@@ -30,29 +30,24 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Represents a field in the TreeView.
 	/// </summary>
-	public sealed class FieldTreeNode : ILSpyTreeNode, IMemberTreeNode
-	{
+	public sealed class FieldTreeNode : ILSpyTreeNode, IMemberTreeNode {
 		readonly FieldDef field;
 
-		public FieldDef FieldDef
-		{
+		public FieldDef FieldDef {
 			get { return field; }
 		}
 
-		public FieldTreeNode(FieldDef field)
-		{
+		public FieldTreeNode(FieldDef field) {
 			if (field == null)
 				throw new ArgumentNullException("field");
 			this.field = field;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			Write(output, field, language);
 		}
 
-		public static ITextOutput Write(ITextOutput output, FieldDef field, Language language)
-		{
+		public static ITextOutput Write(ITextOutput output, FieldDef field, Language language) {
 			output.Write(UIUtils.CleanUpIdentifier(field.Name), TextTokenHelper.GetTextTokenType(field));
 			output.WriteSpace();
 			output.Write(':', TextTokenType.Operator);
@@ -62,23 +57,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return output;
 		}
 
-		public override object Icon
-		{
+		public override object Icon {
 			get { return GetIcon(field, BackgroundType.TreeNode); }
 		}
 
-		public static ImageSource GetIcon(FieldDef field, BackgroundType bgType)
-		{
+		public static ImageSource GetIcon(FieldDef field, BackgroundType bgType) {
 			return GetIcon(GetMemberIcon(field), bgType);
 		}
 
-		internal static ImageInfo GetImageInfo(FieldDef field, BackgroundType bgType)
-		{
+		internal static ImageInfo GetImageInfo(FieldDef field, BackgroundType bgType) {
 			return GetImageInfo(GetMemberIcon(field), bgType);
 		}
 
-		static MemberIcon GetMemberIcon(FieldDef field)
-		{
+		static MemberIcon GetMemberIcon(FieldDef field) {
 			var access = GetMemberAccess(field);
 
 			if (field.DeclaringType.IsEnum && !field.IsSpecialName) {
@@ -136,13 +127,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		internal static ImageSource GetIcon(MemberIcon icon, BackgroundType bgType)
-		{
+		internal static ImageSource GetIcon(MemberIcon icon, BackgroundType bgType) {
 			return ImageCache.Instance.GetImage(GetImageInfo(icon, bgType));
 		}
 
-		internal static ImageInfo GetImageInfo(MemberIcon icon, BackgroundType bgType)
-		{
+		internal static ImageInfo GetImageInfo(MemberIcon icon, BackgroundType bgType) {
 			switch (icon) {
 			case MemberIcon.EnumValue:							return new ImageInfo("EnumValue", bgType);
 			case MemberIcon.EnumValuePrivate:					return new ImageInfo("EnumValuePrivate", bgType);
@@ -253,8 +242,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		private static bool IsDecimalConstant(FieldDef field)
-		{
+		private static bool IsDecimalConstant(FieldDef field) {
 			var fieldType = field.FieldType;
 			if (fieldType != null && fieldType.DefinitionAssembly.IsCorLib() && fieldType.TypeName == "Decimal" && fieldType.Namespace == "System") {
 				if (field.HasCustomAttributes) {
@@ -269,13 +257,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return false;
 		}
 
-		static MemberAccess GetMemberAccess(FieldDef field)
-		{
+		static MemberAccess GetMemberAccess(FieldDef field) {
 			return GetMemberAccess(field.Access);
 		}
 
-		internal static MemberAccess GetMemberAccess(FieldAttributes attrs)
-		{
+		internal static MemberAccess GetMemberAccess(FieldAttributes attrs) {
 			switch (attrs & FieldAttributes.FieldAccessMask) {
 			case FieldAttributes.Public:
 				return MemberAccess.Public;
@@ -295,8 +281,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this.FieldDef);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
@@ -306,22 +291,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				return FilterResult.Hidden;
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			language.DecompileField(field, output, options);
 		}
-		
+
 		public override bool IsPublicAPI {
 			get { return IsPublicAPIInternal(field); }
 		}
 
-		internal static bool IsPublicAPIInternal(FieldDef field)
-		{
+		internal static bool IsPublicAPIInternal(FieldDef field) {
 			return field.IsPublic || field.IsFamily || field.IsFamilyOrAssembly;
 		}
 
-		IMemberRef IMemberTreeNode.Member
-		{
+		IMemberRef IMemberTreeNode.Member {
 			get { return field; }
 		}
 

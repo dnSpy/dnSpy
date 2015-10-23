@@ -19,19 +19,15 @@
 using System;
 using System.Windows.Input;
 
-namespace ICSharpCode.ILSpy
-{
-	class CommandWrapper : ICommand
-	{
+namespace ICSharpCode.ILSpy {
+	class CommandWrapper : ICommand {
 		private readonly ICommand wrappedCommand;
 
-		public CommandWrapper(ICommand wrappedCommand)
-		{
+		public CommandWrapper(ICommand wrappedCommand) {
 			this.wrappedCommand = wrappedCommand;
 		}
 
-		public static ICommand Unwrap(ICommand command)
-		{
+		public static ICommand Unwrap(ICommand command) {
 			CommandWrapper w = command as CommandWrapper;
 			if (w != null)
 				return w.wrappedCommand;
@@ -39,19 +35,16 @@ namespace ICSharpCode.ILSpy
 				return command;
 		}
 
-		public event EventHandler CanExecuteChanged
-		{
+		public event EventHandler CanExecuteChanged {
 			add { wrappedCommand.CanExecuteChanged += value; }
 			remove { wrappedCommand.CanExecuteChanged -= value; }
 		}
 
-		public void Execute(object parameter)
-		{
+		public void Execute(object parameter) {
 			wrappedCommand.Execute(parameter);
 		}
 
-		public bool CanExecute(object parameter)
-		{
+		public bool CanExecute(object parameter) {
 			return wrappedCommand.CanExecute(parameter);
 		}
 	}

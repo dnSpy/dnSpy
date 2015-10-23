@@ -22,15 +22,12 @@ using System.IO;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
 
-namespace ICSharpCode.ILSpy.XmlDoc
-{
+namespace ICSharpCode.ILSpy.XmlDoc {
 	/// <summary>
 	/// Adds XML documentation for member definitions.
 	/// </summary>
-	static class AddXmlDocTransform
-	{
-		public static void Run(AstNode node)
-		{
+	static class AddXmlDocTransform {
+		public static void Run(AstNode node) {
 			if (node is EntityDeclaration) {
 				IMemberRef mr = node.Annotation<IMemberRef>();
 				if (mr != null && mr.Module != null) {
@@ -48,9 +45,8 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			foreach (AstNode child in node.Children)
 				Run(child);
 		}
-		
-		static void InsertXmlDocumentation(AstNode node, StringReader r)
-		{
+
+		static void InsertXmlDocumentation(AstNode node, StringReader r) {
 			foreach (var line in GetXmlDocLines(r))
 				node.Parent.InsertChildBefore(node, new Comment(line, CommentType.Documentation), Roles.Comment);
 		}
@@ -70,7 +66,8 @@ namespace ICSharpCode.ILSpy.XmlDoc
 			while (line != null) {
 				if (string.IsNullOrWhiteSpace(line)) {
 					skippedWhitespaceLines++;
-				} else {
+				}
+				else {
 					while (skippedWhitespaceLines > 0) {
 						yield return string.Empty;
 						skippedWhitespaceLines--;

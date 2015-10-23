@@ -45,8 +45,7 @@ namespace ICSharpCode.ILSpy {
 	/// Decompiler logic for C#.
 	/// </summary>
 	[Export(typeof(Language))]
-	public class CSharpLanguage : Language
-	{
+	public class CSharpLanguage : Language {
 		string name = "C#";
 		bool showAllMembers = false;
 		Predicate<IAstTransform> transformAbortCondition = null;
@@ -80,13 +79,11 @@ namespace ICSharpCode.ILSpy {
 			{ "op_UnaryPlus", "operator +".Split(' ') },
 		};
 
-		public CSharpLanguage()
-		{
+		public CSharpLanguage() {
 		}
 
-		#if DEBUG
-		internal static IEnumerable<CSharpLanguage> GetDebugLanguages()
-		{
+#if DEBUG
+		internal static IEnumerable<CSharpLanguage> GetDebugLanguages() {
 			DecompilerContext context = new DecompilerContext(new ModuleDefUser("dummy"));
 			string lastTransformName = "no transforms";
 			foreach (Type _transformType in TransformationPipeline.CreatePipeline(context).Select(v => v.GetType()).Distinct()) {
@@ -103,55 +100,50 @@ namespace ICSharpCode.ILSpy {
 				showAllMembers = true
 			};
 		}
-		#endif
+#endif
 
-		public override string Name
-		{
+		public override string Name {
 			get { return name; }
 		}
 
-		public override string FileExtension
-		{
+		public override string FileExtension {
 			get { return ".cs"; }
 		}
 
-		public override string ProjectFileExtension
-		{
+		public override string ProjectFileExtension {
 			get { return ".csproj"; }
 		}
 
-		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options)
-		{
+		public override void DecompileMethod(MethodDef method, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLineDeclaringType(output, method);
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: method.DeclaringType, isSingleMember: true);
 			if (method.IsConstructor && !method.IsStatic && !DnlibExtensions.IsValueType(method.DeclaringType)) {
 				// also fields and other ctors so that the field initializers can be shown as such
 				AddFieldsAndCtors(codeDomBuilder, method.DeclaringType, method.IsStatic);
 				RunTransformsAndGenerateCode(codeDomBuilder, output, options, new SelectCtorTransform(method));
-			} else {
+			}
+			else {
 				codeDomBuilder.AddMethod(method);
 				RunTransformsAndGenerateCode(codeDomBuilder, output, options);
 			}
 		}
-		
-		class SelectCtorTransform : IAstTransform
-		{
+
+		class SelectCtorTransform : IAstTransform {
 			readonly MethodDef ctorDef;
-			
-			public SelectCtorTransform(MethodDef ctorDef)
-			{
+
+			public SelectCtorTransform(MethodDef ctorDef) {
 				this.ctorDef = ctorDef;
 			}
-			
-			public void Run(AstNode compilationUnit)
-			{
+
+			public void Run(AstNode compilationUnit) {
 				ConstructorDeclaration ctorDecl = null;
 				foreach (var node in compilationUnit.Children) {
 					ConstructorDeclaration ctor = node as ConstructorDeclaration;
 					if (ctor != null) {
 						if (ctor.Annotation<MethodDef>() == ctorDef) {
 							ctorDecl = ctor;
-						} else {
+						}
+						else {
 							// remove other ctors
 							ctor.Remove();
 						}
@@ -170,41 +162,37 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		public override void DecompileProperty(PropertyDef property, ITextOutput output, DecompilationOptions options)
-		{
+		public override void DecompileProperty(PropertyDef property, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLineDeclaringType(output, property);
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: property.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddProperty(property);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
 		}
 
-		public override void DecompileField(FieldDef field, ITextOutput output, DecompilationOptions options)
-		{
+		public override void DecompileField(FieldDef field, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLineDeclaringType(output, field);
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: field.DeclaringType, isSingleMember: true);
 			if (field.IsLiteral) {
 				codeDomBuilder.AddField(field);
-			} else {
+			}
+			else {
 				// also decompile ctors so that the field initializer can be shown
 				AddFieldsAndCtors(codeDomBuilder, field.DeclaringType, field.IsStatic);
 			}
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options, new SelectFieldTransform(field));
 		}
-		
+
 		/// <summary>
 		/// Removes all top-level members except for the specified fields.
 		/// </summary>
-		sealed class SelectFieldTransform : IAstTransform
-		{
+		sealed class SelectFieldTransform : IAstTransform {
 			readonly FieldDef field;
-			
-			public SelectFieldTransform(FieldDef field)
-			{
+
+			public SelectFieldTransform(FieldDef field) {
 				this.field = field;
 			}
-			
-			public void Run(AstNode compilationUnit)
-			{
+
+			public void Run(AstNode compilationUnit) {
 				foreach (var child in compilationUnit.Children) {
 					if (child is EntityDeclaration) {
 						if (child.Annotation<FieldDef>() != field)
@@ -213,9 +201,8 @@ namespace ICSharpCode.ILSpy {
 				}
 			}
 		}
-		
-		void AddFieldsAndCtors(AstBuilder codeDomBuilder, TypeDef declaringType, bool isStatic)
-		{
+
+		void AddFieldsAndCtors(AstBuilder codeDomBuilder, TypeDef declaringType, bool isStatic) {
 			foreach (var field in declaringType.Fields) {
 				if (field.IsStatic == isStatic)
 					codeDomBuilder.AddField(field);
@@ -226,23 +213,20 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		public override void DecompileEvent(EventDef ev, ITextOutput output, DecompilationOptions options)
-		{
+		public override void DecompileEvent(EventDef ev, ITextOutput output, DecompilationOptions options) {
 			WriteCommentLineDeclaringType(output, ev);
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: ev.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddEvent(ev);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
 		}
 
-		public override void DecompileType(TypeDef type, ITextOutput output, DecompilationOptions options)
-		{
+		public override void DecompileType(TypeDef type, ITextOutput output, DecompilationOptions options) {
 			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: type);
 			codeDomBuilder.AddType(type);
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
 		}
-		
-		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationOptions options, IAstTransform additionalTransform = null)
-		{
+
+		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationOptions options, IAstTransform additionalTransform = null) {
 			astBuilder.RunTransformations(transformAbortCondition);
 			if (additionalTransform != null) {
 				additionalTransform.Run(astBuilder.SyntaxTree);
@@ -250,8 +234,9 @@ namespace ICSharpCode.ILSpy {
 			if (options.DecompilerSettings.ShowXmlDocumentation) {
 				try {
 					AddXmlDocTransform.Run(astBuilder.SyntaxTree);
-				} catch (XmlException ex) {
-					string[] msg = (" Exception while reading XmlDoc: " + ex.ToString()).Split(new[]{'\r', '\n'}, StringSplitOptions.RemoveEmptyEntries);
+				}
+				catch (XmlException ex) {
+					string[] msg = (" Exception while reading XmlDoc: " + ex.ToString()).Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
 					var insertionPoint = astBuilder.SyntaxTree.FirstChild;
 					for (int i = 0; i < msg.Length; i++)
 						astBuilder.SyntaxTree.InsertChildBefore(insertionPoint, new Comment(msg[i], CommentType.Documentation), Roles.Comment);
@@ -260,46 +245,43 @@ namespace ICSharpCode.ILSpy {
 			astBuilder.GenerateCode(output);
 		}
 
-		public static string GetPlatformDisplayName(ModuleDef module)
-		{
+		public static string GetPlatformDisplayName(ModuleDef module) {
 			switch (module.Machine) {
-				case dnlib.PE.Machine.I386:
-					if (module.Is32BitPreferred)
-						return "AnyCPU (32-bit preferred)";
-					else if (module.Is32BitRequired)
-						return "x86";
-					else
-						return "AnyCPU (64-bit preferred)";
-				case dnlib.PE.Machine.AMD64:
-					return "x64";
-				case dnlib.PE.Machine.IA64:
-					return "Itanium";
-				default:
-					return module.Machine.ToString();
-			}
-		}
-		
-		public static string GetPlatformName(ModuleDef module)
-		{
-			switch (module.Machine) {
-				case dnlib.PE.Machine.I386:
-					if (module.Is32BitPreferred)
-						return "AnyCPU";
-					else if (module.Is32BitRequired)
-						return "x86";
-					else
-						return "AnyCPU";
-				case dnlib.PE.Machine.AMD64:
-					return "x64";
-				case dnlib.PE.Machine.IA64:
-					return "Itanium";
-				default:
-					return module.Machine.ToString();
+			case dnlib.PE.Machine.I386:
+				if (module.Is32BitPreferred)
+					return "AnyCPU (32-bit preferred)";
+				else if (module.Is32BitRequired)
+					return "x86";
+				else
+					return "AnyCPU (64-bit preferred)";
+			case dnlib.PE.Machine.AMD64:
+				return "x64";
+			case dnlib.PE.Machine.IA64:
+				return "Itanium";
+			default:
+				return module.Machine.ToString();
 			}
 		}
 
-		public static string GetRuntimeDisplayName(ModuleDef module)
-		{
+		public static string GetPlatformName(ModuleDef module) {
+			switch (module.Machine) {
+			case dnlib.PE.Machine.I386:
+				if (module.Is32BitPreferred)
+					return "AnyCPU";
+				else if (module.Is32BitRequired)
+					return "x86";
+				else
+					return "AnyCPU";
+			case dnlib.PE.Machine.AMD64:
+				return "x64";
+			case dnlib.PE.Machine.IA64:
+				return "Itanium";
+			default:
+				return module.Machine.ToString();
+			}
+		}
+
+		public static string GetRuntimeDisplayName(ModuleDef module) {
 			if (module.IsClr10)
 				return ".NET 1.0";
 			if (module.IsClr11)
@@ -310,15 +292,15 @@ namespace ICSharpCode.ILSpy {
 				return ".NET 4.0";
 			return null;
 		}
-		
-		public override void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule)
-		{
+
+		public override void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
 			if (options.FullDecompilation && options.SaveAsProjectDirectory != null) {
 				HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 				var files = WriteCodeFilesInProject(dnSpyFileList, file.ModuleDef, options, directories).ToList();
 				files.AddRange(WriteResourceFilesInProject(file, options, directories));
 				WriteProjectFile(dnSpyFileList, new TextOutputWriter(output), files, file, options);
-			} else {
+			}
+			else {
 				bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
 				bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 				base.DecompileAssembly(dnSpyFileList, file, output, options, flags);
@@ -343,7 +325,7 @@ namespace ICSharpCode.ILSpy {
 				}
 				if (decompileMod || decompileAsm)
 					output.WriteLine();
-				
+
 				// don't automatically load additional assemblies when an assembly node is selected in the tree view
 				using (options.FullDecompilation ? null : dnSpyFileList.DisableAssemblyLoad()) {
 					AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: file.ModuleDef);
@@ -355,8 +337,7 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		#region WriteProjectFile
-		void WriteProjectFile(DnSpyFileList dnSpyFileList, TextWriter writer, IEnumerable<Tuple<string, string>> files, DnSpyFile assembly, DecompilationOptions options)
-		{
+		void WriteProjectFile(DnSpyFileList dnSpyFileList, TextWriter writer, IEnumerable<Tuple<string, string>> files, DnSpyFile assembly, DecompilationOptions options) {
 			var module = assembly.ModuleDef;
 			const string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 			string platformName = GetPlatformName(module);
@@ -384,15 +365,15 @@ namespace ICSharpCode.ILSpy {
 				w.WriteEndElement(); // </Platform>
 
 				switch (module.Kind) {
-					case ModuleKind.Windows:
-						w.WriteElementString("OutputType", "WinExe");
-						break;
-					case ModuleKind.Console:
-						w.WriteElementString("OutputType", "Exe");
-						break;
-					default:
-						w.WriteElementString("OutputType", "Library");
-						break;
+				case ModuleKind.Windows:
+					w.WriteElementString("OutputType", "WinExe");
+					break;
+				case ModuleKind.Console:
+					w.WriteElementString("OutputType", "Exe");
+					break;
+				default:
+					w.WriteElementString("OutputType", "Library");
+					break;
 				}
 
 				if (module.Assembly != null)
@@ -414,12 +395,15 @@ namespace ICSharpCode.ILSpy {
 				if (!useTargetFrameworkAttribute) {
 					if (module.IsClr10) {
 						w.WriteElementString("TargetFrameworkVersion", "v1.0");
-					} else if (module.IsClr11) {
+					}
+					else if (module.IsClr11) {
 						w.WriteElementString("TargetFrameworkVersion", "v1.1");
-					} else if (module.IsClr20) {
+					}
+					else if (module.IsClr20) {
 						w.WriteElementString("TargetFrameworkVersion", "v2.0");
 						// TODO: Detect when .NET 3.0/3.5 is required
-					} else {
+					}
+					else {
 						w.WriteElementString("TargetFrameworkVersion", "v4.0");
 					}
 				}
@@ -517,31 +501,26 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		internal static List<IAssembly> GetAssemblyRefs(DnSpyFileList dnSpyFileList, DecompilationOptions options, DnSpyFile assembly)
-		{
+		internal static List<IAssembly> GetAssemblyRefs(DnSpyFileList dnSpyFileList, DecompilationOptions options, DnSpyFile assembly) {
 			return new RealAssemblyReferencesFinder(options, assembly).Find(dnSpyFileList);
 		}
 
-		class RealAssemblyReferencesFinder
-		{
+		class RealAssemblyReferencesFinder {
 			readonly DecompilationOptions options;
 			readonly DnSpyFile assembly;
 			readonly List<IAssembly> allReferences = new List<IAssembly>();
 			readonly HashSet<IAssembly> checkedAsms = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
 
-			public RealAssemblyReferencesFinder(DecompilationOptions options, DnSpyFile assembly)
-			{
+			public RealAssemblyReferencesFinder(DecompilationOptions options, DnSpyFile assembly) {
 				this.options = options;
 				this.assembly = assembly;
 			}
 
-			bool ShouldFindRealAsms()
-			{
+			bool ShouldFindRealAsms() {
 				return options.ProjectFiles != null && options.DontReferenceStdLib;
 			}
 
-			public List<IAssembly> Find(DnSpyFileList dnSpyFileList)
-			{
+			public List<IAssembly> Find(DnSpyFileList dnSpyFileList) {
 				if (!ShouldFindRealAsms())
 					allReferences.AddRange(assembly.ModuleDef.GetAssemblyRefs());
 				else {
@@ -561,8 +540,7 @@ namespace ICSharpCode.ILSpy {
 				return allReferences;
 			}
 
-			void Find(DnSpyFileList dnSpyFileList, ExportedType et)
-			{
+			void Find(DnSpyFileList dnSpyFileList, ExportedType et) {
 				if (et == null)
 					return;
 				// The type might've been moved, so always resolve it instead of using DefinitionAssembly
@@ -573,8 +551,7 @@ namespace ICSharpCode.ILSpy {
 					Find(dnSpyFileList, td.DefinitionAssembly ?? et.DefinitionAssembly);
 			}
 
-			void Find(DnSpyFileList dnSpyFileList, TypeRef typeRef)
-			{
+			void Find(DnSpyFileList dnSpyFileList, TypeRef typeRef) {
 				if (typeRef == null)
 					return;
 				// The type might've been moved, so always resolve it instead of using DefinitionAssembly
@@ -585,8 +562,7 @@ namespace ICSharpCode.ILSpy {
 					Find(dnSpyFileList, td.DefinitionAssembly ?? typeRef.DefinitionAssembly);
 			}
 
-			void Find(DnSpyFileList dnSpyFileList, IAssembly asmRef)
-			{
+			void Find(DnSpyFileList dnSpyFileList, IAssembly asmRef) {
 				if (asmRef == null)
 					return;
 				if (checkedAsms.Contains(asmRef))
@@ -599,8 +575,7 @@ namespace ICSharpCode.ILSpy {
 					AddKnown(asm);
 			}
 
-			void AddKnown(DnSpyFile asm)
-			{
+			void AddKnown(DnSpyFile asm) {
 				if (asm.Filename.Equals(assembly.Filename, StringComparison.OrdinalIgnoreCase))
 					return;
 				if (asm.ModuleDef.Assembly != null)
@@ -608,8 +583,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		internal static string GetHintPath(DecompilationOptions options, DnSpyFile asmRef)
-		{
+		internal static string GetHintPath(DecompilationOptions options, DnSpyFile asmRef) {
 			if (asmRef == null || options.ProjectFiles == null || options.SaveAsProjectDirectory == null)
 				return null;
 			if (GacInfo.IsGacPath(asmRef.Filename))
@@ -623,8 +597,7 @@ namespace ICSharpCode.ILSpy {
 		// ("C:\dir1\dir2\dir3", "d:\Dir1\Dir2\Dir3\file.dll") = "d:\Dir1\Dir2\Dir3\file.dll"
 		// ("C:\dir1\dir2\dir3", "c:\Dir1\dirA\dirB\file.dll") = "..\..\dirA\dirB\file.dll"
 		// ("C:\dir1\dir2\dir3", "c:\Dir1\Dir2\Dir3\Dir4\Dir5\file.dll") = "Dir4\Dir5\file.dll"
-		internal static string GetRelativePath(string sourceDir, string destFile)
-		{
+		internal static string GetRelativePath(string sourceDir, string destFile) {
 			sourceDir = Path.GetFullPath(sourceDir);
 			destFile = Path.GetFullPath(destFile);
 			if (!Path.GetPathRoot(sourceDir).Equals(Path.GetPathRoot(destFile), StringComparison.OrdinalIgnoreCase))
@@ -647,8 +620,7 @@ namespace ICSharpCode.ILSpy {
 			return hintPath;
 		}
 
-		static List<string> GetPathNames(string path)
-		{
+		static List<string> GetPathNames(string path) {
 			var list = new List<string>();
 			var root = Path.GetPathRoot(path);
 			while (path != root) {
@@ -660,13 +632,11 @@ namespace ICSharpCode.ILSpy {
 			return list;
 		}
 
-		internal static bool ExistsInProject(DecompilationOptions options, string fileName)
-		{
+		internal static bool ExistsInProject(DecompilationOptions options, string fileName) {
 			return FindOtherProject(options, fileName) != null;
 		}
 
-		internal static ProjectInfo FindOtherProject(DecompilationOptions options, string fileName)
-		{
+		internal static ProjectInfo FindOtherProject(DecompilationOptions options, string fileName) {
 			if (options.ProjectFiles == null)
 				return null;
 			return options.ProjectFiles.FirstOrDefault(f => Path.GetFullPath(f.AssemblyFileName).Equals(Path.GetFullPath(fileName)));
@@ -674,8 +644,7 @@ namespace ICSharpCode.ILSpy {
 		#endregion
 
 		#region WriteCodeFilesInProject
-		bool IncludeTypeWhenDecompilingProject(TypeDef type, DecompilationOptions options)
-		{
+		bool IncludeTypeWhenDecompilingProject(TypeDef type, DecompilationOptions options) {
 			if (type.IsGlobalModuleType || AstBuilder.MemberIsHidden(type, options.DecompilerSettings))
 				return false;
 			if (type.Namespace == "XamlGeneratedNamespace" && type.Name == "GeneratedInternalTypeHelper")
@@ -683,11 +652,9 @@ namespace ICSharpCode.ILSpy {
 			return true;
 		}
 
-		IEnumerable<Tuple<string, string>> WriteAssemblyInfo(DnSpyFileList dnSpyFileList, ModuleDef module, DecompilationOptions options, HashSet<string> directories)
-		{
+		IEnumerable<Tuple<string, string>> WriteAssemblyInfo(DnSpyFileList dnSpyFileList, ModuleDef module, DecompilationOptions options, HashSet<string> directories) {
 			// don't automatically load additional assemblies when an assembly node is selected in the tree view
-			using (dnSpyFileList.DisableAssemblyLoad())
-			{
+			using (dnSpyFileList.DisableAssemblyLoad()) {
 				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: module);
 				codeDomBuilder.AddAssembly(module, true, true, true);
 				codeDomBuilder.RunTransformations(transformAbortCondition);
@@ -702,14 +669,14 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		IEnumerable<Tuple<string, string>> WriteCodeFilesInProject(DnSpyFileList dnSpyFileList, ModuleDef module, DecompilationOptions options, HashSet<string> directories)
-		{
+		IEnumerable<Tuple<string, string>> WriteCodeFilesInProject(DnSpyFileList dnSpyFileList, ModuleDef module, DecompilationOptions options, HashSet<string> directories) {
 			var files = module.Types.Where(t => IncludeTypeWhenDecompilingProject(t, options)).GroupBy(
-				delegate(TypeDef type) {
+				delegate (TypeDef type) {
 					string file = TextView.DecompilerTextView.CleanUpName(type.Name) + this.FileExtension;
 					if (string.IsNullOrEmpty(type.Namespace)) {
 						return file;
-					} else {
+					}
+					else {
 						string dir = TextView.DecompilerTextView.CleanUpName(type.Namespace);
 						if (directories.Add(dir))
 							Directory.CreateDirectory(Path.Combine(options.SaveAsProjectDirectory, dir));
@@ -720,7 +687,7 @@ namespace ICSharpCode.ILSpy {
 			Parallel.ForEach(
 				files,
 				new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
-				delegate(IGrouping<string, TypeDef> file) {
+				delegate (IGrouping<string, TypeDef> file) {
 					using (StreamWriter w = new StreamWriter(Path.Combine(options.SaveAsProjectDirectory, file.Key))) {
 						AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: module);
 						foreach (TypeDef type in file) {
@@ -736,62 +703,61 @@ namespace ICSharpCode.ILSpy {
 		#endregion
 
 		#region WriteResourceFilesInProject
-		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(DnSpyFile assembly, DecompilationOptions options, HashSet<string> directories)
-		{
+		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(DnSpyFile assembly, DecompilationOptions options, HashSet<string> directories) {
 			//AppDomain bamlDecompilerAppDomain = null;
 			//try {
-				foreach (EmbeddedResource r in assembly.ModuleDef.Resources.OfType<EmbeddedResource>()) {
-					string fileName;
-					Stream s = r.GetResourceStream();
-					s.Position = 0;
-					if (r.Name.EndsWith(".g.resources", StringComparison.OrdinalIgnoreCase)) {
-						IEnumerable<DictionaryEntry> rs = null;
-						try {
-							rs = new ResourceSet(s).Cast<DictionaryEntry>();
-						}
-						catch {
-							// NotSupportedException, IOException, BadImageFormatException, ArgumentException
-							// and any other possible exception
-						}
-						if (rs != null && rs.All(e => e.Value is Stream)) {
-							foreach (var pair in rs) {
-								fileName = Path.Combine(((string)pair.Key).Split('/').Select(p => TextView.DecompilerTextView.CleanUpName(p)).ToArray());
-								string dirName = Path.GetDirectoryName(fileName);
-								if (!string.IsNullOrEmpty(dirName) && directories.Add(dirName)) {
-									Directory.CreateDirectory(Path.Combine(options.SaveAsProjectDirectory, dirName));
-								}
-								Stream entryStream = (Stream)pair.Value;
-								entryStream.Position = 0;
-								if (fileName.EndsWith(".baml", StringComparison.OrdinalIgnoreCase)) {
-//									MemoryStream ms = new MemoryStream();
-//									entryStream.CopyTo(ms);
-									// TODO implement extension point
-//									var decompiler = Baml.BamlResourceEntryNode.CreateBamlDecompilerInAppDomain(ref bamlDecompilerAppDomain, assembly.FileName);
-//									string xaml = null;
-//									try {
-//										xaml = decompiler.DecompileBaml(ms, assembly.FileName, new ConnectMethodDecompiler(assembly), new AssemblyResolver(assembly));
-//									}
-//									catch (XamlXmlWriterException) { } // ignore XAML writer exceptions
-//									if (xaml != null) {
-//										File.WriteAllText(Path.Combine(options.SaveAsProjectDirectory, Path.ChangeExtension(fileName, ".xaml")), xaml);
-//										yield return Tuple.Create("Page", Path.ChangeExtension(fileName, ".xaml"));
-//										continue;
-//									}
-								}
-								using (FileStream fs = new FileStream(Path.Combine(options.SaveAsProjectDirectory, fileName), FileMode.Create, FileAccess.Write)) {
-									entryStream.CopyTo(fs);
-								}
-								yield return Tuple.Create("Resource", fileName);
+			foreach (EmbeddedResource r in assembly.ModuleDef.Resources.OfType<EmbeddedResource>()) {
+				string fileName;
+				Stream s = r.GetResourceStream();
+				s.Position = 0;
+				if (r.Name.EndsWith(".g.resources", StringComparison.OrdinalIgnoreCase)) {
+					IEnumerable<DictionaryEntry> rs = null;
+					try {
+						rs = new ResourceSet(s).Cast<DictionaryEntry>();
+					}
+					catch {
+						// NotSupportedException, IOException, BadImageFormatException, ArgumentException
+						// and any other possible exception
+					}
+					if (rs != null && rs.All(e => e.Value is Stream)) {
+						foreach (var pair in rs) {
+							fileName = Path.Combine(((string)pair.Key).Split('/').Select(p => TextView.DecompilerTextView.CleanUpName(p)).ToArray());
+							string dirName = Path.GetDirectoryName(fileName);
+							if (!string.IsNullOrEmpty(dirName) && directories.Add(dirName)) {
+								Directory.CreateDirectory(Path.Combine(options.SaveAsProjectDirectory, dirName));
 							}
-							continue;
+							Stream entryStream = (Stream)pair.Value;
+							entryStream.Position = 0;
+							if (fileName.EndsWith(".baml", StringComparison.OrdinalIgnoreCase)) {
+								//									MemoryStream ms = new MemoryStream();
+								//									entryStream.CopyTo(ms);
+								// TODO implement extension point
+								//									var decompiler = Baml.BamlResourceEntryNode.CreateBamlDecompilerInAppDomain(ref bamlDecompilerAppDomain, assembly.FileName);
+								//									string xaml = null;
+								//									try {
+								//										xaml = decompiler.DecompileBaml(ms, assembly.FileName, new ConnectMethodDecompiler(assembly), new AssemblyResolver(assembly));
+								//									}
+								//									catch (XamlXmlWriterException) { } // ignore XAML writer exceptions
+								//									if (xaml != null) {
+								//										File.WriteAllText(Path.Combine(options.SaveAsProjectDirectory, Path.ChangeExtension(fileName, ".xaml")), xaml);
+								//										yield return Tuple.Create("Page", Path.ChangeExtension(fileName, ".xaml"));
+								//										continue;
+								//									}
+							}
+							using (FileStream fs = new FileStream(Path.Combine(options.SaveAsProjectDirectory, fileName), FileMode.Create, FileAccess.Write)) {
+								entryStream.CopyTo(fs);
+							}
+							yield return Tuple.Create("Resource", fileName);
 						}
+						continue;
 					}
-					fileName = GetFileNameForResource(r.Name, directories);
-					using (FileStream fs = new FileStream(Path.Combine(options.SaveAsProjectDirectory, fileName), FileMode.Create, FileAccess.Write)) {
-						s.CopyTo(fs);
-					}
-					yield return Tuple.Create("EmbeddedResource", fileName);
 				}
+				fileName = GetFileNameForResource(r.Name, directories);
+				using (FileStream fs = new FileStream(Path.Combine(options.SaveAsProjectDirectory, fileName), FileMode.Create, FileAccess.Write)) {
+					s.CopyTo(fs);
+				}
+				yield return Tuple.Create("EmbeddedResource", fileName);
+			}
 			//}
 			//finally {
 			//    if (bamlDecompilerAppDomain != null)
@@ -799,8 +765,7 @@ namespace ICSharpCode.ILSpy {
 			//}
 		}
 
-		string GetFileNameForResource(string fullName, HashSet<string> directories)
-		{
+		string GetFileNameForResource(string fullName, HashSet<string> directories) {
 			string[] splitName = fullName.Split('.');
 			string fileName = TextView.DecompilerTextView.CleanUpName(fullName);
 			for (int i = splitName.Length - 1; i > 0; i--) {
@@ -815,8 +780,7 @@ namespace ICSharpCode.ILSpy {
 		}
 		#endregion
 
-		AstBuilder CreateAstBuilder(DecompilationOptions options, ModuleDef currentModule = null, TypeDef currentType = null, bool isSingleMember = false)
-		{
+		AstBuilder CreateAstBuilder(DecompilationOptions options, ModuleDef currentModule = null, TypeDef currentType = null, bool isSingleMember = false) {
 			if (currentModule == null)
 				currentModule = currentType.Module;
 			DecompilerSettings settings = options.DecompilerSettings;
@@ -834,8 +798,7 @@ namespace ICSharpCode.ILSpy {
 			};
 		}
 
-		public override void TypeToString(ITextOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null)
-		{
+		public override void TypeToString(ITextOutput output, ITypeDefOrRef type, bool includeNamespace, IHasCustomAttribute typeAttributes = null) {
 			ConvertTypeOptions options = ConvertTypeOptions.IncludeTypeParameterDefinitions;
 			if (includeNamespace)
 				options |= ConvertTypeOptions.IncludeNamespace;
@@ -843,8 +806,7 @@ namespace ICSharpCode.ILSpy {
 			TypeToString(output, options, type, typeAttributes);
 		}
 
-		bool WriteRefIfByRef(ITextOutput output, TypeSig typeSig, ParamDef pd)
-		{
+		bool WriteRefIfByRef(ITextOutput output, TypeSig typeSig, ParamDef pd) {
 			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
 				if (pd != null && (!pd.IsIn && pd.IsOut)) {
 					output.Write("out", TextTokenType.Keyword);
@@ -859,8 +821,7 @@ namespace ICSharpCode.ILSpy {
 			return false;
 		}
 
-		void TypeToString(ITextOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null)
-		{
+		void TypeToString(ITextOutput output, ConvertTypeOptions options, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null) {
 			if (type == null)
 				return;
 			AstType astType = AstBuilder.ConvertType(type, typeAttributes, options);
@@ -882,8 +843,7 @@ namespace ICSharpCode.ILSpy {
 			astType.AcceptVisitor(new CSharpOutputVisitor(new TextTokenWriter(output, ctx), FormattingOptionsFactory.CreateAllman()));
 		}
 
-		public override void FormatPropertyName(ITextOutput output, PropertyDef property, bool? isIndexer)
-		{
+		public override void FormatPropertyName(ITextOutput output, PropertyDef property, bool? isIndexer) {
 			if (property == null)
 				throw new ArgumentNullException("property");
 
@@ -911,7 +871,8 @@ namespace ICSharpCode.ILSpy {
 					TypeToString(output, p.ToTypeDefOrRef(), includeNamespace: true);
 				}
 				output.Write(']', TextTokenType.Operator);
-			} else
+			}
+			else
 				WriteIdentifier(output, property.Name, TextTokenHelper.GetTextTokenType(property));
 		}
 
@@ -933,30 +894,26 @@ namespace ICSharpCode.ILSpy {
 				output.Write('@', TextTokenType.Operator);
 			output.Write(IdentifierEscaper.Escape(id), tokenType);
 		}
-		
-		public override void FormatTypeName(ITextOutput output, TypeDef type)
-		{
+
+		public override void FormatTypeName(ITextOutput output, TypeDef type) {
 			if (type == null)
 				throw new ArgumentNullException("type");
 
 			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
 		}
 
-		public override bool ShowMember(IMemberRef member)
-		{
+		public override bool ShowMember(IMemberRef member) {
 			return showAllMembers || !AstBuilder.MemberIsHidden(member, new DecompilationOptions().DecompilerSettings);
 		}
 
-		public override IMemberRef GetOriginalCodeLocation(IMemberRef member)
-		{
+		public override IMemberRef GetOriginalCodeLocation(IMemberRef member) {
 			if (showAllMembers || !DecompilerSettingsPanel.CurrentDecompilerSettings.AnonymousMethods)
 				return member;
 			else
 				return TreeNodes.Analyzer.Helpers.GetOriginalCodeLocation(member);
 		}
 
-		void WriteToolTipType(ITextOutput output, ITypeDefOrRef type, bool useNamespaces, bool usePrimitiveTypeName = true, IHasCustomAttribute typeAttributes = null)
-		{
+		void WriteToolTipType(ITextOutput output, ITypeDefOrRef type, bool useNamespaces, bool usePrimitiveTypeName = true, IHasCustomAttribute typeAttributes = null) {
 			var td = type as TypeDef;
 			if (td == null && type is TypeRef)
 				td = ((TypeRef)type).Resolve();
@@ -998,16 +955,14 @@ namespace ICSharpCode.ILSpy {
 			WriteToolTipGenerics(output, genParams, TextTokenType.TypeGenericParameter);
 		}
 
-		void WriteToolTip(ITextOutput output, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null)
-		{
+		void WriteToolTip(ITextOutput output, ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null) {
 			if (type == null)
 				return;
 
 			WriteToolTipType(output, type, TOOLTIP_USE_NAMESPACES, true, typeAttributes);
 		}
 
-		static GenericParam GetGenericParam(GenericSig gsig, GenericParamContext gpContext)
-		{
+		static GenericParam GetGenericParam(GenericSig gsig, GenericParamContext gpContext) {
 			if (gsig == null)
 				return null;
 			ITypeOrMethodDef owner = gsig.IsTypeVar ? (ITypeOrMethodDef)gpContext.Type : gpContext.Method;
@@ -1020,8 +975,7 @@ namespace ICSharpCode.ILSpy {
 			return null;
 		}
 
-		void WriteToolTip(ITextOutput output, TypeSig type, GenericParamContext gpContext, IHasCustomAttribute typeAttributes)
-		{
+		void WriteToolTip(ITextOutput output, TypeSig type, GenericParamContext gpContext, IHasCustomAttribute typeAttributes) {
 			var gsig = type.RemovePinnedAndModifiers() as GenericSig;
 			var gp = GetGenericParam(gsig, gpContext);
 			if (gp != null) {
@@ -1032,8 +986,7 @@ namespace ICSharpCode.ILSpy {
 			WriteToolTip(output, type.ToTypeDefOrRef(), typeAttributes);
 		}
 
-		void WriteToolTipGenerics(ITextOutput output, IList<GenericParam> gps, TextTokenType gpTokenType)
-		{
+		void WriteToolTipGenerics(ITextOutput output, IList<GenericParam> gps, TextTokenType gpTokenType) {
 			if (gps == null || gps.Count == 0)
 				return;
 			output.Write('<', TextTokenType.Operator);
@@ -1056,8 +1009,7 @@ namespace ICSharpCode.ILSpy {
 			output.Write('>', TextTokenType.Operator);
 		}
 
-		void WriteToolTipGenerics(ITextOutput output, IList<TypeSig> gps, TextTokenType gpTokenType, GenericParamContext gpContext)
-		{
+		void WriteToolTipGenerics(ITextOutput output, IList<TypeSig> gps, TextTokenType gpTokenType, GenericParamContext gpContext) {
 			if (gps == null || gps.Count == 0)
 				return;
 			output.Write('<', TextTokenType.Operator);
@@ -1071,8 +1023,7 @@ namespace ICSharpCode.ILSpy {
 			output.Write('>', TextTokenType.Operator);
 		}
 
-		void WriteToolTip(ITextOutput output, IMethod method)
-		{
+		void WriteToolTip(ITextOutput output, IMethod method) {
 			WriteToolTipMethod(output, method);
 
 			var td = method.DeclaringType.ResolveTypeDef();
@@ -1085,8 +1036,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		void WriteToolTipMethod(ITextOutput output, IMethod method)
-		{
+		void WriteToolTipMethod(ITextOutput output, IMethod method) {
 			var writer = new MethodWriter(this, output, method);
 			writer.WriteReturnType();
 
@@ -1107,8 +1057,7 @@ namespace ICSharpCode.ILSpy {
 			writer.WriteMethodParameterList('(', ')');
 		}
 
-		void WriteMethodName(ITextOutput output, IMethod method, string name)
-		{
+		void WriteMethodName(ITextOutput output, IMethod method, string name) {
 			string[] list;
 			if (nameToOperatorName.TryGetValue(name, out list)) {
 				for (int i = 0; i < list.Length; i++) {
@@ -1122,8 +1071,7 @@ namespace ICSharpCode.ILSpy {
 				WriteIdentifier(output, name, TextTokenHelper.GetTextTokenType(method));
 		}
 
-		static int GetNumberOfOverloads(TypeDef type, string name)
-		{
+		static int GetNumberOfOverloads(TypeDef type, string name) {
 			//TODO: It counts every method, including methods the original type doesn't have access to.
 			var hash = new HashSet<MethodDef>(MethodEqualityComparer.DontCompareDeclaringTypes);
 			while (type != null) {
@@ -1136,8 +1084,7 @@ namespace ICSharpCode.ILSpy {
 			return hash.Count - 1;
 		}
 
-		struct MethodWriter
-		{
+		struct MethodWriter {
 			readonly CSharpLanguage lang;
 			readonly ITextOutput output;
 			readonly IList<TypeSig> typeGenericParams;
@@ -1145,8 +1092,7 @@ namespace ICSharpCode.ILSpy {
 			internal readonly MethodDef md;
 			readonly MethodSig methodSig;
 
-			public MethodWriter(CSharpLanguage lang, ITextOutput output, IMethod method)
-			{
+			public MethodWriter(CSharpLanguage lang, ITextOutput output, IMethod method) {
 				this.lang = lang;
 				this.output = output;
 				this.typeGenericParams = null;
@@ -1185,16 +1131,14 @@ namespace ICSharpCode.ILSpy {
 					this.methodSig = GenericArgumentResolver.Resolve(methodSig, typeGenericParams, methodGenericParams);
 			}
 
-			public void WriteReturnType()
-			{
+			public void WriteReturnType() {
 				if (!(md != null && md.IsConstructor)) {
 					lang.WriteToolTip(output, methodSig.RetType, GenericParamContext.Create(md), md == null ? null : md.Parameters.ReturnParameter.ParamDef);
 					output.WriteSpace();
 				}
 			}
 
-			public void WriteGenericArguments()
-			{
+			public void WriteGenericArguments() {
 				if (methodSig.GenParamCount > 0) {
 					if (methodGenericParams != null)
 						lang.WriteToolTipGenerics(output, methodGenericParams, TextTokenType.MethodGenericParameter, GenericParamContext.Create(md));
@@ -1203,8 +1147,7 @@ namespace ICSharpCode.ILSpy {
 				}
 			}
 
-			public void WriteMethodParameterList(char lparen, char rparen)
-			{
+			public void WriteMethodParameterList(char lparen, char rparen) {
 				output.Write(lparen, TextTokenType.Operator);
 				int baseIndex = methodSig.HasThis ? 1 : 0;
 				for (int i = 0; i < methodSig.Params.Count; i++) {
@@ -1231,8 +1174,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		static string RemoveGenericTick(string name)
-		{
+		static string RemoveGenericTick(string name) {
 			int index = name.LastIndexOf('`');
 			if (index < 0)
 				return name;
@@ -1240,10 +1182,9 @@ namespace ICSharpCode.ILSpy {
 				return name.Substring(0, index);
 			return name;
 		}
-		static readonly Regex genericTick = new Regex(@"`\d+$", RegexOptions.Compiled)  ;
+		static readonly Regex genericTick = new Regex(@"`\d+$", RegexOptions.Compiled);
 
-		void WriteToolTip(ITextOutput output, IField field)
-		{
+		void WriteToolTip(ITextOutput output, IField field) {
 			var sig = field.FieldSig;
 			var gpContext = GenericParamContext.Create(field.DeclaringType.ResolveTypeDef());
 			bool isEnumOwner = gpContext.Type != null && gpContext.Type.IsEnum;
@@ -1270,8 +1211,7 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		const bool USE_DECIMAL = false;
-		void WriteToolTipConstant(ITextOutput output, object obj)
-		{
+		void WriteToolTipConstant(ITextOutput output, object obj) {
 			if (obj == null) {
 				output.Write("null", TextTokenType.Keyword);
 				return;
@@ -1337,8 +1277,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		void WriteToolTip(ITextOutput output, PropertyDef prop)
-		{
+		void WriteToolTip(ITextOutput output, PropertyDef prop) {
 			var sig = prop.PropertySig;
 			var md = prop.GetMethods.FirstOrDefault() ??
 					prop.SetMethods.FirstOrDefault() ??
@@ -1382,8 +1321,7 @@ namespace ICSharpCode.ILSpy {
 			output.WriteRightBrace();
 		}
 
-		static string GetPropName(IMethod method)
-		{
+		static string GetPropName(IMethod method) {
 			if (method == null)
 				return null;
 			var name = method.Name;
@@ -1392,8 +1330,7 @@ namespace ICSharpCode.ILSpy {
 			return null;
 		}
 
-		void WriteToolTip(ITextOutput output, EventDef evt)
-		{
+		void WriteToolTip(ITextOutput output, EventDef evt) {
 			WriteToolTip(output, evt.EventType);
 			output.WriteSpace();
 			WriteToolTip(output, evt.DeclaringType);
@@ -1401,8 +1338,7 @@ namespace ICSharpCode.ILSpy {
 			WriteIdentifier(output, evt.Name, TextTokenHelper.GetTextTokenType(evt));
 		}
 
-		void WriteToolTipWithClassInfo(ITextOutput output, ITypeDefOrRef type)
-		{
+		void WriteToolTipWithClassInfo(ITextOutput output, ITypeDefOrRef type) {
 			var td = type.ResolveTypeDef();
 
 			MethodDef invoke;
@@ -1444,15 +1380,13 @@ namespace ICSharpCode.ILSpy {
 			WriteToolTipType(output, type, true, false);
 		}
 
-		static bool IsDelegate(TypeDef td)
-		{
+		static bool IsDelegate(TypeDef td) {
 			return td != null &&
 				new SigComparer().Equals(td.BaseType, td.Module.CorLibTypes.GetTypeRef("System", "MulticastDelegate")) &&
 				td.BaseType.DefinitionAssembly.IsCorLib();
 		}
 
-		void WriteToolTip(ITextOutput output, GenericParam gp)
-		{
+		void WriteToolTip(ITextOutput output, GenericParam gp) {
 			WriteIdentifier(output, gp.Name, TextTokenHelper.GetTextTokenType(gp));
 			output.WriteSpace();
 			output.Write("in", TextTokenType.Text);
@@ -1469,8 +1403,7 @@ namespace ICSharpCode.ILSpy {
 		// really need the full name.
 		const bool TOOLTIP_USE_NAMESPACES = false;
 
-		public override void WriteToolTip(ITextOutput output, IMemberRef member, IHasCustomAttribute typeAttributes)
-		{
+		public override void WriteToolTip(ITextOutput output, IMemberRef member, IHasCustomAttribute typeAttributes) {
 			var method = member as IMethod;
 			if (method != null && method.MethodSig != null) {
 				WriteToolTip(output, method);
@@ -1510,8 +1443,7 @@ namespace ICSharpCode.ILSpy {
 			base.WriteToolTip(output, member, typeAttributes);
 		}
 
-		public override void WriteToolTip(ITextOutput output, IVariable variable, string name)
-		{
+		public override void WriteToolTip(ITextOutput output, IVariable variable, string name) {
 			var isLocal = variable is Local;
 			output.Write(isLocal ? "(local variable)" : "(parameter)", TextTokenType.Text);
 			output.WriteSpace();

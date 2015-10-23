@@ -27,25 +27,23 @@ using System.Windows;
 using System.Xml.Linq;
 using dnSpy.Tabs;
 
-namespace ICSharpCode.ILSpy
-{
+namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Per-session setting:
 	/// Loaded at startup; saved at exit.
 	/// </summary>
-	public sealed class SessionSettings : INotifyPropertyChanged
-	{
-		public SessionSettings(DNSpySettings spySettings)
-		{
+	public sealed class SessionSettings : INotifyPropertyChanged {
+		public SessionSettings(DNSpySettings spySettings) {
 			XElement doc = spySettings["SessionSettings"];
-			
+
 			XElement filterSettings = doc.Element("FilterSettings");
-			if (filterSettings == null) filterSettings = new XElement("FilterSettings");
-			
+			if (filterSettings == null)
+				filterSettings = new XElement("FilterSettings");
+
 			this.FilterSettings = new FilterSettings(filterSettings);
-			
+
 			this.ActiveAssemblyList = Unescape((string)doc.Element("ActiveAssemblyList"));
-			
+
 			this.WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
 			this.IsFullScreen = FromString((string)doc.Element("IsFullScreen"), false);
 			var winBoundsString = (string)doc.Element("WindowBounds");
@@ -79,23 +77,22 @@ namespace ICSharpCode.ILSpy
 				this.SavedTabGroupsState = SavedTabGroupsState.FromXml(groups);
 			}
 		}
-		
+
 		public event PropertyChangedEventHandler PropertyChanged;
-		
-		void OnPropertyChanged(string propertyName)
-		{
+
+		void OnPropertyChanged(string propertyName) {
 			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
 		}
-		
+
 		public FilterSettings FilterSettings { get; private set; }
-		
+
 		public string ActiveAssemblyList;
-		
+
 		public WindowState WindowState = WindowState.Normal;
 		public bool IsFullScreen;
 		public Rect? WindowBounds;
-		internal static Rect DefaultWindowBounds =  new Rect(10, 10, 1300, 730);
+		internal static Rect DefaultWindowBounds = new Rect(10, 10, 1300, 730);
 		public double LeftColumnWidth;
 		public PaneSettings TopPaneSettings;
 		public PaneSettings BottomPaneSettings;
@@ -127,14 +124,12 @@ namespace ICSharpCode.ILSpy
 		}
 		bool highlightCurrentLine;
 
-		public struct PaneSettings
-		{
+		public struct PaneSettings {
 			public double Height;
 			public string Name;
 		}
-		
-		public void Save()
-		{
+
+		public void Save() {
 			XElement doc = new XElement("SessionSettings");
 			doc.Add(this.FilterSettings.SaveAsXml());
 			if (this.ActiveAssemblyList != null) {
@@ -156,19 +151,17 @@ namespace ICSharpCode.ILSpy
 
 			if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.RestoreTabsAtStartup)
 				doc.Add(SavedTabGroupsState.ToXml(new XElement("TabGroups")));
-			
+
 			DNSpySettings.SaveSettings(doc);
 		}
 
-		static bool IsValidChar(char c)
-		{
+		static bool IsValidChar(char c) {
 			return c >= 0x20 && c != '©';
 		}
 
 		static Regex regex = new Regex("©(?<num>[0-9A-f]{4})");
-		
-		public static string Escape(string p)
-		{
+
+		public static string Escape(string p) {
 			if (p == null)
 				return p;
 			StringBuilder sb = new StringBuilder();
@@ -180,28 +173,26 @@ namespace ICSharpCode.ILSpy
 			}
 			return sb.ToString();
 		}
-		
-		public static string Unescape(string p)
-		{
+
+		public static string Unescape(string p) {
 			if (p == null)
 				return p;
 			return regex.Replace(p, m => ((char)int.Parse(m.Groups["num"].Value, NumberStyles.HexNumber)).ToString());
 		}
-		
-		internal static T FromString<T>(string s, T defaultValue)
-		{
+
+		internal static T FromString<T>(string s, T defaultValue) {
 			if (s == null)
 				return defaultValue;
 			try {
 				TypeConverter c = TypeDescriptor.GetConverter(typeof(T));
 				return (T)c.ConvertFromInvariantString(s);
-			} catch (FormatException) {
+			}
+			catch (FormatException) {
 				return defaultValue;
 			}
 		}
 
-		internal static string ToString<T>(T obj)
-		{
+		internal static string ToString<T>(T obj) {
 			TypeConverter c = TypeDescriptor.GetConverter(typeof(T));
 			return c.ConvertToInvariantString(obj);
 		}

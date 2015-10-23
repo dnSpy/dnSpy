@@ -29,46 +29,38 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Lists the base types of a class.
 	/// </summary>
-	sealed class BaseTypesTreeNode : ILSpyTreeNode
-	{
+	sealed class BaseTypesTreeNode : ILSpyTreeNode {
 		readonly TypeDef type;
 
-		public BaseTypesTreeNode(TypeDef type)
-		{
+		public BaseTypesTreeNode(TypeDef type) {
 			this.type = type;
 			this.LazyLoading = true;
 		}
 
-		protected override void Write(ITextOutput output, Language language)
-		{
+		protected override void Write(ITextOutput output, Language language) {
 			output.Write("Base Types", TextTokenType.Text);
 		}
 
-		public override object Icon
-		{
+		public override object Icon {
 			get { return ImageCache.Instance.GetImage("SuperTypes", BackgroundType.TreeNode); }
 		}
 
-		public override object ExpandedIcon
-		{
+		public override object ExpandedIcon {
 			get { return ImageCache.Instance.GetImage("SuperTypesOpen", BackgroundType.TreeNode); }
 		}
 
-		public override FilterResult Filter(FilterSettings settings)
-		{
+		public override FilterResult Filter(FilterSettings settings) {
 			var res = settings.Filter.GetFilterResult(this);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
 			return base.Filter(settings);
 		}
 
-		protected override void LoadChildren()
-		{
+		protected override void LoadChildren() {
 			AddBaseTypes(this.Children, type);
 		}
 
-		internal static void AddBaseTypes(SharpTreeNodeCollection children, TypeDef type)
-		{
+		internal static void AddBaseTypes(SharpTreeNodeCollection children, TypeDef type) {
 			if (type.BaseType != null)
 				children.Add(new BaseTypesEntryNode(type.BaseType, false));
 			foreach (var i in type.Interfaces) {
@@ -77,8 +69,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options)
-		{
+		public override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
 			App.Current.Dispatcher.Invoke(DispatcherPriority.Normal, new Action(EnsureChildrenFiltered));
 			foreach (ILSpyTreeNode child in this.Children) {
 				child.Decompile(language, output, options);

@@ -50,26 +50,23 @@ namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Interaction logic for App.xaml
 	/// </summary>
-	public partial class App : Application
-	{
+	public partial class App : Application {
 		static CompositionContainer compositionContainer;
-		
+
 		public static CompositionContainer CompositionContainer {
 			get { return compositionContainer; }
 		}
-		
+
 		internal static CommandLineArguments CommandLineArguments;
-		
+
 		internal static IList<ExceptionData> StartupExceptions = new List<ExceptionData>();
-		
-		internal class ExceptionData
-		{
+
+		internal class ExceptionData {
 			public Exception Exception;
 			public string PluginName;
 		}
-		
-		public App()
-		{
+
+		public App() {
 			// Add Ctrl+Shift+Z as a redo command. Don't know why it isn't enabled by default.
 			ApplicationCommands.Redo.InputGestures.Add(new KeyGesture(Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
 
@@ -83,7 +80,7 @@ namespace ICSharpCode.ILSpy {
 				}
 			}
 			InitializeComponent();
-			
+
 			var catalog = new AggregateCatalog();
 			catalog.Catalogs.Add(new AssemblyCatalog(typeof(App).Assembly));
 			// Don't use DirectoryCatalog, that causes problems if the plugins are from the Internet zone
@@ -95,26 +92,27 @@ namespace ICSharpCode.ILSpy {
 					var asm = Assembly.Load(shortName);
 					asm.GetTypes();
 					catalog.Catalogs.Add(new AssemblyCatalog(asm));
-				} catch (Exception ex) {
+				}
+				catch (Exception ex) {
 					// Cannot show MessageBox here, because WPF would crash with a XamlParseException
 					// Remember and show exceptions in text output, once MainWindow is properly initialized
 					StartupExceptions.Add(new ExceptionData { Exception = ex, PluginName = shortName });
 				}
 			}
-			
+
 			compositionContainer = new CompositionContainer(catalog);
-			
+
 			Languages.Initialize(compositionContainer);
-			
+
 			if (!System.Diagnostics.Debugger.IsAttached) {
 				AppDomain.CurrentDomain.UnhandledException += ShowErrorBox;
 				Dispatcher.CurrentDispatcher.UnhandledException += Dispatcher_UnhandledException;
 			}
 			TaskScheduler.UnobservedTaskException += DotNet40_UnobservedTaskException;
-			
+
 			EventManager.RegisterClassHandler(typeof(Window),
-			                                  Hyperlink.RequestNavigateEvent,
-			                                  new RequestNavigateEventHandler(Window_RequestNavigate));
+											  Hyperlink.RequestNavigateEvent,
+											  new RequestNavigateEventHandler(Window_RequestNavigate));
 
 			FixEditorContextMenuStyle();
 		}
@@ -122,8 +120,7 @@ namespace ICSharpCode.ILSpy {
 		// The text editor creates an EditorContextMenu which derives from ContextMenu. This
 		// class is private in the assembly and can't be referenced from XAML. In order to style
 		// this class we must get the type at runtime and add its style to the Resources.
-		void FixEditorContextMenuStyle()
-		{
+		void FixEditorContextMenuStyle() {
 			var module = typeof(System.Windows.Controls.ContextMenu).Module;
 			var type = module.GetType("System.Windows.Documents.TextEditorContextMenu+EditorContextMenu", false, false);
 			Debug.Assert(type != null);
@@ -137,36 +134,33 @@ namespace ICSharpCode.ILSpy {
 			this.Resources.Remove(styleKey);
 			this.Resources.Add(type, style);
 		}
-		
-		string FullyQualifyPath(string argument)
-		{
+
+		string FullyQualifyPath(string argument) {
 			// Fully qualify the paths before passing them to another process,
 			// because that process might use a different current directory.
 			if (string.IsNullOrEmpty(argument) || argument[0] == '/')
 				return argument;
 			try {
 				return Path.Combine(Environment.CurrentDirectory, argument);
-			} catch (ArgumentException) {
+			}
+			catch (ArgumentException) {
 				return argument;
 			}
 		}
 
-		void DotNet40_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
-		{
+		void DotNet40_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e) {
 			// On .NET 4.0, an unobserved exception in a task terminates the process unless we mark it as observed
 			e.SetObserved();
 		}
-		
+
 		#region Exception Handling
-		static void Dispatcher_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e)
-		{
+		static void Dispatcher_UnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
 			Debug.WriteLine(e.Exception.ToString());
 			MessageBox.Show(e.Exception.ToString(), "Sorry, we crashed");
 			e.Handled = true;
 		}
-		
-		static void ShowErrorBox(object sender, UnhandledExceptionEventArgs e)
-		{
+
+		static void ShowErrorBox(object sender, UnhandledExceptionEventArgs e) {
 			Exception ex = e.ExceptionObject as Exception;
 			if (ex != null) {
 				Debug.WriteLine(ex.ToString());
@@ -174,10 +168,9 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 		#endregion
-		
+
 		#region Pass Command Line Arguments to previous instance
-		bool SendToPreviousInstance(string message, bool activate)
-		{
+		bool SendToPreviousInstance(string message, bool activate) {
 			bool success = false;
 			NativeMethods.EnumWindows(
 				(hWnd, lParam) => {
@@ -197,32 +190,31 @@ namespace ICSharpCode.ILSpy {
 				}, IntPtr.Zero);
 			return success;
 		}
-		
-		unsafe static IntPtr Send(IntPtr hWnd, string message)
-		{
+
+		unsafe static IntPtr Send(IntPtr hWnd, string message) {
 			const uint SMTO_NORMAL = 0;
-			
+
 			CopyDataStruct lParam;
 			lParam.Padding = IntPtr.Zero;
 			lParam.Size = message.Length * 2;
-			fixed (char *buffer = message) {
+			fixed (char* buffer = message)
+			{
 				lParam.Buffer = (IntPtr)buffer;
 				IntPtr result;
 				// SendMessage with 3s timeout (e.g. when the target process is stopped in the debugger)
 				if (NativeMethods.SendMessageTimeout(
 					hWnd, NativeMethods.WM_COPYDATA, IntPtr.Zero, ref lParam,
-					SMTO_NORMAL, 3000, out result) != IntPtr.Zero)
-				{
+					SMTO_NORMAL, 3000, out result) != IntPtr.Zero) {
 					return result;
-				} else {
+				}
+				else {
 					return IntPtr.Zero;
 				}
 			}
 		}
 		#endregion
-		
-		void Window_RequestNavigate(object sender, RequestNavigateEventArgs e)
-		{
+
+		void Window_RequestNavigate(object sender, RequestNavigateEventArgs e) {
 			if (e.Uri.Scheme == "resource") {
 				AvalonEditTextOutput output = new AvalonEditTextOutput();
 				using (Stream s = typeof(App).Assembly.GetManifestResourceStream(typeof(dnSpy.StartUpClass), e.Uri.AbsolutePath)) {
