@@ -87,7 +87,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public void Initialize(MenuItem menuItem) {
-			menuItem.Header = GetAssemblyNodes(GetSelectedNodes()).Count <= 1 ? "Save _Module…" : "Save _Modules…";
+			menuItem.Header = GetAssemblyNodes(GetSelectedNodes()).Count <= 1 ? "Save _Module..." : "Save _Modules...";
 		}
 	}
 
@@ -127,7 +127,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "Save A_ll…", MenuInputGestureText = "Ctrl+Shift+S", MenuCategory = "Save", MenuOrder = 1020, MenuIcon = "SaveAll")]
+	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "Save A_ll...", MenuInputGestureText = "Ctrl+Shift+S", MenuCategory = "Save", MenuOrder = 1020, MenuIcon = "SaveAll")]
 	sealed class SaveAllCommand : ICommand {
 		public event EventHandler CanExecuteChanged {
 			add { CommandManager.RequerySuggested += value; }

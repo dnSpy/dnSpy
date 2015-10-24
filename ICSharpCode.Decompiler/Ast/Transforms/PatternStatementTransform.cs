@@ -953,15 +953,15 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 		
 		PropertyDeclaration TransformAutomaticProperties(PropertyDeclaration property)
 		{
-			PropertyDef cecilProperty = property.Annotation<PropertyDef>();
-			if (cecilProperty == null || cecilProperty.GetMethod == null || cecilProperty.SetMethod == null)
+			PropertyDef prop = property.Annotation<PropertyDef>();
+			if (prop == null || prop.GetMethod == null || prop.SetMethod == null)
 				return null;
-			if (!(cecilProperty.GetMethod.IsCompilerGenerated() && cecilProperty.SetMethod.IsCompilerGenerated()))
+			if (!(prop.GetMethod.IsCompilerGenerated() && prop.SetMethod.IsCompilerGenerated()))
 				return null;
 			Match m = automaticPropertyPattern.Match(property);
 			if (m.Success) {
 				FieldDef field = m.Get<AstNode>("fieldReference").Single().Annotation<IField>().ResolveFieldWithinSameModule();
-				if (field != null && field.IsCompilerGenerated() && field.DeclaringType == cecilProperty.DeclaringType) {
+				if (field != null && field.IsCompilerGenerated() && field.DeclaringType == prop.DeclaringType) {
 					RemoveCompilerGeneratedAttribute(property.Getter.Attributes);
 					RemoveCompilerGeneratedAttribute(property.Setter.Attributes);
 					var getterMM = property.Getter.Body.Annotation<MemberMapping>();
@@ -972,10 +972,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 						property.Setter.AddAnnotation(setterMM);
 					property.Getter.Body = null;
 					property.Setter.Body = null;
-					if (cecilProperty.GetMethod.Body != null)
-						property.Getter.AddAnnotation(new List<ILRange> { new ILRange(0, (uint)cecilProperty.GetMethod.Body.GetCodeSize()) });
-					if (cecilProperty.SetMethod.Body != null)
-						property.Setter.AddAnnotation(new List<ILRange> { new ILRange(0, (uint)cecilProperty.SetMethod.Body.GetCodeSize()) });
+					if (prop.GetMethod.Body != null)
+						property.Getter.AddAnnotation(new List<ILRange> { new ILRange(0, (uint)prop.GetMethod.Body.GetCodeSize()) });
+					if (prop.SetMethod.Body != null)
+						property.Setter.AddAnnotation(new List<ILRange> { new ILRange(0, (uint)prop.SetMethod.Body.GetCodeSize()) });
 				}
 			}
 			// Since the event instance is not changed, we can continue in the visitor as usual, so return null

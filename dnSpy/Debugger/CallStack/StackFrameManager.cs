@@ -267,7 +267,7 @@ namespace dnSpy.Debugger.CallStack {
 					uint token = frame.Token;
 					if (token == 0)
 						continue;
-					var serAsm = frame.SerializedDnModuleWithAssembly;
+					var serAsm = frame.SerializedDnModule;
 					if (serAsm == null)
 						continue;
 

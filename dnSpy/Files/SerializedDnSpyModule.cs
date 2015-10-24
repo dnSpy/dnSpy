@@ -21,6 +21,7 @@ using System;
 using dnlib.DotNet;
 
 namespace dnSpy.Files {
+	// Must be identical to SerializedDnModule but we can't reference SerializedDnModule from this assembly
 	public struct SerializedDnSpyModule : IEquatable<SerializedDnSpyModule> {
 		[Flags]
 		enum Flags : byte {
@@ -32,14 +33,14 @@ namespace dnSpy.Files {
 		/// Gets the full name, identical to the dnlib assembly full name
 		/// </summary>
 		public string AssemblyFullName {
-			get { return asmFullName; }
+			get { return asmFullName ?? string.Empty; }
 		}
 
 		/// <summary>
 		/// Name of module. This is the filename if <see cref="IsInMemory"/> is false, else it's <see cref="ModuleDef.Name"/>
 		/// </summary>
 		public string ModuleName {
-			get { return moduleName; }
+			get { return moduleName ?? string.Empty; }
 		}
 
 		/// <summary>
@@ -94,8 +95,8 @@ namespace dnSpy.Files {
 		}
 
 		public bool Equals(SerializedDnSpyModule other) {
-			return AssemblyNameComparer.Equals(asmFullName ?? string.Empty, other.asmFullName ?? string.Empty) &&
-					ModuleNameComparer.Equals(moduleName ?? string.Empty, other.moduleName ?? string.Empty) &&
+			return AssemblyNameComparer.Equals(AssemblyFullName, other.AssemblyFullName) &&
+					ModuleNameComparer.Equals(ModuleName, other.ModuleName) &&
 					flags == other.flags;
 		}
 
@@ -107,13 +108,13 @@ namespace dnSpy.Files {
 		}
 
 		public override int GetHashCode() {
-			return AssemblyNameComparer.GetHashCode(asmFullName ?? string.Empty) ^
-				ModuleNameComparer.GetHashCode(moduleName ?? string.Empty) ^
+			return AssemblyNameComparer.GetHashCode(AssemblyFullName) ^
+				ModuleNameComparer.GetHashCode(ModuleName) ^
 				((int)flags << 16);
 		}
 
 		public override string ToString() {
-			return string.Format("DYN={0} MEM={1} {2} [{3}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, asmFullName ?? string.Empty, moduleName ?? string.Empty);
+			return string.Format("DYN={0} MEM={1} {2} [{3}]", IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, AssemblyFullName, ModuleName);
 		}
 	}
 }

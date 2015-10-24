@@ -474,7 +474,7 @@ namespace ICSharpCode.ILSpy {
 			this.language = language;
 			this.filter = filter;
 
-			this.Results.Add(new SearchResult { NameObject = "Searching…" });
+			this.Results.Add(new SearchResult { NameObject = "Searching..." });
 		}
 
 		public void Cancel() {
@@ -492,7 +492,7 @@ namespace ICSharpCode.ILSpy {
 			dispatcher.BeginInvoke(
 				DispatcherPriority.Normal,
 				new Action(() => {
-					// remove the 'Searching…' entry
+					// remove the 'Searching...' entry
 					this.Results.RemoveAt(this.Results.Count - 1);
 					if (OnSearchEnded != null)
 						OnSearchEnded(this, EventArgs.Empty);

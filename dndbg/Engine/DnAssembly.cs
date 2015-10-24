@@ -141,12 +141,9 @@ namespace dndbg.Engine {
 			return modules.TryGet(comModule);
 		}
 
-		internal void ModuleUnloaded(ICorDebugModule comModule) {
-			var module = modules.TryGet(comModule);
-			if (module == null)
-				return;
+		internal void ModuleUnloaded(DnModule module) {
 			module.SetHasUnloaded();
-			modules.Remove(comModule);
+			modules.Remove(module.CorModule.RawObject);
 		}
 
 		internal void InitializeAssemblyAndModules() {

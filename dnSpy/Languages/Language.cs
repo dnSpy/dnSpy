@@ -139,7 +139,7 @@ namespace ICSharpCode.ILSpy {
 					return null;
 				maxIters = asm.Modules.Count;
 
-				module = asm.Modules.FirstOrDefault(m => Path.GetFileName(m.Location) == file.Name);
+				module = asm.Modules.FirstOrDefault(m => File.Exists(m.Location) && StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileName(m.Location), file.Name));
 			}
 
 			return null;

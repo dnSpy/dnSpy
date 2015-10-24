@@ -78,7 +78,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				var module = dbg.TryGetModule(lcArgs.CorAppDomain, lcArgs.CorClass);
 				Debug.Assert(module != null);
 				if (module != null && module.IsDynamic)
-					pendingModules.Add(module.SerializedDnModuleWithAssembly);
+					pendingModules.Add(module.SerializedDnModule);
 			}
 		}
 
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			Debug.Assert(0 <= nameErrorCounter && nameErrorCounter <= breakpointList.Count);
 		}
 		int nameErrorCounter;
-		readonly HashSet<SerializedDnModuleWithAssembly> pendingModules = new HashSet<SerializedDnModuleWithAssembly>();
+		readonly HashSet<SerializedDnModule> pendingModules = new HashSet<SerializedDnModule>();
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			if (e.PropertyName == "SyntaxHighlightBreakpoints")

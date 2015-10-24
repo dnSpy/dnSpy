@@ -28,7 +28,7 @@
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="300" MinWidth="400">
 	<local:SaveModuleWindow.Resources>
-		<RoutedUICommand x:Key="OptionsCommand" Text="Options…" />
+		<RoutedUICommand x:Key="OptionsCommand" Text="Options..." />
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 		<mvvmvc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
 	</local:SaveModuleWindow.Resources>
@@ -138,11 +138,11 @@
 					   Visibility="{Binding IsCanceling, Converter={StaticResource BooleanToVisibilityConverter}}"
 					   VerticalAlignment="Center"
 					   Foreground="Red"
-					   Text="Canceling the save. Please wait…"
+					   Text="Canceling the save. Please wait..."
 					   />
 			<Button Grid.Column="1"
 					Name="optionsButton"
-					Content="_Options…"
+					Content="_Options..."
 					Style="{StaticResource DialogButton}" Margin="0,0,5,0"
 					Command="{StaticResource OptionsCommand}"
 					CommandParameter="{Binding SelectedItem, ElementName=listBox}"

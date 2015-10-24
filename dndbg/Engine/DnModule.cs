@@ -162,10 +162,6 @@ namespace dndbg.Engine {
 			get { return module.SerializedDnModule; }
 		}
 
-		public SerializedDnModuleWithAssembly SerializedDnModuleWithAssembly {
-			get { return new SerializedDnModuleWithAssembly(Assembly.FullName, SerializedDnModule); }
-		}
-
 		/// <summary>
 		/// Gets the JIT compiler flags. This is a cached value and never gets updated
 		/// </summary>

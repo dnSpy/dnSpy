@@ -24,20 +24,20 @@ using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger {
 	static class SerializedModuleExtensions {
-		public static SerializedDnModuleWithAssembly ToSerializedDnModuleWithAssembly(this SerializedDnSpyModule self) {
-			return new SerializedDnModuleWithAssembly(self.AssemblyFullName, new SerializedDnModule(self.ModuleName, self.IsDynamic, self.IsInMemory));
+		public static SerializedDnModule ToSerializedDnModule(this SerializedDnSpyModule self) {
+			return new SerializedDnModule(self.AssemblyFullName, self.ModuleName, self.IsDynamic, self.IsInMemory);
 		}
 
-		public static SerializedDnSpyModule ToSerializedDnSpyModule(this SerializedDnModuleWithAssembly self) {
-			return SerializedDnSpyModule.Create(self.AssemblyFullName, self.Module.Name, self.Module.IsDynamic, self.Module.IsInMemory);
+		public static SerializedDnSpyModule ToSerializedDnSpyModule(this SerializedDnModule self) {
+			return SerializedDnSpyModule.Create(self.AssemblyFullName, self.ModuleName, self.IsDynamic, self.IsInMemory);
 		}
 
 		public static SerializedDnSpyModule ToSerializedDnSpyModule(this ModuleDef module) {
 			return MainWindow.Instance.DnSpyFileListTreeNode.GetSerializedDnSpyModule(module);
 		}
 
-		public static SerializedDnModuleWithAssembly ToSerializedDnModuleWithAssembly(this IMemberDef md) {
-			return md.Module.ToSerializedDnSpyModule().ToSerializedDnModuleWithAssembly();
+		public static SerializedDnModule ToSerializedDnModule(this IMemberDef md) {
+			return md.Module.ToSerializedDnSpyModule().ToSerializedDnModule();
 		}
 	}
 }

@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 namespace dndbg.Engine {
 	sealed class BreakpointList<TBP> {
-		readonly Dictionary<SerializedDnModuleWithAssembly, List<TBP>> dict = new Dictionary<SerializedDnModuleWithAssembly, List<TBP>>();
+		readonly Dictionary<SerializedDnModule, List<TBP>> dict = new Dictionary<SerializedDnModule, List<TBP>>();
 
 		public IEnumerable<TBP> GetBreakpoints() {
 			foreach (var list in dict.Values) {
@@ -30,21 +30,21 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public TBP[] GetBreakpoints(SerializedDnModuleWithAssembly module) {
+		public TBP[] GetBreakpoints(SerializedDnModule module) {
 			List<TBP> list;
 			if (!dict.TryGetValue(module, out list))
 				return new TBP[0];
 			return list.ToArray();
 		}
 
-		public void Add(SerializedDnModuleWithAssembly module, TBP bp) {
+		public void Add(SerializedDnModule module, TBP bp) {
 			List<TBP> list;
 			if (!dict.TryGetValue(module, out list))
 				dict.Add(module, list = new List<TBP>());
 			list.Add(bp);
 		}
 
-		public bool Remove(SerializedDnModuleWithAssembly module, TBP bp) {
+		public bool Remove(SerializedDnModule module, TBP bp) {
 			List<TBP> list;
 			if (!dict.TryGetValue(module, out list))
 				return false;

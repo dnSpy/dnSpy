@@ -117,15 +117,16 @@ namespace dnSpy.Debugger.IMModules {
 				var manifestFile = FindAssemblyByKey(manifestKey);
 				var manifestNode = DnSpyFileListTreeNode.FindAssemblyNode(manifestFile);
 				if (manifestNode != null) {
+					var cmdf = (CorModuleDefFile)manifestFile;
 					var moduleKey = CorModuleDefFile.CreateKey(module);
 					manifestNode.EnsureChildrenFiltered();
 					Debug.Assert(manifestNode.Children.Count >= 1);
 					var moduleNode = manifestNode.Children.OfType<AssemblyTreeNode>().FirstOrDefault(a => moduleKey.Equals(a.DnSpyFile.Key));
 					Debug.Assert(moduleNode == null);
 					if (moduleNode == null) {
-						var dict = new Dictionary<ModuleDef, CorModuleDefFile>();
-						var newFile = new CorModuleDefFile(dict, module, UseDebugSymbols);
+						var newFile = new CorModuleDefFile(cmdf.Dictionary, module, UseDebugSymbols);
 						UpdateResolver(module.GetOrCreateCorModuleDef());
+						cmdf.Dictionary.Add(newFile.ModuleDef, newFile);
 						Initialize(new[] { newFile.DnModule.CorModuleDef });
 						manifestNode.Children.Add(new AssemblyTreeNode(newFile));
 					}
@@ -138,16 +139,16 @@ namespace dnSpy.Debugger.IMModules {
 				var manifestFile = FindAssemblyByKey(manifestKey);
 				var manifestNode = DnSpyFileListTreeNode.FindAssemblyNode(manifestFile);
 				if (manifestNode != null) {
+					var mmdf = (MemoryModuleDefFile)manifestFile;
 					var moduleKey = MemoryModuleDefFile.CreateKey(module.Process, module.Address);
 					manifestNode.EnsureChildrenFiltered();
 					Debug.Assert(manifestNode.Children.Count >= 1);
 					var moduleNode = manifestNode.Children.OfType<AssemblyTreeNode>().FirstOrDefault(a => moduleKey.Equals(a.DnSpyFile.Key));
 					Debug.Assert(moduleNode == null);
 					if (moduleNode == null) {
-						var dict = new Dictionary<ModuleDef, MemoryModuleDefFile>();
 						MemoryModuleDefFile newFile = null;
 						try {
-							newFile = MemoryModuleDefFile.Create(dict, module, UseDebugSymbols);
+							newFile = MemoryModuleDefFile.Create(mmdf.Dictionary, module, UseDebugSymbols);
 						}
 						catch {
 						}
@@ -155,6 +156,7 @@ namespace dnSpy.Debugger.IMModules {
 						Debug.Assert(newFile != null);
 						if (newFile != null) {
 							UpdateResolver(newFile.ModuleDef);
+							mmdf.Dictionary.Add(newFile.ModuleDef, newFile);
 							manifestNode.DnSpyFile.ModuleDef.Assembly.Modules.Add(newFile.ModuleDef);
 							manifestNode.Children.Add(new AssemblyTreeNode(newFile));
 						}
@@ -212,7 +214,7 @@ namespace dnSpy.Debugger.IMModules {
 					continue;
 				if (cmdf.DnModule.Debugger.ProcessState == DebuggerProcessState.Terminated)
 					continue;
-				if (cmdf.DnModule.Process.HasExited || !cmdf.DnModule.IsDynamic)
+				if (cmdf.DnModule.Process.HasExited || cmdf.DnModule.HasUnloaded || !cmdf.DnModule.IsDynamic)
 					continue;
 				bool b = dict.ContainsKey(cmdf);
 				Debug.Assert(!b);

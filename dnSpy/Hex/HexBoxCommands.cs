@@ -107,11 +107,11 @@ namespace dnSpy.Hex {
 		}
 
 		protected override void Initialize(DnHexBox dnHexBox, MenuItem menuItem) {
-			menuItem.Header = dnHexBox.IsMemory ? "Go to Address…" : "Go to Offset…";
+			menuItem.Header = dnHexBox.IsMemory ? "Go to Address..." : "Go to Offset...";
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Select…", Order = 110, Category = "Misc", InputGestureText = "Ctrl+L")]
+	[ExportContextMenuEntry(Header = "Select...", Order = 110, Category = "Misc", InputGestureText = "Ctrl+L")]
 	sealed class SelectRangeHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		internal static void Execute2(DnHexBox dnHexBox) {
 			ExecuteInternal(dnHexBox);
@@ -154,7 +154,7 @@ namespace dnSpy.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Save Se_lection…", Order = 120, Category = "Misc", InputGestureText = "Ctrl+Alt+S")]
+	[ExportContextMenuEntry(Header = "Save Se_lection...", Order = 120, Category = "Misc", InputGestureText = "Ctrl+Alt+S")]
 	sealed class SaveSelectionHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(DnHexBox dnHexBox) {
 			Execute2(dnHexBox);
@@ -287,7 +287,7 @@ namespace dnSpy.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Fill Selection with Byte…", Order = 210, Category = "Edit", Icon = "Fill")]
+	[ExportContextMenuEntry(Header = "Fill Selection with Byte...", Order = 210, Category = "Edit", Icon = "Fill")]
 	sealed class WriteToSelectionSelectionHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(DnHexBox dnHexBox) {
 			var sel = dnHexBox.Selection;
@@ -433,7 +433,7 @@ namespace dnSpy.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Settings…", Order = 599, Category = "Options")]
+	[ExportContextMenuEntry(Header = "Settings...", Order = 599, Category = "Options")]
 	sealed class LocalSettingsHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(DnHexBox dnHexBox) {
 			var data = new LocalSettingsVM(new LocalHexSettings(dnHexBox));

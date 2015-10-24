@@ -19,12 +19,29 @@
 
 using System.Windows.Input;
 using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TextView;
 
 namespace dnSpy.Commands {
 	[ExportMainMenuCommand(Menu = "_Edit", MenuHeader = "_Find", MenuIcon = "Find", MenuCategory = "Search", MenuInputGestureText = "Ctrl+F", MenuOrder = 2090)]
 	sealed class FindInCodeCommand : CommandWrapper {
 		public FindInCodeCommand()
 			: base(ApplicationCommands.Find) {
+		}
+	}
+
+	[ExportContextMenuEntry(Header = "Find", Order = 1010, Icon = "Find", Category = "Editor", InputGestureText = "Ctrl+F")]
+	sealed class FindInCodeContexMenuEntry : IContextMenuEntry {
+		public void Execute(ContextMenuEntryContext context) {
+			if (ApplicationCommands.Find.CanExecute(null, MainWindow.Instance))
+				ApplicationCommands.Find.Execute(null, MainWindow.Instance);
+		}
+
+		public bool IsEnabled(ContextMenuEntryContext context) {
+			return true;
+		}
+
+		public bool IsVisible(ContextMenuEntryContext context) {
+			return context.Element is DecompilerTextView;
 		}
 	}
 }

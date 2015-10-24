@@ -121,7 +121,8 @@ namespace dnSpy.Debugger.Modules {
 				}
 			}
 			else if (module.IsDynamic || module.IsInMemory) {
-				//TODO: Support dynamic modules
+				if (module.CorModule.IsManifestModule)
+					version = new AssemblyNameInfo(module.Assembly.FullName).Version;
 			}
 			else {
 				try {

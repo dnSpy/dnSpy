@@ -141,11 +141,12 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			Debug.Assert(!DisableDrop);
 			if (DisableDrop)
 				return;
-			string[] files = e.Data.GetData(AssemblyTreeNode.DataFormat) as string[];
-			if (files == null)
-				files = e.Data.GetData(DataFormats.FileDrop) as string[];
-			if (files != null && files.Length > 0) {
-				DnSpyFile newSelectedAsm = null;
+			string[] filenames = null;
+			int[] fileIndexes = e.Data.GetData(AssemblyTreeNode.DataFormat) as int[];
+			if (fileIndexes == null)
+				filenames = e.Data.GetData(DataFormats.FileDrop) as string[];
+			if ((filenames != null && filenames.Length > 0) || (fileIndexes != null && fileIndexes.Length > 0)) {
+				DnSpyFile newSelectedFile = null;
 				bool newSelectedAsmExisted = false;
 				var oldIgnoreSelChg = MainWindow.Instance.TreeView_SelectionChanged_ignore;
 				try {
@@ -154,29 +155,35 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 						var old = dnspyFileList.IsReArranging;
 						try {
 							MainWindow.Instance.TreeView_SelectionChanged_ignore = true;
-							var assemblies = (from file in files
-											  where file != null
-											  select dnspyFileList.OpenFile(file) into node
-											  where node != null
-											  select node).Distinct().ToList();
-							var oldAsm = new Dictionary<DnSpyFile, bool>(assemblies.Count);
-							foreach (var asm in assemblies) {
-								int nodeIndex = dnspyFileList.IndexOf_NoLock(asm);
-								oldAsm[asm] = nodeIndex < numFiles;
-								if (newSelectedAsm == null) {
-									newSelectedAsm = asm;
-									newSelectedAsmExisted = oldAsm[asm];
+							List<DnSpyFile> files;
+							if (fileIndexes != null) {
+								files = fileIndexes.Where(i => 0 <= i && i < Children.Count).Select(i => ((AssemblyTreeNode)Children[i]).DnSpyFile).Distinct().ToList();
+							}
+							else {
+								files = (from filename in filenames
+										 where filename != null
+										 select dnspyFileList.OpenFile(filename) into node
+										 where node != null
+										 select node).Distinct().ToList();
+							}
+							var oldFiles = new Dictionary<DnSpyFile, bool>(files.Count);
+							foreach (var file in files) {
+								int nodeIndex = dnspyFileList.IndexOf_NoLock(file);
+								oldFiles[file] = nodeIndex < numFiles;
+								if (newSelectedFile == null) {
+									newSelectedFile = file;
+									newSelectedAsmExisted = oldFiles[file];
 								}
 								if (nodeIndex < index)
 									index--;
 								numFiles--;
-								dnspyFileList.IsReArranging = oldAsm[asm];
+								dnspyFileList.IsReArranging = oldFiles[file];
 								dnspyFileList.RemoveAt_NoLock(nodeIndex);
 								dnspyFileList.IsReArranging = old;
 							}
-							assemblies.Reverse();
-							foreach (var asm in assemblies) {
-								dnspyFileList.IsReArranging = oldAsm[asm];
+							files.Reverse();
+							foreach (var asm in files) {
+								dnspyFileList.IsReArranging = oldFiles[asm];
 								dnspyFileList.Insert_NoLock(index, asm);
 								dnspyFileList.IsReArranging = old;
 							}
@@ -185,11 +192,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 							dnspyFileList.IsReArranging = old;
 						}
 					}
-					if (newSelectedAsm != null) {
+					if (newSelectedFile != null) {
 						if (!newSelectedAsmExisted)
 							MainWindow.Instance.TreeView_SelectionChanged_ignore = oldIgnoreSelChg;
-						var node = MainWindow.Instance.FindTreeNode(newSelectedAsm.AssemblyDef) ??
-							MainWindow.Instance.FindTreeNode(newSelectedAsm.ModuleDef);
+						var node = MainWindow.Instance.FindTreeNode(newSelectedFile.AssemblyDef) ??
+							MainWindow.Instance.FindTreeNode(newSelectedFile.ModuleDef);
 						if (node != null) {
 							MainWindow.Instance.treeView.FocusNode(node);
 							MainWindow.Instance.treeView.SelectedItem = node;
@@ -217,7 +224,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		public SerializedDnSpyModule GetSerializedDnSpyModule(ModuleDef module) {
 			if (module == null)
 				return new SerializedDnSpyModule();
-			var modNode = MainWindow.Instance.DnSpyFileListTreeNode.FindModuleNode(module);
+			var modNode = FindModuleNode(module);
 			if (modNode == null)
 				return SerializedDnSpyModule.CreateFromFile(module);
 			return modNode.DnSpyFile.SerializedDnSpyModule ?? SerializedDnSpyModule.CreateFromFile(module);

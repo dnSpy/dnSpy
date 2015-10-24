@@ -38,7 +38,7 @@ namespace dnSpy.TreeNodes {
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = "Go to M_D Token…", Order = 400, Category = "Tokens", InputGestureText = "Ctrl+D")]
+	[ExportContextMenuEntry(Header = "Go to M_D Token...", Order = 400, Category = "Tokens", InputGestureText = "Ctrl+D")]
 	sealed class GoToTokenContextMenuEntry : IContextMenuEntry {
 		public bool IsVisible(ContextMenuEntryContext context) {
 			if (!CanExecute())

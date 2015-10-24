@@ -225,12 +225,12 @@ namespace dnSpy.AsmEditor.Assembly {
 	[DebuggerDisplay("{Description}")]
 	sealed class AssemblySettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Assembly";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 600)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuInputGestureText = "Alt+Enter",
@@ -337,11 +337,11 @@ namespace dnSpy.AsmEditor.Assembly {
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateAssemblyCommand : IUndoCommand {
 		const string CMD_NAME = "Create Assembly";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewAssembly",
 								Category = "AsmEd",
 								Order = 500)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewAssembly",
 							MenuCategory = "AsmEd",

@@ -277,7 +277,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		void LoadModuleChildren(IPEImage peImage, ModuleDef module) {
 			var asmListTreeNode = this.Ancestors().OfType<DnSpyFileListTreeNode>().FirstOrDefault();
 			Debug.Assert(asmListTreeNode != null);
-			if (peImage != null)
+			// Only show the PE node if it was loaded from a file. The hex document is always loaded
+			// from a file, so if the PEImage wasn't loaded from the same file, conversion to/from
+			// RVA/FileOffset won't work and the wrong data will be displayed, eg. in the .NET
+			// storage stream nodes.
+			if (DnSpyFile.LoadedFromFile && peImage != null)
 				this.Children.Add(new PETreeNode(peImage, module as ModuleDefMD));
 			if (module != null) {
 				this.Children.Add(new ReferenceFolderTreeNode(module, this, asmListTreeNode));
@@ -497,11 +501,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			DnSpyFileList.Remove(dnSpyFile, canDispose);
 		}
 
-		internal const string DataFormat = "ILSpyAssemblies";
+		internal const string DataFormat = "dnSpyFiles";
 
 		public override IDataObject Copy(SharpTreeNode[] nodes) {
 			DataObject dataObject = new DataObject();
-			dataObject.SetData(DataFormat, nodes.OfType<AssemblyTreeNode>().Where(n => !string.IsNullOrEmpty(n.DnSpyFile.Filename)).Select(n => n.DnSpyFile.Filename).ToArray());
+			var listNode = GetNode<DnSpyFileListTreeNode>(this);
+			if (listNode == null)
+				return dataObject;
+			var dict = new Dictionary<AssemblyTreeNode, int>();
+			for (int i = 0; i < listNode.Children.Count; i++)
+				dict.Add((AssemblyTreeNode)listNode.Children[i], i);
+			var data = nodes.OfType<AssemblyTreeNode>().Where(f => dict.ContainsKey(f)).Select(f => dict[f]).ToArray();
+			if (data.Length != 0)
+				dataObject.SetData(DataFormat, data);
 			return dataObject;
 		}
 

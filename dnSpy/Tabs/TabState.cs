@@ -82,7 +82,7 @@ namespace dnSpy.Tabs {
 				var header = Header;
 				if (header.Length <= MAX_HEADER_LENGTH)
 					return header;
-				return header.Substring(0, MAX_HEADER_LENGTH) + "…";
+				return header.Substring(0, MAX_HEADER_LENGTH) + "...";
 			}
 		}
 

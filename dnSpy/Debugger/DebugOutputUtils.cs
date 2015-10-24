@@ -41,7 +41,7 @@ namespace dnSpy.Debugger {
 
 			if (sb.Length > maxLen) {
 				sb.Length = maxLen;
-				sb.Append('…');
+				sb.Append("...");
 			}
 			return sb.ToString();
 		}

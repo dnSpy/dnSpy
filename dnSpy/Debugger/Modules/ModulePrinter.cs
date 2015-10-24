@@ -63,17 +63,13 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		public void WriteVersion(ModuleVM vm) {
-			if (vm.Version == null)
-				output.Write("???", TextTokenType.Error);
-			else
+			if (vm.Version != null)
 				output.Write(vm.Version);
 		}
 
 		public void WriteTimestamp(ModuleVM vm) {
 			var ts = vm.Timestamp;
-			if (ts == null)
-				output.Write("???", TextTokenType.Error);
-			else {
+			if (ts != null) {
 				var date = Epoch.AddSeconds(ts.Value);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
 				output.Write(dateString, TextTokenType.Text);

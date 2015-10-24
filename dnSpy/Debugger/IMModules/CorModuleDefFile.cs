@@ -58,6 +58,10 @@ namespace dnSpy.Debugger.IMModules {
 			get { return Files.SerializedDnSpyModule.Create(ModuleDef, DnModule.IsDynamic, DnModule.IsInMemory); }
 		}
 
+		public override bool LoadedFromFile {
+			get { return false; }
+		}
+
 		public override bool IsReadOnly {
 			get { return !dnModule.Process.HasExited; }
 		}
@@ -71,6 +75,9 @@ namespace dnSpy.Debugger.IMModules {
 			return new MyKey(module);
 		}
 
+		internal Dictionary<ModuleDef, CorModuleDefFile> Dictionary {
+			get { return dict; }
+		}
 		readonly Dictionary<ModuleDef, CorModuleDefFile> dict;
 
 		public LastValidRids LastValidRids {

@@ -191,11 +191,11 @@ namespace dnSpy.AsmEditor.Field {
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateFieldDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Field";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewField",
 								Category = "AsmEd",
 								Order = 570)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewField",
 							MenuCategory = "AsmEd",
@@ -210,7 +210,7 @@ namespace dnSpy.AsmEditor.Field {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewField",
 								Category = "AsmEd",
 								Order = 570)]
@@ -329,12 +329,12 @@ namespace dnSpy.AsmEditor.Field {
 	[DebuggerDisplay("{Description}")]
 	sealed class FieldDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Field";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 650)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuInputGestureText = "Alt+Enter",
@@ -350,7 +350,7 @@ namespace dnSpy.AsmEditor.Field {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",

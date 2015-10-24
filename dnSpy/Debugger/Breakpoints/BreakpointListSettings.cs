@@ -116,6 +116,11 @@ namespace dnSpy.Debugger.Breakpoints {
 			foreach (var bp in BreakpointManager.Instance.Breakpoints) {
 				var ilbp = bp as ILCodeBreakpoint;
 				if (ilbp != null) {
+					if (string.IsNullOrEmpty(ilbp.SerializedDnSpyToken.Module.ModuleName))
+						continue;
+					if (string.IsNullOrEmpty(ilbp.SerializedDnSpyToken.Module.AssemblyFullName))
+						continue;
+
 					var bpx = new XElement("Breakpoint");
 					bpx.SetAttributeValue("Token", ilbp.SerializedDnSpyToken.Token);
 					bpx.SetAttributeValue("AssemblyFullName", SessionSettings.Escape(ilbp.SerializedDnSpyToken.Module.AssemblyFullName));

@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
@@ -206,7 +207,7 @@ namespace dnSpy.AsmEditor.Hex {
 				return null;
 
 			var addr = context.Reference.Reference as AddressReference;
-			if (addr != null)
+			if (addr != null && File.Exists(addr.Filename))
 				return addr;
 
 			var rsrc = context.Reference.Reference as IResourceNode;
@@ -224,10 +225,12 @@ namespace dnSpy.AsmEditor.Hex {
 			if (asmNode == null)
 				return null;
 			var mod = asmNode.DnSpyFile.ModuleDef;
-			if (mod != null)
+			if (mod != null && File.Exists(mod.Location))
 				return mod.Location;
 			var peImage = asmNode.DnSpyFile.PEImage;
-			return peImage == null ? null : peImage.FileName;
+			if (peImage != null && File.Exists(peImage.FileName))
+				return peImage.FileName;
+			return null;
 		}
 	}
 
@@ -405,18 +408,20 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		internal static IMemberDef GetMemberDef(ContextMenuEntryContext context) {
+			IMemberDef def = null;
 			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1 && context.SelectedTreeNodes[0] is IMemberTreeNode)
-				return MainWindow.ResolveReference(((IMemberTreeNode)context.SelectedTreeNodes[0]).Member);
-
-			// Only allow declarations of the defs, i.e., right-clicking a method call with a method
-			// def as reference should return null, not the method def.
-			if (context.Reference != null && context.Reference.IsLocalTarget && context.Reference.Reference is IMemberRef) {
-				// Don't resolve it. It's confusing if we show the method body of a called method
-				// instead of the current method.
-				return context.Reference.Reference as IMemberDef;
+				def = MainWindow.ResolveReference(((IMemberTreeNode)context.SelectedTreeNodes[0]).Member);
+			else {
+				// Only allow declarations of the defs, i.e., right-clicking a method call with a method
+				// def as reference should return null, not the method def.
+				if (context.Reference != null && context.Reference.IsLocalTarget && context.Reference.Reference is IMemberRef) {
+					// Don't resolve it. It's confusing if we show the method body of a called method
+					// instead of the current method.
+					def = context.Reference.Reference as IMemberDef;
+				}
 			}
-
-			return null;
+			var mod = def == null ? null : def.Module;
+			return mod is ModuleDefMD ? def : null;
 		}
 
 		static AddressReference GetAddressReference(ContextMenuEntryContext context) {
@@ -501,7 +506,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var rsrc = context.SelectedTreeNodes[0] as IResourceNode;
 			if (rsrc != null && rsrc.FileOffset != 0) {
 				var mod = ILSpyTreeNode.GetModule((ILSpyTreeNode)rsrc);
-				if (mod != null && !string.IsNullOrEmpty(mod.Location))
+				if (mod != null && File.Exists(mod.Location))
 					return new AddressReference(mod.Location, false, rsrc.FileOffset, rsrc.Length);
 			}
 
@@ -556,7 +561,7 @@ namespace dnSpy.AsmEditor.Hex {
 			if (md == null)
 				return null;
 			var mod = md.Module;
-			if (mod == null || string.IsNullOrEmpty(mod.Location))
+			if (mod == null || !File.Exists(mod.Location))
 				return null;
 			uint rva;
 			long fileOffset;
@@ -785,6 +790,12 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static TokenReference GetTokenReference(ContextMenuEntryContext context) {
+			var @ref = GetTokenReference2(context);
+			var mod = @ref == null ? null : @ref.ModuleDef;
+			return mod is ModuleDefMD ? @ref : null;
+		}
+
+		static TokenReference GetTokenReference2(ContextMenuEntryContext context) {
 			if (context == null)
 				return null;
 			if (context.Reference != null) {
@@ -826,8 +837,8 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Go to MD Table Row…", Order = 510.1, Category = "Hex", InputGestureText = "Ctrl+Shift+D")]
-	[ExportMainMenuCommand(MenuHeader = "Go to MD Table Row…", Menu = "_Edit", MenuOrder = 3510.1, MenuCategory = "Hex", MenuInputGestureText = "Ctrl+Shift+D")]
+	[ExportContextMenuEntry(Header = "Go to MD Table Row...", Order = 510.1, Category = "Hex", InputGestureText = "Ctrl+Shift+D")]
+	[ExportMainMenuCommand(MenuHeader = "Go to MD Table Row...", Menu = "_Edit", MenuOrder = 3510.1, MenuCategory = "Hex", MenuInputGestureText = "Ctrl+Shift+D")]
 	sealed class GoToMDTableRowUIHexEditorCommand : HexCommand {
 		internal static void OnLoaded() {
 			MainWindow.Instance.CodeBindings.Add(new RoutedCommand("GoToMDTableRowUI", typeof(GoToMDTableRowUIHexEditorCommand)),
@@ -869,14 +880,20 @@ namespace dnSpy.AsmEditor.Hex {
 			var textView = context.Element as DecompilerTextView;
 			if (textView != null) {
 				tabState = DecompileTabState.GetDecompileTabState(textView);
-				if (tabState != null)
-					return ILSpyTreeNode.GetModule(tabState.DecompiledNodes);
+				if (tabState != null && tabState.DecompiledNodes != null && tabState.DecompiledNodes.Length > 0)
+					return GetModule(ILSpyTreeNode.GetNode<AssemblyTreeNode>(tabState.DecompiledNodes[0]));
 			}
 
 			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length == 1)
-				return ILSpyTreeNode.GetModule(context.SelectedTreeNodes[0]);
+				return GetModule(ILSpyTreeNode.GetNode<AssemblyTreeNode>(context.SelectedTreeNodes[0]));
 
 			return null;
+		}
+
+		static ModuleDef GetModule(AssemblyTreeNode node) {
+			if (node == null)
+				return null;
+			return node.DnSpyFile.PEImage == null ? null : node.DnSpyFile.ModuleDef;
 		}
 
 		static void Execute2(ContextMenuEntryContext context) {

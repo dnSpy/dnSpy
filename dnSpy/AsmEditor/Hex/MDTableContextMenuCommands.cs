@@ -224,8 +224,8 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Go to RID…", Order = 520, Category = "Hex", InputGestureText = "Ctrl+G")]
-	[ExportMainMenuCommand(MenuHeader = "_Go to RID…", Menu = "_Edit", MenuOrder = 3520, MenuCategory = "Hex", MenuInputGestureText = "Ctrl+G")]
+	[ExportContextMenuEntry(Header = "_Go to RID...", Order = 520, Category = "Hex", InputGestureText = "Ctrl+G")]
+	[ExportMainMenuCommand(MenuHeader = "_Go to RID...", Menu = "_Edit", MenuOrder = 3520, MenuCategory = "Hex", MenuInputGestureText = "Ctrl+G")]
 	sealed class GoToRidMDTableCommand : MDTableCommand {
 		public override void Execute(MDTableContext context) {
 			var ask = new AskForInput();

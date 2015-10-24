@@ -132,7 +132,6 @@
     <Compile Include="Engine\NativeMethods.cs" />
     <Compile Include="Engine\ProcessCreationFlags.cs" />
     <Compile Include="Engine\SerializedDnModule.cs" />
-    <Compile Include="Engine\SerializedDnModuleWithAssembly.cs" />
     <Compile Include="Engine\StepRange.cs" />
     <Compile Include="Engine\TypeComparer.cs" />
     <Compile Include="Engine\TypePrinter.cs" />

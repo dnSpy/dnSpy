@@ -190,7 +190,7 @@ namespace dnSpy.Debugger {
 		public event EventHandler ProcessRunning;
 
 		static void SetRunningStatusMessage() {
-			MainWindow.Instance.SetStatus("Running…");
+			MainWindow.Instance.SetStatus("Running...");
 		}
 
 		static void SetReadyStatusMessage(string msg) {
@@ -425,7 +425,7 @@ namespace dnSpy.Debugger {
 				const int MAX_LEN = 128;
 				if (s.Length <= MAX_LEN)
 					return s;
-				return s.Substring(0, MAX_LEN / 2) + "…" + s.Substring(s.Length - (MAX_LEN - MAX_LEN / 2));
+				return s.Substring(0, MAX_LEN / 2) + "..." + s.Substring(s.Length - (MAX_LEN - MAX_LEN / 2));
 			}
 		}
 
@@ -962,7 +962,7 @@ namespace dnSpy.Debugger {
 					var mod = Function.Module;
 					if (mod == null)
 						return new SerializedDnSpyToken();
-					return new SerializedDnSpyToken(mod.SerializedDnModuleWithAssembly.ToSerializedDnSpyModule(), Function.Token);
+					return new SerializedDnSpyToken(mod.SerializedDnModule.ToSerializedDnSpyModule(), Function.Token);
 				}
 			}
 
@@ -1078,7 +1078,7 @@ namespace dnSpy.Debugger {
 		}
 
 		static SerializedDnSpyToken? CreateMethodKey(DnDebugger debugger, CorFrame frame) {
-			var sma = frame.SerializedDnModuleWithAssembly;
+			var sma = frame.SerializedDnModule;
 			if (sma == null)
 				return null;
 

@@ -271,7 +271,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Gets the module of the function or null
 		/// </summary>
-		public SerializedDnModuleWithAssembly? SerializedDnModuleWithAssembly {
+		public SerializedDnModule? SerializedDnModule {
 			get {
 				var func = Function;
 				if (func == null)
@@ -281,7 +281,7 @@ namespace dndbg.Engine {
 				if (module == null)
 					return null;
 
-				return module.SerializedDnModuleWithAssembly;
+				return module.SerializedDnModule;
 			}
 		}
 

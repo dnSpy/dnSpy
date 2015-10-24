@@ -45,11 +45,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 	[DebuggerDisplay("{Description}")]
 	sealed class MethodBodySettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Method Body";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "ILEditor",
 								Category = "AsmEd",
 								Order = 640)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "ILEditor",
 							MenuCategory = "AsmEd",
@@ -64,7 +64,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "ILEditor",
 								Category = "AsmEd",
 								Order = 640)]
@@ -144,7 +144,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Edit IL Instruction_s…",
+	[ExportContextMenuEntry(Header = "Edit IL Instruction_s...",
 							Icon = "ILEditor",
 							Category = "AsmEd",
 							Order = 639.99,

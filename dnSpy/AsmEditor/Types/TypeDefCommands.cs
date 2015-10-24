@@ -200,11 +200,11 @@ namespace dnSpy.AsmEditor.Types {
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateTypeDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Type";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewClass",
 								Category = "AsmEd",
 								Order = 540)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewClass",
 							MenuCategory = "AsmEd",
@@ -299,11 +299,11 @@ namespace dnSpy.AsmEditor.Types {
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateNestedTypeDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Nested Type";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewClass",
 								Category = "AsmEd",
 								Order = 550)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewClass",
 							MenuCategory = "AsmEd",
@@ -318,7 +318,7 @@ namespace dnSpy.AsmEditor.Types {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewClass",
 								Category = "AsmEd",
 								Order = 550)]
@@ -414,12 +414,12 @@ namespace dnSpy.AsmEditor.Types {
 	[DebuggerDisplay("{Description}")]
 	sealed class TypeDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Type";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 620)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuInputGestureText = "Alt+Enter",
@@ -435,7 +435,7 @@ namespace dnSpy.AsmEditor.Types {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",

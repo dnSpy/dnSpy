@@ -46,7 +46,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		public override int GetHashCode() {
-			return (Filename ?? string.Empty).GetHashCode() ^
+			return StringComparer.OrdinalIgnoreCase.GetHashCode(Filename) ^
 				(IsRVA ? 0 : int.MinValue) ^
 				(int)Address ^ (int)(Address >> 32) ^
 				(int)Length ^ (int)(Length >> 32);

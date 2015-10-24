@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			OnPropertyChanged("ImageObject");
 		}
 
-		internal void RefreshIfNameError(SerializedDnModuleWithAssembly serMod) {
+		internal void RefreshIfNameError(SerializedDnModule serMod) {
 			if (!NameError)
 				return;
 

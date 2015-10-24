@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		public void Initialize(MenuItem menuItem) {
-			menuItem.Header = MainWindow.Instance.ActiveTabState is DecompileTabState ? "_Save Code…" : "_Save…";
+			menuItem.Header = MainWindow.Instance.ActiveTabState is DecompileTabState ? "_Save Code..." : "_Save...";
 		}
 
 		public void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {

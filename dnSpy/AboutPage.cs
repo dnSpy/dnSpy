@@ -122,7 +122,7 @@ namespace ICSharpCode.ILSpy {
 			stackPanel.Children.Add(button);
 
 			button.Click += delegate {
-				button.Content = "Checking…";
+				button.Content = "Checking...";
 				button.IsEnabled = false;
 				GetLatestVersionAsync().ContinueWith(
 					delegate (Task<AvailableVersionInfo> task) {

@@ -304,11 +304,11 @@ namespace dnSpy.AsmEditor.Method {
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateMethodDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Method";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewMethod",
 								Category = "AsmEd",
 								Order = 560)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewMethod",
 							MenuCategory = "AsmEd",
@@ -323,7 +323,7 @@ namespace dnSpy.AsmEditor.Method {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewMethod",
 								Category = "AsmEd",
 								Order = 560)]
@@ -417,12 +417,12 @@ namespace dnSpy.AsmEditor.Method {
 	[DebuggerDisplay("{Description}")]
 	sealed class MethodDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Method";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 630)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuInputGestureText = "Alt+Enter",
@@ -438,7 +438,7 @@ namespace dnSpy.AsmEditor.Method {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",

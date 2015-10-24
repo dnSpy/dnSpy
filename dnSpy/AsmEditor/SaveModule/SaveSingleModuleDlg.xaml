@@ -83,7 +83,7 @@
 					   VerticalAlignment="Center"
 					   HorizontalAlignment="Center"
 					   Foreground="Red"
-					   Text="Canceling the save. Please wait…"
+					   Text="Canceling the save. Please wait..."
 					   />
 
 		<Grid Grid.Row="4" Margin="5 0 5 5">

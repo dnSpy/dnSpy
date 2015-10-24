@@ -5778,7 +5778,7 @@
 	</Style>
 	<Style x:Key="EllipsisButton" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Padding" Value="7 0 7 0" />
-		<Setter Property="Content" Value="&#8230;" />
+		<Setter Property="Content" Value="..." />
 	</Style>
 	<Style x:Key="{x:Type mm:AnalyzerTreeView}"
 		   BasedOn="{StaticResource {x:Type shtv:SharpTreeView}}"

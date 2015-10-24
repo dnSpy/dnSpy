@@ -183,7 +183,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Save…", Order = 220, Category = "LOCValues", Icon = "Save")]
+	[ExportContextMenuEntry(Header = "_Save...", Order = 220, Category = "LOCValues", Icon = "Save")]
 	sealed class SaveDataLocalsCtxMenuCommand : LocalsCtxMenuCommand {
 		protected override void Execute(LocalsCtxMenuContext context) {
 			var value = GetValue(context);

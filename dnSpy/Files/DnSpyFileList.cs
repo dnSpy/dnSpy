@@ -220,7 +220,7 @@ namespace dnSpy.Files {
 				return ForceAddFileToList_NoLock(newFile, canAdd, delayLoad, index, canDispose);
 		}
 
-		internal DnSpyFile ForceAddFileToList_NoLock(DnSpyFile newFile, bool canAdd, bool delayLoad, int index, bool canDispose) {
+		DnSpyFile ForceAddFileToList_NoLock(DnSpyFile newFile, bool canAdd, bool delayLoad, int index, bool canDispose) {
 			if (!canAdd)
 				return newFile;
 
@@ -287,8 +287,7 @@ namespace dnSpy.Files {
 			options.Dispatcher.VerifyAccess();
 			lock (lockObj) {
 				files.Remove(file);
-				if (canDispose)
-					file.Dispose();
+				// No need to Dispose() it. The GC will take care of it
 			}
 			if (canDispose)
 				CallGC();

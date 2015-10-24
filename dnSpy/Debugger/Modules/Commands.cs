@@ -153,8 +153,10 @@ namespace dnSpy.Debugger.Modules {
 
 		internal static bool ShowErrorIfDynamic(DnModule module) {
 			if (module.IsDynamic && DebugManager.Instance.ProcessState != DebuggerProcessState.Stopped) {
-				MainWindow.Instance.ShowMessageBox("You must break the process before dynamic modules can be loaded.");
-				return false;
+				if (InMemoryModuleManager.Instance.LoadFile(module, false) == null) {
+					MainWindow.Instance.ShowMessageBox("You must break the process before dynamic modules can be loaded.");
+					return false;
+				}
 			}
 			return true;
 		}
@@ -191,12 +193,19 @@ namespace dnSpy.Debugger.Modules {
 			ExecuteInternal(context, false);
 		}
 
+		protected override bool IsVisible(ModulesCtxMenuContext context) {
+			return IsEnabled(context);
+		}
+
 		protected override bool IsEnabled(ModulesCtxMenuContext context) {
 			return CanGoToModule(context);
 		}
 
 		internal static bool CanGoToModule(ModulesCtxMenuContext context) {
-			return context != null && context.SelectedItems.Length > 0;
+			if (context == null || context.SelectedItems.Length == 0)
+				return false;
+			var vm = context.SelectedItems[0];
+			return !vm.Module.IsDynamic && !vm.Module.IsInMemory;
 		}
 
 		internal static void ExecuteInternal(ModulesCtxMenuContext context, bool newTab) {
@@ -218,6 +227,10 @@ namespace dnSpy.Debugger.Modules {
 	sealed class OpenModuleFromMemoryNewTabModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		protected override void Execute(ModulesCtxMenuContext context) {
 			OpenModuleFromMemoryModulesCtxMenuCommand.ExecuteInternal(context, true);
+		}
+
+		protected override bool IsVisible(ModulesCtxMenuContext context) {
+			return IsEnabled(context);
 		}
 
 		protected override bool IsEnabled(ModulesCtxMenuContext context) {

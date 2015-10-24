@@ -48,8 +48,8 @@
 						<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 					</Grid>
 
-					<Button Grid.Row="1" Content="Initialize from Field…" Command="{Binding InitializeFromFieldCommand}" Visibility="{Binding IsField, Converter={StaticResource BooleanToVisibilityConverter}}" />
-					<Button Grid.Row="2" Content="Initialize from Method…" Command="{Binding InitializeFromMethodCommand}" Visibility="{Binding IsMethod, Converter={StaticResource BooleanToVisibilityConverter}}" />
+					<Button Grid.Row="1" Content="Initialize from Field..." Command="{Binding InitializeFromFieldCommand}" Visibility="{Binding IsField, Converter={StaticResource BooleanToVisibilityConverter}}" />
+					<Button Grid.Row="2" Content="Initialize from Method..." Command="{Binding InitializeFromMethodCommand}" Visibility="{Binding IsMethod, Converter={StaticResource BooleanToVisibilityConverter}}" />
 				</Grid>
 			</ScrollViewer>
 		</TabItem>

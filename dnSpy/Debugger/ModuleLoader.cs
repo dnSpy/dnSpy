@@ -47,13 +47,13 @@ namespace dnSpy.Debugger {
 			return null;
 		}
 
-		static DnModule GetDnModule(SerializedDnSpyModule serModAsm) {
+		static DnModule GetDnModule(SerializedDnSpyModule serMod) {
 			var dbg = DebugManager.Instance.Debugger;
 			if (dbg == null)
 				return null;
 			//TODO: This method should have an AppDomain parameter.
 			foreach (var m in dbg.Modules) {
-				if (m.SerializedDnModuleWithAssembly.ToSerializedDnSpyModule().Equals(serModAsm))
+				if (m.SerializedDnModule.ToSerializedDnSpyModule().Equals(serMod))
 					return m;
 			}
 			return null;
@@ -68,7 +68,7 @@ namespace dnSpy.Debugger {
 			if (dnModule != null)
 				return LoadModule(dnModule, canLoadDynFile);
 
-			return LoadModule(module.SerializedDnModuleWithAssembly.ToSerializedDnSpyModule(), canLoadDynFile);
+			return LoadModule(module.SerializedDnModule.ToSerializedDnSpyModule(), canLoadDynFile);
 		}
 
 		public DnSpyFile LoadModule(DnModule module, bool canLoadDynFile) {
@@ -76,8 +76,8 @@ namespace dnSpy.Debugger {
 				return null;
 			if (UseMemoryModules || module.IsDynamic || module.IsInMemory)
 				return InMemoryModuleManager.Instance.LoadFile(module, canLoadDynFile);
-			var serModAsm = module.SerializedDnModuleWithAssembly.ToSerializedDnSpyModule();
-			return LoadModule(serModAsm, canLoadDynFile);
+			var serMod = module.SerializedDnModule.ToSerializedDnSpyModule();
+			return LoadModule(serMod, canLoadDynFile);
 		}
 
 		IEnumerable<DnSpyFile> AllDnSpyFiles {
@@ -108,33 +108,33 @@ namespace dnSpy.Debugger {
 			}
 		}
 
-		public DnSpyFile LoadModule(SerializedDnSpyModule serModAsm, bool canLoadDynFile) {
+		public DnSpyFile LoadModule(SerializedDnSpyModule serMod, bool canLoadDynFile) {
 			const bool isAutoLoaded = true;
 
-			if (UseMemoryModules || serModAsm.IsDynamic || serModAsm.IsInMemory) {
-				var dnModule = GetDnModule(serModAsm);
+			if (UseMemoryModules || serMod.IsDynamic || serMod.IsInMemory) {
+				var dnModule = GetDnModule(serMod);
 				if (dnModule != null)
 					return InMemoryModuleManager.Instance.LoadFile(dnModule, canLoadDynFile);
 			}
 
 			foreach (var file in AllActiveDnSpyFiles) {
 				var serModFile = file.SerializedDnSpyModule;
-				if (serModFile != null && serModFile.Value.Equals(serModAsm))
+				if (serModFile != null && serModFile.Value.Equals(serMod))
 					return file;
 			}
 			foreach (var file in AllDnSpyFiles) {
 				var serModFile = file.SerializedDnSpyModule;
-				if (serModFile != null && serModFile.Value.Equals(serModAsm))
+				if (serModFile != null && serModFile.Value.Equals(serMod))
 					return file;
 			}
 
-			if (serModAsm.IsDynamic || serModAsm.IsInMemory)
+			if (serMod.IsDynamic || serMod.IsInMemory)
 				return null;
 
-			string moduleFilename = serModAsm.ModuleName;
+			string moduleFilename = serMod.ModuleName;
 			if (!File.Exists(moduleFilename))
 				return null;
-			string asmFilename = GetAssemblyFilename(moduleFilename, serModAsm.AssemblyFullName);
+			string asmFilename = GetAssemblyFilename(moduleFilename, serMod.AssemblyFullName);
 			var dnspyFileList = MainWindow.Instance.DnSpyFileList;
 			lock (dnspyFileList.GetLockObj()) {
 				if (string.IsNullOrEmpty(asmFilename))
@@ -162,6 +162,8 @@ namespace dnSpy.Debugger {
 				return null;
 			try {
 				var asm = new AssemblyNameInfo(assemblyFullName);
+				if (Path.GetFileName(asm.Name) != asm.Name || asm.Name.Length == 0)
+					return null;
 				var fn = Path.Combine(Path.GetDirectoryName(moduleFilename), asm.Name);
 				var fnDll = fn + ".dll";
 				if (File.Exists(fnDll))

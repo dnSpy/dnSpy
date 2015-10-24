@@ -76,10 +76,14 @@ namespace dnSpy.Debugger.IMModules {
 		}
 		readonly DnProcess process;
 
+		internal Dictionary<ModuleDef, MemoryModuleDefFile> Dictionary {
+			get { return dict; }
+		}
+		readonly Dictionary<ModuleDef, MemoryModuleDefFile> dict;
+
 		readonly ulong address;
 		readonly byte[] data;
 		readonly bool isInMemory;
-		readonly Dictionary<ModuleDef, MemoryModuleDefFile> dict;
 
 		public MemoryModuleDefFile(Dictionary<ModuleDef, MemoryModuleDefFile>  dict, DnProcess process, ulong address, byte[] data, bool isInMemory, ModuleDef module, bool loadSyms, bool autoUpdateMemory)
 			: base(module, loadSyms) {
@@ -89,6 +93,10 @@ namespace dnSpy.Debugger.IMModules {
 			this.data = data;
 			this.isInMemory = isInMemory;
 			this.autoUpdateMemory = autoUpdateMemory;
+		}
+
+		public override bool LoadedFromFile {
+			get { return false; }
 		}
 
 		public override bool IsReadOnly {
@@ -107,9 +115,6 @@ namespace dnSpy.Debugger.IMModules {
 			ProcessMemoryUtils.ReadMemory(process, address, newData, 0, data.Length);
 			if (Equals(data, newData))
 				return false;
-
-			//TODO: The HexBoxStream must get notified of any changes so the PE fields get updated
-
 			Array.Copy(newData, data, data.Length);
 			return true;
 		}

@@ -325,7 +325,7 @@ namespace dnSpy.TreeNodes.Hex {
 				offs++;
 			}
 			var s = Encoding.UTF8.GetString(bytes.ToArray());
-			return tooLongString ? s + "…" : s;
+			return tooLongString ? s + "..." : s;
 		}
 	}
 

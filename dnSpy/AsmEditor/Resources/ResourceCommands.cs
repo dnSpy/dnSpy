@@ -501,11 +501,11 @@ namespace dnSpy.AsmEditor.Resources {
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateFileResourceCommand : IUndoCommand {
 		const string CMD_NAME = "Create File Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewResource",
 								Category = "AsmEd",
 								Order = 600)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewResource",
 							MenuCategory = "AsmEd",
@@ -520,7 +520,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewResource",
 								Category = "AsmEd",
 								Order = 600)]
@@ -662,11 +662,11 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateMultiFileResourceCommand : CreateResourceTreeNodeCommand {
 		const string CMD_NAME = "Create Multi File Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewResourcesFile",
 								Category = "AsmEd",
 								Order = 610)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewResourcesFile",
 							MenuCategory = "AsmEd",
@@ -681,7 +681,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewResourcesFile",
 								Category = "AsmEd",
 								Order = 610)]
@@ -740,11 +740,11 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateAssemblyLinkedResourceCommand : CreateResourceTreeNodeCommand {
 		const string CMD_NAME = "Create Assembly Linked Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewAssembly",
 								Category = "AsmEd",
 								Order = 620)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewAssembly",
 							MenuCategory = "AsmEd",
@@ -759,7 +759,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewAssembly",
 								Category = "AsmEd",
 								Order = 620)]
@@ -819,11 +819,11 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateFileLinkedResourceCommand : CreateResourceTreeNodeCommand {
 		const string CMD_NAME = "Create File Linked Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
 								Order = 630)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
@@ -838,7 +838,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
 								Order = 630)]
@@ -900,12 +900,12 @@ namespace dnSpy.AsmEditor.Resources {
 	[DebuggerDisplay("{Description}")]
 	sealed class ResourceSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 680)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuInputGestureText = "Alt+Enter",
@@ -921,7 +921,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
@@ -1085,11 +1085,11 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateImageResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create System.Data.Bitmap/Icon Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewImage",
 								Category = "AsmEd",
 								Order = 640)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewImage",
 							MenuCategory = "AsmEd",
@@ -1104,7 +1104,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewImage",
 								Category = "AsmEd",
 								Order = 640)]
@@ -1181,11 +1181,11 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateImageListResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create System.Windows.Forms.ImageListStreamer Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewImage",
 								Category = "AsmEd",
 								Order = 650)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewImage",
 							MenuCategory = "AsmEd",
@@ -1200,7 +1200,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewImage",
 								Category = "AsmEd",
 								Order = 650)]
@@ -1278,11 +1278,11 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateByteArrayResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create Byte Array Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewBinary",
 								Category = "AsmEd",
 								Order = 660)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewBinary",
 							MenuCategory = "AsmEd",
@@ -1297,7 +1297,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewBinary",
 								Category = "AsmEd",
 								Order = 670)]
@@ -1376,11 +1376,11 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateStreamResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create System.IO.Stream Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewBinary",
 								Category = "AsmEd",
 								Order = 670)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewBinary",
 							MenuCategory = "AsmEd",
@@ -1395,7 +1395,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewBinary",
 								Category = "AsmEd",
 								Order = 680)]
@@ -1432,11 +1432,11 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewResource",
 								Category = "AsmEd",
 								Order = 650)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewResource",
 							MenuCategory = "AsmEd",
@@ -1451,7 +1451,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewResource",
 								Category = "AsmEd",
 								Order = 660)]
@@ -1603,12 +1603,12 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class ResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
 		const string CMD_NAME = "Edit Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 690)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuInputGestureText = "Alt+Enter",
@@ -1624,7 +1624,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
@@ -1692,12 +1692,12 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class ImageResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
 		const string CMD_NAME = "Edit Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 700)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuInputGestureText = "Alt+Enter",
@@ -1713,7 +1713,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
@@ -1775,12 +1775,12 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class SerializedImageResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
 		const string CMD_NAME = "Edit Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 710)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuInputGestureText = "Alt+Enter",
@@ -1796,7 +1796,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
@@ -1858,12 +1858,12 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class SerializedImageListStreamerResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
 		const string CMD_NAME = "Edit Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 720)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuInputGestureText = "Alt+Enter",
@@ -1879,7 +1879,7 @@ namespace dnSpy.AsmEditor.Resources {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",

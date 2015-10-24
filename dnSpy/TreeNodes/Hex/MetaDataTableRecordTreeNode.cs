@@ -232,7 +232,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		void WriteFileInfo(ITextOutput output) {
-			output.Write(ReadStringsHeap(1), TextTokenType.Assembly);
+			output.WriteFilename(ReadStringsHeap(1));
 		}
 
 		void WriteExportedTypeInfo(ITextOutput output) {
@@ -240,7 +240,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		void WriteManifestResourceInfo(ITextOutput output) {
-			output.Write(ReadStringsHeap(2), TextTokenType.Comment);
+			output.WriteFilename(ReadStringsHeap(2));
 		}
 
 		void WriteGenericParamInfo(ITextOutput output) {

@@ -158,8 +158,8 @@ namespace dnSpy {
 
 		string GetSaveButtonText(TabInfo[] tabs) {
 			if (tabs.Length == 1 && !(tabs[0].TabState is DecompileTabState))
-				return "_Save…";
-			return "_Save Code…";
+				return "_Save...";
+			return "_Save Code...";
 		}
 
 		private void activateButton_Click(object sender, RoutedEventArgs e) {

@@ -105,7 +105,7 @@ namespace dnSpy.Files {
 		DnSpyFile LookupFromSearchPaths(IAssembly asmName, ModuleDef sourceModule, bool exactCheck) {
 			DnSpyFile file;
 			string sourceModuleDir = null;
-			if (sourceModule != null && !string.IsNullOrWhiteSpace(sourceModule.Location)) {
+			if (sourceModule != null && File.Exists(sourceModule.Location)) {
 				sourceModuleDir = Path.GetDirectoryName(sourceModule.Location);
 				file = TryLoadFromDir(asmName, exactCheck, sourceModuleDir);
 				if (file != null)

@@ -214,11 +214,11 @@ namespace dnSpy.AsmEditor.Event {
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateEventDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Event";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewEvent",
 								Category = "AsmEd",
 								Order = 590)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewEvent",
 							MenuCategory = "AsmEd",
@@ -233,7 +233,7 @@ namespace dnSpy.AsmEditor.Event {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewEvent",
 								Category = "AsmEd",
 								Order = 590)]
@@ -322,12 +322,12 @@ namespace dnSpy.AsmEditor.Event {
 	[DebuggerDisplay("{Description}")]
 	sealed class EventDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Event";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 670)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuInputGestureText = "Alt+Enter",
@@ -343,7 +343,7 @@ namespace dnSpy.AsmEditor.Event {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",

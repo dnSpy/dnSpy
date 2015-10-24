@@ -18,7 +18,7 @@
 
 
 namespace ICSharpCode.ILSpy {
-	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "Open from _GAC…", MenuIcon = "AssemblyListGAC", MenuCategory = "Open", MenuOrder = 1110)]
+	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "Open from _GAC...", MenuIcon = "AssemblyListGAC", MenuCategory = "Open", MenuOrder = 1110)]
 	sealed class OpenFromGacCommand : SimpleCommand {
 		public override void Execute(object parameter) {
 			OpenFromGacDialog dlg = new OpenFromGacDialog();

@@ -209,11 +209,11 @@ namespace dnSpy.AsmEditor.Property {
 	[DebuggerDisplay("{Description}")]
 	sealed class CreatePropertyDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Property";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewProperty",
 								Category = "AsmEd",
 								Order = 580)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewProperty",
 							MenuCategory = "AsmEd",
@@ -228,7 +228,7 @@ namespace dnSpy.AsmEditor.Property {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewProperty",
 								Category = "AsmEd",
 								Order = 580)]
@@ -319,12 +319,12 @@ namespace dnSpy.AsmEditor.Property {
 	[DebuggerDisplay("{Description}")]
 	sealed class PropertyDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Property";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 660)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuInputGestureText = "Alt+Enter",
@@ -340,7 +340,7 @@ namespace dnSpy.AsmEditor.Property {
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",

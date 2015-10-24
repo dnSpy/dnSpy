@@ -490,9 +490,9 @@ namespace ICSharpCode.Decompiler.Ast {
 		/// <summary>
 		/// Converts a type reference.
 		/// </summary>
-		/// <param name="type">The Cecil type reference that should be converted into
+		/// <param name="type">The type reference that should be converted into
 		/// a type system type reference.</param>
-		/// <param name="typeAttributes">Attributes associated with the Cecil type reference.
+		/// <param name="typeAttributes">Attributes associated with the type reference.
 		/// This is used to support the 'dynamic' type.</param>
 		public static AstType ConvertType(ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null, ConvertTypeOptions options = ConvertTypeOptions.None)
 		{
@@ -503,9 +503,9 @@ namespace ICSharpCode.Decompiler.Ast {
 		/// <summary>
 		/// Converts a type reference.
 		/// </summary>
-		/// <param name="type">The Cecil type reference that should be converted into
+		/// <param name="type">The type reference that should be converted into
 		/// a type system type reference.</param>
-		/// <param name="typeAttributes">Attributes associated with the Cecil type reference.
+		/// <param name="typeAttributes">Attributes associated with the type reference.
 		/// This is used to support the 'dynamic' type.</param>
 		public static AstType ConvertType(TypeSig type, IHasCustomAttribute typeAttributes = null, ConvertTypeOptions options = ConvertTypeOptions.None)
 		{

@@ -99,6 +99,9 @@ namespace dnSpy.TextView {
 		}
 
 		public void Append(TextTokenType tokenType, string s) {
+			if (s == null)
+				return;
+
 			int oldCurrentOffset = currentOffset;
 
 			// Newlines could be part of the input string

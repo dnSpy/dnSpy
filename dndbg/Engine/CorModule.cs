@@ -141,10 +141,6 @@ namespace dndbg.Engine {
 		}
 		readonly bool isInMemory;
 
-		public SerializedDnModule SerializedDnModule {
-			get { return new SerializedDnModule(SerializedName, IsDynamic, IsInMemory); }
-		}
-
 		string SerializedName {
 			get {
 				if (!IsInMemory)
@@ -153,10 +149,10 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public SerializedDnModuleWithAssembly SerializedDnModuleWithAssembly {
+		public SerializedDnModule SerializedDnModule {
 			get {
 				var asm = Assembly;
-				return new SerializedDnModuleWithAssembly(asm == null ? string.Empty : asm.FullName, SerializedDnModule);
+				return new SerializedDnModule(asm == null ? string.Empty : asm.FullName, SerializedName, IsDynamic, IsInMemory);
 			}
 		}
 

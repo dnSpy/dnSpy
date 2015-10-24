@@ -42,11 +42,11 @@ namespace dnSpy.AsmEditor.Module {
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateNetModuleCommand : IUndoCommand {
 		const string CMD_NAME = "Create NetModule";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
 								Order = 530)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
@@ -406,11 +406,11 @@ namespace dnSpy.AsmEditor.Module {
 
 	sealed class AddNewNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand {
 		const string CMD_NAME = "Add New NetModule to Assembly";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
 								Order = 510)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
@@ -456,11 +456,11 @@ namespace dnSpy.AsmEditor.Module {
 
 	sealed class AddExistingNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand {
 		const string CMD_NAME = "Add Existing NetModule to Assembly";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "NewAssemblyModule",
 								Category = "AsmEd",
 								Order = 520)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "NewAssemblyModule",
 							MenuCategory = "AsmEd",
@@ -617,12 +617,12 @@ namespace dnSpy.AsmEditor.Module {
 	[DebuggerDisplay("{Description}")]
 	sealed class ModuleSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Module";
-		[ExportContextMenuEntry(Header = CMD_NAME + "…",
+		[ExportContextMenuEntry(Header = CMD_NAME + "...",
 								Icon = "Settings",
 								InputGestureText = "Alt+Enter",
 								Category = "AsmEd",
 								Order = 610)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "…",
+		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
 							Menu = "_Edit",
 							MenuIcon = "Settings",
 							MenuInputGestureText = "Alt+Enter",

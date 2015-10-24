@@ -95,6 +95,13 @@ namespace dnSpy.Files {
 		}
 
 		/// <summary>
+		/// true if it was loaded from a file, false if it was eg. loaded from memory
+		/// </summary>
+		public virtual bool LoadedFromFile {
+			get { return true; }
+		}
+
+		/// <summary>
 		/// true if the file can't be edited, eg. it's an in-memory module and we're debugging it
 		/// </summary>
 		public virtual bool IsReadOnly {
@@ -234,7 +241,7 @@ namespace dnSpy.Files {
 		}
 
 		void LoadSymbols(string dotNetFilename) {
-			if (string.IsNullOrEmpty(dotNetFilename))
+			if (!File.Exists(dotNetFilename))
 				return;
 			// Happens if a module has been removed but then the exact same instance
 			// was re-added.

@@ -171,7 +171,7 @@ namespace dnSpy.Debugger.Locals {
 					var mod = ValueContext.Function.Module;
 					if (mod == null)
 						return null;
-					return new SerializedDnSpyToken(mod.SerializedDnModuleWithAssembly.ToSerializedDnSpyModule(), ValueContext.Function.Token);
+					return new SerializedDnSpyToken(mod.SerializedDnModule.ToSerializedDnSpyModule(), ValueContext.Function.Token);
 				}
 			}
 
