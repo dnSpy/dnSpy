@@ -6,6 +6,10 @@ dnSpy is a .NET assembly editor, decompiler, and debugger forked from
 
 License: GPLv3
 
+![pic1](https://cloud.githubusercontent.com/assets/1060731/10712445/bf8d22e8-7a9b-11e5-8232-9bfc6dc039d8.png)
+![pic2](https://cloud.githubusercontent.com/assets/1060731/10712444/bf69a66a-7a9b-11e5-8039-0c3c2ea4ffb1.png)
+![pic3](https://cloud.githubusercontent.com/assets/1060731/10712446/bf8ef622-7a9b-11e5-8e03-ed142621e009.png)
+
 Binaries
 ========
 Latest release: https://github.com/0xd4d/dnSpy/releases
