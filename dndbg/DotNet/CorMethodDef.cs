@@ -47,7 +47,7 @@ namespace dndbg.DotNet {
 		}
 
 		protected override bool CanFreeMethodBody {
-			get { return canFreeMethodBody; }
+			get { return canFreeMethodBody && !readerModule.DisableMDAPICalls; }
 		}
 		bool canFreeMethodBody;
 
@@ -92,6 +92,7 @@ namespace dndbg.DotNet {
 				InitDeclSecurities_NoLock();
 				InitGenericParams_NoLock();
 				InitSignature_NoLock();
+				Debug.Assert(CanFreeMethodBody, "Can't free method body");
 				FreeMethodBody();
 				InitParamDefs_NoLock();
 				ResetImplMap();
