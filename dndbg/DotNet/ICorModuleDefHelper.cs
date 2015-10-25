@@ -51,7 +51,6 @@ namespace dndbg.DotNet {
 		/// <summary>
 		/// Returns true if <paramref name="module"/> is the manifest (first) module
 		/// </summary>
-		/// <returns></returns>
 		bool IsManifestModule { get; }
 
 		/// <summary>

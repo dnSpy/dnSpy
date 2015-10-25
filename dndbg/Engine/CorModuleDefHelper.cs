@@ -70,7 +70,7 @@ namespace dndbg.Engine {
 		}
 
 		public bool IsManifestModule {
-			get { return this.module.IncrementedId == 0; }
+			get { return this.module.CorModule.IsManifestModule; }
 		}
 
 		public IBinaryReader CreateBodyReader(uint bodyRva, uint mdToken) {
