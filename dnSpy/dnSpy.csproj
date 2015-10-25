@@ -759,7 +759,6 @@
     <Compile Include="Search\EntryPointTreeViewNodeFilter.cs" />
     <Compile Include="Search\FilterNothingTreeViewNodeFilter.cs" />
     <Compile Include="Search\FlagsTreeViewNodeFilter.cs" />
-    <Compile Include="Search\PublicApiTreeViewNodeFilter.cs" />
     <Compile Include="Search\SameAssemblyTreeViewNodeFilter.cs" />
     <Compile Include="Search\SameModuleTreeViewNodeFilter.cs" />
     <Compile Include="Search\ShowNothingTreeViewNodeFilterBase.cs" />
@@ -1522,7 +1521,6 @@
     <Resource Include="Images\PInvokeMethodPrivate.png" />
     <Resource Include="Images\PInvokeMethodProtected.png" />
     <Resource Include="Images\PInvokeMethodProtectedInternal.png" />
-    <Resource Include="Images\PrivateInternal.png" />
     <Resource Include="Images\Process.png" />
     <Resource Include="Images\Property.png" />
     <Resource Include="Images\PropertyCompilerControlled.png" />

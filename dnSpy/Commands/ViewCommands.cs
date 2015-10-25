@@ -22,33 +22,6 @@ using System.Windows.Input;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Commands {
-	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View1", MenuHeader = "Show _Internal Types and Members", MenuOrder = 3000, MenuIcon = "PrivateInternal")]
-	sealed class ShowInternalTypesAndMembersCommand : ICommand, IMainMenuCheckableCommand {
-		public bool? IsChecked {
-			get { return false; }
-		}
-
-		public Binding Binding {
-			get {
-				return new Binding("FilterSettings.ShowInternalApi") {
-					Source = MainWindow.Instance.SessionSettings,
-				};
-			}
-		}
-
-		public bool CanExecute(object parameter) {
-			return true;
-		}
-
-		public event System.EventHandler CanExecuteChanged {
-			add { }
-			remove { }
-		}
-
-		public void Execute(object parameter) {
-		}
-	}
-
 	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View2", MenuHeader = "_Word Wrap", MenuOrder = 3100, MenuIcon = "WordWrap", MenuInputGestureText = "Ctrl+Alt+W")]
 	sealed class WordWrapCommand : ICommand, IMainMenuCheckableCommand {
 		public bool? IsChecked {

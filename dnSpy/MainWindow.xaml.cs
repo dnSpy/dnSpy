@@ -1637,15 +1637,6 @@ namespace ICSharpCode.ILSpy {
 				if (tabState != null)
 					DecompileRestoreLocation(tabState, tabState.DecompiledNodes, sessionSettings.FilterSettings.Language);
 			}
-			else if (e.PropertyName == "ShowInternalApi") {
-				if (treeView.SelectedItem != null) {
-					this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
-						var item = treeView.SelectedItem;
-						if (item != null)
-							treeView.ScrollIntoView(item);
-					}));
-				}
-			}
 		}
 
 		void SetLanguage(Language language) {

@@ -18,7 +18,6 @@
 
 using System;
 using System.ComponentModel;
-using System.Xml.Linq;
 using dnSpy.Search;
 using dnSpy.TreeNodes;
 
@@ -32,34 +31,20 @@ namespace ICSharpCode.ILSpy {
 	/// clone to the ILSpyTreeNodes whenever the main mutable instance changes.
 	/// </remarks>
 	public class FilterSettings : INotifyPropertyChanged {
-		internal FilterSettings(ITreeViewNodeFilter filter, Language language, bool showInternalApi) {
+		internal FilterSettings(ITreeViewNodeFilter filter, Language language) {
 			this.filter = filter;
-			this.origFilter = this.filter;
-			InitializeFilter();
-			this.ShowInternalApi = showInternalApi;
 			this.Language = language ?? Languages.GetLanguage("C#");
 		}
 
-		public FilterSettings(XElement element) {
+		public FilterSettings() {
 			this.filter = FilterNothingTreeViewNodeFilter.Instance;
-			this.origFilter = this.filter;
-			InitializeFilter();
-			this.ShowInternalApi = (bool?)element.Element("ShowInternalApi") ?? true;
 			this.Language = Languages.GetLanguage("C#");
-		}
-
-		public XElement SaveAsXml() {
-			return new XElement(
-				"FilterSettings",
-				new XElement("ShowInternalApi", this.ShowInternalApi)
-			);
 		}
 
 		internal ITreeViewNodeFilter Filter {
 			get { return filter; }
 		}
-		ITreeViewNodeFilter filter;
-		readonly ITreeViewNodeFilter origFilter;
+		readonly ITreeViewNodeFilter filter;
 
 		string searchTerm;
 
@@ -84,29 +69,6 @@ namespace ICSharpCode.ILSpy {
 			if (string.IsNullOrEmpty(searchTerm))
 				return true;
 			return text.IndexOf(searchTerm, StringComparison.OrdinalIgnoreCase) >= 0;
-		}
-
-		bool showInternalApi;
-
-		/// <summary>
-		/// Gets/Sets whether internal API members should be shown.
-		/// </summary>
-		public bool ShowInternalApi {
-			get { return showInternalApi; }
-			set {
-				if (showInternalApi != value) {
-					showInternalApi = value;
-					InitializeFilter();
-					OnPropertyChanged("ShowInternalApi");
-				}
-			}
-		}
-
-		void InitializeFilter() {
-			if (ShowInternalApi)
-				filter = origFilter;
-			else
-				filter = new PublicApiTreeViewNodeFilter(origFilter, () => !ShowInternalApi);
 		}
 
 		Language language;

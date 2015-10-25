@@ -54,7 +54,6 @@
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="Auto" />
-				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
@@ -65,10 +64,7 @@
 			<Button Grid.Column="2" Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding OpenCommand}" ToolTip="Open Assembly or NetModule" Visibility="{Binding CanOpenAssembly, Converter={StaticResource BooleanToVisibilityConverter}}">
 				<Image Name="openImage" Width="16" Height="16"/>
 			</Button>
-			<CheckBox Grid.Column="3" Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" IsChecked="{Binding ShowInternalApi}" ToolTip="Show Internal Types and Members">
-				<Image Name="privateInternalImage" Width="16" Height="16"/>
-			</CheckBox>
-			<ComboBox Grid.Column="4" Margin="5 0 0 0" DisplayMemberPath="Name" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" />
+			<ComboBox Grid.Column="3" Margin="5 0 0 0" DisplayMemberPath="Name" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" />
 		</Grid>
 
 		<ListBox Grid.Row="1"

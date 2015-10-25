@@ -228,26 +228,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
 		}
 
-		public bool ShowInternalApi {
-			get { return showInternalApi; }
-			set {
-				if (showInternalApi != value) {
-					showInternalApi = value;
-					OnPropertyChanged("ShowInternalApi");
-					CreateNewFilterSettings();
-					if (SelectedItem != null) {
-						if (makeVisible == null)
-							throw new InvalidOperationException();
-						makeVisible.ScrollIntoView(SelectedItem);
-					}
-				}
-			}
-		}
-		bool showInternalApi;
-
 		public MemberPickerVM(IDnSpyFileListOptions options, Language language, ITreeViewNodeFilter filter, IEnumerable<DnSpyFile> assemblies) {
 			this.Language = language;
-			this.ShowInternalApi = true;
 			this.filter = filter;
 			this.origFilter = filter;
 
@@ -282,7 +264,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		void CreateNewFilterSettings() {
 			if (dnSpyFileListTreeNode != null) {
-				dnSpyFileListTreeNode.FilterSettings = new FilterSettings(origFilter, Language, ShowInternalApi);
+				dnSpyFileListTreeNode.FilterSettings = new FilterSettings(origFilter, Language);
 				filter = dnSpyFileListTreeNode.FilterSettings.Filter;
 				RestartSearch();
 			}

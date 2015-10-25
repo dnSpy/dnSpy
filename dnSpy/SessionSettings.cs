@@ -36,11 +36,7 @@ namespace ICSharpCode.ILSpy {
 		public SessionSettings(DNSpySettings spySettings) {
 			XElement doc = spySettings["SessionSettings"];
 
-			XElement filterSettings = doc.Element("FilterSettings");
-			if (filterSettings == null)
-				filterSettings = new XElement("FilterSettings");
-
-			this.FilterSettings = new FilterSettings(filterSettings);
+			this.FilterSettings = new FilterSettings();
 
 			this.ActiveAssemblyList = Unescape((string)doc.Element("ActiveAssemblyList"));
 
@@ -131,7 +127,6 @@ namespace ICSharpCode.ILSpy {
 
 		public void Save() {
 			XElement doc = new XElement("SessionSettings");
-			doc.Add(this.FilterSettings.SaveAsXml());
 			if (this.ActiveAssemblyList != null) {
 				doc.Add(new XElement("ActiveAssemblyList", Escape(this.ActiveAssemblyList)));
 			}

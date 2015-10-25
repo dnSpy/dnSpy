@@ -213,7 +213,6 @@ namespace dnSpy.Debugger {
 				evalDisabled = false;
 				currentLocation = null;
 				currentMethod = null;
-				MainWindow.Instance.SessionSettings.FilterSettings.ShowInternalApi = true;
 				SetRunningStatusMessage();
 				MainWindow.Instance.SetDebugging();
 				break;

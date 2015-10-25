@@ -47,25 +47,6 @@ namespace dnSpy.Commands {
 		}
 	}
 
-	[ExportToolbarCommand(ToolbarCategory = "Options", ToolbarOrder = 3000)]
-	sealed class ShowInternalTypesAndMembersToolbarCommand : ToolbarCommand, IToolbarItemCreator {
-		public object CreateToolbarItem() {
-			var checkBox = new CheckBox() {
-				Content = new Image {
-					Width = 16,
-					Height = 16,
-					Source = ImageCache.Instance.GetImage("PrivateInternal", BackgroundType.Toolbar),
-				},
-				ToolTip = "Show Internal Types and Members",
-			};
-			var binding = new Binding("FilterSettings.ShowInternalApi") {
-				Source = MainWindow.Instance.SessionSettings,
-			};
-			checkBox.SetBinding(CheckBox.IsCheckedProperty, binding);
-			return checkBox;
-		}
-	}
-
 	[ExportToolbarCommand(ToolbarCategory = "Language", ToolbarOrder = 4000)]
 	sealed class LanguageComboBoxToolbarCommand : ToolbarCommand, IToolbarItemCreator {
 		public object CreateToolbarItem() {

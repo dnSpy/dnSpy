@@ -791,8 +791,17 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static TokenReference GetTokenReference(ContextMenuEntryContext context) {
 			var @ref = GetTokenReference2(context);
-			var mod = @ref == null ? null : @ref.ModuleDef;
-			return mod is ModuleDefMD ? @ref : null;
+			if (@ref == null)
+				return null;
+			var node = MainWindow.Instance.DnSpyFileListTreeNode.FindModuleNode(@ref.ModuleDef);
+			return HasPENode(node) ? @ref : null;
+		}
+
+		internal static bool HasPENode(AssemblyTreeNode node) {
+			if (node == null)
+				return false;
+			// Currently only nodes loaded from files on disk have a PE node
+			return node.DnSpyFile.PEImage != null && node.DnSpyFile.LoadedFromFile;
 		}
 
 		static TokenReference GetTokenReference2(ContextMenuEntryContext context) {
@@ -891,9 +900,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static ModuleDef GetModule(AssemblyTreeNode node) {
-			if (node == null)
-				return null;
-			return node.DnSpyFile.PEImage == null ? null : node.DnSpyFile.ModuleDef;
+			return GoToMDTableRowHexEditorCommand.HasPENode(node) ? node.DnSpyFile.ModuleDef : null;
 		}
 
 		static void Execute2(ContextMenuEntryContext context) {
