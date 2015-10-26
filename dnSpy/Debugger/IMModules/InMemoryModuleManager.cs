@@ -40,24 +40,46 @@ namespace dnSpy.Debugger.IMModules {
 			get { return DecompilerSettingsPanel.CurrentDecompilerSettings.UseDebugSymbols; }
 		}
 
-		IEnumerable<DnSpyFile> AllDnSpyFiles {
-			get { return DnSpyFileListTreeNode.GetAllModuleNodes().Select(a => a.DnSpyFile); }
+		public static IEnumerable<DnSpyFile> AllDnSpyFiles {
+			get {
+				var hash = new HashSet<DnSpyFile>(DnSpyFileListTreeNode.GetAllModuleNodes().Select(a => a.DnSpyFile));
+				hash.AddRange(DnSpyFileList.GetDnSpyFiles());
+				foreach (var f in hash.ToArray()) {
+					var memf = f as MemoryModuleDefFile;
+					if (memf != null) {
+						hash.AddRange(memf.Dictionary.Values);
+						continue;
+					}
+
+					var dynf = f as CorModuleDefFile;
+					if (dynf != null) {
+						hash.AddRange(dynf.Dictionary.Values);
+						continue;
+					}
+				}
+
+				return hash;
+			}
 		}
 
-		IEnumerable<MemoryModuleDefFile> AllMemoryModuleDefFiles {
+		static IEnumerable<MemoryModuleDefFile> AllMemoryModuleDefFiles {
 			get { return AllDnSpyFiles.OfType<MemoryModuleDefFile>(); }
 		}
 
-		DnSpyFileList DnSpyFileList {
+		static IEnumerable<CorModuleDefFile> AllCorModuleDefFiles {
+			get { return AllDnSpyFiles.OfType<CorModuleDefFile>(); }
+		}
+
+		static DnSpyFileList DnSpyFileList {
 			get { return MainWindow.Instance.DnSpyFileList; }
 		}
 
-		DnSpyFileListTreeNode DnSpyFileListTreeNode {
+		static DnSpyFileListTreeNode DnSpyFileListTreeNode {
 			get { return MainWindow.Instance.DnSpyFileListTreeNode; }
 		}
 
 		InMemoryModuleManager() {
-			this.myAssemblyResolver = new MyAssemblyResolver(this);
+			this.myAssemblyResolver = new MyAssemblyResolver();
 		}
 
 		internal void OnLoaded() {
@@ -236,7 +258,7 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
-		void UpdateModuleMemory(MemoryModuleDefFile file) {
+		public void UpdateModuleMemory(MemoryModuleDefFile file) {
 			if (file.UpdateMemory())
 				RefreshBodies(file);
 		}
@@ -246,40 +268,43 @@ namespace dnSpy.Debugger.IMModules {
 			// got modified (eg. decrypted in memory)
 			for (uint rid = 1; ; rid++) {
 				var md = file.ModuleDef.ResolveToken(new MDToken(Table.Method, rid)) as MethodDef;
-				if (md != null)
+				if (md == null)
 					break;
 				MethodAnnotations.Instance.SetBodyModified(md, false);
 				md.FreeMethodBody();
 			}
 			MainWindow.Instance.ModuleModified(file);
+
+			// A breakpoint in an encrypted method will fail to be created. Now's a good time to
+			// re-add any failed breakpoints.
+			if (!file.Process.HasExited && file.Process.Debugger.ProcessState != DebuggerProcessState.Terminated) {
+				foreach (var module in file.Process.Modules) {
+					if (module.Address == file.Address)
+						file.Process.Debugger.AddBreakpoints(module);
+				}
+			}
 		}
 
 		// Prevents memory leaks by using a weak reference to the current assembly resolver.
 		// DnSpyFileList can be changed whenever the user picks a new assembly list.
 		sealed class MyAssemblyResolver : IAssemblyResolver {
-			readonly InMemoryModuleManager imMgr;
-
-			public MyAssemblyResolver(InMemoryModuleManager imMgr) {
-				this.imMgr = imMgr;
-			}
-
 			public bool AddToCache(AssemblyDef asm) {
-				IAssemblyResolver ar = imMgr.DnSpyFileList.AssemblyResolver;
+				IAssemblyResolver ar = DnSpyFileList.AssemblyResolver;
 				return ar.AddToCache(asm);
 			}
 
 			public void Clear() {
-				IAssemblyResolver ar = imMgr.DnSpyFileList.AssemblyResolver;
+				IAssemblyResolver ar = DnSpyFileList.AssemblyResolver;
 				ar.Clear();
 			}
 
 			public bool Remove(AssemblyDef asm) {
-				IAssemblyResolver ar = imMgr.DnSpyFileList.AssemblyResolver;
+				IAssemblyResolver ar = DnSpyFileList.AssemblyResolver;
 				return ar.Remove(asm);
 			}
 
 			public AssemblyDef Resolve(IAssembly assembly, ModuleDef sourceModule) {
-				IAssemblyResolver ar = imMgr.DnSpyFileList.AssemblyResolver;
+				IAssemblyResolver ar = DnSpyFileList.AssemblyResolver;
 				return ar.Resolve(assembly, sourceModule);
 			}
 		}
@@ -291,6 +316,15 @@ namespace dnSpy.Debugger.IMModules {
 
 		void DnDebugger_OnCorModuleDefCreated(object sender, CorModuleDefCreatedEventArgs e) {
 			UpdateResolver(e.CorModuleDef);
+		}
+
+		public DnSpyFile FindFile(DnModule dnModule) {
+			if (dnModule == null)
+				return null;
+			if (dnModule.IsDynamic)
+				return FindDynamic(dnModule);
+			// It could be a CorModuleDefFile if LoadFromMemory() failed and called LoadDynamic()
+			return (DnSpyFile)FindMemory(dnModule) ?? FindDynamic(dnModule);
 		}
 
 		public DnSpyFile LoadFile(DnModule dnModule, bool canLoadDynFile) {
@@ -339,11 +373,10 @@ namespace dnSpy.Debugger.IMModules {
 		}
 
 		CorModuleDefFile FindDynamic(DnModule dnModule) {
+			if (dnModule == null)
+				return null;
 			var mod = dnModule.GetOrCreateCorModuleDef();
-			var node = DnSpyFileListTreeNode.FindModuleNode(mod);
-			if (node != null)
-				return (CorModuleDefFile)node.DnSpyFile;
-			return null;
+			return AllCorModuleDefFiles.FirstOrDefault(a => a.ModuleDef == mod);
 		}
 
 		DnSpyFile LoadFromMemory(DnModule dnModule, bool canLoadDynFile) {
@@ -406,6 +439,8 @@ namespace dnSpy.Debugger.IMModules {
 		}
 
 		MemoryModuleDefFile FindMemory(DnModule dnModule) {
+			if (dnModule == null)
+				return null;
 			var key = MemoryModuleDefFile.CreateKey(dnModule.Process, dnModule.Address);
 			return AllMemoryModuleDefFiles.FirstOrDefault(a => key.Equals(a.Key));
 		}

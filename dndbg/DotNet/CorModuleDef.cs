@@ -318,14 +318,12 @@ namespace dndbg.DotNet {
 		}
 
 		internal CallingConventionSig ReadSignature(byte[] data, GenericParamContext gpContext) {
-			Debug.Assert(data != null);	// could fail if it's obfuscated
 			if (data == null)
 				return null;
 			return SignatureReader.ReadSig(this, CorLibTypes, data, gpContext);
 		}
 
 		internal TypeSig ReadTypeSignature(byte[] data, GenericParamContext gpContext, out byte[] extraData) {
-			Debug.Assert(data != null);	// could fail if it's obfuscated
 			if (data == null) {
 				extraData = null;
 				return null;
@@ -346,11 +344,8 @@ namespace dndbg.DotNet {
 
 		CustomAttribute ReadCustomAttribute(uint caToken, GenericParamContext gpContext) {
 			uint typeToken;
-			var caBlob = MDAPI.GetCustomAttributeBlob(mdi, caToken, out typeToken);
+			var caBlob = MDAPI.GetCustomAttributeBlob(mdi, caToken, out typeToken) ?? new byte[0];
 			var cat = ResolveToken(typeToken, gpContext) as ICustomAttributeType;
-			Debug.Assert(caBlob != null && cat != null);
-			if (caBlob == null)
-				return null;
 			var ca = CustomAttributeReader.Read(this, caBlob, cat, gpContext);
 			Debug.Assert(ca != null);
 			return ca;
@@ -642,8 +637,7 @@ namespace dndbg.DotNet {
 			var ctd = (CorTypeDef)ResolveTypeDef(ownerRid);
 			if (ctd != null)
 				ctd.UpdateFields();
-			bool b = ridToField.TryGetValue(rid, out info);
-			Debug.Assert(b);
+			ridToField.TryGetValue(rid, out info);
 			return info == null ? null : info.Item;
 		}
 
@@ -659,8 +653,7 @@ namespace dndbg.DotNet {
 			var ctd = (CorTypeDef)ResolveTypeDef(ownerRid);
 			if (ctd != null)
 				ctd.UpdateMethods();
-			bool b = ridToMethod.TryGetValue(rid, out info);
-			Debug.Assert(b);
+			ridToMethod.TryGetValue(rid, out info);
 			return info == null ? null : info.Item;
 		}
 
@@ -676,8 +669,7 @@ namespace dndbg.DotNet {
 			var cmd = (CorMethodDef)ResolveMethod(ownerRid);
 			if (cmd != null)
 				cmd.UpdateParams();
-			bool b = ridToParam.TryGetValue(rid, out info);
-			Debug.Assert(b);
+			ridToParam.TryGetValue(rid, out info);
 			return info == null ? null : info.Item;
 		}
 
@@ -824,8 +816,7 @@ namespace dndbg.DotNet {
 			var cmd = (CorTypeDef)ResolveTypeDef(ownerRid);
 			if (cmd != null)
 				cmd.UpdateProperties();
-			bool b = ridToEventDef.TryGetValue(rid, out info);
-			Debug.Assert(b);
+			ridToEventDef.TryGetValue(rid, out info);
 			return info == null ? null : info.Item;
 		}
 
@@ -841,8 +832,7 @@ namespace dndbg.DotNet {
 			var cmd = (CorTypeDef)ResolveTypeDef(ownerRid);
 			if (cmd != null)
 				cmd.UpdateProperties();
-			bool b = ridToPropertyDef.TryGetValue(rid, out info);
-			Debug.Assert(b);
+			ridToPropertyDef.TryGetValue(rid, out info);
 			return info == null ? null : info.Item;
 		}
 
@@ -970,8 +960,7 @@ namespace dndbg.DotNet {
 			var cmd = (ICorTypeOrMethodDef)ResolveToken(ownerToken);
 			if (cmd != null)
 				cmd.UpdateGenericParams();
-			bool b = ridToGenericParam.TryGetValue(rid, out info);
-			Debug.Assert(b);
+			ridToGenericParam.TryGetValue(rid, out info);
 			return info == null ? null : info.Item;
 		}
 

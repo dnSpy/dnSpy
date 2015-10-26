@@ -176,7 +176,6 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Go To Module (New _Tab)", Order = 210, Category = "MODGoTo", Icon = "AssemblyModule", InputGestureText = "Ctrl+Enter")]
 	sealed class GoToModuleNewTabModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		protected override void Execute(ModulesCtxMenuContext context) {
 			GoToModuleModulesCtxMenuCommand.ExecuteInternal(context, true);
@@ -187,7 +186,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Open Module from Memory", Order = 220, Category = "MODGoTo", Icon = "AssemblyModule")]
+	[ExportContextMenuEntry(Header = "Open Module from Memory", Order = 210, Category = "MODGoTo", Icon = "AssemblyModule")]
 	sealed class OpenModuleFromMemoryModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		protected override void Execute(ModulesCtxMenuContext context) {
 			ExecuteInternal(context, false);
@@ -201,14 +200,14 @@ namespace dnSpy.Debugger.Modules {
 			return CanGoToModule(context);
 		}
 
-		internal static bool CanGoToModule(ModulesCtxMenuContext context) {
+		static bool CanGoToModule(ModulesCtxMenuContext context) {
 			if (context == null || context.SelectedItems.Length == 0)
 				return false;
 			var vm = context.SelectedItems[0];
 			return !vm.Module.IsDynamic && !vm.Module.IsInMemory;
 		}
 
-		internal static void ExecuteInternal(ModulesCtxMenuContext context, bool newTab) {
+		static void ExecuteInternal(ModulesCtxMenuContext context, bool newTab) {
 			if (context == null || context.SelectedItems.Length == 0)
 				return;
 			ExecuteInternal(context.SelectedItems[0], newTab);
@@ -223,22 +222,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Open Module from Memory (New Tab)", Order = 230, Category = "MODGoTo", Icon = "AssemblyModule")]
-	sealed class OpenModuleFromMemoryNewTabModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		protected override void Execute(ModulesCtxMenuContext context) {
-			OpenModuleFromMemoryModulesCtxMenuCommand.ExecuteInternal(context, true);
-		}
-
-		protected override bool IsVisible(ModulesCtxMenuContext context) {
-			return IsEnabled(context);
-		}
-
-		protected override bool IsEnabled(ModulesCtxMenuContext context) {
-			return OpenModuleFromMemoryModulesCtxMenuCommand.CanGoToModule(context);
-		}
-	}
-
-	[ExportContextMenuEntry(Header = "Show in Memory Window", Order = 240, Category = "MODGoTo", Icon = "MemoryWindow")]
+	[ExportContextMenuEntry(Header = "Show in Memory Window", Order = 220, Category = "MODGoTo", Icon = "MemoryWindow")]
 	sealed class ShowInMemoryXModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		protected override void Execute(ModulesCtxMenuContext context) {
 		}

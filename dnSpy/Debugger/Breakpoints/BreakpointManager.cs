@@ -129,8 +129,22 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		void MainWindow_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (e.OldItems != null) {
+				var existing = new HashSet<SerializedDnSpyModule>(MainWindow.Instance.DnSpyFileListTreeNode.GetAllModuleNodes().Select(a => a.DnSpyFile.SerializedDnSpyModule ?? new SerializedDnSpyModule()));
+				var removed = new HashSet<SerializedDnSpyModule>(e.OldItems.Cast<DnSpyFile>().Select(a => a.SerializedDnSpyModule ?? new SerializedDnSpyModule()));
+				existing.Remove(new SerializedDnSpyModule());
+				removed.Remove(new SerializedDnSpyModule());
 				foreach (var ilbp in ILCodeBreakpoints) {
-					if (e.OldItems.Cast<DnSpyFile>().Any(n => n.ModuleDef.ToSerializedDnSpyModule().Equals(ilbp.SerializedDnSpyToken.Module)))
+					// Don't auto-remove BPs in dynamic modules since they have no disk file. The
+					// user must delete these him/herself.
+					if (ilbp.SerializedDnSpyToken.Module.IsDynamic)
+						continue;
+
+					// If the file is still in the TV, don't delete anything. This can happen if
+					// we've loaded an in-memory module and the node just got removed.
+					if (existing.Contains(ilbp.SerializedDnSpyToken.Module))
+						continue;
+
+					if (removed.Contains(ilbp.SerializedDnSpyToken.Module))
 						Remove(ilbp);
 				}
 			}

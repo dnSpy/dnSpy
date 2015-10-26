@@ -41,7 +41,7 @@ namespace dnSpy.MVVM {
 				DefaultExt = extension ?? string.Empty,
 				ValidateNames = true,
 			};
-			if (!string.IsNullOrWhiteSpace(currentFileName)) {
+			if (File.Exists(currentFileName)) {
 				dialog.InitialDirectory = Path.GetDirectoryName(currentFileName);
 				dialog.FileName = Path.GetFileName(currentFileName);
 			}

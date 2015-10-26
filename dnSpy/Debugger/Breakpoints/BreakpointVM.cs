@@ -104,7 +104,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			var bp = Breakpoint as ILCodeBreakpoint;
 			if (bp == null)
 				return null;
-			var file = ModuleLoader.Instance.LoadModule(bp.SerializedDnSpyToken.Module, canLoadDynFile);
+			var file = ModuleLoader.Instance.LoadModule(bp.SerializedDnSpyToken.Module, canLoadDynFile, true);
 			var mod = file == null ? null : file.ModuleDef;
 			return mod == null ? null : mod.ResolveToken(bp.SerializedDnSpyToken.Token) as MethodDef;
 		}

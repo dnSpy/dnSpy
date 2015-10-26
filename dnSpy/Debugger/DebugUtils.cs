@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy.Files;
@@ -76,18 +77,25 @@ namespace dnSpy.Debugger {
 		public static bool MoveCaretTo(DecompilerTextView textView, SerializedDnSpyToken key, uint ilOffset) {
 			if (textView == null)
 				return false;
+
+			Dictionary<SerializedDnSpyToken, MemberMapping> cm;
+			if (!VerifyAndGetCurrentDebuggedMethod(textView, key, out cm))
+				return false;
+
 			TextLocation location, endLocation;
-			var cm = textView.CodeMappings;
-			if (cm == null || !cm.ContainsKey(key))
+			if (!cm[key].GetInstructionByTokenAndOffset(ilOffset, out location, out endLocation))
 				return false;
-			if (!cm[key].GetInstructionByTokenAndOffset(ilOffset, out location, out endLocation)) {
-				//TODO: Missing IL ranges
+
+			textView.ScrollAndMoveCaretTo(location.Line, location.Column);
+			return true;
+		}
+
+		public static bool VerifyAndGetCurrentDebuggedMethod(DecompilerTextView textView, SerializedDnSpyToken serToken, out Dictionary<SerializedDnSpyToken, MemberMapping> codeMappings) {
+			codeMappings = textView == null ? null : textView.CodeMappings;
+			if (codeMappings == null || !codeMappings.ContainsKey(serToken))
 				return false;
-			}
-			else {
-				textView.ScrollAndMoveCaretTo(location.Line, location.Column);
-				return true;
-			}
+
+			return true;
 		}
 	}
 }

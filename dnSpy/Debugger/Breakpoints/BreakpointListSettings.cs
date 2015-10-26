@@ -148,7 +148,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		static string GetMethodAsString(SerializedDnSpyToken key) {
-			var file = ModuleLoader.Instance.LoadModule(key.Module, true);
+			var file = ModuleLoader.Instance.LoadModule(key.Module, true, true);
 			var method = file == null ? null : file.ModuleDef.ResolveToken(key.Token) as MethodDef;
 			return method == null ? null : method.ToString();
 		}

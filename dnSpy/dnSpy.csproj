@@ -177,6 +177,7 @@
     <Compile Include="Debugger\Exceptions\ExceptionVM.cs" />
     <Compile Include="Debugger\Exceptions\IGetNewExceptionName.cs" />
     <Compile Include="Debugger\IMModules\ClassLoader.cs" />
+    <Compile Include="Debugger\IMModules\Commands.cs" />
     <Compile Include="Debugger\IMModules\CorModuleDefFile.cs" />
     <Compile Include="Debugger\IMModules\InMemoryModuleManager.cs" />
     <Compile Include="Debugger\IMModules\LastValidRids.cs" />
@@ -1532,6 +1533,7 @@
     <Resource Include="Images\Redo.png" />
     <Resource Include="Images\ReferenceFolderClosed.png" />
     <Resource Include="Images\ReferenceFolderOpen.png" />
+    <Resource Include="Images\Refresh.png" />
     <Resource Include="Images\RemoveCommand.png" />
     <Resource Include="Images\Resource.png" />
     <Resource Include="Images\ResourcesFile.png" />
@@ -1652,6 +1654,5 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

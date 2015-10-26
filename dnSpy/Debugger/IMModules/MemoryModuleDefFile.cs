@@ -81,7 +81,11 @@ namespace dnSpy.Debugger.IMModules {
 		}
 		readonly Dictionary<ModuleDef, MemoryModuleDefFile> dict;
 
+		public ulong Address {
+			get { return address; }
+		}
 		readonly ulong address;
+
 		readonly byte[] data;
 		readonly bool isInMemory;
 

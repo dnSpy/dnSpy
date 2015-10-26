@@ -790,8 +790,7 @@ namespace dndbg.Engine {
 					module.CorModule.SetJMCStatus(true);
 
 					module.InitializeCachedValues();
-					foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.SerializedDnModule))
-						bp.AddBreakpoint(module);
+					AddBreakpoints(module);
 
 					CallOnModuleAdded(module, true);
 				}
@@ -1312,6 +1311,16 @@ namespace dndbg.Engine {
 			if (asm == null)
 				return null;
 			return asm.TryGetModule(clsMod.RawObject);
+		}
+
+		/// <summary>
+		/// Re-add breakpoints to the module. Should be called if the debugged module has breakpoints
+		/// in decrypted methods and the methods have now been decrypted.
+		/// </summary>
+		/// <param name="module"></param>
+		public void AddBreakpoints(DnModule module) {
+			foreach (var bp in ilCodeBreakpointList.GetBreakpoints(module.SerializedDnModule))
+				bp.AddBreakpoint(module);
 		}
 
 		/// <summary>

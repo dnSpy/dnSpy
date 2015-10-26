@@ -35,13 +35,13 @@ using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Dialogs;
+using dnSpy.Debugger.IMModules;
 using dnSpy.Files;
 using dnSpy.MVVM;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.NRefactory;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.Debugger {
@@ -68,6 +68,10 @@ namespace dnSpy.Debugger {
 			if (e.PropertyName == "IgnoreBreakInstructions") {
 				if (Debugger != null)
 					Debugger.Options.IgnoreBreakInstructions = DebuggerSettings.Instance.IgnoreBreakInstructions;
+			}
+			else if (e.PropertyName == "UseMemoryModules") {
+				if (DebugManager.Instance.ProcessState != DebuggerProcessState.Terminated && DebuggerSettings.Instance.UseMemoryModules)
+					UpdateCurrentLocationToInMemoryModule();
 			}
 		}
 
@@ -922,6 +926,10 @@ namespace dnSpy.Debugger {
 		}
 
 		public void JumpToCurrentStatement(DecompilerTextView textView) {
+			JumpToCurrentStatement(textView, true);
+		}
+
+		void JumpToCurrentStatement(DecompilerTextView textView, bool canRefreshMethods) {
 			if (textView == null)
 				return;
 			if (currentMethod == null)
@@ -931,16 +939,80 @@ namespace dnSpy.Debugger {
 			MainWindow.Instance.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 				MainWindow.Instance.JumpToReference(textView, currentMethod, (success, hasMovedCaret) => {
 					if (success)
-						return MoveCaretToCurrentStatement(textView);
+						return MoveCaretToCurrentStatement(textView, canRefreshMethods);
 					return false;
 				});
 			}));
 		}
 
-		bool MoveCaretToCurrentStatement(DecompilerTextView textView) {
+		bool MoveCaretToCurrentStatement(DecompilerTextView textView, bool canRefreshMethods) {
 			if (currentLocation == null)
 				return false;
-			return DebugUtils.MoveCaretTo(textView, currentLocation.Value.SerializedDnSpyToken, currentLocation.Value.Offset);
+			if (DebugUtils.MoveCaretTo(textView, currentLocation.Value.SerializedDnSpyToken, currentLocation.Value.Offset))
+				return true;
+			if (!canRefreshMethods)
+				return false;
+
+			RefreshMethodBodies(textView);
+
+			return false;
+		}
+
+		void RefreshMethodBodies(DecompilerTextView textView) {
+			if (currentLocation == null)
+				return;
+			if (currentMethod == null)
+				return;
+
+			// If this fails, we're probably in the prolog or epilog. Shouldn't normally happen.
+			if (!currentLocation.Value.IsExact && !currentLocation.Value.IsApproximate)
+				return;
+			var body = currentMethod.Body;
+			if (body == null)
+				return;
+			// If the offset is a valid instruction in the body, the method is probably not encrypted
+			if (body.Instructions.Any(i => i.Offset == currentLocation.Value.Offset))
+				return;
+
+			// No instruction with the current offset: it must be encrypted, and since we're executing
+			// the method, we must be using an invalid method body. Use a copy of the module in
+			// memory, and refresh the method bodies in case it's already loaded, and re-decompile
+			// the method.
+
+			var mod = currentMethod.Module;
+			if (mod == null)
+				return;
+			var modNode = MainWindow.Instance.DnSpyFileListTreeNode.FindModuleNode(mod);
+			if (modNode == null)
+				return;
+			var memFile = modNode.DnSpyFile as MemoryModuleDefFile;
+			DnSpyFile file = memFile;
+			if (memFile == null) {
+				if (modNode.DnSpyFile is CorModuleDefFile)
+					return;
+				var corMod = currentLocation.Value.Function.Module;
+				if (corMod == null || corMod.IsDynamic)
+					return;
+				var dnMod = ModuleLoader.GetDnModule(corMod);
+				file = InMemoryModuleManager.Instance.LoadFile(dnMod, true);
+				Debug.Assert(file != null);
+				memFile = file as MemoryModuleDefFile;
+			}
+			if (file == null)
+				return;
+			// It's null if we couldn't load the file from memory because the PE / COR20 headers
+			// are corrupt (eg. an obfuscator overwrote various fields with garbage). In that case,
+			// file is a CorModuleDefFile and it's using the MD API to read the MD.
+			if (memFile != null)
+				InMemoryModuleManager.Instance.UpdateModuleMemory(memFile);
+			UpdateCurrentMethod(file);
+			JumpToCurrentStatement(textView, false);
+		}
+
+		void UpdateCurrentLocationToInMemoryModule() {
+			UpdateCurrentMethod();
+			if (currentMethod != null && currentLocation != null)
+				JumpToCurrentStatement(MainWindow.Instance.SafeActiveTextView);
 		}
 
 		struct CodeLocation {
@@ -954,6 +1026,10 @@ namespace dnSpy.Debugger {
 
 			public bool IsExact {
 				get { return (Mapping & CorDebugMappingResult.MAPPING_EXACT) != 0; }
+			}
+
+			public bool IsApproximate {
+				get { return (Mapping & CorDebugMappingResult.MAPPING_APPROXIMATE) != 0; }
 			}
 
 			public SerializedDnSpyToken SerializedDnSpyToken {
@@ -997,13 +1073,14 @@ namespace dnSpy.Debugger {
 			currentLocation = newLoc;
 		}
 
-		void UpdateCurrentMethod() {
+		void UpdateCurrentMethod(DnSpyFile file = null) {
 			if (currentLocation == null) {
 				currentMethod = null;
 				return;
 			}
 
-			var file = ModuleLoader.Instance.LoadModule(currentLocation.Value.Function.Module, true);
+			if (file == null)
+				file = ModuleLoader.Instance.LoadModule(currentLocation.Value.Function.Module, true);
 			Debug.Assert(file != null);
 			var loadedMod = file == null ? null : file.ModuleDef;
 			if (loadedMod == null) {
@@ -1147,38 +1224,18 @@ namespace dnSpy.Debugger {
 				return;
 
 			var textView = MainWindow.Instance.SafeActiveTextView;
-			if (!TryShowNextStatement(textView))
+			if (!TryShowNextStatement(textView)) {
+				UpdateCurrentMethod();
 				JumpToCurrentStatement(textView);
+			}
 		}
 
 		bool TryShowNextStatement(DecompilerTextView textView) {
 			// Always reset the selected frame
 			StackFrameManager.Instance.SelectedFrameNumber = 0;
-
-			if (textView == null)
-				return false;
-
-			Dictionary<SerializedDnSpyToken, MemberMapping> cm;
-			if (!VerifyAndGetCurrentDebuggedMethod(textView, out cm))
-				return false;
-			var currentKey = currentLocation.Value.SerializedDnSpyToken;
-
-			TextLocation location, endLocation;
-			if (!cm[currentKey].GetInstructionByTokenAndOffset(currentLocation.Value.Offset, out location, out endLocation))
-				return false;
-
-			textView.ScrollAndMoveCaretTo(location.Line, location.Column);
-			return true;
-		}
-
-		bool VerifyAndGetCurrentDebuggedMethod(DecompilerTextView textView, out Dictionary<SerializedDnSpyToken, MemberMapping> codeMappings) {
-			codeMappings = textView == null ? null : textView.CodeMappings;
 			if (currentLocation == null)
 				return false;
-			if (codeMappings == null || !codeMappings.ContainsKey(currentLocation.Value.SerializedDnSpyToken))
-				return false;
-
-			return true;
+			return DebugUtils.MoveCaretTo(textView, currentLocation.Value.SerializedDnSpyToken, currentLocation.Value.Offset);
 		}
 
 		public bool CanSetNextStatement(object parameter) {
@@ -1252,10 +1309,11 @@ namespace dnSpy.Debugger {
 			}
 
 			Dictionary<SerializedDnSpyToken, MemberMapping> cm;
-			if (!VerifyAndGetCurrentDebuggedMethod(textView, out cm)) {
+			if (currentLocation == null || !DebugUtils.VerifyAndGetCurrentDebuggedMethod(textView, currentLocation.Value.SerializedDnSpyToken, out cm)) {
 				errMsg = "No debug information found. Make sure that only the debugged method is selected in the treeview (press 'Alt+Num *' to go to current statement)";
 				return false;
 			}
+			Debug.Assert(currentLocation != null);
 
 			var location = textView.TextEditor.TextArea.Caret.Location;
 			var bps = SourceCodeMappingUtils.Find(cm, location.Line, location.Column);
@@ -1269,18 +1327,16 @@ namespace dnSpy.Debugger {
 				return false;
 			}
 
-			if (currentLocation != null) {
-				foreach (var bp in bps) {
-					var md = bp.MemberMapping.MethodDef;
-					if (currentLocation.Value.Function.Token != md.MDToken.Raw)
-						continue;
-					var serAsm = md.Module.ToSerializedDnSpyModule();
-					if (!serAsm.Equals(currentLocation.Value.SerializedDnSpyToken.Module))
-						continue;
+			foreach (var bp in bps) {
+				var md = bp.MemberMapping.MethodDef;
+				if (currentLocation.Value.Function.Token != md.MDToken.Raw)
+					continue;
+				var serAsm = md.Module.ToSerializedDnSpyModule();
+				if (!serAsm.Equals(currentLocation.Value.SerializedDnSpyToken.Module))
+					continue;
 
-					mapping = bp;
-					break;
-				}
+				mapping = bp;
+				break;
 			}
 			if (mapping == null) {
 				errMsg = "The next statement cannot be set to another method";

@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Debugger.IMModules;
@@ -36,7 +35,7 @@ namespace dnSpy.Debugger {
 			get { return DebuggerSettings.Instance.UseMemoryModules; }
 		}
 
-		static DnModule GetDnModule(CorModule module) {
+		public static DnModule GetDnModule(CorModule module) {
 			var dbg = DebugManager.Instance.Debugger;
 			if (dbg == null)
 				return null;
@@ -76,12 +75,15 @@ namespace dnSpy.Debugger {
 				return null;
 			if (UseMemoryModules || module.IsDynamic || module.IsInMemory)
 				return InMemoryModuleManager.Instance.LoadFile(module, canLoadDynFile);
+			var file = InMemoryModuleManager.Instance.FindFile(module);
+			if (file != null)
+				return file;
 			var serMod = module.SerializedDnModule.ToSerializedDnSpyModule();
 			return LoadModule(serMod, canLoadDynFile);
 		}
 
 		IEnumerable<DnSpyFile> AllDnSpyFiles {
-			get { return MainWindow.Instance.DnSpyFileListTreeNode.GetAllModuleNodes().Select(a => a.DnSpyFile); }
+			get { return InMemoryModuleManager.AllDnSpyFiles; }
 		}
 
 		IEnumerable<DnSpyFile> AllActiveDnSpyFiles {
@@ -108,23 +110,43 @@ namespace dnSpy.Debugger {
 			}
 		}
 
-		public DnSpyFile LoadModule(SerializedDnSpyModule serMod, bool canLoadDynFile) {
-			const bool isAutoLoaded = true;
-
+		DnSpyFile LoadNonDiskFile(SerializedDnSpyModule serMod, bool canLoadDynFile) {
 			if (UseMemoryModules || serMod.IsDynamic || serMod.IsInMemory) {
 				var dnModule = GetDnModule(serMod);
 				if (dnModule != null)
 					return InMemoryModuleManager.Instance.LoadFile(dnModule, canLoadDynFile);
 			}
 
+			return null;
+		}
+
+		DnSpyFile LoadExisting(SerializedDnSpyModule serMod) {
 			foreach (var file in AllActiveDnSpyFiles) {
 				var serModFile = file.SerializedDnSpyModule;
 				if (serModFile != null && serModFile.Value.Equals(serMod))
 					return file;
 			}
+
 			foreach (var file in AllDnSpyFiles) {
 				var serModFile = file.SerializedDnSpyModule;
 				if (serModFile != null && serModFile.Value.Equals(serMod))
+					return file;
+			}
+
+			return null;
+		}
+
+		public DnSpyFile LoadModule(SerializedDnSpyModule serMod, bool canLoadDynFile, bool diskFileOk = false) {
+			const bool isAutoLoaded = true;
+
+			if (diskFileOk) {
+				var file = LoadExisting(serMod) ?? LoadNonDiskFile(serMod, canLoadDynFile);
+				if (file != null)
+					return file;
+			}
+			else {
+				var file = LoadNonDiskFile(serMod, canLoadDynFile) ?? LoadExisting(serMod);
+				if (file != null)
 					return file;
 			}
 
