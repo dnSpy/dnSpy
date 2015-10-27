@@ -46,9 +46,9 @@ namespace dnSpy.Debugger.Memory {
 		}
 
 		[DllImport("kernel32", SetLastError = true)]
-		static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, IntPtr nSize, out IntPtr lpNumberOfBytesRead);
+		static extern bool ReadProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, int nSize, out IntPtr lpNumberOfBytesRead);
 		[DllImport("kernel32", SetLastError = true)]
-		static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, IntPtr nSize, out IntPtr lpNumberOfBytesWritten);
+		static extern bool WriteProcessMemory(IntPtr hProcess, IntPtr lpBaseAddress, IntPtr lpBuffer, int nSize, out IntPtr lpNumberOfBytesWritten);
 		[DllImport("kernel32", SetLastError = true)]
 		public static extern bool VirtualProtectEx([In] IntPtr hProcess, [In] IntPtr lpAddress, [In] int dwSize, [In] uint flNewProtect, out uint lpflOldProtect);
 		public const uint PAGE_EXECUTE_READWRITE = 0x40;
@@ -57,9 +57,10 @@ namespace dnSpy.Debugger.Memory {
 			if (IntPtr.Size == 4 && offset > uint.MaxValue)
 				return 0;
 			IntPtr sizeRead;
+			bool b;
 			fixed (void* p = &array[index])
-				ReadProcessMemory(hProcess, new IntPtr((void*)offset), new IntPtr(p), new IntPtr(count), out sizeRead);
-			return (int)sizeRead.ToInt64();
+				b = ReadProcessMemory(hProcess, new IntPtr((void*)offset), new IntPtr(p), count, out sizeRead);
+			return !b ? 0 : (int)sizeRead.ToInt64();
 		}
 
 		public unsafe int Write(ulong offset, byte[] array, long index, int count) {
@@ -68,11 +69,12 @@ namespace dnSpy.Debugger.Memory {
 			uint oldProtect;
 			bool restoreOldProtect = VirtualProtectEx(hProcess, new IntPtr((void*)offset), array.Length, PAGE_EXECUTE_READWRITE, out oldProtect);
 			IntPtr sizeWritten;
+			bool b;
 			fixed (void* p = &array[index])
-				WriteProcessMemory(hProcess, new IntPtr((void*)offset), new IntPtr(p), new IntPtr(count), out sizeWritten);
+				b = WriteProcessMemory(hProcess, new IntPtr((void*)offset), new IntPtr(p), count, out sizeWritten);
 			if (restoreOldProtect)
 				VirtualProtectEx(hProcess, new IntPtr((void*)offset), array.Length, oldProtect, out oldProtect);
-			return (int)sizeWritten.ToInt64();
+			return !b ? 0 : (int)sizeWritten.ToInt64();
 		}
 	}
 }
