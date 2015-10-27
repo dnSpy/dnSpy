@@ -68,7 +68,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = "Analy_ze", Icon = "Search", Order = 900, Category = "Other", InputGestureText = "Ctrl+R")]
+	[ExportContextMenuEntry(Header = "Analy_ze", Icon = "Search", Order = 900, Category = "Other", InputGestureText = "Ctrl+R")]
 	internal sealed class AnalyzeContextMenuEntry : IContextMenuEntry {
 		public bool IsVisible(ContextMenuEntryContext context) {
 			return IsEnabled(context);

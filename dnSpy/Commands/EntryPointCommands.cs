@@ -23,7 +23,7 @@ using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.Commands {
-	[ExportContextMenuEntryAttribute(Header = "Go to _Entry Point", Order = 450, Category = "EP", Icon = "EntryPoint")]
+	[ExportContextMenuEntry(Header = "Go to _Entry Point", Order = 450, Category = "EP", Icon = "EntryPoint")]
 	sealed class GoToEntryPointCommand : IContextMenuEntry {
 		public bool IsVisible(ContextMenuEntryContext context) {
 			return TreeView_IsVisible(context) ||
@@ -63,7 +63,7 @@ namespace dnSpy.Commands {
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = "Go to <Module> .ccto_r", Order = 460, Category = "EP")]
+	[ExportContextMenuEntry(Header = "Go to <Module> .ccto_r", Order = 460, Category = "EP")]
 	sealed class GoToGlobalTypeCctorCommand : IContextMenuEntry {
 		public bool IsVisible(ContextMenuEntryContext context) {
 			return TreeView_IsVisible(context) ||

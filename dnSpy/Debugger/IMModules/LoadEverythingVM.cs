@@ -57,12 +57,12 @@ namespace dnSpy.Debugger.IMModules {
 				CurrentItemName = CalculateCurrentItemName(this.modules[0]);
 		}
 
-		bool CanCancel {
+		public bool CanCancel {
 			get { return !cancelling; }
 		}
 		bool cancelling;
 
-		void Cancel() {
+		public void Cancel() {
 			cancelling = true;
 			cancellationTokenSource.Cancel();
 		}

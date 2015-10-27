@@ -39,7 +39,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = "Disable Memory Mapped I/O", Order = 960, Category = "Other")]
+	[ExportContextMenuEntry(Header = "Disable Memory Mapped I/O", Order = 960, Category = "Other")]
 	sealed class DisableMemoryMappedIOCommand : IContextMenuEntry {
 		public bool IsVisible(ContextMenuEntryContext context) {
 			return context.Element == MainWindow.Instance.treeView &&
@@ -146,6 +146,11 @@ namespace dnSpy.AsmEditor.Assembly {
 			if (keepNodes.Count > 0 || onlyInRedoHistory.Count > 0) {
 				// We can't free the asm since older commands might reference it so we must record
 				// it in the history. The user can click Clear History to free everything.
+				foreach (var node in keepNodes) {
+					var mod = node.DnSpyFile.ModuleDef as ModuleDefMD;
+					if (mod != null)
+						mod.MetaData.PEImage.UnsafeDisableMemoryMappedIO();
+				}
 				UndoCommandManager.Instance.Add(new RemoveAssemblyCommand(keepNodes.ToArray()));
 				// Redo history was cleared
 				FreeAssemblies(onlyInRedoHistory);

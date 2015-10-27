@@ -2868,9 +2868,9 @@ namespace ICSharpCode.ILSpy {
 			}
 
 			foreach (var file in files) {
-				var mod = file.ModuleDef as ModuleDefMD;
-				if (mod != null)
-					mod.MetaData.PEImage.UnsafeDisableMemoryMappedIO();
+				var peImage = file.PEImage;
+				if (peImage != null)
+					peImage.UnsafeDisableMemoryMappedIO();
 			}
 		}
 

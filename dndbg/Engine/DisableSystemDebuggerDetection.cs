@@ -91,20 +91,20 @@ namespace dndbg.Engine {
 		static readonly byte[] returnFalse = new byte[] { 0x33, 0xC0, 0xC3 };       // xor eax,eax / retn
 		static readonly byte[] returnTrue = new byte[] { 0x6A, 0x01, 0x58, 0xC3 };  // push 1 / pop eax / retn
 
-		static bool WriteBytes(CorProcess process, ulong addr, byte[] data) {
+		unsafe static bool WriteBytes(CorProcess process, ulong addr, byte[] data) {
 			if (process == null || addr == 0 || data == null)
 				return false;
 
 			var hProcess = process.Handle;
 			uint oldProtect;
-			if (!NativeMethods.VirtualProtectEx(hProcess, new IntPtr((long)addr), data.Length, NativeMethods.PAGE_EXECUTE_READWRITE, out oldProtect))
+			if (!NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)addr), data.Length, NativeMethods.PAGE_EXECUTE_READWRITE, out oldProtect))
 				return false;
 			int sizeWritten;
 			try {
 				process.WriteMemory(addr, data, 0, data.Length, out sizeWritten);
 			}
 			finally {
-				NativeMethods.VirtualProtectEx(hProcess, new IntPtr((long)addr), data.Length, oldProtect, out oldProtect);
+				NativeMethods.VirtualProtectEx(hProcess, new IntPtr((void*)addr), data.Length, oldProtect, out oldProtect);
 			}
 
 			return sizeWritten == data.Length;

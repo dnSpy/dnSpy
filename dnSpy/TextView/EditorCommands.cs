@@ -18,7 +18,7 @@
 
 
 namespace ICSharpCode.ILSpy.TextView {
-	[ExportContextMenuEntryAttribute(Header = "Cop_y", Icon = "Copy", Category = "Editor", InputGestureText = "Ctrl+C", Order = 1000)]
+	[ExportContextMenuEntry(Header = "Cop_y", Icon = "Copy", Category = "Editor", InputGestureText = "Ctrl+C", Order = 1000)]
 	internal sealed class CopyContextMenuEntry : IContextMenuEntry {
 		public bool IsVisible(ContextMenuEntryContext context) {
 			return IsEnabled(context);

@@ -19,7 +19,7 @@
 using System.Linq;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	[ExportContextMenuEntryAttribute(Header = "_Remove", Icon = "Delete", Order = 940, Category = "Other", InputGestureText = "Del")]
+	[ExportContextMenuEntry(Header = "_Remove", Icon = "Delete", Order = 940, Category = "Other", InputGestureText = "Del")]
 	internal sealed class RemoveAnalyzeContextMenuEntry : IContextMenuEntry {
 		public bool IsVisible(ContextMenuEntryContext context) {
 			if (context.Element is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))

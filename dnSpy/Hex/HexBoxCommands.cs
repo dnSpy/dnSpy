@@ -24,6 +24,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using dnSpy.HexEditor;
 using dnSpy.MVVM;
+using dnSpy.MVVM.Dialogs;
 using ICSharpCode.ILSpy;
 using WF = System.Windows.Forms;
 
@@ -154,6 +155,72 @@ namespace dnSpy.Hex {
 		}
 	}
 
+	sealed class HexDocumentDataSaver : IProgressTask {
+		public bool IsIndeterminate {
+			get { return false; }
+		}
+
+		public double ProgressMinimum {
+			get { return 0; }
+		}
+
+		public double ProgressMaximum {
+			get { return progressMaximum; }
+		}
+
+		readonly HexDocument doc;
+		readonly long progressMaximum;
+		readonly string filename;
+		readonly ulong start, end;
+		const int BUF_SIZE = 64 * 1024;
+
+		public HexDocumentDataSaver(HexDocument doc, ulong start, ulong end, string filename) {
+			this.doc = doc;
+			this.start = start;
+			this.end = end;
+			this.filename = filename;
+			ulong len = end - start + 1;
+			if (len == 0 || len + BUF_SIZE - 1 < len)
+				this.progressMaximum = (long)(0x8000000000000000UL / (BUF_SIZE / 2));
+			else
+				this.progressMaximum = (long)((len + BUF_SIZE - 1) / BUF_SIZE);
+		}
+
+		public void Execute(IProgress progress) {
+			progress.SetDescription(filename);
+			var file = File.Create(filename);
+			try {
+				var buf = new byte[BUF_SIZE];
+				ulong offs = start;
+				long currentProgress = 0;
+				while (offs <= end) {
+					progress.ThrowIfCancellationRequested();
+					progress.SetTotalProgress(currentProgress);
+					currentProgress++;
+					ulong left = end - start + 1;
+					if (left == 0)
+						left = ulong.MaxValue;
+					int size = left > (ulong)buf.Length ? buf.Length : (int)left;
+					doc.Read(offs, buf, 0, size);
+					file.Write(buf, 0, size);
+					offs += (ulong)size;
+					if (offs == 0)
+						break;
+				}
+				progress.SetTotalProgress(currentProgress);
+			}
+			catch {
+				file.Dispose();
+				try { File.Delete(filename); }
+				catch { }
+				throw;
+			}
+			finally {
+				file.Dispose();
+			}
+		}
+	}
+
 	[ExportContextMenuEntry(Header = "Save Se_lection...", Order = 120, Category = "Misc", InputGestureText = "Ctrl+Alt+S")]
 	sealed class SaveSelectionHexBoxContextMenuEntry : HexBoxContextMenuEntry {
 		protected override void Execute(DnHexBox dnHexBox) {
@@ -181,36 +248,21 @@ namespace dnSpy.Hex {
 			if (dialog.ShowDialog() != WF.DialogResult.OK)
 				return;
 
-			var filename = dialog.FileName;
-			try {
-				using (var file = File.Create(filename))
-					Write(doc, file, sel.Value.StartOffset, sel.Value.EndOffset);
-			}
-			catch (Exception ex) {
-				MainWindow.Instance.ShowMessageBox(string.Format("Could not save '{0}'\nERROR: {1}", filename, ex.Message));
-			}
+			var data = new ProgressVM(MainWindow.Instance.Dispatcher, new HexDocumentDataSaver(doc, sel.Value.StartOffset, sel.Value.EndOffset, dialog.FileName));
+			var win = new ProgressDlg();
+			win.DataContext = data;
+			win.Owner = MainWindow.Instance;
+			win.Title = string.Format("Save Selection 0x{0:X}-0x{1:X}", sel.Value.StartOffset, sel.Value.EndOffset);
+			var res = win.ShowDialog();
+			if (res != true)
+				return;
+			if (!data.WasError)
+				return;
+			MainWindow.Instance.ShowMessageBox(string.Format("An error occurred:\n\n{0}", data.ErrorMessage));
 		}
 
 		internal static bool CanExecute(DnHexBox dnHexBox) {
 			return dnHexBox.Document != null && dnHexBox.Selection != null;
-		}
-
-		static void Write(HexDocument doc, Stream target, ulong start, ulong end) {
-			const int MAX_BUFFER_LENGTH = 1024 * 64;
-			byte[] buffer = new byte[end - start >= MAX_BUFFER_LENGTH ? MAX_BUFFER_LENGTH : (int)(end - start + 1)];
-			ulong offs = start;
-			while (offs <= end) {
-				ulong bytesLeft = offs == 0 && end == ulong.MaxValue ? ulong.MaxValue : end - offs + 1;
-				int bytesToRead = bytesLeft >= (ulong)buffer.Length ? buffer.Length : (int)bytesLeft;
-
-				doc.Read(offs, buffer, 0, bytesToRead);
-				target.Write(buffer, 0, bytesToRead);
-
-				ulong nextOffs = offs + (ulong)bytesToRead;
-				if (nextOffs < offs)
-					break;
-				offs = nextOffs;
-			}
 		}
 	}
 

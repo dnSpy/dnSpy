@@ -397,7 +397,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Order = 300, Category = "AsmEd")]
+	[ExportContextMenuEntry(Order = 300, Category = "AsmEd")]
 	sealed class SaveResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase {
 		public SaveResourcesContextMenuEntry()
 			: base(false, ResourceDataType.Deserialized) {
@@ -412,7 +412,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Order = 310, Category = "AsmEd")]
+	[ExportContextMenuEntry(Order = 310, Category = "AsmEd")]
 	sealed class SaveWithPathResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase {
 		public SaveWithPathResourcesContextMenuEntry()
 			: base(true, ResourceDataType.Deserialized) {
@@ -433,7 +433,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Order = 320, Category = "AsmEd")]
+	[ExportContextMenuEntry(Order = 320, Category = "AsmEd")]
 	sealed class SaveRawResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase {
 		public SaveRawResourcesContextMenuEntry()
 			: base(false, ResourceDataType.Serialized) {
@@ -448,7 +448,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Order = 330, Category = "AsmEd")]
+	[ExportContextMenuEntry(Order = 330, Category = "AsmEd")]
 	sealed class SaveRawWithPathResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase {
 		public SaveRawWithPathResourcesContextMenuEntry()
 			: base(true, ResourceDataType.Serialized) {

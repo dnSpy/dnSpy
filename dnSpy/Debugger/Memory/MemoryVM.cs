@@ -96,7 +96,7 @@ namespace dnSpy.Debugger.Memory {
 				if (process == null)
 					this.HexDocument = null;
 				else
-					this.HexDocument = new HexDocument(cachedHexStream = new CachedHexStream(new DnProcessHexStream(process)), string.Format("<MEMORY: pid {0}>", process.ProcessId));
+					this.HexDocument = new HexDocument(cachedHexStream = new CachedHexStream(new ProcessHexStream(process.CorProcess.Handle)), string.Format("<MEMORY: pid {0}>", process.ProcessId));
 			}
 		}
 

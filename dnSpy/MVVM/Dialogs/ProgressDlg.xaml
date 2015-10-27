@@ -1,0 +1,52 @@
+﻿<!--
+    Copyright (C) 2014-2015 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<winlocal:WindowBase x:Class="dnSpy.MVVM.Dialogs.ProgressDlg"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:winlocal="clr-namespace:dnSpy.MVVM"
+             xmlns:local="clr-namespace:dnSpy.MVVM.Dialogs"
+             xmlns:mvvm="clr-namespace:dnSpy.MVVM"
+             xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters"
+             Height="200" Width="400"
+             Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
+             MinHeight="150" MinWidth="300">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="1" Margin="0 5 0 0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding CurrentItemDescription}" />
+        <ProgressBar
+            Grid.Row="2"
+            Margin="5 5 5 0"
+            Height="30"
+            HorizontalAlignment="Stretch"
+            IsIndeterminate="{Binding IsIndeterminate}"
+            Minimum="{Binding ProgressMinimum}"
+            Maximum="{Binding ProgressMaximum}"
+            Value="{Binding TotalProgress, Mode=OneWay}"
+            />
+        <Button Grid.Row="4" Margin="5 5 5 5" Content="_Cancel" Style="{StaticResource DialogButton}" Command="{Binding CancelCommand}" />
+    </Grid>
+</winlocal:WindowBase>

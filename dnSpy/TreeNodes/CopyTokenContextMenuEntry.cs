@@ -50,7 +50,7 @@ namespace dnSpy.TreeNodes {
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = "_Copy MD Token", Order = 410, Category = "Tokens")]
+	[ExportContextMenuEntry(Header = "_Copy MD Token", Order = 410, Category = "Tokens")]
 	class CopyTokenContextMenuEntry : CopyTokenContextMenuEntryBase {
 		public override bool IsVisible(ContextMenuEntryContext context) {
 			return GetReference(context) != null;
@@ -63,7 +63,7 @@ namespace dnSpy.TreeNodes {
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = "Copy De_finition MD Token", Order = 420, Category = "Tokens")]
+	[ExportContextMenuEntry(Header = "Copy De_finition MD Token", Order = 420, Category = "Tokens")]
 	class CopyDefinitionTokenContextMenuEntry : CopyTokenContextMenuEntryBase {
 		public override bool IsVisible(ContextMenuEntryContext context) {
 			var obj = GetReference(context);

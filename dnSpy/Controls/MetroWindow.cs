@@ -478,7 +478,7 @@ namespace dnSpy.Controls {
 			var hMenu = GetSystemMenu(hWnd, false);
 			uint res = TrackPopupMenuEx(hMenu, 0x100, (int)p.X, (int)p.Y, hWnd, IntPtr.Zero);
 			if (res != 0)
-				PostMessage(hWnd, 0x112, new IntPtr(res), IntPtr.Zero);
+				PostMessage(hWnd, 0x112, IntPtr.Size == 4 ? new IntPtr((int)res) : new IntPtr(res), IntPtr.Zero);
 		}
 
 		public static void SetState(Window window, WindowState state) {

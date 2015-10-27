@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Media.Imaging;
@@ -26,19 +24,12 @@ using dnSpy.Decompiler;
 using dnSpy.Images;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.TreeNodes {
 	static class ResourceUtils {
-		static readonly HashSet<char> invalidFileNameChar = new HashSet<char>();
-		static ResourceUtils() {
-			invalidFileNameChar.AddRange(Path.GetInvalidFileNameChars());
-			invalidFileNameChar.AddRange(Path.GetInvalidPathChars());
-		}
-
 		public static string GetIconName(string name) {
 			return GetIconName(name, "Resource");
 		}
@@ -76,60 +67,6 @@ namespace dnSpy.TreeNodes {
 			writer.Write(s);
 			writer.Close();
 			return new MemoryStream(outStream.ToArray());
-		}
-
-		public static string GetFileName(string s) {
-			int index = Math.Max(s.LastIndexOf('/'), s.LastIndexOf('\\'));
-			if (index < 0)
-				return s;
-			return s.Substring(index + 1);
-		}
-
-		public static string FixFileNamePart(string s) {
-			var sb = new StringBuilder(s.Length);
-
-			foreach (var c in s) {
-				if (invalidFileNameChar.Contains(c))
-					sb.Append('_');
-				else
-					sb.Append(c);
-			}
-
-			return sb.ToString();
-		}
-
-		public static string GetCleanedPath(string s, bool useSubDirs) {
-			if (!useSubDirs)
-				return FixFileNamePart(GetFileName(s));
-
-			string res = string.Empty;
-			foreach (var part in s.Replace('/', '\\').Split('\\'))
-				res = Path.Combine(res, FixFileNamePart(part));
-			return res;
-		}
-
-		public static Exception SaveFile(string path, Stream data) {
-			bool deleteFile = false;
-			try {
-				using (data) {
-					deleteFile = !File.Exists(path);
-					Directory.CreateDirectory(Path.GetDirectoryName(path));
-					using (var outputStream = File.Create(path))
-						data.CopyTo(outputStream);
-				}
-			}
-			catch (Exception ex) {
-				if (deleteFile) {
-					try {
-						File.Delete(path);
-					}
-					catch {
-					}
-				}
-				return ex;
-			}
-
-			return null;
 		}
 
 		public static void WriteOffsetComment(this ITextOutput output, IResourceNode node) {

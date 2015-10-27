@@ -19,42 +19,27 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Windows;
-using System.Windows.Threading;
-using dnSpy.MVVM;
 
-namespace dnSpy.Debugger.IMModules {
+namespace dnSpy.MVVM.Dialogs {
 	/// <summary>
-	/// Interaction logic for LoadEverythingDlg.xaml
+	/// Interaction logic for ProgressDlg.xaml
 	/// </summary>
-	public partial class LoadEverythingDlg : WindowBase {
-		public LoadEverythingDlg() {
+	public partial class ProgressDlg : WindowBase {
+		public ProgressDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
-				var data = DataContext as LoadEverythingVM;
+				var data = DataContext as ProgressVM;
 				if (data != null)
-					data.OnCompleted += LoadEverythingVM_OnCompleted;
+					data.OnCompleted += ProgressVM_OnCompleted;
 				if (data.HasCompleted)
 					OnCompleted();
 			};
-			Loaded += LoadEverythingDlg_Loaded;
-		}
-
-		void LoadEverythingDlg_Loaded(object sender, RoutedEventArgs e) {
-			var data = DataContext as LoadEverythingVM;
-			Debug.Assert(data != null);
-			if (data != null) {
-				this.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => {
-					data.LoadFiles();
-				}));
-			}
 		}
 
 		protected override void OnClosing(CancelEventArgs e) {
 			base.OnClosing(e);
 
-			var data = DataContext as LoadEverythingVM;
+			var data = DataContext as ProgressVM;
 			if (data == null)
 				return;
 			data.Cancel();
@@ -62,12 +47,12 @@ namespace dnSpy.Debugger.IMModules {
 				e.Cancel = true;
 		}
 
-		void LoadEverythingVM_OnCompleted(object sender, EventArgs e) {
+		void ProgressVM_OnCompleted(object sender, EventArgs e) {
 			OnCompleted();
 		}
 
 		void OnCompleted() {
-			var data = DataContext as LoadEverythingVM;
+			var data = DataContext as ProgressVM;
 			this.DialogResult = data != null && !data.WasCanceled;
 			Close();
 		}

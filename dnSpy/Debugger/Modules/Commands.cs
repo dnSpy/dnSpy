@@ -26,11 +26,13 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dndbg.Engine;
+using dnlib.DotNet;
 using dnSpy.Debugger.IMModules;
 using dnSpy.Debugger.Memory;
 using dnSpy.Files;
 using dnSpy.Images;
 using dnSpy.MVVM;
+using dnSpy.MVVM.Dialogs;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
@@ -341,69 +343,54 @@ namespace dnSpy.Debugger.Modules {
 			Save(GetSavableFiles(context.SelectedItems));
 		}
 
+		static string GetModuleFilename(DnModule module) {
+			if (module.IsDynamic)
+				return null;
+			if (!module.IsInMemory)
+				return DebugOutputUtils.GetFilename(module.Name);
+			if (module.CorModule.IsManifestModule)
+				return DebugOutputUtils.GetFilename(new AssemblyNameInfo(module.Assembly.FullName).Name);
+			return DebugOutputUtils.GetFilename(module.DnlibName);
+		}
+
 		static void Save(ModuleVM[] files) {
-			if (files.Length == 0)
-				return;
-			var buffer = new byte[0x10000];
+			var list = new Tuple<DnModule, string>[files.Length];
 			if (files.Length == 1) {
 				var vm = files[0];
-				var filename = new PickSaveFilename().GetFilename(vm.Module.Name, GetDefaultExtension(vm.Module.Name, vm.IsExe), PickFilenameConstants.DotNetAssemblyOrModuleFilter);
+				var filename = new PickSaveFilename().GetFilename(GetModuleFilename(vm.Module), GetDefaultExtension(GetModuleFilename(vm.Module), vm.IsExe, vm.Module.CorModule.IsManifestModule), PickFilenameConstants.DotNetAssemblyOrModuleFilter);
 				if (string.IsNullOrEmpty(filename))
 					return;
-				Save(vm.Module, filename, buffer);
+				list[0] = Tuple.Create(vm.Module, filename);
 			}
 			else {
 				var dir = new PickDirectory().GetDirectory(null);
-				if (string.IsNullOrEmpty(dir))
+				if (!Directory.Exists(dir))
 					return;
-				foreach (var file in files) {
+				for (int i = 0; i < files.Length; i++) {
+					var file = files[i];
 					var filename = DebugOutputUtils.GetFilename(file.Module.Name);
-					if (filename.IndexOf('.') < 0)
-						filename += file.IsExe ? ".exe" : ".dll";
-					bool saved = Save(file.Module, Path.Combine(dir, filename), buffer);
-					if (!saved)
-						return;
-				}
-			}
-		}
-
-		static bool Save(DnModule module, string filename, byte[] buffer) {
-			bool createdFile = false;
-			try {
-				using (var file = File.Create(filename)) {
-					createdFile = true;
-					ulong addr = module.CorModule.Address;
-					ulong sizeLeft = module.CorModule.Size;
-					while (sizeLeft > 0) {
-						int bytesToRead = sizeLeft <= (ulong)buffer.Length ? (int)sizeLeft : buffer.Length;
-						int bytesRead;
-						int hr = module.Process.CorProcess.ReadMemory(addr, buffer, 0, bytesToRead, out bytesRead);
-						if (hr < 0) {
-							MainWindow.Instance.ShowMessageBox(string.Format("Failed to save '{0}'\nERROR: {1:X8}", filename, hr));
-							return false;
-						}
-						if (bytesRead == 0) {
-							MainWindow.Instance.ShowMessageBox(string.Format("Failed to save '{0}'\nERROR: Could not read any data", filename));
-							return false;
-						}
-
-						file.Write(buffer, 0, bytesRead);
-						addr += (ulong)bytesRead;
-						sizeLeft -= (ulong)bytesRead;
+					var lf = filename.ToUpperInvariant();
+					if (lf.EndsWith(".EXE") || lf.EndsWith(".DLL") || lf.EndsWith(".NETMODULE")) {
 					}
+					else if (file.Module.CorModule.IsManifestModule)
+						filename += file.IsExe ? ".exe" : ".dll";
+					else
+						filename += ".netmodule";
+					list[i] = Tuple.Create(file.Module, Path.Combine(dir, filename));
+				}
+			}
 
-					return true;
-				}
-			}
-			catch (Exception ex) {
-				MainWindow.Instance.ShowMessageBox(string.Format("Failed to save '{0}'\nERROR: {1}", filename, ex.Message));
-				if (createdFile && File.Exists(filename)) {
-					try {
-						File.Delete(filename);
-					} catch { }
-				}
-				return false;
-			}
+			var data = new ProgressVM(MainWindow.Instance.Dispatcher, new PEFilesSaver(list));
+			var win = new ProgressDlg();
+			win.DataContext = data;
+			win.Owner = MainWindow.Instance;
+			win.Title = list.Length == 1 ? "Save Module" : "Save Modules";
+			var res = win.ShowDialog();
+			if (res != true)
+				return;
+			if (!data.WasError)
+				return;
+			MainWindow.Instance.ShowMessageBox(string.Format("An error occurred:\n\n{0}", data.ErrorMessage));
 		}
 
 		protected override bool IsEnabled(ModulesCtxMenuContext context) {
@@ -416,11 +403,12 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		static ModuleVM[] GetSavableFiles(ModuleVM[] files) {
-			//TODO: Support dynamic modules
-			return files.Where(a => a.Module.CorModule.Address != 0 && a.Module.CorModule.Size > 0 && !a.Module.CorModule.IsDynamic && a.Module.CorModule.IsInMemory).ToArray();
+			return files.Where(a => a.Module.CorModule.Address != 0 && a.Module.CorModule.Size > 0 && !a.Module.CorModule.IsDynamic).ToArray();
 		}
 
-		static string GetDefaultExtension(string name, bool isExe) {
+		static string GetDefaultExtension(string name, bool isExe, bool isManifestModule) {
+			if (!isManifestModule)
+				return ".netmodule";
 			try {
 				var ext = Path.GetExtension(name);
 				if (ext.Length > 0 && ext[0] == '.')

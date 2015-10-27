@@ -21,7 +21,7 @@ using System.Diagnostics;
 using dnlib.DotNet;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
-	[ExportContextMenuEntryAttribute(Header = "Search _MSDN", Icon = "Search", Order = 910, Category = "Other")]
+	[ExportContextMenuEntry(Header = "Search _MSDN", Icon = "Search", Order = 910, Category = "Other")]
 	internal sealed class SearchMsdnContextMenuEntry : IContextMenuEntry {
 		private static string msdnAddress = "http://msdn.microsoft.com/en-us/library/{0}";
 

@@ -586,7 +586,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = "_Load Dependencies", Order = 930, Category = "Other")]
+	[ExportContextMenuEntry(Header = "_Load Dependencies", Order = 930, Category = "Other")]
 	sealed class LoadDependencies : IContextMenuEntry {
 		public bool IsVisible(ContextMenuEntryContext context) {
 			if (context.SelectedTreeNodes == null)
@@ -610,7 +610,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 	}
 
-	[ExportContextMenuEntryAttribute(Header = "_Add to Main List", Order = 950, Category = "Other")]
+	[ExportContextMenuEntry(Header = "_Add to Main List", Order = 950, Category = "Other")]
 	sealed class AddToMainList : IContextMenuEntry {
 		public bool IsVisible(ContextMenuEntryContext context) {
 			if (context.SelectedTreeNodes == null)

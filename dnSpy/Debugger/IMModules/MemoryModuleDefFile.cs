@@ -89,7 +89,7 @@ namespace dnSpy.Debugger.IMModules {
 		readonly byte[] data;
 		readonly bool isInMemory;
 
-		public MemoryModuleDefFile(Dictionary<ModuleDef, MemoryModuleDefFile>  dict, DnProcess process, ulong address, byte[] data, bool isInMemory, ModuleDef module, bool loadSyms, bool autoUpdateMemory)
+		MemoryModuleDefFile(Dictionary<ModuleDef, MemoryModuleDefFile>  dict, DnProcess process, ulong address, byte[] data, bool isInMemory, ModuleDef module, bool loadSyms, bool autoUpdateMemory)
 			: base(module, loadSyms) {
 			this.dict = dict;
 			this.process = process;

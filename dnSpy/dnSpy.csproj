@@ -201,12 +201,12 @@
     <Compile Include="Debugger\Locals\ValuePrinter.cs" />
     <Compile Include="Debugger\Locals\ValueStringParser.cs" />
     <Compile Include="Debugger\Locals\ValueVM.cs" />
-    <Compile Include="Debugger\Memory\DnProcessHexStream.cs" />
     <Compile Include="Debugger\Memory\MemoryUtils.cs" />
     <Compile Include="Debugger\Memory\MemoryVM.cs" />
     <Compile Include="Debugger\Memory\MemoryControl.xaml.cs">
       <DependentUpon>MemoryControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Debugger\Memory\ProcessHexStream.cs" />
     <Compile Include="Debugger\ModuleLoader.cs" />
     <Compile Include="Debugger\Modules\Commands.cs" />
     <Compile Include="Debugger\Modules\ModuleColumnConverter.cs" />
@@ -216,6 +216,7 @@
     </Compile>
     <Compile Include="Debugger\Modules\ModulesVM.cs" />
     <Compile Include="Debugger\Modules\ModuleVM.cs" />
+    <Compile Include="Debugger\Modules\PEFilesSaver.cs" />
     <Compile Include="Debugger\OutputConverter.cs" />
     <Compile Include="Debugger\ProcessMemoryUtils.cs" />
     <Compile Include="Debugger\SerializedModuleExtensions.cs" />
@@ -427,6 +428,10 @@
     <Compile Include="AsmEditor\DnlibDialogs\TypeSigCreatorVM.cs" />
     <Compile Include="AsmEditor\DnlibDialogs\TypeSigVM.cs" />
     <Compile Include="AsmEditor\EditCommand.cs" />
+    <Compile Include="MVVM\Dialogs\ProgressVM.cs" />
+    <Compile Include="MVVM\Dialogs\ProgressDlg.xaml.cs">
+      <DependentUpon>ProgressDlg.xaml</DependentUpon>
+    </Compile>
     <Compile Include="MVVM\EnumVM.cs" />
     <Compile Include="AsmEditor\Event\EventDefCommands.cs" />
     <Compile Include="AsmEditor\Event\EventDefOptions.cs" />
@@ -1328,6 +1333,10 @@
     </Page>
     <Page Include="MainWindow.xaml" />
     <Page Include="MsgBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MVVM\Dialogs\ProgressDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

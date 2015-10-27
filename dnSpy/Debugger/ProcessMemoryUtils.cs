@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dndbg.Engine;
 using dnSpy.Debugger.Memory;
 using dnSpy.HexEditor;
@@ -24,7 +25,11 @@ using dnSpy.HexEditor;
 namespace dnSpy.Debugger {
 	static class ProcessMemoryUtils {
 		public static void ReadMemory(DnProcess process, ulong address, byte[] data, long index, int count) {
-			var reader = new CachedHexStream(new DnProcessHexStream(process));
+			ReadMemory(process.CorProcess.Handle, address, data, index, count);
+		}
+
+		public static void ReadMemory(IntPtr hProcess, ulong address, byte[] data, long index, int count) {
+			var reader = new CachedHexStream(new ProcessHexStream(hProcess));
 			reader.Read(address, data, index, count);
 		}
 	}
