@@ -1533,6 +1533,11 @@ namespace dndbg.Engine {
 				try {
 					int hr = process.CorProcess.RawObject.Stop(uint.MaxValue);
 					hr = process.CorProcess.RawObject.Terminate(uint.MaxValue);
+					if (hr != 0) {
+						Debug.Assert(hr == CordbgErrors.CORDBG_E_UNRECOVERABLE_ERROR);
+						bool b = NativeMethods.TerminateProcess(process.CorProcess.Handle, uint.MaxValue);
+						Debug.Assert(b);
+					}
 				}
 				catch {
 				}
