@@ -22,7 +22,7 @@ using System.Diagnostics;
 using dnSpy.MVVM;
 
 namespace dnSpy.TreeNodes.Hex {
-	abstract class HexVM : ViewModelBase {
+	public abstract class HexVM : ViewModelBase {
 		public abstract string Name { get; }
 		public abstract IEnumerable<HexField> HexFields { get; }
 

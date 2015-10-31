@@ -164,7 +164,7 @@ namespace dnSpy.Files {
 			return new UnknownFile(filename);
 		}
 
-		internal static ModuleContext CreateModuleContext(IAssemblyResolver asmResolver) {
+		public static ModuleContext CreateModuleContext(IAssemblyResolver asmResolver) {
 			ModuleContext moduleCtx = new ModuleContext();
 			moduleCtx.AssemblyResolver = asmResolver;
 			// Disable WinMD projection since the user probably expects that clicking on a type
@@ -226,7 +226,7 @@ namespace dnSpy.Files {
 		}
 	}
 
-	abstract class DotNetFileBase : DnSpyFile {
+	public abstract class DotNetFileBase : DnSpyFile {
 		public override ModuleDef ModuleDef {
 			get { return module; }
 		}

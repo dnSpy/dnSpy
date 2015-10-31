@@ -65,15 +65,15 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			language.DecompileNamespace(name, this.Children.OfType<TypeTreeNode>().Select(t => t.TypeDef), output, options);
 		}
 
-		internal void OnBeforeRemoved() {
+		public void OnBeforeRemoved() {
 			((AssemblyTreeNode)Parent).OnRemoved(this);
 		}
 
-		internal void OnReadded() {
+		public void OnReadded() {
 			((AssemblyTreeNode)Parent).OnReadded(this);
 		}
 
-		internal void Append(TypeTreeNode typeNode) {
+		public void Append(TypeTreeNode typeNode) {
 			bool b = name.Equals(typeNode.Namespace, StringComparison.Ordinal);
 			Debug.Assert(b);
 			if (!b)
@@ -82,7 +82,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			((AssemblyTreeNode)Parent).OnReadded(typeNode);
 		}
 
-		internal TypeTreeNode RemoveLast() {
+		public TypeTreeNode RemoveLast() {
 			Debug.Assert(Children.Count > 0);
 			int index = Children.Count - 1;
 			var typeNode = (TypeTreeNode)Children[index];

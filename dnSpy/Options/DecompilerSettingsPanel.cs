@@ -28,7 +28,7 @@ namespace ICSharpCode.ILSpy.Options {
 		}
 	}
 
-	class DecompilerSettingsPanel : OptionPage {
+	public class DecompilerSettingsPanel : OptionPage {
 		static DecompilerSettings currentDecompilerSettings;
 
 		public DecompilerSettings Settings {

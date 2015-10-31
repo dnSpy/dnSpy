@@ -25,7 +25,7 @@ using dnSpy.TreeNodes.Hex;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.Search {
-	abstract class ShowNothingTreeViewNodeFilterBase : ITreeViewNodeFilter {
+	public abstract class ShowNothingTreeViewNodeFilterBase : ITreeViewNodeFilter {
 		public virtual string Text {
 			get { return null; }
 		}

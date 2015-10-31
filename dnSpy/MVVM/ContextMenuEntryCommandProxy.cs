@@ -22,7 +22,7 @@ using System.Windows.Input;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.MVVM {
-	abstract class ContextMenuEntryCommandProxy : ICommand {
+	public abstract class ContextMenuEntryCommandProxy : ICommand {
 		readonly IContextMenuEntry cmd;
 
 		protected ContextMenuEntryCommandProxy(IContextMenuEntry cmd) {

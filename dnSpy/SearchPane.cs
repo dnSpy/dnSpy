@@ -417,7 +417,7 @@ namespace ICSharpCode.ILSpy {
 		}
 	}
 
-	internal sealed class RunningSearch {
+	public sealed class RunningSearch {
 		readonly Dispatcher dispatcher;
 		readonly CancellationTokenSource cts = new CancellationTokenSource();
 		readonly AssemblyTreeNode[] asmNodes;
@@ -529,7 +529,7 @@ namespace ICSharpCode.ILSpy {
 		}
 	}
 
-	sealed class SearchResult : IMemberTreeNode, INotifyPropertyChanged, IComparable<SearchResult> {
+	public sealed class SearchResult : IMemberTreeNode, INotifyPropertyChanged, IComparable<SearchResult> {
 		public IMemberRef Member {
 			get { return MDTokenProvider as IMemberRef; }
 		}

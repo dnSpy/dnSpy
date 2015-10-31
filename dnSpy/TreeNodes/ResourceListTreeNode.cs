@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Lists the embedded resources in an assembly.
 	/// </summary>
-	sealed class ResourceListTreeNode : ILSpyTreeNode {
+	public sealed class ResourceListTreeNode : ILSpyTreeNode {
 		readonly ModuleDef module;
 
 		public ResourceListTreeNode(ModuleDef module) {

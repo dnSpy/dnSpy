@@ -106,7 +106,7 @@ namespace dnSpy.TreeNodes {
 		static readonly TypeRef SystemDrawingIcon = new TypeRefUser(null, "System.Drawing", "Icon", SystemDrawingAsm);
 	}
 
-	sealed class SerializedImageResourceElementTreeNode : ResourceElementTreeNode {
+	public sealed class SerializedImageResourceElementTreeNode : ResourceElementTreeNode {
 		public ImageSource ImageSource {
 			get { return imageSource; }
 		}
@@ -144,14 +144,14 @@ namespace dnSpy.TreeNodes {
 			yield return new ResourceData(resElem.Name, () => new MemoryStream(imageData));
 		}
 
-		internal ResourceElement GetAsRawImage() {
+		public ResourceElement GetAsRawImage() {
 			return new ResourceElement {
 				Name = resElem.Name,
 				ResourceData = new BuiltInResourceData(ResourceTypeCode.ByteArray, imageData),
 			};
 		}
 
-		internal ResourceElement Serialize(ResourceElement resElem) {
+		public ResourceElement Serialize(ResourceElement resElem) {
 			var data = (byte[])((BuiltInResourceData)resElem.ResourceData).Data;
 			bool isIcon = BitConverter.ToUInt32(data, 0) == 0x00010000;
 

@@ -30,6 +30,9 @@ using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 namespace dnSpy.TreeNodes {
 	[Export(typeof(IPlugin))]
 	sealed class GoToTokenPlugin : IPlugin {
+		void IPlugin.EarlyInit() {
+		}
+
 		public void OnLoaded() {
 			MainWindow.Instance.CodeBindings.Add(new RoutedCommand("GoToToken", typeof(GoToTokenPlugin)),
 				(s, e) => GoToTokenContextMenuEntry.Execute(),
@@ -39,7 +42,7 @@ namespace dnSpy.TreeNodes {
 	}
 
 	[ExportContextMenuEntry(Header = "Go to M_D Token...", Order = 400, Category = "Tokens", InputGestureText = "Ctrl+D")]
-	sealed class GoToTokenContextMenuEntry : IContextMenuEntry {
+	public sealed class GoToTokenContextMenuEntry : IContextMenuEntry {
 		public bool IsVisible(ContextMenuEntryContext context) {
 			if (!CanExecute())
 				return false;
@@ -94,7 +97,7 @@ namespace dnSpy.TreeNodes {
 			MainWindow.Instance.JumpToReference(tabState.TextView, member);
 		}
 
-		internal static uint? AskForToken(string title) {
+		public static uint? AskForToken(string title) {
 			var ask = new AskForInput();
 			ask.Owner = MainWindow.Instance;
 			ask.Title = title;

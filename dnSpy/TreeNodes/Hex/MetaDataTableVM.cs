@@ -26,7 +26,7 @@ using dnlib.DotNet.MD;
 using dnSpy.HexEditor;
 
 namespace dnSpy.TreeNodes.Hex {
-	abstract class MetaDataTableVM : HexVM {
+	public abstract class MetaDataTableVM : HexVM {
 		public Func<Table, MetaDataTableVM> FindMetaDataTable {
 			get { return findMetaDataTable; }
 			set { findMetaDataTable = value; }

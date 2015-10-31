@@ -21,7 +21,7 @@ using dnlib.DotNet;
 using ICSharpCode.Decompiler.Disassembler;
 
 namespace dnSpy {
-	static class InstructionBytesReader {
+	public static class InstructionBytesReader {
 		public static IInstructionBytesReader Create(MethodDef method) {
 			bool noInstrStream = method is MethodDefUser;
 			//TODO: OriginalInstructionBytesReader can't handle CorModuleDef assemblies since it

@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace dnSpy.MVVM {
-	static class ListSorter {
+	public static class ListSorter {
 		/// <summary>
 		/// Add an item to an already sorted list
 		/// </summary>

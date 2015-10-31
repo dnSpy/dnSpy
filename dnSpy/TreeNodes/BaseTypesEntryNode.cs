@@ -25,7 +25,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
-	sealed class BaseTypesEntryNode : ILSpyTreeNode, IMemberTreeNode {
+	public sealed class BaseTypesEntryNode : ILSpyTreeNode, IMemberTreeNode {
 		private readonly ITypeDefOrRef tr;
 		private TypeDef def;
 		private readonly bool isInterface;

@@ -37,7 +37,7 @@ namespace dnSpy.TreeNodes {
 		}
 	}
 
-	sealed class UnknownSerializedResourceElementTreeNode : SerializedResourceElementTreeNode {
+	public sealed class UnknownSerializedResourceElementTreeNode : SerializedResourceElementTreeNode {
 		public UnknownSerializedResourceElementTreeNode(ResourceElement resElem)
 			: base(resElem) {
 		}

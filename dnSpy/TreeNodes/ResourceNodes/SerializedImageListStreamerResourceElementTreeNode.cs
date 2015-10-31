@@ -77,7 +77,7 @@ namespace dnSpy.TreeNodes {
 		static readonly TypeRef SystemWindowsFormsImageListStreamer = new TypeRefUser(null, "System.Windows.Forms", "ImageListStreamer", SystemWindowsForms);
 	}
 
-	sealed class SerializedImageListStreamerResourceElementTreeNode : ResourceElementTreeNode {
+	public sealed class SerializedImageListStreamerResourceElementTreeNode : ResourceElementTreeNode {
 		ImageListOptions imageListOptions;
 		byte[] imageData;
 
@@ -148,7 +148,7 @@ namespace dnSpy.TreeNodes {
 			return Serialize(ImageListOptions);
 		}
 
-		internal static ResourceElement Serialize(ImageListOptions opts) {
+		public static ResourceElement Serialize(ImageListOptions opts) {
 			var imgList = new ImageList();
 			imgList.ColorDepth = opts.ColorDepth;
 			imgList.ImageSize = opts.ImageSize;
@@ -181,7 +181,7 @@ namespace dnSpy.TreeNodes {
 			return CheckCanUpdateData(GetModule(this), newResElem);
 		}
 
-		internal static string CheckCanUpdateData(ModuleDef module, ResourceElement newResElem) {
+		public static string CheckCanUpdateData(ModuleDef module, ResourceElement newResElem) {
 			var binData = (BinaryResourceData)newResElem.ResourceData;
 			byte[] imageData;
 			if (!SerializedImageListStreamerResourceElementTreeNodeFactory.GetImageData(module, binData.TypeName, binData.Data, out imageData))

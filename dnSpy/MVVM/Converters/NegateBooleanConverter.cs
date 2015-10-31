@@ -22,7 +22,7 @@ using System.Globalization;
 using System.Windows.Data;
 
 namespace dnSpy.MVVM.Converters {
-	sealed class NegateBooleanConverter : IValueConverter {
+	public sealed class NegateBooleanConverter : IValueConverter {
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			return !(bool)value;
 		}

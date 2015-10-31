@@ -26,7 +26,7 @@ using dnSpy.HexEditor;
 using dnSpy.MVVM;
 
 namespace dnSpy.TreeNodes.Hex {
-	abstract class MetaDataTableRecordVM : HexVM, IVirtualizedListItem {
+	public abstract class MetaDataTableRecordVM : HexVM, IVirtualizedListItem {
 		public int Index {
 			get { return (int)mdToken.Rid - 1; }
 		}

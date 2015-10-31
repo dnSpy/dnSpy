@@ -21,7 +21,7 @@ using System.Windows;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.MVVM {
-	sealed class AskUser : IAskUser {
+	public sealed class AskUser : IAskUser {
 		MsgBoxButton IAskUser.AskUser(string msg, AskUserButton buttons) {
 			return MainWindow.Instance.ShowMessageBox(msg, Convert(buttons));
 		}

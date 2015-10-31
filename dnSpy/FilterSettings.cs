@@ -31,7 +31,7 @@ namespace ICSharpCode.ILSpy {
 	/// clone to the ILSpyTreeNodes whenever the main mutable instance changes.
 	/// </remarks>
 	public class FilterSettings : INotifyPropertyChanged {
-		internal FilterSettings(ITreeViewNodeFilter filter, Language language) {
+		public FilterSettings(ITreeViewNodeFilter filter, Language language) {
 			this.filter = filter;
 			this.Language = language ?? Languages.GetLanguage("C#");
 		}
@@ -41,7 +41,7 @@ namespace ICSharpCode.ILSpy {
 			this.Language = Languages.GetLanguage("C#");
 		}
 
-		internal ITreeViewNodeFilter Filter {
+		public ITreeViewNodeFilter Filter {
 			get { return filter; }
 		}
 		readonly ITreeViewNodeFilter filter;

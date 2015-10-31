@@ -25,7 +25,7 @@ using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.TreeNodes.Hex {
-	enum StorageStreamType {
+	public enum StorageStreamType {
 		None,
 		Strings,
 		US,
@@ -35,7 +35,7 @@ namespace dnSpy.TreeNodes.Hex {
 		HotHeap,
 	}
 
-	sealed class StorageStreamTreeNode : HexTreeNode {
+	public sealed class StorageStreamTreeNode : HexTreeNode {
 		public StorageStreamType StorageStreamType {
 			get { return storageStreamType; }
 		}

@@ -24,7 +24,7 @@ using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
-	class DerivedTypesEntryNode : ILSpyTreeNode, IMemberTreeNode {
+	public class DerivedTypesEntryNode : ILSpyTreeNode, IMemberTreeNode {
 		private readonly TypeDef type;
 		private readonly ModuleDef[] modules;
 		private readonly ThreadingSupport threading;

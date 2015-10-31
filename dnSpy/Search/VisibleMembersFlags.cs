@@ -22,7 +22,7 @@ using System.Text;
 
 namespace dnSpy.Search {
 	[Flags]
-	enum VisibleMembersFlags {
+	public enum VisibleMembersFlags {
 		AssemblyDef		= 0x00000001,
 		ModuleDef		= 0x00000002,
 		Namespace		= 0x00000004,

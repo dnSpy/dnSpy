@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace dnSpy.MVVM {
-	sealed class EnumVM {
+	public sealed class EnumVM {
 		readonly object value;
 		readonly string name;
 
@@ -67,7 +67,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class EnumListVM : ListVM<EnumVM> {
+	public sealed class EnumListVM : ListVM<EnumVM> {
 		public new object SelectedItem {
 			get {
 				if (Index < 0 || Index >= list.Count)

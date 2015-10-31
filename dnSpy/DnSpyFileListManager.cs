@@ -29,7 +29,7 @@ namespace ICSharpCode.ILSpy {
 	/// 
 	/// Contains the list of list names; and provides methods for loading/saving and creating/deleting lists.
 	/// </summary>
-	sealed class DnSpyFileListManager {
+	public sealed class DnSpyFileListManager {
 		const string LIST_SECTION_NAME = "List";
 		const string FILELISTS_SECTION_NAME = "FileLists";
 		const string FILE_SECTION_NAME = "File";
@@ -111,7 +111,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		internal void RefreshSave(DnSpyFileList list) {
+		public void RefreshSave(DnSpyFileList list) {
 			if (!list.IsDirty) {
 				list.IsDirty = true;
 				App.Current.Dispatcher.BeginInvoke(

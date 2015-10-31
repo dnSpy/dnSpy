@@ -117,6 +117,15 @@ namespace ICSharpCode.ILSpy {
 			FixEditorContextMenuStyle();
 		}
 
+		public static void AddMergedResourceDictionary(Assembly asm, string path) {
+			var name = asm.GetName();
+			var s = "pack://application:,,,/" + name.Name + ";v" + name.Version + ";component/" + path;
+			var uri = new Uri(s, UriKind.Absolute);
+			var rsrcDict = new ResourceDictionary();
+			rsrcDict.Source = uri;
+			Current.Resources.MergedDictionaries.Add(rsrcDict);
+		}
+
 		// The text editor creates an EditorContextMenu which derives from ContextMenu. This
 		// class is private in the assembly and can't be referenced from XAML. In order to style
 		// this class we must get the type at runtime and add its style to the Resources.

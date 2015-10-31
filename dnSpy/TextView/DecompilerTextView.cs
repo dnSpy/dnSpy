@@ -84,7 +84,7 @@ namespace ICSharpCode.ILSpy.TextView {
 			get { return textEditor; }
 		}
 
-		internal TextSegmentCollection<ReferenceSegment> References {
+		public TextSegmentCollection<ReferenceSegment> References {
 			get { return references; }
 		}
 
@@ -664,7 +664,7 @@ namespace ICSharpCode.ILSpy.TextView {
 			if (evt != null)
 				evt(this, new ShowOutputEventArgs(nodes, highlighting, state));
 		}
-		internal Dictionary<SerializedDnSpyToken, MemberMapping> CodeMappings { get; private set; }
+		public Dictionary<SerializedDnSpyToken, MemberMapping> CodeMappings { get; private set; }
 		public event EventHandler<ShowOutputEventArgs> OnBeforeShowOutput;
 		public event EventHandler<ShowOutputEventArgs> OnShowOutput;
 		public class ShowOutputEventArgs : EventArgs {

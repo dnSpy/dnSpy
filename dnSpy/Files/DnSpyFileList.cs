@@ -55,7 +55,7 @@ namespace dnSpy.Files {
 		internal void Insert_NoLock(int index, DnSpyFile file) {
 			files.Insert(index, file);
 		}
-		internal object GetLockObj() {
+		public object GetLockObj() {
 			return lockObj;
 		}
 
@@ -168,11 +168,11 @@ namespace dnSpy.Files {
 			}
 		}
 
-		internal DnSpyFile CreateDnSpyFile(ModuleDef module) {
+		public DnSpyFile CreateDnSpyFile(ModuleDef module) {
 			return DnSpyFile.Create(module, options.UseDebugSymbols, assemblyResolver);
 		}
 
-		internal DnSpyFile CreateDnSpyFile(string filename) {
+		public DnSpyFile CreateDnSpyFile(string filename) {
 			return CreateDnSpyFile(filename, options.UseMemoryMappedIO, options.UseDebugSymbols);
 		}
 
@@ -202,7 +202,7 @@ namespace dnSpy.Files {
 			}
 		}
 
-		internal DnSpyFile AddFile(DnSpyFile newFile, bool canAdd, bool delayLoad, bool canDispose = true) {
+		public DnSpyFile AddFile(DnSpyFile newFile, bool canAdd, bool delayLoad, bool canDispose = true) {
 			lock (lockObj) {
 				var file = FindByKey_NoLock(newFile.Key);
 				if (file != null) {
@@ -215,7 +215,7 @@ namespace dnSpy.Files {
 			}
 		}
 
-		internal DnSpyFile ForceAddFileToList(DnSpyFile newFile, bool canAdd, bool delayLoad, int index, bool canDispose) {
+		public DnSpyFile ForceAddFileToList(DnSpyFile newFile, bool canAdd, bool delayLoad, int index, bool canDispose) {
 			lock (lockObj)
 				return ForceAddFileToList_NoLock(newFile, canAdd, delayLoad, index, canDispose);
 		}

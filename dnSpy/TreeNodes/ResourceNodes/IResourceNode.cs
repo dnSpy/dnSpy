@@ -27,7 +27,7 @@ namespace dnSpy.TreeNodes {
 		Serialized,
 	}
 
-	interface IResourceNode {
+	public interface IResourceNode {
 		/// <summary>
 		/// RVA of resource or 0
 		/// </summary>

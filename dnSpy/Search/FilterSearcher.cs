@@ -34,7 +34,7 @@ using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.Search {
-	interface ISearchComparer {
+	public interface ISearchComparer {
 		/// <summary>
 		/// Checks whether some value matches something
 		/// </summary>

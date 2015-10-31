@@ -25,7 +25,7 @@ using ICSharpCode.ILSpy;
 
 namespace dnSpy.MVVM {
 	[Export(typeof(IInitializeDataTemplate))]
-	sealed class InitializeDataTemplateContextMenu : IInitializeDataTemplate {
+	public sealed class InitializeDataTemplateContextMenu : IInitializeDataTemplate {
 		public void Initialize(DependencyObject d) {
 			var fwe = d as FrameworkElement;
 			if (fwe == null)

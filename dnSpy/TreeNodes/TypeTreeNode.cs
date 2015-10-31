@@ -28,7 +28,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
-	enum MemberAccess {
+	public enum MemberAccess {
 		Public,
 		Private,
 		Protected,
@@ -364,7 +364,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return type.BaseType != null && type.BaseType.FullName == typeof(MulticastDelegate).FullName && type.BaseType.DefinitionAssembly.IsCorLib();
 		}
 
-		internal static bool IsException(TypeDef type) {
+		public static bool IsException(TypeDef type) {
 			if (IsSystemException(type))
 				return true;
 			while (type != null) {
@@ -408,19 +408,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return nsNode.Parent as AssemblyTreeNode;
 		}
 
-		internal void OnBeforeRemoved() {
+		public void OnBeforeRemoved() {
 			var asmNode = GetAssemblyIfNonNestedType();
 			if (asmNode != null)
 				asmNode.OnRemoved(this);
 		}
 
-		internal void OnReadded() {
+		public void OnReadded() {
 			var asmNode = GetAssemblyIfNonNestedType();
 			if (asmNode != null)
 				asmNode.OnReadded(this);
 		}
 
-		internal void InvalidateInterfacesNode() {
+		public void InvalidateInterfacesNode() {
 			if (Children.Count == 0)
 				return;
 			Debug.Assert(Children[0] is BaseTypesTreeNode);
@@ -429,7 +429,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			Children[0] = new BaseTypesTreeNode(type);
 		}
 
-		internal TypeTreeNode GetOrCreateNestedTypeTreeNode(TypeDef nestedType) {
+		public TypeTreeNode GetOrCreateNestedTypeTreeNode(TypeDef nestedType) {
 			Debug.Assert(nestedType != null && nestedType.DeclaringType == type);
 			EnsureChildrenFiltered();
 			var typeNode = Children.OfType<TypeTreeNode>().FirstOrDefault(n => n.type == nestedType);

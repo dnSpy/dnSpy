@@ -23,7 +23,7 @@ using System.Windows.Data;
 using dnSpy.Images;
 
 namespace dnSpy.MVVM.Converters {
-	sealed class ImageConverter : IValueConverter {
+	public sealed class ImageConverter : IValueConverter {
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var ary = ((string)parameter).Split(seps, 2);
 			var bgType = (BackgroundType)Enum.Parse(typeof(BackgroundType), ary[0]);

@@ -131,7 +131,7 @@ namespace dnSpy.TreeNodes {
 		}
 	}
 
-	sealed class ImageResourceElementTreeNode : ResourceElementTreeNode {
+	public sealed class ImageResourceElementTreeNode : ResourceElementTreeNode {
 		ImageSource imageSource;
 		byte[] imageData;
 

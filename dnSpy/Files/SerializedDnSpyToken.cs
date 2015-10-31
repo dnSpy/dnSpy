@@ -21,7 +21,7 @@ using System;
 using dnlib.DotNet;
 
 namespace dnSpy.Files {
-	struct SerializedDnSpyToken : IEquatable<SerializedDnSpyToken> {
+	public struct SerializedDnSpyToken : IEquatable<SerializedDnSpyToken> {
 		public SerializedDnSpyModule Module {
 			get { return module; }
 		}

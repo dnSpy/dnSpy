@@ -23,7 +23,7 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 
 namespace dnSpy {
-	static class SourceCodeMappingUtils {
+	public static class SourceCodeMappingUtils {
 		public static IList<SourceCodeMapping> Find(DecompilerTextView textView, int line, int column) {
 			if (textView == null)
 				return new SourceCodeMapping[0];

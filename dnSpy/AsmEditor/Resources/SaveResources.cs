@@ -28,7 +28,7 @@ using ICSharpCode.ILSpy;
 using WF = System.Windows.Forms;
 
 namespace dnSpy.AsmEditor.Resources {
-	static class SaveResources {
+	public static class SaveResources {
 		static readonly HashSet<char> invalidFileNameChar = new HashSet<char>();
 		static SaveResources() {
 			invalidFileNameChar.AddRange(Path.GetInvalidFileNameChars());

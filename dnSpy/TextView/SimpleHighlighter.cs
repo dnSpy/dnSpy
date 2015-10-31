@@ -34,7 +34,7 @@ using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.XmlDoc;
 
 namespace dnSpy.TextView {
-	sealed class SimpleHighlighter : IXmlDocOutput {
+	public sealed class SimpleHighlighter : IXmlDocOutput {
 		public ITextOutput TextOutput {
 			get { return output; }
 		}

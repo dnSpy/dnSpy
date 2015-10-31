@@ -21,11 +21,11 @@ using System.Linq;
 using System.Windows.Controls;
 
 namespace dnSpy.MVVM {
-	interface ISelectedItemsProvider<T> {
+	public interface ISelectedItemsProvider<T> {
 		T[] SelectedItems { get; }
 	}
 
-	sealed class SelectedItemsProvider<T> : ISelectedItemsProvider<T> {
+	public sealed class SelectedItemsProvider<T> : ISelectedItemsProvider<T> {
 		readonly ListBox listBox;
 
 		public SelectedItemsProvider(ListBox listBox) {

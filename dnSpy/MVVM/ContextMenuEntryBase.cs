@@ -21,7 +21,7 @@ using System.Windows.Controls;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.MVVM {
-	abstract class ContextMenuEntryBase<TContext> : IContextMenuEntry2 {
+	public abstract class ContextMenuEntryBase<TContext> : IContextMenuEntry2 {
 		protected abstract TContext CreateContext(ContextMenuEntryContext context);
 
 		void IContextMenuEntry<ContextMenuEntryContext>.Execute(ContextMenuEntryContext context) {

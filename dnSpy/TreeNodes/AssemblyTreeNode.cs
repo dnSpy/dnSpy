@@ -27,6 +27,7 @@ using System.Windows.Documents;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy;
+using dnSpy.AsmEditor;
 using dnSpy.Files;
 using dnSpy.Images;
 using dnSpy.NRefactory;
@@ -45,12 +46,12 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// </summary>
 	public sealed class AssemblyTreeNode : ILSpyTreeNode {
 		readonly DnSpyFile dnSpyFile;
-		internal static readonly StringComparer NamespaceStringEqualsComparer = StringComparer.Ordinal;
+		public static readonly StringComparer NamespaceStringEqualsComparer = StringComparer.Ordinal;
 		internal static readonly StringComparer NamespaceStringSortComparer = StringComparer.OrdinalIgnoreCase;
 		internal static readonly StringComparer TypeStringComparer = StringComparer.OrdinalIgnoreCase;
 		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>(NamespaceStringEqualsComparer);
 
-		internal AssemblyTreeNode(DnSpyFile dnSpyFile) {
+		public AssemblyTreeNode(DnSpyFile dnSpyFile) {
 			if (dnSpyFile == null)
 				throw new ArgumentNullException("assembly");
 
@@ -60,11 +61,15 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			OnAssemblyLoaded();
 		}
 
+		IHexDocumentManager HexDocumentManager {
+			get { return MainWindow.Instance.HexDocumentManager; }
+		}
+
 		internal DnSpyFileList DnSpyFileList {
 			get { return MainWindow.Instance.DnSpyFileList; }
 		}
 
-		internal DnSpyFile DnSpyFile {
+		public DnSpyFile DnSpyFile {
 			get { return dnSpyFile; }
 		}
 
@@ -171,7 +176,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		internal void OnFileNameChanged() {
+		public void OnFileNameChanged() {
 			OnFileNameChangedInternal(this);
 			if (Children.Count > 0 && Children[0] is AssemblyTreeNode)
 				OnFileNameChangedInternal((AssemblyTreeNode)Children[0]);
@@ -281,8 +286,8 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			// from a file, so if the PEImage wasn't loaded from the same file, conversion to/from
 			// RVA/FileOffset won't work and the wrong data will be displayed, eg. in the .NET
 			// storage stream nodes.
-			if (DnSpyFile.LoadedFromFile && peImage != null)
-				this.Children.Add(new PETreeNode(peImage, module as ModuleDefMD));
+			if (HexDocumentManager != null && DnSpyFile.LoadedFromFile && peImage != null)
+				this.Children.Add(new PETreeNode(HexDocumentManager, peImage, module as ModuleDefMD));
 			if (module != null) {
 				this.Children.Add(new ReferenceFolderTreeNode(module, this, asmListTreeNode));
 				this.Children.Add(new ResourceListTreeNode(module));
@@ -342,7 +347,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			typeDict.Add(typeNode.TypeDef, typeNode);
 		}
 
-		internal TypeTreeNode GetOrCreateNonNestedTypeTreeNode(TypeDef td) {
+		public TypeTreeNode GetOrCreateNonNestedTypeTreeNode(TypeDef td) {
 			Debug.Assert(td != null && td.DeclaringType == null);
 			Debug.Assert(!LazyLoading);
 			TypeTreeNode typeNode;
@@ -370,7 +375,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// Called when it's been converted to an assembly
 		/// </summary>
 		/// <param name="modNode">Old child as returned by <see cref="OnConvertedToNetModule()"/></param>
-		internal void OnConvertedToAssembly(AssemblyTreeNode modNode = null) {
+		public void OnConvertedToAssembly(AssemblyTreeNode modNode = null) {
 			Debug.Assert(Children.Count == 0 || !(Children[0] is AssemblyTreeNode));
 			Debug.Assert(!(Parent is AssemblyTreeNode));
 
@@ -415,7 +420,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		/// Converts it to a netmodule and returns the old <see cref="AssemblyTreeNode"/> child
 		/// </summary>
 		/// <returns></returns>
-		internal AssemblyTreeNode OnConvertedToNetModule() {
+		public AssemblyTreeNode OnConvertedToNetModule() {
 			bool b = !LazyLoading &&
 					!(Parent is AssemblyTreeNode) &&
 					Children.Count == 1 && Children[0] is AssemblyTreeNode &&
@@ -517,7 +522,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return dataObject;
 		}
 
-		internal AssemblyFilterType AssemblyFilterType {
+		public AssemblyFilterType AssemblyFilterType {
 			get {
 				if (IsAssembly)
 					return AssemblyFilterType.Assembly;

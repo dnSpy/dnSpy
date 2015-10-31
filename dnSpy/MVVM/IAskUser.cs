@@ -18,14 +18,14 @@
 */
 
 namespace dnSpy.MVVM {
-	enum AskUserButton {
+	public enum AskUserButton {
 		OK,
 		OKCancel,
 		YesNoCancel,
 		YesNo,
 	}
 
-	interface IAskUser {
+	public interface IAskUser {
 		MsgBoxButton AskUser(string msg, AskUserButton buttons);
 	}
 }

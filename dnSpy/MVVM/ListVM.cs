@@ -25,7 +25,7 @@ using System.Diagnostics;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.MVVM {
-	class ListVM<T> : INotifyPropertyChanged, IDataErrorInfo {
+	public class ListVM<T> : INotifyPropertyChanged, IDataErrorInfo {
 		protected ObservableCollection<T> list;
 		readonly Action<int, int> onChanged;
 		int index;

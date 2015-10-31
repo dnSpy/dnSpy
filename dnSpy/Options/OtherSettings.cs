@@ -36,7 +36,7 @@ namespace dnSpy.Options {
 		}
 	}
 
-	sealed class OtherSettings : OptionPage {
+	public sealed class OtherSettings : OptionPage {
 		public ICommand EnableAllWarningsCommand {
 			get { return new RelayCommand(a => EnableAllWarnings(), a => EnableAllWarningsCanExecute()); }
 		}

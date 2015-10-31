@@ -23,7 +23,7 @@ using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy {
-	static class TextOutputUtils {
+	public static class TextOutputUtils {
 		public static T WriteCommaSpace<T>(this T output) where T : ITextOutput {
 			output.Write(',', TextTokenType.Operator);
 			output.WriteSpace();

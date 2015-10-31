@@ -23,7 +23,7 @@ using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.Search {
-	sealed class SameAssemblyTreeViewNodeFilter : ChainTreeViewNodeFilter {
+	public sealed class SameAssemblyTreeViewNodeFilter : ChainTreeViewNodeFilter {
 		readonly AssemblyDef allowedAsm;
 		readonly ModuleDef allowedMod;
 

@@ -24,20 +24,20 @@ using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace dnSpy.MVVM.Dialogs {
-	interface IProgress {
+	public interface IProgress {
 		void SetTotalProgress(double progress);
 		void SetDescription(string desc);
 		void ThrowIfCancellationRequested();
 	}
 
-	interface IProgressTask {
+	public interface IProgressTask {
 		bool IsIndeterminate { get; }
 		double ProgressMaximum { get; }
 		double ProgressMinimum { get; }
 		void Execute(IProgress progress);
 	}
 
-	sealed class ProgressVM : ViewModelBase, IProgress {
+	public sealed class ProgressVM : ViewModelBase, IProgress {
 		public ICommand CancelCommand {
 			get { return new RelayCommand(a => Cancel(), a => CanCancel); }
 		}

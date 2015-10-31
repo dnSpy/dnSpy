@@ -26,7 +26,7 @@ using dnSpy.TreeNodes.Hex;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.Search {
-	sealed class FlagsTreeViewNodeFilter : TreeViewNodeFilterBase {
+	public sealed class FlagsTreeViewNodeFilter : TreeViewNodeFilterBase {
 		readonly VisibleMembersFlags flags;
 
 		public override string Text {

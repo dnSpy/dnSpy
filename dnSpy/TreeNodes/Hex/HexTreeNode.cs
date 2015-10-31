@@ -28,7 +28,7 @@ using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.TreeNodes.Hex {
-	abstract class HexTreeNode : ILSpyTreeNode {
+	public abstract class HexTreeNode : ILSpyTreeNode {
 		protected abstract IEnumerable<HexVM> HexVMs { get; }
 		protected abstract object ViewObject { get; }
 

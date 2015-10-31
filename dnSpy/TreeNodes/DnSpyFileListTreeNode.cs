@@ -37,7 +37,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// Represents a list of files.
 	/// This is used as (invisible) root node of the tree view.
 	/// </summary>
-	sealed class DnSpyFileListTreeNode : ILSpyTreeNode {
+	public sealed class DnSpyFileListTreeNode : ILSpyTreeNode {
 		readonly DnSpyFileList dnspyFileList;
 
 		public object OwnerTreeView { get; set; }
@@ -118,7 +118,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				cachedAsmTreeNodes.Remove(asm);
 		}
 
-		internal bool DisableDrop { get; set; }
+		public bool DisableDrop { get; set; }
 
 		public override bool CanDrop(DragEventArgs e, int index) {
 			if (DisableDrop) {
@@ -198,8 +198,8 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 						var node = MainWindow.Instance.FindTreeNode(newSelectedFile.AssemblyDef) ??
 							MainWindow.Instance.FindTreeNode(newSelectedFile.ModuleDef);
 						if (node != null) {
-							MainWindow.Instance.treeView.FocusNode(node);
-							MainWindow.Instance.treeView.SelectedItem = node;
+							MainWindow.Instance.TreeView.FocusNode(node);
+							MainWindow.Instance.TreeView.SelectedItem = node;
 						}
 					}
 				}
@@ -269,7 +269,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return null;
 		}
 
-		internal MetaDataTableRecordTreeNode FindTokenNode(TokenReference @ref) {
+		public MetaDataTableRecordTreeNode FindTokenNode(TokenReference @ref) {
 			var modNode = FindModuleNode(@ref.ModuleDef);
 			return modNode == null ? null : modNode.FindTokenNode(@ref.Token);
 		}

@@ -24,7 +24,7 @@ using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.TreeNodes.Hex {
-	sealed class ImageSectionHeaderTreeNode : HexTreeNode {
+	public sealed class ImageSectionHeaderTreeNode : HexTreeNode {
 		public override NodePathName NodePathName {
 			get { return new NodePathName("secthdr", sectionNumber.ToString()); }
 		}

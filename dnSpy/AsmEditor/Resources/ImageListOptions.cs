@@ -23,7 +23,7 @@ using System.Windows.Forms;
 using System.Windows.Media;
 
 namespace dnSpy.AsmEditor.Resources {
-	sealed class ImageListOptions {
+	public sealed class ImageListOptions {
 		public string Name;
 		public ColorDepth ColorDepth;
 		public Size ImageSize;

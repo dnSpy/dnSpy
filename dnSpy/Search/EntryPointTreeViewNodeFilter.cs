@@ -24,7 +24,7 @@ using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.Search {
-	sealed class EntryPointTreeViewNodeFilter : ShowNothingTreeViewNodeFilterBase {
+	public sealed class EntryPointTreeViewNodeFilter : ShowNothingTreeViewNodeFilterBase {
 		readonly AssemblyDef assembly;
 		readonly ModuleDef module;
 

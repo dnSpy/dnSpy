@@ -29,7 +29,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Lists the base types of a class.
 	/// </summary>
-	sealed class BaseTypesTreeNode : ILSpyTreeNode {
+	public sealed class BaseTypesTreeNode : ILSpyTreeNode {
 		readonly TypeDef type;
 
 		public BaseTypesTreeNode(TypeDef type) {

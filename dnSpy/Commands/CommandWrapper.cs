@@ -20,7 +20,7 @@ using System;
 using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy {
-	class CommandWrapper : ICommand {
+	public class CommandWrapper : ICommand {
 		private readonly ICommand wrappedCommand;
 
 		public CommandWrapper(ICommand wrappedCommand) {

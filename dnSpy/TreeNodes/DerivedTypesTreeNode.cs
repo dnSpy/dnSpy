@@ -30,7 +30,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// <summary>
 	/// Lists the super types of a class.
 	/// </summary>
-	sealed class DerivedTypesTreeNode : ILSpyTreeNode {
+	public sealed class DerivedTypesTreeNode : ILSpyTreeNode {
 		readonly DnSpyFileList list;
 		readonly TypeDef type;
 		readonly ThreadingSupport threading;

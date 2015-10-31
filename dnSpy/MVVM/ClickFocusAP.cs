@@ -27,7 +27,7 @@ namespace dnSpy.MVVM {
 	/// Can be used to give eg. a <see cref="System.Windows.Controls.TextBox"/> focus when a
 	/// <see cref="System.Windows.Controls.Label"/> is clicked.
 	/// </summary>
-	sealed class ClickFocusAP : DependencyObject {
+	public sealed class ClickFocusAP : DependencyObject {
 		public static readonly DependencyProperty TargetProperty = DependencyProperty.RegisterAttached(
 			"Target", typeof(UIElement), typeof(ClickFocusAP), new PropertyMetadata(null, TargetPropertyChangedCallback));
 

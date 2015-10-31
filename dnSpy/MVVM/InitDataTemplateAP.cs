@@ -22,7 +22,7 @@ using System.Windows;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.MVVM {
-	sealed class InitDataTemplateAP : DependencyObject {
+	public sealed class InitDataTemplateAP : DependencyObject {
 		public static readonly DependencyProperty InitializeProperty = DependencyProperty.RegisterAttached(
 			"Initialize", typeof(bool), typeof(InitDataTemplateAP), new UIPropertyMetadata(false, InitializePropertyChangedCallback));
 

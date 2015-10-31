@@ -24,7 +24,7 @@ using dnSpy.TreeNodes.Hex;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.TreeNodes {
-	enum AssemblyFilterType {
+	public enum AssemblyFilterType {
 		/// <summary>
 		/// non-.NET file node
 		/// </summary>
@@ -41,7 +41,7 @@ namespace dnSpy.TreeNodes {
 		Assembly,
 	}
 
-	struct TreeViewNodeFilterResult {
+	public struct TreeViewNodeFilterResult {
 		/// <summary>
 		/// null if the <see cref="ILSpyTreeNode"/> should decide what result to return in its
 		/// Filter() method. <see cref="FilterResult.Hidden"/> is returned if the node should be
@@ -60,7 +60,7 @@ namespace dnSpy.TreeNodes {
 		}
 	}
 
-	interface ITreeViewNodeFilter {
+	public interface ITreeViewNodeFilter {
 		string Text { get; }
 		// NOTE: Any node arguments (not dnlib types) can be null when called.
 		TreeViewNodeFilterResult GetFilterResult(DnSpyFile file, AssemblyFilterType type);

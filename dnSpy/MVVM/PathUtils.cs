@@ -21,7 +21,7 @@ using System;
 using System.IO;
 
 namespace dnSpy.MVVM {
-	static class PathUtils {
+	public static class PathUtils {
 		/// <summary>
 		/// Validates a filename. Returns null if it's valid else a message that can be used in the
 		/// UI. It won't find every problem though so exceptions could happen when trying to create

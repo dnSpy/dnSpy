@@ -106,7 +106,7 @@ namespace dnSpy.Tabs {
 		public bool IsVisible(ContextMenuEntryContext context) {
 			return context.SelectedTreeNodes != null &&
 				context.SelectedTreeNodes.Length > 0 &&
-				context.Element == MainWindow.Instance.treeView;
+				context.Element == MainWindow.Instance.TreeView;
 		}
 
 		public bool IsEnabled(ContextMenuEntryContext context) {
@@ -165,7 +165,7 @@ namespace dnSpy.Tabs {
 				return null;
 			if (context.Element is TabControl)
 				return null;
-			if (context.Element == MainWindow.Instance.treeView)
+			if (context.Element == MainWindow.Instance.TreeView)
 				return null;
 
 			if (context.Reference != null)

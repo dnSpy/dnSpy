@@ -1,0 +1,39 @@
+﻿<!--
+    Copyright (C) 2014-2015 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<UserControl x:Class="dnSpy.Debugger.Memory.MemoryControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:dnSpy.Debugger.Memory"
+             xmlns:mvvm="clr-namespace:dnSpy.MVVM;assembly=dnSpy"
+             xmlns:hex="clr-namespace:dnSpy.Hex;assembly=dnSpy"
+             IsEnabled="{Binding IsStopped}"
+             mc:Ignorable="d" 
+             d:DesignHeight="100" d:DesignWidth="100">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <ScrollViewer CanContentScroll="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+            <hex:DnHexBox x:Name="hexBox" Document="{Binding HexDocument}" CacheLineBytes="True" IsMemory="True" />
+        </ScrollViewer>
+        <Border Background="{DynamicResource MemoryWindowDisabled}" Visibility="{Binding CanNotEditMemory, Converter={StaticResource BooleanToVisibilityConverter}}" />
+    </Grid>
+</UserControl>

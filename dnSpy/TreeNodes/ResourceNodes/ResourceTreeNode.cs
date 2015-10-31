@@ -43,7 +43,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		public Resource Resource {
 			get { return r; }
-			internal set { r = value; }
+			set { r = value; }
 		}
 
 		protected sealed override void Write(ITextOutput output, Language language) {

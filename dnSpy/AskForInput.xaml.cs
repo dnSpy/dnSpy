@@ -18,12 +18,21 @@
 */
 
 using System.Windows;
+using System.Windows.Controls;
 using dnSpy.Controls;
 
 namespace dnSpy {
 	public partial class AskForInput : MetroWindow {
 		public AskForInput() {
 			InitializeComponent();
+		}
+
+		public Label Label {
+			get { return label; }
+		}
+
+		public TextBox TextBox {
+			get { return textBox; }
 		}
 
 		private void okButton_Click(object sender, RoutedEventArgs e) {

@@ -23,7 +23,7 @@ using System.Threading;
 using dnlib.DotNet;
 
 namespace dnSpy {
-	sealed class MethodAnnotations {
+	public sealed class MethodAnnotations {
 		public static readonly MethodAnnotations Instance = new MethodAnnotations();
 
 		const int DELETE_GCD_ITEMS_EVERY_MS = 5 * 60 * 1000;

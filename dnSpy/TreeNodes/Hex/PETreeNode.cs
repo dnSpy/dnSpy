@@ -34,11 +34,13 @@ using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.TreeNodes.Hex {
-	sealed class PETreeNode : ILSpyTreeNode {
+	public sealed class PETreeNode : ILSpyTreeNode {
+		readonly IHexDocumentManager hexDocMgr;
 		readonly IPEImage peImage;
 		readonly ModuleDefMD module;
 
-		public PETreeNode(IPEImage peImage, ModuleDefMD module) {
+		public PETreeNode(IHexDocumentManager hexDocMgr, IPEImage peImage, ModuleDefMD module) {
+			this.hexDocMgr = hexDocMgr;
 			this.peImage = peImage;
 			this.module = module;
 			LazyLoading = true;
@@ -60,7 +62,7 @@ namespace dnSpy.TreeNodes.Hex {
 			if (weakDocListener != null)
 				return;
 
-			var doc = HexDocumentManager.Instance.GetOrCreate(peImage);
+			var doc = hexDocMgr.GetOrCreate(peImage);
 			if (doc == null)
 				return;
 

@@ -21,7 +21,7 @@ using System;
 using System.Windows.Input;
 
 namespace dnSpy.MVVM {
-	sealed class RelayCommand : ICommand {
+	public sealed class RelayCommand : ICommand {
 		readonly Action<object> exec;
 		readonly Predicate<object> canExec;
 

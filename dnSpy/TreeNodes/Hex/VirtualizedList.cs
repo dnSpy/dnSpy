@@ -22,12 +22,12 @@ using System.Collections;
 using System.Diagnostics;
 
 namespace dnSpy.TreeNodes.Hex {
-	interface IVirtualizedListItem {
+	public interface IVirtualizedListItem {
 		int Index { get; }
 	}
 
 	// The key to make this work is to implement IList, yes, IList, not IList<T>.
-	sealed class VirtualizedList<T> : IList where T : class, IVirtualizedListItem {
+	public sealed class VirtualizedList<T> : IList where T : class, IVirtualizedListItem {
 		readonly WeakReference[] list;
 		readonly Func<int, T> createItem;
 

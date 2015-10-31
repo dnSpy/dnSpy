@@ -22,7 +22,7 @@ using System.Globalization;
 using System.Windows.Data;
 
 namespace dnSpy.MVVM.Converters {
-	sealed class RadioButtonConverter : IValueConverter {
+	public sealed class RadioButtonConverter : IValueConverter {
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			return value.Equals(parameter);
 		}

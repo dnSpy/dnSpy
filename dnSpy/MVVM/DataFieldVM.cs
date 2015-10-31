@@ -24,7 +24,7 @@ using System.Diagnostics;
 using System.Globalization;
 
 namespace dnSpy.MVVM {
-	struct CachedValidationError {
+	public struct CachedValidationError {
 		readonly Func<string> checkError;
 		bool errorMsgValid;
 		string errorMsg;
@@ -63,7 +63,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	abstract class DataFieldVM : ViewModelBase {
+	public abstract class DataFieldVM : ViewModelBase {
 		readonly Action<DataFieldVM> onUpdated;
 		CachedValidationError cachedError;
 
@@ -121,7 +121,7 @@ namespace dnSpy.MVVM {
 
 		protected abstract string Validate();
 
-		internal abstract string ConvertToObjectValue(out object value);
+		public abstract string ConvertToObjectValue(out object value);
 
 		protected override string Verify(string columnName) {
 			if (columnName == "StringValue")
@@ -135,7 +135,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	abstract class DataFieldVM<T> : DataFieldVM {
+	public abstract class DataFieldVM<T> : DataFieldVM {
 		public override object ObjectValue {
 			get { return Value; }
 			set { Value = (T)value; }
@@ -167,7 +167,7 @@ namespace dnSpy.MVVM {
 		protected abstract string OnNewValue(T value);
 		protected abstract string ConvertToValue(out T value);
 
-		internal override string ConvertToObjectValue(out object value) {
+		public override string ConvertToObjectValue(out object value) {
 			T v;
 			var error = ConvertToValue(out v);
 			value = v;
@@ -188,7 +188,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	abstract class NumberDataFieldVM<T, U> : DataFieldVM<T> {
+	public abstract class NumberDataFieldVM<T, U> : DataFieldVM<T> {
 		/// <summary>
 		/// true to always use decimal, false to never use decimal (except if it's just one digit),
 		/// and null to use decimal or hex depending on what number it is.
@@ -231,7 +231,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class NullableGuidVM : DataFieldVM<Guid?> {
+	public sealed class NullableGuidVM : DataFieldVM<Guid?> {
 		public NullableGuidVM(Action<DataFieldVM> onUpdated)
 			: this(null, onUpdated) {
 		}
@@ -266,7 +266,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class HexStringVM : DataFieldVM<IList<byte>> {
+	public sealed class HexStringVM : DataFieldVM<IList<byte>> {
 		public bool UpperCaseHex {
 			get { return upperCaseHex; }
 			set { upperCaseHex = value; }
@@ -293,7 +293,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class NullableBooleanVM : DataFieldVM<bool?> {
+	public sealed class NullableBooleanVM : DataFieldVM<bool?> {
 		public NullableBooleanVM(Action<DataFieldVM> onUpdated)
 			: this(false, onUpdated) {
 		}
@@ -317,7 +317,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class NullableSByteVM : NumberDataFieldVM<sbyte?, sbyte> {
+	public sealed class NullableSByteVM : NumberDataFieldVM<sbyte?, sbyte> {
 		public NullableSByteVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(null, onUpdated, useDecimal) {
 		}
@@ -341,7 +341,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class NullableByteVM : NumberDataFieldVM<byte?, byte> {
+	public sealed class NullableByteVM : NumberDataFieldVM<byte?, byte> {
 		public NullableByteVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(null, onUpdated, useDecimal) {
 		}
@@ -365,7 +365,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class NullableInt16VM : NumberDataFieldVM<short?, short> {
+	public sealed class NullableInt16VM : NumberDataFieldVM<short?, short> {
 		public NullableInt16VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(null, onUpdated, useDecimal) {
 		}
@@ -389,7 +389,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class NullableUInt16VM : NumberDataFieldVM<ushort?, ushort> {
+	public sealed class NullableUInt16VM : NumberDataFieldVM<ushort?, ushort> {
 		public NullableUInt16VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(null, onUpdated, useDecimal) {
 		}
@@ -413,7 +413,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	class NullableInt32VM : NumberDataFieldVM<int?, int> {
+	public class NullableInt32VM : NumberDataFieldVM<int?, int> {
 		public NullableInt32VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(null, onUpdated, useDecimal) {
 		}
@@ -437,7 +437,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	class NullableUInt32VM : NumberDataFieldVM<uint?, uint> {
+	public class NullableUInt32VM : NumberDataFieldVM<uint?, uint> {
 		public NullableUInt32VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(null, onUpdated, useDecimal) {
 		}
@@ -461,7 +461,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class NullableInt64VM : NumberDataFieldVM<long?, long> {
+	public sealed class NullableInt64VM : NumberDataFieldVM<long?, long> {
 		public NullableInt64VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(null, onUpdated, useDecimal) {
 		}
@@ -485,7 +485,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class NullableUInt64VM : NumberDataFieldVM<ulong?, ulong> {
+	public sealed class NullableUInt64VM : NumberDataFieldVM<ulong?, ulong> {
 		public NullableUInt64VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(null, onUpdated, useDecimal) {
 		}
@@ -509,7 +509,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class BooleanVM : DataFieldVM<bool> {
+	public sealed class BooleanVM : DataFieldVM<bool> {
 		public BooleanVM(Action<DataFieldVM> onUpdated)
 			: this(false, onUpdated) {
 		}
@@ -530,7 +530,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class CharVM : DataFieldVM<char> {
+	public sealed class CharVM : DataFieldVM<char> {
 		public CharVM(Action<DataFieldVM> onUpdated)
 			: this((char)0, onUpdated) {
 		}
@@ -551,7 +551,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class ByteVM : NumberDataFieldVM<byte, byte> {
+	public sealed class ByteVM : NumberDataFieldVM<byte, byte> {
 		public ByteVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(0, onUpdated, useDecimal) {
 		}
@@ -572,7 +572,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class UInt16VM : NumberDataFieldVM<ushort, ushort> {
+	public sealed class UInt16VM : NumberDataFieldVM<ushort, ushort> {
 		public UInt16VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(0, onUpdated, useDecimal) {
 		}
@@ -593,7 +593,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class UInt32VM : NumberDataFieldVM<uint, uint> {
+	public sealed class UInt32VM : NumberDataFieldVM<uint, uint> {
 		public UInt32VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(0, onUpdated, useDecimal) {
 		}
@@ -614,7 +614,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class UInt64VM : NumberDataFieldVM<ulong, ulong> {
+	public sealed class UInt64VM : NumberDataFieldVM<ulong, ulong> {
 		public UInt64VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(0, onUpdated, useDecimal) {
 		}
@@ -635,7 +635,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class SByteVM : NumberDataFieldVM<sbyte, sbyte> {
+	public sealed class SByteVM : NumberDataFieldVM<sbyte, sbyte> {
 		public SByteVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(0, onUpdated, useDecimal) {
 		}
@@ -656,7 +656,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class Int16VM : NumberDataFieldVM<short, short> {
+	public sealed class Int16VM : NumberDataFieldVM<short, short> {
 		public Int16VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(0, onUpdated, useDecimal) {
 		}
@@ -677,7 +677,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class Int32VM : NumberDataFieldVM<int, int> {
+	public sealed class Int32VM : NumberDataFieldVM<int, int> {
 		public Int32VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(0, onUpdated, useDecimal) {
 		}
@@ -698,7 +698,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class Int64VM : NumberDataFieldVM<long, long> {
+	public sealed class Int64VM : NumberDataFieldVM<long, long> {
 		public Int64VM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(0, onUpdated, useDecimal) {
 		}
@@ -719,7 +719,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class SingleVM : DataFieldVM<float> {
+	public sealed class SingleVM : DataFieldVM<float> {
 		public SingleVM(Action<DataFieldVM> onUpdated)
 			: this(0, onUpdated) {
 		}
@@ -740,7 +740,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class DoubleVM : DataFieldVM<double> {
+	public sealed class DoubleVM : DataFieldVM<double> {
 		public DoubleVM(Action<DataFieldVM> onUpdated)
 			: this(0, onUpdated) {
 		}
@@ -761,7 +761,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class StringVM : DataFieldVM<string> {
+	public sealed class StringVM : DataFieldVM<string> {
 		readonly bool allowNullString;
 
 		public StringVM(Action<DataFieldVM> onUpdated, bool allowNullString = false)
@@ -785,7 +785,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class DecimalVM : DataFieldVM<decimal> {
+	public sealed class DecimalVM : DataFieldVM<decimal> {
 		public DecimalVM(Action<DataFieldVM> onUpdated)
 			: this(0, onUpdated) {
 		}
@@ -806,7 +806,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class DateTimeVM : DataFieldVM<DateTime> {
+	public sealed class DateTimeVM : DataFieldVM<DateTime> {
 		public DateTimeVM(Action<DataFieldVM> onUpdated)
 			: this(DateTime.Now, onUpdated) {
 		}
@@ -827,7 +827,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class TimeSpanVM : DataFieldVM<TimeSpan> {
+	public sealed class TimeSpanVM : DataFieldVM<TimeSpan> {
 		public TimeSpanVM(Action<DataFieldVM> onUpdated)
 			: this(TimeSpan.Zero, onUpdated) {
 		}
@@ -848,7 +848,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class GuidVM : DataFieldVM<Guid> {
+	public sealed class GuidVM : DataFieldVM<Guid> {
 		public GuidVM(Action<DataFieldVM> onUpdated)
 			: this(new Guid(), onUpdated) {
 		}
@@ -869,7 +869,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class BooleanListDataFieldVM : DataFieldVM<IList<bool>> {
+	public sealed class BooleanListDataFieldVM : DataFieldVM<IList<bool>> {
 		public BooleanListDataFieldVM(Action<DataFieldVM> onUpdated)
 			: this(new bool[0], onUpdated) {
 		}
@@ -890,7 +890,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class CharListDataFieldVM : DataFieldVM<IList<char>> {
+	public sealed class CharListDataFieldVM : DataFieldVM<IList<char>> {
 		public CharListDataFieldVM(Action<DataFieldVM> onUpdated)
 			: this(new char[0], onUpdated) {
 		}
@@ -911,7 +911,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class ByteListDataFieldVM : NumberDataFieldVM<IList<byte>, byte> {
+	public sealed class ByteListDataFieldVM : NumberDataFieldVM<IList<byte>, byte> {
 		public ByteListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(new byte[0], onUpdated, useDecimal) {
 		}
@@ -932,7 +932,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class UInt16ListDataFieldVM : NumberDataFieldVM<IList<ushort>, ushort> {
+	public sealed class UInt16ListDataFieldVM : NumberDataFieldVM<IList<ushort>, ushort> {
 		public UInt16ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(new ushort[0], onUpdated, useDecimal) {
 		}
@@ -953,7 +953,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class UInt32ListDataFieldVM : NumberDataFieldVM<IList<uint>, uint> {
+	public sealed class UInt32ListDataFieldVM : NumberDataFieldVM<IList<uint>, uint> {
 		public UInt32ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(new uint[0], onUpdated, useDecimal) {
 		}
@@ -974,7 +974,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class UInt64ListDataFieldVM : NumberDataFieldVM<IList<ulong>, ulong> {
+	public sealed class UInt64ListDataFieldVM : NumberDataFieldVM<IList<ulong>, ulong> {
 		public UInt64ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(new ulong[0], onUpdated, useDecimal) {
 		}
@@ -995,7 +995,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class SByteListDataFieldVM : NumberDataFieldVM<IList<sbyte>, sbyte> {
+	public sealed class SByteListDataFieldVM : NumberDataFieldVM<IList<sbyte>, sbyte> {
 		public SByteListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(new sbyte[0], onUpdated, useDecimal) {
 		}
@@ -1016,7 +1016,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class Int16ListDataFieldVM : NumberDataFieldVM<IList<short>, short> {
+	public sealed class Int16ListDataFieldVM : NumberDataFieldVM<IList<short>, short> {
 		public Int16ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(new short[0], onUpdated, useDecimal) {
 		}
@@ -1037,7 +1037,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class Int32ListDataFieldVM : NumberDataFieldVM<IList<int>, int> {
+	public sealed class Int32ListDataFieldVM : NumberDataFieldVM<IList<int>, int> {
 		public Int32ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(new int[0], onUpdated, useDecimal) {
 		}
@@ -1058,7 +1058,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class Int64ListDataFieldVM : NumberDataFieldVM<IList<long>, long> {
+	public sealed class Int64ListDataFieldVM : NumberDataFieldVM<IList<long>, long> {
 		public Int64ListDataFieldVM(Action<DataFieldVM> onUpdated, bool? useDecimal = null)
 			: this(new long[0], onUpdated, useDecimal) {
 		}
@@ -1079,7 +1079,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class SingleListDataFieldVM : DataFieldVM<IList<float>> {
+	public sealed class SingleListDataFieldVM : DataFieldVM<IList<float>> {
 		public SingleListDataFieldVM(Action<DataFieldVM> onUpdated)
 			: this(new float[0], onUpdated) {
 		}
@@ -1100,7 +1100,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class DoubleListDataFieldVM : DataFieldVM<IList<double>> {
+	public sealed class DoubleListDataFieldVM : DataFieldVM<IList<double>> {
 		public DoubleListDataFieldVM(Action<DataFieldVM> onUpdated)
 			: this(new double[0], onUpdated) {
 		}
@@ -1121,7 +1121,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class StringListDataFieldVM : DataFieldVM<IList<string>> {
+	public sealed class StringListDataFieldVM : DataFieldVM<IList<string>> {
 		readonly bool allowNullString;
 
 		public StringListDataFieldVM(Action<DataFieldVM> onUpdated, bool allowNullString = true)
@@ -1145,7 +1145,7 @@ namespace dnSpy.MVVM {
 		}
 	}
 
-	sealed class DefaultConverterVM<T> : DataFieldVM<T> {
+	public sealed class DefaultConverterVM<T> : DataFieldVM<T> {
 		static readonly TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
 
 		static DefaultConverterVM() {

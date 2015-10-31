@@ -260,7 +260,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return GetModule(nodes[0]);
 		}
 
-		internal static ModuleDef GetModule(SharpTreeNode node) {
+		public static ModuleDef GetModule(SharpTreeNode node) {
 			var asmNode = GetNode<AssemblyTreeNode>(node);
 			return asmNode == null ? null : asmNode.DnSpyFile.ModuleDef;
 		}

@@ -26,7 +26,7 @@ using dnSpy.HexEditor;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Hex {
-	sealed class DnHexBox : HexBox {
+	public sealed class DnHexBox : HexBox {
 		public DnHexBox() {
 			SetBinding(Control.FontFamilyProperty, new Binding("FontFamily") { Source = HexSettings.Instance });
 			SetBinding(Control.FontSizeProperty, new Binding("FontSize") { Source = HexSettings.Instance });

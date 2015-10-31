@@ -25,6 +25,9 @@ using dnSpy;
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	[Export(typeof(IPlugin))]
 	sealed class InstructionCommandsLoader : IPlugin {
+		void IPlugin.EarlyInit() {
+		}
+
 		void IPlugin.OnLoaded() {
 			var cmd = new RoutedCommand();
 			cmd.InputGestures.Add(new KeyGesture(Key.R, ModifierKeys.Control));
@@ -46,7 +49,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 				return refSeg == null ? null : refSeg.Reference as IMemberRef;
 			}
 
-			var treeView = MainWindow.Instance.treeView;
+			var treeView = MainWindow.Instance.TreeView;
 			if (treeView.IsKeyboardFocusWithin) {
 				var node = treeView.SelectedItem as IMemberTreeNode;
 				return node == null ? null : node.Member;

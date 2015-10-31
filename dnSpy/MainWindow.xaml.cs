@@ -71,7 +71,7 @@ namespace ICSharpCode.ILSpy {
 		DNSpySettings spySettings;
 		internal readonly SessionSettings sessionSettings;
 
-		internal DnSpyFileListManager DnSpyFileListManager {
+		public DnSpyFileListManager DnSpyFileListManager {
 			get { return dnSpyFileListManager; }
 		}
 		internal DnSpyFileListManager dnSpyFileListManager;
@@ -91,8 +91,14 @@ namespace ICSharpCode.ILSpy {
 
 		static MainWindow instance;
 
+		public IHexDocumentManager HexDocumentManager { get; set; }
+
 		public static MainWindow Instance {
 			get { return instance; }
+		}
+
+		public SharpTreeView TreeView {
+			get { return treeView; }
 		}
 
 		public ImageSource BigLoadingImage { get; private set; }
@@ -247,6 +253,8 @@ namespace ICSharpCode.ILSpy {
 			InitializeComponent();
 			AddTitleInfo(IntPtr.Size == 4 ? "x86" : "x64");
 			App.CompositionContainer.ComposeParts(this);
+			foreach (var plugin in plugins)
+				plugin.EarlyInit();
 
 			if (sessionSettings.LeftColumnWidth > 0)
 				leftColumn.Width = new GridLength(sessionSettings.LeftColumnWidth, GridUnitType.Pixel);
@@ -340,7 +348,7 @@ namespace ICSharpCode.ILSpy {
 			App.Current.Resources["TextEditorFontFamily"] = Options.DisplaySettingsPanel.CurrentDisplaySettings.SelectedFont;
 		}
 
-		internal static void InitializeTreeView(SharpTreeView treeView, bool isGridView = false) {
+		public static void InitializeTreeView(SharpTreeView treeView, bool isGridView = false) {
 			if (isGridView)
 				treeView.ItemContainerStyle = (Style)App.Current.TryFindResource(SharpGridView.ItemContainerStyleKey);
 			else {
@@ -352,7 +360,7 @@ namespace ICSharpCode.ILSpy {
 			treeView.GetPreviewInsideForeground = () => Themes.Theme.GetColor(ColorType.SystemColorsHighlightText).InheritedColor.Foreground.GetBrush(null);
 		}
 
-		internal static void InitializeAssemblyTreeView(SharpTreeView treeView) {
+		public static void InitializeAssemblyTreeView(SharpTreeView treeView) {
 			InitializeTreeView(treeView);
 
 			VirtualizingStackPanel.SetIsVirtualizing(treeView, true);
@@ -1119,11 +1127,11 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		internal static void CreateMenuItemImage(MenuItem menuItem, object part, string icon, BackgroundType bgType, bool? enable = null) {
+		public static void CreateMenuItemImage(MenuItem menuItem, object part, string icon, BackgroundType bgType, bool? enable = null) {
 			CreateMenuItemImage(menuItem, part.GetType().Assembly, icon, bgType, enable);
 		}
 
-		internal static void CreateMenuItemImage(MenuItem menuItem, Assembly asm, string icon, BackgroundType bgType, bool? enable = null) {
+		public static void CreateMenuItemImage(MenuItem menuItem, Assembly asm, string icon, BackgroundType bgType, bool? enable = null) {
 			var image = new Image {
 				Width = 16,
 				Height = 16,
@@ -1190,7 +1198,7 @@ namespace ICSharpCode.ILSpy {
 		}
 		#endregion
 
-		internal DnSpyFileList DnSpyFileList {
+		public DnSpyFileList DnSpyFileList {
 			get { return dnspyFileList; }
 		}
 
@@ -1476,21 +1484,15 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		bool AskUserReloadAssemblyListIfModified(string question) {
-			int count = UndoCommandManager.Instance.GetModifiedObjects().Count();
-			if (count == 0)
-				return true;
-
-			var msg = count == 1 ? "There is an unsaved file." : string.Format("There are {0} unsaved files.", count);
-			var res = ShowMessageBox(string.Format("{0} {1}", msg, question), System.Windows.MessageBoxButton.YesNo);
-			return res == MsgBoxButton.OK;
-		}
+		public Func<string, bool> AskUserReloadAssemblyListIfModified;
+		public event EventHandler OnShowNewAssemblyList;
 
 		void ShowAssemblyListDontAskUser(DnSpyFileList dnspyFileList) {
 			// Clear the cache since the keys contain tree nodes which get recreated now. The keys
 			// will never match again so shouldn't be in the cache.
 			DecompileCache.Instance.ClearAll();
-			UndoCommandManager.Instance.Clear();
+			if (OnShowNewAssemblyList != null)
+				OnShowNewAssemblyList(this, EventArgs.Empty);
 
 			foreach (var tabManager in tabGroupsManager.AllTabGroups.ToArray())
 				tabManager.RemoveAllTabStates();
@@ -1651,7 +1653,7 @@ namespace ICSharpCode.ILSpy {
 				dnSpyFileListTreeNode.FilterSettings = sessionSettings.FilterSettings.Clone();
 		}
 
-		internal DnSpyFileListTreeNode DnSpyFileListTreeNode {
+		public DnSpyFileListTreeNode DnSpyFileListTreeNode {
 			get { return dnSpyFileListTreeNode; }
 		}
 
@@ -1676,7 +1678,7 @@ namespace ICSharpCode.ILSpy {
 			return dnSpyFileListTreeNode.FindTreeNode(reference);
 		}
 
-		internal static IMemberDef ResolveReference(object reference) {
+		public static IMemberDef ResolveReference(object reference) {
 			if (reference is ITypeDefOrRef)
 				return ((ITypeDefOrRef)reference).ResolveTypeDef();
 			else if (reference is IMethod && ((IMethod)reference).MethodSig != null)
@@ -2088,6 +2090,8 @@ namespace ICSharpCode.ILSpy {
 			e.CanExecute = ActiveTabState != null;
 		}
 
+		public event EventHandler<TabStateEventArgs> SaveTabState;
+
 		internal void Save(TabState tabState) {
 			var decompileTabState = tabState as DecompileTabState;
 			if (decompileTabState != null) {
@@ -2095,11 +2099,8 @@ namespace ICSharpCode.ILSpy {
 				return;
 			}
 
-			var hexTabState = tabState as HexTabState;
-			if (hexTabState != null && hexTabState.HexBox.Document is AsmEdHexDocument) {
-				dnSpy.AsmEditor.SaveModule.Saver.SaveAssemblies(new[] { UndoCommandManager.Instance.GetUndoObject((AsmEdHexDocument)hexTabState.HexBox.Document) });
-				return;
-			}
+			if (SaveTabState != null)
+				SaveTabState(this, new TabStateEventArgs(tabState));
 		}
 
 		void SaveCode(DecompileTabState tabState) {
@@ -2343,7 +2344,7 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		HexTabState InitializeHexDocument(HexTabState tabState, string filename) {
-			var doc = HexDocumentManager.Instance.GetOrCreate(filename);
+			var doc = HexDocumentManager.GetOrCreate(filename);
 			tabState.SetDocument(doc);
 			if (doc == null)
 				ShowIgnorableMessageBox("hex: load doc err", string.Format("Error loading {0}", filename), MessageBoxButton.OK);
@@ -2829,7 +2830,7 @@ namespace ICSharpCode.ILSpy {
 			return ActiveTabState != null;
 		}
 
-		internal void ModuleModified(DnSpyFile mod) {
+		public void ModuleModified(DnSpyFile mod) {
 			DecompileCache.Instance.Clear(mod);
 
 			foreach (var tabState in AllDecompileTabStates) {
@@ -2861,7 +2862,7 @@ namespace ICSharpCode.ILSpy {
 			DisableMemoryMappedIO(GetAllDnSpyFileInstances());
 		}
 
-		internal void DisableMemoryMappedIO(IEnumerable<DnSpyFile> files) {
+		public void DisableMemoryMappedIO(IEnumerable<DnSpyFile> files) {
 			foreach (var tabState in AllDecompileTabStates) {
 				// Make sure that the code doesn't try to reference memory that will be moved.
 				tabState.TextView.CancelDecompilation();
@@ -3153,7 +3154,7 @@ namespace ICSharpCode.ILSpy {
 			return msgBox.ButtonClicked;
 		}
 
-		internal void OpenOrShowHexBox(string filename) {
+		public void OpenOrShowHexBox(string filename) {
 			var tabState = GetHexTabState(filename);
 			if (tabState != null)
 				ShowHexBox(filename);
@@ -3174,7 +3175,7 @@ namespace ICSharpCode.ILSpy {
 			SetActiveTab(tabState);
 		}
 
-		internal HexTabState GetHexTabState(AssemblyTreeNode node) {
+		public HexTabState GetHexTabState(AssemblyTreeNode node) {
 			if (node == null)
 				return null;
 			return GetHexTabState(node.DnSpyFile.Filename);
@@ -3225,7 +3226,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		internal void GoToAddress(AddressReference @ref) {
+		public void GoToAddress(AddressReference @ref) {
 			HexTabState tabState;
 			ulong fileOffset;
 			if (@ref.IsRVA) {

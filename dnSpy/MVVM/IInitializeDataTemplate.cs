@@ -20,7 +20,7 @@
 using System.Windows;
 
 namespace dnSpy.MVVM {
-	interface IInitializeDataTemplate {
+	public interface IInitializeDataTemplate {
 		void Initialize(DependencyObject d);
 	}
 }

@@ -23,6 +23,11 @@ namespace dnSpy {
 	/// </summary>
 	public interface IPlugin {
 		/// <summary>
+		/// Called when the MainWindow has started to initialize
+		/// </summary>
+		void EarlyInit();
+
+		/// <summary>
 		/// Called when MainWindow has been loaded
 		/// </summary>
 		void OnLoaded();

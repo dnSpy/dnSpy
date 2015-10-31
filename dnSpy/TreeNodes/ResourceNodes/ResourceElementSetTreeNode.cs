@@ -49,7 +49,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 	}
 
-	sealed class ResourceElementSetTreeNode : ResourceTreeNode {
+	public sealed class ResourceElementSetTreeNode : ResourceTreeNode {
 		readonly ResourceElementSet resourceElementSet;
 		readonly ModuleDef module;
 
@@ -60,7 +60,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			this.LazyLoading = true;
 		}
 
-		internal ResourceElementSetTreeNode(ModuleDef module, string name, ManifestResourceAttributes flags)
+		public ResourceElementSetTreeNode(ModuleDef module, string name, ManifestResourceAttributes flags)
 			: base(new EmbeddedResource(name, new byte[0], flags)) {
 			this.module = module;
 			RegenerateEmbeddedResource(module);

@@ -25,7 +25,7 @@ using dnSpy.HexEditor;
 
 namespace dnSpy.Tabs {
 	public sealed class HexTabState : TabState {
-		internal readonly DnHexBox HexBox;
+		public readonly DnHexBox HexBox;
 
 		public override UIElement FocusedElement {
 			get { return HexBox; }

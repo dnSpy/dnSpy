@@ -22,13 +22,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using dnSpy.AsmEditor.Hex;
 using dnSpy.HexEditor;
 using dnSpy.MVVM;
 
 namespace dnSpy.TreeNodes.Hex {
 	[DebuggerDisplay("{StartOffset} {EndOffset} {Name} {DataFieldVM.StringValue}")]
-	abstract class HexField {
+	public abstract class HexField {
 		protected readonly HexDocument doc;
 		readonly string parentName;
 
@@ -111,7 +110,12 @@ namespace dnSpy.TreeNodes.Hex {
 			if (Equals(newData, origData))
 				return;
 
-			WriteHexUndoCommand.AddAndExecute(doc, startOffset, newData, string.Format("Write {0}.{1}", parentName, Name));
+			var undoDoc = doc as IUndoHexDocument;
+			Debug.Assert(undoDoc != null);
+			if (undoDoc != null)
+				undoDoc.WriteUndo(startOffset, newData, string.Format("Write {0}.{1}", parentName, Name));
+			else
+				doc.Write(startOffset, newData);
 			OnUpdateValue();
 		}
 		bool disable_UpdateValue = false;

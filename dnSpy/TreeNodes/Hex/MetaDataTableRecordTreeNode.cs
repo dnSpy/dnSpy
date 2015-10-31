@@ -27,7 +27,7 @@ using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.TreeNodes.Hex {
-	sealed class MetaDataTableRecordTreeNode : HexTreeNode {
+	public sealed class MetaDataTableRecordTreeNode : HexTreeNode {
 		public override NodePathName NodePathName {
 			get { return new NodePathName("mdtblrec", index.ToString()); }
 		}

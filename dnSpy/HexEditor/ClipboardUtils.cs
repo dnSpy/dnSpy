@@ -22,7 +22,7 @@ using System.Windows;
 using System.Runtime.InteropServices;
 
 namespace dnSpy.HexEditor {
-	static class ClipboardUtils {
+	public static class ClipboardUtils {
 		public static byte[] GetData() {
 			var s = Clipboard.GetText();
 			if (s == null)

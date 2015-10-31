@@ -32,7 +32,7 @@ namespace dnSpy.Commands {
 
 		static bool TreeView_IsVisible(ContextMenuEntryContext context) {
 			ModuleDef module;
-			return context.Element == MainWindow.Instance.treeView &&
+			return context.Element == MainWindow.Instance.TreeView &&
 				((module = ILSpyTreeNode.GetModule(context.SelectedTreeNodes)) != null) &&
 				module.EntryPoint is MethodDef;
 		}
@@ -72,7 +72,7 @@ namespace dnSpy.Commands {
 
 		static bool TreeView_IsVisible(ContextMenuEntryContext context) {
 			ModuleDef module;
-			return context.Element == MainWindow.Instance.treeView &&
+			return context.Element == MainWindow.Instance.TreeView &&
 				((module = ILSpyTreeNode.GetModule(context.SelectedTreeNodes)) != null) &&
 				module.GlobalType != null &&
 				module.GlobalType.FindStaticConstructor() != null;

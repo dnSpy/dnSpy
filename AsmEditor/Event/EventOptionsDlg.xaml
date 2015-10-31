@@ -1,0 +1,128 @@
+﻿<!--
+    Copyright (C) 2014-2015 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<winlocal:WindowBase x:Class="dnSpy.AsmEditor.Event.EventOptionsDlg"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
+             xmlns:winlocal="clr-namespace:dnSpy.MVVM;assembly=dnSpy"
+             xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters;assembly=dnSpy"
+             Height="400" Width="500"
+             Title="Edit Event"
+             Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
+             MinHeight="400" MinWidth="500">
+	<winlocal:WindowBase.Resources>
+		<mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
+	</winlocal:WindowBase.Resources>
+	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+		<TabControl Margin="5 5 5 0">
+			<TabItem Header="Main">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<Grid Margin="5">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition />
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+
+						<Grid Grid.Row="0">
+							<Grid.ColumnDefinitions>
+								<ColumnDefinition Width="Auto" />
+								<ColumnDefinition Width="*" />
+							</Grid.ColumnDefinitions>
+							<Grid.RowDefinitions>
+								<RowDefinition />
+								<RowDefinition />
+							</Grid.RowDefinitions>
+
+							<Label Grid.Row="0" Grid.Column="0" Margin="5 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+						</Grid>
+
+						<GroupBox Grid.Row="1" Header="Flags">
+							<Grid>
+								<Grid.ColumnDefinitions>
+									<ColumnDefinition />
+									<ColumnDefinition />
+								</Grid.ColumnDefinitions>
+								<CheckBox Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding SpecialName}" Content="_SpecialName" />
+								<CheckBox Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="_RTSpecialName" />
+							</Grid>
+						</GroupBox>
+					</Grid>
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="Type">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<dnlibdlgs:TypeSigCreatorControl Margin="0 5 0 0" DataContext="{Binding TypeSigCreator}" />
+				</ScrollViewer>
+			</TabItem>
+			<TabItem Header="Methods">
+				<Grid Margin="0 5 0 0">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="*"/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition Width="*"/>
+					</Grid.ColumnDefinitions>
+
+					<Button Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Style="{StaticResource DialogButton2}" Content="_Add..." Command="{Binding PickAddMethodCommand}" />
+					<Button Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Content="C" Padding="7 0 7 0" Command="{Binding ClearAddMethodCommand}" ToolTip="Set to null" />
+					<TextBox Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" IsReadOnly="True" Background="Transparent" Text="{Binding AddMethodFullName, Mode=OneWay}" ToolTip="{Binding AddMethodFullName}" />
+
+					<Button Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource DialogButton2}" Content="_Invoke..." Command="{Binding PickInvokeMethodCommand}" />
+					<Button Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Content="C" Padding="7 0 7 0" Command="{Binding ClearInvokeMethodCommand}" ToolTip="Set to null" />
+					<TextBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsReadOnly="True" Background="Transparent" Text="{Binding InvokeMethodFullName, Mode=OneWay}" ToolTip="{Binding InvokeMethodFullName}" />
+
+					<Button Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource DialogButton2}" Content="_Remove..." Command="{Binding PickRemoveMethodCommand}" />
+					<Button Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Content="C" Padding="7 0 7 0" Command="{Binding ClearRemoveMethodCommand}" ToolTip="Set to null" />
+					<TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" IsReadOnly="True" Background="Transparent" Text="{Binding RemoveMethodFullName, Mode=OneWay}" ToolTip="{Binding RemoveMethodFullName}" />
+				</Grid>
+			</TabItem>
+			<TabItem Header="Other Methods">
+				<dnlibdlgs:MethodDefsControl Margin="0 5 0 0" DataContext="{Binding OtherMethodsVM}" />
+			</TabItem>
+			<TabItem Header="Custom Attrs">
+				<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
+			</TabItem>
+		</TabControl>
+
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
+			<Button Content="_OK" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+			<Button Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
+			<Button Content="Restore" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" ToolTip="Restore all options" />
+		</StackPanel>
+	</Grid>
+</winlocal:WindowBase>
