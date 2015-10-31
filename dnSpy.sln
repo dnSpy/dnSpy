@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy", "dnSpy\dnSpy.csproj", "{1E85EFF9-E370-4683-83E4-8A3D063FF791}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy", "dnSpy_old\dnSpy.csproj", "{1E85EFF9-E370-4683-83E4-8A3D063FF791}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.TreeView", "SharpTreeView\ICSharpCode.TreeView.csproj", "{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}"
 EndProject

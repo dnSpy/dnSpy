@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\dnSpy\bin\Debug\</OutputPath>
+    <OutputPath>..\dnSpy_old\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,7 +28,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\dnSpy\bin\Release\</OutputPath>
+    <OutputPath>..\dnSpy_old\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -60,7 +60,7 @@
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy\dnSpy.csproj">
+    <ProjectReference Include="..\dnSpy_old\dnSpy.csproj">
       <Project>{1e85eff9-e370-4683-83e4-8a3d063ff791}</Project>
       <Name>dnSpy</Name>
     </ProjectReference>

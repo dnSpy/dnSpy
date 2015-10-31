@@ -23,12 +23,12 @@ namespace UpdateAssemblyInfo
 		const string BaseCommit = "d779383cb85003d6dabeb976f0845631e07bf463";
 		const int BaseCommitRev = 1;
 		
-		const string globalAssemblyInfoTemplateFile = "dnSpy/Properties/AssemblyInfo.template.cs";
-		const string dnSpyAppConfigTemplateFile = "dnSpy/Properties/app.config.template";
+		const string globalAssemblyInfoTemplateFile = "dnSpy_old/Properties/AssemblyInfo.template.cs";
+		const string dnSpyAppConfigTemplateFile = "dnSpy_old/Properties/app.config.template";
 		static readonly TemplateFile[] templateFiles = {
 			new TemplateFile {
 				Input = globalAssemblyInfoTemplateFile,
-				Output = "dnSpy/Properties/AssemblyInfo.cs"
+				Output = "dnSpy_old/Properties/AssemblyInfo.cs"
 			},
 			new TemplateFile {
 				Input = globalAssemblyInfoTemplateFile,
@@ -44,7 +44,7 @@ namespace UpdateAssemblyInfo
 			},
 			new TemplateFile {
 				Input = dnSpyAppConfigTemplateFile,
-				Output = "dnSpy/App.config"
+				Output = "dnSpy_old/App.config"
 			},
 			new TemplateFile {
 				Input = dnSpyAppConfigTemplateFile,
