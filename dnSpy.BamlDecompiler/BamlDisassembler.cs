@@ -26,10 +26,9 @@ using System.Globalization;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TextView;
-using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 
 namespace dnSpy.BamlDecompiler {
@@ -89,10 +88,10 @@ namespace dnSpy.BamlDecompiler {
 		#endregion
 
 		Language lang;
-		AvalonEditTextOutput output;
+		ITextOutput output;
 		CancellationToken token;
 
-		public BamlDisassembler(Language lang, AvalonEditTextOutput output, CancellationToken token) {
+		public BamlDisassembler(Language lang, ITextOutput output, CancellationToken token) {
 			this.lang = lang;
 			this.output = output;
 			this.token = token;

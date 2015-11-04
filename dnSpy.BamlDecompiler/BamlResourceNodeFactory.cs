@@ -24,20 +24,37 @@ using System;
 using System.ComponentModel.Composition;
 using System.IO;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy.TreeNodes;
+using dnlib.DotNet.Resources;
+using dnSpy.TreeNodes;
 
 namespace dnSpy.BamlDecompiler {
-	[Export(typeof(IResourceNodeFactory))]
-	public sealed class BamlResourceNodeFactory : IResourceNodeFactory {
-		public ILSpyTreeNode CreateNode(Resource resource) {
-			return null;
+	[Export(typeof(IResourceFactory<ResourceElement, ResourceElementTreeNode>))]
+	public sealed class BamlResourceNodeFactory : IResourceFactory<ResourceElement, ResourceElementTreeNode> {
+		//public ILSpyTreeNode CreateNode(Resource resource) {
+		//    return null;
+		//}
+
+		//public ILSpyTreeNode CreateNode(string key, object data) {
+		//    if (key.EndsWith(".baml", StringComparison.OrdinalIgnoreCase) && data is Stream)
+		//        return new BamlResourceNode(key, (Stream)data);
+		//    else
+		//        return null;
+		//}
+
+		public int Priority {
+			get { return 0; }
 		}
 
-		public ILSpyTreeNode CreateNode(string key, object data) {
-			if (key.EndsWith(".baml", StringComparison.OrdinalIgnoreCase) && data is Stream)
-				return new BamlResourceNode(key, (Stream)data);
-			else
+		public ResourceElementTreeNode Create(ModuleDef module, ResourceElement resInput) {
+			if (resInput.ResourceData.Code != ResourceTypeCode.ByteArray && resInput.ResourceData.Code != ResourceTypeCode.Stream)
 				return null;
+
+			var data = (byte[])((BuiltInResourceData)resInput.ResourceData).Data;
+
+			if (!resInput.Name.EndsWith(".baml", StringComparison.OrdinalIgnoreCase))
+				return null;
+
+			return new BamlResourceNode(module, resInput, new MemoryStream(data));
 		}
 	}
 }

@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\ILSpy\bin\Debug\</OutputPath>
+    <OutputPath>..\dnSpy\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\ILSpy\bin\Release\</OutputPath>
+    <OutputPath>..\dnSpy\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -61,7 +61,6 @@
     <Compile Include="IHandlers.cs" />
     <Compile Include="Rewrite\DocumentRewritePass.cs" />
     <Compile Include="Rewrite\XClassRewritePass.cs" />
-    <Compile Include="ToggleDisassemblyContextMenuEntry.cs" />
     <Compile Include="XamlContext.cs" />
     <Compile Include="XamlDecompiler.cs" />
     <Compile Include="BamlDisassembler.cs" />
@@ -99,7 +98,7 @@
       <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ILSpy\ILSpy.csproj">
+    <ProjectReference Include="..\dnSpy\dnSpy.csproj">
       <Project>{1E85EFF9-E370-4683-83E4-8A3D063FF791}</Project>
       <Name>ILSpy</Name>
     </ProjectReference>
