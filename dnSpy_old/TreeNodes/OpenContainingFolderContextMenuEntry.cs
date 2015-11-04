@@ -17,30 +17,42 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
 using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.TreeView;
 
 namespace dnSpy.TreeNodes {
-	[ExportContextMenuEntry(Header = "_Open Containing Folder", Order = 920, Category = "Other")]
-	sealed class OpenContainingFolderContextMenuEntry : IContextMenuEntry {
-		public bool IsVisible(ContextMenuEntryContext context) {
-			return context.SelectedTreeNodes != null &&
-				context.SelectedTreeNodes.Length == 1 &&
-				context.SelectedTreeNodes[0] is AssemblyTreeNode &&
-				!string.IsNullOrWhiteSpace(((AssemblyTreeNode)context.SelectedTreeNodes[0]).DnSpyFile.Filename);
+	[ExportMenuItem(Header = "_Open Containing Folder", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 20)]
+	sealed class OpenContainingFolderCtxMenuCommand : MenuItemBase {
+		public override bool IsVisible(IMenuItemContext context) {
+			return GetFilename(context) != null;
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			return IsVisible(context);
-		}
-
-		public void Execute(ContextMenuEntryContext context) {
-			// Known problem: explorer can't show files in the .NET 2.0 GAC.
-			var asmNode = (AssemblyTreeNode)context.SelectedTreeNodes[0];
+		static string GetFilename(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
+				return null;
+			var nodes = context.FindByType<SharpTreeNode[]>();
+			if (nodes == null || nodes.Length != 1)
+				return null;
+			var asmNode = nodes[0] as AssemblyTreeNode;
+			if (asmNode == null)
+				return null;
 			var filename = asmNode.DnSpyFile.Filename;
+			if (!File.Exists(filename))
+				return null;
+			return filename;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			// Known problem: explorer can't show files in the .NET 2.0 GAC.
+			var filename = GetFilename(context);
+			if (filename == null)
+				return;
 			var args = string.Format("/select,{0}", filename);
 			try {
 				Process.Start(new ProcessStartInfo("explorer.exe", args));

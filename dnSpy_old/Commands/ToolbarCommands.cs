@@ -68,7 +68,7 @@ namespace dnSpy.Commands {
 			sp.Children.Add(new Image {
 				Width = 16,
 				Height = 16,
-				Source = ImageCache.Instance.GetImage("FullScreen", BackgroundType.ToolBarButtonChecked),
+				Source = ImageCache.Instance.GetImage(GetType().Assembly, "FullScreen", BackgroundType.ToolBarButtonChecked),
 			});
 			sp.Children.Add(new TextBlock {
 				Text = "Full Screen",

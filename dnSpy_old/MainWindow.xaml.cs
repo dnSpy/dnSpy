@@ -24,9 +24,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -40,9 +38,11 @@ using dnlib.PE;
 using dnSpy;
 using dnSpy.AsmEditor;
 using dnSpy.AvalonEdit;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Menus;
 using dnSpy.Controls;
 using dnSpy.Decompiler;
-using dnSpy.dntheme;
+using dnSpy.DnTheme;
 using dnSpy.Files;
 using dnSpy.Files.WPF;
 using dnSpy.Hex;
@@ -229,7 +229,6 @@ namespace ICSharpCode.ILSpy {
 
 		public MainWindow() {
 			instance = this;
-			mainMenu = new Menu();
 			spySettings = DNSpySettings.Load();
 			this.sessionSettings = new SessionSettings(spySettings);
 			this.sessionSettings.PropertyChanged += sessionSettings_PropertyChanged;
@@ -252,7 +251,7 @@ namespace ICSharpCode.ILSpy {
 
 			InitializeComponent();
 			AddTitleInfo(IntPtr.Size == 4 ? "x86" : "x64");
-			App.CompositionContainer.ComposeParts(this);
+			Globals.App.CompositionContainer.ComposeParts(this);
 			foreach (var plugin in plugins)
 				plugin.EarlyInit();
 
@@ -270,9 +269,10 @@ namespace ICSharpCode.ILSpy {
 			Themes.Theme = theme;
 			InitializeAssemblyTreeView(treeView);
 
+			mainMenu = Globals.App.MenuManager.CreateMenu(new Guid(MenuConstants.APP_MENU_GUID), this);
 			InitMainMenu();
 			InitToolbar();
-			loadingImage.Source = ImageCache.Instance.GetImage("dnSpy-Big", theme.GetColor(ColorType.EnvironmentBackground).InheritedColor.Background.GetColor(null).Value);
+			loadingImage.Source = ImageCache.Instance.GetImage(GetType().Assembly, "dnSpy-Big", theme.GetColor(ColorType.EnvironmentBackground).InheritedColor.Background.GetColor(null).Value);
 
 			this.Activated += (s, e) => UpdateSystemMenuImage();
 			this.Deactivated += (s, e) => UpdateSystemMenuImage();
@@ -863,9 +863,9 @@ namespace ICSharpCode.ILSpy {
 
 		void UpdateSystemMenuImage() {
 			if (IsActive)
-				SystemMenuImage = ImageCache.Instance.GetImage("Assembly", BackgroundType.TitleAreaActive);
+				SystemMenuImage = ImageCache.Instance.GetImage(GetType().Assembly, "Assembly", BackgroundType.TitleAreaActive);
 			else
-				SystemMenuImage = ImageCache.Instance.GetImage("Assembly", BackgroundType.TitleAreaInactive);
+				SystemMenuImage = ImageCache.Instance.GetImage(GetType().Assembly, "Assembly", BackgroundType.TitleAreaInactive);
 		}
 
 		void UpdateControlColors() {
@@ -937,7 +937,7 @@ namespace ICSharpCode.ILSpy {
 			var image = new Image {
 				Width = 16,
 				Height = 16,
-				Source = ImageCache.Instance.GetImage(command.Value, command.Metadata.ToolbarIcon, BackgroundType.Toolbar),
+				Source = ImageCache.Instance.GetImage(command.Value.GetType().Assembly, command.Metadata.ToolbarIcon, BackgroundType.Toolbar),
 			};
 			var iconText = command.Metadata.ToolbarIconText;
 			if (string.IsNullOrEmpty(iconText))
@@ -963,7 +963,7 @@ namespace ICSharpCode.ILSpy {
 			public IGrouping<string, Lazy<ICommand, IMainMenuCommandMetadata>>[] Groupings;
 			public List<MenuItem> CachedMenuItems = new List<MenuItem>();
 			public bool Recreate = true;
-			public bool AlwaysRecreate = false;
+			public bool AlwaysRecreate = true;
 		}
 		readonly Dictionary<string, MainSubMenuState> subMenusDict = new Dictionary<string, MainSubMenuState>();
 		void InitMainMenu() {
@@ -999,7 +999,7 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		bool IsAnyMenuOpened() {
-			if (ContextMenuProvider.IsMenuOpened)
+			if (Globals.App.MenuManager.IsMenuOpened)
 				return true;
 			foreach (var item in mainMenu.Items) {
 				var mi = item as MenuItem;
@@ -1025,11 +1025,6 @@ namespace ICSharpCode.ILSpy {
 		/// <param name="menuHeader">The exact display name of the sub menu (eg. "_Debug")</param>
 		public void UpdateMainSubMenu(string menuHeader) {
 			subMenusDict[menuHeader].Recreate = true;
-		}
-
-		public void SetMenuAlwaysRegenerate(string menuHeader) {
-			UpdateMainSubMenu(menuHeader);
-			subMenusDict[menuHeader].AlwaysRecreate = true;
 		}
 
 		static void ClearMainSubMenu(MainSubMenuState state) {
@@ -1092,7 +1087,7 @@ namespace ICSharpCode.ILSpy {
 						menuItem.CommandTarget = MainWindow.Instance;
 						menuItem.Header = entry.Metadata.MenuHeader;
 						if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon))
-							CreateMenuItemImage(menuItem, entry.Value, entry.Metadata.MenuIcon, BackgroundType.MainMenuMenuItem);
+							ImageCache.Instance.CreateMenuItemImage(menuItem, entry.Value.GetType().Assembly, entry.Metadata.MenuIcon, BackgroundType.MainMenuMenuItem);
 
 						menuItem.InputGestureText = entry.Metadata.MenuInputGestureText;
 
@@ -1125,21 +1120,6 @@ namespace ICSharpCode.ILSpy {
 					}
 				}
 			}
-		}
-
-		public static void CreateMenuItemImage(MenuItem menuItem, object part, string icon, BackgroundType bgType, bool? enable = null) {
-			CreateMenuItemImage(menuItem, part.GetType().Assembly, icon, bgType, enable);
-		}
-
-		public static void CreateMenuItemImage(MenuItem menuItem, Assembly asm, string icon, BackgroundType bgType, bool? enable = null) {
-			var image = new Image {
-				Width = 16,
-				Height = 16,
-				Source = ImageCache.Instance.GetImage(asm, icon, bgType),
-			};
-			menuItem.Icon = image;
-			if (enable == false)
-				image.Opacity = 0.3;
 		}
 		#endregion
 
@@ -1294,6 +1274,13 @@ namespace ICSharpCode.ILSpy {
 		}
 		List<Action> callWhenLoaded = new List<Action>();
 
+		sealed class GuidObjectsCreator : IGuidObjectsCreator {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
+				var atv = (SharpTreeView)creatorObject.Object;
+				yield return new GuidObject(MenuConstants.GUIDOBJ_TREEVIEW_NODES_ARRAY_GUID, atv.GetTopLevelSelection().ToArray());
+			}
+		}
+
 		void MainWindow_ContentRendered(object sender, EventArgs e) {
 			this.ContentRendered -= MainWindow_ContentRendered;
 			if (!sessionSettings.IsFullScreen)
@@ -1313,7 +1300,7 @@ namespace ICSharpCode.ILSpy {
 			case 0:
 				this.CommandBindings.Add(new CommandBinding(ILSpyTreeNode.TreeNodeActivatedEvent, TreeNodeActivatedExecuted));
 
-				ContextMenuProvider.Add(treeView);
+				Globals.App.MenuManager.InitializeContextMenu(treeView, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID, new GuidObjectsCreator());
 
 				DNSpySettings spySettings = this.spySettings;
 				this.spySettings = null;
@@ -1348,8 +1335,6 @@ namespace ICSharpCode.ILSpy {
 
 			case 3:
 				AvalonEditTextOutput output = new AvalonEditTextOutput();
-				if (FormatExceptions(App.StartupExceptions.ToArray(), output))
-					SafeActiveTextView.ShowText(output);
 
 				if (topPane.Content == null) {
 					var pane = GetPane(topPane, sessionSettings.TopPaneSettings.Name);
@@ -1421,55 +1406,6 @@ namespace ICSharpCode.ILSpy {
 			}
 			return null;
 		}
-
-		bool FormatExceptions(App.ExceptionData[] exceptions, ITextOutput output) {
-			if (exceptions.Length == 0)
-				return false;
-			bool first = true;
-
-			foreach (var item in exceptions) {
-				if (first)
-					first = false;
-				else
-					output.WriteLine("-------------------------------------------------", TextTokenType.Text);
-				output.WriteLine("Error(s) loading plugin: " + item.PluginName, TextTokenType.Text);
-				if (item.Exception is System.Reflection.ReflectionTypeLoadException) {
-					var e = (System.Reflection.ReflectionTypeLoadException)item.Exception;
-					foreach (var ex in e.LoaderExceptions) {
-						output.WriteLine(ex.ToString(), TextTokenType.Text);
-						output.WriteLine();
-					}
-				}
-				else
-					output.WriteLine(item.Exception.ToString(), TextTokenType.Text);
-			}
-
-			return true;
-		}
-
-		#region Update Check
-		string updateAvailableDownloadUrl;
-
-		void ShowMessageIfUpdatesAvailableAsync(DNSpySettings spySettings) {
-			AboutPage.CheckForUpdatesIfEnabledAsync(spySettings).ContinueWith(
-				delegate (Task<string> task) {
-					if (task.Result != null) {
-						updateAvailableDownloadUrl = task.Result;
-						updateAvailablePanel.Visibility = Visibility.Visible;
-					}
-				},
-				TaskScheduler.FromCurrentSynchronizationContext()
-			);
-		}
-
-		void updateAvailablePanelCloseButtonClick(object sender, RoutedEventArgs e) {
-			updateAvailablePanel.Visibility = Visibility.Collapsed;
-		}
-
-		void downloadUpdateButtonClick(object sender, RoutedEventArgs e) {
-			Process.Start(updateAvailableDownloadUrl);
-		}
-		#endregion
 
 		public void ShowAssemblyList(string name) {
 			DNSpySettings settings = this.spySettings;

@@ -24,6 +24,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Menus;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Tabs {
@@ -108,7 +110,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public TabGroupsManager(ContentPresenter contentPresenter, Action<TabManager<TState>, TState, TState> onSelectionChanged, Action<TabManager<TState>, TabManagerAddType, TState> onAddRemoveTabState) {
-			dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
+			DnTheme.Themes.ThemeChanged += Themes_ThemeChanged;
 			this.contentPresenter = contentPresenter;
 			this.onSelectionChanged = onSelectionChanged;
 			this.onAddRemoveTabState = onAddRemoveTabState;
@@ -148,7 +150,7 @@ namespace dnSpy.Tabs {
 			tabControl.Style = App.Current.FindResource("TabStateTabControl") as Style;
 			var tabManager = new TabManager<TState>(this, tabControl, onSelectionChanged, onAddRemoveTabState);
 			tabManagers.Insert(insertIndex, tabManager);
-			ContextMenuProvider.Add(tabManager.TabControl);
+			Globals.App.MenuManager.InitializeContextMenu(tabManager.TabControl, MenuConstants.GUIDOBJ_TABCONTROL_GUID);
 			if (OnTabGroupAdded != null)
 				OnTabGroupAdded(this, TabGroupEventArgs.Empty);
 			return tabManager;

@@ -49,14 +49,14 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\dnSpy_old\dnSpy.csproj">
-      <Project>{1E85EFF9-E370-4683-83E4-8A3D063FF791}</Project>
-      <Name>dnSpy</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
     <None Include="app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\dnSpy_old\dnSpy_old.csproj">
+      <Project>{1e85eff9-e370-4683-83e4-8a3d063ff791}</Project>
+      <Name>dnSpy_old</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

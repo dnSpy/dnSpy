@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.CallStack {
 		public override ImageSource GetImage(Color bgColor) {
 			var name = GetImageName();
 			if (name != null)
-				return ImageCache.Instance.GetImage(name, bgColor);
+				return ImageCache.Instance.GetImage(GetType().Assembly, name, bgColor);
 			return null;
 		}
 

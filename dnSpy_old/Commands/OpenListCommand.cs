@@ -17,10 +17,13 @@
 // DEALINGS IN THE SOFTWARE.
 
 
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
+
 namespace ICSharpCode.ILSpy {
-	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "Open L_ist...", MenuIcon = "AssemblyList", MenuCategory = "Open", MenuOrder = 1130)]
-	sealed class OpenListCommand : SimpleCommand {
-		public override void Execute(object parameter) {
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "Open L_ist...", Icon = "AssemblyList", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 30)]
+	sealed class OpenListCommand : MenuItemBase {
+		public override void Execute(IMenuItemContext context) {
 			OpenListDialog dlg = new OpenListDialog();
 			dlg.Owner = MainWindow.Instance;
 			if (dlg.ShowDialog() == true)

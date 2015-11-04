@@ -36,6 +36,8 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		public static ResourceData[] GetResourceData(IResourceNode[] nodes, ResourceDataType resourceDataType) {
+			if (nodes == null)
+				return new ResourceData[0];
 			return nodes.SelectMany(a => a.GetResourceData(resourceDataType)).ToArray();
 		}
 

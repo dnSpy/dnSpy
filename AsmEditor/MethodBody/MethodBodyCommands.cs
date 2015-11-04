@@ -24,6 +24,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
@@ -48,37 +51,37 @@ namespace dnSpy.AsmEditor.MethodBody {
 	[DebuggerDisplay("{Description}")]
 	sealed class MethodBodySettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Method Body";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "ILEditor",
-								Category = "AsmEd",
-								Order = 640)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "ILEditor",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2440)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return MethodBodySettingsCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "ILEditor", Group = MenuConstants.GROUP_CTX_FILES_ASMED_ILED, Order = 10)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return MethodBodySettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				MethodBodySettingsCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				MethodBodySettingsCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "ILEditor",
-								Category = "AsmEd",
-								Order = 640)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ctx.ReferenceSegment.IsLocalTarget &&
-					MethodBodySettingsCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "ILEditor", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 40)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return MethodBodySettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				MethodBodySettingsCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				MethodBodySettingsCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "ILEditor", Group = MenuConstants.GROUP_CTX_CODE_ASMED_ILED, Order = 10)]
+		sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return context.IsLocalTarget &&
+					MethodBodySettingsCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				MethodBodySettingsCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -147,14 +150,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Edit IL Instruction_s...",
-							Icon = "ILEditor",
-							Category = "AsmEd",
-							Order = 639.99,
-							InputGestureText = "Ctrl+E")]
-	sealed class EditILInstructionsCommand : IContextMenuEntry, ICommand {
-		public bool IsVisible(ContextMenuEntryContext context) {
-			var list = GetMappings(context);
+	[ExportMenuItem(Header = "Edit IL Instruction_s...", Icon = "ILEditor", InputGestureText = "Ctrl+E", Group = MenuConstants.GROUP_CTX_CODE_ASMED_ILED, Order = 0)]
+	sealed class EditILInstructionsCommand : MenuItemBase, ICommand {
+		public override bool IsVisible(IMenuItemContext context) {
+			return IsVisible(GetMappings(context));
+		}
+
+		static bool IsVisible(IList<SourceCodeMapping> list) {
 			return list != null &&
 				list.Count != 0 &&
 				list[0].MemberMapping.MethodDef != null &&
@@ -162,23 +164,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 				list[0].MemberMapping.MethodDef.Body.Instructions.Count > 0;
 		}
 
-		internal static IList<SourceCodeMapping> GetMappings(ContextMenuEntryContext context) {
-			if (!(context.Element is DecompilerTextView) || context.Position == null)
-				return null;
-			var list = SourceCodeMappingUtils.Find((DecompilerTextView)context.Element, context.Position.Value.Line, context.Position.Value.Column);
-			if (list.Count == 0)
-				return null;
-			if (!(list[0].StartLocation.Line <= context.Position.Value.Line && context.Position.Value.Line <= list[0].EndLocation.Line))
-				return null;
-			return list;
+		public override void Execute(IMenuItemContext context) {
+			Execute(GetMappings(context));
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			return true;
-		}
-
-		public void Execute(ContextMenuEntryContext context) {
-			var list = GetMappings(context);
+		static void Execute(IList<SourceCodeMapping> list) {
 			if (list == null)
 				return;
 
@@ -190,6 +180,29 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 
 			MethodBodySettingsCommand.Execute(new ILSpyTreeNode[] { methodNode }, GetInstructionOffsets(method, list));
+		}
+
+		static IList<SourceCodeMapping> GetMappings(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+				return null;
+			var textView = context.CreatorObject.Object as DecompilerTextView;
+			if (textView == null)
+				return null;
+			var pos = context.FindByType<TextViewPosition?>();
+			if (pos == null)
+				return null;
+			return GetMappings(textView, pos.Value.Line, pos.Value.Column);
+		}
+
+		internal static IList<SourceCodeMapping> GetMappings(DecompilerTextView textView, int line, int col) {
+			if (textView == null)
+				return null;
+			var list = SourceCodeMappingUtils.Find(textView, line, col);
+			if (list.Count == 0)
+				return null;
+			if (!(list[0].StartLocation.Line <= line && line <= list[0].EndLocation.Line))
+				return null;
+			return list;
 		}
 
 		static uint[] GetInstructionOffsets(MethodDef method, IList<SourceCodeMapping> list) {
@@ -223,20 +236,21 @@ namespace dnSpy.AsmEditor.MethodBody {
 			remove { CommandManager.RequerySuggested -= value; }
 		}
 
-		static ContextMenuEntryContext CreateContext() {
+		static IList<SourceCodeMapping> GetMappings() {
 			var textView = MainWindow.Instance.ActiveTextView;
-			if (textView != null && textView.IsKeyboardFocusWithin)
-				return ContextMenuEntryContext.Create(textView);
+			if (textView == null || !textView.IsKeyboardFocusWithin)
+				return null;
 
-			return ContextMenuEntryContext.Create(null);
+			var pos = textView.TextEditor.TextArea.Caret.Position;
+			return GetMappings(textView, pos.Line, pos.Column);
 		}
 
 		void ICommand.Execute(object parameter) {
-			Execute(CreateContext());
+			Execute(GetMappings());
 		}
 
 		bool ICommand.CanExecute(object parameter) {
-			return IsVisible(CreateContext());
+			return IsVisible(GetMappings());
 		}
 	}
 }

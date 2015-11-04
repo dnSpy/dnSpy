@@ -22,8 +22,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Debugger.Memory"
-             xmlns:mvvm="clr-namespace:dnSpy.MVVM;assembly=dnSpy"
-             xmlns:hex="clr-namespace:dnSpy.Hex;assembly=dnSpy"
+             xmlns:mvvm="clr-namespace:dnSpy.MVVM;assembly=dnSpy_old"
+             xmlns:hex="clr-namespace:dnSpy.Hex;assembly=dnSpy_old"
              IsEnabled="{Binding IsStopped}"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="100">

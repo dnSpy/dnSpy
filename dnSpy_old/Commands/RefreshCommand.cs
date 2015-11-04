@@ -17,14 +17,17 @@
 // DEALINGS IN THE SOFTWARE.
 
 
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
+
 namespace ICSharpCode.ILSpy {
-	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "_Reload All Assemblies", MenuCategory = "Open", MenuOrder = 1140)]
-	sealed class ReloadCommand : SimpleCommand {
-		public override bool CanExecute(object parameter) {
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "_Reload All Assemblies", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 40)]
+	sealed class ReloadCommand : MenuItemBase {
+		public override bool IsEnabled(IMenuItemContext context) {
 			return MainWindow.Instance.ReloadListCanExecute();
 		}
 
-		public override void Execute(object parameter) {
+		public override void Execute(IMenuItemContext context) {
 			MainWindow.Instance.ReloadList();
 		}
 	}

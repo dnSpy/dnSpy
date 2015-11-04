@@ -23,11 +23,22 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.AvalonEdit;
+using dnSpy.Contracts;
 using dnSpy.Images;
 using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy.AvalonEdit {
 	#region Context menu extensibility
+	public interface IContextMenuEntry<TContext> {
+		bool IsVisible(TContext context);
+		bool IsEnabled(TContext context);
+		void Execute(TContext context);
+	}
+
+	public interface IContextMenuEntry2<TContext> : IContextMenuEntry<TContext> {
+		void Initialize(TContext context, MenuItem menuItem);
+	}
+
 	public interface IIconBarContextMenuEntry : IContextMenuEntry<IIconBarObject> {
 	}
 	public interface IIconBarContextMenuEntry2 : IIconBarContextMenuEntry, IContextMenuEntry2<IIconBarObject> {
@@ -97,13 +108,11 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 		readonly IconBarMargin margin;
 		readonly DecompilerTextView textView;
 
-		// Prevent big memory leaks (text editor) because the data is put into some MEF data structure.
-		// All created instances in this class are shared so this one can be shared as well.
 		sealed class MefState {
 			public static readonly MefState Instance = new MefState();
 
 			MefState() {
-				App.CompositionContainer.ComposeParts(this);
+				Globals.App.CompositionContainer.ComposeParts(this);
 			}
 
 			[ImportMany(typeof(IIconBarContextMenuEntry))]
@@ -189,7 +198,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 									isEnabled = false;
 								}
 								if (!string.IsNullOrEmpty(entryPair.Metadata.Icon))
-									MainWindow.CreateMenuItemImage(menuItem, entry, entryPair.Metadata.Icon, BackgroundType.ContextMenuItem, isEnabled);
+									ImageCache.Instance.CreateMenuItemImage(menuItem, entry.GetType().Assembly, entryPair.Metadata.Icon, BackgroundType.ContextMenuItem, isEnabled);
 								menuItem.InputGestureText = entryPair.Metadata.InputGestureText ?? string.Empty;
 								var entry2 = entry as IIconBarContextMenuEntry2;
 								if (entry2 != null)

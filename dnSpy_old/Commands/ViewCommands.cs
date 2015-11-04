@@ -17,89 +17,113 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows.Data;
+using System;
+using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
+using dnSpy.Tabs;
 using ICSharpCode.ILSpy;
+using ICSharpCode.ILSpy.TextView;
 
 namespace dnSpy.Commands {
-	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View2", MenuHeader = "_Word Wrap", MenuOrder = 3100, MenuIcon = "WordWrap", MenuInputGestureText = "Ctrl+Alt+W")]
-	sealed class WordWrapCommand : ICommand, IMainMenuCheckableCommand {
-		public bool? IsChecked {
-			get { return false; }
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "_Word Wrap", Icon = "WordWrap", InputGestureText = "Ctrl+Alt+W", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 0)]
+	sealed class WordWrapCommand : MenuItemBase {
+		public override bool IsChecked(IMenuItemContext context) {
+			return MainWindow.Instance.SessionSettings.WordWrap;
 		}
 
-		public Binding Binding {
-			get {
-				return new Binding("WordWrap") {
-					Source = MainWindow.Instance.SessionSettings,
-				};
-			}
-		}
-
-		public bool CanExecute(object parameter) {
-			return true;
-		}
-
-		public event System.EventHandler CanExecuteChanged {
-			add { }
-			remove { }
-		}
-
-		public void Execute(object parameter) {
+		public override void Execute(IMenuItemContext context) {
+			MainWindow.Instance.SessionSettings.WordWrap = !MainWindow.Instance.SessionSettings.WordWrap;
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View2", MenuHeader = "_Highlight Current Line", MenuOrder = 3110)]
-	sealed class HighlightCurrentLineCommand : ICommand, IMainMenuCheckableCommand {
-		public bool? IsChecked {
-			get { return false; }
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "_Highlight Current Line", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 10)]
+	sealed class HighlightCurrentLineCommand : MenuItemBase {
+		public override bool IsChecked(IMenuItemContext context) {
+			return MainWindow.Instance.SessionSettings.HighlightCurrentLine;
 		}
 
-		public Binding Binding {
-			get {
-				return new Binding("HighlightCurrentLine") {
-					Source = MainWindow.Instance.SessionSettings,
-				};
-			}
-		}
-
-		public bool CanExecute(object parameter) {
-			return true;
-		}
-
-		public event System.EventHandler CanExecuteChanged {
-			add { }
-			remove { }
-		}
-
-		public void Execute(object parameter) {
+		public override void Execute(IMenuItemContext context) {
+			MainWindow.Instance.SessionSettings.HighlightCurrentLine = !MainWindow.Instance.SessionSettings.HighlightCurrentLine;
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_View", MenuCategory = "View2", MenuHeader = "F_ull Screen", MenuOrder = 3120, MenuInputGestureText = "Shift+Alt+Enter", MenuIcon = "FullScreen")]
-	sealed class FullScreenCommand : ICommand, IMainMenuCheckableCommand {
-		public bool? IsChecked {
-			get { return MainWindow.Instance.IsFullScreen; }
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "F_ull Screen", InputGestureText = "Shift+Alt+Enter", Icon = "FullScreen", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 20)]
+	sealed class FullScreenCommand : MenuItemBase {
+		public override bool IsChecked(IMenuItemContext context) {
+			return MainWindow.Instance.IsFullScreen;
 		}
 
-		public Binding Binding {
-			get {
-				return new Binding("IsFullScreen") {
-					Source = MainWindow.Instance,
-				};
-			}
+		public override void Execute(IMenuItemContext context) {
+			MainWindow.Instance.IsFullScreen = !MainWindow.Instance.IsFullScreen;
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Icon = "Save", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 0)]
+	sealed class MenuSaveCommand : MenuItemCommand {
+		public MenuSaveCommand()
+			: base(ApplicationCommands.Save) {
 		}
 
-		public bool CanExecute(object parameter) {
-			return true;
+		public override string GetHeader(IMenuItemContext context) {
+			return GetHeaderInternal();
 		}
 
-		public event System.EventHandler CanExecuteChanged {
-			add { }
-			remove { }
+		internal static string GetHeaderInternal() {
+			return MainWindow.Instance.ActiveTabState is DecompileTabState ? "_Save Code..." : "_Save...";
+		}
+	}
+
+	[ExportMenuItem(InputGestureText = "Ctrl+S", Icon = "Save", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 0)]
+	sealed class SaveTabCtxMenuCommand : MenuItemCommand {
+		public SaveTabCtxMenuCommand()
+			: base(ApplicationCommands.Save) {
 		}
 
-		public void Execute(object parameter) {
+		public override bool IsVisible(IMenuItemContext context) {
+			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TABCONTROL_GUID) &&
+				MainWindow.Instance.IsDecompilerTabControl(context.CreatorObject.Object as TabControl) &&
+				base.IsVisible(context);
+		}
+
+		public override string GetHeader(IMenuItemContext context) {
+			return MenuSaveCommand.GetHeaderInternal();
+		}
+	}
+
+	[ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 0)]
+	internal sealed class CopyCodeCtxMenuCommand : MenuItemCommand {
+		public CopyCodeCtxMenuCommand()
+			: base(ApplicationCommands.Copy) {
+		}
+
+		public override bool IsVisible(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+				return false;
+			var textView = context.CreatorObject.Object as DecompilerTextView;
+			return textView != null && textView.TextEditor.SelectionLength > 0 && base.IsVisible(context);
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "E_xit", Icon = "Close", InputGestureText = "Alt+F4", Group = MenuConstants.GROUP_APP_MENU_FILE_EXIT, Order = 1000000)]
+	sealed class MenuFileExitCommand : MenuItemBase {
+		public override void Execute(IMenuItemContext context) {
+			MainWindow.Instance.Close();
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "_Open...", Icon = "Open", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 0)]
+	sealed class MenuFileOpenCommand : MenuItemCommand {
+		public MenuFileOpenCommand()
+			: base(ApplicationCommands.Open) {
+		}
+	}
+
+	[ExportToolbarCommand(ToolTip = "Open (Ctrl+O)", ToolbarIcon = "Open", ToolbarCategory = "Open", ToolbarOrder = 2000)]
+	sealed class ToolbarFileOpenCommand : CommandWrapper {
+		public ToolbarFileOpenCommand()
+			: base(ApplicationCommands.Open) {
 		}
 	}
 }

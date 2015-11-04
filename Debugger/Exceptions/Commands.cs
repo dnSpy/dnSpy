@@ -22,10 +22,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using dnlib.DotNet;
+using dnSpy.Contracts.Menus;
 using dnSpy.MVVM;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.TreeView;
 
 namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionsCtxMenuContext {
@@ -38,21 +39,31 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	sealed class ExceptionsCtxMenuCommandProxy : ContextMenuEntryCommandProxy {
+	sealed class ExceptionsCtxMenuCommandProxy : MenuItemCommandProxy<ExceptionsCtxMenuContext> {
 		public ExceptionsCtxMenuCommandProxy(ExceptionsCtxMenuCommand cmd)
 			: base(cmd) {
 		}
 
-		protected override ContextMenuEntryContext CreateContext() {
-			return ContextMenuEntryContext.Create(ExceptionsControlCreator.ExceptionsControlInstance.listBox);
+		protected override ExceptionsCtxMenuContext CreateContext() {
+			return ExceptionsCtxMenuCommand.Create();
 		}
 	}
 
-	abstract class ExceptionsCtxMenuCommand : ContextMenuEntryBase<ExceptionsCtxMenuContext> {
-		protected override ExceptionsCtxMenuContext CreateContext(ContextMenuEntryContext context) {
+	abstract class ExceptionsCtxMenuCommand : MenuItemBase<ExceptionsCtxMenuContext> {
+		protected sealed override object CachedContextKey {
+			get { return ContextKey; }
+		}
+		static readonly object ContextKey = new object();
+
+		protected sealed override ExceptionsCtxMenuContext CreateContext(IMenuItemContext context) {
 			var ui = ExceptionsControlCreator.ExceptionsControlInstance;
-			if (context.Element != ui.listBox)
+			if (context.CreatorObject.Object != ui.listBox)
 				return null;
+			return Create();
+		}
+
+		internal static ExceptionsCtxMenuContext Create() {
+			var ui = ExceptionsControlCreator.ExceptionsControlInstance;
 			var vm = ui.DataContext as ExceptionsVM;
 			if (vm == null)
 				return null;
@@ -67,9 +78,9 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Cop_y", Order = 100, Category = "CopyEX", Icon = "Copy", InputGestureText = "Ctrl+C")]
+	[ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_COPY, Order = 0)]
 	sealed class CopyCallExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
-		protected override void Execute(ExceptionsCtxMenuContext context) {
+		public override void Execute(ExceptionsCtxMenuContext context) {
 			var output = new PlainTextOutput();
 			foreach (var vm in context.SelectedItems) {
 				var printer = new ExceptionPrinter(output);
@@ -81,57 +92,57 @@ namespace dnSpy.Debugger.Exceptions {
 				Clipboard.SetText(s);
 		}
 
-		protected override bool IsEnabled(ExceptionsCtxMenuContext context) {
+		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
 			return context.SelectedItems.Length > 0;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Select _All", Order = 110, Category = "CopyEX", Icon = "Select", InputGestureText = "Ctrl+A")]
+	[ExportMenuItem(Header = "Select _All", Icon = "Select", InputGestureText = "Ctrl+A", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_COPY, Order = 10)]
 	sealed class SelectAllExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
-		protected override void Execute(ExceptionsCtxMenuContext context) {
+		public override void Execute(ExceptionsCtxMenuContext context) {
 			ExceptionsControlCreator.ExceptionsControlInstance.listBox.SelectAll();
 		}
 
-		protected override bool IsEnabled(ExceptionsCtxMenuContext context) {
+		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
 			return ExceptionsControlCreator.ExceptionsControlInstance.listBox.Items.Count > 0;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Add E_xception", Order = 200, Category = "AddEX", Icon = "Add", InputGestureText = "Ins")]
+	[ExportMenuItem(Header = "Add E_xception", Icon = "Add", InputGestureText = "Ins", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 0)]
 	sealed class AddExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
-		protected override void Execute(ExceptionsCtxMenuContext context) {
+		public override void Execute(ExceptionsCtxMenuContext context) {
 			context.VM.AddException();
 		}
 
-		protected override bool IsEnabled(ExceptionsCtxMenuContext context) {
+		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
 			return context.VM.CanAddException;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Remove", Order = 210, Category = "AddEX", Icon = "RemoveCommand", InputGestureText = "Del")]
+	[ExportMenuItem(Header = "_Remove", Icon = "RemoveCommand", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 10)]
 	sealed class RemoveExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
-		protected override void Execute(ExceptionsCtxMenuContext context) {
+		public override void Execute(ExceptionsCtxMenuContext context) {
 			context.VM.RemoveExceptions();
 		}
 
-		protected override bool IsEnabled(ExceptionsCtxMenuContext context) {
+		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
 			return context.VM.CanRemoveExceptions;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Restore Defaults", Order = 220, Category = "AddEX", Icon = "UndoCheckBoxList")]
+	[ExportMenuItem(Header = "Restore Defaults", Icon = "UndoCheckBoxList", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 20)]
 	sealed class RestoreDefaultsExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
-		protected override void Execute(ExceptionsCtxMenuContext context) {
+		public override void Execute(ExceptionsCtxMenuContext context) {
 			context.VM.RestoreDefaults();
 		}
 
-		protected override bool IsEnabled(ExceptionsCtxMenuContext context) {
+		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
 			return context.VM.CanRestoreDefaults;
 		}
 	}
 
 	sealed class ToggleEnableExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
-		protected override void Execute(ExceptionsCtxMenuContext context) {
+		public override void Execute(ExceptionsCtxMenuContext context) {
 			using (ExceptionListSettings.Instance.TemporarilyDisableSave()) {
 				foreach (var vm in context.SelectedItems)
 					vm.BreakOnFirstChance = !vm.BreakOnFirstChance;
@@ -139,82 +150,114 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Enable All Filtered Exceptions", Order = 230, Category = "AddEX")]
+	[ExportMenuItem(Header = "_Enable All Filtered Exceptions", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 30)]
 	sealed class EnableAllExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
-		protected override void Execute(ExceptionsCtxMenuContext context) {
+		public override void Execute(ExceptionsCtxMenuContext context) {
 			context.VM.EnableAllFilteredExceptions();
 		}
 
-		protected override bool IsEnabled(ExceptionsCtxMenuContext context) {
+		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
 			return context.VM.CanEnableAllFilteredExceptions;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Disable All Filtered Exceptions", Order = 240, Category = "AddEX")]
+	[ExportMenuItem(Header = "_Disable All Filtered Exceptions", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 40)]
 	sealed class DisableAllExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
-		protected override void Execute(ExceptionsCtxMenuContext context) {
+		public override void Execute(ExceptionsCtxMenuContext context) {
 			context.VM.DisableAllFilteredExceptions();
 		}
 
-		protected override bool IsEnabled(ExceptionsCtxMenuContext context) {
+		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
 			return context.VM.CanDisableAllFilteredExceptions;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Break When Thrown", Icon = "Add", Order = 800, Category = "Exceptions")]
-	sealed class BreakWhenThrownExceptionContextMenuEntry : IContextMenuEntry {
-		public void Execute(ContextMenuEntryContext context) {
-			var name = GetExceptionTypeName(context);
-			if (name == null)
-				return;
-			ExceptionsControlCreator.ExceptionsVM.AddException(ExceptionType.DotNet, name);
-		}
+	static class BreakWhenThrownExceptionCommand {
+		abstract class CommandBase : MenuItemBase<string> {
+			protected sealed override string CreateContext(IMenuItemContext context) {
+				return GetExceptionTypeName(context);
+			}
 
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			return true;
-		}
+			public override bool IsVisible(string context) {
+				if (context == null)
+					return false;
+				return !ExceptionsControlCreator.ExceptionsVM.Exists(ExceptionType.DotNet, context);
+			}
 
-		public bool IsVisible(ContextMenuEntryContext context) {
-			var name = GetExceptionTypeName(context);
-			if (name == null)
-				return false;
-			return !ExceptionsControlCreator.ExceptionsVM.Exists(ExceptionType.DotNet, name);
-		}
+			public override void Execute(string context) {
+				if (context == null)
+					return;
+				ExceptionsControlCreator.ExceptionsVM.AddException(ExceptionType.DotNet, context);
+			}
 
-		static string GetExceptionTypeName(ContextMenuEntryContext context) {
-			var vm = ExceptionsControlCreator.ExceptionsVM;
-			if (vm == null)
-				return null;
-			var td = GetTypeDef(context);
-			if (td == null)
-				return null;
-			if (!TypeTreeNode.IsException(td))
-				return null;
-			var name = GetExceptionString(td);
-			if (vm.Exists(ExceptionType.DotNet, name))
-				return null;
-			return name;
-		}
-
-		static string GetExceptionString(TypeDef td) {
-			//TODO: HACK: do a proper replacement since a namespace/name could contain slashes
-			return td.FullName.Replace('/', '.');
-		}
-
-		static TypeDef GetTypeDef(ContextMenuEntryContext context) {
-			if (context.SelectedTreeNodes != null) {
-				if (context.SelectedTreeNodes.Length != 1)
+			string GetExceptionTypeName(IMenuItemContext context) {
+				var vm = ExceptionsControlCreator.ExceptionsVM;
+				if (vm == null)
 					return null;
-				var node = context.SelectedTreeNodes[0] as IMemberTreeNode;
+				var td = GetTypeDef(context);
+				if (td == null)
+					return null;
+				if (!TypeTreeNode.IsException(td))
+					return null;
+				var name = GetExceptionString(td);
+				if (vm.Exists(ExceptionType.DotNet, name))
+					return null;
+				return name;
+			}
+
+			static string GetExceptionString(TypeDef td) {
+				//TODO: HACK: do a proper replacement since a namespace/name could contain slashes
+				return td.FullName.Replace('/', '.');
+			}
+
+			protected abstract TypeDef GetTypeDef(IMenuItemContext context);
+
+			protected TypeDef GetTypeDefFromTreeNodes(IMenuItemContext context, string guid) {
+				if (context.CreatorObject.Guid != new Guid(guid))
+					return null;
+				var nodes = context.FindByType<SharpTreeNode[]>();
+				if (nodes == null || nodes.Length != 1)
+					return null;
+				var node = nodes[0] as IMemberTreeNode;
 				if (node == null)
 					return null;
 				return (node.Member as ITypeDefOrRef).ResolveTypeDef();
 			}
 
-			if (context.Reference != null)
-				return (context.Reference.Reference as ITypeDefOrRef).ResolveTypeDef();
+			protected TypeDef GetTypeDefFromReference(IMenuItemContext context, string guid) {
+				if (context.CreatorObject.Guid != new Guid(guid))
+					return null;
 
-			return null;
+				var @ref = context.FindByType<CodeReferenceSegment>();
+				if (@ref == null || @ref.Reference == null)
+					return null;
+
+				return (@ref.Reference as ITypeDefOrRef).ResolveTypeDef();
+			}
+		}
+
+		[ExportMenuItem(Header = "Break When Thrown", Icon = "Add", Group = MenuConstants.GROUP_CTX_FILES_DEBUG, Order = 0)]
+		sealed class FilesCommand : CommandBase {
+			protected sealed override object CachedContextKey {
+				get { return ContextKey; }
+			}
+			static readonly object ContextKey = new object();
+
+			protected override TypeDef GetTypeDef(IMenuItemContext context) {
+				return GetTypeDefFromTreeNodes(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
+			}
+		}
+
+		[ExportMenuItem(Header = "Break When Thrown", Icon = "Add", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 1000)]
+		sealed class CodeCommand : CommandBase {
+			protected sealed override object CachedContextKey {
+				get { return ContextKey; }
+			}
+			static readonly object ContextKey = new object();
+
+			protected override TypeDef GetTypeDef(IMenuItemContext context) {
+				return GetTypeDefFromReference(context, MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID);
+			}
 		}
 	}
 }

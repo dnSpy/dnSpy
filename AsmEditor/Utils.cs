@@ -28,21 +28,21 @@ namespace dnSpy.AsmEditor {
 			MainWindow.Instance.ModuleModified(asm);
 		}
 
-		public static void InstallSettingsCommand(IContextMenuEntry treeViewCmd, IContextMenuEntry textEditorCmd) {
+		public static void InstallSettingsCommand(EditMenuHandler treeViewCmd, CodeContextMenuHandler textEditorCmd) {
 			InstallTreeViewAndTextEditorCommand(SettingsRoutedCommand, treeViewCmd, textEditorCmd, ModifierKeys.Alt, Key.Enter);
 		}
 		static readonly RoutedCommand SettingsRoutedCommand = new RoutedCommand("Settings", typeof(Utils));
 
-		public static void InstallTreeViewAndTextEditorCommand(RoutedCommand routedCmd, IContextMenuEntry treeViewCmd, IContextMenuEntry textEditorCmd, ModifierKeys modifiers, Key key) {
+		static void InstallTreeViewAndTextEditorCommand(RoutedCommand routedCmd, EditMenuHandler treeViewCmd, CodeContextMenuHandler textEditorCmd, ModifierKeys modifiers, Key key) {
 			if (treeViewCmd != null) {
 				var elem = MainWindow.Instance.TreeView;
-				elem.AddCommandBinding(routedCmd, new TreeViewCommandProxy(treeViewCmd));
+				elem.AddCommandBinding(routedCmd, new EditMenuHandlerCommandProxy(treeViewCmd));
 				bool keyBindingExists = elem.InputBindings.OfType<KeyBinding>().Any(a => a.Key == key && a.Modifiers == modifiers);
 				if (!keyBindingExists)
 					elem.InputBindings.Add(new KeyBinding(routedCmd, key, modifiers));
 			}
 			if (textEditorCmd != null)
-				MainWindow.Instance.CodeBindings.Add(routedCmd, new TextEditorCommandProxy(textEditorCmd), modifiers, key);
+				MainWindow.Instance.CodeBindings.Add(routedCmd, new CodeContextMenuHandlerCommandProxy(textEditorCmd), modifiers, key);
 		}
 	}
 }

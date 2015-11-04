@@ -25,6 +25,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Contracts.Menus;
 using dnSpy.Files;
 using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
@@ -37,34 +38,33 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public void OnLoaded() {
-			MainWindow.Instance.TreeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new RemoveNetModuleFromAssemblyCommand.TheEditCommand()));
-			Utils.InstallSettingsCommand(new ModuleSettingsCommand.TheEditCommand(), null);
+			MainWindow.Instance.TreeView.AddCommandBinding(ApplicationCommands.Delete, new EditMenuHandlerCommandProxy(new RemoveNetModuleFromAssemblyCommand.EditMenuCommand()));
+			Utils.InstallSettingsCommand(new ModuleSettingsCommand.EditMenuCommand(), null);
 		}
 	}
 
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateNetModuleCommand : IUndoCommand {
 		const string CMD_NAME = "Create NetModule";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewAssemblyModule",
-								Category = "AsmEd",
-								Order = 530)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "NewAssemblyModule",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2330)]
-		sealed class TheEditCommand : EditCommand {
-			public TheEditCommand()
-				: base(true) {
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 30)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateNetModuleCommand.CanExecute(context.Nodes);
 			}
 
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return CreateNetModuleCommand.CanExecute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateNetModuleCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 30)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateNetModuleCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				CreateNetModuleCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateNetModuleCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -123,22 +123,25 @@ namespace dnSpy.AsmEditor.Module {
 	[DebuggerDisplay("{Description}")]
 	sealed class ConvertNetModuleToAssemblyCommand : IUndoCommand {
 		const string CMD_NAME = "Convert NetModule to Assembly";
-		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "ModuleToAssembly",
-								Category = "AsmEd",
-								Order = 410)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
-							Menu = "_Edit",
-							MenuIcon = "ModuleToAssembly",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2210)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return ConvertNetModuleToAssemblyCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME, Icon = "ModuleToAssembly", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 20)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return ConvertNetModuleToAssemblyCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				ConvertNetModuleToAssemblyCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				ConvertNetModuleToAssemblyCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "ModuleToAssembly", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 20)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return ConvertNetModuleToAssemblyCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(AsmEditorContext context) {
+				ConvertNetModuleToAssemblyCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -230,26 +233,33 @@ namespace dnSpy.AsmEditor.Module {
 	[DebuggerDisplay("{Description}")]
 	sealed class ConvertAssemblyToNetModuleCommand : IUndoCommand {
 		const string CMD_NAME = "Convert Assembly to NetModule";
-		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "AssemblyToModule",
-								Category = "AsmEd",
-								Order = 420)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
-							Menu = "_Edit",
-							MenuIcon = "AssemblyToModule",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2220)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool IsVisible(ILSpyTreeNode[] nodes) {
-				return ConvertAssemblyToNetModuleCommand.IsVisible(nodes);
+		[ExportMenuItem(Header = CMD_NAME, Icon = "AssemblyToModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 30)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return ConvertAssemblyToNetModuleCommand.IsVisible(context.Nodes);
 			}
 
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return ConvertAssemblyToNetModuleCommand.CanExecute(nodes);
+			public override bool IsEnabled(AsmEditorContext context) {
+				return ConvertAssemblyToNetModuleCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				ConvertAssemblyToNetModuleCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				ConvertAssemblyToNetModuleCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "AssemblyToModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 30)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return ConvertAssemblyToNetModuleCommand.IsVisible(context.Nodes);
+			}
+
+			public override bool IsEnabled(AsmEditorContext context) {
+				return ConvertAssemblyToNetModuleCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(AsmEditorContext context) {
+				ConvertAssemblyToNetModuleCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -409,22 +419,25 @@ namespace dnSpy.AsmEditor.Module {
 
 	sealed class AddNewNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand {
 		const string CMD_NAME = "Add New NetModule to Assembly";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewAssemblyModule",
-								Category = "AsmEd",
-								Order = 510)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "NewAssemblyModule",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2310)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return AddNetModuleToAssemblyCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 10)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return AddNewNetModuleToAssemblyCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				AddNewNetModuleToAssemblyCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				AddNewNetModuleToAssemblyCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 10)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return AddNewNetModuleToAssemblyCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(AsmEditorContext context) {
+				AddNewNetModuleToAssemblyCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -459,22 +472,25 @@ namespace dnSpy.AsmEditor.Module {
 
 	sealed class AddExistingNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand {
 		const string CMD_NAME = "Add Existing NetModule to Assembly";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewAssemblyModule",
-								Category = "AsmEd",
-								Order = 520)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "NewAssemblyModule",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2320)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return AddNetModuleToAssemblyCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 20)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return AddExistingNetModuleToAssemblyCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				AddExistingNetModuleToAssemblyCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				AddExistingNetModuleToAssemblyCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 20)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return AddExistingNetModuleToAssemblyCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(AsmEditorContext context) {
+				AddExistingNetModuleToAssemblyCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -514,28 +530,33 @@ namespace dnSpy.AsmEditor.Module {
 
 	sealed class RemoveNetModuleFromAssemblyCommand : IUndoCommand2 {
 		const string CMD_NAME = "Remove NetModule from Assembly";
-		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Delete",
-								InputGestureText = "Del",
-								Category = "AsmEd",
-								Order = 310)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
-							Menu = "_Edit",
-							MenuIcon = "Delete",
-							MenuInputGestureText = "Del",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2110)]
-		internal sealed class TheEditCommand : EditCommand {
-			protected override bool IsVisible(ILSpyTreeNode[] nodes) {
-				return RemoveNetModuleFromAssemblyCommand.IsVisible(nodes);
+		[ExportMenuItem(Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 10)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return RemoveNetModuleFromAssemblyCommand.IsVisible(context.Nodes);
 			}
 
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return RemoveNetModuleFromAssemblyCommand.CanExecute(nodes);
+			public override bool IsEnabled(AsmEditorContext context) {
+				return RemoveNetModuleFromAssemblyCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				RemoveNetModuleFromAssemblyCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				RemoveNetModuleFromAssemblyCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 10)]
+		internal sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return RemoveNetModuleFromAssemblyCommand.IsVisible(context.Nodes);
+			}
+
+			public override bool IsEnabled(AsmEditorContext context) {
+				return RemoveNetModuleFromAssemblyCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(AsmEditorContext context) {
+				RemoveNetModuleFromAssemblyCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -620,24 +641,25 @@ namespace dnSpy.AsmEditor.Module {
 	[DebuggerDisplay("{Description}")]
 	sealed class ModuleSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Module";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Settings",
-								InputGestureText = "Alt+Enter",
-								Category = "AsmEd",
-								Order = 610)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "Settings",
-							MenuInputGestureText = "Alt+Enter",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2410)]
-		internal sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return ModuleSettingsCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 10)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return ModuleSettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				ModuleSettingsCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				ModuleSettingsCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 10)]
+		internal sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return ModuleSettingsCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(AsmEditorContext context) {
+				ModuleSettingsCommand.Execute(context.Nodes);
 			}
 		}
 

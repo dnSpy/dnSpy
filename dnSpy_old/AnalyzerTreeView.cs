@@ -25,7 +25,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy;
-using dnSpy.dntheme;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Menus;
+using dnSpy.DnTheme;
 using dnSpy.Files;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
@@ -66,11 +68,18 @@ namespace ICSharpCode.ILSpy {
 			get { return "Analyzer"; }
 		}
 
+		sealed class GuidObjectsCreator : IGuidObjectsCreator {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
+				var atv = (SharpTreeView)creatorObject.Object;
+				yield return new GuidObject(MenuConstants.GUIDOBJ_TREEVIEW_NODES_ARRAY_GUID, atv.GetTopLevelSelection().ToArray());
+			}
+		}
+
 		private AnalyzerTreeView() {
 			this.ShowRoot = false;
 			this.Root = new AnalyzerRootNode { Language = MainWindow.Instance.CurrentLanguage };
 			this.BorderThickness = new Thickness(0);
-			ContextMenuProvider.Add(this);
+			Globals.App.MenuManager.InitializeContextMenu(this, MenuConstants.GUIDOBJ_ANALYZER_GUID, new GuidObjectsCreator());
 			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_CurrentAssemblyListChanged;
 			MainWindow.Instance.OnModuleModified += MainWindow_OnModuleModified;
 			Themes.ThemeChanged += Themes_ThemeChanged;

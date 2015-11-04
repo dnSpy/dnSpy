@@ -17,28 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
 
 namespace dnSpy.AsmEditor {
-	[ExportMainMenuCommand(MenuHeader = "Undo",
-						   MenuInputGestureText = "Ctrl+Z",
-						   MenuIcon = "Undo",
-						   Menu = "_Edit",
-						   MenuCategory = "UndoRedo",
-						   MenuOrder = 2000)]
-	sealed class UndoMainMenuEntryCommand : CommandWrapper {
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Undo", InputGestureText = "Ctrl+Z", Icon = "Undo", Group = MenuConstants.GROUP_APP_MENU_EDIT_UNDO, Order = 0)]
+	sealed class UndoMainMenuEntryCommand : MenuItemCommand {
 		public UndoMainMenuEntryCommand()
 			: base(UndoCommandManagerLoader.Undo) {
 		}
 	}
 
-	[ExportMainMenuCommand(MenuHeader = "Redo",
-						   MenuInputGestureText = "Ctrl+Y",
-						   MenuIcon = "Redo",
-						   Menu = "_Edit",
-						   MenuCategory = "UndoRedo",
-						   MenuOrder = 2010)]
-	sealed class RedoMainMenuEntryCommand : CommandWrapper {
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Redo", InputGestureText = "Ctrl+Y", Icon = "Redo", Group = MenuConstants.GROUP_APP_MENU_EDIT_UNDO, Order = 10)]
+	sealed class RedoMainMenuEntryCommand : MenuItemCommand {
 		public RedoMainMenuEntryCommand()
 			: base(UndoCommandManagerLoader.Redo) {
 		}

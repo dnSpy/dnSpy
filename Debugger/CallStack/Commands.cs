@@ -21,10 +21,9 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
 using dndbg.Engine;
+using dnSpy.Contracts.Menus;
 using dnSpy.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class CallStackCtxMenuContext {
@@ -37,23 +36,33 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	sealed class CallStackCtxMenuCommandProxy : ContextMenuEntryCommandProxy {
+	sealed class CallStackCtxMenuCommandProxy : MenuItemCommandProxy<CallStackCtxMenuContext> {
 		public CallStackCtxMenuCommandProxy(CallStackCtxMenuCommand cmd)
 			: base(cmd) {
 		}
 
-		protected override ContextMenuEntryContext CreateContext() {
-			return ContextMenuEntryContext.Create(CallStackControlCreator.CallStackControlInstance.listView);
+		protected override CallStackCtxMenuContext CreateContext() {
+			return CallStackCtxMenuCommand.Create();
 		}
 	}
 
-	abstract class CallStackCtxMenuCommand : ContextMenuEntryBase<CallStackCtxMenuContext> {
-		protected override CallStackCtxMenuContext CreateContext(ContextMenuEntryContext context) {
+	abstract class CallStackCtxMenuCommand : MenuItemBase<CallStackCtxMenuContext> {
+		protected sealed override object CachedContextKey {
+			get { return ContextKey; }
+		}
+		static readonly object ContextKey = new object();
+
+		protected sealed override CallStackCtxMenuContext CreateContext(IMenuItemContext context) {
 			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Stopped)
 				return null;
 			var ui = CallStackControlCreator.CallStackControlInstance;
-			if (context.Element != ui.listView)
+			if (context.CreatorObject.Object != ui.listView)
 				return null;
+			return Create();
+		}
+
+		internal static CallStackCtxMenuContext Create() {
+			var ui = CallStackControlCreator.CallStackControlInstance;
 			var vm = ui.DataContext as CallStackVM;
 			if (vm == null)
 				return null;
@@ -65,9 +74,9 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Cop_y", Order = 100, Category = "CopyCS", Icon = "Copy", InputGestureText = "Ctrl+C")]
+	[ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_COPY, Order = 0)]
 	sealed class CopyCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			var sb = new StringBuilder();
 			foreach (var item in context.SelectedItems) {
 				sb.Append(item.IsCurrentFrame ? '>' : ' ');
@@ -79,23 +88,23 @@ namespace dnSpy.Debugger.CallStack {
 				Clipboard.SetText(sb.ToString());
 		}
 
-		protected override bool IsEnabled(CallStackCtxMenuContext context) {
+		public override bool IsEnabled(CallStackCtxMenuContext context) {
 			return context.SelectedItems.Length > 0;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Select _All", Order = 110, Category = "CopyCS", Icon = "Select", InputGestureText = "Ctrl+A")]
+	[ExportMenuItem(Header = "Select _All", Icon = "Select", InputGestureText = "Ctrl+A", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_COPY, Order = 10)]
 	sealed class SelectAllCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			CallStackControlCreator.CallStackControlInstance.listView.SelectAll();
 		}
 
-		protected override bool IsEnabled(CallStackCtxMenuContext context) {
+		public override bool IsEnabled(CallStackCtxMenuContext context) {
 			return CallStackControlCreator.CallStackControlInstance.listView.Items.Count > 0;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Switch To Frame", Order = 210, Category = "Frame")]
+	[ExportMenuItem(Header = "_Switch To Frame", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 0)]
 	sealed class SwitchToFrameCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		internal static CallStackFrameVM GetFrame(CallStackCtxMenuContext context) {
 			if (context.SelectedItems.Length != 1)
@@ -103,7 +112,7 @@ namespace dnSpy.Debugger.CallStack {
 			return context.SelectedItems[0] as CallStackFrameVM;
 		}
 
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			Execute(GetFrame(context), false);
 		}
 
@@ -114,185 +123,185 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 
-		protected override bool IsEnabled(CallStackCtxMenuContext context) {
+		public override bool IsEnabled(CallStackCtxMenuContext context) {
 			return GetFrame(context) != null;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Go To Code", Order = 220, Category = "Frame", Icon = "GoToSourceCode", InputGestureText = "Enter")]
+	[ExportMenuItem(Header = "_Go To Code", Icon = "GoToSourceCode", InputGestureText = "Enter", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 10)]
 	sealed class GoToSourceCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			if (vm != null)
 				FrameUtils.GoToIL(vm.Frame, false);
 		}
 
-		protected override bool IsEnabled(CallStackCtxMenuContext context) {
+		public override bool IsEnabled(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			return vm != null && FrameUtils.CanGoToIL(vm.Frame);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Go To Code (New _Tab)", Order = 230, Category = "Frame", Icon = "GoToSourceCode", InputGestureText = "Ctrl+Enter")]
+	[ExportMenuItem(Header = "Go To Code (New _Tab)", Icon = "GoToSourceCode", InputGestureText = "Ctrl+Enter", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 20)]
 	sealed class GoToSourceNewTabCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			if (vm != null)
 				FrameUtils.GoToIL(vm.Frame, true);
 		}
 
-		protected override bool IsEnabled(CallStackCtxMenuContext context) {
+		public override bool IsEnabled(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			return vm != null && FrameUtils.CanGoToIL(vm.Frame);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Go To _Disassembly", Order = 240, Category = "Frame", Icon = "DisassemblyWindow")]
+	[ExportMenuItem(Header = "Go To _Disassembly", Icon = "DisassemblyWindow", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 30)]
 	sealed class GoToDisassemblyCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			if (vm != null)
 				FrameUtils.GoToDisasm(vm.Frame);
 		}
 
-		protected override bool IsEnabled(CallStackCtxMenuContext context) {
+		public override bool IsEnabled(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			return vm != null && FrameUtils.CanGoToDisasm(vm.Frame);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Ru_n To Cursor", Order = 250, Category = "Frame", Icon = "Cursor", InputGestureText = "Ctrl+F10")]
+	[ExportMenuItem(Header = "Ru_n To Cursor", Icon = "Cursor", InputGestureText = "Ctrl+F10", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 40)]
 	sealed class RunToCursorCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			if (vm != null)
 				DebugManager.Instance.RunTo(vm.Frame);
 		}
 
-		protected override bool IsEnabled(CallStackCtxMenuContext context) {
+		public override bool IsEnabled(CallStackCtxMenuContext context) {
 			var vm = SwitchToFrameCallStackCtxMenuCommand.GetFrame(context);
 			return vm != null && DebugManager.Instance.CanRunTo(vm.Frame);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Hexadecimal Display", Order = 400, Category = "CSMiscOptions")]
+	[ExportMenuItem(Header = "_Hexadecimal Display", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_HEXOPTS, Order = 0)]
 	sealed class HexadecimalDisplayCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			DebuggerSettings.Instance.UseHexadecimal = !DebuggerSettings.Instance.UseHexadecimal;
 		}
 
-		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = DebuggerSettings.Instance.UseHexadecimal;
+		public override bool IsChecked(CallStackCtxMenuContext context) {
+			return DebuggerSettings.Instance.UseHexadecimal;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show _Module Names", Order = 500, Category = "CSNameOptions")]
+	[ExportMenuItem(Header = "Show _Module Names", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 0)]
 	sealed class ShowModuleNamesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			CallStackSettings.Instance.ShowModuleNames = !CallStackSettings.Instance.ShowModuleNames;
 		}
 
-		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = CallStackSettings.Instance.ShowModuleNames;
+		public override bool IsChecked(CallStackCtxMenuContext context) {
+			return CallStackSettings.Instance.ShowModuleNames;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show Parameter _Types", Order = 510, Category = "CSNameOptions")]
+	[ExportMenuItem(Header = "Show Parameter _Types", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 10)]
 	sealed class ShowParameterTypesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			CallStackSettings.Instance.ShowParameterTypes = !CallStackSettings.Instance.ShowParameterTypes;
 		}
 
-		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = CallStackSettings.Instance.ShowParameterTypes;
+		public override bool IsChecked(CallStackCtxMenuContext context) {
+			return CallStackSettings.Instance.ShowParameterTypes;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show _Parameter Names", Order = 520, Category = "CSNameOptions")]
+	[ExportMenuItem(Header = "Show _Parameter Names", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 20)]
 	sealed class ShowParameterNamesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			CallStackSettings.Instance.ShowParameterNames = !CallStackSettings.Instance.ShowParameterNames;
 		}
 
-		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = CallStackSettings.Instance.ShowParameterNames;
+		public override bool IsChecked(CallStackCtxMenuContext context) {
+			return CallStackSettings.Instance.ShowParameterNames;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show Parameter _Values", Order = 530, Category = "CSNameOptions")]
+	[ExportMenuItem(Header = "Show Parameter _Values", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 30)]
 	sealed class ShowParameterValuesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			CallStackSettings.Instance.ShowParameterValues = !CallStackSettings.Instance.ShowParameterValues;
 		}
 
-		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = CallStackSettings.Instance.ShowParameterValues;
+		public override bool IsChecked(CallStackCtxMenuContext context) {
+			return CallStackSettings.Instance.ShowParameterValues;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show IP", Order = 550, Category = "CSNameOptions")]
+	[ExportMenuItem(Header = "Show IP", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 40)]
 	sealed class ShowIPCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			CallStackSettings.Instance.ShowIP = !CallStackSettings.Instance.ShowIP;
 		}
 
-		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = CallStackSettings.Instance.ShowIP;
+		public override bool IsChecked(CallStackCtxMenuContext context) {
+			return CallStackSettings.Instance.ShowIP;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show Owner Types", Order = 560, Category = "CSNameOptions")]
+	[ExportMenuItem(Header = "Show Owner Types", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 50)]
 	sealed class ShowOwnerTypesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			CallStackSettings.Instance.ShowOwnerTypes = !CallStackSettings.Instance.ShowOwnerTypes;
 		}
 
-		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = CallStackSettings.Instance.ShowOwnerTypes;
+		public override bool IsChecked(CallStackCtxMenuContext context) {
+			return CallStackSettings.Instance.ShowOwnerTypes;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show Namespaces", Order = 570, Category = "CSNameOptions")]
+	[ExportMenuItem(Header = "Show Namespaces", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 60)]
 	sealed class ShowNamespacesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			CallStackSettings.Instance.ShowNamespaces = !CallStackSettings.Instance.ShowNamespaces;
 		}
 
-		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = CallStackSettings.Instance.ShowNamespaces;
+		public override bool IsChecked(CallStackCtxMenuContext context) {
+			return CallStackSettings.Instance.ShowNamespaces;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show Return Types", Order = 580, Category = "CSNameOptions")]
+	[ExportMenuItem(Header = "Show Return Types", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 70)]
 	sealed class ShowReturnTypesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			CallStackSettings.Instance.ShowReturnTypes = !CallStackSettings.Instance.ShowReturnTypes;
 		}
 
-		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = CallStackSettings.Instance.ShowReturnTypes;
+		public override bool IsChecked(CallStackCtxMenuContext context) {
+			return CallStackSettings.Instance.ShowReturnTypes;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show Type Keywords", Order = 590, Category = "CSNameOptions")]
+	[ExportMenuItem(Header = "Show Type Keywords", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 80)]
 	sealed class ShowTypeKeywordsCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			CallStackSettings.Instance.ShowTypeKeywords = !CallStackSettings.Instance.ShowTypeKeywords;
 		}
 
-		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = CallStackSettings.Instance.ShowTypeKeywords;
+		public override bool IsChecked(CallStackCtxMenuContext context) {
+			return CallStackSettings.Instance.ShowTypeKeywords;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show Tokens", Order = 600, Category = "CSNameOptions")]
+	[ExportMenuItem(Header = "Show Tokens", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 90)]
 	sealed class ShowTokensCallStackCtxMenuCommand : CallStackCtxMenuCommand {
-		protected override void Execute(CallStackCtxMenuContext context) {
+		public override void Execute(CallStackCtxMenuContext context) {
 			CallStackSettings.Instance.ShowTokens = !CallStackSettings.Instance.ShowTokens;
 		}
 
-		protected override void Initialize(CallStackCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = CallStackSettings.Instance.ShowTokens;
+		public override bool IsChecked(CallStackCtxMenuContext context) {
+			return CallStackSettings.Instance.ShowTokens;
 		}
 	}
 }

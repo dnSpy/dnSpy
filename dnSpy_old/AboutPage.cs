@@ -17,29 +17,20 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Input;
-using System.Xml.Linq;
-using dnSpy.Images;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
 using dnSpy.NRefactory;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy {
-	[ExportMainMenuCommand(Menu = "_Help", MenuHeader = "_About", MenuOrder = 99999)]
-	sealed class AboutPage : SimpleCommand {
-		static readonly bool checkForUpdateCode = false;
-		public override void Execute(object parameter) {
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "_About", Group = MenuConstants.GROUP_APP_MENU_HELP_ABOUT, Order = 1000000)]
+	sealed class AboutPage : MenuItemBase {
+		public override void Execute(IMenuItemContext context) {
 			// Make sure to get the textview before unselecting anything in case we have two tab
 			// groups opened and the active tab is not a textview
 			var activeTextView = MainWindow.Instance.SafeActiveTextView;
@@ -47,43 +38,12 @@ namespace ICSharpCode.ILSpy {
 			Display(activeTextView);
 		}
 
-		static readonly Uri UpdateUrl = new Uri("http://www.ilspy.net/updates.xml");
-		const string band = "stable";
-
-		static AvailableVersionInfo latestAvailableVersion;
-
 		public static void Display(DecompilerTextView textView) {
 			AvalonEditTextOutput output = new AvalonEditTextOutput();
-			output.WriteLine(string.Format("dnSpy version {0}", currentVersion.ToString()), TextTokenType.Text);
+			output.WriteLine(string.Format("dnSpy version {0}", typeof(MainWindow).Assembly.GetName().Version), TextTokenType.Text);
 			var decVer = typeof(ICSharpCode.Decompiler.Ast.AstBuilder).Assembly.GetName().Version;
 			output.WriteLine(string.Format("ILSpy Decompiler version {0}.{1}.{2}", decVer.Major, decVer.Minor, decVer.Build), TextTokenType.Text);
-			if (checkForUpdateCode)
-				output.AddUIElement(
-					delegate {
-						StackPanel stackPanel = new StackPanel();
-						stackPanel.HorizontalAlignment = HorizontalAlignment.Center;
-						stackPanel.Orientation = Orientation.Horizontal;
-						if (latestAvailableVersion == null) {
-							AddUpdateCheckButton(stackPanel, textView);
-						}
-						else {
-						// we already retrieved the latest version sometime earlier
-						ShowAvailableVersion(latestAvailableVersion, stackPanel);
-						}
-						CheckBox checkBox = new CheckBox();
-						checkBox.Margin = new Thickness(4);
-						checkBox.Content = "Automatically check for updates every week";
-						UpdateSettings settings = new UpdateSettings(DNSpySettings.Load());
-						checkBox.SetBinding(CheckBox.IsCheckedProperty, new Binding("AutomaticUpdateCheckEnabled") { Source = settings });
-						return new StackPanel {
-							Margin = new Thickness(0, 4, 0, 0),
-							Cursor = Cursors.Arrow,
-							Children = { stackPanel, checkBox }
-						};
-					});
-			if (checkForUpdateCode)
-				output.WriteLine();
-			foreach (var plugin in App.CompositionContainer.GetExportedValues<IAboutPageAddition>())
+			foreach (var plugin in Globals.App.CompositionContainer.GetExportedValues<IAboutPageAddition>())
 				plugin.Write(output);
 			output.WriteLine();
 			using (Stream s = typeof(AboutPage).Assembly.GetManifestResourceStream(typeof(dnSpy.StartUpClass), "README.txt")) {
@@ -113,203 +73,6 @@ namespace ICSharpCode.ILSpy {
 			protected override Uri GetUriFromMatch(Match match) {
 				return uri;
 			}
-		}
-
-		static void AddUpdateCheckButton(StackPanel stackPanel, DecompilerTextView textView) {
-			Button button = new Button();
-			button.Content = "Check for updates";
-			button.Cursor = Cursors.Arrow;
-			stackPanel.Children.Add(button);
-
-			button.Click += delegate {
-				button.Content = "Checking...";
-				button.IsEnabled = false;
-				GetLatestVersionAsync().ContinueWith(
-					delegate (Task<AvailableVersionInfo> task) {
-						try {
-							stackPanel.Children.Clear();
-							ShowAvailableVersion(task.Result, stackPanel);
-						}
-						catch (Exception ex) {
-							AvalonEditTextOutput exceptionOutput = new AvalonEditTextOutput();
-							exceptionOutput.WriteLine(ex.ToString(), TextTokenType.Text);
-							textView.ShowText(exceptionOutput);
-						}
-					}, TaskScheduler.FromCurrentSynchronizationContext());
-			};
-		}
-
-		static readonly Version currentVersion = typeof(MainWindow).Assembly.GetName().Version;
-
-		static void ShowAvailableVersion(AvailableVersionInfo availableVersion, StackPanel stackPanel) {
-			if (currentVersion == availableVersion.Version) {
-				stackPanel.Children.Add(
-					new Image {
-						Width = 16,
-						Height = 16,
-						Source = ImageCache.Instance.GetImage("OK", BackgroundType.TextEditor),
-						Margin = new Thickness(4, 0, 4, 0)
-					});
-				stackPanel.Children.Add(
-					new TextBlock {
-						Text = "You are using the latest release.",
-						VerticalAlignment = VerticalAlignment.Bottom
-					});
-			}
-			else if (currentVersion < availableVersion.Version) {
-				stackPanel.Children.Add(
-					new TextBlock {
-						Text = "Version " + availableVersion.Version + " is available.",
-						Margin = new Thickness(0, 0, 8, 0),
-						VerticalAlignment = VerticalAlignment.Bottom
-					});
-				if (availableVersion.DownloadUrl != null) {
-					Button button = new Button();
-					button.Content = "Download";
-					button.Cursor = Cursors.Arrow;
-					button.Click += delegate {
-						Process.Start(availableVersion.DownloadUrl);
-					};
-					stackPanel.Children.Add(button);
-				}
-			}
-			else {
-				stackPanel.Children.Add(new TextBlock { Text = "You are using a nightly build newer than the latest release." });
-			}
-		}
-
-		static Task<AvailableVersionInfo> GetLatestVersionAsync() {
-			var tcs = new TaskCompletionSource<AvailableVersionInfo>();
-			new Action(() => {
-				WebClient wc = new WebClient();
-				IWebProxy systemWebProxy = WebRequest.GetSystemWebProxy();
-				systemWebProxy.Credentials = CredentialCache.DefaultCredentials;
-				wc.Proxy = systemWebProxy;
-				wc.DownloadDataCompleted += delegate (object sender, DownloadDataCompletedEventArgs e) {
-					if (e.Error != null) {
-						tcs.SetException(e.Error);
-					}
-					else {
-						try {
-							XDocument doc = XDocument.Load(new MemoryStream(e.Result));
-							var bands = doc.Root.Elements("band");
-							var currentBand = bands.FirstOrDefault(b => (string)b.Attribute("id") == band) ?? bands.First();
-							Version version = new Version((string)currentBand.Element("latestVersion"));
-							string url = (string)currentBand.Element("downloadUrl");
-							if (!(url.StartsWith("http://", StringComparison.Ordinal) || url.StartsWith("https://", StringComparison.Ordinal)))
-								url = null; // don't accept non-urls
-							latestAvailableVersion = new AvailableVersionInfo { Version = version, DownloadUrl = url };
-							tcs.SetResult(latestAvailableVersion);
-						}
-						catch (Exception ex) {
-							tcs.SetException(ex);
-						}
-					}
-				};
-				wc.DownloadDataAsync(UpdateUrl);
-			}).BeginInvoke(null, null);
-			return tcs.Task;
-		}
-
-		sealed class AvailableVersionInfo {
-			public Version Version;
-			public string DownloadUrl;
-		}
-
-		sealed class UpdateSettings : INotifyPropertyChanged {
-			public UpdateSettings(DNSpySettings spySettings) {
-				XElement s = spySettings["UpdateSettings"];
-				this.automaticUpdateCheckEnabled = (bool?)s.Element("AutomaticUpdateCheckEnabled") ?? true;
-				try {
-					this.lastSuccessfulUpdateCheck = (DateTime?)s.Element("LastSuccessfulUpdateCheck");
-				}
-				catch (FormatException) {
-					// avoid crashing on settings files invalid due to
-					// https://github.com/icsharpcode/ILSpy/issues/closed/#issue/2
-				}
-			}
-
-			bool automaticUpdateCheckEnabled;
-
-			public bool AutomaticUpdateCheckEnabled {
-				get { return automaticUpdateCheckEnabled; }
-				set {
-					if (automaticUpdateCheckEnabled != value) {
-						automaticUpdateCheckEnabled = value;
-						Save();
-						OnPropertyChanged("AutomaticUpdateCheckEnabled");
-					}
-				}
-			}
-
-			DateTime? lastSuccessfulUpdateCheck;
-
-			public DateTime? LastSuccessfulUpdateCheck {
-				get { return lastSuccessfulUpdateCheck; }
-				set {
-					if (lastSuccessfulUpdateCheck != value) {
-						lastSuccessfulUpdateCheck = value;
-						Save();
-						OnPropertyChanged("LastSuccessfulUpdateCheck");
-					}
-				}
-			}
-
-			public void Save() {
-				XElement updateSettings = new XElement("UpdateSettings");
-				updateSettings.Add(new XElement("AutomaticUpdateCheckEnabled", automaticUpdateCheckEnabled));
-				if (lastSuccessfulUpdateCheck != null)
-					updateSettings.Add(new XElement("LastSuccessfulUpdateCheck", lastSuccessfulUpdateCheck));
-				DNSpySettings.SaveSettings(updateSettings);
-			}
-
-			public event PropertyChangedEventHandler PropertyChanged;
-
-			void OnPropertyChanged(string propertyName) {
-				if (PropertyChanged != null) {
-					PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-				}
-			}
-		}
-
-		/// <summary>
-		/// If automatic update checking is enabled, checks if there are any updates available.
-		/// Returns the download URL if an update is available.
-		/// Returns null if no update is available, or if no check was performed.
-		/// </summary>
-		public static Task<string> CheckForUpdatesIfEnabledAsync(DNSpySettings spySettings) {
-			var tcs = new TaskCompletionSource<string>();
-			UpdateSettings s = new UpdateSettings(spySettings);
-			if (checkForUpdateCode && s.AutomaticUpdateCheckEnabled) {
-				// perform update check if we never did one before;
-				// or if the last check wasn't in the past 7 days
-				if (s.LastSuccessfulUpdateCheck == null
-					|| s.LastSuccessfulUpdateCheck < DateTime.UtcNow.AddDays(-7)
-					|| s.LastSuccessfulUpdateCheck > DateTime.UtcNow) {
-					GetLatestVersionAsync().ContinueWith(
-						delegate (Task<AvailableVersionInfo> task) {
-							try {
-								s.LastSuccessfulUpdateCheck = DateTime.UtcNow;
-								AvailableVersionInfo v = task.Result;
-								if (v.Version > currentVersion)
-									tcs.SetResult(v.DownloadUrl);
-								else
-									tcs.SetResult(null);
-							}
-							catch (AggregateException) {
-								// ignore errors getting the version info
-								tcs.SetResult(null);
-							}
-						});
-				}
-				else {
-					tcs.SetResult(null);
-				}
-			}
-			else {
-				tcs.SetResult(null);
-			}
-			return tcs.Task;
 		}
 	}
 

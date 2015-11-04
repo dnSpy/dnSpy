@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
+using dnSpy.Contracts.Menus;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
@@ -38,21 +38,31 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	sealed class BreakpointCtxMenuCommandProxy : ContextMenuEntryCommandProxy {
+	sealed class BreakpointCtxMenuCommandProxy : MenuItemCommandProxy<BreakpointCtxMenuContext> {
 		public BreakpointCtxMenuCommandProxy(BreakpointCtxMenuCommand cmd)
 			: base(cmd) {
 		}
 
-		protected override ContextMenuEntryContext CreateContext() {
-			return ContextMenuEntryContext.Create(BreakpointsControlCreator.BreakpointsControlInstance.listView);
+		protected override BreakpointCtxMenuContext CreateContext() {
+			return BreakpointCtxMenuCommand.Create();
 		}
 	}
 
-	abstract class BreakpointCtxMenuCommand : ContextMenuEntryBase<BreakpointCtxMenuContext> {
-		protected override BreakpointCtxMenuContext CreateContext(ContextMenuEntryContext context) {
+	abstract class BreakpointCtxMenuCommand : MenuItemBase<BreakpointCtxMenuContext> {
+		protected sealed override object CachedContextKey {
+			get { return ContextKey; }
+		}
+		static readonly object ContextKey = new object();
+
+		protected sealed override BreakpointCtxMenuContext CreateContext(IMenuItemContext context) {
 			var ui = BreakpointsControlCreator.BreakpointsControlInstance;
-			if (context.Element != ui.listView)
+			if (context.CreatorObject.Object != ui.listView)
 				return null;
+			return Create();
+		}
+
+		internal static BreakpointCtxMenuContext Create() {
+			var ui = BreakpointsControlCreator.BreakpointsControlInstance;
 			var vm = ui.DataContext as BreakpointsVM;
 			if (vm == null)
 				return null;
@@ -67,9 +77,9 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Cop_y", Order = 100, Category = "CopyBP", Icon = "Copy", InputGestureText = "Ctrl+C")]
+	[ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 0)]
 	sealed class CopyBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
-		protected override void Execute(BreakpointCtxMenuContext context) {
+		public override void Execute(BreakpointCtxMenuContext context) {
 			var output = new PlainTextOutput();
 			foreach (var vm in context.SelectedItems) {
 				var printer = new BreakpointPrinter(output, DebuggerSettings.Instance.UseHexadecimal);
@@ -87,65 +97,65 @@ namespace dnSpy.Debugger.Breakpoints {
 				Clipboard.SetText(s);
 		}
 
-		protected override bool IsEnabled(BreakpointCtxMenuContext context) {
+		public override bool IsEnabled(BreakpointCtxMenuContext context) {
 			return context.SelectedItems.Length > 0;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Select _All", Order = 110, Category = "CopyBP", Icon = "Select", InputGestureText = "Ctrl+A")]
+	[ExportMenuItem(Header = "Select _All", Icon = "Select", InputGestureText = "Ctrl+A", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 10)]
 	sealed class SelectAllBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
-		protected override void Execute(BreakpointCtxMenuContext context) {
+		public override void Execute(BreakpointCtxMenuContext context) {
 			BreakpointsControlCreator.BreakpointsControlInstance.listView.SelectAll();
 		}
 
-		protected override bool IsEnabled(BreakpointCtxMenuContext context) {
+		public override bool IsEnabled(BreakpointCtxMenuContext context) {
 			return BreakpointsControlCreator.BreakpointsControlInstance.listView.Items.Count > 0;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Delete", Order = 120, Category = "CopyBP", Icon = "Delete", InputGestureText = "Del")]
+	[ExportMenuItem(Header = "_Delete", Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 20)]
 	sealed class DeleteBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
-		protected override void Execute(BreakpointCtxMenuContext context) {
+		public override void Execute(BreakpointCtxMenuContext context) {
 			context.VM.Remove(context.SelectedItems);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Delete _All Breakpoints", Order = 130, Category = "CopyBP", Icon = "DeleteAllBreakpoints", InputGestureText = "Ctrl+Shift+F9")]
+	[ExportMenuItem(Header = "Delete _All Breakpoints", Icon = "DeleteAllBreakpoints", InputGestureText = "Ctrl+Shift+F9", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 30)]
 	sealed class DeleteAllBPsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
-		protected override void Execute(BreakpointCtxMenuContext context) {
+		public override void Execute(BreakpointCtxMenuContext context) {
 			DebugRoutedCommands.DeleteAllBreakpoints.Execute(null, MainWindow.Instance);
 		}
 
-		protected override bool IsEnabled(BreakpointCtxMenuContext context) {
+		public override bool IsEnabled(BreakpointCtxMenuContext context) {
 			return DebugRoutedCommands.DeleteAllBreakpoints.CanExecute(null, MainWindow.Instance);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Enable All Breakpoi_nts", Order = 140, Category = "CopyBP", Icon = "EnableAllBreakpoints")]
+	[ExportMenuItem(Header = "Enable All Breakpoi_nts", Icon = "EnableAllBreakpoints", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 40)]
 	sealed class EnableAllBPsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
-		protected override void Execute(BreakpointCtxMenuContext context) {
+		public override void Execute(BreakpointCtxMenuContext context) {
 			DebugRoutedCommands.EnableAllBreakpoints.Execute(null, MainWindow.Instance);
 		}
 
-		protected override bool IsVisible(BreakpointCtxMenuContext context) {
+		public override bool IsVisible(BreakpointCtxMenuContext context) {
 			return DebugRoutedCommands.EnableAllBreakpoints.CanExecute(null, MainWindow.Instance);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Disable All Breakpoi_nts", Order = 150, Category = "CopyBP", Icon = "DisableAllBreakpoints")]
+	[ExportMenuItem(Header = "Disable All Breakpoi_nts", Icon = "DisableAllBreakpoints", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 50)]
 	sealed class DisableAllBPsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
-		protected override void Execute(BreakpointCtxMenuContext context) {
+		public override void Execute(BreakpointCtxMenuContext context) {
 			DebugRoutedCommands.DisableAllBreakpoints.Execute(null, MainWindow.Instance);
 		}
 
-		protected override bool IsVisible(BreakpointCtxMenuContext context) {
+		public override bool IsVisible(BreakpointCtxMenuContext context) {
 			return DebugRoutedCommands.DisableAllBreakpoints.CanExecute(null, MainWindow.Instance);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Go To Code", Order = 200, Category = "CodeBP", Icon = "GoToSourceCode", InputGestureText = "Enter")]
+	[ExportMenuItem(Header = "_Go To Code", Icon = "GoToSourceCode", InputGestureText = "Enter", Group = MenuConstants.GROUP_CTX_DBG_BPS_CODE, Order = 0)]
 	sealed class GoToSourceBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
-		protected override void Execute(BreakpointCtxMenuContext context) {
+		public override void Execute(BreakpointCtxMenuContext context) {
 			if (context.SelectedItems.Length == 1)
 				GoTo(context.SelectedItems[0], false);
 		}
@@ -159,49 +169,49 @@ namespace dnSpy.Debugger.Breakpoints {
 			DebugUtils.GoToIL(ilbp.SerializedDnSpyToken.Module, ilbp.SerializedDnSpyToken.Token, ilbp.ILOffset, newTab);
 		}
 
-		protected override bool IsEnabled(BreakpointCtxMenuContext context) {
+		public override bool IsEnabled(BreakpointCtxMenuContext context) {
 			return context.SelectedItems.Length == 1 && context.SelectedItems[0].Breakpoint is ILCodeBreakpoint;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Go To Code (New _Tab)", Order = 210, Category = "CodeBP", Icon = "GoToSourceCode", InputGestureText = "Ctrl+Enter")]
+	[ExportMenuItem(Header = "Go To Code (New _Tab)", Icon = "GoToSourceCode", InputGestureText = "Ctrl+Enter", Group = MenuConstants.GROUP_CTX_DBG_BPS_CODE, Order = 10)]
 	sealed class GoToSourceNewTabBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
-		protected override void Execute(BreakpointCtxMenuContext context) {
+		public override void Execute(BreakpointCtxMenuContext context) {
 			if (context.SelectedItems.Length == 1)
 				GoToSourceBreakpointCtxMenuCommand.GoTo(context.SelectedItems[0], true);
 		}
 
-		protected override bool IsEnabled(BreakpointCtxMenuContext context) {
+		public override bool IsEnabled(BreakpointCtxMenuContext context) {
 			return context.SelectedItems.Length == 1 && context.SelectedItems[0].Breakpoint is ILCodeBreakpoint;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Go To Disassembly", Order = 220, Category = "CodeBP", Icon = "DisassemblyWindow")]
+	[ExportMenuItem(Header = "Go To Disassembly", Icon = "DisassemblyWindow", Group = MenuConstants.GROUP_CTX_DBG_BPS_CODE, Order = 20)]
 	sealed class GoToDisassemblyBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
-		protected override void Execute(BreakpointCtxMenuContext context) {
+		public override void Execute(BreakpointCtxMenuContext context) {
 			//TODO:
 		}
 
-		protected override bool IsEnabled(BreakpointCtxMenuContext context) {
+		public override bool IsEnabled(BreakpointCtxMenuContext context) {
 			return false;//TODO:
 		}
 	}
 
 	sealed class ToggleEnableBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
-		protected override void Execute(BreakpointCtxMenuContext context) {
+		public override void Execute(BreakpointCtxMenuContext context) {
 			foreach (var bp in context.SelectedItems)
 				bp.IsEnabled = !bp.IsEnabled;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show Tokens", Order = 600, Category = "BPNameOptions")]
+	[ExportMenuItem(Header = "Show Tokens", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 0)]
 	sealed class ShowTokensBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
-		protected override void Execute(BreakpointCtxMenuContext context) {
+		public override void Execute(BreakpointCtxMenuContext context) {
 			BreakpointSettings.Instance.ShowTokens = !BreakpointSettings.Instance.ShowTokens;
 		}
 
-		protected override void Initialize(BreakpointCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = BreakpointSettings.Instance.ShowTokens;
+		public override bool IsChecked(BreakpointCtxMenuContext context) {
+			return BreakpointSettings.Instance.ShowTokens;
 		}
 	}
 }

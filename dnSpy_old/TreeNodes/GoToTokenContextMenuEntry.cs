@@ -17,15 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
 using dnSpy.MVVM;
 using dnSpy.Tabs;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.ILSpy.TreeNodes.Analyzer;
+using ICSharpCode.TreeView;
 
 namespace dnSpy.TreeNodes {
 	[Export(typeof(IPlugin))]
@@ -35,33 +37,13 @@ namespace dnSpy.TreeNodes {
 
 		public void OnLoaded() {
 			MainWindow.Instance.CodeBindings.Add(new RoutedCommand("GoToToken", typeof(GoToTokenPlugin)),
-				(s, e) => GoToTokenContextMenuEntry.Execute(),
-				(s, e) => e.CanExecute = GoToTokenContextMenuEntry.CanExecute(),
+				(s, e) => GoToTokenCommand.ExecuteInternal(),
+				(s, e) => e.CanExecute = GoToTokenCommand.CanExecuteInternal(),
 				ModifierKeys.Control, Key.D);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Go to M_D Token...", Order = 400, Category = "Tokens", InputGestureText = "Ctrl+D")]
-	public sealed class GoToTokenContextMenuEntry : IContextMenuEntry {
-		public bool IsVisible(ContextMenuEntryContext context) {
-			if (!CanExecute())
-				return false;
-			if (context.Element is DecompilerTextView)
-				return true;
-			if (context.SelectedTreeNodes == null || context.SelectedTreeNodes.Length == 0)
-				return false;
-			var elem = context.SelectedTreeNodes[0];
-			return elem is ILSpyTreeNode || elem is AnalyzerTreeNode;
-		}
-
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			return true;
-		}
-
-		public void Execute(ContextMenuEntryContext context) {
-			Execute();
-		}
-
+	public static class GoToTokenCommand {
 		static ITokenResolver GetResolver(out DecompileTabState tabState) {
 			tabState = MainWindow.Instance.GetActiveDecompileTabState();
 			if (tabState == null)
@@ -69,12 +51,12 @@ namespace dnSpy.TreeNodes {
 			return ILSpyTreeNode.GetModule(tabState.DecompiledNodes) as ITokenResolver;
 		}
 
-		internal static bool CanExecute() {
+		internal static bool CanExecuteInternal() {
 			DecompileTabState tabState;
 			return GetResolver(out tabState) != null;
 		}
 
-		internal static void Execute() {
+		internal static void ExecuteInternal() {
 			DecompileTabState tabState;
 			var resolver = GetResolver(out tabState);
 			if (resolver == null)
@@ -120,6 +102,40 @@ namespace dnSpy.TreeNodes {
 			}
 
 			return token;
+		}
+
+		[ExportMenuItem(Header = "Go to M_D Token...", InputGestureText = "Ctrl+D", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 0)]
+		public sealed class CodeCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+					return false;
+				if (!CanExecuteInternal())
+					return false;
+				return true;
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				ExecuteInternal();
+			}
+		}
+
+		[ExportMenuItem(Header = "Go to M_D Token...", InputGestureText = "Ctrl+D", Group = MenuConstants.GROUP_CTX_FILES_TOKENS, Order = 0)]
+		public sealed class FilesCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
+					return false;
+				if (!CanExecuteInternal())
+					return false;
+				var nodes = context.FindByType<SharpTreeNode[]>();
+				if (nodes == null || nodes.Length == 0)
+					return false;
+				var elem = nodes[0];
+				return elem is ILSpyTreeNode;
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				ExecuteInternal();
+			}
 		}
 	}
 }

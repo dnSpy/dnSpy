@@ -22,7 +22,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.AsmEditor.SaveModule"
-             xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters;assembly=dnSpy"
+             xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters;assembly=dnSpy_old"
              Height="300" Width="600"
              Title="Save Modules"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"

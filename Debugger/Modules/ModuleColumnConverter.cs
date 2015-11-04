@@ -32,7 +32,7 @@ namespace dnSpy.Debugger.Modules {
 				return null;
 
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Image"))
-				return ImageCache.Instance.GetImage(vm.IsExe ? "AssemblyExe" : "AssemblyModule", BackgroundType.GridViewItem);
+				return ImageCache.Instance.GetImage(GetType().Assembly, vm.IsExe ? "AssemblyExe" : "AssemblyModule", BackgroundType.GridViewItem);
 
 			var gen = UISyntaxHighlighter.Create(DebuggerSettings.Instance.SyntaxHighlightModules);
 			var printer = new ModulePrinter(gen.TextOutput, DebuggerSettings.Instance.UseHexadecimal);

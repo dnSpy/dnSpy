@@ -22,7 +22,11 @@ using System.ComponentModel;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Menus;
 using dnSpy.TreeNodes;
+using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -144,11 +148,50 @@ namespace dnSpy.Tabs {
 			return (DecompileTabState)GetTabState(elem);
 		}
 
+		sealed class GuidObjectsCreator : IGuidObjectsCreator {
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
+				var textView = (DecompilerTextView)creatorObject.Object;
+				var position = openedFromKeyboard ? textView.TextEditor.TextArea.Caret.Position : textView.GetPositionFromMousePosition();
+				if (position != null)
+					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTVIEWPOSITION_GUID, position);
+
+				var @ref = textView.GetReferenceSegmentAt(position);
+				if (@ref != null) {
+					yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, new CodeReferenceSegment(@ref.Reference, @ref.IsLocal, @ref.IsLocalTarget));
+					yield return new GuidObject(MenuConstants.GUIDOBJ_REFERENCE_GUID, @ref);
+				}
+			}
+		}
+
+		sealed class ContextMenuInitializer : IContextMenuInitializer {
+			public void Initialize(IMenuItemContext context, ContextMenu menu) {
+				var textView = (DecompilerTextView)context.CreatorObject.Object;
+				if (context.OpenedFromKeyboard) {
+					var scrollInfo = (IScrollInfo)textView.TextEditor.TextArea.TextView;
+					var pos = textView.TextEditor.TextArea.TextView.GetVisualPosition(textView.TextEditor.TextArea.Caret.Position, VisualYPosition.TextBottom);
+					pos = new Point(pos.X - scrollInfo.HorizontalOffset, pos.Y - scrollInfo.VerticalOffset);
+
+					menu.HorizontalOffset = pos.X;
+					menu.VerticalOffset = pos.Y;
+					ContextMenuService.SetPlacement(textView, PlacementMode.Relative);
+					ContextMenuService.SetPlacementTarget(textView, textView.TextEditor.TextArea.TextView);
+					menu.Closed += (s, e2) => {
+						textView.ClearValue(ContextMenuService.PlacementProperty);
+						textView.ClearValue(ContextMenuService.PlacementTargetProperty);
+					};
+				}
+				else {
+					textView.ClearValue(ContextMenuService.PlacementProperty);
+					textView.ClearValue(ContextMenuService.PlacementTargetProperty);
+				}
+			}
+		}
+
 		public DecompileTabState(Language language) {
 			var view = TextView;
 			view.Tag = this;
 			this.language = language;
-			ContextMenuProvider.Add(view);
+			Globals.App.MenuManager.InitializeContextMenu(view, MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID, new GuidObjectsCreator(), new ContextMenuInitializer());
 			view.DragOver += view_DragOver;
 			view.OnThemeUpdated();
 			InstallMouseWheelZoomHandler(TextView.TextEditor.TextArea);

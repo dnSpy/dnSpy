@@ -16,11 +16,16 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy;
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
+using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	[Export(typeof(IPlugin))]
@@ -35,11 +40,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		}
 
 		void AnalyzeCanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = AnalyzeContextMenuEntry.CanAnalyze(GetMemberRef());
+			e.CanExecute = AnalyzeCommand.CanAnalyze(GetMemberRef());
 		}
 
 		void AnalyzeExecuted(object sender, ExecutedRoutedEventArgs e) {
-			AnalyzeContextMenuEntry.Analyze(GetMemberRef());
+			AnalyzeCommand.Analyze(GetMemberRef());
 		}
 
 		static IMemberRef GetMemberRef() {
@@ -71,36 +76,90 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Analy_ze", Icon = "Search", Order = 900, Category = "Other", InputGestureText = "Ctrl+R")]
-	internal sealed class AnalyzeContextMenuEntry : IContextMenuEntry {
-		public bool IsVisible(ContextMenuEntryContext context) {
-			return IsEnabled(context);
-		}
-
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			if (context.Element is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))
-				return false;
-			if (context.SelectedTreeNodes == null)
-				return context.Reference != null && MainWindow.ResolveReference(context.Reference.Reference) != null;
-			foreach (var node in context.SelectedTreeNodes) {
-				var mr = node as IMemberTreeNode;
-				if (mr != null && CanAnalyze(mr.Member))
-					return true;
+	static class AnalyzeCommand {
+		[ExportMenuItem(Header = "Analy_ze", Icon = "Search", InputGestureText = "Ctrl+R", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 0)]
+		sealed class FilesCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetMemberRefs(context).Any();
 			}
-			return false;
-		}
 
-		public void Execute(ContextMenuEntryContext context) {
-			if (context.SelectedTreeNodes != null) {
-				foreach (var node in context.SelectedTreeNodes) {
+			IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) {
+				return GetMemberRefs(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID, false);
+			}
+
+			internal static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context, string guid, bool checkRoot) {
+				if (context.CreatorObject.Guid != new Guid(guid))
+					yield break;
+				var nodes = context.FindByType<SharpTreeNode[]>();
+				if (nodes == null)
+					yield break;
+
+				if (checkRoot && nodes.All(a => a.Parent.IsRoot))
+					yield break;
+
+				foreach (var node in nodes) {
 					var mr = node as IMemberTreeNode;
-					if (mr != null)
-						Analyze(mr.Member);
+					if (mr != null && CanAnalyze(mr.Member))
+						yield return mr.Member;
 				}
 			}
-			else if (context.Reference != null && context.Reference.Reference is IMemberRef) {
-				if (context.Reference.Reference is IMemberRef)
-					Analyze((IMemberRef)context.Reference.Reference);
+
+			public override void Execute(IMenuItemContext context) {
+				Analyze(GetMemberRefs(context));
+			}
+		}
+
+		[ExportMenuItem(Header = "Analy_ze", Icon = "Search", InputGestureText = "Ctrl+R", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 0)]
+		sealed class AnalyzerCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetMemberRefs(context).Any();
+			}
+
+			IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) {
+				return FilesCommand.GetMemberRefs(context, MenuConstants.GUIDOBJ_ANALYZER_GUID, true);
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				Analyze(GetMemberRefs(context));
+			}
+		}
+
+		[ExportMenuItem(Header = "Analy_ze", Icon = "Search", InputGestureText = "Ctrl+R", Group = MenuConstants.GROUP_CTX_CODE_OTHER, Order = 0)]
+		sealed class CodeCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetMemberRefs(context).Any();
+			}
+
+			static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) {
+				return GetMemberRefs(context, MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID);
+			}
+
+			internal static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context, string guid) {
+				if (context.CreatorObject.Guid != new Guid(guid))
+					yield break;
+
+				var @ref = context.FindByType<CodeReferenceSegment>();
+				if (@ref != null)
+					yield return @ref.Reference as IMemberRef;
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				Analyze(GetMemberRefs(context));
+			}
+		}
+
+		[ExportMenuItem(Header = "Analy_ze", Icon = "Search", InputGestureText = "Ctrl+R", Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 0)]
+		sealed class SearchCommand : MenuItemBase {
+			static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context) {
+				return CodeCommand.GetMemberRefs(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
+			}
+
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetMemberRefs(context).Any();
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				Analyze(GetMemberRefs(context));
 			}
 		}
 
@@ -111,6 +170,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 					member is MethodDef ||
 					AnalyzedPropertyTreeNode.CanShow(member) ||
 					AnalyzedEventTreeNode.CanShow(member);
+		}
+
+		static void Analyze(IEnumerable<IMemberRef> mrs) {
+			foreach (var mr in mrs)
+				Analyze(mr);
 		}
 
 		public static void Analyze(IMemberRef member) {

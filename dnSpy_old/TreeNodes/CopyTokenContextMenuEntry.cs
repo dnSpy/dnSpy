@@ -17,67 +17,97 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Windows;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
+using ICSharpCode.TreeView;
 
 namespace dnSpy.TreeNodes {
-	abstract class CopyTokenContextMenuEntryBase : IContextMenuEntry {
-		public abstract bool IsVisible(ContextMenuEntryContext context);
-
-		protected IMDTokenProvider GetReference(ContextMenuEntryContext context) {
-			if (context.Reference != null)
-				return context.Reference.Reference as IMDTokenProvider;
-			if (context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length != 0 &&
-					context.SelectedTreeNodes[0] is ITokenTreeNode) {
-				return ((ITokenTreeNode)context.SelectedTreeNodes[0]).MDTokenProvider;
-			}
-
-			return null;
-		}
-
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			return true;
-		}
-
-		public abstract void Execute(ContextMenuEntryContext context);
-
-		protected void Execute(IMDTokenProvider member) {
+	static class CopyTokenCommand {
+		static void ExecuteInternal(IMDTokenProvider member) {
 			if (member == null)
 				return;
-
 			Clipboard.SetText(string.Format("0x{0:X8}", member.MDToken.Raw));
 		}
-	}
 
-	[ExportContextMenuEntry(Header = "_Copy MD Token", Order = 410, Category = "Tokens")]
-	class CopyTokenContextMenuEntry : CopyTokenContextMenuEntryBase {
-		public override bool IsVisible(ContextMenuEntryContext context) {
-			return GetReference(context) != null;
+		[ExportMenuItem(Header = "_Copy MD Token", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 10)]
+		sealed class CodeCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetReference(context) != null;
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				ExecuteInternal(GetReference(context));
+			}
+
+			static IMDTokenProvider GetReference(IMenuItemContext context) {
+				return GetReference(context, MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID);
+			}
+
+			internal static IMDTokenProvider GetReference(IMenuItemContext context, string guid) {
+				if (context.CreatorObject.Guid != new Guid(guid))
+					return null;
+				var @ref = context.FindByType<CodeReferenceSegment>();
+				if (@ref == null)
+					return null;
+				return @ref.Reference as IMDTokenProvider;
+			}
 		}
 
-		public override void Execute(ContextMenuEntryContext context) {
-			var obj = GetReference(context);
-			if (obj != null)
-				Execute(obj);
-		}
-	}
+		[ExportMenuItem(Header = "_Copy MD Token", Group = MenuConstants.GROUP_CTX_SEARCH_TOKENS, Order = 0)]
+		sealed class SearchCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetReference(context) != null;
+			}
 
-	[ExportContextMenuEntry(Header = "Copy De_finition MD Token", Order = 420, Category = "Tokens")]
-	class CopyDefinitionTokenContextMenuEntry : CopyTokenContextMenuEntryBase {
-		public override bool IsVisible(ContextMenuEntryContext context) {
-			var obj = GetReference(context);
-			return obj is IMemberRef && !(obj is IMemberDef);
+			public override void Execute(IMenuItemContext context) {
+				ExecuteInternal(GetReference(context));
+			}
+
+			static IMDTokenProvider GetReference(IMenuItemContext context) {
+				return CodeCommand.GetReference(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
+			}
 		}
 
-		public override void Execute(ContextMenuEntryContext context) {
-			var obj = GetReference(context);
-			if (obj != null) {
-				var member = MainWindow.ResolveReference(obj);
-				if (member == null)
-					MainWindow.Instance.ShowMessageBox("Could not resolve member definition");
-				else
-					Execute(member);
+		[ExportMenuItem(Header = "_Copy MD Token", Group = MenuConstants.GROUP_CTX_FILES_TOKENS, Order = 10)]
+		sealed class FilesCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetReference(context) != null;
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				ExecuteInternal(GetReference(context));
+			}
+
+			static IMDTokenProvider GetReference(IMenuItemContext context) {
+				return GetReference(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
+			}
+
+			internal static IMDTokenProvider GetReference(IMenuItemContext context, string guid) {
+				if (context.CreatorObject.Guid != new Guid(guid))
+					return null;
+				var nodes = context.FindByType<SharpTreeNode[]>();
+				if (nodes == null || nodes.Length == 0)
+					return null;
+				var node = nodes[0] as ITokenTreeNode;
+				return node == null ? null : node.MDTokenProvider;
+			}
+		}
+
+		[ExportMenuItem(Header = "_Copy MD Token", Group = MenuConstants.GROUP_CTX_ANALYZER_TOKENS, Order = 0)]
+		sealed class AnalyzerCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetReference(context) != null;
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				ExecuteInternal(GetReference(context));
+			}
+
+			static IMDTokenProvider GetReference(IMenuItemContext context) {
+				return FilesCommand.GetReference(context, MenuConstants.GUIDOBJ_ANALYZER_GUID);
 			}
 		}
 	}

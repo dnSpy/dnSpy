@@ -22,10 +22,10 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.Menus;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -36,65 +36,65 @@ namespace dnSpy.AsmEditor.Event {
 		}
 
 		public void OnLoaded() {
-			MainWindow.Instance.TreeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new DeleteEventDefCommand.TheEditCommand()));
-			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeleteEventDefCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
-			Utils.InstallSettingsCommand(new EventDefSettingsCommand.TheEditCommand(), new EventDefSettingsCommand.TheTextEditorCommand());
+			MainWindow.Instance.TreeView.AddCommandBinding(ApplicationCommands.Delete, new EditMenuHandlerCommandProxy(new DeleteEventDefCommand.EditMenuCommand()));
+			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new CodeContextMenuHandlerCommandProxy(new DeleteEventDefCommand.CodeCommand()), ModifierKeys.None, Key.Delete);
+			Utils.InstallSettingsCommand(new EventDefSettingsCommand.EditMenuCommand(), new EventDefSettingsCommand.CodeCommand());
 		}
 	}
 
 	[DebuggerDisplay("{Description}")]
 	sealed class DeleteEventDefCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Event";
-		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Delete",
-								InputGestureText = "Del",
-								Category = "AsmEd",
-								Order = 360)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
-							Menu = "_Edit",
-							MenuIcon = "Delete",
-							MenuInputGestureText = "Del",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2160)]
-		internal sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return DeleteEventDefCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 60)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return DeleteEventDefCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				DeleteEventDefCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				DeleteEventDefCommand.Execute(context.Nodes);
 			}
 
-			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
-				DeleteEventDefCommand.Initialize(nodes, menuItem);
+			public override string GetHeader(AsmEditorContext context) {
+				return DeleteEventDefCommand.GetHeader(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Delete",
-								InputGestureText = "Del",
-								Category = "AsmEd",
-								Order = 360)]
-		internal sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ctx.ReferenceSegment.IsLocalTarget &&
-					DeleteEventDefCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 60)]
+		internal sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return DeleteEventDefCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				DeleteEventDefCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				DeleteEventDefCommand.Execute(context.Nodes);
 			}
 
-			protected override void Initialize(Context ctx, MenuItem menuItem) {
-				DeleteEventDefCommand.Initialize(ctx.Nodes, menuItem);
+			public override string GetHeader(AsmEditorContext context) {
+				return DeleteEventDefCommand.GetHeader(context.Nodes);
 			}
 		}
 
-		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
+		[ExportMenuItem(Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELTE, Order = 60)]
+		internal sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return context.IsLocalTarget &&
+					DeleteEventDefCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				DeleteEventDefCommand.Execute(context.Nodes);
+			}
+
+			public override string GetHeader(CodeContext context) {
+				return DeleteEventDefCommand.GetHeader(context.Nodes);
+			}
+		}
+
+		static string GetHeader(ILSpyTreeNode[] nodes) {
 			if (nodes.Length == 1)
-				menuItem.Header = string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
-			else
-				menuItem.Header = string.Format("Delete {0} events", nodes.Length);
+				return string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
+			return string.Format("Delete {0} events", nodes.Length);
 		}
 
 		static bool CanExecute(ILSpyTreeNode[] nodes) {
@@ -217,38 +217,38 @@ namespace dnSpy.AsmEditor.Event {
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateEventDefCommand : IUndoCommand {
 		const string CMD_NAME = "Create Event";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewEvent",
-								Category = "AsmEd",
-								Order = 590)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "NewEvent",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2390)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return CreateEventDefCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewEvent", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 90)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateEventDefCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				CreateEventDefCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateEventDefCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewEvent",
-								Category = "AsmEd",
-								Order = 590)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ctx.ReferenceSegment.IsLocalTarget &&
-					ctx.Nodes.Length == 1 &&
-					ctx.Nodes[0] is TypeTreeNode;
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewEvent", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 90)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateEventDefCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				CreateEventDefCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateEventDefCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewEvent", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 90)]
+		sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return context.IsLocalTarget &&
+					context.Nodes.Length == 1 &&
+					context.Nodes[0] is TypeTreeNode;
+			}
+
+			public override void Execute(CodeContext context) {
+				CreateEventDefCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -325,39 +325,36 @@ namespace dnSpy.AsmEditor.Event {
 	[DebuggerDisplay("{Description}")]
 	sealed class EventDefSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Event";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Settings",
-								InputGestureText = "Alt+Enter",
-								Category = "AsmEd",
-								Order = 670)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "Settings",
-							MenuInputGestureText = "Alt+Enter",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2470)]
-		internal sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return EventDefSettingsCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 70)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return EventDefSettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				EventDefSettingsCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				EventDefSettingsCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Settings",
-								InputGestureText = "Alt+Enter",
-								Category = "AsmEd",
-								Order = 670)]
-		internal sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return EventDefSettingsCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 70)]
+		internal sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return EventDefSettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				EventDefSettingsCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				EventDefSettingsCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 70)]
+		internal sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return EventDefSettingsCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				EventDefSettingsCommand.Execute(context.Nodes);
 			}
 		}
 

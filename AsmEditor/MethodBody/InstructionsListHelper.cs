@@ -335,21 +335,21 @@ namespace dnSpy.AsmEditor.MethodBody {
 					Header = "_Type...",
 					Command = new RelayCommand(a => AddType(opvm)),
 				});
-				MainWindow.CreateMenuItemImage(menuItem, typeof(MethodBodyControl).Assembly, "Class", BackgroundType.ContextMenuItem, true);
+				ImageCache.Instance.CreateMenuItemImage(menuItem, typeof(MethodBodyControl).Assembly, "Class", BackgroundType.ContextMenuItem, true);
 			}
 			if ((flags & MenuCommandFlags.TypeSpec) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
 					Header = "Type_Spec...",
 					Command = new RelayCommand(a => AddTypeSpec(opvm)),
 				});
-				MainWindow.CreateMenuItemImage(menuItem, typeof(MethodBodyControl).Assembly, "Generic", BackgroundType.ContextMenuItem, true);
+				ImageCache.Instance.CreateMenuItemImage(menuItem, typeof(MethodBodyControl).Assembly, "Generic", BackgroundType.ContextMenuItem, true);
 			}
 			if ((flags & MenuCommandFlags.MethodDef) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
 					Header = "_Method...",
 					Command = new RelayCommand(a => AddMethodDef(opvm)),
 				});
-				MainWindow.CreateMenuItemImage(menuItem, typeof(MethodBodyControl).Assembly, "Method", BackgroundType.ContextMenuItem, true);
+				ImageCache.Instance.CreateMenuItemImage(menuItem, typeof(MethodBodyControl).Assembly, "Method", BackgroundType.ContextMenuItem, true);
 			}
 			if ((flags & MenuCommandFlags.MethodMemberRef) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {
@@ -368,7 +368,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 					Header = "_Field...",
 					Command = new RelayCommand(a => AddFieldDef(opvm)),
 				});
-				MainWindow.CreateMenuItemImage(menuItem, typeof(MethodBodyControl).Assembly, "Field", BackgroundType.ContextMenuItem, true);
+				ImageCache.Instance.CreateMenuItemImage(menuItem, typeof(MethodBodyControl).Assembly, "Field", BackgroundType.ContextMenuItem, true);
 			}
 			if ((flags & MenuCommandFlags.FieldMemberRef) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {

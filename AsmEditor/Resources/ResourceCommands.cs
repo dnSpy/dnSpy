@@ -23,16 +23,18 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
 using dnSpy.MVVM;
 using dnSpy.Options;
 using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.TreeView;
 using WF = System.Windows.Forms;
 
 namespace dnSpy.AsmEditor.Resources {
@@ -42,71 +44,71 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		public void OnLoaded() {
-			MainWindow.Instance.TreeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new DeleteResourceCommand.TheEditCommand()));
-			MainWindow.Instance.TreeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new DeleteResourceElementCommand.TheEditCommand()));
-			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeleteResourceCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
-			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new TextEditorCommandProxy(new DeleteResourceElementCommand.TheTextEditorCommand()), ModifierKeys.None, Key.Delete);
-			Utils.InstallSettingsCommand(new ResourceSettingsCommand.TheEditCommand(), new ResourceSettingsCommand.TheTextEditorCommand());
-			Utils.InstallSettingsCommand(new ResourceElementSettingsCommand.TheEditCommand(), new ResourceElementSettingsCommand.TheTextEditorCommand());
-			Utils.InstallSettingsCommand(new ImageResourceElementSettingsCommand.TheEditCommand(), new ImageResourceElementSettingsCommand.TheTextEditorCommand());
-			Utils.InstallSettingsCommand(new SerializedImageResourceElementSettingsCommand.TheEditCommand(), new SerializedImageResourceElementSettingsCommand.TheTextEditorCommand());
-			Utils.InstallSettingsCommand(new SerializedImageListStreamerResourceElementSettingsCommand.TheEditCommand(), new SerializedImageListStreamerResourceElementSettingsCommand.TheTextEditorCommand());
+			MainWindow.Instance.TreeView.AddCommandBinding(ApplicationCommands.Delete, new EditMenuHandlerCommandProxy(new DeleteResourceCommand.EditMenuCommand()));
+			MainWindow.Instance.TreeView.AddCommandBinding(ApplicationCommands.Delete, new EditMenuHandlerCommandProxy(new DeleteResourceElementCommand.EditMenuCommand()));
+			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new CodeContextMenuHandlerCommandProxy(new DeleteResourceCommand.CodeCommand()), ModifierKeys.None, Key.Delete);
+			MainWindow.Instance.CodeBindings.Add(EditingCommands.Delete, new CodeContextMenuHandlerCommandProxy(new DeleteResourceElementCommand.CodeCommand()), ModifierKeys.None, Key.Delete);
+			Utils.InstallSettingsCommand(new ResourceSettingsCommand.EditMenuCommand(), new ResourceSettingsCommand.CodeCommand());
+			Utils.InstallSettingsCommand(new ResourceElementSettingsCommand.EditMenuCommand(), new ResourceElementSettingsCommand.CodeCommand());
+			Utils.InstallSettingsCommand(new ImageResourceElementSettingsCommand.EditMenuCommand(), new ImageResourceElementSettingsCommand.CodeCommand());
+			Utils.InstallSettingsCommand(new SerializedImageResourceElementSettingsCommand.EditMenuCommand(), new SerializedImageResourceElementSettingsCommand.CodeCommand());
+			Utils.InstallSettingsCommand(new SerializedImageListStreamerResourceElementSettingsCommand.EditMenuCommand(), new SerializedImageListStreamerResourceElementSettingsCommand.CodeCommand());
 		}
 	}
 
 	[DebuggerDisplay("{Description}")]
 	sealed class DeleteResourceCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Delete",
-								InputGestureText = "Del",
-								Category = "AsmEd",
-								Order = 380)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
-							Menu = "_Edit",
-							MenuIcon = "Delete",
-							MenuInputGestureText = "Del",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2180)]
-		internal sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return DeleteResourceCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 80)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return DeleteResourceCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				DeleteResourceCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				DeleteResourceCommand.Execute(context.Nodes);
 			}
 
-			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
-				DeleteResourceCommand.Initialize(nodes, menuItem);
+			public override string GetHeader(AsmEditorContext context) {
+				return DeleteResourceCommand.GetHeader(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Delete",
-								InputGestureText = "Del",
-								Category = "AsmEd",
-								Order = 380)]
-		internal sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ctx.ReferenceSegment.IsLocalTarget &&
-					DeleteResourceCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 80)]
+		internal sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return DeleteResourceCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				DeleteResourceCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				DeleteResourceCommand.Execute(context.Nodes);
 			}
 
-			protected override void Initialize(Context ctx, MenuItem menuItem) {
-				DeleteResourceCommand.Initialize(ctx.Nodes, menuItem);
+			public override string GetHeader(AsmEditorContext context) {
+				return DeleteResourceCommand.GetHeader(context.Nodes);
 			}
 		}
 
-		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
+		[ExportMenuItem(Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELTE, Order = 80)]
+		internal sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return context.IsLocalTarget &&
+					DeleteResourceCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				DeleteResourceCommand.Execute(context.Nodes);
+			}
+
+			public override string GetHeader(CodeContext context) {
+				return DeleteResourceCommand.GetHeader(context.Nodes);
+			}
+		}
+
+		static string GetHeader(ILSpyTreeNode[] nodes) {
 			if (nodes.Length == 1)
-				menuItem.Header = string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
-			else
-				menuItem.Header = string.Format("Delete {0} resources", nodes.Length);
+				return string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
+			return string.Format("Delete {0} resources", nodes.Length);
 		}
 
 		static bool CanExecute(ILSpyTreeNode[] nodes) {
@@ -208,56 +210,56 @@ namespace dnSpy.AsmEditor.Resources {
 	[DebuggerDisplay("{Description}")]
 	sealed class DeleteResourceElementCommand : IUndoCommand {
 		const string CMD_NAME = "Delete Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Delete",
-								InputGestureText = "Del",
-								Category = "AsmEd",
-								Order = 390)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
-							Menu = "_Edit",
-							MenuIcon = "Delete",
-							MenuInputGestureText = "Del",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2190)]
-		internal sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return DeleteResourceElementCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 90)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return DeleteResourceElementCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				DeleteResourceElementCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				DeleteResourceElementCommand.Execute(context.Nodes);
 			}
 
-			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
-				DeleteResourceElementCommand.Initialize(nodes, menuItem);
+			public override string GetHeader(AsmEditorContext context) {
+				return DeleteResourceElementCommand.GetHeader(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Delete",
-								InputGestureText = "Del",
-								Category = "AsmEd",
-								Order = 390)]
-		internal sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ctx.ReferenceSegment.IsLocalTarget &&
-					DeleteResourceElementCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 90)]
+		internal sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return DeleteResourceElementCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				DeleteResourceElementCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				DeleteResourceElementCommand.Execute(context.Nodes);
 			}
 
-			protected override void Initialize(Context ctx, MenuItem menuItem) {
-				DeleteResourceElementCommand.Initialize(ctx.Nodes, menuItem);
+			public override string GetHeader(AsmEditorContext context) {
+				return DeleteResourceElementCommand.GetHeader(context.Nodes);
 			}
 		}
 
-		static void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
+		[ExportMenuItem(Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_CODE_ASMED_DELTE, Order = 90)]
+		internal sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return context.IsLocalTarget &&
+					DeleteResourceElementCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				DeleteResourceElementCommand.Execute(context.Nodes);
+			}
+
+			public override string GetHeader(CodeContext context) {
+				return DeleteResourceElementCommand.GetHeader(context.Nodes);
+			}
+		}
+
+		static string GetHeader(ILSpyTreeNode[] nodes) {
 			if (nodes.Length == 1)
-				menuItem.Header = string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
-			else
-				menuItem.Header = string.Format("Delete {0} resources", nodes.Length);
+				return string.Format("Delete {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
+			return string.Format("Delete {0} resources", nodes.Length);
 		}
 
 		static bool CanExecute(ILSpyTreeNode[] nodes) {
@@ -352,123 +354,235 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 	}
 
-	abstract class SaveResourcesContextMenuEntryBase : IContextMenuEntry2 {
+	abstract class SaveResourcesCommandBase : MenuItemBase {
 		readonly bool useSubDirs;
 		readonly ResourceDataType resourceDataType;
 
-		protected SaveResourcesContextMenuEntryBase(bool useSubDirs, ResourceDataType resourceDataType) {
+		protected SaveResourcesCommandBase(bool useSubDirs, ResourceDataType resourceDataType) {
 			this.useSubDirs = useSubDirs;
 			this.resourceDataType = resourceDataType;
 		}
 
-		public virtual bool IsVisible(ContextMenuEntryContext context) {
-			return GetResourceNodes(context) != null;
-		}
+		protected abstract IResourceNode[] GetResourceNodes(IMenuItemContext context);
 
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			return true;
-		}
-
-		public void Execute(ContextMenuEntryContext context) {
-			SaveResources.Save(GetResourceNodes(context), useSubDirs, resourceDataType);
-		}
-
-		public abstract void Initialize(ContextMenuEntryContext context, MenuItem menuItem);
-
-		protected IResourceNode[] GetResourceNodes(ContextMenuEntryContext context) {
-			IResourceNode[] nodes;
-			if (context.SelectedTreeNodes != null) {
-				var inputNodes = context.SelectedTreeNodes;
-				if (context.SelectedTreeNodes.Length == 1 && context.SelectedTreeNodes[0] is ResourceListTreeNode) {
-					var rlist = (ResourceListTreeNode)context.SelectedTreeNodes[0];
-					rlist.EnsureChildrenFiltered();
-					inputNodes = rlist.Children.Cast<ILSpyTreeNode>().ToArray();
-				}
-				nodes = inputNodes.Where(a => a is IResourceNode).Cast<IResourceNode>().ToArray();
-			}
-			else if (context.Reference != null && context.Reference.Reference is IResourceNode)
-				nodes = new[] { (IResourceNode)context.Reference.Reference };
-			else
-				return null;
-
+		IResourceNode[] Filter(IResourceNode[] nodes) {
 			nodes = nodes.Where(a => a.GetResourceData(resourceDataType).Any()).ToArray();
 			return nodes.Length == 0 ? null : nodes;
+		}
+
+		protected IResourceNode[] CodeGetResourceNodes(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+				return null;
+
+			var @ref = context.FindByType<CodeReferenceSegment>();
+			if (@ref == null)
+				return null;
+			var rsrcNode = @ref.Reference as IResourceNode;
+			if (rsrcNode == null)
+				return null;
+
+			return Filter(new[] { rsrcNode });
+		}
+
+		protected IResourceNode[] FilesGetResourceNodes(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
+				return null;
+
+			var selNodes = context.FindByType<SharpTreeNode[]>();
+			if (selNodes == null)
+				return null;
+
+			if (selNodes.Length == 1 && selNodes[0] is ResourceListTreeNode) {
+				var rlist = (ResourceListTreeNode)selNodes[0];
+				rlist.EnsureChildrenFiltered();
+				selNodes = rlist.Children.Cast<ILSpyTreeNode>().ToArray();
+			}
+			return Filter(selNodes.Where(a => a is IResourceNode).Cast<IResourceNode>().ToArray());
 		}
 
 		protected ResourceData[] GetResourceData(IResourceNode[] nodes) {
 			return SaveResources.GetResourceData(nodes, resourceDataType);
 		}
-	}
 
-	[ExportContextMenuEntry(Order = 300, Category = "AsmEd")]
-	sealed class SaveResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase {
-		public SaveResourcesContextMenuEntry()
-			: base(false, ResourceDataType.Deserialized) {
+		public override bool IsVisible(IMenuItemContext context) {
+			return GetResourceNodes(context) != null;
 		}
 
-		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
-			var infos = GetResourceData(GetResourceNodes(context));
+		public override void Execute(IMenuItemContext context) {
+			SaveResources.Save(GetResourceNodes(context), useSubDirs, resourceDataType);
+		}
+	}
+
+	static class SaveResourcesCommand {
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_CODE_ASMED_SAVE, Order = 0)]
+		sealed class CodeCommand : SaveResourcesCommandBase {
+			public CodeCommand()
+				: base(false, ResourceDataType.Deserialized) {
+			}
+
+			public override string GetHeader(IMenuItemContext context) {
+				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			}
+
+			protected override IResourceNode[] GetResourceNodes(IMenuItemContext context) {
+				return CodeGetResourceNodes(context);
+			}
+		}
+
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_FILES_ASMED_SAVE, Order = 0)]
+		sealed class FilesCommand : SaveResourcesCommandBase {
+			public FilesCommand()
+				: base(false, ResourceDataType.Deserialized) {
+			}
+
+			public override string GetHeader(IMenuItemContext context) {
+				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			}
+
+			protected override IResourceNode[] GetResourceNodes(IMenuItemContext context) {
+				return FilesGetResourceNodes(context);
+			}
+		}
+
+		static string GetHeaderInternal(ResourceData[] infos) {
 			if (infos.Length == 1)
-				menuItem.Header = string.Format("Save {0}", UIUtils.EscapeMenuItemHeader(infos[0].Name));
-			else
-				menuItem.Header = string.Format("Save {0} resources", infos.Length);
+				return string.Format("Save {0}", UIUtils.EscapeMenuItemHeader(infos[0].Name));
+			return string.Format("Save {0} resources", infos.Length);
 		}
 	}
 
-	[ExportContextMenuEntry(Order = 310, Category = "AsmEd")]
-	sealed class SaveWithPathResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase {
-		public SaveWithPathResourcesContextMenuEntry()
-			: base(true, ResourceDataType.Deserialized) {
+	static class SaveWithPathResourcesCommand {
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_CODE_ASMED_SAVE, Order = 10)]
+		sealed class CodeCommand : SaveResourcesCommandBase {
+			public CodeCommand()
+				: base(true, ResourceDataType.Deserialized) {
+			}
+
+			public override string GetHeader(IMenuItemContext context) {
+				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			}
+
+			protected override IResourceNode[] GetResourceNodes(IMenuItemContext context) {
+				return CodeGetResourceNodes(context);
+			}
+
+			public override bool IsVisible(IMenuItemContext context) {
+				return IsVisibleInternal(GetResourceData(GetResourceNodes(context)));
+			}
 		}
 
-		public override bool IsVisible(ContextMenuEntryContext context) {
-			var nodes = GetResourceNodes(context);
-			if (nodes == null)
-				return false;
-			var infos = GetResourceData(nodes);
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_FILES_ASMED_SAVE, Order = 10)]
+		sealed class FilesCommand : SaveResourcesCommandBase {
+			public FilesCommand()
+				: base(true, ResourceDataType.Deserialized) {
+			}
+
+			public override string GetHeader(IMenuItemContext context) {
+				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			}
+
+			protected override IResourceNode[] GetResourceNodes(IMenuItemContext context) {
+				return FilesGetResourceNodes(context);
+			}
+
+			public override bool IsVisible(IMenuItemContext context) {
+				return IsVisibleInternal(GetResourceData(GetResourceNodes(context)));
+			}
+		}
+
+		static string GetHeaderInternal(ResourceData[] infos) {
+			return string.Format("Save {0} resources, use sub dirs", infos.Length);
+		}
+
+		internal static bool IsVisibleInternal(ResourceData[] infos) {
 			return infos.Length > 1 &&
 				infos.Any(a => a.Name.Contains('/') || a.Name.Contains('\\'));
 		}
-
-		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
-			var infos = GetResourceData(GetResourceNodes(context));
-			menuItem.Header = string.Format("Save {0} resources, use sub dirs", infos.Length);
-		}
 	}
 
-	[ExportContextMenuEntry(Order = 320, Category = "AsmEd")]
-	sealed class SaveRawResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase {
-		public SaveRawResourcesContextMenuEntry()
-			: base(false, ResourceDataType.Serialized) {
+	static class SaveRawResourcesCommand {
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_CODE_ASMED_SAVE, Order = 20)]
+		sealed class CodeCommand : SaveResourcesCommandBase {
+			public CodeCommand()
+				: base(false, ResourceDataType.Serialized) {
+			}
+
+			public override string GetHeader(IMenuItemContext context) {
+				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			}
+
+			protected override IResourceNode[] GetResourceNodes(IMenuItemContext context) {
+				return CodeGetResourceNodes(context);
+			}
 		}
 
-		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
-			var infos = GetResourceData(GetResourceNodes(context));
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_FILES_ASMED_SAVE, Order = 20)]
+		sealed class FilesCommand : SaveResourcesCommandBase {
+			public FilesCommand()
+				: base(false, ResourceDataType.Serialized) {
+			}
+
+			public override string GetHeader(IMenuItemContext context) {
+				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			}
+
+			protected override IResourceNode[] GetResourceNodes(IMenuItemContext context) {
+				return FilesGetResourceNodes(context);
+			}
+		}
+
+		static string GetHeaderInternal(ResourceData[] infos) {
 			if (infos.Length == 1)
-				menuItem.Header = string.Format("Raw Save {0}", UIUtils.EscapeMenuItemHeader(infos[0].Name));
-			else
-				menuItem.Header = string.Format("Raw Save {0} resources", infos.Length);
+				return string.Format("Raw Save {0}", UIUtils.EscapeMenuItemHeader(infos[0].Name));
+			return string.Format("Raw Save {0} resources", infos.Length);
 		}
 	}
 
-	[ExportContextMenuEntry(Order = 330, Category = "AsmEd")]
-	sealed class SaveRawWithPathResourcesContextMenuEntry : SaveResourcesContextMenuEntryBase {
-		public SaveRawWithPathResourcesContextMenuEntry()
-			: base(true, ResourceDataType.Serialized) {
+	static class SaveRawWithPathResourcesCommand {
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_CODE_ASMED_SAVE, Order = 30)]
+		sealed class CodeCommand : SaveResourcesCommandBase {
+			public CodeCommand()
+				: base(true, ResourceDataType.Serialized) {
+			}
+
+			public override string GetHeader(IMenuItemContext context) {
+				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			}
+
+			protected override IResourceNode[] GetResourceNodes(IMenuItemContext context) {
+				return CodeGetResourceNodes(context);
+			}
+
+			public override bool IsVisible(IMenuItemContext context) {
+				return IsVisibleInternal(GetResourceData(GetResourceNodes(context)));
+			}
 		}
 
-		public override bool IsVisible(ContextMenuEntryContext context) {
-			var nodes = GetResourceNodes(context);
-			if (nodes == null)
-				return false;
-			var infos = GetResourceData(nodes);
-			return infos.Length > 1 &&
-				infos.Any(a => a.Name.Contains('/') || a.Name.Contains('\\'));
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_FILES_ASMED_SAVE, Order = 30)]
+		sealed class FilesCommand : SaveResourcesCommandBase {
+			public FilesCommand()
+				: base(true, ResourceDataType.Serialized) {
+			}
+
+			public override string GetHeader(IMenuItemContext context) {
+				return GetHeaderInternal(GetResourceData(GetResourceNodes(context)));
+			}
+
+			protected override IResourceNode[] GetResourceNodes(IMenuItemContext context) {
+				return FilesGetResourceNodes(context);
+			}
+
+			public override bool IsVisible(IMenuItemContext context) {
+				return IsVisibleInternal(GetResourceData(GetResourceNodes(context)));
+			}
 		}
 
-		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
-			var infos = GetResourceData(GetResourceNodes(context));
-			menuItem.Header = string.Format("Raw Save {0} resources, use sub dirs", infos.Length);
+		static string GetHeaderInternal(ResourceData[] infos) {
+			return string.Format("Raw Save {0} resources, use sub dirs", infos.Length);
+		}
+
+		static bool IsVisibleInternal(ResourceData[] infos) {
+			return SaveWithPathResourcesCommand.IsVisibleInternal(infos);
 		}
 	}
 
@@ -504,37 +618,37 @@ namespace dnSpy.AsmEditor.Resources {
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateFileResourceCommand : IUndoCommand {
 		const string CMD_NAME = "Create File Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewResource",
-								Category = "AsmEd",
-								Order = 600)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "NewResource",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2400)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return CreateFileResourceCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 100)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateFileResourceCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				CreateFileResourceCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateFileResourceCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewResource",
-								Category = "AsmEd",
-								Order = 600)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ctx.ReferenceSegment.IsLocalTarget &&
-					CreateFileResourceCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewResource", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 100)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateFileResourceCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				CreateFileResourceCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateFileResourceCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 100)]
+		sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return context.IsLocalTarget &&
+					CreateFileResourceCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				CreateFileResourceCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -665,37 +779,37 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateMultiFileResourceCommand : CreateResourceTreeNodeCommand {
 		const string CMD_NAME = "Create Multi File Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewResourcesFile",
-								Category = "AsmEd",
-								Order = 610)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "NewResourcesFile",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2410)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return CreateMultiFileResourceCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewResourcesFile", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 110)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateMultiFileResourceCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				CreateMultiFileResourceCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateMultiFileResourceCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewResourcesFile",
-								Category = "AsmEd",
-								Order = 610)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ctx.ReferenceSegment.IsLocalTarget &&
-					CreateMultiFileResourceCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewResourcesFile", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 110)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateMultiFileResourceCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				CreateMultiFileResourceCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateMultiFileResourceCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewResourcesFile", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 110)]
+		sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return context.IsLocalTarget &&
+					CreateMultiFileResourceCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				CreateMultiFileResourceCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -743,37 +857,37 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateAssemblyLinkedResourceCommand : CreateResourceTreeNodeCommand {
 		const string CMD_NAME = "Create Assembly Linked Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewAssembly",
-								Category = "AsmEd",
-								Order = 620)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "NewAssembly",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2420)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return CreateAssemblyLinkedResourceCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssembly", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 120)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateAssemblyLinkedResourceCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				CreateAssemblyLinkedResourceCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateAssemblyLinkedResourceCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewAssembly",
-								Category = "AsmEd",
-								Order = 620)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ctx.ReferenceSegment.IsLocalTarget &&
-					CreateAssemblyLinkedResourceCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewAssembly", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 120)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateAssemblyLinkedResourceCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				CreateAssemblyLinkedResourceCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateAssemblyLinkedResourceCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssembly", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 120)]
+		sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return context.IsLocalTarget &&
+					CreateAssemblyLinkedResourceCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				CreateAssemblyLinkedResourceCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -822,37 +936,37 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateFileLinkedResourceCommand : CreateResourceTreeNodeCommand {
 		const string CMD_NAME = "Create File Linked Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewAssemblyModule",
-								Category = "AsmEd",
-								Order = 630)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "NewAssemblyModule",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2430)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return CreateFileLinkedResourceCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 130)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateFileLinkedResourceCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				CreateFileLinkedResourceCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateFileLinkedResourceCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewAssemblyModule",
-								Category = "AsmEd",
-								Order = 630)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ctx.ReferenceSegment.IsLocalTarget &&
-					CreateFileLinkedResourceCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 130)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateFileLinkedResourceCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				CreateFileLinkedResourceCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateFileLinkedResourceCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 130)]
+		sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return context.IsLocalTarget &&
+					CreateFileLinkedResourceCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				CreateFileLinkedResourceCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -903,39 +1017,36 @@ namespace dnSpy.AsmEditor.Resources {
 	[DebuggerDisplay("{Description}")]
 	sealed class ResourceSettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Settings",
-								InputGestureText = "Alt+Enter",
-								Category = "AsmEd",
-								Order = 680)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "Settings",
-							MenuInputGestureText = "Alt+Enter",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2490)]
-		internal sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return ResourceSettingsCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 80)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return ResourceSettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				ResourceSettingsCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				ResourceSettingsCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Settings",
-								InputGestureText = "Alt+Enter",
-								Category = "AsmEd",
-								Order = 690)]
-		internal sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ResourceSettingsCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 90)]
+		internal sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return ResourceSettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				ResourceSettingsCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				ResourceSettingsCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 90)]
+		internal sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return ResourceSettingsCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				ResourceSettingsCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -1088,37 +1199,37 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateImageResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create System.Data.Bitmap/Icon Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewImage",
-								Category = "AsmEd",
-								Order = 640)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "NewImage",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2440)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return CreateImageResourceElementCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 140)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateImageResourceElementCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				CreateImageResourceElementCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateImageResourceElementCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewImage",
-								Category = "AsmEd",
-								Order = 640)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ctx.ReferenceSegment.IsLocalTarget &&
-					CreateImageResourceElementCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewImage", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 140)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateImageResourceElementCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				CreateImageResourceElementCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateImageResourceElementCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 140)]
+		sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return context.IsLocalTarget &&
+					CreateImageResourceElementCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				CreateImageResourceElementCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -1184,37 +1295,37 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateImageListResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create System.Windows.Forms.ImageListStreamer Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewImage",
-								Category = "AsmEd",
-								Order = 650)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "NewImage",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2450)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return CreateImageListResourceElementCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 150)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateImageListResourceElementCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				CreateImageListResourceElementCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateImageListResourceElementCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewImage",
-								Category = "AsmEd",
-								Order = 650)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ctx.ReferenceSegment.IsLocalTarget &&
-					CreateImageListResourceElementCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewImage", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 150)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateImageListResourceElementCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				CreateImageListResourceElementCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateImageListResourceElementCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewImage", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 150)]
+		sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return context.IsLocalTarget &&
+					CreateImageListResourceElementCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				CreateImageListResourceElementCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -1281,37 +1392,37 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateByteArrayResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create Byte Array Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewBinary",
-								Category = "AsmEd",
-								Order = 660)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "NewBinary",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2470)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return CreateByteArrayResourceElementCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 160)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateByteArrayResourceElementCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				CreateByteArrayResourceElementCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateByteArrayResourceElementCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewBinary",
-								Category = "AsmEd",
-								Order = 670)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ctx.ReferenceSegment.IsLocalTarget &&
-					CreateByteArrayResourceElementCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewBinary", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 170)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateByteArrayResourceElementCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				CreateByteArrayResourceElementCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateByteArrayResourceElementCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 170)]
+		sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return context.IsLocalTarget &&
+					CreateByteArrayResourceElementCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				CreateByteArrayResourceElementCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -1379,37 +1490,37 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateStreamResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create System.IO.Stream Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewBinary",
-								Category = "AsmEd",
-								Order = 670)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "NewBinary",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2480)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return CreateStreamResourceElementCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 170)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateStreamResourceElementCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				CreateStreamResourceElementCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateStreamResourceElementCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewBinary",
-								Category = "AsmEd",
-								Order = 680)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ctx.ReferenceSegment.IsLocalTarget &&
-					CreateStreamResourceElementCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewBinary", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 180)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateStreamResourceElementCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				CreateStreamResourceElementCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateStreamResourceElementCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewBinary", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 180)]
+		sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return context.IsLocalTarget &&
+					CreateStreamResourceElementCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				CreateStreamResourceElementCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -1435,37 +1546,37 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class CreateResourceElementCommand : CreateResourceElementCommandBase {
 		const string CMD_NAME = "Create Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewResource",
-								Category = "AsmEd",
-								Order = 650)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "NewResource",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2460)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return CreateResourceElementCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 190)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateResourceElementCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				CreateResourceElementCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateResourceElementCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewResource",
-								Category = "AsmEd",
-								Order = 660)]
-		sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ctx.ReferenceSegment.IsLocalTarget &&
-					CreateResourceElementCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewResource", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 190)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateResourceElementCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				CreateResourceElementCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateResourceElementCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewResource", Group = MenuConstants.GROUP_CTX_CODE_ASMED_NEW, Order = 190)]
+		sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return context.IsLocalTarget &&
+					CreateResourceElementCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				CreateResourceElementCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -1606,39 +1717,36 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class ResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
 		const string CMD_NAME = "Edit Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Settings",
-								InputGestureText = "Alt+Enter",
-								Category = "AsmEd",
-								Order = 690)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "Settings",
-							MenuInputGestureText = "Alt+Enter",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2500)]
-		internal sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return ResourceElementSettingsCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 90)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return ResourceElementSettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				ResourceElementSettingsCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				ResourceElementSettingsCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Settings",
-								InputGestureText = "Alt+Enter",
-								Category = "AsmEd",
-								Order = 700)]
-		internal sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ResourceElementSettingsCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 100)]
+		internal sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return ResourceElementSettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				ResourceElementSettingsCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				ResourceElementSettingsCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 100)]
+		internal sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return ResourceElementSettingsCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				ResourceElementSettingsCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -1695,39 +1803,36 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class ImageResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
 		const string CMD_NAME = "Edit Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Settings",
-								InputGestureText = "Alt+Enter",
-								Category = "AsmEd",
-								Order = 700)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "Settings",
-							MenuInputGestureText = "Alt+Enter",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2510)]
-		internal sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return ImageResourceElementSettingsCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 100)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return ImageResourceElementSettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				ImageResourceElementSettingsCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				ImageResourceElementSettingsCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Settings",
-								InputGestureText = "Alt+Enter",
-								Category = "AsmEd",
-								Order = 710)]
-		internal sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return ImageResourceElementSettingsCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 110)]
+		internal sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return ImageResourceElementSettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				ImageResourceElementSettingsCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				ImageResourceElementSettingsCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 110)]
+		internal sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return ImageResourceElementSettingsCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				ImageResourceElementSettingsCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -1778,39 +1883,36 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class SerializedImageResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
 		const string CMD_NAME = "Edit Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Settings",
-								InputGestureText = "Alt+Enter",
-								Category = "AsmEd",
-								Order = 710)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "Settings",
-							MenuInputGestureText = "Alt+Enter",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2520)]
-		internal sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return SerializedImageResourceElementSettingsCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 110)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return SerializedImageResourceElementSettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				SerializedImageResourceElementSettingsCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				SerializedImageResourceElementSettingsCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Settings",
-								InputGestureText = "Alt+Enter",
-								Category = "AsmEd",
-								Order = 720)]
-		internal sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return SerializedImageResourceElementSettingsCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 120)]
+		internal sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return SerializedImageResourceElementSettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				SerializedImageResourceElementSettingsCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				SerializedImageResourceElementSettingsCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 120)]
+		internal sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return SerializedImageResourceElementSettingsCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				SerializedImageResourceElementSettingsCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -1861,39 +1963,36 @@ namespace dnSpy.AsmEditor.Resources {
 
 	sealed class SerializedImageListStreamerResourceElementSettingsCommand : ResourceElementSettingsBaseCommand {
 		const string CMD_NAME = "Edit Resource";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Settings",
-								InputGestureText = "Alt+Enter",
-								Category = "AsmEd",
-								Order = 720)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "Settings",
-							MenuInputGestureText = "Alt+Enter",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2530)]
-		internal sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 120)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				SerializedImageListStreamerResourceElementSettingsCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				SerializedImageListStreamerResourceElementSettingsCommand.Execute(context.Nodes);
 			}
 		}
 
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Settings",
-								InputGestureText = "Alt+Enter",
-								Category = "AsmEd",
-								Order = 730)]
-		internal sealed class TheTextEditorCommand : TextEditorCommand {
-			protected override bool CanExecute(Context ctx) {
-				return SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(ctx.Nodes);
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 130)]
+		internal sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void Execute(Context ctx) {
-				SerializedImageListStreamerResourceElementSettingsCommand.Execute(ctx.Nodes);
+			public override void Execute(AsmEditorContext context) {
+				SerializedImageListStreamerResourceElementSettingsCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_CODE_ASMED_SETTINGS, Order = 130)]
+		internal sealed class CodeCommand : CodeContextMenuHandler {
+			public override bool IsEnabled(CodeContext context) {
+				return SerializedImageListStreamerResourceElementSettingsCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(CodeContext context) {
+				SerializedImageListStreamerResourceElementSettingsCommand.Execute(context.Nodes);
 			}
 		}
 

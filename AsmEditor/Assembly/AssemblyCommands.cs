@@ -22,10 +22,11 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.Menus;
 using dnSpy.Files;
+using dnSpy.Menus;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
@@ -37,16 +38,16 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		public void OnLoaded() {
-			MainWindow.Instance.TreeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new RemoveAssemblyCommand.TheEditCommand()));
-			Utils.InstallSettingsCommand(new AssemblySettingsCommand.TheEditCommand(), null);
+			MainWindow.Instance.TreeView.AddCommandBinding(ApplicationCommands.Delete, new EditMenuHandlerCommandProxy(new RemoveAssemblyCommand.EditMenuCommand()));
+			Utils.InstallSettingsCommand(new AssemblySettingsCommand.EditMenuCommand(), null);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Disable Memory Mapped I/O", Order = 960, Category = "Other")]
-	sealed class DisableMemoryMappedIOCommand : IContextMenuEntry {
-		public bool IsVisible(ContextMenuEntryContext context) {
-			return context.Element == MainWindow.Instance.TreeView &&
-				context.SelectedTreeNodes.Any(a => GetDnSpyFile(a) != null);
+	[ExportMenuItem(Header = "Disable Memory Mapped I/O", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 50)]
+	sealed class DisableMemoryMappedIOCommand : MenuItemBase {
+		public override bool IsVisible(IMenuItemContext context) {
+			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID) &&
+				context.FindArrayOrDefaultByType<SharpTreeNode>().Any(a => GetDnSpyFile(a) != null);
 		}
 
 		static DnSpyFile GetDnSpyFile(SharpTreeNode node) {
@@ -63,15 +64,11 @@ namespace dnSpy.AsmEditor.Assembly {
 			return asmNode.DnSpyFile;
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			return true;
-		}
-
-		public void Execute(ContextMenuEntryContext context) {
-			if (context.Element != MainWindow.Instance.TreeView)
+		public override void Execute(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
 				return;
 			var asms = new List<DnSpyFile>();
-			foreach (var node in context.SelectedTreeNodes) {
+			foreach (var node in context.FindArrayOrDefaultByType<SharpTreeNode>()) {
 				var file = GetDnSpyFile(node);
 				if (file != null)
 					asms.Add(file);
@@ -84,32 +81,40 @@ namespace dnSpy.AsmEditor.Assembly {
 	[DebuggerDisplay("{Description}")]
 	sealed class RemoveAssemblyCommand : IGCUndoCommand {
 		const string CMD_NAME = "Remove Assembly";
-		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Delete",
-								InputGestureText = "Del",
-								Category = "AsmEd",
-								Order = 300)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
-							Menu = "_Edit",
-							MenuIcon = "Delete",
-							MenuInputGestureText = "Del",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2100)]
-		internal sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return RemoveAssemblyCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 0)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return RemoveAssemblyCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				RemoveAssemblyCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				RemoveAssemblyCommand.Execute(context.Nodes);
 			}
 
-			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
-				if (nodes.Length == 1)
-					menuItem.Header = string.Format("Remove {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
-				else
-					menuItem.Header = string.Format("Remove {0} assemblies", nodes.Length);
+			public override string GetHeader(AsmEditorContext context) {
+				return RemoveAssemblyCommand.GetHeader(context.Nodes);
 			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 0)]
+		internal sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return RemoveAssemblyCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(AsmEditorContext context) {
+				RemoveAssemblyCommand.Execute(context.Nodes);
+			}
+
+			public override string GetHeader(AsmEditorContext context) {
+				return RemoveAssemblyCommand.GetHeader(context.Nodes);
+			}
+		}
+
+		static string GetHeader(SharpTreeNode[] nodes) {
+			if (nodes.Length == 1)
+				return string.Format("Remove {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
+			return string.Format("Remove {0} assemblies", nodes.Length);
 		}
 
 		static bool CanExecute(ILSpyTreeNode[] nodes) {
@@ -233,24 +238,25 @@ namespace dnSpy.AsmEditor.Assembly {
 	[DebuggerDisplay("{Description}")]
 	sealed class AssemblySettingsCommand : IUndoCommand {
 		const string CMD_NAME = "Edit Assembly";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "Settings",
-								InputGestureText = "Alt+Enter",
-								Category = "AsmEd",
-								Order = 600)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "Settings",
-							MenuInputGestureText = "Alt+Enter",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2400)]
-		internal sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return AssemblySettingsCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 0)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return AssemblySettingsCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				AssemblySettingsCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				AssemblySettingsCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 0)]
+		internal sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return AssemblySettingsCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(AsmEditorContext context) {
+				AssemblySettingsCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -345,26 +351,25 @@ namespace dnSpy.AsmEditor.Assembly {
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateAssemblyCommand : IUndoCommand {
 		const string CMD_NAME = "Create Assembly";
-		[ExportContextMenuEntry(Header = CMD_NAME + "...",
-								Icon = "NewAssembly",
-								Category = "AsmEd",
-								Order = 500)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME + "...",
-							Menu = "_Edit",
-							MenuIcon = "NewAssembly",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2300)]
-		sealed class TheEditCommand : EditCommand {
-			public TheEditCommand()
-				: base(true) {
+		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssembly", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 0)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateAssemblyCommand.CanExecute(context.Nodes);
 			}
 
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return CreateAssemblyCommand.CanExecute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateAssemblyCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewAssembly", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 0)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return CreateAssemblyCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				CreateAssemblyCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				CreateAssemblyCommand.Execute(context.Nodes);
 			}
 		}
 

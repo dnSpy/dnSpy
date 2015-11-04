@@ -26,7 +26,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Xml.Linq;
-using dnSpy.dntheme;
+using dnSpy.DnTheme;
 using dnSpy.NRefactory;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;

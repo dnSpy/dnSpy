@@ -126,15 +126,6 @@
 					<RowDefinition Height="0" />
 					<RowDefinition Height="0" Name="bottomPaneRow" />
 				</Grid.RowDefinitions>
-				<Border BorderBrush="Black" BorderThickness="1" Name="updateAvailablePanel" Visibility="Collapsed">
-					<DockPanel>
-						<Button DockPanel.Dock="Right" Click="updateAvailablePanelCloseButtonClick" MinWidth="0">X</Button>
-						<StackPanel Orientation="Horizontal">
-							<TextBlock Margin="4,0" VerticalAlignment="Center">A new dnSpy version is available.</TextBlock>
-							<Button Click="downloadUpdateButtonClick">Download</Button>
-						</StackPanel>
-					</DockPanel>
-				</Border>
 				
 				<ilctrls:DockedPane x:Name="topPane" Grid.Row="1" Title="Top" Visibility="Collapsed"
 					CloseButtonClicked="TopPane_CloseButtonClicked" Margin="0,0,0,3"

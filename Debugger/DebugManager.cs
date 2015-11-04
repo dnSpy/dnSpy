@@ -33,6 +33,7 @@ using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Contracts.Menus;
 using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Dialogs;
 using dnSpy.Debugger.IMModules;
@@ -619,24 +620,24 @@ namespace dnSpy.Debugger {
 		}
 
 		public bool CanDebugCurrentAssembly(object parameter) {
-			return GetCurrentExecutableAssembly(parameter as ContextMenuEntryContext) != null;
+			return GetCurrentExecutableAssembly(parameter as IMenuItemContext) != null;
 		}
 
 		public void DebugCurrentAssembly(object parameter) {
-			var asm = GetCurrentExecutableAssembly(parameter as ContextMenuEntryContext);
+			var asm = GetCurrentExecutableAssembly(parameter as IMenuItemContext);
 			if (asm == null)
 				return;
 			DebugAssembly(GetDebugAssemblyOptions(CreateDebugProcessVM(asm)));
 		}
 
-		internal DnSpyFile GetCurrentExecutableAssembly(ContextMenuEntryContext context) {
+		internal DnSpyFile GetCurrentExecutableAssembly(IMenuItemContext context) {
 			if (context == null)
 				return null;
 			if (IsDebugging)
 				return null;
 
 			SharpTreeNode node;
-			if (context.Element is DecompilerTextView) {
+			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID)) {
 				var tabState = MainWindow.Instance.GetActiveDecompileTabState();
 				if (tabState == null)
 					return null;
@@ -644,10 +645,11 @@ namespace dnSpy.Debugger {
 					return null;
 				node = tabState.DecompiledNodes[0];
 			}
-			else if (context.SelectedTreeNodes != null) {
-				if (context.SelectedTreeNodes.Length == 0)
+			else if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID)) {
+				var nodes = context.FindByType<SharpTreeNode[]>();
+				if (nodes == null || nodes.Length == 0)
 					return null;
-				node = context.SelectedTreeNodes[0];
+				node = nodes[0];
 			}
 			else
 				return null;
@@ -1238,15 +1240,22 @@ namespace dnSpy.Debugger {
 			return DebugUtils.MoveCaretTo(textView, currentLocation.Value.SerializedDnSpyToken, currentLocation.Value.Offset);
 		}
 
+		DecompilerTextView TryGetDecompilerTextView(object parameter) {
+			var ctx = parameter as IMenuItemContext;
+			if (ctx == null)
+				return null;
+			if (ctx.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+				return ctx.CreatorObject.Object as DecompilerTextView;
+			return null;
+		}
+
 		public bool CanSetNextStatement(object parameter) {
 			if (!IsDebugging)
 				return false;
 
-			var ctx = parameter as ContextMenuEntryContext;
-
 			SourceCodeMapping mapping;
 			string errMsg;
-			if (!DebugGetSourceCodeMappingForSetNextStatement(ctx == null ? null : ctx.Element as DecompilerTextView, out errMsg, out mapping))
+			if (!DebugGetSourceCodeMappingForSetNextStatement(TryGetDecompilerTextView(parameter), out errMsg, out mapping))
 				return false;
 
 			if (currentLocation != null && currentLocation.Value.IsExact)
@@ -1267,9 +1276,8 @@ namespace dnSpy.Debugger {
 		}
 
 		bool DebugSetNextStatement(object parameter, out string errMsg) {
-			var ctx = parameter as ContextMenuEntryContext;
 			SourceCodeMapping mapping;
-			if (!DebugGetSourceCodeMappingForSetNextStatement(ctx == null ? null : ctx.Element as DecompilerTextView, out errMsg, out mapping))
+			if (!DebugGetSourceCodeMappingForSetNextStatement(TryGetDecompilerTextView(parameter), out errMsg, out mapping))
 				return false;
 
 			uint ilOffset = mapping.ILInstructionOffset.From;

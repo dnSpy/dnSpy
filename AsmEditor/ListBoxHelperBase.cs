@@ -27,7 +27,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Images;
 using dnSpy.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor {
 	abstract class ListBoxHelperBase<T> where T : class, IIndexedItem {
@@ -284,7 +283,7 @@ namespace dnSpy.AsmEditor {
 				var tmpHandler = handler;
 				menuItem.Click += (s, e2) => tmpHandler.Command.Execute(parameter);
 				if (handler.Icon != null)
-					MainWindow.CreateMenuItemImage(menuItem, typeof(ListBoxHelperBase<T>).Assembly, handler.Icon, BackgroundType.ContextMenuItem, menuItem.IsEnabled);
+					ImageCache.Instance.CreateMenuItemImage(menuItem, typeof(ListBoxHelperBase<T>).Assembly, handler.Icon, BackgroundType.ContextMenuItem, menuItem.IsEnabled);
 				if (handler.InputGestureText != null)
 					menuItem.InputGestureText = handler.InputGestureText;
 

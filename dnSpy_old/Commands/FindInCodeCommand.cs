@@ -17,31 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Windows.Input;
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TextView;
 
 namespace dnSpy.Commands {
-	[ExportMainMenuCommand(Menu = "_Edit", MenuHeader = "_Find", MenuIcon = "Find", MenuCategory = "Search", MenuInputGestureText = "Ctrl+F", MenuOrder = 2090)]
-	sealed class FindInCodeCommand : CommandWrapper {
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "_Find", Icon = "Find", InputGestureText = "Ctrl+F", Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 0)]
+	sealed class FindInCodeCommand : MenuItemCommand {
 		public FindInCodeCommand()
 			: base(ApplicationCommands.Find) {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Find", Order = 1010, Icon = "Find", Category = "Editor", InputGestureText = "Ctrl+F")]
-	sealed class FindInCodeContexMenuEntry : IContextMenuEntry {
-		public void Execute(ContextMenuEntryContext context) {
+	[ExportMenuItem(Header = "Find", Icon = "Find", InputGestureText = "Ctrl+F", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 10)]
+	sealed class FindInCodeContexMenuEntry : MenuItemBase {
+		public override void Execute(IMenuItemContext context) {
 			if (ApplicationCommands.Find.CanExecute(null, MainWindow.Instance))
 				ApplicationCommands.Find.Execute(null, MainWindow.Instance);
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			return true;
-		}
-
-		public bool IsVisible(ContextMenuEntryContext context) {
-			return context.Element is DecompilerTextView;
+		public override bool IsVisible(IMenuItemContext context) {
+			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID);
 		}
 	}
 }

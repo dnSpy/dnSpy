@@ -17,84 +17,111 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnlib.DotNet;
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
+using ICSharpCode.TreeView;
 
 namespace dnSpy.Commands {
-	[ExportContextMenuEntry(Header = "Go to _Entry Point", Order = 450, Category = "EP", Icon = "EntryPoint")]
-	sealed class GoToEntryPointCommand : IContextMenuEntry {
-		public bool IsVisible(ContextMenuEntryContext context) {
-			return TreeView_IsVisible(context) ||
-				TextEditor_IsVisible(context);
-		}
-
-		static bool TreeView_IsVisible(ContextMenuEntryContext context) {
-			ModuleDef module;
-			return context.Element == MainWindow.Instance.TreeView &&
-				((module = ILSpyTreeNode.GetModule(context.SelectedTreeNodes)) != null) &&
-				module.EntryPoint is MethodDef;
-		}
-
-		static bool TextEditor_IsVisible(ContextMenuEntryContext context) {
-			ModuleDef module;
-			return context.Element is DecompilerTextView &&
-				(module = GetModule()) != null &&
-				module.EntryPoint is MethodDef;
-		}
-
-		internal static ModuleDef GetModule() {
+	static class GoToEntryPointCommand {
+		internal static ModuleDef GetCurrentModule() {
 			var tabState = MainWindow.Instance.GetActiveDecompileTabState();
 			if (tabState == null)
 				return null;
 			return ILSpyTreeNode.GetModule(tabState.DecompiledNodes) as ModuleDef;
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			return true;
+		[ExportMenuItem(Header = "Go to _Entry Point", Icon = "EntryPoint", Group = MenuConstants.GROUP_CTX_CODE_EP, Order = 0)]
+		sealed class CodeCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetEntryPoint(context) != null;
+			}
+
+			static MethodDef GetEntryPoint(IMenuItemContext context) {
+				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+					return null;
+				var module = GetCurrentModule();
+				return module == null ? null : module.EntryPoint as MethodDef;
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				var ep = GetEntryPoint(context);
+				if (ep != null)
+					MainWindow.Instance.JumpToReference(ep);
+			}
 		}
 
-		public void Execute(ContextMenuEntryContext context) {
-			if (TreeView_IsVisible(context))
-				MainWindow.Instance.JumpToReference(ILSpyTreeNode.GetModule(context.SelectedTreeNodes).EntryPoint);
-			else if (TextEditor_IsVisible(context))
-				MainWindow.Instance.JumpToReference(GetModule().EntryPoint);
+		[ExportMenuItem(Header = "Go to _Entry Point", Icon = "EntryPoint", Group = MenuConstants.GROUP_CTX_FILES_EP, Order = 0)]
+		sealed class FilesCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetEntryPoint(context) != null;
+			}
+
+			static MethodDef GetEntryPoint(IMenuItemContext context) {
+				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
+					return null;
+				var nodes = context.FindByType<SharpTreeNode[]>();
+				var module = ILSpyTreeNode.GetModule(nodes);
+				return module == null ? null : module.EntryPoint as MethodDef;
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				var ep = GetEntryPoint(context);
+				if (ep != null)
+					MainWindow.Instance.JumpToReference(ep);
+			}
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Go to <Module> .ccto_r", Order = 460, Category = "EP")]
-	sealed class GoToGlobalTypeCctorCommand : IContextMenuEntry {
-		public bool IsVisible(ContextMenuEntryContext context) {
-			return TreeView_IsVisible(context) ||
-				TextEditor_IsVisible(context);
+	static class GoToGlobalTypeCctorCommand {
+		[ExportMenuItem(Header = "Go to <Module> .ccto_r", Group = MenuConstants.GROUP_CTX_CODE_EP, Order = 10)]
+		sealed class CodeCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetModuleCctor(context) != null;
+			}
+
+			static MethodDef GetModuleCctor(IMenuItemContext context) {
+				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+					return null;
+				var module = GoToEntryPointCommand.GetCurrentModule();
+				if (module == null)
+					return null;
+				var gt = module.GlobalType;
+				return gt == null ? null : gt.FindStaticConstructor();
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				var ep = GetModuleCctor(context);
+				if (ep != null)
+					MainWindow.Instance.JumpToReference(ep);
+			}
 		}
 
-		static bool TreeView_IsVisible(ContextMenuEntryContext context) {
-			ModuleDef module;
-			return context.Element == MainWindow.Instance.TreeView &&
-				((module = ILSpyTreeNode.GetModule(context.SelectedTreeNodes)) != null) &&
-				module.GlobalType != null &&
-				module.GlobalType.FindStaticConstructor() != null;
-		}
+		[ExportMenuItem(Header = "Go to <Module> .ccto_r", Group = MenuConstants.GROUP_CTX_FILES_EP, Order = 10)]
+		sealed class FilesCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetModuleCctor(context) != null;
+			}
 
-		static bool TextEditor_IsVisible(ContextMenuEntryContext context) {
-			ModuleDef module;
-			return context.Element is DecompilerTextView &&
-				(module = GoToEntryPointCommand.GetModule()) != null &&
-				module.GlobalType != null &&
-				module.GlobalType.FindStaticConstructor() != null;
-		}
+			static MethodDef GetModuleCctor(IMenuItemContext context) {
+				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
+					return null;
+				var nodes = context.FindByType<SharpTreeNode[]>();
+				var module = ILSpyTreeNode.GetModule(nodes);
+				if (module == null)
+					return null;
+				var gt = module.GlobalType;
+				return gt == null ? null : gt.FindStaticConstructor();
+			}
 
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			return true;
-		}
-
-		public void Execute(ContextMenuEntryContext context) {
-			if (TreeView_IsVisible(context))
-				MainWindow.Instance.JumpToReference(ILSpyTreeNode.GetModule(context.SelectedTreeNodes).GlobalType.FindStaticConstructor());
-			else if (TextEditor_IsVisible(context))
-				MainWindow.Instance.JumpToReference(GoToEntryPointCommand.GetModule().GlobalType.FindStaticConstructor());
+			public override void Execute(IMenuItemContext context) {
+				var ep = GetModuleCctor(context);
+				if (ep != null)
+					MainWindow.Instance.JumpToReference(ep);
+			}
 		}
 	}
 }

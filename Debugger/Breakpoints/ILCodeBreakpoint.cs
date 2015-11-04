@@ -62,8 +62,8 @@ namespace dnSpy.Debugger.Breakpoints {
 
 			public override ImageSource GetImage(Color bgColor) {
 				return ilbp.IsEnabled ?
-					ImageCache.Instance.GetImage("Breakpoint", bgColor) :
-					ImageCache.Instance.GetImage("DisabledBreakpoint", bgColor);
+					ImageCache.Instance.GetImage(GetType().Assembly, "Breakpoint", bgColor) :
+					ImageCache.Instance.GetImage(GetType().Assembly, "DisabledBreakpoint", bgColor);
 			}
 
 			internal new void Redraw() {

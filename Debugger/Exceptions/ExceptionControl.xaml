@@ -23,7 +23,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Debugger.Exceptions"
              xmlns:mvvm="clr-namespace:dnSpy.MVVM;assembly=dnSpy"
-             xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters;assembly=dnSpy"
+             xmlns:mvvm2="clr-namespace:dnSpy.MVVM;assembly=dnSpy_old"
+             xmlns:vc="clr-namespace:dnSpy.Debugger.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">
     <Grid>
@@ -33,7 +34,7 @@
         </Grid.RowDefinitions>
         <Grid Grid.Row="0" Background="{DynamicResource EnvironmentCommandBar}">
             <Grid.Resources>
-                <mvvmvc:ImageConverter x:Key="imageConverter" />
+                <vc:ImageConverter x:Key="imageConverter" />
             </Grid.Resources>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
@@ -64,7 +65,7 @@
                     <Image Source="{Binding RestoreDefaultsImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_UndoCheckBoxList}" Width="16" Height="16"/>
                 </Button>
             </StackPanel>
-            <Label Grid.Column="1" Margin="5 0 0 0" Content="Search" ToolTip="Search for an exception (Ctrl+F)" mvvm:ClickFocusAP.Target="{Binding ElementName=searchTextBox}" />
+            <Label Grid.Column="1" Margin="5 0 0 0" Content="Search" ToolTip="Search for an exception (Ctrl+F)" mvvm2:ClickFocusAP.Target="{Binding ElementName=searchTextBox}" />
             <TextBox Grid.Column="2" Name="searchTextBox" Margin="5 0 0 0" Text="{Binding FilterText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="Search for an exception (Ctrl+F)" />
         </Grid>
         <ListBox

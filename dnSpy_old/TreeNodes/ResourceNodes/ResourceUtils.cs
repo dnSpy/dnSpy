@@ -18,6 +18,7 @@
 */
 
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Windows.Media.Imaging;
 using dnSpy.Decompiler;
@@ -57,8 +58,8 @@ namespace dnSpy.TreeNodes {
 			return rsrcName;
 		}
 
-		public static BitmapSource GetIcon(string name, BackgroundType bgType) {
-			return ImageCache.Instance.GetImage(name, bgType);
+		public static BitmapSource GetIcon(Assembly asm, string name, BackgroundType bgType) {
+			return ImageCache.Instance.GetImage(asm, name, bgType);
 		}
 
 		public static MemoryStream StringToStream(string s) {

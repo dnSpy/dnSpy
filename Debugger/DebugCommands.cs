@@ -18,13 +18,16 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.AvalonEdit;
+using dnSpy.Contracts.Menus;
 using dnSpy.Debugger.Breakpoints;
 using dnSpy.Debugger.Memory;
 using dnSpy.Images;
+using dnSpy.Menus;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
@@ -120,107 +123,119 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	abstract class DebugCtxMenuCommand : IContextMenuEntry2 {
+	abstract class DebugCtxMenuCommand : MenuItemBase {
 		readonly ICommand realCmd;
 
 		protected DebugCtxMenuCommand(ICommand realCmd) {
 			this.realCmd = realCmd;
 		}
 
-		public void Execute(ContextMenuEntryContext context) {
+		public override void Execute(IMenuItemContext context) {
 			realCmd.Execute(context);
 		}
 
-		public virtual void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
+		public override bool IsVisible(IMenuItemContext context) {
+			return IsValidElement(context.CreatorObject) && realCmd.CanExecute(context);
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context) {
+		public override bool IsEnabled(IMenuItemContext context) {
 			return true;
 		}
 
-		public bool IsVisible(ContextMenuEntryContext context) {
-			return IsValidElement(context.Element) && realCmd.CanExecute(context);
-		}
-
-		protected virtual bool IsValidElement(object element) {
-			return element is DecompilerTextView;
+		protected virtual bool IsValidElement(GuidObject element) {
+			return element.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Debug Assembly", Icon = "StartDebugging", Order = 200, InputGestureText = "F5", Category = "Debug")]
+	[ExportMenuItem(Header = "_Debug Assembly", Icon = "StartDebugging", InputGestureText = "F5", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 0)]
 	sealed class DebugAssemblyDebugCtxMenuCommand : DebugCtxMenuCommand {
 		public DebugAssemblyDebugCtxMenuCommand()
 			: base(DebugRoutedCommands.DebugCurrentAssembly) {
 		}
 
-		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
+		public override string GetHeader(IMenuItemContext context) {
 			var asm = DebugManager.Instance.GetCurrentExecutableAssembly(context);
 			if (asm == null)
-				return;
-			menuItem.Header = string.Format("_Debug {0}", UIUtils.EscapeMenuItemHeader(asm.ShortName));
+				return null;
+			return string.Format("_Debug {0}", UIUtils.EscapeMenuItemHeader(asm.ShortName));
 		}
 
-		protected override bool IsValidElement(object element) {
-			return true;
+		protected override bool IsValidElement(GuidObject element) {
+			return element.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID) ||
+				element.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
 		}
 	}
 
-	[ExportContextMenuEntry(Icon = "BreakpointMenu", InputGestureText = "F9", Category = "Debug", Order = 210)]
+	[ExportMenuItem(Icon = "BreakpointMenu", InputGestureText = "F9", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 10)]
 	sealed class ToggleBreakpointDebugCtxMenuCommand : DebugCtxMenuCommand {
 		public ToggleBreakpointDebugCtxMenuCommand()
 			: base(DebugRoutedCommands.ToggleBreakpoint) {
 		}
 
-		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
+		public override string GetHeader(IMenuItemContext context) {
 			int count;
 			bool? enabled = BreakpointManager.Instance.GetAddRemoveBreakpointsInfo(out count);
 
 			if (enabled == null)
-				menuItem.Header = "_Add Breakpoint";
-			else if (enabled.Value)
-				menuItem.Header = count == 1 ? "D_elete Breakpoint" : "D_elete Breakpoints";
-			else
-				menuItem.Header = count == 1 ? "_Enable Breakpoint" : "_Enable Breakpoints";
+				return "_Add Breakpoint";
+			if (enabled.Value)
+				return count == 1 ? "D_elete Breakpoint" : "D_elete Breakpoints";
+			return count == 1 ? "_Enable Breakpoint" : "_Enable Breakpoints";
 		}
 	}
 
-	[ExportContextMenuEntry(InputGestureText = "Ctrl+F9", Category = "Debug", Order = 220)]
+	[ExportMenuItem(InputGestureText = "Ctrl+F9", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 20)]
 	sealed class EnableDisableBreakpointDebugCtxMenuCommand : DebugCtxMenuCommand {
 		public EnableDisableBreakpointDebugCtxMenuCommand()
 			: base(DebugRoutedCommands.DisableBreakpoint) {
 		}
 
-		public override void Initialize(ContextMenuEntryContext context, MenuItem menuItem) {
+		public override bool IsEnabled(IMenuItemContext context) {
 			int count;
 			bool enabled = BreakpointManager.Instance.GetEnableDisableBreakpointsInfo(out count);
-			InitializeMenuItem(this, enabled, count, menuItem, BackgroundType.ContextMenuItem);
+			return IsMenuItemEnabledInternal(count);
 		}
 
-		internal static void InitializeMenuItem(object obj, bool enabled, int count, MenuItem menuItem, BackgroundType bgType) {
-			menuItem.IsEnabled = count > 0;
+		public override string GetHeader(IMenuItemContext context) {
+			int count;
+			bool enabled = BreakpointManager.Instance.GetEnableDisableBreakpointsInfo(out count);
+			return GetHeaderInternal(enabled, count);
+		}
+
+		public override string GetIcon(IMenuItemContext context) {
+			return GetIconInternal();
+		}
+
+		internal static bool IsMenuItemEnabledInternal(int count) {
+			return count > 0;
+		}
+
+		internal static string GetHeaderInternal(bool enabled, int count) {
 			if (enabled)
-				menuItem.Header = count <= 1 ? "_Disable Breakpoint" : "_Disable Breakpoints";
-			else
-				menuItem.Header = count <= 1 ? "Enab_le Breakpoint" : "Enab_le Breakpoints";
-			MainWindow.CreateMenuItemImage(menuItem, obj, "DisableEnableBreakpoint", bgType);
+				return count <= 1 ? "_Disable Breakpoint" : "_Disable Breakpoints";
+			return count <= 1 ? "Enab_le Breakpoint" : "Enab_le Breakpoints";
+		}
+
+		internal static string GetIconInternal() {
+			return "DisableEnableBreakpoint";
 		}
 	}
 
-	[ExportContextMenuEntry(Icon = "CurrentLineToolBar", Header = "S_how Next Statement", InputGestureText = "Alt+Num *", Category = "Debug", Order = 230)]
+	[ExportMenuItem(Icon = "CurrentLineToolBar", Header = "S_how Next Statement", InputGestureText = "Alt+Num *", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 30)]
 	sealed class ShowNextStatementDebugCtxMenuCommand : DebugCtxMenuCommand {
 		public ShowNextStatementDebugCtxMenuCommand()
 			: base(DebugRoutedCommands.ShowNextStatement) {
 		}
 	}
 
-	[ExportContextMenuEntry(Icon = "SetNextStatement", Header = "Set Ne_xt Statement", InputGestureText = "Ctrl+Shift+F10", Category = "Debug", Order = 240)]
+	[ExportMenuItem(Icon = "SetNextStatement", Header = "Set Ne_xt Statement", InputGestureText = "Ctrl+Shift+F10", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 40)]
 	sealed class SetNextStatementDebugCtxMenuCommand : DebugCtxMenuCommand {
 		public SetNextStatementDebugCtxMenuCommand()
 			: base(DebugRoutedCommands.SetNextStatement) {
 		}
 	}
 
-	abstract class DebugMainMenuCommand : CommandWrapper, IMainMenuCommand {
+	abstract class DebugMainMenuCommand : MenuItemCommand {
 		readonly bool? mustBeDebugging;
 
 		protected DebugMainMenuCommand(ICommand realCmd, bool? mustBeDebugging)
@@ -228,194 +243,213 @@ namespace dnSpy.Debugger {
 			this.mustBeDebugging = mustBeDebugging;
 		}
 
-		public virtual bool IsVisible {
-			get { return mustBeDebugging == null || DebugManager.Instance.IsDebugging == mustBeDebugging; }
+		public override bool IsVisible(IMenuItemContext context) {
+			return mustBeDebugging == null || DebugManager.Instance.IsDebugging == mustBeDebugging;
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "StartDebugging", MenuCategory = "Start", MenuHeader = "Debug an Assembl_y...", MenuInputGestureText = "F5", MenuOrder = 5000)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Debug an Assembl_y...", Icon = "StartDebugging", InputGestureText = "F5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 0)]
 	sealed class DebugAssemblyDebugMainMenuCommand : DebugMainMenuCommand {
 		public DebugAssemblyDebugMainMenuCommand()
 			: base(DebugRoutedCommands.DebugAssembly, false) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "StartWithoutDebugging", MenuCategory = "Start", MenuHeader = "Start Wit_hout Debugging", MenuInputGestureText = "Ctrl+F5", MenuOrder = 5010)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Start Wit_hout Debugging", Icon = "StartWithoutDebugging", InputGestureText = "Ctrl+F5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 10)]
 	sealed class StartWithoutDegbuggingDebugMainMenuCommand : DebugMainMenuCommand {
 		public StartWithoutDegbuggingDebugMainMenuCommand()
 			: base(DebugRoutedCommands.StartWithoutDebugging, false) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "StartDebugging", MenuCategory = "Start", MenuHeader = "Debug a CoreCLR Assembl_y...", MenuOrder = 5020)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Debug a CoreCLR Assembl_y...", Icon = "StartDebugging", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 20)]
 	sealed class DebugCoreCLRAssemblyDebugMainMenuCommand : DebugMainMenuCommand {
 		public DebugCoreCLRAssemblyDebugMainMenuCommand()
 			: base(DebugRoutedCommands.DebugCoreCLRAssembly, false) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "Process", MenuCategory = "Start", MenuHeader = "Attach to _Process...", MenuInputGestureText = "Ctrl+Alt+P", MenuOrder = 5030)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Attach to _Process...", Icon = "Process", InputGestureText = "Ctrl+Alt+P", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 30)]
 	sealed class AttachDebugMainMenuCommand : DebugMainMenuCommand {
 		public AttachDebugMainMenuCommand()
 			: base(DebugRoutedCommands.Attach, false) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "ContinueDebugging", MenuCategory = "Debug1", MenuHeader = "_Continue", MenuInputGestureText = "F5", MenuOrder = 5100)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "_Continue", Icon = "ContinueDebugging", InputGestureText = "F5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 0)]
 	sealed class ContinueDebugMainMenuCommand : DebugMainMenuCommand {
 		public ContinueDebugMainMenuCommand()
 			: base(DebugRoutedCommands.Continue, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "Break", MenuCategory = "Debug1", MenuHeader = "Brea_k", MenuInputGestureText = "Ctrl+Break", MenuOrder = 5110)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Brea_k", Icon = "Break", InputGestureText = "Ctrl+Break", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 10)]
 	sealed class BreakDebugMainMenuCommand : DebugMainMenuCommand {
 		public BreakDebugMainMenuCommand()
 			: base(DebugRoutedCommands.Break, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "StopProcess", MenuCategory = "Debug1", MenuHeader = "Stop D_ebugging", MenuInputGestureText = "Shift+F5", MenuOrder = 5120)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Stop D_ebugging", Icon = "StopProcess", InputGestureText = "Shift+F5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 20)]
 	sealed class StopDebugMainMenuCommand : DebugMainMenuCommand {
 		public StopDebugMainMenuCommand()
 			: base(DebugRoutedCommands.Stop, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "Debug1", MenuHeader = "_Detach", MenuOrder = 5130)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "_Detach", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 30)]
 	sealed class DetachDebugMainMenuCommand : DebugMainMenuCommand {
 		public DetachDebugMainMenuCommand()
 			: base(DebugRoutedCommands.Detach, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "RestartProcess", MenuCategory = "Debug1", MenuHeader = "_Restart", MenuInputGestureText = "Ctrl+Shift+F5", MenuOrder = 5140)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "_Restart", Icon = "RestartProcess", InputGestureText = "Ctrl+Shift+F5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 40)]
 	sealed class RestartDebugMainMenuCommand : DebugMainMenuCommand {
 		public RestartDebugMainMenuCommand()
 			: base(DebugRoutedCommands.Restart, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "StepInto", MenuCategory = "Debug2", MenuHeader = "Step _Into", MenuInputGestureText = "F11", MenuOrder = 5200)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Step _Into", Icon = "StepInto", InputGestureText = "F11", Group = MenuConstants.GROUP_APP_MENU_DEBUG_STEP, Order = 0)]
 	sealed class StepIntoDebugMainMenuCommand : DebugMainMenuCommand {
 		public StepIntoDebugMainMenuCommand()
 			: base(DebugRoutedCommands.StepInto, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "StepOver", MenuCategory = "Debug2", MenuHeader = "Step _Over", MenuInputGestureText = "F10", MenuOrder = 5210)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Step _Over", Icon = "StepOver", InputGestureText = "F10", Group = MenuConstants.GROUP_APP_MENU_DEBUG_STEP, Order = 10)]
 	sealed class StepOverDebugMainMenuCommand : DebugMainMenuCommand {
 		public StepOverDebugMainMenuCommand()
 			: base(DebugRoutedCommands.StepOver, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "StepOut", MenuCategory = "Debug2", MenuHeader = "Step Ou_t", MenuInputGestureText = "Shift+F11", MenuOrder = 5220)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Step Ou_t", Icon = "StepOut", InputGestureText = "Shift+F11", Group = MenuConstants.GROUP_APP_MENU_DEBUG_STEP, Order = 20)]
 	sealed class StepOutDebugMainMenuCommand : DebugMainMenuCommand {
 		public StepOutDebugMainMenuCommand()
 			: base(DebugRoutedCommands.StepOut, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "Breakpoints", MenuHeader = "To_ggle Breakpoint", MenuInputGestureText = "F9", MenuOrder = 5300)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "To_ggle Breakpoint", InputGestureText = "F9", Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 0)]
 	sealed class ToggleBreakpointDebugMainMenuCommand : DebugMainMenuCommand {
 		public ToggleBreakpointDebugMainMenuCommand()
 			: base(DebugRoutedCommands.ToggleBreakpoint, null) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "DeleteAllBreakpoints", MenuCategory = "Breakpoints", MenuHeader = "Delete _All Breakpoints", MenuInputGestureText = "Ctrl+Shift+F9", MenuOrder = 5310)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Delete _All Breakpoints", Icon = "DeleteAllBreakpoints", InputGestureText = "Ctrl+Shift+F9", Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 10)]
 	sealed class DeleteAllBreakpointsDebugMainMenuCommand : DebugMainMenuCommand {
 		public DeleteAllBreakpointsDebugMainMenuCommand()
 			: base(DebugRoutedCommands.DeleteAllBreakpoints, null) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "EnableAllBreakpoints", MenuCategory = "Breakpoints", MenuHeader = "Enable All Breakpoi_nts", MenuOrder = 5320)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Enable All Breakpoi_nts", Icon = "EnableAllBreakpoints", Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 20)]
 	sealed class EnableAllBreakpointsDebugMainMenuCommand : DebugMainMenuCommand {
 		public EnableAllBreakpointsDebugMainMenuCommand()
 			: base(DebugRoutedCommands.EnableAllBreakpoints, null) {
 		}
 
-		public override bool IsVisible {
-			get { return DebugRoutedCommands.EnableAllBreakpoints.CanExecute(null, MainWindow.Instance); }
+		public override bool IsVisible(IMenuItemContext context) {
+			return DebugRoutedCommands.EnableAllBreakpoints.CanExecute(null, MainWindow.Instance);
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuIcon = "DisableAllBreakpoints", MenuCategory = "Breakpoints", MenuHeader = "Disable All Breakpoi_nts", MenuOrder = 5330)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Disable All Breakpoi_nts", Icon = "DisableAllBreakpoints", Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 30)]
 	sealed class DisableAllBreakpointsDebugMainMenuCommand : DebugMainMenuCommand {
 		public DisableAllBreakpointsDebugMainMenuCommand()
 			: base(DebugRoutedCommands.DisableAllBreakpoints, null) {
 		}
 
-		public override bool IsVisible {
-			get { return DebugRoutedCommands.DisableAllBreakpoints.CanExecute(null, MainWindow.Instance); }
+		public override bool IsVisible(IMenuItemContext context) {
+			return DebugRoutedCommands.DisableAllBreakpoints.CanExecute(null, MainWindow.Instance);
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "Breakpoints", MenuHeader = "_Breakpoints", MenuIcon = "BreakpointsWindow", MenuInputGestureText = "Ctrl+Alt+B", MenuOrder = 5340)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "_Breakpoints", Icon = "BreakpointsWindow", InputGestureText = "Ctrl+Alt+B", Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 40)]
 	sealed class BreakpointsWindowCommand : DebugMainMenuCommand {
 		public BreakpointsWindowCommand()
 			: base(DebugRoutedCommands.ShowBreakpoints, null) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "_Locals", MenuIcon = "LocalsWindow", MenuInputGestureText = "Alt+4", MenuOrder = 5400)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "_Locals", Icon = "LocalsWindow", InputGestureText = "Alt+4", Group = MenuConstants.GROUP_APP_MENU_DEBUG_SHOW, Order = 0)]
 	sealed class LocalsWindowCommand : DebugMainMenuCommand {
 		public LocalsWindowCommand()
 			: base(DebugRoutedCommands.ShowLocals, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "Call _Stack", MenuIcon = "CallStackWindow", MenuInputGestureText = "Ctrl+Alt+C", MenuOrder = 5410)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Call _Stack", Icon = "CallStackWindow", InputGestureText = "Ctrl+Alt+C", Group = MenuConstants.GROUP_APP_MENU_DEBUG_SHOW, Order = 10)]
 	sealed class CallStackWindowCommand : DebugMainMenuCommand {
 		public CallStackWindowCommand()
 			: base(DebugRoutedCommands.ShowCallStack, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "T_hreads", MenuIcon = "Thread", MenuInputGestureText = "Ctrl+Alt+H", MenuOrder = 5420)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "T_hreads", Icon = "Thread", InputGestureText = "Ctrl+Alt+H", Group = MenuConstants.GROUP_APP_MENU_DEBUG_SHOW, Order = 20)]
 	sealed class ThreadsWindowCommand : DebugMainMenuCommand {
 		public ThreadsWindowCommand()
 			: base(DebugRoutedCommands.ShowThreads, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "Mod_ules", MenuIcon = "ModulesWindow", MenuInputGestureText = "Ctrl+Alt+U", MenuOrder = 5430)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Mod_ules", Icon = "ModulesWindow", InputGestureText = "Ctrl+Alt+U", Group = MenuConstants.GROUP_APP_MENU_DEBUG_SHOW, Order = 30)]
 	sealed class ModulesWindowCommand : DebugMainMenuCommand {
 		public ModulesWindowCommand()
 			: base(DebugRoutedCommands.ShowModules, true) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "E_xception Settings", MenuIcon = "ExceptionSettings", MenuInputGestureText = "Ctrl+Alt+E", MenuOrder = 5440)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "E_xception Settings", Icon = "ExceptionSettings", InputGestureText = "Ctrl+Alt+E", Group = MenuConstants.GROUP_APP_MENU_DEBUG_SHOW, Order = 40)]
 	sealed class ExceptionSettingsWindowCommand : DebugMainMenuCommand {
 		public ExceptionSettingsWindowCommand()
 			: base(DebugRoutedCommands.ShowExceptions, null) {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Debug", MenuCategory = "View", MenuHeader = "_Memory", MenuIcon = "MemoryWindow", MenuOrder = 5450)]
-	sealed class MemoryWindowCommand : ICommand, IMainMenuCommand, IMainMenuCommandInitialize {
-		public MemoryWindowCommand() {
+	static class Constants {
+		public const string SHOW_IN_MEMORY_WINDOW_GUID = "C9EF4AD5-21C6-4185-B5C7-7DCF2DFA7BCD";
+		public const string GROUP_SHOW_IN_MEMORY_WINDOW = "0,6DE55384-1907-4D19-86F1-3C48A1846193";
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "_Memory", Icon = "MemoryWindow", Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_APP_MENU_DEBUG_SHOW, Order = 50)]
+	sealed class MemoryWindowCommand : MenuItemBase {
+		public override void Execute(IMenuItemContext context) {
 		}
 
-		public bool IsVisible {
-			get { return DebugManager.Instance.IsDebugging; }
+		public override bool IsVisible(IMenuItemContext context) {
+			return DebugManager.Instance.IsDebugging;
+		}
+	}
+
+	sealed class CommandToMenuItem : MenuItemBase {
+		readonly ICommand cmd;
+
+		public CommandToMenuItem(ICommand cmd) {
+			this.cmd = cmd;
 		}
 
-		event EventHandler ICommand.CanExecuteChanged {
-			add { }
-			remove { }
+		public override void Execute(IMenuItemContext context) {
+			cmd.Execute(context);
 		}
 
-		static MemoryWindowCommand() {
-			subCmds = new Tuple<ICommand, string, string>[DebugRoutedCommands.ShowMemoryCommands.Length];
+		public override bool IsVisible(IMenuItemContext context) {
+			return cmd.CanExecute(context);
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = Constants.GROUP_SHOW_IN_MEMORY_WINDOW, Order = 0)]
+	sealed class SubMenuMemoryWindowCommand : MenuItemBase, IMenuItemCreator {
+		static SubMenuMemoryWindowCommand() {
+			subCmds = new Tuple<IMenuItem, string, string>[DebugRoutedCommands.ShowMemoryCommands.Length];
 			for (int i = 0; i < subCmds.Length; i++) {
 				var inputGestureText = GetInputGestureText(i);
 				var headerText = MemoryControlCreator.GetHeaderText(i);
-				var cmd = DebugRoutedCommands.ShowMemoryCommands[i];
-				subCmds[i] = Tuple.Create((ICommand)cmd, headerText, inputGestureText);
+				var cmd = new CommandToMenuItem(DebugRoutedCommands.ShowMemoryCommands[i]);
+				subCmds[i] = Tuple.Create((IMenuItem)cmd, headerText, inputGestureText);
 			}
 		}
 
@@ -427,26 +461,18 @@ namespace dnSpy.Debugger {
 			return string.Empty;
 		}
 
-		static readonly Tuple<ICommand, string, string>[] subCmds;
+		static readonly Tuple<IMenuItem, string, string>[] subCmds;
 
-		bool ICommand.CanExecute(object parameter) {
-			return IsVisible;
+		public override void Execute(IMenuItemContext context) {
 		}
 
-		void ICommand.Execute(object parameter) {
-		}
-
-		void IMainMenuCommandInitialize.Initialize(MenuItem menuItem) {
-			foreach (var tuple in subCmds) {
-				var mi = new MenuItem {
-					Command = tuple.Item1,
-					CommandTarget = menuItem.CommandTarget,
-					Header = tuple.Item2,
-				};
-				if (!string.IsNullOrEmpty(tuple.Item3))
-					mi.InputGestureText = tuple.Item3;
-				MainWindow.CreateMenuItemImage(mi, this, "MemoryWindow", BackgroundType.MainMenuMenuItem);
-				menuItem.Items.Add(mi);
+		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
+			for (int i = 0; i < subCmds.Length; i++) {
+				var info = subCmds[i];
+				var attr = new ExportMenuItemAttribute { Header = info.Item2, Icon = "MemoryWindow" };
+				if (!string.IsNullOrEmpty(info.Item3))
+					attr.InputGestureText = info.Item3;
+				yield return new CreatedMenuItem(attr, info.Item1);
 			}
 		}
 	}
@@ -497,8 +523,11 @@ namespace dnSpy.Debugger {
 
 		public void Initialize(IIconBarObject context, MenuItem menuItem) {
 			var bpm = context as ILCodeBreakpoint;
-			if (bpm != null)
-				EnableDisableBreakpointDebugCtxMenuCommand.InitializeMenuItem(this, bpm.IsEnabled, 1, menuItem, BackgroundType.ContextMenuItem);
+			if (bpm != null) {
+				menuItem.IsEnabled = EnableDisableBreakpointDebugCtxMenuCommand.IsMenuItemEnabledInternal(1);
+				menuItem.Header = EnableDisableBreakpointDebugCtxMenuCommand.GetHeaderInternal(bpm.IsEnabled, 1);
+				ImageCache.Instance.CreateMenuItemImage(menuItem, GetType().Assembly, EnableDisableBreakpointDebugCtxMenuCommand.GetIconInternal(), BackgroundType.ContextMenuItem);
+			}
 		}
 	}
 }

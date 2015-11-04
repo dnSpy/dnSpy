@@ -18,6 +18,8 @@
 */
 
 using System.Diagnostics;
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Commands {
@@ -34,30 +36,30 @@ namespace dnSpy.Commands {
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "_Latest Release", MenuOrder = 99900)]
-	sealed class OpenReleasesUrlCommand : SimpleCommand {
-		public override void Execute(object parameter) {
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "_Latest Release", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 0)]
+	sealed class OpenReleasesUrlCommand : MenuItemBase {
+		public override void Execute(IMenuItemContext context) {
 			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"releases");
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "Latest _Build", MenuOrder = 99910)]
-	sealed class OpenLatestBuildUrlCommand : SimpleCommand {
-		public override void Execute(object parameter) {
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "Latest _Build", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 10)]
+	sealed class OpenLatestBuildUrlCommand : MenuItemBase {
+		public override void Execute(IMenuItemContext context) {
 			AboutHelpers.OpenWebPage("https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts");
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "_Issues", MenuOrder = 99920)]
-	sealed class OpenIssuesUrlCommand : SimpleCommand {
-		public override void Execute(object parameter) {
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "_Issues", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 20)]
+	sealed class OpenIssuesUrlCommand : MenuItemBase {
+		public override void Execute(IMenuItemContext context) {
 			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"issues");
 		}
 	}
 
-	[ExportMainMenuCommand(Menu = "_Help", MenuCategory = "Links", MenuHeader = "_Source Code", MenuOrder = 99940)]
-	sealed class OpenSourceCodeUrlCommand : SimpleCommand {
-		public override void Execute(object parameter) {
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "_Source Code", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 30)]
+	sealed class OpenSourceCodeUrlCommand : MenuItemBase {
+		public override void Execute(IMenuItemContext context) {
 			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL);
 		}
 	}

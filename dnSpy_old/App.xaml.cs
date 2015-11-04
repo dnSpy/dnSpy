@@ -17,8 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -29,6 +27,8 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using dnSpy;
+using dnSpy.Contracts;
 using dnSpy.NRefactory;
 using ICSharpCode.ILSpy.TextView;
 
@@ -51,20 +51,9 @@ namespace ICSharpCode.ILSpy {
 	/// Interaction logic for App.xaml
 	/// </summary>
 	public partial class App : Application {
-		static CompositionContainer compositionContainer;
-
-		public static CompositionContainer CompositionContainer {
-			get { return compositionContainer; }
-		}
-
 		internal static CommandLineArguments CommandLineArguments;
 
-		internal static IList<ExceptionData> StartupExceptions = new List<ExceptionData>();
-
-		internal class ExceptionData {
-			public Exception Exception;
-			public string PluginName;
-		}
+		readonly AppImpl appImpl;
 
 		public App() {
 			// Add Ctrl+Shift+Z as a redo command. Don't know why it isn't enabled by default.
@@ -81,28 +70,10 @@ namespace ICSharpCode.ILSpy {
 			}
 			InitializeComponent();
 
-			var catalog = new AggregateCatalog();
-			catalog.Catalogs.Add(new AssemblyCatalog(typeof(App).Assembly));
-			// Don't use DirectoryCatalog, that causes problems if the plugins are from the Internet zone
-			// see http://stackoverflow.com/questions/8063841/mef-loading-plugins-from-a-network-shared-folder
-			string appPath = Path.GetDirectoryName(typeof(App).Module.FullyQualifiedName);
-			foreach (string plugin in Directory.GetFiles(appPath, "*.Plugin.dll")) {
-				string shortName = Path.GetFileNameWithoutExtension(plugin);
-				try {
-					var asm = Assembly.Load(shortName);
-					asm.GetTypes();
-					catalog.Catalogs.Add(new AssemblyCatalog(asm));
-				}
-				catch (Exception ex) {
-					// Cannot show MessageBox here, because WPF would crash with a XamlParseException
-					// Remember and show exceptions in text output, once MainWindow is properly initialized
-					StartupExceptions.Add(new ExceptionData { Exception = ex, PluginName = shortName });
-				}
-			}
+			this.appImpl = new AppImpl();
+			appImpl.InitializeCompositionContainer(GetType().Assembly, "*.Plugin.dll");
 
-			compositionContainer = new CompositionContainer(catalog);
-
-			Languages.Initialize(compositionContainer);
+			Languages.Initialize(Globals.App.CompositionContainer);
 
 			if (!System.Diagnostics.Debugger.IsAttached) {
 				AppDomain.CurrentDomain.UnhandledException += ShowErrorBox;

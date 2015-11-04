@@ -49,13 +49,17 @@
       <Project>{FDFC1237-143F-4919-8318-4926901F4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\dnSpy\dnSpy.csproj">
+      <Project>{722257a9-1b14-4d63-b886-18a4229af4eb}</Project>
+      <Name>dnSpy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy_old\dnSpy_old.csproj">
+      <Project>{1e85eff9-e370-4683-83e4-8a3d063ff791}</Project>
+      <Name>dnSpy_old</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
       <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
       <Name>ICSharpCode.Decompiler</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\dnSpy_old\dnSpy.csproj">
-      <Project>{1E85EFF9-E370-4683-83E4-8A3D063FF791}</Project>
-      <Name>dnSpy</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

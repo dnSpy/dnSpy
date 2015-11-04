@@ -20,7 +20,7 @@
                     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:tnhex="clr-namespace:dnSpy.TreeNodes.Hex"
-                    xmlns:mvvm="clr-namespace:dnSpy.MVVM">
+                    xmlns:mvvm="clr-namespace:dnSpy.MVVM;assembly=dnSpy">
 
     <Style x:Key="MDTableIndexTextBlockStyle"
            BasedOn="{StaticResource {x:Type TextBlock}}"

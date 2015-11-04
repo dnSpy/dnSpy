@@ -60,9 +60,17 @@
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy_old\dnSpy.csproj">
-      <Project>{1e85eff9-e370-4683-83e4-8a3d063ff791}</Project>
+    <ProjectReference Include="..\dnSpy.Contracts\dnSpy.Contracts.csproj">
+      <Project>{9b234472-0e22-428c-9345-c8d9ee5e06af}</Project>
+      <Name>dnSpy.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy\dnSpy.csproj">
+      <Project>{722257a9-1b14-4d63-b886-18a4229af4eb}</Project>
       <Name>dnSpy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy_old\dnSpy_old.csproj">
+      <Project>{1e85eff9-e370-4683-83e4-8a3d063ff791}</Project>
+      <Name>dnSpy_old</Name>
     </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
       <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
@@ -79,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AsmEdHexDocument.cs" />
+    <Compile Include="AsmEditorContext.cs" />
     <Compile Include="AssemblyTreeNodeCreator.cs" />
     <Compile Include="Assembly\AssemblyCommands.cs" />
     <Compile Include="Assembly\AssemblyOptions.cs" />
@@ -86,6 +95,8 @@
       <DependentUpon>AssemblyOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Assembly\AssemblyOptionsVM.cs" />
+    <Compile Include="CodeContextMenuHandler.cs" />
+    <Compile Include="CodeContextMenuHandlerCommandProxy.cs" />
     <Compile Include="ContextMenuHandler.cs" />
     <Compile Include="Converters\CilObjectConverter.cs" />
     <Compile Include="Converters\InstructionOperandTextBoxStyleConverter.cs" />
@@ -253,7 +264,8 @@
     <Compile Include="DnlibDialogs\TypeSigCreatorOptions.cs" />
     <Compile Include="DnlibDialogs\TypeSigCreatorVM.cs" />
     <Compile Include="DnlibDialogs\TypeSigVM.cs" />
-    <Compile Include="EditCommand.cs" />
+    <Compile Include="EditMenuHandler.cs" />
+    <Compile Include="EditMenuHandlerCommandProxy.cs" />
     <Compile Include="Event\EventDefCommands.cs" />
     <Compile Include="Event\EventDefOptions.cs" />
     <Compile Include="Event\EventOptionsDlg.xaml.cs">
@@ -267,6 +279,8 @@
       <DependentUpon>FieldOptionsDlg.xaml</DependentUpon>
     </Compile>
     <Compile Include="Field\FieldOptionsVM.cs" />
+    <Compile Include="FileMenuHandler.cs" />
+    <Compile Include="FilesContextMenuHandler.cs" />
     <Compile Include="HexDocumentManager.cs" />
     <Compile Include="Hex\ContextMenuCommands.cs" />
     <Compile Include="Hex\HexBoxUndo.cs" />
@@ -412,11 +426,7 @@
     <Compile Include="SaveModule\SaveSingleModuleDlg.xaml.cs">
       <DependentUpon>SaveSingleModuleDlg.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TextEditorCommand.cs" />
-    <Compile Include="TextEditorCommandProxy.cs" />
     <Compile Include="ToolbarCommands.cs" />
-    <Compile Include="TreeNodeCommand.cs" />
-    <Compile Include="TreeViewCommandProxy.cs" />
     <Compile Include="Types\TypeDefCommands.cs" />
     <Compile Include="Types\TypeDefOptions.cs" />
     <Compile Include="Types\TypeOptionsDlg.xaml.cs">
@@ -731,11 +741,15 @@
     <Resource Include="Images\AssemblyToModule.png" />
     <Resource Include="Images\Binary.png" />
     <Resource Include="Images\Branch.png" />
+    <Resource Include="Images\Class.png" />
     <Resource Include="Images\Copy.png" />
     <Resource Include="Images\Cut.png" />
     <Resource Include="Images\Delete.png" />
     <Resource Include="Images\DeleteHistory.png" />
+    <Resource Include="Images\Field.png" />
+    <Resource Include="Images\Generic.png" />
     <Resource Include="Images\ILEditor.png" />
+    <Resource Include="Images\Method.png" />
     <Resource Include="Images\ModuleToAssembly.png" />
     <Resource Include="Images\NameSpace.png" />
     <Resource Include="Images\NewAssembly.png" />
@@ -750,6 +764,7 @@
     <Resource Include="Images\NewResource.png" />
     <Resource Include="Images\NewResourcesFile.png" />
     <Resource Include="Images\NOP.png" />
+    <Resource Include="Images\Open.png" />
     <Resource Include="Images\Paste.png" />
     <Resource Include="Images\Redo.png" />
     <Resource Include="Images\SaveAll.png" />

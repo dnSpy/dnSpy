@@ -153,7 +153,7 @@ namespace dnSpy.Debugger.Locals {
 		public LocalsControl() {
 			InitializeComponent();
 			MainWindow.InitializeTreeView(treeView, true);
-			dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
+			DnTheme.Themes.ThemeChanged += Themes_ThemeChanged;
 		}
 
 		public ICommand ShowCommand {

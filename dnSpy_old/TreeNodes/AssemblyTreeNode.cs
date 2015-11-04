@@ -28,8 +28,10 @@ using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy;
 using dnSpy.AsmEditor;
+using dnSpy.Contracts.Menus;
 using dnSpy.Files;
 using dnSpy.Images;
+using dnSpy.Menus;
 using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
 using dnSpy.TreeNodes.Hex;
@@ -190,19 +192,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		public override object Icon {
 			get {
 				if (dnSpyFile is UnknownFile)
-					return ImageCache.Instance.GetImage("AssemblyWarning", BackgroundType.TreeNode);
+					return ImageCache.Instance.GetImage(GetType().Assembly, "AssemblyWarning", BackgroundType.TreeNode);
 				if (Parent is AssemblyTreeNode || (dnSpyFile.ModuleDef != null && dnSpyFile.AssemblyDef == null))
-					return ImageCache.Instance.GetImage("AssemblyModule", BackgroundType.TreeNode);
+					return ImageCache.Instance.GetImage(GetType().Assembly, "AssemblyModule", BackgroundType.TreeNode);
 				if (dnSpyFile.ModuleDef == null && dnSpyFile.PEImage != null) {
 					return (dnSpyFile.PEImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0 ?
-						ImageCache.Instance.GetImage("AssemblyExe", BackgroundType.TreeNode) :
-						ImageCache.Instance.GetImage("Assembly", BackgroundType.TreeNode);
+						ImageCache.Instance.GetImage(GetType().Assembly, "AssemblyExe", BackgroundType.TreeNode) :
+						ImageCache.Instance.GetImage(GetType().Assembly, "Assembly", BackgroundType.TreeNode);
 				}
 				return dnSpyFile.ModuleDef != null &&
 					dnSpyFile.ModuleDef.IsManifestModule &&
 					(dnSpyFile.ModuleDef.Characteristics & Characteristics.Dll) == 0 ?
-					ImageCache.Instance.GetImage("AssemblyExe", BackgroundType.TreeNode) :
-					ImageCache.Instance.GetImage("Assembly", BackgroundType.TreeNode);
+					ImageCache.Instance.GetImage(GetType().Assembly, "AssemblyExe", BackgroundType.TreeNode) :
+					ImageCache.Instance.GetImage(GetType().Assembly, "Assembly", BackgroundType.TreeNode);
 			}
 		}
 
@@ -591,47 +593,58 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Load Dependencies", Order = 930, Category = "Other")]
-	sealed class LoadDependencies : IContextMenuEntry {
-		public bool IsVisible(ContextMenuEntryContext context) {
-			if (context.SelectedTreeNodes == null)
-				return false;
-			return context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n is AssemblyTreeNode && ((AssemblyTreeNode)n).DnSpyFile.ModuleDef != null);
+	[ExportMenuItem(Header = "_Load Dependencies", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 30)]
+	sealed class LoadDependencies : MenuItemBase {
+		public override bool IsVisible(IMenuItemContext context) {
+			return GetNodes(context).Any();
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			return true;
+		static IEnumerable<AssemblyTreeNode> GetNodes(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
+				yield break;
+			var nodes = context.FindByType<SharpTreeNode[]>();
+			if (nodes == null)
+				yield break;
+			foreach (var node in nodes) {
+				var asmNode = node as AssemblyTreeNode;
+				if (asmNode == null || asmNode.DnSpyFile.ModuleDef == null)
+					continue;
+				yield return asmNode;
+			}
 		}
 
-		public void Execute(ContextMenuEntryContext context) {
-			if (context.SelectedTreeNodes == null)
-				return;
-			foreach (var node in context.SelectedTreeNodes) {
-				var la = ((AssemblyTreeNode)node).DnSpyFile;
-				foreach (var assyRef in la.ModuleDef.GetAssemblyRefs()) {
+		public override void Execute(IMenuItemContext context) {
+			foreach (var node in GetNodes(context)) {
+				var la = node.DnSpyFile;
+				foreach (var assyRef in la.ModuleDef.GetAssemblyRefs())
 					MainWindow.Instance.DnSpyFileList.AssemblyResolver.Resolve(assyRef, la.ModuleDef);
-				}
 			}
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Add to Main List", Order = 950, Category = "Other")]
-	sealed class AddToMainList : IContextMenuEntry {
-		public bool IsVisible(ContextMenuEntryContext context) {
-			if (context.SelectedTreeNodes == null)
-				return false;
-			return context.SelectedTreeNodes.Where(n => n is AssemblyTreeNode).Any(n => ((AssemblyTreeNode)n).IsAutoLoaded);
+	[ExportMenuItem(Header = "_Add to Main List", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 40)]
+	sealed class AddToMainList : MenuItemBase {
+		public override bool IsVisible(IMenuItemContext context) {
+			return GetNodes(context).Any();
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			return true;
+		static IEnumerable<AssemblyTreeNode> GetNodes(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
+				yield break;
+			var nodes = context.FindByType<SharpTreeNode[]>();
+			if (nodes == null)
+				yield break;
+			foreach (var node in nodes) {
+				var asmNode = node as AssemblyTreeNode;
+				if (asmNode == null || !asmNode.IsAutoLoaded)
+					continue;
+				yield return asmNode;
+			}
 		}
 
-		public void Execute(ContextMenuEntryContext context) {
-			if (context.SelectedTreeNodes == null)
-				return;
-			foreach (var node in context.SelectedTreeNodes) {
-				foreach (var asmNode in GetAllRelatedNodes((AssemblyTreeNode)node)) {
+		public override void Execute(IMenuItemContext context) {
+			foreach (var node in GetNodes(context)) {
+				foreach (var asmNode in GetAllRelatedNodes(node)) {
 					var file = asmNode.DnSpyFile;
 					file.IsAutoLoaded = false;
 					asmNode.RaisePropertyChanged("Foreground");

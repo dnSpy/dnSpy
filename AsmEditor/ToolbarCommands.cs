@@ -17,9 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Windows;
+using System.Windows.Input;
 using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.AsmEditor {
 	[ExportToolbarCommand(ToolTip = "Undo (Ctrl+Z)",
@@ -46,17 +47,18 @@ namespace dnSpy.AsmEditor {
 						  ToolbarIcon = "DeleteHistory",
 						  ToolbarCategory = "AsmEdit",
 						  ToolbarOrder = 5020)]
-	sealed class DeleteHistoryAsmEdCommand : TreeNodeCommand {
-		public DeleteHistoryAsmEdCommand()
-			: base(true) {
+	sealed class DeleteHistoryAsmEdCommand : ICommand {
+		event EventHandler ICommand.CanExecuteChanged {
+			add { CommandManager.RequerySuggested += value; }
+			remove { CommandManager.RequerySuggested -= value; }
 		}
 
-		protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
+		bool ICommand.CanExecute(object parameter) {
 			return UndoCommandManager.Instance.CanUndo ||
 				UndoCommandManager.Instance.CanRedo;
 		}
 
-		protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
+		void ICommand.Execute(object parameter) {
 			var res = MainWindow.Instance.ShowIgnorableMessageBox("undo: clear history", "Do you want to clear the undo/redo history?", MessageBoxButton.YesNo);
 			if (res == null || res == MsgBoxButton.OK)
 				UndoCommandManager.Instance.Clear();

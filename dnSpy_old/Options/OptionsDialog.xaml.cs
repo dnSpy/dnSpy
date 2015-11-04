@@ -22,7 +22,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Menus;
 using dnSpy.Controls;
+using dnSpy.Menus;
 using dnSpy.MVVM;
 
 namespace ICSharpCode.ILSpy.Options {
@@ -34,7 +37,7 @@ namespace ICSharpCode.ILSpy.Options {
 			public static readonly MefState Instance = new MefState();
 
 			MefState() {
-				App.CompositionContainer.ComposeParts(this);
+				Globals.App.CompositionContainer.ComposeParts(this);
 			}
 
 			[ImportMany(typeof(IOptionPageCreator))]
@@ -153,9 +156,9 @@ namespace ICSharpCode.ILSpy.Options {
 		public int Order { get; set; }
 	}
 
-	[ExportMainMenuCommand(Menu = "_View", MenuHeader = "_Options...", MenuIcon = "Settings", MenuCategory = "Options", MenuOrder = 3999)]
-	sealed class ShowOptionsCommand : SimpleCommand {
-		public override void Execute(object parameter) {
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "_Options...", Icon = "Settings", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTSDLG, Order = 1000000)]
+	sealed class ShowOptionsCommand : MenuItemBase {
+		public override void Execute(IMenuItemContext context) {
 			OptionsDialog dlg = new OptionsDialog();
 			dlg.Owner = MainWindow.Instance;
 			if (dlg.ShowDialog() == true) {

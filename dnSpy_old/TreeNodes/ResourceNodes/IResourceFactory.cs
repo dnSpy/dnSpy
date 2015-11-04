@@ -20,7 +20,7 @@
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts;
 using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.TreeNodes {
@@ -47,7 +47,7 @@ namespace dnSpy.TreeNodes {
 
 	public static class ResourceFactory {
 		static TOutput Create<TInput, TOutput>(ModuleDef module, TInput resInput) where TOutput : class {
-			foreach (var creator in App.CompositionContainer.GetExportedValues<IResourceFactory<TInput, TOutput>>().OrderByDescending(a => a.Priority)) {
+			foreach (var creator in Globals.App.CompositionContainer.GetExportedValues<IResourceFactory<TInput, TOutput>>().OrderByDescending(a => a.Priority)) {
 				try {
 					var resNode = creator.Create(module, resInput);
 					if (resNode != null)

@@ -24,7 +24,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.dntheme;
+using dnSpy.DnTheme;
 using dnSpy.NRefactory;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;

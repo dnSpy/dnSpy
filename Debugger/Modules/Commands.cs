@@ -18,19 +18,18 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Threading;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Contracts.Menus;
 using dnSpy.Debugger.IMModules;
 using dnSpy.Debugger.Memory;
 using dnSpy.Files;
-using dnSpy.Images;
 using dnSpy.MVVM;
 using dnSpy.MVVM.Dialogs;
 using dnSpy.NRefactory;
@@ -48,23 +47,33 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	sealed class ModulesCtxMenuCommandProxy : ContextMenuEntryCommandProxy {
+	sealed class ModulesCtxMenuCommandProxy : MenuItemCommandProxy<ModulesCtxMenuContext> {
 		public ModulesCtxMenuCommandProxy(ModulesCtxMenuCommand cmd)
 			: base(cmd) {
 		}
 
-		protected override ContextMenuEntryContext CreateContext() {
-			return ContextMenuEntryContext.Create(ModulesControlCreator.ModulesControlInstance.listView);
+		protected override ModulesCtxMenuContext CreateContext() {
+			return ModulesCtxMenuCommand.Create();
 		}
 	}
 
-	abstract class ModulesCtxMenuCommand : ContextMenuEntryBase<ModulesCtxMenuContext> {
-		protected override ModulesCtxMenuContext CreateContext(ContextMenuEntryContext context) {
+	abstract class ModulesCtxMenuCommand : MenuItemBase<ModulesCtxMenuContext> {
+		protected sealed override object CachedContextKey {
+			get { return ContextKey; }
+		}
+		static readonly object ContextKey = new object();
+
+		protected sealed override ModulesCtxMenuContext CreateContext(IMenuItemContext context) {
 			if (DebugManager.Instance.ProcessState == DebuggerProcessState.Terminated)
 				return null;
 			var ui = ModulesControlCreator.ModulesControlInstance;
-			if (context.Element != ui.listView)
+			if (context.CreatorObject.Object != ui.listView)
 				return null;
+			return Create();
+		}
+
+		internal static ModulesCtxMenuContext Create() {
+			var ui = ModulesControlCreator.ModulesControlInstance;
 			var vm = ui.DataContext as ModulesVM;
 			if (vm == null)
 				return null;
@@ -76,9 +85,9 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Cop_y", Order = 100, Category = "CopyMOD", Icon = "Copy", InputGestureText = "Ctrl+C")]
+	[ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_MODULES_COPY, Order = 0)]
 	sealed class CopyCallModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		protected override void Execute(ModulesCtxMenuContext context) {
+		public override void Execute(ModulesCtxMenuContext context) {
 			var output = new PlainTextOutput();
 			foreach (var vm in context.SelectedItems) {
 				var printer = new ModulePrinter(output, DebuggerSettings.Instance.UseHexadecimal);
@@ -110,29 +119,29 @@ namespace dnSpy.Debugger.Modules {
 				Clipboard.SetText(s);
 		}
 
-		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+		public override bool IsEnabled(ModulesCtxMenuContext context) {
 			return context.SelectedItems.Length > 0;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Select _All", Order = 110, Category = "CopyMOD", Icon = "Select", InputGestureText = "Ctrl+A")]
+	[ExportMenuItem(Header = "Select _All", Icon = "Select", InputGestureText = "Ctrl+A", Group = MenuConstants.GROUP_CTX_DBG_MODULES_COPY, Order = 10)]
 	sealed class SelectAllModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		protected override void Execute(ModulesCtxMenuContext context) {
+		public override void Execute(ModulesCtxMenuContext context) {
 			ModulesControlCreator.ModulesControlInstance.listView.SelectAll();
 		}
 
-		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+		public override bool IsEnabled(ModulesCtxMenuContext context) {
 			return ModulesControlCreator.ModulesControlInstance.listView.Items.Count > 0;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Go To Module", Order = 200, Category = "MODGoTo", Icon = "AssemblyModule", InputGestureText = "Enter")]
+	[ExportMenuItem(Header = "_Go To Module", Icon = "AssemblyModule", InputGestureText = "Enter", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 0)]
 	sealed class GoToModuleModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		protected override void Execute(ModulesCtxMenuContext context) {
+		public override void Execute(ModulesCtxMenuContext context) {
 			ExecuteInternal(context, false);
 		}
 
-		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+		public override bool IsEnabled(ModulesCtxMenuContext context) {
 			return CanGoToModule(context);
 		}
 
@@ -179,26 +188,26 @@ namespace dnSpy.Debugger.Modules {
 	}
 
 	sealed class GoToModuleNewTabModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		protected override void Execute(ModulesCtxMenuContext context) {
+		public override void Execute(ModulesCtxMenuContext context) {
 			GoToModuleModulesCtxMenuCommand.ExecuteInternal(context, true);
 		}
 
-		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+		public override bool IsEnabled(ModulesCtxMenuContext context) {
 			return GoToModuleModulesCtxMenuCommand.CanGoToModule(context);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Open Module from Memory", Order = 210, Category = "MODGoTo", Icon = "AssemblyModule")]
+	[ExportMenuItem(Header = "Open Module from Memory", Icon = "AssemblyModule", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 10)]
 	sealed class OpenModuleFromMemoryModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		protected override void Execute(ModulesCtxMenuContext context) {
+		public override void Execute(ModulesCtxMenuContext context) {
 			ExecuteInternal(context, false);
 		}
 
-		protected override bool IsVisible(ModulesCtxMenuContext context) {
+		public override bool IsVisible(ModulesCtxMenuContext context) {
 			return IsEnabled(context);
 		}
 
-		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+		public override bool IsEnabled(ModulesCtxMenuContext context) {
 			return CanGoToModule(context);
 		}
 
@@ -224,41 +233,54 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show in Memory Window", Order = 220, Category = "MODGoTo", Icon = "MemoryWindow")]
+	static class Constants {
+		public const string SHOW_IN_MEMORY_WINDOW_GUID = "517AC97D-2619-477E-961E-B5519BB7FCE3";
+		public const string GROUP_SHOW_IN_MEMORY_WINDOW = "0,E1F6906B-64C8-4411-B8B7-07C331197BFE";
+	}
+
+	[ExportMenuItem(Header = "Show in Memory Window", Icon = "MemoryWindow", Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 20)]
 	sealed class ShowInMemoryXModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		protected override void Execute(ModulesCtxMenuContext context) {
+		public override void Execute(ModulesCtxMenuContext context) {
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = Constants.GROUP_SHOW_IN_MEMORY_WINDOW, Order = 0)]
+	sealed class ShowInMemoryXModulesSubCtxMenuCommand : ModulesCtxMenuCommand, IMenuItemCreator {
+		public override void Execute(ModulesCtxMenuContext context) {
 		}
 
-		static ShowInMemoryXModulesCtxMenuCommand() {
-			subCmds = new Tuple<ICommand, string, string>[MemoryControlCreator.NUMBER_OF_MEMORY_WINDOWS];
+		static ShowInMemoryXModulesSubCtxMenuCommand() {
+			subCmds = new Tuple<IMenuItem, string, string>[MemoryControlCreator.NUMBER_OF_MEMORY_WINDOWS];
 			for (int i = 0; i < subCmds.Length; i++)
-				subCmds[i] = Tuple.Create((ICommand)new ModulesCtxMenuCommandProxy(new ShowInMemoryWindowModulesCtxMenuCommand(i + 1)), MemoryControlCreator.GetHeaderText(i), MemoryControlCreator.GetCtrlInputGestureText(i));
+				subCmds[i] = Tuple.Create((IMenuItem)new ShowInMemoryWindowModulesCtxMenuCommand(i + 1), MemoryControlCreator.GetHeaderText(i), MemoryControlCreator.GetCtrlInputGestureText(i));
 		}
 
-		static readonly Tuple<ICommand, string, string>[] subCmds;
+		static readonly Tuple<IMenuItem, string, string>[] subCmds;
 
-		protected override void Initialize(ModulesCtxMenuContext context, MenuItem menuItem) {
-			foreach (var tuple in subCmds) {
-				var mi = new MenuItem {
-					Command = tuple.Item1,
-					Header = tuple.Item2,
-				};
-				if (!string.IsNullOrEmpty(tuple.Item3))
-					mi.InputGestureText = tuple.Item3;
-				MainWindow.CreateMenuItemImage(mi, this, "MemoryWindow", BackgroundType.ContextMenuItem);
-				menuItem.Items.Add(mi);
+		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
+			var ctx = CreateContext(context);
+			Debug.Assert(ctx != null);
+			if (ctx == null)
+				yield break;
+
+			for (int i = 0; i < subCmds.Length; i++) {
+				var info = subCmds[i];
+				var attr = new ExportMenuItemAttribute { Header = info.Item2, Icon = "MemoryWindow" };
+				if (!string.IsNullOrEmpty(info.Item3))
+					attr.InputGestureText = info.Item3;
+				yield return new CreatedMenuItem(attr, info.Item1);
 			}
 		}
 	}
 
 	sealed class ShowInMemoryModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		protected override void Execute(ModulesCtxMenuContext context) {
+		public override void Execute(ModulesCtxMenuContext context) {
 			var vm = ShowInMemoryWindowModulesCtxMenuCommand.GetModule(context);
 			if (vm != null)
 				MemoryUtils.ShowInMemoryWindow(vm.Module.Address, vm.Module.Size);
 		}
 
-		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+		public override bool IsEnabled(ModulesCtxMenuContext context) {
 			return ShowInMemoryWindowModulesCtxMenuCommand.GetModule(context) != null;
 		}
 	}
@@ -270,13 +292,13 @@ namespace dnSpy.Debugger.Modules {
 			this.windowNumber = windowNumber;
 		}
 
-		protected override void Execute(ModulesCtxMenuContext context) {
+		public override void Execute(ModulesCtxMenuContext context) {
 			var vm = GetModule(context);
 			if (vm != null)
 				MemoryUtils.ShowInMemoryWindow(windowNumber, vm.Module.Address, vm.Module.Size);
 		}
 
-		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+		public override bool IsEnabled(ModulesCtxMenuContext context) {
 			return GetModule(context) != null;
 		}
 
@@ -290,25 +312,25 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Hexadecimal Display", Order = 300, Category = "MODMiscOptions")]
+	[ExportMenuItem(Header = "_Hexadecimal Display", Group = MenuConstants.GROUP_CTX_DBG_MODULES_HEXOPTS, Order = 0)]
 	sealed class HexadecimalDisplayModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		protected override void Execute(ModulesCtxMenuContext context) {
+		public override void Execute(ModulesCtxMenuContext context) {
 			DebuggerSettings.Instance.UseHexadecimal = !DebuggerSettings.Instance.UseHexadecimal;
 		}
 
-		protected override void Initialize(ModulesCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = DebuggerSettings.Instance.UseHexadecimal;
+		public override bool IsChecked(ModulesCtxMenuContext context) {
+			return DebuggerSettings.Instance.UseHexadecimal;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Open Containing Folder", Order = 400, Category = "MOD1")]
+	[ExportMenuItem(Header = "_Open Containing Folder", Group = MenuConstants.GROUP_CTX_DBG_MODULES_DIRS, Order = 0)]
 	sealed class OpenContainingFolderModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		protected override void Execute(ModulesCtxMenuContext context) {
+		public override void Execute(ModulesCtxMenuContext context) {
 			if (context.SelectedItems.Length > 0)
 				OpenContainingFolder(context.SelectedItems[0].Module.Name);
 		}
 
-		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+		public override bool IsEnabled(ModulesCtxMenuContext context) {
 			return context.SelectedItems.Length == 1 &&
 				!context.SelectedItems[0].Module.IsDynamic &&
 				!context.SelectedItems[0].Module.IsInMemory;
@@ -325,21 +347,21 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Copy Filename", Order = 410, Category = "MOD1")]
+	[ExportMenuItem(Header = "Copy Filename", Group = MenuConstants.GROUP_CTX_DBG_MODULES_DIRS, Order = 10)]
 	sealed class CopyFilenameModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		protected override void Execute(ModulesCtxMenuContext context) {
+		public override void Execute(ModulesCtxMenuContext context) {
 			if (context.SelectedItems.Length > 0)
 				Clipboard.SetText(context.SelectedItems[0].Module.Name);
 		}
 
-		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+		public override bool IsEnabled(ModulesCtxMenuContext context) {
 			return context.SelectedItems.Length == 1;
 		}
 	}
 
-	[ExportContextMenuEntry(Order = 500, Category = "MOD2")]
+	[ExportMenuItem(Group = MenuConstants.GROUP_CTX_DBG_MODULES_SAVE, Order = 0)]
 	sealed class SaveModuleToDiskModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		protected override void Execute(ModulesCtxMenuContext context) {
+		public override void Execute(ModulesCtxMenuContext context) {
 			Save(GetSavableFiles(context.SelectedItems));
 		}
 
@@ -393,13 +415,13 @@ namespace dnSpy.Debugger.Modules {
 			MainWindow.Instance.ShowMessageBox(string.Format("An error occurred:\n\n{0}", data.ErrorMessage));
 		}
 
-		protected override bool IsEnabled(ModulesCtxMenuContext context) {
+		public override bool IsEnabled(ModulesCtxMenuContext context) {
 			return GetSavableFiles(context.SelectedItems).Length > 0;
 		}
 
-		protected override void Initialize(ModulesCtxMenuContext context, MenuItem menuItem) {
+		public override string GetHeader(ModulesCtxMenuContext context) {
 			var files = GetSavableFiles(context.SelectedItems);
-			menuItem.Header = files.Length > 1 ? string.Format("Save {0} Modules...", files.Length) : "Save Module...";
+			return files.Length > 1 ? string.Format("Save {0} Modules...", files.Length) : "Save Module...";
 		}
 
 		static ModuleVM[] GetSavableFiles(ModuleVM[] files) {

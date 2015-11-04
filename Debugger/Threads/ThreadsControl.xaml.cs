@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.Threads {
 
 		public ThreadsControl() {
 			InitializeComponent();
-			dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
+			DnTheme.Themes.ThemeChanged += Themes_ThemeChanged;
 		}
 
 		public ICommand ShowCommand {

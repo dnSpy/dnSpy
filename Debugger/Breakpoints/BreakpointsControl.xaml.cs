@@ -75,7 +75,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		public BreakpointsControl() {
 			InitializeComponent();
-			dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
+			DnTheme.Themes.ThemeChanged += Themes_ThemeChanged;
 		}
 
 		public ICommand ShowCommand {

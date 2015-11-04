@@ -5,7 +5,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="dntheme/wpf.styles.templates.xaml" />
+                <ResourceDictionary Source="DnTheme/wpf.styles.templates.xaml" />
                 <ResourceDictionary Source="TreeNodes/Hex/wpf.styles.templates.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

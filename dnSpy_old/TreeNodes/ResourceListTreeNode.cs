@@ -43,11 +43,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public override object Icon {
-			get { return ImageCache.Instance.GetImage("FolderClosed", BackgroundType.TreeNode); }
+			get { return ImageCache.Instance.GetImage(GetType().Assembly, "FolderClosed", BackgroundType.TreeNode); }
 		}
 
 		public override object ExpandedIcon {
-			get { return ImageCache.Instance.GetImage("FolderOpen", BackgroundType.TreeNode); }
+			get { return ImageCache.Instance.GetImage(GetType().Assembly, "FolderOpen", BackgroundType.TreeNode); }
 		}
 
 		protected override void LoadChildren() {

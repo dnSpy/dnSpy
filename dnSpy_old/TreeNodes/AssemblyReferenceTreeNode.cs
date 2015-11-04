@@ -67,7 +67,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public override object Icon {
-			get { return ImageCache.Instance.GetImage("AssemblyReference", BackgroundType.TreeNode); }
+			get { return ImageCache.Instance.GetImage(GetType().Assembly, "AssemblyReference", BackgroundType.TreeNode); }
 		}
 
 		public override FilterResult Filter(FilterSettings settings) {

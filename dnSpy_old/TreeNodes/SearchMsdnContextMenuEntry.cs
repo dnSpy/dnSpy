@@ -19,20 +19,104 @@
 using System.Linq;
 using System.Diagnostics;
 using dnlib.DotNet;
+using dnSpy.Menus;
+using dnSpy.Contracts.Menus;
+using System;
+using ICSharpCode.TreeView;
+using System.Collections.Generic;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
-	[ExportContextMenuEntry(Header = "Search _MSDN", Icon = "Search", Order = 910, Category = "Other")]
-	internal sealed class SearchMsdnContextMenuEntry : IContextMenuEntry {
+	static class SearchMsdnCtxMenuCommand {
 		private static string msdnAddress = "http://msdn.microsoft.com/en-us/library/{0}";
 
-		public bool IsVisible(ContextMenuEntryContext context) {
-			if (context.SelectedTreeNodes != null)
-				return context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n is NamespaceTreeNode || n is IMemberTreeNode);
+		[ExportMenuItem(Header = "Search _MSDN", Icon = "Search", Group = MenuConstants.GROUP_CTX_CODE_OTHER, Order = 10)]
+		sealed class CodeCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetMemberRef(context) != null;
+			}
 
-			if (context.Reference != null && context.Reference.Reference is IMemberRef)
-				return IsPublic(context.Reference.Reference as IMemberRef);
+			static IMemberRef GetMemberRef(IMenuItemContext context) {
+				return GetMemberRef(context, MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID);
+			}
 
-			return false;
+			public override void Execute(IMenuItemContext context) {
+				SearchMsdn(GetMemberRef(context));
+			}
+
+			internal static IMemberRef GetMemberRef(IMenuItemContext context, string guid) {
+				if (context.CreatorObject.Guid != new Guid(guid))
+					return null;
+				var @ref = context.FindByType<CodeReferenceSegment>();
+				return @ref == null ? null : @ref.Reference as IMemberRef;
+			}
+		}
+
+		[ExportMenuItem(Header = "Search _MSDN", Icon = "Search", Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 10)]
+		sealed class SearchCommand : MenuItemBase {
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetMemberRef(context) != null;
+			}
+
+			static IMemberRef GetMemberRef(IMenuItemContext context) {
+				return CodeCommand.GetMemberRef(context, MenuConstants.GUIDOBJ_SEARCH_GUID);
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				SearchMsdn(GetMemberRef(context));
+			}
+		}
+
+		[ExportMenuItem(Header = "Search _MSDN", Icon = "Search", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 10)]
+		sealed class FilesCommand : MenuItemBase {
+			static IEnumerable<SharpTreeNode> GetNodes(IMenuItemContext context) {
+				return GetNodes(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
+			}
+
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetNodes(context).Any();
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				ExecuteInternal(GetNodes(context));
+			}
+
+			internal static IEnumerable<SharpTreeNode> GetNodes(IMenuItemContext context, string guid) {
+				if (context.CreatorObject.Guid != new Guid(guid))
+					yield break;
+				var nodes = context.FindByType<SharpTreeNode[]>();
+				if (nodes == null)
+					yield break;
+				foreach (var node in nodes) {
+					var mrNode = node as IMemberTreeNode;
+					if (mrNode != null) {
+						if (IsPublic(mrNode.Member))
+							yield return node;
+						continue;
+					}
+
+					var nsNode = node as NamespaceTreeNode;
+					if (nsNode != null) {
+						if (!string.IsNullOrEmpty(nsNode.Name))
+							yield return node;
+						continue;
+					}
+				}
+			}
+		}
+
+		[ExportMenuItem(Header = "Search _MSDN", Icon = "Search", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
+		sealed class AnalyzerCommand : MenuItemBase {
+			static IEnumerable<SharpTreeNode> GetNodes(IMenuItemContext context) {
+				return FilesCommand.GetNodes(context, MenuConstants.GUIDOBJ_ANALYZER_GUID);
+			}
+
+			public override bool IsVisible(IMenuItemContext context) {
+				return GetNodes(context).Any();
+			}
+
+			public override void Execute(IMenuItemContext context) {
+				ExecuteInternal(GetNodes(context));
+			}
 		}
 
 		static IMemberDef Resolve(IMemberRef memberRef) {
@@ -156,45 +240,6 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 				evt.OtherMethods.Any(m => IsAccessible(m));
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			if (context.SelectedTreeNodes != null) {
-				foreach (var node in context.SelectedTreeNodes) {
-					var mrNode = node as IMemberTreeNode;
-					if (mrNode != null && !IsPublic(mrNode.Member))
-						return false;
-
-					var namespaceNode = node as NamespaceTreeNode;
-					if (namespaceNode != null && string.IsNullOrEmpty(namespaceNode.Name))
-						return false;
-				}
-
-				return true;
-			}
-
-			return context.Reference != null && context.Reference.Reference is IMemberRef;
-		}
-
-		public void Execute(ContextMenuEntryContext context) {
-			if (context.SelectedTreeNodes != null) {
-				foreach (var node in context.SelectedTreeNodes) {
-					var nsNode = node as NamespaceTreeNode;
-					if (nsNode != null) {
-						SearchMsdn(string.Format(msdnAddress, nsNode.Name));
-						continue;
-					}
-
-					var mrNode = node as IMemberTreeNode;
-					if (mrNode != null) {
-						SearchMsdn(mrNode.Member);
-						continue;
-					}
-				}
-			}
-
-			if (context.Reference != null)
-				SearchMsdn(context.Reference.Reference as IMemberRef);
-		}
-
 		static string GetAddress(IMemberRef memberRef) {
 			var member = Resolve(memberRef);
 			if (member == null)
@@ -218,8 +263,25 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return string.Format(msdnAddress, memberName.Replace('/', '.'));
 		}
 
+		static void ExecuteInternal(IEnumerable<SharpTreeNode> nodes) {
+			foreach (var node in nodes) {
+				var nsNode = node as NamespaceTreeNode;
+				if (nsNode != null) {
+					SearchMsdn(string.Format(msdnAddress, nsNode.Name));
+					continue;
+				}
+
+				var mrNode = node as IMemberTreeNode;
+				if (mrNode != null) {
+					SearchMsdn(mrNode.Member);
+					continue;
+				}
+			}
+		}
+
 		public static void SearchMsdn(IMemberRef memberRef) {
-			SearchMsdn(GetAddress(memberRef));
+			if (memberRef != null)
+				SearchMsdn(GetAddress(memberRef));
 		}
 
 		static void SearchMsdn(string address) {

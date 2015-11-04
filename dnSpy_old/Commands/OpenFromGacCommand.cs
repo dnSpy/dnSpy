@@ -17,10 +17,13 @@
 // DEALINGS IN THE SOFTWARE.
 
 
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
+
 namespace ICSharpCode.ILSpy {
-	[ExportMainMenuCommand(Menu = "_File", MenuHeader = "Open from _GAC...", MenuIcon = "AssemblyListGAC", MenuCategory = "Open", MenuOrder = 1110)]
-	sealed class OpenFromGacCommand : SimpleCommand {
-		public override void Execute(object parameter) {
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "Open from _GAC...", Icon = "AssemblyListGAC", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 10)]
+	sealed class OpenFromGacCommand : MenuItemBase {
+		public override void Execute(IMenuItemContext context) {
 			OpenFromGacDialog dlg = new OpenFromGacDialog();
 			dlg.Owner = MainWindow.Instance;
 			if (dlg.ShowDialog() == true)

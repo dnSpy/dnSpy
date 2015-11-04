@@ -47,7 +47,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		public override object Icon {
-			get { return ImageCache.Instance.GetImage("ModuleFile", BackgroundType.TreeNode); }
+			get { return ImageCache.Instance.GetImage(GetType().Assembly, "ModuleFile", BackgroundType.TreeNode); }
 		}
 
 		public sealed override FilterResult Filter(FilterSettings settings) {

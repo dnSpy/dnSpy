@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using dnSpy.dntheme;
+using dnSpy.DnTheme;
 using dnSpy.Files;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;

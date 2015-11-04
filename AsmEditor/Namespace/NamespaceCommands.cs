@@ -22,9 +22,9 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.Menus;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -35,7 +35,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 
 		public void OnLoaded() {
-			MainWindow.Instance.TreeView.AddCommandBinding(ApplicationCommands.Delete, new TreeViewCommandProxy(new DeleteNamespaceCommand.TheEditCommand()));
+			MainWindow.Instance.TreeView.AddCommandBinding(ApplicationCommands.Delete, new EditMenuHandlerCommandProxy(new DeleteNamespaceCommand.EditMenuCommand()));
 		}
 	}
 
@@ -43,26 +43,33 @@ namespace dnSpy.AsmEditor.Namespace {
 	sealed class DeleteNamespaceCommand : IUndoCommand {
 		const string CMD_NAME_SINGULAR = "Delete Namespace";
 		const string CMD_NAME_PLURAL_FORMAT = "Delete {0} Namespaces";
-		[ExportContextMenuEntry(Category = "AsmEd",
-								Icon = "Delete",
-								InputGestureText = "Del",
-								Order = 370)]
-		[ExportMainMenuCommand(Menu = "_Edit",
-							MenuIcon = "Delete",
-							MenuInputGestureText = "Del",
-							MenuCategory = "AsmEd",
-							MenuOrder = 2170)]
-		internal sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return DeleteNamespaceCommand.CanExecute(nodes);
+		[ExportMenuItem(Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 70)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return DeleteNamespaceCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				DeleteNamespaceCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				DeleteNamespaceCommand.Execute(context.Nodes);
 			}
 
-			protected override void Initialize(ILSpyTreeNode[] nodes, MenuItem menuItem) {
-				menuItem.Header = GetCommandName(nodes.Length);
+			public override string GetHeader(AsmEditorContext context) {
+				return GetCommandName(context.Nodes.Length);
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 70)]
+		internal sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return DeleteNamespaceCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(AsmEditorContext context) {
+				DeleteNamespaceCommand.Execute(context.Nodes);
+			}
+
+			public override string GetHeader(AsmEditorContext context) {
+				return GetCommandName(context.Nodes.Length);
 			}
 		}
 
@@ -74,6 +81,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 		static bool CanExecute(ILSpyTreeNode[] nodes) {
 			return nodes != null &&
+				nodes.Length > 0 &&
 				nodes.All(a => a is NamespaceTreeNode);
 		}
 
@@ -195,22 +203,25 @@ namespace dnSpy.AsmEditor.Namespace {
 	[DebuggerDisplay("{Description}")]
 	sealed class MoveNamespaceTypesToEmptypNamespaceCommand : IUndoCommand {
 		const string CMD_NAME = "Move Types to Empty Namespace";
-		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Namespace",
-								Category = "AsmEd",
-								Order = 400)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
-							   Menu = "_Edit",
-							   MenuIcon = "Namespace",
-							   MenuCategory = "AsmEd",
-							   MenuOrder = 2200)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME, Icon = "Namespace", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 0)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				MoveNamespaceTypesToEmptypNamespaceCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				MoveNamespaceTypesToEmptypNamespaceCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Namespace", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 0)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(AsmEditorContext context) {
+				MoveNamespaceTypesToEmptypNamespaceCommand.Execute(context.Nodes);
 			}
 		}
 
@@ -328,22 +339,25 @@ namespace dnSpy.AsmEditor.Namespace {
 	[DebuggerDisplay("{Description}")]
 	sealed class RenameNamespaceCommand : IUndoCommand {
 		const string CMD_NAME = "Rename Namespace";
-		[ExportContextMenuEntry(Header = CMD_NAME,
-								Icon = "Namespace",
-								Category = "AsmEd",
-								Order = 401)]
-		[ExportMainMenuCommand(MenuHeader = CMD_NAME,
-							   Menu = "_Edit",
-							   MenuIcon = "Namespace",
-							   MenuCategory = "AsmEd",
-							   MenuOrder = 2201)]
-		sealed class TheEditCommand : EditCommand {
-			protected override bool CanExecuteInternal(ILSpyTreeNode[] nodes) {
-				return RenameNamespaceCommand.CanExecute(nodes);
+		[ExportMenuItem(Header = CMD_NAME, Icon = "Namespace", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 10)]
+		sealed class FilesCommand : FilesContextMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return RenameNamespaceCommand.CanExecute(context.Nodes);
 			}
 
-			protected override void ExecuteInternal(ILSpyTreeNode[] nodes) {
-				RenameNamespaceCommand.Execute(nodes);
+			public override void Execute(AsmEditorContext context) {
+				RenameNamespaceCommand.Execute(context.Nodes);
+			}
+		}
+
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Namespace", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 10)]
+		sealed class EditMenuCommand : EditMenuHandler {
+			public override bool IsVisible(AsmEditorContext context) {
+				return RenameNamespaceCommand.CanExecute(context.Nodes);
+			}
+
+			public override void Execute(AsmEditorContext context) {
+				RenameNamespaceCommand.Execute(context.Nodes);
 			}
 		}
 

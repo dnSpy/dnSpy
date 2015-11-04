@@ -33,7 +33,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		}
 
 		public override object Icon {
-			get { return ImageCache.Instance.GetImage("Search", BackgroundType.TreeNode); }
+			get { return ImageCache.Instance.GetImage(GetType().Assembly, "Search", BackgroundType.TreeNode); }
 		}
 
 		protected override void LoadChildren() {

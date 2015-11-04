@@ -19,16 +19,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
+using dnSpy.Contracts.Menus;
 using dnSpy.Debugger.Memory;
-using dnSpy.Images;
+using dnSpy.Menus;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
@@ -45,23 +45,33 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
-	sealed class LocalsCtxMenuCommandProxy : ContextMenuEntryCommandProxy {
+	sealed class LocalsCtxMenuCommandProxy : MenuItemCommandProxy<LocalsCtxMenuContext> {
 		public LocalsCtxMenuCommandProxy(LocalsCtxMenuCommand cmd)
 			: base(cmd) {
 		}
 
-		protected override ContextMenuEntryContext CreateContext() {
-			return ContextMenuEntryContext.Create(LocalsControlCreator.LocalsControlInstance.treeView);
+		protected override LocalsCtxMenuContext CreateContext() {
+			return LocalsCtxMenuCommand.Create();
 		}
 	}
 
-	abstract class LocalsCtxMenuCommand : ContextMenuEntryBase<LocalsCtxMenuContext> {
-		protected override LocalsCtxMenuContext CreateContext(ContextMenuEntryContext context) {
+	abstract class LocalsCtxMenuCommand : MenuItemBase<LocalsCtxMenuContext> {
+		protected sealed override object CachedContextKey {
+			get { return ContextKey; }
+		}
+		static readonly object ContextKey = new object();
+
+		protected sealed override LocalsCtxMenuContext CreateContext(IMenuItemContext context) {
 			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Stopped)
 				return null;
 			var ui = LocalsControlCreator.LocalsControlInstance;
-			if (context.Element != ui.treeView)
+			if (context.CreatorObject.Object != ui.treeView)
 				return null;
+			return Create();
+		}
+
+		internal static LocalsCtxMenuContext Create() {
+			var ui = LocalsControlCreator.LocalsControlInstance;
 			var vm = ui.DataContext as LocalsVM;
 			if (vm == null)
 				return null;
@@ -77,7 +87,7 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class ToggleCollapsedLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			var vm = GetValueVM(context);
 			if (vm != null)
 				vm.IsExpanded = !vm.IsExpanded;
@@ -94,14 +104,14 @@ namespace dnSpy.Debugger.Locals {
 			return null;
 		}
 
-		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+		public override bool IsEnabled(LocalsCtxMenuContext context) {
 			return GetValueVM(context) != null;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Cop_y", Order = 100, Category = "CopyLOC", Icon = "Copy", InputGestureText = "Ctrl+C")]
+	[ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_COPY, Order = 0)]
 	sealed class CopyLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			var output = new PlainTextOutput();
 			foreach (var vm in context.SelectedItems) {
 				//TODO: Break if it takes too long and the user cancels
@@ -122,38 +132,38 @@ namespace dnSpy.Debugger.Locals {
 				Clipboard.SetText(s);
 		}
 
-		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+		public override bool IsEnabled(LocalsCtxMenuContext context) {
 			return context.SelectedItems.Length > 0;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Select _All", Order = 110, Category = "CopyLOC", Icon = "Select", InputGestureText = "Ctrl+A")]
+	[ExportMenuItem(Header = "Select _All", Icon = "Select", InputGestureText = "Ctrl+A", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_COPY, Order = 10)]
 	sealed class SelectAllLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			LocalsControlCreator.LocalsControlInstance.treeView.SelectAll();
 		}
 
-		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+		public override bool IsEnabled(LocalsCtxMenuContext context) {
 			return LocalsControlCreator.LocalsControlInstance.treeView.Items.Count > 0;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Edit Value", Order = 200, Category = "LOCValues", InputGestureText = "F2")]
+	[ExportMenuItem(Header = "_Edit Value", InputGestureText = "F2", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 0)]
 	sealed class EditValueLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			if (IsEnabled(context))
 				context.SelectedItems[0].IsEditingValue = true;
 		}
 
-		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+		public override bool IsEnabled(LocalsCtxMenuContext context) {
 			return context.SelectedItems.Length == 1 &&
 				context.SelectedItems[0].CanEdit;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Copy Va_lue", Order = 210, Category = "LOCValues", InputGestureText = "Ctrl+Shift+C")]
+	[ExportMenuItem(Header = "Copy Va_lue", InputGestureText = "Ctrl+Shift+C", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 10)]
 	sealed class CopyValueLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			var output = new PlainTextOutput();
 			foreach (var vm in context.SelectedItems) {
 				//TODO: Break if it takes too long and the user cancels
@@ -167,25 +177,25 @@ namespace dnSpy.Debugger.Locals {
 				Clipboard.SetText(s);
 		}
 
-		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+		public override bool IsEnabled(LocalsCtxMenuContext context) {
 			return context.SelectedItems.Length > 0;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Add _Watch", Order = 220, Category = "LOCValues", Icon = "Watch")]
+	[ExportMenuItem(Header = "Add _Watch", Icon = "Watch", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 20)]
 	sealed class AddWatchLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			//TODO:
 		}
 
-		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+		public override bool IsEnabled(LocalsCtxMenuContext context) {
 			return false;//TODO:
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Save...", Order = 220, Category = "LOCValues", Icon = "Save")]
+	[ExportMenuItem(Header = "_Save...", Icon = "Save", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 30)]
 	sealed class SaveDataLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			var value = GetValue(context);
 			if (value == null)
 				return;
@@ -239,7 +249,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+		public override bool IsEnabled(LocalsCtxMenuContext context) {
 			return GetValue(context) != null;
 		}
 
@@ -272,41 +282,66 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show in Memory Window", Order = 220, Category = "LOCValues", Icon = "MemoryWindow")]
+	static class Constants {
+		public const string SHOW_IN_MEMORY_WINDOW_GUID = "10E1F865-8531-486F-86E2-071FB1B9E1B1";
+		public const string GROUP_SHOW_IN_MEMORY_WINDOW = "0,CFAF7CC1-2289-436D-8EB6-C5F6E32DE253";
+	}
+
+	sealed class SimpleMenuItem : MenuItemBase {
+		readonly Action<IMenuItemContext> action;
+
+		public SimpleMenuItem(Action<IMenuItemContext> action) {
+			this.action = action;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			action(context);
+		}
+	}
+
+	[ExportMenuItem(Header = "Show in Memory Window", Icon = "MemoryWindow", Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 40)]
 	sealed class ShowInMemoryXLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = Constants.GROUP_SHOW_IN_MEMORY_WINDOW, Order = 0)]
+	sealed class ShowInMemoryXLocalsSubCtxMenuCommand : LocalsCtxMenuCommand, IMenuItemCreator {
+		public override void Execute(LocalsCtxMenuContext context) {
 		}
 
-		static ShowInMemoryXLocalsCtxMenuCommand() {
-			subCmds = new Tuple<ICommand, string, string>[MemoryControlCreator.NUMBER_OF_MEMORY_WINDOWS];
+		static ShowInMemoryXLocalsSubCtxMenuCommand() {
+			subCmds = new Tuple<IMenuItem, string, string>[MemoryControlCreator.NUMBER_OF_MEMORY_WINDOWS];
 			for (int i = 0; i < subCmds.Length; i++)
-				subCmds[i] = Tuple.Create((ICommand)new LocalsCtxMenuCommandProxy(new ShowInMemoryWindowLocalsCtxMenuCommand(i + 1)), MemoryControlCreator.GetHeaderText(i), MemoryControlCreator.GetCtrlInputGestureText(i));
+				subCmds[i] = Tuple.Create((IMenuItem)new ShowInMemoryWindowLocalsCtxMenuCommand(i + 1), MemoryControlCreator.GetHeaderText(i), MemoryControlCreator.GetCtrlInputGestureText(i));
 		}
 
-		static readonly Tuple<ICommand, string, string>[] subCmds;
+		static readonly Tuple<IMenuItem, string, string>[] subCmds;
 
-		protected override void Initialize(LocalsCtxMenuContext context, MenuItem menuItem) {
-			foreach (var tuple in subCmds) {
-				var mi = new MenuItem {
-					Command = tuple.Item1,
-					Header = tuple.Item2,
-				};
-				if (!string.IsNullOrEmpty(tuple.Item3))
-					mi.InputGestureText = tuple.Item3;
-				MainWindow.CreateMenuItemImage(mi, this, "MemoryWindow", BackgroundType.ContextMenuItem);
-				menuItem.Items.Add(mi);
+		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
+			var ctx = CreateContext(context);
+			Debug.Assert(ctx != null);
+			if (ctx == null)
+				yield break;
+
+			for (int i = 0; i < subCmds.Length; i++) {
+				var info = subCmds[i];
+				var attr = new ExportMenuItemAttribute { Header = info.Item2, Icon = "MemoryWindow" };
+				if (!string.IsNullOrEmpty(info.Item3))
+					attr.InputGestureText = info.Item3;
+				yield return new CreatedMenuItem(attr, info.Item1);
 			}
 		}
 	}
 
 	sealed class ShowInMemoryLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			var addrRange = ShowInMemoryWindowLocalsCtxMenuCommand.GetValue(context);
 			if (addrRange != null)
 				MemoryUtils.ShowInMemoryWindow(addrRange.Value.Address, addrRange.Value.Size);
 		}
 
-		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+		public override bool IsEnabled(LocalsCtxMenuContext context) {
 			return ShowInMemoryWindowLocalsCtxMenuCommand.GetValue(context) != null;
 		}
 	}
@@ -327,13 +362,13 @@ namespace dnSpy.Debugger.Locals {
 			this.windowNumber = windowNumber;
 		}
 
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			var addrRange = GetValue(context);
 			if (addrRange != null)
 				MemoryUtils.ShowInMemoryWindow(windowNumber, addrRange.Value.Address, addrRange.Value.Size);
 		}
 
-		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+		public override bool IsEnabled(LocalsCtxMenuContext context) {
 			return GetValue(context) != null;
 		}
 
@@ -363,26 +398,26 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Hexadecimal Display", Order = 300, Category = "LOCMiscOptions")]
+	[ExportMenuItem(Header = "_Hexadecimal Display", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_HEXOPTS, Order = 0)]
 	sealed class HexadecimalDisplayLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			DebuggerSettings.Instance.UseHexadecimal = !DebuggerSettings.Instance.UseHexadecimal;
 		}
 
-		protected override void Initialize(LocalsCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = DebuggerSettings.Instance.UseHexadecimal;
+		public override bool IsChecked(LocalsCtxMenuContext context) {
+			return DebuggerSettings.Instance.UseHexadecimal;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "C_ollapse Parent", Order = 300, Category = "LOCTree", Icon = "OneLevelUp")]
+	[ExportMenuItem(Header = "C_ollapse Parent", Icon = "OneLevelUp", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_TREE, Order = 0)]
 	sealed class CollapseParentLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			var vm = GetLocalParent(context);
 			if (vm != null)
 				vm.IsExpanded = false;
 		}
 
-		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+		public override bool IsEnabled(LocalsCtxMenuContext context) {
 			var p = GetLocalParent(context);
 			return p != null && p.IsExpanded;
 		}
@@ -394,9 +429,9 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "E_xpand Children", Order = 310, Category = "LOCTree", Icon = "SuperTypesOpen")]
+	[ExportMenuItem(Header = "E_xpand Children", Icon = "SuperTypesOpen", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_TREE, Order = 10)]
 	sealed class ExpandChildrenLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			var vm = GetLocalParent(context);
 			if (vm != null) {
 				vm.IsExpanded = true;
@@ -407,7 +442,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+		public override bool IsEnabled(LocalsCtxMenuContext context) {
 			var p = GetLocalParent(context);
 			if (p == null)
 				return false;
@@ -430,9 +465,9 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Collapse Children", Order = 320, Category = "LOCTree", Icon = "SuperTypes")]
+	[ExportMenuItem(Header = "_Collapse Children", Icon = "SuperTypes", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_TREE, Order = 20)]
 	sealed class CollapseChildrenLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			var vm = GetLocalParent(context);
 			if (vm != null) {
 				foreach (var child in vm.Children)
@@ -440,7 +475,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		protected override bool IsEnabled(LocalsCtxMenuContext context) {
+		public override bool IsEnabled(LocalsCtxMenuContext context) {
 			var p = GetLocalParent(context);
 			if (p == null)
 				return false;
@@ -457,36 +492,36 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show Namespaces", Order = 570, Category = "LOCDispOptions")]
+	[ExportMenuItem(Header = "Show Namespaces", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_OPTS, Order = 0)]
 	sealed class ShowNamespacesLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			LocalsSettings.Instance.ShowNamespaces = !LocalsSettings.Instance.ShowNamespaces;
 		}
 
-		protected override void Initialize(LocalsCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = LocalsSettings.Instance.ShowNamespaces;
+		public override bool IsChecked(LocalsCtxMenuContext context) {
+			return LocalsSettings.Instance.ShowNamespaces;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show Type Keywords", Order = 590, Category = "LOCDispOptions")]
+	[ExportMenuItem(Header = "Show Type Keywords", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_OPTS, Order = 10)]
 	sealed class ShowTypeKeywordsLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			LocalsSettings.Instance.ShowTypeKeywords = !LocalsSettings.Instance.ShowTypeKeywords;
 		}
 
-		protected override void Initialize(LocalsCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = LocalsSettings.Instance.ShowTypeKeywords;
+		public override bool IsChecked(LocalsCtxMenuContext context) {
+			return LocalsSettings.Instance.ShowTypeKeywords;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Show Tokens", Order = 600, Category = "LOCDispOptions")]
+	[ExportMenuItem(Header = "Show Tokens", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_OPTS, Order = 20)]
 	sealed class ShowTokensLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		protected override void Execute(LocalsCtxMenuContext context) {
+		public override void Execute(LocalsCtxMenuContext context) {
 			LocalsSettings.Instance.ShowTokens = !LocalsSettings.Instance.ShowTokens;
 		}
 
-		protected override void Initialize(LocalsCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = LocalsSettings.Instance.ShowTokens;
+		public override bool IsChecked(LocalsCtxMenuContext context) {
+			return LocalsSettings.Instance.ShowTokens;
 		}
 	}
 }

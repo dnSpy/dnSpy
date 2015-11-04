@@ -25,6 +25,8 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
@@ -50,18 +52,17 @@ namespace dnSpy.AsmEditor {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Copy IL Bytes", Icon = "Copy", Category = "Editor", InputGestureText = "Ctrl+B", Order = 1010)]
-	sealed class CopyILBytesCommand : IContextMenuEntry {
-		public bool IsVisible(ContextMenuEntryContext context) {
-			return CanExecute(context.Element as DecompilerTextView);
+	[ExportMenuItem(Header = "Copy IL Bytes", Icon = "Copy", InputGestureText = "Ctrl+B", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 20)]
+	sealed class CopyILBytesCommand : MenuItemBase {
+		public override bool IsVisible(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+				return false;
+			return CanExecute(context.CreatorObject.Object as DecompilerTextView);
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			return true;
-		}
-
-		public void Execute(ContextMenuEntryContext context) {
-			Execute(context.Element as DecompilerTextView);
+		public override void Execute(IMenuItemContext context) {
+			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+				Execute(context.CreatorObject.Object as DecompilerTextView);
 		}
 
 		public static bool CanExecute(DecompilerTextView textView) {

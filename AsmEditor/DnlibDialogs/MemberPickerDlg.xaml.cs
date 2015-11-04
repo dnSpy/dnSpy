@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			};
 			MainWindow.InitializeAssemblyTreeView(treeView);
-			openImage.Source = ImageCache.Instance.GetImage("Open", BackgroundType.DialogWindow);
+			openImage.Source = ImageCache.Instance.GetImage(GetType().Assembly, "Open", BackgroundType.DialogWindow);
 		}
 
 		void MemberPickerVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {

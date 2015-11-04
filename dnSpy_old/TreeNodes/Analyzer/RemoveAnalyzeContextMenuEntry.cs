@@ -16,26 +16,35 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Linq;
+using dnSpy.Contracts.Menus;
+using dnSpy.Menus;
+using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
-	[ExportContextMenuEntry(Header = "_Remove", Icon = "Delete", Order = 940, Category = "Other", InputGestureText = "Del")]
-	internal sealed class RemoveAnalyzeContextMenuEntry : IContextMenuEntry {
-		public bool IsVisible(ContextMenuEntryContext context) {
-			if (context.Element is AnalyzerTreeView && context.SelectedTreeNodes != null && context.SelectedTreeNodes.Length > 0 && context.SelectedTreeNodes.All(n => n.Parent.IsRoot))
-				return true;
-			return false;
+	[ExportMenuItem(Header = "_Remove", Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 20)]
+	internal sealed class RemoveAnalyzeCtxMenuCommand : MenuItemBase {
+		public override bool IsVisible(IMenuItemContext context) {
+			return GetNodes(context) != null;
 		}
 
-		public bool IsEnabled(ContextMenuEntryContext context) {
-			return true;
+		static SharpTreeNode[] GetNodes(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_ANALYZER_GUID))
+				return null;
+			var nodes = context.FindByType<SharpTreeNode[]>();
+			if (nodes == null)
+				return null;
+			if (nodes.Length == 0 || !nodes.All(a => a.Parent.IsRoot))
+				return null;
+			return nodes;
 		}
 
-		public void Execute(ContextMenuEntryContext context) {
-			if (context.SelectedTreeNodes != null) {
-				foreach (var node in context.SelectedTreeNodes) {
+		public override void Execute(IMenuItemContext context) {
+			var nodes = GetNodes(context);
+			if (nodes != null) {
+				foreach (var node in nodes)
 					node.Parent.Children.Remove(node);
-				}
 			}
 		}
 	}

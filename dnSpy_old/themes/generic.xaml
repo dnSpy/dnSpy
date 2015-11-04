@@ -4,7 +4,7 @@
 	xmlns:ctrls2="clr-namespace:dnSpy.Controls"
 >
 	<ResourceDictionary.MergedDictionaries>
-		<ResourceDictionary Source="pack://application:,,,/dnSpy;component/Controls/SearchBoxStyle.xaml" />
+		<ResourceDictionary Source="pack://application:,,,/dnSpy_old;component/Controls/SearchBoxStyle.xaml" />
 	</ResourceDictionary.MergedDictionaries>
 	
 	<!-- SortableGridViewColumn.

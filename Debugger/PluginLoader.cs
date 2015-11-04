@@ -30,7 +30,6 @@ namespace dnSpy.Debugger {
 		}
 
 		void IPlugin.OnLoaded() {
-			MainWindow.Instance.SetMenuAlwaysRegenerate("_Debug");
 			InstallRoutedCommands();
 			InstallKeyboardShortcutCommands();
 			DebugManager.Instance.OnLoaded();

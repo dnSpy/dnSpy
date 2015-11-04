@@ -80,7 +80,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		public CallStackControl() {
 			InitializeComponent();
-			dntheme.Themes.ThemeChanged += Themes_ThemeChanged;
+			DnTheme.Themes.ThemeChanged += Themes_ThemeChanged;
 		}
 
 		public ICommand ShowCommand {

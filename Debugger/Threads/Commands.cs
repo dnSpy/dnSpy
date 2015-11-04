@@ -20,13 +20,12 @@
 using System;
 using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 using dndbg.Engine;
+using dnSpy.Contracts.Menus;
 using dnSpy.Debugger.CallStack;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.Threads {
 	sealed class ThreadsCtxMenuContext {
@@ -39,23 +38,33 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	sealed class ThreadsCtxMenuCommandProxy : ContextMenuEntryCommandProxy {
-		public ThreadsCtxMenuCommandProxy(ThreadsCtxMenuCommand cmd)
+	sealed class ThreadsCtxMenuCommandProxy : MenuItemCommandProxy<ThreadsCtxMenuContext> {
+        public ThreadsCtxMenuCommandProxy(ThreadsCtxMenuCommand cmd)
 			: base(cmd) {
 		}
 
-		protected override ContextMenuEntryContext CreateContext() {
-			return ContextMenuEntryContext.Create(ThreadsControlCreator.ThreadsControlInstance.listView);
+		protected override ThreadsCtxMenuContext CreateContext() {
+			return ThreadsCtxMenuCommand.Create();
 		}
 	}
 
-	abstract class ThreadsCtxMenuCommand : ContextMenuEntryBase<ThreadsCtxMenuContext> {
-		protected override ThreadsCtxMenuContext CreateContext(ContextMenuEntryContext context) {
+	abstract class ThreadsCtxMenuCommand : MenuItemBase<ThreadsCtxMenuContext> {
+		protected sealed override object CachedContextKey {
+			get { return ContextKey; }
+		}
+		static readonly object ContextKey = new object();
+
+		protected sealed override ThreadsCtxMenuContext CreateContext(IMenuItemContext context) {
 			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Stopped)
 				return null;
 			var ui = ThreadsControlCreator.ThreadsControlInstance;
-			if (context.Element != ui.listView)
+			if (context.CreatorObject.Object != ui.listView)
 				return null;
+			return Create();
+		}
+
+		internal static ThreadsCtxMenuContext Create() {
+			var ui = ThreadsControlCreator.ThreadsControlInstance;
 			var vm = ui.DataContext as ThreadsVM;
 			if (vm == null)
 				return null;
@@ -67,9 +76,9 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Cop_y", Order = 100, Category = "CopyTH", Icon = "Copy", InputGestureText = "Ctrl+C")]
+	[ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 0)]
 	sealed class CopyCallThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
-		protected override void Execute(ThreadsCtxMenuContext context) {
+		public override void Execute(ThreadsCtxMenuContext context) {
 			var output = new PlainTextOutput();
 			foreach (var vm in context.SelectedItems) {
 				var printer = new ThreadPrinter(output, DebuggerSettings.Instance.UseHexadecimal);
@@ -103,40 +112,40 @@ namespace dnSpy.Debugger.Threads {
 				Clipboard.SetText(s);
 		}
 
-		protected override bool IsEnabled(ThreadsCtxMenuContext context) {
+		public override bool IsEnabled(ThreadsCtxMenuContext context) {
 			return context.SelectedItems.Length > 0;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Select _All", Order = 110, Category = "CopyTH", Icon = "Select", InputGestureText = "Ctrl+A")]
+	[ExportMenuItem(Header = "Select _All", Icon = "Select", InputGestureText = "Ctrl+A", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 10)]
 	sealed class SelectAllThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
-		protected override void Execute(ThreadsCtxMenuContext context) {
+		public override void Execute(ThreadsCtxMenuContext context) {
 			ThreadsControlCreator.ThreadsControlInstance.listView.SelectAll();
 		}
 
-		protected override bool IsEnabled(ThreadsCtxMenuContext context) {
+		public override bool IsEnabled(ThreadsCtxMenuContext context) {
 			return ThreadsControlCreator.ThreadsControlInstance.listView.Items.Count > 0;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Hexadecimal Display", Order = 200, Category = "THMiscOptions")]
+	[ExportMenuItem(Header = "_Hexadecimal Display", Group = MenuConstants.GROUP_CTX_DBG_THREADS_HEXOPTS, Order = 0)]
 	sealed class HexadecimalDisplayThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
-		protected override void Execute(ThreadsCtxMenuContext context) {
+		public override void Execute(ThreadsCtxMenuContext context) {
 			DebuggerSettings.Instance.UseHexadecimal = !DebuggerSettings.Instance.UseHexadecimal;
 		}
 
-		protected override void Initialize(ThreadsCtxMenuContext context, MenuItem menuItem) {
-			menuItem.IsChecked = DebuggerSettings.Instance.UseHexadecimal;
+		public override bool IsChecked(ThreadsCtxMenuContext context) {
+			return DebuggerSettings.Instance.UseHexadecimal;
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Switch To Thread", Order = 300, Category = "TH1", InputGestureText = "Enter")]
+	[ExportMenuItem(Header = "_Switch To Thread", InputGestureText = "Enter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 0)]
 	sealed class SwitchToThreadThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
-		protected override void Execute(ThreadsCtxMenuContext context) {
+		public override void Execute(ThreadsCtxMenuContext context) {
 			GoTo(context, false);
 		}
 
-		protected override bool IsEnabled(ThreadsCtxMenuContext context) {
+		public override bool IsEnabled(ThreadsCtxMenuContext context) {
 			return CanGoToThread(context);
 		}
 
@@ -158,48 +167,48 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Switch To Thread (New _Tab)", Order = 310, Category = "TH1", InputGestureText = "Ctrl+Enter")]
+	[ExportMenuItem(Header = "Switch To Thread (New _Tab)", InputGestureText = "Ctrl+Enter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 10)]
 	sealed class SwitchToThreadNewTabThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
-		protected override void Execute(ThreadsCtxMenuContext context) {
+		public override void Execute(ThreadsCtxMenuContext context) {
 			SwitchToThreadThreadsCtxMenuCommand.GoTo(context, true);
 		}
 
-		protected override bool IsEnabled(ThreadsCtxMenuContext context) {
+		public override bool IsEnabled(ThreadsCtxMenuContext context) {
 			return SwitchToThreadThreadsCtxMenuCommand.CanGoToThread(context);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "Rename", Order = 320, Category = "TH1")]
+	[ExportMenuItem(Header = "Rename", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 20)]
 	sealed class RenameThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
-		protected override void Execute(ThreadsCtxMenuContext context) {
+		public override void Execute(ThreadsCtxMenuContext context) {
 			//TODO:
 		}
 
-		protected override bool IsEnabled(ThreadsCtxMenuContext context) {
+		public override bool IsEnabled(ThreadsCtxMenuContext context) {
 			return false;//TODO:
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Freeze", Order = 330, Category = "TH1")]
+	[ExportMenuItem(Header = "_Freeze", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 30)]
 	sealed class FreezeThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
-		protected override void Execute(ThreadsCtxMenuContext context) {
+		public override void Execute(ThreadsCtxMenuContext context) {
 			foreach (var t in context.SelectedItems)
 				t.IsSuspended = true;
 		}
 
-		protected override bool IsEnabled(ThreadsCtxMenuContext context) {
+		public override bool IsEnabled(ThreadsCtxMenuContext context) {
 			return context.SelectedItems.Any(t => !t.IsSuspended);
 		}
 	}
 
-	[ExportContextMenuEntry(Header = "_Thaw", Order = 340, Category = "TH1")]
+	[ExportMenuItem(Header = "_Thaw", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 40)]
 	sealed class ThawThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
-		protected override void Execute(ThreadsCtxMenuContext context) {
+		public override void Execute(ThreadsCtxMenuContext context) {
 			foreach (var t in context.SelectedItems)
 				t.IsSuspended = false;
 		}
 
-		protected override bool IsEnabled(ThreadsCtxMenuContext context) {
+		public override bool IsEnabled(ThreadsCtxMenuContext context) {
 			return context.SelectedItems.Any(t => t.IsSuspended);
 		}
 	}

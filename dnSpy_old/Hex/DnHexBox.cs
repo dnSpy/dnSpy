@@ -19,14 +19,38 @@
 
 using System;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
-using dnSpy.dntheme;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Menus;
+using dnSpy.DnTheme;
 using dnSpy.HexEditor;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Hex {
 	public sealed class DnHexBox : HexBox {
+		sealed class ContextMenuInitializer : IContextMenuInitializer {
+			public void Initialize(IMenuItemContext context, ContextMenu menu) {
+				var hexBox = (HexBox)context.CreatorObject.Object;
+				var rect = hexBox.GetCaretWindowRect();
+				if (rect != null && context.OpenedFromKeyboard) {
+					var pos = rect.Value.BottomLeft;
+					menu.HorizontalOffset = pos.X;
+					menu.VerticalOffset = pos.Y;
+					ContextMenuService.SetPlacement(hexBox, PlacementMode.Relative);
+					ContextMenuService.SetPlacementTarget(hexBox, hexBox);
+					menu.Closed += (s, e2) => {
+						hexBox.ClearValue(ContextMenuService.PlacementProperty);
+						hexBox.ClearValue(ContextMenuService.PlacementTargetProperty);
+					};
+				}
+				else {
+					hexBox.ClearValue(ContextMenuService.PlacementProperty);
+					hexBox.ClearValue(ContextMenuService.PlacementTargetProperty);
+				}
+			}
+		}
+
 		public DnHexBox() {
 			SetBinding(Control.FontFamilyProperty, new Binding("FontFamily") { Source = HexSettings.Instance });
 			SetBinding(Control.FontSizeProperty, new Binding("FontSize") { Source = HexSettings.Instance });
@@ -43,7 +67,7 @@ namespace dnSpy.Hex {
 			SetResourceReference(Control.FontStyleProperty, HexBoxThemeHelper.GetFontStyleResourceKey(ColorType.HexText));
 			SetResourceReference(Control.FontWeightProperty, HexBoxThemeHelper.GetFontWeightResourceKey(ColorType.HexText));
 
-			ContextMenuProvider.Add(this);
+			Globals.App.MenuManager.InitializeContextMenu(this, MenuConstants.GUIDOBJ_HEXBOX_GUID, null, new ContextMenuInitializer());
 
 			BytesGroupCount = null;
 			BytesPerLine = null;
@@ -62,29 +86,29 @@ namespace dnSpy.Hex {
 		bool isMemory;
 
 		void InstallBindings() {
-			Add(new RoutedCommand("GoToOffset", typeof(GoToOffsetHexBoxContextMenuEntry)),
-				(s, e) => GoToOffsetHexBoxContextMenuEntry.Execute2(this),
-				(s, e) => e.CanExecute = GoToOffsetHexBoxContextMenuEntry.CanExecute(this),
+			Add(new RoutedCommand("GoToOffset", typeof(GoToOffsetHexBoxCtxMenuCommand)),
+				(s, e) => GoToOffsetHexBoxCtxMenuCommand.Execute2(this),
+				(s, e) => e.CanExecute = GoToOffsetHexBoxCtxMenuCommand.CanExecute(this),
 				ModifierKeys.Control, Key.G);
-			Add(new RoutedCommand("PasteBlobData", typeof(PasteBlobDataHexBoxContextMenuEntry)),
-				(s, e) => PasteBlobDataHexBoxContextMenuEntry.Execute2(this),
-				(s, e) => e.CanExecute = PasteBlobDataHexBoxContextMenuEntry.CanExecute(this),
+			Add(new RoutedCommand("PasteBlobData", typeof(PasteBlobDataHexBoxCtxMenuCommand)),
+				(s, e) => PasteBlobDataHexBoxCtxMenuCommand.Execute2(this),
+				(s, e) => e.CanExecute = PasteBlobDataHexBoxCtxMenuCommand.CanExecute(this),
 				ModifierKeys.Control, Key.B);
-			Add(new RoutedCommand("Select", typeof(SelectRangeHexBoxContextMenuEntry)),
-				(s, e) => SelectRangeHexBoxContextMenuEntry.Execute2(this),
-				(s, e) => e.CanExecute = SelectRangeHexBoxContextMenuEntry.CanExecute(this),
+			Add(new RoutedCommand("Select", typeof(SelectRangeHexBoxCtxMenuCommand)),
+				(s, e) => SelectRangeHexBoxCtxMenuCommand.Execute2(this),
+				(s, e) => e.CanExecute = SelectRangeHexBoxCtxMenuCommand.CanExecute(this),
 				ModifierKeys.Control, Key.L);
-			Add(new RoutedCommand("ShowOnlySelectedBytes", typeof(ShowSelectionHexBoxContextMenuEntry)),
-				(s, e) => ShowSelectionHexBoxContextMenuEntry.Execute2(this),
-				(s, e) => e.CanExecute = ShowSelectionHexBoxContextMenuEntry.CanExecute(this),
+			Add(new RoutedCommand("ShowOnlySelectedBytes", typeof(ShowSelectionHexBoxCtxMenuCommand)),
+				(s, e) => ShowSelectionHexBoxCtxMenuCommand.Execute2(this),
+				(s, e) => e.CanExecute = ShowSelectionHexBoxCtxMenuCommand.CanExecute(this),
 				ModifierKeys.Control, Key.D);
-			Add(new RoutedCommand("ShowAllBytes", typeof(ShowWholeDocumentHexBoxContextMenuEntry)),
-				(s, e) => ShowWholeDocumentHexBoxContextMenuEntry.Execute2(this),
-				(s, e) => e.CanExecute = ShowWholeDocumentHexBoxContextMenuEntry.CanExecute(this),
+			Add(new RoutedCommand("ShowAllBytes", typeof(ShowWholeDocumentHexBoxCtxMenuCommand)),
+				(s, e) => ShowWholeDocumentHexBoxCtxMenuCommand.Execute2(this),
+				(s, e) => e.CanExecute = ShowWholeDocumentHexBoxCtxMenuCommand.CanExecute(this),
 				ModifierKeys.Control | ModifierKeys.Shift, Key.D);
-			Add(new RoutedCommand("SaveSelection", typeof(SaveSelectionHexBoxContextMenuEntry)),
-				(s, e) => SaveSelectionHexBoxContextMenuEntry.Execute2(this),
-				(s, e) => e.CanExecute = SaveSelectionHexBoxContextMenuEntry.CanExecute(this),
+			Add(new RoutedCommand("SaveSelection", typeof(SaveSelectionHexBoxCtxMenuCommand)),
+				(s, e) => SaveSelectionHexBoxCtxMenuCommand.Execute2(this),
+				(s, e) => e.CanExecute = SaveSelectionHexBoxCtxMenuCommand.CanExecute(this),
 				ModifierKeys.Control | ModifierKeys.Alt, Key.S);
 		}
 

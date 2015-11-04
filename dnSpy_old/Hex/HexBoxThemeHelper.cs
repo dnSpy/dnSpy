@@ -20,7 +20,7 @@
 using System;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.dntheme;
+using dnSpy.DnTheme;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.ILSpy;
 

@@ -52,7 +52,7 @@ namespace ICSharpCode.ILSpy {
 			this.TopPaneSettings.Height = FromString((string)doc.Element("TopPaneHeight"), 200.0);
 			this.BottomPaneSettings.Name = FromString((string)doc.Element("BottomPaneName"), string.Empty);
 			this.BottomPaneSettings.Height = FromString((string)doc.Element("BottomPaneHeight"), 200.0);
-			this.ThemeName = (string)doc.Element("ThemeName") ?? dnSpy.dntheme.Themes.DefaultThemeName;
+			this.ThemeName = (string)doc.Element("ThemeName") ?? dnSpy.DnTheme.Themes.DefaultThemeName;
 
 			var ignoreXml = doc.Element("IgnoredWarnings");
 			if (ignoreXml != null) {

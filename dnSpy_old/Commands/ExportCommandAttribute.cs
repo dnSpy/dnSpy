@@ -16,6 +16,8 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+//TODO: REMOVE
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -103,21 +105,6 @@ namespace ICSharpCode.ILSpy {
 		/// the first time after this method is called.</param>
 		/// <returns></returns>
 		IEnumerable<MenuItem> CreateMenuItems(MenuItem cachedMenuItem);
-	}
-
-	[MetadataAttribute]
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public class ExportMainMenuCommandAttribute : ExportAttribute, IMainMenuCommandMetadata {
-		public ExportMainMenuCommandAttribute()
-			: base("MainMenuCommand", typeof(ICommand)) {
-		}
-
-		public string MenuIcon { get; set; }
-		public string MenuHeader { get; set; }
-		public string Menu { get; set; }
-		public string MenuCategory { get; set; }
-		public string MenuInputGestureText { get; set; }
-		public double MenuOrder { get; set; }
 	}
 	#endregion
 }

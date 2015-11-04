@@ -51,7 +51,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public sealed override object Icon {
-			get { return ResourceUtils.GetIcon(IconName, BackgroundType.TreeNode); }
+			get { return ResourceUtils.GetIcon(GetType().Assembly, IconName, BackgroundType.TreeNode); }
 		}
 
 		public virtual string IconName {

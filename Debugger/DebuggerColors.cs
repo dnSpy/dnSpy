@@ -41,17 +41,17 @@ namespace dnSpy.Debugger {
 		};
 
 		static DebuggerColors() {
-			dntheme.Themes.ThemeChanged += (s, e) => OnThemeUpdated();
+			DnTheme.Themes.ThemeChanged += (s, e) => OnThemeUpdated();
 			OnThemeUpdated();
 		}
 
 		static void OnThemeUpdated() {
-			var theme = dntheme.Themes.Theme;
-			CodeBreakpointHighlightingColor = theme.GetColor(dntheme.ColorType.BreakpointStatement).TextInheritedColor;
-			CodeBreakpointDisabledHighlightingColor = theme.GetColor(dntheme.ColorType.DisabledBreakpointStatement).TextInheritedColor;
-			StackFrameCurrentHighlightingColor = theme.GetColor(dntheme.ColorType.CurrentStatement).TextInheritedColor;
-			StackFrameReturnHighlightingColor = theme.GetColor(dntheme.ColorType.ReturnStatement).TextInheritedColor;
-			StackFrameSelectedHighlightingColor = theme.GetColor(dntheme.ColorType.SelectedReturnStatement).TextInheritedColor;
+			var theme = DnTheme.Themes.Theme;
+			CodeBreakpointHighlightingColor = theme.GetColor(DnTheme.ColorType.BreakpointStatement).TextInheritedColor;
+			CodeBreakpointDisabledHighlightingColor = theme.GetColor(DnTheme.ColorType.DisabledBreakpointStatement).TextInheritedColor;
+			StackFrameCurrentHighlightingColor = theme.GetColor(DnTheme.ColorType.CurrentStatement).TextInheritedColor;
+			StackFrameReturnHighlightingColor = theme.GetColor(DnTheme.ColorType.ReturnStatement).TextInheritedColor;
+			StackFrameSelectedHighlightingColor = theme.GetColor(DnTheme.ColorType.SelectedReturnStatement).TextInheritedColor;
 		}
 	}
 }

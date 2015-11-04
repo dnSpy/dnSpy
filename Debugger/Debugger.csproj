@@ -36,6 +36,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AppMenus.cs" />
     <Compile Include="Breakpoints\Breakpoint.cs" />
     <Compile Include="Breakpoints\BreakpointColumnConverter.cs" />
     <Compile Include="Breakpoints\BreakpointListSettings.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="CallStack\ICallStackObjectCreator.cs" />
     <Compile Include="CallStack\StackFrameLine.cs" />
     <Compile Include="CallStack\StackFrameManager.cs" />
+    <Compile Include="Converters\ImageConverter.cs" />
     <Compile Include="DebugCommands.cs" />
     <Compile Include="DebuggedProcessRunningNotifier.cs" />
     <Compile Include="DebuggerColors.cs" />
@@ -137,6 +139,7 @@
     <Compile Include="Memory\MemoryUtils.cs" />
     <Compile Include="Memory\MemoryVM.cs" />
     <Compile Include="Memory\ProcessHexStream.cs" />
+    <Compile Include="MenuItemCommandProxy.cs" />
     <Compile Include="ModuleLoader.cs" />
     <Compile Include="Modules\Commands.cs" />
     <Compile Include="Modules\ModuleColumnConverter.cs" />
@@ -229,9 +232,17 @@
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy_old\dnSpy.csproj">
-      <Project>{1e85eff9-e370-4683-83e4-8a3d063ff791}</Project>
+    <ProjectReference Include="..\dnSpy.Contracts\dnSpy.Contracts.csproj">
+      <Project>{9b234472-0e22-428c-9345-c8d9ee5e06af}</Project>
+      <Name>dnSpy.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy\dnSpy.csproj">
+      <Project>{722257a9-1b14-4d63-b886-18a4229af4eb}</Project>
       <Name>dnSpy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy_old\dnSpy_old.csproj">
+      <Project>{1e85eff9-e370-4683-83e4-8a3d063ff791}</Project>
+      <Name>dnSpy_old</Name>
     </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
       <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
@@ -258,22 +269,27 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Resource Include="Images\Add.png" />
+    <Resource Include="Images\AssemblyExe.png" />
     <Resource Include="Images\AssemblyModule.png" />
     <Resource Include="Images\Break.png" />
+    <Resource Include="Images\Breakpoint.png" />
     <Resource Include="Images\BreakpointMenu.png" />
     <Resource Include="Images\BreakpointsWindow.png" />
     <Resource Include="Images\CallStackWindow.png" />
     <Resource Include="Images\ContinueDebugging.png" />
     <Resource Include="Images\Copy.png" />
+    <Resource Include="Images\CurrentLine.png" />
     <Resource Include="Images\CurrentLineToolBar.png" />
     <Resource Include="Images\Cursor.png" />
     <Resource Include="Images\Delete.png" />
     <Resource Include="Images\DeleteAllBreakpoints.png" />
     <Resource Include="Images\DisableAllBreakpoints.png" />
+    <Resource Include="Images\DisabledBreakpoint.png" />
+    <Resource Include="Images\DisableEnableBreakpoint.png" />
     <Resource Include="Images\DisassemblyWindow.png" />
+    <Resource Include="Images\DraggedCurrentInstructionPointer.png" />
     <Resource Include="Images\EnableAllBreakpoints.png" />
     <Resource Include="Images\EnumValue.png" />
     <Resource Include="Images\EnumValueCompilerControlled.png" />
@@ -295,6 +311,7 @@
     <Resource Include="Images\FieldReadOnlyPrivate.png" />
     <Resource Include="Images\FieldReadOnlyProtected.png" />
     <Resource Include="Images\FieldReadOnlyProtectedInternal.png" />
+    <Resource Include="Images\Filter.png" />
     <Resource Include="Images\GenericParameter.png" />
     <Resource Include="Images\GoToSourceCode.png" />
     <Resource Include="Images\Literal.png" />
@@ -314,11 +331,13 @@
     <Resource Include="Images\PropertyPrivate.png" />
     <Resource Include="Images\PropertyProtected.png" />
     <Resource Include="Images\PropertyProtectedInternal.png" />
+    <Resource Include="Images\QuestionMark.png" />
     <Resource Include="Images\Refresh.png" />
     <Resource Include="Images\RemoveCommand.png" />
     <Resource Include="Images\RestartProcess.png" />
     <Resource Include="Images\Save.png" />
     <Resource Include="Images\Select.png" />
+    <Resource Include="Images\SelectedReturnLine.png" />
     <Resource Include="Images\SetNextStatement.png" />
     <Resource Include="Images\StartDebugging.png" />
     <Resource Include="Images\StartWithoutDebugging.png" />
