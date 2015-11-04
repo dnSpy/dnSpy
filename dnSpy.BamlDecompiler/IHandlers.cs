@@ -25,6 +25,19 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		public static IHandler LookupHandler(BamlRecordType type) {
+#if DEBUG
+			switch (type) {
+				case BamlRecordType.AssemblyInfo:
+				case BamlRecordType.TypeInfo:
+				case BamlRecordType.AttributeInfo:
+				case BamlRecordType.StringInfo:
+					break;
+				default:
+					if (!handlers.ContainsKey(type))
+						throw new NotSupportedException(type.ToString());
+					break;
+			}
+#endif
 			return handlers.ContainsKey(type) ? handlers[type] : null;
 		}
 

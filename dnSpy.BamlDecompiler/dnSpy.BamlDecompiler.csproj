@@ -50,6 +50,8 @@
     <Compile Include="Handlers\Blocks\DocumentHandler.cs" />
     <Compile Include="Handlers\Records\AssemblyInfoHandler.cs" />
     <Compile Include="Handlers\Records\ContentPropertyHandler.cs" />
+    <Compile Include="Handlers\Records\LineNumberAndPositionHandler.cs" />
+    <Compile Include="Handlers\Records\LinePositionHandler.cs" />
     <Compile Include="Handlers\Records\PropertyCustomHandler.cs" />
     <Compile Include="Handlers\Records\PropertyWithExtensionHandler.cs" />
     <Compile Include="Handlers\Records\PropertyWithConverterHandler.cs" />
