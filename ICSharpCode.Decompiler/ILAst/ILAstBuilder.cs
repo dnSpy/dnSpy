@@ -341,6 +341,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			// Process agenda
 			while(agenda.Count > 0) {
+				context.CancellationToken.ThrowIfCancellationRequested();
 				ByteCode byteCode = agenda.Pop();
 				
 				// Calculate new stack

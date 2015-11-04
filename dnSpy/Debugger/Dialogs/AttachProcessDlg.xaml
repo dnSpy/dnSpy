@@ -1,0 +1,126 @@
+﻿<!--
+    Copyright (C) 2014-2015 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<winlocal:WindowBase x:Class="dnSpy.Debugger.Dialogs.AttachProcessDlg"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:winlocal="clr-namespace:dnSpy.MVVM"
+             xmlns:local="clr-namespace:dnSpy.Debugger.Dialogs"
+             xmlns:mvvm="clr-namespace:dnSpy.MVVM"
+             xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters"
+             Height="500" Width="1000"
+             Title="{Binding Title}"
+             Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
+             MinHeight="150" MinWidth="300">
+    <winlocal:WindowBase.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
+    </winlocal:WindowBase.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ListView
+            Grid.Row="0"
+            Name="listView"
+            Margin="5 5 5 0"
+            MouseDoubleClick="listView_MouseDoubleClick"
+            VirtualizingStackPanel.IsVirtualizing="True"
+            VirtualizingStackPanel.VirtualizationMode="Recycling"
+            mvvm:InitDataTemplateAP.Initialize="True"
+            SelectionMode="Single"
+            ItemsSource="{Binding Collection}"
+            SelectedItem="{Binding SelectedItem}">
+            <ListView.Resources>
+                <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource DbgTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                <local:ProcessColumnConverter x:Key="processColumnConverter" />
+            </ListView.Resources>
+            <ListView.View>
+                <GridView AllowsColumnReorder="False">
+                    <GridViewColumn Header="Process">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding FilenameObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=Filename}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="ID">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding PIDObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=PID}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Title">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding TitleObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=Title}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="CLR">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding CLRVersionObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=CLRVersion}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Type">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding TypeObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=Type}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Arch">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding MachineObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=Machine}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Filename">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding FullPathObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=FullPath}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <Grid Grid.Row="1" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Content="_Refresh" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding RefreshCommand}" />
+            <TextBlock Grid.Column="1" Text="{Binding DebuggingText}" Visibility="{Binding HasDebuggingText, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Center" />
+            <ProgressBar Grid.Column="1" IsIndeterminate="True" Visibility="{Binding IsRefreshing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Grid.Column="2" Content="_Attach" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="5 0 5 0" Click="okButton_Click" />
+            <Button Grid.Column="3" Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0 0 0 0" />
+        </Grid>
+    </Grid>
+</winlocal:WindowBase>

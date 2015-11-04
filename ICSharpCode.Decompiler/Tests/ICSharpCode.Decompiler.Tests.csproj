@@ -83,6 +83,7 @@
     <Compile Include="UndocumentedExpressions.cs" />
     <Compile Include="UnsafeCode.cs" />
     <Compile Include="Types\S_TypeDeclarations.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="YieldReturn.cs" />
     <None Include="IL\SequenceOfNestedIfs.dll" />
     <None Include="IL\SequenceOfNestedIfs.il" />

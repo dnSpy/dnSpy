@@ -30,7 +30,6 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>Full</DebugType>
     <Optimize>False</Optimize>
-    <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -38,7 +37,6 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>PdbOnly</DebugType>
     <Optimize>True</Optimize>
-    <CheckForOverflowUnderflow>False</CheckForOverflowUnderflow>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(BuildNuGetPackage)' == 'True' ">
@@ -55,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AddressReference.cs" />
     <Compile Include="Ast\Annotations.cs" />
     <Compile Include="Ast\AstBuilder.cs" />
     <Compile Include="Ast\AstMethodBodyBuilder.cs" />
@@ -82,6 +81,8 @@
     <Compile Include="Ast\Transforms\TransformationPipeline.cs" />
     <Compile Include="Ast\Transforms\PatternStatementTransform.cs" />
     <Compile Include="Ast\TypesHierarchyHelpers.cs" />
+    <Compile Include="Disassembler\IInstructionBytesReader.cs" />
+    <Compile Include="Disassembler\InstructionReference.cs" />
     <Compile Include="DnlibExtensions.cs" />
     <Compile Include="CodeMappings.cs" />
     <Compile Include="DecompilerException.cs" />
@@ -93,18 +94,10 @@
     <Compile Include="DnlibExtra\GenericArgumentResolver.cs" />
     <Compile Include="FlowAnalysis\ControlFlowEdge.cs" />
     <Compile Include="FlowAnalysis\ControlFlowGraph.cs" />
-    <None Include="FlowAnalysis\ControlFlowGraphBuilder.cs" />
+    <Compile Include="TokenReference.cs" />
     <Compile Include="FlowAnalysis\ControlFlowNode.cs" />
     <Compile Include="FlowAnalysis\ControlStructureDetector.cs" />
     <Compile Include="FlowAnalysis\OpCodeInfo.cs" />
-    <None Include="FlowAnalysis\SimplifyByRefCalls.cs" />
-    <None Include="FlowAnalysis\SsaBlock.cs" />
-    <None Include="FlowAnalysis\SsaForm.cs" />
-    <None Include="FlowAnalysis\SsaFormBuilder.cs" />
-    <None Include="FlowAnalysis\SsaInstruction.cs" />
-    <None Include="FlowAnalysis\SsaOptimization.cs" />
-    <None Include="FlowAnalysis\SsaVariable.cs" />
-    <None Include="FlowAnalysis\TransformToSsa.cs" />
     <Compile Include="IdentifierEscaper.cs" />
     <Compile Include="ILAst\AsyncDecompiler.cs" />
     <Compile Include="ILAst\LiftedOperators.cs" />
@@ -126,6 +119,7 @@
     <Compile Include="ILAst\Utils.cs" />
     <Compile Include="ILAst\YieldReturnDecompiler.cs" />
     <Compile Include="ITextOutput.cs" />
+    <Compile Include="MemberComparer.cs" />
     <Compile Include="PlainTextOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceResolvingException.cs" />

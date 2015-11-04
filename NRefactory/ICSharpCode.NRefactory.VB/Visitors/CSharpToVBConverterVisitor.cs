@@ -4,14 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
-using ICSharpCode.Decompiler;
+using dnSpy.NRefactory;
 using ICSharpCode.NRefactory.PatternMatching;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.VB.Ast;
 
-namespace ICSharpCode.NRefactory.VB.Visitors
-{
+namespace ICSharpCode.NRefactory.VB.Visitors {
 	public interface IEnvironmentProvider
 	{
 		string RootNamespace { get; }

@@ -17,15 +17,11 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using ICSharpCode.Decompiler.Ast;
-using ICSharpCode.Decompiler.Disassembler;
+using dnlib.DotNet;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
-using dnlib.DotNet;
 
 namespace ICSharpCode.Decompiler
 {
@@ -58,7 +54,7 @@ namespace ICSharpCode.Decompiler
 		/// Retrieves the array that contains the IL range and the missing gaps between ranges.
 		/// </summary>
 		/// <returns>The array representation of the step aranges.</returns>
-		public int[] ToArray(bool isMatch)
+		public uint[] ToArray(bool isMatch)
 		{
 			var currentList = new List<ILRange>();
 			
@@ -86,22 +82,16 @@ namespace ICSharpCode.Decompiler
 		IEnumerable<ILRange> invertedList;
 		
 		public MemberMapping(MethodDef method)
-			: this(method, null)
-		{
-		}
-		
-		public MemberMapping(MethodDef method, IEnumerable<ILVariable> localVariables)
 		{
 			this.MemberCodeMappings = new List<SourceCodeMapping>();
-			this.MethodDefinition = method;
+			this.MethodDef = method;
 			this.CodeSize = method.Body.GetCodeSize();
-			this.LocalVariables = localVariables;
 		}
 		
 		/// <summary>
 		/// Gets or sets the type of the mapping.
 		/// </summary>
-		public MethodDef MethodDefinition { get; internal set; }
+		public MethodDef MethodDef { get; internal set; }
 		
 		/// <summary>
 		/// Gets or sets the code size for the member mapping.
@@ -134,7 +124,7 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 
-		public int[] ToArray(List<ILRange> currentList, bool isMatch)
+		public uint[] ToArray(List<ILRange> currentList, bool isMatch)
 		{
 			if (currentList == null)
 				currentList = new List<ILRange>();
@@ -150,10 +140,10 @@ namespace ICSharpCode.Decompiler
 			}
 			
 			// set the output
-			var resultList = new List<int>();
+			var resultList = new List<uint>();
 			foreach (var element in ILRange.OrderAndJoin(currentList)) {
-				resultList.Add((int)element.From);
-				resultList.Add((int)element.To);
+				resultList.Add(element.From);
+				resultList.Add(element.To);
 			}
 			
 			return resultList.ToArray();
@@ -293,7 +283,7 @@ namespace ICSharpCode.Decompiler
 				}
 			}
 			
-			methodDef = mapping.MethodDefinition;
+			methodDef = mapping.MethodDef;
 			location = codeMapping.StartLocation;
 			endLocation = codeMapping.EndLocation;
 			return true;

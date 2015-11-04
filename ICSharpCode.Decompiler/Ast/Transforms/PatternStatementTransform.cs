@@ -20,16 +20,14 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
+using dnlib.DotNet;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.Analysis;
 using ICSharpCode.NRefactory.PatternMatching;
-using dnlib.DotNet;
 
-namespace ICSharpCode.Decompiler.Ast.Transforms
-{
+namespace ICSharpCode.Decompiler.Ast.Transforms {
 	/// <summary>
 	/// Finds the expanded form of using statements using pattern matching and replaces it with a UsingStatement.
 	/// </summary>
@@ -955,15 +953,15 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 		
 		PropertyDeclaration TransformAutomaticProperties(PropertyDeclaration property)
 		{
-			PropertyDef cecilProperty = property.Annotation<PropertyDef>();
-			if (cecilProperty == null || cecilProperty.GetMethod == null || cecilProperty.SetMethod == null)
+			PropertyDef prop = property.Annotation<PropertyDef>();
+			if (prop == null || prop.GetMethod == null || prop.SetMethod == null)
 				return null;
-			if (!(cecilProperty.GetMethod.IsCompilerGenerated() && cecilProperty.SetMethod.IsCompilerGenerated()))
+			if (!(prop.GetMethod.IsCompilerGenerated() && prop.SetMethod.IsCompilerGenerated()))
 				return null;
 			Match m = automaticPropertyPattern.Match(property);
 			if (m.Success) {
 				FieldDef field = m.Get<AstNode>("fieldReference").Single().Annotation<IField>().ResolveFieldWithinSameModule();
-				if (field != null && field.IsCompilerGenerated() && field.DeclaringType == cecilProperty.DeclaringType) {
+				if (field != null && field.IsCompilerGenerated() && field.DeclaringType == prop.DeclaringType) {
 					RemoveCompilerGeneratedAttribute(property.Getter.Attributes);
 					RemoveCompilerGeneratedAttribute(property.Setter.Attributes);
 					var getterMM = property.Getter.Body.Annotation<MemberMapping>();
@@ -974,10 +972,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						property.Setter.AddAnnotation(setterMM);
 					property.Getter.Body = null;
 					property.Setter.Body = null;
-					if (cecilProperty.GetMethod.Body != null)
-						property.Getter.AddAnnotation(new List<ILRange> { new ILRange(0, (uint)cecilProperty.GetMethod.Body.GetCodeSize()) });
-					if (cecilProperty.SetMethod.Body != null)
-						property.Setter.AddAnnotation(new List<ILRange> { new ILRange(0, (uint)cecilProperty.SetMethod.Body.GetCodeSize()) });
+					if (prop.GetMethod.Body != null)
+						property.Getter.AddAnnotation(new List<ILRange> { new ILRange(0, (uint)prop.GetMethod.Body.GetCodeSize()) });
+					if (prop.SetMethod.Body != null)
+						property.Setter.AddAnnotation(new List<ILRange> { new ILRange(0, (uint)prop.SetMethod.Body.GetCodeSize()) });
 				}
 			}
 			// Since the event instance is not changed, we can continue in the visitor as usual, so return null
@@ -1079,6 +1077,25 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			ed.Modifiers = ev.Modifiers;
 			ed.Variables.Add(new VariableInitializer(TextTokenHelper.GetTextTokenType(ev.Annotation<EventDef>()), ev.Name));
 			ed.CopyAnnotationsFrom(ev);
+
+			// Keep the token comments
+			foreach (var child in ev.Children.Reverse().ToArray()) {
+				var cmt = child as Comment;
+				if (cmt != null) {
+					ed.InsertChildAfter(null, cmt.Detach(), Roles.Comment);
+					continue;
+				}
+
+				var acc = child as Accessor;
+				if (acc != null) {
+					foreach (var accChild in acc.Children.Reverse().ToArray()) {
+						var accCmt = accChild as Comment;
+						if (accCmt != null)
+							ed.InsertChildAfter(null, accCmt.Detach(), Roles.Comment);
+					}
+					continue;
+				}
+			}
 			
 			EventDef eventDef = ev.Annotation<EventDef>();
 			if (eventDef != null) {
@@ -1126,6 +1143,13 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 				dd.Body.HiddenEnd = NRefactoryExtensions.CreateHidden(dd.Body.HiddenEnd, methodDef.Body.HiddenEnd, tc.FinallyBlock);
 				dd.NameToken = Identifier.Create(AstBuilder.CleanName(context.CurrentType.Name)).WithAnnotation(context.CurrentType);
 				methodDef.ReplaceWith(dd);
+				foreach (var child in methodDef.Children.Reverse().ToArray()) {
+					var cmt = child as Comment;
+					if (cmt != null) {
+						cmt.Detach();
+						dd.InsertChildAfter(null, cmt, Roles.Comment);
+					}
+				}
 				return dd;
 			}
 			return null;

@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
   <metadata>
     <id>ICSharpCode.Decompiler</id>
-    <version>2.3.0</version>
+    <version>2.3.1</version>
     <title>ILSpy Decompiler Engine</title>
     <authors>Daniel Grunwald, David Srbecky, Ed Harvey, Siegfried Pammer</authors>
     <owners>Daniel Grunwald, SharpDevelop</owners>

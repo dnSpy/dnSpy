@@ -1,15 +1,11 @@
 ﻿// Copyright (c) AlphaSierraPapa for the SharpDevelop Team (for details please see \doc\copyright.txt)
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using dnSpy.NRefactory;
 
-using ICSharpCode.NRefactory.PatternMatching;
-
-namespace ICSharpCode.NRefactory.VB.Ast
-{
+namespace ICSharpCode.NRefactory.VB.Ast {
 	/// <summary>
 	/// Namespace Name
 	/// 	Members

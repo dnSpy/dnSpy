@@ -6,11 +6,15 @@ dnSpy is a .NET assembly editor, decompiler, and debugger forked from
 
 License: GPLv3
 
+![pic1](https://cloud.githubusercontent.com/assets/1060731/10716326/9cfbc9ec-7b35-11e5-9024-0e286700335f.png)
+![pic2](https://cloud.githubusercontent.com/assets/1060731/10712444/bf69a66a-7a9b-11e5-8039-0c3c2ea4ffb1.png)
+![pic3](https://cloud.githubusercontent.com/assets/1060731/10716327/9cfc9d4a-7b35-11e5-831c-e63730d3c834.png)
+
 Binaries
 ========
 Latest release: https://github.com/0xd4d/dnSpy/releases
 
-Latest build: https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts
+Latest build (possibly unstable): https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts
 
 Features
 ========
@@ -40,6 +44,8 @@ ESC			| (Text view) Remove selected markers or close search box
 Backspace	| Navigate back in history
 Alt+Left Arrow | Navigate back in history
 Alt+Right Arrow | Navigate forward in history
+F5			| (Debugger) Debug an assembly
+Ctrl+F5		| (Debugger) Start without debugging
 F5			| (Debugger) Continue debugging
 Shift+F5	| (Debugger) Stop debugging
 Ctrl+Shift+F5 | (Debugger) Restart debugged program
@@ -53,7 +59,10 @@ Shift+F11	| (Debugger) Step out of current method
 Ctrl+Pause	| (Debugger) Break
 Alt+*		| (Debugger) Show next statement
 Ctrl+D		| (Text view) Go to token
+Ctrl+Shift+D| (Text view) Go to MD table row
+Shift+Alt+R	| (Text view) Go to highlighted reference's MD table row
 Ctrl+G		| (Text view) Go to line
+Ctrl+X		| (Text view) Show current instruction in hex editor or open hex editor
 Ctrl+T		| Open a new tab
 Ctrl+W		| Close current tab
 Ctrl+F4		| Close current tab
@@ -63,6 +72,7 @@ Ctrl+K		| Open search pane
 Ctrl+T		| (Search pane) Select Type
 Ctrl+M		| (Search pane) Select Member
 Ctrl+S		| (Search pane) Select Literal
+Alt+Enter	| (Text view, Tree view) Edit current type, method, field, etc
 F12			| (Text view) Follow reference at caret
 Enter		| (Text view) Follow reference at caret
 Ctrl+F12	| (Text view) Follow reference at caret in a new tab
@@ -71,6 +81,8 @@ Ctrl+Click	| (Text view) Follow the clicked reference in a new tab
 Ctrl+Alt+W	| (Text view) Toggle word wrap
 Shift+Dbl Click| (BP/Call stack/Search/etc windows) Open BP/method/etc in a new tab
 Ctrl+C		| (Text view) Copy selected text
+Ctrl+B		| (Text view, IL language) Copy selected lines as IL hex bytes
+Ctrl+E		| (Text view) Edit IL instructions
 Ctrl+S		| Save code
 Ctrl+Shift+S| Save all modified assemblies and netmodules
 Ctrl+O		| Open assembly
@@ -85,10 +97,19 @@ Alt+Click	| (Text view) Don't follow the clicked reference so it's possible to s
 F7			| Give text editor keyboard focus
 Ctrl+Alt+0	| Give text editor keyboard focus
 Ctrl+Alt+L	| Give tree view keyboard focus
-Ctrl+Alt+B	| Show Breakpoints window
-Alt+F9		| Show Breakpoints window
-Ctrl+Alt+C	| Show Call Stack window
-Alt+7		| Show Call Stack window
+Ctrl+Alt+B	| (Debugger) Show Breakpoints window
+Alt+F9		| (Debugger) Show Breakpoints window
+Ctrl+Alt+C	| (Debugger) Show Call Stack window
+Alt+7		| (Debugger) Show Call Stack window
+Ctrl+Alt+H	| (Debugger) Show Threads window
+Ctrl+Alt+U	| (Debugger) Show Modules window
+Ctrl+Alt+E	| (Debugger) Show Exceptions window
+Alt+4		| (Debugger) Show Locals window
+Alt+6		| (Debugger) Show Memory 1 window
+Ctrl+Alt+1	| (Debugger) Show Memory 1 window
+Ctrl+Alt+2	| (Debugger) Show Memory 2 window
+Ctrl+Alt+3	| (Debugger) Show Memory 3 window
+Ctrl+Alt+4	| (Debugger) Show Memory 4 window
 Shift+Alt+Enter | Toggle full screen mode
 Tab			| (Text view) Move to the next reference. Does nothing if the caret is not on a reference.
 Shift+Tab	| (Text view) Move to the previous reference. Does nothing if the caret is not on a reference.
@@ -113,6 +134,23 @@ Ctrl+Alt+V	| (Method Editor) Paste instructions after selection
 Ctrl+M		| (Method Editor) Copy operand's MD token
 Ctrl+R		| (Method Editor) Copy RVA of instruction
 Ctrl+F		| (Method Editor) Copy file offset of instruction
+Ctrl+R		| (Text view) Analyze reference at caret
+Tab			| (Hex editor) Switch caret from hex bytes to ASCII or back
+Ctrl+C		| (Hex editor) Copy binary data
+Ctrl+Shift+8| (Hex editor) Copy UTF-8 encoded data
+Ctrl+Shift+U| (Hex editor) Copy Unicode encoded data
+Ctrl+Shift+P| (Hex editor) Copy data as a C# array
+Ctrl+Shift+B| (Hex editor) Copy data as a VB array
+Ctrl+Shift+C| (Hex editor) Copy hex editor screen contents
+Ctrl+Alt+O	| (Hex editor) Copy offset
+Ctrl+G		| (Hex editor) Go to offset
+Ctrl+8		| (Hex editor) Paste (UTF-8)
+Ctrl+U		| (Hex editor) Paste (Unicode)
+Ctrl+B		| (Hex editor) Paste (#Blob data with compressed length)
+Ctrl+L		| (Hex editor) Show 'Select' dialog box
+Ctrl+D		| (Hex editor) Show only the selected bytes
+Ctrl+Shift+D| (Hex editor) Show all bytes
+Ctrl+Alt+S	| (Hex editor) Save selection
 
 Credits
 =======
@@ -131,13 +169,9 @@ git submodule update --init --recursive
 ```
 
 Use Visual Studio 2010 or later or run `debugbuild.bat` / `releasebuild.bat`
-to build it once you have all dependencies. You don't need Visual Studio
-installed to run the `*.bat` files. The C# compiler is installed if you have
-the .NET Framework installed.
-
-You need the Visual Studio SDK to build ILSpy.AddIn. [NOTE: ILSpy.AddIn is
-currently disabled in **Release** mode because the build server fails to build it
-due to a missing dependency. You must enable it in VS: Build|Configuration Manager]
+to build it once you have all dependencies. You probably don't need Visual Studio
+installed to run the `*.bat` files. The C# compiler is usually installed if you
+have the .NET Framework installed. Otherwise, download and install `Microsoft Build Tools`.
 
 Dependencies
 ============

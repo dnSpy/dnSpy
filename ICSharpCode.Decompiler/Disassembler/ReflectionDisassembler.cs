@@ -18,16 +18,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Decompiler;
+using dnSpy.NRefactory;
 
-namespace ICSharpCode.Decompiler.Disassembler
-{
+namespace ICSharpCode.Decompiler.Disassembler {
 	public class DisassemblerOptions
 	{
 		public DisassemblerOptions(CancellationToken cancellationToken, ModuleDef ownerModule)
@@ -49,6 +46,26 @@ namespace ICSharpCode.Decompiler.Disassembler
 		/// null if we shouldn't add XML doc comments.
 		/// </summary>
 		public Func<IMemberRef, IEnumerable<string>> GetXmlDocComments;
+
+		/// <summary>
+		/// Creates a <see cref="IInstructionBytesReader"/> instance
+		/// </summary>
+		public Func<MethodDef, IInstructionBytesReader> CreateInstructionBytesReader;
+
+		/// <summary>
+		/// Show tokens, RVAs, file offsets
+		/// </summary>
+		public bool ShowTokenAndRvaComments;
+
+		/// <summary>
+		/// Show IL instruction bytes
+		/// </summary>
+		public bool ShowILBytes;
+
+		/// <summary>
+		/// Sort members if true
+		/// </summary>
+		public bool SortMembers;
 	}
 
 	/// <summary>
@@ -56,7 +73,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 	/// </summary>
 	public sealed class ReflectionDisassembler
 	{
-		ITextOutput output;
+		readonly ITextOutput output;
 		readonly DisassemblerOptions options;
 		bool isInType; // whether we are currently disassembling a whole type (-> defaultCollapsed for foldings)
 		MethodBodyDisassembler methodBodyDisassembler;
@@ -140,6 +157,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			
 			// write method header
 			WriteXmlDocComment(method);
+			AddComment(method);
 			output.WriteDefinition(".method", method, TextTokenType.ILDirective, false);
 			output.WriteSpace();
 			DisassembleMethodInternal(method);
@@ -285,10 +303,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 					output.WriteLine();
 				}
 			}
+			WriteParameterAttributes(0, method.Parameters.ReturnParameter);
 			foreach (var p in method.Parameters) {
 				if (p.IsHiddenThisParameter)
 					continue;
-				WriteParameterAttributes(p);
+				WriteParameterAttributes(p.MethodSigIndex + 1, p);
 			}
 			WriteSecurityDeclarations(method);
 			
@@ -907,14 +926,14 @@ namespace ICSharpCode.Decompiler.Disassembler
 			return p.ParamDef != null && (p.ParamDef.HasConstant || p.ParamDef.HasCustomAttributes);
 		}
 		
-		void WriteParameterAttributes(Parameter p)
+		void WriteParameterAttributes(int index, Parameter p)
 		{
 			if (!HasParameterAttributes(p))
 				return;
 			output.Write(".param", TextTokenType.ILDirective);
 			output.WriteSpace();
 			output.Write('[', TextTokenType.Operator);
-			output.Write(string.Format("{0}", p.MethodSigIndex + 1), TextTokenType.Number);
+			output.Write(string.Format("{0}", index), TextTokenType.Number);
 			output.Write(']', TextTokenType.Operator);
 			if (p.HasParamDef && p.ParamDef.HasConstant) {
 				output.WriteSpace();
@@ -976,6 +995,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		public void DisassembleField(FieldDef field)
 		{
 			WriteXmlDocComment(field);
+			AddComment(field);
 			output.WriteDefinition(".field", field, TextTokenType.ILDirective, false);
 			output.WriteSpace();
 			if (field.HasLayoutInfo && field.FieldOffset.HasValue) {
@@ -1032,6 +1052,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			currentMember = property;
 			
 			WriteXmlDocComment(property);
+			AddComment(property);
 			output.WriteDefinition(".property", property, TextTokenType.ILDirective, false);
 			output.WriteSpace();
 			WriteFlags(property.Attributes, propertyAttributes);
@@ -1091,6 +1112,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			if (method == null)
 				return;
 			
+			AddComment(method);
 			output.Write(keyword, TextTokenType.ILDirective);
 			output.WriteSpace();
 			method.WriteMethodTo(output);
@@ -1110,6 +1132,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			currentMember = ev;
 			
 			WriteXmlDocComment(ev);
+			AddComment(ev);
 			output.WriteDefinition(".event", ev, TextTokenType.ILDirective, false);
 			output.WriteSpace();
 			WriteFlags(ev.Attributes, eventAttributes);
@@ -1190,11 +1213,63 @@ namespace ICSharpCode.Decompiler.Disassembler
 			{ TypeAttributes.BeforeFieldInit, "beforefieldinit" },
 			{ TypeAttributes.HasSecurity, null },
 		};
+
+		void AddTokenComment(IMDTokenProvider member, string extra = null)
+		{
+			if (!options.ShowTokenAndRvaComments)
+				return;
+
+			StartComment();
+			WriteToken(member);
+			output.WriteLine();
+		}
+
+		void StartComment()
+		{
+			output.Write("//", TextTokenType.Comment);
+		}
+
+		void WriteToken(IMDTokenProvider member)
+		{
+			output.Write(" Token: ", TextTokenType.Comment);
+			output.WriteReference(string.Format("0x{0:X8}", member.MDToken.Raw), new TokenReference(options.OwnerModule, member.MDToken.Raw), TextTokenType.Comment, false);
+			output.Write(" RID: ", TextTokenType.Comment);
+			output.Write(string.Format("{0}", member.MDToken.Rid), TextTokenType.Comment);
+		}
+
+		void WriteRVA(IMemberDef member)
+		{
+			uint rva;
+			long fileOffset;
+			member.GetRVA(out rva, out fileOffset);
+			string extra = string.Empty;
+			if (rva == 0)
+				return;
+
+			var mod = member.Module;
+			var filename = mod == null ? null : mod.Location;
+			output.Write(" RVA: ", TextTokenType.Comment);
+			output.WriteReference(string.Format("0x{0:X8}", rva), new AddressReference(filename, true, rva, 0), TextTokenType.Comment, false);
+			output.Write(" File Offset: ", TextTokenType.Comment);
+			output.WriteReference(string.Format("0x{0:X8}", fileOffset), new AddressReference(filename, false, (ulong)fileOffset, 0), TextTokenType.Comment, false);
+		}
+
+		void AddComment(IMemberDef member)
+		{
+			if (!options.ShowTokenAndRvaComments)
+				return;
+
+			StartComment();
+			WriteToken(member);
+			WriteRVA(member);
+			output.WriteLine();
+		}
 		
 		public void DisassembleType(TypeDef type)
 		{
 			// start writing IL
 			WriteXmlDocComment(type);
+			AddComment(type);
 			output.WriteDefinition(".class", type, TextTokenType.ILDirective, false);
 			output.WriteSpace();
 			
@@ -1255,7 +1330,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			if (type.HasNestedTypes) {
 				output.WriteLine("// Nested Types", TextTokenType.Comment);
-				foreach (var nestedType in type.NestedTypes) {
+				foreach (var nestedType in type.GetNestedTypes(options.SortMembers)) {
 					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleType(nestedType);
 					output.WriteLine();
@@ -1264,7 +1339,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			if (type.HasFields) {
 				output.WriteLine("// Fields", TextTokenType.Comment);
-				foreach (var field in type.Fields) {
+				foreach (var field in type.GetFields(type.IsAutoLayout ? options.SortMembers : false)) {
 					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleField(field);
 				}
@@ -1272,7 +1347,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			if (type.HasMethods) {
 				output.WriteLine("// Methods", TextTokenType.Comment);
-				foreach (var m in type.Methods) {
+				foreach (var m in type.GetMethods(options.SortMembers)) {
 					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleMethod(m);
 					output.WriteLine();
@@ -1280,7 +1355,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			if (type.HasEvents) {
 				output.WriteLine("// Events", TextTokenType.Comment);
-				foreach (var ev in type.Events) {
+				foreach (var ev in type.GetEvents(options.SortMembers)) {
 					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleEvent(ev);
 					output.WriteLine();
@@ -1289,7 +1364,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 			if (type.HasProperties) {
 				output.WriteLine("// Properties", TextTokenType.Comment);
-				foreach (var prop in type.Properties) {
+				foreach (var prop in type.GetProperties(options.SortMembers)) {
 					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleProperty(prop);
 				}
@@ -1533,7 +1608,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			CloseBlock();
 		}
 		
-		public void WriteAssemblyReferences(ModuleDefMD module)
+		public void WriteAssemblyReferences(ModuleDef module)
 		{
 			if (module == null)
 				return;
@@ -1545,6 +1620,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 				output.WriteLine(DisassemblerHelpers.Escape(mref.Name), TextTokenType.Text);
 			}
 			foreach (var aref in module.GetAssemblyRefs()) {
+				AddTokenComment(aref);
 				output.Write(".assembly", TextTokenType.ILDirective);
 				output.WriteSpace();
 				output.Write("extern", TextTokenType.Keyword);
@@ -1582,6 +1658,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 		{
 			if (module.HasExportedTypes) {
 				foreach (ExportedType exportedType in module.ExportedTypes) {
+					AddTokenComment(exportedType);
 					output.Write(".class", TextTokenType.ILDirective);
 					output.WriteSpace();
 					output.Write("extern", TextTokenType.Keyword);

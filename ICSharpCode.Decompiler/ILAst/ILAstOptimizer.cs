@@ -414,11 +414,11 @@ namespace ICSharpCode.Decompiler.ILAst
 		void IntroducePropertyAccessInstructions(ILExpression expr, ILExpression parentExpr, int posInParent)
 		{
 			if (expr.Code == ILCode.Call || expr.Code == ILCode.Callvirt) {
-				IMethod cecilMethod = (IMethod)expr.Operand;
-				var declType = cecilMethod.DeclaringType as dnlib.DotNet.TypeSpec;
+				IMethod method = (IMethod)expr.Operand;
+				var declType = method.DeclaringType as dnlib.DotNet.TypeSpec;
 				var declArrayType = declType == null ? null : declType.TypeSig.RemovePinnedAndModifiers() as ArraySigBase;
 				if (declArrayType != null) {
-					switch (cecilMethod.Name) {
+					switch (method.Name) {
 						case "Get":
 							expr.Code = ILCode.CallGetter;
 							break;
@@ -426,9 +426,9 @@ namespace ICSharpCode.Decompiler.ILAst
 							expr.Code = ILCode.CallSetter;
 							break;
 						case "Address":
-							ByRefSig brt = cecilMethod.MethodSig.GetRetType() as ByRefSig;
+							ByRefSig brt = method.MethodSig.GetRetType() as ByRefSig;
 							if (brt != null) {
-								IMethod getMethod = new MemberRefUser(cecilMethod.Module, "Get", cecilMethod.MethodSig == null ? null : cecilMethod.MethodSig.Clone(), declArrayType.ToTypeDefOrRef());
+								IMethod getMethod = new MemberRefUser(method.Module, "Get", method.MethodSig == null ? null : method.MethodSig.Clone(), declArrayType.ToTypeDefOrRef());
 								if (getMethod.MethodSig != null)
 									getMethod.MethodSig.RetType = declArrayType.Next;
 								expr.Operand = getMethod;
@@ -440,11 +440,11 @@ namespace ICSharpCode.Decompiler.ILAst
 							break;
 					}
 				} else {
-					MethodDef cecilMethodDef = cecilMethod.Resolve();
-					if (cecilMethodDef != null) {
-						if (cecilMethodDef.IsGetter)
+					MethodDef methodDef = method.Resolve();
+					if (methodDef != null) {
+						if (methodDef.IsGetter)
 							expr.Code = (expr.Code == ILCode.Call) ? ILCode.CallGetter : ILCode.CallvirtGetter;
-						else if (cecilMethodDef.IsSetter)
+						else if (methodDef.IsSetter)
 							expr.Code = (expr.Code == ILCode.Call) ? ILCode.CallSetter : ILCode.CallvirtSetter;
 					}
 				}
@@ -706,6 +706,9 @@ namespace ICSharpCode.Decompiler.ILAst
 				switch (expr.Code) {
 					case ILCode.Localloc:
 					{
+						// Disable unstable code. Will throw when type is void* because it gets
+						// changed to a byte*.
+#if false
 						PtrSig type = expr.InferredType as PtrSig;
 						if (type != null) {
 							ILExpression arg0 = args[0];
@@ -716,6 +719,7 @@ namespace ICSharpCode.Decompiler.ILAst
 								throw new InvalidOperationException();
 							args[0] = arg0;
 						}
+#endif
 						break;
 					}
 					case ILCode.Add:

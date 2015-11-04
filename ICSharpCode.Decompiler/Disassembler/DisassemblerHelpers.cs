@@ -18,12 +18,12 @@
 
 using System;
 using System.Collections.Generic;
-using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Decompiler;
+using dnSpy.NRefactory;
 
-namespace ICSharpCode.Decompiler.Disassembler
-{
+namespace ICSharpCode.Decompiler.Disassembler {
 	public enum ILNameSyntax
 	{
 		/// <summary>
@@ -46,23 +46,34 @@ namespace ICSharpCode.Decompiler.Disassembler
 	
 	public static class DisassemblerHelpers
 	{
-		public static void WriteOffsetReference(ITextOutput writer, Instruction instruction, TextTokenType tokenType = TextTokenType.Label)
+		const int OPERAND_ALIGNMENT = 10;
+
+		static DisassemblerHelpers()
 		{
-			writer.WriteReference(DnlibExtensions.OffsetToString(instruction.GetOffset()), instruction, tokenType);
+			spaces = new string[OPERAND_ALIGNMENT];
+			for (int i = 0; i < spaces.Length; i++)
+				spaces[i] = new string(' ', i);
+		}
+		static readonly string[] spaces;
+
+		public static void WriteOffsetReference(ITextOutput writer, Instruction instruction, MethodDef method, TextTokenType tokenType = TextTokenType.Label)
+		{
+			var r = instruction == null ? null : method == null ? (object)instruction : new InstructionReference(method, instruction);
+			writer.WriteReference(DnlibExtensions.OffsetToString(instruction.GetOffset()), r, tokenType);
 		}
 		
-		public static void WriteTo(this ExceptionHandler exceptionHandler, ITextOutput writer)
+		public static void WriteTo(this ExceptionHandler exceptionHandler, ITextOutput writer, MethodDef method)
 		{
 			writer.Write("Try", TextTokenType.Keyword);
 			writer.WriteSpace();
-			WriteOffsetReference(writer, exceptionHandler.TryStart);
+			WriteOffsetReference(writer, exceptionHandler.TryStart, method);
 			writer.Write('-', TextTokenType.Operator);
-			WriteOffsetReference(writer, exceptionHandler.TryEnd);
+			WriteOffsetReference(writer, exceptionHandler.TryEnd, method);
 			writer.WriteSpace();
 			writer.Write(exceptionHandler.HandlerType.ToString(), TextTokenType.Keyword);
 			if (exceptionHandler.FilterStart != null) {
 				writer.WriteSpace();
-				WriteOffsetReference(writer, exceptionHandler.FilterStart);
+				WriteOffsetReference(writer, exceptionHandler.FilterStart, method);
 				writer.WriteSpace();
 				writer.Write("handler", TextTokenType.Keyword);
 				writer.WriteSpace();
@@ -72,19 +83,59 @@ namespace ICSharpCode.Decompiler.Disassembler
 				exceptionHandler.CatchType.WriteTo(writer);
 			}
 			writer.WriteSpace();
-			WriteOffsetReference(writer, exceptionHandler.HandlerStart);
+			WriteOffsetReference(writer, exceptionHandler.HandlerStart, method);
 			writer.Write('-', TextTokenType.Operator);
-			WriteOffsetReference(writer, exceptionHandler.HandlerEnd);
+			WriteOffsetReference(writer, exceptionHandler.HandlerEnd, method);
 		}
 		
-		public static void WriteTo(this Instruction instruction, ITextOutput writer, Func<OpCode, string> getOpCodeDocumentation)
+		public static void WriteTo(this Instruction instruction, ITextOutput writer, DisassemblerOptions options, uint baseRva, long baseOffs, IInstructionBytesReader byteReader, MethodDef method)
 		{
-			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.GetOffset()), instruction, TextTokenType.Label, false);
+			if (options != null && (options.ShowTokenAndRvaComments || options.ShowILBytes)) {
+				writer.Write("/* ", TextTokenType.Comment);
+
+				bool needSpace = false;
+
+				if (options.ShowTokenAndRvaComments) {
+					ulong fileOffset = (ulong)baseOffs + instruction.Offset;
+					writer.WriteReference(string.Format("0x{0:X8}", fileOffset), new AddressReference(options.OwnerModule == null ? null : options.OwnerModule.Location, false, fileOffset, (ulong)instruction.GetSize()), TextTokenType.Comment, false);
+					needSpace = true;
+				}
+
+				if (options.ShowILBytes) {
+					if (needSpace)
+						writer.Write(' ', TextTokenType.Comment);
+					if (byteReader == null)
+						writer.Write("??", TextTokenType.Comment);
+					else {
+						int size = instruction.GetSize();
+						for (int i = 0; i < size; i++) {
+							var b = byteReader.ReadByte();
+							if (b < 0)
+								writer.Write("??", TextTokenType.Comment);
+							else
+								writer.Write(string.Format("{0:X2}", b), TextTokenType.Comment);
+						}
+						// Most instructions should be at most 5 bytes in length, but use 6 since
+						// ldftn/ldvirtftn are 6 bytes long. The longest instructions are those with
+						// 8 byte operands, ldc.i8 and ldc.r8: 9 bytes.
+						const int MIN_BYTES = 6;
+						for (int i = size; i < MIN_BYTES; i++)
+							writer.Write("  ", TextTokenType.Comment);
+					}
+				}
+
+				writer.Write(" */", TextTokenType.Comment);
+				writer.WriteSpace();
+			}
+			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.GetOffset()), new InstructionReference(method, instruction), TextTokenType.Label, false);
 			writer.Write(':', TextTokenType.Operator);
 			writer.WriteSpace();
 			writer.WriteReference(instruction.OpCode.Name, instruction.OpCode, TextTokenType.OpCode);
 			if (instruction.Operand != null) {
-				writer.WriteSpace();
+				int count = OPERAND_ALIGNMENT - instruction.OpCode.Name.Length;
+				if (count <= 0)
+					count = 1;
+				writer.Write(spaces[count], TextTokenType.Text);
 				if (instruction.OpCode == OpCodes.Ldtoken) {
 					var member = instruction.Operand as IMemberRef;
 					if (member != null && member.IsMethod) {
@@ -96,10 +147,10 @@ namespace ICSharpCode.Decompiler.Disassembler
 						writer.WriteSpace();
 					}
 				}
-				WriteOperand(writer, instruction.Operand);
+				WriteOperand(writer, instruction.Operand, method);
 			}
-			if (getOpCodeDocumentation != null) {
-				var doc = getOpCodeDocumentation(instruction.OpCode);
+			if (options != null && options.GetOpCodeDocumentation != null) {
+				var doc = options.GetOpCodeDocumentation(instruction.OpCode);
 				if (doc != null) {
 					writer.Write("\t", TextTokenType.Text);
 					writer.Write("// " + doc, TextTokenType.Comment);
@@ -107,7 +158,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 		
-		static void WriteLabelList(ITextOutput writer, IList<Instruction> instructions)
+		static void WriteLabelList(ITextOutput writer, IList<Instruction> instructions, MethodDef method)
 		{
 			writer.Write("(", TextTokenType.Operator);
 			for(int i = 0; i < instructions.Count; i++) {
@@ -115,7 +166,7 @@ namespace ICSharpCode.Decompiler.Disassembler
 					writer.Write(',', TextTokenType.Operator);
 					writer.WriteSpace();
 				}
-				WriteOffsetReference(writer, instructions[i]);
+				WriteOffsetReference(writer, instructions[i], method);
 			}
 			writer.Write(")", TextTokenType.Operator);
 		}
@@ -298,11 +349,11 @@ namespace ICSharpCode.Decompiler.Disassembler
 		public static string Escape(string identifier)
 		{
 			if (!MustEscape(identifier)) {
-				return identifier;
+				return IdentifierEscaper.LimitIdentifierLength(identifier);
 			} else {
 				// The ECMA specification says that ' inside SQString should be ecaped using an octal escape sequence,
 				// but we follow Microsoft's ILDasm and use \'.
-				return "'" + NRefactory.CSharp.TextWriterTokenWriter.ConvertString(identifier).Replace("'", "\\'") + "'";
+				return "'" + IdentifierEscaper.LimitIdentifierLength(NRefactory.CSharp.TextWriterTokenWriter.ConvertString(identifier).Replace("'", "\\'")) + "'";
 			}
 		}
 		
@@ -467,7 +518,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 			for (int i = 0; i < parts.Length; i++) {
 				if (i > 0)
 					writer.Write('.', TextTokenType.Operator);
-				writer.Write(IdentifierEscaper.Escape(parts[i]), TextTokenType.NamespacePart);
+				var nsPart = parts[i];
+				if (!string.IsNullOrEmpty(nsPart))
+					writer.Write(IdentifierEscaper.Escape(nsPart), TextTokenType.NamespacePart);
 			}
 		}
 
@@ -484,17 +537,17 @@ namespace ICSharpCode.Decompiler.Disassembler
 			}
 		}
 		
-		public static void WriteOperand(ITextOutput writer, object operand)
+		public static void WriteOperand(ITextOutput writer, object operand, MethodDef method = null)
 		{
 			Instruction targetInstruction = operand as Instruction;
 			if (targetInstruction != null) {
-				WriteOffsetReference(writer, targetInstruction);
+				WriteOffsetReference(writer, targetInstruction, method);
 				return;
 			}
 			
 			IList<Instruction> targetInstructions = operand as IList<Instruction>;
 			if (targetInstructions != null) {
-				WriteLabelList(writer, targetInstructions);
+				WriteLabelList(writer, targetInstructions, method);
 				return;
 			}
 			
@@ -547,9 +600,9 @@ namespace ICSharpCode.Decompiler.Disassembler
 				return;
 			}
 			
-			IMethod method = operand as IMethod;
-			if (method != null) {
-				method.WriteMethodTo(writer);
+			IMethod m = operand as IMethod;
+			if (m != null) {
+				m.WriteMethodTo(writer);
 				return;
 			}
 

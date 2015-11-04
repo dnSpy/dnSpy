@@ -35,6 +35,13 @@ namespace ICSharpCode.Decompiler
 		public DecompilerSettings Settings = new DecompilerSettings();
 		public bool CurrentMethodIsAsync;
 		
+		public static DecompilerContext CreateTestContext(ModuleDef currentModule)
+		{
+			var ctx = new DecompilerContext(currentModule);
+			ctx.Settings.InitializeForTest();
+			return ctx;
+		}
+
 		public DecompilerContext(ModuleDef currentModule)
 		{
 			this.CurrentModule = currentModule;

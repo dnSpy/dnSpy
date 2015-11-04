@@ -16,18 +16,16 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.Analysis;
 
-namespace ICSharpCode.Decompiler.Ast.Transforms
-{
+namespace ICSharpCode.Decompiler.Ast.Transforms {
 	/// <summary>
 	/// Moves variable declarations to improved positions.
 	/// </summary>

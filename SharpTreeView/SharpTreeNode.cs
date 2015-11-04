@@ -125,6 +125,10 @@ namespace ICSharpCode.TreeView
 		{
 			get { return Parent == null; }
 		}
+
+		public virtual bool SingleClickExpandsChildren {
+			get { return false; }
+		}
 		
 		bool isHidden;
 		
@@ -659,6 +663,10 @@ namespace ICSharpCode.TreeView
 		
 		public event PropertyChangedEventHandler PropertyChanged;
 		
+		protected bool HasPropertyChangedHandlers {
+			get { return PropertyChanged != null; }
+		}
+
 		public void RaisePropertyChanged(string name)
 		{
 			if (PropertyChanged != null) {

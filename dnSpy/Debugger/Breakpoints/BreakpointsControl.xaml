@@ -1,0 +1,85 @@
+﻿<!--
+    Copyright (C) 2014-2015 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<UserControl x:Class="dnSpy.Debugger.Breakpoints.BreakpointsControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:dnSpy.Debugger.Breakpoints"
+             xmlns:mvvm="clr-namespace:dnSpy.MVVM"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <ListView
+            Name="listView"
+            MouseDoubleClick="listView_MouseDoubleClick"
+            VirtualizingStackPanel.IsVirtualizing="True"
+            VirtualizingStackPanel.VirtualizationMode="Recycling"
+            mvvm:InitDataTemplateAP.Initialize="True"
+            SelectionMode="Extended"
+            ItemsSource="{Binding Collection}"
+            SelectedItem="{Binding SelectedItem}">
+            <ListView.Resources>
+                <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" BasedOn="{StaticResource DbgTableGridViewScrollViewerStyle}" TargetType="{x:Type ScrollViewer}" />
+                <local:BreakpointColumnConverter x:Key="breakpointColumnConverter" />
+            </ListView.Resources>
+            <ListView.View>
+                <GridView AllowsColumnReorder="True">
+                    <GridViewColumn Header="Name">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <CheckBox Grid.Column="0" Focusable="False" IsChecked="{Binding IsEnabled}" />
+                                    <Image Grid.Column="1" Margin="5 0 0 0" Source="{Binding ImageObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Image}" Stretch="None" Height="16" Width="16" />
+                                    <ContentPresenter Grid.Column="2" Margin="5 0 0 0" Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Name}" />
+                                </Grid>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Assembly">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding AssemblyObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Assembly}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Module">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding ModuleObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Module}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="File">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding FileObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=File}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</UserControl>

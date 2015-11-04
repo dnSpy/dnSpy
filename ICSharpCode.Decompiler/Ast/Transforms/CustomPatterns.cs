@@ -18,14 +18,12 @@
 
 using System;
 using System.Linq;
-using System.Reflection;
-using ICSharpCode.NRefactory;
+using dnlib.DotNet;
+using dnSpy.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
-using dnlib.DotNet;
 
-namespace ICSharpCode.Decompiler.Ast.Transforms
-{
+namespace ICSharpCode.Decompiler.Ast.Transforms {
 	sealed class TypePattern : Pattern
 	{
 		readonly string ns;

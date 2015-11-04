@@ -17,30 +17,23 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Threading;
-
-using ICSharpCode.Decompiler;
+using dnlib.DotNet;
+using dnSpy.Decompiler;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.Utils;
-using dnlib.DotNet;
-using dnlib.DotNet.Emit;
 
-namespace ICSharpCode.Decompiler.Ast
-{
+namespace ICSharpCode.Decompiler.Ast {
 	using Ast = ICSharpCode.NRefactory.CSharp;
 	using VarianceModifier = ICSharpCode.NRefactory.TypeSystem.VarianceModifier;
-	
+
 	[Flags]
 	public enum ConvertTypeOptions
 	{
@@ -67,6 +60,8 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		public static bool MemberIsHidden(IMemberRef member, DecompilerSettings settings)
 		{
+			if (settings.ForceShowAllMembers)
+				return false;
 			MethodDef method = member as MethodDef;
 			if (method != null) {
 				if (method.IsGetter || method.IsSetter || method.IsAddOn || method.IsRemoveOn)
@@ -163,7 +158,7 @@ namespace ICSharpCode.Decompiler.Ast
 			syntaxTree.AcceptVisitor(new InsertParenthesesVisitor { InsertParenthesesForReadability = true });
 			var outputFormatter = new TextTokenWriter(output, context) { FoldBraces = false };
 			var formattingPolicy = context.Settings.CSharpFormattingOptions;
-			syntaxTree.AcceptVisitor(new CSharpOutputVisitor(outputFormatter, formattingPolicy));
+			syntaxTree.AcceptVisitor(new CSharpOutputVisitor(outputFormatter, formattingPolicy, context.CancellationToken));
 		}
 		
 		public void AddAssembly(AssemblyDef assemblyDefinition, bool onlyAssemblyLevel = false)
@@ -250,6 +245,32 @@ namespace ICSharpCode.Decompiler.Ast
 				return astNamespace;
 			}
 		}
+
+		void AddComment(AstNode node, IMemberDef member)
+		{
+			if (!this.context.Settings.ShowTokenAndRvaComments)
+				return;
+			uint rva;
+			long fileOffset;
+			member.GetRVA(out rva, out fileOffset);
+
+			var creator = new CommentReferencesCreator();
+			creator.AddText(" Token: ");
+			creator.AddReference(string.Format("0x{0:X8}", member.MDToken.Raw), new TokenReference(member));
+			creator.AddText(string.Format(" RID: {0}", member.MDToken.Rid));
+			if (rva != 0) {
+				var mod = member.Module;
+				var filename = mod == null ? null : mod.Location;
+				creator.AddText(" RVA: ");
+				creator.AddReference(string.Format("0x{0:X8}", rva), new AddressReference(filename, true, rva, 0));
+				creator.AddText(" File Offset: ");
+				creator.AddReference(string.Format("0x{0:X8}", fileOffset), new AddressReference(filename, false, (ulong)fileOffset, 0));
+			}
+
+			var cmt = new Comment(creator.Text);
+			cmt.References = creator.CommentReferences;
+			node.InsertChildAfter(null, cmt, Roles.Comment);
+		}
 		
 		public void AddType(TypeDef typeDef)
 		{
@@ -331,6 +352,7 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 					} else {
 						EnumMemberDeclaration enumMember = new EnumMemberDeclaration();
+						ConvertCustomAttributes(enumMember, field);
 						enumMember.AddAnnotation(field);
 						enumMember.NameToken = Identifier.Create(CleanName(field.Name)).WithAnnotation(field);
 						var constant = field.Constant == null ? null : field.Constant.Value;
@@ -343,6 +365,7 @@ namespace ICSharpCode.Decompiler.Ast
 						}
 						expectedEnumMemberValue = memberValue + 1;
 						astType.AddChild(enumMember, Roles.TypeMemberRole);
+						AddComment(enumMember, field);
 					}
 				}
 			} else if (IsNormalDelegate(typeDef)) {
@@ -358,8 +381,10 @@ namespace ICSharpCode.Decompiler.Ast
 						dd.ReturnType = ConvertType(m.ReturnType, m.Parameters.ReturnParameter.ParamDef);
 						dd.Parameters.AddRange(MakeParameters(m));
 						ConvertAttributes(dd, m.Parameters.ReturnParameter, m.Module);
+						AddComment(dd, m);
 					}
 				}
+				AddComment(dd, typeDef);
 				result = dd;
 			} else {
 				// Base type
@@ -386,6 +411,7 @@ namespace ICSharpCode.Decompiler.Ast
 				}
 			}
 
+			AddComment(astType, typeDef);
 			context.CurrentType = oldCurrentType;
 			return result;
 		}
@@ -412,9 +438,12 @@ namespace ICSharpCode.Decompiler.Ast
 			int pos = name.LastIndexOf('`');
 			if (pos >= 0)
 				name = name.Substring(0, pos);
-			pos = name.LastIndexOf('.');
-			if (pos >= 0)
-				name = name.Substring(pos + 1);
+			// Could be a compiler-generated name, eg. "<.ctor>b__0_0"
+			if (name.Length == 0 || name[0] != '<') {
+				pos = name.LastIndexOf('.');
+				if (pos >= 0)
+					name = name.Substring(pos + 1);
+			}
 			return name;
 		}
 
@@ -439,7 +468,7 @@ namespace ICSharpCode.Decompiler.Ast
 			MemberType mType = type as MemberType;
 			if (sType != null) {
 				while (typeDef.GenericParameters.Count > sType.TypeArguments.Count) {
-					sType.TypeArguments.Add(new SimpleType("").WithAnnotation(TextTokenType.TypeGenericParameter));
+					sType.TypeArguments.Add(new SimpleType("").WithAnnotation(TextTokenType.TypeGenericParameter).WithAnnotation(SimpleType.DummyTypeGenericParam));
 				}
 			}
 			
@@ -449,7 +478,7 @@ namespace ICSharpCode.Decompiler.Ast
 				int outerTypeParamCount = typeDef.DeclaringType == null ? 0 : typeDef.DeclaringType.GenericParameters.Count;
 				
 				while (typeDef.GenericParameters.Count - outerTypeParamCount > mType.TypeArguments.Count) {
-					mType.TypeArguments.Add(new SimpleType("").WithAnnotation(TextTokenType.TypeGenericParameter));
+					mType.TypeArguments.Add(new SimpleType("").WithAnnotation(TextTokenType.TypeGenericParameter).WithAnnotation(SimpleType.DummyTypeGenericParam));
 				}
 			}
 			
@@ -461,9 +490,9 @@ namespace ICSharpCode.Decompiler.Ast
 		/// <summary>
 		/// Converts a type reference.
 		/// </summary>
-		/// <param name="type">The Cecil type reference that should be converted into
+		/// <param name="type">The type reference that should be converted into
 		/// a type system type reference.</param>
-		/// <param name="typeAttributes">Attributes associated with the Cecil type reference.
+		/// <param name="typeAttributes">Attributes associated with the type reference.
 		/// This is used to support the 'dynamic' type.</param>
 		public static AstType ConvertType(ITypeDefOrRef type, IHasCustomAttribute typeAttributes = null, ConvertTypeOptions options = ConvertTypeOptions.None)
 		{
@@ -474,9 +503,9 @@ namespace ICSharpCode.Decompiler.Ast
 		/// <summary>
 		/// Converts a type reference.
 		/// </summary>
-		/// <param name="type">The Cecil type reference that should be converted into
+		/// <param name="type">The type reference that should be converted into
 		/// a type system type reference.</param>
-		/// <param name="typeAttributes">Attributes associated with the Cecil type reference.
+		/// <param name="typeAttributes">Attributes associated with the type reference.
 		/// This is used to support the 'dynamic' type.</param>
 		public static AstType ConvertType(TypeSig type, IHasCustomAttribute typeAttributes = null, ConvertTypeOptions options = ConvertTypeOptions.None)
 		{
@@ -782,43 +811,54 @@ namespace ICSharpCode.Decompiler.Ast
 		
 		void AddTypeMembers(TypeDeclaration astType, TypeDef typeDef)
 		{
-			// Nested types
-			foreach (TypeDef nestedTypeDef in typeDef.NestedTypes) {
-				if (MemberIsHidden(nestedTypeDef, context.Settings))
-					continue;
-				var nestedType = CreateType(nestedTypeDef);
-				SetNewModifier(nestedType);
-				astType.AddChild(nestedType, Roles.TypeMemberRole);
-			}
-			
-			// Add fields
-			foreach(FieldDef fieldDef in typeDef.Fields) {
-				if (MemberIsHidden(fieldDef, context.Settings)) continue;
-				astType.AddChild(CreateField(fieldDef), Roles.TypeMemberRole);
-			}
-			
-			// Add events
-			foreach(EventDef eventDef in typeDef.Events) {
-				if (eventDef.AddMethod == null && eventDef.RemoveMethod == null)
-					continue;
-				astType.AddChild(CreateEvent(eventDef), Roles.TypeMemberRole);
-			}
+			foreach (var d in this.context.Settings.DecompilationObjects) {
+				switch (d) {
+				case DecompilationObject.NestedTypes:
+					foreach (TypeDef nestedTypeDef in typeDef.GetNestedTypes(context.Settings.SortMembers)) {
+						if (MemberIsHidden(nestedTypeDef, context.Settings))
+							continue;
+						var nestedType = CreateType(nestedTypeDef);
+						SetNewModifier(nestedType);
+						astType.AddChild(nestedType, Roles.TypeMemberRole);
+					}
+					break;
 
-			// Add properties
-			foreach(PropertyDef propDef in typeDef.Properties) {
-				if (propDef.GetMethod == null && propDef.SetMethod == null)
-					continue;
-				astType.Members.Add(CreateProperty(propDef));
-			}
-			
-			// Add methods
-			foreach(MethodDef methodDef in typeDef.Methods) {
-				if (MemberIsHidden(methodDef, context.Settings)) continue;
-				
-				if (methodDef.IsConstructor)
-					astType.Members.Add(CreateConstructor(methodDef));
-				else
-					astType.Members.Add(CreateMethod(methodDef));
+				case DecompilationObject.Fields:
+					foreach (FieldDef fieldDef in typeDef.GetFields(typeDef.IsAutoLayout ? context.Settings.SortMembers : false)) {
+						if (MemberIsHidden(fieldDef, context.Settings)) continue;
+						astType.AddChild(CreateField(fieldDef), Roles.TypeMemberRole);
+					}
+					break;
+
+				case DecompilationObject.Events:
+					foreach (EventDef eventDef in typeDef.GetEvents(context.Settings.SortMembers)) {
+						if (eventDef.AddMethod == null && eventDef.RemoveMethod == null)
+							continue;
+						astType.AddChild(CreateEvent(eventDef), Roles.TypeMemberRole);
+					}
+					break;
+
+				case DecompilationObject.Properties:
+					foreach (PropertyDef propDef in typeDef.GetProperties(context.Settings.SortMembers)) {
+						if (propDef.GetMethod == null && propDef.SetMethod == null)
+							continue;
+						astType.Members.Add(CreateProperty(propDef));
+					}
+					break;
+
+				case DecompilationObject.Methods:
+					foreach (MethodDef methodDef in typeDef.GetMethods(typeDef.IsInterface ? false : context.Settings.SortMembers)) {
+						if (MemberIsHidden(methodDef, context.Settings)) continue;
+
+						if (methodDef.IsConstructor)
+							astType.Members.Add(CreateConstructor(methodDef));
+						else
+							astType.Members.Add(CreateMethod(methodDef));
+					}
+					break;
+
+				default: throw new InvalidOperationException();
+				}
 			}
 		}
 
@@ -870,9 +910,11 @@ namespace ICSharpCode.Decompiler.Ast
 					astMethod.Parameters.MoveTo(op.Parameters);
 					astMethod.Attributes.MoveTo(op.Attributes);
 					op.Body = astMethod.Body.Detach();
+					AddComment(op, methodDef);
 					return op;
 				}
 			}
+			AddComment(astMethod, methodDef);
 			return astMethod;
 		}
 		
@@ -941,6 +983,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (methodDef.IsStatic && methodDef.DeclaringType.IsBeforeFieldInit && !astMethod.Body.IsNull) {
 				astMethod.Body.InsertChildAfter(null, new Comment(" Note: this type is marked as 'beforefieldinit'."), Roles.Comment);
 			}
+			AddComment(astMethod, methodDef);
 			return astMethod;
 		}
 
@@ -1002,6 +1045,7 @@ namespace ICSharpCode.Decompiler.Ast
 				
 				if ((getterModifiers & Modifiers.VisibilityMask) != (astProp.Modifiers & Modifiers.VisibilityMask))
 					astProp.Getter.Modifiers = getterModifiers & Modifiers.VisibilityMask;
+				AddComment(astProp.Getter, propDef.GetMethod);
 			}
 			if (propDef.SetMethod != null) {
 				astProp.Setter = new Accessor();
@@ -1019,6 +1063,7 @@ namespace ICSharpCode.Decompiler.Ast
 				
 				if ((setterModifiers & Modifiers.VisibilityMask) != (astProp.Modifiers & Modifiers.VisibilityMask))
 					astProp.Setter.Modifiers = setterModifiers & Modifiers.VisibilityMask;
+				AddComment(astProp.Setter, propDef.SetMethod);
 			}
 			ConvertCustomAttributes(astProp, propDef);
 
@@ -1028,6 +1073,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if(accessor != null && !accessor.HasOverrides && accessor.DeclaringType != null && !accessor.DeclaringType.IsInterface)
 				if (accessor.IsVirtual == accessor.IsNewSlot)
 					SetNewModifier(member);
+			AddComment(member, propDef);
 			return member;
 		}
 
@@ -1056,6 +1102,7 @@ namespace ICSharpCode.Decompiler.Ast
 				astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
 				if (!eventDef.DeclaringType.IsInterface)
 					astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
+				AddComment(astEvent, eventDef);
 				return astEvent;
 			} else {
 				CustomEventDeclaration astEvent = new CustomEventDeclaration();
@@ -1077,6 +1124,7 @@ namespace ICSharpCode.Decompiler.Ast
 					}.WithAnnotation(eventDef.AddMethod);
 					astEvent.AddAccessor.AddAnnotation(mm);
 					ConvertAttributes(astEvent.AddAccessor, eventDef.AddMethod);
+					AddComment(astEvent.AddAccessor, eventDef.AddMethod);
 				}
 				if (eventDef.RemoveMethod != null) {
 					astEvent.RemoveAccessor = new Accessor {
@@ -1084,11 +1132,13 @@ namespace ICSharpCode.Decompiler.Ast
 					}.WithAnnotation(eventDef.RemoveMethod);
 					astEvent.RemoveAccessor.AddAnnotation(mm);
 					ConvertAttributes(astEvent.RemoveAccessor, eventDef.RemoveMethod);
+					AddComment(astEvent.RemoveAccessor, eventDef.RemoveMethod);
 				}
 				MethodDef accessor = eventDef.AddMethod ?? eventDef.RemoveMethod;
 				if (accessor != null && accessor.IsVirtual == accessor.IsNewSlot) {
 					SetNewModifier(astEvent);
 				}
+				AddComment(astEvent, eventDef);
 				return astEvent;
 			}
 		}
@@ -1140,6 +1190,7 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			ConvertAttributes(astField, fieldDef);
 			SetNewModifier(astField);
+			AddComment(astField, fieldDef);
 			return astField;
 		}
 

@@ -16,16 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Diagnostics;
 using System.Linq;
-using ICSharpCode.NRefactory;
+using dnSpy.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
 
 //TODO: Verify that no ILRanges have been removed from this file
 
-namespace ICSharpCode.Decompiler.Ast.Transforms
-{
+namespace ICSharpCode.Decompiler.Ast.Transforms {
 	/// <summary>
 	/// Decompiles query expressions.
 	/// Based on C# 4.0 spec, §7.16.2 Query expression translation

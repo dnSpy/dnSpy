@@ -20,14 +20,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using ICSharpCode.Decompiler;
+using dnlib.DotNet;
+using dnSpy.NRefactory;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
-using dnlib.DotNet;
 
-namespace ICSharpCode.Decompiler.Ast
-{
+namespace ICSharpCode.Decompiler.Ast {
 	public class TextTokenWriter : TokenWriter
 	{
 		readonly ITextOutput output;
@@ -57,6 +56,10 @@ namespace ICSharpCode.Decompiler.Ast
 			if (tokenType == TextTokenType.Text)
 				tokenType = TextTokenHelper.GetTextTokenType(identifier.AnnotationVT<TextTokenType>() ?? identifier.Annotation<object>());
 
+			if (tokenType != TextTokenType.Keyword && (identifier.IsVerbatim || CSharpOutputVisitor.IsKeyword(identifier.Name, identifier))) {
+				output.Write('@', TextTokenType.Operator);
+			}
+			
 			var definition = GetCurrentDefinition(identifier);
 			if (definition != null) {
 				output.WriteDefinition(IdentifierEscaper.Escape(identifier.Name), definition, tokenType, false);
@@ -87,7 +90,10 @@ namespace ICSharpCode.Decompiler.Ast
 				firstUsingDeclaration = false;
 			}
 
-			output.Write(IdentifierEscaper.Escape(identifier.Name), tokenType);
+			var s = identifier.Name;
+			if (identifier.Annotation<IdentifierFormatted>() == null)
+				s = IdentifierEscaper.Escape(s);
+			output.Write(s, tokenType);
 		}
 
 		IMemberRef GetCurrentMemberReference()
@@ -213,7 +219,7 @@ namespace ICSharpCode.Decompiler.Ast
 			var node = nodeStack.Peek();
 			if (node is IndexerDeclaration)
 				memberRef = node.Annotation<PropertyDef>();
-			if (memberRef != null && (node is PrimitiveType || node is ConstructorInitializer || node is BaseReferenceExpression || node is ThisReferenceExpression || node is ObjectCreateExpression))
+			if (memberRef != null && (node is PrimitiveType || node is ConstructorInitializer || node is BaseReferenceExpression || node is ThisReferenceExpression || node is ObjectCreateExpression || node is AnonymousMethodExpression))
 				output.WriteReference(keyword, memberRef, TextTokenType.Keyword);
 			else if (memberRef != null && node is IndexerDeclaration && keyword == "this")
 				output.WriteDefinition(keyword, memberRef, TextTokenType.Keyword, false);
@@ -297,16 +303,17 @@ namespace ICSharpCode.Decompiler.Ast
 			output.WriteLine();
 		}
 		
-		public override void WriteComment(CommentType commentType, string content)
+		public override void WriteComment(CommentType commentType, string content, CommentReference[] refs)
 		{
 			switch (commentType) {
 				case CommentType.SingleLine:
 					output.Write("//", TextTokenType.Comment);
-					output.WriteLine(content, TextTokenType.Comment);
+					Write(content, refs);
+					output.WriteLine();
 					break;
 				case CommentType.MultiLine:
 					output.Write("/*", TextTokenType.Comment);
-					output.Write(content, TextTokenType.Comment);
+					Write(content, refs);
 					output.Write("*/", TextTokenType.Comment);
 					break;
 				case CommentType.Documentation:
@@ -316,6 +323,7 @@ namespace ICSharpCode.Decompiler.Ast
 						output.MarkFoldStart("///" + content, true);
 					}
 					output.Write("///", TextTokenType.XmlDocTag);
+					Debug.Assert(refs == null);
 					output.WriteXmlDoc(content);
 					if (inDocumentationComment && isLastLine) {
 						inDocumentationComment = false;
@@ -324,9 +332,29 @@ namespace ICSharpCode.Decompiler.Ast
 					output.WriteLine();
 					break;
 				default:
-					output.Write(content, TextTokenType.Comment);
+					Write(content, refs);
 					break;
 			}
+		}
+
+		void Write(string content, CommentReference[] refs)
+		{
+			if (refs == null) {
+				output.Write(content, TextTokenType.Comment);
+				return;
+			}
+
+			int offs = 0;
+			for (int i = 0; i < refs.Length; i++) {
+				var @ref = refs[i];
+				var s = content.Substring(offs, @ref.Length);
+				offs += @ref.Length;
+				if (@ref.Reference == null)
+					output.Write(s, TextTokenType.Comment);
+				else
+					output.WriteReference(s, @ref.Reference, TextTokenType.Comment, @ref.IsLocal);
+			}
+			Debug.Assert(offs == content.Length);
 		}
 		
 		public override void WritePreProcessorDirective(PreProcessorDirectiveType type, string argument)

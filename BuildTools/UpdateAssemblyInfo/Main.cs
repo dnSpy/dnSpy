@@ -19,31 +19,35 @@ namespace UpdateAssemblyInfo
 	// Updates the version numbers in the assembly information.
 	class MainClass
 	{
-		const string DNSPY_VERSION = "1.0.0.0";
+		const string DNSPY_VERSION = "1.4.0.0";
 		const string BaseCommit = "d779383cb85003d6dabeb976f0845631e07bf463";
 		const int BaseCommitRev = 1;
 		
-		const string globalAssemblyInfoTemplateFile = "ILSpy/Properties/AssemblyInfo.template.cs";
-		const string ilspyAppConfigTemplateFile = "ILSpy/Properties/app.config.template";
+		const string globalAssemblyInfoTemplateFile = "dnSpy/Properties/AssemblyInfo.template.cs";
+		const string dnSpyAppConfigTemplateFile = "dnSpy/Properties/app.config.template";
 		static readonly TemplateFile[] templateFiles = {
 			new TemplateFile {
 				Input = globalAssemblyInfoTemplateFile,
-				Output = "ILSpy/Properties/AssemblyInfo.cs"
+				Output = "dnSpy/Properties/AssemblyInfo.cs"
 			},
 			new TemplateFile {
 				Input = globalAssemblyInfoTemplateFile,
 				Output = "dnSpy-x86/Properties/AssemblyInfo.cs"
 			},
 			new TemplateFile {
+				Input = globalAssemblyInfoTemplateFile,
+				Output = "dnSpyc/Properties/AssemblyInfo.cs"
+			},
+			new TemplateFile {
 				Input = "ICSharpCode.Decompiler/Properties/AssemblyInfo.template.cs",
 				Output = "ICSharpCode.Decompiler/Properties/AssemblyInfo.cs"
 			},
 			new TemplateFile {
-				Input = ilspyAppConfigTemplateFile,
-				Output = "ILSpy/App.config"
+				Input = dnSpyAppConfigTemplateFile,
+				Output = "dnSpy/App.config"
 			},
 			new TemplateFile {
-				Input = ilspyAppConfigTemplateFile,
+				Input = dnSpyAppConfigTemplateFile,
 				Output = "dnSpy-x86/App.config"
 			},
 		};
@@ -68,13 +72,13 @@ namespace UpdateAssemblyInfo
 						}
 						return 0;
 					}
-					if (!File.Exists("ILSpy.sln")) {
+					if (!File.Exists("dnSpy.sln")) {
 						string mainDir = Path.GetFullPath(Path.Combine(exeDir, "../../../.."));
-						if (File.Exists(Path.Combine(mainDir, "ILSpy.sln"))) {
+						if (File.Exists(Path.Combine(mainDir, "dnSpy.sln"))) {
 							Directory.SetCurrentDirectory(mainDir);
 						}
 					}
-					if (!File.Exists("ILSpy.sln")) {
+					if (!File.Exists("dnSpy.sln")) {
 						Console.WriteLine("Working directory must be the dnSpy repo root!");
 						return 2;
 					}

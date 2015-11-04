@@ -20,12 +20,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using ICSharpCode.NRefactory;
-using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
+using dnSpy.NRefactory;
+using ICSharpCode.NRefactory.CSharp;
 
-namespace ICSharpCode.Decompiler.Ast.Transforms
-{
+namespace ICSharpCode.Decompiler.Ast.Transforms {
 	/// <summary>
 	/// Introduces using declarations.
 	/// </summary>
@@ -47,7 +46,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 			
 			if (context.Settings.UsingDeclarations) {
 				// Now add using declarations for those namespaces:
-				foreach (string ns in importedNamespaces.OrderByDescending(n => n)) {
+				foreach (string ns in GetNamespacesInReverseOrder()) {
 					// we go backwards (OrderByDescending) through the list of namespaces because we insert them backwards
 					// (always inserting at the start of the list)
 					string[] parts = ns.Split('.');
@@ -64,25 +63,46 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 
 			if (context.CurrentModule != null) {
 				FindAmbiguousTypeNames(context.CurrentModule.Types, internalsVisible: true);
-				if (context.CurrentModule is ModuleDefMD) {
-					var asmDict = new Dictionary<AssemblyDef, List<AssemblyDef>>(AssemblyEqualityComparer.Instance);
-					foreach (var r in ((ModuleDefMD)context.CurrentModule).GetAssemblyRefs()) {
-						AssemblyDef d = context.CurrentModule.Context.AssemblyResolver.Resolve(r, context.CurrentModule);
-						if (d == null)
-							continue;
-						List<AssemblyDef> list;
-						if (!asmDict.TryGetValue(d, out list))
-							asmDict.Add(d, list = new List<AssemblyDef>());
-						list.Add(d);
-					}
-					foreach (var list in asmDict.Values) {
-						FindAmbiguousTypeNames(GetTypes(list), internalsVisible: false);
-					}
+				var asmDict = new Dictionary<AssemblyDef, List<AssemblyDef>>(AssemblyEqualityComparer.Instance);
+				foreach (var r in context.CurrentModule.GetAssemblyRefs()) {
+					AssemblyDef d = context.CurrentModule.Context.AssemblyResolver.Resolve(r, context.CurrentModule);
+					if (d == null)
+						continue;
+					List<AssemblyDef> list;
+					if (!asmDict.TryGetValue(d, out list))
+						asmDict.Add(d, list = new List<AssemblyDef>());
+					list.Add(d);
+				}
+				foreach (var list in asmDict.Values) {
+					FindAmbiguousTypeNames(GetTypes(list), internalsVisible: false);
 				}
 			}
 			
 			// verify that the SimpleTypes refer to the correct type (no ambiguities)
 			compilationUnit.AcceptVisitor(new FullyQualifyAmbiguousTypeNamesVisitor(this), null);
+		}
+
+		IEnumerable<string> GetNamespacesInReverseOrder()
+		{
+			var list = new List<string>(importedNamespaces);
+
+			if (context.Settings.SortSystemUsingStatementsFirst) {
+				list.Sort((a, b) => {
+					bool sa = a == "System" || a.StartsWith("System.");
+					bool sb = b == "System" || b.StartsWith("System.");
+					if (sa && sb)
+						return StringComparer.OrdinalIgnoreCase.Compare(b, a);
+					if (sa && !sb)
+						return 1;
+					if (!sa && sb)
+						return -1;
+					return StringComparer.OrdinalIgnoreCase.Compare(b, a);
+				});
+			}
+			else
+				list.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(b, a));
+
+			return list;
 		}
 
 		static IEnumerable<TypeDef> GetTypes(List<AssemblyDef> asms)

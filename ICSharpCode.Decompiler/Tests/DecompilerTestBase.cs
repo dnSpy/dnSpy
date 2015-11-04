@@ -49,7 +49,7 @@ namespace ICSharpCode.Decompiler.Tests
 			var code = RemoveIgnorableLines(File.ReadLines(fileName));
 			AssemblyDef assembly = CompileLegacy(code, optimize, useDebug, compilerVersion);
 
-			AstBuilder decompiler = new AstBuilder(new DecompilerContext(assembly.ManifestModule));
+			AstBuilder decompiler = new AstBuilder(DecompilerContext.CreateTestContext(assembly.ManifestModule));
 			decompiler.AddAssembly(assembly);
 			new Helpers.RemoveCompilerAttribute().Run(decompiler.SyntaxTree);
 
@@ -77,7 +77,7 @@ namespace ICSharpCode.Decompiler.Tests
 					}
 					throw new Exception(b.ToString());
 				}
-				return AssemblyDef.Load(results.PathToAssembly);
+				return Utils.OpenAssembly(results.PathToAssembly);
 			}
 			finally
 			{

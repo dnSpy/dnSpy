@@ -21,16 +21,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Disassembler;
-using ICSharpCode.NRefactory.Utils;
-using ICSharpCode.NRefactory;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.NRefactory;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.Disassembler;
+using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.Decompiler.ILAst
-{
+namespace ICSharpCode.Decompiler.ILAst {
 	public abstract class ILNode
 	{
 		public readonly List<ILRange> ILRanges = new List<ILRange>(1);
@@ -429,23 +427,38 @@ namespace ICSharpCode.Decompiler.ILAst
 		{
 			if (input == null)
 				throw new ArgumentNullException("Input is null!");
-			
-			List<ILRange> ranges = ranges = input.ToList();
-			ranges.Sort((a, b) => a.from.CompareTo(b.from));
-			for (int i = 0; i < ranges.Count - 1; ) {
-				ILRange curr = ranges[i];
-				ILRange next = ranges[i + 1];
-				// Merge consequtive ranges if they intersect
-				if (curr.from <= next.from && next.from <= curr.to) {
-					ranges[i] = new ILRange(curr.from, Math.Max(curr.to, next.to));
-					ranges.RemoveAt(i + 1);
-				} else {
-					i++;
+
+			List<ILRange> ranges = input.ToList();
+			if (ranges.Count <= 1)
+				return ranges;
+
+			ranges.Sort(Sort);
+			var result = new List<ILRange>();
+			var curr = ranges[0];
+			result.Add(curr);
+			for (int i = 1; i < ranges.Count; i++) {
+				var next = ranges[i];
+				if (curr.to == next.from)
+					result[result.Count - 1] = curr = new ILRange(curr.from, next.to);
+				else if (next.from > curr.to) {
+					result.Add(next);
+					curr = next;
 				}
+				else if (next.to > curr.to)
+					result[result.Count - 1] = curr = new ILRange(curr.from, next.to);
 			}
-			return ranges;
+
+			return result;
 		}
-		
+
+		static int Sort(ILRange a, ILRange b)
+		{
+			int c = unchecked((int)a.from - (int)b.from);
+			if (c != 0)
+				return c;
+			return unchecked((int)b.to - (int)a.to);
+		}
+
 		public static List<ILRange> Invert(IEnumerable<ILRange> input, int codeSize)
 		{
 			if (input == null)

@@ -19,7 +19,6 @@
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>1607</NoWarn>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <SourceAnalysisOverrideSettingsFile>C:\Users\Daniel\AppData\Roaming\ICSharpCode/SharpDevelop3.0\Settings.SourceAnalysis</SourceAnalysisOverrideSettingsFile>
     <StartArguments>--REVISION</StartArguments>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>

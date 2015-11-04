@@ -18,6 +18,7 @@
 
 using System;
 using System.IO;
+using dnSpy.NRefactory;
 using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.Decompiler
