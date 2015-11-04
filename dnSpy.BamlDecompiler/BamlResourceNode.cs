@@ -41,8 +41,6 @@ namespace dnSpy.BamlDecompiler {
 		string bamlName;
 		Stream bamlData;
 
-		bool isDisassembly = false;
-
 		public BamlResourceNode(ModuleDef module, ResourceElement resElem, Stream bamlData)
 			: base(resElem) {
 			this.module = module;
@@ -77,7 +75,7 @@ namespace dnSpy.BamlDecompiler {
 						try {
 							bamlData.Position = 0;
 							var document = BamlReader.ReadDocument(bamlData, token);
-							if (isDisassembly)
+							if (BamlSettings.Instance.DisassembleBaml)
 								Disassemble(module, document, lang, output, out highlighting, token);
 							else
 								Decompile(module, document, lang, output, out highlighting, token);

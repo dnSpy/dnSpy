@@ -30,17 +30,6 @@ using dnSpy.TreeNodes;
 namespace dnSpy.BamlDecompiler {
 	[Export(typeof(IResourceFactory<ResourceElement, ResourceElementTreeNode>))]
 	public sealed class BamlResourceNodeFactory : IResourceFactory<ResourceElement, ResourceElementTreeNode> {
-		//public ILSpyTreeNode CreateNode(Resource resource) {
-		//    return null;
-		//}
-
-		//public ILSpyTreeNode CreateNode(string key, object data) {
-		//    if (key.EndsWith(".baml", StringComparison.OrdinalIgnoreCase) && data is Stream)
-		//        return new BamlResourceNode(key, (Stream)data);
-		//    else
-		//        return null;
-		//}
-
 		public int Priority {
 			get { return 0; }
 		}
