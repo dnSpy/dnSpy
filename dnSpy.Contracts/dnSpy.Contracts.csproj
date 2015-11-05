@@ -42,6 +42,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Contracts.cs" />
+    <Compile Include="Images\BackgroundType.cs" />
+    <Compile Include="Images\IImageManager.cs" />
+    <Compile Include="Images\ImageInfo.cs" />
     <Compile Include="Menus\CodeReferenceSegment.cs" />
     <Compile Include="Menus\CreatedMenuItem.cs" />
     <Compile Include="Menus\ExportMenuAttribute.cs" />
@@ -60,6 +63,23 @@
     <Compile Include="Menus\IMenuMetadata.cs" />
     <Compile Include="Menus\MenuConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Themes\ColorType.cs" />
+    <Compile Include="Themes\ITheme.cs" />
+    <Compile Include="Themes\IThemeColor.cs" />
+    <Compile Include="Themes\IThemesManager.cs" />
+    <Compile Include="Themes\ThemeChangedEventArgs.cs" />
+    <Compile Include="ToolBars\ExportToolBarButtonAttribute.cs" />
+    <Compile Include="ToolBars\ExportToolBarItemAttribute.cs" />
+    <Compile Include="ToolBars\ExportToolBarObjectAttribute.cs" />
+    <Compile Include="ToolBars\IToolBarButton.cs" />
+    <Compile Include="ToolBars\IToolBarButtonMetadata.cs" />
+    <Compile Include="ToolBars\IToolBarItem.cs" />
+    <Compile Include="ToolBars\IToolBarItemContext.cs" />
+    <Compile Include="ToolBars\IToolBarItemMetadata.cs" />
+    <Compile Include="ToolBars\IToolBarManager.cs" />
+    <Compile Include="ToolBars\IToolBarObject.cs" />
+    <Compile Include="ToolBars\IToolBarObjectMetadata.cs" />
+    <Compile Include="ToolBars\ToolBarConstants.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />

@@ -27,7 +27,7 @@ using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.AvalonEdit;
 using dnSpy.Files;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;

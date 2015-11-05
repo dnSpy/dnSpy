@@ -39,10 +39,10 @@ using dnSpy;
 using dnSpy.AsmEditor;
 using dnSpy.AvalonEdit;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
-using dnSpy.Controls;
+using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler;
-using dnSpy.DnTheme;
 using dnSpy.Files;
 using dnSpy.Files.WPF;
 using dnSpy.Hex;
@@ -50,6 +50,8 @@ using dnSpy.Images;
 using dnSpy.NRefactory;
 using dnSpy.Options;
 using dnSpy.Search;
+using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.UI.Images;
 using dnSpy.Tabs;
 using dnSpy.TextView;
 using dnSpy.TreeNodes;
@@ -234,8 +236,7 @@ namespace ICSharpCode.ILSpy {
 			this.sessionSettings.PropertyChanged += sessionSettings_PropertyChanged;
 			var listOptions = new DnSpyFileListOptionsImpl(this.Dispatcher);
 			this.dnSpyFileListManager = new DnSpyFileListManager(listOptions, spySettings);
-			Themes.ThemeChanged += Themes_ThemeChanged;
-			Themes.IsHighContrastChanged += (s, e) => Themes.SwitchThemeIfNecessary();
+			Globals.App.ThemesManager.ThemeChanged += ThemesManager_ThemeChanged;
 			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 			OtherSettings.Instance.PropertyChanged += OtherSettings_PropertyChanged;
 			InitializeTextEditorFontResource();
@@ -263,16 +264,13 @@ namespace ICSharpCode.ILSpy {
 
 			tabGroupsManager = new TabGroupsManager<TabState>(tabGroupsContentPresenter, tabManager_OnSelectionChanged, tabManager_OnAddRemoveTabState);
 			tabGroupsManager.OnTabGroupSelected += tabGroupsManager_OnTabGroupSelected;
-			var theme = Themes.GetThemeOrDefault(sessionSettings.ThemeName);
-			if (theme.IsHighContrast != Themes.IsHighContrast)
-				theme = Themes.GetThemeOrDefault(Themes.CurrentDefaultThemeName) ?? theme;
-			Themes.Theme = theme;
+			((AppImpl)Globals.App).InitializeThemes(sessionSettings.ThemeName);
 			InitializeAssemblyTreeView(treeView);
 
 			mainMenu = Globals.App.MenuManager.CreateMenu(new Guid(MenuConstants.APP_MENU_GUID), this);
 			InitMainMenu();
 			InitToolbar();
-			loadingImage.Source = ImageCache.Instance.GetImage(GetType().Assembly, "dnSpy-Big", theme.GetColor(ColorType.EnvironmentBackground).InheritedColor.Background.GetColor(null).Value);
+			loadingImage.Source = Globals.App.ImageManager.GetImage(GetType().Assembly, "dnSpy-Big", (Globals.App.ThemesManager.Theme.GetColor(ColorType.EnvironmentBackground).Background as SolidColorBrush).Color);
 
 			this.Activated += (s, e) => UpdateSystemMenuImage();
 			this.Deactivated += (s, e) => UpdateSystemMenuImage();
@@ -356,8 +354,8 @@ namespace ICSharpCode.ILSpy {
 				treeView.ClearValue(ItemsControl.ItemContainerStyleProperty);
 			}
 
-			treeView.GetPreviewInsideTextBackground = () => Themes.Theme.GetColor(ColorType.SystemColorsHighlight).InheritedColor.Background.GetBrush(null);
-			treeView.GetPreviewInsideForeground = () => Themes.Theme.GetColor(ColorType.SystemColorsHighlightText).InheritedColor.Foreground.GetBrush(null);
+			treeView.GetPreviewInsideTextBackground = () => Globals.App.ThemesManager.Theme.GetColor(ColorType.SystemColorsHighlight).Background;
+			treeView.GetPreviewInsideForeground = () => Globals.App.ThemesManager.Theme.GetColor(ColorType.SystemColorsHighlightText).Foreground;
 		}
 
 		public static void InitializeAssemblyTreeView(SharpTreeView treeView) {
@@ -848,10 +846,10 @@ namespace ICSharpCode.ILSpy {
 				listener.ClosePopup();
 		}
 
-		void Themes_ThemeChanged(object sender, EventArgs e) {
-			ImageCache.Instance.OnThemeChanged();
+		void ThemesManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
+			((ImageManager)Globals.App.ImageManager).OnThemeChanged();
 			UpdateSystemMenuImage();
-			UpdateControlColors();
+			((AppImpl)Globals.App).UpdateResources(Globals.App.ThemesManager.Theme, App.Current.Resources);
 			NewTextEditor.OnThemeUpdatedStatic();
 			HexBoxThemeHelper.OnThemeUpdatedStatic();
 			foreach (var view in AllTextViews)
@@ -863,17 +861,9 @@ namespace ICSharpCode.ILSpy {
 
 		void UpdateSystemMenuImage() {
 			if (IsActive)
-				SystemMenuImage = ImageCache.Instance.GetImage(GetType().Assembly, "Assembly", BackgroundType.TitleAreaActive);
+				SystemMenuImage = Globals.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TitleAreaActive);
 			else
-				SystemMenuImage = ImageCache.Instance.GetImage(GetType().Assembly, "Assembly", BackgroundType.TitleAreaInactive);
-		}
-
-		void UpdateControlColors() {
-			var resources = App.Current.Resources;
-			foreach (var color in Themes.Theme.Colors) {
-				foreach (var kv in color.ColorInfo.GetResourceKeyValues(color.InheritedColor))
-					resources[kv.Item1] = kv.Item2;
-			}
+				SystemMenuImage = Globals.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TitleAreaInactive);
 		}
 
 		void SetWindowBounds(Rect bounds) {
@@ -937,7 +927,7 @@ namespace ICSharpCode.ILSpy {
 			var image = new Image {
 				Width = 16,
 				Height = 16,
-				Source = ImageCache.Instance.GetImage(command.Value.GetType().Assembly, command.Metadata.ToolbarIcon, BackgroundType.Toolbar),
+				Source = Globals.App.ImageManager.GetImage(command.Value.GetType().Assembly, command.Metadata.ToolbarIcon, BackgroundType.ToolBar),
 			};
 			var iconText = command.Metadata.ToolbarIconText;
 			if (string.IsNullOrEmpty(iconText))
@@ -1087,7 +1077,7 @@ namespace ICSharpCode.ILSpy {
 						menuItem.CommandTarget = MainWindow.Instance;
 						menuItem.Header = entry.Metadata.MenuHeader;
 						if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon))
-							ImageCache.Instance.CreateMenuItemImage(menuItem, entry.Value.GetType().Assembly, entry.Metadata.MenuIcon, BackgroundType.MainMenuMenuItem);
+							Globals.App.ImageManager.Add16x16Image(menuItem, entry.Value.GetType().Assembly, entry.Metadata.MenuIcon, false);
 
 						menuItem.InputGestureText = entry.Metadata.MenuInputGestureText;
 
@@ -2137,7 +2127,7 @@ namespace ICSharpCode.ILSpy {
 			if (e.Cancel)
 				return;
 
-			sessionSettings.ThemeName = Themes.Theme.Name;
+			sessionSettings.ThemeName = Globals.App.ThemesManager.Theme.Name;
 			sessionSettings.ActiveAssemblyList = dnspyFileList.Name;
 			sessionSettings.WindowBounds = this.RestoreBounds;
 			sessionSettings.LeftColumnWidth = leftColumn.Width.Value;

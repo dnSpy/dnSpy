@@ -20,7 +20,10 @@
 using System;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Themes;
+using dnSpy.Contracts.ToolBars;
 
 namespace dnSpy.Contracts {
 	/// <summary>
@@ -57,9 +60,24 @@ namespace dnSpy.Contracts {
 		Version Version { get; }
 
 		/// <summary>
-		/// Gets the <see cref="IMenuManager"/>
+		/// Gets the <see cref="IMenuManager"/> instance
 		/// </summary>
 		IMenuManager MenuManager { get; }
+
+		/// <summary>
+		/// Gets the <see cref="IToolBarManager"/> instance
+		/// </summary>
+		IToolBarManager ToolBarManager { get; }
+
+		/// <summary>
+		/// Gets the <see cref="IThemesManager"/> instance
+		/// </summary>
+		IThemesManager ThemesManager { get; }
+
+		/// <summary>
+		/// Gets the <see cref="IImageManager"/> instance
+		/// </summary>
+		IImageManager ImageManager { get; }
 
 		/// <summary>
 		/// Gets the <see cref="System.ComponentModel.Composition.Hosting.CompositionContainer"/> instance

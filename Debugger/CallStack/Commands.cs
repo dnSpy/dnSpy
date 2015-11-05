@@ -23,7 +23,7 @@ using System.Text;
 using System.Windows;
 using dndbg.Engine;
 using dnSpy.Contracts.Menus;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.Menus;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class CallStackCtxMenuContext {

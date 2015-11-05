@@ -21,7 +21,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:ctrls="clr-namespace:dnSpy.Controls"
+             xmlns:ctrls="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
              Width="300"
              ResizeMode="NoResize"
              SizeToContent="Height"

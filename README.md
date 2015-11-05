@@ -28,9 +28,9 @@ Features
 Themes
 ======
 
-dnSpy looks for *.dntheme files in the `<dnSpy-bin-dir>\dntheme` directory
-and the user's `%APPDATA%\dnSpy\dntheme` directory. If you wish to override a
-standard theme, copy the file to `%APPDATA%\dnSpy\dntheme` and edit the file.
+dnSpy looks for *.dntheme files in the `<dnSpy-bin-dir>\Themes` directory
+and the user's `%APPDATA%\dnSpy\Themes` directory. If you wish to override a
+standard theme, copy the file to `%APPDATA%\dnSpy\Themes` and edit the file.
 
 Keyboard shortcuts
 ==================

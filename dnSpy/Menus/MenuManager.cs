@@ -26,8 +26,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Menus;
-using dnSpy.Images;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.Images;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Menus {
 	sealed class MenuItemMD {
@@ -308,6 +308,7 @@ namespace dnSpy.Menus {
 			menuItem.Header = header;
 			menuItem.InputGestureText = inputGestureText;
 
+			bool isCtxMenu = ctx.MenuGuid == new Guid(MenuConstants.CTX_MENU_GUID);
 			var cmdHolder = item as ICommandHolder;
 			bool lastIsEnabledCallValue = false;
 			if (!string.IsNullOrEmpty(iconName)) {
@@ -317,7 +318,7 @@ namespace dnSpy.Menus {
 					var routedCommand = cmdHolder.Command as RoutedCommand;
 					lastIsEnabledCallValue = commandTarget == null || routedCommand == null || routedCommand.CanExecute(ctx, commandTarget);
 				}
-				ImageCache.Instance.CreateMenuItemImage(menuItem, item.GetType().Assembly, iconName, BackgroundType.ContextMenuItem, lastIsEnabledCallValue);
+				app.ImageManager.Add16x16Image(menuItem, item.GetType().Assembly, iconName, isCtxMenu, lastIsEnabledCallValue);
 			}
 
 			if (metadata.Guid != null) {
@@ -341,7 +342,7 @@ namespace dnSpy.Menus {
 			menuItem.Command = cmdHolder != null ? cmdHolder.Command : new RelayCommand(a => item.Execute(ctx), a => {
 				bool b = item.IsEnabled(ctx);
 				if (lastIsEnabledCallValue != b && !string.IsNullOrEmpty(iconName))
-					ImageCache.Instance.CreateMenuItemImage(menuItem, item.GetType().Assembly, iconName, BackgroundType.ContextMenuItem, lastIsEnabledCallValue = b);
+					app.ImageManager.Add16x16Image(menuItem, item.GetType().Assembly, iconName, isCtxMenu, lastIsEnabledCallValue = b);
 				return b;
 			});
 

@@ -25,7 +25,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.Contracts.Menus;
-using dnSpy.Menus;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;

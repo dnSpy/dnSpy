@@ -28,11 +28,12 @@ using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy;
 using dnSpy.AsmEditor;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Files;
-using dnSpy.Images;
-using dnSpy.Menus;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Menus;
 using dnSpy.TreeNodes;
 using dnSpy.TreeNodes.Hex;
 using ICSharpCode.Decompiler;
@@ -192,19 +193,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		public override object Icon {
 			get {
 				if (dnSpyFile is UnknownFile)
-					return ImageCache.Instance.GetImage(GetType().Assembly, "AssemblyWarning", BackgroundType.TreeNode);
+					return Globals.App.ImageManager.GetImage(GetType().Assembly, "AssemblyWarning", BackgroundType.TreeNode);
 				if (Parent is AssemblyTreeNode || (dnSpyFile.ModuleDef != null && dnSpyFile.AssemblyDef == null))
-					return ImageCache.Instance.GetImage(GetType().Assembly, "AssemblyModule", BackgroundType.TreeNode);
+					return Globals.App.ImageManager.GetImage(GetType().Assembly, "AssemblyModule", BackgroundType.TreeNode);
 				if (dnSpyFile.ModuleDef == null && dnSpyFile.PEImage != null) {
 					return (dnSpyFile.PEImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0 ?
-						ImageCache.Instance.GetImage(GetType().Assembly, "AssemblyExe", BackgroundType.TreeNode) :
-						ImageCache.Instance.GetImage(GetType().Assembly, "Assembly", BackgroundType.TreeNode);
+						Globals.App.ImageManager.GetImage(GetType().Assembly, "AssemblyExe", BackgroundType.TreeNode) :
+						Globals.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TreeNode);
 				}
 				return dnSpyFile.ModuleDef != null &&
 					dnSpyFile.ModuleDef.IsManifestModule &&
 					(dnSpyFile.ModuleDef.Characteristics & Characteristics.Dll) == 0 ?
-					ImageCache.Instance.GetImage(GetType().Assembly, "AssemblyExe", BackgroundType.TreeNode) :
-					ImageCache.Instance.GetImage(GetType().Assembly, "Assembly", BackgroundType.TreeNode);
+					Globals.App.ImageManager.GetImage(GetType().Assembly, "AssemblyExe", BackgroundType.TreeNode) :
+					Globals.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TreeNode);
 			}
 		}
 

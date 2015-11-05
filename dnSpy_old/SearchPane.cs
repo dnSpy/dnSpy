@@ -35,9 +35,10 @@ using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Themes;
 using dnSpy.Files;
-using dnSpy.Images;
 using dnSpy.Menus;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
@@ -77,11 +78,11 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		public ImageSource SearchImage {
-			get { return ImageCache.Instance.GetImage(GetType().Assembly, "Search", BackgroundType.TextBox); }
+			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "Search", BackgroundType.TextBox); }
 		}
 
 		public ImageSource ClearSearchImage {
-			get { return ImageCache.Instance.GetImage(GetType().Assembly, "ClearSearch", BackgroundType.TextBox); }
+			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "ClearSearch", BackgroundType.TextBox); }
 		}
 
 		public string PaneName {
@@ -99,7 +100,7 @@ namespace ICSharpCode.ILSpy {
 			public VisibleMembersFlags Flags { get; private set; }
 
 			public ImageSource Image {
-				get { return ImageCache.Instance.GetImage(GetType().Assembly, ImageName, BackgroundType.ComboBox); }
+				get { return Globals.App.ImageManager.GetImage(GetType().Assembly, ImageName, BackgroundType.ComboBox); }
 			}
 
 			public SearchType(string name, string imageName, SearchMode searchMode, VisibleMembersFlags flags) {
@@ -146,7 +147,7 @@ namespace ICSharpCode.ILSpy {
 		Dictionary<SearchMode, int> searchModeToIndex = new Dictionary<SearchMode, int>();
 
 		static SearchPane() {
-			dnSpy.DnTheme.Themes.ThemeChanged += (s, e) => {
+			Globals.App.ThemesManager.ThemeChanged += (s, e) => {
 				foreach (var searchType in searchTypes)
 					searchType.OnThemeChanged();
 			};
@@ -182,12 +183,12 @@ namespace ICSharpCode.ILSpy {
 				cb.Unchecked += (s, e) => RestartSearch();
 			}
 
-			dnSpy.DnTheme.Themes.ThemeChanged += Themes_ThemeChanged;
+			Globals.App.ThemesManager.ThemeChanged += ThemesManager_ThemeChanged;
 			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 			TooManyResults = false;
 		}
 
-		void Themes_ThemeChanged(object sender, EventArgs e) {
+		void ThemesManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
 			if (currentSearch != null)
 				currentSearch.OnThemeChanged();
 			if (PropertyChanged != null) {
@@ -586,10 +587,10 @@ namespace ICSharpCode.ILSpy {
 		public object LocationObject { get; set; }
 		public object NameObject { get; set; }
 		public ImageSource Image {
-			get { return ImageCache.Instance.GetImage(GetType().Assembly, TypeImageInfo); }
+			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, TypeImageInfo); }
 		}
 		public ImageSource LocationImage {
-			get { return ImageCache.Instance.GetImage(GetType().Assembly, LocationImageInfo); }
+			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, LocationImageInfo); }
 		}
 		public ImageInfo TypeImageInfo { get; set; }
 		public ImageInfo LocationImageInfo { get; set; }

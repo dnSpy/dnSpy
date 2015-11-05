@@ -18,7 +18,7 @@
 
 using System;
 using dnlib.DotNet;
-using dnSpy.Images;
+using dnSpy.Contracts.Images;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 

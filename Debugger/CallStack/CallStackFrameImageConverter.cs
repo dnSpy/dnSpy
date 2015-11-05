@@ -20,7 +20,8 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Images;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class CallStackFrameImageConverter : IValueConverter {
@@ -29,9 +30,9 @@ namespace dnSpy.Debugger.CallStack {
 			if (vm == null)
 				return null;
 			if (vm.Index == 0)
-				return ImageCache.Instance.GetImage(GetType().Assembly, "CurrentLine", BackgroundType.GridViewItem);
+				return Globals.App.ImageManager.GetImage(GetType().Assembly, "CurrentLine", BackgroundType.GridViewItem);
 			if (vm.IsCurrentFrame)
-				return ImageCache.Instance.GetImage(GetType().Assembly, "SelectedReturnLine", BackgroundType.GridViewItem);
+				return Globals.App.ImageManager.GetImage(GetType().Assembly, "SelectedReturnLine", BackgroundType.GridViewItem);
 			return null;
 		}
 

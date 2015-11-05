@@ -20,16 +20,16 @@
 using System;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.DnTheme;
-using ICSharpCode.AvalonEdit.Highlighting;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Themes;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Hex {
 	static class HexBoxThemeHelper {
 		internal static void OnThemeUpdatedStatic() {
-			var theme = Themes.Theme;
+			var theme = Globals.App.ThemesManager.Theme;
 
-			var color = theme.GetColor(ColorType.HexText).InheritedColor;
+			var color = theme.GetColor(ColorType.HexText);
 			App.Current.Resources[GetBackgroundResourceKey(ColorType.HexText)] = GetBrush(color.Background);
 			App.Current.Resources[GetForegroundResourceKey(ColorType.HexText)] = GetBrush(color.Foreground);
 			App.Current.Resources[GetFontStyleResourceKey(ColorType.HexText)] = color.FontStyle ?? FontStyles.Normal;
@@ -45,18 +45,18 @@ namespace dnSpy.Hex {
 			UpdateBackground(theme, ColorType.HexSelection);
 		}
 
-		static void UpdateForeground(Theme theme, ColorType colorType) {
-			var color = theme.GetColor(colorType).TextInheritedColor;
+		static void UpdateForeground(ITheme theme, ColorType colorType) {
+			var color = theme.GetTextColor(colorType);
 			App.Current.Resources[GetForegroundResourceKey(colorType)] = GetBrush(color.Foreground);
 		}
 
-		static void UpdateBackground(Theme theme, ColorType colorType) {
-			var color = theme.GetColor(colorType).TextInheritedColor;
+		static void UpdateBackground(ITheme theme, ColorType colorType) {
+			var color = theme.GetTextColor(colorType);
 			App.Current.Resources[GetBackgroundResourceKey(colorType)] = GetBrush(color.Background);
 		}
 
-		static Brush GetBrush(HighlightingBrush b) {
-			return b == null ? Brushes.Transparent : b.GetBrush(null);
+		static Brush GetBrush(Brush b) {
+			return b ?? Brushes.Transparent;
 		}
 
 		public static string GetBackgroundResourceKey(ColorType colorType) {

@@ -19,11 +19,11 @@
 using System.Linq;
 using System.Diagnostics;
 using dnlib.DotNet;
-using dnSpy.Menus;
 using dnSpy.Contracts.Menus;
 using System;
 using ICSharpCode.TreeView;
 using System.Collections.Generic;
+using dnSpy.Shared.UI.Menus;
 
 namespace ICSharpCode.ILSpy.TreeNodes {
 	static class SearchMsdnCtxMenuCommand {

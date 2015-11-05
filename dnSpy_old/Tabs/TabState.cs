@@ -22,7 +22,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Tabs {

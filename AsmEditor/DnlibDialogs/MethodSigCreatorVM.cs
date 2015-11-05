@@ -23,6 +23,7 @@ using dnlib.DotNet;
 using dnlib.Threading;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {

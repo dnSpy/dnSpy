@@ -23,8 +23,8 @@ using System.Windows;
 using dndbg.Engine;
 using dnSpy.Contracts.Menus;
 using dnSpy.Debugger.CallStack;
-using dnSpy.MVVM;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger.Threads {
@@ -39,7 +39,7 @@ namespace dnSpy.Debugger.Threads {
 	}
 
 	sealed class ThreadsCtxMenuCommandProxy : MenuItemCommandProxy<ThreadsCtxMenuContext> {
-        public ThreadsCtxMenuCommandProxy(ThreadsCtxMenuCommand cmd)
+		public ThreadsCtxMenuCommandProxy(ThreadsCtxMenuCommand cmd)
 			: base(cmd) {
 		}
 

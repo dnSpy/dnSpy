@@ -24,9 +24,9 @@ using System.Windows.Controls;
 using System.Xml.Linq;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Menus;
-using dnSpy.Controls;
-using dnSpy.Menus;
 using dnSpy.MVVM;
+using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.UI.Menus;
 
 namespace ICSharpCode.ILSpy.Options {
 	/// <summary>

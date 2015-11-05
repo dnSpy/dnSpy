@@ -19,6 +19,7 @@
 
 using System.Windows.Input;
 using dnSpy.Contracts.Menus;
+using dnSpy.Shared.UI.Menus;
 
 namespace dnSpy.Menus {
 	public abstract class MenuItemCommand : MenuItemBase, ICommandHolder {

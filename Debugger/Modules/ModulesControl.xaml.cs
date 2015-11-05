@@ -17,11 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.ComponentModel.Composition;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.MVVM;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Themes;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.Modules {
@@ -66,14 +67,14 @@ namespace dnSpy.Debugger.Modules {
 
 		public ModulesControl() {
 			InitializeComponent();
-			DnTheme.Themes.ThemeChanged += Themes_ThemeChanged;
+			Globals.App.ThemesManager.ThemeChanged += ThemesManager_ThemeChanged;
 		}
 
 		public ICommand ShowCommand {
 			get { return new RelayCommand(a => Show(), a => CanShow); }
 		}
 
-		void Themes_ThemeChanged(object sender, EventArgs e) {
+		void ThemesManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
 			var vm = DataContext as ModulesVM;
 			if (vm != null)
 				vm.RefreshThemeFields();

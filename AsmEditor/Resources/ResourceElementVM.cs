@@ -23,6 +23,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.Resources {
 	enum ResourceElementType {

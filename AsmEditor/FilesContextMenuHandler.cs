@@ -21,7 +21,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Menus;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 

@@ -18,7 +18,7 @@
 
 
 using dnSpy.Contracts.Menus;
-using dnSpy.Menus;
+using dnSpy.Shared.UI.Menus;
 
 namespace ICSharpCode.ILSpy {
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "Open from _GAC...", Icon = "AssemblyListGAC", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 10)]

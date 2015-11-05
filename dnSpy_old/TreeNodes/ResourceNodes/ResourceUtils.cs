@@ -21,8 +21,9 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Media.Imaging;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using dnSpy.Decompiler;
-using dnSpy.Images;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.Options;
@@ -59,7 +60,7 @@ namespace dnSpy.TreeNodes {
 		}
 
 		public static BitmapSource GetIcon(Assembly asm, string name, BackgroundType bgType) {
-			return ImageCache.Instance.GetImage(asm, name, bgType);
+			return Globals.App.ImageManager.GetImage(asm, name, bgType);
 		}
 
 		public static MemoryStream StringToStream(string s) {

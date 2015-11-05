@@ -7,7 +7,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using dnSpy.AvalonEdit;
-using dnSpy.DnTheme;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Themes;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
@@ -41,11 +42,11 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			Size renderSize = this.RenderSize;
-			var theme = Themes.Theme;
-			var bgColor = theme.GetColor(ColorType.IconBar).InheritedColor.Background.GetColor(null).Value;
-			drawingContext.DrawRectangle(theme.GetColor(ColorType.IconBar).InheritedColor.Background.GetBrush(null), null,
+			var theme = Globals.App.ThemesManager.Theme;
+			var bgColor = (theme.GetColor(ColorType.IconBar).Background as SolidColorBrush).Color;
+			drawingContext.DrawRectangle(theme.GetColor(ColorType.IconBar).Background, null,
 										 new Rect(0, 0, renderSize.Width, renderSize.Height));
-			drawingContext.DrawLine(new Pen(theme.GetColor(ColorType.IconBarBorder).InheritedColor.Background.GetBrush(null), 1),
+			drawingContext.DrawLine(new Pen(theme.GetColor(ColorType.IconBarBorder).Background, 1),
 									new Point(renderSize.Width - 0.5, 0),
 									new Point(renderSize.Width - 0.5, renderSize.Height));
 

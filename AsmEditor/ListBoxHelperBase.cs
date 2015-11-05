@@ -25,8 +25,9 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Images;
-using dnSpy.MVVM;
+using dnSpy.Contracts;
+using dnSpy.Shared.UI.Images;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor {
 	abstract class ListBoxHelperBase<T> where T : class, IIndexedItem {
@@ -283,7 +284,7 @@ namespace dnSpy.AsmEditor {
 				var tmpHandler = handler;
 				menuItem.Click += (s, e2) => tmpHandler.Command.Execute(parameter);
 				if (handler.Icon != null)
-					ImageCache.Instance.CreateMenuItemImage(menuItem, typeof(ListBoxHelperBase<T>).Assembly, handler.Icon, BackgroundType.ContextMenuItem, menuItem.IsEnabled);
+					Globals.App.ImageManager.Add16x16Image(menuItem, typeof(ListBoxHelperBase<T>).Assembly, handler.Icon, true, menuItem.IsEnabled);
 				if (handler.InputGestureText != null)
 					menuItem.InputGestureText = handler.InputGestureText;
 

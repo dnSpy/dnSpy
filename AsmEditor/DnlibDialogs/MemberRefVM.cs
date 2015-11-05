@@ -26,6 +26,7 @@ using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Files;
 using dnSpy.MVVM;
 using dnSpy.Search;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MemberRefVM : ViewModelBase {

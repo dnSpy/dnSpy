@@ -25,7 +25,8 @@ using System.Linq;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnlib.DotNet;
-using dnSpy.Images;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -62,7 +63,7 @@ namespace dnSpy.Debugger.Locals {
 		protected abstract string IconName { get; }
 
 		public sealed override object Icon {
-			get { return ImageCache.Instance.GetImage(GetType().Assembly, IconName, BackgroundType.TreeNode); }
+			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, IconName, BackgroundType.TreeNode); }
 		}
 
 		public sealed override bool ShowIcon {

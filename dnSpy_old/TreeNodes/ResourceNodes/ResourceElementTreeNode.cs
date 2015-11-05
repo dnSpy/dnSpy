@@ -23,7 +23,7 @@ using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnlib.IO;
-using dnSpy.Images;
+using dnSpy.Contracts.Images;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;

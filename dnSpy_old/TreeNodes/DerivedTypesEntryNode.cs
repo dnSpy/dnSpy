@@ -19,7 +19,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using dnlib.DotNet;
-using dnSpy.Images;
+using dnSpy.Contracts.Images;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 

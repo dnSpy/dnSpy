@@ -16,7 +16,6 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -27,7 +26,7 @@ using System.Windows.Input;
 using dnSpy;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Menus;
-using dnSpy.DnTheme;
+using dnSpy.Contracts.Themes;
 using dnSpy.Files;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
@@ -82,7 +81,7 @@ namespace ICSharpCode.ILSpy {
 			Globals.App.MenuManager.InitializeContextMenu(this, MenuConstants.GUIDOBJ_ANALYZER_GUID, new GuidObjectsCreator());
 			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_CurrentAssemblyListChanged;
 			MainWindow.Instance.OnModuleModified += MainWindow_OnModuleModified;
-			Themes.ThemeChanged += Themes_ThemeChanged;
+			Globals.App.ThemesManager.ThemeChanged += ThemesManager_ThemeChanged;
 			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 		}
 
@@ -115,7 +114,7 @@ namespace ICSharpCode.ILSpy {
 			UIUtils.FocusSelector(this);
 		}
 
-		void Themes_ThemeChanged(object sender, EventArgs e) {
+		void ThemesManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
 			UpdateUIColors();
 		}
 

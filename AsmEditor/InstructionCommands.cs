@@ -26,7 +26,7 @@ using System.Windows;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.Contracts.Menus;
-using dnSpy.Menus;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;

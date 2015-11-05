@@ -20,8 +20,8 @@
 using System;
 using System.Windows.Media;
 using dnSpy.AvalonEdit;
+using dnSpy.Contracts;
 using dnSpy.Files;
-using dnSpy.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
@@ -62,8 +62,8 @@ namespace dnSpy.Debugger.Breakpoints {
 
 			public override ImageSource GetImage(Color bgColor) {
 				return ilbp.IsEnabled ?
-					ImageCache.Instance.GetImage(GetType().Assembly, "Breakpoint", bgColor) :
-					ImageCache.Instance.GetImage(GetType().Assembly, "DisabledBreakpoint", bgColor);
+					Globals.App.ImageManager.GetImage(GetType().Assembly, "Breakpoint", bgColor) :
+					Globals.App.ImageManager.GetImage(GetType().Assembly, "DisabledBreakpoint", bgColor);
 			}
 
 			internal new void Redraw() {

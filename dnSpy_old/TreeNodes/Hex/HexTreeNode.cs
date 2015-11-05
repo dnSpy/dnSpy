@@ -21,7 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using dnSpy.Images;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
@@ -47,7 +48,7 @@ namespace dnSpy.TreeNodes.Hex {
 		readonly ulong endOffset;
 
 		public override object Icon {
-			get { return ImageCache.Instance.GetImage(GetType().Assembly, IconName, BackgroundType.TreeNode); }
+			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, IconName, BackgroundType.TreeNode); }
 		}
 
 		protected abstract string IconName { get; }

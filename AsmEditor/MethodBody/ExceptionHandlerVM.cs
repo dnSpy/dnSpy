@@ -26,6 +26,7 @@ using dnlib.DotNet.Emit;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class ExceptionHandlerVM : ViewModelBase, IIndexedItem {

@@ -17,34 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Menus;
-
-namespace dnSpy.Menus {
-	public abstract class MenuItemBase : IMenuItem, IMenuItem2 {
-		public abstract void Execute(IMenuItemContext context);
-
-		public virtual bool IsEnabled(IMenuItemContext context) {
-			return true;
-		}
-
-		public virtual bool IsVisible(IMenuItemContext context) {
-			return true;
-		}
-
-		public virtual string GetHeader(IMenuItemContext context) {
-			return null;
-		}
-
-		public virtual string GetIcon(IMenuItemContext context) {
-			return null;
-		}
-
-		public virtual string GetInputGestureText(IMenuItemContext context) {
-			return null;
-		}
-
-		public virtual bool IsChecked(IMenuItemContext context) {
-			return false;
-		}
+namespace dnSpy.Contracts.ToolBars {
+	/// <summary>
+	/// Constants
+	/// </summary>
+	public static class ToolBarConstants {
+		/// <summary>Guid of app toolbar</summary>
+		public const string APP_TOOLBAR_GUID = "DCDABF16-B5AF-484F-92FD-E852918BF367";
 	}
 }

@@ -5,7 +5,7 @@
 	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
 	xmlns:textView="clr-namespace:ICSharpCode.ILSpy.TextView"
 	xmlns:ilctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
-	xmlns:ctrls="clr-namespace:dnSpy.Controls"
+	xmlns:ctrls="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
 	Style="{StaticResource MainWindowStyle}"
 	Title="dnSpy"
 	MinWidth="250"

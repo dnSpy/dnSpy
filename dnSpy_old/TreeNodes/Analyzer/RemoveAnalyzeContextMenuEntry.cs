@@ -19,7 +19,7 @@
 using System;
 using System.Linq;
 using dnSpy.Contracts.Menus;
-using dnSpy.Menus;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.TreeView;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {

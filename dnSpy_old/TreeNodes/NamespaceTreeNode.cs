@@ -20,7 +20,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy;
-using dnSpy.Images;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
@@ -48,7 +49,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public override object Icon {
-			get { return ImageCache.Instance.GetImage(GetType().Assembly, "Namespace", BackgroundType.TreeNode); }
+			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "Namespace", BackgroundType.TreeNode); }
 		}
 
 		public override FilterResult Filter(FilterSettings settings) {

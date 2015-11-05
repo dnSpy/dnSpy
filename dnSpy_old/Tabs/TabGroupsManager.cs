@@ -26,6 +26,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Themes;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Tabs {
@@ -110,7 +111,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public TabGroupsManager(ContentPresenter contentPresenter, Action<TabManager<TState>, TState, TState> onSelectionChanged, Action<TabManager<TState>, TabManagerAddType, TState> onAddRemoveTabState) {
-			DnTheme.Themes.ThemeChanged += Themes_ThemeChanged;
+			Globals.App.ThemesManager.ThemeChanged += ThemesManager_ThemeChanged;
 			this.contentPresenter = contentPresenter;
 			this.onSelectionChanged = onSelectionChanged;
 			this.onAddRemoveTabState = onAddRemoveTabState;
@@ -118,7 +119,7 @@ namespace dnSpy.Tabs {
 			UpdateGrid();
 		}
 
-		void Themes_ThemeChanged(object sender, EventArgs e) {
+		void ThemesManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
 			foreach (var tabManager in tabManagers)
 				tabManager.OnThemeChanged();
 		}

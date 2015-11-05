@@ -26,9 +26,10 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Xml.Linq;
-using dnSpy.DnTheme;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Themes;
 using dnSpy.NRefactory;
-using ICSharpCode.AvalonEdit.Highlighting;
+using dnSpy.Shared.UI.Themes;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.XmlDoc;
@@ -196,9 +197,9 @@ namespace dnSpy.TextView {
 						if (hlColor.FontWeight != null)
 							elem.FontWeight = hlColor.FontWeight.Value;
 						if (hlColor.Foreground != null)
-							elem.Foreground = hlColor.Foreground.GetBrush(null);
+							elem.Foreground = hlColor.Foreground;
 						if (hlColor.Background != null)
-							elem.Background = hlColor.Background.GetBrush(null);
+							elem.Background = hlColor.Background;
 						textBlock.Inlines.Add(elem);
 					}
 					offs += tokenLength;
@@ -213,8 +214,8 @@ namespace dnSpy.TextView {
 			return textBlock;
 		}
 
-		HighlightingColor GetColor(TextTokenType tokenType) {
-			var color = Themes.Theme.GetColor(tokenType).TextInheritedColor;
+		IThemeColor GetColor(TextTokenType tokenType) {
+			var color = Globals.App.ThemesManager.Theme.GetTextColor(tokenType.ToColorType());
 			Debug.Assert(color != null);
 			return color;
 		}

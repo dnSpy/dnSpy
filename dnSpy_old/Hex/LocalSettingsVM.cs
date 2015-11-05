@@ -20,6 +20,7 @@
 using System.Windows.Input;
 using dnSpy.HexEditor;
 using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Hex {
 	sealed class LocalSettingsVM : ViewModelBase {

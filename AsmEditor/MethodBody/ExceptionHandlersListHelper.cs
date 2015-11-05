@@ -28,6 +28,7 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.AsmEditor.MethodBody {

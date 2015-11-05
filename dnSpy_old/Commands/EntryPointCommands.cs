@@ -20,7 +20,7 @@
 using System;
 using dnlib.DotNet;
 using dnSpy.Contracts.Menus;
-using dnSpy.Menus;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;

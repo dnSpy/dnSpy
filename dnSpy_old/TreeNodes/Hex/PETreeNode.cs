@@ -26,8 +26,9 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.PE;
 using dnSpy.AsmEditor;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using dnSpy.HexEditor;
-using dnSpy.Images;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
@@ -47,7 +48,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		public override object Icon {
-			get { return ImageCache.Instance.GetImage(GetType().Assembly, "ModuleFile", BackgroundType.TreeNode); }
+			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "ModuleFile", BackgroundType.TreeNode); }
 		}
 
 		public sealed override FilterResult Filter(FilterSettings settings) {

@@ -22,6 +22,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Media;
 using dnlib.DotNet;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using dnSpy.Images;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
@@ -195,7 +197,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		internal static ImageSource GetIcon(TypeIcon typeIcon, BackgroundType bgType) {
-			return ImageCache.Instance.GetImage(typeof(TypeTreeNode).Assembly, GetImageInfo(typeIcon, bgType));
+			return Globals.App.ImageManager.GetImage(typeof(TypeTreeNode).Assembly, GetImageInfo(typeIcon, bgType));
 		}
 
 		internal static ImageInfo GetImageInfo(TypeDef type, BackgroundType bgType) {

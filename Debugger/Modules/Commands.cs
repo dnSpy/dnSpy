@@ -33,6 +33,7 @@ using dnSpy.Files;
 using dnSpy.MVVM;
 using dnSpy.MVVM.Dialogs;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 

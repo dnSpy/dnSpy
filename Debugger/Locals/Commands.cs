@@ -28,9 +28,9 @@ using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Menus;
 using dnSpy.Debugger.Memory;
-using dnSpy.Menus;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 

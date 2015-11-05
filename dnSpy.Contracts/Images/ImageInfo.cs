@@ -17,23 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using System.Windows.Controls.Primitives;
-using System.Windows.Input;
+namespace dnSpy.Contracts.Images {
+	/// <summary>
+	/// Image info
+	/// </summary>
+	public struct ImageInfo {
+		/// <summary>
+		/// Image name
+		/// </summary>
+		public readonly string Name;
 
-namespace dnSpy.Controls {
-	public class SysMenuButton : ButtonBase {
-		static SysMenuButton() {
-			DefaultStyleKeyProperty.OverrideMetadata(typeof(SysMenuButton), new FrameworkPropertyMetadata(typeof(SysMenuButton)));
-		}
+		/// <summary>
+		/// Image background type
+		/// </summary>
+		public readonly BackgroundType BackgroundType;
 
-		public SysMenuButton() {
-		}
-
-		protected override void OnMouseDoubleClick(MouseButtonEventArgs e) {
-			var win = Window.GetWindow(this);
-			win.Close();
-			e.Handled = true;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="name">Image name</param>
+		/// <param name="bgType">Image background type</param>
+		public ImageInfo(string name, BackgroundType bgType) {
+			this.Name = name;
+			this.BackgroundType = bgType;
 		}
 	}
 }

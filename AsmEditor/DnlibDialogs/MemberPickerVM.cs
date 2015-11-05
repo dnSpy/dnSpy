@@ -26,6 +26,7 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Files;
 using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;

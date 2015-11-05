@@ -22,6 +22,7 @@ using System.Drawing;
 using System.Windows.Input;
 using System.Windows.Forms;
 using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.Resources {
 	sealed class ImageListVM : ViewModelBase {

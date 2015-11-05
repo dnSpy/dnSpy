@@ -24,6 +24,7 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.MVVM;
 using dnSpy.Search;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	enum NamedArgType {

@@ -24,9 +24,9 @@ using System.IO;
 using System.Windows.Threading;
 using dnSpy.Contracts.Menus;
 using dnSpy.HexEditor;
-using dnSpy.Menus;
 using dnSpy.MVVM;
 using dnSpy.MVVM.Dialogs;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.ILSpy;
 using WF = System.Windows.Forms;
 

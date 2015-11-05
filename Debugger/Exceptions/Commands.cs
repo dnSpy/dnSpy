@@ -23,7 +23,7 @@ using System.Linq;
 using System.Windows;
 using dnlib.DotNet;
 using dnSpy.Contracts.Menus;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;

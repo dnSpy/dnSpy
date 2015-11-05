@@ -24,7 +24,7 @@ using dnlib.DotNet;
 using dnlib.IO;
 using dnSpy;
 using dnSpy.AsmEditor.Resources;
-using dnSpy.Images;
+using dnSpy.Contracts.Images;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using dnSpy.TreeNodes;

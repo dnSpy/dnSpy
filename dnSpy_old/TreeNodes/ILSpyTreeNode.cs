@@ -25,7 +25,8 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using dnlib.DotNet;
-using dnSpy.DnTheme;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Themes;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
@@ -242,13 +243,13 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			get {
 				if (IsPublicAPI)
 					if (IsAutoLoaded) {
-						return Themes.Theme.GetColor(ColorType.NodeAutoLoaded).InheritedColor.Foreground.GetBrush(null);
+						return Globals.App.ThemesManager.Theme.GetColor(ColorType.NodeAutoLoaded).Foreground;
 					}
 					else {
-						return Themes.Theme.GetColor(ColorType.NodePublic).InheritedColor.Foreground.GetBrush(null);
+						return Globals.App.ThemesManager.Theme.GetColor(ColorType.NodePublic).Foreground;
 					}
 				else
-					return Themes.Theme.GetColor(ColorType.NodeNotPublic).InheritedColor.Foreground.GetBrush(null);
+					return Globals.App.ThemesManager.Theme.GetColor(ColorType.NodeNotPublic).Foreground;
 			}
 		}
 

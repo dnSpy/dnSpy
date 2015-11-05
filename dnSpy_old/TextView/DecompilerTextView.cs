@@ -37,12 +37,14 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy;
 using dnSpy.AvalonEdit;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler;
-using dnSpy.DnTheme;
 using dnSpy.Files;
-using dnSpy.Images;
-using dnSpy.MVVM;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.UI.Themes;
 using dnSpy.TextView;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
@@ -218,9 +220,9 @@ namespace ICSharpCode.ILSpy.TextView {
 
 		internal void OnThemeUpdated() {
 			textEditor.OnThemeUpdated();
-			var theme = Themes.Theme;
-			var marker = theme.GetColor(ColorType.SearchResultMarker).InheritedColor;
-			searchPanel.MarkerBrush = marker.Background == null ? Brushes.LightGreen : marker.Background.GetBrush(null);
+			var theme = Globals.App.ThemesManager.Theme;
+			var marker = theme.GetColor(ColorType.SearchResultMarker);
+			searchPanel.MarkerBrush = marker.Background == null ? Brushes.LightGreen : marker.Background;
 			iconMargin.InvalidateVisual();
 		}
 
@@ -381,20 +383,20 @@ namespace ICSharpCode.ILSpy.TextView {
 
 			var gd = obj as GenericParam;
 			if (gd != null)
-				return ImageCache.Instance.GetImage(typeof(DecompilerTextView).Assembly, "GenericParameter", bgType);
+				return Globals.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "GenericParameter", bgType);
 
 			if (obj is Local)
-				return ImageCache.Instance.GetImage(typeof(DecompilerTextView).Assembly, "Local", bgType);
+				return Globals.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Local", bgType);
 
 			if (obj is Parameter)
-				return ImageCache.Instance.GetImage(typeof(DecompilerTextView).Assembly, "Parameter", bgType);
+				return Globals.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Parameter", bgType);
 
 			if (obj is IType)
-				return ImageCache.Instance.GetImage(typeof(DecompilerTextView).Assembly, "Class", bgType);
+				return Globals.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Class", bgType);
 			if (obj is IMethod && ((IMethod)obj).IsMethod)
-				return ImageCache.Instance.GetImage(typeof(DecompilerTextView).Assembly, "Method", bgType);
+				return Globals.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Method", bgType);
 			if (obj is IField && ((IField)obj).IsField)
-				return ImageCache.Instance.GetImage(typeof(DecompilerTextView).Assembly, "Field", bgType);
+				return Globals.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Field", bgType);
 
 			return null;
 		}
@@ -889,7 +891,7 @@ namespace ICSharpCode.ILSpy.TextView {
 			output.WriteLine();
 			if (wasNormalLimit) {
 				output.AddButton(
-					ImageCache.Instance.GetImage(GetType().Assembly, "ViewCode", BackgroundType.Button), "Display Code",
+					Globals.App.ImageManager.GetImage(GetType().Assembly, "ViewCode", BackgroundType.Button), "Display Code",
 					delegate {
 						DoDecompile(context, ExtendedOutputLengthLimit).HandleExceptions();
 					});
@@ -897,7 +899,7 @@ namespace ICSharpCode.ILSpy.TextView {
 			}
 
 			output.AddButton(
-				ImageCache.Instance.GetImage(GetType().Assembly, "Save", BackgroundType.Button), "Save Code",
+				Globals.App.ImageManager.GetImage(GetType().Assembly, "Save", BackgroundType.Button), "Save Code",
 				delegate {
 					SaveToDisk(context.Language, context.TreeNodes, context.Options);
 				});
@@ -980,9 +982,9 @@ namespace ICSharpCode.ILSpy.TextView {
 					var mark = textMarkerService.Create(r.StartOffset, r.Length);
 					mark.ZOrder = (int)TextLineObjectZOrder.SearchResult;
 					mark.HighlightingColor = () => {
-						return (r.IsLocalTarget ?
-							Themes.Theme.GetColor(dnSpy.DnTheme.ColorType.LocalDefinition) :
-							Themes.Theme.GetColor(dnSpy.DnTheme.ColorType.LocalReference)).TextInheritedColor;
+						return r.IsLocalTarget ?
+							Globals.App.ThemesManager.Theme.GetTextColor(ColorType.LocalDefinition).ToHighlightingColor() :
+							Globals.App.ThemesManager.Theme.GetTextColor(ColorType.LocalReference).ToHighlightingColor();
 					};
 					markedReferences.Add(mark);
 				}

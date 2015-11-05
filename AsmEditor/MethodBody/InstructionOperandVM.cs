@@ -23,6 +23,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	enum InstructionOperandType {

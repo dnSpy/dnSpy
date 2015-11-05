@@ -19,7 +19,8 @@
 using System;
 using System.Linq;
 using dnlib.DotNet;
-using dnSpy.Images;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
@@ -59,8 +60,8 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 					return TypeTreeNode.GetIcon(def, BackgroundType.TreeNode);
 				else
 					return isInterface ?
-						ImageCache.Instance.GetImage(GetType().Assembly, "Interface", BackgroundType.TreeNode) :
-						ImageCache.Instance.GetImage(GetType().Assembly, "Class", BackgroundType.TreeNode);
+						Globals.App.ImageManager.GetImage(GetType().Assembly, "Interface", BackgroundType.TreeNode) :
+						Globals.App.ImageManager.GetImage(GetType().Assembly, "Class", BackgroundType.TreeNode);
 			}
 		}
 

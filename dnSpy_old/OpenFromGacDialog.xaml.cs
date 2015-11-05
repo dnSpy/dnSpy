@@ -29,7 +29,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy;
-using dnSpy.Controls;
+using dnSpy.Shared.UI.Controls;
 using ICSharpCode.ILSpy.Controls;
 
 namespace ICSharpCode.ILSpy {

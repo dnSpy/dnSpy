@@ -23,6 +23,7 @@ using System.Xml.Linq;
 using dndbg.Engine;
 using dnSpy.Debugger.Dialogs;
 using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
 

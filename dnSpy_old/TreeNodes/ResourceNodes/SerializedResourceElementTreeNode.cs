@@ -24,8 +24,8 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Input;
 using dnlib.DotNet.Resources;
 using dnSpy.AsmEditor.Resources;
-using dnSpy.MVVM;
 using dnSpy.Options;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.TreeNodes {
 	/// <summary>

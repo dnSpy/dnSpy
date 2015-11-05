@@ -18,8 +18,9 @@
 
 using System.Collections.Generic;
 using System.Threading;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using dnSpy.Files;
-using dnSpy.Images;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 	/// <summary>
@@ -33,7 +34,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		}
 
 		public override object Icon {
-			get { return ImageCache.Instance.GetImage(GetType().Assembly, "Search", BackgroundType.TreeNode); }
+			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "Search", BackgroundType.TreeNode); }
 		}
 
 		protected override void LoadChildren() {

@@ -24,7 +24,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Menus;
-using dnSpy.DnTheme;
+using dnSpy.Contracts.Themes;
 using dnSpy.HexEditor;
 
 namespace dnSpy.Hex {

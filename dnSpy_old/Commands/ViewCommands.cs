@@ -22,6 +22,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Menus;
 using dnSpy.Menus;
+using dnSpy.Shared.UI.Menus;
 using dnSpy.Tabs;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;

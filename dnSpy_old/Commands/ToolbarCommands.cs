@@ -22,7 +22,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using dnSpy.Images;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Commands {
@@ -68,7 +69,7 @@ namespace dnSpy.Commands {
 			sp.Children.Add(new Image {
 				Width = 16,
 				Height = 16,
-				Source = ImageCache.Instance.GetImage(GetType().Assembly, "FullScreen", BackgroundType.ToolBarButtonChecked),
+				Source = Globals.App.ImageManager.GetImage(GetType().Assembly, "FullScreen", BackgroundType.ToolBarButtonChecked),
 			});
 			sp.Children.Add(new TextBlock {
 				Text = "Full Screen",

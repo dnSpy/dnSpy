@@ -21,8 +21,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy;
-using dnSpy.Controls;
 using dnSpy.Files;
+using dnSpy.Shared.UI.Controls;
 
 namespace ICSharpCode.ILSpy {
 	/// <summary>

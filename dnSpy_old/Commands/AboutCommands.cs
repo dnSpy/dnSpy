@@ -19,7 +19,7 @@
 
 using System.Diagnostics;
 using dnSpy.Contracts.Menus;
-using dnSpy.Menus;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Commands {

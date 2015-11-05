@@ -18,7 +18,7 @@
 */
 
 using System.Windows;
-using dnSpy.Controls;
+using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.MVVM {
 	public abstract class WindowBase : MetroWindow {

@@ -22,7 +22,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Debugger.Threads"
-             xmlns:mvvm="clr-namespace:dnSpy.MVVM;assembly=dnSpy"
+             xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">
     <Grid>

@@ -22,8 +22,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using dnSpy.Contracts.Menus;
-using dnSpy.MVVM;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 

@@ -26,6 +26,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionsVM : ViewModelBase {

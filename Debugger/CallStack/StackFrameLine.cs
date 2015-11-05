@@ -20,8 +20,8 @@
 using System;
 using System.Windows.Media;
 using dnSpy.AvalonEdit;
+using dnSpy.Contracts;
 using dnSpy.Files;
-using dnSpy.Images;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
 
@@ -94,7 +94,7 @@ namespace dnSpy.Debugger.CallStack {
 		public override ImageSource GetImage(Color bgColor) {
 			var name = GetImageName();
 			if (name != null)
-				return ImageCache.Instance.GetImage(GetType().Assembly, name, bgColor);
+				return Globals.App.ImageManager.GetImage(GetType().Assembly, name, bgColor);
 			return null;
 		}
 

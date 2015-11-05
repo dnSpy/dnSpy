@@ -19,7 +19,7 @@
 
 using System;
 using dnSpy.Contracts.Menus;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 

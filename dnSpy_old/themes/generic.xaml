@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	xmlns:ctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
-	xmlns:ctrls2="clr-namespace:dnSpy.Controls"
+	xmlns:ctrls2="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
 >
 	<ResourceDictionary.MergedDictionaries>
 		<ResourceDictionary Source="pack://application:,,,/dnSpy_old;component/Controls/SearchBoxStyle.xaml" />

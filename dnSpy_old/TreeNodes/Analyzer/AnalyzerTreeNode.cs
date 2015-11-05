@@ -20,7 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using dnSpy.DnTheme;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Themes;
 using dnSpy.Files;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
@@ -66,7 +67,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		protected abstract void Write(ITextOutput output, Language language);
 
 		public override System.Windows.Media.Brush Foreground {
-			get { return Themes.Theme.GetColor(ColorType.NodePublic).InheritedColor.Foreground.GetBrush(null); }
+			get { return Globals.App.ThemesManager.Theme.GetColor(ColorType.NodePublic).Foreground; }
 		}
 
 		public void RaiseUIPropsChanged() {

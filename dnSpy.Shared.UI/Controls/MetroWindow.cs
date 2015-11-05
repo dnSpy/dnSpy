@@ -26,9 +26,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
-namespace dnSpy.Controls {
+namespace dnSpy.Shared.UI.Controls {
 	public class MetroWindow : Window {
 		public MetroWindow() {
 			SetValue(winChrome_WindowChromeProperty, CreateWindowChromeObject());
@@ -443,7 +443,7 @@ namespace dnSpy.Controls {
 		}
 	}
 
-	static class WindowUtils {
+	public static class WindowUtils {//TODO: REMOVE public
 		[DllImport("user32")]
 		static extern bool IsWindow(IntPtr hWnd);
 		[DllImport("user32")]

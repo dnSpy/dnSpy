@@ -18,6 +18,9 @@
 */
 
 using System.Windows.Media;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Themes;
+using dnSpy.Shared.UI.Themes;
 using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace dnSpy.Debugger {
@@ -41,17 +44,17 @@ namespace dnSpy.Debugger {
 		};
 
 		static DebuggerColors() {
-			DnTheme.Themes.ThemeChanged += (s, e) => OnThemeUpdated();
+			Globals.App.ThemesManager.ThemeChanged += (s, e) => OnThemeUpdated();
 			OnThemeUpdated();
 		}
 
 		static void OnThemeUpdated() {
-			var theme = DnTheme.Themes.Theme;
-			CodeBreakpointHighlightingColor = theme.GetColor(DnTheme.ColorType.BreakpointStatement).TextInheritedColor;
-			CodeBreakpointDisabledHighlightingColor = theme.GetColor(DnTheme.ColorType.DisabledBreakpointStatement).TextInheritedColor;
-			StackFrameCurrentHighlightingColor = theme.GetColor(DnTheme.ColorType.CurrentStatement).TextInheritedColor;
-			StackFrameReturnHighlightingColor = theme.GetColor(DnTheme.ColorType.ReturnStatement).TextInheritedColor;
-			StackFrameSelectedHighlightingColor = theme.GetColor(DnTheme.ColorType.SelectedReturnStatement).TextInheritedColor;
+			var theme = Globals.App.ThemesManager.Theme;
+			CodeBreakpointHighlightingColor = theme.GetTextColor(ColorType.BreakpointStatement).ToHighlightingColor();
+			CodeBreakpointDisabledHighlightingColor = theme.GetTextColor(ColorType.DisabledBreakpointStatement).ToHighlightingColor();
+			StackFrameCurrentHighlightingColor = theme.GetTextColor(ColorType.CurrentStatement).ToHighlightingColor();
+			StackFrameReturnHighlightingColor = theme.GetTextColor(ColorType.ReturnStatement).ToHighlightingColor();
+			StackFrameSelectedHighlightingColor = theme.GetTextColor(ColorType.SelectedReturnStatement).ToHighlightingColor();
 		}
 	}
 }

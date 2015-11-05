@@ -30,10 +30,11 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Images;
-using dnSpy.MVVM;
+using dnSpy.Contracts;
 using dnSpy.NRefactory;
 using dnSpy.Search;
+using dnSpy.Shared.UI.Images;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 
@@ -335,21 +336,21 @@ namespace dnSpy.AsmEditor.MethodBody {
 					Header = "_Type...",
 					Command = new RelayCommand(a => AddType(opvm)),
 				});
-				ImageCache.Instance.CreateMenuItemImage(menuItem, typeof(MethodBodyControl).Assembly, "Class", BackgroundType.ContextMenuItem, true);
+				Globals.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Class", true, true);
 			}
 			if ((flags & MenuCommandFlags.TypeSpec) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
 					Header = "Type_Spec...",
 					Command = new RelayCommand(a => AddTypeSpec(opvm)),
 				});
-				ImageCache.Instance.CreateMenuItemImage(menuItem, typeof(MethodBodyControl).Assembly, "Generic", BackgroundType.ContextMenuItem, true);
+				Globals.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Generic", true, true);
 			}
 			if ((flags & MenuCommandFlags.MethodDef) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
 					Header = "_Method...",
 					Command = new RelayCommand(a => AddMethodDef(opvm)),
 				});
-				ImageCache.Instance.CreateMenuItemImage(menuItem, typeof(MethodBodyControl).Assembly, "Method", BackgroundType.ContextMenuItem, true);
+				Globals.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Method", true, true);
 			}
 			if ((flags & MenuCommandFlags.MethodMemberRef) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {
@@ -368,7 +369,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 					Header = "_Field...",
 					Command = new RelayCommand(a => AddFieldDef(opvm)),
 				});
-				ImageCache.Instance.CreateMenuItemImage(menuItem, typeof(MethodBodyControl).Assembly, "Field", BackgroundType.ContextMenuItem, true);
+				Globals.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Field", true, true);
 			}
 			if ((flags & MenuCommandFlags.FieldMemberRef) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {

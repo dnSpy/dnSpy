@@ -38,7 +38,7 @@ using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Dialogs;
 using dnSpy.Debugger.IMModules;
 using dnSpy.Files;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;

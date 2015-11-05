@@ -19,7 +19,8 @@
 using System;
 using System.Windows.Threading;
 using dnlib.DotNet;
-using dnSpy.Images;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
@@ -42,11 +43,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public override object Icon {
-			get { return ImageCache.Instance.GetImage(GetType().Assembly, "SuperTypes", BackgroundType.TreeNode); }
+			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "SuperTypes", BackgroundType.TreeNode); }
 		}
 
 		public override object ExpandedIcon {
-			get { return ImageCache.Instance.GetImage(GetType().Assembly, "SuperTypesOpen", BackgroundType.TreeNode); }
+			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "SuperTypesOpen", BackgroundType.TreeNode); }
 		}
 
 		public override FilterResult Filter(FilterSettings settings) {

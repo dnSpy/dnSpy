@@ -25,6 +25,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Xml.Linq;
+using dnSpy.Contracts;
 using dnSpy.Tabs;
 
 namespace ICSharpCode.ILSpy {
@@ -52,7 +53,7 @@ namespace ICSharpCode.ILSpy {
 			this.TopPaneSettings.Height = FromString((string)doc.Element("TopPaneHeight"), 200.0);
 			this.BottomPaneSettings.Name = FromString((string)doc.Element("BottomPaneName"), string.Empty);
 			this.BottomPaneSettings.Height = FromString((string)doc.Element("BottomPaneHeight"), 200.0);
-			this.ThemeName = (string)doc.Element("ThemeName") ?? dnSpy.DnTheme.Themes.DefaultThemeName;
+			this.ThemeName = (string)doc.Element("ThemeName") ?? Globals.App.ThemesManager.DefaultThemeName;
 
 			var ignoreXml = doc.Element("IgnoredWarnings");
 			if (ignoreXml != null) {

@@ -24,7 +24,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.AvalonEdit;
 using dnSpy.Contracts;
-using dnSpy.Images;
+using dnSpy.Shared.UI.Images;
 using ICSharpCode.ILSpy.TextView;
 
 namespace ICSharpCode.ILSpy.AvalonEdit {
@@ -198,7 +198,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 									isEnabled = false;
 								}
 								if (!string.IsNullOrEmpty(entryPair.Metadata.Icon))
-									ImageCache.Instance.CreateMenuItemImage(menuItem, entry.GetType().Assembly, entryPair.Metadata.Icon, BackgroundType.ContextMenuItem, isEnabled);
+									Globals.App.ImageManager.Add16x16Image(menuItem, entry.GetType().Assembly, entryPair.Metadata.Icon, true, isEnabled);
 								menuItem.InputGestureText = entryPair.Metadata.InputGestureText ?? string.Empty;
 								var entry2 = entry as IIconBarContextMenuEntry2;
 								if (entry2 != null)

@@ -21,7 +21,7 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 
-namespace dnSpy.Controls {
+namespace dnSpy.Shared.UI.Controls {
 	public enum WinSysType {
 		Minimize,
 		Maximize,

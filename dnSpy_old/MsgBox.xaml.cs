@@ -19,7 +19,7 @@
 
 using System;
 using System.Windows;
-using dnSpy.Controls;
+using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy {
 	[Flags]

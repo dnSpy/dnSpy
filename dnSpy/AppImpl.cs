@@ -18,14 +18,21 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Themes;
+using dnSpy.Contracts.ToolBars;
+using dnSpy.Images;
 using dnSpy.Menus;
+using dnSpy.Themes;
+using dnSpy.ToolBars;
 
 namespace dnSpy {
 	public sealed class AppImpl : IApp {//TODO: Shouldn't be public
@@ -36,7 +43,22 @@ namespace dnSpy {
 		public IMenuManager MenuManager {
 			get { return menuManager; }
 		}
-		readonly IMenuManager menuManager;
+		readonly MenuManager menuManager;
+
+		public IToolBarManager ToolBarManager {
+			get { return toolBarManager; }
+		}
+		readonly ToolBarManager toolBarManager;
+
+		public IThemesManager ThemesManager {
+			get { return themesManager; }
+		}
+		readonly ThemesManager themesManager;
+
+		public IImageManager ImageManager {
+			get { return imageManager; }
+		}
+		readonly ImageManager imageManager;
 
 		public CompositionContainer CompositionContainer {
 			get { return compositionContainer; }
@@ -46,14 +68,19 @@ namespace dnSpy {
 		public AppImpl() {
 			Globals.App = this;
 			this.menuManager = new MenuManager(this);
+			this.toolBarManager = new ToolBarManager(this);
+			this.themesManager = new ThemesManager(this);
+			this.imageManager = new ImageManager(this);
 		}
 
-		public void InitializeCompositionContainer(Assembly asm, string pattern) {
+		public void InitializeCompositionContainer(IEnumerable<Assembly> asms, string pattern) {
 			var aggregateCatalog = new AggregateCatalog();
 			var ourAsm = GetType().Assembly;
 			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(ourAsm));
-			if (ourAsm != asm)
-				aggregateCatalog.Catalogs.Add(new AssemblyCatalog(asm));
+			foreach (var asm in asms) {
+				if (ourAsm != asm)
+					aggregateCatalog.Catalogs.Add(new AssemblyCatalog(asm));
+			}
 			AddFiles(aggregateCatalog, pattern);
 			compositionContainer = new CompositionContainer(aggregateCatalog);
 		}
@@ -70,6 +97,14 @@ namespace dnSpy {
 					Debug.Fail(string.Format("Failed to load file '{0}'", file));
 				}
 			}
+		}
+
+		public void InitializeThemes(string themeName) {
+			themesManager.Initialize(themeName);
+		}
+
+		public void UpdateResources(ITheme theme, System.Windows.ResourceDictionary resources) {//TODO: REMOVE
+			((Theme)theme).UpdateResources(resources);
 		}
 	}
 }

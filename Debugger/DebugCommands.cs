@@ -23,11 +23,13 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.AvalonEdit;
+using dnSpy.Contracts;
 using dnSpy.Contracts.Menus;
 using dnSpy.Debugger.Breakpoints;
 using dnSpy.Debugger.Memory;
-using dnSpy.Images;
 using dnSpy.Menus;
+using dnSpy.Shared.UI.Images;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
@@ -526,7 +528,7 @@ namespace dnSpy.Debugger {
 			if (bpm != null) {
 				menuItem.IsEnabled = EnableDisableBreakpointDebugCtxMenuCommand.IsMenuItemEnabledInternal(1);
 				menuItem.Header = EnableDisableBreakpointDebugCtxMenuCommand.GetHeaderInternal(bpm.IsEnabled, 1);
-				ImageCache.Instance.CreateMenuItemImage(menuItem, GetType().Assembly, EnableDisableBreakpointDebugCtxMenuCommand.GetIconInternal(), BackgroundType.ContextMenuItem);
+				Globals.App.ImageManager.Add16x16Image(menuItem, GetType().Assembly, EnableDisableBreakpointDebugCtxMenuCommand.GetIconInternal(), true);
 			}
 		}
 	}

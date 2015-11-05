@@ -17,10 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
+using System;
 
-namespace dnSpy.MVVM {
-	public interface IInitializeDataTemplate {
-		void Initialize(DependencyObject d);
+namespace dnSpy.Contracts.Themes {
+	/// <summary>
+	/// Theme changed event args
+	/// </summary>
+	public class ThemeChangedEventArgs : EventArgs {
 	}
 }

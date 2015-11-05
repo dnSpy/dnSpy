@@ -27,7 +27,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Menus;
 using dnSpy.Decompiler;
 using dnSpy.HexEditor;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.Menus;
 using dnSpy.Tabs;
 using dnSpy.TreeNodes;
 using dnSpy.TreeNodes.Hex;

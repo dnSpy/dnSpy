@@ -24,7 +24,7 @@ using System.Windows.Media;
 using dnSpy.Tabs;
 using ICSharpCode.ILSpy;
 
-namespace dnSpy.DnTheme {
+namespace dnSpy.Themes {
 	sealed class FileTabBackgroundConverter : IValueConverter {
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			string rsrcName;

@@ -22,7 +22,7 @@ using System.Windows;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Menus;
 
-namespace dnSpy.MVVM {
+namespace dnSpy.Shared.UI.MVVM {
 	[Export(typeof(IInitializeDataTemplate))]
 	sealed class InitializeDataTemplateContextMenu : IInitializeDataTemplate {
 		public void Initialize(DependencyObject d) {

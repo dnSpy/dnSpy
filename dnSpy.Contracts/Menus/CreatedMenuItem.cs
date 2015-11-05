@@ -25,12 +25,18 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>
 		/// Metadata, eg. an <see cref="ExportMenuItemAttribute"/> instance
 		/// </summary>
-		public IMenuItemMetadata Metadata { get; private set; }
+		public IMenuItemMetadata Metadata {
+			get { return metadata; }
+		}
+		readonly IMenuItemMetadata metadata;
 
 		/// <summary>
 		/// Menu item
 		/// </summary>
-		public IMenuItem MenuItem { get; private set; }
+		public IMenuItem MenuItem {
+			get { return menuItem; }
+		}
+		readonly IMenuItem menuItem;
 
 		/// <summary>
 		/// Constructor
@@ -38,8 +44,8 @@ namespace dnSpy.Contracts.Menus {
 		/// <param name="md">Metadata, eg. an <see cref="ExportMenuItemAttribute"/> instance</param>
 		/// <param name="menuItem">Menu item</param>
 		public CreatedMenuItem(IMenuItemMetadata md, IMenuItem menuItem) {
-			this.Metadata = md;
-			this.MenuItem = menuItem;
+			this.metadata = md;
+			this.menuItem = menuItem;
 		}
 	}
 }

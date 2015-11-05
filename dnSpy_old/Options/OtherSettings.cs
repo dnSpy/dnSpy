@@ -23,7 +23,7 @@ using System.Security;
 using System.Threading;
 using System.Windows.Input;
 using System.Xml.Linq;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
 using Microsoft.Win32;

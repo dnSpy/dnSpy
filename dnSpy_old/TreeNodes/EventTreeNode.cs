@@ -21,7 +21,7 @@ using System.Diagnostics;
 using System.Windows.Media;
 using dnlib.DotNet;
 using dnSpy;
-using dnSpy.Images;
+using dnSpy.Contracts.Images;
 using dnSpy.NRefactory;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;

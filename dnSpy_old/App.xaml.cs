@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -30,6 +31,7 @@ using System.Windows.Threading;
 using dnSpy;
 using dnSpy.Contracts;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.ILSpy.TextView;
 
 namespace dnSpy {
@@ -71,7 +73,14 @@ namespace ICSharpCode.ILSpy {
 			InitializeComponent();
 
 			this.appImpl = new AppImpl();
-			appImpl.InitializeCompositionContainer(GetType().Assembly, "*.Plugin.dll");
+			var asms = new List<Assembly>();
+			asms.Add(GetType().Assembly);
+			asms.Add(typeof(RelayCommand).Assembly);	// dnSpy.Shared.UI
+			appImpl.InitializeCompositionContainer(asms, "*.Plugin.dll");
+			AddMergedResourceDictionary(Globals.App.GetType().Assembly, "Themes/wpf.styles.templates.xaml");
+			AddMergedResourceDictionary(typeof(RelayCommand).Assembly, "Themes/wpf.styles.templates.xaml");
+			AddMergedResourceDictionary(GetType().Assembly, "DnTheme/wpf.styles.templates.xaml");
+			AddMergedResourceDictionary(GetType().Assembly, "TreeNodes/Hex/wpf.styles.templates.xaml");
 
 			Languages.Initialize(Globals.App.CompositionContainer);
 

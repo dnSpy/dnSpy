@@ -19,7 +19,8 @@
 using System;
 using dnlib.DotNet;
 using dnSpy;
-using dnSpy.Images;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
@@ -35,7 +36,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		}
 
 		public override object Icon {
-			get { return ImageCache.Instance.GetImage(GetType().Assembly, "Assembly", BackgroundType.TreeNode); }
+			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TreeNode); }
 		}
 
 		protected override void Write(ITextOutput output, Language language) {

@@ -21,7 +21,7 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using dnSpy.Contracts;
 
-namespace dnSpy.MVVM {
+namespace dnSpy.Shared.UI.MVVM {
 	public sealed class InitDataTemplateAP : DependencyObject {
 		public static readonly DependencyProperty InitializeProperty = DependencyProperty.RegisterAttached(
 			"Initialize", typeof(bool), typeof(InitDataTemplateAP), new UIPropertyMetadata(false, InitializePropertyChangedCallback));

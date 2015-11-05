@@ -20,7 +20,8 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Images;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 
 namespace dnSpy.Debugger.Converters {
 	public sealed class ImageConverter : IValueConverter {
@@ -28,7 +29,7 @@ namespace dnSpy.Debugger.Converters {
 			var ary = ((string)parameter).Split(seps, 2);
 			var bgType = (BackgroundType)Enum.Parse(typeof(BackgroundType), ary[0]);
 			var asm = GetType().Assembly;
-			return ImageCache.Instance.GetImage(asm, ary[1], bgType);
+			return Globals.App.ImageManager.GetImage(asm, ary[1], bgType);
 		}
 		static readonly char[] seps = new char[1] { '_' };
 

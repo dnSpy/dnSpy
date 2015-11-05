@@ -28,6 +28,8 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Decompiler;
 using dnSpy.HexEditor;
 using dnSpy.MVVM;
+using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.UI.MVVM;
 using dnSpy.Tabs;
 using dnSpy.TreeNodes.Hex;
 using ICSharpCode.Decompiler;

@@ -25,8 +25,11 @@ using System.Windows.Input;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Themes;
 using dnSpy.Files;
 using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 using dnSpy.Tabs;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
@@ -153,14 +156,14 @@ namespace dnSpy.Debugger.Locals {
 		public LocalsControl() {
 			InitializeComponent();
 			MainWindow.InitializeTreeView(treeView, true);
-			DnTheme.Themes.ThemeChanged += Themes_ThemeChanged;
+			Globals.App.ThemesManager.ThemeChanged += ThemesManager_ThemeChanged;
 		}
 
 		public ICommand ShowCommand {
 			get { return new RelayCommand(a => Show(), a => CanShow); }
 		}
 
-		void Themes_ThemeChanged(object sender, EventArgs e) {
+		void ThemesManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
 			var vm = DataContext as LocalsVM;
 			if (vm != null)
 				vm.RefreshThemeFields();

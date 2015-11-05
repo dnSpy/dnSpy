@@ -20,7 +20,7 @@
 using System;
 using System.Linq;
 using dnSpy.Contracts.Menus;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.Menus;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor {

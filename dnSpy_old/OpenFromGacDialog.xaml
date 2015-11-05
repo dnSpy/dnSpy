@@ -3,7 +3,7 @@
 	x:Class="ICSharpCode.ILSpy.OpenFromGacDialog" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
 	Title="Open from GAC"
 	xmlns:ilctrls="clr-namespace:ICSharpCode.ILSpy.Controls"
-	xmlns:ctrls="clr-namespace:dnSpy.Controls"
+	xmlns:ctrls="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
 	Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
 	MinWidth="400"
 	MinHeight="300"

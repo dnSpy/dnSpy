@@ -23,7 +23,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:winlocal="clr-namespace:dnSpy.MVVM;assembly=dnSpy_old"
              xmlns:local="clr-namespace:dnSpy.Debugger.Dialogs"
-             xmlns:mvvm="clr-namespace:dnSpy.MVVM;assembly=dnSpy"
+             xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
              xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters;assembly=dnSpy_old"
              Height="500" Width="1000"
              Title="{Binding Title}"

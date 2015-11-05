@@ -24,8 +24,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.DnTheme;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Themes;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Themes;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -42,62 +44,96 @@ namespace dnSpy.TextView {
 		}
 
 		internal static void OnThemeUpdatedStatic() {
-			var theme = Themes.Theme;
+			var theme = Globals.App.ThemesManager.Theme;
 
-			var specialBox = theme.GetColor(ColorType.SpecialCharacterBox).TextInheritedColor;
-			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.BackgroundBrush = specialBox.Background == null ? null : specialBox.Background.GetBrush(null);
-			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.ForegroundBrush = specialBox.Foreground == null ? null : specialBox.Foreground.GetBrush(null);
+			var specialBox = theme.GetTextColor(ColorType.SpecialCharacterBox);
+			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.BackgroundBrush = specialBox.Background == null ? null : specialBox.Background;
+			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.ForegroundBrush = specialBox.Foreground == null ? null : specialBox.Foreground;
 
 			foreach (var f in typeof(TextTokenType).GetFields()) {
 				if (!f.IsLiteral)
 					continue;
-				UpdateTextEditorResource((TextTokenType)f.GetValue(null), f.Name);
+				var val = (TextTokenType)f.GetValue(null);
+				if (val != TextTokenType.Last)
+					UpdateTextEditorResource(val, f.Name);
 			}
 		}
 
 		static void UpdateTextEditorResource(TextTokenType colorType, string name) {
-			var theme = Themes.Theme;
+			var theme = Globals.App.ThemesManager.Theme;
 
-			var color = theme.GetColor(colorType).TextInheritedColor;
-			App.Current.Resources[Theme.GetTextInheritedForegroundResourceKey(name)] = GetBrush(color.Foreground);
-			App.Current.Resources[Theme.GetTextInheritedBackgroundResourceKey(name)] = GetBrush(color.Background);
-			App.Current.Resources[Theme.GetTextInheritedFontStyleResourceKey(name)] = color.FontStyle ?? FontStyles.Normal;
-			App.Current.Resources[Theme.GetTextInheritedFontWeightResourceKey(name)] = color.FontWeight ?? FontWeights.Normal;
+			var color = theme.GetTextColor(colorType.ToColorType());
+			App.Current.Resources[GetTextInheritedForegroundResourceKey(name)] = GetBrush(color.Foreground);
+			App.Current.Resources[GetTextInheritedBackgroundResourceKey(name)] = GetBrush(color.Background);
+			App.Current.Resources[GetTextInheritedFontStyleResourceKey(name)] = color.FontStyle ?? FontStyles.Normal;
+			App.Current.Resources[GetTextInheritedFontWeightResourceKey(name)] = color.FontWeight ?? FontWeights.Normal;
 
-			color = theme.GetColor(colorType).InheritedColor;
-			App.Current.Resources[Theme.GetInheritedForegroundResourceKey(name)] = GetBrush(color.Foreground);
-			App.Current.Resources[Theme.GetInheritedBackgroundResourceKey(name)] = GetBrush(color.Background);
-			App.Current.Resources[Theme.GetInheritedFontStyleResourceKey(name)] = color.FontStyle ?? FontStyles.Normal;
-			App.Current.Resources[Theme.GetInheritedFontWeightResourceKey(name)] = color.FontWeight ?? FontWeights.Normal;
+			color = theme.GetColor(colorType.ToColorType());
+			App.Current.Resources[GetInheritedForegroundResourceKey(name)] = GetBrush(color.Foreground);
+			App.Current.Resources[GetInheritedBackgroundResourceKey(name)] = GetBrush(color.Background);
+			App.Current.Resources[GetInheritedFontStyleResourceKey(name)] = color.FontStyle ?? FontStyles.Normal;
+			App.Current.Resources[GetInheritedFontWeightResourceKey(name)] = color.FontWeight ?? FontWeights.Normal;
 		}
 
-		static Brush GetBrush(HighlightingBrush b) {
-			return b == null ? Brushes.Transparent : b.GetBrush(null);
+		static Brush GetBrush(Brush b) {
+			return b ?? Brushes.Transparent;
+		}
+
+		static string GetTextInheritedForegroundResourceKey(string name) {
+			return string.Format("TETextInherited{0}Foreground", name);
+		}
+
+		static string GetTextInheritedBackgroundResourceKey(string name) {
+			return string.Format("TETextInherited{0}Background", name);
+		}
+
+		static string GetTextInheritedFontStyleResourceKey(string name) {
+			return string.Format("TETextInherited{0}FontStyle", name);
+		}
+
+		static string GetTextInheritedFontWeightResourceKey(string name) {
+			return string.Format("TETextInherited{0}FontWeight", name);
+		}
+
+		static string GetInheritedForegroundResourceKey(string name) {
+			return string.Format("TEInherited{0}Foreground", name);
+		}
+
+		static string GetInheritedBackgroundResourceKey(string name) {
+			return string.Format("TEInherited{0}Background", name);
+		}
+
+		static string GetInheritedFontStyleResourceKey(string name) {
+			return string.Format("TEInherited{0}FontStyle", name);
+		}
+
+		static string GetInheritedFontWeightResourceKey(string name) {
+			return string.Format("TEInherited{0}FontWeight", name);
 		}
 
 		internal void OnThemeUpdated() {
-			var theme = Themes.Theme;
-			var textColor = theme.GetColor(ColorType.Text).InheritedColor;
-			Background = textColor.Background == null ? null : textColor.Background.GetBrush(null);
-			Foreground = textColor.Foreground == null ? null : textColor.Foreground.GetBrush(null);
+			var theme = Globals.App.ThemesManager.Theme;
+			var textColor = theme.GetColor(ColorType.Text);
+			Background = textColor.Background == null ? null : textColor.Background;
+			Foreground = textColor.Foreground == null ? null : textColor.Foreground;
 			FontWeight = textColor.FontWeight ?? FontWeights.Regular;
 			FontStyle = textColor.FontStyle ?? FontStyles.Normal;
 
-			var ln = theme.GetColor(ColorType.LineNumber).InheritedColor;
-			LineNumbersForeground = ln.Foreground == null ? null : ln.Foreground.GetBrush(null);
+			var ln = theme.GetColor(ColorType.LineNumber);
+			LineNumbersForeground = ln.Foreground == null ? null : ln.Foreground;
 
-			var linkColor = theme.GetColor(ColorType.Link).TextInheritedColor;
-			TextArea.TextView.LinkTextForegroundBrush = (linkColor.Foreground ?? textColor.Foreground).GetBrush(null);
-			TextArea.TextView.LinkTextBackgroundBrush = linkColor.Background == null ? Brushes.Transparent : linkColor.Background.GetBrush(null);
+			var linkColor = theme.GetTextColor(ColorType.Link);
+			TextArea.TextView.LinkTextForegroundBrush = (linkColor.Foreground ?? textColor.Foreground);
+			TextArea.TextView.LinkTextBackgroundBrush = linkColor.Background == null ? Brushes.Transparent : linkColor.Background;
 
-			var sel = theme.GetColor(ColorType.Selection).InheritedColor;
+			var sel = theme.GetColor(ColorType.Selection);
 			TextArea.SelectionBorder = null;
-			TextArea.SelectionBrush = sel.Background == null ? null : sel.Background.GetBrush(null);
-			TextArea.SelectionForeground = sel.Foreground == null ? null : sel.Foreground.GetBrush(null);
+			TextArea.SelectionBrush = sel.Background == null ? null : sel.Background;
+			TextArea.SelectionForeground = sel.Foreground == null ? null : sel.Foreground;
 
-			var currentLine = theme.GetColor(ColorType.CurrentLine).InheritedColor;
-			TextArea.TextView.CurrentLineBackground = currentLine.Background == null ? null : currentLine.Background.GetBrush(null);
-			TextArea.TextView.CurrentLineBorder = new Pen(currentLine.Foreground == null ? null : currentLine.Foreground.GetBrush(null), 2);
+			var currentLine = theme.GetColor(ColorType.CurrentLine);
+			TextArea.TextView.CurrentLineBackground = currentLine.Background == null ? null : currentLine.Background;
+			TextArea.TextView.CurrentLineBorder = new Pen(currentLine.Foreground == null ? null : currentLine.Foreground, 2);
 
 			UpdateDefaultHighlighter();
 			TextArea.TextView.Redraw();
@@ -135,9 +171,9 @@ namespace dnSpy.TextView {
 				Debug.Assert(b);
 				if (!b)
 					continue;
-				var ourColor = Themes.Theme.GetColor(colorType).TextInheritedColor;
-				color.Background = ourColor.Background;
-				color.Foreground = ourColor.Foreground;
+				var ourColor = Globals.App.ThemesManager.Theme.GetTextColor(colorType);
+				color.Background = ourColor.Background.ToHighlightingBrush();
+				color.Foreground = ourColor.Foreground.ToHighlightingBrush();
 				color.FontWeight = ourColor.FontWeight;
 				color.FontStyle = ourColor.FontStyle;
 			}
@@ -212,7 +248,7 @@ namespace dnSpy.TextView {
 			}
 
 			HighlightingColor GetColor(TextTokenType tokenType) {
-				return Themes.Theme.GetColor(tokenType).TextInheritedColor;
+				return Globals.App.ThemesManager.Theme.GetTextColor(tokenType.ToColorType()).ToHighlightingColor();
 			}
 
 			public IEnumerable<HighlightingColor> GetColorStack(int lineNumber) {
