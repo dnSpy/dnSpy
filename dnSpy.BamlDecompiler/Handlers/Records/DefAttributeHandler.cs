@@ -22,29 +22,20 @@
 
 using System.Xml.Linq;
 using dnSpy.BamlDecompiler.Baml;
-using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
-	internal class ConstructorParameterTypeHandler : IHandler {
+	internal class DefAttributeHandler : IHandler {
 		public BamlRecordType Type {
-			get { return BamlRecordType.ConstructorParameterType; }
+			get { return BamlRecordType.DefAttribute; }
 		}
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			var record = (ConstructorParameterTypeRecord)((BamlRecordNode)node).Record;
+			var record = (DefAttributeRecord)((BamlRecordNode)node).Record;
 
-			var elem = new XElement(ctx.GetXamlNsName("TypeExtension", parent.Xaml));
-			elem.AddAnnotation(ctx.ResolveType(0xfd4d)); // Known type - TypeExtension
+			var attrName = ctx.ResolveString(record.NameId);
+			parent.Xaml.Element.Add(new XAttribute(ctx.GetXamlNsName(attrName), record.Value));
 
-			var bamlElem = new BamlElement(node);
-			bamlElem.Xaml = elem;
-			parent.Xaml.Element.Add(elem);
-
-			var type = ctx.ResolveType(record.TypeId);
-			var typeName = ctx.ToString(parent.Xaml, type);
-			elem.Add(new XAttribute("TypeName", typeName));
-
-			return bamlElem;
+			return null;
 		}
 	}
 }

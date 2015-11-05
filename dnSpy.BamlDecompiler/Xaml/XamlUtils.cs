@@ -27,6 +27,8 @@ using System.Xml.Linq;
 namespace dnSpy.BamlDecompiler.Xaml {
 	internal static class XamlUtils {
 		public static string Escape(string value) {
+			if (value.Length == 0)
+				return value;
 			if (value[0] == '{')
 				return "{}" + value;
 			return value;
@@ -40,7 +42,8 @@ namespace dnSpy.BamlDecompiler.Xaml {
 		public static string ToString(this XamlContext ctx, XElement elem, XName name) {
 			var sb = new StringBuilder();
 			if (name.Namespace != elem.GetDefaultNamespace() &&
-			    name.Namespace != elem.Name.Namespace) {
+			    name.Namespace != elem.Name.Namespace &&
+			    !string.IsNullOrEmpty(name.Namespace.NamespaceName)) {
 				sb.Append(elem.GetPrefixOfNamespace(name.Namespace));
 				sb.Append(':');
 			}

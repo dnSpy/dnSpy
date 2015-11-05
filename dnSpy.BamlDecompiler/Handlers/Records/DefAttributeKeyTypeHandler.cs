@@ -25,24 +25,32 @@ using dnSpy.BamlDecompiler.Baml;
 using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
-	internal class ConstructorParameterTypeHandler : IHandler {
+	internal class DefAttributeTypeHandler : IHandler, IDeferHandler {
 		public BamlRecordType Type {
-			get { return BamlRecordType.ConstructorParameterType; }
+			get { return BamlRecordType.DefAttributeKeyType; }
 		}
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			var record = (ConstructorParameterTypeRecord)((BamlRecordNode)node).Record;
+			XamlResourceKey.Create(node);
+			return null;
+		}
 
-			var elem = new XElement(ctx.GetXamlNsName("TypeExtension", parent.Xaml));
-			elem.AddAnnotation(ctx.ResolveType(0xfd4d)); // Known type - TypeExtension
-
-			var bamlElem = new BamlElement(node);
-			bamlElem.Xaml = elem;
-			parent.Xaml.Element.Add(elem);
-
+		public BamlElement TranslateDefer(XamlContext ctx, BamlNode node, BamlElement parent) {
+			var record = (DefAttributeKeyTypeRecord)((BamlRecordNode)node).Record;
 			var type = ctx.ResolveType(record.TypeId);
 			var typeName = ctx.ToString(parent.Xaml, type);
-			elem.Add(new XAttribute("TypeName", typeName));
+			var key = (XamlResourceKey)node.Annotation;
+
+			var bamlElem = new BamlElement(node);
+			bamlElem.Xaml = new XElement(ctx.GetXamlNsName("Key", parent.Xaml));
+			parent.Xaml.Element.Add(bamlElem.Xaml.Element);
+
+			var typeElem = new XElement(ctx.GetXamlNsName("TypeExtension", parent.Xaml));
+			typeElem.AddAnnotation(ctx.ResolveType(0xfd4d)); // Known type - TypeExtension
+			typeElem.Add(new XAttribute("TypeName", typeName));
+			bamlElem.Xaml.Element.Add(typeElem);
+
+			key.KeyElement = bamlElem;
 
 			return bamlElem;
 		}

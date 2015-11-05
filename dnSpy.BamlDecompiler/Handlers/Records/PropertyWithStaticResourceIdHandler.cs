@@ -20,31 +20,48 @@
 	THE SOFTWARE.
 */
 
+using System;
 using System.Xml.Linq;
 using dnSpy.BamlDecompiler.Baml;
 using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
-	internal class ConstructorParameterTypeHandler : IHandler {
+	internal class PropertyWithStaticResourceIdHandler : IHandler {
 		public BamlRecordType Type {
-			get { return BamlRecordType.ConstructorParameterType; }
+			get { return BamlRecordType.PropertyWithStaticResourceId; }
 		}
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			var record = (ConstructorParameterTypeRecord)((BamlRecordNode)node).Record;
+			var record = (PropertyWithStaticResourceIdRecord)((BamlRecordNode)node).Record;
+			var doc = new BamlElement(node);
 
-			var elem = new XElement(ctx.GetXamlNsName("TypeExtension", parent.Xaml));
-			elem.AddAnnotation(ctx.ResolveType(0xfd4d)); // Known type - TypeExtension
+			var elemAttr = ctx.ResolveProperty(record.AttributeId);
+			doc.Xaml = new XElement(elemAttr.ToXName(ctx, null));
 
-			var bamlElem = new BamlElement(node);
-			bamlElem.Xaml = elem;
-			parent.Xaml.Element.Add(elem);
+			doc.Xaml.Element.AddAnnotation(elemAttr);
+			parent.Xaml.Element.Add(doc.Xaml.Element);
 
-			var type = ctx.ResolveType(record.TypeId);
-			var typeName = ctx.ToString(parent.Xaml, type);
-			elem.Add(new XAttribute("TypeName", typeName));
+			BamlNode found = node;
+			XamlResourceKey key;
+			do {
+				key = XamlResourceKey.FindKeyInAncestors(found.Parent, out found);
+			} while (key != null && record.StaticResourceId >= key.StaticResources.Count);
 
-			return bamlElem;
+			if (key == null)
+				throw new Exception("Cannot find StaticResource @" + node.Record.Position);
+
+			var resNode = key.StaticResources[record.StaticResourceId];
+
+			var handler = (IDeferHandler)HandlerMap.LookupHandler(resNode.Type);
+			var resElem = handler.TranslateDefer(ctx, resNode, doc);
+
+			doc.Children.Add(resElem);
+			resElem.Parent = doc;
+
+			elemAttr.DeclaringType.ResolveNamespace(doc.Xaml, ctx);
+			doc.Xaml.Element.Name = elemAttr.ToXName(ctx, null);
+
+			return doc;
 		}
 	}
 }

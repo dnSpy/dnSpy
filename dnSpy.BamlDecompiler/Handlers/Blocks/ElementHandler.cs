@@ -22,6 +22,7 @@
 
 using System.Xml.Linq;
 using dnSpy.BamlDecompiler.Baml;
+using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class ElementHandler : IHandler {
@@ -40,6 +41,15 @@ namespace dnSpy.BamlDecompiler.Handlers {
 			parent.Xaml.Element.Add(doc.Xaml.Element);
 
 			HandlerMap.ProcessChildren(ctx, (BamlBlockNode)node, doc);
+			var key = node.Annotation as XamlResourceKey;
+			if (key != null && key.KeyNode.Record != node.Record) {
+				var handler = (IDeferHandler)HandlerMap.LookupHandler(key.KeyNode.Record.Type);
+				var keyElem = handler.TranslateDefer(ctx, key.KeyNode, doc);
+
+				doc.Children.Add(keyElem);
+				keyElem.Parent = doc;
+			}
+
 			elemType.ResolveNamespace(doc.Xaml, ctx);
 			doc.Xaml.Element.Name = elemType.ToXName(ctx);
 

@@ -132,6 +132,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	}
 
 	internal interface IBamlDeferRecord {
+		long Position { get; }
 		BamlRecord Record { get; set; }
 		void ReadDefer(BamlDocument doc, int index, Func<long, BamlRecord> resolve);
 		void WriteDefer(BamlDocument doc, int index, BinaryWriter wtr);

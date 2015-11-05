@@ -32,7 +32,7 @@ namespace dnSpy.BamlDecompiler.Handlers {
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
 			var record = (PropertyTypeReferenceRecord)((BamlRecordNode)node).Record;
-			var attr = ctx.ResolveType(record.AttributeId);
+			var attr = ctx.ResolveProperty(record.AttributeId);
 			var type = ctx.ResolveType(record.TypeId);
 			var typeName = ctx.ToString(parent.Xaml, type);
 

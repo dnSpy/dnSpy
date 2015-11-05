@@ -31,6 +31,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 		readonly Dictionary<KnownProperties, KnownProperty> properties;
 		readonly Dictionary<KnownTypes, TypeDef> types;
 		readonly Dictionary<int, string> strings;
+		readonly Dictionary<int, string> resources;
 
 		public KnownThingsv3(ModuleDef module) {
 			resolver = module.Context.AssemblyResolver;
@@ -44,6 +45,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 			InitTypes();
 			InitProperties();
 			InitStrings();
+			InitResources();
 		}
 
 		public Func<KnownTypes, TypeDef> Types {
@@ -54,8 +56,12 @@ namespace dnSpy.BamlDecompiler.Baml {
 			get { return property => properties[property]; }
 		}
 
-		public Func<int, String> Strings {
+		public Func<int, string> Strings {
 			get { return str => strings[str]; }
+		}
+
+		public Func<int, string> Resources {
+			get { return str => resources[str]; }
 		}
 
 		public AssemblyDef FrameworkAssembly {
@@ -1559,6 +1565,236 @@ namespace dnSpy.BamlDecompiler.Baml {
 			strings[0] = null;
 			strings[1] = "Name";
 			strings[2] = "Uid";
+		}
+
+		void InitResources() {
+			resources[1] = "SystemColors.ActiveBorderBrush";
+			resources[2] = "SystemColors.ActiveCaptionBrush";
+			resources[3] = "SystemColors.ActiveCaptionTextBrush";
+			resources[4] = "SystemColors.AppWorkspaceBrush";
+			resources[5] = "SystemColors.ControlBrush";
+			resources[6] = "SystemColors.ControlDarkBrush";
+			resources[7] = "SystemColors.ControlDarkDarkBrush";
+			resources[8] = "SystemColors.ControlLightBrush";
+			resources[9] = "SystemColors.ControlLightLightBrush";
+			resources[10] = "SystemColors.ControlTextBrush";
+			resources[11] = "SystemColors.DesktopBrush";
+			resources[12] = "SystemColors.GradientActiveCaptionBrush";
+			resources[13] = "SystemColors.GradientInactiveCaptionBrush";
+			resources[14] = "SystemColors.GrayTextBrush";
+			resources[15] = "SystemColors.HighlightBrush";
+			resources[16] = "SystemColors.HighlightTextBrush";
+			resources[17] = "SystemColors.HotTrackBrush";
+			resources[18] = "SystemColors.InactiveBorderBrush";
+			resources[19] = "SystemColors.InactiveCaptionBrush";
+			resources[20] = "SystemColors.InactiveCaptionTextBrush";
+			resources[21] = "SystemColors.InfoBrush";
+			resources[22] = "SystemColors.InfoTextBrush";
+			resources[23] = "SystemColors.MenuBrush";
+			resources[24] = "SystemColors.MenuBarBrush";
+			resources[25] = "SystemColors.MenuHighlightBrush";
+			resources[26] = "SystemColors.MenuTextBrush";
+			resources[27] = "SystemColors.ScrollBarBrush";
+			resources[28] = "SystemColors.WindowBrush";
+			resources[29] = "SystemColors.WindowFrameBrush";
+			resources[30] = "SystemColors.WindowTextBrush";
+			resources[31] = "SystemColors.ActiveBorderColor";
+			resources[32] = "SystemColors.ActiveCaptionColor";
+			resources[33] = "SystemColors.ActiveCaptionTextColor";
+			resources[34] = "SystemColors.AppWorkspaceColor";
+			resources[35] = "SystemColors.ControlColor";
+			resources[36] = "SystemColors.ControlDarkColor";
+			resources[37] = "SystemColors.ControlDarkDarkColor";
+			resources[38] = "SystemColors.ControlLightColor";
+			resources[39] = "SystemColors.ControlLightLightColor";
+			resources[40] = "SystemColors.ControlTextColor";
+			resources[41] = "SystemColors.DesktopColor";
+			resources[42] = "SystemColors.GradientActiveCaptionColor";
+			resources[43] = "SystemColors.GradientInactiveCaptionColor";
+			resources[44] = "SystemColors.GrayTextColor";
+			resources[45] = "SystemColors.HighlightColor";
+			resources[46] = "SystemColors.HighlightTextColor";
+			resources[47] = "SystemColors.HotTrackColor";
+			resources[48] = "SystemColors.InactiveBorderColor";
+			resources[49] = "SystemColors.InactiveCaptionColor";
+			resources[50] = "SystemColors.InactiveCaptionTextColor";
+			resources[51] = "SystemColors.InfoColor";
+			resources[52] = "SystemColors.InfoTextColor";
+			resources[53] = "SystemColors.MenuColor";
+			resources[54] = "SystemColors.MenuBarColor";
+			resources[55] = "SystemColors.MenuHighlightColor";
+			resources[56] = "SystemColors.MenuTextColor";
+			resources[57] = "SystemColors.ScrollBarColor";
+			resources[58] = "SystemColors.WindowColor";
+			resources[59] = "SystemColors.WindowFrameColor";
+			resources[60] = "SystemColors.WindowTextColor";
+			resources[63] = "SystemFonts.CaptionFontSize";
+			resources[64] = "SystemFonts.CaptionFontFamily";
+			resources[65] = "SystemFonts.CaptionFontStyle";
+			resources[66] = "SystemFonts.CaptionFontWeight";
+			resources[67] = "SystemFonts.CaptionFontTextDecorations";
+			resources[68] = "SystemFonts.SmallCaptionFontSize";
+			resources[69] = "SystemFonts.SmallCaptionFontFamily";
+			resources[70] = "SystemFonts.SmallCaptionFontStyle";
+			resources[71] = "SystemFonts.SmallCaptionFontWeight";
+			resources[72] = "SystemFonts.SmallCaptionFontTextDecorations";
+			resources[73] = "SystemFonts.MenuFontSize";
+			resources[74] = "SystemFonts.MenuFontFamily";
+			resources[75] = "SystemFonts.MenuFontStyle";
+			resources[76] = "SystemFonts.MenuFontWeight";
+			resources[77] = "SystemFonts.MenuFontTextDecorations";
+			resources[78] = "SystemFonts.StatusFontSize";
+			resources[79] = "SystemFonts.StatusFontFamily";
+			resources[80] = "SystemFonts.StatusFontStyle";
+			resources[81] = "SystemFonts.StatusFontWeight";
+			resources[82] = "SystemFonts.StatusFontTextDecorations";
+			resources[83] = "SystemFonts.MessageFontSize";
+			resources[84] = "SystemFonts.MessageFontFamily";
+			resources[85] = "SystemFonts.MessageFontStyle";
+			resources[86] = "SystemFonts.MessageFontWeight";
+			resources[87] = "SystemFonts.MessageFontTextDecorations";
+			resources[88] = "SystemFonts.IconFontSize";
+			resources[89] = "SystemFonts.IconFontFamily";
+			resources[90] = "SystemFonts.IconFontStyle";
+			resources[91] = "SystemFonts.IconFontWeight";
+			resources[92] = "SystemFonts.IconFontTextDecorations";
+			resources[95] = "SystemParameters.ThinHorizontalBorderHeight";
+			resources[96] = "SystemParameters.ThinVerticalBorderWidth";
+			resources[97] = "SystemParameters.CursorWidth";
+			resources[98] = "SystemParameters.CursorHeight";
+			resources[99] = "SystemParameters.ThickHorizontalBorderHeight";
+			resources[100] = "SystemParameters.ThickVerticalBorderWidth";
+			resources[101] = "SystemParameters.FixedFrameHorizontalBorderHeight";
+			resources[102] = "SystemParameters.FixedFrameVerticalBorderWidth";
+			resources[103] = "SystemParameters.FocusHorizontalBorderHeight";
+			resources[104] = "SystemParameters.FocusVerticalBorderWidth";
+			resources[105] = "SystemParameters.FullPrimaryScreenWidth";
+			resources[106] = "SystemParameters.FullPrimaryScreenHeight";
+			resources[107] = "SystemParameters.HorizontalScrollBarButtonWidth";
+			resources[108] = "SystemParameters.HorizontalScrollBarHeight";
+			resources[109] = "SystemParameters.HorizontalScrollBarThumbWidth";
+			resources[110] = "SystemParameters.IconWidth";
+			resources[111] = "SystemParameters.IconHeight";
+			resources[112] = "SystemParameters.IconGridWidth";
+			resources[113] = "SystemParameters.IconGridHeight";
+			resources[114] = "SystemParameters.MaximizedPrimaryScreenWidth";
+			resources[115] = "SystemParameters.MaximizedPrimaryScreenHeight";
+			resources[116] = "SystemParameters.MaximumWindowTrackWidth";
+			resources[117] = "SystemParameters.MaximumWindowTrackHeight";
+			resources[118] = "SystemParameters.MenuCheckmarkWidth";
+			resources[119] = "SystemParameters.MenuCheckmarkHeight";
+			resources[120] = "SystemParameters.MenuButtonWidth";
+			resources[121] = "SystemParameters.MenuButtonHeight";
+			resources[122] = "SystemParameters.MinimumWindowWidth";
+			resources[123] = "SystemParameters.MinimumWindowHeight";
+			resources[124] = "SystemParameters.MinimizedWindowWidth";
+			resources[125] = "SystemParameters.MinimizedWindowHeight";
+			resources[126] = "SystemParameters.MinimizedGridWidth";
+			resources[127] = "SystemParameters.MinimizedGridHeight";
+			resources[128] = "SystemParameters.MinimumWindowTrackWidth";
+			resources[129] = "SystemParameters.MinimumWindowTrackHeight";
+			resources[130] = "SystemParameters.PrimaryScreenWidth";
+			resources[131] = "SystemParameters.PrimaryScreenHeight";
+			resources[132] = "SystemParameters.WindowCaptionButtonWidth";
+			resources[133] = "SystemParameters.WindowCaptionButtonHeight";
+			resources[134] = "SystemParameters.ResizeFrameHorizontalBorderHeight";
+			resources[135] = "SystemParameters.ResizeFrameVerticalBorderWidth";
+			resources[136] = "SystemParameters.SmallIconWidth";
+			resources[137] = "SystemParameters.SmallIconHeight";
+			resources[138] = "SystemParameters.SmallWindowCaptionButtonWidth";
+			resources[139] = "SystemParameters.SmallWindowCaptionButtonHeight";
+			resources[140] = "SystemParameters.VirtualScreenWidth";
+			resources[141] = "SystemParameters.VirtualScreenHeight";
+			resources[142] = "SystemParameters.VerticalScrollBarWidth";
+			resources[143] = "SystemParameters.VerticalScrollBarButtonHeight";
+			resources[144] = "SystemParameters.WindowCaptionHeight";
+			resources[145] = "SystemParameters.KanjiWindowHeight";
+			resources[146] = "SystemParameters.MenuBarHeight";
+			resources[147] = "SystemParameters.SmallCaptionHeight";
+			resources[148] = "SystemParameters.VerticalScrollBarThumbHeight";
+			resources[149] = "SystemParameters.IsImmEnabled";
+			resources[150] = "SystemParameters.IsMediaCenter";
+			resources[151] = "SystemParameters.IsMenuDropRightAligned";
+			resources[152] = "SystemParameters.IsMiddleEastEnabled";
+			resources[153] = "SystemParameters.IsMousePresent";
+			resources[154] = "SystemParameters.IsMouseWheelPresent";
+			resources[155] = "SystemParameters.IsPenWindows";
+			resources[156] = "SystemParameters.IsRemotelyControlled";
+			resources[157] = "SystemParameters.IsRemoteSession";
+			resources[158] = "SystemParameters.ShowSounds";
+			resources[159] = "SystemParameters.IsSlowMachine";
+			resources[160] = "SystemParameters.SwapButtons";
+			resources[161] = "SystemParameters.IsTabletPC";
+			resources[162] = "SystemParameters.VirtualScreenLeft";
+			resources[163] = "SystemParameters.VirtualScreenTop";
+			resources[164] = "SystemParameters.FocusBorderWidth";
+			resources[165] = "SystemParameters.FocusBorderHeight";
+			resources[166] = "SystemParameters.HighContrast";
+			resources[167] = "SystemParameters.DropShadow";
+			resources[168] = "SystemParameters.FlatMenu";
+			resources[169] = "SystemParameters.WorkArea";
+			resources[170] = "SystemParameters.IconHorizontalSpacing";
+			resources[171] = "SystemParameters.IconVerticalSpacing";
+			resources[172] = "SystemParameters.IconTitleWrap";
+			resources[173] = "SystemParameters.KeyboardCues";
+			resources[174] = "SystemParameters.KeyboardDelay";
+			resources[175] = "SystemParameters.KeyboardPreference";
+			resources[176] = "SystemParameters.KeyboardSpeed";
+			resources[177] = "SystemParameters.SnapToDefaultButton";
+			resources[178] = "SystemParameters.WheelScrollLines";
+			resources[179] = "SystemParameters.MouseHoverTime";
+			resources[180] = "SystemParameters.MouseHoverHeight";
+			resources[181] = "SystemParameters.MouseHoverWidth";
+			resources[182] = "SystemParameters.MenuDropAlignment";
+			resources[183] = "SystemParameters.MenuFade";
+			resources[184] = "SystemParameters.MenuShowDelay";
+			resources[185] = "SystemParameters.ComboBoxAnimation";
+			resources[186] = "SystemParameters.ClientAreaAnimation";
+			resources[187] = "SystemParameters.CursorShadow";
+			resources[188] = "SystemParameters.GradientCaptions";
+			resources[189] = "SystemParameters.HotTracking";
+			resources[190] = "SystemParameters.ListBoxSmoothScrolling";
+			resources[191] = "SystemParameters.MenuAnimation";
+			resources[192] = "SystemParameters.SelectionFade";
+			resources[193] = "SystemParameters.StylusHotTracking";
+			resources[194] = "SystemParameters.ToolTipAnimation";
+			resources[195] = "SystemParameters.ToolTipFade";
+			resources[196] = "SystemParameters.UIEffects";
+			resources[197] = "SystemParameters.MinimizeAnimation";
+			resources[198] = "SystemParameters.Border";
+			resources[199] = "SystemParameters.CaretWidth";
+			resources[200] = "SystemParameters.ForegroundFlashCount";
+			resources[201] = "SystemParameters.DragFullWindows";
+			resources[202] = "SystemParameters.BorderWidth";
+			resources[203] = "SystemParameters.ScrollWidth";
+			resources[204] = "SystemParameters.ScrollHeight";
+			resources[205] = "SystemParameters.CaptionWidth";
+			resources[206] = "SystemParameters.CaptionHeight";
+			resources[207] = "SystemParameters.SmallCaptionWidth";
+			resources[208] = "SystemParameters.MenuWidth";
+			resources[209] = "SystemParameters.MenuHeight";
+			resources[210] = "SystemParameters.ComboBoxPopupAnimation";
+			resources[211] = "SystemParameters.MenuPopupAnimation";
+			resources[212] = "SystemParameters.ToolTipPopupAnimation";
+			resources[213] = "SystemParameters.PowerLineStatus";
+			resources[215] = "SystemParameters.FocusVisualStyle";
+			resources[216] = "SystemParameters.NavigationChromeDownLevelStyle";
+			resources[217] = "SystemParameters.NavigationChromeStyle";
+			resources[219] = "MenuItem.SeparatorStyle";
+			resources[220] = "GridView.GridViewScrollViewerStyle";
+			resources[221] = "GridView.GridViewStyle";
+			resources[222] = "GridView.GridViewItemContainerStyle";
+			resources[223] = "StatusBar.SeparatorStyle";
+			resources[224] = "ToolBar.ButtonStyle";
+			resources[225] = "ToolBar.ToggleButtonStyle";
+			resources[226] = "ToolBar.SeparatorStyle";
+			resources[227] = "ToolBar.CheckBoxStyle";
+			resources[228] = "ToolBar.RadioButtonStyle";
+			resources[229] = "ToolBar.ComboBoxStyle";
+			resources[230] = "ToolBar.TextBoxStyle";
+			resources[231] = "ToolBar.MenuStyle";
+			resources[234] = "SystemColors.InactiveSelectionHighlightBrush";
+			resources[235] = "SystemColors.InactiveSelectionHighlightTextBrush";
 		}
 	}
 }

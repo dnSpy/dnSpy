@@ -1063,6 +1063,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 		Func<KnownTypes, TypeDef> Types { get; }
 		Func<KnownProperties, KnownProperty> Properties { get; }
 		Func<int, string> Strings { get; }
+		Func<int, string> Resources { get; }
 		AssemblyDef FrameworkAssembly { get; }
 	}
 

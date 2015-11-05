@@ -23,6 +23,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
+using dnlib.DotNet;
 
 namespace dnSpy.BamlDecompiler.Xaml {
 	internal class XamlExtension {
@@ -71,6 +72,36 @@ namespace dnSpy.BamlDecompiler.Xaml {
 
 			sb.Append('}');
 			return sb.ToString();
+		}
+
+		public static bool CanInlineExt(XamlContext ctx, XElement ctxElement) {
+			if (ctxElement.Name == ctx.GetPseudoName("Ctor")) {
+				foreach (var child in ctxElement.Elements()) {
+					if (!CanInlineExt(ctx, child))
+						return false;
+				}
+				return true;
+			}
+			var type = ctxElement.Annotation<XamlType>();
+			if (type == null || type.ResolvedType == null)
+				return false;
+
+			var typeDef = type.ResolvedType.GetBaseType();
+			bool isExt = false;
+			do {
+				if (typeDef.FullName == "System.Windows.Markup.MarkupExtension") {
+					isExt = true;
+					break;
+				}
+			} while (typeDef != null);
+			if (!isExt)
+				return false;
+
+			foreach (var child in ctxElement.Elements()) {
+				if (!CanInlineExt(ctx, child))
+					return false;
+			}
+			return true;
 		}
 	}
 }

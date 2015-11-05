@@ -22,21 +22,29 @@
 
 using System.Xml.Linq;
 using dnSpy.BamlDecompiler.Baml;
+using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
-	internal class KeyElementStartHandler : ElementHandler, IHandler {
+	internal class KeyElementStartHandler : ElementHandler, IHandler, IDeferHandler {
 		BamlRecordType IHandler.Type {
 			get { return BamlRecordType.KeyElementStart; }
 		}
 
 		BamlElement IHandler.Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
+			XamlResourceKey.Create(node);
+			return null;
+		}
+
+		public BamlElement TranslateDefer(XamlContext ctx, BamlNode node, BamlElement parent) {
 			var record = (KeyElementStartRecord)((BamlBlockNode)node).Header;
+			var key = (XamlResourceKey)node.Annotation;
 
 			var bamlElem = new BamlElement(node);
 			bamlElem.Xaml = new XElement(ctx.GetXamlNsName("Key", parent.Xaml));
 			parent.Xaml.Element.Add(bamlElem.Xaml.Element);
-
+			key.KeyElement = bamlElem;
 			base.Translate(ctx, node, bamlElem);
+
 			return bamlElem;
 		}
 	}

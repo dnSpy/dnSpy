@@ -54,6 +54,10 @@
     <Compile Include="Handlers\Records\AssemblyInfoHandler.cs" />
     <Compile Include="Handlers\Records\ContentPropertyHandler.cs" />
     <Compile Include="Handlers\Records\ConstructorParameterTypeHandler.cs" />
+    <Compile Include="Handlers\Records\DefAttributeHandler.cs" />
+    <Compile Include="Handlers\Records\DefAttributeKeyTypeHandler.cs" />
+    <Compile Include="Handlers\Records\OptimizedStaticResourceHandler.cs" />
+    <Compile Include="Handlers\Records\PropertyWithStaticResourceIdHandler.cs" />
     <Compile Include="Handlers\Records\PropertyTypeReferenceHandler.cs" />
     <Compile Include="Handlers\Records\DefAttributeKeyStringHandler.cs" />
     <Compile Include="Handlers\Records\LineNumberAndPositionHandler.cs" />
@@ -94,6 +98,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Xaml\XamlExtension.cs" />
     <Compile Include="Xaml\XamlPathDeserializer.cs" />
+    <Compile Include="Xaml\XamlResourceKey.cs" />
     <Compile Include="Xaml\XamlUtils.cs" />
     <Compile Include="Xaml\XamlProperty.cs" />
     <Compile Include="Xaml\NamespaceMap.cs" />
