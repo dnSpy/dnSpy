@@ -29,6 +29,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 	internal abstract class BamlNode {
 		public BamlNode Parent { get; set; }
 		public abstract BamlRecordType Type { get; }
+		public bool Skip { get; set; }
 
 		public static bool IsHeader(BamlRecord rec) {
 			switch (rec.Type) {
@@ -132,7 +133,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 						current = stack.Pop();
 				}
 				else
-					current.Children.Add(new BamlRecordNode(document[i]));
+					current.Children.Add(new BamlRecordNode(document[i]) { Parent = current });
 			}
 			Debug.Assert(stack.Count == 0);
 			return current;

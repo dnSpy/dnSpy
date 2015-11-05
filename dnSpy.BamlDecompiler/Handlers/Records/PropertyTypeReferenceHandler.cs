@@ -20,16 +20,39 @@
 	THE SOFTWARE.
 */
 
+using System.Xml.Linq;
 using dnSpy.BamlDecompiler.Baml;
+using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
-	internal class LinePositionHandler : IHandler {
+	internal class PropertyTypeReferenceHandler : IHandler {
 		public BamlRecordType Type {
-			get { return BamlRecordType.LinePosition; }
+			get { return BamlRecordType.PropertyTypeReference; }
 		}
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			return null;
+			var record = (PropertyTypeReferenceRecord)((BamlRecordNode)node).Record;
+			var attr = ctx.ResolveType(record.AttributeId);
+			var type = ctx.ResolveType(record.TypeId);
+			var typeName = ctx.ToString(parent.Xaml, type);
+
+			var elem = new BamlElement(node);
+
+			var elemAttr = ctx.ResolveProperty(record.AttributeId);
+			elem.Xaml = new XElement(elemAttr.ToXName(ctx, null));
+
+			elem.Xaml.Element.AddAnnotation(elemAttr);
+			parent.Xaml.Element.Add(elem.Xaml.Element);
+
+			var typeElem = new XElement(ctx.GetXamlNsName("TypeExtension", parent.Xaml));
+			typeElem.AddAnnotation(ctx.ResolveType(0xfd4d)); // Known type - TypeExtension
+			typeElem.Add(new XAttribute("TypeName", typeName));
+			elem.Xaml.Element.Add(typeElem);
+
+			elemAttr.DeclaringType.ResolveNamespace(elem.Xaml, ctx);
+			elem.Xaml.Element.Name = elemAttr.ToXName(ctx, null);
+
+			return elem;
 		}
 	}
 }

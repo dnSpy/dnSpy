@@ -28,7 +28,7 @@ using dnSpy.BamlDecompiler.Xaml;
 namespace dnSpy.BamlDecompiler.Rewrite {
 	internal class XClassRewritePass : IRewritePass {
 		public void Run(XamlContext ctx, XDocument document) {
-			foreach (var elem in document.Elements("Document").Elements())
+			foreach (var elem in document.Elements(ctx.GetPseudoName("Document")).Elements())
 				RewriteClass(ctx, elem);
 		}
 

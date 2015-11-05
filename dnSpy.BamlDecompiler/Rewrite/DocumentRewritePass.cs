@@ -27,7 +27,7 @@ using System.Xml.Linq;
 namespace dnSpy.BamlDecompiler.Rewrite {
 	internal class DocumentRewritePass : IRewritePass {
 		public void Run(XamlContext ctx, XDocument document) {
-			foreach (var elem in document.Elements("Document").ToList()) {
+			foreach (var elem in document.Elements(ctx.GetPseudoName("Document")).ToList()) {
 				if (elem.Elements().Count() != 1)
 					continue;
 

@@ -20,15 +20,38 @@
 	THE SOFTWARE.
 */
 
+using System.Diagnostics;
+using System.Linq;
+using System.Xml.Linq;
 using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
-	internal class LinePositionHandler : IHandler {
+	internal class DefAttributeStringHandler : IHandler {
 		public BamlRecordType Type {
-			get { return BamlRecordType.LinePosition; }
+			get { return BamlRecordType.DefAttributeKeyString; }
 		}
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
+			var record = (DefAttributeKeyStringRecord)((BamlRecordNode)node).Record;
+
+			var value = record.Record;
+			Debug.Assert(BamlNode.IsHeader(value));
+
+			var parentNode = (BamlBlockNode)node.Parent;
+			var valueNode = parentNode.Children.FirstOrDefault(n => n is BamlBlockNode && ((BamlBlockNode)n).Header == value);
+			Debug.Assert(valueNode != null);
+
+			var elem = HandlerMap.LookupHandler(value.Type).Translate(ctx, valueNode, parent);
+			Debug.Assert(elem != null);
+			if (elem != null) {
+				parent.Children.Add(elem);
+				elem.Parent = parent;
+			}
+
+			valueNode.Skip = true;
+			var xamlElem = elem.Xaml.Element;
+			xamlElem.Add(new XAttribute(ctx.GetXamlNsName("Key", xamlElem), ctx.ResolveString(record.ValueId)));
+
 			return null;
 		}
 	}

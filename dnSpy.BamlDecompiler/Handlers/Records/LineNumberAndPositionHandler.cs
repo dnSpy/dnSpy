@@ -20,7 +20,6 @@
 	THE SOFTWARE.
 */
 
-using System.Diagnostics;
 using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler.Handlers {

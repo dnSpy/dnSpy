@@ -20,16 +20,24 @@
 	THE SOFTWARE.
 */
 
+using System.Xml.Linq;
 using dnSpy.BamlDecompiler.Baml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
-	internal class LinePositionHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.LinePosition; }
+	internal class KeyElementStartHandler : ElementHandler, IHandler {
+		BamlRecordType IHandler.Type {
+			get { return BamlRecordType.KeyElementStart; }
 		}
 
-		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			return null;
+		BamlElement IHandler.Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
+			var record = (KeyElementStartRecord)((BamlBlockNode)node).Header;
+
+			var bamlElem = new BamlElement(node);
+			bamlElem.Xaml = new XElement(ctx.GetXamlNsName("Key", parent.Xaml));
+			parent.Xaml.Element.Add(bamlElem.Xaml.Element);
+
+			base.Translate(ctx, node, bamlElem);
+			return bamlElem;
 		}
 	}
 }

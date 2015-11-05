@@ -31,7 +31,7 @@ namespace dnSpy.BamlDecompiler.Handlers {
 
 		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
 			var doc = new BamlElement(node);
-			doc.Xaml = new XElement(XName.Get("Document"));
+			doc.Xaml = new XElement(ctx.GetPseudoName("Document"));
 
 			HandlerMap.ProcessChildren(ctx, (BamlBlockNode)node, doc);
 			return doc;

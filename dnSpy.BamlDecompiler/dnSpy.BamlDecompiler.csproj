@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Annotations.cs" />
+    <Compile Include="Handlers\Blocks\ConstructorParametersHandler.cs" />
+    <Compile Include="Handlers\Blocks\KeyElementStartHandler.cs" />
     <Compile Include="Handlers\Blocks\PropertyComplexHandler.cs" />
     <Compile Include="Handlers\Blocks\PropertyListHandler.cs" />
     <Compile Include="Handlers\Blocks\PropertyDictionaryHandler.cs" />
@@ -51,6 +53,9 @@
     <Compile Include="Handlers\Blocks\DocumentHandler.cs" />
     <Compile Include="Handlers\Records\AssemblyInfoHandler.cs" />
     <Compile Include="Handlers\Records\ContentPropertyHandler.cs" />
+    <Compile Include="Handlers\Records\ConstructorParameterTypeHandler.cs" />
+    <Compile Include="Handlers\Records\PropertyTypeReferenceHandler.cs" />
+    <Compile Include="Handlers\Records\DefAttributeKeyStringHandler.cs" />
     <Compile Include="Handlers\Records\LineNumberAndPositionHandler.cs" />
     <Compile Include="Handlers\Records\LinePositionHandler.cs" />
     <Compile Include="Handlers\Records\ConnectionIdHandler.cs" />
