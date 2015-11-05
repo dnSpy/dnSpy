@@ -30,7 +30,9 @@ namespace dnSpy.BamlDecompiler {
 	internal class XamlDecompiler {
 		static readonly IRewritePass[] rewritePasses = new IRewritePass[] {
 			new XClassRewritePass(),
-			new DocumentRewritePass()
+			new MarkupExtensionRewritePass(),
+			new AttributeRewritePass(),
+			new DocumentRewritePass(),
 		};
 
 		public XDocument Decompile(ModuleDef module, BamlDocument document, CancellationToken token) {

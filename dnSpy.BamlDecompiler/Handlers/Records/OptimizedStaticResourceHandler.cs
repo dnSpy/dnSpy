@@ -47,20 +47,12 @@ namespace dnSpy.BamlDecompiler.Handlers {
 
 				var typeElem = new XElement(ctx.GetXamlNsName("TypeExtension", parent.Xaml));
 				typeElem.AddAnnotation(ctx.ResolveType(0xfd4d)); // Known type - TypeExtension
-				typeElem.Add(new XAttribute("TypeName", ctx.ToString(parent.Xaml, value)));
+				typeElem.Add(new XElement(ctx.GetPseudoName("Ctor"), ctx.ToString(parent.Xaml, value)));
 				key = typeElem;
 			}
 			else if (record.IsStatic) {
 				string attrName;
-				if (record.ValueId > 0) {
-					var value = ctx.ResolveProperty(record.ValueId);
-
-					value.DeclaringType.ResolveNamespace(parent.Xaml, ctx);
-					var xName = value.ToXName(ctx, parent.Xaml);
-
-					attrName = ctx.ToString(parent.Xaml, xName);
-				}
-				else {
+				if (record.ValueId > 0x7fff) {
 					bool isKey = true;
 					ushort bamlId = (ushort)-record.ValueId;
 					if (bamlId > 232 && bamlId < 464) {
@@ -80,10 +72,18 @@ namespace dnSpy.BamlDecompiler.Handlers {
 					var xmlns = ctx.GetXmlNamespace("http://schemas.microsoft.com/winfx/2006/xaml/presentation");
 					attrName = ctx.ToString(parent.Xaml, xmlns.GetName(name));
 				}
+				else {
+					var value = ctx.ResolveProperty(record.ValueId);
+
+					value.DeclaringType.ResolveNamespace(parent.Xaml, ctx);
+					var xName = value.ToXName(ctx, parent.Xaml);
+
+					attrName = ctx.ToString(parent.Xaml, xName);
+				}
 
 				var staticElem = new XElement(ctx.GetXamlNsName("StaticExtension", parent.Xaml));
 				staticElem.AddAnnotation(ctx.ResolveType(0xfda6)); // Known type - StaticExtension
-				staticElem.Add(new XAttribute("Member", attrName));
+				staticElem.Add(new XElement(ctx.GetPseudoName("Ctor"), attrName));
 				key = staticElem;
 			}
 			else
@@ -95,8 +95,7 @@ namespace dnSpy.BamlDecompiler.Handlers {
 			bamlElem.Xaml = resElem;
 			parent.Xaml.Element.Add(resElem);
 
-			var property = new XamlProperty(extType, "ResourceKey");
-			var attrElem = new XElement(property.ToXName(ctx, null));
+			var attrElem = new XElement(ctx.GetPseudoName("Ctor"));
 			attrElem.Add(key);
 			resElem.Add(attrElem);
 

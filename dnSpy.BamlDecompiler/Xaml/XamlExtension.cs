@@ -23,12 +23,11 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Xml.Linq;
-using dnlib.DotNet;
 
 namespace dnSpy.BamlDecompiler.Xaml {
 	internal class XamlExtension {
 		public XamlType ExtensionType { get; private set; }
-		public object Initializer { get; set; }
+		public object[] Initializer { get; set; }
 		public IDictionary<string, object> NamedArguments { get; private set; }
 
 		public XamlExtension(XamlType type) {
@@ -53,9 +52,13 @@ namespace dnSpy.BamlDecompiler.Xaml {
 			else
 				sb.Append(typeName);
 
-			if (Initializer != null) {
+			if (Initializer != null && Initializer.Length > 0) {
 				sb.Append(' ');
-				WriteObject(sb, ctx, ctxElement, Initializer);
+				for (int i = 0; i < Initializer.Length; i++) {
+					if (i != 0)
+						sb.Append(", ");
+					WriteObject(sb, ctx, ctxElement, Initializer[i]);
+				}
 			}
 
 			if (NamedArguments.Count > 0) {
@@ -63,8 +66,10 @@ namespace dnSpy.BamlDecompiler.Xaml {
 				foreach (var kvp in NamedArguments) {
 					if (comma)
 						sb.Append(',');
-					else
+					else {
+						sb.Append(' ');
 						comma = true;
+					}
 					sb.AppendFormat("{0}=", kvp.Key);
 					WriteObject(sb, ctx, ctxElement, kvp.Value);
 				}
@@ -72,36 +77,6 @@ namespace dnSpy.BamlDecompiler.Xaml {
 
 			sb.Append('}');
 			return sb.ToString();
-		}
-
-		public static bool CanInlineExt(XamlContext ctx, XElement ctxElement) {
-			if (ctxElement.Name == ctx.GetPseudoName("Ctor")) {
-				foreach (var child in ctxElement.Elements()) {
-					if (!CanInlineExt(ctx, child))
-						return false;
-				}
-				return true;
-			}
-			var type = ctxElement.Annotation<XamlType>();
-			if (type == null || type.ResolvedType == null)
-				return false;
-
-			var typeDef = type.ResolvedType.GetBaseType();
-			bool isExt = false;
-			do {
-				if (typeDef.FullName == "System.Windows.Markup.MarkupExtension") {
-					isExt = true;
-					break;
-				}
-			} while (typeDef != null);
-			if (!isExt)
-				return false;
-
-			foreach (var child in ctxElement.Elements()) {
-				if (!CanInlineExt(ctx, child))
-					return false;
-			}
-			return true;
 		}
 	}
 }

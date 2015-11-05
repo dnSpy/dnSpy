@@ -47,7 +47,7 @@ namespace dnSpy.BamlDecompiler.Handlers {
 
 			var typeElem = new XElement(ctx.GetXamlNsName("TypeExtension", parent.Xaml));
 			typeElem.AddAnnotation(ctx.ResolveType(0xfd4d)); // Known type - TypeExtension
-			typeElem.Add(new XAttribute("TypeName", typeName));
+			typeElem.Add(new XElement(ctx.GetPseudoName("Ctor"), typeName));
 			bamlElem.Xaml.Element.Add(typeElem);
 
 			key.KeyElement = bamlElem;

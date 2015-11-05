@@ -60,7 +60,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 		}
 
 		public bool IsAttachedTo(XamlType type) {
-			if (ResolvedMember == null || type.ResolvedType == null)
+			if (type == null || ResolvedMember == null || type.ResolvedType == null)
 				return true;
 
 			var declType = ResolvedMember.DeclaringType;

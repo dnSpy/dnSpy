@@ -40,6 +40,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 			types = new Dictionary<KnownTypes, TypeDef>();
 			properties = new Dictionary<KnownProperties, KnownProperty>();
 			strings = new Dictionary<int, string>();
+			resources = new Dictionary<int, string>();
 
 			InitAssemblies(module);
 			InitTypes();

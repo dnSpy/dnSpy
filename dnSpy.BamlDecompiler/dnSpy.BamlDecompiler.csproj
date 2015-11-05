@@ -78,6 +78,8 @@
     <Compile Include="IRewritePass.cs" />
     <Compile Include="IHandlers.cs" />
     <Compile Include="BamlSettings.cs" />
+    <Compile Include="Rewrite\AttributeRewritePass.cs" />
+    <Compile Include="Rewrite\MarkupExtensionRewritePass.cs" />
     <Compile Include="Rewrite\DocumentRewritePass.cs" />
     <Compile Include="Rewrite\XClassRewritePass.cs" />
     <Compile Include="XamlContext.cs" />

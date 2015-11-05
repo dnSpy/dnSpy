@@ -21,30 +21,50 @@
 */
 
 using System.Xml.Linq;
-using dnSpy.BamlDecompiler.Baml;
 using dnSpy.BamlDecompiler.Xaml;
 
-namespace dnSpy.BamlDecompiler.Handlers {
-	internal class ConstructorParameterTypeHandler : IHandler {
-		public BamlRecordType Type {
-			get { return BamlRecordType.ConstructorParameterType; }
+namespace dnSpy.BamlDecompiler.Rewrite {
+	internal class AttributeRewritePass : IRewritePass {
+		XName key;
+
+		public void Run(XamlContext ctx, XDocument document) {
+			key = ctx.GetXamlNsName("Key");
+
+			bool doWork;
+			do {
+				doWork = false;
+				foreach (var elem in document.Elements()) {
+					doWork |= ProcessElement(ctx, elem);
+				}
+			} while (doWork);
 		}
 
-		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
-			var record = (ConstructorParameterTypeRecord)((BamlRecordNode)node).Record;
+		bool ProcessElement(XamlContext ctx, XElement elem) {
+			bool doWork = false;
+			foreach (var child in elem.Elements()) {
+				doWork |= RewriteElement(ctx, elem, child);
+				doWork |= ProcessElement(ctx, child);
+			}
+			return doWork;
+		}
 
-			var elem = new XElement(ctx.GetXamlNsName("TypeExtension", parent.Xaml));
-			elem.AddAnnotation(ctx.ResolveType(0xfd4d)); // Known type - TypeExtension
+		bool RewriteElement(XamlContext ctx, XElement parent, XElement elem) {
+			var property = elem.Annotation<XamlProperty>();
+			if (property == null && elem.Name != key)
+				return false;
 
-			var bamlElem = new BamlElement(node);
-			bamlElem.Xaml = elem;
-			parent.Xaml.Element.Add(elem);
+			if (elem.HasAttributes || elem.HasElements)
+				return false;
 
-			var type = ctx.ResolveType(record.TypeId);
-			var typeName = ctx.ToString(parent.Xaml, type);
-			elem.Add(new XElement(ctx.GetPseudoName("Ctor"), typeName));
+			var value = elem.Value;
+			var attrName = elem.Name;
+			if (attrName != key)
+				attrName = property.ToXName(ctx, parent, property.IsAttachedTo(parent.Annotation<XamlType>()));
+			var attr = new XAttribute(attrName, value);
+			parent.Add(attr);
+			elem.Remove();
 
-			return bamlElem;
+			return true;
 		}
 	}
 }
