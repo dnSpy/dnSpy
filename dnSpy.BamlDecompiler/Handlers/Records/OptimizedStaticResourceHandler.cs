@@ -54,7 +54,7 @@ namespace dnSpy.BamlDecompiler.Handlers {
 				string attrName;
 				if (record.ValueId > 0x7fff) {
 					bool isKey = true;
-					ushort bamlId = (ushort)-record.ValueId;
+					short bamlId = (short)-record.ValueId;
 					if (bamlId > 232 && bamlId < 464) {
 						bamlId -= 232;
 						isKey = false;
@@ -66,9 +66,12 @@ namespace dnSpy.BamlDecompiler.Handlers {
 						bamlId -= 234;
 						isKey = false;
 					}
-					var name = ctx.Baml.KnownThings.Resources(bamlId);
+					var res = ctx.Baml.KnownThings.Resources(bamlId);
+					string name;
 					if (isKey)
-						name += "Key";
+						name = res.Item1 + res.Item2;
+					else
+						name = res.Item1 + res.Item3;
 					var xmlns = ctx.GetXmlNamespace("http://schemas.microsoft.com/winfx/2006/xaml/presentation");
 					attrName = ctx.ToString(parent.Xaml, xmlns.GetName(name));
 				}

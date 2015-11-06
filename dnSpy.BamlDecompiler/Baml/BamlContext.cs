@@ -27,7 +27,7 @@ using dnlib.DotNet;
 namespace dnSpy.BamlDecompiler.Baml {
 	internal class BamlContext {
 		public ModuleDef Module { get; private set; }
-		public IKnownThings KnownThings { get; private set; }
+		public KnownThings KnownThings { get; private set; }
 
 		Dictionary<ushort, IAssembly> assemblyMap = new Dictionary<ushort, IAssembly>();
 
@@ -38,7 +38,7 @@ namespace dnSpy.BamlDecompiler.Baml {
 
 		BamlContext(ModuleDef module) {
 			Module = module;
-			KnownThings = module.IsClr40 ? (IKnownThings)new KnownThingsv4(module) : new KnownThingsv3(module);
+			KnownThings = new KnownThings(module);
 
 			AssemblyIdMap = new Dictionary<ushort, AssemblyInfoRecord>();
 			AttributeIdMap = new Dictionary<ushort, AttributeInfoRecord>();

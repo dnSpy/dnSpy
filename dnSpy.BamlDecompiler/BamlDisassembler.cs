@@ -165,9 +165,9 @@ namespace dnSpy.BamlDecompiler {
 			string declType;
 			string name;
 			if (id > 0x7fff) {
-				var knownProperty = ctx.KnownThings.Properties((KnownProperties)(-id));
-				declType = knownProperty.DeclaringType.FullName;
-				name = knownProperty.Name;
+				var knownMember = ctx.KnownThings.Members((KnownMembers)(-id));
+				declType = knownMember.DeclaringType.FullName;
+				name = knownMember.Name;
 			}
 			else if (ctx.AttributeIdMap.ContainsKey(id)) {
 				var attrInfo = ctx.AttributeIdMap[id];
@@ -191,7 +191,7 @@ namespace dnSpy.BamlDecompiler {
 		void WriteStringId(BamlContext ctx, ushort id) {
 			string str;
 			if (id > 0x7fff)
-				str = ctx.KnownThings.Strings(-(short)id);
+				str = ctx.KnownThings.Strings((short)-id);
 			else if (ctx.StringIdMap.ContainsKey(id))
 				str = ctx.StringIdMap[id].Value;
 			else

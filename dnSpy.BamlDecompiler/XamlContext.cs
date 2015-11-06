@@ -134,8 +134,8 @@ namespace dnSpy.BamlDecompiler {
 			IMemberDef member;
 
 			if (id > 0x7fff) {
-				var knownProp = Baml.KnownThings.Properties((KnownProperties)(-id));
-				type = ResolveType((ushort)-(short)knownProp.KnownParent);
+				var knownProp = Baml.KnownThings.Members((KnownMembers)(-id));
+				type = ResolveType((ushort)-(short)knownProp.Parent);
 				name = knownProp.Name;
 				member = knownProp.Property;
 			}
@@ -157,7 +157,7 @@ namespace dnSpy.BamlDecompiler {
 
 		public string ResolveString(ushort id) {
 			if (id > 0x7fff)
-				return Baml.KnownThings.Strings(-(short)id);
+				return Baml.KnownThings.Strings((short)-id);
 			else if (Baml.StringIdMap.ContainsKey(id))
 				return Baml.StringIdMap[id].Value;
 
