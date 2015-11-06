@@ -47,6 +47,7 @@
     <Compile Include="Baml\KnownMembers.cs" />
     <None Include="Baml\KnownThings.gen.cs" />
     <Compile Include="Handlers\Blocks\ConstructorParametersHandler.cs" />
+    <Compile Include="Handlers\Blocks\PropertyArrayHandler.cs" />
     <Compile Include="Handlers\Blocks\KeyElementStartHandler.cs" />
     <Compile Include="Handlers\Blocks\PropertyComplexHandler.cs" />
     <Compile Include="Handlers\Blocks\PropertyListHandler.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="IHandlers.cs" />
     <Compile Include="BamlSettings.cs" />
     <Compile Include="Rewrite\AttributeRewritePass.cs" />
+    <Compile Include="Rewrite\ConnectionIdRewritePass.cs" />
     <Compile Include="Rewrite\MarkupExtensionRewritePass.cs" />
     <Compile Include="Rewrite\DocumentRewritePass.cs" />
     <Compile Include="Rewrite\XClassRewritePass.cs" />

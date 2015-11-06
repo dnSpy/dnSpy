@@ -40,6 +40,7 @@ namespace dnSpy.BamlDecompiler {
 		Dictionary<string, XNamespace> xmlnsMap = new Dictionary<string, XNamespace>();
 
 		public ModuleDef Module { get; private set; }
+		public CancellationToken CancellationToken { get; private set; }
 
 		public BamlContext Baml { get; private set; }
 		public BamlNode RootNode { get; private set; }
@@ -49,6 +50,7 @@ namespace dnSpy.BamlDecompiler {
 
 		public static XamlContext Construct(ModuleDef module, BamlDocument document, CancellationToken token) {
 			var ctx = new XamlContext(module);
+			ctx.CancellationToken = token;
 
 			ctx.Baml = BamlContext.ConstructContext(module, document, token);
 			ctx.RootNode = BamlNode.Parse(document, token);

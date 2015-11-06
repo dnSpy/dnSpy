@@ -60,6 +60,8 @@ namespace dnSpy.BamlDecompiler {
 					nodeElem.Children.Add(elem);
 					elem.Parent = nodeElem;
 				}
+
+				ctx.CancellationToken.ThrowIfCancellationRequested();
 			}
 			ctx.XmlNs.PopScope();
 		}

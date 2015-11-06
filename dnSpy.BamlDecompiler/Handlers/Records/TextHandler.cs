@@ -36,4 +36,18 @@ namespace dnSpy.BamlDecompiler.Handlers {
 			return null;
 		}
 	}
+
+	internal class TextWithIdHandler : IHandler {
+		public BamlRecordType Type {
+			get { return BamlRecordType.TextWithId; }
+		}
+
+		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
+			var record = (TextWithIdRecord)((BamlRecordNode)node).Record;
+
+			parent.Xaml.Element.Add(ctx.ResolveString(record.ValueId));
+
+			return null;
+		}
+	}
 }

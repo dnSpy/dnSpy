@@ -26,7 +26,7 @@ using dnSpy.BamlDecompiler.Xaml;
 
 namespace dnSpy.BamlDecompiler.Handlers {
 	internal class PropertyHandler : IHandler {
-		public BamlRecordType Type {
+		public virtual BamlRecordType Type {
 			get { return BamlRecordType.Property; }
 		}
 

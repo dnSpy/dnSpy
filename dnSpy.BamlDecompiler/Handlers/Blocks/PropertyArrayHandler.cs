@@ -20,37 +20,30 @@
 	THE SOFTWARE.
 */
 
-using System.Threading;
 using System.Xml.Linq;
-using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
-using dnSpy.BamlDecompiler.Rewrite;
 
-namespace dnSpy.BamlDecompiler {
-	internal class XamlDecompiler {
-		static readonly IRewritePass[] rewritePasses = new IRewritePass[] {
-			new XClassRewritePass(),
-			new MarkupExtensionRewritePass(),
-			new AttributeRewritePass(),
-			new ConnectionIdRewritePass(),
-			new DocumentRewritePass(),
-		};
+namespace dnSpy.BamlDecompiler.Handlers {
+	internal class PropertyArrayHandler : IHandler {
+		public BamlRecordType Type {
+			get { return BamlRecordType.PropertyArrayStart; }
+		}
 
-		public XDocument Decompile(ModuleDef module, BamlDocument document, CancellationToken token) {
-			var ctx = XamlContext.Construct(module, document, token);
+		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
+			var record = (PropertyArrayStartRecord)((BamlBlockNode)node).Header;
+			var doc = new BamlElement(node);
 
-			var handler = HandlerMap.LookupHandler(ctx.RootNode.Type);
-			var elem = handler.Translate(ctx, ctx.RootNode, null);
+			var elemAttr = ctx.ResolveProperty(record.AttributeId);
+			doc.Xaml = new XElement(elemAttr.ToXName(ctx, null));
 
-			var xaml = new XDocument();
-			xaml.Add(elem.Xaml.Element);
+			doc.Xaml.Element.AddAnnotation(elemAttr);
+			parent.Xaml.Element.Add(doc.Xaml.Element);
 
-			foreach (var pass in rewritePasses) {
-				token.ThrowIfCancellationRequested();
-				pass.Run(ctx, xaml);
-			}
+			HandlerMap.ProcessChildren(ctx, (BamlBlockNode)node, doc);
+			elemAttr.DeclaringType.ResolveNamespace(doc.Xaml, ctx);
+			doc.Xaml.Element.Name = elemAttr.ToXName(ctx, null);
 
-			return xaml;
+			return doc;
 		}
 	}
 }

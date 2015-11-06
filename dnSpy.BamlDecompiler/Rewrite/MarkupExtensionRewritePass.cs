@@ -71,6 +71,8 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 			if (ext == null)
 				return false;
 
+			ctx.CancellationToken.ThrowIfCancellationRequested();
+
 			var extValue = ext.ToString(ctx, parent);
 
 			var attrName = elem.Name;

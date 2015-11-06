@@ -32,4 +32,14 @@ namespace dnSpy.BamlDecompiler.Handlers {
 			return null;
 		}
 	}
+
+	internal class TypeSerializerInfoHandler : IHandler {
+		public BamlRecordType Type {
+			get { return BamlRecordType.TypeSerializerInfo; }
+		}
+
+		public BamlElement Translate(XamlContext ctx, BamlNode node, BamlElement parent) {
+			return null;
+		}
+	}
 }

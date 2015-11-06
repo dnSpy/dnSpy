@@ -56,6 +56,8 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 			if (elem.HasAttributes || elem.HasElements)
 				return false;
 
+			ctx.CancellationToken.ThrowIfCancellationRequested();
+
 			var value = elem.Value;
 			var attrName = elem.Name;
 			if (attrName != key)
