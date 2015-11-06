@@ -46,14 +46,48 @@ namespace dnSpy.BamlDecompiler.Handlers {
 				var value = ctx.ResolveType(record.ValueId);
 				ext.Initializer = new object[] { ctx.ToString(parent.Xaml, value) };
 			}
-			else if (valStaticExt || extTypeId == (short)KnownTypes.TemplateBindingExtension ||
-			         extTypeId == (short)KnownTypes.StaticExtension) {
+			else if (extTypeId == (short)KnownTypes.TemplateBindingExtension) {
 				var value = ctx.ResolveProperty(record.ValueId);
 
 				value.DeclaringType.ResolveNamespace(parent.Xaml, ctx);
-				var xName = value.ToXName(ctx, parent.Xaml, extTypeId != (short)KnownTypes.TemplateBindingExtension);
+				var xName = value.ToXName(ctx, parent.Xaml, false);
 
 				ext.Initializer = new object[] { ctx.ToString(parent.Xaml, xName) };
+			}
+			else if (valStaticExt || extTypeId == (short)KnownTypes.StaticExtension) {
+				string attrName;
+				if (record.ValueId > 0x7fff) {
+					bool isKey = true;
+					short bamlId = (short)-record.ValueId;
+					if (bamlId > 232 && bamlId < 464) {
+						bamlId -= 232;
+						isKey = false;
+					}
+					else if (bamlId > 464 && bamlId < 467) {
+						bamlId -= 231;
+					}
+					else if (bamlId > 467 && bamlId < 470) {
+						bamlId -= 234;
+						isKey = false;
+					}
+					var res = ctx.Baml.KnownThings.Resources(bamlId);
+					string name;
+					if (isKey)
+						name = res.Item1 + "." + res.Item2;
+					else
+						name = res.Item1 + "." + res.Item3;
+					var xmlns = ctx.GetXmlNamespace("http://schemas.microsoft.com/winfx/2006/xaml/presentation");
+					attrName = ctx.ToString(parent.Xaml, xmlns.GetName(name));
+				}
+				else {
+					var value = ctx.ResolveProperty(record.ValueId);
+
+					value.DeclaringType.ResolveNamespace(parent.Xaml, ctx);
+					var xName = value.ToXName(ctx, parent.Xaml);
+
+					attrName = ctx.ToString(parent.Xaml, xName);
+				}
+				ext.Initializer = new object[] { attrName };
 			}
 			else {
 				ext.Initializer = new object[] { XamlUtils.Escape(ctx.ResolveString(record.ValueId)) };
