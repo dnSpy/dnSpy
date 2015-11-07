@@ -1,0 +1,11 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:baml="clr-namespace:dnSpy.BamlDecompiler;assembly=dnSpy.BamlDecompiler.Plugin"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+	<DataTemplate DataType="{x:Type baml:BamlSettings}">
+		<Grid Margin="10">
+			<StackPanel>
+				<CheckBox Margin="0 5 0 0" IsChecked="{Binding DisassembleBaml}" Content="Disassemble BAML" ToolTip="Disassembles BAML records instead of decompiling it to XAML." />
+			</StackPanel>
+		</Grid>
+	</DataTemplate>
+</ResourceDictionary>

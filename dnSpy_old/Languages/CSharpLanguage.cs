@@ -231,7 +231,12 @@ namespace ICSharpCode.ILSpy {
 			if (additionalTransform != null) {
 				additionalTransform.Run(astBuilder.SyntaxTree);
 			}
-			if (options.DecompilerSettings.ShowXmlDocumentation) {
+			AddXmlDocumentation(options.DecompilerSettings, astBuilder);
+			astBuilder.GenerateCode(output);
+		}
+
+		static void AddXmlDocumentation(DecompilerSettings settings, AstBuilder astBuilder) { 
+			if (settings.ShowXmlDocumentation) {
 				try {
 					AddXmlDocTransform.Run(astBuilder.SyntaxTree);
 				}
@@ -242,7 +247,6 @@ namespace ICSharpCode.ILSpy {
 						astBuilder.SyntaxTree.InsertChildBefore(insertionPoint, new Comment(msg[i], CommentType.Documentation), Roles.Comment);
 				}
 			}
-			astBuilder.GenerateCode(output);
 		}
 
 		public static string GetPlatformDisplayName(ModuleDef module) {
@@ -694,6 +698,7 @@ namespace ICSharpCode.ILSpy {
 							codeDomBuilder.AddType(type);
 						}
 						codeDomBuilder.RunTransformations(transformAbortCondition);
+						AddXmlDocumentation(options.DecompilerSettings, codeDomBuilder);
 						codeDomBuilder.GenerateCode(new PlainTextOutput(w));
 					}
 				});
