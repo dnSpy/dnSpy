@@ -25,7 +25,6 @@ using dnlib.DotNet.Writer;
 using dnlib.PE;
 using dnlib.W32Resources;
 using dnSpy.Files;
-using dnSpy.MVVM;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {

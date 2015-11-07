@@ -20,7 +20,7 @@
 using System.Windows.Media;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Themes;
-using dnSpy.Shared.UI.Themes;
+using dnSpy.Shared.UI.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace dnSpy.Debugger {
@@ -44,12 +44,12 @@ namespace dnSpy.Debugger {
 		};
 
 		static DebuggerColors() {
-			Globals.App.ThemesManager.ThemeChanged += (s, e) => OnThemeUpdated();
+			DnSpy.App.ThemeManager.ThemeChanged += (s, e) => OnThemeUpdated();
 			OnThemeUpdated();
 		}
 
 		static void OnThemeUpdated() {
-			var theme = Globals.App.ThemesManager.Theme;
+			var theme = DnSpy.App.ThemeManager.Theme;
 			CodeBreakpointHighlightingColor = theme.GetTextColor(ColorType.BreakpointStatement).ToHighlightingColor();
 			CodeBreakpointDisabledHighlightingColor = theme.GetTextColor(ColorType.DisabledBreakpointStatement).ToHighlightingColor();
 			StackFrameCurrentHighlightingColor = theme.GetTextColor(ColorType.CurrentStatement).ToHighlightingColor();

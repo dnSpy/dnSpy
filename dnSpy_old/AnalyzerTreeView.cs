@@ -78,10 +78,10 @@ namespace ICSharpCode.ILSpy {
 			this.ShowRoot = false;
 			this.Root = new AnalyzerRootNode { Language = MainWindow.Instance.CurrentLanguage };
 			this.BorderThickness = new Thickness(0);
-			Globals.App.MenuManager.InitializeContextMenu(this, MenuConstants.GUIDOBJ_ANALYZER_GUID, new GuidObjectsCreator());
+			DnSpy.App.MenuManager.InitializeContextMenu(this, MenuConstants.GUIDOBJ_ANALYZER_GUID, new GuidObjectsCreator());
 			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_CurrentAssemblyListChanged;
 			MainWindow.Instance.OnModuleModified += MainWindow_OnModuleModified;
-			Globals.App.ThemesManager.ThemeChanged += ThemesManager_ThemeChanged;
+			DnSpy.App.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 		}
 
@@ -114,7 +114,7 @@ namespace ICSharpCode.ILSpy {
 			UIUtils.FocusSelector(this);
 		}
 
-		void ThemesManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
 			UpdateUIColors();
 		}
 

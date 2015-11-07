@@ -21,9 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet.MD;
-using dnSpy.HexEditor;
-using dnSpy.MVVM;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.HexEditor;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.TreeNodes.Hex {

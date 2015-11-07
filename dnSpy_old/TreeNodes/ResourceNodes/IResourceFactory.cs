@@ -47,7 +47,7 @@ namespace dnSpy.TreeNodes {
 
 	public static class ResourceFactory {
 		static TOutput Create<TInput, TOutput>(ModuleDef module, TInput resInput) where TOutput : class {
-			foreach (var creator in Globals.App.CompositionContainer.GetExportedValues<IResourceFactory<TInput, TOutput>>().OrderByDescending(a => a.Priority)) {
+			foreach (var creator in DnSpy.App.CompositionContainer.GetExportedValues<IResourceFactory<TInput, TOutput>>().OrderByDescending(a => a.Priority)) {
 				try {
 					var resNode = creator.Create(module, resInput);
 					if (resNode != null)

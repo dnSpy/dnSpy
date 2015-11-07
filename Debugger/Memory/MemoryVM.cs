@@ -21,8 +21,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
-using dnSpy.HexEditor;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.HexEditor;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Memory {
 	sealed class MemoryVM : ViewModelBase {

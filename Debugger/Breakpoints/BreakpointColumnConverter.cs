@@ -36,7 +36,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Image")) {
 				string img = vm.IsEnabled ? "Breakpoint" : "DisabledBreakpoint";
-				return Globals.App.ImageManager.GetImage(GetType().Assembly, img, BackgroundType.GridViewItem);
+				return DnSpy.App.ImageManager.GetImage(GetType().Assembly, img, BackgroundType.GridViewItem);
 			}
 
 			var gen = UISyntaxHighlighter.Create(DebuggerSettings.Instance.SyntaxHighlightBreakpoints);

@@ -21,16 +21,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters;assembly=dnSpy_old"
+             xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
+             xmlns:vc="clr-namespace:dnSpy.AsmEditor.DnlibDialogs.Converters"
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
              xmlns:local="clr-namespace:dnSpy.AsmEditor.Module"
-             xmlns:winlocal="clr-namespace:dnSpy.MVVM;assembly=dnSpy_old"
+             xmlns:winlocal="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
              Height="380" Width="400"
              Title="Edit Module"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="380" MinWidth="400">
 	<winlocal:WindowBase.Resources>
-		<mvvmvc:RadioButtonConverter x:Key="RadioButtonConverter" />
+		<vc:RadioButtonConverter x:Key="RadioButtonConverter" />
 		<mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
 	</winlocal:WindowBase.Resources>
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">

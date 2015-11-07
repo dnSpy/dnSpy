@@ -18,7 +18,7 @@
 */
 
 using dnlib.PE;
-using dnSpy.HexEditor;
+using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.AsmEditor {
 	public interface IHexDocumentManager {

@@ -25,7 +25,7 @@ using System.Windows.Input;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
-using dnSpy.HexEditor;
+using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.Hex {
 	public sealed class DnHexBox : HexBox {
@@ -67,7 +67,7 @@ namespace dnSpy.Hex {
 			SetResourceReference(Control.FontStyleProperty, HexBoxThemeHelper.GetFontStyleResourceKey(ColorType.HexText));
 			SetResourceReference(Control.FontWeightProperty, HexBoxThemeHelper.GetFontWeightResourceKey(ColorType.HexText));
 
-			Globals.App.MenuManager.InitializeContextMenu(this, MenuConstants.GUIDOBJ_HEXBOX_GUID, null, new ContextMenuInitializer());
+			DnSpy.App.MenuManager.InitializeContextMenu(this, MenuConstants.GUIDOBJ_HEXBOX_GUID, null, new ContextMenuInitializer());
 
 			BytesGroupCount = null;
 			BytesPerLine = null;

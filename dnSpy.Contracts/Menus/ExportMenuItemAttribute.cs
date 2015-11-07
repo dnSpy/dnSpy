@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.Menus {
 	/// <summary>
-	/// Exports a menu item (<see cref="IMenuItem"/>
+	/// Exports a menu item (<see cref="IMenuItem"/>)
 	/// </summary>
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 	public sealed class ExportMenuItemAttribute : ExportAttribute, IMenuItemMetadata {

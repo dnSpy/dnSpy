@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.Converters {
 			var ary = ((string)parameter).Split(seps, 2);
 			var bgType = (BackgroundType)Enum.Parse(typeof(BackgroundType), ary[0]);
 			var asm = GetType().Assembly;
-			return Globals.App.ImageManager.GetImage(asm, ary[1], bgType);
+			return DnSpy.App.ImageManager.GetImage(asm, ary[1], bgType);
 		}
 		static readonly char[] seps = new char[1] { '_' };
 

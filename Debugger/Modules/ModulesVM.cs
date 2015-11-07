@@ -23,7 +23,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Modules {
 	sealed class ModulesVM : ViewModelBase {

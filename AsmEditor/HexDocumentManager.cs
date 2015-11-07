@@ -25,7 +25,7 @@ using System.Linq;
 using System.Security;
 using dnlib.IO;
 using dnlib.PE;
-using dnSpy.HexEditor;
+using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.AsmEditor {
 	sealed class HexDocumentManager : IHexDocumentManager {

@@ -19,7 +19,7 @@
 
 using System;
 using System.IO;
-using dnSpy.HexEditor;
+using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	sealed class SaveHexOptionsVM : SaveOptionsVM {

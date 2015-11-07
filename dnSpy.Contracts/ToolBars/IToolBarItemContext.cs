@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.ToolBars {
 	/// </summary>
 	public interface IToolBarItemContext {
 		/// <summary>
-		/// Gets the guid of the toolbar, eg. <see cref="ToolBarConstants.APP_TOOLBAR_GUID"/>
+		/// Gets the guid of the toolbar, eg. <see cref="ToolBarConstants.APP_TB_GUID"/>
 		/// </summary>
 		Guid ToolBarGuid { get; }
 	}

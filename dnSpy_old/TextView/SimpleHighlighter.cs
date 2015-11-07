@@ -215,7 +215,7 @@ namespace dnSpy.TextView {
 		}
 
 		IThemeColor GetColor(TextTokenType tokenType) {
-			var color = Globals.App.ThemesManager.Theme.GetTextColor(tokenType.ToColorType());
+			var color = DnSpy.App.ThemeManager.Theme.GetTextColor(tokenType.ToColorType());
 			Debug.Assert(color != null);
 			return color;
 		}

@@ -25,7 +25,7 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.AvalonEdit;
 using dnSpy.Files;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 using dnSpy.Tabs;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;

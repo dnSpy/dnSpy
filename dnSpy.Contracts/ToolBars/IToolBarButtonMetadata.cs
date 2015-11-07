@@ -21,8 +21,12 @@ namespace dnSpy.Contracts.ToolBars {
 	/// <summary>Metadata</summary>
 	public interface IToolBarButtonMetadata : IToolBarItemMetadata {
 		/// <summary>See <see cref="ExportToolBarButtonAttribute.Header"/></summary>
-		string Header { get; set; }
+		string Header { get; }
 		/// <summary>See <see cref="ExportToolBarButtonAttribute.Icon"/></summary>
-		string Icon { get; set; }
+		string Icon { get; }
+		/// <summary>See <see cref="ExportToolBarButtonAttribute.ToolTip"/></summary>
+		string ToolTip { get; }
+		/// <summary>See <see cref="ExportToolBarButtonAttribute.IsToggleButton"/></summary>
+		bool IsToggleButton { get; }
 	}
 }

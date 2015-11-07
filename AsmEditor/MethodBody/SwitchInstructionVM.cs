@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class SwitchInstructionVM : ViewModelBase, IIndexedItem {

@@ -27,6 +27,7 @@ using System.Windows.Media;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Themes;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.AvalonEdit;
 using dnSpy.Shared.UI.Themes;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
@@ -44,7 +45,7 @@ namespace dnSpy.TextView {
 		}
 
 		internal static void OnThemeUpdatedStatic() {
-			var theme = Globals.App.ThemesManager.Theme;
+			var theme = DnSpy.App.ThemeManager.Theme;
 
 			var specialBox = theme.GetTextColor(ColorType.SpecialCharacterBox);
 			ICSharpCode.AvalonEdit.Rendering.SpecialCharacterTextRunOptions.BackgroundBrush = specialBox.Background == null ? null : specialBox.Background;
@@ -60,7 +61,7 @@ namespace dnSpy.TextView {
 		}
 
 		static void UpdateTextEditorResource(TextTokenType colorType, string name) {
-			var theme = Globals.App.ThemesManager.Theme;
+			var theme = DnSpy.App.ThemeManager.Theme;
 
 			var color = theme.GetTextColor(colorType.ToColorType());
 			App.Current.Resources[GetTextInheritedForegroundResourceKey(name)] = GetBrush(color.Foreground);
@@ -112,7 +113,7 @@ namespace dnSpy.TextView {
 		}
 
 		internal void OnThemeUpdated() {
-			var theme = Globals.App.ThemesManager.Theme;
+			var theme = DnSpy.App.ThemeManager.Theme;
 			var textColor = theme.GetColor(ColorType.Text);
 			Background = textColor.Background == null ? null : textColor.Background;
 			Foreground = textColor.Foreground == null ? null : textColor.Foreground;
@@ -171,7 +172,7 @@ namespace dnSpy.TextView {
 				Debug.Assert(b);
 				if (!b)
 					continue;
-				var ourColor = Globals.App.ThemesManager.Theme.GetTextColor(colorType);
+				var ourColor = DnSpy.App.ThemeManager.Theme.GetTextColor(colorType);
 				color.Background = ourColor.Background.ToHighlightingBrush();
 				color.Foreground = ourColor.Foreground.ToHighlightingBrush();
 				color.FontWeight = ourColor.FontWeight;
@@ -248,7 +249,7 @@ namespace dnSpy.TextView {
 			}
 
 			HighlightingColor GetColor(TextTokenType tokenType) {
-				return Globals.App.ThemesManager.Theme.GetTextColor(tokenType.ToColorType()).ToHighlightingColor();
+				return DnSpy.App.ThemeManager.Theme.GetTextColor(tokenType.ToColorType()).ToHighlightingColor();
 			}
 
 			public IEnumerable<HighlightingColor> GetColorStack(int lineNumber) {

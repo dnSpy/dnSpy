@@ -23,7 +23,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Debugger.IMModules;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointsVM : ViewModelBase {

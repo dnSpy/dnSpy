@@ -18,7 +18,6 @@
 */
 
 using System.Windows.Input;
-using dnSpy.MVVM;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {

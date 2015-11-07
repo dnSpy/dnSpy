@@ -22,7 +22,6 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.MVVM;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {

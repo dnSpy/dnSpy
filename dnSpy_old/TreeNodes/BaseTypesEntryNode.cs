@@ -60,8 +60,8 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 					return TypeTreeNode.GetIcon(def, BackgroundType.TreeNode);
 				else
 					return isInterface ?
-						Globals.App.ImageManager.GetImage(GetType().Assembly, "Interface", BackgroundType.TreeNode) :
-						Globals.App.ImageManager.GetImage(GetType().Assembly, "Class", BackgroundType.TreeNode);
+						DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Interface", BackgroundType.TreeNode) :
+						DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Class", BackgroundType.TreeNode);
 			}
 		}
 

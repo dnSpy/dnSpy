@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.Text;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
-using dnSpy.HexEditor;
+using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.TreeNodes.Hex {
 	public abstract class MetaDataTableVM : HexVM {

@@ -60,7 +60,7 @@ namespace dnSpy.TreeNodes {
 		}
 
 		public static BitmapSource GetIcon(Assembly asm, string name, BackgroundType bgType) {
-			return Globals.App.ImageManager.GetImage(asm, name, bgType);
+			return DnSpy.App.ImageManager.GetImage(asm, name, bgType);
 		}
 
 		public static MemoryStream StringToStream(string s) {

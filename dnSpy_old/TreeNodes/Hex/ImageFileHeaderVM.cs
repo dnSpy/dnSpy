@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using dnSpy.HexEditor;
+using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.TreeNodes.Hex {
 	sealed class ImageFileHeaderVM : HexVM {

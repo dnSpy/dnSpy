@@ -23,7 +23,6 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnSpy.MVVM;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Dialogs {

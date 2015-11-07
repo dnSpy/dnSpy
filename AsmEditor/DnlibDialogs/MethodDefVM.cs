@@ -18,7 +18,7 @@
 */
 
 using dnlib.DotNet;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MethodDefVM : ViewModelBase {

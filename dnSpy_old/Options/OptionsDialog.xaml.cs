@@ -24,9 +24,9 @@ using System.Windows.Controls;
 using System.Xml.Linq;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Menus;
-using dnSpy.MVVM;
 using dnSpy.Shared.UI.Controls;
 using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.UI.MVVM;
 
 namespace ICSharpCode.ILSpy.Options {
 	/// <summary>
@@ -37,7 +37,7 @@ namespace ICSharpCode.ILSpy.Options {
 			public static readonly MefState Instance = new MefState();
 
 			MefState() {
-				Globals.App.CompositionContainer.ComposeParts(this);
+				DnSpy.App.CompositionContainer.ComposeParts(this);
 			}
 
 			[ImportMany(typeof(IOptionPageCreator))]

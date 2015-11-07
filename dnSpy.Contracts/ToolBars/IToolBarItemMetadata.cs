@@ -21,10 +21,10 @@ namespace dnSpy.Contracts.ToolBars {
 	/// <summary>Metadata</summary>
 	public interface IToolBarItemMetadata {
 		/// <summary>See <see cref="ExportToolBarItemAttribute.OwnerGuid"/></summary>
-		string OwnerGuid { get; set; }
+		string OwnerGuid { get; }
 		/// <summary>See <see cref="ExportToolBarItemAttribute.Group"/></summary>
-		string Group { get; set; }
+		string Group { get; }
 		/// <summary>See <see cref="ExportToolBarItemAttribute.Order"/></summary>
-		double Order { get; set; }
+		double Order { get; }
 	}
 }

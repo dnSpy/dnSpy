@@ -125,6 +125,8 @@
     </Compile>
     <Compile Include="DnlibDialogs\ConstantTypeVM.cs" />
     <Compile Include="DnlibDialogs\ConstantVM.cs" />
+    <Compile Include="DnlibDialogs\Converters\BooleanToGridrowLengthConverter.cs" />
+    <Compile Include="DnlibDialogs\Converters\RadioButtonConverter.cs" />
     <Compile Include="DnlibDialogs\CreateTypeSigArrayControl.xaml.cs">
       <DependentUpon>CreateTypeSigArrayControl.xaml</DependentUpon>
     </Compile>
@@ -286,7 +288,7 @@
     <Compile Include="FileMenuHandler.cs" />
     <Compile Include="FilesContextMenuHandler.cs" />
     <Compile Include="HexDocumentManager.cs" />
-    <Compile Include="Hex\ContextMenuCommands.cs" />
+    <Compile Include="Hex\Commands.cs" />
     <Compile Include="Hex\HexBoxUndo.cs" />
     <Compile Include="Hex\HexBoxUndoCommand.cs" />
     <Compile Include="Hex\InstructionUtils.cs" />
@@ -410,6 +412,7 @@
     <Compile Include="SaveModule\CharacteristicsHelper.cs" />
     <Compile Include="SaveModule\MmapUtils.cs" />
     <Compile Include="SaveModule\ModuleSaver.cs" />
+    <Compile Include="SaveModule\PathUtils.cs" />
     <Compile Include="SaveModule\SaveHexOptionsDlg.xaml.cs">
       <DependentUpon>SaveHexOptionsDlg.xaml</DependentUpon>
     </Compile>

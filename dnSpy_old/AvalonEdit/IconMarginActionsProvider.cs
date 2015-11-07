@@ -112,7 +112,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 			public static readonly MefState Instance = new MefState();
 
 			MefState() {
-				Globals.App.CompositionContainer.ComposeParts(this);
+				DnSpy.App.CompositionContainer.ComposeParts(this);
 			}
 
 			[ImportMany(typeof(IIconBarContextMenuEntry))]
@@ -198,7 +198,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 									isEnabled = false;
 								}
 								if (!string.IsNullOrEmpty(entryPair.Metadata.Icon))
-									Globals.App.ImageManager.Add16x16Image(menuItem, entry.GetType().Assembly, entryPair.Metadata.Icon, true, isEnabled);
+									DnSpy.App.ImageManager.Add16x16Image(menuItem, entry.GetType().Assembly, entryPair.Metadata.Icon, true, isEnabled);
 								menuItem.InputGestureText = entryPair.Metadata.InputGestureText ?? string.Empty;
 								var entry2 = entry as IIconBarContextMenuEntry2;
 								if (entry2 != null)

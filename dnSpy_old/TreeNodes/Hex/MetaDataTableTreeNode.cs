@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet.MD;
-using dnSpy.HexEditor;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.HexEditor;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 

@@ -43,8 +43,8 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler;
 using dnSpy.Files;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.AvalonEdit;
 using dnSpy.Shared.UI.MVVM;
-using dnSpy.Shared.UI.Themes;
 using dnSpy.TextView;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
@@ -220,7 +220,7 @@ namespace ICSharpCode.ILSpy.TextView {
 
 		internal void OnThemeUpdated() {
 			textEditor.OnThemeUpdated();
-			var theme = Globals.App.ThemesManager.Theme;
+			var theme = DnSpy.App.ThemeManager.Theme;
 			var marker = theme.GetColor(ColorType.SearchResultMarker);
 			searchPanel.MarkerBrush = marker.Background == null ? Brushes.LightGreen : marker.Background;
 			iconMargin.InvalidateVisual();
@@ -383,20 +383,20 @@ namespace ICSharpCode.ILSpy.TextView {
 
 			var gd = obj as GenericParam;
 			if (gd != null)
-				return Globals.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "GenericParameter", bgType);
+				return DnSpy.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "GenericParameter", bgType);
 
 			if (obj is Local)
-				return Globals.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Local", bgType);
+				return DnSpy.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Local", bgType);
 
 			if (obj is Parameter)
-				return Globals.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Parameter", bgType);
+				return DnSpy.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Parameter", bgType);
 
 			if (obj is IType)
-				return Globals.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Class", bgType);
+				return DnSpy.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Class", bgType);
 			if (obj is IMethod && ((IMethod)obj).IsMethod)
-				return Globals.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Method", bgType);
+				return DnSpy.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Method", bgType);
 			if (obj is IField && ((IField)obj).IsField)
-				return Globals.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Field", bgType);
+				return DnSpy.App.ImageManager.GetImage(typeof(DecompilerTextView).Assembly, "Field", bgType);
 
 			return null;
 		}
@@ -891,7 +891,7 @@ namespace ICSharpCode.ILSpy.TextView {
 			output.WriteLine();
 			if (wasNormalLimit) {
 				output.AddButton(
-					Globals.App.ImageManager.GetImage(GetType().Assembly, "ViewCode", BackgroundType.Button), "Display Code",
+					DnSpy.App.ImageManager.GetImage(GetType().Assembly, "ViewCode", BackgroundType.Button), "Display Code",
 					delegate {
 						DoDecompile(context, ExtendedOutputLengthLimit).HandleExceptions();
 					});
@@ -899,7 +899,7 @@ namespace ICSharpCode.ILSpy.TextView {
 			}
 
 			output.AddButton(
-				Globals.App.ImageManager.GetImage(GetType().Assembly, "Save", BackgroundType.Button), "Save Code",
+				DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Save", BackgroundType.Button), "Save Code",
 				delegate {
 					SaveToDisk(context.Language, context.TreeNodes, context.Options);
 				});
@@ -983,8 +983,8 @@ namespace ICSharpCode.ILSpy.TextView {
 					mark.ZOrder = (int)TextLineObjectZOrder.SearchResult;
 					mark.HighlightingColor = () => {
 						return r.IsLocalTarget ?
-							Globals.App.ThemesManager.Theme.GetTextColor(ColorType.LocalDefinition).ToHighlightingColor() :
-							Globals.App.ThemesManager.Theme.GetTextColor(ColorType.LocalReference).ToHighlightingColor();
+							DnSpy.App.ThemeManager.Theme.GetTextColor(ColorType.LocalDefinition).ToHighlightingColor() :
+							DnSpy.App.ThemeManager.Theme.GetTextColor(ColorType.LocalReference).ToHighlightingColor();
 					};
 					markedReferences.Add(mark);
 				}

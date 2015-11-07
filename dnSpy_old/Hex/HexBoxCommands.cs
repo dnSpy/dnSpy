@@ -23,10 +23,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows.Threading;
 using dnSpy.Contracts.Menus;
-using dnSpy.HexEditor;
 using dnSpy.MVVM;
-using dnSpy.MVVM.Dialogs;
+using dnSpy.Shared.UI.HexEditor;
 using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.UI.MVVM.Dialogs;
 using ICSharpCode.ILSpy;
 using WF = System.Windows.Forms;
 

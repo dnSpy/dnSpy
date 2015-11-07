@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.Locals {
 		protected abstract string IconName { get; }
 
 		public sealed override object Icon {
-			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, IconName, BackgroundType.TreeNode); }
+			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, IconName, BackgroundType.TreeNode); }
 		}
 
 		public sealed override bool ShowIcon {

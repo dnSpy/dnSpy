@@ -38,7 +38,7 @@ namespace dnSpy.Shared.UI.MVVM {
 			public static readonly MefState Instance = new MefState();
 
 			MefState() {
-				Globals.App.CompositionContainer.ComposeParts(this);
+				DnSpy.App.CompositionContainer.ComposeParts(this);
 			}
 
 			[ImportMany(typeof(IInitializeDataTemplate))]

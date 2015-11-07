@@ -20,8 +20,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using dnlib.DotNet.MD;
-using dnSpy.HexEditor;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.HexEditor;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.TreeNodes.Hex {

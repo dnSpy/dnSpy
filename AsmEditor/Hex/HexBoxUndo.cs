@@ -19,7 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.HexEditor;
+using dnSpy.Shared.UI.HexEditor;
 using dnSpy.Tabs;
 using ICSharpCode.ILSpy;
 

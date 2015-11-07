@@ -35,7 +35,6 @@ namespace dnSpy.Contracts.Images {
 		Search,
 		ComboBox,
 		ToolBar,
-		ToolBarButtonChecked,
 		AppMenuMenuItem,
 		ContextMenuItem,
 		GridViewItem,

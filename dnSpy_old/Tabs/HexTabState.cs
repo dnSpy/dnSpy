@@ -21,7 +21,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Hex;
-using dnSpy.HexEditor;
+using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.Tabs {
 	public sealed class HexTabState : TabState {

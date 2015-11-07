@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.ToolBars {
 	/// <summary>
-	/// Exports a toolbar object (<see cref="IToolBarObject"/>
+	/// Exports a toolbar object (<see cref="IToolBarObject"/>)
 	/// </summary>
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 	public sealed class ExportToolBarObjectAttribute : ExportToolBarItemAttribute, IToolBarObjectMetadata {

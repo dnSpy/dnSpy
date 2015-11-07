@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
+                    xmlns:tb="clr-namespace:dnSpy.ToolBars"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<!--
@@ -4608,5 +4609,23 @@
 		   BasedOn="{StaticResource {x:Type ContextMenu}}"
 		   TargetType="{x:Type ContextMenu}">
 	</Style>
+
+    <DataTemplate DataType="{x:Type tb:ToolBarButtonVM}">
+        <Button ToolTipService.ShowOnDisabled="True" ToolTip="{Binding ToolTip}" Command="{Binding Command}" CommandTarget="{Binding CommandTarget}" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" FocusVisualStyle="{x:Null}">
+            <Button.Resources>
+                <Style TargetType="{x:Type Image}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Control}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
+                            <Setter Property="Opacity" Value="0.30" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Resources>
+            <StackPanel Orientation="Horizontal">
+                <Image Width="16" Height="16" Source="{Binding Image}" />
+                <TextBlock Margin="5 0 5 0"  Text="{Binding Header}" Visibility="{Binding HasHeader, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            </StackPanel>
+        </Button>
+    </DataTemplate>
 
 </ResourceDictionary>

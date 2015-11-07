@@ -77,12 +77,12 @@ namespace ICSharpCode.ILSpy {
 			asms.Add(GetType().Assembly);
 			asms.Add(typeof(RelayCommand).Assembly);	// dnSpy.Shared.UI
 			appImpl.InitializeCompositionContainer(asms, "*.Plugin.dll");
-			AddMergedResourceDictionary(Globals.App.GetType().Assembly, "Themes/wpf.styles.templates.xaml");
+			AddMergedResourceDictionary(DnSpy.App.GetType().Assembly, "Themes/wpf.styles.templates.xaml");
 			AddMergedResourceDictionary(typeof(RelayCommand).Assembly, "Themes/wpf.styles.templates.xaml");
 			AddMergedResourceDictionary(GetType().Assembly, "DnTheme/wpf.styles.templates.xaml");
 			AddMergedResourceDictionary(GetType().Assembly, "TreeNodes/Hex/wpf.styles.templates.xaml");
 
-			Languages.Initialize(Globals.App.CompositionContainer);
+			Languages.Initialize(DnSpy.App.CompositionContainer);
 
 			if (!System.Diagnostics.Debugger.IsAttached) {
 				AppDomain.CurrentDomain.UnhandledException += ShowErrorBox;

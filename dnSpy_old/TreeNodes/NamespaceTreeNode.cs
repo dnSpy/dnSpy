@@ -49,7 +49,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public override object Icon {
-			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "Namespace", BackgroundType.TreeNode); }
+			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Namespace", BackgroundType.TreeNode); }
 		}
 
 		public override FilterResult Filter(FilterSettings settings) {

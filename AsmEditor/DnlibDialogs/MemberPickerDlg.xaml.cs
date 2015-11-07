@@ -24,7 +24,7 @@ using System.Windows.Threading;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.Controls;
 using ICSharpCode.ILSpy;
 using ICSharpCode.TreeView;
 
@@ -45,7 +45,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				}
 			};
 			MainWindow.InitializeAssemblyTreeView(treeView);
-			openImage.Source = Globals.App.ImageManager.GetImage(GetType().Assembly, "Open", BackgroundType.DialogWindow);
+			openImage.Source = DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Open", BackgroundType.DialogWindow);
 		}
 
 		void MemberPickerVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {

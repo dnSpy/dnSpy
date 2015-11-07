@@ -20,7 +20,7 @@
 using System;
 
 namespace dnSpy.Hex {
-	class MDUtils {
+	static class MDUtils {
 		public static int GetCompressedUInt32Length(uint value) {
 			if (value <= 0x7F)
 				return 1;

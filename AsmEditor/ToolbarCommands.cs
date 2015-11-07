@@ -17,48 +17,34 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Windows;
-using System.Windows.Input;
+using dnSpy.Contracts.ToolBars;
+using dnSpy.Shared.UI.ToolBars;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor {
-	[ExportToolbarCommand(ToolTip = "Undo (Ctrl+Z)",
-						  ToolbarIcon = "Undo",
-						  ToolbarCategory = "AsmEdit",
-						  ToolbarOrder = 5000)]
-	sealed class UndoAsmEdCommand : CommandWrapper {
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "Undo", ToolTip = "Undo (Ctrl+Z)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_ASMED_UNDO, Order = 0)]
+	sealed class UndoAsmEdCommand : ToolBarButtonCommand {
 		public UndoAsmEdCommand()
 			: base(UndoCommandManagerLoader.Undo) {
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Redo (Ctrl+Y)",
-						  ToolbarIcon = "Redo",
-						  ToolbarCategory = "AsmEdit",
-						  ToolbarOrder = 5010)]
-	sealed class RedoAsmEdCommand : CommandWrapper {
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "Redo", ToolTip = "Redo (Ctrl+Y)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_ASMED_UNDO, Order = 10)]
+	sealed class RedoAsmEdCommand : ToolBarButtonCommand {
 		public RedoAsmEdCommand()
 			: base(UndoCommandManagerLoader.Redo) {
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Clear Undo/Redo History",
-						  ToolbarIcon = "DeleteHistory",
-						  ToolbarCategory = "AsmEdit",
-						  ToolbarOrder = 5020)]
-	sealed class DeleteHistoryAsmEdCommand : ICommand {
-		event EventHandler ICommand.CanExecuteChanged {
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
-		}
-
-		bool ICommand.CanExecute(object parameter) {
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "DeleteHistory", ToolTip = "Clear Undo/Redo History", Group = ToolBarConstants.GROUP_APP_TB_MAIN_ASMED_UNDO, Order = 20)]
+	sealed class DeleteHistoryAsmEdCommand : ToolBarButtonBase {
+		public override bool IsEnabled(IToolBarItemContext context) {
 			return UndoCommandManager.Instance.CanUndo ||
 				UndoCommandManager.Instance.CanRedo;
 		}
 
-		void ICommand.Execute(object parameter) {
+		public override void Execute(IToolBarItemContext context) {
 			var res = MainWindow.Instance.ShowIgnorableMessageBox("undo: clear history", "Do you want to clear the undo/redo history?", MessageBoxButton.YesNo);
 			if (res == null || res == MsgBoxButton.OK)
 				UndoCommandManager.Instance.Clear();

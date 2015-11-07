@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.ToolBars {
 	/// <summary>
-	/// Exports a toolbar button (<see cref="IToolBarButton"/>
+	/// Exports a toolbar button (<see cref="IToolBarButton"/>)
 	/// </summary>
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 	public sealed class ExportToolBarButtonAttribute : ExportToolBarItemAttribute, IToolBarButtonMetadata {
@@ -38,8 +38,18 @@ namespace dnSpy.Contracts.ToolBars {
 		public string Header { get; set; }
 
 		/// <summary>
-		/// (Optional) icon name. If not set, you should implement <see cref="IToolBarButton2"/>
+		/// (Optional) icon name. If not set, you must implement <see cref="IToolBarButton2"/>
 		/// </summary>
 		public string Icon { get; set; }
+
+		/// <summary>
+		/// (Optional) tooltip. If not set, you can implement <see cref="IToolBarButton2"/>
+		/// </summary>
+		public string ToolTip { get; set; }
+
+		/// <summary>
+		/// true if it's a toggle button. If true, you must implement <see cref="IToolBarToggleButton"/>.
+		/// </summary>
+		public bool IsToggleButton { get; set; }
 	}
 }

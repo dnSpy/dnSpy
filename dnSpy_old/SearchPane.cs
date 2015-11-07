@@ -38,11 +38,13 @@ using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
+using dnSpy.Contracts.ToolBars;
 using dnSpy.Files;
-using dnSpy.Menus;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using dnSpy.Search;
+using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.UI.ToolBars;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
@@ -78,11 +80,11 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		public ImageSource SearchImage {
-			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "Search", BackgroundType.TextBox); }
+			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Search", BackgroundType.TextBox); }
 		}
 
 		public ImageSource ClearSearchImage {
-			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "ClearSearch", BackgroundType.TextBox); }
+			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "ClearSearch", BackgroundType.TextBox); }
 		}
 
 		public string PaneName {
@@ -100,7 +102,7 @@ namespace ICSharpCode.ILSpy {
 			public VisibleMembersFlags Flags { get; private set; }
 
 			public ImageSource Image {
-				get { return Globals.App.ImageManager.GetImage(GetType().Assembly, ImageName, BackgroundType.ComboBox); }
+				get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, ImageName, BackgroundType.ComboBox); }
 			}
 
 			public SearchType(string name, string imageName, SearchMode searchMode, VisibleMembersFlags flags) {
@@ -147,7 +149,7 @@ namespace ICSharpCode.ILSpy {
 		Dictionary<SearchMode, int> searchModeToIndex = new Dictionary<SearchMode, int>();
 
 		static SearchPane() {
-			Globals.App.ThemesManager.ThemeChanged += (s, e) => {
+			DnSpy.App.ThemeManager.ThemeChanged += (s, e) => {
 				foreach (var searchType in searchTypes)
 					searchType.OnThemeChanged();
 			};
@@ -174,7 +176,7 @@ namespace ICSharpCode.ILSpy {
 				searchModeToIndex[type.SearchMode] = searchModeComboBox.Items.Count - 1;
 			}
 			searchModeComboBox.SelectedIndex = searchModeToIndex[SearchMode.TypeDef];
-			Globals.App.MenuManager.InitializeContextMenu(listBox, MenuConstants.GUIDOBJ_SEARCH_GUID, new GuidObjectsCreator());
+			DnSpy.App.MenuManager.InitializeContextMenu(listBox, MenuConstants.GUIDOBJ_SEARCH_GUID, new GuidObjectsCreator());
 
 			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_Instance_CurrentAssemblyListChanged;
 			var checkBoxes = new[] { matchWholeWordsCheckBox, caseSensitiveCheckBox, matchAnyWordsCheckBox };
@@ -183,12 +185,12 @@ namespace ICSharpCode.ILSpy {
 				cb.Unchecked += (s, e) => RestartSearch();
 			}
 
-			Globals.App.ThemesManager.ThemeChanged += ThemesManager_ThemeChanged;
+			DnSpy.App.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 			TooManyResults = false;
 		}
 
-		void ThemesManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
 			if (currentSearch != null)
 				currentSearch.OnThemeChanged();
 			if (PropertyChanged != null) {
@@ -587,10 +589,10 @@ namespace ICSharpCode.ILSpy {
 		public object LocationObject { get; set; }
 		public object NameObject { get; set; }
 		public ImageSource Image {
-			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, TypeImageInfo); }
+			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, TypeImageInfo); }
 		}
 		public ImageSource LocationImage {
-			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, LocationImageInfo); }
+			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, LocationImageInfo); }
 		}
 		public ImageInfo TypeImageInfo { get; set; }
 		public ImageInfo LocationImageInfo { get; set; }
@@ -747,21 +749,21 @@ namespace ICSharpCode.ILSpy {
 		public event PropertyChangedEventHandler PropertyChanged;
 	}
 
-	[ExportToolbarCommand(ToolTip = "Search Assemblies (Ctrl+K)", ToolbarIcon = "Find", ToolbarCategory = "View", ToolbarOrder = 9000)]
-	sealed class ToolbarShowSearchCommand : CommandWrapper {
-		static ToolbarShowSearchCommand() {
+	[ExportToolBarButton(Icon = "Find", ToolTip = "Search Assemblies (Ctrl+K)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_SEARCH, Order = 0)]
+	sealed class SearchAssembliesToolBarButtonCommand : ToolBarButtonCommand {
+		static SearchAssembliesToolBarButtonCommand() {
 			NavigationCommands.Search.InputGestures.Clear();
 			NavigationCommands.Search.InputGestures.Add(new KeyGesture(Key.K, ModifierKeys.Control));
 		}
 
-		public ToolbarShowSearchCommand()
+		public SearchAssembliesToolBarButtonCommand()
 			: base(NavigationCommands.Search) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "_Search Assemblies", Icon = "Find", Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 10)]
-	sealed class MenuShowSearchCommand : MenuItemCommand {
-		public MenuShowSearchCommand()
+	sealed class SearchAssembliesMenuItemCommand : MenuItemCommand {
+		public SearchAssembliesMenuItemCommand()
 			: base(NavigationCommands.Search) {
 		}
 	}

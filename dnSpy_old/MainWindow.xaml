@@ -31,20 +31,7 @@
 			Grid.Row="0"
 			Name="toolBar"
 			FocusVisualStyle="{x:Null}"
-			ToolBarTray.IsLocked="True">
-			<ToolBar.Resources>
-				<!-- Make images transparent if menu command is disabled -->
-				<Style TargetType="{x:Type Image}">
-					<Style.Triggers>
-						<DataTrigger
-							Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Control}, AncestorLevel=1}, Path=IsEnabled}"
-							Value="False">
-							<Setter Property="Opacity" Value="0.30" />
-						</DataTrigger>
-					</Style.Triggers>
-				</Style>
-			</ToolBar.Resources>
-		</ToolBar>
+			ToolBarTray.IsLocked="True" />
 		<!-- Status bar -->
 		<StatusBar x:Name="statusBar" Grid.Row="2" Height="26" Visibility="Collapsed">
 			<StatusBarItem>

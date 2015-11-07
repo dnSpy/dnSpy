@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 using System.Text;
-using dnSpy.HexEditor;
+using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.TreeNodes.Hex {
 	sealed class ImageSectionHeaderVM : HexVM {

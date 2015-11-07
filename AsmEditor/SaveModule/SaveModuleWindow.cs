@@ -20,7 +20,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.Controls;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.SaveModule {

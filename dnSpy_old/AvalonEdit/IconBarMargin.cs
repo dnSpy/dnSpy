@@ -42,7 +42,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			Size renderSize = this.RenderSize;
-			var theme = Globals.App.ThemesManager.Theme;
+			var theme = DnSpy.App.ThemeManager.Theme;
 			var bgColor = (theme.GetColor(ColorType.IconBar).Background as SolidColorBrush).Color;
 			drawingContext.DrawRectangle(theme.GetColor(ColorType.IconBar).Background, null,
 										 new Rect(0, 0, renderSize.Width, renderSize.Height));

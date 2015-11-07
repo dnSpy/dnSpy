@@ -35,22 +35,22 @@ namespace dnSpy.Debugger.Threads {
 
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "CurrentImage")) {
 				if (vm.IsCurrent)
-					return Globals.App.ImageManager.GetImage(GetType().Assembly, "CurrentLine", BackgroundType.GridViewItem);
+					return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "CurrentLine", BackgroundType.GridViewItem);
 				if (vm.Type == ThreadType.Main)
-					return Globals.App.ImageManager.GetImage(GetType().Assembly, "DraggedCurrentInstructionPointer", BackgroundType.GridViewItem);
+					return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "DraggedCurrentInstructionPointer", BackgroundType.GridViewItem);
 				return null;
 			}
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "CategoryImage")) {
 				switch (vm.Type) {
 				case ThreadType.Unknown:
 				case ThreadType.Terminated:
-					return Globals.App.ImageManager.GetImage(GetType().Assembly, "QuestionMark", BackgroundType.GridViewItem);
+					return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "QuestionMark", BackgroundType.GridViewItem);
 				case ThreadType.Main:
-					return Globals.App.ImageManager.GetImage(GetType().Assembly, "Thread", BackgroundType.GridViewItem);
+					return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Thread", BackgroundType.GridViewItem);
 				case ThreadType.BGCOrFinalizer:
 				case ThreadType.ThreadPool:
 				case ThreadType.Worker:
-					return Globals.App.ImageManager.GetImage(GetType().Assembly, "Process", BackgroundType.GridViewItem);
+					return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Process", BackgroundType.GridViewItem);
 				default:
 					Debug.Fail(string.Format("Unknown thread type: {0}", vm.Type));
 					goto case ThreadType.Unknown;

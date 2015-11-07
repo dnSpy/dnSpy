@@ -29,6 +29,7 @@ using dnlib.DotNet.Emit;
 using dnSpy.Debugger.CallStack;
 using dnSpy.Files;
 using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.TreeView;
 

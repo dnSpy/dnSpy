@@ -21,7 +21,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
-using dnSpy.MVVM;
 using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.ILSpy;
 

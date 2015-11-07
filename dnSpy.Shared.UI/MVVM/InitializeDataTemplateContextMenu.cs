@@ -30,7 +30,7 @@ namespace dnSpy.Shared.UI.MVVM {
 			if (fwe == null)
 				return;
 
-			Globals.App.MenuManager.InitializeContextMenu(fwe, MenuConstants.GUIDOBJ_UNKNOWN_GUID);
+			DnSpy.App.MenuManager.InitializeContextMenu(fwe, MenuConstants.GUIDOBJ_UNKNOWN_GUID);
 		}
 	}
 }

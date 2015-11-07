@@ -66,7 +66,6 @@
     <Compile Include="Images\ThemedImageCreator.cs" />
     <Compile Include="Menus\AppMenus.cs" />
     <Compile Include="Menus\ContextMenuCreator.cs" />
-    <Compile Include="Menus\MenuItemCommand.cs" />
     <Compile Include="Menus\MenuItemContext.cs" />
     <Compile Include="Menus\MenuManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -78,9 +77,10 @@
     <Compile Include="Themes\ColorInfos.cs" />
     <Compile Include="Themes\Theme.cs" />
     <Compile Include="Themes\ThemeColor.cs" />
-    <Compile Include="Themes\ThemesManager.cs" />
+    <Compile Include="Themes\ThemeManager.cs" />
     <Compile Include="Themes\ThemesMenu.cs" />
-    <Compile Include="ToolBars\ToolBarButtonBase.cs" />
+    <Compile Include="ToolBars\ToolBarButtonVM.cs" />
+    <Compile Include="ToolBars\ToolBarItemContext.cs" />
     <Compile Include="ToolBars\ToolBarManager.cs" />
   </ItemGroup>
   <ItemGroup>

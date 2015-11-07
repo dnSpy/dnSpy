@@ -111,7 +111,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public TabGroupsManager(ContentPresenter contentPresenter, Action<TabManager<TState>, TState, TState> onSelectionChanged, Action<TabManager<TState>, TabManagerAddType, TState> onAddRemoveTabState) {
-			Globals.App.ThemesManager.ThemeChanged += ThemesManager_ThemeChanged;
+			DnSpy.App.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			this.contentPresenter = contentPresenter;
 			this.onSelectionChanged = onSelectionChanged;
 			this.onAddRemoveTabState = onAddRemoveTabState;
@@ -119,7 +119,7 @@ namespace dnSpy.Tabs {
 			UpdateGrid();
 		}
 
-		void ThemesManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
 			foreach (var tabManager in tabManagers)
 				tabManager.OnThemeChanged();
 		}
@@ -151,7 +151,7 @@ namespace dnSpy.Tabs {
 			tabControl.Style = App.Current.FindResource("TabStateTabControl") as Style;
 			var tabManager = new TabManager<TState>(this, tabControl, onSelectionChanged, onAddRemoveTabState);
 			tabManagers.Insert(insertIndex, tabManager);
-			Globals.App.MenuManager.InitializeContextMenu(tabManager.TabControl, MenuConstants.GUIDOBJ_TABCONTROL_GUID);
+			DnSpy.App.MenuManager.InitializeContextMenu(tabManager.TabControl, MenuConstants.GUIDOBJ_TABCONTROL_GUID);
 			if (OnTabGroupAdded != null)
 				OnTabGroupAdded(this, TabGroupEventArgs.Empty);
 			return tabManager;

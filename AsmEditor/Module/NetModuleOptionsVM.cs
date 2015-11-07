@@ -20,7 +20,6 @@
 using System;
 using System.Windows.Input;
 using dnlib.DotNet;
-using dnSpy.MVVM;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.Module {

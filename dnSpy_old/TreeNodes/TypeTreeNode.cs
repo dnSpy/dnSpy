@@ -197,7 +197,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		internal static ImageSource GetIcon(TypeIcon typeIcon, BackgroundType bgType) {
-			return Globals.App.ImageManager.GetImage(typeof(TypeTreeNode).Assembly, GetImageInfo(typeIcon, bgType));
+			return DnSpy.App.ImageManager.GetImage(typeof(TypeTreeNode).Assembly, GetImageInfo(typeIcon, bgType));
 		}
 
 		internal static ImageInfo GetImageInfo(TypeDef type, BackgroundType bgType) {

@@ -25,17 +25,18 @@ using dndbg.Engine;
 using dnSpy.AvalonEdit;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.ToolBars;
 using dnSpy.Debugger.Breakpoints;
 using dnSpy.Debugger.Memory;
-using dnSpy.Menus;
 using dnSpy.Shared.UI.Images;
 using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.UI.ToolBars;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;
 
 namespace dnSpy.Debugger {
-	abstract class ToolbarDebugCommand : CommandWrapper, IToolbarCommand {
+	abstract class DebugToolBarButtonCommand : ToolBarButtonCommand {
 		internal static void OnLoaded() {
 			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
 		}
@@ -49,78 +50,78 @@ namespace dnSpy.Debugger {
 		}
 		static bool? prevIsDebugging = null;
 
-		protected ToolbarDebugCommand(ICommand command)
+		protected DebugToolBarButtonCommand(ICommand command)
 			: base(command) {
 		}
 
-		public virtual bool IsVisible {
-			get { return DebugManager.Instance.IsDebugging; }
+		public override bool IsVisible(IToolBarItemContext context) {
+			return DebugManager.Instance.IsDebugging;
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Debug an Assembly (F5)", ToolbarIconText = "Start", ToolbarIcon = "StartDebugging", ToolbarCategory = "Debug1", ToolbarOrder = 6000)]
-	sealed class DebugAssemblyToolbarCommand : ToolbarDebugCommand {
+	[ExportToolBarButton(Icon = "StartDebugging", ToolTip = "Debug an Assembly (F5)", Header = "Start", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG, Order = 0)]
+	sealed class DebugAssemblyToolbarCommand : DebugToolBarButtonCommand {
 		public DebugAssemblyToolbarCommand()
 			: base(DebugRoutedCommands.DebugAssembly) {
 		}
 
-		public override bool IsVisible {
-			get { return !DebugManager.Instance.IsDebugging; }
+		public override bool IsVisible(IToolBarItemContext context) {
+			return !DebugManager.Instance.IsDebugging;
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Continue (F5)", ToolbarIconText = "Continue", ToolbarIcon = "ContinueDebugging", ToolbarCategory = "Debug2", ToolbarOrder = 7000)]
-	sealed class ContinueToolbarDebugCommand : ToolbarDebugCommand {
-		public ContinueToolbarDebugCommand()
+	[ExportToolBarButton(Icon = "ContinueDebugging", ToolTip = "Continue (F5)", Header = "Continue", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 0)]
+	sealed class ContinueDebugToolBarButtonCommand : DebugToolBarButtonCommand {
+		public ContinueDebugToolBarButtonCommand()
 			: base(DebugRoutedCommands.Continue) {
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Break (Ctrl+Break)", ToolbarIcon = "Break", ToolbarCategory = "Debug2", ToolbarOrder = 7100)]
-	sealed class BreakToolbarDebugCommand : ToolbarDebugCommand {
-		public BreakToolbarDebugCommand()
+	[ExportToolBarButton(Icon = "Break", ToolTip = "Break (Ctrl+Break)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 10)]
+	sealed class BreakDebugToolBarButtonCommand : DebugToolBarButtonCommand {
+		public BreakDebugToolBarButtonCommand()
 			: base(DebugRoutedCommands.Break) {
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Stop Debugging (Shift+F5)", ToolbarIcon = "StopProcess", ToolbarCategory = "Debug2", ToolbarOrder = 7200)]
-	sealed class StopToolbarDebugCommand : ToolbarDebugCommand {
-		public StopToolbarDebugCommand()
+	[ExportToolBarButton(Icon = "StopProcess", ToolTip = "Stop Debugging (Shift+F5)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 20)]
+	sealed class StopDebugToolBarButtonCommand : DebugToolBarButtonCommand {
+		public StopDebugToolBarButtonCommand()
 			: base(DebugRoutedCommands.Stop) {
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Restart (Ctrl+Shift+F5)", ToolbarIcon = "RestartProcess", ToolbarCategory = "Debug2", ToolbarOrder = 7300)]
-	sealed class RestartToolbarDebugCommand : ToolbarDebugCommand {
-		public RestartToolbarDebugCommand()
+	[ExportToolBarButton(Icon = "RestartProcess", ToolTip = "Restart (Ctrl+Shift+F5)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 30)]
+	sealed class RestartDebugToolBarButtonCommand : DebugToolBarButtonCommand {
+		public RestartDebugToolBarButtonCommand()
 			: base(DebugRoutedCommands.Restart) {
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Show Next Statement (Alt+Num *)", ToolbarIcon = "CurrentLineToolBar", ToolbarCategory = "Debug3", ToolbarOrder = 8000)]
-	sealed class ShowNextStatementToolbarDebugCommand : ToolbarDebugCommand {
-		public ShowNextStatementToolbarDebugCommand()
+	[ExportToolBarButton(Icon = "CurrentLineToolBar", ToolTip = "Show Next Statement (Alt+Num *)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 0)]
+	sealed class ShowNextStatementDebugToolBarButtonCommand : DebugToolBarButtonCommand {
+		public ShowNextStatementDebugToolBarButtonCommand()
 			: base(DebugRoutedCommands.ShowNextStatement) {
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Step Into (F11)", ToolbarIcon = "StepInto", ToolbarCategory = "Debug3", ToolbarOrder = 8100)]
-	sealed class StepIntoToolbarDebugCommand : ToolbarDebugCommand {
-		public StepIntoToolbarDebugCommand()
+	[ExportToolBarButton(Icon = "StepInto", ToolTip = "Step Into (F11)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 10)]
+	sealed class StepIntoDebugToolBarButtonCommand : DebugToolBarButtonCommand {
+		public StepIntoDebugToolBarButtonCommand()
 			: base(DebugRoutedCommands.StepInto) {
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Step Over (F10)", ToolbarIcon = "StepOver", ToolbarCategory = "Debug3", ToolbarOrder = 8200)]
-	sealed class StepOverToolbarDebugCommand : ToolbarDebugCommand {
-		public StepOverToolbarDebugCommand()
+	[ExportToolBarButton(Icon = "StepOver", ToolTip = "Step Over (F10)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 20)]
+	sealed class StepOverDebugToolBarButtonCommand : DebugToolBarButtonCommand {
+		public StepOverDebugToolBarButtonCommand()
 			: base(DebugRoutedCommands.StepOver) {
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Step Out (Shift+F11)", ToolbarIcon = "StepOut", ToolbarCategory = "Debug3", ToolbarOrder = 8300)]
-	sealed class StepOutToolbarDebugCommand : ToolbarDebugCommand {
-		public StepOutToolbarDebugCommand()
+	[ExportToolBarButton(Icon = "StepOut", ToolTip = "Step Out (Shift+F11)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 30)]
+	sealed class StepOutDebugToolBarButtonCommand : DebugToolBarButtonCommand {
+		public StepOutDebugToolBarButtonCommand()
 			: base(DebugRoutedCommands.StepOut) {
 		}
 	}
@@ -528,7 +529,7 @@ namespace dnSpy.Debugger {
 			if (bpm != null) {
 				menuItem.IsEnabled = EnableDisableBreakpointDebugCtxMenuCommand.IsMenuItemEnabledInternal(1);
 				menuItem.Header = EnableDisableBreakpointDebugCtxMenuCommand.GetHeaderInternal(bpm.IsEnabled, 1);
-				Globals.App.ImageManager.Add16x16Image(menuItem, GetType().Assembly, EnableDisableBreakpointDebugCtxMenuCommand.GetIconInternal(), true);
+				DnSpy.App.ImageManager.Add16x16Image(menuItem, GetType().Assembly, EnableDisableBreakpointDebugCtxMenuCommand.GetIconInternal(), true);
 			}
 		}
 	}

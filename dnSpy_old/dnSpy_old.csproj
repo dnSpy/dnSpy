@@ -131,23 +131,10 @@
     <Compile Include="Files\SerializedDnSpyToken.cs" />
     <Compile Include="Files\WPF\DispatcherImpl.cs" />
     <Compile Include="Files\WPF\DnSpyFileListOptionsImpl.cs" />
-    <Compile Include="HexEditor\CachedHexStream.cs" />
-    <Compile Include="HexEditor\ISimpleHexStream.cs" />
-    <Compile Include="HexEditor\IUndoHexDocument.cs" />
     <Compile Include="Hex\DnHexBox.cs" />
     <Compile Include="Hex\HexBoxCommands.cs" />
     <Compile Include="Hex\HexBoxThemeHelper.cs" />
     <Compile Include="MVVM\AskUser.cs" />
-    <Compile Include="MVVM\ClickFocusAP.cs" />
-    <Compile Include="MVVM\Converters\BooleanToGridrowLengthConverter.cs" />
-    <Compile Include="MVVM\Converters\NegateBooleanConverter.cs" />
-    <Compile Include="MVVM\Converters\RadioButtonConverter.cs" />
-    <Compile Include="MVVM\DataFieldVM.cs" />
-    <Compile Include="MVVM\Dialogs\ProgressVM.cs" />
-    <Compile Include="MVVM\Dialogs\ProgressDlg.xaml.cs">
-      <DependentUpon>ProgressDlg.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="MVVM\EnumVM.cs" />
     <Compile Include="Hex\GoToOffsetDlg.xaml.cs">
       <DependentUpon>GoToOffsetDlg.xaml</DependentUpon>
     </Compile>
@@ -164,17 +151,10 @@
     </Compile>
     <Compile Include="Hex\SelectVM.cs" />
     <Compile Include="MVVM\IAskUser.cs" />
-    <Compile Include="MVVM\ISelectedItemsProvider.cs" />
     <Compile Include="MVVM\ListSorter.cs" />
-    <Compile Include="MVVM\ListVM.cs" />
-    <Compile Include="MVVM\NumberVMUtils.cs" />
-    <Compile Include="MVVM\PathUtils.cs" />
     <Compile Include="MVVM\PickDirectory.cs" />
     <Compile Include="MVVM\PickFilename.cs" />
     <Compile Include="MVVM\PickSaveFilename.cs" />
-    <Compile Include="MVVM\ViewModelBase.cs" />
-    <Compile Include="MVVM\VMPropertyChangedEventArgs.cs" />
-    <Compile Include="MVVM\WindowBase.cs" />
     <Compile Include="DnSpyFileListManager.cs" />
     <Compile Include="AvalonEdit\EditorPositionState.cs" />
     <Compile Include="AvalonEdit\IconBarMargin.cs" />
@@ -186,11 +166,8 @@
     <Compile Include="AvalonEdit\TextLineObjectManager.cs" />
     <Compile Include="AvalonEdit\TextMarkerService.cs" />
     <Compile Include="Commands\AboutCommands.cs" />
-    <Compile Include="Commands\BrowseBackCommand.cs" />
-    <Compile Include="Commands\BrowseForwardCommand.cs" />
     <Compile Include="CommandLineArguments.cs" />
     <Compile Include="Commands\EntryPointCommands.cs" />
-    <Compile Include="Commands\CommandWrapper.cs" />
     <Compile Include="Commands\FindInCodeCommand.cs" />
     <Compile Include="Commands\ToolbarCommands.cs" />
     <Compile Include="Commands\ViewCommands.cs" />
@@ -198,32 +175,6 @@
       <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Search\FilterSearcher.cs" />
-    <Compile Include="HexEditor\AsciiEncoding.cs" />
-    <Compile Include="HexEditor\ByteArrayHexStream.cs" />
-    <Compile Include="HexEditor\ClipboardUtils.cs" />
-    <Compile Include="HexEditor\DataFormatter.cs" />
-    <Compile Include="HexEditor\HexBox.cs" />
-    <Compile Include="HexEditor\HexBoxPosition.cs" />
-    <Compile Include="HexEditor\HexBoxPositionKind.cs" />
-    <Compile Include="HexEditor\HexBoxState.cs" />
-    <Compile Include="HexEditor\HexBoxWriteEventArgs.cs" />
-    <Compile Include="HexEditor\HexCaret.cs" />
-    <Compile Include="HexEditor\HexDocument.cs" />
-    <Compile Include="HexEditor\HexDocumentModifiedEventArgs.cs" />
-    <Compile Include="HexEditor\HexLine.cs" />
-    <Compile Include="HexEditor\HexLineLayer.cs" />
-    <Compile Include="HexEditor\HexLinePart.cs" />
-    <Compile Include="HexEditor\HexLineTextSource.cs" />
-    <Compile Include="HexEditor\HexPositionUI.cs" />
-    <Compile Include="HexEditor\HexSelection.cs" />
-    <Compile Include="HexEditor\HexTextParagraphProperties.cs" />
-    <Compile Include="HexEditor\HexTextRunProperties.cs" />
-    <Compile Include="HexEditor\HexWriteType.cs" />
-    <Compile Include="HexEditor\HtmlClipboardFormatWriter.cs" />
-    <Compile Include="HexEditor\IHexLayer.cs" />
-    <Compile Include="HexEditor\IHexStream.cs" />
-    <Compile Include="HexEditor\NumberUtils.cs" />
-    <Compile Include="HexEditor\SelectionLayer.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="Languages\InstructionBytesReader.cs" />
     <Compile Include="Languages\InstructionUtils.cs" />
@@ -489,10 +440,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="MVVM\Dialogs\ProgressDlg.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="OpenFromGacDialog.xaml" />
     <Page Include="OpenListDialog.xaml" />
     <Page Include="Options\OptionsDialog.xaml" />
@@ -523,7 +470,7 @@
     <Resource Include="Images\AssemblyReference.png" />
     <Resource Include="Images\AssemblyToModule.png" />
     <Resource Include="Images\AssemblyWarning.png" />
-    <Resource Include="Images\Back.png" />
+    <Resource Include="Images\Backward.png" />
     <Resource Include="Images\Binary.png" />
     <Resource Include="Images\BinaryFile.png" />
     <Resource Include="Images\Branch.png" />

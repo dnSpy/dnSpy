@@ -50,10 +50,10 @@ namespace dnSpy {
 		}
 		readonly ToolBarManager toolBarManager;
 
-		public IThemesManager ThemesManager {
-			get { return themesManager; }
+		public IThemeManager ThemeManager {
+			get { return themeManager; }
 		}
-		readonly ThemesManager themesManager;
+		readonly ThemeManager themeManager;
 
 		public IImageManager ImageManager {
 			get { return imageManager; }
@@ -66,10 +66,10 @@ namespace dnSpy {
 		CompositionContainer compositionContainer;
 
 		public AppImpl() {
-			Globals.App = this;
+			DnSpy.App = this;
 			this.menuManager = new MenuManager(this);
 			this.toolBarManager = new ToolBarManager(this);
-			this.themesManager = new ThemesManager(this);
+			this.themeManager = new ThemeManager(this);
 			this.imageManager = new ImageManager(this);
 		}
 
@@ -100,7 +100,7 @@ namespace dnSpy {
 		}
 
 		public void InitializeThemes(string themeName) {
-			themesManager.Initialize(themeName);
+			themeManager.Initialize(themeName);
 		}
 
 		public void UpdateResources(ITheme theme, System.Windows.ResourceDictionary resources) {//TODO: REMOVE

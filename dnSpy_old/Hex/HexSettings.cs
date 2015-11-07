@@ -23,9 +23,9 @@ using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Threading;
 using System.Xml.Linq;
-using dnSpy.HexEditor;
-using dnSpy.MVVM;
 using dnSpy.Options;
+using dnSpy.Shared.UI.HexEditor;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
 

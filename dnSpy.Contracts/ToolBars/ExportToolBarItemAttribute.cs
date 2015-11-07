@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.ToolBars {
 		}
 
 		/// <summary>
-		/// Guid of owner toolbar or null to use <see cref="ToolBarConstants.APP_TOOLBAR_GUID"/>
+		/// Guid of owner toolbar or null to use <see cref="ToolBarConstants.APP_TB_GUID"/>
 		/// </summary>
 		public string OwnerGuid { get; set; }
 

@@ -284,7 +284,7 @@ namespace dnSpy.AsmEditor {
 				var tmpHandler = handler;
 				menuItem.Click += (s, e2) => tmpHandler.Command.Execute(parameter);
 				if (handler.Icon != null)
-					Globals.App.ImageManager.Add16x16Image(menuItem, typeof(ListBoxHelperBase<T>).Assembly, handler.Icon, true, menuItem.IsEnabled);
+					DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(ListBoxHelperBase<T>).Assembly, handler.Icon, true, menuItem.IsEnabled);
 				if (handler.InputGestureText != null)
 					menuItem.InputGestureText = handler.InputGestureText;
 

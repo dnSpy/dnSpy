@@ -17,18 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Windows;
 using System.Windows.Controls;
 
 namespace dnSpy.Contracts.ToolBars {
 	/// <summary>
-	/// A toolbar user-defined object
+	/// A toolbar object
 	/// </summary>
 	public interface IToolBarObject : IToolBarItem {
 		/// <summary>
 		/// Gets the UI object to place in the <see cref="ToolBar"/>
 		/// </summary>
 		/// <param name="context">Context</param>
+		/// <param name="commandTarget">Command target for toolbar items, eg. the owner window, or null</param>
 		/// <returns></returns>
-		object GetUIObject(IToolBarItemContext context);
+		object GetUIObject(IToolBarItemContext context, IInputElement commandTarget);
 	}
 }

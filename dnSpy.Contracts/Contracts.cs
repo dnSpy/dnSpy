@@ -29,7 +29,7 @@ namespace dnSpy.Contracts {
 	/// <summary>
 	/// Globals
 	/// </summary>
-	public static class Globals {
+	public static class DnSpy {
 		/// <summary>
 		/// Gets the application
 		/// </summary>
@@ -70,9 +70,9 @@ namespace dnSpy.Contracts {
 		IToolBarManager ToolBarManager { get; }
 
 		/// <summary>
-		/// Gets the <see cref="IThemesManager"/> instance
+		/// Gets the <see cref="IThemeManager"/> instance
 		/// </summary>
-		IThemesManager ThemesManager { get; }
+		IThemeManager ThemeManager { get; }
 
 		/// <summary>
 		/// Gets the <see cref="IImageManager"/> instance

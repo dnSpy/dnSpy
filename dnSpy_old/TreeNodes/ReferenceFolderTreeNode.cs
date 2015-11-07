@@ -47,11 +47,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public override object Icon {
-			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "ReferenceFolderClosed", BackgroundType.TreeNode); }
+			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "ReferenceFolderClosed", BackgroundType.TreeNode); }
 		}
 
 		public override object ExpandedIcon {
-			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "ReferenceFolderOpen", BackgroundType.TreeNode); }
+			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "ReferenceFolderOpen", BackgroundType.TreeNode); }
 		}
 
 		public override FilterResult Filter(FilterSettings settings) {

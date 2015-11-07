@@ -19,8 +19,8 @@
 
 using System.Collections.Generic;
 using dnlib.PE;
-using dnSpy.HexEditor;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.HexEditor;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.TreeNodes.Hex {

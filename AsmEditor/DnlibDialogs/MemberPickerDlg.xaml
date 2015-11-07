@@ -21,16 +21,17 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:mvvmvc="clr-namespace:dnSpy.MVVM.Converters;assembly=dnSpy_old"
+             xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
+             xmlns:vc="clr-namespace:dnSpy.AsmEditor.DnlibDialogs.Converters"
              xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
-             xmlns:winlocal="clr-namespace:dnSpy.MVVM;assembly=dnSpy_old"
+             xmlns:winlocal="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
              Height="500" Width="600"
              Title="{Binding Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="200" MinWidth="400">
 	<winlocal:WindowBase.Resources>
 		<mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
-		<mvvmvc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
+		<vc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 		<ControlTemplate x:Key="noRedBorderOnValidationError">
 			<!-- Don't show the red border when the user hasn't selected a valid node -->

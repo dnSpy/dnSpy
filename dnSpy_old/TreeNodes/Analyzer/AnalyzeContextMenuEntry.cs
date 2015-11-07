@@ -139,8 +139,11 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 					yield break;
 
 				var @ref = context.FindByType<CodeReferenceSegment>();
-				if (@ref != null)
-					yield return @ref.Reference as IMemberRef;
+				if (@ref != null) {
+					var mr = @ref.Reference as IMemberRef;
+					if (mr != null)
+						yield return mr;
+				}
 			}
 
 			public override void Execute(IMenuItemContext context) {

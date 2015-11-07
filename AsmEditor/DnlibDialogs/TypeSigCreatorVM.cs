@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.MVVM;
 using dnSpy.Search;
 using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.ILSpy;

@@ -336,21 +336,21 @@ namespace dnSpy.AsmEditor.MethodBody {
 					Header = "_Type...",
 					Command = new RelayCommand(a => AddType(opvm)),
 				});
-				Globals.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Class", true, true);
+				DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Class", true, true);
 			}
 			if ((flags & MenuCommandFlags.TypeSpec) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
 					Header = "Type_Spec...",
 					Command = new RelayCommand(a => AddTypeSpec(opvm)),
 				});
-				Globals.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Generic", true, true);
+				DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Generic", true, true);
 			}
 			if ((flags & MenuCommandFlags.MethodDef) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
 					Header = "_Method...",
 					Command = new RelayCommand(a => AddMethodDef(opvm)),
 				});
-				Globals.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Method", true, true);
+				DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Method", true, true);
 			}
 			if ((flags & MenuCommandFlags.MethodMemberRef) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {
@@ -369,7 +369,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 					Header = "_Field...",
 					Command = new RelayCommand(a => AddFieldDef(opvm)),
 				});
-				Globals.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Field", true, true);
+				DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Field", true, true);
 			}
 			if ((flags & MenuCommandFlags.FieldMemberRef) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {

@@ -22,7 +22,6 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Themes;
-using dnSpy.MVVM;
 using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.ILSpy;
 
@@ -75,14 +74,14 @@ namespace dnSpy.Debugger.Exceptions {
 
 		public ExceptionsControl() {
 			InitializeComponent();
-			Globals.App.ThemesManager.ThemeChanged += ThemesManager_ThemeChanged;
+			DnSpy.App.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 		}
 
 		public ICommand ShowCommand {
 			get { return new RelayCommand(a => Show(), a => CanShow); }
 		}
 
-		void ThemesManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
 			var vm = DataContext as ExceptionsVM;
 			if (vm != null)
 				vm.RefreshThemeFields();

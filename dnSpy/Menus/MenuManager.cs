@@ -25,6 +25,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Menus;
 using dnSpy.Shared.UI.Images;
 using dnSpy.Shared.UI.MVVM;
@@ -206,7 +207,7 @@ namespace dnSpy.Menus {
 		}
 		Dictionary<Guid, List<MenuItemGroupMD>> guidToGroups;
 
-		static bool ParseGroup(string s, out double order, out string name) {
+		internal static bool ParseGroup(string s, out double order, out string name) {
 			order = 0;
 			name = string.Empty;
 			int index = s.IndexOf(',');

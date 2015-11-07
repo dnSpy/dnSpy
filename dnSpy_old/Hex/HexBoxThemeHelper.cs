@@ -27,7 +27,7 @@ using ICSharpCode.ILSpy;
 namespace dnSpy.Hex {
 	static class HexBoxThemeHelper {
 		internal static void OnThemeUpdatedStatic() {
-			var theme = Globals.App.ThemesManager.Theme;
+			var theme = DnSpy.App.ThemeManager.Theme;
 
 			var color = theme.GetColor(ColorType.HexText);
 			App.Current.Resources[GetBackgroundResourceKey(ColorType.HexText)] = GetBrush(color.Background);

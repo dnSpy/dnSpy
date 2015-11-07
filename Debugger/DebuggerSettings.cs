@@ -20,7 +20,7 @@
 using System.Diagnostics;
 using System.Xml.Linq;
 using dndbg.Engine;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger {
@@ -184,6 +184,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (propertyEvalAndFunctionCalls != value) {
 					propertyEvalAndFunctionCalls = value;
+					Save();
 					OnPropertyChanged("PropertyEvalAndFunctionCalls");
 				}
 			}
@@ -195,6 +196,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (useStringConversionFunction != value) {
 					useStringConversionFunction = value;
+					Save();
 					OnPropertyChanged("UseStringConversionFunction");
 				}
 			}
@@ -210,6 +212,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (debuggerBrowsableAttributesCanHidePropsFields != value) {
 					debuggerBrowsableAttributesCanHidePropsFields = value;
+					Save();
 					OnPropertyChanged("DebuggerBrowsableAttributesCanHidePropsFields");
 				}
 			}
@@ -221,6 +224,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (compilerGeneratedAttributesCanHideFields != value) {
 					compilerGeneratedAttributesCanHideFields = value;
+					Save();
 					OnPropertyChanged("CompilerGeneratedAttributesCanHideFields");
 				}
 			}
@@ -232,6 +236,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (disableManagedDebuggerDetection != value) {
 					disableManagedDebuggerDetection = value;
+					Save();
 					OnPropertyChanged("DisableManagedDebuggerDetection");
 				}
 			}
@@ -243,6 +248,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (ignoreBreakInstructions != value) {
 					ignoreBreakInstructions = value;
+					Save();
 					OnPropertyChanged("IgnoreBreakInstructions");
 				}
 			}
@@ -254,6 +260,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (autoOpenLocalsWindow != value) {
 					autoOpenLocalsWindow = value;
+					Save();
 					OnPropertyChanged("AutoOpenLocalsWindow");
 				}
 			}
@@ -265,6 +272,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (useMemoryModules != value) {
 					useMemoryModules = value;
+					Save();
 					OnPropertyChanged("UseMemoryModules");
 				}
 			}
@@ -276,6 +284,7 @@ namespace dnSpy.Debugger {
 			set {
 				if (coreCLRDbgShimFilename != value) {
 					coreCLRDbgShimFilename = value;
+					Save();
 					OnPropertyChanged("CoreCLRDbgShimFilename");
 				}
 			}

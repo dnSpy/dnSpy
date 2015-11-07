@@ -18,11 +18,6 @@
 
 //TODO: REMOVE
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Input;
 
 namespace ICSharpCode.ILSpy {
@@ -44,67 +39,6 @@ namespace ICSharpCode.ILSpy {
 
 	public interface IToolbarItemCreator {
 		object CreateToolbarItem();
-	}
-
-	[MetadataAttribute]
-	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public class ExportToolbarCommandAttribute : ExportAttribute, IToolbarCommandMetadata {
-		public ExportToolbarCommandAttribute()
-			: base("ToolbarCommand", typeof(ICommand)) {
-		}
-
-		public string ToolTip { get; set; }
-		public string ToolbarIcon { get; set; }
-		public string ToolbarCategory { get; set; }
-		public double ToolbarOrder { get; set; }
-		public string ToolbarIconText { get; set; }
-	}
-	#endregion
-
-	#region Main Menu
-	public interface IMainMenuCommandMetadata {
-		string MenuIcon { get; }
-		string MenuHeader { get; }
-		string Menu { get; }
-		string MenuCategory { get; }
-		string MenuInputGestureText { get; }
-		double MenuOrder { get; }
-	}
-
-	public interface IMainMenuCommand {
-		/// <summary>
-		/// true if it should be added to the menu
-		/// </summary>
-		bool IsVisible { get; }
-	}
-
-	public interface IMainMenuCheckableCommand {
-		/// <summary>
-		/// null if it's not checkable. Else it returns the checked state
-		/// </summary>
-		bool? IsChecked { get; }
-
-		/// <summary>
-		/// Gets the binding or null. Only called when <see cref="IsChecked"/> is not null
-		/// </summary>
-		Binding Binding { get; }
-	}
-
-	public interface IMainMenuCommandInitialize {
-		void Initialize(MenuItem menuItem);
-	}
-
-	public interface IMenuItemProvider {
-		/// <summary>
-		/// Creates all menu items
-		/// </summary>
-		/// <param name="cachedMenuItem">The cached menu item for this command handler. It can be
-		/// ignored if this command's menu items can never be the first menu items in the menu. Else
-		/// this menu item should be the first returned menu item by this method. This is required
-		/// or the first menu item won't be highlighted when the menu is opened from the keyboard
-		/// the first time after this method is called.</param>
-		/// <returns></returns>
-		IEnumerable<MenuItem> CreateMenuItems(MenuItem cachedMenuItem);
 	}
 	#endregion
 }

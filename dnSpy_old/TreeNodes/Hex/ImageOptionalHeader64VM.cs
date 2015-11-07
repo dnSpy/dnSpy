@@ -18,7 +18,7 @@
 */
 
 using System.Collections.Generic;
-using dnSpy.HexEditor;
+using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.TreeNodes.Hex {
 	sealed class ImageOptionalHeader64VM : ImageOptionalHeaderVM {

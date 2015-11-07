@@ -18,7 +18,7 @@
 */
 
 using dnSpy.AsmEditor.Hex;
-using dnSpy.HexEditor;
+using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.AsmEditor {
 	//TODO: This class should be removed once the UndoObject prop has been removed

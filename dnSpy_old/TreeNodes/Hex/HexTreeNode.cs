@@ -48,7 +48,7 @@ namespace dnSpy.TreeNodes.Hex {
 		readonly ulong endOffset;
 
 		public override object Icon {
-			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, IconName, BackgroundType.TreeNode); }
+			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, IconName, BackgroundType.TreeNode); }
 		}
 
 		protected abstract string IconName { get; }

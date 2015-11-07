@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using dnSpy.HexEditor;
+using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
 	/// <summary>

@@ -18,7 +18,7 @@
 */
 
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.Assembly {
 	/// <summary>

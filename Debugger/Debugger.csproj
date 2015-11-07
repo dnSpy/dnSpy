@@ -64,6 +64,7 @@
     <Compile Include="CallStack\ICallStackObjectCreator.cs" />
     <Compile Include="CallStack\StackFrameLine.cs" />
     <Compile Include="CallStack\StackFrameManager.cs" />
+    <Compile Include="CallStack\VMPropertyChangedEventArgs.cs" />
     <Compile Include="Converters\ImageConverter.cs" />
     <Compile Include="DebugCommands.cs" />
     <Compile Include="DebuggedProcessRunningNotifier.cs" />
@@ -91,6 +92,7 @@
     <Compile Include="Dialogs\ProcessPrinter.cs" />
     <Compile Include="Dialogs\ProcessVM.cs" />
     <Compile Include="EvalUtils.cs" />
+    <Compile Include="Exceptions\ClickFocusAP.cs" />
     <Compile Include="Exceptions\Commands.cs" />
     <Compile Include="Exceptions\DefaultExceptionSettings.cs" />
     <Compile Include="Exceptions\ExceptionColumnConverter.cs" />
@@ -107,6 +109,7 @@
     <Compile Include="Exceptions\ExceptionType.cs" />
     <Compile Include="Exceptions\ExceptionVM.cs" />
     <Compile Include="Exceptions\IGetNewExceptionName.cs" />
+    <Compile Include="Exceptions\ISelectedItemsProvider.cs" />
     <Compile Include="IMModules\ClassLoader.cs" />
     <Compile Include="IMModules\Commands.cs" />
     <Compile Include="IMModules\CorModuleDefFile.cs" />

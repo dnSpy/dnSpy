@@ -18,7 +18,7 @@
 */
 
 using System.Xml.Linq;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.CallStack {

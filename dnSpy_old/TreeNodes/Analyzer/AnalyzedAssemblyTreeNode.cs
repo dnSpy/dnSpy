@@ -36,7 +36,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		}
 
 		public override object Icon {
-			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TreeNode); }
+			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TreeNode); }
 		}
 
 		protected override void Write(ITextOutput output, Language language) {

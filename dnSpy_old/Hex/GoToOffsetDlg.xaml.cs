@@ -18,7 +18,7 @@
 */
 
 using System.Windows;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.Hex {
 	/// <summary>

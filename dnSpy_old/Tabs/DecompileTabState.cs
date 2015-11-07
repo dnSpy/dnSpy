@@ -191,7 +191,7 @@ namespace dnSpy.Tabs {
 			var view = TextView;
 			view.Tag = this;
 			this.language = language;
-			Globals.App.MenuManager.InitializeContextMenu(view, MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID, new GuidObjectsCreator(), new ContextMenuInitializer());
+			DnSpy.App.MenuManager.InitializeContextMenu(view, MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID, new GuidObjectsCreator(), new ContextMenuInitializer());
 			view.DragOver += view_DragOver;
 			view.OnThemeUpdated();
 			InstallMouseWheelZoomHandler(TextView.TextEditor.TextArea);

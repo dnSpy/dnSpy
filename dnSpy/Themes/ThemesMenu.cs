@@ -49,7 +49,7 @@ namespace dnSpy.Themes {
 		}
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
-			var mgr = Globals.App.ThemesManager as ThemesManager;
+			var mgr = DnSpy.App.ThemeManager as ThemeManager;
 			Debug.Assert(mgr != null);
 			if (mgr == null)
 				yield break;

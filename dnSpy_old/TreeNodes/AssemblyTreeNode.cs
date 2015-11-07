@@ -193,19 +193,19 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		public override object Icon {
 			get {
 				if (dnSpyFile is UnknownFile)
-					return Globals.App.ImageManager.GetImage(GetType().Assembly, "AssemblyWarning", BackgroundType.TreeNode);
+					return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "AssemblyWarning", BackgroundType.TreeNode);
 				if (Parent is AssemblyTreeNode || (dnSpyFile.ModuleDef != null && dnSpyFile.AssemblyDef == null))
-					return Globals.App.ImageManager.GetImage(GetType().Assembly, "AssemblyModule", BackgroundType.TreeNode);
+					return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "AssemblyModule", BackgroundType.TreeNode);
 				if (dnSpyFile.ModuleDef == null && dnSpyFile.PEImage != null) {
 					return (dnSpyFile.PEImage.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0 ?
-						Globals.App.ImageManager.GetImage(GetType().Assembly, "AssemblyExe", BackgroundType.TreeNode) :
-						Globals.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TreeNode);
+						DnSpy.App.ImageManager.GetImage(GetType().Assembly, "AssemblyExe", BackgroundType.TreeNode) :
+						DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TreeNode);
 				}
 				return dnSpyFile.ModuleDef != null &&
 					dnSpyFile.ModuleDef.IsManifestModule &&
 					(dnSpyFile.ModuleDef.Characteristics & Characteristics.Dll) == 0 ?
-					Globals.App.ImageManager.GetImage(GetType().Assembly, "AssemblyExe", BackgroundType.TreeNode) :
-					Globals.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TreeNode);
+					DnSpy.App.ImageManager.GetImage(GetType().Assembly, "AssemblyExe", BackgroundType.TreeNode) :
+					DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TreeNode);
 			}
 		}
 

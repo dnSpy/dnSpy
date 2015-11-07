@@ -22,7 +22,7 @@ using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.PE;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Modules {
 	sealed class ModuleVM : ViewModelBase {

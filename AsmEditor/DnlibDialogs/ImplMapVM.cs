@@ -18,34 +18,29 @@
 */
 
 using dnlib.DotNet;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
-namespace dnSpy.AsmEditor.DnlibDialogs
-{
-	enum CharSet
-	{
+namespace dnSpy.AsmEditor.DnlibDialogs {
+	enum CharSet {
 		NotSpec		= (int)PInvokeAttributes.CharSetNotSpec >> 1,
 		Ansi		= (int)PInvokeAttributes.CharSetAnsi >> 1,
 		Unicode		= (int)PInvokeAttributes.CharSetUnicode >> 1,
 		Auto		= (int)PInvokeAttributes.CharSetAuto >> 1,
 	}
 
-	enum BestFit
-	{
+	enum BestFit {
 		UseAssem	= (int)PInvokeAttributes.BestFitUseAssem >> 4,
 		Enabled		= (int)PInvokeAttributes.BestFitEnabled >> 4,
 		Disabled	= (int)PInvokeAttributes.BestFitDisabled >> 4,
 	}
 
-	enum ThrowOnUnmappableChar
-	{
+	enum ThrowOnUnmappableChar {
 		UseAssem	= (int)PInvokeAttributes.ThrowOnUnmappableCharUseAssem >> 12,
 		Enabled		= (int)PInvokeAttributes.ThrowOnUnmappableCharEnabled >> 12,
 		Disabled	= (int)PInvokeAttributes.ThrowOnUnmappableCharDisabled >> 12,
 	}
 
-	enum CallConv
-	{
+	enum CallConv {
 		Winapi		= (int)PInvokeAttributes.CallConvWinapi >> 8,
 		Cdecl		= (int)PInvokeAttributes.CallConvCdecl >> 8,
 		Stdcall		= (int)PInvokeAttributes.CallConvStdcall >> 8,

@@ -18,7 +18,7 @@
 */
 
 using dndbg.Engine;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
 	interface ICallStackFrameVM {

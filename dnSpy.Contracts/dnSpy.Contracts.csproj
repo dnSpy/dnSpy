@@ -41,6 +41,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Command\ICommandHolder.cs" />
     <Compile Include="Contracts.cs" />
     <Compile Include="Images\BackgroundType.cs" />
     <Compile Include="Images\IImageManager.cs" />
@@ -51,7 +52,6 @@
     <Compile Include="Menus\ExportMenuItemAttribute.cs" />
     <Compile Include="Menus\ExtensionMethods.cs" />
     <Compile Include="Menus\GuidObject.cs" />
-    <Compile Include="Menus\ICommandHolder.cs" />
     <Compile Include="Menus\IContextMenuInitializer.cs" />
     <Compile Include="Menus\IGuidObjectsCreator.cs" />
     <Compile Include="Menus\IMenu.cs" />
@@ -66,7 +66,7 @@
     <Compile Include="Themes\ColorType.cs" />
     <Compile Include="Themes\ITheme.cs" />
     <Compile Include="Themes\IThemeColor.cs" />
-    <Compile Include="Themes\IThemesManager.cs" />
+    <Compile Include="Themes\IThemeManager.cs" />
     <Compile Include="Themes\ThemeChangedEventArgs.cs" />
     <Compile Include="ToolBars\ExportToolBarButtonAttribute.cs" />
     <Compile Include="ToolBars\ExportToolBarItemAttribute.cs" />
@@ -79,6 +79,7 @@
     <Compile Include="ToolBars\IToolBarManager.cs" />
     <Compile Include="ToolBars\IToolBarObject.cs" />
     <Compile Include="ToolBars\IToolBarObjectMetadata.cs" />
+    <Compile Include="ToolBars\IToolBarToggleButton.cs" />
     <Compile Include="ToolBars\ToolBarConstants.cs" />
   </ItemGroup>
   <ItemGroup>

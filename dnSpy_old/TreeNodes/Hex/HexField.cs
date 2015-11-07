@@ -22,8 +22,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using dnSpy.HexEditor;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.HexEditor;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.TreeNodes.Hex {
 	[DebuggerDisplay("{StartOffset} {EndOffset} {Name} {DataFieldVM.StringValue}")]

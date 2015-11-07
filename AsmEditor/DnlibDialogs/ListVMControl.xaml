@@ -21,12 +21,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:winlocal="clr-namespace:dnSpy.MVVM;assembly=dnSpy_old"
+             xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="500">
 	<UserControl.Resources>
-        <DataTemplate DataType="{x:Type winlocal:ViewModelBase}">
+        <DataTemplate DataType="{x:Type mvvm:ViewModelBase}">
 			<TextBlock Text="{Binding FullName}" ToolTip="{Binding FullName}" />
 		</DataTemplate>
 		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

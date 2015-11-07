@@ -26,7 +26,7 @@ using System.Linq;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnlib.DotNet;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Locals {
 	sealed class ValueStringParser {

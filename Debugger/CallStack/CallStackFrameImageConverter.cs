@@ -30,9 +30,9 @@ namespace dnSpy.Debugger.CallStack {
 			if (vm == null)
 				return null;
 			if (vm.Index == 0)
-				return Globals.App.ImageManager.GetImage(GetType().Assembly, "CurrentLine", BackgroundType.GridViewItem);
+				return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "CurrentLine", BackgroundType.GridViewItem);
 			if (vm.IsCurrentFrame)
-				return Globals.App.ImageManager.GetImage(GetType().Assembly, "SelectedReturnLine", BackgroundType.GridViewItem);
+				return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "SelectedReturnLine", BackgroundType.GridViewItem);
 			return null;
 		}
 

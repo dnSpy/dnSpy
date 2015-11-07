@@ -21,7 +21,7 @@ using System;
 using System.ComponentModel;
 using dndbg.Engine;
 using dnlib.DotNet;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointVM : ViewModelBase, IDisposable {

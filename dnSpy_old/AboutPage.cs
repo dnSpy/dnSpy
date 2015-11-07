@@ -43,7 +43,7 @@ namespace ICSharpCode.ILSpy {
 			output.WriteLine(string.Format("dnSpy version {0}", typeof(MainWindow).Assembly.GetName().Version), TextTokenType.Text);
 			var decVer = typeof(ICSharpCode.Decompiler.Ast.AstBuilder).Assembly.GetName().Version;
 			output.WriteLine(string.Format("ILSpy Decompiler version {0}.{1}.{2}", decVer.Major, decVer.Minor, decVer.Build), TextTokenType.Text);
-			foreach (var plugin in Globals.App.CompositionContainer.GetExportedValues<IAboutPageAddition>())
+			foreach (var plugin in DnSpy.App.CompositionContainer.GetExportedValues<IAboutPageAddition>())
 				plugin.Write(output);
 			output.WriteLine();
 			using (Stream s = typeof(AboutPage).Assembly.GetManifestResourceStream(typeof(dnSpy.StartUpClass), "README.txt")) {

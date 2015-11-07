@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using dnSpy.MVVM.Dialogs;
+using dnSpy.Shared.UI.MVVM.Dialogs;
 using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
 using WF = System.Windows.Forms;

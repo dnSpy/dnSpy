@@ -24,7 +24,7 @@ using System.ComponentModel;
 using System.Linq;
 using dndbg.Engine;
 using dnSpy.Debugger.CallStack;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Threads {
 	sealed class ThreadsVM : ViewModelBase {

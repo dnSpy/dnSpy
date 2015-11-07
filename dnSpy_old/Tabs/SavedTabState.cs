@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Xml.Linq;
 using dnSpy.AvalonEdit;
-using dnSpy.HexEditor;
+using dnSpy.Shared.UI.HexEditor;
 using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
 

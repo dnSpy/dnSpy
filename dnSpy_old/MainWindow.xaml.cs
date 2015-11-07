@@ -39,9 +39,11 @@ using dnSpy;
 using dnSpy.AsmEditor;
 using dnSpy.AvalonEdit;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
+using dnSpy.Contracts.ToolBars;
 using dnSpy.Decompiler;
 using dnSpy.Files;
 using dnSpy.Files.WPF;
@@ -236,7 +238,7 @@ namespace ICSharpCode.ILSpy {
 			this.sessionSettings.PropertyChanged += sessionSettings_PropertyChanged;
 			var listOptions = new DnSpyFileListOptionsImpl(this.Dispatcher);
 			this.dnSpyFileListManager = new DnSpyFileListManager(listOptions, spySettings);
-			Globals.App.ThemesManager.ThemeChanged += ThemesManager_ThemeChanged;
+			DnSpy.App.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 			OtherSettings.Instance.PropertyChanged += OtherSettings_PropertyChanged;
 			InitializeTextEditorFontResource();
@@ -252,7 +254,7 @@ namespace ICSharpCode.ILSpy {
 
 			InitializeComponent();
 			AddTitleInfo(IntPtr.Size == 4 ? "x86" : "x64");
-			Globals.App.CompositionContainer.ComposeParts(this);
+			DnSpy.App.CompositionContainer.ComposeParts(this);
 			foreach (var plugin in plugins)
 				plugin.EarlyInit();
 
@@ -264,13 +266,12 @@ namespace ICSharpCode.ILSpy {
 
 			tabGroupsManager = new TabGroupsManager<TabState>(tabGroupsContentPresenter, tabManager_OnSelectionChanged, tabManager_OnAddRemoveTabState);
 			tabGroupsManager.OnTabGroupSelected += tabGroupsManager_OnTabGroupSelected;
-			((AppImpl)Globals.App).InitializeThemes(sessionSettings.ThemeName);
+			((AppImpl)DnSpy.App).InitializeThemes(sessionSettings.ThemeName);
 			InitializeAssemblyTreeView(treeView);
 
-			mainMenu = Globals.App.MenuManager.CreateMenu(new Guid(MenuConstants.APP_MENU_GUID), this);
-			InitMainMenu();
-			InitToolbar();
-			loadingImage.Source = Globals.App.ImageManager.GetImage(GetType().Assembly, "dnSpy-Big", (Globals.App.ThemesManager.Theme.GetColor(ColorType.EnvironmentBackground).Background as SolidColorBrush).Color);
+			mainMenu = DnSpy.App.MenuManager.CreateMenu(new Guid(MenuConstants.APP_MENU_GUID), this);
+			UpdateToolbar();
+			loadingImage.Source = DnSpy.App.ImageManager.GetImage(GetType().Assembly, "dnSpy-Big", (DnSpy.App.ThemeManager.Theme.GetColor(ColorType.EnvironmentBackground).Background as SolidColorBrush).Color);
 
 			this.Activated += (s, e) => UpdateSystemMenuImage();
 			this.Deactivated += (s, e) => UpdateSystemMenuImage();
@@ -354,8 +355,8 @@ namespace ICSharpCode.ILSpy {
 				treeView.ClearValue(ItemsControl.ItemContainerStyleProperty);
 			}
 
-			treeView.GetPreviewInsideTextBackground = () => Globals.App.ThemesManager.Theme.GetColor(ColorType.SystemColorsHighlight).Background;
-			treeView.GetPreviewInsideForeground = () => Globals.App.ThemesManager.Theme.GetColor(ColorType.SystemColorsHighlightText).Foreground;
+			treeView.GetPreviewInsideTextBackground = () => DnSpy.App.ThemeManager.Theme.GetColor(ColorType.SystemColorsHighlight).Background;
+			treeView.GetPreviewInsideForeground = () => DnSpy.App.ThemeManager.Theme.GetColor(ColorType.SystemColorsHighlightText).Foreground;
 		}
 
 		public static void InitializeAssemblyTreeView(SharpTreeView treeView) {
@@ -846,24 +847,23 @@ namespace ICSharpCode.ILSpy {
 				listener.ClosePopup();
 		}
 
-		void ThemesManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			((ImageManager)Globals.App.ImageManager).OnThemeChanged();
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
+			((ImageManager)DnSpy.App.ImageManager).OnThemeChanged();
 			UpdateSystemMenuImage();
-			((AppImpl)Globals.App).UpdateResources(Globals.App.ThemesManager.Theme, App.Current.Resources);
+			((AppImpl)DnSpy.App).UpdateResources(DnSpy.App.ThemeManager.Theme, App.Current.Resources);
 			NewTextEditor.OnThemeUpdatedStatic();
 			HexBoxThemeHelper.OnThemeUpdatedStatic();
 			foreach (var view in AllTextViews)
 				view.OnThemeUpdated();
 			UpdateToolbar();
-			InvalidateMainMenu();
 			RefreshTreeViewFilter();
 		}
 
 		void UpdateSystemMenuImage() {
 			if (IsActive)
-				SystemMenuImage = Globals.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TitleAreaActive);
+				SystemMenuImage = DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TitleAreaActive);
 			else
-				SystemMenuImage = Globals.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TitleAreaInactive);
+				SystemMenuImage = DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Assembly", BackgroundType.TitleAreaInactive);
 		}
 
 		void SetWindowBounds(Rect bounds) {
@@ -873,245 +873,14 @@ namespace ICSharpCode.ILSpy {
 			this.Height = bounds.Height;
 		}
 
-		#region Toolbar extensibility
-		[ImportMany("ToolbarCommand", typeof(ICommand))]
-		Lazy<ICommand, IToolbarCommandMetadata>[] toolbarCommands = null;
-
-		/// <summary>
-		/// Call this when a toolbar button's visibility has changed. The toolbar items will be
-		/// re-created.
-		/// </summary>
 		public void UpdateToolbar() {
-			// Clear the Command property so they can unhook the event handlers
-			foreach (DependencyObject item in toolBar.Items)
-				item.ClearValue(System.Windows.Controls.Primitives.ButtonBase.CommandProperty);
-			toolBar.Items.Clear();
-			foreach (var commandGroup in mtbState.Groupings) {
-				var items = new List<object>();
-				foreach (var command in commandGroup) {
-					var tbarCmd = command.Value as IToolbarCommand;
-					if (tbarCmd != null && !tbarCmd.IsVisible)
-						continue;
-					var itemCreator = command.Value as IToolbarItemCreator;
-					if (itemCreator != null)
-						items.Add(itemCreator.CreateToolbarItem());
-					else
-						items.Add(MakeToolbarItem(command));
-				}
-
-				if (items.Count > 0) {
-					if (toolBar.Items.Count > 0)
-						toolBar.Items.Add(new Separator());
-					foreach (var item in items)
-						toolBar.Items.Add(item);
-				}
-			}
-
-			CommandManager.InvalidateRequerySuggested();
-		}
-
-		class MainToolbarState {
-			public IGrouping<string, Lazy<ICommand, IToolbarCommandMetadata>>[] Groupings = new IGrouping<string, Lazy<ICommand, IToolbarCommandMetadata>>[0];
-		}
-		MainToolbarState mtbState = new MainToolbarState();
-		void InitToolbar() {
-			mtbState.Groupings = toolbarCommands.OrderBy(c => c.Metadata.ToolbarOrder).GroupBy(c => c.Metadata.ToolbarCategory).ToArray();
-			UpdateToolbar();
-		}
-
-		Button MakeToolbarItem(Lazy<ICommand, IToolbarCommandMetadata> command) {
-			var button = new Button {
-				Command = CommandWrapper.Unwrap(command.Value),
-				ToolTip = command.Metadata.ToolTip,
-			};
-			var image = new Image {
-				Width = 16,
-				Height = 16,
-				Source = Globals.App.ImageManager.GetImage(command.Value.GetType().Assembly, command.Metadata.ToolbarIcon, BackgroundType.ToolBar),
-			};
-			var iconText = command.Metadata.ToolbarIconText;
-			if (string.IsNullOrEmpty(iconText))
-				button.Content = image;
-			else {
-				var sp = new StackPanel() { Orientation = Orientation.Horizontal };
-				sp.Children.Add(image);
-				sp.Children.Add(new TextBlock() { Text = iconText, Margin = new Thickness(5, 0, 5, 0) });
-				button.Content = sp;
-			}
-
-			ToolTipService.SetShowOnDisabled(button, true);
-			return button;
-		}
-		#endregion
-
-		#region Main Menu extensibility
-		[ImportMany("MainMenuCommand", typeof(ICommand))]
-		Lazy<ICommand, IMainMenuCommandMetadata>[] mainMenuCommands = null;
-
-		class MainSubMenuState {
-			public MenuItem TopLevelMenuItem;
-			public IGrouping<string, Lazy<ICommand, IMainMenuCommandMetadata>>[] Groupings;
-			public List<MenuItem> CachedMenuItems = new List<MenuItem>();
-			public bool Recreate = true;
-			public bool AlwaysRecreate = true;
-		}
-		readonly Dictionary<string, MainSubMenuState> subMenusDict = new Dictionary<string, MainSubMenuState>();
-		void InitMainMenu() {
-			foreach (var topLevelMenu in mainMenuCommands.OrderBy(c => c.Metadata.MenuOrder).GroupBy(c => c.Metadata.Menu)) {
-				var topLevelMenuItem = mainMenu.Items.OfType<MenuItem>().FirstOrDefault(m => (m.Header as string) == topLevelMenu.Key);
-				var state = new MainSubMenuState();
-				if (topLevelMenuItem == null) {
-					topLevelMenuItem = new MenuItem();
-					topLevelMenuItem.Header = topLevelMenu.Key;
-					mainMenu.Items.Add(topLevelMenuItem);
-				}
-				subMenusDict.Add((string)topLevelMenuItem.Header, state);
-				state.TopLevelMenuItem = topLevelMenuItem;
-				state.Groupings = topLevelMenu.GroupBy(c => c.Metadata.MenuCategory).ToArray();
-				foreach (var category in state.Groupings) {
-					foreach (var entry in category)
-						state.CachedMenuItems.Add(new MenuItem());
-				}
-				var stateTmp = state;
-				state.TopLevelMenuItem.SubmenuOpened += (s, e) => {
-					if (e.Source == stateTmp.TopLevelMenuItem)
-						InitializeMainSubMenu(stateTmp);
-				};
-				state.TopLevelMenuItem.SubmenuClosed += (s, e) => {
-					if (e.Source == stateTmp.TopLevelMenuItem && stateTmp.AlwaysRecreate)
-						ClearMainSubMenu(stateTmp);
-				};
-
-				// Make sure it's not empty or it will always be empty
-				state.TopLevelMenuItem.Items.Clear();
-				state.TopLevelMenuItem.Items.Add(state.CachedMenuItems[0]);
-			}
-		}
-
-		bool IsAnyMenuOpened() {
-			if (Globals.App.MenuManager.IsMenuOpened)
-				return true;
-			foreach (var item in mainMenu.Items) {
-				var mi = item as MenuItem;
-				if (mi != null && mi.IsSubmenuOpen)
-					return true;
-			}
-			return false;
+			DnSpy.App.ToolBarManager.InitializeToolBar(toolBar, new Guid(ToolBarConstants.APP_TB_GUID), this);
 		}
 
 		public static void SetFocusIfNoMenuIsOpened(UIElement elem) {
-			if (!Instance.IsAnyMenuOpened())
+			if (!DnSpy.App.MenuManager.IsMenuOpened)
 				elem.Focus();
 		}
-
-		void InvalidateMainMenu() {
-			foreach (var state in subMenusDict.Values)
-				state.Recreate = true;
-		}
-
-		/// <summary>
-		/// If a menu item gets hidden, this method should be called to re-create the sub menu.
-		/// </summary>
-		/// <param name="menuHeader">The exact display name of the sub menu (eg. "_Debug")</param>
-		public void UpdateMainSubMenu(string menuHeader) {
-			subMenusDict[menuHeader].Recreate = true;
-		}
-
-		static void ClearMainSubMenu(MainSubMenuState state) {
-			// Clear all properties that are set by our code
-			foreach (var item in state.CachedMenuItems) {
-				item.ClearValue(MenuItem.CommandProperty);
-				item.ClearValue(MenuItem.CommandTargetProperty);
-				item.ClearValue(MenuItem.HeaderProperty);
-				item.ClearValue(MenuItem.IconProperty);
-				item.ClearValue(MenuItem.IsEnabledProperty);
-				item.ClearValue(MenuItem.InputGestureTextProperty);
-				item.ClearValue(MenuItem.IsCheckableProperty);
-				item.ClearValue(MenuItem.IsCheckedProperty);
-				BindingOperations.ClearBinding(item, MenuItem.IsCheckedProperty);
-				item.Items.Clear();
-			}
-		}
-
-		static void InitializeMainSubMenu(MainSubMenuState state) {
-			if (!state.Recreate)
-				return;
-			state.Recreate = state.AlwaysRecreate;
-			var topLevelMenuItem = state.TopLevelMenuItem;
-
-			// Don't remove the first one or opening the menu from the keyboard (Alt+XXX) won't
-			// highlight the first menu item.
-			for (int i = topLevelMenuItem.Items.Count - 1; i >= 1; i--)
-				topLevelMenuItem.Items.RemoveAt(i);
-
-			ClearMainSubMenu(state);
-
-			int cachedIndex = 0;
-			int added = 0;
-			var items = new List<object>();
-			foreach (var category in state.Groupings) {
-				items.Clear();
-				foreach (var entry in category) {
-					var menuCmd = entry.Value as IMainMenuCommand;
-					if (menuCmd != null && !menuCmd.IsVisible)
-						continue;
-					var provider = entry.Value as IMenuItemProvider;
-					if (provider != null) {
-						var cached = state.CachedMenuItems[cachedIndex++];
-						items.AddRange(provider.CreateMenuItems(cached));
-						// This condition should never be true. The called code should make sure that
-						// the cached menu item is always used if it's the first item in the menu.
-						if (items.Count > 0 && items[0] != cached && added == 0) {
-							Debug.Fail("The first returned menu item is not the cached menu item. It won't be selected when opened with Alt+XXX the first time.");
-							// We can't clear topLevelMenuItem.Items since it must always contain
-							// the first cached menu item (== cached). Just disable it instead.
-							cached.IsEnabled = false;
-						}
-					}
-					else {
-						var menuItem = state.CachedMenuItems[cachedIndex++];
-						menuItem.Command = CommandWrapper.Unwrap(entry.Value);
-						// We must initialize CommandTarget or the menu items for the standard commands
-						// (Ctrl+C, Ctrl+O etc) will be disabled after we stop debugging. We didn't
-						// need to do this when the menu wasn't in the toolbar.
-						menuItem.CommandTarget = MainWindow.Instance;
-						menuItem.Header = entry.Metadata.MenuHeader;
-						if (!string.IsNullOrEmpty(entry.Metadata.MenuIcon))
-							Globals.App.ImageManager.Add16x16Image(menuItem, entry.Value.GetType().Assembly, entry.Metadata.MenuIcon, false);
-
-						menuItem.InputGestureText = entry.Metadata.MenuInputGestureText;
-
-						var checkable = entry.Value as IMainMenuCheckableCommand;
-						bool? checkState = checkable == null ? null : checkable.IsChecked;
-						menuItem.IsCheckable = checkState != null;
-						if (checkState != null) {
-							var binding = checkable.Binding;
-							if (binding != null)
-								menuItem.SetBinding(MenuItem.IsCheckedProperty, binding);
-							else
-								menuItem.IsChecked = checkState.Value;
-						}
-
-						var initMenu = entry.Value as IMainMenuCommandInitialize;
-						if (initMenu != null)
-							initMenu.Initialize(menuItem);
-
-						items.Add(menuItem);
-					}
-				}
-				if (items.Count > 0) {
-					if (added > 0)
-						topLevelMenuItem.Items.Add(new Separator());
-					added += items.Count;
-					foreach (var item in items) {
-						// The first one is never removed from the Items collection so don't try to re-add it
-						if (topLevelMenuItem.Items.Count == 0 || topLevelMenuItem.Items[0] != item)
-							topLevelMenuItem.Items.Add(item);
-					}
-				}
-			}
-		}
-		#endregion
 
 		#region Message Hook
 		protected override void OnSourceInitialized(EventArgs e) {
@@ -1290,7 +1059,7 @@ namespace ICSharpCode.ILSpy {
 			case 0:
 				this.CommandBindings.Add(new CommandBinding(ILSpyTreeNode.TreeNodeActivatedEvent, TreeNodeActivatedExecuted));
 
-				Globals.App.MenuManager.InitializeContextMenu(treeView, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID, new GuidObjectsCreator());
+				DnSpy.App.MenuManager.InitializeContextMenu(treeView, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID, new GuidObjectsCreator());
 
 				DNSpySettings spySettings = this.spySettings;
 				this.spySettings = null;
@@ -2127,7 +1896,7 @@ namespace ICSharpCode.ILSpy {
 			if (e.Cancel)
 				return;
 
-			sessionSettings.ThemeName = Globals.App.ThemesManager.Theme.Name;
+			sessionSettings.ThemeName = DnSpy.App.ThemeManager.Theme.Name;
 			sessionSettings.ActiveAssemblyList = dnspyFileList.Name;
 			sessionSettings.WindowBounds = this.RestoreBounds;
 			sessionSettings.LeftColumnWidth = leftColumn.Width.Value;

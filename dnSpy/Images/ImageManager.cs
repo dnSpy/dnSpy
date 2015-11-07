@@ -39,7 +39,7 @@ namespace dnSpy.Images {
 
 		public void OnThemeChanged() {//TODO: Should be internal
 			imageCache.Clear();
-			isHighContrast = app.ThemesManager.Theme.IsHighContrast;
+			isHighContrast = app.ThemeManager.Theme.IsHighContrast;
 		}
 
 		static Color GetColor(BackgroundType bgType) {
@@ -52,7 +52,6 @@ namespace dnSpy.Images {
 			case BackgroundType.Search: return GetColorBackground(ColorType.ListBoxBackground);
 			case BackgroundType.ComboBox: return GetColorBackground(ColorType.CommonControlsComboBoxBackground);
 			case BackgroundType.ToolBar: return GetColorBackground(ColorType.ToolBarIconBackground);
-			case BackgroundType.ToolBarButtonChecked: return GetColorBackground(ColorType.ToolBarButtonChecked);
 			case BackgroundType.AppMenuMenuItem: return GetColorBackground(ColorType.ToolBarIconVerticalBackground);
 			case BackgroundType.ContextMenuItem: return GetColorBackground(ColorType.ContextMenuRectangleFill);
 			case BackgroundType.GridViewItem: return GetColorBackground(ColorType.GridViewBackground);
@@ -67,7 +66,7 @@ namespace dnSpy.Images {
 		}
 
 		static Color GetColorBackground(ColorType colorType) {
-			var c = Globals.App.ThemesManager.Theme.GetColor(colorType).Background as SolidColorBrush;
+			var c = DnSpy.App.ThemeManager.Theme.GetColor(colorType).Background as SolidColorBrush;
 			Debug.WriteLineIf(c == null, string.Format("Background color is null: {0}", colorType));
 			return c.Color;
 		}

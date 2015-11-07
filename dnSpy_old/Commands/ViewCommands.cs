@@ -21,8 +21,9 @@ using System;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Menus;
-using dnSpy.Menus;
+using dnSpy.Contracts.ToolBars;
 using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.UI.ToolBars;
 using dnSpy.Tabs;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
@@ -121,8 +122,8 @@ namespace dnSpy.Commands {
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Open (Ctrl+O)", ToolbarIcon = "Open", ToolbarCategory = "Open", ToolbarOrder = 2000)]
-	sealed class ToolbarFileOpenCommand : CommandWrapper {
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "Open", ToolTip = "Open (Ctrl+O)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 0)]
+	sealed class ToolbarFileOpenCommand : ToolBarButtonCommand {
 		public ToolbarFileOpenCommand()
 			: base(ApplicationCommands.Open) {
 		}

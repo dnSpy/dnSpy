@@ -67,7 +67,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		protected abstract void Write(ITextOutput output, Language language);
 
 		public override System.Windows.Media.Brush Foreground {
-			get { return Globals.App.ThemesManager.Theme.GetColor(ColorType.NodePublic).Foreground; }
+			get { return DnSpy.App.ThemeManager.Theme.GetColor(ColorType.NodePublic).Foreground; }
 		}
 
 		public void RaiseUIPropsChanged() {

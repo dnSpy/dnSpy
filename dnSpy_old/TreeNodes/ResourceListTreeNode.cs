@@ -44,11 +44,11 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public override object Icon {
-			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "FolderClosed", BackgroundType.TreeNode); }
+			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "FolderClosed", BackgroundType.TreeNode); }
 		}
 
 		public override object ExpandedIcon {
-			get { return Globals.App.ImageManager.GetImage(GetType().Assembly, "FolderOpen", BackgroundType.TreeNode); }
+			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "FolderOpen", BackgroundType.TreeNode); }
 		}
 
 		protected override void LoadChildren() {

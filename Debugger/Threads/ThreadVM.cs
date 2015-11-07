@@ -21,7 +21,7 @@ using System;
 using System.Runtime.InteropServices;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Threads {
 	enum ThreadType {

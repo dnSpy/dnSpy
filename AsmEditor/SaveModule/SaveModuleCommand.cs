@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.ToolBars;
+using dnSpy.Shared.UI.ToolBars;
 using dnSpy.Tabs;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -90,37 +92,42 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 	}
 
-	[ExportToolbarCommand(ToolTip = "Save All (Ctrl+Shift+S)",
-						  ToolbarIcon = "SaveAll",
-						  ToolbarCategory = "Open",
-						  ToolbarOrder = 2010)]
-	sealed class SaveAllToolbarCommand : ICommand {
+	[ExportToolBarButton(Icon = "SaveAll", ToolTip = "Save All (Ctrl+Shift+S)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 10)]
+	sealed class SaveAllToolbarCommand : ToolBarButtonBase, ICommand {
 		public SaveAllToolbarCommand() {
 			MainWindow.Instance.InputBindings.Add(new KeyBinding(this, Key.S, ModifierKeys.Control | ModifierKeys.Shift));
+		}
+
+		void ICommand.Execute(object parameter) {
+			ExecuteInternal();
+		}
+
+		bool ICommand.CanExecute(object parameter) {
+			return IsEnabledInternal();
+		}
+
+		event EventHandler ICommand.CanExecuteChanged {
+			add { CommandManager.RequerySuggested += value; }
+			remove { CommandManager.RequerySuggested -= value; }
+		}
+
+		public override void Execute(IToolBarItemContext context) {
+			ExecuteInternal();
+		}
+
+		public override bool IsEnabled(IToolBarItemContext context) {
+			return IsEnabledInternal();
 		}
 
 		static IUndoObject[] GetDirtyObjects() {
 			return UndoCommandManager.Instance.GetModifiedObjects().ToArray();
 		}
 
-		public event EventHandler CanExecuteChanged {
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
-		}
-
-		public bool CanExecute(object parameter) {
-			return CanExecute();
-		}
-
-		public void Execute(object parameter) {
-			Execute();
-		}
-
-		public static bool CanExecute() {
+		internal static bool IsEnabledInternal() {
 			return GetDirtyObjects().Length > 0;
 		}
 
-		public static void Execute() {
+		internal static void ExecuteInternal() {
 			Saver.SaveAssemblies(GetDirtyObjects());
 		}
 	}
@@ -128,11 +135,11 @@ namespace dnSpy.AsmEditor.SaveModule {
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "Save A_ll...", Icon = "SaveAll", InputGestureText = "Ctrl+Shift+S", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 20)]
 	sealed class SaveAllCommand : FileMenuHandler {
 		public override bool IsEnabled(AsmEditorContext context) {
-			return SaveAllToolbarCommand.CanExecute();
+			return SaveAllToolbarCommand.IsEnabledInternal();
 		}
 
 		public override void Execute(AsmEditorContext context) {
-			SaveAllToolbarCommand.Execute();
+			SaveAllToolbarCommand.ExecuteInternal();
 		}
 	}
 }

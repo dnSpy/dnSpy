@@ -33,7 +33,7 @@ namespace dnSpy.Debugger {
 			InstallRoutedCommands();
 			InstallKeyboardShortcutCommands();
 			DebugManager.Instance.OnLoaded();
-			ToolbarDebugCommand.OnLoaded();
+			DebugToolBarButtonCommand.OnLoaded();
 			Breakpoints.BreakpointManager.Instance.OnLoaded();
 			CallStack.StackFrameManager.Instance.OnLoaded();
 			Exceptions.ExceptionManager.Instance.OnLoaded();

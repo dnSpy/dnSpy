@@ -22,7 +22,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using dndbg.Engine;
-using dnSpy.MVVM;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class CallStackVM : ViewModelBase {

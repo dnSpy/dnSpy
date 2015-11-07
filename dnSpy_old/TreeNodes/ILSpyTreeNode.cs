@@ -243,13 +243,13 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			get {
 				if (IsPublicAPI)
 					if (IsAutoLoaded) {
-						return Globals.App.ThemesManager.Theme.GetColor(ColorType.NodeAutoLoaded).Foreground;
+						return DnSpy.App.ThemeManager.Theme.GetColor(ColorType.NodeAutoLoaded).Foreground;
 					}
 					else {
-						return Globals.App.ThemesManager.Theme.GetColor(ColorType.NodePublic).Foreground;
+						return DnSpy.App.ThemeManager.Theme.GetColor(ColorType.NodePublic).Foreground;
 					}
 				else
-					return Globals.App.ThemesManager.Theme.GetColor(ColorType.NodeNotPublic).Foreground;
+					return DnSpy.App.ThemeManager.Theme.GetColor(ColorType.NodeNotPublic).Foreground;
 			}
 		}
 

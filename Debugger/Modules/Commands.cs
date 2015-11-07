@@ -31,9 +31,9 @@ using dnSpy.Debugger.IMModules;
 using dnSpy.Debugger.Memory;
 using dnSpy.Files;
 using dnSpy.MVVM;
-using dnSpy.MVVM.Dialogs;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.UI.MVVM.Dialogs;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 

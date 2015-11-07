@@ -67,14 +67,14 @@ namespace dnSpy.Debugger.Modules {
 
 		public ModulesControl() {
 			InitializeComponent();
-			Globals.App.ThemesManager.ThemeChanged += ThemesManager_ThemeChanged;
+			DnSpy.App.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 		}
 
 		public ICommand ShowCommand {
 			get { return new RelayCommand(a => Show(), a => CanShow); }
 		}
 
-		void ThemesManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
 			var vm = DataContext as ModulesVM;
 			if (vm != null)
 				vm.RefreshThemeFields();
