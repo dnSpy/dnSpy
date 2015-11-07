@@ -143,7 +143,7 @@ namespace dnSpy.Files {
 				if (useMemoryMappedIO)
 					peImage = new PEImage(filename);
 				else
-					peImage = new PEImage(File.ReadAllBytes(filename));
+					peImage = new PEImage(File.ReadAllBytes(filename), filename);
 
 				var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
 				bool isDotNet = dotNetDir.VirtualAddress != 0 && dotNetDir.Size >= 0x48;
