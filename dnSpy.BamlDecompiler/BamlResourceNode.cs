@@ -48,6 +48,10 @@ namespace dnSpy.BamlDecompiler {
 			this.bamlData = bamlData;
 		}
 
+		public override string IconName {
+			get { return "XamlFile"; }
+		}
+
 		void Disassemble(ModuleDef module, BamlDocument document, Language lang,
 			ITextOutput output, out IHighlightingDefinition highlight, CancellationToken token) {
 			var disassembler = new BamlDisassembler(lang, output, token);
