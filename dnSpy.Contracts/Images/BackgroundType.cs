@@ -22,7 +22,7 @@ namespace dnSpy.Contracts.Images {
 	/// Image background
 	/// </summary>
 	public enum BackgroundType {
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		// ********************************************************************************
 		// ONLY APPEND VALUES. DON'T REMOVE SORT OR RENAME ANYTHING. (unless you can recompile
 		// EVERYTHING that depend on these values)
@@ -42,6 +42,6 @@ namespace dnSpy.Contracts.Images {
 		TitleAreaActive,
 		TitleAreaInactive,
 		CommandBar,
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

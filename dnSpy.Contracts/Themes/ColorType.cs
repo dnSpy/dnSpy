@@ -22,7 +22,7 @@ namespace dnSpy.Contracts.Themes {
 	/// Color type
 	/// </summary>
 	public enum ColorType : uint {
-#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable 1591 // Missing XML comment for publicly visible type or member
 		// The order and names of the following constants must match dnSpy.NRefactory.TextTokenType
 		Text = 0x00004000,
 		FirstNR = Text,	// Text should be first so ToString() picks it instead of FirstNR
@@ -545,6 +545,6 @@ namespace dnSpy.Contracts.Themes {
 		// Add new color types before this comment
 
 		LastUI,
-#pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }
