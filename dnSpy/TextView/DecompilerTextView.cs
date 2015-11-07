@@ -317,6 +317,10 @@ namespace ICSharpCode.ILSpy.TextView {
 			else if (segment.Reference is ILVariable) {
 				var ilVar = (ILVariable)segment.Reference;
 				return GenerateToolTip(ilVar.OriginalVariable, ilVar.Name);
+			} else if (segment.Reference is string) {
+				return new TextBlock {
+					Text = (string)segment.Reference
+				};
 			}
 
 			return null;
