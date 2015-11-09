@@ -17,9 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Xml.Linq;
+using dnSpy.Contracts;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointSettings : ViewModelBase {
@@ -42,15 +41,14 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 		bool showTokens;
 
-		const string SETTINGS_NAME = "BreakpointSettings";
+		const string SETTINGS_NAME = "42CB1310-641D-4EB7-971D-16DC5CF9A40D";
 
 		void Load() {
 			try {
 				disableSaveCounter++;
 
-				var settings = DNSpySettings.Load();
-				var csx = settings[SETTINGS_NAME];
-				ShowTokens = (bool?)csx.Attribute("ShowTokens") ?? true;
+				var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+				ShowTokens = section.Attribute<bool?>("ShowTokens") ?? true;
 			}
 			finally {
 				disableSaveCounter--;
@@ -60,23 +58,12 @@ namespace dnSpy.Debugger.Breakpoints {
 		void Save() {
 			if (this != BreakpointSettings.Instance)
 				return;
-			DNSpySettings.Update(root => Save(root));
-		}
-
-		void Save(XElement root) {
-			if (this != BreakpointSettings.Instance)
-				return;
 			if (disableSaveCounter != 0)
 				return;
 
-			var csx = new XElement(SETTINGS_NAME);
-			var existingElement = root.Element(SETTINGS_NAME);
-			if (existingElement != null)
-				existingElement.ReplaceWith(csx);
-			else
-				root.Add(csx);
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
 
-			csx.SetAttributeValue("ShowTokens", ShowTokens);
+			section.Attribute("ShowTokens", ShowTokens);
 		}
 	}
 }

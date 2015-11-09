@@ -19,11 +19,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.AvalonEdit;
-using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Debugger.Breakpoints;
@@ -510,6 +511,13 @@ namespace dnSpy.Debugger {
 
 	[ExportIconBarContextMenuEntry(InputGestureText = "Ctrl+F9", Category = "Debug", Order = 110)]
 	sealed class EnableAndDisableBreakpointCommand : IIconBarContextMenuEntry2 {
+		readonly IImageManager imageManager;
+
+		[ImportingConstructor]
+		EnableAndDisableBreakpointCommand(IImageManager imageManager) {
+			this.imageManager = imageManager;
+		}
+
 		public bool IsVisible(IIconBarObject context) {
 			return context is ILCodeBreakpoint;
 		}
@@ -529,7 +537,7 @@ namespace dnSpy.Debugger {
 			if (bpm != null) {
 				menuItem.IsEnabled = EnableDisableBreakpointDebugCtxMenuCommand.IsMenuItemEnabledInternal(1);
 				menuItem.Header = EnableDisableBreakpointDebugCtxMenuCommand.GetHeaderInternal(bpm.IsEnabled, 1);
-				DnSpy.App.ImageManager.Add16x16Image(menuItem, GetType().Assembly, EnableDisableBreakpointDebugCtxMenuCommand.GetIconInternal(), true);
+				imageManager.Add16x16Image(menuItem, GetType().Assembly, EnableDisableBreakpointDebugCtxMenuCommand.GetIconInternal(), true);
 			}
 		}
 	}

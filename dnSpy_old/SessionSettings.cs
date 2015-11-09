@@ -16,16 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows;
-using System.Xml.Linq;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Settings;
 using dnSpy.Tabs;
 
 namespace ICSharpCode.ILSpy {
@@ -34,44 +29,46 @@ namespace ICSharpCode.ILSpy {
 	/// Loaded at startup; saved at exit.
 	/// </summary>
 	public sealed class SessionSettings : INotifyPropertyChanged {
-		public SessionSettings(DNSpySettings spySettings) {
-			XElement doc = spySettings["SessionSettings"];
+		const string SETTINGS_NAME = "66D5A354-FF55-4FD6-8F30-2D0C3C8250EC";
+
+		public SessionSettings() {
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
 
 			this.FilterSettings = new FilterSettings();
 
-			this.ActiveAssemblyList = Unescape((string)doc.Element("ActiveAssemblyList"));
+			this.ActiveAssemblyList = section.Attribute<string>("ActiveAssemblyList");
 
-			this.WindowState = FromString((string)doc.Element("WindowState"), WindowState.Normal);
-			this.IsFullScreen = FromString((string)doc.Element("IsFullScreen"), false);
-			var winBoundsString = (string)doc.Element("WindowBounds");
+			this.WindowState = section.Attribute<WindowState?>("WindowState") ?? WindowState.Normal;
+			this.IsFullScreen = section.Attribute<bool?>("IsFullScreen") ?? false;
+			var winBoundsString = section.Attribute<Rect?>("WindowBounds");
 			if (winBoundsString != null)
-				this.WindowBounds = FromString(winBoundsString, DefaultWindowBounds);
-			this.LeftColumnWidth = FromString((string)doc.Element("LeftColumnWidth"), 0.0);
-			this.WordWrap = FromString((string)doc.Element("WordWrap"), false);
-			this.HighlightCurrentLine = FromString((string)doc.Element("HighlightCurrentLine"), true);
-			this.TopPaneSettings.Name = FromString((string)doc.Element("TopPaneName"), string.Empty);
-			this.TopPaneSettings.Height = FromString((string)doc.Element("TopPaneHeight"), 200.0);
-			this.BottomPaneSettings.Name = FromString((string)doc.Element("BottomPaneName"), string.Empty);
-			this.BottomPaneSettings.Height = FromString((string)doc.Element("BottomPaneHeight"), 200.0);
-			this.ThemeName = (string)doc.Element("ThemeName") ?? DnSpy.App.ThemeManager.DefaultThemeName;
+				this.WindowBounds = winBoundsString.Value;
+			this.LeftColumnWidth = section.Attribute<double?>("LeftColumnWidth") ?? 0.0;
+			this.WordWrap = section.Attribute<bool?>("WordWrap") ?? false;
+			this.HighlightCurrentLine = section.Attribute<bool?>("HighlightCurrentLine") ?? true;
+			this.TopPaneSettings.Name = section.Attribute<string>("TopPaneName") ?? string.Empty;
+			this.TopPaneSettings.Height = section.Attribute<double?>("TopPaneHeight") ?? 200.0;
+			this.BottomPaneSettings.Name = section.Attribute<string>("BottomPaneName") ?? string.Empty;
+			this.BottomPaneSettings.Height = section.Attribute<double?>("BottomPaneHeight") ?? 200.0;
+			this.ThemeName = section.Attribute<string>("ThemeName") ?? DnSpy.App.ThemeManager.DefaultThemeName;
 
-			var ignoreXml = doc.Element("IgnoredWarnings");
-			if (ignoreXml != null) {
-				foreach (var child in ignoreXml.Elements("Warning")) {
-					var id = Unescape((string)child);
+			var ignoreSection = section.TryGetSection("IgnoredWarnings");
+			if (ignoreSection != null) {
+				foreach (var warning in ignoreSection.SectionsWithName("Warning")) {
+					var id = warning.Attribute<string>("id");
 					if (id != null)
 						IgnoredWarnings.Add(id);
 				}
 			}
 
-			var groups = doc.Element("TabGroups");
+			var groups = section.TryGetSection("TabGroups");
 			if (groups == null) {
 				this.TabsFound = false;
 				this.SavedTabGroupsState = new SavedTabGroupsState();
 			}
 			else {
 				this.TabsFound = true;
-				this.SavedTabGroupsState = SavedTabGroupsState.FromXml(groups);
+				this.SavedTabGroupsState = SavedTabGroupsState.Read(groups);
 			}
 		}
 
@@ -127,70 +124,29 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		public void Save() {
-			XElement doc = new XElement("SessionSettings");
-			if (this.ActiveAssemblyList != null) {
-				doc.Add(new XElement("ActiveAssemblyList", Escape(this.ActiveAssemblyList)));
-			}
-			doc.Add(new XElement("WindowState", ToString(this.WindowState)));
-			doc.Add(new XElement("IsFullScreen", ToString(this.IsFullScreen)));
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
+			if (this.ActiveAssemblyList != null)
+				section.Attribute("ActiveAssemblyList", this.ActiveAssemblyList);
+			section.Attribute("WindowState", this.WindowState);
+			section.Attribute("IsFullScreen", this.IsFullScreen);
 			if (this.WindowBounds != null)
-				doc.Add(new XElement("WindowBounds", ToString(this.WindowBounds)));
-			doc.Add(new XElement("WordWrap", ToString(this.WordWrap)));
-			doc.Add(new XElement("HighlightCurrentLine", ToString(this.HighlightCurrentLine)));
-			doc.Add(new XElement("LeftColumnWidth", ToString(this.LeftColumnWidth)));
-			doc.Add(new XElement("TopPaneHeight", ToString(this.TopPaneSettings.Height)));
-			doc.Add(new XElement("TopPaneName", ToString(this.TopPaneSettings.Name)));
-			doc.Add(new XElement("BottomPaneHeight", ToString(this.BottomPaneSettings.Height)));
-			doc.Add(new XElement("BottomPaneName", ToString(this.BottomPaneSettings.Name)));
-			doc.Add(new XElement("ThemeName", ToString(this.ThemeName)));
-			doc.Add(new XElement("IgnoredWarnings", IgnoredWarnings.Select(id => new XElement("Warning", Escape(id)))));
+				section.Attribute("WindowBounds", this.WindowBounds);
+			section.Attribute("WordWrap", this.WordWrap);
+			section.Attribute("HighlightCurrentLine", this.HighlightCurrentLine);
+			section.Attribute("LeftColumnWidth", this.LeftColumnWidth);
+			section.Attribute("TopPaneHeight", this.TopPaneSettings.Height);
+			section.Attribute("TopPaneName", this.TopPaneSettings.Name);
+			section.Attribute("BottomPaneHeight", this.BottomPaneSettings.Height);
+			section.Attribute("BottomPaneName", this.BottomPaneSettings.Name);
+			section.Attribute("ThemeName", this.ThemeName);
+			if (IgnoredWarnings.Count != 0) {
+				var ignoredSection = section.CreateSection("IgnoredWarnings");
+				foreach (var id in IgnoredWarnings)
+					ignoredSection.CreateSection("Warning").Attribute("id", id);
+			}
 
 			if (ICSharpCode.ILSpy.Options.DisplaySettingsPanel.CurrentDisplaySettings.RestoreTabsAtStartup)
-				doc.Add(SavedTabGroupsState.ToXml(new XElement("TabGroups")));
-
-			DNSpySettings.SaveSettings(doc);
-		}
-
-		static bool IsValidChar(char c) {
-			return c >= 0x20 && c != '©';
-		}
-
-		static Regex regex = new Regex("©(?<num>[0-9A-f]{4})");
-
-		public static string Escape(string p) {
-			if (p == null)
-				return p;
-			StringBuilder sb = new StringBuilder();
-			foreach (char ch in p) {
-				if (IsValidChar(ch))
-					sb.Append(ch);
-				else
-					sb.AppendFormat("©{0:X4}", (int)ch);
-			}
-			return sb.ToString();
-		}
-
-		public static string Unescape(string p) {
-			if (p == null)
-				return p;
-			return regex.Replace(p, m => ((char)int.Parse(m.Groups["num"].Value, NumberStyles.HexNumber)).ToString());
-		}
-
-		internal static T FromString<T>(string s, T defaultValue) {
-			if (s == null)
-				return defaultValue;
-			try {
-				TypeConverter c = TypeDescriptor.GetConverter(typeof(T));
-				return (T)c.ConvertFromInvariantString(s);
-			}
-			catch (FormatException) {
-				return defaultValue;
-			}
-		}
-
-		internal static string ToString<T>(T obj) {
-			TypeConverter c = TypeDescriptor.GetConverter(typeof(T));
-			return c.ConvertToInvariantString(obj);
+				SavedTabGroupsState.Write(section.CreateSection("TabGroups"));
 		}
 	}
 }

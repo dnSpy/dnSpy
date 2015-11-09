@@ -72,6 +72,14 @@
       <SubType>Code</SubType>
     </Compile>
     <AppDesigner Include="Properties\" />
+    <Compile Include="Settings\SectionAttributes.cs" />
+    <Compile Include="Settings\SettingsManager.cs" />
+    <Compile Include="Settings\SettingsSection.cs" />
+    <Compile Include="Settings\SettingsSectionCreator.cs" />
+    <Compile Include="Settings\XmlSettingsConstants.cs" />
+    <Compile Include="Settings\XmlSettingsReader.cs" />
+    <Compile Include="Settings\XmlSettingsWriter.cs" />
+    <Compile Include="Settings\XmlUtils.cs" />
     <Compile Include="Themes\Color.cs" />
     <Compile Include="Themes\ColorInfo.cs" />
     <Compile Include="Themes\ColorInfos.cs" />

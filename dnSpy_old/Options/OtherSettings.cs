@@ -22,14 +22,14 @@ using System.IO;
 using System.Security;
 using System.Threading;
 using System.Windows.Input;
-using System.Xml.Linq;
+using dnSpy.Contracts;
 using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
 using Microsoft.Win32;
 
 namespace dnSpy.Options {
-	[ExportOptionPage(Title = "Other", Order = 3)]
+	[ExportOptionPage(Title = "Other", Order = 5)]
 	sealed class OtherSettingsCreator : IOptionPageCreator {
 		public OptionPage Create() {
 			return new OtherSettings();
@@ -46,7 +46,7 @@ namespace dnSpy.Options {
 				if (settings != null)
 					return settings;
 				var s = new OtherSettings();
-				s.Load(DNSpySettings.Load());
+				s.Load();
 				Interlocked.CompareExchange(ref settings, s, null);
 				return settings;
 			}
@@ -83,29 +83,22 @@ namespace dnSpy.Options {
 		}
 		bool deserializeResources;
 
-		const string SETTINGS_SECTION_NAME = "OtherSettings";
-		public override void Load(DNSpySettings settings) {
-			var xelem = settings[SETTINGS_SECTION_NAME];
-			this.UseMemoryMappedIO = (bool?)xelem.Attribute("UseMemoryMappedIO") ?? true;
-			this.DeserializeResources = (bool?)xelem.Attribute("DeserializeResources") ?? true;
+		const string SETTINGS_NAME = "FF5E504F-2C3F-4C8E-A9B1-6D8D1D7053B9";
+		public override void Load() {
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+			this.UseMemoryMappedIO = section.Attribute<bool?>("UseMemoryMappedIO") ?? true;
+			this.DeserializeResources = section.Attribute<bool?>("DeserializeResources") ?? true;
 		}
 
-		public override RefreshFlags Save(XElement root) {
+		public override RefreshFlags Save() {
 			var flags = RefreshFlags.None;
 
 			if (!this.UseMemoryMappedIO && Instance.UseMemoryMappedIO)
 				flags |= RefreshFlags.DisableMmap;
 
-			var xelem = new XElement(SETTINGS_SECTION_NAME);
-			xelem.SetAttributeValue("UseMemoryMappedIO", this.UseMemoryMappedIO);
-			xelem.SetAttributeValue("DeserializeResources", this.DeserializeResources);
-
-
-			var currElem = root.Element(SETTINGS_SECTION_NAME);
-			if (currElem != null)
-				currElem.ReplaceWith(xelem);
-			else
-				root.Add(xelem);
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
+			section.Attribute("UseMemoryMappedIO", this.UseMemoryMappedIO);
+			section.Attribute("DeserializeResources", this.DeserializeResources);
 
 			WriteTo(Instance);
 

@@ -19,30 +19,32 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Images {
+	[Export, Export(typeof(IImageManager))]
 	public sealed class ImageManager : IImageManager {//TODO: REMOVE public
 		readonly Dictionary<Tuple<string, Color>, BitmapSource> imageCache = new Dictionary<Tuple<string, Color>, BitmapSource>();
 		bool isHighContrast;
-		readonly IApp app;
+		readonly IThemeManager themeManager;
 
-		public ImageManager(IApp app) {
-			this.app = app;
+		[ImportingConstructor]
+		ImageManager(IThemeManager themeManager) {
+			this.themeManager = themeManager;
 		}
 
 		public void OnThemeChanged() {//TODO: Should be internal
 			imageCache.Clear();
-			isHighContrast = app.ThemeManager.Theme.IsHighContrast;
+			isHighContrast = themeManager.Theme.IsHighContrast;
 		}
 
-		static Color GetColor(BackgroundType bgType) {
+		Color GetColor(BackgroundType bgType) {
 			switch (bgType) {
 			case BackgroundType.Button: return GetColorBackground(ColorType.CommonControlsButtonIconBackground);
 			case BackgroundType.TextEditor: return GetColorBackground(ColorType.DefaultText);
@@ -65,8 +67,8 @@ namespace dnSpy.Images {
 			}
 		}
 
-		static Color GetColorBackground(ColorType colorType) {
-			var c = DnSpy.App.ThemeManager.Theme.GetColor(colorType).Background as SolidColorBrush;
+		Color GetColorBackground(ColorType colorType) {
+			var c = themeManager.Theme.GetColor(colorType).Background as SolidColorBrush;
 			Debug.WriteLineIf(c == null, string.Format("Background color is null: {0}", colorType));
 			return c.Color;
 		}

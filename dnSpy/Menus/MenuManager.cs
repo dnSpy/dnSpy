@@ -19,13 +19,14 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Contracts;
 using dnSpy.Contracts.Command;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Shared.UI.Images;
 using dnSpy.Shared.UI.MVVM;
@@ -73,8 +74,9 @@ namespace dnSpy.Menus {
 		}
 	}
 
+	[Export, Export(typeof(IMenuManager))]
 	sealed class MenuManager : IMenuManager {
-		readonly IApp app;
+		readonly IImageManager imageManager;
 
 		public bool IsMenuOpened {
 			get { return menuOpenedCounter != 0; }
@@ -92,9 +94,12 @@ namespace dnSpy.Menus {
 			menuOpenedCounter--;
 		}
 
-		public MenuManager(IApp app) {
-			this.app = app;
+		[ImportingConstructor]
+		MenuManager(IImageManager imageManager, [ImportMany] IEnumerable<Lazy<IMenu, IMenuMetadata>> mefMenus, [ImportMany] IEnumerable<Lazy<IMenuItem, IMenuItemMetadata>> mefMenuItems) {
+			this.imageManager = imageManager;
 			this.guidToGroups = null;
+			this.mefMenus = mefMenus;
+			this.mefMenuItems = mefMenuItems;
 		}
 
 		public void InitializeContextMenu(FrameworkElement elem, Guid guid, IGuidObjectsCreator creator, IContextMenuInitializer initCtxMenu) {
@@ -114,7 +119,7 @@ namespace dnSpy.Menus {
 
 		void InitializeMenus() {
 			guidToMenu = new Dictionary<Guid, List<MenuMD>>();
-			foreach (var item in app.CompositionContainer.GetExports<IMenu, IMenuMetadata>()) {
+			foreach (var item in mefMenus) {
 				string ownerGuidString = item.Metadata.OwnerGuid ?? MenuConstants.APP_MENU_GUID;
 				Guid ownerGuid;
 				bool b = Guid.TryParse(ownerGuidString, out ownerGuid);
@@ -155,11 +160,12 @@ namespace dnSpy.Menus {
 				list.Sort((a, b) => a.Metadata.Order.CompareTo(b.Metadata.Order));
 			}
 		}
+		readonly IEnumerable<Lazy<IMenu, IMenuMetadata>> mefMenus;
 		Dictionary<Guid, List<MenuMD>> guidToMenu;
 
 		void InitializeMenuItems() {
 			var dict = new Dictionary<Guid, Dictionary<string, MenuItemGroupMD>>();
-			foreach (var item in app.CompositionContainer.GetExports<IMenuItem, IMenuItemMetadata>()) {
+			foreach (var item in mefMenuItems) {
 				string ownerGuidString = item.Metadata.OwnerGuid ?? MenuConstants.CTX_MENU_GUID;
 				Guid ownerGuid;
 				bool b = Guid.TryParse(ownerGuidString, out ownerGuid);
@@ -205,6 +211,7 @@ namespace dnSpy.Menus {
 				guidToGroups.Add(kv.Key, groups);
 			}
 		}
+		readonly IEnumerable<Lazy<IMenuItem, IMenuItemMetadata>> mefMenuItems;
 		Dictionary<Guid, List<MenuItemGroupMD>> guidToGroups;
 
 		internal static bool ParseGroup(string s, out double order, out string name) {
@@ -319,7 +326,7 @@ namespace dnSpy.Menus {
 					var routedCommand = cmdHolder.Command as RoutedCommand;
 					lastIsEnabledCallValue = commandTarget == null || routedCommand == null || routedCommand.CanExecute(ctx, commandTarget);
 				}
-				app.ImageManager.Add16x16Image(menuItem, item.GetType().Assembly, iconName, isCtxMenu, lastIsEnabledCallValue);
+				imageManager.Add16x16Image(menuItem, item.GetType().Assembly, iconName, isCtxMenu, lastIsEnabledCallValue);
 			}
 
 			if (metadata.Guid != null) {
@@ -343,7 +350,7 @@ namespace dnSpy.Menus {
 			menuItem.Command = cmdHolder != null ? cmdHolder.Command : new RelayCommand(a => item.Execute(ctx), a => {
 				bool b = item.IsEnabled(ctx);
 				if (lastIsEnabledCallValue != b && !string.IsNullOrEmpty(iconName))
-					app.ImageManager.Add16x16Image(menuItem, item.GetType().Assembly, iconName, isCtxMenu, lastIsEnabledCallValue = b);
+					imageManager.Add16x16Image(menuItem, item.GetType().Assembly, iconName, isCtxMenu, lastIsEnabledCallValue = b);
 				return b;
 			});
 

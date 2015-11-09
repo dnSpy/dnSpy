@@ -19,14 +19,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using dnSpy.Contracts;
+using System.ComponentModel.Composition;
 using dnSpy.Contracts.Menus;
 using dnSpy.Shared.UI.Menus;
 
 namespace dnSpy.Themes {
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_THEMES_GUID, Group = MenuConstants.GROUP_APP_MENU_THEMES_THEMES, Order = 0)]
 	sealed class ThemesMenu : MenuItemBase, IMenuItemCreator {
+		readonly ThemeManager themeManager;
+
+		[ImportingConstructor]
+		ThemesMenu(ThemeManager themeManager) {
+			this.themeManager = themeManager;
+		}
+
 		public override void Execute(IMenuItemContext context) {
 		}
 
@@ -49,14 +55,10 @@ namespace dnSpy.Themes {
 		}
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
-			var mgr = DnSpy.App.ThemeManager as ThemeManager;
-			Debug.Assert(mgr != null);
-			if (mgr == null)
-				yield break;
-			foreach (var theme in mgr.AllThemesSorted) {
+			foreach (var theme in themeManager.AllThemesSorted) {
 				var attr = new ExportMenuItemAttribute { Header = theme.MenuName };
 				var tmp = theme;
-				var item = new MyMenuItem(ctx => mgr.Theme = tmp, theme == mgr.Theme);
+				var item = new MyMenuItem(ctx => themeManager.Theme = tmp, theme == themeManager.Theme);
 				yield return new CreatedMenuItem(attr, item);
 			}
 		}

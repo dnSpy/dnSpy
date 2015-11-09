@@ -18,15 +18,15 @@
 */
 
 using System.ComponentModel;
-using System.Xml.Linq;
 using dnlib.DotNet;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Settings;
 using dnSpy.Files;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointListSettings {
 		public static readonly BreakpointListSettings Instance = new BreakpointListSettings();
-		const string SETTINGS_NAME = "Breakpoints";
+		const string SETTINGS_NAME = "FBC6039C-8A7A-49DC-9C32-52C1B73DE0A3";
 		int disableSaveCounter;
 
 		BreakpointListSettings() {
@@ -47,10 +47,6 @@ namespace dnSpy.Debugger.Breakpoints {
 				Save();
 		}
 
-		void Save() {
-			DNSpySettings.Update(root => Save(root));
-		}
-
 		internal void OnLoaded() {
 			disableSaveCounter++;
 			try {
@@ -62,17 +58,16 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		void LoadInternal() {
-			DNSpySettings settings = DNSpySettings.Load();
-			var bpsx = settings[SETTINGS_NAME];
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
 			BreakpointManager.Instance.Clear();
-			foreach (var bpx in bpsx.Elements("Breakpoint")) {
-				uint? token = (uint?)bpx.Attribute("Token");
-				string asmFullName = SessionSettings.Unescape((string)bpx.Attribute("AssemblyFullName"));
-				string moduleName = SessionSettings.Unescape((string)bpx.Attribute("ModuleName"));
-				bool? isDynamic = (bool?)bpx.Attribute("IsDynamic");
-				bool? isInMemory = (bool?)bpx.Attribute("IsInMemory");
-				uint? ilOffset = (uint?)bpx.Attribute("ILOffset");
-				bool? isEnabled = (bool?)bpx.Attribute("IsEnabled");
+			foreach (var bpx in section.SectionsWithName("Breakpoint")) {
+				uint? token = bpx.Attribute<uint?>("Token");
+				string asmFullName = bpx.Attribute<string>("AssemblyFullName");
+				string moduleName = bpx.Attribute<string>("ModuleName");
+				bool? isDynamic = bpx.Attribute<bool?>("IsDynamic");
+				bool? isInMemory = bpx.Attribute<bool?>("IsInMemory");
+				uint? ilOffset = bpx.Attribute<uint?>("ILOffset");
+				bool? isEnabled = bpx.Attribute<bool?>("IsEnabled");
 
 				if (token == null)
 					continue;
@@ -91,7 +86,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				var key = new SerializedDnSpyToken(snModule, token.Value);
 
 				if (!isInMemory.Value && !isDynamic.Value) {
-					var s = SessionSettings.Unescape((string)bpx.Attribute("Method"));
+					var s = bpx.Attribute<string>("Method");
 					if (s == null || s != GetMethodAsString(key))
 						continue;
 				}
@@ -101,17 +96,12 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		void Save(XElement root) {
+		void Save() {
 			// Prevent Load() from saving the settings every time a new BP is added
 			if (disableSaveCounter != 0)
 				return;
 
-			var bps = new XElement(SETTINGS_NAME);
-			var existingElement = root.Element(SETTINGS_NAME);
-			if (existingElement != null)
-				existingElement.ReplaceWith(bps);
-			else
-				root.Add(bps);
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
 
 			foreach (var bp in BreakpointManager.Instance.Breakpoints) {
 				var ilbp = bp as ILCodeBreakpoint;
@@ -121,21 +111,20 @@ namespace dnSpy.Debugger.Breakpoints {
 					if (string.IsNullOrEmpty(ilbp.SerializedDnSpyToken.Module.AssemblyFullName))
 						continue;
 
-					var bpx = new XElement("Breakpoint");
-					bpx.SetAttributeValue("Token", ilbp.SerializedDnSpyToken.Token);
-					bpx.SetAttributeValue("AssemblyFullName", SessionSettings.Escape(ilbp.SerializedDnSpyToken.Module.AssemblyFullName));
-					bpx.SetAttributeValue("ModuleName", SessionSettings.Escape(ilbp.SerializedDnSpyToken.Module.ModuleName));
-					bpx.SetAttributeValue("IsDynamic", ilbp.SerializedDnSpyToken.Module.IsDynamic);
-					bpx.SetAttributeValue("IsInMemory", ilbp.SerializedDnSpyToken.Module.IsInMemory);
-					bpx.SetAttributeValue("ILOffset", ilbp.ILOffset);
-					bpx.SetAttributeValue("IsEnabled", ilbp.IsEnabled);
+					var bpx = section.CreateSection("Breakpoint");
+					bpx.Attribute("Token", ilbp.SerializedDnSpyToken.Token);
+					bpx.Attribute("AssemblyFullName", ilbp.SerializedDnSpyToken.Module.AssemblyFullName);
+					bpx.Attribute("ModuleName", ilbp.SerializedDnSpyToken.Module.ModuleName);
+					bpx.Attribute("IsDynamic", ilbp.SerializedDnSpyToken.Module.IsDynamic);
+					bpx.Attribute("IsInMemory", ilbp.SerializedDnSpyToken.Module.IsInMemory);
+					bpx.Attribute("ILOffset", ilbp.ILOffset);
+					bpx.Attribute("IsEnabled", ilbp.IsEnabled);
 					if (!ilbp.SerializedDnSpyToken.Module.IsInMemory && !ilbp.SerializedDnSpyToken.Module.IsDynamic) {
 						var s = GetMethodAsString(ilbp.SerializedDnSpyToken);
 						if (s == null)
 							continue;
-						bpx.SetAttributeValue("Method", SessionSettings.Escape(s));
+						bpx.Attribute("Method", s);
 					}
-					bps.Add(bpx);
 					continue;
 				}
 

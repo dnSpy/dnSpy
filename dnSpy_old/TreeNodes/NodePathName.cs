@@ -20,8 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Xml.Linq;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.Settings;
 
 namespace dnSpy.TreeNodes {
 	[DebuggerDisplay("{Id} - {Name}")]
@@ -46,17 +45,16 @@ namespace dnSpy.TreeNodes {
 			this.name = name;
 		}
 
-		public XElement ToXml(XElement xml) {
-			xml.SetAttributeValue("id", SessionSettings.Escape(id));
-			xml.SetAttributeValue("name", SessionSettings.Escape(name));
-			return xml;
+		public void Write(ISettingsSection section) {
+			section.Attribute("id", id);
+			section.Attribute("name", name);
 		}
 
-		public static NodePathName FromXml(XElement doc) {
-			if (doc == null)
+		public static NodePathName Read(ISettingsSection section) {
+			if (section == null)
 				return new NodePathName();
-			var id = SessionSettings.FromString(SessionSettings.Unescape((string)doc.Attribute("id")), string.Empty);
-			var name = SessionSettings.FromString(SessionSettings.Unescape((string)doc.Attribute("name")), string.Empty);
+			var id = section.Attribute<string>("id") ?? string.Empty;
+			var name = section.Attribute<string>("name") ?? string.Empty;
 			return new NodePathName(id, name);
 		}
 
@@ -90,17 +88,16 @@ namespace dnSpy.TreeNodes {
 			get { return names ?? (names = new List<NodePathName>()); }
 		}
 
-		public XElement ToXml(XElement xml) {
+		public void Write(ISettingsSection section) {
 			foreach (var name in names)
-				xml.Add(name.ToXml(new XElement("Name")));
-			return xml;
+				name.Write(section.CreateSection("Name"));
 		}
 
-		public static FullNodePathName FromXml(XElement doc) {
+		public static FullNodePathName Read(ISettingsSection section) {
 			var fullPath = new FullNodePathName();
-			if (doc != null) {
-				foreach (var xname in doc.Elements("Name"))
-					fullPath.Names.Add(NodePathName.FromXml(xname));
+			if (section != null) {
+				foreach (var nameSection in section.SectionsWithName("Name"))
+					fullPath.Names.Add(NodePathName.Read(nameSection));
 			}
 			return fullPath;
 		}

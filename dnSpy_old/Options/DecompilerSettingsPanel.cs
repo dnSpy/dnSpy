@@ -17,7 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System.Threading;
-using System.Xml.Linq;
+using dnSpy.Contracts;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.Options {
@@ -40,41 +40,43 @@ namespace ICSharpCode.ILSpy.Options {
 			get {
 				if (currentDecompilerSettings != null)
 					return currentDecompilerSettings;
-				Interlocked.CompareExchange(ref currentDecompilerSettings, LoadDecompilerSettings(DNSpySettings.Load()), null);
+				Interlocked.CompareExchange(ref currentDecompilerSettings, LoadDecompilerSettings(), null);
 				return currentDecompilerSettings;
 			}
 		}
 
-		public override void Load(DNSpySettings settings) {
-			this.settings = LoadDecompilerSettings(settings);
+		public override void Load() {
+			this.settings = LoadDecompilerSettings();
 		}
 
-		public static DecompilerSettings LoadDecompilerSettings(DNSpySettings settings) {
-			XElement e = settings["DecompilerSettings"];
+		const string SETTINGS_NAME = "AFE83D9E-39AC-4F4E-B7E4-CAA3D132C8AD";
+
+		public static DecompilerSettings LoadDecompilerSettings() {
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
 			DecompilerSettings s = new DecompilerSettings();
-			s.AnonymousMethods = (bool?)e.Attribute("anonymousMethods") ?? s.AnonymousMethods;
-			s.YieldReturn = (bool?)e.Attribute("yieldReturn") ?? s.YieldReturn;
-			s.AsyncAwait = (bool?)e.Attribute("asyncAwait") ?? s.AsyncAwait;
-			s.QueryExpressions = (bool?)e.Attribute("queryExpressions") ?? s.QueryExpressions;
-			s.ExpressionTrees = (bool?)e.Attribute("expressionTrees") ?? s.ExpressionTrees;
-			s.UseDebugSymbols = (bool?)e.Attribute("useDebugSymbols") ?? s.UseDebugSymbols;
-			s.ShowXmlDocumentation = (bool?)e.Attribute("xmlDoc") ?? s.ShowXmlDocumentation;
-			s.ShowILComments = (bool?)e.Attribute("showILComments") ?? s.ShowILComments;
-			s.RemoveEmptyDefaultConstructors = (bool?)e.Attribute("removeEmptyDefaultConstructors") ?? s.RemoveEmptyDefaultConstructors;
-			s.ShowTokenAndRvaComments = (bool?)e.Attribute("showTokenAndRvaComments") ?? s.ShowTokenAndRvaComments;
-			s.ShowILBytes = (bool?)e.Attribute("showILBytes") ?? s.ShowILBytes;
-			s.DecompilationObject0 = (DecompilationObject)((int?)e.Attribute("decompilationObject0") ?? (int)s.DecompilationObject0);
-			s.DecompilationObject1 = (DecompilationObject)((int?)e.Attribute("decompilationObject1") ?? (int)s.DecompilationObject1);
-			s.DecompilationObject2 = (DecompilationObject)((int?)e.Attribute("decompilationObject2") ?? (int)s.DecompilationObject2);
-			s.DecompilationObject3 = (DecompilationObject)((int?)e.Attribute("decompilationObject3") ?? (int)s.DecompilationObject3);
-			s.DecompilationObject4 = (DecompilationObject)((int?)e.Attribute("decompilationObject4") ?? (int)s.DecompilationObject4);
-			s.SortMembers = (bool?)e.Attribute("sortMembers") ?? s.SortMembers;
-			s.ForceShowAllMembers = (bool?)e.Attribute("forceShowAllMembers") ?? s.ForceShowAllMembers;
-			s.SortSystemUsingStatementsFirst = (bool?)e.Attribute("sortSystemUsingStatementsFirst") ?? s.SortSystemUsingStatementsFirst;
+			s.AnonymousMethods = section.Attribute<bool?>("AnonymousMethods") ?? s.AnonymousMethods;
+			s.YieldReturn = section.Attribute<bool?>("YieldReturn") ?? s.YieldReturn;
+			s.AsyncAwait = section.Attribute<bool?>("AsyncAwait") ?? s.AsyncAwait;
+			s.QueryExpressions = section.Attribute<bool?>("QueryExpressions") ?? s.QueryExpressions;
+			s.ExpressionTrees = section.Attribute<bool?>("ExpressionTrees") ?? s.ExpressionTrees;
+			s.UseDebugSymbols = section.Attribute<bool?>("UseDebugSymbols") ?? s.UseDebugSymbols;
+			s.ShowXmlDocumentation = section.Attribute<bool?>("ShowXmlDocumentation") ?? s.ShowXmlDocumentation;
+			s.ShowILComments = section.Attribute<bool?>("ShowILComments") ?? s.ShowILComments;
+			s.RemoveEmptyDefaultConstructors = section.Attribute<bool?>("RemoveEmptyDefaultConstructors") ?? s.RemoveEmptyDefaultConstructors;
+			s.ShowTokenAndRvaComments = section.Attribute<bool?>("ShowTokenAndRvaComments") ?? s.ShowTokenAndRvaComments;
+			s.ShowILBytes = section.Attribute<bool?>("ShowILBytes") ?? s.ShowILBytes;
+			s.DecompilationObject0 = section.Attribute<DecompilationObject?>("DecompilationObject0") ?? s.DecompilationObject0;
+			s.DecompilationObject1 = section.Attribute<DecompilationObject?>("DecompilationObject1") ?? s.DecompilationObject1;
+			s.DecompilationObject2 = section.Attribute<DecompilationObject?>("DecompilationObject2") ?? s.DecompilationObject2;
+			s.DecompilationObject3 = section.Attribute<DecompilationObject?>("DecompilationObject3") ?? s.DecompilationObject3;
+			s.DecompilationObject4 = section.Attribute<DecompilationObject?>("DecompilationObject4") ?? s.DecompilationObject4;
+			s.SortMembers = section.Attribute<bool?>("SortMembers") ?? s.SortMembers;
+			s.ForceShowAllMembers = section.Attribute<bool?>("ForceShowAllMembers") ?? s.ForceShowAllMembers;
+			s.SortSystemUsingStatementsFirst = section.Attribute<bool?>("SortSystemUsingStatementsFirst") ?? s.SortSystemUsingStatementsFirst;
 			return s;
 		}
 
-		public override RefreshFlags Save(XElement root) {
+		public override RefreshFlags Save() {
 			DecompilerSettings s = this.settings;
 			var flags = RefreshFlags.None;
 
@@ -110,32 +112,26 @@ namespace ICSharpCode.ILSpy.Options {
 			if (CurrentDecompilerSettings.ForceShowAllMembers != s.ForceShowAllMembers) flags |= RefreshFlags.CSharp | RefreshFlags.TreeViewNodes;
 			if (CurrentDecompilerSettings.SortSystemUsingStatementsFirst != s.SortSystemUsingStatementsFirst) flags |= RefreshFlags.CSharp;
 
-			XElement section = new XElement("DecompilerSettings");
-			section.SetAttributeValue("anonymousMethods", s.AnonymousMethods);
-			section.SetAttributeValue("yieldReturn", s.YieldReturn);
-			section.SetAttributeValue("asyncAwait", s.AsyncAwait);
-			section.SetAttributeValue("queryExpressions", s.QueryExpressions);
-			section.SetAttributeValue("expressionTrees", s.ExpressionTrees);
-			section.SetAttributeValue("useDebugSymbols", s.UseDebugSymbols);
-			section.SetAttributeValue("xmlDoc", s.ShowXmlDocumentation);
-			section.SetAttributeValue("showILComments", s.ShowILComments);
-			section.SetAttributeValue("removeEmptyDefaultConstructors", s.RemoveEmptyDefaultConstructors);
-			section.SetAttributeValue("showTokenAndRvaComments", s.ShowTokenAndRvaComments);
-			section.SetAttributeValue("showILBytes", s.ShowILBytes);
-			section.SetAttributeValue("decompilationObject0", (int)s.DecompilationObject0);
-			section.SetAttributeValue("decompilationObject1", (int)s.DecompilationObject1);
-			section.SetAttributeValue("decompilationObject2", (int)s.DecompilationObject2);
-			section.SetAttributeValue("decompilationObject3", (int)s.DecompilationObject3);
-			section.SetAttributeValue("decompilationObject4", (int)s.DecompilationObject4);
-			section.SetAttributeValue("sortMembers", s.SortMembers);
-			section.SetAttributeValue("forceShowAllMembers", s.ForceShowAllMembers);
-			section.SetAttributeValue("sortSystemUsingStatementsFirst", s.SortSystemUsingStatementsFirst);
-
-			XElement existingElement = root.Element("DecompilerSettings");
-			if (existingElement != null)
-				existingElement.ReplaceWith(section);
-			else
-				root.Add(section);
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
+			section.Attribute("AnonymousMethods", s.AnonymousMethods);
+			section.Attribute("YieldReturn", s.YieldReturn);
+			section.Attribute("AsyncAwait", s.AsyncAwait);
+			section.Attribute("QueryExpressions", s.QueryExpressions);
+			section.Attribute("ExpressionTrees", s.ExpressionTrees);
+			section.Attribute("UseDebugSymbols", s.UseDebugSymbols);
+			section.Attribute("ShowXmlDocumentation", s.ShowXmlDocumentation);
+			section.Attribute("ShowILComments", s.ShowILComments);
+			section.Attribute("RemoveEmptyDefaultConstructors", s.RemoveEmptyDefaultConstructors);
+			section.Attribute("ShowTokenAndRvaComments", s.ShowTokenAndRvaComments);
+			section.Attribute("ShowILBytes", s.ShowILBytes);
+			section.Attribute("DecompilationObject0", s.DecompilationObject0);
+			section.Attribute("DecompilationObject1", s.DecompilationObject1);
+			section.Attribute("DecompilationObject2", s.DecompilationObject2);
+			section.Attribute("DecompilationObject3", s.DecompilationObject3);
+			section.Attribute("DecompilationObject4", s.DecompilationObject4);
+			section.Attribute("SortMembers", s.SortMembers);
+			section.Attribute("ForceShowAllMembers", s.ForceShowAllMembers);
+			section.Attribute("SortSystemUsingStatementsFirst", s.SortSystemUsingStatementsFirst);
 
 			currentDecompilerSettings = null; // invalidate cached settings
 			return flags;

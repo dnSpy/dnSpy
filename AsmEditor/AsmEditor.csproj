@@ -68,10 +68,6 @@
       <Project>{7e7c2cf8-2057-4eaa-9dad-ab3022cf4037}</Project>
       <Name>dnSpy.Shared.UI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy\dnSpy.csproj">
-      <Project>{722257a9-1b14-4d63-b886-18a4229af4eb}</Project>
-      <Name>dnSpy</Name>
-    </ProjectReference>
     <ProjectReference Include="..\dnSpy_old\dnSpy_old.csproj">
       <Project>{1e85eff9-e370-4683-83e4-8a3d063ff791}</Project>
       <Name>dnSpy_old</Name>

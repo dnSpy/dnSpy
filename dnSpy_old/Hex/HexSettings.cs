@@ -22,7 +22,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Threading;
-using System.Xml.Linq;
+using dnSpy.Contracts;
 using dnSpy.Options;
 using dnSpy.Shared.UI.HexEditor;
 using dnSpy.Shared.UI.MVVM;
@@ -30,7 +30,7 @@ using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
 
 namespace dnSpy.Hex {
-	[ExportOptionPage(Title = "Hex Editor", Order = 2)]
+	[ExportOptionPage(Title = "Hex Editor", Order = 3)]
 	sealed class HexSettingsCreator : IOptionPageCreator {
 		public OptionPage Create() {
 			return new HexSettingsVM();
@@ -45,7 +45,7 @@ namespace dnSpy.Hex {
 				if (settings != null)
 					return settings;
 				var s = new HexSettings();
-				s.Load(DNSpySettings.Load());
+				s.Load();
 				Interlocked.CompareExchange(ref settings, s, null);
 				return settings;
 			}
@@ -146,36 +146,30 @@ namespace dnSpy.Hex {
 		}
 		AsciiEncoding asciiEncoding;
 
-		const string SETTINGS_SECTION_NAME = "HexSettings";
-		public override void Load(DNSpySettings settings) {
-			var xelem = settings[SETTINGS_SECTION_NAME];
-			this.BytesGroupCountVM.Value = (int?)xelem.Attribute("BytesGroupCount") ?? 8;
-			this.BytesPerLineVM.Value = (int?)xelem.Attribute("BytesPerLine") ?? 0;
-			this.UseHexPrefix = (bool?)xelem.Attribute("UseHexPrefix") ?? false;
-			this.ShowAscii = (bool?)xelem.Attribute("ShowAscii") ?? true;
-			this.LowerCaseHex = (bool?)xelem.Attribute("LowerCaseHex") ?? false;
-			this.FontFamily = new FontFamily(SessionSettings.Unescape((string)xelem.Attribute("FontFamily")) ?? FontUtils.GetDefaultFont());
-			this.FontSize = (double?)xelem.Attribute("FontSize") ?? FontUtils.DEFAULT_FONT_SIZE;
-			this.AsciiEncoding = (AsciiEncoding)((int?)xelem.Attribute("AsciiEncoding") ?? (int)AsciiEncoding.UTF8);
+		const string SETTINGS_NAME = "4EFA9642-600F-42AD-9FC0-7B4B9D792225";
+		public override void Load() {
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+			this.BytesGroupCountVM.Value = section.Attribute<int?>("BytesGroupCount") ?? 8;
+			this.BytesPerLineVM.Value = section.Attribute<int?>("BytesPerLine") ?? 0;
+			this.UseHexPrefix = section.Attribute<bool?>("UseHexPrefix") ?? false;
+			this.ShowAscii = section.Attribute<bool?>("ShowAscii") ?? true;
+			this.LowerCaseHex = section.Attribute<bool?>("LowerCaseHex") ?? false;
+			this.FontFamily = new FontFamily(section.Attribute<string>("FontFamily") ?? FontUtils.GetDefaultFont());
+			this.FontSize = section.Attribute<double?>("FontSize") ?? FontUtils.DEFAULT_FONT_SIZE;
+			this.AsciiEncoding = section.Attribute<AsciiEncoding?>("AsciiEncoding") ?? AsciiEncoding.UTF8;
 		}
 
-		public override RefreshFlags Save(XElement root) {
-			var xelem = new XElement(SETTINGS_SECTION_NAME);
+		public override RefreshFlags Save() {
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
 
-			xelem.SetAttributeValue("BytesGroupCount", this.BytesGroupCountVM.Value);
-			xelem.SetAttributeValue("BytesPerLine", this.BytesPerLineVM.Value);
-			xelem.SetAttributeValue("UseHexPrefix", this.UseHexPrefix);
-			xelem.SetAttributeValue("ShowAscii", this.ShowAscii);
-			xelem.SetAttributeValue("LowerCaseHex", this.LowerCaseHex);
-			xelem.SetAttributeValue("FontFamily", SessionSettings.Escape(this.FontFamily.Source));
-			xelem.SetAttributeValue("FontSize", this.FontSize);
-			xelem.SetAttributeValue("AsciiEncoding", (int)this.AsciiEncoding);
-
-			var currElem = root.Element(SETTINGS_SECTION_NAME);
-			if (currElem != null)
-				currElem.ReplaceWith(xelem);
-			else
-				root.Add(xelem);
+			section.Attribute("BytesGroupCount", this.BytesGroupCountVM.Value);
+			section.Attribute("BytesPerLine", this.BytesPerLineVM.Value);
+			section.Attribute("UseHexPrefix", this.UseHexPrefix);
+			section.Attribute("ShowAscii", this.ShowAscii);
+			section.Attribute("LowerCaseHex", this.LowerCaseHex);
+			section.Attribute("FontFamily", this.FontFamily.Source);
+			section.Attribute("FontSize", this.FontSize);
+			section.Attribute("AsciiEncoding", this.AsciiEncoding);
 
 			WriteTo(Instance);
 

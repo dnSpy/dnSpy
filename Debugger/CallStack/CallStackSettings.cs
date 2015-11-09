@@ -17,9 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Xml.Linq;
+using dnSpy.Contracts;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class CallStackSettings : ViewModelBase {
@@ -150,24 +149,23 @@ namespace dnSpy.Debugger.CallStack {
 		}
 		bool showReturnTypes;
 
-		const string SETTINGS_NAME = "CallStackSettings";
+		const string SETTINGS_NAME = "7280C4EB-1135-4F39-B6E0-57BD0A2454D6";
 
 		void Load() {
 			try {
 				disableSaveCounter++;
 
-				var settings = DNSpySettings.Load();
-				var csx = settings[SETTINGS_NAME];
-				ShowModuleNames = (bool?)csx.Attribute("ShowModuleNames") ?? true;
-				ShowParameterTypes = (bool?)csx.Attribute("ShowParameterTypes") ?? true;
-				ShowParameterNames = (bool?)csx.Attribute("ShowParameterNames") ?? true;
-				ShowParameterValues = (bool?)csx.Attribute("ShowParameterValues") ?? false;
-				ShowIP = (bool?)csx.Attribute("ShowIP") ?? true;
-				ShowOwnerTypes = (bool?)csx.Attribute("ShowOwnerTypes") ?? true;
-				ShowNamespaces = (bool?)csx.Attribute("ShowNamespaces") ?? true;
-				ShowTypeKeywords = (bool?)csx.Attribute("ShowTypeKeywords") ?? true;
-				ShowTokens = (bool?)csx.Attribute("ShowTokens") ?? false;
-				ShowReturnTypes = (bool?)csx.Attribute("ShowReturnTypes") ?? false;
+				var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+				ShowModuleNames = section.Attribute<bool?>("ShowModuleNames") ?? true;
+				ShowParameterTypes = section.Attribute<bool?>("ShowParameterTypes") ?? true;
+				ShowParameterNames = section.Attribute<bool?>("ShowParameterNames") ?? true;
+				ShowParameterValues = section.Attribute<bool?>("ShowParameterValues") ?? false;
+				ShowIP = section.Attribute<bool?>("ShowIP") ?? true;
+				ShowOwnerTypes = section.Attribute<bool?>("ShowOwnerTypes") ?? true;
+				ShowNamespaces = section.Attribute<bool?>("ShowNamespaces") ?? true;
+				ShowTypeKeywords = section.Attribute<bool?>("ShowTypeKeywords") ?? true;
+				ShowTokens = section.Attribute<bool?>("ShowTokens") ?? false;
+				ShowReturnTypes = section.Attribute<bool?>("ShowReturnTypes") ?? false;
 			}
 			finally {
 				disableSaveCounter--;
@@ -177,32 +175,21 @@ namespace dnSpy.Debugger.CallStack {
 		void Save() {
 			if (this != CallStackSettings.Instance)
 				return;
-			DNSpySettings.Update(root => Save(root));
-		}
-
-		void Save(XElement root) {
-			if (this != CallStackSettings.Instance)
-				return;
 			if (disableSaveCounter != 0)
 				return;
 
-			var csx = new XElement(SETTINGS_NAME);
-			var existingElement = root.Element(SETTINGS_NAME);
-			if (existingElement != null)
-				existingElement.ReplaceWith(csx);
-			else
-				root.Add(csx);
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
 
-			csx.SetAttributeValue("ShowModuleNames", ShowModuleNames);
-			csx.SetAttributeValue("ShowParameterTypes", ShowParameterTypes);
-			csx.SetAttributeValue("ShowParameterNames", ShowParameterNames);
-			csx.SetAttributeValue("ShowParameterValues", ShowParameterValues);
-			csx.SetAttributeValue("ShowIP", ShowIP);
-			csx.SetAttributeValue("ShowOwnerTypes", ShowOwnerTypes);
-			csx.SetAttributeValue("ShowNamespaces", ShowNamespaces);
-			csx.SetAttributeValue("ShowTypeKeywords", ShowTypeKeywords);
-			csx.SetAttributeValue("ShowTokens", ShowTokens);
-			csx.SetAttributeValue("ShowReturnTypes", ShowReturnTypes);
+			section.Attribute("ShowModuleNames", ShowModuleNames);
+			section.Attribute("ShowParameterTypes", ShowParameterTypes);
+			section.Attribute("ShowParameterNames", ShowParameterNames);
+			section.Attribute("ShowParameterValues", ShowParameterValues);
+			section.Attribute("ShowIP", ShowIP);
+			section.Attribute("ShowOwnerTypes", ShowOwnerTypes);
+			section.Attribute("ShowNamespaces", ShowNamespaces);
+			section.Attribute("ShowTypeKeywords", ShowTypeKeywords);
+			section.Attribute("ShowTokens", ShowTokens);
+			section.Attribute("ShowReturnTypes", ShowReturnTypes);
 		}
 	}
 }

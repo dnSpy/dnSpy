@@ -103,7 +103,7 @@ namespace dnSpy.Themes {
 			else
 				this.IsHighContrast = false;
 
-			var sort = root.Attribute("sort");
+			var sort = root.Attribute("order");
 			this.Order = sort == null ? 1 : (double)sort;
 
 			for (int i = 0; i < hlColors.Length; i++)

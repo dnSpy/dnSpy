@@ -20,7 +20,8 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Threading;
-using System.Xml.Linq;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Settings;
 using dnSpy.Files;
 
 namespace ICSharpCode.ILSpy {
@@ -31,23 +32,19 @@ namespace ICSharpCode.ILSpy {
 	/// </summary>
 	public sealed class DnSpyFileListManager {
 		const string LIST_SECTION_NAME = "List";
-		const string FILELISTS_SECTION_NAME = "FileLists";
+		const string SETTINGS_NAME = "92B7D8B9-DC49-4E59-B201-71DB2BD2B272";
 		const string FILE_SECTION_NAME = "File";
-
-		//TODO: Remove these a couple of months after this commit
-		const string FILELISTS_SECTION_NAME_OLD = "AssemblyLists";
-		const string FILE_SECTION_NAME_OLD = "Assembly";
 
 		public IDnSpyFileListOptions DnSpyFileListOptions {
 			get { return options; }
 		}
 		readonly IDnSpyFileListOptions options;
 
-		public DnSpyFileListManager(IDnSpyFileListOptions options, DNSpySettings spySettings) {
+		public DnSpyFileListManager(IDnSpyFileListOptions options) {
 			this.options = options;
-			var doc = GetFileListsElement(spySettings);
-			foreach (var list in doc.Elements(LIST_SECTION_NAME))
-				FileLists.Add(SessionSettings.Unescape((string)list.Attribute("name")));
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+			foreach (var list in section.SectionsWithName(LIST_SECTION_NAME))
+				FileLists.Add(list.Attribute<string>("name") ?? string.Empty);
 		}
 
 		public readonly ObservableCollection<string> FileLists = new ObservableCollection<string>();
@@ -56,29 +53,22 @@ namespace ICSharpCode.ILSpy {
 		/// Loads an assembly list from the ILSpySettings.
 		/// If no list with the specified name is found, the default list is loaded instead.
 		/// </summary>
-		public DnSpyFileList LoadList(DNSpySettings spySettings, string listName) {
-			DnSpyFileList list = DoLoadList(spySettings, listName);
+		public DnSpyFileList LoadList(string listName) {
+			DnSpyFileList list = DoLoadList(listName);
 			if (!FileLists.Contains(list.Name))
 				FileLists.Add(list.Name);
 			return list;
 		}
 
-		static XElement GetFileListsElement(DNSpySettings spySettings) {
-			var doc = spySettings.GetElement(FILELISTS_SECTION_NAME);
-			if (doc == null)
-				doc = spySettings[FILELISTS_SECTION_NAME_OLD];
-			return doc ?? new XElement(FILELISTS_SECTION_NAME);
-		}
-
-		DnSpyFileList DoLoadList(DNSpySettings spySettings, string listName) {
-			var doc = GetFileListsElement(spySettings);
+		DnSpyFileList DoLoadList(string listName) {
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
 			if (listName != null) {
-				foreach (var listElem in doc.Elements(LIST_SECTION_NAME)) {
-					if (SessionSettings.Unescape((string)listElem.Attribute("name")) == listName)
-						return Initialize(Create(listElem));
+				foreach (var listSection in section.SectionsWithName(LIST_SECTION_NAME)) {
+					if (listSection.Attribute<string>("name") == listName)
+						return Initialize(Create(listSection));
 				}
 			}
-			XElement firstList = doc.Elements(LIST_SECTION_NAME).FirstOrDefault();
+			var firstList = section.SectionsWithName(LIST_SECTION_NAME).FirstOrDefault();
 			DnSpyFileList list;
 			if (firstList != null)
 				list = Create(firstList);
@@ -127,14 +117,12 @@ namespace ICSharpCode.ILSpy {
 
 		public const string DefaultListName = "(Default)";
 
-		DnSpyFileList Create(XElement listElement) {
-			var name = SessionSettings.Unescape((string)listElement.Attribute("name"));
+		DnSpyFileList Create(ISettingsSection section) {
+			var name = section.Attribute<string>("name") ?? string.Empty;
 			var list = new DnSpyFileList(options, name);
-			var elems = listElement.Elements(FILE_SECTION_NAME).ToList();
-			elems.AddRange(listElement.Elements(FILE_SECTION_NAME_OLD));
-			foreach (var asm in elems) {
+			foreach (var fileSection in section.SectionsWithName(FILE_SECTION_NAME)) {
 				try {
-					list.OpenFile(SessionSettings.Unescape((string)asm));
+					list.OpenFile(fileSection.Attribute<string>("Name"));
 				}
 				catch {
 				}
@@ -147,28 +135,20 @@ namespace ICSharpCode.ILSpy {
 		/// Saves the specifies assembly list into the config file.
 		/// </summary>
 		public static void SaveList(DnSpyFileList list) {
-			DNSpySettings.Update((root) => {
-				var doc = root.Element(FILELISTS_SECTION_NAME) ?? root.Element(FILELISTS_SECTION_NAME_OLD);
-				if (doc != null)
-					doc.Name = FILELISTS_SECTION_NAME;
-				if (doc == null) {
-					doc = new XElement(FILELISTS_SECTION_NAME);
-					root.Add(doc);
-				}
-				XElement listElement = doc.Elements(LIST_SECTION_NAME).FirstOrDefault(e => SessionSettings.Unescape((string)e.Attribute("name")) == list.Name);
-				if (listElement != null)
-					listElement.ReplaceWith(SaveAsXml(list));
-				else
-					doc.Add(SaveAsXml(list));
-			});
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var listSection = section.SectionsWithName(LIST_SECTION_NAME).FirstOrDefault(e => e.Attribute<string>("name") == list.Name);
+			if (listSection != null)
+				section.RemoveSection(listSection);
+			listSection = section.CreateSection(LIST_SECTION_NAME);
+			SaveTo(listSection, list);
 		}
 
-		static XElement SaveAsXml(DnSpyFileList list) {
-			return new XElement(
-				LIST_SECTION_NAME,
-				new XAttribute("name", SessionSettings.Escape(list.Name)),
-				list.GetDnSpyFiles().Where(file => !file.IsAutoLoaded && file.CanBeSavedToSettingsFile && !string.IsNullOrWhiteSpace(file.Filename)).Select(asm => new XElement(FILE_SECTION_NAME, SessionSettings.Escape(asm.Filename)))
-			);
+		static void SaveTo(ISettingsSection section, DnSpyFileList list) {
+			section.Attribute("name", list.Name);
+			foreach (var file in list.GetDnSpyFiles().Where(file => !file.IsAutoLoaded && file.CanBeSavedToSettingsFile && !string.IsNullOrWhiteSpace(file.Filename))) {
+				var fileSection = section.CreateSection(FILE_SECTION_NAME);
+				fileSection.Attribute("Name", file.Filename);
+			}
 		}
 
 
@@ -182,24 +162,18 @@ namespace ICSharpCode.ILSpy {
 			return false;
 		}
 
-		public bool DeleteList(string Name) {
+		public void DeleteList(string Name) {
 			if (FileLists.Contains(Name)) {
 				FileLists.Remove(Name);
 
-				DNSpySettings.Update(
-					delegate (XElement root) {
-						XElement doc = root.Element(FILELISTS_SECTION_NAME);
-						if (doc == null)
-							root.Element(FILELISTS_SECTION_NAME_OLD);
-						if (doc == null)
-							return;
-						XElement listElement = doc.Elements(LIST_SECTION_NAME).FirstOrDefault(e => SessionSettings.Unescape((string)e.Attribute("name")) == Name);
-						if (listElement != null)
-							listElement.Remove();
-					});
-				return true;
+				var section = DnSpy.App.SettingsManager.TryGetSection(SETTINGS_NAME);
+				if (section == null)
+					return;
+
+				var listSection = section.SectionsWithName(LIST_SECTION_NAME).FirstOrDefault(e => e.Attribute<string>("name") == Name);
+				if (listSection != null)
+					section.RemoveSection(listSection);
 			}
-			return false;
 		}
 	}
 }

@@ -55,8 +55,6 @@ namespace ICSharpCode.ILSpy {
 	public partial class App : Application {
 		internal static CommandLineArguments CommandLineArguments;
 
-		readonly AppImpl appImpl;
-
 		public App() {
 			// Add Ctrl+Shift+Z as a redo command. Don't know why it isn't enabled by default.
 			ApplicationCommands.Redo.InputGestures.Add(new KeyGesture(Key.Z, ModifierKeys.Control | ModifierKeys.Shift));
@@ -72,11 +70,12 @@ namespace ICSharpCode.ILSpy {
 			}
 			InitializeComponent();
 
-			this.appImpl = new AppImpl();
 			var asms = new List<Assembly>();
 			asms.Add(GetType().Assembly);
 			asms.Add(typeof(RelayCommand).Assembly);	// dnSpy.Shared.UI
-			appImpl.InitializeCompositionContainer(asms, "*.Plugin.dll");
+			AppCreator.Create(asms, "*.Plugin.dll");
+			((AppImpl)DnSpy.App).InitializeSettings();
+
 			AddMergedResourceDictionary(DnSpy.App.GetType().Assembly, "Themes/wpf.styles.templates.xaml");
 			AddMergedResourceDictionary(typeof(RelayCommand).Assembly, "Themes/wpf.styles.templates.xaml");
 			AddMergedResourceDictionary(GetType().Assembly, "DnTheme/wpf.styles.templates.xaml");

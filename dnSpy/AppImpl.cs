@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.IO;
@@ -27,15 +28,52 @@ using System.Reflection;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Images;
 using dnSpy.Menus;
+using dnSpy.Settings;
 using dnSpy.Themes;
 using dnSpy.ToolBars;
 
 namespace dnSpy {
-	public sealed class AppImpl : IApp {//TODO: Shouldn't be public
+	public static class AppCreator {//TODO: Shouldn't be public
+		public static void Create(IEnumerable<Assembly> asms, string pattern) {
+			var container = InitializeCompositionContainer(asms, pattern);
+			var appImpl = container.GetExportedValue<AppImpl>();
+			appImpl.CompositionContainer = container;
+		}
+
+		static CompositionContainer InitializeCompositionContainer(IEnumerable<Assembly> asms, string pattern) {
+			var aggregateCatalog = new AggregateCatalog();
+			var ourAsm = typeof(AppCreator).Assembly;
+			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(ourAsm));
+			foreach (var asm in asms) {
+				if (ourAsm != asm)
+					aggregateCatalog.Catalogs.Add(new AssemblyCatalog(asm));
+			}
+			AddFiles(aggregateCatalog, pattern);
+			return new CompositionContainer(aggregateCatalog);
+		}
+
+		static void AddFiles(AggregateCatalog aggregateCatalog, string pattern) {
+			var dir = Path.GetDirectoryName(typeof(AppCreator).Assembly.Location);
+			var random = new Random();
+			var files = Directory.GetFiles(dir, pattern).OrderBy(a => random.Next()).ToArray();
+			foreach (var file in files) {
+				try {
+					aggregateCatalog.Catalogs.Add(new AssemblyCatalog(Assembly.LoadFile(file)));
+				}
+				catch {
+					Debug.Fail(string.Format("Failed to load file '{0}'", file));
+				}
+			}
+		}
+	}
+
+	[Export, Export(typeof(IApp))]
+	public sealed class AppImpl : IApp {//TODO: REMOVE public
 		public Version Version {
 			get { return GetType().Assembly.GetName().Version; }
 		}
@@ -60,43 +98,25 @@ namespace dnSpy {
 		}
 		readonly ImageManager imageManager;
 
+		public ISettingsManager SettingsManager {
+			get { return settingsManager; }
+		}
+		readonly SettingsManager settingsManager;
+
 		public CompositionContainer CompositionContainer {
 			get { return compositionContainer; }
+			internal set { compositionContainer = value; }
 		}
 		CompositionContainer compositionContainer;
 
-		public AppImpl() {
+		[ImportingConstructor]
+		AppImpl(ThemeManager themeManager, ImageManager imageManager, MenuManager menuManager, ToolBarManager toolBarManager, SettingsManager settingsManager) {
 			DnSpy.App = this;
-			this.menuManager = new MenuManager(this);
-			this.toolBarManager = new ToolBarManager(this);
-			this.themeManager = new ThemeManager(this);
-			this.imageManager = new ImageManager(this);
-		}
-
-		public void InitializeCompositionContainer(IEnumerable<Assembly> asms, string pattern) {
-			var aggregateCatalog = new AggregateCatalog();
-			var ourAsm = GetType().Assembly;
-			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(ourAsm));
-			foreach (var asm in asms) {
-				if (ourAsm != asm)
-					aggregateCatalog.Catalogs.Add(new AssemblyCatalog(asm));
-			}
-			AddFiles(aggregateCatalog, pattern);
-			compositionContainer = new CompositionContainer(aggregateCatalog);
-		}
-
-		void AddFiles(AggregateCatalog aggregateCatalog, string pattern) {
-			var dir = Path.GetDirectoryName(GetType().Assembly.Location);
-			var random = new Random();
-			var files = Directory.GetFiles(dir, pattern).OrderBy(a => random.Next()).ToArray();
-			foreach (var file in files) {
-				try {
-					aggregateCatalog.Catalogs.Add(new AssemblyCatalog(Assembly.LoadFile(file)));
-				}
-				catch {
-					Debug.Fail(string.Format("Failed to load file '{0}'", file));
-				}
-			}
+			this.menuManager = menuManager;
+			this.toolBarManager = toolBarManager;
+			this.themeManager = themeManager;
+			this.imageManager = imageManager;
+			this.settingsManager = settingsManager;
 		}
 
 		public void InitializeThemes(string themeName) {
@@ -105,6 +125,24 @@ namespace dnSpy {
 
 		public void UpdateResources(ITheme theme, System.Windows.ResourceDictionary resources) {//TODO: REMOVE
 			((Theme)theme).UpdateResources(resources);
+		}
+
+		public void InitializeSettings() {//TODO: REMOVE
+			try {
+				new XmlSettingsReader(settingsManager).Read();
+			}
+			catch {
+				//TODO: Show error to user
+			}
+		}
+
+		public void SaveSettings() {//TODO: REMOVE
+			try {
+				new XmlSettingsWriter(settingsManager).Write();
+			}
+			catch {
+				//TODO: Show error to user
+			}
 		}
 	}
 }

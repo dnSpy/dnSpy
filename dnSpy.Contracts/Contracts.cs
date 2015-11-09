@@ -22,6 +22,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.ToolBars;
 
@@ -78,6 +79,11 @@ namespace dnSpy.Contracts {
 		/// Gets the <see cref="IImageManager"/> instance
 		/// </summary>
 		IImageManager ImageManager { get; }
+
+		/// <summary>
+		/// Gets the <see cref="ISettingsManager"/> instance
+		/// </summary>
+		ISettingsManager SettingsManager { get; }
 
 		/// <summary>
 		/// Gets the <see cref="System.ComponentModel.Composition.Hosting.CompositionContainer"/> instance

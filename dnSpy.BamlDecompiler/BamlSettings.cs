@@ -23,12 +23,11 @@
 using System;
 using System.Threading;
 using System.Windows;
-using System.Xml.Linq;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts;
 using ICSharpCode.ILSpy.Options;
 
 namespace dnSpy.BamlDecompiler {
-	[ExportOptionPage(Title = "BAML", Order = 3)]
+	[ExportOptionPage(Title = "BAML", Order = 4)]
 	internal sealed class BamlSettingsCreator : IOptionPageCreator {
 		bool loaded = false;
 
@@ -53,7 +52,7 @@ namespace dnSpy.BamlDecompiler {
 				if (settings != null)
 					return settings;
 				var s = new BamlSettings();
-				s.Load(DNSpySettings.Load());
+				s.Load();
 				Interlocked.CompareExchange(ref settings, s, null);
 				return settings;
 			}
@@ -71,22 +70,16 @@ namespace dnSpy.BamlDecompiler {
 			}
 		}
 
-		const string SETTINGS_SECTION_NAME = "BamlSettings";
+		const string SETTINGS_NAME = "D9809EB3-1605-4E05-A84F-6EE241FAAD6C";
 
-		public override void Load(DNSpySettings settings) {
-			var xelem = settings[SETTINGS_SECTION_NAME];
-			DisassembleBaml = (bool?)xelem.Attribute("DisassembleBaml") ?? false;
+		public override void Load() {
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+			DisassembleBaml = section.Attribute<bool?>("DisassembleBaml") ?? false;
 		}
 
-		public override RefreshFlags Save(XElement root) {
-			var xelem = new XElement(SETTINGS_SECTION_NAME);
-			xelem.SetAttributeValue("DisassembleBaml", DisassembleBaml);
-
-			var currElem = root.Element(SETTINGS_SECTION_NAME);
-			if (currElem != null)
-				currElem.ReplaceWith(xelem);
-			else
-				root.Add(xelem);
+		public override RefreshFlags Save() {
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
+			section.Attribute("DisassembleBaml", DisassembleBaml);
 
 			WriteTo(Instance);
 

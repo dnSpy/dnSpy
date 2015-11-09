@@ -21,7 +21,6 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Xml.Linq;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Menus;
 using dnSpy.Shared.UI.Controls;
@@ -57,7 +56,6 @@ namespace ICSharpCode.ILSpy.Options {
 
 		public OptionsDialog() {
 			InitializeComponent();
-			DNSpySettings settings = DNSpySettings.Load();
 			var creators = MefState.Instance.optionPages.OrderBy(p => p.Metadata.Order).ToArray();
 			optionPages = creators.Select(p => p.Value.Create()).ToArray();
 			for (int i = 0; i < creators.Length; i++) {
@@ -72,7 +70,7 @@ namespace ICSharpCode.ILSpy.Options {
 				};
 				tabControl.Items.Add(tabItem);
 
-				optionPages[i].Load(settings);
+				optionPages[i].Load();
 			}
 
 			foreach (var page in optionPages)
@@ -82,11 +80,8 @@ namespace ICSharpCode.ILSpy.Options {
 
 		void OKButton_Click(object sender, RoutedEventArgs e) {
 			RefreshFlags = RefreshFlags.None;
-			DNSpySettings.Update(
-				delegate (XElement root) {
-					foreach (var optionPage in optionPages)
-						RefreshFlags |= optionPage.Save(root);
-				});
+			foreach (var optionPage in optionPages)
+				RefreshFlags |= optionPage.Save();
 			this.DialogResult = true;
 			Close();
 		}
@@ -102,8 +97,8 @@ namespace ICSharpCode.ILSpy.Options {
 	}
 
 	public abstract class OptionPage : ViewModelBase {
-		public abstract void Load(DNSpySettings settings);
-		public abstract RefreshFlags Save(XElement root);
+		public abstract void Load();
+		public abstract RefreshFlags Save();
 	}
 
 	[Flags]

@@ -39,7 +39,6 @@ using dnSpy;
 using dnSpy.AsmEditor;
 using dnSpy.AvalonEdit;
 using dnSpy.Contracts;
-using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
@@ -53,7 +52,6 @@ using dnSpy.NRefactory;
 using dnSpy.Options;
 using dnSpy.Search;
 using dnSpy.Shared.UI.Controls;
-using dnSpy.Shared.UI.Images;
 using dnSpy.Tabs;
 using dnSpy.TextView;
 using dnSpy.TreeNodes;
@@ -72,7 +70,6 @@ namespace ICSharpCode.ILSpy {
 	/// The main window of the application.
 	/// </summary>
 	partial class MainWindow : MetroWindow {
-		DNSpySettings spySettings;
 		internal readonly SessionSettings sessionSettings;
 
 		public DnSpyFileListManager DnSpyFileListManager {
@@ -233,11 +230,10 @@ namespace ICSharpCode.ILSpy {
 
 		public MainWindow() {
 			instance = this;
-			spySettings = DNSpySettings.Load();
-			this.sessionSettings = new SessionSettings(spySettings);
+			this.sessionSettings = new SessionSettings();
 			this.sessionSettings.PropertyChanged += sessionSettings_PropertyChanged;
 			var listOptions = new DnSpyFileListOptionsImpl(this.Dispatcher);
-			this.dnSpyFileListManager = new DnSpyFileListManager(listOptions, spySettings);
+			this.dnSpyFileListManager = new DnSpyFileListManager(listOptions);
 			DnSpy.App.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			Options.DisplaySettingsPanel.CurrentDisplaySettings.PropertyChanged += CurrentDisplaySettings_PropertyChanged;
 			OtherSettings.Instance.PropertyChanged += OtherSettings_PropertyChanged;
@@ -1061,10 +1057,7 @@ namespace ICSharpCode.ILSpy {
 
 				DnSpy.App.MenuManager.InitializeContextMenu(treeView, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID, new GuidObjectsCreator());
 
-				DNSpySettings spySettings = this.spySettings;
-				this.spySettings = null;
-
-				this.dnspyFileList = dnSpyFileListManager.LoadList(spySettings, sessionSettings.ActiveAssemblyList);
+				this.dnspyFileList = dnSpyFileListManager.LoadList(sessionSettings.ActiveAssemblyList);
 				break;
 
 			case 1:
@@ -1167,11 +1160,7 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		public void ShowAssemblyList(string name) {
-			DNSpySettings settings = this.spySettings;
-			if (settings == null) {
-				settings = DNSpySettings.Load();
-			}
-			DnSpyFileList list = this.dnSpyFileListManager.LoadList(settings, name);
+			DnSpyFileList list = this.dnSpyFileListManager.LoadList(name);
 			//Only load a new list when it is a different one
 			if (list.Name != DnSpyFileList.Name) {
 				if (AskUserReloadAssemblyListIfModified("Are you sure you want to load new assemblies and lose all changes?"))
@@ -1632,7 +1621,7 @@ namespace ICSharpCode.ILSpy {
 
 			try {
 				TreeView_SelectionChanged_ignore = true;
-				ShowAssemblyListDontAskUser(dnSpyFileListManager.LoadList(DNSpySettings.Load(), dnspyFileList.Name));
+				ShowAssemblyListDontAskUser(dnSpyFileListManager.LoadList(dnspyFileList.Name));
 			}
 			finally {
 				TreeView_SelectionChanged_ignore = false;
@@ -1907,6 +1896,8 @@ namespace ICSharpCode.ILSpy {
 
 			foreach (var tabState in AllTabStates)
 				tabState.Dispose();
+
+			((AppImpl)DnSpy.App).SaveSettings();
 		}
 
 		void RestoreTabGroups(SavedTabGroupsState savedGroups) {

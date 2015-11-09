@@ -25,12 +25,19 @@ using dnSpy.Contracts.Menus;
 namespace dnSpy.Shared.UI.MVVM {
 	[Export(typeof(IInitializeDataTemplate))]
 	sealed class InitializeDataTemplateContextMenu : IInitializeDataTemplate {
+		readonly IMenuManager menuManager;
+
+		[ImportingConstructor]
+		InitializeDataTemplateContextMenu(IMenuManager menuManager) {
+			this.menuManager = menuManager;
+		}
+
 		public void Initialize(DependencyObject d) {
 			var fwe = d as FrameworkElement;
 			if (fwe == null)
 				return;
 
-			DnSpy.App.MenuManager.InitializeContextMenu(fwe, MenuConstants.GUIDOBJ_UNKNOWN_GUID);
+			menuManager.InitializeContextMenu(fwe, MenuConstants.GUIDOBJ_UNKNOWN_GUID);
 		}
 	}
 }

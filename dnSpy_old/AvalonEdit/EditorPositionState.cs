@@ -18,9 +18,8 @@
 */
 
 using System;
-using System.Xml.Linq;
+using dnSpy.Contracts.Settings;
 using ICSharpCode.AvalonEdit;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AvalonEdit {
 	public struct EditorPositionState : IEquatable<EditorPositionState> {
@@ -38,29 +37,28 @@ namespace dnSpy.AvalonEdit {
 			this.DesiredXPos = DesiredXPos;
 		}
 
-		public XElement ToXml(XElement xml) {
-			xml.SetAttributeValue("VerticalOffset", SessionSettings.ToString(VerticalOffset));
-			xml.SetAttributeValue("HorizontalOffset", SessionSettings.ToString(HorizontalOffset));
-			xml.SetAttributeValue("Line", SessionSettings.ToString(TextViewPosition.Line));
-			xml.SetAttributeValue("Column", SessionSettings.ToString(TextViewPosition.Column));
-			xml.SetAttributeValue("VisualColumn", SessionSettings.ToString(TextViewPosition.VisualColumn));
-			xml.SetAttributeValue("IsAtEndOfLine", SessionSettings.ToString(TextViewPosition.IsAtEndOfLine));
-			xml.SetAttributeValue("DesiredXPos", SessionSettings.ToString(DesiredXPos));
-			return xml;
+		public void Write(ISettingsSection section) {
+			section.Attribute("VerticalOffset", VerticalOffset);
+			section.Attribute("HorizontalOffset", HorizontalOffset);
+			section.Attribute("Line", TextViewPosition.Line);
+			section.Attribute("Column", TextViewPosition.Column);
+			section.Attribute("VisualColumn", TextViewPosition.VisualColumn);
+			section.Attribute("IsAtEndOfLine", TextViewPosition.IsAtEndOfLine);
+			section.Attribute("DesiredXPos", DesiredXPos);
 		}
 
-		public static EditorPositionState FromXml(XElement doc) {
+		public static EditorPositionState Read(ISettingsSection section) {
 			var state = new EditorPositionState();
-			if (doc != null) {
-				state.VerticalOffset = SessionSettings.FromString((string)doc.Attribute("VerticalOffset"), 0.0);
-				state.HorizontalOffset = SessionSettings.FromString((string)doc.Attribute("HorizontalOffset"), 0.0);
+			if (section != null) {
+				state.VerticalOffset = section.Attribute<double?>("VerticalOffset") ?? 0.0;
+				state.HorizontalOffset = section.Attribute<double?>("HorizontalOffset") ?? 0.0;
 				state.TextViewPosition = new TextViewPosition {
-					Line = SessionSettings.FromString((string)doc.Attribute("Line"), 0),
-					Column = SessionSettings.FromString((string)doc.Attribute("Column"), 0),
-					VisualColumn = SessionSettings.FromString((string)doc.Attribute("VisualColumn"), 0),
-					IsAtEndOfLine = SessionSettings.FromString((string)doc.Attribute("IsAtEndOfLine"), false),
+					Line = section.Attribute<int?>("Line") ?? 0,
+					Column = section.Attribute<int?>("Column") ?? 0,
+					VisualColumn = section.Attribute<int?>("VisualColumn") ?? 0,
+					IsAtEndOfLine = section.Attribute<bool?>("IsAtEndOfLine") ?? false,
 				};
-				state.DesiredXPos = SessionSettings.FromString((string)doc.Attribute("DesiredXPos"), 0.0);
+				state.DesiredXPos = section.Attribute<double?>("DesiredXPos") ?? 0.0;
 			}
 			return state;
 		}

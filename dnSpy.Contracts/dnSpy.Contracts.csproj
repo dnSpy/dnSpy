@@ -63,6 +63,9 @@
     <Compile Include="Menus\IMenuMetadata.cs" />
     <Compile Include="Menus\MenuConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\ISettingsManager.cs" />
+    <Compile Include="Settings\ISettingsSection.cs" />
+    <Compile Include="Settings\ISettingsSectionCreator.cs" />
     <Compile Include="Themes\ColorType.cs" />
     <Compile Include="Themes\ITheme.cs" />
     <Compile Include="Themes\IThemeColor.cs" />

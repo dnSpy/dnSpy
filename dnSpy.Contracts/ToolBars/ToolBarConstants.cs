@@ -43,10 +43,10 @@ namespace dnSpy.Contracts.ToolBars {
 		/// <summary>Group: App ToolBar: Main, Group: Debug</summary>
 		public const string GROUP_APP_TB_MAIN_DEBUG = "5000,A0AFBC69-B6D1-46FE-96C8-EC380DEBE9AA";
 
-		/// <summary>Group: App ToolBar: Main, Group: Debug</summary>
+		/// <summary>Group: App ToolBar: Main, Group: Debug / Continue</summary>
 		public const string GROUP_APP_TB_MAIN_DEBUG_CONTINUE = "6000,47DB0753-CEB2-4D83-A5F2-4DBCFF108E67";
 
-		/// <summary>Group: App ToolBar: Main, Group: Step</summary>
+		/// <summary>Group: App ToolBar: Main, Group: Debug / Step</summary>
 		public const string GROUP_APP_TB_MAIN_DEBUG_STEP = "7000,5B9EF354-4FB6-4C7D-A700-80A8BEC7FC52";
 
 		/// <summary>Group: App ToolBar: Main, Group: Search</summary>

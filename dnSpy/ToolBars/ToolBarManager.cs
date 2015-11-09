@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -27,7 +28,6 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using dnSpy.Contracts;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.ToolBars;
@@ -81,11 +81,15 @@ namespace dnSpy.ToolBars {
 		}
 	}
 
+	[Export, Export(typeof(IToolBarManager))]
 	sealed class ToolBarManager : IToolBarManager {
-		readonly IApp app;
+		readonly IImageManager imageManager;
 
-		public ToolBarManager(IApp app) {
-			this.app = app;
+		[ImportingConstructor]
+		ToolBarManager(IImageManager imageManager, [ImportMany] IEnumerable<Lazy<IToolBarButton, IToolBarButtonMetadata>> tbButtonMef, [ImportMany] IEnumerable<Lazy<IToolBarObject, IToolBarObjectMetadata>> tbObjectMef) {
+			this.imageManager = imageManager;
+			this.tbButtonMef = tbButtonMef;
+			this.tbObjectMef = tbObjectMef;
 		}
 
 		void InitializeToolBarItems() {
@@ -134,11 +138,13 @@ namespace dnSpy.ToolBars {
 		Dictionary<Guid, List<ToolBarItemGroupMD>> guidToGroups;
 
 		IEnumerable<ToolBarItemMD> GetToolBarItemMDs() {
-			foreach (var i in app.CompositionContainer.GetExports<IToolBarButton, IToolBarButtonMetadata>())
+			foreach (var i in tbButtonMef)
 				yield return new ToolBarButtonMD(i);
-			foreach (var i in app.CompositionContainer.GetExports<IToolBarObject, IToolBarObjectMetadata>())
+			foreach (var i in tbObjectMef)
 				yield return new ToolBarObjectMD(i);
 		}
+		readonly IEnumerable<Lazy<IToolBarButton, IToolBarButtonMetadata>> tbButtonMef;
+		readonly IEnumerable<Lazy<IToolBarObject, IToolBarObjectMetadata>> tbObjectMef;
 
 		public ToolBar InitializeToolBar(ToolBar toolBar, Guid toolBarGuid, IInputElement commandTarget) {
 			InitializeToolBarItems();
@@ -213,7 +219,7 @@ namespace dnSpy.ToolBars {
 
 			BitmapSource imageSource = null;
 			if (!string.IsNullOrEmpty(icon))
-				imageSource = app.ImageManager.GetImage(item.GetType().Assembly, icon, BackgroundType.ToolBar);
+				imageSource = imageManager.GetImage(item.GetType().Assembly, icon, BackgroundType.ToolBar);
 
 			var toggleButtonCmd = item as IToolBarToggleButton;
 			Debug.Assert(md2.IsToggleButton == (toggleButtonCmd != null), "Implement IToolBarToggleButton if IsToggleButton is true");

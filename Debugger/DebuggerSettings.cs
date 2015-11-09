@@ -18,10 +18,9 @@
 */
 
 using System.Diagnostics;
-using System.Xml.Linq;
 using dndbg.Engine;
+using dnSpy.Contracts;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger {
 	sealed class DebuggerSettings : ViewModelBase {
@@ -291,78 +290,66 @@ namespace dnSpy.Debugger {
 		}
 		string coreCLRDbgShimFilename;
 
-		const string SETTINGS_NAME = "DebuggerSettings";
+		const string SETTINGS_NAME = "102DCD2E-BE0A-477C-B4D0-600C5CA28A6A";
 
 		void Load() {
 			try {
 				disableSaveCounter++;
 
-				Load(DNSpySettings.Load());
+				Load2();
 			}
 			finally {
 				disableSaveCounter--;
 			}
 		}
 
-		void Load(DNSpySettings settings) {
-			var csx = settings[SETTINGS_NAME];
-			UseHexadecimal = (bool?)csx.Attribute("UseHexadecimal") ?? true;
-			SyntaxHighlightCallStack = (bool?)csx.Attribute("SyntaxHighlightCallStack") ?? true;
-			SyntaxHighlightBreakpoints = (bool?)csx.Attribute("SyntaxHighlightBreakpoints") ?? true;
-			SyntaxHighlightThreads = (bool?)csx.Attribute("SyntaxHighlightThreads") ?? true;
-			SyntaxHighlightModules = (bool?)csx.Attribute("SyntaxHighlightModules") ?? true;
-			SyntaxHighlightLocals = (bool?)csx.Attribute("SyntaxHighlightLocals") ?? true;
-			SyntaxHighlightAttach = (bool?)csx.Attribute("SyntaxHighlightAttach") ?? true;
-			SyntaxHighlightExceptions = (bool?)csx.Attribute("SyntaxHighlightExceptions") ?? true;
-			BreakProcessType = (BreakProcessType)((int?)csx.Attribute("BreakProcessType") ?? (int)BreakProcessType.ModuleCctorOrEntryPoint);
-			PropertyEvalAndFunctionCalls = (bool?)csx.Attribute("PropertyEvalAndFunctionCalls") ?? true;
-			UseStringConversionFunction = (bool?)csx.Attribute("UseStringConversionFunction") ?? true;
-			DebuggerBrowsableAttributesCanHidePropsFields = (bool?)csx.Attribute("DebuggerBrowsableAttributesCanHidePropsFields") ?? true;
-			CompilerGeneratedAttributesCanHideFields = (bool?)csx.Attribute("CompilerGeneratedAttributesCanHideFields") ?? true;
-			DisableManagedDebuggerDetection = (bool?)csx.Attribute("DisableManagedDebuggerDetection") ?? true;
-			IgnoreBreakInstructions = (bool?)csx.Attribute("IgnoreBreakInstructions") ?? false;
-			AutoOpenLocalsWindow = (bool?)csx.Attribute("AutoOpenLocalsWindow") ?? true;
-			UseMemoryModules = (bool?)csx.Attribute("UseMemoryModules") ?? false;
-			CoreCLRDbgShimFilename = SessionSettings.Unescape((string)csx.Attribute("CoreCLRDbgShimFilename") ?? string.Empty);
+		void Load2() {
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+			UseHexadecimal = section.Attribute<bool?>("UseHexadecimal") ?? true;
+			SyntaxHighlightCallStack = section.Attribute<bool?>("SyntaxHighlightCallStack") ?? true;
+			SyntaxHighlightBreakpoints = section.Attribute<bool?>("SyntaxHighlightBreakpoints") ?? true;
+			SyntaxHighlightThreads = section.Attribute<bool?>("SyntaxHighlightThreads") ?? true;
+			SyntaxHighlightModules = section.Attribute<bool?>("SyntaxHighlightModules") ?? true;
+			SyntaxHighlightLocals = section.Attribute<bool?>("SyntaxHighlightLocals") ?? true;
+			SyntaxHighlightAttach = section.Attribute<bool?>("SyntaxHighlightAttach") ?? true;
+			SyntaxHighlightExceptions = section.Attribute<bool?>("SyntaxHighlightExceptions") ?? true;
+			BreakProcessType = section.Attribute<BreakProcessType?>("BreakProcessType") ?? BreakProcessType.ModuleCctorOrEntryPoint;
+			PropertyEvalAndFunctionCalls = section.Attribute<bool?>("PropertyEvalAndFunctionCalls") ?? true;
+			UseStringConversionFunction = section.Attribute<bool?>("UseStringConversionFunction") ?? true;
+			DebuggerBrowsableAttributesCanHidePropsFields = section.Attribute<bool?>("DebuggerBrowsableAttributesCanHidePropsFields") ?? true;
+			CompilerGeneratedAttributesCanHideFields = section.Attribute<bool?>("CompilerGeneratedAttributesCanHideFields") ?? true;
+			DisableManagedDebuggerDetection = section.Attribute<bool?>("DisableManagedDebuggerDetection") ?? true;
+			IgnoreBreakInstructions = section.Attribute<bool?>("IgnoreBreakInstructions") ?? false;
+			AutoOpenLocalsWindow = section.Attribute<bool?>("AutoOpenLocalsWindow") ?? true;
+			UseMemoryModules = section.Attribute<bool?>("UseMemoryModules") ?? false;
+			CoreCLRDbgShimFilename = section.Attribute<string>("CoreCLRDbgShimFilename") ?? string.Empty;
 		}
 
 		void Save() {
 			if (this != DebuggerSettings.Instance)
 				return;
-			DNSpySettings.Update(root => Save(root));
-		}
-
-		void Save(XElement root) {
-			if (this != DebuggerSettings.Instance)
-				return;
 			if (disableSaveCounter != 0)
 				return;
 
-			var csx = new XElement(SETTINGS_NAME);
-			var existingElement = root.Element(SETTINGS_NAME);
-			if (existingElement != null)
-				existingElement.ReplaceWith(csx);
-			else
-				root.Add(csx);
-
-			csx.SetAttributeValue("UseHexadecimal", UseHexadecimal);
-			csx.SetAttributeValue("SyntaxHighlightCallStack", SyntaxHighlightCallStack);
-			csx.SetAttributeValue("SyntaxHighlightBreakpoints", SyntaxHighlightBreakpoints);
-			csx.SetAttributeValue("SyntaxHighlightThreads", SyntaxHighlightThreads);
-			csx.SetAttributeValue("SyntaxHighlightModules", SyntaxHighlightModules);
-			csx.SetAttributeValue("SyntaxHighlightLocals", SyntaxHighlightLocals);
-			csx.SetAttributeValue("SyntaxHighlightAttach", SyntaxHighlightAttach);
-			csx.SetAttributeValue("SyntaxHighlightExceptions", SyntaxHighlightExceptions);
-			csx.SetAttributeValue("BreakProcessType", (int)BreakProcessType);
-			csx.SetAttributeValue("PropertyEvalAndFunctionCalls", PropertyEvalAndFunctionCalls);
-			csx.SetAttributeValue("UseStringConversionFunction", UseStringConversionFunction);
-			csx.SetAttributeValue("DebuggerBrowsableAttributesCanHidePropsFields", DebuggerBrowsableAttributesCanHidePropsFields);
-			csx.SetAttributeValue("CompilerGeneratedAttributesCanHideFields", CompilerGeneratedAttributesCanHideFields);
-			csx.SetAttributeValue("DisableManagedDebuggerDetection", DisableManagedDebuggerDetection);
-			csx.SetAttributeValue("IgnoreBreakInstructions", IgnoreBreakInstructions);
-			csx.SetAttributeValue("AutoOpenLocalsWindow", AutoOpenLocalsWindow);
-			csx.SetAttributeValue("UseMemoryModules", UseMemoryModules);
-			csx.SetAttributeValue("CoreCLRDbgShimFilename", SessionSettings.Escape(CoreCLRDbgShimFilename));
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
+			section.Attribute("UseHexadecimal", UseHexadecimal);
+			section.Attribute("SyntaxHighlightCallStack", SyntaxHighlightCallStack);
+			section.Attribute("SyntaxHighlightBreakpoints", SyntaxHighlightBreakpoints);
+			section.Attribute("SyntaxHighlightThreads", SyntaxHighlightThreads);
+			section.Attribute("SyntaxHighlightModules", SyntaxHighlightModules);
+			section.Attribute("SyntaxHighlightLocals", SyntaxHighlightLocals);
+			section.Attribute("SyntaxHighlightAttach", SyntaxHighlightAttach);
+			section.Attribute("SyntaxHighlightExceptions", SyntaxHighlightExceptions);
+			section.Attribute("BreakProcessType", BreakProcessType);
+			section.Attribute("PropertyEvalAndFunctionCalls", PropertyEvalAndFunctionCalls);
+			section.Attribute("UseStringConversionFunction", UseStringConversionFunction);
+			section.Attribute("DebuggerBrowsableAttributesCanHidePropsFields", DebuggerBrowsableAttributesCanHidePropsFields);
+			section.Attribute("CompilerGeneratedAttributesCanHideFields", CompilerGeneratedAttributesCanHideFields);
+			section.Attribute("DisableManagedDebuggerDetection", DisableManagedDebuggerDetection);
+			section.Attribute("IgnoreBreakInstructions", IgnoreBreakInstructions);
+			section.Attribute("AutoOpenLocalsWindow", AutoOpenLocalsWindow);
+			section.Attribute("UseMemoryModules", UseMemoryModules);
+			section.Attribute("CoreCLRDbgShimFilename", CoreCLRDbgShimFilename);
 		}
 
 		public DebuggerSettings CopyTo(DebuggerSettings other) {
@@ -391,7 +378,7 @@ namespace dnSpy.Debugger {
 			return CopyTo(new DebuggerSettings());
 		}
 
-		internal static void WriteNewSettings(XElement root, DebuggerSettings settings) {
+		internal static void WriteNewSettings(DebuggerSettings settings) {
 			try {
 				DebuggerSettings.Instance.disableSaveCounter++;
 				settings.CopyTo(DebuggerSettings.Instance);
@@ -399,7 +386,7 @@ namespace dnSpy.Debugger {
 			finally {
 				DebuggerSettings.Instance.disableSaveCounter--;
 			}
-			DebuggerSettings.Instance.Save(root);
+			DebuggerSettings.Instance.Save();
 		}
 	}
 }

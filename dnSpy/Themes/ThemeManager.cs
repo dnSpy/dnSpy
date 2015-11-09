@@ -19,17 +19,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Security;
 using System.Windows;
 using System.Xml.Linq;
-using dnSpy.Contracts;
 using dnSpy.Contracts.Themes;
 using Microsoft.Win32;
 
 namespace dnSpy.Themes {
+	[Export, Export(typeof(IThemeManager))]
 	sealed class ThemeManager : IThemeManager {
 		readonly Dictionary<string, Theme> themes;
 
@@ -66,12 +67,10 @@ namespace dnSpy.Themes {
 
 		public event EventHandler<ThemeChangedEventArgs> ThemeChanged;
 
-		readonly IApp app;
-
-		public ThemeManager(IApp app) {
-			this.app = app;
+		ThemeManager() {
 			this.themes = new Dictionary<string, Theme>();
 			Load();
+			Debug.Assert(themes.Count != 0);
 			SystemEvents.UserPreferenceChanged += (s, e) => IsHighContrast = SystemParameters.HighContrast;
 			IsHighContrast = SystemParameters.HighContrast;
 		}
@@ -116,7 +115,7 @@ namespace dnSpy.Themes {
 
 		const string DNTHEME_DIR = "Themes";
 		IEnumerable<string> GetDnthemePaths() {
-			yield return Path.Combine(Path.GetDirectoryName(app.GetType().Assembly.Location), DNTHEME_DIR);
+			yield return Path.Combine(Path.GetDirectoryName(GetType().Assembly.Location), DNTHEME_DIR);
 			yield return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "dnSpy", DNTHEME_DIR);
 		}
 

@@ -19,16 +19,14 @@
 
 using System;
 using System.Windows.Input;
-using System.Xml.Linq;
 using dndbg.Engine;
 using dnSpy.Debugger.Dialogs;
 using dnSpy.MVVM;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
 
 namespace dnSpy.Debugger {
-	[ExportOptionPage(Title = "Debugger", Order = 4)]
+	[ExportOptionPage(Title = "Debugger", Order = 1)]
 	sealed class DebuggerSettingsVMCreator : IOptionPageCreator {
 		public OptionPage Create() {
 			return new DebuggerSettingsVM(new PickFilename());
@@ -72,14 +70,14 @@ namespace dnSpy.Debugger {
 			Settings.CoreCLRDbgShimFilename = newFilename;
 		}
 
-		public override void Load(DNSpySettings settings) {
+		public override void Load() {
 			this.settings = DebuggerSettings.Instance.Clone();
 			this.BreakProcessType = this.settings.BreakProcessType;
 		}
 
-		public override RefreshFlags Save(XElement root) {
+		public override RefreshFlags Save() {
 			this.settings.BreakProcessType = this.BreakProcessType;
-			DebuggerSettings.WriteNewSettings(root, this.settings);
+			DebuggerSettings.WriteNewSettings(this.settings);
 			return RefreshFlags.None;
 		}
 	}

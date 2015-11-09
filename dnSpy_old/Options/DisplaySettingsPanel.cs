@@ -23,11 +23,11 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
-using System.Xml.Linq;
+using dnSpy.Contracts;
 using dnSpy.Options;
 
 namespace ICSharpCode.ILSpy.Options {
-	[ExportOptionPage(Title = "Display", Order = 1)]
+	[ExportOptionPage(Title = "Display", Order = 2)]
 	sealed class DisplaySettingsPanelCreator : IOptionPageCreator {
 		public OptionPage Create() {
 			return new DisplaySettingsPanel();
@@ -72,8 +72,8 @@ namespace ICSharpCode.ILSpy.Options {
 			);
 		}
 
-		public override void Load(DNSpySettings settings) {
-			this.settings = LoadDisplaySettings(settings);
+		public override void Load() {
+			this.settings = LoadDisplaySettings();
 		}
 
 		static DisplaySettings currentDisplaySettings;
@@ -82,7 +82,7 @@ namespace ICSharpCode.ILSpy.Options {
 			get {
 				if (currentDisplaySettings != null)
 					return currentDisplaySettings;
-				Interlocked.CompareExchange(ref currentDisplaySettings, LoadDisplaySettings(DNSpySettings.Load()), null);
+				Interlocked.CompareExchange(ref currentDisplaySettings, LoadDisplaySettings(), null);
 				return currentDisplaySettings;
 			}
 		}
@@ -108,28 +108,30 @@ namespace ICSharpCode.ILSpy.Options {
 				.ToArray();
 		}
 
-		public static DisplaySettings LoadDisplaySettings(DNSpySettings settings) {
-			XElement e = settings["DisplaySettings"];
+		const string SETTINGS_NAME = "DD4AE909-A608-4DF8-816F-6967E8B441D5";
+
+		public static DisplaySettings LoadDisplaySettings() {
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
 			DisplaySettings s = new DisplaySettings();
-			s.SelectedFont = new FontFamily(SessionSettings.Unescape((string)e.Attribute("Font")) ?? FontUtils.GetDefaultFont());
-			s.SelectedFontSize = (double?)e.Attribute("FontSize") ?? FontUtils.DEFAULT_FONT_SIZE;
-			s.ShowLineNumbers = (bool?)e.Attribute("ShowLineNumbers") ?? true;
-			s.ShowMetadataTokens = (bool?)e.Attribute("ShowMetadataTokens") ?? true;
-			s.ShowAssemblyVersion = (bool?)e.Attribute("ShowAssemblyVersion") ?? true;
-			s.ShowAssemblyPublicKeyToken = (bool?)e.Attribute("ShowAssemblyPublicKeyToken") ?? false;
-			s.DecompileFullType = (bool?)e.Attribute("DecompileFullType") ?? true;
-			s.NewEmptyTabs = (bool?)e.Attribute("NewEmptyTabs") ?? false;
-			s.RestoreTabsAtStartup = (bool?)e.Attribute("RestoreTabsAtStartup") ?? true;
-			s.AutoHighlightRefs = (bool?)e.Attribute("AutoHighlightRefs") ?? true;
-			s.SyntaxHighlightTreeViewUI = (bool?)e.Attribute("SyntaxHighlightTreeViewUI") ?? true;
-			s.SyntaxHighlightAnalyzerTreeViewUI = (bool?)e.Attribute("SyntaxHighlightAnalyzerTreeViewUI") ?? true;
-			s.SyntaxHighlightSearchListUI = (bool?)e.Attribute("SyntaxHighlightSearchListUI") ?? true;
-			s.SingleClickExpandsChildren = (bool?)e.Attribute("SingleClickExpandsChildren") ?? true;
+			s.SelectedFont = new FontFamily(section.Attribute<string>("Font") ?? FontUtils.GetDefaultFont());
+			s.SelectedFontSize = section.Attribute<double?>("FontSize") ?? FontUtils.DEFAULT_FONT_SIZE;
+			s.ShowLineNumbers = section.Attribute<bool?>("ShowLineNumbers") ?? true;
+			s.ShowMetadataTokens = section.Attribute<bool?>("ShowMetadataTokens") ?? true;
+			s.ShowAssemblyVersion = section.Attribute<bool?>("ShowAssemblyVersion") ?? true;
+			s.ShowAssemblyPublicKeyToken = section.Attribute<bool?>("ShowAssemblyPublicKeyToken") ?? false;
+			s.DecompileFullType = section.Attribute<bool?>("DecompileFullType") ?? true;
+			s.NewEmptyTabs = section.Attribute<bool?>("NewEmptyTabs") ?? false;
+			s.RestoreTabsAtStartup = section.Attribute<bool?>("RestoreTabsAtStartup") ?? true;
+			s.AutoHighlightRefs = section.Attribute<bool?>("AutoHighlightRefs") ?? true;
+			s.SyntaxHighlightTreeViewUI = section.Attribute<bool?>("SyntaxHighlightTreeViewUI") ?? true;
+			s.SyntaxHighlightAnalyzerTreeViewUI = section.Attribute<bool?>("SyntaxHighlightAnalyzerTreeViewUI") ?? true;
+			s.SyntaxHighlightSearchListUI = section.Attribute<bool?>("SyntaxHighlightSearchListUI") ?? true;
+			s.SingleClickExpandsChildren = section.Attribute<bool?>("SingleClickExpandsChildren") ?? true;
 
 			return s;
 		}
 
-		public override RefreshFlags Save(XElement root) {
+		public override RefreshFlags Save() {
 			DisplaySettings s = this.settings;
 
 			var flags = RefreshFlags.None;
@@ -141,27 +143,21 @@ namespace ICSharpCode.ILSpy.Options {
 
 			currentDisplaySettings.CopyValues(s);
 
-			XElement section = new XElement("DisplaySettings");
-			section.SetAttributeValue("Font", SessionSettings.Escape(s.SelectedFont.Source));
-			section.SetAttributeValue("FontSize", s.SelectedFontSize);
-			section.SetAttributeValue("ShowLineNumbers", s.ShowLineNumbers);
-			section.SetAttributeValue("ShowMetadataTokens", s.ShowMetadataTokens);
-			section.SetAttributeValue("ShowAssemblyVersion", s.ShowAssemblyVersion);
-			section.SetAttributeValue("ShowAssemblyPublicKeyToken", s.ShowAssemblyPublicKeyToken);
-			section.SetAttributeValue("DecompileFullType", s.DecompileFullType);
-			section.SetAttributeValue("NewEmptyTabs", s.NewEmptyTabs);
-			section.SetAttributeValue("RestoreTabsAtStartup", s.RestoreTabsAtStartup);
-			section.SetAttributeValue("AutoHighlightRefs", s.AutoHighlightRefs);
-			section.SetAttributeValue("SyntaxHighlightTreeViewUI", s.SyntaxHighlightTreeViewUI);
-			section.SetAttributeValue("SyntaxHighlightAnalyzerTreeViewUI", s.SyntaxHighlightAnalyzerTreeViewUI);
-			section.SetAttributeValue("SyntaxHighlightSearchListUI", s.SyntaxHighlightSearchListUI);
-			section.SetAttributeValue("SingleClickExpandsChildren", s.SingleClickExpandsChildren);
-
-			XElement existingElement = root.Element("DisplaySettings");
-			if (existingElement != null)
-				existingElement.ReplaceWith(section);
-			else
-				root.Add(section);
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
+			section.Attribute("Font", s.SelectedFont.Source);
+			section.Attribute("FontSize", s.SelectedFontSize);
+			section.Attribute("ShowLineNumbers", s.ShowLineNumbers);
+			section.Attribute("ShowMetadataTokens", s.ShowMetadataTokens);
+			section.Attribute("ShowAssemblyVersion", s.ShowAssemblyVersion);
+			section.Attribute("ShowAssemblyPublicKeyToken", s.ShowAssemblyPublicKeyToken);
+			section.Attribute("DecompileFullType", s.DecompileFullType);
+			section.Attribute("NewEmptyTabs", s.NewEmptyTabs);
+			section.Attribute("RestoreTabsAtStartup", s.RestoreTabsAtStartup);
+			section.Attribute("AutoHighlightRefs", s.AutoHighlightRefs);
+			section.Attribute("SyntaxHighlightTreeViewUI", s.SyntaxHighlightTreeViewUI);
+			section.Attribute("SyntaxHighlightAnalyzerTreeViewUI", s.SyntaxHighlightAnalyzerTreeViewUI);
+			section.Attribute("SyntaxHighlightSearchListUI", s.SyntaxHighlightSearchListUI);
+			section.Attribute("SingleClickExpandsChildren", s.SingleClickExpandsChildren);
 
 			return flags;
 		}

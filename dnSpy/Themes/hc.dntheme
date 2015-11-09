@@ -1,4 +1,4 @@
-<theme name="hc" menu-name="_High Contrast" sort="100000" is-high-contrast="true">
+<theme name="hc" menu-name="_High Contrast" order="100000" is-high-contrast="true">
 	<colors>
 		<color name="defaulttext" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="selection" bg="#33FFFFFF" />

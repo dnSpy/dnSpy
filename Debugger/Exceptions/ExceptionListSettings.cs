@@ -20,8 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Xml.Linq;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts;
+using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.Exceptions {
 	enum ExceptionDiffType {
@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 	sealed class ExceptionListSettings {
 		public static readonly ExceptionListSettings Instance = new ExceptionListSettings();
-		const string SETTINGS_NAME = "Exceptions";
+		const string SETTINGS_NAME = "102DCD2E-BE0A-477C-B4D0-600C5CA28A6A";
 		int disableSaveCounter;
 
 		ExceptionListSettings() {
@@ -40,10 +40,6 @@ namespace dnSpy.Debugger.Exceptions {
 
 		private void ExceptionManager_Changed(object sender, ExceptionManagerEventArgs e) {
 			Save();
-		}
-
-		void Save() {
-			DNSpySettings.Update(root => Save(root));
 		}
 
 		internal void OnLoaded() {
@@ -57,15 +53,14 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		void LoadInternal() {
-			DNSpySettings settings = DNSpySettings.Load();
-			var exs = settings[SETTINGS_NAME];
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
 			ExceptionManager.Instance.RestoreDefaults();
-			foreach (var exx in exs.Elements("Exception")) {
-				var exceptionType = (ExceptionType?)(int?)exx.Attribute("ExceptionType");
-				var fullName = SessionSettings.Unescape((string)exx.Attribute("FullName"));
-				bool? breakOnFirstChance = (bool?)exx.Attribute("BreakOnFirstChance");
-				bool isOtherExceptions = (bool?)exx.Attribute("IsOtherExceptions") ?? false;
-				var diffType = (ExceptionDiffType?)(int?)exx.Attribute("DiffType");
+			foreach (var exx in section.SectionsWithName("Exception")) {
+				var exceptionType = exx.Attribute<ExceptionType?>("ExceptionType");
+				var fullName = exx.Attribute<string>("FullName");
+				bool? breakOnFirstChance = exx.Attribute<bool?>("BreakOnFirstChance");
+				bool isOtherExceptions = exx.Attribute<bool?>("IsOtherExceptions") ?? false;
+				var diffType = exx.Attribute<ExceptionDiffType?>("DiffType");
 
 				if (diffType == null)
 					continue;
@@ -93,27 +88,21 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 		}
 
-		void Save(XElement root) {
+		void Save() {
 			// Prevent Load() from saving the settings every time a new exception is added
 			if (disableSaveCounter != 0)
 				return;
 
-			var exs = new XElement(SETTINGS_NAME);
-			var existingElement = root.Element(SETTINGS_NAME);
-			if (existingElement != null)
-				existingElement.ReplaceWith(exs);
-			else
-				root.Add(exs);
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
 
 			foreach (var tuple in GetDiff()) {
-				var exx = new XElement("Exception");
-				exx.SetAttributeValue("ExceptionType", (int)tuple.Item2.ExceptionType);
-				exx.SetAttributeValue("FullName", SessionSettings.Escape(tuple.Item2.Name));
-				exx.SetAttributeValue("BreakOnFirstChance", tuple.Item2.BreakOnFirstChance);
+				var exx = section.CreateSection("Exception");
+				exx.Attribute("ExceptionType", tuple.Item2.ExceptionType);
+				exx.Attribute("FullName", tuple.Item2.Name);
+				exx.Attribute("BreakOnFirstChance", tuple.Item2.BreakOnFirstChance);
 				if (tuple.Item2.IsOtherExceptions)
-					exx.SetAttributeValue("IsOtherExceptions", tuple.Item2.IsOtherExceptions);
-				exx.SetAttributeValue("DiffType", (int)tuple.Item1);
-				exs.Add(exx);
+					exx.Attribute("IsOtherExceptions", tuple.Item2.IsOtherExceptions);
+				exx.Attribute("DiffType", tuple.Item1);
 			}
 		}
 

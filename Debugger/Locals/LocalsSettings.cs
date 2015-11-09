@@ -17,9 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Xml.Linq;
+using dnSpy.Contracts;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.Locals {
 	sealed class LocalsSettings : ViewModelBase {
@@ -66,17 +65,16 @@ namespace dnSpy.Debugger.Locals {
 		}
 		bool showTokens;
 
-		const string SETTINGS_NAME = "LocalsSettings";
+		const string SETTINGS_NAME = "33608C69-6696-4721-8011-81ECCCC80C64";
 
 		void Load() {
 			try {
 				disableSaveCounter++;
 
-				var settings = DNSpySettings.Load();
-				var csx = settings[SETTINGS_NAME];
-				ShowNamespaces = (bool?)csx.Attribute("ShowNamespaces") ?? true;
-				ShowTypeKeywords = (bool?)csx.Attribute("ShowTypeKeywords") ?? true;
-				ShowTokens = (bool?)csx.Attribute("ShowTokens") ?? false;
+				var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+				ShowNamespaces = section.Attribute<bool?>("ShowNamespaces") ?? true;
+				ShowTypeKeywords = section.Attribute<bool?>("ShowTypeKeywords") ?? true;
+				ShowTokens = section.Attribute<bool?>("ShowTokens") ?? false;
 			}
 			finally {
 				disableSaveCounter--;
@@ -86,25 +84,14 @@ namespace dnSpy.Debugger.Locals {
 		void Save() {
 			if (this != LocalsSettings.Instance)
 				return;
-			DNSpySettings.Update(root => Save(root));
-		}
-
-		void Save(XElement root) {
-			if (this != LocalsSettings.Instance)
-				return;
 			if (disableSaveCounter != 0)
 				return;
 
-			var csx = new XElement(SETTINGS_NAME);
-			var existingElement = root.Element(SETTINGS_NAME);
-			if (existingElement != null)
-				existingElement.ReplaceWith(csx);
-			else
-				root.Add(csx);
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
 
-			csx.SetAttributeValue("ShowNamespaces", ShowNamespaces);
-			csx.SetAttributeValue("ShowTypeKeywords", ShowTypeKeywords);
-			csx.SetAttributeValue("ShowTokens", ShowTokens);
+			section.Attribute("ShowNamespaces", ShowNamespaces);
+			section.Attribute("ShowTypeKeywords", ShowTypeKeywords);
+			section.Attribute("ShowTokens", ShowTokens);
 		}
 	}
 }

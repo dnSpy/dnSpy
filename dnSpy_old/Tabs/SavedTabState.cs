@@ -20,11 +20,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Xml.Linq;
 using dnSpy.AvalonEdit;
+using dnSpy.Contracts.Settings;
 using dnSpy.Shared.UI.HexEditor;
 using dnSpy.TreeNodes;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Tabs {
 	public class SavedTabGroupsState {
@@ -32,24 +31,22 @@ namespace dnSpy.Tabs {
 		public int Index;
 		public bool IsHorizontal;
 
-		public XElement ToXml(XElement xml) {
-			xml.SetAttributeValue("index", Index);
-			xml.SetAttributeValue("is-horizontal", IsHorizontal);
+		public void Write(ISettingsSection section) {
+			section.Attribute("index", Index);
+			section.Attribute("is-horizontal", IsHorizontal);
 
 			foreach (var group in Groups)
-				xml.Add(group.ToXml(new XElement("TabGroup")));
-
-			return xml;
+				group.Write(section.CreateSection("TabGroup"));
 		}
 
-		public static SavedTabGroupsState FromXml(XElement child) {
+		public static SavedTabGroupsState Read(ISettingsSection section) {
 			var savedState = new SavedTabGroupsState();
 
-			savedState.Index = (int)child.Attribute("index");
-			savedState.IsHorizontal = (bool)child.Attribute("is-horizontal");
+			savedState.Index = section.Attribute<int?>("index") ?? 0;
+			savedState.IsHorizontal = section.Attribute<bool?>("is-horizontal") ?? true;
 
-			foreach (var group in child.Elements("TabGroup"))
-				savedState.Groups.Add(SavedTabGroupState.FromXml(group));
+			foreach (var group in section.SectionsWithName("TabGroup"))
+				savedState.Groups.Add(SavedTabGroupState.Read(group));
 
 			return savedState;
 		}
@@ -59,22 +56,20 @@ namespace dnSpy.Tabs {
 		public List<SavedTabState> Tabs = new List<SavedTabState>();
 		public int Index;
 
-		public XElement ToXml(XElement xml) {
-			xml.SetAttributeValue("index", Index);
+		public void Write(ISettingsSection section) {
+			section.Attribute("index", Index);
 
 			foreach (var tab in Tabs)
-				xml.Add(tab.ToXml(new XElement("Tab")));
-
-			return xml;
+				tab.Write(section.CreateSection("Tab"));
 		}
 
-		public static SavedTabGroupState FromXml(XElement child) {
+		public static SavedTabGroupState Read(ISettingsSection section) {
 			var savedState = new SavedTabGroupState();
 
-			savedState.Index = (int)child.Attribute("index");
+			savedState.Index = section.Attribute<int?>("index") ?? 0;
 
-			foreach (var tab in child.Elements("Tab")) {
-				var tabState = SavedTabState.FromXml(tab);
+			foreach (var tab in section.SectionsWithName("Tab")) {
+				var tabState = SavedTabState.Read(tab);
 				if (tabState != null)
 					savedState.Tabs.Add(tabState);
 			}
@@ -86,21 +81,19 @@ namespace dnSpy.Tabs {
 	public abstract class SavedTabState {
 		protected abstract string Type { get; }
 
-		public XElement ToXml(XElement xml) {
-			xml.SetAttributeValue("tab-type", Type);
-			ToXmlOverride(xml);
-			return xml;
+		public void Write(ISettingsSection xml) {
+			xml.Attribute("tab-type", Type);
+			WriteOverride(xml);
 		}
 
-		protected abstract void ToXmlOverride(XElement xml);
+		protected abstract void WriteOverride(ISettingsSection xml);
 
-		public static SavedTabState FromXml(XElement child) {
-			var type = (string)child.Attribute("tab-type");
-			//TODO: Remove the null check after some time after this commit. Only here so older files can be loaded.
-			if (type == null || type == SavedDecompileTabState.TYPE)
-				return SavedDecompileTabState.FromXmlInternal(child);
+		public static SavedTabState Read(ISettingsSection child) {
+			var type = child.Attribute<string>("tab-type");
+			if (type == SavedDecompileTabState.TYPE)
+				return SavedDecompileTabState.ReadInternal(child);
 			if (type == SavedHexTabState.TYPE)
-				return SavedHexTabState.FromXmlInternal(child);
+				return SavedHexTabState.ReadInternal(child);
 			Debug.Fail(string.Format("Unknown type: {0}", type));
 			return null;
 		}
@@ -118,32 +111,37 @@ namespace dnSpy.Tabs {
 			get { return TYPE; }
 		}
 
-		protected override void ToXmlOverride(XElement xml) {
-			xml.SetAttributeValue("language", SessionSettings.Escape(Language));
+		protected override void WriteOverride(ISettingsSection section) {
+			section.Attribute("language", Language);
 
 			foreach (var path in Paths)
-				xml.Add(path.ToXml(new XElement("Path")));
+				path.Write(section.CreateSection("Path"));
 
-			var asms = new XElement("ActiveAutoLoadedAssemblies", ActiveAutoLoadedAssemblies.Select(p => new XElement("Node", SessionSettings.Escape(p))));
-			xml.Add(asms);
+			if (ActiveAutoLoadedAssemblies.Count > 0) {
+				var autoLoadedSection = section.CreateSection("ActiveAutoLoadedAssemblies");
+				foreach (var a in ActiveAutoLoadedAssemblies) {
+					var nodeSection = autoLoadedSection.CreateSection("Node");
+					nodeSection.Attribute("Value", a);
+				}
+			}
 
-			xml.Add(EditorPositionState.ToXml(new XElement("EditorPositionState")));
+			EditorPositionState.Write(section.CreateSection("EditorPositionState"));
 		}
 
-		internal static SavedDecompileTabState FromXmlInternal(XElement child) {
+		internal static SavedDecompileTabState ReadInternal(ISettingsSection section) {
 			var savedState = new SavedDecompileTabState();
 
-			savedState.Language = SessionSettings.Unescape((string)child.Attribute("language")) ?? "C#";
+			savedState.Language = section.Attribute<string>("language") ?? "C#";
 
-			foreach (var path in child.Elements("Path"))
-				savedState.Paths.Add(FullNodePathName.FromXml(path));
+			foreach (var path in section.SectionsWithName("Path"))
+				savedState.Paths.Add(FullNodePathName.Read(path));
 
 			savedState.ActiveAutoLoadedAssemblies = new List<string>();
-			var autoAsms = child.Element("ActiveAutoLoadedAssemblies");
+			var autoAsms = section.TryGetSection("ActiveAutoLoadedAssemblies");
 			if (autoAsms != null)
-				savedState.ActiveAutoLoadedAssemblies.AddRange(autoAsms.Elements().Select(e => SessionSettings.Unescape((string)e)));
+				savedState.ActiveAutoLoadedAssemblies.AddRange(autoAsms.SectionsWithName("Node").Select(e => e.Attribute<string>("Value")));
 
-			savedState.EditorPositionState = EditorPositionState.FromXml(child.Element("EditorPositionState"));
+			savedState.EditorPositionState = EditorPositionState.Read(section.GetOrCreateSection("EditorPositionState"));
 
 			return savedState;
 		}
@@ -169,57 +167,57 @@ namespace dnSpy.Tabs {
 			get { return TYPE; }
 		}
 
-		protected override void ToXmlOverride(XElement xml) {
-			xml.SetAttributeValue("BytesGroupCount", BytesGroupCount);
-			xml.SetAttributeValue("BytesPerLine", BytesPerLine);
-			xml.SetAttributeValue("UseHexPrefix", UseHexPrefix);
-			xml.SetAttributeValue("ShowAscii", ShowAscii);
-			xml.SetAttributeValue("LowerCaseHex", LowerCaseHex);
-			xml.SetAttributeValue("AsciiEncoding", (int?)AsciiEncoding);
+		protected override void WriteOverride(ISettingsSection section) {
+			section.Attribute("BytesGroupCount", BytesGroupCount);
+			section.Attribute("BytesPerLine", BytesPerLine);
+			section.Attribute("UseHexPrefix", UseHexPrefix);
+			section.Attribute("ShowAscii", ShowAscii);
+			section.Attribute("LowerCaseHex", LowerCaseHex);
+			section.Attribute("AsciiEncoding", AsciiEncoding);
 
-			xml.SetAttributeValue("HexOffsetSize", HexOffsetSize);
-			xml.SetAttributeValue("UseRelativeOffsets", UseRelativeOffsets);
-			xml.SetAttributeValue("BaseOffset", BaseOffset);
-			xml.SetAttributeValue("FileName", SessionSettings.Escape(FileName));
+			section.Attribute("HexOffsetSize", HexOffsetSize);
+			section.Attribute("UseRelativeOffsets", UseRelativeOffsets);
+			section.Attribute("BaseOffset", BaseOffset);
+			section.Attribute("FileName", FileName);
 
-			xml.SetAttributeValue("HexBoxState-TopOffset", HexBoxState.TopOffset);
-			xml.SetAttributeValue("HexBoxState-Column", HexBoxState.Column);
-			xml.SetAttributeValue("HexBoxState-StartOffset", HexBoxState.StartOffset);
-			xml.SetAttributeValue("HexBoxState-EndOffset", HexBoxState.EndOffset);
-			xml.SetAttributeValue("HexBoxState-HexBoxPosition-Offset", HexBoxState.CaretPosition.Offset);
-			xml.SetAttributeValue("HexBoxState-HexBoxPosition-Kind", (int)HexBoxState.CaretPosition.Kind);
-			xml.SetAttributeValue("HexBoxState-HexBoxPosition-KindPosition", (int)HexBoxState.CaretPosition.KindPosition);
+			section.Attribute("HexBoxState-TopOffset", HexBoxState.TopOffset);
+			section.Attribute("HexBoxState-Column", HexBoxState.Column);
+			section.Attribute("HexBoxState-StartOffset", HexBoxState.StartOffset);
+			section.Attribute("HexBoxState-EndOffset", HexBoxState.EndOffset);
+			section.Attribute("HexBoxState-HexBoxPosition-Offset", HexBoxState.CaretPosition.Offset);
+			section.Attribute("HexBoxState-HexBoxPosition-Kind", HexBoxState.CaretPosition.Kind);
+			section.Attribute("HexBoxState-HexBoxPosition-KindPosition", HexBoxState.CaretPosition.KindPosition);
 			if (HexBoxState.Selection != null) {
-				xml.SetAttributeValue("HexBoxState-Selection-From", HexBoxState.Selection.Value.From);
-				xml.SetAttributeValue("HexBoxState-Selection-To", HexBoxState.Selection.Value.To);
+				section.Attribute("HexBoxState-Selection-From", HexBoxState.Selection.Value.From);
+				section.Attribute("HexBoxState-Selection-To", HexBoxState.Selection.Value.To);
 			}
 		}
 
-		internal static SavedHexTabState FromXmlInternal(XElement child) {
+		internal static SavedHexTabState ReadInternal(ISettingsSection section) {
 			var savedState = new SavedHexTabState();
 
-			savedState.BytesGroupCount = (int?)child.Attribute("BytesGroupCount");
-			savedState.BytesPerLine = (int?)child.Attribute("BytesPerLine");
-			savedState.UseHexPrefix = (bool?)child.Attribute("UseHexPrefix");
-			savedState.ShowAscii = (bool?)child.Attribute("ShowAscii");
-			savedState.LowerCaseHex = (bool?)child.Attribute("LowerCaseHex");
-			savedState.AsciiEncoding = (AsciiEncoding?)(int?)child.Attribute("AsciiEncoding");
+			savedState.BytesGroupCount = section.Attribute<int?>("BytesGroupCount");
+			savedState.BytesPerLine = section.Attribute<int?>("BytesPerLine");
+			savedState.UseHexPrefix = section.Attribute<bool?>("UseHexPrefix");
+			savedState.ShowAscii = section.Attribute<bool?>("ShowAscii");
+			savedState.LowerCaseHex = section.Attribute<bool?>("LowerCaseHex");
+			savedState.AsciiEncoding = section.Attribute<AsciiEncoding?>("AsciiEncoding");
 
-			savedState.HexOffsetSize = (int)child.Attribute("HexOffsetSize");
-			savedState.UseRelativeOffsets = (bool)child.Attribute("UseRelativeOffsets");
-			savedState.BaseOffset = (ulong)child.Attribute("BaseOffset");
-			savedState.FileName = SessionSettings.Unescape((string)child.Attribute("FileName"));
+			savedState.HexOffsetSize = section.Attribute<int?>("HexOffsetSize") ?? 0;
+			savedState.UseRelativeOffsets = section.Attribute<bool?>("UseRelativeOffsets") ?? false;
+			savedState.BaseOffset = section.Attribute<ulong?>("BaseOffset") ?? 0;
+			savedState.FileName = section.Attribute<string>("FileName");
 
-			savedState.HexBoxState.TopOffset = (ulong)child.Attribute("HexBoxState-TopOffset");
-			savedState.HexBoxState.Column = (int)child.Attribute("HexBoxState-Column");
-			savedState.HexBoxState.StartOffset = (ulong)child.Attribute("HexBoxState-StartOffset");
-			savedState.HexBoxState.EndOffset = (ulong)child.Attribute("HexBoxState-EndOffset");
-			savedState.HexBoxState.CaretPosition.Offset = (ulong)child.Attribute("HexBoxState-HexBoxPosition-Offset");
-			savedState.HexBoxState.CaretPosition.Kind = (HexBoxPositionKind)(int)child.Attribute("HexBoxState-HexBoxPosition-Kind");
-			savedState.HexBoxState.CaretPosition.KindPosition = (byte)(int)child.Attribute("HexBoxState-HexBoxPosition-KindPosition");
+			savedState.HexBoxState.TopOffset = section.Attribute<ulong?>("HexBoxState-TopOffset") ?? 0;
+			savedState.HexBoxState.Column = section.Attribute<int?>("HexBoxState-Column") ?? 0;
+			savedState.HexBoxState.StartOffset = section.Attribute<ulong?>("HexBoxState-StartOffset") ?? 0;
+			savedState.HexBoxState.EndOffset = section.Attribute<ulong?>("HexBoxState-EndOffset") ?? 0;
+			savedState.HexBoxState.CaretPosition.Offset = section.Attribute<ulong?>("HexBoxState-HexBoxPosition-Offset") ?? 0;
+			savedState.HexBoxState.CaretPosition.Kind = section.Attribute<HexBoxPositionKind?>("HexBoxState-HexBoxPosition-Kind") ?? 0;
+			savedState.HexBoxState.CaretPosition.KindPosition = section.Attribute<byte?>("HexBoxState-HexBoxPosition-KindPosition") ?? 0;
 
-			var from = child.Attribute("HexBoxState-Selection-From");
-			var to = child.Attribute("HexBoxState-Selection-To");
+			var from = section.Attribute<ulong?>("HexBoxState-Selection-From");
+			var to = section.Attribute<ulong?>("HexBoxState-Selection-To");
 			if (from != null && to != null)
 				savedState.HexBoxState.Selection = new HexSelection((ulong)from, (ulong)to);
 
