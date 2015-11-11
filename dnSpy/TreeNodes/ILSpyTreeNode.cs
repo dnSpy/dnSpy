@@ -68,21 +68,20 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
-		object cacheText;
+		WeakReference cacheText;
 		public sealed override object Text {
 			get {
 				var gen = UISyntaxHighlighter.CreateTreeView();
 
-				if (cacheText != null && !gen.IsSyntaxHighlighted)
-					return cacheText;
+				if (cacheText != null && cacheText.IsAlive)
+					return cacheText.Target;
 				else
 					cacheText = null;
 
 				Write(gen.TextOutput, Language);
 
 				var text = gen.CreateTextBlock(filterOutNewLines: true);
-				if (!gen.IsSyntaxHighlighted)
-					cacheText = text;
+				cacheText = new WeakReference(text);
 				return text;
 			}
 		}
@@ -93,21 +92,20 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			get { return filterSettings != null ? filterSettings.Language : Languages.AllLanguages[0]; }
 		}
 
-		object cacheToolTip;
+		WeakReference cacheToolTip;
 		public override object ToolTip {
 			get {
 				var gen = UISyntaxHighlighter.CreateTreeView();
 
-				if (cacheToolTip != null && !gen.IsSyntaxHighlighted)
-					return cacheToolTip;
+				if (cacheToolTip != null && cacheToolTip.IsAlive)
+					return cacheToolTip.Target;
 				else
 					cacheToolTip = null;
 
 				Write(gen.TextOutput, Language);
 
 				var text = gen.CreateTextBlock(filterOutNewLines: false);
-				if (!gen.IsSyntaxHighlighted)
-					cacheToolTip = text;
+				cacheToolTip = new WeakReference(text);
 				return text;
 			}
 		}
@@ -388,6 +386,9 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public virtual void RaiseUIPropsChanged() {
+			cacheToolTip = null;
+			cacheText = null;
+
 			RaisePropertyChanged("Icon");
 			RaisePropertyChanged("ExpandedIcon");
 			RaisePropertyChanged("ToolTip");

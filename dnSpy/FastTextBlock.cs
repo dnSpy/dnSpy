@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
+using ICSharpCode.AvalonEdit.Utils;
 
 namespace ICSharpCode.ILSpy {
 	public class FastTextBlock : FrameworkElement {
@@ -41,25 +42,20 @@ namespace ICSharpCode.ILSpy {
 		public static readonly DependencyProperty FontStretchProperty;
 		public static readonly DependencyProperty FontSizeProperty;
 		public static readonly DependencyProperty ForegroundProperty;
+		public static readonly DependencyProperty BackgroundProperty;
 
 		static FastTextBlock() {
 			TextProperty =
 				DependencyProperty.Register("Text", typeof(string), typeof(FastTextBlock),
 					new FrameworkPropertyMetadata("",
-						FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure,
-						RenderPropertyChanged));
-			FontFamilyProperty = TextElement.FontFamilyProperty.AddOwner(typeof(FastTextBlock),
-				new FrameworkPropertyMetadata(RenderPropertyChanged));
-			FontStyleProperty = TextElement.FontStyleProperty.AddOwner(typeof(FastTextBlock),
-				new FrameworkPropertyMetadata(RenderPropertyChanged));
-			FontWeightProperty = TextElement.FontWeightProperty.AddOwner(typeof(FastTextBlock),
-				new FrameworkPropertyMetadata(RenderPropertyChanged));
-			FontStretchProperty = TextElement.FontStretchProperty.AddOwner(typeof(FastTextBlock),
-				new FrameworkPropertyMetadata(RenderPropertyChanged));
-			FontSizeProperty = TextElement.FontSizeProperty.AddOwner(typeof(FastTextBlock),
-				new FrameworkPropertyMetadata(RenderPropertyChanged));
-			ForegroundProperty = TextElement.ForegroundProperty.AddOwner(typeof(FastTextBlock),
-				new FrameworkPropertyMetadata(RenderPropertyChanged));
+						FrameworkPropertyMetadataOptions.AffectsRender | FrameworkPropertyMetadataOptions.AffectsMeasure));
+			FontFamilyProperty = TextElement.FontFamilyProperty.AddOwner(typeof(FastTextBlock));
+			FontStyleProperty = TextElement.FontStyleProperty.AddOwner(typeof(FastTextBlock));
+			FontWeightProperty = TextElement.FontWeightProperty.AddOwner(typeof(FastTextBlock));
+			FontStretchProperty = TextElement.FontStretchProperty.AddOwner(typeof(FastTextBlock));
+			FontSizeProperty = TextElement.FontSizeProperty.AddOwner(typeof(FastTextBlock));
+			ForegroundProperty = TextElement.ForegroundProperty.AddOwner(typeof(FastTextBlock));
+			BackgroundProperty = TextElement.BackgroundProperty.AddOwner(typeof(FastTextBlock));
 		}
 
 		static int H(object obj) {
@@ -75,6 +71,7 @@ namespace ICSharpCode.ILSpy {
 			hash = hash * 23 + H(GetValue(FontStretchProperty));
 			hash = hash * 23 + H(GetValue(FontSizeProperty));
 			hash = hash * 23 + H(GetValue(ForegroundProperty));
+			hash = hash * 23 + H(GetValue(BackgroundProperty));
 			hash = hash * 23 + H(FlowDirection);
 			hash = hash * 23 + H(CultureInfo.CurrentUICulture);
 
@@ -82,11 +79,6 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		int cache;
-		bool invalidate = false;
-
-		static void RenderPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-			((FastTextBlock)d).invalidate = true;
-		}
 
 		class TextProps : TextRunProperties {
 			FastTextBlock tb;
@@ -96,7 +88,7 @@ namespace ICSharpCode.ILSpy {
 			}
 
 			public override Brush BackgroundBrush {
-				get { return null; }
+				get { return (Brush)tb.GetValue(BackgroundProperty); }
 			}
 
 			public override CultureInfo CultureInfo {
@@ -197,7 +189,7 @@ namespace ICSharpCode.ILSpy {
 		}
 
 
-		TextFormatter fmt = null;
+		ITextFormatter fmt = null;
 		TextLine line = null;
 
 		Typeface GetTypeface() {
@@ -209,9 +201,8 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		void MakeNewText() {
-
 			if (fmt == null)
-				fmt = TextFormatter.Create(TextOptions.GetTextFormattingMode(this));
+				fmt = TextFormatterFactory.Create(this);
 
 			if (line != null)
 				line.Dispose();
@@ -219,25 +210,23 @@ namespace ICSharpCode.ILSpy {
 			line = fmt.FormatLine(new TextSrc(this), 0, 0, new ParaProps(this), null);
 		}
 
+		void EnsureText() {
+			var hash = CacheHash();
+			if (cache != hash || line == null) {
+				cache = hash;
+				MakeNewText();
+			}
+		}
+
 
 		protected override Size MeasureOverride(Size availableSize) {
-			if (invalidate) {
-				invalidate = false;
-				var hash = CacheHash();
-				if (cache != hash) {
-					cache = hash;
-					MakeNewText();
-				}
-			}
-
-			if (line == null)
-				return Size.Empty;
+			EnsureText();
 			return new Size(line.Width, line.Height);
 		}
 
 		protected override void OnRender(DrawingContext drawingContext) {
-			if (line != null)
-				line.Draw(drawingContext, new Point(0, 0), InvertAxes.None);
+			EnsureText();
+			line.Draw(drawingContext, new Point(0, 0), InvertAxes.None);
 		}
 	}
 }
