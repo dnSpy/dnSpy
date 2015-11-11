@@ -32,9 +32,19 @@ namespace ICSharpCode.TreeView
 			set { SetValue(TextBackgroundProperty, value); }
 		}
 
+		SharpTreeNode GetNode(object dataCtx)
+		{
+			if (dataCtx is SharpTreeNode)
+				return (SharpTreeNode)dataCtx;
+			else if (dataCtx is SharpTreeNodeProxy)
+				return ((SharpTreeNodeProxy)dataCtx).Object;
+			else
+				return null;
+		}
+
 		public SharpTreeNode Node
 		{
-			get { return DataContext as SharpTreeNode; }
+			get { return GetNode(DataContext); }
 		}
 
 		public SharpTreeViewItem ParentItem { get; private set; }
@@ -73,7 +83,7 @@ namespace ICSharpCode.TreeView
 		{
 			base.OnPropertyChanged(e);
 			if (e.Property == DataContextProperty) {
-				UpdateDataContext(e.OldValue as SharpTreeNode, e.NewValue as SharpTreeNode);
+				UpdateDataContext(GetNode(e.OldValue), GetNode(e.NewValue));
 			}
 		}
 
@@ -81,9 +91,7 @@ namespace ICSharpCode.TreeView
 		{
 			if (newNode != null) {
 				newNode.PropertyChanged += Node_PropertyChanged;
-				if (Template != null) {
-					UpdateTemplate();
-				}
+				UpdateTemplate();
 			}
 			if (oldNode != null) {
 				oldNode.PropertyChanged -= Node_PropertyChanged;
@@ -92,6 +100,7 @@ namespace ICSharpCode.TreeView
 
 		void Node_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			var node = (SharpTreeNode)sender;
 			if (e.PropertyName == "IsEditing") {
 				OnIsEditingChanged();
 			} else if (e.PropertyName == "IsLast") {
@@ -104,8 +113,8 @@ namespace ICSharpCode.TreeView
 					}
 				}
 			} else if (e.PropertyName == "IsExpanded") {
-				if (Node.IsExpanded)
-					ParentTreeView.HandleExpanding(Node);
+				if (node.IsExpanded)
+					ParentTreeView.HandleExpanding(node);
 			}
 		}
 
@@ -123,8 +132,11 @@ namespace ICSharpCode.TreeView
 			}
 		}
 
-		void UpdateTemplate()
+		internal void UpdateTemplate()
 		{
+			if (Template == null || Node == null)
+				return;
+
 			var spacer = Template.FindName("spacer", this) as FrameworkElement;
 			spacer.Width = CalculateIndent();
 
