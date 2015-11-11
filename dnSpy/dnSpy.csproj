@@ -228,6 +228,7 @@
     </Compile>
     <Compile Include="Debugger\Threads\ThreadsVM.cs" />
     <Compile Include="Debugger\Threads\ThreadVM.cs" />
+    <Compile Include="FastTextBlock.cs" />
     <Compile Include="Files\AssemblyResolver.cs" />
     <Compile Include="Files\DnSpyFile.cs" />
     <Compile Include="Files\DnSpyFileList.cs" />

@@ -68,11 +68,22 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
+		object cacheText;
 		public sealed override object Text {
 			get {
 				var gen = UISyntaxHighlighter.CreateTreeView();
+
+				if (cacheText != null && !gen.IsSyntaxHighlighted)
+					return cacheText;
+				else
+					cacheText = null;
+
 				Write(gen.TextOutput, Language);
-				return gen.CreateObject(filterOutNewLines: true);
+
+				var text = gen.CreateTextBlock(filterOutNewLines: true);
+				if (!gen.IsSyntaxHighlighted)
+					cacheText = text;
+				return text;
 			}
 		}
 
@@ -82,11 +93,22 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			get { return filterSettings != null ? filterSettings.Language : Languages.AllLanguages[0]; }
 		}
 
+		object cacheToolTip;
 		public override object ToolTip {
 			get {
 				var gen = UISyntaxHighlighter.CreateTreeView();
+
+				if (cacheToolTip != null && !gen.IsSyntaxHighlighted)
+					return cacheToolTip;
+				else
+					cacheToolTip = null;
+
 				Write(gen.TextOutput, Language);
-				return gen.CreateObject(filterOutNewLines: false);
+
+				var text = gen.CreateTextBlock(filterOutNewLines: false);
+				if (!gen.IsSyntaxHighlighted)
+					cacheToolTip = text;
+				return text;
 			}
 		}
 
