@@ -30,10 +30,24 @@ using ICSharpCode.AvalonEdit.Utils;
 
 namespace ICSharpCode.ILSpy {
 	public class FastTextBlock : FrameworkElement {
+		public interface IFastTextSource {
+			void UpdateParent(FastTextBlock ftb);
+			TextSource Source { get; }
+		}
+
 		public string Text {
 			get { return (string)GetValue(TextProperty); }
 			set { SetValue(TextProperty, value); }
 		}
+
+		public FastTextBlock()
+			: this(new TextSrc()) {
+		}
+
+		public FastTextBlock(IFastTextSource src) {
+			this.src = src;
+		}
+
 
 		public static readonly DependencyProperty TextProperty;
 		public static readonly DependencyProperty FontFamilyProperty;
@@ -120,14 +134,9 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		class TextSrc : TextSource {
+		class TextSrc : TextSource, IFastTextSource {
 			string text;
 			TextProps props;
-
-			public TextSrc(FastTextBlock tb) {
-				text = tb.Text;
-				props = new TextProps(tb);
-			}
 
 			public override TextRun GetTextRun(int textSourceCharacterIndex) {
 				if (textSourceCharacterIndex >= text.Length) {
@@ -143,6 +152,15 @@ namespace ICSharpCode.ILSpy {
 
 			public override int GetTextEffectCharacterIndexFromTextSourceCharacterIndex(int textSourceCharacterIndex) {
 				throw new NotSupportedException();
+			}
+
+			public void UpdateParent(FastTextBlock ftb) {
+				text = ftb.Text;
+				props = new TextProps(ftb);
+			}
+
+			public TextSource Source {
+				get { return this; }
 			}
 		}
 
@@ -200,6 +218,8 @@ namespace ICSharpCode.ILSpy {
 			return new Typeface(fontFamily, fontStyle, fontWeight, fontStrech, null);
 		}
 
+		IFastTextSource src;
+
 		void MakeNewText() {
 			if (fmt == null)
 				fmt = TextFormatterFactory.Create(this);
@@ -207,7 +227,8 @@ namespace ICSharpCode.ILSpy {
 			if (line != null)
 				line.Dispose();
 
-			line = fmt.FormatLine(new TextSrc(this), 0, 0, new ParaProps(this), null);
+			src.UpdateParent(this);
+			line = fmt.FormatLine(src.Source, 0, 0, new ParaProps(this), null);
 		}
 
 		void EnsureText() {
