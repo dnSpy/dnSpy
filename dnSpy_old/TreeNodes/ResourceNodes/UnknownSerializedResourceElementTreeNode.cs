@@ -20,6 +20,7 @@
 using System.ComponentModel.Composition;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
+using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.TreeNodes {
 	[Export(typeof(IResourceFactory<ResourceElement, ResourceElementTreeNode>))]
@@ -43,7 +44,7 @@ namespace dnSpy.TreeNodes {
 		}
 
 		public override NodePathName NodePathName {
-			get { return new NodePathName("unserresel", UIUtils.CleanUpName(resElem.Name)); }
+			get { return new NodePathName("unserresel", NameUtils.CleanName(resElem.Name)); }
 		}
 	}
 }

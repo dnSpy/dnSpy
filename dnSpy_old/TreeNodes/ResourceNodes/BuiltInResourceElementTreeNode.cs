@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using dnlib.DotNet.Resources;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -77,7 +78,7 @@ namespace dnSpy.TreeNodes {
 		}
 
 		public override NodePathName NodePathName {
-			get { return new NodePathName("resbuiltin", UIUtils.CleanUpName(resElem.Name)); }
+			get { return new NodePathName("resbuiltin", NameUtils.CleanName(resElem.Name)); }
 		}
 	}
 }

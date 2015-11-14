@@ -27,6 +27,9 @@ using System.Threading.Tasks;
 using System.Xml;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Languages;
+using dnSpy.Decompiler;
 using dnSpy.Files;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
@@ -41,15 +44,19 @@ namespace ICSharpCode.ILSpy.VB {
 	/// <summary>
 	/// Decompiler logic for VB.
 	/// </summary>
-	[Export(typeof(Language))]
+	[Export(typeof(ILanguage))]
 	public class VBLanguage : Language {
 		readonly Predicate<IAstTransform> transformAbortCondition = null;
 		bool showAllMembers = false;
 
+		public override double OrderUI {
+			get { return LanguageConstants.VB_ORDERUI; }
+		}
+
 		public VBLanguage() {
 		}
 
-		public override string Name {
+		public override string NameUI {
 			get { return "VB"; }
 		}
 
@@ -69,7 +76,7 @@ namespace ICSharpCode.ILSpy.VB {
 			output.Write("' " + comment, TextTokenType.Comment);
 		}
 
-		public override void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
+		public override void DecompileAssembly(DnSpyFileList dnSpyFileList, IDnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
 			if (options.FullDecompilation && options.SaveAsProjectDirectory != null) {
 				HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 				var files = WriteCodeFilesInProject(dnSpyFileList, file.ModuleDef, options, directories).ToList();
@@ -120,7 +127,7 @@ namespace ICSharpCode.ILSpy.VB {
 		};
 
 		#region WriteProjectFile
-		void WriteProjectFile(DnSpyFileList dnSpyFileList, TextWriter writer, IEnumerable<Tuple<string, string>> files, DnSpyFile assembly, DecompilationOptions options) {
+		void WriteProjectFile(DnSpyFileList dnSpyFileList, TextWriter writer, IEnumerable<Tuple<string, string>> files, IDnSpyFile assembly, DecompilationOptions options) {
 			var module = assembly.ModuleDef;
 			const string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 			string platformName = CSharpLanguage.GetPlatformName(module);
@@ -352,7 +359,7 @@ namespace ICSharpCode.ILSpy.VB {
 		#endregion
 
 		#region WriteResourceFilesInProject
-		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(DnSpyFile assembly, DecompilationOptions options, HashSet<string> directories) {
+		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(IDnSpyFile assembly, DecompilationOptions options, HashSet<string> directories) {
 			//AppDomain bamlDecompilerAppDomain = null;
 			//try {
 			foreach (EmbeddedResource r in assembly.ModuleDef.Resources.OfType<EmbeddedResource>()) {

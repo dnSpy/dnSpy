@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Modules {
 		void WriteFilename(ModuleVM vm, string filename) {
 			if (vm.Module.IsDynamic || vm.Module.IsInMemory)
 				filename = DebugOutputUtils.FilterName(filename, 300);
-			output.WriteFilename(filename);
+			output.WriteFilename_OLD(filename);
 		}
 
 		public void WriteName(ModuleVM vm) {
@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.Modules {
 
 		public void WriteVersion(ModuleVM vm) {
 			if (vm.Version != null)
-				output.Write(vm.Version);
+				output.Write_OLD(vm.Version);
 		}
 
 		public void WriteTimestamp(ModuleVM vm) {
@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.Modules {
 				output.Write("<no address>", TextTokenType.Text);
 			else {
 				WriteAddress(addr);
-				output.Write('-', TextTokenType.Operator);
+				output.Write("-", TextTokenType.Operator);
 				WriteAddress(endAddr);
 			}
 		}

@@ -21,8 +21,8 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Themes;
-using dnSpy.Files;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 using ICSharpCode.TreeView;
@@ -67,7 +67,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		protected abstract void Write(ITextOutput output, Language language);
 
 		public override System.Windows.Media.Brush Foreground {
-			get { return DnSpy.App.ThemeManager.Theme.GetColor(ColorType.NodePublic).Foreground; }
+			get { return DnSpy.App.ThemeManager.Theme.GetColor(ColorType.TreeViewNode).Foreground; }
 		}
 
 		public void RaiseUIPropsChanged() {
@@ -102,9 +102,9 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 		/// <summary>
 		/// Handles changes to the assembly list.
 		/// </summary>
-		public abstract bool HandleAssemblyListChanged(ICollection<DnSpyFile> removedAssemblies, ICollection<DnSpyFile> addedAssemblies);
+		public abstract bool HandleAssemblyListChanged(ICollection<IDnSpyFile> removedAssemblies, ICollection<IDnSpyFile> addedAssemblies);
 
-		public abstract bool HandleModelUpdated(DnSpyFile asm);
+		public abstract bool HandleModelUpdated(IDnSpyFile asm);
 
 		public void Dispose() {
 			Dispose(true);

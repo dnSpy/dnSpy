@@ -24,6 +24,7 @@ using System.Windows.Media;
 using dnlib.DotNet;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
+using dnSpy.Decompiler;
 using dnSpy.Images;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
@@ -196,52 +197,53 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return GetIcon(GetTypeIcon(type), bgType);
 		}
 
-		internal static ImageSource GetIcon(TypeIcon typeIcon, BackgroundType bgType) {
-			return DnSpy.App.ImageManager.GetImage(typeof(TypeTreeNode).Assembly, GetImageInfo(typeIcon, bgType));
+		static ImageSource GetIcon(TypeIcon typeIcon, BackgroundType bgType) {
+			var info = GetImageInfo(typeIcon, bgType);
+			return DnSpy.App.ImageManager.GetImage(info.Assembly, info.Name, info.BackgroundType);
 		}
 
 		internal static ImageInfo GetImageInfo(TypeDef type, BackgroundType bgType) {
 			return GetImageInfo(GetTypeIcon(type), bgType);
 		}
 
-		internal static ImageInfo GetImageInfo(TypeIcon typeIcon, BackgroundType bgType) {
+		static ImageInfo GetImageInfo(TypeIcon typeIcon, BackgroundType bgType) {
 			switch (typeIcon) {
-			case TypeIcon.StaticClass:				return new ImageInfo("StaticClass", bgType);
-			case TypeIcon.Class:					return new ImageInfo("Class", bgType);
-			case TypeIcon.ClassPrivate:				return new ImageInfo("ClassPrivate", bgType);
-			case TypeIcon.ClassProtected:			return new ImageInfo("ClassProtected", bgType);
-			case TypeIcon.ClassInternal:			return new ImageInfo("ClassInternal", bgType);
-			case TypeIcon.ClassProtectedInternal:	return new ImageInfo("ClassProtectedInternal", bgType);
-			case TypeIcon.Enum:						return new ImageInfo("Enum", bgType);
-			case TypeIcon.EnumPrivate:				return new ImageInfo("EnumPrivate", bgType);
-			case TypeIcon.EnumProtected:			return new ImageInfo("EnumProtected", bgType);
-			case TypeIcon.EnumInternal:				return new ImageInfo("EnumInternal", bgType);
-			case TypeIcon.EnumProtectedInternal:	return new ImageInfo("EnumProtectedInternal", bgType);
-			case TypeIcon.Struct:					return new ImageInfo("Struct", bgType);
-			case TypeIcon.StructPrivate:			return new ImageInfo("StructPrivate", bgType);
-			case TypeIcon.StructProtected:			return new ImageInfo("StructProtected", bgType);
-			case TypeIcon.StructInternal:			return new ImageInfo("StructInternal", bgType);
-			case TypeIcon.StructProtectedInternal:	return new ImageInfo("StructProtectedInternal", bgType);
-			case TypeIcon.Interface:				return new ImageInfo("Interface", bgType);
-			case TypeIcon.InterfacePrivate:			return new ImageInfo("InterfacePrivate", bgType);
-			case TypeIcon.InterfaceProtected:		return new ImageInfo("InterfaceProtected", bgType);
-			case TypeIcon.InterfaceInternal:		return new ImageInfo("InterfaceInternal", bgType);
-			case TypeIcon.InterfaceProtectedInternal:return new ImageInfo("InterfaceProtectedInternal", bgType);
-			case TypeIcon.Delegate:					return new ImageInfo("Delegate", bgType);
-			case TypeIcon.DelegatePrivate:			return new ImageInfo("DelegatePrivate", bgType);
-			case TypeIcon.DelegateProtected:		return new ImageInfo("DelegateProtected", bgType);
-			case TypeIcon.DelegateInternal:			return new ImageInfo("DelegateInternal", bgType);
-			case TypeIcon.DelegateProtectedInternal:return new ImageInfo("DelegateProtectedInternal", bgType);
-			case TypeIcon.Exception:				return new ImageInfo("Exception", bgType);
-			case TypeIcon.ExceptionPrivate:			return new ImageInfo("ExceptionPrivate", bgType);
-			case TypeIcon.ExceptionProtected:		return new ImageInfo("ExceptionProtected", bgType);
-			case TypeIcon.ExceptionInternal:		return new ImageInfo("ExceptionInternal", bgType);
-			case TypeIcon.ExceptionProtectedInternal:return new ImageInfo("ExceptionProtectedInternal", bgType);
-			case TypeIcon.Generic:					return new ImageInfo("Generic", bgType);
-			case TypeIcon.GenericPrivate:			return new ImageInfo("GenericPrivate", bgType);
-			case TypeIcon.GenericProtected:			return new ImageInfo("GenericProtected", bgType);
-			case TypeIcon.GenericInternal:			return new ImageInfo("GenericInternal", bgType);
-			case TypeIcon.GenericProtectedInternal:	return new ImageInfo("GenericProtectedInternal", bgType);
+			case TypeIcon.StaticClass:				return new ImageInfo(typeof(TypeTreeNode).Assembly, "StaticClass", bgType);
+			case TypeIcon.Class:					return new ImageInfo(typeof(TypeTreeNode).Assembly, "Class", bgType);
+			case TypeIcon.ClassPrivate:				return new ImageInfo(typeof(TypeTreeNode).Assembly, "ClassPrivate", bgType);
+			case TypeIcon.ClassProtected:			return new ImageInfo(typeof(TypeTreeNode).Assembly, "ClassProtected", bgType);
+			case TypeIcon.ClassInternal:			return new ImageInfo(typeof(TypeTreeNode).Assembly, "ClassInternal", bgType);
+			case TypeIcon.ClassProtectedInternal:	return new ImageInfo(typeof(TypeTreeNode).Assembly, "ClassProtectedInternal", bgType);
+			case TypeIcon.Enum:						return new ImageInfo(typeof(TypeTreeNode).Assembly, "Enum", bgType);
+			case TypeIcon.EnumPrivate:				return new ImageInfo(typeof(TypeTreeNode).Assembly, "EnumPrivate", bgType);
+			case TypeIcon.EnumProtected:			return new ImageInfo(typeof(TypeTreeNode).Assembly, "EnumProtected", bgType);
+			case TypeIcon.EnumInternal:				return new ImageInfo(typeof(TypeTreeNode).Assembly, "EnumInternal", bgType);
+			case TypeIcon.EnumProtectedInternal:	return new ImageInfo(typeof(TypeTreeNode).Assembly, "EnumProtectedInternal", bgType);
+			case TypeIcon.Struct:					return new ImageInfo(typeof(TypeTreeNode).Assembly, "Struct", bgType);
+			case TypeIcon.StructPrivate:			return new ImageInfo(typeof(TypeTreeNode).Assembly, "StructPrivate", bgType);
+			case TypeIcon.StructProtected:			return new ImageInfo(typeof(TypeTreeNode).Assembly, "StructProtected", bgType);
+			case TypeIcon.StructInternal:			return new ImageInfo(typeof(TypeTreeNode).Assembly, "StructInternal", bgType);
+			case TypeIcon.StructProtectedInternal:	return new ImageInfo(typeof(TypeTreeNode).Assembly, "StructProtectedInternal", bgType);
+			case TypeIcon.Interface:				return new ImageInfo(typeof(TypeTreeNode).Assembly, "Interface", bgType);
+			case TypeIcon.InterfacePrivate:			return new ImageInfo(typeof(TypeTreeNode).Assembly, "InterfacePrivate", bgType);
+			case TypeIcon.InterfaceProtected:		return new ImageInfo(typeof(TypeTreeNode).Assembly, "InterfaceProtected", bgType);
+			case TypeIcon.InterfaceInternal:		return new ImageInfo(typeof(TypeTreeNode).Assembly, "InterfaceInternal", bgType);
+			case TypeIcon.InterfaceProtectedInternal:return new ImageInfo(typeof(TypeTreeNode).Assembly, "InterfaceProtectedInternal", bgType);
+			case TypeIcon.Delegate:					return new ImageInfo(typeof(TypeTreeNode).Assembly, "Delegate", bgType);
+			case TypeIcon.DelegatePrivate:			return new ImageInfo(typeof(TypeTreeNode).Assembly, "DelegatePrivate", bgType);
+			case TypeIcon.DelegateProtected:		return new ImageInfo(typeof(TypeTreeNode).Assembly, "DelegateProtected", bgType);
+			case TypeIcon.DelegateInternal:			return new ImageInfo(typeof(TypeTreeNode).Assembly, "DelegateInternal", bgType);
+			case TypeIcon.DelegateProtectedInternal:return new ImageInfo(typeof(TypeTreeNode).Assembly, "DelegateProtectedInternal", bgType);
+			case TypeIcon.Exception:				return new ImageInfo(typeof(TypeTreeNode).Assembly, "Exception", bgType);
+			case TypeIcon.ExceptionPrivate:			return new ImageInfo(typeof(TypeTreeNode).Assembly, "ExceptionPrivate", bgType);
+			case TypeIcon.ExceptionProtected:		return new ImageInfo(typeof(TypeTreeNode).Assembly, "ExceptionProtected", bgType);
+			case TypeIcon.ExceptionInternal:		return new ImageInfo(typeof(TypeTreeNode).Assembly, "ExceptionInternal", bgType);
+			case TypeIcon.ExceptionProtectedInternal:return new ImageInfo(typeof(TypeTreeNode).Assembly, "ExceptionProtectedInternal", bgType);
+			case TypeIcon.Generic:					return new ImageInfo(typeof(TypeTreeNode).Assembly, "Generic", bgType);
+			case TypeIcon.GenericPrivate:			return new ImageInfo(typeof(TypeTreeNode).Assembly, "GenericPrivate", bgType);
+			case TypeIcon.GenericProtected:			return new ImageInfo(typeof(TypeTreeNode).Assembly, "GenericProtected", bgType);
+			case TypeIcon.GenericInternal:			return new ImageInfo(typeof(TypeTreeNode).Assembly, "GenericInternal", bgType);
+			case TypeIcon.GenericProtectedInternal:	return new ImageInfo(typeof(TypeTreeNode).Assembly, "GenericProtectedInternal", bgType);
 			default:
 				Debug.Fail("Unknown type");
 				goto case TypeIcon.Class;

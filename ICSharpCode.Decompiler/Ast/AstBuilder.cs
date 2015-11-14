@@ -40,7 +40,8 @@ namespace ICSharpCode.Decompiler.Ast {
 		None = 0,
 		IncludeNamespace = 1,
 		IncludeTypeParameterDefinitions = 2,
-		DoNotUsePrimitiveTypeNames = 4
+		DoNotUsePrimitiveTypeNames = 4,
+		DoNotIncludeEnclosingType = 8,
 	}
 	
 	public class AstBuilder
@@ -573,7 +574,7 @@ namespace ICSharpCode.Decompiler.Ast {
 			if (ts != null && !(ts.TypeSig is FnPtrSig))
 				return ConvertType(ts.TypeSig, typeAttributes, ref typeIndex, options, depth);
 
-			if (type.DeclaringType != null) {
+			if (type.DeclaringType != null && (options & ConvertTypeOptions.DoNotIncludeEnclosingType) == 0) {
 				AstType typeRef = ConvertType(type.DeclaringType, typeAttributes, ref typeIndex, options & ~ConvertTypeOptions.IncludeTypeParameterDefinitions, depth);
 				string namepart = ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(type.Name);
 				MemberType memberType = new MemberType { Target = typeRef, MemberNameToken = Identifier.Create(namepart).WithAnnotation(type) };

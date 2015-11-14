@@ -92,8 +92,8 @@ namespace dnSpyc {
 			Console.WriteLine("  -o outdir    output directory");
 			Console.WriteLine("  -l lang      set language, default is C#");
 			Console.WriteLine("Languages:");
-			foreach (var lang in Languages.AllLanguages)
-				Console.WriteLine("  {0}", lang.Name);
+			foreach (var lang in Languages.AllLanguages_OLD)
+				Console.WriteLine("  {0}", lang.NameUI);
 			Console.WriteLine(@"Examples:
   {0} --stdout C:\some\path\file.dll
       Decompile file.dll to the screen
@@ -116,7 +116,7 @@ namespace dnSpyc {
 		}
 
 		static void InitILSpy() {
-			Languages.Initialize();
+			Languages.Initialize_OLD();
 		}
 
 		static string GetProgramBaseName() {
@@ -167,7 +167,7 @@ namespace dnSpyc {
 							throw new ErrorException("Missing language name");
 						language = next;
 						i++;
-						if (!language.Equals(GetLanguage().Name, StringComparison.OrdinalIgnoreCase))
+						if (!language.Equals(GetLanguage().NameUI, StringComparison.OrdinalIgnoreCase))
 							throw new ErrorException(string.Format("Language '{0}' doesn't exist", language));
 						break;
 
@@ -479,7 +479,7 @@ namespace dnSpyc {
 		}
 
 		static Language GetLanguage() {
-			return Languages.GetLanguage(language);
+			return Languages.GetLanguage_OLD(language);
 		}
 
 		static string GetProjectDir(Language lang, string fileName) {

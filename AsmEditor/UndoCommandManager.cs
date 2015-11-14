@@ -25,7 +25,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
 using dnSpy.Tabs;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -195,15 +195,15 @@ namespace dnSpy.AsmEditor {
 			get { return currentCommands != null; }
 		}
 
-		public IUndoObject GetUndoObject(DnSpyFile file) {
-			var uo = file.GetOrCreateAnnotation<Type, UndoObject>(typeof(UndoObject));
+		public IUndoObject GetUndoObject(IDnSpyFile file) {
+			var uo = file.Annotation<UndoObject>() ?? file.AddAnnotation(new UndoObject());
 			uo.Value = file;
 			return uo;
 		}
 
-		public DnSpyFile TryGetDnSpyFile(IUndoObject iuo) {
+		public IDnSpyFile TryGetDnSpyFile(IUndoObject iuo) {
 			var uo = iuo as UndoObject;
-			return uo == null ? null : uo.Value as DnSpyFile;
+			return uo == null ? null : uo.Value as IDnSpyFile;
 		}
 
 		internal IUndoObject GetUndoObject(AsmEdHexDocument file) {
@@ -404,7 +404,7 @@ namespace dnSpy.AsmEditor {
 			return obj.SavedCommand != 0 && obj.SavedCommand != counter;
 		}
 
-		internal void MarkAsModified(DnSpyFile file) {
+		internal void MarkAsModified(IDnSpyFile file) {
 			MarkAsModified(GetUndoObject(file));
 		}
 
@@ -513,8 +513,8 @@ namespace dnSpy.AsmEditor {
 		}
 
 		public IEnumerable<UndoRedoInfo> GetUndoRedoInfo(IEnumerable<AssemblyTreeNode> nodes) {
-			var modifiedUndoAsms = new HashSet<DnSpyFile>(undoCommands.SelectMany(a => a.ModifiedObjects.Where(b => TryGetDnSpyFile(b) != null).Select(b => TryGetDnSpyFile(b))));
-			var modifiedRedoAsms = new HashSet<DnSpyFile>(redoCommands.SelectMany(a => a.ModifiedObjects.Where(b => TryGetDnSpyFile(b) != null).Select(b => TryGetDnSpyFile(b))));
+			var modifiedUndoAsms = new HashSet<IDnSpyFile>(undoCommands.SelectMany(a => a.ModifiedObjects.Where(b => TryGetDnSpyFile(b) != null).Select(b => TryGetDnSpyFile(b))));
+			var modifiedRedoAsms = new HashSet<IDnSpyFile>(redoCommands.SelectMany(a => a.ModifiedObjects.Where(b => TryGetDnSpyFile(b) != null).Select(b => TryGetDnSpyFile(b))));
 			foreach (var node in nodes) {
 				bool isInUndo = modifiedUndoAsms.Contains(node.DnSpyFile);
 				bool isInRedo = modifiedRedoAsms.Contains(node.DnSpyFile);
@@ -522,7 +522,7 @@ namespace dnSpy.AsmEditor {
 			}
 		}
 
-		public IEnumerable<DnSpyFile> GetDnSpyFiles() {
+		public IEnumerable<IDnSpyFile> GetDnSpyFiles() {
 			var list = new List<UndoState>(undoCommands);
 			list.AddRange(redoCommands);
 			foreach (var grp in list) {

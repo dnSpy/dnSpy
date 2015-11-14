@@ -83,27 +83,27 @@ namespace dnSpy.Debugger.Threads {
 			foreach (var vm in context.SelectedItems) {
 				var printer = new ThreadPrinter(output, DebuggerSettings.Instance.UseHexadecimal);
 				printer.WriteCurrent(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteId(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteManagedId(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteCategory(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteName(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteLocation(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WritePriority(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteAffinityMask(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteSuspended(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteProcess(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteAppDomain(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteUserState(vm);
 				output.WriteLine();
 			}

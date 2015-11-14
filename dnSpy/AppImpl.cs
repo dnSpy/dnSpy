@@ -26,16 +26,22 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.ToolBars;
+using dnSpy.Contracts.TreeView;
+using dnSpy.Files.TreeView;
 using dnSpy.Images;
+using dnSpy.Languages;
 using dnSpy.Menus;
 using dnSpy.Settings;
 using dnSpy.Themes;
 using dnSpy.ToolBars;
+using dnSpy.TreeView;
 
 namespace dnSpy {
 	public static class AppCreator {//TODO: Shouldn't be public
@@ -72,7 +78,7 @@ namespace dnSpy {
 		}
 	}
 
-	[Export, Export(typeof(IApp))]
+	[Export, Export(typeof(IApp)), PartCreationPolicy(CreationPolicy.Shared)]
 	public sealed class AppImpl : IApp {//TODO: REMOVE public
 		public Version Version {
 			get { return GetType().Assembly.GetName().Version; }
@@ -98,10 +104,30 @@ namespace dnSpy {
 		}
 		readonly ImageManager imageManager;
 
+		public IDotNetImageManager DotNetImageManager {
+			get { return dotNetImageManager; }
+		}
+		readonly DotNetImageManager dotNetImageManager;
+
 		public ISettingsManager SettingsManager {
 			get { return settingsManager; }
 		}
 		readonly SettingsManager settingsManager;
+
+		public ITreeViewManager TreeViewManager {
+			get { return treeViewManager; }
+		}
+		readonly TreeViewManager treeViewManager;
+
+		public IFileTreeView FileTreeView {
+			get { return fileTreeView; }
+		}
+		readonly FileTreeView fileTreeView;
+
+		public ILanguageManager LanguageManager {
+			get { return languageManager; }
+		}
+		LanguageManager languageManager;
 
 		public CompositionContainer CompositionContainer {
 			get { return compositionContainer; }
@@ -110,13 +136,17 @@ namespace dnSpy {
 		CompositionContainer compositionContainer;
 
 		[ImportingConstructor]
-		AppImpl(ThemeManager themeManager, ImageManager imageManager, MenuManager menuManager, ToolBarManager toolBarManager, SettingsManager settingsManager) {
+		AppImpl(ThemeManager themeManager, ImageManager imageManager, DotNetImageManager dotNetImageManager, MenuManager menuManager, ToolBarManager toolBarManager, SettingsManager settingsManager, TreeViewManager treeViewManager, FileTreeView fileTreeView, LanguageManager languageManager) {
 			DnSpy.App = this;
-			this.menuManager = menuManager;
-			this.toolBarManager = toolBarManager;
 			this.themeManager = themeManager;
 			this.imageManager = imageManager;
+			this.dotNetImageManager = dotNetImageManager;
+			this.menuManager = menuManager;
+			this.toolBarManager = toolBarManager;
 			this.settingsManager = settingsManager;
+			this.treeViewManager = treeViewManager;
+			this.fileTreeView = fileTreeView;
+			this.languageManager = languageManager;
 		}
 
 		public void InitializeThemes(string themeName) {

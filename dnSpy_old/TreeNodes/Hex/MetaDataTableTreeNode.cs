@@ -84,9 +84,9 @@ namespace dnSpy.TreeNodes.Hex {
 			output.WriteSpace();
 			output.Write(string.Format("{0}", tablesStreamVM.Table), TextTokenType.Type);
 			output.WriteSpace();
-			output.Write('(', TextTokenType.Operator);
+			output.Write("(", TextTokenType.Operator);
 			output.Write(string.Format("{0}", tablesStreamVM.Rows), TextTokenType.Number);
-			output.Write(')', TextTokenType.Operator);
+			output.Write(")", TextTokenType.Operator);
 		}
 
 		protected override void DecompileFields(Language language, ITextOutput output) {
@@ -106,11 +106,11 @@ namespace dnSpy.TreeNodes.Hex {
 
 			output.Write("RID\tToken\tOffset", TextTokenType.Comment);
 			for (int i = 0; i < cols.Count; i++) {
-				output.Write('\t', TextTokenType.Comment);
+				output.Write("\t", TextTokenType.Comment);
 				output.Write(tablesStreamVM.GetColumnName(i), TextTokenType.Comment);
 			}
 			if (tablesStreamVM.HasInfo) {
-				output.Write('\t', TextTokenType.Comment);
+				output.Write("\t", TextTokenType.Comment);
 				output.Write(tablesStreamVM.InfoName, TextTokenType.Comment);
 			}
 			output.WriteLine();
@@ -120,16 +120,16 @@ namespace dnSpy.TreeNodes.Hex {
 			var cols = tablesStreamVM.TableInfo.Columns;
 
 			output.Write(mdVM.RidString, TextTokenType.Comment);
-			output.Write('\t', TextTokenType.Comment);
+			output.Write("\t", TextTokenType.Comment);
 			output.Write(mdVM.TokenString, TextTokenType.Comment);
-			output.Write('\t', TextTokenType.Comment);
+			output.Write("\t", TextTokenType.Comment);
 			output.Write(mdVM.OffsetString, TextTokenType.Comment);
 			for (int j = 0; j < cols.Count; j++) {
-				output.Write('\t', TextTokenType.Comment);
+				output.Write("\t", TextTokenType.Comment);
 				output.Write(mdVM.GetField(j).DataFieldVM.StringValue, TextTokenType.Comment);
 			}
 			if (tablesStreamVM.HasInfo) {
-				output.Write('\t', TextTokenType.Comment);
+				output.Write("\t", TextTokenType.Comment);
 				output.Write(mdVM.Info, TextTokenType.Comment);
 			}
 			output.WriteLine();

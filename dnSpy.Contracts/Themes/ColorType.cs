@@ -536,11 +536,9 @@ namespace dnSpy.Contracts.Themes {
 		EnvironmentToolWindowButtonHoverInactiveGlyph,
 		EnvironmentToolWindowButtonInactiveGlyph,
 		SearchBoxWatermark,
-		NodeAutoLoaded,
-		NodePublic,
-		NodeNotPublic,
 		XmlDocToolTipDescriptionText,
 		MemoryWindowDisabled,
+		TreeViewNode,
 
 		// Add new color types before this comment
 

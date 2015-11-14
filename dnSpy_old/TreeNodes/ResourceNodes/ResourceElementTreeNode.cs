@@ -25,6 +25,7 @@ using dnlib.DotNet.Resources;
 using dnlib.IO;
 using dnSpy.Contracts.Images;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
@@ -164,7 +165,7 @@ namespace dnSpy.TreeNodes {
 		}
 
 		protected sealed override void Write(ITextOutput output, Language language) {
-			output.WriteFilename(resElem.Name);
+			output.WriteFilename_OLD(resElem.Name);
 		}
 
 		public sealed override void Decompile(Language language, ITextOutput output, DecompilationOptions options) {
@@ -174,7 +175,7 @@ namespace dnSpy.TreeNodes {
 		public virtual void Decompile(Language language, ITextOutput output) {
 			language.WriteComment(output, string.Empty);
 			output.WriteOffsetComment(this);
-			output.WriteDefinition(UIUtils.CleanUpName(Name), this, TextTokenType.Comment);
+			output.WriteDefinition(NameUtils.CleanName(Name), this, TextTokenType.Comment);
 			output.Write(string.Format(" = {0}", ValueString), TextTokenType.Comment);
 			output.WriteLine();
 		}

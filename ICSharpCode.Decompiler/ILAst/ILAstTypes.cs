@@ -223,7 +223,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 		{
 			var location = output.Location;
 			output.WriteDefinition(Name, this, TextTokenType.Label);
-			output.Write(':', TextTokenType.Operator);
+			output.Write(":", TextTokenType.Operator);
 			UpdateMemberMapping(memberMapping, location, output.Location, ILRanges);
 		}
 	}
@@ -588,7 +588,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 				if (Code == ILCode.Stloc && this.InferredType == null) {
 					output.WriteReference(((ILVariable)Operand).Name, Operand, ((ILVariable)Operand).IsParameter ? TextTokenType.Parameter : TextTokenType.Local);
 					output.WriteSpace();
-					output.Write('=', TextTokenType.Operator);
+					output.Write("=", TextTokenType.Operator);
 					output.WriteSpace();
 					Arguments.First().WriteTo(output, null);
 					UpdateMemberMapping(memberMapping, startLoc, output.Location, this.GetSelfAndChildrenRecursiveILRanges());
@@ -596,14 +596,14 @@ namespace ICSharpCode.Decompiler.ILAst {
 				} else if (Code == ILCode.Ldloc) {
 					output.WriteReference(((ILVariable)Operand).Name, Operand, ((ILVariable)Operand).IsParameter ? TextTokenType.Parameter : TextTokenType.Local);
 					if (this.InferredType != null) {
-						output.Write(':', TextTokenType.Operator);
+						output.Write(":", TextTokenType.Operator);
 						this.InferredType.WriteTo(output, ILNameSyntax.ShortTypeName);
 						if (this.ExpectedType != null && this.ExpectedType.FullName != this.InferredType.FullName) {
-							output.Write('[', TextTokenType.Operator);
+							output.Write("[", TextTokenType.Operator);
 							output.Write("exp", TextTokenType.Keyword);
-							output.Write(':', TextTokenType.Operator);
+							output.Write(":", TextTokenType.Operator);
 							this.ExpectedType.WriteTo(output, ILNameSyntax.ShortTypeName);
-							output.Write(']', TextTokenType.Operator);
+							output.Write("]", TextTokenType.Operator);
 						}
 					}
 					UpdateMemberMapping(memberMapping, startLoc, output.Location, this.GetSelfAndChildrenRecursiveILRanges());
@@ -620,23 +620,23 @@ namespace ICSharpCode.Decompiler.ILAst {
 			
 			output.Write(Code.GetName(), TextTokenType.OpCode);
 			if (this.InferredType != null) {
-				output.Write(':', TextTokenType.Operator);
+				output.Write(":", TextTokenType.Operator);
 				this.InferredType.WriteTo(output, ILNameSyntax.ShortTypeName);
 				if (this.ExpectedType != null && this.ExpectedType.FullName != this.InferredType.FullName) {
-					output.Write('[', TextTokenType.Operator);
+					output.Write("[", TextTokenType.Operator);
 					output.Write("exp", TextTokenType.Keyword);
-					output.Write(':', TextTokenType.Operator);
+					output.Write(":", TextTokenType.Operator);
 					this.ExpectedType.WriteTo(output, ILNameSyntax.ShortTypeName);
-					output.Write(']', TextTokenType.Operator);
+					output.Write("]", TextTokenType.Operator);
 				}
 			} else if (this.ExpectedType != null) {
-				output.Write('[', TextTokenType.Operator);
+				output.Write("[", TextTokenType.Operator);
 				output.Write("exp", TextTokenType.Keyword);
-				output.Write(':', TextTokenType.Operator);
+				output.Write(":", TextTokenType.Operator);
 				this.ExpectedType.WriteTo(output, ILNameSyntax.ShortTypeName);
-				output.Write(']', TextTokenType.Operator);
+				output.Write("]", TextTokenType.Operator);
 			}
-			output.Write('(', TextTokenType.Operator);
+			output.Write("(", TextTokenType.Operator);
 			bool first = true;
 			if (Operand != null) {
 				if (Operand is ILLabel) {
@@ -645,7 +645,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 					ILLabel[] labels = (ILLabel[])Operand;
 					for (int i = 0; i < labels.Length; i++) {
 						if (i > 0) {
-							output.Write(',', TextTokenType.Operator);
+							output.Write(",", TextTokenType.Operator);
 							output.WriteSpace();
 						}
 						output.WriteReference(labels[i].Name, labels[i], TextTokenType.Label);
@@ -672,13 +672,13 @@ namespace ICSharpCode.Decompiler.ILAst {
 			}
 			foreach (ILExpression arg in this.Arguments) {
 				if (!first) {
-					output.Write(',', TextTokenType.Operator);
+					output.Write(",", TextTokenType.Operator);
 					output.WriteSpace();
 				}
 				arg.WriteTo(output, null);
 				first = false;
 			}
-			output.Write(')', TextTokenType.Operator);
+			output.Write(")", TextTokenType.Operator);
 			UpdateMemberMapping(memberMapping, startLoc, output.Location, this.GetSelfAndChildrenRecursiveILRanges());
 		}
 	}
@@ -701,10 +701,10 @@ namespace ICSharpCode.Decompiler.ILAst {
 			var startLoc = output.Location;
 			output.Write("loop", TextTokenType.Keyword);
 			output.WriteSpace();
-			output.Write('(', TextTokenType.Operator);
+			output.Write("(", TextTokenType.Operator);
 			if (this.Condition != null)
 				this.Condition.WriteTo(output, null);
-			output.Write(')', TextTokenType.Operator);
+			output.Write(")", TextTokenType.Operator);
 			var ilRanges = new List<ILRange>(ILRanges);
 			if (this.Condition != null)
 				ilRanges.AddRange(this.Condition.GetSelfAndChildrenRecursiveILRanges());
@@ -735,9 +735,9 @@ namespace ICSharpCode.Decompiler.ILAst {
 			var startLoc = output.Location;
 			output.Write("if", TextTokenType.Keyword);
 			output.WriteSpace();
-			output.Write('(', TextTokenType.Operator);
+			output.Write("(", TextTokenType.Operator);
 			Condition.WriteTo(output, null);
-			output.Write(')', TextTokenType.Operator);
+			output.Write(")", TextTokenType.Operator);
 			var ilRanges = new List<ILRange>(ILRanges);
 			ilRanges.AddRange(Condition.GetSelfAndChildrenRecursiveILRanges());
 			UpdateMemberMapping(memberMapping, startLoc, output.Location, ilRanges);
@@ -810,9 +810,9 @@ namespace ICSharpCode.Decompiler.ILAst {
 			var startLoc = output.Location;
 			output.Write("switch", TextTokenType.Keyword);
 			output.WriteSpace();
-			output.Write('(', TextTokenType.Operator);
+			output.Write("(", TextTokenType.Operator);
 			Condition.WriteTo(output, null);
-			output.Write(')', TextTokenType.Operator);
+			output.Write(")", TextTokenType.Operator);
 			var ilRanges = new List<ILRange>(ILRanges);
 			ilRanges.AddRange(Condition.GetSelfAndChildrenRecursiveILRanges());
 			UpdateMemberMapping(memberMapping, startLoc, output.Location, ilRanges);
@@ -843,15 +843,15 @@ namespace ICSharpCode.Decompiler.ILAst {
 			var startLoc = output.Location;
 			output.Write("fixed", TextTokenType.Keyword);
 			output.WriteSpace();
-			output.Write('(', TextTokenType.Operator);
+			output.Write("(", TextTokenType.Operator);
 			for (int i = 0; i < this.Initializers.Count; i++) {
 				if (i > 0) {
-					output.Write(',', TextTokenType.Operator);
+					output.Write(",", TextTokenType.Operator);
 					output.WriteSpace();
 				}
 				this.Initializers[i].WriteTo(output, null);
 			}
-			output.Write(')', TextTokenType.Operator);
+			output.Write(")", TextTokenType.Operator);
 			var ilRanges = new List<ILRange>(ILRanges);
 			foreach (var i in Initializers)
 				ilRanges.AddRange(i.GetSelfAndChildrenRecursiveILRanges());

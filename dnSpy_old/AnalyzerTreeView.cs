@@ -25,9 +25,9 @@ using System.Windows;
 using System.Windows.Input;
 using dnSpy;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
-using dnSpy.Files;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes.Analyzer;
 using ICSharpCode.TreeView;
@@ -141,12 +141,12 @@ namespace ICSharpCode.ILSpy {
 				this.Root.Children.Clear();
 			}
 			else {
-				List<DnSpyFile> removedAssemblies = new List<DnSpyFile>();
+				List<IDnSpyFile> removedAssemblies = new List<IDnSpyFile>();
 				if (e.OldItems != null)
-					removedAssemblies.AddRange(e.OldItems.Cast<DnSpyFile>());
-				List<DnSpyFile> addedAssemblies = new List<DnSpyFile>();
+					removedAssemblies.AddRange(e.OldItems.Cast<IDnSpyFile>());
+				List<IDnSpyFile> addedAssemblies = new List<IDnSpyFile>();
 				if (e.NewItems != null)
-					addedAssemblies.AddRange(e.NewItems.Cast<DnSpyFile>());
+					addedAssemblies.AddRange(e.NewItems.Cast<IDnSpyFile>());
 				((AnalyzerRootNode)this.Root).HandleAssemblyListChanged(removedAssemblies, addedAssemblies);
 			}
 		}
@@ -193,7 +193,7 @@ namespace ICSharpCode.ILSpy {
 			protected override void Write(ITextOutput output, Language language) {
 			}
 
-			public override bool HandleAssemblyListChanged(ICollection<DnSpyFile> removedAssemblies, ICollection<DnSpyFile> addedAssemblies) {
+			public override bool HandleAssemblyListChanged(ICollection<IDnSpyFile> removedAssemblies, ICollection<IDnSpyFile> addedAssemblies) {
 				this.Children.RemoveAll(
 					delegate (SharpTreeNode n) {
 						AnalyzerTreeNode an = n as AnalyzerTreeNode;
@@ -202,7 +202,7 @@ namespace ICSharpCode.ILSpy {
 				return true;
 			}
 
-			public override bool HandleModelUpdated(DnSpyFile asm) {
+			public override bool HandleModelUpdated(IDnSpyFile asm) {
 				this.Children.RemoveAll(
 					delegate (SharpTreeNode n) {
 						AnalyzerTreeNode an = n as AnalyzerTreeNode;

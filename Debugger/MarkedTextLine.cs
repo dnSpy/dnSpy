@@ -20,7 +20,7 @@
 using System;
 using System.Windows.Media;
 using dnSpy.AvalonEdit;
-using dnSpy.Files;
+using dnSpy.Shared.UI.Files;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.AvalonEdit;
 using ICSharpCode.ILSpy.TextView;

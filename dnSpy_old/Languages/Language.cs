@@ -22,7 +22,12 @@ using System.IO;
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.Languages;
+using dnSpy.Decompiler;
 using dnSpy.Files;
+using dnSpy.LanguagesInternal;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
@@ -37,11 +42,9 @@ namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Base class for language-specific decompiler implementations.
 	/// </summary>
-	public abstract class Language {
-		/// <summary>
-		/// Gets the name of the language (as shown in the UI)
-		/// </summary>
-		public abstract string Name { get; }
+	public abstract class Language : ILanguage {
+		public abstract string NameUI { get; }
+		public abstract double OrderUI { get; }
 
 		/// <summary>
 		/// Gets the file extension used by source code files in this language.
@@ -50,6 +53,18 @@ namespace ICSharpCode.ILSpy {
 
 		public virtual string ProjectFileExtension {
 			get { return null; }
+		}
+
+		public void WriteName(ISyntaxHighlightOutput output, TypeDef type) {
+			FormatTypeName(new SyntaxHighlightOutputToTextOutput(output), type);
+		}
+
+		public void WriteType(ISyntaxHighlightOutput output, ITypeDefOrRef type, bool includeNamespace, ParamDef pd = null) {
+			TypeToString(new SyntaxHighlightOutputToTextOutput(output), type, includeNamespace, pd);
+		}
+
+		public void WriteName(ISyntaxHighlightOutput output, PropertyDef property, bool? isIndexer) {
+			FormatPropertyName(new SyntaxHighlightOutputToTextOutput(output), property, isIndexer);
 		}
 
 		/// <summary>
@@ -85,7 +100,7 @@ namespace ICSharpCode.ILSpy {
 			WriteCommentLine(output, string.IsNullOrEmpty(nameSpace) ? string.Empty : IdentifierEscaper.Escape(nameSpace));
 		}
 
-		public virtual void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
+		public virtual void DecompileAssembly(DnSpyFileList dnSpyFileList, IDnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
 			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
 			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 			WriteCommentLine(output, file.Filename);
@@ -102,7 +117,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		protected void PrintEntryPoint(DnSpyFile assembly, ITextOutput output) {
+		protected void PrintEntryPoint(IDnSpyFile assembly, ITextOutput output) {
 			var ep = GetEntryPoint(assembly.ModuleDef);
 			if (ep is uint)
 				WriteCommentLine(output, string.Format("Native Entry point: 0x{0:x8}", (uint)ep));
@@ -111,7 +126,7 @@ namespace ICSharpCode.ILSpy {
 				WriteComment(output, "Entry point: ");
 				if (epMethod.DeclaringType != null) {
 					output.WriteReference(IdentifierEscaper.Escape(epMethod.DeclaringType.FullName), epMethod.DeclaringType, TextTokenType.Comment);
-					output.Write('.', TextTokenType.Comment);
+					output.Write(".", TextTokenType.Comment);
 				}
 				output.WriteReference(IdentifierEscaper.Escape(epMethod.Name), epMethod, TextTokenType.Comment);
 				output.WriteLine();
@@ -233,7 +248,7 @@ namespace ICSharpCode.ILSpy {
 		/// Used for WPF keyboard navigation.
 		/// </summary>
 		public override string ToString() {
-			return Name;
+			return NameUI;
 		}
 
 		public virtual bool ShowMember(IMemberRef member) {

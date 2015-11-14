@@ -19,7 +19,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
                     xmlns:dbg="clr-namespace:dnSpy.Debugger">
 
     <Style x:Key="DbgTableGridViewScrollViewerStyle"
@@ -95,10 +94,5 @@
             </GroupBox>
         </Grid>
     </DataTemplate>
-
-    <Style x:Key="SharpTreeViewGridViewStyle"
-           BasedOn="{StaticResource {x:Static GridView.GridViewStyleKey}}"
-           TargetType="{x:Type tv:SharpTreeView}">
-    </Style>
 
 </ResourceDictionary>

@@ -23,8 +23,8 @@ using System.Diagnostics;
 using System.IO;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Contracts.Files;
 using dnSpy.Debugger.IMModules;
-using dnSpy.Files;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger {
@@ -58,7 +58,7 @@ namespace dnSpy.Debugger {
 			return null;
 		}
 
-		public DnSpyFile LoadModule(CorModule module, bool canLoadDynFile) {
+		public IDnSpyFile LoadModule(CorModule module, bool canLoadDynFile) {
 			if (module == null)
 				return null;
 
@@ -70,7 +70,7 @@ namespace dnSpy.Debugger {
 			return LoadModule(module.SerializedDnModule.ToSerializedDnSpyModule(), canLoadDynFile);
 		}
 
-		public DnSpyFile LoadModule(DnModule module, bool canLoadDynFile) {
+		public IDnSpyFile LoadModule(DnModule module, bool canLoadDynFile) {
 			if (module == null)
 				return null;
 			if (UseMemoryModules || module.IsDynamic || module.IsInMemory)
@@ -82,11 +82,11 @@ namespace dnSpy.Debugger {
 			return LoadModule(serMod, canLoadDynFile);
 		}
 
-		IEnumerable<DnSpyFile> AllDnSpyFiles {
+		IEnumerable<IDnSpyFile> AllDnSpyFiles {
 			get { return InMemoryModuleManager.AllDnSpyFiles; }
 		}
 
-		IEnumerable<DnSpyFile> AllActiveDnSpyFiles {
+		IEnumerable<IDnSpyFile> AllActiveDnSpyFiles {
 			get {
 				foreach (var file in AllDnSpyFiles) {
 					var cmdf = file as CorModuleDefFile;
@@ -110,7 +110,7 @@ namespace dnSpy.Debugger {
 			}
 		}
 
-		DnSpyFile LoadNonDiskFile(SerializedDnSpyModule serMod, bool canLoadDynFile) {
+		IDnSpyFile LoadNonDiskFile(SerializedDnSpyModule serMod, bool canLoadDynFile) {
 			if (UseMemoryModules || serMod.IsDynamic || serMod.IsInMemory) {
 				var dnModule = GetDnModule(serMod);
 				if (dnModule != null)
@@ -120,7 +120,7 @@ namespace dnSpy.Debugger {
 			return null;
 		}
 
-		DnSpyFile LoadExisting(SerializedDnSpyModule serMod) {
+		IDnSpyFile LoadExisting(SerializedDnSpyModule serMod) {
 			foreach (var file in AllActiveDnSpyFiles) {
 				var serModFile = file.SerializedDnSpyModule;
 				if (serModFile != null && serModFile.Value.Equals(serMod))
@@ -136,7 +136,7 @@ namespace dnSpy.Debugger {
 			return null;
 		}
 
-		public DnSpyFile LoadModule(SerializedDnSpyModule serMod, bool canLoadDynFile, bool diskFileOk = false) {
+		public IDnSpyFile LoadModule(SerializedDnSpyModule serMod, bool canLoadDynFile, bool diskFileOk = false) {
 			const bool isAutoLoaded = true;
 
 			if (diskFileOk) {

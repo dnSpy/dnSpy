@@ -44,22 +44,4 @@ namespace dnSpy.Contracts.Images {
 		/// <returns></returns>
 		BitmapSource GetImage(Assembly asm, string icon, Color bgColor);
 	}
-
-	/// <summary>
-	/// Extension methods
-	/// </summary>
-	public static class ImageManagerExtensionMethods {
-		/// <summary>
-		/// Returns an image or null if <see cref="ImageInfo.Name"/> is null
-		/// </summary>
-		/// <param name="self">This</param>
-		/// <param name="asm">Assembly of image</param>
-		/// <param name="info">Image info</param>
-		/// <returns></returns>
-		public static BitmapSource GetImage(this IImageManager self, Assembly asm, ImageInfo info) {
-			if (info.Name == null)
-				return null;
-			return self.GetImage(asm, info.Name, info.BackgroundType);
-		}
-	}
 }

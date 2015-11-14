@@ -76,13 +76,6 @@ namespace ICSharpCode.Decompiler
 			}
 		}
 		
-		public void Write(char ch, TextTokenType tokenType)
-		{
-			WriteIndent();
-			writer.Write(ch);
-			column++;
-		}
-		
 		public void Write(string text, TextTokenType tokenType)
 		{
 			WriteIndent();
@@ -106,14 +99,6 @@ namespace ICSharpCode.Decompiler
 		public void WriteReference(string text, object reference, TextTokenType tokenType, bool isLocal)
 		{
 			Write(text, TextTokenType.Text);
-		}
-		
-		void ITextOutput.MarkFoldStart(string collapsedText, bool defaultCollapsed)
-		{
-		}
-		
-		void ITextOutput.MarkFoldEnd()
-		{
 		}
 		
 		void ITextOutput.AddDebugSymbols(MemberMapping methodDebugSymbols)

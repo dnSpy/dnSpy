@@ -21,14 +21,18 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
+using dnlib.PE;
+using dnSpy.Contracts.Files;
+using dnSpy.Shared.UI.Files;
 
 namespace dnSpy.Files {
 	public sealed class DnSpyFileList {
 		readonly object lockObj;
-		readonly ObservableCollection<DnSpyFile> files;
+		readonly ObservableCollection<IDnSpyFile> files;
 
 		public IDnSpyFileListOptions DnSpyFileListOptions {
 			get { return options; }
@@ -46,13 +50,13 @@ namespace dnSpy.Files {
 		internal int Count_NoLock {
 			get { return files.Count; }
 		}
-		internal int IndexOf_NoLock(DnSpyFile file) {
+		internal int IndexOf_NoLock(IDnSpyFile file) {
 			return files.IndexOf(file);
 		}
 		internal void RemoveAt_NoLock(int index) {
 			files.RemoveAt(index);
 		}
-		internal void Insert_NoLock(int index, DnSpyFile file) {
+		internal void Insert_NoLock(int index, IDnSpyFile file) {
 			files.Insert(index, file);
 		}
 		public object GetLockObj() {
@@ -102,11 +106,11 @@ namespace dnSpy.Files {
 			this.options = options;
 			this.name = name;
 			this.lockObj = new object();
-			this.files = new ObservableCollection<DnSpyFile>();
+			this.files = new ObservableCollection<IDnSpyFile>();
 			this.assemblyResolver = new AssemblyResolver(this);
 		}
 
-		public DnSpyFile[] GetDnSpyFiles() {
+		public IDnSpyFile[] GetDnSpyFiles() {
 			lock (lockObj)
 				return files.ToArray();
 		}
@@ -125,16 +129,16 @@ namespace dnSpy.Files {
 			}
 		}
 
-		public DnSpyFile Find(string filename) {
+		public IDnSpyFile Find(string filename) {
 			return FindByKey(new FilenameKey(filename));
 		}
 
-		public DnSpyFile FindByKey(IDnSpyFilenameKey key) {
+		public IDnSpyFile FindByKey(IDnSpyFilenameKey key) {
 			lock (lockObj)
 				return FindByKey_NoLock(key);
 		}
 
-		DnSpyFile FindByKey_NoLock(IDnSpyFilenameKey key) {
+		IDnSpyFile FindByKey_NoLock(IDnSpyFilenameKey key) {
 			if (key == null)
 				return null;
 			foreach (var file in files) {
@@ -144,7 +148,7 @@ namespace dnSpy.Files {
 			return null;
 		}
 
-		public DnSpyFile Add(DnSpyFile file) {
+		public IDnSpyFile Add(IDnSpyFile file) {
 			options.Dispatcher.VerifyAccess();
 			lock (lockObj) {
 				var key = file.Key;
@@ -157,7 +161,7 @@ namespace dnSpy.Files {
 			}
 		}
 
-		public DnSpyFile FindAssembly(IAssembly assembly) {
+		public IDnSpyFile FindAssembly(IAssembly assembly) {
 			lock (lockObj) {
 				var comparer = new AssemblyNameComparer(AssemblyNameComparerFlags.All);
 				foreach (var file in files) {
@@ -168,27 +172,59 @@ namespace dnSpy.Files {
 			}
 		}
 
-		public DnSpyFile CreateDnSpyFile(ModuleDef module) {
-			return DnSpyFile.Create(module, options.UseDebugSymbols, assemblyResolver);
+		public IDnSpyFile CreateDnSpyFile(ModuleDef module, bool isAsmFile) {
+			module.Context = DnSpyDotNetFileBase.CreateModuleContext(assemblyResolver);
+			return DnSpyDotNetFile.CreateAssembly(module, options.UseDebugSymbols);
 		}
 
-		public DnSpyFile CreateDnSpyFile(string filename) {
+		public IDnSpyFile CreateDnSpyFile(string filename) {
 			return CreateDnSpyFile(filename, options.UseMemoryMappedIO, options.UseDebugSymbols);
 		}
 
-		DnSpyFile CreateDnSpyFile(string filename, bool useMemoryMappedIO, bool loadSyms) {
-			return DnSpyFile.CreateFromFile(filename, options.UseMemoryMappedIO, options.UseDebugSymbols, assemblyResolver);
+		IDnSpyFile CreateDnSpyFile(string filename, bool useMemoryMappedIO, bool loadSyms) {
+			return CreateFromFile(filename, options.UseMemoryMappedIO, options.UseDebugSymbols, assemblyResolver);
 		}
 
-		public DnSpyFile OpenFile(string file, bool isAutoLoaded = false) {
+		static IDnSpyFile CreateFromFile(string filename, bool useMemoryMappedIO, bool loadSyms, IAssemblyResolver asmResolver) {
+			try {
+				// Quick check to prevent exceptions from being thrown
+				if (!File.Exists(filename))
+					return new DnSpyUnknownFile(filename);
+
+				IPEImage peImage;
+
+				if (useMemoryMappedIO)
+					peImage = new PEImage(filename);
+				else
+					peImage = new PEImage(File.ReadAllBytes(filename), filename);
+
+				var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
+				bool isDotNet = dotNetDir.VirtualAddress != 0 && dotNetDir.Size >= 0x48;
+				if (isDotNet) {
+					try {
+						var options = new ModuleCreationOptions(DnSpyDotNetFileBase.CreateModuleContext(asmResolver));
+						return DnSpyDotNetFile.CreateAssembly(ModuleDefMD.Load(peImage, options), loadSyms);
+					}
+					catch {
+					}
+				}
+
+				return new DnSpyPEFile(peImage);
+			}
+			catch {
+			}
+			return new DnSpyUnknownFile(filename);
+		}
+
+		public IDnSpyFile OpenFile(string file, bool isAutoLoaded = false) {
 			return GetOrCreate(file, true, isAutoLoaded, false);
 		}
 
-		public DnSpyFile OpenFileDelay(string file, bool isAutoLoaded) {
+		public IDnSpyFile OpenFileDelay(string file, bool isAutoLoaded) {
 			return GetOrCreate(file, true, isAutoLoaded, true);
 		}
 
-		internal DnSpyFile GetOrCreate(string file, bool canAdd, bool isAutoLoaded, bool delayLoad) {
+		internal IDnSpyFile GetOrCreate(string file, bool canAdd, bool isAutoLoaded, bool delayLoad) {
 			var key = new FilenameKey(file);
 
 			lock (lockObj) {
@@ -202,12 +238,18 @@ namespace dnSpy.Files {
 			}
 		}
 
-		public DnSpyFile AddFile(DnSpyFile newFile, bool canAdd, bool delayLoad, bool canDispose = true) {
+		static void Dispose(object o) {
+			var id = o as IDisposable;
+			if (id != null)
+				id.Dispose();
+		}
+
+		public IDnSpyFile AddFile(IDnSpyFile newFile, bool canAdd, bool delayLoad, bool canDispose = true) {
 			lock (lockObj) {
 				var file = FindByKey_NoLock(newFile.Key);
 				if (file != null) {
 					if (canDispose && newFile != file)
-						newFile.Dispose();
+						Dispose(newFile);
 					return file;
 				}
 
@@ -215,12 +257,12 @@ namespace dnSpy.Files {
 			}
 		}
 
-		public DnSpyFile ForceAddFileToList(DnSpyFile newFile, bool canAdd, bool delayLoad, int index, bool canDispose) {
+		public IDnSpyFile ForceAddFileToList(IDnSpyFile newFile, bool canAdd, bool delayLoad, int index, bool canDispose) {
 			lock (lockObj)
 				return ForceAddFileToList_NoLock(newFile, canAdd, delayLoad, index, canDispose);
 		}
 
-		DnSpyFile ForceAddFileToList_NoLock(DnSpyFile newFile, bool canAdd, bool delayLoad, int index, bool canDispose) {
+		IDnSpyFile ForceAddFileToList_NoLock(IDnSpyFile newFile, bool canAdd, bool delayLoad, int index, bool canDispose) {
 			if (!canAdd)
 				return newFile;
 
@@ -234,7 +276,7 @@ namespace dnSpy.Files {
 			return newFile;
 		}
 
-		void AddToList_NoLock(DnSpyFile newFile, int index) {
+		void AddToList_NoLock(IDnSpyFile newFile, int index) {
 			var key = newFile.Key;
 			if ((uint)index < (uint)files.Count)
 				files.Insert(index, newFile);
@@ -242,15 +284,15 @@ namespace dnSpy.Files {
 				files.Add(newFile);
 		}
 
-		readonly Dictionary<IDnSpyFilenameKey, Tuple<DnSpyFile, int>> delayLoadedFiles = new Dictionary<IDnSpyFilenameKey, Tuple<DnSpyFile, int>>();
-		DnSpyFile DelayLoadFile_NoLock(DnSpyFile newFile, int index, bool canDispose) {
+		readonly Dictionary<IDnSpyFilenameKey, Tuple<IDnSpyFile, int>> delayLoadedFiles = new Dictionary<IDnSpyFilenameKey, Tuple<IDnSpyFile, int>>();
+		IDnSpyFile DelayLoadFile_NoLock(IDnSpyFile newFile, int index, bool canDispose) {
 			bool startThread;
 			lock (delayLoadedFiles) {
 				var key = newFile.Key;
-				Tuple<DnSpyFile, int> info;
+				Tuple<IDnSpyFile, int> info;
 				if (delayLoadedFiles.TryGetValue(key, out info)) {
 					if (canDispose && info.Item1 != newFile)
-						newFile.Dispose();
+						Dispose(newFile);
 					return info.Item1;
 				}
 				delayLoadedFiles.Add(key, Tuple.Create(newFile, index));
@@ -263,9 +305,9 @@ namespace dnSpy.Files {
 
 		void DelayLoadFileMainThread() {
 			options.Dispatcher.VerifyAccess();
-			List<Tuple<DnSpyFile, int>> newFiles;
+			List<Tuple<IDnSpyFile, int>> newFiles;
 			lock (delayLoadedFiles) {
-				newFiles = new List<Tuple<DnSpyFile, int>>(delayLoadedFiles.Values);
+				newFiles = new List<Tuple<IDnSpyFile, int>>(delayLoadedFiles.Values);
 				delayLoadedFiles.Clear();
 			}
 
@@ -283,7 +325,7 @@ namespace dnSpy.Files {
 			}
 		}
 
-		public void Remove(DnSpyFile file, bool canDispose) {
+		public void Remove(IDnSpyFile file, bool canDispose) {
 			options.Dispatcher.VerifyAccess();
 			lock (lockObj) {
 				files.Remove(file);

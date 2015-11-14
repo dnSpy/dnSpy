@@ -20,7 +20,7 @@
 using System.Text;
 using System.Globalization;
 
-namespace ICSharpCode.Decompiler {
+namespace dnSpy.Decompiler {
 	public sealed class IdentifierFormatted {
 	}
 

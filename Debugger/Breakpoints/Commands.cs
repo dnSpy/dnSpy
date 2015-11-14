@@ -84,11 +84,11 @@ namespace dnSpy.Debugger.Breakpoints {
 			foreach (var vm in context.SelectedItems) {
 				var printer = new BreakpointPrinter(output, DebuggerSettings.Instance.UseHexadecimal);
 				printer.WriteName(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteAssembly(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteModule(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteFile(vm);
 				output.WriteLine();
 			}

@@ -28,6 +28,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnlib.IO;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -187,7 +188,7 @@ namespace dnSpy.TreeNodes {
 					};
 				});
 				output.Write(" = ", TextTokenType.Comment);
-				output.WriteDefinition(UIUtils.CleanUpName(Name), this, TextTokenType.Comment);
+				output.WriteDefinition(NameUtils.CleanName(Name), this, TextTokenType.Comment);
 				output.WriteLine();
 				return;
 			}
@@ -220,7 +221,7 @@ namespace dnSpy.TreeNodes {
 		}
 
 		public override NodePathName NodePathName {
-			get { return new NodePathName("imgresel", UIUtils.CleanUpName(resElem.Name)); }
+			get { return new NodePathName("imgresel", NameUtils.CleanName(resElem.Name)); }
 		}
 	}
 
@@ -265,7 +266,7 @@ namespace dnSpy.TreeNodes {
 		}
 
 		public override NodePathName NodePathName {
-			get { return new NodePathName("imgres", UIUtils.CleanUpName(r.Name)); }
+			get { return new NodePathName("imgres", NameUtils.CleanName(r.Name)); }
 		}
 	}
 }

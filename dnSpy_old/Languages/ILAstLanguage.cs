@@ -18,8 +18,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using dnlib.DotNet;
+using dnSpy.Contracts.Languages;
+using dnSpy.Decompiler;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
@@ -35,7 +38,16 @@ namespace ICSharpCode.ILSpy {
 		bool inlineVariables = true;
 		ILAstOptimizationStep? abortBeforeStep;
 
-		public override string Name {
+		ILAstLanguage(double orderUI) {
+			this.orderUI = orderUI;
+		}
+
+		public override double OrderUI {
+			get { return orderUI; }
+		}
+		readonly double orderUI;
+
+		public override string NameUI {
 			get {
 				return name;
 			}
@@ -63,7 +75,7 @@ namespace ICSharpCode.ILSpy {
 
 			if (context.CurrentMethodIsAsync) {
 				output.Write("async", TextTokenType.Keyword);
-				output.Write('/', TextTokenType.Operator);
+				output.Write("/", TextTokenType.Operator);
 				output.WriteLine("await", TextTokenType.Keyword);
 			}
 
@@ -73,7 +85,7 @@ namespace ICSharpCode.ILSpy {
 				output.WriteDefinition(IdentifierEscaper.Escape(v.Name), v, v.IsParameter ? TextTokenType.Parameter : TextTokenType.Local);
 				if (v.Type != null) {
 					output.WriteSpace();
-					output.Write(':', TextTokenType.Operator);
+					output.Write(":", TextTokenType.Operator);
 					output.WriteSpace();
 					if (v.IsPinned) {
 						output.Write("pinned", TextTokenType.Keyword);
@@ -83,9 +95,9 @@ namespace ICSharpCode.ILSpy {
 				}
 				if (v.IsGenerated) {
 					output.WriteSpace();
-					output.Write('[', TextTokenType.Operator);
+					output.Write("[", TextTokenType.Operator);
 					output.Write("generated", TextTokenType.Keyword);
-					output.Write(']', TextTokenType.Operator);
+					output.Write("]", TextTokenType.Operator);
 				}
 				output.WriteLine();
 			}
@@ -144,7 +156,7 @@ namespace ICSharpCode.ILSpy {
 			var c = field.Constant;
 			if (c != null) {
 				output.WriteSpace();
-				output.Write('=', TextTokenType.Operator);
+				output.Write("=", TextTokenType.Operator);
 				output.WriteSpace();
 				if (c.Value == null)
 					output.Write("null", TextTokenType.Keyword);
@@ -242,11 +254,19 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
+		[Export(typeof(ILanguageCreator))]
+		sealed class LanguageCreator : ILanguageCreator {
+			public IEnumerable<ILanguage> Create() {
+				return GetDebugLanguages();
+			}
+		}
+
 		internal static IEnumerable<ILAstLanguage> GetDebugLanguages() {
-			yield return new ILAstLanguage { name = "ILAst (unoptimized)", inlineVariables = false };
+			double orderUI = LanguageConstants.ILAST_DEBUG_ORDERUI;
+			yield return new ILAstLanguage(orderUI++) { name = "ILAst (unoptimized)", inlineVariables = false };
 			string nextName = "ILAst (variable splitting)";
 			foreach (ILAstOptimizationStep step in Enum.GetValues(typeof(ILAstOptimizationStep))) {
-				yield return new ILAstLanguage { name = nextName, abortBeforeStep = step };
+				yield return new ILAstLanguage(orderUI++) { name = nextName, abortBeforeStep = step };
 				nextName = "ILAst (after " + step + ")";
 
 			}

@@ -67,7 +67,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			writer.Write("Try", TextTokenType.Keyword);
 			writer.WriteSpace();
 			WriteOffsetReference(writer, exceptionHandler.TryStart, method);
-			writer.Write('-', TextTokenType.Operator);
+			writer.Write("-", TextTokenType.Operator);
 			WriteOffsetReference(writer, exceptionHandler.TryEnd, method);
 			writer.WriteSpace();
 			writer.Write(exceptionHandler.HandlerType.ToString(), TextTokenType.Keyword);
@@ -84,7 +84,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			}
 			writer.WriteSpace();
 			WriteOffsetReference(writer, exceptionHandler.HandlerStart, method);
-			writer.Write('-', TextTokenType.Operator);
+			writer.Write("-", TextTokenType.Operator);
 			WriteOffsetReference(writer, exceptionHandler.HandlerEnd, method);
 		}
 		
@@ -103,7 +103,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 
 				if (options.ShowILBytes) {
 					if (needSpace)
-						writer.Write(' ', TextTokenType.Comment);
+						writer.Write(" ", TextTokenType.Comment);
 					if (byteReader == null)
 						writer.Write("??", TextTokenType.Comment);
 					else {
@@ -128,7 +128,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				writer.WriteSpace();
 			}
 			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.GetOffset()), new InstructionReference(method, instruction), TextTokenType.Label, false);
-			writer.Write(':', TextTokenType.Operator);
+			writer.Write(":", TextTokenType.Operator);
 			writer.WriteSpace();
 			writer.WriteReference(instruction.OpCode.Name, instruction.OpCode, TextTokenType.OpCode);
 			if (instruction.Operand != null) {
@@ -163,7 +163,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			writer.Write("(", TextTokenType.Operator);
 			for(int i = 0; i < instructions.Count; i++) {
 				if (i != 0) {
-					writer.Write(',', TextTokenType.Operator);
+					writer.Write(",", TextTokenType.Operator);
 					writer.WriteSpace();
 				}
 				WriteOffsetReference(writer, instructions[i], method);
@@ -219,21 +219,21 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			}
 			MethodSpec gim = method as MethodSpec;
 			if (gim != null && gim.GenericInstMethodSig != null) {
-				writer.Write('<', TextTokenType.Operator);
+				writer.Write("<", TextTokenType.Operator);
 				for (int i = 0; i < gim.GenericInstMethodSig.GenericArguments.Count; i++) {
 					if (i > 0) {
-						writer.Write(',', TextTokenType.Operator);
+						writer.Write(",", TextTokenType.Operator);
 						writer.WriteSpace();
 					}
 					gim.GenericInstMethodSig.GenericArguments[i].WriteTo(writer);
 				}
-				writer.Write('>', TextTokenType.Operator);
+				writer.Write(">", TextTokenType.Operator);
 			}
 			writer.Write("(", TextTokenType.Operator);
 			var parameters = sig.GetParameters();
 			for(int i = 0; i < parameters.Count; ++i) {
 				if (i > 0) {
-					writer.Write(',', TextTokenType.Operator);
+					writer.Write(",", TextTokenType.Operator);
 					writer.WriteSpace();
 				}
 				parameters[i].WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
@@ -255,11 +255,11 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			}
 			sig.RetType.WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
 			writer.WriteSpace();
-			writer.Write('(', TextTokenType.Operator);
+			writer.Write("(", TextTokenType.Operator);
 			var parameters = sig.GetParameters();
 			for(int i = 0; i < parameters.Count; ++i) {
 				if (i > 0) {
-					writer.Write(',', TextTokenType.Operator);
+					writer.Write(",", TextTokenType.Operator);
 					writer.WriteSpace();
 				}
 				parameters[i].WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
@@ -375,11 +375,11 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			} else if (type is ArraySig) {
 				ArraySig at = (ArraySig)type;
 				at.Next.WriteTo(writer, syntaxForElementTypes, depth);
-				writer.Write('[', TextTokenType.Operator);
+				writer.Write("[", TextTokenType.Operator);
 				for (int i = 0; i < at.Rank; i++)
 				{
 					if (i != 0) {
-						writer.Write(',', TextTokenType.Operator);
+						writer.Write(",", TextTokenType.Operator);
 						writer.WriteSpace();
 					}
 					int? lower = i < at.LowerBounds.Count ? at.LowerBounds[i] : (int?)null;
@@ -395,7 +395,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 							writer.Write("...", TextTokenType.Operator);
 					}
 				}
-				writer.Write(']', TextTokenType.Operator);
+				writer.Write("]", TextTokenType.Operator);
 			} else if (type is SZArraySig) {
 				SZArraySig at = (SZArraySig)type;
 				at.Next.WriteTo(writer, syntaxForElementTypes, depth);
@@ -412,38 +412,38 @@ namespace ICSharpCode.Decompiler.Disassembler {
 					writer.Write(Escape(typeName), TextTokenHelper.GetTextTokenType(type));
 			} else if (type is ByRefSig) {
 				((ByRefSig)type).Next.WriteTo(writer, syntaxForElementTypes, depth);
-				writer.Write('&', TextTokenType.Operator);
+				writer.Write("&", TextTokenType.Operator);
 			} else if (type is PtrSig) {
 				((PtrSig)type).Next.WriteTo(writer, syntaxForElementTypes, depth);
-				writer.Write('*', TextTokenType.Operator);
+				writer.Write("*", TextTokenType.Operator);
 			} else if (type is GenericInstSig) {
 				((GenericInstSig)type).GenericType.WriteTo(writer, syntaxForElementTypes, depth);
-				writer.Write('<', TextTokenType.Operator);
+				writer.Write("<", TextTokenType.Operator);
 				var arguments = ((GenericInstSig)type).GenericArguments;
 				for (int i = 0; i < arguments.Count; i++) {
 					if (i > 0) {
-						writer.Write(',', TextTokenType.Operator);
+						writer.Write(",", TextTokenType.Operator);
 						writer.WriteSpace();
 					}
 					arguments[i].WriteTo(writer, syntaxForElementTypes, depth);
 				}
-				writer.Write('>', TextTokenType.Operator);
+				writer.Write(">", TextTokenType.Operator);
 			} else if (type is CModOptSig) {
 				((ModifierSig)type).Next.WriteTo(writer, syntax, depth);
 				writer.WriteSpace();
 				writer.Write("modopt", TextTokenType.Keyword);
-				writer.Write('(', TextTokenType.Operator);
+				writer.Write("(", TextTokenType.Operator);
 				((ModifierSig)type).Modifier.WriteTo(writer, ILNameSyntax.TypeName, depth);
-				writer.Write(')', TextTokenType.Operator);
+				writer.Write(")", TextTokenType.Operator);
 				writer.WriteSpace();
 			}
 			else if (type is CModReqdSig) {
 				((ModifierSig)type).Next.WriteTo(writer, syntax, depth);
 				writer.WriteSpace();
 				writer.Write("modreq", TextTokenType.Keyword);
-				writer.Write('(', TextTokenType.Operator);
+				writer.Write("(", TextTokenType.Operator);
 				((ModifierSig)type).Modifier.WriteTo(writer, ILNameSyntax.TypeName, depth);
-				writer.Write(')', TextTokenType.Operator);
+				writer.Write(")", TextTokenType.Operator);
 				writer.WriteSpace();
 			}
 			else if (type is TypeDefOrRefSig) {
@@ -492,20 +492,20 @@ namespace ICSharpCode.Decompiler.Disassembler {
 
 				if (type.DeclaringType != null) {
 					type.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName, depth);
-					writer.Write('/', TextTokenType.Operator);
+					writer.Write("/", TextTokenType.Operator);
 					writer.WriteReference(Escape(typeName), type, TextTokenHelper.GetTextTokenType(type));
 				} else {
 					if (!(type is TypeDef) && type.Scope != null && !(type is TypeSpec)) {
-						writer.Write('[', TextTokenType.Operator);
+						writer.Write("[", TextTokenType.Operator);
 						writer.Write(Escape(type.Scope.GetScopeName()), TextTokenType.ILModule);
-						writer.Write(']', TextTokenType.Operator);
+						writer.Write("]", TextTokenType.Operator);
 					}
 					if (ts != null || MustEscape(typeFullName))
 						writer.WriteReference(Escape(typeFullName), type, TextTokenHelper.GetTextTokenType(type));
 					else {
 						WriteNamespace(writer, type.Namespace);
 						if (!string.IsNullOrEmpty(type.Namespace))
-							writer.Write('.', TextTokenType.Operator);
+							writer.Write(".", TextTokenType.Operator);
 						writer.WriteReference(IdentifierEscaper.Escape(type.Name), type, TextTokenHelper.GetTextTokenType(type));
 					}
 				}
@@ -517,7 +517,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			var parts = ns.Split('.');
 			for (int i = 0; i < parts.Length; i++) {
 				if (i > 0)
-					writer.Write('.', TextTokenType.Operator);
+					writer.Write(".", TextTokenType.Operator);
 				var nsPart = parts[i];
 				if (!string.IsNullOrEmpty(nsPart))
 					writer.Write(IdentifierEscaper.Escape(nsPart), TextTokenType.NamespacePart);
@@ -628,13 +628,13 @@ namespace ICSharpCode.Decompiler.Disassembler {
 						writer.Write("0.0", TextTokenType.Number);
 				} else if (float.IsInfinity(val) || float.IsNaN(val)) {
 					byte[] data = BitConverter.GetBytes(val);
-					writer.Write('(', TextTokenType.Operator);
+					writer.Write("(", TextTokenType.Operator);
 					for (int i = 0; i < data.Length; i++) {
 						if (i > 0)
 							writer.WriteSpace();
 						writer.Write(data[i].ToString("X2"), TextTokenType.Number);
 					}
-					writer.Write(')', TextTokenType.Operator);
+					writer.Write(")", TextTokenType.Operator);
 				} else {
 					writer.Write(val.ToString("R", System.Globalization.CultureInfo.InvariantCulture), TextTokenType.Number);
 				}
@@ -649,13 +649,13 @@ namespace ICSharpCode.Decompiler.Disassembler {
 						writer.Write("0.0", TextTokenType.Number);
 				} else if (double.IsInfinity(val) || double.IsNaN(val)) {
 					byte[] data = BitConverter.GetBytes(val);
-					writer.Write('(', TextTokenType.Operator);
+					writer.Write("(", TextTokenType.Operator);
 					for (int i = 0; i < data.Length; i++) {
 						if (i > 0)
 							writer.WriteSpace();
 						writer.Write(data[i].ToString("X2"), TextTokenType.Number);
 					}
-					writer.Write(')', TextTokenType.Operator);
+					writer.Write(")", TextTokenType.Operator);
 				} else {
 					writer.Write(val.ToString("R", System.Globalization.CultureInfo.InvariantCulture), TextTokenType.Number);
 				}

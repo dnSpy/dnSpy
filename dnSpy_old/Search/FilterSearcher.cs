@@ -27,8 +27,8 @@ using System.Windows.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.Resources;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Images;
-using dnSpy.Files;
 using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -326,10 +326,10 @@ namespace dnSpy.Search {
 		}
 
 		static ImageInfo GetImage(string name) {
-			return new ImageInfo(name, BackgroundType.Search);
+			return new ImageInfo(typeof(MainWindow).Assembly, name, BackgroundType.Search);
 		}
 
-		void SearchModule(DnSpyFile module) {
+		void SearchModule(IDnSpyFile module) {
 			if (module == null)
 				return;
 			var mod = module.ModuleDef;
@@ -363,7 +363,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void SearchModAsmReferences(DnSpyFile module) {
+		void SearchModAsmReferences(IDnSpyFile module) {
 			var res = filter.GetFilterResult((ReferenceFolderTreeNode)null);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -405,7 +405,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void SearchResources(DnSpyFile module) {
+		void SearchResources(IDnSpyFile module) {
 			var res = filter.GetFilterResult((ResourceListTreeNode)null);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -431,7 +431,7 @@ namespace dnSpy.Search {
 				SearchResourceTreeNodes(module, node);
 		}
 
-		void SearchResourceTreeNodes(DnSpyFile module, ResourceTreeNode resTreeNode) {
+		void SearchResourceTreeNodes(IDnSpyFile module, ResourceTreeNode resTreeNode) {
 			var res = filter.GetFilterResult(resTreeNode);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -462,7 +462,7 @@ namespace dnSpy.Search {
 				SearchResourceElementTreeNode(module, resTreeNode, resElNode);
 		}
 
-		void SearchResourceElementTreeNode(DnSpyFile module, ResourceTreeNode resTreeNode, ResourceElementTreeNode resElNode) {
+		void SearchResourceElementTreeNode(IDnSpyFile module, ResourceTreeNode resTreeNode, ResourceElementTreeNode resElNode) {
 			var res = filter.GetFilterResult(resElNode);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -507,14 +507,14 @@ namespace dnSpy.Search {
 			return ns;
 		}
 
-		void SearchNonNetFile(DnSpyFile nonNetFile) {
+		void SearchNonNetFile(IDnSpyFile nonNetFile) {
 			if (nonNetFile == null)
 				return;
 			var res = filter.GetFilterResult(nonNetFile, AssemblyFilterType.NonNetFile);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
 
-			if (res.IsMatch && IsMatch(nonNetFile.ShortName, nonNetFile)) {
+			if (res.IsMatch && IsMatch(nonNetFile.GetShortName(), nonNetFile)) {
 				onMatch(new SearchResult {
 					Language = language,
 					Object = nonNetFile,
@@ -527,7 +527,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void Search(DnSpyFile ownerModule, string ns, List<TypeDef> types) {
+		void Search(IDnSpyFile ownerModule, string ns, List<TypeDef> types) {
 			var res = filter.GetFilterResult(ns, ownerModule);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -550,7 +550,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void Search(DnSpyFile ownerModule, string nsOwner, TypeDef type) {
+		void Search(IDnSpyFile ownerModule, string nsOwner, TypeDef type) {
 			var res = filter.GetFilterResult(type);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -575,7 +575,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void Search(DnSpyFile ownerModule, TypeDef type) {
+		void Search(IDnSpyFile ownerModule, TypeDef type) {
 			var res = filter.GetFilterResult(type);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -595,7 +595,7 @@ namespace dnSpy.Search {
 			SearchMembers(ownerModule, type);
 		}
 
-		void SearchMembers(DnSpyFile ownerModule, TypeDef type) {
+		void SearchMembers(IDnSpyFile ownerModule, TypeDef type) {
 			foreach (var method in type.Methods)
 				Search(ownerModule, type, method);
 			cancellationToken.ThrowIfCancellationRequested();
@@ -609,7 +609,7 @@ namespace dnSpy.Search {
 				Search(ownerModule, type, evt);
 		}
 
-		void Search(DnSpyFile ownerModule, TypeDef type, MethodDef method) {
+		void Search(IDnSpyFile ownerModule, TypeDef type, MethodDef method) {
 			var res = filter.GetFilterResult(method);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -652,14 +652,14 @@ namespace dnSpy.Search {
 			SearchBody(ownerModule, type, method);
 		}
 
-		void SearchBody(DnSpyFile ownerModule, TypeDef type, MethodDef method) {
+		void SearchBody(IDnSpyFile ownerModule, TypeDef type, MethodDef method) {
 			bool loadedBody;
 			SearchBody(ownerModule, type, method, out loadedBody);
 			if (loadedBody)
 				ICSharpCode.ILSpy.TreeNodes.Analyzer.Helpers.FreeMethodBody(method);
 		}
 
-		void SearchBody(DnSpyFile ownerModule, TypeDef type, MethodDef method, out bool loadedBody) {
+		void SearchBody(IDnSpyFile ownerModule, TypeDef type, MethodDef method, out bool loadedBody) {
 			loadedBody = false;
 			CilBody body;
 
@@ -735,7 +735,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void Search(DnSpyFile ownerModule, TypeDef type, FieldDef field) {
+		void Search(IDnSpyFile ownerModule, TypeDef type, FieldDef field) {
 			var res = filter.GetFilterResult(field);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -754,7 +754,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void Search(DnSpyFile ownerModule, TypeDef type, PropertyDef prop) {
+		void Search(IDnSpyFile ownerModule, TypeDef type, PropertyDef prop) {
 			var res = filter.GetFilterResult(prop);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;
@@ -772,7 +772,7 @@ namespace dnSpy.Search {
 			}
 		}
 
-		void Search(DnSpyFile ownerModule, TypeDef type, EventDef evt) {
+		void Search(IDnSpyFile ownerModule, TypeDef type, EventDef evt) {
 			var res = filter.GetFilterResult(evt);
 			if (res.FilterResult == FilterResult.Hidden)
 				return;

@@ -27,6 +27,7 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
+using dnSpy.Decompiler;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TreeNodes;

@@ -108,9 +108,9 @@ namespace dnSpy.TreeNodes.Hex {
 			output.WriteSpace();
 			output.Write("Stream", TextTokenType.InstanceField);
 			output.WriteSpace();
-			output.Write('#', TextTokenType.Operator);
+			output.Write("#", TextTokenType.Operator);
 			output.Write(streamNumber.ToString(), TextTokenType.Number);
-			output.Write(':', TextTokenType.Operator);
+			output.Write(":", TextTokenType.Operator);
 			output.WriteSpace();
 			output.Write(string.Format("{0}", storageStreamVM.RCNameVM.StringZ), storageStreamType == StorageStreamType.None ? TextTokenType.Error : TextTokenType.Type);
 		}

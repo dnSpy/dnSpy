@@ -38,12 +38,13 @@ using dnlib.DotNet.Emit;
 using dnSpy;
 using dnSpy.AvalonEdit;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler;
-using dnSpy.Files;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.AvalonEdit;
+using dnSpy.Shared.UI.Files;
 using dnSpy.Shared.UI.MVVM;
 using dnSpy.TextView;
 using ICSharpCode.AvalonEdit;
@@ -282,9 +283,9 @@ namespace ICSharpCode.ILSpy.TextView {
 				string opCodeHex = code.Size > 1 ? string.Format("0x{0:X4}", code.Value) : string.Format("0x{0:X2}", code.Value);
 				gen.TextOutput.Write(code.Name, TextTokenType.OpCode);
 				gen.TextOutput.WriteSpace();
-				gen.TextOutput.Write('(', TextTokenType.Operator);
+				gen.TextOutput.Write("(", TextTokenType.Operator);
 				gen.TextOutput.Write(opCodeHex, TextTokenType.Number);
-				gen.TextOutput.Write(')', TextTokenType.Operator);
+				gen.TextOutput.Write(")", TextTokenType.Operator);
 				if (s != null) {
 					gen.TextOutput.Write(" - ", TextTokenType.Text);
 					gen.TextOutput.Write(s, TextTokenType.Text);
@@ -1023,7 +1024,7 @@ namespace ICSharpCode.ILSpy.TextView {
 
 			SaveFileDialog dlg = new SaveFileDialog();
 			dlg.DefaultExt = language.FileExtension;
-			dlg.Filter = language.Name + "|*" + language.FileExtension + "|All Files|*.*";
+			dlg.Filter = language.NameUI + "|*" + language.FileExtension + "|All Files|*.*";
 			dlg.FileName = CleanUpName(treeNodes.First().ToString()) + language.FileExtension;
 			if (dlg.ShowDialog() == true) {
 				SaveToDisk(new DecompilationContext(language, treeNodes.ToArray(), options), dlg.FileName);

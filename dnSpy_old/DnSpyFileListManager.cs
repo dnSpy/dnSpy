@@ -145,7 +145,7 @@ namespace ICSharpCode.ILSpy {
 
 		static void SaveTo(ISettingsSection section, DnSpyFileList list) {
 			section.Attribute("name", list.Name);
-			foreach (var file in list.GetDnSpyFiles().Where(file => !file.IsAutoLoaded && file.CanBeSavedToSettingsFile && !string.IsNullOrWhiteSpace(file.Filename))) {
+			foreach (var file in list.GetDnSpyFiles().Where(file => !file.IsAutoLoaded && file.LoadedFromFile && !string.IsNullOrWhiteSpace(file.Filename))) {
 				var fileSection = section.CreateSection(FILE_SECTION_NAME);
 				fileSection.Attribute("Name", file.Filename);
 			}

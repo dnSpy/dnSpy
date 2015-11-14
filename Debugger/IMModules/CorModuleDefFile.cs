@@ -21,14 +21,15 @@ using System.Collections.Generic;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
+using dnSpy.Shared.UI.Files;
 
 namespace dnSpy.Debugger.IMModules {
 	/// <summary>
 	/// A class holding a <see cref="dndbg.DotNet.CorModuleDef"/> reference. Should only be used if
 	/// it's a dynamic module since it uses <c>IMetaDataImport</c> to read the MD.
 	/// </summary>
-	sealed class CorModuleDefFile : DotNetFileBase {
+	sealed class CorModuleDefFile : DnSpyDotNetFileBase {
 		sealed class MyKey : IDnSpyFilenameKey {
 			readonly DnModule dnModule;
 
@@ -46,24 +47,16 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
-		public override bool CanBeSavedToSettingsFile {
-			get { return false; }
-		}
-
 		public override IDnSpyFilenameKey Key {
 			get { return CreateKey(dnModule); }
 		}
 
 		public override SerializedDnSpyModule? SerializedDnSpyModule {
-			get { return Files.SerializedDnSpyModule.Create(ModuleDef, DnModule.IsDynamic, DnModule.IsInMemory); }
+			get { return Contracts.Files.SerializedDnSpyModule.Create(ModuleDef, DnModule.IsDynamic, DnModule.IsInMemory); }
 		}
 
 		public override bool LoadedFromFile {
 			get { return false; }
-		}
-
-		public override bool IsReadOnly {
-			get { return !dnModule.Process.HasExited; }
 		}
 
 		public DnModule DnModule {
@@ -75,30 +68,33 @@ namespace dnSpy.Debugger.IMModules {
 			return new MyKey(module);
 		}
 
-		internal Dictionary<ModuleDef, CorModuleDefFile> Dictionary {
-			get { return dict; }
-		}
-		readonly Dictionary<ModuleDef, CorModuleDefFile> dict;
-
 		public LastValidRids LastValidRids {
 			get { return lastValidRids; }
 		}
 		LastValidRids lastValidRids;
 
-		public CorModuleDefFile(Dictionary<ModuleDef, CorModuleDefFile> dict, DnModule dnModule, bool loadSyms)
+		public CorModuleDefFile(DnModule dnModule, bool loadSyms)
 			: base(dnModule.GetOrCreateCorModuleDef(), loadSyms) {
-			this.dict = dict;
 			this.dnModule = dnModule;
 			this.lastValidRids = new LastValidRids();
 		}
 
-		public override DnSpyFile CreateDnSpyFile(ModuleDef module) {
-			if (module == null)
-				return null;
-			CorModuleDefFile file;
-			dict.TryGetValue(module, out file);
+		public static CorModuleDefFile CreateAssembly(List<CorModuleDefFile> files) {
+			var manifest = files[0];
+			var file = new CorModuleDefFile(manifest.DnModule, false);
+			file.files = new List<CorModuleDefFile>(files);
 			return file;
 		}
+
+		protected override List<IDnSpyFile> CreateChildren() {
+			var list = new List<IDnSpyFile>();
+			if (files != null) {
+				list.AddRange(files);
+				files = null;
+			}
+			return list;
+		}
+		List<CorModuleDefFile> files;
 
 		public LastValidRids UpdateLastValidRids() {
 			var old = lastValidRids;

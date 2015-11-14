@@ -62,8 +62,39 @@
   <ItemGroup>
     <Compile Include="AppImpl.cs" />
     <Compile Include="Dummy.cs" />
+    <Compile Include="Files\AssemblyResolver.cs" />
+    <Compile Include="Files\FileManager.cs" />
+    <Compile Include="Files\TreeView\AssemblyFileNode.cs" />
+    <Compile Include="Files\TreeView\AssemblyReferenceNode.cs" />
+    <Compile Include="Files\TreeView\BaseTypeFolderNode.cs" />
+    <Compile Include="Files\TreeView\BaseTypeNode.cs" />
+    <Compile Include="Files\TreeView\DefaultDnSpyFileNodeCreator.cs" />
+    <Compile Include="Files\TreeView\DerivedTypeNode.cs" />
+    <Compile Include="Files\TreeView\DerivedTypesFinder.cs" />
+    <Compile Include="Files\TreeView\DerivedTypesFolderNode.cs" />
+    <Compile Include="Files\TreeView\DnSpyFileNode.cs" />
+    <Compile Include="Files\TreeView\EventNode.cs" />
+    <Compile Include="Files\TreeView\ExeUtils.cs" />
+    <Compile Include="Files\TreeView\FieldNode.cs" />
+    <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
+    <Compile Include="Files\TreeView\FileTreeNodeDataContext.cs" />
+    <Compile Include="Files\TreeView\FileTreeView.cs" />
+    <Compile Include="Files\TreeView\MessageNode.cs" />
+    <Compile Include="Files\TreeView\MethodNode.cs" />
+    <Compile Include="Files\TreeView\ModuleFileNode.cs" />
+    <Compile Include="Files\TreeView\ModuleReferenceNode.cs" />
+    <Compile Include="Files\TreeView\NamespaceNode.cs" />
+    <Compile Include="Files\TreeView\PEFileNode.cs" />
+    <Compile Include="Files\TreeView\PropertyNode.cs" />
+    <Compile Include="Files\TreeView\ReferencesNode.cs" />
+    <Compile Include="Files\TreeView\ResourcesNode.cs" />
+    <Compile Include="Files\TreeView\TreeNodeGroups.cs" />
+    <Compile Include="Files\TreeView\TypeNode.cs" />
+    <Compile Include="Files\TreeView\UnknownFileNode.cs" />
+    <Compile Include="Images\DotNetImageManager.cs" />
     <Compile Include="Images\ImageManager.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
+    <Compile Include="Languages\LanguageManager.cs" />
     <Compile Include="Menus\AppMenus.cs" />
     <Compile Include="Menus\ContextMenuCreator.cs" />
     <Compile Include="Menus\MenuItemContext.cs" />
@@ -90,6 +121,13 @@
     <Compile Include="ToolBars\ToolBarButtonVM.cs" />
     <Compile Include="ToolBars\ToolBarItemContext.cs" />
     <Compile Include="ToolBars\ToolBarManager.cs" />
+    <Compile Include="TreeView\AsyncNodeCreator.cs" />
+    <Compile Include="TreeView\DnSpySharpTreeNode.cs" />
+    <Compile Include="TreeView\SharpTreeNodeChildrenList.cs" />
+    <Compile Include="TreeView\TreeNodeDataImpl.cs" />
+    <Compile Include="TreeView\TreeNodeImpl.cs" />
+    <Compile Include="TreeView\TreeViewImpl.cs" />
+    <Compile Include="TreeView\TreeViewManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
@@ -107,6 +145,18 @@
     <ProjectReference Include="..\dnSpy.Shared.UI\dnSpy.Shared.UI.csproj">
       <Project>{7e7c2cf8-2057-4eaa-9dad-ab3022cf4037}</Project>
       <Name>dnSpy.Shared.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
+      <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
+      <Name>ICSharpCode.Decompiler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
+      <Project>{3b2a5653-ec97-4001-bb9b-d90f1af2c371}</Project>
+      <Name>ICSharpCode.NRefactory</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SharpTreeView\ICSharpCode.TreeView.csproj">
+      <Project>{dde2a481-8271-4eac-a330-8fa6a38d13d1}</Project>
+      <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
@@ -128,6 +178,162 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Assembly.png" />
+    <Resource Include="Images\AssemblyExe.png" />
+    <Resource Include="Images\AssemblyModule.png" />
+    <Resource Include="Images\AssemblyReference.png" />
+    <Resource Include="Images\AssemblyWarning.png" />
+    <Resource Include="Images\BaseTypeClosed.png" />
+    <Resource Include="Images\BaseTypeOpened.png" />
+    <Resource Include="Images\Class.png" />
+    <Resource Include="Images\ClassInternal.png" />
+    <Resource Include="Images\ClassPrivate.png" />
+    <Resource Include="Images\ClassProtected.png" />
+    <Resource Include="Images\ClassProtectedInternal.png" />
+    <Resource Include="Images\Constructor.png" />
+    <Resource Include="Images\ConstructorCompilerControlled.png" />
+    <Resource Include="Images\ConstructorInternal.png" />
+    <Resource Include="Images\ConstructorPrivate.png" />
+    <Resource Include="Images\ConstructorProtected.png" />
+    <Resource Include="Images\ConstructorProtectedInternal.png" />
+    <Resource Include="Images\Delegate.png" />
+    <Resource Include="Images\DelegateInternal.png" />
+    <Resource Include="Images\DelegatePrivate.png" />
+    <Resource Include="Images\DelegateProtected.png" />
+    <Resource Include="Images\DelegateProtectedInternal.png" />
+    <Resource Include="Images\DerivedTypesClosed.png" />
+    <Resource Include="Images\DerivedTypesOpened.png" />
+    <Resource Include="Images\Enum.png" />
+    <Resource Include="Images\EnumInternal.png" />
+    <Resource Include="Images\EnumPrivate.png" />
+    <Resource Include="Images\EnumProtected.png" />
+    <Resource Include="Images\EnumProtectedInternal.png" />
+    <Resource Include="Images\EnumValue.png" />
+    <Resource Include="Images\EnumValueCompilerControlled.png" />
+    <Resource Include="Images\EnumValueInternal.png" />
+    <Resource Include="Images\EnumValuePrivate.png" />
+    <Resource Include="Images\EnumValueProtected.png" />
+    <Resource Include="Images\EnumValueProtectedInternal.png" />
+    <Resource Include="Images\Event.png" />
+    <Resource Include="Images\EventCompilerControlled.png" />
+    <Resource Include="Images\EventInternal.png" />
+    <Resource Include="Images\EventPrivate.png" />
+    <Resource Include="Images\EventProtected.png" />
+    <Resource Include="Images\EventProtectedInternal.png" />
+    <Resource Include="Images\Exception.png" />
+    <Resource Include="Images\ExceptionInternal.png" />
+    <Resource Include="Images\ExceptionPrivate.png" />
+    <Resource Include="Images\ExceptionProtected.png" />
+    <Resource Include="Images\ExceptionProtectedInternal.png" />
+    <Resource Include="Images\ExtensionMethod.png" />
+    <Resource Include="Images\ExtensionMethodCompilerControlled.png" />
+    <Resource Include="Images\ExtensionMethodInternal.png" />
+    <Resource Include="Images\ExtensionMethodPrivate.png" />
+    <Resource Include="Images\ExtensionMethodProtected.png" />
+    <Resource Include="Images\ExtensionMethodProtectedInternal.png" />
+    <Resource Include="Images\Field.png" />
+    <Resource Include="Images\FieldCompilerControlled.png" />
+    <Resource Include="Images\FieldInternal.png" />
+    <Resource Include="Images\FieldPrivate.png" />
+    <Resource Include="Images\FieldProtected.png" />
+    <Resource Include="Images\FieldProtectedInternal.png" />
+    <Resource Include="Images\FieldReadOnly.png" />
+    <Resource Include="Images\FieldReadOnlyCompilerControlled.png" />
+    <Resource Include="Images\FieldReadOnlyInternal.png" />
+    <Resource Include="Images\FieldReadOnlyPrivate.png" />
+    <Resource Include="Images\FieldReadOnlyProtected.png" />
+    <Resource Include="Images\FieldReadOnlyProtectedInternal.png" />
+    <Resource Include="Images\FolderClosed.png" />
+    <Resource Include="Images\FolderOpened.png" />
+    <Resource Include="Images\Generic.png" />
+    <Resource Include="Images\GenericInternal.png" />
+    <Resource Include="Images\GenericPrivate.png" />
+    <Resource Include="Images\GenericProtected.png" />
+    <Resource Include="Images\GenericProtectedInternal.png" />
+    <Resource Include="Images\Interface.png" />
+    <Resource Include="Images\InterfaceInternal.png" />
+    <Resource Include="Images\InterfacePrivate.png" />
+    <Resource Include="Images\InterfaceProtected.png" />
+    <Resource Include="Images\InterfaceProtectedInternal.png" />
+    <Resource Include="Images\Literal.png" />
+    <Resource Include="Images\LiteralCompilerControlled.png" />
+    <Resource Include="Images\LiteralInternal.png" />
+    <Resource Include="Images\LiteralPrivate.png" />
+    <Resource Include="Images\LiteralProtected.png" />
+    <Resource Include="Images\LiteralProtectedInternal.png" />
+    <Resource Include="Images\Method.png" />
+    <Resource Include="Images\MethodCompilerControlled.png" />
+    <Resource Include="Images\MethodInternal.png" />
+    <Resource Include="Images\MethodPrivate.png" />
+    <Resource Include="Images\MethodProtected.png" />
+    <Resource Include="Images\MethodProtectedInternal.png" />
+    <Resource Include="Images\ModuleReference.png" />
+    <Resource Include="Images\Namespace.png" />
+    <Resource Include="Images\Operator.png" />
+    <Resource Include="Images\OperatorCompilerControlled.png" />
+    <Resource Include="Images\OperatorInternal.png" />
+    <Resource Include="Images\OperatorPrivate.png" />
+    <Resource Include="Images\OperatorProtected.png" />
+    <Resource Include="Images\OperatorProtectedInternal.png" />
+    <Resource Include="Images\PInvokeMethod.png" />
+    <Resource Include="Images\PInvokeMethodCompilerControlled.png" />
+    <Resource Include="Images\PInvokeMethodInternal.png" />
+    <Resource Include="Images\PInvokeMethodPrivate.png" />
+    <Resource Include="Images\PInvokeMethodProtected.png" />
+    <Resource Include="Images\PInvokeMethodProtectedInternal.png" />
+    <Resource Include="Images\Property.png" />
+    <Resource Include="Images\PropertyCompilerControlled.png" />
+    <Resource Include="Images\PropertyInternal.png" />
+    <Resource Include="Images\PropertyPrivate.png" />
+    <Resource Include="Images\PropertyProtected.png" />
+    <Resource Include="Images\PropertyProtectedInternal.png" />
+    <Resource Include="Images\ReferenceFolderClosed.png" />
+    <Resource Include="Images\ReferenceFolderOpened.png" />
+    <Resource Include="Images\Search.png" />
+    <Resource Include="Images\StaticClass.png" />
+    <Resource Include="Images\StaticEvent.png" />
+    <Resource Include="Images\StaticEventCompilerControlled.png" />
+    <Resource Include="Images\StaticEventInternal.png" />
+    <Resource Include="Images\StaticEventPrivate.png" />
+    <Resource Include="Images\StaticEventProtected.png" />
+    <Resource Include="Images\StaticEventProtectedInternal.png" />
+    <Resource Include="Images\StaticMethod.png" />
+    <Resource Include="Images\StaticMethodCompilerControlled.png" />
+    <Resource Include="Images\StaticMethodInternal.png" />
+    <Resource Include="Images\StaticMethodPrivate.png" />
+    <Resource Include="Images\StaticMethodProtected.png" />
+    <Resource Include="Images\StaticMethodProtectedInternal.png" />
+    <Resource Include="Images\StaticProperty.png" />
+    <Resource Include="Images\StaticPropertyCompilerControlled.png" />
+    <Resource Include="Images\StaticPropertyInternal.png" />
+    <Resource Include="Images\StaticPropertyPrivate.png" />
+    <Resource Include="Images\StaticPropertyProtected.png" />
+    <Resource Include="Images\StaticPropertyProtectedInternal.png" />
+    <Resource Include="Images\Struct.png" />
+    <Resource Include="Images\StructInternal.png" />
+    <Resource Include="Images\StructPrivate.png" />
+    <Resource Include="Images\StructProtected.png" />
+    <Resource Include="Images\StructProtectedInternal.png" />
+    <Resource Include="Images\VirtualEvent.png" />
+    <Resource Include="Images\VirtualEventCompilerControlled.png" />
+    <Resource Include="Images\VirtualEventInternal.png" />
+    <Resource Include="Images\VirtualEventPrivate.png" />
+    <Resource Include="Images\VirtualEventProtected.png" />
+    <Resource Include="Images\VirtualEventProtectedInternal.png" />
+    <Resource Include="Images\VirtualMethod.png" />
+    <Resource Include="Images\VirtualMethodCompilerControlled.png" />
+    <Resource Include="Images\VirtualMethodInternal.png" />
+    <Resource Include="Images\VirtualMethodPrivate.png" />
+    <Resource Include="Images\VirtualMethodProtected.png" />
+    <Resource Include="Images\VirtualMethodProtectedInternal.png" />
+    <Resource Include="Images\VirtualProperty.png" />
+    <Resource Include="Images\VirtualPropertyCompilerControlled.png" />
+    <Resource Include="Images\VirtualPropertyInternal.png" />
+    <Resource Include="Images\VirtualPropertyPrivate.png" />
+    <Resource Include="Images\VirtualPropertyProtected.png" />
+    <Resource Include="Images\VirtualPropertyProtectedInternal.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

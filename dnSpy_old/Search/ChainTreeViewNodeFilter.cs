@@ -19,7 +19,7 @@
 
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
 using dnSpy.TreeNodes;
 using dnSpy.TreeNodes.Hex;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -40,7 +40,7 @@ namespace dnSpy.Search {
 			return filter.GetFilterResult(asmRef);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(DnSpyFile file, AssemblyFilterType type) {
+		public virtual TreeViewNodeFilterResult GetFilterResult(IDnSpyFile file, AssemblyFilterType type) {
 			return filter.GetFilterResult(file, type);
 		}
 
@@ -76,8 +76,8 @@ namespace dnSpy.Search {
 			return filter.GetFilterResult(modRef);
 		}
 
-		public virtual TreeViewNodeFilterResult GetFilterResult(string ns, DnSpyFile file) {
-			return filter.GetFilterResult(ns, file);
+		public virtual TreeViewNodeFilterResult GetFilterResult(string ns, IDnSpyFile owner) {
+			return filter.GetFilterResult(ns, owner);
 		}
 
 		public virtual TreeViewNodeFilterResult GetFilterResult(PropertyDef prop) {

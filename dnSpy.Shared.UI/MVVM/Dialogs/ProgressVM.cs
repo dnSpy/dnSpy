@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Shared.UI.MVVM.Dialogs {
 	public interface IProgress {

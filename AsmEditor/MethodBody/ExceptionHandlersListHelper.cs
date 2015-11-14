@@ -109,19 +109,19 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 				var eh = ehs[i];
 				output.Write(eh.Index.ToString(), TextTokenType.Number);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				BodyUtils.WriteObject(output, eh.TryStartVM.SelectedItem);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				BodyUtils.WriteObject(output, eh.TryEndVM.SelectedItem);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				BodyUtils.WriteObject(output, eh.FilterStartVM.SelectedItem);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				BodyUtils.WriteObject(output, eh.HandlerStartVM.SelectedItem);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				BodyUtils.WriteObject(output, eh.HandlerEndVM.SelectedItem);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				output.Write(((EnumVM)eh.HandlerTypeVM.Items[eh.HandlerTypeVM.SelectedIndex]).Name, TextTokenType.Text);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				BodyUtils.WriteObject(output, eh.CatchType);
 			}
 			if (ehs.Length > 1)

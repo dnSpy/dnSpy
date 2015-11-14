@@ -20,8 +20,9 @@
 using System.ComponentModel;
 using dnlib.DotNet;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Settings;
-using dnSpy.Files;
+using dnSpy.Shared.UI.Files;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointListSettings {

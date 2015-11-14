@@ -20,9 +20,9 @@ using System;
 using System.Diagnostics;
 using System.Windows.Media;
 using dnlib.DotNet;
-using dnSpy;
 using dnSpy.Contracts.Images;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 
@@ -48,27 +48,27 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public static ITextOutput Write(ITextOutput output, MethodDef method, Language language) {
-			output.Write(UIUtils.CleanUpIdentifier(method.Name), TextTokenHelper.GetTextTokenType(method));
-			output.Write('(', TextTokenType.Operator);
+			output.Write(NameUtils.CleanIdentifier(method.Name), TextTokenHelper.GetTextTokenType(method));
+			output.Write("(", TextTokenType.Operator);
 			for (int i = 0; i < method.Parameters.Count; i++) {
 				if (method.Parameters[i].IsHiddenThisParameter)
 					continue;
 				if (method.Parameters[i].MethodSigIndex > 0) {
-					output.Write(',', TextTokenType.Operator);
+					output.Write(",", TextTokenType.Operator);
 					output.WriteSpace();
 				}
 				language.TypeToString(output, method.Parameters[i].Type.ToTypeDefOrRef(), false, method.Parameters[i].ParamDef);
 			}
 			if (method.CallingConvention == CallingConvention.VarArg || method.CallingConvention == CallingConvention.NativeVarArg) {
 				if (method.MethodSig.GetParamCount() > 0) {
-					output.Write(',', TextTokenType.Operator);
+					output.Write(",", TextTokenType.Operator);
 					output.WriteSpace();
 				}
 				output.Write("...", TextTokenType.Operator);
 			}
-			output.Write(')', TextTokenType.Operator);
+			output.Write(")", TextTokenType.Operator);
 			output.WriteSpace();
-			output.Write(':', TextTokenType.Operator);
+			output.Write(":", TextTokenType.Operator);
 			output.WriteSpace();
 			language.TypeToString(output, method.ReturnType.ToTypeDefOrRef(), false, method.Parameters.ReturnParameter.ParamDef);
 			method.MDToken.WriteSuffixString(output);

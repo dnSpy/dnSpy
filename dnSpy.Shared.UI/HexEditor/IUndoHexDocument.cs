@@ -18,7 +18,7 @@
 */
 
 namespace dnSpy.Shared.UI.HexEditor {
-	public interface IUndoHexDocument {
+	public interface IUndoHexDocument {//TODO: REMOVE this. It belongs in AsmEditor
 		void WriteUndo(ulong startOffset, byte[] newData, string descr);
 	}
 }

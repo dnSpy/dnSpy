@@ -36,9 +36,6 @@ namespace ICSharpCode.NRefactory.VB {
 		void NewLine();
 		
 		void WriteComment(bool isDocumentation, string content);
-		
-		void MarkFoldStart();
-		void MarkFoldEnd();
 
 		void DebugStart(AstNode node);
 		void DebugHidden(object hiddenILRanges);

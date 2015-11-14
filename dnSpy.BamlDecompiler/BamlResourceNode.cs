@@ -29,6 +29,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnSpy.BamlDecompiler.Baml;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using dnSpy.TreeNodes;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
@@ -98,7 +99,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		public override NodePathName NodePathName {
-			get { return new NodePathName("baml", UIUtils.CleanUpName(resElem.Name)); }
+			get { return new NodePathName("baml", NameUtils.CleanName(resElem.Name)); }
 		}
 	}
 }

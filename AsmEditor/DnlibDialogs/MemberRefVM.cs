@@ -23,7 +23,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
 using dnSpy.Search;
 using dnSpy.Shared.UI.MVVM;
 
@@ -200,7 +200,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickModuleRef() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var file = dnlibTypePicker.GetDnlibType<DnSpyFile>(new SameAssemblyTreeViewNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsTreeViewNodeFilter(VisibleMembersFlags.ModuleDef)), null, typeSigCreatorOptions.OwnerModule);
+			var file = dnlibTypePicker.GetDnlibType<IDnSpyFile>(new SameAssemblyTreeViewNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsTreeViewNodeFilter(VisibleMembersFlags.ModuleDef)), null, typeSigCreatorOptions.OwnerModule);
 			if (file != null) {
 				var module = file.ModuleDef;
 				if (module != null) {

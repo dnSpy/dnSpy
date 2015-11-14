@@ -23,7 +23,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using dnSpy.NRefactory;
-using dnSpy.TextView;
+using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
@@ -170,14 +170,9 @@ namespace ICSharpCode.ILSpy.TextView {
 			if (needsIndent) {
 				needsIndent = false;
 				for (int i = 0; i < indent; i++) {
-					Append(TextTokenType.Text, '\t');
+					Append(TextTokenType.Text, "\t");
 				}
 			}
-		}
-
-		public void Write(char ch, TextTokenType tokenType) {
-			WriteIndent();
-			Append(tokenType, ch);
 		}
 
 		public void Write(string text, TextTokenType tokenType) {
@@ -213,12 +208,6 @@ namespace ICSharpCode.ILSpy.TextView {
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = isLocal });
 		}
 
-		public void MarkFoldStart(string collapsedText, bool defaultCollapsed) {
-		}
-
-		public void MarkFoldEnd() {
-		}
-
 		public void AddUIElement(Func<UIElement> element) {
 			if (element != null) {
 				if (this.UIElements.Count > 0 && this.UIElements.Last().Key == this.TextLength)
@@ -230,12 +219,6 @@ namespace ICSharpCode.ILSpy.TextView {
 
 		public void AddDebugSymbols(MemberMapping methodDebugSymbols) {
 			DebuggerMemberMappings.Add(methodDebugSymbols);
-		}
-
-		void Append(TextTokenType tokenType, char c) {
-			tokens.Append(tokenType, c);
-			b.Append(c);
-			Debug.Assert(b.Length == tokens.Length);
 		}
 
 		void Append(TextTokenType tokenType, string s) {

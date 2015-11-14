@@ -19,7 +19,7 @@
 
 using dndbg.Engine;
 using dnlib.DotNet;
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger {

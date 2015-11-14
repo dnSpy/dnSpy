@@ -39,6 +39,7 @@ using dnSpy;
 using dnSpy.AsmEditor;
 using dnSpy.AvalonEdit;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
@@ -240,7 +241,7 @@ namespace ICSharpCode.ILSpy {
 			InitializeTextEditorFontResource();
 
 			languageComboBox = new ComboBox() {
-				DisplayMemberPath = "Name",
+				DisplayMemberPath = "NameUI",
 				Width = 100,
 				ItemsSource = Languages.AllLanguages,
 			};
@@ -319,7 +320,7 @@ namespace ICSharpCode.ILSpy {
 			if (ownerNodes.Count == 0)
 				return;
 
-			DecompileCache.Instance.Clear(new HashSet<DnSpyFile>(ownerNodes.Select(a => ILSpyTreeNode.GetNode<AssemblyTreeNode>(a).DnSpyFile)));
+			DecompileCache.Instance.Clear(new HashSet<IDnSpyFile>(ownerNodes.Select(a => ILSpyTreeNode.GetNode<AssemblyTreeNode>(a).DnSpyFile)));
 
 			foreach (var tabState in AllDecompileTabStates) {
 				bool refresh = tabState.DecompiledNodes.Any(a => ownerNodes.Contains(ILSpyTreeNode.GetNode<ResourceListTreeNode>(a)));
@@ -939,7 +940,7 @@ namespace ICSharpCode.ILSpy {
 
 		public event NotifyCollectionChangedEventHandler CurrentAssemblyListChanged;
 
-		List<DnSpyFile> commandLineLoadedFiles = new List<DnSpyFile>();
+		List<IDnSpyFile> commandLineLoadedFiles = new List<IDnSpyFile>();
 
 		bool HandleCommandLineArguments(CommandLineArguments args) {
 			foreach (string file in args.AssembliesToLoad) {
@@ -955,7 +956,7 @@ namespace ICSharpCode.ILSpy {
 				bool found = false;
 				if (args.NavigateTo.StartsWith("N:", StringComparison.Ordinal)) {
 					string namespaceName = args.NavigateTo.Substring(2);
-					foreach (DnSpyFile asm in commandLineLoadedFiles) {
+					foreach (IDnSpyFile asm in commandLineLoadedFiles) {
 						AssemblyTreeNode asmNode = dnSpyFileListTreeNode.FindAssemblyNode(asm);
 						if (asmNode != null) {
 							NamespaceTreeNode nsNode = asmNode.FindNamespaceNode(namespaceName);
@@ -968,7 +969,7 @@ namespace ICSharpCode.ILSpy {
 					}
 				}
 				else {
-					foreach (DnSpyFile asm in commandLineLoadedFiles) {
+					foreach (IDnSpyFile asm in commandLineLoadedFiles) {
 						ModuleDef def = asm.ModuleDef;
 						if (def != null) {
 							IMemberRef mr = XmlDocKeyProvider.FindMemberByKey(def, args.NavigateTo);
@@ -1002,13 +1003,13 @@ namespace ICSharpCode.ILSpy {
 			commandLineLoadedFiles.Clear(); // clear references once we don't need them anymore
 		}
 
-		void OnExportAssembly(DnSpyFile dnSpyFile, string path) {
+		void OnExportAssembly(IDnSpyFile dnSpyFile, string path) {
 			var textView = ActiveTextView;
 			if (textView == null)
 				return;
 			AssemblyTreeNode asmNode = dnSpyFileListTreeNode.FindModuleNode(dnSpyFile.ModuleDef);
 			if (asmNode != null) {
-				string file = DecompilerTextView.CleanUpName(asmNode.DnSpyFile.ShortName);
+				string file = DecompilerTextView.CleanUpName(asmNode.DnSpyFile.GetShortName());
 				Language language = sessionSettings.FilterSettings.Language;
 				DecompilationOptions options = new DecompilationOptions();
 				options.FullDecompilation = true;
@@ -1242,7 +1243,7 @@ namespace ICSharpCode.ILSpy {
 						tabManager.RemoveAllTabStates();
 				}
 				if (e.OldItems != null) {
-					var oldAssemblies = new HashSet<DnSpyFile>(e.OldItems.Cast<DnSpyFile>());
+					var oldAssemblies = new HashSet<IDnSpyFile>(e.OldItems.Cast<IDnSpyFile>());
 					var newNodes = new List<ILSpyTreeNode>();
 					foreach (var tabState in AllTabStates.ToArray()) {
 						switch (tabState.Type) {
@@ -1276,7 +1277,7 @@ namespace ICSharpCode.ILSpy {
 							throw new InvalidOperationException();
 						}
 					}
-					var oldModules = new HashSet<DnSpyFile>(oldAssemblies);
+					var oldModules = new HashSet<IDnSpyFile>(oldAssemblies);
 					foreach (var asm in oldAssemblies) {
 						var node = dnSpyFileListTreeNode.FindAssemblyNode(asm);
 						if (node != null) {
@@ -1402,7 +1403,7 @@ namespace ICSharpCode.ILSpy {
 			return JumpToNamespace(textView, nsRef.Module, nsRef.Namespace, canRecordHistory);
 		}
 
-		bool JumpToNamespace(DecompilerTextView textView, DnSpyFile asm, string ns, bool canRecordHistory = true) {
+		bool JumpToNamespace(DecompilerTextView textView, IDnSpyFile asm, string ns, bool canRecordHistory = true) {
 			if (asm == null || ns == null)
 				return false;
 			var asmNode = FindTreeNode(asm.ModuleDef) as AssemblyTreeNode;
@@ -1556,7 +1557,7 @@ namespace ICSharpCode.ILSpy {
 				}
 
 				// The module has been removed. Add it again
-				var dnSpyFile = dnspyFileList.CreateDnSpyFile(mainModule);
+				var dnSpyFile = dnspyFileList.CreateDnSpyFile(mainModule, true);
 				dnSpyFile.IsAutoLoaded = true;
 				dnspyFileList.AddFile(dnSpyFile, true, false, false);
 				return JumpToReferenceAsyncInternal(tabState, false, reference, onDecompileFinished);
@@ -2516,7 +2517,7 @@ namespace ICSharpCode.ILSpy {
 			return ActiveTabState != null;
 		}
 
-		public void ModuleModified(DnSpyFile mod) {
+		public void ModuleModified(IDnSpyFile mod) {
 			DecompileCache.Instance.Clear(mod);
 
 			foreach (var tabState in AllDecompileTabStates) {
@@ -2530,15 +2531,15 @@ namespace ICSharpCode.ILSpy {
 
 		public event EventHandler<ModuleModifiedEventArgs> OnModuleModified;
 		public class ModuleModifiedEventArgs : EventArgs {
-			public DnSpyFile DnSpyFile { get; private set; }
+			public IDnSpyFile DnSpyFile { get; private set; }
 
-			public ModuleModifiedEventArgs(DnSpyFile asm) {
+			public ModuleModifiedEventArgs(IDnSpyFile asm) {
 				this.DnSpyFile = asm;
 			}
 		}
 
-		static bool MustRefresh(DecompileTabState tabState, DnSpyFile mod) {
-			var asms = new HashSet<DnSpyFile>();
+		static bool MustRefresh(DecompileTabState tabState, IDnSpyFile mod) {
+			var asms = new HashSet<IDnSpyFile>();
 			asms.Add(mod);
 			return DecompileCache.IsInModifiedModule(asms, tabState.DecompiledNodes) ||
 				DecompileCache.IsInModifiedModule(asms, tabState.TextView.References);
@@ -2548,7 +2549,7 @@ namespace ICSharpCode.ILSpy {
 			DisableMemoryMappedIO(GetAllDnSpyFileInstances());
 		}
 
-		public void DisableMemoryMappedIO(IEnumerable<DnSpyFile> files) {
+		public void DisableMemoryMappedIO(IEnumerable<IDnSpyFile> files) {
 			foreach (var tabState in AllDecompileTabStates) {
 				// Make sure that the code doesn't try to reference memory that will be moved.
 				tabState.TextView.CancelDecompilation();
@@ -2561,7 +2562,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		public IEnumerable<DnSpyFile> GetAllDnSpyFileInstances() {
+		public IEnumerable<IDnSpyFile> GetAllDnSpyFileInstances() {
 			if (dnSpyFileListTreeNode == null)
 				yield break;
 			foreach (AssemblyTreeNode asmNode in dnSpyFileListTreeNode.Children) {
@@ -2591,28 +2592,28 @@ namespace ICSharpCode.ILSpy {
 
 		void RefreshCodeIL() {
 			foreach (var tabState in AllDecompileTabStates) {
-				if (tabState.Language.Name == "IL")
+				if (tabState.Language.NameUI == "IL")
 					ForceDecompile(tabState);
 			}
 		}
 
 		void RefreshCodeILAst() {
 			foreach (var tabState in AllDecompileTabStates) {
-				if (tabState.Language.Name.StartsWith("ILAst (") && tabState.Language.Name.EndsWith(")"))
+				if (tabState.Language.NameUI.StartsWith("ILAst (") && tabState.Language.NameUI.EndsWith(")"))
 					ForceDecompile(tabState);
 			}
 		}
 
 		void RefreshCodeCSharp() {
 			foreach (var tabState in AllDecompileTabStates) {
-				if (tabState.Language.Name == "C#" || tabState.Language.Name.StartsWith("C# - "))
+				if (tabState.Language.NameUI == "C#" || tabState.Language.NameUI.StartsWith("C# - "))
 					ForceDecompile(tabState);
 			}
 		}
 
 		void RefreshCodeVB() {
 			foreach (var tabState in AllDecompileTabStates) {
-				if (tabState.Language.Name == "VB")
+				if (tabState.Language.NameUI == "VB")
 					ForceDecompile(tabState);
 			}
 		}

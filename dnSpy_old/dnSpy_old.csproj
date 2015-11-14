@@ -120,20 +120,16 @@
     <Compile Include="AsmEditor\Resources\SerializationUtils.cs" />
     <Compile Include="DnTheme\FileTabBackgroundConverter.cs" />
     <Compile Include="Files\AssemblyResolver.cs" />
-    <Compile Include="Files\DnSpyFile.cs" />
     <Compile Include="Files\DnSpyFileList.cs" />
-    <Compile Include="Files\FilenameKey.cs" />
-    <Compile Include="Files\GacInfo.cs" />
     <Compile Include="Files\IDispatcher.cs" />
     <Compile Include="Files\IDnSpyFileListOptions.cs" />
-    <Compile Include="Files\IDnSpyFilenameKey.cs" />
-    <Compile Include="Files\SerializedDnSpyModule.cs" />
-    <Compile Include="Files\SerializedDnSpyToken.cs" />
     <Compile Include="Files\WPF\DispatcherImpl.cs" />
     <Compile Include="Files\WPF\DnSpyFileListOptionsImpl.cs" />
     <Compile Include="Hex\DnHexBox.cs" />
     <Compile Include="Hex\HexBoxCommands.cs" />
     <Compile Include="Hex\HexBoxThemeHelper.cs" />
+    <Compile Include="Images\ImageInfo.cs" />
+    <Compile Include="Languages\SyntaxHighlightOutputToTextOutput.cs" />
     <Compile Include="MVVM\AskUser.cs" />
     <Compile Include="Hex\GoToOffsetDlg.xaml.cs">
       <DependentUpon>GoToOffsetDlg.xaml</DependentUpon>
@@ -293,7 +289,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="TaskHelper.cs" />
-    <Compile Include="TextView\LanguageTokens.cs" />
     <Compile Include="TextView\NewTextEditor.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzeContextMenuEntry.cs" />
     <Compile Include="TreeNodes\Analyzer\AnalyzedAssemblyTreeNode.cs" />

@@ -17,10 +17,13 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy;
+using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Languages;
 using dnSpy.Files;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
@@ -35,14 +38,23 @@ namespace ICSharpCode.ILSpy {
 	/// Currently comes in two versions:
 	/// flat IL (detectControlStructure=false) and structured IL (detectControlStructure=true).
 	/// </remarks>
+	[Export(typeof(ILanguage))]
 	public class ILLanguage : Language {
 		private readonly bool detectControlStructure;
+
+		ILLanguage()
+			: this(true) {
+		}
 
 		public ILLanguage(bool detectControlStructure) {
 			this.detectControlStructure = detectControlStructure;
 		}
 
-		public override string Name {
+		public override double OrderUI {
+			get { return LanguageConstants.IL_ORDERUI; }
+		}
+
+		public override string NameUI {
 			get { return "IL"; }
 		}
 
@@ -155,7 +167,7 @@ namespace ICSharpCode.ILSpy {
 			dis.DisassembleType(type);
 		}
 
-		public override void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
+		public override void DecompileAssembly(DnSpyFileList dnSpyFileList, IDnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
 			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
 			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 			output.WriteLine("// " + file.Filename, TextTokenType.Comment);

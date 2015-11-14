@@ -26,7 +26,8 @@ using System.Windows;
 using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.AvalonEdit;
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
+using dnSpy.Shared.UI.Files;
 using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
@@ -130,7 +131,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		void MainWindow_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e) {
 			if (e.OldItems != null) {
 				var existing = new HashSet<SerializedDnSpyModule>(MainWindow.Instance.DnSpyFileListTreeNode.GetAllModuleNodes().Select(a => a.DnSpyFile.SerializedDnSpyModule ?? new SerializedDnSpyModule()));
-				var removed = new HashSet<SerializedDnSpyModule>(e.OldItems.Cast<DnSpyFile>().Select(a => a.SerializedDnSpyModule ?? new SerializedDnSpyModule()));
+				var removed = new HashSet<SerializedDnSpyModule>(e.OldItems.Cast<IDnSpyFile>().Select(a => a.SerializedDnSpyModule ?? new SerializedDnSpyModule()));
 				existing.Remove(new SerializedDnSpyModule());
 				removed.Remove(new SerializedDnSpyModule());
 				foreach (var ilbp in ILCodeBreakpoints) {

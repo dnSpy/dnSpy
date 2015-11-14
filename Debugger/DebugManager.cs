@@ -33,11 +33,12 @@ using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Menus;
 using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Dialogs;
 using dnSpy.Debugger.IMModules;
-using dnSpy.Files;
+using dnSpy.Shared.UI.Files;
 using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
@@ -630,7 +631,7 @@ namespace dnSpy.Debugger {
 			DebugAssembly(GetDebugAssemblyOptions(CreateDebugProcessVM(asm)));
 		}
 
-		internal DnSpyFile GetCurrentExecutableAssembly(IMenuItemContext context) {
+		internal IDnSpyFile GetCurrentExecutableAssembly(IMenuItemContext context) {
 			if (context == null)
 				return null;
 			if (IsDebugging)
@@ -657,7 +658,7 @@ namespace dnSpy.Debugger {
 			return GetCurrentExecutableAssembly(node, true);
 		}
 
-		DnSpyFile GetCurrentExecutableAssembly(SharpTreeNode node, bool mustBeNetExe) {
+		IDnSpyFile GetCurrentExecutableAssembly(SharpTreeNode node, bool mustBeNetExe) {
 			var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
 			if (asmNode == null)
 				return null;
@@ -681,7 +682,7 @@ namespace dnSpy.Debugger {
 			return file;
 		}
 
-		DnSpyFile GetCurrentExecutableAssembly(bool mustBeNetExe) {
+		IDnSpyFile GetCurrentExecutableAssembly(bool mustBeNetExe) {
 			return GetCurrentExecutableAssembly(MainWindow.Instance.TreeView.SelectedItem as SharpTreeNode, mustBeNetExe);
 		}
 
@@ -701,7 +702,7 @@ namespace dnSpy.Debugger {
 			}
 		}
 
-		DebugCoreCLRVM CreateDebugCoreCLRVM(DnSpyFile asm = null) {
+		DebugCoreCLRVM CreateDebugCoreCLRVM(IDnSpyFile asm = null) {
 			// Re-use the previous one if it's the same file
 			if (lastDebugCoreCLRVM != null && asm != null) {
 				if (StringComparer.OrdinalIgnoreCase.Equals(lastDebugCoreCLRVM.Filename, asm.Filename))
@@ -754,7 +755,7 @@ namespace dnSpy.Debugger {
 			return opts;
 		}
 
-		DebugProcessVM CreateDebugProcessVM(DnSpyFile asm = null) {
+		DebugProcessVM CreateDebugProcessVM(IDnSpyFile asm = null) {
 			// Re-use the previous one if it's the same file
 			if (lastDebugProcessVM != null && asm != null) {
 				if (StringComparer.OrdinalIgnoreCase.Equals(lastDebugProcessVM.Filename, asm.Filename))
@@ -988,7 +989,7 @@ namespace dnSpy.Debugger {
 			if (modNode == null)
 				return;
 			var memFile = modNode.DnSpyFile as MemoryModuleDefFile;
-			DnSpyFile file = memFile;
+			IDnSpyFile file = memFile;
 			if (memFile == null) {
 				if (modNode.DnSpyFile is CorModuleDefFile)
 					return;
@@ -1075,7 +1076,7 @@ namespace dnSpy.Debugger {
 			currentLocation = newLoc;
 		}
 
-		void UpdateCurrentMethod(DnSpyFile file = null) {
+		void UpdateCurrentMethod(IDnSpyFile file = null) {
 			if (currentLocation == null) {
 				currentMethod = null;
 				return;

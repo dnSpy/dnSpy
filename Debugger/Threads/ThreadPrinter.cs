@@ -46,7 +46,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		public void WriteCurrent(ThreadVM vm) {
-			output.Write(vm.IsCurrent ? '>' : ' ', TextTokenType.Text);
+			output.Write(vm.IsCurrent ? ">" : " ", TextTokenType.Text);
 		}
 
 		public void WriteId(ThreadVM vm) {
@@ -173,14 +173,14 @@ namespace dnSpy.Debugger.Threads {
 				if ((state & t.Item1) != 0) {
 					state &= ~t.Item1;
 					if (needComma)
-						output.WriteCommaSpace();
+						output.WriteCommaSpace_OLD();
 					needComma = true;
 					output.Write(t.Item2, TextTokenType.EnumField);
 				}
 			}
 			if (state != 0) {
 				if (needComma)
-					output.WriteCommaSpace();
+					output.WriteCommaSpace_OLD();
 				output.Write(string.Format("0x{0:X}", (int)state), TextTokenType.Number);
 			}
 		}

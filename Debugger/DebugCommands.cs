@@ -24,6 +24,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.AvalonEdit;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolBars;
@@ -161,7 +162,7 @@ namespace dnSpy.Debugger {
 			var asm = DebugManager.Instance.GetCurrentExecutableAssembly(context);
 			if (asm == null)
 				return null;
-			return string.Format("_Debug {0}", UIUtils.EscapeMenuItemHeader(asm.ShortName));
+			return string.Format("_Debug {0}", UIUtils.EscapeMenuItemHeader(asm.GetShortName()));
 		}
 
 		protected override bool IsValidElement(GuidObject element) {

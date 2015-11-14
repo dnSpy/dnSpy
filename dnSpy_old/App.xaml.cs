@@ -69,6 +69,10 @@ namespace ICSharpCode.ILSpy {
 				}
 			}
 			InitializeComponent();
+			AddMergedResourceDictionary(typeof(AppCreator).Assembly, "Themes/wpf.styles.templates.xaml");
+			AddMergedResourceDictionary(typeof(RelayCommand).Assembly, "Themes/wpf.styles.templates.xaml");
+			AddMergedResourceDictionary(GetType().Assembly, "DnTheme/wpf.styles.templates.xaml");
+			AddMergedResourceDictionary(GetType().Assembly, "TreeNodes/Hex/wpf.styles.templates.xaml");
 
 			var asms = new List<Assembly>();
 			asms.Add(GetType().Assembly);
@@ -76,12 +80,7 @@ namespace ICSharpCode.ILSpy {
 			AppCreator.Create(asms, "*.Plugin.dll");
 			((AppImpl)DnSpy.App).InitializeSettings();
 
-			AddMergedResourceDictionary(DnSpy.App.GetType().Assembly, "Themes/wpf.styles.templates.xaml");
-			AddMergedResourceDictionary(typeof(RelayCommand).Assembly, "Themes/wpf.styles.templates.xaml");
-			AddMergedResourceDictionary(GetType().Assembly, "DnTheme/wpf.styles.templates.xaml");
-			AddMergedResourceDictionary(GetType().Assembly, "TreeNodes/Hex/wpf.styles.templates.xaml");
-
-			Languages.Initialize(DnSpy.App.CompositionContainer);
+			Languages.Initialize();
 
 			if (!System.Diagnostics.Debugger.IsAttached) {
 				AppDomain.CurrentDomain.UnhandledException += ShowErrorBox;

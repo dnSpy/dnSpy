@@ -18,7 +18,7 @@
 */
 
 using dnlib.DotNet;
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
 using dnSpy.TreeNodes;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -33,7 +33,7 @@ namespace dnSpy.Search {
 			this.allowedMod = allowedMod;
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(DnSpyFile file, AssemblyFilterType type) {
+		public override TreeViewNodeFilterResult GetFilterResult(IDnSpyFile file, AssemblyFilterType type) {
 			if (file.AssemblyDef != allowedAsm)
 				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
 			if (allowedAsm == null && file.ModuleDef != allowedMod)

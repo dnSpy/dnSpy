@@ -56,7 +56,7 @@ namespace dnSpy.Debugger {
 				output.WriteSpace();
 				var filteredName = FilterName(appDomain.Name, MAX_APP_DOMAIN_NAME);
 				if (HasSameNameAsProcess(appDomain))
-					output.WriteFilename(filteredName);
+					output.WriteFilename_OLD(filteredName);
 				else
 					output.Write(filteredName, TextTokenType.String);
 			}
@@ -86,14 +86,14 @@ namespace dnSpy.Debugger {
 		}
 
 		public static T Write<T>(this T output, DnProcess p, bool useHex) where T : ITextOutput {
-			output.Write('[', TextTokenType.Operator);
+			output.Write("[", TextTokenType.Operator);
 			if (useHex)
 				output.Write(string.Format("0x{0:X}", p.ProcessId), TextTokenType.Number);
 			else
 				output.Write(string.Format("{0}", p.ProcessId), TextTokenType.Number);
-			output.Write(']', TextTokenType.Operator);
+			output.Write("]", TextTokenType.Operator);
 			output.WriteSpace();
-			output.WriteFilename(GetFilename(p.Filename));
+			output.WriteFilename_OLD(GetFilename(p.Filename));
 			return output;
 		}
 

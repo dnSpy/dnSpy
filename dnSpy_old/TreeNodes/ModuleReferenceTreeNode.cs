@@ -18,10 +18,11 @@
 
 using System;
 using dnlib.DotNet;
-using dnSpy;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
+using dnSpy.Decompiler;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 
@@ -51,7 +52,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public static ITextOutput Write(ITextOutput output, ModuleRef r, Language language) {
-			output.Write(UIUtils.CleanUpIdentifier(r.Name), TextTokenType.Text);
+			output.Write(NameUtils.CleanIdentifier(r.Name), TextTokenType.Text);
 			r.MDToken.WriteSuffixString(output);
 			return output;
 		}

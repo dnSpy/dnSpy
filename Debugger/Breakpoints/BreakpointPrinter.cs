@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		static Language MethodLanguage {
 			get {
 				var lang = Language;
-				if (lang.Name != "VB")
+				if (lang.NameUI != "VB")
 					return lang;
 				// VB's WriteToolTip() hasn't been implemented for methods so use C# instead
 				return Languages.GetLanguage("C#");
@@ -49,14 +49,14 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		static string GetHexFormatUInt16() {
-			if (Language.Name == "VB")
+			if (Language.NameUI == "VB")
 				return "&H{0:X4}";
 			else
 				return "0x{0:X4}";
 		}
 
 		static string GetHexFormatUInt32() {
-			if (Language.Name == "VB")
+			if (Language.NameUI == "VB")
 				return "&H{0:X8}";
 			else
 				return "0x{0:X8}";
@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				else
 					MethodLanguage.WriteToolTip(output, method, null);
 				output.WriteSpace();
-				output.Write('+', TextTokenType.Operator);
+				output.Write("+", TextTokenType.Operator);
 				output.WriteSpace();
 				WriteILOffset(output, ilbp.ILOffset);
 				return;
@@ -119,7 +119,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public void WriteAssembly(BreakpointVM vm) {
 			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
 			if (ilbp != null) {
-				output.Write(new AssemblyNameInfo(ilbp.SerializedDnSpyToken.Module.AssemblyFullName));
+				output.Write_OLD(new AssemblyNameInfo(ilbp.SerializedDnSpyToken.Module.AssemblyFullName));
 				return;
 			}
 
@@ -144,7 +144,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			if (ilbp != null) {
 				// Always use the filename since it matches the module names in the call stack and
 				// modules windows
-				output.WriteModule(ModulePathToModuleName(ilbp.SerializedDnSpyToken.Module.ModuleName));
+				output.WriteModule_OLD(ModulePathToModuleName(ilbp.SerializedDnSpyToken.Module.ModuleName));
 				return;
 			}
 
@@ -158,7 +158,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public void WriteFile(BreakpointVM vm) {
 			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
 			if (ilbp != null) {
-				output.WriteFilename(ilbp.SerializedDnSpyToken.Module.ModuleName);
+				output.WriteFilename_OLD(ilbp.SerializedDnSpyToken.Module.ModuleName);
 				return;
 			}
 

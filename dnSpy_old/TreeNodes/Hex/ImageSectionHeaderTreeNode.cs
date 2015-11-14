@@ -63,9 +63,9 @@ namespace dnSpy.TreeNodes.Hex {
 		protected override void Write(ITextOutput output) {
 			output.Write("Section", TextTokenType.Keyword);
 			output.WriteSpace();
-			output.Write('#', TextTokenType.Operator);
+			output.Write("#", TextTokenType.Operator);
 			output.Write(sectionNumber.ToString(), TextTokenType.Number);
-			output.Write(':', TextTokenType.Operator);
+			output.Write(":", TextTokenType.Operator);
 			output.WriteSpace();
 			output.Write(string.Format("{0}", imageSectionHeaderVM.NameVM.String), TextTokenType.Type);
 		}

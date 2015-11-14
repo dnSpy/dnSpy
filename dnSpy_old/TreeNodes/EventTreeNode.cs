@@ -20,9 +20,9 @@ using System;
 using System.Diagnostics;
 using System.Windows.Media;
 using dnlib.DotNet;
-using dnSpy;
 using dnSpy.Contracts.Images;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 
@@ -59,9 +59,9 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public static ITextOutput Write(ITextOutput output, EventDef ev, Language language) {
-			output.Write(UIUtils.CleanUpIdentifier(ev.Name), TextTokenHelper.GetTextTokenType(ev));
+			output.Write(NameUtils.CleanIdentifier(ev.Name), TextTokenHelper.GetTextTokenType(ev));
 			output.WriteSpace();
-			output.Write(':', TextTokenType.Operator);
+			output.Write(":", TextTokenType.Operator);
 			output.WriteSpace();
 			language.TypeToString(output, ev.EventType, false, ev);
 			ev.MDToken.WriteSuffixString(output);

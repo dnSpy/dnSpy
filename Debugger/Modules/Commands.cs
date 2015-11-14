@@ -26,10 +26,10 @@ using System.Windows;
 using System.Windows.Threading;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Menus;
 using dnSpy.Debugger.IMModules;
 using dnSpy.Debugger.Memory;
-using dnSpy.Files;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Menus;
@@ -93,25 +93,25 @@ namespace dnSpy.Debugger.Modules {
 			foreach (var vm in context.SelectedItems) {
 				var printer = new ModulePrinter(output, DebuggerSettings.Instance.UseHexadecimal);
 				printer.WriteName(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteOptimized(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteDynamic(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteInMemory(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteOrder(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteVersion(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteTimestamp(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteAddress(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteProcess(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteAppDomain(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WritePath(vm);
 				output.WriteLine();
 			}
@@ -173,7 +173,7 @@ namespace dnSpy.Debugger.Modules {
 			return true;
 		}
 
-		internal static void GoToFile(DnSpyFile file, bool newTab) {
+		internal static void GoToFile(IDnSpyFile file, bool newTab) {
 			if (file == null)
 				return;
 			var mod = file.ModuleDef;

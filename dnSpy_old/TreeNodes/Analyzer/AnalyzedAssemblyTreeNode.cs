@@ -18,10 +18,10 @@
 
 using System;
 using dnlib.DotNet;
-using dnSpy;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.Decompiler;
 
 namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
@@ -43,7 +43,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			var isExe = analyzedAssembly.Assembly != null &&
 				analyzedAssembly.IsManifestModule &&
 				(analyzedAssembly.Characteristics & dnlib.PE.Characteristics.Dll) == 0;
-			output.Write(UIUtils.CleanUpIdentifier(analyzedAssembly.Name), isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
+			output.Write(NameUtils.CleanIdentifier(analyzedAssembly.Name), isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
 		}
 
 		protected override void LoadChildren() {

@@ -19,7 +19,7 @@
 
 using System;
 using System.Diagnostics;
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -36,7 +36,7 @@ namespace dnSpy.AsmEditor {
 			get { return asmNode; }
 		}
 
-		public AssemblyTreeNodeCreator(DnSpyFile asm)
+		public AssemblyTreeNodeCreator(IDnSpyFile asm)
 			: this(asm, null, false) {
 		}
 
@@ -44,7 +44,7 @@ namespace dnSpy.AsmEditor {
 			: this(asmNode.DnSpyFile, asmNode, true) {
 		}
 
-		AssemblyTreeNodeCreator(DnSpyFile asm, AssemblyTreeNode asmNode, bool restoreIndex) {
+		AssemblyTreeNodeCreator(IDnSpyFile asm, AssemblyTreeNode asmNode, bool restoreIndex) {
 			this.asmNode = asmNode ?? new AssemblyTreeNode(asm);
 			this.restoreIndex = restoreIndex;
 			MainWindow.Instance.DnSpyFileListTreeNode.RegisterCached(asm, this.asmNode);

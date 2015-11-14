@@ -30,8 +30,12 @@ using System.Xml;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.DotNet.MD;
+using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Languages;
+using dnSpy.Decompiler;
 using dnSpy.Files;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Files;
 using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
@@ -44,7 +48,7 @@ namespace ICSharpCode.ILSpy {
 	/// <summary>
 	/// Decompiler logic for C#.
 	/// </summary>
-	[Export(typeof(Language))]
+	[Export(typeof(ILanguage))]
 	public class CSharpLanguage : Language {
 		string name = "C#";
 		bool showAllMembers = false;
@@ -79,32 +83,50 @@ namespace ICSharpCode.ILSpy {
 			{ "op_UnaryPlus", "operator +".Split(' ') },
 		};
 
-		public CSharpLanguage() {
+		public CSharpLanguage()
+			: this(LanguageConstants.CSHARP_ORDERUI) {
+		}
+
+		public CSharpLanguage(double orderUI) {
+			this.orderUI = orderUI;
 		}
 
 #if DEBUG
+		[Export(typeof(ILanguageCreator))]
+		sealed class LanguageCreator : ILanguageCreator {
+			public IEnumerable<ILanguage> Create() {
+				return GetDebugLanguages();
+			}
+		}
+
 		internal static IEnumerable<CSharpLanguage> GetDebugLanguages() {
 			DecompilerContext context = new DecompilerContext(new ModuleDefUser("dummy"));
 			string lastTransformName = "no transforms";
+			double orderUI = LanguageConstants.CSHARP_DEBUG_ORDERUI;
 			foreach (Type _transformType in TransformationPipeline.CreatePipeline(context).Select(v => v.GetType()).Distinct()) {
 				Type transformType = _transformType; // copy for lambda
-				yield return new CSharpLanguage {
+				yield return new CSharpLanguage(orderUI++) {
 					transformAbortCondition = v => transformType.IsInstanceOfType(v),
 					name = "C# - " + lastTransformName,
 					showAllMembers = true
 				};
 				lastTransformName = "after " + transformType.Name;
 			}
-			yield return new CSharpLanguage {
+			yield return new CSharpLanguage(orderUI++) {
 				name = "C# - " + lastTransformName,
 				showAllMembers = true
 			};
 		}
 #endif
 
-		public override string Name {
+		public override string NameUI {
 			get { return name; }
 		}
+
+		public override double OrderUI {
+			get { return orderUI; }
+		}
+		readonly double orderUI;
 
 		public override string FileExtension {
 			get { return ".cs"; }
@@ -297,7 +319,7 @@ namespace ICSharpCode.ILSpy {
 			return null;
 		}
 
-		public override void DecompileAssembly(DnSpyFileList dnSpyFileList, DnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
+		public override void DecompileAssembly(DnSpyFileList dnSpyFileList, IDnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
 			if (options.FullDecompilation && options.SaveAsProjectDirectory != null) {
 				HashSet<string> directories = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 				var files = WriteCodeFilesInProject(dnSpyFileList, file.ModuleDef, options, directories).ToList();
@@ -341,7 +363,7 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		#region WriteProjectFile
-		void WriteProjectFile(DnSpyFileList dnSpyFileList, TextWriter writer, IEnumerable<Tuple<string, string>> files, DnSpyFile assembly, DecompilationOptions options) {
+		void WriteProjectFile(DnSpyFileList dnSpyFileList, TextWriter writer, IEnumerable<Tuple<string, string>> files, IDnSpyFile assembly, DecompilationOptions options) {
 			var module = assembly.ModuleDef;
 			const string ns = "http://schemas.microsoft.com/developer/msbuild/2003";
 			string platformName = GetPlatformName(module);
@@ -505,17 +527,17 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		internal static List<IAssembly> GetAssemblyRefs(DnSpyFileList dnSpyFileList, DecompilationOptions options, DnSpyFile assembly) {
+		internal static List<IAssembly> GetAssemblyRefs(DnSpyFileList dnSpyFileList, DecompilationOptions options, IDnSpyFile assembly) {
 			return new RealAssemblyReferencesFinder(options, assembly).Find(dnSpyFileList);
 		}
 
 		class RealAssemblyReferencesFinder {
 			readonly DecompilationOptions options;
-			readonly DnSpyFile assembly;
+			readonly IDnSpyFile assembly;
 			readonly List<IAssembly> allReferences = new List<IAssembly>();
 			readonly HashSet<IAssembly> checkedAsms = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
 
-			public RealAssemblyReferencesFinder(DecompilationOptions options, DnSpyFile assembly) {
+			public RealAssemblyReferencesFinder(DecompilationOptions options, IDnSpyFile assembly) {
 				this.options = options;
 				this.assembly = assembly;
 			}
@@ -579,7 +601,7 @@ namespace ICSharpCode.ILSpy {
 					AddKnown(asm);
 			}
 
-			void AddKnown(DnSpyFile asm) {
+			void AddKnown(IDnSpyFile asm) {
 				if (asm.Filename.Equals(assembly.Filename, StringComparison.OrdinalIgnoreCase))
 					return;
 				if (asm.ModuleDef.Assembly != null)
@@ -587,7 +609,7 @@ namespace ICSharpCode.ILSpy {
 			}
 		}
 
-		internal static string GetHintPath(DecompilationOptions options, DnSpyFile asmRef) {
+		internal static string GetHintPath(DecompilationOptions options, IDnSpyFile asmRef) {
 			if (asmRef == null || options.ProjectFiles == null || options.SaveAsProjectDirectory == null)
 				return null;
 			if (GacInfo.IsGacPath(asmRef.Filename))
@@ -708,7 +730,7 @@ namespace ICSharpCode.ILSpy {
 		#endregion
 
 		#region WriteResourceFilesInProject
-		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(DnSpyFile assembly, DecompilationOptions options, HashSet<string> directories) {
+		IEnumerable<Tuple<string, string>> WriteResourceFilesInProject(IDnSpyFile assembly, DecompilationOptions options, HashSet<string> directories) {
 			//AppDomain bamlDecompilerAppDomain = null;
 			//try {
 			foreach (EmbeddedResource r in assembly.ModuleDef.Resources.OfType<EmbeddedResource>()) {
@@ -861,21 +883,21 @@ namespace ICSharpCode.ILSpy {
 					var methDecl = accessor.Overrides.First().MethodDeclaration;
 					var declaringType = methDecl == null ? null : methDecl.DeclaringType;
 					TypeToString(output, declaringType, includeNamespace: true);
-					output.Write('.', TextTokenType.Operator);
+					output.Write(".", TextTokenType.Operator);
 				}
 				output.Write("this", TextTokenType.Keyword);
-				output.Write('[', TextTokenType.Operator);
+				output.Write("[", TextTokenType.Operator);
 				bool addSeparator = false;
 				foreach (var p in property.PropertySig.GetParameters()) {
 					if (addSeparator) {
-						output.Write(',', TextTokenType.Operator);
+						output.Write(",", TextTokenType.Operator);
 						output.WriteSpace();
 					}
 					else
 						addSeparator = true;
 					TypeToString(output, p.ToTypeDefOrRef(), includeNamespace: true);
 				}
-				output.Write(']', TextTokenType.Operator);
+				output.Write("]", TextTokenType.Operator);
 			}
 			else
 				WriteIdentifier(output, property.Name, TextTokenHelper.GetTextTokenType(property));
@@ -896,7 +918,7 @@ namespace ICSharpCode.ILSpy {
 
 		static void WriteIdentifier(ITextOutput output, string id, TextTokenType tokenType) {
 			if (isKeyword.Contains(id))
-				output.Write('@', TextTokenType.Operator);
+				output.Write("@", TextTokenType.Operator);
 			output.Write(IdentifierEscaper.Escape(id), tokenType);
 		}
 
@@ -904,7 +926,7 @@ namespace ICSharpCode.ILSpy {
 			if (type == null)
 				throw new ArgumentNullException("type");
 
-			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions, type);
+			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions | ConvertTypeOptions.DoNotIncludeEnclosingType, type);
 		}
 
 		public override bool ShowMember(IMemberRef member) {
@@ -943,7 +965,7 @@ namespace ICSharpCode.ILSpy {
 				if (useNamespaces)
 					options |= ConvertTypeOptions.IncludeNamespace;
 				TypeToString(output, options, type.DeclaringType, null);
-				output.Write('.', TextTokenType.Operator);
+				output.Write(".", TextTokenType.Operator);
 				numGenParams = numGenParams - td.DeclaringType.GenericParameters.Count;
 				if (numGenParams < 0)
 					numGenParams = 0;
@@ -951,7 +973,7 @@ namespace ICSharpCode.ILSpy {
 			else if (useNamespaces && !UTF8String.IsNullOrEmpty(td.Namespace)) {
 				foreach (var ns in td.Namespace.String.Split('.')) {
 					WriteIdentifier(output, ns, TextTokenType.NamespacePart);
-					output.Write('.', TextTokenType.Operator);
+					output.Write(".", TextTokenType.Operator);
 				}
 			}
 
@@ -994,10 +1016,10 @@ namespace ICSharpCode.ILSpy {
 		void WriteToolTipGenerics(ITextOutput output, IList<GenericParam> gps, TextTokenType gpTokenType) {
 			if (gps == null || gps.Count == 0)
 				return;
-			output.Write('<', TextTokenType.Operator);
+			output.Write("<", TextTokenType.Operator);
 			for (int i = 0; i < gps.Count; i++) {
 				if (i > 0) {
-					output.Write(',', TextTokenType.Operator);
+					output.Write(",", TextTokenType.Operator);
 					output.WriteSpace();
 				}
 				var gp = gps[i];
@@ -1011,21 +1033,21 @@ namespace ICSharpCode.ILSpy {
 				}
 				WriteIdentifier(output, gp.Name, gpTokenType);
 			}
-			output.Write('>', TextTokenType.Operator);
+			output.Write(">", TextTokenType.Operator);
 		}
 
 		void WriteToolTipGenerics(ITextOutput output, IList<TypeSig> gps, TextTokenType gpTokenType, GenericParamContext gpContext) {
 			if (gps == null || gps.Count == 0)
 				return;
-			output.Write('<', TextTokenType.Operator);
+			output.Write("<", TextTokenType.Operator);
 			for (int i = 0; i < gps.Count; i++) {
 				if (i > 0) {
-					output.Write(',', TextTokenType.Operator);
+					output.Write(",", TextTokenType.Operator);
 					output.WriteSpace();
 				}
 				WriteToolTip(output, gps[i], gpContext, null);
 			}
-			output.Write('>', TextTokenType.Operator);
+			output.Write(">", TextTokenType.Operator);
 		}
 
 		void WriteToolTip(ITextOutput output, IMethod method) {
@@ -1046,20 +1068,20 @@ namespace ICSharpCode.ILSpy {
 			writer.WriteReturnType();
 
 			WriteToolTip(output, method.DeclaringType);
-			output.Write('.', TextTokenType.Operator);
+			output.Write(".", TextTokenType.Operator);
 			if (writer.md != null && writer.md.IsConstructor && method.DeclaringType != null)
 				WriteIdentifier(output, RemoveGenericTick(method.DeclaringType.Name), TextTokenHelper.GetTextTokenType(method));
 			else if (writer.md != null && writer.md.Overrides.Count > 0) {
 				var ovrMeth = (IMemberRef)writer.md.Overrides[0].MethodDeclaration;
 				WriteToolTipType(output, ovrMeth.DeclaringType, false);
-				output.Write('.', TextTokenType.Operator);
+				output.Write(".", TextTokenType.Operator);
 				WriteMethodName(output, method, ovrMeth.Name);
 			}
 			else
 				WriteMethodName(output, method, method.Name);
 
 			writer.WriteGenericArguments();
-			writer.WriteMethodParameterList('(', ')');
+			writer.WriteMethodParameterList("(", ")");
 		}
 
 		void WriteMethodName(ITextOutput output, IMethod method, string name) {
@@ -1152,12 +1174,12 @@ namespace ICSharpCode.ILSpy {
 				}
 			}
 
-			public void WriteMethodParameterList(char lparen, char rparen) {
+			public void WriteMethodParameterList(string lparen, string rparen) {
 				output.Write(lparen, TextTokenType.Operator);
 				int baseIndex = methodSig.HasThis ? 1 : 0;
 				for (int i = 0; i < methodSig.Params.Count; i++) {
 					if (i > 0) {
-						output.Write(',', TextTokenType.Operator);
+						output.Write(",", TextTokenType.Operator);
 						output.WriteSpace();
 					}
 					ParamDef pd;
@@ -1205,11 +1227,11 @@ namespace ICSharpCode.ILSpy {
 				output.WriteSpace();
 			}
 			WriteToolTip(output, field.DeclaringType);
-			output.Write('.', TextTokenType.Operator);
+			output.Write(".", TextTokenType.Operator);
 			WriteIdentifier(output, field.Name, TextTokenHelper.GetTextTokenType(field));
 			if (fd.IsLiteral && fd.Constant != null) {
 				output.WriteSpace();
-				output.Write('=', TextTokenType.Operator);
+				output.Write("=", TextTokenType.Operator);
 				output.WriteSpace();
 				WriteToolTipConstant(output, fd.Constant.Value);
 			}
@@ -1291,20 +1313,20 @@ namespace ICSharpCode.ILSpy {
 			var writer = new MethodWriter(this, output, md);
 			writer.WriteReturnType();
 			WriteToolTip(output, prop.DeclaringType);
-			output.Write('.', TextTokenType.Operator);
+			output.Write(".", TextTokenType.Operator);
 			var ovrMeth = md == null || md.Overrides.Count == 0 ? null : md.Overrides[0].MethodDeclaration;
 			if (prop.IsIndexer()) {
 				if (ovrMeth != null) {
 					WriteToolTipType(output, ovrMeth.DeclaringType, false);
-					output.Write('.', TextTokenType.Operator);
+					output.Write(".", TextTokenType.Operator);
 				}
 				output.Write("this", TextTokenType.Keyword);
 				writer.WriteGenericArguments();
-				writer.WriteMethodParameterList('[', ']');
+				writer.WriteMethodParameterList("[", "]");
 			}
 			else if (ovrMeth != null && GetPropName(ovrMeth) != null) {
 				WriteToolTipType(output, ovrMeth.DeclaringType, false);
-				output.Write('.', TextTokenType.Operator);
+				output.Write(".", TextTokenType.Operator);
 				WriteIdentifier(output, GetPropName(ovrMeth), TextTokenHelper.GetTextTokenType(prop));
 			}
 			else
@@ -1315,12 +1337,12 @@ namespace ICSharpCode.ILSpy {
 			if (prop.GetMethods.Count > 0) {
 				output.WriteSpace();
 				output.Write("get", TextTokenType.Keyword);
-				output.Write(';', TextTokenType.Operator);
+				output.Write(";", TextTokenType.Operator);
 			}
 			if (prop.SetMethods.Count > 0) {
 				output.WriteSpace();
 				output.Write("set", TextTokenType.Keyword);
-				output.Write(';', TextTokenType.Operator);
+				output.Write(";", TextTokenType.Operator);
 			}
 			output.WriteSpace();
 			output.WriteRightBrace();
@@ -1339,7 +1361,7 @@ namespace ICSharpCode.ILSpy {
 			WriteToolTip(output, evt.EventType);
 			output.WriteSpace();
 			WriteToolTip(output, evt.DeclaringType);
-			output.Write('.', TextTokenType.Operator);
+			output.Write(".", TextTokenType.Operator);
 			WriteIdentifier(output, evt.Name, TextTokenHelper.GetTextTokenType(evt));
 		}
 
@@ -1359,7 +1381,7 @@ namespace ICSharpCode.ILSpy {
 				WriteToolTipType(output, td, true);
 
 				writer.WriteGenericArguments();
-				writer.WriteMethodParameterList('(', ')');
+				writer.WriteMethodParameterList("(", ")");
 				return;
 			}
 

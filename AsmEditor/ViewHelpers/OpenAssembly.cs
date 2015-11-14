@@ -18,13 +18,13 @@
 */
 
 using System.Windows.Forms;
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
 using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class OpenAssembly : IOpenAssembly {
-		public DnSpyFile Open() {
+		public IDnSpyFile Open() {
 			var dialog = new OpenFileDialog() {
 				Filter = PickFilenameConstants.DotNetAssemblyOrModuleFilter,
 				RestoreDirectory = true,

@@ -49,7 +49,7 @@ namespace ICSharpCode.ILSpy {
 				return;
 
 			output.WriteSpace();
-			output.Write('@', TextTokenType.Operator);
+			output.Write("@", TextTokenType.Operator);
 			output.Write(string.Format("{0:X8}", token.ToUInt32()), TextTokenType.Number);
 		}
 	}

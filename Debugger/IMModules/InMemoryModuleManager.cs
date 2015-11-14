@@ -25,7 +25,9 @@ using dndbg.DotNet;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
+using dnSpy.Contracts.Files;
 using dnSpy.Files;
+using dnSpy.Shared.UI.Files;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -40,22 +42,12 @@ namespace dnSpy.Debugger.IMModules {
 			get { return DecompilerSettingsPanel.CurrentDecompilerSettings.UseDebugSymbols; }
 		}
 
-		public static IEnumerable<DnSpyFile> AllDnSpyFiles {
+		public static IEnumerable<IDnSpyFile> AllDnSpyFiles {
 			get {
-				var hash = new HashSet<DnSpyFile>(DnSpyFileListTreeNode.GetAllModuleNodes().Select(a => a.DnSpyFile));
+				var hash = new HashSet<IDnSpyFile>(DnSpyFileListTreeNode.GetAllModuleNodes().Select(a => a.DnSpyFile));
 				hash.AddRange(DnSpyFileList.GetDnSpyFiles());
 				foreach (var f in hash.ToArray()) {
-					var memf = f as MemoryModuleDefFile;
-					if (memf != null) {
-						hash.AddRange(memf.Dictionary.Values);
-						continue;
-					}
-
-					var dynf = f as CorModuleDefFile;
-					if (dynf != null) {
-						hash.AddRange(dynf.Dictionary.Values);
-						continue;
-					}
+					hash.AddRange(f.Children);
 				}
 
 				return hash;
@@ -146,9 +138,9 @@ namespace dnSpy.Debugger.IMModules {
 					var moduleNode = manifestNode.Children.OfType<AssemblyTreeNode>().FirstOrDefault(a => moduleKey.Equals(a.DnSpyFile.Key));
 					Debug.Assert(moduleNode == null);
 					if (moduleNode == null) {
-						var newFile = new CorModuleDefFile(cmdf.Dictionary, module, UseDebugSymbols);
+						var newFile = new CorModuleDefFile(module, UseDebugSymbols);
 						UpdateResolver(module.GetOrCreateCorModuleDef());
-						cmdf.Dictionary.Add(newFile.ModuleDef, newFile);
+						cmdf.Children.Add(newFile);
 						Initialize(new[] { newFile.DnModule.CorModuleDef });
 						manifestNode.Children.Add(new AssemblyTreeNode(newFile));
 					}
@@ -170,7 +162,7 @@ namespace dnSpy.Debugger.IMModules {
 					if (moduleNode == null) {
 						MemoryModuleDefFile newFile = null;
 						try {
-							newFile = MemoryModuleDefFile.Create(mmdf.Dictionary, module, UseDebugSymbols);
+							newFile = MemoryModuleDefFile.Create(module, UseDebugSymbols);
 						}
 						catch {
 						}
@@ -178,7 +170,7 @@ namespace dnSpy.Debugger.IMModules {
 						Debug.Assert(newFile != null);
 						if (newFile != null) {
 							UpdateResolver(newFile.ModuleDef);
-							mmdf.Dictionary.Add(newFile.ModuleDef, newFile);
+							mmdf.Children.Add(newFile);
 							manifestNode.DnSpyFile.ModuleDef.Assembly.Modules.Add(newFile.ModuleDef);
 							manifestNode.Children.Add(new AssemblyTreeNode(newFile));
 						}
@@ -311,23 +303,23 @@ namespace dnSpy.Debugger.IMModules {
 
 		void UpdateResolver(ModuleDef module) {
 			if (module != null)
-				module.Context = DnSpyFile.CreateModuleContext(myAssemblyResolver);
+				module.Context = DnSpyDotNetFileBase.CreateModuleContext(myAssemblyResolver);
 		}
 
 		void DnDebugger_OnCorModuleDefCreated(object sender, CorModuleDefCreatedEventArgs e) {
 			UpdateResolver(e.CorModuleDef);
 		}
 
-		public DnSpyFile FindFile(DnModule dnModule) {
+		public IDnSpyFile FindFile(DnModule dnModule) {
 			if (dnModule == null)
 				return null;
 			if (dnModule.IsDynamic)
 				return FindDynamic(dnModule);
 			// It could be a CorModuleDefFile if LoadFromMemory() failed and called LoadDynamic()
-			return (DnSpyFile)FindMemory(dnModule) ?? FindDynamic(dnModule);
+			return FindMemory(dnModule) ?? FindDynamic(dnModule);
 		}
 
-		public DnSpyFile LoadFile(DnModule dnModule, bool canLoadDynFile) {
+		public IDnSpyFile LoadFile(DnModule dnModule, bool canLoadDynFile) {
 			if (dnModule == null)
 				return null;
 
@@ -336,7 +328,7 @@ namespace dnSpy.Debugger.IMModules {
 			return LoadFromMemory(dnModule, canLoadDynFile);
 		}
 
-		DnSpyFile LoadDynamic(DnModule dnModule, bool canLoadDynFile) {
+		IDnSpyFile LoadDynamic(DnModule dnModule, bool canLoadDynFile) {
 			var file = FindDynamic(dnModule);
 			if (file != null)
 				return file;
@@ -360,26 +352,30 @@ namespace dnSpy.Debugger.IMModules {
 
 			var modules = manifestDnModule.Assembly.Modules;
 			var dict = new Dictionary<ModuleDef, CorModuleDefFile>(modules.Length);
+			var files = new List<CorModuleDefFile>(modules.Length);
 			foreach (var module in modules) {
 				UpdateResolver(module.GetOrCreateCorModuleDef());
-				dict.Add(module.GetOrCreateCorModuleDef(), new CorModuleDefFile(dict, module, UseDebugSymbols));
+				var newFile = new CorModuleDefFile(module, UseDebugSymbols);
+				dict.Add(module.GetOrCreateCorModuleDef(), newFile);
+				files.Add(newFile);
 			}
+			Debug.Assert(files.Count != 0);
 			Initialize(dict.Select(a => a.Value.DnModule.CorModuleDef));
 
-			manMod = dict[manifestDnModule.CorModuleDef];
-			DnSpyFileList.AddFile(manMod, true, true, false);
+			var asmFile = CorModuleDefFile.CreateAssembly(files);
+			DnSpyFileList.AddFile(asmFile, true, true, false);
 
 			return dict[dnModule.CorModuleDef];
 		}
 
-		CorModuleDefFile FindDynamic(DnModule dnModule) {
+		IDnSpyFile FindDynamic(DnModule dnModule) {
 			if (dnModule == null)
 				return null;
 			var mod = dnModule.GetOrCreateCorModuleDef();
 			return AllCorModuleDefFiles.FirstOrDefault(a => a.ModuleDef == mod);
 		}
 
-		DnSpyFile LoadFromMemory(DnModule dnModule, bool canLoadDynFile) {
+		IDnSpyFile LoadFromMemory(DnModule dnModule, bool canLoadDynFile) {
 			Debug.Assert(!dnModule.IsDynamic);
 			if (dnModule.Address == 0)
 				return null;
@@ -407,7 +403,7 @@ namespace dnSpy.Debugger.IMModules {
 			foreach (var module in modules) {
 				MemoryModuleDefFile mfile;
 				try {
-					mfile = MemoryModuleDefFile.Create(dict, module, UseDebugSymbols);
+					mfile = MemoryModuleDefFile.Create(module, UseDebugSymbols);
 					UpdateResolver(mfile.ModuleDef);
 					if (module == dnModule)
 						result = mfile;
@@ -422,6 +418,7 @@ namespace dnSpy.Debugger.IMModules {
 			Debug.Assert(result != null);
 			if (files.Count == 0)
 				return null;
+			var asmFile = MemoryModuleDefFile.CreateAssembly(files);
 			var asm = files[0].AssemblyDef;
 			if (asm == null) {
 				if (files.Count > 1) {
@@ -433,7 +430,7 @@ namespace dnSpy.Debugger.IMModules {
 			for (int i = 0; i < files.Count; i++)
 				asm.Modules.Add(files[i].ModuleDef);
 
-			DnSpyFileList.AddFile(files[0], true, true, false);
+			DnSpyFileList.AddFile(asmFile, true, true, false);
 
 			return result;
 		}
@@ -445,7 +442,7 @@ namespace dnSpy.Debugger.IMModules {
 			return AllMemoryModuleDefFiles.FirstOrDefault(a => key.Equals(a.Key));
 		}
 
-		DnSpyFile FindAssemblyByKey(IDnSpyFilenameKey key) {
+		IDnSpyFile FindAssemblyByKey(IDnSpyFilenameKey key) {
 			return DnSpyFileList.FindByKey(key);
 		}
 

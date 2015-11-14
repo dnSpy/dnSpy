@@ -24,8 +24,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Menus;
-using dnSpy.Files;
 using dnSpy.Shared.UI.Menus;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.Assembly {
 				context.FindArrayOrDefaultByType<SharpTreeNode>().Any(a => GetDnSpyFile(a) != null);
 		}
 
-		static DnSpyFile GetDnSpyFile(SharpTreeNode node) {
+		static IDnSpyFile GetDnSpyFile(SharpTreeNode node) {
 			var asmNode = node as AssemblyTreeNode;
 			if (asmNode == null)
 				return null;
@@ -67,7 +67,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		public override void Execute(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
 				return;
-			var asms = new List<DnSpyFile>();
+			var asms = new List<IDnSpyFile>();
 			foreach (var node in context.FindArrayOrDefaultByType<SharpTreeNode>()) {
 				var file = GetDnSpyFile(node);
 				if (file != null)
@@ -155,9 +155,11 @@ namespace dnSpy.AsmEditor.Assembly {
 				// We can't free the asm since older commands might reference it so we must record
 				// it in the history. The user can click Clear History to free everything.
 				foreach (var node in keepNodes) {
-					var mod = node.DnSpyFile.ModuleDef as ModuleDefMD;
-					if (mod != null)
-						mod.MetaData.PEImage.UnsafeDisableMemoryMappedIO();
+					foreach (var f in GetDnSpyFiles(node.DnSpyFile)) {
+						var peImage = f.PEImage;
+						if (peImage != null)
+							peImage.UnsafeDisableMemoryMappedIO();
+					}
 				}
 				UndoCommandManager.Instance.Add(new RemoveAssemblyCommand(keepNodes.ToArray()));
 				// Redo history was cleared
@@ -167,6 +169,12 @@ namespace dnSpy.AsmEditor.Assembly {
 			FreeAssemblies(freeNodes);
 			if (freeNodes.Count > 0 || onlyInRedoHistory.Count > 0)
 				UndoCommandManager.Instance.CallGc();
+		}
+
+		static IEnumerable<IDnSpyFile> GetDnSpyFiles(IDnSpyFile file) {
+			yield return file;
+			foreach (var f in file.Children)
+				yield return f;
 		}
 
 		AssemblyTreeNodeCreator[] savedStates;
@@ -403,7 +411,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		CreateAssemblyCommand(ModuleDef newModule, AssemblyOptions options) {
 			var module = Module.ModuleUtils.CreateModule(options.Name, Guid.NewGuid(), options.ClrVersion, ModuleKind.Dll, newModule);
 			options.CreateAssemblyDef(module).Modules.Add(module);
-			this.asmNodeCreator = new AssemblyTreeNodeCreator(MainWindow.Instance.DnSpyFileList.CreateDnSpyFile(module));
+			this.asmNodeCreator = new AssemblyTreeNodeCreator(MainWindow.Instance.DnSpyFileList.CreateDnSpyFile(module, true));
 		}
 
 		public string Description {

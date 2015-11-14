@@ -77,9 +77,9 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				output.WriteLine("(", TextTokenType.Operator);
 				output.Indent();
 				foreach (var v in method.Body.Variables) {
-					output.Write('[', TextTokenType.Operator);
+					output.Write("[", TextTokenType.Operator);
 					output.WriteDefinition(v.Index.ToString(), v, TextTokenType.Number);
-					output.Write(']', TextTokenType.Operator);
+					output.Write("]", TextTokenType.Operator);
 					output.WriteSpace();
 					v.Type.WriteTo(output);
 					if (!string.IsNullOrEmpty(v.Name)) {
@@ -87,7 +87,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 						output.Write(DisassemblerHelpers.Escape(v.Name), TextTokenType.Local);
 					}
 					if (v.Index + 1 < method.Body.Variables.Count)
-						output.Write(',', TextTokenType.Operator);
+						output.Write(",", TextTokenType.Operator);
 					output.WriteLine();
 				}
 				output.Unindent();
@@ -159,7 +159,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 					if (s.LoopEntryPoint != null) {
 						output.Write(" (head: ", TextTokenType.Comment);
 						DisassemblerHelpers.WriteOffsetReference(output, s.LoopEntryPoint, null, TextTokenType.Comment);
-						output.Write(')', TextTokenType.Comment);
+						output.Write(")", TextTokenType.Comment);
 					}
 					output.WriteLine();
 					break;

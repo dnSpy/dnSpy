@@ -19,7 +19,6 @@
 
 using System.ComponentModel.Composition;
 using System.Windows;
-using dnSpy.Contracts;
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.Shared.UI.MVVM {

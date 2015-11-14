@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Decompiler;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
@@ -589,9 +590,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		static void WriteLocalParameterIndex(this ITextOutput output, int index) {
-			output.Write('(', TextTokenType.Operator);
+			output.Write("(", TextTokenType.Operator);
 			output.Write(index.ToString(), TextTokenType.Number);
-			output.Write(')', TextTokenType.Operator);
+			output.Write(")", TextTokenType.Operator);
 		}
 
 		static void WriteLong(this ITextOutput output, InstructionVM instr) {
@@ -634,21 +635,21 @@ namespace dnSpy.AsmEditor.MethodBody {
 		static void WriteShort(this ITextOutput output, InstructionVM instr) {
 			output.Write(instr.Index.ToString(), TextTokenType.Number);
 			output.WriteSpace();
-			output.Write('(', TextTokenType.Operator);
+			output.Write("(", TextTokenType.Operator);
 			output.Write(string.Format("{0:X4}", instr.Offset), TextTokenType.Number);
-			output.Write(')', TextTokenType.Operator);
+			output.Write(")", TextTokenType.Operator);
 		}
 
 		static void Write(this ITextOutput output, IList<InstructionVM> instrs) {
-			output.Write('[', TextTokenType.Operator);
+			output.Write("[", TextTokenType.Operator);
 			for (int i = 0; i < instrs.Count; i++) {
 				if (i > 0) {
-					output.Write(',', TextTokenType.Operator);
+					output.Write(",", TextTokenType.Operator);
 					output.WriteSpace();
 				}
 				output.WriteShort(instrs[i]);
 			}
-			output.Write(']', TextTokenType.Operator);
+			output.Write("]", TextTokenType.Operator);
 		}
 	}
 }

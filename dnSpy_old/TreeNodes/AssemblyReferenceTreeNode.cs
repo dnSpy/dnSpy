@@ -19,11 +19,11 @@
 using System;
 using System.Diagnostics;
 using dnlib.DotNet;
-using dnSpy;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Images;
-using dnSpy.Files;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using dnSpy.TreeNodes;
 using ICSharpCode.Decompiler;
 
@@ -62,7 +62,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public static ITextOutput Write(ITextOutput output, AssemblyRef r, Language language) {
-			output.Write(UIUtils.CleanUpIdentifier(r.Name), TextTokenType.Text);
+			output.Write(NameUtils.CleanIdentifier(r.Name), TextTokenType.Text);
 			r.MDToken.WriteSuffixString(output);
 			return output;
 		}
@@ -78,7 +78,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			return base.Filter(settings);
 		}
 
-		static AssemblyDef LookupReferencedAssembly(DnSpyFile file, IAssembly asm) {
+		static AssemblyDef LookupReferencedAssembly(IDnSpyFile file, IAssembly asm) {
 			var mod = file.ModuleDef;
 			return mod == null ? null : mod.Context.AssemblyResolver.Resolve(asm, mod);
 		}

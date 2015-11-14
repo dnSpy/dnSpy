@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+//TODO: All commands that modify the Modules prop must also update the IDnSpyFile.Children prop
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
@@ -25,8 +27,8 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Menus;
-using dnSpy.Files;
 using dnSpy.MVVM;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TreeNodes;
@@ -93,7 +95,7 @@ namespace dnSpy.AsmEditor.Module {
 
 		CreateNetModuleCommand(NetModuleOptions options) {
 			var module = ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion);
-			this.asmNodeCreator = new AssemblyTreeNodeCreator(MainWindow.Instance.DnSpyFileList.CreateDnSpyFile(module));
+			this.asmNodeCreator = new AssemblyTreeNodeCreator(MainWindow.Instance.DnSpyFileList.CreateDnSpyFile(module, false));
 		}
 
 		public string Description {
@@ -462,7 +464,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		AddNewNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, NetModuleOptions options)
-			: base(asmNode, new AssemblyTreeNode(MainWindow.Instance.DnSpyFileList.CreateDnSpyFile(ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion))), true) {
+			: base(asmNode, new AssemblyTreeNode(MainWindow.Instance.DnSpyFileList.CreateDnSpyFile(ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion), false)), true) {
 		}
 
 		public override string Description {
@@ -510,7 +512,9 @@ namespace dnSpy.AsmEditor.Module {
 			var asm = MainWindow.Instance.DnSpyFileList.CreateDnSpyFile(dialog.FileName);
 			if (asm.ModuleDef == null || asm.AssemblyDef != null) {
 				MainWindow.Instance.ShowMessageBox(string.Format("{0} is not a NetModule", asm.Filename), System.Windows.MessageBoxButton.OK);
-				asm.Dispose();
+				var id = asm as IDisposable;
+				if (id != null)
+					id.Dispose();
 				return;
 			}
 
@@ -519,7 +523,7 @@ namespace dnSpy.AsmEditor.Module {
 			MainWindow.Instance.JumpToReference(cmd.modNode);
 		}
 
-		AddExistingNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, DnSpyFile asm)
+		AddExistingNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, IDnSpyFile asm)
 			: base(asmNode, new AssemblyTreeNode(asm), false) {
 		}
 

@@ -28,6 +28,7 @@ using dnSpy.Contracts;
 using dnSpy.Contracts.Themes;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.AvalonEdit;
+using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Themes;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;

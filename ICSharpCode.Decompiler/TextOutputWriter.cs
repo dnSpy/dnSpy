@@ -37,11 +37,6 @@ namespace ICSharpCode.Decompiler {
 			get { return Encoding.UTF8; }
 		}
 		
-		public override void Write(char value)
-		{
-			output.Write(value, TextTokenType.Text);
-		}
-		
 		public override void Write(string value)
 		{
 			output.Write(value, TextTokenType.Text);

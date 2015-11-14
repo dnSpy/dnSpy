@@ -240,17 +240,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public override System.Windows.Media.Brush Foreground {
-			get {
-				if (IsPublicAPI)
-					if (IsAutoLoaded) {
-						return DnSpy.App.ThemeManager.Theme.GetColor(ColorType.NodeAutoLoaded).Foreground;
-					}
-					else {
-						return DnSpy.App.ThemeManager.Theme.GetColor(ColorType.NodePublic).Foreground;
-					}
-				else
-					return DnSpy.App.ThemeManager.Theme.GetColor(ColorType.NodeNotPublic).Foreground;
-			}
+			get { return DnSpy.App.ThemeManager.Theme.GetColor(ColorType.TreeViewNode).Foreground; }
 		}
 
 		public abstract NodePathName NodePathName { get; }

@@ -24,7 +24,7 @@ using dnlib.DotNet.MD;
 using dnlib.DotNet.Writer;
 using dnlib.PE;
 using dnlib.W32Resources;
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
@@ -41,7 +41,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		public override IUndoObject UndoObject {
 			get { return UndoCommandManager.Instance.GetUndoObject(dnSpyFile); }
 		}
-		readonly DnSpyFile dnSpyFile;
+		readonly IDnSpyFile dnSpyFile;
 
 		public ICommand ReinitializeCommand {
 			get { return new RelayCommand(a => Reinitialize()); }
@@ -174,7 +174,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 		readonly MetaDataOptionsVM metaDataOptions;
 
-		public SaveModuleOptionsVM(DnSpyFile dnSpyFile) {
+		public SaveModuleOptionsVM(IDnSpyFile dnSpyFile) {
 			this.dnSpyFile = dnSpyFile;
 			this.module = dnSpyFile.ModuleDef;
 			this.peHeadersOptions = new PEHeadersOptionsVM(module.Machine, GetSubsystem(module.Kind));

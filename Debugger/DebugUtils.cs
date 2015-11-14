@@ -21,7 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Threading;
 using dnlib.DotNet;
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
+using dnSpy.Shared.UI.Files;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.TextView;
@@ -34,7 +35,7 @@ namespace dnSpy.Debugger {
 			GoToIL(file, token, ilOffset, newTab);
 		}
 
-		public static bool GoToIL(DnSpyFile file, uint token, uint ilOffset, bool newTab) {
+		public static bool GoToIL(IDnSpyFile file, uint token, uint ilOffset, bool newTab) {
 			if (file == null)
 				return false;
 

@@ -30,6 +30,7 @@ using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy;
 using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.UI.Files;
 using ICSharpCode.ILSpy.Controls;
 
 namespace ICSharpCode.ILSpy {
@@ -121,7 +122,7 @@ namespace ICSharpCode.ILSpy {
 				if (cancelFetchThread)
 					break;
 				if (fullNames.Add(r.FullName)) { // filter duplicates
-					var file = GacInterop.FindAssemblyInNetGac(r);
+					var file = GacInfo.FindInGac(r);
 					if (file != null) {
 						var entry = new GacEntry(r, file);
 						UpdateProgressBar(pg => { pg.Value = pg.Value + 1; AddNewEntry(entry); });

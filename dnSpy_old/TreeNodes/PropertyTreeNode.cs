@@ -74,7 +74,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		public static ITextOutput Write(ITextOutput output, PropertyDef property, Language language, bool? isIndexer = null) {
 			language.FormatPropertyName(output, property, isIndexer);
 			output.WriteSpace();
-			output.Write(':', TextTokenType.Operator);
+			output.Write(":", TextTokenType.Operator);
 			output.WriteSpace();
 			language.TypeToString(output, property.PropertySig.GetRetType().ToTypeDefOrRef(), false, property);
 			property.MDToken.WriteSuffixString(output);

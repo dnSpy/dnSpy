@@ -24,6 +24,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.PE;
 using dnlib.IO;
+using dnSpy.Decompiler;
 
 namespace ICSharpCode.Decompiler
 {

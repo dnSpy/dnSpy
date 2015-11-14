@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
@@ -120,7 +120,7 @@ namespace dnSpy {
 
 			public override int GetHashCode() {
 				int h = 0;
-				h = Language.Name.GetHashCode();
+				h = Language.NameUI.GetHashCode();
 				foreach (var node in TreeNodes)
 					h ^= node.GetHashCode();
 				h ^= Options.GetHashCode();
@@ -187,11 +187,11 @@ namespace dnSpy {
 				cachedItems.Clear();
 		}
 
-		public void Clear(DnSpyFile mod) {
-			Clear(new HashSet<DnSpyFile>(new[] { mod }));
+		public void Clear(IDnSpyFile mod) {
+			Clear(new HashSet<IDnSpyFile>(new[] { mod }));
 		}
 
-		public void Clear(HashSet<DnSpyFile> mods) {
+		public void Clear(HashSet<IDnSpyFile> mods) {
 			lock (lockObj) {
 				foreach (var kv in cachedItems.ToArray()) {
 					if (IsInModifiedModule(mods, kv.Key.TreeNodes) ||
@@ -203,7 +203,7 @@ namespace dnSpy {
 			}
 		}
 
-		internal static bool IsInModifiedModule(HashSet<DnSpyFile> mods, ILSpyTreeNode[] nodes) {
+		internal static bool IsInModifiedModule(HashSet<IDnSpyFile> mods, ILSpyTreeNode[] nodes) {
 			foreach (var node in nodes) {
 				var modNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
 				if (modNode == null || mods.Contains(modNode.DnSpyFile))
@@ -213,7 +213,7 @@ namespace dnSpy {
 			return false;
 		}
 
-		static bool IsInModifiedModule(HashSet<DnSpyFile> mods, Item item) {
+		static bool IsInModifiedModule(HashSet<IDnSpyFile> mods, Item item) {
 			var textOutput = item.TextOutput;
 			if (textOutput == null && item.WeakTextOutput != null)
 				textOutput = (AvalonEditTextOutput)item.WeakTextOutput.Target;
@@ -223,7 +223,7 @@ namespace dnSpy {
 			return IsInModifiedModule(mods, textOutput.References);
 		}
 
-		internal static bool IsInModifiedModule(HashSet<DnSpyFile> mods, TextSegmentCollection<ReferenceSegment> references) {
+		internal static bool IsInModifiedModule(HashSet<IDnSpyFile> mods, TextSegmentCollection<ReferenceSegment> references) {
 			if (references == null)
 				return false;
 			var checkedAsmRefs = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);

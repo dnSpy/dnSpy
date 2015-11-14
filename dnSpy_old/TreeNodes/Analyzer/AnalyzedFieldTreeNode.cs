@@ -39,7 +39,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 
 		protected override void Write(ITextOutput output, Language language) {
 			Language.TypeToString(output, analyzedField.DeclaringType, true);
-			output.Write('.', TextTokenType.Operator);
+			output.Write(".", TextTokenType.Operator);
 			FieldTreeNode.Write(output, analyzedField, Language);
 		}
 

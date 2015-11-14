@@ -24,6 +24,7 @@ using System.Threading;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.Files;
 using dnSpy.Files;
 using dnSpy.Shared.UI.MVVM;
 using dnSpy.TreeNodes;
@@ -81,8 +82,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 					if (obj is AssemblyTreeNode && filter.GetFilterResult((obj as AssemblyTreeNode).DnSpyFile, (obj as AssemblyTreeNode).AssemblyFilterType).IsMatch)
 						return ((AssemblyTreeNode)obj).DnSpyFile;
-					if (obj is DnSpyFile && filter.GetFilterResult(obj as DnSpyFile, (obj as DnSpyFile).ModuleDef != null ? AssemblyFilterType.NetModule : AssemblyFilterType.NonNetFile).IsMatch)
-						return (DnSpyFile)obj;
+					if (obj is IDnSpyFile && filter.GetFilterResult(obj as IDnSpyFile, (obj as IDnSpyFile).ModuleDef != null ? AssemblyFilterType.NetModule : AssemblyFilterType.NonNetFile).IsMatch)
+						return (IDnSpyFile)obj;
 					if (obj is string && filter.GetFilterResult((string)obj, res.DnSpyFile).IsMatch)
 						return (string)obj;
 					if (obj is TypeDef && filter.GetFilterResult(obj as TypeDef).IsMatch)
@@ -228,7 +229,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			return c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
 		}
 
-		public MemberPickerVM(IDnSpyFileListOptions options, Language language, ITreeViewNodeFilter filter, IEnumerable<DnSpyFile> assemblies) {
+		public MemberPickerVM(IDnSpyFileListOptions options, Language language, ITreeViewNodeFilter filter, IEnumerable<IDnSpyFile> assemblies) {
 			this.Language = language;
 			this.filter = filter;
 			this.origFilter = filter;

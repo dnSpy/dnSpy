@@ -41,13 +41,13 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 
 		protected override void Write(ITextOutput output, Language language) {
 			if (hidesParent) {
-				output.Write('(', TextTokenType.Operator);
+				output.Write("(", TextTokenType.Operator);
 				output.Write("hides", TextTokenType.Text);
-				output.Write(')', TextTokenType.Operator);
+				output.Write(")", TextTokenType.Operator);
 				output.WriteSpace();
 			}
 			Language.TypeToString(output, analyzedMethod.DeclaringType, true);
-			output.Write('.', TextTokenType.Operator);
+			output.Write(".", TextTokenType.Operator);
 			MethodTreeNode.Write(output, analyzedMethod, Language);
 		}
 

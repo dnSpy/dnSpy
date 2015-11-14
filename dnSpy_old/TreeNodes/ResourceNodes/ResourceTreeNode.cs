@@ -26,6 +26,7 @@ using dnSpy;
 using dnSpy.AsmEditor.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.MVVM;
 using dnSpy.TreeNodes;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -47,7 +48,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		protected sealed override void Write(ITextOutput output, Language language) {
-			output.WriteFilename(r.Name);
+			output.WriteFilename_OLD(r.Name);
 		}
 
 		public sealed override object Icon {
@@ -129,7 +130,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		public virtual void Decompile(Language language, ITextOutput output) {
 			language.WriteComment(output, string.Empty);
 			output.WriteOffsetComment(this);
-			output.WriteDefinition(UIUtils.CleanUpName(Name), this, TextTokenType.Comment);
+			output.WriteDefinition(NameUtils.CleanName(Name), this, TextTokenType.Comment);
 			string extra = null;
 			if (r.ResourceType == ResourceType.AssemblyLinked)
 				extra = ((AssemblyLinkedResource)r).Assembly.FullName;
@@ -212,7 +213,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public override NodePathName NodePathName {
-			get { return new NodePathName("rst", UIUtils.CleanUpName(r.Name) + " - " + r.ResourceType.ToString()); }
+			get { return new NodePathName("rst", NameUtils.CleanName(r.Name) + " - " + r.ResourceType.ToString()); }
 		}
 	}
 }

@@ -29,6 +29,7 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Debug\dnSpy.Contracts.XML</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -39,13 +40,61 @@
     <WarningLevel>4</WarningLevel>
     <DocumentationFile>bin\Release\dnSpy.Contracts.XML</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Command\ICommandHolder.cs" />
     <Compile Include="Contracts.cs" />
+    <Compile Include="Files\DnSpyFileCreatorContext.cs" />
+    <Compile Include="Files\FilenameKey.cs" />
+    <Compile Include="Files\IAnnotations.cs" />
+    <Compile Include="Files\IDnSpyDotNetFile.cs" />
+    <Compile Include="Files\IDnSpyFile.cs" />
+    <Compile Include="Files\IDnSpyFileCreator.cs" />
+    <Compile Include="Files\IDnSpyFilenameKey.cs" />
+    <Compile Include="Files\IDnSpyPEFile.cs" />
+    <Compile Include="Files\IFileManager.cs" />
+    <Compile Include="Files\NotifyFileCollectionChangedEventArgs.cs" />
+    <Compile Include="Files\NotifyFileCollectionType.cs" />
+    <Compile Include="Files\SerializedDnSpyModule.cs" />
+    <Compile Include="Files\TreeView\FileTVConstants.cs" />
+    <Compile Include="Files\TreeView\IAssemblyFileNode.cs" />
+    <Compile Include="Files\TreeView\IAssemblyReferenceNode.cs" />
+    <Compile Include="Files\TreeView\IBaseTypeFolderNode.cs" />
+    <Compile Include="Files\TreeView\IBaseTypeNode.cs" />
+    <Compile Include="Files\TreeView\IDerivedTypeNode.cs" />
+    <Compile Include="Files\TreeView\IDerivedTypesFolderNode.cs" />
+    <Compile Include="Files\TreeView\IDnSpyFileNode.cs" />
+    <Compile Include="Files\TreeView\IDnSpyFileNodeCreator.cs" />
+    <Compile Include="Files\TreeView\IEventNode.cs" />
+    <Compile Include="Files\TreeView\IFieldNode.cs" />
+    <Compile Include="Files\TreeView\IFileTreeNodeCreator.cs" />
+    <Compile Include="Files\TreeView\IFileTreeNodeData.cs" />
+    <Compile Include="Files\TreeView\IFileTreeNodeDataContext.cs" />
+    <Compile Include="Files\TreeView\IFileTreeView.cs" />
+    <Compile Include="Files\TreeView\IMessageNode.cs" />
+    <Compile Include="Files\TreeView\IMethodNode.cs" />
+    <Compile Include="Files\TreeView\IModuleFileNode.cs" />
+    <Compile Include="Files\TreeView\IModuleReferenceNode.cs" />
+    <Compile Include="Files\TreeView\INamespaceNode.cs" />
+    <Compile Include="Files\TreeView\IPEFileNode.cs" />
+    <Compile Include="Files\TreeView\IPropertyNode.cs" />
+    <Compile Include="Files\TreeView\IReferencesNode.cs" />
+    <Compile Include="Files\TreeView\IResourcesNode.cs" />
+    <Compile Include="Files\TreeView\ITypeNode.cs" />
+    <Compile Include="Files\TreeView\IUnknownFileNode.cs" />
+    <Compile Include="Files\TreeView\NodePathName.cs" />
+    <Compile Include="Files\TreeView\NotifyFileTreeViewCollection.cs" />
+    <Compile Include="Files\TreeView\NotifyFileTreeViewCollectionChangedEventArgs.cs" />
+    <Compile Include="Highlighting\ISyntaxHighlightOutput.cs" />
     <Compile Include="Images\BackgroundType.cs" />
+    <Compile Include="Images\IDotNetImageManager.cs" />
     <Compile Include="Images\IImageManager.cs" />
-    <Compile Include="Images\ImageInfo.cs" />
+    <Compile Include="Images\ImageReference.cs" />
+    <Compile Include="Languages\ILanguage.cs" />
+    <Compile Include="Languages\ILanguageCreator.cs" />
+    <Compile Include="Languages\ILanguageManager.cs" />
+    <Compile Include="Languages\LanguageConstants.cs" />
     <Compile Include="Menus\CodeReferenceSegment.cs" />
     <Compile Include="Menus\CreatedMenuItem.cs" />
     <Compile Include="Menus\ExportMenuAttribute.cs" />
@@ -84,6 +133,17 @@
     <Compile Include="ToolBars\IToolBarObjectMetadata.cs" />
     <Compile Include="ToolBars\IToolBarToggleButton.cs" />
     <Compile Include="ToolBars\ToolBarConstants.cs" />
+    <Compile Include="TreeView\IMDTokenNode.cs" />
+    <Compile Include="TreeView\ITreeNode.cs" />
+    <Compile Include="TreeView\ITreeNodeData.cs" />
+    <Compile Include="TreeView\ITreeNodeDataCreator.cs" />
+    <Compile Include="TreeView\ITreeNodeGroup.cs" />
+    <Compile Include="TreeView\ITreeView.cs" />
+    <Compile Include="TreeView\ITreeViewListener.cs" />
+    <Compile Include="TreeView\ITreeViewManager.cs" />
+    <Compile Include="TreeView\TreeNodeDataCreatorContext.cs" />
+    <Compile Include="TreeView\TreeViewOptions.cs" />
+    <Compile Include="TreeView\TVConstants.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -92,6 +152,16 @@
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Xaml" />
     <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\dnlib\src\dnlib.csproj">
+      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
+      <Project>{3b2a5653-ec97-4001-bb9b-d90f1af2c371}</Project>
+      <Name>ICSharpCode.NRefactory</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

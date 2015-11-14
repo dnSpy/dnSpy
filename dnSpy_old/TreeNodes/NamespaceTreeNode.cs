@@ -45,7 +45,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		protected override void Write(ITextOutput output, Language language) {
-			output.WriteNamespace(name);
+			output.WriteNamespace_OLD(name);
 		}
 
 		public override object Icon {

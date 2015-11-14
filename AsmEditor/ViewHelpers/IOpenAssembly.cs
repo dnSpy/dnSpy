@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	interface IOpenAssembly {
@@ -25,6 +25,6 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		/// Asks user to pick a file and returns it or null if user canceled.
 		/// </summary>
 		/// <returns></returns>
-		DnSpyFile Open();
+		IDnSpyFile Open();
 	}
 }

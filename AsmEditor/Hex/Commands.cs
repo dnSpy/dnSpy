@@ -1220,6 +1220,7 @@ namespace dnSpy.AsmEditor.Hex {
 			if (node == null)
 				return false;
 			// Currently only nodes loaded from files on disk have a PE node
+			//TODO: Update this check
 			return node.DnSpyFile.PEImage != null && node.DnSpyFile.LoadedFromFile;
 		}
 

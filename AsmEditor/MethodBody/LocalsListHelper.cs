@@ -68,13 +68,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 				var local = locals[i];
 				output.Write(local.Index.ToString(), TextTokenType.Number);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				output.Write(local.IsPinned ? "P" : string.Empty, TextTokenType.Text);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				output.Write(local.IsCompilerGenerated ? "C" : string.Empty, TextTokenType.Text);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				output.Write(local.Name ?? string.Empty, TextTokenType.Local);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				BodyUtils.WriteObject(output, local.Type);
 			}
 			if (locals.Length > 1)

@@ -74,7 +74,7 @@ namespace dnSpy.Menus {
 		}
 	}
 
-	[Export, Export(typeof(IMenuManager))]
+	[Export, Export(typeof(IMenuManager)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class MenuManager : IMenuManager {
 		readonly IImageManager imageManager;
 

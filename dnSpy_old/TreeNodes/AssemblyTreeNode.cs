@@ -29,10 +29,13 @@ using dnlib.PE;
 using dnSpy;
 using dnSpy.AsmEditor;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Files;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Files;
+using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Menus;
 using dnSpy.TreeNodes;
 using dnSpy.TreeNodes.Hex;
@@ -48,13 +51,13 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 	/// This class is responsible for loading both namespace and type nodes.
 	/// </summary>
 	public sealed class AssemblyTreeNode : ILSpyTreeNode {
-		readonly DnSpyFile dnSpyFile;
+		readonly IDnSpyFile dnSpyFile;
 		public static readonly StringComparer NamespaceStringEqualsComparer = StringComparer.Ordinal;
 		internal static readonly StringComparer NamespaceStringSortComparer = StringComparer.OrdinalIgnoreCase;
 		internal static readonly StringComparer TypeStringComparer = StringComparer.OrdinalIgnoreCase;
 		readonly Dictionary<string, NamespaceTreeNode> namespaces = new Dictionary<string, NamespaceTreeNode>(NamespaceStringEqualsComparer);
 
-		public AssemblyTreeNode(DnSpyFile dnSpyFile) {
+		public AssemblyTreeNode(IDnSpyFile dnSpyFile) {
 			if (dnSpyFile == null)
 				throw new ArgumentNullException("assembly");
 
@@ -72,7 +75,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			get { return MainWindow.Instance.DnSpyFileList; }
 		}
 
-		public DnSpyFile DnSpyFile {
+		public IDnSpyFile DnSpyFile {
 			get { return dnSpyFile; }
 		}
 
@@ -118,18 +121,18 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			if (dnSpyFile.ModuleDef == null) {
 				var filename = Path.GetFileName(dnSpyFile.Filename);
 				if (string.IsNullOrEmpty(filename))
-					filename = dnSpyFile.ShortName;
+					filename = dnSpyFile.GetShortName();
 
 				var pe = dnSpyFile.PEImage;
 				if (pe != null) {
 					bool isExe = (pe.ImageNTHeaders.FileHeader.Characteristics & Characteristics.Dll) == 0;
-					output.Write(UIUtils.CleanUpName(filename), isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
+					output.Write(NameUtils.CleanName(filename), isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
 				}
 				else
-					output.Write(UIUtils.CleanUpName(filename), TextTokenType.Text);
+					output.Write(NameUtils.CleanName(filename), TextTokenType.Text);
 			}
 			else if (Parent is AssemblyTreeNode || dnSpyFile.AssemblyDef == null)
-				output.Write(UIUtils.CleanUpName(dnSpyFile.ModuleDef.Name), TextTokenType.Module);
+				output.Write(NameUtils.CleanName(dnSpyFile.ModuleDef.Name), TextTokenType.Module);
 			else {
 				var asm = dnSpyFile.AssemblyDef;
 
@@ -141,28 +144,28 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 				if (showAsmVer || showPublicKeyToken) {
 					output.WriteSpace();
-					output.Write('(', TextTokenType.Operator);
+					output.Write("(", TextTokenType.Operator);
 
 					bool needComma = false;
 					if (showAsmVer) {
 						if (needComma) {
-							output.Write(',', TextTokenType.Operator);
+							output.Write(",", TextTokenType.Operator);
 							output.WriteSpace();
 						}
 						needComma = true;
 
 						output.Write(asm.Version.Major.ToString(), TextTokenType.Number);
-						output.Write('.', TextTokenType.Operator);
+						output.Write(".", TextTokenType.Operator);
 						output.Write(asm.Version.Minor.ToString(), TextTokenType.Number);
-						output.Write('.', TextTokenType.Operator);
+						output.Write(".", TextTokenType.Operator);
 						output.Write(asm.Version.Build.ToString(), TextTokenType.Number);
-						output.Write('.', TextTokenType.Operator);
+						output.Write(".", TextTokenType.Operator);
 						output.Write(asm.Version.Revision.ToString(), TextTokenType.Number);
 					}
 
 					if (showPublicKeyToken) {
 						if (needComma) {
-							output.Write(',', TextTokenType.Operator);
+							output.Write(",", TextTokenType.Operator);
 							output.WriteSpace();
 						}
 						needComma = true;
@@ -174,7 +177,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 							output.Write(pkt.ToString(), TextTokenType.Number);
 					}
 
-					output.Write(')', TextTokenType.Operator);
+					output.Write(")", TextTokenType.Operator);
 				}
 			}
 		}
@@ -192,7 +195,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		public override object Icon {
 			get {
-				if (dnSpyFile is UnknownFile)
+				if (dnSpyFile is DnSpyUnknownFile)
 					return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "AssemblyWarning", BackgroundType.TreeNode);
 				if (Parent is AssemblyTreeNode || (dnSpyFile.ModuleDef != null && dnSpyFile.AssemblyDef == null))
 					return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "AssemblyModule", BackgroundType.TreeNode);
@@ -241,7 +244,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public override bool ShowExpander {
-			get { return !(dnSpyFile is UnknownFile) && base.ShowExpander; }
+			get { return !(dnSpyFile is DnSpyUnknownFile) && base.ShowExpander; }
 		}
 
 		void OnAssemblyLoaded() {
@@ -249,7 +252,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			RaisePropertyChanged("Icon");
 			RaisePropertyChanged("ExpandedIcon");
 			RaisePropertyChanged("ToolTip");
-			if (dnSpyFile is UnknownFile)
+			if (dnSpyFile is DnSpyUnknownFile)
 				RaisePropertyChanged("ShowExpander"); // cannot expand assemblies with load error
 			RaisePropertyChanged("Text");
 		}
@@ -258,20 +261,13 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 
 		protected override void LoadChildren() {
 			if (Parent is AssemblyTreeNode || dnSpyFile.AssemblyDef == null) {
+				Debug.Assert(dnSpyFile.Children.Count == 0);
 				LoadModuleChildren(dnSpyFile.PEImage, dnSpyFile.ModuleDef);
 			}
 			else {
-				// Add all modules in this assembly
-				foreach (var mod in dnSpyFile.AssemblyDef.Modules) {
-					if (mod == dnSpyFile.ModuleDef)
-						this.Children.Add(new AssemblyTreeNode(dnSpyFile));
-					else {
-						var file = dnSpyFile.CreateDnSpyFile(mod);
-						if (file == null)
-							file = DnSpyFileList.CreateDnSpyFile(mod);
-						file.IsAutoLoaded = dnSpyFile.IsAutoLoaded;
-						this.Children.Add(new AssemblyTreeNode(file));
-					}
+				foreach (var child in dnSpyFile.Children) {
+					child.IsAutoLoaded = dnSpyFile.IsAutoLoaded;
+					this.Children.Add(new AssemblyTreeNode(child));
 				}
 			}
 		}
@@ -539,7 +535,7 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			var res = settings.Filter.GetFilterResult(this.DnSpyFile, AssemblyFilterType);
 			if (res.FilterResult != null)
 				return res.FilterResult.Value;
-			if (settings.SearchTermMatches(dnSpyFile.ShortName))
+			if (settings.SearchTermMatches(dnSpyFile.GetShortName()))
 				return FilterResult.Match;
 			else
 				return FilterResult.Recurse;
@@ -565,8 +561,8 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			if (string.IsNullOrEmpty(language.ProjectFileExtension))
 				return false;
 			SaveFileDialog dlg = new SaveFileDialog();
-			dlg.FileName = DecompilerTextView.CleanUpName(dnSpyFile.ShortName) + language.ProjectFileExtension;
-			dlg.Filter = language.Name + " project|*" + language.ProjectFileExtension + "|" + language.Name + " single file|*" + language.FileExtension + "|All files|*.*";
+			dlg.FileName = DecompilerTextView.CleanUpName(dnSpyFile.GetShortName()) + language.ProjectFileExtension;
+			dlg.Filter = language.NameUI + " project|*" + language.ProjectFileExtension + "|" + language.NameUI + " single file|*" + language.FileExtension + "|All files|*.*";
 			if (dlg.ShowDialog() == true) {
 				DecompilationOptions options = new DecompilationOptions();
 				options.FullDecompilation = true;

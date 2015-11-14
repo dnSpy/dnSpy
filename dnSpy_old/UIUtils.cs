@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -27,7 +26,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
-using ICSharpCode.Decompiler;
+using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy {
 	public static class UIUtils {
@@ -61,30 +60,7 @@ namespace dnSpy {
 		}
 
 		public static string EscapeMenuItemHeader(string s) {
-			return CleanUpName(s).Replace("_", "__");
-		}
-
-		public static string CleanUpName(string n) {
-			if (n == null)
-				return n;
-			const int MAX_LEN = 0x100;
-			if (n.Length > MAX_LEN)
-				n = n.Substring(0, MAX_LEN);
-			var sb = new StringBuilder(n.Length);
-			for (int i = 0; i < n.Length; i++) {
-				var c = n[i];
-				if ((ushort)c < 0x20)
-					c = '_';
-				sb.Append(c);
-			}
-			return sb.ToString();
-		}
-
-		public static string CleanUpIdentifier(string id) {
-			if (id == null)
-				return id;
-			id = IdentifierEscaper.Escape(id);
-			return CleanUpName(id);
+			return NameUtils.CleanName(s).Replace("_", "__");
 		}
 
 		public static bool HasSelectedChildrenFocus(ListBox listBox) {

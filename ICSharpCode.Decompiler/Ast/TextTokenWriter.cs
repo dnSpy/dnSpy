@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
+using dnSpy.Decompiler;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory;
@@ -33,7 +34,6 @@ namespace ICSharpCode.Decompiler.Ast {
 		readonly DecompilerContext context;
 		readonly Stack<AstNode> nodeStack = new Stack<AstNode>();
 		int braceLevelWithinType = -1;
-		bool inDocumentationComment = false;
 		bool firstUsingDeclaration;
 		bool lastUsingDeclaration;
 		
@@ -57,7 +57,7 @@ namespace ICSharpCode.Decompiler.Ast {
 				tokenType = TextTokenHelper.GetTextTokenType(identifier.AnnotationVT<TextTokenType>() ?? identifier.Annotation<object>());
 
 			if (tokenType != TextTokenType.Keyword && (identifier.IsVerbatim || CSharpOutputVisitor.IsKeyword(identifier.Name, identifier))) {
-				output.Write('@', TextTokenType.Operator);
+				output.Write("@", TextTokenType.Operator);
 			}
 			
 			var definition = GetCurrentDefinition(identifier);
@@ -86,7 +86,6 @@ namespace ICSharpCode.Decompiler.Ast {
 			}
 
 			if (firstUsingDeclaration) {
-				output.MarkFoldStart(defaultCollapsed: true);
 				firstUsingDeclaration = false;
 			}
 
@@ -260,9 +259,6 @@ namespace ICSharpCode.Decompiler.Ast {
 		{
 			if (braceLevelWithinType >= 0 || nodeStack.Peek() is TypeDeclaration)
 				braceLevelWithinType++;
-			if (nodeStack.OfType<BlockStatement>().Count() <= 1) {
-				output.MarkFoldStart(defaultCollapsed: braceLevelWithinType == 1);
-			}
 			output.WriteLine();
 			start = output.Location;
 			output.WriteLeftBrace();
@@ -277,8 +273,6 @@ namespace ICSharpCode.Decompiler.Ast {
 			start = output.Location;
 			output.WriteRightBrace();
 			end = output.Location;
-			if (nodeStack.OfType<BlockStatement>().Count() <= 1)
-				output.MarkFoldEnd();
 			if (braceLevelWithinType >= 0)
 				braceLevelWithinType--;
 		}
@@ -296,7 +290,6 @@ namespace ICSharpCode.Decompiler.Ast {
 		public override void NewLine()
 		{
 			if (lastUsingDeclaration) {
-				output.MarkFoldEnd();
 				lastUsingDeclaration = false;
 			}
 			lastEndOfLine = output.Location;
@@ -318,17 +311,9 @@ namespace ICSharpCode.Decompiler.Ast {
 					break;
 				case CommentType.Documentation:
 					bool isLastLine = !(nodeStack.Peek().NextSibling is Comment);
-					if (!inDocumentationComment && !isLastLine) {
-						inDocumentationComment = true;
-						output.MarkFoldStart("///" + content, true);
-					}
 					output.Write("///", TextTokenType.XmlDocTag);
 					Debug.Assert(refs == null);
 					output.WriteXmlDoc(content);
-					if (inDocumentationComment && isLastLine) {
-						inDocumentationComment = false;
-						output.MarkFoldEnd();
-					}
 					output.WriteLine();
 					break;
 				default:
@@ -360,7 +345,7 @@ namespace ICSharpCode.Decompiler.Ast {
 		public override void WritePreProcessorDirective(PreProcessorDirectiveType type, string argument)
 		{
 			// pre-processor directive must start on its own line
-			output.Write('#', TextTokenType.Text);
+			output.Write("#", TextTokenType.Text);
 			output.Write(type.ToString().ToLowerInvariant(), TextTokenType.Text);
 			if (!string.IsNullOrEmpty(argument)) {
 				output.WriteSpace();
@@ -379,8 +364,8 @@ namespace ICSharpCode.Decompiler.Ast {
 		{
 			WriteKeyword(type);
 			if (type == "new") {
-				output.Write('(', TextTokenType.Operator);
-				output.Write(')', TextTokenType.Operator);
+				output.Write("(", TextTokenType.Operator);
+				output.Write(")", TextTokenType.Operator);
 			}
 		}
 		

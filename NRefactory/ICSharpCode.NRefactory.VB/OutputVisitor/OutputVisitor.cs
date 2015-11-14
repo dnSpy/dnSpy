@@ -239,7 +239,6 @@ namespace ICSharpCode.NRefactory.VB
 			WriteModifiers(typeDeclaration.ModifierTokens);
 			WriteClassTypeKeyword(typeDeclaration);
 			WriteIdentifier(typeDeclaration.Name.Name, TextTokenHelper.GetTextTokenType(typeDeclaration.Name.Annotation<object>()));
-			MarkFoldStart();
 			NewLine();
 			
 			if (!typeDeclaration.InheritsType.IsNull) {
@@ -263,7 +262,6 @@ namespace ICSharpCode.NRefactory.VB
 			
 			WriteKeyword("End");
 			WriteClassTypeKeyword(typeDeclaration);
-			MarkFoldEnd();
 			NewLine();
 			return EndNode(typeDeclaration);
 		}
@@ -306,7 +304,6 @@ namespace ICSharpCode.NRefactory.VB
 				WriteKeyword("As");
 				enumDeclaration.UnderlyingType.AcceptVisitor(this, data);
 			}
-			MarkFoldStart();
 			NewLine();
 			
 			Indent();
@@ -317,7 +314,6 @@ namespace ICSharpCode.NRefactory.VB
 			
 			WriteKeyword("End");
 			WriteKeyword("Enum");
-			MarkFoldEnd();
 			NewLine();
 			
 			return EndNode(enumDeclaration);
@@ -532,7 +528,6 @@ namespace ICSharpCode.NRefactory.VB
 			WriteKeyword("New");
 			DebugEnd(constructorDeclaration, false);
 			WriteCommaSeparatedListInParenthesis(constructorDeclaration.Parameters, false);
-			MarkFoldStart();
 			NewLine();
 			
 			Indent();
@@ -544,7 +539,6 @@ namespace ICSharpCode.NRefactory.VB
 			WriteKeyword("End");
 			WriteKeyword("Sub");
 			DebugEnd(constructorDeclaration, false);
-			MarkFoldEnd();
 			NewLine();
 			
 			return EndNode(constructorDeclaration);
@@ -575,7 +569,6 @@ namespace ICSharpCode.NRefactory.VB
 			WriteHandlesClause(methodDeclaration.HandlesClause);
 			WriteImplementsClause(methodDeclaration.ImplementsClause);
 			if (!methodDeclaration.Body.IsNull) {
-				MarkFoldStart();
 				NewLine();
 				Indent();
 				WriteBlock(methodDeclaration.Body);
@@ -588,7 +581,6 @@ namespace ICSharpCode.NRefactory.VB
 				else
 					WriteKeyword("Function");
 				DebugEnd(methodDeclaration, false);
-				MarkFoldEnd();
 			}
 			NewLine();
 			
@@ -630,7 +622,6 @@ namespace ICSharpCode.NRefactory.VB
 			bool needsBody = !propertyDeclaration.Getter.Body.IsNull || !propertyDeclaration.Setter.Body.IsNull;
 			
 			if (needsBody) {
-				MarkFoldStart();
 				NewLine();
 				Indent();
 				
@@ -645,7 +636,6 @@ namespace ICSharpCode.NRefactory.VB
 				
 				WriteKeyword("End");
 				WriteKeyword("Property");
-				MarkFoldEnd();
 			}
 			NewLine();
 			
@@ -1050,16 +1040,6 @@ namespace ICSharpCode.NRefactory.VB
 		void Unindent()
 		{
 			formatter.Unindent();
-		}
-		
-		void MarkFoldStart()
-		{
-			formatter.MarkFoldStart();
-		}
-		
-		void MarkFoldEnd()
-		{
-			formatter.MarkFoldEnd();
 		}
 		#endregion
 		
@@ -1868,7 +1848,6 @@ namespace ICSharpCode.NRefactory.VB
 			WriteImplementsClause(eventDeclaration.ImplementsClause);
 			
 			if (eventDeclaration.IsCustom) {
-				MarkFoldStart();
 				NewLine();
 				Indent();
 				
@@ -1879,7 +1858,6 @@ namespace ICSharpCode.NRefactory.VB
 				Unindent();
 				WriteKeyword("End");
 				WriteKeyword("Event");
-				MarkFoldEnd();
 			}
 			NewLine();
 			
@@ -2182,7 +2160,6 @@ namespace ICSharpCode.NRefactory.VB
 				operatorDeclaration.ReturnType.AcceptVisitor(this, data);
 			}
 			if (!operatorDeclaration.Body.IsNull || (operatorDeclaration.Body.HiddenEnd != null && operatorDeclaration.Body.HiddenEnd.Count > 0)) {
-				MarkFoldStart();
 				NewLine();
 				Indent();
 				WriteBlock(operatorDeclaration.Body);
@@ -2192,7 +2169,6 @@ namespace ICSharpCode.NRefactory.VB
 				WriteKeyword("End");
 				WriteKeyword("Operator");
 				DebugEnd(operatorDeclaration, false);
-				MarkFoldEnd();
 			}
 			NewLine();
 			

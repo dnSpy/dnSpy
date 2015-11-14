@@ -26,6 +26,7 @@ using System.Globalization;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
+using dnSpy.Decompiler;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
@@ -128,11 +129,11 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		void WriteVersion(BamlDocument.BamlVersion value) {
-			output.Write('[', TextTokenType.Text);
+			output.Write("[", TextTokenType.Text);
 			WriteHexNumber(value.Major);
 			output.Write(", ", TextTokenType.Text);
 			WriteHexNumber(value.Minor);
-			output.Write(']', TextTokenType.Text);
+			output.Write("]", TextTokenType.Text);
 		}
 
 		void WriteAssemblyId(BamlContext ctx, ushort id) {
@@ -266,7 +267,7 @@ namespace dnSpy.BamlDecompiler {
 			if (handlerMap.TryGetValue(record.Type, out handler)) {
 				output.Write(" [", TextTokenType.Text);
 				handler(ctx, record);
-				output.Write(']', TextTokenType.Text);
+				output.Write("]", TextTokenType.Text);
 			}
 
 			output.WriteLine();

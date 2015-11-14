@@ -75,16 +75,16 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>An unknown object</summary>
 		public const string GUIDOBJ_UNKNOWN_GUID = "9BD7C228-91A0-4140-8E8B-AB0450B418CA";
 
-		/// <summary>Analyzer treeview (<c>AnalyzerTreeView</c>)</summary>
+		/// <summary>Analyzer tree view</summary>
 		public const string GUIDOBJ_ANALYZER_GUID = "9F0F1FF9-B834-43E9-BFAF-8F114C4D1D9E";
 
-		/// <summary>Files treeview (<c>SharpTreeView</c>)</summary>
+		/// <summary>Files tree view</summary>
 		public const string GUIDOBJ_FILES_TREEVIEW_GUID = "F64505EB-6D8B-4332-B697-73B2D1EE6C37";
 
 		/// <summary>Search ListBox</summary>
 		public const string GUIDOBJ_SEARCH_GUID = "7B460F9C-424D-48B3-8FD3-72CEE8DD58E5";
 
-		/// <summary>Treeview nodes array (<c>SharpTreeNode[]</c>)</summary>
+		/// <summary>Tree view nodes array (<c>SharpTreeNode[]</c>)</summary>
 		public const string GUIDOBJ_TREEVIEW_NODES_ARRAY_GUID = "B116BABD-BD8B-4870-968A-D1871CC21638";
 
 		/// <summary>Code Reference (<see cref="CodeReferenceSegment"/>)</summary>

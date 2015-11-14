@@ -18,7 +18,7 @@
 */
 
 using System.Collections.Generic;
-using dnSpy.Files;
+using dnSpy.Shared.UI.Files;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy.TextView;
 

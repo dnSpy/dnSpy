@@ -30,6 +30,7 @@ using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
 
 namespace ICSharpCode.Decompiler.Ast {
+	using dnSpy.Decompiler;
 	using Ast = ICSharpCode.NRefactory.CSharp;
 
 	public class AstMethodBodyBuilder

@@ -23,6 +23,7 @@ using dnlib.DotNet;
 using dnSpy;
 using dnSpy.Files;
 using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.UI.Files;
 
 namespace ICSharpCode.ILSpy {
 	/// <summary>
@@ -135,7 +136,7 @@ namespace ICSharpCode.ILSpy {
 
 		private void AddToList(DnSpyFileList list, string FullName) {
 			AssemblyNameInfo reference = new AssemblyNameInfo(FullName);
-			string file = GacInterop.FindAssemblyInNetGac(reference);
+			string file = GacInfo.FindInGac(reference);
 			if (file != null)
 				list.OpenFile(file);
 		}

@@ -1732,18 +1732,12 @@ namespace dnSpy.Themes {
 				DefaultForeground = "#FF6D6D6D",
 				ForegroundResourceKey = "SearchBoxWatermarkForeground",
 			},
-			new BrushColorInfo(ColorType.NodeAutoLoaded, "TreeView node auto loaded") {
-				DefaultForeground = "SteelBlue",
-			},
-			new BrushColorInfo(ColorType.NodePublic, "TreeView node public") {
-				DefaultForeground = "#FF000000",
-			},
-			new BrushColorInfo(ColorType.NodeNotPublic, "TreeView node not public") {
-				DefaultForeground = "#FF6D6D6D",
-			},
 			new BrushColorInfo(ColorType.MemoryWindowDisabled, "Memory Window Disabled") {
 				DefaultBackground = "#40000000",
 				BackgroundResourceKey = "MemoryWindowDisabled",
+			},
+			new BrushColorInfo(ColorType.TreeViewNode, "TreeView node") {
+				DefaultForeground = "#FF000000",
 			},
 			new BrushColorInfo(ColorType.DefaultText, "Default text") {
 				DefaultForeground = "Black",

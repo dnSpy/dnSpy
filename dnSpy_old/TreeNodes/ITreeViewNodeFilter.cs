@@ -19,7 +19,7 @@
 
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
 using dnSpy.TreeNodes.Hex;
 using ICSharpCode.ILSpy.TreeNodes;
 
@@ -63,8 +63,8 @@ namespace dnSpy.TreeNodes {
 	public interface ITreeViewNodeFilter {
 		string Text { get; }
 		// NOTE: Any node arguments (not dnlib types) can be null when called.
-		TreeViewNodeFilterResult GetFilterResult(DnSpyFile file, AssemblyFilterType type);
-		TreeViewNodeFilterResult GetFilterResult(string ns, DnSpyFile owner);
+		TreeViewNodeFilterResult GetFilterResult(IDnSpyFile file, AssemblyFilterType type);
+		TreeViewNodeFilterResult GetFilterResult(string ns, IDnSpyFile owner);
 		TreeViewNodeFilterResult GetFilterResult(TypeDef type);
 		TreeViewNodeFilterResult GetFilterResult(FieldDef field);
 		TreeViewNodeFilterResult GetFilterResult(MethodDef method);

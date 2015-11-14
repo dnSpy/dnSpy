@@ -30,7 +30,7 @@ using dnSpy.Contracts.Themes;
 using Microsoft.Win32;
 
 namespace dnSpy.Themes {
-	[Export, Export(typeof(IThemeManager))]
+	[Export, Export(typeof(IThemeManager)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class ThemeManager : IThemeManager {
 		readonly Dictionary<string, Theme> themes;
 

@@ -117,13 +117,13 @@ namespace dnSpy.Debugger.Locals {
 				//TODO: Break if it takes too long and the user cancels
 				var printer = new ValuePrinter(output, DebuggerSettings.Instance.UseHexadecimal);
 				printer.WriteExpander(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				// Add an extra here to emulate VS output
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteName(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteValue(vm);
-				output.Write('\t', TextTokenType.Text);
+				output.Write("\t", TextTokenType.Text);
 				printer.WriteType(vm);
 				output.WriteLine();
 			}

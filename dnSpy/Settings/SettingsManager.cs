@@ -25,7 +25,7 @@ using System.Linq;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Settings {
-	[Export, Export(typeof(ISettingsManager))]
+	[Export, Export(typeof(ISettingsManager)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class SettingsManager : ISettingsManager {
 		readonly Dictionary<string, ISettingsSection> sections;
 

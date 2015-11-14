@@ -26,6 +26,7 @@ using System.Windows.Media;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnSpy.AsmEditor.Resources;
+using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.Decompiler;
 using ICSharpCode.ILSpy;
 
@@ -197,7 +198,7 @@ namespace dnSpy.TreeNodes {
 		}
 
 		public override NodePathName NodePathName {
-			get { return new NodePathName("serimgresel", UIUtils.CleanUpName(resElem.Name)); }
+			get { return new NodePathName("serimgresel", NameUtils.CleanName(resElem.Name)); }
 		}
 	}
 }

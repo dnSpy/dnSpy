@@ -34,7 +34,7 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 
 		void WriteFilename(ProcessVM vm, string filename) {
-			output.WriteFilename(filename);
+			output.WriteFilename_OLD(filename);
 		}
 
 		public void WriteFilename(ProcessVM vm) {

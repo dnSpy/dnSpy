@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
+using dnSpy.Decompiler;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.ILAst;
@@ -232,14 +233,6 @@ namespace ICSharpCode.ILSpy.VB {
 			}
 			else
 				output.WriteLine("'" + content, TextTokenType.Comment);
-		}
-
-		public void MarkFoldStart() {
-			output.MarkFoldStart();
-		}
-
-		public void MarkFoldEnd() {
-			output.MarkFoldEnd();
 		}
 
 		private static bool IsDefinition(AstNode node) {

@@ -35,11 +35,12 @@ using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.ToolBars;
-using dnSpy.Files;
+using dnSpy.Decompiler;
 using dnSpy.MVVM;
 using dnSpy.NRefactory;
 using dnSpy.Search;
@@ -213,7 +214,7 @@ namespace ICSharpCode.ILSpy {
 				return;
 			if (IsVisible) {
 				bool canRestart = (e.OldItems != null && e.OldItems.Count > 0) ||
-								  (e.NewItems != null && e.NewItems.Cast<DnSpyFile>().Any(a => !a.IsAutoLoaded));
+								  (e.NewItems != null && e.NewItems.Cast<IDnSpyFile>().Any(a => !a.IsAutoLoaded));
 				if (canRestart)
 					RestartSearch();
 			}
@@ -560,7 +561,7 @@ namespace ICSharpCode.ILSpy {
 				var asmNode = obj as AssemblyTreeNode;
 				if (asmNode != null)
 					obj = asmNode.DnSpyFile.AssemblyDef;
-				var asm = obj as DnSpyFile;
+				var asm = obj as IDnSpyFile;
 				if (asm != null)
 					obj = asm.ModuleDef;
 				return obj as IMDTokenProvider; // returns null if it's a namespace (a string)
@@ -581,7 +582,7 @@ namespace ICSharpCode.ILSpy {
 
 		/// <summary>
 		/// <see cref="AssemblyTreeNode"/> if it's an assembly. If it's a module, it's a
-		/// <see cref="DnSpyFile"/> reference. If it's a <see cref="IMemberRef"/>,
+		/// <see cref="IDnSpyFile"/> reference. If it's a <see cref="IMemberRef"/>,
 		/// <see cref="AssemblyRef"/> or a <see cref="ModuleRef"/>, it's that reference. If it's a
 		/// namespace, it's a <see cref="string"/>.
 		/// </summary>
@@ -589,14 +590,14 @@ namespace ICSharpCode.ILSpy {
 		public object LocationObject { get; set; }
 		public object NameObject { get; set; }
 		public ImageSource Image {
-			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, TypeImageInfo); }
+			get { return DnSpy.App.ImageManager.GetImage(TypeImageInfo.Assembly, TypeImageInfo.Name, TypeImageInfo.BackgroundType); }
 		}
 		public ImageSource LocationImage {
-			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, LocationImageInfo); }
+			get { return DnSpy.App.ImageManager.GetImage(LocationImageInfo.Assembly, LocationImageInfo.Name, LocationImageInfo.BackgroundType); }
 		}
 		public ImageInfo TypeImageInfo { get; set; }
 		public ImageInfo LocationImageInfo { get; set; }
-		public DnSpyFile DnSpyFile { get; set; }
+		public IDnSpyFile DnSpyFile { get; set; }
 		public Language Language { get; set; }
 		public string ToolTip {
 			get {
@@ -650,7 +651,7 @@ namespace ICSharpCode.ILSpy {
 		void CreateUI(ITextOutput output, object o, bool includeNamespace) {
 			var ns = o as NamespaceSearchResult;
 			if (ns != null) {
-				output.WriteNamespace(ns.Namespace);
+				output.WriteNamespace_OLD(ns.Namespace);
 				return;
 			}
 
@@ -687,44 +688,44 @@ namespace ICSharpCode.ILSpy {
 
 			var asm = o as AssemblyDef;
 			if (asm != null) {
-				output.Write(asm);
+				output.Write_OLD(asm);
 				return;
 			}
 
 			var mod = o as ModuleDef;
 			if (mod != null) {
-				output.WriteModule(mod.FullName);
+				output.WriteModule_OLD(mod.FullName);
 				return;
 			}
 
 			var asmRef = o as AssemblyRef;
 			if (asmRef != null) {
-				output.Write(asmRef);
+				output.Write_OLD(asmRef);
 				return;
 			}
 
 			var modRef = o as ModuleRef;
 			if (modRef != null) {
-				output.WriteModule(modRef.FullName);
+				output.WriteModule_OLD(modRef.FullName);
 				return;
 			}
 
 			// non-.NET file
-			var file = o as DnSpyFile;
+			var file = o as IDnSpyFile;
 			if (file != null) {
-				output.Write(file.ShortName, TextTokenType.Text);
+				output.Write(file.GetShortName(), TextTokenType.Text);
 				return;
 			}
 
 			var resNode = o as ResourceTreeNode;
 			if (resNode != null) {
-				output.WriteFilename(resNode.Name);
+				output.WriteFilename_OLD(resNode.Name);
 				return;
 			}
 
 			var resElNode = o as ResourceElementTreeNode;
 			if (resElNode != null) {
-				output.WriteFilename(resElNode.Name);
+				output.WriteFilename_OLD(resElNode.Name);
 				return;
 			}
 

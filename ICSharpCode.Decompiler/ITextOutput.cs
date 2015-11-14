@@ -27,16 +27,12 @@ namespace ICSharpCode.Decompiler {
 		
 		void Indent();
 		void Unindent();
-		void Write(char ch, TextTokenType tokenType);
 		void Write(string text, TextTokenType tokenType);
 		void WriteLine();
 		void WriteDefinition(string text, object definition, TextTokenType tokenType, bool isLocal = true);
 		void WriteReference(string text, object reference, TextTokenType tokenType, bool isLocal = false);
 		
 		void AddDebugSymbols(MemberMapping methodDebugSymbols);
-		
-		void MarkFoldStart(string collapsedText = "...", bool defaultCollapsed = false);
-		void MarkFoldEnd();
 	}
 	
 	public static class TextOutputExtensions
@@ -49,29 +45,29 @@ namespace ICSharpCode.Decompiler {
 
 		public static void WriteSpace(this ITextOutput output)
 		{
-			output.Write(' ', TextTokenType.Text);
+			output.Write(" ", TextTokenType.Text);
 		}
 
 		public static void WriteLineLeftBrace(this ITextOutput output)
 		{
-			output.Write('{', TextTokenType.Brace);
+			output.Write("{", TextTokenType.Brace);
 			output.WriteLine();
 		}
 
 		public static void WriteLineRightBrace(this ITextOutput output)
 		{
-			output.Write('}', TextTokenType.Brace);
+			output.Write("}", TextTokenType.Brace);
 			output.WriteLine();
 		}
 
 		public static void WriteLeftBrace(this ITextOutput output)
 		{
-			output.Write('{', TextTokenType.Brace);
+			output.Write("{", TextTokenType.Brace);
 		}
 
 		public static void WriteRightBrace(this ITextOutput output)
 		{
-			output.Write('}', TextTokenType.Brace);
+			output.Write("}", TextTokenType.Brace);
 		}
 
 		public static void WriteXmlDoc(this ITextOutput output, string text)

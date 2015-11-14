@@ -23,13 +23,14 @@ using System.Diagnostics;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.PE;
-using dnSpy.Files;
+using dnSpy.Contracts.Files;
+using dnSpy.Shared.UI.Files;
 
 namespace dnSpy.Debugger.IMModules {
 	/// <summary>
 	/// A class that reads the module from the debugged process' address space.
 	/// </summary>
-	sealed class MemoryModuleDefFile : DotNetFileBase {
+	sealed class MemoryModuleDefFile : DnSpyDotNetFileBase {
 		sealed class MyKey : IDnSpyFilenameKey {
 			readonly DnProcess process;
 			readonly ulong address;
@@ -49,10 +50,6 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
-		public override bool CanBeSavedToSettingsFile {
-			get { return false; }
-		}
-
 		public override IDnSpyFilenameKey Key {
 			get { return CreateKey(process, address); }
 		}
@@ -61,7 +58,7 @@ namespace dnSpy.Debugger.IMModules {
 			get {
 				if (!isInMemory)
 					return base.SerializedDnSpyModule;
-				return Files.SerializedDnSpyModule.CreateInMemory(ModuleDef);
+				return Contracts.Files.SerializedDnSpyModule.CreateInMemory(ModuleDef);
 			}
 		}
 
@@ -76,11 +73,6 @@ namespace dnSpy.Debugger.IMModules {
 		}
 		readonly DnProcess process;
 
-		internal Dictionary<ModuleDef, MemoryModuleDefFile> Dictionary {
-			get { return dict; }
-		}
-		readonly Dictionary<ModuleDef, MemoryModuleDefFile> dict;
-
 		public ulong Address {
 			get { return address; }
 		}
@@ -89,9 +81,8 @@ namespace dnSpy.Debugger.IMModules {
 		readonly byte[] data;
 		readonly bool isInMemory;
 
-		MemoryModuleDefFile(Dictionary<ModuleDef, MemoryModuleDefFile>  dict, DnProcess process, ulong address, byte[] data, bool isInMemory, ModuleDef module, bool loadSyms, bool autoUpdateMemory)
+		MemoryModuleDefFile(DnProcess process, ulong address, byte[] data, bool isInMemory, ModuleDef module, bool loadSyms, bool autoUpdateMemory)
 			: base(module, loadSyms) {
-			this.dict = dict;
 			this.process = process;
 			this.address = address;
 			this.data = data;
@@ -103,13 +94,19 @@ namespace dnSpy.Debugger.IMModules {
 			get { return false; }
 		}
 
-		public override bool IsReadOnly {
-			get { return !process.HasExited; }
-		}
-
 		public static IDnSpyFilenameKey CreateKey(DnProcess process, ulong address) {
 			return new MyKey(process, address);
 		}
+
+		protected override List<IDnSpyFile> CreateChildren() {
+			var list = new List<IDnSpyFile>();
+			if (files != null) {
+				list.AddRange(files);
+				files = null;
+			}
+			return list;
+		}
+		List<MemoryModuleDefFile> files;
 
 		public bool UpdateMemory() {
 			if (process.HasExited)
@@ -137,7 +134,14 @@ namespace dnSpy.Debugger.IMModules {
 			return true;
 		}
 
-		public static MemoryModuleDefFile Create(Dictionary<ModuleDef, MemoryModuleDefFile>  dict, DnModule dnModule, bool loadSyms) {
+		public static MemoryModuleDefFile CreateAssembly(List<MemoryModuleDefFile> files) {
+			var manifest = files[0];
+			var file = new MemoryModuleDefFile(manifest.Process, manifest.Address, manifest.data, manifest.isInMemory, manifest.module, false, manifest.AutoUpdateMemory);
+			file.files = new List<MemoryModuleDefFile>(files);
+			return file;
+		}
+
+		public static MemoryModuleDefFile Create(DnModule dnModule, bool loadSyms) {
 			Debug.Assert(!dnModule.IsDynamic);
 			Debug.Assert(dnModule.Address != 0);
 			ulong address = dnModule.Address;
@@ -153,20 +157,12 @@ namespace dnSpy.Debugger.IMModules {
 			bool autoUpdateMemory = false;//TODO: Init to default value
 			if (GacInfo.IsGacPath(dnModule.Name))
 				autoUpdateMemory = false;	// GAC files are not likely to decrypt methods in memory
-			return new MemoryModuleDefFile(dict, process, address, data, dnModule.IsInMemory, module, loadSyms, autoUpdateMemory);
+			return new MemoryModuleDefFile(process, address, data, dnModule.IsInMemory, module, loadSyms, autoUpdateMemory);
 		}
 
 		static ImageLayout GetImageLayout(DnModule module) {
 			Debug.Assert(!module.IsDynamic);
 			return module.IsInMemory ? ImageLayout.File : ImageLayout.Memory;
-		}
-
-		public override DnSpyFile CreateDnSpyFile(ModuleDef module) {
-			if (module == null)
-				return null;
-			MemoryModuleDefFile file;
-			dict.TryGetValue(module, out file);
-			return file;
 		}
 	}
 }

@@ -234,7 +234,7 @@ namespace dnSpy.Tabs {
 
 		public override SavedTabState CreateSavedTabState() {
 			var savedState = new SavedDecompileTabState();
-			savedState.Language = Language.Name;
+			savedState.Language = Language.NameUI;
 			savedState.Paths = new List<FullNodePathName>();
 			savedState.ActiveAutoLoadedAssemblies = new List<string>();
 			foreach (var node in DecompiledNodes) {

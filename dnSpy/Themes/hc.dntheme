@@ -415,9 +415,7 @@
 		<color name="environmenttoolwindowbuttonhoverinactiveglyph" bg="#FF800080" />
 		<color name="environmenttoolwindowbuttoninactiveglyph" bg="#FFFFFFFF" />
 		<color name="searchboxwatermark" fg="#FF00FF00" />
-		<color name="nodeautoloaded" fg="SteelBlue" />
-		<color name="nodepublic" fg="#FFFFFFFF" />
-		<color name="nodenotpublic" fg="#FF00FF00" />
 		<color name="memorywindowdisabled" bg="#40FFFFFF" />
+		<color name="treeviewnode" fg="#FFFFFFFF" />
 	</colors>
 </theme>

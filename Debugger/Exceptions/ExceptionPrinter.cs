@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Decompiler;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
 
@@ -39,8 +40,8 @@ namespace dnSpy.Debugger.Exceptions {
 			string ns, name;
 			SplitTypeName(fullName, out ns, out name);
 			if (!string.IsNullOrEmpty(ns)) {
-				output.WriteNamespace(ns);
-				output.Write('.', TextTokenType.Operator);
+				output.WriteNamespace_OLD(ns);
+				output.Write(".", TextTokenType.Operator);
 			}
 			output.Write(IdentifierEscaper.Escape(name), TextTokenType.Type);
 		}

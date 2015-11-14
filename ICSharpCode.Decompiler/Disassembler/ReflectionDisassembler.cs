@@ -181,7 +181,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				output.Write("pinvokeimpl", TextTokenType.Keyword);
 				if (method.HasImplMap) {
 					ImplMap info = method.ImplMap;
-					output.Write('(', TextTokenType.Operator);
+					output.Write("(", TextTokenType.Operator);
 					output.Write("\"" + NRefactory.CSharp.TextWriterTokenWriter.ConvertString(info.Module == null ? string.Empty : info.Module.Name.String) + "\"", TextTokenType.String);
 
 					if (!string.IsNullOrEmpty(info.Name) && info.Name != method.Name) {
@@ -235,7 +235,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 						output.Write("winapi", TextTokenType.Keyword);
 					}
 
-					output.Write(')', TextTokenType.Operator);
+					output.Write(")", TextTokenType.Operator);
 				}
 				output.WriteSpace();
 			}
@@ -272,14 +272,14 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			
 			//( params )
 			output.WriteSpace();
-			output.Write('(', TextTokenType.Operator);
+			output.Write("(", TextTokenType.Operator);
 			if (method.Parameters.GetNumberOfNormalParameters() > 0) {
 				output.WriteLine();
 				output.Indent();
 				WriteParameters(method.Parameters);
 				output.Unindent();
 			}
-			output.Write(')', TextTokenType.Operator);
+			output.Write(")", TextTokenType.Operator);
 			output.WriteSpace();
 			//cil managed
 			WriteEnum(method.ImplAttributes & MethodImplAttributes.CodeTypeMask, methodCodeType);
@@ -380,7 +380,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 						break;
 				}
 				output.WriteSpace();
-				output.Write('=', TextTokenType.Operator);
+				output.Write("=", TextTokenType.Operator);
 				output.WriteSpace();
 				output.WriteLineLeftBrace();
 				output.Indent();
@@ -394,7 +394,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 						sa.AttributeType.WriteTo(output, ILNameSyntax.TypeName);
 					}
 					output.WriteSpace();
-					output.Write('=', TextTokenType.Operator);
+					output.Write("=", TextTokenType.Operator);
 					output.WriteSpace();
 					output.WriteLeftBrace();
 					if (sa.HasNamedArguments) {
@@ -421,7 +421,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 					output.WriteRightBrace();
 					
 					if (i + 1< secdecl.SecurityAttributes.Count)
-						output.Write(',', TextTokenType.Operator);
+						output.Write(",", TextTokenType.Operator);
 					output.WriteLine();
 				}
 				output.Unindent();
@@ -456,14 +456,14 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			output.WriteSpace();
 			output.WriteReference(DisassemblerHelpers.Escape(na.Name), reference, na.IsField ? TextTokenType.InstanceField : TextTokenType.InstanceProperty);
 			output.WriteSpace();
-			output.Write('=', TextTokenType.Operator);
+			output.Write("=", TextTokenType.Operator);
 			output.WriteSpace();
 			if (na.Argument.Value is UTF8String) {
 				// secdecls use special syntax for strings
 				output.Write("string", TextTokenType.Keyword);
-				output.Write('(', TextTokenType.Operator);
+				output.Write("(", TextTokenType.Operator);
 				output.Write(string.Format("'{0}'", NRefactory.CSharp.TextWriterTokenWriter.ConvertString((UTF8String)na.Argument.Value).Replace("'", "\'")), TextTokenType.String);
-				output.Write(')', TextTokenType.Operator);
+				output.Write(")", TextTokenType.Operator);
 			} else {
 				WriteConstant(na.Argument.Value);
 			}
@@ -490,10 +490,10 @@ namespace ICSharpCode.Decompiler.Disassembler {
 		void WriteMarshalInfo(MarshalType marshalInfo)
 		{
 			output.Write("marshal", TextTokenType.Keyword);
-			output.Write('(', TextTokenType.Operator);
+			output.Write("(", TextTokenType.Operator);
 			if (marshalInfo != null)
 				WriteNativeType(marshalInfo.NativeType, marshalInfo);
-			output.Write(')', TextTokenType.Operator);
+			output.Write(")", TextTokenType.Operator);
 			output.WriteSpace();
 		}
 		
@@ -563,18 +563,18 @@ namespace ICSharpCode.Decompiler.Disassembler {
 						goto default;
 					if (ami.ElementType != NativeType.Max)
 						WriteNativeType(ami.ElementType);
-					output.Write('[', TextTokenType.Operator);
+					output.Write("[", TextTokenType.Operator);
 					if (ami.Flags == 0) {
 						output.Write(ami.Size.ToString(), TextTokenType.Number);
 					} else {
 						if (ami.Size >= 0)
 							output.Write(ami.Size.ToString(), TextTokenType.Number);
 						output.WriteSpace();
-						output.Write('+', TextTokenType.Operator);
+						output.Write("+", TextTokenType.Operator);
 						output.WriteSpace();
 						output.Write(ami.ParamNumber.ToString(), TextTokenType.Number);
 					}
-					output.Write(']', TextTokenType.Operator);
+					output.Write("]", TextTokenType.Operator);
 					break;
 				case NativeType.Currency:
 					output.Write("currency", TextTokenType.Keyword);
@@ -594,9 +594,9 @@ namespace ICSharpCode.Decompiler.Disassembler {
 					output.WriteSpace();
 					output.Write("sysstring", TextTokenType.Keyword);
 					if (fsmi != null && fsmi.IsSizeValid) {
-						output.Write('[', TextTokenType.Operator);
+						output.Write("[", TextTokenType.Operator);
 						output.Write(string.Format("{0}", fsmi.Size), TextTokenType.Number);
-						output.Write(']', TextTokenType.Operator);
+						output.Write("]", TextTokenType.Operator);
 					}
 					break;
 				case NativeType.IUnknown:
@@ -612,13 +612,13 @@ namespace ICSharpCode.Decompiler.Disassembler {
 						throw new InvalidOperationException();
 					var imti = marshalInfo as InterfaceMarshalType;
 					if (imti != null && imti.IsIidParamIndexValid) {
-						output.Write('(', TextTokenType.Operator);
+						output.Write("(", TextTokenType.Operator);
 						output.Write("iidparam", TextTokenType.Keyword);
 						output.WriteSpace();
-						output.Write('=', TextTokenType.Operator);
+						output.Write("=", TextTokenType.Operator);
 						output.WriteSpace();
 						output.Write(imti.IidParamIndex.ToString(), TextTokenType.Number);
-						output.Write(')', TextTokenType.Operator);
+						output.Write(")", TextTokenType.Operator);
 					}
 					break;
 				case NativeType.Struct:
@@ -779,7 +779,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 							output.Write("vector", TextTokenType.Keyword);
 						}
 						if (sami.IsUserDefinedSubTypeValid) {
-							output.Write(',', TextTokenType.Operator);
+							output.Write(",", TextTokenType.Operator);
 							output.WriteSpace();
 							output.Write("\"" + NRefactory.CSharp.TextWriterTokenWriter.ConvertString(sami.UserDefinedSubType.FullName) + "\"", TextTokenType.String);
 						}
@@ -792,9 +792,9 @@ namespace ICSharpCode.Decompiler.Disassembler {
 					FixedArrayMarshalType fami = marshalInfo as FixedArrayMarshalType;
 					if (fami != null) {
 						if (fami.IsSizeValid) {
-							output.Write('[', TextTokenType.Operator);
+							output.Write("[", TextTokenType.Operator);
 							output.Write(fami.Size.ToString(), TextTokenType.Number);
-							output.Write(']', TextTokenType.Operator);
+							output.Write("]", TextTokenType.Operator);
 						}
 						if (fami.IsElementTypeValid) {
 							output.WriteSpace();
@@ -831,20 +831,20 @@ namespace ICSharpCode.Decompiler.Disassembler {
 					if (cmi == null)
 						goto default;
 					output.Write("custom", TextTokenType.Keyword);
-					output.Write('(', TextTokenType.Operator);
+					output.Write("(", TextTokenType.Operator);
 					output.Write(string.Format("\"{0}\"", NRefactory.CSharp.TextWriterTokenWriter.ConvertString(cmi.CustomMarshaler == null ? string.Empty : cmi.CustomMarshaler.FullName)), TextTokenType.String);
-					output.Write(',', TextTokenType.Operator);
+					output.Write(",", TextTokenType.Operator);
 					output.WriteSpace();
 					output.Write(string.Format("\"{0}\"", NRefactory.CSharp.TextWriterTokenWriter.ConvertString(cmi.Cookie)), TextTokenType.String);
 					if (!UTF8String.IsNullOrEmpty(cmi.Guid) || !UTF8String.IsNullOrEmpty(cmi.NativeTypeName)) {
-						output.Write(',', TextTokenType.Operator);
+						output.Write(",", TextTokenType.Operator);
 						output.WriteSpace();
 						output.Write(string.Format("\"{0}\"", NRefactory.CSharp.TextWriterTokenWriter.ConvertString(cmi.Guid)), TextTokenType.String);
-						output.Write(',', TextTokenType.Operator);
+						output.Write(",", TextTokenType.Operator);
 						output.WriteSpace();
 						output.Write(string.Format("\"{0}\"", NRefactory.CSharp.TextWriterTokenWriter.ConvertString(cmi.NativeTypeName)), TextTokenType.String);
 					}
-					output.Write(')', TextTokenType.Operator);
+					output.Write(")", TextTokenType.Operator);
 					break;
 				case NativeType.Error:
 					output.Write("error", TextTokenType.Keyword);
@@ -891,21 +891,21 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				var paramDef = p.ParamDef;
 				if (paramDef != null) {
 					if (paramDef.IsIn) {
-						output.Write('[', TextTokenType.Operator);
+						output.Write("[", TextTokenType.Operator);
 						output.Write("in", TextTokenType.Keyword);
-						output.Write(']', TextTokenType.Operator);
+						output.Write("]", TextTokenType.Operator);
 						output.WriteSpace();
 					}
 					if (paramDef.IsOut) {
-						output.Write('[', TextTokenType.Operator);
+						output.Write("[", TextTokenType.Operator);
 						output.Write("out", TextTokenType.Keyword);
-						output.Write(']', TextTokenType.Operator);
+						output.Write("]", TextTokenType.Operator);
 						output.WriteSpace();
 					}
 					if (paramDef.IsOptional) {
-						output.Write('[', TextTokenType.Operator);
+						output.Write("[", TextTokenType.Operator);
 						output.Write("opt", TextTokenType.Keyword);
-						output.Write(']', TextTokenType.Operator);
+						output.Write("]", TextTokenType.Operator);
 						output.WriteSpace();
 					}
 				}
@@ -916,7 +916,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				}
 				output.WriteDefinition(DisassemblerHelpers.Escape(p.Name), p, TextTokenType.Parameter);
 				if (i < parameters.Count - 1)
-					output.Write(',', TextTokenType.Operator);
+					output.Write(",", TextTokenType.Operator);
 				output.WriteLine();
 			}
 		}
@@ -932,12 +932,12 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				return;
 			output.Write(".param", TextTokenType.ILDirective);
 			output.WriteSpace();
-			output.Write('[', TextTokenType.Operator);
+			output.Write("[", TextTokenType.Operator);
 			output.Write(string.Format("{0}", index), TextTokenType.Number);
-			output.Write(']', TextTokenType.Operator);
+			output.Write("]", TextTokenType.Operator);
 			if (p.HasParamDef && p.ParamDef.HasConstant) {
 				output.WriteSpace();
-				output.Write('=', TextTokenType.Operator);
+				output.Write("=", TextTokenType.Operator);
 				output.WriteSpace();
 				WriteConstant(p.ParamDef.Constant.Value);
 			}
@@ -955,7 +955,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				string typeName = DisassemblerHelpers.PrimitiveTypeName(constant.GetType().FullName, options.OwnerModule, out typeSig);
 				if (typeName != null && typeName != "string") {
 					DisassemblerHelpers.WriteKeyword(output, typeName, typeSig.ToTypeDefOrRef());
-					output.Write('(', TextTokenType.Operator);
+					output.Write("(", TextTokenType.Operator);
 					float? cf = constant as float?;
 					double? cd = constant as double?;
 					if (cf.HasValue && (float.IsNaN(cf.Value) || float.IsInfinity(cf.Value))) {
@@ -965,7 +965,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 					} else {
 						DisassemblerHelpers.WriteOperand(output, constant);
 					}
-					output.Write(')', TextTokenType.Operator);
+					output.Write(")", TextTokenType.Operator);
 				} else {
 					DisassemblerHelpers.WriteOperand(output, constant);
 				}
@@ -999,9 +999,9 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			output.WriteDefinition(".field", field, TextTokenType.ILDirective, false);
 			output.WriteSpace();
 			if (field.HasLayoutInfo && field.FieldOffset.HasValue) {
-				output.Write('[', TextTokenType.Operator);
+				output.Write("[", TextTokenType.Operator);
 				output.Write(string.Format("{0}", field.FieldOffset), TextTokenType.Number);
-				output.Write(']', TextTokenType.Operator);
+				output.Write("]", TextTokenType.Operator);
 				output.WriteSpace();
 			}
 			WriteEnum(field.Attributes & FieldAttributes.FieldAccessMask, fieldVisibility);
@@ -1026,15 +1026,13 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			}
 			if (field.HasConstant) {
 				output.WriteSpace();
-				output.Write('=', TextTokenType.Operator);
+				output.Write("=", TextTokenType.Operator);
 				output.WriteSpace();
 				WriteConstant(field.Constant.Value);
 			}
 			output.WriteLine();
 			if (field.HasCustomAttributes) {
-				output.MarkFoldStart();
 				WriteAttributes(field.CustomAttributes);
-				output.MarkFoldEnd();
 			}
 		}
 		#endregion
@@ -1064,7 +1062,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			output.WriteSpace();
 			output.Write(DisassemblerHelpers.Escape(property.Name), TextTokenHelper.GetTextTokenType(property));
 			
-			output.Write('(', TextTokenType.Operator);
+			output.Write("(", TextTokenType.Operator);
 			var parameters = new List<Parameter>(property.GetParameters());
 			if (parameters.GetNumberOfNormalParameters() > 0) {
 				output.WriteLine();
@@ -1072,7 +1070,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				WriteParameters(parameters);
 				output.Unindent();
 			}
-			output.Write(')', TextTokenType.Operator);
+			output.Write(")", TextTokenType.Operator);
 
 			if (full) {
 				OpenBlock(false);
@@ -1093,13 +1091,13 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				if (property.GetMethods.Count > 0) {
 					output.WriteSpace();
 					output.Write(".get", TextTokenType.Keyword);
-					output.Write(';', TextTokenType.Operator);
+					output.Write(";", TextTokenType.Operator);
 				}
 
 				if (property.SetMethods.Count > 0) {
 					output.WriteSpace();
 					output.Write(".set", TextTokenType.Keyword);
-					output.Write(';', TextTokenType.Operator);
+					output.Write(";", TextTokenType.Operator);
 				}
 
 				output.WriteSpace();
@@ -1158,19 +1156,19 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				if (ev.AddMethod != null) {
 					output.WriteSpace();
 					output.Write(".addon", TextTokenType.Keyword);
-					output.Write(';', TextTokenType.Operator);
+					output.Write(";", TextTokenType.Operator);
 				}
 
 				if (ev.RemoveMethod != null) {
 					output.WriteSpace();
 					output.Write(".removeon", TextTokenType.Keyword);
-					output.Write(';', TextTokenType.Operator);
+					output.Write(";", TextTokenType.Operator);
 				}
 
 				if (ev.InvokeMethod != null) {
 					output.WriteSpace();
 					output.Write(".fire", TextTokenType.Keyword);
-					output.Write(';', TextTokenType.Operator);
+					output.Write(";", TextTokenType.Operator);
 				}
 
 				output.WriteSpace();
@@ -1285,7 +1283,6 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			
 			output.Write(DisassemblerHelpers.Escape(type.DeclaringType != null ? type.Name.String : type.FullName), TextTokenHelper.GetTextTokenType(type));
 			WriteTypeParameters(output, type);
-			output.MarkFoldStart(defaultCollapsed: isInType);
 			output.WriteLine();
 			
 			if (type.BaseType != null) {
@@ -1377,10 +1374,10 @@ namespace ICSharpCode.Decompiler.Disassembler {
 		void WriteTypeParameters(ITextOutput output, ITypeOrMethodDef p)
 		{
 			if (p.HasGenericParameters) {
-				output.Write('<', TextTokenType.Operator);
+				output.Write("<", TextTokenType.Operator);
 				for (int i = 0; i < p.GenericParameters.Count; i++) {
 					if (i > 0) {
-						output.Write(',', TextTokenType.Operator);
+						output.Write(",", TextTokenType.Operator);
 						output.WriteSpace();
 					}
 					GenericParam gp = p.GenericParameters[i];
@@ -1396,25 +1393,25 @@ namespace ICSharpCode.Decompiler.Disassembler {
 						output.WriteSpace();
 					}
 					if (gp.HasGenericParamConstraints) {
-						output.Write('(', TextTokenType.Operator);
+						output.Write("(", TextTokenType.Operator);
 						for (int j = 0; j < gp.GenericParamConstraints.Count; j++) {
 							if (j > 0) {
-								output.Write(',', TextTokenType.Operator);
+								output.Write(",", TextTokenType.Operator);
 								output.WriteSpace();
 							}
 							gp.GenericParamConstraints[j].Constraint.WriteTo(output, ILNameSyntax.TypeName);
 						}
-						output.Write(')', TextTokenType.Operator);
+						output.Write(")", TextTokenType.Operator);
 						output.WriteSpace();
 					}
 					if (gp.IsContravariant) {
-						output.Write('-', TextTokenType.Operator);
+						output.Write("-", TextTokenType.Operator);
 					} else if (gp.IsCovariant) {
-						output.Write('+', TextTokenType.Operator);
+						output.Write("+", TextTokenType.Operator);
 					}
 					output.Write(DisassemblerHelpers.Escape(gp.Name), TextTokenHelper.GetTextTokenType(gp));
 				}
-				output.Write('>', TextTokenType.Operator);
+				output.Write(">", TextTokenType.Operator);
 			}
 		}
 		#endregion
@@ -1429,7 +1426,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				byte[] blob = a.GetBlob();
 				if (blob != null) {
 					output.WriteSpace();
-					output.Write('=', TextTokenType.Operator);
+					output.Write("=", TextTokenType.Operator);
 					output.WriteSpace();
 					WriteBlob(blob);
 				}
@@ -1439,7 +1436,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 		
 		void WriteBlob(byte[] blob)
 		{
-			output.Write('(', TextTokenType.Operator);
+			output.Write("(", TextTokenType.Operator);
 			output.Indent();
 
 			for (int i = 0; i < blob.Length; i++) {
@@ -1453,12 +1450,11 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			
 			output.WriteLine();
 			output.Unindent();
-			output.Write(')', TextTokenType.Operator);
+			output.Write(")", TextTokenType.Operator);
 		}
 		
 		void OpenBlock(bool defaultCollapsed)
 		{
-			output.MarkFoldStart(defaultCollapsed: defaultCollapsed);
 			output.WriteLine();
 			output.WriteLineLeftBrace();
 			output.Indent();
@@ -1472,7 +1468,6 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				output.WriteSpace();
 				output.Write("// " + comment, TextTokenType.Comment);
 			}
-			output.MarkFoldEnd();
 			output.WriteLine();
 		}
 		
@@ -1576,7 +1571,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			if (asm.PublicKey != null && !asm.PublicKey.IsNullOrEmpty) {
 				output.Write(".publickey", TextTokenType.ILDirective);
 				output.WriteSpace();
-				output.Write('=', TextTokenType.Operator);
+				output.Write("=", TextTokenType.Operator);
 				output.WriteSpace();
 				WriteBlob(asm.PublicKey.Data);
 				output.WriteLine();
@@ -1598,11 +1593,11 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				output.Write(".ver", TextTokenType.ILDirective);
 				output.WriteSpace();
 				output.Write(string.Format("{0}", v.Major), TextTokenType.Number);
-				output.Write(':', TextTokenType.Operator);
+				output.Write(":", TextTokenType.Operator);
 				output.Write(string.Format("{0}", v.Minor), TextTokenType.Number);
-				output.Write(':', TextTokenType.Operator);
+				output.Write(":", TextTokenType.Operator);
 				output.Write(string.Format("{0}", v.Build), TextTokenType.Number);
-				output.Write(':', TextTokenType.Operator);
+				output.Write(":", TextTokenType.Operator);
 				output.WriteLine(string.Format("{0}", v.Revision), TextTokenType.Number);
 			}
 			CloseBlock();
@@ -1634,7 +1629,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				if (!PublicKeyBase.IsNullOrEmpty2(aref.PublicKeyOrToken)) {
 					output.Write(".publickeytoken", TextTokenType.ILDirective);
 					output.WriteSpace();
-					output.Write('=', TextTokenType.Operator);
+					output.Write("=", TextTokenType.Operator);
 					output.WriteSpace();
 					WriteBlob(aref.PublicKeyOrToken.Token.Data);
 					output.WriteLine();
@@ -1643,11 +1638,11 @@ namespace ICSharpCode.Decompiler.Disassembler {
 					output.Write(".ver", TextTokenType.ILDirective);
 					output.WriteSpace();
 					output.Write(string.Format("{0}", aref.Version.Major), TextTokenType.Number);
-					output.Write(':', TextTokenType.Operator);
+					output.Write(":", TextTokenType.Operator);
 					output.Write(string.Format("{0}", aref.Version.Minor), TextTokenType.Number);
-					output.Write(':', TextTokenType.Operator);
+					output.Write(":", TextTokenType.Operator);
 					output.Write(string.Format("{0}", aref.Version.Build), TextTokenType.Number);
-					output.Write(':', TextTokenType.Operator);
+					output.Write(":", TextTokenType.Operator);
 					output.WriteLine(string.Format("{0}", aref.Version.Revision), TextTokenType.Number);
 				}
 				CloseBlock();

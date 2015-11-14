@@ -69,7 +69,7 @@ namespace dnSpy.TreeNodes.Hex {
 			output.Write(string.Format("{0}", index + 1), TextTokenType.Number);
 			if (infoTuple != null) {
 				output.WriteSpace();
-				output.Write('-', TextTokenType.Operator);
+				output.Write("-", TextTokenType.Operator);
 				output.WriteSpace();
 				infoTuple.Item2(output);
 			}
@@ -171,14 +171,14 @@ namespace dnSpy.TreeNodes.Hex {
 
 			if (!string.IsNullOrEmpty(ns)) {
 				output.WriteSpace();
-				output.Write('-', TextTokenType.Operator);
+				output.Write("-", TextTokenType.Operator);
 				output.WriteSpace();
 
 				var parts = ns.Split('.');
 				for (int i = 0; i < parts.Length; i++) {
 					output.Write(parts[i], TextTokenType.NamespacePart);
 					if (i + 1 < parts.Length)
-						output.Write('.', TextTokenType.Operator);
+						output.Write(".", TextTokenType.Operator);
 				}
 			}
 		}
@@ -232,7 +232,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		void WriteFileInfo(ITextOutput output) {
-			output.WriteFilename(ReadStringsHeap(1));
+			output.WriteFilename_OLD(ReadStringsHeap(1));
 		}
 
 		void WriteExportedTypeInfo(ITextOutput output) {
@@ -240,7 +240,7 @@ namespace dnSpy.TreeNodes.Hex {
 		}
 
 		void WriteManifestResourceInfo(ITextOutput output) {
-			output.WriteFilename(ReadStringsHeap(2));
+			output.WriteFilename_OLD(ReadStringsHeap(2));
 		}
 
 		void WriteGenericParamInfo(ITextOutput output) {
