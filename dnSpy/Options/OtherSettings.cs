@@ -101,7 +101,7 @@ namespace dnSpy.Options {
 			var xelem = settings[SETTINGS_SECTION_NAME];
 			this.UseMemoryMappedIO = (bool?)xelem.Attribute("UseMemoryMappedIO") ?? true;
 			this.DeserializeResources = (bool?)xelem.Attribute("DeserializeResources") ?? true;
-			this.UseNewRenderer = (bool?)xelem.Attribute("UseNewRenderer") ?? true;
+			this.UseNewRenderer = (bool?)xelem.Attribute("UseNewRenderer") ?? false;
 			TextFormatterFactory.TextFormatterProvider = UseNewRenderer ? TextFormatterProvider.GlyphRunFormatter : TextFormatterProvider.BuiltIn;
 		}
 

@@ -356,16 +356,8 @@ namespace ICSharpCode.ILSpy {
 			InitializeTreeView(treeView);
 
 			VirtualizingStackPanel.SetIsVirtualizing(treeView, true);
-			// VirtualizationMode.Recycling results in slower scrolling but less memory usage.
-			// In my simple test, 225MB vs 280MB (165 loaded assemblies, selected method was
-			// [mscorlib]System.String::Format(string, object), scroll up and down, release, then
-			// keep doing it a number of times).
-			// VirtualizationMode.Standard: all created items are freed once the scrolling stops
-			// which can sometimes result in the UI not responding to input. Doesn't seem to be a
-			// problem with the treeview, though. More of a problem with the CIL editor which has
-			// to use Recycling.
-			// SharpTreeView defaults to Recycling, so we must explicitly set it to Standard.
-			VirtualizingStackPanel.SetVirtualizationMode(treeView, VirtualizationMode.Standard);
+			// With new optimization, Recycling mode is better.
+			VirtualizingStackPanel.SetVirtualizationMode(treeView, VirtualizationMode.Recycling);
 		}
 
 		internal bool IsDecompilerTabControl(TabControl tabControl) {

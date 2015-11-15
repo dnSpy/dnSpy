@@ -57,6 +57,9 @@ namespace ICSharpCode.TreeView {
 		}
 
 		public void UpdateObject(SharpTreeNode obj) {
+			if (Object == obj)
+				return;
+
 			if (Object != null)
 				Object.PropertyChanged -= OnPropertyChanged;
 
@@ -68,9 +71,13 @@ namespace ICSharpCode.TreeView {
 				IsNull = false;
 				obj.PropertyChanged += OnPropertyChanged;
 
-				foreach (var desc in descMap)
+				foreach (var desc in descMap) {
 					desc.Value.OnValueChanged(this);
+				}
 			}
+
+			if (ObjectChanged != null)
+				ObjectChanged(this, EventArgs.Empty);
 		}
 
 		void OnPropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -78,6 +85,8 @@ namespace ICSharpCode.TreeView {
 			if (descMap.TryGetValue(e.PropertyName, out desc))
 				desc.OnValueChanged(this);
 		}
+
+		public event EventHandler ObjectChanged;
 
 		public bool IsNull { get; private set; }
 		public SharpTreeNode Object { get; private set; }

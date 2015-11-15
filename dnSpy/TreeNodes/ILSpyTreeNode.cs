@@ -409,5 +409,17 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			fullPath.Names.Reverse();
 			return fullPath;
 		}
+
+		public override sealed bool IsCheckable {
+			get {
+				return false;
+			}
+		}
+
+		public override sealed bool IsEditable {
+			get {
+				return false;
+			}
+		}
 	}
 }
