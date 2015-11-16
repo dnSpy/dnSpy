@@ -31,6 +31,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
+using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Contracts.TreeView;
@@ -39,6 +40,7 @@ using dnSpy.Images;
 using dnSpy.Languages;
 using dnSpy.Menus;
 using dnSpy.Settings;
+using dnSpy.Tabs;
 using dnSpy.Themes;
 using dnSpy.ToolBars;
 using dnSpy.TreeView;
@@ -87,47 +89,62 @@ namespace dnSpy {
 		public IMenuManager MenuManager {
 			get { return menuManager; }
 		}
-		readonly MenuManager menuManager;
+		[Import]
+		/*readonly*/ MenuManager menuManager;
 
 		public IToolBarManager ToolBarManager {
 			get { return toolBarManager; }
 		}
-		readonly ToolBarManager toolBarManager;
+		[Import]
+		/*readonly*/ ToolBarManager toolBarManager;
 
 		public IThemeManager ThemeManager {
 			get { return themeManager; }
 		}
-		readonly ThemeManager themeManager;
+		[Import]
+		/*readonly*/ ThemeManager themeManager;
 
 		public IImageManager ImageManager {
 			get { return imageManager; }
 		}
-		readonly ImageManager imageManager;
+		[Import]
+		/*readonly*/ ImageManager imageManager;
 
 		public IDotNetImageManager DotNetImageManager {
 			get { return dotNetImageManager; }
 		}
-		readonly DotNetImageManager dotNetImageManager;
+		[Import]
+		/*readonly*/ DotNetImageManager dotNetImageManager;
 
 		public ISettingsManager SettingsManager {
 			get { return settingsManager; }
 		}
-		readonly SettingsManager settingsManager;
+		[Import]
+		/*readonly*/ SettingsManager settingsManager;
 
 		public ITreeViewManager TreeViewManager {
 			get { return treeViewManager; }
 		}
-		readonly TreeViewManager treeViewManager;
+		[Import]
+		/*readonly*/ TreeViewManager treeViewManager;
 
 		public IFileTreeView FileTreeView {
 			get { return fileTreeView; }
 		}
-		readonly FileTreeView fileTreeView;
+		[Import]
+		/*readonly*/ FileTreeView fileTreeView;
 
 		public ILanguageManager LanguageManager {
 			get { return languageManager; }
 		}
-		LanguageManager languageManager;
+		[Import]
+		/*readonly*/ LanguageManager languageManager;
+
+		public ITabManagerCreator TabManagerCreator {
+			get { return tabManagerCreator; }
+		}
+		[Import]
+		/*readonly*/ TabManagerCreator tabManagerCreator;
 
 		public CompositionContainer CompositionContainer {
 			get { return compositionContainer; }
@@ -135,18 +152,18 @@ namespace dnSpy {
 		}
 		CompositionContainer compositionContainer;
 
-		[ImportingConstructor]
-		AppImpl(ThemeManager themeManager, ImageManager imageManager, DotNetImageManager dotNetImageManager, MenuManager menuManager, ToolBarManager toolBarManager, SettingsManager settingsManager, TreeViewManager treeViewManager, FileTreeView fileTreeView, LanguageManager languageManager) {
+		AppImpl() {
 			DnSpy.App = this;
-			this.themeManager = themeManager;
-			this.imageManager = imageManager;
-			this.dotNetImageManager = dotNetImageManager;
-			this.menuManager = menuManager;
-			this.toolBarManager = toolBarManager;
-			this.settingsManager = settingsManager;
-			this.treeViewManager = treeViewManager;
-			this.fileTreeView = fileTreeView;
-			this.languageManager = languageManager;
+			this.themeManager = null;
+			this.imageManager = null;
+			this.dotNetImageManager = null;
+			this.menuManager = null;
+			this.toolBarManager = null;
+			this.settingsManager = null;
+			this.treeViewManager = null;
+			this.fileTreeView = null;
+			this.languageManager = null;
+			this.tabManagerCreator = null;
 		}
 
 		public void InitializeThemes(string themeName) {

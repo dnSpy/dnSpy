@@ -27,6 +27,7 @@ using System.Security;
 using System.Windows;
 using System.Xml.Linq;
 using dnSpy.Contracts.Themes;
+using dnSpy.Events;
 using Microsoft.Win32;
 
 namespace dnSpy.Themes {
@@ -39,8 +40,7 @@ namespace dnSpy.Themes {
 			internal set {
 				if (theme != value) {
 					theme = value;
-					if (ThemeChanged != null)
-						ThemeChanged(this, new ThemeChangedEventArgs());
+					themeChanged.Raise(this, new ThemeChangedEventArgs());
 				}
 			}
 		}
@@ -65,9 +65,14 @@ namespace dnSpy.Themes {
 		}
 		bool isHighContrast;
 
-		public event EventHandler<ThemeChangedEventArgs> ThemeChanged;
+		public event EventHandler<ThemeChangedEventArgs> ThemeChanged {
+			add { themeChanged.Add(value); }
+			remove { themeChanged.Remove(value); }
+		}
+		readonly WeakEventList<ThemeChangedEventArgs> themeChanged;
 
 		ThemeManager() {
+			this.themeChanged = new WeakEventList<ThemeChangedEventArgs>();
 			this.themes = new Dictionary<string, Theme>();
 			Load();
 			Debug.Assert(themes.Count != 0);

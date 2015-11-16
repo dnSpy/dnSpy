@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.TreeView {
@@ -58,6 +59,7 @@ namespace dnSpy.TreeView {
 		}
 
 		public TreeNodeImpl(TreeViewImpl treeViewImpl, ITreeNodeData data) {
+			Debug.Assert(data.TreeNode == null);
 			this.treeViewImpl = treeViewImpl;
 			this.nodeList = new SharpTreeNodeChildrenList(this);
 			this.data = data;

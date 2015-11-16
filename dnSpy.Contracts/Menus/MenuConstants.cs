@@ -18,6 +18,7 @@
 */
 
 using System.Windows.Controls;
+using dnSpy.Contracts.Tabs;
 
 namespace dnSpy.Contracts.Menus {
 	/// <summary>
@@ -93,8 +94,11 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Reference</summary>
 		public const string GUIDOBJ_REFERENCE_GUID = "6A019D43-8FDA-4869-A861-0A5DE55CF413";
 
-		/// <summary><see cref="TabControl"/></summary>
-		public const string GUIDOBJ_TABCONTROL_GUID = "AB1B4BCE-D8C1-43BE-8822-C124FBCAC260";
+		/// <summary>Files <see cref="TabControl"/></summary>
+		public const string GUIDOBJ_FILES_TABCONTROL_GUID = "AB1B4BCE-D8C1-43BE-8822-C124FBCAC260";
+
+		/// <summary>Files <see cref="ITabGroup"/></summary>
+		public const string GUIDOBJ_FILES_TABGROUP_GUID = "87B2F94A-D80B-45FD-BB31-71E390CA6C01";
 
 		/// <summary>DecompilerTextView</summary>
 		public const string GUIDOBJ_DECOMPILED_CODE_GUID = "7F9E85C9-05B5-43FE-9CD1-20E61B183454";

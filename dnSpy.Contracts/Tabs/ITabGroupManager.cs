@@ -19,22 +19,32 @@
 
 using System;
 using System.Collections.Generic;
+using dnSpy.Contracts.Menus;
 
-namespace dnSpy.Contracts.TreeView {
+namespace dnSpy.Contracts.Tabs {
 	/// <summary>
-	/// Creates <see cref="ITreeNodeData"/>
+	/// <see cref="ITabGroup"/> manager
 	/// </summary>
-	public interface ITreeNodeDataCreator {
+	public interface ITabGroupManager {
 		/// <summary>
-		/// Guid of owner <see cref="ITreeNodeData"/> that will receive the new <see cref="ITreeNodeData"/>
+		/// Gets all <see cref="ITabGroup"/> instances
 		/// </summary>
-		Guid Guid { get; }
+		IEnumerable<ITabGroup> TabGroups { get; }
 
 		/// <summary>
-		/// Creates new <see cref="ITreeNodeData"/>
+		/// true if the <see cref="ITabGroup"/>s are lined up horizontally, else vertically
 		/// </summary>
-		/// <param name="context">Context</param>
+		bool IsHorizontal { get; set; }
+
+		/// <summary>
+		/// Creates a new <see cref="ITabGroup"/> instance
+		/// </summary>
 		/// <returns></returns>
-		IEnumerable<ITreeNodeData> Create(TreeNodeDataCreatorContext context);
+		ITabGroup Create();
+
+		/// <summary>
+		/// Gets the UI object
+		/// </summary>
+		object UIObject { get; }
 	}
 }

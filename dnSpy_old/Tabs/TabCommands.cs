@@ -47,7 +47,7 @@ namespace dnSpy.Tabs {
 		}
 
 		static TabGroupContext CreateContextInternal(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TABCONTROL_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID))
 				return null;
 			var tabControl = context.CreatorObject.Object as TabControl;
 			if (!MainWindow.Instance.IsDecompilerTabControl(tabControl))

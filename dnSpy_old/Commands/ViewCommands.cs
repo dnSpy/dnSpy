@@ -84,7 +84,7 @@ namespace dnSpy.Commands {
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TABCONTROL_GUID) &&
+			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID) &&
 				MainWindow.Instance.IsDecompilerTabControl(context.CreatorObject.Object as TabControl) &&
 				base.IsVisible(context);
 		}

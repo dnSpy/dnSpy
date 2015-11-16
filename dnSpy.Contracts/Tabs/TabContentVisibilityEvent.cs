@@ -17,24 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-
-namespace dnSpy.Contracts.TreeView {
+namespace dnSpy.Contracts.Tabs {
 	/// <summary>
-	/// Creates <see cref="ITreeNodeData"/>
+	/// Event type
 	/// </summary>
-	public interface ITreeNodeDataCreator {
+	public enum TabContentVisibilityEvent {
 		/// <summary>
-		/// Guid of owner <see cref="ITreeNodeData"/> that will receive the new <see cref="ITreeNodeData"/>
+		/// It's been added to the UI. It may or may not be visible.
 		/// </summary>
-		Guid Guid { get; }
+		Added,
 
 		/// <summary>
-		/// Creates new <see cref="ITreeNodeData"/>
+		/// It's been removed from the UI
 		/// </summary>
-		/// <param name="context">Context</param>
-		/// <returns></returns>
-		IEnumerable<ITreeNodeData> Create(TreeNodeDataCreatorContext context);
+		Removed,
+
+		/// <summary>
+		/// It's open and visible
+		/// </summary>
+		Visible,
+
+		/// <summary>
+		/// It's open but hidden
+		/// </summary>
+		Hidden,
 	}
 }

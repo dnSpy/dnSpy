@@ -72,7 +72,7 @@ namespace dnSpy.Files.TreeView {
 			this.treeView = treeViewManager.Create(new Guid(TVConstants.FILE_TREEVIEW_GUID), options);
 			this.fileManager = fileManager;
 			this.dotNetImageManager = dotNetImageManager;
-			var dispatcher = ((DispatcherObject)treeView.UIObject).Dispatcher;
+			var dispatcher = treeView.UIObject.Dispatcher;
 			this.fileManager.SetDispatcher(a => {
 				if (!dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted) {
 					// Always notify with a delay because adding stuff to the tree view could

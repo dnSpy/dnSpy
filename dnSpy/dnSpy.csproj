@@ -62,6 +62,7 @@
   <ItemGroup>
     <Compile Include="AppImpl.cs" />
     <Compile Include="Dummy.cs" />
+    <Compile Include="Events\WeakEventList.cs" />
     <Compile Include="Files\AssemblyResolver.cs" />
     <Compile Include="Files\FileManager.cs" />
     <Compile Include="Files\TreeView\AssemblyFileNode.cs" />
@@ -111,6 +112,12 @@
     <Compile Include="Settings\XmlSettingsReader.cs" />
     <Compile Include="Settings\XmlSettingsWriter.cs" />
     <Compile Include="Settings\XmlUtils.cs" />
+    <Compile Include="Tabs\FileTabBackgroundConverter.cs" />
+    <Compile Include="Tabs\TabGroup.cs" />
+    <Compile Include="Tabs\TabGroupManager.cs" />
+    <Compile Include="Tabs\TabItemImpl.cs" />
+    <Compile Include="Tabs\TabManager.cs" />
+    <Compile Include="Tabs\TabManagerCreator.cs" />
     <Compile Include="Themes\Color.cs" />
     <Compile Include="Themes\ColorInfo.cs" />
     <Compile Include="Themes\ColorInfos.cs" />
@@ -192,6 +199,7 @@
     <Resource Include="Images\ClassPrivate.png" />
     <Resource Include="Images\ClassProtected.png" />
     <Resource Include="Images\ClassProtectedInternal.png" />
+    <Resource Include="Images\CloseDocuments.png" />
     <Resource Include="Images\Constructor.png" />
     <Resource Include="Images\ConstructorCompilerControlled.png" />
     <Resource Include="Images\ConstructorInternal.png" />
@@ -252,6 +260,7 @@
     <Resource Include="Images\GenericPrivate.png" />
     <Resource Include="Images\GenericProtected.png" />
     <Resource Include="Images\GenericProtectedInternal.png" />
+    <Resource Include="Images\HorizontalTabGroup.png" />
     <Resource Include="Images\Interface.png" />
     <Resource Include="Images\InterfaceInternal.png" />
     <Resource Include="Images\InterfacePrivate.png" />
@@ -316,6 +325,7 @@
     <Resource Include="Images\StructPrivate.png" />
     <Resource Include="Images\StructProtected.png" />
     <Resource Include="Images\StructProtectedInternal.png" />
+    <Resource Include="Images\VerticalTabGroup.png" />
     <Resource Include="Images\VirtualEvent.png" />
     <Resource Include="Images\VirtualEventCompilerControlled.png" />
     <Resource Include="Images\VirtualEventInternal.png" />

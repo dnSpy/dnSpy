@@ -21,6 +21,7 @@ using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
@@ -39,7 +40,7 @@ namespace dnSpy.TreeView {
 		}
 		readonly Guid guid;
 
-		public object UIObject {
+		public DispatcherObject UIObject {
 			get { return sharpTreeView; }
 		}
 		readonly SharpTreeView sharpTreeView;
@@ -91,6 +92,7 @@ namespace dnSpy.TreeView {
 		}
 
 		TreeNodeImpl Create(ITreeNodeData data) {
+			Debug.Assert(data.TreeNode == null);
 			var impl = new TreeNodeImpl(this, data);
 			if (treeViewListener != null)
 				treeViewListener.NodeCreated(impl);

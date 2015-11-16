@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Windows.Threading;
 
 namespace dnSpy.Contracts.TreeView {
 	/// <summary>
@@ -43,8 +44,8 @@ namespace dnSpy.Contracts.TreeView {
 		ITreeNode Create(ITreeNodeData data);
 
 		/// <summary>
-		/// Gets the tree view WPF UI object
+		/// Gets the tree view UI object
 		/// </summary>
-		object UIObject { get; }
+		DispatcherObject UIObject { get; }
 	}
 }

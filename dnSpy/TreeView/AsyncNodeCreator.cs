@@ -38,7 +38,7 @@ namespace dnSpy.TreeView {
 		protected AsyncNodeCreator(ITreeNodeData targetNode) {
 			this.lockObj = new object();
 			this.targetNode = targetNode;
-			this.dispatcher = ((DispatcherObject)targetNode.TreeNode.TreeView.UIObject).Dispatcher;
+			this.dispatcher = targetNode.TreeNode.TreeView.UIObject.Dispatcher;
 			this.uiThreadActions = new List<Action>();
 			this.cancellationTokenSource = new CancellationTokenSource();
 			this.cancellationToken = cancellationTokenSource.Token;

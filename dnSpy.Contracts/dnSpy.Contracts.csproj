@@ -115,6 +115,12 @@
     <Compile Include="Settings\ISettingsManager.cs" />
     <Compile Include="Settings\ISettingsSection.cs" />
     <Compile Include="Settings\ISettingsSectionCreator.cs" />
+    <Compile Include="Tabs\ITabContent.cs" />
+    <Compile Include="Tabs\ITabGroup.cs" />
+    <Compile Include="Tabs\ITabGroupManager.cs" />
+    <Compile Include="Tabs\ITabManager.cs" />
+    <Compile Include="Tabs\ITabManagerCreator.cs" />
+    <Compile Include="Tabs\TabContentVisibilityEvent.cs" />
     <Compile Include="Themes\ColorType.cs" />
     <Compile Include="Themes\ITheme.cs" />
     <Compile Include="Themes\IThemeColor.cs" />

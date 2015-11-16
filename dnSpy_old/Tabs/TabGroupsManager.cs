@@ -151,7 +151,7 @@ namespace dnSpy.Tabs {
 			tabControl.Style = App.Current.FindResource("TabStateTabControl") as Style;
 			var tabManager = new TabManager<TState>(this, tabControl, onSelectionChanged, onAddRemoveTabState);
 			tabManagers.Insert(insertIndex, tabManager);
-			DnSpy.App.MenuManager.InitializeContextMenu(tabManager.TabControl, MenuConstants.GUIDOBJ_TABCONTROL_GUID);
+			DnSpy.App.MenuManager.InitializeContextMenu(tabManager.TabControl, MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID);
 			if (OnTabGroupAdded != null)
 				OnTabGroupAdded(this, TabGroupEventArgs.Empty);
 			return tabManager;

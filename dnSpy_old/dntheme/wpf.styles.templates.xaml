@@ -10,10 +10,6 @@
 
 	<dntheme:FileTabBackgroundConverter x:Key="FileTabBackgroundConverter"/>
 
-	<Style x:Key="TabGroupsGridStyle"
-           TargetType="{x:Type Grid}">
-	</Style>
-
     <Style x:Key="CodeToolTip"
            BasedOn="{StaticResource {x:Type ToolTip}}"
            TargetType="{x:Type ToolTip}">

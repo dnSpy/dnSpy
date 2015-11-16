@@ -17,24 +17,25 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Tabs;
+using dnSpy.Contracts.Themes;
 
-namespace dnSpy.Contracts.TreeView {
-	/// <summary>
-	/// Creates <see cref="ITreeNodeData"/>
-	/// </summary>
-	public interface ITreeNodeDataCreator {
-		/// <summary>
-		/// Guid of owner <see cref="ITreeNodeData"/> that will receive the new <see cref="ITreeNodeData"/>
-		/// </summary>
-		Guid Guid { get; }
+namespace dnSpy.Tabs {
+	[Export, Export(typeof(ITabManagerCreator)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class TabManagerCreator : ITabManagerCreator {
+		readonly IThemeManager themeManager;
+		readonly IMenuManager menuManager;
 
-		/// <summary>
-		/// Creates new <see cref="ITreeNodeData"/>
-		/// </summary>
-		/// <param name="context">Context</param>
-		/// <returns></returns>
-		IEnumerable<ITreeNodeData> Create(TreeNodeDataCreatorContext context);
+		[ImportingConstructor]
+		TabManagerCreator(IThemeManager themeManager, IMenuManager menuManager) {
+			this.themeManager = themeManager;
+			this.menuManager = menuManager;
+		}
+
+		public ITabManager Create() {
+			return new TabManager(themeManager, menuManager);
+		}
 	}
 }

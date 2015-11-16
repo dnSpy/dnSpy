@@ -2,6 +2,8 @@
                     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
                     xmlns:tb="clr-namespace:dnSpy.ToolBars"
                     xmlns:shtv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
+                    xmlns:ctrls="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
+                    xmlns:tabs="clr-namespace:dnSpy.Tabs"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<!--
@@ -5063,5 +5065,165 @@
             </StackPanel>
         </Button>
     </DataTemplate>
+
+	<Style x:Key="TabGroupsGridStyle"
+           TargetType="{x:Type Grid}">
+	</Style>
+
+	<tabs:FileTabBackgroundConverter x:Key="FileTabBackgroundConverter"/>
+    <Style x:Key="FileTabGroupTabControl"
+           BasedOn="{StaticResource {x:Type TabControl}}"
+           TargetType="{x:Type TabControl}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource SystemColorsControlText}"/>
+        <Setter Property="Padding"
+                Value="0 2 0 0"/>
+        <Setter Property="BorderThickness"
+                Value="0 0 0 0"/>
+        <Setter Property="Background"
+                Value="{Binding TabGroupState, Converter={StaticResource FileTabBackgroundConverter}}"/>
+        <Setter Property="Visibility"
+                Value="{Binding HasOpenedDoc, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <Setter Property="HorizontalContentAlignment"
+                Value="Center"/>
+        <Setter Property="VerticalContentAlignment"
+                Value="Center"/>
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabControl}">
+                    <Grid KeyboardNavigation.TabNavigation="Local"
+                          SnapsToDevicePixels="true"
+                          ClipToBounds="true">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition x:Name="ColumnDefinition0"/>
+                            <ColumnDefinition x:Name="ColumnDefinition1"
+                                              Width="0"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition x:Name="RowDefinition0"
+                                           Height="Auto"/>
+                            <RowDefinition x:Name="RowDefinition1"
+                                           Height="*"/>
+                        </Grid.RowDefinitions>
+                        <TabPanel x:Name="HeaderPanel"
+                                  Panel.ZIndex ="1" 
+                                  KeyboardNavigation.TabIndex="1"
+                                  Grid.Column="0"
+                                  Grid.Row="0"
+                                  Margin="0 0 0 0"
+                                  IsItemsHost="true"/>
+                        <Border x:Name="ContentPanel"
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                KeyboardNavigation.TabNavigation="Local"
+                                KeyboardNavigation.DirectionalNavigation="Contained"
+                                KeyboardNavigation.TabIndex="2"
+                                Grid.Column="0"
+                                Grid.Row="1">
+                            <ContentPresenter x:Name="PART_SelectedContentHost"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              Margin="{TemplateBinding Padding}"
+                                              ContentSource="SelectedContent"/>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+	<Style TargetType="{x:Type tabs:TabItemImpl}">
+		<Setter Property="Control.Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type TabItem}">
+					<Border ToolTip="{Binding ToolTip}">
+						<Border>
+							<Border Name="Border"
+									Background="{DynamicResource EnvironmentFileTabBackground}"
+									BorderBrush="{DynamicResource EnvironmentFileTabBorder}"
+									BorderThickness="0 2 0 0"
+									Padding="0 1 0 3">
+								<DockPanel Name="DockPanel" TextBlock.Foreground="{DynamicResource EnvironmentFileTabText}">
+									<ctrls:TabButton x:Name="CloseButton"
+													 DockPanel.Dock="Right"
+													 Margin="3 0 3 0"
+													 Command="{Binding CloseCommand}"
+													 GlyphForeground="Transparent"
+													 HoverBackground="{DynamicResource EnvironmentFileTabButtonHoverInactive}"
+													 HoverBorderBrush="{DynamicResource EnvironmentFileTabButtonHoverInactiveBorder}"
+													 HoverForeground="{DynamicResource EnvironmentFileTabButtonHoverInactiveGlyph}"
+													 HoverBorderThickness="1"
+													 PressedBackground="{DynamicResource EnvironmentFileTabButtonDownInactive}"
+													 PressedBorderBrush="{DynamicResource EnvironmentFileTabButtonDownInactiveBorder}"
+													 PressedForeground="{DynamicResource EnvironmentFileTabButtonDownInactiveGlyph}"
+													 PressedBorderThickness="1"
+													 ToolTip="Close">
+										<Path x:Name="CloseButtonCross"
+											  Width="10" Height="8"
+											  Stretch="Uniform"
+											  Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
+											  Fill="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource Self}}" />
+									</ctrls:TabButton>
+									<TextBlock HorizontalAlignment="Stretch"
+											   Margin="4 0 4 0"
+											   VerticalAlignment="Stretch"
+											   Text="{Binding Header}"
+											   MaxWidth="230"
+											   TextTrimming="CharacterEllipsis"
+											   ToolTip="{Binding ToolTip}" />
+								</DockPanel>
+							</Border>
+						</Border>
+					</Border>
+					<ControlTemplate.Triggers>
+						<DataTrigger Value="True" Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}">
+							<Setter TargetName="Border" Property="Background" Value="{DynamicResource EnvironmentFileTabHotGradient}" />
+							<Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource EnvironmentFileTabHotBorder}" />
+							<Setter TargetName="DockPanel" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentFileTabHotText}" />
+							<Setter TargetName="CloseButton" Property="GlyphForeground" Value="{DynamicResource EnvironmentFileTabHotGlyph}" />
+						</DataTrigger>
+						<DataTrigger Value="True" Binding="{Binding IsSelected}">
+							<Setter Property="UIElement.Focusable" Value="False" />
+							<Setter Property="Panel.ZIndex" Value="1" />
+						</DataTrigger>
+						<MultiDataTrigger>
+							<MultiDataTrigger.Conditions>
+								<Condition Binding="{Binding Path=IsSelected}" Value="True" />
+								<Condition Binding="{Binding Path=IsActive}" Value="True" />
+							</MultiDataTrigger.Conditions>
+							<Setter TargetName="Border" Property="Background" Value="{DynamicResource EnvironmentFileTabSelectedGradient}" />
+							<Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource EnvironmentFileTabSelectedBorder}" />
+							<Setter TargetName="DockPanel" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentFileTabSelectedText}" />
+							<Setter TargetName="CloseButton" Property="HoverBackground" Value="{DynamicResource EnvironmentFileTabButtonHoverSelectedActive}" />
+							<Setter TargetName="CloseButton" Property="HoverBorderBrush" Value="{DynamicResource EnvironmentFileTabButtonHoverSelectedActiveBorder}" />
+							<Setter TargetName="CloseButton" Property="HoverForeground" Value="{DynamicResource EnvironmentFileTabButtonHoverSelectedActiveGlyph}" />
+							<Setter TargetName="CloseButton" Property="PressedBackground" Value="{DynamicResource EnvironmentFileTabButtonDownSelectedActive}" />
+							<Setter TargetName="CloseButton" Property="PressedBorderBrush" Value="{DynamicResource EnvironmentFileTabButtonDownSelectedActiveBorder}" />
+							<Setter TargetName="CloseButton" Property="PressedForeground" Value="{DynamicResource EnvironmentFileTabButtonDownSelectedActiveGlyph}" />
+							<Setter TargetName="CloseButton" Property="GlyphForeground" Value="{DynamicResource EnvironmentFileTabButtonSelectedActiveGlyph}" />
+						</MultiDataTrigger>
+						<MultiDataTrigger>
+							<MultiDataTrigger.Conditions>
+								<Condition Binding="{Binding Path=IsSelected}" Value="True" />
+								<Condition Binding="{Binding Path=IsActive}" Value="False" />
+							</MultiDataTrigger.Conditions>
+							<Setter TargetName="Border" Property="Background" Value="{DynamicResource EnvironmentFileTabInactiveGradient}" />
+							<Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource EnvironmentFileTabInactiveBorder}" />
+							<Setter TargetName="DockPanel" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentFileTabInactiveText}" />
+							<Setter TargetName="CloseButton" Property="HoverBackground" Value="{DynamicResource EnvironmentFileTabButtonHoverSelectedInactive}" />
+							<Setter TargetName="CloseButton" Property="HoverBorderBrush" Value="{DynamicResource EnvironmentFileTabButtonHoverSelectedInactiveBorder}" />
+							<Setter TargetName="CloseButton" Property="HoverForeground" Value="{DynamicResource EnvironmentFileTabButtonHoverSelectedInactiveGlyph}" />
+							<Setter TargetName="CloseButton" Property="PressedBackground" Value="{DynamicResource EnvironmentFileTabButtonDownSelectedInactive}" />
+							<Setter TargetName="CloseButton" Property="PressedBorderBrush" Value="{DynamicResource EnvironmentFileTabButtonDownSelectedInactiveBorder}" />
+							<Setter TargetName="CloseButton" Property="PressedForeground" Value="{DynamicResource EnvironmentFileTabButtonDownSelectedInactiveGlyph}" />
+							<Setter TargetName="CloseButton" Property="GlyphForeground" Value="{DynamicResource EnvironmentFileTabButtonSelectedInactiveGlyph}" />
+						</MultiDataTrigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
 
 </ResourceDictionary>

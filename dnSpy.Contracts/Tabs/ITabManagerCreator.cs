@@ -17,24 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
-
-namespace dnSpy.Contracts.TreeView {
+namespace dnSpy.Contracts.Tabs {
 	/// <summary>
-	/// Creates <see cref="ITreeNodeData"/>
+	/// Creates <see cref="ITabManager"/>s
 	/// </summary>
-	public interface ITreeNodeDataCreator {
+	public interface ITabManagerCreator {
 		/// <summary>
-		/// Guid of owner <see cref="ITreeNodeData"/> that will receive the new <see cref="ITreeNodeData"/>
+		/// Creates a new <see cref="ITabManager"/> instance
 		/// </summary>
-		Guid Guid { get; }
-
-		/// <summary>
-		/// Creates new <see cref="ITreeNodeData"/>
-		/// </summary>
-		/// <param name="context">Context</param>
 		/// <returns></returns>
-		IEnumerable<ITreeNodeData> Create(TreeNodeDataCreatorContext context);
+		ITabManager Create();
 	}
 }

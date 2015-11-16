@@ -25,6 +25,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
+using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Contracts.TreeView;
@@ -107,6 +108,11 @@ namespace dnSpy.Contracts {
 		/// Gets the <see cref="ILanguageManager"/> instance
 		/// </summary>
 		ILanguageManager LanguageManager { get; }
+
+		/// <summary>
+		/// Gets the <see cref="ITabManagerCreator"/> instance
+		/// </summary>
+		ITabManagerCreator TabManagerCreator { get; }
 
 		/// <summary>
 		/// Gets the <see cref="System.ComponentModel.Composition.Hosting.CompositionContainer"/> instance

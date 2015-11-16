@@ -17,24 +17,38 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Collections.Generic;
+using System.ComponentModel;
 
-namespace dnSpy.Contracts.TreeView {
+namespace dnSpy.Contracts.Tabs {
 	/// <summary>
-	/// Creates <see cref="ITreeNodeData"/>
+	/// Tab content
 	/// </summary>
-	public interface ITreeNodeDataCreator {
+	public interface ITabContent {
 		/// <summary>
-		/// Guid of owner <see cref="ITreeNodeData"/> that will receive the new <see cref="ITreeNodeData"/>
+		/// Title. If this property can change, you must implement <see cref="INotifyPropertyChanged"/>
 		/// </summary>
-		Guid Guid { get; }
+		string Title { get; }   // The data template uses a TextBlock so need to keep it a string
 
 		/// <summary>
-		/// Creates new <see cref="ITreeNodeData"/>
+		/// ToolTip or null. If this property can change, you must implement <see cref="INotifyPropertyChanged"/>
 		/// </summary>
-		/// <param name="context">Context</param>
+		object ToolTip { get; }
+
+		/// <summary>
+		/// The UI object
+		/// </summary>
+		object UIObject { get; }
+
+		/// <summary>
+		/// Gives <see cref="UIObject"/> focus. Returns false if caller should focus it.
+		/// </summary>
 		/// <returns></returns>
-		IEnumerable<ITreeNodeData> Create(TreeNodeDataCreatorContext context);
+		bool FocusUIObject();
+
+		/// <summary>
+		/// Called when the visibility changes
+		/// </summary>
+		/// <param name="visEvent">Event</param>
+		void OnVisibilityChanged(TabContentVisibilityEvent visEvent);
 	}
 }

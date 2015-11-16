@@ -19,22 +19,29 @@
 
 using System;
 using System.Collections.Generic;
+using dnSpy.Contracts.Menus;
 
-namespace dnSpy.Contracts.TreeView {
+namespace dnSpy.Contracts.Tabs {
 	/// <summary>
-	/// Creates <see cref="ITreeNodeData"/>
+	/// Creates <see cref="ITabGroupManager"/> instances
 	/// </summary>
-	public interface ITreeNodeDataCreator {
+	public interface ITabManager {
 		/// <summary>
-		/// Guid of owner <see cref="ITreeNodeData"/> that will receive the new <see cref="ITreeNodeData"/>
+		/// Gets all <see cref="ITabGroupManager"/> instances
 		/// </summary>
-		Guid Guid { get; }
+		IEnumerable<ITabGroupManager> TabGroupManagers { get; }
 
 		/// <summary>
-		/// Creates new <see cref="ITreeNodeData"/>
+		/// Creates a new <see cref="ITabGroupManager"/> instance
 		/// </summary>
-		/// <param name="context">Context</param>
+		/// <param name="tabGroupGuid"><see cref="ITabGroup"/> guid, eg. <see cref="MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID"/></param>/// 
 		/// <returns></returns>
-		IEnumerable<ITreeNodeData> Create(TreeNodeDataCreatorContext context);
+		ITabGroupManager Create(Guid tabGroupGuid);
+
+		/// <summary>
+		/// Removes a <see cref="ITabGroupManager"/> instance
+		/// </summary>
+		/// <param name="mgr"></param>
+		void Remove(ITabGroupManager mgr);
 	}
 }
