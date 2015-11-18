@@ -68,11 +68,21 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 		}
 
+		WeakReference cacheText;
 		public sealed override object Text {
 			get {
 				var gen = UISyntaxHighlighter.CreateTreeView();
+
+				if (cacheText != null && cacheText.IsAlive)
+					return cacheText.Target;
+				else
+					cacheText = null;
+
 				Write(gen.TextOutput, Language);
-				return gen.CreateObject(filterOutNewLines: true);
+
+				var text = gen.CreateTextBlock(filterOutNewLines: true);
+				cacheText = new WeakReference(text);
+				return text;
 			}
 		}
 
@@ -82,11 +92,21 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			get { return filterSettings != null ? filterSettings.Language : Languages.AllLanguages[0]; }
 		}
 
+		WeakReference cacheToolTip;
 		public override object ToolTip {
 			get {
 				var gen = UISyntaxHighlighter.CreateTreeView();
+
+				if (cacheToolTip != null && cacheToolTip.IsAlive)
+					return cacheToolTip.Target;
+				else
+					cacheToolTip = null;
+
 				Write(gen.TextOutput, Language);
-				return gen.CreateObject(filterOutNewLines: false);
+
+				var text = gen.CreateTextBlock(filterOutNewLines: false);
+				cacheToolTip = new WeakReference(text);
+				return text;
 			}
 		}
 
@@ -366,6 +386,9 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 		}
 
 		public virtual void RaiseUIPropsChanged() {
+			cacheToolTip = null;
+			cacheText = null;
+
 			RaisePropertyChanged("Icon");
 			RaisePropertyChanged("ExpandedIcon");
 			RaisePropertyChanged("ToolTip");
@@ -385,6 +408,18 @@ namespace ICSharpCode.ILSpy.TreeNodes {
 			}
 			fullPath.Names.Reverse();
 			return fullPath;
+		}
+
+		public override sealed bool IsCheckable {
+			get {
+				return false;
+			}
+		}
+
+		public override sealed bool IsEditable {
+			get {
+				return false;
+			}
 		}
 	}
 }

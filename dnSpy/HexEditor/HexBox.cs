@@ -32,6 +32,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using System.Windows.Threading;
+using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.HexEditor {
 	/// <summary>
@@ -39,7 +40,7 @@ namespace dnSpy.HexEditor {
 	/// It only uses ASCII characters 0x20-0x7E so those characters must have the same width and height.
 	/// </summary>
 	public class HexBox : Control, IScrollInfo {
-		TextFormatter textFormatter;
+		ITextFormatter textFormatter;
 		ulong topOffset;
 		readonly SelectionLayer selectionLayer;
 		readonly HexLineLayer hexLineLayer;
@@ -474,7 +475,7 @@ namespace dnSpy.HexEditor {
 		}
 
 		void InitializeAll() {
-			textFormatter = TextFormatter.Create(TextOptions.GetTextFormattingMode(this));
+			textFormatter = TextFormatterFactory.Create(this);
 			InitializeFontProperties();
 			InitializeSizeProperties(false);
 			RepaintLayers();

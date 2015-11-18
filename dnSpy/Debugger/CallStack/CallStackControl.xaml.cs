@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.MVVM;
@@ -42,7 +43,7 @@ namespace dnSpy.Debugger.CallStack {
 				return CreateTextBlock(vm.CachedOutput, DebuggerSettings.Instance.SyntaxHighlightCallStack);
 			}
 
-			static TextBlock CreateTextBlock(CachedOutput cachedOutput, bool highlight) {
+			static FrameworkElement CreateTextBlock(CachedOutput cachedOutput, bool highlight) {
 				var gen = UISyntaxHighlighter.Create(highlight);
 				var conv = new OutputConverter(gen.TextOutput);
 				foreach (var t in cachedOutput.data)

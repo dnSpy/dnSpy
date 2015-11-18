@@ -24,6 +24,7 @@ using System.Threading;
 using System.Windows.Input;
 using System.Xml.Linq;
 using dnSpy.MVVM;
+using ICSharpCode.AvalonEdit.Utils;
 using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
 using Microsoft.Win32;
@@ -83,11 +84,25 @@ namespace dnSpy.Options {
 		}
 		bool deserializeResources;
 
+
+		public bool UseNewRenderer {
+			get { return useNewRenderer; }
+			set {
+				if (useNewRenderer != value) {
+					useNewRenderer = value;
+					OnPropertyChanged("UseNewRenderer");
+				}
+			}
+		}
+		bool useNewRenderer;
+
 		const string SETTINGS_SECTION_NAME = "OtherSettings";
 		public override void Load(DNSpySettings settings) {
 			var xelem = settings[SETTINGS_SECTION_NAME];
 			this.UseMemoryMappedIO = (bool?)xelem.Attribute("UseMemoryMappedIO") ?? true;
 			this.DeserializeResources = (bool?)xelem.Attribute("DeserializeResources") ?? true;
+			this.UseNewRenderer = (bool?)xelem.Attribute("UseNewRenderer") ?? false;
+			TextFormatterFactory.TextFormatterProvider = UseNewRenderer ? TextFormatterProvider.GlyphRunFormatter : TextFormatterProvider.BuiltIn;
 		}
 
 		public override RefreshFlags Save(XElement root) {
@@ -96,10 +111,16 @@ namespace dnSpy.Options {
 			if (!this.UseMemoryMappedIO && Instance.UseMemoryMappedIO)
 				flags |= RefreshFlags.DisableMmap;
 
+			var provider = UseNewRenderer ? TextFormatterProvider.GlyphRunFormatter : TextFormatterProvider.BuiltIn;
+			if (TextFormatterFactory.TextFormatterProvider != provider) {
+				TextFormatterFactory.TextFormatterProvider = provider;
+				flags |= RefreshFlags.DecompileAll | RefreshFlags.TreeViewNodes;
+			}
+
 			var xelem = new XElement(SETTINGS_SECTION_NAME);
 			xelem.SetAttributeValue("UseMemoryMappedIO", this.UseMemoryMappedIO);
 			xelem.SetAttributeValue("DeserializeResources", this.DeserializeResources);
-
+			xelem.SetAttributeValue("UseNewRenderer", this.UseNewRenderer);
 
 			var currElem = root.Element(SETTINGS_SECTION_NAME);
 			if (currElem != null)
@@ -115,6 +136,7 @@ namespace dnSpy.Options {
 		void WriteTo(OtherSettings other) {
 			other.UseMemoryMappedIO = this.UseMemoryMappedIO;
 			other.DeserializeResources = this.DeserializeResources;
+			other.UseNewRenderer = this.UseNewRenderer;
 		}
 
 		const string EXPLORER_MENU_TEXT = "Open with dnSpy";

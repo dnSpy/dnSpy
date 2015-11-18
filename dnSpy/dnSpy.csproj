@@ -228,6 +228,7 @@
     </Compile>
     <Compile Include="Debugger\Threads\ThreadsVM.cs" />
     <Compile Include="Debugger\Threads\ThreadVM.cs" />
+    <Compile Include="FastTextBlock.cs" />
     <Compile Include="Files\AssemblyResolver.cs" />
     <Compile Include="Files\DnSpyFile.cs" />
     <Compile Include="Files\DnSpyFileList.cs" />
@@ -770,6 +771,7 @@
     <Compile Include="Search\ShowNothingTreeViewNodeFilterBase.cs" />
     <Compile Include="Search\TreeViewNodeFilterBase.cs" />
     <Compile Include="Search\VisibleMembersFlags.cs" />
+    <Compile Include="FastTreeNodeView.cs" />
     <Compile Include="TreeNodes\GoToTokenContextMenuEntry.cs" />
     <Compile Include="TreeNodes\Hex\HexField.cs" />
     <Compile Include="TreeNodes\Hex\HexTreeNode.cs" />

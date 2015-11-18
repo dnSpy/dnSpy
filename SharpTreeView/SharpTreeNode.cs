@@ -50,7 +50,7 @@ namespace ICSharpCode.TreeView
 				if (removedNodes != null) {
 					var flattener = GetListRoot().treeFlattener;
 					if (flattener != null) {
-						flattener.NodesRemoved(GetVisibleIndexForNode(this), removedNodes);
+						flattener.NodesRemoved(GetVisibleIndexForNode(this, flattener.version), removedNodes);
 						foreach (var n in removedNodes)
 							n.OnIsVisibleChanged();
 					}
@@ -59,7 +59,7 @@ namespace ICSharpCode.TreeView
 				if (updateFlattener && newIsVisible) {
 					var flattener = GetListRoot().treeFlattener;
 					if (flattener != null) {
-						flattener.NodesInserted(GetVisibleIndexForNode(this), VisibleDescendantsAndSelf());
+						flattener.NodesInserted(GetVisibleIndexForNode(this, flattener.version), VisibleDescendantsAndSelf());
 						foreach (var n in VisibleDescendantsAndSelf())
 							n.OnIsVisibleChanged();
 					}
@@ -183,7 +183,8 @@ namespace ICSharpCode.TreeView
 					List<SharpTreeNode> removedNodes = null;
 					int visibleIndexOfRemoval = 0;
 					if (node.isVisible) {
-						visibleIndexOfRemoval = GetVisibleIndexForNode(node);
+						var flattener = GetListRoot().treeFlattener;
+						visibleIndexOfRemoval = GetVisibleIndexForNode(node, flattener.version);
 						removedNodes = node.VisibleDescendantsAndSelf().ToList();
 					}
 					
@@ -219,7 +220,7 @@ namespace ICSharpCode.TreeView
 					if (node.isVisible) {
 						var flattener = GetListRoot().treeFlattener;
 						if (flattener != null) {
-							flattener.NodesInserted(GetVisibleIndexForNode(node), node.VisibleDescendantsAndSelf());
+							flattener.NodesInserted(GetVisibleIndexForNode(node, flattener.version), node.VisibleDescendantsAndSelf());
 						}
 					}
 				}

@@ -557,7 +557,7 @@ namespace ICSharpCode.TreeView
 				insertMarker.Visibility = Visibility.Visible;
 
 				var p1 = previewNodeView.TransformToVisual(this).Transform(new Point());
-				var p = new Point(p1.X + previewNodeView.CalculateIndent() + 4.5, p1.Y - 3);
+				var p = new Point(p1.X + previewNodeView.CalculateIndent(item.Node) + 4.5, p1.Y - 3);
 
 				if (place == DropPlace.After) {
 					p.Y += previewNodeView.ActualHeight;
