@@ -63,5 +63,7 @@ namespace dnSpy.Shared.UI.TreeView {
 
 		public virtual void Initialize() {
 		}
+
+		public abstract void OnRefreshUI();
 	}
 }

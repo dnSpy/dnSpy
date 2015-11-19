@@ -20,14 +20,18 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using System.Windows.Media;
+using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Themes;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Controls;
 using dnSpy.Shared.UI.Themes;
 
 namespace dnSpy.Shared.UI.Highlighting {
@@ -66,9 +70,17 @@ namespace dnSpy.Shared.UI.Highlighting {
 			}
 		}
 
-		public TextBlock Create(bool useEllipsis = false, bool filterOutNewLines = false) {
+		public FrameworkElement Create(bool useEllipsis = false, bool filterOutNewLines = false) {
 			var textBlockText = sb.ToString();
 			tokens.Finish();
+
+			if (!useEllipsis && filterOutNewLines) {
+				return new FastTextBlock(new TextSrc {
+					text = textBlockText,
+					tokens = tokens,
+					filterOutNewLines = filterOutNewLines
+				});
+			}
 
 			var textBlock = new TextBlock();
 
@@ -119,10 +131,142 @@ namespace dnSpy.Shared.UI.Highlighting {
 			return textBlock;
 		}
 
-		IThemeColor GetColor(TextTokenType tokenType) {
+		static IThemeColor GetColor(TextTokenType tokenType) {
 			var color = DnSpy.App.ThemeManager.Theme.GetTextColor(tokenType.ToColorType());
 			Debug.Assert(color != null);
 			return color;
+		}
+
+		class TextSrc : TextSource, FastTextBlock.IFastTextSource {
+			FastTextBlock parent;
+			internal string text;
+			internal LanguageTokens tokens;
+			internal bool filterOutNewLines;
+
+			class TextProps : TextRunProperties {
+				internal Brush background;
+				internal Brush foreground;
+				internal Typeface typeface;
+				internal double fontSize;
+
+				public override Brush BackgroundBrush {
+					get { return background; }
+				}
+
+				public override CultureInfo CultureInfo {
+					get { return CultureInfo.CurrentUICulture; }
+				}
+
+				public override double FontHintingEmSize {
+					get { return fontSize; }
+				}
+
+				public override double FontRenderingEmSize {
+					get { return fontSize; }
+				}
+
+				public override Brush ForegroundBrush {
+					get { return foreground; }
+				}
+
+				public override TextDecorationCollection TextDecorations {
+					get { return null; }
+				}
+
+				public override TextEffectCollection TextEffects {
+					get { return null; }
+				}
+
+				public override Typeface Typeface {
+					get { return typeface; }
+				}
+			}
+
+			public override TextSpan<CultureSpecificCharacterBufferRange> GetPrecedingText(int textSourceCharacterIndexLimit) {
+				return new TextSpan<CultureSpecificCharacterBufferRange>(0,
+					new CultureSpecificCharacterBufferRange(CultureInfo.CurrentUICulture, new CharacterBufferRange(string.Empty, 0, 0)));
+			}
+
+			public override int GetTextEffectCharacterIndexFromTextSourceCharacterIndex(int textSourceCharacterIndex) {
+				throw new NotSupportedException();
+			}
+
+			public void UpdateParent(FastTextBlock ftb) {
+				parent = ftb;
+			}
+
+			public TextSource Source { get { return this; } }
+
+			Dictionary<int, TextRun> runs = new Dictionary<int, TextRun>();
+			public override TextRun GetTextRun(int textSourceCharacterIndex) {
+				var index = textSourceCharacterIndex;
+
+				if (runs.ContainsKey(index)) {
+					var run = runs[index];
+					runs.Remove(index);
+					return run;
+				}
+
+				if (index >= text.Length || text[index] == '\r' || text[index] == '\n') {
+					if (index < text.Length && text[index] != '\r')
+						return new TextCharacters(" ", null);
+					else
+						return new TextEndOfParagraph(1);
+				}
+
+				int defaultTextLength, tokenLength;
+				TextTokenType tokenType;
+				if (!tokens.Find(index, out defaultTextLength, out tokenType, out tokenLength)) {
+					Debug.Fail("Could not find token info");
+					return new TextCharacters(" ", null);
+				}
+
+				TextCharacters defaultRun = null, tokenRun = null;
+				if (defaultTextLength != 0) {
+					var defaultText = text.Substring(index, defaultTextLength);
+
+					defaultRun = new TextCharacters(defaultText, new TextProps {
+						background = (Brush)parent.GetValue(TextElement.BackgroundProperty),
+						foreground = TextElement.GetForeground(parent),
+						typeface = new Typeface(
+							TextElement.GetFontFamily(parent),
+							TextElement.GetFontStyle(parent),
+							TextElement.GetFontWeight(parent),
+							TextElement.GetFontStretch(parent)
+						),
+						fontSize = TextElement.GetFontSize(parent),
+					});
+				}
+				index += defaultTextLength;
+
+				if (tokenLength != 0) {
+					var tc = GetColor(tokenType);
+					var tokenText = text.Substring(index, tokenLength);
+
+					var textProps = new TextProps();
+					textProps.fontSize = TextElement.GetFontSize(parent);
+
+					textProps.foreground = tc.Foreground ?? TextElement.GetForeground(parent);
+					textProps.background = tc.Background ?? (Brush)parent.GetValue(TextElement.BackgroundProperty);
+
+					textProps.typeface = new Typeface(
+						TextElement.GetFontFamily(parent),
+						tc.FontStyle ?? TextElement.GetFontStyle(parent),
+						tc.FontWeight ?? TextElement.GetFontWeight(parent),
+						TextElement.GetFontStretch(parent)
+					);
+
+					tokenRun = new TextCharacters(tokenText, textProps);
+				}
+
+				Debug.Assert(defaultRun != null || tokenRun != null);
+				if ((defaultRun != null) ^ (tokenRun != null))
+					return defaultRun ?? tokenRun;
+				else {
+					runs[index] = tokenRun;
+					return defaultRun;
+				}
+			}
 		}
 	}
 }

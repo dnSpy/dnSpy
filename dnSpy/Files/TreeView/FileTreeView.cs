@@ -26,6 +26,7 @@ using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using dnlib.DotNet;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
@@ -33,6 +34,7 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using dnSpy.MainApp;
+using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Files.TreeView {
 	[Export, Export(typeof(IFileTreeView)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -102,6 +104,7 @@ namespace dnSpy.Files.TreeView {
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			appSettings.PropertyChanged += AppSettings_PropertyChanged;
+			InitializeTextFormatterProvider(appSettings);
 		}
 		readonly List<Action> actionsToCall = new List<Action>();
 
@@ -142,8 +145,21 @@ namespace dnSpy.Files.TreeView {
 				context.SingleClickExpandsChildren = appSettings.SingleClickExpandsTreeViewChildren;
 				break;
 
+			case "UseNewRenderer":
+				InitializeTextFormatterProvider(appSettings);
+				RefreshNodes();
+				break;
+
 			default:
 				break;
+			}
+		}
+
+		void InitializeTextFormatterProvider(IAppSettings appSettings) {
+			var newValue = appSettings.UseNewRenderer ? TextFormatterProvider.GlyphRunFormatter : TextFormatterProvider.BuiltIn;
+			if (TextFormatterFactory.TextFormatterProvider != newValue) {
+				TextFormatterFactory.TextFormatterProvider = newValue;
+				//TODO: Refresh all text editors, hex editors (the treeview gets refreshed by the caller)
 			}
 		}
 

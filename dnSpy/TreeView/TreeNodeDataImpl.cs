@@ -69,5 +69,8 @@ namespace dnSpy.TreeView {
 
 		public void Initialize() {
 		}
+
+		public void OnRefreshUI() {
+		}
 	}
 }

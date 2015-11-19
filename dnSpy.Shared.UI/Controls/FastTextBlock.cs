@@ -28,7 +28,7 @@ using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using ICSharpCode.AvalonEdit.Utils;
 
-namespace ICSharpCode.ILSpy {
+namespace dnSpy.Shared.UI.Controls {
 	public class FastTextBlock : FrameworkElement {
 		public interface IFastTextSource {
 			void UpdateParent(FastTextBlock ftb);

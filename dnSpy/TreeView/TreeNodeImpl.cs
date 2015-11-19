@@ -80,6 +80,7 @@ namespace dnSpy.TreeView {
 		}
 
 		public void RefreshUI() {
+			Data.OnRefreshUI();
 			Node.RefreshUI();
 		}
 	}

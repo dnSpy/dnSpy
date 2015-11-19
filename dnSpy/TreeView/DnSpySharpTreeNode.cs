@@ -82,5 +82,13 @@ namespace dnSpy.TreeView {
 			RaisePropertyChanged("Text");
 			RaisePropertyChanged("Foreground");
 		}
+
+		public override sealed bool IsCheckable {
+			get { return false; }
+		}
+
+		public override sealed bool IsEditable {
+			get { return false; }
+		}
 	}
 }

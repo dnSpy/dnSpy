@@ -99,6 +99,18 @@ namespace dnSpy.MainApp {
 			}
 		}
 		string languageName = "C#";
+
+		public bool UseNewRenderer {
+			get { return useNewRenderer; }
+			set {
+				if (useNewRenderer != value) {
+					useNewRenderer = value;
+					OnPropertyChanged("UseNewRenderer");
+					OnModified();
+				}
+			}
+		}
+		bool useNewRenderer = false;
 	}
 
 	[Export, Export(typeof(IAppSettings)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -131,6 +143,7 @@ namespace dnSpy.MainApp {
 			this.ShowAssemblyPublicKeyToken = sect.Attribute<bool?>("ShowAssemblyPublicKeyToken") ?? this.ShowAssemblyPublicKeyToken;
 			this.ShowToken = sect.Attribute<bool?>("ShowToken") ?? this.ShowToken;
 			this.LanguageName = sect.Attribute<string>("LanguageName") ?? this.LanguageName;
+			this.UseNewRenderer = sect.Attribute<bool?>("UseNewRenderer") ?? this.UseNewRenderer;
 			this.SavedWindowState = new SavedWindowState().Read(sect.GetOrCreateSection("SavedWindowState"));
 			this.disableSave = false;
 
@@ -153,6 +166,7 @@ namespace dnSpy.MainApp {
 			sect.Attribute("ShowAssemblyPublicKeyToken", ShowAssemblyPublicKeyToken);
 			sect.Attribute("ShowToken", ShowToken);
 			sect.Attribute("LanguageName", LanguageName);
+			sect.Attribute("UseNewRenderer", UseNewRenderer);
 			SavedWindowState.Write(sect.GetOrCreateSection("SavedWindowState"));
 		}
 	}

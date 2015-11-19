@@ -85,6 +85,11 @@ namespace dnSpy.Contracts.TreeView {
 		/// Called after <see cref="TreeNode"/> has been set.
 		/// </summary>
 		void Initialize();
+
+		/// <summary>
+		/// Called from <see cref="ITreeNode.RefreshUI()"/> before it invalidates all UI properties
+		/// </summary>
+		void OnRefreshUI();
 	}
 
 	/// <summary>

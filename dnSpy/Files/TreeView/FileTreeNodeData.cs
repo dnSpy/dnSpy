@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
@@ -50,10 +51,19 @@ namespace dnSpy.Files.TreeView {
 		public sealed override object Text {
 			get {
 				var gen = UISyntaxHighlighter.Create(Context.SyntaxHighlight);
+
+				var cached = cachedText != null ? cachedText.Target : null;
+				if (cached != null)
+					return cached;
+
 				Write(gen.SyntaxHighlightOutput, Context.Language);
-				return gen.CreateObject(filterOutNewLines: true);
+
+				var text = gen.CreateTextBlock(filterOutNewLines: true);
+				cachedText = new WeakReference(text);
+				return text;
 			}
 		}
+		WeakReference cachedText;
 
 		protected abstract void Write(ISyntaxHighlightOutput output, ILanguage language);
 
@@ -64,10 +74,19 @@ namespace dnSpy.Files.TreeView {
 		public sealed override object ToolTip {
 			get {
 				var gen = UISyntaxHighlighter.Create(Context.SyntaxHighlight);
+
+				var cached = cachedToolTip != null ? cachedToolTip.Target : null;
+				if (cached != null)
+					return cached;
+
 				WriteToolTip(gen.SyntaxHighlightOutput, Context.Language);
-				return gen.CreateObject(filterOutNewLines: false);
+
+				var text = gen.CreateTextBlock(filterOutNewLines: false);
+				cachedToolTip = new WeakReference(text);
+				return text;
 			}
 		}
+		WeakReference cachedToolTip;
 
 		public sealed override string ToString() {
 			return ToString(Context.Language);
@@ -77,6 +96,11 @@ namespace dnSpy.Files.TreeView {
 			var output = new NoSyntaxHighlightOutput();
 			Write(output, language);
 			return output.ToString();
+		}
+
+		public sealed override void OnRefreshUI() {
+			cachedToolTip = null;
+			cachedText = null;
 		}
 	}
 }

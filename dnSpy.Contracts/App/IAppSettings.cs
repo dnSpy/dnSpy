@@ -36,5 +36,7 @@ namespace dnSpy.Contracts.App {
 		bool ShowToken { get; }
 		/// <summary />
 		string LanguageName { get; }
+		/// <summary />
+		bool UseNewRenderer { get; }
 	}
 }

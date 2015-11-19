@@ -4818,7 +4818,7 @@
                 <ControlTemplate TargetType="{x:Type shtv:SharpTreeViewItem}">
                     <Border Background="Transparent">
                         <Border Background="{TemplateBinding Background}">
-                            <mm:FastTreeNodeView Name="nodeView"
+                            <ctrls:FastTreeNodeView Name="nodeView"
                                                        Foreground="{Binding Foreground}"
                                                        HorizontalAlignment="Left" />
                         </Border>

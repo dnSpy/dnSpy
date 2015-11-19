@@ -68,9 +68,15 @@
       <Project>{3b2a5653-ec97-4001-bb9b-d90f1af2c371}</Project>
       <Name>ICSharpCode.NRefactory</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SharpTreeView\ICSharpCode.TreeView.csproj">
+      <Project>{dde2a481-8271-4eac-a330-8fa6a38d13d1}</Project>
+      <Name>ICSharpCode.TreeView</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AvalonEdit\ExtensionMethods.cs" />
+    <Compile Include="Controls\FastTextBlock.cs" />
+    <Compile Include="Controls\FastTreeNodeView.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="Controls\SysMenuButton.cs" />
     <Compile Include="Controls\TabButton.cs" />

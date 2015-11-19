@@ -28,7 +28,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using ICSharpCode.TreeView;
 
-namespace ICSharpCode.ILSpy {
+namespace dnSpy.Shared.UI.Controls {
 	public class FastTreeNodeView : SharpTreeNodeView {
 		static FastTreeNodeView() {
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(FastTreeNodeView),
