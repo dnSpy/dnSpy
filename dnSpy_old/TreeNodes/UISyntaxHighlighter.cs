@@ -22,6 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using dnSpy.TextView;
 using ICSharpCode.Decompiler;
+using ICSharpCode.ILSpy;
 using ICSharpCode.ILSpy.Options;
 
 namespace dnSpy.TreeNodes {
@@ -55,12 +56,12 @@ namespace dnSpy.TreeNodes {
 
 		UISyntaxHighlighter(bool highlight) {
 			if (highlight) {
-				this.simpleHighlighter = new SimpleHighlighter();
-				this.output = null;
+				simpleHighlighter = new SimpleHighlighter();
+				output = null;
 			}
 			else {
-				this.simpleHighlighter = null;
-				this.output = new PlainTextOutput();
+				simpleHighlighter = null;
+				output = new PlainTextOutput();
 			}
 		}
 
@@ -96,16 +97,21 @@ namespace dnSpy.TreeNodes {
 		/// <param name="useEllipsis">true to add <see cref="TextTrimming.CharacterEllipsis"/> to the <see cref="TextBlock"/></param>
 		/// <param name="filterOutNewLines">true to filter out newline characters</param>
 		/// <returns></returns>
-		public TextBlock CreateTextBlock(bool useEllipsis = false, bool filterOutNewLines = true) {
+		public FrameworkElement CreateTextBlock(bool useEllipsis = false, bool filterOutNewLines = true) {
 			if (simpleHighlighter != null)
 				return simpleHighlighter.Create(useEllipsis, filterOutNewLines);
 
-			var tb = new TextBlock {
-				Text = ToString(output.ToString(), filterOutNewLines),
-			};
-			if (useEllipsis)
-				tb.TextTrimming = TextTrimming.CharacterEllipsis;
-			return tb;
+			if (!useEllipsis) {
+				return new FastTextBlock {
+					Text = ToString(output.ToString(), filterOutNewLines)
+				};
+			}
+			else {
+				return new TextBlock {
+					Text = ToString(output.ToString(), filterOutNewLines),
+					TextTrimming = TextTrimming.CharacterEllipsis
+				};
+			}
 		}
 	}
 }

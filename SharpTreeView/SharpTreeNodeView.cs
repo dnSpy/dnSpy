@@ -32,9 +32,19 @@ namespace ICSharpCode.TreeView
 			set { SetValue(TextBackgroundProperty, value); }
 		}
 
+		SharpTreeNode GetNode(object dataCtx)
+		{
+			if (dataCtx is SharpTreeNode)
+				return (SharpTreeNode)dataCtx;
+			else if (dataCtx is SharpTreeNodeProxy)
+				return ((SharpTreeNodeProxy)dataCtx).Object;
+			else
+				return null;
+		}
+
 		public SharpTreeNode Node
 		{
-			get { return DataContext as SharpTreeNode; }
+			get { return GetNode(DataContext); }
 		}
 
 		public SharpTreeViewItem ParentItem { get; private set; }
@@ -73,25 +83,44 @@ namespace ICSharpCode.TreeView
 		{
 			base.OnPropertyChanged(e);
 			if (e.Property == DataContextProperty) {
-				UpdateDataContext(e.OldValue as SharpTreeNode, e.NewValue as SharpTreeNode);
+				UpdateDataContext(e.OldValue as SharpTreeNodeProxy, e.NewValue as SharpTreeNodeProxy);
 			}
 		}
 
-		void UpdateDataContext(SharpTreeNode oldNode, SharpTreeNode newNode)
+		void UpdateDataContext(SharpTreeNodeProxy oldAdaptor, SharpTreeNodeProxy newAdaptor)
 		{
-			if (newNode != null) {
-				newNode.PropertyChanged += Node_PropertyChanged;
-				if (Template != null) {
-					UpdateTemplate();
+			if (newAdaptor != null) {
+				newAdaptor.ObjectChanged += AdaptorObjectChanged;
+				if (newAdaptor.Object != null) {
+					newAdaptor.Object.PropertyChanged += Node_PropertyChanged;
+					oldNode = newAdaptor.Object;
 				}
 			}
-			if (oldNode != null) {
-				oldNode.PropertyChanged -= Node_PropertyChanged;
+			if (oldAdaptor != null) {
+				oldAdaptor.ObjectChanged -= AdaptorObjectChanged;
+				if (oldAdaptor.Object != null) {
+					oldAdaptor.Object.PropertyChanged -= Node_PropertyChanged;
+				}
 			}
 		}
 
-		void Node_PropertyChanged(object sender, PropertyChangedEventArgs e)
+		SharpTreeNode oldNode;
+		void AdaptorObjectChanged(object sender, EventArgs e) {
+			if (oldNode != null)
+				oldNode.PropertyChanged -= Node_PropertyChanged;
+
+			var adaptor = (SharpTreeNodeProxy)sender;
+			if (adaptor.Object != null) {
+				adaptor.Object.PropertyChanged += Node_PropertyChanged;
+				oldNode = adaptor.Object;
+			}
+
+			UpdateTemplate();
+		}
+
+		protected virtual void Node_PropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			var node = (SharpTreeNode)sender;
 			if (e.PropertyName == "IsEditing") {
 				OnIsEditingChanged();
 			} else if (e.PropertyName == "IsLast") {
@@ -104,15 +133,18 @@ namespace ICSharpCode.TreeView
 					}
 				}
 			} else if (e.PropertyName == "IsExpanded") {
-				if (Node.IsExpanded)
-					ParentTreeView.HandleExpanding(Node);
+				if (node.IsExpanded)
+					ParentTreeView.HandleExpanding(node);
 			}
 		}
 
 		void OnIsEditingChanged()
 		{
+			if (Template == null)
+				return;
+
 			var textEditorContainer = Template.FindName("textEditorContainer", this) as Border;
-			if (Node.IsEditing) {
+			if (textEditorContainer != null && Node.IsEditing) {
 				if (CellEditor == null)
 					textEditorContainer.Child = new EditTextBox() { Item = ParentItem };
 				else
@@ -123,10 +155,13 @@ namespace ICSharpCode.TreeView
 			}
 		}
 
-		void UpdateTemplate()
+		protected internal virtual void UpdateTemplate()
 		{
+			if (Template == null || Node == null)
+				return;
+
 			var spacer = Template.FindName("spacer", this) as FrameworkElement;
-			spacer.Width = CalculateIndent();
+			spacer.Width = CalculateIndent(Node);
 
 			var expander = Template.FindName("expander", this) as ToggleButton;
 			if (ParentTreeView.Root == Node && !ParentTreeView.ShowRootExpander) {
@@ -137,12 +172,12 @@ namespace ICSharpCode.TreeView
 			}
 		}
 
-		internal double CalculateIndent()
+		protected internal double CalculateIndent(SharpTreeNode node)
 		{
-			var result = 19 * Node.Level;
+			var result = 19 * node.Level;
 			if (ParentTreeView.ShowRoot) {
 				if (!ParentTreeView.ShowRootExpander) {
-					if (ParentTreeView.Root != Node) {
+					if (ParentTreeView.Root != node) {
 						result -= 15;
 					}
 				}

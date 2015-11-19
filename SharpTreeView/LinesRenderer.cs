@@ -27,7 +27,7 @@ namespace ICSharpCode.TreeView
 
 		protected override void OnRender(DrawingContext dc)
 		{
-			var indent = NodeView.CalculateIndent();
+			var indent = NodeView.CalculateIndent(NodeView.Node);
 			var p = new Point(indent + 4.5, 0);
 
 			if (!NodeView.Node.IsRoot || NodeView.ParentTreeView.ShowRootExpander) {

@@ -26,7 +26,43 @@ namespace ICSharpCode.TreeView
 			get { return DataContext as SharpTreeNode; }
 		}
 
-		public SharpTreeNodeView NodeView { get; internal set; }
+		void UpdateAdaptor(SharpTreeNode node)
+		{
+			if (nodeView == null)
+				return;
+
+			var doAdaptor = nodeView.DataContext as SharpTreeNodeProxy;
+			if (doAdaptor == null)
+				nodeView.DataContext = (doAdaptor = new SharpTreeNodeProxy(node));
+			else
+				doAdaptor.UpdateObject(node);
+
+			nodeView.UpdateTemplate();
+		}
+
+		protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+		{
+			base.OnPropertyChanged(e);
+			if (e.Property == DataContextProperty)
+			{
+				UpdateAdaptor(e.NewValue as SharpTreeNode);
+			}
+		}
+
+
+		SharpTreeNodeView nodeView;
+		public SharpTreeNodeView NodeView
+		{
+			get { return nodeView; }
+			internal set
+			{
+				if (nodeView != value)
+				{
+					nodeView = value;
+					UpdateAdaptor(Node);
+				}
+			}
+		}
 		public SharpTreeView ParentTreeView { get; internal set; }
 
 		protected override void OnKeyDown(KeyEventArgs e)
@@ -110,7 +146,7 @@ namespace ICSharpCode.TreeView
 					Node.IsExpanded = !Node.IsExpanded;
 				}
 			}
-			
+
 			ReleaseMouseCapture();
 			if (wasSelected) {
 				base.OnMouseLeftButtonDown(e);
@@ -130,7 +166,7 @@ namespace ICSharpCode.TreeView
 		}
 
 		#endregion
-		
+
 		#region Drag and Drop
 
 		protected override void OnDragEnter(DragEventArgs e)

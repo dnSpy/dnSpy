@@ -32,9 +32,14 @@ namespace ICSharpCode.TreeView
 		}
 
 		public event NotifyCollectionChangedEventHandler CollectionChanged;
-		
-		public void RaiseCollectionChanged(NotifyCollectionChangedEventArgs e)
+
+		internal int version = 0;
+		Dictionary<int, SharpTreeNode> nodeCache = new Dictionary<int, SharpTreeNode>();
+
+		void RaiseCollectionChanged(NotifyCollectionChangedEventArgs e)
 		{
+			version++;
+			nodeCache.Clear();
 			if (CollectionChanged != null)
 				CollectionChanged(this, e);
 		}
@@ -65,7 +70,14 @@ namespace ICSharpCode.TreeView
 			get {
 				if (index < 0 || index >= this.Count)
 					throw new ArgumentOutOfRangeException();
-				return SharpTreeNode.GetNodeByVisibleIndex(root, includeRoot ? index : index + 1);
+
+				SharpTreeNode node;
+				if (nodeCache.TryGetValue(index, out node))
+					return node;
+
+				node = SharpTreeNode.GetNodeByVisibleIndex(root, includeRoot ? index : index + 1);
+				nodeCache[index] = node;
+				return node;
 			}
 			set {
 				throw new NotSupportedException();
@@ -83,9 +95,9 @@ namespace ICSharpCode.TreeView
 			SharpTreeNode node = item as SharpTreeNode;
 			if (node != null && node.IsVisible && node.GetListRoot() == root) {
 				if (includeRoot)
-					return SharpTreeNode.GetVisibleIndexForNode(node);
+					return SharpTreeNode.GetVisibleIndexForNode(node, version);
 				else
-					return SharpTreeNode.GetVisibleIndexForNode(node) - 1;
+					return SharpTreeNode.GetVisibleIndexForNode(node, version) - 1;
 			} else {
 				return -1;
 			}
