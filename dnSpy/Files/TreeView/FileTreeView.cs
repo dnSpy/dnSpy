@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
@@ -29,7 +30,9 @@ using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
+using dnSpy.MainApp;
 
 namespace dnSpy.Files.TreeView {
 	[Export, Export(typeof(IFileTreeView)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -61,11 +64,11 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		[ImportingConstructor]
-		FileTreeView(ITreeViewManager treeViewManager, IFileManager fileManager, IDotNetImageManager dotNetImageManager, [ImportMany] IDnSpyFileNodeCreator[] dnSpyFileNodeCreators, ILanguageManager languageManager) {
+		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, AppSettingsImpl appSettings, IDotNetImageManager dotNetImageManager, [ImportMany] IDnSpyFileNodeCreator[] dnSpyFileNodeCreators) {
 			var options = new TreeViewOptions {
 				AllowDrop = true,
 				IsVirtualizing = true,
-				VirtualizationMode = VirtualizationMode.Standard,
+				VirtualizationMode = VirtualizationMode.Recycling,
 				TreeViewListener = this,
 			};
 			this.dnSpyFileNodeCreators = dnSpyFileNodeCreators.OrderBy(a => a.Order).ToArray();
@@ -75,22 +78,88 @@ namespace dnSpy.Files.TreeView {
 			var dispatcher = treeView.UIObject.Dispatcher;
 			this.fileManager.SetDispatcher(a => {
 				if (!dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted) {
-					// Always notify with a delay because adding stuff to the tree view could
-					// cause some problems with the tree view or the list box it derives from.
-					dispatcher.BeginInvoke(DispatcherPriority.Background, a);
+					bool callInvoke;
+					lock (actionsToCall) {
+						actionsToCall.Add(a);
+						callInvoke = actionsToCall.Count == 1;
+					}
+					if (callInvoke) {
+						// Always notify with a delay because adding stuff to the tree view could
+						// cause some problems with the tree view or the list box it derives from.
+						dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(CallActions));
+					}
 				}
 			});
 			this.fileManager.CollectionChanged += FileManager_CollectionChanged;
 			this.context = new FileTreeNodeDataContext(this);
 
-			//TODO: Read from settings
-			this.context.SyntaxHighlight = true;
-			this.context.SingleClickExpandsChildren = true;
-			this.context.ShowAssemblyVersion = true;
-			this.context.ShowAssemblyPublicKeyToken = false;
-			this.context.ShowToken = true;
-			//TODO: Update all nodes when language changes
+			this.context.SyntaxHighlight = appSettings.SyntaxHighlightFileTreeView;
+			this.context.SingleClickExpandsChildren = appSettings.SingleClickExpandsTreeViewChildren;
+			this.context.ShowAssemblyVersion = appSettings.ShowAssemblyVersion;
+			this.context.ShowAssemblyPublicKeyToken = appSettings.ShowAssemblyPublicKeyToken;
+			this.context.ShowToken = appSettings.ShowToken;
 			this.context.Language = languageManager.SelectedLanguage;
+			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
+			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
+			appSettings.PropertyChanged += AppSettings_PropertyChanged;
+		}
+		readonly List<Action> actionsToCall = new List<Action>();
+
+		void CallActions() {
+			List<Action> list;
+			lock (actionsToCall) {
+				list = new List<Action>(actionsToCall);
+				actionsToCall.Clear();
+			}
+			foreach (var a in list)
+				a();
+		}
+
+		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			var appSettings = (AppSettingsImpl)sender;
+			switch (e.PropertyName) {
+			case "SyntaxHighlightFileTreeView":
+				context.SyntaxHighlight = appSettings.SyntaxHighlightFileTreeView;
+				RefreshNodes();
+				break;
+
+			case "ShowAssemblyVersion":
+				context.ShowAssemblyVersion = appSettings.ShowAssemblyVersion;
+				RefreshNodes();
+				break;
+
+			case "ShowAssemblyPublicKeyToken":
+				context.ShowAssemblyPublicKeyToken = appSettings.ShowAssemblyPublicKeyToken;
+				RefreshNodes();
+				break;
+
+			case "ShowToken":
+				context.ShowToken = appSettings.ShowToken;
+				RefreshNodes();
+				break;
+
+			case "SingleClickExpandsTreeViewChildren":
+				context.SingleClickExpandsChildren = appSettings.SingleClickExpandsTreeViewChildren;
+				break;
+
+			default:
+				break;
+			}
+		}
+
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
+			RefreshNodes();
+		}
+
+		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
+			this.context.Language = ((ILanguageManager)sender).SelectedLanguage;
+			RefreshNodes();
+		}
+
+		void RefreshNodes() {
+			//TODO: Should only call the method if the node is visible
+			foreach (var node in this.treeView.Root.Descendants())
+				node.RefreshUI();
 		}
 
 		void FileManager_CollectionChanged(object sender, NotifyFileCollectionChangedEventArgs e) {
@@ -138,10 +207,14 @@ namespace dnSpy.Files.TreeView {
 			return new UnknownFileNode(file);
 		}
 
-		void ITreeViewListener.NodeCreated(ITreeNode node) {
-			var d = node.Data as IFileTreeNodeData;
-			if (d != null)
-				d.Context = context;
+		void ITreeViewListener.OnEvent(ITreeView treeView, TreeViewListenerEventArgs e) {
+			if (e.Event == TreeViewListenerEvent.NodeCreated) {
+				var node = (ITreeNode)e.Argument;
+				var d = node.Data as IFileTreeNodeData;
+				if (d != null)
+					d.Context = context;
+				return;
+			}
 		}
 
 		public IAssemblyReferenceNode Create(AssemblyRef asmRef, ModuleDef ownerModule) {

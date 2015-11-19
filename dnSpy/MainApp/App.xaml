@@ -1,0 +1,13 @@
+﻿<Application x:Class="dnSpy.MainApp.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:ClassModifier="internal">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Themes/wpf.styles.templates.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/dnSpy.Shared.UI;component/Themes/wpf.styles.templates.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

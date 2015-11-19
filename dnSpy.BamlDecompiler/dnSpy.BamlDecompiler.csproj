@@ -131,10 +131,6 @@
       <Project>{7E7C2CF8-2057-4EAA-9DAD-AB3022CF4037}</Project>
       <Name>dnSpy.Shared.UI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy_old\dnSpy_old.csproj">
-      <Project>{1E85EFF9-E370-4683-83E4-8A3D063FF791}</Project>
-      <Name>dnSpy_old</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
       <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
       <Name>ICSharpCode.Decompiler</Name>

@@ -42,13 +42,13 @@ using dnSpy.Contracts;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Remove;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Decompiler;
 using dnSpy.Files;
 using dnSpy.Files.WPF;
 using dnSpy.Hex;
-using dnSpy.Images;
 using dnSpy.NRefactory;
 using dnSpy.Options;
 using dnSpy.Search;
@@ -263,7 +263,7 @@ namespace ICSharpCode.ILSpy {
 
 			tabGroupsManager = new TabGroupsManager<TabState>(tabGroupsContentPresenter, tabManager_OnSelectionChanged, tabManager_OnAddRemoveTabState);
 			tabGroupsManager.OnTabGroupSelected += tabGroupsManager_OnTabGroupSelected;
-			((AppImpl)DnSpy.App).InitializeThemes(sessionSettings.ThemeName);
+			TempHack.HackRemove.InitializeThemes(sessionSettings.ThemeName);
 			InitializeAssemblyTreeView(treeView);
 
 			mainMenu = DnSpy.App.MenuManager.CreateMenu(new Guid(MenuConstants.APP_MENU_GUID), this);
@@ -845,9 +845,9 @@ namespace ICSharpCode.ILSpy {
 		}
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			((ImageManager)DnSpy.App.ImageManager).OnThemeChanged();
+			TempHack.HackRemove.ImageManager_OnThemeChanged();
 			UpdateSystemMenuImage();
-			((AppImpl)DnSpy.App).UpdateResources(DnSpy.App.ThemeManager.Theme, App.Current.Resources);
+			DnSpy.App.ThemeManager.Theme.UpdateResources(App.Current.Resources);
 			NewTextEditor.OnThemeUpdatedStatic();
 			HexBoxThemeHelper.OnThemeUpdatedStatic();
 			foreach (var view in AllTextViews)
@@ -1750,7 +1750,7 @@ namespace ICSharpCode.ILSpy {
 			}
 
 			tabState.Content = tabState.TextView;
-			tabState.TextView.DecompileAsync(language, nodes, new DecompilationOptions() { TextViewState = state, DecompilerTextView = tabState.TextView });
+			tabState.TextView.DecompileAsync(language, nodes, new DecompilationOptions() { TextViewState = state });
 			return true;
 		}
 
@@ -1898,7 +1898,7 @@ namespace ICSharpCode.ILSpy {
 			foreach (var tabState in AllTabStates)
 				tabState.Dispose();
 
-			((AppImpl)DnSpy.App).SaveSettings();
+			TempHack.HackRemove.SaveSettings();
 		}
 
 		void RestoreTabGroups(SavedTabGroupsState savedGroups) {

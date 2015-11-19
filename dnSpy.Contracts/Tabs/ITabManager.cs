@@ -34,14 +34,14 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// Creates a new <see cref="ITabGroupManager"/> instance
 		/// </summary>
-		/// <param name="tabGroupGuid"><see cref="ITabGroup"/> guid, eg. <see cref="MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID"/></param>/// 
+		/// <param name="tabGroupGuid"><see cref="ITabGroup"/> guid, eg. <see cref="MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID"/></param>
 		/// <returns></returns>
 		ITabGroupManager Create(Guid tabGroupGuid);
 
 		/// <summary>
 		/// Removes a <see cref="ITabGroupManager"/> instance
 		/// </summary>
-		/// <param name="mgr"></param>
+		/// <param name="mgr">Instance to remove</param>
 		void Remove(ITabGroupManager mgr);
 	}
 }

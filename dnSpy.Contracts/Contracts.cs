@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
@@ -113,6 +114,11 @@ namespace dnSpy.Contracts {
 		/// Gets the <see cref="ITabManagerCreator"/> instance
 		/// </summary>
 		ITabManagerCreator TabManagerCreator { get; }
+
+		/// <summary>
+		/// Gets the <see cref="IFileTabManager"/> instance
+		/// </summary>
+		IFileTabManager FileTabManager { get; }
 
 		/// <summary>
 		/// Gets the <see cref="System.ComponentModel.Composition.Hosting.CompositionContainer"/> instance

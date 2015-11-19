@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Contracts.Images;
 
 namespace dnSpy.Contracts.Themes {
 	/// <summary>
@@ -30,13 +31,14 @@ namespace dnSpy.Contracts.Themes {
 		ITheme Theme { get; }
 
 		/// <summary>
-		/// Gets the default theme name
-		/// </summary>
-		string DefaultThemeName { get; }//TODO: REMOVE. ThemeManager should read the theme name from the settings file
-
-		/// <summary>
 		/// Notified when <see cref="Theme"/> gets changed
 		/// </summary>
 		event EventHandler<ThemeChangedEventArgs> ThemeChanged;
+
+		/// <summary>
+		/// Notified when <see cref="Theme"/> gets changed. Gets notified before <see cref="ThemeChanged"/>
+		/// and should normally not be used (it's currently only used by <see cref="IImageManager"/>)
+		/// </summary>
+		event EventHandler<ThemeChangedEventArgs> EarlyThemeChanged;
 	}
 }

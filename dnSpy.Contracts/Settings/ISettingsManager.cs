@@ -23,4 +23,20 @@ namespace dnSpy.Contracts.Settings {
 	/// </summary>
 	public interface ISettingsManager : ISettingsSectionCreator {
 	}
+
+	/// <summary>
+	/// Extension methods
+	/// </summary>
+	public static class SettingsManagerExtensionMethods {
+		/// <summary>
+		/// Removes an existing section and re-creates it
+		/// </summary>
+		/// <param name="self">This</param>
+		/// <param name="name">Name of section</param>
+		/// <returns></returns>
+		public static ISettingsSection RecreateSection(this ISettingsManager self, string name) {
+			self.RemoveSection(name);
+			return self.GetOrCreateSection(name);
+		}
+	}
 }

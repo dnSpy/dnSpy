@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Contracts.TreeView {
@@ -84,5 +85,28 @@ namespace dnSpy.Contracts.TreeView {
 		/// Called after <see cref="TreeNode"/> has been set.
 		/// </summary>
 		void Initialize();
+	}
+
+	/// <summary>
+	/// Extension methods
+	/// </summary>
+	public static class TreeNodeDataExtensionMethods {
+		/// <summary>
+		/// Gets all descendants
+		/// </summary>
+		/// <param name="self">This</param>
+		/// <returns></returns>
+		public static IEnumerable<ITreeNodeData> Descendants(this ITreeNodeData self) {
+			return self.TreeNode.Descendants().Select(a => a.Data);
+		}
+
+		/// <summary>
+		/// Gets all descendants including itself
+		/// </summary>
+		/// <param name="self">This</param>
+		/// <returns></returns>
+		public static IEnumerable<ITreeNodeData> DescendantsAndSelf(this ITreeNodeData self) {
+			return self.TreeNode.DescendantsAndSelf().Select(a => a.Data);
+		}
 	}
 }

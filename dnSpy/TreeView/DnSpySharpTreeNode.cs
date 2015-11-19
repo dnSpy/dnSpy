@@ -74,5 +74,13 @@ namespace dnSpy.TreeView {
 		public override Brush Foreground {
 			get { return DnSpy.App.ThemeManager.Theme.GetColor(ColorType.TreeViewNode).Foreground; }
 		}
+
+		public void RefreshUI() {
+			RaisePropertyChanged("Icon");
+			RaisePropertyChanged("ExpandedIcon");
+			RaisePropertyChanged("ToolTip");
+			RaisePropertyChanged("Text");
+			RaisePropertyChanged("Foreground");
+		}
 	}
 }

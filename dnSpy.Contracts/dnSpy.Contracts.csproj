@@ -43,6 +43,9 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="App\IAppSettings.cs" />
+    <Compile Include="App\IAppStatusBar.cs" />
+    <Compile Include="App\IAppWindow.cs" />
     <Compile Include="Command\ICommandHolder.cs" />
     <Compile Include="Contracts.cs" />
     <Compile Include="Files\DnSpyFileCreatorContext.cs" />
@@ -57,6 +60,7 @@
     <Compile Include="Files\NotifyFileCollectionChangedEventArgs.cs" />
     <Compile Include="Files\NotifyFileCollectionType.cs" />
     <Compile Include="Files\SerializedDnSpyModule.cs" />
+    <Compile Include="Files\Tabs\IFileTabManager.cs" />
     <Compile Include="Files\TreeView\FileTVConstants.cs" />
     <Compile Include="Files\TreeView\IAssemblyFileNode.cs" />
     <Compile Include="Files\TreeView\IAssemblyReferenceNode.cs" />
@@ -91,10 +95,15 @@
     <Compile Include="Images\IDotNetImageManager.cs" />
     <Compile Include="Images\IImageManager.cs" />
     <Compile Include="Images\ImageReference.cs" />
+    <Compile Include="Languages\DecompilationOptions.cs" />
+    <Compile Include="Languages\DecompileAssemblyFlags.cs" />
     <Compile Include="Languages\ILanguage.cs" />
     <Compile Include="Languages\ILanguageCreator.cs" />
     <Compile Include="Languages\ILanguageManager.cs" />
     <Compile Include="Languages\LanguageConstants.cs" />
+    <Compile Include="Languages\ProjectFileRef.cs" />
+    <Compile Include="Languages\ProjectOptions.cs" />
+    <Compile Include="Languages\SyntaxHighlightOutputToTextOutput.cs" />
     <Compile Include="Menus\CodeReferenceSegment.cs" />
     <Compile Include="Menus\CreatedMenuItem.cs" />
     <Compile Include="Menus\ExportMenuAttribute.cs" />
@@ -111,6 +120,12 @@
     <Compile Include="Menus\IMenuManager.cs" />
     <Compile Include="Menus\IMenuMetadata.cs" />
     <Compile Include="Menus\MenuConstants.cs" />
+    <Compile Include="Plugin\IAutoLoaded.cs" />
+    <Compile Include="Plugin\IPlugin.cs" />
+    <Compile Include="Plugin\PluginAuthor.cs" />
+    <Compile Include="Plugin\PluginEvent.cs" />
+    <Compile Include="Plugin\PluginInfo.cs" />
+    <Compile Include="Plugin\PluginLicense.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\ISettingsManager.cs" />
     <Compile Include="Settings\ISettingsSection.cs" />
@@ -148,6 +163,8 @@
     <Compile Include="TreeView\ITreeViewListener.cs" />
     <Compile Include="TreeView\ITreeViewManager.cs" />
     <Compile Include="TreeView\TreeNodeDataCreatorContext.cs" />
+    <Compile Include="TreeView\TreeViewListenerEvent.cs" />
+    <Compile Include="TreeView\TreeViewListenerEventArgs.cs" />
     <Compile Include="TreeView\TreeViewOptions.cs" />
     <Compile Include="TreeView\TVConstants.cs" />
   </ItemGroup>
@@ -163,6 +180,10 @@
     <ProjectReference Include="..\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
+      <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
+      <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
     <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
       <Project>{3b2a5653-ec97-4001-bb9b-d90f1af2c371}</Project>

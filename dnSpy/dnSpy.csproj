@@ -40,13 +40,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>dnSpy.Dummy</StartupObject>
+    <StartupObject>dnSpy.MainApp.StartUpClass</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -60,11 +62,12 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppImpl.cs" />
-    <Compile Include="Dummy.cs" />
+    <Compile Include="Controls\IStackedContentChild.cs" />
+    <Compile Include="Controls\StackedContent.cs" />
     <Compile Include="Events\WeakEventList.cs" />
     <Compile Include="Files\AssemblyResolver.cs" />
     <Compile Include="Files\FileManager.cs" />
+    <Compile Include="Files\Tabs\FileTabManager.cs" />
     <Compile Include="Files\TreeView\AssemblyFileNode.cs" />
     <Compile Include="Files\TreeView\AssemblyReferenceNode.cs" />
     <Compile Include="Files\TreeView\BaseTypeFolderNode.cs" />
@@ -96,10 +99,28 @@
     <Compile Include="Images\ImageManager.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
     <Compile Include="Languages\LanguageManager.cs" />
+    <Compile Include="MainApp\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainApp\AppCreator.cs" />
+    <Compile Include="MainApp\AppImpl.cs" />
+    <Compile Include="MainApp\AppSettings.cs" />
+    <Compile Include="MainApp\AppStatusBar.cs" />
+    <Compile Include="MainApp\AppToolBar.cs" />
+    <Compile Include="MainApp\AppWindow.cs" />
+    <Compile Include="MainApp\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainApp\SavedWindowBounds.cs" />
+    <Compile Include="MainApp\StartUpClass.cs" />
+    <Compile Include="MainApp\ToolBarCommands.cs" />
+    <Compile Include="MainApp\ViewCommands.cs" />
     <Compile Include="Menus\AppMenus.cs" />
     <Compile Include="Menus\ContextMenuCreator.cs" />
     <Compile Include="Menus\MenuItemContext.cs" />
     <Compile Include="Menus\MenuManager.cs" />
+    <Compile Include="MVVM\InitializeDataTemplateContextMenu.cs" />
+    <Compile Include="Plugin\PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -124,6 +145,7 @@
     <Compile Include="Themes\Theme.cs" />
     <Compile Include="Themes\ThemeColor.cs" />
     <Compile Include="Themes\ThemeManager.cs" />
+    <Compile Include="Themes\ThemeSettings.cs" />
     <Compile Include="Themes\ThemesMenu.cs" />
     <Compile Include="ToolBars\ToolBarButtonVM.cs" />
     <Compile Include="ToolBars\ToolBarItemContext.cs" />
@@ -157,6 +179,10 @@
       <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Languages\Languages.csproj">
+      <Project>{d7fe873e-df22-4f54-aefa-bcf33afd7e05}</Project>
+      <Name>Languages</Name>
+    </ProjectReference>
     <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
       <Project>{3b2a5653-ec97-4001-bb9b-d90f1af2c371}</Project>
       <Name>ICSharpCode.NRefactory</Name>
@@ -181,6 +207,13 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ApplicationDefinition Include="MainApp\App.xaml">
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Page Include="MainApp\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Themes\wpf.styles.templates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -192,6 +225,7 @@
     <Resource Include="Images\AssemblyModule.png" />
     <Resource Include="Images\AssemblyReference.png" />
     <Resource Include="Images\AssemblyWarning.png" />
+    <Resource Include="Images\Backward.png" />
     <Resource Include="Images\BaseTypeClosed.png" />
     <Resource Include="Images\BaseTypeOpened.png" />
     <Resource Include="Images\Class.png" />
@@ -199,6 +233,7 @@
     <Resource Include="Images\ClassPrivate.png" />
     <Resource Include="Images\ClassProtected.png" />
     <Resource Include="Images\ClassProtectedInternal.png" />
+    <Resource Include="Images\Close.png" />
     <Resource Include="Images\CloseDocuments.png" />
     <Resource Include="Images\Constructor.png" />
     <Resource Include="Images\ConstructorCompilerControlled.png" />
@@ -206,6 +241,7 @@
     <Resource Include="Images\ConstructorPrivate.png" />
     <Resource Include="Images\ConstructorProtected.png" />
     <Resource Include="Images\ConstructorProtectedInternal.png" />
+    <Resource Include="Images\Copy.png" />
     <Resource Include="Images\Delegate.png" />
     <Resource Include="Images\DelegateInternal.png" />
     <Resource Include="Images\DelegatePrivate.png" />
@@ -255,6 +291,8 @@
     <Resource Include="Images\FieldReadOnlyProtectedInternal.png" />
     <Resource Include="Images\FolderClosed.png" />
     <Resource Include="Images\FolderOpened.png" />
+    <Resource Include="Images\Forward.png" />
+    <Resource Include="Images\FullScreen.png" />
     <Resource Include="Images\Generic.png" />
     <Resource Include="Images\GenericInternal.png" />
     <Resource Include="Images\GenericPrivate.png" />
@@ -280,6 +318,7 @@
     <Resource Include="Images\MethodProtectedInternal.png" />
     <Resource Include="Images\ModuleReference.png" />
     <Resource Include="Images\Namespace.png" />
+    <Resource Include="Images\Open.png" />
     <Resource Include="Images\Operator.png" />
     <Resource Include="Images\OperatorCompilerControlled.png" />
     <Resource Include="Images\OperatorInternal.png" />
@@ -300,6 +339,7 @@
     <Resource Include="Images\PropertyProtectedInternal.png" />
     <Resource Include="Images\ReferenceFolderClosed.png" />
     <Resource Include="Images\ReferenceFolderOpened.png" />
+    <Resource Include="Images\Save.png" />
     <Resource Include="Images\Search.png" />
     <Resource Include="Images\StaticClass.png" />
     <Resource Include="Images\StaticEvent.png" />
@@ -344,6 +384,7 @@
     <Resource Include="Images\VirtualPropertyPrivate.png" />
     <Resource Include="Images\VirtualPropertyProtected.png" />
     <Resource Include="Images\VirtualPropertyProtectedInternal.png" />
+    <Resource Include="Images\WordWrap.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

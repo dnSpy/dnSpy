@@ -127,7 +127,6 @@
     <Compile Include="MVVM\EnumVM.cs" />
     <Compile Include="MVVM\IInitializeDataTemplate.cs" />
     <Compile Include="MVVM\InitDataTemplateAP.cs" />
-    <Compile Include="MVVM\InitializeDataTemplateContextMenu.cs" />
     <Compile Include="MVVM\ListVM.cs" />
     <Compile Include="MVVM\NumberVMUtils.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />

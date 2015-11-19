@@ -56,6 +56,8 @@ namespace dnSpy.Themes {
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
 			foreach (var theme in themeManager.AllThemesSorted) {
+				if (!themeManager.Settings.ShowAllThemes && !themeManager.IsHighContrast && theme.IsHighContrast)
+					continue;
 				var attr = new ExportMenuItemAttribute { Header = theme.MenuName };
 				var tmp = theme;
 				var item = new MyMenuItem(ctx => themeManager.Theme = tmp, theme == themeManager.Theme);

@@ -53,10 +53,6 @@
       <Project>{9b234472-0e22-428c-9345-c8d9ee5e06af}</Project>
       <Name>dnSpy.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy\dnSpy.csproj">
-      <Project>{722257a9-1b14-4d63-b886-18a4229af4eb}</Project>
-      <Name>dnSpy</Name>
-    </ProjectReference>
     <ProjectReference Include="..\dnSpy_old\dnSpy_old.csproj">
       <Project>{1e85eff9-e370-4683-83e4-8a3d063ff791}</Project>
       <Name>dnSpy_old</Name>

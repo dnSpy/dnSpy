@@ -357,7 +357,7 @@ namespace dnSpy.Themes {
 			return ColorType.LastUI;
 		}
 
-		internal void UpdateResources(ResourceDictionary resources) {
+		public void UpdateResources(ResourceDictionary resources) {
 			foreach (var color in hlColors) {
 				foreach (var kv in color.ColorInfo.GetResourceKeyValues(color.InheritedColor))
 					resources[kv.Item1] = kv.Item2;

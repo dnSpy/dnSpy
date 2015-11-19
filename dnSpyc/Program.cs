@@ -79,7 +79,7 @@ namespace dnSpyc {
 
 		static void PrintHelp() {
 			var progName = GetProgramBaseName();
-			Console.WriteLine("{0} [--stdout] [--asm-path path] [--no-gac] [--no-stdlib] [--sln] [--sln-name name] [--proj-dir-suffix suffix] [--dont-mask-merr] [-r] [-o outdir] [-l lang] [fileOrDir1] [fileOrDir2] […]", progName);
+			Console.WriteLine("{0} [--stdout] [--asm-path path] [--no-gac] [--no-stdlib] [--sln] [--sln-name name] [--proj-dir-suffix suffix] [--dont-mask-merr] [-r] [-o outdir] [-l lang] [fileOrDir1] [fileOrDir2] [...]", progName);
 			Console.WriteLine("  --stdout     decompile to the screen");
 			Console.WriteLine("  --asm-path path    assembly search path. Paths can be separated with '{0}' or multiple --asm-path's can be used", PATHS_SEP);
 			Console.WriteLine("  --no-gac     don't use the GAC to look up assemblies. Useful with --no-stdlib");
@@ -229,7 +229,7 @@ namespace dnSpyc {
 					DumpNetModule(info, null);
 			}
 			else {
-				var projectFiles = new List<ProjectInfo>(GetDotNetFiles());
+				var projectFiles = new List<ProjectFileRef>(GetDotNetFiles());
 				foreach (var info in projectFiles)
 					DumpNetModule(info, projectFiles);
 
@@ -271,7 +271,7 @@ namespace dnSpyc {
 			}
 		}
 
-		static IEnumerable<ProjectInfo> GetDotNetFiles() {
+		static IEnumerable<ProjectFileRef> GetDotNetFiles() {
 			foreach (var file in files) {
 				if (File.Exists(file)) {
 					var info = OpenNetFile(file);
@@ -296,7 +296,7 @@ namespace dnSpyc {
 			}
 		}
 
-		static IEnumerable<ProjectInfo> DumpDir(string path, string pattern) {
+		static IEnumerable<ProjectFileRef> DumpDir(string path, string pattern) {
 			pattern = pattern ?? "*";
 			Stack<string> stack = new Stack<string>();
 			stack.Push(path);
@@ -343,7 +343,7 @@ namespace dnSpyc {
 			}
 		}
 
-		static IEnumerable<ProjectInfo> DumpDir2(string path, string pattern) {
+		static IEnumerable<ProjectFileRef> DumpDir2(string path, string pattern) {
 			pattern = pattern ?? "*";
 			foreach (var fi in GetFiles(path, pattern)) {
 				var info = OpenNetFile(fi.FullName);
@@ -384,7 +384,7 @@ namespace dnSpyc {
 			}
 		}
 
-		static ProjectInfo OpenNetFile(string file) {
+		static ProjectFileRef OpenNetFile(string file) {
 			try {
 				file = Path.GetFullPath(file);
 				if (!File.Exists(file))
@@ -397,7 +397,7 @@ namespace dnSpyc {
 
 				var projFileName = GetProjectFileName(file);
 				projFileName = Path.Combine(GetProjectDir(GetLanguage(), file), projFileName);
-				return new ProjectInfo {
+				return new ProjectFileRef {
 					AssemblyFileName = file,
 					AssemblySimpleName = asmName,
 					ProjectFileName = projFileName,
@@ -433,7 +433,7 @@ namespace dnSpyc {
 			public bool UseMemoryMappedIO { get; set; }
 		}
 
-		static void DumpNetModule(ProjectInfo info, List<ProjectInfo> projectFiles) {
+		static void DumpNetModule(ProjectFileRef info, List<ProjectFileRef> projectFiles) {
 			var fileName = info.AssemblyFileName;
 			if (string.IsNullOrEmpty(fileName))
 				throw new Exception(".NET module filename is empty or null");

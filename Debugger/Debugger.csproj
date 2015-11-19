@@ -243,13 +243,13 @@
       <Project>{7e7c2cf8-2057-4eaa-9dad-ab3022cf4037}</Project>
       <Name>dnSpy.Shared.UI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy_old\dnSpy_old.csproj">
-      <Project>{1e85eff9-e370-4683-83e4-8a3d063ff791}</Project>
-      <Name>dnSpy_old</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
       <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
       <Name>ICSharpCode.Decompiler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Languages\Languages.csproj">
+      <Project>{d7fe873e-df22-4f54-aefa-bcf33afd7e05}</Project>
+      <Name>Languages</Name>
     </ProjectReference>
     <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
       <Project>{3b2a5653-ec97-4001-bb9b-d90f1af2c371}</Project>

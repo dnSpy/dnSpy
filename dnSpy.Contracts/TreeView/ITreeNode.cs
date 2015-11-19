@@ -56,5 +56,22 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <param name="node">Node to insert</param>
 		void AddChild(ITreeNode node);
+
+		/// <summary>
+		/// Gets all descendants
+		/// </summary>
+		/// <returns></returns>
+		IEnumerable<ITreeNode> Descendants();
+
+		/// <summary>
+		/// Gets all descendants including itself
+		/// </summary>
+		/// <returns></returns>
+		IEnumerable<ITreeNode> DescendantsAndSelf();
+
+		/// <summary>
+		/// Refreshes the UI
+		/// </summary>
+		void RefreshUI();
 	}
 }

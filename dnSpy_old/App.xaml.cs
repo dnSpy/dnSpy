@@ -17,7 +17,6 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -28,14 +27,13 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Navigation;
 using System.Windows.Threading;
-using dnSpy;
-using dnSpy.Contracts;
+using dnSpy.Contracts.Remove;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.ILSpy.TextView;
 
 namespace dnSpy {
-	public static class StartUpClass {
+	public static class StartUpClass_OLD {
 		[STAThread]
 		public static void Main() {
 			if (!dnlib.Settings.IsThreadSafe) {
@@ -69,16 +67,13 @@ namespace ICSharpCode.ILSpy {
 				}
 			}
 			InitializeComponent();
-			AddMergedResourceDictionary(typeof(AppCreator).Assembly, "Themes/wpf.styles.templates.xaml");
+			TempHack.HackRemove = (IHackRemove)Activator.CreateInstance("dnSpy", "dnSpy.TempHack.Remove.HackRemove").Unwrap();
+			AddMergedResourceDictionary(TempHack.HackRemove.GetType().Assembly, "Themes/wpf.styles.templates.xaml");
 			AddMergedResourceDictionary(typeof(RelayCommand).Assembly, "Themes/wpf.styles.templates.xaml");
 			AddMergedResourceDictionary(GetType().Assembly, "DnTheme/wpf.styles.templates.xaml");
 			AddMergedResourceDictionary(GetType().Assembly, "TreeNodes/Hex/wpf.styles.templates.xaml");
 
-			var asms = new List<Assembly>();
-			asms.Add(GetType().Assembly);
-			asms.Add(typeof(RelayCommand).Assembly);	// dnSpy.Shared.UI
-			AppCreator.Create(asms, "*.Plugin.dll");
-			((AppImpl)DnSpy.App).InitializeSettings();
+			TempHack.HackRemove.Initialize(GetType().Assembly);
 
 			Languages.Initialize();
 
@@ -204,7 +199,7 @@ namespace ICSharpCode.ILSpy {
 		void Window_RequestNavigate(object sender, RequestNavigateEventArgs e) {
 			if (e.Uri.Scheme == "resource") {
 				AvalonEditTextOutput output = new AvalonEditTextOutput();
-				using (Stream s = typeof(App).Assembly.GetManifestResourceStream(typeof(dnSpy.StartUpClass), e.Uri.AbsolutePath)) {
+				using (Stream s = typeof(App).Assembly.GetManifestResourceStream(typeof(dnSpy.StartUpClass_OLD), e.Uri.AbsolutePath)) {
 					using (StreamReader r = new StreamReader(s)) {
 						string line;
 						while ((line = r.ReadLine()) != null) {

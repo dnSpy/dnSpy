@@ -56,7 +56,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>dnSpy.StartUpClass</StartupObject>
+    <StartupObject>dnSpy.StartUpClass_OLD</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -129,7 +129,7 @@
     <Compile Include="Hex\HexBoxCommands.cs" />
     <Compile Include="Hex\HexBoxThemeHelper.cs" />
     <Compile Include="Images\ImageInfo.cs" />
-    <Compile Include="Languages\SyntaxHighlightOutputToTextOutput.cs" />
+    <Compile Include="Languages\Languages.cs" />
     <Compile Include="MVVM\AskUser.cs" />
     <Compile Include="Hex\GoToOffsetDlg.xaml.cs">
       <DependentUpon>GoToOffsetDlg.xaml</DependentUpon>
@@ -172,10 +172,6 @@
     </Compile>
     <Compile Include="Search\FilterSearcher.cs" />
     <Compile Include="IPlugin.cs" />
-    <Compile Include="Languages\InstructionBytesReader.cs" />
-    <Compile Include="Languages\InstructionUtils.cs" />
-    <Compile Include="Languages\ModifiedInstructionBytesReader.cs" />
-    <Compile Include="Languages\OriginalInstructionBytesReader.cs" />
     <Compile Include="MethodAnnotations.cs" />
     <Compile Include="MsgBox.xaml.cs">
       <DependentUpon>MsgBox.xaml</DependentUpon>
@@ -251,7 +247,6 @@
       <DependentUpon>CreateListDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="DecompileCache.cs" />
-    <Compile Include="Languages\CSharpLanguage.cs" />
     <Compile Include="DecompilationOptions.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="FilterSettings.cs" />
@@ -259,14 +254,10 @@
     <Compile Include="GacInterop.cs" />
     <Compile Include="GuessFileType.cs" />
     <Compile Include="DecompileEventArgs.cs" />
-    <Compile Include="Languages\ILAstLanguage.cs" />
-    <Compile Include="Languages\ILLanguage.cs" />
     <Compile Include="Images\MemberIcon.cs" />
     <Compile Include="Images\TypeIcon.cs" />
     <Compile Include="IPane.cs" />
     <Compile Include="ISmartTextOutput.cs" />
-    <Compile Include="Languages\Language.cs" />
-    <Compile Include="Languages\Languages.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="NavigationHistory.cs" />
     <Compile Include="NavigationState.cs" />
@@ -336,13 +327,6 @@
     <Compile Include="TreeNodes\SearchMsdnContextMenuEntry.cs" />
     <Compile Include="TreeNodes\UISyntaxHighlighter.cs" />
     <Compile Include="UIUtils.cs" />
-    <Compile Include="VB\ILSpyEnvironmentProvider.cs" />
-    <Compile Include="VB\VBLanguage.cs" />
-    <Compile Include="VB\VBTextOutputFormatter.cs" />
-    <Compile Include="XmlDoc\AddXmlDocTransform.cs" />
-    <Compile Include="XmlDoc\XmlDocKeyProvider.cs" />
-    <Compile Include="XmlDoc\XmlDocLoader.cs" />
-    <Compile Include="XmlDoc\XmlDocRenderer.cs" />
     <EmbeddedResource Include="..\README.txt">
       <Link>README.txt</Link>
     </EmbeddedResource>
@@ -731,10 +715,6 @@
       <Project>{7e7c2cf8-2057-4eaa-9dad-ab3022cf4037}</Project>
       <Name>dnSpy.Shared.UI</Name>
     </ProjectReference>
-    <ProjectReference Include="..\dnSpy\dnSpy.csproj">
-      <Project>{722257a9-1b14-4d63-b886-18a4229af4eb}</Project>
-      <Name>dnSpy</Name>
-    </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
       <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
       <Name>ICSharpCode.Decompiler</Name>
@@ -746,6 +726,10 @@
     <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
       <Project>{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}</Project>
       <Name>ICSharpCode.AvalonEdit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Languages\Languages.csproj">
+      <Project>{d7fe873e-df22-4f54-aefa-bcf33afd7e05}</Project>
+      <Name>Languages</Name>
     </ProjectReference>
     <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
       <Project>{53DCA265-3C3C-42F9-B647-F72BA678122B}</Project>
@@ -769,5 +753,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

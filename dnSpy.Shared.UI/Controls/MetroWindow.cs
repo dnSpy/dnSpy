@@ -443,7 +443,7 @@ namespace dnSpy.Shared.UI.Controls {
 		}
 	}
 
-	public static class WindowUtils {//TODO: REMOVE public
+	public static class WindowUtils {
 		[DllImport("user32")]
 		static extern bool IsWindow(IntPtr hWnd);
 		[DllImport("user32")]

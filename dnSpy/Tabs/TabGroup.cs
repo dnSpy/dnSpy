@@ -31,6 +31,7 @@ using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Tabs;
+using dnSpy.Controls;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Tabs {
@@ -40,7 +41,7 @@ namespace dnSpy.Tabs {
 		Inactive,
 	}
 
-	sealed class TabGroup : ViewModelBase, ITabGroup {
+	sealed class TabGroup : ViewModelBase, ITabGroup, IStackedContentChild {
 		public IEnumerable<ITabContent> TabContents {
 			get { return AllTabItemImpls.Select(a => a.TabContent); }
 		}
@@ -96,6 +97,13 @@ namespace dnSpy.Tabs {
 		internal Guid Guid {
 			get { return tabGroupGuid; }
 		}
+
+		object IStackedContentChild.UIObject {
+			get { return tabControl; }
+		}
+
+		IStackedContent IStackedContentChild.StackedContent { get; set; }
+
 		readonly Guid tabGroupGuid;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {

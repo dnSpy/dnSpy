@@ -5066,11 +5066,11 @@
         </Button>
     </DataTemplate>
 
-	<Style x:Key="TabGroupsGridStyle"
+    <Style x:Key="StackedContentGridStyle"
            TargetType="{x:Type Grid}">
-	</Style>
+    </Style>
 
-	<tabs:FileTabBackgroundConverter x:Key="FileTabBackgroundConverter"/>
+    <tabs:FileTabBackgroundConverter x:Key="FileTabBackgroundConverter"/>
     <Style x:Key="FileTabGroupTabControl"
            BasedOn="{StaticResource {x:Type TabControl}}"
            TargetType="{x:Type TabControl}">

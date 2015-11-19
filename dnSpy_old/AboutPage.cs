@@ -46,7 +46,7 @@ namespace ICSharpCode.ILSpy {
 			foreach (var plugin in DnSpy.App.CompositionContainer.GetExportedValues<IAboutPageAddition>())
 				plugin.Write(output);
 			output.WriteLine();
-			using (Stream s = typeof(AboutPage).Assembly.GetManifestResourceStream(typeof(dnSpy.StartUpClass), "README.txt")) {
+			using (Stream s = typeof(AboutPage).Assembly.GetManifestResourceStream(typeof(dnSpy.StartUpClass_OLD), "README.txt")) {
 				using (StreamReader r = new StreamReader(s)) {
 					string line;
 					while ((line = r.ReadLine()) != null) {

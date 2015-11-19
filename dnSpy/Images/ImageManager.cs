@@ -29,7 +29,7 @@ using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Images {
 	[Export, Export(typeof(IImageManager)), PartCreationPolicy(CreationPolicy.Shared)]
-	public sealed class ImageManager : IImageManager {//TODO: REMOVE public
+	sealed class ImageManager : IImageManager {
 		readonly Dictionary<Tuple<string, Color>, BitmapSource> imageCache = new Dictionary<Tuple<string, Color>, BitmapSource>();
 		bool isHighContrast;
 		readonly IThemeManager themeManager;
@@ -37,30 +37,31 @@ namespace dnSpy.Images {
 		[ImportingConstructor]
 		ImageManager(IThemeManager themeManager) {
 			this.themeManager = themeManager;
+			this.themeManager.EarlyThemeChanged += ThemeManager_EarlyThemeChanged;
 		}
 
-		public void OnThemeChanged() {//TODO: Should be internal
+		void ThemeManager_EarlyThemeChanged(object sender, ThemeChangedEventArgs e) {
 			imageCache.Clear();
 			isHighContrast = themeManager.Theme.IsHighContrast;
 		}
 
 		Color GetColor(BackgroundType bgType) {
 			switch (bgType) {
-			case BackgroundType.Button: return GetColorBackground(ColorType.CommonControlsButtonIconBackground);
-			case BackgroundType.TextEditor: return GetColorBackground(ColorType.DefaultText);
-			case BackgroundType.DialogWindow: return GetColorBackground(ColorType.DialogWindow);
-			case BackgroundType.TextBox: return GetColorBackground(ColorType.CommonControlsTextBox);
-			case BackgroundType.TreeNode: return GetColorBackground(ColorType.TreeView);
-			case BackgroundType.Search: return GetColorBackground(ColorType.ListBoxBackground);
-			case BackgroundType.ComboBox: return GetColorBackground(ColorType.CommonControlsComboBoxBackground);
-			case BackgroundType.ToolBar: return GetColorBackground(ColorType.ToolBarIconBackground);
-			case BackgroundType.AppMenuMenuItem: return GetColorBackground(ColorType.ToolBarIconVerticalBackground);
-			case BackgroundType.ContextMenuItem: return GetColorBackground(ColorType.ContextMenuRectangleFill);
-			case BackgroundType.GridViewItem: return GetColorBackground(ColorType.GridViewBackground);
-			case BackgroundType.CodeToolTip: return GetColorBackground(ColorType.CodeToolTip);
-			case BackgroundType.TitleAreaActive: return GetColorBackground(ColorType.EnvironmentMainWindowActiveCaption);
-			case BackgroundType.TitleAreaInactive: return GetColorBackground(ColorType.EnvironmentMainWindowInactiveCaption);
-			case BackgroundType.CommandBar: return GetColorBackground(ColorType.EnvironmentCommandBarIcon);
+			case BackgroundType.Button:				return GetColorBackground(ColorType.CommonControlsButtonIconBackground);
+			case BackgroundType.TextEditor:			return GetColorBackground(ColorType.DefaultText);
+			case BackgroundType.DialogWindow:		return GetColorBackground(ColorType.DialogWindow);
+			case BackgroundType.TextBox:			return GetColorBackground(ColorType.CommonControlsTextBox);
+			case BackgroundType.TreeNode:			return GetColorBackground(ColorType.TreeView);
+			case BackgroundType.Search:				return GetColorBackground(ColorType.ListBoxBackground);
+			case BackgroundType.ComboBox:			return GetColorBackground(ColorType.CommonControlsComboBoxBackground);
+			case BackgroundType.ToolBar:			return GetColorBackground(ColorType.ToolBarIconBackground);
+			case BackgroundType.AppMenuMenuItem:	return GetColorBackground(ColorType.ToolBarIconVerticalBackground);
+			case BackgroundType.ContextMenuItem:	return GetColorBackground(ColorType.ContextMenuRectangleFill);
+			case BackgroundType.GridViewItem:		return GetColorBackground(ColorType.GridViewBackground);
+			case BackgroundType.CodeToolTip:		return GetColorBackground(ColorType.CodeToolTip);
+			case BackgroundType.TitleAreaActive:	return GetColorBackground(ColorType.EnvironmentMainWindowActiveCaption);
+			case BackgroundType.TitleAreaInactive:	return GetColorBackground(ColorType.EnvironmentMainWindowInactiveCaption);
+			case BackgroundType.CommandBar:			return GetColorBackground(ColorType.EnvironmentCommandBarIcon);
 			default:
 				Debug.Fail("Invalid bg type");
 				return GetColorBackground(ColorType.SystemColorsWindow);

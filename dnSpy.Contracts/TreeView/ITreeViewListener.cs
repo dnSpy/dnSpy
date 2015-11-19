@@ -23,9 +23,10 @@ namespace dnSpy.Contracts.TreeView {
 	/// </summary>
 	public interface ITreeViewListener {
 		/// <summary>
-		/// Gets called when a new <see cref="ITreeNode"/> instance has been created
+		/// Called at various times
 		/// </summary>
-		/// <param name="node">New instance</param>
-		void NodeCreated(ITreeNode node);
+		/// <param name="treeView">Sender</param>
+		/// <param name="e">Event args</param>
+		void OnEvent(ITreeView treeView, TreeViewListenerEventArgs e);
 	}
 }

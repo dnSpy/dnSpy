@@ -18,7 +18,10 @@
 */
 
 using dnlib.DotNet;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Highlighting;
+using dnSpy.NRefactory;
+using ICSharpCode.Decompiler;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>
@@ -34,6 +37,16 @@ namespace dnSpy.Contracts.Languages {
 		/// Order of language when shown in a UI
 		/// </summary>
 		double OrderUI { get; }
+
+		/// <summary>
+		/// File extension, eg. .cs, can't be null
+		/// </summary>
+		string FileExtension { get; }
+
+		/// <summary>
+		/// Project file extension, eg. .csproj or null if it's not supported
+		/// </summary>
+		string ProjectFileExtension { get; }
 
 		/// <summary>
 		/// Writes a type name
@@ -58,5 +71,108 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="includeNamespace">true to include namespace</param>
 		/// <param name="pd"><see cref="ParamDef"/> or null</param>
 		void WriteType(ISyntaxHighlightOutput output, ITypeDefOrRef type, bool includeNamespace, ParamDef pd = null);
+
+		/// <summary>
+		/// Decompiles a method
+		/// </summary>
+		/// <param name="method">Method</param>
+		/// <param name="output">Output</param>
+		/// <param name="options">Options</param>
+		void Decompile(MethodDef method, ITextOutput output, DecompilationOptions options);
+
+		/// <summary>
+		/// Decompiles a property
+		/// </summary>
+		/// <param name="property">Property</param>
+		/// <param name="output">Output</param>
+		/// <param name="options">Options</param>
+		void Decompile(PropertyDef property, ITextOutput output, DecompilationOptions options);
+
+		/// <summary>
+		/// Decompiles a field
+		/// </summary>
+		/// <param name="field">Field</param>
+		/// <param name="output">Output</param>
+		/// <param name="options">Options</param>
+		void Decompile(FieldDef field, ITextOutput output, DecompilationOptions options);
+
+		/// <summary>
+		/// Decompiles an event
+		/// </summary>
+		/// <param name="ev">Event</param>
+		/// <param name="output">Output</param>
+		/// <param name="options">Options</param>
+		void Decompile(EventDef ev, ITextOutput output, DecompilationOptions options);
+
+		/// <summary>
+		/// Decompiles a type
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <param name="output">Output</param>
+		/// <param name="options">Options</param>
+		void Decompile(TypeDef type, ITextOutput output, DecompilationOptions options);
+
+		/// <summary>
+		/// Decompiles an assembly or module
+		/// </summary>
+		/// <param name="file">Module</param>
+		/// <param name="output">Output</param>
+		/// <param name="options">Options</param>
+		/// <param name="flags">Flags</param>
+		void DecompileAssembly(IDnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule);
+
+		/// <summary>
+		/// Writes a tooltip
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="member">Member</param>
+		/// <param name="typeAttributes">Type containing attributes, used to detect the dynamic types and out/ref params</param>
+		void WriteToolTip(ISyntaxHighlightOutput output, IMemberRef member, IHasCustomAttribute typeAttributes);
+
+		/// <summary>
+		/// Writes a tooltip
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="variable">Local or argument</param>
+		/// <param name="name">Name or null</param>
+		void WriteToolTip(ISyntaxHighlightOutput output, IVariable variable, string name);
+
+		/// <summary>
+		/// Writes a comment prefix
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="addSpace">true to add a space before the comment prefix</param>
+		void WriteCommentBegin(ITextOutput output, bool addSpace);
+
+		/// <summary>
+		/// Writes a comment suffix
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="addSpace">true to add a space before the comment suffix (if it's written)</param>
+		void WriteCommentEnd(ITextOutput output, bool addSpace);
+
+		/// <summary>
+		/// Returns true if the member is visible. Can be used to hide compiler generated types, methods etc
+		/// </summary>
+		/// <param name="member">Member</param>
+		/// <returns></returns>
+		bool ShowMember(IMemberRef member);
+	}
+
+	/// <summary>
+	/// Extension methods
+	/// </summary>
+	public static class LanguageExtensionMethods {
+		/// <summary>
+		/// Writes a comment and a new line
+		/// </summary>
+		/// <param name="self">This</param>
+		/// <param name="output">Output</param>
+		/// <param name="comment">Comment</param>
+		public static void WriteCommentLine(this ILanguage self, ITextOutput output, string comment) {
+			self.WriteCommentBegin(output, true);
+			output.Write(comment, TextTokenType.Comment);
+			self.WriteCommentEnd(output, true);
+		}
 	}
 }

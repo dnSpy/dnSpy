@@ -35,6 +35,11 @@ namespace dnSpy.Contracts.Languages {
 		/// Current default language
 		/// </summary>
 		ILanguage SelectedLanguage { get; set; }
+
+		/// <summary>
+		/// Raised when <see cref="SelectedLanguage"/> has been updated
+		/// </summary>
+		event EventHandler<EventArgs> LanguageChanged;
 	}
 
 	/// <summary>

@@ -23,7 +23,7 @@ using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
-	[Export(typeof(IDnSpyFileNodeCreator))]
+	[Export(typeof(IDnSpyFileNodeCreator)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class DefaultDnSpyFileNodeCreator : IDnSpyFileNodeCreator {
 		public double Order {
 			get { return double.MaxValue; }

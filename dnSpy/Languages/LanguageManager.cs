@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Languages;
+using dnSpy.Events;
 
 namespace dnSpy.Languages {
 	[Export, Export(typeof(ILanguageManager)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -35,8 +36,9 @@ namespace dnSpy.Languages {
 			foreach (var creator in creators)
 				langs.AddRange(creator.Create());
 			this.languages = langs.OrderBy(a => a.OrderUI).ToArray();
-			Debug.Assert(languages.Length != 0);
-			this.selectedLanguage = languages == null ? null : languages[0];
+			Debug.Assert(this.languages.Length != 0);
+			this.selectedLanguage = this.languages.Length == 0 ? null : this.languages[0];
+			this.languageChanged = new WeakEventList<EventArgs>();
 		}
 
 		public ILanguage SelectedLanguage {
@@ -48,11 +50,17 @@ namespace dnSpy.Languages {
 					throw new InvalidOperationException("Can't set a language that isn't part of this instance's language collection");
 				if (selectedLanguage != value) {
 					selectedLanguage = value;
-					//TODO: Notify listeners
+					languageChanged.Raise(this, EventArgs.Empty);
 				}
 			}
 		}
 		ILanguage selectedLanguage;
+
+		public event EventHandler<EventArgs> LanguageChanged {
+			add { languageChanged.Add(value); }
+			remove { languageChanged.Remove(value); }
+		}
+		readonly WeakEventList<EventArgs> languageChanged;
 
 		public IEnumerable<ILanguage> Languages {
 			get { return languages.AsEnumerable(); }

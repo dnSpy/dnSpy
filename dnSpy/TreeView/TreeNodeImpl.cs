@@ -19,6 +19,7 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.TreeView {
@@ -68,6 +69,18 @@ namespace dnSpy.TreeView {
 
 		public void AddChild(ITreeNode node) {
 			treeViewImpl.AddSorted(this, node);
+		}
+
+		public IEnumerable<ITreeNode> Descendants() {
+			return Node.Descendants().Select(a => ((DnSpySharpTreeNode)a).TreeNodeImpl);
+		}
+
+		public IEnumerable<ITreeNode> DescendantsAndSelf() {
+			return Node.DescendantsAndSelf().Select(a => ((DnSpySharpTreeNode)a).TreeNodeImpl);
+		}
+
+		public void RefreshUI() {
+			Node.RefreshUI();
 		}
 	}
 }

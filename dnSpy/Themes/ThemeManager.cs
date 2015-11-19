@@ -40,6 +40,8 @@ namespace dnSpy.Themes {
 			internal set {
 				if (theme != value) {
 					theme = value;
+					themeSettings.ThemeName = value.Name;
+					earlyThemeChanged.Raise(this, new ThemeChangedEventArgs());
 					themeChanged.Raise(this, new ThemeChangedEventArgs());
 				}
 			}
@@ -50,11 +52,7 @@ namespace dnSpy.Themes {
 			get { return themes.Values.OrderBy(x => x.Order); }
 		}
 
-		string IThemeManager.DefaultThemeName {
-			get { return DefaultThemeName; }
-		}
-
-		bool IsHighContrast {
+		public bool IsHighContrast {
 			get { return isHighContrast; }
 			set {
 				if (isHighContrast != value) {
@@ -71,13 +69,28 @@ namespace dnSpy.Themes {
 		}
 		readonly WeakEventList<ThemeChangedEventArgs> themeChanged;
 
-		ThemeManager() {
+		public event EventHandler<ThemeChangedEventArgs> EarlyThemeChanged {
+			add { earlyThemeChanged.Add(value); }
+			remove { earlyThemeChanged.Remove(value); }
+		}
+		readonly WeakEventList<ThemeChangedEventArgs> earlyThemeChanged;
+
+		public ThemeSettings Settings {
+			get { return themeSettings; }
+		}
+		readonly ThemeSettings themeSettings;
+
+		[ImportingConstructor]
+		ThemeManager(ThemeSettings themeSettings) {
+			this.themeSettings = themeSettings;
 			this.themeChanged = new WeakEventList<ThemeChangedEventArgs>();
+			this.earlyThemeChanged = new WeakEventList<ThemeChangedEventArgs>();
 			this.themes = new Dictionary<string, Theme>();
 			Load();
 			Debug.Assert(themes.Count != 0);
 			SystemEvents.UserPreferenceChanged += (s, e) => IsHighContrast = SystemParameters.HighContrast;
 			IsHighContrast = SystemParameters.HighContrast;
+			Initialize(themeSettings.ThemeName ?? DefaultThemeName);
 		}
 
 		string CurrentDefaultThemeName {
@@ -87,7 +100,7 @@ namespace dnSpy.Themes {
 		const string DefaultHighContrastThemeName = "hc";
 
 		ITheme GetThemeOrDefault(string name) {
-			return themes[name] ?? themes[DefaultThemeName] ?? AllThemesSorted.FirstOrDefault();
+			return themes[name ?? string.Empty] ?? themes[DefaultThemeName] ?? AllThemesSorted.FirstOrDefault();
 		}
 
 		void SwitchThemeIfNecessary() {
@@ -143,7 +156,7 @@ namespace dnSpy.Themes {
 			return null;
 		}
 
-		internal void Initialize(string themeName) {
+		void Initialize(string themeName) {
 			var theme = GetThemeOrDefault(themeName);
 			if (theme.IsHighContrast != IsHighContrast)
 				theme = GetThemeOrDefault(CurrentDefaultThemeName) ?? theme;

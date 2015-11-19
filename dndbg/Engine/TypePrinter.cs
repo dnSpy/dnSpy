@@ -883,9 +883,8 @@ namespace dndbg.Engine {
 						uint ip = frame.NativeFrameIP;
 						if (nativeCode != null && !nativeCode.IsIL)
 							WriteNativeAddress(nativeCode.Address);
-						else {
+						else
 							OutputWrite("???", TypeColor.Error);
-						}
 						WriteRelativeOffset((int)ip);
 					}
 					OutputWrite(")", TypeColor.Operator);

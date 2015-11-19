@@ -30,7 +30,9 @@ namespace dnSpy.TreeView {
 
 		public ITreeNode TreeNode { get; set; }
 
-		public bool SingleClickExpandsChildren { get; }
+		public bool SingleClickExpandsChildren {
+			get { return false; }
+		}
 
 		public object Text {
 			get { return null; }

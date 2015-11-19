@@ -150,10 +150,12 @@ namespace ICSharpCode.ILSpy {
 		Dictionary<SearchMode, int> searchModeToIndex = new Dictionary<SearchMode, int>();
 
 		static SearchPane() {
-			DnSpy.App.ThemeManager.ThemeChanged += (s, e) => {
-				foreach (var searchType in searchTypes)
-					searchType.OnThemeChanged();
-			};
+			DnSpy.App.ThemeManager.ThemeChanged += ThemeManager_StaticThemeChanged;
+		}
+
+		static void ThemeManager_StaticThemeChanged(object sender, ThemeChangedEventArgs e) {
+			foreach (var searchType in searchTypes)
+				searchType.OnThemeChanged();
 		}
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {

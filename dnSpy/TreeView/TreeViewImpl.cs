@@ -95,7 +95,7 @@ namespace dnSpy.TreeView {
 			Debug.Assert(data.TreeNode == null);
 			var impl = new TreeNodeImpl(this, data);
 			if (treeViewListener != null)
-				treeViewListener.NodeCreated(impl);
+				treeViewListener.OnEvent(this, new TreeViewListenerEventArgs(TreeViewListenerEvent.NodeCreated, impl));
 			data.Initialize();
 			if (!impl.LazyLoading)
 				AddChildren(impl);
