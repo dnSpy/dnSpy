@@ -74,6 +74,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			case FieldAttributes.Assembly:
 				memberAccessibility = Accessibility.Internal;
 				break;
+			case FieldAttributes.PrivateScope:
 			case FieldAttributes.Family:
 				memberAccessibility = Accessibility.Family;
 				break;
@@ -98,6 +99,7 @@ namespace ICSharpCode.ILSpy.TreeNodes.Analyzer {
 			case MethodAttributes.FamANDAssem:
 				accessibility = Accessibility.FamilyAndInternal;
 				break;
+			case MethodAttributes.PrivateScope:
 			case MethodAttributes.Family:
 				accessibility = Accessibility.Family;
 				break;
