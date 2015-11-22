@@ -469,7 +469,7 @@ namespace dnSpy.Languages.CSharp {
 				w.WriteStartElement("ItemGroup"); // References
 				foreach (var r in asmRefs) {
 					if (r.Name != "mscorlib") {
-						var asm = options.ProjectOptions.AssemblyResolver.Resolve(r, module);
+						var asm = options.ProjectOptions.Resolve(r, module);
 						if (asm != null && ExistsInProject(options, asm.ManifestModule.Location))
 							continue;
 						w.WriteStartElement("Reference");
@@ -497,7 +497,7 @@ namespace dnSpy.Languages.CSharp {
 
 				w.WriteStartElement("ItemGroup"); // ProjectReference
 				foreach (var r in asmRefs) {
-					var asm = options.ProjectOptions.AssemblyResolver.Resolve(r, module);
+					var asm = options.ProjectOptions.Resolve(r, module);
 					if (asm == null)
 						continue;
 					var otherProj = FindOtherProject(options, asm.ManifestModule.Location);
@@ -591,7 +591,7 @@ namespace dnSpy.Languages.CSharp {
 				if (checkedAsms.Contains(asmRef))
 					return;
 				checkedAsms.Add(asmRef);
-				var asm = options.ProjectOptions.AssemblyResolver.Resolve(asmRef, assembly.ModuleDef);
+				var asm = options.ProjectOptions.Resolve(asmRef, assembly.ModuleDef);
 				if (asm == null)
 					allReferences.Add(asmRef);
 				else

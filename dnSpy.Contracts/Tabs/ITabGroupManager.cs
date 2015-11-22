@@ -30,6 +30,11 @@ namespace dnSpy.Contracts.Tabs {
 		IEnumerable<ITabGroup> TabGroups { get; }
 
 		/// <summary>
+		/// Gets the active <see cref="ITabGroup"/> or null if <see cref="TabGroups"/> is empty
+		/// </summary>
+		ITabGroup ActiveTabGroup { get; }
+
+		/// <summary>
 		/// true if the <see cref="ITabGroup"/>s are lined up horizontally, else vertically
 		/// </summary>
 		bool IsHorizontal { get; set; }

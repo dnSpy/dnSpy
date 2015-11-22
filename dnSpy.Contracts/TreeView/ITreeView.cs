@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Windows.Threading;
 
 namespace dnSpy.Contracts.TreeView {
@@ -47,5 +48,21 @@ namespace dnSpy.Contracts.TreeView {
 		/// Gets the tree view UI object
 		/// </summary>
 		DispatcherObject UIObject { get; }
+
+		/// <summary>
+		/// Select items
+		/// </summary>
+		/// <param name="items">Items to select</param>
+		void SelectItems(IEnumerable<ITreeNodeData> items);
+
+		/// <summary>
+		/// Raised when selection has changed
+		/// </summary>
+		event EventHandler<TVSelectionChangedEventArgs> SelectionChanged;
+
+		/// <summary>
+		/// Gets all selected items
+		/// </summary>
+		ITreeNodeData[] SelectedItems { get; }
 	}
 }

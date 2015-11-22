@@ -22,7 +22,7 @@ using System.Windows;
 
 using ICSharpCode.AvalonEdit.Rendering;
 
-namespace ICSharpCode.ILSpy.TextView {
+namespace dnSpy.Files.Tabs.TextEditor {
 	using Pair = KeyValuePair<int, Lazy<UIElement>>;
 
 	/// <summary>

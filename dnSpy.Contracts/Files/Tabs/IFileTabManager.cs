@@ -22,5 +22,21 @@ namespace dnSpy.Contracts.Files.Tabs {
 	/// Manages the file tabs and treeview
 	/// </summary>
 	public interface IFileTabManager {
+		/// <summary>
+		/// Gets the active tab or null if none, see also <see cref="GetOrCreateActiveTab()"/>
+		/// </summary>
+		IFileTab ActiveTab { get; }
+
+		/// <summary>
+		/// Gets the active tab or creates a new one if <see cref="ActiveTab"/> is null
+		/// </summary>
+		/// <returns></returns>
+		IFileTab GetOrCreateActiveTab();
+
+		/// <summary>
+		/// Opens a new empty tab and sets it as the active tab (<see cref="ActiveTab"/>)
+		/// </summary>
+		/// <returns></returns>
+		IFileTab OpenEmptyTab();
 	}
 }

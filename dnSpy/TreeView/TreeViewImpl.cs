@@ -18,7 +18,9 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -26,10 +28,11 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Controls;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.TreeView {
-	sealed class TreeViewImpl : ITreeView {
+	sealed class TreeViewImpl : ITreeView, IStackedContentChild {
 		public ITreeNode Root {
 			get { return root; }
 		}
@@ -45,9 +48,20 @@ namespace dnSpy.TreeView {
 		}
 		readonly SharpTreeView sharpTreeView;
 
+		IStackedContent IStackedContentChild.StackedContent { get; set; }
+		object IStackedContentChild.UIObject {
+			get { return sharpTreeView; }
+		}
+
+		public ITreeNodeData[] SelectedItems {
+			get { return Convert(sharpTreeView.SelectedItems); }
+		}
+
 		readonly ITreeViewManager treeViewManager;
 		readonly IImageManager imageManager;
 		readonly ITreeViewListener treeViewListener;
+
+		public event EventHandler<TVSelectionChangedEventArgs> SelectionChanged;
 
 		public TreeViewImpl(ITreeViewManager treeViewManager, IThemeManager themeManager, IImageManager imageManager, Guid guid, TreeViewOptions options) {
 			this.guid = guid;
@@ -55,6 +69,7 @@ namespace dnSpy.TreeView {
 			this.imageManager = imageManager;
 			this.treeViewListener = options.TreeViewListener;
 			this.sharpTreeView = new SharpTreeView();
+			this.sharpTreeView.SelectionChanged += SharpTreeView_SelectionChanged;
 			this.sharpTreeView.CanDragAndDrop = options.CanDragAndDrop;
 			this.sharpTreeView.AllowDrop = options.AllowDrop;
 			this.sharpTreeView.AllowDropOrder = options.AllowDrop;
@@ -81,6 +96,24 @@ namespace dnSpy.TreeView {
 			// Add the root at the end since Create() requires some stuff to have been initialized
 			this.root = Create(options.RootNode ?? new TreeNodeDataImpl(new Guid(FileTVConstants.ROOT_NODE_GUID)));
 			this.sharpTreeView.Root = this.root.Node;
+		}
+
+		void SharpTreeView_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+			if (SelectionChanged != null)
+				SelectionChanged(this, Convert(e));
+		}
+
+		static TVSelectionChangedEventArgs Convert(SelectionChangedEventArgs e) {
+			ITreeNodeData[] added = null, removed = null;
+			if (e.AddedItems != null)
+				added = Convert(e.AddedItems);
+			if (e.RemovedItems != null)
+				removed = Convert(e.RemovedItems);
+			return new TVSelectionChangedEventArgs(added, removed);
+		}
+
+		static ITreeNodeData[] Convert(System.Collections.IList list) {
+			return list.Cast<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
 		}
 
 		internal object GetIcon(ImageReference imgRef) {
@@ -156,6 +189,29 @@ namespace dnSpy.TreeView {
 				return ga.GetType().GetHashCode().CompareTo(gb.GetType().GetHashCode());
 			}
 			return ga.Compare(a, b);
+		}
+
+		public void SelectItems(IEnumerable<ITreeNodeData> items) {
+			sharpTreeView.SelectedItems.Clear();
+			var nodes = items.Select(a => (TreeNodeImpl)a.TreeNode).ToArray();
+			if (nodes.Length > 0) {
+				sharpTreeView.FocusNode(nodes[0].Node);
+				// This can happen when pressing Ctrl+Shift+Tab when the treeview has keyboard focus
+				if (sharpTreeView.SelectedItems.Count != 0)
+					sharpTreeView.SelectedItems.Clear();
+				sharpTreeView.SelectedItem = nodes[0].Node;
+
+				// FocusNode() should already call ScrollIntoView() but for some reason,
+				// ScrollIntoView() does nothing so add another call.
+				// Background priority won't work, we need ContextIdle prio
+				sharpTreeView.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => {
+					var item = sharpTreeView.SelectedItem as SharpTreeNode;
+					if (item != null)
+						sharpTreeView.ScrollIntoView(item);
+				}));
+			}
+			foreach (var node in nodes)
+				sharpTreeView.SelectedItems.Add(node.Node);
 		}
 	}
 }

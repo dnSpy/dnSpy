@@ -30,6 +30,11 @@ namespace dnSpy.Contracts.Tabs {
 		IEnumerable<ITabContent> TabContents { get; }
 
 		/// <summary>
+		/// Gets the active <see cref="ITabContent"/> or null if <see cref="TabContents"/> is empty
+		/// </summary>
+		ITabContent ActiveTabContent { get; set; }
+
+		/// <summary>
 		/// Adds tab content
 		/// </summary>
 		/// <param name="content">Content</param>

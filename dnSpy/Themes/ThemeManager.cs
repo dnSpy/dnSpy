@@ -41,6 +41,7 @@ namespace dnSpy.Themes {
 				if (theme != value) {
 					theme = value;
 					themeSettings.ThemeName = value.Name;
+					InitializeResources();
 					earlyThemeChanged.Raise(this, new ThemeChangedEventArgs());
 					themeChanged.Raise(this, new ThemeChangedEventArgs());
 				}
@@ -91,6 +92,13 @@ namespace dnSpy.Themes {
 			SystemEvents.UserPreferenceChanged += (s, e) => IsHighContrast = SystemParameters.HighContrast;
 			IsHighContrast = SystemParameters.HighContrast;
 			Initialize(themeSettings.ThemeName ?? DefaultThemeName);
+		}
+
+		void InitializeResources() {
+			var app = Application.Current;
+			Debug.Assert(app != null);
+			if (app != null)
+				((Theme)Theme).UpdateResources(app.Resources);
 		}
 
 		string CurrentDefaultThemeName {

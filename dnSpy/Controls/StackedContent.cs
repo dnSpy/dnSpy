@@ -28,6 +28,63 @@ using System.Windows.Media;
 namespace dnSpy.Controls {
 	interface IStackedContent {	// Needed by IStackedContentChild since the interface doesn't know about TChild
 	}
+
+	struct GridChildLength {
+		public GridLength? GridLength;
+		public double? MinLength;
+		public double? MaxLength;
+
+		public GridChildLength(GridLength length, double? min = null, double? max = null) {
+			this.GridLength = length;
+			this.MinLength = min;
+			this.MaxLength = max;
+		}
+	}
+
+	sealed class StackedContentChildInfo {
+		public GridChildLength Horizontal;
+		public GridChildLength Vertical;
+
+		public StackedContentChildInfo Clone() {
+			return new StackedContentChildInfo {
+				Horizontal = Horizontal,
+				Vertical = Vertical,
+			};
+		}
+
+		public static StackedContentChildInfo CreateVertical(GridLength length, double? min = null, double? max = null) {
+			return new StackedContentChildInfo {
+				Vertical = new GridChildLength { GridLength = length, MinLength = min, MaxLength = max }
+			};
+		}
+
+		public static StackedContentChildInfo CreateHorizontal(GridLength length, double? min = null, double? max = null) {
+			return new StackedContentChildInfo {
+				Horizontal = new GridChildLength { GridLength = length, MinLength = min, MaxLength = max }
+			};
+		}
+	}
+
+	sealed class StackedContentChildImpl : IStackedContentChild {
+		IStackedContent IStackedContentChild.StackedContent { get; set; }
+
+		public object UIObject {
+			get { return uiObject; }
+		}
+		readonly object uiObject;
+
+		public StackedContentChildImpl(object uiObject) {
+			this.uiObject = uiObject;
+		}
+
+		public static IStackedContentChild GetOrCreate(object uiObjectOwner, object uiObject) {
+			var scc = uiObjectOwner as IStackedContentChild;
+			if (scc != null)
+				return scc;
+			return new StackedContentChildImpl(uiObject);
+		}
+	}
+
 	sealed class StackedContent<TChild> : IStackedContent, IStackedContentChild where TChild : class, IStackedContentChild {
 		public TChild this[int index] {
 			get { return children[index].Child; }
@@ -39,11 +96,15 @@ namespace dnSpy.Controls {
 
 		sealed class ChildInfo {
 			public TChild Child;
-			public GridLength GridLength;
+			public StackedContentChildInfo LengthInfo;
 
-			public ChildInfo(TChild child, GridLength? gridLength) {
+			public ChildInfo(TChild child, StackedContentChildInfo lengthInfo) {
 				this.Child = child;
-				this.GridLength = gridLength ?? new GridLength(1, GridUnitType.Star);
+				this.LengthInfo = lengthInfo != null ? lengthInfo.Clone() : new StackedContentChildInfo();
+				if (this.LengthInfo.Horizontal.GridLength == null)
+					this.LengthInfo.Horizontal.GridLength = new GridLength(1, GridUnitType.Star);
+				if (this.LengthInfo.Vertical.GridLength == null)
+					this.LengthInfo.Vertical.GridLength = new GridLength(1, GridUnitType.Star);
 			}
 		}
 
@@ -82,12 +143,12 @@ namespace dnSpy.Controls {
 			UpdateGrid();
 		}
 
-		public void AddChild(TChild child, GridLength? gridLength = null, int index = -1) {
+		public void AddChild(TChild child, StackedContentChildInfo lengthInfo = null, int index = -1) {
 			Debug.Assert(child.StackedContent == null);
 			if ((uint)index <= (uint)children.Count)
-				children.Insert(index, new ChildInfo(child, gridLength));
+				children.Insert(index, new ChildInfo(child, lengthInfo));
 			else
-				children.Add(new ChildInfo(child, gridLength));
+				children.Add(new ChildInfo(child, lengthInfo));
 			child.StackedContent = this;
 			UpdateGrid();
 		}
@@ -122,7 +183,7 @@ namespace dnSpy.Controls {
 				grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
 				int rowCol = 0;
 				foreach (var info in children) {
-					if (needSplitter && !info.GridLength.IsAuto) {
+					if (needSplitter && !info.LengthInfo.Vertical.GridLength.Value.IsAuto) {
 						var gridSplitter = new GridSplitter();
 						Panel.SetZIndex(gridSplitter, 1);
 						grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(3, GridUnitType.Pixel) });
@@ -137,21 +198,26 @@ namespace dnSpy.Controls {
 						rowCol++;
 					}
 
-					grid.RowDefinitions.Add(new RowDefinition() { Height = GetGridLength(info.GridLength, -d) });
+					var rowDef = new RowDefinition() { Height = GetGridLength(info.LengthInfo.Vertical.GridLength.Value, -d) };
+					if (info.LengthInfo.Vertical.MaxLength != null)
+						rowDef.MaxHeight = info.LengthInfo.Vertical.MaxLength.Value;
+					if (info.LengthInfo.Vertical.MinLength != null)
+						rowDef.MinHeight = info.LengthInfo.Vertical.MinLength.Value;
+					grid.RowDefinitions.Add(rowDef);
 					var uiel = GetUIElement(info.Child);
 					uiel.SetValue(Grid.RowProperty, rowCol);
 					uiel.ClearValue(Grid.ColumnProperty);
 					grid.Children.Add(uiel);
 					rowCol++;
 					d = -d;
-					needSplitter = !info.GridLength.IsAuto;
+					needSplitter = !info.LengthInfo.Vertical.GridLength.Value.IsAuto;
 				}
 			}
 			else {
 				grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
 				int rowCol = 0;
 				foreach (var info in children) {
-					if (needSplitter && !info.GridLength.IsAuto) {
+					if (needSplitter && !info.LengthInfo.Horizontal.GridLength.Value.IsAuto) {
 						var gridSplitter = new GridSplitter();
 						Panel.SetZIndex(gridSplitter, 1);
 						grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Pixel) });
@@ -166,14 +232,19 @@ namespace dnSpy.Controls {
 						rowCol++;
 					}
 
-					grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GetGridLength(info.GridLength, -d) });
+					var colDef = new ColumnDefinition() { Width = GetGridLength(info.LengthInfo.Horizontal.GridLength.Value, -d) };
+					if (info.LengthInfo.Horizontal.MaxLength != null)
+						colDef.MaxWidth = info.LengthInfo.Horizontal.MaxLength.Value;
+					if (info.LengthInfo.Horizontal.MinLength != null)
+						colDef.MinWidth = info.LengthInfo.Horizontal.MinLength.Value;
+					this.grid.ColumnDefinitions.Add(colDef);
 					var uiel = GetUIElement(info.Child);
 					uiel.ClearValue(Grid.RowProperty);
 					uiel.SetValue(Grid.ColumnProperty, rowCol);
 					grid.Children.Add(uiel);
 					rowCol++;
 					d = -d;
-					needSplitter = !info.GridLength.IsAuto;
+					needSplitter = !info.LengthInfo.Horizontal.GridLength.Value.IsAuto;
 				}
 			}
 		}

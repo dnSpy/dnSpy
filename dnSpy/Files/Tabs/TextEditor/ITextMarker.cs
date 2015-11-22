@@ -19,14 +19,13 @@
 using System;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 
-namespace ICSharpCode.ILSpy.AvalonEdit {
+namespace dnSpy.Files.Tabs.TextEditor {
 	/// <summary>
 	/// Represents a text marker.
 	/// </summary>
-	public interface ITextMarker {
+	interface ITextMarker {
 		/// <summary>
 		/// Gets the start offset of the marked text region.
 		/// </summary>
@@ -114,7 +113,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 	}
 
 	[Flags]
-	public enum TextMarkerTypes {
+	enum TextMarkerTypes {
 		/// <summary>
 		/// Use no marker
 		/// </summary>
@@ -150,7 +149,7 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 		CircleInScrollBar = 0x1000
 	}
 
-	public interface ITextMarkerService {
+	interface ITextMarkerService {
 		/// <summary>
 		/// Gets the text view
 		/// </summary>

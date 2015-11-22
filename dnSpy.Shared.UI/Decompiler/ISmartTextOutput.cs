@@ -24,7 +24,7 @@ using System.Windows.Media;
 
 using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy {
+namespace dnSpy.Shared.UI.Decompiler {
 	/// <summary>
 	/// Adds additional WPF-specific output features to <see cref="ITextOutput"/>.
 	/// </summary>

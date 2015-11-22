@@ -153,17 +153,19 @@ namespace dnSpy.Tabs {
 
 		void TabContent_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			theHeader.TabContentPropertyChanged(e.PropertyName);
+			if (e.PropertyName == "UIObject")
+				this.Content = tabContent.UIObject;
 		}
 
 		internal void FocusContent() {
-			if (!tabContent.FocusUIObject()) {
-				var uiel = tabContent.UIObject as UIElement;
-				var sv = uiel as ScrollViewer;
-				if (sv != null)
-					uiel = sv.Content as UIElement ?? uiel;
-				if (uiel != null)
-					uiel.Focus();
-			}
+			var uiel = tabContent.FocusedElement;
+			if (uiel == null)
+				uiel = tabContent.UIObject as UIElement;
+			var sv = uiel as ScrollViewer;
+			if (sv != null)
+				uiel = sv.Content as UIElement ?? uiel;
+			if (uiel != null)
+				uiel.Focus();
 		}
 	}
 }

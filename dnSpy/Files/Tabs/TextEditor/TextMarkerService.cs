@@ -18,61 +18,64 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
-using dnSpy.Tabs;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
-using ICSharpCode.ILSpy.TextView;
+using TextView = ICSharpCode.AvalonEdit.Rendering.TextView;
 
-namespace ICSharpCode.ILSpy.AvalonEdit {
-	using System.Diagnostics;
-	using dnSpy.AvalonEdit;
-	using TextView = ICSharpCode.AvalonEdit.Rendering.TextView;
+namespace dnSpy.Files.Tabs.TextEditor {
 	/// <summary>
 	/// Handles the text markers for a code editor.
 	/// </summary>
-	public sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService {
+	sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService {
 		TextSegmentCollection<TextMarker> markers;
-		DecompilerTextView textView;
+		TextEditorControl textEditorControl;
 		readonly Dictionary<ITextMarkerObject, ITextMarker> objToMarker = new Dictionary<ITextMarkerObject, ITextMarker>();
 
 		public TextView TextView {
-			get { return textView.TextEditor.TextArea.TextView; }
+			get { return textEditorControl.TextEditor.TextArea.TextView; }
 		}
 
-		public TextMarkerService(DecompilerTextView textView) {
+		public TextMarkerService(TextEditorControl textView) {
 			if (textView == null)
 				throw new ArgumentNullException("textView");
-			this.textView = textView;
+			this.textEditorControl = textView;
 			TextView.DocumentChanged += OnDocumentChanged;
 			TextLineObjectManager.Instance.OnListModified += TextLineObjectManager_OnListModified;
-			MainWindow.Instance.ExecuteWhenLoaded(() => {
-				MainWindow.Instance.OnTabStateRemoved += OnTabStateRemoved;
-				this.textView.OnShowOutput += textView_OnShowOutput;
+			/*TODO:
+			XXXXXXXXXXXX.ExecuteWhenLoaded(() => {
+				XXXXXXXXXXXX.OnTabStateRemoved += OnTabStateRemoved;
+				this.textEditorControl.OnShowOutput += textView_OnShowOutput;
 				RecreateMarkers();
 			});
+			*/
 			OnDocumentChanged(null, null);
 		}
 
-		void textView_OnShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e) {
+		/*TODO:
+		void textView_OnShowOutput(object sender, TextEditorControl.ShowOutputEventArgs e) {
 			RecreateMarkers();
 		}
+		*/
 
+		/*TODO:
 		void OnTabStateRemoved(object sender, MainWindow.TabStateEventArgs e) {
 			var tsd = e.TabState as DecompileTabState;
-			if (tsd == null || tsd.TextView != textView)
+			if (tsd == null || tsd.TextView != textEditorControl)
 				return;
 
 			TextView.DocumentChanged -= OnDocumentChanged;
 			TextLineObjectManager.Instance.OnListModified -= TextLineObjectManager_OnListModified;
-			MainWindow.Instance.OnTabStateRemoved -= OnTabStateRemoved;
-			textView.OnShowOutput -= textView_OnShowOutput;
+			XXXXXXXXXXXX.OnTabStateRemoved -= OnTabStateRemoved;
+			textEditorControl.OnShowOutput -= textView_OnShowOutput;
 			ClearMarkers();
 		}
+		*/
 
 		void ClearMarkers() {
 			foreach (var obj in objToMarker.Keys.ToArray())
@@ -100,12 +103,12 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 		}
 
 		void CreateMarker(ITextMarkerObject tmo) {
-			if (tmo == null || !tmo.IsVisible(textView))
+			if (tmo == null || !tmo.IsVisible(textEditorControl))
 				return;
 
 			ITextMarker marker;
 			if (!objToMarker.TryGetValue(tmo, out marker)) {
-				objToMarker.Add(tmo, marker = tmo.CreateMarker(textView, this));
+				objToMarker.Add(tmo, marker = tmo.CreateMarker(textEditorControl, this));
 				tmo.ObjPropertyChanged += TextMarkerObject_ObjPropertyChanged;
 			}
 			Debug.Assert(marker != null);
@@ -384,13 +387,8 @@ namespace ICSharpCode.ILSpy.AvalonEdit {
 			}
 		}
 
-		/// <inheritdoc/>
 		public Predicate<object> IsVisible { get; set; }
-
-		/// <inheritdoc/>
 		public ITextMarkerObject TextMarkerObject { get; set; }
-
-		/// <inheritdoc/>
 		public double ZOrder { get; set; }
 	}
 }

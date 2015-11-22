@@ -28,7 +28,7 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
 
-namespace ICSharpCode.ILSpy.TextView {
+namespace dnSpy.Shared.UI.Decompiler {
 	/// <summary>
 	/// A text segment that references some object. Used for hyperlinks in the editor.
 	/// </summary>
@@ -41,8 +41,8 @@ namespace ICSharpCode.ILSpy.TextView {
 	/// <summary>
 	/// Stores the positions of the definitions that were written to the text output.
 	/// </summary>
-	sealed class DefinitionLookup {
-		internal Dictionary<object, int> definitions = new Dictionary<object, int>();
+	public sealed class DefinitionLookup {
+		readonly Dictionary<object, int> definitions = new Dictionary<object, int>();
 
 		public int GetDefinitionPosition(object definition) {
 			int val;
@@ -67,10 +67,12 @@ namespace ICSharpCode.ILSpy.TextView {
 			private set { canBeCached = value; }
 		}
 		bool canBeCached = true;
-		internal LanguageTokens LanguageTokens {
+
+		public LanguageTokens LanguageTokens {
 			get { return tokens; }
 		}
-		LanguageTokens tokens = new LanguageTokens();
+		readonly LanguageTokens tokens = new LanguageTokens();
+
 		int lastLineStart = 0;
 		int lineNumber = 1;
 		readonly StringBuilder b = new StringBuilder();
@@ -80,17 +82,17 @@ namespace ICSharpCode.ILSpy.TextView {
 		/// <summary>Whether indentation should be inserted on the next write</summary>
 		bool needsIndent;
 
-		internal readonly List<VisualLineElementGenerator> elementGenerators = new List<VisualLineElementGenerator>();
+		public readonly List<VisualLineElementGenerator> ElementGenerators = new List<VisualLineElementGenerator>();
 
 		/// <summary>List of all references that were written to the output</summary>
 		TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
 
-		internal readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
+		public readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
 
 		/// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
-		internal readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
+		public readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
 
-		internal readonly List<MemberMapping> DebuggerMemberMappings = new List<MemberMapping>();
+		readonly List<MemberMapping> DebuggerMemberMappings = new List<MemberMapping>();
 
 		public AvalonEditTextOutput() {
 		}
@@ -98,12 +100,12 @@ namespace ICSharpCode.ILSpy.TextView {
 		/// <summary>
 		/// Gets the list of references (hyperlinks).
 		/// </summary>
-		internal TextSegmentCollection<ReferenceSegment> References {
+		public TextSegmentCollection<ReferenceSegment> References {
 			get { return references; }
 		}
 
 		public void AddVisualLineElementGenerator(VisualLineElementGenerator elementGenerator) {
-			elementGenerators.Add(elementGenerator);
+			ElementGenerators.Add(elementGenerator);
 		}
 
 		/// <summary>
@@ -117,8 +119,8 @@ namespace ICSharpCode.ILSpy.TextView {
 			get { return b.Length; }
 		}
 
-		internal string Text {
-			get { return b.ToString(); }
+		public override string ToString() {
+			return b.ToString();
 		}
 
 		public ICSharpCode.NRefactory.TextLocation Location {

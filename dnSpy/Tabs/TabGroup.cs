@@ -85,7 +85,30 @@ namespace dnSpy.Tabs {
 			get { return tabControl.Items.Count; }
 		}
 
-		internal TabItemImpl ActiveTabItem {
+		public ITabContent ActiveTabContent {
+			get {
+				var act = ActiveTabItemImpl;
+				return act == null ? null : act.TabContent;
+			}
+			set {
+				if (value == null)
+					throw new ArgumentNullException();
+				var impl = GetTabItemImpl(value);
+				if (impl == null)
+					throw new InvalidOperationException();
+				tabControl.SelectedItem = impl;
+			}
+		}
+
+		TabItemImpl GetTabItemImpl(ITabContent content) {
+			foreach (TabItemImpl impl in tabControl.Items) {
+				if (impl.TabContent == content)
+					return impl;
+			}
+			return null;
+		}
+
+		internal TabItemImpl ActiveTabItemImpl {
 			get {
 				int index = tabControl.SelectedIndex == -1 ? 0 : tabControl.SelectedIndex;
 				if (index >= tabControl.Items.Count)
@@ -134,7 +157,7 @@ namespace dnSpy.Tabs {
 		}
 
 		void OnStylePropChange() {
-			OnPropertyChanged("TabManagerState");
+			OnPropertyChanged("TabGroupState");
 			OnPropertyChanged("HasOpenedDoc");
 		}
 
@@ -158,10 +181,16 @@ namespace dnSpy.Tabs {
 
 		void tabItem_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			tabGroupManager.SetActive(this);
+			var tabItem = GetTabItemImpl(sender);
+			if (tabItem != null)
+				tabItem.IsActive = true;
 			IsActive = true;
 		}
 
 		void tabItem_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+			var tabItem = GetTabItemImpl(sender);
+			if (tabItem != null)
+				tabItem.IsActive = false;
 			IsActive = false;
 		}
 
@@ -307,9 +336,8 @@ namespace dnSpy.Tabs {
 			var impl = new TabItemImpl(this, content);
 			AddEvents(impl);
 			content.OnVisibilityChanged(TabContentVisibilityEvent.Added);
-			tabControl.Items.Add(impl);
-			if (tabControl.Items.Count == 1)
-				OnStylePropChange();
+			UpdateState(impl);
+			AddToTabControl(impl, tabControl.Items.Count);
 		}
 
 		int IndexOf(ITabContent content) {
@@ -387,16 +415,22 @@ namespace dnSpy.Tabs {
 			if (insertIndex < 0 || insertIndex > TabControl.Items.Count)
 				insertIndex = TabControl.Items.Count;
 			UpdateState(tabItem);
-			tabControl.Items.Insert(insertIndex, tabItem);
-			if (tabControl.Items.Count == 1)
-				OnStylePropChange();
+			AddToTabControl(tabItem, insertIndex);
 			return tabItem;
+		}
+
+		void AddToTabControl(TabItemImpl tabItem, int insertIndex) {
+			tabControl.Items.Insert(insertIndex, tabItem);
+			if (tabControl.Items.Count == 1) {
+				tabControl.SelectedItem = tabItem;
+				OnStylePropChange();
+			}
 		}
 
 		void UpdateState(TabItemImpl tabItem) {
 			Debug.Assert(tabControl.Items.IndexOf(tabItem) < 0);
 			tabItem.IsSelected = false;		// It's not inserted so can't be selected
-			tabItem.IsActive = IsActive;
+			tabItem.IsActive = IsActive && tabControl.IsKeyboardFocusWithin;
 		}
 
 		void DetachNoEvents(TabItemImpl tabItem) {
@@ -465,15 +499,15 @@ namespace dnSpy.Tabs {
 		}
 
 		void CloseActiveTab() {
-			RemoveTabItem(ActiveTabItem);
+			RemoveTabItem(ActiveTabItemImpl);
 		}
 
 		bool CloseActiveTabCanExecute() {
-			return ActiveTabItem != null;
+			return ActiveTabItemImpl != null;
 		}
 
 		void CloseAllButActiveTab() {
-			var activeTab = ActiveTabItem;
+			var activeTab = ActiveTabItemImpl;
 			if (activeTab == null)
 				return;
 			foreach (var tabItem in AllTabItemImpls.ToArray()) {

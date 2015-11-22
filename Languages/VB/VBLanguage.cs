@@ -71,9 +71,9 @@ namespace dnSpy.Languages.VB {
 
 		public override void WriteCommentBegin(ITextOutput output, bool addSpace) {
 			if (addSpace)
-				output.WriteLine("' ", TextTokenType.Comment);
+				output.Write("' ", TextTokenType.Comment);
 			else
-				output.WriteLine("'", TextTokenType.Comment);
+				output.Write("'", TextTokenType.Comment);
 		}
 
 		public override void WriteCommentEnd(ITextOutput output, bool addSpace) {
@@ -264,7 +264,7 @@ namespace dnSpy.Languages.VB {
 
 				w.WriteStartElement("ItemGroup"); // ProjectReference
 				foreach (var r in asmRefs) {
-					var asm = options.ProjectOptions.AssemblyResolver.Resolve(r, module);
+					var asm = options.ProjectOptions.Resolve(r, module);
 					if (asm == null)
 						continue;
 					var otherProj = CSharpLanguage.FindOtherProject(options, asm.ManifestModule.Location);

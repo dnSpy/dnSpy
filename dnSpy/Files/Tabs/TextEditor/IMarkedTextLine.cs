@@ -19,14 +19,12 @@
 
 using System;
 using System.Windows.Media;
-using ICSharpCode.ILSpy.AvalonEdit;
-using ICSharpCode.ILSpy.TextView;
 
-namespace dnSpy.AvalonEdit {
+namespace dnSpy.Files.Tabs.TextEditor {
 	/// <summary>
 	/// Z-order of eg. icons in the icon bar
 	/// </summary>
-	public enum TextLineObjectZOrder {
+	enum TextLineObjectZOrder {
 		Breakpoint,
 		ReturnStatement,
 		SelectedReturnStatement,
@@ -34,7 +32,7 @@ namespace dnSpy.AvalonEdit {
 		SearchResult,
 	}
 
-	public class TextLineObjectEventArgs : EventArgs {
+	class TextLineObjectEventArgs : EventArgs {
 		/// <summary>
 		/// The object needs to be redrawn
 		/// </summary>
@@ -47,17 +45,17 @@ namespace dnSpy.AvalonEdit {
 		}
 	}
 
-	public interface ITextLineObject {
+	interface ITextLineObject {
 		double ZOrder { get; }
-		bool IsVisible(DecompilerTextView textView);
+		bool IsVisible(TextEditorControl textView);
 		event EventHandler<TextLineObjectEventArgs> ObjPropertyChanged;
 	}
 
 	/// <summary>
 	/// Add an icon in the icon bar
 	/// </summary>
-	public interface IIconBarObject : ITextLineObject {
-		int GetLineNumber(DecompilerTextView textView);
+	interface IIconBarObject : ITextLineObject {
+		int GetLineNumber(TextEditorControl textView);
 		bool HasImage { get; }
 		ImageSource GetImage(Color bgColor);
 	}
@@ -65,14 +63,14 @@ namespace dnSpy.AvalonEdit {
 	/// <summary>
 	/// Mark text in the text editor
 	/// </summary>
-	public interface ITextMarkerObject : ITextLineObject {
-		ITextMarker CreateMarker(DecompilerTextView textView, ITextMarkerService markerService);
+	interface ITextMarkerObject : ITextLineObject {
+		ITextMarker CreateMarker(TextEditorControl textView, ITextMarkerService markerService);
 	}
 
 	/// <summary>
 	/// Implemented by code breakpoints, call stack lines, current line and any other classes that
 	/// must have an icon in the icon bar and always-marked text in the text editor
 	/// </summary>
-	public interface IMarkedTextLine : IIconBarObject, ITextMarkerObject {
+	interface IMarkedTextLine : IIconBarObject, ITextMarkerObject {
 	}
 }

@@ -18,6 +18,7 @@
 */
 
 using System.ComponentModel;
+using System.Windows;
 
 namespace dnSpy.Contracts.Tabs {
 	/// <summary>
@@ -35,15 +36,15 @@ namespace dnSpy.Contracts.Tabs {
 		object ToolTip { get; }
 
 		/// <summary>
-		/// The UI object
+		/// The UI object. If this property can change, you must implement <see cref="INotifyPropertyChanged"/>
 		/// </summary>
 		object UIObject { get; }
 
 		/// <summary>
-		/// Gives <see cref="UIObject"/> focus. Returns false if caller should focus it.
+		/// Gets the element that should should get focus when the tab is selected or null to use
+		/// <see cref="UIObject"/>
 		/// </summary>
-		/// <returns></returns>
-		bool FocusUIObject();
+		UIElement FocusedElement { get; }
 
 		/// <summary>
 		/// Called when the visibility changes

@@ -60,7 +60,20 @@
     <Compile Include="Files\NotifyFileCollectionChangedEventArgs.cs" />
     <Compile Include="Files\NotifyFileCollectionType.cs" />
     <Compile Include="Files\SerializedDnSpyModule.cs" />
+    <Compile Include="Files\Tabs\IAsyncFileTabContent.cs" />
+    <Compile Include="Files\Tabs\IFileTab.cs" />
+    <Compile Include="Files\Tabs\IFileTabContent.cs" />
+    <Compile Include="Files\Tabs\IFileTabContentFactory.cs" />
+    <Compile Include="Files\Tabs\IFileTabContentFactoryContext.cs" />
     <Compile Include="Files\Tabs\IFileTabManager.cs" />
+    <Compile Include="Files\Tabs\IFileTabUIContext.cs" />
+    <Compile Include="Files\Tabs\IFileTabUIContextCreator.cs" />
+    <Compile Include="Files\Tabs\IFileTabUIContextLocator.cs" />
+    <Compile Include="Files\Tabs\IReferenceFileTabContentCreator.cs" />
+    <Compile Include="Files\Tabs\TabsConstants.cs" />
+    <Compile Include="Files\Tabs\TextEditor\IDecompileNode.cs" />
+    <Compile Include="Files\Tabs\TextEditor\IDecompileNodeContext.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ITextEditorUIContext.cs" />
     <Compile Include="Files\TreeView\FileTVConstants.cs" />
     <Compile Include="Files\TreeView\IAssemblyFileNode.cs" />
     <Compile Include="Files\TreeView\IAssemblyReferenceNode.cs" />
@@ -167,6 +180,7 @@
     <Compile Include="TreeView\TreeViewListenerEventArgs.cs" />
     <Compile Include="TreeView\TreeViewOptions.cs" />
     <Compile Include="TreeView\TVConstants.cs" />
+    <Compile Include="TreeView\TVSelectionChangedEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -177,6 +191,10 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
+      <Project>{6c55b776-26d4-4db3-a6ab-87e783b2f3d1}</Project>
+      <Name>ICSharpCode.AvalonEdit</Name>
+    </ProjectReference>
     <ProjectReference Include="..\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>

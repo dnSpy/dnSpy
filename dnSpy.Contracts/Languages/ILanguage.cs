@@ -21,6 +21,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.NRefactory;
+using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Contracts.Languages {
@@ -173,6 +174,16 @@ namespace dnSpy.Contracts.Languages {
 			self.WriteCommentBegin(output, true);
 			output.Write(comment, TextTokenType.Comment);
 			self.WriteCommentEnd(output, true);
+			output.WriteLine();
+		}
+
+		/// <summary>
+		/// Gets the <see cref="IHighlightingDefinition"/> instance to use for this language
+		/// </summary>
+		/// <param name="self">This</param>
+		/// <returns></returns>
+		public static IHighlightingDefinition GetHighlightingDefinition(this ILanguage self) {
+			return HighlightingManager.Instance.GetDefinitionByExtension(self.FileExtension);
 		}
 	}
 }

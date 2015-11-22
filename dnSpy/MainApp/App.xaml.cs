@@ -27,11 +27,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnSpy.Contracts.Themes;
 using dnSpy.Languages;
 using dnSpy.Plugin;
 using dnSpy.Settings;
-using dnSpy.Themes;
 
 namespace dnSpy.MainApp {
 	partial class App : Application {
@@ -56,8 +54,6 @@ namespace dnSpy.MainApp {
 		}
 
 		[Import]
-		IThemeManager themeManager = null;
-		[Import]
 		AppWindow appWindow = null;
 		[Import]
 		SettingsManager settingsManager = null;
@@ -73,9 +69,6 @@ namespace dnSpy.MainApp {
 			var app = AppCreator.Create(asms, "*.Plugin.dll");
 			app.CompositionContainer.ComposeParts(this);
 
-			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
-			OnThemeUpdated();
-
 			this.Exit += App_Exit;
 		}
 
@@ -86,14 +79,6 @@ namespace dnSpy.MainApp {
 			catch {
 				//TODO: Show error to user
 			}
-		}
-
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			OnThemeUpdated();
-		}
-
-		void OnThemeUpdated() {
-			((Theme)themeManager.Theme).UpdateResources(Resources);
 		}
 
 		void UIFixes() {

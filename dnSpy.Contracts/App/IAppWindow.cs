@@ -26,9 +26,19 @@ namespace dnSpy.Contracts.App {
 	/// </summary>
 	public interface IAppWindow {
 		/// <summary>
+		/// Raised when the text formatter setting has been updated
+		/// </summary>
+		event EventHandler<EventArgs> TextFormatterChanged;
+
+		/// <summary>
 		/// Raised when the main window is closing
 		/// </summary>
 		event EventHandler<CancelEventArgs> MainWindowClosing;
+
+		/// <summary>
+		/// Raised when the main window has closed
+		/// </summary>
+		event EventHandler<EventArgs> MainWindowClosed;
 
 		/// <summary>
 		/// Gets the settings

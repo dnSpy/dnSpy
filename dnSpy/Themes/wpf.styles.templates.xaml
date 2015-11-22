@@ -5049,6 +5049,10 @@
     </Style>
 
 	<Style TargetType="{x:Type tabs:TabItemImpl}">
+		<Setter Property="HorizontalContentAlignment"
+				Value="Stretch"/>
+		<Setter Property="VerticalContentAlignment"
+				Value="Stretch"/>
 		<Setter Property="Control.Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type TabItem}">

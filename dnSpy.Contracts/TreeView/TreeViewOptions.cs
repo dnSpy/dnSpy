@@ -73,7 +73,7 @@ namespace dnSpy.Contracts.TreeView {
 			this.AllowDrop = false;
 			this.IsVirtualizing = true;
 			this.VirtualizationMode = VirtualizationMode.Recycling;
-			this.SelectionMode = SelectionMode.Single;
+			this.SelectionMode = SelectionMode.Extended;
 		}
 	}
 }

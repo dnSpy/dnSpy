@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.Plugin {
 	/// <summary>
-	/// All classes that export this type get automatically loaded at startup.
+	/// All classes that export this type automatically get loaded at startup.
 	/// Use <see cref="ExportAutoLoadedAttribute"/> to export it.
 	/// </summary>
 	public interface IAutoLoaded {

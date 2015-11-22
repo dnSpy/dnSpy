@@ -30,6 +30,6 @@ namespace dnSpy.Controls {
 		/// <summary>
 		/// Gets the <see cref="IStackedContent"/> instance. Can only be written by <see cref="IStackedContent"/>
 		/// </summary>
-		IStackedContent StackedContent { get; set; }
+		IStackedContent StackedContent { get; set; }//TODO: Remove if this is never used
 	}
 }

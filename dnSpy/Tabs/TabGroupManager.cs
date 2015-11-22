@@ -26,14 +26,16 @@ using dnSpy.Contracts.Tabs;
 using dnSpy.Controls;
 
 namespace dnSpy.Tabs {
-	sealed class TabGroupManager : ITabGroupManager {
+	sealed class TabGroupManager : ITabGroupManager, IStackedContentChild {
 		internal int ActiveIndex {
 			get { return _activeIndex; }
 			private set { _activeIndex = value; }
 		}
 		int _activeIndex;
 
-		public ITabGroup ActiveTabItem {
+		IStackedContent IStackedContentChild.StackedContent { get; set; }
+
+		public ITabGroup ActiveTabGroup {
 			get { return ActiveIndex < 0 ? null : stackedContent[ActiveIndex]; }
 		}
 
@@ -60,6 +62,7 @@ namespace dnSpy.Tabs {
 			this.tabManager = tabManager;
 			this.menuManager = menuManager;
 			this.tabGroupGuid = tabGroupGuid;
+			this._activeIndex = -1;
 		}
 
 		internal void OnThemeChanged() {
@@ -78,13 +81,15 @@ namespace dnSpy.Tabs {
 		TabGroup Create(int index) {
 			var tg = new TabGroup(this, menuManager, tabGroupGuid);
 			stackedContent.AddChild(tg, null, index);
+			if (ActiveIndex < 0)
+				ActiveIndex = index;
 			return tg;
 		}
 
 		internal void SetActive(TabGroup tabGroup) {
 			tabManager.SetActive(this);
 
-			if (tabGroup == ActiveTabItem)
+			if (tabGroup == ActiveTabGroup)
 				return;
 			int newIndex = stackedContent.IndexOf(tabGroup);
 			if (newIndex < 0)
@@ -149,7 +154,7 @@ namespace dnSpy.Tabs {
 
 			IsHorizontal = horizontal;
 
-			Move(newTabGroup, stackedContent[ActiveIndex], stackedContent[ActiveIndex].ActiveTabItem);
+			Move(newTabGroup, stackedContent[ActiveIndex], stackedContent[ActiveIndex].ActiveTabItemImpl);
 			SetActive(newTabGroup);
 		}
 
@@ -163,24 +168,24 @@ namespace dnSpy.Tabs {
 
 		bool MoveToNextTabGroupCanExecute() {
 			return ActiveIndex + 1 < stackedContent.Count &&
-				stackedContent[ActiveIndex].ActiveTabItem != null;
+				stackedContent[ActiveIndex].ActiveTabItemImpl != null;
 		}
 
 		void MoveToNextTabGroup() {
 			if (!MoveToNextTabGroupCanExecute())
 				return;
-			Move(stackedContent[ActiveIndex + 1], stackedContent[ActiveIndex], stackedContent[ActiveIndex].ActiveTabItem);
+			Move(stackedContent[ActiveIndex + 1], stackedContent[ActiveIndex], stackedContent[ActiveIndex].ActiveTabItemImpl);
 		}
 
 		bool MoveToPreviousTabGroupCanExecute() {
 			return ActiveIndex != 0 &&
-				stackedContent[ActiveIndex].ActiveTabItem != null;
+				stackedContent[ActiveIndex].ActiveTabItemImpl != null;
 		}
 
 		void MoveToPreviousTabGroup() {
 			if (!MoveToPreviousTabGroupCanExecute())
 				return;
-			Move(stackedContent[ActiveIndex - 1], stackedContent[ActiveIndex], stackedContent[ActiveIndex].ActiveTabItem);
+			Move(stackedContent[ActiveIndex - 1], stackedContent[ActiveIndex], stackedContent[ActiveIndex].ActiveTabItemImpl);
 		}
 
 		bool MoveAllToNextTabGroupCanExecute() {
@@ -206,7 +211,7 @@ namespace dnSpy.Tabs {
 		}
 
 		void MoveAllToOtherTabGroup(TabGroup dst, TabGroup src) {
-			var activeTab = src.ActiveTabItem;
+			var activeTab = src.ActiveTabItemImpl;
 			Merge(dst, src, 0);
 			dst.SetSelectedTab(activeTab);
 			SetActive(dst);

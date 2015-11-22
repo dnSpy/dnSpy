@@ -21,8 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace dnSpy.AvalonEdit {
-	public class TextLineObjectListModifiedEventArgs : EventArgs {
+namespace dnSpy.Files.Tabs.TextEditor {
+	class TextLineObjectListModifiedEventArgs : EventArgs {
 		/// <summary>
 		/// Added/removed object
 		/// </summary>
@@ -42,7 +42,7 @@ namespace dnSpy.AvalonEdit {
 	/// <summary>
 	/// Keeps track of text line objects, eg. code breakpoints, current line markers, etc
 	/// </summary>
-	public class TextLineObjectManager {
+	sealed class TextLineObjectManager {
 		public static readonly TextLineObjectManager Instance = new TextLineObjectManager();
 
 		readonly HashSet<ITextLineObject> objects = new HashSet<ITextLineObject>();

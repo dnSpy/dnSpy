@@ -1,0 +1,67 @@
+﻿/*
+    Copyright (C) 2014-2015 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.Windows.Threading;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Languages;
+using ICSharpCode.Decompiler;
+
+namespace dnSpy.Files.Tabs.TextEditor {
+	sealed class DecompileNodeContext : IDecompileNodeContext {
+		public DecompilationOptions DecompilationOptions {
+			get { return decompilationOptions; }
+		}
+		readonly DecompilationOptions decompilationOptions;
+
+		public ILanguage Language {
+			get { return language; }
+		}
+		readonly ILanguage language;
+
+		public ITextOutput Output {
+			get { return output; }
+		}
+		readonly ITextOutput output;
+
+		readonly Dispatcher dispatcher;
+
+		public DecompileNodeContext(DecompilationOptions decompilationOptions, ILanguage language, ITextOutput output, Dispatcher dispatcher) {
+			if (decompilationOptions == null)
+				throw new ArgumentNullException();
+			if (language == null)
+				throw new ArgumentNullException();
+			if (output == null)
+				throw new ArgumentNullException();
+			if (dispatcher == null)
+				throw new ArgumentNullException();
+			this.decompilationOptions = decompilationOptions;
+			this.language = language;
+			this.output = output;
+			this.dispatcher = dispatcher;
+		}
+
+		public T ExecuteInUIThread<T>(Func<T> func) {
+			if (dispatcher.CheckAccess())
+				return func();
+
+			return (T)dispatcher.Invoke(DispatcherPriority.Send, func);
+		}
+	}
+}

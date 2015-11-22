@@ -20,9 +20,8 @@
 using System.Diagnostics;
 using dnSpy.Contracts.Menus;
 using dnSpy.Shared.UI.Menus;
-using ICSharpCode.ILSpy;
 
-namespace dnSpy.Commands {
+namespace dnSpy.MainApp {
 	static class AboutHelpers {
 		public const string BASE_URL = @"https://github.com/0xd4d/dnSpy/";
 
@@ -31,7 +30,7 @@ namespace dnSpy.Commands {
 				Process.Start(url);
 			}
 			catch {
-				MainWindow.Instance.ShowMessageBox("Could not start browser");
+				//TODO: ShowMessageBox("Could not start browser");
 			}
 		}
 	}

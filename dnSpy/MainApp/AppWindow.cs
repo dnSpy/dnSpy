@@ -29,6 +29,7 @@ using dnSpy.Controls;
 using dnSpy.Events;
 using dnSpy.Files.Tabs;
 using dnSpy.Settings;
+using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.MainApp {
 	[Export, Export(typeof(IAppWindow)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -72,7 +73,25 @@ namespace dnSpy.MainApp {
 			this.appToolBar = appToolBar;
 			this.mainWindowClosing = new WeakEventList<CancelEventArgs>();
 			this.mainWindowClosed = new WeakEventList<EventArgs>();
+			this.textFormatterChanged = new WeakEventList<EventArgs>();
+			InitializeTextFormatterProvider();
 		}
+
+		void InitializeTextFormatterProvider() {
+			var newValue = appSettings.UseNewRenderer ? TextFormatterProvider.GlyphRunFormatter : TextFormatterProvider.BuiltIn;
+			if (TextFormatterFactory.TextFormatterProvider != newValue) {
+				TextFormatterFactory.TextFormatterProvider = newValue;
+				fileTabManager.FileTreeView.OnTextFormatterChanged();
+				textFormatterChanged.Raise(this, EventArgs.Empty);
+				//TODO: Refresh all text editors, hex editors
+			}
+		}
+
+		public event EventHandler<EventArgs> TextFormatterChanged {
+			add { textFormatterChanged.Add(value); }
+			remove { textFormatterChanged.Remove(value); }
+		}
+		readonly WeakEventList<EventArgs> textFormatterChanged;
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
 			RefreshToolBar();
@@ -81,9 +100,9 @@ namespace dnSpy.MainApp {
 		static Rect DefaultWindowLocation = new Rect(10, 10, 1300, 730);
 		public Window InitializeMainWindow() {
 			var sc = new StackedContent<IStackedContentChild>(false);
-			sc.AddChild(appToolBar, new GridLength(0, GridUnitType.Auto));
-			sc.AddChild(stackedContent, new GridLength(1, GridUnitType.Star));
-			sc.AddChild(statusBar, new GridLength(0, GridUnitType.Auto));
+			sc.AddChild(appToolBar, StackedContentChildInfo.CreateVertical(new GridLength(0, GridUnitType.Auto)));
+			sc.AddChild(stackedContent, StackedContentChildInfo.CreateVertical(new GridLength(1, GridUnitType.Star)));
+			sc.AddChild(statusBar, StackedContentChildInfo.CreateVertical(new GridLength(0, GridUnitType.Auto)));
 			mainWindow = new MainWindow(themeManager, imageManager, sc.UIObject);
 			new SavedWindowStateRestorer(mainWindow, appSettings.SavedWindowState, DefaultWindowLocation);
 			mainWindow.Closing += MainWindow_Closing;

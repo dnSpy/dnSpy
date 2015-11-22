@@ -67,7 +67,34 @@
     <Compile Include="Events\WeakEventList.cs" />
     <Compile Include="Files\AssemblyResolver.cs" />
     <Compile Include="Files\FileManager.cs" />
+    <Compile Include="Files\Tabs\DefaultDecompileNode.cs" />
+    <Compile Include="Files\Tabs\FileTabContentFactoryContext.cs" />
     <Compile Include="Files\Tabs\FileTabManager.cs" />
+    <Compile Include="Files\Tabs\FileTabUIContextLocator.cs" />
+    <Compile Include="Files\Tabs\FileTabUIContextLocatorCreator.cs" />
+    <Compile Include="Files\Tabs\FileTreeNodeDecompiler.cs" />
+    <Compile Include="Files\Tabs\IFileTabUIContextLocatorCreator.cs" />
+    <Compile Include="Files\Tabs\NavigationCommands.cs" />
+    <Compile Include="Files\Tabs\NodeDecompiler.cs" />
+    <Compile Include="Files\Tabs\NullObjects.cs" />
+    <Compile Include="Files\Tabs\TabContentImpl.cs" />
+    <Compile Include="Files\Tabs\TabHistory.cs" />
+    <Compile Include="Files\Tabs\TextEditor\DecompileFileTabContent.cs" />
+    <Compile Include="Files\Tabs\TextEditor\DecompileNodeContext.cs" />
+    <Compile Include="Files\Tabs\TextEditor\EditorPositionState.cs" />
+    <Compile Include="Files\Tabs\TextEditor\IconBarMargin.cs" />
+    <Compile Include="Files\Tabs\TextEditor\IMarkedTextLine.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ITextMarker.cs" />
+    <Compile Include="Files\Tabs\TextEditor\NewTextEditor.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ReferenceElementGenerator.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextEditorControl.xaml.cs">
+      <DependentUpon>TextEditorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Files\Tabs\TextEditor\TextEditorUIContext.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextCreator.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextLineObjectManager.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextMarkerService.cs" />
+    <Compile Include="Files\Tabs\TextEditor\UIElementGenerator.cs" />
     <Compile Include="Files\TreeView\AssemblyFileNode.cs" />
     <Compile Include="Files\TreeView\AssemblyReferenceNode.cs" />
     <Compile Include="Files\TreeView\BaseTypeFolderNode.cs" />
@@ -99,6 +126,8 @@
     <Compile Include="Images\ImageManager.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
     <Compile Include="Languages\LanguageManager.cs" />
+    <Compile Include="MainApp\AboutCommands.cs" />
+    <Compile Include="MainApp\AboutScreen.cs" />
     <Compile Include="MainApp\App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
@@ -159,6 +188,9 @@
     <Compile Include="TreeView\TreeViewManager.cs" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Files\Tabs\TextEditor\IL.xshd" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
       <Project>{6c55b776-26d4-4db3-a6ab-87e783b2f3d1}</Project>
       <Name>ICSharpCode.AvalonEdit</Name>
@@ -210,6 +242,10 @@
     <ApplicationDefinition Include="MainApp\App.xaml">
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Files\Tabs\TextEditor\TextEditorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainApp\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

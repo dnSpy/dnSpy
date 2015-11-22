@@ -27,7 +27,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Input;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolBars;
@@ -134,20 +133,6 @@ namespace dnSpy.MainApp {
 				initd = true;
 			}
 			return appWindow.MainWindow.IsFullScreen;
-		}
-	}
-
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, ToolTip = "Navigate Backward (Backspace)", Icon = "Backward", Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 0)]
-	sealed class BrowseBackCommand : ToolBarButtonCommand {
-		public BrowseBackCommand()
-			: base(NavigationCommands.BrowseBack) {
-		}
-	}
-
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, ToolTip = "Navigate Forward (Alt+Right)", Icon = "Forward", Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 10)]
-	sealed class BrowseForwardCommand : ToolBarButtonCommand {
-		public BrowseForwardCommand()
-			: base(NavigationCommands.BrowseForward) {
 		}
 	}
 }

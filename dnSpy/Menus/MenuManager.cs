@@ -239,7 +239,6 @@ namespace dnSpy.Menus {
 
 			List<MenuItemGroupMD> groups;
 			bool b = guidToGroups.TryGetValue(ownerMenuGuid, out groups);
-			Debug.Assert(b);
 			if (!b)
 				return false;
 

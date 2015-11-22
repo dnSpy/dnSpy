@@ -81,6 +81,9 @@
     <Compile Include="Controls\SysMenuButton.cs" />
     <Compile Include="Controls\TabButton.cs" />
     <Compile Include="Controls\WinSysButton.cs" />
+    <Compile Include="Decompiler\AvalonEditTextOutput.cs" />
+    <Compile Include="Decompiler\ISmartTextOutput.cs" />
+    <Compile Include="Decompiler\OutputLengthExceededException.cs" />
     <Compile Include="Files\AnnotationsImpl.cs" />
     <Compile Include="Files\DnSpyFile.cs" />
     <Compile Include="Files\GacInfo.cs" />

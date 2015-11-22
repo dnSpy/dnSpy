@@ -18,10 +18,11 @@
 
 using System;
 using System.Windows.Input;
+using dnSpy.Shared.UI.Decompiler;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 
-namespace ICSharpCode.ILSpy.TextView {
+namespace dnSpy.Files.Tabs.TextEditor {
 	/// <summary>
 	/// Creates hyperlinks in the text view.
 	/// </summary>
