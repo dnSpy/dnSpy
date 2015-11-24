@@ -18,6 +18,8 @@
 */
 
 using System;
+using dnlib.DotNet;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.TreeView;
 
@@ -42,6 +44,11 @@ namespace dnSpy.Contracts.Files.TreeView {
 		IDotNetImageManager DotNetImageManager { get; }
 
 		/// <summary>
+		/// Gets the <see cref="IWpfCommands"/> instance
+		/// </summary>
+		IWpfCommands WpfCommands { get; }
+
+		/// <summary>
 		/// Notified when the collection gets changed
 		/// </summary>
 		event EventHandler<NotifyFileTreeViewCollectionChangedEventArgs> CollectionChanged;
@@ -54,5 +61,68 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="file">New file</param>
 		/// <returns></returns>
 		IDnSpyFileNode CreateNode(IDnSpyFileNode owner, IDnSpyFile file);
+
+		/// <summary>
+		/// Returns a node or null if none could be found
+		/// </summary>
+		/// <param name="ref">Reference, eg. a <see cref="IMemberRef"/></param>
+		/// <returns></returns>
+		IFileTreeNodeData FindNode(object @ref);
+
+		/// <summary>
+		/// Returns a <see cref="IDnSpyFileNode"/> node or null if none could be found
+		/// </summary>
+		/// <param name="file">File</param>
+		/// <returns></returns>
+		IDnSpyFileNode FindNode(IDnSpyFile file);
+
+		/// <summary>
+		/// Returns a <see cref="IAssemblyFileNode"/> node or null if none could be found
+		/// </summary>
+		/// <param name="assembly">Assembly</param>
+		/// <returns></returns>
+		IAssemblyFileNode FindNode(AssemblyDef assembly);
+
+		/// <summary>
+		/// Returns a <see cref="IModuleFileNode"/> node or null if none could be found
+		/// </summary>
+		/// <param name="module">Module</param>
+		/// <returns></returns>
+		IModuleFileNode FindNode(ModuleDef module);
+
+		/// <summary>
+		/// Returns a <see cref="ITypeNode"/> node or null if none could be found
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <returns></returns>
+		ITypeNode FindNode(TypeDef type);
+
+		/// <summary>
+		/// Returns a <see cref="IMethodNode"/> node or null if none could be found
+		/// </summary>
+		/// <param name="method">Method</param>
+		/// <returns></returns>
+		IMethodNode FindNode(MethodDef method);
+
+		/// <summary>
+		/// Returns a <see cref="IFieldNode"/> node or null if none could be found
+		/// </summary>
+		/// <param name="field">Field</param>
+		/// <returns></returns>
+		IFieldNode FindNode(FieldDef field);
+
+		/// <summary>
+		/// Returns a <see cref="IPropertyNode"/> node or null if none could be found
+		/// </summary>
+		/// <param name="property">Property</param>
+		/// <returns></returns>
+		IPropertyNode FindNode(PropertyDef property);
+
+		/// <summary>
+		/// Returns a <see cref="IEventNode"/> node or null if none could be found
+		/// </summary>
+		/// <param name="event">Event</param>
+		/// <returns></returns>
+		IEventNode FindNode(EventDef @event);
 	}
 }

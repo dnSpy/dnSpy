@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Windows.Threading;
@@ -32,7 +31,7 @@ using dnSpy.Shared.UI.Decompiler;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.Tabs.TextEditor {
-	[ExportFileTabContentFactory(Order = TabsConstants.ORDER_DECOMPILEFILETABCONTENTFACTORY)]
+	[Export, ExportFileTabContentFactory(Order = TabsConstants.ORDER_DECOMPILEFILETABCONTENTFACTORY)]
 	sealed class DecompileFileTabContentFactory : IFileTabContentFactory {
 		public FileTreeNodeDecompiler FileTreeNodeDecompiler {
 			get { return fileTreeNodeDecompiler; }
@@ -44,28 +43,40 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 		readonly ILanguageManager languageManager;
 
+		public IDecompilationCache DecompilationCache {
+			get { return decompilationCache; }
+		}
+		readonly IDecompilationCache decompilationCache;
+
 		[ImportingConstructor]
-		DecompileFileTabContentFactory(FileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguageManager languageManager) {
+		DecompileFileTabContentFactory(FileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguageManager languageManager, IDecompilationCache decompilationCache) {
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
 			this.languageManager = languageManager;
+			this.decompilationCache = decompilationCache;
 		}
 
 		public IFileTabContent Create(IFileTabContentFactoryContext context) {
-			return new DecompileFileTabContent(this, context.Nodes);
+			return new DecompileFileTabContent(this, context.Nodes, languageManager.SelectedLanguage);
+		}
+
+		public IFileTabContent Create(IFileTreeNodeData[] nodes) {
+			return new DecompileFileTabContent(this, nodes, languageManager.SelectedLanguage);
 		}
 	}
 
 	sealed class DecompileFileTabContent : IAsyncFileTabContent {
 		readonly DecompileFileTabContentFactory decompileFileTabContentFactory;
 		readonly IFileTreeNodeData[] nodes;
+		ILanguage language;
 
-		public DecompileFileTabContent(DecompileFileTabContentFactory decompileFileTabContentFactory, IFileTreeNodeData[] nodes) {
+		public DecompileFileTabContent(DecompileFileTabContentFactory decompileFileTabContentFactory, IFileTreeNodeData[] nodes, ILanguage language) {
 			this.decompileFileTabContentFactory = decompileFileTabContentFactory;
 			this.nodes = nodes;
+			this.language = language;
 		}
 
 		public IFileTabContent Clone() {
-			return new DecompileFileTabContent(decompileFileTabContentFactory, nodes);
+			return new DecompileFileTabContent(decompileFileTabContentFactory, nodes, language);
 		}
 
 		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) {
@@ -96,9 +107,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 		}
 
-		public void OnHide() {
-		}
-
 		public IFileTab FileTab {
 			get { return fileTab; }
 			set {
@@ -119,10 +127,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		sealed class DecompileContext {
 			public DecompileNodeContext DecompileNodeContext;
 			public CancellationTokenSource CancellationTokenSource;
+			public AvalonEditTextOutput CachedOutput;
 		}
-		DecompileContext decompileContext;
 
-		DecompileContext CreateDecompileContext(ILanguage language) {
+		DecompileContext CreateDecompileContext() {
 			var decompileContext = new DecompileContext();
 			decompileContext.CancellationTokenSource = new CancellationTokenSource();
 			var decompilationOptions = new DecompilationOptions();
@@ -135,27 +143,60 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return decompileContext;
 		}
 
-		public void OnShow(IFileTabUIContext uiContext) {
-			Debug.Assert(decompileContext == null);
-			decompileContext = CreateDecompileContext(decompileFileTabContentFactory.LanguageManager.SelectedLanguage);
+		void UpdateLanguage(bool force = false) {
+			if (force || FileTab.IsActiveTab)
+				decompileFileTabContentFactory.LanguageManager.SelectedLanguage = language;
 		}
 
-		public void AsyncWorker(IFileTabUIContext uiContext) {
-			Debug.Assert(decompileContext != null);
+		public void OnSelected() {
+			UpdateLanguage(true);
+		}
+
+		public void OnUnselected() {
+		}
+
+		public void OnHide() {
+		}
+
+		public object OnShow(IFileTabUIContext uiContext) {
+			UpdateLanguage();
+			var decompileContext = CreateDecompileContext();
+			decompileContext.CachedOutput = decompileFileTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Language, nodes, decompileContext.DecompileNodeContext.DecompilationOptions);
+			return decompileContext;
+		}
+
+		public void AsyncWorker(IFileTabUIContext uiContext, object userData) {
+			var decompileContext = (DecompileContext)userData;
 			decompileFileTabContentFactory.FileTreeNodeDecompiler.Decompile(decompileContext.DecompileNodeContext, nodes);
 		}
 
-		public void EndAsyncShow(IFileTabUIContext uiContext) {
-			Debug.Assert(decompileContext != null);
-			var oldDecompileContext = decompileContext;
-			decompileContext = null;
+		public void EndAsyncShow(IFileTabUIContext uiContext, object userData) {
+			var decompileContext = (DecompileContext)userData;
 
 			var uiCtx = (ITextEditorUIContext)uiContext;
-			uiCtx.SetOutput(oldDecompileContext.DecompileNodeContext.Output, oldDecompileContext.DecompileNodeContext.Language.GetHighlightingDefinition());
+
+			var output = decompileContext.CachedOutput;
+			if (output == null) {
+				output = (AvalonEditTextOutput)decompileContext.DecompileNodeContext.Output;
+				decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Language, nodes, decompileContext.DecompileNodeContext.DecompilationOptions, output);
+			}
+			uiCtx.SetOutput(output, decompileContext.DecompileNodeContext.Language.GetHighlightingDefinition());
 		}
 
-		public bool CanStartAsyncWorker(IFileTabUIContext uiContext) {
-			return true;//TODO: Return false if it was in the cache
+		public bool CanStartAsyncWorker(IFileTabUIContext uiContext, object userData) {
+			var decompileContext = (DecompileContext)userData;
+			return decompileContext.CachedOutput == null;
+		}
+
+		public bool NeedRefresh() {
+			bool needRefresh = false;
+
+			if (language != decompileFileTabContentFactory.LanguageManager.SelectedLanguage) {
+				needRefresh = true;
+				language = decompileFileTabContentFactory.LanguageManager.SelectedLanguage;
+			}
+
+			return needRefresh;
 		}
 	}
 }

@@ -18,25 +18,84 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Menus;
 using dnSpy.Shared.UI.Decompiler;
 using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.Tabs.TextEditor {
-	interface IClickedReferenceHandler {
+	interface ITextEditorHelper {
 		bool GoTo(ReferenceSegment refSeg, bool newTab, bool followLocalRefs);
+		void SetFocus();
+		void SetActive();
 	}
 
-	sealed class TextEditorUIContext : ITextEditorUIContext, IClickedReferenceHandler {
+	sealed class TextEditorUIContext : ITextEditorUIContext, ITextEditorHelper, IDisposable {
+		readonly IWpfCommandManager wpfCommandManager;
 		readonly TextEditorControl textEditorControl;
 
-		public TextEditorUIContext(TextEditorControl textEditorControl) {
+		sealed class GuidObjectsCreator : IGuidObjectsCreator {
+			readonly TextEditorUIContext textEditorUIContext;
+
+			public GuidObjectsCreator(TextEditorUIContext textEditorUIContext) {
+				this.textEditorUIContext = textEditorUIContext;
+			}
+
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
+				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXT, textEditorUIContext);
+
+				var teCtrl = (TextEditorControl)creatorObject.Object;
+				var position = openedFromKeyboard ? teCtrl.TextEditor.TextArea.Caret.Position : teCtrl.TextEditor.GetPositionFromMousePosition();
+				if (position != null)
+					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTVIEWPOSITION_GUID, position);
+
+				var @ref = teCtrl.GetReferenceSegmentAt(position);
+				if (@ref != null)
+					yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, new CodeReferenceSegment(@ref.Reference, @ref.IsLocal, @ref.IsLocalTarget));
+			}
+		}
+
+		sealed class ContextMenuInitializer : IContextMenuInitializer {
+			public void Initialize(IMenuItemContext context, ContextMenu menu) {
+				var teCtrl = (TextEditorControl)context.CreatorObject.Object;
+				if (context.OpenedFromKeyboard) {
+					var scrollInfo = (IScrollInfo)teCtrl.TextEditor.TextArea.TextView;
+					var pos = teCtrl.TextEditor.TextArea.TextView.GetVisualPosition(teCtrl.TextEditor.TextArea.Caret.Position, VisualYPosition.TextBottom);
+					pos = new Point(pos.X - scrollInfo.HorizontalOffset, pos.Y - scrollInfo.VerticalOffset);
+
+					menu.HorizontalOffset = pos.X;
+					menu.VerticalOffset = pos.Y;
+					ContextMenuService.SetPlacement(teCtrl, PlacementMode.Relative);
+					ContextMenuService.SetPlacementTarget(teCtrl, teCtrl.TextEditor.TextArea.TextView);
+					menu.Closed += (s, e2) => {
+						teCtrl.ClearValue(ContextMenuService.PlacementProperty);
+						teCtrl.ClearValue(ContextMenuService.PlacementTargetProperty);
+					};
+				}
+				else {
+					teCtrl.ClearValue(ContextMenuService.PlacementProperty);
+					teCtrl.ClearValue(ContextMenuService.PlacementTargetProperty);
+				}
+			}
+		}
+
+		public TextEditorUIContext(IWpfCommandManager wpfCommandManager, IMenuManager menuManager, TextEditorControl textEditorControl) {
+			this.wpfCommandManager = wpfCommandManager;
 			this.textEditorControl = textEditorControl;
-			this.textEditorControl.ClickedReferenceHandler = this;
+			this.textEditorControl.TextEditorHelper = this;
+			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
+			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTEDITOR, textEditorControl.TextEditor);
+			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTAREA, textEditorControl.TextEditor.TextArea);
+			menuManager.InitializeContextMenu(this.textEditorControl, MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer());
 		}
 
 		public IFileTab FileTab {
@@ -53,21 +112,30 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		IFileTab fileTab;
 
 		public UIElement FocusedElement {
-			get { return textEditorControl.TextEditor.TextArea; }
+			get {
+				//TODO: if button is visible, return it
+				return textEditorControl.TextEditor.TextArea;
+			}
 		}
 
 		public object UIObject {
 			get { return textEditorControl; }
 		}
 
-		public void Clear() {
+		public FrameworkElement ScaleElement {
+			get { return textEditorControl.TextEditor.TextArea; }
+		}
+
+		public void OnShow() {
+		}
+
+		public void OnHide() {
 			textEditorControl.Clear();
 			//TODO: Debugger plugin should clear CodeMappings
 		}
 
 		public void Deserialize(object obj) {
 			var state = obj as EditorPositionState;
-			Debug.Assert(state != null);
 			if (state == null)
 				return;
 
@@ -93,7 +161,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			FileTab.FollowReference(@ref, newTab);
 		}
 
-		bool IClickedReferenceHandler.GoTo(ReferenceSegment refSeg, bool newTab, bool followLocalRefs) {
+		bool ITextEditorHelper.GoTo(ReferenceSegment refSeg, bool newTab, bool followLocalRefs) {
 			if (refSeg == null)
 				return false;
 
@@ -140,7 +208,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				if (pos >= 0) {
 					//TODO: RecordHistory(this);
 					textEditorControl.MarkReferences(refSeg);
-					//TODO: SetTextEditorFocus(this);
+					((ITextEditorHelper)this).SetFocus();
 					textEditorControl.TextEditor.Select(pos, 0);
 					textEditorControl.TextEditor.ScrollTo(textEditorControl.TextEditor.TextArea.Caret.Line, textEditorControl.TextEditor.TextArea.Caret.Column);
 					return true;
@@ -149,10 +217,24 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				if (refSeg.IsLocal && textEditorControl.MarkReferences(refSeg))
 					return false;   // Allow another handler to set a new caret position
 
-				//TODO: SetTextEditorFocus(this);
+				((ITextEditorHelper)this).SetFocus();
 				FollowReference(refSeg.Reference, newTab);
 				return true;
 			}
+		}
+
+		void ITextEditorHelper.SetFocus() {
+			FileTab.SetFocus();
+		}
+
+		public void SetActive() {
+			FileTab.FileTabManager.ActiveTab = FileTab;
+		}
+
+		public void Dispose() {
+			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
+			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTEDITOR, textEditorControl.TextEditor);
+			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTAREA, textEditorControl.TextEditor.TextArea);
 		}
 	}
 }

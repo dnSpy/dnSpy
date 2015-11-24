@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>
 	/// A tab
@@ -36,6 +38,11 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// Gets the <see cref="IFileTabManager"/> owner
 		/// </summary>
 		IFileTabManager FileTabManager { get; }
+
+		/// <summary>
+		/// true if this is the active tab
+		/// </summary>
+		bool IsActiveTab { get; }
 
 		/// <summary>
 		/// true if <see cref="NavigateBackward()"/> can execute
@@ -67,7 +74,14 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// Shows the tab content
 		/// </summary>
 		/// <param name="tabContent">Tab content</param>
-		void Show(IFileTabContent tabContent);
+		/// <param name="serializedUI">Serialized UI data or null</param>
+		/// <param name="onShown">Called after the output has been shown on the screen</param>
+		void Show(IFileTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShown);
+
+		/// <summary>
+		/// Sets focus to the focused element if this is the active tab
+		/// </summary>
+		void SetFocus();
 	}
 
 	/// <summary>
@@ -80,7 +94,9 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <param name="self">This</param>
 		/// <param name="ref">Reference</param>
 		public static void FollowReferenceNewTab(this IFileTab self, object @ref) {
-			self.FileTabManager.OpenEmptyTab().FollowReference(@ref);
+			var tab = self.FileTabManager.OpenEmptyTab();
+			tab.FollowReference(@ref);
+			self.FileTabManager.SetFocus(tab);
 		}
 
 		/// <summary>

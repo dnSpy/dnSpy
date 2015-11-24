@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel;
+using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Contracts.App {
 	/// <summary>
@@ -49,5 +50,10 @@ namespace dnSpy.Contracts.App {
 		/// Gets the <see cref="IAppStatusBar"/> instance
 		/// </summary>
 		IAppStatusBar StatusBar { get; }
+
+		/// <summary>
+		/// Gets the <see cref="IWpfCommandManager"/> instance
+		/// </summary>
+		IWpfCommandManager WpfCommandManager { get; }
 	}
 }

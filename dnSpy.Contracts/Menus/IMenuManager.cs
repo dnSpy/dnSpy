@@ -27,11 +27,6 @@ namespace dnSpy.Contracts.Menus {
 	/// </summary>
 	public interface IMenuManager {
 		/// <summary>
-		/// true if a menu is currently opened
-		/// </summary>
-		bool IsMenuOpened { get; }
-
-		/// <summary>
 		/// Initializes a context menu. Should be called when <paramref name="elem"/> has been created.
 		/// </summary>
 		/// <param name="elem">Element that needs a context menu</param>

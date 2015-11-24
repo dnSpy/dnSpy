@@ -17,15 +17,34 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Generic;
+using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Tabs;
+
 namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>
 	/// Manages the file tabs and treeview
 	/// </summary>
 	public interface IFileTabManager {
 		/// <summary>
+		/// Gets the <see cref="IFileTreeView"/> instance
+		/// </summary>
+		IFileTreeView FileTreeView { get; }
+
+		/// <summary>
+		/// Gets the <see cref="ITabGroupManager"/> instance
+		/// </summary>
+		ITabGroupManager TabGroupManager { get; }
+
+		/// <summary>
+		/// Gets all <see cref="IFileTab"/> instances
+		/// </summary>
+		IEnumerable<IFileTab> SortedTabs { get; }
+
+		/// <summary>
 		/// Gets the active tab or null if none, see also <see cref="GetOrCreateActiveTab()"/>
 		/// </summary>
-		IFileTab ActiveTab { get; }
+		IFileTab ActiveTab { get; set; }
 
 		/// <summary>
 		/// Gets the active tab or creates a new one if <see cref="ActiveTab"/> is null
@@ -38,5 +57,29 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// </summary>
 		/// <returns></returns>
 		IFileTab OpenEmptyTab();
+
+		/// <summary>
+		/// Gives <paramref name="tab"/> keyboard focus
+		/// </summary>
+		/// <param name="tab"></param>
+		void SetFocus(IFileTab tab);
+
+		/// <summary>
+		/// Refreshes those tabs that need to be refreshed
+		/// </summary>
+		void CheckRefresh();
+
+		/// <summary>
+		/// Refreshes those tabs that need to be refreshed
+		/// </summary>
+		/// <param name="tabs">Tabs to check</param>
+		void CheckRefresh(IEnumerable<IFileTab> tabs);
+
+		/// <summary>
+		/// Returns true if <paramref name="tabGroup"/> is owned by this instance
+		/// </summary>
+		/// <param name="tabGroup">Tab group</param>
+		/// <returns></returns>
+		bool Owns(ITabGroup tabGroup);
 	}
 }

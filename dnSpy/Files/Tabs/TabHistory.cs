@@ -23,9 +23,19 @@ using System.Diagnostics;
 using dnSpy.Contracts.Files.Tabs;
 
 namespace dnSpy.Files.Tabs {
+	struct TabContentState {
+		public readonly IFileTabContent FileTabContent;
+		public readonly object SerializedData;
+
+		public TabContentState(IFileTabContent fileTabContent, object serializedData) {
+			this.FileTabContent = fileTabContent;
+			this.SerializedData = serializedData;
+		}
+	}
+
 	sealed class TabHistory {
-		readonly List<IFileTabContent> oldList;
-		readonly List<IFileTabContent> newList;
+		readonly List<TabContentState> oldList;
+		readonly List<TabContentState> newList;
 
 		public IFileTabContent Current {
 			get { return current; }
@@ -33,15 +43,15 @@ namespace dnSpy.Files.Tabs {
 		IFileTabContent current;
 
 		public TabHistory() {
-			this.oldList = new List<IFileTabContent>();
-			this.newList = new List<IFileTabContent>();
+			this.oldList = new List<TabContentState>();
+			this.newList = new List<TabContentState>();
 		}
 
 		public void SetCurrent(IFileTabContent content, bool saveCurrent) {
 			if (content == null)
 				throw new ArgumentNullException();
 			if (saveCurrent && current != null)
-				oldList.Add(current);
+				oldList.Add(new TabContentState(current, current.FileTab.UIContext.Serialize()));
 			this.current = content;
 			newList.Clear();
 		}
@@ -54,24 +64,26 @@ namespace dnSpy.Files.Tabs {
 			get { return newList.Count > 0; }
 		}
 
-		public void NavigateBackward() {
+		public object NavigateBackward() {
 			Debug.Assert(CanNavigateBackward);
 			if (oldList.Count == 0)
-				return;
+				return null;
 			var old = oldList[oldList.Count - 1];
 			oldList.RemoveAt(oldList.Count - 1);
-			newList.Add(current);
-			current = old;
+			newList.Add(new TabContentState(current, current.FileTab.UIContext.Serialize()));
+			current = old.FileTabContent;
+			return old.SerializedData;
 		}
 
-		public void NavigateForward() {
+		public object NavigateForward() {
 			Debug.Assert(CanNavigateForward);
 			if (newList.Count == 0)
-				return;
+				return null;
 			var old = newList[newList.Count - 1];
 			newList.RemoveAt(newList.Count - 1);
-			oldList.Add(current);
-			current = old;
+			oldList.Add(new TabContentState(current, current.FileTab.UIContext.Serialize()));
+			current = old.FileTabContent;
+			return old.SerializedData;
 		}
 	}
 }

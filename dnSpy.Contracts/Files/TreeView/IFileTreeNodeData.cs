@@ -42,4 +42,27 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <returns></returns>
 		string ToString(ILanguage language);
 	}
+
+	/// <summary>
+	/// Extension methods
+	/// </summary>
+	public static class FileTreeNodeDataExtensionMethods {
+		/// <summary>
+		/// Gets the <see cref="IAssemblyFileNode"/> owner or null if none was found
+		/// </summary>
+		/// <param name="self"></param>
+		/// <returns></returns>
+		public static IAssemblyFileNode GetAssemblyNode(this ITreeNodeData self) {
+			return self.GetAncestor<IAssemblyFileNode>();
+		}
+
+		/// <summary>
+		/// Gets the <see cref="IModuleFileNode"/> owner or null if none was found
+		/// </summary>
+		/// <param name="self"></param>
+		/// <returns></returns>
+		public static IModuleFileNode GetModuleNode(this ITreeNodeData self) {
+			return self.GetAncestor<IModuleFileNode>();
+		}
+	}
 }

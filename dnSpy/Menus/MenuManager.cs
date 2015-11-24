@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Command;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Shared.UI.Images;
@@ -74,12 +75,33 @@ namespace dnSpy.Menus {
 		}
 	}
 
+	[Export(typeof(IWpfFocusChecker))]
+	sealed class MenuWpfFocusChecker : IWpfFocusChecker {
+		public bool CanFocus {
+			get { return !menuManager.IsMenuOpened; }
+		}
+
+		readonly MenuManager menuManager;
+
+		[ImportingConstructor]
+		MenuWpfFocusChecker(MenuManager menuManager) {
+			this.menuManager = menuManager;
+		}
+	}
+
 	[Export, Export(typeof(IMenuManager)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class MenuManager : IMenuManager {
 		readonly IImageManager imageManager;
 
 		public bool IsMenuOpened {
-			get { return menuOpenedCounter != 0; }
+			get {
+				foreach (var mi in openedMenuItems) {
+					if (mi.IsSubmenuOpen)
+						return true;
+				}
+
+				return menuOpenedCounter != 0;
+			}
 		}
 		int menuOpenedCounter;
 
@@ -418,13 +440,13 @@ namespace dnSpy.Menus {
 				topMenuItem.Items.Add(new MenuItem());
 				topMenuItem.SubmenuOpened += (s, e) => {
 					if (e.Source == topMenuItem) {
-						MenuOpened();
+						openedMenuItems.Add(topMenuItem);
 						InitializeMainSubMenu(topMenuItem, md, commandTarget);
 					}
 				};
 				topMenuItem.SubmenuClosed += (s, e) => {
 					if (e.Source == topMenuItem) {
-						MenuClosed();
+						openedMenuItems.Remove(topMenuItem);
 						// There must always be exactly one MenuItem in the list when it's not shown.
 						// We must re-use the first one or the first menu item won't be highlighted
 						// when the menu is opened from the keyboard, eg. Alt+F.
@@ -437,5 +459,6 @@ namespace dnSpy.Menus {
 
 			return menu;
 		}
+		readonly List<MenuItem> openedMenuItems = new List<MenuItem>();
 	}
 }

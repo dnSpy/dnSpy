@@ -19,23 +19,22 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Languages;
+using dnSpy.Shared.UI.Decompiler;
 using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TextView;
-using ICSharpCode.ILSpy.TreeNodes;
 
-namespace dnSpy {
+namespace dnSpy.Files.Tabs {
 	/// <summary>
 	/// Caches decompiled output
 	/// </summary>
-	sealed class DecompileCache {
-		public static readonly DecompileCache Instance = new DecompileCache();
-
+	[Export(typeof(IDecompilationCache)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class DecompilationCache : IDecompilationCache {
 		// How often ClearOld() is called
 		const int CLEAR_OLD_ITEMS_EVERY_MS = 30 * 1000;
 
@@ -78,35 +77,37 @@ namespace dnSpy {
 		}
 
 		struct Key : IEquatable<Key> {
-			public readonly Language Language;
-			public readonly ILSpyTreeNode[] TreeNodes;
+			public readonly ILanguage ILanguage;
+			public readonly IFileTreeNodeData[] Nodes;
 			public readonly DecompilationOptions Options;
 
-			public Key(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options) {
-				this.Language = language;
-				this.TreeNodes = new List<ILSpyTreeNode>(treeNodes).ToArray();
+			public Key(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options) {
+				this.ILanguage = language;
+				this.Nodes = new List<IFileTreeNodeData>(nodes).ToArray();
 				this.Options = Clone(options);
 			}
 
 			static DecompilationOptions Clone(DecompilationOptions options) {
-				var newOpts = options.SimpleClone();
-				newOpts.DecompilerSettings = (DecompilerSettings)options.DecompilerSettings.Clone();
-				newOpts.TextViewState = null;   // Ignore it; we don't use it
+				var newOpts = new DecompilationOptions();
+				newOpts.ProjectOptions = null;
+				newOpts.CancellationToken = CancellationToken.None;
+				newOpts.DecompilerSettings = options.DecompilerSettings.Clone();
+				newOpts.DontShowCreateMethodBodyExceptions = options.DontShowCreateMethodBodyExceptions;
 				return newOpts;
 			}
 
 			public bool Equals(Key other) {
-				if (Language != other.Language)
+				if (ILanguage != other.ILanguage)
 					return false;
 
-				if (TreeNodes.Length != other.TreeNodes.Length)
+				if (Nodes.Length != other.Nodes.Length)
 					return false;
-				for (int i = 0; i < TreeNodes.Length; i++) {
-					if ((object)TreeNodes[i] != (object)other.TreeNodes[i])
+				for (int i = 0; i < Nodes.Length; i++) {
+					if ((object)Nodes[i] != (object)other.Nodes[i])
 						return false;
 				}
 
-				if (!Options.Equals(other.Options))
+				if (!Equals(Options, other.Options))
 					return false;
 
 				return true;
@@ -120,24 +121,58 @@ namespace dnSpy {
 
 			public override int GetHashCode() {
 				int h = 0;
-				h = Language.NameUI.GetHashCode();
-				foreach (var node in TreeNodes)
+				h = ILanguage.NameUI.GetHashCode();
+				foreach (var node in Nodes)
 					h ^= node.GetHashCode();
-				h ^= Options.GetHashCode();
+				h ^= GetHashCode(Options);
 				return h;
+			}
+
+			static int GetHashCode(DecompilationOptions options) {
+				int h = 0;
+
+				// Ignore: ProjectOptions
+				// Ignore: CancellationToken
+
+				h ^= options.DecompilerSettings.GetHashCode();
+				h ^= options.DontShowCreateMethodBodyExceptions ? int.MinValue : 0;
+
+				return h;
+			}
+
+			static bool Equals(DecompilationOptions a, DecompilationOptions b) {
+				if (a == b)
+					return true;
+				if (a == null || b == null)
+					return false;
+
+				// Ignore: ProjectOptions
+				// Ignore: CancellationToken
+
+				if (!a.DecompilerSettings.Equals(b.DecompilerSettings))
+					return false;
+
+				if (a.DontShowCreateMethodBodyExceptions != b.DontShowCreateMethodBodyExceptions)
+					return false;
+
+				return true;
 			}
 		}
 
-		public DecompileCache() {
+		readonly IFileManager fileManager;
+
+		[ImportingConstructor]
+		DecompilationCache(IFileManager fileManager) {
+			this.fileManager = fileManager;
 			AddTimerWait(this);
 		}
 
-		static void AddTimerWait(DecompileCache dc) {
+		static void AddTimerWait(DecompilationCache dc) {
 			Timer timer = null;
 			WeakReference weakSelf = new WeakReference(dc);
 			timer = new Timer(a => {
 				timer.Dispose();
-				var self = (DecompileCache)weakSelf.Target;
+				var self = (DecompilationCache)weakSelf.Target;
 				if (self != null) {
 					self.ClearOld();
 					AddTimerWait(self);
@@ -145,9 +180,9 @@ namespace dnSpy {
 			}, null, CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
 		}
 
-		public AvalonEditTextOutput Lookup(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options) {
+		public AvalonEditTextOutput Lookup(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options) {
 			lock (lockObj) {
-				var key = new Key(language, treeNodes, options);
+				var key = new Key(language, nodes, options);
 
 				Item item;
 				if (cachedItems.TryGetValue(key, out item)) {
@@ -161,11 +196,11 @@ namespace dnSpy {
 			return null;
 		}
 
-		public void Cache(Language language, ILSpyTreeNode[] treeNodes, DecompilationOptions options, AvalonEditTextOutput textOutput) {
+		public void Cache(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options, AvalonEditTextOutput textOutput) {
 			if (!textOutput.CanBeCached)
 				return;
 			lock (lockObj) {
-				var key = new Key(language, treeNodes, options);
+				var key = new Key(language, nodes, options);
 				cachedItems[key] = new Item(textOutput);
 			}
 		}
@@ -187,15 +222,15 @@ namespace dnSpy {
 				cachedItems.Clear();
 		}
 
-		public void Clear(IDnSpyFile mod) {
-			Clear(new HashSet<IDnSpyFile>(new[] { mod }));
+		public void Clear(IDnSpyFile module) {
+			Clear(new HashSet<IDnSpyFile>(new[] { module }));
 		}
 
-		public void Clear(HashSet<IDnSpyFile> mods) {
+		public void Clear(HashSet<IDnSpyFile> modules) {
 			lock (lockObj) {
 				foreach (var kv in cachedItems.ToArray()) {
-					if (IsInModifiedModule(mods, kv.Key.TreeNodes) ||
-						IsInModifiedModule(mods, kv.Value)) {
+					if (IsInModifiedModule(modules, kv.Key.Nodes) ||
+						IsInModifiedModule(fileManager, modules, kv.Value)) {
 						cachedItems.Remove(kv.Key);
 						continue;
 					}
@@ -203,27 +238,27 @@ namespace dnSpy {
 			}
 		}
 
-		internal static bool IsInModifiedModule(HashSet<IDnSpyFile> mods, ILSpyTreeNode[] nodes) {
+		static bool IsInModifiedModule(HashSet<IDnSpyFile> modules, IFileTreeNodeData[] nodes) {
 			foreach (var node in nodes) {
-				var modNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
-				if (modNode == null || mods.Contains(modNode.DnSpyFile))
+				var modNode = (IDnSpyFileNode)node.GetModuleNode() ?? node.GetAssemblyNode();
+				if (modNode == null || modules.Contains(modNode.DnSpyFile))
 					return true;
 			}
 
 			return false;
 		}
 
-		static bool IsInModifiedModule(HashSet<IDnSpyFile> mods, Item item) {
+		static bool IsInModifiedModule(IFileManager fileManager, HashSet<IDnSpyFile> modules, Item item) {
 			var textOutput = item.TextOutput;
 			if (textOutput == null && item.WeakTextOutput != null)
 				textOutput = (AvalonEditTextOutput)item.WeakTextOutput.Target;
 			if (textOutput == null)
 				return true;
 
-			return IsInModifiedModule(mods, textOutput.References);
+			return IsInModifiedModule(fileManager, modules, textOutput.References);
 		}
 
-		internal static bool IsInModifiedModule(HashSet<IDnSpyFile> mods, TextSegmentCollection<ReferenceSegment> references) {
+		static bool IsInModifiedModule(IFileManager fileManager, HashSet<IDnSpyFile> modules, TextSegmentCollection<ReferenceSegment> references) {
 			if (references == null)
 				return false;
 			var checkedAsmRefs = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
@@ -239,8 +274,8 @@ namespace dnSpy {
 				}
 				if (asmRef != null && !checkedAsmRefs.Contains(asmRef)) {
 					checkedAsmRefs.Add(asmRef);
-					var asm = MainWindow.Instance.DnSpyFileList.FindAssembly(asmRef);
-					if (asm != null && mods.Contains(asm))
+					var asm = fileManager.FindAssembly(asmRef);
+					if (asm != null && modules.Contains(asm))
 						return true;
 				}
 			}

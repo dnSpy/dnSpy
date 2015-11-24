@@ -212,7 +212,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 		}
 
-		TextViewPosition? GetPositionFromMousePosition() {
+		public TextViewPosition? GetPositionFromMousePosition() {
 			return TextArea.TextView.GetPosition(Mouse.GetPosition(TextArea.TextView) + TextArea.TextView.ScrollOffset);
 		}
 

@@ -32,7 +32,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// </summary>
 		/// <typeparam name="T">Type</typeparam>
 		/// <returns></returns>
-		T Create<T>() where T : class, IFileTabUIContext;
+		IFileTabUIContext Create<T>() where T : class, IFileTabUIContext;
 	}
 
 	/// <summary>Metadata</summary>

@@ -21,7 +21,9 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Windows;
+using System.Windows.Input;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
@@ -60,8 +62,13 @@ namespace dnSpy.MainApp {
 		}
 		readonly AppSettingsImpl appSettings;
 
+		public IWpfCommandManager WpfCommandManager {
+			get { return wpfCommandManager; }
+		}
+		readonly IWpfCommandManager wpfCommandManager;
+
 		[ImportingConstructor]
-		AppWindow(IThemeManager themeManager, IImageManager imageManager, AppSettingsImpl appSettings, SettingsManager settingsManager, FileTabManager fileTabManager, AppToolBar appToolBar) {
+		AppWindow(IThemeManager themeManager, IImageManager imageManager, AppSettingsImpl appSettings, SettingsManager settingsManager, FileTabManager fileTabManager, AppToolBar appToolBar, IWpfCommandManager wpfCommandManager) {
 			this.appSettings = appSettings;
 			this.stackedContent = new StackedContent<IStackedContentChild>();
 			this.themeManager = themeManager;
@@ -71,6 +78,7 @@ namespace dnSpy.MainApp {
 			this.fileTabManager = fileTabManager;
 			this.statusBar = new AppStatusBar();
 			this.appToolBar = appToolBar;
+			this.wpfCommandManager = wpfCommandManager;
 			this.mainWindowClosing = new WeakEventList<CancelEventArgs>();
 			this.mainWindowClosed = new WeakEventList<EventArgs>();
 			this.textFormatterChanged = new WeakEventList<EventArgs>();
@@ -104,9 +112,13 @@ namespace dnSpy.MainApp {
 			sc.AddChild(stackedContent, StackedContentChildInfo.CreateVertical(new GridLength(1, GridUnitType.Star)));
 			sc.AddChild(statusBar, StackedContentChildInfo.CreateVertical(new GridLength(0, GridUnitType.Auto)));
 			mainWindow = new MainWindow(themeManager, imageManager, sc.UIObject);
+			wpfCommandManager.Add(CommandConstants.GUID_MAINWINDOW, mainWindow);
 			new SavedWindowStateRestorer(mainWindow, appSettings.SavedWindowState, DefaultWindowLocation);
 			mainWindow.Closing += MainWindow_Closing;
 			mainWindow.Closed += MainWindow_Closed;
+			mainWindow.GotKeyboardFocus += MainWindow_GotKeyboardFocus;
+			stackedContent.AddChild(StackedContentChildImpl.GetOrCreate(fileTabManager.FileTreeView.TreeView, fileTabManager.FileTreeView.TreeView.UIObject), StackedContentChildInfo.CreateHorizontal(new GridLength(250, GridUnitType.Pixel), 100));
+			stackedContent.AddChild(StackedContentChildImpl.GetOrCreate(fileTabManager.TabGroupManager, fileTabManager.TabGroupManager.UIObject), StackedContentChildInfo.CreateHorizontal(new GridLength(1, GridUnitType.Star), 100));
 			RefreshToolBar();
 			return mainWindow;
 		}
@@ -121,6 +133,17 @@ namespace dnSpy.MainApp {
 
 		void MainWindow_Closed(object sender, EventArgs e) {
 			mainWindowClosed.Raise(this, e);
+		}
+
+		void MainWindow_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+			if (e.NewFocus == MainWindow) {
+				var g = fileTabManager.TabGroupManager.ActiveTabGroup;
+				if (g != null && g.ActiveTabContent != null) {
+					g.SetFocus(g.ActiveTabContent);
+					e.Handled = true;
+					return;
+				}
+			}
 		}
 
 		public event EventHandler<CancelEventArgs> MainWindowClosing {

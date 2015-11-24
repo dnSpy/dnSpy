@@ -32,15 +32,27 @@ namespace dnSpy.Contracts.Files.Tabs {
 
 		/// <summary>
 		/// Called to show its content in the UI. Implement <see cref="IAsyncFileTabContent"/> to
-		/// create the content in a worker thread.
+		/// create the content in a worker thread. The return value is the input to methods in
+		/// <see cref="IAsyncFileTabContent"/>.
 		/// </summary>
 		/// <param name="uiContext">UI Context created by <see cref="CreateUIContext(IFileTabUIContextLocator)"/></param>
-		void OnShow(IFileTabUIContext uiContext);
+		/// <returns></returns>
+		object OnShow(IFileTabUIContext uiContext);
 
 		/// <summary>
 		/// Called when the content is hidden
 		/// </summary>
 		void OnHide();
+
+		/// <summary>
+		/// Called when its tab has been selected. Only called if this is the tab's active content.
+		/// </summary>
+		void OnSelected();
+
+		/// <summary>
+		/// Called when its tab has been unselected. Only called if this is the tab's active content.
+		/// </summary>
+		void OnUnselected();
 
 		/// <summary>
 		/// Gets the title
@@ -70,5 +82,11 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// Written by the owner <see cref="IFileTab"/> instance
 		/// </summary>
 		IFileTab FileTab { get; set; }
+
+		/// <summary>
+		/// Returns true if the output must be refreshed.
+		/// </summary>
+		/// <returns></returns>
+		bool NeedRefresh();
 	}
 }

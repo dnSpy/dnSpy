@@ -61,7 +61,18 @@ namespace dnSpy.Files.Tabs {
 		public void OnHide() {
 		}
 
-		public void OnShow(IFileTabUIContext uiContext) {
+		public object OnShow(IFileTabUIContext uiContext) {
+			return null;
+		}
+
+		public void OnSelected() {
+		}
+
+		public void OnUnselected() {
+		}
+
+		public bool NeedRefresh() {
+			return false;
 		}
 	}
 
@@ -87,7 +98,14 @@ namespace dnSpy.Files.Tabs {
 			get { return string.Empty; }
 		}
 
-		public void Clear() {
+		public FrameworkElement ScaleElement {
+			get { return null; }
+		}
+
+		public void OnShow() {
+		}
+
+		public void OnHide() {
 		}
 
 		public void Deserialize(object obj) {

@@ -29,6 +29,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
 using System.Windows.Threading;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Controls;
@@ -76,11 +77,6 @@ namespace dnSpy.Tabs {
 			get { return Count != 0; }
 		}
 
-		internal TabControl TabControl {
-			get { return tabControl; }
-		}
-		readonly TabControl tabControl;
-
 		internal int Count {
 			get { return tabControl.Items.Count; }
 		}
@@ -97,6 +93,71 @@ namespace dnSpy.Tabs {
 				if (impl == null)
 					throw new InvalidOperationException();
 				tabControl.SelectedItem = impl;
+			}
+		}
+
+		public void SetFocus(ITabContent content) {
+			if (content == null)
+				throw new ArgumentNullException();
+			var impl = GetTabItemImpl(content);
+			if (impl == null)
+				throw new InvalidOperationException();
+			if (impl != ActiveTabItemImpl)
+				return;
+			SetFocus2(impl.TabContent);
+		}
+
+		void SetFocus2(ITabContent content) {
+			var uiel = content.FocusedElement;
+			if (uiel == null)
+				uiel = content.UIObject as UIElement;
+			var sv = uiel as ScrollViewer;
+			if (sv != null)
+				uiel = sv.Content as UIElement ?? uiel;
+			if (uiel == null || !uiel.Focusable)
+				return;
+
+			if (!uiel.IsVisible)
+				new SetFocusWhenVisible(this, content, uiel);
+			else
+				SetFocusNoChecks(uiel);
+		}
+
+		void SetFocusNoChecks(UIElement uiel) {
+			Debug.Assert(uiel != null && uiel.Focusable);
+			if (uiel == null)
+				return;
+			wpfFocusManager.Focus(uiel);
+		}
+
+		bool IsActiveTab(ITabContent content) {
+			var impl = GetTabItemImpl(content);
+			if (impl == null)
+				return false;
+			if (impl != ActiveTabItemImpl)
+				return false;
+			if (TabGroupManager.ActiveTabGroup != this)
+				return false;
+
+			return true;
+		}
+
+		sealed class SetFocusWhenVisible {
+			readonly TabGroup tabGroup;
+			readonly ITabContent content;
+			readonly UIElement uiElem;
+
+			public SetFocusWhenVisible(TabGroup tabGroup, ITabContent content, UIElement uiElem) {
+				this.tabGroup = tabGroup;
+				this.content = content;
+				this.uiElem = uiElem;
+				uiElem.IsVisibleChanged += uiElem_IsVisibleChanged;
+			}
+
+			void uiElem_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+				uiElem.IsVisibleChanged -= uiElem_IsVisibleChanged;
+				if (tabGroup.IsActiveTab(content))
+					tabGroup.SetFocusNoChecks(uiElem);
 			}
 		}
 
@@ -121,6 +182,11 @@ namespace dnSpy.Tabs {
 			get { return tabGroupGuid; }
 		}
 
+		public ITabGroupManager TabGroupManager {
+			get { return tabGroupManager; }
+		}
+		readonly TabGroupManager tabGroupManager;
+
 		object IStackedContentChild.UIObject {
 			get { return tabControl; }
 		}
@@ -128,6 +194,8 @@ namespace dnSpy.Tabs {
 		IStackedContent IStackedContentChild.StackedContent { get; set; }
 
 		readonly Guid tabGroupGuid;
+		readonly TabControl tabControl;
+		readonly IWpfFocusManager wpfFocusManager;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly TabGroup tabGroup;
@@ -141,15 +209,40 @@ namespace dnSpy.Tabs {
 			}
 		}
 
-		readonly TabGroupManager tabGroupManager;
-
-		public TabGroup(TabGroupManager tabGroupManager, IMenuManager menuManager, Guid tabGroupGuid) {
+		public TabGroup(TabGroupManager tabGroupManager, IMenuManager menuManager, IWpfFocusManager wpfFocusManager, Guid tabGroupGuid) {
 			this.tabGroupManager = tabGroupManager;
+			this.wpfFocusManager = wpfFocusManager;
 			this.tabGroupGuid = tabGroupGuid;
 			this.tabControl = new TabControl();
 			this.tabControl.DataContext = this;
 			this.tabControl.SetResourceReference(FrameworkElement.StyleProperty, "FileTabGroupTabControl");
+			this.tabControl.SelectionChanged += TabControl_SelectionChanged;
 			menuManager.InitializeContextMenu(this.tabControl, tabGroupGuid, new GuidObjectsCreator(this));
+		}
+
+		void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+			if (sender != tabControl || e.Source != tabControl)
+				return;
+			Debug.Assert(e.RemovedItems.Count <= 1);
+			Debug.Assert(e.AddedItems.Count <= 1);
+
+			TabItemImpl selected = null, unselected = null;
+			if (e.RemovedItems.Count >= 1) {
+				unselected = e.RemovedItems[0] as TabItemImpl;
+				if (unselected == null)
+					return;
+			}
+			if (e.AddedItems.Count >= 1) {
+				selected = e.AddedItems[0] as TabItemImpl;
+				if (selected == null)
+					return;
+			}
+
+			tabGroupManager.OnSelectionChanged(this, selected, unselected);
+		}
+
+		internal bool Contains(TabItemImpl impl) {
+			return tabControl.Items.Contains(impl);
 		}
 
 		internal void OnThemeChanged() {
@@ -225,7 +318,7 @@ namespace dnSpy.Tabs {
 				return;
 
 			if (tabControl.SelectedItem == tabItem)
-				tabItem.FocusContent();
+				SetFocus2(tabItem.TabContent);
 
 			// HACK: The Close button won't work if we start the drag and drop operation
 			bool isTabButtonPressed = IsTabButton(tabItem, e.OriginalSource);
@@ -393,7 +486,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public bool MoveTo(TabGroup dstTabGroup, TabItemImpl srcTabItem, int insertIndex) {
-			Debug.Assert(this.TabControl.Items.Contains(srcTabItem));
+			Debug.Assert(Contains(srcTabItem));
 			if (srcTabItem == null)
 				return false;
 
@@ -412,8 +505,8 @@ namespace dnSpy.Tabs {
 		TabItemImpl AttachTabItem(TabItemImpl tabItem, int insertIndex) {
 			tabItem.Owner = this;
 			AddEvents(tabItem);
-			if (insertIndex < 0 || insertIndex > TabControl.Items.Count)
-				insertIndex = TabControl.Items.Count;
+			if (insertIndex < 0 || insertIndex > tabControl.Items.Count)
+				insertIndex = tabControl.Items.Count;
 			UpdateState(tabItem);
 			AddToTabControl(tabItem, insertIndex);
 			return tabItem;
@@ -462,9 +555,9 @@ namespace dnSpy.Tabs {
 		}
 
 		internal bool SetActiveTab(TabItemImpl tabItem) {
-			if (tabItem == null || !this.TabControl.Items.Contains(tabItem))
+			if (tabItem == null || !Contains(tabItem))
 				return false;
-			this.TabControl.SelectedItem = tabItem;
+			this.tabControl.SelectedItem = tabItem;
 			return true;
 		}
 
@@ -482,31 +575,31 @@ namespace dnSpy.Tabs {
 			tabControl.SelectedIndex = index;
 		}
 
-		void SelectNextTab() {
+		public void SelectNextTab() {
 			SelectTab(tabControl.SelectedIndex + 1);
 		}
 
-		bool SelectNextTabCanExecute() {
-			return tabControl.Items.Count > 1;
+		public bool SelectNextTabCanExecute {
+			get { return tabControl.Items.Count > 1; }
 		}
 
-		void SelectPreviousTab() {
+		public void SelectPreviousTab() {
 			SelectTab(tabControl.SelectedIndex - 1);
 		}
 
-		bool SelectPreviousTabCanExecute() {
-			return tabControl.Items.Count > 1;
+		public bool SelectPreviousTabCanExecute {
+			get { return tabControl.Items.Count > 1; }
 		}
 
-		void CloseActiveTab() {
+		public void CloseActiveTab() {
 			RemoveTabItem(ActiveTabItemImpl);
 		}
 
-		bool CloseActiveTabCanExecute() {
-			return ActiveTabItemImpl != null;
+		public bool CloseActiveTabCanExecute {
+			get { return ActiveTabItemImpl != null; }
 		}
 
-		void CloseAllButActiveTab() {
+		public void CloseAllButActiveTab() {
 			var activeTab = ActiveTabItemImpl;
 			if (activeTab == null)
 				return;
@@ -516,15 +609,15 @@ namespace dnSpy.Tabs {
 			}
 		}
 
-		bool CloseAllButActiveTabCanExecute() {
-			return tabControl.Items.Count > 1;
+		public bool CloseAllButActiveTabCanExecute {
+			get { return tabControl.Items.Count > 1; }
 		}
 
-		internal bool CloseAllTabsCanExecute() {
-			return tabControl.Items.Count > 0;
+		public bool CloseAllTabsCanExecute {
+			get { return tabControl.Items.Count > 0; }
 		}
 
-		internal void CloseAllTabs() {
+		public void CloseAllTabs() {
 			foreach (var tabItem in AllTabItemImpls.ToArray())
 				RemoveTabItem(tabItem);
 		}

@@ -36,9 +36,16 @@ namespace dnSpy.Contracts.TreeView {
 		ITreeNode Parent { get; }
 
 		/// <summary>
-		/// Gets all children
+		/// Gets all children or an empty list if <see cref="LazyLoading"/> is true. See also
+		/// <see cref="EnsureChildrenLoaded()"/>
 		/// </summary>
 		IList<ITreeNode> Children { get; }
+
+		/// <summary>
+		/// Gets all <see cref="ITreeNodeData"/> children in <see cref="Children"/>. See also
+		/// <see cref="EnsureChildrenLoaded()"/>
+		/// </summary>
+		IEnumerable<ITreeNodeData> DataChildren { get; }
 
 		/// <summary>
 		/// Tree node data
@@ -50,6 +57,11 @@ namespace dnSpy.Contracts.TreeView {
 		/// will get called to load the children. Should only be used by <see cref="Data"/>
 		/// </summary>
 		bool LazyLoading { get; set; }
+
+		/// <summary>
+		/// Forces loading of <see cref="Children"/>
+		/// </summary>
+		void EnsureChildrenLoaded();
 
 		/// <summary>
 		/// Adds a new node to <see cref="Children"/>

@@ -1,11 +1,10 @@
-The following MIT license applies to ILSpy, NRefactory and ICSharpCode.Decompiler.
-dnlib uses MIT license, Copyright (C) 2012-2015 de4dot@gmail.com
-dnSpy uses GPLv3 license, Copyright (C) 2014-2015 de4dot@gmail.com
-AvalonEdit and SharpTreeView use LGPL, which can be found in the LGPL.txt file.
+Original port to dnlib by Ki. Various other features needed by dnSpy have also been added.
 
-MIT license:
+License: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 (see GPLv3.txt)
 
-Copyright (c) 2011-2014 AlphaSierraPapa for the SharpDevelop team
+Original license: MIT, see below:
+
+Copyright (c) 2010-2014 AlphaSierraPapa, Xamarin
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this
 software and associated documentation files (the "Software"), to deal in the Software

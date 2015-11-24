@@ -21,9 +21,11 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolBars;
+using dnSpy.Shared.UI.MVVM;
 using dnSpy.Shared.UI.ToolBars;
 
 namespace dnSpy.Files.Tabs {
@@ -46,12 +48,12 @@ namespace dnSpy.Files.Tabs {
 		readonly IFileTabManager fileTabManager;
 
 		[ImportingConstructor]
-		NavigationCommandInstaller(IFileTabManager fileTabManager) {
+		NavigationCommandInstaller(IFileTabManager fileTabManager, IWpfCommandManager wpfCommandManager) {
 			this.fileTabManager = fileTabManager;
 			Debug.Assert(Application.Current != null && Application.Current.MainWindow != null);
-			var win = Application.Current.MainWindow;
-			win.CommandBindings.Add(new CommandBinding(NavigationCommands.BrowseBack, (s, e) => BrowseBack(), (s, e) => e.CanExecute = CanBrowseBack));
-			win.CommandBindings.Add(new CommandBinding(NavigationCommands.BrowseForward, (s, e) => BrowseForward(), (s, e) => e.CanExecute = CanBrowseForward));
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			cmds.Add(NavigationCommands.BrowseBack, new RelayCommand(a => BrowseBack(), a => CanBrowseBack));
+			cmds.Add(NavigationCommands.BrowseForward, new RelayCommand(a => BrowseForward(), a => CanBrowseForward));
 		}
 
 		bool CanBrowseBack {

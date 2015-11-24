@@ -48,6 +48,11 @@
     <Compile Include="App\IAppWindow.cs" />
     <Compile Include="Command\ICommandHolder.cs" />
     <Compile Include="Contracts.cs" />
+    <Compile Include="Controls\CommandConstants.cs" />
+    <Compile Include="Controls\IWpfCommandManager.cs" />
+    <Compile Include="Controls\IWpfCommands.cs" />
+    <Compile Include="Controls\IWpfFocusChecker.cs" />
+    <Compile Include="Controls\IWpfFocusManager.cs" />
     <Compile Include="Files\DnSpyFileCreatorContext.cs" />
     <Compile Include="Files\FilenameKey.cs" />
     <Compile Include="Files\IAnnotations.cs" />
@@ -60,6 +65,7 @@
     <Compile Include="Files\NotifyFileCollectionChangedEventArgs.cs" />
     <Compile Include="Files\NotifyFileCollectionType.cs" />
     <Compile Include="Files\SerializedDnSpyModule.cs" />
+    <Compile Include="Files\Tabs\FileTabReferenceResult.cs" />
     <Compile Include="Files\Tabs\IAsyncFileTabContent.cs" />
     <Compile Include="Files\Tabs\IFileTab.cs" />
     <Compile Include="Files\Tabs\IFileTabContent.cs" />
@@ -70,6 +76,7 @@
     <Compile Include="Files\Tabs\IFileTabUIContextCreator.cs" />
     <Compile Include="Files\Tabs\IFileTabUIContextLocator.cs" />
     <Compile Include="Files\Tabs\IReferenceFileTabContentCreator.cs" />
+    <Compile Include="Files\Tabs\ShowTabContentEventArgs.cs" />
     <Compile Include="Files\Tabs\TabsConstants.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNode.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNodeContext.cs" />
@@ -88,6 +95,7 @@
     <Compile Include="Files\TreeView\IFileTreeNodeCreator.cs" />
     <Compile Include="Files\TreeView\IFileTreeNodeData.cs" />
     <Compile Include="Files\TreeView\IFileTreeNodeDataContext.cs" />
+    <Compile Include="Files\TreeView\IFileTreeNodeDataFinder.cs" />
     <Compile Include="Files\TreeView\IFileTreeView.cs" />
     <Compile Include="Files\TreeView\IMessageNode.cs" />
     <Compile Include="Files\TreeView\IMethodNode.cs" />
@@ -149,6 +157,8 @@
     <Compile Include="Tabs\ITabManager.cs" />
     <Compile Include="Tabs\ITabManagerCreator.cs" />
     <Compile Include="Tabs\TabContentVisibilityEvent.cs" />
+    <Compile Include="Tabs\TabGroupSelectedEventArgs.cs" />
+    <Compile Include="Tabs\TabSelectedEventArgs.cs" />
     <Compile Include="Themes\ColorType.cs" />
     <Compile Include="Themes\ITheme.cs" />
     <Compile Include="Themes\IThemeColor.cs" />

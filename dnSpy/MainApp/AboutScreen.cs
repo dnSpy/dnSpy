@@ -39,7 +39,7 @@ namespace dnSpy.MainApp {
 		}
 
 		public override void Execute(IMenuItemContext context) {
-			fileTabManager.GetOrCreateActiveTab().Show(new AboutScreenFileTabContent());
+			fileTabManager.GetOrCreateActiveTab().Show(new AboutScreenFileTabContent(), null, null);
 		}
 	}
 
@@ -66,14 +66,25 @@ namespace dnSpy.MainApp {
 			return locator.Get<ITextEditorUIContext>();
 		}
 
+		public bool NeedRefresh() {
+			return false;
+		}
+
 		public void OnHide() {
 		}
 
-		public void OnShow(IFileTabUIContext uiContext) {
+		public void OnSelected() {
+		}
+
+		public void OnUnselected() {
+		}
+
+		public object OnShow(IFileTabUIContext uiContext) {
 			var ctx = (ITextEditorUIContext)uiContext;
 			var output = new AvalonEditTextOutput();
 			Write(output);
 			ctx.SetOutput(output, null);
+			return null;
 		}
 
 		void Write(AvalonEditTextOutput output) {

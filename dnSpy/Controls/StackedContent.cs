@@ -177,7 +177,7 @@ namespace dnSpy.Controls {
 			grid.RowDefinitions.Clear();
 
 			// Make sure the horizontal grid splitters can resize the content
-			double d = 0.0001;
+			double d = 0.1;
 			bool needSplitter = false;
 			if (!horizontal) {
 				grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });

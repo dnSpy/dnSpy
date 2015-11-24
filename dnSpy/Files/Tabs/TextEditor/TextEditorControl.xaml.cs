@@ -51,6 +51,7 @@ using dnSpy.Shared.UI.AvalonEdit;
 using dnSpy.Shared.UI.Decompiler;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.MVVM;
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
@@ -71,16 +72,16 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			);
 		}
 
-		public IClickedReferenceHandler ClickedReferenceHandler {
+		public ITextEditorHelper TextEditorHelper {
 			set {
 				if (value == null)
 					throw new ArgumentNullException();
-				if (clickedReferenceHandler != null)
+				if (textEditorHelper != null)
 					throw new InvalidOperationException();
-				clickedReferenceHandler = value;
+				textEditorHelper = value;
 			}
 		}
-		IClickedReferenceHandler clickedReferenceHandler;
+		ITextEditorHelper textEditorHelper;
 
 		public NewTextEditor TextEditor {
 			get { return textEditor; }
@@ -139,6 +140,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			searchPanel.RegisterCommands(this.CommandBindings);
 
 			TextEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
+
+			TextEditor.TextArea.MouseRightButtonDown += (s, e) => TextEditor.GoToMousePosition();
 
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(true)), Key.Tab, ModifierKeys.None));
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(false)), Key.Tab, ModifierKeys.Shift));
@@ -210,7 +213,43 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			activeCustomElementGenerators.Clear();
 		}
 
+		struct LastOutput : IEquatable<LastOutput> {
+			readonly ITextOutput output;
+			readonly IHighlightingDefinition highlighting;
+
+			public LastOutput(ITextOutput output, IHighlightingDefinition highlighting) {
+				this.output = output;
+				this.highlighting = highlighting;
+			}
+
+			public bool Equals(LastOutput other) {
+				return output == other.output &&
+					highlighting == other.highlighting;
+			}
+
+			public override bool Equals(object obj) {
+				if (obj is LastOutput)
+					return Equals((LastOutput)obj);
+				return false;
+			}
+
+			public override int GetHashCode() {
+				return (output == null ? 0 : output.GetHashCode()) ^
+					(highlighting == null ? 0 : highlighting.GetHashCode());
+			}
+		}
+
+		LastOutput lastOutput;
 		public void SetOutput(ITextOutput output, IHighlightingDefinition newHighlighting) {
+			if (output == null)
+				throw new ArgumentNullException();
+
+			//TODO: Is this optimization worth it?
+			var newLastOutput = new LastOutput(output, newHighlighting);
+			if (lastOutput.Equals(newLastOutput))
+				return;
+			lastOutput = newLastOutput;
+
 			var avOutput = output as AvalonEditTextOutput;
 			Debug.Assert(avOutput != null, "output should be an AvalonEditTextOutput instance");
 
@@ -252,6 +291,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			uiElementGenerator.UIElements = null;
 			referenceElementGenerator.References = null;
 			references = new TextSegmentCollection<ReferenceSegment>();
+			lastOutput = new LastOutput();
 		}
 
 		void OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
@@ -296,6 +336,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 		}
 
+		public ReferenceSegment GetReferenceSegmentAt(TextViewPosition? position) {
+			if (position == null)
+				return null;
+			int offset = textEditor.Document.GetOffset(position.Value.Location);
+			return GetReferenceSegmentAt(offset);
+		}
+
 		ReferenceSegment GetCurrentReferenceSegment() {
 			return GetReferenceSegmentAt(TextEditor.TextArea.Caret.Offset);
 		}
@@ -316,9 +363,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		void FollowReferenceNewTab() {
-			if (clickedReferenceHandler == null)
+			if (textEditorHelper == null)
 				return;
-			clickedReferenceHandler.GoTo(GetCurrentReferenceSegment(), true, true);
+			textEditorHelper.GoTo(GetCurrentReferenceSegment(), true, true);
 		}
 
 		void ClearMarkedReferencesAndPopups() {
@@ -360,9 +407,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		bool GoToTarget(ReferenceSegment refSeg, bool canJumpToReference, bool canRecordHistory) {
-			if (clickedReferenceHandler == null)
+			if (textEditorHelper == null)
 				return false;
-			return clickedReferenceHandler.GoTo(refSeg, false, true);
+			return textEditorHelper.GoTo(refSeg, false, true);
 		}
 
 		internal bool IsOwnerOf(ReferenceSegment refSeg) {
@@ -434,18 +481,18 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			TextEditor.TextArea.TextView.EnsureVisualLines();
 			TextEditor.ScrollTo(line, column);
 			TextEditor.SetCaretPosition(line, column);
-			if (focus) {
-				//TODO: SetTextEditorFocus(this);
-			}
+			if (focus)
+				textEditorHelper.SetFocus();
 		}
 
 		void JumpToReference(ReferenceSegment referenceSegment, MouseEventArgs e) {
-			if (clickedReferenceHandler == null)
+			if (textEditorHelper == null)
 				return;
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Control;
-			//TODO: SetActiveView(this);
+			textEditorHelper.SetActive();
+			textEditorHelper.SetFocus();
 			TextEditor.GoToMousePosition();
-			e.Handled = clickedReferenceHandler.GoTo(referenceSegment, newTab, false);
+			e.Handled = textEditorHelper.GoTo(referenceSegment, newTab, false);
 		}
 
 		internal bool MarkReferences(ReferenceSegment referenceSegment) {

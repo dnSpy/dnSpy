@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Threading;
 
 namespace dnSpy.Contracts.TreeView {
 	/// <summary>
@@ -47,7 +46,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// <summary>
 		/// Gets the tree view UI object
 		/// </summary>
-		DispatcherObject UIObject { get; }
+		object UIObject { get; }
 
 		/// <summary>
 		/// Select items
@@ -64,5 +63,10 @@ namespace dnSpy.Contracts.TreeView {
 		/// Gets all selected items
 		/// </summary>
 		ITreeNodeData[] SelectedItems { get; }
+
+		/// <summary>
+		/// Gets the selected items which don't have any of their ancestors selected
+		/// </summary>
+		ITreeNodeData[] TopLevelSelection { get; }
 	}
 }

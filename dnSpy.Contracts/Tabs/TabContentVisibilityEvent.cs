@@ -41,5 +41,15 @@ namespace dnSpy.Contracts.Tabs {
 		/// It's open but hidden
 		/// </summary>
 		Hidden,
+
+		/// <summary>
+		/// The content got keyboard focus
+		/// </summary>
+		GotKeyboardFocus,
+
+		/// <summary>
+		/// The content lost keyboard focus
+		/// </summary>
+		LostKeyboardFocus,
 	}
 }

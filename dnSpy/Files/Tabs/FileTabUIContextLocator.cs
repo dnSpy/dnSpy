@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Files.Tabs;
 
 namespace dnSpy.Files.Tabs {
-	sealed class FileTabUIContextLocator : IFileTabUIContextLocator {
+	sealed class FileTabUIContextLocator : IFileTabUIContextLocator, IDisposable {
 		readonly IFileTabUIContextCreator[] creators;
 		readonly Dictionary<object, WeakReference> cachedInstances;
 
@@ -46,7 +46,7 @@ namespace dnSpy.Files.Tabs {
 			return res;
 		}
 
-		T Create<T>() where T : class, IFileTabUIContext {
+		IFileTabUIContext Create<T>() where T : class, IFileTabUIContext {
 			foreach (var c in creators) {
 				var t = c.Create<T>();
 				if (t != null)
@@ -56,7 +56,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public T Get<T>() where T : class, IFileTabUIContext {
-			return GetOrCreate(typeof(T), () => Create<T>());
+			return (T)GetOrCreate(typeof(T), () => Create<T>());
 		}
 
 		public T Get<T>(object key, Func<T> creator) where T : class, IFileTabUIContext {
@@ -67,7 +67,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		sealed class Key : IEquatable<Key> {
-            readonly object obj;
+			readonly object obj;
 
 			public Key(object obj) {
 				if (obj == null)
@@ -87,6 +87,15 @@ namespace dnSpy.Files.Tabs {
 			public override int GetHashCode() {
 				return obj.GetHashCode();
 			}
+		}
+
+		public void Dispose() {
+			foreach (var v in cachedInstances.Values) {
+				var id = v.Target as IDisposable;
+				if (id != null)
+					id.Dispose();
+			}
+			cachedInstances.Clear();
 		}
 	}
 }

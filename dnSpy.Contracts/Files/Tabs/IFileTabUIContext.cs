@@ -19,11 +19,14 @@
 
 using System;
 using System.Windows;
+using System.Windows.Media;
 
 namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>
 	/// UI content shared by some <see cref="IFileTabContent"/> instances, eg. it could contain
 	/// the text editor. Only one instance per tab is allocated and stored in a <see cref="WeakReference"/>.
+	/// Implement <see cref="IDisposable"/> to get called when the tab is removed (only called if
+	/// this instance hasn't been GC'd)
 	/// </summary>
 	public interface IFileTabUIContext {
 		/// <summary>
@@ -37,22 +40,32 @@ namespace dnSpy.Contracts.Files.Tabs {
 		UIElement FocusedElement { get; }
 
 		/// <summary>
+		/// Gets the element that gets the <see cref="ScaleTransform"/> or null if none
+		/// </summary>
+		FrameworkElement ScaleElement { get; }
+
+		/// <summary>
 		/// Save UI state, eg. line number, caret position, etc
 		/// </summary>
 		/// <returns></returns>
 		object Serialize();
 
 		/// <summary>
-		/// Restore UI state. <paramref name="obj"/> was created by <see cref="Serialize()"/>
+		/// Restores UI state. <paramref name="obj"/> was created by <see cref="Serialize()"/> but
+		/// could also be null or an invalid value.
 		/// </summary>
 		/// <param name="obj">Serialized UI state</param>
 		void Deserialize(object obj);
 
 		/// <summary>
-		/// Called before a new <see cref="IFileTabContent"/> is shown, even if the new instance
-		/// will use this same instance.
+		/// Called when this instance will be shown in a tab
 		/// </summary>
-		void Clear();
+		void OnShow();
+
+		/// <summary>
+		/// Called when another <see cref="IFileTabUIContext"/> instance will be shown
+		/// </summary>
+		void OnHide();
 
 		/// <summary>
 		/// Initialized by the <see cref="IFileTabManager"/> owner

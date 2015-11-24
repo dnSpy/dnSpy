@@ -23,13 +23,16 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using dnlib.DotNet;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using dnSpy.MainApp;
@@ -39,6 +42,7 @@ namespace dnSpy.Files.TreeView {
 	sealed class FileTreeView : IFileTreeView, ITreeViewListener {
 		readonly FileTreeNodeDataContext context;
 		readonly IDnSpyFileNodeCreator[] dnSpyFileNodeCreators;
+		readonly Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>[] nodeFinders;
 
 		public IFileManager FileManager {
 			get { return fileManager; }
@@ -50,10 +54,19 @@ namespace dnSpy.Files.TreeView {
 		}
 		readonly ITreeView treeView;
 
+		IEnumerable<IDnSpyFileNode> TopNodes {
+			get { return treeView.Root.Children.Select(a => (IDnSpyFileNode)a.Data); }
+		}
+
 		public IDotNetImageManager DotNetImageManager {
 			get { return dotNetImageManager; }
 		}
 		readonly IDotNetImageManager dotNetImageManager;
+
+		public IWpfCommands WpfCommands {
+			get { return wpfCommands; }
+		}
+		readonly IWpfCommands wpfCommands;
 
 		public event EventHandler<NotifyFileTreeViewCollectionChangedEventArgs> CollectionChanged;
 
@@ -63,8 +76,20 @@ namespace dnSpy.Files.TreeView {
 				c(this, eventArgs);
 		}
 
+		sealed class GuidObjectsCreator : IGuidObjectsCreator {
+			readonly ITreeView treeView;
+
+			public GuidObjectsCreator(ITreeView treeView) {
+				this.treeView = treeView;
+			}
+
+			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
+				yield return new GuidObject(MenuConstants.GUIDOBJ_TREEVIEW_NODES_ARRAY_GUID, treeView.TopLevelSelection);
+			}
+		}
+
 		[ImportingConstructor]
-		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, AppSettingsImpl appSettings, IDotNetImageManager dotNetImageManager, [ImportMany] IDnSpyFileNodeCreator[] dnSpyFileNodeCreators) {
+		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, AppSettingsImpl appSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, [ImportMany] IDnSpyFileNodeCreator[] dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
 			var options = new TreeViewOptions {
 				AllowDrop = true,
 				IsVirtualizing = true,
@@ -73,9 +98,10 @@ namespace dnSpy.Files.TreeView {
 			};
 			this.dnSpyFileNodeCreators = dnSpyFileNodeCreators.OrderBy(a => a.Order).ToArray();
 			this.treeView = treeViewManager.Create(new Guid(TVConstants.FILE_TREEVIEW_GUID), options);
+			menuManager.InitializeContextMenu((FrameworkElement)this.treeView.UIObject, new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID), new GuidObjectsCreator(this.treeView));
 			this.fileManager = fileManager;
 			this.dotNetImageManager = dotNetImageManager;
-			var dispatcher = treeView.UIObject.Dispatcher;
+			var dispatcher = Dispatcher.CurrentDispatcher;
 			this.fileManager.SetDispatcher(a => {
 				if (!dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted) {
 					bool callInvoke;
@@ -92,7 +118,6 @@ namespace dnSpy.Files.TreeView {
 			});
 			this.fileManager.CollectionChanged += FileManager_CollectionChanged;
 			this.context = new FileTreeNodeDataContext(this);
-
 			this.context.SyntaxHighlight = appSettings.SyntaxHighlightFileTreeView;
 			this.context.SingleClickExpandsChildren = appSettings.SingleClickExpandsTreeViewChildren;
 			this.context.ShowAssemblyVersion = appSettings.ShowAssemblyVersion;
@@ -102,6 +127,11 @@ namespace dnSpy.Files.TreeView {
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			appSettings.PropertyChanged += AppSettings_PropertyChanged;
+
+			wpfCommandManager.Add(CommandConstants.GUID_FILE_TREEVIEW, (UIElement)treeView.UIObject);
+			this.wpfCommands = wpfCommandManager.GetCommands(CommandConstants.GUID_FILE_TREEVIEW);
+
+			this.nodeFinders = mefFinders.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 		readonly List<Action> actionsToCall = new List<Action>();
 
@@ -274,6 +304,244 @@ namespace dnSpy.Files.TreeView {
 
 		public IFieldNode Create(FieldDef field) {
 			return (IFieldNode)TreeView.Create(new FieldNode(TreeNodeGroups.FieldTreeNodeGroupType, field)).Data;
+		}
+
+		public IFileTreeNodeData FindNode(object @ref) {
+			if (@ref == null)
+				return null;
+			if (@ref is IFileTreeNodeData)
+				return (IFileTreeNodeData)@ref;
+			if (@ref is IDnSpyFile)
+				return FindNode((IDnSpyFile)@ref);
+			if (@ref is AssemblyDef)
+				return FindNode((AssemblyDef)@ref);
+			if (@ref is ModuleDef)
+				return FindNode((ModuleDef)@ref);
+			if (@ref is TypeDef)
+				return FindNode((TypeDef)@ref);
+			if (@ref is MethodDef)
+				return FindNode((MethodDef)@ref);
+			if (@ref is FieldDef)
+				return FindNode((FieldDef)@ref);
+			if (@ref is PropertyDef)
+				return FindNode((PropertyDef)@ref);
+			if (@ref is EventDef)
+				return FindNode((EventDef)@ref);
+
+			foreach (var finder in nodeFinders) {
+				var node = finder.Value.FindNode(this, @ref);
+				if (node != null)
+					return node;
+			}
+
+			return null;
+		}
+
+		public IDnSpyFileNode FindNode(IDnSpyFile file) {
+			if (file == null)
+				return null;
+			return Find(TopNodes, file);
+		}
+
+		IDnSpyFileNode Find(IEnumerable<IDnSpyFileNode> nodes, IDnSpyFile file) {
+			foreach (var n in nodes) {
+				if (n.DnSpyFile == file)
+					return n;
+				if (n.DnSpyFile.Children.Count == 0)
+					continue;
+				n.TreeNode.EnsureChildrenLoaded();
+				var found = Find(n.TreeNode.DataChildren.OfType<IDnSpyFileNode>(), file);
+				if (found != null)
+					return found;
+			}
+			return null;
+		}
+
+		public IAssemblyFileNode FindNode(AssemblyDef asm) {
+			if (asm == null)
+				return null;
+
+			foreach (var n in TopNodes.OfType<IAssemblyFileNode>()) {
+				if (n.DnSpyFile.AssemblyDef == asm)
+					return n;
+			}
+
+			return null;
+		}
+
+		public IModuleFileNode FindNode(ModuleDef mod) {
+			if (mod == null)
+				return null;
+
+			foreach (var n in TopNodes.OfType<IAssemblyFileNode>()) {
+				n.TreeNode.EnsureChildrenLoaded();
+				foreach (var m in n.TreeNode.DataChildren.OfType<IModuleFileNode>()) {
+					if (m.DnSpyFile.ModuleDef == mod)
+						return m;
+				}
+			}
+
+			// Check for netmodules
+			foreach (var n in TopNodes.OfType<IModuleFileNode>()) {
+				if (n.DnSpyFile.ModuleDef == mod)
+					return n;
+			}
+
+			return null;
+		}
+
+		public ITypeNode FindNode(TypeDef td) {
+			if (td == null)
+				return null;
+
+			var types = new List<TypeDef>();
+			for (var t = td; t != null; t = t.DeclaringType)
+				types.Add(t);
+			types.Reverse();
+
+			var modNode = FindNode(types[0].Module);
+			if (modNode == null)
+				return null;
+
+			var nsNode = FindNamespaceNode(modNode, types[0].Namespace);
+			if (nsNode == null)
+				return null;
+
+			var typeNode = FindNode(nsNode, types[0]);
+			if (typeNode == null)
+				return null;
+
+			for (int i = 1; i < types.Count; i++) {
+				var childNode = FindNode(typeNode, types[i]);
+				if (childNode == null)
+					return null;
+				typeNode = childNode;
+			}
+
+			return typeNode;
+		}
+
+		ITypeNode FindNode(INamespaceNode nsNode, TypeDef type) {
+			if (nsNode == null || type == null)
+				return null;
+
+			nsNode.TreeNode.EnsureChildrenLoaded();
+			foreach (var n in nsNode.TreeNode.DataChildren.OfType<ITypeNode>()) {
+				if (n.TypeDef == type)
+					return n;
+			}
+
+			return null;
+		}
+
+		ITypeNode FindNode(ITypeNode typeNode, TypeDef type) {
+			if (typeNode == null || type == null)
+				return null;
+
+			typeNode.TreeNode.EnsureChildrenLoaded();
+			foreach (var n in typeNode.TreeNode.DataChildren.OfType<ITypeNode>()) {
+				if (n.TypeDef == type)
+					return n;
+			}
+
+			return null;
+		}
+
+		INamespaceNode FindNamespaceNode(IModuleFileNode modNode, string ns) {
+			if (ns == null)
+				return null;
+
+			modNode.TreeNode.EnsureChildrenLoaded();
+			foreach (var n in modNode.TreeNode.DataChildren.OfType<INamespaceNode>()) {
+				if (n.Name == ns)
+					return n;
+			}
+
+			return null;
+		}
+
+		public IMethodNode FindNode(MethodDef md) {
+			if (md == null)
+				return null;
+
+			var typeNode = FindNode(md.DeclaringType);
+			if (typeNode == null)
+				return null;
+
+			typeNode.TreeNode.EnsureChildrenLoaded();
+			foreach (var n in typeNode.TreeNode.DataChildren.OfType<IMethodNode>()) {
+				if (n.MethodDef == md)
+					return n;
+			}
+
+			foreach (var n in typeNode.TreeNode.DataChildren.OfType<IPropertyNode>()) {
+				n.TreeNode.EnsureChildrenLoaded();
+				foreach (var m in n.TreeNode.DataChildren.OfType<IMethodNode>()) {
+					if (m.MethodDef == md)
+						return m;
+				}
+			}
+
+			foreach (var n in typeNode.TreeNode.DataChildren.OfType<IEventNode>()) {
+				n.TreeNode.EnsureChildrenLoaded();
+				foreach (var m in n.TreeNode.DataChildren.OfType<IMethodNode>()) {
+					if (m.MethodDef == md)
+						return m;
+				}
+			}
+
+			return null;
+		}
+
+		public IFieldNode FindNode(FieldDef fd) {
+			if (fd == null)
+				return null;
+
+			var typeNode = FindNode(fd.DeclaringType);
+			if (typeNode == null)
+				return null;
+
+			typeNode.TreeNode.EnsureChildrenLoaded();
+			foreach (var n in typeNode.TreeNode.DataChildren.OfType<IFieldNode>()) {
+				if (n.FieldDef == fd)
+					return n;
+			}
+
+			return null;
+		}
+
+		public IPropertyNode FindNode(PropertyDef pd) {
+			if (pd == null)
+				return null;
+
+			var typeNode = FindNode(pd.DeclaringType);
+			if (typeNode == null)
+				return null;
+
+			typeNode.TreeNode.EnsureChildrenLoaded();
+			foreach (var n in typeNode.TreeNode.DataChildren.OfType<IPropertyNode>()) {
+				if (n.PropertyDef == pd)
+					return n;
+			}
+
+			return null;
+		}
+
+		public IEventNode FindNode(EventDef ed) {
+			if (ed == null)
+				return null;
+
+			var typeNode = FindNode(ed.DeclaringType);
+			if (typeNode == null)
+				return null;
+
+			typeNode.TreeNode.EnsureChildrenLoaded();
+			foreach (var n in typeNode.TreeNode.DataChildren.OfType<IEventNode>()) {
+				if (n.EventDef == ed)
+					return n;
+			}
+
+			return null;
 		}
 	}
 }

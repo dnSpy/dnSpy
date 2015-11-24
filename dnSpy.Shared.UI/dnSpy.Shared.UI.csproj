@@ -127,6 +127,7 @@
     <Compile Include="Images\ImageManagerExtensionMethods.cs" />
     <Compile Include="Menus\MenuItemBase.cs" />
     <Compile Include="Menus\MenuItemCommand.cs" />
+    <Compile Include="Menus\MenuUtils.cs" />
     <Compile Include="MVVM\Converters\NegateBooleanConverter.cs" />
     <Compile Include="MVVM\DataFieldVM.cs" />
     <Compile Include="MVVM\Dialogs\ProgressDlg.xaml.cs">

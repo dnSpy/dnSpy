@@ -39,6 +39,10 @@ namespace dnSpy.Contracts.Languages {
 		/// </summary>
 		public bool DontShowCreateMethodBodyExceptions { get; set; }
 
+		// *******************************************************************
+		// NOTE: Don't add new props here without also updating the decompilation cache code
+		// *******************************************************************
+
 		/// <summary />
 		public DecompilationOptions() {//TODO: Original code init'd this instance to current default options. Fix callers.
 			this.ProjectOptions = new ProjectOptions();

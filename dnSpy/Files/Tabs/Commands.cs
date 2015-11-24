@@ -19,20 +19,92 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Controls;
+using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.Windows.Input;
+using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.Tabs;
+using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.UI.Menus;
-using dnSpy.TreeNodes;
-using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TextView;
-using ICSharpCode.TreeView;
 
-namespace dnSpy.Tabs {
+namespace dnSpy.Files.Tabs {
+	[ExportAutoLoaded]
+	sealed class InstallTabCommands : IAutoLoaded {
+		readonly IFileTabManager fileTabManager;
+
+		[ImportingConstructor]
+		InstallTabCommands(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
+			this.fileTabManager = fileTabManager;
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			cmds.Add(new RoutedCommand("OpenNewTab", typeof(InstallTabCommands)), (s, e) => OpenNewTab(), (s, e) => e.CanExecute = CanOpenNewTab, ModifierKeys.Control, Key.T);
+			cmds.Add(new RoutedCommand("CloseActiveTab", typeof(InstallTabCommands)), (s, e) => CloseActiveTab(), (s, e) => e.CanExecute = CanCloseActiveTab, ModifierKeys.Control, Key.W, ModifierKeys.Control, Key.F4);
+			cmds.Add(new RoutedCommand("SelectNextTab", typeof(InstallTabCommands)), (s, e) => SelectNextTab(), (s, e) => e.CanExecute = CanSelectNextTab, ModifierKeys.Control, Key.Tab);
+			cmds.Add(new RoutedCommand("SelectPrevTab", typeof(InstallTabCommands)), (s, e) => SelectPrevTab(), (s, e) => e.CanExecute = CanSelectPrevTab, ModifierKeys.Control | ModifierKeys.Shift, Key.Tab);
+		}
+
+		internal static bool CanOpenNewTabInternal(IFileTabManager fileTabManager) {
+			return fileTabManager.ActiveTab != null;
+		}
+
+		internal static void OpenNewTabInternal(IFileTabManager fileTabManager, bool clone) {
+			var activeTab = fileTabManager.ActiveTab;
+			if (activeTab == null)
+				return;
+			var newTab = fileTabManager.OpenEmptyTab();
+			if (clone) {
+				newTab.Show(activeTab.FileTabContent.Clone(), activeTab.UIContext.Serialize(), null);
+				fileTabManager.SetFocus(newTab);
+			}
+		}
+
+		bool CanOpenNewTab {
+			get { return CanOpenNewTabInternal(fileTabManager); }
+		}
+
+		void OpenNewTab() {
+			bool newEmptyTabs = false;//TODO: Read from settings
+			OpenNewTabInternal(fileTabManager, !newEmptyTabs);
+		}
+
+		bool CanCloseActiveTab {
+			get { return fileTabManager.TabGroupManager.ActiveTabGroup != null && fileTabManager.TabGroupManager.ActiveTabGroup.CloseActiveTabCanExecute; }
+		}
+
+		void CloseActiveTab() {
+			if (fileTabManager.TabGroupManager.ActiveTabGroup != null)
+				fileTabManager.TabGroupManager.ActiveTabGroup.CloseActiveTab();
+		}
+
+		bool CanSelectNextTab {
+			get { return fileTabManager.TabGroupManager.ActiveTabGroup != null && fileTabManager.TabGroupManager.ActiveTabGroup.SelectNextTabCanExecute; }
+		}
+
+		void SelectNextTab() {
+			if (fileTabManager.TabGroupManager.ActiveTabGroup != null)
+				fileTabManager.TabGroupManager.ActiveTabGroup.SelectNextTab();
+		}
+
+		bool CanSelectPrevTab {
+			get { return fileTabManager.TabGroupManager.ActiveTabGroup != null && fileTabManager.TabGroupManager.ActiveTabGroup.SelectPreviousTabCanExecute; }
+		}
+
+		void SelectPrevTab() {
+			if (fileTabManager.TabGroupManager.ActiveTabGroup != null)
+				fileTabManager.TabGroupManager.ActiveTabGroup.SelectPreviousTab();
+		}
+	}
+
 	sealed class TabGroupContext {
-		public readonly TabControl TabControl;
+		public readonly ITabGroupManager TabGroupManager;
+		public readonly ITabGroup TabGroup;
 
-		public TabGroupContext(TabControl tabControl) {
-			this.TabControl = tabControl;
+		public TabGroupContext(ITabGroup tabGroup) {
+			this.TabGroup = tabGroup;
+			this.TabGroupManager = tabGroup.TabGroupManager;
 		}
 	}
 
@@ -46,235 +118,341 @@ namespace dnSpy.Tabs {
 			return CreateContextInternal(context);
 		}
 
-		static TabGroupContext CreateContextInternal(IMenuItemContext context) {
+		protected readonly IFileTabManager fileTabManager;
+
+		protected CtxMenuTabGroupCommand(IFileTabManager fileTabManager) {
+			this.fileTabManager = fileTabManager;
+		}
+
+		TabGroupContext CreateContextInternal(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID))
 				return null;
-			var tabControl = context.CreatorObject.Object as TabControl;
-			if (!MainWindow.Instance.IsDecompilerTabControl(tabControl))
+			var tabGroup = context.FindByType<ITabGroup>();
+			if (tabGroup == null || !fileTabManager.Owns(tabGroup))
 				return null;
-			return new TabGroupContext(tabControl);
+			return new TabGroupContext(tabGroup);
 		}
 	}
 
 	[ExportMenuItem(Header = "_Close", InputGestureText = "Ctrl+W", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 10)]
 	sealed class CloseTabCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		CloseTabCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.CloseActiveTabCanExecute();
+			return context.TabGroup.CloseActiveTabCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.CloseActiveTab();
+			context.TabGroup.CloseActiveTab();
 		}
 	}
 
 	[ExportMenuItem(Header = "C_lose All Tabs", Icon = "CloseDocuments", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 20)]
 	sealed class CloseAllTabsCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		CloseAllTabsCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.CloseAllTabsCanExecute();
+			return context.TabGroupManager.CloseAllTabsCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.CloseAllTabs();
+			context.TabGroupManager.CloseAllTabs();
 		}
 	}
 
 	[ExportMenuItem(Header = "Close _All But This", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 30)]
 	sealed class CloseAllTabsButThisCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		CloseAllTabsButThisCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.ActiveTabState != null;
+			return context.TabGroup.ActiveTabContent != null;
 		}
 
 		public override bool IsEnabled(TabGroupContext context) {
-			return MainWindow.Instance.CloseAllButActiveTabCanExecute();
+			return context.TabGroup.CloseAllButActiveTabCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.CloseAllButActiveTab();
+			context.TabGroup.CloseAllButActiveTab();
 		}
 	}
 
 	[ExportMenuItem(Header = "New _Tab", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 40)]
 	sealed class NewTabCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		NewTabCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.CloneActiveTabCanExecute();
+			return InstallTabCommands.CanOpenNewTabInternal(fileTabManager);
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.CloneActiveTab();
+			InstallTabCommands.OpenNewTabInternal(fileTabManager, true);
 		}
 	}
 
 	[ExportMenuItem(Header = "New Hori_zontal Tab Group", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 0)]
 	sealed class NewHorizontalTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		NewHorizontalTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.NewHorizontalTabGroupCanExecute();
+			return context.TabGroupManager.NewHorizontalTabGroupCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.NewHorizontalTabGroup();
+			context.TabGroupManager.NewHorizontalTabGroup();
 		}
 	}
 
 	[ExportMenuItem(Header = "New _Vertical Tab Group", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 10)]
 	sealed class NewVerticalTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		NewVerticalTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.NewVerticalTabGroupCanExecute();
+			return context.TabGroupManager.NewVerticalTabGroupCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.NewVerticalTabGroup();
+			context.TabGroupManager.NewVerticalTabGroup();
 		}
 	}
 
 	[ExportMenuItem(Header = "Move to Ne_xt Tab Group", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 20)]
 	sealed class MoveToNextTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		MoveToNextTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.MoveToNextTabGroupCanExecute();
+			return context.TabGroupManager.MoveToNextTabGroupCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.MoveToNextTabGroup();
+			context.TabGroupManager.MoveToNextTabGroup();
 		}
 	}
 
 	[ExportMenuItem(Header = "Move All to Next Tab Group", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 30)]
 	sealed class MoveAllToNextTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		MoveAllToNextTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.MoveAllToNextTabGroupCanExecute();
+			return context.TabGroupManager.MoveAllToNextTabGroupCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.MoveAllToNextTabGroup();
+			context.TabGroupManager.MoveAllToNextTabGroup();
 		}
 	}
 
 	[ExportMenuItem(Header = "Move to P_revious Tab Group", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 40)]
 	sealed class MoveToPreviousTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		MoveToPreviousTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.MoveToPreviousTabGroupCanExecute();
+			return context.TabGroupManager.MoveToPreviousTabGroupCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.MoveToPreviousTabGroup();
+			context.TabGroupManager.MoveToPreviousTabGroup();
 		}
 	}
 
 	[ExportMenuItem(Header = "Move All to Previous Tab Group", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 50)]
 	sealed class MoveAllToPreviousTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		MoveAllToPreviousTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.MoveAllToPreviousTabGroupCanExecute();
+			return context.TabGroupManager.MoveAllToPreviousTabGroupCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.MoveAllToPreviousTabGroup();
+			context.TabGroupManager.MoveAllToPreviousTabGroup();
 		}
 	}
 
 	[ExportMenuItem(Header = "Close Tab Group", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 0)]
 	sealed class CloseTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		CloseTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.CloseTabGroupCanExecute();
+			return context.TabGroupManager.CloseTabGroupCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.CloseTabGroup();
+			context.TabGroupManager.CloseTabGroup();
 		}
 	}
 
 	[ExportMenuItem(Header = "Close All Tab Groups But This", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 10)]
 	sealed class CloseAllTabGroupsButThisCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		CloseAllTabGroupsButThisCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.CloseAllTabGroupsButThisCanExecute();
+			return context.TabGroupManager.CloseAllTabGroupsButThisCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.CloseAllTabGroupsButThis();
+			context.TabGroupManager.CloseAllTabGroupsButThis();
 		}
 	}
 
 	[ExportMenuItem(Header = "Move Tab Group After Next Tab Group", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 20)]
 	sealed class MoveTabGroupAfterNextTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		MoveTabGroupAfterNextTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.MoveTabGroupAfterNextTabGroupCanExecute();
+			return context.TabGroupManager.MoveTabGroupAfterNextTabGroupCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.MoveTabGroupAfterNextTabGroup();
+			context.TabGroupManager.MoveTabGroupAfterNextTabGroup();
 		}
 	}
 
 	[ExportMenuItem(Header = "Move Tab Group Before Previous Tab Group", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 30)]
 	sealed class MoveTabGroupBeforePreviousTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		MoveTabGroupBeforePreviousTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.MoveTabGroupBeforePreviousTabGroupCanExecute();
+			return context.TabGroupManager.MoveTabGroupBeforePreviousTabGroupCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.MoveTabGroupBeforePreviousTabGroup();
+			context.TabGroupManager.MoveTabGroupBeforePreviousTabGroup();
 		}
 	}
 
 	[ExportMenuItem(Header = "Merge All Tab Groups", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 40)]
 	sealed class MergeAllTabGroupsCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		MergeAllTabGroupsCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.MergeAllTabGroupsCanExecute();
+			return context.TabGroupManager.MergeAllTabGroupsCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.MergeAllTabGroups();
+			context.TabGroupManager.MergeAllTabGroups();
 		}
 	}
 
 	[ExportMenuItem(Header = "Use Vertical Tab Groups", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPSVERT, Order = 0)]
 	sealed class UseVerticalTabGroupsCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		UseVerticalTabGroupsCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.UseVerticalTabGroupsCanExecute();
+			return context.TabGroupManager.UseVerticalTabGroupsCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.UseVerticalTabGroups();
+			context.TabGroupManager.UseVerticalTabGroups();
 		}
 	}
 
 	[ExportMenuItem(Header = "Use Horizontal Tab Groups", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPSVERT, Order = 10)]
 	sealed class UseHorizontalTabGroupsCtxMenuCommand : CtxMenuTabGroupCommand {
+		[ImportingConstructor]
+		UseHorizontalTabGroupsCtxMenuCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(TabGroupContext context) {
-			return MainWindow.Instance.UseHorizontalTabGroupsCanExecute();
+			return context.TabGroupManager.UseHorizontalTabGroupsCanExecute;
 		}
 
 		public override void Execute(TabGroupContext context) {
-			MainWindow.Instance.UseHorizontalTabGroups();
+			context.TabGroupManager.UseHorizontalTabGroups();
 		}
 	}
 
 	[ExportMenuItem(Header = "Open in New _Tab", InputGestureText = "Ctrl+T", Group = MenuConstants.GROUP_CTX_FILES_TABS, Order = 0)]
 	sealed class OpenInNewTabCtxMenuCommand : MenuItemBase {
+		readonly IFileTabManager fileTabManager;
+
+		[ImportingConstructor]
+		OpenInNewTabCtxMenuCommand(IFileTabManager fileTabManager) {
+			this.fileTabManager = fileTabManager;
+		}
+
 		public override bool IsVisible(IMenuItemContext context) {
 			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID) &&
-				context.FindArrayOrDefaultByType<SharpTreeNode>().Length > 0;
+				InstallTabCommands.CanOpenNewTabInternal(fileTabManager) &&
+				context.FindArrayOrDefaultByType<ITreeNodeData>().Length > 0;
 		}
 
 		public override void Execute(IMenuItemContext context) {
-			MainWindow.Instance.OpenNewTab();
+			InstallTabCommands.OpenNewTabInternal(fileTabManager, true);
 		}
 	}
 
 	[ExportMenuItem(Header = "Open in New _Tab", Group = MenuConstants.GROUP_CTX_CODE_TABS, Order = 0)]
 	sealed class OpenReferenceInNewTabCtxMenuCommand : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
-			var @ref = GetReference(context);
+			ITextEditorUIContext uiContext;
+			var @ref = GetReference(context, out uiContext);
 			if (@ref != null)
-				MainWindow.Instance.OpenReferenceInNewTab(context.CreatorObject.Object as DecompilerTextView, @ref);
+				uiContext.FileTab.FollowReferenceNewTab(@ref);
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
-			return GetReference(context) != null;
+			ITextEditorUIContext uiContext;
+			return GetReference(context, out uiContext) != null;
 		}
 
-		static ReferenceSegment GetReference(IMenuItemContext context) {
+		static object GetReference(IMenuItemContext context, out ITextEditorUIContext uiContext) {
+			uiContext = null;
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
 				return null;
-			return context.FindByType<ReferenceSegment>();
+			uiContext = context.FindByType<ITextEditorUIContext>();
+			if (uiContext == null)
+				return null;
+			var @ref = context.FindByType<CodeReferenceSegment>();
+			return @ref == null ? null : @ref.Reference;
 		}
 
 		public override string GetInputGestureText(IMenuItemContext context) {
@@ -282,6 +460,7 @@ namespace dnSpy.Tabs {
 		}
 	}
 
+#if false  //TODO:
 	static class OpenReferenceCtxMenuCommand {
 		internal static void ExecuteInternal(object @ref, bool newTab) {
 			if (@ref == null)
@@ -336,7 +515,7 @@ namespace dnSpy.Tabs {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_ANALYZER_GUID))
 					return null;
 
-				var nodes = context.FindByType<SharpTreeNode[]>();
+				var nodes = context.FindByType<ITreeNodeData[]>();
 				if (nodes == null || nodes.Length != 1)
 					return null;
 
@@ -359,8 +538,16 @@ namespace dnSpy.Tabs {
 			}
 		}
 	}
+#endif
 
 	sealed class MenuTabGroupContext {
+		public readonly ITabGroupManager TabGroupManager;
+		public readonly ITabGroup TabGroup;
+
+		public MenuTabGroupContext(ITabGroupManager tabGroupManager) {
+			this.TabGroup = tabGroupManager.ActiveTabGroup;
+			this.TabGroupManager = tabGroupManager;
+		}
 	}
 
 	abstract class MenuTabGroupCommand : MenuItemBase<MenuTabGroupContext> {
@@ -372,192 +559,285 @@ namespace dnSpy.Tabs {
 		protected sealed override MenuTabGroupContext CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.APP_MENU_WINDOW_GUID))
 				return null;
-			return new MenuTabGroupContext();
+
+			return new MenuTabGroupContext(fileTabManager.TabGroupManager);
+		}
+
+		protected readonly IFileTabManager fileTabManager;
+
+		protected MenuTabGroupCommand(IFileTabManager fileTabManager) {
+			this.fileTabManager = fileTabManager;
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "_New Window", Icon = "NewWindow", Group = MenuConstants.GROUP_APP_MENU_WINDOW_WINDOW, Order = 0)]
 	sealed class NewWindowCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		NewWindowCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsEnabled(MenuTabGroupContext context) {
-			return MainWindow.Instance.CloneActiveTabCanExecute();
+			return InstallTabCommands.CanOpenNewTabInternal(fileTabManager);
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.CloneActiveTab();
+			InstallTabCommands.OpenNewTabInternal(fileTabManager, true);
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "_Close", InputGestureText = "Ctrl+W", Group = MenuConstants.GROUP_APP_MENU_WINDOW_WINDOW, Order = 10)]
 	sealed class CloseTabCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		CloseTabCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
-			return MainWindow.Instance.CloseActiveTabCanExecute();
+			return context.TabGroup != null && context.TabGroup.CloseActiveTabCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.CloseActiveTab();
+			if (context.TabGroup != null)
+				context.TabGroup.CloseActiveTab();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "New Hori_zontal Tab Group", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 0)]
 	sealed class NewHorizontalTabGroupCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		NewHorizontalTabGroupCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
-			return MainWindow.Instance.NewHorizontalTabGroupCanExecute();
+			return context.TabGroupManager.NewHorizontalTabGroupCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.NewHorizontalTabGroup();
+			context.TabGroupManager.NewHorizontalTabGroup();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "New _Vertical Tab Group", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 10)]
 	sealed class NewVerticalTabGroupCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		NewVerticalTabGroupCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
-			return MainWindow.Instance.NewVerticalTabGroupCanExecute();
+			return context.TabGroupManager.NewVerticalTabGroupCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.NewVerticalTabGroup();
+			context.TabGroupManager.NewVerticalTabGroup();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Move to Ne_xt Tab Group", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 20)]
 	sealed class MoveToNextTabGroupCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		MoveToNextTabGroupCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
-			return MainWindow.Instance.MoveToNextTabGroupCanExecute();
+			return context.TabGroupManager.MoveToNextTabGroupCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.MoveToNextTabGroup();
+			context.TabGroupManager.MoveToNextTabGroup();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Move All to Next Tab Group", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 30)]
 	sealed class MoveAllToNextTabGroupCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		MoveAllToNextTabGroupCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
-			return MainWindow.Instance.MoveAllToNextTabGroupCanExecute();
+			return context.TabGroupManager.MoveAllToNextTabGroupCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.MoveAllToNextTabGroup();
+			context.TabGroupManager.MoveAllToNextTabGroup();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Move to P_revious Tab Group", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 40)]
 	sealed class MoveToPreviousTabGroupCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		MoveToPreviousTabGroupCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
-			return MainWindow.Instance.MoveToPreviousTabGroupCanExecute();
+			return context.TabGroupManager.MoveToPreviousTabGroupCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.MoveToPreviousTabGroup();
+			context.TabGroupManager.MoveToPreviousTabGroup();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Move All to Previous Tab Group", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 50)]
 	sealed class MoveAllToPreviousTabGroupCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		MoveAllToPreviousTabGroupCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
-			return MainWindow.Instance.MoveAllToPreviousTabGroupCanExecute();
+			return context.TabGroupManager.MoveAllToPreviousTabGroupCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.MoveAllToPreviousTabGroup();
+			context.TabGroupManager.MoveAllToPreviousTabGroup();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "C_lose All Tabs", Icon = "CloseDocuments", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 60)]
 	sealed class CloseAllTabsCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		CloseAllTabsCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
 			return true;
 		}
 
 		public override bool IsEnabled(MenuTabGroupContext context) {
-			return MainWindow.Instance.CloseAllTabsCanExecute();
+			return context.TabGroupManager.CloseAllTabsCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.CloseAllTabs();
+			context.TabGroupManager.CloseAllTabs();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Close Tab Group", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 0)]
 	sealed class CloseTabGroupCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		CloseTabGroupCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
-			return MainWindow.Instance.CloseTabGroupCanExecute();
+			return context.TabGroupManager.CloseTabGroupCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.CloseTabGroup();
+			context.TabGroupManager.CloseTabGroup();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Close All Tab Groups But This", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 10)]
 	sealed class CloseAllTabGroupsButThisCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		CloseAllTabGroupsButThisCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
-			return MainWindow.Instance.CloseAllTabGroupsButThisCanExecute();
+			return context.TabGroupManager.CloseAllTabGroupsButThisCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.CloseAllTabGroupsButThis();
+			context.TabGroupManager.CloseAllTabGroupsButThis();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Move Tab Group After Next Tab Group", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 20)]
 	sealed class MoveTabGroupAfterNextTabGroupCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		MoveTabGroupAfterNextTabGroupCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
-			return MainWindow.Instance.MoveTabGroupAfterNextTabGroupCanExecute();
+			return context.TabGroupManager.MoveTabGroupAfterNextTabGroupCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.MoveTabGroupAfterNextTabGroup();
+			context.TabGroupManager.MoveTabGroupAfterNextTabGroup();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Move Tab Group Before Previous Tab Group", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 30)]
 	sealed class MoveTabGroupBeforePreviousTabGroupCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		MoveTabGroupBeforePreviousTabGroupCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
-			return MainWindow.Instance.MoveTabGroupBeforePreviousTabGroupCanExecute();
+			return context.TabGroupManager.MoveTabGroupBeforePreviousTabGroupCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.MoveTabGroupBeforePreviousTabGroup();
+			context.TabGroupManager.MoveTabGroupBeforePreviousTabGroup();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Merge All Tab Groups", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 40)]
 	sealed class MergeAllTabGroupsCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		MergeAllTabGroupsCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
-			return MainWindow.Instance.MergeAllTabGroupsCanExecute();
+			return context.TabGroupManager.MergeAllTabGroupsCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.MergeAllTabGroups();
+			context.TabGroupManager.MergeAllTabGroups();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Use Vertical Tab Groups", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSVERT, Order = 0)]
 	sealed class UseVerticalTabGroupsCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		UseVerticalTabGroupsCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
-			return MainWindow.Instance.UseVerticalTabGroupsCanExecute();
+			return context.TabGroupManager.UseVerticalTabGroupsCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.UseVerticalTabGroups();
+			context.TabGroupManager.UseVerticalTabGroups();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Use Horizontal Tab Groups", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSVERT, Order = 10)]
 	sealed class UseHorizontalTabGroupsCommand : MenuTabGroupCommand {
+		[ImportingConstructor]
+		UseHorizontalTabGroupsCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override bool IsVisible(MenuTabGroupContext context) {
-			return MainWindow.Instance.UseHorizontalTabGroupsCanExecute();
+			return context.TabGroupManager.UseHorizontalTabGroupsCanExecute;
 		}
 
 		public override void Execute(MenuTabGroupContext context) {
-			MainWindow.Instance.UseHorizontalTabGroups();
+			context.TabGroupManager.UseHorizontalTabGroups();
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Group = MenuConstants.GROUP_APP_MENU_WINDOW_ALLWINDOWS, Order = 0)]
-	sealed class DecompilerWindowsCommand : MenuTabGroupCommand, IMenuItemCreator {
+	sealed class AllTabsMenuItemCommand : MenuTabGroupCommand, IMenuItemCreator {
+		[ImportingConstructor]
+		AllTabsMenuItemCommand(IFileTabManager fileTabManager)
+			: base(fileTabManager) {
+		}
+
 		public override void Execute(MenuTabGroupContext context) {
 		}
 
@@ -582,11 +862,11 @@ namespace dnSpy.Tabs {
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
 			const int MAX_TABS = 10;
 			int index = 0;
-			foreach (var tabState in MainWindow.Instance.GetTabStateInOrder()) {
-				var header = GetHeader(index + 1, tabState);
+			foreach (var tab in fileTabManager.SortedTabs) {
+				var header = GetHeader(index + 1, tab);
 				var attr = new ExportMenuItemAttribute { Header = header };
-				var tabStateTmp = tabState;
-				var item = new MyMenuItem(ctx => MainWindow.Instance.SetActiveTab(tabStateTmp), index == 0);
+				var tabTmp = tab;
+				var item = new MyMenuItem(ctx => fileTabManager.ActiveTab = tabTmp, index == 0);
 
 				yield return new CreatedMenuItem(attr, item);
 
@@ -595,11 +875,21 @@ namespace dnSpy.Tabs {
 			}
 
 			var attr2 = new ExportMenuItemAttribute { Header = "_Windows..." };
-			var item2 = new MyMenuItem(ctx => MainWindow.Instance.ShowDecompilerTabsWindow(), false);
+			var item2 = new MyMenuItem(ctx => { /*TODO: ShowDecompilerTabsWindow()*/ }, false);
 			yield return new CreatedMenuItem(attr2, item2);
 		}
 
-		static string GetHeader(int i, TabState tabState) {
+		static string GetShortMenuItemHeader(string s) {
+			Debug.Assert(s != null);
+			if (s == null)
+				s = string.Empty;
+			const int MAX_LEN = 40;
+			if (s.Length > MAX_LEN)
+				s = s.Substring(0, MAX_LEN) + "...";
+			return MenuUtils.EscapeMenuItemHeader(s);
+		}
+
+		static string GetHeader(int i, IFileTab tab) {
 			string s;
 			if (i == 10)
 				s = "1_0";
@@ -607,7 +897,7 @@ namespace dnSpy.Tabs {
 				s = i.ToString();
 			else
 				s = string.Format("_{0}", i);
-			return string.Format("{0} {1}", s, UIUtils.EscapeMenuItemHeader(tabState.ShortHeader));
+			return string.Format("{0} {1}", s, GetShortMenuItemHeader(tab.FileTabContent.Title));
 		}
 	}
 }

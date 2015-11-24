@@ -27,12 +27,12 @@ namespace dnSpy.Contracts.Files.Tabs {
 	/// </summary>
 	public interface IReferenceFileTabContentCreator {
 		/// <summary>
-		/// Creates a new <see cref="IFileTabContent"/> or returns null
+		/// Creates a new <see cref="FileTabReferenceResult"/> or returns null
 		/// </summary>
 		/// <param name="fileTabManager">Owner</param>
 		/// <param name="ref">Reference</param>
 		/// <returns></returns>
-		IFileTabContent Create(IFileTabManager fileTabManager, object @ref);
+		FileTabReferenceResult Create(IFileTabManager fileTabManager, object @ref);
 	}
 
 	/// <summary>Metadata</summary>

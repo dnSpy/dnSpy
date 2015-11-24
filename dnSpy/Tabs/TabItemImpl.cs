@@ -111,7 +111,17 @@ namespace dnSpy.Tabs {
 			this.DataContext = theHeader;
 			this.Header = theHeader;
 			this.AllowDrop = true;
+			this.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(GotKeyboardFocus2), true);
+			this.AddHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(LostKeyboardFocus2), true);
 			AddEvents();
+		}
+
+		void GotKeyboardFocus2(object sender, KeyboardFocusChangedEventArgs e) {
+			tabContent.OnVisibilityChanged(TabContentVisibilityEvent.GotKeyboardFocus);
+		}
+
+		void LostKeyboardFocus2(object sender, KeyboardFocusChangedEventArgs e) {
+			tabContent.OnVisibilityChanged(TabContentVisibilityEvent.LostKeyboardFocus);
 		}
 
 		protected override void OnSelected(RoutedEventArgs e) {
@@ -155,17 +165,6 @@ namespace dnSpy.Tabs {
 			theHeader.TabContentPropertyChanged(e.PropertyName);
 			if (e.PropertyName == "UIObject")
 				this.Content = tabContent.UIObject;
-		}
-
-		internal void FocusContent() {
-			var uiel = tabContent.FocusedElement;
-			if (uiel == null)
-				uiel = tabContent.UIObject as UIElement;
-			var sv = uiel as ScrollViewer;
-			if (sv != null)
-				uiel = sv.Content as UIElement ?? uiel;
-			if (uiel != null)
-				uiel.Focus();
 		}
 	}
 }

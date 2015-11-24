@@ -18,24 +18,30 @@
 */
 
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	[ExportFileTabUIContextCreator(Order = TabsConstants.ORDER_TEXTEDITORUICONTEXTCREATOR)]
 	sealed class TextEditorUIContextCreator : IFileTabUIContextCreator {
 		readonly IThemeManager themeManager;
+		readonly IWpfCommandManager wpfCommandManager;
+		readonly IMenuManager menuManager;
 
 		[ImportingConstructor]
-		TextEditorUIContextCreator(IThemeManager themeManager) {
+		TextEditorUIContextCreator(IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager) {
 			this.themeManager = themeManager;
+			this.wpfCommandManager = wpfCommandManager;
+			this.menuManager = menuManager;
 		}
 
-		public T Create<T>() where T : class, IFileTabUIContext {
+		public IFileTabUIContext Create<T>() where T : class, IFileTabUIContext {
 			if (typeof(T) == typeof(ITextEditorUIContext)) {
 				var tec = new TextEditorControl(themeManager);
-				return (T)(IFileTabUIContext)new TextEditorUIContext(tec);
+				return new TextEditorUIContext(wpfCommandManager, menuManager, tec);
 			}
 			return null;
 		}

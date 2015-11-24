@@ -25,6 +25,11 @@ namespace dnSpy.Contracts.Tabs {
 	/// </summary>
 	public interface ITabGroup {
 		/// <summary>
+		/// Gets the owner <see cref="ITabGroupManager"/> instance
+		/// </summary>
+		ITabGroupManager TabGroupManager { get; }
+
+		/// <summary>
 		/// Gets all <see cref="ITabContent"/> instances
 		/// </summary>
 		IEnumerable<ITabContent> TabContents { get; }
@@ -33,6 +38,12 @@ namespace dnSpy.Contracts.Tabs {
 		/// Gets the active <see cref="ITabContent"/> or null if <see cref="TabContents"/> is empty
 		/// </summary>
 		ITabContent ActiveTabContent { get; set; }
+
+		/// <summary>
+		/// Sets keyboard focus
+		/// </summary>
+		/// <param name="content">Content</param>
+		void SetFocus(ITabContent content);
 
 		/// <summary>
 		/// Adds tab content
@@ -45,5 +56,56 @@ namespace dnSpy.Contracts.Tabs {
 		/// </summary>
 		/// <param name="content">Content</param>
 		void Remove(ITabContent content);
+
+		/// <summary>
+		/// true if <see cref="CloseActiveTab()"/> can execute
+		/// </summary>
+		/// <returns></returns>
+		bool CloseActiveTabCanExecute { get; }
+
+		/// <summary>
+		/// Closes the active tab
+		/// </summary>
+		void CloseActiveTab();
+
+		/// <summary>
+		/// true if <see cref="CloseAllTabs()"/> can execute
+		/// </summary>
+		bool CloseAllTabsCanExecute { get; }
+
+		/// <summary>
+		/// Closes all tabs
+		/// </summary>
+		void CloseAllTabs();
+
+		/// <summary>
+		/// true if <see cref="CloseAllButActiveTab()"/> can execute
+		/// </summary>
+		bool CloseAllButActiveTabCanExecute { get; }
+
+		/// <summary>
+		/// Closes all tabs except the active tab
+		/// </summary>
+		void CloseAllButActiveTab();
+
+		/// <summary>
+		/// true if <see cref="SelectNextTab()"/> can execute
+		/// </summary>
+		bool SelectNextTabCanExecute { get; }
+
+		/// <summary>
+		/// Selects the next tab
+		/// </summary>
+		void SelectNextTab();
+
+		/// <summary>
+		/// true if <see cref="SelectPreviousTab()"/> can execute
+		/// </summary>
+		bool SelectPreviousTabCanExecute { get; }
+
+		/// <summary>
+		/// Selects the previous tab
+		/// </summary>
+		void SelectPreviousTab();
 	}
 }

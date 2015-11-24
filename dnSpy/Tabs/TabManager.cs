@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.Themes;
@@ -38,10 +39,12 @@ namespace dnSpy.Tabs {
 		int selectedIndex;
 
 		readonly IMenuManager menuManager;
+		readonly IWpfFocusManager wpfFocusManager;
 
-		public TabManager(IThemeManager themeManager, IMenuManager menuManager) {
+		public TabManager(IThemeManager themeManager, IMenuManager menuManager, IWpfFocusManager wpfFocusManager) {
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			this.menuManager = menuManager;
+			this.wpfFocusManager = wpfFocusManager;
 			this.tabGroupManagers = new List<TabGroupManager>();
 			this.selectedIndex = -1;
 		}
@@ -52,7 +55,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public ITabGroupManager Create(Guid tabGroupGuid) {
-			var mgr = new TabGroupManager(this, menuManager, tabGroupGuid);
+			var mgr = new TabGroupManager(this, menuManager, wpfFocusManager, tabGroupGuid);
 			tabGroupManagers.Add(mgr);
 			if (selectedIndex < 0)
 				selectedIndex = 0;

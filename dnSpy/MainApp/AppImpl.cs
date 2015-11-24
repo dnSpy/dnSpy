@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using dnSpy.Contracts;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
@@ -115,6 +116,12 @@ namespace dnSpy.MainApp {
 		[Import]
 		/*readonly*/ FileTabManager fileTabManager;
 
+		public IAppWindow AppWindow {
+			get { return appWindow; }
+		}
+		[Import]
+		/*readonly*/ IAppWindow appWindow;
+
 		public CompositionContainer CompositionContainer {
 			get { return compositionContainer; }
 			internal set { compositionContainer = value; }
@@ -134,6 +141,7 @@ namespace dnSpy.MainApp {
 			this.languageManager = null;
 			this.tabManagerCreator = null;
 			this.fileTabManager = null;
+			this.appWindow = null;
 		}
 	}
 }

@@ -38,6 +38,10 @@ namespace dnSpy.TreeView {
 		}
 		readonly SharpTreeNodeChildrenList nodeList;
 
+		public IEnumerable<ITreeNodeData> DataChildren {
+			get { return Children.Select(a => a.Data); }
+		}
+
 		public ITreeNodeData Data {
 			get { return data; }
 		}
@@ -82,6 +86,10 @@ namespace dnSpy.TreeView {
 		public void RefreshUI() {
 			Data.OnRefreshUI();
 			Node.RefreshUI();
+		}
+
+		public void EnsureChildrenLoaded() {
+			Node.EnsureLazyChildren();
 		}
 	}
 }

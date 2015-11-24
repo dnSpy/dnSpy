@@ -113,5 +113,24 @@ namespace dnSpy.Contracts.TreeView {
 		public static IEnumerable<ITreeNodeData> DescendantsAndSelf(this ITreeNodeData self) {
 			return self.TreeNode.DescendantsAndSelf().Select(a => a.Data);
 		}
+
+		/// <summary>
+		/// Gets the ancestor of a certain type
+		/// </summary>
+		/// <typeparam name="T">Desired type</typeparam>
+		/// <param name="self">This</param>
+		/// <returns></returns>
+		public static T GetAncestor<T>(this ITreeNodeData self) where T : class, ITreeNodeData {
+			while (self != null) {
+				var found = self as T;
+				if (found != null)
+					return found;
+				var parent = self.TreeNode.Parent;
+				if (parent == null)
+					break;
+				self = parent.Data;
+			}
+			return null;
+		}
 	}
 }

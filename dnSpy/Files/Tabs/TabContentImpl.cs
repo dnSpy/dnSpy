@@ -33,9 +33,13 @@ namespace dnSpy.Files.Tabs {
 		}
 		readonly FileTabManager fileTabManager;
 
+		public bool IsActiveTab {
+			get { return FileTabManager.ActiveTab == this; }
+		}
+
 		public IFileTabContent FileTabContent {
 			get { return tabHistory.Current; }
-			set {
+			private set {
 				bool saveCurrent = !(tabHistory.Current is NullFileTabContent);
 				tabHistory.SetCurrent(value, saveCurrent);
 			}
@@ -43,12 +47,23 @@ namespace dnSpy.Files.Tabs {
 
 		public IFileTabUIContext UIContext {
 			get { return uiContext; }
-			set {
-				uiContext = value;
-				UIObject = uiContext.UIObject;
+			private set {
+				uiContextVersion++;
+				var newValue = value;
+				Debug.Assert(newValue != null);
+				if (newValue == null)
+					newValue = new NullFileTabUIContext();
+				if (uiContext != newValue) {
+					uiContext.OnHide();
+					elementScaler.InstallScale(newValue.ScaleElement);
+					newValue.OnShow();
+					uiContext = newValue;
+					UIObject = uiContext.UIObject;
+				}
 			}
 		}
 		IFileTabUIContext uiContext;
+		int uiContextVersion;
 
 		public string Title {
 			get { return title; }
@@ -93,26 +108,35 @@ namespace dnSpy.Files.Tabs {
 
 		readonly IFileTabUIContextLocator fileTabUIContextLocator;
 		readonly Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>[] refFactories;
+		readonly TabElementScaler elementScaler;
 
 		public TabContentImpl(FileTabManager fileTabManager, IFileTabUIContextLocator fileTabUIContextLocator, Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>[] refFactories) {
+			this.elementScaler = new TabElementScaler();
 			this.tabHistory = new TabHistory();
 			this.tabHistory.SetCurrent(new NullFileTabContent(), false);
 			this.fileTabManager = fileTabManager;
 			this.fileTabUIContextLocator = fileTabUIContextLocator;
 			this.refFactories = refFactories;
-			this.UIContext = new NullFileTabUIContext();
+			this.uiContext = new NullFileTabUIContext();
+			this.uiObject = this.uiContext.UIObject;
 		}
 
 		void ITabContent.OnVisibilityChanged(TabContentVisibilityEvent visEvent) {
+			if (visEvent == TabContentVisibilityEvent.Removed) {
+				var id = fileTabUIContextLocator as IDisposable;
+				Debug.Assert(id != null);
+				if (id != null)
+					id.Dispose();
+			}
 		}
 
 		public void FollowReference(object @ref) {
-			var tabContent = TryCreateContentFromReference(@ref);
-			if (tabContent != null)
-				Show(tabContent);
+			var result = TryCreateContentFromReference(@ref);
+			if (result != null)
+				Show(result.FileTabContent, result.SerializedUI, result.OnShownHandler);
 		}
 
-		IFileTabContent TryCreateContentFromReference(object @ref) {
+		FileTabReferenceResult TryCreateContentFromReference(object @ref) {
 			foreach (var f in refFactories) {
 				var c = f.Value.Create(FileTabManager, @ref);
 				if (c != null)
@@ -121,43 +145,87 @@ namespace dnSpy.Files.Tabs {
 			return null;
 		}
 
-		public void Show(IFileTabContent tabContent) {
+		public void Show(IFileTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShown) {
 			if (tabContent == null)
 				throw new ArgumentNullException();
 			Debug.Assert(tabContent.FileTab == null || tabContent.FileTab == this);
 			HideCurrentContent();
 			FileTabContent = tabContent;
-			ShowInternal(tabContent);
+			ShowInternal(tabContent, serializedUI, onShown);
 		}
 
 		void HideCurrentContent() {
 			//TODO: cancel any async workers
 			if (FileTabContent != null)
 				FileTabContent.OnHide();
-			UIContext.Clear();
 		}
 
-		void ShowInternal(IFileTabContent tabContent) {
+		void ShowInternal(IFileTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShownHandler) {
+			var oldUIContext = UIContext;
 			UIContext = tabContent.CreateUIContext(fileTabUIContextLocator);
-			Debug.Assert(UIContext != null);
-			if (UIContext == null)
-				UIContext = new NullFileTabUIContext();
+			Debug.Assert(UIContext.FileTab == null || UIContext.FileTab == this);
 			UIContext.FileTab = this;
+			Debug.Assert(UIContext.FileTab == this);
+			Debug.Assert(tabContent.FileTab == null || tabContent.FileTab == this);
 			tabContent.FileTab = this;
+			Debug.Assert(tabContent.FileTab == this);
 
 			UpdateTitleAndToolTip();
-			tabContent.OnShow(UIContext);
+			var userData = tabContent.OnShow(UIContext);
+			bool asyncShow = false;
 			var asyncTabContent = tabContent as IAsyncFileTabContent;
 			if (asyncTabContent != null) {
-				if (asyncTabContent.CanStartAsyncWorker(UIContext)) {
+				if (asyncTabContent.CanStartAsyncWorker(UIContext, userData)) {
+					asyncShow = true;
 					//TODO: Call this in a worker thread
-					asyncTabContent.AsyncWorker(UIContext);
-					asyncTabContent.EndAsyncShow(UIContext);
+					asyncTabContent.AsyncWorker(UIContext, userData);
+					asyncTabContent.EndAsyncShow(UIContext, userData);
+					OnShown(serializedUI, onShownHandler);
 				}
 				else
-					asyncTabContent.EndAsyncShow(UIContext);
+					asyncTabContent.EndAsyncShow(UIContext, userData);
 			}
+			if (!asyncShow)
+				OnShown(serializedUI, onShownHandler);
 			fileTabManager.OnNewTabContentShown(this);
+		}
+
+		void OnShown(object serializedUI, Action<ShowTabContentEventArgs> onShownHandler) {
+			bool success = true;//TODO: Set it to true if it decompiled successfully (no ex, not canceled)
+			if (serializedUI != null)
+				Deserialize(serializedUI);
+			if (onShownHandler != null)
+				onShownHandler(new ShowTabContentEventArgs(success));
+		}
+
+		void Deserialize(object serializedUI) {
+			if (serializedUI == null)
+				return;
+			UIContext.Deserialize(serializedUI);
+			var uiel = UIContext.FocusedElement as UIElement ?? UIContext.UIObject as UIElement;
+			if (uiel.IsVisible)
+				return;
+			int uiContextVersionTmp = uiContextVersion;
+			new OnVisibleHelper(uiel, () => {
+				if (uiContextVersionTmp == uiContextVersion)
+					UIContext.Deserialize(serializedUI);
+			});
+		}
+
+		sealed class OnVisibleHelper {
+			readonly UIElement uiel;
+			readonly Action exec;
+
+			public OnVisibleHelper(UIElement uiel, Action exec) {
+				this.uiel = uiel;
+				this.exec = exec;
+				this.uiel.IsVisibleChanged += UIElement_IsVisibleChanged;
+			}
+
+			void UIElement_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+				this.uiel.IsVisibleChanged -= UIElement_IsVisibleChanged;
+				exec();
+			}
 		}
 
 		internal void UpdateTitleAndToolTip() {
@@ -177,16 +245,35 @@ namespace dnSpy.Files.Tabs {
 			if (!CanNavigateBackward)
 				return;
 			HideCurrentContent();
-			tabHistory.NavigateBackward();
-			ShowInternal(tabHistory.Current);
+			var serialized = tabHistory.NavigateBackward();
+			ShowInternal(tabHistory.Current, serialized, null);
 		}
 
 		public void NavigateForward() {
 			if (!CanNavigateForward)
 				return;
 			HideCurrentContent();
-			tabHistory.NavigateForward();
-			ShowInternal(tabHistory.Current);
+			var serialized = tabHistory.NavigateForward();
+			ShowInternal(tabHistory.Current, serialized, null);
+		}
+
+		public void Refresh() {
+			// Pretend it gets hidden and then shown again. Will also cancel any async output threads
+			HideCurrentContent();
+			ShowInternal(FileTabContent, UIContext.Serialize(), null);
+		}
+
+		public void SetFocus() {
+			if (IsActiveTab)
+				FileTabManager.SetFocus(this);
+		}
+
+		public void OnSelected() {
+			FileTabContent.OnSelected();
+		}
+
+		public void OnUnselected() {
+			FileTabContent.OnUnselected();
 		}
 	}
 }

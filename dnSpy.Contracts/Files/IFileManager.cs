@@ -60,6 +60,13 @@ namespace dnSpy.Contracts.Files {
 		IDnSpyFile Resolve(IAssembly asm, ModuleDef sourceModule);
 
 		/// <summary>
+		/// Returns an assembly or null if it's not in the list
+		/// </summary>
+		/// <param name="assembly">Assembly</param>
+		/// <returns></returns>
+		IDnSpyFile FindAssembly(IAssembly assembly);
+
+		/// <summary>
 		/// Removes a file
 		/// </summary>
 		/// <param name="key">Key of file to remove. See <see cref="IDnSpyFile.Key"/></param>

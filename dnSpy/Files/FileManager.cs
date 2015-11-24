@@ -105,7 +105,7 @@ namespace dnSpy.Files {
 				CallCollectionChanged(NotifyFileCollectionChangedEventArgs.CreateClear(oldFiles));
 		}
 
-		internal IDnSpyFile FindAssembly(IAssembly assembly) {
+		public IDnSpyFile FindAssembly(IAssembly assembly) {
 			lock (lockObj) {
 				var comparer = new AssemblyNameComparer(AssemblyNameComparerFlags.All);
 				foreach (var file in files) {

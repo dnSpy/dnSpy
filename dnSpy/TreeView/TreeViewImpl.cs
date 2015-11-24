@@ -43,7 +43,7 @@ namespace dnSpy.TreeView {
 		}
 		readonly Guid guid;
 
-		public DispatcherObject UIObject {
+		public object UIObject {
 			get { return sharpTreeView; }
 		}
 		readonly SharpTreeView sharpTreeView;
@@ -55,6 +55,10 @@ namespace dnSpy.TreeView {
 
 		public ITreeNodeData[] SelectedItems {
 			get { return Convert(sharpTreeView.SelectedItems); }
+		}
+
+		public ITreeNodeData[] TopLevelSelection {
+			get { return Convert(sharpTreeView.GetTopLevelSelection()); }
 		}
 
 		readonly ITreeViewManager treeViewManager;
@@ -112,7 +116,7 @@ namespace dnSpy.TreeView {
 			return new TVSelectionChangedEventArgs(added, removed);
 		}
 
-		static ITreeNodeData[] Convert(System.Collections.IList list) {
+		static ITreeNodeData[] Convert(System.Collections.IEnumerable list) {
 			return list.Cast<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
 		}
 

@@ -40,4 +40,23 @@ namespace dnSpy.Shared.UI.Menus {
 			return realCommand.CanExecute(context);
 		}
 	}
+
+	public abstract class MenuItemCommand<TContext> : MenuItemBase<TContext>, ICommandHolder where TContext : class {
+		public ICommand Command {
+			get { return realCommand; }
+		}
+		readonly ICommand realCommand;
+
+		protected MenuItemCommand(ICommand realCommand) {
+			this.realCommand = realCommand;
+		}
+
+		public override void Execute(TContext context) {
+			realCommand.Execute(context);
+		}
+
+		public override bool IsEnabled(TContext context) {
+			return realCommand.CanExecute(context);
+		}
+	}
 }

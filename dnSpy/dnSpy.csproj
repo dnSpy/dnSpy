@@ -64,20 +64,28 @@
   <ItemGroup>
     <Compile Include="Controls\IStackedContentChild.cs" />
     <Compile Include="Controls\StackedContent.cs" />
+    <Compile Include="Controls\WpfCommandManager.cs" />
+    <Compile Include="Controls\WpfCommands.cs" />
+    <Compile Include="Controls\WpfFocusManager.cs" />
     <Compile Include="Events\WeakEventList.cs" />
     <Compile Include="Files\AssemblyResolver.cs" />
     <Compile Include="Files\FileManager.cs" />
+    <Compile Include="Files\Tabs\Commands.cs" />
+    <Compile Include="Files\Tabs\DecompilationCache.cs" />
     <Compile Include="Files\Tabs\DefaultDecompileNode.cs" />
     <Compile Include="Files\Tabs\FileTabContentFactoryContext.cs" />
     <Compile Include="Files\Tabs\FileTabManager.cs" />
     <Compile Include="Files\Tabs\FileTabUIContextLocator.cs" />
     <Compile Include="Files\Tabs\FileTabUIContextLocatorCreator.cs" />
     <Compile Include="Files\Tabs\FileTreeNodeDecompiler.cs" />
+    <Compile Include="Files\Tabs\IDecompilationCache.cs" />
     <Compile Include="Files\Tabs\IFileTabUIContextLocatorCreator.cs" />
     <Compile Include="Files\Tabs\NavigationCommands.cs" />
     <Compile Include="Files\Tabs\NodeDecompiler.cs" />
     <Compile Include="Files\Tabs\NullObjects.cs" />
+    <Compile Include="Files\Tabs\RedecompileTabs.cs" />
     <Compile Include="Files\Tabs\TabContentImpl.cs" />
+    <Compile Include="Files\Tabs\TabElementScaler.cs" />
     <Compile Include="Files\Tabs\TabHistory.cs" />
     <Compile Include="Files\Tabs\TextEditor\DecompileFileTabContent.cs" />
     <Compile Include="Files\Tabs\TextEditor\DecompileNodeContext.cs" />
@@ -95,6 +103,7 @@
     <Compile Include="Files\Tabs\TextEditor\TextLineObjectManager.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextMarkerService.cs" />
     <Compile Include="Files\Tabs\TextEditor\UIElementGenerator.cs" />
+    <Compile Include="Files\Tabs\TreeNodeReferenceFileTabContentCreator.cs" />
     <Compile Include="Files\TreeView\AssemblyFileNode.cs" />
     <Compile Include="Files\TreeView\AssemblyReferenceNode.cs" />
     <Compile Include="Files\TreeView\BaseTypeFolderNode.cs" />
@@ -354,6 +363,7 @@
     <Resource Include="Images\MethodProtectedInternal.png" />
     <Resource Include="Images\ModuleReference.png" />
     <Resource Include="Images\Namespace.png" />
+    <Resource Include="Images\NewWindow.png" />
     <Resource Include="Images\Open.png" />
     <Resource Include="Images\Operator.png" />
     <Resource Include="Images\OperatorCompilerControlled.png" />
@@ -421,6 +431,11 @@
     <Resource Include="Images\VirtualPropertyProtected.png" />
     <Resource Include="Images\VirtualPropertyProtectedInternal.png" />
     <Resource Include="Images\WordWrap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Microsoft.Windows.Shell.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

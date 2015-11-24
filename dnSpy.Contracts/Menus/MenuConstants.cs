@@ -18,7 +18,9 @@
 */
 
 using System.Windows.Controls;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Tabs;
+using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Contracts.Menus {
 	/// <summary>
@@ -85,14 +87,11 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Search ListBox</summary>
 		public const string GUIDOBJ_SEARCH_GUID = "7B460F9C-424D-48B3-8FD3-72CEE8DD58E5";
 
-		/// <summary>Tree view nodes array (<c>SharpTreeNode[]</c>)</summary>
+		/// <summary>Tree view nodes array (<see cref="ITreeNodeData"/>[])</summary>
 		public const string GUIDOBJ_TREEVIEW_NODES_ARRAY_GUID = "B116BABD-BD8B-4870-968A-D1871CC21638";
 
 		/// <summary>Code Reference (<see cref="CodeReferenceSegment"/>)</summary>
 		public const string GUIDOBJ_CODE_REFERENCE_GUID = "751F4075-D420-4196-BCF0-A0149A8948A4";
-
-		/// <summary>Reference</summary>
-		public const string GUIDOBJ_REFERENCE_GUID = "6A019D43-8FDA-4869-A861-0A5DE55CF413";
 
 		/// <summary>Files <see cref="TabControl"/></summary>
 		public const string GUIDOBJ_FILES_TABCONTROL_GUID = "AB1B4BCE-D8C1-43BE-8822-C124FBCAC260";
@@ -100,8 +99,11 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Files <see cref="ITabGroup"/></summary>
 		public const string GUIDOBJ_FILES_TABGROUP_GUID = "87B2F94A-D80B-45FD-BB31-71E390CA6C01";
 
-		/// <summary>DecompilerTextView</summary>
+		/// <summary>Text editor control</summary>
 		public const string GUIDOBJ_DECOMPILED_CODE_GUID = "7F9E85C9-05B5-43FE-9CD1-20E61B183454";
+
+		/// <summary><see cref="ITextEditorUIContext"/></summary>
+		public const string GUIDOBJ_TEXTEDITORUICONTEXT = "848AC3FB-7D67-4427-A604-86BFF539E527";
 
 		/// <summary>TextViewPosition</summary>
 		public const string GUIDOBJ_TEXTVIEWPOSITION_GUID = "0C5E61BF-FC0D-47F7-8C49-69BD93CD11B5";

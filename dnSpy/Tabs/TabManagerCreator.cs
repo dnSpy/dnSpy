@@ -18,6 +18,7 @@
 */
 
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.Themes;
@@ -27,15 +28,17 @@ namespace dnSpy.Tabs {
 	sealed class TabManagerCreator : ITabManagerCreator {
 		readonly IThemeManager themeManager;
 		readonly IMenuManager menuManager;
+		readonly IWpfFocusManager wpfFocusManager;
 
 		[ImportingConstructor]
-		TabManagerCreator(IThemeManager themeManager, IMenuManager menuManager) {
+		TabManagerCreator(IThemeManager themeManager, IMenuManager menuManager, IWpfFocusManager wpfFocusManager) {
 			this.themeManager = themeManager;
 			this.menuManager = menuManager;
+			this.wpfFocusManager = wpfFocusManager;
 		}
 
 		public ITabManager Create() {
-			return new TabManager(themeManager, menuManager);
+			return new TabManager(themeManager, menuManager, wpfFocusManager);
 		}
 	}
 }
