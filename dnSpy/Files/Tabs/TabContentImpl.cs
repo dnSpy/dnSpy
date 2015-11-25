@@ -19,6 +19,8 @@
 
 using System;
 using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Tabs;
@@ -130,15 +132,15 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		public void FollowReference(object @ref) {
-			var result = TryCreateContentFromReference(@ref);
+		public void FollowReference(object @ref, IFileTabContent sourceContent) {
+			var result = TryCreateContentFromReference(@ref, sourceContent);
 			if (result != null)
 				Show(result.FileTabContent, result.SerializedUI, result.OnShownHandler);
 		}
 
-		FileTabReferenceResult TryCreateContentFromReference(object @ref) {
+		FileTabReferenceResult TryCreateContentFromReference(object @ref, IFileTabContent sourceContent) {
 			foreach (var f in refFactories) {
-				var c = f.Value.Create(FileTabManager, @ref);
+				var c = f.Value.Create(FileTabManager, sourceContent, @ref);
 				if (c != null)
 					return c;
 			}
@@ -155,43 +157,76 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		void HideCurrentContent() {
-			//TODO: cancel any async workers
+			CancelAsyncWorker();
 			if (FileTabContent != null)
 				FileTabContent.OnHide();
 		}
 
 		void ShowInternal(IFileTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShownHandler) {
+			Debug.Assert(asyncWorkerContext == null);
 			var oldUIContext = UIContext;
 			UIContext = tabContent.CreateUIContext(fileTabUIContextLocator);
-			Debug.Assert(UIContext.FileTab == null || UIContext.FileTab == this);
-			UIContext.FileTab = this;
-			Debug.Assert(UIContext.FileTab == this);
+			var cachedUIContext = UIContext;
+			Debug.Assert(cachedUIContext.FileTab == null || cachedUIContext.FileTab == this);
+			cachedUIContext.FileTab = this;
+			Debug.Assert(cachedUIContext.FileTab == this);
 			Debug.Assert(tabContent.FileTab == null || tabContent.FileTab == this);
 			tabContent.FileTab = this;
 			Debug.Assert(tabContent.FileTab == this);
 
 			UpdateTitleAndToolTip();
-			var userData = tabContent.OnShow(UIContext);
+			var userData = tabContent.OnShow(cachedUIContext);
 			bool asyncShow = false;
 			var asyncTabContent = tabContent as IAsyncFileTabContent;
 			if (asyncTabContent != null) {
-				if (asyncTabContent.CanStartAsyncWorker(UIContext, userData)) {
+				if (asyncTabContent.CanStartAsyncWorker(cachedUIContext, userData)) {
 					asyncShow = true;
-					//TODO: Call this in a worker thread
-					asyncTabContent.AsyncWorker(UIContext, userData);
-					asyncTabContent.EndAsyncShow(UIContext, userData);
-					OnShown(serializedUI, onShownHandler);
+					var ctx = new AsyncWorkerContext();
+					asyncWorkerContext = ctx;
+					Task.Factory.StartNew(() => {
+						asyncTabContent.AsyncWorker(cachedUIContext, userData, ctx.CancellationTokenSource);
+					}, ctx.CancellationTokenSource.Token)
+					.ContinueWith(t => {
+						bool canShowAsyncOutput = ctx == asyncWorkerContext &&
+												cachedUIContext.FileTab == this &&
+												UIContext == cachedUIContext;
+						if (asyncWorkerContext == ctx)
+							asyncWorkerContext = null;
+						ctx.Dispose();
+						asyncTabContent.EndAsyncShow(cachedUIContext, userData, new AsyncShowResult(t, canShowAsyncOutput));
+						bool success = !t.IsFaulted && !t.IsCanceled;
+						OnShown(serializedUI, onShownHandler, success);
+					}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 				}
 				else
-					asyncTabContent.EndAsyncShow(UIContext, userData);
+					asyncTabContent.EndAsyncShow(cachedUIContext, userData, new AsyncShowResult());
 			}
 			if (!asyncShow)
-				OnShown(serializedUI, onShownHandler);
+				OnShown(serializedUI, onShownHandler, true);
 			fileTabManager.OnNewTabContentShown(this);
 		}
 
-		void OnShown(object serializedUI, Action<ShowTabContentEventArgs> onShownHandler) {
-			bool success = true;//TODO: Set it to true if it decompiled successfully (no ex, not canceled)
+		sealed class AsyncWorkerContext : IDisposable {
+			public readonly CancellationTokenSource CancellationTokenSource;
+
+			public AsyncWorkerContext() {
+				this.CancellationTokenSource = new CancellationTokenSource();
+			}
+
+			public void Dispose() {
+				this.CancellationTokenSource.Dispose();
+			}
+		}
+		AsyncWorkerContext asyncWorkerContext;
+
+		void CancelAsyncWorker() {
+			if (asyncWorkerContext == null)
+				return;
+			asyncWorkerContext.CancellationTokenSource.Cancel();
+			asyncWorkerContext = null;
+		}
+
+		void OnShown(object serializedUI, Action<ShowTabContentEventArgs> onShownHandler, bool success) {
 			if (serializedUI != null)
 				Deserialize(serializedUI);
 			if (onShownHandler != null)

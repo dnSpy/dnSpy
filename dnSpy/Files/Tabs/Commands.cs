@@ -451,8 +451,7 @@ namespace dnSpy.Files.Tabs {
 			uiContext = context.FindByType<ITextEditorUIContext>();
 			if (uiContext == null)
 				return null;
-			var @ref = context.FindByType<CodeReferenceSegment>();
-			return @ref == null ? null : @ref.Reference;
+			return context.FindByType<CodeReferenceSegment>();
 		}
 
 		public override string GetInputGestureText(IMenuItemContext context) {

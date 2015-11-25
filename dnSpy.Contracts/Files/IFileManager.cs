@@ -31,7 +31,7 @@ namespace dnSpy.Contracts.Files {
 		event EventHandler<NotifyFileCollectionChangedEventArgs> CollectionChanged;
 
 		/// <summary>
-		/// Gets all files
+		/// Gets all files. Doesn't include any children.
 		/// </summary>
 		/// <returns></returns>
 		IDnSpyFile[] GetFiles();

@@ -68,7 +68,8 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// Follows a reference
 		/// </summary>
 		/// <param name="ref">Reference</param>
-		void FollowReference(object @ref);
+		/// <param name="sourceContent">Source content or null</param>
+		void FollowReference(object @ref, IFileTabContent sourceContent = null);
 
 		/// <summary>
 		/// Shows the tab content
@@ -95,7 +96,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <param name="ref">Reference</param>
 		public static void FollowReferenceNewTab(this IFileTab self, object @ref) {
 			var tab = self.FileTabManager.OpenEmptyTab();
-			tab.FollowReference(@ref);
+			tab.FollowReference(@ref, self.FileTabContent);
 			self.FileTabManager.SetFocus(tab);
 		}
 

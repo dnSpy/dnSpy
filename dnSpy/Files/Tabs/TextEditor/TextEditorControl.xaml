@@ -27,5 +27,6 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <ContentPresenter Name="newTextEditor" />
+        <ContentPresenter Name="waitAdorner" />
     </Grid>
 </UserControl>

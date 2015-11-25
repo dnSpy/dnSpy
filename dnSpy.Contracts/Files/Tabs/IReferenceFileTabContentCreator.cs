@@ -30,9 +30,11 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// Creates a new <see cref="FileTabReferenceResult"/> or returns null
 		/// </summary>
 		/// <param name="fileTabManager">Owner</param>
+		/// <param name="sourceContent">Source content or null. It's used when showing the reference
+		/// in a new tab. This would then be the older tab's content.</param>
 		/// <param name="ref">Reference</param>
 		/// <returns></returns>
-		FileTabReferenceResult Create(IFileTabManager fileTabManager, object @ref);
+		FileTabReferenceResult Create(IFileTabManager fileTabManager, IFileTabContent sourceContent, object @ref);
 	}
 
 	/// <summary>Metadata</summary>

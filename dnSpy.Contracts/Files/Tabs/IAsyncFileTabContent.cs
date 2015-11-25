@@ -17,13 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Threading;
+
 namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>
 	/// <see cref="IFileTabContent"/> that creates its output asynchronously in another thread
 	/// </summary>
 	public interface IAsyncFileTabContent : IFileTabContent {
 		/// <summary>
-		/// Returns true if <see cref="AsyncWorker(IFileTabUIContext,object)"/>
+		/// Returns true if <see cref="AsyncWorker(IFileTabUIContext,object,CancellationTokenSource)"/>
 		/// should be called
 		/// </summary>
 		/// <param name="uiContext">UI Context</param>
@@ -36,13 +38,15 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// </summary>
 		/// <param name="uiContext">UI Context</param>
 		/// <param name="userData">User data returned by <see cref="IFileTabContent.OnShow(IFileTabUIContext)"/></param>/// 
-		void AsyncWorker(IFileTabUIContext uiContext, object userData);
+		/// <param name="source">Cancellation token source</param>
+		void AsyncWorker(IFileTabUIContext uiContext, object userData, CancellationTokenSource source);
 
 		/// <summary>
 		/// Called in the main UI thread after the worker thread has exited or was interrupted
 		/// </summary>
 		/// <param name="uiContext">UI Context</param>
 		/// <param name="userData">User data returned by <see cref="IFileTabContent.OnShow(IFileTabUIContext)"/></param>
-		void EndAsyncShow(IFileTabUIContext uiContext, object userData);
+		/// <param name="result">Result</param>
+		void EndAsyncShow(IFileTabUIContext uiContext, object userData, IAsyncShowResult result);
 	}
 }

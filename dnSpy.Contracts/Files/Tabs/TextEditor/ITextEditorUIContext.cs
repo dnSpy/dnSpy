@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using dnlib.DotNet;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
 
@@ -32,5 +34,19 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// <param name="output">New document</param>
 		/// <param name="newHighlighting">Highlighting to use or null</param>
 		void SetOutput(ITextOutput output, IHighlightingDefinition newHighlighting);
+
+		/// <summary>
+		/// Shows a cancel button. Can be used when decompiling in another thread
+		/// </summary>
+		/// <param name="onCancel">Called if the user clicks the cancel button</param>
+		/// <param name="msg">Message to show to the user</param>
+		void ShowCancelButton(Action onCancel, string msg);
+
+		/// <summary>
+		/// Moves the caret to a reference, this can be a <see cref="CodeReferenceSegment"/>,
+		/// or a <see cref="IMemberDef"/>. Anything else isn't currently supported.
+		/// </summary>
+		/// <param name="ref">Reference</param>
+		void MoveCaretTo(object @ref);
 	}
 }

@@ -17,14 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Files.TreeView {
-	/// <summary>
-	/// A PE file (but not a .NET file)
-	/// </summary>
-	public interface IPEFileNode : IDnSpyFileNode {
-		/// <summary>
-		/// true if it's an .exe file, false if it's a .dll file
-		/// </summary>
-		bool IsExe { get; }
+using System;
+using System.Windows;
+using System.Windows.Controls;
+
+namespace dnSpy.Files.Tabs.TextEditor {
+	sealed partial class WaitAdorner : UserControl {
+		readonly Action onCancel;
+
+		public WaitAdorner(Action onCancel, string msg) {
+			this.onCancel = onCancel;
+			InitializeComponent();
+			this.textBlock.Text = msg;
+		}
+
+		void button_Click(object sender, RoutedEventArgs e) {
+			onCancel();
+		}
 	}
 }

@@ -81,6 +81,10 @@ namespace dnSpy.Tabs {
 			get { return tabControl.Items.Count; }
 		}
 
+		public bool IsKeyboardFocusWithin {
+			get { return tabControl.IsKeyboardFocusWithin; }
+		}
+
 		public ITabContent ActiveTabContent {
 			get {
 				var act = ActiveTabItemImpl;

@@ -70,6 +70,7 @@
     <Compile Include="Events\WeakEventList.cs" />
     <Compile Include="Files\AssemblyResolver.cs" />
     <Compile Include="Files\FileManager.cs" />
+    <Compile Include="Files\Tabs\AsyncShowResult.cs" />
     <Compile Include="Files\Tabs\Commands.cs" />
     <Compile Include="Files\Tabs\DecompilationCache.cs" />
     <Compile Include="Files\Tabs\DefaultDecompileNode.cs" />
@@ -103,6 +104,9 @@
     <Compile Include="Files\Tabs\TextEditor\TextLineObjectManager.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextMarkerService.cs" />
     <Compile Include="Files\Tabs\TextEditor\UIElementGenerator.cs" />
+    <Compile Include="Files\Tabs\TextEditor\WaitAdorner.xaml.cs">
+      <DependentUpon>WaitAdorner.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Files\Tabs\TreeNodeReferenceFileTabContentCreator.cs" />
     <Compile Include="Files\TreeView\AssemblyFileNode.cs" />
     <Compile Include="Files\TreeView\AssemblyReferenceNode.cs" />
@@ -252,6 +256,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Files\Tabs\TextEditor\TextEditorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Files\Tabs\TextEditor\WaitAdorner.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

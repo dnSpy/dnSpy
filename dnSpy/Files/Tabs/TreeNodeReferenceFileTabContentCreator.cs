@@ -20,7 +20,9 @@
 using System.ComponentModel.Composition;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Menus;
 using dnSpy.Files.Tabs.TextEditor;
 
 namespace dnSpy.Files.Tabs {
@@ -75,14 +77,47 @@ namespace dnSpy.Files.Tabs {
 			return def;
 		}
 
-		public FileTabReferenceResult Create(IFileTabManager fileTabManager, object @ref) {
+		public FileTabReferenceResult Create(IFileTabManager fileTabManager, IFileTabContent sourceContent, object @ref) {
+			var codeRef = @ref as CodeReferenceSegment;
+			if (codeRef != null) {
+				var result = CreateMemberRefResult(fileTabManager, codeRef.Reference);
+				if (result != null)
+					return result;
+
+				return CreateLocalRefResult(sourceContent, codeRef);
+			}
+
+			return CreateMemberRefResult(fileTabManager, @ref);
+		}
+
+		FileTabReferenceResult CreateLocalRefResult(IFileTabContent sourceContent, CodeReferenceSegment codeRef) {
+			if (sourceContent == null)
+				return null;
+			var content = sourceContent.Clone();
+			return new FileTabReferenceResult(content, null, a => {
+				if (a.Success)
+					GoToReference(content, codeRef);
+			});
+		}
+
+		FileTabReferenceResult CreateMemberRefResult(IFileTabManager fileTabManager, object @ref) {
 			var node = fileTabManager.FileTreeView.FindNode(GetReference(@ref));
 			if (node == null)
 				return null;
 
 			var content = decompileFileTabContentFactory.Create(new IFileTreeNodeData[] { node });
-			//TODO: Move the caret to the reference
-			return new FileTabReferenceResult(content);
+			return new FileTabReferenceResult(content, null, a => {
+				if (a.Success)
+					GoToReference(content, ResolveMemberDef(@ref as IMemberRef));
+			});
+		}
+
+		void GoToReference(IFileTabContent content, object @ref) {
+			var uiCtx = content.FileTab.UIContext as ITextEditorUIContext;
+			if (uiCtx == null)
+				return;
+
+			uiCtx.MoveCaretTo(@ref);
 		}
 	}
 }

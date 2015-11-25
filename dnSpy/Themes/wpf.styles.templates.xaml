@@ -4963,7 +4963,7 @@
 	</Style>
 
     <DataTemplate DataType="{x:Type tb:ToolBarButtonVM}">
-        <Button ToolTipService.ShowOnDisabled="True" ToolTip="{Binding ToolTip}" Command="{Binding Command}" CommandTarget="{Binding CommandTarget}" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" FocusVisualStyle="{x:Null}">
+        <Button ToolTipService.ShowOnDisabled="True" ToolTip="{Binding ToolTip}" Command="{Binding Command}" CommandTarget="{Binding CommandTarget}" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" FocusVisualStyle="{x:Null}" Focusable="False">
             <Button.Resources>
                 <Style TargetType="{x:Type Image}">
                     <Style.Triggers>

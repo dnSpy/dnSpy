@@ -44,8 +44,10 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Xml;
 using dnlib.DotNet;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Shared.UI.AvalonEdit;
 using dnSpy.Shared.UI.Decompiler;
@@ -155,6 +157,43 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnLostKeyboardFocus), true);
 		}
 
+		public Button CancelButton {
+			get {
+				var wa = this.waitAdorner.Content as WaitAdorner;
+				return wa == null ? null : wa.button;
+			}
+		}
+
+		public void ShowCancelButton(Action onCancel, string msg) {
+			var wa = new WaitAdorner(onCancel, msg);
+			this.waitAdorner.Content = wa;
+
+			// Prevents flickering when decompiling small classes
+			wa.BeginAnimation(OpacityProperty, new DoubleAnimation(0, 1, new Duration(TimeSpan.FromSeconds(0.5)), FillBehavior.Stop));
+
+			wa.MouseDown += (s, e) => e.Handled = true;
+			wa.MouseUp += (s, e) => e.Handled = true;
+			wa.button.IsVisibleChanged += (s, e) => {
+				if (wa != this.waitAdorner.Content)
+					return;
+				if (wa.button.IsVisible && IsKeyboardFocusWithin)
+					wa.button.Focus();
+			};
+
+			if (IsKeyboardFocusWithin)
+				wa.button.Focus();
+		}
+
+		void HideCancelButton() {
+			var wa = this.waitAdorner.Content as WaitAdorner;
+			// It contains a progress bar that can still be shown on the screen if some older
+			// version of the .NET Framework is used. I could reproduce it with .NET 4 + VMWare + XP.
+			// Also frees the hard ref to the onCancel() delegate.
+			this.waitAdorner.Content = null;
+			if (wa != null && wa.IsKeyboardFocusWithin)
+				this.textEditorHelper.SetFocus();
+		}
+
 		// Remove commands the text editor added so we can use them for our own purposes
 		static void RemoveCommands(NewTextEditor textEditor) {
 			var handler = textEditor.TextArea.DefaultInputHandler;
@@ -243,6 +282,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public void SetOutput(ITextOutput output, IHighlightingDefinition newHighlighting) {
 			if (output == null)
 				throw new ArgumentNullException();
+
+			HideCancelButton();
 
 			//TODO: Is this optimization worth it?
 			var newLastOutput = new LastOutput(output, newHighlighting);
@@ -365,7 +406,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		void FollowReferenceNewTab() {
 			if (textEditorHelper == null)
 				return;
-			textEditorHelper.GoTo(GetCurrentReferenceSegment(), true, true);
+			textEditorHelper.GoTo(GetCurrentReferenceSegment(), true, true, true);
 		}
 
 		void ClearMarkedReferencesAndPopups() {
@@ -409,7 +450,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		bool GoToTarget(ReferenceSegment refSeg, bool canJumpToReference, bool canRecordHistory) {
 			if (textEditorHelper == null)
 				return false;
-			return textEditorHelper.GoTo(refSeg, false, true);
+			//TODO: canJumpToReference isn't used
+			return textEditorHelper.GoTo(refSeg, false, true, canRecordHistory);
 		}
 
 		internal bool IsOwnerOf(ReferenceSegment refSeg) {
@@ -492,7 +534,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			textEditorHelper.SetActive();
 			textEditorHelper.SetFocus();
 			TextEditor.GoToMousePosition();
-			e.Handled = textEditorHelper.GoTo(referenceSegment, newTab, false);
+			e.Handled = textEditorHelper.GoTo(referenceSegment, newTab, false, true);
 		}
 
 		internal bool MarkReferences(ReferenceSegment referenceSegment) {
@@ -528,6 +570,26 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 			markedReferences.Clear();
 			previousReferenceSegment = null;
+		}
+
+		public bool GoToLocation(object @ref) {
+			if (@ref == null)
+				return false;
+
+			var member = @ref as IMemberDef;
+			if (member != null) {
+				var refSeg = references == null ? null : references.FirstOrDefault(a => a.IsLocalTarget && a.Reference == member);
+				return GoToTarget(refSeg, false, false);
+			}
+
+			var codeRef = @ref as CodeReferenceSegment;
+			if (codeRef != null) {
+				var refSeg = references == null ? null : references.FirstOrDefault(a => a.Equals(codeRef));
+				return GoToTarget(refSeg, false, false);
+			}
+
+			Debug.Fail(string.Format("Unknown type: {0} = {1}", @ref.GetType(), @ref));
+			return false;
 		}
 	}
 }

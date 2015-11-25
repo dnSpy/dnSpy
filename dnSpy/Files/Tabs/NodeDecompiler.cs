@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
 using ICSharpCode.Decompiler;
@@ -34,15 +35,28 @@ namespace dnSpy.Files.Tabs {
 		Field,
 		Property,
 		Event,
+		AssemblyRef,
+		BaseTypeFolder,
+		BaseType,
+		DerivedType,
+		DerivedTypesFolder,
+		ModuleRef,
+		Namespace,
+		PEFileNode,
+		References,
+		UnknownFileNode,
+		MessageNode,
 	}
 
 	struct NodeDecompiler {
+		readonly Func<Func<object>, object> execInThread;
 		readonly ITextOutput output;
 		readonly ILanguage language;
 		readonly DecompilationOptions decompilationOptions;
 		readonly IFileTreeNodeData node;
 
-		public NodeDecompiler(ITextOutput output, ILanguage language, DecompilationOptions decompilationOptions, IFileTreeNodeData node) {
+		public NodeDecompiler(Func<Func<object>, object> execInThread, ITextOutput output, ILanguage language, DecompilationOptions decompilationOptions, IFileTreeNodeData node) {
+			this.execInThread = execInThread;
 			this.output = output;
 			this.language = language;
 			this.decompilationOptions = decompilationOptions;
@@ -87,10 +101,113 @@ namespace dnSpy.Files.Tabs {
 				language.Decompile(((IEventNode)node).EventDef, output, decompilationOptions);
 				break;
 
+			case NodeType.AssemblyRef:
+				Decompile((IAssemblyReferenceNode)node);
+				break;
+
+			case NodeType.BaseTypeFolder:
+				Decompile((IBaseTypeFolderNode)node);
+				break;
+
+			case NodeType.BaseType:
+				Decompile((IBaseTypeNode)node);
+				break;
+
+			case NodeType.DerivedType:
+				Decompile((IDerivedTypeNode)node);
+				break;
+
+			case NodeType.DerivedTypesFolder:
+				Decompile((IDerivedTypesFolderNode)node);
+				break;
+
+			case NodeType.ModuleRef:
+				Decompile((IModuleReferenceNode)node);
+				break;
+
+			case NodeType.Namespace:
+				Decompile((INamespaceNode)node);
+				break;
+
+			case NodeType.PEFileNode:
+				Decompile((IPEFileNode)node);
+				break;
+
+			case NodeType.References:
+				Decompile((IReferencesNode)node);
+				break;
+
+			case NodeType.UnknownFileNode:
+				Decompile((IUnknownFileNode)node);
+				break;
+
+			case NodeType.MessageNode:
+				Decompile((IMessageNode)node);
+				break;
+
 			default:
 				Debug.Fail(string.Format("Unknown NodeType: {0}", nodeType));
 				goto case NodeType.Unknown;
 			}
+		}
+
+		IFileTreeNodeData[] GetChildren() {
+			var n = node;
+			return (IFileTreeNodeData[])execInThread(() => {
+				n.TreeNode.EnsureChildrenLoaded();
+				return n.TreeNode.DataChildren.OfType<IFileTreeNodeData>().ToArray();
+			});
+		}
+
+		void Decompile(IAssemblyReferenceNode node) {
+			language.WriteCommentLine(output, node.AssemblyRef.ToString());
+		}
+
+		void Decompile(IBaseTypeFolderNode node) {
+			foreach (var child in GetChildren().OfType<IBaseTypeNode>())
+				Decompile(child);
+		}
+
+		void Decompile(IBaseTypeNode node) {
+			language.WriteCommentLine(output, node.TypeDefOrRef.ReflectionFullName);
+		}
+
+		void Decompile(IDerivedTypeNode node) {
+			language.WriteCommentLine(output, node.TypeDef.ReflectionFullName);
+		}
+
+		void Decompile(IDerivedTypesFolderNode node) {
+			foreach (var child in GetChildren().OfType<IDerivedTypeNode>())
+				Decompile(child);
+		}
+
+		void Decompile(IModuleReferenceNode node) {
+			language.WriteCommentLine(output, node.ModuleRef.ToString());
+		}
+
+		void Decompile(INamespaceNode node) {
+			language.WriteCommentLine(output, node.Name);
+		}
+
+		void Decompile(IPEFileNode node) {
+			language.WriteCommentLine(output, node.DnSpyFile.Filename);
+		}
+
+		void Decompile(IReferencesNode node) {
+			foreach (var child in GetChildren()) {
+				if (child is IAssemblyReferenceNode)
+					Decompile((IAssemblyReferenceNode)child);
+				else if (child is IModuleReferenceNode)
+					Decompile((IModuleReferenceNode)child);
+			}
+		}
+
+		void Decompile(IUnknownFileNode node) {
+			language.WriteCommentLine(output, node.DnSpyFile.Filename);
+		}
+
+		void Decompile(IMessageNode node) {
+			language.WriteCommentLine(output, node.Message);
 		}
 
 		static NodeType GetNodeType(IFileTreeNodeData node) {
@@ -121,6 +238,28 @@ namespace dnSpy.Files.Tabs {
 				return NodeType.Property;
 			if (node is IEventNode)
 				return NodeType.Event;
+			if (node is IAssemblyReferenceNode)
+				return NodeType.AssemblyRef;
+			if (node is IBaseTypeFolderNode)
+				return NodeType.BaseTypeFolder;
+			if (node is IBaseTypeNode)
+				return NodeType.BaseType;
+			if (node is IDerivedTypeNode)
+				return NodeType.DerivedType;
+			if (node is IDerivedTypesFolderNode)
+				return NodeType.DerivedTypesFolder;
+			if (node is IModuleReferenceNode)
+				return NodeType.ModuleRef;
+			if (node is INamespaceNode)
+				return NodeType.Namespace;
+			if (node is IPEFileNode)
+				return NodeType.PEFileNode;
+			if (node is IReferencesNode)
+				return NodeType.References;
+			if (node is IUnknownFileNode)
+				return NodeType.UnknownFileNode;
+			if (node is IMessageNode)
+				return NodeType.MessageNode;
 
 			return NodeType.Unknown;
 		}

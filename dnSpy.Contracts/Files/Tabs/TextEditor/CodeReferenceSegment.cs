@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Menus {
+namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 	/// <summary>
 	/// A reference in code
 	/// </summary>

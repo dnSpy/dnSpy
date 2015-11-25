@@ -199,13 +199,19 @@ namespace dnSpy.Files.Tabs {
 		void TreeView_SelectionChanged(object sender, TVSelectionChangedEventArgs e) {
 			if (disableSelectionChangedEventCounter > 0)
 				return;
-			ShowNodes(((ITreeView)sender).SelectedItems.OfType<IFileTreeNodeData>().ToArray());
+			ShowNodes(((ITreeView)sender).TopLevelSelection.OfType<IFileTreeNodeData>().ToArray());
 		}
 		int disableSelectionChangedEventCounter = 0;
 
 		void ShowNodes(IFileTreeNodeData[] nodes) {
 			var tabContent = CreateTabContent(nodes);
-			SafeActiveTabContentImpl.Show(tabContent, null, null);
+			disableSelectTreeNodes++;
+			try {
+				SafeActiveTabContentImpl.Show(tabContent, null, null);
+			}
+			finally {
+				disableSelectTreeNodes--;
+			}
 		}
 
 		IFileTabContent CreateTabContent(IFileTreeNodeData[] nodes) {
@@ -225,7 +231,10 @@ namespace dnSpy.Files.Tabs {
 			return impl;
 		}
 
+		int disableSelectTreeNodes;
 		internal void OnNewTabContentShown(IFileTab fileTab) {
+			if (disableSelectTreeNodes > 0)
+				return;
 			if (fileTab != ActiveTabContentImpl)
 				return;
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
@@ -233,7 +242,7 @@ namespace dnSpy.Files.Tabs {
 					OnNewTabContentShownDelay(fileTab);
 			}));
 		}
-		
+
 		void OnNewTabContentShownDelay(IFileTab fileTab) {
 			var newNodes = fileTab.FileTabContent.Nodes.ToArray();
 			if (Equals(fileTreeView.TreeView.SelectedItems, newNodes))
@@ -244,6 +253,7 @@ namespace dnSpy.Files.Tabs {
 			var focusedElem = Keyboard.FocusedElement;
 			if (((UIElement)fileTreeView.TreeView.UIObject).IsKeyboardFocusWithin)
 				focusedElem = null;
+			bool tabGroupHasFocus = tabGroupManager.TabGroups.Any(a => a.IsKeyboardFocusWithin);
 
 			disableSelectionChangedEventCounter++;
 			try {
@@ -253,8 +263,16 @@ namespace dnSpy.Files.Tabs {
 				disableSelectionChangedEventCounter--;
 			}
 
-			if (focusedElem != null && Keyboard.FocusedElement != focusedElem)
-				focusedElem.Focus();
+			if (focusedElem != null && Keyboard.FocusedElement != focusedElem) {
+				if (tabGroupHasFocus) {
+					var tab = ActiveTabContentImpl;
+					Debug.Assert(tab != null);
+					if (tab != null)
+						tab.SetFocus();
+				}
+				else
+					focusedElem.Focus();
+			}
 		}
 
 		static bool Equals(ITreeNodeData[] a, ITreeNodeData[] b) {

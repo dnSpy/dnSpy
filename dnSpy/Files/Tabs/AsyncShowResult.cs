@@ -17,14 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Files.TreeView {
-	/// <summary>
-	/// A PE file (but not a .NET file)
-	/// </summary>
-	public interface IPEFileNode : IDnSpyFileNode {
-		/// <summary>
-		/// true if it's an .exe file, false if it's a .dll file
-		/// </summary>
-		bool IsExe { get; }
+using System;
+using System.Threading.Tasks;
+using dnSpy.Contracts.Files.Tabs;
+
+namespace dnSpy.Files.Tabs {
+	sealed class AsyncShowResult : IAsyncShowResult {
+		public Exception Exception { get; set; }
+		public bool IsCanceled { get; set; }
+		public bool CanShowOutput { get; set; }
+
+		public AsyncShowResult() {
+			this.CanShowOutput = true;
+		}
+
+		public AsyncShowResult(Task t, bool canShowOutput) {
+			this.Exception = t.Exception;
+			this.IsCanceled = t.IsCanceled;
+			this.CanShowOutput = canShowOutput;
+		}
 	}
 }

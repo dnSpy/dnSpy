@@ -17,14 +17,27 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Files.TreeView {
+using System;
+
+namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>
-	/// A PE file (but not a .NET file)
+	/// Result passed to <see cref="IAsyncFileTabContent.EndAsyncShow(IFileTabUIContext, object, IAsyncShowResult)"/>
 	/// </summary>
-	public interface IPEFileNode : IDnSpyFileNode {
+	public interface IAsyncShowResult {
 		/// <summary>
-		/// true if it's an .exe file, false if it's a .dll file
+		/// The caught exception or null if none
 		/// </summary>
-		bool IsExe { get; }
+		Exception Exception { get; }
+
+		/// <summary>
+		/// true if it was canceled (the cancellation token threw an exception)
+		/// </summary>
+		bool IsCanceled { get; }
+
+		/// <summary>
+		/// true if it's still the visible tab and the UI context can be written to. It can be false
+		/// if the asynchronous operation got canceled by the user.
+		/// </summary>
+		bool CanShowOutput { get; }
 	}
 }

@@ -67,6 +67,7 @@
     <Compile Include="Files\SerializedDnSpyModule.cs" />
     <Compile Include="Files\Tabs\FileTabReferenceResult.cs" />
     <Compile Include="Files\Tabs\IAsyncFileTabContent.cs" />
+    <Compile Include="Files\Tabs\IAsyncShowResult.cs" />
     <Compile Include="Files\Tabs\IFileTab.cs" />
     <Compile Include="Files\Tabs\IFileTabContent.cs" />
     <Compile Include="Files\Tabs\IFileTabContentFactory.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Files\Tabs\IReferenceFileTabContentCreator.cs" />
     <Compile Include="Files\Tabs\ShowTabContentEventArgs.cs" />
     <Compile Include="Files\Tabs\TabsConstants.cs" />
+    <Compile Include="Files\Tabs\TextEditor\CodeReferenceSegment.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNode.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNodeContext.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextEditorUIContext.cs" />
@@ -125,7 +127,6 @@
     <Compile Include="Languages\ProjectFileRef.cs" />
     <Compile Include="Languages\ProjectOptions.cs" />
     <Compile Include="Languages\SyntaxHighlightOutputToTextOutput.cs" />
-    <Compile Include="Menus\CodeReferenceSegment.cs" />
     <Compile Include="Menus\CreatedMenuItem.cs" />
     <Compile Include="Menus\ExportMenuAttribute.cs" />
     <Compile Include="Menus\ExportMenuItemAttribute.cs" />

@@ -30,12 +30,12 @@ namespace dnSpy.Contracts.Languages {
 	/// </summary>
 	public interface ILanguage {
 		/// <summary>
-		/// Language name shown in UI
+		/// Language name shown to the user
 		/// </summary>
 		string NameUI { get; }
 
 		/// <summary>
-		/// Order of language when shown in a UI
+		/// Order of language when shown to the user
 		/// </summary>
 		double OrderUI { get; }
 

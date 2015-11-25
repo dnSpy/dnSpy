@@ -27,6 +27,7 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
+using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Decompiler;
 using ICSharpCode.Decompiler;
 
@@ -126,15 +127,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		sealed class DecompileContext {
 			public DecompileNodeContext DecompileNodeContext;
-			public CancellationTokenSource CancellationTokenSource;
 			public AvalonEditTextOutput CachedOutput;
+			public CancellationTokenSource CancellationTokenSource;
 		}
 
 		DecompileContext CreateDecompileContext() {
 			var decompileContext = new DecompileContext();
-			decompileContext.CancellationTokenSource = new CancellationTokenSource();
 			var decompilationOptions = new DecompilationOptions();
-			decompilationOptions.CancellationToken = decompileContext.CancellationTokenSource.Token;
 			decompilationOptions.DecompilerSettings = new DecompilerSettings();//TODO: Init from settings
 			decompilationOptions.DontShowCreateMethodBodyExceptions = true;
 			var output = new AvalonEditTextOutput();
@@ -165,27 +164,50 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return decompileContext;
 		}
 
-		public void AsyncWorker(IFileTabUIContext uiContext, object userData) {
+		public void AsyncWorker(IFileTabUIContext uiContext, object userData, CancellationTokenSource source) {
 			var decompileContext = (DecompileContext)userData;
+			decompileContext.CancellationTokenSource = source;
+			decompileContext.DecompileNodeContext.DecompilationOptions.CancellationToken = source.Token;
 			decompileFileTabContentFactory.FileTreeNodeDecompiler.Decompile(decompileContext.DecompileNodeContext, nodes);
 		}
 
-		public void EndAsyncShow(IFileTabUIContext uiContext, object userData) {
+		public void EndAsyncShow(IFileTabUIContext uiContext, object userData, IAsyncShowResult result) {
 			var decompileContext = (DecompileContext)userData;
 
 			var uiCtx = (ITextEditorUIContext)uiContext;
 
-			var output = decompileContext.CachedOutput;
-			if (output == null) {
-				output = (AvalonEditTextOutput)decompileContext.DecompileNodeContext.Output;
-				decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Language, nodes, decompileContext.DecompileNodeContext.DecompilationOptions, output);
+			AvalonEditTextOutput output;
+
+			if (result.IsCanceled) {
+				output = new AvalonEditTextOutput();
+				output.Write("The operation was canceled", TextTokenType.Error);
 			}
-			uiCtx.SetOutput(output, decompileContext.DecompileNodeContext.Language.GetHighlightingDefinition());
+			else if (result.Exception != null) {
+				output = new AvalonEditTextOutput();
+				output.Write("An error occurred", TextTokenType.Error);
+				output.WriteLine();
+				output.Write(result.Exception.ToString(), TextTokenType.Text);
+			}
+			else {
+				output = decompileContext.CachedOutput;
+				if (output == null) {
+					output = (AvalonEditTextOutput)decompileContext.DecompileNodeContext.Output;
+					decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Language, nodes, decompileContext.DecompileNodeContext.DecompilationOptions, output);
+				}
+			}
+
+			if (result.CanShowOutput)
+				uiCtx.SetOutput(output, decompileContext.DecompileNodeContext.Language.GetHighlightingDefinition());
 		}
 
 		public bool CanStartAsyncWorker(IFileTabUIContext uiContext, object userData) {
 			var decompileContext = (DecompileContext)userData;
-			return decompileContext.CachedOutput == null;
+			if (decompileContext.CachedOutput != null)
+				return false;
+
+			var uiCtx = (ITextEditorUIContext)uiContext;
+			uiCtx.ShowCancelButton(() => decompileContext.CancellationTokenSource.Cancel(), "Decompiling...");
+			return true;
 		}
 
 		public bool NeedRefresh() {

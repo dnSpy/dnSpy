@@ -40,6 +40,11 @@ namespace dnSpy.Contracts.Tabs {
 		ITabContent ActiveTabContent { get; set; }
 
 		/// <summary>
+		/// true if keyboard focus is within the tab
+		/// </summary>
+		bool IsKeyboardFocusWithin { get; }
+
+		/// <summary>
 		/// Sets keyboard focus
 		/// </summary>
 		/// <param name="content">Content</param>

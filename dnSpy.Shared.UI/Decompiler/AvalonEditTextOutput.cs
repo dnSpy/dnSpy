@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.AvalonEdit.Document;
@@ -36,6 +37,17 @@ namespace dnSpy.Shared.UI.Decompiler {
 		public object Reference;
 		public bool IsLocal;
 		public bool IsLocalTarget;
+
+		public bool Equals(CodeReferenceSegment codeRef) {
+			return codeRef != null &&
+				Reference == codeRef.Reference &&
+				IsLocal == codeRef.IsLocal &&
+				IsLocalTarget == codeRef.IsLocalTarget;
+		}
+
+		public CodeReferenceSegment ToCodeReferenceSegment() {
+			return new CodeReferenceSegment(Reference, IsLocal, IsLocalTarget);
+		}
 	}
 
 	/// <summary>

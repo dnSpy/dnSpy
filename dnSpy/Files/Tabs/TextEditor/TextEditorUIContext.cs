@@ -34,7 +34,7 @@ using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	interface ITextEditorHelper {
-		bool GoTo(ReferenceSegment refSeg, bool newTab, bool followLocalRefs);
+		bool GoTo(ReferenceSegment refSeg, bool newTab, bool followLocalRefs, bool canRecordHistory);
 		void SetFocus();
 		void SetActive();
 	}
@@ -60,7 +60,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 				var @ref = teCtrl.GetReferenceSegmentAt(position);
 				if (@ref != null)
-					yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, new CodeReferenceSegment(@ref.Reference, @ref.IsLocal, @ref.IsLocalTarget));
+					yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, @ref.ToCodeReferenceSegment());
 			}
 		}
 
@@ -113,7 +113,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public UIElement FocusedElement {
 			get {
-				//TODO: if button is visible, return it
+				var button = textEditorControl.CancelButton;
+				if (button != null && button.IsVisible)
+					return button;
 				return textEditorControl.TextEditor.TextArea;
 			}
 		}
@@ -154,25 +156,25 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			//TODO: CodeMappings should be init'd by the debugger plugin
 		}
 
-		void FollowReference(object @ref, bool newTab) {
+		void FollowReference(ReferenceSegment refSeg, bool newTab) {
 			Debug.Assert(FileTab != null);
 			if (FileTab == null)
 				return;
-			FileTab.FollowReference(@ref, newTab);
+			FileTab.FollowReference(refSeg.ToCodeReferenceSegment(), newTab);
 		}
 
-		bool ITextEditorHelper.GoTo(ReferenceSegment refSeg, bool newTab, bool followLocalRefs) {
+		bool ITextEditorHelper.GoTo(ReferenceSegment refSeg, bool newTab, bool followLocalRefs, bool canRecordHistory) {
 			if (refSeg == null)
 				return false;
 
 			if (newTab) {
-				FollowReference(refSeg.Reference, newTab);
+				FollowReference(refSeg, newTab);
 				return true;
 			}
 
 			if (followLocalRefs) {
 				if (!textEditorControl.IsOwnerOf(refSeg)) {
-					FollowReference(refSeg.Reference, newTab);
+					FollowReference(refSeg, newTab);
 					return true;
 				}
 
@@ -181,7 +183,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					refSeg = localTarget;
 
 				if (refSeg.IsLocalTarget) {
-					//TODO: RecordHistory(this);
+					//TODO: if (canRecordHistory) RecordHistory(this);
 					var line = textEditorControl.TextEditor.Document.GetLineByOffset(refSeg.StartOffset);
 					int column = refSeg.StartOffset - line.Offset + 1;
 					textEditorControl.ScrollAndMoveCaretTo(line.LineNumber, column);
@@ -190,7 +192,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 				if (refSeg.IsLocal)
 					return false;
-				FollowReference(refSeg.Reference, newTab);
+				FollowReference(refSeg, newTab);
 				return true;
 			}
 			else {
@@ -206,7 +208,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 						pos = textEditorControl.DefinitionLookup.GetDefinitionPosition(refSeg.Reference);
 				}
 				if (pos >= 0) {
-					//TODO: RecordHistory(this);
+					//TODO: if (canRecordHistory) RecordHistory(this);
 					textEditorControl.MarkReferences(refSeg);
 					((ITextEditorHelper)this).SetFocus();
 					textEditorControl.TextEditor.Select(pos, 0);
@@ -218,7 +220,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					return false;   // Allow another handler to set a new caret position
 
 				((ITextEditorHelper)this).SetFocus();
-				FollowReference(refSeg.Reference, newTab);
+				FollowReference(refSeg, newTab);
 				return true;
 			}
 		}
@@ -235,6 +237,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
 			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTEDITOR, textEditorControl.TextEditor);
 			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTAREA, textEditorControl.TextEditor.TextArea);
+		}
+
+		public void ShowCancelButton(Action onCancel, string msg) {
+			textEditorControl.ShowCancelButton(onCancel, msg);
+		}
+
+		public void MoveCaretTo(object @ref) {
+			textEditorControl.GoToLocation(@ref);
 		}
 	}
 }

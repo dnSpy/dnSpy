@@ -100,20 +100,13 @@ namespace dnSpy.Menus {
 						return true;
 				}
 
-				return menuOpenedCounter != 0;
+				foreach (var cm in openedContextMenus) {
+					if (cm.IsOpen)
+						return true;
+				}
+
+				return false;
 			}
-		}
-		int menuOpenedCounter;
-
-		void MenuOpened() {
-			Debug.Assert(menuOpenedCounter >= 0);
-			// Can be 2 when switching from one menu to another one
-			menuOpenedCounter++;
-		}
-
-		void MenuClosed() {
-			Debug.Assert(menuOpenedCounter >= 1);
-			menuOpenedCounter--;
 		}
 
 		[ImportingConstructor]
@@ -271,14 +264,18 @@ namespace dnSpy.Menus {
 			foreach (var i in allItems)
 				menu.Items.Add(i);
 
-			menu.Opened += (s, e) => MenuOpened();
-			menu.Closed += (s, e) => { MenuClosed(); ctxMenuElem.ContextMenu = new ContextMenu(); };
+			menu.Opened += (s, e) => openedContextMenus.Add(menu);
+			menu.Closed += (s, e) => {
+				openedContextMenus.Remove(menu);
+				ctxMenuElem.ContextMenu = new ContextMenu();
+			};
 			if (initCtxMenu != null)
 				initCtxMenu.Initialize(ctx, menu);
 			ctxMenuElem.ContextMenu = menu;
 			prevEventArgs.Target = evArgs;
 			return true;
 		}
+		readonly List<ContextMenu> openedContextMenus = new List<ContextMenu>();
 
 		List<object> CreateMenuItems(IMenuItemContext ctx, List<MenuItemGroupMD> groups, IInputElement commandTarget, MenuItem firstMenuItem) {
 			var allItems = new List<object>();

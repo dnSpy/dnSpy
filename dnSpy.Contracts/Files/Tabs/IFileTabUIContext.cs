@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		object UIObject { get; }
 
 		/// <summary>
-		/// Gets the element that should should get focus when the tab is selected, or null
+		/// Gets the element that should get focus when the tab is selected, or null
 		/// </summary>
 		UIElement FocusedElement { get; }
 
@@ -52,7 +52,8 @@ namespace dnSpy.Contracts.Files.Tabs {
 
 		/// <summary>
 		/// Restores UI state. <paramref name="obj"/> was created by <see cref="Serialize()"/> but
-		/// could also be null or an invalid value.
+		/// could also be null or an invalid value. The callee is responsible for verifying
+		/// <paramref name="obj"/>.
 		/// </summary>
 		/// <param name="obj">Serialized UI state</param>
 		void Deserialize(object obj);
