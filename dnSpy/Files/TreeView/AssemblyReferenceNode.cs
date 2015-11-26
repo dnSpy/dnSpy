@@ -45,7 +45,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(assemblyRef);
+			return dnImgMgr.GetImageReferenceAssemblyRef();
 		}
 
 		public override NodePathName NodePathName {

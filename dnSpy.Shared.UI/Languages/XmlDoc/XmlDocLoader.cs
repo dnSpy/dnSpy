@@ -24,7 +24,7 @@ using ICSharpCode.NRefactory.Documentation;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 
-namespace dnSpy.Languages.XmlDoc {
+namespace dnSpy.Shared.UI.Languages.XmlDoc {
 	/// <summary>
 	/// Helps finding and loading .xml documentation.
 	/// </summary>

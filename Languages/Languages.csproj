@@ -51,10 +51,6 @@
     <Compile Include="VB\ILSpyEnvironmentProvider.cs" />
     <Compile Include="VB\VBLanguage.cs" />
     <Compile Include="VB\VBTextOutputFormatter.cs" />
-    <Compile Include="XmlDoc\AddXmlDocTransform.cs" />
-    <Compile Include="XmlDoc\XmlDocKeyProvider.cs" />
-    <Compile Include="XmlDoc\XmlDocLoader.cs" />
-    <Compile Include="XmlDoc\XmlDocRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dnlib\src\dnlib.csproj">

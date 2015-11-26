@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
@@ -34,7 +35,7 @@ using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	interface ITextEditorHelper {
-		bool GoTo(ReferenceSegment refSeg, bool newTab, bool followLocalRefs, bool canRecordHistory);
+		void FollowReference(CodeReferenceSegment refSeg, bool newTab);
 		void SetFocus();
 		void SetActive();
 	}
@@ -156,73 +157,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			//TODO: CodeMappings should be init'd by the debugger plugin
 		}
 
-		void FollowReference(ReferenceSegment refSeg, bool newTab) {
+		void ITextEditorHelper.FollowReference(CodeReferenceSegment codeRef, bool newTab) {
 			Debug.Assert(FileTab != null);
 			if (FileTab == null)
 				return;
-			FileTab.FollowReference(refSeg.ToCodeReferenceSegment(), newTab);
-		}
-
-		bool ITextEditorHelper.GoTo(ReferenceSegment refSeg, bool newTab, bool followLocalRefs, bool canRecordHistory) {
-			if (refSeg == null)
-				return false;
-
-			if (newTab) {
-				FollowReference(refSeg, newTab);
-				return true;
-			}
-
-			if (followLocalRefs) {
-				if (!textEditorControl.IsOwnerOf(refSeg)) {
-					FollowReference(refSeg, newTab);
-					return true;
-				}
-
-				var localTarget = textEditorControl.FindLocalTarget(refSeg);
-				if (localTarget != null)
-					refSeg = localTarget;
-
-				if (refSeg.IsLocalTarget) {
-					//TODO: if (canRecordHistory) RecordHistory(this);
-					var line = textEditorControl.TextEditor.Document.GetLineByOffset(refSeg.StartOffset);
-					int column = refSeg.StartOffset - line.Offset + 1;
-					textEditorControl.ScrollAndMoveCaretTo(line.LineNumber, column);
-					return true;
-				}
-
-				if (refSeg.IsLocal)
-					return false;
-				FollowReference(refSeg, newTab);
-				return true;
-			}
-			else {
-				var localTarget = textEditorControl.FindLocalTarget(refSeg);
-				if (localTarget != null)
-					refSeg = localTarget;
-
-				int pos = -1;
-				if (!refSeg.IsLocal) {
-					if (refSeg.IsLocalTarget)
-						pos = refSeg.EndOffset;
-					if (pos < 0 && textEditorControl.DefinitionLookup != null)
-						pos = textEditorControl.DefinitionLookup.GetDefinitionPosition(refSeg.Reference);
-				}
-				if (pos >= 0) {
-					//TODO: if (canRecordHistory) RecordHistory(this);
-					textEditorControl.MarkReferences(refSeg);
-					((ITextEditorHelper)this).SetFocus();
-					textEditorControl.TextEditor.Select(pos, 0);
-					textEditorControl.TextEditor.ScrollTo(textEditorControl.TextEditor.TextArea.Caret.Line, textEditorControl.TextEditor.TextArea.Caret.Column);
-					return true;
-				}
-
-				if (refSeg.IsLocal && textEditorControl.MarkReferences(refSeg))
-					return false;   // Allow another handler to set a new caret position
-
-				((ITextEditorHelper)this).SetFocus();
-				FollowReference(refSeg, newTab);
-				return true;
-			}
+			FileTab.FollowReference(codeRef, newTab);
 		}
 
 		void ITextEditorHelper.SetFocus() {
@@ -233,18 +172,22 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			FileTab.FileTabManager.ActiveTab = FileTab;
 		}
 
-		public void Dispose() {
-			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
-			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTEDITOR, textEditorControl.TextEditor);
-			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTAREA, textEditorControl.TextEditor.TextArea);
-		}
-
 		public void ShowCancelButton(Action onCancel, string msg) {
 			textEditorControl.ShowCancelButton(onCancel, msg);
 		}
 
 		public void MoveCaretTo(object @ref) {
 			textEditorControl.GoToLocation(@ref);
+		}
+
+		public object GetReferenceSegmentAt(MouseEventArgs e) {
+			return textEditorControl.GetReferenceSegmentAt(e);
+		}
+
+		public void Dispose() {
+			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
+			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTEDITOR, textEditorControl.TextEditor);
+			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTAREA, textEditorControl.TextEditor.TextArea);
 		}
 	}
 }

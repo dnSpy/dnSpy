@@ -76,6 +76,7 @@
     <Compile Include="Files\Tabs\IFileTabUIContext.cs" />
     <Compile Include="Files\Tabs\IFileTabUIContextCreator.cs" />
     <Compile Include="Files\Tabs\IFileTabUIContextLocator.cs" />
+    <Compile Include="Files\Tabs\ILanguageTabContent.cs" />
     <Compile Include="Files\Tabs\IReferenceFileTabContentCreator.cs" />
     <Compile Include="Files\Tabs\ShowTabContentEventArgs.cs" />
     <Compile Include="Files\Tabs\TabsConstants.cs" />
@@ -83,6 +84,10 @@
     <Compile Include="Files\Tabs\TextEditor\IDecompileNode.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNodeContext.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextEditorUIContext.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ToolTips\ICodeToolTipCreator.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ToolTips\ICodeToolTipWriter.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ToolTips\IToolTipContentCreator.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ToolTips\IToolTipContentCreatorContext.cs" />
     <Compile Include="Files\TreeView\FileTVConstants.cs" />
     <Compile Include="Files\TreeView\IAssemblyFileNode.cs" />
     <Compile Include="Files\TreeView\IAssemblyReferenceNode.cs" />

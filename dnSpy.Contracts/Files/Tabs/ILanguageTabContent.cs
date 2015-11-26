@@ -17,32 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Text;
-using dnSpy.Contracts.Highlighting;
-using dnSpy.NRefactory;
+using dnSpy.Contracts.Languages;
 
-namespace dnSpy.Shared.UI.Highlighting {
-	public sealed class NoSyntaxHighlightOutput : ISyntaxHighlightOutput {
-		readonly StringBuilder sb;
-
-		public bool IsEmpty {
-			get { return sb.Length == 0; }
-		}
-
-		public string Text {
-			get { return sb.ToString(); }
-		}
-
-		public NoSyntaxHighlightOutput() {
-			this.sb = new StringBuilder();
-		}
-
-		public void Write(string s, TextTokenType tokenType) {
-			sb.Append(s);
-		}
-
-		public override string ToString() {
-			return sb.ToString();
-		}
+namespace dnSpy.Contracts.Files.Tabs {
+	/// <summary>
+	/// A <see cref="IFileTabContent"/> that uses a <see cref="ILanguage"/> to generate its content
+	/// </summary>
+	public interface ILanguageTabContent : IFileTabContent {
+		/// <summary>
+		/// Gets the language used to generate the content
+		/// </summary>
+		ILanguage Language { get; }
 	}
 }

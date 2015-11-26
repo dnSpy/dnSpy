@@ -22,7 +22,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using dnSpy.NRefactory;
 
-namespace dnSpy.Languages.XmlDoc {
+namespace dnSpy.Shared.UI.Languages.XmlDoc {
 	public interface IXmlDocOutput {
 		void WriteNewLine();
 		void WriteSpace();
@@ -55,7 +55,7 @@ namespace dnSpy.Languages.XmlDoc {
 			WriteXmlDoc(this, xmlDocumentation);
 		}
 
-		internal static bool WriteXmlDoc(IXmlDocOutput output, string xmlDocumentation) {
+		public static bool WriteXmlDoc(IXmlDocOutput output, string xmlDocumentation) {
 			if (xmlDocumentation == null)
 				return false;
 			try {
@@ -68,7 +68,10 @@ namespace dnSpy.Languages.XmlDoc {
 			return true;
 		}
 
-		internal static readonly Regex whitespace = new Regex(@"\s+");
+		public static Regex WhitespaceRegex {
+			get { return whitespace; }
+		}
+		static readonly Regex whitespace = new Regex(@"\s+");
 
 		static void AddXmlDocumentation(IXmlDocOutput output, XmlReader xml) {
 			string lastElemName = string.Empty;
@@ -161,7 +164,7 @@ namespace dnSpy.Languages.XmlDoc {
 			}
 		}
 
-		internal static string GetCref(string cref) {
+		public static string GetCref(string cref) {
 			if (string.IsNullOrWhiteSpace(cref))
 				return string.Empty;
 			if (cref.Length < 2) {

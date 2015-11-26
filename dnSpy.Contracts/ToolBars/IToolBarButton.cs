@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.ToolBars {
 		string GetIcon(IToolBarItemContext context);
 
 		/// <summary>
-		/// Gets the tool tip or null to use the tool tip from the attribute
+		/// Gets the tooltip or null to use the tooltip from the attribute
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>

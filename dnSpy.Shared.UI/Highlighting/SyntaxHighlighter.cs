@@ -39,6 +39,14 @@ namespace dnSpy.Shared.UI.Highlighting {
 		readonly LanguageTokens tokens;
 		readonly StringBuilder sb;
 
+		public bool IsEmpty {
+			get { return sb.Length == 0; }
+		}
+
+		public string Text {
+			get { return sb.ToString(); }
+		}
+
 		public SyntaxHighlighter() {
 			this.tokens = new LanguageTokens();
 			this.sb = new StringBuilder();
@@ -129,6 +137,10 @@ namespace dnSpy.Shared.UI.Highlighting {
 			if (useEllipsis)
 				textBlock.TextTrimming = TextTrimming.CharacterEllipsis;
 			return textBlock;
+		}
+
+		public override string ToString() {
+			return Text;
 		}
 
 		static IThemeColor GetColor(TextTokenType tokenType) {

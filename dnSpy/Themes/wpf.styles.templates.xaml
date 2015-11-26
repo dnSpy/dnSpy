@@ -5144,4 +5144,19 @@
 		</Setter>
 	</Style>
 
+    <Style x:Key="CodeToolTip"
+           BasedOn="{StaticResource {x:Type ToolTip}}"
+           TargetType="{x:Type ToolTip}">
+        <Setter Property="BorderBrush"
+                Value="{DynamicResource CodeToolTipBorder}"/>
+        <Setter Property="Background"
+                Value="{DynamicResource CodeToolTipBackground}"/>
+        <Setter Property="Foreground"
+                Value="{DynamicResource CodeToolTipForeground}"/>
+        <Setter Property="Padding"
+                Value="10,10,10,10"/>
+        <Setter Property="HasDropShadow"
+                Value="False"/>
+    </Style>
+
 </ResourceDictionary>

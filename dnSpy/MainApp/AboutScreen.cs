@@ -39,7 +39,9 @@ namespace dnSpy.MainApp {
 		}
 
 		public override void Execute(IMenuItemContext context) {
-			fileTabManager.GetOrCreateActiveTab().Show(new AboutScreenFileTabContent(), null, null);
+			var tab = fileTabManager.GetOrCreateActiveTab();
+			tab.Show(new AboutScreenFileTabContent(), null, null);
+			fileTabManager.SetFocus(tab);
 		}
 	}
 

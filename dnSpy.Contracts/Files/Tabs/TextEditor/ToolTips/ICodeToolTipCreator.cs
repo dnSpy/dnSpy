@@ -17,32 +17,39 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Files.Tabs.TextEditor;
-using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
+using dnSpy.Contracts.Images;
 
-namespace dnSpy.Contracts.Files.Tabs {
+namespace dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips {
 	/// <summary>
-	/// Constants
+	/// Creates code tooltips
 	/// </summary>
-	public static class TabsConstants {
+	public interface ICodeToolTipCreator {
 		/// <summary>
-		/// Order of decompile <see cref="IFileTabContentFactory"/> instance
+		/// Sets the image that should be shown in the tooltip or null if none should be shown
 		/// </summary>
-		public const double ORDER_DECOMPILEFILETABCONTENTFACTORY = double.MaxValue;
+		ImageReference? Image { get; set; }
 
 		/// <summary>
-		/// Order of default <see cref="IDecompileNode"/> instance
+		/// Initializes <see cref="Image"/> with an image
 		/// </summary>
-		public const double ORDER_DEFAULTDECOMPILENODE = double.MaxValue;
+		/// <param name="ref">A dnlib type, method, field, local, etc</param>
+		void SetImage(object @ref);
 
 		/// <summary>
-		/// Order of <see cref="IFileTabUIContextCreator"/> instance that creates <see cref="ITextEditorUIContext"/> instances
+		/// Gets the current output
 		/// </summary>
-		public const double ORDER_TEXTEDITORUICONTEXTCREATOR = double.MaxValue;
+		ICodeToolTipWriter Output { get; }
 
 		/// <summary>
-		/// Order of dnlib reference <see cref="IToolTipContentCreator"/> instance
+		/// Creates a new output that is shown on a new line
 		/// </summary>
-		public const double ORDER_DNLIBREFTOOLTIPCONTENTCREATOR = double.MaxValue;
+		/// <returns></returns>
+		ICodeToolTipWriter CreateNewOutput();
+
+		/// <summary>
+		/// Creates the tooltip
+		/// </summary>
+		/// <returns></returns>
+		object Create();
 	}
 }

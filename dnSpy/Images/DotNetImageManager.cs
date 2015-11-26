@@ -556,7 +556,7 @@ namespace dnSpy.Images {
 			}
 		}
 
-		public ImageReference GetImageReference(ModuleRef modRef) {
+		public ImageReference GetImageReferenceModuleRef() {
 			return new ImageReference(GetType().Assembly, "ModuleReference");
 		}
 
@@ -565,8 +565,32 @@ namespace dnSpy.Images {
 			return GetGetImageReference(mod != null ? mod.Characteristics : Characteristics.Dll);
 		}
 
-		public ImageReference GetImageReference(AssemblyRef asmRef) {
+		public ImageReference GetImageReferenceAssemblyRef() {
 			return new ImageReference(GetType().Assembly, "AssemblyReference");
+		}
+
+		public ImageReference GetImageReferenceGenericParameter() {
+			return new ImageReference(GetType().Assembly, "GenericParameter");
+		}
+
+		public ImageReference GetImageReferenceLocal() {
+			return new ImageReference(GetType().Assembly, "Local");
+		}
+
+		public ImageReference GetImageReferenceParameter() {
+			return new ImageReference(GetType().Assembly, "Parameter");
+		}
+
+		public ImageReference GetImageReferenceType() {
+			return new ImageReference(GetType().Assembly, "Class");
+		}
+
+		public ImageReference GetImageReferenceMethod() {
+			return new ImageReference(GetType().Assembly, "Method");
+		}
+
+		public ImageReference GetImageReferenceField() {
+			return new ImageReference(GetType().Assembly, "Field");
 		}
 
 		ImageReference GetGetImageReference(Characteristics ch) {

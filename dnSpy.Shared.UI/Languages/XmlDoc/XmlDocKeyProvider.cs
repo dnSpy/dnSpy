@@ -24,7 +24,7 @@ using System.Text;
 using dnlib.DotNet;
 using ICSharpCode.Decompiler;
 
-namespace dnSpy.Languages.XmlDoc {
+namespace dnSpy.Shared.UI.Languages.XmlDoc {
 	/// <summary>
 	/// Provides XML documentation tags.
 	/// </summary>

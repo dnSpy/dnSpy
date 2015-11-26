@@ -17,32 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Text;
-using dnSpy.Contracts.Highlighting;
-using dnSpy.NRefactory;
+using dnSpy.Contracts.Languages;
 
-namespace dnSpy.Shared.UI.Highlighting {
-	public sealed class NoSyntaxHighlightOutput : ISyntaxHighlightOutput {
-		readonly StringBuilder sb;
+namespace dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips {
+	/// <summary>
+	/// <see cref="IToolTipContentCreator"/> context
+	/// </summary>
+	public interface IToolTipContentCreatorContext {
+		/// <summary>
+		/// Language to use
+		/// </summary>
+		ILanguage Language { get; }
 
-		public bool IsEmpty {
-			get { return sb.Length == 0; }
-		}
-
-		public string Text {
-			get { return sb.ToString(); }
-		}
-
-		public NoSyntaxHighlightOutput() {
-			this.sb = new StringBuilder();
-		}
-
-		public void Write(string s, TextTokenType tokenType) {
-			sb.Append(s);
-		}
-
-		public override string ToString() {
-			return sb.ToString();
-		}
+		/// <summary>
+		/// Creates a <see cref="ICodeToolTipCreator"/> instance that can be used to create the
+		/// code tooltip
+		/// </summary>
+		/// <returns></returns>
+		ICodeToolTipCreator Create();
 	}
 }

@@ -49,6 +49,7 @@ using System.Xml;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Themes;
+using dnSpy.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Shared.UI.AvalonEdit;
 using dnSpy.Shared.UI.Decompiler;
 using dnSpy.Shared.UI.Highlighting;
@@ -95,9 +96,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly IconBarMargin iconBarMargin;
 		readonly SearchPanel searchPanel;
 
-		internal DefinitionLookup DefinitionLookup {
-			get { return definitionLookup; }
-		}
 		DefinitionLookup definitionLookup;
 		TextSegmentCollection<ReferenceSegment> references;
 		readonly TextMarkerService textMarkerService;
@@ -107,14 +105,18 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly UIElementGenerator uiElementGenerator;
 		List<VisualLineElementGenerator> activeCustomElementGenerators = new List<VisualLineElementGenerator>();
 
-		public TextEditorControl(IThemeManager themeManager) {
+		readonly ToolTipHelper toolTipHelper;
+
+		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper) {
 			this.themeManager = themeManager;
+			this.toolTipHelper = toolTipHelper;
 			InitializeComponent();
 
 			Loaded += TextEditorControl_Loaded;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
 			textEditor = new NewTextEditor(themeManager);
+			this.toolTipHelper.Initialize(TextEditor);
 			RemoveCommands(TextEditor);
 			newTextEditor.Content = TextEditor;
 			TextEditor.IsReadOnly = true;
@@ -151,7 +153,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReference()), Key.Enter, ModifierKeys.None));
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReferenceNewTab()), Key.F12, ModifierKeys.Control));
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReferenceNewTab()), Key.Enter, ModifierKeys.Control));
-			InputBindings.Add(new KeyBinding(new RelayCommand(a => ClearMarkedReferencesAndPopups()), Key.Escape, ModifierKeys.None));
+			InputBindings.Add(new KeyBinding(new RelayCommand(a => ClearMarkedReferencesAndToolTip()), Key.Escape, ModifierKeys.None));
 
 			this.AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnGotKeyboardFocus), true);
 			this.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnLostKeyboardFocus), true);
@@ -285,7 +287,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			HideCancelButton();
 
-			//TODO: Is this optimization worth it?
 			var newLastOutput = new LastOutput(output, newHighlighting);
 			if (lastOutput.Equals(newLastOutput))
 				return;
@@ -363,8 +364,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		void Caret_PositionChanged(object sender, EventArgs e) {
-			//TODO: ClosePopups();
-			//TODO: CloseToolTip();
+			toolTipHelper.Close();
 
 			bool autoHighlightRefs = true;//TODO: Read from settings
 			if (autoHighlightRefs) {
@@ -375,6 +375,22 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				else
 					ClearMarkedReferences();
 			}
+		}
+
+		void ClearMarkedReferencesAndToolTip() {
+			ClearMarkedReferences();
+			toolTipHelper.Close();
+		}
+
+		public object GetReferenceSegmentAt(MouseEventArgs e) {
+			var te = TextEditor;
+			var tv = te.TextArea.TextView;
+			var pos = tv.GetPosition(e.GetPosition(tv) + tv.ScrollOffset);
+			if (pos == null)
+				return null;
+			int offset = te.Document.GetOffset(pos.Value.Location);
+			var seg = GetReferenceSegmentAt(offset);
+			return seg == null ? null : seg.Reference;
 		}
 
 		public ReferenceSegment GetReferenceSegmentAt(TextViewPosition? position) {
@@ -388,7 +404,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return GetReferenceSegmentAt(TextEditor.TextArea.Caret.Offset);
 		}
 
-		ReferenceSegment GetReferenceSegmentAt(int offset) {
+		public ReferenceSegment GetReferenceSegmentAt(int offset) {
 			if (referenceElementGenerator == null || referenceElementGenerator.References == null)
 				return null;
 			var segs = referenceElementGenerator.References.FindSegmentsContaining(offset).ToArray();
@@ -406,12 +422,90 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		void FollowReferenceNewTab() {
 			if (textEditorHelper == null)
 				return;
-			textEditorHelper.GoTo(GetCurrentReferenceSegment(), true, true, true);
+			GoTo(GetCurrentReferenceSegment(), true, true, true, true);
 		}
 
-		void ClearMarkedReferencesAndPopups() {
-			ClearMarkedReferences();
-			//TODO: ClosePopups();
+		bool GoTo(ReferenceSegment refSeg, bool newTab, bool followLocalRefs, bool canRecordHistory, bool canJumpToReference) {
+			if (refSeg == null)
+				return false;
+
+			if (newTab) {
+				Debug.Assert(canJumpToReference);
+				if (!canJumpToReference)
+					return false;
+				textEditorHelper.FollowReference(refSeg.ToCodeReferenceSegment(), newTab);
+				return true;
+			}
+
+			if (followLocalRefs) {
+				if (!IsOwnerOf(refSeg)) {
+					if (!canJumpToReference)
+						return false;
+					textEditorHelper.FollowReference(refSeg.ToCodeReferenceSegment(), newTab);
+					return true;
+				}
+
+				var localTarget = FindLocalTarget(refSeg);
+				if (localTarget != null)
+					refSeg = localTarget;
+
+				if (refSeg.IsLocalTarget) {
+					if (canRecordHistory) {
+						if (!canJumpToReference)
+							return false;
+						textEditorHelper.FollowReference(refSeg.ToCodeReferenceSegment(), newTab);
+					}
+					else {
+						var line = TextEditor.Document.GetLineByOffset(refSeg.StartOffset);
+						int column = refSeg.StartOffset - line.Offset + 1;
+						ScrollAndMoveCaretTo(line.LineNumber, column);
+					}
+					return true;
+				}
+
+				if (refSeg.IsLocal)
+					return false;
+				if (!canJumpToReference)
+					return false;
+				textEditorHelper.FollowReference(refSeg.ToCodeReferenceSegment(), newTab);
+				return true;
+			}
+			else {
+				var localTarget = FindLocalTarget(refSeg);
+				if (localTarget != null)
+					refSeg = localTarget;
+
+				int pos = -1;
+				if (!refSeg.IsLocal) {
+					if (refSeg.IsLocalTarget)
+						pos = refSeg.EndOffset;
+					if (pos < 0 && definitionLookup != null)
+						pos = definitionLookup.GetDefinitionPosition(refSeg.Reference);
+				}
+				if (pos >= 0) {
+					if (canRecordHistory) {
+						if (!canJumpToReference)
+							return false;
+						textEditorHelper.FollowReference(refSeg.ToCodeReferenceSegment(), newTab);
+					}
+					else {
+						MarkReferences(refSeg);
+						textEditorHelper.SetFocus();
+						TextEditor.Select(pos, 0);
+						TextEditor.ScrollTo(TextEditor.TextArea.Caret.Line, TextEditor.TextArea.Caret.Column);
+					}
+					return true;
+				}
+
+				if (refSeg.IsLocal && MarkReferences(refSeg))
+					return false;   // Allow another handler to set a new caret position
+
+				textEditorHelper.SetFocus();
+				if (!canJumpToReference)
+					return false;
+				textEditorHelper.FollowReference(refSeg.ToCodeReferenceSegment(), newTab);
+				return true;
+			}
 		}
 
 		void MoveReference(bool forward) {
@@ -450,11 +544,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		bool GoToTarget(ReferenceSegment refSeg, bool canJumpToReference, bool canRecordHistory) {
 			if (textEditorHelper == null)
 				return false;
-			//TODO: canJumpToReference isn't used
-			return textEditorHelper.GoTo(refSeg, false, true, canRecordHistory);
+			return GoTo(refSeg, false, true, canRecordHistory, canJumpToReference);
 		}
 
-		internal bool IsOwnerOf(ReferenceSegment refSeg) {
+		bool IsOwnerOf(ReferenceSegment refSeg) {
 			if (references == null)
 				return false;
 			foreach (var r in references) {
@@ -474,7 +567,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return null;
 		}
 
-		internal ReferenceSegment FindLocalTarget(ReferenceSegment refSeg) {
+		ReferenceSegment FindLocalTarget(ReferenceSegment refSeg) {
 			if (references == null)
 				return null;
 			if (refSeg.IsLocalTarget)
@@ -518,7 +611,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return null;
 		}
 
-		internal void ScrollAndMoveCaretTo(int line, int column, bool focus = true) {
+		void ScrollAndMoveCaretTo(int line, int column, bool focus = true) {
 			// Make sure the lines have been re-initialized or the ScrollTo() method could fail
 			TextEditor.TextArea.TextView.EnsureVisualLines();
 			TextEditor.ScrollTo(line, column);
@@ -534,10 +627,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			textEditorHelper.SetActive();
 			textEditorHelper.SetFocus();
 			TextEditor.GoToMousePosition();
-			e.Handled = textEditorHelper.GoTo(referenceSegment, newTab, false, true);
+			e.Handled = GoTo(referenceSegment, newTab, false, true, true);
 		}
 
-		internal bool MarkReferences(ReferenceSegment referenceSegment) {
+		bool MarkReferences(ReferenceSegment referenceSegment) {
 			if (TextEditor.TextArea.TextView.Document == null)
 				return false;
 			if (previousReferenceSegment == referenceSegment)

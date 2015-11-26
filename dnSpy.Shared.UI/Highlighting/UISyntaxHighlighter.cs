@@ -28,6 +28,22 @@ namespace dnSpy.Shared.UI.Highlighting {
 		SyntaxHighlighter syntaxHighlighter;
 		NoSyntaxHighlightOutput output;
 
+		public bool IsEmpty {
+			get {
+				if (syntaxHighlighter != null)
+					return syntaxHighlighter.IsEmpty;
+				return output.IsEmpty;
+			}
+		}
+
+		public string Text {
+			get {
+				if (syntaxHighlighter != null)
+					return syntaxHighlighter.Text;
+				return output.Text;
+			}
+		}
+
 		public ISyntaxHighlightOutput SyntaxHighlightOutput {
 			get { return (ISyntaxHighlightOutput)output ?? syntaxHighlighter; }
 		}

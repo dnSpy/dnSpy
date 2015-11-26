@@ -22,7 +22,6 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Contracts.Menus;
 using dnSpy.Files.Tabs.TextEditor;
 
 namespace dnSpy.Files.Tabs {

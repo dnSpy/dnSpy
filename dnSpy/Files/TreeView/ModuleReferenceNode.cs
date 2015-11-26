@@ -33,7 +33,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return dnImgMgr.GetImageReference(moduleRef);
+			return dnImgMgr.GetImageReferenceModuleRef();
 		}
 
 		public ModuleRef ModuleRef {

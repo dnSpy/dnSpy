@@ -24,12 +24,39 @@ using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.Languages.XmlDoc;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Languages.XmlDoc;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 
 namespace dnSpy.Languages.IL {
+	public static class ILLanguageHelper {
+		static readonly string[] cachedOpCodeDocs = new string[0x200];
+		public static string GetOpCodeDocumentation(OpCode code) {
+			int index = (int)code.Code;
+			int hi = index >> 8;
+			if (hi == 0xFE)
+				index -= 0xFD00;
+			else if (hi != 0)
+				return null;
+			var s = cachedOpCodeDocs[index];
+			if (s != null)
+				return s;
+
+			var docProvider = XmlDocLoader.MscorlibDocumentation;
+			if (docProvider != null) {
+				string docXml = docProvider.GetDocumentation("F:System.Reflection.Emit.OpCodes." + code.Code.ToString());
+				if (docXml != null) {
+					XmlDocRenderer renderer = new XmlDocRenderer();
+					renderer.AddXmlDocumentation(docXml);
+					return cachedOpCodeDocs[index] = renderer.ToString();
+				}
+			}
+
+			return null;
+		}
+	}
+
 	/// <summary>
 	/// IL language support.
 	/// </summary>
@@ -68,7 +95,7 @@ namespace dnSpy.Languages.IL {
 		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationOptions options, ModuleDef ownerModule) {
 			var disOpts = new DisassemblerOptions(options.CancellationToken, ownerModule);
 			if (options.DecompilerSettings.ShowILComments)
-				disOpts.GetOpCodeDocumentation = GetOpCodeDocumentation;
+				disOpts.GetOpCodeDocumentation = ILLanguageHelper.GetOpCodeDocumentation;
 			if (options.DecompilerSettings.ShowXmlDocumentation)
 				disOpts.GetXmlDocComments = GetXmlDocComments;
 			disOpts.CreateInstructionBytesReader = InstructionBytesReader.Create;
@@ -76,31 +103,6 @@ namespace dnSpy.Languages.IL {
 			disOpts.ShowILBytes = options.DecompilerSettings.ShowILBytes;
 			disOpts.SortMembers = options.DecompilerSettings.SortMembers;
 			return new ReflectionDisassembler(output, detectControlStructure, disOpts);
-		}
-
-		static readonly string[] cachedOpCodeDocs = new string[0x200];
-		public static string GetOpCodeDocumentation(OpCode code) {
-			int index = (int)code.Code;
-			int hi = index >> 8;
-			if (hi == 0xFE)
-				index -= 0xFD00;
-			else if (hi != 0)
-				return null;
-			var s = cachedOpCodeDocs[index];
-			if (s != null)
-				return s;
-
-			var docProvider = XmlDocLoader.MscorlibDocumentation;
-			if (docProvider != null) {
-				string docXml = docProvider.GetDocumentation("F:System.Reflection.Emit.OpCodes." + code.Code.ToString());
-				if (docXml != null) {
-					XmlDocRenderer renderer = new XmlDocRenderer();
-					renderer.AddXmlDocumentation(docXml);
-					return cachedOpCodeDocs[index] = renderer.ToString();
-				}
-			}
-
-			return null;
 		}
 
 		static IEnumerable<string> GetXmlDocComments(IMemberRef mr) {

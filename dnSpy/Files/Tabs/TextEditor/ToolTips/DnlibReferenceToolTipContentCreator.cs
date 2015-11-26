@@ -1,0 +1,205 @@
+﻿/*
+    Copyright (C) 2014-2015 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System.Diagnostics;
+using System.Linq;
+using System.Xml;
+using dnlib.DotNet;
+using dnlib.DotNet.Emit;
+using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
+using dnSpy.Languages.IL;
+using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
+using dnSpy.Shared.UI.Languages.XmlDoc;
+using ICSharpCode.Decompiler;
+using ICSharpCode.Decompiler.ILAst;
+using ICSharpCode.NRefactory.Documentation;
+
+namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
+	[ExportToolTipContentCreator(Order = TabsConstants.ORDER_DNLIBREFTOOLTIPCONTENTCREATOR)]
+	sealed class DnlibReferenceToolTipContentCreator : IToolTipContentCreator {
+		public object Create(IToolTipContentCreatorContext context, object @ref) {
+			if (@ref is GenericParam)
+				return Create(context, (GenericParam)@ref);
+			if (@ref is IMemberRef)
+				return Create(context, (IMemberRef)@ref);
+			if (@ref is Parameter)
+				return Create(context, (Parameter)@ref);
+			if (@ref is ILVariable)
+				return Create(context, (ILVariable)@ref);
+			if (@ref is OpCode)
+				return Create(context, (OpCode)@ref);
+			return null;
+		}
+
+		string GetDocumentation(XmlDocumentationProvider docProvider, IMemberRef mr) {
+			var doc = docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
+			if (doc != null)
+				return doc;
+			var method = mr as IMethod;
+			if (method == null)
+				return null;
+			string name = method.Name;
+			if (name.StartsWith("set_") || name.StartsWith("get_")) {
+				var md = DnlibExtensions.Resolve(method);
+				if (md == null)
+					return null;
+				mr = md.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == md || p.SetMethod == md);
+				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
+			}
+			else if (name.StartsWith("add_")) {
+				var md = DnlibExtensions.Resolve(method);
+				if (md == null)
+					return null;
+				mr = md.DeclaringType.Events.FirstOrDefault(p => p.AddMethod == md);
+				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
+			}
+			else if (name.StartsWith("remove_")) {
+				var md = DnlibExtensions.Resolve(method);
+				if (md == null)
+					return null;
+				mr = md.DeclaringType.Events.FirstOrDefault(p => p.RemoveMethod == md);
+				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
+			}
+			return null;
+		}
+
+		static IMemberRef Resolve(IMemberRef mr) {
+			if (mr is ITypeDefOrRef)
+				return ((ITypeDefOrRef)mr).ResolveTypeDef();
+			if (mr is IMethod && ((IMethod)mr).IsMethod)
+				return ((IMethod)mr).ResolveMethodDef();
+			if (mr is IField)
+				return ((IField)mr).ResolveFieldDef();
+			Debug.Assert(mr is PropertyDef || mr is EventDef || mr is GenericParam, "Unknown IMemberRef");
+			return null;
+		}
+
+		object Create(IToolTipContentCreatorContext context, GenericParam gp) {
+			var creator = context.Create();
+			creator.SetImage(gp);
+
+			context.Language.WriteToolTip(creator.Output, gp, null);
+
+			creator.CreateNewOutput();
+			try {
+				var docProvider = XmlDocLoader.LoadDocumentation(gp.Module);
+				if (docProvider != null) {
+					if (!creator.Output.WriteXmlDocGeneric(GetDocumentation(docProvider, gp.Owner), gp.Name) && gp.Owner is TypeDef) {
+						// If there's no doc available, use the parent class' documentation if this
+						// is a generic type parameter (and not a generic method parameter).
+						var owner = ((TypeDef)gp.Owner).DeclaringType;
+						while (owner != null) {
+							if (creator.Output.WriteXmlDocGeneric(GetDocumentation(docProvider, owner), gp.Name))
+								break;
+							owner = owner.DeclaringType;
+						}
+					}
+				}
+			}
+			catch (XmlException) {
+			}
+
+			return creator.Create();
+		}
+
+		object Create(IToolTipContentCreatorContext context, IMemberRef @ref) {
+			var creator = context.Create();
+
+			var resolvedRef = Resolve(@ref) ?? @ref;
+			creator.SetImage(resolvedRef);
+			context.Language.WriteToolTip(creator.Output, @ref, null);
+			creator.CreateNewOutput();
+			try {
+				if (resolvedRef is IMemberDef) {
+					var docProvider = XmlDocLoader.LoadDocumentation(resolvedRef.Module);
+					if (docProvider != null)
+						creator.Output.WriteXmlDoc(GetDocumentation(docProvider, resolvedRef));
+				}
+			}
+			catch (XmlException) {
+			}
+
+			return creator.Create();
+		}
+
+		object Create(IToolTipContentCreatorContext context, Parameter p) {
+			return Create(context, p, null);
+		}
+
+		object Create(IToolTipContentCreatorContext context, ILVariable local) {
+			return Create(context, local.OriginalVariable, local.Name);
+		}
+
+		object Create(IToolTipContentCreatorContext context, IVariable v, string name) {
+			var creator = context.Create();
+			creator.SetImage(v);
+
+			if (v == null) {
+				if (name == null)
+					return null;
+				creator.Output.Write(string.Format("(local variable) {0}", name), TextTokenType.Text);
+				return creator.Create();
+			}
+
+			context.Language.WriteToolTip(creator.Output, v, name);
+
+			creator.CreateNewOutput();
+			if (v is Parameter) {
+				var method = ((Parameter)v).Method;
+				try {
+					var docProvider = XmlDocLoader.LoadDocumentation(method.Module);
+					if (docProvider != null) {
+						if (!creator.Output.WriteXmlDocParameter(GetDocumentation(docProvider, method), v.Name)) {
+							var owner = method.DeclaringType;
+							while (owner != null) {
+								if (creator.Output.WriteXmlDocParameter(GetDocumentation(docProvider, owner), v.Name))
+									break;
+								owner = owner.DeclaringType;
+							}
+						}
+					}
+				}
+				catch (XmlException) {
+				}
+			}
+
+			return creator.Create();
+		}
+
+		object Create(IToolTipContentCreatorContext context, OpCode opCode) {
+			var creator = context.Create();
+
+			var s = ILLanguageHelper.GetOpCodeDocumentation(opCode);
+			string opCodeHex = opCode.Size > 1 ? string.Format("0x{0:X4}", opCode.Value) : string.Format("0x{0:X2}", opCode.Value);
+			creator.Output.Write(opCode.Name, TextTokenType.OpCode);
+			creator.Output.WriteSpace();
+			creator.Output.Write("(", TextTokenType.Operator);
+			creator.Output.Write(opCodeHex, TextTokenType.Number);
+			creator.Output.Write(")", TextTokenType.Operator);
+			if (s != null) {
+				creator.Output.Write(" - ", TextTokenType.Text);
+				creator.Output.Write(s, TextTokenType.Text);
+			}
+
+			return creator.Create();
+		}
+	}
+}

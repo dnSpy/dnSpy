@@ -18,11 +18,14 @@
 */
 
 using System.ComponentModel.Composition;
+using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
+using dnSpy.Files.Tabs.TextEditor.ToolTips;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	[ExportFileTabUIContextCreator(Order = TabsConstants.ORDER_TEXTEDITORUICONTEXTCREATOR)]
@@ -30,20 +33,51 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly IThemeManager themeManager;
 		readonly IWpfCommandManager wpfCommandManager;
 		readonly IMenuManager menuManager;
+		readonly ICodeToolTipManager codeToolTipManager;
 
 		[ImportingConstructor]
-		TextEditorUIContextCreator(IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager) {
+		TextEditorUIContextCreator(IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager) {
 			this.themeManager = themeManager;
 			this.wpfCommandManager = wpfCommandManager;
 			this.menuManager = menuManager;
+			this.codeToolTipManager = codeToolTipManager;
 		}
 
 		public IFileTabUIContext Create<T>() where T : class, IFileTabUIContext {
 			if (typeof(T) == typeof(ITextEditorUIContext)) {
-				var tec = new TextEditorControl(themeManager);
-				return new TextEditorUIContext(wpfCommandManager, menuManager, tec);
+				var ttRefFinder = new ToolTipReferenceFinder();
+				var tec = new TextEditorControl(themeManager, new ToolTipHelper(codeToolTipManager, ttRefFinder));
+				var uiContext = new TextEditorUIContext(wpfCommandManager, menuManager, tec);
+				ttRefFinder.UIContext = uiContext;
+				return uiContext;
 			}
 			return null;
+		}
+
+		sealed class ToolTipReferenceFinder : IToolTipReferenceFinder {
+			public TextEditorUIContext UIContext { get; set; }
+
+			public ReferenceInfo? GetReference(MouseEventArgs e) {
+				if (UIContext == null)
+					return null;
+
+				var @ref = UIContext.GetReferenceSegmentAt(e);
+				if (@ref == null)
+					return null;
+
+				var lang = GetLanguage();
+				if (lang == null)
+					return null;
+
+				return new ReferenceInfo(lang, @ref);
+			}
+
+			ILanguage GetLanguage() {
+				if (UIContext == null)
+					return null;
+				var content = UIContext.FileTab.Content as ILanguageTabContent;
+				return content == null ? null : content.Language;
+			}
 		}
 	}
 }

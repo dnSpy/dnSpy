@@ -39,7 +39,7 @@ namespace dnSpy.Files.Tabs {
 			get { return FileTabManager.ActiveTab == this; }
 		}
 
-		public IFileTabContent FileTabContent {
+		public IFileTabContent Content {
 			get { return tabHistory.Current; }
 			private set {
 				bool saveCurrent = !(tabHistory.Current is NullFileTabContent);
@@ -152,14 +152,14 @@ namespace dnSpy.Files.Tabs {
 				throw new ArgumentNullException();
 			Debug.Assert(tabContent.FileTab == null || tabContent.FileTab == this);
 			HideCurrentContent();
-			FileTabContent = tabContent;
+			Content = tabContent;
 			ShowInternal(tabContent, serializedUI, onShown);
 		}
 
 		void HideCurrentContent() {
 			CancelAsyncWorker();
-			if (FileTabContent != null)
-				FileTabContent.OnHide();
+			if (Content != null)
+				Content.OnHide();
 		}
 
 		void ShowInternal(IFileTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShownHandler) {
@@ -264,8 +264,8 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		internal void UpdateTitleAndToolTip() {
-			Title = FileTabContent.Title;
-			ToolTip = FileTabContent.ToolTip;
+			Title = Content.Title;
+			ToolTip = Content.ToolTip;
 		}
 
 		public bool CanNavigateBackward {
@@ -295,7 +295,7 @@ namespace dnSpy.Files.Tabs {
 		public void Refresh() {
 			// Pretend it gets hidden and then shown again. Will also cancel any async output threads
 			HideCurrentContent();
-			ShowInternal(FileTabContent, UIContext.Serialize(), null);
+			ShowInternal(Content, UIContext.Serialize(), null);
 		}
 
 		public void SetFocus() {
@@ -304,11 +304,11 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public void OnSelected() {
-			FileTabContent.OnSelected();
+			Content.OnSelected();
 		}
 
 		public void OnUnselected() {
-			FileTabContent.OnUnselected();
+			Content.OnUnselected();
 		}
 	}
 }

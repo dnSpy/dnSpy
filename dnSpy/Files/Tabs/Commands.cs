@@ -56,7 +56,7 @@ namespace dnSpy.Files.Tabs {
 				return;
 			var newTab = fileTabManager.OpenEmptyTab();
 			if (clone) {
-				newTab.Show(activeTab.FileTabContent.Clone(), activeTab.UIContext.Serialize(), null);
+				newTab.Show(activeTab.Content.Clone(), activeTab.UIContext.Serialize(), null);
 				fileTabManager.SetFocus(newTab);
 			}
 		}
@@ -896,7 +896,7 @@ namespace dnSpy.Files.Tabs {
 				s = i.ToString();
 			else
 				s = string.Format("_{0}", i);
-			return string.Format("{0} {1}", s, GetShortMenuItemHeader(tab.FileTabContent.Title));
+			return string.Format("{0} {1}", s, GetShortMenuItemHeader(tab.Content.Title));
 		}
 	}
 }

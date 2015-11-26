@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		FrameworkElement ScaleElement { get; }
 
 		/// <summary>
-		/// Save UI state, eg. line number, caret position, etc
+		/// Saves UI state, eg. line number, caret position, etc
 		/// </summary>
 		/// <returns></returns>
 		object Serialize();

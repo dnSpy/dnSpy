@@ -68,11 +68,10 @@ namespace dnSpy.Contracts.Images {
 		ImageReference GetImageReference(PropertyDef property);
 
 		/// <summary>
-		/// Gets an image
+		/// Gets a module reference image
 		/// </summary>
-		/// <param name="modRef">Module reference</param>
 		/// <returns></returns>
-		ImageReference GetImageReference(ModuleRef modRef);
+		ImageReference GetImageReferenceModuleRef();
 
 		/// <summary>
 		/// Gets an image
@@ -82,11 +81,46 @@ namespace dnSpy.Contracts.Images {
 		ImageReference GetImageReference(AssemblyDef assembly);
 
 		/// <summary>
-		/// Gets an image
+		/// Gets an assembly reference image
 		/// </summary>
-		/// <param name="asmRef">Assembly reference</param>
 		/// <returns></returns>
-		ImageReference GetImageReference(AssemblyRef asmRef);
+		ImageReference GetImageReferenceAssemblyRef();
+
+		/// <summary>
+		/// Gets a generic parameter image
+		/// </summary>
+		/// <returns></returns>
+		ImageReference GetImageReferenceGenericParameter();
+
+		/// <summary>
+		/// Gets a local image
+		/// </summary>
+		/// <returns></returns>
+		ImageReference GetImageReferenceLocal();
+
+		/// <summary>
+		/// Gets a parameter image
+		/// </summary>
+		/// <returns></returns>
+		ImageReference GetImageReferenceParameter();
+
+		/// <summary>
+		/// Gets a type image
+		/// </summary>
+		/// <returns></returns>
+		ImageReference GetImageReferenceType();
+
+		/// <summary>
+		/// Gets a method image
+		/// </summary>
+		/// <returns></returns>
+		ImageReference GetImageReferenceMethod();
+
+		/// <summary>
+		/// Gets a field image
+		/// </summary>
+		/// <returns></returns>
+		ImageReference GetImageReferenceField();
 
 		/// <summary>
 		/// Gets an image

@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <summary>
 		/// Current <see cref="IFileTabContent"/> instance
 		/// </summary>
-		IFileTabContent FileTabContent { get; }
+		IFileTabContent Content { get; }
 
 		/// <summary>
 		/// Current <see cref="IFileTabUIContext"/>
@@ -96,7 +96,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <param name="ref">Reference</param>
 		public static void FollowReferenceNewTab(this IFileTab self, object @ref) {
 			var tab = self.FileTabManager.OpenEmptyTab();
-			tab.FollowReference(@ref, self.FileTabContent);
+			tab.FollowReference(@ref, self.Content);
 			self.FileTabManager.SetFocus(tab);
 		}
 
@@ -110,7 +110,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 			if (newTab)
 				self.FollowReferenceNewTab(@ref);
 			else
-				self.FollowReference(@ref);
+				self.FollowReference(@ref, self.Content);
 		}
 	}
 }

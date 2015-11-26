@@ -244,7 +244,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		void OnNewTabContentShownDelay(IFileTab fileTab) {
-			var newNodes = fileTab.FileTabContent.Nodes.ToArray();
+			var newNodes = fileTab.Content.Nodes.ToArray();
 			if (Equals(fileTreeView.TreeView.SelectedItems, newNodes))
 				return;
 
@@ -312,7 +312,7 @@ namespace dnSpy.Files.Tabs {
 				var impl = tab as TabContentImpl;
 				if (impl == null)
 					throw new InvalidOperationException();
-				if (impl.FileTabContent.NeedRefresh())
+				if (impl.Content.NeedRefresh())
 					impl.Refresh();
 			}
 		}

@@ -65,9 +65,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 	}
 
-	sealed class DecompileFileTabContent : IAsyncFileTabContent {
+	sealed class DecompileFileTabContent : IAsyncFileTabContent, ILanguageTabContent {
 		readonly DecompileFileTabContentFactory decompileFileTabContentFactory;
 		readonly IFileTreeNodeData[] nodes;
+
+		public ILanguage Language {
+			get { return language; }
+		}
 		ILanguage language;
 
 		public DecompileFileTabContent(DecompileFileTabContentFactory decompileFileTabContentFactory, IFileTreeNodeData[] nodes, ILanguage language) {
