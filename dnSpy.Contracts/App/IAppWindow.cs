@@ -52,6 +52,11 @@ namespace dnSpy.Contracts.App {
 		IAppStatusBar StatusBar { get; }
 
 		/// <summary>
+		/// true if the app has been loaded
+		/// </summary>
+		bool AppLoaded { get; }
+
+		/// <summary>
 		/// Gets the <see cref="IWpfCommandManager"/> instance
 		/// </summary>
 		IWpfCommandManager WpfCommandManager { get; }

@@ -17,32 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.IO;
+using dnSpy.Contracts.Files.Tabs;
 
-namespace dnSpy.Contracts.Files {
+namespace dnSpy.Contracts.App {
 	/// <summary>
-	/// <see cref="IDnSpyFileCreator"/> context
+	/// Constants
 	/// </summary>
-	public sealed class DnSpyFileCreatorContext {
+	public static class LoaderConstants {
 		/// <summary>
-		/// File manager
+		/// Delays the loading a short while
 		/// </summary>
-		public IFileManager FileManager { get; private set; }
+		public static readonly object Delay = new object();
 
 		/// <summary>
-		/// Filename, might be invalid (eg. empty or null), so call <see cref="File.Exists(string)"/>
-		/// first to prevent exceptions when trying to open files.
+		/// Order of <see cref="IFileTabManager"/>'s <see cref="IDnSpyLoader"/> instance
 		/// </summary>
-		public string Filename { get; private set; }
-
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="fileManager">File manager</param>
-		/// <param name="filename">Filename</param>
-		public DnSpyFileCreatorContext(IFileManager fileManager, string filename) {
-			this.FileManager = fileManager;
-			this.Filename = filename;
-		}
+		public const double ORDER_FILETABMANAGER = 1000;
 	}
 }

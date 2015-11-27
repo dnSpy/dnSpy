@@ -17,18 +17,41 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Settings;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Decompiler;
 using dnSpy.Shared.UI.Menus;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.MainApp {
+	[Export, ExportFileTabContentFactory(Order = double.MaxValue)]
+	sealed class DecompileFileTabContentFactory : IFileTabContentFactory {
+		public IFileTabContent Create(IFileTabContentFactoryContext context) {
+			return null;
+		}
+
+		static readonly Guid GUID_SerializedContent = new Guid("1C931C0F-D968-4664-B22D-87287A226EEC");
+
+		public IFileTabContent Deserialize(Guid guid, ISettingsSection section, IFileTabContentFactoryContext context) {
+			if (guid == GUID_SerializedContent)
+				return new AboutScreenFileTabContent();
+			return null;
+		}
+
+		public Guid? Serialize(IFileTabContent content, ISettingsSection section) {
+			if (content is AboutScreenFileTabContent)
+				return GUID_SerializedContent;
+			return null;
+		}
+	}
+
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "_About", Group = MenuConstants.GROUP_APP_MENU_HELP_ABOUT, Order = 1000000)]
 	sealed class AboutScreenMenuItem : MenuItemBase {
 		readonly IFileTabManager fileTabManager;

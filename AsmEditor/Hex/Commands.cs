@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Menus;
 using dnSpy.Decompiler;
 using dnSpy.Shared.UI.HexEditor;
@@ -1221,7 +1222,9 @@ namespace dnSpy.AsmEditor.Hex {
 				return false;
 			// Currently only nodes loaded from files on disk have a PE node
 			//TODO: Update this check
-			return node.DnSpyFile.PEImage != null && node.DnSpyFile.LoadedFromFile;
+			return node.DnSpyFile.PEImage != null &&
+					node.DnSpyFile.SerializedFile != null &&
+					node.DnSpyFile.SerializedFile.Value.Type == FilesConstants.FILETYPE_FILE;
 		}
 
 		static TokenReference GetTokenReference2(HexContext context) {

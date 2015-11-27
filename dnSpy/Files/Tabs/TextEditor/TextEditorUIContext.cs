@@ -28,7 +28,8 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
-using dnSpy.Shared.UI.Decompiler;
+using dnSpy.Contracts.Settings;
+using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.Decompiler;
@@ -137,6 +138,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			//TODO: Debugger plugin should clear CodeMappings
 		}
 
+		public object Serialize() {
+			return new EditorPositionState(textEditorControl.TextEditor);
+		}
+
 		public void Deserialize(object obj) {
 			var state = obj as EditorPositionState;
 			if (state == null)
@@ -148,8 +153,37 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			textEditorControl.TextEditor.TextArea.Caret.DesiredXPos = state.DesiredXPos;
 		}
 
-		public object Serialize() {
-			return new EditorPositionState(textEditorControl.TextEditor);
+		public object CreateSerialized(ISettingsSection section) {
+			double? verticalOffset = section.Attribute<double?>("VerticalOffset");
+			double? horizontalOffset = section.Attribute<double?>("HorizontalOffset");
+			double? desiredXPos = section.Attribute<double?>("DesiredXPos");
+			int? textViewPosition_Line = section.Attribute<int?>("TextViewPosition.Line");
+			int? textViewPosition_Column = section.Attribute<int?>("TextViewPosition.Column");
+			int? textViewPosition_VisualColumn = section.Attribute<int?>("TextViewPosition.VisualColumn");
+			bool? textViewPosition_IsAtEndOfLine = section.Attribute<bool?>("TextViewPosition.IsAtEndOfLine");
+			Debug.Assert(verticalOffset != null);
+			if (verticalOffset == null || horizontalOffset == null || desiredXPos == null)
+				return null;
+			if (textViewPosition_Line == null || textViewPosition_Column == null)
+				return null;
+			if (textViewPosition_VisualColumn == null || textViewPosition_IsAtEndOfLine == null)
+				return null;
+			return new EditorPositionState(verticalOffset.Value, horizontalOffset.Value, new TextViewPosition(textViewPosition_Line.Value, textViewPosition_Column.Value, textViewPosition_VisualColumn.Value) { IsAtEndOfLine = textViewPosition_IsAtEndOfLine.Value }, desiredXPos.Value);
+		}
+
+		public void SaveSerialized(ISettingsSection section, object obj) {
+			var state = obj as EditorPositionState;
+			Debug.Assert(state != null);
+			if (state == null)
+				return;
+
+			section.Attribute("VerticalOffset", state.VerticalOffset);
+			section.Attribute("HorizontalOffset", state.HorizontalOffset);
+			section.Attribute("DesiredXPos", state.DesiredXPos);
+			section.Attribute("TextViewPosition.Line", state.TextViewPosition.Line);
+			section.Attribute("TextViewPosition.Column", state.TextViewPosition.Column);
+			section.Attribute("TextViewPosition.VisualColumn", state.TextViewPosition.VisualColumn);
+			section.Attribute("TextViewPosition.IsAtEndOfLine", state.TextViewPosition.IsAtEndOfLine);
 		}
 
 		public void SetOutput(ITextOutput output, IHighlightingDefinition newHighlighting) {

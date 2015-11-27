@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Windows;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Files.Tabs {
 	sealed class NullFileTabContent : IFileTabContent {
@@ -113,6 +114,13 @@ namespace dnSpy.Files.Tabs {
 
 		public object Serialize() {
 			return null;
+		}
+
+		public object CreateSerialized(ISettingsSection section) {
+			return null;
+		}
+
+		public void SaveSerialized(ISettingsSection section, object obj) {
 		}
 	}
 }

@@ -67,9 +67,9 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 			Close();
 			toolTip = new ToolTip {
 				Content = ttContent,
-				Style = (Style)textEditor.FindResource("CodeToolTip"),
 				IsOpen = true,
 			};
+			toolTip.SetResourceReference(FrameworkElement.StyleProperty, "CodeToolTip");
 		}
 
 		public void Close() {

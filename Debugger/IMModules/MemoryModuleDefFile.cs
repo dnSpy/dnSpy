@@ -90,10 +90,6 @@ namespace dnSpy.Debugger.IMModules {
 			this.autoUpdateMemory = autoUpdateMemory;
 		}
 
-		public override bool LoadedFromFile {
-			get { return false; }
-		}
-
 		public static IDnSpyFilenameKey CreateKey(DnProcess process, ulong address) {
 			return new MyKey(process, address);
 		}

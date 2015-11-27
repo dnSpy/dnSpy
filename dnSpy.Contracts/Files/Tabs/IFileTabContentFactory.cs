@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>
@@ -32,6 +33,25 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <param name="context">Context</param>
 		/// <returns></returns>
 		IFileTabContent Create(IFileTabContentFactoryContext context);
+
+		/// <summary>
+		/// Serializes a <see cref="IFileTabContent"/> instance. Returns a unique guid if it was
+		/// serialized, else null
+		/// </summary>
+		/// <param name="content">Content</param>
+		/// <param name="section">Section to use</param>
+		/// <returns></returns>
+		Guid? Serialize(IFileTabContent content, ISettingsSection section);
+
+		/// <summary>
+		/// Deserializes a <see cref="IFileTabContent"/> instance. Returns null if <paramref name="guid"/>
+		/// isn't supported.
+		/// </summary>
+		/// <param name="guid">Guid, this is the return value of <see cref="Serialize(IFileTabContent, ISettingsSection)"/></param>
+		/// <param name="section">Section with serialized content</param>
+		/// <param name="context">Context</param>
+		/// <returns></returns>
+		IFileTabContent Deserialize(Guid guid, ISettingsSection section, IFileTabContentFactoryContext context);
 	}
 
 	/// <summary>Metadata</summary>

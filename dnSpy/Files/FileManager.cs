@@ -30,15 +30,52 @@ using dnSpy.Contracts.Files;
 using dnSpy.Shared.UI.Files;
 
 namespace dnSpy.Files {
+	[Export(typeof(IDnSpyFileCreator))]
+	sealed class DefaultDnSpyFileCreator : IDnSpyFileCreator {
+		public double Order {
+			get { return FilesConstants.ORDER_DEFAULT_FILE_CREATOR; }
+		}
+
+		public IDnSpyFile Create(IFileManager fileManager, DnSpyFileInfo fileInfo) {
+			if (fileInfo.Type == FilesConstants.FILETYPE_FILE)
+				return FileManager.CreateDnSpyFileFromFile(fileInfo, fileInfo.Name, fileManager.UseMemoryMappedIO, fileManager.UseDebugSymbols, fileManager.AssemblyResolver);
+			if (fileInfo.Type == FilesConstants.FILETYPE_GAC) {
+				var filename = GetGacFilename(fileInfo.Name);
+				if (filename != null)
+					return FileManager.CreateDnSpyFileFromFile(fileInfo, filename, fileManager.UseMemoryMappedIO, fileManager.UseDebugSymbols, fileManager.AssemblyResolver);
+			}
+			return null;
+		}
+
+		public IDnSpyFilenameKey CreateKey(IFileManager fileManager, DnSpyFileInfo fileInfo) {
+			if (fileInfo.Type == FilesConstants.FILETYPE_FILE)
+				return new FilenameKey(fileInfo.Name);
+			if (fileInfo.Type == FilesConstants.FILETYPE_GAC) {
+				var filename = GetGacFilename(fileInfo.Name);
+				if (filename != null)
+					return new FilenameKey(filename);
+			}
+			return null;
+		}
+
+		static string GetGacFilename(string asmFullName) {
+			return GacInfo.FindInGac(new AssemblyNameInfo(asmFullName));
+		}
+	}
+
 	[Export, Export(typeof(IFileManager)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class FileManager : IFileManager {
 		readonly object lockObj;
 		readonly List<IDnSpyFile> files;
-		readonly IAssemblyResolver asmResolver;
 		readonly IDnSpyFileCreator[] dnSpyFileCreators;
 
-		bool UseMemoryMappedIO { get; set; }
-		bool UseDebugSymbols { get; set; }
+		public IAssemblyResolver AssemblyResolver {
+			get { return asmResolver; }
+		}
+		readonly IAssemblyResolver asmResolver;
+
+		public bool UseMemoryMappedIO { get; set; }
+		public bool UseDebugSymbols { get; set; }
 		public bool UseGAC { get; set; }
 
 		sealed class DisableAssemblyLoadHelper : IDisposable {
@@ -66,11 +103,11 @@ namespace dnSpy.Files {
 		public event EventHandler<NotifyFileCollectionChangedEventArgs> CollectionChanged;
 
 		[ImportingConstructor]
-		FileManager([ImportMany] IDnSpyFileCreator[] dnSpyFileCreators) {
+		FileManager([ImportMany] IDnSpyFileCreator[] mefCreators) {
 			this.lockObj = new object();
 			this.files = new List<IDnSpyFile>();
 			this.asmResolver = new AssemblyResolver(this);
-			this.dnSpyFileCreators = dnSpyFileCreators.OrderBy(a => a.Order).ToArray();
+			this.dnSpyFileCreators = mefCreators.OrderBy(a => a.Order).ToArray();
 			//TODO: Initialize these from the settings
 			this.UseMemoryMappedIO = true;
 			this.UseDebugSymbols = true;
@@ -185,17 +222,17 @@ namespace dnSpy.Files {
 			return file;
 		}
 
-		public IDnSpyFile GetOrCreate(string filename) {
-			return GetOrCreate(filename, false);
-		}
-
-		internal IDnSpyFile GetOrCreate(string filename, bool isAutoLoaded) {
-			var key = new FilenameKey(filename);
+		public IDnSpyFile TryGetOrCreate(DnSpyFileInfo info, bool isAutoLoaded) {
+			var key = TryCreateKey(info);
+			if (key == null)
+				return null;
 			var existing = Find(key);
 			if (existing != null)
 				return existing;
 
-			var newFile = CreateDnSpyFile(filename);
+			var newFile = TryCreateDnSpyFile(info);
+			if (newFile == null)
+				return null;
 			newFile.IsAutoLoaded = isAutoLoaded;
 			if (!AssemblyLoadEnabled)
 				return DisableMMapdIO(newFile);
@@ -213,21 +250,37 @@ namespace dnSpy.Files {
 				id.Dispose();
 		}
 
-		internal IDnSpyFile CreateDnSpyFile(string filename) {
-			if (dnSpyFileCreators.Length > 0) {
-				var context = new DnSpyFileCreatorContext(this, filename);
-				foreach (var creator in dnSpyFileCreators) {
-					try {
-						var file = creator.Create(context);
-						if (file != null)
-							return file;
-					}
-					catch (Exception ex) {
-						Debug.WriteLine(string.Format("IDnSpyFileCreator ({0}) failed with an exception: {1}", creator.GetType(), ex.Message));
-					}
+		IDnSpyFilenameKey TryCreateKey(DnSpyFileInfo info) {
+			foreach (var creator in dnSpyFileCreators) {
+				try {
+					var key = creator.CreateKey(this, info);
+					if (key != null)
+						return key;
+				}
+				catch (Exception ex) {
+					Debug.WriteLine(string.Format("IDnSpyFileCreator ({0}) failed with an exception: {1}", creator.GetType(), ex.Message));
 				}
 			}
 
+			return null;
+		}
+
+		internal IDnSpyFile TryCreateDnSpyFile(DnSpyFileInfo info) {
+			foreach (var creator in dnSpyFileCreators) {
+				try {
+					var file = creator.Create(this, info);
+					if (file != null)
+						return file;
+				}
+				catch (Exception ex) {
+					Debug.WriteLine(string.Format("IDnSpyFileCreator ({0}) failed with an exception: {1}", creator.GetType(), ex.Message));
+				}
+			}
+
+			return null;
+		}
+
+		internal static IDnSpyFile CreateDnSpyFileFromFile(DnSpyFileInfo fileInfo, string filename, bool useMemoryMappedIO, bool useDebugSymbols, IAssemblyResolver asmResolver) {
 			try {
 				// Quick check to prevent exceptions from being thrown
 				if (!File.Exists(filename))
@@ -235,7 +288,7 @@ namespace dnSpy.Files {
 
 				IPEImage peImage;
 
-				if (UseMemoryMappedIO)
+				if (useMemoryMappedIO)
 					peImage = new PEImage(filename);
 				else
 					peImage = new PEImage(File.ReadAllBytes(filename), filename);
@@ -245,7 +298,7 @@ namespace dnSpy.Files {
 				if (isDotNet) {
 					try {
 						var options = new ModuleCreationOptions(DnSpyDotNetFileBase.CreateModuleContext(asmResolver));
-						return DnSpyDotNetFile.CreateAssembly(ModuleDefMD.Load(peImage, options), UseDebugSymbols);
+						return DnSpyDotNetFile.CreateAssembly(fileInfo, ModuleDefMD.Load(peImage, options), useDebugSymbols);
 					}
 					catch {
 					}
@@ -255,6 +308,7 @@ namespace dnSpy.Files {
 			}
 			catch {
 			}
+
 			return new DnSpyUnknownFile(filename);
 		}
 

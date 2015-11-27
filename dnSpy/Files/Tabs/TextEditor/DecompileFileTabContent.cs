@@ -27,6 +27,7 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Settings;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Decompiler;
 using ICSharpCode.Decompiler;
@@ -62,6 +63,26 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public IFileTabContent Create(IFileTreeNodeData[] nodes) {
 			return new DecompileFileTabContent(this, nodes, languageManager.SelectedLanguage);
+		}
+
+		static readonly Guid GUID_SerializedContent = new Guid("DE0390B0-747C-4F53-9CFF-1D10B93DD5DD");
+
+		public Guid? Serialize(IFileTabContent content, ISettingsSection section) {
+			var dc = content as DecompileFileTabContent;
+			if (dc == null)
+				return null;
+
+			section.Attribute("Language", dc.Language.NameUI);
+			return GUID_SerializedContent;
+		}
+
+		public IFileTabContent Deserialize(Guid guid, ISettingsSection section, IFileTabContentFactoryContext context) {
+			if (guid != GUID_SerializedContent)
+				return null;
+
+			var langName = section.Attribute<string>("Language") ?? "C#";
+			var language = languageManager.FindOrDefault(langName);
+			return new DecompileFileTabContent(this, context.Nodes, language);
 		}
 	}
 

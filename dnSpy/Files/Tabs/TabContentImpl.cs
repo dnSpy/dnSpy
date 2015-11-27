@@ -310,5 +310,10 @@ namespace dnSpy.Files.Tabs {
 		public void OnUnselected() {
 			Content.OnUnselected();
 		}
+
+		internal void OnTabsLoaded() {
+			// Make sure that the tab initializes eg. SelectedLanguage to the language it's using.
+			OnSelected();
+		}
 	}
 }

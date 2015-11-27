@@ -27,9 +27,8 @@ using dnSpy.Contracts.Files;
 
 namespace dnSpy.Shared.UI.Files {
 	public abstract class DnSpyFile : IDnSpyFile {
-		public virtual IDnSpyFilenameKey Key {
-			get { return new FilenameKey(Filename); }
-		}
+		public abstract DnSpyFileInfo? SerializedFile { get; }
+		public abstract IDnSpyFilenameKey Key { get; }
 
 		public virtual SerializedDnSpyModule? SerializedDnSpyModule {
 			get {
@@ -55,15 +54,19 @@ namespace dnSpy.Shared.UI.Files {
 
 		public string Filename {
 			get { return filename; }
-			set { this.filename = value; }
+			set {
+				if (this.filename != value) {
+					this.filename = value;
+					OnPropertyChanged("Filename");
+				}
+			}
 		}
 		string filename;
 
-		public bool IsAutoLoaded { get; set; }
-
-		public virtual bool LoadedFromFile {
-			get { return true; }
+		protected virtual void OnPropertyChanged(string propName) {
 		}
+
+		public bool IsAutoLoaded { get; set; }
 
 		public List<IDnSpyFile> Children {
 			get {
@@ -104,12 +107,28 @@ namespace dnSpy.Shared.UI.Files {
 	}
 
 	public sealed class DnSpyUnknownFile : DnSpyFile {
+		public override DnSpyFileInfo? SerializedFile {
+			get { return DnSpyFileInfo.CreateFile(Filename); }
+		}
+
+		public override IDnSpyFilenameKey Key {
+			get { return new FilenameKey(Filename); }
+		}
+
 		public DnSpyUnknownFile(string filename) {
-			Filename = filename;
+			Filename = filename ?? string.Empty;
 		}
 	}
 
 	public sealed class DnSpyPEFile : DnSpyFile, IDnSpyPEFile, IDisposable {
+		public override DnSpyFileInfo? SerializedFile {
+			get { return DnSpyFileInfo.CreateFile(Filename); }
+		}
+
+		public override IDnSpyFilenameKey Key {
+			get { return new FilenameKey(Filename); }
+		}
+
 		public override IPEImage PEImage {
 			get { return peImage; }
 		}
@@ -136,7 +155,7 @@ namespace dnSpy.Shared.UI.Files {
 		protected DnSpyDotNetFileBase(ModuleDef module, bool loadSyms) {
 			this.module = module;
 			this.loadedSymbols = loadSyms;
-			Filename = module.Location;
+			Filename = module.Location ?? string.Empty;
 			module.EnableTypeDefFindCache = true;
 			if (loadSyms)
 				LoadSymbols(module.Location);
@@ -161,7 +180,6 @@ namespace dnSpy.Shared.UI.Files {
 			if (module.PdbState != null)
 				return;
 
-			//TODO: Support CorModuleDef too
 			var m = module as ModuleDefMD;
 			if (m == null)
 				return;
@@ -178,13 +196,29 @@ namespace dnSpy.Shared.UI.Files {
 	public sealed class DnSpyDotNetFile : DnSpyDotNetFileBase, IDisposable {
 		readonly bool isAsmNode;
 
-		DnSpyDotNetFile(ModuleDef module, bool loadSyms, bool isAsmNode)
+		public override DnSpyFileInfo? SerializedFile {
+			get { return fileInfo; }
+		}
+		DnSpyFileInfo fileInfo;
+
+		public override IDnSpyFilenameKey Key {
+			get { return new FilenameKey(Filename); }
+		}
+
+		DnSpyDotNetFile(DnSpyFileInfo fileInfo, ModuleDef module, bool loadSyms, bool isAsmNode)
 			: base(module, loadSyms) {
+			this.fileInfo = fileInfo;
 			this.isAsmNode = isAsmNode;
 		}
 
-		public static DnSpyDotNetFile CreateAssembly(ModuleDef module, bool loadSyms) {
-			return new DnSpyDotNetFile(module, loadSyms, true);
+		protected override void OnPropertyChanged(string propName) {
+			base.OnPropertyChanged(propName);
+			if (propName == "Filename")
+				fileInfo = DnSpyFileInfo.CreateFile(Filename);
+		}
+
+		public static DnSpyDotNetFile CreateAssembly(DnSpyFileInfo fileInfo, ModuleDef module, bool loadSyms) {
+			return new DnSpyDotNetFile(fileInfo, module, loadSyms, true);
 		}
 
 		protected override List<IDnSpyFile> CreateChildren() {
@@ -197,7 +231,7 @@ namespace dnSpy.Shared.UI.Files {
 						Debug.Assert(!foundThis);
 						foundThis = true;
 					}
-					list.Add(new DnSpyDotNetFile(module, loadedSymbols, false));
+					list.Add(new DnSpyDotNetFile(DnSpyFileInfo.CreateFile(module.Location), module, loadedSymbols, false));
 				}
 				Debug.Assert(foundThis);
 			}

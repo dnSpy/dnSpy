@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Windows.Threading;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Plugin;
@@ -28,14 +29,18 @@ namespace dnSpy.Files.Tabs {
 	[ExportAutoLoaded]
 	sealed class RedecompileTabs : IAutoLoaded {
 		readonly IFileTabManager fileTabManager;
+		readonly IAppWindow appWindow;
 
 		[ImportingConstructor]
-		RedecompileTabs(IFileTabManager fileTabManager, ILanguageManager languageManager) {
+		RedecompileTabs(IFileTabManager fileTabManager, ILanguageManager languageManager, IAppWindow appWindow) {
 			this.fileTabManager = fileTabManager;
+			this.appWindow = appWindow;
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 		}
 
 		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
+			if (!appWindow.AppLoaded)
+				return;
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 				var tab = fileTabManager.ActiveTab;
 				if (tab != null)

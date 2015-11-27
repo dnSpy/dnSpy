@@ -17,9 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using System.Windows;
-using dnSpy.Contracts;
+using dnSpy.Contracts.Plugin;
 
 namespace dnSpy.Shared.UI.MVVM {
 	public sealed class InitDataTemplateAP : DependencyObject {
@@ -34,21 +35,23 @@ namespace dnSpy.Shared.UI.MVVM {
 			return (bool)element.GetValue(InitializeProperty);
 		}
 
-		sealed class MefState {
-			public static readonly MefState Instance = new MefState();
+		[ExportAutoLoaded]
+		sealed class MefState : IAutoLoaded {
+			internal static MefState Instance;
 
-			MefState() {
-				DnSpy.App.CompositionContainer.ComposeParts(this);
+			[ImportingConstructor]
+			MefState([ImportMany] Lazy<IInitializeDataTemplate>[] entries) {
+				Instance = this;
+				this.entries = entries;
 			}
 
-			[ImportMany(typeof(IInitializeDataTemplate))]
-			public IInitializeDataTemplate[] entries = null;
+			internal Lazy<IInitializeDataTemplate>[] entries;
 		}
 
 		static void InitializePropertyChangedCallback(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			if ((bool)e.NewValue) {
 				foreach (var elem in MefState.Instance.entries)
-					elem.Initialize(d);
+					elem.Value.Initialize(d);
 			}
 		}
 	}

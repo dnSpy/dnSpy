@@ -29,6 +29,11 @@ namespace dnSpy.Contracts.Files {
 	/// </summary>
 	public interface IDnSpyFile : IAnnotations {
 		/// <summary>
+		/// Used to serialize this instance. Null if it can't be serialized.
+		/// </summary>
+		DnSpyFileInfo? SerializedFile { get; }
+
+		/// <summary>
 		/// Gets a key for this file. Eg. a <see cref="FilenameKey"/> instance if it's a
 		/// file loaded from disk. It's used to detect duplicate files when adding a new file.
 		/// </summary>
@@ -58,11 +63,6 @@ namespace dnSpy.Contracts.Files {
 		/// Gets/sets the filename
 		/// </summary>
 		string Filename { get; set; }
-
-		/// <summary>
-		/// true if it was loaded from a file
-		/// </summary>
-		bool LoadedFromFile { get; }
 
 		/// <summary>
 		/// true if it was not loaded by the user

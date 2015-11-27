@@ -88,7 +88,7 @@ namespace dnSpy.Files {
 			if (fileManager.UseGAC) {
 				var gacFile = GacInfo.FindInGac(assembly);
 				if (gacFile != null)
-					return fileManager.GetOrCreate(gacFile, true);
+					return fileManager.TryGetOrCreate(DnSpyFileInfo.CreateFile(gacFile), true);
 				foreach (var path in GacInfo.OtherGacPaths) {
 					file = TryLoadFromDir(assembly, true, path);
 					if (file != null)
@@ -141,7 +141,9 @@ namespace dnSpy.Files {
 			IDnSpyFile file = null;
 			bool error = true;
 			try {
-				file = fileManager.CreateDnSpyFile(filename);
+				file = fileManager.TryCreateDnSpyFile(DnSpyFileInfo.CreateFile(filename));
+				if (file == null)
+					return null;
 				file.IsAutoLoaded = true;
 				var asm = file.AssemblyDef;
 				if (asm == null)
@@ -177,7 +179,7 @@ namespace dnSpy.Files {
 					continue;
 				}
 				if (File.Exists(file))
-					return fileManager.GetOrCreate(file, true);
+					return fileManager.TryGetOrCreate(DnSpyFileInfo.CreateFile(file), true);
 			}
 			return null;
 		}

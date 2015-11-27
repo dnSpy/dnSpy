@@ -45,11 +45,14 @@ namespace dnSpy.Contracts.Files {
 		IDnSpyFile GetOrAdd(IDnSpyFile file);
 
 		/// <summary>
-		/// Creates a new <see cref="IDnSpyFile"/> instance or returns an existing one
+		/// Creates a new <see cref="IDnSpyFile"/> instance or returns an existing one. null is
+		/// returned if it couldn't be created.
 		/// </summary>
-		/// <param name="filename">Filename</param>
+		/// <param name="info">File info</param>
+		/// <param name="isAutoLoaded">New value of <see cref="IDnSpyFile.IsAutoLoaded"/> if the
+		/// file gets created.</param>
 		/// <returns></returns>
-		IDnSpyFile GetOrCreate(string filename);
+		IDnSpyFile TryGetOrCreate(DnSpyFileInfo info, bool isAutoLoaded = false);
 
 		/// <summary>
 		/// Resolves an assembly. Returns null if it couldn't be resolved.
@@ -84,5 +87,20 @@ namespace dnSpy.Contracts.Files {
 		/// </summary>
 		/// <param name="action">Action</param>
 		void SetDispatcher(Action<Action> action);
+
+		/// <summary>
+		/// true if memory mapped I/O is used
+		/// </summary>
+		bool UseMemoryMappedIO { get; }
+
+		/// <summary>
+		/// true if PDB files should be loaded
+		/// </summary>
+		bool UseDebugSymbols { get; }
+
+		/// <summary>
+		/// The assembly resolver it uses
+		/// </summary>
+		IAssemblyResolver AssemblyResolver { get; }
 	}
 }

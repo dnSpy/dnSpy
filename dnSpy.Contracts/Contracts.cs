@@ -125,10 +125,5 @@ namespace dnSpy.Contracts {
 		/// Gets the <see cref="IAppWindow"/> instance
 		/// </summary>
 		IAppWindow AppWindow { get; }
-
-		/// <summary>
-		/// Gets the <see cref="System.ComponentModel.Composition.Hosting.CompositionContainer"/> instance
-		/// </summary>
-		CompositionContainer CompositionContainer { get; }
 	}
 }

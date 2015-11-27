@@ -23,7 +23,7 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.MainApp {
-	partial class MainWindow : MetroWindow {
+	sealed partial class MainWindow : MetroWindow {
 		readonly IImageManager imageManager;
 
 		public MainWindow(IThemeManager themeManager, IImageManager imageManager, object content) {

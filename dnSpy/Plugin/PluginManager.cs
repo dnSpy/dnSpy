@@ -55,5 +55,14 @@ namespace dnSpy.Plugin {
 			foreach (var m in mefPlugins)
 				m.Value.OnEvent(@event, obj);
 		}
+
+		public void OnAppLoaded() {
+			NotifyPlugins(PluginEvent.AppLoaded, null);
+			LoadAutoLoaded(AutoLoadedLoadType.AppLoaded);
+		}
+
+		public void OnAppExit() {
+			NotifyPlugins(PluginEvent.AppExit, null);
+		}
 	}
 }

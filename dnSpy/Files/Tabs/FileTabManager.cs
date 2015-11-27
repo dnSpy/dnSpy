@@ -141,16 +141,14 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		readonly IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator;
-
 		readonly ITabManager tabManager;
-		readonly Lazy<IFileTabContentFactory, IFileTabContentFactoryMetadata>[] tabContentFactories;
+		readonly IFileTabContentFactoryManager fileTabContentFactoryManager;
 		readonly Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>[] refFactories;
 
 		[ImportingConstructor]
-		FileTabManager(IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator, FileTreeView fileTreeView, ITabManagerCreator tabManagerCreator, [ImportMany] IEnumerable<Lazy<IFileTabContentFactory, IFileTabContentFactoryMetadata>> mefTabContentFactories, [ImportMany] IEnumerable<Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>> mefRefFactories) {
+		FileTabManager(IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator, FileTreeView fileTreeView, ITabManagerCreator tabManagerCreator, IFileTabContentFactoryManager fileTabContentFactoryManager, [ImportMany] IEnumerable<Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>> mefRefFactories) {
 			this.fileTabUIContextLocatorCreator = fileTabUIContextLocatorCreator;
-			this.tabContentFactories = mefTabContentFactories.OrderBy(a => a.Metadata.Order).ToArray();
-			Debug.Assert(tabContentFactories.Length > 0);
+			this.fileTabContentFactoryManager = fileTabContentFactoryManager;
 			this.refFactories = mefRefFactories.OrderBy(a => a.Metadata.Order).ToArray();
 			this.fileTreeView = fileTreeView;
 			this.fileTreeView.TreeView.SelectionChanged += TreeView_SelectionChanged;
@@ -215,17 +213,22 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		IFileTabContent CreateTabContent(IFileTreeNodeData[] nodes) {
-			var context = new FileTabContentFactoryContext(nodes);
-			foreach (var factory in tabContentFactories) {
-				var tabContent = factory.Value.Create(context);
-				if (tabContent != null)
-					return tabContent;
-			}
-			throw new InvalidOperationException();
+			var content = fileTabContentFactoryManager.CreateTabContent(nodes);
+			Debug.Assert(content != null);
+			return content ?? new NullFileTabContent();
+		}
+
+		internal void Add(ITabGroup group, IFileTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShown) {
+			Debug.Assert(TabGroupManager.TabGroups.Contains(group));
+			var tab = OpenEmptyTab(group);
+			tab.Show(tabContent, serializedUI, onShown);
 		}
 
 		public IFileTab OpenEmptyTab() {
-			var g = SafeActiveTabGroup;
+			return OpenEmptyTab(SafeActiveTabGroup);
+		}
+
+		IFileTab OpenEmptyTab(ITabGroup g) {
 			var impl = CreateNewTab(g);
 			g.ActiveTabContent = impl;
 			return impl;
@@ -233,6 +236,8 @@ namespace dnSpy.Files.Tabs {
 
 		int disableSelectTreeNodes;
 		internal void OnNewTabContentShown(IFileTab fileTab) {
+			if (!tabsLoaded)
+				return;
 			if (disableSelectTreeNodes > 0)
 				return;
 			if (fileTab != ActiveTabContentImpl)
@@ -320,5 +325,16 @@ namespace dnSpy.Files.Tabs {
 		public bool Owns(ITabGroup tabGroup) {
 			return tabGroupManager.TabGroups.Contains(tabGroup);
 		}
+
+		internal void OnTabsLoaded() {
+			Debug.Assert(!tabsLoaded);
+			tabsLoaded = true;
+			var impl = ActiveTabContentImpl;
+			if (impl != null) {
+				impl.OnTabsLoaded();
+				OnNewTabContentShown(impl);
+			}
+		}
+		bool tabsLoaded = false;
 	}
 }

@@ -74,8 +74,13 @@
     <Compile Include="Files\Tabs\Commands.cs" />
     <Compile Include="Files\Tabs\DecompilationCache.cs" />
     <Compile Include="Files\Tabs\DefaultDecompileNode.cs" />
+    <Compile Include="Files\Tabs\DnSpyFileInfoSerializer.cs" />
+    <Compile Include="Files\Tabs\FileList.cs" />
+    <Compile Include="Files\Tabs\FileListManager.cs" />
     <Compile Include="Files\Tabs\FileTabContentFactoryContext.cs" />
+    <Compile Include="Files\Tabs\FileTabContentFactoryManager.cs" />
     <Compile Include="Files\Tabs\FileTabManager.cs" />
+    <Compile Include="Files\Tabs\FileTabManagerLoader.cs" />
     <Compile Include="Files\Tabs\FileTabUIContextLocator.cs" />
     <Compile Include="Files\Tabs\FileTabUIContextLocatorCreator.cs" />
     <Compile Include="Files\Tabs\FileTreeNodeDecompiler.cs" />
@@ -85,6 +90,7 @@
     <Compile Include="Files\Tabs\NodeDecompiler.cs" />
     <Compile Include="Files\Tabs\NullObjects.cs" />
     <Compile Include="Files\Tabs\RedecompileTabs.cs" />
+    <Compile Include="Files\Tabs\SerializedTabs.cs" />
     <Compile Include="Files\Tabs\TabContentImpl.cs" />
     <Compile Include="Files\Tabs\TabElementScaler.cs" />
     <Compile Include="Files\Tabs\TabHistory.cs" />
@@ -156,6 +162,10 @@
     <Compile Include="MainApp\AppStatusBar.cs" />
     <Compile Include="MainApp\AppToolBar.cs" />
     <Compile Include="MainApp\AppWindow.cs" />
+    <Compile Include="MainApp\DnSpyLoaderControl.xaml.cs">
+      <DependentUpon>DnSpyLoaderControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainApp\DnSpyLoaderManager.cs" />
     <Compile Include="MainApp\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -269,6 +279,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="MainApp\DnSpyLoaderControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainApp\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -308,6 +322,7 @@
     <Resource Include="Images\DelegateProtectedInternal.png" />
     <Resource Include="Images\DerivedTypesClosed.png" />
     <Resource Include="Images\DerivedTypesOpened.png" />
+    <Resource Include="Images\dnSpy-Big.png" />
     <Resource Include="Images\Enum.png" />
     <Resource Include="Images\EnumInternal.png" />
     <Resource Include="Images\EnumPrivate.png" />

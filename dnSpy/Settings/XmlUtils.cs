@@ -99,13 +99,13 @@ namespace dnSpy.Settings {
 		}
 
 		static bool IsValidFirstXmlAttrChar(char c) {
-			return c == '-' || c == '_' ||
+			return c == '-' || c == '_' || c == '.' ||
 				('A' <= c && c <= 'Z') ||
 				('a' <= c && c <= 'z');
 		}
 
 		static bool IsValidXmlAttrChar(char c) {
-			return c == '-' || c == '_' ||
+			return c == '-' || c == '_' || c == '.' ||
 				('0' <= c && c <= '9') || 
 				('A' <= c && c <= 'Z') ||
 				('a' <= c && c <= 'z');

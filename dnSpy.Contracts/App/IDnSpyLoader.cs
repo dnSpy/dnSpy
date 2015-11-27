@@ -18,67 +18,57 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Settings;
 
-namespace dnSpy.Contracts.Plugin {
+namespace dnSpy.Contracts.App {
 	/// <summary>
-	/// All classes that export this type automatically get loaded at startup.
-	/// Use <see cref="ExportAutoLoadedAttribute"/> to export it.
+	/// Called at startup and exit. Use <see cref="ExportDnSpyLoaderAttribute"/> to export an
+	/// instance.
 	/// </summary>
-	public interface IAutoLoaded {
-	}
-
-	/// <summary>
-	/// <see cref="IAutoLoaded"/> load type
-	/// </summary>
-	public enum AutoLoadedLoadType {
+	public interface IDnSpyLoader {
 		/// <summary>
-		/// Loaded before plugins are created
+		/// Called when dnSpy exits
 		/// </summary>
-		BeforePlugins,
+		/// <param name="settingsManager">Settings manager</param>
+		void Save(ISettingsManager settingsManager);
 
 		/// <summary>
-		/// Loaded after plugins have been created
+		/// Called when dnSpy has just started. If the method takes too long to execute, give control
+		/// back to dnSpy by using yield return. Only values in <see cref="LoaderConstants"/>
+		/// are used by the loader, anything else is ignored.
 		/// </summary>
-		AfterPlugins,
+		/// <param name="settingsManager">Settings manager</param>
+		/// <returns></returns>
+		IEnumerable<object> Load(ISettingsManager settingsManager);
 
 		/// <summary>
-		/// Loaded after all plugins have been created and loaded
+		/// Called when everything has been loaded
 		/// </summary>
-		AfterPluginsLoaded,
-
-		/// <summary>
-		/// Loaded when the app has been loaded
-		/// </summary>
-		AppLoaded,
+		void OnAppLoaded();
 	}
 
 	/// <summary>Metadata</summary>
-	public interface IAutoLoadedMetadata {
-		/// <summary>See <see cref="ExportAutoLoadedAttribute.LoadType"/></summary>
-		AutoLoadedLoadType LoadType { get; }
-		/// <summary>See <see cref="ExportAutoLoadedAttribute.Order"/></summary>
+	public interface IDnSpyLoaderMetadata {
+		/// <summary>See <see cref="ExportDnSpyLoaderAttribute.Order"/></summary>
 		double Order { get; }
 	}
 
 	/// <summary>
-	/// Exports a <see cref="IAutoLoaded"/> instance
+	/// Exports a <see cref="IDnSpyLoader"/> instance
 	/// </summary>
 	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public sealed class ExportAutoLoadedAttribute : ExportAttribute, IAutoLoadedMetadata {
+	public sealed class ExportDnSpyLoaderAttribute : ExportAttribute, IDnSpyLoaderMetadata {
 		/// <summary>Constructor</summary>
-		public ExportAutoLoadedAttribute()
-			: base(typeof(IAutoLoaded)) {
+		public ExportDnSpyLoaderAttribute()
+			: base(typeof(IDnSpyLoader)) {
+			Order = double.MaxValue;
 		}
 
 		/// <summary>
 		/// Order of this instance
 		/// </summary>
 		public double Order { get; set; }
-
-		/// <summary>
-		/// Default is <see cref="AutoLoadedLoadType.BeforePlugins"/>
-		/// </summary>
-		public AutoLoadedLoadType LoadType { get; set; }
 	}
 }

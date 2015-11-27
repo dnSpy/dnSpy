@@ -46,6 +46,8 @@
     <Compile Include="App\IAppSettings.cs" />
     <Compile Include="App\IAppStatusBar.cs" />
     <Compile Include="App\IAppWindow.cs" />
+    <Compile Include="App\IDnSpyLoader.cs" />
+    <Compile Include="App\LoaderConstants.cs" />
     <Compile Include="Command\ICommandHolder.cs" />
     <Compile Include="Contracts.cs" />
     <Compile Include="Controls\CommandConstants.cs" />
@@ -53,8 +55,9 @@
     <Compile Include="Controls\IWpfCommands.cs" />
     <Compile Include="Controls\IWpfFocusChecker.cs" />
     <Compile Include="Controls\IWpfFocusManager.cs" />
-    <Compile Include="Files\DnSpyFileCreatorContext.cs" />
+    <Compile Include="Files\DnSpyFileInfo.cs" />
     <Compile Include="Files\FilenameKey.cs" />
+    <Compile Include="Files\FilesConstants.cs" />
     <Compile Include="Files\IAnnotations.cs" />
     <Compile Include="Files\IDnSpyDotNetFile.cs" />
     <Compile Include="Files\IDnSpyFile.cs" />

@@ -54,6 +54,11 @@ namespace dnSpy.Contracts.Files.TreeView {
 		event EventHandler<NotifyFileTreeViewCollectionChangedEventArgs> CollectionChanged;
 
 		/// <summary>
+		/// Notified when the node's text has changed
+		/// </summary>
+		event EventHandler<EventArgs> NodesTextChanged;
+
+		/// <summary>
 		/// Creates a new <see cref="IDnSpyFileNode"/> instance. This will internally call all
 		/// <see cref="IDnSpyFileNodeCreator"/>s it can find.
 		/// </summary>

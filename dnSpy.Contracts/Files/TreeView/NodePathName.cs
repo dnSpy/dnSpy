@@ -26,7 +26,20 @@ namespace dnSpy.Contracts.Files.TreeView {
 	/// Node path name
 	/// </summary>
 	public struct NodePathName : IEquatable<NodePathName> {
+		/// <summary>
+		/// Gets the guid
+		/// </summary>
+		public Guid Guid {
+			get { return guid; }
+		}
 		readonly Guid guid;
+
+		/// <summary>
+		/// Gets the name
+		/// </summary>
+		public string Name {
+			get { return name; }
+		}
 		readonly string name;
 
 		/// <summary>

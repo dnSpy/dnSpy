@@ -17,31 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Files {
 	/// <summary>
-	/// Creates <see cref="IDnSpyFile"/>s
+	/// Constants
 	/// </summary>
-	public interface IDnSpyFileCreator {
+	public static class FilesConstants {
 		/// <summary>
-		/// Order of this instance
+		/// Order of default <see cref="IDnSpyFileCreator"/> instance
 		/// </summary>
-		double Order { get; }
+		public const double ORDER_DEFAULT_FILE_CREATOR = double.MaxValue;
 
 		/// <summary>
-		/// Creates a new <see cref="IDnSpyFile"/> instance or returns null. This method can be
-		/// called in <c>any</c> thread so the code must be thread safe.
+		/// A normal <see cref="IDnSpyFile"/> created from a file. <see cref="DnSpyFileInfo.Name"/>
+		/// is the filename.
 		/// </summary>
-		/// <param name="fileManager">File manager</param>
-		/// <param name="fileInfo">File to create</param>
-		/// <returns></returns>
-		IDnSpyFile Create(IFileManager fileManager, DnSpyFileInfo fileInfo);
+		public static readonly Guid FILETYPE_FILE = new Guid("57E89016-3E28-43A2-88C0-42D067520C14");
 
 		/// <summary>
-		/// Creates a <see cref="IDnSpyFilenameKey"/> instance
+		/// A <see cref="IDnSpyFile"/> created from a file in the GAC. <see cref="DnSpyFileInfo.Name"/>
+		/// is the assembly name.
 		/// </summary>
-		/// <param name="fileManager">File manager</param>
-		/// <param name="fileInfo">File to create</param>
-		/// <returns></returns>
-		IDnSpyFilenameKey CreateKey(IFileManager fileManager, DnSpyFileInfo fileInfo);
+		public static readonly Guid FILETYPE_GAC = new Guid("1A7BE658-FD95-46A9-BA03-A05D87161342");
 	}
 }

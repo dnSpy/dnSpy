@@ -30,9 +30,10 @@ using System.Windows.Threading;
 using dnSpy.Languages;
 using dnSpy.Plugin;
 using dnSpy.Settings;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.MainApp {
-	partial class App : Application {
+	sealed partial class App : Application {
 		static App() {
 			InstallExceptionHandlers();
 		}
@@ -50,7 +51,7 @@ namespace dnSpy.MainApp {
 
 		static void ShowException(Exception ex) {
 			string msg = ex == null ? "Unknown exception" : ex.ToString();
-			MessageBox.Show(msg, "ERROR");
+			MessageBox.Show(msg, "dnSpy", MessageBoxButton.OK, MessageBoxImage.Error);
 		}
 
 		[Import]
@@ -59,6 +60,8 @@ namespace dnSpy.MainApp {
 		SettingsManager settingsManager = null;
 		[Import]
 		PluginManager pluginManager = null;
+		[Import]
+		IDnSpyLoaderManager dnSpyLoaderManager = null;
 
 		public App() {
 			InitializeComponent();
@@ -66,6 +69,7 @@ namespace dnSpy.MainApp {
 
 			var asms = new List<Assembly>();
 			asms.Add(typeof(Language).Assembly);		// Languages
+			asms.Add(typeof(EnumVM).Assembly);			// dnSpy.Shared.UI
 			var app = AppCreator.Create(asms, "*.Plugin.dll");
 			app.CompositionContainer.ComposeParts(this);
 
@@ -73,6 +77,8 @@ namespace dnSpy.MainApp {
 		}
 
 		void App_Exit(object sender, ExitEventArgs e) {
+			pluginManager.OnAppExit();
+			dnSpyLoaderManager.Save();
 			try {
 				new XmlSettingsWriter(settingsManager).Write();
 			}
@@ -109,8 +115,16 @@ namespace dnSpy.MainApp {
 			base.OnStartup(e);
 
 			var win = appWindow.InitializeMainWindow();
+			dnSpyLoaderManager.OnAppLoaded += DnSpyLoaderManager_OnAppLoaded;
+			dnSpyLoaderManager.Initialize(appWindow, win);
 			pluginManager.LoadPlugins();
 			win.Show();
+		}
+
+		void DnSpyLoaderManager_OnAppLoaded(object sender, EventArgs e) {
+			dnSpyLoaderManager.OnAppLoaded -= DnSpyLoaderManager_OnAppLoaded;
+			appWindow.AppLoaded = true;
+			pluginManager.OnAppLoaded();
 		}
 	}
 }

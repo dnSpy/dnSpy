@@ -55,5 +55,11 @@ namespace dnSpy.Contracts.Settings {
 		/// </summary>
 		/// <param name="name">Name of attribute</param>
 		void RemoveAttribute(string name);
+
+		/// <summary>
+		/// Copies <paramref name="section"/> to this instance
+		/// </summary>
+		/// <param name="section">Source section</param>
+		void CopyFrom(ISettingsSection section);
 	}
 }

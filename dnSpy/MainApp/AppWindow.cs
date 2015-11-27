@@ -20,22 +20,23 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Themes;
 using dnSpy.Controls;
 using dnSpy.Events;
 using dnSpy.Files.Tabs;
-using dnSpy.Settings;
 using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.MainApp {
 	[Export, Export(typeof(IAppWindow)), PartCreationPolicy(CreationPolicy.Shared)]
-	sealed class AppWindow : IAppWindow {
+	sealed class AppWindow : IAppWindow, IDnSpyLoaderContentProvider {
 		public IFileTabManager FileTabManager {
 			get { return fileTabManager; }
 		}
@@ -49,7 +50,7 @@ namespace dnSpy.MainApp {
 		readonly StackedContent<IStackedContentChild> stackedContent;
 		readonly IThemeManager themeManager;
 		readonly IImageManager imageManager;
-		readonly SettingsManager settingsManager;
+		readonly ISettingsManager settingsManager;
 		readonly AppToolBar appToolBar;
 
 		internal MainWindow MainWindow {
@@ -65,10 +66,13 @@ namespace dnSpy.MainApp {
 		public IWpfCommandManager WpfCommandManager {
 			get { return wpfCommandManager; }
 		}
+
+		public bool AppLoaded { get; internal set; }
+
 		readonly IWpfCommandManager wpfCommandManager;
 
 		[ImportingConstructor]
-		AppWindow(IThemeManager themeManager, IImageManager imageManager, AppSettingsImpl appSettings, SettingsManager settingsManager, FileTabManager fileTabManager, AppToolBar appToolBar, IWpfCommandManager wpfCommandManager) {
+		AppWindow(IThemeManager themeManager, IImageManager imageManager, AppSettingsImpl appSettings, ISettingsManager settingsManager, FileTabManager fileTabManager, AppToolBar appToolBar, IWpfCommandManager wpfCommandManager) {
 			this.appSettings = appSettings;
 			this.stackedContent = new StackedContent<IStackedContentChild>();
 			this.themeManager = themeManager;
@@ -117,10 +121,19 @@ namespace dnSpy.MainApp {
 			mainWindow.Closing += MainWindow_Closing;
 			mainWindow.Closed += MainWindow_Closed;
 			mainWindow.GotKeyboardFocus += MainWindow_GotKeyboardFocus;
-			stackedContent.AddChild(StackedContentChildImpl.GetOrCreate(fileTabManager.FileTreeView.TreeView, fileTabManager.FileTreeView.TreeView.UIObject), StackedContentChildInfo.CreateHorizontal(new GridLength(250, GridUnitType.Pixel), 100));
-			stackedContent.AddChild(StackedContentChildImpl.GetOrCreate(fileTabManager.TabGroupManager, fileTabManager.TabGroupManager.UIObject), StackedContentChildInfo.CreateHorizontal(new GridLength(1, GridUnitType.Star), 100));
 			RefreshToolBar();
 			return mainWindow;
+		}
+
+		void IDnSpyLoaderContentProvider.SetLoadingContent(object content) {
+			Debug.Assert(stackedContent.Count == 0);
+			stackedContent.AddChild(StackedContentChildImpl.GetOrCreate(content, content));
+		}
+
+		void IDnSpyLoaderContentProvider.RemoveLoadingContent() {
+			stackedContent.Clear();
+			stackedContent.AddChild(StackedContentChildImpl.GetOrCreate(fileTabManager.FileTreeView.TreeView, fileTabManager.FileTreeView.TreeView.UIObject), StackedContentChildInfo.CreateHorizontal(new GridLength(250, GridUnitType.Pixel), 100));
+			stackedContent.AddChild(StackedContentChildImpl.GetOrCreate(fileTabManager.TabGroupManager, fileTabManager.TabGroupManager.UIObject), StackedContentChildInfo.CreateHorizontal(new GridLength(1, GridUnitType.Star), 100));
 		}
 
 		void MainWindow_Closing(object sender, CancelEventArgs e) {

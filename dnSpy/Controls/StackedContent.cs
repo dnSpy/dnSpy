@@ -143,6 +143,11 @@ namespace dnSpy.Controls {
 			UpdateGrid();
 		}
 
+		public void Clear() {
+			children.Clear();
+			UpdateGrid();
+		}
+
 		public void AddChild(TChild child, StackedContentChildInfo lengthInfo = null, int index = -1) {
 			Debug.Assert(child.StackedContent == null);
 			if ((uint)index <= (uint)children.Count)

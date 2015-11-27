@@ -17,24 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Plugin {
-	/// <summary>
-	/// Plugin event
-	/// </summary>
-	public enum PluginEvent {
-		/// <summary>
-		/// All plugins have been loaded
-		/// </summary>
-		Loaded,
+using System.Windows.Controls;
 
-		/// <summary>
-		/// The app has been loaded
-		/// </summary>
-		AppLoaded,
+namespace dnSpy.MainApp {
+	sealed partial class DnSpyLoaderControl : UserControl {
+		public Image Image {
+			get { return loadingImage; }
+		}
 
-		/// <summary>
-		/// The app is closing
-		/// </summary>
-		AppExit,
+		public DnSpyLoaderControl() {
+			InitializeComponent();
+		}
 	}
 }

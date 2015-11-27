@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 
@@ -63,6 +64,29 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <returns></returns>
 		public static IModuleFileNode GetModuleNode(this ITreeNodeData self) {
 			return self.GetAncestor<IModuleFileNode>();
+		}
+
+		/// <summary>
+		/// Gets the <see cref="IDnSpyFileNode"/> top node or null if none was found
+		/// </summary>
+		/// <param name="self"></param>
+		/// <returns></returns>
+		public static IDnSpyFileNode GetTopNode(this ITreeNodeData self) {
+			var root = self == null ? null : self.TreeNode.TreeView.Root;
+			while (self != null) {
+				var found = self as IDnSpyFileNode;
+				if (found != null) {
+					var p = found.TreeNode.Parent;
+					Debug.Assert(p != null);
+					if (p == null || p == root)
+						return found;
+				}
+				var parent = self.TreeNode.Parent;
+				if (parent == null)
+					break;
+				self = parent.Data;
+			}
+			return null;
 		}
 	}
 }

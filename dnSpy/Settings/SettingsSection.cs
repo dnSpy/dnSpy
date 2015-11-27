@@ -73,6 +73,15 @@ namespace dnSpy.Settings {
 			sectionAttributes.RemoveAttribute(name);
 		}
 
+		public void CopyFrom(ISettingsSection section) {
+			if (section == null)
+				throw new ArgumentNullException();
+			foreach (var attr in section.Attributes)
+				this.Attribute(attr.Item1, attr.Item2);
+			foreach (var child in section.Sections)
+				CreateSection(child.Name).CopyFrom(child);
+		}
+
 		public override string ToString() {
 			return Name;
 		}

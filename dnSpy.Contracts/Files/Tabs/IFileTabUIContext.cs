@@ -20,6 +20,7 @@
 using System;
 using System.Windows;
 using System.Windows.Media;
+using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>
@@ -57,6 +58,21 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// </summary>
 		/// <param name="obj">Serialized UI state</param>
 		void Deserialize(object obj);
+
+		/// <summary>
+		/// Creates a serialized UI object, same type as returned by <see cref="Serialize()"/>.
+		/// </summary>
+		/// <param name="section">Serialized data</param>
+		/// <returns></returns>
+		object CreateSerialized(ISettingsSection section);
+
+		/// <summary>
+		/// Saves serialized data to <paramref name="section"/>. <paramref name="obj"/> was created
+		/// by <see cref="Serialize()"/> but should be verified by the callee.
+		/// </summary>
+		/// <param name="section">Destination</param>
+		/// <param name="obj">Serialized data, created by <see cref="Serialize()"/></param>
+		void SaveSerialized(ISettingsSection section, object obj);
 
 		/// <summary>
 		/// Called when this instance will be shown in a tab
