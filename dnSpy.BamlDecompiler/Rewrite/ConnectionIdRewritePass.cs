@@ -99,8 +99,10 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 				return;
 
 			Action<XamlContext, XElement> cb;
-			if (!connIds.TryGetValue((int)connId.Id, out cb))
+			if (!connIds.TryGetValue((int)connId.Id, out cb)) {
 				elem.AddBeforeSelf(new XComment("Unknown connection ID: " + connId.Id));
+				return;
+			}
 
 			cb(ctx, elem);
 		}
@@ -218,11 +220,13 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 					}
 				}
 
-				foreach (var id in cas.Values)
-					connIds[id] = cb;
+				if (cb != null) {
+					foreach (var id in cas.Values)
+						connIds[id] = cb;
+				}
 			}
 
-			return connIds;
+			return connIds.Count == 0 ? null : connIds;
 		}
 	}
 }
