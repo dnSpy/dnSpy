@@ -56,7 +56,7 @@ namespace dnSpy.Files.TreeView {
 				if (cached != null)
 					return cached;
 
-				Write(gen.SyntaxHighlightOutput, Context.Language);
+				Write(gen.Output, Context.Language);
 
 				var text = gen.CreateTextBlock(filterOutNewLines: true);
 				cachedText = new WeakReference(text);
@@ -79,7 +79,7 @@ namespace dnSpy.Files.TreeView {
 				if (cached != null)
 					return cached;
 
-				WriteToolTip(gen.SyntaxHighlightOutput, Context.Language);
+				WriteToolTip(gen.Output, Context.Language);
 
 				var text = gen.CreateTextBlock(filterOutNewLines: false);
 				cachedToolTip = new WeakReference(text);

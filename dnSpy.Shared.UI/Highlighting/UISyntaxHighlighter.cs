@@ -44,7 +44,7 @@ namespace dnSpy.Shared.UI.Highlighting {
 			}
 		}
 
-		public ISyntaxHighlightOutput SyntaxHighlightOutput {
+		public ISyntaxHighlightOutput Output {
 			get { return (ISyntaxHighlightOutput)output ?? syntaxHighlighter; }
 		}
 

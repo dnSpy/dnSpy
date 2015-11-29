@@ -26,8 +26,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
 using System.Windows.Threading;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
@@ -106,8 +104,8 @@ namespace dnSpy.Tabs {
 			var impl = GetTabItemImpl(content);
 			if (impl == null)
 				throw new InvalidOperationException();
-			if (impl != ActiveTabItemImpl)
-				return;
+			tabControl.SelectedItem = impl;
+			tabGroupManager.SetActive(this);
 			SetFocus2(impl.TabContent);
 		}
 
@@ -242,6 +240,7 @@ namespace dnSpy.Tabs {
 					return;
 			}
 
+			tabGroupManager.SetActive(this);
 			tabGroupManager.OnSelectionChanged(this, selected, unselected);
 		}
 
@@ -357,16 +356,8 @@ namespace dnSpy.Tabs {
 		public static T GetItem<T>(DependencyObject view, object o) where T : class {
 			var depo = o as DependencyObject;
 			while (depo != null && !(depo is T) && depo != view)
-				depo = GetParent(depo);
+				depo = UIUtils.GetParent(depo);
 			return depo as T;
-		}
-
-		static DependencyObject GetParent(DependencyObject depo) {
-			if (depo is Visual || depo is Visual3D)
-				return VisualTreeHelper.GetParent(depo);
-			else if (depo is FrameworkContentElement)
-				return ((FrameworkContentElement)depo).Parent;
-			return null;
 		}
 
 		bool GetInfo(object sender, DragEventArgs e,
@@ -563,6 +554,15 @@ namespace dnSpy.Tabs {
 				return false;
 			this.tabControl.SelectedItem = tabItem;
 			return true;
+		}
+
+		void ITabGroup.Close(ITabContent content) {
+			if (content == null)
+				throw new ArgumentNullException();
+			var impl = GetTabItemImpl(content);
+			if (impl == null)
+				throw new InvalidOperationException();
+			Close(impl);
 		}
 
 		internal void Close(TabItemImpl impl) {

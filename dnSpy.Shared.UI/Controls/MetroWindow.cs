@@ -30,6 +30,8 @@ using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Shared.UI.Controls {
 	public class MetroWindow : Window {
+		public static readonly RoutedCommand FullScreenCommand = new RoutedCommand("FullScreen", typeof(MetroWindow));
+
 		public MetroWindow() {
 			SetValue(winChrome_WindowChromeProperty, CreateWindowChromeObject());
 			// Since the system menu had to be disabled, we must add this command

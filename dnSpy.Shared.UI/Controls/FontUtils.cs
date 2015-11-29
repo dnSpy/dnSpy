@@ -23,15 +23,15 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 
-namespace dnSpy.Options {
+namespace dnSpy.Shared.UI.Controls {
 	public static class FontUtils {
-		public const double DEFAULT_FONT_SIZE = 10.0 * 4 / 3;
-		public const double MIN_FONT_SIZE = 1;
-		public const double MAX_FONT_SIZE = 200;
+		public static readonly double DEFAULT_FONT_SIZE = 10.0 * 4 / 3;
+		const double MIN_FONT_SIZE = 1;
+		const double MAX_FONT_SIZE = 200;
 
 		const string GLOBAL_MONOSPACE_FONT = "Global Monospace";
 
-		static readonly string[] monospaceFontsToCheck = new string[] {
+		static readonly string[] monospacedFontsToCheck = new string[] {
 			"Consolas",
 			"Lucida Console",
 			"Courier New",
@@ -39,8 +39,8 @@ namespace dnSpy.Options {
 			GLOBAL_MONOSPACE_FONT,
 		};
 
-		public static string GetDefaultFont() {
-			foreach (var name in monospaceFontsToCheck) {
+		public static string GetDefaultMonospacedFont() {
+			foreach (var name in monospacedFontsToCheck) {
 				if (Exists(name))
 					return name;
 			}

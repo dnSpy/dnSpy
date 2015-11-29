@@ -26,6 +26,9 @@ namespace dnSpy.AsmEditor {
 		void IPlugin.EarlyInit() {
 			ICSharpCode.ILSpy.App.AddMergedResourceDictionary(typeof(PluginLoader).Assembly, "Themes/Generic.xaml");
 			MainWindow.Instance.HexDocumentManager = HexDocumentManager.Instance;
+
+			//TODO: Update this resource with the text editor font each time it gets initialized
+			App.Current.Resources["TextEditorFontFamily"] = XXXXXXXXXXXX;
 		}
 
 		void IPlugin.OnLoaded() {

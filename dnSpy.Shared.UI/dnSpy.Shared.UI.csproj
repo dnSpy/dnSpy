@@ -81,6 +81,7 @@
     <Compile Include="AvalonEdit\ExtensionMethods.cs" />
     <Compile Include="Controls\FastTextBlock.cs" />
     <Compile Include="Controls\FastTreeNodeView.cs" />
+    <Compile Include="Controls\FontUtils.cs" />
     <Compile Include="Controls\MetroWindow.cs" />
     <Compile Include="Controls\SysMenuButton.cs" />
     <Compile Include="Controls\TabButton.cs" />
@@ -148,6 +149,7 @@
     <Compile Include="MVVM\ListVM.cs" />
     <Compile Include="MVVM\NumberVMUtils.cs" />
     <Compile Include="MVVM\RelayCommand.cs" />
+    <Compile Include="MVVM\UIUtils.cs" />
     <Compile Include="MVVM\ViewModelBase.cs" />
     <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

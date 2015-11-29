@@ -17,14 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Settings;
-using dnSpy.Contracts.Tabs;
 
 namespace dnSpy.Files.Tabs {
 	[ExportDnSpyLoader(Order = LoaderConstants.ORDER_FILETABMANAGER)]
@@ -110,8 +108,7 @@ namespace dnSpy.Files.Tabs {
 			fileListManager.SelectedFileList.Update(fileTabManager.FileTreeView.FileManager.GetFiles());
 			fileListManager.Save(section.GetOrCreateSection(FILE_LISTS_SECTION));
 
-			bool restoreTabs = true;//TODO: Read from settings
-			if (restoreTabs) {
+			if (fileTabManager.Settings.RestoreTabs) {
 				var tgw = SerializedTabGroupWindow.Create(fileTabContentFactoryManager, fileTabManager.TabGroupManager, SerializedTabGroupWindow.MAIN_NAME);
 				tgw.Save(section.CreateSection(TABGROUPWINDOW_SECTION));
 			}

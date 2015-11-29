@@ -54,73 +54,73 @@ namespace dnSpy.MainApp {
 			get { return menuManager; }
 		}
 		[Import]
-		/*readonly*/ MenuManager menuManager;
+		/*readonly*/ MenuManager menuManager = null;
 
 		public IToolBarManager ToolBarManager {
 			get { return toolBarManager; }
 		}
 		[Import]
-		/*readonly*/ ToolBarManager toolBarManager;
+		/*readonly*/ ToolBarManager toolBarManager = null;
 
 		public IThemeManager ThemeManager {
 			get { return themeManager; }
 		}
 		[Import]
-		/*readonly*/ ThemeManager themeManager;
+		/*readonly*/ ThemeManager themeManager = null;
 
 		public IImageManager ImageManager {
 			get { return imageManager; }
 		}
 		[Import]
-		/*readonly*/ ImageManager imageManager;
+		/*readonly*/ ImageManager imageManager = null;
 
 		public IDotNetImageManager DotNetImageManager {
 			get { return dotNetImageManager; }
 		}
 		[Import]
-		/*readonly*/ DotNetImageManager dotNetImageManager;
+		/*readonly*/ DotNetImageManager dotNetImageManager = null;
 
 		public ISettingsManager SettingsManager {
 			get { return settingsManager; }
 		}
 		[Import]
-		/*readonly*/ SettingsManager settingsManager;
+		/*readonly*/ SettingsManager settingsManager = null;
 
 		public ITreeViewManager TreeViewManager {
 			get { return treeViewManager; }
 		}
 		[Import]
-		/*readonly*/ TreeViewManager treeViewManager;
+		/*readonly*/ TreeViewManager treeViewManager = null;
 
 		public IFileTreeView FileTreeView {
 			get { return fileTreeView; }
 		}
 		[Import]
-		/*readonly*/ FileTreeView fileTreeView;
+		/*readonly*/ FileTreeView fileTreeView = null;
 
 		public ILanguageManager LanguageManager {
 			get { return languageManager; }
 		}
 		[Import]
-		/*readonly*/ LanguageManager languageManager;
+		/*readonly*/ LanguageManager languageManager = null;
 
 		public ITabManagerCreator TabManagerCreator {
 			get { return tabManagerCreator; }
 		}
 		[Import]
-		/*readonly*/ TabManagerCreator tabManagerCreator;
+		/*readonly*/ TabManagerCreator tabManagerCreator = null;
 
 		public IFileTabManager FileTabManager {
 			get { return fileTabManager; }
 		}
 		[Import]
-		/*readonly*/ FileTabManager fileTabManager;
+		/*readonly*/ FileTabManager fileTabManager = null;
 
 		public IAppWindow AppWindow {
 			get { return appWindow; }
 		}
 		[Import]
-		/*readonly*/ IAppWindow appWindow;
+		/*readonly*/ IAppWindow appWindow = null;
 
 		public CompositionContainer CompositionContainer {
 			get { return compositionContainer; }
@@ -130,18 +130,6 @@ namespace dnSpy.MainApp {
 
 		AppImpl() {
 			DnSpy.App = this;
-			this.themeManager = null;
-			this.imageManager = null;
-			this.dotNetImageManager = null;
-			this.menuManager = null;
-			this.toolBarManager = null;
-			this.settingsManager = null;
-			this.treeViewManager = null;
-			this.fileTreeView = null;
-			this.languageManager = null;
-			this.tabManagerCreator = null;
-			this.fileTabManager = null;
-			this.appWindow = null;
 		}
 	}
 }

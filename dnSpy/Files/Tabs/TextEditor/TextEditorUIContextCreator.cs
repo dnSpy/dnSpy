@@ -34,19 +34,21 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly IWpfCommandManager wpfCommandManager;
 		readonly IMenuManager menuManager;
 		readonly ICodeToolTipManager codeToolTipManager;
+		readonly ITextEditorSettings textEditorSettings;
 
 		[ImportingConstructor]
-		TextEditorUIContextCreator(IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager) {
+		TextEditorUIContextCreator(IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager, ITextEditorSettings textEditorSettings) {
 			this.themeManager = themeManager;
 			this.wpfCommandManager = wpfCommandManager;
 			this.menuManager = menuManager;
 			this.codeToolTipManager = codeToolTipManager;
+			this.textEditorSettings = textEditorSettings;
 		}
 
 		public IFileTabUIContext Create<T>() where T : class, IFileTabUIContext {
 			if (typeof(T) == typeof(ITextEditorUIContext)) {
 				var ttRefFinder = new ToolTipReferenceFinder();
-				var tec = new TextEditorControl(themeManager, new ToolTipHelper(codeToolTipManager, ttRefFinder));
+				var tec = new TextEditorControl(themeManager, new ToolTipHelper(codeToolTipManager, ttRefFinder), textEditorSettings);
 				var uiContext = new TextEditorUIContext(wpfCommandManager, menuManager, tec);
 				ttRefFinder.UIContext = uiContext;
 				return uiContext;

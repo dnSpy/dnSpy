@@ -26,8 +26,12 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 
 namespace dnSpy.Files.Tabs {
-	[Export, PartCreationPolicy(CreationPolicy.Shared)]
-	sealed class FileTreeNodeDecompiler {
+	interface IFileTreeNodeDecompiler {
+		void Decompile(IDecompileNodeContext decompileNodeContext, IFileTreeNodeData[] nodes);
+	}
+
+	[Export, Export(typeof(IFileTreeNodeDecompiler)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class FileTreeNodeDecompiler : IFileTreeNodeDecompiler {
 		readonly IDecompileNode[] decompileNodes;
 
 		[ImportingConstructor]
@@ -38,6 +42,7 @@ namespace dnSpy.Files.Tabs {
 
 		public void Decompile(IDecompileNodeContext decompileNodeContext, IFileTreeNodeData[] nodes) {
 			for (int i = 0; i < nodes.Length; i++) {
+				decompileNodeContext.DecompilationOptions.CancellationToken.ThrowIfCancellationRequested();
 				if (i > 0)
 					decompileNodeContext.Output.WriteLine();
 				DecompileNode(decompileNodeContext, nodes[i]);

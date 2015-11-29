@@ -39,6 +39,9 @@ namespace ICSharpCode.Decompiler
 	/// </summary>
 	public class DecompilerSettings : INotifyPropertyChanged, IEquatable<DecompilerSettings>
 	{
+		protected virtual void OnModified() {
+		}
+
 		public DecompilerSettings InitializeForTest()
 		{
 			ShowILComments = false;
@@ -504,11 +507,11 @@ namespace ICSharpCode.Decompiler
 		
 		protected virtual void OnPropertyChanged(string propertyName)
 		{
-			if (PropertyChanged != null) {
+			if (PropertyChanged != null)
 				PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-			}
+			OnModified();
 		}
-		
+
 		public DecompilerSettings Clone()
 		{
 			DecompilerSettings settings = (DecompilerSettings)MemberwiseClone();

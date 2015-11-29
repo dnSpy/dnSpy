@@ -27,6 +27,11 @@ namespace dnSpy.Contracts.Files.Tabs {
 	/// </summary>
 	public interface IFileTabManager {
 		/// <summary>
+		/// Gets the settings
+		/// </summary>
+		IFileTabManagerSettings Settings { get; }
+
+		/// <summary>
 		/// Gets the <see cref="IFileTreeView"/> instance
 		/// </summary>
 		IFileTreeView FileTreeView { get; }
@@ -61,7 +66,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <summary>
 		/// Gives <paramref name="tab"/> keyboard focus
 		/// </summary>
-		/// <param name="tab"></param>
+		/// <param name="tab">Tab</param>
 		void SetFocus(IFileTab tab);
 
 		/// <summary>
@@ -81,5 +86,18 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <param name="tabGroup">Tab group</param>
 		/// <returns></returns>
 		bool Owns(ITabGroup tabGroup);
+
+		/// <summary>
+		/// Closes the tab
+		/// </summary>
+		/// <param name="tab"></param>
+		void Close(IFileTab tab);
+
+		/// <summary>
+		/// Tries to get the <see cref="IFileTab"/>
+		/// </summary>
+		/// <param name="content">Tab content</param>
+		/// <returns></returns>
+		IFileTab TryGetFileTab(ITabContent content);
 	}
 }

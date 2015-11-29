@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>
@@ -40,30 +39,19 @@ namespace dnSpy.Contracts.Languages {
 		/// Raised when <see cref="SelectedLanguage"/> has been updated
 		/// </summary>
 		event EventHandler<EventArgs> LanguageChanged;
-	}
 
-	/// <summary>
-	/// Extension methods
-	/// </summary>
-	public static class LanguageManagerExtensionMethods {
 		/// <summary>
 		/// Finds a <see cref="ILanguage"/> instance. null is returned if it wasn't found
 		/// </summary>
-		/// <param name="self">This</param>
 		/// <param name="nameUI">Name, see <see cref="ILanguage.NameUI"/></param>
 		/// <returns></returns>
-		public static ILanguage Find(this ILanguageManager self, string nameUI) {
-			return self.Languages.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.NameUI, nameUI));
-		}
+		ILanguage Find(string nameUI);
 
 		/// <summary>
 		/// Finds a <see cref="ILanguage"/> instance. Returns the first one if the language wasn't found
 		/// </summary>
-		/// <param name="self">This</param>
 		/// <param name="nameUI">Name, see <see cref="ILanguage.NameUI"/></param>
 		/// <returns></returns>
-		public static ILanguage FindOrDefault(this ILanguageManager self, string nameUI) {
-			return self.Find(nameUI) ?? self.Languages.First();
-		}
+		ILanguage FindOrDefault(string nameUI);
 	}
 }

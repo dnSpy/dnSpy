@@ -34,12 +34,14 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 	sealed class CodeToolTipManager : ICodeToolTipManager {
 		readonly IImageManager imageManager;
 		readonly IDotNetImageManager dotNetImageManager;
+		readonly ICodeToolTipSettings codeToolTipSettings;
 		readonly Lazy<IToolTipContentCreator, IToolTipContentCreatorMetadata>[] creators;
 
 		[ImportingConstructor]
-		CodeToolTipManager(IImageManager imageManager, IDotNetImageManager dotNetImageManager, [ImportMany] IEnumerable<Lazy<IToolTipContentCreator, IToolTipContentCreatorMetadata>> mefCreators) {
+		CodeToolTipManager(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ICodeToolTipSettings codeToolTipSettings, [ImportMany] IEnumerable<Lazy<IToolTipContentCreator, IToolTipContentCreatorMetadata>> mefCreators) {
 			this.imageManager = imageManager;
 			this.dotNetImageManager = dotNetImageManager;
+			this.codeToolTipSettings = codeToolTipSettings;
 			this.creators = mefCreators.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
@@ -49,7 +51,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 			if (@ref == null)
 				return null;
 
-			var ctx = new ToolTipContentCreatorContext(imageManager, dotNetImageManager, language);
+			var ctx = new ToolTipContentCreatorContext(imageManager, dotNetImageManager, language, codeToolTipSettings);
 			foreach (var creator in creators) {
 				var ttObj = creator.Value.Create(ctx, @ref);
 				if (ttObj != null)

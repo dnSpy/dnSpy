@@ -33,6 +33,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		void button_Click(object sender, RoutedEventArgs e) {
 			onCancel();
+			button.IsEnabled = false;
 		}
 	}
 }

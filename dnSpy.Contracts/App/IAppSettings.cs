@@ -25,18 +25,6 @@ namespace dnSpy.Contracts.App {
 	/// </summary>
 	public interface IAppSettings : INotifyPropertyChanged {
 		/// <summary />
-		bool SyntaxHighlightFileTreeView { get; }
-		/// <summary />
-		bool SingleClickExpandsTreeViewChildren { get; }
-		/// <summary />
-		bool ShowAssemblyVersion { get; }
-		/// <summary />
-		bool ShowAssemblyPublicKeyToken { get; }
-		/// <summary />
-		bool ShowToken { get; }
-		/// <summary />
-		string LanguageName { get; }
-		/// <summary />
 		bool UseNewRenderer { get; }
 	}
 }

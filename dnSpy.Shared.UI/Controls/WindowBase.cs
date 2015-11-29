@@ -21,14 +21,22 @@ using System.Windows;
 
 namespace dnSpy.Shared.UI.Controls {
 	public abstract class WindowBase : MetroWindow {
-		protected void okButton_Click(object sender, RoutedEventArgs e) {
+		protected void ClickOK() {
 			this.DialogResult = true;
 			Close();
 		}
 
-		protected void cancelButton_Click(object sender, RoutedEventArgs e) {
+		protected void ClickCancel() {
 			this.DialogResult = false;
 			Close();
+		}
+
+		protected void okButton_Click(object sender, RoutedEventArgs e) {
+			ClickOK();
+		}
+
+		protected void cancelButton_Click(object sender, RoutedEventArgs e) {
+			ClickCancel();
 		}
 	}
 }

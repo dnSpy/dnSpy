@@ -19,7 +19,6 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
@@ -41,11 +40,9 @@ namespace dnSpy.Files.Tabs {
 		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
 			if (!appWindow.AppLoaded)
 				return;
-			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-				var tab = fileTabManager.ActiveTab;
-				if (tab != null)
-					fileTabManager.CheckRefresh(new IFileTab[] { tab });
-			}));
+			var tab = fileTabManager.ActiveTab;
+			if (tab != null)
+				fileTabManager.CheckRefresh(new IFileTab[] { tab });
 		}
 	}
 }

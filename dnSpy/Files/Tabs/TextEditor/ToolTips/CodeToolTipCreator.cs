@@ -36,10 +36,12 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 
 		readonly IImageManager imageManager;
 		readonly IDotNetImageManager dotNetImageManager;
+		readonly bool syntaxHighlight;
 
-		public CodeToolTipCreator(IImageManager imageManager, IDotNetImageManager dotNetImageManager) {
+		public CodeToolTipCreator(IImageManager imageManager, IDotNetImageManager dotNetImageManager, bool syntaxHighlight) {
 			this.imageManager = imageManager;
 			this.dotNetImageManager = dotNetImageManager;
+			this.syntaxHighlight = syntaxHighlight;
 			this.writers = new List<CodeToolTipWriter>();
 			CreateNewOutput();
 		}
@@ -72,7 +74,6 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		}
 
 		public ICodeToolTipWriter CreateNewOutput() {
-			const bool syntaxHighlight = true;
 			writers.Add(new CodeToolTipWriter(syntaxHighlight));
 			return writers[writers.Count - 1];
 		}

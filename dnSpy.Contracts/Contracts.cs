@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;

@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Diagnostics;
 using System.Threading;
 using ICSharpCode.Decompiler;
 
@@ -43,12 +45,42 @@ namespace dnSpy.Contracts.Languages {
 		// NOTE: Don't add new props here without also updating the decompilation cache code
 		// *******************************************************************
 
-		/// <summary />
-		public DecompilationOptions() {//TODO: Original code init'd this instance to current default options. Fix callers.
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		public DecompilationOptions() {
 			this.ProjectOptions = new ProjectOptions();
 			this.CancellationToken = CancellationToken.None;
 			this.DecompilerSettings = new DecompilerSettings();
 			this.DontShowCreateMethodBodyExceptions = true;
+		}
+
+		/// <summary>
+		/// Set a <see cref="DecompilerSettings"/> factory
+		/// </summary>
+		/// <param name="factory">Factory</param>
+		public static void SetDecompilerSettingsFactory(Func<DecompilerSettings> factory) {
+			if (factory == null)
+				throw new ArgumentNullException();
+			if (DecompilationOptions.factory != null)
+				throw new InvalidOperationException();
+			DecompilationOptions.factory = factory;
+		}
+		static Func<DecompilerSettings> factory;
+
+		/// <summary>
+		/// Makes a copy of the global <see cref="DecompilerSettings"/>. DON'T CALL IT.
+		/// </summary>
+		/// <returns></returns>
+		public static DecompilerSettings _DONT_CALL_CreateDecompilerSettings() {//TODO: Remove it and SetDecompilerSettingsFactory(). Only used by older C#/VB code in Languages that accessed a global
+			if (factory != null) {
+				var d = factory();
+				if (d == null)
+					throw new InvalidOperationException();
+				return d;
+			}
+			Debug.Fail("DecompilerSettings factory hasn't been initialized");
+			return new DecompilerSettings();
 		}
 	}
 }

@@ -81,7 +81,7 @@ namespace dnSpy.MainApp {
 	}
 
 	sealed class WindowLoader {
-		const int EXEC_TIME_BEFORE_DELAY_MS = 80;
+		const int EXEC_TIME_BEFORE_DELAY_MS = 40;
 		readonly DnSpyLoaderManager dnSpyLoaderManager;
 		readonly IImageManager imageManager;
 		readonly IThemeManager themeManager;

@@ -326,12 +326,12 @@ namespace dnSpy.Languages.VB {
 		IEnumerable<Tuple<string, string>> WriteCodeFilesInProject(ModuleDef module, DecompilationOptions options, HashSet<string> directories) {
 			var files = module.Types.Where(t => IncludeTypeWhenDecompilingProject(t, options)).GroupBy(
 				delegate (TypeDef type) {
-					string file = CSharpLanguage.CleanUpName(type.Name) + this.FileExtension;
+					string file = FilenameUtils.CleanUpName(type.Name) + this.FileExtension;
 					if (string.IsNullOrEmpty(type.Namespace)) {
 						return file;
 					}
 					else {
-						string dir = CSharpLanguage.CleanUpName(type.Namespace);
+						string dir = FilenameUtils.CleanUpName(type.Namespace);
 						if (directories.Add(dir))
 							Directory.CreateDirectory(Path.Combine(options.ProjectOptions.Directory, dir));
 						return Path.Combine(dir, file);
@@ -340,7 +340,7 @@ namespace dnSpy.Languages.VB {
 			AstMethodBodyBuilder.ClearUnhandledOpcodes();
 			Parallel.ForEach(
 				files,
-				new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
+				new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = options.CancellationToken },
 				delegate (IGrouping<string, TypeDef> file) {
 					using (StreamWriter w = new StreamWriter(Path.Combine(options.ProjectOptions.Directory, file.Key))) {
 						AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: module);
@@ -370,7 +370,7 @@ namespace dnSpy.Languages.VB {
 					}
 					if (rs != null && rs.All(e => e.Value is Stream)) {
 						foreach (var pair in rs) {
-							fileName = Path.Combine(((string)pair.Key).Split('/').Select(p => CSharpLanguage.CleanUpName(p)).ToArray());
+							fileName = Path.Combine(((string)pair.Key).Split('/').Select(p => FilenameUtils.CleanUpName(p)).ToArray());
 							string dirName = Path.GetDirectoryName(fileName);
 							if (!string.IsNullOrEmpty(dirName) && directories.Add(dirName)) {
 								Directory.CreateDirectory(Path.Combine(options.ProjectOptions.Directory, dirName));
@@ -395,12 +395,12 @@ namespace dnSpy.Languages.VB {
 
 		string GetFileNameForResource(string fullName, HashSet<string> directories) {
 			string[] splitName = fullName.Split('.');
-			string fileName = CSharpLanguage.CleanUpName(fullName);
+			string fileName = FilenameUtils.CleanUpName(fullName);
 			for (int i = splitName.Length - 1; i > 0; i--) {
 				string ns = string.Join(".", splitName, 0, i);
 				if (directories.Contains(ns)) {
 					string name = string.Join(".", splitName, i, splitName.Length - i);
-					fileName = Path.Combine(ns, CSharpLanguage.CleanUpName(name));
+					fileName = Path.Combine(ns, FilenameUtils.CleanUpName(name));
 					break;
 				}
 			}
@@ -443,7 +443,7 @@ namespace dnSpy.Languages.VB {
 		}
 
 		public override bool ShowMember(IMemberRef member) {
-			return showAllMembers || !AstBuilder.MemberIsHidden(member, new DecompilationOptions().DecompilerSettings);
+			return showAllMembers || !AstBuilder.MemberIsHidden(member, DecompilationOptions._DONT_CALL_CreateDecompilerSettings());
 		}
 
 		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationOptions options, ModuleDef module) {

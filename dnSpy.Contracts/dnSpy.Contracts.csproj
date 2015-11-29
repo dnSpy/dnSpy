@@ -65,6 +65,7 @@
     <Compile Include="Files\IDnSpyFilenameKey.cs" />
     <Compile Include="Files\IDnSpyPEFile.cs" />
     <Compile Include="Files\IFileManager.cs" />
+    <Compile Include="Files\IFileManagerSettings.cs" />
     <Compile Include="Files\NotifyFileCollectionChangedEventArgs.cs" />
     <Compile Include="Files\NotifyFileCollectionType.cs" />
     <Compile Include="Files\SerializedDnSpyModule.cs" />
@@ -76,16 +77,21 @@
     <Compile Include="Files\Tabs\IFileTabContentFactory.cs" />
     <Compile Include="Files\Tabs\IFileTabContentFactoryContext.cs" />
     <Compile Include="Files\Tabs\IFileTabManager.cs" />
+    <Compile Include="Files\Tabs\IFileTabManagerSettings.cs" />
     <Compile Include="Files\Tabs\IFileTabUIContext.cs" />
     <Compile Include="Files\Tabs\IFileTabUIContextCreator.cs" />
     <Compile Include="Files\Tabs\IFileTabUIContextLocator.cs" />
     <Compile Include="Files\Tabs\ILanguageTabContent.cs" />
     <Compile Include="Files\Tabs\IReferenceFileTabContentCreator.cs" />
+    <Compile Include="Files\Tabs\ISaveManager.cs" />
+    <Compile Include="Files\Tabs\ITabSaver.cs" />
+    <Compile Include="Files\Tabs\ITabSaverCreator.cs" />
     <Compile Include="Files\Tabs\ShowTabContentEventArgs.cs" />
     <Compile Include="Files\Tabs\TabsConstants.cs" />
     <Compile Include="Files\Tabs\TextEditor\CodeReferenceSegment.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNode.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNodeContext.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ITextEditorSettings.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextEditorUIContext.cs" />
     <Compile Include="Files\Tabs\TextEditor\ToolTips\ICodeToolTipCreator.cs" />
     <Compile Include="Files\Tabs\TextEditor\ToolTips\ICodeToolTipWriter.cs" />
@@ -107,6 +113,7 @@
     <Compile Include="Files\TreeView\IFileTreeNodeDataContext.cs" />
     <Compile Include="Files\TreeView\IFileTreeNodeDataFinder.cs" />
     <Compile Include="Files\TreeView\IFileTreeView.cs" />
+    <Compile Include="Files\TreeView\IFileTreeViewSettings.cs" />
     <Compile Include="Files\TreeView\IMessageNode.cs" />
     <Compile Include="Files\TreeView\IMethodNode.cs" />
     <Compile Include="Files\TreeView\IModuleFileNode.cs" />

@@ -1,14 +1,5 @@
 bin/
 obj/
-
-/ICSharpCode.Decompiler/Properties/AssemblyInfo.cs
-/dnSpy/Properties/AssemblyInfo.cs
-/dnSpy_old/Properties/AssemblyInfo.cs
-/dnSpy-x86/Properties/AssemblyInfo.cs
-/dnSpyc/Properties/AssemblyInfo.cs
-/dnSpy/app.config
-/dnSpy_old/app.config
-/dnSpy-x86/app.config
 *.suo
 *.user
 _ReSharper*/

@@ -85,7 +85,7 @@ namespace dnSpy.Files {
 			if (file != null)
 				return fileManager.GetOrAddCanDispose(file);
 
-			if (fileManager.UseGAC) {
+			if (fileManager.Settings.UseGAC) {
 				var gacFile = GacInfo.FindInGac(assembly);
 				if (gacFile != null)
 					return fileManager.TryGetOrCreate(DnSpyFileInfo.CreateFile(gacFile), true);

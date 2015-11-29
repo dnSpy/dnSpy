@@ -44,5 +44,10 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// Order of dnlib reference <see cref="IToolTipContentCreator"/> instance
 		/// </summary>
 		public const double ORDER_DNLIBREFTOOLTIPCONTENTCREATOR = double.MaxValue;
+
+		/// <summary>
+		/// Order of default <see cref="ITabSaverCreator"/> instance
+		/// </summary>
+		public const double ORDER_DEFAULTTABSAVERCREATOR = double.MaxValue;
 	}
 }

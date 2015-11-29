@@ -89,14 +89,9 @@ namespace dnSpy.Contracts.Files {
 		void SetDispatcher(Action<Action> action);
 
 		/// <summary>
-		/// true if memory mapped I/O is used
+		/// Gets the settings
 		/// </summary>
-		bool UseMemoryMappedIO { get; }
-
-		/// <summary>
-		/// true if PDB files should be loaded
-		/// </summary>
-		bool UseDebugSymbols { get; }
+		IFileManagerSettings Settings { get; }
 
 		/// <summary>
 		/// The assembly resolver it uses

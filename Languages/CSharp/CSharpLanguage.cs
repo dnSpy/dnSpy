@@ -44,6 +44,31 @@ using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
 
+namespace dnSpy.Languages {
+	public static class FilenameUtils {
+		static HashSet<string> ReservedFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+			"CON", "PRN", "AUX", "NUL",
+			"COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+			"LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
+		};
+
+		public static string CleanUpName(string text) {
+			int pos = text.IndexOf(':');
+			if (pos > 0)
+				text = text.Substring(0, pos);
+			pos = text.IndexOf('`');
+			if (pos > 0)
+				text = text.Substring(0, pos);
+			text = text.Trim();
+			foreach (char c in Path.GetInvalidFileNameChars())
+				text = text.Replace(c, '-');
+			if (ReservedFileNames.Contains(text))
+				text = "__" + text + "__";
+			return text;
+		}
+	}
+}
+
 namespace dnSpy.Languages.CSharp {
 	/// <summary>
 	/// Decompiler logic for C#.
@@ -691,12 +716,12 @@ namespace dnSpy.Languages.CSharp {
 		IEnumerable<Tuple<string, string>> WriteCodeFilesInProject(ModuleDef module, DecompilationOptions options, HashSet<string> directories) {
 			var files = module.Types.Where(t => IncludeTypeWhenDecompilingProject(t, options)).GroupBy(
 				delegate (TypeDef type) {
-					string file = CleanUpName(type.Name) + this.FileExtension;
+					string file = FilenameUtils.CleanUpName(type.Name) + this.FileExtension;
 					if (string.IsNullOrEmpty(type.Namespace)) {
 						return file;
 					}
 					else {
-						string dir = CleanUpName(type.Namespace);
+						string dir = FilenameUtils.CleanUpName(type.Namespace);
 						if (directories.Add(dir))
 							Directory.CreateDirectory(Path.Combine(options.ProjectOptions.Directory, dir));
 						return Path.Combine(dir, file);
@@ -705,7 +730,7 @@ namespace dnSpy.Languages.CSharp {
 			AstMethodBodyBuilder.ClearUnhandledOpcodes();
 			Parallel.ForEach(
 				files,
-				new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount },
+				new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount, CancellationToken = options.CancellationToken },
 				delegate (IGrouping<string, TypeDef> file) {
 					using (StreamWriter w = new StreamWriter(Path.Combine(options.ProjectOptions.Directory, file.Key))) {
 						AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: module);
@@ -739,7 +764,7 @@ namespace dnSpy.Languages.CSharp {
 					}
 					if (rs != null && rs.All(e => e.Value is Stream)) {
 						foreach (var pair in rs) {
-							fileName = Path.Combine(((string)pair.Key).Split('/').Select(p => CleanUpName(p)).ToArray());
+							fileName = Path.Combine(((string)pair.Key).Split('/').Select(p => FilenameUtils.CleanUpName(p)).ToArray());
 							string dirName = Path.GetDirectoryName(fileName);
 							if (!string.IsNullOrEmpty(dirName) && directories.Add(dirName)) {
 								Directory.CreateDirectory(Path.Combine(options.ProjectOptions.Directory, dirName));
@@ -764,12 +789,12 @@ namespace dnSpy.Languages.CSharp {
 
 		string GetFileNameForResource(string fullName, HashSet<string> directories) {
 			string[] splitName = fullName.Split('.');
-			string fileName = CleanUpName(fullName);
+			string fileName = FilenameUtils.CleanUpName(fullName);
 			for (int i = splitName.Length - 1; i > 0; i--) {
 				string ns = string.Join(".", splitName, 0, i);
 				if (directories.Contains(ns)) {
 					string name = string.Join(".", splitName, i, splitName.Length - i);
-					fileName = Path.Combine(ns, CleanUpName(name));
+					fileName = Path.Combine(ns, FilenameUtils.CleanUpName(name));
 					break;
 				}
 			}
@@ -900,7 +925,7 @@ namespace dnSpy.Languages.CSharp {
 		}
 
 		public override bool ShowMember(IMemberRef member) {
-			return showAllMembers || !AstBuilder.MemberIsHidden(member, new DecompilationOptions().DecompilerSettings);
+			return showAllMembers || !AstBuilder.MemberIsHidden(member, DecompilationOptions._DONT_CALL_CreateDecompilerSettings());
 		}
 
 		void WriteToolTipType(ITextOutput output, ITypeDefOrRef type, bool useNamespaces, bool usePrimitiveTypeName = true, IHasCustomAttribute typeAttributes = null) {
@@ -1444,27 +1469,6 @@ namespace dnSpy.Languages.CSharp {
 			WriteToolTip(newOutput, variable.Type, new GenericParamContext(), !isLocal ? ((Parameter)variable).ParamDef : null);
 			output.WriteSpace();
 			WriteIdentifier(newOutput, GetName(variable, name), isLocal ? TextTokenType.Local : TextTokenType.Parameter);
-		}
-
-		static HashSet<string> ReservedFileNames = new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
-			"CON", "PRN", "AUX", "NUL",
-			"COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
-			"LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
-		};
-
-		internal static string CleanUpName(string text) {
-			int pos = text.IndexOf(':');
-			if (pos > 0)
-				text = text.Substring(0, pos);
-			pos = text.IndexOf('`');
-			if (pos > 0)
-				text = text.Substring(0, pos);
-			text = text.Trim();
-			foreach (char c in Path.GetInvalidFileNameChars())
-				text = text.Replace(c, '-');
-			if (ReservedFileNames.Contains(text))
-				text = "__" + text + "__";
-			return text;
 		}
 	}
 }

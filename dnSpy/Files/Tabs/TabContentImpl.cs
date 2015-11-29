@@ -125,6 +125,7 @@ namespace dnSpy.Files.Tabs {
 
 		void ITabContent.OnVisibilityChanged(TabContentVisibilityEvent visEvent) {
 			if (visEvent == TabContentVisibilityEvent.Removed) {
+				CancelAsyncWorker();
 				var id = fileTabUIContextLocator as IDisposable;
 				Debug.Assert(id != null);
 				if (id != null)
@@ -219,6 +220,27 @@ namespace dnSpy.Files.Tabs {
 		}
 		AsyncWorkerContext asyncWorkerContext;
 
+		public bool IsAsyncExecInProgress {
+			get { return asyncWorkerContext != null; }
+		}
+
+		public void AsyncExec(Action<CancellationTokenSource> preExec, Action asyncAction, Action<IAsyncShowResult> postExec) {
+			CancelAsyncWorker();
+
+			var ctx = new AsyncWorkerContext();
+			asyncWorkerContext = ctx;
+			preExec(ctx.CancellationTokenSource);
+			Task.Factory.StartNew(() => {
+				asyncAction();
+			}, ctx.CancellationTokenSource.Token)
+			.ContinueWith(t => {
+				if (asyncWorkerContext == ctx)
+					asyncWorkerContext = null;
+				ctx.Dispose();
+				postExec(new AsyncShowResult(t, false));
+			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+		}
+
 		void CancelAsyncWorker() {
 			if (asyncWorkerContext == null)
 				return;
@@ -298,9 +320,13 @@ namespace dnSpy.Files.Tabs {
 			ShowInternal(Content, UIContext.Serialize(), null);
 		}
 
-		public void SetFocus() {
+		public void TrySetFocus() {
 			if (IsActiveTab)
 				FileTabManager.SetFocus(this);
+		}
+
+		public void Close() {
+			FileTabManager.Close(this);
 		}
 
 		public void OnSelected() {

@@ -28,16 +28,18 @@ using dnSpy.Events;
 namespace dnSpy.Languages {
 	[Export, Export(typeof(ILanguageManager)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class LanguageManager : ILanguageManager {
+		readonly LanguageManagerSettingsImpl languageManagerSettings;
 		readonly ILanguage[] languages;
 
 		[ImportingConstructor]
-		LanguageManager([ImportMany] ILanguage[] languages, [ImportMany] ILanguageCreator[] creators) {
+		LanguageManager(LanguageManagerSettingsImpl languageManagerSettings, [ImportMany] ILanguage[] languages, [ImportMany] ILanguageCreator[] creators) {
+			this.languageManagerSettings = languageManagerSettings;
 			var langs = new List<ILanguage>(languages);
 			foreach (var creator in creators)
 				langs.AddRange(creator.Create());
 			this.languages = langs.OrderBy(a => a.OrderUI).ToArray();
 			Debug.Assert(this.languages.Length != 0);
-			this.selectedLanguage = this.languages.Length == 0 ? null : this.languages[0];
+			this.selectedLanguage = FindOrDefault(languageManagerSettings.LanguageName);
 			this.languageChanged = new WeakEventList<EventArgs>();
 		}
 
@@ -50,6 +52,7 @@ namespace dnSpy.Languages {
 					throw new InvalidOperationException("Can't set a language that isn't part of this instance's language collection");
 				if (selectedLanguage != value) {
 					selectedLanguage = value;
+					languageManagerSettings.LanguageName = value.NameUI;
 					languageChanged.Raise(this, EventArgs.Empty);
 				}
 			}
@@ -64,6 +67,14 @@ namespace dnSpy.Languages {
 
 		public IEnumerable<ILanguage> Languages {
 			get { return languages.AsEnumerable(); }
+		}
+
+		public ILanguage Find(string nameUI) {
+			return this.Languages.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.NameUI, nameUI));
+		}
+
+		public ILanguage FindOrDefault(string nameUI) {
+			return Find(nameUI) ?? Languages.FirstOrDefault();
 		}
 	}
 }

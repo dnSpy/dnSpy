@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Shared.UI", "dnSpy.Sh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Languages", "Languages\Languages.csproj", "{D7FE873E-DF22-4F54-AEFA-BCF33AFD7E05}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy-x86", "dnSpy-x86\dnSpy-x86.csproj", "{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -193,6 +195,18 @@ Global
 		{D7FE873E-DF22-4F54-AEFA-BCF33AFD7E05}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{D7FE873E-DF22-4F54-AEFA-BCF33AFD7E05}.Release|x86.ActiveCfg = Release|Any CPU
 		{D7FE873E-DF22-4F54-AEFA-BCF33AFD7E05}.Release|x86.Build.0 = Release|Any CPU
+		{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}.Debug|Any CPU.Build.0 = Debug|x86
+		{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}.Debug|x86.ActiveCfg = Debug|x86
+		{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}.Debug|x86.Build.0 = Debug|x86
+		{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}.Release|Any CPU.ActiveCfg = Release|x86
+		{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}.Release|Any CPU.Build.0 = Release|x86
+		{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}.Release|Mixed Platforms.Build.0 = Release|x86
+		{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}.Release|x86.ActiveCfg = Release|x86
+		{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

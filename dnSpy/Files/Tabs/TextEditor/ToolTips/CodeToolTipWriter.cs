@@ -43,7 +43,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		}
 
 		public void Write(string s, TextTokenType tokenType) {
-			uiSyntaxHighlighter.SyntaxHighlightOutput.Write(s, tokenType);
+			uiSyntaxHighlighter.Output.Write(s, tokenType);
 		}
 
 		bool needsNewLine = false;
@@ -51,11 +51,11 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		void IXmlDocOutput.Write(string s, TextTokenType tokenType) {
 			if (needsNewLine)
 				((IXmlDocOutput)this).WriteNewLine();
-			uiSyntaxHighlighter.SyntaxHighlightOutput.Write(s, tokenType);
+			uiSyntaxHighlighter.Output.Write(s, tokenType);
 		}
 
 		void IXmlDocOutput.WriteNewLine() {
-			uiSyntaxHighlighter.SyntaxHighlightOutput.WriteLine();
+			uiSyntaxHighlighter.Output.WriteLine();
 			needsNewLine = false;
 		}
 

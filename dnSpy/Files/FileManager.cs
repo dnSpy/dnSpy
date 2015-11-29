@@ -38,11 +38,11 @@ namespace dnSpy.Files {
 
 		public IDnSpyFile Create(IFileManager fileManager, DnSpyFileInfo fileInfo) {
 			if (fileInfo.Type == FilesConstants.FILETYPE_FILE)
-				return FileManager.CreateDnSpyFileFromFile(fileInfo, fileInfo.Name, fileManager.UseMemoryMappedIO, fileManager.UseDebugSymbols, fileManager.AssemblyResolver);
+				return FileManager.CreateDnSpyFileFromFile(fileInfo, fileInfo.Name, fileManager.Settings.UseMemoryMappedIO, fileManager.Settings.LoadPDBFiles, fileManager.AssemblyResolver);
 			if (fileInfo.Type == FilesConstants.FILETYPE_GAC) {
 				var filename = GetGacFilename(fileInfo.Name);
 				if (filename != null)
-					return FileManager.CreateDnSpyFileFromFile(fileInfo, filename, fileManager.UseMemoryMappedIO, fileManager.UseDebugSymbols, fileManager.AssemblyResolver);
+					return FileManager.CreateDnSpyFileFromFile(fileInfo, filename, fileManager.Settings.UseMemoryMappedIO, fileManager.Settings.LoadPDBFiles, fileManager.AssemblyResolver);
 			}
 			return null;
 		}
@@ -74,10 +74,6 @@ namespace dnSpy.Files {
 		}
 		readonly IAssemblyResolver asmResolver;
 
-		public bool UseMemoryMappedIO { get; set; }
-		public bool UseDebugSymbols { get; set; }
-		public bool UseGAC { get; set; }
-
 		sealed class DisableAssemblyLoadHelper : IDisposable {
 			readonly FileManager fileManager;
 
@@ -102,16 +98,18 @@ namespace dnSpy.Files {
 
 		public event EventHandler<NotifyFileCollectionChangedEventArgs> CollectionChanged;
 
+		public IFileManagerSettings Settings {
+			get { return fileManagerSettings; }
+		}
+		readonly IFileManagerSettings fileManagerSettings;
+
 		[ImportingConstructor]
-		FileManager([ImportMany] IDnSpyFileCreator[] mefCreators) {
+		FileManager(IFileManagerSettings fileManagerSettings, [ImportMany] IDnSpyFileCreator[] mefCreators) {
 			this.lockObj = new object();
 			this.files = new List<IDnSpyFile>();
 			this.asmResolver = new AssemblyResolver(this);
 			this.dnSpyFileCreators = mefCreators.OrderBy(a => a.Order).ToArray();
-			//TODO: Initialize these from the settings
-			this.UseMemoryMappedIO = true;
-			this.UseDebugSymbols = true;
-			this.UseGAC = true;
+			this.fileManagerSettings = fileManagerSettings;
 		}
 
 		void CallCollectionChanged(NotifyFileCollectionChangedEventArgs eventArgs) {
@@ -280,7 +278,7 @@ namespace dnSpy.Files {
 			return null;
 		}
 
-		internal static IDnSpyFile CreateDnSpyFileFromFile(DnSpyFileInfo fileInfo, string filename, bool useMemoryMappedIO, bool useDebugSymbols, IAssemblyResolver asmResolver) {
+		internal static IDnSpyFile CreateDnSpyFileFromFile(DnSpyFileInfo fileInfo, string filename, bool useMemoryMappedIO, bool loadPDBFiles, IAssemblyResolver asmResolver) {
 			try {
 				// Quick check to prevent exceptions from being thrown
 				if (!File.Exists(filename))
@@ -298,7 +296,7 @@ namespace dnSpy.Files {
 				if (isDotNet) {
 					try {
 						var options = new ModuleCreationOptions(DnSpyDotNetFileBase.CreateModuleContext(asmResolver));
-						return DnSpyDotNetFile.CreateAssembly(fileInfo, ModuleDefMD.Load(peImage, options), useDebugSymbols);
+						return DnSpyDotNetFile.CreateAssembly(fileInfo, ModuleDefMD.Load(peImage, options), loadPDBFiles);
 					}
 					catch {
 					}

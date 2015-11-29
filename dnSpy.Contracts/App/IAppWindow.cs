@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Windows;
 using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Contracts.App {
@@ -40,6 +41,11 @@ namespace dnSpy.Contracts.App {
 		/// Raised when the main window has closed
 		/// </summary>
 		event EventHandler<EventArgs> MainWindowClosed;
+
+		/// <summary>
+		/// Gets the main window
+		/// </summary>
+		Window MainWindow { get; }
 
 		/// <summary>
 		/// Gets the settings

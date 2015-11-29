@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -62,6 +63,7 @@ namespace dnSpy.MainApp {
 		PluginManager pluginManager = null;
 		[Import]
 		IDnSpyLoaderManager dnSpyLoaderManager = null;
+		CompositionContainer compositionContainer;
 
 		public App() {
 			InitializeComponent();
@@ -71,7 +73,8 @@ namespace dnSpy.MainApp {
 			asms.Add(typeof(Language).Assembly);		// Languages
 			asms.Add(typeof(EnumVM).Assembly);			// dnSpy.Shared.UI
 			var app = AppCreator.Create(asms, "*.Plugin.dll");
-			app.CompositionContainer.ComposeParts(this);
+			compositionContainer = app.CompositionContainer;
+			compositionContainer.ComposeParts(this);
 
 			this.Exit += App_Exit;
 		}
@@ -85,6 +88,7 @@ namespace dnSpy.MainApp {
 			catch {
 				//TODO: Show error to user
 			}
+			compositionContainer.Dispose();
 		}
 
 		void UIFixes() {

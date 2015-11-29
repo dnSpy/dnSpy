@@ -43,10 +43,20 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		void ShowCancelButton(Action onCancel, string msg);
 
 		/// <summary>
+		/// Hides the cancel button shown by <see cref="ShowCancelButton(Action, string)"/>
+		/// </summary>
+		void HideCancelButton();
+
+		/// <summary>
 		/// Moves the caret to a reference, this can be a <see cref="CodeReferenceSegment"/>,
 		/// or a <see cref="IMemberDef"/>. Anything else isn't currently supported.
 		/// </summary>
 		/// <param name="ref">Reference</param>
 		void MoveCaretTo(object @ref);
+
+		/// <summary>
+		/// true if there's selected text
+		/// </summary>
+		bool HasSelectedText { get; }
 	}
 }

@@ -35,7 +35,6 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
-using dnSpy.MainApp;
 
 namespace dnSpy.Files.TreeView {
 	[Export, Export(typeof(IFileTreeView)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -89,7 +88,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		[ImportingConstructor]
-		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, AppSettingsImpl appSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, [ImportMany] IDnSpyFileNodeCreator[] dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
+		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, [ImportMany] IDnSpyFileNodeCreator[] dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
 			var options = new TreeViewOptions {
 				AllowDrop = true,
 				IsVirtualizing = true,
@@ -118,15 +117,15 @@ namespace dnSpy.Files.TreeView {
 			});
 			this.fileManager.CollectionChanged += FileManager_CollectionChanged;
 			this.context = new FileTreeNodeDataContext(this);
-			this.context.SyntaxHighlight = appSettings.SyntaxHighlightFileTreeView;
-			this.context.SingleClickExpandsChildren = appSettings.SingleClickExpandsTreeViewChildren;
-			this.context.ShowAssemblyVersion = appSettings.ShowAssemblyVersion;
-			this.context.ShowAssemblyPublicKeyToken = appSettings.ShowAssemblyPublicKeyToken;
-			this.context.ShowToken = appSettings.ShowToken;
+			this.context.SyntaxHighlight = fileTreeViewSettings.SyntaxHighlight;
+			this.context.SingleClickExpandsChildren = fileTreeViewSettings.SingleClickExpandsTreeViewChildren;
+			this.context.ShowAssemblyVersion = fileTreeViewSettings.ShowAssemblyVersion;
+			this.context.ShowAssemblyPublicKeyToken = fileTreeViewSettings.ShowAssemblyPublicKeyToken;
+			this.context.ShowToken = fileTreeViewSettings.ShowToken;
 			this.context.Language = languageManager.SelectedLanguage;
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
-			appSettings.PropertyChanged += AppSettings_PropertyChanged;
+			fileTreeViewSettings.PropertyChanged += FileTreeViewSettings_PropertyChanged;
 
 			wpfCommandManager.Add(CommandConstants.GUID_FILE_TREEVIEW, (UIElement)treeView.UIObject);
 			this.wpfCommands = wpfCommandManager.GetCommands(CommandConstants.GUID_FILE_TREEVIEW);
@@ -149,34 +148,34 @@ namespace dnSpy.Files.TreeView {
 			RefreshNodes();
 		}
 
-		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			var appSettings = (AppSettingsImpl)sender;
+		void FileTreeViewSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			var fileTreeViewSettings = (IFileTreeViewSettings)sender;
 			switch (e.PropertyName) {
-			case "SyntaxHighlightFileTreeView":
-				context.SyntaxHighlight = appSettings.SyntaxHighlightFileTreeView;
+			case "SyntaxHighlight":
+				context.SyntaxHighlight = fileTreeViewSettings.SyntaxHighlight;
 				RefreshNodes();
 				break;
 
 			case "ShowAssemblyVersion":
-				context.ShowAssemblyVersion = appSettings.ShowAssemblyVersion;
+				context.ShowAssemblyVersion = fileTreeViewSettings.ShowAssemblyVersion;
 				RefreshNodes();
 				NotifyNodesTextRefreshed();
 				break;
 
 			case "ShowAssemblyPublicKeyToken":
-				context.ShowAssemblyPublicKeyToken = appSettings.ShowAssemblyPublicKeyToken;
+				context.ShowAssemblyPublicKeyToken = fileTreeViewSettings.ShowAssemblyPublicKeyToken;
 				RefreshNodes();
 				NotifyNodesTextRefreshed();
 				break;
 
 			case "ShowToken":
-				context.ShowToken = appSettings.ShowToken;
+				context.ShowToken = fileTreeViewSettings.ShowToken;
 				RefreshNodes();
 				NotifyNodesTextRefreshed();
 				break;
 
 			case "SingleClickExpandsTreeViewChildren":
-				context.SingleClickExpandsChildren = appSettings.SingleClickExpandsTreeViewChildren;
+				context.SingleClickExpandsChildren = fileTreeViewSettings.SingleClickExpandsTreeViewChildren;
 				break;
 
 			default:

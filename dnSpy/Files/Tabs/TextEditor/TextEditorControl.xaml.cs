@@ -41,6 +41,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -63,7 +64,7 @@ using ICSharpCode.AvalonEdit.Search;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.Tabs.TextEditor {
-	sealed partial class TextEditorControl : UserControl {
+	sealed partial class TextEditorControl : UserControl, IDisposable {
 		static TextEditorControl() {
 			HighlightingManager.Instance.RegisterHighlighting(
 				"IL", new string[] { ".il" }, () => {
@@ -106,11 +107,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		List<VisualLineElementGenerator> activeCustomElementGenerators = new List<VisualLineElementGenerator>();
 
 		readonly ToolTipHelper toolTipHelper;
+		readonly ITextEditorSettings textEditorSettings;
 
-		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper) {
+		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings) {
 			this.themeManager = themeManager;
 			this.toolTipHelper = toolTipHelper;
+			this.textEditorSettings = textEditorSettings;
 			InitializeComponent();
+			this.textEditorSettings.PropertyChanged += TextEditorSettings_PropertyChanged;
 
 			Loaded += TextEditorControl_Loaded;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
@@ -129,9 +133,21 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.uiElementGenerator = new UIElementGenerator();
 			textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
 
-			//TODO: Read from settings
-			TextEditor.FontFamily = (FontFamily)new FontFamilyConverter().ConvertFromInvariantString("Consolas");
-			TextEditor.FontSize = (double)new FontSizeConverter().ConvertFromInvariantString("10pt");
+			TextEditor.SetBinding(FontFamilyProperty, new Binding {
+				Source = textEditorSettings,
+				Path = new PropertyPath("FontFamily"),
+				Mode = BindingMode.OneWay,
+			});
+			TextEditor.SetBinding(FontSizeProperty, new Binding {
+				Source = textEditorSettings,
+				Path = new PropertyPath("FontSize"),
+				Mode = BindingMode.OneWay,
+			});
+			TextEditor.SetBinding(ICSharpCode.AvalonEdit.TextEditor.WordWrapProperty, new Binding {
+				Source = textEditorSettings,
+				Path = new PropertyPath("WordWrap"),
+				Mode = BindingMode.OneWay,
+			});
 
 			iconBarMargin = new IconBarMargin(this);
 			TextEditor.TextArea.LeftMargins.Insert(0, iconBarMargin);
@@ -186,7 +202,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				wa.button.Focus();
 		}
 
-		void HideCancelButton() {
+		public void HideCancelButton() {
 			var wa = this.waitAdorner.Content as WaitAdorner;
 			// It contains a progress bar that can still be shown on the screen if some older
 			// version of the .NET Framework is used. I could reproduce it with .NET 4 + VMWare + XP.
@@ -337,7 +353,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		void OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
-			TextEditor.Options.HighlightCurrentLine = true;//TODO: Read from settings
+			OnHighlightCurrentLineChanged();
 		}
 
 		void OnLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
@@ -353,7 +369,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		void TextEditorControl_Loaded(object sender, RoutedEventArgs e) {
 			Loaded -= TextEditorControl_Loaded;
-			TextEditor.ShowLineMargin(true);//TODO: Read from settings
+			OnHighlightCurrentLineChanged();
+			OnShowLineNumbersChanged();
+			OnAutoHighlightRefsChanged();
 
 			TextEditor.TextArea.TextView.VisualLinesChanged += (s, e2) => iconBarMargin.InvalidateVisual();
 
@@ -366,15 +384,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		void Caret_PositionChanged(object sender, EventArgs e) {
 			toolTipHelper.Close();
 
-			bool autoHighlightRefs = true;//TODO: Read from settings
-			if (autoHighlightRefs) {
-				int offset = textEditor.TextArea.Caret.Offset;
-				var refSeg = GetReferenceSegmentAt(offset);
-				if (refSeg != null)
-					MarkReferences(refSeg);
-				else
-					ClearMarkedReferences();
-			}
+			OnAutoHighlightRefsChanged();
 		}
 
 		void ClearMarkedReferencesAndToolTip() {
@@ -683,6 +693,42 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			Debug.Fail(string.Format("Unknown type: {0} = {1}", @ref.GetType(), @ref));
 			return false;
+		}
+
+		void TextEditorSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+			if (e.PropertyName == "HighlightCurrentLine")
+				OnHighlightCurrentLineChanged();
+			else if (e.PropertyName == "ShowLineNumbers")
+				OnShowLineNumbersChanged();
+			else if (e.PropertyName == "AutoHighlightRefs")
+				OnAutoHighlightRefsChanged();
+		}
+
+		void OnHighlightCurrentLineChanged() {
+			TextEditor.Options.HighlightCurrentLine = textEditorSettings.HighlightCurrentLine;
+		}
+
+		void OnShowLineNumbersChanged() {
+			TextEditor.ShowLineMargin(textEditorSettings.ShowLineNumbers);
+		}
+
+		void OnAutoHighlightRefsChanged() {
+			if (!textEditorSettings.AutoHighlightRefs)
+				ClearMarkedReferences();
+			else {
+				int offset = textEditor.TextArea.Caret.Offset;
+				var refSeg = GetReferenceSegmentAt(offset);
+				if (refSeg != null)
+					MarkReferences(refSeg);
+				else
+					ClearMarkedReferences();
+			}
+		}
+
+		public void Dispose() {
+			this.textEditorSettings.PropertyChanged -= TextEditorSettings_PropertyChanged;
+			Clear();
+			BindingOperations.ClearAllBindings(TextEditor);
 		}
 	}
 }

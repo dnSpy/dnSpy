@@ -35,10 +35,10 @@ using ICSharpCode.Decompiler;
 namespace dnSpy.Files.Tabs.TextEditor {
 	[Export, ExportFileTabContentFactory(Order = TabsConstants.ORDER_DECOMPILEFILETABCONTENTFACTORY)]
 	sealed class DecompileFileTabContentFactory : IFileTabContentFactory {
-		public FileTreeNodeDecompiler FileTreeNodeDecompiler {
+		public IFileTreeNodeDecompiler FileTreeNodeDecompiler {
 			get { return fileTreeNodeDecompiler; }
 		}
-		readonly FileTreeNodeDecompiler fileTreeNodeDecompiler;
+		readonly IFileTreeNodeDecompiler fileTreeNodeDecompiler;
 
 		public ILanguageManager LanguageManager {
 			get { return languageManager; }
@@ -50,11 +50,17 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 		readonly IDecompilationCache decompilationCache;
 
+		public DecompilerSettings CreateDecompilerSettings() {
+			return _global_decompilerSettings.Clone();
+		}
+		readonly DecompilerSettings _global_decompilerSettings;
+
 		[ImportingConstructor]
-		DecompileFileTabContentFactory(FileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguageManager languageManager, IDecompilationCache decompilationCache) {
+		DecompileFileTabContentFactory(IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguageManager languageManager, IDecompilationCache decompilationCache, DecompilerSettings decompilerSettings) {
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
 			this.languageManager = languageManager;
 			this.decompilationCache = decompilationCache;
+			this._global_decompilerSettings = decompilerSettings;
 		}
 
 		public IFileTabContent Create(IFileTabContentFactoryContext context) {
@@ -159,7 +165,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		DecompileContext CreateDecompileContext() {
 			var decompileContext = new DecompileContext();
 			var decompilationOptions = new DecompilationOptions();
-			decompilationOptions.DecompilerSettings = new DecompilerSettings();//TODO: Init from settings
+			decompilationOptions.DecompilerSettings = decompileFileTabContentFactory.CreateDecompilerSettings();
 			decompilationOptions.DontShowCreateMethodBodyExceptions = true;
 			var output = new AvalonEditTextOutput();
 			var dispatcher = Dispatcher.CurrentDispatcher;

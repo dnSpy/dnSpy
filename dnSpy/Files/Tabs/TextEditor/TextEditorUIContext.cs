@@ -70,7 +70,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			public void Initialize(IMenuItemContext context, ContextMenu menu) {
 				var teCtrl = (TextEditorControl)context.CreatorObject.Object;
 				if (context.OpenedFromKeyboard) {
-					var scrollInfo = (IScrollInfo)teCtrl.TextEditor.TextArea.TextView;
+					IScrollInfo scrollInfo = teCtrl.TextEditor.TextArea.TextView;
 					var pos = teCtrl.TextEditor.TextArea.TextView.GetVisualPosition(teCtrl.TextEditor.TextArea.Caret.Position, VisualYPosition.TextBottom);
 					pos = new Point(pos.X - scrollInfo.HorizontalOffset, pos.Y - scrollInfo.VerticalOffset);
 
@@ -128,6 +128,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public FrameworkElement ScaleElement {
 			get { return textEditorControl.TextEditor.TextArea; }
+		}
+
+		public bool HasSelectedText {
+			get { return textEditorControl.TextEditor.SelectionLength > 0; }
 		}
 
 		public void OnShow() {
@@ -199,7 +203,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		void ITextEditorHelper.SetFocus() {
-			FileTab.SetFocus();
+			FileTab.TrySetFocus();
 		}
 
 		public void SetActive() {
@@ -208,6 +212,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public void ShowCancelButton(Action onCancel, string msg) {
 			textEditorControl.ShowCancelButton(onCancel, msg);
+		}
+
+		public void HideCancelButton() {
+			textEditorControl.HideCancelButton();
 		}
 
 		public void MoveCaretTo(object @ref) {
@@ -222,6 +230,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
 			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTEDITOR, textEditorControl.TextEditor);
 			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTAREA, textEditorControl.TextEditor.TextArea);
+			textEditorControl.Dispose();
 		}
 	}
 }

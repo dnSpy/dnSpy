@@ -51,6 +51,12 @@ namespace dnSpy.Contracts.Tabs {
 		void SetFocus(ITabContent content);
 
 		/// <summary>
+		/// Closes the tab
+		/// </summary>
+		/// <param name="content">Content</param>
+		void Close(ITabContent content);
+
+		/// <summary>
 		/// Adds tab content
 		/// </summary>
 		/// <param name="content">Content</param>

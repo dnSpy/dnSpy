@@ -41,6 +41,7 @@ namespace dnSpy.Settings {
 		}
 
 		static ISettingsSection[] Sort(ISettingsSection[] sections) {
+			// This preserves the order of elements with the same name, which some code depend on.
 			return sections.OrderBy(a => a.Name.ToUpperInvariant()).ToArray();
 		}
 

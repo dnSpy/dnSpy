@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Threading;
 
 namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>
@@ -82,7 +83,26 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <summary>
 		/// Sets focus to the focused element if this is the active tab
 		/// </summary>
-		void SetFocus();
+		void TrySetFocus();
+
+		/// <summary>
+		/// Closes this tab
+		/// </summary>
+		void Close();
+
+		/// <summary>
+		/// true if <see cref="AsyncExec(Action{CancellationTokenSource}, Action, Action{IAsyncShowResult})"/> hasn't finished executing
+		/// </summary>
+		bool IsAsyncExecInProgress { get; }
+
+		/// <summary>
+		/// Executes new code, cancelling any other started <see cref="AsyncExec(Action{CancellationTokenSource}, Action, Action{IAsyncShowResult})"/> call
+		/// </summary>
+		/// <param name="preExec">Executed in the current thread before the async code has started</param>
+		/// <param name="asyncAction">Executed in a new thread</param>
+		/// <param name="postExec">Executed in the current thread after <paramref name="asyncAction"/>
+		/// has finished executing</param>
+		void AsyncExec(Action<CancellationTokenSource> preExec, Action asyncAction, Action<IAsyncShowResult> postExec);
 	}
 
 	/// <summary>

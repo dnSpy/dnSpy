@@ -23,7 +23,7 @@ namespace dnSpy_x86 {
 	class Program {
 		[STAThread]
 		static void Main() {
-			dnSpy.StartUpClass_OLD.Main();
+			dnSpy.MainApp.StartUpClass.Main();
 		}
 	}
 }

@@ -24,19 +24,20 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using dnSpy.Contracts.Settings;
 using dnSpy.Settings;
 
 namespace dnSpy.MainApp {
 	static class AppCreator {
 		public static AppImpl Create(IEnumerable<Assembly> asms, string pattern) {
 			var container = InitializeCompositionContainer(asms, pattern);
-			ReadSettings(container.GetExportedValue<SettingsManager>());
+			ReadSettings(container.GetExportedValue<ISettingsManager>());
 			var appImpl = container.GetExportedValue<AppImpl>();
 			appImpl.CompositionContainer = container;
 			return appImpl;
 		}
 
-		static void ReadSettings(SettingsManager settingsManager) {
+		static void ReadSettings(ISettingsManager settingsManager) {
 			try {
 				new XmlSettingsReader(settingsManager).Read();
 			}

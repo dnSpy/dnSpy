@@ -28,10 +28,12 @@ namespace dnSpy.Files.Tabs {
 	[ExportReferenceFileTabContentCreator]
 	sealed class TreeNodeReferenceFileTabContentCreator : IReferenceFileTabContentCreator {
 		readonly DecompileFileTabContentFactory decompileFileTabContentFactory;
+		readonly IFileTabManagerSettings fileTabManagerSettings;
 
 		[ImportingConstructor]
-		TreeNodeReferenceFileTabContentCreator(DecompileFileTabContentFactory decompileFileTabContentFactory) {
+		TreeNodeReferenceFileTabContentCreator(DecompileFileTabContentFactory decompileFileTabContentFactory, IFileTabManagerSettings fileTabManagerSettings) {
 			this.decompileFileTabContentFactory = decompileFileTabContentFactory;
+			this.fileTabManagerSettings = fileTabManagerSettings;
 		}
 
 		static IMemberDef ResolveMemberDef(IMemberRef @ref) {
@@ -66,8 +68,7 @@ namespace dnSpy.Files.Tabs {
 		object GetReference(object @ref) {
 			var def = ResolveMemberDef(@ref as IMemberRef);
 
-			bool decompileFullType = true;//TODO: Read from settings
-			if (!decompileFullType || def == null)
+			if (!fileTabManagerSettings.DecompileFullType || def == null)
 				return def ?? @ref;
 
 			const int MAX = 100;

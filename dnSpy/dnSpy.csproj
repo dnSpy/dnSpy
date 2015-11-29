@@ -41,6 +41,10 @@
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>dnSpy.MainApp.StartUpClass</StartupObject>
+    <ApplicationIcon>Images\dnSpy.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationFramework.Aero" />
@@ -67,13 +71,22 @@
     <Compile Include="Controls\WpfCommandManager.cs" />
     <Compile Include="Controls\WpfCommands.cs" />
     <Compile Include="Controls\WpfFocusManager.cs" />
+    <Compile Include="Decompiler\DecompilerSettingsImpl.cs" />
     <Compile Include="Events\WeakEventList.cs" />
     <Compile Include="Files\AssemblyResolver.cs" />
     <Compile Include="Files\FileManager.cs" />
+    <Compile Include="Files\FileManagerSettings.cs" />
     <Compile Include="Files\Tabs\AsyncShowResult.cs" />
     <Compile Include="Files\Tabs\Commands.cs" />
     <Compile Include="Files\Tabs\DecompilationCache.cs" />
     <Compile Include="Files\Tabs\DefaultDecompileNode.cs" />
+    <Compile Include="Files\Tabs\Dialogs\TabPrinter.cs" />
+    <Compile Include="Files\Tabs\Dialogs\TabsDlg.xaml.cs">
+      <DependentUpon>TabsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Files\Tabs\Dialogs\TabsVM.cs" />
+    <Compile Include="Files\Tabs\Dialogs\TabsVMSettings.cs" />
+    <Compile Include="Files\Tabs\Dialogs\TabVM.cs" />
     <Compile Include="Files\Tabs\DnSpyFileInfoSerializer.cs" />
     <Compile Include="Files\Tabs\FileList.cs" />
     <Compile Include="Files\Tabs\FileListManager.cs" />
@@ -81,6 +94,7 @@
     <Compile Include="Files\Tabs\FileTabContentFactoryManager.cs" />
     <Compile Include="Files\Tabs\FileTabManager.cs" />
     <Compile Include="Files\Tabs\FileTabManagerLoader.cs" />
+    <Compile Include="Files\Tabs\FileTabManagerSettings.cs" />
     <Compile Include="Files\Tabs\FileTabUIContextLocator.cs" />
     <Compile Include="Files\Tabs\FileTabUIContextLocatorCreator.cs" />
     <Compile Include="Files\Tabs\FileTreeNodeDecompiler.cs" />
@@ -88,12 +102,18 @@
     <Compile Include="Files\Tabs\IFileTabUIContextLocatorCreator.cs" />
     <Compile Include="Files\Tabs\NavigationCommands.cs" />
     <Compile Include="Files\Tabs\NodeDecompiler.cs" />
+    <Compile Include="Files\Tabs\NodeTabSaver.cs" />
     <Compile Include="Files\Tabs\NullObjects.cs" />
     <Compile Include="Files\Tabs\RedecompileTabs.cs" />
+    <Compile Include="Files\Tabs\SaveCommands.cs" />
+    <Compile Include="Files\Tabs\SaveManager.cs" />
     <Compile Include="Files\Tabs\SerializedTabs.cs" />
+    <Compile Include="Files\Tabs\Dialogs\TabColumnConverter.cs" />
+    <Compile Include="Files\Tabs\TabCommands.cs" />
     <Compile Include="Files\Tabs\TabContentImpl.cs" />
     <Compile Include="Files\Tabs\TabElementScaler.cs" />
     <Compile Include="Files\Tabs\TabHistory.cs" />
+    <Compile Include="Files\Tabs\TextEditor\Commands.cs" />
     <Compile Include="Files\Tabs\TextEditor\DecompileFileTabContent.cs" />
     <Compile Include="Files\Tabs\TextEditor\DecompileNodeContext.cs" />
     <Compile Include="Files\Tabs\TextEditor\EditorPositionState.cs" />
@@ -105,12 +125,14 @@
     <Compile Include="Files\Tabs\TextEditor\TextEditorControl.xaml.cs">
       <DependentUpon>TextEditorControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Files\Tabs\TextEditor\TextEditorSettings.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorUIContext.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextCreator.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextLineObjectManager.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextMarkerService.cs" />
     <Compile Include="Files\Tabs\TextEditor\ToolTips\CodeToolTipCreator.cs" />
     <Compile Include="Files\Tabs\TextEditor\ToolTips\CodeToolTipManager.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ToolTips\CodeToolTipSettings.cs" />
     <Compile Include="Files\Tabs\TextEditor\ToolTips\CodeToolTipWriter.cs" />
     <Compile Include="Files\Tabs\TextEditor\ToolTips\DnlibReferenceToolTipContentCreator.cs" />
     <Compile Include="Files\Tabs\TextEditor\ToolTips\ToolTipContentCreatorContext.cs" />
@@ -135,6 +157,7 @@
     <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeDataContext.cs" />
     <Compile Include="Files\TreeView\FileTreeView.cs" />
+    <Compile Include="Files\TreeView\FileTreeViewSettings.cs" />
     <Compile Include="Files\TreeView\MessageNode.cs" />
     <Compile Include="Files\TreeView\MethodNode.cs" />
     <Compile Include="Files\TreeView\ModuleFileNode.cs" />
@@ -151,6 +174,7 @@
     <Compile Include="Images\ImageManager.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
     <Compile Include="Languages\LanguageManager.cs" />
+    <Compile Include="Languages\LanguageManagerSettings.cs" />
     <Compile Include="MainApp\AboutCommands.cs" />
     <Compile Include="MainApp\AboutScreen.cs" />
     <Compile Include="MainApp\App.xaml.cs">
@@ -169,7 +193,7 @@
     <Compile Include="MainApp\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="MainApp\SavedWindowBounds.cs" />
+    <Compile Include="MainApp\SavedWindowState.cs" />
     <Compile Include="MainApp\StartUpClass.cs" />
     <Compile Include="MainApp\ToolBarCommands.cs" />
     <Compile Include="MainApp\ViewCommands.cs" />
@@ -254,6 +278,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="App.config" />
+    <None Include="app.manifest" />
     <None Include="Themes\blue.dntheme">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -271,6 +297,10 @@
     <ApplicationDefinition Include="MainApp\App.xaml">
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Files\Tabs\Dialogs\TabsDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Files\Tabs\TextEditor\TextEditorControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -363,6 +393,7 @@
     <Resource Include="Images\FieldReadOnlyPrivate.png" />
     <Resource Include="Images\FieldReadOnlyProtected.png" />
     <Resource Include="Images\FieldReadOnlyProtectedInternal.png" />
+    <Resource Include="Images\Find.png" />
     <Resource Include="Images\FolderClosed.png" />
     <Resource Include="Images\FolderOpened.png" />
     <Resource Include="Images\Forward.png" />

@@ -140,13 +140,19 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
+		public IFileTabManagerSettings Settings {
+			get { return fileTabManagerSettings; }
+		}
+		readonly IFileTabManagerSettings fileTabManagerSettings;
+
 		readonly IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator;
 		readonly ITabManager tabManager;
 		readonly IFileTabContentFactoryManager fileTabContentFactoryManager;
 		readonly Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>[] refFactories;
 
 		[ImportingConstructor]
-		FileTabManager(IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator, FileTreeView fileTreeView, ITabManagerCreator tabManagerCreator, IFileTabContentFactoryManager fileTabContentFactoryManager, [ImportMany] IEnumerable<Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>> mefRefFactories) {
+		FileTabManager(IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator, FileTreeView fileTreeView, ITabManagerCreator tabManagerCreator, IFileTabContentFactoryManager fileTabContentFactoryManager, IFileTabManagerSettings fileTabManagerSettings, [ImportMany] IEnumerable<Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>> mefRefFactories) {
+			this.fileTabManagerSettings = fileTabManagerSettings;
 			this.fileTabUIContextLocatorCreator = fileTabUIContextLocatorCreator;
 			this.fileTabContentFactoryManager = fileTabContentFactoryManager;
 			this.refFactories = mefRefFactories.OrderBy(a => a.Metadata.Order).ToArray();
@@ -197,9 +203,34 @@ namespace dnSpy.Files.Tabs {
 		void TreeView_SelectionChanged(object sender, TVSelectionChangedEventArgs e) {
 			if (disableSelectionChangedEventCounter > 0)
 				return;
-			ShowNodes(((ITreeView)sender).TopLevelSelection.OfType<IFileTreeNodeData>().ToArray());
+			var nodes = ((ITreeView)sender).TopLevelSelection.OfType<IFileTreeNodeData>().ToArray();
+
+			// When the treeview selects nodes it will unselect everything and then select the new
+			// nodes. We're not interested in the empty selection since it shouldn't be recorded in
+			// the navigation history. If we get an empty selection, it could be because of the
+			// treeview or it's because the user unselected everything. Show the empty nodes with
+			// a slight delay so we can cancel it if the real selection immediately follows.
+			// Reproduce: Select a node, then collapse its parent to unselect the node and select
+			// the parent. Or open a new file.
+			if (nodes.Length != 0 || inEmptySelectionHack) {
+				ignoreEmptySelection = true;
+				ShowNodes(nodes);
+			}
+			else {
+				inEmptySelectionHack = true;
+				ignoreEmptySelection = false;
+				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
+					var old = ignoreEmptySelection;
+					inEmptySelectionHack = false;
+					ignoreEmptySelection = false;
+					if (!old)
+						ShowNodes(nodes);
+				}));
+			}
 		}
 		int disableSelectionChangedEventCounter = 0;
+		bool inEmptySelectionHack;
+		bool ignoreEmptySelection;
 
 		void ShowNodes(IFileTreeNodeData[] nodes) {
 			var tabContent = CreateTabContent(nodes);
@@ -273,7 +304,7 @@ namespace dnSpy.Files.Tabs {
 					var tab = ActiveTabContentImpl;
 					Debug.Assert(tab != null);
 					if (tab != null)
-						tab.SetFocus();
+						tab.TrySetFocus();
 				}
 				else
 					focusedElem.Focus();
@@ -336,5 +367,24 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 		bool tabsLoaded = false;
+
+		public void Close(IFileTab tab) {
+			if (tab == null)
+				throw new ArgumentNullException();
+			var impl = tab as TabContentImpl;
+			if (impl == null)
+				throw new InvalidOperationException();
+			var g = GetTabGroup(impl);
+			if (g == null)
+				throw new InvalidOperationException();
+			g.Close(impl);
+		}
+
+		public IFileTab TryGetFileTab(ITabContent content) {
+			var impl = content as TabContentImpl;
+			if (impl == null)
+				return null;
+			return GetTabGroup(impl) == null ? null : impl;
+		}
 	}
 }

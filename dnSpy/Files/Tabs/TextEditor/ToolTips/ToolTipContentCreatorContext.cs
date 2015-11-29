@@ -30,15 +30,17 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 
 		readonly IImageManager imageManager;
 		readonly IDotNetImageManager dotNetImageManager;
+		readonly ICodeToolTipSettings codeToolTipSettings;
 
-		public ToolTipContentCreatorContext(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ILanguage language) {
+		public ToolTipContentCreatorContext(IImageManager imageManager, IDotNetImageManager dotNetImageManager, ILanguage language, ICodeToolTipSettings codeToolTipSettings) {
 			this.imageManager = imageManager;
 			this.dotNetImageManager = dotNetImageManager;
 			this.language = language;
+			this.codeToolTipSettings = codeToolTipSettings;
 		}
 
 		public ICodeToolTipCreator Create() {
-			return new CodeToolTipCreator(imageManager, dotNetImageManager);
+			return new CodeToolTipCreator(imageManager, dotNetImageManager, codeToolTipSettings.SyntaxHighlight);
 		}
 	}
 }

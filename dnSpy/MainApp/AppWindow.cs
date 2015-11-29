@@ -53,6 +53,9 @@ namespace dnSpy.MainApp {
 		readonly ISettingsManager settingsManager;
 		readonly AppToolBar appToolBar;
 
+		Window IAppWindow.MainWindow {
+			get { return mainWindow; }
+		}
 		internal MainWindow MainWindow {
 			get { return mainWindow; }
 		}

@@ -21,9 +21,8 @@ using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Media;
-using System.Windows.Media.Media3D;
 using dnSpy.Contracts.Menus;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Menus {
 	sealed class ContextMenuCreator {
@@ -43,14 +42,6 @@ namespace dnSpy.Menus {
 			elem.ContextMenuOpening += FrameworkElement_ContextMenuOpening;
 		}
 
-		static DependencyObject GetParent(DependencyObject depo) {
-			if (depo is Visual || depo is Visual3D)
-				return VisualTreeHelper.GetParent(depo);
-			else if (depo is FrameworkContentElement)
-				return ((FrameworkContentElement)depo).Parent;
-			return null;
-		}
-
 		bool IsIgnored(object sender, ContextMenuEventArgs e) {
 			if (!(elem is ListBox))
 				return false;
@@ -63,7 +54,7 @@ namespace dnSpy.Menus {
 				if (o is ScrollBar)
 					return true;	// Don't set e.Handled
 
-				o = GetParent(o);
+				o = UIUtils.GetParent(o);
 			}
 
 			e.Handled = true;
