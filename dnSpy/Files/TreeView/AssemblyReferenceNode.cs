@@ -85,7 +85,7 @@ namespace dnSpy.Files.TreeView {
 			if (mod == null)
 				yield break;
 			foreach (var asmRef in mod.GetAssemblyRefs())
-				yield return new AssemblyReferenceNode(TreeNodeGroups.AssemblyRefTreeNodeGroupAssemblyRef, mod, asmRef);
+				yield return new AssemblyReferenceNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.AssemblyRefTreeNodeGroupAssemblyRef), mod, asmRef);
 		}
 	}
 }

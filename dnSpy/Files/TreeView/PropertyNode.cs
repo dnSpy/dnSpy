@@ -66,11 +66,11 @@ namespace dnSpy.Files.TreeView {
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			foreach (var m in property.GetMethods)
-				yield return new MethodNode(TreeNodeGroups.MethodTreeNodeGroupProperty, m);
+				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupProperty), m);
 			foreach (var m in property.SetMethods)
-				yield return new MethodNode(TreeNodeGroups.MethodTreeNodeGroupProperty, m);
+				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupProperty), m);
 			foreach (var m in property.OtherMethods)
-				yield return new MethodNode(TreeNodeGroups.MethodTreeNodeGroupProperty, m);
+				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupProperty), m);
 		}
 
 		public IMethodNode Create(MethodDef method) {

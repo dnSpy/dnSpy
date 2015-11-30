@@ -16,6 +16,7 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
@@ -82,6 +83,10 @@ namespace dnSpy.Languages.IL {
 
 		public override string NameUI {
 			get { return "IL"; }
+		}
+
+		public override Guid Guid {
+			get { return LanguageConstants.LANGUAGE_IL; }
 		}
 
 		public override string FileExtension {

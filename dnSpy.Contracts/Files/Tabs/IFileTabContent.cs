@@ -82,11 +82,5 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// Written by the owner <see cref="IFileTab"/> instance
 		/// </summary>
 		IFileTab FileTab { get; set; }
-
-		/// <summary>
-		/// Returns true if the output must be refreshed.
-		/// </summary>
-		/// <returns></returns>
-		bool NeedRefresh();
 	}
 }

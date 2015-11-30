@@ -35,6 +35,7 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
+using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.TreeView {
 	[Export, Export(typeof(IFileTreeView)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -52,6 +53,11 @@ namespace dnSpy.Files.TreeView {
 			get { return treeView; }
 		}
 		readonly ITreeView treeView;
+
+		public IFileTreeNodeGroups FileTreeNodeGroups {
+			get { return fileTreeNodeGroups; }
+		}
+		readonly FileTreeNodeGroups fileTreeNodeGroups;
 
 		IEnumerable<IDnSpyFileNode> TopNodes {
 			get { return treeView.Root.Children.Select(a => (IDnSpyFileNode)a.Data); }
@@ -88,13 +94,14 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		[ImportingConstructor]
-		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, [ImportMany] IDnSpyFileNodeCreator[] dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
+		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, DecompilerSettings decompilerSettings, [ImportMany] IDnSpyFileNodeCreator[] dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
 			var options = new TreeViewOptions {
 				AllowDrop = true,
 				IsVirtualizing = true,
 				VirtualizationMode = VirtualizationMode.Recycling,
 				TreeViewListener = this,
 			};
+			this.fileTreeNodeGroups = new FileTreeNodeGroups();
 			this.dnSpyFileNodeCreators = dnSpyFileNodeCreators.OrderBy(a => a.Order).ToArray();
 			this.treeView = treeViewManager.Create(new Guid(TVConstants.FILE_TREEVIEW_GUID), options);
 			menuManager.InitializeContextMenu((FrameworkElement)this.treeView.UIObject, new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID), new GuidObjectsCreator(this.treeView));
@@ -131,7 +138,37 @@ namespace dnSpy.Files.TreeView {
 			this.wpfCommands = wpfCommandManager.GetCommands(CommandConstants.GUID_FILE_TREEVIEW);
 
 			this.nodeFinders = mefFinders.OrderBy(a => a.Metadata.Order).ToArray();
+			InitializeFileTreeNodeGroups(decompilerSettings);
 		}
+
+		void InitializeFileTreeNodeGroups(DecompilerSettings decompilerSettings) {
+			MemberType[] orders;
+			try {
+				orders = new MemberType[] {
+					ToMemberType(decompilerSettings.DecompilationObject0),
+					ToMemberType(decompilerSettings.DecompilationObject1),
+					ToMemberType(decompilerSettings.DecompilationObject2),
+					ToMemberType(decompilerSettings.DecompilationObject3),
+					ToMemberType(decompilerSettings.DecompilationObject4),
+				};
+			}
+			catch (InvalidOperationException) {
+				return;
+			}
+			fileTreeNodeGroups.SetMemberOrder(orders);
+		}
+
+		static MemberType ToMemberType(DecompilationObject o) {
+			switch (o) {
+			case DecompilationObject.NestedTypes: return MemberType.NestedTypes;
+			case DecompilationObject.Fields: return MemberType.Fields;
+			case DecompilationObject.Events: return MemberType.Events;
+			case DecompilationObject.Properties: return MemberType.Properties;
+			case DecompilationObject.Methods: return MemberType.Methods;
+			}
+			throw new InvalidOperationException();
+		}
+
 		readonly List<Action> actionsToCall = new List<Action>();
 
 		void CallActions() {
@@ -200,6 +237,18 @@ namespace dnSpy.Files.TreeView {
 			NotifyNodesTextRefreshed();
 		}
 
+		public void RefreshNodes(bool showMember, bool decompilationOrder) {
+			if (showMember)
+				RefreshNodes();
+			/*TODO: decompilationOrder
+			Should call InitializeFileTreeNodeGroups(). Some stuff that must be fixed:
+			The asm editor has some classes that store indexes of nodes, and would need to be
+			updated to just use the normal AddChild() method to restore the node.
+			Also, when the asm editor reinserts a node, its children (recursively) must be resorted
+			if the sort order has changed.
+			*/
+		}
+
 		void RefreshNodes() {
 			//TODO: Should only call the method if the node is visible
 			foreach (var node in this.treeView.Root.Descendants())
@@ -262,47 +311,47 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		public IAssemblyReferenceNode Create(AssemblyRef asmRef, ModuleDef ownerModule) {
-			return (IAssemblyReferenceNode)TreeView.Create(new AssemblyReferenceNode(TreeNodeGroups.AssemblyRefTreeNodeGroupReferences, ownerModule, asmRef)).Data;
+			return (IAssemblyReferenceNode)TreeView.Create(new AssemblyReferenceNode(FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.AssemblyRefTreeNodeGroupReferences), ownerModule, asmRef)).Data;
 		}
 
 		public IModuleReferenceNode Create(ModuleRef modRef) {
-			return (IModuleReferenceNode)TreeView.Create(new ModuleReferenceNode(TreeNodeGroups.ModuleRefTreeNodeGroupReferences, modRef)).Data;
+			return (IModuleReferenceNode)TreeView.Create(new ModuleReferenceNode(FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ModuleRefTreeNodeGroupReferences), modRef)).Data;
 		}
 
 		public IMethodNode CreateEvent(MethodDef method) {
-			return (IMethodNode)TreeView.Create(new MethodNode(TreeNodeGroups.MethodTreeNodeGroupEvent, method)).Data;
+			return (IMethodNode)TreeView.Create(new MethodNode(FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupEvent), method)).Data;
 		}
 
 		public IMethodNode CreateProperty(MethodDef method) {
-			return (IMethodNode)TreeView.Create(new MethodNode(TreeNodeGroups.MethodTreeNodeGroupProperty, method)).Data;
+			return (IMethodNode)TreeView.Create(new MethodNode(FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupProperty), method)).Data;
 		}
 
 		public INamespaceNode Create(string name) {
-			return (INamespaceNode)TreeView.Create(new NamespaceNode(TreeNodeGroups.NamespaceTreeNodeGroupModule, name, new List<TypeDef>())).Data;
+			return (INamespaceNode)TreeView.Create(new NamespaceNode(FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.NamespaceTreeNodeGroupModule), name, new List<TypeDef>())).Data;
 		}
 
 		public ITypeNode Create(TypeDef type) {
-			return (ITypeNode)TreeView.Create(new TypeNode(TreeNodeGroups.TypeTreeNodeGroupNamespace, type)).Data;
+			return (ITypeNode)TreeView.Create(new TypeNode(FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.TypeTreeNodeGroupNamespace), type)).Data;
 		}
 
 		public ITypeNode CreateNested(TypeDef type) {
-			return (ITypeNode)TreeView.Create(new TypeNode(TreeNodeGroups.TypeTreeNodeGroupType, type)).Data;
+			return (ITypeNode)TreeView.Create(new TypeNode(FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.TypeTreeNodeGroupType), type)).Data;
 		}
 
 		public IMethodNode Create(MethodDef method) {
-			return (IMethodNode)TreeView.Create(new MethodNode(TreeNodeGroups.MethodTreeNodeGroupType, method)).Data;
+			return (IMethodNode)TreeView.Create(new MethodNode(FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupType), method)).Data;
 		}
 
 		public IPropertyNode Create(PropertyDef property) {
-			return (IPropertyNode)TreeView.Create(new PropertyNode(TreeNodeGroups.PropertyTreeNodeGroupType, property)).Data;
+			return (IPropertyNode)TreeView.Create(new PropertyNode(FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.PropertyTreeNodeGroupType), property)).Data;
 		}
 
 		public IEventNode Create(EventDef @event) {
-			return (IEventNode)TreeView.Create(new EventNode(TreeNodeGroups.EventTreeNodeGroupType, @event)).Data;
+			return (IEventNode)TreeView.Create(new EventNode(FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.EventTreeNodeGroupType), @event)).Data;
 		}
 
 		public IFieldNode Create(FieldDef field) {
-			return (IFieldNode)TreeView.Create(new FieldNode(TreeNodeGroups.FieldTreeNodeGroupType, field)).Data;
+			return (IFieldNode)TreeView.Create(new FieldNode(FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.FieldTreeNodeGroupType), field)).Data;
 		}
 
 		public IFileTreeNodeData FindNode(object @ref) {

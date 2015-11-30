@@ -129,5 +129,10 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="event">Event</param>
 		/// <returns></returns>
 		IEventNode FindNode(EventDef @event);
+
+		/// <summary>
+		/// Gets the <see cref="IFileTreeNodeGroups"/> instance
+		/// </summary>
+		IFileTreeNodeGroups FileTreeNodeGroups { get; }
 	}
 }

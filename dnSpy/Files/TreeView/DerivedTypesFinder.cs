@@ -23,15 +23,20 @@ using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.TreeView;
 using dnSpy.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class DerivedTypesFinder : AsyncNodeCreator {
 		readonly WeakReference[] weakModules;
 		readonly TypeDef type;
+		readonly ITreeNodeGroup msgNodeGroup;
+		readonly ITreeNodeGroup derivedTypesGroup;
 
 		public DerivedTypesFinder(FileTreeNodeData targetNode, TypeDef type)
 			: base(targetNode) {
+			this.msgNodeGroup = targetNode.Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MessageTreeNodeGroupDerivedTypes);
+			this.derivedTypesGroup = targetNode.Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.DerivedTypeTreeNodeGroupDerivedTypes);
 			this.weakModules = targetNode.Context.FileTreeView.FileManager.GetFiles().Where(a => a.ModuleDef != null).SelectMany(a => a.AssemblyDef != null ? (IEnumerable<ModuleDef>)a.AssemblyDef.Modules : new[] { a.ModuleDef }).Select(a => new WeakReference(a)).ToArray();
 			this.type = type;
 			Start();
@@ -43,7 +48,7 @@ namespace dnSpy.Files.TreeView {
 
 			//TODO: If it's not a public type, only check modules in this assembly and any friend assemblies
 
-			AddMessageNode(() => new MessageNode(TreeNodeGroups.MessageTreeNodeGroupDerivedTypes, new Guid(FileTVConstants.DNSPY_MESSAGE_NODE_GUID), new ImageReference(GetType().Assembly, "Search"), "Searching..."));
+			AddMessageNode(() => new MessageNode(msgNodeGroup, new Guid(FileTVConstants.DNSPY_MESSAGE_NODE_GUID), new ImageReference(GetType().Assembly, "Search"), "Searching..."));
 			foreach (var weakMod in weakModules) {
 				cancellationToken.ThrowIfCancellationRequested();
 				var mod = (ModuleDef)weakMod.Target;
@@ -51,7 +56,7 @@ namespace dnSpy.Files.TreeView {
 					continue;
 
 				foreach (var td in FindDerivedTypes(mod))
-					AddNode(new DerivedTypeNode(TreeNodeGroups.DerivedTypeTreeNodeGroupDerivedTypes, td));
+					AddNode(new DerivedTypeNode(derivedTypesGroup, td));
 			}
 		}
 

@@ -423,8 +423,9 @@ namespace dnSpy.Files.Tabs {
 		public override bool IsVisible(IMenuItemContext context) {
 			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID) &&
 				InstallTabCommands.CanOpenNewTabInternal(fileTabManager) &&
-				context.FindArrayOrDefaultByType<ITreeNodeData>().Length > 0;
+				(context.FindByType<ITreeNodeData[]>() ?? emptyArray).Length > 0;
 		}
+		static readonly ITreeNodeData[] emptyArray = new ITreeNodeData[0];
 
 		public override void Execute(IMenuItemContext context) {
 			InstallTabCommands.OpenNewTabInternal(fileTabManager);

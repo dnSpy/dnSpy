@@ -23,6 +23,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Shared.UI.MVVM;
 
@@ -126,6 +127,7 @@ namespace dnSpy.Files.Tabs {
 		void ITabContent.OnVisibilityChanged(TabContentVisibilityEvent visEvent) {
 			if (visEvent == TabContentVisibilityEvent.Removed) {
 				CancelAsyncWorker();
+				elementScaler.Dispose();
 				var id = fileTabUIContextLocator as IDisposable;
 				Debug.Assert(id != null);
 				if (id != null)
@@ -137,6 +139,19 @@ namespace dnSpy.Files.Tabs {
 			var result = TryCreateContentFromReference(@ref, sourceContent);
 			if (result != null)
 				Show(result.FileTabContent, result.SerializedUI, result.OnShownHandler);
+		}
+
+		public void FollowReferenceNewTab(object @ref) {
+			var tab = FileTabManager.OpenEmptyTab();
+			tab.FollowReference(@ref, Content);
+			FileTabManager.SetFocus(tab);
+		}
+
+		public void FollowReference(object @ref, bool newTab) {
+			if (newTab)
+				FollowReferenceNewTab(@ref);
+			else
+				FollowReference(@ref, Content);
 		}
 
 		FileTabReferenceResult TryCreateContentFromReference(object @ref, IFileTabContent sourceContent) {
@@ -340,6 +355,17 @@ namespace dnSpy.Files.Tabs {
 		internal void OnTabsLoaded() {
 			// Make sure that the tab initializes eg. SelectedLanguage to the language it's using.
 			OnSelected();
+		}
+
+		const string SCALE_ATTR = "scale";
+
+		public void DeserializeUI(ISettingsSection tabContentUI) {
+			double? scale = tabContentUI.Attribute<double?>(SCALE_ATTR);
+			elementScaler.ScaleValue = scale ?? 1.0;
+		}
+
+		public void SerializeUI(ISettingsSection tabContentUI) {
+			tabContentUI.Attribute(SCALE_ATTR, elementScaler.ScaleValue);
 		}
 	}
 }

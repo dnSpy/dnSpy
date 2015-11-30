@@ -50,6 +50,16 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 		bool decompileFullType = true;
+
+		public FileTabManagerSettings Clone() {
+			return CopyTo(new FileTabManagerSettings());
+		}
+
+		public FileTabManagerSettings CopyTo(FileTabManagerSettings other) {
+			other.RestoreTabs = this.RestoreTabs;
+			other.DecompileFullType = this.DecompileFullType;
+			return other;
+		}
 	}
 
 	[Export, Export(typeof(IFileTabManagerSettings)), PartCreationPolicy(CreationPolicy.Shared)]

@@ -62,5 +62,13 @@ namespace dnSpy.Menus {
 			return value;
 		}
 		readonly Dictionary<object, object> state;
+
+		public T FindByType<T>() {
+			foreach (var o in GuidObjects) {
+				if (o.Object is T)
+					return (T)o.Object;
+			}
+			return default(T);
+		}
 	}
 }

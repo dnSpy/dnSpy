@@ -57,36 +57,12 @@ namespace dnSpy.Contracts.Menus {
 		/// <param name="createState">Delegate that creates a new value if it hasn't been created yet</param>
 		/// <returns></returns>
 		T GetOrCreateState<T>(object key, Func<T> createState) where T : class;
-	}
 
-	public static partial class ExtensionMethods {
 		/// <summary>
 		/// Finds the first object of a certain type. Returns default({T}) if none was found
 		/// </summary>
 		/// <typeparam name="T">Type</typeparam>
-		/// <param name="ctx">This</param>
 		/// <returns></returns>
-		public static T FindByType<T>(this IMenuItemContext ctx) {
-			foreach (var o in ctx.GuidObjects) {
-				if (o.Object is T)
-					return (T)o.Object;
-			}
-			return default(T);
-		}
-
-		/// <summary>
-		/// Finds the first array of a certain type. Returns an empty array if none was found
-		/// </summary>
-		/// <typeparam name="T">Type</typeparam>
-		/// <param name="ctx">This</param>
-		/// <returns></returns>
-		public static T[] FindArrayOrDefaultByType<T>(this IMenuItemContext ctx) {
-			foreach (var o in ctx.GuidObjects) {
-				var ary = o.Object as T[];
-				if (ary != null)
-					return ary;
-			}
-			return new T[0];
-		}
+		T FindByType<T>();
 	}
 }

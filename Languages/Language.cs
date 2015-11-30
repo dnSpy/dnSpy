@@ -37,6 +37,7 @@ namespace dnSpy.Languages {
 	public abstract class Language : ILanguage {
 		public abstract string NameUI { get; }
 		public abstract double OrderUI { get; }
+		public abstract Guid Guid { get; }
 
 		/// <summary>
 		/// Gets the file extension used by source code files in this language.
@@ -226,7 +227,7 @@ namespace dnSpy.Languages {
 			output.Write(IdentifierEscaper.Escape(type.Name), TextTokenHelper.GetTextTokenType(type));
 		}
 
-		public virtual bool ShowMember(IMemberRef member) {
+		public virtual bool ShowMember(IMemberRef member, DecompilerSettings decompilerSettings) {
 			return true;
 		}
 	}

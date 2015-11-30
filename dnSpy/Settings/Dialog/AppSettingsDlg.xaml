@@ -1,0 +1,53 @@
+﻿<!--
+    Copyright (C) 2014-2015 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<ctrls:WindowBase x:Class="dnSpy.Settings.Dialog.AppSettingsDlg"
+        x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:dnSpy.Settings.Dialog"
+        xmlns:ctrls="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
+        Background="{DynamicResource SystemColorsControl}"
+        Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
+        mc:Ignorable="d"
+        MinHeight="300" MinWidth="450"
+        Title="Options" Height="480" Width="500">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TabControl
+            Name="tabControl"
+            Grid.Row="0"
+            Margin="5 5 5 0"/>
+
+        <Grid Grid.Row="1" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Content="_OK" Style="{StaticResource DialogButton2}" Margin="0 0 5 0" Click="okButton_Click" IsDefault="True" />
+            <Button Grid.Column="2" Content="_Cancel" Style="{StaticResource DialogButton2}" Margin="0 0 0 0" Click="cancelButton_Click" IsCancel="True" />
+        </Grid>
+    </Grid>
+</ctrls:WindowBase>

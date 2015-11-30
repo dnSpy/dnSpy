@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Highlighting;
@@ -38,6 +39,11 @@ namespace dnSpy.Contracts.Languages {
 		/// Order of language when shown to the user
 		/// </summary>
 		double OrderUI { get; }
+
+		/// <summary>
+		/// Language guid, eg. <see cref="LanguageConstants.LANGUAGE_CSHARP"/>
+		/// </summary>
+		Guid Guid { get; }
 
 		/// <summary>
 		/// File extension, eg. .cs, can't be null
@@ -156,8 +162,9 @@ namespace dnSpy.Contracts.Languages {
 		/// Returns true if the member is visible. Can be used to hide compiler generated types, methods etc
 		/// </summary>
 		/// <param name="member">Member</param>
+		/// <param name="decompilerSettings">Decompiler settings</param>
 		/// <returns></returns>
-		bool ShowMember(IMemberRef member);
+		bool ShowMember(IMemberRef member, DecompilerSettings decompilerSettings);
 	}
 
 	/// <summary>

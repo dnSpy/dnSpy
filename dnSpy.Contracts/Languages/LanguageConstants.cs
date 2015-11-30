@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Languages {
 	/// <summary>
 	/// Language constants
@@ -36,5 +38,17 @@ namespace dnSpy.Contracts.Languages {
 
 		/// <summary>Order of ILAst debug languages</summary>
 		public const double ILAST_DEBUG_ORDERUI = 20000;
+
+		/// <summary>IL language</summary>
+		public static readonly Guid LANGUAGE_IL = new Guid("9EF276FD-3293-42A4-B48A-1D6A69086B3D");
+
+		/// <summary>ILAst language</summary>
+		public static readonly Guid LANGUAGE_ILAST = new Guid("CA52A515-12AE-4182-BC88-81ED037C3D32");
+
+		/// <summary>C# language</summary>
+		public static readonly Guid LANGUAGE_CSHARP = new Guid("F5A318D4-4B2A-48D2-AE33-F4D2B1EFF4B0");
+
+		/// <summary>VB language</summary>
+		public static readonly Guid LANGUAGE_VB = new Guid("B6849618-8239-4FBB-8DFF-D45EB023C193");
 	}
 }

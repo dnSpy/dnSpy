@@ -25,8 +25,8 @@ namespace dnSpy.Contracts.Files.Tabs {
 	/// </summary>
 	public interface ILanguageTabContent : IFileTabContent {
 		/// <summary>
-		/// Gets the language used to generate the content
+		/// Gets/sets the language used to generate the content
 		/// </summary>
-		ILanguage Language { get; }
+		ILanguage Language { get; set; }
 	}
 }

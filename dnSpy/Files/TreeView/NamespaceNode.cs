@@ -63,7 +63,7 @@ namespace dnSpy.Files.TreeView {
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			foreach (var type in typesToCreate)
-				yield return new TypeNode(TreeNodeGroups.TypeTreeNodeGroupNamespace, type);
+				yield return new TypeNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.TypeTreeNodeGroupNamespace), type);
 			typesToCreate = null;
 		}
 		List<TypeDef> typesToCreate;

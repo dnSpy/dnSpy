@@ -47,6 +47,11 @@ namespace dnSpy.Contracts.Files.Tabs {
 		IEnumerable<IFileTab> SortedTabs { get; }
 
 		/// <summary>
+		/// Same as <see cref="SortedTabs"/> except that visible tabs are returned first
+		/// </summary>
+		IEnumerable<IFileTab> VisibleFirstTabs { get; }
+
+		/// <summary>
 		/// Gets the active tab or null if none, see also <see cref="GetOrCreateActiveTab()"/>
 		/// </summary>
 		IFileTab ActiveTab { get; set; }
@@ -70,15 +75,10 @@ namespace dnSpy.Contracts.Files.Tabs {
 		void SetFocus(IFileTab tab);
 
 		/// <summary>
-		/// Refreshes those tabs that need to be refreshed
+		/// Forces a refresh of the selected tabs
 		/// </summary>
-		void CheckRefresh();
-
-		/// <summary>
-		/// Refreshes those tabs that need to be refreshed
-		/// </summary>
-		/// <param name="tabs">Tabs to check</param>
-		void CheckRefresh(IEnumerable<IFileTab> tabs);
+		/// <param name="tabs">Tabs to refresh</param>
+		void ForceRefresh(IEnumerable<IFileTab> tabs);
 
 		/// <summary>
 		/// Returns true if <paramref name="tabGroup"/> is owned by this instance

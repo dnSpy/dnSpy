@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Linq;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Settings {
@@ -59,6 +60,14 @@ namespace dnSpy.Settings {
 
 		public void RemoveSection(ISettingsSection section) {
 			settingsSectionCreator.RemoveSection(section);
+		}
+
+		public ISettingsSection[] SectionsWithName(string name) {
+			return Sections.Where(a => StringComparer.Ordinal.Equals(name, a.Name)).ToArray();
+		}
+
+		public ISettingsSection TryGetSection(string name) {
+			return Sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
 		}
 
 		public T Attribute<T>(string name) {

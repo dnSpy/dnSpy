@@ -122,6 +122,10 @@ namespace dnSpy.Menus {
 			new ContextMenuCreator(this, elem, guid, creator, initCtxMenu);
 		}
 
+		public void InitializeContextMenu(FrameworkElement elem, string guid, IGuidObjectsCreator creator, IContextMenuInitializer initCtxMenu) {
+			InitializeContextMenu(elem, new Guid(guid), creator, initCtxMenu);
+		}
+
 		void InitializeMenuItemObjects() {
 			if (guidToGroups != null)
 				return;

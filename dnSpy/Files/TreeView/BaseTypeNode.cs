@@ -102,9 +102,9 @@ namespace dnSpy.Files.TreeView {
 				yield break;
 
 			if (td.BaseType != null)
-				yield return new BaseTypeNode(TreeNodeGroups.BaseTypeTreeNodeGroupBaseType, td.BaseType, true);
+				yield return new BaseTypeNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.BaseTypeTreeNodeGroupBaseType), td.BaseType, true);
 			foreach (var iface in td.Interfaces)
-				yield return new BaseTypeNode(TreeNodeGroups.InterfaceBaseTypeTreeNodeGroupBaseType, iface.Interface, false);
+				yield return new BaseTypeNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.InterfaceBaseTypeTreeNodeGroupBaseType), iface.Interface, false);
 		}
 	}
 }

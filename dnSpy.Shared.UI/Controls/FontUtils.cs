@@ -66,13 +66,24 @@ namespace dnSpy.Shared.UI.Controls {
 			return size;
 		}
 
+		public static bool IsSymbol(FontFamily ff) {
+			foreach (var tf in ff.GetTypefaces()) {
+				GlyphTypeface gtf;
+				if (!tf.TryGetGlyphTypeface(out gtf))
+					return true;
+				if (gtf.Symbol)
+					return true;
+			}
+			return false;
+		}
+
 		public static FontFamily[] GetMonospacedFonts() {
 			return Fonts.SystemFontFamilies.Where(a => IsMonospacedFont(a)).OrderBy(a => a.Source.ToUpperInvariant()).ToArray();
 		}
 
 		// Checks chars 0x20-0x7E (the only ones used by the hex editor) whether they have the same
 		// width and height. There's probably a better way of doing this...
-		static bool IsMonospacedFont(FontFamily ff) {
+		public static bool IsMonospacedFont(FontFamily ff) {
 			if (ff.Source.Equals(GLOBAL_MONOSPACE_FONT, StringComparison.OrdinalIgnoreCase))
 				return true;
 

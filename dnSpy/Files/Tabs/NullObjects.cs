@@ -71,10 +71,6 @@ namespace dnSpy.Files.Tabs {
 
 		public void OnUnselected() {
 		}
-
-		public bool NeedRefresh() {
-			return false;
-		}
 	}
 
 	sealed class NullFileTabUIContext : IFileTabUIContext {

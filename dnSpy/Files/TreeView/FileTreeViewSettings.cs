@@ -86,6 +86,19 @@ namespace dnSpy.Files.TreeView {
 			}
 		}
 		bool showToken = true;
+
+		public FileTreeViewSettings Clone() {
+			return CopyTo(new FileTreeViewSettings());
+		}
+
+		public FileTreeViewSettings CopyTo(FileTreeViewSettings other) {
+			other.SyntaxHighlight = this.SyntaxHighlight;
+			other.SingleClickExpandsTreeViewChildren = this.SingleClickExpandsTreeViewChildren;
+			other.ShowAssemblyVersion = this.ShowAssemblyVersion;
+			other.ShowAssemblyPublicKeyToken = this.ShowAssemblyPublicKeyToken;
+			other.ShowToken = this.ShowToken;
+			return other;
+		}
 	}
 
 	[Export, Export(typeof(IFileTreeViewSettings)), PartCreationPolicy(CreationPolicy.Shared)]

@@ -58,8 +58,8 @@ namespace dnSpy.Files.TreeView {
 			foreach (var file in DnSpyFile.Children)
 				yield return Context.FileTreeView.CreateNode(this, file);
 
-			yield return new ResourcesNode(TreeNodeGroups.ResourcesTreeNodeGroupModule);
-			yield return new ReferencesNode(TreeNodeGroups.ReferencesTreeNodeGroupModule, this);
+			yield return new ResourcesNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourcesTreeNodeGroupModule));
+			yield return new ReferencesNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ReferencesTreeNodeGroupModule), this);
 
 			var nsDict = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
 			foreach (var td in DnSpyFile.ModuleDef.Types) {
@@ -70,7 +70,7 @@ namespace dnSpy.Files.TreeView {
 				list.Add(td);
 			}
 			foreach (var kv in nsDict)
-				yield return new NamespaceNode(TreeNodeGroups.NamespaceTreeNodeGroupModule, kv.Key, kv.Value);
+				yield return new NamespaceNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.NamespaceTreeNodeGroupModule), kv.Key, kv.Value);
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {

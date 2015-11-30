@@ -82,5 +82,18 @@ namespace dnSpy.Settings {
 
 			sections.Remove(section.Name);
 		}
+
+		public ISettingsSection[] SectionsWithName(string name) {
+			return Sections.Where(a => StringComparer.Ordinal.Equals(name, a.Name)).ToArray();
+		}
+
+		public ISettingsSection TryGetSection(string name) {
+			return Sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
+		}
+
+		public ISettingsSection RecreateSection(string name) {
+			RemoveSection(name);
+			return GetOrCreateSection(name);
+		}
 	}
 }

@@ -36,25 +36,20 @@ namespace dnSpy.Contracts.Menus {
 		void InitializeContextMenu(FrameworkElement elem, Guid guid, IGuidObjectsCreator creator = null, IContextMenuInitializer initCtxMenu = null);
 
 		/// <summary>
+		/// Initializes a context menu. Should be called when <paramref name="elem"/> has been created.
+		/// </summary>
+		/// <param name="elem">Element that needs a context menu</param>
+		/// <param name="guid">Guid of <paramref name="elem"/></param>
+		/// <param name="creator">A <see cref="IGuidObjectsCreator"/> instance or null</param>
+		/// <param name="initCtxMenu">A <see cref="IContextMenuInitializer"/> instance or null</param>/// 
+		void InitializeContextMenu(FrameworkElement elem, string guid, IGuidObjectsCreator creator = null, IContextMenuInitializer initCtxMenu = null);
+
+		/// <summary>
 		/// Creates a <see cref="Menu"/>
 		/// </summary>
 		/// <param name="menuGuid">Guid of menu, eg. <see cref="MenuConstants.APP_MENU_GUID"/></param>
 		/// <param name="commandTarget">Command target for menu items, eg. the owner window, or null</param>
 		/// <returns></returns>
 		Menu CreateMenu(Guid menuGuid, IInputElement commandTarget);
-	}
-
-	public static partial class ExtensionMethods {
-		/// <summary>
-		/// Initializes a context menu. Should be called when <paramref name="elem"/> has been created.
-		/// </summary>
-		/// <param name="self">This</param>
-		/// <param name="elem">Element that needs a context menu</param>
-		/// <param name="guid">Guid of <paramref name="elem"/></param>
-		/// <param name="creator">A <see cref="IGuidObjectsCreator"/> instance or null</param>
-		/// <param name="initCtxMenu">A <see cref="IContextMenuInitializer"/> instance or null</param>/// 
-		public static void InitializeContextMenu(this IMenuManager self, FrameworkElement elem, string guid, IGuidObjectsCreator creator = null, IContextMenuInitializer initCtxMenu = null) {
-			self.InitializeContextMenu(elem, new Guid(guid), creator, initCtxMenu);
-		}
 	}
 }

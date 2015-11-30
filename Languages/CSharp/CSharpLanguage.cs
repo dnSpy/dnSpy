@@ -153,6 +153,10 @@ namespace dnSpy.Languages.CSharp {
 		}
 		readonly double orderUI;
 
+		public override Guid Guid {
+			get { return LanguageConstants.LANGUAGE_CSHARP; }
+		}
+
 		public override string FileExtension {
 			get { return ".cs"; }
 		}
@@ -924,8 +928,8 @@ namespace dnSpy.Languages.CSharp {
 			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions | ConvertTypeOptions.DoNotIncludeEnclosingType, type);
 		}
 
-		public override bool ShowMember(IMemberRef member) {
-			return showAllMembers || !AstBuilder.MemberIsHidden(member, DecompilationOptions._DONT_CALL_CreateDecompilerSettings());
+		public override bool ShowMember(IMemberRef member, DecompilerSettings decompilerSettings) {
+			return showAllMembers || !AstBuilder.MemberIsHidden(member, decompilerSettings);
 		}
 
 		void WriteToolTipType(ITextOutput output, ITypeDefOrRef type, bool useNamespaces, bool usePrimitiveTypeName = true, IHasCustomAttribute typeAttributes = null) {

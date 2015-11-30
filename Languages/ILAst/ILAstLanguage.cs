@@ -48,9 +48,11 @@ namespace dnSpy.Languages.ILAst {
 		readonly double orderUI;
 
 		public override string NameUI {
-			get {
-				return name;
-			}
+			get { return name; }
+		}
+
+		public override Guid Guid {
+			get { return LanguageConstants.LANGUAGE_ILAST; }
 		}
 
 		public override void Decompile(MethodDef method, ITextOutput output, DecompilationOptions options) {

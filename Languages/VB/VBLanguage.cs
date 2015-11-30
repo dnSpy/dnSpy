@@ -61,6 +61,10 @@ namespace dnSpy.Languages.VB {
 			get { return "VB"; }
 		}
 
+		public override Guid Guid {
+			get { return LanguageConstants.LANGUAGE_VB; }
+		}
+
 		public override string FileExtension {
 			get { return ".vb"; }
 		}
@@ -442,8 +446,8 @@ namespace dnSpy.Languages.VB {
 			RunTransformsAndGenerateCode(codeDomBuilder, output, options, type.Module);
 		}
 
-		public override bool ShowMember(IMemberRef member) {
-			return showAllMembers || !AstBuilder.MemberIsHidden(member, DecompilationOptions._DONT_CALL_CreateDecompilerSettings());
+		public override bool ShowMember(IMemberRef member, DecompilerSettings decompilerSettings) {
+			return showAllMembers || !AstBuilder.MemberIsHidden(member, decompilerSettings);
 		}
 
 		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationOptions options, ModuleDef module) {

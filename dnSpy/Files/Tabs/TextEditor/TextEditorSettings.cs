@@ -32,7 +32,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public FontFamily FontFamily {
 			get { return fontFamily; }
 			set {
-				if (fontFamily != value) {
+				if (fontFamily.Source != value.Source) {
 					fontFamily = value;
 					OnPropertyChanged("FontFamily");
 					OnModified();
@@ -100,6 +100,20 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 		}
 		bool wordWrap = false;
+
+		public TextEditorSettings Clone() {
+			return CopyTo(new TextEditorSettings());
+		}
+
+		public TextEditorSettings CopyTo(TextEditorSettings other) {
+			other.FontFamily = this.FontFamily;
+			other.FontSize = this.FontSize;
+			other.ShowLineNumbers = this.ShowLineNumbers;
+			other.AutoHighlightRefs = this.AutoHighlightRefs;
+			other.HighlightCurrentLine = this.HighlightCurrentLine;
+			other.WordWrap = this.WordWrap;
+			return other;
+		}
 	}
 
 	[Export, Export(typeof(ITextEditorSettings)), PartCreationPolicy(CreationPolicy.Shared)]

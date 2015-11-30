@@ -69,9 +69,9 @@ namespace dnSpy.Files.TreeView {
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			foreach (var asmRef in moduleNode.DnSpyFile.ModuleDef.GetAssemblyRefs())
-				yield return new AssemblyReferenceNode(TreeNodeGroups.AssemblyRefTreeNodeGroupReferences, moduleNode.DnSpyFile.ModuleDef, asmRef);
+				yield return new AssemblyReferenceNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.AssemblyRefTreeNodeGroupReferences), moduleNode.DnSpyFile.ModuleDef, asmRef);
 			foreach (var modRef in moduleNode.DnSpyFile.ModuleDef.GetModuleRefs())
-				yield return new ModuleReferenceNode(TreeNodeGroups.ModuleRefTreeNodeGroupReferences, modRef);
+				yield return new ModuleReferenceNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ModuleRefTreeNodeGroupReferences), modRef);
 		}
 
 		public IAssemblyReferenceNode Create(AssemblyRef asmRef) {

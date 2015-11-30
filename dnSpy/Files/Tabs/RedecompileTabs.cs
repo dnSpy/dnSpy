@@ -41,8 +41,16 @@ namespace dnSpy.Files.Tabs {
 			if (!appWindow.AppLoaded)
 				return;
 			var tab = fileTabManager.ActiveTab;
-			if (tab != null)
-				fileTabManager.CheckRefresh(new IFileTab[] { tab });
+			if (tab == null)
+				return;
+			var langContent = tab.Content as ILanguageTabContent;
+			if (langContent == null)
+				return;
+			var languageManager = (ILanguageManager)sender;
+			if (langContent.Language == languageManager.SelectedLanguage)
+				return;
+			langContent.Language = languageManager.SelectedLanguage;
+			fileTabManager.ForceRefresh(new IFileTab[] { tab });
 		}
 	}
 }

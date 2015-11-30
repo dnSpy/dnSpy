@@ -91,10 +91,6 @@ namespace dnSpy.MainApp {
 			return locator.Get<ITextEditorUIContext>();
 		}
 
-		public bool NeedRefresh() {
-			return false;
-		}
-
 		public void OnHide() {
 		}
 

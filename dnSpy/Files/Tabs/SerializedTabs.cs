@@ -178,6 +178,7 @@ namespace dnSpy.Files.Tabs {
 	sealed class SerializedTab {
 		const string CONTENT_SECTION = "Content";
 		const string UI_SECTION = "UI";
+		const string TAB_UI_SECTION = "TabUI";
 		const string PATH_SECTION = "Path";
 		const string CONTENT_GUID_ATTR = "_g_";
 		const string AUTOLOADED_SECTION = "File";
@@ -186,6 +187,11 @@ namespace dnSpy.Files.Tabs {
 			get { return content; }
 		}
 		readonly ISettingsSection content;
+
+		public ISettingsSection TabUI {
+			get { return tabContentUI; }
+		}
+		ISettingsSection tabContentUI;
 
 		public ISettingsSection UI {
 			get { return ui; }
@@ -202,8 +208,9 @@ namespace dnSpy.Files.Tabs {
 		}
 		readonly List<DnSpyFileInfo> autoLoadedFiles;
 
-		SerializedTab(ISettingsSection content, ISettingsSection ui, List<SerializedPath> paths, List<DnSpyFileInfo> autoLoadedFiles) {
+		SerializedTab(ISettingsSection content, ISettingsSection tabContentUI, ISettingsSection ui, List<SerializedPath> paths, List<DnSpyFileInfo> autoLoadedFiles) {
 			this.content = content;
+			this.tabContentUI = tabContentUI;
 			this.ui = ui;
 			this.paths = paths;
 			this.autoLoadedFiles = autoLoadedFiles;
@@ -215,6 +222,9 @@ namespace dnSpy.Files.Tabs {
 				return null;
 			var uiSect = section.TryGetSection(UI_SECTION);
 			if (uiSect == null)
+				return null;
+			var tabUISect = section.TryGetSection(TAB_UI_SECTION);
+			if (tabUISect == null)
 				return null;
 
 			var paths = new List<SerializedPath>();
@@ -228,13 +238,14 @@ namespace dnSpy.Files.Tabs {
 					autoLoadedFiles.Add(info.Value);
 			}
 
-			return new SerializedTab(contentSect, uiSect, paths, autoLoadedFiles);
+			return new SerializedTab(contentSect, tabUISect, uiSect, paths, autoLoadedFiles);
 		}
 
 		public void Save(ISettingsSection section) {
 			Debug.Assert(Content.Attribute<Guid?>(CONTENT_GUID_ATTR) != null);
 			section.CreateSection(CONTENT_SECTION).CopyFrom(Content);
 			section.CreateSection(UI_SECTION).CopyFrom(UI);
+			section.CreateSection(TAB_UI_SECTION).CopyFrom(TabUI);
 			foreach (var path in Paths)
 				path.Save(section.CreateSection(PATH_SECTION));
 			foreach (var f in AutoLoadedFiles)
@@ -251,6 +262,9 @@ namespace dnSpy.Files.Tabs {
 			var uiSect = new SettingsSection(UI_SECTION);
 			tab.UIContext.SaveSerialized(uiSect, tab.UIContext.Serialize());
 
+			var tabUISect = new SettingsSection(TAB_UI_SECTION);
+			tab.SerializeUI(tabUISect);
+
 			var paths = new List<SerializedPath>();
 			foreach (var node in tab.Content.Nodes)
 				paths.Add(SerializedPath.Create(node));
@@ -259,7 +273,7 @@ namespace dnSpy.Files.Tabs {
 			foreach (var f in GetAutoLoadedFiles(tab.Content.Nodes))
 				autoLoadedFiles.Add(f);
 
-			return new SerializedTab(contentSect, uiSect, paths, autoLoadedFiles);
+			return new SerializedTab(contentSect, tabUISect, uiSect, paths, autoLoadedFiles);
 		}
 
 		static IEnumerable<DnSpyFileInfo> GetAutoLoadedFiles(IEnumerable<IFileTreeNodeData> nodes) {
@@ -297,6 +311,7 @@ namespace dnSpy.Files.Tabs {
 			fileTabManager.Add(g, tabContent, null, a => {
 				if (a.Success) {
 					var uiContext = tabContent.FileTab.UIContext;
+					tabContent.FileTab.DeserializeUI(TabUI);
 					var obj = uiContext.CreateSerialized(UI);
 					uiContext.Deserialize(obj);
 				}

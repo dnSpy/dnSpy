@@ -17,13 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
 namespace dnSpy.Files.Tabs {
-	sealed class TabElementScaler {
+	sealed class TabElementScaler : IDisposable {
 		readonly List<CommandBinding> commandBindings;
 		readonly List<KeyBinding> keyBindings;
 		FrameworkElement scaleElement;
@@ -62,6 +63,7 @@ namespace dnSpy.Files.Tabs {
 				scaleElement.CommandBindings.Remove(b);
 			foreach (var b in keyBindings)
 				scaleElement.InputBindings.Remove(b);
+			scaleElement = null;
 		}
 
 		void ScaleElement_MouseWheel(object sender, MouseWheelEventArgs e) {
@@ -98,10 +100,12 @@ namespace dnSpy.Files.Tabs {
 			ScaleValue = 1;
 		}
 
-		double ScaleValue {
+		public double ScaleValue {
 			get { return currentScaleValue; }
 			set {
 				var scale = value;
+				if (double.IsNaN(scale))
+					scale = 1.0;
 				if (scaleElement == null) {
 				}
 				else if (scale == 1) {
@@ -125,5 +129,9 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 		double currentScaleValue = 1;
+
+		public void Dispose() {
+			UninstallScale();
+		}
 	}
 }

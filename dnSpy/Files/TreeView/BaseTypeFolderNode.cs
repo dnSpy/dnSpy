@@ -63,9 +63,9 @@ namespace dnSpy.Files.TreeView {
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			if (type.BaseType != null)
-				yield return new BaseTypeNode(TreeNodeGroups.BaseTypeTreeNodeGroupBaseType, type.BaseType, true);
+				yield return new BaseTypeNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.BaseTypeTreeNodeGroupBaseType), type.BaseType, true);
 			foreach (var iface in type.Interfaces)
-				yield return new BaseTypeNode(TreeNodeGroups.InterfaceBaseTypeTreeNodeGroupBaseType, iface.Interface, false);
+				yield return new BaseTypeNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.InterfaceBaseTypeTreeNodeGroupBaseType), iface.Interface, false);
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {

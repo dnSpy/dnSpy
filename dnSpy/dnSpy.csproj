@@ -71,10 +71,13 @@
     <Compile Include="Controls\WpfCommandManager.cs" />
     <Compile Include="Controls\WpfCommands.cs" />
     <Compile Include="Controls\WpfFocusManager.cs" />
+    <Compile Include="Decompiler\DecompilerAppSettingsModifiedListener.cs" />
     <Compile Include="Decompiler\DecompilerSettingsImpl.cs" />
+    <Compile Include="Decompiler\DecompilerSettingsTab.cs" />
     <Compile Include="Events\WeakEventList.cs" />
     <Compile Include="Files\AssemblyResolver.cs" />
     <Compile Include="Files\FileManager.cs" />
+    <Compile Include="Files\FileManagerAppSettingsModifiedListener.cs" />
     <Compile Include="Files\FileManagerSettings.cs" />
     <Compile Include="Files\Tabs\AsyncShowResult.cs" />
     <Compile Include="Files\Tabs\Commands.cs" />
@@ -109,6 +112,7 @@
     <Compile Include="Files\Tabs\SaveManager.cs" />
     <Compile Include="Files\Tabs\SerializedTabs.cs" />
     <Compile Include="Files\Tabs\Dialogs\TabColumnConverter.cs" />
+    <Compile Include="Files\Tabs\Settings\DisplaySettingsTab.cs" />
     <Compile Include="Files\Tabs\TabCommands.cs" />
     <Compile Include="Files\Tabs\TabContentImpl.cs" />
     <Compile Include="Files\Tabs\TabElementScaler.cs" />
@@ -156,7 +160,9 @@
     <Compile Include="Files\TreeView\FieldNode.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeDataContext.cs" />
+    <Compile Include="Files\TreeView\FileTreeNodeGroups.cs" />
     <Compile Include="Files\TreeView\FileTreeView.cs" />
+    <Compile Include="Files\TreeView\FileTreeViewAppSettingsModifiedListener.cs" />
     <Compile Include="Files\TreeView\FileTreeViewSettings.cs" />
     <Compile Include="Files\TreeView\MessageNode.cs" />
     <Compile Include="Files\TreeView\MethodNode.cs" />
@@ -167,7 +173,6 @@
     <Compile Include="Files\TreeView\PropertyNode.cs" />
     <Compile Include="Files\TreeView\ReferencesNode.cs" />
     <Compile Include="Files\TreeView\ResourcesNode.cs" />
-    <Compile Include="Files\TreeView\TreeNodeGroups.cs" />
     <Compile Include="Files\TreeView\TypeNode.cs" />
     <Compile Include="Files\TreeView\UnknownFileNode.cs" />
     <Compile Include="Images\DotNetImageManager.cs" />
@@ -207,6 +212,11 @@
       <SubType>Code</SubType>
     </Compile>
     <AppDesigner Include="Properties\" />
+    <Compile Include="Settings\Dialog\AppRefreshSettings.cs" />
+    <Compile Include="Settings\Dialog\AppSettingsDlg.xaml.cs">
+      <DependentUpon>AppSettingsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Dialog\ShowAppSettings.cs" />
     <Compile Include="Settings\SectionAttributes.cs" />
     <Compile Include="Settings\SettingsManager.cs" />
     <Compile Include="Settings\SettingsSection.cs" />
@@ -316,6 +326,10 @@
     <Page Include="MainApp\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Settings\Dialog\AppSettingsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\wpf.styles.templates.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -450,6 +464,7 @@
     <Resource Include="Images\ReferenceFolderOpened.png" />
     <Resource Include="Images\Save.png" />
     <Resource Include="Images\Search.png" />
+    <Resource Include="Images\Settings.png" />
     <Resource Include="Images\StaticClass.png" />
     <Resource Include="Images\StaticEvent.png" />
     <Resource Include="Images\StaticEventCompilerControlled.png" />

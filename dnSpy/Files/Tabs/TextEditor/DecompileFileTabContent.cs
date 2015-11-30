@@ -98,6 +98,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public ILanguage Language {
 			get { return language; }
+			set { language = value; }
 		}
 		ILanguage language;
 
@@ -239,17 +240,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			var uiCtx = (ITextEditorUIContext)uiContext;
 			uiCtx.ShowCancelButton(() => decompileContext.CancellationTokenSource.Cancel(), "Decompiling...");
 			return true;
-		}
-
-		public bool NeedRefresh() {
-			bool needRefresh = false;
-
-			if (language != decompileFileTabContentFactory.LanguageManager.SelectedLanguage) {
-				needRefresh = true;
-				language = decompileFileTabContentFactory.LanguageManager.SelectedLanguage;
-			}
-
-			return needRefresh;
 		}
 	}
 }

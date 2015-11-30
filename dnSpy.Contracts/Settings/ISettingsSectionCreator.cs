@@ -17,9 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.Linq;
-
 namespace dnSpy.Contracts.Settings {
 	/// <summary>
 	/// Creates <see cref="ISettingsSection"/>s
@@ -55,30 +52,19 @@ namespace dnSpy.Contracts.Settings {
 		/// </summary>
 		/// <param name="section">Section</param>
 		void RemoveSection(ISettingsSection section);
-	}
 
-	/// <summary>
-	/// Extension methods
-	/// </summary>
-	public static class SettingsSectionExtensionMethods {
 		/// <summary>
 		/// Gets all sections
 		/// </summary>
-		/// <param name="self">This</param>
 		/// <param name="name">Name of section</param>
 		/// <returns></returns>
-		public static ISettingsSection[] SectionsWithName(this ISettingsSectionCreator self, string name) {
-			return self.Sections.Where(a => StringComparer.Ordinal.Equals(name, a.Name)).ToArray();
-		}
+		ISettingsSection[] SectionsWithName(string name);
 
 		/// <summary>
 		/// Gets a section or null if it doesn't exist
 		/// </summary>
-		/// <param name="self">This</param>
 		/// <param name="name">Name of section</param>
 		/// <returns></returns>
-		public static ISettingsSection TryGetSection(this ISettingsSectionCreator self, string name) {
-			return self.Sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
-		}
+		ISettingsSection TryGetSection(string name);
 	}
 }

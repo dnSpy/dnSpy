@@ -66,13 +66,13 @@ namespace dnSpy.Files.TreeView {
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			if (@event.AddMethod != null)
-				yield return new MethodNode(TreeNodeGroups.MethodTreeNodeGroupEvent, @event.AddMethod);
+				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupEvent), @event.AddMethod);
 			if (@event.RemoveMethod != null)
-				yield return new MethodNode(TreeNodeGroups.MethodTreeNodeGroupEvent, @event.RemoveMethod);
+				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupEvent), @event.RemoveMethod);
 			if (@event.InvokeMethod != null)
-				yield return new MethodNode(TreeNodeGroups.MethodTreeNodeGroupEvent, @event.InvokeMethod);
+				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupEvent), @event.InvokeMethod);
 			foreach (var m in @event.OtherMethods)
-				yield return new MethodNode(TreeNodeGroups.MethodTreeNodeGroupEvent, m);
+				yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupEvent), m);
 		}
 
 		public IMethodNode Create(MethodDef method) {

@@ -66,22 +66,22 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
-			yield return new BaseTypeFolderNode(TreeNodeGroups.BaseTypeFolderTreeNodeGroupType, type);
-			yield return new DerivedTypesFolderNode(TreeNodeGroups.DerivedTypesFolderTreeNodeGroupType, type);
+			yield return new BaseTypeFolderNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.BaseTypeFolderTreeNodeGroupType), type);
+			yield return new DerivedTypesFolderNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.DerivedTypesFolderTreeNodeGroupType), type);
 
 			var hash = type.GetAccessorMethods();
 			foreach (var m in type.Methods) {
 				if (!hash.Contains(m))
-					yield return new MethodNode(TreeNodeGroups.MethodTreeNodeGroupType, m);
+					yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupType), m);
 			}
 			foreach (var p in type.Properties)
-				yield return new PropertyNode(TreeNodeGroups.PropertyTreeNodeGroupType, p);
+				yield return new PropertyNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.PropertyTreeNodeGroupType), p);
 			foreach (var e in type.Events)
-				yield return new EventNode(TreeNodeGroups.EventTreeNodeGroupType, e);
+				yield return new EventNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.EventTreeNodeGroupType), e);
 			foreach (var f in type.Fields)
-				yield return new FieldNode(TreeNodeGroups.FieldTreeNodeGroupType, f);
+				yield return new FieldNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.FieldTreeNodeGroupType), f);
 			foreach (var t in type.NestedTypes)
-				yield return new TypeNode(TreeNodeGroups.TypeTreeNodeGroupType, t);
+				yield return new TypeNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.TypeTreeNodeGroupType), t);
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {

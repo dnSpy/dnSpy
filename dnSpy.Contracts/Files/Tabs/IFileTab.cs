@@ -19,6 +19,7 @@
 
 using System;
 using System.Threading;
+using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>
@@ -39,6 +40,18 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// Gets the <see cref="IFileTabManager"/> owner
 		/// </summary>
 		IFileTabManager FileTabManager { get; }
+
+		/// <summary>
+		/// Deserializes UI settings serialized by <see cref="SerializeUI(ISettingsSection)"/>
+		/// </summary>
+		/// <param name="tabContentUI">Serialized data</param>
+		void DeserializeUI(ISettingsSection tabContentUI);
+
+		/// <summary>
+		/// Serializes UI settings
+		/// </summary>
+		/// <param name="tabContentUI">Target section</param>
+		void SerializeUI(ISettingsSection tabContentUI);
 
 		/// <summary>
 		/// true if this is the active tab
@@ -73,6 +86,19 @@ namespace dnSpy.Contracts.Files.Tabs {
 		void FollowReference(object @ref, IFileTabContent sourceContent = null);
 
 		/// <summary>
+		/// Follows a reference in a new tab
+		/// </summary>
+		/// <param name="ref">Reference</param>
+		void FollowReferenceNewTab(object @ref);
+
+		/// <summary>
+		/// Follows a reference
+		/// </summary>
+		/// <param name="ref">Reference</param>
+		/// <param name="newTab">true to open a new tab</param>
+		void FollowReference(object @ref, bool newTab);
+
+		/// <summary>
 		/// Shows the tab content
 		/// </summary>
 		/// <param name="tabContent">Tab content</param>
@@ -103,34 +129,5 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <param name="postExec">Executed in the current thread after <paramref name="asyncAction"/>
 		/// has finished executing</param>
 		void AsyncExec(Action<CancellationTokenSource> preExec, Action asyncAction, Action<IAsyncShowResult> postExec);
-	}
-
-	/// <summary>
-	/// Extension methods
-	/// </summary>
-	public static class FileTabExtensionMethods {
-		/// <summary>
-		/// Follows a reference in a new tab
-		/// </summary>
-		/// <param name="self">This</param>
-		/// <param name="ref">Reference</param>
-		public static void FollowReferenceNewTab(this IFileTab self, object @ref) {
-			var tab = self.FileTabManager.OpenEmptyTab();
-			tab.FollowReference(@ref, self.Content);
-			self.FileTabManager.SetFocus(tab);
-		}
-
-		/// <summary>
-		/// Follows a reference
-		/// </summary>
-		/// <param name="self">This</param>
-		/// <param name="ref">Reference</param>
-		/// <param name="newTab">true to open a new tab</param>
-		public static void FollowReference(this IFileTab self, object @ref, bool newTab) {
-			if (newTab)
-				self.FollowReferenceNewTab(@ref);
-			else
-				self.FollowReference(@ref, self.Content);
-		}
 	}
 }

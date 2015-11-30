@@ -140,6 +140,21 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
+		public IEnumerable<IFileTab> VisibleFirstTabs {
+			get {
+				var hash = new HashSet<IFileTab>();
+				foreach (var g in TabGroupManager.TabGroups) {
+					var c = (TabContentImpl)g.ActiveTabContent;
+					hash.Add(c);
+					yield return c;
+				}
+				foreach (var c in SortedTabs) {
+					if (!hash.Contains(c))
+						yield return c;
+				}
+			}
+		}
+
 		public IFileTabManagerSettings Settings {
 			get { return fileTabManagerSettings; }
 		}
@@ -337,19 +352,14 @@ namespace dnSpy.Files.Tabs {
 			g.SetFocus(impl);
 		}
 
-		public void CheckRefresh() {
-			CheckRefresh(AllTabContentImpls);
-		}
-
-		public void CheckRefresh(IEnumerable<IFileTab> tabs) {
+		public void ForceRefresh(IEnumerable<IFileTab> tabs) {
 			if (tabs == null)
 				throw new ArgumentNullException();
-			foreach (var tab in tabs) {
+			foreach (var tab in tabs.ToArray()) {
 				var impl = tab as TabContentImpl;
 				if (impl == null)
 					throw new InvalidOperationException();
-				if (impl.Content.NeedRefresh())
-					impl.Refresh();
+				impl.Refresh();
 			}
 		}
 
