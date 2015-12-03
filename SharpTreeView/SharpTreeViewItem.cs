@@ -30,6 +30,8 @@ namespace ICSharpCode.TreeView
 		{
 			if (nodeView == null)
 				return;
+			if (node == null)
+				return;
 
 			var doAdaptor = nodeView.DataContext as SharpTreeNodeProxy;
 			if (doAdaptor == null)

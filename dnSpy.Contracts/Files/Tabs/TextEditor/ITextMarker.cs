@@ -21,11 +21,11 @@ using System.Windows;
 using System.Windows.Media;
 using ICSharpCode.AvalonEdit.Highlighting;
 
-namespace dnSpy.Files.Tabs.TextEditor {
+namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 	/// <summary>
 	/// Represents a text marker.
 	/// </summary>
-	interface ITextMarker {
+	public interface ITextMarker {
 		/// <summary>
 		/// Gets the start offset of the marked text region.
 		/// </summary>
@@ -112,8 +112,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		void Redraw();
 	}
 
+	/// <summary>
+	/// Text marker types
+	/// </summary>
 	[Flags]
-	enum TextMarkerTypes {
+	public enum TextMarkerTypes {
 		/// <summary>
 		/// Use no marker
 		/// </summary>
@@ -149,7 +152,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		CircleInScrollBar = 0x1000
 	}
 
-	interface ITextMarkerService {
+	/// <summary>
+	/// Handles the text markers for a code editor.
+	/// </summary>
+	public interface ITextMarkerService {
 		/// <summary>
 		/// Gets the text view
 		/// </summary>

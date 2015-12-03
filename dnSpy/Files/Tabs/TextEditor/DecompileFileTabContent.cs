@@ -121,12 +121,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				if (nodes.Length == 0)
 					return "<empty>";
 				if (nodes.Length == 1)
-					return nodes[0].ToString();
+					return nodes[0].ToString(language);
 				var sb = new StringBuilder();
 				foreach (var node in nodes) {
 					if (sb.Length > 0)
 						sb.Append(", ");
-					sb.Append(node.ToString());
+					sb.Append(node.ToString(language));
 				}
 				return sb.ToString();
 			}
@@ -174,13 +174,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return decompileContext;
 		}
 
-		void UpdateLanguage(bool force = false) {
-			if (force || FileTab.IsActiveTab)
+		void UpdateLanguage() {
+			if (FileTab.IsActiveTab)
 				decompileFileTabContentFactory.LanguageManager.SelectedLanguage = language;
 		}
 
 		public void OnSelected() {
-			UpdateLanguage(true);
+			UpdateLanguage();
 		}
 
 		public void OnUnselected() {

@@ -87,7 +87,7 @@ namespace dnSpy.Files.Tabs {
 		}
 		IFileTab fileTab;
 
-		public UIElement FocusedElement {
+		public IInputElement FocusedElement {
 			get { return null; }
 		}
 

@@ -47,7 +47,9 @@
     <Compile Include="App\IAppStatusBar.cs" />
     <Compile Include="App\IAppWindow.cs" />
     <Compile Include="App\IDnSpyLoader.cs" />
+    <Compile Include="App\IMessageBoxManager.cs" />
     <Compile Include="App\LoaderConstants.cs" />
+    <Compile Include="App\MsgBoxButton.cs" />
     <Compile Include="Command\ICommandHolder.cs" />
     <Compile Include="Contracts.cs" />
     <Compile Include="Controls\CommandConstants.cs" />
@@ -72,6 +74,7 @@
     <Compile Include="Files\Tabs\FileTabReferenceResult.cs" />
     <Compile Include="Files\Tabs\IAsyncFileTabContent.cs" />
     <Compile Include="Files\Tabs\IAsyncShowResult.cs" />
+    <Compile Include="Files\Tabs\IFileListListener.cs" />
     <Compile Include="Files\Tabs\IFileTab.cs" />
     <Compile Include="Files\Tabs\IFileTabContent.cs" />
     <Compile Include="Files\Tabs\IFileTabContentFactory.cs" />
@@ -91,8 +94,17 @@
     <Compile Include="Files\Tabs\TextEditor\CodeReferenceSegment.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNode.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNodeContext.cs" />
+    <Compile Include="Files\Tabs\TextEditor\IIconBarObject.cs" />
+    <Compile Include="Files\Tabs\TextEditor\IMarkedTextLine.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextEditorSettings.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextEditorUIContext.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ITextLineObject.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ITextLineObjectManager.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ITextMarker.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ITextMarkerObject.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextEditorConstants.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextLineObjectEventArgs.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextLineObjectListModifiedEventArgs.cs" />
     <Compile Include="Files\Tabs\TextEditor\ToolTips\ICodeToolTipCreator.cs" />
     <Compile Include="Files\Tabs\TextEditor\ToolTips\ICodeToolTipWriter.cs" />
     <Compile Include="Files\Tabs\TextEditor\ToolTips\IToolTipContentCreator.cs" />

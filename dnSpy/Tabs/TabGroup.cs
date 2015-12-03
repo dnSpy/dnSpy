@@ -110,22 +110,23 @@ namespace dnSpy.Tabs {
 		}
 
 		void SetFocus2(ITabContent content) {
-			var uiel = content.FocusedElement;
-			if (uiel == null)
-				uiel = content.UIObject as UIElement;
-			var sv = uiel as ScrollViewer;
+			var fel = content.FocusedElement;
+			if (fel == null)
+				fel = content.UIObject as IInputElement;
+			var sv = fel as ScrollViewer;
 			if (sv != null)
-				uiel = sv.Content as UIElement ?? uiel;
-			if (uiel == null || !uiel.Focusable)
+				fel = sv.Content as IInputElement ?? fel;
+			if (fel == null || !fel.Focusable)
 				return;
 
-			if (!uiel.IsVisible)
+			var uiel = fel as UIElement;
+			if (uiel != null && !uiel.IsVisible)
 				new SetFocusWhenVisible(this, content, uiel);
 			else
-				SetFocusNoChecks(uiel);
+				SetFocusNoChecks(fel);
 		}
 
-		void SetFocusNoChecks(UIElement uiel) {
+		void SetFocusNoChecks(IInputElement uiel) {
 			Debug.Assert(uiel != null && uiel.Focusable);
 			if (uiel == null)
 				return;

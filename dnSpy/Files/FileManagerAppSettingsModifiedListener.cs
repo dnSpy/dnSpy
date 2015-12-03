@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
@@ -38,29 +37,8 @@ namespace dnSpy.Files {
 				DisableMemoryMappedIO();
 		}
 
-		IEnumerable<ModuleDefMD> GetModules(HashSet<ModuleDefMD> hash, IEnumerable<IDnSpyFile> files) {
-			foreach (var f in files) {
-				var mod = f.ModuleDef as ModuleDefMD;
-				if (mod != null && !hash.Contains(mod)) {
-					hash.Add(mod);
-					yield return mod;
-				}
-				var asm = mod.Assembly;
-				foreach (var m in asm.Modules) {
-					mod = m as ModuleDefMD;
-					if (mod != null && !hash.Contains(mod)) {
-						hash.Add(mod);
-						yield return mod;
-					}
-				}
-				foreach (var m in GetModules(hash, f.Children))
-					yield return m;
-			}
-		}
-
 		void DisableMemoryMappedIO() {
-			var hash = new HashSet<ModuleDefMD>();
-			foreach (var m in GetModules(hash, fileManager.GetFiles()))
+			foreach (var m in fileManager.GetFiles().GetModules<ModuleDefMD>())
 				m.MetaData.PEImage.UnsafeDisableMemoryMappedIO();
 		}
 	}

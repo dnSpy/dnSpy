@@ -23,25 +23,36 @@ using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using dnlib.DotNet;
 
 namespace dnSpy.Shared.UI.Files {
+	public struct GacFileInfo {
+		public readonly IAssembly Assembly;
+		public readonly string Path;
+
+		public GacFileInfo(IAssembly asm, string path) {
+			this.Assembly = asm;
+			this.Path = path;
+		}
+	}
+
 	public static class GacInfo {
 		public static string[] GacPaths { get; private set; }
 		public static string[] OtherGacPaths { get; private set; }
 		public static string[] WinmdPaths { get; private set; }
 
 		sealed class GacDirInfo {
-			public readonly int version;
-			public readonly string path;
-			public readonly string prefix;
-			public readonly IList<string> subDirs;
+			public readonly int Version;
+			public readonly string Path;
+			public readonly string Prefix;
+			public readonly IList<string> SubDirs;
 
 			public GacDirInfo(int version, string prefix, string path, IList<string> subDirs) {
-				this.version = version;
-				this.prefix = prefix;
-				this.path = path;
-				this.subDirs = subDirs;
+				this.Version = version;
+				this.Prefix = prefix;
+				this.Path = path;
+				this.SubDirs = subDirs;
 			}
 		}
 		static readonly GacDirInfo[] gacDirInfos;
@@ -159,14 +170,85 @@ namespace dnSpy.Shared.UI.Files {
 			string pktString = pkt.ToString();
 			string verString = assembly.Version.ToString();
 			var asmSimpleName = UTF8String.ToSystemStringOrEmpty(assembly.Name);
-			foreach (var subDir in gacInfo.subDirs) {
-				var baseDir = Path.Combine(gacInfo.path, subDir);
+			foreach (var subDir in gacInfo.SubDirs) {
+				var baseDir = Path.Combine(gacInfo.Path, subDir);
 				baseDir = Path.Combine(baseDir, asmSimpleName);
-				baseDir = Path.Combine(baseDir, string.Format("{0}{1}__{2}", gacInfo.prefix, verString, pktString));
+				baseDir = Path.Combine(baseDir, string.Format("{0}{1}__{2}", gacInfo.Prefix, verString, pktString));
 				var pathName = Path.Combine(baseDir, asmSimpleName + ".dll");
 				if (File.Exists(pathName))
 					yield return pathName;
 			}
+		}
+
+		public static IEnumerable<GacFileInfo> GetAssemblies(int majorVersion) {
+			if (majorVersion == 2)
+				return GetAssemblies(gacDirInfos[0]);
+			if (majorVersion == 4)
+				return GetAssemblies(gacDirInfos[1]);
+			Debug.Fail("Invalid version");
+			return new GacFileInfo[0];
+		}
+
+		static IEnumerable<GacFileInfo> GetAssemblies(GacDirInfo gacInfo) {
+			foreach (var subDir in gacInfo.SubDirs) {
+				var baseDir = Path.Combine(gacInfo.Path, subDir);
+				foreach (var dir in GetDirectories(baseDir)) {
+					foreach (var dir2 in GetDirectories(dir)) {
+						Version version;
+						string culture;
+						PublicKeyToken pkt;
+						if (gacInfo.Version == 2) {
+							var m = gac2Regex.Match(Path.GetFileName(dir2));
+							if (!m.Success || m.Groups.Count != 4)
+								continue;
+							if (!Version.TryParse(m.Groups[1].Value, out version))
+								continue;
+							culture = m.Groups[2].Value;
+							pkt = new PublicKeyToken(m.Groups[3].Value);
+							if (PublicKeyBase.IsNullOrEmpty2(pkt))
+								continue;
+						}
+						else if (gacInfo.Version == 4) {
+							var m = gac4Regex.Match(Path.GetFileName(dir2));
+							if (!m.Success || m.Groups.Count != 4)
+								continue;
+							if (!Version.TryParse(m.Groups[1].Value, out version))
+								continue;
+							culture = m.Groups[2].Value;
+							pkt = new PublicKeyToken(m.Groups[3].Value);
+							if (PublicKeyBase.IsNullOrEmpty2(pkt))
+								continue;
+						}
+						else
+							throw new InvalidOperationException();
+						var asmName = Path.GetFileName(dir);
+						var file = Path.Combine(dir2, asmName) + ".dll";
+						if (!File.Exists(file)) {
+							file = Path.Combine(dir2, asmName) + ".exe";
+							if (!File.Exists(file))
+								continue;
+						}
+						var asmInfo = new AssemblyNameInfo {
+							Name = asmName,
+							Version = version,
+							Culture = culture,
+							PublicKeyOrToken = pkt,
+						};
+						yield return new GacFileInfo(asmInfo, file);
+					}
+				}
+			}
+		}
+		static readonly Regex gac2Regex = new Regex("^([^_]+)_([^_]*)_([a-fA-F0-9]{16})$", RegexOptions.Compiled);
+		static readonly Regex gac4Regex = new Regex("^v[^_]+_([^_]+)_([^_]*)_([a-fA-F0-9]{16})$", RegexOptions.Compiled);
+
+		static string[] GetDirectories(string dir) {
+			try {
+				return Directory.GetDirectories(dir);
+			}
+			catch {
+			}
+			return new string[0];
 		}
 	}
 }

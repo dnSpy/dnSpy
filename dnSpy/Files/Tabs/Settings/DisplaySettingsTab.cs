@@ -92,7 +92,7 @@ namespace dnSpy.Files.Tabs.Settings {
 		public bool IsMonospaced {
 			get { return isMonospaced; }
 		}
-		bool isMonospaced;
+		readonly bool isMonospaced;
 
 		public FontFamilyVM(FontFamily ff) {
 			this.ff = ff;

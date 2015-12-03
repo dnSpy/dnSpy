@@ -41,7 +41,7 @@ namespace dnSpy.Settings.Dialog {
 		}
 
 		public override void Execute(IMenuItemContext context) {
-			var tabs = tabCreators.Select(a => a.Value.Create()).ToArray();
+			var tabs = tabCreators.Select(a => a.Value.Create()).Where(a => a != null).ToArray();
 			var dlg = new AppSettingsDlg(tabs);
 			dlg.Owner = appWindow.MainWindow;
 			bool saveSettings = dlg.ShowDialog() == true;

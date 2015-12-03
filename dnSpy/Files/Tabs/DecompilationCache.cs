@@ -24,15 +24,38 @@ using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.Decompiler;
 using ICSharpCode.AvalonEdit.Document;
 
 namespace dnSpy.Files.Tabs {
-	/// <summary>
-	/// Caches decompiled output
-	/// </summary>
+	[ExportFileListListener]
+	sealed class DecompilationCacheFileListListener : IFileListListener {
+		readonly IDecompilationCache decompilationCache;
+
+		[ImportingConstructor]
+		DecompilationCacheFileListListener(IDecompilationCache decompilationCache) {
+			this.decompilationCache = decompilationCache;
+		}
+
+		public bool CanLoad {
+			get { return true; }
+		}
+
+		public bool CanReload {
+			get { return true; }
+		}
+
+		public void BeforeLoad(bool isReload) {
+		}
+
+		public void AfterLoad(bool isReload) {
+			decompilationCache.ClearAll();
+		}
+	}
+
 	[Export(typeof(IDecompilationCache)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class DecompilationCache : IDecompilationCache {
 		// How often ClearOld() is called

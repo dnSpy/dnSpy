@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 	/// </summary>
 	public interface IAppSettingsTabCreator {
 		/// <summary>
-		/// Creates a new <see cref="IAppSettingsTab"/> instance
+		/// Creates a new <see cref="IAppSettingsTab"/> instance or returns null
 		/// </summary>
 		/// <returns></returns>
 		IAppSettingsTab Create();

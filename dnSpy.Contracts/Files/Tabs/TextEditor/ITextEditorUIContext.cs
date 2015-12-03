@@ -32,8 +32,8 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// instance
 		/// </summary>
 		/// <param name="output">New document</param>
-		/// <param name="newHighlighting">Highlighting to use or null</param>
-		void SetOutput(ITextOutput output, IHighlightingDefinition newHighlighting);
+		/// <param name="highlighting">Highlighting to use or null</param>
+		void SetOutput(ITextOutput output, IHighlightingDefinition highlighting);
 
 		/// <summary>
 		/// Shows a cancel button. Can be used when decompiling in another thread
@@ -58,5 +58,10 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// true if there's selected text
 		/// </summary>
 		bool HasSelectedText { get; }
+
+		/// <summary>
+		/// Raised after the text editor has gotten new text (<see cref="SetOutput(ITextOutput, IHighlightingDefinition)"/>)
+		/// </summary>
+		event EventHandler<EventArgs> NewTextContent;
 	}
 }

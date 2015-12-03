@@ -81,6 +81,10 @@ namespace dnSpy.Shared.UI.Files {
 		}
 		List<IDnSpyFile> children;
 
+		public bool ChildrenLoaded {
+			get { return children != null; }
+		}
+
 		protected virtual List<IDnSpyFile> CreateChildren() {
 			return new List<IDnSpyFile>();
 		}

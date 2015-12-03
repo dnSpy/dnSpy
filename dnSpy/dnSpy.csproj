@@ -83,6 +83,22 @@
     <Compile Include="Files\Tabs\Commands.cs" />
     <Compile Include="Files\Tabs\DecompilationCache.cs" />
     <Compile Include="Files\Tabs\DefaultDecompileNode.cs" />
+    <Compile Include="Files\Tabs\DefaultFileList.cs" />
+    <Compile Include="Files\Tabs\Dialogs\FileListColumnConverter.cs" />
+    <Compile Include="Files\Tabs\Dialogs\FileListPrinter.cs" />
+    <Compile Include="Files\Tabs\Dialogs\FileListVM.cs" />
+    <Compile Include="Files\Tabs\Dialogs\GACFileColumnConverter.cs" />
+    <Compile Include="Files\Tabs\Dialogs\GACFileFinder.cs" />
+    <Compile Include="Files\Tabs\Dialogs\GACFilePrinter.cs" />
+    <Compile Include="Files\Tabs\Dialogs\GACFileVM.cs" />
+    <Compile Include="Files\Tabs\Dialogs\OpenFileListDlg.xaml.cs">
+      <DependentUpon>OpenFileListDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Files\Tabs\Dialogs\OpenFileListVM.cs" />
+    <Compile Include="Files\Tabs\Dialogs\OpenFromGACDlg.xaml.cs">
+      <DependentUpon>OpenFromGACDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Files\Tabs\Dialogs\OpenFromGACVM.cs" />
     <Compile Include="Files\Tabs\Dialogs\TabPrinter.cs" />
     <Compile Include="Files\Tabs\Dialogs\TabsDlg.xaml.cs">
       <DependentUpon>TabsDlg.xaml</DependentUpon>
@@ -92,12 +108,14 @@
     <Compile Include="Files\Tabs\Dialogs\TabVM.cs" />
     <Compile Include="Files\Tabs\DnSpyFileInfoSerializer.cs" />
     <Compile Include="Files\Tabs\FileList.cs" />
+    <Compile Include="Files\Tabs\FileListLoader.cs" />
     <Compile Include="Files\Tabs\FileListManager.cs" />
     <Compile Include="Files\Tabs\FileTabContentFactoryContext.cs" />
     <Compile Include="Files\Tabs\FileTabContentFactoryManager.cs" />
     <Compile Include="Files\Tabs\FileTabManager.cs" />
     <Compile Include="Files\Tabs\FileTabManagerLoader.cs" />
     <Compile Include="Files\Tabs\FileTabManagerSettings.cs" />
+    <Compile Include="Files\Tabs\FileTabSerializer.cs" />
     <Compile Include="Files\Tabs\FileTabUIContextLocator.cs" />
     <Compile Include="Files\Tabs\FileTabUIContextLocatorCreator.cs" />
     <Compile Include="Files\Tabs\FileTreeNodeDecompiler.cs" />
@@ -122,8 +140,6 @@
     <Compile Include="Files\Tabs\TextEditor\DecompileNodeContext.cs" />
     <Compile Include="Files\Tabs\TextEditor\EditorPositionState.cs" />
     <Compile Include="Files\Tabs\TextEditor\IconBarMargin.cs" />
-    <Compile Include="Files\Tabs\TextEditor\IMarkedTextLine.cs" />
-    <Compile Include="Files\Tabs\TextEditor\ITextMarker.cs" />
     <Compile Include="Files\Tabs\TextEditor\NewTextEditor.cs" />
     <Compile Include="Files\Tabs\TextEditor\ReferenceElementGenerator.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorControl.xaml.cs">
@@ -191,6 +207,10 @@
     <Compile Include="MainApp\AppStatusBar.cs" />
     <Compile Include="MainApp\AppToolBar.cs" />
     <Compile Include="MainApp\AppWindow.cs" />
+    <Compile Include="MainApp\AskDlg.xaml.cs">
+      <DependentUpon>AskDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainApp\AskVM.cs" />
     <Compile Include="MainApp\DnSpyLoaderControl.xaml.cs">
       <DependentUpon>DnSpyLoaderControl.xaml</DependentUpon>
     </Compile>
@@ -198,6 +218,11 @@
     <Compile Include="MainApp\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainApp\MessageBoxManager.cs" />
+    <Compile Include="MainApp\MsgBoxDlg.xaml.cs">
+      <DependentUpon>MsgBoxDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainApp\MsgBoxVM.cs" />
     <Compile Include="MainApp\SavedWindowState.cs" />
     <Compile Include="MainApp\StartUpClass.cs" />
     <Compile Include="MainApp\ToolBarCommands.cs" />
@@ -307,6 +332,14 @@
     <ApplicationDefinition Include="MainApp\App.xaml">
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Files\Tabs\Dialogs\OpenFileListDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Files\Tabs\Dialogs\OpenFromGACDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Files\Tabs\Dialogs\TabsDlg.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -319,6 +352,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="MainApp\AskDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainApp\DnSpyLoaderControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -326,6 +363,10 @@
     <Page Include="MainApp\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MainApp\MsgBoxDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Settings\Dialog\AppSettingsDlg.xaml">
       <SubType>Designer</SubType>
@@ -339,6 +380,8 @@
   <ItemGroup>
     <Resource Include="Images\Assembly.png" />
     <Resource Include="Images\AssemblyExe.png" />
+    <Resource Include="Images\AssemblyList.png" />
+    <Resource Include="Images\AssemblyListGAC.png" />
     <Resource Include="Images\AssemblyModule.png" />
     <Resource Include="Images\AssemblyReference.png" />
     <Resource Include="Images\AssemblyWarning.png" />
@@ -516,6 +559,10 @@
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>mkdir "$(TargetDir)FileLists"
+copy "$(ProjectDir)FileLists\*.FileList.xml" "$(TargetDir)FileLists"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

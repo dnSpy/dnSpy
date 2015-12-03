@@ -66,5 +66,17 @@ namespace dnSpy.Contracts.App {
 		/// Gets the <see cref="IWpfCommandManager"/> instance
 		/// </summary>
 		IWpfCommandManager WpfCommandManager { get; }
+
+		/// <summary>
+		/// Adds <paramref name="info"/> to the window title
+		/// </summary>
+		/// <param name="info">Some text</param>
+		void AddTitleInfo(string info);
+
+		/// <summary>
+		/// Removes <paramref name="info"/> from the window title
+		/// </summary>
+		/// <param name="info">Some text</param>
+		void RemoveTitleInfo(string info);
 	}
 }

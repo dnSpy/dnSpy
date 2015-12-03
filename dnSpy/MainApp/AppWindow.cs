@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
@@ -119,6 +120,7 @@ namespace dnSpy.MainApp {
 			sc.AddChild(stackedContent, StackedContentChildInfo.CreateVertical(new GridLength(1, GridUnitType.Star)));
 			sc.AddChild(statusBar, StackedContentChildInfo.CreateVertical(new GridLength(0, GridUnitType.Auto)));
 			mainWindow = new MainWindow(themeManager, imageManager, sc.UIObject);
+			AddTitleInfo(IntPtr.Size == 4 ? "x86" : "x64");
 			wpfCommandManager.Add(CommandConstants.GUID_MAINWINDOW, mainWindow);
 			new SavedWindowStateRestorer(mainWindow, appSettings.SavedWindowState, DefaultWindowLocation);
 			mainWindow.Closing += MainWindow_Closing;
@@ -177,6 +179,28 @@ namespace dnSpy.MainApp {
 		public void RefreshToolBar() {
 			if (mainWindow != null)
 				appToolBar.Initialize(mainWindow);
+		}
+
+		void UpdateTitle() {
+			this.mainWindow.Title = GetDefaultTitle();
+		}
+
+		string GetDefaultTitle() {
+			var t = string.Format("dnSpy ({0})", string.Join(", ", titleInfos.ToArray()));
+			return t;
+		}
+		readonly List<string> titleInfos = new List<string>();
+
+		public void AddTitleInfo(string info) {
+			if (titleInfos.Contains(info))
+				return;
+			titleInfos.Add(info);
+			UpdateTitle();
+		}
+
+		public void RemoveTitleInfo(string info) {
+			if (titleInfos.Remove(info))
+				UpdateTitle();
 		}
 	}
 }

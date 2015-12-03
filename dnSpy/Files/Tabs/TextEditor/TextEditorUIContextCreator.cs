@@ -22,6 +22,7 @@ using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
@@ -31,25 +32,30 @@ namespace dnSpy.Files.Tabs.TextEditor {
 	[ExportFileTabUIContextCreator(Order = TabsConstants.ORDER_TEXTEDITORUICONTEXTCREATOR)]
 	sealed class TextEditorUIContextCreator : IFileTabUIContextCreator {
 		readonly IThemeManager themeManager;
+		readonly IImageManager imageManager;
 		readonly IWpfCommandManager wpfCommandManager;
 		readonly IMenuManager menuManager;
 		readonly ICodeToolTipManager codeToolTipManager;
 		readonly ITextEditorSettings textEditorSettings;
+		readonly ITextLineObjectManager textLineObjectManager;
 
 		[ImportingConstructor]
-		TextEditorUIContextCreator(IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager, ITextEditorSettings textEditorSettings) {
+		TextEditorUIContextCreator(IThemeManager themeManager, IImageManager imageManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager, ITextEditorSettings textEditorSettings, ITextLineObjectManager textLineObjectManager) {
 			this.themeManager = themeManager;
+			this.imageManager = imageManager;
 			this.wpfCommandManager = wpfCommandManager;
 			this.menuManager = menuManager;
 			this.codeToolTipManager = codeToolTipManager;
 			this.textEditorSettings = textEditorSettings;
+			this.textLineObjectManager = textLineObjectManager;
 		}
 
 		public IFileTabUIContext Create<T>() where T : class, IFileTabUIContext {
 			if (typeof(T) == typeof(ITextEditorUIContext)) {
 				var ttRefFinder = new ToolTipReferenceFinder();
-				var tec = new TextEditorControl(themeManager, new ToolTipHelper(codeToolTipManager, ttRefFinder), textEditorSettings);
-				var uiContext = new TextEditorUIContext(wpfCommandManager, menuManager, tec);
+				var uiContext = new TextEditorUIContext(wpfCommandManager);
+				var tec = new TextEditorControl(themeManager, new ToolTipHelper(codeToolTipManager, ttRefFinder), textEditorSettings, uiContext, uiContext, textLineObjectManager, imageManager);
+				uiContext.Initialize(menuManager, tec);
 				ttRefFinder.UIContext = uiContext;
 				return uiContext;
 			}

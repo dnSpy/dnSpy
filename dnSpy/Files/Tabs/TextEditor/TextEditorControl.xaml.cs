@@ -49,6 +49,7 @@ using System.Windows.Media.Animation;
 using System.Xml;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 using dnSpy.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Shared.UI.AvalonEdit;
@@ -76,16 +77,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			);
 		}
 
-		public ITextEditorHelper TextEditorHelper {
-			set {
-				if (value == null)
-					throw new ArgumentNullException();
-				if (textEditorHelper != null)
-					throw new InvalidOperationException();
-				textEditorHelper = value;
-			}
-		}
-		ITextEditorHelper textEditorHelper;
+		readonly ITextEditorHelper textEditorHelper;
 
 		public NewTextEditor TextEditor {
 			get { return textEditor; }
@@ -109,10 +101,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ToolTipHelper toolTipHelper;
 		readonly ITextEditorSettings textEditorSettings;
 
-		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings) {
+		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContext textEditorUIContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager) {
 			this.themeManager = themeManager;
 			this.toolTipHelper = toolTipHelper;
 			this.textEditorSettings = textEditorSettings;
+			this.textEditorHelper = textEditorHelper;
 			InitializeComponent();
 			this.textEditorSettings.PropertyChanged += TextEditorSettings_PropertyChanged;
 
@@ -149,11 +142,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				Mode = BindingMode.OneWay,
 			});
 
-			iconBarMargin = new IconBarMargin(this);
+			iconBarMargin = new IconBarMargin(textEditorUIContext, textLineObjectManager, imageManager);
 			TextEditor.TextArea.LeftMargins.Insert(0, iconBarMargin);
 			TextEditor.TextArea.TextView.VisualLinesChanged += delegate { iconBarMargin.InvalidateVisual(); };
 
-			textMarkerService = new TextMarkerService(this);
+			textMarkerService = new TextMarkerService(this, textEditorUIContext, textLineObjectManager);
 			TextEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
 
 			searchPanel = SearchPanel.Install(TextEditor.TextArea);
@@ -297,13 +290,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		LastOutput lastOutput;
-		public void SetOutput(ITextOutput output, IHighlightingDefinition newHighlighting) {
+		public void SetOutput(ITextOutput output, IHighlightingDefinition highlighting) {
 			if (output == null)
 				throw new ArgumentNullException();
 
 			HideCancelButton();
 
-			var newLastOutput = new LastOutput(output, newHighlighting);
+			var newLastOutput = new LastOutput(output, highlighting);
 			if (lastOutput.Equals(newLastOutput))
 				return;
 			lastOutput = newLastOutput;
@@ -317,7 +310,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			ClearMarkedReferences();
 			TextEditor.ScrollToHome();
 			TextEditor.Document = null;
-			TextEditor.SyntaxHighlighting = newHighlighting;
+			TextEditor.SyntaxHighlighting = highlighting;
 			ClearCustomElementGenerators();
 
 			if (avOutput == null) {
@@ -654,7 +647,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				var r = tmp;
 				if (RefSegEquals(referenceSegment, r)) {
 					var mark = textMarkerService.Create(r.StartOffset, r.Length);
-					mark.ZOrder = (int)TextLineObjectZOrder.SearchResult;
+					mark.ZOrder = TextEditorConstants.ZORDER_SEARCHRESULT;
 					mark.HighlightingColor = () => {
 						return r.IsLocalTarget ?
 							themeManager.Theme.GetTextColor(ColorType.LocalDefinition).ToHighlightingColor() :
@@ -729,6 +722,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.textEditorSettings.PropertyChanged -= TextEditorSettings_PropertyChanged;
 			Clear();
 			BindingOperations.ClearAllBindings(TextEditor);
+			textMarkerService.Dispose();
 		}
 	}
 }

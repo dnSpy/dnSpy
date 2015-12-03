@@ -7,6 +7,8 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using dnSpy.Contracts;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Rendering;
@@ -17,10 +19,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		// 16px wide icon + 1px each side padding + 1px right-side border
 		public const int WIDTH = 1 + 16 + 1 + 1;
 
-		readonly TextEditorControl textEditorControl;
+		readonly ITextEditorUIContext textEditorUIContext;
+		readonly ITextLineObjectManager textLineObjectManager;
+		readonly IImageManager imageManager;
 
-		public IconBarMargin(TextEditorControl textEditorControl) {
-			this.textEditorControl = textEditorControl;
+		public IconBarMargin(ITextEditorUIContext textEditorUIContext, ITextLineObjectManager textLineObjectManager, IImageManager imageManager) {
+			this.textEditorUIContext = textEditorUIContext;
+			this.textLineObjectManager = textLineObjectManager;
+			this.imageManager = imageManager;
 		}
 
 		public void Dispose() {
@@ -50,10 +56,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (textView != null && textView.VisualLinesValid) {
 				// create a dictionary line number => first bookmark
 				Dictionary<int, List<IIconBarObject>> bookmarkDict = new Dictionary<int, List<IIconBarObject>>();
-				foreach (var obj in TextLineObjectManager.Instance.GetObjectsOfType<IIconBarObject>()) {
-					if (!obj.IsVisible(textEditorControl))
+				foreach (var obj in textLineObjectManager.GetObjectsOfType<IIconBarObject>()) {
+					if (!obj.IsVisible(textEditorUIContext))
 						continue;
-					int line = obj.GetLineNumber(textEditorControl);
+					int line = obj.GetLineNumber(textEditorUIContext);
 					List<IIconBarObject> list;
 					if (!bookmarkDict.TryGetValue(line, out list))
 						bookmarkDict[line] = list = new List<IIconBarObject>();
@@ -70,7 +76,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					list.Sort((a, b) => a.ZOrder.CompareTo(b.ZOrder));
 					foreach (var bm in list) {
 						Rect rect = new Rect(imagePadding, PixelSnapHelpers.Round(line.VisualTop - textView.VerticalOffset, pixelSize.Height), 16, 16);
-						drawingContext.DrawImage(bm.GetImage(bgColor), rect);
+						var imgRef = bm.ImageReference;
+						if (imgRef != null)
+							drawingContext.DrawImage(imageManager.GetImage(imgRef.Value.Assembly, imgRef.Value.Name, bgColor), rect);
 					}
 				}
 			}

@@ -74,19 +74,10 @@ namespace dnSpy.Files.TreeView {
 		public sealed override object ToolTip {
 			get {
 				var gen = UISyntaxHighlighter.Create(Context.SyntaxHighlight);
-
-				var cached = cachedToolTip != null ? cachedToolTip.Target : null;
-				if (cached != null)
-					return cached;
-
 				WriteToolTip(gen.Output, Context.Language);
-
-				var text = gen.CreateTextBlock(filterOutNewLines: false);
-				cachedToolTip = new WeakReference(text);
-				return text;
+				return gen.CreateTextBlock(filterOutNewLines: false);
 			}
 		}
-		WeakReference cachedToolTip;
 
 		public sealed override string ToString() {
 			return ToString(Context.Language);
@@ -99,7 +90,6 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		public sealed override void OnRefreshUI() {
-			cachedToolTip = null;
 			cachedText = null;
 		}
 	}

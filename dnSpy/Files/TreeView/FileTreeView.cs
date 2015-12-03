@@ -275,12 +275,14 @@ namespace dnSpy.Files.TreeView {
 				if (!b)
 					break;
 				var node = (IDnSpyFileNode)treeView.Root.Children[index];
+				DisableMemoryMappedIO(new[] { node });
 				CallCollectionChanged(NotifyFileTreeViewCollectionChangedEventArgs.CreateRemove(node));
 				break;
 
 			case NotifyFileCollectionType.Clear:
 				var oldNodes = treeView.Root.Children.Select(a => (IDnSpyFileNode)a.Data).ToArray();
 				treeView.Root.Children.Clear();
+				DisableMemoryMappedIO(oldNodes);
 				CallCollectionChanged(NotifyFileTreeViewCollectionChangedEventArgs.CreateClear(oldNodes));
 				break;
 
@@ -288,6 +290,13 @@ namespace dnSpy.Files.TreeView {
 				Debug.Fail(string.Format("Unknown event type: {0}", e.Type));
 				break;
 			}
+		}
+
+		void DisableMemoryMappedIO(IDnSpyFileNode[] nodes) {
+			// The nodes will be GC'd eventually, but it's not safe to call Dispose(), so disable
+			// mmap'd I/O so the files can at least be modified (eg. deleted) by the user.
+			foreach (var m in nodes.SelectMany(n => n.DnSpyFile.GetModules<ModuleDefMD>()))
+				m.MetaData.PEImage.UnsafeDisableMemoryMappedIO();
 		}
 
 		public IDnSpyFileNode CreateNode(IDnSpyFileNode owner, IDnSpyFile file) {

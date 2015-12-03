@@ -25,6 +25,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
@@ -163,13 +164,15 @@ namespace dnSpy.Files.Tabs {
 		readonly IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator;
 		readonly ITabManager tabManager;
 		readonly IFileTabContentFactoryManager fileTabContentFactoryManager;
+		readonly IWpfFocusManager wpfFocusManager;
 		readonly Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>[] refFactories;
 
 		[ImportingConstructor]
-		FileTabManager(IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator, FileTreeView fileTreeView, ITabManagerCreator tabManagerCreator, IFileTabContentFactoryManager fileTabContentFactoryManager, IFileTabManagerSettings fileTabManagerSettings, [ImportMany] IEnumerable<Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>> mefRefFactories) {
+		FileTabManager(IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator, FileTreeView fileTreeView, ITabManagerCreator tabManagerCreator, IFileTabContentFactoryManager fileTabContentFactoryManager, IFileTabManagerSettings fileTabManagerSettings, IWpfFocusManager wpfFocusManager, [ImportMany] IEnumerable<Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>> mefRefFactories) {
 			this.fileTabManagerSettings = fileTabManagerSettings;
 			this.fileTabUIContextLocatorCreator = fileTabUIContextLocatorCreator;
 			this.fileTabContentFactoryManager = fileTabContentFactoryManager;
+			this.wpfFocusManager = wpfFocusManager;
 			this.refFactories = mefRefFactories.OrderBy(a => a.Metadata.Order).ToArray();
 			this.fileTreeView = fileTreeView;
 			this.fileTreeView.TreeView.SelectionChanged += TreeView_SelectionChanged;
@@ -219,6 +222,10 @@ namespace dnSpy.Files.Tabs {
 			if (disableSelectionChangedEventCounter > 0)
 				return;
 			var nodes = ((ITreeView)sender).TopLevelSelection.OfType<IFileTreeNodeData>().ToArray();
+
+			// Prevent a new empty tab from opening when closing the last tab
+			if (nodes.Length == 0 && ActiveTabContentImpl == null)
+				return;
 
 			// When the treeview selects nodes it will unselect everything and then select the new
 			// nodes. We're not interested in the empty selection since it shouldn't be recorded in
@@ -322,7 +329,7 @@ namespace dnSpy.Files.Tabs {
 						tab.TrySetFocus();
 				}
 				else
-					focusedElem.Focus();
+					wpfFocusManager.Focus(focusedElem);
 			}
 		}
 
@@ -395,6 +402,17 @@ namespace dnSpy.Files.Tabs {
 			if (impl == null)
 				return null;
 			return GetTabGroup(impl) == null ? null : impl;
+		}
+
+		public void CloseAll() {
+			foreach (var impl in AllTabContentImpls.ToArray())
+				Close(impl);
+			fileTreeView.TreeView.SelectItems(new ITreeNodeData[0]);
+		}
+
+		internal void OnRemoved(TabContentImpl impl) {
+			if (ActiveTabContentImpl == null)
+				fileTreeView.TreeView.SelectItems(new ITreeNodeData[0]);
 		}
 	}
 }

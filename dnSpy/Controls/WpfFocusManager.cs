@@ -39,7 +39,7 @@ namespace dnSpy.Controls {
 			this.checkers = checkers.ToArray();
 		}
 
-		public void Focus(UIElement element) {
+		public void Focus(IInputElement element) {
 			Debug.Assert(element != null && element.Focusable);
 			if (element == null || !element.Focusable)
 				return;

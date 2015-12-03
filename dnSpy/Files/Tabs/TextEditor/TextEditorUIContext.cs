@@ -29,6 +29,7 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
+using dnSpy.Events;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
@@ -43,7 +44,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 	sealed class TextEditorUIContext : ITextEditorUIContext, ITextEditorHelper, IDisposable {
 		readonly IWpfCommandManager wpfCommandManager;
-		readonly TextEditorControl textEditorControl;
+		TextEditorControl textEditorControl;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly TextEditorUIContext textEditorUIContext;
@@ -90,10 +91,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 		}
 
-		public TextEditorUIContext(IWpfCommandManager wpfCommandManager, IMenuManager menuManager, TextEditorControl textEditorControl) {
+		public TextEditorUIContext(IWpfCommandManager wpfCommandManager) {
 			this.wpfCommandManager = wpfCommandManager;
+			this.newTextContentEvent = new WeakEventList<EventArgs>();
+		}
+
+		public void Initialize(IMenuManager menuManager, TextEditorControl textEditorControl) {
 			this.textEditorControl = textEditorControl;
-			this.textEditorControl.TextEditorHelper = this;
 			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
 			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTEDITOR, textEditorControl.TextEditor);
 			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTAREA, textEditorControl.TextEditor.TextArea);
@@ -113,7 +117,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 		IFileTab fileTab;
 
-		public UIElement FocusedElement {
+		public IInputElement FocusedElement {
 			get {
 				var button = textEditorControl.CancelButton;
 				if (button != null && button.IsVisible)
@@ -190,10 +194,17 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			section.Attribute("TextViewPosition.IsAtEndOfLine", state.TextViewPosition.IsAtEndOfLine);
 		}
 
-		public void SetOutput(ITextOutput output, IHighlightingDefinition newHighlighting) {
-			textEditorControl.SetOutput(output, newHighlighting);
+		public void SetOutput(ITextOutput output, IHighlightingDefinition highlighting) {
+			textEditorControl.SetOutput(output, highlighting);
+			newTextContentEvent.Raise(this, EventArgs.Empty);
 			//TODO: CodeMappings should be init'd by the debugger plugin
 		}
+
+		public event EventHandler<EventArgs> NewTextContent {
+			add { newTextContentEvent.Add(value); }
+			remove { newTextContentEvent.Remove(value); }
+		}
+		readonly WeakEventList<EventArgs> newTextContentEvent;
 
 		void ITextEditorHelper.FollowReference(CodeReferenceSegment codeRef, bool newTab) {
 			Debug.Assert(FileTab != null);

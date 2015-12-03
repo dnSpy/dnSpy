@@ -70,7 +70,7 @@ namespace dnSpy.Files.Tabs {
 			var nodeType = GetNodeType(node);
 			switch (nodeType) {
 			case NodeType.Unknown:
-				language.WriteCommentLine(output, node.ToString());
+				language.WriteCommentLine(output, node.ToString(language));
 				break;
 
 			case NodeType.Assembly:

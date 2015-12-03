@@ -26,8 +26,13 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Files.Tabs {
 	sealed class FileList {
-		const string FILELIST_NAME = "name";
+		public const string DEFAULT_NAME = "(Default)";
+		const string FILELIST_NAME_ATTR = "name";
 		const string FILE_SECTION = "File";
+
+		public bool IsDefault {
+			get { return StringComparer.OrdinalIgnoreCase.Equals(Name, DEFAULT_NAME); }
+		}
 
 		public string Name {
 			get { return name; }
@@ -44,8 +49,13 @@ namespace dnSpy.Files.Tabs {
 			this.name = name;
 		}
 
+		public FileList(DefaultFileList defaultList) {
+			this.files = new List<DnSpyFileInfo>(defaultList.Assemblies.Select(a => DnSpyFileInfo.CreateGacFile(a)));
+			this.name = defaultList.Name;
+		}
+
 		public static FileList Create(ISettingsSection section) {
-			var fileList = new FileList(section.Attribute<string>(FILELIST_NAME));
+			var fileList = new FileList(section.Attribute<string>(FILELIST_NAME_ATTR));
 			foreach (var fileSect in section.SectionsWithName(FILE_SECTION)) {
 				var info = DnSpyFileInfoSerializer.TryLoad(fileSect);
 				if (info != null)
@@ -55,7 +65,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public void Save(ISettingsSection section) {
-			section.Attribute(FILELIST_NAME, Name);
+			section.Attribute(FILELIST_NAME_ATTR, Name);
 			foreach (var info in files)
 				DnSpyFileInfoSerializer.Save(section.CreateSection(FILE_SECTION), info);
 		}
@@ -90,34 +100,6 @@ namespace dnSpy.Files.Tabs {
 			AddFile(typeof(System.Windows.FrameworkElement).Assembly);
 			AddFile(typeof(dnlib.DotNet.ModuleDefMD).Assembly);
 			AddFile(GetType().Assembly);
-		}
-
-		public void AddDotNet4Files() {//TODO: Use
-			AddGacFile("mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("System, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("System.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("System.Data, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("System.Data.DataSetExtensions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("System.Xaml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("System.Xml, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("System.Xml.Linq, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("Microsoft.CSharp, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
-			AddGacFile("PresentationCore, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
-			AddGacFile("PresentationFramework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
-			AddGacFile("WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
-		}
-
-		public void AddDotNet35Files() {//TODO: Use
-			AddGacFile("mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("System.Core, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("System.Data, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("System.Data.DataSetExtensions, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("System.Xml, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("System.Xml.Linq, Version=3.5.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089");
-			AddGacFile("PresentationCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
-			AddGacFile("PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
-			AddGacFile("WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
 		}
 	}
 }

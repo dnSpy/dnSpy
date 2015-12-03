@@ -101,7 +101,7 @@ namespace dnSpy.Files.Tabs {
 		}
 		object uiObject;
 
-		UIElement ITabContent.FocusedElement {
+		IInputElement ITabContent.FocusedElement {
 			get {
 				if (UIContext != null)
 					return UIContext.FocusedElement;
@@ -132,6 +132,7 @@ namespace dnSpy.Files.Tabs {
 				Debug.Assert(id != null);
 				if (id != null)
 					id.Dispose();
+				fileTabManager.OnRemoved(this);
 			}
 		}
 
@@ -275,7 +276,7 @@ namespace dnSpy.Files.Tabs {
 				return;
 			UIContext.Deserialize(serializedUI);
 			var uiel = UIContext.FocusedElement as UIElement ?? UIContext.UIObject as UIElement;
-			if (uiel.IsVisible)
+			if (uiel == null || uiel.IsVisible)
 				return;
 			int uiContextVersionTmp = uiContextVersion;
 			new OnVisibleHelper(uiel, () => {

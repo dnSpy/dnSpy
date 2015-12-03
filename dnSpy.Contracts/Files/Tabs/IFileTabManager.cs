@@ -99,5 +99,10 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <param name="content">Tab content</param>
 		/// <returns></returns>
 		IFileTab TryGetFileTab(ITabContent content);
+
+		/// <summary>
+		/// Closes all tabs
+		/// </summary>
+		void CloseAll();
 	}
 }

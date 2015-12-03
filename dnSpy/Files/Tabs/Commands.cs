@@ -18,16 +18,20 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Linq;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolBars;
+using dnSpy.Files.Tabs.Dialogs;
 using dnSpy.Shared.UI.Menus;
 using dnSpy.Shared.UI.ToolBars;
 using Microsoft.Win32;
@@ -54,8 +58,12 @@ namespace dnSpy.Files.Tabs {
 			};
 			if (openDlg.ShowDialog() != true)
 				return;
+			OpenFiles(fileTreeView, openDlg.FileNames);
+		}
+
+		public static void OpenFiles(IFileTreeView fileTreeView, IEnumerable<string> filenames) {
 			IDnSpyFile file = null;
-			foreach (var filename in openDlg.FileNames) {
+			foreach (var filename in filenames) {
 				if (File.Exists(filename))
 					file = fileTreeView.FileManager.TryGetOrCreate(DnSpyFileInfo.CreateFile(filename)) ?? file;
 			}
@@ -79,6 +87,97 @@ namespace dnSpy.Files.Tabs {
 	sealed class ToolbarFileOpenCommand : ToolBarButtonCommand {
 		public ToolbarFileOpenCommand()
 			: base(ApplicationCommands.Open) {
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "Open from _GAC...", Icon = "AssemblyListGAC", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 10)]
+	sealed class OpenFromGacCommand : MenuItemBase {
+		readonly IFileTreeView fileTreeView;
+		readonly IAppWindow appWindow;
+
+		[ImportingConstructor]
+		OpenFromGacCommand(IFileTreeView fileTreeView, IAppWindow appWindow) {
+			this.fileTreeView = fileTreeView;
+			this.appWindow = appWindow;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			var win = new OpenFromGACDlg();
+			const bool syntaxHighlight = true;
+			var vm = new OpenFromGACVM(syntaxHighlight);
+			win.DataContext = vm;
+			win.Owner = appWindow.MainWindow;
+			if (win.ShowDialog() != true)
+				return;
+			OpenFileInit.OpenFiles(fileTreeView, win.SelectedItems.Select(a => a.Path));
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "Open L_ist...", Icon = "AssemblyList", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 20)]
+	sealed class OpenListCommand : MenuItemBase {
+		readonly IAppWindow appWindow;
+		readonly IFileListLoader fileListLoader;
+		readonly FileListManager fileListManager;
+		readonly IMessageBoxManager messageBoxManager;
+
+		[ImportingConstructor]
+		OpenListCommand(IAppWindow appWindow, IFileListLoader fileListLoader, FileListManager fileListManager, IMessageBoxManager messageBoxManager) {
+			this.appWindow = appWindow;
+			this.fileListLoader = fileListLoader;
+			this.fileListManager = fileListManager;
+			this.messageBoxManager = messageBoxManager;
+		}
+
+		public override bool IsEnabled(IMenuItemContext context) {
+			return fileListLoader.CanLoad;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			if (!fileListLoader.CanLoad)
+				return;
+
+			var win = new OpenFileListDlg();
+			const bool syntaxHighlight = true;
+			var vm = new OpenFileListVM(syntaxHighlight, fileListManager, labelMsg => messageBoxManager.Ask<string>(labelMsg, ownerWindow: win));
+			win.DataContext = vm;
+			win.Owner = appWindow.MainWindow;
+			if (win.ShowDialog() != true)
+				return;
+
+			var flvm = win.SelectedItems.FirstOrDefault();
+			var oldSelected = fileListManager.SelectedFileList;
+			if (flvm != null) {
+				fileListManager.Add(flvm.FileList);
+				fileListManager.SelectedFileList = flvm.FileList;
+			}
+
+			vm.Save();
+
+			if (flvm == null)
+				return;
+			var fileList = flvm.FileList;
+			if (fileList == oldSelected)
+				return;
+
+			fileListLoader.Load(fileList);
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "_Reload All Assemblies", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 30)]
+	sealed class ReloadCommand : MenuItemBase {
+		readonly IFileListLoader fileListLoader;
+
+		[ImportingConstructor]
+		ReloadCommand(IFileListLoader fileListLoader) {
+			this.fileListLoader = fileListLoader;
+		}
+
+		public override bool IsEnabled(IMenuItemContext context) {
+			return fileListLoader.CanReload;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			fileListLoader.Reload();
 		}
 	}
 }

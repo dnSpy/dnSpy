@@ -78,6 +78,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App\MsgBox.cs" />
     <Compile Include="AvalonEdit\ExtensionMethods.cs" />
     <Compile Include="Controls\FastTextBlock.cs" />
     <Compile Include="Controls\FastTreeNodeView.cs" />

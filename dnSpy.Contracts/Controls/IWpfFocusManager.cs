@@ -31,6 +31,6 @@ namespace dnSpy.Contracts.Controls {
 		/// class to prevent Focus() from being called.
 		/// </summary>
 		/// <param name="element">Element</param>
-		void Focus(UIElement element);
+		void Focus(IInputElement element);
 	}
 }

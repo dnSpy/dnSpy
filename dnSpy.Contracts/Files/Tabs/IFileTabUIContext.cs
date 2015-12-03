@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <summary>
 		/// Gets the element that should get focus when the tab is selected, or null
 		/// </summary>
-		UIElement FocusedElement { get; }
+		IInputElement FocusedElement { get; }
 
 		/// <summary>
 		/// Gets the element that gets the <see cref="ScaleTransform"/> or null if none

@@ -44,7 +44,7 @@ namespace dnSpy.Contracts.Tabs {
 		/// Gets the element that should should get focus when the tab is selected or null to use
 		/// <see cref="UIObject"/>
 		/// </summary>
-		UIElement FocusedElement { get; }
+		IInputElement FocusedElement { get; }
 
 		/// <summary>
 		/// Called when the visibility changes

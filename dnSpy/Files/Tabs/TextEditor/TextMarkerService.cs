@@ -23,66 +23,55 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Threading;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
 using TextView = ICSharpCode.AvalonEdit.Rendering.TextView;
 
 namespace dnSpy.Files.Tabs.TextEditor {
-	/// <summary>
-	/// Handles the text markers for a code editor.
-	/// </summary>
-	sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService {
+	sealed class TextMarkerService : DocumentColorizingTransformer, IBackgroundRenderer, ITextMarkerService, IDisposable {
 		TextSegmentCollection<TextMarker> markers;
-		TextEditorControl textEditorControl;
+		readonly ITextEditorUIContext textEditorUIContext;
+		readonly TextEditorControl textEditorControl;
+		readonly ITextLineObjectManager textLineObjectManager;
 		readonly Dictionary<ITextMarkerObject, ITextMarker> objToMarker = new Dictionary<ITextMarkerObject, ITextMarker>();
 
 		public TextView TextView {
 			get { return textEditorControl.TextEditor.TextArea.TextView; }
 		}
 
-		public TextMarkerService(TextEditorControl textView) {
-			if (textView == null)
-				throw new ArgumentNullException("textView");
+		public TextMarkerService(TextEditorControl textView, ITextEditorUIContext textEditorUIContext, ITextLineObjectManager textLineObjectManager) {
 			this.textEditorControl = textView;
-			TextView.DocumentChanged += OnDocumentChanged;
-			TextLineObjectManager.Instance.OnListModified += TextLineObjectManager_OnListModified;
-			/*TODO:
-			XXXXXXXXXXXX.ExecuteWhenLoaded(() => {
-				XXXXXXXXXXXX.OnTabStateRemoved += OnTabStateRemoved;
-				this.textEditorControl.OnShowOutput += textView_OnShowOutput;
-				RecreateMarkers();
-			});
-			*/
-			OnDocumentChanged(null, null);
+			this.textEditorUIContext = textEditorUIContext;
+			this.textLineObjectManager = textLineObjectManager;
+			textEditorUIContext.NewTextContent += TextEditorUIContext_NewTextContent;
+			TextView.DocumentChanged += TextView_DocumentChanged;
+			textLineObjectManager.OnListModified += TextLineObjectManager_OnListModified;
+			OnDocumentChanged();
 		}
 
-		/*TODO:
-		void textView_OnShowOutput(object sender, TextEditorControl.ShowOutputEventArgs e) {
+		void TextEditorUIContext_NewTextContent(object sender, EventArgs e) {
 			RecreateMarkers();
 		}
-		*/
 
-		/*TODO:
-		void OnTabStateRemoved(object sender, MainWindow.TabStateEventArgs e) {
-			var tsd = e.TabState as DecompileTabState;
-			if (tsd == null || tsd.TextView != textEditorControl)
-				return;
-
-			TextView.DocumentChanged -= OnDocumentChanged;
-			TextLineObjectManager.Instance.OnListModified -= TextLineObjectManager_OnListModified;
-			XXXXXXXXXXXX.OnTabStateRemoved -= OnTabStateRemoved;
-			textEditorControl.OnShowOutput -= textView_OnShowOutput;
+		public void Dispose() {
+			textEditorUIContext.NewTextContent -= TextEditorUIContext_NewTextContent;
+			textLineObjectManager.OnListModified -= TextLineObjectManager_OnListModified;
+			TextView.DocumentChanged -= TextView_DocumentChanged;
 			ClearMarkers();
 		}
-		*/
 
 		void ClearMarkers() {
 			foreach (var obj in objToMarker.Keys.ToArray())
 				RemoveMarker(obj);
 		}
 
-		void OnDocumentChanged(object sender, EventArgs e) {
+		void TextView_DocumentChanged(object sender, EventArgs e) {
+			OnDocumentChanged();
+		}
+
+		void OnDocumentChanged() {
 			ClearMarkers();
 			if (TextView.Document != null)
 				markers = new TextSegmentCollection<TextMarker>(TextView.Document);
@@ -98,17 +87,17 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		void RecreateMarkers() {
-			foreach (var tmo in TextLineObjectManager.Instance.GetObjectsOfType<ITextMarkerObject>())
+			foreach (var tmo in textLineObjectManager.GetObjectsOfType<ITextMarkerObject>())
 				CreateMarker(tmo);
 		}
 
 		void CreateMarker(ITextMarkerObject tmo) {
-			if (tmo == null || !tmo.IsVisible(textEditorControl))
+			if (tmo == null || !tmo.IsVisible(textEditorUIContext))
 				return;
 
 			ITextMarker marker;
 			if (!objToMarker.TryGetValue(tmo, out marker)) {
-				objToMarker.Add(tmo, marker = tmo.CreateMarker(textEditorControl, this));
+				objToMarker.Add(tmo, marker = tmo.CreateMarker(textEditorUIContext, this));
 				tmo.ObjPropertyChanged += TextMarkerObject_ObjPropertyChanged;
 			}
 			Debug.Assert(marker != null);

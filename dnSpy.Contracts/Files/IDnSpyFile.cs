@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using dnlib.DotNet;
 using dnlib.PE;
 
@@ -74,6 +75,11 @@ namespace dnSpy.Contracts.Files {
 		/// assembly.
 		/// </summary>
 		List<IDnSpyFile> Children { get; }
+
+		/// <summary>
+		/// true if <see cref="Children"/> has been initialized
+		/// </summary>
+		bool ChildrenLoaded { get; }
 	}
 
 	/// <summary>
@@ -112,6 +118,61 @@ namespace dnSpy.Contracts.Files {
 			catch (ArgumentException) {
 			}
 			return filename;
+		}
+
+		/// <summary>
+		/// Gets self and all descendants that have been loaded
+		/// </summary>
+		/// <param name="file">This</param>
+		/// <returns></returns>
+		public static IEnumerable<IDnSpyFile> NonLoadedDescendantsAndSelf(this IDnSpyFile file) {
+			if (file == null)
+				throw new ArgumentNullException();
+			yield return file;
+			if (file.ChildrenLoaded) {
+				foreach (var child in file.Children) {
+					foreach (var f in child.NonLoadedDescendantsAndSelf())
+						yield return f;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets all modules in this instance and any children
+		/// </summary>
+		/// <typeparam name="T"><see cref="ModuleDefMD"/> or <see cref="ModuleDefMD"/></typeparam>
+		/// <param name="file">File</param>
+		/// <returns></returns>
+		public static IEnumerable<T> GetModules<T>(this IDnSpyFile file) where T : ModuleDef {
+			return GetModules(new HashSet<T>(), new[] { file });
+		}
+
+		/// <summary>
+		/// Gets all modules in this instance and any children
+		/// </summary>
+		/// <typeparam name="T"><see cref="ModuleDefMD"/> or <see cref="ModuleDefMD"/></typeparam>
+		/// <param name="files">Files</param>
+		/// <returns></returns>
+		public static IEnumerable<T> GetModules<T>(this IEnumerable<IDnSpyFile> files) where T : ModuleDef {
+			return GetModules(new HashSet<T>(), files);
+		}
+
+		static IEnumerable<T> GetModules<T>(HashSet<T> hash, IEnumerable<IDnSpyFile> files) where T : ModuleDef {
+			foreach (var f in files.SelectMany(f => f.NonLoadedDescendantsAndSelf())) {
+				var mod = f.ModuleDef as T;
+				if (mod != null && !hash.Contains(mod)) {
+					hash.Add(mod);
+					yield return mod;
+				}
+				var asm = mod.Assembly;
+				foreach (var m in asm.Modules) {
+					mod = m as T;
+					if (mod != null && !hash.Contains(mod)) {
+						hash.Add(mod);
+						yield return mod;
+					}
+				}
+			}
 		}
 	}
 }

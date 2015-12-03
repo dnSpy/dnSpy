@@ -19,32 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 
 namespace dnSpy.Files.Tabs.TextEditor {
-	class TextLineObjectListModifiedEventArgs : EventArgs {
-		/// <summary>
-		/// Added/removed object
-		/// </summary>
-		public ITextLineObject TextLineObject { get; private set; }
-
-		/// <summary>
-		/// true if added, false if removed
-		/// </summary>
-		public bool Added { get; private set; }
-
-		public TextLineObjectListModifiedEventArgs(ITextLineObject obj, bool added) {
-			this.TextLineObject = obj;
-			this.Added = added;
-		}
-	}
-
-	/// <summary>
-	/// Keeps track of text line objects, eg. code breakpoints, current line markers, etc
-	/// </summary>
-	sealed class TextLineObjectManager {
-		public static readonly TextLineObjectManager Instance = new TextLineObjectManager();
-
+	[Export, Export(typeof(ITextLineObjectManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class TextLineObjectManager : ITextLineObjectManager {
 		readonly HashSet<ITextLineObject> objects = new HashSet<ITextLineObject>();
 
 		public event EventHandler<TextLineObjectListModifiedEventArgs> OnListModified;

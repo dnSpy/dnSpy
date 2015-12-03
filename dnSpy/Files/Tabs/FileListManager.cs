@@ -26,9 +26,8 @@ using dnSpy.Contracts.Settings;
 namespace dnSpy.Files.Tabs {
 	[Export]
 	sealed class FileListManager {
-		const string DEFAULT_NAME = "(Default)";
-		const string CURRENT_LIST_NAME = "name";
-		const string FILE_LIST_SECTION_NAME = "FileList";
+		const string CURRENT_LIST_ATTR = "name";
+		const string FILE_LIST_SECTION = "FileList";
 
 		public FileList SelectedFileList {
 			get {
@@ -39,9 +38,20 @@ namespace dnSpy.Files.Tabs {
 					selectedIndex = 0;
 				return fileLists[selectedIndex];
 			}
+			set {
+				if (value == null)
+					throw new ArgumentNullException();
+				int index = fileLists.IndexOf(value);
+				if (index < 0)
+					throw new InvalidOperationException();
+				selectedIndex = index;
+			}
 		}
 		int selectedIndex;
 
+		public FileList[] FileLists {
+			get { return fileLists.ToArray(); }
+		}
 		readonly List<FileList> fileLists;
 
 		FileListManager() {
@@ -51,7 +61,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		void CreateDefaultList() {
-			var fl = new FileList(DEFAULT_NAME);
+			var fl = new FileList(FileList.DEFAULT_NAME);
 			fl.AddDefaultFiles();
 			fileLists.Add(fl);
 		}
@@ -69,9 +79,9 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public void Load(ISettingsSection section) {
-			var listName = section.Attribute<string>(CURRENT_LIST_NAME);
+			var listName = section.Attribute<string>(CURRENT_LIST_ATTR);
 			var names = new HashSet<string>(StringComparer.Ordinal);
-			foreach (var listSection in section.SectionsWithName(FILE_LIST_SECTION_NAME)) {
+			foreach (var listSection in section.SectionsWithName(FILE_LIST_SECTION)) {
 				var fileList = FileList.Create(listSection);
 				if (names.Contains(fileList.Name))
 					continue;
@@ -84,9 +94,26 @@ namespace dnSpy.Files.Tabs {
 		bool hasLoaded;
 
 		public void Save(ISettingsSection section) {
-			section.Attribute(CURRENT_LIST_NAME, SelectedFileList.Name);
+			section.Attribute(CURRENT_LIST_ATTR, SelectedFileList.Name);
 			foreach (var fileList in fileLists)
-				fileList.Save(section.CreateSection(FILE_LIST_SECTION_NAME));
+				fileList.Save(section.CreateSection(FILE_LIST_SECTION));
+		}
+
+		public bool Remove(FileList fileList) {
+			if (fileList == SelectedFileList)
+				return false;
+			var selected = SelectedFileList;
+			fileLists.Remove(fileList);
+			selectedIndex = fileLists.IndexOf(selected);
+			Debug.Assert(selectedIndex >= 0);
+			Debug.Assert(SelectedFileList == selected);
+			return true;
+		}
+
+		public void Add(FileList fileList) {
+			if (fileLists.Contains(fileList))
+				return;
+			fileLists.Add(fileList);
 		}
 	}
 }

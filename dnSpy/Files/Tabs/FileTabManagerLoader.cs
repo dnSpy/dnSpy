@@ -19,9 +19,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Files.Tabs {
@@ -31,27 +29,22 @@ namespace dnSpy.Files.Tabs {
 		const string FILE_LISTS_SECTION = "FileLists";
 		const string TABGROUPWINDOW_SECTION = "TabGroupWindow";
 
-		readonly IFileTabContentFactoryManager fileTabContentFactoryManager;
+		readonly FileTabSerializer fileTabSerializer;
 		readonly FileTabManager fileTabManager;
-		readonly FileListManager fileListManager;
+		readonly IFileListLoader fileListLoader;
 
 		[ImportingConstructor]
-		FileTabManagerLoader(IFileTabContentFactoryManager fileTabContentFactoryManager, FileTabManager fileTabManager, FileListManager fileListManager) {
-			this.fileTabContentFactoryManager = fileTabContentFactoryManager;
+		FileTabManagerLoader(FileTabSerializer fileTabSerializer, FileTabManager fileTabManager, IFileListLoader fileListLoader) {
+			this.fileTabSerializer = fileTabSerializer;
 			this.fileTabManager = fileTabManager;
-			this.fileListManager = fileListManager;
+			this.fileListLoader = fileListLoader;
 		}
 
 		public IEnumerable<object> Load(ISettingsManager settingsManager) {
 			var section = settingsManager.GetOrCreateSection(SETTINGS_NAME);
 
-			fileListManager.Load(section.GetOrCreateSection(FILE_LISTS_SECTION));
-			yield return null;
-
-			foreach (var f in fileListManager.SelectedFileList.Files) {
-				fileTabManager.FileTreeView.FileManager.TryGetOrCreate(f);
-				yield return null;
-			}
+			foreach (var o in fileListLoader.Load(section.GetOrCreateSection(FILE_LISTS_SECTION)))
+				yield return o;
 
 			var tgws = new List<SerializedTabGroupWindow>();
 			var tgwsHash = new HashSet<string>();
@@ -67,37 +60,10 @@ namespace dnSpy.Files.Tabs {
 			// been added to the TV or the node lookup code will fail to find the nodes it needs.
 			yield return LoaderConstants.Delay;
 
-			var mainTgw = tgws.FirstOrDefault(a => a.Name == SerializedTabGroupWindow.MAIN_NAME);
-			if (mainTgw != null) {
-				foreach (var o in Load(mainTgw))
-					yield return o;
-				yield return null;
-			}
+			foreach (var o in fileTabSerializer.Restore(tgws))
+				yield return o;
 
 			fileTabManager.OnTabsLoaded();
-		}
-
-		IEnumerable<object> Load(SerializedTabGroupWindow tgw) {
-			bool addedAutoLoadedAssembly = false;
-			foreach (var f in GetAutoLoadedAssemblies(tgw)) {
-				addedAutoLoadedAssembly = true;
-				fileTabManager.FileTreeView.FileManager.TryGetOrCreate(f, true);
-				yield return null;
-			}
-			if (addedAutoLoadedAssembly)
-				yield return LoaderConstants.Delay;
-
-			foreach (var o in tgw.Restore(fileTabManager, fileTabContentFactoryManager, fileTabManager.TabGroupManager))
-				yield return o;
-		}
-
-		IEnumerable<DnSpyFileInfo> GetAutoLoadedAssemblies(SerializedTabGroupWindow tgw) {
-			foreach (var g in tgw.TabGroups) {
-				foreach (var t in g.Tabs) {
-					foreach (var f in t.AutoLoadedFiles)
-						yield return f;
-				}
-			}
 		}
 
 		public void OnAppLoaded() {
@@ -105,12 +71,11 @@ namespace dnSpy.Files.Tabs {
 
 		public void Save(ISettingsManager settingsManager) {
 			var section = settingsManager.RecreateSection(SETTINGS_NAME);
-			fileListManager.SelectedFileList.Update(fileTabManager.FileTreeView.FileManager.GetFiles());
-			fileListManager.Save(section.GetOrCreateSection(FILE_LISTS_SECTION));
+			fileListLoader.Save(section.GetOrCreateSection(FILE_LISTS_SECTION));
 
 			if (fileTabManager.Settings.RestoreTabs) {
-				var tgw = SerializedTabGroupWindow.Create(fileTabContentFactoryManager, fileTabManager.TabGroupManager, SerializedTabGroupWindow.MAIN_NAME);
-				tgw.Save(section.CreateSection(TABGROUPWINDOW_SECTION));
+				foreach (var tgw in fileTabSerializer.SaveTabs())
+					tgw.Save(section.CreateSection(TABGROUPWINDOW_SECTION));
 			}
 		}
 	}

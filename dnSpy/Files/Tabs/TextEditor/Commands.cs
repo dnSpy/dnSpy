@@ -112,7 +112,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			var tab = fileTabManager.ActiveTab;
 			if (tab == null)
 				return null;
-			IInputElement elem = tab.UIContext.FocusedElement ?? tab.UIContext.UIObject as IInputElement;
+			var elem = tab.UIContext.FocusedElement ?? tab.UIContext.UIObject as IInputElement;
 			return elem == null ? null : ApplicationCommands.Find.CanExecute(null, elem) ? elem : null;
 		}
 	}
