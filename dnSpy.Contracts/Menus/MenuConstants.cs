@@ -100,10 +100,10 @@ namespace dnSpy.Contracts.Menus {
 		public const string GUIDOBJ_FILES_TABGROUP_GUID = "87B2F94A-D80B-45FD-BB31-71E390CA6C01";
 
 		/// <summary>Text editor control</summary>
-		public const string GUIDOBJ_DECOMPILED_CODE_GUID = "7F9E85C9-05B5-43FE-9CD1-20E61B183454";
+		public const string GUIDOBJ_TEXTEDITORCONTROL_GUID = "7F9E85C9-05B5-43FE-9CD1-20E61B183454";
 
 		/// <summary><see cref="ITextEditorUIContext"/></summary>
-		public const string GUIDOBJ_TEXTEDITORUICONTEXT = "848AC3FB-7D67-4427-A604-86BFF539E527";
+		public const string GUIDOBJ_TEXTEDITORUICONTEXT_GUID = "848AC3FB-7D67-4427-A604-86BFF539E527";
 
 		/// <summary>TextViewPosition</summary>
 		public const string GUIDOBJ_TEXTVIEWPOSITION_GUID = "0C5E61BF-FC0D-47F7-8C49-69BD93CD11B5";

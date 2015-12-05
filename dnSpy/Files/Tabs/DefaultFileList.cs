@@ -18,45 +18,40 @@
 */
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
+using dnSpy.Contracts.App;
+using dnSpy.Contracts.Files;
 
 namespace dnSpy.Files.Tabs {
-	sealed class DefaultFileList : IEnumerable {
+	sealed class DefaultFileList {
 		public string Name {
 			get { return name; }
 		}
 		readonly string name;
 
-		public string[] Assemblies {
-			get { return assemblies.ToArray(); }
+		public DnSpyFileInfo[] Files {
+			get { return files.ToArray(); }
 		}
-		readonly List<string> assemblies;
+		readonly List<DnSpyFileInfo> files;
 
 		public DefaultFileList(string name) {
 			this.name = name;
-			this.assemblies = new List<string>();
+			this.files = new List<DnSpyFileInfo>();
 		}
 
-		public DefaultFileList(string name, IEnumerable<string> asmNames) {
+		public DefaultFileList(string name, IEnumerable<DnSpyFileInfo> asmNames) {
 			this.name = name;
-			this.assemblies = new List<string>(asmNames);
-			this.assemblies.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a, b));
+			this.files = new List<DnSpyFileInfo>(asmNames);
+			this.files.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name));
 		}
 
-		public void Add(string assemblyFullName) {
-			if (assemblyFullName == null)
-				throw new ArgumentNullException();
-			assemblies.Add(assemblyFullName);
-		}
-
-		IEnumerator IEnumerable.GetEnumerator() {
-			return Assemblies.GetEnumerator();
+		public void Add(DnSpyFileInfo file) {
+			files.Add(file);
 		}
 	}
 
@@ -71,7 +66,7 @@ namespace dnSpy.Files.Tabs {
 
 		public IEnumerable<DefaultFileList> AllFiles {
 			get {
-				return allFiles.Where(a => a.Files.Count > 0).Select(a => new DefaultFileList(a.Name, a.Files.Where(b => b.InGac).Select(b => b.AssemblyFullName))).Where(a => a.Assemblies.Length > 0);
+				return allFiles.Where(a => a.Files.Count > 0).Select(a => new DefaultFileList(a.Name, a.Files.Select(b => b.ToDnSpyFileInfo()))).Where(a => a.Files.Length > 0);
 			}
 		}
 
@@ -86,7 +81,15 @@ namespace dnSpy.Files.Tabs {
 					AddRedistList(path);
 			}
 
-			Find(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86));
+			var pfd = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+			if (string.IsNullOrEmpty(pfd))
+				pfd = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+			Find(pfd);
+		}
+
+		static bool IsDNF20Path(string s) {
+			return s.EndsWith(@"\Microsoft.NET\Framework\v2.0.50727\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase) ||
+					s.EndsWith(@"\Microsoft.NET\Framework64\v2.0.50727\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase);
 		}
 
 		void Find(string path) {
@@ -123,7 +126,7 @@ namespace dnSpy.Files.Tabs {
 				}
 			}
 
-			var net20 = allFiles.FirstOrDefault(a => a.Filename.EndsWith(@"\Microsoft.NET\Framework\v2.0.50727\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase));
+			var net20 = allFiles.FirstOrDefault(a => IsDNF20Path(a.Filename));
 			var net30 = allFiles.FirstOrDefault(a => a.Filename.EndsWith(@"\Reference Assemblies\Microsoft\Framework\v3.0\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase));
 			var net35 = allFiles.FirstOrDefault(a => a.Filename.EndsWith(@"\Reference Assemblies\Microsoft\Framework\v3.5\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase));
 			var net35C = allFiles.FirstOrDefault(a => a.Filename.EndsWith(@"\Reference Assemblies\Microsoft\Framework\.NETFramework\v3.5\Profile\Client\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase));
@@ -179,32 +182,43 @@ namespace dnSpy.Files.Tabs {
 
 			public RefFileList(string filename) {
 				Filename = filename;
+				var refFilePath = Path.GetDirectoryName(Path.GetDirectoryName(filename));
 				var doc = XDocument.Load(filename, LoadOptions.None);
 				var root = doc.Root;
 				if (root.Name != "FileList")
 					throw new InvalidOperationException();
 				foreach (var attr in root.Attributes()) {
-					if (attr.Name == "Redist")
+					switch (attr.Name.ToString()) {
+					case "Redist":
 						Redist = attr.Value;
-					else if (attr.Name == "Name")
+						break;
+					case "Name":
 						Name = attr.Value;
-					else if (attr.Name == "RuntimeVersion")
+						break;
+					case "RuntimeVersion":
 						RuntimeVersion = attr.Value;
-					else if (attr.Name == "ToolsVersion")
+						break;
+					case "ToolsVersion":
 						ToolsVersion = attr.Value;
-					else if (attr.Name == "ShortName")
+						break;
+					case "ShortName":
 						ShortName = attr.Value;
-					else if (attr.Name == "IncludeFramework")
+						break;
+					case "IncludeFramework":
 						IncludeFramework = attr.Value;
-					else if (attr.Name == "TargetFrameworkDirectory")
+						break;
+					case "TargetFrameworkDirectory":
 						TargetFrameworkDirectory = attr.Value;
-					else
+						break;
+					default:
 						Debug.Fail("Unknown attr");
+						break;
+					}
 				}
 
 				foreach (var sect in root.Elements()) {
 					if (sect.Name == "File")
-						Files.Add(new RefFile(sect));
+						Files.Add(new RefFile(sect, refFilePath));
 					else
 						Debug.Fail("Unknown section");
 				}
@@ -221,7 +235,7 @@ namespace dnSpy.Files.Tabs {
 
 			string CreateDescription() {
 				var f = Filename;
-				if (f.EndsWith(@"\Microsoft.NET\Framework\v2.0.50727\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase))
+				if (IsDNF20Path(f))
 					f = @"\Reference Assemblies\Microsoft\Framework\.NETFramework\v2.0\RedistList\FrameworkList.xml";
 				else if (f.EndsWith(@"\Reference Assemblies\Microsoft\Framework\v3.0\RedistList\FrameworkList.xml", StringComparison.OrdinalIgnoreCase))
 					f = @"\Reference Assemblies\Microsoft\Framework\.NETFramework\v3.0\RedistList\FrameworkList.xml";
@@ -273,28 +287,55 @@ namespace dnSpy.Files.Tabs {
 			public bool InGac { get; set; }
 			public bool IsRedistRoot { get; set; }
 			public string FileVersion { get; set; }
+			public string Filename { get; set; }
 
-			public RefFile(XElement sect) {
+			public RefFile(XElement sect, string refFilePath) {
 				foreach (var attr in sect.Attributes()) {
-					if (attr.Name == "AssemblyName")
+					switch (attr.Name.ToString()) {
+					case "AssemblyName":
 						AssemblyName = attr.Value;
-					else if (attr.Name == "Version")
+						break;
+					case "Version":
 						Version = new Version(attr.Value);
-					else if (attr.Name == "PublicKeyToken")
+						break;
+					case "PublicKeyToken":
 						PublicKeyToken = attr.Value;
-					else if (attr.Name == "Culture")
+						break;
+					case "Culture":
 						Culture = attr.Value;
-					else if (attr.Name == "ProcessorArchitecture")
+						break;
+					case "ProcessorArchitecture":
 						ProcessorArchitecture = attr.Value;
-					else if (attr.Name == "InGac" || attr.Name == "InGAC")
+						break;
+					case "InGac":
+					case "InGAC":
 						InGac = bool.Parse(attr.Value);
-					else if (attr.Name == "IsRedistRoot")
+						break;
+					case "IsRedistRoot":
 						IsRedistRoot = bool.Parse(attr.Value);
-					else if (attr.Name == "FileVersion")
+						break;
+					case "FileVersion":
 						FileVersion = attr.Value;
-					else
+						break;
+					default:
 						Debug.Fail("Unknown attr");
+						break;
+					}
 				}
+
+				var f = Path.Combine(refFilePath, AssemblyName);
+				var fn = f + ".dll";
+				if (!File.Exists(fn))
+					fn = f + ".exe";
+				if (!File.Exists(fn))
+					fn = string.Empty;
+				Filename = fn;
+			}
+
+			public DnSpyFileInfo ToDnSpyFileInfo() {
+				if (string.IsNullOrEmpty(Filename))
+					return DnSpyFileInfo.CreateGacFile(AssemblyFullName);
+				return DnSpyFileInfo.CreateReferenceAssembly(AssemblyFullName, Filename);
 			}
 
 			public string AssemblyFullName {
@@ -319,11 +360,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		static IEnumerable<string> FilesDirs {
-			get {
-				const string FILELISTS_DIR = "FileLists";
-				yield return Path.Combine(Path.GetDirectoryName(typeof(DefaultFileListFinder).Assembly.Location), FILELISTS_DIR);
-				yield return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "dnSpy", FILELISTS_DIR);
-			}
+			get { return AppDirectories.GetDirectories("FileLists"); }
 		}
 
 		public DefaultFileList[] Find() {
@@ -382,7 +419,7 @@ namespace dnSpy.Files.Tabs {
 					var asmFullName = (string)sect.Attribute("name");
 					if (string.IsNullOrWhiteSpace(asmFullName))
 						return null;
-					l.Add(asmFullName);
+					l.Add(DnSpyFileInfo.CreateGacFile(asmFullName));
 				}
 				return Tuple.Create(l, isDefault ?? false);
 			}

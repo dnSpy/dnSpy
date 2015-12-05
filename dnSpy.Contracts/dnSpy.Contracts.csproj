@@ -43,6 +43,7 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="App\AppDirectories.cs" />
     <Compile Include="App\IAppSettings.cs" />
     <Compile Include="App\IAppStatusBar.cs" />
     <Compile Include="App\IAppWindow.cs" />
@@ -183,6 +184,9 @@
     <Compile Include="Settings\Dialog\IAppSettingsModifiedListener.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsTab.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsTabCreator.cs" />
+    <Compile Include="Settings\Dialog\IDynamicAppSettingsTab.cs" />
+    <Compile Include="Settings\Dialog\ISimpleAppOption.cs" />
+    <Compile Include="Settings\Dialog\ISimpleAppOptionCreator.cs" />
     <Compile Include="Settings\ISettingsManager.cs" />
     <Compile Include="Settings\ISettingsSection.cs" />
     <Compile Include="Settings\ISettingsSectionCreator.cs" />

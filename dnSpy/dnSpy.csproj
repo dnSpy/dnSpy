@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="Controls\IStackedContentChild.cs" />
     <Compile Include="Controls\StackedContent.cs" />
+    <Compile Include="Controls\StackedContentState.cs" />
     <Compile Include="Controls\WpfCommandManager.cs" />
     <Compile Include="Controls\WpfCommands.cs" />
     <Compile Include="Controls\WpfFocusManager.cs" />
@@ -76,9 +77,14 @@
     <Compile Include="Decompiler\DecompilerSettingsTab.cs" />
     <Compile Include="Events\WeakEventList.cs" />
     <Compile Include="Files\AssemblyResolver.cs" />
+    <Compile Include="Files\DefaultDnSpyFileCreator.cs" />
+    <Compile Include="Files\DefaultDnSpyFileLoader.cs" />
+    <Compile Include="Files\FileLoader.cs" />
     <Compile Include="Files\FileManager.cs" />
     <Compile Include="Files\FileManagerAppSettingsModifiedListener.cs" />
+    <Compile Include="Files\FileManagerOptionCreator.cs" />
     <Compile Include="Files\FileManagerSettings.cs" />
+    <Compile Include="Files\IDnSpyFileLoader.cs" />
     <Compile Include="Files\Tabs\AsyncShowResult.cs" />
     <Compile Include="Files\Tabs\Commands.cs" />
     <Compile Include="Files\Tabs\DecompilationCache.cs" />
@@ -219,6 +225,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainApp\MessageBoxManager.cs" />
+    <Compile Include="MainApp\MiscOptions.cs" />
     <Compile Include="MainApp\MsgBoxDlg.xaml.cs">
       <DependentUpon>MsgBoxDlg.xaml</DependentUpon>
     </Compile>
@@ -241,6 +248,7 @@
     <Compile Include="Settings\Dialog\AppSettingsDlg.xaml.cs">
       <DependentUpon>AppSettingsDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Settings\Dialog\DynamicAppSettingsTabCreator.cs" />
     <Compile Include="Settings\Dialog\ShowAppSettings.cs" />
     <Compile Include="Settings\SectionAttributes.cs" />
     <Compile Include="Settings\SettingsManager.cs" />

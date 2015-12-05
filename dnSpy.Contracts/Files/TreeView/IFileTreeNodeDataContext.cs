@@ -58,5 +58,10 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// Show MD token
 		/// </summary>
 		bool ShowToken { get; }
+
+		/// <summary>
+		/// true to use the new optimized renderer. It doesn't support all unicode chars or word wrapping
+		/// </summary>
+		bool UseNewRenderer { get; }
 	}
 }

@@ -17,15 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.IO;
-
 namespace dnSpy.Settings {
 	static class XmlSettingsConstants {
-		public static string SettingsFilename {
-			get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "dnSpy", "dnSpy.xml"); }
-		}
-
 		public const string XML_ROOT_NAME = "settings";
 		public const string SECTION_NAME = "section";
 		public const string SECTION_ATTRIBUTE_NAME = "_";

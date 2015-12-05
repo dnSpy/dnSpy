@@ -439,10 +439,11 @@ namespace dnSpy.Menus {
 
 				var topMenuItem = new MenuItem() { Header = md.Metadata.Header };
 				topMenuItem.Items.Add(new MenuItem());
+				var mdTmp = md;
 				topMenuItem.SubmenuOpened += (s, e) => {
 					if (e.Source == topMenuItem) {
 						openedMenuItems.Add(topMenuItem);
-						InitializeMainSubMenu(topMenuItem, md, commandTarget);
+						InitializeMainSubMenu(topMenuItem, mdTmp, commandTarget);
 					}
 				};
 				topMenuItem.SubmenuClosed += (s, e) => {

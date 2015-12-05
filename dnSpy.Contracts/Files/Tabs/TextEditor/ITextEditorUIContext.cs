@@ -63,5 +63,11 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// Raised after the text editor has gotten new text (<see cref="SetOutput(ITextOutput, IHighlightingDefinition)"/>)
 		/// </summary>
 		event EventHandler<EventArgs> NewTextContent;
+
+		/// <summary>
+		/// Called when 'use new renderer' option has been changed. <see cref="SetOutput(ITextOutput, IHighlightingDefinition)"/>
+		/// will be called after this method has been called.
+		/// </summary>
+		void OnUseNewRendererChanged();
 	}
 }

@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.App {
 		/// <param name="buttons">Buttons that should be present</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
 		/// <returns></returns>
-		MsgBoxButton? ShowIgnorableMessage(string id, string message, MsgBoxButton buttons, Window ownerWindow = null);
+		MsgBoxButton? ShowIgnorableMessage(string id, string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null);
 
 		/// <summary>
 		/// Shows a message box
@@ -47,10 +47,10 @@ namespace dnSpy.Contracts.App {
 		MsgBoxButton Show(string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null);
 
 		/// <summary>
-		/// Asks the user for a value and returns it or null if the user canceled the dialog box.
-		/// <typeparamref name="T"/> must be a reference type or a nullable type.
+		/// Asks the user for a value and returns it or the default value (eg. null or 0) if the
+		/// user canceled the dialog box.
 		/// </summary>
-		/// <typeparam name="T">Type, must be a reference type (class) or a nullable type</typeparam>
+		/// <typeparam name="T">Type</typeparam>
 		/// <param name="labelMessage">Label</param>
 		/// <param name="defaultText">Default text to write to the textbox or null</param>
 		/// <param name="converter">Converts a string to the type, or null to use the default

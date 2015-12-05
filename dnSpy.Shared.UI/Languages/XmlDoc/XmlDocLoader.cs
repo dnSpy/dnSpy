@@ -62,8 +62,16 @@ namespace dnSpy.Shared.UI.Languages.XmlDoc {
 			}
 		}
 
-		static readonly string referenceAssembliesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Reference Assemblies", "Microsoft", "Framework");
-		static readonly string frameworkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Microsoft.NET", "Framework");
+		static XmlDocLoader() {
+			var pfd = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+			if (string.IsNullOrEmpty(pfd))
+				pfd = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+			referenceAssembliesPath = Path.Combine(pfd, "Reference Assemblies", "Microsoft", "Framework");
+			frameworkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Microsoft.NET", "Framework");
+		}
+
+		static readonly string referenceAssembliesPath;
+		static readonly string frameworkPath;
 
 		static string FindXmlDocumentation(string assemblyFileName, string runtime) {
 			if (string.IsNullOrEmpty(assemblyFileName))

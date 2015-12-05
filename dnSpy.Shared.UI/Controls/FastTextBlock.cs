@@ -40,11 +40,14 @@ namespace dnSpy.Shared.UI.Controls {
 			set { SetValue(TextProperty, value); }
 		}
 
-		public FastTextBlock()
-			: this(new TextSrc()) {
+		readonly TextFormatterProvider provider;
+
+		public FastTextBlock(TextFormatterProvider provider)
+			: this(provider, new TextSrc()) {
 		}
 
-		public FastTextBlock(IFastTextSource src) {
+		public FastTextBlock(TextFormatterProvider provider, IFastTextSource src) {
+			this.provider = provider;
 			this.src = src;
 		}
 
@@ -222,7 +225,7 @@ namespace dnSpy.Shared.UI.Controls {
 
 		void MakeNewText() {
 			if (fmt == null)
-				fmt = TextFormatterFactory.Create(this);
+				fmt = TextFormatterFactory.Create(this, provider);
 
 			if (line != null)
 				line.Dispose();

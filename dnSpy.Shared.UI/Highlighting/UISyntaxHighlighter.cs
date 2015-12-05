@@ -22,6 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Shared.UI.Controls;
+using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Shared.UI.Highlighting {
 	public struct UISyntaxHighlighter {
@@ -76,31 +77,21 @@ namespace dnSpy.Shared.UI.Highlighting {
 		}
 
 		/// <summary>
-		/// Creates the object. If it's syntax highlighted, it's a <see cref="TextBlock"/>, else
-		/// it's just a <see cref="string"/>. See also <see cref="CreateTextBlock(bool,bool)"/>
-		/// </summary>
-		/// <param name="useEllipsis">true to add <see cref="TextTrimming.CharacterEllipsis"/> to the <see cref="TextBlock"/></param>
-		/// <param name="filterOutNewLines">true to filter out newline characters</param>
-		/// <returns></returns>
-		public object CreateObject(bool useEllipsis = false, bool filterOutNewLines = true) {
-			if (syntaxHighlighter != null)
-				return syntaxHighlighter.Create(useEllipsis, filterOutNewLines);
-
-			return ToString(output.ToString(), filterOutNewLines);
-		}
-
-		/// <summary>
 		/// Creates a <see cref="FrameworkElement"/> containing the resulting text
 		/// </summary>
 		/// <param name="useEllipsis">true to add <see cref="TextTrimming.CharacterEllipsis"/> to the <see cref="TextBlock"/></param>
 		/// <param name="filterOutNewLines">true to filter out newline characters</param>
 		/// <returns></returns>
-		public FrameworkElement CreateTextBlock(bool useEllipsis = false, bool filterOutNewLines = true) {
-			if (syntaxHighlighter != null)
-				return syntaxHighlighter.Create(useEllipsis, filterOutNewLines);
+		public FrameworkElement CreateResult(bool useEllipsis = false, bool filterOutNewLines = true) {
+			return CreateResult(TextFormatterProvider.BuiltIn, useEllipsis, filterOutNewLines);
+		}
 
-			if (!useEllipsis) {
-				return new FastTextBlock {
+		public FrameworkElement CreateResult(TextFormatterProvider provider, bool useEllipsis = false, bool filterOutNewLines = true) {
+			if (syntaxHighlighter != null)
+				return syntaxHighlighter.Create(provider, useEllipsis, filterOutNewLines);
+
+			if (!useEllipsis && filterOutNewLines) {
+				return new FastTextBlock(provider) {
 					Text = ToString(output.ToString(), filterOutNewLines)
 				};
 			}

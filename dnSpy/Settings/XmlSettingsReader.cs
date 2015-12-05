@@ -20,6 +20,7 @@
 using dnSpy.Contracts.Settings;
 using System.Xml.Linq;
 using System.IO;
+using dnSpy.Contracts.App;
 
 namespace dnSpy.Settings {
 	struct XmlSettingsReader {
@@ -28,7 +29,7 @@ namespace dnSpy.Settings {
 
 		public XmlSettingsReader(ISettingsManager mgr, string filename = null) {
 			this.mgr = mgr;
-			this.filename = filename ?? XmlSettingsConstants.SettingsFilename;
+			this.filename = filename ?? AppDirectories.SettingsFilename;
 		}
 
 		public void Read() {

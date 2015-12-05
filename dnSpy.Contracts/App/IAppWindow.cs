@@ -28,11 +28,6 @@ namespace dnSpy.Contracts.App {
 	/// </summary>
 	public interface IAppWindow {
 		/// <summary>
-		/// Raised when the text formatter setting has been updated
-		/// </summary>
-		event EventHandler<EventArgs> TextFormatterChanged;
-
-		/// <summary>
 		/// Raised when the main window is closing
 		/// </summary>
 		event EventHandler<CancelEventArgs> MainWindowClosing;
@@ -48,6 +43,11 @@ namespace dnSpy.Contracts.App {
 		Window MainWindow { get; }
 
 		/// <summary>
+		/// Gets the <see cref="IWpfCommands"/> instance
+		/// </summary>
+		IWpfCommands MainWindowCommands { get; }
+
+		/// <summary>
 		/// Gets the settings
 		/// </summary>
 		IAppSettings AppSettings { get; }
@@ -61,11 +61,6 @@ namespace dnSpy.Contracts.App {
 		/// true if the app has been loaded
 		/// </summary>
 		bool AppLoaded { get; }
-
-		/// <summary>
-		/// Gets the <see cref="IWpfCommandManager"/> instance
-		/// </summary>
-		IWpfCommandManager WpfCommandManager { get; }
 
 		/// <summary>
 		/// Adds <paramref name="info"/> to the window title

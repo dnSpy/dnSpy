@@ -20,7 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Windows.Input;
-using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
@@ -31,9 +31,8 @@ namespace dnSpy.Files.Tabs {
 	[ExportAutoLoaded]
 	sealed class SaveCommandInit : IAutoLoaded {
 		[ImportingConstructor]
-		SaveCommandInit(ISaveManager saveManager, IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
-			cmds.Add(ApplicationCommands.Save, (s, e) => saveManager.Save(fileTabManager.ActiveTab), (s, e) => e.CanExecute = saveManager.CanSave(fileTabManager.ActiveTab));
+		SaveCommandInit(ISaveManager saveManager, IAppWindow appWindow, IFileTabManager fileTabManager) {
+			appWindow.MainWindowCommands.Add(ApplicationCommands.Save, (s, e) => saveManager.Save(fileTabManager.ActiveTab), (s, e) => e.CanExecute = saveManager.CanSave(fileTabManager.ActiveTab));
 		}
 	}
 

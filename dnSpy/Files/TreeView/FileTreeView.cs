@@ -27,6 +27,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using dnlib.DotNet;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
@@ -94,7 +95,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		[ImportingConstructor]
-		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, DecompilerSettings decompilerSettings, [ImportMany] IDnSpyFileNodeCreator[] dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
+		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, DecompilerSettings decompilerSettings, IAppSettings appSettings, [ImportMany] IDnSpyFileNodeCreator[] dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
 			var options = new TreeViewOptions {
 				AllowDrop = true,
 				IsVirtualizing = true,
@@ -130,15 +131,25 @@ namespace dnSpy.Files.TreeView {
 			this.context.ShowAssemblyPublicKeyToken = fileTreeViewSettings.ShowAssemblyPublicKeyToken;
 			this.context.ShowToken = fileTreeViewSettings.ShowToken;
 			this.context.Language = languageManager.SelectedLanguage;
+			this.context.UseNewRenderer = appSettings.UseNewRenderer_FileTreeView;
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			fileTreeViewSettings.PropertyChanged += FileTreeViewSettings_PropertyChanged;
+			appSettings.PropertyChanged += AppSettings_PropertyChanged;
 
 			wpfCommandManager.Add(CommandConstants.GUID_FILE_TREEVIEW, (UIElement)treeView.UIObject);
 			this.wpfCommands = wpfCommandManager.GetCommands(CommandConstants.GUID_FILE_TREEVIEW);
 
 			this.nodeFinders = mefFinders.OrderBy(a => a.Metadata.Order).ToArray();
 			InitializeFileTreeNodeGroups(decompilerSettings);
+		}
+
+		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			var appSettings = (IAppSettings)sender;
+			if (e.PropertyName == "UseNewRenderer_FileTreeView") {
+				this.context.UseNewRenderer = appSettings.UseNewRenderer_FileTreeView;
+				RefreshNodes();
+			}
 		}
 
 		void InitializeFileTreeNodeGroups(DecompilerSettings decompilerSettings) {
@@ -179,10 +190,6 @@ namespace dnSpy.Files.TreeView {
 			}
 			foreach (var a in list)
 				a();
-		}
-
-		internal void OnTextFormatterChanged() {
-			RefreshNodes();
 		}
 
 		void FileTreeViewSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {

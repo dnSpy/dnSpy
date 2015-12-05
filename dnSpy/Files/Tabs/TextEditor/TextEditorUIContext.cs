@@ -54,7 +54,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
-				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXT, textEditorUIContext);
+				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXT_GUID, textEditorUIContext);
 
 				var teCtrl = (TextEditorControl)creatorObject.Object;
 				var position = openedFromKeyboard ? teCtrl.TextEditor.TextArea.Caret.Position : teCtrl.TextEditor.GetPositionFromMousePosition();
@@ -101,7 +101,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
 			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTEDITOR, textEditorControl.TextEditor);
 			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTAREA, textEditorControl.TextEditor.TextArea);
-			menuManager.InitializeContextMenu(this.textEditorControl, MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer());
+			menuManager.InitializeContextMenu(this.textEditorControl, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer());
 		}
 
 		public IFileTab FileTab {
@@ -205,6 +205,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			remove { newTextContentEvent.Remove(value); }
 		}
 		readonly WeakEventList<EventArgs> newTextContentEvent;
+
+		public void OnUseNewRendererChanged() {
+			textEditorControl.OnUseNewRendererChanged();
+		}
 
 		void ITextEditorHelper.FollowReference(CodeReferenceSegment codeRef, bool newTab) {
 			Debug.Assert(FileTab != null);

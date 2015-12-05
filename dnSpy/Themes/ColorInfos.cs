@@ -1021,7 +1021,7 @@ namespace dnSpy.Themes {
 				BackgroundResourceKey = "EnvironmentScrollBarBorder",
 			},
 			new BrushColorInfo(ColorType.EnvironmentScrollBarThumbBackground, "ScrollBar thumb background") {
-				DefaultBackground = "#FFDEDFE7",
+				DefaultBackground = "#FFC2C3C9",
 				BackgroundResourceKey = "EnvironmentScrollBarThumbBackground",
 			},
 			new BrushColorInfo(ColorType.EnvironmentScrollBarThumbDisabled, "ScrollBar thumb disabled") {
@@ -1029,11 +1029,11 @@ namespace dnSpy.Themes {
 				BackgroundResourceKey = "EnvironmentScrollBarThumbDisabled",
 			},
 			new BrushColorInfo(ColorType.EnvironmentScrollBarThumbMouseOverBackground, "ScrollBar thumb mouse over background") {
-				DefaultBackground = "#FF888888",
+				DefaultBackground = "#FF686868",
 				BackgroundResourceKey = "EnvironmentScrollBarThumbMouseOverBackground",
 			},
 			new BrushColorInfo(ColorType.EnvironmentScrollBarThumbPressedBackground, "ScrollBar thumb pressed background") {
-				DefaultBackground = "#FF6A6A6A",
+				DefaultBackground = "#FF5B5B5B",
 				BackgroundResourceKey = "EnvironmentScrollBarThumbPressedBackground",
 			},
 			new BrushColorInfo(ColorType.StatusBarDebugging, "StatusBar debugging") {

@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Windows;
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.Shared.UI.MVVM.Dialogs {
@@ -56,6 +57,14 @@ namespace dnSpy.Shared.UI.MVVM.Dialogs {
 			var data = DataContext as ProgressVM;
 			this.DialogResult = data != null && !data.WasCanceled;
 			Close();
+		}
+
+		public static void Show(IProgressTask task, Window ownerWindow) {
+			var win = new ProgressDlg();
+			var vm = new ProgressVM(System.Windows.Threading.Dispatcher.CurrentDispatcher, task);
+			win.Owner = ownerWindow;
+			win.DataContext = vm;
+			win.ShowDialog();
 		}
 	}
 }

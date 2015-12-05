@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Windows.Threading;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
@@ -37,19 +38,22 @@ namespace dnSpy.Files.Tabs {
 	sealed class NodeTabSaverCreator : ITabSaverCreator {
 		readonly IFileTreeNodeDecompiler fileTreeNodeDecompiler;
 		readonly DecompilerSettings decompilerSettings;
+		readonly IMessageBoxManager messageBoxManager;
 
 		[ImportingConstructor]
-		NodeTabSaverCreator(IFileTreeNodeDecompiler fileTreeNodeDecompiler, DecompilerSettings decompilerSettings) {
+		NodeTabSaverCreator(IFileTreeNodeDecompiler fileTreeNodeDecompiler, DecompilerSettings decompilerSettings, IMessageBoxManager messageBoxManager) {
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
 			this.decompilerSettings = decompilerSettings;
+			this.messageBoxManager = messageBoxManager;
 		}
 
 		public ITabSaver Create(IFileTab tab) {
-			return NodeTabSaver.TryCreate(fileTreeNodeDecompiler, tab, decompilerSettings);
+			return NodeTabSaver.TryCreate(fileTreeNodeDecompiler, tab, decompilerSettings, messageBoxManager);
 		}
 	}
 
 	sealed class NodeTabSaver : ITabSaver {
+		readonly IMessageBoxManager messageBoxManager;
 		readonly IFileTab tab;
 		readonly IFileTreeNodeDecompiler fileTreeNodeDecompiler;
 		readonly ILanguage language;
@@ -57,7 +61,7 @@ namespace dnSpy.Files.Tabs {
 		readonly ITextEditorUIContext uiContext;
 		readonly DecompilerSettings _global_decompilerSettings;
 
-		public static NodeTabSaver TryCreate(IFileTreeNodeDecompiler fileTreeNodeDecompiler, IFileTab tab, DecompilerSettings decompilerSettings) {
+		public static NodeTabSaver TryCreate(IFileTreeNodeDecompiler fileTreeNodeDecompiler, IFileTab tab, DecompilerSettings decompilerSettings, IMessageBoxManager messageBoxManager) {
 			if (tab.IsAsyncExecInProgress)
 				return null;
 			var uiContext = tab.UIContext as ITextEditorUIContext;
@@ -70,10 +74,11 @@ namespace dnSpy.Files.Tabs {
 			var nodes = tab.Content.Nodes.ToArray();
 			if (nodes.Length == 0)
 				return null;
-			return new NodeTabSaver(tab, fileTreeNodeDecompiler, lang, uiContext, nodes, decompilerSettings);
+			return new NodeTabSaver(messageBoxManager, tab, fileTreeNodeDecompiler, lang, uiContext, nodes, decompilerSettings);
 		}
 
-		NodeTabSaver(IFileTab tab, IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguage language, ITextEditorUIContext uiContext, IFileTreeNodeData[] nodes, DecompilerSettings decompilerSettings) {
+		NodeTabSaver(IMessageBoxManager messageBoxManager, IFileTab tab, IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguage language, ITextEditorUIContext uiContext, IFileTreeNodeData[] nodes, DecompilerSettings decompilerSettings) {
+			this.messageBoxManager = messageBoxManager;
 			this.tab = tab;
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
 			this.language = language;
@@ -162,7 +167,11 @@ namespace dnSpy.Files.Tabs {
 				ctx.Dispose();
 				uiContext.HideCancelButton();
 				if (result.Exception != null) {
-					//TODO: Show exception to user
+					var msg = string.Format("An exception occurred:\n\n{0}", result.Exception.ToString());
+					const int MAX_LEN = 1024;
+					if (msg.Length > MAX_LEN)
+						msg = msg.Substring(0, MAX_LEN) + "[...]";
+					messageBoxManager.Show(msg);
 				}
 			});
 		}

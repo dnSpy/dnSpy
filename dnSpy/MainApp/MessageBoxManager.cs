@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Plugin;
@@ -42,6 +41,10 @@ namespace dnSpy.MainApp {
 		const string SETTINGS_NAME = "686C5CFB-FF63-4AA5-8C92-E08607AE5146";
 		const string IGNORED_SECTION = "Ignored";
 		const string IGNORED_ATTR = "id";
+
+		public bool CanEnableAllWarnings {
+			get { return ignoredMessages.Count > 0; }
+		}
 
 		readonly IAppWindow appWindow;
 		readonly ISettingsManager settingsManager;
@@ -64,6 +67,11 @@ namespace dnSpy.MainApp {
 			}
 		}
 
+		public void EnableAllWarnings() {
+			ignoredMessages.Clear();
+			SaveSettings();
+		}
+
 		void SaveSettings() {
 			var sect = settingsManager.RecreateSection(SETTINGS_NAME);
 			foreach (var id in ignoredMessages) {
@@ -72,7 +80,7 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		public MsgBoxButton? ShowIgnorableMessage(string id, string message, MsgBoxButton buttons, Window ownerWindow = null) {
+		public MsgBoxButton? ShowIgnorableMessage(string id, string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null) {
 			if (ignoredMessages.Contains(id))
 				return null;
 			MsgBoxDlg win;
@@ -108,11 +116,6 @@ namespace dnSpy.MainApp {
 		}
 
 		public T Ask<T>(string labelMessage, string defaultText = null, Func<string, T> converter = null, Func<string, string> verifier = null, Window ownerWindow = null) {
-			bool b = Nullable.GetUnderlyingType(typeof(T)) != null || !typeof(ValueType).IsAssignableFrom(typeof(T));
-			Debug.Assert(b, string.Format("Ask<{0}>(): The generic parameter (return type) must be a nullable type or a reference type", typeof(T)));
-			if (!b)
-				throw new InvalidOperationException();
-
 			var win = new AskDlg();
 			if (converter == null)
 				converter = CreateDefaultConverter<T>();

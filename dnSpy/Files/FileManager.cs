@@ -30,39 +30,6 @@ using dnSpy.Contracts.Files;
 using dnSpy.Shared.UI.Files;
 
 namespace dnSpy.Files {
-	[Export(typeof(IDnSpyFileCreator))]
-	sealed class DefaultDnSpyFileCreator : IDnSpyFileCreator {
-		public double Order {
-			get { return FilesConstants.ORDER_DEFAULT_FILE_CREATOR; }
-		}
-
-		public IDnSpyFile Create(IFileManager fileManager, DnSpyFileInfo fileInfo) {
-			if (fileInfo.Type == FilesConstants.FILETYPE_FILE)
-				return FileManager.CreateDnSpyFileFromFile(fileInfo, fileInfo.Name, fileManager.Settings.UseMemoryMappedIO, fileManager.Settings.LoadPDBFiles, fileManager.AssemblyResolver);
-			if (fileInfo.Type == FilesConstants.FILETYPE_GAC) {
-				var filename = GetGacFilename(fileInfo.Name);
-				if (filename != null)
-					return FileManager.CreateDnSpyFileFromFile(fileInfo, filename, fileManager.Settings.UseMemoryMappedIO, fileManager.Settings.LoadPDBFiles, fileManager.AssemblyResolver);
-			}
-			return null;
-		}
-
-		public IDnSpyFilenameKey CreateKey(IFileManager fileManager, DnSpyFileInfo fileInfo) {
-			if (fileInfo.Type == FilesConstants.FILETYPE_FILE)
-				return new FilenameKey(fileInfo.Name);
-			if (fileInfo.Type == FilesConstants.FILETYPE_GAC) {
-				var filename = GetGacFilename(fileInfo.Name);
-				if (filename != null)
-					return new FilenameKey(filename);
-			}
-			return null;
-		}
-
-		static string GetGacFilename(string asmFullName) {
-			return GacInfo.FindInGac(new AssemblyNameInfo(asmFullName));
-		}
-	}
-
 	[Export, Export(typeof(IFileManager)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class FileManager : IFileManager {
 		readonly object lockObj;

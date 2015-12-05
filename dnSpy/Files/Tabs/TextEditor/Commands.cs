@@ -21,7 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Input;
-using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
@@ -33,10 +33,22 @@ namespace dnSpy.Files.Tabs.TextEditor {
 	sealed class WordWrapInit : IAutoLoaded {
 		public static readonly RoutedCommand WordWrap = new RoutedCommand("WordWrap", typeof(WordWrapInit));
 
+		readonly TextEditorSettingsImpl textEditorSettings;
+		readonly IAppSettings appSettings;
+		readonly IMessageBoxManager messageBoxManager;
+
 		[ImportingConstructor]
-		WordWrapInit(IWpfCommandManager wpfCommandManager, TextEditorSettingsImpl textEditorSettings) {
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
-			cmds.Add(WordWrap, (s, e) => textEditorSettings.WordWrap = !textEditorSettings.WordWrap, (s, e) => e.CanExecute = true, ModifierKeys.Control | ModifierKeys.Alt, Key.W);
+		WordWrapInit(IAppWindow appWindow, TextEditorSettingsImpl textEditorSettings, IAppSettings appSettings, IMessageBoxManager messageBoxManager) {
+			this.textEditorSettings = textEditorSettings;
+			this.appSettings = appSettings;
+			this.messageBoxManager = messageBoxManager;
+			appWindow.MainWindowCommands.Add(WordWrap, (s, e) => ToggleWordWrap(), (s, e) => e.CanExecute = true, ModifierKeys.Control | ModifierKeys.Alt, Key.W);
+		}
+
+		void ToggleWordWrap() {
+			textEditorSettings.WordWrap = !textEditorSettings.WordWrap;
+			if (textEditorSettings.WordWrap && appSettings.UseNewRenderer_TextEditor)
+				messageBoxManager.ShowIgnorableMessage("text editor word wrap new renderer", "The text editor is using the new faster text renderer. It doesn't support word wrap or all unicode characters. Enable/disable it in the options.");
 		}
 	}
 
@@ -80,7 +92,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 				return false;
 			var uiContext = context.FindByType<ITextEditorUIContext>();
 			return uiContext != null && uiContext.HasSelectedText;
@@ -92,10 +104,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly IFileTabManager fileTabManager;
 
 		[ImportingConstructor]
-		FindInCodeInit(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
+		FindInCodeInit(IAppWindow appWindow, IFileTabManager fileTabManager) {
 			this.fileTabManager = fileTabManager;
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
-			cmds.Add(ApplicationCommands.Find, Execute, CanExecute);
+			appWindow.MainWindowCommands.Add(ApplicationCommands.Find, Execute, CanExecute);
 		}
 
 		void Execute(object s, ExecutedRoutedEventArgs e) {
@@ -131,7 +142,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
-			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID);
+			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
 		}
 	}
 }

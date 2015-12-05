@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 
 namespace dnSpy.Contracts.Files {
 	/// <summary>
@@ -56,6 +57,18 @@ namespace dnSpy.Contracts.Files {
 		/// <returns></returns>
 		public static DnSpyFileInfo CreateGacFile(string asmFullName) {
 			return new DnSpyFileInfo(asmFullName, FilesConstants.FILETYPE_GAC);
+		}
+
+		/// <summary>
+		/// Creates a <see cref="DnSpyFileInfo"/> used by reference assemblies
+		/// </summary>
+		/// <param name="asmFullName">Full name of assembly</param>
+		/// <param name="refFilePath">Path to the reference assembly. It's used if it's not found
+		/// in the GAC.</param>
+		/// <returns></returns>
+		public static DnSpyFileInfo CreateReferenceAssembly(string asmFullName, string refFilePath) {
+			Debug.Assert(!refFilePath.Contains(FilesConstants.REFERENCE_ASSEMBLY_SEPARATOR));
+			return new DnSpyFileInfo(asmFullName + FilesConstants.REFERENCE_ASSEMBLY_SEPARATOR + refFilePath, FilesConstants.FILETYPE_REFASM);
 		}
 
 		/// <summary>

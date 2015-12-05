@@ -40,5 +40,18 @@ namespace dnSpy.Contracts.Files {
 		/// is the assembly name.
 		/// </summary>
 		public static readonly Guid FILETYPE_GAC = new Guid("1A7BE658-FD95-46A9-BA03-A05D87161342");
+
+		/// <summary>
+		/// A <see cref="IDnSpyFile"/> created from a file in the GAC or the reference assemblies
+		/// folder. <see cref="DnSpyFileInfo.Name"/> is the assembly name followed by 
+		/// <see cref="REFERENCE_ASSEMBLY_SEPARATOR"/> followed by the path to the reference file in
+		/// case it's not found in the GAC.
+		/// </summary>
+		public static readonly Guid FILETYPE_REFASM = new Guid("75AB0E5C-D1D7-4811-93E1-0AF26CE3856C");
+
+		/// <summary>
+		/// String separating assembly full name and reference assembly path
+		/// </summary>
+		public static readonly string REFERENCE_ASSEMBLY_SEPARATOR = "|";
 	}
 }

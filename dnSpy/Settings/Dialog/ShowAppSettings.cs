@@ -30,18 +30,18 @@ namespace dnSpy.Settings.Dialog {
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "_Options...", Icon = "Settings", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTSDLG, Order = 1000000)]
 	sealed class ShowOptionsCommand : MenuItemBase {
 		readonly IAppWindow appWindow;
-		readonly Lazy<IAppSettingsTabCreator, IAppSettingsTabCreatorMetadata>[] tabCreators;
+		readonly Lazy<IAppSettingsTabCreator>[] tabCreators;
 		readonly Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>[] listeners;
 
 		[ImportingConstructor]
-		ShowOptionsCommand(IAppWindow appWindow, [ImportMany] IEnumerable<Lazy<IAppSettingsTabCreator, IAppSettingsTabCreatorMetadata>> mefTabCreators, [ImportMany] IEnumerable<Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>> mefListeners) {
+		ShowOptionsCommand(IAppWindow appWindow, [ImportMany] IEnumerable<Lazy<IAppSettingsTabCreator>> mefTabCreators, [ImportMany] IEnumerable<Lazy<IAppSettingsModifiedListener, IAppSettingsModifiedListenerMetadata>> mefListeners) {
 			this.appWindow = appWindow;
-			this.tabCreators = mefTabCreators.OrderBy(a => a.Metadata.Order).ToArray();
+			this.tabCreators = mefTabCreators.ToArray();
 			this.listeners = mefListeners.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
 		public override void Execute(IMenuItemContext context) {
-			var tabs = tabCreators.Select(a => a.Value.Create()).Where(a => a != null).ToArray();
+			var tabs = tabCreators.SelectMany(a => a.Value.Create()).OrderBy(a => a.Order).ToArray();
 			var dlg = new AppSettingsDlg(tabs);
 			dlg.Owner = appWindow.MainWindow;
 			bool saveSettings = dlg.ShowDialog() == true;

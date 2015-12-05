@@ -17,49 +17,80 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using System.Diagnostics;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
 using dnSpy.Shared.UI.Menus;
 
 namespace dnSpy.MainApp {
 	static class AboutHelpers {
 		public const string BASE_URL = @"https://github.com/0xd4d/dnSpy/";
+		public const string BUILD_URL = @"https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts";
 
-		public static void OpenWebPage(string url) {
+		public static void OpenWebPage(string url, IMessageBoxManager messageBoxManager) {
 			try {
 				Process.Start(url);
 			}
 			catch {
-				//TODO: ShowMessageBox("Could not start browser");
+				messageBoxManager.Show("Could not start browser");
 			}
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "_Latest Release", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 0)]
 	sealed class OpenReleasesUrlCommand : MenuItemBase {
+		readonly IMessageBoxManager messageBoxManager;
+
+		[ImportingConstructor]
+		OpenReleasesUrlCommand(IMessageBoxManager messageBoxManager) {
+			this.messageBoxManager = messageBoxManager;
+		}
+
 		public override void Execute(IMenuItemContext context) {
-			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"releases");
+			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"releases", messageBoxManager);
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "Latest _Build", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 10)]
 	sealed class OpenLatestBuildUrlCommand : MenuItemBase {
+		readonly IMessageBoxManager messageBoxManager;
+
+		[ImportingConstructor]
+		OpenLatestBuildUrlCommand(IMessageBoxManager messageBoxManager) {
+			this.messageBoxManager = messageBoxManager;
+		}
+
 		public override void Execute(IMenuItemContext context) {
-			AboutHelpers.OpenWebPage("https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts");
+			AboutHelpers.OpenWebPage(AboutHelpers.BUILD_URL, messageBoxManager);
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "_Issues", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 20)]
 	sealed class OpenIssuesUrlCommand : MenuItemBase {
+		readonly IMessageBoxManager messageBoxManager;
+
+		[ImportingConstructor]
+		OpenIssuesUrlCommand(IMessageBoxManager messageBoxManager) {
+			this.messageBoxManager = messageBoxManager;
+		}
+
 		public override void Execute(IMenuItemContext context) {
-			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"issues");
+			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"issues", messageBoxManager);
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "_Source Code", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 30)]
 	sealed class OpenSourceCodeUrlCommand : MenuItemBase {
+		readonly IMessageBoxManager messageBoxManager;
+
+		[ImportingConstructor]
+		OpenSourceCodeUrlCommand(IMessageBoxManager messageBoxManager) {
+			this.messageBoxManager = messageBoxManager;
+		}
+
 		public override void Execute(IMenuItemContext context) {
-			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL);
+			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL, messageBoxManager);
 		}
 	}
 }

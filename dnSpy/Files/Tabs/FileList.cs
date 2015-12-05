@@ -50,7 +50,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public FileList(DefaultFileList defaultList) {
-			this.files = new List<DnSpyFileInfo>(defaultList.Assemblies.Select(a => DnSpyFileInfo.CreateGacFile(a)));
+			this.files = new List<DnSpyFileInfo>(defaultList.Files);
 			this.name = defaultList.Name;
 		}
 

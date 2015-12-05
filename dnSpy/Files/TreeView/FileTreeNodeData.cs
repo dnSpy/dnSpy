@@ -24,6 +24,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.TreeView;
+using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Files.TreeView {
 	abstract class FileTreeNodeData : TreeNodeData, IFileTreeNodeData {
@@ -58,7 +59,8 @@ namespace dnSpy.Files.TreeView {
 
 				Write(gen.Output, Context.Language);
 
-				var text = gen.CreateTextBlock(filterOutNewLines: true);
+				var provider = Context.UseNewRenderer ? TextFormatterProvider.GlyphRunFormatter : TextFormatterProvider.BuiltIn;
+				var text = gen.CreateResult(provider, filterOutNewLines: true);
 				cachedText = new WeakReference(text);
 				return text;
 			}
@@ -75,7 +77,7 @@ namespace dnSpy.Files.TreeView {
 			get {
 				var gen = UISyntaxHighlighter.Create(Context.SyntaxHighlight);
 				WriteToolTip(gen.Output, Context.Language);
-				return gen.CreateTextBlock(filterOutNewLines: false);
+				return gen.CreateResult(filterOutNewLines: false);
 			}
 		}
 

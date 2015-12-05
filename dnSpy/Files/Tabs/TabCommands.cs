@@ -23,7 +23,6 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
@@ -39,9 +38,9 @@ namespace dnSpy.Files.Tabs {
 		readonly IFileTabManager fileTabManager;
 
 		[ImportingConstructor]
-		InstallTabCommands(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
+		InstallTabCommands(IAppWindow appWindow, IFileTabManager fileTabManager) {
 			this.fileTabManager = fileTabManager;
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = appWindow.MainWindowCommands;
 			cmds.Add(new RoutedCommand("OpenNewTab", typeof(InstallTabCommands)), (s, e) => OpenNewTab(), (s, e) => e.CanExecute = CanOpenNewTab, ModifierKeys.Control, Key.T);
 			cmds.Add(new RoutedCommand("CloseActiveTab", typeof(InstallTabCommands)), (s, e) => CloseActiveTab(), (s, e) => e.CanExecute = CanCloseActiveTab, ModifierKeys.Control, Key.W, ModifierKeys.Control, Key.F4);
 			cmds.Add(new RoutedCommand("SelectNextTab", typeof(InstallTabCommands)), (s, e) => SelectNextTab(), (s, e) => e.CanExecute = CanSelectNextTab, ModifierKeys.Control, Key.Tab);
@@ -448,7 +447,7 @@ namespace dnSpy.Files.Tabs {
 
 		static object GetReference(IMenuItemContext context, out ITextEditorUIContext uiContext) {
 			uiContext = null;
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 				return null;
 			uiContext = context.FindByType<ITextEditorUIContext>();
 			if (uiContext == null)

@@ -29,6 +29,7 @@ namespace dnSpy.Files.TreeView {
 		public bool ShowAssemblyVersion { get; internal set; }
 		public bool ShowAssemblyPublicKeyToken { get; internal set; }
 		public bool ShowToken { get; internal set; }
+		public bool UseNewRenderer { get; internal set; }
 
 		public FileTreeNodeDataContext(IFileTreeView fileTreeView) {
 			this.FileTreeView = fileTreeView;

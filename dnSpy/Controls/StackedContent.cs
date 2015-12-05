@@ -131,6 +131,36 @@ namespace dnSpy.Controls {
 		}
 		readonly Grid grid;
 
+		public StackedContentState State {
+			get {
+				var state = new StackedContentState();
+				state.IsHorizontal = IsHorizontal;
+				if (!IsHorizontal)
+					state.RowsCols.AddRange(grid.RowDefinitions.Select(a => a.Height));
+				else
+					state.RowsCols.AddRange(grid.ColumnDefinitions.Select(a => a.Width));
+				return state;
+			}
+			set {
+				if (value == null)
+					throw new ArgumentNullException();
+				if (IsHorizontal != value.IsHorizontal)
+					return;
+				if (!IsHorizontal) {
+					if (grid.RowDefinitions.Count != value.RowsCols.Count)
+						return;
+					for (int i = 0; i < value.RowsCols.Count; i++)
+						grid.RowDefinitions[i].Height = value.RowsCols[i];
+				}
+				else {
+					if (grid.ColumnDefinitions.Count != value.RowsCols.Count)
+						return;
+					for (int i = 0; i < value.RowsCols.Count; i++)
+						grid.ColumnDefinitions[i].Width = value.RowsCols[i];
+				}
+			}
+		}
+
 		public StackedContent()
 			: this(true) {
 		}

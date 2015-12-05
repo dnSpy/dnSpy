@@ -73,7 +73,12 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// <summary>
 		/// Order of display settings tab
 		/// </summary>
-		public const double ORDER_SETTINGS_TAB_DISPLAY = 2000;
+		public const double ORDER_SETTINGS_TAB_DISPLAY = 3000;
+
+		/// <summary>
+		/// Order of misc settings tab
+		/// </summary>
+		public const double ORDER_SETTINGS_TAB_MISC = 5000;
 
 		/// <summary>
 		/// Order of <see cref="IFileManager"/>'s <see cref="IAppSettingsModifiedListener"/> instance
@@ -89,5 +94,22 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// Order of <see cref="IFileTreeView"/>'s <see cref="IAppSettingsModifiedListener"/> instance
 		/// </summary>
 		public const double ORDER_SETTINGS_LISTENER_FILETREEVIEW = 2000;
+
+		/// <summary>
+		/// Guid of app settings tab "Misc"
+		/// </summary>
+		public const string GUID_DYNTAB_MISC = "D32B4501-DDB3-4886-9D51-8DA1255A30DC";
+
+		/// <summary>Misc tab: order of: use mmap'd I/O checkbox</summary>
+		public const double ORDER_MISC_USEMMAPDIO = 1000;
+
+		/// <summary>Misc tab: order of: windows explorer integration checkbox</summary>
+		public const double ORDER_MISC_EXPLORERINTEGRATION = 2000;
+
+		/// <summary>Misc tab: order of: enable all warnings button</summary>
+		public const double ORDER_MISC_ENABLEALLWARNINGS = 3000;
+
+		/// <summary>Misc tab: order of: use new renderer group box</summary>
+		public const double ORDER_MISC_USENEWRENDERER = 4000;
 	}
 }

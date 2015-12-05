@@ -86,7 +86,6 @@ namespace dnSpy.MainApp {
 				new XmlSettingsWriter(settingsManager).Write();
 			}
 			catch {
-				//TODO: Show error to user
 			}
 			compositionContainer.Dispose();
 		}

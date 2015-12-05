@@ -312,10 +312,10 @@
 		<color name="environmentscrollbararrowpressedbackground" bg="#FFE8E8EC" />
 		<color name="environmentscrollbarbackground" bg="#FFE8E8EC" />
 		<color name="environmentscrollbarborder" bg="#FFFFFFFF" />
-		<color name="environmentscrollbarthumbbackground" bg="#FFD0D1D7" />
+		<color name="environmentscrollbarthumbbackground" bg="#FFC2C3C9" />
 		<color name="environmentscrollbarthumbdisabled" bg="#FFE8E8EC" />
-		<color name="environmentscrollbarthumbmouseoverbackground" bg="#FF888888" />
-		<color name="environmentscrollbarthumbpressedbackground" bg="#FF6A6A6A" />
+		<color name="environmentscrollbarthumbmouseoverbackground" bg="#FF686868" />
+		<color name="environmentscrollbarthumbpressedbackground" bg="#FF5B5B5B" />
 		<color name="statusbardebugging" fg="White" bg="#CA5100" />
 		<color name="tooltipbackground" fg="White" bg="White" />
 		<color name="tooltipborderbrush" bg="#767676" />

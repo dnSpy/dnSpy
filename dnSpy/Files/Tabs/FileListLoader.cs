@@ -31,9 +31,9 @@ namespace dnSpy.Files.Tabs {
 		IEnumerable<object> Load(ISettingsSection section);
 		void Save(ISettingsSection section);
 		bool CanLoad { get; }
-		bool Load(FileList fileList);
+		bool Load(FileList fileList, IDnSpyFileLoader dnSpyFileLoader = null);
 		bool CanReload { get; }
-		bool Reload();
+		bool Reload(IDnSpyFileLoader dnSpyFileLoader = null);
 	}
 
 	[Export, Export(typeof(IFileListLoader)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -116,7 +116,9 @@ namespace dnSpy.Files.Tabs {
 			get { return !disableLoadAndReload && listeners.All(a => a.Value.CanLoad); }
 		}
 
-		public bool Load(FileList fileList) {
+		public bool Load(FileList fileList, IDnSpyFileLoader dnSpyFileLoader) {
+			if (dnSpyFileLoader == null)
+				dnSpyFileLoader = new DefaultDnSpyFileLoader(fileManager);
 			if (!CanLoad)
 				return false;
 			if (fileList != fileListManager.SelectedFileList)
@@ -126,8 +128,7 @@ namespace dnSpy.Files.Tabs {
 			using (DisableSaveToList()) {
 				fileTabManager.CloseAll();
 				fileManager.Clear();
-				foreach (var f in fileList.Files)
-					fileManager.TryGetOrCreate(f);
+				dnSpyFileLoader.Load(fileList.Files);
 			}
 			NotifyAfterLoad(false);
 
@@ -140,7 +141,9 @@ namespace dnSpy.Files.Tabs {
 			get { return !disableLoadAndReload && listeners.All(a => a.Value.CanReload); }
 		}
 
-		public bool Reload() {
+		public bool Reload(IDnSpyFileLoader dnSpyFileLoader) {
+			if (dnSpyFileLoader == null)
+				dnSpyFileLoader = new DefaultDnSpyFileLoader(fileManager);
 			if (!CanReload)
 				return false;
 			SaveCurrentFilesToList();
@@ -150,8 +153,7 @@ namespace dnSpy.Files.Tabs {
 			using (DisableSaveToList()) {
 				fileTabManager.CloseAll();
 				fileManager.Clear();
-				foreach (var f in fileListManager.SelectedFileList.Files)
-					fileManager.TryGetOrCreate(f);
+				dnSpyFileLoader.Load(fileListManager.SelectedFileList.Files);
 			}
 			NotifyAfterLoad(true);
 

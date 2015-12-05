@@ -18,12 +18,13 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings.Dialog;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Decompiler {
-	[ExportAppSettingsTabCreator(Order = AppSettingsConstants.ORDER_SETTINGS_TAB_DECOMPILER)]
+	[Export(typeof(IAppSettingsTabCreator))]
 	sealed class DecompilerAppSettingsTabCreator : IAppSettingsTabCreator {
 		readonly DecompilerSettings decompilerSettings;
 
@@ -32,14 +33,18 @@ namespace dnSpy.Decompiler {
 			this.decompilerSettings = decompilerSettings;
 		}
 
-		public IAppSettingsTab Create() {
-			return new DecompilerAppSettingsTab(decompilerSettings);
+		public IEnumerable<IAppSettingsTab> Create() {
+			yield return new DecompilerAppSettingsTab(decompilerSettings);
 		}
 	}
 
 	sealed class DecompilerAppSettingsTab : IAppSettingsTab {
 		readonly DecompilerSettings _global_decompilerSettings;
 		readonly DecompilerSettings decompilerSettings;
+
+		public double Order {
+			get { return AppSettingsConstants.ORDER_SETTINGS_TAB_DECOMPILER; }
+		}
 
 		public string Title {
 			get { return "Decompiler"; }

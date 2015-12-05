@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Settings {
@@ -30,7 +31,7 @@ namespace dnSpy.Settings {
 
 		public XmlSettingsWriter(ISettingsManager mgr, string filename = null) {
 			this.mgr = mgr;
-			this.filename = filename ?? XmlSettingsConstants.SettingsFilename;
+			this.filename = filename ?? AppDirectories.SettingsFilename;
 		}
 
 		public void Write() {

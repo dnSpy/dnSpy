@@ -256,7 +256,7 @@ namespace dnSpy.Debugger.Exceptions {
 			static readonly object ContextKey = new object();
 
 			protected override TypeDef GetTypeDef(IMenuItemContext context) {
-				return GetTypeDefFromReference(context, MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID);
+				return GetTypeDefFromReference(context, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
 			}
 		}
 	}

@@ -73,7 +73,7 @@ namespace dnSpy.AsmEditor.Hex {
 			this.IsLocalTarget = isLocalTarget;
 			this.Line = line;
 			this.Column = col;
-			this.CreatorObject = new GuidObject(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID, textView);
+			this.CreatorObject = new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID, textView);
 		}
 	}
 
@@ -84,7 +84,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static readonly object ContextKey = new object();
 
 		protected sealed override HexContext CreateContext(IMenuItemContext context) {
-			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID)) {
+			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID)) {
 				var refSeg = context.FindByType<CodeReferenceSegment>();
 				bool isLocalTarget = false;
 				object @ref = null;
@@ -244,7 +244,7 @@ namespace dnSpy.AsmEditor.Hex {
 				return null;
 			if (ShowHexNodeInHexEditorCommand.IsVisibleInternal(context))
 				return null;
-			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 				return GetActiveAssemblyTreeNode();
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID)) {
 				return context.Nodes != null &&
@@ -1194,7 +1194,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static string GetInputGestureTextInternal(HexContext context) {
-			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID) || context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID) || context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 				return "Shift+Alt+R";
 			return null;
 		}

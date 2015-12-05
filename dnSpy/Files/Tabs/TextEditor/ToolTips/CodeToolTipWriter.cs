@@ -39,7 +39,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		}
 
 		public UIElement Create() {
-			return uiSyntaxHighlighter.CreateTextBlock(false, false);
+			return uiSyntaxHighlighter.CreateResult(false, false);
 		}
 
 		public void Write(string s, TextTokenType tokenType) {

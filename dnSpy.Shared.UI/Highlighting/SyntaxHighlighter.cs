@@ -33,6 +33,7 @@ using dnSpy.Contracts.Themes;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Controls;
 using dnSpy.Shared.UI.Themes;
+using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Shared.UI.Highlighting {
 	sealed class SyntaxHighlighter : ISyntaxHighlightOutput {
@@ -78,15 +79,14 @@ namespace dnSpy.Shared.UI.Highlighting {
 			}
 		}
 
-		public FrameworkElement Create(bool useEllipsis = false, bool filterOutNewLines = false) {
+		public FrameworkElement Create(TextFormatterProvider provider, bool useEllipsis, bool filterOutNewLines) {
 			var textBlockText = sb.ToString();
 			tokens.Finish();
 
 			if (!useEllipsis && filterOutNewLines) {
-				return new FastTextBlock(new TextSrc {
+				return new FastTextBlock(provider, new TextSrc {
 					text = textBlockText,
 					tokens = tokens,
-					filterOutNewLines = filterOutNewLines
 				});
 			}
 
@@ -153,7 +153,6 @@ namespace dnSpy.Shared.UI.Highlighting {
 			FastTextBlock parent;
 			internal string text;
 			internal LanguageTokens tokens;
-			internal bool filterOutNewLines;
 
 			class TextProps : TextRunProperties {
 				internal Brush background;

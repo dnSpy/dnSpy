@@ -183,7 +183,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		static IList<SourceCodeMapping> GetMappings(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 				return null;
 			var textView = context.CreatorObject.Object as DecompilerTextView;
 			if (textView == null)

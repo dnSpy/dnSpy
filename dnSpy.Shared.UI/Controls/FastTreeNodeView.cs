@@ -63,8 +63,8 @@ namespace dnSpy.Shared.UI.Controls {
 				Focusable = false
 			};
 
-			expander.Checked += (sender, e) => Node.IsExpanded = true;
-			expander.Unchecked += (sender, e) => Node.IsExpanded = false;
+			expander.Checked += (sender, e) => { if (Node != null) Node.IsExpanded = true; };
+			expander.Unchecked += (sender, e) => { if (Node != null) Node.IsExpanded = false; };
 
 			AddVisualChild(expander);
 			AddVisualChild(icon);
@@ -75,7 +75,7 @@ namespace dnSpy.Shared.UI.Controls {
 
 		protected override void OnToolTipOpening(ToolTipEventArgs e) {
 			if (ToolTip == toolTipDummy) {
-				ToolTip = Node.ToolTip;
+				ToolTip = Node == null ? null : Node.ToolTip;
 				if (ToolTip == null)
 					e.Handled = true;
 			}

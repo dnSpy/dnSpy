@@ -42,7 +42,6 @@ namespace dnSpy.MainApp {
 				new XmlSettingsReader(settingsManager).Read();
 			}
 			catch {
-				//TODO: Show error to user
 			}
 		}
 

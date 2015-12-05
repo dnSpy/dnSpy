@@ -638,7 +638,7 @@ namespace dnSpy.Debugger {
 				return null;
 
 			SharpTreeNode node;
-			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID)) {
+			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID)) {
 				var tabState = MainWindow.Instance.GetActiveDecompileTabState();
 				if (tabState == null)
 					return null;
@@ -1245,7 +1245,7 @@ namespace dnSpy.Debugger {
 			var ctx = parameter as IMenuItemContext;
 			if (ctx == null)
 				return null;
-			if (ctx.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+			if (ctx.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 				return ctx.CreatorObject.Object as DecompilerTextView;
 			return null;
 		}

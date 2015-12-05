@@ -23,6 +23,11 @@ namespace dnSpy.Contracts.Settings.Dialog {
 	/// </summary>
 	public interface IAppSettingsTab {
 		/// <summary>
+		/// Gets the order, eg. <see cref="AppSettingsConstants.ORDER_SETTINGS_TAB_DECOMPILER"/>
+		/// </summary>
+		double Order { get; }
+
+		/// <summary>
 		/// Gets the title
 		/// </summary>
 		string Title { get; }

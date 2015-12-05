@@ -148,7 +148,7 @@ namespace dnSpy.Debugger {
 		}
 
 		protected virtual bool IsValidElement(GuidObject element) {
-			return element.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID);
+			return element.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
 		}
 	}
 
@@ -166,7 +166,7 @@ namespace dnSpy.Debugger {
 		}
 
 		protected override bool IsValidElement(GuidObject element) {
-			return element.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID) ||
+			return element.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID) ||
 				element.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
 		}
 	}

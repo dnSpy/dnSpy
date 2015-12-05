@@ -6,6 +6,7 @@
                     xmlns:tabs="clr-namespace:dnSpy.Tabs"
                     xmlns:tabssettings="clr-namespace:dnSpy.Files.Tabs.Settings"
                     xmlns:compiler="clr-namespace:ICSharpCode.Decompiler;assembly=ICSharpCode.Decompiler"
+                    xmlns:mainapp="clr-namespace:dnSpy.MainApp"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<!--
@@ -5263,6 +5264,30 @@
                 </StackPanel>
             </GroupBox>
         </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type mainapp:UseNewRendererVM}">
+        <GroupBox>
+            <GroupBox.Header>
+                <CheckBox IsChecked="{Binding UseNewRenderer}" Content="Use the new text renderer" />
+            </GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap"
+                           Text="The new text renderer is faster but doesn't support word wrap or all unicode characters." />
+                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding UseNewRenderer_TextEditor}" Content="Text Editor" />
+                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding UseNewRenderer_HexEditor}" Content="Hex Editor" />
+                <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UseNewRenderer_FileTreeView}" Content="File TreeView" />
+            </Grid>
+        </GroupBox>
     </DataTemplate>
 
 </ResourceDictionary>

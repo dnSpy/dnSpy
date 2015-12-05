@@ -21,7 +21,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
-using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolBars;
@@ -48,10 +48,10 @@ namespace dnSpy.Files.Tabs {
 		readonly IFileTabManager fileTabManager;
 
 		[ImportingConstructor]
-		NavigationCommandInstaller(IFileTabManager fileTabManager, IWpfCommandManager wpfCommandManager) {
+		NavigationCommandInstaller(IFileTabManager fileTabManager, IAppWindow appWindow) {
 			this.fileTabManager = fileTabManager;
 			Debug.Assert(Application.Current != null && Application.Current.MainWindow != null);
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			var cmds = appWindow.MainWindowCommands;
 			cmds.Add(NavigationCommands.BrowseBack, new RelayCommand(a => BrowseBack(), a => CanBrowseBack));
 			cmds.Add(NavigationCommands.BrowseForward, new RelayCommand(a => BrowseForward(), a => CanBrowseForward));
 		}

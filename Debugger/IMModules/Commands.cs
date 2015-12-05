@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.IMModules {
 			}
 
 			protected override ILSpyTreeNode GetTreeNode(IMenuItemContext context) {
-				if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+				if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 					return MainWindow.Instance.TreeView.SelectedItem as ILSpyTreeNode;
 				return null;
 			}

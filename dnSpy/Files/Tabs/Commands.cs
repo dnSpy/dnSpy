@@ -20,12 +20,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
@@ -40,12 +39,13 @@ namespace dnSpy.Files.Tabs {
 	[ExportAutoLoaded]
 	sealed class OpenFileInit : IAutoLoaded {
 		readonly IFileTreeView fileTreeView;
+		readonly IAppWindow appWindow;
 
 		[ImportingConstructor]
-		OpenFileInit(IWpfCommandManager wpfCommandManager, IFileTreeView fileTreeView) {
+		OpenFileInit(IFileTreeView fileTreeView, IAppWindow appWindow) {
 			this.fileTreeView = fileTreeView;
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
-			cmds.Add(ApplicationCommands.Open, (s, e) => { Open(); e.Handled = true; }, (s, e) => e.CanExecute = true);
+			this.appWindow = appWindow;
+			appWindow.MainWindowCommands.Add(ApplicationCommands.Open, (s, e) => { Open(); e.Handled = true; }, (s, e) => e.CanExecute = true);
 		}
 
 		static readonly string DotNetAssemblyOrModuleFilter = ".NET Executables (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|All files (*.*)|*.*";
@@ -58,15 +58,13 @@ namespace dnSpy.Files.Tabs {
 			};
 			if (openDlg.ShowDialog() != true)
 				return;
-			OpenFiles(fileTreeView, openDlg.FileNames);
+			OpenFiles(fileTreeView, appWindow.MainWindow, openDlg.FileNames);
 		}
 
-		public static void OpenFiles(IFileTreeView fileTreeView, IEnumerable<string> filenames) {
-			IDnSpyFile file = null;
-			foreach (var filename in filenames) {
-				if (File.Exists(filename))
-					file = fileTreeView.FileManager.TryGetOrCreate(DnSpyFileInfo.CreateFile(filename)) ?? file;
-			}
+		public static void OpenFiles(IFileTreeView fileTreeView, Window ownerWindow, IEnumerable<string> filenames) {
+			var fileLoader = new FileLoader(fileTreeView.FileManager, ownerWindow);
+			var loadedFiles = fileLoader.Load(filenames.Select(a => DnSpyFileInfo.CreateFile(a)));
+			var file = loadedFiles.Length == 0 ? null : loadedFiles[loadedFiles.Length - 1];
 			if (file != null) {
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 					var node = fileTreeView.FindNode(file);
@@ -109,7 +107,7 @@ namespace dnSpy.Files.Tabs {
 			win.Owner = appWindow.MainWindow;
 			if (win.ShowDialog() != true)
 				return;
-			OpenFileInit.OpenFiles(fileTreeView, win.SelectedItems.Select(a => a.Path));
+			OpenFileInit.OpenFiles(fileTreeView, appWindow.MainWindow, win.SelectedItems.Select(a => a.Path));
 		}
 	}
 
@@ -119,13 +117,15 @@ namespace dnSpy.Files.Tabs {
 		readonly IFileListLoader fileListLoader;
 		readonly FileListManager fileListManager;
 		readonly IMessageBoxManager messageBoxManager;
+		readonly IFileManager fileManager;
 
 		[ImportingConstructor]
-		OpenListCommand(IAppWindow appWindow, IFileListLoader fileListLoader, FileListManager fileListManager, IMessageBoxManager messageBoxManager) {
+		OpenListCommand(IAppWindow appWindow, IFileListLoader fileListLoader, FileListManager fileListManager, IMessageBoxManager messageBoxManager, IFileManager fileManager) {
 			this.appWindow = appWindow;
 			this.fileListLoader = fileListLoader;
 			this.fileListManager = fileListManager;
 			this.messageBoxManager = messageBoxManager;
+			this.fileManager = fileManager;
 		}
 
 		public override bool IsEnabled(IMenuItemContext context) {
@@ -138,7 +138,7 @@ namespace dnSpy.Files.Tabs {
 
 			var win = new OpenFileListDlg();
 			const bool syntaxHighlight = true;
-			var vm = new OpenFileListVM(syntaxHighlight, fileListManager, labelMsg => messageBoxManager.Ask<string>(labelMsg, ownerWindow: win));
+			var vm = new OpenFileListVM(syntaxHighlight, fileListManager, labelMsg => messageBoxManager.Ask<string>(labelMsg, ownerWindow: win, verifier: s => string.IsNullOrEmpty(s) ? "Missing name" : string.Empty));
 			win.DataContext = vm;
 			win.Owner = appWindow.MainWindow;
 			if (win.ShowDialog() != true)
@@ -159,7 +159,7 @@ namespace dnSpy.Files.Tabs {
 			if (fileList == oldSelected)
 				return;
 
-			fileListLoader.Load(fileList);
+			fileListLoader.Load(fileList, new FileLoader(fileManager, appWindow.MainWindow));
 		}
 	}
 

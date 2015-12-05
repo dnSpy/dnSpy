@@ -55,13 +55,13 @@ namespace dnSpy.AsmEditor {
 	[ExportMenuItem(Header = "Copy IL Bytes", Icon = "Copy", InputGestureText = "Ctrl+B", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 20)]
 	sealed class CopyILBytesCommand : MenuItemBase {
 		public override bool IsVisible(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 				return false;
 			return CanExecute(context.CreatorObject.Object as DecompilerTextView);
 		}
 
 		public override void Execute(IMenuItemContext context) {
-			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 				Execute(context.CreatorObject.Object as DecompilerTextView);
 		}
 

@@ -124,7 +124,7 @@ namespace ICSharpCode.TreeView
 			if (e.PropertyName == "IsEditing") {
 				OnIsEditingChanged();
 			} else if (e.PropertyName == "IsLast") {
-				if (ParentTreeView.ShowLines) {
+				if (ParentTreeView.ShowLines && Node != null) {
 					foreach (var child in Node.VisibleDescendantsAndSelf()) {
 						var container = ParentTreeView.ItemContainerGenerator.ContainerFromItem(child) as SharpTreeViewItem;
 						if (container != null && container.NodeView != null && container.NodeView.LinesRenderer != null) {
@@ -144,7 +144,7 @@ namespace ICSharpCode.TreeView
 				return;
 
 			var textEditorContainer = Template.FindName("textEditorContainer", this) as Border;
-			if (textEditorContainer != null && Node.IsEditing) {
+			if (textEditorContainer != null && Node != null && Node.IsEditing) {
 				if (CellEditor == null)
 					textEditorContainer.Child = new EditTextBox() { Item = ParentItem };
 				else

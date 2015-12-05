@@ -26,6 +26,7 @@ using System.Linq;
 using System.Security;
 using System.Windows;
 using System.Xml.Linq;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Themes;
 using dnSpy.Events;
 using Microsoft.Win32;
@@ -139,10 +140,8 @@ namespace dnSpy.Themes {
 			}
 		}
 
-		const string DNTHEME_DIR = "Themes";
 		IEnumerable<string> GetDnthemePaths() {
-			yield return Path.Combine(Path.GetDirectoryName(GetType().Assembly.Location), DNTHEME_DIR);
-			yield return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "dnSpy", DNTHEME_DIR);
+			return AppDirectories.GetDirectories("Themes");
 		}
 
 		Theme Load(string filename) {

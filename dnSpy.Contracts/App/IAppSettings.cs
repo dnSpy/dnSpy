@@ -24,7 +24,19 @@ namespace dnSpy.Contracts.App {
 	/// Application settings
 	/// </summary>
 	public interface IAppSettings : INotifyPropertyChanged {
-		/// <summary />
-		bool UseNewRenderer { get; }
+		/// <summary>
+		/// Text Editor: true to use the new optimized renderer. It doesn't support all unicode chars or word wrapping
+		/// </summary>
+		bool UseNewRenderer_TextEditor { get; }
+
+		/// <summary>
+		/// Hex Editor: true to use the new optimized renderer. It doesn't support all unicode chars or word wrapping
+		/// </summary>
+		bool UseNewRenderer_HexEditor { get; }
+
+		/// <summary>
+		/// File TreeView: true to use the new optimized renderer. It doesn't support all unicode chars or word wrapping
+		/// </summary>
+		bool UseNewRenderer_FileTreeView { get; }
 	}
 }

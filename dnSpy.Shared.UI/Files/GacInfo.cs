@@ -169,11 +169,14 @@ namespace dnSpy.Shared.UI.Files {
 		static IEnumerable<string> GetAssemblies(GacDirInfo gacInfo, PublicKeyToken pkt, IAssembly assembly) {
 			string pktString = pkt.ToString();
 			string verString = assembly.Version.ToString();
+			var cultureString = UTF8String.ToSystemStringOrEmpty(assembly.Culture);
+			if (cultureString.Equals("neutral", StringComparison.OrdinalIgnoreCase))
+				cultureString = string.Empty;
 			var asmSimpleName = UTF8String.ToSystemStringOrEmpty(assembly.Name);
 			foreach (var subDir in gacInfo.SubDirs) {
 				var baseDir = Path.Combine(gacInfo.Path, subDir);
 				baseDir = Path.Combine(baseDir, asmSimpleName);
-				baseDir = Path.Combine(baseDir, string.Format("{0}{1}__{2}", gacInfo.Prefix, verString, pktString));
+				baseDir = Path.Combine(baseDir, string.Format("{0}{1}_{2}_{3}", gacInfo.Prefix, verString, cultureString, pktString));
 				var pathName = Path.Combine(baseDir, asmSimpleName + ".dll");
 				if (File.Exists(pathName))
 					yield return pathName;

@@ -146,8 +146,10 @@ namespace dnSpy.Files.Tabs {
 				var hash = new HashSet<IFileTab>();
 				foreach (var g in TabGroupManager.TabGroups) {
 					var c = (TabContentImpl)g.ActiveTabContent;
-					hash.Add(c);
-					yield return c;
+					if (c != null) {
+						hash.Add(c);
+						yield return c;
+					}
 				}
 				foreach (var c in SortedTabs) {
 					if (!hash.Contains(c))

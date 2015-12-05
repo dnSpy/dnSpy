@@ -17,42 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel.Composition;
+using System.Collections.Generic;
 
 namespace dnSpy.Contracts.Settings.Dialog {
 	/// <summary>
-	/// Creates <see cref="IAppSettingsTab"/> instances. Use <see cref="ExportAppSettingsTabCreatorAttribute"/>
-	/// to export an instance.
+	/// Creates <see cref="IAppSettingsTab"/> instances
 	/// </summary>
 	public interface IAppSettingsTabCreator {
 		/// <summary>
-		/// Creates a new <see cref="IAppSettingsTab"/> instance or returns null
+		/// Creates new <see cref="IAppSettingsTab"/> instances
 		/// </summary>
 		/// <returns></returns>
-		IAppSettingsTab Create();
-	}
-
-	/// <summary>Metadata</summary>
-	public interface IAppSettingsTabCreatorMetadata {
-		/// <summary>See <see cref="ExportAppSettingsTabCreatorAttribute.Order"/></summary>
-		double Order { get; }
-	}
-
-	/// <summary>
-	/// Exports a <see cref="IAppSettingsTabCreator"/> instance
-	/// </summary>
-	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public sealed class ExportAppSettingsTabCreatorAttribute : ExportAttribute, IAppSettingsTabCreatorMetadata {
-		/// <summary>Constructor</summary>
-		public ExportAppSettingsTabCreatorAttribute()
-			: base(typeof(IAppSettingsTabCreator)) {
-			Order = double.MaxValue;
-		}
-
-		/// <summary>
-		/// Order of this instance
-		/// </summary>
-		public double Order { get; set; }
+		IEnumerable<IAppSettingsTab> Create();
 	}
 }

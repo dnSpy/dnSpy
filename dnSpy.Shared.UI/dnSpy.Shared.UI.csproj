@@ -154,6 +154,7 @@
     <Compile Include="MVVM\ViewModelBase.cs" />
     <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\Dialog\SimpleAppOption.cs" />
     <Compile Include="Themes\ExtensionMethods.cs" />
     <Compile Include="ToolBars\ToolBarButtonBase.cs" />
     <Compile Include="ToolBars\ToolBarButtonCommand.cs" />

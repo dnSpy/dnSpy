@@ -371,7 +371,7 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		protected IResourceNode[] CodeGetResourceNodes(IMenuItemContext context) {
-			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_DECOMPILED_CODE_GUID))
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 				return null;
 
 			var @ref = context.FindByType<CodeReferenceSegment>();

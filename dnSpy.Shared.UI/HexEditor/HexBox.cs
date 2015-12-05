@@ -475,7 +475,8 @@ namespace dnSpy.Shared.UI.HexEditor {
 		}
 
 		void InitializeAll() {
-			textFormatter = TextFormatterFactory.Create(this);
+			//TODO: Pass in the correct TextFormatterProvider to use to this method
+			textFormatter = TextFormatterFactory.Create(this, TextFormatterProvider.BuiltIn);
 			InitializeFontProperties();
 			InitializeSizeProperties(false);
 			RepaintLayers();

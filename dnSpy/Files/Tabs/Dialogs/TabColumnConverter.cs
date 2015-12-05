@@ -41,7 +41,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			else
 				return null;
 
-			return gen.CreateTextBlock(true);
+			return gen.CreateResult(true);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

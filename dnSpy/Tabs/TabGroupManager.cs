@@ -74,6 +74,11 @@ namespace dnSpy.Tabs {
 		}
 		readonly WeakEventList<TabGroupSelectedEventArgs> tabGroupSelectionChanged;
 
+		public StackedContentState StackedContentState {
+			get { return stackedContent.State; }
+			set { stackedContent.State = value; }
+		}
+
 		readonly StackedContent<TabGroup> stackedContent;
 		readonly TabManager tabManager;
 		readonly IMenuManager menuManager;

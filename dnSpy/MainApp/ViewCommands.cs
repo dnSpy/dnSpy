@@ -20,7 +20,6 @@
 using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Shared.UI.Controls;
@@ -32,10 +31,9 @@ namespace dnSpy.MainApp {
 		readonly FullScreenCommand fullScreenCommand;
 
 		[ImportingConstructor]
-		FullScreenInit(IWpfCommandManager wpfCommandManager, IAppWindow appWindow) {
+		FullScreenInit(IAppWindow appWindow) {
 			this.fullScreenCommand = new FullScreenCommand(appWindow);
-			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
-			cmds.Add(MetroWindow.FullScreenCommand, (s, e) => fullScreenCommand.FullScreen(), (s, e) => e.CanExecute = true, ModifierKeys.Shift | ModifierKeys.Alt, Key.Enter);
+			appWindow.MainWindowCommands.Add(MetroWindow.FullScreenCommand, (s, e) => fullScreenCommand.FullScreen(), (s, e) => e.CanExecute = true, ModifierKeys.Shift | ModifierKeys.Alt, Key.Enter);
 		}
 	}
 

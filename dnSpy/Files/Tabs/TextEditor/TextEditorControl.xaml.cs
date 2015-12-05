@@ -168,6 +168,19 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnLostKeyboardFocus), true);
 		}
 
+		protected override void OnDragOver(DragEventArgs e) {
+			base.OnDragOver(e);
+
+			if (!e.Handled) {
+				// The text editor seems to allow anything
+				if (e.Data.GetDataPresent(typeof(dnSpy.Tabs.TabItemImpl))) {
+					e.Effects = DragDropEffects.None;
+					e.Handled = true;
+					return;
+				}
+			}
+		}
+
 		public Button CancelButton {
 			get {
 				var wa = this.waitAdorner.Content as WaitAdorner;
@@ -287,6 +300,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				return (output == null ? 0 : output.GetHashCode()) ^
 					(highlighting == null ? 0 : highlighting.GetHashCode());
 			}
+		}
+
+		public void OnUseNewRendererChanged() {
+			lastOutput = new LastOutput();
 		}
 
 		LastOutput lastOutput;

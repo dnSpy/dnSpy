@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Linq;
@@ -34,7 +35,7 @@ using dnSpy.Shared.UI.Controls;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Files.Tabs.Settings {
-	[ExportAppSettingsTabCreator(Order = AppSettingsConstants.ORDER_SETTINGS_TAB_DISPLAY)]
+	[Export(typeof(IAppSettingsTabCreator))]
 	sealed class DisplayAppSettingsTabCreator : IAppSettingsTabCreator {
 		readonly TextEditorSettingsImpl textEditorSettings;
 		readonly FileTreeViewSettingsImpl fileTreeViewSettings;
@@ -47,12 +48,16 @@ namespace dnSpy.Files.Tabs.Settings {
 			this.fileTabManagerSettings = fileTabManagerSettings;
 		}
 
-		public IAppSettingsTab Create() {
-			return new DisplayAppSettingsTab(textEditorSettings, fileTreeViewSettings, fileTabManagerSettings);
+		public IEnumerable<IAppSettingsTab> Create() {
+			yield return new DisplayAppSettingsTab(textEditorSettings, fileTreeViewSettings, fileTabManagerSettings);
 		}
 	}
 
 	sealed class DisplayAppSettingsTab : IAppSettingsTab {
+		public double Order {
+			get { return AppSettingsConstants.ORDER_SETTINGS_TAB_DISPLAY; }
+		}
+
 		public string Title {
 			get { return "Display"; }
 		}

@@ -27,7 +27,9 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Controls;
 using dnSpy.Settings;
+using dnSpy.Tabs;
 
 namespace dnSpy.Files.Tabs {
 	sealed class SerializedTabGroupWindow {
@@ -36,6 +38,7 @@ namespace dnSpy.Files.Tabs {
 		const string INDEX_ATTR = "index";
 		const string ISHORIZONTAL_ATTR = "is-horizontal";
 		const string TABGROUP_SECTION = "TabGroup";
+		const string STACKEDCONTENTSTATE_SECTION = "StackedContent";
 
 		public string Name {
 			get { return name; }
@@ -57,18 +60,25 @@ namespace dnSpy.Files.Tabs {
 		}
 		readonly List<SerializedTabGroup> tabGroups;
 
-		SerializedTabGroupWindow(string name, int index, bool isHorizontal) {
+		public StackedContentState StackedContentState {
+			get { return stackedContentState; }
+		}
+		readonly StackedContentState stackedContentState;
+
+		SerializedTabGroupWindow(string name, int index, bool isHorizontal, StackedContentState stackedContentState) {
 			this.name = name;
 			this.index = index;
 			this.isHorizontal = isHorizontal;
 			this.tabGroups = new List<SerializedTabGroup>();
+			this.stackedContentState = stackedContentState;
 		}
 
 		public static SerializedTabGroupWindow Load(ISettingsSection section) {
 			var name = section.Attribute<string>(NAME_ATTR) ?? MAIN_NAME;
 			int index = section.Attribute<int?>(INDEX_ATTR) ?? -1;
 			bool isHorizontal = section.Attribute<bool?>(ISHORIZONTAL_ATTR) ?? false;
-			var tgw = new SerializedTabGroupWindow(name, index, isHorizontal);
+			var stackedContentState = StackedContentStateSerializer.TryDeserialize(section.GetOrCreateSection(STACKEDCONTENTSTATE_SECTION));
+			var tgw = new SerializedTabGroupWindow(name, index, isHorizontal, stackedContentState);
 
 			foreach (var tgSection in section.SectionsWithName(TABGROUP_SECTION))
 				tgw.TabGroups.Add(SerializedTabGroup.Load(tgSection));
@@ -81,13 +91,17 @@ namespace dnSpy.Files.Tabs {
 			section.Attribute(INDEX_ATTR, Index);
 			section.Attribute(ISHORIZONTAL_ATTR, IsHorizontal);
 
+			if (StackedContentState != null)
+				StackedContentStateSerializer.Serialize(section.GetOrCreateSection(STACKEDCONTENTSTATE_SECTION), StackedContentState);
+
 			foreach (var stg in TabGroups)
 				stg.Save(section.CreateSection(TABGROUP_SECTION));
 		}
 
 		public static SerializedTabGroupWindow Create(IFileTabContentFactoryManager creator, ITabGroupManager tabGroupManager, string name) {
 			int index = tabGroupManager.TabGroups.ToList().IndexOf(tabGroupManager.ActiveTabGroup);
-			var tgw = new SerializedTabGroupWindow(name, index, tabGroupManager.IsHorizontal);
+			var stackedContentState = ((TabGroupManager)tabGroupManager).StackedContentState;
+			var tgw = new SerializedTabGroupWindow(name, index, tabGroupManager.IsHorizontal, stackedContentState);
 
 			foreach (var g in tabGroupManager.TabGroups)
 				tgw.TabGroups.Add(SerializedTabGroup.Create(creator, g));
@@ -104,6 +118,10 @@ namespace dnSpy.Files.Tabs {
 				foreach (var o in stg.Restore(fileTabManager, creator, g))
 					yield return o;
 			}
+
+			if (StackedContentState != null)
+				((TabGroupManager)mgr).StackedContentState = StackedContentState;
+
 			var ary = mgr.TabGroups.ToArray();
 			if ((uint)Index < (uint)ary.Length)
 				mgr.ActiveTabGroup = ary[Index];
