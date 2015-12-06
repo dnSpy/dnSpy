@@ -33,12 +33,10 @@ namespace ICSharpCode.TreeView
 
 		public event NotifyCollectionChangedEventHandler CollectionChanged;
 
-		internal int version = 0;
 		Dictionary<int, SharpTreeNode> nodeCache = new Dictionary<int, SharpTreeNode>();
 
 		void RaiseCollectionChanged(NotifyCollectionChangedEventArgs e)
 		{
-			version++;
 			nodeCache.Clear();
 			if (CollectionChanged != null)
 				CollectionChanged(this, e);
@@ -95,9 +93,9 @@ namespace ICSharpCode.TreeView
 			SharpTreeNode node = item as SharpTreeNode;
 			if (node != null && node.IsVisible && node.GetListRoot() == root) {
 				if (includeRoot)
-					return SharpTreeNode.GetVisibleIndexForNode(node, version);
+					return SharpTreeNode.GetVisibleIndexForNode(node);
 				else
-					return SharpTreeNode.GetVisibleIndexForNode(node, version) - 1;
+					return SharpTreeNode.GetVisibleIndexForNode(node) - 1;
 			} else {
 				return -1;
 			}

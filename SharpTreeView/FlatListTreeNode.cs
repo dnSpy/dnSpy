@@ -17,8 +17,6 @@ namespace ICSharpCode.TreeView
 		SharpTreeNode left, right;
 		
 		internal TreeFlattener treeFlattener;
-		internal int version = -1;
-		internal int indexCache = 0;
 		
 		/// <summary>Subtree height in the flat list tree</summary>
 		byte height = 1;
@@ -110,11 +108,8 @@ namespace ICSharpCode.TreeView
 			}
 		}
 		
-		internal static int GetVisibleIndexForNode(SharpTreeNode node, int version)
+		internal static int GetVisibleIndexForNode(SharpTreeNode node)
 		{
-			if (node.version == version)
-				return node.indexCache;
-
 			int index = node.left != null ? node.left.GetTotalListLength() : 0;
 			while (node.listParent != null) {
 				if (node == node.listParent.right) {
@@ -125,8 +120,6 @@ namespace ICSharpCode.TreeView
 				}
 				node = node.listParent;
 			}
-			node.version = version;
-			node.indexCache = index;
 			return index;
 		}
 		#endregion
