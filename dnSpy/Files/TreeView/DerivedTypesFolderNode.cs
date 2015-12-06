@@ -59,7 +59,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		public override void Initialize() {
-			TreeNode.LazyLoading = true;
+			TreeNode.LazyLoading = DerivedTypesFinder.QuickCheck(type);
 		}
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

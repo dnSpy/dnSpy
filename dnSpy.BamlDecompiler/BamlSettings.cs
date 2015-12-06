@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.Linq;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Settings;
@@ -136,15 +135,8 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		void BamlSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "DisassembleBaml") {
-				var tabs = new List<IFileTab>();
-				foreach (var tab in fileTabManager.VisibleFirstTabs) {
-					var nodes = tab.Content.Nodes.ToArray();
-					if (nodes.Length == 1 && nodes[0] is BamlResourceElementNode)
-						tabs.Add(tab);
-				}
-				fileTabManager.Refresh(tabs);
-			}
+			if (e.PropertyName == "DisassembleBaml")
+				fileTabManager.Refresh<BamlResourceElementNode>();
 		}
 	}
 }

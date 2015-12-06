@@ -106,13 +106,11 @@ namespace dnSpy.Files.Tabs {
 			public readonly ILanguage ILanguage;
 			public readonly IFileTreeNodeData[] Nodes;
 			public readonly DecompilationOptions Options;
-			public readonly IHighlightingDefinition Highlighting;
 
-			public Key(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options, IHighlightingDefinition highlighting) {
+			public Key(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options) {
 				this.ILanguage = language;
 				this.Nodes = new List<IFileTreeNodeData>(nodes).ToArray();
 				this.Options = Clone(options);
-				this.Highlighting = highlighting;
 			}
 
 			static DecompilationOptions Clone(DecompilationOptions options) {
@@ -138,9 +136,6 @@ namespace dnSpy.Files.Tabs {
 				if (!Equals(Options, other.Options))
 					return false;
 
-				if (Highlighting != other.Highlighting)
-					return false;
-
 				return true;
 			}
 
@@ -156,7 +151,6 @@ namespace dnSpy.Files.Tabs {
 				foreach (var node in Nodes)
 					h ^= node.GetHashCode();
 				h ^= GetHashCode(Options);
-				h ^= (Highlighting == null ? 0 : Highlighting.GetHashCode());
 				return h;
 			}
 
@@ -215,7 +209,7 @@ namespace dnSpy.Files.Tabs {
 		public AvalonEditTextOutput Lookup(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options, out IHighlightingDefinition highlighting) {
 			highlighting = null;
 			lock (lockObj) {
-				var key = new Key(language, nodes, options, highlighting);
+				var key = new Key(language, nodes, options);
 
 				Item item;
 				if (cachedItems.TryGetValue(key, out item)) {
@@ -234,7 +228,7 @@ namespace dnSpy.Files.Tabs {
 			if (!textOutput.CanBeCached)
 				return;
 			lock (lockObj) {
-				var key = new Key(language, nodes, options, highlighting);
+				var key = new Key(language, nodes, options);
 				cachedItems[key] = new Item(textOutput, highlighting);
 			}
 		}

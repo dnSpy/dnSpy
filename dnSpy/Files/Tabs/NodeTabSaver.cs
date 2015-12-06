@@ -127,7 +127,7 @@ namespace dnSpy.Files.Tabs {
 			if (nodes.Length == 1 && (nodes[0] is IAssemblyFileNode || nodes[0] is IModuleFileNode)) {
 				var dnSpyFile = ((IDnSpyFileNode)nodes[0]).DnSpyFile;
 				var saveDlg = new SaveFileDialog {
-					FileName = FilenameUtils.CleanUpName(dnSpyFile.GetShortName()) + language.ProjectFileExtension,
+					FileName = FilenameUtils.CleanName(dnSpyFile.GetShortName()) + language.ProjectFileExtension,
 					DefaultExt = language.FileExtension,
 					Filter = string.Format("{0} project|*{1}|{0} single file|*{2}|All files|*.*", language.NameUI, language.ProjectFileExtension, language.FileExtension),
 				};
@@ -140,7 +140,7 @@ namespace dnSpy.Files.Tabs {
 			}
 			else {
 				var saveDlg = new SaveFileDialog {
-					FileName = FilenameUtils.CleanUpName(nodes[0].ToString(language)) + language.FileExtension,
+					FileName = FilenameUtils.CleanName(nodes[0].ToString(language)) + language.FileExtension,
 					DefaultExt = language.FileExtension,
 					Filter = string.Format("{0}|*{1}|All Files|*.*", language.NameUI, language.FileExtension),
 				};

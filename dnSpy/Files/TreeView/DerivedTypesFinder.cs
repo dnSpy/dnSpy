@@ -43,8 +43,16 @@ namespace dnSpy.Files.TreeView {
 			Start();
 		}
 
-		protected override void ThreadMethod() {
+		public static bool QuickCheck(TypeDef type) {
+			if (type == null)
+				return false;
 			if (!type.IsInterface && type.IsSealed)
+				return false;
+			return true;
+		}
+
+		protected override void ThreadMethod() {
+			if (!QuickCheck(type))
 				return;
 
 			//TODO: If it's not a public type, only check modules in this assembly and any friend assemblies

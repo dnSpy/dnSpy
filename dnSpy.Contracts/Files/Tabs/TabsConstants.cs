@@ -49,5 +49,10 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// Order of default <see cref="ITabSaverCreator"/> instance
 		/// </summary>
 		public const double ORDER_DEFAULTTABSAVERCREATOR = double.MaxValue;
+
+		/// <summary>
+		/// Order of baml <see cref="ITabSaverCreator"/> instance
+		/// </summary>
+		public const double ORDER_BAMLTABSAVERCREATOR = 1000;
 	}
 }

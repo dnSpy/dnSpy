@@ -52,7 +52,7 @@ namespace dnSpy.Languages {
 			"LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9",
 		};
 
-		public static string CleanUpName(string text) {
+		public static string CleanName(string text) {
 			int pos = text.IndexOf(':');
 			if (pos > 0)
 				text = text.Substring(0, pos);
@@ -720,12 +720,12 @@ namespace dnSpy.Languages.CSharp {
 		IEnumerable<Tuple<string, string>> WriteCodeFilesInProject(ModuleDef module, DecompilationOptions options, HashSet<string> directories) {
 			var files = module.Types.Where(t => IncludeTypeWhenDecompilingProject(t, options)).GroupBy(
 				delegate (TypeDef type) {
-					string file = FilenameUtils.CleanUpName(type.Name) + this.FileExtension;
+					string file = FilenameUtils.CleanName(type.Name) + this.FileExtension;
 					if (string.IsNullOrEmpty(type.Namespace)) {
 						return file;
 					}
 					else {
-						string dir = FilenameUtils.CleanUpName(type.Namespace);
+						string dir = FilenameUtils.CleanName(type.Namespace);
 						if (directories.Add(dir))
 							Directory.CreateDirectory(Path.Combine(options.ProjectOptions.Directory, dir));
 						return Path.Combine(dir, file);
@@ -768,7 +768,7 @@ namespace dnSpy.Languages.CSharp {
 					}
 					if (rs != null && rs.All(e => e.Value is Stream)) {
 						foreach (var pair in rs) {
-							fileName = Path.Combine(((string)pair.Key).Split('/').Select(p => FilenameUtils.CleanUpName(p)).ToArray());
+							fileName = Path.Combine(((string)pair.Key).Split('/').Select(p => FilenameUtils.CleanName(p)).ToArray());
 							string dirName = Path.GetDirectoryName(fileName);
 							if (!string.IsNullOrEmpty(dirName) && directories.Add(dirName)) {
 								Directory.CreateDirectory(Path.Combine(options.ProjectOptions.Directory, dirName));
@@ -793,12 +793,12 @@ namespace dnSpy.Languages.CSharp {
 
 		string GetFileNameForResource(string fullName, HashSet<string> directories) {
 			string[] splitName = fullName.Split('.');
-			string fileName = FilenameUtils.CleanUpName(fullName);
+			string fileName = FilenameUtils.CleanName(fullName);
 			for (int i = splitName.Length - 1; i > 0; i--) {
 				string ns = string.Join(".", splitName, 0, i);
 				if (directories.Contains(ns)) {
 					string name = string.Join(".", splitName, i, splitName.Length - i);
-					fileName = Path.Combine(ns, FilenameUtils.CleanUpName(name));
+					fileName = Path.Combine(ns, FilenameUtils.CleanName(name));
 					break;
 				}
 			}

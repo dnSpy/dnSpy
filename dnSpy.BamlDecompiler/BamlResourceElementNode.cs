@@ -43,6 +43,10 @@ namespace dnSpy.BamlDecompiler {
 		readonly byte[] bamlData;
 		readonly BamlSettings bamlSettings;
 
+		public bool DisassembleBaml {
+			get { return bamlSettings.DisassembleBaml; }
+		}
+
 		public override Guid Guid {
 			get { return new Guid(FileTVConstants.BAML_RESOURCE_ELEMENT_NODE_GUID); }
 		}
@@ -75,15 +79,26 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		protected override IEnumerable<ResourceData> GetDeserialized() {
-			yield return new ResourceData(GetXamlName(ResourceElement.Name), token => GetDecompiledStream(token));
+			yield return new ResourceData(GetFilename(), token => GetDecompiledStream(token));
 		}
 
-		static string GetXamlName(string s) {
-			if (s.EndsWith(".baml", StringComparison.OrdinalIgnoreCase))
-				return s.Substring(0, s.Length - ".baml".Length) + ".xaml";
-			if (s.EndsWith(".xaml", StringComparison.OrdinalIgnoreCase))
+		public string GetFilename() {
+			string otherExt, targetExt;
+			if (bamlSettings.DisassembleBaml) {
+				otherExt = ".xaml";
+				targetExt = ".baml";
+			}
+			else {
+				otherExt = ".baml";
+				targetExt = ".xaml";
+			}
+
+			string s = ResourceElement.Name;
+			if (s.EndsWith(otherExt, StringComparison.OrdinalIgnoreCase))
+				return s.Substring(0, s.Length - otherExt.Length) + targetExt;
+			if (s.EndsWith(targetExt, StringComparison.OrdinalIgnoreCase))
 				return s;
-			return s + ".xaml";
+			return s + targetExt;
 		}
 
 		Stream GetDecompiledStream(CancellationToken token) {
@@ -97,7 +112,7 @@ namespace dnSpy.BamlDecompiler {
 			return true;
 		}
 
-		string Decompile(ITextOutput output, CancellationToken token) {
+		public string Decompile(ITextOutput output, CancellationToken token) {
 			string ext = null;
 			var lang = Context.Language;
 			var document = BamlReader.ReadDocument(new MemoryStream(bamlData), token);
