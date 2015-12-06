@@ -19,8 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Windows;
 using dnSpy.Contracts.Plugin;
 
 namespace dnSpy.Plugin {
@@ -35,10 +37,15 @@ namespace dnSpy.Plugin {
 			this.mefPlugins = mefPlugins.OrderBy(a => a.Metadata.Order).ToArray();
 		}
 
-		public void LoadPlugins() {
+		public void LoadPlugins(Collection<ResourceDictionary> mergedDictionaries) {
 			LoadAutoLoaded(AutoLoadedLoadType.BeforePlugins);
 			foreach (var m in mefPlugins) {
-				var o = m.Value;
+				var plugin = m.Value;
+				foreach (var rsrc in plugin.MergedResourceDictionaries) {
+					var asm = plugin.GetType().Assembly.GetName();
+					var uri = new Uri("pack://application:,,,/" + asm.Name + ";v" + asm.Version + ";component/" + rsrc, UriKind.Absolute);
+					mergedDictionaries.Add(new ResourceDictionary { Source = uri });
+				}
 			}
 			LoadAutoLoaded(AutoLoadedLoadType.AfterPlugins);
 			NotifyPlugins(PluginEvent.Loaded, null);

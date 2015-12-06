@@ -33,14 +33,27 @@ namespace dnSpy.Files.Tabs {
 	[Export, Export(typeof(IFileTreeNodeDecompiler)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class FileTreeNodeDecompiler : IFileTreeNodeDecompiler {
 		readonly IDecompileNode[] decompileNodes;
+		readonly IDecompileNodeCollection[] decompileNodeCollections;
 
 		[ImportingConstructor]
-		FileTreeNodeDecompiler([ImportMany] IEnumerable<Lazy<IDecompileNode, IDecompileNodeMetadata>> mefDecompileNodes) {
+		FileTreeNodeDecompiler([ImportMany] IEnumerable<Lazy<IDecompileNode, IDecompileNodeMetadata>> mefDecompileNodes, [ImportMany] IEnumerable<Lazy<IDecompileNodeCollection, IDecompileNodeCollectionMetadata>> mefDecompileNodeCollections) {
 			this.decompileNodes = mefDecompileNodes.OrderBy(a => a.Metadata.Order).Select(a => a.Value).ToArray();
+			this.decompileNodeCollections = mefDecompileNodeCollections.OrderBy(a => a.Metadata.Order).Select(a => a.Value).ToArray();
 			Debug.Assert(this.decompileNodes.Length > 0);
 		}
 
 		public void Decompile(IDecompileNodeContext decompileNodeContext, IFileTreeNodeData[] nodes) {
+			foreach (var dc in decompileNodeCollections) {
+				if (dc.Decompile(decompileNodeContext, nodes))
+					return;
+			}
+
+			if (nodes.Length == 1) {
+				var ds = nodes[0] as IDecompileSelf;
+				if (ds != null && ds.Decompile(decompileNodeContext))
+					return;
+			}
+
 			for (int i = 0; i < nodes.Length; i++) {
 				decompileNodeContext.DecompilationOptions.CancellationToken.ThrowIfCancellationRequested();
 				if (i > 0)

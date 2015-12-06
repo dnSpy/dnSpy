@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Settings;
@@ -64,7 +65,7 @@ namespace dnSpy.Files.Tabs {
 
 	[Export, Export(typeof(IFileTabManagerSettings)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class FileTabManagerSettingsImpl : FileTabManagerSettings {
-		const string SETTINGS_NAME = "1ACE15FD-D689-40DC-B1E7-6EEC25B3116F";
+		static readonly Guid SETTINGS_GUID = new Guid("1ACE15FD-D689-40DC-B1E7-6EEC25B3116F");
 
 		readonly ISettingsManager settingsManager;
 
@@ -73,7 +74,7 @@ namespace dnSpy.Files.Tabs {
 			this.settingsManager = settingsManager;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			this.RestoreTabs = sect.Attribute<bool?>("RestoreTabs") ?? this.RestoreTabs;
 			this.DecompileFullType = sect.Attribute<bool?>("DecompileFullType") ?? this.DecompileFullType;
 			this.disableSave = false;
@@ -83,7 +84,7 @@ namespace dnSpy.Files.Tabs {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_NAME);
+			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 			sect.Attribute("RestoreTabs", RestoreTabs);
 			sect.Attribute("DecompileFullType", DecompileFullType);
 		}

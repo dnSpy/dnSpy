@@ -18,21 +18,25 @@
 */
 
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Files.TreeView {
 	sealed class FileTreeNodeDataContext : IFileTreeNodeDataContext {
 		public IFileTreeView FileTreeView { get; private set; }
 		public ILanguage Language { get; internal set; }
+		public IResourceNodeFactory ResourceNodeFactory { get; private set; }
 		public bool SyntaxHighlight { get; internal set; }
 		public bool SingleClickExpandsChildren { get; internal set; }
 		public bool ShowAssemblyVersion { get; internal set; }
 		public bool ShowAssemblyPublicKeyToken { get; internal set; }
 		public bool ShowToken { get; internal set; }
 		public bool UseNewRenderer { get; internal set; }
+		public bool DeserializeResources { get; internal set; }
 
-		public FileTreeNodeDataContext(IFileTreeView fileTreeView) {
+		public FileTreeNodeDataContext(IFileTreeView fileTreeView, IResourceNodeFactory resourceNodeFactory) {
 			this.FileTreeView = fileTreeView;
+			this.ResourceNodeFactory = resourceNodeFactory;
 		}
 	}
 }

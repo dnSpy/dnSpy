@@ -120,7 +120,7 @@ namespace dnSpy.MainApp {
 			var win = appWindow.InitializeMainWindow();
 			dnSpyLoaderManager.OnAppLoaded += DnSpyLoaderManager_OnAppLoaded;
 			dnSpyLoaderManager.Initialize(appWindow, win);
-			pluginManager.LoadPlugins();
+			pluginManager.LoadPlugins(this.Resources.MergedDictionaries);
 			win.Show();
 		}
 

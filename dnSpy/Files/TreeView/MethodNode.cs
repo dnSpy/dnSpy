@@ -29,7 +29,7 @@ using dnSpy.Shared.UI.Files.TreeView;
 namespace dnSpy.Files.TreeView {
 	sealed class MethodNode : FileTreeNodeData, IMethodNode {
 		public override Guid Guid {
-			get { return new Guid(FileTVConstants.DNSPY_METHOD_NODE_GUID); }
+			get { return new Guid(FileTVConstants.METHOD_NODE_GUID); }
 		}
 
 		public MethodDef MethodDef {

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
 using ICSharpCode.Decompiler;
@@ -24,7 +25,7 @@ using ICSharpCode.Decompiler;
 namespace dnSpy.Decompiler {
 	[Export, Export(typeof(DecompilerSettings)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class DecompilerSettingsImpl : DecompilerSettings {
-		const string SETTINGS_NAME = "6745457F-254B-4B7B-90F1-F948F0721C3B";
+		static readonly Guid SETTINGS_GUID = new Guid("6745457F-254B-4B7B-90F1-F948F0721C3B");
 
 		readonly ISettingsManager settingsManager;
 
@@ -33,7 +34,7 @@ namespace dnSpy.Decompiler {
 			this.settingsManager = settingsManager;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			// Only read those settings that can be changed in the dialog box
 			this.DecompilationObject0 = sect.Attribute<DecompilationObject?>("DecompilationObject0") ?? this.DecompilationObject0;
 			this.DecompilationObject1 = sect.Attribute<DecompilationObject?>("DecompilationObject1") ?? this.DecompilationObject1;
@@ -75,7 +76,7 @@ namespace dnSpy.Decompiler {
 			if (disableSave)
 				return;
 
-			var sect = settingsManager.RecreateSection(SETTINGS_NAME);
+			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 			// Only save those settings that can be changed in the dialog box
 			sect.Attribute("DecompilationObject0", DecompilationObject0);
 			sect.Attribute("DecompilationObject1", DecompilationObject1);

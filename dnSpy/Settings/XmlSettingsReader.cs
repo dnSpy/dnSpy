@@ -21,6 +21,7 @@ using dnSpy.Contracts.Settings;
 using System.Xml.Linq;
 using System.IO;
 using dnSpy.Contracts.App;
+using System;
 
 namespace dnSpy.Settings {
 	struct XmlSettingsReader {
@@ -46,7 +47,10 @@ namespace dnSpy.Settings {
 				var name = XmlUtils.UnescapeAttributeValue((string)xmlSect.Attribute(XmlSettingsConstants.SECTION_ATTRIBUTE_NAME));
 				if (name == null)
 					continue;
-				var section = mgr.CreateSection(name);
+				Guid guid;
+				if (!Guid.TryParse(name, out guid))
+					continue;
+				var section = mgr.GetOrCreateSection(guid);
 				ReadSection(xmlSect, section, 0);
 			}
 		}

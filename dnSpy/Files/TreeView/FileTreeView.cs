@@ -31,6 +31,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
@@ -95,7 +96,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		[ImportingConstructor]
-		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, DecompilerSettings decompilerSettings, IAppSettings appSettings, [ImportMany] IDnSpyFileNodeCreator[] dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
+		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, DecompilerSettings decompilerSettings, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IDnSpyFileNodeCreator[] dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
 			var options = new TreeViewOptions {
 				AllowDrop = true,
 				IsVirtualizing = true,
@@ -124,7 +125,7 @@ namespace dnSpy.Files.TreeView {
 				}
 			});
 			this.fileManager.CollectionChanged += FileManager_CollectionChanged;
-			this.context = new FileTreeNodeDataContext(this);
+			this.context = new FileTreeNodeDataContext(this, resourceNodeFactory);
 			this.context.SyntaxHighlight = fileTreeViewSettings.SyntaxHighlight;
 			this.context.SingleClickExpandsChildren = fileTreeViewSettings.SingleClickExpandsTreeViewChildren;
 			this.context.ShowAssemblyVersion = fileTreeViewSettings.ShowAssemblyVersion;
@@ -132,6 +133,7 @@ namespace dnSpy.Files.TreeView {
 			this.context.ShowToken = fileTreeViewSettings.ShowToken;
 			this.context.Language = languageManager.SelectedLanguage;
 			this.context.UseNewRenderer = appSettings.UseNewRenderer_FileTreeView;
+			this.context.DeserializeResources = fileTreeViewSettings.DeserializeResources;
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			fileTreeViewSettings.PropertyChanged += FileTreeViewSettings_PropertyChanged;
@@ -220,6 +222,10 @@ namespace dnSpy.Files.TreeView {
 
 			case "SingleClickExpandsTreeViewChildren":
 				context.SingleClickExpandsChildren = fileTreeViewSettings.SingleClickExpandsTreeViewChildren;
+				break;
+
+			case "DeserializeResources":
+				context.DeserializeResources = fileTreeViewSettings.DeserializeResources;
 				break;
 
 			default:

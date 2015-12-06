@@ -20,30 +20,39 @@
 	THE SOFTWARE.
 */
 
-using System;
 using System.ComponentModel.Composition;
 using System.IO;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
-using dnSpy.TreeNodes;
+using dnSpy.BamlDecompiler.Baml;
+using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Files.TreeView.Resources;
+using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.BamlDecompiler {
-	[Export(typeof(IResourceFactory<ResourceElement, ResourceElementTreeNode>))]
-	public sealed class BamlResourceNodeFactory : IResourceFactory<ResourceElement, ResourceElementTreeNode> {
-		public int Priority {
-			get { return 0; }
+	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_BAML_NODE)]
+	sealed class BamlResourceNodeCreator : IResourceNodeCreator {
+		readonly BamlSettingsImpl bamlSettings;
+
+		[ImportingConstructor]
+		BamlResourceNodeCreator(BamlSettingsImpl bamlSettings) {
+			this.bamlSettings = bamlSettings;
 		}
 
-		public ResourceElementTreeNode Create(ModuleDef module, ResourceElement resInput) {
-			if (resInput.ResourceData.Code != ResourceTypeCode.ByteArray && resInput.ResourceData.Code != ResourceTypeCode.Stream)
+		public IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup) {
+			return null;
+		}
+
+		public IResourceElementNode Create(ModuleDef module, ResourceElement resourceElement, ITreeNodeGroup treeNodeGroup) {
+			if (resourceElement.ResourceData.Code != ResourceTypeCode.ByteArray && resourceElement.ResourceData.Code != ResourceTypeCode.Stream)
 				return null;
 
-			var data = (byte[])((BuiltInResourceData)resInput.ResourceData).Data;
+			var data = (byte[])((BuiltInResourceData)resourceElement.ResourceData).Data;
 
-			if (!resInput.Name.EndsWith(".baml", StringComparison.OrdinalIgnoreCase))
+			if (!BamlReader.IsBamlHeader(new MemoryStream(data)))
 				return null;
 
-			return new BamlResourceNode(module, resInput, new MemoryStream(data));
+			return new BamlResourceElementNode(module, resourceElement, data, treeNodeGroup, bamlSettings);
 		}
 	}
 }

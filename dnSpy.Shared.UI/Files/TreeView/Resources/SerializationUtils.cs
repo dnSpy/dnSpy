@@ -24,7 +24,7 @@ using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using dnlib.DotNet.Resources;
 
-namespace dnSpy.AsmEditor.Resources {
+namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 	public static class SerializationUtils {
 		public static ResourceElement CreateSerializedImage(string filename) {
 			using (var stream = File.OpenRead(filename))

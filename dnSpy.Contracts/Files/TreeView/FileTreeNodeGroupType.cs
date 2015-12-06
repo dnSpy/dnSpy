@@ -28,8 +28,8 @@ namespace dnSpy.Contracts.Files.TreeView {
 		AssemblyRefTreeNodeGroupReferences,
 		AssemblyRefTreeNodeGroupAssemblyRef,
 		ModuleRefTreeNodeGroupReferences,
-		ReferencesTreeNodeGroupModule,
-		ResourcesTreeNodeGroupModule,
+		ReferencesFolderTreeNodeGroupModule,
+		ResourcesFolderTreeNodeGroupModule,
 		NamespaceTreeNodeGroupModule,
 		TypeTreeNodeGroupNamespace,
 		TypeTreeNodeGroupType,
@@ -45,6 +45,8 @@ namespace dnSpy.Contracts.Files.TreeView {
 		FieldTreeNodeGroupType,
 		EventTreeNodeGroupType,
 		PropertyTreeNodeGroupType,
+		ResourceTreeNodeGroup,
+		ResourceElementTreeNodeGroup,
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

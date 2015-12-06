@@ -48,5 +48,10 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// true to show tokens
 		/// </summary>
 		bool ShowToken { get; }
+
+		/// <summary>
+		/// true to deserialize resources
+		/// </summary>
+		bool DeserializeResources { get; }
 	}
 }

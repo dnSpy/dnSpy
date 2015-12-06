@@ -34,7 +34,7 @@ namespace dnSpy.Files.TreeView {
 		readonly FieldDef field;
 
 		public override Guid Guid {
-			get { return new Guid(FileTVConstants.DNSPY_FIELD_NODE_GUID); }
+			get { return new Guid(FileTVConstants.FIELD_NODE_GUID); }
 		}
 
 		public override NodePathName NodePathName {

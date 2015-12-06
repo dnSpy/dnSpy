@@ -20,6 +20,7 @@
 using System;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Shared.UI.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	abstract class DnSpyFileNode : FileTreeNodeData, IDnSpyFileNode {

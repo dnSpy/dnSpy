@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel;
 using dnlib.DotNet;
 using dnSpy.Contracts;
@@ -27,7 +28,7 @@ using dnSpy.Shared.UI.Files;
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointListSettings {
 		public static readonly BreakpointListSettings Instance = new BreakpointListSettings();
-		const string SETTINGS_NAME = "FBC6039C-8A7A-49DC-9C32-52C1B73DE0A3";
+		static readonly Guid SETTINGS_GUID = new Guid("FBC6039C-8A7A-49DC-9C32-52C1B73DE0A3");
 		int disableSaveCounter;
 
 		BreakpointListSettings() {
@@ -59,7 +60,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		void LoadInternal() {
-			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_GUID);
 			BreakpointManager.Instance.Clear();
 			foreach (var bpx in section.SectionsWithName("Breakpoint")) {
 				uint? token = bpx.Attribute<uint?>("Token");
@@ -102,7 +103,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			if (disableSaveCounter != 0)
 				return;
 
-			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_GUID);
 
 			foreach (var bp in BreakpointManager.Instance.Breakpoints) {
 				var ilbp = bp as ILCodeBreakpoint;

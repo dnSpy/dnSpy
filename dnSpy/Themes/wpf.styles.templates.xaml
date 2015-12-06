@@ -5259,7 +5259,7 @@
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.ShowToken}">Show metadata tokens</CheckBox>
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.ShowAssemblyVersion}">Show assembly version</CheckBox>
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.ShowAssemblyPublicKeyToken}">Show assembly public key token</CheckBox>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.SingleClickExpandsTreeViewChildren}">Single click expands TreeView nodes</CheckBox>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.SingleClickExpandsTreeViewChildren}">Single-click expands TreeView nodes</CheckBox>
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.SyntaxHighlight}">Syntax highlight TreeView</CheckBox>
                 </StackPanel>
             </GroupBox>
@@ -5269,7 +5269,7 @@
     <DataTemplate DataType="{x:Type mainapp:UseNewRendererVM}">
         <GroupBox>
             <GroupBox.Header>
-                <CheckBox IsChecked="{Binding UseNewRenderer}" Content="Use the new text renderer" />
+                <CheckBox IsChecked="{Binding UseNewRenderer}" Content="Use the new text formatter" />
             </GroupBox.Header>
             <Grid>
                 <Grid.RowDefinitions>
@@ -5282,7 +5282,7 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap"
-                           Text="The new text renderer is faster but doesn't support word wrap or all unicode characters." />
+                           Text="The new text formatter is faster but doesn't support word wrap or all unicode characters." />
                 <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding UseNewRenderer_TextEditor}" Content="Text Editor" />
                 <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding UseNewRenderer_HexEditor}" Content="Hex Editor" />
                 <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UseNewRenderer_FileTreeView}" Content="File TreeView" />

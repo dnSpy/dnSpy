@@ -26,10 +26,10 @@ using System.Globalization;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
+using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler;
 using dnSpy.NRefactory;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
 using ICSharpCode.NRefactory.CSharp;
 
 namespace dnSpy.BamlDecompiler {
@@ -88,11 +88,11 @@ namespace dnSpy.BamlDecompiler {
 
 		#endregion
 
-		Language lang;
+		ILanguage lang;
 		ITextOutput output;
 		CancellationToken token;
 
-		public BamlDisassembler(Language lang, ITextOutput output, CancellationToken token) {
+		public BamlDisassembler(ILanguage lang, ITextOutput output, CancellationToken token) {
 			this.lang = lang;
 			this.output = output;
 			this.token = token;
@@ -144,7 +144,7 @@ namespace dnSpy.BamlDecompiler {
 				reference = ctx.AssemblyIdMap[id].AssemblyFullName;
 			else
 				reference = null;
-			output.WriteReference(string.Format("0x{0:x4}", id), reference, TextTokenType.Number, true);
+			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), TextTokenType.Number, true);
 		}
 
 		void WriteTypeId(BamlContext ctx, ushort id) {
@@ -159,7 +159,7 @@ namespace dnSpy.BamlDecompiler {
 			if (reference != null)
 				reference = IdentifierEscaper.Escape(reference);
 
-			output.WriteReference(string.Format("0x{0:x4}", id), reference, TextTokenType.Number, true);
+			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), TextTokenType.Number, true);
 		}
 
 		void WriteAttributeId(BamlContext ctx, ushort id) {
@@ -186,7 +186,7 @@ namespace dnSpy.BamlDecompiler {
 			string reference = null;
 			if (declType != null && name != null)
 				reference = string.Format("{0}::{1}", IdentifierEscaper.Escape(declType), IdentifierEscaper.Escape(name));
-			output.WriteReference(string.Format("0x{0:x4}", id), reference, TextTokenType.Number, true);
+			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), TextTokenType.Number, true);
 		}
 
 		void WriteStringId(BamlContext ctx, ushort id) {
@@ -200,16 +200,16 @@ namespace dnSpy.BamlDecompiler {
 			string reference = null;
 			if (str != null)
 				reference = string.Format("\"{0}\"", TextWriterTokenWriter.ConvertString(str));
-			output.WriteReference(string.Format("0x{0:x4}", id), reference, TextTokenType.Number, true);
+			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), TextTokenType.Number, true);
 		}
 
 		void WriteDefinition(string value, string def = null) {
 			string str = string.Format("\"{0}\"", TextWriterTokenWriter.ConvertString(value));
-			output.WriteDefinition(str, def ?? IdentifierEscaper.Escape(value), TextTokenType.String, true);
+			output.WriteDefinition(str, BamlToolTipReference.Create(def ?? IdentifierEscaper.Escape(value)), TextTokenType.String, true);
 		}
 
 		void WriteRecordRef(BamlRecord record) {
-			output.WriteReference(record.Type.ToString(), GetRecordReference(record), TextTokenType.Keyword, true);
+			output.WriteReference(record.Type.ToString(), BamlToolTipReference.Create(GetRecordReference(record)), TextTokenType.Keyword, true);
 		}
 
 		public void Disassemble(ModuleDef module, BamlDocument document) {
@@ -261,7 +261,7 @@ namespace dnSpy.BamlDecompiler {
 				}
 			}
 
-			output.WriteDefinition(record.Type.ToString(), GetRecordReference(record), TextTokenType.Keyword, true);
+			output.WriteDefinition(record.Type.ToString(), BamlToolTipReference.Create(GetRecordReference(record)), TextTokenType.Keyword, true);
 
 			Action<BamlContext, BamlRecord> handler;
 			if (handlerMap.TryGetValue(record.Type, out handler)) {

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.App;
@@ -25,7 +26,7 @@ using dnSpy.Contracts.Settings;
 namespace dnSpy.Files.Tabs {
 	[ExportDnSpyLoader(Order = LoaderConstants.ORDER_FILETABMANAGER)]
 	sealed class FileTabManagerLoader : IDnSpyLoader {
-		const string SETTINGS_NAME = "53863C11-DF95-43F2-8F86-5E9DFCCE6893";
+		static readonly Guid SETTINGS_GUID = new Guid("53863C11-DF95-43F2-8F86-5E9DFCCE6893");
 		const string FILE_LISTS_SECTION = "FileLists";
 		const string TABGROUPWINDOW_SECTION = "TabGroupWindow";
 
@@ -41,7 +42,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public IEnumerable<object> Load(ISettingsManager settingsManager) {
-			var section = settingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var section = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 
 			foreach (var o in fileListLoader.Load(section.GetOrCreateSection(FILE_LISTS_SECTION)))
 				yield return o;
@@ -70,7 +71,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public void Save(ISettingsManager settingsManager) {
-			var section = settingsManager.RecreateSection(SETTINGS_NAME);
+			var section = settingsManager.RecreateSection(SETTINGS_GUID);
 			fileListLoader.Save(section.GetOrCreateSection(FILE_LISTS_SECTION));
 
 			if (fileTabManager.Settings.RestoreTabs) {

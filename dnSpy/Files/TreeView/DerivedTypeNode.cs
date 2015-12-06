@@ -31,7 +31,7 @@ using dnSpy.Shared.UI.Files.TreeView;
 namespace dnSpy.Files.TreeView {
 	sealed class DerivedTypeNode : FileTreeNodeData, IDerivedTypeNode {
 		public override Guid Guid {
-			get { return new Guid(FileTVConstants.DNSPY_DERIVEDTYPE_NODE_GUID); }
+			get { return new Guid(FileTVConstants.DERIVEDTYPE_NODE_GUID); }
 		}
 
 		public override NodePathName NodePathName {

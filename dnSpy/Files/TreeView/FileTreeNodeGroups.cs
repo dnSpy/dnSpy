@@ -20,8 +20,10 @@
 using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler;
+using dnSpy.Shared.UI.Files.TreeView.Resources;
 
 namespace dnSpy.Files.TreeView {
 	enum MemberType {
@@ -42,8 +44,8 @@ namespace dnSpy.Files.TreeView {
 			case FileTreeNodeGroupType.AssemblyRefTreeNodeGroupReferences: return AssemblyRefTreeNodeGroupReferences;
 			case FileTreeNodeGroupType.AssemblyRefTreeNodeGroupAssemblyRef: return AssemblyRefTreeNodeGroupAssemblyRef;
 			case FileTreeNodeGroupType.ModuleRefTreeNodeGroupReferences: return ModuleRefTreeNodeGroupReferences;
-			case FileTreeNodeGroupType.ReferencesTreeNodeGroupModule: return ReferencesTreeNodeGroupModule;
-			case FileTreeNodeGroupType.ResourcesTreeNodeGroupModule: return ResourcesTreeNodeGroupModule;
+			case FileTreeNodeGroupType.ReferencesFolderTreeNodeGroupModule: return ReferencesFolderTreeNodeGroupModule;
+			case FileTreeNodeGroupType.ResourcesFolderTreeNodeGroupModule: return ResourcesFolderTreeNodeGroupModule;
 			case FileTreeNodeGroupType.NamespaceTreeNodeGroupModule: return NamespaceTreeNodeGroupModule;
 			case FileTreeNodeGroupType.TypeTreeNodeGroupNamespace: return TypeTreeNodeGroupNamespace;
 			case FileTreeNodeGroupType.TypeTreeNodeGroupType: return TypeTreeNodeGroupType;
@@ -59,6 +61,8 @@ namespace dnSpy.Files.TreeView {
 			case FileTreeNodeGroupType.FieldTreeNodeGroupType: return FieldTreeNodeGroupType;
 			case FileTreeNodeGroupType.EventTreeNodeGroupType: return EventTreeNodeGroupType;
 			case FileTreeNodeGroupType.PropertyTreeNodeGroupType: return PropertyTreeNodeGroupType;
+			case FileTreeNodeGroupType.ResourceTreeNodeGroup: return ResourceTreeNodeGroup;
+			case FileTreeNodeGroupType.ResourceElementTreeNodeGroup: return ResourceElementTreeNodeGroup;
 			default: throw new ArgumentException();
 			}
 		}
@@ -68,9 +72,9 @@ namespace dnSpy.Files.TreeView {
 
 		readonly ITreeNodeGroup2 ModuleRefTreeNodeGroupReferences = new ModuleRefTreeNodeGroup(FileTVConstants.ORDER_REFERENCES_MODULEREF);
 
-		readonly ITreeNodeGroup2 ReferencesTreeNodeGroupModule = new ReferencesTreeNodeGroup(FileTVConstants.ORDER_MODULE_REFERENCES);
+		readonly ITreeNodeGroup2 ReferencesFolderTreeNodeGroupModule = new ReferencesFolderTreeNodeGroup(FileTVConstants.ORDER_MODULE_REFERENCES_FOLDER);
 
-		readonly ITreeNodeGroup2 ResourcesTreeNodeGroupModule = new ResourcesTreeNodeGroup(FileTVConstants.ORDER_MODULE_RESOURCES);
+		readonly ITreeNodeGroup2 ResourcesFolderTreeNodeGroupModule = new ResourcesFolderTreeNodeGroup(FileTVConstants.ORDER_MODULE_RESOURCES_FOLDER);
 
 		readonly ITreeNodeGroup2 NamespaceTreeNodeGroupModule = new NamespaceTreeNodeGroup(FileTVConstants.ORDER_MODULE_NAMESPACE);
 
@@ -96,6 +100,9 @@ namespace dnSpy.Files.TreeView {
 		readonly ITreeNodeGroup2 EventTreeNodeGroupType = new EventTreeNodeGroup(FileTVConstants.ORDER_TYPE_EVENT);
 
 		readonly ITreeNodeGroup2 PropertyTreeNodeGroupType = new PropertyTreeNodeGroup(FileTVConstants.ORDER_TYPE_PROPERTY);
+
+		readonly ITreeNodeGroup2 ResourceTreeNodeGroup = new ResourceTreeNodeGroup(FileTVConstants.ORDER_RESOURCE);
+		readonly ITreeNodeGroup2 ResourceElementTreeNodeGroup = new ResourceElementTreeNodeGroup(FileTVConstants.ORDER_RESOURCE_ELEM);
 
 		public void SetMemberOrder(MemberType[] newOrders) {
 			if (newOrders == null)
@@ -161,8 +168,8 @@ namespace dnSpy.Files.TreeView {
 		}
 	}
 
-	sealed class ReferencesTreeNodeGroup : ITreeNodeGroup2 {
-		public ReferencesTreeNodeGroup(double order) {
+	sealed class ReferencesFolderTreeNodeGroup : ITreeNodeGroup2 {
+		public ReferencesFolderTreeNodeGroup(double order) {
 			this.order = order;
 		}
 
@@ -174,16 +181,16 @@ namespace dnSpy.Files.TreeView {
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IReferencesNode;
-			var b = y as IReferencesNode;
+			var a = x as IReferencesFolderNode;
+			var b = y as IReferencesFolderNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return -1;
 		}
 	}
 
-	sealed class ResourcesTreeNodeGroup : ITreeNodeGroup2 {
-		public ResourcesTreeNodeGroup(double order) {
+	sealed class ResourcesFolderTreeNodeGroup : ITreeNodeGroup2 {
+		public ResourcesFolderTreeNodeGroup(double order) {
 			this.order = order;
 		}
 
@@ -195,8 +202,8 @@ namespace dnSpy.Files.TreeView {
 
 		public int Compare(ITreeNodeData x, ITreeNodeData y) {
 			if (x == y) return 0;
-			var a = x as IResourcesNode;
-			var b = y as IResourcesNode;
+			var a = x as IResourcesFolderNode;
+			var b = y as IResourcesFolderNode;
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return -1;
@@ -437,6 +444,54 @@ namespace dnSpy.Files.TreeView {
 			if (a == null) return -1;
 			if (b == null) return 1;
 			return PropertyDefComparer.Instance.Compare(a.PropertyDef, b.PropertyDef);
+		}
+	}
+
+	sealed class ResourceTreeNodeGroup : ITreeNodeGroup2 {
+		public ResourceTreeNodeGroup(double order) {
+			this.order = order;
+		}
+
+		public double Order {
+			get { return order; }
+			set { order = value; }
+		}
+		double order;
+
+		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+			if (x == y) return 0;
+			var a = x as IResourceNode;
+			var b = y as IResourceNode;
+			if (a == null) return -1;
+			if (b == null) return 1;
+			int c = StringComparer.OrdinalIgnoreCase.Compare(a.Resource.Name, b.Resource.Name);
+			if (c != 0) return c;
+			return a.Resource.MDToken.Raw.CompareTo(b.Resource.MDToken.Raw);
+		}
+	}
+
+	sealed class ResourceElementTreeNodeGroup : ITreeNodeGroup2 {
+		public ResourceElementTreeNodeGroup(double order) {
+			this.order = order;
+		}
+
+		public double Order {
+			get { return order; }
+			set { order = value; }
+		}
+		double order;
+
+		public int Compare(ITreeNodeData x, ITreeNodeData y) {
+			if (x == y) return 0;
+			var a = x as IResourceElementNode;
+			var b = y as IResourceElementNode;
+			if (a == null) return -1;
+			if (b == null) return 1;
+			int c = StringComparer.OrdinalIgnoreCase.Compare(a.ResourceElement.Name, b.ResourceElement.Name);
+			if (c != 0) return c;
+			int cx = (int)a.ResourceElement.ResourceData.Code.FixUserType();
+			int cy = (int)b.ResourceElement.ResourceData.Code.FixUserType();
+			return cx.CompareTo(cy);
 		}
 	}
 }

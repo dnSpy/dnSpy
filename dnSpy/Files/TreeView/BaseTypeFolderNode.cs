@@ -26,11 +26,12 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class BaseTypeFolderNode : FileTreeNodeData, IBaseTypeFolderNode {
 		public override Guid Guid {
-			get { return new Guid(FileTVConstants.DNSPY_BASETYPEFOLDER_NODE_GUID); }
+			get { return new Guid(FileTVConstants.BASETYPEFOLDER_NODE_GUID); }
 		}
 
 		public override NodePathName NodePathName {

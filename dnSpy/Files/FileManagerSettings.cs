@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Settings;
@@ -66,7 +67,7 @@ namespace dnSpy.Files {
 
 	[Export, Export(typeof(IFileManagerSettings)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class FileManagerSettingsImpl : FileManagerSettings {
-		const string SETTINGS_NAME = "3643CE93-84D5-455A-9183-94B58BC80942";
+		static readonly Guid SETTINGS_GUID = new Guid("3643CE93-84D5-455A-9183-94B58BC80942");
 
 		readonly ISettingsManager settingsManager;
 
@@ -75,7 +76,7 @@ namespace dnSpy.Files {
 			this.settingsManager = settingsManager;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			this.UseMemoryMappedIO = sect.Attribute<bool?>("UseMemoryMappedIO") ?? this.UseMemoryMappedIO;
 			this.LoadPDBFiles = sect.Attribute<bool?>("LoadPDBFiles") ?? this.LoadPDBFiles;
 			this.UseGAC = sect.Attribute<bool?>("UseGAC") ?? this.UseGAC;
@@ -86,7 +87,7 @@ namespace dnSpy.Files {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_NAME);
+			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 			sect.Attribute("UseMemoryMappedIO", UseMemoryMappedIO);
 			sect.Attribute("LoadPDBFiles", LoadPDBFiles);
 			sect.Attribute("UseGAC", UseGAC);

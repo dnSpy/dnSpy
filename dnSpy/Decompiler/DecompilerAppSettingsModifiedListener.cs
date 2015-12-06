@@ -67,7 +67,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		void RefreshCode(Guid guid) {
-			fileTabManager.ForceRefresh(LanguageTabs.Where(t => t.Item2.Guid == guid).Select(a => a.Item1).ToArray());
+			fileTabManager.Refresh(LanguageTabs.Where(t => t.Item2.Guid == guid).Select(a => a.Item1).ToArray());
 		}
 	}
 }

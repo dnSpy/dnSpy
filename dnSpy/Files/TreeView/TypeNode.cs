@@ -31,7 +31,7 @@ using ICSharpCode.Decompiler;
 namespace dnSpy.Files.TreeView {
 	sealed class TypeNode : FileTreeNodeData, ITypeNode {
 		public override Guid Guid {
-			get { return new Guid(FileTVConstants.DNSPY_TYPE_NODE_GUID); }
+			get { return new Guid(FileTVConstants.TYPE_NODE_GUID); }
 		}
 
 		public override NodePathName NodePathName {

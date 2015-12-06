@@ -27,11 +27,12 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
-	sealed class ReferencesNode : FileTreeNodeData, IReferencesNode {
+	sealed class ReferencesFolderNode : FileTreeNodeData, IReferencesFolderNode {
 		public override Guid Guid {
-			get { return new Guid(FileTVConstants.DNSPY_REFERENCES_NODE_GUID); }
+			get { return new Guid(FileTVConstants.REFERENCES_FOLDER_NODE_GUID); }
 		}
 
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
@@ -57,7 +58,7 @@ namespace dnSpy.Files.TreeView {
 
 		readonly IModuleFileNode moduleNode;
 
-		public ReferencesNode(ITreeNodeGroup treeNodeGroup, IModuleFileNode moduleNode) {
+		public ReferencesFolderNode(ITreeNodeGroup treeNodeGroup, IModuleFileNode moduleNode) {
 			Debug.Assert(moduleNode.DnSpyFile.ModuleDef != null);
 			this.treeNodeGroup = treeNodeGroup;
 			this.moduleNode = moduleNode;

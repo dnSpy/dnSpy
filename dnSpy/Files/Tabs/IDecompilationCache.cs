@@ -22,6 +22,7 @@ using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.Decompiler;
+using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace dnSpy.Files.Tabs {
 	/// <summary>
@@ -34,8 +35,9 @@ namespace dnSpy.Files.Tabs {
 		/// <param name="language">Language</param>
 		/// <param name="nodes">Nodes</param>
 		/// <param name="options">Options</param>
+		/// <param name="highlighting">Highlighting</param>
 		/// <returns></returns>
-		AvalonEditTextOutput Lookup(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options);
+		AvalonEditTextOutput Lookup(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options, out IHighlightingDefinition highlighting);
 
 		/// <summary>
 		/// Cache decompiled output
@@ -44,7 +46,8 @@ namespace dnSpy.Files.Tabs {
 		/// <param name="nodes">Nodes</param>
 		/// <param name="options">Options</param>
 		/// <param name="textOutput">Output</param>
-		void Cache(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options, AvalonEditTextOutput textOutput);
+		/// <param name="highlighting">Highlighting</param>
+		void Cache(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options, AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting);
 
 		/// <summary>
 		/// Clear the cache

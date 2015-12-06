@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts;
 using dnSpy.Shared.UI.MVVM;
 
@@ -149,13 +150,13 @@ namespace dnSpy.Debugger.CallStack {
 		}
 		bool showReturnTypes;
 
-		const string SETTINGS_NAME = "7280C4EB-1135-4F39-B6E0-57BD0A2454D6";
+		static readonly Guid SETTINGS_GUID = new Guid("7280C4EB-1135-4F39-B6E0-57BD0A2454D6");
 
 		void Load() {
 			try {
 				disableSaveCounter++;
 
-				var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+				var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_GUID);
 				ShowModuleNames = section.Attribute<bool?>("ShowModuleNames") ?? true;
 				ShowParameterTypes = section.Attribute<bool?>("ShowParameterTypes") ?? true;
 				ShowParameterNames = section.Attribute<bool?>("ShowParameterNames") ?? true;
@@ -178,7 +179,7 @@ namespace dnSpy.Debugger.CallStack {
 			if (disableSaveCounter != 0)
 				return;
 
-			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_GUID);
 
 			section.Attribute("ShowModuleNames", ShowModuleNames);
 			section.Attribute("ShowParameterTypes", ShowParameterTypes);

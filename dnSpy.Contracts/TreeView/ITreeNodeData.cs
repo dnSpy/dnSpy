@@ -120,7 +120,7 @@ namespace dnSpy.Contracts.TreeView {
 		/// <typeparam name="T">Desired type</typeparam>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static T GetAncestor<T>(this ITreeNodeData self) where T : class, ITreeNodeData {
+		public static T GetAncestorOrSelf<T>(this ITreeNodeData self) where T : class, ITreeNodeData {
 			while (self != null) {
 				var found = self as T;
 				if (found != null)

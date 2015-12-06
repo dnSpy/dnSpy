@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts;
 using dnSpy.Shared.UI.MVVM;
 
@@ -65,13 +66,13 @@ namespace dnSpy.Debugger.Locals {
 		}
 		bool showTokens;
 
-		const string SETTINGS_NAME = "33608C69-6696-4721-8011-81ECCCC80C64";
+		static readonly Guid SETTINGS_GUID = new Guid("33608C69-6696-4721-8011-81ECCCC80C64");
 
 		void Load() {
 			try {
 				disableSaveCounter++;
 
-				var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+				var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_GUID);
 				ShowNamespaces = section.Attribute<bool?>("ShowNamespaces") ?? true;
 				ShowTypeKeywords = section.Attribute<bool?>("ShowTypeKeywords") ?? true;
 				ShowTokens = section.Attribute<bool?>("ShowTokens") ?? false;
@@ -87,7 +88,7 @@ namespace dnSpy.Debugger.Locals {
 			if (disableSaveCounter != 0)
 				return;
 
-			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_GUID);
 
 			section.Attribute("ShowNamespaces", ShowNamespaces);
 			section.Attribute("ShowTypeKeywords", ShowTypeKeywords);

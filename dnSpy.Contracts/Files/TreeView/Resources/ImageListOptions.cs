@@ -22,14 +22,42 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Media;
 
-namespace dnSpy.AsmEditor.Resources {
+namespace dnSpy.Contracts.Files.TreeView.Resources {
+	/// <summary>
+	/// <see cref="ImageList"/> options
+	/// </summary>
 	public sealed class ImageListOptions {
-		public string Name;
-		public ColorDepth ColorDepth;
-		public Size ImageSize;
-		public System.Drawing.Color TransparentColor;
-		public List<ImageSource> ImageSources = new List<ImageSource>();
+		/// <summary>
+		/// Gets/sets the name
+		/// </summary>
+		public string Name { get; set; }
 
+		/// <summary>
+		/// Gets/sets the color depth
+		/// </summary>
+		public ColorDepth ColorDepth { get; set; }
+
+		/// <summary>
+		/// Gets/sets the image size
+		/// </summary>
+		public Size ImageSize { get; set; }
+
+		/// <summary>
+		/// Gets/sets the transparent color
+		/// </summary>
+		public System.Drawing.Color TransparentColor { get; set; }
+
+		/// <summary>
+		/// Gets the images
+		/// </summary>
+		public List<ImageSource> ImageSources {
+			get { return imageSources; }
+		}
+		readonly List<ImageSource> imageSources = new List<ImageSource>();
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public ImageListOptions() {
 			this.Name = string.Empty;
 			this.ColorDepth = ColorDepth.Depth32Bit;
@@ -37,6 +65,10 @@ namespace dnSpy.AsmEditor.Resources {
 			this.TransparentColor = System.Drawing.Color.Transparent;
 		}
 
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="other">Other instance</param>
 		public ImageListOptions(ImageListOptions other) {
 			this.Name = other.Name ?? string.Empty;
 			this.ColorDepth = other.ColorDepth;

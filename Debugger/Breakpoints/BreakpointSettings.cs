@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts;
 using dnSpy.Shared.UI.MVVM;
 
@@ -41,13 +42,13 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 		bool showTokens;
 
-		const string SETTINGS_NAME = "42CB1310-641D-4EB7-971D-16DC5CF9A40D";
+		static readonly Guid SETTINGS_GUID = new Guid("42CB1310-641D-4EB7-971D-16DC5CF9A40D");
 
 		void Load() {
 			try {
 				disableSaveCounter++;
 
-				var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+				var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_GUID);
 				ShowTokens = section.Attribute<bool?>("ShowTokens") ?? true;
 			}
 			finally {
@@ -61,7 +62,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			if (disableSaveCounter != 0)
 				return;
 
-			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_GUID);
 
 			section.Attribute("ShowTokens", ShowTokens);
 		}

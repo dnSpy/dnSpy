@@ -36,7 +36,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		public override Guid Guid {
-			get { return new Guid(FileTVConstants.DNSPY_UNKNOWN_FILE_NODE_GUID); }
+			get { return new Guid(FileTVConstants.UNKNOWN_FILE_NODE_GUID); }
 		}
 
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {

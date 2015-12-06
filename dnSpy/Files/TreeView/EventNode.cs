@@ -35,7 +35,7 @@ namespace dnSpy.Files.TreeView {
 		readonly EventDef @event;
 
 		public override Guid Guid {
-			get { return new Guid(FileTVConstants.DNSPY_EVENT_NODE_GUID); }
+			get { return new Guid(FileTVConstants.EVENT_NODE_GUID); }
 		}
 
 		public override NodePathName NodePathName {

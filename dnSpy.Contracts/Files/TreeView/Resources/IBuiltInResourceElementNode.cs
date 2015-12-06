@@ -17,10 +17,12 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Files.TreeView {
+using dnlib.DotNet.Resources;
+
+namespace dnSpy.Contracts.Files.TreeView.Resources {
 	/// <summary>
-	/// Resources node
+	/// A resource created from a <see cref="ResourceElement"/>
 	/// </summary>
-	public interface IResourcesNode : IFileTreeNodeData {
+	public interface IBuiltInResourceElementNode : IResourceElementNode {
 	}
 }

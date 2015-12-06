@@ -94,7 +94,15 @@
     <Compile Include="Files\DnSpyFile.cs" />
     <Compile Include="Files\GacInfo.cs" />
     <Compile Include="Files\SerializedDnSpyToken.cs" />
+    <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
     <Compile Include="Files\TreeView\NodePrinter.cs" />
+    <Compile Include="Files\TreeView\Resources\GuessFileType.cs" />
+    <Compile Include="Files\TreeView\Resources\ResourceElementNode.cs" />
+    <Compile Include="Files\TreeView\Resources\ResourceNode.cs" />
+    <Compile Include="Files\TreeView\Resources\ResourceUtils.cs" />
+    <Compile Include="Files\TreeView\Resources\SaveResources.cs" />
+    <Compile Include="Files\TreeView\Resources\SerializationUtils.cs" />
+    <Compile Include="Files\TreeView\Resources\SerializedResourceElementNode.cs" />
     <Compile Include="HexEditor\AsciiEncoding.cs" />
     <Compile Include="HexEditor\ByteArrayHexStream.cs" />
     <Compile Include="HexEditor\CachedHexStream.cs" />

@@ -276,13 +276,13 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		sealed class ModuleInfo {
-			public readonly ResourceTreeNode Node;
+			public readonly ResourceElementSetTreeNode Node;
 			readonly ModuleDef Module;
 			readonly int Index;
 			readonly Resource Resource;
 			Resource NewResource;
 
-			public ModuleInfo(ResourceTreeNode node) {
+			public ModuleInfo(ResourceElementSetTreeNode node) {
 				if (node == null)
 					throw new InvalidOperationException();
 				this.Node = node;
@@ -329,7 +329,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		public void Execute() {
 			Debug.Assert(savedResources.Count == 0);
-			savedResources.AddRange(nodes.Nodes.Select(a => ILSpyTreeNode.GetNode<ResourceTreeNode>(a)).Distinct().Select(a => new ModuleInfo(a)));
+			savedResources.AddRange(nodes.Nodes.Select(a => ILSpyTreeNode.GetNode<ResourceElementSetTreeNode>(a)).Distinct().Select(a => new ModuleInfo(a)));
 
 			nodes.Delete();
 

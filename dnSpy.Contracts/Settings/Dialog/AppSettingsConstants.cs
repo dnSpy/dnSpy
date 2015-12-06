@@ -76,6 +76,11 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_SETTINGS_TAB_DISPLAY = 3000;
 
 		/// <summary>
+		/// Order of baml settings tab
+		/// </summary>
+		public const double ORDER_BAML_TAB_DISPLAY = 4000;
+
+		/// <summary>
 		/// Order of misc settings tab
 		/// </summary>
 		public const double ORDER_SETTINGS_TAB_MISC = 5000;
@@ -106,10 +111,13 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		/// <summary>Misc tab: order of: windows explorer integration checkbox</summary>
 		public const double ORDER_MISC_EXPLORERINTEGRATION = 2000;
 
+		/// <summary>Misc tab: order of: deserialize resources checkbox</summary>
+		public const double ORDER_MISC_DESERIALIZERSRCS = 3000;
+
 		/// <summary>Misc tab: order of: enable all warnings button</summary>
-		public const double ORDER_MISC_ENABLEALLWARNINGS = 3000;
+		public const double ORDER_MISC_ENABLEALLWARNINGS = 4000;
 
 		/// <summary>Misc tab: order of: use new renderer group box</summary>
-		public const double ORDER_MISC_USENEWRENDERER = 4000;
+		public const double ORDER_MISC_USENEWRENDERER = 5000;
 	}
 }

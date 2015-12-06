@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\dnSpy_old\bin\Debug\</OutputPath>
+    <OutputPath>..\dnSpy\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -28,7 +28,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\dnSpy_old\bin\Release\</OutputPath>
+    <OutputPath>..\dnSpy\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Annotations.cs" />
+    <Compile Include="BamlToolTipContentCreator.cs" />
     <Compile Include="Baml\KnownThings.cs" />
     <Compile Include="Baml\KnownMembers.cs" />
     <None Include="Baml\KnownThings.gen.cs" />
@@ -85,6 +86,8 @@
     <Compile Include="IRewritePass.cs" />
     <Compile Include="IHandlers.cs" />
     <Compile Include="BamlSettings.cs" />
+    <Compile Include="MenuCommands.cs" />
+    <Compile Include="Plugin.cs" />
     <Compile Include="Rewrite\AttributeRewritePass.cs" />
     <Compile Include="Rewrite\ConnectionIdRewritePass.cs" />
     <Compile Include="Rewrite\MarkupExtensionRewritePass.cs" />
@@ -94,8 +97,8 @@
     <Compile Include="XamlDecompiler.cs" />
     <Compile Include="BamlDisassembler.cs" />
     <Compile Include="BamlElement.cs" />
-    <Compile Include="BamlResourceNode.cs" />
-    <Compile Include="BamlResourceNodeFactory.cs" />
+    <Compile Include="BamlResourceElementNode.cs" />
+    <Compile Include="BamlResourceNodeCreator.cs" />
     <Compile Include="Baml\BamlContext.cs" />
     <Compile Include="Baml\BamlDocument.cs" />
     <Compile Include="Baml\BamlNode.cs" />
@@ -142,10 +145,6 @@
     <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
       <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
       <Name>ICSharpCode.NRefactory</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\SharpTreeView\ICSharpCode.TreeView.csproj">
-      <Project>{DDE2A481-8271-4EAC-A330-8FA6A38D13D1}</Project>
-      <Name>ICSharpCode.TreeView</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

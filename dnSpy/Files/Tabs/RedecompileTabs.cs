@@ -50,7 +50,7 @@ namespace dnSpy.Files.Tabs {
 			if (langContent.Language == languageManager.SelectedLanguage)
 				return;
 			langContent.Language = languageManager.SelectedLanguage;
-			fileTabManager.ForceRefresh(new IFileTab[] { tab });
+			fileTabManager.Refresh(new IFileTab[] { tab });
 		}
 	}
 }

@@ -48,7 +48,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		void ToggleWordWrap() {
 			textEditorSettings.WordWrap = !textEditorSettings.WordWrap;
 			if (textEditorSettings.WordWrap && appSettings.UseNewRenderer_TextEditor)
-				messageBoxManager.ShowIgnorableMessage("text editor word wrap new renderer", "The text editor is using the new faster text renderer. It doesn't support word wrap or all unicode characters. Enable/disable it in the options.");
+				messageBoxManager.ShowIgnorableMessage("text editor word wrap new renderer", "The text editor is using the new faster text formatter. It doesn't support word wrap or all unicode characters. Enable/disable it in the options.");
 		}
 	}
 

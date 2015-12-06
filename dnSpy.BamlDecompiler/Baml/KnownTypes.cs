@@ -20,9 +20,6 @@
 	THE SOFTWARE.
 */
 
-using System;
-using dnlib.DotNet;
-
 namespace dnSpy.BamlDecompiler.Baml {
 	// Auto generated. Do not modify.
 

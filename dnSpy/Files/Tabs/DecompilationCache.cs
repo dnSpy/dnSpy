@@ -29,6 +29,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.Decompiler;
 using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace dnSpy.Files.Tabs {
 	[ExportFileListListener]
@@ -69,6 +70,7 @@ namespace dnSpy.Files.Tabs {
 
 		sealed class Item {
 			public AvalonEditTextOutput TextOutput;
+			public IHighlightingDefinition Highlighting;
 			public WeakReference WeakTextOutput;
 			DateTime LastHitUTC;
 
@@ -79,8 +81,9 @@ namespace dnSpy.Files.Tabs {
 				get { return DateTime.UtcNow - LastHitUTC; }
 			}
 
-			public Item(AvalonEditTextOutput textOutput) {
+			public Item(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting) {
 				this.TextOutput = textOutput;
+				this.Highlighting = highlighting;
 				this.LastHitUTC = DateTime.UtcNow;
 			}
 
@@ -103,11 +106,13 @@ namespace dnSpy.Files.Tabs {
 			public readonly ILanguage ILanguage;
 			public readonly IFileTreeNodeData[] Nodes;
 			public readonly DecompilationOptions Options;
+			public readonly IHighlightingDefinition Highlighting;
 
-			public Key(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options) {
+			public Key(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options, IHighlightingDefinition highlighting) {
 				this.ILanguage = language;
 				this.Nodes = new List<IFileTreeNodeData>(nodes).ToArray();
 				this.Options = Clone(options);
+				this.Highlighting = highlighting;
 			}
 
 			static DecompilationOptions Clone(DecompilationOptions options) {
@@ -133,6 +138,9 @@ namespace dnSpy.Files.Tabs {
 				if (!Equals(Options, other.Options))
 					return false;
 
+				if (Highlighting != other.Highlighting)
+					return false;
+
 				return true;
 			}
 
@@ -148,6 +156,7 @@ namespace dnSpy.Files.Tabs {
 				foreach (var node in Nodes)
 					h ^= node.GetHashCode();
 				h ^= GetHashCode(Options);
+				h ^= (Highlighting == null ? 0 : Highlighting.GetHashCode());
 				return h;
 			}
 
@@ -203,12 +212,14 @@ namespace dnSpy.Files.Tabs {
 			}, null, CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
 		}
 
-		public AvalonEditTextOutput Lookup(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options) {
+		public AvalonEditTextOutput Lookup(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options, out IHighlightingDefinition highlighting) {
+			highlighting = null;
 			lock (lockObj) {
-				var key = new Key(language, nodes, options);
+				var key = new Key(language, nodes, options, highlighting);
 
 				Item item;
 				if (cachedItems.TryGetValue(key, out item)) {
+					highlighting = item.Highlighting;
 					item.Hit();
 					var to = item.TextOutput;
 					if (to == null)
@@ -219,12 +230,12 @@ namespace dnSpy.Files.Tabs {
 			return null;
 		}
 
-		public void Cache(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options, AvalonEditTextOutput textOutput) {
+		public void Cache(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options, AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting) {
 			if (!textOutput.CanBeCached)
 				return;
 			lock (lockObj) {
-				var key = new Key(language, nodes, options);
-				cachedItems[key] = new Item(textOutput);
+				var key = new Key(language, nodes, options, highlighting);
+				cachedItems[key] = new Item(textOutput, highlighting);
 			}
 		}
 

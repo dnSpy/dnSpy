@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Settings;
@@ -66,7 +67,7 @@ namespace dnSpy.MainApp {
 
 	[Export, Export(typeof(IAppSettings)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class AppSettingsImpl : AppSettings {
-		const string SETTINGS_NAME = "071CF92D-ACFA-46A1-8EEF-DFAC1D01E644";
+		static readonly Guid SETTINGS_GUID = new Guid("071CF92D-ACFA-46A1-8EEF-DFAC1D01E644");
 
 		readonly ISettingsManager settingsManager;
 
@@ -75,7 +76,7 @@ namespace dnSpy.MainApp {
 			this.settingsManager = settingsManager;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			this.UseNewRenderer_TextEditor = sect.Attribute<bool?>("UseNewRenderer_TextEditor") ?? this.UseNewRenderer_TextEditor;
 			this.UseNewRenderer_HexEditor = sect.Attribute<bool?>("UseNewRenderer_HexEditor") ?? this.UseNewRenderer_HexEditor;
 			this.UseNewRenderer_FileTreeView = sect.Attribute<bool?>("UseNewRenderer_FileTreeView") ?? this.UseNewRenderer_FileTreeView;
@@ -86,7 +87,7 @@ namespace dnSpy.MainApp {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_NAME);
+			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 			sect.Attribute("UseNewRenderer_TextEditor", UseNewRenderer_TextEditor);
 			sect.Attribute("UseNewRenderer_HexEditor", UseNewRenderer_HexEditor);
 			sect.Attribute("UseNewRenderer_FileTreeView", UseNewRenderer_FileTreeView);

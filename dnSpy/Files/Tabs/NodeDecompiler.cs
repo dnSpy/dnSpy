@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Languages;
 using ICSharpCode.Decompiler;
 
@@ -42,10 +43,14 @@ namespace dnSpy.Files.Tabs {
 		DerivedTypesFolder,
 		ModuleRef,
 		Namespace,
-		PEFileNode,
-		References,
-		UnknownFileNode,
-		MessageNode,
+		PEFile,
+		ReferencesFolder,
+		ResourcesFolder,
+		Resource,
+		ResourceElement,
+		ResourceElementSet,
+		UnknownFile,
+		Message,
 	}
 
 	struct NodeDecompiler {
@@ -53,24 +58,22 @@ namespace dnSpy.Files.Tabs {
 		readonly ITextOutput output;
 		readonly ILanguage language;
 		readonly DecompilationOptions decompilationOptions;
-		readonly IFileTreeNodeData node;
 
-		public NodeDecompiler(Func<Func<object>, object> execInThread, ITextOutput output, ILanguage language, DecompilationOptions decompilationOptions, IFileTreeNodeData node) {
+		public NodeDecompiler(Func<Func<object>, object> execInThread, ITextOutput output, ILanguage language, DecompilationOptions decompilationOptions) {
 			this.execInThread = execInThread;
 			this.output = output;
 			this.language = language;
 			this.decompilationOptions = decompilationOptions;
-			this.node = node;
 		}
 
 		static readonly object lockObj = new object();
 		static readonly Dictionary<Type, NodeType> toNodeType = new Dictionary<Type, NodeType>();
 
-		public void Decompile() {
+		public void Decompile(IFileTreeNodeData node) {
 			var nodeType = GetNodeType(node);
 			switch (nodeType) {
 			case NodeType.Unknown:
-				language.WriteCommentLine(output, node.ToString(language));
+				DecompileUnknown(node);
 				break;
 
 			case NodeType.Assembly:
@@ -129,19 +132,35 @@ namespace dnSpy.Files.Tabs {
 				Decompile((INamespaceNode)node);
 				break;
 
-			case NodeType.PEFileNode:
+			case NodeType.PEFile:
 				Decompile((IPEFileNode)node);
 				break;
 
-			case NodeType.References:
-				Decompile((IReferencesNode)node);
+			case NodeType.ReferencesFolder:
+				Decompile((IReferencesFolderNode)node);
 				break;
 
-			case NodeType.UnknownFileNode:
+			case NodeType.ResourcesFolder:
+				Decompile((IResourcesFolderNode)node);
+				break;
+
+			case NodeType.Resource:
+				Decompile((IResourceNode)node);
+				break;
+
+			case NodeType.ResourceElement:
+				Decompile((IResourceElementNode)node);
+				break;
+
+			case NodeType.ResourceElementSet:
+				Decompile((IResourceElementSetNode)node);
+				break;
+
+			case NodeType.UnknownFile:
 				Decompile((IUnknownFileNode)node);
 				break;
 
-			case NodeType.MessageNode:
+			case NodeType.Message:
 				Decompile((IMessageNode)node);
 				break;
 
@@ -151,7 +170,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		IFileTreeNodeData[] GetChildren() {
+		IFileTreeNodeData[] GetChildren(IFileTreeNodeData node) {
 			var n = node;
 			return (IFileTreeNodeData[])execInThread(() => {
 				n.TreeNode.EnsureChildrenLoaded();
@@ -159,12 +178,16 @@ namespace dnSpy.Files.Tabs {
 			});
 		}
 
+		void DecompileUnknown(IFileTreeNodeData node) {
+			language.WriteCommentLine(output, node.ToString(language));
+		}
+
 		void Decompile(IAssemblyReferenceNode node) {
 			language.WriteCommentLine(output, node.AssemblyRef.ToString());
 		}
 
 		void Decompile(IBaseTypeFolderNode node) {
-			foreach (var child in GetChildren().OfType<IBaseTypeNode>())
+			foreach (var child in GetChildren(node).OfType<IBaseTypeNode>())
 				Decompile(child);
 		}
 
@@ -177,7 +200,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		void Decompile(IDerivedTypesFolderNode node) {
-			foreach (var child in GetChildren().OfType<IDerivedTypeNode>())
+			foreach (var child in GetChildren(node).OfType<IDerivedTypeNode>())
 				Decompile(child);
 		}
 
@@ -193,12 +216,45 @@ namespace dnSpy.Files.Tabs {
 			language.WriteCommentLine(output, node.DnSpyFile.Filename);
 		}
 
-		void Decompile(IReferencesNode node) {
-			foreach (var child in GetChildren()) {
+		void Decompile(IReferencesFolderNode node) {
+			foreach (var child in GetChildren(node)) {
 				if (child is IAssemblyReferenceNode)
 					Decompile((IAssemblyReferenceNode)child);
 				else if (child is IModuleReferenceNode)
 					Decompile((IModuleReferenceNode)child);
+				else
+					DecompileUnknown(child);
+			}
+		}
+
+		void Decompile(IResourcesFolderNode node) {
+			foreach (var child in GetChildren(node)) {
+				if (child is IResourceNode)
+					Decompile((IResourceNode)child);
+				else
+					DecompileUnknown(child);
+			}
+		}
+
+		void Decompile(IResourceNode node) {
+			if (node is IResourceElementSetNode)
+				Decompile((IResourceElementSetNode)node);
+			else
+				node.WriteShort(output, language, decompilationOptions.DecompilerSettings.ShowTokenAndRvaComments);
+		}
+
+		void Decompile(IResourceElementNode node) {
+			node.WriteShort(output, language, decompilationOptions.DecompilerSettings.ShowTokenAndRvaComments);
+		}
+
+		void Decompile(IResourceElementSetNode node) {
+			node.WriteShort(output, language, decompilationOptions.DecompilerSettings.ShowTokenAndRvaComments);
+
+			foreach (var child in GetChildren(node)) {
+				if (child is IResourceElementNode)
+					Decompile((IResourceElementNode)child);
+				else
+					DecompileUnknown(child);
 			}
 		}
 
@@ -253,13 +309,21 @@ namespace dnSpy.Files.Tabs {
 			if (node is INamespaceNode)
 				return NodeType.Namespace;
 			if (node is IPEFileNode)
-				return NodeType.PEFileNode;
-			if (node is IReferencesNode)
-				return NodeType.References;
+				return NodeType.PEFile;
+			if (node is IReferencesFolderNode)
+				return NodeType.ReferencesFolder;
+			if (node is IResourcesFolderNode)
+				return NodeType.ResourcesFolder;
+			if (node is IResourceNode)
+				return NodeType.Resource;
+			if (node is IResourceElementNode)
+				return NodeType.ResourceElement;
+			if (node is IResourceElementSetNode)
+				return NodeType.ResourceElementSet;
 			if (node is IUnknownFileNode)
-				return NodeType.UnknownFileNode;
+				return NodeType.UnknownFile;
 			if (node is IMessageNode)
-				return NodeType.MessageNode;
+				return NodeType.Message;
 
 			return NodeType.Unknown;
 		}

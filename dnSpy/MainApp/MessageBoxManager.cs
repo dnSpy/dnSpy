@@ -38,7 +38,7 @@ namespace dnSpy.MainApp {
 
 	[Export, Export(typeof(IMessageBoxManager)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class MessageBoxManager : IMessageBoxManager {
-		const string SETTINGS_NAME = "686C5CFB-FF63-4AA5-8C92-E08607AE5146";
+		static readonly Guid SETTINGS_GUID = new Guid("686C5CFB-FF63-4AA5-8C92-E08607AE5146");
 		const string IGNORED_SECTION = "Ignored";
 		const string IGNORED_ATTR = "id";
 
@@ -59,7 +59,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void ReadSettings() {
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			foreach (var ignoredSect in sect.SectionsWithName(IGNORED_SECTION)) {
 				var id = ignoredSect.Attribute<string>(IGNORED_ATTR);
 				if (!string.IsNullOrEmpty(id))
@@ -73,7 +73,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void SaveSettings() {
-			var sect = settingsManager.RecreateSection(SETTINGS_NAME);
+			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 			foreach (var id in ignoredMessages) {
 				var ignoredSect = sect.CreateSection(IGNORED_SECTION);
 				ignoredSect.Attribute(IGNORED_ATTR, id);

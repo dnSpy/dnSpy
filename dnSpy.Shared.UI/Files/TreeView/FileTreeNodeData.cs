@@ -26,8 +26,8 @@ using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.TreeView;
 using ICSharpCode.AvalonEdit.Utils;
 
-namespace dnSpy.Files.TreeView {
-	abstract class FileTreeNodeData : TreeNodeData, IFileTreeNodeData {
+namespace dnSpy.Shared.UI.Files.TreeView {
+	public abstract class FileTreeNodeData : TreeNodeData, IFileTreeNodeData {
 		public sealed override bool SingleClickExpandsChildren {
 			get { return Context.SingleClickExpandsChildren; }
 		}

@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 	sealed class ExceptionListSettings {
 		public static readonly ExceptionListSettings Instance = new ExceptionListSettings();
-		const string SETTINGS_NAME = "102DCD2E-BE0A-477C-B4D0-600C5CA28A6A";
+		static readonly Guid SETTINGS_GUID = new Guid("102DCD2E-BE0A-477C-B4D0-600C5CA28A6A");
 		int disableSaveCounter;
 
 		ExceptionListSettings() {
@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		void LoadInternal() {
-			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_GUID);
 			ExceptionManager.Instance.RestoreDefaults();
 			foreach (var exx in section.SectionsWithName("Exception")) {
 				var exceptionType = exx.Attribute<ExceptionType?>("ExceptionType");
@@ -93,7 +93,7 @@ namespace dnSpy.Debugger.Exceptions {
 			if (disableSaveCounter != 0)
 				return;
 
-			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_GUID);
 
 			foreach (var tuple in GetDiff()) {
 				var exx = section.CreateSection("Exception");

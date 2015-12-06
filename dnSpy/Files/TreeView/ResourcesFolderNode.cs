@@ -18,17 +18,20 @@
 */
 
 using System;
+using System.Collections.Generic;
+using dnlib.DotNet;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
-	sealed class ResourcesNode : FileTreeNodeData, IResourcesNode {
+	sealed class ResourcesFolderNode : FileTreeNodeData, IResourcesFolderNode {
 		public override Guid Guid {
-			get { return new Guid(FileTVConstants.DNSPY_RESOURCES_NODE_GUID); }
+			get { return new Guid(FileTVConstants.RESOURCES_FOLDER_NODE_GUID); }
 		}
 
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
@@ -52,12 +55,21 @@ namespace dnSpy.Files.TreeView {
 		}
 		readonly ITreeNodeGroup treeNodeGroup;
 
-		public ResourcesNode(ITreeNodeGroup treeNodeGroup) {
+		readonly ModuleDef module;
+
+		public ResourcesFolderNode(ITreeNodeGroup treeNodeGroup, ModuleDef module) {
 			this.treeNodeGroup = treeNodeGroup;
+			this.module = module;
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			output.Write("Resources", TextTokenType.Text);
+		}
+
+		public override IEnumerable<ITreeNodeData> CreateChildren() {
+			var treeNodeGroup = Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourceTreeNodeGroup);
+			foreach (var resource in module.Resources)
+				yield return Context.ResourceNodeFactory.Create(module, resource, treeNodeGroup);
 		}
 	}
 }

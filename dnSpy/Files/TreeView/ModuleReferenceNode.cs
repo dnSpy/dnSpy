@@ -29,7 +29,7 @@ using dnSpy.Shared.UI.Files.TreeView;
 namespace dnSpy.Files.TreeView {
 	sealed class ModuleReferenceNode : FileTreeNodeData, IModuleReferenceNode {
 		public override Guid Guid {
-			get { return new Guid(FileTVConstants.DNSPY_MODULEREF_NODE_GUID); }
+			get { return new Guid(FileTVConstants.MODULEREF_NODE_GUID); }
 		}
 
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {

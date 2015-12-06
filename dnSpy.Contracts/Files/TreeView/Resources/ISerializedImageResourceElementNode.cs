@@ -17,25 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnlib.DotNet;
-
-namespace dnSpy.Contracts.Files.TreeView {
+namespace dnSpy.Contracts.Files.TreeView.Resources {
 	/// <summary>
-	/// References node
+	/// A resource node created from a serialized image (BMP or ICO)
 	/// </summary>
-	public interface IReferencesNode : IFileTreeNodeData {
-		/// <summary>
-		/// Creates a <see cref="IAssemblyReferenceNode"/>
-		/// </summary>
-		/// <param name="asmRef">Assembly reference</param>
-		/// <returns></returns>
-		IAssemblyReferenceNode Create(AssemblyRef asmRef);
-
-		/// <summary>
-		/// Creates a <see cref="IModuleReferenceNode"/>
-		/// </summary>
-		/// <param name="modRef">Module reference</param>
-		/// <returns></returns>
-		IModuleReferenceNode Create(ModuleRef modRef);
+	public interface ISerializedImageResourceElementNode : IResourceElementNode {
 	}
 }

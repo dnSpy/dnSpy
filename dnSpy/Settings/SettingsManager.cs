@@ -37,21 +37,8 @@ namespace dnSpy.Settings {
 			this.sections = new Dictionary<string, ISettingsSection>(StringComparer.Ordinal);
 		}
 
-		public ISettingsSection CreateSection(string name) {
-			Debug.Assert(name != null);
-			if (name == null)
-				throw new ArgumentNullException();
-
-			var section = new SettingsSection(name);
-			sections[name] = section;
-			return section;
-		}
-
-		public ISettingsSection GetOrCreateSection(string name) {
-			Debug.Assert(name != null);
-			if (name == null)
-				throw new ArgumentNullException();
-
+		public ISettingsSection GetOrCreateSection(Guid guid) {
+			var name = guid.ToString();
 			ISettingsSection section;
 			if (sections.TryGetValue(name, out section))
 				return section;
@@ -61,11 +48,8 @@ namespace dnSpy.Settings {
 			return section;
 		}
 
-		public void RemoveSection(string name) {
-			Debug.Assert(name != null);
-			if (name == null)
-				throw new ArgumentNullException();
-
+		public void RemoveSection(Guid guid) {
+			var name = guid.ToString();
 			sections.Remove(name);
 		}
 
@@ -83,17 +67,9 @@ namespace dnSpy.Settings {
 			sections.Remove(section.Name);
 		}
 
-		public ISettingsSection[] SectionsWithName(string name) {
-			return Sections.Where(a => StringComparer.Ordinal.Equals(name, a.Name)).ToArray();
-		}
-
-		public ISettingsSection TryGetSection(string name) {
-			return Sections.FirstOrDefault(a => StringComparer.Ordinal.Equals(name, a.Name));
-		}
-
-		public ISettingsSection RecreateSection(string name) {
-			RemoveSection(name);
-			return GetOrCreateSection(name);
+		public ISettingsSection RecreateSection(Guid guid) {
+			RemoveSection(guid);
+			return GetOrCreateSection(guid);
 		}
 	}
 }

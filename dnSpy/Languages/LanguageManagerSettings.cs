@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
@@ -46,7 +47,7 @@ namespace dnSpy.Languages {
 
 	[Export, Export(typeof(ILanguageManagerSettings)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class LanguageManagerSettingsImpl : LanguageManagerSettings {
-		const string SETTINGS_NAME = "6A7E565D-DC09-4AAE-A7C8-E86A835FCBFC";
+		static readonly Guid SETTINGS_GUID = new Guid("6A7E565D-DC09-4AAE-A7C8-E86A835FCBFC");
 
 		readonly ISettingsManager settingsManager;
 
@@ -55,7 +56,7 @@ namespace dnSpy.Languages {
 			this.settingsManager = settingsManager;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			this.LanguageName = sect.Attribute<string>("LanguageName") ?? this.LanguageName;
 			this.disableSave = false;
 		}
@@ -64,7 +65,7 @@ namespace dnSpy.Languages {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_NAME);
+			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 			sect.Attribute("LanguageName", LanguageName);
 		}
 	}

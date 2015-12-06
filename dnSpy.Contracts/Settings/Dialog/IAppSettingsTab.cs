@@ -38,7 +38,7 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		object UIObject { get; }
 
 		/// <summary>
-		/// Called when the dialog box has closed
+		/// Called when the dialog box has been closed
 		/// </summary>
 		/// <param name="saveSettings">true to save the settings, false to cancel any changes</param>
 		/// <param name="appRefreshSettings">Used if <paramref name="saveSettings"/> is true. Add

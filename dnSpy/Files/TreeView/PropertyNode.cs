@@ -30,7 +30,7 @@ using dnSpy.Shared.UI.Files.TreeView;
 namespace dnSpy.Files.TreeView {
 	sealed class PropertyNode : FileTreeNodeData, IPropertyNode {
 		public override Guid Guid {
-			get { return new Guid(FileTVConstants.DNSPY_PROPERTY_NODE_GUID); }
+			get { return new Guid(FileTVConstants.PROPERTY_NODE_GUID); }
 		}
 
 		public override NodePathName NodePathName {

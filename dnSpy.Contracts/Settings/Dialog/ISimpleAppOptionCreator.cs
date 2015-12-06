@@ -24,8 +24,9 @@ using System.ComponentModel.Composition;
 namespace dnSpy.Contracts.Settings.Dialog {
 	/// <summary>
 	/// Creates <see cref="ISimpleAppOption"/> instances (<see cref="ISimpleAppOptionCheckBox"/>,
-	/// <see cref="ISimpleAppOptionButton"/>, <see cref="ISimpleAppOptionUserContent"/>). Use
-	/// <see cref="ExportSimpleAppOptionCreatorAttribute"/> to export an instance.
+	/// <see cref="ISimpleAppOptionButton"/>, <see cref="ISimpleAppOptionTextBox"/>,
+	/// <see cref="ISimpleAppOptionUserContent"/>). Use <see cref="ExportSimpleAppOptionCreatorAttribute"/>
+	/// to export an instance.
 	/// </summary>
 	public interface ISimpleAppOptionCreator {
 		/// <summary>

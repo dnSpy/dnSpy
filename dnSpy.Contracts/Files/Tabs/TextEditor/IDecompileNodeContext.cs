@@ -20,6 +20,7 @@
 using System;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
+using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Contracts.Files.Tabs.TextEditor {
@@ -51,5 +52,17 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// <param name="func">Delegate to execute</param>
 		/// <returns></returns>
 		T ExecuteInUIThread<T>(Func<T> func);
+
+		/// <summary>
+		/// Sets the <see cref="IHighlightingDefinition"/> to use or null to use the default one.
+		/// See also <see cref="HighlightingExtension"/>
+		/// </summary>
+		IHighlightingDefinition HighlightingDefinition { get; set; }
+
+		/// <summary>
+		/// Sets the file extension (including the period) to use or null to use the default one.
+		/// See also <see cref="HighlightingDefinition"/>
+		/// </summary>
+		string HighlightingExtension { get; set; }
 	}
 }

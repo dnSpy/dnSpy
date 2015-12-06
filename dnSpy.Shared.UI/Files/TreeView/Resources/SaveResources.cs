@@ -22,47 +22,52 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
+using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Shared.UI.MVVM.Dialogs;
-using dnSpy.TreeNodes;
-using ICSharpCode.ILSpy;
 using WF = System.Windows.Forms;
 
-namespace dnSpy.AsmEditor.Resources {
+namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 	public static class SaveResources {
 		static readonly HashSet<char> invalidFileNameChar = new HashSet<char>();
 		static SaveResources() {
-			invalidFileNameChar.AddRange(Path.GetInvalidFileNameChars());
-			invalidFileNameChar.AddRange(Path.GetInvalidPathChars());
+			foreach (var c in Path.GetInvalidFileNameChars())
+				invalidFileNameChar.Add(c);
+			foreach (var c in Path.GetInvalidPathChars())
+				invalidFileNameChar.Add(c);
 		}
 
-		public static ResourceData[] GetResourceData(IResourceNode[] nodes, ResourceDataType resourceDataType) {
+		public static ResourceData[] GetResourceData(IResourceDataProvider[] nodes, ResourceDataType resourceDataType) {
 			if (nodes == null)
 				return new ResourceData[0];
 			return nodes.SelectMany(a => a.GetResourceData(resourceDataType)).ToArray();
 		}
 
-		public static void Save(IResourceNode[] nodes, bool useSubDirs, ResourceDataType resourceDataType) {
+		public static void Save(IResourceDataProvider[] nodes, bool useSubDirs, ResourceDataType resourceDataType, Window ownerWindow = null) {
 			if (nodes == null)
 				return;
 
-			var files = GetFiles(GetResourceData(nodes, resourceDataType), useSubDirs).ToArray();
+			var token = CancellationToken.None;//TODO: Allow user to cancel it
+			var files = GetFiles(GetResourceData(nodes, resourceDataType), useSubDirs, token).ToArray();
 			if (files.Length == 0)
 				return;
 
-			var data = new ProgressVM(MainWindow.Instance.Dispatcher, new ResourceSaver(files));
+			var data = new ProgressVM(Dispatcher.CurrentDispatcher, new ResourceSaver(files));
 			var win = new ProgressDlg();
 			win.DataContext = data;
-			win.Owner = MainWindow.Instance;
+			win.Owner = ownerWindow ?? Contracts.DnSpy.App.AppWindow.MainWindow;
 			win.Title = files.Length == 1 ? "Save Resource" : "Save Resources";
 			var res = win.ShowDialog();
 			if (res != true)
 				return;
 			if (!data.WasError)
 				return;
-			MainWindow.Instance.ShowMessageBox(string.Format("An error occurred:\n\n{0}", data.ErrorMessage));
+			App.MsgBox.Instance.Show(string.Format("An error occurred:\n\n{0}", data.ErrorMessage));
 		}
 
-		static IEnumerable<Tuple<Stream, string>> GetFiles(ResourceData[] infos, bool useSubDirs) {
+		static IEnumerable<Tuple<Stream, string>> GetFiles(ResourceData[] infos, bool useSubDirs, CancellationToken token) {
 			if (infos.Length == 1) {
 				var info = infos[0];
 				var name = FixFileNamePart(GetFileName(info.Name));
@@ -75,7 +80,7 @@ namespace dnSpy.AsmEditor.Resources {
 				dlg.DefaultExt = string.IsNullOrEmpty(ext) ? string.Empty : ext.Substring(1);
 				if (dlg.ShowDialog() != WF.DialogResult.OK)
 					yield break;
-				yield return Tuple.Create(info.GetStream(), dlg.FileName);
+				yield return Tuple.Create(info.GetStream(token), dlg.FileName);
 			}
 			else {
 				var dlg = new WF.FolderBrowserDialog();
@@ -85,7 +90,7 @@ namespace dnSpy.AsmEditor.Resources {
 				foreach (var info in infos) {
 					var name = GetCleanedPath(info.Name, useSubDirs);
 					var pathName = Path.Combine(baseDir, name);
-					yield return Tuple.Create(info.GetStream(), pathName);
+					yield return Tuple.Create(info.GetStream(token), pathName);
 				}
 			}
 		}

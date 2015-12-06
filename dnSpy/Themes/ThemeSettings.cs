@@ -17,13 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Themes {
 	[Export, PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class ThemeSettings {
-		const string SETTINGS_NAME = "34CF0AF5-D265-4393-BC68-9B8C9B8EA622";
+		static readonly Guid SETTINGS_GUID = new Guid("34CF0AF5-D265-4393-BC68-9B8C9B8EA622");
 
 		readonly ISettingsManager settingsManager;
 
@@ -54,7 +55,7 @@ namespace dnSpy.Themes {
 			this.settingsManager = settingsManager;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			this.ThemeName = sect.Attribute<string>("ThemeName");
 			this.ShowAllThemes = sect.Attribute<bool?>("ShowAllThemes") ?? ShowAllThemes;
 			this.disableSave = false;
@@ -64,7 +65,7 @@ namespace dnSpy.Themes {
 		void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_NAME);
+			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 			sect.Attribute("ThemeName", ThemeName);
 			sect.Attribute("ShowAllThemes", ShowAllThemes);
 		}

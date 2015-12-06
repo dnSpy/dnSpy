@@ -39,7 +39,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		public override Guid Guid {
-			get { return new Guid(FileTVConstants.DNSPY_MODULE_NODE_GUID); }
+			get { return new Guid(FileTVConstants.MODULE_NODE_GUID); }
 		}
 
 		IMDTokenProvider IMDTokenNode.Reference {
@@ -58,8 +58,8 @@ namespace dnSpy.Files.TreeView {
 			foreach (var file in DnSpyFile.Children)
 				yield return Context.FileTreeView.CreateNode(this, file);
 
-			yield return new ResourcesNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourcesTreeNodeGroupModule));
-			yield return new ReferencesNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ReferencesTreeNodeGroupModule), this);
+			yield return new ResourcesFolderNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ResourcesFolderTreeNodeGroupModule), DnSpyFile.ModuleDef);
+			yield return new ReferencesFolderNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.ReferencesFolderTreeNodeGroupModule), this);
 
 			var nsDict = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
 			foreach (var td in DnSpyFile.ModuleDef.Types) {

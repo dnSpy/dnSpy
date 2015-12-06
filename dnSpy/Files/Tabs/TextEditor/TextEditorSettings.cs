@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
@@ -118,7 +119,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 	[Export, Export(typeof(ITextEditorSettings)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class TextEditorSettingsImpl : TextEditorSettings {
-		const string SETTINGS_NAME = "9D40E1AD-5922-4BBA-B386-E6BABE5D185D";
+		static readonly Guid SETTINGS_GUID = new Guid("9D40E1AD-5922-4BBA-B386-E6BABE5D185D");
 
 		readonly ISettingsManager settingsManager;
 
@@ -127,7 +128,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.settingsManager = settingsManager;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			this.FontFamily = new FontFamily(sect.Attribute<string>("FontFamily") ?? FontUtils.GetDefaultMonospacedFont());
 			this.FontSize = sect.Attribute<double?>("FontSize") ?? this.FontSize;
 			this.ShowLineNumbers = sect.Attribute<bool?>("ShowLineNumbers") ?? this.ShowLineNumbers;
@@ -141,7 +142,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_NAME);
+			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 			sect.Attribute("FontFamily", FontFamily.Source);
 			sect.Attribute("FontSize", FontSize);
 			sect.Attribute("ShowLineNumbers", ShowLineNumbers);

@@ -17,17 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.IO;
-
-namespace dnSpy.TreeNodes {
-	public sealed class ResourceData {
-		public readonly string Name;
-		public readonly Func<Stream> GetStream;
-
-		public ResourceData(string name, Func<Stream> getStream) {
-			this.Name = name;
-			this.GetStream = getStream;
-		}
+namespace dnSpy.Contracts.Files.TreeView.Resources {
+	/// <summary>
+	/// A resource node created from an image
+	/// </summary>
+	public interface IImageResourceNode : IResourceNode {
 	}
 }

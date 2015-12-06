@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Tabs;
@@ -78,7 +79,19 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// Forces a refresh of the selected tabs
 		/// </summary>
 		/// <param name="tabs">Tabs to refresh</param>
-		void ForceRefresh(IEnumerable<IFileTab> tabs);
+		void Refresh(IEnumerable<IFileTab> tabs);
+
+		/// <summary>
+		/// Refreshes all tabs that contain nodes of type <typeparamref name="T"/>
+		/// </summary>
+		/// <typeparam name="T">Node type</typeparam>
+		void Refresh<T>() where T : IFileTreeNodeData;
+
+		/// <summary>
+		/// Refreshes all tabs that contain certain nodes
+		/// </summary>
+		/// <param name="pred">Returns true if the node should be included</param>
+		void Refresh(Predicate<IFileTreeNodeData> pred);
 
 		/// <summary>
 		/// Returns true if <paramref name="tabGroup"/> is owned by this instance

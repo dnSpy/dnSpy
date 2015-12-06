@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
@@ -46,7 +47,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 
 	[Export, Export(typeof(ITabsVMSettings)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class TabsVMSettingsImpl : TabsVMSettings {
-		const string SETTINGS_NAME = "EB2D9511-93B9-4985-BB99-1758BF2A5ADE";
+		static readonly Guid SETTINGS_GUID = new Guid("EB2D9511-93B9-4985-BB99-1758BF2A5ADE");
 
 		readonly ISettingsManager settingsManager;
 
@@ -55,7 +56,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			this.settingsManager = settingsManager;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			this.SyntaxHighlight = sect.Attribute<bool?>("SyntaxHighlight") ?? this.SyntaxHighlight;
 			this.disableSave = false;
 		}
@@ -64,7 +65,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_NAME);
+			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 			sect.Attribute("SyntaxHighlight", SyntaxHighlight);
 		}
 	}

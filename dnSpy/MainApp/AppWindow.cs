@@ -76,7 +76,7 @@ namespace dnSpy.MainApp {
 		public bool AppLoaded { get; internal set; }
 
 		sealed class UISettings {
-			const string SETTINGS_NAME = "33E1988B-8EFF-4F4C-A064-FA99A7D0C64D";
+			static readonly Guid SETTINGS_GUID = new Guid("33E1988B-8EFF-4F4C-A064-FA99A7D0C64D");
 			const string SAVEDWINDOWSTATE_SECTION = "SavedWindowState";
 			const string STACKEDCONTENTSTATE_SECTION = "StackedContent";
 
@@ -90,13 +90,13 @@ namespace dnSpy.MainApp {
 			}
 
 			public void Read() {
-				var sect = settingsManager.GetOrCreateSection(SETTINGS_NAME);
+				var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 				this.SavedWindowState = new SavedWindowState().Read(sect.GetOrCreateSection(SAVEDWINDOWSTATE_SECTION));
 				this.StackedContentState = StackedContentStateSerializer.TryDeserialize(sect.GetOrCreateSection(STACKEDCONTENTSTATE_SECTION));
 			}
 
 			public void Write() {
-				var sect = settingsManager.RecreateSection(SETTINGS_NAME);
+				var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 				SavedWindowState.Write(sect.GetOrCreateSection(SAVEDWINDOWSTATE_SECTION));
 				StackedContentStateSerializer.Serialize(sect.GetOrCreateSection(STACKEDCONTENTSTATE_SECTION), StackedContentState);
 			}
@@ -136,7 +136,7 @@ namespace dnSpy.MainApp {
 			var tabs = fileTabManager.VisibleFirstTabs.Where(a => a.UIContext is ITextEditorUIContext).ToArray();
 			foreach (var tab in tabs)
 				((ITextEditorUIContext)tab.UIContext).OnUseNewRendererChanged();
-			fileTabManager.ForceRefresh(tabs);
+			fileTabManager.Refresh(tabs);
 		}
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {

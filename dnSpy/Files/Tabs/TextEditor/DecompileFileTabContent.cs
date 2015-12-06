@@ -30,6 +30,7 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Decompiler;
+using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.Tabs.TextEditor {
@@ -192,7 +193,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public object OnShow(IFileTabUIContext uiContext) {
 			UpdateLanguage();
 			var decompileContext = CreateDecompileContext();
-			decompileContext.CachedOutput = decompileFileTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Language, nodes, decompileContext.DecompileNodeContext.DecompilationOptions);
+			IHighlightingDefinition highlighting;
+			decompileContext.CachedOutput = decompileFileTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Language, nodes, decompileContext.DecompileNodeContext.DecompilationOptions, out highlighting);
+			decompileContext.DecompileNodeContext.HighlightingDefinition = highlighting;
 			return decompileContext;
 		}
 
@@ -210,6 +213,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			AvalonEditTextOutput output;
 
+			var highlighting = decompileContext.DecompileNodeContext.Language.GetHighlightingDefinition();
+			if (decompileContext.DecompileNodeContext.HighlightingExtension != null)
+				highlighting = HighlightingManager.Instance.GetDefinitionByExtension(decompileContext.DecompileNodeContext.HighlightingExtension) ?? highlighting;
+			if (decompileContext.DecompileNodeContext.HighlightingDefinition != null)
+				highlighting = decompileContext.DecompileNodeContext.HighlightingDefinition;
+
 			if (result.IsCanceled) {
 				output = new AvalonEditTextOutput();
 				output.Write("The operation was canceled", TextTokenType.Error);
@@ -224,12 +233,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				output = decompileContext.CachedOutput;
 				if (output == null) {
 					output = (AvalonEditTextOutput)decompileContext.DecompileNodeContext.Output;
-					decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Language, nodes, decompileContext.DecompileNodeContext.DecompilationOptions, output);
+					decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Language, nodes, decompileContext.DecompileNodeContext.DecompilationOptions, output, highlighting);
 				}
 			}
 
 			if (result.CanShowOutput)
-				uiCtx.SetOutput(output, decompileContext.DecompileNodeContext.Language.GetHighlightingDefinition());
+				uiCtx.SetOutput(output, highlighting);
 		}
 
 		public bool CanStartAsyncWorker(IFileTabUIContext uiContext, object userData) {

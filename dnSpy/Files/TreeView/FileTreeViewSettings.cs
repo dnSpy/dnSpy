@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Settings;
@@ -87,6 +88,18 @@ namespace dnSpy.Files.TreeView {
 		}
 		bool showToken = true;
 
+		public bool DeserializeResources {
+			get { return deserializeResources; }
+			set {
+				if (deserializeResources != value) {
+					deserializeResources = value;
+					OnPropertyChanged("DeserializeResources");
+					OnModified();
+				}
+			}
+		}
+		bool deserializeResources = true;
+
 		public FileTreeViewSettings Clone() {
 			return CopyTo(new FileTreeViewSettings());
 		}
@@ -97,13 +110,14 @@ namespace dnSpy.Files.TreeView {
 			other.ShowAssemblyVersion = this.ShowAssemblyVersion;
 			other.ShowAssemblyPublicKeyToken = this.ShowAssemblyPublicKeyToken;
 			other.ShowToken = this.ShowToken;
+			other.DeserializeResources = this.DeserializeResources;
 			return other;
 		}
 	}
 
 	[Export, Export(typeof(IFileTreeViewSettings)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class FileTreeViewSettingsImpl : FileTreeViewSettings {
-		const string SETTINGS_NAME = "3E04ABE0-FD5E-4938-B40C-F86AA0FA377D";
+		static readonly Guid SETTINGS_GUID = new Guid("3E04ABE0-FD5E-4938-B40C-F86AA0FA377D");
 
 		readonly ISettingsManager settingsManager;
 
@@ -112,12 +126,13 @@ namespace dnSpy.Files.TreeView {
 			this.settingsManager = settingsManager;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			this.SyntaxHighlight = sect.Attribute<bool?>("SyntaxHighlight") ?? this.SyntaxHighlight;
 			this.SingleClickExpandsTreeViewChildren = sect.Attribute<bool?>("SingleClickExpandsTreeViewChildren") ?? this.SingleClickExpandsTreeViewChildren;
 			this.ShowAssemblyVersion = sect.Attribute<bool?>("ShowAssemblyVersion") ?? this.ShowAssemblyVersion;
 			this.ShowAssemblyPublicKeyToken = sect.Attribute<bool?>("ShowAssemblyPublicKeyToken") ?? this.ShowAssemblyPublicKeyToken;
 			this.ShowToken = sect.Attribute<bool?>("ShowToken") ?? this.ShowToken;
+			this.DeserializeResources = sect.Attribute<bool?>("DeserializeResources") ?? this.DeserializeResources;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -125,12 +140,13 @@ namespace dnSpy.Files.TreeView {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_NAME);
+			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 			sect.Attribute("SyntaxHighlight", SyntaxHighlight);
 			sect.Attribute("SingleClickExpandsTreeViewChildren", SingleClickExpandsTreeViewChildren);
 			sect.Attribute("ShowAssemblyVersion", ShowAssemblyVersion);
 			sect.Attribute("ShowAssemblyPublicKeyToken", ShowAssemblyPublicKeyToken);
 			sect.Attribute("ShowToken", ShowToken);
+			sect.Attribute("DeserializeResources", DeserializeResources);
 		}
 	}
 }

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Contracts.Files.TreeView {
@@ -33,6 +34,11 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// Default language
 		/// </summary>
 		ILanguage Language { get; }
+
+		/// <summary>
+		/// Gets the <see cref="IResourceNodeFactory"/> instance
+		/// </summary>
+		IResourceNodeFactory ResourceNodeFactory { get; }
 
 		/// <summary>
 		/// true if it should be syntax highlighted
@@ -63,5 +69,10 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// true to use the new optimized renderer. It doesn't support all unicode chars or word wrapping
 		/// </summary>
 		bool UseNewRenderer { get; }
+
+		/// <summary>
+		/// true to deserialize resources
+		/// </summary>
+		bool DeserializeResources { get; }
 	}
 }

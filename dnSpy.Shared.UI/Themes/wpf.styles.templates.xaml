@@ -562,5 +562,11 @@
 		<Setter Property="Padding" Value="7 0 7 0" />
 		<Setter Property="Content" Value="..." />
 	</Style>
+	<Style x:Key="TextEditorButton" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+		<Setter Property="Padding" Value="10,1,10,1" />
+		<Setter Property="MinWidth" Value="75" />
+		<Setter Property="MinHeight" Value="23" />
+		<Setter Property="Cursor" Value="Arrow" />
+	</Style>
 
 </ResourceDictionary>

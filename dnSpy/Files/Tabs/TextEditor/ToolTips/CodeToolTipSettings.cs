@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
@@ -46,7 +47,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 
 	[Export, Export(typeof(ICodeToolTipSettings)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class FileManagerSettingsImpl : CodeToolTipSettings {
-		const string SETTINGS_NAME = "6AA691D6-C3B8-4823-87EC-DC2E9134CB3E";
+		static readonly Guid SETTINGS_GUID = new Guid("6AA691D6-C3B8-4823-87EC-DC2E9134CB3E");
 
 		readonly ISettingsManager settingsManager;
 
@@ -55,7 +56,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 			this.settingsManager = settingsManager;
 
 			this.disableSave = true;
-			var sect = settingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			this.SyntaxHighlight = sect.Attribute<bool?>("SyntaxHighlight") ?? this.SyntaxHighlight;
 			this.disableSave = false;
 		}
@@ -64,7 +65,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		protected override void OnModified() {
 			if (disableSave)
 				return;
-			var sect = settingsManager.RecreateSection(SETTINGS_NAME);
+			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 			sect.Attribute("SyntaxHighlight", SyntaxHighlight);
 		}
 	}

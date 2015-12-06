@@ -127,11 +127,13 @@
     <Compile Include="Files\Tabs\FileTreeNodeDecompiler.cs" />
     <Compile Include="Files\Tabs\IDecompilationCache.cs" />
     <Compile Include="Files\Tabs\IFileTabUIContextLocatorCreator.cs" />
+    <Compile Include="Files\Tabs\MiscOptions.cs" />
     <Compile Include="Files\Tabs\NavigationCommands.cs" />
     <Compile Include="Files\Tabs\NodeDecompiler.cs" />
     <Compile Include="Files\Tabs\NodeTabSaver.cs" />
     <Compile Include="Files\Tabs\NullObjects.cs" />
     <Compile Include="Files\Tabs\RedecompileTabs.cs" />
+    <Compile Include="Files\Tabs\RefreshResourcesCommand.cs" />
     <Compile Include="Files\Tabs\SaveCommands.cs" />
     <Compile Include="Files\Tabs\SaveManager.cs" />
     <Compile Include="Files\Tabs\SerializedTabs.cs" />
@@ -180,7 +182,6 @@
     <Compile Include="Files\TreeView\EventNode.cs" />
     <Compile Include="Files\TreeView\ExeUtils.cs" />
     <Compile Include="Files\TreeView\FieldNode.cs" />
-    <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeDataContext.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeGroups.cs" />
     <Compile Include="Files\TreeView\FileTreeView.cs" />
@@ -193,8 +194,17 @@
     <Compile Include="Files\TreeView\NamespaceNode.cs" />
     <Compile Include="Files\TreeView\PEFileNode.cs" />
     <Compile Include="Files\TreeView\PropertyNode.cs" />
-    <Compile Include="Files\TreeView\ReferencesNode.cs" />
-    <Compile Include="Files\TreeView\ResourcesNode.cs" />
+    <Compile Include="Files\TreeView\ReferencesFolderNode.cs" />
+    <Compile Include="Files\TreeView\ResourcesFolderNode.cs" />
+    <Compile Include="Files\TreeView\Resources\BuiltInResourceElementNode.cs" />
+    <Compile Include="Files\TreeView\Resources\Deserializer.cs" />
+    <Compile Include="Files\TreeView\Resources\ImageResourceNode.cs" />
+    <Compile Include="Files\TreeView\Resources\ResourceElementSetNode.cs" />
+    <Compile Include="Files\TreeView\Resources\ResourceNodeFactory.cs" />
+    <Compile Include="Files\TreeView\Resources\SerializedImageListStreamerResourceElementNode.cs" />
+    <Compile Include="Files\TreeView\Resources\SerializedImageResourceElementNode.cs" />
+    <Compile Include="Files\TreeView\Resources\UnknownResourceNode.cs" />
+    <Compile Include="Files\TreeView\Resources\UnknownSerializedResourceElementNode.cs" />
     <Compile Include="Files\TreeView\TypeNode.cs" />
     <Compile Include="Files\TreeView\UnknownFileNode.cs" />
     <Compile Include="Images\DotNetImageManager.cs" />
@@ -396,6 +406,7 @@
     <Resource Include="Images\Backward.png" />
     <Resource Include="Images\BaseTypeClosed.png" />
     <Resource Include="Images\BaseTypeOpened.png" />
+    <Resource Include="Images\Binary.png" />
     <Resource Include="Images\Class.png" />
     <Resource Include="Images\ClassInternal.png" />
     <Resource Include="Images\ClassPrivate.png" />
@@ -410,6 +421,7 @@
     <Resource Include="Images\ConstructorProtected.png" />
     <Resource Include="Images\ConstructorProtectedInternal.png" />
     <Resource Include="Images\Copy.png" />
+    <Resource Include="Images\CSharpFile.png" />
     <Resource Include="Images\Delegate.png" />
     <Resource Include="Images\DelegateInternal.png" />
     <Resource Include="Images\DelegatePrivate.png" />
@@ -470,6 +482,7 @@
     <Resource Include="Images\GenericProtected.png" />
     <Resource Include="Images\GenericProtectedInternal.png" />
     <Resource Include="Images\HorizontalTabGroup.png" />
+    <Resource Include="Images\ImageFile.png" />
     <Resource Include="Images\Interface.png" />
     <Resource Include="Images\InterfaceInternal.png" />
     <Resource Include="Images\InterfacePrivate.png" />
@@ -513,6 +526,8 @@
     <Resource Include="Images\PropertyProtectedInternal.png" />
     <Resource Include="Images\ReferenceFolderClosed.png" />
     <Resource Include="Images\ReferenceFolderOpened.png" />
+    <Resource Include="Images\Resource.png" />
+    <Resource Include="Images\ResourcesFile.png" />
     <Resource Include="Images\Save.png" />
     <Resource Include="Images\Search.png" />
     <Resource Include="Images\Settings.png" />
@@ -535,11 +550,14 @@
     <Resource Include="Images\StaticPropertyPrivate.png" />
     <Resource Include="Images\StaticPropertyProtected.png" />
     <Resource Include="Images\StaticPropertyProtectedInternal.png" />
+    <Resource Include="Images\Strings.png" />
     <Resource Include="Images\Struct.png" />
     <Resource Include="Images\StructInternal.png" />
     <Resource Include="Images\StructPrivate.png" />
     <Resource Include="Images\StructProtected.png" />
     <Resource Include="Images\StructProtectedInternal.png" />
+    <Resource Include="Images\TextFile.png" />
+    <Resource Include="Images\UserDefinedDataType.png" />
     <Resource Include="Images\VerticalTabGroup.png" />
     <Resource Include="Images\VirtualEvent.png" />
     <Resource Include="Images\VirtualEventCompilerControlled.png" />
@@ -559,7 +577,12 @@
     <Resource Include="Images\VirtualPropertyPrivate.png" />
     <Resource Include="Images\VirtualPropertyProtected.png" />
     <Resource Include="Images\VirtualPropertyProtectedInternal.png" />
+    <Resource Include="Images\VisualBasicFile.png" />
     <Resource Include="Images\WordWrap.png" />
+    <Resource Include="Images\XamlFile.png" />
+    <Resource Include="Images\XmlFile.png" />
+    <Resource Include="Images\XsdFile.png" />
+    <Resource Include="Images\XsltFile.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Microsoft.Windows.Shell.dll">

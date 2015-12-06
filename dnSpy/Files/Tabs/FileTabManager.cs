@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
@@ -167,14 +168,16 @@ namespace dnSpy.Files.Tabs {
 		readonly ITabManager tabManager;
 		readonly IFileTabContentFactoryManager fileTabContentFactoryManager;
 		readonly IWpfFocusManager wpfFocusManager;
+		readonly IDecompilationCache decompilationCache;
 		readonly Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>[] refFactories;
 
 		[ImportingConstructor]
-		FileTabManager(IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator, FileTreeView fileTreeView, ITabManagerCreator tabManagerCreator, IFileTabContentFactoryManager fileTabContentFactoryManager, IFileTabManagerSettings fileTabManagerSettings, IWpfFocusManager wpfFocusManager, [ImportMany] IEnumerable<Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>> mefRefFactories) {
+		FileTabManager(IFileTabUIContextLocatorCreator fileTabUIContextLocatorCreator, FileTreeView fileTreeView, ITabManagerCreator tabManagerCreator, IFileTabContentFactoryManager fileTabContentFactoryManager, IFileTabManagerSettings fileTabManagerSettings, IWpfFocusManager wpfFocusManager, IDecompilationCache decompilationCache, [ImportMany] IEnumerable<Lazy<IReferenceFileTabContentCreator, IReferenceFileTabContentCreatorMetadata>> mefRefFactories) {
 			this.fileTabManagerSettings = fileTabManagerSettings;
 			this.fileTabUIContextLocatorCreator = fileTabUIContextLocatorCreator;
 			this.fileTabContentFactoryManager = fileTabContentFactoryManager;
 			this.wpfFocusManager = wpfFocusManager;
+			this.decompilationCache = decompilationCache;
 			this.refFactories = mefRefFactories.OrderBy(a => a.Metadata.Order).ToArray();
 			this.fileTreeView = fileTreeView;
 			this.fileTreeView.TreeView.SelectionChanged += TreeView_SelectionChanged;
@@ -361,7 +364,7 @@ namespace dnSpy.Files.Tabs {
 			g.SetFocus(impl);
 		}
 
-		public void ForceRefresh(IEnumerable<IFileTab> tabs) {
+		public void Refresh(IEnumerable<IFileTab> tabs) {
 			if (tabs == null)
 				throw new ArgumentNullException();
 			foreach (var tab in tabs.ToArray()) {
@@ -415,6 +418,32 @@ namespace dnSpy.Files.Tabs {
 		internal void OnRemoved(TabContentImpl impl) {
 			if (ActiveTabContentImpl == null)
 				fileTreeView.TreeView.SelectItems(new ITreeNodeData[0]);
+		}
+
+		public void Refresh<T>() where T : IFileTreeNodeData {
+			Refresh(a => a is T);
+		}
+
+		public void Refresh(Predicate<IFileTreeNodeData> pred) {
+			var nodes = new List<IFileTreeNodeData>(FileTreeView.TreeView.Root.Data.Descendants().OfType<IFileTreeNodeData>().Where(a => pred(a)));
+			var hash = new HashSet<IDnSpyFileNode>();
+			foreach (var node in nodes) {
+				var n = node.GetAncestorOrSelf<IDnSpyFileNode>();
+				if (n == null)
+					continue;
+				hash.Add(n);
+			}
+			if (hash.Count == 0)
+				return;
+			decompilationCache.Clear(new HashSet<IDnSpyFile>(hash.Select(a => a.DnSpyFile)));
+
+			var tabs = new List<IFileTab>();
+			foreach (var tab in VisibleFirstTabs) {
+				bool refresh = tab.Content.Nodes.Any(a => hash.Contains(a.GetAncestorOrSelf<IDnSpyFileNode>()));
+				if (refresh)
+					tabs.Add(tab);
+			}
+			Refresh(tabs);
 		}
 	}
 }

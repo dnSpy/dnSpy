@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.Plugin {
@@ -37,6 +38,11 @@ namespace dnSpy.Contracts.Plugin {
 		/// Gets the <see cref="PluginInfo"/> instance
 		/// </summary>
 		PluginInfo PluginInfo { get; }
+
+		/// <summary>
+		/// Gets relative paths of all resource dictionaries that will be added to the app's resources
+		/// </summary>
+		IEnumerable<string> MergedResourceDictionaries { get; }
 	}
 
 	/// <summary>Metadata</summary>
@@ -53,6 +59,7 @@ namespace dnSpy.Contracts.Plugin {
 		/// <summary>Constructor</summary>
 		public ExportPluginAttribute()
 			: base(typeof(IPlugin)) {
+			Order = double.MaxValue;
 		}
 
 		/// <summary>

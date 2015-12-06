@@ -17,39 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
+using System.Windows.Forms;
 
-namespace dnSpy.TreeNodes {
-	public enum ResourceDataType {
-		Deserialized,
-		Serialized,
-	}
-
-	public interface IResourceNode {
+namespace dnSpy.Contracts.Files.TreeView.Resources {
+	/// <summary>
+	/// A resource node created from a serialized <see cref="ImageListStreamer"/>
+	/// </summary>
+	public interface ISerializedImageListStreamerResourceElementNode : IResourceElementNode {
 		/// <summary>
-		/// RVA of resource or 0
+		/// Gets the <see cref="ImageList"/> options
 		/// </summary>
-		uint RVA { get; }
-
-		/// <summary>
-		/// File offset of resource or 0
-		/// </summary>
-		ulong FileOffset { get; }
-
-		/// <summary>
-		/// Length of the resource
-		/// </summary>
-		ulong Length { get; }
-
-		/// <summary>
-		/// Gets the resource data
-		/// </summary>
-		/// <param name="type">Type of data</param>
-		/// <returns></returns>
-		IEnumerable<ResourceData> GetResourceData(ResourceDataType type);
-
-		void Decompile(Language language, ITextOutput output);
+		ImageListOptions ImageListOptions { get; }
 	}
 }

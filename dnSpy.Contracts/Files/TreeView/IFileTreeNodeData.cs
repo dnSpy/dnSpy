@@ -18,6 +18,7 @@
 */
 
 using System.Diagnostics;
+using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 
@@ -54,7 +55,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="self"></param>
 		/// <returns></returns>
 		public static IAssemblyFileNode GetAssemblyNode(this ITreeNodeData self) {
-			return self.GetAncestor<IAssemblyFileNode>();
+			return self.GetAncestorOrSelf<IAssemblyFileNode>();
 		}
 
 		/// <summary>
@@ -63,7 +64,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="self"></param>
 		/// <returns></returns>
 		public static IModuleFileNode GetModuleNode(this ITreeNodeData self) {
-			return self.GetAncestor<IModuleFileNode>();
+			return self.GetAncestorOrSelf<IModuleFileNode>();
 		}
 
 		/// <summary>
@@ -87,6 +88,16 @@ namespace dnSpy.Contracts.Files.TreeView {
 				self = parent.Data;
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// Gets the <see cref="ModuleDef"/> instance or null
+		/// </summary>
+		/// <param name="self">This</param>
+		/// <returns></returns>
+		public static ModuleDef GetModule(this ITreeNodeData self) {
+			var node = self.GetModuleNode();
+			return node == null ? null : node.DnSpyFile.ModuleDef;
 		}
 	}
 }

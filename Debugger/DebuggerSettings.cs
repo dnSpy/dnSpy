@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts;
@@ -290,7 +291,7 @@ namespace dnSpy.Debugger {
 		}
 		string coreCLRDbgShimFilename;
 
-		const string SETTINGS_NAME = "102DCD2E-BE0A-477C-B4D0-600C5CA28A6A";
+		static readonly Guid SETTINGS_GUID = new Guid("102DCD2E-BE0A-477C-B4D0-600C5CA28A6A");
 
 		void Load() {
 			try {
@@ -304,7 +305,7 @@ namespace dnSpy.Debugger {
 		}
 
 		void Load2() {
-			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_NAME);
+			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_GUID);
 			UseHexadecimal = section.Attribute<bool?>("UseHexadecimal") ?? true;
 			SyntaxHighlightCallStack = section.Attribute<bool?>("SyntaxHighlightCallStack") ?? true;
 			SyntaxHighlightBreakpoints = section.Attribute<bool?>("SyntaxHighlightBreakpoints") ?? true;
@@ -331,7 +332,7 @@ namespace dnSpy.Debugger {
 			if (disableSaveCounter != 0)
 				return;
 
-			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_NAME);
+			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_GUID);
 			section.Attribute("UseHexadecimal", UseHexadecimal);
 			section.Attribute("SyntaxHighlightCallStack", SyntaxHighlightCallStack);
 			section.Attribute("SyntaxHighlightBreakpoints", SyntaxHighlightBreakpoints);
