@@ -198,10 +198,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		void OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			TextArea.Caret.Show();
+			UpdateCurrentLineColors(true);
 		}
 
 		void OnLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			TextArea.Caret.Hide();
+			UpdateCurrentLineColors(true);
 		}
 
 		public void GoToMousePosition() {
@@ -345,10 +347,18 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			TextArea.SelectionBrush = sel.Background == null ? null : sel.Background;
 			TextArea.SelectionForeground = sel.Foreground == null ? null : sel.Foreground;
 
-			var currentLine = theme.GetColor(ColorType.CurrentLine);
+			UpdateCurrentLineColors(false);
+
+			if (redraw)
+				TextArea.TextView.Redraw();
+		}
+
+		void UpdateCurrentLineColors(bool redraw) {
+			var theme = themeManager.Theme;
+			bool hasFocus = this.IsKeyboardFocusWithin;
+			var currentLine = theme.GetColor(hasFocus ? ColorType.CurrentLine : ColorType.CurrentLineNoFocus);
 			TextArea.TextView.CurrentLineBackground = currentLine.Background == null ? null : currentLine.Background;
 			TextArea.TextView.CurrentLineBorder = new Pen(currentLine.Foreground == null ? null : currentLine.Foreground, 2);
-
 			if (redraw)
 				TextArea.TextView.Redraw();
 		}

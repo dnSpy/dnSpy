@@ -60,5 +60,13 @@ namespace dnSpy.Contracts.App {
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
 		/// <returns></returns>
 		T Ask<T>(string labelMessage, string defaultText = null, Func<string, T> converter = null, Func<string, string> verifier = null, Window ownerWindow = null);
+
+		/// <summary>
+		/// Show an exception message
+		/// </summary>
+		/// <param name="exception">Exception</param>
+		/// <param name="msg">Message to show or null</param>
+		/// <param name="ownerWindow">Owner window or null to use the main window</param>
+		void Show(Exception exception, string msg = null, Window ownerWindow = null);
 	}
 }

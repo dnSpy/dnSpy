@@ -31,34 +31,26 @@ namespace dnSpy.Files {
 		}
 
 		public IDnSpyFile Create(IFileManager fileManager, DnSpyFileInfo fileInfo) {
-			if (fileInfo.Type == FilesConstants.FILETYPE_FILE)
-				return FileManager.CreateDnSpyFileFromFile(fileInfo, fileInfo.Name, fileManager.Settings.UseMemoryMappedIO, fileManager.Settings.LoadPDBFiles, fileManager.AssemblyResolver);
-			else if (fileInfo.Type == FilesConstants.FILETYPE_GAC) {
-				var filename = GetGacFilename(fileInfo.Name);
-				if (filename != null)
-					return FileManager.CreateDnSpyFileFromFile(fileInfo, filename, fileManager.Settings.UseMemoryMappedIO, fileManager.Settings.LoadPDBFiles, fileManager.AssemblyResolver);
-			}
-			else if (fileInfo.Type == FilesConstants.FILETYPE_REFASM) {
-				var filename = GetRefFileFilename(fileInfo.Name);
-				if (filename != null)
-					return FileManager.CreateDnSpyFileFromFile(fileInfo, filename, fileManager.Settings.UseMemoryMappedIO, fileManager.Settings.LoadPDBFiles, fileManager.AssemblyResolver);
-			}
+			var filename = GetFilename(fileInfo);
+			if (filename != null)
+				return FileManager.CreateDnSpyFileFromFile(fileInfo, filename, fileManager.Settings.UseMemoryMappedIO, fileManager.Settings.LoadPDBFiles, fileManager.AssemblyResolver);
 			return null;
 		}
 
 		public IDnSpyFilenameKey CreateKey(IFileManager fileManager, DnSpyFileInfo fileInfo) {
+			var filename = GetFilename(fileInfo);
+			if (filename != null)
+				return new FilenameKey(filename);
+			return null;
+		}
+
+		static string GetFilename(DnSpyFileInfo fileInfo) {
 			if (fileInfo.Type == FilesConstants.FILETYPE_FILE)
-				return new FilenameKey(fileInfo.Name);
-			else if (fileInfo.Type == FilesConstants.FILETYPE_GAC) {
-				var filename = GetGacFilename(fileInfo.Name);
-				if (filename != null)
-					return new FilenameKey(filename);
-			}
-			else if (fileInfo.Type == FilesConstants.FILETYPE_REFASM) {
-				var filename = GetRefFileFilename(fileInfo.Name);
-				if (filename != null)
-					return new FilenameKey(filename);
-			}
+				return fileInfo.Name;
+			if (fileInfo.Type == FilesConstants.FILETYPE_GAC)
+				return GetGacFilename(fileInfo.Name);
+			if (fileInfo.Type == FilesConstants.FILETYPE_REFASM)
+				return GetRefFileFilename(fileInfo.Name);
 			return null;
 		}
 
@@ -72,13 +64,10 @@ namespace dnSpy.Files {
 			if (index < 0)
 				return null;
 
-			var asmFullName = s.Substring(0, index);
-			var refFileName = s.Substring(index + FilesConstants.REFERENCE_ASSEMBLY_SEPARATOR.Length);
-			var f = GetGacFilename(asmFullName);
+			var f = GetGacFilename(s.Substring(0, index));
 			if (f != null)
 				return f;
-
-			return refFileName.Trim();
+			return s.Substring(index + FilesConstants.REFERENCE_ASSEMBLY_SEPARATOR.Length).Trim();
 		}
 	}
 }

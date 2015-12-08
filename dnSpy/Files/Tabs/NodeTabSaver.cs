@@ -166,13 +166,8 @@ namespace dnSpy.Files.Tabs {
 			}, result => {
 				ctx.Dispose();
 				uiContext.HideCancelButton();
-				if (result.Exception != null) {
-					var msg = string.Format("An exception occurred:\n\n{0}", result.Exception.ToString());
-					const int MAX_LEN = 1024;
-					if (msg.Length > MAX_LEN)
-						msg = msg.Substring(0, MAX_LEN) + "[...]";
-					messageBoxManager.Show(msg);
-				}
+				if (result.Exception != null)
+					messageBoxManager.Show(result.Exception);
 			});
 		}
 	}

@@ -80,7 +80,7 @@ namespace dnSpy.Files.TreeView.Resources {
 				yield return Context.ResourceNodeFactory.Create(module, elem, treeNodeGroup);
 		}
 
-		protected override IEnumerable<ResourceData> GetDeserialized() {
+		protected override IEnumerable<ResourceData> GetDeserializedData() {
 			TreeNode.EnsureChildrenLoaded();
 			foreach (IResourceDataProvider node in TreeNode.DataChildren) {
 				foreach (var data in node.GetResourceData(ResourceDataType.Deserialized))

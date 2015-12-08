@@ -178,8 +178,11 @@ namespace ICSharpCode.TreeView
 
 		protected override void ClearContainerForItemOverride(DependencyObject element, object item) {
 			var item2 = element as SharpTreeViewItem;
-			if (item2 != null)
-				item2.NodeView.DataContext = null;
+			if (item2 != null) {
+				var nv = item2.NodeView;
+				if (nv != null)
+					nv.DataContext = null;
+			}
 			base.ClearContainerForItemOverride(element, item);
 		}
 

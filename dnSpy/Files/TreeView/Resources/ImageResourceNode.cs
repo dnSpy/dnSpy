@@ -160,8 +160,9 @@ namespace dnSpy.Files.TreeView.Resources {
 			}
 		}
 
-		protected override IEnumerable<ResourceData> GetDeserialized() {
-			yield return new ResourceData(Resource.Name, token => new MemoryStream(imageData));
+		protected override IEnumerable<ResourceData> GetDeserializedData() {
+			var id = imageData;
+			yield return new ResourceData(Resource.Name, token => new MemoryStream(id));
 		}
 	}
 
@@ -230,8 +231,9 @@ namespace dnSpy.Files.TreeView.Resources {
 			base.WriteShort(output, language, showOffset);
 		}
 
-		protected override IEnumerable<ResourceData> GetDeserialized() {
-			yield return new ResourceData(ResourceElement.Name, token => new MemoryStream(imageData));
+		protected override IEnumerable<ResourceData> GetDeserializedData() {
+			var id = imageData;
+			yield return new ResourceData(ResourceElement.Name, token => new MemoryStream(id));
 		}
 
 		public override string CheckCanUpdateData(ResourceElement newResElem) {

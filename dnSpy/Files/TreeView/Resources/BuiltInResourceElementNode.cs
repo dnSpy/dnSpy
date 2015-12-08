@@ -49,25 +49,28 @@ namespace dnSpy.Files.TreeView.Resources {
 			: base(treeNodeGroup, resourceElement) {
 		}
 
-		public override string GetStringContent(CancellationToken token) {
+		public override string ToString(CancellationToken token) {
 			if (ResourceElement.ResourceData.Code == ResourceTypeCode.ByteArray || ResourceElement.ResourceData.Code == ResourceTypeCode.Stream) {
 				var data = (byte[])((BuiltInResourceData)ResourceElement.ResourceData).Data;
-				return ResourceUtils.GetStringContent(new MemoryStream(data));
+				return ResourceUtils.TryGetString(new MemoryStream(data));
 			}
 			return null;
 		}
 
-		protected override IEnumerable<ResourceData> GetDeserialized() {
-			if (ResourceElement.ResourceData.Code == ResourceTypeCode.Null)
-				yield return new ResourceData(ResourceElement.Name, token => new MemoryStream());
-			else if (ResourceElement.ResourceData.Code == ResourceTypeCode.String)
-				yield return new ResourceData(ResourceElement.Name, token => ResourceUtils.StringToStream((string)((BuiltInResourceData)ResourceElement.ResourceData).Data));
-			else if (ResourceElement.ResourceData.Code == ResourceTypeCode.ByteArray || ResourceElement.ResourceData.Code == ResourceTypeCode.Stream)
-				yield return new ResourceData(ResourceElement.Name, token => new MemoryStream((byte[])((BuiltInResourceData)ResourceElement.ResourceData).Data));
-			else if (ResourceElement.ResourceData.Code >= ResourceTypeCode.UserTypes)
-				yield return new ResourceData(ResourceElement.Name, token => new MemoryStream(((BinaryResourceData)ResourceElement.ResourceData).Data));
-			else
-				yield return new ResourceData(ResourceElement.Name, token => ResourceUtils.StringToStream(this.ValueString));
+		protected override IEnumerable<ResourceData> GetDeserializedData() {
+			var re = ResourceElement;
+			if (re.ResourceData.Code == ResourceTypeCode.Null)
+				yield return new ResourceData(re.Name, token => new MemoryStream());
+			else if (re.ResourceData.Code == ResourceTypeCode.String)
+				yield return new ResourceData(re.Name, token => ResourceUtils.StringToStream((string)((BuiltInResourceData)re.ResourceData).Data));
+			else if (re.ResourceData.Code == ResourceTypeCode.ByteArray || re.ResourceData.Code == ResourceTypeCode.Stream)
+				yield return new ResourceData(re.Name, token => new MemoryStream((byte[])((BuiltInResourceData)re.ResourceData).Data));
+			else if (re.ResourceData.Code >= ResourceTypeCode.UserTypes)
+				yield return new ResourceData(re.Name, token => new MemoryStream(((BinaryResourceData)re.ResourceData).Data));
+			else {
+				var vs = this.ValueString;
+				yield return new ResourceData(re.Name, token => ResourceUtils.StringToStream(vs));
+			}
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {

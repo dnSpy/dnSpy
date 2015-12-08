@@ -153,26 +153,26 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 			output.WriteLine();
 		}
 
-		public virtual string GetStringContent(CancellationToken token) {
+		public virtual string ToString(CancellationToken token) {
 			return null;
 		}
 
 		public IEnumerable<ResourceData> GetResourceData(ResourceDataType type) {
 			switch (type) {
 			case ResourceDataType.Deserialized:
-				return GetDeserialized();
+				return GetDeserializedData();
 			case ResourceDataType.Serialized:
-				return GetSerialized();
+				return GetSerializedData();
 			default:
 				throw new InvalidOperationException();
 			}
 		}
 
-		protected virtual IEnumerable<ResourceData> GetDeserialized() {
-			return GetSerialized();
+		protected virtual IEnumerable<ResourceData> GetDeserializedData() {
+			return GetSerializedData();
 		}
 
-		protected virtual IEnumerable<ResourceData> GetSerialized() {
+		protected virtual IEnumerable<ResourceData> GetSerializedData() {
 			var er = resource as EmbeddedResource;
 			if (er != null)
 				yield return new ResourceData(resource.Name, token => new MemoryStream(er.GetResourceData()));

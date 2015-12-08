@@ -213,11 +213,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			AvalonEditTextOutput output;
 
-			var highlighting = decompileContext.DecompileNodeContext.Language.GetHighlightingDefinition();
-			if (decompileContext.DecompileNodeContext.HighlightingExtension != null)
-				highlighting = HighlightingManager.Instance.GetDefinitionByExtension(decompileContext.DecompileNodeContext.HighlightingExtension) ?? highlighting;
+			IHighlightingDefinition highlighting;
 			if (decompileContext.DecompileNodeContext.HighlightingDefinition != null)
 				highlighting = decompileContext.DecompileNodeContext.HighlightingDefinition;
+			else if (decompileContext.DecompileNodeContext.HighlightingExtension != null)
+				highlighting = HighlightingManager.Instance.GetDefinitionByExtension(decompileContext.DecompileNodeContext.HighlightingExtension);
+			else
+				highlighting = decompileContext.DecompileNodeContext.Language.GetHighlightingDefinition();
 
 			if (result.IsCanceled) {
 				output = new AvalonEditTextOutput();

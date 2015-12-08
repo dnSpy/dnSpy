@@ -78,7 +78,7 @@ namespace dnSpy.BamlDecompiler {
 			ext = ".xml";
 		}
 
-		protected override IEnumerable<ResourceData> GetDeserialized() {
+		protected override IEnumerable<ResourceData> GetDeserializedData() {
 			yield return new ResourceData(GetFilename(), token => GetDecompiledStream(token));
 		}
 
@@ -123,7 +123,7 @@ namespace dnSpy.BamlDecompiler {
 			return ext;
 		}
 
-		public override string GetStringContent(CancellationToken token) {
+		public override string ToString(CancellationToken token) {
 			var output = new PlainTextOutput();
 			Decompile(output, token);
 			return output.ToString();

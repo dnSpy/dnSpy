@@ -65,6 +65,6 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		/// </summary>
 		/// <param name="token">Cancellation token</param>
 		/// <returns></returns>
-		string GetStringContent(CancellationToken token);
+		string ToString(CancellationToken token);
 	}
 }

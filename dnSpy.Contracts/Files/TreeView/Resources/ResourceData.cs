@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		readonly string name;
 
 		/// <summary>
-		/// Gets the stream
+		/// Gets the stream. Can be called in any thread.
 		/// </summary>
 		/// <param name="token">Cancellation token</param>
 		/// <returns></returns>
@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		/// Constructor
 		/// </summary>
 		/// <param name="name">Name</param>
-		/// <param name="getStream">Returns the stream</param>
+		/// <param name="getStream">Returns the stream. It can be called in any thread.</param>
 		public ResourceData(string name, Func<CancellationToken, Stream> getStream) {
 			this.name = name;
 			this.getStream = getStream;

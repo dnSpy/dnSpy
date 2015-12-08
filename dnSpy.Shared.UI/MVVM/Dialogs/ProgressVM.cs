@@ -28,6 +28,7 @@ namespace dnSpy.Shared.UI.MVVM.Dialogs {
 		void SetTotalProgress(double progress);
 		void SetDescription(string desc);
 		void ThrowIfCancellationRequested();
+		CancellationToken Token { get; }
 	}
 
 	public interface IProgressTask {
@@ -44,6 +45,7 @@ namespace dnSpy.Shared.UI.MVVM.Dialogs {
 
 		readonly Dispatcher dispatcher;
 		readonly IProgressTask task;
+		CancellationTokenSource cancellationTokenSource;
 
 		public ProgressVM(Dispatcher dispatcher, IProgressTask task) {
 			this.dispatcher = dispatcher;
@@ -51,6 +53,7 @@ namespace dnSpy.Shared.UI.MVVM.Dialogs {
 			this.progressMinimum = task.ProgressMinimum;
 			this.progressMaximum = task.ProgressMaximum;
 			this.isIndeterminate = task.IsIndeterminate;
+			this.cancellationTokenSource = new CancellationTokenSource();
 			Start();
 		}
 
@@ -63,6 +66,8 @@ namespace dnSpy.Shared.UI.MVVM.Dialogs {
 
 		public void Cancel() {
 			cancelling = true;
+			if (cancellationTokenSource != null)
+				cancellationTokenSource.Cancel();
 		}
 
 		public bool IsIndeterminate {
@@ -191,12 +196,17 @@ namespace dnSpy.Shared.UI.MVVM.Dialogs {
 			QueueAction(new SetDescriptionAction(() => CurrentItemDescription = desc), true);
 		}
 
+		public CancellationToken Token {
+			get { return cancellationTokenSource.Token; }
+		}
+
 		void IProgress.ThrowIfCancellationRequested() {
-			if (cancelling)
-				throw new OperationCanceledException();
+			this.cancellationTokenSource.Token.ThrowIfCancellationRequested();
 		}
 
 		void OnTaskCompleted() {
+			cancellationTokenSource.Dispose();
+			cancellationTokenSource = null;
 			HasCompleted = true;
 			if (OnCompleted != null)
 				OnCompleted(this, EventArgs.Empty);

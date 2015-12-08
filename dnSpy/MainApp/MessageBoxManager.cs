@@ -102,6 +102,19 @@ namespace dnSpy.MainApp {
 			return win.ClickedButton;
 		}
 
+		public void Show(Exception exception, string msg = null, Window ownerWindow = null) {
+			string msgToShow;
+			if (exception != null) {
+				msgToShow = string.Format("{0}\n\n{1}", msg ?? "An exception occurred:", exception.ToString());
+				const int MAX_LEN = 2048;
+				if (msgToShow.Length > MAX_LEN)
+					msgToShow = msgToShow.Substring(0, MAX_LEN) + "[...]";
+			}
+			else
+				msgToShow = msg ?? "An unknown error occurred";
+			Show(msgToShow, MsgBoxButton.OK, ownerWindow);
+		}
+
 		void Create(string message, MsgBoxButton buttons, bool hasDontShowAgain, Window ownerWindow, out MsgBoxDlg win, out MsgBoxVM vm) {
 			win = new MsgBoxDlg();
 			var winTmp = win;

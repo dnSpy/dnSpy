@@ -50,10 +50,10 @@ namespace dnSpy.Files.TreeView.Resources {
 			}
 		}
 
-		public override string GetStringContent(CancellationToken token) {
+		public override string ToString(CancellationToken token) {
 			var er = Resource as EmbeddedResource;
 			if (er != null)
-				return ResourceUtils.GetStringContent(new MemoryStream(er.GetResourceData()));
+				return ResourceUtils.TryGetString(new MemoryStream(er.GetResourceData()));
 			return null;
 		}
 

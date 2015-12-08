@@ -67,6 +67,7 @@
 		<color name="specialcharacterbox" fg="#FFF1F1F1" bg="#FF666699" />
 		<color name="searchresultmarker" bg="#FFFFB7" />
 		<color name="currentline" fg="#282828" bg="#0F0F0F" />
+		<color name="currentlinenofocus" fg="#282828" bg="#242424" />
 		<color name="selectedreturnstatement" fg="Black" bg="#6A7CA5A0" />
 		<color name="returnstatement" bg="#8E5A5A5A" />
 		<color name="hextext" fg="#DCDCDC" bg="#1E1E1E" />

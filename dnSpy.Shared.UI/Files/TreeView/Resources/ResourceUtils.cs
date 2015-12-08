@@ -97,7 +97,7 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 			output.Write(": ", TextTokenType.Comment);
 		}
 
-		public static string GetStringContent(Stream stream) {
+		public static string TryGetString(Stream stream) {
 			if (stream == null)
 				return null;
 
@@ -110,7 +110,7 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 		}
 
 		public static bool Decompile(IDecompileNodeContext context, Stream stream, string name) {
-			if (stream == null || stream.Length >= 1000000)
+			if (stream == null || stream.Length > 500 * 1024)
 				return false;
 
 			stream.Position = 0;

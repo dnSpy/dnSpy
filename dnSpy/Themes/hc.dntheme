@@ -3,6 +3,7 @@
 		<color name="defaulttext" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="selection" bg="#33FFFFFF" />
 		<color name="currentline" fg="#FFEEEEEE" bg="#FF000000" />
+		<color name="currentlinenofocus" fg="#FFEEEEEE" bg="#FF000000" />
 		<color name="currentstatement" fg="Black" bg="#8FFFEE62" />
 		<color name="returnstatement" bg="#88C0C0C0" />
 		<color name="selectedreturnstatement" fg="Black" bg="#94B4E4B4" />

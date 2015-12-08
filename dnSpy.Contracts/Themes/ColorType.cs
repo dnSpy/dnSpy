@@ -130,6 +130,7 @@ namespace dnSpy.Contracts.Themes {
 		SpecialCharacterBox,
 		SearchResultMarker,
 		CurrentLine,
+		CurrentLineNoFocus,
 
 		HexText,
 		HexOffset,

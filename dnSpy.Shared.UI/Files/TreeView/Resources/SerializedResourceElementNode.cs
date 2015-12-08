@@ -65,11 +65,13 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 				Deserialize();
 		}
 
-		protected override IEnumerable<ResourceData> GetDeserialized() {
-			if (deserializedData != null)
-				yield return new ResourceData(ResourceElement.Name, token => ResourceUtils.StringToStream(ConvertObjectToString(deserializedData)));
+		protected override IEnumerable<ResourceData> GetDeserializedData() {
+			var dd = deserializedData;
+			var re = ResourceElement;
+			if (dd != null)
+				yield return new ResourceData(re.Name, token => ResourceUtils.StringToStream(ConvertObjectToString(dd)));
 			else
-				yield return new ResourceData(ResourceElement.Name, token => new MemoryStream(((BinaryResourceData)ResourceElement.ResourceData).Data));
+				yield return new ResourceData(re.Name, token => new MemoryStream(((BinaryResourceData)re.ResourceData).Data));
 		}
 
 		protected virtual void OnDeserialized() {
@@ -117,7 +119,7 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 			DeserializeIfPossible();
 		}
 
-		public override string GetStringContent(CancellationToken token) {
+		public override string ToString(CancellationToken token) {
 			if (IsSerialized)
 				return null;
 			return DeserializedStringValue;

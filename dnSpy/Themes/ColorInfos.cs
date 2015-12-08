@@ -40,6 +40,10 @@ namespace dnSpy.Themes {
 				DefaultForeground = "#EAEAF2",
 				DefaultBackground = "#00000000",
 			},
+			new BrushColorInfo(ColorType.CurrentLineNoFocus, "Current line (no keyboard focus)") {
+				DefaultForeground = "#EEEEEE",
+				DefaultBackground = "#00000000",
+			},
 			new BrushColorInfo(ColorType.SystemColorsControl, "SystemColors.Control") {
 				DefaultBackground = "#FFF0F0F0",
 				BackgroundResourceKey = "SystemColorsControl"

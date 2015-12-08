@@ -168,19 +168,39 @@ namespace dnSpy.TreeView {
 		}
 
 		int GetInsertIndex(TreeNodeImpl owner, TreeNodeImpl impl, ITreeNodeGroup group) {
-			//TODO: Could be optimized if needed, eg. use a binary search
 			var children = owner.Children;
-			for (int i = 0; i < children.Count; i++) {
-				var otherChild = children[i];
-				var otherGroup = otherChild.Data.TreeNodeGroup;
-				if (otherGroup == null)
-					return i;
-				int x = Compare(impl.Data, otherChild.Data, group, otherGroup);
-				if (x <= 0)
-					return i;
+
+			// At creation time, it's most likely inserted last, so check that position first.
+			if (children.Count >= 1) {
+				var lastData = children[children.Count - 1].Data;
+				var lastGroup = lastData.TreeNodeGroup;
+				if (lastGroup != null) {
+					int x = Compare(impl.Data, lastData, group, lastGroup);
+					if (x > 0)
+						return children.Count;
+				}
 			}
 
-			return children.Count;
+			int lo = 0, hi = children.Count - 1;
+			while (lo <= hi && hi != -1) {
+				int i = (lo + hi) / 2;
+
+				var otherData = children[i].Data;
+				var otherGroup = otherData.TreeNodeGroup;
+				int x;
+				if (otherGroup == null)
+					x = -1;
+				else
+					x = Compare(impl.Data, otherData, group, otherGroup);
+
+				if (x == 0)
+					return i;
+				if (x < 0)
+					hi = i - 1;
+				else
+					lo = i + 1;
+			}
+			return hi + 1;
 		}
 
 		int Compare(ITreeNodeData a, ITreeNodeData b, ITreeNodeGroup ga, ITreeNodeGroup gb) {
