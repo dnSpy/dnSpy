@@ -4,8 +4,8 @@ using System.Windows.Media.Imaging;
 
 namespace dnSpy.Images {
 	// Fixes the VS2013 images to work with any theme. Same algo as VS2015 itself uses...
-	public static class ThemedImageCreator {
-		public struct HslColor {
+	static class ThemedImageCreator {
+		struct HslColor {
 			public readonly double Hue;
 			public readonly double Saturation;
 			public readonly double Luminosity;

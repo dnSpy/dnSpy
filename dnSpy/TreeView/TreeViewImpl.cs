@@ -48,7 +48,6 @@ namespace dnSpy.TreeView {
 		}
 		readonly SharpTreeView sharpTreeView;
 
-		IStackedContent IStackedContentChild.StackedContent { get; set; }
 		object IStackedContentChild.UIObject {
 			get { return sharpTreeView; }
 		}

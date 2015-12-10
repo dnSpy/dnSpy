@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 
 namespace dnSpy.Contracts.Tabs {
@@ -24,6 +25,11 @@ namespace dnSpy.Contracts.Tabs {
 	/// Contains 0 or more tabs
 	/// </summary>
 	public interface ITabGroup {
+		/// <summary>
+		/// Any value can be written here. It's ignored by this instance.
+		/// </summary>
+		object Tag { get; set; }
+
 		/// <summary>
 		/// Gets the owner <see cref="ITabGroupManager"/> instance
 		/// </summary>
@@ -38,6 +44,11 @@ namespace dnSpy.Contracts.Tabs {
 		/// Gets the active <see cref="ITabContent"/> or null if <see cref="TabContents"/> is empty
 		/// </summary>
 		ITabContent ActiveTabContent { get; set; }
+
+		/// <summary>
+		/// Raised when a <see cref="ITabContent"/> is attached/detached
+		/// </summary>
+		event EventHandler<TabContentAttachedEventArgs> TabContentAttached;
 
 		/// <summary>
 		/// true if keyboard focus is within the tab
@@ -61,12 +72,6 @@ namespace dnSpy.Contracts.Tabs {
 		/// </summary>
 		/// <param name="content">Content</param>
 		void Add(ITabContent content);
-
-		/// <summary>
-		/// Removes tab content
-		/// </summary>
-		/// <param name="content">Content</param>
-		void Remove(ITabContent content);
 
 		/// <summary>
 		/// true if <see cref="CloseActiveTab()"/> can execute

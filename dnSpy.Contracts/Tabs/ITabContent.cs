@@ -28,7 +28,7 @@ namespace dnSpy.Contracts.Tabs {
 		/// <summary>
 		/// Title. If this property can change, you must implement <see cref="INotifyPropertyChanged"/>
 		/// </summary>
-		string Title { get; }   // The data template uses a TextBlock so need to keep it a string
+		string Title { get; }
 
 		/// <summary>
 		/// ToolTip or null. If this property can change, you must implement <see cref="INotifyPropertyChanged"/>
@@ -41,8 +41,7 @@ namespace dnSpy.Contracts.Tabs {
 		object UIObject { get; }
 
 		/// <summary>
-		/// Gets the element that should should get focus when the tab is selected or null to use
-		/// <see cref="UIObject"/>
+		/// Gets the element that should get focus when the tab is selected or null to use <see cref="UIObject"/>
 		/// </summary>
 		IInputElement FocusedElement { get; }
 

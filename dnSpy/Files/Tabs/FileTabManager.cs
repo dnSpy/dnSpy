@@ -179,14 +179,19 @@ namespace dnSpy.Files.Tabs {
 			this.wpfFocusManager = wpfFocusManager;
 			this.decompilationCache = decompilationCache;
 			this.refFactories = mefRefFactories.OrderBy(a => a.Metadata.Order).ToArray();
+			var tvElem = fileTreeView.TreeView.UIObject as UIElement;
+			Debug.Assert(tvElem != null);
+			if (tvElem != null) {
+				tvElem.IsVisibleChanged += TreeView_IsVisibleChanged;
+				isTreeViewVisible = tvElem.IsVisible;
+			}
 			this.fileTreeView = fileTreeView;
 			this.fileTreeView.TreeView.SelectionChanged += TreeView_SelectionChanged;
 			this.fileTreeView.NodesTextChanged += FileTreeView_NodesTextChanged;
 			this.tabManager = tabManagerCreator.Create();
-			this.tabGroupManager = this.tabManager.Create(new Guid(MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID));
+			this.tabGroupManager = this.tabManager.Create(new TabGroupManagerOptions(MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID));
 			this.tabGroupManager.TabSelectionChanged += TabGroupManager_TabSelectionChanged;
 			this.tabGroupManager.TabGroupSelectionChanged += TabGroupManager_TabGroupSelectionChanged;
-			this.tabGroupManager.Create();
 		}
 
 		void TabGroupManager_TabGroupSelectionChanged(object sender, TabGroupSelectedEventArgs e) {
@@ -294,6 +299,10 @@ namespace dnSpy.Files.Tabs {
 
 		int disableSelectTreeNodes;
 		internal void OnNewTabContentShown(IFileTab fileTab) {
+			if (fileTab == null)
+				return;
+			if (!isTreeViewVisible)
+				return;
 			if (!tabsLoaded)
 				return;
 			if (disableSelectTreeNodes > 0)
@@ -336,6 +345,16 @@ namespace dnSpy.Files.Tabs {
 				else
 					wpfFocusManager.Focus(focusedElem);
 			}
+		}
+
+		bool isTreeViewVisible = true;
+		void TreeView_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+			if ((bool)e.NewValue) {
+				isTreeViewVisible = true;
+				OnNewTabContentShown(ActiveTabContentImpl);
+			}
+			else
+				isTreeViewVisible = false;
 		}
 
 		static bool Equals(ITreeNodeData[] a, ITreeNodeData[] b) {

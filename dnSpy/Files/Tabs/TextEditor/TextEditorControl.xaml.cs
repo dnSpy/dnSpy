@@ -58,6 +58,7 @@ using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
+using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
@@ -109,7 +110,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			InitializeComponent();
 			this.textEditorSettings.PropertyChanged += TextEditorSettings_PropertyChanged;
 
-			Loaded += TextEditorControl_Loaded;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
 			textEditor = new NewTextEditor(themeManager);
@@ -142,12 +142,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				Mode = BindingMode.OneWay,
 			});
 
-			iconBarMargin = new IconBarMargin(textEditorUIContext, textLineObjectManager, imageManager);
+			iconBarMargin = new IconBarMargin(textEditorUIContext, textLineObjectManager, imageManager, themeManager);
 			TextEditor.TextArea.LeftMargins.Insert(0, iconBarMargin);
-			TextEditor.TextArea.TextView.VisualLinesChanged += delegate { iconBarMargin.InvalidateVisual(); };
+			TextEditor.TextArea.TextView.VisualLinesChanged += (s, e) => iconBarMargin.InvalidateVisual();
 
 			textMarkerService = new TextMarkerService(this, textEditorUIContext, textLineObjectManager);
 			TextEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
+			TextEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 
 			searchPanel = SearchPanel.Install(TextEditor.TextArea);
 			searchPanel.RegisterCommands(this.CommandBindings);
@@ -166,6 +167,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			this.AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnGotKeyboardFocus), true);
 			this.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnLostKeyboardFocus), true);
+
+			OnHighlightCurrentLineChanged();
+			OnShowLineNumbersChanged();
+			OnAutoHighlightRefsChanged();
 		}
 
 		protected override void OnDragOver(DragEventArgs e) {
@@ -227,7 +232,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			RemoveCommands(handler.CommandBindings);
 		}
 
-		static void RemoveCommands(ICSharpCode.AvalonEdit.Editing.TextAreaInputHandler handler) {
+		static void RemoveCommands(TextAreaInputHandler handler) {
 			var commands = new HashSet<ICommand>();
 			var inputList = (IList<InputBinding>)handler.InputBindings;
 			for (int i = inputList.Count - 1; i >= 0; i--) {
@@ -258,7 +263,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			var bindingList = (IList<CommandBinding>)commandBindings;
 			for (int i = bindingList.Count - 1; i >= 0; i--) {
 				var binding = bindingList[i];
-				if (binding.Command == ICSharpCode.AvalonEdit.AvalonEditCommands.DeleteLine ||
+				if (binding.Command == AvalonEditCommands.DeleteLine ||
 					binding.Command == ApplicationCommands.Undo ||
 					binding.Command == ApplicationCommands.Redo ||
 					binding.Command == ApplicationCommands.Cut ||
@@ -375,20 +380,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			var marker = theme.GetColor(ColorType.SearchResultMarker);
 			searchPanel.MarkerBrush = marker.Background == null ? Brushes.LightGreen : marker.Background;
 			iconBarMargin.InvalidateVisual();
-		}
-
-		void TextEditorControl_Loaded(object sender, RoutedEventArgs e) {
-			Loaded -= TextEditorControl_Loaded;
-			OnHighlightCurrentLineChanged();
-			OnShowLineNumbersChanged();
-			OnAutoHighlightRefsChanged();
-
-			TextEditor.TextArea.TextView.VisualLinesChanged += (s, e2) => iconBarMargin.InvalidateVisual();
-
-			// We need to add this here in Loaded and not in the ctor. Adding it in the ctor causes
-			// the highlighted line not to be shown when opening a new tab. It's shown again when
-			// the caret is moved to another line.
-			TextEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 		}
 
 		void Caret_PositionChanged(object sender, EventArgs e) {
@@ -518,7 +509,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				}
 
 				if (refSeg.IsLocal && MarkReferences(refSeg))
-					return false;   // Allow another handler to set a new caret position
+					return false;	// Allow another handler to set a new caret position
 
 				textEditorHelper.SetFocus();
 				if (!canJumpToReference)

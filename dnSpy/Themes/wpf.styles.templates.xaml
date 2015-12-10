@@ -7,6 +7,8 @@
                     xmlns:tabssettings="clr-namespace:dnSpy.Files.Tabs.Settings"
                     xmlns:compiler="clr-namespace:ICSharpCode.Decompiler;assembly=ICSharpCode.Decompiler"
                     xmlns:mainapp="clr-namespace:dnSpy.MainApp"
+                    xmlns:tw="clr-namespace:dnSpy.ToolWindows"
+                    xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<!--
@@ -4988,7 +4990,7 @@
     </Style>
 
     <tabs:FileTabBackgroundConverter x:Key="FileTabBackgroundConverter"/>
-    <Style x:Key="FileTabGroupTabControl"
+    <Style x:Key="FileTabGroupTabControlStyle"
            BasedOn="{StaticResource {x:Type TabControl}}"
            TargetType="{x:Type TabControl}">
         <Setter Property="Foreground"
@@ -5014,17 +5016,15 @@
                           SnapsToDevicePixels="true"
                           ClipToBounds="true">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition x:Name="ColumnDefinition0"/>
-                            <ColumnDefinition x:Name="ColumnDefinition1"
-                                              Width="0"/>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="0"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
-                            <RowDefinition x:Name="RowDefinition0"
-                                           Height="Auto"/>
-                            <RowDefinition x:Name="RowDefinition1"
-                                           Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <TabPanel x:Name="HeaderPanel"
+                                  mvvm:IsDraggableAP.IsDraggable="True"
                                   Panel.ZIndex ="1" 
                                   KeyboardNavigation.TabIndex="1"
                                   Grid.Column="0"
@@ -5032,6 +5032,7 @@
                                   Margin="0 0 0 0"
                                   IsItemsHost="true"/>
                         <Border x:Name="ContentPanel"
+                                mvvm:IsDraggableAP.IsDraggable="False"
                                 Background="{TemplateBinding Background}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
@@ -5051,7 +5052,7 @@
         </Setter>
     </Style>
 
-	<Style TargetType="{x:Type tabs:TabItemImpl}">
+	<Style x:Key="FileTabGroupTabItemStyle" TargetType="{x:Type TabItem}">
 		<Setter Property="HorizontalContentAlignment"
 				Value="Stretch"/>
 		<Setter Property="VerticalContentAlignment"
@@ -5059,7 +5060,7 @@
 		<Setter Property="Control.Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type TabItem}">
-					<Border ToolTip="{Binding ToolTip}">
+					<Border ToolTip="{Binding ToolTip}" mvvm:IsDraggableAP.IsDraggable="True">
 						<Border>
 							<Border Name="Border"
 									Background="{DynamicResource EnvironmentFileTabBackground}"
@@ -5068,6 +5069,7 @@
 									Padding="0 1 0 3">
 								<DockPanel Name="DockPanel" TextBlock.Foreground="{DynamicResource EnvironmentFileTabText}">
 									<ctrls:TabButton x:Name="CloseButton"
+													 mvvm:IsDraggableAP.IsDraggable="False"
 													 DockPanel.Dock="Right"
 													 Margin="3 0 3 0"
 													 Command="{Binding CloseCommand}"
@@ -5146,6 +5148,198 @@
 			</Setter.Value>
 		</Setter>
 	</Style>
+
+    <Style x:Key="ToolWindowGroupTabControlStyle"
+           BasedOn="{StaticResource {x:Type TabControl}}"
+           TargetType="{x:Type TabControl}">
+        <Setter Property="Foreground"
+                Value="{DynamicResource SystemColorsControlText}"/>
+        <Setter Property="Padding"
+                Value="0 0 0 0"/>
+        <Setter Property="BorderThickness"
+                Value="0 0 0 0"/>
+        <Setter Property="Background"
+                Value="{DynamicResource EnvironmentToolWindow}"/>
+        <Setter Property="Visibility"
+                Value="{Binding HasOpenedDoc, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        <Setter Property="HorizontalContentAlignment"
+                Value="Center"/>
+        <Setter Property="VerticalContentAlignment"
+                Value="Center"/>
+        <Setter Property="FocusVisualStyle"
+                Value="{x:Null}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabControl}">
+                    <Grid KeyboardNavigation.TabNavigation="Local"
+                          SnapsToDevicePixels="true"
+                          ClipToBounds="true">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="0"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <TabPanel x:Name="HeaderPanel"
+                                  mvvm:IsDraggableAP.IsDraggable="True"
+                                  Panel.ZIndex ="1" 
+                                  KeyboardNavigation.TabIndex="1"
+                                  Grid.Column="0"
+                                  Grid.Row="1"
+                                  Margin="0 -1 0 0"
+                                  IsItemsHost="true"/>
+                        <Border x:Name="ContentPanel"
+                                mvvm:IsDraggableAP.IsDraggable="False"
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="1 1 1 1"
+                                BorderBrush="{DynamicResource EnvironmentToolWindowBorder}"
+                                KeyboardNavigation.TabNavigation="Local"
+                                KeyboardNavigation.DirectionalNavigation="Contained"
+                                KeyboardNavigation.TabIndex="2"
+                                Grid.Column="0"
+                                Grid.Row="0">
+                            <ContentPresenter x:Name="PART_SelectedContentHost"
+                                              SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                              Margin="{TemplateBinding Padding}"
+                                              ContentSource="SelectedContent"/>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Value="1" Binding="{Binding Path=Items.Count, RelativeSource={RelativeSource Self}}">
+                            <Setter TargetName="HeaderPanel" Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+	<Style x:Key="ToolWindowGroupTabItemStyle" TargetType="{x:Type TabItem}">
+		<Setter Property="HorizontalContentAlignment"
+				Value="Stretch"/>
+		<Setter Property="VerticalContentAlignment"
+				Value="Stretch"/>
+		<Setter Property="Control.Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="{x:Type TabItem}">
+					<Border Name="TabBorder"
+							mvvm:IsDraggableAP.IsDraggable="True"
+							ToolTip="{Binding ToolTip}"
+							VerticalAlignment="Stretch"
+							HorizontalAlignment="Stretch"
+							BorderBrush="{DynamicResource EnvironmentToolWindowBorder}"
+							BorderThickness="0 1 0 0">
+						<Border Name="Border"
+								Background="{DynamicResource EnvironmentToolWindowTabGradient}"
+								BorderBrush="{DynamicResource EnvironmentToolWindowTabBorder}"
+								BorderThickness="0 0 0 2"
+								Padding="0 1 0 3">
+							<DockPanel Name="DockPanel" TextBlock.Foreground="{DynamicResource EnvironmentToolWindowTabText}">
+								<TextBlock HorizontalAlignment="Stretch"
+										   Margin="5 2 5 0"
+										   VerticalAlignment="Stretch"
+										   Text="{Binding Header}"
+										   MaxWidth="230"
+										   TextTrimming="CharacterEllipsis"
+										   ToolTip="{Binding ToolTip}" />
+							</DockPanel>
+						</Border>
+					</Border>
+					<ControlTemplate.Triggers>
+						<DataTrigger Value="True" Binding="{Binding Path=IsMouseOver, RelativeSource={RelativeSource Self}}">
+							<Setter TargetName="Border" Property="Background" Value="{DynamicResource EnvironmentToolWindowTabMouseOverBackgroundGradient}" />
+							<Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource EnvironmentToolWindowTabMouseOverBorder}" />
+							<Setter TargetName="DockPanel" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentToolWindowTabMouseOverText}" />
+						</DataTrigger>
+						<DataTrigger Value="True" Binding="{Binding IsSelected}">
+							<Setter Property="Panel.ZIndex" Value="-1" />
+							<Setter TargetName="Border" Property="Background" Value="{DynamicResource EnvironmentToolWindowTabSelectedTab}" />
+							<Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource EnvironmentToolWindowTabSelectedBorder}" />
+							<Setter TargetName="TabBorder" Property="BorderThickness" Value="1,0,1,1" />
+							<Setter Property="Focusable" Value="False" />
+						</DataTrigger>
+						<MultiDataTrigger>
+							<MultiDataTrigger.Conditions>
+								<Condition Value="False" Binding="{Binding IsActive}" />
+								<Condition Value="True" Binding="{Binding IsSelected}" />
+							</MultiDataTrigger.Conditions>
+							<Setter TargetName="DockPanel" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentToolWindowTabSelectedText}" />
+						</MultiDataTrigger>
+						<MultiDataTrigger>
+							<MultiDataTrigger.Conditions>
+								<Condition Value="True" Binding="{Binding Path=IsSelected}" />
+								<Condition Value="True" Binding="{Binding Path=IsActive}" />
+							</MultiDataTrigger.Conditions>
+							<Setter TargetName="DockPanel" Property="TextBlock.Foreground" Value="{DynamicResource EnvironmentToolWindowTabSelectedActiveText}" />
+						</MultiDataTrigger>
+					</ControlTemplate.Triggers>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
+
+	<DataTemplate DataType="{x:Type tw:TabContentImpl}">
+		<Border Background="Transparent">
+			<DockPanel>
+				<Border Name="Bd"
+						mvvm:IsDraggableAP.IsDraggable="True"
+						BorderThickness="0,0,0,0"
+						MinHeight="19"
+						Padding="1,3,1,3"
+						Focusable="False"
+						BorderBrush="{DynamicResource EnvironmentTitleBarInactiveBorder}"
+						Background="{DynamicResource EnvironmentTitleBarInactiveGradient}"
+						TextBlock.Foreground="{DynamicResource EnvironmentTitleBarInactiveText}"
+						DockPanel.Dock="Top">
+					<Grid>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto"/>
+							<ColumnDefinition Width="*"/>
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<TextBlock Text="{Binding Title}" Margin="3,0" VerticalAlignment="Center"/>
+						<Rectangle Grid.Column="1" Name="Rect" Height="5" VerticalAlignment="Center" Margin="8 0 4 0" Fill="{DynamicResource EnvironmentTitleBarDragHandle}" />
+						<ctrls:TabButton x:Name="PART_Close"
+										 Grid.Column="2"
+										 mvvm:IsDraggableAP.IsDraggable="False"
+										 Margin="3 -1 3 0"
+										 Command="{Binding CloseCommand}"
+										 GlyphForeground="{DynamicResource EnvironmentToolWindowButtonInactiveGlyph}"
+										 HoverBackground="{DynamicResource EnvironmentToolWindowButtonHoverInactive}"
+										 HoverBorderBrush="{DynamicResource EnvironmentToolWindowButtonHoverInactiveBorder}"
+										 HoverForeground="{DynamicResource EnvironmentToolWindowButtonHoverInactiveGlyph}"
+										 HoverBorderThickness="1"
+										 PressedBackground="{DynamicResource EnvironmentToolWindowButtonDown}"
+										 PressedBorderBrush="{DynamicResource EnvironmentToolWindowButtonDownBorder}"
+										 PressedForeground="{DynamicResource EnvironmentToolWindowButtonDownActiveGlyph}"
+										 PressedBorderThickness="1"
+										 ToolTip="Close">
+							<Path x:Name="CloseButtonCross"
+								  Width="10" Height="8"
+								  Stretch="Uniform"
+								  Data="F1M0,0L2,0 5,3 8,0 10,0 6,4 10,8 8,8 5,5 2,8 0,8 4,4 0,0z"
+								  Fill="{Binding Path=(TextElement.Foreground), RelativeSource={RelativeSource Self}}" />
+						</ctrls:TabButton>
+					</Grid>
+				</Border>
+				<ContentPresenter Content="{Binding ContentUIObject}" />
+			</DockPanel>
+		</Border>
+		<DataTemplate.Triggers>
+			<DataTrigger Value="True" Binding="{Binding IsActive}">
+				<Setter TargetName="Bd" Value="{DynamicResource EnvironmentTitleBarActiveGradient}" Property="Background" />
+				<Setter TargetName="Bd" Value="{DynamicResource EnvironmentTitleBarActiveBorder}" Property="BorderBrush" />
+				<Setter TargetName="Bd" Value="{DynamicResource EnvironmentTitleBarActiveText}" Property="TextElement.Foreground" />
+				<Setter TargetName="PART_Close" Value="{DynamicResource EnvironmentToolWindowButtonHoverActive}" Property="HoverBackground" />
+				<Setter TargetName="PART_Close" Value="{DynamicResource EnvironmentToolWindowButtonHoverActiveBorder}" Property="HoverBorderBrush" />
+				<Setter TargetName="PART_Close" Value="{DynamicResource EnvironmentToolWindowButtonHoverActiveGlyph}" Property="HoverForeground" />
+				<Setter TargetName="PART_Close" Value="{DynamicResource EnvironmentToolWindowButtonActiveGlyph}" Property="GlyphForeground" />
+				<Setter TargetName="Rect" Value="{DynamicResource EnvironmentTitleBarDragHandleActive}" Property="Fill" />
+			</DataTrigger>
+		</DataTemplate.Triggers>
+	</DataTemplate>
 
     <Style x:Key="CodeToolTip"
            BasedOn="{StaticResource {x:Type ToolTip}}"

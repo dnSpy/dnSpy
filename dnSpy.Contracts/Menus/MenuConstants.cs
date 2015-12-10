@@ -20,6 +20,7 @@
 using System.Windows.Controls;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Tabs;
+using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Contracts.Menus {
@@ -96,8 +97,14 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Files <see cref="TabControl"/></summary>
 		public const string GUIDOBJ_FILES_TABCONTROL_GUID = "AB1B4BCE-D8C1-43BE-8822-C124FBCAC260";
 
-		/// <summary>Files <see cref="ITabGroup"/></summary>
-		public const string GUIDOBJ_FILES_TABGROUP_GUID = "87B2F94A-D80B-45FD-BB31-71E390CA6C01";
+		/// <summary><see cref="ITabGroup"/></summary>
+		public const string GUIDOBJ_TABGROUP_GUID = "87B2F94A-D80B-45FD-BB31-71E390CA6C01";
+
+		/// <summary><see cref="IToolWindowGroup"/></summary>
+		public const string GUIDOBJ_TOOLWINDOWGROUP_GUID = "3E9743F1-A2E0-4C5A-B463-3E8CF6D677E4";
+
+		/// <summary>Tool window <see cref="TabControl"/></summary>
+		public const string GUIDOBJ_TOOLWINDOW_TABCONTROL_GUID = "33FEE79F-7998-4D63-8E6F-B3AD86134960";
 
 		/// <summary>Text editor control</summary>
 		public const string GUIDOBJ_TEXTEDITORCONTROL_GUID = "7F9E85C9-05B5-43FE-9CD1-20E61B183454";
@@ -152,6 +159,9 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Group: App Menu: View, Group: Options</summary>
 		public const string GROUP_APP_MENU_VIEW_OPTS = "0,FCBA133F-F62B-4DB2-BEC9-5AE11C95873B";
+
+		/// <summary>Group: App Menu: View, Group: Tool Windows</summary>
+		public const string GROUP_APP_MENU_VIEW_WINDOWS = "1000,599D070A-521E-4A1B-80DB-62C9B0AB48FA";
 
 		/// <summary>Group: App Menu: View, Group: Options dlg</summary>
 		public const string GROUP_APP_MENU_VIEW_OPTSDLG = "1000000,AAA7FF98-47CD-4ABF-8824-EE20A283EEB3";
@@ -266,6 +276,12 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Group: Context Menu, Type: Tabs, Group: Tab Groups Vert/Horiz commands</summary>
 		public const string GROUP_CTX_TABS_GROUPSVERT = "3000,15174C91-6EA8-47E3-880E-FCDF607974F1";
+
+		/// <summary>Group: Context Menu, Type: Tool Windows, Group: Close commands</summary>
+		public const string GROUP_CTX_TOOLWINS_CLOSE = "0,D6F31BC9-2474-44B9-8786-D3044F6F402C";
+
+		/// <summary>Group: Context Menu, Type: Tool Windows, Group: Tab Groups</summary>
+		public const string GROUP_CTX_TOOLWINS_GROUPS = "1000,32E1C678-7889-499D-8BC3-C22160E7E2AC";
 
 		/// <summary>Group: Context Menu, Type: Search, Group: Tabs</summary>
 		public const string GROUP_CTX_SEARCH_TABS = "0,249A0912-68BE-4468-931A-055726958EA4";

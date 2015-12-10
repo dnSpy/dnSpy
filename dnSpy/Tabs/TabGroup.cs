@@ -24,13 +24,13 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Controls;
+using dnSpy.Events;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Tabs {
@@ -41,6 +41,14 @@ namespace dnSpy.Tabs {
 	}
 
 	sealed class TabGroup : ViewModelBase, ITabGroup, IStackedContentChild {
+		public object Tag { get; set; }
+
+		public event EventHandler<TabContentAttachedEventArgs> TabContentAttached {
+			add { tabContentAttached.Add(value); }
+			remove { tabContentAttached.Remove(value); }
+		}
+		readonly WeakEventList<TabContentAttachedEventArgs> tabContentAttached;
+
 		public IEnumerable<ITabContent> TabContents {
 			get { return AllTabItemImpls.Select(a => a.TabContent); }
 		}
@@ -141,6 +149,8 @@ namespace dnSpy.Tabs {
 				return false;
 			if (TabGroupManager.ActiveTabGroup != this)
 				return false;
+			if (TabGroupManager.TabManager.ActiveTabGroupManager != TabGroupManager)
+				return false;
 
 			return true;
 		}
@@ -181,10 +191,6 @@ namespace dnSpy.Tabs {
 			}
 		}
 
-		internal Guid Guid {
-			get { return tabGroupGuid; }
-		}
-
 		public ITabGroupManager TabGroupManager {
 			get { return tabGroupManager; }
 		}
@@ -194,11 +200,9 @@ namespace dnSpy.Tabs {
 			get { return tabControl; }
 		}
 
-		IStackedContent IStackedContentChild.StackedContent { get; set; }
-
-		readonly Guid tabGroupGuid;
 		readonly TabControl tabControl;
 		readonly IWpfFocusManager wpfFocusManager;
+		readonly TabGroupManagerOptions options;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly TabGroup tabGroup;
@@ -208,19 +212,23 @@ namespace dnSpy.Tabs {
 			}
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
-				yield return new GuidObject(MenuConstants.GUIDOBJ_FILES_TABGROUP_GUID, tabGroup);
+				yield return new GuidObject(MenuConstants.GUIDOBJ_TABGROUP_GUID, tabGroup);
 			}
 		}
 
-		public TabGroup(TabGroupManager tabGroupManager, IMenuManager menuManager, IWpfFocusManager wpfFocusManager, Guid tabGroupGuid) {
+		public TabGroup(TabGroupManager tabGroupManager, IMenuManager menuManager, IWpfFocusManager wpfFocusManager, TabGroupManagerOptions options) {
+			this.options = options;
+			this.tabContentAttached = new WeakEventList<TabContentAttachedEventArgs>();
 			this.tabGroupManager = tabGroupManager;
 			this.wpfFocusManager = wpfFocusManager;
-			this.tabGroupGuid = tabGroupGuid;
 			this.tabControl = new TabControl();
 			this.tabControl.DataContext = this;
-			this.tabControl.SetResourceReference(FrameworkElement.StyleProperty, "FileTabGroupTabControl");
+			tabControl.SetStyle(options.TabControlStyle ?? "FileTabGroupTabControlStyle");
 			this.tabControl.SelectionChanged += TabControl_SelectionChanged;
-			menuManager.InitializeContextMenu(this.tabControl, tabGroupGuid, new GuidObjectsCreator(this));
+			if (options.InitializeContextMenu != null)
+				options.InitializeContextMenu(menuManager, this, this.tabControl);
+			else if (options.TabGroupGuid != Guid.Empty)
+				menuManager.InitializeContextMenu(this.tabControl, options.TabGroupGuid, new GuidObjectsCreator(this));
 		}
 
 		void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) {
@@ -307,37 +315,36 @@ namespace dnSpy.Tabs {
 			tabControl.SelectedItem = tabItem;
 		}
 
+		bool IsDragArea(object sender, MouseButtonEventArgs e, TabItem tabItem) {
+			return IsDraggableAP.GetIsDraggable(e.OriginalSource as FrameworkElement);
+		}
+
 		void tabItem_PreviewMouseDown(object sender, MouseButtonEventArgs e) {
 			var tabItem = GetTabItemImpl(sender);
 			if (tabItem == null)
-				return;
-
-			// We get notified whenever the mouse is down in TabItem.Header and TabItem.Contents
-			var mousePos = e.GetPosition(tabItem);
-			if (mousePos.X >= tabItem.ActualWidth || mousePos.Y >= tabItem.ActualHeight)
 				return;
 
 			var tabControl = tabItem.Parent as TabControl;
 			if (tabControl == null)
 				return;
 
+			if (!IsDragArea(sender, e, tabItem))
+				return;
+
 			if (tabControl.SelectedItem == tabItem)
 				SetFocus2(tabItem.TabContent);
 
-			// HACK: The Close button won't work if we start the drag and drop operation
-			bool isTabButtonPressed = IsTabButton(tabItem, e.OriginalSource);
-
-			if (!isTabButtonPressed && (e.LeftButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed)) {
+			if (e.LeftButton == MouseButtonState.Pressed || e.RightButton == MouseButtonState.Pressed) {
 				tabGroupManager.SetActive(this);
 				tabControl.SelectedItem = tabItem;
 			}
 
-			if (!isTabButtonPressed && (Keyboard.Modifiers == ModifierKeys.None && e.LeftButton == MouseButtonState.Pressed)) {
+			if (Keyboard.Modifiers == ModifierKeys.None && e.LeftButton == MouseButtonState.Pressed) {
 				// Don't call DoDragDrop() immediately because it takes ownership of the mouse and
 				// prevents the pressed TabItem from becoming selected. When we don't want to drag
 				// a tab, the TabItem gets selected first when we release the mouse pointer instead
 				// of instantly when we press it. It makes the program feel slow.
-				tabControl.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
+				tabControl.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 					// Make sure it's still the active TabItem
 					if (tabControl.SelectedItem == tabItem) {
 						try {
@@ -348,17 +355,6 @@ namespace dnSpy.Tabs {
 					}
 				}));
 			}
-		}
-
-		static bool IsTabButton(TabItem tabItem, object o) {
-			return GetItem<ButtonBase>(tabItem, o) != null;
-		}
-
-		public static T GetItem<T>(DependencyObject view, object o) where T : class {
-			var depo = o as DependencyObject;
-			while (depo != null && !(depo is T) && depo != view)
-				depo = UIUtils.GetParent(depo);
-			return depo as T;
 		}
 
 		bool GetInfo(object sender, DragEventArgs e,
@@ -386,7 +382,7 @@ namespace dnSpy.Tabs {
 			tabGroupSource = tabControlSource.DataContext as TabGroup;
 			if (tabGroupTarget == null || tabGroupSource == null)
 				return false;
-			if (tabGroupTarget.tabGroupManager != tabGroupSource.tabGroupManager)
+			if (tabGroupTarget.tabGroupManager.TabManager != tabGroupSource.tabGroupManager.TabManager)
 				return false;
 			if (tabGroupTarget.tabGroupManager != this.tabGroupManager)
 				return false;
@@ -422,7 +418,7 @@ namespace dnSpy.Tabs {
 		public void Add(ITabContent content) {
 			if (content == null)
 				throw new ArgumentNullException();
-			var impl = new TabItemImpl(this, content);
+			var impl = new TabItemImpl(this, content, options.TabItemStyle);
 			AddEvents(impl);
 			content.OnVisibilityChanged(TabContentVisibilityEvent.Added);
 			UpdateState(impl);
@@ -441,7 +437,7 @@ namespace dnSpy.Tabs {
 			return -1;
 		}
 
-		public void Remove(ITabContent content) {
+		void Remove(ITabContent content) {
 			int index = IndexOf(content);
 			if (index >= 0)
 				RemoveTabItem((TabItemImpl)tabControl.Items[index]);
@@ -505,6 +501,7 @@ namespace dnSpy.Tabs {
 				insertIndex = tabControl.Items.Count;
 			UpdateState(tabItem);
 			AddToTabControl(tabItem, insertIndex);
+			tabContentAttached.Raise(this, new TabContentAttachedEventArgs(true, tabItem.TabContent));
 			return tabItem;
 		}
 
@@ -547,6 +544,7 @@ namespace dnSpy.Tabs {
 		void DetachTabItem(TabItemImpl tabItem) {
 			DetachNoEvents(tabItem);
 			RemoveEvents(tabItem);
+			tabContentAttached.Raise(this, new TabContentAttachedEventArgs(false, tabItem.TabContent));
 			NotifyIfEmtpy();
 		}
 
@@ -625,6 +623,7 @@ namespace dnSpy.Tabs {
 		public void CloseAllTabs() {
 			foreach (var tabItem in AllTabItemImpls.ToArray())
 				RemoveTabItem(tabItem);
+			NotifyIfEmtpy();
 		}
 
 		void RemoveTabItem(TabItemImpl tabItem) {

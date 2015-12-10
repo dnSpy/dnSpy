@@ -26,6 +26,16 @@ namespace dnSpy.Contracts.Tabs {
 	/// </summary>
 	public interface ITabGroupManager {
 		/// <summary>
+		/// Any value can be written here. It's ignored by this instance.
+		/// </summary>
+		object Tag { get; set; }
+
+		/// <summary>
+		/// Gets the <see cref="ITabManager"/> instance
+		/// </summary>
+		ITabManager TabManager { get; }
+
+		/// <summary>
 		/// Gets all <see cref="ITabGroup"/> instances
 		/// </summary>
 		IEnumerable<ITabGroup> TabGroups { get; }
@@ -52,14 +62,25 @@ namespace dnSpy.Contracts.Tabs {
 		object UIObject { get; }
 
 		/// <summary>
-		/// Raised when a new tab is selected
+		/// Raised when a new tab has been selected
 		/// </summary>
 		event EventHandler<TabSelectedEventArgs> TabSelectionChanged;
 
 		/// <summary>
-		/// Raised when a new tab group is selected
+		/// Raised when a new tab group has been selected
 		/// </summary>
 		event EventHandler<TabGroupSelectedEventArgs> TabGroupSelectionChanged;
+
+		/// <summary>
+		/// Raised when a tab group has been added or removed
+		/// </summary>
+		event EventHandler<TabGroupCollectionChangedEventArgs> TabGroupCollectionChanged;
+
+		/// <summary>
+		/// Closes the tab group
+		/// </summary>
+		/// <param name="tabGroup">Tab group</param>
+		void Close(ITabGroup tabGroup);
 
 		/// <summary>
 		/// true if <see cref="CloseAllTabs()"/> can execute
@@ -72,24 +93,26 @@ namespace dnSpy.Contracts.Tabs {
 		void CloseAllTabs();
 
 		/// <summary>
-		/// true if <see cref="NewHorizontalTabGroup()"/> can execute
+		/// true if <see cref="NewHorizontalTabGroup(Action{ITabGroup})"/> can execute
 		/// </summary>
 		bool NewHorizontalTabGroupCanExecute { get; }
 
 		/// <summary>
 		/// Moves the active tab to a new horizontal tab group
 		/// </summary>
-		void NewHorizontalTabGroup();
+		/// <param name="onCreated">Called after the <see cref="ITabGroup"/> instance has been created</param>
+		void NewHorizontalTabGroup(Action<ITabGroup> onCreated = null);
 
 		/// <summary>
-		/// true if <see cref="NewVerticalTabGroup()"/> can execute
+		/// true if <see cref="NewVerticalTabGroup(Action{ITabGroup})"/> can execute
 		/// </summary>
 		bool NewVerticalTabGroupCanExecute { get; }
 
 		/// <summary>
 		/// Moves the active tab to a new vertical tab group
 		/// </summary>
-		void NewVerticalTabGroup();
+		/// <param name="onCreated">Called after the <see cref="ITabGroup"/> instance has been created</param>
+		void NewVerticalTabGroup(Action<ITabGroup> onCreated = null);
 
 		/// <summary>
 		/// true if <see cref="MoveToNextTabGroup()"/> can execute

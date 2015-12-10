@@ -26,10 +26,6 @@ using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Tabs {
 	sealed class TabItemImpl : TabItem {
-		static TabItemImpl() {
-			DefaultStyleKeyProperty.OverrideMetadata(typeof(TabItemImpl), new FrameworkPropertyMetadata(typeof(TabItemImpl)));
-		}
-
 		internal ITabContent TabContent {
 			get { return tabContent; }
 		}
@@ -103,7 +99,7 @@ namespace dnSpy.Tabs {
 
 		readonly TheHeader theHeader;
 
-		public TabItemImpl(TabGroup tabGroup, ITabContent tabContent) {
+		public TabItemImpl(TabGroup tabGroup, ITabContent tabContent, object objStyle) {
 			this.tabGroup = tabGroup;
 			this.tabContent = tabContent;
 			this.Content = tabContent.UIObject;
@@ -113,6 +109,7 @@ namespace dnSpy.Tabs {
 			this.AllowDrop = true;
 			this.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(GotKeyboardFocus2), true);
 			this.AddHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(LostKeyboardFocus2), true);
+			this.SetStyle(objStyle ?? "FileTabGroupTabItemStyle");
 			AddEvents();
 		}
 

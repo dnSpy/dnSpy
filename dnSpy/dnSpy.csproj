@@ -231,9 +231,12 @@
       <DependentUpon>DnSpyLoaderControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainApp\DnSpyLoaderManager.cs" />
+    <Compile Include="MainApp\FileTreeViewWindowContent.cs" />
+    <Compile Include="MainApp\MainToolWindowManagerCommands.cs" />
     <Compile Include="MainApp\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="MainApp\MainWindowControl.cs" />
     <Compile Include="MainApp\MessageBoxManager.cs" />
     <Compile Include="MainApp\MiscOptions.cs" />
     <Compile Include="MainApp\MsgBoxDlg.xaml.cs">
@@ -274,6 +277,7 @@
     <Compile Include="Tabs\TabItemImpl.cs" />
     <Compile Include="Tabs\TabManager.cs" />
     <Compile Include="Tabs\TabManagerCreator.cs" />
+    <Compile Include="Tabs\TabUtils.cs" />
     <Compile Include="Themes\Color.cs" />
     <Compile Include="Themes\ColorInfo.cs" />
     <Compile Include="Themes\ColorInfos.cs" />
@@ -285,6 +289,11 @@
     <Compile Include="ToolBars\ToolBarButtonVM.cs" />
     <Compile Include="ToolBars\ToolBarItemContext.cs" />
     <Compile Include="ToolBars\ToolBarManager.cs" />
+    <Compile Include="ToolWindows\TabContentImpl.cs" />
+    <Compile Include="ToolWindows\ToolWindowGroup.cs" />
+    <Compile Include="ToolWindows\ToolWindowGroupManager.cs" />
+    <Compile Include="ToolWindows\ToolWindowManager.cs" />
+    <Compile Include="ToolWindows\ToolWindowManagerCreator.cs" />
     <Compile Include="TreeView\AsyncNodeCreator.cs" />
     <Compile Include="TreeView\DnSpySharpTreeNode.cs" />
     <Compile Include="TreeView\SharpTreeNodeChildrenList.cs" />
@@ -495,6 +504,7 @@
     <Resource Include="Images\LiteralProtected.png" />
     <Resource Include="Images\LiteralProtectedInternal.png" />
     <Resource Include="Images\Local.png" />
+    <Resource Include="Images\MarkUpTag.png" />
     <Resource Include="Images\Method.png" />
     <Resource Include="Images\MethodCompilerControlled.png" />
     <Resource Include="Images\MethodInternal.png" />
@@ -556,7 +566,12 @@
     <Resource Include="Images\StructPrivate.png" />
     <Resource Include="Images\StructProtected.png" />
     <Resource Include="Images\StructProtectedInternal.png" />
+    <Resource Include="Images\tableviewnameonly.png" />
     <Resource Include="Images\TextFile.png" />
+    <Resource Include="Images\toolstrippanelbottom.png" />
+    <Resource Include="Images\toolstrippanelleft.png" />
+    <Resource Include="Images\toolstrippanelright.png" />
+    <Resource Include="Images\toolstrippaneltop.png" />
     <Resource Include="Images\UserDefinedDataType.png" />
     <Resource Include="Images\VerticalTabGroup.png" />
     <Resource Include="Images\VirtualEvent.png" />

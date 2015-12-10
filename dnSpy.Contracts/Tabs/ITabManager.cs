@@ -17,9 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
-using dnSpy.Contracts.Menus;
 
 namespace dnSpy.Contracts.Tabs {
 	/// <summary>
@@ -32,11 +30,16 @@ namespace dnSpy.Contracts.Tabs {
 		IEnumerable<ITabGroupManager> TabGroupManagers { get; }
 
 		/// <summary>
+		/// Gets the active <see cref="ITabGroupManager"/> instance
+		/// </summary>
+		ITabGroupManager ActiveTabGroupManager { get; }
+
+		/// <summary>
 		/// Creates a new <see cref="ITabGroupManager"/> instance
 		/// </summary>
-		/// <param name="tabGroupGuid"><see cref="ITabGroup"/> guid, eg. <see cref="MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID"/></param>
+		/// <param name="options">Options</param>
 		/// <returns></returns>
-		ITabGroupManager Create(Guid tabGroupGuid);
+		ITabGroupManager Create(TabGroupManagerOptions options);
 
 		/// <summary>
 		/// Removes a <see cref="ITabGroupManager"/> instance

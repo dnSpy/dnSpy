@@ -26,10 +26,5 @@ namespace dnSpy.Controls {
 		/// Gets the UI object
 		/// </summary>
 		object UIObject { get; }
-
-		/// <summary>
-		/// Gets the <see cref="IStackedContent"/> instance. Can only be written by <see cref="IStackedContent"/>
-		/// </summary>
-		IStackedContent StackedContent { get; set; }//TODO: Remove if this is never used
 	}
 }

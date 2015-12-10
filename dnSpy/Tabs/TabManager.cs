@@ -33,6 +33,10 @@ namespace dnSpy.Tabs {
 		}
 		readonly List<TabGroupManager> tabGroupManagers;
 
+		public ITabGroupManager ActiveTabGroupManager {
+			get { return selectedIndex < 0 ? null : tabGroupManagers[selectedIndex]; }
+		}
+
 		public int SelectedIndex {
 			get { return selectedIndex; }
 		}
@@ -54,8 +58,8 @@ namespace dnSpy.Tabs {
 				mgr.OnThemeChanged();
 		}
 
-		public ITabGroupManager Create(Guid tabGroupGuid) {
-			var mgr = new TabGroupManager(this, menuManager, wpfFocusManager, tabGroupGuid);
+		public ITabGroupManager Create(TabGroupManagerOptions options = null) {
+			var mgr = new TabGroupManager(this, menuManager, wpfFocusManager, options);
 			tabGroupManagers.Add(mgr);
 			if (selectedIndex < 0)
 				selectedIndex = 0;

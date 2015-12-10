@@ -35,7 +35,7 @@ namespace dnSpy.Tabs {
 		}
 		int _activeIndex;
 
-		IStackedContent IStackedContentChild.StackedContent { get; set; }
+		public object Tag { get; set; }
 
 		public ITabGroup ActiveTabGroup {
 			get { return ActiveIndex < 0 ? null : stackedContent[ActiveIndex]; }
@@ -74,25 +74,39 @@ namespace dnSpy.Tabs {
 		}
 		readonly WeakEventList<TabGroupSelectedEventArgs> tabGroupSelectionChanged;
 
+		public event EventHandler<TabGroupCollectionChangedEventArgs> TabGroupCollectionChanged {
+			add { tabGroupCollectionChanged.Add(value); }
+			remove { tabGroupCollectionChanged.Remove(value); }
+		}
+		readonly WeakEventList<TabGroupCollectionChangedEventArgs> tabGroupCollectionChanged;
+
 		public StackedContentState StackedContentState {
 			get { return stackedContent.State; }
 			set { stackedContent.State = value; }
 		}
 
-		readonly StackedContent<TabGroup> stackedContent;
+		ITabManager ITabGroupManager.TabManager {
+			get { return tabManager; }
+		}
+		public TabManager TabManager {
+			get { return tabManager; }
+		}
 		readonly TabManager tabManager;
+
+		readonly StackedContent<TabGroup> stackedContent;
 		readonly IMenuManager menuManager;
 		readonly IWpfFocusManager wpfFocusManager;
-		readonly Guid tabGroupGuid;
+		readonly TabGroupManagerOptions options;
 
-		public TabGroupManager(TabManager tabManager, IMenuManager menuManager, IWpfFocusManager wpfFocusManager, Guid tabGroupGuid) {
+		public TabGroupManager(TabManager tabManager, IMenuManager menuManager, IWpfFocusManager wpfFocusManager, TabGroupManagerOptions options) {
+			this.options = (options ?? new TabGroupManagerOptions()).Clone();
 			this.stackedContent = new StackedContent<TabGroup>();
 			this.tabSelectionChanged = new WeakEventList<TabSelectedEventArgs>();
 			this.tabGroupSelectionChanged = new WeakEventList<TabGroupSelectedEventArgs>();
+			this.tabGroupCollectionChanged = new WeakEventList<TabGroupCollectionChangedEventArgs>();
 			this.tabManager = tabManager;
 			this.menuManager = menuManager;
 			this.wpfFocusManager = wpfFocusManager;
-			this.tabGroupGuid = tabGroupGuid;
 			this._activeIndex = -1;
 		}
 
@@ -102,18 +116,17 @@ namespace dnSpy.Tabs {
 		}
 
 		ITabGroup ITabGroupManager.Create() {
-			return Create();
+			return Create(stackedContent.Count, null);
 		}
 
-		TabGroup Create() {
-			return Create(stackedContent.Count);
-		}
-
-		TabGroup Create(int index) {
-			var tg = new TabGroup(this, menuManager, wpfFocusManager, tabGroupGuid);
+		TabGroup Create(int index, Action<ITabGroup> onCreated) {
+			var tg = new TabGroup(this, menuManager, wpfFocusManager, options);
 			stackedContent.AddChild(tg, null, index);
 			if (ActiveIndex < 0)
 				ActiveIndex = index;
+			if (onCreated != null)
+				onCreated(tg);
+			tabGroupCollectionChanged.Raise(this, new TabGroupCollectionChangedEventArgs(true, tg));
 			return tg;
 		}
 
@@ -135,18 +148,22 @@ namespace dnSpy.Tabs {
 			Debug.Assert(index >= 0);
 			if (index < 0)
 				return;
-			if (stackedContent.Count == 1)
-				return;
-
-			if (ActiveIndex == index) {
-				int newIndex = index == 0 ? index + 1 : index - 1;
-				SetActive(stackedContent[newIndex]);
-				ActiveIndex = newIndex;
+			if (stackedContent.Count == 1) {
+				ActiveIndex = -1;
+				stackedContent.Remove(tabGroup);
 			}
-			var current = stackedContent[ActiveIndex];
-			stackedContent.Remove(tabGroup);
-			ActiveIndex = stackedContent.IndexOf(current);
-			Debug.Assert(ActiveIndex >= 0);
+			else {
+				if (ActiveIndex == index) {
+					int newIndex = index == 0 ? index + 1 : index - 1;
+					SetActive(stackedContent[newIndex]);
+					ActiveIndex = newIndex;
+				}
+				var current = stackedContent[ActiveIndex];
+				stackedContent.Remove(tabGroup);
+				ActiveIndex = stackedContent.IndexOf(current);
+				Debug.Assert(ActiveIndex >= 0);
+			}
+			tabGroupCollectionChanged.Raise(this, new TabGroupCollectionChangedEventArgs(false, tabGroup));
 		}
 
 		internal bool SetActiveTab(TabItemImpl tabItem) {
@@ -164,34 +181,36 @@ namespace dnSpy.Tabs {
 
 		public bool NewHorizontalTabGroupCanExecute {
 			get {
-				return (stackedContent.Count == 1 || IsHorizontal) &&
+				return ActiveIndex >= 0 &&
+					(stackedContent.Count == 1 || IsHorizontal) &&
 					stackedContent[ActiveIndex].Count > 1;
 			}
 		}
 
-		public void NewHorizontalTabGroup() {
+		public void NewHorizontalTabGroup(Action<ITabGroup> onCreated = null) {
 			if (!NewHorizontalTabGroupCanExecute)
 				return;
-			AddNewTabGroup(true);
+			AddNewTabGroup(true, onCreated);
 		}
 
 		public bool NewVerticalTabGroupCanExecute {
 			get {
-				return (stackedContent.Count == 1 || !IsHorizontal) &&
+				return ActiveIndex >= 0 &&
+					(stackedContent.Count == 1 || !IsHorizontal) &&
 					stackedContent[ActiveIndex].Count > 1;
 			}
 		}
 
-		public void NewVerticalTabGroup() {
+		public void NewVerticalTabGroup(Action<ITabGroup> onCreated = null) {
 			if (!NewVerticalTabGroupCanExecute)
 				return;
-			AddNewTabGroup(false);
+			AddNewTabGroup(false, onCreated);
 		}
 
-		void AddNewTabGroup(bool horizontal) {
+		void AddNewTabGroup(bool horizontal, Action<ITabGroup> onCreated) {
 			Debug.Assert(stackedContent.Count == 1 || IsHorizontal == horizontal);
 
-			var newTabGroup = Create(ActiveIndex + 1);
+			var newTabGroup = Create(ActiveIndex + 1, onCreated);
 
 			IsHorizontal = horizontal;
 
@@ -209,7 +228,8 @@ namespace dnSpy.Tabs {
 
 		public bool MoveToNextTabGroupCanExecute {
 			get {
-				return ActiveIndex + 1 < stackedContent.Count &&
+				return ActiveIndex >= 0 &&
+					ActiveIndex + 1 < stackedContent.Count &&
 					stackedContent[ActiveIndex].ActiveTabItemImpl != null;
 			}
 		}
@@ -222,7 +242,7 @@ namespace dnSpy.Tabs {
 
 		public bool MoveToPreviousTabGroupCanExecute {
 			get {
-				return ActiveIndex != 0 &&
+				return ActiveIndex > 0 &&
 					stackedContent[ActiveIndex].ActiveTabItemImpl != null;
 			}
 		}
@@ -235,7 +255,8 @@ namespace dnSpy.Tabs {
 
 		public bool MoveAllToNextTabGroupCanExecute {
 			get {
-				return ActiveIndex + 1 < stackedContent.Count &&
+				return ActiveIndex >= 0 &&
+					ActiveIndex + 1 < stackedContent.Count &&
 					stackedContent[ActiveIndex].Count > 1;
 			}
 		}
@@ -248,7 +269,7 @@ namespace dnSpy.Tabs {
 
 		public bool MoveAllToPreviousTabGroupCanExecute {
 			get {
-				return ActiveIndex != 0 &&
+				return ActiveIndex > 0 &&
 					stackedContent[ActiveIndex].Count > 1;
 			}
 		}
@@ -293,7 +314,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public bool MergeAllTabGroupsCanExecute {
-			get { return stackedContent.Count > 1; }
+			get { return ActiveIndex >= 0 && stackedContent.Count > 1; }
 		}
 
 		public void MergeAllTabGroups() {
@@ -328,7 +349,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public bool CloseTabGroupCanExecute {
-			get { return stackedContent.Count > 1; }
+			get { return ActiveIndex >= 0 && stackedContent.Count > 1; }
 		}
 
 		public void CloseTabGroup() {
@@ -338,7 +359,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public bool CloseAllTabGroupsButThisCanExecute {
-			get { return stackedContent.Count > 1; }
+			get { return ActiveIndex >= 0 && stackedContent.Count > 1; }
 		}
 
 		public void CloseAllTabGroupsButThis() {
@@ -353,7 +374,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public bool MoveTabGroupAfterNextTabGroupCanExecute {
-			get { return ActiveIndex + 1 < stackedContent.Count; }
+			get { return ActiveIndex >= 0 && ActiveIndex + 1 < stackedContent.Count; }
 		}
 
 		public void MoveTabGroupAfterNextTabGroup() {
@@ -363,7 +384,7 @@ namespace dnSpy.Tabs {
 		}
 
 		public bool MoveTabGroupBeforePreviousTabGroupCanExecute {
-			get { return ActiveIndex != 0; }
+			get { return ActiveIndex > 0; }
 		}
 
 		public void MoveTabGroupBeforePreviousTabGroup() {
@@ -379,6 +400,15 @@ namespace dnSpy.Tabs {
 				ActiveIndex = index2;
 			else if (ActiveIndex == index2)
 				ActiveIndex = index1;
+		}
+
+		public void Close(ITabGroup tabGroup) {
+			if (tabGroup == null)
+				throw new ArgumentNullException();
+			var impl = tabGroup as TabGroup;
+			if (impl == null)
+				throw new InvalidOperationException();
+			impl.CloseAllTabs();
 		}
 	}
 }

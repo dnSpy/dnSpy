@@ -66,8 +66,6 @@ namespace dnSpy.Controls {
 	}
 
 	sealed class StackedContentChildImpl : IStackedContentChild {
-		IStackedContent IStackedContentChild.StackedContent { get; set; }
-
 		public object UIObject {
 			get { return uiObject; }
 		}
@@ -86,6 +84,8 @@ namespace dnSpy.Controls {
 	}
 
 	sealed class StackedContent<TChild> : IStackedContent, IStackedContentChild where TChild : class, IStackedContentChild {
+		public const double DEFAULT_SPLITTER_LENGTH = 6;
+
 		public TChild this[int index] {
 			get { return children[index].Child; }
 		}
@@ -93,6 +93,17 @@ namespace dnSpy.Controls {
 		public int Count {
 			get { return children.Count; }
 		}
+
+		public double SplitterLength {
+			get { return splitterLength; }
+			set {
+				if (splitterLength != value) {
+					splitterLength = value;
+					UpdateGrid();
+				}
+			}
+		}
+		double splitterLength;
 
 		sealed class ChildInfo {
 			public TChild Child;
@@ -123,8 +134,6 @@ namespace dnSpy.Controls {
 			}
 		}
 		bool isHorizontal;
-
-		IStackedContent IStackedContentChild.StackedContent { get; set; }
 
 		public object UIObject {
 			get { return grid; }
@@ -161,15 +170,14 @@ namespace dnSpy.Controls {
 			}
 		}
 
-		public StackedContent()
-			: this(true) {
-		}
-
-		public StackedContent(bool isHorizontal) {
+		public StackedContent(bool isHorizontal = true, double splitterLength = DEFAULT_SPLITTER_LENGTH, Thickness? margin = null) {
 			this.children = new List<ChildInfo>();
 			this.grid = new Grid();
 			this.grid.SetResourceReference(FrameworkElement.StyleProperty, "StackedContentGridStyle");
+			if (margin != null)
+				this.grid.Margin = margin.Value;
 			this.isHorizontal = isHorizontal;
+			this.splitterLength = splitterLength;
 			UpdateGrid();
 		}
 
@@ -179,12 +187,10 @@ namespace dnSpy.Controls {
 		}
 
 		public void AddChild(TChild child, StackedContentChildInfo lengthInfo = null, int index = -1) {
-			Debug.Assert(child.StackedContent == null);
 			if ((uint)index <= (uint)children.Count)
 				children.Insert(index, new ChildInfo(child, lengthInfo));
 			else
 				children.Add(new ChildInfo(child, lengthInfo));
-			child.StackedContent = this;
 			UpdateGrid();
 		}
 
@@ -196,8 +202,6 @@ namespace dnSpy.Controls {
 			if (index >= 0) {
 				var info = children[index];
 				children.RemoveAt(index);
-				Debug.Assert(info.Child.StackedContent != null);
-				info.Child.StackedContent = null;
 				UpdateGrid();
 			}
 		}
@@ -212,7 +216,7 @@ namespace dnSpy.Controls {
 			grid.RowDefinitions.Clear();
 
 			// Make sure the horizontal grid splitters can resize the content
-			double d = 0.1;
+			double d = 0.05;
 			bool needSplitter = false;
 			if (!horizontal) {
 				grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
@@ -221,7 +225,7 @@ namespace dnSpy.Controls {
 					if (needSplitter && !info.LengthInfo.Vertical.GridLength.Value.IsAuto) {
 						var gridSplitter = new GridSplitter();
 						Panel.SetZIndex(gridSplitter, 1);
-						grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(3, GridUnitType.Pixel) });
+						grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(splitterLength, GridUnitType.Pixel) });
 						gridSplitter.SetValue(Grid.RowProperty, rowCol);
 						gridSplitter.Margin = new Thickness(0, -5, 0, -5);
 						gridSplitter.BorderThickness = new Thickness(0, 5, 0, 5);
@@ -255,7 +259,7 @@ namespace dnSpy.Controls {
 					if (needSplitter && !info.LengthInfo.Horizontal.GridLength.Value.IsAuto) {
 						var gridSplitter = new GridSplitter();
 						Panel.SetZIndex(gridSplitter, 1);
-						grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(3, GridUnitType.Pixel) });
+						grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(splitterLength, GridUnitType.Pixel) });
 						gridSplitter.SetValue(Grid.ColumnProperty, rowCol);
 						gridSplitter.Margin = new Thickness(-5, 0, -5, 0);
 						gridSplitter.BorderThickness = new Thickness(5, 0, 5, 0);
@@ -282,6 +286,35 @@ namespace dnSpy.Controls {
 					needSplitter = !info.LengthInfo.Horizontal.GridLength.Value.IsAuto;
 				}
 			}
+		}
+
+		public GridLength GetLength(TChild child) {
+			int index = Array.IndexOf(Children, child);
+			Debug.Assert(index >= 0);
+			if (index < 0)
+				throw new InvalidOperationException();
+			if (!IsHorizontal) {
+				for (int i = 0, j = 0; i < grid.RowDefinitions.Count; i++, j++) {
+					var c = grid.Children[i];
+					if (c is GridSplitter)
+						c = grid.Children[++i];
+					if (j != index)
+						continue;
+					return grid.RowDefinitions[i].Height;
+				}
+			}
+			else {
+				for (int i = 0, j = 0; i < grid.ColumnDefinitions.Count; i++, j++) {
+					var c = grid.Children[i];
+					if (c is GridSplitter)
+						c = grid.Children[++i];
+					if (j != index)
+						continue;
+					return grid.ColumnDefinitions[i].Width;
+				}
+			}
+			Debug.Fail("Failed to find length");
+			throw new InvalidOperationException();
 		}
 
 		static GridLength GetGridLength(GridLength len, double d) {

@@ -50,11 +50,6 @@ namespace dnSpy.MainApp {
 		}
 		readonly AppStatusBar statusBar;
 
-		readonly StackedContent<IStackedContentChild> stackedContent;
-		readonly IThemeManager themeManager;
-		readonly IImageManager imageManager;
-		readonly AppToolBar appToolBar;
-
 		Window IAppWindow.MainWindow {
 			get { return mainWindow; }
 		}
@@ -78,12 +73,12 @@ namespace dnSpy.MainApp {
 		sealed class UISettings {
 			static readonly Guid SETTINGS_GUID = new Guid("33E1988B-8EFF-4F4C-A064-FA99A7D0C64D");
 			const string SAVEDWINDOWSTATE_SECTION = "SavedWindowState";
-			const string STACKEDCONTENTSTATE_SECTION = "StackedContent";
+			const string MAINWINDOWCONTROLSTATE_SECTION = "MainWindowControlState";
 
 			readonly ISettingsManager settingsManager;
 
 			public SavedWindowState SavedWindowState;
-			public StackedContentState StackedContentState;
+			public MainWindowControlState MainWindowControlState;
 
 			public UISettings(ISettingsManager settingsManager) {
 				this.settingsManager = settingsManager;
@@ -92,31 +87,37 @@ namespace dnSpy.MainApp {
 			public void Read() {
 				var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 				this.SavedWindowState = new SavedWindowState().Read(sect.GetOrCreateSection(SAVEDWINDOWSTATE_SECTION));
-				this.StackedContentState = StackedContentStateSerializer.TryDeserialize(sect.GetOrCreateSection(STACKEDCONTENTSTATE_SECTION));
+				this.MainWindowControlState = new MainWindowControlState().Read(sect.GetOrCreateSection(MAINWINDOWCONTROLSTATE_SECTION));
 			}
 
 			public void Write() {
 				var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 				SavedWindowState.Write(sect.GetOrCreateSection(SAVEDWINDOWSTATE_SECTION));
-				StackedContentStateSerializer.Serialize(sect.GetOrCreateSection(STACKEDCONTENTSTATE_SECTION), StackedContentState);
+				MainWindowControlState.Write(sect.GetOrCreateSection(MAINWINDOWCONTROLSTATE_SECTION));
 			}
 		}
 
 		readonly UISettings uiSettings;
 		readonly IWpfCommandManager wpfCommandManager;
+		readonly StackedContent<IStackedContentChild> stackedContent;
+		readonly IThemeManager themeManager;
+		readonly IImageManager imageManager;
+		readonly AppToolBar appToolBar;
+		readonly MainWindowControl mainWindowControl;
 
 		[ImportingConstructor]
-		AppWindow(IThemeManager themeManager, IImageManager imageManager, AppSettingsImpl appSettings, ISettingsManager settingsManager, FileTabManager fileTabManager, AppToolBar appToolBar, IWpfCommandManager wpfCommandManager) {
+		AppWindow(IThemeManager themeManager, IImageManager imageManager, AppSettingsImpl appSettings, ISettingsManager settingsManager, FileTabManager fileTabManager, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandManager wpfCommandManager) {
 			this.uiSettings = new UISettings(settingsManager);
 			this.uiSettings.Read();
 			this.appSettings = appSettings;
-			this.stackedContent = new StackedContent<IStackedContentChild>();
+			this.stackedContent = new StackedContent<IStackedContentChild>(margin: new Thickness(6));
 			this.themeManager = themeManager;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			this.imageManager = imageManager;
 			this.fileTabManager = fileTabManager;
 			this.statusBar = new AppStatusBar();
 			this.appToolBar = appToolBar;
+			this.mainWindowControl = mainWindowControl;
 			this.wpfCommandManager = wpfCommandManager;
 			this.mainWindowCommands = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
 			this.mainWindowClosing = new WeakEventList<CancelEventArgs>();
@@ -143,7 +144,7 @@ namespace dnSpy.MainApp {
 			RefreshToolBar();
 		}
 
-		static Rect DefaultWindowLocation = new Rect(10, 10, 1300, 730);
+		static readonly Rect DefaultWindowLocation = new Rect(10, 10, 1300, 730);
 		public Window InitializeMainWindow() {
 			var sc = new StackedContent<IStackedContentChild>(false);
 			sc.AddChild(appToolBar, StackedContentChildInfo.CreateVertical(new GridLength(0, GridUnitType.Auto)));
@@ -167,10 +168,8 @@ namespace dnSpy.MainApp {
 
 		void IDnSpyLoaderContentProvider.RemoveLoadingContent() {
 			stackedContent.Clear();
-			stackedContent.AddChild(StackedContentChildImpl.GetOrCreate(fileTabManager.FileTreeView.TreeView, fileTabManager.FileTreeView.TreeView.UIObject), StackedContentChildInfo.CreateHorizontal(new GridLength(250, GridUnitType.Pixel), 100));
-			stackedContent.AddChild(StackedContentChildImpl.GetOrCreate(fileTabManager.TabGroupManager, fileTabManager.TabGroupManager.UIObject), StackedContentChildInfo.CreateHorizontal(new GridLength(1, GridUnitType.Star), 100));
-			if (uiSettings.StackedContentState != null)
-				stackedContent.State = uiSettings.StackedContentState;
+			stackedContent.AddChild(mainWindowControl);
+			mainWindowControl.Initialize(StackedContentChildImpl.GetOrCreate(fileTabManager.TabGroupManager, fileTabManager.TabGroupManager.UIObject), uiSettings.MainWindowControlState);
 		}
 
 		void MainWindow_Closing(object sender, CancelEventArgs e) {
@@ -179,7 +178,7 @@ namespace dnSpy.MainApp {
 				return;
 
 			uiSettings.SavedWindowState = new SavedWindowState(mainWindow);
-			uiSettings.StackedContentState = stackedContent.State;
+			uiSettings.MainWindowControlState = mainWindowControl.CreateState();
 			uiSettings.Write();
 		}
 

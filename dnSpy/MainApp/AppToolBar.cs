@@ -27,8 +27,6 @@ using dnSpy.Controls;
 namespace dnSpy.MainApp {
 	[Export, PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class AppToolBar : IStackedContentChild {
-		IStackedContent IStackedContentChild.StackedContent { get; set; }
-
 		public object UIObject {
 			get { return toolBar; }
 		}

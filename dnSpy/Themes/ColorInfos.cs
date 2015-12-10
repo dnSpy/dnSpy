@@ -1732,6 +1732,48 @@ namespace dnSpy.Themes {
 				DefaultBackground = "#FF1E1E1E",
 				BackgroundResourceKey = "EnvironmentToolWindowButtonInactiveGlyph",
 			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowTabBorder, "Tool Window Tab Border") {
+				DefaultBackground = "#FFEEEEF2",
+				BackgroundResourceKey = "EnvironmentToolWindowTabBorder",
+			},
+			new LinearGradientColorInfo(ColorType.EnvironmentToolWindowTabGradient, new Point(0, 1), "Tool Window Tab Gradient", 0, 1) {
+				ResourceKey = "EnvironmentToolWindowTabGradient",
+				DefaultForeground = "#FFEEEEF2",// Environment.ToolWindowTabGradientBegin
+				DefaultBackground = "#FFEEEEF2",// Environment.ToolWindowTabGradientEnd
+			},
+			new LinearGradientColorInfo(ColorType.EnvironmentToolWindowTabMouseOverBackgroundGradient, new Point(0, 1), "Tool Window Tab Mouse Over Background Gradient", 0, 1) {
+				ResourceKey = "EnvironmentToolWindowTabMouseOverBackgroundGradient",
+				DefaultForeground = "#FFC9DEF5",// Environment.ToolWindowTabMouseOverBackgroundBegin
+				DefaultBackground = "#FFC9DEF5",// Environment.ToolWindowTabMouseOverBackgroundEnd
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowTabMouseOverBorder, "Tool Window Tab Mouse Over Border") {
+				DefaultBackground = "#FFC9DEF5",
+				BackgroundResourceKey = "EnvironmentToolWindowTabMouseOverBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowTabMouseOverText, "Tool Window Tab Mouse Over Text") {
+				DefaultForeground = "#FF1E1E1E",
+				ForegroundResourceKey = "EnvironmentToolWindowTabMouseOverText",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowTabSelectedActiveText, "Tool Window Tab Selected Active Text") {
+				DefaultForeground = "#FF0E70C0",
+				ForegroundResourceKey = "EnvironmentToolWindowTabSelectedActiveText",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowTabSelectedBorder, "Tool Window Tab Selected Border") {
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "EnvironmentToolWindowTabSelectedBorder",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowTabSelectedTab, "Tool Window Tab Selected Tab") {
+				DefaultBackground = "#FFF5F5F5",
+				BackgroundResourceKey = "EnvironmentToolWindowTabSelectedTab",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowTabSelectedText, "Tool Window Tab Selected Text") {
+				DefaultForeground = "#FF0E70C0",
+				ForegroundResourceKey = "EnvironmentToolWindowTabSelectedText",
+			},
+			new BrushColorInfo(ColorType.EnvironmentToolWindowTabText, "Tool Window Tab Text") {
+				DefaultForeground = "#FF444444",
+				ForegroundResourceKey = "EnvironmentToolWindowTabText",
+			},
 			new BrushColorInfo(ColorType.SearchBoxWatermark, "SearchBox Watermark") {
 				DefaultForeground = "#FF6D6D6D",
 				ForegroundResourceKey = "SearchBoxWatermarkForeground",

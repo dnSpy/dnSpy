@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
-using dnSpy.Contracts;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
@@ -22,11 +21,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ITextEditorUIContext textEditorUIContext;
 		readonly ITextLineObjectManager textLineObjectManager;
 		readonly IImageManager imageManager;
+		readonly IThemeManager themeManager;
 
-		public IconBarMargin(ITextEditorUIContext textEditorUIContext, ITextLineObjectManager textLineObjectManager, IImageManager imageManager) {
+		public IconBarMargin(ITextEditorUIContext textEditorUIContext, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IThemeManager themeManager) {
 			this.textEditorUIContext = textEditorUIContext;
 			this.textLineObjectManager = textLineObjectManager;
 			this.imageManager = imageManager;
+			this.themeManager = themeManager;
 		}
 
 		public void Dispose() {
@@ -44,7 +45,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		protected override void OnRender(DrawingContext drawingContext) {
 			Size renderSize = this.RenderSize;
-			var theme = DnSpy.App.ThemeManager.Theme;
+			var theme = themeManager.Theme;
 			var bgColor = (theme.GetColor(ColorType.IconBar).Background as SolidColorBrush).Color;
 			drawingContext.DrawRectangle(theme.GetColor(ColorType.IconBar).Background, null,
 										 new Rect(0, 0, renderSize.Width, renderSize.Height));

@@ -25,7 +25,9 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
@@ -178,6 +180,29 @@ namespace dnSpy.Files.Tabs {
 
 		public override void Execute(IMenuItemContext context) {
 			fileListLoader.Reload();
+		}
+	}
+
+	[ExportAutoLoaded]
+	sealed class ShowCodeEditorCommandLoader : IAutoLoaded {
+		public static readonly RoutedCommand ShowCodeEditorRoutedCommand = new RoutedCommand("ShowCodeEditorRoutedCommand", typeof(ShowCodeEditorCommandLoader));
+
+		[ImportingConstructor]
+		ShowCodeEditorCommandLoader(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
+			wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW).Add(
+				ShowCodeEditorRoutedCommand,
+				(s, e) => { var tab = fileTabManager.ActiveTab; if (tab != null) tab.TrySetFocus(); },
+				(s, e) => e.CanExecute = fileTabManager.ActiveTab != null,
+				ModifierKeys.Control | ModifierKeys.Alt, Key.D0,
+				ModifierKeys.Control | ModifierKeys.Alt, Key.NumPad0,
+				ModifierKeys.None, Key.F7);
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "_Code", InputGestureText = "Ctrl+Alt+0", Icon = "MarkUpTag", Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 0)]
+	sealed class ShowCodeEditorCommand : MenuItemCommand {
+		ShowCodeEditorCommand()
+			: base(ShowCodeEditorCommandLoader.ShowCodeEditorRoutedCommand) {
 		}
 	}
 }

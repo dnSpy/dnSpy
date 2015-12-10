@@ -474,6 +474,16 @@
 		<color name="environmenttoolwindowbuttonhoverinactiveborder" bg="#FF393939" />
 		<color name="environmenttoolwindowbuttonhoverinactiveglyph" bg="#FFF1F1F1" />
 		<color name="environmenttoolwindowbuttoninactiveglyph" bg="#FFF1F1F1" />
+		<color name="environmenttoolwindowtabborder" bg="#FF2D2D30" />
+		<color name="environmenttoolwindowtabgradient" fg="#FF2D2D30" bg="#FF2D2D30" />
+		<color name="environmenttoolwindowtabmouseoverbackgroundgradient" fg="#FF3E3E40" bg="#FF3E3E40" />
+		<color name="environmenttoolwindowtabmouseoverborder" bg="#FF3E3E40" />
+		<color name="environmenttoolwindowtabmouseovertext" fg="#FF55AAFF" />
+		<color name="environmenttoolwindowtabselectedactivetext" fg="#FF0097FB" />
+		<color name="environmenttoolwindowtabselectedborder" bg="#FF252526" />
+		<color name="environmenttoolwindowtabselectedtab" bg="#FF252526" />
+		<color name="environmenttoolwindowtabselectedtext" fg="#FF0097FB" />
+		<color name="environmenttoolwindowtabtext" fg="#FFD0D0D0" />
 		<color name="searchboxwatermark" fg="#FFA0A0A0" />
 		<color name="memorywindowdisabled" bg="#40FFFFFF" />
 		<color name="treeviewnode" fg="#F1F1F1" />
