@@ -126,10 +126,19 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			if (!File.Exists(gacFileInfo.Path))
 				return;
 			var info = FileVersionInfo.GetVersionInfo(gacFileInfo.Path);
-			fileVersion = info.FileVersion ?? string.Empty;
-			createdBy = info.CompanyName;
+			fileVersion = Filter(info.FileVersion ?? string.Empty);
+			createdBy = Filter(info.CompanyName);
 			if (string.IsNullOrWhiteSpace(createdBy))
 				createdBy = CalculateCreatedByFromAttribute() ?? string.Empty;
+		}
+
+		static string Filter(string s) {
+			if (s == null)
+				return string.Empty;
+			const int MAX = 512;
+			if (s.Length > MAX)
+				s = s.Substring(0, MAX);
+			return s;
 		}
 	}
 }

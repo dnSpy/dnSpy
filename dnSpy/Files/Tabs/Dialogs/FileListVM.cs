@@ -25,7 +25,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		public object FileCountObject { get { return this; } }
 
 		public string Name {
-			get { return fileList.Name; }
+			get { return Filter(fileList.Name); }
 		}
 
 		public int FileCount {
@@ -62,6 +62,15 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			this.fileList = fileList;
 			this.isExistingList = isExistingList;
 			this.isUserList = isUserList;
+		}
+
+		static string Filter(string s) {
+			if (s == null)
+				return string.Empty;
+			const int MAX = 512;
+			if (s.Length > MAX)
+				s = s.Substring(0, MAX);
+			return s;
 		}
 	}
 }
