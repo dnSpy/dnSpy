@@ -930,6 +930,7 @@ namespace ICSharpCode.Decompiler.Ast {
 			astMethod.NameToken = Identifier.Create(CleanName(methodDef.Name)).WithAnnotation(methodDef);
 			astMethod.TypeParameters.AddRange(MakeTypeParameters(methodDef.GenericParameters));
 			astMethod.Parameters.AddRange(MakeParameters(methodDef));
+			bool createMethodBody = false;
 			// constraints for override and explicit interface implementation methods are inherited from the base method, so they cannot be specified directly
 			if (!methodDef.IsVirtual || (methodDef.IsNewSlot && !methodDef.IsPrivate)) astMethod.Constraints.AddRange(MakeConstraints(methodDef.GenericParameters));
 			if (!methodDef.DeclaringType.IsInterface) {
@@ -941,6 +942,13 @@ namespace ICSharpCode.Decompiler.Ast {
 					if (methodDef.IsVirtual == methodDef.IsNewSlot)
 						SetNewModifier(astMethod);
 				}
+				createMethodBody = true;
+			} else if (methodDef.IsStatic) {
+				// decompile static method in interface
+				astMethod.Modifiers = ConvertModifiers(methodDef);
+				createMethodBody = true;
+			}
+			if (createMethodBody) {
 				MemberMapping mm;
 				astMethod.Body = CreateMethodBody(methodDef, astMethod.Parameters, out mm);
 				astMethod.AddAnnotation(mm);
