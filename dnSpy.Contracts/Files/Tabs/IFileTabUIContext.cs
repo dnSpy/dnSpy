@@ -20,6 +20,7 @@
 using System;
 using System.Windows;
 using System.Windows.Media;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Contracts.Files.Tabs {
@@ -36,7 +37,8 @@ namespace dnSpy.Contracts.Files.Tabs {
 		object UIObject { get; }
 
 		/// <summary>
-		/// Gets the element that should get focus when the tab is selected, or null
+		/// Gets the element that should get focus when the tab is selected, or null. Implement
+		/// <see cref="IFocusable"/> to set focus yourself.
 		/// </summary>
 		IInputElement FocusedElement { get; }
 

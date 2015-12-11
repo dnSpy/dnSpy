@@ -17,25 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-
 namespace dnSpy.Contracts.Controls {
 	/// <summary>
-	/// Focuses <see cref="UIElement"/>s
+	/// Can focus elements
 	/// </summary>
-	public interface IWpfFocusManager {
+	public interface IFocusable {
 		/// <summary>
-		/// true if <see cref="Focus(IInputElement)"/> can be called
+		/// true if <see cref="Focus()"/> can be called
 		/// </summary>
 		bool CanFocus { get; }
 
 		/// <summary>
-		/// Gives the focus to <paramref name="element"/> by calling its <see cref="UIElement.Focus()"/>
-		/// method unless some other code prevents it. Eg., a menu could be open which could prevent
-		/// the focus from being stolen by <paramref name="element"/>. Export a <see cref="IWpfFocusChecker"/>
-		/// class to prevent Focus() from being called.
+		/// Sets focus. Only called if <see cref="CanFocus"/> is true
 		/// </summary>
-		/// <param name="element">Element</param>
-		void Focus(IInputElement element);
+		void Focus();
 	}
 }

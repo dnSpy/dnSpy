@@ -236,5 +236,13 @@ namespace dnSpy.TreeView {
 			foreach (var node in nodes)
 				sharpTreeView.SelectedItems.Add(node.Node);
 		}
+
+		public void Focus() {
+			var node = sharpTreeView.SelectedItem as SharpTreeNode;
+			if (node != null)
+				sharpTreeView.FocusNode(node);
+			else
+				sharpTreeView.Focus();
+		}
 	}
 }

@@ -30,7 +30,7 @@ namespace dnSpy.Controls {
 	sealed class WpfFocusManager : IWpfFocusManager {
 		readonly Lazy<IWpfFocusChecker>[] checkers;
 
-		bool CanFocus {
+		public bool CanFocus {
 			get { return checkers.All(a => a.Value.CanFocus); }
 		}
 

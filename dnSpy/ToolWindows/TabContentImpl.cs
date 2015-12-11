@@ -22,14 +22,29 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.ToolWindows {
-	sealed class TabContentImpl : ITabContent, INotifyPropertyChanged {
+	sealed class TabContentImpl : ITabContent, IFocusable, INotifyPropertyChanged {
 		public ICommand CloseCommand {
 			get { return new RelayCommand(a => Close(), a => CanClose); }
+		}
+
+		bool IFocusable.CanFocus {
+			get {
+				var focusable = content as IFocusable;
+				return focusable != null && focusable.CanFocus;
+			}
+		}
+
+		void IFocusable.Focus() {
+			var focusable = content as IFocusable;
+			Debug.Assert(focusable != null);
+			if (focusable != null)
+				focusable.Focus();
 		}
 
 		public IInputElement FocusedElement {

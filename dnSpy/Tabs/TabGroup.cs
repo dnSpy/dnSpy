@@ -124,14 +124,30 @@ namespace dnSpy.Tabs {
 			var sv = fel as ScrollViewer;
 			if (sv != null)
 				fel = sv.Content as IInputElement ?? fel;
-			if (fel == null || !fel.Focusable)
-				return;
 
-			var uiel = fel as UIElement;
-			if (uiel != null && !uiel.IsVisible)
-				new SetFocusWhenVisible(this, content, uiel);
-			else
-				SetFocusNoChecks(fel);
+			var focusable = content as IFocusable;
+			if (focusable != null && focusable.CanFocus) {
+				var uiel = fel as UIElement;
+				if (uiel != null && !uiel.IsVisible)
+					new SetFocusWhenVisible(this, content, uiel, () => {
+						if (wpfFocusManager.CanFocus)
+							focusable.Focus();
+					});
+				else {
+					if (wpfFocusManager.CanFocus)
+						focusable.Focus();
+				}
+			}
+			else {
+				if (fel == null || !fel.Focusable)
+					return;
+
+				var uiel = fel as UIElement;
+				if (uiel != null && !uiel.IsVisible)
+					new SetFocusWhenVisible(this, content, uiel, () => SetFocusNoChecks(fel));
+				else
+					SetFocusNoChecks(fel);
+			}
 		}
 
 		void SetFocusNoChecks(IInputElement uiel) {
@@ -159,18 +175,20 @@ namespace dnSpy.Tabs {
 			readonly TabGroup tabGroup;
 			readonly ITabContent content;
 			readonly UIElement uiElem;
+			readonly Action action;
 
-			public SetFocusWhenVisible(TabGroup tabGroup, ITabContent content, UIElement uiElem) {
+			public SetFocusWhenVisible(TabGroup tabGroup, ITabContent content, UIElement uiElem, Action action) {
 				this.tabGroup = tabGroup;
 				this.content = content;
 				this.uiElem = uiElem;
+				this.action = action;
 				uiElem.IsVisibleChanged += uiElem_IsVisibleChanged;
 			}
 
 			void uiElem_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 				uiElem.IsVisibleChanged -= uiElem_IsVisibleChanged;
 				if (tabGroup.IsActiveTab(content))
-					tabGroup.SetFocusNoChecks(uiElem);
+					action();
 			}
 		}
 

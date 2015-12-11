@@ -57,7 +57,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	sealed class FileTreeViewWindowContent : IToolWindowContent {
+	sealed class FileTreeViewWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("5495EE9F-1EF2-45F3-A320-22A89BFDF731");
 
 		public IInputElement FocusedElement {
@@ -80,6 +80,10 @@ namespace dnSpy.MainApp {
 			get { return treeView.UIObject; }
 		}
 
+		public bool CanFocus {
+			get { return true; }
+		}
+
 		readonly ITreeView treeView;
 
 		public FileTreeViewWindowContent(ITreeView treeView) {
@@ -87,6 +91,10 @@ namespace dnSpy.MainApp {
 		}
 
 		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {
+		}
+
+		public void Focus() {
+			treeView.Focus();
 		}
 	}
 

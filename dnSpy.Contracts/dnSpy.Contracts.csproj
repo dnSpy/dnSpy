@@ -54,6 +54,7 @@
     <Compile Include="Command\ICommandHolder.cs" />
     <Compile Include="Contracts.cs" />
     <Compile Include="Controls\CommandConstants.cs" />
+    <Compile Include="Controls\IFocusable.cs" />
     <Compile Include="Controls\IWpfCommandManager.cs" />
     <Compile Include="Controls\IWpfCommands.cs" />
     <Compile Include="Controls\IWpfFocusChecker.cs" />

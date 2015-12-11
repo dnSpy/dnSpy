@@ -19,6 +19,7 @@
 
 using System.ComponentModel;
 using System.Windows;
+using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Contracts.Tabs {
 	/// <summary>
@@ -41,7 +42,8 @@ namespace dnSpy.Contracts.Tabs {
 		object UIObject { get; }
 
 		/// <summary>
-		/// Gets the element that should get focus when the tab is selected or null to use <see cref="UIObject"/>
+		/// Gets the element that should get focus when the tab is selected or null to use <see cref="UIObject"/>.
+		/// Implement <see cref="IFocusable"/> to set focus yourself.
 		/// </summary>
 		IInputElement FocusedElement { get; }
 

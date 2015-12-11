@@ -22,13 +22,14 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Files.Tabs {
-	sealed class TabContentImpl : ViewModelBase, ITabContent, IFileTab {
+	sealed class TabContentImpl : ViewModelBase, ITabContent, IFileTab, IFocusable {
 		readonly TabHistory tabHistory;
 
 		public IFileTabManager FileTabManager {
@@ -107,6 +108,20 @@ namespace dnSpy.Files.Tabs {
 					return UIContext.FocusedElement;
 				return null;
 			}
+		}
+
+		bool IFocusable.CanFocus {
+			get {
+				var focusable = UIContext as IFocusable;
+				return focusable != null && focusable.CanFocus;
+			}
+		}
+
+		void IFocusable.Focus() {
+			var focusable = UIContext as IFocusable;
+			Debug.Assert(focusable != null);
+			if (focusable != null)
+				focusable.Focus();
 		}
 
 		readonly IFileTabUIContextLocator fileTabUIContextLocator;

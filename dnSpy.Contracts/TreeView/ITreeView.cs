@@ -68,5 +68,10 @@ namespace dnSpy.Contracts.TreeView {
 		/// Gets the selected items which don't have any of their ancestors selected
 		/// </summary>
 		ITreeNodeData[] TopLevelSelection { get; }
+
+		/// <summary>
+		/// Focuses the treeview, possibly getting keyboard focus
+		/// </summary>
+		void Focus();
 	}
 }
