@@ -130,15 +130,15 @@ namespace dnSpy.Shared.UI.Controls {
 			width -= expander.DesiredSize.Width;
 			height = Math.Max(height, expander.DesiredSize.Height);
 
-			icon.Measure(constraint);
+			icon.Measure(new Size(width, constraint.Height));
 			width -= icon.DesiredSize.Width;
 			height = Math.Max(height, icon.DesiredSize.Height);
 
-			content.Measure(constraint);
+			content.Measure(new Size(width, constraint.Height));
 			width -= content.DesiredSize.Width;
 			height = Math.Max(height, content.DesiredSize.Height);
 
-			return new Size(expander.DesiredSize.Width + icon.DesiredSize.Width + content.DesiredSize.Width, height);
+			return new Size(indent + expander.DesiredSize.Width + icon.DesiredSize.Width + content.DesiredSize.Width, height);
 		}
 
 		protected override void OnRender(DrawingContext drawingContext) {

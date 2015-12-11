@@ -4876,6 +4876,93 @@
     <Style TargetType="{x:Type shtv:SharpTreeNodeView}">
         <Setter Property="Focusable"
                 Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type shtv:SharpTreeNodeView}">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <FrameworkElement Name="spacer" />
+                            <ToggleButton Name="expander"
+                                          Style="{StaticResource ExpandCollapseToggleStyle}"
+                                          IsChecked="{Binding IsExpanded}"
+                                          Visibility="Hidden"
+                                          VerticalAlignment="Center" />
+                            <Border Name="checkBoxContainer"
+                                    Width="16"
+                                    Margin="0 0 3 0"
+                                    Visibility="Collapsed">
+                                <CheckBox IsChecked="{Binding IsChecked}"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center" />
+                            </Border>
+                            <StackPanel Orientation="Horizontal"
+                                        Background="Transparent"
+                                        ToolTip="{Binding ToolTip}">
+                                <ContentPresenter Name="icon"
+                                                  Content="{Binding Icon}"
+                                                  Width="16"
+                                                  Height="16"
+                                                  Margin="0 0 5 1"
+                                                  VerticalAlignment="Center"
+                                                  Focusable="False">
+                            		<ContentPresenter.ContentTemplate>
+                                		<DataTemplate>
+                            				<Image Source="{Binding}"/>
+                            			</DataTemplate>
+                                	</ContentPresenter.ContentTemplate>
+                            	</ContentPresenter>
+                                <Border Name="textContainer"
+                                        Background="{TemplateBinding TextBackground}">
+                                    <ContentPresenter Content="{Binding Text}"
+                                                      Margin="2 0 6 0"
+                                                      VerticalAlignment="Center"
+                                                      Focusable="False" />
+                                </Border>
+                                <Border Name="textEditorContainer" />
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding IsEditing}"
+                                     Value="True">
+                            <Setter TargetName="textContainer"
+                                    Property="Visibility"
+                                    Value="Collapsed" />
+                        </DataTrigger>
+                    	  <DataTrigger Binding="{Binding ShowIcon}"
+                                     Value="False">
+                    		  <Setter TargetName="icon"
+                                    Property="Visibility"
+                                   Value="Collapsed" />
+ 						  </DataTrigger>
+                        <DataTrigger Binding="{Binding IsExpanded}"
+                                     Value="True">
+                            <Setter TargetName="icon"
+                                    Property="Content"
+                                    Value="{Binding ExpandedIcon}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ShowExpander}"
+                                     Value="True">
+                            <Setter TargetName="expander"
+                                    Property="Visibility"
+                                    Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsCheckable}"
+                                     Value="True">
+                            <Setter TargetName="checkBoxContainer"
+                                    Property="Visibility"
+                                    Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsCut}"
+                                     Value="True">
+                            <Setter TargetName="icon"
+                                    Property="Opacity"
+                                    Value="0.5" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 	<!-- Same as above except that Text and ToolTip aren't used. Used by eg. locals window -->
     <Style x:Key="SharpTreeNodeView_GridView" TargetType="{x:Type shtv:SharpTreeNodeView}">
