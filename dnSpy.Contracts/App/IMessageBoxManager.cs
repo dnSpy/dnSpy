@@ -53,13 +53,14 @@ namespace dnSpy.Contracts.App {
 		/// <typeparam name="T">Type</typeparam>
 		/// <param name="labelMessage">Label</param>
 		/// <param name="defaultText">Default text to write to the textbox or null</param>
+		/// <param name="title">Title or null</param>
 		/// <param name="converter">Converts a string to the type, or null to use the default
 		/// converter.</param>
 		/// <param name="verifier">Verifies the typed message. Returns null or an empty string if
 		/// it's a valid value, else an error message to show to the user.</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
 		/// <returns></returns>
-		T Ask<T>(string labelMessage, string defaultText = null, Func<string, T> converter = null, Func<string, string> verifier = null, Window ownerWindow = null);
+		T Ask<T>(string labelMessage, string defaultText = null, string title = null, Func<string, T> converter = null, Func<string, string> verifier = null, Window ownerWindow = null);
 
 		/// <summary>
 		/// Show an exception message

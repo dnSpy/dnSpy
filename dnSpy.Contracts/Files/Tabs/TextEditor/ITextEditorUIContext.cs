@@ -69,5 +69,17 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// will be called after this method has been called.
 		/// </summary>
 		void OnUseNewRendererChanged();
+
+		/// <summary>
+		/// Gets the current line number
+		/// </summary>
+		int CurrentLine { get; }
+
+		/// <summary>
+		/// Scrolls to a line and column
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <param name="column">Column</param>
+		void ScrollAndMoveCaretTo(int line, int column);
 	}
 }

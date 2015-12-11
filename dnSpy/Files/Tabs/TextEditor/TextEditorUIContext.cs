@@ -138,6 +138,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			get { return textEditorControl.TextEditor.SelectionLength > 0; }
 		}
 
+		public int CurrentLine {
+			get { return textEditorControl.TextEditor.TextArea.Caret.Line; }
+		}
+
 		public void OnShow() {
 		}
 
@@ -246,6 +250,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTEDITOR, textEditorControl.TextEditor);
 			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTAREA, textEditorControl.TextEditor.TextArea);
 			textEditorControl.Dispose();
+		}
+
+		public void ScrollAndMoveCaretTo(int line, int column) {
+			textEditorControl.ScrollAndMoveCaretTo(line, column);
 		}
 	}
 }

@@ -19,9 +19,11 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
@@ -143,6 +145,74 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public override bool IsVisible(IMenuItemContext context) {
 			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);
+		}
+	}
+
+	[ExportAutoLoaded]
+	sealed class GoToCommand : IAutoLoaded {
+		static readonly RoutedCommand GoToRoutedCommand = new RoutedCommand("GoToRoutedCommand", typeof(GoToCommand));
+		readonly IFileTabManager fileTabManager;
+		readonly IMessageBoxManager messageBoxManager;
+
+		[ImportingConstructor]
+		GoToCommand(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, IMessageBoxManager messageBoxManager) {
+			this.fileTabManager = fileTabManager;
+			this.messageBoxManager = messageBoxManager;
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_TEXTEDITOR_UICONTEXT);
+			cmds.Add(GoToRoutedCommand, Execute, CanExecute, ModifierKeys.Control, Key.G);
+		}
+
+		void Execute(object s, ExecutedRoutedEventArgs e) {
+			GoTo();
+		}
+
+		void CanExecute(object s, CanExecuteRoutedEventArgs e) {
+			e.CanExecute = fileTabManager.ActiveTab != null && fileTabManager.ActiveTab.UIContext is ITextEditorUIContext;
+		}
+
+		void GoTo() {
+			var tab = fileTabManager.ActiveTab;
+			var uiContext = tab == null ? null : tab.UIContext as ITextEditorUIContext;
+			if (uiContext == null)
+				return;
+
+			var res = messageBoxManager.Ask<Tuple<int, int>>("_Line [, column]", null, "Go to Line", s => {
+				int? line, column;
+				TryGetRowCol(s, uiContext.CurrentLine, out line, out column);
+				return Tuple.Create(line.Value, column.Value);
+			}, s => {
+				int? line, column;
+				return TryGetRowCol(s, uiContext.CurrentLine, out line, out column);
+			});
+			if (res != null)
+				uiContext.ScrollAndMoveCaretTo(res.Item1, res.Item2);
+		}
+
+		string TryGetRowCol(string s, int currentLine, out int? line, out int? column) {
+			line = null;
+			column = null;
+			Match match;
+			if ((match = goToLineRegex1.Match(s)) != null && match.Groups.Count == 4) {
+				line = TryParse(match.Groups[1].Value);
+				column = match.Groups[3].Value != string.Empty ? TryParse(match.Groups[3].Value) : 1;
+			}
+			else if ((match = goToLineRegex2.Match(s)) != null && match.Groups.Count == 2) {
+				line = currentLine;
+				column = TryParse(match.Groups[1].Value);
+			}
+			if (line == null || column == null) {
+				if (string.IsNullOrWhiteSpace(s))
+					return "Enter a line number";
+				return string.Format("Invalid line: {0}", s);
+			}
+			return string.Empty;
+		}
+		static readonly Regex goToLineRegex1 = new Regex(@"^\s*(\d+)\s*(,\s*(\d+))?\s*$");
+		static readonly Regex goToLineRegex2 = new Regex(@"^\s*,\s*(\d+)\s*$");
+
+		static int? TryParse(string valText) {
+			int val;
+			return int.TryParse(valText, out val) ? (int?)val : null;
 		}
 	}
 }

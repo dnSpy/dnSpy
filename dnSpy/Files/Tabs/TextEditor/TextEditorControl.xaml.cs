@@ -622,7 +622,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return null;
 		}
 
-		void ScrollAndMoveCaretTo(int line, int column, bool focus = true) {
+		public void ScrollAndMoveCaretTo(int line, int column, bool focus = true) {
 			// Make sure the lines have been re-initialized or the ScrollTo() method could fail
 			TextEditor.TextArea.TextView.EnsureVisualLines();
 			TextEditor.ScrollTo(line, column);

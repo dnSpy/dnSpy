@@ -128,7 +128,7 @@ namespace dnSpy.MainApp {
 			win.Owner = ownerWindow ?? appWindow.MainWindow;
 		}
 
-		public T Ask<T>(string labelMessage, string defaultText = null, Func<string, T> converter = null, Func<string, string> verifier = null, Window ownerWindow = null) {
+		public T Ask<T>(string labelMessage, string defaultText = null, string title = null, Func<string, T> converter = null, Func<string, string> verifier = null, Window ownerWindow = null) {
 			var win = new AskDlg();
 			if (converter == null)
 				converter = CreateDefaultConverter<T>();
@@ -139,6 +139,8 @@ namespace dnSpy.MainApp {
 			vm.Text = defaultText ?? string.Empty;
 			win.DataContext = vm;
 			win.Owner = ownerWindow ?? appWindow.MainWindow;
+			if (!string.IsNullOrWhiteSpace(title))
+				win.Title = title;
 			if (win.ShowDialog() != true)
 				return default(T);
 			return (T)vm.Value;
