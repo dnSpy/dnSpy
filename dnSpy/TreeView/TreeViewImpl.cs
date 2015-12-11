@@ -238,6 +238,12 @@ namespace dnSpy.TreeView {
 		}
 
 		public void Focus() {
+			Focus2();
+			// This is needed if the treeview was hidden and just got visible
+			sharpTreeView.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(Focus2));
+		}
+
+		void Focus2() {
 			var node = sharpTreeView.SelectedItem as SharpTreeNode;
 			if (node != null)
 				sharpTreeView.FocusNode(node);
