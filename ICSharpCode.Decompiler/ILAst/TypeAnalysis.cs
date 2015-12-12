@@ -1218,6 +1218,9 @@ namespace ICSharpCode.Decompiler.ILAst {
 					return TypeCode.Double;
 				case ElementType.String:
 					return TypeCode.String;
+				case MetadataType.RequiredModifier:
+				case MetadataType.OptionalModifier:
+					return GetTypeCode(((IModifierType)type).ElementType);
 				default:
 					return TypeCode.Object;
 			}
