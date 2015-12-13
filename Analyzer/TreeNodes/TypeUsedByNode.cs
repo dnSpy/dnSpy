@@ -46,8 +46,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return analyzer.PerformAnalysis(ct)
 				.Cast<EntityNode>()
 				.Where(n => n.Member.DeclaringType != analyzedType)
-				.Distinct(new AnalyzerEntityTreeNodeComparer())
-				.OrderBy(n => n.ToString(Context.Language));
+				.Distinct(new AnalyzerEntityTreeNodeComparer());
 		}
 
 		IEnumerable<EntityNode> FindTypeUsage(TypeDef type) {

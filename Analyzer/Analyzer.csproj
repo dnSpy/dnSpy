@@ -75,6 +75,7 @@
     <Compile Include="TreeNodes\MethodOverridesNode.cs" />
     <Compile Include="TreeNodes\MethodUsedByNode.cs" />
     <Compile Include="TreeNodes\MethodUsesNode.cs" />
+    <Compile Include="TreeNodes\ModuleNode.cs" />
     <Compile Include="TreeNodes\PropertyAccessorNode.cs" />
     <Compile Include="TreeNodes\PropertyNode.cs" />
     <Compile Include="TreeNodes\PropertyOverridesNode.cs" />

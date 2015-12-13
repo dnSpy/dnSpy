@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
@@ -48,7 +47,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
 
 			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedMethod, FindReferencesInType);
-			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Context.Language))) {
+			foreach (var child in analyzer.PerformAnalysis(ct)) {
 				yield return child;
 			}
 

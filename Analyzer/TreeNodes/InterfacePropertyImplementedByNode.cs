@@ -47,7 +47,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (analyzedMethod == null)
 				return new List<IAnalyzerTreeNodeData>();
 			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedMethod, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Context.Language));
+			return analyzer.PerformAnalysis(ct);
 		}
 
 		IEnumerable<IAnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {

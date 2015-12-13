@@ -55,7 +55,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			foundMethods = new ConcurrentDictionary<MethodDef, int>();
 
-			foreach (var child in FindReferencesInType(analyzedEvent.DeclaringType).OrderBy(n => n.ToString(Context.Language))) {
+			foreach (var child in FindReferencesInType(analyzedEvent.DeclaringType)) {
 				yield return child;
 			}
 

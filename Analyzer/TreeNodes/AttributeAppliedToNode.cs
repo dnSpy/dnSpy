@@ -108,54 +108,44 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			var results = modules.AsParallel().WithCancellation(ct).SelectMany(a => FindReferencesInModule(new[] { a.Item1 }, a.Item2, ct));
 
-			foreach (var result in results.OrderBy(n => n.ToString(Context.Language))) {
+			foreach (var result in results)
 				yield return result;
-			}
 
 			foundMethods = null;
 		}
 
 		IEnumerable<IAnalyzerTreeNodeData> FindReferencesInModule(IEnumerable<ModuleDef> modules, ITypeDefOrRef tr, CancellationToken ct) {
+			var checkedAsms = new HashSet<AssemblyDef>();
 			foreach (var module in modules) {
-				//since we do not display modules as separate entities, coalesce the assembly and module searches
-				bool foundInAssyOrModule = false;
-
 				if ((usage & AttributeTargets.Assembly) != 0) {
 					AssemblyDef asm = module.Assembly;
-					if (asm != null && asm.HasCustomAttributes) {
+					if (asm != null && !checkedAsms.Contains(asm) && asm.HasCustomAttributes) {
+						checkedAsms.Add(asm);
 						foreach (var attribute in asm.CustomAttributes) {
 							if (new SigComparer().Equals(attribute.AttributeType, tr)) {
-								foundInAssyOrModule = true;
+								yield return new AssemblyNode(asm) { Context = Context };
 								break;
 							}
 						}
 					}
 				}
 
-				if (!foundInAssyOrModule) {
-					ct.ThrowIfCancellationRequested();
+				ct.ThrowIfCancellationRequested();
 
-					//search module
-					if ((usage & AttributeTargets.Module) != 0) {
-						if (module.HasCustomAttributes) {
-							foreach (var attribute in module.CustomAttributes) {
-								if (new SigComparer().Equals(attribute.AttributeType, tr)) {
-									foundInAssyOrModule = true;
-									break;
-								}
+				if ((usage & AttributeTargets.Module) != 0) {
+					if (module.HasCustomAttributes) {
+						foreach (var attribute in module.CustomAttributes) {
+							if (new SigComparer().Equals(attribute.AttributeType, tr)) {
+								yield return new ModuleNode(module) { Context = Context };
+								break;
 							}
 						}
 					}
-
-				}
-
-				if (foundInAssyOrModule) {
-					yield return new AssemblyNode(module) { Context = Context };
 				}
 
 				ct.ThrowIfCancellationRequested();
 
-				foreach (TypeDef type in TreeTraversal.PreOrder(module.Types, t => t.NestedTypes).OrderBy(t => t.FullName)) {
+				foreach (TypeDef type in TreeTraversal.PreOrder(module.Types, t => t.NestedTypes)) {
 					ct.ThrowIfCancellationRequested();
 					foreach (var result in FindReferencesWithinInType(type, tr)) {
 						ct.ThrowIfCancellationRequested();

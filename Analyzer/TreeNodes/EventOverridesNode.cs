@@ -18,7 +18,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Highlighting;
@@ -43,7 +42,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
 			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedEvent, FindReferencesInType);
-			return analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Context.Language));
+			return analyzer.PerformAnalysis(ct);
 		}
 
 		IEnumerable<IAnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {

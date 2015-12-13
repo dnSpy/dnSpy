@@ -19,7 +19,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
@@ -50,7 +49,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foundMethods = new Lazy<Hashtable>(LazyThreadSafetyMode.ExecutionAndPublication);
 
 			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedField, FindReferencesInType);
-			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Context.Language))) {
+			foreach (var child in analyzer.PerformAnalysis(ct)) {
 				yield return child;
 			}
 

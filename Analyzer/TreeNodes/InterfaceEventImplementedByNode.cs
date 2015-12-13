@@ -47,7 +47,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (analyzedMethod == null)
 				yield break;
 			var analyzer = new ScopedWhereUsedAnalyzer<IAnalyzerTreeNodeData>(Context.FileManager, analyzedMethod, FindReferencesInType);
-			foreach (var child in analyzer.PerformAnalysis(ct).OrderBy(n => n.ToString(Context.Language))) {
+			foreach (var child in analyzer.PerformAnalysis(ct)) {
 				yield return child;
 			}
 		}

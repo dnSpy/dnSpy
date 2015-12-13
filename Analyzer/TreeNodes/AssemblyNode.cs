@@ -16,35 +16,26 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using dnlib.DotNet;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
-using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class AssemblyNode : EntityNode {
-		readonly ModuleDef analyzedAssembly;
+		readonly AssemblyDef analyzedAssembly;
 
-		public AssemblyNode(ModuleDef analyzedAssembly) {
-			if (analyzedAssembly == null)
-				throw new ArgumentNullException("analyzedAssembly");
+		public AssemblyNode(AssemblyDef analyzedAssembly) {
 			this.analyzedAssembly = analyzedAssembly;
 		}
 
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			if (analyzedAssembly.Assembly != null)
-				return dnImgMgr.GetImageReference(analyzedAssembly.Assembly);
 			return dnImgMgr.GetImageReference(analyzedAssembly);
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			var isExe = analyzedAssembly.Assembly != null &&
-				analyzedAssembly.IsManifestModule &&
-				(analyzedAssembly.Characteristics & dnlib.PE.Characteristics.Dll) == 0;
-			output.Write(NameUtils.CleanIdentifier(analyzedAssembly.Name), isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
+			output.Write(analyzedAssembly);
 		}
 
 		public override IMemberRef Member {
