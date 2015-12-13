@@ -29,6 +29,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Controls;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.TreeView {
@@ -239,8 +240,9 @@ namespace dnSpy.TreeView {
 
 		public void Focus() {
 			Focus2();
-			// This is needed if the treeview was hidden and just got visible
-			sharpTreeView.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(Focus2));
+			// This is needed if the treeview was hidden and just got visible. It's disabled because
+			// it also prevents the text editor from getting focus when dnSpy starts.
+			// sharpTreeView.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(Focus2));
 		}
 
 		void Focus2() {
@@ -249,6 +251,11 @@ namespace dnSpy.TreeView {
 				sharpTreeView.FocusNode(node);
 			else
 				sharpTreeView.Focus();
+		}
+
+		public void RefreshAllNodes() {
+			foreach (var node in this.Root.Descendants())
+				node.RefreshUI();
 		}
 	}
 }

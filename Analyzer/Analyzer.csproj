@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{82E9DEC4-564F-42D5-8856-AA17D3962829}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>dnSpy.Analyzer</RootNamespace>
+    <AssemblyName>dnSpy.Analyzer.Plugin</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\dnSpy.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\dnSpy\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\dnSpy\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AnalyzerTreeNodeDataContext.cs" />
+    <Compile Include="AnalyzerManager.cs" />
+    <Compile Include="AnalyzerSettings.cs" />
+    <Compile Include="AnalyzerToolWindowContent.cs" />
+    <Compile Include="Commands.cs" />
+    <Compile Include="Plugin.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TreeNodes\AnalyzerTreeNodeData.cs" />
+    <Compile Include="TreeNodes\AssemblyNode.cs" />
+    <Compile Include="TreeNodes\AsyncFetchChildrenHelper.cs" />
+    <Compile Include="TreeNodes\AttributeAppliedToNode.cs" />
+    <Compile Include="TreeNodes\Commands.cs" />
+    <Compile Include="TreeNodes\EntityNode.cs" />
+    <Compile Include="TreeNodes\EventAccessorNode.cs" />
+    <Compile Include="TreeNodes\EventFiredByNode.cs" />
+    <Compile Include="TreeNodes\EventNode.cs" />
+    <Compile Include="TreeNodes\EventOverridesNode.cs" />
+    <Compile Include="TreeNodes\FieldAccessNode.cs" />
+    <Compile Include="TreeNodes\FieldNode.cs" />
+    <Compile Include="TreeNodes\Helpers.cs" />
+    <Compile Include="TreeNodes\IAnalyzerTreeNodeData.cs" />
+    <Compile Include="TreeNodes\IAnalyzerTreeNodeDataContext.cs" />
+    <Compile Include="TreeNodes\IAsyncCancellable.cs" />
+    <Compile Include="TreeNodes\InterfaceEventImplementedByNode.cs" />
+    <Compile Include="TreeNodes\InterfaceMethodImplementedByNode.cs" />
+    <Compile Include="TreeNodes\InterfacePropertyImplementedByNode.cs" />
+    <Compile Include="TreeNodes\MethodNode.cs" />
+    <Compile Include="TreeNodes\MethodOverridesNode.cs" />
+    <Compile Include="TreeNodes\MethodUsedByNode.cs" />
+    <Compile Include="TreeNodes\MethodUsesNode.cs" />
+    <Compile Include="TreeNodes\PropertyAccessorNode.cs" />
+    <Compile Include="TreeNodes\PropertyNode.cs" />
+    <Compile Include="TreeNodes\PropertyOverridesNode.cs" />
+    <Compile Include="TreeNodes\ScopedWhereUsedAnalyzer.cs" />
+    <Compile Include="TreeNodes\SearchNode.cs" />
+    <Compile Include="TreeNodes\TypeExposedByNode.cs" />
+    <Compile Include="TreeNodes\TypeExtensionMethodsNode.cs" />
+    <Compile Include="TreeNodes\TypeInstantiationsNode.cs" />
+    <Compile Include="TreeNodes\TypeNode.cs" />
+    <Compile Include="TreeNodes\TypeUsedByNode.cs" />
+    <Compile Include="TreeNodes\VirtualMethodUsedByNode.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
+      <Project>{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}</Project>
+      <Name>ICSharpCode.AvalonEdit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnlib\src\dnlib.csproj">
+      <Project>{FDFC1237-143F-4919-8318-4926901F4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Contracts\dnSpy.Contracts.csproj">
+      <Project>{9B234472-0E22-428C-9345-C8D9EE5E06AF}</Project>
+      <Name>dnSpy.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Shared.UI\dnSpy.Shared.UI.csproj">
+      <Project>{7E7C2CF8-2057-4EAA-9DAD-AB3022CF4037}</Project>
+      <Name>dnSpy.Shared.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
+      <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
+      <Name>ICSharpCode.Decompiler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Languages\Languages.csproj">
+      <Project>{d7fe873e-df22-4f54-aefa-bcf33afd7e05}</Project>
+      <Name>Languages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
+      <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
+      <Name>ICSharpCode.NRefactory</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Delete.png" />
+    <Resource Include="Images\Search.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

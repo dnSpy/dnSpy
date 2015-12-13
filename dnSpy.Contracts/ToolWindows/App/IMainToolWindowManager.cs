@@ -29,22 +29,40 @@ namespace dnSpy.Contracts.ToolWindows.App {
 		/// already been added, it becomes active and gets keyboard focus.
 		/// </summary>
 		/// <param name="content">Content</param>
-		/// <param name="location">Location</param>
-		void Add(IToolWindowContent content, AppToolWindowLocation location);
+		/// <param name="location">Location or null to use the default location
+		/// (<see cref="ToolWindowContentInfo.Location"/>). It's ignored if the content is already
+		/// present in the UI.</param>
+		void Show(IToolWindowContent content, AppToolWindowLocation? location = null);
 
 		/// <summary>
 		/// Adds content to a tool window and gives it keyboard focus. If it's already been added,
 		/// it becomes active and gets keyboard focus.
 		/// </summary>
 		/// <param name="guid">Guid of content, see <see cref="IToolWindowContent.Guid"/></param>
-		/// <param name="location">Location</param>
-		void Add(Guid guid, AppToolWindowLocation location);
+		/// <param name="location">Location or null to use the default location
+		/// (<see cref="ToolWindowContentInfo.Location"/>). It's ignored if the content is already
+		/// present in the UI.</param>
+		void Show(Guid guid, AppToolWindowLocation? location = null);
 
 		/// <summary>
-		/// Removes <paramref name="content"/>
+		/// Removes <paramref name="content"/> from the UI
 		/// </summary>
 		/// <param name="content">Content</param>
 		void Close(IToolWindowContent content);
+
+		/// <summary>
+		/// Returns true if <paramref name="content"/> is shown in the UI
+		/// </summary>
+		/// <param name="content">Content</param>
+		/// <returns></returns>
+		bool IsShown(IToolWindowContent content);
+
+		/// <summary>
+		/// Returns true if the content is shown in the UI
+		/// </summary>
+		/// <param name="guid">Guid of content, see <see cref="IToolWindowContent.Guid"/></param>
+		/// <returns></returns>
+		bool IsShown(Guid guid);
 
 		/// <summary>
 		/// Returns true if it owns <paramref name="toolWindowGroup"/>

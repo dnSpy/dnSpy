@@ -168,6 +168,7 @@
     <Compile Include="ToolBars\ToolBarButtonBase.cs" />
     <Compile Include="ToolBars\ToolBarButtonCommand.cs" />
     <Compile Include="ToolBars\ToolBarObjectBase.cs" />
+    <Compile Include="TreeView\AsyncNodeCreator.cs" />
     <Compile Include="TreeView\TreeNodeData.cs" />
   </ItemGroup>
   <ItemGroup>

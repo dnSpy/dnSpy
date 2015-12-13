@@ -411,7 +411,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return GetReferenceSegmentAt(offset);
 		}
 
-		ReferenceSegment GetCurrentReferenceSegment() {
+		public ReferenceSegment GetCurrentReferenceSegment() {
 			return GetReferenceSegmentAt(TextEditor.TextArea.Caret.Offset);
 		}
 

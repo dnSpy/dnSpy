@@ -351,5 +351,16 @@ namespace dnSpy.Controls {
 			// Reset sizes
 			UpdateGrid();
 		}
+
+		public void UpdateSize(TChild child, StackedContentChildInfo info) {
+			foreach (var c in children) {
+				if (c.Child != child)
+					continue;
+
+				c.LengthInfo = info;
+				return;
+			}
+			Debug.Fail("Couldn't find child");
+		}
 	}
 }

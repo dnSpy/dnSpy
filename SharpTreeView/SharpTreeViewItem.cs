@@ -151,12 +151,18 @@ namespace ICSharpCode.TreeView
 
 			ReleaseMouseCapture();
 			if (wasSelected) {
-				base.OnMouseLeftButtonDown(e);
+				// Make sure the TV doesn't steal focus when double clicking something that will
+				// trigger setting focus to eg. the text editor.
+				if (!ignoreOnMouseLeftButtonDown)
+					base.OnMouseLeftButtonDown(e);
 			}
+			ignoreOnMouseLeftButtonDown = false;
 		}
 
+		bool ignoreOnMouseLeftButtonDown = false;
 		void OnDoubleClick(RoutedEventArgs e)
 		{
+			ignoreOnMouseLeftButtonDown = true;
 			if (Node == null)
 				return;
 			Node.ActivateItem(e);

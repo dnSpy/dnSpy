@@ -40,5 +40,8 @@ namespace dnSpy.Contracts.Controls {
 
 		/// <summary>Guid of file <see cref="ITreeView"/></summary>
 		public static readonly Guid GUID_FILE_TREEVIEW = new Guid("E0ABA20F-5CD7-4CFD-A9D4-F9F3C655DD4A");
+
+		/// <summary>Guid of analyzer <see cref="ITreeView"/></summary>
+		public static readonly Guid GUID_ANALYZER_TREEVIEW = new Guid("6C62342D-8CBE-4EC4-9E05-828DDCCFE934");
 	}
 }

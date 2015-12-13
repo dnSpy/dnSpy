@@ -59,6 +59,11 @@ namespace dnSpy.TreeView {
 			set { Node.LazyLoading = value; }
 		}
 
+		public bool IsExpanded {
+			get { return Node.IsExpanded; }
+			set { Node.IsExpanded = value; }
+		}
+
 		ITreeView ITreeNode.TreeView {
 			get { return treeViewImpl; }
 		}

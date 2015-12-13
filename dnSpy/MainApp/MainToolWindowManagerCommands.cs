@@ -244,6 +244,22 @@ namespace dnSpy.MainApp {
 		}
 	}
 
+	[ExportMenuItem(Header = "New Hori_zontal Tab Group", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 0)]
+	sealed class NewHorizontalTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
+		[ImportingConstructor]
+		NewHorizontalTabGroupCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
+			: base(mainToolWindowManager) {
+		}
+
+		public override bool IsVisible(ToolWindowGroupContext context) {
+			return context.ToolWindowGroupManager.NewHorizontalTabGroupCanExecute;
+		}
+
+		public override void Execute(ToolWindowGroupContext context) {
+			context.ToolWindowGroupManager.NewHorizontalTabGroup();
+		}
+	}
+
 	[ExportMenuItem(Header = "New _Vertical Tab Group", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 10)]
 	sealed class NewVerticalTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
@@ -321,6 +337,118 @@ namespace dnSpy.MainApp {
 
 		public override void Execute(ToolWindowGroupContext context) {
 			context.ToolWindowGroupManager.MoveAllToPreviousTabGroup();
+		}
+	}
+
+	[ExportMenuItem(Header = "Close Tab Group", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 0)]
+	sealed class CloseTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
+		[ImportingConstructor]
+		CloseTabGroupCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
+			: base(mainToolWindowManager) {
+		}
+
+		public override bool IsVisible(ToolWindowGroupContext context) {
+			return context.ToolWindowGroupManager.CloseTabGroupCanExecute;
+		}
+
+		public override void Execute(ToolWindowGroupContext context) {
+			context.ToolWindowGroupManager.CloseTabGroup();
+		}
+	}
+
+	[ExportMenuItem(Header = "Close All Tab Groups But This", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 10)]
+	sealed class CloseAllTabGroupsButThisCtxMenuCommand : CtxMenuToolWindowGroupCommand {
+		[ImportingConstructor]
+		CloseAllTabGroupsButThisCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
+			: base(mainToolWindowManager) {
+		}
+
+		public override bool IsVisible(ToolWindowGroupContext context) {
+			return context.ToolWindowGroupManager.CloseAllTabGroupsButThisCanExecute;
+		}
+
+		public override void Execute(ToolWindowGroupContext context) {
+			context.ToolWindowGroupManager.CloseAllTabGroupsButThis();
+		}
+	}
+
+	[ExportMenuItem(Header = "Move Tab Group After Next Tab Group", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 20)]
+	sealed class MoveTabGroupAfterNextTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
+		[ImportingConstructor]
+		MoveTabGroupAfterNextTabGroupCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
+			: base(mainToolWindowManager) {
+		}
+
+		public override bool IsVisible(ToolWindowGroupContext context) {
+			return context.ToolWindowGroupManager.MoveTabGroupAfterNextTabGroupCanExecute;
+		}
+
+		public override void Execute(ToolWindowGroupContext context) {
+			context.ToolWindowGroupManager.MoveTabGroupAfterNextTabGroup();
+		}
+	}
+
+	[ExportMenuItem(Header = "Move Tab Group Before Previous Tab Group", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 30)]
+	sealed class MoveTabGroupBeforePreviousTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
+		[ImportingConstructor]
+		MoveTabGroupBeforePreviousTabGroupCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
+			: base(mainToolWindowManager) {
+		}
+
+		public override bool IsVisible(ToolWindowGroupContext context) {
+			return context.ToolWindowGroupManager.MoveTabGroupBeforePreviousTabGroupCanExecute;
+		}
+
+		public override void Execute(ToolWindowGroupContext context) {
+			context.ToolWindowGroupManager.MoveTabGroupBeforePreviousTabGroup();
+		}
+	}
+
+	[ExportMenuItem(Header = "Merge All Tab Groups", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 40)]
+	sealed class MergeAllTabGroupsCtxMenuCommand : CtxMenuToolWindowGroupCommand {
+		[ImportingConstructor]
+		MergeAllTabGroupsCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
+			: base(mainToolWindowManager) {
+		}
+
+		public override bool IsVisible(ToolWindowGroupContext context) {
+			return context.ToolWindowGroupManager.MergeAllTabGroupsCanExecute;
+		}
+
+		public override void Execute(ToolWindowGroupContext context) {
+			context.ToolWindowGroupManager.MergeAllTabGroups();
+		}
+	}
+
+	[ExportMenuItem(Header = "Use Vertical Tab Groups", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSVERT, Order = 0)]
+	sealed class UseVerticalTabGroupsCtxMenuCommand : CtxMenuToolWindowGroupCommand {
+		[ImportingConstructor]
+		UseVerticalTabGroupsCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
+			: base(mainToolWindowManager) {
+		}
+
+		public override bool IsVisible(ToolWindowGroupContext context) {
+			return context.ToolWindowGroupManager.UseVerticalTabGroupsCanExecute;
+		}
+
+		public override void Execute(ToolWindowGroupContext context) {
+			context.ToolWindowGroupManager.UseVerticalTabGroups();
+		}
+	}
+
+	[ExportMenuItem(Header = "Use Horizontal Tab Groups", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSVERT, Order = 10)]
+	sealed class UseHorizontalTabGroupsCtxMenuCommand : CtxMenuToolWindowGroupCommand {
+		[ImportingConstructor]
+		UseHorizontalTabGroupsCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
+			: base(mainToolWindowManager) {
+		}
+
+		public override bool IsVisible(ToolWindowGroupContext context) {
+			return context.ToolWindowGroupManager.UseHorizontalTabGroupsCanExecute;
+		}
+
+		public override void Execute(ToolWindowGroupContext context) {
+			context.ToolWindowGroupManager.UseHorizontalTabGroups();
 		}
 	}
 }

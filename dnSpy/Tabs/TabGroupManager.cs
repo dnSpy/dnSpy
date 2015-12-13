@@ -145,7 +145,6 @@ namespace dnSpy.Tabs {
 
 		internal void Remove(TabGroup tabGroup) {
 			int index = stackedContent.IndexOf(tabGroup);
-			Debug.Assert(index >= 0);
 			if (index < 0)
 				return;
 			if (stackedContent.Count == 1) {

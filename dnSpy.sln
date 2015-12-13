@@ -31,6 +31,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy-x86", "dnSpy-x86\dnSp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.BamlDecompiler", "dnSpy.BamlDecompiler\dnSpy.BamlDecompiler.csproj", "{6D647069-5C94-4388-AC0C-E059D125AC51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzer", "Analyzer\Analyzer.csproj", "{82E9DEC4-564F-42D5-8856-AA17D3962829}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -221,6 +223,18 @@ Global
 		{6D647069-5C94-4388-AC0C-E059D125AC51}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{6D647069-5C94-4388-AC0C-E059D125AC51}.Release|x86.ActiveCfg = Release|Any CPU
 		{6D647069-5C94-4388-AC0C-E059D125AC51}.Release|x86.Build.0 = Release|Any CPU
+		{82E9DEC4-564F-42D5-8856-AA17D3962829}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82E9DEC4-564F-42D5-8856-AA17D3962829}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82E9DEC4-564F-42D5-8856-AA17D3962829}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{82E9DEC4-564F-42D5-8856-AA17D3962829}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{82E9DEC4-564F-42D5-8856-AA17D3962829}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{82E9DEC4-564F-42D5-8856-AA17D3962829}.Debug|x86.Build.0 = Debug|Any CPU
+		{82E9DEC4-564F-42D5-8856-AA17D3962829}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82E9DEC4-564F-42D5-8856-AA17D3962829}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82E9DEC4-564F-42D5-8856-AA17D3962829}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{82E9DEC4-564F-42D5-8856-AA17D3962829}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{82E9DEC4-564F-42D5-8856-AA17D3962829}.Release|x86.ActiveCfg = Release|Any CPU
+		{82E9DEC4-564F-42D5-8856-AA17D3962829}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

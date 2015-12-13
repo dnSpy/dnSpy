@@ -500,43 +500,6 @@ namespace dnSpy.Files.Tabs {
 				return SearchCommand.GetReference(context) != null;
 			}
 		}
-
-		[ExportMenuItem(Header = "Go to Reference", InputGestureText = "Dbl Click", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 0)]
-		sealed class AnalyzerCommand : MenuItemBase {
-			public override void Execute(IMenuItemContext context) {
-				ExecuteInternal(GetReference(context), false);
-			}
-
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetReference(context) != null;
-			}
-
-			internal static object GetReference(IMenuItemContext context) {
-				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_ANALYZER_GUID))
-					return null;
-
-				var nodes = context.FindByType<ITreeNodeData[]>();
-				if (nodes == null || nodes.Length != 1)
-					return null;
-
-				var tokenNode = nodes[0] as ITokenTreeNode;
-				if (tokenNode != null && tokenNode.MDTokenProvider != null)
-					return tokenNode.MDTokenProvider;
-
-				return null;
-			}
-		}
-
-		[ExportMenuItem(Header = "Open in New _Tab", InputGestureText = "Shift+Dbl Click", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 10)]
-		sealed class NewTabAnalyzerCommand : MenuItemBase {
-			public override void Execute(IMenuItemContext context) {
-				ExecuteInternal(AnalyzerCommand.GetReference(context), true);
-			}
-
-			public override bool IsVisible(IMenuItemContext context) {
-				return AnalyzerCommand.GetReference(context) != null;
-			}
-		}
 	}
 #endif
 

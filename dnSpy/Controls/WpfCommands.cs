@@ -134,5 +134,10 @@ namespace dnSpy.Controls {
 			if (key3 != Key.None)
 				AddIfNotAdded(new KeyBinding(command, key3, modifiers3));
 		}
+
+		public void Add(ICommand command, ModifierKeys modifiers, Key key) {
+			if (key != Key.None)
+				AddIfNotAdded(new KeyBinding(command, key, modifiers));
+		}
 	}
 }

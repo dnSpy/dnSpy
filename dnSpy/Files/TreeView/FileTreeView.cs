@@ -83,6 +83,18 @@ namespace dnSpy.Files.TreeView {
 				c(this, eventArgs);
 		}
 
+		public event EventHandler<FileTreeNodeActivatedEventArgs> NodeActivated;
+
+		public bool RaiseNodeActivated(IFileTreeNodeData node) {
+			if (node == null)
+				throw new ArgumentNullException();
+			if (NodeActivated == null)
+				return false;
+			var e = new FileTreeNodeActivatedEventArgs(node);
+			NodeActivated(this, e);
+			return e.Handled;
+		}
+
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly ITreeView treeView;
 
@@ -263,9 +275,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		void RefreshNodes() {
-			//TODO: Should only call the method if the node is visible
-			foreach (var node in this.treeView.Root.Descendants())
-				node.RefreshUI();
+			this.treeView.RefreshAllNodes();
 		}
 
 		void FileManager_CollectionChanged(object sender, NotifyFileCollectionChangedEventArgs e) {

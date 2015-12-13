@@ -117,5 +117,12 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// Closes all tabs
 		/// </summary>
 		void CloseAll();
+
+		/// <summary>
+		/// Follows the reference in the active tab or a new tab
+		/// </summary>
+		/// <param name="ref">Reference</param>
+		/// <param name="newTab">true to open a new tab</param>
+		void FollowReference(object @ref, bool newTab);
 	}
 }

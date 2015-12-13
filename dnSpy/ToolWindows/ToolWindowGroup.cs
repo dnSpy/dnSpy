@@ -103,6 +103,27 @@ namespace dnSpy.ToolWindows {
 			tabGroup.Close(impl);
 		}
 
+		public void MoveTo(IToolWindowGroup destGroup, IToolWindowContent content) {
+			if (destGroup == null || content == null)
+				throw new ArgumentNullException();
+			var impl = GetTabContentImpl(content);
+			Debug.Assert(impl != null);
+			if (impl == null)
+				throw new InvalidOperationException();
+			if (destGroup == this)
+				return;
+			var destGroupImpl = destGroup as ToolWindowGroup;
+			if (destGroupImpl == null)
+				throw new InvalidOperationException();
+
+			impl.PrepareMove();
+			Close(impl);
+
+			impl = new TabContentImpl(destGroupImpl, content);
+			impl.PrepareMove();
+			destGroupImpl.tabGroup.Add(impl);
+		}
+
 		public void SetFocus(TabContentImpl impl) {
 			tabGroup.SetFocus(impl);
 		}

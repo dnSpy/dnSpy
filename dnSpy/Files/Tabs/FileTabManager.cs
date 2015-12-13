@@ -188,6 +188,7 @@ namespace dnSpy.Files.Tabs {
 			this.fileTreeView = fileTreeView;
 			this.fileTreeView.TreeView.SelectionChanged += TreeView_SelectionChanged;
 			this.fileTreeView.NodesTextChanged += FileTreeView_NodesTextChanged;
+			this.fileTreeView.NodeActivated += FileTreeView_NodeActivated;
 			this.tabManager = tabManagerCreator.Create();
 			this.tabGroupManager = this.tabManager.Create(new TabGroupManagerOptions(MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID));
 			this.tabGroupManager.TabSelectionChanged += TabGroupManager_TabSelectionChanged;
@@ -221,6 +222,14 @@ namespace dnSpy.Files.Tabs {
 				impl.OnSelected();
 				OnNewTabContentShown(impl);
 			}
+		}
+
+		void FileTreeView_NodeActivated(object sender, FileTreeNodeActivatedEventArgs e) {
+			e.Handled = true;
+			var tab = ActiveTabContentImpl;
+			if (tab == null)
+				return;
+			SetFocus(tab);
 		}
 
 		void FileTreeView_NodesTextChanged(object sender, EventArgs e) {
@@ -463,6 +472,24 @@ namespace dnSpy.Files.Tabs {
 					tabs.Add(tab);
 			}
 			Refresh(tabs);
+		}
+
+		public void FollowReference(object @ref, bool newTab) {
+			if (@ref == null)
+				return;
+
+			IFileTab tab = ActiveTabContentImpl;
+			var sourceTab = tab;
+			if (tab == null)
+				tab = SafeActiveTabContentImpl;
+			else if (newTab) {
+				var g = TabGroupManager.ActiveTabGroup;
+				Debug.Assert(g != null);
+				if (g == null)
+					return;
+				tab = OpenEmptyTab(g);
+			}
+			tab.FollowReference(@ref, sourceTab == null ? null : sourceTab.Content);
 		}
 	}
 }

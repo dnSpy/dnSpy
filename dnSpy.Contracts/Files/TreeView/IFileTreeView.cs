@@ -49,14 +49,26 @@ namespace dnSpy.Contracts.Files.TreeView {
 		IWpfCommands WpfCommands { get; }
 
 		/// <summary>
-		/// Notified when the collection gets changed
+		/// Raised when the collection gets changed
 		/// </summary>
 		event EventHandler<NotifyFileTreeViewCollectionChangedEventArgs> CollectionChanged;
 
 		/// <summary>
-		/// Notified when the node's text has changed
+		/// Raised when the node's text has changed
 		/// </summary>
 		event EventHandler<EventArgs> NodesTextChanged;
+
+		/// <summary>
+		/// Raised when a node gets activated (eg. double clicked)
+		/// </summary>
+		event EventHandler<FileTreeNodeActivatedEventArgs> NodeActivated;
+
+		/// <summary>
+		/// Should only be called by the node that gets activated. Returns true if someone handled it.
+		/// </summary>
+		/// <param name="node">The activated node (should be the caller)</param>
+		/// <returns></returns>
+		bool RaiseNodeActivated(IFileTreeNodeData node);
 
 		/// <summary>
 		/// Creates a new <see cref="IDnSpyFileNode"/> instance. This will internally call all

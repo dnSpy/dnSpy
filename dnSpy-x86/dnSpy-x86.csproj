@@ -46,9 +46,9 @@
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\dnSpy\Properties\AssemblyInfo.cs">
+    <Compile Include="..\dnSpy\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
-    </None>
+    </Compile>
     <None Include="..\dnSpy\App.config">
       <Link>App.config</Link>
     </None>

@@ -73,5 +73,10 @@ namespace dnSpy.Contracts.TreeView {
 		/// Focuses the treeview, possibly getting keyboard focus
 		/// </summary>
 		void Focus();
+
+		/// <summary>
+		/// Calls all nodes' <see cref="ITreeNode.RefreshUI()"/> method
+		/// </summary>
+		void RefreshAllNodes();
 	}
 }

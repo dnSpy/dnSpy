@@ -294,7 +294,6 @@
     <Compile Include="ToolWindows\ToolWindowGroupManager.cs" />
     <Compile Include="ToolWindows\ToolWindowManager.cs" />
     <Compile Include="ToolWindows\ToolWindowManagerCreator.cs" />
-    <Compile Include="TreeView\AsyncNodeCreator.cs" />
     <Compile Include="TreeView\DnSpySharpTreeNode.cs" />
     <Compile Include="TreeView\SharpTreeNodeChildrenList.cs" />
     <Compile Include="TreeView\TreeNodeDataImpl.cs" />

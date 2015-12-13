@@ -47,7 +47,7 @@ namespace dnSpy.MainApp {
 		}
 
 		public IEnumerable<ToolWindowContentInfo> ContentInfos {
-			get { yield return new ToolWindowContentInfo(FileTreeViewWindowContent.THE_GUID, AppToolWindowLocation.Left, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_LEFT_FILES, true); }
+			get { yield return new ToolWindowContentInfo(FileTreeViewWindowContent.THE_GUID, FileTreeViewWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_LEFT_FILES, true); }
 		}
 
 		public IToolWindowContent GetOrCreate(Guid guid) {
@@ -59,6 +59,7 @@ namespace dnSpy.MainApp {
 
 	sealed class FileTreeViewWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("5495EE9F-1EF2-45F3-A320-22A89BFDF731");
+		public static AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Left;
 
 		public IInputElement FocusedElement {
 			get { return null; }
@@ -106,7 +107,7 @@ namespace dnSpy.MainApp {
 		ShowFileTreeViewCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
 			wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW).Add(
 				ShowFileTreeViewRoutedCommand,
-				(s, e) => mainToolWindowManager.Add(FileTreeViewWindowContent.THE_GUID, AppToolWindowLocation.Left),
+				(s, e) => mainToolWindowManager.Show(FileTreeViewWindowContent.THE_GUID),
 				(s, e) => e.CanExecute = true,
 				ModifierKeys.Control | ModifierKeys.Alt, Key.L);
 		}

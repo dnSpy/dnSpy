@@ -1749,7 +1749,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             SnapsToDevicePixels="true"
-                            Padding="1">
+                            Padding="0">
                         <ScrollViewer Padding="{TemplateBinding Padding}"
                                       Focusable="false">
                             <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
@@ -5271,7 +5271,7 @@
                         </Grid.RowDefinitions>
                         <TabPanel x:Name="HeaderPanel"
                                   mvvm:IsDraggableAP.IsDraggable="True"
-                                  Panel.ZIndex ="1" 
+                                  Panel.ZIndex ="1"
                                   KeyboardNavigation.TabIndex="1"
                                   Grid.Column="0"
                                   Grid.Row="1"
@@ -5322,7 +5322,7 @@
 								Background="{DynamicResource EnvironmentToolWindowTabGradient}"
 								BorderBrush="{DynamicResource EnvironmentToolWindowTabBorder}"
 								BorderThickness="0 0 0 2"
-								Padding="0 1 0 3">
+								Padding="0 0 0 1">
 							<DockPanel Name="DockPanel" TextBlock.Foreground="{DynamicResource EnvironmentToolWindowTabText}">
 								<TextBlock HorizontalAlignment="Stretch"
 										   Margin="5 2 5 0"

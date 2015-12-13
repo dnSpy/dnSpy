@@ -90,6 +90,13 @@ namespace dnSpy.Contracts.TreeView {
 		/// Called from <see cref="ITreeNode.RefreshUI()"/> before it invalidates all UI properties
 		/// </summary>
 		void OnRefreshUI();
+
+		/// <summary>
+		/// Called when the item gets activated, eg. double clicked. Returns true if it was handled,
+		/// false otherwise.
+		/// </summary>
+		/// <returns></returns>
+		bool Activate();
 	}
 
 	/// <summary>

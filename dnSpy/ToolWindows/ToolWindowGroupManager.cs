@@ -69,6 +69,11 @@ namespace dnSpy.ToolWindows {
 			}
 		}
 
+		public bool IsHorizontal {
+			get { return tabGroupManager.IsHorizontal; }
+			set { tabGroupManager.IsHorizontal = value; }
+		}
+
 		public StackedContentState StackedContentState {
 			get { return ((TabGroupManager)tabGroupManager).StackedContentState; }
 			set { ((TabGroupManager)tabGroupManager).StackedContentState = value; }
@@ -134,6 +139,14 @@ namespace dnSpy.ToolWindows {
 			tabGroupManager.CloseAllTabs();
 		}
 
+		public bool NewHorizontalTabGroupCanExecute {
+			get { return tabGroupManager.NewHorizontalTabGroupCanExecute; }
+		}
+
+		public void NewHorizontalTabGroup() {
+			tabGroupManager.NewHorizontalTabGroup(a => new ToolWindowGroup(this, a));
+		}
+
 		public bool NewVerticalTabGroupCanExecute {
 			get { return tabGroupManager.NewVerticalTabGroupCanExecute; }
 		}
@@ -172,6 +185,62 @@ namespace dnSpy.ToolWindows {
 
 		public void MoveAllToPreviousTabGroup() {
 			tabGroupManager.MoveAllToPreviousTabGroup();
+		}
+
+		public bool CloseTabGroupCanExecute {
+			get { return tabGroupManager.CloseTabGroupCanExecute; }
+		}
+
+		public void CloseTabGroup() {
+			tabGroupManager.CloseTabGroup();
+		}
+
+		public bool CloseAllTabGroupsButThisCanExecute {
+			get { return tabGroupManager.CloseAllTabGroupsButThisCanExecute; }
+		}
+
+		public void CloseAllTabGroupsButThis() {
+			tabGroupManager.CloseAllTabGroupsButThis();
+		}
+
+		public bool MoveTabGroupAfterNextTabGroupCanExecute {
+			get { return tabGroupManager.MoveTabGroupAfterNextTabGroupCanExecute; }
+		}
+
+		public void MoveTabGroupAfterNextTabGroup() {
+			tabGroupManager.MoveTabGroupAfterNextTabGroup();
+		}
+
+		public bool MoveTabGroupBeforePreviousTabGroupCanExecute {
+			get { return tabGroupManager.MoveTabGroupBeforePreviousTabGroupCanExecute; }
+		}
+
+		public void MoveTabGroupBeforePreviousTabGroup() {
+			tabGroupManager.MoveTabGroupBeforePreviousTabGroup();
+		}
+
+		public bool MergeAllTabGroupsCanExecute {
+			get { return tabGroupManager.MergeAllTabGroupsCanExecute; }
+		}
+
+		public void MergeAllTabGroups() {
+			tabGroupManager.MergeAllTabGroups();
+		}
+
+		public bool UseVerticalTabGroupsCanExecute {
+			get { return tabGroupManager.UseVerticalTabGroupsCanExecute; }
+		}
+
+		public void UseVerticalTabGroups() {
+			tabGroupManager.UseVerticalTabGroups();
+		}
+
+		public bool UseHorizontalTabGroupsCanExecute {
+			get { return tabGroupManager.UseHorizontalTabGroupsCanExecute; }
+		}
+
+		public void UseHorizontalTabGroups() {
+			tabGroupManager.UseHorizontalTabGroups();
 		}
 	}
 }

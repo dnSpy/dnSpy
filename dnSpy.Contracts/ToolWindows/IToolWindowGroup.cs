@@ -52,6 +52,13 @@ namespace dnSpy.Contracts.ToolWindows {
 		void Close(IToolWindowContent content);
 
 		/// <summary>
+		/// Moves <paramref name="content"/> from this group to <paramref name="destGroup"/>
+		/// </summary>
+		/// <param name="destGroup">Destination group</param>
+		/// <param name="content">Content in this group</param>
+		void MoveTo(IToolWindowGroup destGroup, IToolWindowContent content);
+
+		/// <summary>
 		/// Sets keyboard focus
 		/// </summary>
 		/// <param name="content">Content</param>

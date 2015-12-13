@@ -255,5 +255,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public void ScrollAndMoveCaretTo(int line, int column) {
 			textEditorControl.ScrollAndMoveCaretTo(line, column);
 		}
+
+		public object SelectedReference {
+			get {
+				var refSeg = textEditorControl.GetCurrentReferenceSegment();
+				return refSeg == null ? null : refSeg.Reference;
+			}
+		}
 	}
 }

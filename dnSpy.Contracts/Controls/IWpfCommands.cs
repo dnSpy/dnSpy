@@ -31,6 +31,14 @@ namespace dnSpy.Contracts.Controls {
 		Guid Guid { get; }
 
 		/// <summary>
+		/// Adds a key binding
+		/// </summary>
+		/// <param name="command">Gets called when the key combination is pressed</param>
+		/// <param name="modifiers">Modifiers</param>
+		/// <param name="key">Key</param>
+		void Add(ICommand command, ModifierKeys modifiers, Key key);
+
+		/// <summary>
 		/// Adds a command and key binding
 		/// </summary>
 		/// <param name="command">The routed command</param>

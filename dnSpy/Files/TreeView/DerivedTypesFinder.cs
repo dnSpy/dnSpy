@@ -25,7 +25,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.UI.Files.TreeView;
-using dnSpy.TreeView;
+using dnSpy.Shared.UI.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class DerivedTypesFinder : AsyncNodeCreator {

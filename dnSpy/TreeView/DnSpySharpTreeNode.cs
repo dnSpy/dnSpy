@@ -18,6 +18,7 @@
 */
 
 using System.Diagnostics;
+using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
@@ -89,6 +90,10 @@ namespace dnSpy.TreeView {
 
 		public override sealed bool IsEditable {
 			get { return false; }
+		}
+
+		public override void ActivateItem(RoutedEventArgs e) {
+			e.Handled = treeNodeImpl.Data.Activate();
 		}
 	}
 }

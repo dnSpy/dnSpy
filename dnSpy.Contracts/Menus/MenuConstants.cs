@@ -79,11 +79,11 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>An unknown object</summary>
 		public const string GUIDOBJ_UNKNOWN_GUID = "9BD7C228-91A0-4140-8E8B-AB0450B418CA";
 
-		/// <summary>Analyzer tree view</summary>
-		public const string GUIDOBJ_ANALYZER_GUID = "9F0F1FF9-B834-43E9-BFAF-8F114C4D1D9E";
-
 		/// <summary>Files tree view</summary>
 		public const string GUIDOBJ_FILES_TREEVIEW_GUID = "F64505EB-6D8B-4332-B697-73B2D1EE6C37";
+
+		/// <summary>Analyzer's tree view</summary>
+		public const string GUIDOBJ_ANALYZER_TREEVIEW_GUID = "4C7D6317-C84A-42E6-A582-FCE3ED35EBE6";
 
 		/// <summary>Search ListBox</summary>
 		public const string GUIDOBJ_SEARCH_GUID = "7B460F9C-424D-48B3-8FD3-72CEE8DD58E5";
@@ -283,6 +283,12 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Tool Windows, Group: Tab Groups</summary>
 		public const string GROUP_CTX_TOOLWINS_GROUPS = "1000,32E1C678-7889-499D-8BC3-C22160E7E2AC";
 
+		/// <summary>Group: Context Menu, Type: Tool Windows, Group: Tab Groups Close commands</summary>
+		public const string GROUP_CTX_TOOLWINS_GROUPSCLOSE = "2000,61D665C4-B55D-45BF-B592-85D174C0A1E7";
+
+		/// <summary>Group: Context Menu, Type: Tool Windows, Group: Tab Groups Vert/Horiz commands</summary>
+		public const string GROUP_CTX_TOOLWINS_GROUPSVERT = "3000,3F438576-672F-4865-B581-759D5DC678D5";
+
 		/// <summary>Group: Context Menu, Type: Search, Group: Tabs</summary>
 		public const string GROUP_CTX_SEARCH_TABS = "0,249A0912-68BE-4468-931A-055726958EA4";
 
@@ -300,6 +306,9 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Group: Context Menu, Type: Analyzer, Group: Other</summary>
 		public const string GROUP_CTX_ANALYZER_OTHER = "2000,A766D535-4069-4AF7-801E-F4B87A2D0F84";
+
+		/// <summary>Group: Context Menu, Type: Analyzer, Group: Options</summary>
+		public const string GROUP_CTX_ANALYZER_OPTIONS = "10000,FD6E5D84-A83C-4D0A-8A77-EE755DE76999";
 
 		/// <summary>Group: Context Menu, Type: Files, Group: Tabs</summary>
 		public const string GROUP_CTX_FILES_TABS = "0,3FEF128B-8320-4ED0-B03B-0932FCCDA98E";

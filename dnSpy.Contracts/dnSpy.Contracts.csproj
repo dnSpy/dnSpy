@@ -113,6 +113,7 @@
     <Compile Include="Files\Tabs\TextEditor\ToolTips\ICodeToolTipWriter.cs" />
     <Compile Include="Files\Tabs\TextEditor\ToolTips\IToolTipContentCreator.cs" />
     <Compile Include="Files\Tabs\TextEditor\ToolTips\IToolTipContentCreatorContext.cs" />
+    <Compile Include="Files\TreeView\FileTreeNodeActivatedEventArgs.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeGroupType.cs" />
     <Compile Include="Files\TreeView\FileTVConstants.cs" />
     <Compile Include="Files\TreeView\IAssemblyFileNode.cs" />

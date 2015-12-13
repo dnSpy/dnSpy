@@ -81,5 +81,10 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// <param name="line">Line</param>
 		/// <param name="column">Column</param>
 		void ScrollAndMoveCaretTo(int line, int column);
+
+		/// <summary>
+		/// Gets the selected reference or null
+		/// </summary>
+		object SelectedReference { get; }
 	}
 }

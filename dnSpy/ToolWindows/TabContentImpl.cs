@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
@@ -147,10 +148,21 @@ namespace dnSpy.ToolWindows {
 			AddEvents();
 		}
 
+		public void PrepareMove() {
+			moving = true;
+		}
+		bool moving = false;
+
 		public void OnVisibilityChanged(TabContentVisibilityEvent visEvent) {
 			var ev = Convert(visEvent);
-			if (ev != null)
-				content.OnVisibilityChanged(ev.Value);
+			if (ev != null) {
+				if (moving && (visEvent == TabContentVisibilityEvent.Added || visEvent == TabContentVisibilityEvent.Removed)) {
+					// Don't send the Added/Removed events
+					moving = false;
+				}
+				else
+					content.OnVisibilityChanged(ev.Value);
+			}
 
 			switch (visEvent) {
 			case TabContentVisibilityEvent.Removed:

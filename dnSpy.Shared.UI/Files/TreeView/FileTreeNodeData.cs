@@ -94,5 +94,9 @@ namespace dnSpy.Shared.UI.Files.TreeView {
 		public sealed override void OnRefreshUI() {
 			cachedText = null;
 		}
+
+		public override bool Activate() {
+			return Context.FileTreeView.RaiseNodeActivated(this);
+		}
 	}
 }

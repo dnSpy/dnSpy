@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 
 namespace dnSpy.Contracts.TreeView {
@@ -57,6 +58,11 @@ namespace dnSpy.Contracts.TreeView {
 		/// will get called to load the children. Should only be used by <see cref="Data"/>
 		/// </summary>
 		bool LazyLoading { get; set; }
+
+		/// <summary>
+		/// true if it's expanded
+		/// </summary>
+		bool IsExpanded { get; set; }
 
 		/// <summary>
 		/// Forces loading of <see cref="Children"/>
