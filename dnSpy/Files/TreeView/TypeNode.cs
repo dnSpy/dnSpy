@@ -107,5 +107,14 @@ namespace dnSpy.Files.TreeView {
 		public ITypeNode Create(TypeDef type) {
 			return Context.FileTreeView.CreateNested(type);
 		}
+
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
+			var res = filter.GetResult(TypeDef);
+			if (res.FilterType != FilterType.Default)
+				return res.FilterType;
+			if (Context.Language.ShowMember(type, Context.DecompilerSettings))
+				return FilterType.Visible;
+			return FilterType.Hide;
+		}
 	}
 }

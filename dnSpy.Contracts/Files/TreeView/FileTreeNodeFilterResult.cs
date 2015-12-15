@@ -17,16 +17,29 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Contracts.Files;
+namespace dnSpy.Contracts.Files.TreeView {
+	/// <summary>
+	/// <see cref="IFileTreeNodeFilter"/> result
+	/// </summary>
+	public struct FileTreeNodeFilterResult {
+		/// <summary>
+		/// Filter type
+		/// </summary>
+		public FilterType FilterType;
 
-namespace dnSpy.Search {
-	sealed class NamespaceRef {
-		public readonly IDnSpyFile Module;
-		public readonly string Namespace;
+		/// <summary>
+		/// true if this is a node that can be returned as a result to the user
+		/// </summary>
+		public bool IsMatch;
 
-		public NamespaceRef(IDnSpyFile mod, string ns) {
-			this.Module = mod;
-			this.Namespace = ns;
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="filterType">Filter type</param>
+		/// <param name="isMatch">True if it was a match</param>
+		public FileTreeNodeFilterResult(FilterType filterType, bool isMatch) {
+			this.FilterType = filterType;
+			this.IsMatch = isMatch;
 		}
 	}
 }

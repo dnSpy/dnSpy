@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
@@ -29,6 +30,7 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.Search;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.UI.Menus;
@@ -64,7 +66,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 			cmds.Add(AnalyzeRoutedCommand, AnalyzerTreeView_Executed, AnalyzerTreeView_CanExecute, ModifierKeys.Control, Key.R);
 			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control, Key.R);
 
-			//TODO: Also support the search listbox
+			cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_SEARCH_LISTBOX);
+			cmds.Add(AnalyzeRoutedCommand, SearchListBox_Executed, SearchListBox_CanExecute, ModifierKeys.Control, Key.R);
+			cmds.Add(AnalyzeRoutedCommand, ShowAnalyzerExecuted, ShowAnalyzerCanExecute, ModifierKeys.Control, Key.R);
 		}
 
 		void ShowAnalyzerCanExecute(object sender, CanExecuteRoutedEventArgs e) {
@@ -117,6 +121,19 @@ namespace dnSpy.Analyzer.TreeNodes {
 			var nodes = analyzerManager.Value.TreeView.TopLevelSelection;
 			var node = nodes.Length == 0 ? null : nodes[0] as IMDTokenNode;
 			return node == null ? null : node.Reference as IMemberRef;
+		}
+
+		void SearchListBox_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+			e.CanExecute = AnalyzeCommand.CanAnalyze(SearchListBox_GetMemberRef(e.Source as ListBox), languageManager.SelectedLanguage, decompilerSettings.Clone());
+		}
+
+		void SearchListBox_Executed(object sender, ExecutedRoutedEventArgs e) {
+			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.SelectedLanguage, decompilerSettings.Clone(), SearchListBox_GetMemberRef(e.Source as ListBox));
+		}
+
+		IMemberRef SearchListBox_GetMemberRef(ListBox listBox) {
+			var sr = listBox == null ? null : listBox.SelectedItem as ISearchResult;
+			return sr == null ? null : sr.Reference as IMemberRef;
 		}
 	}
 
@@ -282,35 +299,35 @@ namespace dnSpy.Analyzer.TreeNodes {
 			var type = memberDef as TypeDef;
 			if (type != null) {
 				mainToolWindowManager.Show(AnalyzerToolWindowContent.THE_GUID);
-				analyzerManager.Value.ShowOrFocus(new TypeNode(type));
+				analyzerManager.Value.Add(new TypeNode(type));
 			}
 
 			var field = memberDef as FieldDef;
 			if (field != null) {
 				mainToolWindowManager.Show(AnalyzerToolWindowContent.THE_GUID);
-				analyzerManager.Value.ShowOrFocus(new FieldNode(field));
+				analyzerManager.Value.Add(new FieldNode(field));
 			}
 
 			var method = memberDef as MethodDef;
 			if (method != null) {
 				mainToolWindowManager.Show(AnalyzerToolWindowContent.THE_GUID);
-				analyzerManager.Value.ShowOrFocus(new MethodNode(method));
+				analyzerManager.Value.Add(new MethodNode(method));
 			}
 
 			var propertyAnalyzer = PropertyNode.TryCreateAnalyzer(member, language, decompilerSettings.Clone());
 			if (propertyAnalyzer != null) {
 				mainToolWindowManager.Show(AnalyzerToolWindowContent.THE_GUID);
-				analyzerManager.Value.ShowOrFocus(propertyAnalyzer);
+				analyzerManager.Value.Add(propertyAnalyzer);
 			}
 
 			var eventAnalyzer = EventNode.TryCreateAnalyzer(member, language, decompilerSettings.Clone());
 			if (eventAnalyzer != null) {
 				mainToolWindowManager.Show(AnalyzerToolWindowContent.THE_GUID);
-				analyzerManager.Value.ShowOrFocus(eventAnalyzer);
+				analyzerManager.Value.Add(eventAnalyzer);
 			}
 		}
 
-		internal static IMemberDef ResolveReference(object reference) {
+		static IMemberDef ResolveReference(object reference) {
 			if (reference is ITypeDefOrRef)
 				return ((ITypeDefOrRef)reference).ResolveTypeDef();
 			else if (reference is IMethod && ((IMethod)reference).MethodSig != null)
@@ -366,7 +383,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Remove", Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 20)]
+	[ExportMenuItem(Header = "_Remove", Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
 	sealed class RemoveAnalyzeCtxMenuCommand : MenuItemBase {
 		public override bool IsVisible(IMenuItemContext context) {
 			return GetNodes(context) != null;

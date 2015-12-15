@@ -64,6 +64,15 @@ namespace dnSpy.TreeView {
 			set { Node.IsExpanded = value; }
 		}
 
+		public bool IsHidden {
+			get { return Node.IsHidden; }
+			set { Node.IsHidden = value; }
+		}
+
+		public bool IsVisible {
+			get { return Node.IsVisible; }
+		}
+
 		ITreeView ITreeNode.TreeView {
 			get { return treeViewImpl; }
 		}
@@ -95,6 +104,7 @@ namespace dnSpy.TreeView {
 
 		public void EnsureChildrenLoaded() {
 			Node.EnsureLazyChildren();
+			Data.OnEnsureChildrenLoaded();
 		}
 	}
 }

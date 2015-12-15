@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -44,19 +45,19 @@ namespace dnSpy.Analyzer {
 		ITreeView TreeView { get; }
 
 		/// <summary>
-		/// Called when closed
+		/// Called when it's been closed
 		/// </summary>
 		void OnClose();
 
 		/// <summary>
-		/// Adds <paramref name="node"/> if it's not been added and gives it focus.
+		/// Adds <paramref name="node"/> if it hasn't been added and gives it focus.
 		/// </summary>
 		/// <param name="node">Node</param>
-		void ShowOrFocus(IAnalyzerTreeNodeData node);
+		void Add(IAnalyzerTreeNodeData node);
 
 		/// <summary>
-		/// Called by <paramref name="node"/> when its <see cref="ITreeNodeData.Activate()"/> has
-		/// been called.
+		/// Called by <paramref name="node"/> when its <see cref="ITreeNodeData.Activate()"/> method
+		/// has been called.
 		/// </summary>
 		/// <param name="node">Activated node (it's the caller)</param>
 		void OnActivated(IAnalyzerTreeNodeData node);
@@ -89,6 +90,19 @@ namespace dnSpy.Analyzer {
 		[ImportingConstructor]
 		AnalyzerManager(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, ITreeViewManager treeViewManager, IMenuManager menuManager, IThemeManager themeManager, IAnalyzerSettings analyzerSettings, IDotNetImageManager dotNetImageManager, ILanguageManager languageManager, IFileManager fileManager, DecompilerSettings decompilerSettings) {
 			this.fileTabManager = fileTabManager;
+
+			this.context = new AnalyzerTreeNodeDataContext {
+				DotNetImageManager = dotNetImageManager,
+				Language = languageManager.SelectedLanguage,
+				FileManager = fileManager,
+				DecompilerSettings = decompilerSettings,
+				ShowToken = analyzerSettings.ShowToken,
+				SingleClickExpandsChildren = analyzerSettings.SingleClickExpandsChildren,
+				SyntaxHighlight = analyzerSettings.SyntaxHighlight,
+				UseNewRenderer = analyzerSettings.UseNewRenderer,
+				AnalyzerManager = this,
+			};
+
 			var options = new TreeViewOptions {
 				CanDragAndDrop = false,
 				TreeViewListener = this,
@@ -103,17 +117,6 @@ namespace dnSpy.Analyzer {
 			};
 			*/
 
-			this.context = new AnalyzerTreeNodeDataContext {
-				DotNetImageManager = dotNetImageManager,
-				Language = languageManager.SelectedLanguage,
-				FileManager = fileManager,
-				DecompilerSettings = decompilerSettings,
-				ShowToken = analyzerSettings.ShowToken,
-				SingleClickExpandsChildren = analyzerSettings.SingleClickExpandsChildren,
-				SyntaxHighlight = analyzerSettings.SyntaxHighlight,
-				UseNewRenderer = analyzerSettings.UseNewRenderer,
-				AnalyzerManager = this,
-			};
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			analyzerSettings.PropertyChanged += AnalyzerSettings_PropertyChanged;
@@ -187,6 +190,7 @@ namespace dnSpy.Analyzer {
 
 		void ITreeViewListener.OnEvent(ITreeView treeView, TreeViewListenerEventArgs e) {
 			if (e.Event == TreeViewListenerEvent.NodeCreated) {
+				Debug.Assert(context != null);
 				var node = (ITreeNode)e.Argument;
 				var d = node.Data as IAnalyzerTreeNodeData;
 				if (d != null)
@@ -208,7 +212,7 @@ namespace dnSpy.Analyzer {
 			this.treeView.Root.Children.Clear();
 		}
 
-		public void ShowOrFocus(IAnalyzerTreeNodeData node) {
+		public void Add(IAnalyzerTreeNodeData node) {
 			if (node is EntityNode) {
 				var an = node as EntityNode;
 				var found = this.treeView.Root.DataChildren.OfType<EntityNode>().FirstOrDefault(n => n.Member == an.Member);

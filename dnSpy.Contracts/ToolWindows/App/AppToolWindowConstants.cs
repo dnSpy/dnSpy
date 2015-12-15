@@ -22,10 +22,13 @@ namespace dnSpy.Contracts.ToolWindows.App {
 	/// Constants
 	/// </summary>
 	public static class AppToolWindowConstants {
-		/// <summary>Order of files treeview on the left side</summary>
+		/// <summary>Order of files tool window</summary>
 		public const double DEFAULT_CONTENT_ORDER_LEFT_FILES = 1000;
 
-		/// <summary>Order of analyzer treeview</summary>
+		/// <summary>Order of analyzer tool window</summary>
 		public const double DEFAULT_CONTENT_ORDER_BOTTOM_ANALYZER = 10000;
+
+		/// <summary>Order of search tool window</summary>
+		public const double DEFAULT_CONTENT_ORDER_TOP_SEARCH = 10000;
 	}
 }

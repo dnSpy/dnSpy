@@ -18,27 +18,29 @@
 */
 
 using dnlib.DotNet;
-using dnSpy.Contracts.Files;
-using dnSpy.TreeNodes;
-using ICSharpCode.ILSpy.TreeNodes;
+using dnSpy.Contracts.Files.TreeView;
 
-namespace dnSpy.Search {
-	public sealed class SameAssemblyTreeViewNodeFilter : ChainTreeViewNodeFilter {
+namespace dnSpy.Shared.UI.Search {
+	public sealed class SameAssemblyFileTreeNodeFilter : ChainFileTreeNodeFilter {
 		readonly AssemblyDef allowedAsm;
 		readonly ModuleDef allowedMod;
 
-		public SameAssemblyTreeViewNodeFilter(ModuleDef allowedMod, ITreeViewNodeFilter filter)
+		public SameAssemblyFileTreeNodeFilter(ModuleDef allowedMod, IFileTreeNodeFilter filter)
 			: base(filter) {
 			this.allowedAsm = allowedMod.Assembly;
 			this.allowedMod = allowedMod;
 		}
 
-		public override TreeViewNodeFilterResult GetFilterResult(IDnSpyFile file, AssemblyFilterType type) {
-			if (file.AssemblyDef != allowedAsm)
-				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-			if (allowedAsm == null && file.ModuleDef != allowedMod)
-				return new TreeViewNodeFilterResult(FilterResult.Hidden, false);
-			return base.GetFilterResult(file, type);
+		public override FileTreeNodeFilterResult GetResult(AssemblyDef asm) {
+			if (asm != allowedAsm)
+				return new FileTreeNodeFilterResult(FilterType.Hide, false);
+			return base.GetResult(asm);
+		}
+
+		public override FileTreeNodeFilterResult GetResult(ModuleDef mod) {
+			if (allowedAsm == null && mod != allowedMod)
+				return new FileTreeNodeFilterResult(FilterType.Hide, false);
+			return base.GetResult(mod);
 		}
 	}
 }

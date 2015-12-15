@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Windows.Controls;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.TreeView;
 
@@ -43,5 +44,11 @@ namespace dnSpy.Contracts.Controls {
 
 		/// <summary>Guid of analyzer <see cref="ITreeView"/></summary>
 		public static readonly Guid GUID_ANALYZER_TREEVIEW = new Guid("6C62342D-8CBE-4EC4-9E05-828DDCCFE934");
+
+		/// <summary>Guid of search control</summary>
+		public static readonly Guid GUID_SEARCH_CONTROL = new Guid("D2699C68-1A08-4522-9A2D-C5DF6002F5FC");
+
+		/// <summary>Guid of search <see cref="ListBox"/></summary>
+		public static readonly Guid GUID_SEARCH_LISTBOX = new Guid("651FC97F-A9A7-4649-97AC-FC942168E6E2");
 	}
 }

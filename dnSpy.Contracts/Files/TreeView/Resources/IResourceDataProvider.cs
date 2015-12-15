@@ -64,7 +64,8 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		/// XML doc.
 		/// </summary>
 		/// <param name="token">Cancellation token</param>
+		/// <param name="canDecompile">true if the callee can decompile (eg. XAML), false otherwise</param>
 		/// <returns></returns>
-		string ToString(CancellationToken token);
+		string ToString(CancellationToken token, bool canDecompile);
 	}
 }

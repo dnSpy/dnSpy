@@ -69,5 +69,9 @@ namespace dnSpy.Files.TreeView {
 			output.WriteLine();
 			output.WriteFilename(DnSpyFile.Filename);
 		}
+
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
+			return filter.GetResult(DnSpyFile).FilterType;
+		}
 	}
 }

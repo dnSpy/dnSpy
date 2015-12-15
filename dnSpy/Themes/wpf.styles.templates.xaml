@@ -9,6 +9,7 @@
                     xmlns:mainapp="clr-namespace:dnSpy.MainApp"
                     xmlns:tw="clr-namespace:dnSpy.ToolWindows"
                     xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
+                    xmlns:search="clr-namespace:dnSpy.Search"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
 	<!--
@@ -774,6 +775,7 @@
 		<Setter Property="Foreground" Value="{DynamicResource CommonControlsComboBoxListItemText}" />
 		<Setter Property="Margin" Value="2,0" />
 		<Setter Property="FocusVisualStyle" Value="{x:Null}" />
+		<Setter Property="HorizontalContentAlignment" Value="Stretch" />
 		<Setter Property="Template">
 			<Setter.Value>
 				<ControlTemplate TargetType="{x:Type ComboBoxItem}">
@@ -1045,23 +1047,6 @@
     </Style>
 
 
-    <Style x:Key="ExpanderHeaderFocusVisual">
-        <Setter Property="Control.Template">
-            <Setter.Value>
-                <ControlTemplate>
-                    <Border>
-                        <Rectangle Margin="0"
-                                   StrokeThickness="1"
-                                   Stroke="Black"
-                                   StrokeDashArray="1 2"
-                                   SnapsToDevicePixels="true"/>
-                    </Border>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
-    </Style>        
-    
-    
     <Style x:Key="ExpanderDownHeaderStyle"
            TargetType="{x:Type ToggleButton}">
         <Setter Property="Template">
@@ -1466,7 +1451,7 @@
                                           MinWidth="0"
                                           MinHeight="0"
                                           Style="{StaticResource ExpanderDownHeaderStyle}"
-                                          FocusVisualStyle="{StaticResource ExpanderHeaderFocusVisual}"
+                                          FocusVisualStyle="{x:Null}"
                                           IsChecked="{Binding Path=IsExpanded,Mode=TwoWay,RelativeSource={RelativeSource TemplatedParent}}"
                                           Content="{TemplateBinding Header}"
                                           ContentTemplate="{TemplateBinding HeaderTemplate}"
@@ -5569,6 +5554,26 @@
                 <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UseNewRenderer_FileTreeView}" Content="File TreeView" />
             </Grid>
         </GroupBox>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type search:SearchResult}">
+        <Grid ToolTip="{Binding ToolTip}" Background="Transparent">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="20" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Image Grid.Column="0" Height="16" Width="16" Source="{Binding Image}" HorizontalAlignment="Center" />
+            <ContentPresenter Grid.Column="1" Content="{Binding NameUI}" />
+            <Grid Grid.Column="2" HorizontalAlignment="Right">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="20" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Image Grid.Column="0" Height="16" Width="16" Source="{Binding LocationImage}" HorizontalAlignment="Center" />
+                <ContentPresenter Grid.Column="1" Content="{Binding LocationUI}" Margin="0 0 2 0" />
+            </Grid>
+        </Grid>
     </DataTemplate>
 
 </ResourceDictionary>

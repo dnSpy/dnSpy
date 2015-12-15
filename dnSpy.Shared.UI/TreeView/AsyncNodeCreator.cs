@@ -90,6 +90,10 @@ namespace dnSpy.Shared.UI.TreeView {
 		void RemoveMessageNode_UI() {
 			if (msgNode != null)
 				targetNode.TreeNode.Children.Remove(msgNode);
+			OnCompleted();
+		}
+
+		protected virtual void OnCompleted() {
 		}
 
 		void ExecActions() {
@@ -104,16 +108,33 @@ namespace dnSpy.Shared.UI.TreeView {
 		}
 
 		protected void Start() {
+			Debug.Assert(!isRunning);
+			isRunning = true;
+			completedSuccessfully = false;
 			thread.Start();
 		}
 
+		public bool CompletedSuccessfully {
+			get { return completedSuccessfully; }
+		}
+		bool completedSuccessfully;
+
+		public bool IsRunning {
+			get { return isRunning; }
+		}
+		bool isRunning;
+
 		void ThreadMethodImpl() {
+			Debug.Assert(isRunning);
+			Debug.Assert(!completedSuccessfully);
 			try {
 				ThreadMethod();
+				completedSuccessfully = true;
 			}
 			catch (OperationCanceledException) {
 			}
 			ExecInUIThread(RemoveMessageNode_UI);
+			isRunning = false;
 		}
 
 		protected abstract void ThreadMethod();

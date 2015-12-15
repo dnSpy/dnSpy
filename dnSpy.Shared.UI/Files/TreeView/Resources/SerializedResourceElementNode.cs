@@ -119,7 +119,7 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 			DeserializeIfPossible();
 		}
 
-		public override string ToString(CancellationToken token) {
+		public override string ToString(CancellationToken token, bool canDecompile) {
 			if (IsSerialized)
 				return null;
 			return DeserializedStringValue;

@@ -90,6 +90,8 @@ namespace dnSpy.Analyzer {
 		public AnalyzerSettings CopyTo(AnalyzerSettings other) {
 			other.SyntaxHighlight = this.SyntaxHighlight;
 			other.ShowToken = this.ShowToken;
+			other.SingleClickExpandsChildren = this.SingleClickExpandsChildren;
+			other.UseNewRenderer = this.UseNewRenderer;
 			return other;
 		}
 	}

@@ -41,7 +41,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			Debug.Assert(asyncFetchChildrenHelper == null);
-			asyncFetchChildrenHelper = new AsyncFetchChildrenHelper(this);
+			asyncFetchChildrenHelper = new AsyncFetchChildrenHelper(this, () => asyncFetchChildrenHelper = null);
 			yield break;
 		}
 		AsyncFetchChildrenHelper asyncFetchChildrenHelper;
@@ -50,6 +50,20 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		internal IEnumerable<IAnalyzerTreeNodeData> FetchChildrenInternal(CancellationToken token) {
 			return FetchChildren(token);
+		}
+
+		public override void OnIsVisibleChanged() {
+			if (!TreeNode.IsVisible && asyncFetchChildrenHelper != null && !asyncFetchChildrenHelper.CompletedSuccessfully) {
+				CancelAndClearChildren();
+				TreeNode.LazyLoading = true;
+			}
+ 		}
+
+		public override void OnIsExpandedChanged(bool isExpanded) {
+			if (!isExpanded && asyncFetchChildrenHelper != null && !asyncFetchChildrenHelper.CompletedSuccessfully) {
+				CancelAndClearChildren();
+				TreeNode.LazyLoading = true;
+			}
 		}
 
 		public override bool HandleAssemblyListChanged(IDnSpyFile[] removedAssemblies, IDnSpyFile[] addedAssemblies) {

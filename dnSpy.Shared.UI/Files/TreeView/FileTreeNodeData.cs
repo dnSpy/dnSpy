@@ -18,10 +18,13 @@
 */
 
 using System;
+using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.TreeView;
 using ICSharpCode.AvalonEdit.Utils;
@@ -97,6 +100,93 @@ namespace dnSpy.Shared.UI.Files.TreeView {
 
 		public override bool Activate() {
 			return Context.FileTreeView.RaiseNodeActivated(this);
+		}
+
+		public abstract FilterType GetFilterType(IFileTreeNodeFilter filter);
+
+		public sealed override void OnEnsureChildrenLoaded() {
+			if (refilter) {
+				refilter = false;
+				foreach (var node in this.TreeNode.DataChildren.OfType<IFileTreeNodeData>())
+					Filter(node);
+			}
+		}
+		bool refilter = true;
+
+		public int FilterVersion {
+			get { return filterVersion; }
+			set {
+				if (filterVersion != value) {
+					filterVersion = value;
+					Refilter();
+				}
+			}
+		}
+		int filterVersion;
+
+		void Filter(IFileTreeNodeData node) {
+			if (node == null)
+				return;
+			var res = node.GetFilterType(node.Context.Filter);
+			switch (res) {
+			case FilterType.Default:
+			case FilterType.Visible:
+				node.FilterVersion = node.Context.FilterVersion;
+				node.TreeNode.IsHidden = false;
+				var fnode = node as FileTreeNodeData;
+				if (fnode != null && fnode.refilter && node.TreeNode.Children.Count > 0)
+					node.OnEnsureChildrenLoaded();
+				break;
+
+			case FilterType.Hide:
+				node.TreeNode.IsHidden = true;
+				break;
+
+			case FilterType.CheckChildren:
+				node.FilterVersion = node.Context.FilterVersion;
+				node.TreeNode.EnsureChildrenLoaded();
+				node.TreeNode.IsHidden = node.TreeNode.Children.All(a => a.IsHidden);
+				break;
+
+			default:
+				Debug.Fail(string.Format("Invalid type: {0}", res));
+				goto case FilterType.Default;
+			}
+		}
+
+		public sealed override void OnChildrenChanged(ITreeNodeData[] added, ITreeNodeData[] removed) {
+			if (TreeNode.Parent == null)
+				refilter = true;
+			else {
+				if (added.Length > 0) {
+					if (TreeNode.IsHidden)
+						Filter(this);
+					if (TreeNode.IsVisible) {
+						foreach (var node in added)
+							Filter(node as IFileTreeNodeData);
+					}
+					else
+						refilter = true;
+				}
+
+				if (TreeNode.IsVisible && TreeNode.Children.Count == 0)
+					Filter(this);
+			}
+		}
+
+		public sealed override void OnIsVisibleChanged() {
+			if (refilter && TreeNode.Children.Count > 0 && TreeNode.IsVisible)
+				OnEnsureChildrenLoaded();
+		}
+
+		public void Refilter() {
+			if (!TreeNode.IsVisible) {
+				refilter = true;
+				return;
+			}
+
+			foreach (var node in this.TreeNode.DataChildren)
+				Filter(node as IFileTreeNodeData);
 		}
 	}
 }

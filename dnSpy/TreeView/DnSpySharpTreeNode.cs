@@ -17,12 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
+using dnSpy.Contracts.TreeView;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.TreeView {
@@ -94,6 +97,31 @@ namespace dnSpy.TreeView {
 
 		public override void ActivateItem(RoutedEventArgs e) {
 			e.Handled = treeNodeImpl.Data.Activate();
+		}
+
+		protected override void OnChildrenChanged(NotifyCollectionChangedEventArgs e) {
+			base.OnChildrenChanged(e);
+			var added = e.NewItems == null || e.NewItems.Count == 0 ? emptyNodes : e.NewItems.OfType<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
+			var removed = e.OldItems == null || e.OldItems.Count == 0 ? emptyNodes : e.OldItems.OfType<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray();
+			treeNodeImpl.Data.OnChildrenChanged(added, removed);
+		}
+		static readonly ITreeNodeData[] emptyNodes = new ITreeNodeData[0];
+
+		protected override void OnIsVisibleChanged() {
+			base.OnIsVisibleChanged();
+			treeNodeImpl.Data.OnIsVisibleChanged();
+		}
+
+		protected override void OnExpanding() {
+			base.OnExpanding();
+			Debug.Assert(IsExpanded);
+			treeNodeImpl.Data.OnIsExpandedChanged(true);
+		}
+
+		protected override void OnCollapsing() {
+			base.OnCollapsing();
+			Debug.Assert(!IsExpanded);
+			treeNodeImpl.Data.OnIsExpandedChanged(false);
 		}
 	}
 }

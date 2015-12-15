@@ -20,7 +20,7 @@
 using System;
 using System.Text;
 
-namespace dnSpy.Search {
+namespace dnSpy.Shared.UI.Search {
 	[Flags]
 	public enum VisibleMembersFlags {
 		AssemblyDef		= 0x00000001,
@@ -64,7 +64,7 @@ namespace dnSpy.Search {
 						  PE | Hex,
 	}
 
-	static class VisibleMembersFlagsExtensions {
+	public static class VisibleMembersFlagsExtensions {
 		public static string GetListString(this VisibleMembersFlags flags) {
 			int count;
 			return flags.GetListString(out count);

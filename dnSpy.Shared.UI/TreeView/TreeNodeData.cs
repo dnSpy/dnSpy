@@ -69,5 +69,17 @@ namespace dnSpy.Shared.UI.TreeView {
 		public virtual bool Activate() {
 			return false;
 		}
+
+		public virtual void OnEnsureChildrenLoaded() {
+		}
+
+		public virtual void OnChildrenChanged(ITreeNodeData[] added, ITreeNodeData[] removed) {
+		}
+
+		public virtual void OnIsVisibleChanged() {
+		}
+
+		public virtual void OnIsExpandedChanged(bool isExpanded) {
+		}
 	}
 }

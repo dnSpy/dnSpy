@@ -18,63 +18,33 @@
 */
 
 using System;
-using System.Collections.Generic;
 using dnSpy.Contracts.Images;
-using dnSpy.Contracts.TreeView;
+using dnSpy.Shared.UI.TreeView;
 
 namespace dnSpy.TreeView {
-	sealed class TreeNodeDataImpl : ITreeNodeData {
+	sealed class TreeNodeDataImpl : TreeNodeData {
 		public TreeNodeDataImpl(Guid guid) {
 			this.guid = guid;
 		}
 
-		public ITreeNode TreeNode { get; set; }
-
-		public bool SingleClickExpandsChildren {
-			get { return false; }
-		}
-
-		public object Text {
+		public override object Text {
 			get { return null; }
 		}
 
-		public object ToolTip {
+		public override object ToolTip {
 			get { return null; }
 		}
 
-		public Guid Guid {
+		public override Guid Guid {
 			get { return guid; }
 		}
 		readonly Guid guid;
 
-		public ITreeNodeGroup TreeNodeGroup {
-			get { return null; }
-		}
-
-		public ImageReference Icon {
+		public override ImageReference Icon {
 			get { return new ImageReference(); }
 		}
 
-		public ImageReference? ExpandedIcon {
-			get { return null; }
-		}
-
-		public IEnumerable<ITreeNodeData> CreateChildren() {
-			yield break;
-		}
-
-		public bool ShowExpander(bool defaultValue) {
-			return defaultValue;
-		}
-
-		public void Initialize() {
-		}
-
-		public void OnRefreshUI() {
-		}
-
-		public bool Activate() {
-			return false;
+		public override void OnRefreshUI() {
 		}
 	}
 }

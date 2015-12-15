@@ -37,6 +37,7 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Shared.UI.Search;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.TreeView {
@@ -109,11 +110,23 @@ namespace dnSpy.Files.TreeView {
 
 		[ImportingConstructor]
 		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, DecompilerSettings decompilerSettings, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IDnSpyFileNodeCreator[] dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
+			this.context = new FileTreeNodeDataContext(this, resourceNodeFactory, decompilerSettings, FilterNothingFileTreeNodeFilter.Instance) {
+				SyntaxHighlight = fileTreeViewSettings.SyntaxHighlight,
+				SingleClickExpandsChildren = fileTreeViewSettings.SingleClickExpandsTreeViewChildren,
+				ShowAssemblyVersion = fileTreeViewSettings.ShowAssemblyVersion,
+				ShowAssemblyPublicKeyToken = fileTreeViewSettings.ShowAssemblyPublicKeyToken,
+				ShowToken = fileTreeViewSettings.ShowToken,
+				Language = languageManager.SelectedLanguage,
+				UseNewRenderer = appSettings.UseNewRenderer_FileTreeView,
+				DeserializeResources = fileTreeViewSettings.DeserializeResources,
+			};
+
 			var options = new TreeViewOptions {
 				AllowDrop = true,
 				IsVirtualizing = true,
 				VirtualizationMode = VirtualizationMode.Recycling,
 				TreeViewListener = this,
+				RootNode = new RootNode(),
 			};
 			this.fileTreeNodeGroups = new FileTreeNodeGroups();
 			this.dnSpyFileNodeCreators = dnSpyFileNodeCreators.OrderBy(a => a.Order).ToArray();
@@ -137,15 +150,6 @@ namespace dnSpy.Files.TreeView {
 				}
 			});
 			this.fileManager.CollectionChanged += FileManager_CollectionChanged;
-			this.context = new FileTreeNodeDataContext(this, resourceNodeFactory);
-			this.context.SyntaxHighlight = fileTreeViewSettings.SyntaxHighlight;
-			this.context.SingleClickExpandsChildren = fileTreeViewSettings.SingleClickExpandsTreeViewChildren;
-			this.context.ShowAssemblyVersion = fileTreeViewSettings.ShowAssemblyVersion;
-			this.context.ShowAssemblyPublicKeyToken = fileTreeViewSettings.ShowAssemblyPublicKeyToken;
-			this.context.ShowToken = fileTreeViewSettings.ShowToken;
-			this.context.Language = languageManager.SelectedLanguage;
-			this.context.UseNewRenderer = appSettings.UseNewRenderer_FileTreeView;
-			this.context.DeserializeResources = fileTreeViewSettings.DeserializeResources;
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			fileTreeViewSettings.PropertyChanged += FileTreeViewSettings_PropertyChanged;
@@ -156,6 +160,11 @@ namespace dnSpy.Files.TreeView {
 
 			this.nodeFinders = mefFinders.OrderBy(a => a.Metadata.Order).ToArray();
 			InitializeFileTreeNodeGroups(decompilerSettings);
+		}
+
+		void RefilterNodes() {
+			context.FilterVersion++;
+			((RootNode)treeView.Root.Data).Refilter();
 		}
 
 		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -259,12 +268,15 @@ namespace dnSpy.Files.TreeView {
 		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
 			this.context.Language = ((ILanguageManager)sender).SelectedLanguage;
 			RefreshNodes();
+			RefilterNodes();
 			NotifyNodesTextRefreshed();
 		}
 
 		public void RefreshNodes(bool showMember, bool decompilationOrder) {
-			if (showMember)
+			if (showMember) {
 				RefreshNodes();
+				RefilterNodes();
+			}
 			/*TODO: decompilationOrder
 			Should call InitializeFileTreeNodeGroups(). Some stuff that must be fixed:
 			The asm editor has some classes that store indexes of nodes, and would need to be
@@ -334,6 +346,7 @@ namespace dnSpy.Files.TreeView {
 
 		void ITreeViewListener.OnEvent(ITreeView treeView, TreeViewListenerEventArgs e) {
 			if (e.Event == TreeViewListenerEvent.NodeCreated) {
+				Debug.Assert(context != null);
 				var node = (ITreeNode)e.Argument;
 				var d = node.Data as IFileTreeNodeData;
 				if (d != null)
@@ -407,6 +420,10 @@ namespace dnSpy.Files.TreeView {
 				return FindNode((PropertyDef)@ref);
 			if (@ref is EventDef)
 				return FindNode((EventDef)@ref);
+			if (@ref is NamespaceRef) {
+				var nsRef = (NamespaceRef)@ref;
+				return FindNamespaceNode(nsRef.Module, nsRef.Namespace);
+			}
 
 			foreach (var finder in nodeFinders) {
 				var node = finder.Value.FindNode(this, @ref);
@@ -524,6 +541,13 @@ namespace dnSpy.Files.TreeView {
 					return n;
 			}
 
+			return null;
+		}
+
+		public INamespaceNode FindNamespaceNode(IDnSpyFile module, string @namespace) {
+			var modNode = FindNode(module) as IModuleFileNode;
+			if (modNode != null)
+				return FindNamespaceNode(modNode, @namespace);
 			return null;
 		}
 

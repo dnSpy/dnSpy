@@ -143,6 +143,14 @@ namespace dnSpy.Contracts.Files.TreeView {
 		IEventNode FindNode(EventDef @event);
 
 		/// <summary>
+		/// Returns a <see cref="INamespaceNode"/> node or null if none could be found
+		/// </summary>
+		/// <param name="module">Owner module</param>
+		/// <param name="namespace">Namespace</param>
+		/// <returns></returns>
+		INamespaceNode FindNamespaceNode(IDnSpyFile module, string @namespace);
+
+		/// <summary>
 		/// Gets the <see cref="IFileTreeNodeGroups"/> instance
 		/// </summary>
 		IFileTreeNodeGroups FileTreeNodeGroups { get; }

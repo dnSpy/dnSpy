@@ -19,6 +19,7 @@
 
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
+using dnSpy.Contracts.Files.TreeView;
 
 namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>
@@ -54,5 +55,16 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// Order of baml <see cref="ITabSaverCreator"/> instance
 		/// </summary>
 		public const double ORDER_BAMLTABSAVERCREATOR = 1000;
+
+		/// <summary>
+		/// Order of default <see cref="IReferenceFileTabContentCreator"/> instance
+		/// </summary>
+		public const double ORDER_CONTENTCREATOR_CODEREF = 1000;
+
+		/// <summary>
+		/// Order of <see cref="IReferenceFileTabContentCreator"/> instance that creates content
+		/// from <see cref="IFileTreeNodeData"/> nodes.
+		/// </summary>
+		public const double ORDER_CONTENTCREATOR_NODE = 2000;
 	}
 }

@@ -167,7 +167,6 @@
     <Compile Include="DecompilerTabsWindow.xaml.cs">
       <DependentUpon>DecompilerTabsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Search\FilterSearcher.cs" />
     <Compile Include="IPlugin.cs" />
     <Compile Include="MethodAnnotations.cs" />
     <Compile Include="MsgBox.xaml.cs">
@@ -177,7 +176,6 @@
     <Compile Include="Options\DisplaySettingsPanel.cs" />
     <Compile Include="Options\FontUtils.cs" />
     <Compile Include="Options\OtherSettings.cs" />
-    <Compile Include="Search\NamespaceRef.cs" />
     <Compile Include="Tabs\DecompileTabState.cs" />
     <Compile Include="Tabs\HexTabState.cs" />
     <Compile Include="Tabs\SavedTabState.cs" />
@@ -189,15 +187,6 @@
     <Compile Include="TextOutputUtils.cs" />
     <Compile Include="TextView\SimpleHighlighter.cs" />
     <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />
-    <Compile Include="Search\ChainTreeViewNodeFilter.cs" />
-    <Compile Include="Search\EntryPointTreeViewNodeFilter.cs" />
-    <Compile Include="Search\FilterNothingTreeViewNodeFilter.cs" />
-    <Compile Include="Search\FlagsTreeViewNodeFilter.cs" />
-    <Compile Include="Search\SameAssemblyTreeViewNodeFilter.cs" />
-    <Compile Include="Search\SameModuleTreeViewNodeFilter.cs" />
-    <Compile Include="Search\ShowNothingTreeViewNodeFilterBase.cs" />
-    <Compile Include="Search\TreeViewNodeFilterBase.cs" />
-    <Compile Include="Search\VisibleMembersFlags.cs" />
     <Compile Include="TreeNodes\GoToTokenContextMenuEntry.cs" />
     <Compile Include="TreeNodes\Hex\HexField.cs" />
     <Compile Include="TreeNodes\Hex\HexTreeNode.cs" />

@@ -80,8 +80,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (res != null) {
 					var obj = res.Object;
 
+					//TODO: obj is now AssemblyDef/ModuleDef. res.DnSpyFile contains the actual IDnSpyFile
 					if (obj is AssemblyTreeNode && filter.GetFilterResult((obj as AssemblyTreeNode).DnSpyFile, (obj as AssemblyTreeNode).AssemblyFilterType).IsMatch)
 						return ((AssemblyTreeNode)obj).DnSpyFile;
+					//TODO: Check for ModuleDef here, not IDnSpyFile
 					if (obj is IDnSpyFile && filter.GetFilterResult(obj as IDnSpyFile, (obj as IDnSpyFile).ModuleDef != null ? AssemblyFilterType.NetModule : AssemblyFilterType.NonNetFile).IsMatch)
 						return (IDnSpyFile)obj;
 					if (obj is string && filter.GetFilterResult((string)obj, res.DnSpyFile).IsMatch)

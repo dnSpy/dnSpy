@@ -460,49 +460,6 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-#if false  //TODO:
-	static class OpenReferenceCtxMenuCommand {
-		internal static void ExecuteInternal(object @ref, bool newTab) {
-			if (@ref == null)
-				return;
-			if (newTab)
-				MainWindow.Instance.OpenNewEmptyTab();
-			var textView = MainWindow.Instance.SafeActiveTextView;
-			MainWindow.Instance.JumpToReference(textView, @ref);
-			MainWindow.Instance.SetTextEditorFocus(textView);
-		}
-
-		[ExportMenuItem(Header = "Go to Reference", InputGestureText = "Dbl Click", Group = MenuConstants.GROUP_CTX_SEARCH_TABS, Order = 0)]
-		sealed class SearchCommand : MenuItemBase {
-			public override void Execute(IMenuItemContext context) {
-				ExecuteInternal(GetReference(context), false);
-			}
-
-			public override bool IsVisible(IMenuItemContext context) {
-				return GetReference(context) != null;
-			}
-
-			internal static object GetReference(IMenuItemContext context) {
-				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID))
-					return null;
-				var @ref = context.FindByType<CodeReferenceSegment>();
-				return @ref == null ? null : @ref.Reference;
-			}
-		}
-
-		[ExportMenuItem(Header = "Open in New _Tab", InputGestureText = "Shift+Dbl Click", Group = MenuConstants.GROUP_CTX_SEARCH_TABS, Order = 10)]
-		sealed class NewTabSearchCommand : MenuItemBase {
-			public override void Execute(IMenuItemContext context) {
-				ExecuteInternal(SearchCommand.GetReference(context), true);
-			}
-
-			public override bool IsVisible(IMenuItemContext context) {
-				return SearchCommand.GetReference(context) != null;
-			}
-		}
-	}
-#endif
-
 	sealed class MenuTabGroupContext {
 		public readonly ITabGroupManager TabGroupManager;
 		public readonly ITabGroup TabGroup;

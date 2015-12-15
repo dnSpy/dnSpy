@@ -106,5 +106,9 @@ namespace dnSpy.Files.TreeView {
 			foreach (var iface in td.Interfaces)
 				yield return new BaseTypeNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.InterfaceBaseTypeTreeNodeGroupBaseType), iface.Interface, false);
 		}
+
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
+			return filter.GetResult(this).FilterType;
+		}
 	}
 }

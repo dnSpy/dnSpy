@@ -48,7 +48,7 @@ namespace dnSpy.Contracts.ToolWindows {
 		object UIObject { get; }
 
 		/// <summary>
-		/// Gets the element that should should get focus when the tab is selected or null to use
+		/// Gets the element that should get focus when the tab is selected or null to use
 		/// <see cref="UIObject"/>. Implement <see cref="IFocusable"/> to set focus yourself.
 		/// </summary>
 		IInputElement FocusedElement { get; }

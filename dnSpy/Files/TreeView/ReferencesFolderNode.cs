@@ -82,5 +82,9 @@ namespace dnSpy.Files.TreeView {
 		public IModuleReferenceNode Create(ModuleRef modRef) {
 			return Context.FileTreeView.Create(modRef);
 		}
+
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
+			return filter.GetResult(this).FilterType;
+		}
 	}
 }

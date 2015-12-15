@@ -298,6 +298,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Search, Group: Other</summary>
 		public const string GROUP_CTX_SEARCH_OTHER = "2000,255AE50D-3638-4128-808D-FC8910BA9279";
 
+		/// <summary>Group: Context Menu, Type: Search, Group: Options</summary>
+		public const string GROUP_CTX_SEARCH_OPTIONS = "10000,2A261412-7DCD-4CD1-B936-783C67476E99";
+
 		/// <summary>Group: Context Menu, Type: Analyzer, Group: Tabs</summary>
 		public const string GROUP_CTX_ANALYZER_TABS = "0,BC8D4C75-B5BC-4964-9A3C-E9EE33F928B0";
 

@@ -130,6 +130,7 @@
     <Compile Include="Files\Tabs\MiscOptions.cs" />
     <Compile Include="Files\Tabs\NavigationCommands.cs" />
     <Compile Include="Files\Tabs\NodeDecompiler.cs" />
+    <Compile Include="Files\Tabs\NodeReferenceFileTabContentCreator.cs" />
     <Compile Include="Files\Tabs\NodeTabSaver.cs" />
     <Compile Include="Files\Tabs\NullObjects.cs" />
     <Compile Include="Files\Tabs\RedecompileTabs.cs" />
@@ -205,6 +206,7 @@
     <Compile Include="Files\TreeView\Resources\SerializedImageResourceElementNode.cs" />
     <Compile Include="Files\TreeView\Resources\UnknownResourceNode.cs" />
     <Compile Include="Files\TreeView\Resources\UnknownSerializedResourceElementNode.cs" />
+    <Compile Include="Files\TreeView\RootNode.cs" />
     <Compile Include="Files\TreeView\TypeNode.cs" />
     <Compile Include="Files\TreeView\UnknownFileNode.cs" />
     <Compile Include="Images\DotNetImageManager.cs" />
@@ -257,6 +259,24 @@
       <SubType>Code</SubType>
     </Compile>
     <AppDesigner Include="Properties\" />
+    <Compile Include="Search\BooleanToThicknessConverter.cs" />
+    <Compile Include="Search\Commands.cs" />
+    <Compile Include="Search\DelayedAction.cs" />
+    <Compile Include="Search\FileSearcher.cs" />
+    <Compile Include="Search\FileSearcherCreator.cs" />
+    <Compile Include="Search\FilterSearcher.cs" />
+    <Compile Include="Search\FilterSearcherOptions.cs" />
+    <Compile Include="Search\SearchControl.xaml.cs">
+      <DependentUpon>SearchControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Search\SearchControlVM.cs" />
+    <Compile Include="Search\SearchManager.cs" />
+    <Compile Include="Search\SearchResult.cs" />
+    <Compile Include="Search\SearchResultContext.cs" />
+    <Compile Include="Search\SearchSettings.cs" />
+    <Compile Include="Search\SearchToolWindowContent.cs" />
+    <Compile Include="Search\SearchType.cs" />
+    <Compile Include="Search\SearchTypeVM.cs" />
     <Compile Include="Settings\Dialog\AppRefreshSettings.cs" />
     <Compile Include="Settings\Dialog\AppSettingsDlg.xaml.cs">
       <DependentUpon>AppSettingsDlg.xaml</DependentUpon>
@@ -391,6 +411,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainApp\MsgBoxDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Search\SearchControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -89,5 +89,15 @@ namespace dnSpy.Files.TreeView {
 			else
 				new NodePrinter().Write(output, language, td, Context.ShowToken);
 		}
+
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
+			var res = filter.GetResult(this);
+			if (res.FilterType != FilterType.Default)
+				return res.FilterType;
+			var type = TypeDef;
+			if (type.IsNested && !Context.Language.ShowMember(type, Context.DecompilerSettings))
+				return FilterType.Hide;
+			return FilterType.Visible;
+		}
 	}
 }

@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.TreeView {
 	/// <summary>
 	/// Holds a reference with a token
 	/// </summary>
-	public interface IMDTokenNode : ITreeNodeData {
+	public interface IMDTokenNode {
 		/// <summary>
 		/// Gets the reference
 		/// </summary>

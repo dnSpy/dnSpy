@@ -93,5 +93,9 @@ namespace dnSpy.Files.TreeView {
 		public INamespaceNode Create(string name) {
 			return Context.FileTreeView.Create(name);
 		}
+
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
+			return filter.GetResult(DnSpyFile.ModuleDef).FilterType;
+		}
 	}
 }

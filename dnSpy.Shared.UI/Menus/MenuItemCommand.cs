@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using System.Windows.Input;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Menus;
@@ -51,7 +52,8 @@ namespace dnSpy.Shared.UI.Menus {
 			this.realCommand = realCommand;
 		}
 
-		public override void Execute(TContext context) {
+		public sealed override void Execute(TContext context) {
+			Debug.Fail("MenuItemCommand.Execute() got called");
 			realCommand.Execute(context);
 		}
 

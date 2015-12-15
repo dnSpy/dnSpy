@@ -160,7 +160,7 @@ namespace dnSpy.Files.Tabs.Settings {
 			this.fileTabManagerSettings = fileTabManagerSettings;
 			this.fontFamilies = null;
 			this.fontFamilyVM = new FontFamilyVM(textEditorSettings.FontFamily);
-			Task.Factory.StartNew<FontFamilyVM[]>(() => {
+			Task.Factory.StartNew(() => {
 				return Fonts.SystemFontFamilies.Where(a => !FontUtils.IsSymbol(a)).OrderBy(a => a.Source.ToUpperInvariant()).Select(a => new FontFamilyVM(a)).ToArray();
 			})
 			.ContinueWith(t => {

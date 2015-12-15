@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 
 namespace dnSpy.Contracts.TreeView {
@@ -63,6 +62,16 @@ namespace dnSpy.Contracts.TreeView {
 		/// true if it's expanded
 		/// </summary>
 		bool IsExpanded { get; set; }
+
+		/// <summary>
+		/// true if it's hidden
+		/// </summary>
+		bool IsHidden { get; set; }
+
+		/// <summary>
+		/// true when this node is not hidden and all parent nodes are expanded and not hidden
+		/// </summary>
+		bool IsVisible { get; }
 
 		/// <summary>
 		/// Forces loading of <see cref="Children"/>

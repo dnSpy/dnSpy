@@ -26,7 +26,7 @@ using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 
 namespace dnSpy.Analyzer {
-	[Export, Export(typeof(IMainToolWindowContentCreator))]
+	[Export(typeof(IMainToolWindowContentCreator))]
 	sealed class AnalyzerToolWindowContentCreator : IMainToolWindowContentCreator {
 		readonly Lazy<IAnalyzerManager> analyzerManager;
 

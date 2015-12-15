@@ -153,7 +153,7 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 			output.WriteLine();
 		}
 
-		public virtual string ToString(CancellationToken token) {
+		public virtual string ToString(CancellationToken token, bool canDecompile) {
 			return null;
 		}
 
@@ -176,6 +176,10 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 			var er = resource as EmbeddedResource;
 			if (er != null)
 				yield return new ResourceData(resource.Name, token => new MemoryStream(er.GetResourceData()));
+		}
+
+		public sealed override FilterType GetFilterType(IFileTreeNodeFilter filter) {
+			return filter.GetResult(this).FilterType;
 		}
 	}
 }

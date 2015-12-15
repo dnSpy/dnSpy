@@ -43,6 +43,24 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="language">Language</param>
 		/// <returns></returns>
 		string ToString(ILanguage language);
+
+		/// <summary>
+		/// Called when <see cref="IFileTreeNodeDataContext.Filter"/> has been changed
+		/// </summary>
+		void Refilter();
+
+		/// <summary>
+		/// The class (<c>FileTreeNodeData</c>) should call <see cref="Refilter()"/> when updating
+		/// this value.
+		/// </summary>
+		int FilterVersion { get; set; }
+
+		/// <summary>
+		/// Gets the <see cref="FilterType"/> to filter this instance
+		/// </summary>
+		/// <param name="filter">Filter to call</param>
+		/// <returns></returns>
+		FilterType GetFilterType(IFileTreeNodeFilter filter);
 	}
 
 	/// <summary>

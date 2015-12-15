@@ -18,6 +18,7 @@
 */
 
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
@@ -25,7 +26,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Files.Tabs.TextEditor;
 
 namespace dnSpy.Files.Tabs {
-	[ExportReferenceFileTabContentCreator]
+	[ExportReferenceFileTabContentCreator(Order = TabsConstants.ORDER_CONTENTCREATOR_CODEREF)]
 	sealed class TreeNodeReferenceFileTabContentCreator : IReferenceFileTabContentCreator {
 		readonly DecompileFileTabContentFactory decompileFileTabContentFactory;
 		readonly IFileTabManagerSettings fileTabManagerSettings;
@@ -91,6 +92,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		FileTabReferenceResult CreateLocalRefResult(IFileTabContent sourceContent, CodeReferenceSegment codeRef) {
+			Debug.Assert(IsSupportedReference(codeRef));
 			if (sourceContent == null)
 				return null;
 			var content = sourceContent.Clone();
@@ -101,6 +103,10 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		FileTabReferenceResult CreateMemberRefResult(IFileTabManager fileTabManager, object @ref) {
+			var resolvedRef = ResolveMemberDef(@ref as IMemberRef);
+			if (!IsSupportedReference(resolvedRef))
+				return null;
+			var newRef = GetReference(@ref);
 			var node = fileTabManager.FileTreeView.FindNode(GetReference(@ref));
 			if (node == null)
 				return null;
@@ -108,11 +114,17 @@ namespace dnSpy.Files.Tabs {
 			var content = decompileFileTabContentFactory.Create(new IFileTreeNodeData[] { node });
 			return new FileTabReferenceResult(content, null, a => {
 				if (a.Success)
-					GoToReference(content, ResolveMemberDef(@ref as IMemberRef));
+					GoToReference(content, resolvedRef);
 			});
 		}
 
+		static bool IsSupportedReference(object @ref) {
+			return @ref != null &&
+				(@ref is CodeReferenceSegment || @ref is IMemberDef);
+		}
+
 		void GoToReference(IFileTabContent content, object @ref) {
+			Debug.Assert(IsSupportedReference(@ref));
 			var uiCtx = content.FileTab.UIContext as ITextEditorUIContext;
 			if (uiCtx == null)
 				return;

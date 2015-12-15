@@ -197,7 +197,7 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 			}
 		}
 
-		public virtual string ToString(CancellationToken token) {
+		public virtual string ToString(CancellationToken token, bool canDecompile) {
 			return null;
 		}
 
@@ -312,6 +312,10 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 
 		public virtual void UpdateData(ResourceElement newResElem) {
 			resourceElement = newResElem;
+		}
+
+		public sealed override FilterType GetFilterType(IFileTreeNodeFilter filter) {
+			return filter.GetResult(this).FilterType;
 		}
 	}
 }

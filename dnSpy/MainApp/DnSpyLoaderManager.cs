@@ -149,7 +149,8 @@ namespace dnSpy.MainApp {
 		void LoadAllCodeFinished() {
 			content.RemoveLoadingContent();
 			window.IsEnabled = true;
-			//TODO: Check if this is still needed. Had to do it in dnSpy-old to make sure Ctrl+K worked if no tabs were visible
+			// This is needed if there's nothing shown at startup (no tabs, no TV, etc), otherwise
+			// eg. Ctrl+K won't work.
 			window.Focus();
 			foreach (var loader in loaders)
 				loader.Value.OnAppLoaded();

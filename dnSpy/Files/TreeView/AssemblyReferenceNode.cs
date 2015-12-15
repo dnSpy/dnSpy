@@ -87,5 +87,9 @@ namespace dnSpy.Files.TreeView {
 			foreach (var asmRef in mod.GetAssemblyRefs())
 				yield return new AssemblyReferenceNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.AssemblyRefTreeNodeGroupAssemblyRef), mod, asmRef);
 		}
+
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
+			return filter.GetResult(assemblyRef).FilterType;
+		}
 	}
 }

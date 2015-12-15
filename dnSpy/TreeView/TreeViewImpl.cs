@@ -29,7 +29,6 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Controls;
-using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.TreeView {

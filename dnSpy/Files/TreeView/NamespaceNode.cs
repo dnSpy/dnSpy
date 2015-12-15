@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
@@ -74,6 +75,18 @@ namespace dnSpy.Files.TreeView {
 
 		public ITypeNode Create(TypeDef type) {
 			return Context.FileTreeView.Create(type);
+		}
+
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
+			var p = TreeNode.Parent;
+			var parent = p == null ? null : p.Data as IModuleFileNode;
+			Debug.Assert(parent != null);
+			if (parent == null)
+				return FilterType.Default;
+			var res = filter.GetResult(Name, parent.DnSpyFile);
+			if (res.FilterType != FilterType.Default)
+				return res.FilterType;
+			return FilterType.CheckChildren;
 		}
 	}
 }

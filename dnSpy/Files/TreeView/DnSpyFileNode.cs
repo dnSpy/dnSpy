@@ -38,5 +38,9 @@ namespace dnSpy.Files.TreeView {
 		public sealed override NodePathName NodePathName {
 			get { return new NodePathName(Guid, (DnSpyFile.Filename ?? string.Empty).ToUpperInvariant()); }
 		}
+
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
+			return filter.GetResult(DnSpyFile).FilterType;
+		}
 	}
 }

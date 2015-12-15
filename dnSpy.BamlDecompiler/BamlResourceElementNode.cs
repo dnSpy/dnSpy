@@ -123,7 +123,9 @@ namespace dnSpy.BamlDecompiler {
 			return ext;
 		}
 
-		public override string ToString(CancellationToken token) {
+		public override string ToString(CancellationToken token, bool canDecompile) {
+			if (!canDecompile)
+				return null;
 			var output = new PlainTextOutput();
 			Decompile(output, token);
 			return output.ToString();

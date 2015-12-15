@@ -62,5 +62,14 @@ namespace dnSpy.Files.TreeView {
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			new NodePrinter().Write(output, language, method, Context.ShowToken);
 		}
+
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
+			var res = filter.GetResult(MethodDef);
+			if (res.FilterType != FilterType.Default)
+				return res.FilterType;
+			if (Context.Language.ShowMember(MethodDef, Context.DecompilerSettings))
+				return FilterType.Visible;
+			return FilterType.Hide;
+		}
 	}
 }

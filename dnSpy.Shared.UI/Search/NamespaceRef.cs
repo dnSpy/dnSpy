@@ -17,8 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Search {
-	sealed class FilterNothingTreeViewNodeFilter : TreeViewNodeFilterBase {
-		public static readonly FilterNothingTreeViewNodeFilter Instance = new FilterNothingTreeViewNodeFilter();
+using dnSpy.Contracts.Files;
+
+namespace dnSpy.Shared.UI.Search {
+	public sealed class NamespaceRef {
+		public readonly IDnSpyFile Module;
+		public readonly string Namespace;
+
+		public NamespaceRef(IDnSpyFile mod, string ns) {
+			this.Module = mod;
+			this.Namespace = ns;
+		}
 	}
 }

@@ -26,10 +26,12 @@ using dnSpy.Shared.UI.TreeView;
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class AsyncFetchChildrenHelper : AsyncNodeCreator {
 		readonly SearchNode node;
+		readonly Action completed;
 
-		public AsyncFetchChildrenHelper(SearchNode node)
+		public AsyncFetchChildrenHelper(SearchNode node, Action completed)
 			: base(node) {
 			this.node = node;
+			this.completed = completed;
 			Start();
 		}
 
@@ -81,6 +83,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 			AddMessageNode(() => new MessageNode());
 			foreach (var child in node.FetchChildrenInternal(cancellationToken))
 				AddNode(child);
+		}
+
+		protected override void OnCompleted() {
+			completed();
 		}
 	}
 }

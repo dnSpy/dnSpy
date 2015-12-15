@@ -51,6 +51,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <summary>Constructor</summary>
 		public ExportReferenceFileTabContentCreatorAttribute()
 			: base(typeof(IReferenceFileTabContentCreator)) {
+			Order = double.MaxValue;
 		}
 
 		/// <summary>

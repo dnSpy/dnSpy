@@ -87,7 +87,7 @@ namespace dnSpy.Contracts.TreeView {
 		void Initialize();
 
 		/// <summary>
-		/// Called from <see cref="ITreeNode.RefreshUI()"/> before it invalidates all UI properties
+		/// Called by <see cref="ITreeNode.RefreshUI()"/> before it invalidates all UI properties
 		/// </summary>
 		void OnRefreshUI();
 
@@ -97,6 +97,29 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <returns></returns>
 		bool Activate();
+
+		/// <summary>
+		/// Called by <see cref="ITreeNode.EnsureChildrenLoaded()"/>
+		/// </summary>
+		void OnEnsureChildrenLoaded();
+
+		/// <summary>
+		/// Called when the children has been changed
+		/// </summary>
+		/// <param name="added">Added nodes</param>
+		/// <param name="removed">Removed nodes</param>
+		void OnChildrenChanged(ITreeNodeData[] added, ITreeNodeData[] removed);
+
+		/// <summary>
+		/// Called when <see cref="ITreeNode.IsVisible"/> has changed
+		/// </summary>
+		void OnIsVisibleChanged();
+
+		/// <summary>
+		/// Called when <see cref="ITreeNode.IsExpanded"/> has changed
+		/// </summary>
+		/// <param name="isExpanded">Value of <see cref="ITreeNode.IsExpanded"/></param>
+		void OnIsExpandedChanged(bool isExpanded);
 	}
 
 	/// <summary>

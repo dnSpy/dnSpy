@@ -71,5 +71,12 @@ namespace dnSpy.Files.TreeView {
 			foreach (var resource in module.Resources)
 				yield return Context.ResourceNodeFactory.Create(module, resource, treeNodeGroup);
 		}
+
+		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
+			var res = filter.GetResult(this);
+			if (res.FilterType != FilterType.Default)
+				return res.FilterType;
+			return FilterType.CheckChildren;
+		}
 	}
 }
