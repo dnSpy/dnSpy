@@ -20,19 +20,22 @@
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dndbg.Engine;
+using dnSpy.Contracts.Images;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
-	sealed class CallStackVM : ViewModelBase {
-		internal ICallStackObjectCreator CallStackObjectCreator {
-			get { return callStackObjectCreator; }
-			set { callStackObjectCreator = value; }
-		}
-		ICallStackObjectCreator callStackObjectCreator;
+	interface ICallStackVM {
+		bool IsEnabled { get; set; }
+		bool IsVisible { get; set; }
+		void RefreshThemeFields();
+	}
 
-		internal bool IsEnabled {
+	[Export, Export(typeof(ICallStackVM)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class CallStackVM : ViewModelBase, ICallStackVM {
+		public bool IsEnabled {
 			get { return isEnabled; }
 			set {
 				if (isEnabled != value) {
@@ -43,6 +46,12 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 		bool isEnabled;
+
+		public bool IsVisible {//TODO: Use this
+			get { return isVisible; }
+			set { isVisible = value; }
+		}
+		bool isVisible;
 
 		public ObservableCollection<ICallStackFrameVM> Collection {
 			get { return framesList; }
@@ -60,47 +69,68 @@ namespace dnSpy.Debugger.CallStack {
 		}
 		object selectedItem;
 
-		internal TypePrinterFlags TypePrinterFlags {
+		TypePrinterFlags TypePrinterFlags {
 			get {
-				TypePrinterFlags flags = TypePrinterFlags.ShowArrayValueSizes;
-				if (!DebuggerSettings.Instance.UseHexadecimal) flags |= TypePrinterFlags.UseDecimal;
-				if (CallStackSettings.Instance.ShowModuleNames) flags |= TypePrinterFlags.ShowModuleNames;
-				if (CallStackSettings.Instance.ShowParameterTypes) flags |= TypePrinterFlags.ShowParameterTypes;
-				if (CallStackSettings.Instance.ShowParameterNames) flags |= TypePrinterFlags.ShowParameterNames;
-				if (CallStackSettings.Instance.ShowParameterValues) flags |= TypePrinterFlags.ShowParameterValues;
-				if (CallStackSettings.Instance.ShowIP) flags |= TypePrinterFlags.ShowIP;
-				if (CallStackSettings.Instance.ShowOwnerTypes) flags |= TypePrinterFlags.ShowOwnerTypes;
-				if (CallStackSettings.Instance.ShowNamespaces) flags |= TypePrinterFlags.ShowNamespaces;
-				if (CallStackSettings.Instance.ShowTypeKeywords) flags |= TypePrinterFlags.ShowTypeKeywords;
-				if (CallStackSettings.Instance.ShowTokens) flags |= TypePrinterFlags.ShowTokens;
-				if (CallStackSettings.Instance.ShowReturnTypes) flags |= TypePrinterFlags.ShowReturnTypes;
+				var flags = TypePrinterFlags.ShowArrayValueSizes;
+				if (!debuggerSettings.UseHexadecimal) flags |= TypePrinterFlags.UseDecimal;
+				if (callStackSettings.ShowModuleNames) flags |= TypePrinterFlags.ShowModuleNames;
+				if (callStackSettings.ShowParameterTypes) flags |= TypePrinterFlags.ShowParameterTypes;
+				if (callStackSettings.ShowParameterNames) flags |= TypePrinterFlags.ShowParameterNames;
+				if (callStackSettings.ShowParameterValues) flags |= TypePrinterFlags.ShowParameterValues;
+				if (callStackSettings.ShowIP) flags |= TypePrinterFlags.ShowIP;
+				if (callStackSettings.ShowOwnerTypes) flags |= TypePrinterFlags.ShowOwnerTypes;
+				if (callStackSettings.ShowNamespaces) flags |= TypePrinterFlags.ShowNamespaces;
+				if (callStackSettings.ShowTypeKeywords) flags |= TypePrinterFlags.ShowTypeKeywords;
+				if (callStackSettings.ShowTokens) flags |= TypePrinterFlags.ShowTokens;
+				if (callStackSettings.ShowReturnTypes) flags |= TypePrinterFlags.ShowReturnTypes;
 				return flags;
 			}
 		}
 
-		public CallStackVM() {
-			StackFrameManager.Instance.StackFramesUpdated += StackFrameManager_StackFramesUpdated;
-			StackFrameManager.Instance.PropertyChanged += StackFrameManager_PropertyChanged;
+		readonly IDebuggerSettings debuggerSettings;
+		readonly ICallStackSettings callStackSettings;
+		readonly ITheDebugger theDebugger;
+		readonly IStackFrameManager stackFrameManager;
+		readonly CallStackFrameContext callStackFrameContext;
+
+		[ImportingConstructor]
+		CallStackVM(IDebuggerSettings debuggerSettings, ICallStackSettings callStackSettings, IStackFrameManager stackFrameManager, ITheDebugger theDebugger, IImageManager imageManager) {
+			this.debuggerSettings = debuggerSettings;
+			this.callStackSettings = callStackSettings;
+			this.theDebugger = theDebugger;
+			this.stackFrameManager = stackFrameManager;
 			this.framesList = new ObservableCollection<ICallStackFrameVM>();
-			CallStackSettings.Instance.PropertyChanged += CallStackSettings_PropertyChanged;
-			DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
-			DebugManager.Instance.ProcessRunning += DebugManager_ProcessRunning;
-			DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
+			this.callStackFrameContext = new CallStackFrameContext(imageManager) {
+				TypePrinterFlags = TypePrinterFlags,
+				SyntaxHighlight = debuggerSettings.SyntaxHighlightCallStack,
+			};
+
+			stackFrameManager.StackFramesUpdated += StackFrameManager_StackFramesUpdated;
+			stackFrameManager.PropertyChanged += StackFrameManager_PropertyChanged;
+			callStackSettings.PropertyChanged += CallStackSettings_PropertyChanged;
+			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
+			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 		}
 
-		void DebugManager_ProcessRunning(object sender, EventArgs e) {
+		void TheDebugger_ProcessRunning(object sender, EventArgs e) {
 			InitializeStackFrames();
 		}
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			switch (e.PropertyName) {
 			case "UseHexadecimal":
+				callStackFrameContext.TypePrinterFlags = TypePrinterFlags;
+				RefreshFrameNames();
+				break;
+
 			case "SyntaxHighlightCallStack":
+				callStackFrameContext.SyntaxHighlight = debuggerSettings.SyntaxHighlightCallStack;
+				RefreshFrameNames();
+				break;
+
 			case "PropertyEvalAndFunctionCalls":
 			case "UseStringConversionFunction":
 				RefreshFrameNames();
-				break;
-			default:
 				break;
 			}
 		}
@@ -117,9 +147,8 @@ namespace dnSpy.Debugger.CallStack {
 			case "ShowTypeKeywords":
 			case "ShowTokens":
 			case "ShowReturnTypes":
+				callStackFrameContext.TypePrinterFlags = TypePrinterFlags;
 				RefreshFrameNames();
-				break;
-			default:
 				break;
 			}
 		}
@@ -137,18 +166,18 @@ namespace dnSpy.Debugger.CallStack {
 			if (e.Debugger.IsEvaluating)
 				return;
 			// InitializeStackFrames() is called when the process has been running for a little while. Speeds up stepping.
-			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Continuing && DebugManager.Instance.ProcessState != DebuggerProcessState.Running)
+			if (theDebugger.ProcessState != DebuggerProcessState.Continuing && theDebugger.ProcessState != DebuggerProcessState.Running)
 				InitializeStackFrames();
 		}
 
-		internal void InitializeStackFrames() {
+		void InitializeStackFrames() {
 			if (!IsEnabled) {
 				framesList.Clear();
 				return;
 			}
 
 			bool tooManyFrames;
-			var newFrames = StackFrameManager.Instance.GetFrames(out tooManyFrames);
+			var newFrames = stackFrameManager.GetFrames(out tooManyFrames);
 
 			bool oldHadTooManyFrames = framesList.Count > 0 && framesList[framesList.Count - 1] is MessageCallStackFrameVM;
 			int oldVisibleFramesCount = framesList.Count - (oldHadTooManyFrames ? 1 : 0);
@@ -165,8 +194,8 @@ namespace dnSpy.Debugger.CallStack {
 			if (framesToAdd > 0) {
 				for (int i = 0; i < framesToAdd; i++) {
 					var frame = newFrames[i];
-					var vm = new CallStackFrameVM(this, i, frame);
-					vm.IsCurrentFrame = i == StackFrameManager.Instance.SelectedFrameNumber;
+					var vm = new CallStackFrameVM(callStackFrameContext, i, frame);
+					vm.IsCurrentFrame = i == stackFrameManager.SelectedFrameNumber;
 					vm.IsUserCode = IsUserCode(frame);
 
 					if (framesList.Count == i)
@@ -186,7 +215,7 @@ namespace dnSpy.Debugger.CallStack {
 				var frame = newFrames[i];
 
 				vm.Index = i;
-				vm.IsCurrentFrame = i == StackFrameManager.Instance.SelectedFrameNumber;
+				vm.IsCurrentFrame = i == stackFrameManager.SelectedFrameNumber;
 				vm.IsUserCode = IsUserCode(frame);
 				vm.Frame = frame;
 			}
@@ -200,7 +229,7 @@ namespace dnSpy.Debugger.CallStack {
 					framesList.RemoveAt(framesList.Count - 1);
 			}
 			else if (!oldHadTooManyFrames && tooManyFrames)
-				framesList.Add(new MessageCallStackFrameVM(this, newFrames.Count, "The maximum number of stack frames supported by dnSpy has been exceeded."));
+				framesList.Add(new MessageCallStackFrameVM(callStackFrameContext, newFrames.Count, "The maximum number of stack frames supported by dnSpy has been exceeded."));
 		}
 
 		bool IsUserCode(CorFrame frame) {
@@ -224,7 +253,7 @@ namespace dnSpy.Debugger.CallStack {
 				vm.IsCurrentFrame = value;
 		}
 
-		internal void RefreshThemeFields() {
+		public void RefreshThemeFields() {
 			foreach (var vm in framesList) {
 				var vm2 = vm as CallStackFrameVM;
 				if (vm2 != null)

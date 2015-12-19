@@ -474,9 +474,22 @@ namespace dnSpy.Shared.UI.HexEditor {
 			RemoveHooks(Document);
 		}
 
+		public bool UseNewFormatter {
+			get { return useNewFormatter; }
+			set {
+				if (useNewFormatter != value) {
+					useNewFormatter = value;
+					if (textFormatter != null) {
+						InitializeAll();
+						InvalidateCachedLinesAndRefresh();
+					}
+				}
+			}
+		}
+		bool useNewFormatter;
+
 		void InitializeAll() {
-			//TODO: Pass in the correct TextFormatterProvider to use to this method
-			textFormatter = TextFormatterFactory.Create(this, TextFormatterProvider.BuiltIn);
+			textFormatter = TextFormatterFactory.Create(this, UseNewFormatter ? TextFormatterProvider.GlyphRunFormatter : TextFormatterProvider.BuiltIn);
 			InitializeFontProperties();
 			InitializeSizeProperties(false);
 			RepaintLayers();

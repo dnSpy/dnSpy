@@ -17,112 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
-using System.Windows;
+using System;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Contracts;
-using dnSpy.Contracts.Themes;
 using dnSpy.Shared.UI.MVVM;
-using dnSpy.TreeNodes;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.CallStack {
-	[Export(typeof(IPaneCreator))]
-	sealed class CallStackControlCreator : IPaneCreator {
-		CallStackControlCreator() {
+	sealed partial class CallStackControl : UserControl {
+		public ListView ListView {
+			get { return listView; }
 		}
-
-		public IPane Create(string name) {
-			if (name == CallStackControl.PANE_TYPE_NAME)
-				return CallStackControlInstance;
-			return null;
-		}
-
-		sealed class CallStackObjectCreator : ICallStackObjectCreator {
-			public object CreateName(ICallStackFrameVM vm) {
-				return CreateTextBlock(vm.CachedOutput, DebuggerSettings.Instance.SyntaxHighlightCallStack);
-			}
-
-			static FrameworkElement CreateTextBlock(CachedOutput cachedOutput, bool highlight) {
-				var gen = UISyntaxHighlighter.Create(highlight);
-				var conv = new OutputConverter(gen.TextOutput);
-				foreach (var t in cachedOutput.data)
-					conv.Write(t.Item1, t.Item2);
-				return gen.CreateTextBlock(true);
-			}
-		}
-
-		internal static CallStackControl CallStackControlInstance {
-			get {
-				if (callStackControl == null) {
-					callStackControl = new CallStackControl();
-					var vm = new CallStackVM();
-					vm.CallStackObjectCreator = new CallStackObjectCreator();
-					callStackControl.DataContext = vm;
-					InitializeCommandShortcuts(callStackControl.listView);
-				}
-				return callStackControl;
-			}
-		}
-
-		static CallStackControl callStackControl;
-
-		static void InitializeCommandShortcuts(ListView listView) {
-			listView.AddCommandBinding(ApplicationCommands.Copy, new CallStackCtxMenuCommandProxy(new CopyCallStackCtxMenuCommand()));
-			listView.AddCommandBinding(new CallStackCtxMenuCommandProxy(new RunToCursorCallStackCtxMenuCommand()), ModifierKeys.Control, Key.F10);
-			listView.InputBindings.Add(new KeyBinding(new CallStackCtxMenuCommandProxy(new GoToSourceCallStackCtxMenuCommand()), Key.Enter, ModifierKeys.None));
-			listView.InputBindings.Add(new KeyBinding(new CallStackCtxMenuCommandProxy(new GoToSourceNewTabCallStackCtxMenuCommand()), Key.Enter, ModifierKeys.Control));
-			listView.InputBindings.Add(new KeyBinding(new CallStackCtxMenuCommandProxy(new GoToSourceNewTabCallStackCtxMenuCommand()), Key.Enter, ModifierKeys.Shift));
-		}
-	}
-
-	public partial class CallStackControl : UserControl, IPane {
-		public static readonly string PANE_TYPE_NAME = "call stack window";
 
 		public CallStackControl() {
 			InitializeComponent();
-			DnSpy.App.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
-		}
-
-		public ICommand ShowCommand {
-			get { return new RelayCommand(a => Show(), a => CanShow); }
-		}
-
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			var vm = DataContext as CallStackVM;
-			if (vm != null)
-				vm.RefreshThemeFields();
-		}
-
-		string IPane.PaneName {
-			get { return PANE_TYPE_NAME; }
-		}
-
-		string IPane.PaneTitle {
-			get { return "Call Stack"; }
-		}
-
-		void IPane.Closed() {
-			var vm = DataContext as CallStackVM;
-			if (vm != null)
-				vm.IsEnabled = false;
-		}
-
-		void IPane.Opened() {
-			var vm = DataContext as CallStackVM;
-			if (vm != null)
-				vm.IsEnabled = true;
-		}
-
-		bool CanShow {
-			get { return DebugManager.Instance.IsDebugging; }
-		}
-
-		void Show() {
-			if (!MainWindow.Instance.IsBottomPaneVisible(this))
-				MainWindow.Instance.ShowInBottomPane(this);
-			FocusPane();
 		}
 
 		public void FocusPane() {
@@ -132,8 +39,10 @@ namespace dnSpy.Debugger.CallStack {
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
-			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			SwitchToFrameCallStackCtxMenuCommand.Execute(listView.SelectedItem as CallStackFrameVM, newTab);
+			if (CallStackListViewDoubleClick != null)
+				CallStackListViewDoubleClick(this, EventArgs.Empty);
 		}
+
+		public event EventHandler CallStackListViewDoubleClick;
 	}
 }

@@ -19,23 +19,27 @@
 
 using System;
 using System.Globalization;
+using dndbg.Engine;
+using dnSpy.Contracts.Highlighting;
 using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
+using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Debugger.Modules {
 	sealed class ModulePrinter {
-		readonly ITextOutput output;
+		readonly ISyntaxHighlightOutput output;
 		readonly bool useHex;
+		readonly DnDebugger dbg;
 
-		public ModulePrinter(ITextOutput output, bool useHex) {
+		public ModulePrinter(ISyntaxHighlightOutput output, bool useHex, DnDebugger dbg) {
 			this.output = output;
 			this.useHex = useHex;
+			this.dbg = dbg;
 		}
 
 		void WriteFilename(ModuleVM vm, string filename) {
 			if (vm.Module.IsDynamic || vm.Module.IsInMemory)
 				filename = DebugOutputUtils.FilterName(filename, 300);
-			output.WriteFilename_OLD(filename);
+			output.WriteFilename(filename);
 		}
 
 		public void WriteName(ModuleVM vm) {
@@ -64,7 +68,7 @@ namespace dnSpy.Debugger.Modules {
 
 		public void WriteVersion(ModuleVM vm) {
 			if (vm.Version != null)
-				output.Write_OLD(vm.Version);
+				output.Write(vm.Version);
 		}
 
 		public void WriteTimestamp(ModuleVM vm) {
@@ -101,7 +105,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		public void WriteAppDomain(ModuleVM vm) {
-			output.Write(vm.Module.AppDomain.CorAppDomain);
+			output.Write(vm.Module.AppDomain.CorAppDomain, dbg);
 		}
 	}
 }

@@ -86,6 +86,15 @@ namespace dnSpy.Contracts.Files.TreeView {
 		}
 
 		/// <summary>
+		/// Gets the first <see cref="IDnSpyFileNode"/> owner or null if none was found
+		/// </summary>
+		/// <param name="self"></param>
+		/// <returns></returns>
+		public static IDnSpyFileNode GetDnSpyFileNode(this ITreeNodeData self) {
+			return self.GetAncestorOrSelf<IDnSpyFileNode>();
+		}
+
+		/// <summary>
 		/// Gets the <see cref="IDnSpyFileNode"/> top node or null if none was found
 		/// </summary>
 		/// <param name="self"></param>

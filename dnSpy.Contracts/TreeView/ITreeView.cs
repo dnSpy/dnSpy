@@ -60,6 +60,11 @@ namespace dnSpy.Contracts.TreeView {
 		event EventHandler<TVSelectionChangedEventArgs> SelectionChanged;
 
 		/// <summary>
+		/// Gets the selected node or null
+		/// </summary>
+		ITreeNodeData SelectedItem { get; }
+
+		/// <summary>
 		/// Gets all selected items
 		/// </summary>
 		ITreeNodeData[] SelectedItems { get; }

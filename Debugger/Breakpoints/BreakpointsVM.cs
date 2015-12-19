@@ -17,16 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dndbg.Engine;
+using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Themes;
 using dnSpy.Debugger.IMModules;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Breakpoints {
-	sealed class BreakpointsVM : ViewModelBase {
+	interface IBreakpointsVM {
+		void Remove(IEnumerable<BreakpointVM> bps);
+	}
+
+	[Export, Export(typeof(IBreakpointsVM)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class BreakpointsVM : ViewModelBase, IBreakpointsVM {
 		public ObservableCollection<BreakpointVM> Collection {
 			get { return breakpointList; }
 		}
@@ -43,20 +53,45 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 		object selectedItem;
 
-		public BreakpointsVM() {
+		readonly BreakpointContext breakpointContext;
+		readonly IBreakpointManager breakpointManager;
+		readonly ITheDebugger theDebugger;
+
+		[ImportingConstructor]
+		BreakpointsVM(ILanguageManager languageManager, IImageManager imageManager, IThemeManager themeManager, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IBreakpointManager breakpointManager, IBreakpointSettings breakpointSettings, Lazy<IModuleLoader> moduleLoader, IInMemoryModuleManager inMemoryModuleManager) {
+			this.breakpointContext = new BreakpointContext(imageManager, languageManager, moduleLoader) {
+				Language = languageManager.SelectedLanguage,
+				SyntaxHighlight = debuggerSettings.SyntaxHighlightBreakpoints,
+				UseHexadecimal = debuggerSettings.UseHexadecimal,
+				ShowTokens = breakpointSettings.ShowTokens,
+			};
+			this.breakpointManager = breakpointManager;
+			this.theDebugger = theDebugger;
 			this.breakpointList = new ObservableCollection<BreakpointVM>();
-			BreakpointSettings.Instance.PropertyChanged += BreakpointSettings_PropertyChanged;
-			BreakpointManager.Instance.OnListModified += BreakpointManager_OnListModified;
-			DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
-			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
-			InMemoryModuleManager.Instance.DynamicModulesLoaded += InMemoryModuleManager_DynamicModulesLoaded;
-			foreach (var bp in BreakpointManager.Instance.Breakpoints)
+			breakpointSettings.PropertyChanged += BreakpointSettings_PropertyChanged;
+			breakpointManager.OnListModified += BreakpointManager_OnListModified;
+			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
+			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
+			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
+			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
+			inMemoryModuleManager.DynamicModulesLoaded += InMemoryModuleManager_DynamicModulesLoaded;
+			foreach (var bp in breakpointManager.Breakpoints)
 				AddBreakpoint(bp);
 		}
 
-		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
+			var languageManager = (ILanguageManager)sender;
+			breakpointContext.Language = languageManager.SelectedLanguage;
+			RefreshLanguageFields();
+		}
+
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
+			RefreshThemeFields();
+		}
+
+		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			var dbg = (DnDebugger)sender;
-			switch (dbg.ProcessState) {
+			switch (theDebugger.ProcessState) {
 			case DebuggerProcessState.Starting:
 				dbg.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
 				break;
@@ -82,7 +117,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		void InMemoryModuleManager_DynamicModulesLoaded(object sender, System.EventArgs e) {
+		void InMemoryModuleManager_DynamicModulesLoaded(object sender, EventArgs e) {
 			if (nameErrorCounter != 0) {
 				foreach (var serMod in pendingModules) {
 					foreach (var vm in breakpointList)
@@ -93,7 +128,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		internal void OnNameErrorChanged(BreakpointVM vm) {
-			// Also called by vm.Dispose() when it's already been removed so don't add an Assert() here
+			// Called by vm.Dispose() when it's already been removed so don't add an Assert() here
 			if (vm.NameError)
 				nameErrorCounter++;
 			else
@@ -104,18 +139,31 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly HashSet<SerializedDnModule> pendingModules = new HashSet<SerializedDnModule>();
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "SyntaxHighlightBreakpoints")
+			var debuggerSettings = (IDebuggerSettings)sender;
+			switch (e.PropertyName) {
+			case "SyntaxHighlightBreakpoints":
+				breakpointContext.SyntaxHighlight = debuggerSettings.SyntaxHighlightBreakpoints;
 				RefreshThemeFields();
+				break;
+
+			case "UseHexadecimal":
+				breakpointContext.UseHexadecimal = debuggerSettings.UseHexadecimal;
+				RefreshThemeFields();
+				break;
+			}
 		}
 
 		void BreakpointSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
-			if (e.PropertyName == "ShowTokens")
+			var breakpointSettings = (IBreakpointSettings)sender;
+			if (e.PropertyName == "ShowTokens") {
+				breakpointContext.ShowTokens = breakpointSettings.ShowTokens;
 				RefreshNameField();
+			}
 		}
 
 		public void Remove(IEnumerable<BreakpointVM> bps) {
 			foreach (var bp in bps)
-				BreakpointManager.Instance.Remove(bp.Breakpoint);
+				breakpointManager.Remove(bp.Breakpoint);
 		}
 
 		void BreakpointManager_OnListModified(object sender, BreakpointListModifiedEventArgs e) {
@@ -126,7 +174,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		void AddBreakpoint(Breakpoint bp) {
-			Collection.Add(new BreakpointVM(this, bp));
+			Collection.Add(new BreakpointVM(this, breakpointContext, bp));
 		}
 
 		void RemoveBreakpoint(Breakpoint bp) {
@@ -141,12 +189,12 @@ namespace dnSpy.Debugger.Breakpoints {
 			Debug.Fail("Breakpoint got removed but it wasn't in BreakpointsVM's list");
 		}
 
-		internal void RefreshThemeFields() {
+		void RefreshThemeFields() {
 			foreach (var vm in breakpointList)
 				vm.RefreshThemeFields();
 		}
 
-		internal void RefreshLanguageFields() {
+		void RefreshLanguageFields() {
 			RefreshNameField();
 		}
 

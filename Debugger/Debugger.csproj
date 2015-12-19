@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>dnSpy.Debugger</RootNamespace>
-    <AssemblyName>Debugger.Plugin</AssemblyName>
+    <AssemblyName>dnSpy.Debugger.Plugin</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -20,7 +20,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\dnSpy_old\bin\Debug\</OutputPath>
+    <OutputPath>..\dnSpy\bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -29,7 +29,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\dnSpy_old\bin\Release\</OutputPath>
+    <OutputPath>..\dnSpy\bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -39,39 +39,45 @@
     <Compile Include="AppMenus.cs" />
     <Compile Include="Breakpoints\Breakpoint.cs" />
     <Compile Include="Breakpoints\BreakpointColumnConverter.cs" />
+    <Compile Include="Breakpoints\BreakpointContext.cs" />
     <Compile Include="Breakpoints\BreakpointListSettings.cs" />
     <Compile Include="Breakpoints\BreakpointManager.cs" />
     <Compile Include="Breakpoints\BreakpointPrinter.cs" />
+    <Compile Include="Breakpoints\BreakpointsContent.cs" />
     <Compile Include="Breakpoints\BreakpointsControl.xaml.cs">
       <DependentUpon>BreakpointsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Breakpoints\BreakpointSettings.cs" />
+    <Compile Include="Breakpoints\BreakpointsToolWindowContent.cs" />
     <Compile Include="Breakpoints\BreakpointsVM.cs" />
     <Compile Include="Breakpoints\BreakpointVM.cs" />
     <Compile Include="Breakpoints\Commands.cs" />
     <Compile Include="Breakpoints\DebugEventBreakpoint.cs" />
     <Compile Include="Breakpoints\ILCodeBreakpoint.cs" />
     <Compile Include="CachedOutput.cs" />
+    <Compile Include="CallStack\CallStackContent.cs" />
     <Compile Include="CallStack\CallStackControl.xaml.cs">
       <DependentUpon>CallStackControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="CallStack\CallStackFrameImageConverter.cs" />
+    <Compile Include="CallStack\CallStackFrameColumnConverter.cs" />
     <Compile Include="CallStack\CallStackFrameVM.cs" />
     <Compile Include="CallStack\CallStackSettings.cs" />
+    <Compile Include="CallStack\CallStackToolWindowContent.cs" />
     <Compile Include="CallStack\CallStackVM.cs" />
     <Compile Include="CallStack\Commands.cs" />
     <Compile Include="CallStack\FrameUtils.cs" />
-    <Compile Include="CallStack\ICallStackObjectCreator.cs" />
     <Compile Include="CallStack\StackFrameLine.cs" />
     <Compile Include="CallStack\StackFrameManager.cs" />
     <Compile Include="CallStack\VMPropertyChangedEventArgs.cs" />
+    <Compile Include="CodeMappings.cs" />
     <Compile Include="Converters\ImageConverter.cs" />
     <Compile Include="DebugCommands.cs" />
     <Compile Include="DebuggedProcessRunningNotifier.cs" />
+    <Compile Include="DebuggerAppSettingsTab.cs" />
     <Compile Include="DebuggerColors.cs" />
     <Compile Include="DebuggerSettings.cs" />
-    <Compile Include="DebuggerSettingsVM.cs" />
     <Compile Include="DebugManager.cs" />
+    <Compile Include="DebugManagerCommands.cs" />
     <Compile Include="DebugOutputUtils.cs" />
     <Compile Include="DebugRoutedCommands.cs" />
     <Compile Include="DebugUtils.cs" />
@@ -89,6 +95,7 @@
     <Compile Include="Dialogs\DebugProcessVM.cs" />
     <Compile Include="Dialogs\ManagedProcessesFinder.cs" />
     <Compile Include="Dialogs\ProcessColumnConverter.cs" />
+    <Compile Include="Dialogs\ProcessContext.cs" />
     <Compile Include="Dialogs\ProcessPrinter.cs" />
     <Compile Include="Dialogs\ProcessVM.cs" />
     <Compile Include="EvalUtils.cs" />
@@ -104,7 +111,9 @@
     <Compile Include="Exceptions\ExceptionListSettings.cs" />
     <Compile Include="Exceptions\ExceptionManager.cs" />
     <Compile Include="Exceptions\ExceptionPrinter.cs" />
+    <Compile Include="Exceptions\ExceptionsContent.cs" />
     <Compile Include="Exceptions\ExceptionState.cs" />
+    <Compile Include="Exceptions\ExceptionsToolWindowContent.cs" />
     <Compile Include="Exceptions\ExceptionsVM.cs" />
     <Compile Include="Exceptions\ExceptionType.cs" />
     <Compile Include="Exceptions\ExceptionVM.cs" />
@@ -121,49 +130,63 @@
     <Compile Include="IMModules\LoadEverythingVM.cs" />
     <Compile Include="IMModules\MemoryModuleDefFile.cs" />
     <Compile Include="IMModules\TreeViewUpdater.cs" />
+    <Compile Include="Locals\AskUser.cs" />
     <Compile Include="Locals\Commands.cs" />
     <Compile Include="Locals\EditValueControl.xaml.cs">
       <DependentUpon>EditValueControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Locals\LocalColumnConverter.cs" />
+    <Compile Include="Locals\LocalsContent.cs" />
     <Compile Include="Locals\LocalsControl.xaml.cs">
       <DependentUpon>LocalsControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Locals\LocalsSettings.cs" />
+    <Compile Include="Locals\LocalsToolWindowContent.cs" />
     <Compile Include="Locals\LocalsVM.cs" />
+    <Compile Include="Locals\MethodLocalProvider.cs" />
     <Compile Include="Locals\ValueContext.cs" />
     <Compile Include="Locals\ValuePrinter.cs" />
     <Compile Include="Locals\ValueStringParser.cs" />
     <Compile Include="Locals\ValueVM.cs" />
     <Compile Include="MarkedTextLine.cs" />
+    <Compile Include="Memory\Commands.cs" />
+    <Compile Include="Memory\MemoryContent.cs" />
     <Compile Include="Memory\MemoryControl.xaml.cs">
       <DependentUpon>MemoryControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Memory\MemoryUtils.cs" />
+    <Compile Include="Memory\MemoryToolWindowContent.cs" />
     <Compile Include="Memory\MemoryVM.cs" />
+    <Compile Include="Memory\MemoryWindowManager.cs" />
+    <Compile Include="Memory\MemoryWindowsHelper.cs" />
     <Compile Include="Memory\ProcessHexStream.cs" />
     <Compile Include="MenuItemCommandProxy.cs" />
     <Compile Include="ModuleLoader.cs" />
     <Compile Include="Modules\Commands.cs" />
     <Compile Include="Modules\ModuleColumnConverter.cs" />
     <Compile Include="Modules\ModulePrinter.cs" />
+    <Compile Include="Modules\ModulesContent.cs" />
     <Compile Include="Modules\ModulesControl.xaml.cs">
       <DependentUpon>ModulesControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Modules\ModulesToolWindowContent.cs" />
     <Compile Include="Modules\ModulesVM.cs" />
     <Compile Include="Modules\ModuleVM.cs" />
     <Compile Include="Modules\PEFilesSaver.cs" />
     <Compile Include="OutputConverter.cs" />
-    <Compile Include="PluginLoader.cs" />
+    <Compile Include="Plugin.cs" />
     <Compile Include="ProcessMemoryUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SerializedDnSpyModuleCreator.cs" />
     <Compile Include="SerializedModuleExtensions.cs" />
+    <Compile Include="TheDebugger.cs" />
     <Compile Include="Threads\Commands.cs" />
     <Compile Include="Threads\ThreadColumnConverter.cs" />
     <Compile Include="Threads\ThreadPrinter.cs" />
+    <Compile Include="Threads\ThreadsContent.cs" />
     <Compile Include="Threads\ThreadsControl.xaml.cs">
       <DependentUpon>ThreadsControl.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Threads\ThreadsToolWindowContent.cs" />
     <Compile Include="Threads\ThreadsVM.cs" />
     <Compile Include="Threads\ThreadVM.cs" />
     <Compile Include="WpfDebugMessageDispatcher.cs" />
@@ -217,7 +240,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Themes\Generic.xaml">
+    <Page Include="Themes\wpf.styles.templates.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

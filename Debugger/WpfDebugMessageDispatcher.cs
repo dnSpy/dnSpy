@@ -22,7 +22,6 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Windows.Threading;
 using dndbg.Engine;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger {
 	sealed class WpfDebugMessageDispatcher : IDebugMessageDispatcher {
@@ -30,12 +29,14 @@ namespace dnSpy.Debugger {
 
 		readonly ConcurrentQueue<Action> queue = new ConcurrentQueue<Action>();
 		volatile int callingEmptyQueue;
+		readonly Dispatcher dispatcher;
+
+		WpfDebugMessageDispatcher() {
+			this.dispatcher = Dispatcher.CurrentDispatcher;
+		}
 
 		Dispatcher Dispatcher {
-			get {
-				var disp = App.Current.Dispatcher;
-				return disp != null && !disp.HasShutdownFinished && !disp.HasShutdownStarted ? disp : null;
-			}
+			get { return !dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted ? dispatcher : null; }
 		}
 
 		public void ExecuteAsync(Action action) {

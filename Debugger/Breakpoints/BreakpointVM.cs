@@ -52,10 +52,16 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 		readonly Breakpoint bp;
 
+		public IBreakpointContext Context {
+			get { return context; }
+		}
+		readonly IBreakpointContext context;
+
 		readonly BreakpointsVM owner;
 
-		public BreakpointVM(BreakpointsVM owner, Breakpoint bp) {
+		public BreakpointVM(BreakpointsVM owner, IBreakpointContext context, Breakpoint bp) {
 			this.owner = owner;
+			this.context = context;
 			this.bp = bp;
 			bp.PropertyChanged += Breakpoint_PropertyChanged;
 		}
@@ -104,7 +110,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			var bp = Breakpoint as ILCodeBreakpoint;
 			if (bp == null)
 				return null;
-			var file = ModuleLoader.Instance.LoadModule(bp.SerializedDnSpyToken.Module, canLoadDynFile, true);
+			var file = Context.ModuleLoader.LoadModule(bp.SerializedDnSpyToken.Module, canLoadDynFile, true);
 			var mod = file == null ? null : file.ModuleDef;
 			return mod == null ? null : mod.ResolveToken(bp.SerializedDnSpyToken.Token) as MethodDef;
 		}

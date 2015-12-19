@@ -18,16 +18,32 @@
 */
 
 using dndbg.Engine;
+using dnSpy.Contracts.Images;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
+	interface ICallStackFrameContext {
+		IImageManager ImageManager { get; }
+		TypePrinterFlags TypePrinterFlags { get; }
+		bool SyntaxHighlight { get; }
+	}
+
+	sealed class CallStackFrameContext : ICallStackFrameContext {
+		public IImageManager ImageManager { get; private set; }
+		public TypePrinterFlags TypePrinterFlags { get; set; }
+		public bool SyntaxHighlight { get; set; }
+
+		public CallStackFrameContext(IImageManager ImageManager) {
+			this.ImageManager = ImageManager;
+		}
+	}
+
 	interface ICallStackFrameVM {
 		int Index { get; }
 		bool IsCurrentFrame { get; }
 		string Name { get; }
-		object NameObject { get; }
-		object ImageObject { get; }
 		CachedOutput CachedOutput { get; }
+		ICallStackFrameContext Context { get; }
 	}
 
 	sealed class MessageCallStackFrameVM : ICallStackFrameVM {
@@ -44,23 +60,21 @@ namespace dnSpy.Debugger.CallStack {
 			get { return cachedOutput.ToString(); }
 		}
 
-		public object NameObject {
-			get { return owner.CallStackObjectCreator.CreateName(this); }
-		}
-
-		public object ImageObject {
-			get { return this; }
-		}
+		public object ImageObject { get { return this; } }
+		public object NameObject { get { return this; } }
 
 		public CachedOutput CachedOutput {
 			get { return cachedOutput; }
 		}
 		readonly CachedOutput cachedOutput;
 
-		readonly CallStackVM owner;
+		public ICallStackFrameContext Context {
+			get { return context; }
+		}
+		readonly ICallStackFrameContext context;
 
-		public MessageCallStackFrameVM(CallStackVM owner, int index, string name) {
-			this.owner = owner;
+		public MessageCallStackFrameVM(ICallStackFrameContext context, int index, string name) {
+			this.context = context;
 			this.index = index;
 			this.cachedOutput = CachedOutput.Create(name, TypeColor.Error);
 		}
@@ -104,27 +118,17 @@ namespace dnSpy.Debugger.CallStack {
 		}
 		bool isCurrentFrame;
 
-		public TypePrinterFlags TypePrinterFlags {
-			get { return owner.TypePrinterFlags; }
-		}
-
-		public object NameObject {
+		public CachedOutput CachedOutput {
 			get {
 				if (cachedOutput == null)
-					cachedOutput = CachedOutput.Create(frame, TypePrinterFlags);
-
-				return owner.CallStackObjectCreator.CreateName(this);
+					cachedOutput = CachedOutput.Create(frame, Context.TypePrinterFlags);
+				return cachedOutput.Value;
 			}
 		}
 		CachedOutput? cachedOutput;
 
-		public CachedOutput CachedOutput {
-			get { return cachedOutput.Value; }
-		}
-
-		public object ImageObject {
-			get { return this; }
-		}
+		public object ImageObject { get { return this; } }
+		public object NameObject { get { return this; } }
 
 		public string Name {
 			get { return ComputeName(); }
@@ -140,7 +144,7 @@ namespace dnSpy.Debugger.CallStack {
 					OnPropertyChanged("NameObject");
 				}
 				else {
-					var newCachedOutput = CachedOutput.Create(frame, TypePrinterFlags);
+					var newCachedOutput = CachedOutput.Create(frame, Context.TypePrinterFlags);
 					if (newCachedOutput.Equals(cachedOutput.Value))
 						return;
 
@@ -151,17 +155,20 @@ namespace dnSpy.Debugger.CallStack {
 		}
 		CorFrame frame;
 
-		readonly CallStackVM owner;
+		public ICallStackFrameContext Context {
+			get { return context; }
+		}
+		readonly ICallStackFrameContext context;
 
-		public CallStackFrameVM(CallStackVM owner, int index, CorFrame frame) {
-			this.owner = owner;
+		public CallStackFrameVM(ICallStackFrameContext context, int index, CorFrame frame) {
+			this.context = context;
 			this.index = index;
 			this.frame = frame;
 		}
 
 		string ComputeName() {
 			var output = new StringBuilderTypeOutput();
-			frame.Write(output, TypePrinterFlags);
+			frame.Write(output, Context.TypePrinterFlags);
 			return output.ToString();
 		}
 

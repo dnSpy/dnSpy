@@ -66,13 +66,19 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 		readonly CLRTypeAttachInfo type;
 
-		public ProcessVM(int pid, string title, Machine machine, CLRTypeAttachInfo type, string fullPath) {
+		public IProcessContext Context {
+			get { return context; }
+		}
+		readonly IProcessContext context;
+
+		public ProcessVM(int pid, string title, Machine machine, CLRTypeAttachInfo type, string fullPath, IProcessContext context) {
 			this.fullPath = fullPath;
 			this.pid = pid;
 			this.title = title;
 			this.machine = machine;
 			this.clrVersion = type.Version;
 			this.type = type;
+			this.context = context;
 		}
 	}
 }

@@ -18,85 +18,73 @@
 */
 
 using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Shared.UI.Files;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
 namespace dnSpy.Debugger {
 	static class DebugUtils {
-		public static void GoToIL(SerializedDnSpyModule serAsm, uint token, uint ilOffset, bool newTab) {
-			var file = ModuleLoader.Instance.LoadModule(serAsm, true);
-			GoToIL(file, token, ilOffset, newTab);
+		public static void GoToIL(IFileTabManager fileTabManager, IModuleLoader moduleLoader, SerializedDnSpyModule serAsm, uint token, uint ilOffset, bool newTab) {
+			var file = moduleLoader.LoadModule(serAsm, true);
+			GoToIL(fileTabManager, file, token, ilOffset, newTab);
 		}
 
-		public static bool GoToIL(IDnSpyFile file, uint token, uint ilOffset, bool newTab) {
+		public static bool GoToIL(IFileTabManager fileTabManager, IDnSpyFile file, uint token, uint ilOffset, bool newTab) {
 			if (file == null)
 				return false;
 
-			var md = file.ModuleDef.ResolveToken(token) as MethodDef;
-			if (md == null)
-				return false;
-
-			if (newTab)
-				MainWindow.Instance.OpenNewEmptyTab();
-			return JumpToStatement(md, ilOffset, null);
-		}
-
-		static bool JumpToStatement(MethodDef method, uint ilOffset, DecompilerTextView textView) {
+			var method = file.ModuleDef.ResolveToken(token) as MethodDef;
 			if (method == null)
 				return false;
-			var serMod = method.Module.ToSerializedDnSpyModule();
-			var key = new SerializedDnSpyToken(serMod, method.MDToken);
-			if (textView == null)
-				textView = MainWindow.Instance.SafeActiveTextView;
 
-			bool found = MainWindow.Instance.DnSpyFileListTreeNode.FindModuleNode(method.Module) != null;
+			var serMod = SerializedDnSpyModuleCreator.Create(fileTabManager.FileTreeView,  method.Module);
+			var key = new SerializedDnSpyToken(serMod, method.MDToken);
+
+			bool found = fileTabManager.FileTreeView.FindNode(method.Module) != null;
 			if (found) {
-				return MainWindow.Instance.JumpToReference(textView, method, (success, hasMovedCaret) => {
-					if (success)
-						return MoveCaretTo(textView, key, ilOffset);
-					return false;
+				fileTabManager.FollowReference(method, newTab, e => {
+					Debug.Assert(e.Tab.UIContext is ITextEditorUIContext);
+					if (e.Success)
+						MoveCaretTo(e.Tab.UIContext as ITextEditorUIContext, key, ilOffset);
 				});
+				return true;
 			}
 
-			MainWindow.Instance.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-				MainWindow.Instance.JumpToReference(textView, method, (success, hasMovedCaret) => {
-					if (success)
-						return MoveCaretTo(textView, key, ilOffset);
-					return false;
+			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+				fileTabManager.FollowReference(method, newTab, e => {
+					Debug.Assert(e.Tab.UIContext is ITextEditorUIContext);
+					if (e.Success)
+						MoveCaretTo(e.Tab.UIContext as ITextEditorUIContext, key, ilOffset);
 				});
 			}));
 			return true;
 		}
 
-		public static bool MoveCaretTo(DecompilerTextView textView, SerializedDnSpyToken key, uint ilOffset) {
-			if (textView == null)
+		public static bool MoveCaretTo(ITextEditorUIContext uiContext, SerializedDnSpyToken key, uint ilOffset) {
+			if (uiContext == null)
 				return false;
 
-			Dictionary<SerializedDnSpyToken, MemberMapping> cm;
-			if (!VerifyAndGetCurrentDebuggedMethod(textView, key, out cm))
+			CodeMappings cm;
+			if (!VerifyAndGetCurrentDebuggedMethod(uiContext, key, out cm))
 				return false;
 
 			TextLocation location, endLocation;
-			if (!cm[key].GetInstructionByTokenAndOffset(ilOffset, out location, out endLocation))
+			if (!cm.TryGetMapping(key).GetInstructionByTokenAndOffset(ilOffset, out location, out endLocation))
 				return false;
 
-			textView.ScrollAndMoveCaretTo(location.Line, location.Column);
+			uiContext.ScrollAndMoveCaretTo(location.Line, location.Column);
 			return true;
 		}
 
-		public static bool VerifyAndGetCurrentDebuggedMethod(DecompilerTextView textView, SerializedDnSpyToken serToken, out Dictionary<SerializedDnSpyToken, MemberMapping> codeMappings) {
-			codeMappings = textView == null ? null : textView.CodeMappings;
-			if (codeMappings == null || !codeMappings.ContainsKey(serToken))
-				return false;
-
-			return true;
+		public static bool VerifyAndGetCurrentDebuggedMethod(ITextEditorUIContext uiContext, SerializedDnSpyToken serToken, out CodeMappings codeMappings) {
+			codeMappings = uiContext.GetCodeMappings();
+			return codeMappings.TryGetMapping(serToken) != null;
 		}
 	}
 }

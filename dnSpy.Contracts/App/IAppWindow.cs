@@ -73,5 +73,10 @@ namespace dnSpy.Contracts.App {
 		/// </summary>
 		/// <param name="info">Some text</param>
 		void RemoveTitleInfo(string info);
+
+		/// <summary>
+		/// Refreshes the toolbar
+		/// </summary>
+		void RefreshToolBar();
 	}
 }

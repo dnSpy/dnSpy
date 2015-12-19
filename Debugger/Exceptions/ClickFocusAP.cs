@@ -27,7 +27,7 @@ namespace dnSpy.Debugger.Exceptions {
 	/// Can be used to give eg. a <see cref="System.Windows.Controls.TextBox"/> focus when a
 	/// <see cref="System.Windows.Controls.Label"/> is clicked.
 	/// </summary>
-	public sealed class ClickFocusAP : DependencyObject {
+	sealed class ClickFocusAP : DependencyObject {
 		public static readonly DependencyProperty TargetProperty = DependencyProperty.RegisterAttached(
 			"Target", typeof(UIElement), typeof(ClickFocusAP), new PropertyMetadata(null, TargetPropertyChangedCallback));
 

@@ -22,7 +22,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using dndbg.Engine;
+using dnSpy.Contracts.Highlighting;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger {
@@ -46,7 +48,7 @@ namespace dnSpy.Debugger {
 			return sb.ToString();
 		}
 
-		public static T Write<T>(this T output, CorAppDomain appDomain) where T : ITextOutput {
+		public static T Write<T>(this T output, CorAppDomain appDomain, DnDebugger dbg) where T : ISyntaxHighlightOutput {
 			if (appDomain == null)
 				output.Write("<not available>", TextTokenType.Error);
 			else {
@@ -55,18 +57,17 @@ namespace dnSpy.Debugger {
 				output.Write("]", TextTokenType.Operator);
 				output.WriteSpace();
 				var filteredName = FilterName(appDomain.Name, MAX_APP_DOMAIN_NAME);
-				if (HasSameNameAsProcess(appDomain))
-					output.WriteFilename_OLD(filteredName);
+				if (HasSameNameAsProcess(dbg, appDomain))
+					output.WriteFilename(filteredName);
 				else
 					output.Write(filteredName, TextTokenType.String);
 			}
 			return output;
 		}
 
-		static bool HasSameNameAsProcess(CorAppDomain ad) {
+		static bool HasSameNameAsProcess(DnDebugger dbg, CorAppDomain ad) {
 			if (ad == null)
 				return false;
-			var dbg = DebugManager.Instance.Debugger;
 			if (dbg == null)
 				return false;
 			var p = dbg.Processes.FirstOrDefault(dp => dp.CorProcess == ad.Process);
@@ -85,7 +86,7 @@ namespace dnSpy.Debugger {
 			return s;
 		}
 
-		public static T Write<T>(this T output, DnProcess p, bool useHex) where T : ITextOutput {
+		public static T Write<T>(this T output, DnProcess p, bool useHex) where T : ISyntaxHighlightOutput {
 			output.Write("[", TextTokenType.Operator);
 			if (useHex)
 				output.Write(string.Format("0x{0:X}", p.ProcessId), TextTokenType.Number);
@@ -93,11 +94,11 @@ namespace dnSpy.Debugger {
 				output.Write(string.Format("{0}", p.ProcessId), TextTokenType.Number);
 			output.Write("]", TextTokenType.Operator);
 			output.WriteSpace();
-			output.WriteFilename_OLD(GetFilename(p.Filename));
+			output.WriteFilename(GetFilename(p.Filename));
 			return output;
 		}
 
-		public static T WriteYesNo<T>(this T output, bool value) where T : ITextOutput {
+		public static T WriteYesNo<T>(this T output, bool value) where T : ISyntaxHighlightOutput {
 			if (value)
 				output.Write("Yes", TextTokenType.Keyword);
 			else

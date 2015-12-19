@@ -20,7 +20,7 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.TreeNodes;
+using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionColumnConverter : IValueConverter {
@@ -30,14 +30,14 @@ namespace dnSpy.Debugger.Exceptions {
 			if (vm == null || s == null)
 				return null;
 
-			var gen = UISyntaxHighlighter.Create(DebuggerSettings.Instance.SyntaxHighlightExceptions);
-			var printer = new ExceptionPrinter(gen.TextOutput);
+			var gen = UISyntaxHighlighter.Create(vm.Context.SyntaxHighlight);
+			var printer = new ExceptionPrinter(gen.Output);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				printer.WriteName(vm);
 			else
 				return null;
 
-			return gen.CreateTextBlock(true);
+			return gen.CreateResult(true);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

@@ -19,33 +19,70 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.ToolWindows.App;
+using dnSpy.Contracts.TreeView;
+using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.TreeView;
 
 namespace dnSpy.Debugger.Exceptions {
+	[ExportAutoLoaded]
+	sealed class ExceptionsContentCommandLoader : IAutoLoaded {
+		[ImportingConstructor]
+		ExceptionsContentCommandLoader(IWpfCommandManager wpfCommandManager, Lazy<IExceptionsContent> exceptionsContent, CopyCallExceptionsCtxMenuCommand copyCmd, AddExceptionsCtxMenuCommand addExCmd, RemoveExceptionsCtxMenuCommand removeExCmd, ToggleEnableExceptionsCtxMenuCommand toggleExCmd) {
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DEBUGGER_EXCEPTIONS_LISTVIEW);
+			cmds.Add(ApplicationCommands.Copy, new ExceptionsCtxMenuCommandProxy(copyCmd));
+			cmds.Add(new ExceptionsCtxMenuCommandProxy(addExCmd), ModifierKeys.None, Key.Insert);
+			cmds.Add(new ExceptionsCtxMenuCommandProxy(removeExCmd), ModifierKeys.None, Key.Delete);
+			cmds.Add(new ExceptionsCtxMenuCommandProxy(toggleExCmd), ModifierKeys.None, Key.Space);
+
+			cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DEBUGGER_EXCEPTIONS_CONTROL);
+			cmds.Add(new RelayCommand(a => exceptionsContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.F);
+		}
+	}
+
+	[ExportAutoLoaded]
+	sealed class CallStackCommandLoader : IAutoLoaded {
+		[ImportingConstructor]
+		CallStackCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+
+			cmds.Add(DebugRoutedCommands.ShowExceptions, new RelayCommand(a => mainToolWindowManager.Show(ExceptionsToolWindowContent.THE_GUID)));
+			cmds.Add(DebugRoutedCommands.ShowExceptions, ModifierKeys.Control | ModifierKeys.Alt, Key.E);
+		}
+	}
+
 	sealed class ExceptionsCtxMenuContext {
-		public readonly ExceptionsVM VM;
+		public readonly IExceptionsVM VM;
 		public readonly ExceptionVM[] SelectedItems;
 
-		public ExceptionsCtxMenuContext(ExceptionsVM vm, ExceptionVM[] selItems) {
+		public ExceptionsCtxMenuContext(IExceptionsVM vm, ExceptionVM[] selItems) {
 			this.VM = vm;
 			this.SelectedItems = selItems;
 		}
 	}
 
 	sealed class ExceptionsCtxMenuCommandProxy : MenuItemCommandProxy<ExceptionsCtxMenuContext> {
+		readonly ExceptionsCtxMenuCommand cmd;
+
 		public ExceptionsCtxMenuCommandProxy(ExceptionsCtxMenuCommand cmd)
 			: base(cmd) {
+			this.cmd = cmd;
 		}
 
 		protected override ExceptionsCtxMenuContext CreateContext() {
-			return ExceptionsCtxMenuCommand.Create();
+			return cmd.Create();
 		}
 	}
 
@@ -55,33 +92,43 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 		static readonly object ContextKey = new object();
 
+		protected readonly Lazy<IExceptionsContent> exceptionsContent;
+
+		protected ExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent) {
+			this.exceptionsContent = exceptionsContent;
+		}
+
 		protected sealed override ExceptionsCtxMenuContext CreateContext(IMenuItemContext context) {
-			var ui = ExceptionsControlCreator.ExceptionsControlInstance;
-			if (context.CreatorObject.Object != ui.listBox)
+			if (!(context.CreatorObject.Object != null && context.CreatorObject.Object.GetType() == typeof(ListBox)))
+				return null;
+			if (context.CreatorObject.Object != exceptionsContent.Value.ListBox)
 				return null;
 			return Create();
 		}
 
-		internal static ExceptionsCtxMenuContext Create() {
-			var ui = ExceptionsControlCreator.ExceptionsControlInstance;
-			var vm = ui.DataContext as ExceptionsVM;
-			if (vm == null)
-				return null;
+		internal ExceptionsCtxMenuContext Create() {
+			var ui = exceptionsContent.Value;
+			var vm = exceptionsContent.Value.ExceptionsVM;
 
-			var dict = new Dictionary<object, int>(ui.listBox.Items.Count);
-			for (int i = 0; i < ui.listBox.Items.Count; i++)
-				dict[ui.listBox.Items[i]] = i;
-			var elems = ui.listBox.SelectedItems.OfType<ExceptionVM>().ToArray();
+			var dict = new Dictionary<object, int>(ui.ListBox.Items.Count);
+			for (int i = 0; i < ui.ListBox.Items.Count; i++)
+				dict[ui.ListBox.Items[i]] = i;
+			var elems = ui.ListBox.SelectedItems.OfType<ExceptionVM>().ToArray();
 			Array.Sort(elems, (a, b) => dict[a].CompareTo(dict[b]));
 
 			return new ExceptionsCtxMenuContext(vm, elems);
 		}
 	}
 
-	[ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_COPY, Order = 0)]
+	[Export, ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_COPY, Order = 0)]
 	sealed class CopyCallExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
+		[ImportingConstructor]
+		CopyCallExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
+			: base(exceptionsContent) {
+		}
+
 		public override void Execute(ExceptionsCtxMenuContext context) {
-			var output = new PlainTextOutput();
+			var output = new NoSyntaxHighlightOutput();
 			foreach (var vm in context.SelectedItems) {
 				var printer = new ExceptionPrinter(output);
 				printer.WriteName(vm);
@@ -99,17 +146,27 @@ namespace dnSpy.Debugger.Exceptions {
 
 	[ExportMenuItem(Header = "Select _All", Icon = "Select", InputGestureText = "Ctrl+A", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_COPY, Order = 10)]
 	sealed class SelectAllExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
+		[ImportingConstructor]
+		SelectAllExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
+			: base(exceptionsContent) {
+		}
+
 		public override void Execute(ExceptionsCtxMenuContext context) {
-			ExceptionsControlCreator.ExceptionsControlInstance.listBox.SelectAll();
+			exceptionsContent.Value.ListBox.SelectAll();
 		}
 
 		public override bool IsEnabled(ExceptionsCtxMenuContext context) {
-			return ExceptionsControlCreator.ExceptionsControlInstance.listBox.Items.Count > 0;
+			return context.SelectedItems.Length > 0;
 		}
 	}
 
-	[ExportMenuItem(Header = "Add E_xception", Icon = "Add", InputGestureText = "Ins", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 0)]
+	[Export, ExportMenuItem(Header = "Add E_xception", Icon = "Add", InputGestureText = "Ins", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 0)]
 	sealed class AddExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
+		[ImportingConstructor]
+		AddExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
+			: base(exceptionsContent) {
+		}
+
 		public override void Execute(ExceptionsCtxMenuContext context) {
 			context.VM.AddException();
 		}
@@ -119,8 +176,13 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Remove", Icon = "RemoveCommand", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 10)]
+	[Export, ExportMenuItem(Header = "_Remove", Icon = "RemoveCommand", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 10)]
 	sealed class RemoveExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
+		[ImportingConstructor]
+		RemoveExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
+			: base(exceptionsContent) {
+		}
+
 		public override void Execute(ExceptionsCtxMenuContext context) {
 			context.VM.RemoveExceptions();
 		}
@@ -132,6 +194,11 @@ namespace dnSpy.Debugger.Exceptions {
 
 	[ExportMenuItem(Header = "Restore Defaults", Icon = "UndoCheckBoxList", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 20)]
 	sealed class RestoreDefaultsExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
+		[ImportingConstructor]
+		RestoreDefaultsExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
+			: base(exceptionsContent) {
+		}
+
 		public override void Execute(ExceptionsCtxMenuContext context) {
 			context.VM.RestoreDefaults();
 		}
@@ -141,9 +208,18 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
+	[Export]
 	sealed class ToggleEnableExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
+		readonly IExceptionListSettings exceptionListSettings;
+
+		[ImportingConstructor]
+		ToggleEnableExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent, IExceptionListSettings exceptionListSettings)
+			: base(exceptionsContent) {
+			this.exceptionListSettings = exceptionListSettings;
+		}
+
 		public override void Execute(ExceptionsCtxMenuContext context) {
-			using (ExceptionListSettings.Instance.TemporarilyDisableSave()) {
+			using (exceptionListSettings.TemporarilyDisableSave()) {
 				foreach (var vm in context.SelectedItems)
 					vm.BreakOnFirstChance = !vm.BreakOnFirstChance;
 			}
@@ -152,6 +228,11 @@ namespace dnSpy.Debugger.Exceptions {
 
 	[ExportMenuItem(Header = "_Enable All Filtered Exceptions", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 30)]
 	sealed class EnableAllExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
+		[ImportingConstructor]
+		EnableAllExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
+			: base(exceptionsContent) {
+		}
+
 		public override void Execute(ExceptionsCtxMenuContext context) {
 			context.VM.EnableAllFilteredExceptions();
 		}
@@ -163,6 +244,11 @@ namespace dnSpy.Debugger.Exceptions {
 
 	[ExportMenuItem(Header = "_Disable All Filtered Exceptions", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 40)]
 	sealed class DisableAllExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
+		[ImportingConstructor]
+		DisableAllExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
+			: base(exceptionsContent) {
+		}
+
 		public override void Execute(ExceptionsCtxMenuContext context) {
 			context.VM.DisableAllFilteredExceptions();
 		}
@@ -174,35 +260,50 @@ namespace dnSpy.Debugger.Exceptions {
 
 	static class BreakWhenThrownExceptionCommand {
 		abstract class CommandBase : MenuItemBase<string> {
-			protected sealed override string CreateContext(IMenuItemContext context) {
-				return GetExceptionTypeName(context);
+			protected readonly Lazy<IExceptionsContent> exceptionsContent;
+
+			protected CommandBase(Lazy<IExceptionsContent> exceptionsContent) {
+				this.exceptionsContent = exceptionsContent;
 			}
 
-			public override bool IsVisible(string context) {
-				if (context == null)
-					return false;
-				return !ExceptionsControlCreator.ExceptionsVM.Exists(ExceptionType.DotNet, context);
+			protected sealed override string CreateContext(IMenuItemContext context) {
+				return GetExceptionTypeName(context);
 			}
 
 			public override void Execute(string context) {
 				if (context == null)
 					return;
-				ExceptionsControlCreator.ExceptionsVM.AddException(ExceptionType.DotNet, context);
+				exceptionsContent.Value.ExceptionsVM.BreakWhenThrown(ExceptionType.DotNet, context);
 			}
 
 			string GetExceptionTypeName(IMenuItemContext context) {
-				var vm = ExceptionsControlCreator.ExceptionsVM;
-				if (vm == null)
-					return null;
+				var vm = exceptionsContent.Value.ExceptionsVM;
 				var td = GetTypeDef(context);
 				if (td == null)
 					return null;
-				if (!TypeTreeNode.IsException(td))
+				if (!IsException(td))
 					return null;
-				var name = GetExceptionString(td);
-				if (vm.Exists(ExceptionType.DotNet, name))
-					return null;
-				return name;
+				return GetExceptionString(td);
+			}
+
+			static bool IsException(TypeDef type) {
+				if (IsSystemException(type))
+					return true;
+				while (type != null) {
+					if (IsSystemException(type.BaseType))
+						return true;
+					var bt = type.BaseType;
+					type = bt == null ? null : bt.ScopeType.ResolveTypeDef();
+				}
+				return false;
+			}
+
+			static bool IsSystemException(ITypeDefOrRef type) {
+				return type != null &&
+					type.DeclaringType == null &&
+					type.Namespace == "System" &&
+					type.Name == "Exception" &&
+					type.DefinitionAssembly.IsCorLib();
 			}
 
 			static string GetExceptionString(TypeDef td) {
@@ -215,13 +316,13 @@ namespace dnSpy.Debugger.Exceptions {
 			protected TypeDef GetTypeDefFromTreeNodes(IMenuItemContext context, string guid) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					return null;
-				var nodes = context.FindByType<SharpTreeNode[]>();
+				var nodes = context.FindByType<ITreeNodeData[]>();
 				if (nodes == null || nodes.Length != 1)
 					return null;
-				var node = nodes[0] as IMemberTreeNode;
+				var node = nodes[0] as IMDTokenNode;
 				if (node == null)
 					return null;
-				return (node.Member as ITypeDefOrRef).ResolveTypeDef();
+				return (node.Reference as ITypeDefOrRef).ResolveTypeDef();
 			}
 
 			protected TypeDef GetTypeDefFromReference(IMenuItemContext context, string guid) {
@@ -243,6 +344,11 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 			static readonly object ContextKey = new object();
 
+			[ImportingConstructor]
+			FilesCommand(Lazy<IExceptionsContent> exceptionsContent)
+				: base(exceptionsContent) {
+			}
+
 			protected override TypeDef GetTypeDef(IMenuItemContext context) {
 				return GetTypeDefFromTreeNodes(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
 			}
@@ -254,6 +360,11 @@ namespace dnSpy.Debugger.Exceptions {
 				get { return ContextKey; }
 			}
 			static readonly object ContextKey = new object();
+
+			[ImportingConstructor]
+			CodeCommand(Lazy<IExceptionsContent> exceptionsContent)
+				: base(exceptionsContent) {
+			}
 
 			protected override TypeDef GetTypeDef(IMenuItemContext context) {
 				return GetTypeDefFromReference(context, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID);

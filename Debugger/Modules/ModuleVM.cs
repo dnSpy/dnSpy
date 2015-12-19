@@ -22,9 +22,29 @@ using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Contracts.Images;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Modules {
+	interface IModuleContext {
+		IImageManager ImageManager { get; }
+		ITheDebugger TheDebugger { get; }
+		bool SyntaxHighlight { get; }
+		bool UseHexadecimal { get; }
+	}
+
+	sealed class ModuleContext : IModuleContext {
+		public IImageManager ImageManager { get; private set; }
+		public ITheDebugger TheDebugger { get; private set; }
+		public bool SyntaxHighlight { get; set; }
+		public bool UseHexadecimal { get; set; }
+
+		public ModuleContext(IImageManager imageManager, ITheDebugger theDebugger) {
+			this.ImageManager = imageManager;
+			this.TheDebugger = theDebugger;
+		}
+	}
+
 	sealed class ModuleVM : ViewModelBase {
 		public bool IsExe {
 			get {
@@ -72,8 +92,14 @@ namespace dnSpy.Debugger.Modules {
 		}
 		readonly DnModule module;
 
-		public ModuleVM(DnModule module) {
+		public IModuleContext Context {
+			get { return context; }
+		}
+		readonly IModuleContext context;
+
+		public ModuleVM(DnModule module, IModuleContext context) {
 			this.module = module;
+			this.context = context;
 		}
 
 		internal void RefreshThemeFields() {

@@ -20,7 +20,7 @@
 using System.Windows.Input;
 
 namespace dnSpy.Debugger {
-	public static class DebugRoutedCommands {
+	static class DebugRoutedCommands {
 		public static readonly RoutedCommand DebugCurrentAssembly = new RoutedCommand("DebugCurrentAssembly", typeof(DebugRoutedCommands));
 		public static readonly RoutedCommand DebugAssembly = new RoutedCommand("DebugAssembly", typeof(DebugRoutedCommands));
 		public static readonly RoutedCommand DebugCoreCLRAssembly = new RoutedCommand("DebugCoreCLRAssembly", typeof(DebugRoutedCommands));
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger {
 		public static readonly RoutedCommand ShowExceptions = new RoutedCommand("ShowExceptions", typeof(DebugRoutedCommands));
 
 		static DebugRoutedCommands() {
-			ShowMemoryCommands = new RoutedCommand[Memory.MemoryControlCreator.NUMBER_OF_MEMORY_WINDOWS];
+			ShowMemoryCommands = new RoutedCommand[Memory.MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS];
 			for (int i = 0; i < ShowMemoryCommands.Length; i++)
 				ShowMemoryCommands[i] = new RoutedCommand(string.Format("ShowMemory{0}", i + 1), typeof(DebugRoutedCommands));
 		}

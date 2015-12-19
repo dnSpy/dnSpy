@@ -23,12 +23,33 @@ namespace dnSpy.Contracts.ToolWindows.App {
 	/// </summary>
 	public static class AppToolWindowConstants {
 		/// <summary>Order of files tool window</summary>
-		public const double DEFAULT_CONTENT_ORDER_LEFT_FILES = 1000;
+		public static readonly double DEFAULT_CONTENT_ORDER_LEFT_FILES = 1000;
 
 		/// <summary>Order of analyzer tool window</summary>
-		public const double DEFAULT_CONTENT_ORDER_BOTTOM_ANALYZER = 10000;
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_ANALYZER = 10000;
+
+		/// <summary>Order of debugger locals window</summary>
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_LOCALS = 20000;
+
+		/// <summary>Order of debugger breakpoints tool window</summary>
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_BREAKPOINTS = 20001;
+
+		/// <summary>Order of debugger call stack tool window</summary>
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_CALLSTACK = 20002;
+
+		/// <summary>Order of debugger threads tool window</summary>
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_THREADS = 20003;
+
+		/// <summary>Order of debugger exceptions tool window</summary>
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_EXCEPTIONS = 20004;
+
+		/// <summary>Order of debugger modules tool window</summary>
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_MODULES = 20005;
+
+		/// <summary>Order of debugger memory tool window</summary>
+		public static readonly double DEFAULT_CONTENT_ORDER_BOTTOM_DEBUGGER_MEMORY = 20006;
 
 		/// <summary>Order of search tool window</summary>
-		public const double DEFAULT_CONTENT_ORDER_TOP_SEARCH = 10000;
+		public static readonly double DEFAULT_CONTENT_ORDER_TOP_SEARCH = 10000;
 	}
 }

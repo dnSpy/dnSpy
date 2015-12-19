@@ -18,12 +18,10 @@
 */
 
 using System;
-using System.Windows.Media;
-using dnSpy.AvalonEdit;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Shared.UI.Files;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.AvalonEdit;
-using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
 namespace dnSpy.Debugger {
@@ -54,23 +52,23 @@ namespace dnSpy.Debugger {
 				ObjPropertyChanged(senderObj, new TextLineObjectEventArgs(propName));
 		}
 
-		public int GetLineNumber(DecompilerTextView textView) {
+		public int GetLineNumber(ITextEditorUIContext uiContext) {
 			TextLocation location, endLocation;
-			if (GetLocation(textView, out location, out endLocation))
+			if (GetLocation(uiContext, out location, out endLocation))
 				return location.Line;
 			return -1;
 		}
 
-		public bool GetLocation(DecompilerTextView textView, out TextLocation location, out TextLocation endLocation) {
-			var cm = textView == null ? null : textView.CodeMappings;
-			MemberMapping mapping;
-			if (cm == null || !cm.TryGetValue(methodKey, out mapping)) {
+		public bool GetLocation(ITextEditorUIContext uiContext, out TextLocation location, out TextLocation endLocation) {
+			var cm = uiContext.GetCodeMappings();
+			var mapping = cm.TryGetMapping(methodKey);
+			if (mapping == null) {
 				location = endLocation = new TextLocation();
 				return false;
 			}
 
 			bool isMatch;
-			SourceCodeMapping map = mapping.GetInstructionByOffset(ilOffset, out isMatch);
+			var map = mapping.GetInstructionByOffset(ilOffset, out isMatch);
 			if (map == null) {
 				location = endLocation = new TextLocation();
 				return false;
@@ -81,22 +79,22 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		public abstract bool IsVisible(DecompilerTextView textView);
-		protected abstract void Initialize(DecompilerTextView textView, ITextMarkerService markerService, ITextMarker marker);
+		public abstract bool IsVisible(ITextEditorUIContext uiContext);
+		protected abstract void Initialize(ITextEditorUIContext uiContext, ITextMarkerService markerService, ITextMarker marker);
 
-		public ITextMarker CreateMarker(DecompilerTextView textView, ITextMarkerService markerService) {
-			var marker = CreateMarkerInternal(markerService, textView);
-			var cm = textView == null ? null : textView.CodeMappings;
+		public ITextMarker CreateMarker(ITextEditorUIContext uiContext, ITextMarkerService markerService) {
+			var marker = CreateMarkerInternal(markerService, uiContext);
+			var cm = uiContext.GetCodeMappings();
 			marker.ZOrder = ZOrder;
-			marker.IsVisible = b => cm != null && cm.ContainsKey(SerializedDnSpyToken);
+			marker.IsVisible = b => cm.TryGetMapping(SerializedDnSpyToken) != null;
 			marker.TextMarkerObject = this;
-			Initialize(textView, markerService, marker);
+			Initialize(uiContext, markerService, marker);
 			return marker;
 		}
 
-		ITextMarker CreateMarkerInternal(ITextMarkerService markerService, DecompilerTextView textView) {
+		ITextMarker CreateMarkerInternal(ITextMarkerService markerService, ITextEditorUIContext uiContext) {
 			TextLocation location, endLocation;
-			if (!GetLocation(textView, out location, out endLocation))
+			if (!GetLocation(uiContext, out location, out endLocation))
 				throw new InvalidOperationException();
 
 			var line = markerService.TextView.Document.GetLineByNumber(location.Line);
@@ -109,7 +107,7 @@ namespace dnSpy.Debugger {
 
 		public abstract bool HasImage { get; }
 		public abstract double ZOrder { get; }
-		public abstract ImageSource GetImage(Color bgColor);
+		public abstract ImageReference? ImageReference { get; }
 
 		protected void Redraw() {
 			OnObjPropertyChanged(TextLineObjectEventArgs.RedrawProperty);

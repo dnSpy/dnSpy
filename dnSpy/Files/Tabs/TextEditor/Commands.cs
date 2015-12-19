@@ -178,11 +178,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			var res = messageBoxManager.Ask<Tuple<int, int>>("_Line [, column]", null, "Go to Line", s => {
 				int? line, column;
-				TryGetRowCol(s, uiContext.CurrentLine, out line, out column);
+				TryGetRowCol(s, uiContext.Location.Line, out line, out column);
 				return Tuple.Create(line.Value, column.Value);
 			}, s => {
 				int? line, column;
-				return TryGetRowCol(s, uiContext.CurrentLine, out line, out column);
+				return TryGetRowCol(s, uiContext.Location.Line, out line, out column);
 			});
 			if (res != null)
 				uiContext.ScrollAndMoveCaretTo(res.Item1, res.Item2);

@@ -20,13 +20,23 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
+using dnSpy.Contracts.Images;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Modules {
-	sealed class ModulesVM : ViewModelBase {
+	interface IModulesVM {
+		bool IsEnabled { get; set; }
+		bool IsVisible { get; set; }
+
+		void RefreshThemeFields();
+	}
+
+	[Export, Export(typeof(IModulesVM)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class ModulesVM : ViewModelBase, IModulesVM {
 		public ObservableCollection<ModuleVM> Collection {
 			get { return modulesList; }
 		}
@@ -43,19 +53,45 @@ namespace dnSpy.Debugger.Modules {
 		}
 		object selectedItem;
 
-		public ModulesVM() {
+		public bool IsEnabled {//TODO: Use
+			get { return isEnabled; }
+			set { isEnabled = value; }
+		}
+		bool isEnabled;
+
+		public bool IsVisible {//TODO: Use
+			get { return isVisible; }
+			set { isVisible = value; }
+		}
+		bool isVisible;
+
+		readonly ITheDebugger theDebugger;
+		readonly ModuleContext moduleContext;
+
+		[ImportingConstructor]
+		ModulesVM(ITheDebugger theDebugger, IDebuggerSettings debuggerSettings, IImageManager imageManager) {
+			this.theDebugger = theDebugger;
+			this.moduleContext = new ModuleContext(imageManager, theDebugger) {
+				SyntaxHighlight = debuggerSettings.SyntaxHighlightModules,
+				UseHexadecimal = debuggerSettings.UseHexadecimal,
+			};
 			this.modulesList = new ObservableCollection<ModuleVM>();
-			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
-			DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
-			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Terminated)
-				InstallDebuggerHooks(DebugManager.Instance.Debugger);
+			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
+			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
+			if (theDebugger.ProcessState != DebuggerProcessState.Terminated)
+				InstallDebuggerHooks(theDebugger.Debugger);
 		}
 
 		void DebuggerSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
-			if (e.PropertyName == "UseHexadecimal")
+			var debuggerSettings = (IDebuggerSettings)sender;
+			if (e.PropertyName == "UseHexadecimal") {
+				moduleContext.UseHexadecimal = debuggerSettings.UseHexadecimal;
 				RefreshHexFields();
-			else if (e.PropertyName == "SyntaxHighlightModules")
+			}
+			else if (e.PropertyName == "SyntaxHighlightModules") {
+				moduleContext.SyntaxHighlight = debuggerSettings.SyntaxHighlightModules;
 				RefreshThemeFields();
+			}
 		}
 
 		void InstallDebuggerHooks(DnDebugger dbg) {
@@ -95,9 +131,9 @@ namespace dnSpy.Debugger.Modules {
 				Remove(e.Module);
 		}
 
-		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			var dbg = (DnDebugger)sender;
-			switch (DebugManager.Instance.ProcessState) {
+			switch (theDebugger.ProcessState) {
 			case DebuggerProcessState.Starting:
 				Collection.Clear();
 				InstallDebuggerHooks(dbg);
@@ -115,7 +151,7 @@ namespace dnSpy.Debugger.Modules {
 			}
 		}
 
-		internal void RefreshThemeFields() {
+		public void RefreshThemeFields() {
 			foreach (var vm in Collection)
 				vm.RefreshThemeFields();
 		}
@@ -133,7 +169,7 @@ namespace dnSpy.Debugger.Modules {
 		bool VerifyDebugger(DnModule module) {
 			if (module == null)
 				return false;
-			var dbg = DebugManager.Instance.Debugger;
+			var dbg = theDebugger.Debugger;
 			return module.Debugger == dbg;
 		}
 
@@ -143,7 +179,7 @@ namespace dnSpy.Debugger.Modules {
 			if (!b)
 				return;
 
-			Collection.Add(new ModuleVM(module));
+			Collection.Add(new ModuleVM(module, moduleContext));
 		}
 
 		void Remove(DnModule module) {

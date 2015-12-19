@@ -19,17 +19,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using dndbg.Engine;
 using dnlib.DotNet;
-using dnSpy.AvalonEdit;
+using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Shared.UI.Files;
 using dnSpy.Shared.UI.MVVM;
-using dnSpy.Tabs;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
 namespace dnSpy.Debugger.CallStack {
@@ -41,9 +41,20 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	sealed class StackFrameManager : ViewModelBase {
-		public static readonly StackFrameManager Instance = new StackFrameManager();
+	interface IStackFrameManager : INotifyPropertyChanged {
+		/// <summary>
+		/// Gets/sets the selected frame number. 0 is the current frame.
+		/// </summary>
+		int SelectedFrameNumber { get; set; }
+		DnThread SelectedThread { get; set; }
+		CorFrame FirstILFrame { get; }
+		CorFrame SelectedFrame { get; }
+		event EventHandler<StackFramesUpdatedEventArgs> StackFramesUpdated;
+		List<CorFrame> GetFrames(out bool tooManyFrames);
+	}
 
+	[Export, Export(typeof(IStackFrameManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class StackFrameManager : ViewModelBase, IStackFrameManager {
 		// VS2015 shows at most 5000 frames but we can increase that to 50000, dnSpy had no trouble
 		// showing 12K frames, which was the total number of frames until I got a SO in the test app.
 		const int MAX_SHOWN_FRAMES = 50000;
@@ -61,26 +72,32 @@ namespace dnSpy.Debugger.CallStack {
 		}
 		CurrentState currentState = new CurrentState();
 
-		internal void OnLoaded() {
-			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
-			DebugManager.Instance.ProcessRunning += DebugManager_ProcessRunning;
-			MainWindow.Instance.ExecuteWhenLoaded(() => {
-				MainWindow.Instance.OnTabStateChanged += (sender, e) => OnTabStateChanged(e.OldTabState, e.NewTabState);
-				foreach (var tabState in MainWindow.Instance.AllVisibleDecompileTabStates)
-					OnTabStateChanged(null, tabState);
-			});
+		readonly ITheDebugger theDebugger;
+		readonly IFileTabManager fileTabManager;
+		readonly ITextLineObjectManager textLineObjectManager;
+		readonly Lazy<IModuleLoader> moduleLoader;
+
+		[ImportingConstructor]
+		StackFrameManager(ITheDebugger theDebugger, IFileTabManager fileTabManager, ITextLineObjectManager textLineObjectManager, Lazy<IModuleLoader> moduleLoader, ITextEditorUIContextManager textEditorUIContextManager) {
+			this.theDebugger = theDebugger;
+			this.fileTabManager = fileTabManager;
+			this.textLineObjectManager = textLineObjectManager;
+			this.moduleLoader = moduleLoader;
+			textEditorUIContextManager.Add(OnTextEditorUIContextEvent, TextEditorUIContextManagerConstants.ORDER_DEBUGGER_CALLSTACK);
+			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
+			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 		}
 
 		[Conditional("DEBUG")]
 		void VerifyDebuggeeStopped() {
-			Debug.Assert(DebugManager.Instance.ProcessState == DebuggerProcessState.Stopped);
+			Debug.Assert(theDebugger.ProcessState == DebuggerProcessState.Stopped);
 		}
 
-		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			var oldState = currentState;
 			currentState = new CurrentState();
 			var dbg = (DnDebugger)sender;
-			switch (DebugManager.Instance.ProcessState) {
+			switch (theDebugger.ProcessState) {
 			case DebuggerProcessState.Starting:
 				savedEvalState = null;
 				break;
@@ -101,15 +118,15 @@ namespace dnSpy.Debugger.CallStack {
 
 				// Don't update the selected thread if we just evaluated something
 				if (UpdateState(savedEvalState)) {
-					currentState.Thread = DebugManager.Instance.Debugger.Current.Thread;
+					currentState.Thread = dbg.Current.Thread;
 					SelectedFrameNumber = 0;
 				}
 				else
 					currentState = savedEvalState;
 				savedEvalState = null;
 
-				foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
-					UpdateStackFrameLines(textView, false);
+				foreach (var tab in fileTabManager.VisibleFirstTabs)
+					UpdateStackFrameLines(tab.UIContext as ITextEditorUIContext, false);
 				break;
 
 			case DebuggerProcessState.Terminated:
@@ -137,39 +154,20 @@ namespace dnSpy.Debugger.CallStack {
 			return false;
 		}
 
-		void DebugManager_ProcessRunning(object sender, EventArgs e) {
+		void TheDebugger_ProcessRunning(object sender, EventArgs e) {
 			ClearStackFrameLines();
 		}
 
 		void ClearStackFrameLines() {
-			foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
-				Remove(textView);
+			foreach (var tab in fileTabManager.VisibleFirstTabs)
+				Remove(tab.UIContext as ITextEditorUIContext);
 		}
 
-		void OnTabStateChanged(TabState oldTabState, TabState newTabState) {
-			var oldTsd = oldTabState as DecompileTabState;
-			if (oldTsd != null) {
-				oldTsd.TextView.OnBeforeShowOutput -= DecompilerTextView_OnBeforeShowOutput;
-				oldTsd.TextView.OnShowOutput -= DecompilerTextView_OnShowOutput;
+		void OnTextEditorUIContextEvent(TextEditorUIContextListenerEvent @event, ITextEditorUIContext uiContext, object data) {
+			if (@event == TextEditorUIContextListenerEvent.NewContent) {
+				Remove(uiContext);
+				UpdateStackFrameLines(uiContext, true);
 			}
-			var newTsd = newTabState as DecompileTabState;
-			if (newTsd != null) {
-				newTsd.TextView.OnBeforeShowOutput += DecompilerTextView_OnBeforeShowOutput;
-				newTsd.TextView.OnShowOutput += DecompilerTextView_OnShowOutput;
-			}
-
-			if (oldTsd != null)
-				Remove(oldTsd.TextView);
-			if (newTsd != null)
-				UpdateStackFrameLines(newTsd.TextView);
-		}
-
-		void DecompilerTextView_OnBeforeShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e) {
-			Remove((DecompilerTextView)sender);
-		}
-
-		void DecompilerTextView_OnShowOutput(object sender, DecompilerTextView.ShowOutputEventArgs e) {
-			e.HasMovedCaret |= UpdateStackFrameLines((DecompilerTextView)sender, !e.HasMovedCaret);
 		}
 
 		CorFrame GetFrameByNumber(int number) {
@@ -209,16 +207,12 @@ namespace dnSpy.Debugger.CallStack {
 					currentState.Thread = value;
 					currentState.FrameNumber = 0;
 					UpdateStackFrameLinesInTextViews();
-					DebugManager.Instance.UpdateCurrentLocation(FirstILFrame);
 					OnPropertyChanged(new VMPropertyChangedEventArgs<DnThread>("SelectedThread", oldThread, currentState.Thread));
 					OnPropertyChanged(new VMPropertyChangedEventArgs<int>("SelectedFrameNumber", -1, currentState.FrameNumber));
 				}
 			}
 		}
 
-		/// <summary>
-		/// Gets/sets the selected frame number. 0 is the current frame.
-		/// </summary>
 		public int SelectedFrameNumber {
 			get { VerifyDebuggeeStopped(); return currentState.FrameNumber; }
 			set {
@@ -233,14 +227,16 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		void UpdateStackFrameLinesInTextViews() {
-			foreach (var textView in MainWindow.Instance.AllVisibleTextViews)
-				UpdateStackFrameLines(textView);
+			foreach (var tab in fileTabManager.VisibleFirstTabs)
+				UpdateStackFrameLines(tab.UIContext as ITextEditorUIContext);
 		}
 
-		void Remove(DecompilerTextView decompilerTextView) {
+		void Remove(ITextEditorUIContext uiContext) {
+			if (uiContext == null)
+				return;
 			for (int i = stackFrameLines.Count - 1; i >= 0; i--) {
-				if (stackFrameLines[i].TextView == decompilerTextView) {
-					TextLineObjectManager.Instance.Remove(stackFrameLines[i]);
+				if (stackFrameLines[i].TextView == uiContext) {
+					textLineObjectManager.Remove(stackFrameLines[i]);
 					stackFrameLines.RemoveAt(i);
 				}
 			}
@@ -249,11 +245,13 @@ namespace dnSpy.Debugger.CallStack {
 		/// <summary>
 		/// Should be called each time the IL offset has been updated
 		/// </summary>
-		bool UpdateStackFrameLines(DecompilerTextView decompilerTextView, bool moveCaret = false) {
-			Remove(decompilerTextView);
+		bool UpdateStackFrameLines(ITextEditorUIContext uiContext, bool moveCaret = false) {
+			if (uiContext == null)
+				return false;
+			Remove(uiContext);
 			bool movedCaret = false;
-			var cm = decompilerTextView == null ? null : decompilerTextView.CodeMappings;
-			bool updateReturnStatements = cm != null && DebugManager.Instance.ProcessState == DebuggerProcessState.Stopped;
+			var cm = uiContext.TryGetCodeMappings();
+			bool updateReturnStatements = cm != null && theDebugger.ProcessState == DebuggerProcessState.Stopped;
 			if (updateReturnStatements) {
 				int frameNo = -1;
 				bool tooManyFrames;
@@ -277,17 +275,17 @@ namespace dnSpy.Debugger.CallStack {
 					else
 						type = currentState.FrameNumber == frameNo ? StackFrameLineType.SelectedReturnStatement : StackFrameLineType.ReturnStatement;
 					var key = new SerializedDnSpyToken(serAsm.Value.ToSerializedDnSpyModule(), token);
-					uint offset = frame.GetILOffset();
+					uint offset = frame.GetILOffset(moduleLoader.Value);
 					MethodDef methodDef;
 					TextLocation location, endLocation;
-					if (cm != null && cm.ContainsKey(key) &&
-						cm[key].GetInstructionByTokenAndOffset(offset, out methodDef, out location, out endLocation)) {
-						var rs = new StackFrameLine(type, decompilerTextView, key, offset);
+					var mm = cm.TryGetMapping(key);
+					if (mm != null && mm.GetInstructionByTokenAndOffset(offset, out methodDef, out location, out endLocation)) {
+						var rs = new StackFrameLine(type, uiContext, key, offset);
 						stackFrameLines.Add(rs);
-						TextLineObjectManager.Instance.Add(rs);
+						textLineObjectManager.Add(rs);
 
 						if (moveCaret && frameNo == currentState.FrameNumber) {
-							decompilerTextView.ScrollAndMoveCaretTo(location.Line, location.Column);
+							uiContext.ScrollAndMoveCaretTo(location.Line, location.Column);
 							movedCaret = true;
 						}
 					}

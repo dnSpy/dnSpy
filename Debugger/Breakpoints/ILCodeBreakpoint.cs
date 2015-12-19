@@ -18,13 +18,10 @@
 */
 
 using System;
-using System.Windows.Media;
-using dnSpy.AvalonEdit;
-using dnSpy.Contracts;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Shared.UI.Files;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.AvalonEdit;
-using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
 namespace dnSpy.Debugger.Breakpoints {
@@ -37,16 +34,17 @@ namespace dnSpy.Debugger.Breakpoints {
 				this.ilbp = ilbp;
 			}
 
-			protected override void Initialize(DecompilerTextView textView, ITextMarkerService markerService, ITextMarker marker) {
+			protected override void Initialize(ITextEditorUIContext uiContext, ITextMarkerService markerService, ITextMarker marker) {
 				marker.HighlightingColor = () => ilbp.IsEnabled ? DebuggerColors.CodeBreakpointHighlightingColor : DebuggerColors.CodeBreakpointDisabledHighlightingColor;
 			}
 
-			public override bool IsVisible(DecompilerTextView textView) {
+			public override bool IsVisible(ITextEditorUIContext uiContext) {
 				TextLocation location, endLocation;
-				var cm = textView == null ? null : textView.CodeMappings;
-				if (cm == null || !cm.ContainsKey(SerializedDnSpyToken))
+				var cm = uiContext.GetCodeMappings();
+				var mm = cm.TryGetMapping(SerializedDnSpyToken);
+				if (mm == null)
 					return false;
-				if (!cm[SerializedDnSpyToken].GetInstructionByTokenAndOffset(ILOffset, out location, out endLocation))
+				if (!mm.GetInstructionByTokenAndOffset(ILOffset, out location, out endLocation))
 					return false;
 
 				return true;
@@ -57,13 +55,15 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 
 			public override double ZOrder {
-				get { return (int)TextLineObjectZOrder.Breakpoint; }
+				get { return TextEditorConstants.ZORDER_BREAKPOINT; }
 			}
 
-			public override ImageSource GetImage(Color bgColor) {
-				return ilbp.IsEnabled ?
-					DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Breakpoint", bgColor) :
-					DnSpy.App.ImageManager.GetImage(GetType().Assembly, "DisabledBreakpoint", bgColor);
+			public override ImageReference? ImageReference {
+				get {
+					return ilbp.IsEnabled ?
+						new ImageReference(GetType().Assembly, "Breakpoint") :
+						new ImageReference(GetType().Assembly, "DisabledBreakpoint");
+				}
 			}
 
 			internal new void Redraw() {
@@ -96,8 +96,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			get { return myMarkedTextLine.HasImage; }
 		}
 
-		public ImageSource GetImage(Color bgColor) {
-			return myMarkedTextLine.GetImage(bgColor);
+		public ImageReference? ImageReference {
+			get { return myMarkedTextLine.ImageReference; }
 		}
 
 		readonly MyMarkedTextLine myMarkedTextLine;
@@ -107,20 +107,20 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.myMarkedTextLine = new MyMarkedTextLine(this, methodKey, ilOffset);
 		}
 
-		public int GetLineNumber(DecompilerTextView textView) {
-			return myMarkedTextLine.GetLineNumber(textView);
+		public int GetLineNumber(ITextEditorUIContext uiContext) {
+			return myMarkedTextLine.GetLineNumber(uiContext);
 		}
 
-		public bool GetLocation(DecompilerTextView textView, out TextLocation location, out TextLocation endLocation) {
-			return myMarkedTextLine.GetLocation(textView, out location, out endLocation);
+		public bool GetLocation(ITextEditorUIContext uiContext, out TextLocation location, out TextLocation endLocation) {
+			return myMarkedTextLine.GetLocation(uiContext, out location, out endLocation);
 		}
 
-		ITextMarker ITextMarkerObject.CreateMarker(DecompilerTextView textView, ITextMarkerService markerService) {
-			return myMarkedTextLine.CreateMarker(textView, markerService);
+		ITextMarker ITextMarkerObject.CreateMarker(ITextEditorUIContext uiContext, ITextMarkerService markerService) {
+			return myMarkedTextLine.CreateMarker(uiContext, markerService);
 		}
 
-		bool ITextLineObject.IsVisible(DecompilerTextView textView) {
-			return myMarkedTextLine.IsVisible(textView);
+		bool ITextLineObject.IsVisible(ITextEditorUIContext uiContext) {
+			return myMarkedTextLine.IsVisible(uiContext);
 		}
 
 		protected override void OnIsEnabledChanged() {

@@ -19,6 +19,7 @@
 
 using System;
 using System.Threading;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Contracts.Files.Tabs {
@@ -83,20 +84,23 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// </summary>
 		/// <param name="ref">Reference</param>
 		/// <param name="sourceContent">Source content or null</param>
-		void FollowReference(object @ref, IFileTabContent sourceContent = null);
+		/// <param name="onShown">Called after the content has been shown. Can be null.</param>
+		void FollowReference(object @ref, IFileTabContent sourceContent = null, Action<ShowTabContentEventArgs> onShown = null);
 
 		/// <summary>
 		/// Follows a reference in a new tab
 		/// </summary>
 		/// <param name="ref">Reference</param>
-		void FollowReferenceNewTab(object @ref);
+		/// <param name="onShown">Called after the content has been shown. Can be null.</param>
+		void FollowReferenceNewTab(object @ref, Action<ShowTabContentEventArgs> onShown = null);
 
 		/// <summary>
 		/// Follows a reference
 		/// </summary>
 		/// <param name="ref">Reference</param>
 		/// <param name="newTab">true to open a new tab</param>
-		void FollowReference(object @ref, bool newTab);
+		/// <param name="onShown">Called after the content has been shown. Can be null.</param>
+		void FollowReference(object @ref, bool newTab, Action<ShowTabContentEventArgs> onShown = null);
 
 		/// <summary>
 		/// Shows the tab content
@@ -129,5 +133,19 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <param name="postExec">Executed in the current thread after <paramref name="asyncAction"/>
 		/// has finished executing</param>
 		void AsyncExec(Action<CancellationTokenSource> preExec, Action asyncAction, Action<IAsyncShowResult> postExec);
+	}
+
+	/// <summary>
+	/// Extension methods
+	/// </summary>
+	public static class FileTabExtensions {
+		/// <summary>
+		/// Returns the tab's <see cref="ITextEditorUIContext"/> or null if it's not visible
+		/// </summary>
+		/// <param name="tab">Tab</param>
+		/// <returns></returns>
+		public static ITextEditorUIContext TryGetTextEditorUIContext(this IFileTab tab) {
+			return tab == null ? null : tab.UIContext as ITextEditorUIContext;
+		}
 	}
 }

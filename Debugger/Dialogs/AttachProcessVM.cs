@@ -73,9 +73,13 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 
 		readonly Dispatcher dispatcher;
+		readonly ProcessContext processContext;
 
-		public AttachProcessVM(Dispatcher dispatcher) {
+		public AttachProcessVM(Dispatcher dispatcher, bool syntaxHighlight) {
 			this.dispatcher = dispatcher;
+			this.processContext = new ProcessContext {
+				SyntaxHighlight = syntaxHighlight,
+			};
 			this.processList = new ObservableCollection<ProcessVM>();
 			Refresh();
 		}
@@ -132,7 +136,7 @@ namespace dnSpy.Debugger.Dialogs {
 			}
 
 			foreach (var info in list)
-				Collection.Add(new ProcessVM(info.ProcessId, info.Title, info.Machine, info.Type, info.FullPath));
+				Collection.Add(new ProcessVM(info.ProcessId, info.Title, info.Machine, info.Type, info.FullPath, processContext));
 		}
 
 		void RefreshAsync() {

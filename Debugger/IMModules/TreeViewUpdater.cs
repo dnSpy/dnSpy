@@ -19,26 +19,25 @@
 
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dnlib.DotNet;
+using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.TreeView;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.Debugger.IMModules {
 	struct TreeViewUpdater {
+		readonly IFileTreeView fileTreeView;
 		readonly CorModuleDefFile CorModuleDefFile;
-		readonly AssemblyTreeNode ModuleNode;
+		readonly IModuleFileNode ModuleNode;
 		readonly HashSet<uint> modifiedTypes;
 		readonly HashSet<uint> loadedClassTokens;
 		readonly HashSet<TypeDef> checkedTypes;
-		AssemblyTreeNode modNode;
+		IModuleFileNode modNode;
 
-		DnSpyFileListTreeNode DnSpyFileListTreeNode {
-			get { return MainWindow.Instance.DnSpyFileListTreeNode; }
-		}
-
-		public TreeViewUpdater(CorModuleDefFile cmdf, AssemblyTreeNode node, HashSet<uint> modifiedTypes, HashSet<uint> loadedClassTokens) {
+		public TreeViewUpdater(IFileTreeView fileTreeView, CorModuleDefFile cmdf, IModuleFileNode node, HashSet<uint> modifiedTypes, HashSet<uint> loadedClassTokens) {
 			Debug.Assert(node.DnSpyFile == cmdf);
+			this.fileTreeView = fileTreeView;
 			this.CorModuleDefFile = cmdf;
 			this.ModuleNode = node;
 			this.modifiedTypes = new HashSet<uint>(modifiedTypes);
@@ -49,11 +48,13 @@ namespace dnSpy.Debugger.IMModules {
 
 		public void Update() {
 			// If none of its children have been loaded, we can safely return without doing anything
-			if (ModuleNode.LazyLoading)
+			if (ModuleNode.TreeNode.LazyLoading)
 				return;
 
-			if (loadedClassTokens != null)
-				modifiedTypes.AddRange(loadedClassTokens);
+			if (loadedClassTokens != null) {
+				foreach (var a in loadedClassTokens)
+					modifiedTypes.Add(a);
+			}
 			var tokensList = new List<uint>(modifiedTypes);
 			tokensList.Sort();
 
@@ -70,7 +71,7 @@ namespace dnSpy.Debugger.IMModules {
 			if (needRedecompile) {
 				// Force a re-decompile of every view that references this module. This could be
 				// optimized if necessary
-				MainWindow.Instance.ModuleModified(CorModuleDefFile);
+				//TODO: ModuleModified(CorModuleDefFile);
 			}
 		}
 
@@ -88,23 +89,23 @@ namespace dnSpy.Debugger.IMModules {
 
 		void Update(TypeDef td) {
 			var list = GetNonCheckedTypeAndDeclaringTypes(td);
-			CreateTypeTreeNodes(list);
+			CreateTypeNodes(list);
 		}
 
-		void CreateTypeTreeNodes(List<TypeDef> types) {
-			TypeTreeNode parentNode = null;
+		void CreateTypeNodes(List<TypeDef> types) {
+			ITypeNode parentNode = null;
 			foreach (var type in types) {
 				bool wasLoaded = loadedClassTokens == null ? false : loadedClassTokens.Contains(type.MDToken.Raw);
 
-				TypeTreeNode typeNode;
+				ITypeNode typeNode;
 				if (type.DeclaringType == null)
-					typeNode = modNode.GetOrCreateNonNestedTypeTreeNode(type);
+					typeNode = GetOrCreateNonNestedTypeTreeNode(modNode, type);
 				else {
 					if (parentNode == null)
-						parentNode = DnSpyFileListTreeNode.FindTypeNode(type.DeclaringType);
-					if (parentNode == null || parentNode.LazyLoading)
+						parentNode = fileTreeView.FindNode(type.DeclaringType);
+					if (parentNode == null || parentNode.TreeNode.LazyLoading)
 						break;
-					typeNode = parentNode.GetOrCreateNestedTypeTreeNode(type);
+					typeNode = GetOrCreateNestedTypeTreeNode(parentNode, type);
 				}
 				Debug.Assert(typeNode != null);
 
@@ -115,34 +116,68 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
-		void UpdateMemberNodes(TypeTreeNode typeNode) {
+		static ITypeNode GetOrCreateNonNestedTypeTreeNode(IModuleFileNode modNode, TypeDef type) {
+			Debug.Assert(type != null && type.DeclaringType == null);
+			modNode.TreeNode.EnsureChildrenLoaded();
+			ITypeNode typeNode;
+			var nsNode = GetOrCreateNamespaceNode(modNode, type.Namespace);
+			typeNode = nsNode.TreeNode.DataChildren.OfType<ITypeNode>().FirstOrDefault(a => a.TypeDef == type);
+			if (typeNode != null)
+				return typeNode;
+			typeNode = nsNode.Create(type);
+			nsNode.TreeNode.AddChild(typeNode.TreeNode);
+			return typeNode;
+		}
+
+		static INamespaceNode GetOrCreateNamespaceNode(IModuleFileNode modNode, string ns) {
+			modNode.TreeNode.EnsureChildrenLoaded();
+			var nsNode = modNode.TreeNode.DataChildren.OfType<INamespaceNode>().FirstOrDefault(a => a.Name == ns);
+			if (nsNode != null)
+				return nsNode;
+			nsNode = modNode.Create(ns);
+			modNode.TreeNode.AddChild(nsNode.TreeNode);
+			return nsNode;
+		}
+
+		static ITypeNode GetOrCreateNestedTypeTreeNode(ITypeNode typeNode, TypeDef nestedType) {
+			Debug.Assert(nestedType != null && nestedType.DeclaringType == typeNode.TypeDef);
+			typeNode.TreeNode.EnsureChildrenLoaded();
+			var childTypeNode = typeNode.TreeNode.DataChildren.OfType<ITypeNode>().FirstOrDefault(a => a.TypeDef == nestedType);
+			if (childTypeNode != null)
+				return childTypeNode;
+			childTypeNode = typeNode.Create(nestedType);
+			typeNode.TreeNode.AddChild(childTypeNode.TreeNode);
+			return childTypeNode;
+		}
+
+		void UpdateMemberNodes(ITypeNode typeNode) {
 			// If it's not been loaded, we've got nothing to do
-			if (typeNode.LazyLoading)
+			if (typeNode.TreeNode.LazyLoading)
 				return;
 
 			var existing = new HashSet<object>();
-			foreach (var child in typeNode.Children) {
-				var memberNode = child as IMemberTreeNode;
-				if (memberNode != null)
-					existing.Add(memberNode.Member);
+			foreach (var child in typeNode.TreeNode.DataChildren) {
+				var tokenNode = child as IMDTokenNode;
+				if (tokenNode != null)
+					existing.Add(tokenNode.Reference);
 			}
 
 			foreach (var fd in typeNode.TypeDef.Fields) {
 				if (existing.Contains(fd))
 					continue;
-				typeNode.AddToChildren(new FieldTreeNode(fd));
+				typeNode.TreeNode.AddChild(fileTreeView.TreeView.Create(fileTreeView.Create(fd)));
 			}
 
 			foreach (var pd in typeNode.TypeDef.Properties) {
 				if (existing.Contains(pd))
 					continue;
-				typeNode.AddToChildren(new PropertyTreeNode(pd, typeNode));
+				typeNode.TreeNode.AddChild(fileTreeView.TreeView.Create(fileTreeView.Create(pd)));
 			}
 
 			foreach (var ed in typeNode.TypeDef.Events) {
 				if (existing.Contains(ed))
 					continue;
-				typeNode.AddToChildren(new EventTreeNode(ed));
+				typeNode.TreeNode.AddChild(fileTreeView.TreeView.Create(fileTreeView.Create(ed)));
 			}
 
 			var accessorMethods = typeNode.TypeDef.GetAccessorMethods();
@@ -150,7 +185,7 @@ namespace dnSpy.Debugger.IMModules {
 				if (existing.Contains(md))
 					continue;
 				if (!accessorMethods.Contains(md))
-					typeNode.AddToChildren(new MethodTreeNode(md));
+					typeNode.TreeNode.AddChild(fileTreeView.TreeView.Create(fileTreeView.Create(md)));
 			}
 		}
 	}

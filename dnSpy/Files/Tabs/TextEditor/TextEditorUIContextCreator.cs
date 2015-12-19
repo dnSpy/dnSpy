@@ -38,9 +38,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ICodeToolTipManager codeToolTipManager;
 		readonly ITextEditorSettings textEditorSettings;
 		readonly ITextLineObjectManager textLineObjectManager;
+		readonly ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl;
 
 		[ImportingConstructor]
-		TextEditorUIContextCreator(IThemeManager themeManager, IImageManager imageManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager, ITextEditorSettings textEditorSettings, ITextLineObjectManager textLineObjectManager) {
+		TextEditorUIContextCreator(IThemeManager themeManager, IImageManager imageManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager, ITextEditorSettings textEditorSettings, ITextLineObjectManager textLineObjectManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl) {
 			this.themeManager = themeManager;
 			this.imageManager = imageManager;
 			this.wpfCommandManager = wpfCommandManager;
@@ -48,15 +49,17 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.codeToolTipManager = codeToolTipManager;
 			this.textEditorSettings = textEditorSettings;
 			this.textLineObjectManager = textLineObjectManager;
+			this.textEditorUIContextManagerImpl = textEditorUIContextManagerImpl;
 		}
 
 		public IFileTabUIContext Create<T>() where T : class, IFileTabUIContext {
 			if (typeof(T) == typeof(ITextEditorUIContext)) {
 				var ttRefFinder = new ToolTipReferenceFinder();
-				var uiContext = new TextEditorUIContext(wpfCommandManager);
+				var uiContext = new TextEditorUIContext(wpfCommandManager, textEditorUIContextManagerImpl);
 				var tec = new TextEditorControl(themeManager, new ToolTipHelper(codeToolTipManager, ttRefFinder), textEditorSettings, uiContext, uiContext, textLineObjectManager, imageManager);
 				uiContext.Initialize(menuManager, tec);
 				ttRefFinder.UIContext = uiContext;
+				textEditorUIContextManagerImpl.RaiseAddedEvent(uiContext);
 				return uiContext;
 			}
 			return null;

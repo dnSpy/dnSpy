@@ -155,6 +155,30 @@ namespace dnSpy.ToolWindows {
 		public void OnVisibilityChanged(TabContentVisibilityEvent visEvent) {
 			var ev = Convert(visEvent);
 			if (ev != null) {
+#if DEBUG
+				switch (ev) {
+				case ToolWindowContentVisibilityEvent.Added:
+					Debug.Assert(!_added);
+					Debug.Assert(!_visible);
+					_added = true;
+					break;
+				case ToolWindowContentVisibilityEvent.Removed:
+					Debug.Assert(_added);
+					Debug.Assert(!_visible);
+					_added = false;
+					break;
+				case ToolWindowContentVisibilityEvent.Visible:
+					Debug.Assert(_added);
+					Debug.Assert(!_visible);
+					_visible = true;
+					break;
+				case ToolWindowContentVisibilityEvent.Hidden:
+					Debug.Assert(_added);
+					Debug.Assert(_visible);
+					_visible = false;
+					break;
+				}
+#endif
 				if (moving && (visEvent == TabContentVisibilityEvent.Added || visEvent == TabContentVisibilityEvent.Removed)) {
 					// Don't send the Added/Removed events
 					moving = false;
@@ -182,6 +206,9 @@ namespace dnSpy.ToolWindows {
 				break;
 			}
 		}
+#if DEBUG
+		bool _added, _visible;
+#endif
 
 		static ToolWindowContentVisibilityEvent? Convert(TabContentVisibilityEvent ev) {
 			switch (ev) {

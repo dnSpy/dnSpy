@@ -20,14 +20,16 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Threading;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Contracts.App;
+using dnSpy.Contracts.Images;
 using dnSpy.Debugger.CallStack;
-using dnSpy.MVVM;
 using dnSpy.Shared.UI.Files;
 using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler.ILAst;
@@ -46,13 +48,15 @@ namespace dnSpy.Debugger.Locals {
 		Simple,
 	}
 
-	sealed class LocalsVM : ViewModelBase, ILocalsOwner {
-		public IAskUser AskUser {
-			set { askUser = value; }
-		}
-		IAskUser askUser;
+	interface ILocalsVM {
+		bool IsEnabled { get; set; }
+		bool IsVisible { get; set; }
+		void RefreshThemeFields();
+	}
 
-		internal bool IsEnabled {
+	[Export, Export(typeof(ILocalsVM)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class LocalsVM : ViewModelBase, ILocalsOwner, ILocalsVM {
+		public bool IsEnabled {
 			get { return isEnabled; }
 			set {
 				if (isEnabled != value) {
@@ -64,47 +68,92 @@ namespace dnSpy.Debugger.Locals {
 		}
 		bool isEnabled;
 
+		public bool IsVisible {//TODO: Use this
+			get { return isVisible; }
+			set { isVisible = value; }
+		}
+		bool isVisible;
+
 		public SharpTreeNode Root {
 			get { return rootNode; }
 		}
 		readonly SharpTreeNode rootNode;
 
-		public TypePrinterFlags TypePrinterFlags {
-			get {
-				TypePrinterFlags flags = TypePrinterFlags.ShowArrayValueSizes;
-				if (LocalsSettings.Instance.ShowNamespaces) flags |= TypePrinterFlags.ShowNamespaces;
-				if (LocalsSettings.Instance.ShowTokens) flags |= TypePrinterFlags.ShowTokens;
-				if (LocalsSettings.Instance.ShowTypeKeywords) flags |= TypePrinterFlags.ShowTypeKeywords;
-				if (!DebuggerSettings.Instance.UseHexadecimal) flags |= TypePrinterFlags.UseDecimal;
-				return flags;
-			}
+		public IPrinterContext PrinterContext {
+			get { return printerContext; }
 		}
+		readonly PrinterContext printerContext;
 
 		public bool DebuggerBrowsableAttributesCanHidePropsFields {
-			get { return DebuggerSettings.Instance.DebuggerBrowsableAttributesCanHidePropsFields; }
+			get { return debuggerSettings.DebuggerBrowsableAttributesCanHidePropsFields; }
 		}
 
 		public bool CompilerGeneratedAttributesCanHideFields {
-			get { return DebuggerSettings.Instance.CompilerGeneratedAttributesCanHideFields; }
+			get { return debuggerSettings.CompilerGeneratedAttributesCanHideFields; }
 		}
 
+		public bool PropertyEvalAndFunctionCalls {
+			get { return debuggerSettings.PropertyEvalAndFunctionCalls; }
+		}
+
+		readonly IAskUser askUser;
 		readonly IMethodLocalProvider methodLocalProvider;
 		readonly Dispatcher dispatcher;
+		readonly IDebuggerSettings debuggerSettings;
+		readonly IStackFrameManager stackFrameManager;
 
-		public LocalsVM(Dispatcher dispatcher, IMethodLocalProvider methodLocalProvider) {
-			this.dispatcher = dispatcher;
+		public ITheDebugger TheDebugger {
+			get { return theDebugger; }
+		}
+		readonly ITheDebugger theDebugger;
+
+		[ImportingConstructor]
+		LocalsVM(IImageManager imageManager, IDebuggerSettings debuggerSettings, ILocalsSettings localsSettings, IMethodLocalProvider methodLocalProvider, IStackFrameManager stackFrameManager, ITheDebugger theDebugger, IAskUser askUser) {
+			this.dispatcher = Dispatcher.CurrentDispatcher;
+			this.askUser = askUser;
 			this.methodLocalProvider = methodLocalProvider;
+			this.debuggerSettings = debuggerSettings;
+			this.stackFrameManager = stackFrameManager;
+			this.theDebugger = theDebugger;
+
+			this.printerContext = new PrinterContext(imageManager) {
+				SyntaxHighlight = debuggerSettings.SyntaxHighlightLocals,
+				UseHexadecimal = debuggerSettings.UseHexadecimal,
+				TypePrinterFlags = TypePrinterFlags.ShowArrayValueSizes,
+			};
+			this.printerContext.TypePrinterFlags = GetTypePrinterFlags(localsSettings, this.printerContext.TypePrinterFlags);
+			this.printerContext.TypePrinterFlags = GetTypePrinterFlags(debuggerSettings, this.printerContext.TypePrinterFlags);
+
 			methodLocalProvider.NewMethodInfoAvailable += MethodLocalProvider_NewMethodInfoAvailable;
 			this.rootNode = new SharpTreeNode();
-			StackFrameManager.Instance.StackFramesUpdated += StackFrameManager_StackFramesUpdated;
-			StackFrameManager.Instance.PropertyChanged += StackFrameManager_PropertyChanged;
-			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
-			DebuggerSettings.Instance.PropertyChanged += DebuggerSettings_PropertyChanged;
-			LocalsSettings.Instance.PropertyChanged += LocalsSettings_PropertyChanged;
-			DebugManager.Instance.ProcessRunning += DebugManager_ProcessRunning;
+			stackFrameManager.StackFramesUpdated += StackFrameManager_StackFramesUpdated;
+			stackFrameManager.PropertyChanged += StackFrameManager_PropertyChanged;
+			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
+			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
+			debuggerSettings.PropertyChanged += DebuggerSettings_PropertyChanged;
+			localsSettings.PropertyChanged += LocalsSettings_PropertyChanged;
 		}
 
-		void DebugManager_ProcessRunning(object sender, EventArgs e) {
+		static void Update(bool b, TypePrinterFlags f, ref TypePrinterFlags flags) {
+			if (b)
+				flags |= f;
+			else
+				flags &= ~f;
+		}
+
+		TypePrinterFlags GetTypePrinterFlags(ILocalsSettings localsSettings, TypePrinterFlags flags) {
+			Update(localsSettings.ShowNamespaces, TypePrinterFlags.ShowNamespaces, ref flags);
+			Update(localsSettings.ShowTokens, TypePrinterFlags.ShowTokens, ref flags);
+			Update(localsSettings.ShowTypeKeywords, TypePrinterFlags.ShowTypeKeywords, ref flags);
+			return flags;
+		}
+
+		TypePrinterFlags GetTypePrinterFlags(IDebuggerSettings debuggerSettings, TypePrinterFlags flags) {
+			Update(!debuggerSettings.UseHexadecimal, TypePrinterFlags.UseDecimal, ref flags);
+			return flags;
+		}
+
+		void TheDebugger_ProcessRunning(object sender, EventArgs e) {
 			InitializeLocals(LocalInitType.Full);
 		}
 
@@ -112,22 +161,28 @@ namespace dnSpy.Debugger.Locals {
 			InitializeLocalAndArgNames();
 		}
 
-		private void LocalsSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+		void LocalsSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			var localsSettings = (ILocalsSettings)sender;
 			switch (e.PropertyName) {
 			case "ShowNamespaces":
 			case "ShowTypeKeywords":
 			case "ShowTokens":
+				printerContext.TypePrinterFlags = GetTypePrinterFlags(localsSettings, printerContext.TypePrinterFlags);
 				RefreshTypeFields();
 				break;
 			}
 		}
 
 		void DebuggerSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			var debuggerSettings = (IDebuggerSettings)sender;
 			switch (e.PropertyName) {
 			case "UseHexadecimal":
+				printerContext.UseHexadecimal = debuggerSettings.UseHexadecimal;
+				printerContext.TypePrinterFlags = GetTypePrinterFlags(debuggerSettings, printerContext.TypePrinterFlags);
 				RefreshHexFields();
 				break;
 			case "SyntaxHighlightLocals":
+				printerContext.SyntaxHighlight = debuggerSettings.SyntaxHighlightLocals;
 				RefreshSyntaxHighlightFields();
 				break;
 			case "PropertyEvalAndFunctionCalls":
@@ -141,8 +196,8 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
-			switch (DebugManager.Instance.ProcessState) {
+		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+			switch (theDebugger.ProcessState) {
 			case DebuggerProcessState.Starting:
 				frameInfo = null;
 				break;
@@ -202,7 +257,7 @@ namespace dnSpy.Debugger.Locals {
 			if (e.Debugger.IsEvaluating)
 				return;
 			// InitializeLocals() is called when the process has been running for a little while. Speeds up stepping.
-			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Continuing && DebugManager.Instance.ProcessState != DebuggerProcessState.Running)
+			if (theDebugger.ProcessState != DebuggerProcessState.Continuing && theDebugger.ProcessState != DebuggerProcessState.Running)
 				InitializeLocals(e.Debugger.EvalCompleted ? LocalInitType.Simple : LocalInitType.Full);
 		}
 
@@ -221,7 +276,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		void InitializeLocals(LocalInitType initType) {
-			if (!IsEnabled || DebugManager.Instance.ProcessState != DebuggerProcessState.Stopped) {
+			if (!IsEnabled || theDebugger.ProcessState != DebuggerProcessState.Stopped) {
 				ClearAllLocals();
 				return;
 			}
@@ -231,12 +286,12 @@ namespace dnSpy.Debugger.Locals {
 				return;
 			}
 
-			var thread = StackFrameManager.Instance.SelectedThread;
-			var frame = StackFrameManager.Instance.SelectedFrame;
-			int frameNo = StackFrameManager.Instance.SelectedFrameNumber;
+			var thread = stackFrameManager.SelectedThread;
+			var frame = stackFrameManager.SelectedFrame;
+			int frameNo = stackFrameManager.SelectedFrameNumber;
 			DnProcess process;
 			if (thread == null) {
-				process = DebugManager.Instance.Debugger.Processes.FirstOrDefault();
+				process = theDebugger.Debugger.Processes.FirstOrDefault();
 				thread = process == null ? null : process.Threads.FirstOrDefault();
 			}
 			else
@@ -257,9 +312,9 @@ namespace dnSpy.Debugger.Locals {
 			var args = new List<ICorValueHolder>(corArgs.Length);
 			var locals = new List<ICorValueHolder>(corLocals.Length);
 			for (int i = 0; i < corArgs.Length; i++)
-				args.Add(new LocArgCorValueHolder(true, this, corArgs[i], i));
+				args.Add(new LocArgCorValueHolder(theDebugger, true, this, corArgs[i], i));
 			for (int i = 0; i < corLocals.Length; i++)
-				locals.Add(new LocArgCorValueHolder(false, this, corLocals[i], i));
+				locals.Add(new LocArgCorValueHolder(theDebugger, false, this, corLocals[i], i));
 
 			var exValue = thread == null ? null : thread.CorThread.CurrentException;
 			var exValueHolder = exValue == null ? null : new DummyCorValueHolder(exValue);
@@ -458,12 +513,12 @@ namespace dnSpy.Debugger.Locals {
 				vm.RefreshHexFields();
 		}
 
-		internal void RefreshThemeFields() {
+		public void RefreshThemeFields() {
 			foreach (var vm in GetValueVMs())
 				vm.RefreshThemeFields();
 		}
 
-		internal void RefreshSyntaxHighlightFields() {
+		void RefreshSyntaxHighlightFields() {
 			foreach (var vm in GetValueVMs())
 				vm.RefreshSyntaxHighlightFields();
 		}
@@ -487,9 +542,6 @@ namespace dnSpy.Debugger.Locals {
 		bool callingReread = false;
 
 		bool ILocalsOwner.AskUser(string msg) {
-			Debug.Assert(askUser != null);
-			if (askUser == null)
-				throw new InvalidOperationException();
 			return askUser.AskUser(msg, AskUserButton.YesNo) == MsgBoxButton.OK;
 		}
 
@@ -497,14 +549,14 @@ namespace dnSpy.Debugger.Locals {
 			Debug.Assert(context != null && context.Thread != null);
 			if (context == null || context.Thread == null)
 				return null;
-			if (!DebuggerSettings.Instance.CanEvaluateToString)
+			if (!debuggerSettings.CanEvaluateToString)
 				return null;
-			if (!DebugManager.Instance.CanEvaluate)
+			if (!theDebugger.CanEvaluate)
 				return null;
-			if (DebugManager.Instance.EvalDisabled)
+			if (theDebugger.EvalDisabled)
 				return null;
 
-			return DebugManager.Instance.CreateEval(context.Thread.CorThread);
+			return theDebugger.CreateEval(context.Thread.CorThread);
 		}
 
 		sealed class LocArgCorValueHolder : ICorValueHolder {
@@ -526,8 +578,10 @@ namespace dnSpy.Debugger.Locals {
 			readonly bool isArg;
 			readonly LocalsVM locals;
 			readonly int index;
+			readonly ITheDebugger theDebugger;
 
-			public LocArgCorValueHolder(bool isArg, LocalsVM locals, CorValue value, int index) {
+			public LocArgCorValueHolder(ITheDebugger theDebugger, bool isArg, LocalsVM locals, CorValue value, int index) {
+				this.theDebugger = theDebugger;
 				this.isArg = isArg;
 				this.locals = locals;
 				this.value = value;
@@ -535,7 +589,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 
 			public void InvalidateCorValue() {
-				DebugManager.Instance.DisposeHandle(value);
+				theDebugger.DisposeHandle(value);
 				value = null;
 			}
 

@@ -21,6 +21,7 @@ using System;
 using System.Runtime.InteropServices;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
+using dnSpy.Contracts.Images;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Threads {
@@ -39,6 +40,28 @@ namespace dnSpy.Debugger.Threads {
 		Normal				= 0,
 		AboveNormal			= 1,
 		Highest				= 2,
+	}
+
+	interface IThreadContext {
+		IImageManager ImageManager { get; }
+		ITheDebugger TheDebugger { get; }
+		IDebuggerSettings DebuggerSettings { get; }
+		bool SyntaxHighlight { get; }
+		bool UseHexadecimal { get; }
+	}
+
+	sealed class ThreadContext : IThreadContext {
+		public IImageManager ImageManager { get; private set; }
+		public ITheDebugger TheDebugger { get; private set; }
+		public IDebuggerSettings DebuggerSettings { get; private set; }
+		public bool SyntaxHighlight { get; set; }
+		public bool UseHexadecimal { get; set; }
+
+		public ThreadContext(IImageManager imageManager, ITheDebugger theDebugger, IDebuggerSettings debuggerSettings) {
+			this.ImageManager = imageManager;
+			this.TheDebugger = theDebugger;
+			this.DebuggerSettings = debuggerSettings;
+		}
 	}
 
 	sealed class ThreadVM : ViewModelBase {
@@ -152,11 +175,11 @@ namespace dnSpy.Debugger.Threads {
 				if (reinitManagedId)
 					reinitManagedId = !EvalUtils.ReflectionReadValue(thread.CorThread.Object, "m_ManagedThreadId", ref managedId);
 
-				if (!DebugManager.Instance.EvalCompleted && reinitManagedId) {
-					if (DebugManager.Instance.CanEvaluate && DebuggerSettings.Instance.PropertyEvalAndFunctionCalls) {
+				if (!Context.TheDebugger.EvalCompleted && reinitManagedId) {
+					if (Context.TheDebugger.CanEvaluate && Context.DebuggerSettings.PropertyEvalAndFunctionCalls) {
 						if (HasValidThreadObject) {
 							reinitManagedId = false;
-							managedId = EvalUtils.EvaluateCallMethod<int?>(thread, thread.CorThread.Object, "get_ManagedThreadId");
+							managedId = EvalUtils.EvaluateCallMethod<int?>(Context.TheDebugger, Context.DebuggerSettings, thread, thread.CorThread.Object, "get_ManagedThreadId");
 						}
 					}
 					else {
@@ -185,12 +208,12 @@ namespace dnSpy.Debugger.Threads {
 						unknownName = false;
 				}
 
-				if (!DebugManager.Instance.EvalCompleted && reinitName) {
-					if (DebugManager.Instance.CanEvaluate && DebuggerSettings.Instance.PropertyEvalAndFunctionCalls) {
+				if (!Context.TheDebugger.EvalCompleted && reinitName) {
+					if (Context.TheDebugger.CanEvaluate && Context.DebuggerSettings.PropertyEvalAndFunctionCalls) {
 						if (HasValidThreadObject) {
 							reinitName = false;
 							unknownName = false;
-							name = EvalUtils.EvaluateCallMethod<string>(thread, thread.CorThread.Object, "get_Name");
+							name = EvalUtils.EvaluateCallMethod<string>(Context.TheDebugger, Context.DebuggerSettings, thread, thread.CorThread.Object, "get_Name");
 						}
 					}
 					else {
@@ -232,8 +255,14 @@ namespace dnSpy.Debugger.Threads {
 		}
 		readonly DnThread thread;
 
-		public ThreadVM(DnThread thread) {
+		public IThreadContext Context {
+			get { return context; }
+		}
+		readonly IThreadContext context;
+
+		public ThreadVM(DnThread thread, IThreadContext context) {
 			this.thread = thread;
+			this.context = context;
 		}
 
 		internal void NameChanged(DnThread thread) {

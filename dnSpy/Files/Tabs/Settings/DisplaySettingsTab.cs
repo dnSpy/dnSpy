@@ -170,20 +170,6 @@ namespace dnSpy.Files.Tabs.Settings {
 		}
 	}
 
-	sealed class FontSizeConverter : IValueConverter {
-		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-			return Math.Round((double)value * 3 / 4);
-		}
-
-		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-			var s = (string)value;
-			double v;
-			if (double.TryParse(s, out v))
-				return v * 4 / 3;
-			return FontUtils.DEFAULT_FONT_SIZE;
-		}
-	}
-
 	sealed class FontFamilyVMConverter : IValueConverter {
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var vm = (FontFamilyVM)value;

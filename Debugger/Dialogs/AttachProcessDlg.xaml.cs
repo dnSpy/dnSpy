@@ -24,12 +24,10 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Dialogs {
-	/// <summary>
-	/// Interaction logic for AttachProcessDlg.xaml
-	/// </summary>
-	public partial class AttachProcessDlg : WindowBase {
+	sealed partial class AttachProcessDlg : WindowBase {
 		public AttachProcessDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

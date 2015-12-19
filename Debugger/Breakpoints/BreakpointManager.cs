@@ -19,19 +19,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows;
-using System.Windows.Input;
 using dndbg.Engine;
-using dnSpy.AvalonEdit;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Shared.UI.Files;
-using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TextView;
 using ICSharpCode.NRefactory;
 
 namespace dnSpy.Debugger.Breakpoints {
@@ -52,53 +49,61 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	sealed class BreakpointManager {
-		public static readonly BreakpointManager Instance = new BreakpointManager();
+	interface IBreakpointManager {
+		Breakpoint[] Breakpoints { get; }
+		ILCodeBreakpoint[] ILCodeBreakpoints { get; }
+		event EventHandler<BreakpointListModifiedEventArgs> OnListModified;
+		void Add(Breakpoint bp);
+		void Remove(Breakpoint bp);
+		void Clear();
+		bool? GetAddRemoveBreakpointsInfo(out int count);
+		bool GetEnableDisableBreakpointsInfo(out int count);
+		void Toggle(ITextEditorUIContext uiContext, int line, int column = 0);
+	}
 
+	[Export, Export(typeof(IBreakpointManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class BreakpointManager : IBreakpointManager {
 		public event EventHandler<BreakpointListModifiedEventArgs> OnListModified;
 
 		readonly HashSet<DebugEventBreakpoint> otherBreakpoints = new HashSet<DebugEventBreakpoint>();
 
-		public ICommand ClearCommand {
-			get { return new RelayCommand(a => ClearAskUser(), a => CanClear); }
-		}
-
-		public ICommand ToggleBreakpointCommand {
-			get { return new RelayCommand(a => ToggleBreakpoint(), a => CanToggleBreakpoint); }
-		}
-
-		public ICommand DisableBreakpointCommand {
-			get { return new RelayCommand(a => DisableBreakpoint(), a => CanDisableBreakpoint); }
-		}
-
-		public ICommand DisableAllBreakpointsCommand {
-			get { return new RelayCommand(a => DisableAllBreakpoints(), a => CanDisableAllBreakpoints); }
-		}
-
-		public ICommand EnableAllBreakpointsCommand {
-			get { return new RelayCommand(a => EnableAllBreakpoints(), a => CanEnableAllBreakpoints); }
-		}
-
 		public Breakpoint[] Breakpoints {
 			get {
-				var bps = new List<Breakpoint>(TextLineObjectManager.Instance.GetObjectsOfType<ILCodeBreakpoint>());
+				var bps = new List<Breakpoint>(textLineObjectManager.GetObjectsOfType<ILCodeBreakpoint>());
 				bps.AddRange(otherBreakpoints);
 				return bps.ToArray();
 			}
 		}
 
 		public ILCodeBreakpoint[] ILCodeBreakpoints {
-			get { return TextLineObjectManager.Instance.GetObjectsOfType<ILCodeBreakpoint>(); }
+			get { return textLineObjectManager.GetObjectsOfType<ILCodeBreakpoint>(); }
 		}
 
 		public DebugEventBreakpoint[] DebugEventBreakpoints {
 			get { return otherBreakpoints.ToArray(); }
 		}
 
-		BreakpointManager() {
-			TextLineObjectManager.Instance.OnListModified += MarkedTextLinesManager_OnListModified;
+		readonly ITextLineObjectManager textLineObjectManager;
+		readonly IFileTabManager fileTabManager;
+		readonly ITheDebugger theDebugger;
+		readonly IMessageBoxManager messageBoxManager;
+		readonly ISerializedDnSpyModuleCreator serializedDnSpyModuleCreator;
+
+		[ImportingConstructor]
+		BreakpointManager(ITextLineObjectManager textLineObjectManager, IFileTabManager fileTabManager, ITheDebugger theDebugger, IMessageBoxManager messageBoxManager, ISerializedDnSpyModuleCreator serializedDnSpyModuleCreator) {
+			this.textLineObjectManager = textLineObjectManager;
+			this.fileTabManager = fileTabManager;
+			this.theDebugger = theDebugger;
+			this.messageBoxManager = messageBoxManager;
+			this.serializedDnSpyModuleCreator = serializedDnSpyModuleCreator;
+			textLineObjectManager.OnListModified += MarkedTextLinesManager_OnListModified;
 			foreach (var bp in Breakpoints)
 				InitializeDebuggerBreakpoint(bp);
+
+			fileTabManager.FileTreeView.FileManager.CollectionChanged += FileManager_CollectionChanged;
+			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
+			if (theDebugger.IsDebugging)
+				AddDebuggerBreakpoints();
 		}
 
 		void MarkedTextLinesManager_OnListModified(object sender, TextLineObjectListModifiedEventArgs e) {
@@ -120,18 +125,12 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		internal void OnLoaded() {
-			BreakpointListSettings.Instance.OnLoaded();
-			MainWindow.Instance.CurrentAssemblyListChanged += MainWindow_CurrentAssemblyListChanged;
-			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
-			if (DebugManager.Instance.IsDebugging)
-				AddDebuggerBreakpoints();
-		}
-
-		void MainWindow_CurrentAssemblyListChanged(object sender, NotifyCollectionChangedEventArgs e) {
-			if (e.OldItems != null) {
-				var existing = new HashSet<SerializedDnSpyModule>(MainWindow.Instance.DnSpyFileListTreeNode.GetAllModuleNodes().Select(a => a.DnSpyFile.SerializedDnSpyModule ?? new SerializedDnSpyModule()));
-				var removed = new HashSet<SerializedDnSpyModule>(e.OldItems.Cast<IDnSpyFile>().Select(a => a.SerializedDnSpyModule ?? new SerializedDnSpyModule()));
+		void FileManager_CollectionChanged(object sender, NotifyFileCollectionChangedEventArgs e) {
+			switch (e.Type) {
+			case NotifyFileCollectionType.Clear:
+			case NotifyFileCollectionType.Remove:
+				var existing = new HashSet<SerializedDnSpyModule>(fileTabManager.FileTreeView.GetAllModuleNodes().Select(a => a.DnSpyFile.SerializedDnSpyModule ?? new SerializedDnSpyModule()));
+				var removed = new HashSet<SerializedDnSpyModule>(e.Files.Select(a => a.SerializedDnSpyModule ?? new SerializedDnSpyModule()));
 				existing.Remove(new SerializedDnSpyModule());
 				removed.Remove(new SerializedDnSpyModule());
 				foreach (var ilbp in ILCodeBreakpoints) {
@@ -148,11 +147,15 @@ namespace dnSpy.Debugger.Breakpoints {
 					if (removed.Contains(ilbp.SerializedDnSpyToken.Module))
 						Remove(ilbp);
 				}
+				break;
+
+			case NotifyFileCollectionType.Add:
+				break;
 			}
 		}
 
-		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
-			switch (DebugManager.Instance.ProcessState) {
+		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+			switch (theDebugger.ProcessState) {
 			case DebuggerProcessState.Starting:
 				AddDebuggerBreakpoints();
 				break;
@@ -179,8 +182,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		void InitializeDebuggerBreakpoint(Breakpoint bp) {
-			var debugger = DebugManager.Instance.Debugger;
-			if (debugger == null || debugger.ProcessState == DebuggerProcessState.Terminated)
+			var debugger = theDebugger.Debugger;
+			if (debugger == null || theDebugger.ProcessState == DebuggerProcessState.Terminated)
 				return;
 
 			IBreakpointCondition cond;
@@ -205,7 +208,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			var dnbp = bp.DnBreakpoint;
 			bp.DnBreakpoint = null;
 			if (dnbp != null) {
-				var dbg = DebugManager.Instance.Debugger;
+				var dbg = theDebugger.Debugger;
 				if (dbg != null)
 					dbg.RemoveBreakpoint(dnbp);
 			}
@@ -214,7 +217,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public void Add(Breakpoint bp) {
 			var ilbp = bp as ILCodeBreakpoint;
 			if (ilbp != null) {
-				TextLineObjectManager.Instance.Add(ilbp);
+				textLineObjectManager.Add(ilbp);
 				return;
 			}
 
@@ -229,7 +232,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public void Remove(Breakpoint bp) {
 			var ilbp = bp as ILCodeBreakpoint;
 			if (ilbp != null) {
-				TextLineObjectManager.Instance.Remove(ilbp);
+				textLineObjectManager.Remove(ilbp);
 				return;
 			}
 
@@ -246,8 +249,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		public bool ClearAskUser() {
-			var res = MainWindow.Instance.ShowIgnorableMessageBox("debug: delete all bps", "Do you want to delete all breakpoints?", MessageBoxButton.YesNo);
-			if (res != null && res != MsgBoxButton.OK)
+			var res = messageBoxManager.ShowIgnorableMessage("debug: delete all bps", "Do you want to delete all breakpoints?", MsgBoxButton.Yes | MsgBoxButton.No);
+			if (res != null && res != MsgBoxButton.Yes)
 				return false;
 			Clear();
 			return true;
@@ -260,8 +263,8 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		public bool CanToggleBreakpoint {
 			get {
-				var textView = MainWindow.Instance.ActiveTextView;
-				return textView != null && textView.CodeMappings.Count != 0;
+				var uiContext = fileTabManager.ActiveTab.TryGetTextEditorUIContext();
+				return uiContext.GetCodeMappings().Count != 0;
 			}
 		}
 
@@ -269,34 +272,34 @@ namespace dnSpy.Debugger.Breakpoints {
 			if (!CanToggleBreakpoint)
 				return false;
 
-			var textView = MainWindow.Instance.ActiveTextView;
-			if (textView == null)
+			var uiContext = fileTabManager.ActiveTab.TryGetTextEditorUIContext();
+			if (uiContext == null)
 				return false;
-			var location = textView.TextEditor.TextArea.Caret.Location;
-			BreakpointHelper.Toggle(textView, location.Line, location.Column);
+			var location = uiContext.Location;
+			Toggle(uiContext, location.Line, location.Column);
 			return true;
 		}
 
-		internal bool? GetAddRemoveBreakpointsInfo(out int count) {
+		public bool? GetAddRemoveBreakpointsInfo(out int count) {
 			count = 0;
-			var textView = MainWindow.Instance.ActiveTextView;
-			if (textView == null)
+			var uiContext = fileTabManager.ActiveTab.TryGetTextEditorUIContext();
+			if (uiContext == null)
 				return null;
-			var location = textView.TextEditor.TextArea.Caret.Location;
-			var ilbps = BreakpointHelper.GetILCodeBreakpoints(textView, location.Line, location.Column);
+			var location = uiContext.Location;
+			var ilbps = GetILCodeBreakpoints(uiContext, location.Line, location.Column);
 			count = ilbps.Count;
 			if (ilbps.Count == 0)
 				return null;
-			return BreakpointHelper.IsEnabled(ilbps);
+			return IsEnabled(ilbps);
 		}
 
 		public bool CanDisableBreakpoint {
 			get {
-				var textView = MainWindow.Instance.ActiveTextView;
-				if (textView == null)
+				var uiContext = fileTabManager.ActiveTab.TryGetTextEditorUIContext();
+				if (uiContext == null)
 					return false;
-				var location = textView.TextEditor.TextArea.Caret.Location;
-				return BreakpointHelper.GetILCodeBreakpoints(textView, location.Line, location.Column).Count != 0;
+				var location = uiContext.Location;
+				return GetILCodeBreakpoints(uiContext, location.Line, location.Column).Count != 0;
 			}
 		}
 
@@ -304,26 +307,26 @@ namespace dnSpy.Debugger.Breakpoints {
 			if (!CanDisableBreakpoint)
 				return false;
 
-			var textView = MainWindow.Instance.ActiveTextView;
-			if (textView == null)
+			var uiContext = fileTabManager.ActiveTab.TryGetTextEditorUIContext();
+			if (uiContext == null)
 				return false;
-			var location = textView.TextEditor.TextArea.Caret.Location;
-			var ilbps = BreakpointHelper.GetILCodeBreakpoints(textView, location.Line, location.Column);
-			bool isEnabled = BreakpointHelper.IsEnabled(ilbps);
+			var location = uiContext.Location;
+			var ilbps = GetILCodeBreakpoints(uiContext, location.Line, location.Column);
+			bool isEnabled = IsEnabled(ilbps);
 			foreach (var ilbp in ilbps)
 				ilbp.IsEnabled = !isEnabled;
 			return ilbps.Count > 0;
 		}
 
-		internal bool GetEnableDisableBreakpointsInfo(out int count) {
+		public bool GetEnableDisableBreakpointsInfo(out int count) {
 			count = 0;
-			var textView = MainWindow.Instance.ActiveTextView;
-			if (textView == null)
+			var uiContext = fileTabManager.ActiveTab.TryGetTextEditorUIContext();
+			if (uiContext == null)
 				return false;
-			var location = textView.TextEditor.TextArea.Caret.Location;
-			var ilbps = BreakpointHelper.GetILCodeBreakpoints(textView, location.Line, location.Column);
+			var location = uiContext.Location;
+			var ilbps = GetILCodeBreakpoints(uiContext, location.Line, location.Column);
 			count = ilbps.Count;
-			return BreakpointHelper.IsEnabled(ilbps);
+			return IsEnabled(ilbps);
 		}
 
 		public bool CanDisableAllBreakpoints {
@@ -344,63 +347,57 @@ namespace dnSpy.Debugger.Breakpoints {
 				bp.IsEnabled = true;
 		}
 
-		internal void Toggle(DecompilerTextView textView, int line, int column = 0) {
-			BreakpointHelper.Toggle(textView, line, column);
+		static bool IsEnabled(IEnumerable<ILCodeBreakpoint> bps) {
+			foreach (var bp in bps) {
+				if (bp.IsEnabled)
+					return true;
+			}
+			return false;
 		}
 
-		static class BreakpointHelper {
-			public static bool IsEnabled(IEnumerable<ILCodeBreakpoint> bps) {
-				foreach (var bp in bps) {
-					if (bp.IsEnabled)
-						return true;
-				}
-				return false;
-			}
+		List<ILCodeBreakpoint> GetILCodeBreakpoints(ITextEditorUIContext uiContext, int line, int column) {
+			return GetILCodeBreakpoints(uiContext, uiContext.GetCodeMappings().Find(line, column));
+		}
 
-			public static List<ILCodeBreakpoint> GetILCodeBreakpoints(DecompilerTextView textView, int line, int column) {
-				return GetILCodeBreakpoints(textView, SourceCodeMappingUtils.Find(textView, line, column));
-			}
-
-			static List<ILCodeBreakpoint> GetILCodeBreakpoints(DecompilerTextView textView, IList<SourceCodeMapping> mappings) {
-				var list = new List<ILCodeBreakpoint>();
-				if (mappings.Count == 0)
-					return list;
-				var mapping = mappings[0];
-				foreach (var ilbp in BreakpointManager.Instance.ILCodeBreakpoints) {
-					TextLocation location, endLocation;
-					if (!ilbp.GetLocation(textView, out location, out endLocation))
-						continue;
-					if (location != mapping.StartLocation || endLocation != mapping.EndLocation)
-						continue;
-
-					list.Add(ilbp);
-				}
-
+		List<ILCodeBreakpoint> GetILCodeBreakpoints(ITextEditorUIContext uiContext, IList<SourceCodeMapping> mappings) {
+			var list = new List<ILCodeBreakpoint>();
+			if (mappings.Count == 0)
 				return list;
+			var mapping = mappings[0];
+			foreach (var ilbp in ILCodeBreakpoints) {
+				TextLocation location, endLocation;
+				if (!ilbp.GetLocation(uiContext, out location, out endLocation))
+					continue;
+				if (location != mapping.StartLocation || endLocation != mapping.EndLocation)
+					continue;
+
+				list.Add(ilbp);
 			}
 
-			public static void Toggle(DecompilerTextView textView, int line, int column) {
-				var bps = SourceCodeMappingUtils.Find(textView, line, column);
-				var ilbps = GetILCodeBreakpoints(textView, bps);
-				if (ilbps.Count > 0) {
-					if (IsEnabled(ilbps)) {
-						foreach (var ilbp in ilbps)
-							BreakpointManager.Instance.Remove(ilbp);
-					}
-					else {
-						foreach (var bpm in ilbps)
-							bpm.IsEnabled = true;
-					}
+			return list;
+		}
+
+		public void Toggle(ITextEditorUIContext uiContext, int line, int column = 0) {
+			var bps = uiContext.GetCodeMappings().Find(line, column);
+			var ilbps = GetILCodeBreakpoints(uiContext, bps);
+			if (ilbps.Count > 0) {
+				if (IsEnabled(ilbps)) {
+					foreach (var ilbp in ilbps)
+						Remove(ilbp);
 				}
-				else if (bps.Count > 0) {
-					foreach (var bp in bps) {
-						var md = bp.MemberMapping.MethodDef;
-						var serMod = md.Module.ToSerializedDnSpyModule();
-						var key = new SerializedDnSpyToken(serMod, md.MDToken);
-						BreakpointManager.Instance.Add(new ILCodeBreakpoint(key, bp.ILInstructionOffset.From));
-					}
-					textView.ScrollAndMoveCaretTo(bps[0].StartLocation.Line, bps[0].StartLocation.Column);
+				else {
+					foreach (var bpm in ilbps)
+						bpm.IsEnabled = true;
 				}
+			}
+			else if (bps.Count > 0) {
+				foreach (var bp in bps) {
+					var md = bp.MemberMapping.MethodDef;
+					var serMod = serializedDnSpyModuleCreator.Create(md.Module);
+					var key = new SerializedDnSpyToken(serMod, md.MDToken);
+					Add(new ILCodeBreakpoint(key, bp.ILInstructionOffset.From));
+				}
+				uiContext.ScrollAndMoveCaretTo(bps[0].StartLocation.Line, bps[0].StartLocation.Column);
 			}
 		}
 	}

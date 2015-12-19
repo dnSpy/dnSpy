@@ -647,5 +647,26 @@ namespace dnSpy.Files.TreeView {
 
 			return null;
 		}
+
+		public IEnumerable<IModuleFileNode> GetAllModuleNodes() {
+			foreach (var node in TopNodes) {
+				var modNode = node as IModuleFileNode;
+				if (modNode != null) {
+					yield return modNode;
+					continue;
+				}
+
+				var asmNode = node as IAssemblyFileNode;
+				if (asmNode != null) {
+					asmNode.TreeNode.EnsureChildrenLoaded();
+					foreach (var c in asmNode.TreeNode.DataChildren) {
+						modNode = c as IModuleFileNode;
+						if (modNode != null)
+							yield return modNode;
+					}
+					continue;
+				}
+			}
+		}
 	}
 }

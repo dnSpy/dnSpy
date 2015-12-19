@@ -20,49 +20,51 @@
 using System.Diagnostics;
 using System.IO;
 using dnlib.DotNet;
+using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.Languages;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointPrinter {
-		readonly ITextOutput output;
+		readonly ISyntaxHighlightOutput output;
 		readonly bool useHex;
+		readonly ILanguage language;
+		readonly ILanguageManager languageManager;
 
-		public BreakpointPrinter(ITextOutput output, bool useHex) {
+		public BreakpointPrinter(ISyntaxHighlightOutput output, bool useHex, ILanguage language, ILanguageManager languageManager) {
 			this.output = output;
 			this.useHex = useHex;
+			this.language = language;
+			this.languageManager = languageManager;
 		}
 
-		static Language Language {
-			get { return MainWindow.Instance.CurrentLanguage; }
-		}
-
-		static Language MethodLanguage {
+		ILanguage MethodLanguage {
 			get {
-				var lang = Language;
+				var lang = language;
 				if (lang.NameUI != "VB")
 					return lang;
 				// VB's WriteToolTip() hasn't been implemented for methods so use C# instead
-				return Languages.GetLanguage("C#");
+				return languageManager.FindOrDefault("C#");
 			}
 		}
 
-		static string GetHexFormatUInt16() {
-			if (Language.NameUI == "VB")
+		string GetHexFormatUInt16() {
+			if (language.Guid == LanguageConstants.LANGUAGE_VB)
 				return "&H{0:X4}";
 			else
 				return "0x{0:X4}";
 		}
 
-		static string GetHexFormatUInt32() {
-			if (Language.NameUI == "VB")
+		string GetHexFormatUInt32() {
+			if (language.NameUI == "VB")
 				return "&H{0:X8}";
 			else
 				return "0x{0:X8}";
 		}
 
-		static void WriteILOffset(ITextOutput output, uint offset) {
+		void WriteILOffset(ISyntaxHighlightOutput output, uint offset) {
 			// Offsets are always in hex
 			if (offset <= ushort.MaxValue)
 				output.Write(string.Format(GetHexFormatUInt16(), offset), TextTokenType.Number);
@@ -70,7 +72,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				output.Write(string.Format(GetHexFormatUInt32(), offset), TextTokenType.Number);
 		}
 
-		static void WriteToken(ITextOutput output, uint token) {
+		void WriteToken(ISyntaxHighlightOutput output, uint token) {
 			// Tokens are always in hex
 			output.Write(string.Format(GetHexFormatUInt32(), token), TextTokenType.Number);
 		}
@@ -80,7 +82,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			if (ilbp != null) {
 				vm.NameError = false;
 				bool printedToken = false;
-				if (BreakpointSettings.Instance.ShowTokens) {
+				if (vm.Context.ShowTokens) {
 					WriteToken(output, ilbp.SerializedDnSpyToken.Token);
 					output.WriteSpace();
 					printedToken = true;
@@ -119,7 +121,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public void WriteAssembly(BreakpointVM vm) {
 			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
 			if (ilbp != null) {
-				output.Write_OLD(new AssemblyNameInfo(ilbp.SerializedDnSpyToken.Module.AssemblyFullName));
+				output.Write(new AssemblyNameInfo(ilbp.SerializedDnSpyToken.Module.AssemblyFullName));
 				return;
 			}
 
@@ -144,7 +146,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			if (ilbp != null) {
 				// Always use the filename since it matches the module names in the call stack and
 				// modules windows
-				output.WriteModule_OLD(ModulePathToModuleName(ilbp.SerializedDnSpyToken.Module.ModuleName));
+				output.WriteModule(ModulePathToModuleName(ilbp.SerializedDnSpyToken.Module.ModuleName));
 				return;
 			}
 
@@ -158,7 +160,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public void WriteFile(BreakpointVM vm) {
 			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
 			if (ilbp != null) {
-				output.WriteFilename_OLD(ilbp.SerializedDnSpyToken.Module.ModuleName);
+				output.WriteFilename(ilbp.SerializedDnSpyToken.Module.ModuleName);
 				return;
 			}
 

@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Images;
@@ -154,5 +155,11 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// Gets the <see cref="IFileTreeNodeGroups"/> instance
 		/// </summary>
 		IFileTreeNodeGroups FileTreeNodeGroups { get; }
+
+		/// <summary>
+		/// Gets all <see cref="IModuleFileNode"/>s
+		/// </summary>
+		/// <returns></returns>
+		IEnumerable<IModuleFileNode> GetAllModuleNodes();
 	}
 }

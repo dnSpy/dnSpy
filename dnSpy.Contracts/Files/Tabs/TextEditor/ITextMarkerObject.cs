@@ -25,9 +25,9 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// <summary>
 		/// Creates a <see cref="ITextMarker"/>
 		/// </summary>
-		/// <param name="textEditorUIContext">Text editor</param>
+		/// <param name="uiContext">Text editor</param>
 		/// <param name="markerService">Text marker service</param>
 		/// <returns></returns>
-		ITextMarker CreateMarker(ITextEditorUIContext textEditorUIContext, ITextMarkerService markerService);
+		ITextMarker CreateMarker(ITextEditorUIContext uiContext, ITextMarkerService markerService);
 	}
 }

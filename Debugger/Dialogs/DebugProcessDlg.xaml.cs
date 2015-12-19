@@ -17,14 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.MVVM;
 using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Dialogs {
-	/// <summary>
-	/// Interaction logic for DebugProcessDlg.xaml
-	/// </summary>
-	public partial class DebugProcessDlg : WindowBase {
+	sealed partial class DebugProcessDlg : WindowBase {
 		public DebugProcessDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

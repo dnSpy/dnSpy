@@ -42,19 +42,33 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		void SetActive();
 	}
 
-	sealed class TextEditorUIContext : ITextEditorUIContext, ITextEditorHelper, IDisposable {
+	interface ITextEditorUIContextImpl : ITextEditorUIContext {
+		/// <summary>
+		/// Called when 'use new renderer' option has been changed. <see cref="SetOutput(ITextOutput, IHighlightingDefinition)"/>
+		/// will be called after this method has been called.
+		/// </summary>
+		void OnUseNewRendererChanged();
+
+		/// <summary>
+		/// Raised after the text editor has gotten new text (<see cref="SetOutput(ITextOutput, IHighlightingDefinition)"/>)
+		/// </summary>
+		event EventHandler<EventArgs> NewTextContent;
+	}
+
+	sealed class TextEditorUIContext : ITextEditorUIContextImpl, ITextEditorHelper, IDisposable {
 		readonly IWpfCommandManager wpfCommandManager;
+		readonly ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl;
 		TextEditorControl textEditorControl;
 
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
-			readonly TextEditorUIContext textEditorUIContext;
+			readonly TextEditorUIContext uiContext;
 
-			public GuidObjectsCreator(TextEditorUIContext textEditorUIContext) {
-				this.textEditorUIContext = textEditorUIContext;
+			public GuidObjectsCreator(TextEditorUIContext uiContext) {
+				this.uiContext = uiContext;
 			}
 
 			public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
-				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXT_GUID, textEditorUIContext);
+				yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORUICONTEXT_GUID, uiContext);
 
 				var teCtrl = (TextEditorControl)creatorObject.Object;
 				var position = openedFromKeyboard ? teCtrl.TextEditor.TextArea.Caret.Position : teCtrl.TextEditor.GetPositionFromMousePosition();
@@ -91,8 +105,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 		}
 
-		public TextEditorUIContext(IWpfCommandManager wpfCommandManager) {
+		public TextEditorUIContext(IWpfCommandManager wpfCommandManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl) {
 			this.wpfCommandManager = wpfCommandManager;
+			this.textEditorUIContextManagerImpl = textEditorUIContextManagerImpl;
 			this.newTextContentEvent = new WeakEventList<EventArgs>();
 		}
 
@@ -138,8 +153,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			get { return textEditorControl.TextEditor.SelectionLength > 0; }
 		}
 
-		public int CurrentLine {
-			get { return textEditorControl.TextEditor.TextArea.Caret.Line; }
+		public TextEditorLocation Location {
+			get {
+				var caret = textEditorControl.TextEditor.TextArea.Caret;
+				return new TextEditorLocation(caret.Line, caret.Column);
+			}
 		}
 
 		public void OnShow() {
@@ -147,7 +165,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public void OnHide() {
 			textEditorControl.Clear();
-			//TODO: Debugger plugin should clear CodeMappings
+			outputData.Clear();
 		}
 
 		public object Serialize() {
@@ -199,10 +217,25 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public void SetOutput(ITextOutput output, IHighlightingDefinition highlighting) {
+			outputData.Clear();
 			textEditorControl.SetOutput(output, highlighting);
-			newTextContentEvent.Raise(this, EventArgs.Empty);
-			//TODO: CodeMappings should be init'd by the debugger plugin
+			this.textEditorUIContextManagerImpl.RaiseNewContentEvent(this, output, (a, b, c) => newTextContentEvent.Raise(this, EventArgs.Empty), TextEditorUIContextManagerConstants.ORDER_TEXTMARKERSERVICE);
 		}
+
+		public void AddOutputData(object key, object data) {
+			if (key == null)
+				throw new ArgumentNullException();
+			outputData.Add(key, data);
+		}
+
+		public object GetOutputData(object key) {
+			if (key == null)
+				throw new ArgumentNullException();
+			object data;
+			outputData.TryGetValue(key, out data);
+			return data;
+		}
+		readonly Dictionary<object, object> outputData = new Dictionary<object, object>();
 
 		public event EventHandler<EventArgs> NewTextContent {
 			add { newTextContentEvent.Add(value); }
@@ -246,10 +279,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public void Dispose() {
+			textEditorUIContextManagerImpl.RaiseRemovedEvent(this);
 			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
 			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTEDITOR, textEditorControl.TextEditor);
 			this.wpfCommandManager.Remove(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTAREA, textEditorControl.TextEditor.TextArea);
 			textEditorControl.Dispose();
+			outputData.Clear();
 		}
 
 		public void ScrollAndMoveCaretTo(int line, int column) {

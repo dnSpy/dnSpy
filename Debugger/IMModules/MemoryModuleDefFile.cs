@@ -62,6 +62,10 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
+		public override DnSpyFileInfo? SerializedFile {
+			get { return null; }
+		}
+
 		public bool AutoUpdateMemory {
 			get { return autoUpdateMemory; }
 			set { autoUpdateMemory = value; }

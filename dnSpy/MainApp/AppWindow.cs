@@ -28,13 +28,13 @@ using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Themes;
 using dnSpy.Controls;
 using dnSpy.Events;
 using dnSpy.Files.Tabs;
+using dnSpy.Files.Tabs.TextEditor;
 using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.MainApp {
@@ -134,9 +134,9 @@ namespace dnSpy.MainApp {
 		void InitializeTextFormatterProvider() {
 			var newValue = appSettings.UseNewRenderer_TextEditor ? TextFormatterProvider.GlyphRunFormatter : TextFormatterProvider.BuiltIn;
 			TextFormatterFactory.DefaultTextFormatterProvider = newValue;
-			var tabs = fileTabManager.VisibleFirstTabs.Where(a => a.UIContext is ITextEditorUIContext).ToArray();
+			var tabs = fileTabManager.VisibleFirstTabs.Where(a => a.UIContext is ITextEditorUIContextImpl).ToArray();
 			foreach (var tab in tabs)
-				((ITextEditorUIContext)tab.UIContext).OnUseNewRendererChanged();
+				((ITextEditorUIContextImpl)tab.UIContext).OnUseNewRendererChanged();
 			fileTabManager.Refresh(tabs);
 		}
 

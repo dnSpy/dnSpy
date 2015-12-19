@@ -20,21 +20,22 @@
 using System.Diagnostics;
 using dndbg.Engine;
 using dnlib.PE;
+using dnSpy.Contracts.Highlighting;
 using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
+using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class ProcessPrinter {
-		readonly ITextOutput output;
+		readonly ISyntaxHighlightOutput output;
 		readonly bool useHex;
 
-		public ProcessPrinter(ITextOutput output, bool useHex) {
+		public ProcessPrinter(ISyntaxHighlightOutput output, bool useHex) {
 			this.output = output;
 			this.useHex = useHex;
 		}
 
 		void WriteFilename(ProcessVM vm, string filename) {
-			output.WriteFilename_OLD(filename);
+			output.WriteFilename(filename);
 		}
 
 		public void WriteFilename(ProcessVM vm) {

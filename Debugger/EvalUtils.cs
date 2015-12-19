@@ -69,13 +69,13 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		public static T EvaluateCallMethod<T>(DnThread thread, CorValue thisObj, string methodName) {
+		public static T EvaluateCallMethod<T>(ITheDebugger theDebugger, IDebuggerSettings debuggerSettings, DnThread thread, CorValue thisObj, string methodName) {
 			try {
-				if (!DebuggerSettings.Instance.PropertyEvalAndFunctionCalls)
+				if (!debuggerSettings.PropertyEvalAndFunctionCalls)
 					return default(T);
-				if (DebugManager.Instance.EvalDisabled)
+				if (theDebugger.EvalDisabled)
 					return default(T);
-				if (!DebugManager.Instance.CanEvaluate)
+				if (!theDebugger.CanEvaluate)
 					return default(T);
 				if (thisObj == null || thisObj.IsNull)
 					return default(T);
@@ -100,7 +100,7 @@ namespace dnSpy.Debugger {
 					return default(T);
 
 				CorValueResult res;
-				using (var eval = DebugManager.Instance.CreateEval(thread.CorThread))
+				using (var eval = theDebugger.CreateEval(thread.CorThread))
 					res = eval.CallResult(func, null, new CorValue[] { thisObj }, out hr);
 				if (hr < 0)
 					return default(T);

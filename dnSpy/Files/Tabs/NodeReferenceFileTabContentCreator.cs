@@ -18,6 +18,8 @@
 */
 
 using System.ComponentModel.Composition;
+using dnlib.DotNet;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Shared.UI.Search;
@@ -41,6 +43,15 @@ namespace dnSpy.Files.Tabs {
 			var nsRef = @ref as NamespaceRef;
 			if (nsRef != null)
 				return Create(nsRef);
+			var file = @ref as IDnSpyFile;
+			if (file != null)
+				return Create(file);
+			var asm = @ref as AssemblyDef;
+			if (asm != null)
+				return Create(asm);
+			var mod = @ref as ModuleDef;
+			if (mod != null)
+				return Create(mod);
 			return null;
 		}
 
@@ -53,9 +64,22 @@ namespace dnSpy.Files.Tabs {
 
 		FileTabReferenceResult Create(NamespaceRef nsRef) {
 			var node = fileTreeView.FindNamespaceNode(nsRef.Module, nsRef.Namespace);
-			if (node != null)
-				return Create(node);
-			return null;
+			return node == null ? null : Create(node);
+		}
+
+		FileTabReferenceResult Create(IDnSpyFile file) {
+			var node = fileTreeView.FindNode(file);
+			return node == null ? null : Create(node);
+		}
+
+		private FileTabReferenceResult Create(AssemblyDef asm) {
+			var node = fileTreeView.FindNode(asm);
+			return node == null ? null : Create(node);
+		}
+
+		private FileTabReferenceResult Create(ModuleDef mod) {
+			var node = fileTreeView.FindNode(mod);
+			return node == null ? null : Create(node);
 		}
 	}
 }

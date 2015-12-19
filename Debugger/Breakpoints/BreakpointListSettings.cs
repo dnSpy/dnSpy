@@ -19,20 +19,40 @@
 
 using System;
 using System.ComponentModel;
+using System.ComponentModel.Composition;
 using dnlib.DotNet;
-using dnSpy.Contracts;
 using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Settings;
 using dnSpy.Shared.UI.Files;
 
 namespace dnSpy.Debugger.Breakpoints {
-	sealed class BreakpointListSettings {
-		public static readonly BreakpointListSettings Instance = new BreakpointListSettings();
-		static readonly Guid SETTINGS_GUID = new Guid("FBC6039C-8A7A-49DC-9C32-52C1B73DE0A3");
-		int disableSaveCounter;
+	[ExportAutoLoaded]
+	sealed class BreakpointListLoader : IAutoLoaded {
+		[ImportingConstructor]
+		BreakpointListLoader(IBreakpointListSettings breakpointListSettings) {
+			// breakpointListSettings loads the breakpoints
+		}
+	}
 
-		BreakpointListSettings() {
-			BreakpointManager.Instance.OnListModified += BreakpointManager_OnListModified;
+	interface IBreakpointListSettings {
+	}
+
+	[Export, Export(typeof(IBreakpointListSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class BreakpointListSettings : IBreakpointListSettings {
+		static readonly Guid SETTINGS_GUID = new Guid("FBC6039C-8A7A-49DC-9C32-52C1B73DE0A3");
+
+		readonly ISettingsManager settingsManager;
+		readonly Lazy<IModuleLoader> moduleLoader;
+		readonly IBreakpointManager breakpointManager;
+
+		[ImportingConstructor]
+		BreakpointListSettings(ISettingsManager settingsManager, Lazy<IModuleLoader> moduleLoader, IBreakpointManager breakpointManager) {
+			this.settingsManager = settingsManager;
+			this.moduleLoader = moduleLoader;
+			this.breakpointManager = breakpointManager;
+			breakpointManager.OnListModified += BreakpointManager_OnListModified;
+			Load();
 		}
 
 		void BreakpointManager_OnListModified(object sender, BreakpointListModifiedEventArgs e) {
@@ -49,7 +69,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				Save();
 		}
 
-		internal void OnLoaded() {
+		void Load() {
 			disableSaveCounter++;
 			try {
 				LoadInternal();
@@ -58,10 +78,11 @@ namespace dnSpy.Debugger.Breakpoints {
 				disableSaveCounter--;
 			}
 		}
+		int disableSaveCounter;
 
 		void LoadInternal() {
-			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_GUID);
-			BreakpointManager.Instance.Clear();
+			var section = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			breakpointManager.Clear();
 			foreach (var bpx in section.SectionsWithName("Breakpoint")) {
 				uint? token = bpx.Attribute<uint?>("Token");
 				string asmFullName = bpx.Attribute<string>("AssemblyFullName");
@@ -94,7 +115,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				}
 
 				var bp = new ILCodeBreakpoint(key, ilOffset.Value, isEnabled.Value);
-				BreakpointManager.Instance.Add(bp);
+				breakpointManager.Add(bp);
 			}
 		}
 
@@ -103,9 +124,9 @@ namespace dnSpy.Debugger.Breakpoints {
 			if (disableSaveCounter != 0)
 				return;
 
-			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_GUID);
+			var section = settingsManager.RecreateSection(SETTINGS_GUID);
 
-			foreach (var bp in BreakpointManager.Instance.Breakpoints) {
+			foreach (var bp in breakpointManager.Breakpoints) {
 				var ilbp = bp as ILCodeBreakpoint;
 				if (ilbp != null) {
 					if (string.IsNullOrEmpty(ilbp.SerializedDnSpyToken.Module.ModuleName))
@@ -138,8 +159,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		static string GetMethodAsString(SerializedDnSpyToken key) {
-			var file = ModuleLoader.Instance.LoadModule(key.Module, true, true);
+		string GetMethodAsString(SerializedDnSpyToken key) {
+			var file = moduleLoader.Value.LoadModule(key.Module, true, true);
 			var method = file == null ? null : file.ModuleDef.ResolveToken(key.Token) as MethodDef;
 			return method == null ? null : method.ToString();
 		}

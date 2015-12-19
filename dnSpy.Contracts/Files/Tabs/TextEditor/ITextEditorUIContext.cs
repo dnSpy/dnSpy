@@ -36,6 +36,21 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		void SetOutput(ITextOutput output, IHighlightingDefinition highlighting);
 
 		/// <summary>
+		/// Adds data that is cleared each time <see cref="SetOutput(ITextOutput, IHighlightingDefinition)"/>
+		/// gets called.
+		/// </summary>
+		/// <param name="key">Key</param>
+		/// <param name="data">Value</param>
+		void AddOutputData(object key, object data);
+
+		/// <summary>
+		/// Returns data added by <see cref="AddOutputData(object, object)"/> or null if not found
+		/// </summary>
+		/// <param name="key">Key</param>
+		/// <returns></returns>
+		object GetOutputData(object key);
+
+		/// <summary>
 		/// Shows a cancel button. Can be used when decompiling in another thread
 		/// </summary>
 		/// <param name="onCancel">Called if the user clicks the cancel button</param>
@@ -60,20 +75,9 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		bool HasSelectedText { get; }
 
 		/// <summary>
-		/// Raised after the text editor has gotten new text (<see cref="SetOutput(ITextOutput, IHighlightingDefinition)"/>)
+		/// Gets the current location
 		/// </summary>
-		event EventHandler<EventArgs> NewTextContent;
-
-		/// <summary>
-		/// Called when 'use new renderer' option has been changed. <see cref="SetOutput(ITextOutput, IHighlightingDefinition)"/>
-		/// will be called after this method has been called.
-		/// </summary>
-		void OnUseNewRendererChanged();
-
-		/// <summary>
-		/// Gets the current line number
-		/// </summary>
-		int CurrentLine { get; }
+		TextEditorLocation Location { get; }
 
 		/// <summary>
 		/// Scrolls to a line and column

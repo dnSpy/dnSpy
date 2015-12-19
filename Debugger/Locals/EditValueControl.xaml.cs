@@ -24,10 +24,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.Locals {
-	public partial class EditValueControl : UserControl {
+	sealed partial class EditValueControl : UserControl {
 		public static readonly DependencyProperty ReadOnlyContentProperty =
 			DependencyProperty.Register("ReadOnlyContent", typeof(object), typeof(EditValueControl),
 			new FrameworkPropertyMetadata(null));
@@ -148,7 +147,7 @@ namespace dnSpy.Debugger.Locals {
 						error = string.Format("Could not set value: {0}", ex.Message);
 					}
 					if (!string.IsNullOrEmpty(error))
-						MainWindow.Instance.ShowMessageBox(error);
+						Shared.UI.App.MsgBox.Instance.Show(error);
 				}
 			}
 

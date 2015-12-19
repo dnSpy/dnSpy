@@ -17,35 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
-using ICSharpCode.ILSpy;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.App;
 
 namespace dnSpy.Debugger.Exceptions {
 	interface IGetNewExceptionName {
 		string GetName();
 	}
 
+	[Export(typeof(IGetNewExceptionName))]
 	sealed class GetNewExceptionName : IGetNewExceptionName {
-		readonly Window ownerWindow;
+		readonly IMessageBoxManager messageBoxManager;
 
-		public GetNewExceptionName(Window ownerWindow) {
-			this.ownerWindow = ownerWindow;
+		[ImportingConstructor]
+		GetNewExceptionName(IMessageBoxManager messageBoxManager) {
+			this.messageBoxManager = messageBoxManager;
 		}
 
 		public string GetName() {
-			var ask = new AskForInput();
-			ask.Owner = ownerWindow ?? MainWindow.Instance;
-			ask.Title = "Add an Exception";
-			ask.Label.Content = "_Full name";
-			ask.TextBox.Text = string.Empty;
-			ask.ShowDialog();
-			if (ask.DialogResult != true)
-				return null;
-			var t = ask.TextBox.Text.Trim();
-			if (string.IsNullOrEmpty(t))
-				return null;
-
-			return t;
+			var res = messageBoxManager.Ask("_Full name", null, "Add an Exception", s => s.Trim(), s => !string.IsNullOrWhiteSpace(s) ? null : "Missing full name of exception, eg. System.My.Exception");
+			return string.IsNullOrEmpty(res) ? null : res;
 		}
 	}
 }

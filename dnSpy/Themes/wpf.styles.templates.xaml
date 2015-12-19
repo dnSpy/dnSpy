@@ -9,6 +9,7 @@
                     xmlns:mainapp="clr-namespace:dnSpy.MainApp"
                     xmlns:tw="clr-namespace:dnSpy.ToolWindows"
                     xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
+                    xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
                     xmlns:search="clr-namespace:dnSpy.Search"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
@@ -5466,7 +5467,7 @@
     <DataTemplate DataType="{x:Type tabssettings:DisplayAppSettingsVM}">
         <Grid>
             <Grid.Resources>
-                <tabssettings:FontSizeConverter x:Key="fontSizeConverter" />
+                <mvvmvc:FontSizeConverter x:Key="fontSizeConverter" />
                 <tabssettings:FontFamilyVMConverter x:Key="fontFamilyVMConverter" />
             </Grid.Resources>
             <Grid.RowDefinitions>

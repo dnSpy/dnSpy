@@ -18,16 +18,18 @@
 */
 
 using System;
-using dnSpy.Contracts;
+using System.ComponentModel;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Settings;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Breakpoints {
-	sealed class BreakpointSettings : ViewModelBase {
-		public static readonly BreakpointSettings Instance = new BreakpointSettings();
-		int disableSaveCounter;
+	interface IBreakpointSettings : INotifyPropertyChanged {
+		bool ShowTokens { get; }
+	}
 
-		BreakpointSettings() {
-			Load();
+	class BreakpointSettings : ViewModelBase, IBreakpointSettings {
+		protected virtual void OnModified() {
 		}
 
 		public bool ShowTokens {
@@ -35,36 +37,36 @@ namespace dnSpy.Debugger.Breakpoints {
 			set {
 				if (showTokens != value) {
 					showTokens = value;
-					Save();
 					OnPropertyChanged("ShowTokens");
+					OnModified();
 				}
 			}
 		}
-		bool showTokens;
+		bool showTokens = true;
+	}
 
+	[Export, Export(typeof(IBreakpointSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class BreakpointSettingsImpl : BreakpointSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("42CB1310-641D-4EB7-971D-16DC5CF9A40D");
 
-		void Load() {
-			try {
-				disableSaveCounter++;
+		readonly ISettingsManager settingsManager;
 
-				var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_GUID);
-				ShowTokens = section.Attribute<bool?>("ShowTokens") ?? true;
-			}
-			finally {
-				disableSaveCounter--;
-			}
+		[ImportingConstructor]
+		BreakpointSettingsImpl(ISettingsManager settingsManager) {
+			this.settingsManager = settingsManager;
+
+			this.disableSave = true;
+			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			ShowTokens = sect.Attribute<bool?>("ShowTokens") ?? ShowTokens;
+			this.disableSave = false;
 		}
+		readonly bool disableSave;
 
-		void Save() {
-			if (this != BreakpointSettings.Instance)
+		protected override void OnModified() {
+			if (disableSave)
 				return;
-			if (disableSaveCounter != 0)
-				return;
-
-			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_GUID);
-
-			section.Attribute("ShowTokens", ShowTokens);
+			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
+			sect.Attribute("ShowTokens", ShowTokens);
 		}
 	}
 }

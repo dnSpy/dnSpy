@@ -17,15 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Highlighting;
 using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger.Locals {
 	sealed class ValuePrinter {
-		readonly ITextOutput output;
+		readonly ISyntaxHighlightOutput output;
 		readonly bool useHex;
 
-		public ValuePrinter(ITextOutput output, bool useHex) {
+		public ValuePrinter(ISyntaxHighlightOutput output, bool useHex) {
 			this.output = output;
 			this.useHex = useHex;
 		}

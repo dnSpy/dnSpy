@@ -18,12 +18,9 @@
 */
 
 using System;
-using System.Windows.Media;
-using dnSpy.AvalonEdit;
-using dnSpy.Contracts;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Shared.UI.Files;
-using ICSharpCode.ILSpy.AvalonEdit;
-using ICSharpCode.ILSpy.TextView;
 
 namespace dnSpy.Debugger.CallStack {
 	enum StackFrameLineType {
@@ -52,11 +49,11 @@ namespace dnSpy.Debugger.CallStack {
 			get {
 				switch (type) {
 				case StackFrameLineType.CurrentStatement:
-					return (int)TextLineObjectZOrder.CurrentStatement;
+					return TextEditorConstants.ZORDER_CURRENTSTATEMENT;
 				case StackFrameLineType.SelectedReturnStatement:
-					return (int)TextLineObjectZOrder.SelectedReturnStatement;
+					return TextEditorConstants.ZORDER_SELECTEDRETURNSTATEMENT;
 				case StackFrameLineType.ReturnStatement:
-					return (int)TextLineObjectZOrder.ReturnStatement;
+					return TextEditorConstants.ZORDER_RETURNSTATEMENT;
 				default:
 					throw new InvalidOperationException();
 				}
@@ -65,18 +62,18 @@ namespace dnSpy.Debugger.CallStack {
 
 		readonly StackFrameLineType type;
 
-		internal DecompilerTextView TextView {
-			get { return decompilerTextView; }
+		internal ITextEditorUIContext TextView {
+			get { return uiContext; }
 		}
-		readonly DecompilerTextView decompilerTextView;
+		readonly ITextEditorUIContext uiContext;
 
-		public StackFrameLine(StackFrameLineType type, DecompilerTextView decompilerTextView, SerializedDnSpyToken methodKey, uint ilOffset)
+		public StackFrameLine(StackFrameLineType type, ITextEditorUIContext uiContext, SerializedDnSpyToken methodKey, uint ilOffset)
 			: base(methodKey, ilOffset) {
 			this.type = type;
-			this.decompilerTextView = decompilerTextView;
+			this.uiContext = uiContext;
 		}
 
-		protected override void Initialize(DecompilerTextView textView, ITextMarkerService markerService, ITextMarker marker) {
+		protected override void Initialize(ITextEditorUIContext uiContext, ITextMarkerService markerService, ITextMarker marker) {
 			marker.HighlightingColor = () => {
 				switch (type) {
 				case StackFrameLineType.CurrentStatement:
@@ -91,11 +88,13 @@ namespace dnSpy.Debugger.CallStack {
 			};
 		}
 
-		public override ImageSource GetImage(Color bgColor) {
-			var name = GetImageName();
-			if (name != null)
-				return DnSpy.App.ImageManager.GetImage(GetType().Assembly, name, bgColor);
-			return null;
+		public override ImageReference? ImageReference {
+			get {
+				var name = GetImageName();
+				if (name != null)
+					return new ImageReference(GetType().Assembly, name);
+				return null;
+			}
 		}
 
 		string GetImageName() {
@@ -111,8 +110,8 @@ namespace dnSpy.Debugger.CallStack {
 			}
 		}
 
-		public override bool IsVisible(DecompilerTextView textView) {
-			return decompilerTextView == textView;
+		public override bool IsVisible(ITextEditorUIContext uiContext) {
+			return this.uiContext == uiContext;
 		}
 	}
 }

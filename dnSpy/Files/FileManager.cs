@@ -128,7 +128,7 @@ namespace dnSpy.Files {
 			return null;
 		}
 
-		IDnSpyFile Find(IDnSpyFilenameKey key) {
+		public IDnSpyFile Find(IDnSpyFilenameKey key) {
 			lock (lockObj)
 				return Find_NoLock(key);
 		}

@@ -52,6 +52,13 @@ namespace dnSpy.TreeView {
 			get { return sharpTreeView; }
 		}
 
+		public ITreeNodeData SelectedItem {
+			get {
+				var node = sharpTreeView.SelectedItem as DnSpySharpTreeNode;
+				return node == null ? null : node.TreeNodeImpl.Data;
+			}
+		}
+
 		public ITreeNodeData[] SelectedItems {
 			get { return Convert(sharpTreeView.SelectedItems); }
 		}

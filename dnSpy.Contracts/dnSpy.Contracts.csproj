@@ -102,11 +102,15 @@
     <Compile Include="Files\Tabs\TextEditor\IMarkedTextLine.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextEditorSettings.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextEditorUIContext.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ITextEditorUIContextManager.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextLineObject.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextLineObjectManager.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextMarker.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextMarkerObject.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorConstants.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextEditorLocation.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextListenerEvent.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextManagerConstants.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextLineObjectEventArgs.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextLineObjectListModifiedEventArgs.cs" />
     <Compile Include="Files\Tabs\TextEditor\ToolTips\ICodeToolTipCreator.cs" />

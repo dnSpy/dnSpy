@@ -24,7 +24,6 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Threading;
 using dndbg.Engine;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger {
 	sealed class DebuggedProcessRunningEventArgs : EventArgs {
@@ -45,8 +44,13 @@ namespace dnSpy.Debugger {
 		[DllImport("user32")]
 		static extern bool SetForegroundWindow(IntPtr hWnd);
 
-		internal DebuggedProcessRunningNotifier() {
-			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
+		readonly Dispatcher dispatcher;
+		readonly ITheDebugger theDebugger;
+
+		public DebuggedProcessRunningNotifier(ITheDebugger theDebugger) {
+			this.dispatcher = Dispatcher.CurrentDispatcher;
+			this.theDebugger = theDebugger;
+			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 		}
 
 		public event EventHandler<DebuggedProcessRunningEventArgs> ProcessRunning;
@@ -54,15 +58,15 @@ namespace dnSpy.Debugger {
 		bool isRunning;
 		int isRunningId;
 
-		void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
-			if (DebugManager.Instance.Debugger == null)
+		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+			if (theDebugger.Debugger == null)
 				return;
-			if (DebugManager.Instance.Debugger.IsEvaluating)
+			if (theDebugger.Debugger.IsEvaluating)
 				return;
-			bool newIsRunning = DebugManager.Instance.ProcessState == DebuggerProcessState.Running;
+			bool newIsRunning = theDebugger.ProcessState == DebuggerProcessState.Running;
 			if (newIsRunning == isRunning)
 				return;
-			var dnProcess = DebugManager.Instance.Debugger.Processes.FirstOrDefault();
+			var dnProcess = theDebugger.Debugger.Processes.FirstOrDefault();
 			if (dnProcess == null)
 				return;
 
@@ -79,10 +83,9 @@ namespace dnSpy.Debugger {
 			timer = new Timer(a => {
 				timer.Dispose();
 				if (id == isRunningId) {
-					var cur = App.Current;
-					if (cur == null)
+					if (dispatcher.HasShutdownStarted || dispatcher.HasShutdownFinished)
 						return;
-					cur.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
+					dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
 						if (id == isRunningId) {
 							if (ProcessRunning != null)
 								ProcessRunning(this, new DebuggedProcessRunningEventArgs(process));

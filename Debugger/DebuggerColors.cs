@@ -17,14 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using System.Windows.Media;
-using dnSpy.Contracts;
+using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Themes;
 using dnSpy.Shared.UI.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace dnSpy.Debugger {
-	static class DebuggerColors {
+	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
+	sealed class DebuggerColors : IAutoLoaded {
 		public static HighlightingColor CodeBreakpointHighlightingColor = new HighlightingColor {
 			Background = new SimpleHighlightingBrush(Color.FromRgb(0xB4, 0x26, 0x26)),
 			Foreground = new SimpleHighlightingBrush(Colors.White),
@@ -43,13 +45,18 @@ namespace dnSpy.Debugger {
 			Foreground = new SimpleHighlightingBrush(Colors.Blue),
 		};
 
-		static DebuggerColors() {
-			DnSpy.App.ThemeManager.ThemeChanged += (s, e) => OnThemeUpdated();
-			OnThemeUpdated();
+		[ImportingConstructor]
+		DebuggerColors(IThemeManager themeManager) {
+			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
+			OnThemeUpdated(themeManager);
 		}
 
-		static void OnThemeUpdated() {
-			var theme = DnSpy.App.ThemeManager.Theme;
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
+			OnThemeUpdated((IThemeManager)sender);
+		}
+
+		void OnThemeUpdated(IThemeManager themeManager) {
+			var theme = themeManager.Theme;
 			CodeBreakpointHighlightingColor = theme.GetTextColor(ColorType.BreakpointStatement).ToHighlightingColor();
 			CodeBreakpointDisabledHighlightingColor = theme.GetTextColor(ColorType.DisabledBreakpointStatement).ToHighlightingColor();
 			StackFrameCurrentHighlightingColor = theme.GetTextColor(ColorType.CurrentStatement).ToHighlightingColor();

@@ -20,111 +20,139 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Windows.Controls;
 using System.Windows.Input;
 using dndbg.Engine;
-using dnSpy.AvalonEdit;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
-using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Debugger.Breakpoints;
 using dnSpy.Debugger.Memory;
-using dnSpy.Shared.UI.Images;
 using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.UI.MVVM;
 using dnSpy.Shared.UI.ToolBars;
-using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.AvalonEdit;
-using ICSharpCode.ILSpy.TextView;
 
 namespace dnSpy.Debugger {
-	abstract class DebugToolBarButtonCommand : ToolBarButtonCommand {
-		internal static void OnLoaded() {
-			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
+	[ExportAutoLoaded]
+	sealed class RefreshToolBarCommand : IAutoLoaded {
+		readonly ITheDebugger theDebugger;
+		readonly IAppWindow appWindow;
+
+		[ImportingConstructor]
+		RefreshToolBarCommand(ITheDebugger theDebugger, IAppWindow appWindow) {
+			this.theDebugger = theDebugger;
+			this.appWindow = appWindow;
+			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 		}
 
-		static void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
-			bool newIsDebugging = DebugManager.Instance.IsDebugging;
+		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+			bool newIsDebugging = theDebugger.IsDebugging;
 			if (newIsDebugging != prevIsDebugging) {
 				prevIsDebugging = newIsDebugging;
-				MainWindow.Instance.UpdateToolbar();
+				appWindow.RefreshToolBar();
 			}
 		}
-		static bool? prevIsDebugging = null;
+		bool? prevIsDebugging = null;
+	}
 
-		protected DebugToolBarButtonCommand(ICommand command)
+	abstract class DebugToolBarButtonCommand : ToolBarButtonCommand {
+		protected readonly Lazy<ITheDebugger> theDebugger;
+
+		// Prevents ITheDebugger from being loaded since IsVisible will be called early. We're
+		// never debugging when the program starts so there's no need to check IsDebugging.
+		[ExportAutoLoaded]
+		sealed class Loader : IAutoLoaded {
+			[ImportingConstructor]
+			Loader(IAppWindow appWindow) {
+				initd = true;
+			}
+		}
+		protected static bool initd;
+
+		protected DebugToolBarButtonCommand(ICommand command, Lazy<ITheDebugger> theDebugger)
 			: base(command) {
+			this.theDebugger = theDebugger;
 		}
 
 		public override bool IsVisible(IToolBarItemContext context) {
-			return DebugManager.Instance.IsDebugging;
+			return initd && theDebugger.Value.IsDebugging;
 		}
 	}
 
 	[ExportToolBarButton(Icon = "StartDebugging", ToolTip = "Debug an Assembly (F5)", Header = "Start", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG, Order = 0)]
 	sealed class DebugAssemblyToolbarCommand : DebugToolBarButtonCommand {
-		public DebugAssemblyToolbarCommand()
-			: base(DebugRoutedCommands.DebugAssembly) {
+		[ImportingConstructor]
+		public DebugAssemblyToolbarCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.DebugAssembly, theDebugger) {
 		}
 
 		public override bool IsVisible(IToolBarItemContext context) {
-			return !DebugManager.Instance.IsDebugging;
+			return !initd || !theDebugger.Value.IsDebugging;
 		}
 	}
 
 	[ExportToolBarButton(Icon = "ContinueDebugging", ToolTip = "Continue (F5)", Header = "Continue", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 0)]
 	sealed class ContinueDebugToolBarButtonCommand : DebugToolBarButtonCommand {
-		public ContinueDebugToolBarButtonCommand()
-			: base(DebugRoutedCommands.Continue) {
+		[ImportingConstructor]
+		public ContinueDebugToolBarButtonCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.Continue, theDebugger) {
 		}
 	}
 
 	[ExportToolBarButton(Icon = "Break", ToolTip = "Break (Ctrl+Break)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 10)]
 	sealed class BreakDebugToolBarButtonCommand : DebugToolBarButtonCommand {
-		public BreakDebugToolBarButtonCommand()
-			: base(DebugRoutedCommands.Break) {
+		[ImportingConstructor]
+		public BreakDebugToolBarButtonCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.Break, theDebugger) {
 		}
 	}
 
 	[ExportToolBarButton(Icon = "StopProcess", ToolTip = "Stop Debugging (Shift+F5)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 20)]
 	sealed class StopDebugToolBarButtonCommand : DebugToolBarButtonCommand {
-		public StopDebugToolBarButtonCommand()
-			: base(DebugRoutedCommands.Stop) {
+		[ImportingConstructor]
+		public StopDebugToolBarButtonCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.Stop, theDebugger) {
 		}
 	}
 
 	[ExportToolBarButton(Icon = "RestartProcess", ToolTip = "Restart (Ctrl+Shift+F5)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_CONTINUE, Order = 30)]
 	sealed class RestartDebugToolBarButtonCommand : DebugToolBarButtonCommand {
-		public RestartDebugToolBarButtonCommand()
-			: base(DebugRoutedCommands.Restart) {
+		[ImportingConstructor]
+		public RestartDebugToolBarButtonCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.Restart, theDebugger) {
 		}
 	}
 
 	[ExportToolBarButton(Icon = "CurrentLineToolBar", ToolTip = "Show Next Statement (Alt+Num *)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 0)]
 	sealed class ShowNextStatementDebugToolBarButtonCommand : DebugToolBarButtonCommand {
-		public ShowNextStatementDebugToolBarButtonCommand()
-			: base(DebugRoutedCommands.ShowNextStatement) {
+		[ImportingConstructor]
+		public ShowNextStatementDebugToolBarButtonCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.ShowNextStatement, theDebugger) {
 		}
 	}
 
 	[ExportToolBarButton(Icon = "StepInto", ToolTip = "Step Into (F11)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 10)]
 	sealed class StepIntoDebugToolBarButtonCommand : DebugToolBarButtonCommand {
-		public StepIntoDebugToolBarButtonCommand()
-			: base(DebugRoutedCommands.StepInto) {
+		[ImportingConstructor]
+		public StepIntoDebugToolBarButtonCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.StepInto, theDebugger) {
 		}
 	}
 
 	[ExportToolBarButton(Icon = "StepOver", ToolTip = "Step Over (F10)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 20)]
 	sealed class StepOverDebugToolBarButtonCommand : DebugToolBarButtonCommand {
-		public StepOverDebugToolBarButtonCommand()
-			: base(DebugRoutedCommands.StepOver) {
+		[ImportingConstructor]
+		public StepOverDebugToolBarButtonCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.StepOver, theDebugger) {
 		}
 	}
 
 	[ExportToolBarButton(Icon = "StepOut", ToolTip = "Step Out (Shift+F11)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_DEBUG_STEP, Order = 30)]
 	sealed class StepOutDebugToolBarButtonCommand : DebugToolBarButtonCommand {
-		public StepOutDebugToolBarButtonCommand()
-			: base(DebugRoutedCommands.StepOut) {
+		[ImportingConstructor]
+		public StepOutDebugToolBarButtonCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.StepOut, theDebugger) {
 		}
 	}
 
@@ -154,12 +182,16 @@ namespace dnSpy.Debugger {
 
 	[ExportMenuItem(Header = "_Debug Assembly", Icon = "StartDebugging", InputGestureText = "F5", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 0)]
 	sealed class DebugAssemblyDebugCtxMenuCommand : DebugCtxMenuCommand {
-		public DebugAssemblyDebugCtxMenuCommand()
+		readonly Lazy<IDebugManager> debugManager;
+
+		[ImportingConstructor]
+		public DebugAssemblyDebugCtxMenuCommand(Lazy<IDebugManager> debugManager)
 			: base(DebugRoutedCommands.DebugCurrentAssembly) {
+			this.debugManager = debugManager;
 		}
 
 		public override string GetHeader(IMenuItemContext context) {
-			var asm = DebugManager.Instance.GetCurrentExecutableAssembly(context);
+			var asm = debugManager.Value.GetCurrentExecutableAssembly(context);
 			if (asm == null)
 				return null;
 			return string.Format("_Debug {0}", UIUtils.EscapeMenuItemHeader(asm.GetShortName()));
@@ -173,13 +205,17 @@ namespace dnSpy.Debugger {
 
 	[ExportMenuItem(Icon = "BreakpointMenu", InputGestureText = "F9", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 10)]
 	sealed class ToggleBreakpointDebugCtxMenuCommand : DebugCtxMenuCommand {
-		public ToggleBreakpointDebugCtxMenuCommand()
+		readonly Lazy<IBreakpointManager> breakpointManager;
+
+		[ImportingConstructor]
+		public ToggleBreakpointDebugCtxMenuCommand(Lazy<IBreakpointManager> breakpointManager)
 			: base(DebugRoutedCommands.ToggleBreakpoint) {
+			this.breakpointManager = breakpointManager;
 		}
 
 		public override string GetHeader(IMenuItemContext context) {
 			int count;
-			bool? enabled = BreakpointManager.Instance.GetAddRemoveBreakpointsInfo(out count);
+			bool? enabled = breakpointManager.Value.GetAddRemoveBreakpointsInfo(out count);
 
 			if (enabled == null)
 				return "_Add Breakpoint";
@@ -191,19 +227,23 @@ namespace dnSpy.Debugger {
 
 	[ExportMenuItem(InputGestureText = "Ctrl+F9", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 20)]
 	sealed class EnableDisableBreakpointDebugCtxMenuCommand : DebugCtxMenuCommand {
-		public EnableDisableBreakpointDebugCtxMenuCommand()
+		readonly Lazy<IBreakpointManager> breakpointManager;
+
+		[ImportingConstructor]
+		public EnableDisableBreakpointDebugCtxMenuCommand(Lazy<IBreakpointManager> breakpointManager)
 			: base(DebugRoutedCommands.DisableBreakpoint) {
+			this.breakpointManager = breakpointManager;
 		}
 
 		public override bool IsEnabled(IMenuItemContext context) {
 			int count;
-			bool enabled = BreakpointManager.Instance.GetEnableDisableBreakpointsInfo(out count);
+			bool enabled = breakpointManager.Value.GetEnableDisableBreakpointsInfo(out count);
 			return IsMenuItemEnabledInternal(count);
 		}
 
 		public override string GetHeader(IMenuItemContext context) {
 			int count;
-			bool enabled = BreakpointManager.Instance.GetEnableDisableBreakpointsInfo(out count);
+			bool enabled = breakpointManager.Value.GetEnableDisableBreakpointsInfo(out count);
 			return GetHeaderInternal(enabled, count);
 		}
 
@@ -241,177 +281,207 @@ namespace dnSpy.Debugger {
 	}
 
 	abstract class DebugMainMenuCommand : MenuItemCommand {
+		readonly Lazy<ITheDebugger> theDebugger;
 		readonly bool? mustBeDebugging;
 
-		protected DebugMainMenuCommand(ICommand realCmd, bool? mustBeDebugging)
+		protected DebugMainMenuCommand(ICommand realCmd, Lazy<ITheDebugger> theDebugger, bool? mustBeDebugging)
 			: base(realCmd) {
+			this.theDebugger = theDebugger;
 			this.mustBeDebugging = mustBeDebugging;
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
-			return mustBeDebugging == null || DebugManager.Instance.IsDebugging == mustBeDebugging;
+			return mustBeDebugging == null || theDebugger.Value.IsDebugging == mustBeDebugging;
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Debug an Assembl_y...", Icon = "StartDebugging", InputGestureText = "F5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 0)]
 	sealed class DebugAssemblyDebugMainMenuCommand : DebugMainMenuCommand {
-		public DebugAssemblyDebugMainMenuCommand()
-			: base(DebugRoutedCommands.DebugAssembly, false) {
+		[ImportingConstructor]
+		public DebugAssemblyDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.DebugAssembly, theDebugger, false) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Start Wit_hout Debugging", Icon = "StartWithoutDebugging", InputGestureText = "Ctrl+F5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 10)]
 	sealed class StartWithoutDegbuggingDebugMainMenuCommand : DebugMainMenuCommand {
-		public StartWithoutDegbuggingDebugMainMenuCommand()
-			: base(DebugRoutedCommands.StartWithoutDebugging, false) {
+		[ImportingConstructor]
+		public StartWithoutDegbuggingDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.StartWithoutDebugging, theDebugger, false) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Debug a CoreCLR Assembl_y...", Icon = "StartDebugging", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 20)]
 	sealed class DebugCoreCLRAssemblyDebugMainMenuCommand : DebugMainMenuCommand {
-		public DebugCoreCLRAssemblyDebugMainMenuCommand()
-			: base(DebugRoutedCommands.DebugCoreCLRAssembly, false) {
+		[ImportingConstructor]
+		public DebugCoreCLRAssemblyDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.DebugCoreCLRAssembly, theDebugger, false) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Attach to _Process...", Icon = "Process", InputGestureText = "Ctrl+Alt+P", Group = MenuConstants.GROUP_APP_MENU_DEBUG_START, Order = 30)]
 	sealed class AttachDebugMainMenuCommand : DebugMainMenuCommand {
-		public AttachDebugMainMenuCommand()
-			: base(DebugRoutedCommands.Attach, false) {
+		[ImportingConstructor]
+		public AttachDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.Attach, theDebugger, false) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "_Continue", Icon = "ContinueDebugging", InputGestureText = "F5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 0)]
 	sealed class ContinueDebugMainMenuCommand : DebugMainMenuCommand {
-		public ContinueDebugMainMenuCommand()
-			: base(DebugRoutedCommands.Continue, true) {
+		[ImportingConstructor]
+		public ContinueDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.Continue, theDebugger, true) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Brea_k", Icon = "Break", InputGestureText = "Ctrl+Break", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 10)]
 	sealed class BreakDebugMainMenuCommand : DebugMainMenuCommand {
-		public BreakDebugMainMenuCommand()
-			: base(DebugRoutedCommands.Break, true) {
+		[ImportingConstructor]
+		public BreakDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.Break, theDebugger, true) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Stop D_ebugging", Icon = "StopProcess", InputGestureText = "Shift+F5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 20)]
 	sealed class StopDebugMainMenuCommand : DebugMainMenuCommand {
-		public StopDebugMainMenuCommand()
-			: base(DebugRoutedCommands.Stop, true) {
+		[ImportingConstructor]
+		public StopDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.Stop, theDebugger, true) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "_Detach", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 30)]
 	sealed class DetachDebugMainMenuCommand : DebugMainMenuCommand {
-		public DetachDebugMainMenuCommand()
-			: base(DebugRoutedCommands.Detach, true) {
+		[ImportingConstructor]
+		public DetachDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.Detach, theDebugger, true) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "_Restart", Icon = "RestartProcess", InputGestureText = "Ctrl+Shift+F5", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 40)]
 	sealed class RestartDebugMainMenuCommand : DebugMainMenuCommand {
-		public RestartDebugMainMenuCommand()
-			: base(DebugRoutedCommands.Restart, true) {
+		[ImportingConstructor]
+		public RestartDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.Restart, theDebugger, true) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Step _Into", Icon = "StepInto", InputGestureText = "F11", Group = MenuConstants.GROUP_APP_MENU_DEBUG_STEP, Order = 0)]
 	sealed class StepIntoDebugMainMenuCommand : DebugMainMenuCommand {
-		public StepIntoDebugMainMenuCommand()
-			: base(DebugRoutedCommands.StepInto, true) {
+		[ImportingConstructor]
+		public StepIntoDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.StepInto, theDebugger, true) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Step _Over", Icon = "StepOver", InputGestureText = "F10", Group = MenuConstants.GROUP_APP_MENU_DEBUG_STEP, Order = 10)]
 	sealed class StepOverDebugMainMenuCommand : DebugMainMenuCommand {
-		public StepOverDebugMainMenuCommand()
-			: base(DebugRoutedCommands.StepOver, true) {
+		[ImportingConstructor]
+		public StepOverDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.StepOver, theDebugger, true) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Step Ou_t", Icon = "StepOut", InputGestureText = "Shift+F11", Group = MenuConstants.GROUP_APP_MENU_DEBUG_STEP, Order = 20)]
 	sealed class StepOutDebugMainMenuCommand : DebugMainMenuCommand {
-		public StepOutDebugMainMenuCommand()
-			: base(DebugRoutedCommands.StepOut, true) {
+		[ImportingConstructor]
+		public StepOutDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.StepOut, theDebugger, true) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "To_ggle Breakpoint", InputGestureText = "F9", Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 0)]
 	sealed class ToggleBreakpointDebugMainMenuCommand : DebugMainMenuCommand {
-		public ToggleBreakpointDebugMainMenuCommand()
-			: base(DebugRoutedCommands.ToggleBreakpoint, null) {
+		[ImportingConstructor]
+		public ToggleBreakpointDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.ToggleBreakpoint, theDebugger, null) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Delete _All Breakpoints", Icon = "DeleteAllBreakpoints", InputGestureText = "Ctrl+Shift+F9", Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 10)]
 	sealed class DeleteAllBreakpointsDebugMainMenuCommand : DebugMainMenuCommand {
-		public DeleteAllBreakpointsDebugMainMenuCommand()
-			: base(DebugRoutedCommands.DeleteAllBreakpoints, null) {
+		[ImportingConstructor]
+		public DeleteAllBreakpointsDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.DeleteAllBreakpoints, theDebugger, null) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Enable All Breakpoi_nts", Icon = "EnableAllBreakpoints", Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 20)]
 	sealed class EnableAllBreakpointsDebugMainMenuCommand : DebugMainMenuCommand {
-		public EnableAllBreakpointsDebugMainMenuCommand()
-			: base(DebugRoutedCommands.EnableAllBreakpoints, null) {
+		readonly IAppWindow appWindow;
+
+		[ImportingConstructor]
+		public EnableAllBreakpointsDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger, IAppWindow appWindow)
+			: base(DebugRoutedCommands.EnableAllBreakpoints, theDebugger, null) {
+			this.appWindow = appWindow;
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
-			return DebugRoutedCommands.EnableAllBreakpoints.CanExecute(null, MainWindow.Instance);
+			return DebugRoutedCommands.EnableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Disable All Breakpoi_nts", Icon = "DisableAllBreakpoints", Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 30)]
 	sealed class DisableAllBreakpointsDebugMainMenuCommand : DebugMainMenuCommand {
-		public DisableAllBreakpointsDebugMainMenuCommand()
-			: base(DebugRoutedCommands.DisableAllBreakpoints, null) {
+		readonly IAppWindow appWindow;
+
+		[ImportingConstructor]
+		public DisableAllBreakpointsDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger, IAppWindow appWindow)
+			: base(DebugRoutedCommands.DisableAllBreakpoints, theDebugger, null) {
+			this.appWindow = appWindow;
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
-			return DebugRoutedCommands.DisableAllBreakpoints.CanExecute(null, MainWindow.Instance);
+			return DebugRoutedCommands.DisableAllBreakpoints.CanExecute(null, appWindow.MainWindow);
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "_Breakpoints", Icon = "BreakpointsWindow", InputGestureText = "Ctrl+Alt+B", Group = MenuConstants.GROUP_APP_MENU_DEBUG_BREAKPOINTS, Order = 40)]
 	sealed class BreakpointsWindowCommand : DebugMainMenuCommand {
-		public BreakpointsWindowCommand()
-			: base(DebugRoutedCommands.ShowBreakpoints, null) {
+		[ImportingConstructor]
+		public BreakpointsWindowCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.ShowBreakpoints, theDebugger, null) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "_Locals", Icon = "LocalsWindow", InputGestureText = "Alt+4", Group = MenuConstants.GROUP_APP_MENU_DEBUG_SHOW, Order = 0)]
 	sealed class LocalsWindowCommand : DebugMainMenuCommand {
-		public LocalsWindowCommand()
-			: base(DebugRoutedCommands.ShowLocals, true) {
+		[ImportingConstructor]
+		public LocalsWindowCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.ShowLocals, theDebugger, true) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Call _Stack", Icon = "CallStackWindow", InputGestureText = "Ctrl+Alt+C", Group = MenuConstants.GROUP_APP_MENU_DEBUG_SHOW, Order = 10)]
 	sealed class CallStackWindowCommand : DebugMainMenuCommand {
-		public CallStackWindowCommand()
-			: base(DebugRoutedCommands.ShowCallStack, true) {
+		[ImportingConstructor]
+		public CallStackWindowCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.ShowCallStack, theDebugger, true) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "T_hreads", Icon = "Thread", InputGestureText = "Ctrl+Alt+H", Group = MenuConstants.GROUP_APP_MENU_DEBUG_SHOW, Order = 20)]
 	sealed class ThreadsWindowCommand : DebugMainMenuCommand {
-		public ThreadsWindowCommand()
-			: base(DebugRoutedCommands.ShowThreads, true) {
+		[ImportingConstructor]
+		public ThreadsWindowCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.ShowThreads, theDebugger, true) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "Mod_ules", Icon = "ModulesWindow", InputGestureText = "Ctrl+Alt+U", Group = MenuConstants.GROUP_APP_MENU_DEBUG_SHOW, Order = 30)]
 	sealed class ModulesWindowCommand : DebugMainMenuCommand {
-		public ModulesWindowCommand()
-			: base(DebugRoutedCommands.ShowModules, true) {
+		[ImportingConstructor]
+		public ModulesWindowCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.ShowModules, theDebugger, true) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "E_xception Settings", Icon = "ExceptionSettings", InputGestureText = "Ctrl+Alt+E", Group = MenuConstants.GROUP_APP_MENU_DEBUG_SHOW, Order = 40)]
 	sealed class ExceptionSettingsWindowCommand : DebugMainMenuCommand {
-		public ExceptionSettingsWindowCommand()
-			: base(DebugRoutedCommands.ShowExceptions, null) {
+		[ImportingConstructor]
+		public ExceptionSettingsWindowCommand(Lazy<ITheDebugger> theDebugger)
+			: base(DebugRoutedCommands.ShowExceptions, theDebugger, null) {
 		}
 	}
 
@@ -422,11 +492,18 @@ namespace dnSpy.Debugger {
 
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "_Memory", Icon = "MemoryWindow", Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_APP_MENU_DEBUG_SHOW, Order = 50)]
 	sealed class MemoryWindowCommand : MenuItemBase {
+		readonly Lazy<ITheDebugger> theDebugger;
+
+		[ImportingConstructor]
+		MemoryWindowCommand(Lazy<ITheDebugger> theDebugger) {
+			this.theDebugger = theDebugger;
+		}
+
 		public override void Execute(IMenuItemContext context) {
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
-			return DebugManager.Instance.IsDebugging;
+			return theDebugger.Value.IsDebugging;
 		}
 	}
 
@@ -452,7 +529,7 @@ namespace dnSpy.Debugger {
 			subCmds = new Tuple<IMenuItem, string, string>[DebugRoutedCommands.ShowMemoryCommands.Length];
 			for (int i = 0; i < subCmds.Length; i++) {
 				var inputGestureText = GetInputGestureText(i);
-				var headerText = MemoryControlCreator.GetHeaderText(i);
+				var headerText = MemoryWindowsHelper.GetHeaderText(i);
 				var cmd = new CommandToMenuItem(DebugRoutedCommands.ShowMemoryCommands[i]);
 				subCmds[i] = Tuple.Create((IMenuItem)cmd, headerText, inputGestureText);
 			}
@@ -482,19 +559,36 @@ namespace dnSpy.Debugger {
 		}
 	}
 
+	/*TODO:
 	[ExportIconBarActionEntry(Icon = "BreakpointMenu", Category = "Debug")]
 	sealed class BreakpointCommand : IIconBarActionEntry {
-		public bool IsEnabled(DecompilerTextView textView) {
+		readonly Lazy<IBreakpointManager> breakpointManager;
+
+		[ImportingConstructor]
+		BreakpointCommand(Lazy<IBreakpointManager> breakpointManager) {
+			this.breakpointManager = breakpointManager;
+		}
+
+		public bool IsEnabled(ITextEditorUIContext uiContext) {
 			return true;
 		}
 
-		public void Execute(DecompilerTextView textView, int line) {
-			BreakpointManager.Instance.Toggle(textView, line);
+		public void Execute(ITextEditorUIContext uiContext, int line) {
+			breakpointManager.Value.Toggle(uiContext, line);
 		}
 	}
+	*/
 
+	/*TODO:
 	[ExportIconBarContextMenuEntry(Header = "D_elete Breakpoint", Icon = "BreakpointMenu", Category = "Debug", Order = 100)]
 	sealed class DeleteBreakpointCommand : IIconBarContextMenuEntry {
+		readonly Lazy<IBreakpointManager> breakpointManager;
+
+		[ImportingConstructor]
+		DeleteBreakpointCommand(Lazy<IBreakpointManager> breakpointManager) {
+			this.breakpointManager = breakpointManager;
+		}
+
 		public bool IsVisible(IIconBarObject context) {
 			return context is ILCodeBreakpoint;
 		}
@@ -506,10 +600,12 @@ namespace dnSpy.Debugger {
 		public void Execute(IIconBarObject context) {
 			var bpm = context as ILCodeBreakpoint;
 			if (bpm != null)
-				BreakpointManager.Instance.Remove(bpm);
+				breakpointManager.Value.Remove(bpm);
 		}
 	}
+	*/
 
+	/*TODO:
 	[ExportIconBarContextMenuEntry(InputGestureText = "Ctrl+F9", Category = "Debug", Order = 110)]
 	sealed class EnableAndDisableBreakpointCommand : IIconBarContextMenuEntry2 {
 		readonly IImageManager imageManager;
@@ -542,4 +638,5 @@ namespace dnSpy.Debugger {
 			}
 		}
 	}
+	*/
 }

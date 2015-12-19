@@ -104,7 +104,7 @@ namespace dnSpy.Shared.UI.Decompiler {
 		/// <summary>Embedded UIElements, see <see cref="UIElementGenerator"/>.</summary>
 		public readonly List<KeyValuePair<int, Lazy<UIElement>>> UIElements = new List<KeyValuePair<int, Lazy<UIElement>>>();
 
-		readonly List<MemberMapping> DebuggerMemberMappings = new List<MemberMapping>();
+		public readonly List<MemberMapping> DebuggerMemberMappings = new List<MemberMapping>();
 
 		public AvalonEditTextOutput() {
 		}

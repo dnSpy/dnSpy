@@ -17,102 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
+using System;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Contracts;
-using dnSpy.Contracts.Themes;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.Modules {
-	[Export(typeof(IPaneCreator))]
-	sealed class ModulesControlCreator : IPaneCreator {
-		ModulesControlCreator() {
+	sealed partial class ModulesControl : UserControl {
+		public ListView ListView {
+			get { return listView; }
 		}
-
-		public IPane Create(string name) {
-			if (name == ModulesControl.PANE_TYPE_NAME)
-				return ModulesControlInstance;
-			return null;
-		}
-
-		internal static ModulesControl ModulesControlInstance {
-			get {
-				if (modulesControl == null) {
-					modulesControl = new ModulesControl();
-					var vm = new ModulesVM();
-					modulesControl.DataContext = vm;
-					InitializeCommandShortcuts(modulesControl.listView);
-				}
-				return modulesControl;
-			}
-		}
-
-		static ModulesControl modulesControl;
-
-		static void InitializeCommandShortcuts(ListView listView) {
-			listView.AddCommandBinding(ApplicationCommands.Copy, new ModulesCtxMenuCommandProxy(new CopyCallModulesCtxMenuCommand()));
-			listView.InputBindings.Add(new KeyBinding(new ModulesCtxMenuCommandProxy(new GoToModuleModulesCtxMenuCommand()), Key.Enter, ModifierKeys.None));
-			listView.InputBindings.Add(new KeyBinding(new ModulesCtxMenuCommandProxy(new GoToModuleNewTabModulesCtxMenuCommand()), Key.Enter, ModifierKeys.Control));
-			listView.InputBindings.Add(new KeyBinding(new ModulesCtxMenuCommandProxy(new GoToModuleNewTabModulesCtxMenuCommand()), Key.Enter, ModifierKeys.Shift));
-			listView.InputBindings.Add(new KeyBinding(new ModulesCtxMenuCommandProxy(new ShowInMemoryModulesCtxMenuCommand()), Key.X, ModifierKeys.Control));
-			for (int i = 0; i < Memory.MemoryControlCreator.NUMBER_OF_MEMORY_WINDOWS && i < 10; i++)
-				listView.InputBindings.Add(new KeyBinding(new ModulesCtxMenuCommandProxy(new ShowInMemoryWindowModulesCtxMenuCommand(i + 1)), Key.D0 + (i + 1) % 10, ModifierKeys.Control));
-		}
-	}
-
-	public partial class ModulesControl : UserControl, IPane {
-		public static readonly string PANE_TYPE_NAME = "modules window";
 
 		public ModulesControl() {
 			InitializeComponent();
-			DnSpy.App.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
-		}
-
-		public ICommand ShowCommand {
-			get { return new RelayCommand(a => Show(), a => CanShow); }
-		}
-
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			var vm = DataContext as ModulesVM;
-			if (vm != null)
-				vm.RefreshThemeFields();
-		}
-
-		string IPane.PaneName {
-			get { return PANE_TYPE_NAME; }
-		}
-
-		string IPane.PaneTitle {
-			get { return "Modules"; }
-		}
-
-		void IPane.Closed() {
-		}
-
-		void IPane.Opened() {
-		}
-
-		bool CanShow {
-			get { return DebugManager.Instance.IsDebugging; }
-		}
-
-		void Show() {
-			if (!MainWindow.Instance.IsBottomPaneVisible(this))
-				MainWindow.Instance.ShowInBottomPane(this);
-			FocusPane();
-		}
-
-		public void FocusPane() {
-			UIUtils.FocusSelector(listView);
 		}
 
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
-			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			GoToModuleModulesCtxMenuCommand.ExecuteInternal(listView.SelectedItem as ModuleVM, newTab);
+			if (ModulesListViewDoubleClick != null)
+				ModulesListViewDoubleClick(this, EventArgs.Empty);
 		}
+
+		public event EventHandler ModulesListViewDoubleClick;
 	}
 }

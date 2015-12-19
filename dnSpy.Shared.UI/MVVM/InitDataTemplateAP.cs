@@ -35,7 +35,7 @@ namespace dnSpy.Shared.UI.MVVM {
 			return (bool)element.GetValue(InitializeProperty);
 		}
 
-		[ExportAutoLoaded]
+		[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
 		sealed class MefState : IAutoLoaded {
 			internal static MefState Instance;
 

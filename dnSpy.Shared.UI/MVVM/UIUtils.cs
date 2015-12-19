@@ -17,12 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Media3D;
+using System.Windows.Threading;
+using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Shared.UI.MVVM {
 	public static class UIUtils {
@@ -55,6 +59,42 @@ namespace dnSpy.Shared.UI.MVVM {
 			return GetItem<T>(view, e.OriginalSource) != null;
 		}
 
+		public static string EscapeMenuItemHeader(string s) {
+			return NameUtils.CleanName(s).Replace("_", "__");
+		}
+
+		public static bool HasSelectedChildrenFocus(ListBox listBox) {
+			if (listBox == null)
+				return false;
+
+			foreach (var item in listBox.SelectedItems) {
+				var elem = listBox.ItemContainerGenerator.ContainerFromItem(item) as UIElement;
+				if (elem == null)
+					elem = item as UIElement;
+				if (elem == null)
+					continue;
+				if (elem.IsFocused || elem.IsKeyboardFocusWithin)
+					return true;
+			}
+			return false;
+		}
+
+		public static void ScrollSelectAndSetFocus(ListBox listBox, object obj) {
+			listBox.SelectedItem = obj;
+			listBox.ScrollIntoView(obj);
+			SetFocus(listBox, obj, DispatcherPriority.Normal);
+		}
+
+		public static void SetFocus(Selector selector, object obj, DispatcherPriority prio) {
+			selector.Dispatcher.BeginInvoke(prio, new Action(() => {
+				if (selector.SelectedItem == obj) {
+					var item = selector.ItemContainerGenerator.ContainerFromItem(obj) as IInputElement;
+					if (item != null)
+						item.Focus();
+				}
+			}));
+		}
+
 		public static void Focus(UIElement elem) {
 			if (!elem.IsVisible)
 				elem.IsVisibleChanged += UIElement_IsVisibleChanged;
@@ -83,9 +123,9 @@ namespace dnSpy.Shared.UI.MVVM {
 
 		static void FocusSelectorInternal(Selector selector) {
 			bool focused = false;
-			var item = selector.SelectedItem as UIElement;
+			var item = selector.SelectedItem as IInputElement;
 			if (item == null && selector.SelectedItem != null)
-				item = selector.ItemContainerGenerator.ContainerFromItem(selector.SelectedItem) as UIElement;
+				item = selector.ItemContainerGenerator.ContainerFromItem(selector.SelectedItem) as IInputElement;
 			if (item != null)
 				focused = item.Focus();
 			if (!focused)

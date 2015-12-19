@@ -69,6 +69,7 @@ namespace dnSpy.Contracts.Plugin {
 		/// <summary>Constructor</summary>
 		public ExportAutoLoadedAttribute()
 			: base(typeof(IAutoLoaded)) {
+			LoadType = AutoLoadedLoadType.AppLoaded;
 		}
 
 		/// <summary>
@@ -77,7 +78,7 @@ namespace dnSpy.Contracts.Plugin {
 		public double Order { get; set; }
 
 		/// <summary>
-		/// Default is <see cref="AutoLoadedLoadType.BeforePlugins"/>
+		/// Default is <see cref="AutoLoadedLoadType.AppLoaded"/>
 		/// </summary>
 		public AutoLoadedLoadType LoadType { get; set; }
 	}

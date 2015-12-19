@@ -70,6 +70,13 @@ namespace dnSpy.Contracts.Files {
 		IDnSpyFile FindAssembly(IAssembly assembly);
 
 		/// <summary>
+		/// Returns an inserted <see cref="IDnSpyFile"/> instance or null
+		/// </summary>
+		/// <param name="key">Key</param>
+		/// <returns></returns>
+		IDnSpyFile Find(IDnSpyFilenameKey key);
+
+		/// <summary>
 		/// Removes a file
 		/// </summary>
 		/// <param name="key">Key of file to remove. See <see cref="IDnSpyFile.Key"/></param>

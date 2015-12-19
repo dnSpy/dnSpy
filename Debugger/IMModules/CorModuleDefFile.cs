@@ -55,6 +55,10 @@ namespace dnSpy.Debugger.IMModules {
 			get { return Contracts.Files.SerializedDnSpyModule.Create(ModuleDef, DnModule.IsDynamic, DnModule.IsInMemory); }
 		}
 
+		public override DnSpyFileInfo? SerializedFile {
+			get { return null; }
+		}
+
 		public DnModule DnModule {
 			get { return dnModule; }
 		}

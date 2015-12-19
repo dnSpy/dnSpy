@@ -30,11 +30,18 @@ namespace dnSpy.Contracts.Files.Tabs {
 		public bool Success { get; private set; }
 
 		/// <summary>
+		/// Gets the tab
+		/// </summary>
+		public IFileTab Tab { get; private set; }
+
+		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="success">See <see cref="Success"/></param>
-		public ShowTabContentEventArgs(bool success) {
+		/// <param name="tab">Tab</param>
+		public ShowTabContentEventArgs(bool success, IFileTab tab) {
 			this.Success = success;
+			this.Tab = tab;
 		}
 	}
 }

@@ -19,39 +19,94 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
+using dnSpy.Contracts.App;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Memory;
-using dnSpy.MVVM;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.Locals {
+	[ExportAutoLoaded]
+	sealed class AutoShowDebuggerWindowsLoader : IAutoLoaded {
+		readonly IDebuggerSettings debuggerSettings;
+		readonly ITheDebugger theDebugger;
+		readonly IMainToolWindowManager mainToolWindowManager;
+
+		[ImportingConstructor]
+		AutoShowDebuggerWindowsLoader(IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IMainToolWindowManager mainToolWindowManager) {
+			this.debuggerSettings = debuggerSettings;
+			this.theDebugger = theDebugger;
+			this.mainToolWindowManager = mainToolWindowManager;
+			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
+		}
+
+		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+			if (debuggerSettings.AutoOpenLocalsWindow && theDebugger.ProcessState == DebuggerProcessState.Starting)
+				mainToolWindowManager.Show(LocalsToolWindowContent.THE_GUID);
+		}
+	}
+
+	[ExportAutoLoaded]
+	sealed class LocalsContentCommandLoader : IAutoLoaded {
+		[ImportingConstructor]
+		LocalsContentCommandLoader(IWpfCommandManager wpfCommandManager, Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowManager memoryWindowManager, CopyLocalsCtxMenuCommand copyCmd, EditValueLocalsCtxMenuCommand editValueCmd, CopyValueLocalsCtxMenuCommand copyValueCmd, ToggleCollapsedLocalsCtxMenuCommand toggleCollapsedCmd, ShowInMemoryLocalsCtxMenuCommand showInMemCmd) {
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DEBUGGER_LOCALS_LISTVIEW);
+			cmds.Add(ApplicationCommands.Copy, new LocalsCtxMenuCommandProxy(copyCmd));
+			cmds.Add(new LocalsCtxMenuCommandProxy(editValueCmd), ModifierKeys.None, Key.F2);
+			cmds.Add(new LocalsCtxMenuCommandProxy(copyValueCmd), ModifierKeys.Control | ModifierKeys.Shift, Key.C);
+			cmds.Add(new LocalsCtxMenuCommandProxy(toggleCollapsedCmd), ModifierKeys.None, Key.Enter);
+			cmds.Add(new LocalsCtxMenuCommandProxy(showInMemCmd), ModifierKeys.Control, Key.X);
+			for (int i = 0; i < Memory.MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS && i < 10; i++)
+				cmds.Add(new LocalsCtxMenuCommandProxy(new ShowInMemoryWindowLocalsCtxMenuCommand(theDebugger, localsContent, memoryWindowManager, i)), ModifierKeys.Control, Key.D0 + (i + 1) % 10);
+		}
+	}
+
+	[ExportAutoLoaded]
+	sealed class CallStackCommandLoader : IAutoLoaded {
+		[ImportingConstructor]
+		CallStackCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			cmds.Add(DebugRoutedCommands.ShowLocals, new RelayCommand(a => mainToolWindowManager.Show(LocalsToolWindowContent.THE_GUID)));
+			cmds.Add(DebugRoutedCommands.ShowLocals, ModifierKeys.Alt, Key.D4);
+		}
+	}
+
 	sealed class LocalsCtxMenuContext {
-		public readonly LocalsVM VM;
+		public readonly ILocalsVM VM;
 		public readonly ValueVM[] SelectedItems;
 
-		public LocalsCtxMenuContext(LocalsVM vm, ValueVM[] selItems) {
+		public LocalsCtxMenuContext(ILocalsVM vm, ValueVM[] selItems) {
 			this.VM = vm;
 			this.SelectedItems = selItems;
 		}
 	}
 
 	sealed class LocalsCtxMenuCommandProxy : MenuItemCommandProxy<LocalsCtxMenuContext> {
+		readonly LocalsCtxMenuCommand cmd;
+
 		public LocalsCtxMenuCommandProxy(LocalsCtxMenuCommand cmd)
 			: base(cmd) {
+			this.cmd = cmd;
 		}
 
 		protected override LocalsCtxMenuContext CreateContext() {
-			return LocalsCtxMenuCommand.Create();
+			return cmd.Create();
 		}
 	}
 
@@ -61,32 +116,46 @@ namespace dnSpy.Debugger.Locals {
 		}
 		static readonly object ContextKey = new object();
 
+		protected readonly Lazy<ITheDebugger> theDebugger;
+		protected readonly Lazy<ILocalsContent> localsContent;
+
+		protected LocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent) {
+			this.theDebugger = theDebugger;
+			this.localsContent = localsContent;
+		}
+
 		protected sealed override LocalsCtxMenuContext CreateContext(IMenuItemContext context) {
-			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Stopped)
+			if (!(context.CreatorObject.Object is ListView))
 				return null;
-			var ui = LocalsControlCreator.LocalsControlInstance;
-			if (context.CreatorObject.Object != ui.treeView)
+			if (theDebugger.Value.ProcessState != DebuggerProcessState.Stopped)
+				return null;
+			if (context.CreatorObject.Object != localsContent.Value.ListView)
 				return null;
 			return Create();
 		}
 
-		internal static LocalsCtxMenuContext Create() {
-			var ui = LocalsControlCreator.LocalsControlInstance;
-			var vm = ui.DataContext as LocalsVM;
-			if (vm == null)
-				return null;
+		internal LocalsCtxMenuContext Create() {
+			var lv = localsContent.Value.ListView;
+			var vm = localsContent.Value.LocalsVM;
 
-			var dict = new Dictionary<object, int>(ui.treeView.Items.Count);
-			for (int i = 0; i < ui.treeView.Items.Count; i++)
-				dict[ui.treeView.Items[i]] = i;
-			var elems = ui.treeView.SelectedItems.OfType<ValueVM>().ToArray();
+			var dict = new Dictionary<object, int>(lv.Items.Count);
+			//TODO: This is slow if it contains tons of items since it reads every item
+			for (int i = 0; i < lv.Items.Count; i++)
+				dict[lv.Items[i]] = i;
+			var elems = lv.SelectedItems.OfType<ValueVM>().ToArray();
 			Array.Sort(elems, (a, b) => dict[a].CompareTo(dict[b]));
 
 			return new LocalsCtxMenuContext(vm, elems);
 		}
 	}
 
+	[Export]
 	sealed class ToggleCollapsedLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		[ImportingConstructor]
+		ToggleCollapsedLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent)
+			: base(theDebugger, localsContent) {
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
 			var vm = GetValueVM(context);
 			if (vm != null)
@@ -109,13 +178,21 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
-	[ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_COPY, Order = 0)]
+	[Export, ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_COPY, Order = 0)]
 	sealed class CopyLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		readonly IDebuggerSettings debuggerSettings;
+
+		[ImportingConstructor]
+		CopyLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IDebuggerSettings debuggerSettings)
+			: base(theDebugger, localsContent) {
+			this.debuggerSettings = debuggerSettings;
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
-			var output = new PlainTextOutput();
+			var output = new NoSyntaxHighlightOutput();
 			foreach (var vm in context.SelectedItems) {
 				//TODO: Break if it takes too long and the user cancels
-				var printer = new ValuePrinter(output, DebuggerSettings.Instance.UseHexadecimal);
+				var printer = new ValuePrinter(output, debuggerSettings.UseHexadecimal);
 				printer.WriteExpander(vm);
 				output.Write("\t", TextTokenType.Text);
 				// Add an extra here to emulate VS output
@@ -139,17 +216,27 @@ namespace dnSpy.Debugger.Locals {
 
 	[ExportMenuItem(Header = "Select _All", Icon = "Select", InputGestureText = "Ctrl+A", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_COPY, Order = 10)]
 	sealed class SelectAllLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		[ImportingConstructor]
+		SelectAllLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent)
+			: base(theDebugger, localsContent) {
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
-			LocalsControlCreator.LocalsControlInstance.treeView.SelectAll();
+			localsContent.Value.ListView.SelectAll();
 		}
 
 		public override bool IsEnabled(LocalsCtxMenuContext context) {
-			return LocalsControlCreator.LocalsControlInstance.treeView.Items.Count > 0;
+			return context.SelectedItems.Length > 0;
 		}
 	}
 
-	[ExportMenuItem(Header = "_Edit Value", InputGestureText = "F2", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 0)]
+	[Export, ExportMenuItem(Header = "_Edit Value", InputGestureText = "F2", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 0)]
 	sealed class EditValueLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		[ImportingConstructor]
+		EditValueLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent)
+			: base(theDebugger, localsContent) {
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
 			if (IsEnabled(context))
 				context.SelectedItems[0].IsEditingValue = true;
@@ -161,13 +248,21 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
-	[ExportMenuItem(Header = "Copy Va_lue", InputGestureText = "Ctrl+Shift+C", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 10)]
+	[Export, ExportMenuItem(Header = "Copy Va_lue", InputGestureText = "Ctrl+Shift+C", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 10)]
 	sealed class CopyValueLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		readonly IDebuggerSettings debuggerSettings;
+
+		[ImportingConstructor]
+		CopyValueLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IDebuggerSettings debuggerSettings)
+			: base(theDebugger, localsContent) {
+			this.debuggerSettings = debuggerSettings;
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
-			var output = new PlainTextOutput();
+			var output = new NoSyntaxHighlightOutput();
 			foreach (var vm in context.SelectedItems) {
 				//TODO: Break if it takes too long and the user cancels
-				var printer = new ValuePrinter(output, DebuggerSettings.Instance.UseHexadecimal);
+				var printer = new ValuePrinter(output, debuggerSettings.UseHexadecimal);
 				printer.WriteValue(vm);
 				if (context.SelectedItems.Length > 1)
 					output.WriteLine();
@@ -184,6 +279,11 @@ namespace dnSpy.Debugger.Locals {
 
 	[ExportMenuItem(Header = "Add _Watch", Icon = "Watch", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 20)]
 	sealed class AddWatchLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		[ImportingConstructor]
+		AddWatchLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent)
+			: base(theDebugger, localsContent) {
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
 			//TODO:
 		}
@@ -195,6 +295,14 @@ namespace dnSpy.Debugger.Locals {
 
 	[ExportMenuItem(Header = "_Save...", Icon = "Save", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 30)]
 	sealed class SaveDataLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		readonly IMessageBoxManager messageBoxManager;
+
+		[ImportingConstructor]
+		SaveDataLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMessageBoxManager messageBoxManager)
+			: base(theDebugger, localsContent) {
+			this.messageBoxManager = messageBoxManager;
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
 			var value = GetValue(context);
 			if (value == null)
@@ -220,7 +328,7 @@ namespace dnSpy.Debugger.Locals {
 					ulong addr = value.Address;
 					ulong totalSize = elemSize * value.ArrayCount;
 					if (elemAddr == 0 || elemAddr < addr || elemAddr - addr > int.MaxValue || totalSize > int.MaxValue) {
-						MainWindow.Instance.ShowMessageBox("Could not get array data");
+						messageBoxManager.Show("Could not get array data");
 						return;
 					}
 					data = value.ReadGenericValue();
@@ -231,7 +339,7 @@ namespace dnSpy.Debugger.Locals {
 			else
 				data = value.ReadGenericValue();
 			if (data == null) {
-				MainWindow.Instance.ShowMessageBox("Could not read any data");
+				messageBoxManager.Show("Could not read any data");
 				return;
 			}
 
@@ -244,7 +352,7 @@ namespace dnSpy.Debugger.Locals {
 					file.Write(data, dataIndex.Value, dataSize.Value);
 			}
 			catch (Exception ex) {
-				MainWindow.Instance.ShowMessageBox(string.Format("Error saving data to '{0}'\nERROR: {1}", filename, ex.Message));
+				messageBoxManager.Show(string.Format("Error saving data to '{0}'\nERROR: {1}", filename, ex.Message));
 				return;
 			}
 		}
@@ -301,22 +409,29 @@ namespace dnSpy.Debugger.Locals {
 
 	[ExportMenuItem(Header = "Show in Memory Window", Icon = "MemoryWindow", Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_LOCALS_VALUES, Order = 40)]
 	sealed class ShowInMemoryXLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		[ImportingConstructor]
+		ShowInMemoryXLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent)
+			: base(theDebugger, localsContent) {
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
 		}
 	}
 
 	[ExportMenuItem(OwnerGuid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = Constants.GROUP_SHOW_IN_MEMORY_WINDOW, Order = 0)]
 	sealed class ShowInMemoryXLocalsSubCtxMenuCommand : LocalsCtxMenuCommand, IMenuItemCreator {
+		readonly Tuple<IMenuItem, string, string>[] subCmds;
+
+		[ImportingConstructor]
+		ShowInMemoryXLocalsSubCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowManager memoryWindowManager)
+			: base(theDebugger, localsContent) {
+			subCmds = new Tuple<IMenuItem, string, string>[MemoryWindowsHelper.NUMBER_OF_MEMORY_WINDOWS];
+			for (int i = 0; i < subCmds.Length; i++)
+				subCmds[i] = Tuple.Create((IMenuItem)new ShowInMemoryWindowLocalsCtxMenuCommand(theDebugger, localsContent, memoryWindowManager, i), MemoryWindowsHelper.GetHeaderText(i), MemoryWindowsHelper.GetCtrlInputGestureText(i));
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
 		}
-
-		static ShowInMemoryXLocalsSubCtxMenuCommand() {
-			subCmds = new Tuple<IMenuItem, string, string>[MemoryControlCreator.NUMBER_OF_MEMORY_WINDOWS];
-			for (int i = 0; i < subCmds.Length; i++)
-				subCmds[i] = Tuple.Create((IMenuItem)new ShowInMemoryWindowLocalsCtxMenuCommand(i + 1), MemoryControlCreator.GetHeaderText(i), MemoryControlCreator.GetCtrlInputGestureText(i));
-		}
-
-		static readonly Tuple<IMenuItem, string, string>[] subCmds;
 
 		public IEnumerable<CreatedMenuItem> Create(IMenuItemContext context) {
 			var ctx = CreateContext(context);
@@ -334,11 +449,20 @@ namespace dnSpy.Debugger.Locals {
 		}
 	}
 
+	[Export]
 	sealed class ShowInMemoryLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		readonly IMemoryWindowManager memoryWindowManager;
+
+		[ImportingConstructor]
+		ShowInMemoryLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowManager memoryWindowManager)
+			: base(theDebugger, localsContent) {
+			this.memoryWindowManager = memoryWindowManager;
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
 			var addrRange = ShowInMemoryWindowLocalsCtxMenuCommand.GetValue(context);
 			if (addrRange != null)
-				MemoryUtils.ShowInMemoryWindow(addrRange.Value.Address, addrRange.Value.Size);
+				memoryWindowManager.Show(addrRange.Value.Address, addrRange.Value.Size);
 		}
 
 		public override bool IsEnabled(LocalsCtxMenuContext context) {
@@ -347,7 +471,8 @@ namespace dnSpy.Debugger.Locals {
 	}
 
 	sealed class ShowInMemoryWindowLocalsCtxMenuCommand : LocalsCtxMenuCommand {
-		readonly int windowNumber;
+		readonly IMemoryWindowManager memoryWindowManager;
+		readonly int windowIndex;
 
 		internal struct AddrRange {
 			public ulong Address;
@@ -358,14 +483,16 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		public ShowInMemoryWindowLocalsCtxMenuCommand(int windowNumber) {
-			this.windowNumber = windowNumber;
+		public ShowInMemoryWindowLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, IMemoryWindowManager memoryWindowManager, int windowIndex)
+			: base(theDebugger, localsContent) {
+			this.memoryWindowManager = memoryWindowManager;
+			this.windowIndex = windowIndex;
 		}
 
 		public override void Execute(LocalsCtxMenuContext context) {
 			var addrRange = GetValue(context);
 			if (addrRange != null)
-				MemoryUtils.ShowInMemoryWindow(windowNumber, addrRange.Value.Address, addrRange.Value.Size);
+				memoryWindowManager.Show(addrRange.Value.Address, addrRange.Value.Size, windowIndex);
 		}
 
 		public override bool IsEnabled(LocalsCtxMenuContext context) {
@@ -400,17 +527,30 @@ namespace dnSpy.Debugger.Locals {
 
 	[ExportMenuItem(Header = "_Hexadecimal Display", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_HEXOPTS, Order = 0)]
 	sealed class HexadecimalDisplayLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		readonly DebuggerSettingsImpl debuggerSettings;
+
+		[ImportingConstructor]
+		HexadecimalDisplayLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, DebuggerSettingsImpl debuggerSettings)
+			: base(theDebugger, localsContent) {
+			this.debuggerSettings = debuggerSettings;
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
-			DebuggerSettings.Instance.UseHexadecimal = !DebuggerSettings.Instance.UseHexadecimal;
+			debuggerSettings.UseHexadecimal = !debuggerSettings.UseHexadecimal;
 		}
 
 		public override bool IsChecked(LocalsCtxMenuContext context) {
-			return DebuggerSettings.Instance.UseHexadecimal;
+			return debuggerSettings.UseHexadecimal;
 		}
 	}
 
 	[ExportMenuItem(Header = "C_ollapse Parent", Icon = "OneLevelUp", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_TREE, Order = 0)]
 	sealed class CollapseParentLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		[ImportingConstructor]
+		CollapseParentLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent)
+			: base(theDebugger, localsContent) {
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
 			var vm = GetLocalParent(context);
 			if (vm != null)
@@ -431,6 +571,11 @@ namespace dnSpy.Debugger.Locals {
 
 	[ExportMenuItem(Header = "E_xpand Children", Icon = "SuperTypesOpen", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_TREE, Order = 10)]
 	sealed class ExpandChildrenLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		[ImportingConstructor]
+		ExpandChildrenLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent)
+			: base(theDebugger, localsContent) {
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
 			var vm = GetLocalParent(context);
 			if (vm != null) {
@@ -467,6 +612,11 @@ namespace dnSpy.Debugger.Locals {
 
 	[ExportMenuItem(Header = "_Collapse Children", Icon = "SuperTypes", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_TREE, Order = 20)]
 	sealed class CollapseChildrenLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		[ImportingConstructor]
+		CollapseChildrenLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent)
+			: base(theDebugger, localsContent) {
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
 			var vm = GetLocalParent(context);
 			if (vm != null) {
@@ -494,34 +644,58 @@ namespace dnSpy.Debugger.Locals {
 
 	[ExportMenuItem(Header = "Show Namespaces", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_OPTS, Order = 0)]
 	sealed class ShowNamespacesLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		readonly LocalsSettingsImpl localsSettings;
+
+		[ImportingConstructor]
+		ShowNamespacesLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, LocalsSettingsImpl localsSettings)
+			: base(theDebugger, localsContent) {
+			this.localsSettings = localsSettings;
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
-			LocalsSettings.Instance.ShowNamespaces = !LocalsSettings.Instance.ShowNamespaces;
+			localsSettings.ShowNamespaces = !localsSettings.ShowNamespaces;
 		}
 
 		public override bool IsChecked(LocalsCtxMenuContext context) {
-			return LocalsSettings.Instance.ShowNamespaces;
+			return localsSettings.ShowNamespaces;
 		}
 	}
 
 	[ExportMenuItem(Header = "Show Type Keywords", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_OPTS, Order = 10)]
 	sealed class ShowTypeKeywordsLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		readonly LocalsSettingsImpl localsSettings;
+
+		[ImportingConstructor]
+		ShowTypeKeywordsLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, LocalsSettingsImpl localsSettings)
+			: base(theDebugger, localsContent) {
+			this.localsSettings = localsSettings;
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
-			LocalsSettings.Instance.ShowTypeKeywords = !LocalsSettings.Instance.ShowTypeKeywords;
+			localsSettings.ShowTypeKeywords = !localsSettings.ShowTypeKeywords;
 		}
 
 		public override bool IsChecked(LocalsCtxMenuContext context) {
-			return LocalsSettings.Instance.ShowTypeKeywords;
+			return localsSettings.ShowTypeKeywords;
 		}
 	}
 
 	[ExportMenuItem(Header = "Show Tokens", Group = MenuConstants.GROUP_CTX_DBG_LOCALS_OPTS, Order = 20)]
 	sealed class ShowTokensLocalsCtxMenuCommand : LocalsCtxMenuCommand {
+		readonly LocalsSettingsImpl localsSettings;
+
+		[ImportingConstructor]
+		ShowTokensLocalsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ILocalsContent> localsContent, LocalsSettingsImpl localsSettings)
+			: base(theDebugger, localsContent) {
+			this.localsSettings = localsSettings;
+		}
+
 		public override void Execute(LocalsCtxMenuContext context) {
-			LocalsSettings.Instance.ShowTokens = !LocalsSettings.Instance.ShowTokens;
+			localsSettings.ShowTokens = !localsSettings.ShowTokens;
 		}
 
 		public override bool IsChecked(LocalsCtxMenuContext context) {
-			return LocalsSettings.Instance.ShowTokens;
+			return localsSettings.ShowTokens;
 		}
 	}
 }

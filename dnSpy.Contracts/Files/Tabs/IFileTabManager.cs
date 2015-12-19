@@ -123,6 +123,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// </summary>
 		/// <param name="ref">Reference</param>
 		/// <param name="newTab">true to open a new tab</param>
-		void FollowReference(object @ref, bool newTab);
+		/// <param name="onShown">Called after the content has been shown. Can be null.</param>
+		void FollowReference(object @ref, bool newTab, Action<ShowTabContentEventArgs> onShown = null);
 	}
 }

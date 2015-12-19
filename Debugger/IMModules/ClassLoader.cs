@@ -20,19 +20,27 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using dndbg.DotNet;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
-using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TreeNodes;
+using dnSpy.Contracts.Files.TreeView;
 
 namespace dnSpy.Debugger.IMModules {
 	/// <summary>
 	/// Loads all new classes from dynamic modules
 	/// </summary>
 	sealed class ClassLoader {
-		readonly Dictionary<DnModule, HashSet<uint>> loadedClasses = new Dictionary<DnModule, HashSet<uint>>();
+		readonly IFileTreeView fileTreeView;
+		readonly Window ownerWindow;
+		readonly Dictionary<DnModule, HashSet<uint>> loadedClasses;
+
+		public ClassLoader(IFileTreeView fileTreeView, Window ownerWindow) {
+			this.fileTreeView = fileTreeView;
+			this.ownerWindow = ownerWindow;
+			this.loadedClasses = new Dictionary<DnModule, HashSet<uint>>();
+		}
 
 		public void LoadClass(DnModule dnModule, uint token) {
 			Debug.Assert(dnModule.CorModuleDef != null);
@@ -56,11 +64,11 @@ namespace dnSpy.Debugger.IMModules {
 
 		struct ModuleState {
 			public CorModuleDefFile CorModuleDefFile;
-			public AssemblyTreeNode ModuleNode;
+			public IModuleFileNode ModuleNode;
 			public HashSet<uint> ModifiedTypes;
 			public HashSet<uint> LoadClassHash;
 
-			public ModuleState(CorModuleDefFile corModuleDefFile, AssemblyTreeNode moduleNode, HashSet<uint> modifiedTypes, HashSet<uint> loadClassHash) {
+			public ModuleState(CorModuleDefFile corModuleDefFile, IModuleFileNode moduleNode, HashSet<uint> modifiedTypes, HashSet<uint> loadClassHash) {
 				this.CorModuleDefFile = corModuleDefFile;
 				this.ModuleNode = moduleNode;
 				this.ModifiedTypes = modifiedTypes;
@@ -68,7 +76,7 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
-		public void LoadNewClasses(Dictionary<CorModuleDefFile, AssemblyTreeNode> visibleModules) {
+		public void LoadNewClasses(Dictionary<CorModuleDefFile, IModuleFileNode> visibleModules) {
 			var oldLoadedClasses = new Dictionary<DnModule, HashSet<uint>>(loadedClasses);
 			loadedClasses.Clear();
 			if (visibleModules.Count == 0)
@@ -84,8 +92,10 @@ namespace dnSpy.Debugger.IMModules {
 
 			foreach (var state in states) {
 				var hash = new HashSet<uint>(state.ModifiedTypes);
-				if (state.LoadClassHash != null)
-					hash.AddRange(state.LoadClassHash);
+				if (state.LoadClassHash != null) {
+					foreach (var a in state.LoadClassHash)
+						hash.Add(a);
+				}
 				var tokens = hash.ToList();
 				tokens.Sort();
 				foreach (uint token in tokens) {
@@ -101,7 +111,7 @@ namespace dnSpy.Debugger.IMModules {
 			LoadEverything(states.Where(a => a.ModifiedTypes.Count != 0 || (a.LoadClassHash != null && a.LoadClassHash.Count != 0)).Select(a => a.CorModuleDefFile.DnModule.CorModuleDef));
 
 			foreach (var state in states)
-				new TreeViewUpdater(state.CorModuleDefFile, state.ModuleNode, state.ModifiedTypes, state.LoadClassHash).Update();
+				new TreeViewUpdater(fileTreeView, state.CorModuleDefFile, state.ModuleNode, state.ModifiedTypes, state.LoadClassHash).Update();
 		}
 
 		HashSet<uint> GetModifiedTypesList(CorModuleDefFile cmdf) {
@@ -209,7 +219,7 @@ namespace dnSpy.Debugger.IMModules {
 				var data = new LoadEverythingVM(list);
 				var win = new LoadEverythingDlg();
 				win.DataContext = data;
-				win.Owner = MainWindow.Instance;
+				win.Owner = ownerWindow;
 				var res = win.ShowDialog();
 				if (res != true) {
 					Debug.Fail("User canceled but this is currently impossible...");

@@ -20,6 +20,20 @@
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Exceptions {
+	interface IExceptionContext {
+		IExceptionManager ExceptionManager { get; }
+		bool SyntaxHighlight { get; }
+	}
+
+	sealed class ExceptionContext : IExceptionContext {
+		public IExceptionManager ExceptionManager { get; private set; }
+		public bool SyntaxHighlight { get; set; }
+
+		public ExceptionContext(IExceptionManager exceptionManager) {
+			this.ExceptionManager = exceptionManager;
+		}
+	}
+
 	sealed class ExceptionVM : ViewModelBase {
 		public object NameObject { get { return this; } }
 
@@ -29,7 +43,7 @@ namespace dnSpy.Debugger.Exceptions {
 				if (info.BreakOnFirstChance != value) {
 					info.BreakOnFirstChance = value;
 					OnPropertyChanged("BreakOnFirstChance");
-					ExceptionManager.Instance.BreakOnFirstChanceChanged(info);
+					Context.ExceptionManager.BreakOnFirstChanceChanged(info);
 				}
 			}
 		}
@@ -43,8 +57,14 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 		readonly ExceptionInfo info;
 
-		public ExceptionVM(ExceptionInfo info) {
+		public IExceptionContext Context {
+			get { return context; }
+		}
+		readonly IExceptionContext context;
+
+		public ExceptionVM(ExceptionInfo info, IExceptionContext context) {
 			this.info = info;
+			this.context = context;
 		}
 
 		internal void RefreshThemeFields() {

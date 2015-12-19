@@ -23,19 +23,22 @@ using System.Linq;
 using System.Text;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
+using dnSpy.Contracts.Highlighting;
 using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
+using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Debugger.Threads {
 	sealed class ThreadPrinter {
 		const int MAX_THREAD_NAME = 128;
 
-		readonly ITextOutput output;
+		readonly ISyntaxHighlightOutput output;
 		readonly bool useHex;
+		readonly DnDebugger dbg;
 
-		public ThreadPrinter(ITextOutput output, bool useHex) {
+		public ThreadPrinter(ISyntaxHighlightOutput output, bool useHex, DnDebugger dbg) {
 			this.output = output;
 			this.useHex = useHex;
+			this.dbg = dbg;
 		}
 
 		void WriteInt32(int value) {
@@ -151,7 +154,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		public void WriteAppDomain(ThreadVM vm) {
-			output.Write(vm.AppDomain);
+			output.Write(vm.AppDomain, dbg);
 		}
 
 		static readonly Tuple<CorDebugUserState, string>[] UserStates = new Tuple<CorDebugUserState, string>[] {
@@ -173,14 +176,14 @@ namespace dnSpy.Debugger.Threads {
 				if ((state & t.Item1) != 0) {
 					state &= ~t.Item1;
 					if (needComma)
-						output.WriteCommaSpace_OLD();
+						output.WriteCommaSpace();
 					needComma = true;
 					output.Write(t.Item2, TextTokenType.EnumField);
 				}
 			}
 			if (state != 0) {
 				if (needComma)
-					output.WriteCommaSpace_OLD();
+					output.WriteCommaSpace();
 				output.Write(string.Format("0x{0:X}", (int)state), TextTokenType.Number);
 			}
 		}

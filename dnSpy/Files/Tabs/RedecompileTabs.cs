@@ -25,7 +25,7 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Plugin;
 
 namespace dnSpy.Files.Tabs {
-	[ExportAutoLoaded]
+	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
 	sealed class RedecompileTabs : IAutoLoaded {
 		readonly IFileTabManager fileTabManager;
 		readonly IAppWindow appWindow;

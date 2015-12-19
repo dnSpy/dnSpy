@@ -17,105 +17,28 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
+using System;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Contracts;
-using dnSpy.Contracts.Themes;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger.Threads {
-	[Export(typeof(IPaneCreator))]
-	sealed class ThreadsControlCreator : IPaneCreator {
-		ThreadsControlCreator() {
+	sealed partial class ThreadsControl : UserControl {
+		public ListView ListView {
+			get { return listView; }
 		}
-
-		public IPane Create(string name) {
-			if (name == ThreadsControl.PANE_TYPE_NAME)
-				return ThreadsControlInstance;
-			return null;
-		}
-
-		internal static ThreadsControl ThreadsControlInstance {
-			get {
-				if (threadsControl == null) {
-					threadsControl = new ThreadsControl();
-					var vm = new ThreadsVM();
-					threadsControl.DataContext = vm;
-					InitializeCommandShortcuts(threadsControl.listView);
-				}
-				return threadsControl;
-			}
-		}
-
-		static ThreadsControl threadsControl;
-
-		static void InitializeCommandShortcuts(ListView listView) {
-			listView.AddCommandBinding(ApplicationCommands.Copy, new ThreadsCtxMenuCommandProxy(new CopyCallThreadsCtxMenuCommand()));
-			listView.InputBindings.Add(new KeyBinding(new ThreadsCtxMenuCommandProxy(new SwitchToThreadThreadsCtxMenuCommand()), Key.Enter, ModifierKeys.None));
-			listView.InputBindings.Add(new KeyBinding(new ThreadsCtxMenuCommandProxy(new SwitchToThreadNewTabThreadsCtxMenuCommand()), Key.Enter, ModifierKeys.Control));
-			listView.InputBindings.Add(new KeyBinding(new ThreadsCtxMenuCommandProxy(new SwitchToThreadNewTabThreadsCtxMenuCommand()), Key.Enter, ModifierKeys.Shift));
-		}
-	}
-
-	public partial class ThreadsControl : UserControl, IPane {
-		public static readonly string PANE_TYPE_NAME = "threads window";
 
 		public ThreadsControl() {
 			InitializeComponent();
-			DnSpy.App.ThemeManager.ThemeChanged += ThemeManager_ThemeChanged;
-		}
-
-		public ICommand ShowCommand {
-			get { return new RelayCommand(a => Show(), a => CanShow); }
-		}
-
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			var vm = DataContext as ThreadsVM;
-			if (vm != null)
-				vm.RefreshThemeFields();
-		}
-
-		string IPane.PaneName {
-			get { return PANE_TYPE_NAME; }
-		}
-
-		string IPane.PaneTitle {
-			get { return "Threads"; }
-		}
-
-		void IPane.Closed() {
-			var vm = DataContext as ThreadsVM;
-			if (vm != null)
-				vm.IsEnabled = false;
-		}
-
-		void IPane.Opened() {
-			var vm = DataContext as ThreadsVM;
-			if (vm != null)
-				vm.IsEnabled = true;
-		}
-
-		bool CanShow {
-			get { return DebugManager.Instance.IsDebugging; }
-		}
-
-		void Show() {
-			if (!MainWindow.Instance.IsBottomPaneVisible(this))
-				MainWindow.Instance.ShowInBottomPane(this);
-			FocusPane();
-		}
-
-		public void FocusPane() {
-			UIUtils.FocusSelector(listView);
 		}
 
 		void listView_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListViewItem>(listView, e))
 				return;
-			bool newTab = Keyboard.Modifiers == ModifierKeys.Shift || Keyboard.Modifiers == ModifierKeys.Control;
-			SwitchToThreadThreadsCtxMenuCommand.GoTo(listView.SelectedItem as ThreadVM, newTab);
+			if (ThreadsListViewDoubleClick != null)
+				ThreadsListViewDoubleClick(this, EventArgs.Empty);
 		}
+
+		public event EventHandler ThreadsListViewDoubleClick;
 	}
 }

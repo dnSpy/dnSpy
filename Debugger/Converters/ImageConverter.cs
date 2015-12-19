@@ -18,18 +18,29 @@
 */
 
 using System;
+using System.ComponentModel.Composition;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Plugin;
 
 namespace dnSpy.Debugger.Converters {
-	public sealed class ImageConverter : IValueConverter {
+	sealed class ImageConverter : IValueConverter {
+		static IImageManager imageManager;
+
+		[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
+		sealed class Loader : IAutoLoaded {
+			[ImportingConstructor]
+			Loader(IImageManager imageManager) {
+				ImageConverter.imageManager = imageManager;
+			}
+		}
+
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
 			var ary = ((string)parameter).Split(seps, 2);
 			var bgType = (BackgroundType)Enum.Parse(typeof(BackgroundType), ary[0]);
 			var asm = GetType().Assembly;
-			return DnSpy.App.ImageManager.GetImage(asm, ary[1], bgType);
+			return imageManager.GetImage(asm, ary[1], bgType);
 		}
 		static readonly char[] seps = new char[1] { '_' };
 

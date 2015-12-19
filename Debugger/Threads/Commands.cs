@@ -18,33 +18,67 @@
 */
 
 using System;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using dndbg.Engine;
+using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.CallStack;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger.Threads {
+	[ExportAutoLoaded]
+	sealed class ThreadsContentCommandLoader : IAutoLoaded {
+		[ImportingConstructor]
+		ThreadsContentCommandLoader(IWpfCommandManager wpfCommandManager, CopyCallThreadsCtxMenuCommand copyCmd, SwitchToThreadThreadsCtxMenuCommand switchCmd, SwitchToThreadNewTabThreadsCtxMenuCommand switchNewTabCmd) {
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DEBUGGER_THREADS_LISTVIEW);
+			cmds.Add(ApplicationCommands.Copy, new ThreadsCtxMenuCommandProxy(copyCmd));
+			cmds.Add(new ThreadsCtxMenuCommandProxy(switchCmd), ModifierKeys.None, Key.Enter);
+			cmds.Add(new ThreadsCtxMenuCommandProxy(switchNewTabCmd), ModifierKeys.Control, Key.Enter);
+			cmds.Add(new ThreadsCtxMenuCommandProxy(switchNewTabCmd), ModifierKeys.Shift, Key.Enter);
+		}
+	}
+
+	[ExportAutoLoaded]
+	sealed class ThreadsCommandLoader : IAutoLoaded {
+		[ImportingConstructor]
+		ThreadsCommandLoader(IWpfCommandManager wpfCommandManager, IMainToolWindowManager mainToolWindowManager) {
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			cmds.Add(DebugRoutedCommands.ShowThreads, new RelayCommand(a => mainToolWindowManager.Show(ThreadsToolWindowContent.THE_GUID)));
+			cmds.Add(DebugRoutedCommands.ShowThreads, ModifierKeys.Control | ModifierKeys.Alt, Key.H);
+		}
+	}
+
 	sealed class ThreadsCtxMenuContext {
-		public readonly ThreadsVM VM;
+		public readonly IThreadsVM VM;
 		public readonly ThreadVM[] SelectedItems;
 
-		public ThreadsCtxMenuContext(ThreadsVM vm, ThreadVM[] selItems) {
+		public ThreadsCtxMenuContext(IThreadsVM vm, ThreadVM[] selItems) {
 			this.VM = vm;
 			this.SelectedItems = selItems;
 		}
 	}
 
 	sealed class ThreadsCtxMenuCommandProxy : MenuItemCommandProxy<ThreadsCtxMenuContext> {
+		readonly ThreadsCtxMenuCommand cmd;
+
 		public ThreadsCtxMenuCommandProxy(ThreadsCtxMenuCommand cmd)
 			: base(cmd) {
+			this.cmd = cmd;
 		}
 
 		protected override ThreadsCtxMenuContext CreateContext() {
-			return ThreadsCtxMenuCommand.Create();
+			return cmd.Create();
 		}
 	}
 
@@ -54,34 +88,47 @@ namespace dnSpy.Debugger.Threads {
 		}
 		static readonly object ContextKey = new object();
 
+		protected readonly Lazy<ITheDebugger> theDebugger;
+		protected readonly Lazy<IThreadsContent> threadsContent;
+
+		protected ThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent) {
+			this.theDebugger = theDebugger;
+			this.threadsContent = threadsContent;
+		}
+
 		protected sealed override ThreadsCtxMenuContext CreateContext(IMenuItemContext context) {
-			if (DebugManager.Instance.ProcessState != DebuggerProcessState.Stopped)
+			if (!(context.CreatorObject.Object is ListView))
 				return null;
-			var ui = ThreadsControlCreator.ThreadsControlInstance;
-			if (context.CreatorObject.Object != ui.listView)
+			if (theDebugger.Value.ProcessState != DebuggerProcessState.Stopped)
+				return null;
+			if (context.CreatorObject.Object != threadsContent.Value.ListView)
 				return null;
 			return Create();
 		}
 
-		internal static ThreadsCtxMenuContext Create() {
-			var ui = ThreadsControlCreator.ThreadsControlInstance;
-			var vm = ui.DataContext as ThreadsVM;
-			if (vm == null)
-				return null;
-
-			var elems = ui.listView.SelectedItems.OfType<ThreadVM>().ToArray();
+		internal ThreadsCtxMenuContext Create() {
+			var vm = threadsContent.Value.ThreadsVM;
+			var elems = threadsContent.Value.ListView.SelectedItems.OfType<ThreadVM>().ToArray();
 			Array.Sort(elems, (a, b) => a.Thread.IncrementedId.CompareTo(b.Thread.IncrementedId));
 
 			return new ThreadsCtxMenuContext(vm, elems);
 		}
 	}
 
-	[ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 0)]
+	[Export, ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 0)]
 	sealed class CopyCallThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
+		readonly IDebuggerSettings debuggerSettings;
+
+		[ImportingConstructor]
+		CopyCallThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent, IDebuggerSettings debuggerSettings)
+			: base(theDebugger, threadsContent) {
+			this.debuggerSettings = debuggerSettings;
+		}
+
 		public override void Execute(ThreadsCtxMenuContext context) {
-			var output = new PlainTextOutput();
+			var output = new NoSyntaxHighlightOutput();
 			foreach (var vm in context.SelectedItems) {
-				var printer = new ThreadPrinter(output, DebuggerSettings.Instance.UseHexadecimal);
+				var printer = new ThreadPrinter(output, debuggerSettings.UseHexadecimal, theDebugger.Value.Debugger);
 				printer.WriteCurrent(vm);
 				output.Write("\t", TextTokenType.Text);
 				printer.WriteId(vm);
@@ -119,30 +166,55 @@ namespace dnSpy.Debugger.Threads {
 
 	[ExportMenuItem(Header = "Select _All", Icon = "Select", InputGestureText = "Ctrl+A", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 10)]
 	sealed class SelectAllThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
+		[ImportingConstructor]
+		SelectAllThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent)
+			: base(theDebugger, threadsContent) {
+		}
+
 		public override void Execute(ThreadsCtxMenuContext context) {
-			ThreadsControlCreator.ThreadsControlInstance.listView.SelectAll();
+			threadsContent.Value.ListView.SelectAll();
 		}
 
 		public override bool IsEnabled(ThreadsCtxMenuContext context) {
-			return ThreadsControlCreator.ThreadsControlInstance.listView.Items.Count > 0;
+			return context.SelectedItems.Length > 0;
 		}
 	}
 
 	[ExportMenuItem(Header = "_Hexadecimal Display", Group = MenuConstants.GROUP_CTX_DBG_THREADS_HEXOPTS, Order = 0)]
 	sealed class HexadecimalDisplayThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
+		readonly DebuggerSettingsImpl debuggerSettings;
+
+		[ImportingConstructor]
+		HexadecimalDisplayThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent, DebuggerSettingsImpl debuggerSettings)
+			: base(theDebugger, threadsContent) {
+			this.debuggerSettings = debuggerSettings;
+		}
+
 		public override void Execute(ThreadsCtxMenuContext context) {
-			DebuggerSettings.Instance.UseHexadecimal = !DebuggerSettings.Instance.UseHexadecimal;
+			debuggerSettings.UseHexadecimal = !debuggerSettings.UseHexadecimal;
 		}
 
 		public override bool IsChecked(ThreadsCtxMenuContext context) {
-			return DebuggerSettings.Instance.UseHexadecimal;
+			return debuggerSettings.UseHexadecimal;
 		}
 	}
 
-	[ExportMenuItem(Header = "_Switch To Thread", InputGestureText = "Enter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 0)]
+	[Export, ExportMenuItem(Header = "_Switch To Thread", InputGestureText = "Enter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 0)]
 	sealed class SwitchToThreadThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
+		readonly Lazy<IStackFrameManager> stackFrameManager;
+		readonly IFileTabManager fileTabManager;
+		readonly Lazy<IModuleLoader> moduleLoader;
+
+		[ImportingConstructor]
+		SwitchToThreadThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader)
+			: base(theDebugger, threadsContent) {
+			this.stackFrameManager = stackFrameManager;
+			this.fileTabManager = fileTabManager;
+			this.moduleLoader = moduleLoader;
+		}
+
 		public override void Execute(ThreadsCtxMenuContext context) {
-			GoTo(context, false);
+			GoTo(stackFrameManager, fileTabManager, moduleLoader, context, false);
 		}
 
 		public override bool IsEnabled(ThreadsCtxMenuContext context) {
@@ -153,24 +225,36 @@ namespace dnSpy.Debugger.Threads {
 			return context.SelectedItems.Length == 1;
 		}
 
-		internal static void GoTo(ThreadsCtxMenuContext context, bool newTab) {
+		internal static void GoTo(Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader, ThreadsCtxMenuContext context, bool newTab) {
 			if (context.SelectedItems.Length == 0)
 				return;
-			GoTo(context.SelectedItems[0], newTab);
+			GoTo(fileTabManager, moduleLoader.Value, stackFrameManager.Value, context.SelectedItems[0], newTab);
 		}
 
-		internal static void GoTo(ThreadVM vm, bool newTab) {
+		internal static void GoTo(IFileTabManager fileTabManager, IModuleLoader moduleLoader, IStackFrameManager stackFrameManager, ThreadVM vm, bool newTab) {
 			if (vm == null)
 				return;
-			StackFrameManager.Instance.SelectedThread = vm.Thread;
-			FrameUtils.GoTo(vm.Thread.AllFrames.FirstOrDefault(f => f.IsILFrame), newTab);
+			stackFrameManager.SelectedThread = vm.Thread;
+			FrameUtils.GoTo(fileTabManager, moduleLoader, vm.Thread.AllFrames.FirstOrDefault(f => f.IsILFrame), newTab);
 		}
 	}
 
-	[ExportMenuItem(Header = "Switch To Thread (New _Tab)", InputGestureText = "Ctrl+Enter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 10)]
+	[Export, ExportMenuItem(Header = "Switch To Thread (New _Tab)", InputGestureText = "Ctrl+Enter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 10)]
 	sealed class SwitchToThreadNewTabThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
+		readonly Lazy<IStackFrameManager> stackFrameManager;
+		readonly IFileTabManager fileTabManager;
+		readonly Lazy<IModuleLoader> moduleLoader;
+
+		[ImportingConstructor]
+		SwitchToThreadNewTabThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent, Lazy<IStackFrameManager> stackFrameManager, IFileTabManager fileTabManager, Lazy<IModuleLoader> moduleLoader)
+			: base(theDebugger, threadsContent) {
+			this.stackFrameManager = stackFrameManager;
+			this.fileTabManager = fileTabManager;
+			this.moduleLoader = moduleLoader;
+		}
+
 		public override void Execute(ThreadsCtxMenuContext context) {
-			SwitchToThreadThreadsCtxMenuCommand.GoTo(context, true);
+			SwitchToThreadThreadsCtxMenuCommand.GoTo(stackFrameManager, fileTabManager, moduleLoader, context, true);
 		}
 
 		public override bool IsEnabled(ThreadsCtxMenuContext context) {
@@ -180,6 +264,11 @@ namespace dnSpy.Debugger.Threads {
 
 	[ExportMenuItem(Header = "Rename", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 20)]
 	sealed class RenameThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
+		[ImportingConstructor]
+		RenameThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent)
+			: base(theDebugger, threadsContent) {
+		}
+
 		public override void Execute(ThreadsCtxMenuContext context) {
 			//TODO:
 		}
@@ -191,6 +280,11 @@ namespace dnSpy.Debugger.Threads {
 
 	[ExportMenuItem(Header = "_Freeze", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 30)]
 	sealed class FreezeThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
+		[ImportingConstructor]
+		FreezeThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent)
+			: base(theDebugger, threadsContent) {
+		}
+
 		public override void Execute(ThreadsCtxMenuContext context) {
 			foreach (var t in context.SelectedItems)
 				t.IsSuspended = true;
@@ -203,6 +297,11 @@ namespace dnSpy.Debugger.Threads {
 
 	[ExportMenuItem(Header = "_Thaw", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 40)]
 	sealed class ThawThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
+		[ImportingConstructor]
+		ThawThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent)
+			: base(theDebugger, threadsContent) {
+		}
+
 		public override void Execute(ThreadsCtxMenuContext context) {
 			foreach (var t in context.SelectedItems)
 				t.IsSuspended = false;

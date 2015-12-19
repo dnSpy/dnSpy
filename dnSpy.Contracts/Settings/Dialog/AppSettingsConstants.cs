@@ -71,19 +71,29 @@ namespace dnSpy.Contracts.Settings.Dialog {
 		public const double ORDER_SETTINGS_TAB_DECOMPILER = 1000;
 
 		/// <summary>
+		/// Order of debugger settings tab
+		/// </summary>
+		public const double ORDER_DEBUGGER_TAB_DISPLAY = 2000;
+
+		/// <summary>
 		/// Order of display settings tab
 		/// </summary>
 		public const double ORDER_SETTINGS_TAB_DISPLAY = 3000;
 
 		/// <summary>
+		/// Order of hex editor settings tab
+		/// </summary>
+		public const double ORDER_SETTINGS_TAB_HEXEDITOR = 4000;
+
+		/// <summary>
 		/// Order of baml settings tab
 		/// </summary>
-		public const double ORDER_BAML_TAB_DISPLAY = 4000;
+		public const double ORDER_BAML_TAB_DISPLAY = 5000;
 
 		/// <summary>
 		/// Order of misc settings tab
 		/// </summary>
-		public const double ORDER_SETTINGS_TAB_MISC = 5000;
+		public const double ORDER_SETTINGS_TAB_MISC = 6000;
 
 		/// <summary>
 		/// Order of <see cref="IFileManager"/>'s <see cref="IAppSettingsModifiedListener"/> instance

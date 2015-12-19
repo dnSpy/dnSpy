@@ -20,7 +20,7 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.TreeNodes;
+using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Debugger.Locals {
 	sealed class LocalColumnConverter : IValueConverter {
@@ -30,8 +30,8 @@ namespace dnSpy.Debugger.Locals {
 			if (vm == null || s == null)
 				return null;
 
-			var gen = UISyntaxHighlighter.Create(DebuggerSettings.Instance.SyntaxHighlightLocals);
-			var printer = new ValuePrinter(gen.TextOutput, DebuggerSettings.Instance.UseHexadecimal);
+			var gen = UISyntaxHighlighter.Create(vm.PrinterContext.SyntaxHighlight);
+			var printer = new ValuePrinter(gen.Output, vm.PrinterContext.UseHexadecimal);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				printer.WriteName(vm);
 			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Value"))
@@ -41,7 +41,7 @@ namespace dnSpy.Debugger.Locals {
 			else
 				return null;
 
-			return gen.CreateTextBlock(true);
+			return gen.CreateResult(true);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

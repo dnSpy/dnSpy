@@ -18,9 +18,7 @@
 */
 
 using dndbg.Engine;
-using dnlib.DotNet;
 using dnSpy.Contracts.Files;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger {
 	static class SerializedModuleExtensions {
@@ -30,14 +28,6 @@ namespace dnSpy.Debugger {
 
 		public static SerializedDnSpyModule ToSerializedDnSpyModule(this SerializedDnModule self) {
 			return SerializedDnSpyModule.Create(self.AssemblyFullName, self.ModuleName, self.IsDynamic, self.IsInMemory);
-		}
-
-		public static SerializedDnSpyModule ToSerializedDnSpyModule(this ModuleDef module) {
-			return MainWindow.Instance.DnSpyFileListTreeNode.GetSerializedDnSpyModule(module);
-		}
-
-		public static SerializedDnModule ToSerializedDnModule(this IMemberDef md) {
-			return md.Module.ToSerializedDnSpyModule().ToSerializedDnModule();
 		}
 	}
 }

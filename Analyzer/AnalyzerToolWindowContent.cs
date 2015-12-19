@@ -31,12 +31,12 @@ namespace dnSpy.Analyzer {
 		readonly Lazy<IAnalyzerManager> analyzerManager;
 
 		public AnalyzerToolWindowContent FileTreeViewWindowContent {
-			get { return fileTreeViewWindowContent ?? (fileTreeViewWindowContent = new AnalyzerToolWindowContent(analyzerManager)); }
+			get { return analyzerToolWindowContent ?? (analyzerToolWindowContent = new AnalyzerToolWindowContent(analyzerManager)); }
 		}
-		AnalyzerToolWindowContent fileTreeViewWindowContent;
+		AnalyzerToolWindowContent analyzerToolWindowContent;
 
 		[ImportingConstructor]
-		AnalyzerToolWindowContentCreator(IMainToolWindowManager mainToolWindowManager, Lazy<IAnalyzerManager> analyzerManager) {
+		AnalyzerToolWindowContentCreator(Lazy<IAnalyzerManager> analyzerManager) {
 			this.analyzerManager = analyzerManager;
 		}
 

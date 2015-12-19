@@ -19,8 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
-using dnSpy.Contracts;
+using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Debugger.Exceptions {
@@ -29,32 +30,44 @@ namespace dnSpy.Debugger.Exceptions {
 		AddOrUpdate,
 	}
 
-	sealed class ExceptionListSettings {
-		public static readonly ExceptionListSettings Instance = new ExceptionListSettings();
+	[ExportAutoLoaded]
+	sealed class ExceptionListSettingsLoader : IAutoLoaded {
+		[ImportingConstructor]
+		ExceptionListSettingsLoader(ExceptionListSettings exceptionListSettings) {
+			// Nothing to do, we needed it created
+		}
+	}
+
+	interface IExceptionListSettings {
+		IDisposable TemporarilyDisableSave();
+	}
+
+	[Export, Export(typeof(IExceptionListSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class ExceptionListSettings : IExceptionListSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("102DCD2E-BE0A-477C-B4D0-600C5CA28A6A");
+
+		readonly IExceptionManager exceptionManager;
+		readonly ISettingsManager settingsManager;
+
+		[ImportingConstructor]
+		ExceptionListSettings(IExceptionManager exceptionManager, ISettingsManager settingsManager) {
+			this.exceptionManager = exceptionManager;
+			this.settingsManager = settingsManager;
+			exceptionManager.Changed += ExceptionManager_Changed;
+
+			disableSaveCounter++;
+			Load();
+			disableSaveCounter--;
+		}
 		int disableSaveCounter;
 
-		ExceptionListSettings() {
-			ExceptionManager.Instance.Changed += ExceptionManager_Changed;
-		}
-
-		private void ExceptionManager_Changed(object sender, ExceptionManagerEventArgs e) {
+		void ExceptionManager_Changed(object sender, ExceptionManagerEventArgs e) {
 			Save();
 		}
 
-		internal void OnLoaded() {
-			disableSaveCounter++;
-			try {
-				LoadInternal();
-			}
-			finally {
-				disableSaveCounter--;
-			}
-		}
-
-		void LoadInternal() {
-			var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_GUID);
-			ExceptionManager.Instance.RestoreDefaults();
+		void Load() {
+			exceptionManager.RestoreDefaults();
+			var section = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			foreach (var exx in section.SectionsWithName("Exception")) {
 				var exceptionType = exx.Attribute<ExceptionType?>("ExceptionType");
 				var fullName = exx.Attribute<string>("FullName");
@@ -64,7 +77,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 				if (diffType == null)
 					continue;
-				if (exceptionType == null || (int)exceptionType.Value < 0 || exceptionType.Value >= ExceptionType.Last)
+				if (exceptionType == null || exceptionType.Value < 0 || exceptionType.Value >= ExceptionType.Last)
 					continue;
 				if (fullName == null)
 					continue;
@@ -72,13 +85,13 @@ namespace dnSpy.Debugger.Exceptions {
 				var key = new ExceptionInfoKey(exceptionType.Value, fullName);
 				switch (diffType.Value) {
 				case ExceptionDiffType.Remove:
-					ExceptionManager.Instance.Remove(key);
+					exceptionManager.Remove(key);
 					break;
 
 				case ExceptionDiffType.AddOrUpdate:
 					if (breakOnFirstChance == null)
 						continue;
-					ExceptionManager.Instance.AddOrUpdate(key, breakOnFirstChance.Value, isOtherExceptions);
+					exceptionManager.AddOrUpdate(key, breakOnFirstChance.Value, isOtherExceptions);
 					break;
 
 				default:
@@ -89,12 +102,9 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		void Save() {
-			// Prevent Load() from saving the settings every time a new exception is added
 			if (disableSaveCounter != 0)
 				return;
-
-			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_GUID);
-
+			var section = settingsManager.RecreateSection(SETTINGS_GUID);
 			foreach (var tuple in GetDiff()) {
 				var exx = section.CreateSection("Exception");
 				exx.Attribute("ExceptionType", tuple.Item2.ExceptionType);
@@ -106,12 +116,12 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 		}
 
-		static IEnumerable<Tuple<ExceptionDiffType, ExceptionInfo>> GetDiff() {
+		IEnumerable<Tuple<ExceptionDiffType, ExceptionInfo>> GetDiff() {
 			var defaultInfos = new Dictionary<ExceptionInfoKey, ExceptionInfo>();
 			foreach (var info in DefaultExceptionSettings.Instance.ExceptionInfos)
 				defaultInfos[info.Key] = info;
 
-			foreach (var info in ExceptionManager.Instance.ExceptionInfos) {
+			foreach (var info in exceptionManager.ExceptionInfos) {
 				if (info.IsOtherExceptions) {
 					if (!info.BreakOnFirstChance)
 						continue;

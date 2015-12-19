@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
@@ -89,6 +90,10 @@ namespace dnSpy.MainApp {
 
 		public FileTreeViewWindowContent(ITreeView treeView) {
 			this.treeView = treeView;
+			var fel = treeView.UIObject as FrameworkElement;
+			Debug.Assert(fel != null);
+			if (fel != null)
+				fel.Margin = new Thickness(0, 2, 0, 0);
 		}
 
 		public void OnVisibilityChanged(ToolWindowContentVisibilityEvent visEvent) {

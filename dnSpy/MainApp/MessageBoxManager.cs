@@ -28,7 +28,7 @@ using dnSpy.Contracts.Settings;
 using dnSpy.Shared.UI.App;
 
 namespace dnSpy.MainApp {
-	[ExportAutoLoaded(Order = double.MinValue)]
+	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins, Order = double.MinValue)]
 	sealed class MessageBoxManagerLoader : IAutoLoaded {
 		[ImportingConstructor]
 		MessageBoxManagerLoader(MessageBoxManager messageBoxManager) {

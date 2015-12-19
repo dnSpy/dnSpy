@@ -74,7 +74,7 @@ namespace dnSpy.Files.Tabs {
 			return -1;
 		}
 
-		public void SelectList(string name) {
+		void SelectList(string name) {
 			selectedIndex = IndexOf(name);
 		}
 

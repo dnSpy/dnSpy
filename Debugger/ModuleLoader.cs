@@ -19,24 +19,43 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Debugger.IMModules;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.Debugger {
-	sealed class ModuleLoader {
-		public static readonly ModuleLoader Instance = new ModuleLoader();
+	interface IModuleLoader {
+		IDnSpyFile LoadModule(CorModule module, bool canLoadDynFile);
+		IDnSpyFile LoadModule(DnModule module, bool canLoadDynFile);
+		IDnSpyFile LoadModule(SerializedDnSpyModule serMod, bool canLoadDynFile, bool diskFileOk = false);
+		DnModule GetDnModule(CorModule module);
+	}
 
+	[Export, Export(typeof(IModuleLoader)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class ModuleLoader : IModuleLoader {
 		bool UseMemoryModules {
-			get { return DebuggerSettings.Instance.UseMemoryModules; }
+			get { return debuggerSettings.UseMemoryModules; }
 		}
 
-		public static DnModule GetDnModule(CorModule module) {
-			var dbg = DebugManager.Instance.Debugger;
+		readonly Lazy<ITheDebugger> theDebugger;
+		readonly IDebuggerSettings debuggerSettings;
+		readonly IFileManager fileManager;
+		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
+
+		[ImportingConstructor]
+		ModuleLoader(Lazy<ITheDebugger> theDebugger, IDebuggerSettings debuggerSettings, IFileManager fileManager, Lazy<IInMemoryModuleManager> inMemoryModuleManager) {
+			this.theDebugger = theDebugger;
+			this.debuggerSettings = debuggerSettings;
+			this.fileManager = fileManager;
+			this.inMemoryModuleManager = inMemoryModuleManager;
+		}
+
+		public DnModule GetDnModule(CorModule module) {
+			var dbg = theDebugger.Value.Debugger;
 			if (dbg == null)
 				return null;
 			foreach (var m in dbg.Modules) {
@@ -46,8 +65,8 @@ namespace dnSpy.Debugger {
 			return null;
 		}
 
-		static DnModule GetDnModule(SerializedDnSpyModule serMod) {
-			var dbg = DebugManager.Instance.Debugger;
+		DnModule GetDnModule(SerializedDnSpyModule serMod) {
+			var dbg = theDebugger.Value.Debugger;
 			if (dbg == null)
 				return null;
 			//TODO: This method should have an AppDomain parameter.
@@ -74,8 +93,8 @@ namespace dnSpy.Debugger {
 			if (module == null)
 				return null;
 			if (UseMemoryModules || module.IsDynamic || module.IsInMemory)
-				return InMemoryModuleManager.Instance.LoadFile(module, canLoadDynFile);
-			var file = InMemoryModuleManager.Instance.FindFile(module);
+				return inMemoryModuleManager.Value.LoadFile(module, canLoadDynFile);
+			var file = inMemoryModuleManager.Value.FindFile(module);
 			if (file != null)
 				return file;
 			var serMod = module.SerializedDnModule.ToSerializedDnSpyModule();
@@ -83,7 +102,7 @@ namespace dnSpy.Debugger {
 		}
 
 		IEnumerable<IDnSpyFile> AllDnSpyFiles {
-			get { return InMemoryModuleManager.AllDnSpyFiles; }
+			get { return inMemoryModuleManager.Value.AllDnSpyFiles; }
 		}
 
 		IEnumerable<IDnSpyFile> AllActiveDnSpyFiles {
@@ -114,7 +133,7 @@ namespace dnSpy.Debugger {
 			if (UseMemoryModules || serMod.IsDynamic || serMod.IsInMemory) {
 				var dnModule = GetDnModule(serMod);
 				if (dnModule != null)
-					return InMemoryModuleManager.Instance.LoadFile(dnModule, canLoadDynFile);
+					return inMemoryModuleManager.Value.LoadFile(dnModule, canLoadDynFile);
 			}
 
 			return null;
@@ -139,13 +158,14 @@ namespace dnSpy.Debugger {
 		public IDnSpyFile LoadModule(SerializedDnSpyModule serMod, bool canLoadDynFile, bool diskFileOk = false) {
 			const bool isAutoLoaded = true;
 
+			IDnSpyFile file;
 			if (diskFileOk) {
-				var file = LoadExisting(serMod) ?? LoadNonDiskFile(serMod, canLoadDynFile);
+				file = LoadExisting(serMod) ?? LoadNonDiskFile(serMod, canLoadDynFile);
 				if (file != null)
 					return file;
 			}
 			else {
-				var file = LoadNonDiskFile(serMod, canLoadDynFile) ?? LoadExisting(serMod);
+				file = LoadNonDiskFile(serMod, canLoadDynFile) ?? LoadExisting(serMod);
 				if (file != null)
 					return file;
 			}
@@ -157,26 +177,24 @@ namespace dnSpy.Debugger {
 			if (!File.Exists(moduleFilename))
 				return null;
 			string asmFilename = GetAssemblyFilename(moduleFilename, serMod.AssemblyFullName);
-			var dnspyFileList = MainWindow.Instance.DnSpyFileList;
-			lock (dnspyFileList.GetLockObj()) {
-				if (string.IsNullOrEmpty(asmFilename))
-					return dnspyFileList.OpenFileDelay(moduleFilename, isAutoLoaded);
 
-				var file = dnspyFileList.OpenFileDelay(asmFilename, isAutoLoaded);
+			if (!string.IsNullOrEmpty(asmFilename)) {
+				file = fileManager.TryGetOrCreate(DnSpyFileInfo.CreateFile(asmFilename), isAutoLoaded);
 				if (file == null)
-					return null;
+					file = fileManager.Resolve(new AssemblyNameInfo(serMod.AssemblyFullName), null);
+				if (file != null) {
+					// Common case is a one-file assembly or first module of a multifile assembly
+					if (asmFilename.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
+						return file;
 
-				// Common case is a one-file assembly or first module of a multifile assembly
-				if (asmFilename.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
-					return file;
-
-				var loadedMod = MainWindow.Instance.DnSpyFileListTreeNode.FindModule(file, moduleFilename);
-				if (loadedMod != null)
-					return loadedMod;
-
-				Debug.Fail("Shouldn't be here.");
-				return dnspyFileList.OpenFileDelay(moduleFilename, isAutoLoaded);
+					foreach (var child in file.Children) {
+						if (child.Filename.Equals(moduleFilename, StringComparison.OrdinalIgnoreCase))
+							return child;
+					}
+				}
 			}
+
+			return fileManager.TryGetOrCreate(DnSpyFileInfo.CreateFile(moduleFilename), isAutoLoaded);
 		}
 
 		static string GetAssemblyFilename(string moduleFilename, string assemblyFullName) {

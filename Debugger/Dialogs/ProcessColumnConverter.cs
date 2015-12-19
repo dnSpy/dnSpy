@@ -21,7 +21,7 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using dnSpy.TreeNodes;
+using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class ProcessColumnConverter : IValueConverter {
@@ -31,8 +31,8 @@ namespace dnSpy.Debugger.Dialogs {
 			if (vm == null || s == null)
 				return null;
 
-			var gen = UISyntaxHighlighter.Create(DebuggerSettings.Instance.SyntaxHighlightAttach);
-			var printer = new ProcessPrinter(gen.TextOutput, false);
+			var gen = UISyntaxHighlighter.Create(vm.Context.SyntaxHighlight);
+			var printer = new ProcessPrinter(gen.Output, false);
 			HorizontalAlignment? horizAlign = null;
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "FullPath"))
 				printer.WriteFullPath(vm);
@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Dialogs {
 			else
 				return null;
 
-			var tb = gen.CreateTextBlock(true);
+			var tb = gen.CreateResult(true);
 			if (horizAlign != null)
 				tb.HorizontalAlignment = horizAlign.Value;
 			return tb;

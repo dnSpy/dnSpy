@@ -70,7 +70,7 @@ namespace dnSpy.Shared.UI.HexEditor {
 			double x = lineStart.X, y = lineStart.Y;
 			foreach (var line in hexLines) {
 				var visual = line.GetOrCreateDrawingVisual();
-				var t = new TranslateTransform((int)x, (int)y);
+				var t = new TranslateTransform(x, y);
 				t.Freeze();
 				visual.Transform = t;
 				y += line.Height;

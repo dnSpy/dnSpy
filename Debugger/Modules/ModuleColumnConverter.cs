@@ -20,9 +20,8 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
-using dnSpy.TreeNodes;
+using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Debugger.Modules {
 	sealed class ModuleColumnConverter : IValueConverter {
@@ -33,10 +32,10 @@ namespace dnSpy.Debugger.Modules {
 				return null;
 
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Image"))
-				return DnSpy.App.ImageManager.GetImage(GetType().Assembly, vm.IsExe ? "AssemblyExe" : "AssemblyModule", BackgroundType.GridViewItem);
+				return vm.Context.ImageManager.GetImage(GetType().Assembly, vm.IsExe ? "AssemblyExe" : "AssemblyModule", BackgroundType.GridViewItem);
 
-			var gen = UISyntaxHighlighter.Create(DebuggerSettings.Instance.SyntaxHighlightModules);
-			var printer = new ModulePrinter(gen.TextOutput, DebuggerSettings.Instance.UseHexadecimal);
+			var gen = UISyntaxHighlighter.Create(vm.Context.SyntaxHighlight);
+			var printer = new ModulePrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.TheDebugger.Debugger);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				printer.WriteName(vm);
 			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Path"))
@@ -62,7 +61,7 @@ namespace dnSpy.Debugger.Modules {
 			else
 				return null;
 
-			return gen.CreateTextBlock(true);
+			return gen.CreateResult(true);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

@@ -18,16 +18,20 @@
 */
 
 using System;
-using dnSpy.Contracts;
+using System.ComponentModel;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.Settings;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Locals {
-	sealed class LocalsSettings : ViewModelBase {
-		public static readonly LocalsSettings Instance = new LocalsSettings();
-		int disableSaveCounter;
+	interface ILocalsSettings : INotifyPropertyChanged {
+		bool ShowNamespaces { get;}
+		bool ShowTypeKeywords { get; }
+		bool ShowTokens { get; }
+	}
 
-		LocalsSettings() {
-			Load();
+	class LocalsSettings : ViewModelBase, ILocalsSettings {
+		protected virtual void OnModified() {
 		}
 
 		public bool ShowNamespaces {
@@ -35,64 +39,64 @@ namespace dnSpy.Debugger.Locals {
 			set {
 				if (showNamespaces != value) {
 					showNamespaces = value;
-					Save();
 					OnPropertyChanged("ShowNamespaces");
+					OnModified();
 				}
 			}
 		}
-		bool showNamespaces;
+		bool showNamespaces = true;
 
 		public bool ShowTypeKeywords {
 			get { return showTypeKeywords; }
 			set {
 				if (showTypeKeywords != value) {
 					showTypeKeywords = value;
-					Save();
 					OnPropertyChanged("ShowTypeKeywords");
+					OnModified();
 				}
 			}
 		}
-		bool showTypeKeywords;
+		bool showTypeKeywords = true;
 
 		public bool ShowTokens {
 			get { return showTokens; }
 			set {
 				if (showTokens != value) {
 					showTokens = value;
-					Save();
 					OnPropertyChanged("ShowTokens");
+					OnModified();
 				}
 			}
 		}
-		bool showTokens;
+		bool showTokens = false;
+	}
 
+	[Export, Export(typeof(ILocalsSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class LocalsSettingsImpl : LocalsSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("33608C69-6696-4721-8011-81ECCCC80C64");
 
-		void Load() {
-			try {
-				disableSaveCounter++;
+		readonly ISettingsManager settingsManager;
 
-				var section = DnSpy.App.SettingsManager.GetOrCreateSection(SETTINGS_GUID);
-				ShowNamespaces = section.Attribute<bool?>("ShowNamespaces") ?? true;
-				ShowTypeKeywords = section.Attribute<bool?>("ShowTypeKeywords") ?? true;
-				ShowTokens = section.Attribute<bool?>("ShowTokens") ?? false;
-			}
-			finally {
-				disableSaveCounter--;
-			}
+		[ImportingConstructor]
+		LocalsSettingsImpl(ISettingsManager settingsManager) {
+			this.settingsManager = settingsManager;
+
+			this.disableSave = true;
+			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
+			ShowNamespaces = sect.Attribute<bool?>("ShowNamespaces") ?? ShowNamespaces;
+			ShowTypeKeywords = sect.Attribute<bool?>("ShowTypeKeywords") ?? ShowTypeKeywords;
+			ShowTokens = sect.Attribute<bool?>("ShowTokens") ?? ShowTokens;
+			this.disableSave = false;
 		}
+		readonly bool disableSave;
 
-		void Save() {
-			if (this != LocalsSettings.Instance)
+		protected override void OnModified() {
+			if (disableSave)
 				return;
-			if (disableSaveCounter != 0)
-				return;
-
-			var section = DnSpy.App.SettingsManager.CreateSection(SETTINGS_GUID);
-
-			section.Attribute("ShowNamespaces", ShowNamespaces);
-			section.Attribute("ShowTypeKeywords", ShowTypeKeywords);
-			section.Attribute("ShowTokens", ShowTokens);
+			var secti = settingsManager.RecreateSection(SETTINGS_GUID);
+			secti.Attribute("ShowNamespaces", ShowNamespaces);
+			secti.Attribute("ShowTypeKeywords", ShowTypeKeywords);
+			secti.Attribute("ShowTokens", ShowTokens);
 		}
 	}
 }

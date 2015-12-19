@@ -139,7 +139,35 @@ namespace dnSpy.Files.Tabs {
 			this.uiObject = this.uiContext.UIObject;
 		}
 
+#if DEBUG
+		bool _added, _visible;
+#endif
 		void ITabContent.OnVisibilityChanged(TabContentVisibilityEvent visEvent) {
+#if DEBUG
+			switch (visEvent) {
+			case TabContentVisibilityEvent.Added:
+				Debug.Assert(!_added);
+				Debug.Assert(!_visible);
+				_added = true;
+				break;
+			case TabContentVisibilityEvent.Removed:
+				Debug.Assert(_added);
+				Debug.Assert(!_visible);
+				_added = false;
+				break;
+			case TabContentVisibilityEvent.Visible:
+				Debug.Assert(_added);
+				Debug.Assert(!_visible);
+				_visible = true;
+				break;
+			case TabContentVisibilityEvent.Hidden:
+				Debug.Assert(_added);
+				Debug.Assert(_visible);
+				_visible = false;
+				break;
+			}
+#endif
+
 			if (visEvent == TabContentVisibilityEvent.Removed) {
 				CancelAsyncWorker();
 				elementScaler.Dispose();
@@ -151,23 +179,29 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		public void FollowReference(object @ref, IFileTabContent sourceContent) {
+		public void FollowReference(object @ref, IFileTabContent sourceContent, Action<ShowTabContentEventArgs> onShown) {
 			var result = TryCreateContentFromReference(@ref, sourceContent);
-			if (result != null)
-				Show(result.FileTabContent, result.SerializedUI, result.OnShownHandler);
+			if (result != null) {
+				Show(result.FileTabContent, result.SerializedUI, e => {
+					if (result.OnShownHandler != null)
+						result.OnShownHandler(e);
+					if (onShown != null)
+						onShown(e);
+				});
+			}
 		}
 
-		public void FollowReferenceNewTab(object @ref) {
+		public void FollowReferenceNewTab(object @ref, Action<ShowTabContentEventArgs> onShown) {
 			var tab = FileTabManager.OpenEmptyTab();
-			tab.FollowReference(@ref, Content);
+			tab.FollowReference(@ref, Content, onShown);
 			FileTabManager.SetFocus(tab);
 		}
 
-		public void FollowReference(object @ref, bool newTab) {
+		public void FollowReference(object @ref, bool newTab, Action<ShowTabContentEventArgs> onShown) {
 			if (newTab)
-				FollowReferenceNewTab(@ref);
+				FollowReferenceNewTab(@ref, onShown);
 			else
-				FollowReference(@ref, Content);
+				FollowReference(@ref, Content, onShown);
 		}
 
 		FileTabReferenceResult TryCreateContentFromReference(object @ref, IFileTabContent sourceContent) {
@@ -283,7 +317,7 @@ namespace dnSpy.Files.Tabs {
 			if (serializedUI != null)
 				Deserialize(serializedUI);
 			if (onShownHandler != null)
-				onShownHandler(new ShowTabContentEventArgs(success));
+				onShownHandler(new ShowTabContentEventArgs(success, this));
 		}
 
 		void Deserialize(object serializedUI) {

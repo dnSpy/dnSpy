@@ -19,11 +19,12 @@
 
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Contracts.Files.Tabs;
 
 namespace dnSpy.Debugger.CallStack {
 	static class FrameUtils {
-		public static bool GoTo(CorFrame frame, bool newTab) {
-			if (GoToIL(frame, newTab))
+		public static bool GoTo(IFileTabManager fileTabManager, IModuleLoader moduleLoader, CorFrame frame, bool newTab) {
+			if (GoToIL(fileTabManager, moduleLoader, frame, newTab))
 				return true;
 
 			//TODO: eg. native frame or internal frame
@@ -45,7 +46,7 @@ namespace dnSpy.Debugger.CallStack {
 			return true;
 		}
 
-		public static bool GoToIL(CorFrame frame, bool newTab) {
+		public static bool GoToIL(IFileTabManager fileTabManager, IModuleLoader moduleLoader, CorFrame frame, bool newTab) {
 			if (!CanGoToIL(frame))
 				return false;
 
@@ -53,7 +54,7 @@ namespace dnSpy.Debugger.CallStack {
 			if (func == null)
 				return false;
 
-			return DebugUtils.GoToIL(ModuleLoader.Instance.LoadModule(func.Module, true), frame.Token, frame.GetILOffset(), newTab);
+			return DebugUtils.GoToIL(fileTabManager, moduleLoader.LoadModule(func.Module, true), frame.Token, frame.GetILOffset(moduleLoader), newTab);
 		}
 
 		public static bool CanGoToDisasm(CorFrame frame) {
@@ -72,7 +73,7 @@ namespace dnSpy.Debugger.CallStack {
 			return false;//TODO:
 		}
 
-		public static uint GetILOffset(this CorFrame frame) {
+		public static uint GetILOffset(this CorFrame frame, IModuleLoader moduleLoader) {
 			var ip = frame.ILFrameIP;
 			if (ip.IsExact || ip.IsApproximate)
 				return ip.Offset;
@@ -81,7 +82,7 @@ namespace dnSpy.Debugger.CallStack {
 
 			if (ip.IsEpilog) {
 				var func = frame.Function;
-				var file = func == null ? null : ModuleLoader.Instance.LoadModule(func.Module, true);
+				var file = func == null ? null : moduleLoader.LoadModule(func.Module, true);
 				var mod = file == null ? null : file.ModuleDef;
 				var md = mod == null ? null : mod.ResolveToken(frame.Token) as MethodDef;
 				if (md != null && md.Body != null && md.Body.Instructions.Count > 0)

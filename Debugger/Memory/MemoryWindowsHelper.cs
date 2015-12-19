@@ -1,0 +1,40 @@
+﻿/*
+    Copyright (C) 2014-2015 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+namespace dnSpy.Debugger.Memory {
+	static class MemoryWindowsHelper {
+		// Four should be enough, but if more are required, it's as simple as changing this constant.
+		// The first 10 will have keyboard shortcuts (Ctrl+N or Ctrl+Alt+N) depending on the command.
+		public static readonly int NUMBER_OF_MEMORY_WINDOWS = 4;
+
+		public static string GetHeaderText(int i) {
+			if (i == 9)
+				return "Memory 1_0";
+			if (0 <= i && i <= 8)
+				return string.Format("Memory _{0}", (i + 1) % 10);
+			return string.Format("Memory {0}", i + 1);
+		}
+
+		public static string GetCtrlInputGestureText(int i) {
+			if (0 <= i && i <= 9)
+				return string.Format("Ctrl+{0}", (i + 1) % 10);
+			return string.Empty;
+		}
+	}
+}

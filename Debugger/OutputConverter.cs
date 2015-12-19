@@ -19,14 +19,14 @@
 
 using System.Diagnostics;
 using dndbg.Engine;
+using dnSpy.Contracts.Highlighting;
 using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger {
 	sealed class OutputConverter : ITypeOutput {
-		readonly ITextOutput output;
+		readonly ISyntaxHighlightOutput output;
 
-		public OutputConverter(ITextOutput output) {
+		public OutputConverter(ISyntaxHighlightOutput output) {
 			this.output = output;
 		}
 

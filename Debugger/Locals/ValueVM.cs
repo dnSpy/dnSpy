@@ -25,12 +25,10 @@ using System.Linq;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnlib.DotNet;
-using dnSpy.Contracts;
+using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Decompiler;
 using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy.TreeNodes;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.Debugger.Locals {
@@ -63,8 +61,12 @@ namespace dnSpy.Debugger.Locals {
 
 		protected abstract string IconName { get; }
 
+		public IPrinterContext PrinterContext {
+			get { return context.LocalsOwner.PrinterContext; }
+		}
+
 		public sealed override object Icon {
-			get { return DnSpy.App.ImageManager.GetImage(GetType().Assembly, IconName, BackgroundType.TreeNode); }
+			get { return context.LocalsOwner.PrinterContext.ImageManager.GetImage(GetType().Assembly, IconName, BackgroundType.TreeNode); }
 		}
 
 		public sealed override bool ShowIcon {
@@ -123,12 +125,12 @@ namespace dnSpy.Debugger.Locals {
 			return CachedOutput.Create();
 		}
 
-		public abstract void WriteName(ITextOutput output);
+		public abstract void WriteName(ISyntaxHighlightOutput output);
 
 		protected ValueContext context;
 
 		protected TypePrinterFlags TypePrinterFlags {
-			get { return context.LocalsOwner.TypePrinterFlags; }
+			get { return context.LocalsOwner.PrinterContext.TypePrinterFlags; }
 		}
 
 		internal void RefreshTypeFields() {
@@ -219,7 +221,7 @@ namespace dnSpy.Debugger.Locals {
 			this.msg = msg;
 		}
 
-		public override void WriteName(ITextOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) {
 			output.Write(msg, TextTokenType.Error);
 		}
 	}
@@ -254,7 +256,7 @@ namespace dnSpy.Debugger.Locals {
 			return CachedOutput.Create(info.FieldType, TypePrinterFlags);
 		}
 
-		public override void WriteName(ITextOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) {
 			FieldValueType.WriteName(output, info.Name, TextTokenType.LiteralField, info.OwnerType, overridden);
 		}
 	}
@@ -785,7 +787,7 @@ namespace dnSpy.Debugger.Locals {
 			RaisePropertyChanged(propName);
 		}
 
-		public override void WriteName(ITextOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) {
 			valueType.WriteName(output);
 		}
 
@@ -931,14 +933,14 @@ namespace dnSpy.Debugger.Locals {
 		protected string CreateString(string s, out CorValue newString) {
 			newString = null;
 
-			if (DebugManager.Instance.EvalDisabled)
+			if (this.context.LocalsOwner.TheDebugger.EvalDisabled)
 				return "Evaluation timed out and it's not possible to create new strings until you continue the debugged program";
-			if (!DebugManager.Instance.CanEvaluate)
+			if (!this.context.LocalsOwner.TheDebugger.CanEvaluate)
 				return "It's currently not possible to create new strings";
 
 			int hr;
 			EvalResult? res;
-			using (var eval = DebugManager.Instance.CreateEval(context.Thread.CorThread))
+			using (var eval = this.context.LocalsOwner.TheDebugger.CreateEval(context.Thread.CorThread))
 				res = eval.CreateString(s, out hr);
 			if (res == null)
 				return string.Format("Couldn't create a string. Error: 0x{0:X8}", hr);
@@ -1033,8 +1035,9 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public void Reinitialize(ValueContext newContext) {
+			this.context = CreateValueContext(newContext, ownerType);
 			CleanUpCorValue();
-			ReinitializeInternal(CreateValueContext(newContext, ownerType));
+			ReinitializeInternal(this.context);
 		}
 
 		protected override int GetReadOnlyCorValue(out CorValue value) {
@@ -1070,7 +1073,9 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		protected override void CleanUpCorValue() {
-			DebugManager.Instance.DisposeHandle(value);
+			Debug.Assert(this.context != null);
+			if (this.context != null)
+				this.context.LocalsOwner.TheDebugger.DisposeHandle(value);
 			value = null;
 		}
 	}
@@ -1121,8 +1126,9 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public void Reinitialize(ValueContext newContext) {
+			this.context = CreateValueContext(newContext, ownerType);
 			CleanUpCorValue();
-			ReinitializeInternal(CreateValueContext(newContext, ownerType));
+			ReinitializeInternal(this.context);
 		}
 
 		protected override int GetReadOnlyCorValue(out CorValue value) {
@@ -1153,16 +1159,16 @@ namespace dnSpy.Debugger.Locals {
 		int InitializeValue() {
 			CleanUpCorValue();
 
-			if (!DebuggerSettings.Instance.PropertyEvalAndFunctionCalls)
+			if (!context.LocalsOwner.PropertyEvalAndFunctionCalls)
 				return ERROR_PropertyEvalDisabled;
-			if (DebugManager.Instance.EvalDisabled)
+			if (this.context.LocalsOwner.TheDebugger.EvalDisabled)
 				return ERROR_EvalDisabledTimedOut;
-			if (!DebugManager.Instance.CanEvaluate)
+			if (!this.context.LocalsOwner.TheDebugger.CanEvaluate)
 				return ERROR_CantEvaluate;
 
 			try {
 				int hr;
-				using (var eval = DebugManager.Instance.CreateEval(context.Thread.CorThread)) {
+				using (var eval = this.context.LocalsOwner.TheDebugger.CreateEval(context.Thread.CorThread)) {
 					var func = ownerType.Class.Module.GetFunctionFromToken(getToken);
 					CorValue[] args;
 					if ((GetMethodAttributes & MethodAttributes.Static) != 0)
@@ -1190,14 +1196,16 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		protected override void CleanUpCorValue() {
-			DebugManager.Instance.DisposeHandle(value);
+			Debug.Assert(this.context != null);
+			if (this.context != null)
+				this.context.LocalsOwner.TheDebugger.DisposeHandle(value);
 			value = null;
 		}
 
 		protected override string SetValueAsTextInternal(ValueStringParser parser) {
-			if (DebugManager.Instance.EvalDisabled)
+			if (this.context.LocalsOwner.TheDebugger.EvalDisabled)
 				return EVAL_DISABLED_TIMEDOUT_ERROR_MSG;
-			if (!DebugManager.Instance.CanEvaluate)
+			if (!this.context.LocalsOwner.TheDebugger.CanEvaluate)
 				return EVAL_DISABLED_CANT_CALL_PROPS_METHS;
 
 			var v = ReadOnlyCorValue;
@@ -1233,7 +1241,7 @@ namespace dnSpy.Debugger.Locals {
 				}
 
 				int hr;
-				using (var eval = DebugManager.Instance.CreateEval(context.Thread.CorThread)) {
+				using (var eval = this.context.LocalsOwner.TheDebugger.CreateEval(context.Thread.CorThread)) {
 					if (createNull)
 						v = eval.CreateNull();
 
@@ -1275,7 +1283,7 @@ namespace dnSpy.Debugger.Locals {
 			get { return true; }
 		}
 		public abstract string IconName { get; }
-		public abstract void WriteName(ITextOutput output);
+		public abstract void WriteName(ISyntaxHighlightOutput output);
 		public NormalValueVM Owner {
 			get { return owner; }
 			set {
@@ -1308,7 +1316,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 		string name;
 
-		public override void WriteName(ITextOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) {
 			var n = name;
 			if (string.IsNullOrEmpty(n))
 				n = string.Format("V_{0}", index);
@@ -1340,7 +1348,7 @@ namespace dnSpy.Debugger.Locals {
 		bool isThis;
 		string name;
 
-		public override void WriteName(ITextOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) {
 			if (isThis)
 				output.Write("this", TextTokenType.Keyword);
 			else {
@@ -1362,7 +1370,7 @@ namespace dnSpy.Debugger.Locals {
 			get { return false; }
 		}
 
-		public override void WriteName(ITextOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) {
 			output.Write("$exception", TextTokenType.Local);
 		}
 	}
@@ -1380,7 +1388,7 @@ namespace dnSpy.Debugger.Locals {
 			this.state = state;
 		}
 
-		public override void WriteName(ITextOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) {
 			output.Write("[", TextTokenType.Operator);
 
 			if (state.Dimensions.Length == 1 && state.Indices.Length == 1 && state.Indices[0] == 0) {
@@ -1431,67 +1439,87 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		internal static string GetIconName(CorType ownerType, FieldAttributes attrs) {
-			var access = FieldTreeNode.GetMemberAccess(attrs);
+			var access = attrs & FieldAttributes.FieldAccessMask;
 
 			if ((attrs & FieldAttributes.SpecialName) == 0 && ownerType.IsEnum) {
 				switch (access) {
-				case MemberAccess.Public:				return "EnumValue";
-				case MemberAccess.Private:				return "EnumValuePrivate";
-				case MemberAccess.Protected:			return "EnumValueProtected";
-				case MemberAccess.Internal:				return "EnumValueInternal";
-				case MemberAccess.CompilerControlled:	return "EnumValueCompilerControlled";
-				case MemberAccess.ProtectedInternal:	return "EnumValueProtectedInternal";
 				default:
-					Debug.Fail("Invalid MemberAccess");
-					goto case MemberAccess.Public;
+				case FieldAttributes.Public:
+					return "EnumValue";
+				case FieldAttributes.Private:
+					return "EnumValuePrivate";
+				case FieldAttributes.Family:
+					return "EnumValueProtected";
+				case FieldAttributes.Assembly:
+				case FieldAttributes.FamANDAssem:
+					return "EnumValueInternal";
+				case FieldAttributes.CompilerControlled:
+					return "EnumValueCompilerControlled";
+				case FieldAttributes.FamORAssem:
+					return "EnumValueProtectedInternal";
 				}
 			}
 			else if ((attrs & FieldAttributes.Literal) != 0) {
 				switch (access) {
-				case MemberAccess.Public:				return "Literal";
-				case MemberAccess.Private:				return "LiteralPrivate";
-				case MemberAccess.Protected:			return "LiteralProtected";
-				case MemberAccess.Internal:				return "LiteralInternal";
-				case MemberAccess.CompilerControlled:	return "LiteralCompilerControlled";
-				case MemberAccess.ProtectedInternal:	return "LiteralProtectedInternal";
 				default:
-					Debug.Fail("Invalid MemberAccess");
-					goto case MemberAccess.Public;
+				case FieldAttributes.Public:
+					return "Literal";
+				case FieldAttributes.Private:
+					return "LiteralPrivate";
+				case FieldAttributes.Family:
+					return "LiteralProtected";
+				case FieldAttributes.Assembly:
+				case FieldAttributes.FamANDAssem:
+					return "LiteralInternal";
+				case FieldAttributes.CompilerControlled:
+					return "LiteralCompilerControlled";
+				case FieldAttributes.FamORAssem:
+					return "LiteralProtectedInternal";
 				}
 			}
 			else if ((attrs & FieldAttributes.InitOnly) != 0) {
 				switch (access) {
-				case MemberAccess.Public:				return "FieldReadOnly";
-				case MemberAccess.Private:				return "FieldReadOnlyPrivate";
-				case MemberAccess.Protected:			return "FieldReadOnlyProtected";
-				case MemberAccess.Internal:				return "FieldReadOnlyInternal";
-				case MemberAccess.CompilerControlled:	return "FieldReadOnlyCompilerControlled";
-				case MemberAccess.ProtectedInternal:	return "FieldReadOnlyProtectedInternal";
 				default:
-					Debug.Fail("Invalid MemberAccess");
-					goto case MemberAccess.Public;
+				case FieldAttributes.Public:
+					return "FieldReadOnly";
+				case FieldAttributes.Private:
+					return "FieldReadOnlyPrivate";
+				case FieldAttributes.Family:
+					return "FieldReadOnlyProtected";
+				case FieldAttributes.Assembly:
+				case FieldAttributes.FamANDAssem:
+					return "FieldReadOnlyInternal";
+				case FieldAttributes.CompilerControlled:
+					return "FieldReadOnlyCompilerControlled";
+				case FieldAttributes.FamORAssem:
+					return "FieldReadOnlyProtectedInternal";
 				}
 			}
 			else {
 				switch (access) {
-				case MemberAccess.Public:				return "Field";
-				case MemberAccess.Private:				return "FieldPrivate";
-				case MemberAccess.Protected:			return "FieldProtected";
-				case MemberAccess.Internal:				return "FieldInternal";
-				case MemberAccess.CompilerControlled:	return "FieldCompilerControlled";
-				case MemberAccess.ProtectedInternal:	return "FieldProtectedInternal";
 				default:
-					Debug.Fail("Invalid MemberAccess");
-					goto case MemberAccess.Public;
+				case FieldAttributes.Public:
+					return "Field";
+				case FieldAttributes.Private:
+					return "FieldPrivate";
+				case FieldAttributes.Family:
+					return "FieldProtected";
+				case FieldAttributes.Assembly:
+				case FieldAttributes.FamANDAssem:
+					return "FieldInternal";
+				case FieldAttributes.CompilerControlled:
+					return "FieldCompilerControlled";
+				case FieldAttributes.FamORAssem:
+					return "FieldProtectedInternal";
 				}
 			}
 		}
 
-		public override void WriteName(ITextOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) {
 			WriteName(output, name, GetTextTokenType(), vm.OwnerType, vm.Overridden);
 		}
 
-		internal static void WriteName(ITextOutput output, string name, TextTokenType type, CorType ownerType, bool overridden) {
+		internal static void WriteName(ISyntaxHighlightOutput output, string name, TextTokenType type, CorType ownerType, bool overridden) {
 			output.Write(IdentifierEscaper.Escape(name), type);
 			if (overridden) {
 				output.Write(" ", TextTokenType.Text);
@@ -1526,50 +1554,65 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		internal static string GetIconName(CorType ownerType, MethodAttributes attrs) {
-			var access = MethodTreeNode.GetMemberAccess(attrs);
+			var access = attrs & MethodAttributes.MemberAccessMask;
 
 			if ((attrs & MethodAttributes.Static) != 0) {
 				switch (access) {
-				case MemberAccess.Public:			return "StaticProperty";
-				case MemberAccess.Private:			return "StaticPropertyPrivate";
-				case MemberAccess.Protected:		return "StaticPropertyProtected";
-				case MemberAccess.Internal:			return "StaticPropertyInternal";
-				case MemberAccess.CompilerControlled:return "StaticPropertyCompilerControlled";
-				case MemberAccess.ProtectedInternal:return "StaticPropertyProtectedInternal";
 				default:
-					Debug.Fail("Invalid MemberAccess");
-					goto case MemberAccess.Public;
+				case MethodAttributes.Public:
+					return "StaticProperty";
+				case MethodAttributes.Private:
+					return "StaticPropertyPrivate";
+				case MethodAttributes.Family:
+					return "StaticPropertyProtected";
+				case MethodAttributes.Assembly:
+				case MethodAttributes.FamANDAssem:
+					return "StaticPropertyInternal";
+				case MethodAttributes.CompilerControlled:
+					return "StaticPropertyCompilerControlled";
+				case MethodAttributes.FamORAssem:
+					return "StaticPropertyProtectedInternal";
 				}
 			}
 
 			if ((attrs & MethodAttributes.Virtual) != 0) {
 				switch (access) {
-				case MemberAccess.Public:			return "VirtualProperty";
-				case MemberAccess.Private:			return "VirtualPropertyPrivate";
-				case MemberAccess.Protected:		return "VirtualPropertyProtected";
-				case MemberAccess.Internal:			return "VirtualPropertyInternal";
-				case MemberAccess.CompilerControlled:return "VirtualPropertyCompilerControlled";
-				case MemberAccess.ProtectedInternal:return "VirtualPropertyProtectedInternal";
 				default:
-					Debug.Fail("Invalid MemberAccess");
-					goto case MemberAccess.Public;
+				case MethodAttributes.Public:
+					return "VirtualProperty";
+				case MethodAttributes.Private:
+					return "VirtualPropertyPrivate";
+				case MethodAttributes.Family:
+					return "VirtualPropertyProtected";
+				case MethodAttributes.Assembly:
+				case MethodAttributes.FamANDAssem:
+					return "VirtualPropertyInternal";
+				case MethodAttributes.CompilerControlled:
+					return "VirtualPropertyCompilerControlled";
+				case MethodAttributes.FamORAssem:
+					return "VirtualPropertyProtectedInternal";
 				}
 			}
 
 			switch (access) {
-			case MemberAccess.Public:				return "Property";
-			case MemberAccess.Private:				return "PropertyPrivate";
-			case MemberAccess.Protected:			return "PropertyProtected";
-			case MemberAccess.Internal:				return "PropertyInternal";
-			case MemberAccess.CompilerControlled:	return "PropertyCompilerControlled";
-			case MemberAccess.ProtectedInternal:	return "PropertyProtectedInternal";
 			default:
-				Debug.Fail("Invalid MemberAccess");
-				goto case MemberAccess.Public;
+			case MethodAttributes.Public:
+				return "Property";
+			case MethodAttributes.Private:
+				return "PropertyPrivate";
+			case MethodAttributes.Family:
+				return "PropertyProtected";
+			case MethodAttributes.Assembly:
+			case MethodAttributes.FamANDAssem:
+				return "PropertyInternal";
+			case MethodAttributes.CompilerControlled:
+				return "PropertyCompilerControlled";
+			case MethodAttributes.FamORAssem:
+				return "PropertyProtectedInternal";
 			}
 		}
 
-		public override void WriteName(ITextOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) {
 			FieldValueType.WriteName(output, name, GetTextTokenType(), vm.OwnerType, vm.Overridden);
 		}
 
@@ -1698,7 +1741,7 @@ namespace dnSpy.Debugger.Locals {
 			Reinitialize(context, type);
 		}
 
-		public override void WriteName(ITextOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) {
 			if (!string.IsNullOrEmpty(name))
 				output.Write(IdentifierEscaper.Escape(name), isTypeVar ? TextTokenType.TypeGenericParameter : TextTokenType.MethodGenericParameter);
 			else if (isTypeVar) {
@@ -1773,7 +1816,7 @@ namespace dnSpy.Debugger.Locals {
 			Reinitialize(context);
 		}
 
-		public override void WriteName(ITextOutput output) {
+		public override void WriteName(ISyntaxHighlightOutput output) {
 			output.Write("Type variables", TextTokenType.TypeGenericParameter);
 		}
 	}

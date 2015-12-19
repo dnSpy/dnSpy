@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
@@ -41,9 +42,21 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	sealed class ExceptionManager {
-		public static readonly ExceptionManager Instance = new ExceptionManager();
+	interface IExceptionManager {
+		event EventHandler<ExceptionManagerEventArgs> Changed;
+		IEnumerable<ExceptionInfo> ExceptionInfos { get; }
+		void RestoreDefaults();
+		void Remove(ExceptionInfoKey key);
+		void BreakOnFirstChanceChanged(ExceptionInfo info);
+		void AddOrUpdate(ExceptionInfoKey key, bool breakOnFirstChance, bool isOtherExceptions);
+		void Add(ExceptionInfoKey key);
+		void RemoveExceptions(IEnumerable<ExceptionInfo> infos);
+		bool CanRemove(ExceptionInfo info);
+		bool Exists(ExceptionInfoKey key);
+	}
 
+	[Export, Export(typeof(IExceptionManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class ExceptionManager : IExceptionManager {
 		readonly Dictionary<ExceptionInfoKey, ExceptionInfo> exceptions = new Dictionary<ExceptionInfoKey, ExceptionInfo>();
 		readonly ExceptionInfo[] otherExceptions = new ExceptionInfo[(int)ExceptionType.Last];
 
@@ -53,18 +66,18 @@ namespace dnSpy.Debugger.Exceptions {
 			get { return exceptions.Values; }
 		}
 
-		ExceptionManager() {
+		readonly ITheDebugger theDebugger;
+
+		[ImportingConstructor]
+		ExceptionManager(ITheDebugger theDebugger) {
+			this.theDebugger = theDebugger;
+			RestoreDefaults();
+			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 		}
 
-		internal void OnLoaded() {
-			// This calls RestoreDefaults();
-			ExceptionListSettings.Instance.OnLoaded();
-			DebugManager.Instance.OnProcessStateChanged += DebugManager_OnProcessStateChanged;
-		}
-
-		private void DebugManager_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+		private void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			var dbg = (DnDebugger)sender;
-			switch (dbg.ProcessState) {
+			switch (theDebugger.ProcessState) {
 			case DebuggerProcessState.Starting:
 				dbg.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
 				break;
@@ -108,7 +121,7 @@ namespace dnSpy.Debugger.Exceptions {
 			e.AddStopReason(DebuggerStopReason.Exception);
 		}
 
-		internal void BreakOnFirstChanceChanged(ExceptionInfo info) {
+		public void BreakOnFirstChanceChanged(ExceptionInfo info) {
 			ExceptionInfo info2;
 			bool b = exceptions.TryGetValue(info.Key, out info2) && ReferenceEquals(info, info2);
 			Debug.Assert(b);
@@ -158,7 +171,7 @@ namespace dnSpy.Debugger.Exceptions {
 			BreakOnFirstChanceChanged(info);
 		}
 
-		internal void AddOrUpdate(ExceptionInfoKey key, bool breakOnFirstChance, bool isOtherExceptions) {
+		public void AddOrUpdate(ExceptionInfoKey key, bool breakOnFirstChance, bool isOtherExceptions) {
 			if (isOtherExceptions) {
 				int index = (int)key.ExceptionType;
 				if ((uint)index < (uint)otherExceptions.Length)

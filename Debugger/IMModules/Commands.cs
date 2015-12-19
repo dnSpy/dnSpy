@@ -18,12 +18,12 @@
 */
 
 using System;
+using System.ComponentModel.Composition;
 using dndbg.Engine;
+using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.UI.Menus;
-using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.TreeView;
 
 namespace dnSpy.Debugger.IMModules {
 	static class ReloadAllMethodBodiesCommand {
@@ -36,13 +36,20 @@ namespace dnSpy.Debugger.IMModules {
 		}
 
 		abstract class CommandBase : MenuItemBase<Context> {
+			readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
+
+			protected CommandBase(Lazy<IInMemoryModuleManager> inMemoryModuleManager) {
+				this.inMemoryModuleManager = inMemoryModuleManager;
+			}
+
 			protected sealed override Context CreateContext(IMenuItemContext context) {
 				var file = GetFile(context);
 				return file == null ? null : new Context(file);
 			}
 
 			MemoryModuleDefFile GetFile(IMenuItemContext context) {
-				var modNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(GetTreeNode(context));
+				var node = GetTreeNode(context);
+				var modNode = node.GetModuleNode();
 				var mfile = modNode == null ? null : modNode.DnSpyFile as MemoryModuleDefFile;
 				if (mfile == null)
 					return null;
@@ -51,7 +58,11 @@ namespace dnSpy.Debugger.IMModules {
 				return mfile;
 			}
 
-			protected abstract ILSpyTreeNode GetTreeNode(IMenuItemContext context);
+			protected abstract IFileTreeNodeData GetTreeNode(IMenuItemContext context);
+
+			protected void ExecuteInternal(Context context) {
+				inMemoryModuleManager.Value.UpdateModuleMemory(context.MemoryModuleDefFile);
+			}
 		}
 
 		[ExportMenuItem(Header = "Reload All Method Bodies", Icon = "Refresh", Group = MenuConstants.GROUP_CTX_FILES_DEBUGRT, Order = 0)]
@@ -61,16 +72,21 @@ namespace dnSpy.Debugger.IMModules {
 			}
 			static readonly object ContextKey = new object();
 
+			[ImportingConstructor]
+			FilesCommand(Lazy<IInMemoryModuleManager> inMemoryModuleManager)
+				: base(inMemoryModuleManager) {
+			}
+
 			public override void Execute(Context context) {
 				ExecuteInternal(context);
 			}
 
-			protected override ILSpyTreeNode GetTreeNode(IMenuItemContext context) {
+			protected override IFileTreeNodeData GetTreeNode(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
 					return null;
-				var nodes = context.FindByType<SharpTreeNode[]>();
+				var nodes = context.FindByType<ITreeNodeData[]>();
 				if (nodes != null && nodes.Length != 0)
-					return nodes[0] as ILSpyTreeNode;
+					return nodes[0] as IFileTreeNodeData;
 				return null;
 			}
 		}
@@ -82,19 +98,23 @@ namespace dnSpy.Debugger.IMModules {
 			}
 			static readonly object ContextKey = new object();
 
+			readonly IFileTreeView fileTreeView;
+
+			[ImportingConstructor]
+			CodeCommand(Lazy<IInMemoryModuleManager> inMemoryModuleManager, IFileTreeView fileTreeView)
+				: base(inMemoryModuleManager) {
+				this.fileTreeView = fileTreeView;
+			}
+
 			public override void Execute(Context context) {
 				ExecuteInternal(context);
 			}
 
-			protected override ILSpyTreeNode GetTreeNode(IMenuItemContext context) {
+			protected override IFileTreeNodeData GetTreeNode(IMenuItemContext context) {
 				if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
-					return MainWindow.Instance.TreeView.SelectedItem as ILSpyTreeNode;
+					return fileTreeView.TreeView.SelectedItem as IFileTreeNodeData;
 				return null;
 			}
-		}
-
-		static void ExecuteInternal(Context context) {
-			InMemoryModuleManager.Instance.UpdateModuleMemory(context.MemoryModuleDefFile);
 		}
 	}
 }

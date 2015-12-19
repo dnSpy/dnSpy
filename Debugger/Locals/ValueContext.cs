@@ -20,12 +20,33 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using dndbg.Engine;
+using dnSpy.Contracts.Images;
 
 namespace dnSpy.Debugger.Locals {
-	interface ILocalsOwner {
+	interface IPrinterContext {
+		IImageManager ImageManager { get; }
+		bool SyntaxHighlight { get; }
+		bool UseHexadecimal { get; }
 		TypePrinterFlags TypePrinterFlags { get; }
+	}
+
+	sealed class PrinterContext : IPrinterContext {
+		public IImageManager ImageManager { get; private set; }
+		public bool SyntaxHighlight { get; set; }
+		public bool UseHexadecimal { get; set; }
+		public TypePrinterFlags TypePrinterFlags { get; set; }
+
+		public PrinterContext(IImageManager imageManager) {
+			this.ImageManager = imageManager;
+		}
+	}
+
+	interface ILocalsOwner {
+		IPrinterContext PrinterContext { get; }
+		ITheDebugger TheDebugger { get; }
 		bool DebuggerBrowsableAttributesCanHidePropsFields { get; }
 		bool CompilerGeneratedAttributesCanHideFields { get; }
+		bool PropertyEvalAndFunctionCalls { get; }
 		void Refresh(NormalValueVM vm);
 		bool AskUser(string msg);
 		DnEval CreateEval(ValueContext context);

@@ -17,13 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <winlocal:WindowBase x:Class="dnSpy.Debugger.IMModules.LoadEverythingDlg"
+             x:ClassModifier="internal"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:winlocal="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
              xmlns:local="clr-namespace:dnSpy.Debugger.IMModules"
-             xmlns:mvvm="clr-namespace:dnSpy.MVVM;assembly=dnSpy_old"
              xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
              Height="200" Width="400"
              Title="Loading Dynamic Modules"

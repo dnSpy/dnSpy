@@ -25,10 +25,7 @@ using System.Windows.Threading;
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.Debugger.IMModules {
-	/// <summary>
-	/// Interaction logic for LoadEverythingDlg.xaml
-	/// </summary>
-	public partial class LoadEverythingDlg : WindowBase {
+	sealed partial class LoadEverythingDlg : WindowBase {
 		public LoadEverythingDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

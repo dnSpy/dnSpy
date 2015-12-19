@@ -102,7 +102,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ToolTipHelper toolTipHelper;
 		readonly ITextEditorSettings textEditorSettings;
 
-		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContext textEditorUIContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager) {
+		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager) {
 			this.themeManager = themeManager;
 			this.toolTipHelper = toolTipHelper;
 			this.textEditorSettings = textEditorSettings;
@@ -142,11 +142,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				Mode = BindingMode.OneWay,
 			});
 
-			iconBarMargin = new IconBarMargin(textEditorUIContext, textLineObjectManager, imageManager, themeManager);
+			iconBarMargin = new IconBarMargin(uiContext, textLineObjectManager, imageManager, themeManager);
 			TextEditor.TextArea.LeftMargins.Insert(0, iconBarMargin);
 			TextEditor.TextArea.TextView.VisualLinesChanged += (s, e) => iconBarMargin.InvalidateVisual();
 
-			textMarkerService = new TextMarkerService(this, textEditorUIContext, textLineObjectManager);
+			textMarkerService = new TextMarkerService(this, uiContext, textLineObjectManager);
 			TextEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
 			TextEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 

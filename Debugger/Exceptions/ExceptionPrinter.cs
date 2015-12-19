@@ -17,15 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Contracts.Highlighting;
 using dnSpy.Decompiler;
 using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
+using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionPrinter {
-		readonly ITextOutput output;
+		readonly ISyntaxHighlightOutput output;
 
-		public ExceptionPrinter(ITextOutput output) {
+		public ExceptionPrinter(ISyntaxHighlightOutput output) {
 			this.output = output;
 		}
 
@@ -40,7 +41,7 @@ namespace dnSpy.Debugger.Exceptions {
 			string ns, name;
 			SplitTypeName(fullName, out ns, out name);
 			if (!string.IsNullOrEmpty(ns)) {
-				output.WriteNamespace_OLD(ns);
+				output.WriteNamespace(ns);
 				output.Write(".", TextTokenType.Operator);
 			}
 			output.Write(IdentifierEscaper.Escape(name), TextTokenType.Type);

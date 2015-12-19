@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>dnSpy.AsmEditor</RootNamespace>
-    <AssemblyName>AsmEditor.Plugin</AssemblyName>
+    <AssemblyName>dnSpy.AsmEditor.Plugin</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>

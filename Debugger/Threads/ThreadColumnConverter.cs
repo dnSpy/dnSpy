@@ -21,9 +21,8 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
-using dnSpy.TreeNodes;
+using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Debugger.Threads {
 	sealed class ThreadColumnConverter : IValueConverter {
@@ -35,30 +34,30 @@ namespace dnSpy.Debugger.Threads {
 
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "CurrentImage")) {
 				if (vm.IsCurrent)
-					return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "CurrentLine", BackgroundType.GridViewItem);
+					return vm.Context.ImageManager.GetImage(GetType().Assembly, "CurrentLine", BackgroundType.GridViewItem);
 				if (vm.Type == ThreadType.Main)
-					return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "DraggedCurrentInstructionPointer", BackgroundType.GridViewItem);
+					return vm.Context.ImageManager.GetImage(GetType().Assembly, "DraggedCurrentInstructionPointer", BackgroundType.GridViewItem);
 				return null;
 			}
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "CategoryImage")) {
 				switch (vm.Type) {
 				case ThreadType.Unknown:
 				case ThreadType.Terminated:
-					return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "QuestionMark", BackgroundType.GridViewItem);
+					return vm.Context.ImageManager.GetImage(GetType().Assembly, "QuestionMark", BackgroundType.GridViewItem);
 				case ThreadType.Main:
-					return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Thread", BackgroundType.GridViewItem);
+					return vm.Context.ImageManager.GetImage(GetType().Assembly, "Thread", BackgroundType.GridViewItem);
 				case ThreadType.BGCOrFinalizer:
 				case ThreadType.ThreadPool:
 				case ThreadType.Worker:
-					return DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Process", BackgroundType.GridViewItem);
+					return vm.Context.ImageManager.GetImage(GetType().Assembly, "Process", BackgroundType.GridViewItem);
 				default:
 					Debug.Fail(string.Format("Unknown thread type: {0}", vm.Type));
 					goto case ThreadType.Unknown;
 				}
 			}
 
-			var gen = UISyntaxHighlighter.Create(DebuggerSettings.Instance.SyntaxHighlightThreads);
-			var printer = new ThreadPrinter(gen.TextOutput, DebuggerSettings.Instance.UseHexadecimal);
+			var gen = UISyntaxHighlighter.Create(vm.Context.SyntaxHighlight);
+			var printer = new ThreadPrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.TheDebugger.Debugger);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Id"))
 				printer.WriteId(vm);
 			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "ManagedId"))
@@ -84,7 +83,7 @@ namespace dnSpy.Debugger.Threads {
 			else
 				return null;
 
-			return gen.CreateTextBlock(true);
+			return gen.CreateResult(true);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

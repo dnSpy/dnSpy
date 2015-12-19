@@ -37,10 +37,9 @@ using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
-using AR = ICSharpCode.AvalonEdit.Rendering;
 
 namespace dnSpy.Files.Tabs.TextEditor {
-	[ExportAutoLoaded]
+	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
 	sealed class NewTextEditorThemeInitializer : IAutoLoaded {
 		readonly IThemeManager themeManager;
 
@@ -59,8 +58,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			var theme = themeManager.Theme;
 
 			var specialBox = theme.GetTextColor(ColorType.SpecialCharacterBox);
-			AR.SpecialCharacterTextRunOptions.BackgroundBrush = specialBox.Background == null ? null : specialBox.Background;
-			AR.SpecialCharacterTextRunOptions.ForegroundBrush = specialBox.Foreground == null ? null : specialBox.Foreground;
+			SpecialCharacterTextRunOptions.BackgroundBrush = specialBox.Background == null ? null : specialBox.Background;
+			SpecialCharacterTextRunOptions.ForegroundBrush = specialBox.Foreground == null ? null : specialBox.Foreground;
 
 			foreach (var f in typeof(TextTokenType).GetFields()) {
 				if (!f.IsLiteral)
@@ -223,7 +222,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			TextArea.Caret.DesiredXPos = desiredXPos;
 		}
 
-		static Point FilterCaretPos(AR.TextView textView, Point pt) {
+		static Point FilterCaretPos(TextView textView, Point pt) {
 			Point firstPos;
 			if (textView.VisualLines.Count == 0)
 				firstPos = new Point(0, 0);
@@ -378,7 +377,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				this.textEditor = textEditor;
 			}
 
-			protected override IHighlighter CreateHighlighter(AR.TextView textView, TextDocument document) {
+			protected override IHighlighter CreateHighlighter(TextView textView, TextDocument document) {
 				return new NewHighlighter(textEditor, document);
 			}
 		}

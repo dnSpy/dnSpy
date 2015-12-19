@@ -157,6 +157,7 @@
     <Compile Include="Files\Tabs\TextEditor\TextEditorSettings.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorUIContext.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextCreator.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextManagerImpl.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextLineObjectManager.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextMarkerService.cs" />
     <Compile Include="Files\Tabs\TextEditor\ToolTips\CodeToolTipCreator.cs" />

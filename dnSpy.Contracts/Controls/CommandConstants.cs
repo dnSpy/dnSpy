@@ -50,5 +50,47 @@ namespace dnSpy.Contracts.Controls {
 
 		/// <summary>Guid of search <see cref="ListBox"/></summary>
 		public static readonly Guid GUID_SEARCH_LISTBOX = new Guid("651FC97F-A9A7-4649-97AC-FC942168E6E2");
+
+		/// <summary>Guid of debugger breakpoints control</summary>
+		public static readonly Guid GUID_DEBUGGER_BREAKPOINTS_CONTROL = new Guid("00EC8F82-086C-4305-A07D-CC43CB035905");
+
+		/// <summary>Guid of debugger breakpoints <see cref="ListView"/></summary>
+		public static readonly Guid GUID_DEBUGGER_BREAKPOINTS_LISTVIEW = new Guid("E178917C-199C-4A99-95F9-9724806E528F");
+
+		/// <summary>Guid of debugger call stack control</summary>
+		public static readonly Guid GUID_DEBUGGER_CALLSTACK_CONTROL = new Guid("D0EDBB27-8367-4806-BB03-03B6990A7D32");
+
+		/// <summary>Guid of debugger call stack <see cref="ListView"/></summary>
+		public static readonly Guid GUID_DEBUGGER_CALLSTACK_LISTVIEW = new Guid("7E39E2DD-666C-4309-867E-9460D97361D2");
+
+		/// <summary>Guid of debugger locals control</summary>
+		public static readonly Guid GUID_DEBUGGER_LOCALS_CONTROL = new Guid("391EB04D-F544-459A-A242-2D856E3C6CDB");
+
+		/// <summary>Guid of debugger locals <see cref="ListView"/></summary>
+		public static readonly Guid GUID_DEBUGGER_LOCALS_LISTVIEW = new Guid("B50167E5-2AD7-44A3-B3E2-C486BD56BE3B");
+
+		/// <summary>Guid of debugger exceptions control</summary>
+		public static readonly Guid GUID_DEBUGGER_EXCEPTIONS_CONTROL = new Guid("FD139D3D-2C84-40C1-B088-11BD99840956");
+
+		/// <summary>Guid of debugger exceptions <see cref="ListView"/></summary>
+		public static readonly Guid GUID_DEBUGGER_EXCEPTIONS_LISTVIEW = new Guid("02BC921F-A601-456A-8C4F-84256C34A2A0");
+
+		/// <summary>Guid of debugger threads control</summary>
+		public static readonly Guid GUID_DEBUGGER_THREADS_CONTROL = new Guid("19AB4CCD-65AB-46B1-9855-79BDABBCDFFB");
+
+		/// <summary>Guid of debugger threads <see cref="ListView"/></summary>
+		public static readonly Guid GUID_DEBUGGER_THREADS_LISTVIEW = new Guid("44EB5AF6-D9D3-44AD-ABB0-288C6F95EE29");
+
+		/// <summary>Guid of debugger modules control</summary>
+		public static readonly Guid GUID_DEBUGGER_MODULES_CONTROL = new Guid("131B8A8D-771B-46DE-A8D4-20D4BBEBF2B1");
+
+		/// <summary>Guid of debugger modules <see cref="ListView"/></summary>
+		public static readonly Guid GUID_DEBUGGER_MODULES_LISTVIEW = new Guid("F91D9EA8-614D-4B36-AE27-B4EA541F6992");
+
+		/// <summary>Guid of debugger memory control</summary>
+		public static readonly Guid GUID_DEBUGGER_MEMORY_CONTROL = new Guid("D638F6E0-EA1E-4E2C-9969-A14751C800D1");
+
+		/// <summary>Guid of debugger memory <c>HexBox</c></summary>
+		public static readonly Guid GUID_DEBUGGER_MEMORY_HEXBOX = new Guid("34F1BAA4-36F1-4687-8552-7D71BDDBC1F3");
 	}
 }

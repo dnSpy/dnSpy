@@ -20,9 +20,8 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
-using dnSpy.TreeNodes;
+using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointColumnConverter : IValueConverter {
@@ -36,11 +35,11 @@ namespace dnSpy.Debugger.Breakpoints {
 
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Image")) {
 				string img = vm.IsEnabled ? "Breakpoint" : "DisabledBreakpoint";
-				return DnSpy.App.ImageManager.GetImage(GetType().Assembly, img, BackgroundType.GridViewItem);
+				return vm.Context.ImageManager.GetImage(GetType().Assembly, img, BackgroundType.GridViewItem);
 			}
 
-			var gen = UISyntaxHighlighter.Create(DebuggerSettings.Instance.SyntaxHighlightBreakpoints);
-			var printer = new BreakpointPrinter(gen.TextOutput, DebuggerSettings.Instance.UseHexadecimal);
+			var gen = UISyntaxHighlighter.Create(vm.Context.SyntaxHighlight);
+			var printer = new BreakpointPrinter(gen.Output, vm.Context.UseHexadecimal, vm.Context.Language, vm.Context.LanguageManager);
 			if (StringComparer.OrdinalIgnoreCase.Equals(s, "Name"))
 				printer.WriteName(vm);
 			else if (StringComparer.OrdinalIgnoreCase.Equals(s, "Assembly"))
@@ -52,7 +51,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			else
 				return null;
 
-			return gen.CreateTextBlock(true);
+			return gen.CreateResult(true);
 		}
 
 		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

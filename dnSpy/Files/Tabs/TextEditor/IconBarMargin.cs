@@ -18,13 +18,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		// 16px wide icon + 1px each side padding + 1px right-side border
 		public const int WIDTH = 1 + 16 + 1 + 1;
 
-		readonly ITextEditorUIContext textEditorUIContext;
+		readonly ITextEditorUIContext uiContext;
 		readonly ITextLineObjectManager textLineObjectManager;
 		readonly IImageManager imageManager;
 		readonly IThemeManager themeManager;
 
-		public IconBarMargin(ITextEditorUIContext textEditorUIContext, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IThemeManager themeManager) {
-			this.textEditorUIContext = textEditorUIContext;
+		public IconBarMargin(ITextEditorUIContext uiContext, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IThemeManager themeManager) {
+			this.uiContext = uiContext;
 			this.textLineObjectManager = textLineObjectManager;
 			this.imageManager = imageManager;
 			this.themeManager = themeManager;
@@ -58,9 +58,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				// create a dictionary line number => first bookmark
 				Dictionary<int, List<IIconBarObject>> bookmarkDict = new Dictionary<int, List<IIconBarObject>>();
 				foreach (var obj in textLineObjectManager.GetObjectsOfType<IIconBarObject>()) {
-					if (!obj.IsVisible(textEditorUIContext))
+					if (!obj.IsVisible(uiContext))
 						continue;
-					int line = obj.GetLineNumber(textEditorUIContext);
+					int line = obj.GetLineNumber(uiContext);
 					List<IIconBarObject> list;
 					if (!bookmarkDict.TryGetValue(line, out list))
 						bookmarkDict[line] = list = new List<IIconBarObject>();
