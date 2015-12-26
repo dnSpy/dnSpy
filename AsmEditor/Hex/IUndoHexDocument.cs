@@ -17,8 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Shared.UI.HexEditor {
-	public interface IUndoHexDocument {//TODO: REMOVE this. It belongs in AsmEditor
+namespace dnSpy.AsmEditor.Hex {
+	public interface IUndoHexDocument {
 		void WriteUndo(ulong startOffset, byte[] newData, string descr);
 	}
 }

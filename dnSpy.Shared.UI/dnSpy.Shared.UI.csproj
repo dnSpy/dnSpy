@@ -132,7 +132,6 @@
     <Compile Include="HexEditor\IHexLayer.cs" />
     <Compile Include="HexEditor\IHexStream.cs" />
     <Compile Include="HexEditor\ISimpleHexStream.cs" />
-    <Compile Include="HexEditor\IUndoHexDocument.cs" />
     <Compile Include="HexEditor\NumberUtils.cs" />
     <Compile Include="HexEditor\SelectionLayer.cs" />
     <Compile Include="Hex\DnHexBox.cs" />

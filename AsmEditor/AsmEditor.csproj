@@ -101,6 +101,7 @@
     <Compile Include="Hex\HexBoxUndoManager.cs" />
     <Compile Include="Hex\HexTabSaver.cs" />
     <Compile Include="Hex\HexUndoableDocumentsProvider.cs" />
+    <Compile Include="Hex\IUndoHexDocument.cs" />
     <Compile Include="Hex\Nodes\HexField.cs" />
     <Compile Include="Hex\Nodes\HexFileTabContent.cs" />
     <Compile Include="Hex\Nodes\HexFileTreeNodeDataFinder.cs" />
