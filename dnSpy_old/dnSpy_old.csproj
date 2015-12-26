@@ -142,7 +142,6 @@
     <Compile Include="AvalonEdit\TextMarkerService.cs" />
     <Compile Include="Commands\AboutCommands.cs" />
     <Compile Include="CommandLineArguments.cs" />
-    <Compile Include="Commands\EntryPointCommands.cs" />
     <Compile Include="Commands\FindInCodeCommand.cs" />
     <Compile Include="Commands\ToolbarCommands.cs" />
     <Compile Include="Commands\ViewCommands.cs" />
@@ -168,43 +167,9 @@
     <Compile Include="Tabs\TabState.cs" />
     <Compile Include="TextOutputUtils.cs" />
     <Compile Include="TextView\SimpleHighlighter.cs" />
-    <Compile Include="TreeNodes\CopyTokenContextMenuEntry.cs" />
-    <Compile Include="TreeNodes\GoToTokenContextMenuEntry.cs" />
-    <Compile Include="TreeNodes\Hex\HexField.cs" />
-    <Compile Include="TreeNodes\Hex\HexTreeNode.cs" />
-    <Compile Include="TreeNodes\Hex\HexUtils.cs" />
-    <Compile Include="TreeNodes\Hex\HexVM.cs" />
-    <Compile Include="TreeNodes\Hex\ImageCor20HeaderTreeNode.cs" />
-    <Compile Include="TreeNodes\Hex\ImageCor20HeaderVM.cs" />
-    <Compile Include="TreeNodes\Hex\ImageDosHeaderTreeNode.cs" />
-    <Compile Include="TreeNodes\Hex\ImageDosHeaderVM.cs" />
-    <Compile Include="TreeNodes\Hex\ImageFileHeaderTreeNode.cs" />
-    <Compile Include="TreeNodes\Hex\ImageFileHeaderVM.cs" />
-    <Compile Include="TreeNodes\Hex\ImageOptionalHeader32TreeNode.cs" />
-    <Compile Include="TreeNodes\Hex\ImageOptionalHeader32VM.cs" />
-    <Compile Include="TreeNodes\Hex\ImageOptionalHeader64TreeNode.cs" />
-    <Compile Include="TreeNodes\Hex\ImageOptionalHeader64VM.cs" />
-    <Compile Include="TreeNodes\Hex\ImageOptionalHeaderVM.cs" />
-    <Compile Include="TreeNodes\Hex\ImageSectionHeaderTreeNode.cs" />
-    <Compile Include="TreeNodes\Hex\ImageSectionHeaderVM.cs" />
-    <Compile Include="TreeNodes\Hex\MetaDataTableRecordTreeNode.cs" />
-    <Compile Include="TreeNodes\Hex\MetaDataTableRecordVM.cs" />
-    <Compile Include="TreeNodes\Hex\MetaDataTableTreeNode.cs" />
-    <Compile Include="TreeNodes\Hex\MetaDataTableVM.cs" />
-    <Compile Include="TreeNodes\Hex\PETreeNode.cs" />
-    <Compile Include="TreeNodes\Hex\StorageHeaderTreeNode.cs" />
-    <Compile Include="TreeNodes\Hex\StorageHeaderVM.cs" />
-    <Compile Include="TreeNodes\Hex\StorageSignatureTreeNode.cs" />
-    <Compile Include="TreeNodes\Hex\StorageSignatureVM.cs" />
-    <Compile Include="TreeNodes\Hex\StorageStreamTreeNode.cs" />
-    <Compile Include="TreeNodes\Hex\StorageStreamVM.cs" />
-    <Compile Include="TreeNodes\Hex\TablesStreamTreeNode.cs" />
-    <Compile Include="TreeNodes\Hex\TablesStreamVM.cs" />
-    <Compile Include="TreeNodes\Hex\VirtualizedList.cs" />
     <Compile Include="TreeNodes\ITokenTreeNode.cs" />
     <Compile Include="TreeNodes\ITreeViewNodeFilter.cs" />
     <Compile Include="TreeNodes\NodePathName.cs" />
-    <Compile Include="TreeNodes\OpenContainingFolderContextMenuEntry.cs" />
     <Compile Include="Commands\OpenListCommand.cs" />
     <Compile Include="Controls\DockedPane.cs" />
     <Compile Include="Commands\ExportCommandAttribute.cs" />
@@ -268,7 +233,6 @@
     <Compile Include="TreeNodes\ResourceNodes\SerializedResourceElementTreeNode.cs" />
     <Compile Include="TreeNodes\ResourceNodes\UnknownResourceTreeNode.cs" />
     <Compile Include="TreeNodes\ResourceNodes\UnknownSerializedResourceElementTreeNode.cs" />
-    <Compile Include="TreeNodes\SearchMsdnContextMenuEntry.cs" />
     <Compile Include="TreeNodes\UISyntaxHighlighter.cs" />
     <Compile Include="UIUtils.cs" />
     <EmbeddedResource Include="..\README.txt">
@@ -353,10 +317,6 @@
       <DependentUpon>DecompilerTextView.cs</DependentUpon>
     </Page>
     <Page Include="themes\generic.xaml" />
-    <Page Include="TreeNodes\Hex\wpf.styles.templates.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\Add.png" />
@@ -680,6 +640,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="TreeNodes\Analyzer\" />
+    <Folder Include="TreeNodes\Hex\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

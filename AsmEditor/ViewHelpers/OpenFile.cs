@@ -21,8 +21,8 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Forms;
-using dnSpy.MVVM;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.App;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class OpenFile : IOpenFile {
@@ -50,7 +50,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 				return File.ReadAllBytes(dialog.FileName);
 			}
 			catch (Exception ex) {
-				MainWindow.Instance.ShowMessageBox(string.Format("Error opening file: {0}", ex.Message), MessageBoxButton.OK, ownerWindow);
+				Shared.UI.App.MsgBox.Instance.Show(string.Format("Error opening file: {0}", ex.Message), MsgBoxButton.OK, ownerWindow);
 			}
 
 			return null;

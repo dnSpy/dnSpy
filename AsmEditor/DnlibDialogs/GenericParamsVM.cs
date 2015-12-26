@@ -18,24 +18,24 @@
 */
 
 using dnlib.DotNet;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.Languages;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class GenericParamsVM : ListVM<GenericParamVM, GenericParam> {
-		public GenericParamsVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Generic Parameter", "Create Generic Parameter", ownerModule, language, ownerType, ownerMethod) {
+		public GenericParamsVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod)
+			: base("Edit Generic Parameter", "Create Generic Parameter", ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
 		protected override GenericParamVM Create(GenericParam model) {
-			return new GenericParamVM(new GenericParamOptions(model), ownerModule, language, ownerType, ownerMethod);
+			return new GenericParamVM(new GenericParamOptions(model), ownerModule, languageManager, ownerType, ownerMethod);
 		}
 
 		protected override GenericParamVM Clone(GenericParamVM obj) {
-			return new GenericParamVM(obj.CreateGenericParamOptions(), ownerModule, language, ownerType, ownerMethod);
+			return new GenericParamVM(obj.CreateGenericParamOptions(), ownerModule, languageManager, ownerType, ownerMethod);
 		}
 
 		protected override GenericParamVM Create() {
-			return new GenericParamVM(new GenericParamOptions(), ownerModule, language, ownerType, ownerMethod);
+			return new GenericParamVM(new GenericParamOptions(), ownerModule, languageManager, ownerType, ownerMethod);
 		}
 
 		protected override int GetAddIndex(GenericParamVM obj) {

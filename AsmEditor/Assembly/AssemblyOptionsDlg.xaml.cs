@@ -21,10 +21,7 @@ using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.Assembly {
-	/// <summary>
-	/// Interaction logic for AssemblyOptionsDlg.xaml
-	/// </summary>
-	public partial class AssemblyOptionsDlg : WindowBase {
+	sealed partial class AssemblyOptionsDlg : WindowBase {
 		public AssemblyOptionsDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

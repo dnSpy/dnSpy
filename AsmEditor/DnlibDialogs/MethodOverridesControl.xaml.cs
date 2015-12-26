@@ -22,10 +22,7 @@ using System.Windows.Controls;
 using dnSpy.AsmEditor.ViewHelpers;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for MethodOverridesControl.xaml
-	/// </summary>
-	public partial class MethodOverridesControl : UserControl {
+	sealed partial class MethodOverridesControl : UserControl {
 		public MethodOverridesControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

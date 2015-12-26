@@ -24,7 +24,7 @@ using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Contracts.Files.TreeView {
 	/// <summary>
-	/// A node in the file tree view
+	/// A node in the file treeview
 	/// </summary>
 	public interface IFileTreeNodeData : ITreeNodeData {
 		/// <summary>
@@ -123,7 +123,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="self">This</param>
 		/// <returns></returns>
 		public static ModuleDef GetModule(this ITreeNodeData self) {
-			var node = self.GetModuleNode();
+			var node = self.GetDnSpyFileNode();
 			return node == null ? null : node.DnSpyFile.ModuleDef;
 		}
 	}

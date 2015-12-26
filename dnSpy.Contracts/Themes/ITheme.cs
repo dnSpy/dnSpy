@@ -17,13 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Contracts.Themes {
 	/// <summary>
 	/// A theme
 	/// </summary>
 	public interface ITheme {
-		/// <summary>Unique name of this theme</summary>
-		string Name { get; }
+		/// <summary>Guid</summary>
+		Guid Guid { get; }
 
 		/// <summary>Name of theme that can be used in a MenuItem</summary>
 		string MenuName { get; }

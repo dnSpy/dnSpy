@@ -17,7 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dnSpy.Debugger.Exceptions {
+	[Flags]
 	enum ExceptionState : uint {	// see msdbg.h or https://msdn.microsoft.com/en-us/library/vstudio/bb146192%28v=vs.140%29.aspx
 		EXCEPTION_NONE						= 0x0000,
 		EXCEPTION_STOP_FIRST_CHANCE			= 0x0001,

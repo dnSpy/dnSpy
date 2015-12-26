@@ -94,6 +94,17 @@ namespace dnSpy.Contracts.Files.Tabs {
 		void Refresh(Predicate<IFileTreeNodeData> pred);
 
 		/// <summary>
+		/// Refreshes all tabs that use <paramref name="file"/>
+		/// </summary>
+		/// <param name="file">Modified file</param>
+		void RefreshModifiedFile(IDnSpyFile file);
+
+		/// <summary>
+		/// Raised when <see cref="RefreshModifiedFile(IDnSpyFile)"/> gets called
+		/// </summary>
+		event EventHandler<FileModifiedEventArgs> FileModified;
+
+		/// <summary>
 		/// Returns true if <paramref name="tabGroup"/> is owned by this instance
 		/// </summary>
 		/// <param name="tabGroup">Tab group</param>
@@ -124,6 +135,13 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <param name="ref">Reference</param>
 		/// <param name="newTab">true to open a new tab</param>
 		/// <param name="onShown">Called after the content has been shown. Can be null.</param>
-		void FollowReference(object @ref, bool newTab, Action<ShowTabContentEventArgs> onShown = null);
+		void FollowReference(object @ref, bool newTab = false, Action<ShowTabContentEventArgs> onShown = null);
+
+		/// <summary>
+		/// Creates a new <see cref="IFileTabContent"/> instance. Returns null if it couldn't be created
+		/// </summary>
+		/// <param name="nodes">Nodes</param>
+		/// <returns></returns>
+		IFileTabContent TryCreateContent(IFileTreeNodeData[] nodes);
 	}
 }

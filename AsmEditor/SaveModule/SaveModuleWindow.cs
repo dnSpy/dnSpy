@@ -20,11 +20,11 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
+using dnSpy.Contracts.App;
 using dnSpy.Shared.UI.Controls;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.SaveModule {
-	public class SaveModuleWindow : WindowBase {
+	class SaveModuleWindow : WindowBase {
 		public SaveModuleWindow() {
 			Loaded += SaveMultiModule_Loaded;
 		}
@@ -45,16 +45,16 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 			var data = (SaveMultiModuleVM)DataContext;
 			if (data.IsSaving) {
-				var res = MainWindow.Instance.ShowMessageBox("Are you sure you want to cancel the save?", MessageBoxButton.YesNo);
-				if (res == MsgBoxButton.OK)
+				var res = Shared.UI.App.MsgBox.Instance.Show("Are you sure you want to cancel the save?", MsgBoxButton.Yes | MsgBoxButton.No);
+				if (res == MsgBoxButton.Yes)
 					data.CancelSave();
 				e.Cancel = true;
 				return;
 			}
 
 			if (data.IsCanceling) {
-				var res = MainWindow.Instance.ShowMessageBox("The save is being canceled.\nAre you sure you want to close the window?", MessageBoxButton.YesNo);
-				if (res != MsgBoxButton.OK)
+				var res = Shared.UI.App.MsgBox.Instance.Show("The save is being canceled.\nAre you sure you want to close the window?", MsgBoxButton.Yes | MsgBoxButton.No);
+				if (res != MsgBoxButton.Yes)
 					e.Cancel = true;
 				return;
 			}

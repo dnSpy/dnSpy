@@ -22,8 +22,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ParamDefVM : ViewModelBase {
@@ -148,14 +148,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		readonly ModuleDef ownerModule;
 
-		public ParamDefVM(ParamDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
+		public ParamDefVM(ParamDefOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 			this.sequence = new UInt16VM(a => { OnPropertyChanged("FullName"); HasErrorUpdated(); });
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
 			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, "Default value for this parameter");
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
-			this.marshalTypeVM = new MarshalTypeVM(ownerModule, language, ownerType != null ? ownerType : ownerMethod == null ? null : ownerMethod.DeclaringType, ownerMethod);
+			this.marshalTypeVM = new MarshalTypeVM(ownerModule, languageManager, ownerType != null ? ownerType : ownerMethod == null ? null : ownerMethod.DeclaringType, ownerMethod);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;
 
 			ConstantVM.IsEnabled = HasDefault;

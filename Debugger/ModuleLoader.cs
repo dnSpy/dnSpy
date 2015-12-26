@@ -31,7 +31,7 @@ namespace dnSpy.Debugger {
 	interface IModuleLoader {
 		IDnSpyFile LoadModule(CorModule module, bool canLoadDynFile);
 		IDnSpyFile LoadModule(DnModule module, bool canLoadDynFile);
-		IDnSpyFile LoadModule(SerializedDnSpyModule serMod, bool canLoadDynFile, bool diskFileOk = false);
+		IDnSpyFile LoadModule(SerializedDnModule serMod, bool canLoadDynFile, bool diskFileOk = false);
 		DnModule GetDnModule(CorModule module);
 	}
 
@@ -65,13 +65,13 @@ namespace dnSpy.Debugger {
 			return null;
 		}
 
-		DnModule GetDnModule(SerializedDnSpyModule serMod) {
+		DnModule GetDnModule(SerializedDnModule serMod) {
 			var dbg = theDebugger.Value.Debugger;
 			if (dbg == null)
 				return null;
 			//TODO: This method should have an AppDomain parameter.
 			foreach (var m in dbg.Modules) {
-				if (m.SerializedDnModule.ToSerializedDnSpyModule().Equals(serMod))
+				if (m.SerializedDnModule.Equals(serMod))
 					return m;
 			}
 			return null;
@@ -86,7 +86,7 @@ namespace dnSpy.Debugger {
 			if (dnModule != null)
 				return LoadModule(dnModule, canLoadDynFile);
 
-			return LoadModule(module.SerializedDnModule.ToSerializedDnSpyModule(), canLoadDynFile);
+			return LoadModule(module.SerializedDnModule, canLoadDynFile);
 		}
 
 		public IDnSpyFile LoadModule(DnModule module, bool canLoadDynFile) {
@@ -97,7 +97,7 @@ namespace dnSpy.Debugger {
 			var file = inMemoryModuleManager.Value.FindFile(module);
 			if (file != null)
 				return file;
-			var serMod = module.SerializedDnModule.ToSerializedDnSpyModule();
+			var serMod = module.SerializedDnModule;
 			return LoadModule(serMod, canLoadDynFile);
 		}
 
@@ -129,7 +129,7 @@ namespace dnSpy.Debugger {
 			}
 		}
 
-		IDnSpyFile LoadNonDiskFile(SerializedDnSpyModule serMod, bool canLoadDynFile) {
+		IDnSpyFile LoadNonDiskFile(SerializedDnModule serMod, bool canLoadDynFile) {
 			if (UseMemoryModules || serMod.IsDynamic || serMod.IsInMemory) {
 				var dnModule = GetDnModule(serMod);
 				if (dnModule != null)
@@ -139,23 +139,23 @@ namespace dnSpy.Debugger {
 			return null;
 		}
 
-		IDnSpyFile LoadExisting(SerializedDnSpyModule serMod) {
+		IDnSpyFile LoadExisting(SerializedDnModule serMod) {
 			foreach (var file in AllActiveDnSpyFiles) {
-				var serModFile = file.SerializedDnSpyModule;
-				if (serModFile != null && serModFile.Value.Equals(serMod))
+				var serModFile = file.ToSerializedDnModule();
+				if (serModFile.Equals(serMod))
 					return file;
 			}
 
 			foreach (var file in AllDnSpyFiles) {
-				var serModFile = file.SerializedDnSpyModule;
-				if (serModFile != null && serModFile.Value.Equals(serMod))
+				var serModFile = file.ToSerializedDnModule();
+				if (serModFile.Equals(serMod))
 					return file;
 			}
 
 			return null;
 		}
 
-		public IDnSpyFile LoadModule(SerializedDnSpyModule serMod, bool canLoadDynFile, bool diskFileOk = false) {
+		public IDnSpyFile LoadModule(SerializedDnModule serMod, bool canLoadDynFile, bool diskFileOk = false) {
 			const bool isAutoLoaded = true;
 
 			IDnSpyFile file;

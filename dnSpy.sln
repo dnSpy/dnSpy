@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzer", "Analyzer\Analyz
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Debugger", "Debugger\Debugger.csproj", "{52995BD1-DB91-4654-89B7-1DEB3B0D3155}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsmEditor", "AsmEditor\AsmEditor.csproj", "{87772B51-FA94-47A5-83F4-4E8E69369A2D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -249,6 +251,18 @@ Global
 		{52995BD1-DB91-4654-89B7-1DEB3B0D3155}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{52995BD1-DB91-4654-89B7-1DEB3B0D3155}.Release|x86.ActiveCfg = Release|Any CPU
 		{52995BD1-DB91-4654-89B7-1DEB3B0D3155}.Release|x86.Build.0 = Release|Any CPU
+		{87772B51-FA94-47A5-83F4-4E8E69369A2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87772B51-FA94-47A5-83F4-4E8E69369A2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87772B51-FA94-47A5-83F4-4E8E69369A2D}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{87772B51-FA94-47A5-83F4-4E8E69369A2D}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{87772B51-FA94-47A5-83F4-4E8E69369A2D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{87772B51-FA94-47A5-83F4-4E8E69369A2D}.Debug|x86.Build.0 = Debug|Any CPU
+		{87772B51-FA94-47A5-83F4-4E8E69369A2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87772B51-FA94-47A5-83F4-4E8E69369A2D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87772B51-FA94-47A5-83F4-4E8E69369A2D}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{87772B51-FA94-47A5-83F4-4E8E69369A2D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{87772B51-FA94-47A5-83F4-4E8E69369A2D}.Release|x86.ActiveCfg = Release|Any CPU
+		{87772B51-FA94-47A5-83F4-4E8E69369A2D}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -25,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -34,6 +35,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AppMenus.cs" />
@@ -119,6 +121,7 @@
     <Compile Include="Exceptions\ExceptionVM.cs" />
     <Compile Include="Exceptions\IGetNewExceptionName.cs" />
     <Compile Include="Exceptions\ISelectedItemsProvider.cs" />
+    <Compile Include="ILoadBeforeDebug.cs" />
     <Compile Include="IMModules\ClassLoader.cs" />
     <Compile Include="IMModules\Commands.cs" />
     <Compile Include="IMModules\CorModuleDefFile.cs" />
@@ -130,6 +133,7 @@
     <Compile Include="IMModules\LoadEverythingVM.cs" />
     <Compile Include="IMModules\MemoryModuleDefFile.cs" />
     <Compile Include="IMModules\TreeViewUpdater.cs" />
+    <Compile Include="ISerializedDnModule.cs" />
     <Compile Include="Locals\AskUser.cs" />
     <Compile Include="Locals\Commands.cs" />
     <Compile Include="Locals\EditValueControl.xaml.cs">
@@ -176,8 +180,8 @@
     <Compile Include="Plugin.cs" />
     <Compile Include="ProcessMemoryUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SerializedDnSpyModuleCreator.cs" />
-    <Compile Include="SerializedModuleExtensions.cs" />
+    <Compile Include="SerializedDnModuleCreator.cs" />
+    <Compile Include="SerializedDnToken.cs" />
     <Compile Include="TheDebugger.cs" />
     <Compile Include="Threads\Commands.cs" />
     <Compile Include="Threads\ThreadColumnConverter.cs" />
@@ -270,10 +274,6 @@
       <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Languages\Languages.csproj">
-      <Project>{d7fe873e-df22-4f54-aefa-bcf33afd7e05}</Project>
-      <Name>Languages</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
       <Project>{3b2a5653-ec97-4001-bb9b-d90f1af2c371}</Project>
       <Name>ICSharpCode.NRefactory</Name>
@@ -286,13 +286,10 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xaml" />
-    <Reference Include="System.XML" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>

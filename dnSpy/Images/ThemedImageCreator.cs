@@ -61,7 +61,7 @@ namespace dnSpy.Images {
 				}
 			}
 
-			private static double ModOne(double value) {
+			static double ModOne(double value) {
 				unchecked {
 					if (value < 0.0)
 						return value + 1.0;
@@ -71,7 +71,7 @@ namespace dnSpy.Images {
 				}
 			}
 
-			private static double ComputeRGBComponent(double p, double q, double tC) {
+			static double ComputeRGBComponent(double p, double q, double tC) {
 				unchecked {
 					if (tC < 1.0 / 6.0)
 						return p + (q - p) * 6.0 * tC;

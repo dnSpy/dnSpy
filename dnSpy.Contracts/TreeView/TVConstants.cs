@@ -19,10 +19,10 @@
 
 namespace dnSpy.Contracts.TreeView {
 	/// <summary>
-	/// Tree view constants
+	/// Treeview constants
 	/// </summary>
 	public static class TVConstants {
-		/// <summary>Guid of file tree view</summary>
+		/// <summary>Guid of file treeview</summary>
 		public const string FILE_TREEVIEW_GUID = "47F487E1-64D1-4D63-87C6-B4C4F89461A3";
 	}
 }

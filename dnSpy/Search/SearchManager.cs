@@ -86,7 +86,7 @@ namespace dnSpy.Search {
 				if (searchResult != null) {
 					var @ref = searchResult.Reference;
 					if (@ref != null)
-						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, new CodeReferenceSegment(@ref));
+						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, new CodeReference(@ref));
 				}
 			}
 		}

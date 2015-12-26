@@ -22,10 +22,7 @@ using System.Windows.Controls;
 using dnSpy.AsmEditor.ViewHelpers;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for CANamedArgumentControl.xaml
-	/// </summary>
-	public partial class CANamedArgumentControl : UserControl {
+	sealed partial class CANamedArgumentControl : UserControl {
 		public CANamedArgumentControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

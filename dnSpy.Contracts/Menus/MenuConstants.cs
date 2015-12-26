@@ -79,19 +79,19 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>An unknown object</summary>
 		public const string GUIDOBJ_UNKNOWN_GUID = "9BD7C228-91A0-4140-8E8B-AB0450B418CA";
 
-		/// <summary>Files tree view</summary>
+		/// <summary>Files treeview</summary>
 		public const string GUIDOBJ_FILES_TREEVIEW_GUID = "F64505EB-6D8B-4332-B697-73B2D1EE6C37";
 
-		/// <summary>Analyzer's tree view</summary>
+		/// <summary>Analyzer's treeview</summary>
 		public const string GUIDOBJ_ANALYZER_TREEVIEW_GUID = "4C7D6317-C84A-42E6-A582-FCE3ED35EBE6";
 
 		/// <summary>Search ListBox</summary>
 		public const string GUIDOBJ_SEARCH_GUID = "7B460F9C-424D-48B3-8FD3-72CEE8DD58E5";
 
-		/// <summary>Tree view nodes array (<see cref="ITreeNodeData"/>[])</summary>
+		/// <summary>Treeview nodes array (<see cref="ITreeNodeData"/>[])</summary>
 		public const string GUIDOBJ_TREEVIEW_NODES_ARRAY_GUID = "B116BABD-BD8B-4870-968A-D1871CC21638";
 
-		/// <summary>Code Reference (<see cref="CodeReferenceSegment"/>)</summary>
+		/// <summary>Code Reference (<see cref="CodeReference"/>)</summary>
 		public const string GUIDOBJ_CODE_REFERENCE_GUID = "751F4075-D420-4196-BCF0-A0149A8948A4";
 
 		/// <summary>Files <see cref="TabControl"/></summary>
@@ -112,8 +112,8 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary><see cref="ITextEditorUIContext"/></summary>
 		public const string GUIDOBJ_TEXTEDITORUICONTEXT_GUID = "848AC3FB-7D67-4427-A604-86BFF539E527";
 
-		/// <summary>TextViewPosition</summary>
-		public const string GUIDOBJ_TEXTVIEWPOSITION_GUID = "0C5E61BF-FC0D-47F7-8C49-69BD93CD11B5";
+		/// <summary><see cref="TextEditorLocation"/></summary>
+		public const string GUIDOBJ_TEXTEDITORLOCATION_GUID = "0C5E61BF-FC0D-47F7-8C49-69BD93CD11B5";
 
 		/// <summary><c>HexBox</c></summary>
 		public const string GUIDOBJ_HEXBOX_GUID = "6D0D8103-1D91-4815-94C3-9AAB41D3175B";
@@ -229,17 +229,11 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Group: Context Menu, Type: Code, Group: Tokens</summary>
 		public const string GROUP_CTX_CODE_TOKENS = "7000,096957CB-B94D-4A47-AC6D-DBF4C63C6955";
 
-		/// <summary>Group: Context Menu, Type: Code, Group: EntryPoint</summary>
-		public const string GROUP_CTX_CODE_EP = "8000,496DD4B5-EC88-4A2C-AEFD-ABA85AC2C482";
-
 		/// <summary>Group: Context Menu, Type: Code, Group: Hex</summary>
 		public const string GROUP_CTX_CODE_HEX = "9000,81BEEEAD-9498-4AD5-B387-006E93FD4014";
 
 		/// <summary>Group: Context Menu, Type: Code, Group: Hex MD</summary>
 		public const string GROUP_CTX_CODE_HEX_MD = "10000,0BE33A51-E400-4E3D-9B48-FF91E4A78303";
-
-		/// <summary>Group: Context Menu, Type: Code, Group: Hex Go To MD</summary>
-		public const string GROUP_CTX_CODE_HEX_GOTO_MD = "11000,FA358CAA-0396-4FA9-B54B-701D7892079F";
 
 		/// <summary>Group: Context Menu, Type: Code, Group: Hex Copy</summary>
 		public const string GROUP_CTX_CODE_HEX_COPY = "12000,E18271DD-7571-4509-9A7D-37E283BCF7C2";
@@ -336,9 +330,6 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Group: Context Menu, Type: Files, Group: Tokens</summary>
 		public const string GROUP_CTX_FILES_TOKENS = "7000,C98101AD-1A59-42AE-B446-16545F39DC7A";
-
-		/// <summary>Group: Context Menu, Type: Files, Group: EntryPoint</summary>
-		public const string GROUP_CTX_FILES_EP = "8000,5A3E8C6D-70C7-44E0-8B1B-44A32A9E18C3";
 
 		/// <summary>Group: Context Menu, Type: Files, Group: Debug RT</summary>
 		public const string GROUP_CTX_FILES_DEBUGRT = "9000,9A151E30-AC16-4745-A819-24AA199E82CB";

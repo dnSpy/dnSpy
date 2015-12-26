@@ -61,7 +61,7 @@
     <Compile Include="Controls\IWpfFocusManager.cs" />
     <Compile Include="Files\DnSpyFileInfo.cs" />
     <Compile Include="Files\FilenameKey.cs" />
-    <Compile Include="Files\FilesConstants.cs" />
+    <Compile Include="Files\FileConstants.cs" />
     <Compile Include="Files\IAnnotations.cs" />
     <Compile Include="Files\IDnSpyDotNetFile.cs" />
     <Compile Include="Files\IDnSpyFile.cs" />
@@ -69,10 +69,12 @@
     <Compile Include="Files\IDnSpyFilenameKey.cs" />
     <Compile Include="Files\IDnSpyPEFile.cs" />
     <Compile Include="Files\IFileManager.cs" />
+    <Compile Include="Files\IFileManagerCreator.cs" />
     <Compile Include="Files\IFileManagerSettings.cs" />
+    <Compile Include="Files\IMethodAnnotations.cs" />
     <Compile Include="Files\NotifyFileCollectionChangedEventArgs.cs" />
     <Compile Include="Files\NotifyFileCollectionType.cs" />
-    <Compile Include="Files\SerializedDnSpyModule.cs" />
+    <Compile Include="Files\Tabs\FileModifiedEventArgs.cs" />
     <Compile Include="Files\Tabs\FileTabReferenceResult.cs" />
     <Compile Include="Files\Tabs\IAsyncFileTabContent.cs" />
     <Compile Include="Files\Tabs\IAsyncShowResult.cs" />
@@ -92,8 +94,8 @@
     <Compile Include="Files\Tabs\ITabSaver.cs" />
     <Compile Include="Files\Tabs\ITabSaverCreator.cs" />
     <Compile Include="Files\Tabs\ShowTabContentEventArgs.cs" />
-    <Compile Include="Files\Tabs\TabsConstants.cs" />
-    <Compile Include="Files\Tabs\TextEditor\CodeReferenceSegment.cs" />
+    <Compile Include="Files\Tabs\TabConstants.cs" />
+    <Compile Include="Files\Tabs\TextEditor\CodeReference.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNode.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNodeCollection.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNodeContext.cs" />
@@ -139,6 +141,7 @@
     <Compile Include="Files\TreeView\IFileTreeNodeFilter.cs" />
     <Compile Include="Files\TreeView\IFileTreeNodeGroups.cs" />
     <Compile Include="Files\TreeView\IFileTreeView.cs" />
+    <Compile Include="Files\TreeView\IFileTreeViewCreator.cs" />
     <Compile Include="Files\TreeView\IFileTreeViewSettings.cs" />
     <Compile Include="Files\TreeView\IMessageNode.cs" />
     <Compile Include="Files\TreeView\IMethodNode.cs" />
@@ -188,7 +191,6 @@
     <Compile Include="Menus\CreatedMenuItem.cs" />
     <Compile Include="Menus\ExportMenuAttribute.cs" />
     <Compile Include="Menus\ExportMenuItemAttribute.cs" />
-    <Compile Include="Menus\ExtensionMethods.cs" />
     <Compile Include="Menus\GuidObject.cs" />
     <Compile Include="Menus\IContextMenuInitializer.cs" />
     <Compile Include="Menus\IGuidObjectsCreator.cs" />
@@ -240,6 +242,7 @@
     <Compile Include="Themes\IThemeColor.cs" />
     <Compile Include="Themes\IThemeManager.cs" />
     <Compile Include="Themes\ThemeChangedEventArgs.cs" />
+    <Compile Include="Themes\ThemeConstants.cs" />
     <Compile Include="ToolBars\ExportToolBarButtonAttribute.cs" />
     <Compile Include="ToolBars\ExportToolBarItemAttribute.cs" />
     <Compile Include="ToolBars\ExportToolBarObjectAttribute.cs" />

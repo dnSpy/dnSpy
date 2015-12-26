@@ -63,7 +63,7 @@ namespace dnSpy.Contracts.App {
 		T Ask<T>(string labelMessage, string defaultText = null, string title = null, Func<string, T> converter = null, Func<string, string> verifier = null, Window ownerWindow = null);
 
 		/// <summary>
-		/// Show an exception message
+		/// Shows an exception message
 		/// </summary>
 		/// <param name="exception">Exception</param>
 		/// <param name="msg">Message to show or null</param>

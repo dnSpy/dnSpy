@@ -19,7 +19,6 @@
 
 using System.Windows;
 using dnSpy.AsmEditor.DnlibDialogs;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class EditDeclSecurity : IEdit<DeclSecurityVM> {
@@ -38,7 +37,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			if (title != null)
 				win.Title = title;
 			win.DataContext = ds;
-			win.Owner = ownerWindow ?? MainWindow.Instance;
+			win.Owner = ownerWindow ?? Application.Current.MainWindow;
 			if (win.ShowDialog() != true)
 				return null;
 

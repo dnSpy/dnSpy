@@ -21,13 +21,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
+using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.TreeView;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger.IMModules {
 	struct TreeViewUpdater {
-		readonly IFileTreeView fileTreeView;
+		readonly IFileTabManager fileTabManager;
 		readonly CorModuleDefFile CorModuleDefFile;
 		readonly IModuleFileNode ModuleNode;
 		readonly HashSet<uint> modifiedTypes;
@@ -35,9 +36,9 @@ namespace dnSpy.Debugger.IMModules {
 		readonly HashSet<TypeDef> checkedTypes;
 		IModuleFileNode modNode;
 
-		public TreeViewUpdater(IFileTreeView fileTreeView, CorModuleDefFile cmdf, IModuleFileNode node, HashSet<uint> modifiedTypes, HashSet<uint> loadedClassTokens) {
+		public TreeViewUpdater(IFileTabManager fileTabManager, CorModuleDefFile cmdf, IModuleFileNode node, HashSet<uint> modifiedTypes, HashSet<uint> loadedClassTokens) {
 			Debug.Assert(node.DnSpyFile == cmdf);
-			this.fileTreeView = fileTreeView;
+			this.fileTabManager = fileTabManager;
 			this.CorModuleDefFile = cmdf;
 			this.ModuleNode = node;
 			this.modifiedTypes = new HashSet<uint>(modifiedTypes);
@@ -71,7 +72,7 @@ namespace dnSpy.Debugger.IMModules {
 			if (needRedecompile) {
 				// Force a re-decompile of every view that references this module. This could be
 				// optimized if necessary
-				//TODO: ModuleModified(CorModuleDefFile);
+				fileTabManager.RefreshModifiedFile(CorModuleDefFile);
 			}
 		}
 
@@ -102,7 +103,7 @@ namespace dnSpy.Debugger.IMModules {
 					typeNode = GetOrCreateNonNestedTypeTreeNode(modNode, type);
 				else {
 					if (parentNode == null)
-						parentNode = fileTreeView.FindNode(type.DeclaringType);
+						parentNode = fileTabManager.FileTreeView.FindNode(type.DeclaringType);
 					if (parentNode == null || parentNode.TreeNode.LazyLoading)
 						break;
 					typeNode = GetOrCreateNestedTypeTreeNode(parentNode, type);
@@ -165,19 +166,19 @@ namespace dnSpy.Debugger.IMModules {
 			foreach (var fd in typeNode.TypeDef.Fields) {
 				if (existing.Contains(fd))
 					continue;
-				typeNode.TreeNode.AddChild(fileTreeView.TreeView.Create(fileTreeView.Create(fd)));
+				typeNode.TreeNode.AddChild(fileTabManager.FileTreeView.TreeView.Create(fileTabManager.FileTreeView.Create(fd)));
 			}
 
 			foreach (var pd in typeNode.TypeDef.Properties) {
 				if (existing.Contains(pd))
 					continue;
-				typeNode.TreeNode.AddChild(fileTreeView.TreeView.Create(fileTreeView.Create(pd)));
+				typeNode.TreeNode.AddChild(fileTabManager.FileTreeView.TreeView.Create(fileTabManager.FileTreeView.Create(pd)));
 			}
 
 			foreach (var ed in typeNode.TypeDef.Events) {
 				if (existing.Contains(ed))
 					continue;
-				typeNode.TreeNode.AddChild(fileTreeView.TreeView.Create(fileTreeView.Create(ed)));
+				typeNode.TreeNode.AddChild(fileTabManager.FileTreeView.TreeView.Create(fileTabManager.FileTreeView.Create(ed)));
 			}
 
 			var accessorMethods = typeNode.TypeDef.GetAccessorMethods();
@@ -185,7 +186,7 @@ namespace dnSpy.Debugger.IMModules {
 				if (existing.Contains(md))
 					continue;
 				if (!accessorMethods.Contains(md))
-					typeNode.TreeNode.AddChild(fileTreeView.TreeView.Create(fileTreeView.Create(md)));
+					typeNode.TreeNode.AddChild(fileTabManager.FileTreeView.TreeView.Create(fileTabManager.FileTreeView.Create(md)));
 			}
 		}
 	}

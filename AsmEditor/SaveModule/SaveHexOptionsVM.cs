@@ -19,6 +19,7 @@
 
 using System;
 using System.IO;
+using dnSpy.AsmEditor.Hex;
 using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.AsmEditor.SaveModule {
@@ -27,8 +28,8 @@ namespace dnSpy.AsmEditor.SaveModule {
 			get { return SaveOptionsType.Hex; }
 		}
 
-		public override IUndoObject UndoObject {
-			get { return UndoCommandManager.Instance.GetUndoObject(doc); }
+		public override object UndoDocument {
+			get { return doc; }
 		}
 
 		public HexDocument Document {

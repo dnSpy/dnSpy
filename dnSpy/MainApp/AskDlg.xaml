@@ -53,7 +53,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Button Grid.Column="1" Margin="5 0 0 0" Content="_OK" IsDefault="True" Style="{StaticResource DialogButton}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" Click="okButton_Click" />
-            <Button Grid.Column="2" Margin="5 0 0 0" Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton2}" />
+            <Button Grid.Column="2" Margin="5 0 0 0" Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" />
         </Grid>
     </Grid>
 </ctrls:WindowBase>

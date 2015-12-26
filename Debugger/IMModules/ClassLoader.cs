@@ -25,6 +25,7 @@ using dndbg.DotNet;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
+using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 
 namespace dnSpy.Debugger.IMModules {
@@ -32,12 +33,12 @@ namespace dnSpy.Debugger.IMModules {
 	/// Loads all new classes from dynamic modules
 	/// </summary>
 	sealed class ClassLoader {
-		readonly IFileTreeView fileTreeView;
+		readonly IFileTabManager fileTabManager;
 		readonly Window ownerWindow;
 		readonly Dictionary<DnModule, HashSet<uint>> loadedClasses;
 
-		public ClassLoader(IFileTreeView fileTreeView, Window ownerWindow) {
-			this.fileTreeView = fileTreeView;
+		public ClassLoader(IFileTabManager fileTabManager, Window ownerWindow) {
+			this.fileTabManager = fileTabManager;
 			this.ownerWindow = ownerWindow;
 			this.loadedClasses = new Dictionary<DnModule, HashSet<uint>>();
 		}
@@ -111,7 +112,7 @@ namespace dnSpy.Debugger.IMModules {
 			LoadEverything(states.Where(a => a.ModifiedTypes.Count != 0 || (a.LoadClassHash != null && a.LoadClassHash.Count != 0)).Select(a => a.CorModuleDefFile.DnModule.CorModuleDef));
 
 			foreach (var state in states)
-				new TreeViewUpdater(fileTreeView, state.CorModuleDefFile, state.ModuleNode, state.ModifiedTypes, state.LoadClassHash).Update();
+				new TreeViewUpdater(fileTabManager, state.CorModuleDefFile, state.ModuleNode, state.ModifiedTypes, state.LoadClassHash).Update();
 		}
 
 		HashSet<uint> GetModifiedTypesList(CorModuleDefFile cmdf) {

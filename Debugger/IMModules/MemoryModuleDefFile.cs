@@ -30,7 +30,7 @@ namespace dnSpy.Debugger.IMModules {
 	/// <summary>
 	/// A class that reads the module from the debugged process' address space.
 	/// </summary>
-	sealed class MemoryModuleDefFile : DnSpyDotNetFileBase {
+	sealed class MemoryModuleDefFile : DnSpyDotNetFileBase, ISerializedDnModule {
 		sealed class MyKey : IDnSpyFilenameKey {
 			readonly DnProcess process;
 			readonly ulong address;
@@ -54,11 +54,11 @@ namespace dnSpy.Debugger.IMModules {
 			get { return CreateKey(process, address); }
 		}
 
-		public override SerializedDnSpyModule? SerializedDnSpyModule {
+		public SerializedDnModule? SerializedDnModule {
 			get {
 				if (!isInMemory)
-					return base.SerializedDnSpyModule;
-				return Contracts.Files.SerializedDnSpyModule.CreateInMemory(ModuleDef);
+					return dndbg.Engine.SerializedDnModule.CreateFromFile(ModuleDef);
+				return dndbg.Engine.SerializedDnModule.CreateInMemory(ModuleDef);
 			}
 		}
 

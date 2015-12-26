@@ -27,13 +27,12 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
-using dnSpy.Shared.UI.Files;
 using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 
 namespace dnSpy.Debugger.CallStack {
-	class StackFramesUpdatedEventArgs : EventArgs {
+	sealed class StackFramesUpdatedEventArgs : EventArgs {
 		public readonly DnDebugger Debugger;
 
 		public StackFramesUpdatedEventArgs(DnDebugger debugger) {
@@ -53,8 +52,8 @@ namespace dnSpy.Debugger.CallStack {
 		List<CorFrame> GetFrames(out bool tooManyFrames);
 	}
 
-	[Export, Export(typeof(IStackFrameManager)), PartCreationPolicy(CreationPolicy.Shared)]
-	sealed class StackFrameManager : ViewModelBase, IStackFrameManager {
+	[Export, Export(typeof(IStackFrameManager)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class StackFrameManager : ViewModelBase, IStackFrameManager, ILoadBeforeDebug {
 		// VS2015 shows at most 5000 frames but we can increase that to 50000, dnSpy had no trouble
 		// showing 12K frames, which was the total number of frames until I got a SO in the test app.
 		const int MAX_SHOWN_FRAMES = 50000;
@@ -274,7 +273,7 @@ namespace dnSpy.Debugger.CallStack {
 						type = StackFrameLineType.CurrentStatement;
 					else
 						type = currentState.FrameNumber == frameNo ? StackFrameLineType.SelectedReturnStatement : StackFrameLineType.ReturnStatement;
-					var key = new SerializedDnSpyToken(serAsm.Value.ToSerializedDnSpyModule(), token);
+					var key = new SerializedDnToken(serAsm.Value, token);
 					uint offset = frame.GetILOffset(moduleLoader.Value);
 					MethodDef methodDef;
 					TextLocation location, endLocation;

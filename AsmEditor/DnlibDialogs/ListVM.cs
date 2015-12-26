@@ -23,9 +23,10 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	// Needed by ListVMControl
@@ -79,16 +80,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly string editString;
 		readonly string createString;
 		protected readonly ModuleDef ownerModule;
-		protected readonly Language language;
+		protected readonly ILanguageManager languageManager;
 		protected readonly TypeDef ownerType;
 		protected readonly MethodDef ownerMethod;
 		readonly bool inlineEditing;
 
-		protected ListVM(string editString, string createString, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod, bool inlineEditing = false) {
+		protected ListVM(string editString, string createString, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod, bool inlineEditing = false) {
 			this.editString = editString;
 			this.createString = createString;
 			this.ownerModule = ownerModule;
-			this.language = language;
+			this.languageManager = languageManager;
 			this.ownerType = ownerType;
 			this.ownerMethod = ownerMethod;
 			this.inlineEditing = inlineEditing;

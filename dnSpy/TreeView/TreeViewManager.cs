@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
@@ -30,21 +31,27 @@ namespace dnSpy.TreeView {
 	sealed class TreeViewManager : ITreeViewManager {
 		readonly IThemeManager themeManager;
 		readonly IImageManager imageManager;
-		readonly Dictionary<Guid, List<ITreeNodeDataCreator>> guidToCreator;
+		readonly Dictionary<Guid, List<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>>> guidToCreator;
 
 		[ImportingConstructor]
-		TreeViewManager(IThemeManager themeManager, IImageManager imageManager, [ImportMany] ITreeNodeDataCreator[] treeNodeDataCreators) {
+		TreeViewManager(IThemeManager themeManager, IImageManager imageManager, [ImportMany] IEnumerable<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>> treeNodeDataCreators) {
 			this.themeManager = themeManager;
 			this.imageManager = imageManager;
-			this.guidToCreator = new Dictionary<Guid, List<ITreeNodeDataCreator>>();
+			this.guidToCreator = new Dictionary<Guid, List<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>>>();
 			InitializeGuidToCreator(treeNodeDataCreators);
 		}
 
-		void InitializeGuidToCreator(ITreeNodeDataCreator[] treeNodeDataCreators) {
-			foreach (var creator in treeNodeDataCreators) {
-				List<ITreeNodeDataCreator> list;
-				if (!guidToCreator.TryGetValue(creator.Guid, out list))
-					guidToCreator.Add(creator.Guid, list = new List<ITreeNodeDataCreator>());
+		void InitializeGuidToCreator(IEnumerable<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>> treeNodeDataCreators) {
+			foreach (var creator in treeNodeDataCreators.OrderBy(a => a.Metadata.Order)) {
+				Guid guid;
+				bool b = Guid.TryParse(creator.Metadata.Guid, out guid);
+				Debug.Assert(b, string.Format("Couldn't parse guid: '{0}'", creator.Metadata.Guid));
+				if (!b)
+					continue;
+
+				List<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>> list;
+				if (!guidToCreator.TryGetValue(guid, out list))
+					guidToCreator.Add(guid, list = new List<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>>());
 				list.Add(creator);
 			}
 		}
@@ -54,10 +61,10 @@ namespace dnSpy.TreeView {
 		}
 
 		public IEnumerable<ITreeNodeDataCreator> GetCreators(Guid guid) {
-			List<ITreeNodeDataCreator> list;
+			List<Lazy<ITreeNodeDataCreator, ITreeNodeDataCreatorMetadata>> list;
 			if (!guidToCreator.TryGetValue(guid, out list))
 				return new ITreeNodeDataCreator[0];
-			return list.AsEnumerable();
+			return list.Select(a => a.Value);
 		}
 	}
 }

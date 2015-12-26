@@ -102,6 +102,14 @@ namespace dnSpy.Files.Tabs {
 			fileListManager.Save(section);
 		}
 
+		bool CheckCanLoad(bool isReload) {
+			foreach (var listener in listeners) {
+				if (!listener.Value.CheckCanLoad(isReload))
+					return false;
+			}
+			return true;
+		}
+
 		void NotifyBeforeLoad(bool isReload) {
 			foreach (var listener in listeners)
 				listener.Value.BeforeLoad(isReload);
@@ -117,20 +125,23 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public bool Load(FileList fileList, IDnSpyFileLoader dnSpyFileLoader) {
+			const bool isReload = false;
 			if (dnSpyFileLoader == null)
 				dnSpyFileLoader = new DefaultDnSpyFileLoader(fileManager);
 			if (!CanLoad)
 				return false;
+			if (!CheckCanLoad(isReload))
+				return false;
 			if (fileList != fileListManager.SelectedFileList)
 				SaveCurrentFilesToList();
 
-			NotifyBeforeLoad(false);
+			NotifyBeforeLoad(isReload);
 			using (DisableSaveToList()) {
 				fileTabManager.CloseAll();
 				fileManager.Clear();
 				dnSpyFileLoader.Load(fileList.Files);
 			}
-			NotifyAfterLoad(false);
+			NotifyAfterLoad(isReload);
 
 			GC.Collect();
 			GC.WaitForPendingFinalizers();
@@ -142,20 +153,23 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public bool Reload(IDnSpyFileLoader dnSpyFileLoader) {
+			const bool isReload = true;
 			if (dnSpyFileLoader == null)
 				dnSpyFileLoader = new DefaultDnSpyFileLoader(fileManager);
 			if (!CanReload)
 				return false;
+			if (!CheckCanLoad(isReload))
+				return false;
 			SaveCurrentFilesToList();
 
-			NotifyBeforeLoad(true);
+			NotifyBeforeLoad(isReload);
 			var tgws = fileTabSerializer.SaveTabs();
 			using (DisableSaveToList()) {
 				fileTabManager.CloseAll();
 				fileManager.Clear();
 				dnSpyFileLoader.Load(fileListManager.SelectedFileList.Files);
 			}
-			NotifyAfterLoad(true);
+			NotifyAfterLoad(isReload);
 
 			// The files in the TV is loaded with a delay so make sure we delay before restoring
 			// or the code that tries to find the nodes might fail to find them.

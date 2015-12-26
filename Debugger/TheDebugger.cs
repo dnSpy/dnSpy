@@ -18,8 +18,10 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Threading;
 using dndbg.Engine;
 
@@ -63,6 +65,7 @@ namespace dnSpy.Debugger {
 		readonly Dispatcher dispatcher;
 		readonly IDebuggerSettings debuggerSettings;
 		readonly DebuggedProcessRunningNotifier debuggedProcessRunningNotifier;
+		readonly Lazy<ILoadBeforeDebug>[] loadBeforeDebugInsts;
 
 		public DnDebugger Debugger {
 			get { return debugger; }
@@ -81,9 +84,10 @@ namespace dnSpy.Debugger {
 		}
 
 		[ImportingConstructor]
-		TheDebugger(IDebuggerSettings debuggerSettings) {
+		TheDebugger(IDebuggerSettings debuggerSettings, [ImportMany] IEnumerable<Lazy<ILoadBeforeDebug>> loadBeforeDebugInsts) {
 			this.debuggerSettings = debuggerSettings;
 			this.dispatcher = Dispatcher.CurrentDispatcher;
+			this.loadBeforeDebugInsts = loadBeforeDebugInsts.ToArray();
 			debuggedProcessRunningNotifier = new DebuggedProcessRunningNotifier(this);
 			debuggedProcessRunningNotifier.ProcessRunning += DebuggedProcessRunningNotifier_ProcessRunning;
 			OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
@@ -104,6 +108,9 @@ namespace dnSpy.Debugger {
 		}
 
 		public void Initialize(DnDebugger newDebugger) {
+			foreach (var l in loadBeforeDebugInsts) {
+				var o = l.Value;
+			}
 			if (debuggerSettings.DisableManagedDebuggerDetection)
 				DisableSystemDebuggerDetection.Initialize(newDebugger);
 			AddDebugger(newDebugger);

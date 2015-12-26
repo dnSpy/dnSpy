@@ -84,8 +84,8 @@ namespace dnSpy.Files {
 		}
 
 		string GetDescription(DnSpyFileInfo info) {
-			if (info.Type == FilesConstants.FILETYPE_REFASM) {
-				int index = info.Name.LastIndexOf(FilesConstants.REFERENCE_ASSEMBLY_SEPARATOR);
+			if (info.Type == FileConstants.FILETYPE_REFASM) {
+				int index = info.Name.LastIndexOf(FileConstants.REFERENCE_ASSEMBLY_SEPARATOR);
 				if (index >= 0)
 					return info.Name.Substring(0, index);
 			}

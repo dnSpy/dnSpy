@@ -21,6 +21,10 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.ToolWindows.App;
 
 namespace dnSpy.Contracts.App {
 	/// <summary>
@@ -56,6 +60,26 @@ namespace dnSpy.Contracts.App {
 		/// Gets the <see cref="IAppStatusBar"/> instance
 		/// </summary>
 		IAppStatusBar StatusBar { get; }
+
+		/// <summary>
+		/// Gets the <see cref="IFileTabManager"/> instance
+		/// </summary>
+		IFileTabManager FileTabManager { get; }
+
+		/// <summary>
+		/// Gets the <see cref="IFileTreeView"/> instance
+		/// </summary>
+		IFileTreeView FileTreeView { get; }
+
+		/// <summary>
+		/// Gets the <see cref="IMainToolWindowManager"/> instance
+		/// </summary>
+		IMainToolWindowManager ToolWindowManager { get; }
+
+		/// <summary>
+		/// Gets the <see cref="ILanguageManager"/> instance
+		/// </summary>
+		ILanguageManager LanguageManager { get; }
 
 		/// <summary>
 		/// true if the app has been loaded

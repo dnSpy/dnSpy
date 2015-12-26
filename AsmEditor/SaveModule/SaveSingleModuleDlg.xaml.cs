@@ -18,10 +18,7 @@
 */
 
 namespace dnSpy.AsmEditor.SaveModule {
-	/// <summary>
-	/// Interaction logic for SaveSingleModuleDlg.xaml
-	/// </summary>
-	public partial class SaveSingleModuleDlg : SaveModuleWindow {
+	sealed partial class SaveSingleModuleDlg : SaveModuleWindow {
 		public SaveSingleModuleDlg() {
 			InitializeComponent();
 		}

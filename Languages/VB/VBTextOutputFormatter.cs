@@ -232,7 +232,7 @@ namespace dnSpy.Languages.VB {
 				output.WriteLine("'" + content, TextTokenType.Comment);
 		}
 
-		private static bool IsDefinition(AstNode node) {
+		static bool IsDefinition(AstNode node) {
 			return
 				node is FieldDeclaration ||
 				node is ConstructorDeclaration ||

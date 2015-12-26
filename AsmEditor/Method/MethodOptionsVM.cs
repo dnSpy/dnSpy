@@ -22,8 +22,8 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.Method {
 	enum CodeType {
@@ -330,9 +330,9 @@ namespace dnSpy.AsmEditor.Method {
 
 		readonly ModuleDef ownerModule;
 
-		public MethodOptionsVM(MethodDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
+		public MethodOptionsVM(MethodDefOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = ownerMethod == null || ownerMethod.GenericParameters.Count > 0,
@@ -350,11 +350,11 @@ namespace dnSpy.AsmEditor.Method {
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.ShowTypeFullName = true;
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
 
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, language, ownerType, ownerMethod);
-			this.declSecuritiesVM = new DeclSecuritiesVM(ownerModule, language, ownerType, ownerMethod);
-			this.paramDefsVM = new ParamDefsVM(ownerModule, language, ownerType, ownerMethod);
-			this.genericParamsVM = new GenericParamsVM(ownerModule, language, ownerType, ownerMethod);
-			this.methodOverridesVM = new MethodOverridesVM(ownerModule, language, ownerType, ownerMethod);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager, ownerType, ownerMethod);
+			this.declSecuritiesVM = new DeclSecuritiesVM(ownerModule, languageManager, ownerType, ownerMethod);
+			this.paramDefsVM = new ParamDefsVM(ownerModule, languageManager, ownerType, ownerMethod);
+			this.genericParamsVM = new GenericParamsVM(ownerModule, languageManager, ownerType, ownerMethod);
+			this.methodOverridesVM = new MethodOverridesVM(ownerModule, languageManager, ownerType, ownerMethod);
 
 			this.origOptions = options;
 

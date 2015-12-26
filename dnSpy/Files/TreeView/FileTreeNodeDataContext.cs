@@ -45,5 +45,13 @@ namespace dnSpy.Files.TreeView {
 			this.Filter = filter;
 			this.FilterVersion = 1;
 		}
+
+		public void Clear() {
+			this.FileTreeView = null;
+			this.Language = null;
+			this.ResourceNodeFactory = null;
+			this.DecompilerSettings = null;
+			this.Filter = null;
+		}
 	}
 }

@@ -23,9 +23,6 @@ using System.Windows;
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.Shared.UI.MVVM.Dialogs {
-	/// <summary>
-	/// Interaction logic for ProgressDlg.xaml
-	/// </summary>
 	public partial class ProgressDlg : WindowBase {
 		public ProgressDlg() {
 			InitializeComponent();

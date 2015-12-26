@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 -->
 <winlocal:WindowBase x:Class="dnSpy.AsmEditor.Event.EventOptionsDlg"
+             x:ClassModifier="internal"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -98,15 +99,15 @@
 						<ColumnDefinition Width="*"/>
 					</Grid.ColumnDefinitions>
 
-					<Button Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Style="{StaticResource DialogButton2}" Content="_Add..." Command="{Binding PickAddMethodCommand}" />
+					<Button Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Style="{StaticResource DialogButton}" Content="_Add..." Command="{Binding PickAddMethodCommand}" />
 					<Button Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Content="C" Padding="7 0 7 0" Command="{Binding ClearAddMethodCommand}" ToolTip="Set to null" />
 					<TextBox Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" IsReadOnly="True" Background="Transparent" Text="{Binding AddMethodFullName, Mode=OneWay}" ToolTip="{Binding AddMethodFullName}" />
 
-					<Button Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource DialogButton2}" Content="_Invoke..." Command="{Binding PickInvokeMethodCommand}" />
+					<Button Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource DialogButton}" Content="_Invoke..." Command="{Binding PickInvokeMethodCommand}" />
 					<Button Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Content="C" Padding="7 0 7 0" Command="{Binding ClearInvokeMethodCommand}" ToolTip="Set to null" />
 					<TextBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsReadOnly="True" Background="Transparent" Text="{Binding InvokeMethodFullName, Mode=OneWay}" ToolTip="{Binding InvokeMethodFullName}" />
 
-					<Button Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource DialogButton2}" Content="_Remove..." Command="{Binding PickRemoveMethodCommand}" />
+					<Button Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Style="{StaticResource DialogButton}" Content="_Remove..." Command="{Binding PickRemoveMethodCommand}" />
 					<Button Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Content="C" Padding="7 0 7 0" Command="{Binding ClearRemoveMethodCommand}" ToolTip="Set to null" />
 					<TextBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" IsReadOnly="True" Background="Transparent" Text="{Binding RemoveMethodFullName, Mode=OneWay}" ToolTip="{Binding RemoveMethodFullName}" />
 				</Grid>

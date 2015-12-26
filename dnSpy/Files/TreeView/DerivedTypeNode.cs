@@ -69,16 +69,18 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		public override void Initialize() {
-			TreeNode.LazyLoading = DerivedTypesFinder.QuickCheck(TryGetTypeDef());
+			TreeNode.LazyLoading = createChildren = DerivedTypesFinder.QuickCheck(TryGetTypeDef());
 		}
+		bool createChildren;
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
+			if (!createChildren)
+				yield break;
 			if (derivedTypesFinder != null)
 				derivedTypesFinder.Cancel();
 			var td = TryGetTypeDef();
 			if (td != null)
 				derivedTypesFinder = new DerivedTypesFinder(this, td);
-			yield break;
 		}
 		DerivedTypesFinder derivedTypesFinder;
 

@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.PE;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.Module {
 	sealed class ModuleOptions {

@@ -45,68 +45,11 @@ namespace dnSpy.Files.TreeView.Resources {
 				return null;
 
 			byte[] imageData;
-			if (GetImageData(module, serializedData.TypeName, serializedData.Data, out imageData))
+			if (SerializedImageUtils.GetImageData(module, serializedData.TypeName, serializedData.Data, out imageData))
 				return new SerializedImageResourceElementNode(treeNodeGroup, resourceElement, imageData);
 
 			return null;
 		}
-
-		internal static bool GetImageData(ModuleDef module, string typeName, byte[] serializedData, out byte[] imageData) {
-			imageData = null;
-			if (CouldBeBitmap(module, typeName)) {
-				var dict = Deserializer.Deserialize(SystemDrawingBitmap.DefinitionAssembly.FullName, SystemDrawingBitmap.ReflectionFullName, serializedData);
-				// Bitmap loops over every item looking for "Data" (case insensitive)
-				foreach (var v in dict.Values) {
-					var d = v.Value as byte[];
-					if (d == null)
-						continue;
-					if ("Data".Equals(v.Name, StringComparison.OrdinalIgnoreCase)) {
-						imageData = d;
-						return true;
-					}
-				}
-				return false;
-			}
-
-			if (CouldBeIcon(module, typeName)) {
-				var dict = Deserializer.Deserialize(SystemDrawingIcon.DefinitionAssembly.FullName, SystemDrawingIcon.ReflectionFullName, serializedData);
-				DeserializedDataInfo info;
-				if (!dict.TryGetValue("IconData", out info))
-					return false;
-				imageData = info.Value as byte[];
-				return imageData != null;
-			}
-
-			return false;
-		}
-
-		static bool CouldBeBitmap(ModuleDef module, string name) {
-			return CheckType(module, name, SystemDrawingBitmap);
-		}
-
-		static bool CouldBeIcon(ModuleDef module, string name) {
-			return CheckType(module, name, SystemDrawingIcon);
-		}
-
-		internal static bool CheckType(ModuleDef module, string name, TypeRef expectedType) {
-			if (module == null)
-				module = new ModuleDefUser();
-			var tr = TypeNameParser.ParseReflection(module, name, null);
-			if (tr == null)
-				return false;
-
-			var flags = AssemblyNameComparerFlags.All & ~AssemblyNameComparerFlags.Version;
-			if (!new AssemblyNameComparer(flags).Equals(tr.DefinitionAssembly, expectedType.DefinitionAssembly))
-				return false;
-
-			if (!new SigComparer().Equals(tr, expectedType))
-				return false;
-
-			return true;
-		}
-		static readonly AssemblyRef SystemDrawingAsm = new AssemblyRefUser(new AssemblyNameInfo("System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a"));
-		static readonly TypeRef SystemDrawingBitmap = new TypeRefUser(null, "System.Drawing", "Bitmap", SystemDrawingAsm);
-		static readonly TypeRef SystemDrawingIcon = new TypeRefUser(null, "System.Drawing", "Icon", SystemDrawingAsm);
 	}
 
 	sealed class SerializedImageResourceElementNode : ResourceElementNode, ISerializedImageResourceElementNode {
@@ -131,7 +74,7 @@ namespace dnSpy.Files.TreeView.Resources {
 
 		void InitializeImageData(byte[] imageData) {
 			this.imageData = imageData;
-			this.imageSource = ImageResourceElementNode.CreateImageSource(imageData);
+			this.imageSource = ImageResourceUtils.CreateImageSource(imageData);
 		}
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
@@ -152,26 +95,10 @@ namespace dnSpy.Files.TreeView.Resources {
 			yield return new ResourceData(ResourceElement.Name, token => new MemoryStream(id));
 		}
 
-		internal ResourceElement GetAsRawImage() {
+		public ResourceElement GetAsRawImage() {
 			return new ResourceElement {
 				Name = ResourceElement.Name,
 				ResourceData = new BuiltInResourceData(ResourceTypeCode.ByteArray, imageData),
-			};
-		}
-
-		internal ResourceElement Serialize(ResourceElement resElem) {
-			var data = (byte[])((BuiltInResourceData)resElem.ResourceData).Data;
-			bool isIcon = BitConverter.ToUInt32(data, 0) == 0x00010000;
-
-			object obj;
-			if (isIcon)
-				obj = new System.Drawing.Icon(new MemoryStream(data));
-			else
-				obj = new System.Drawing.Bitmap(new MemoryStream(data));
-
-			return new ResourceElement {
-				Name = resElem.Name,
-				ResourceData = new BinaryResourceData(new UserResourceType(obj.GetType().AssemblyQualifiedName, ResourceTypeCode.UserTypes), SerializationUtils.Serialize(obj)),
 			};
 		}
 
@@ -182,11 +109,11 @@ namespace dnSpy.Files.TreeView.Resources {
 
 			var binData = (BinaryResourceData)newResElem.ResourceData;
 			byte[] imageData;
-			if (!SerializedImageResourceElementNodeCreator.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out imageData))
+			if (!SerializedImageUtils.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out imageData))
 				return "The new data is not an image.";
 
 			try {
-				ImageResourceElementNode.CreateImageSource(imageData);
+				ImageResourceUtils.CreateImageSource(imageData);
 			}
 			catch {
 				return "The new data is not an image.";
@@ -200,7 +127,7 @@ namespace dnSpy.Files.TreeView.Resources {
 
 			var binData = (BinaryResourceData)newResElem.ResourceData;
 			byte[] imageData;
-			SerializedImageResourceElementNodeCreator.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out imageData);
+			SerializedImageUtils.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out imageData);
 			InitializeImageData(imageData);
 		}
 	}

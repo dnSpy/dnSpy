@@ -39,13 +39,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return true;
 		}
 
-		public override bool HandleModelUpdated(IDnSpyFile file) {
+		public override bool HandleModelUpdated(IDnSpyFile[] files) {
 			if (this.Member.Module == null)
 				return false; // remove this node
 			if ((this.Member is IField || this.Member is IMethod || this.Member is PropertyDef || this.Member is EventDef) &&
 				this.Member.DeclaringType == null)
 				return false;
-			HandleModelUpdated(this.TreeNode, file);
+			HandleModelUpdated(this.TreeNode, files);
 			return true;
 		}
 	}

@@ -20,7 +20,6 @@
 using System.Windows;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class CreateMethodPropertySig : ICreateMethodPropertySig {
@@ -42,7 +41,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 				data.PropertySig = (PropertySig)origSig;
 			var win = new MethodSigCreatorDlg();
 			win.DataContext = data;
-			win.Owner = ownerWindow ?? MainWindow.Instance;
+			win.Owner = ownerWindow ?? Application.Current.MainWindow;
 			if (win.ShowDialog() != true)
 				return null;
 

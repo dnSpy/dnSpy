@@ -21,10 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.MethodBody {
-	/// <summary>
-	/// Interaction logic for SwitchOperandControl.xaml
-	/// </summary>
-	public partial class SwitchOperandControl : UserControl {
+	sealed partial class SwitchOperandControl : UserControl {
 		SwitchOperandsListHelper switchOperandsListHelper;
 
 		public SwitchOperandControl() {

@@ -18,7 +18,6 @@
 */
 
 using System.ComponentModel.Composition;
-using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Settings.Dialog;
 
@@ -38,8 +37,13 @@ namespace dnSpy.Files {
 		}
 
 		void DisableMemoryMappedIO() {
-			foreach (var m in fileManager.GetFiles().GetModules<ModuleDefMD>())
-				m.MetaData.PEImage.UnsafeDisableMemoryMappedIO();
+			foreach (var m in fileManager.GetFiles()) {
+				foreach (var f in m.GetAllChildrenAndSelf()) {
+					var peImage = f.PEImage;
+					if (peImage != null)
+						peImage.UnsafeDisableMemoryMappedIO();
+				}
+			}
 		}
 	}
 }

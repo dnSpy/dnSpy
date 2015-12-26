@@ -52,8 +52,7 @@ namespace dnSpy.Shared.UI.Search {
 		Local			= 0x04000000,
 		Resource		= 0x08000000,
 		ResourceElement	= 0x10000000,
-		PE				= 0x20000000,
-		Hex				= 0x40000000,
+		Other			= 0x20000000,
 		TypeDefOther	= GenericTypeDef | NonGenericTypeDef | EnumTypeDef | InterfaceTypeDef | ClassTypeDef | StructTypeDef | DelegateTypeDef,
 		AnyTypeDef		= TypeDef | TypeDefOther,
 		// What's shown in the normal treeview
@@ -61,7 +60,7 @@ namespace dnSpy.Shared.UI.Search {
 						  FieldDef | MethodDef | PropertyDef | EventDef |
 						  AssemblyRef | BaseTypes | DerivedTypes | ModuleRef |
 						  ResourceList | NonNetFile | Resource | ResourceElement |
-						  PE | Hex,
+						  Other,
 	}
 
 	public static class VisibleMembersFlagsExtensions {
@@ -103,8 +102,7 @@ namespace dnSpy.Shared.UI.Search {
 			if ((flags & VisibleMembersFlags.InstanceConstructor) != 0) AddString(sb, "Constructor", ref count);
 			if ((flags & VisibleMembersFlags.Resource) != 0) AddString(sb, "Resource", ref count);
 			if ((flags & VisibleMembersFlags.ResourceElement) != 0) AddString(sb, "ResourceElement", ref count);
-			if ((flags & VisibleMembersFlags.PE) != 0) AddString(sb, "PE", ref count);
-			if ((flags & VisibleMembersFlags.Hex) != 0) AddString(sb, "Hex", ref count);
+			if ((flags & VisibleMembersFlags.Other) != 0) AddString(sb, "Other", ref count);
 
 			return sb.ToString();
 		}

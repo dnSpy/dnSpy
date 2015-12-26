@@ -20,6 +20,7 @@
 using System;
 using System.Linq;
 using System.Windows.Controls;
+using dnSpy.AsmEditor.Commands;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class SwitchOperandsListHelper : ListBoxHelperBase<SwitchInstructionVM> {

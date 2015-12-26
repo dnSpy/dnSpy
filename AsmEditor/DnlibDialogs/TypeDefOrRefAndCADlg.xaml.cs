@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for TypeDefOrRefAndCADlg.xaml
-	/// </summary>
-	public partial class TypeDefOrRefAndCADlg : WindowBase {
+	sealed partial class TypeDefOrRefAndCADlg : WindowBase {
 		public TypeDefOrRefAndCADlg() {
 			InitializeComponent();
 		}

@@ -93,7 +93,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		public abstract bool HandleAssemblyListChanged(IDnSpyFile[] removedAssemblies, IDnSpyFile[] addedAssemblies);
-		public abstract bool HandleModelUpdated(IDnSpyFile file);
+		public abstract bool HandleModelUpdated(IDnSpyFile[] files);
 
 		public static void CancelSelfAndChildren(ITreeNodeData node) {
 			foreach (var c in node.DescendantsAndSelf()) {
@@ -115,12 +115,12 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		public static void HandleModelUpdated(ITreeNode node, IDnSpyFile file) {
+		public static void HandleModelUpdated(ITreeNode node, IDnSpyFile[] files) {
 			var children = node.DataChildren.ToArray();
 			for (int i = children.Length - 1; i >= 0; i--) {
 				var c = children[i];
 				var n = c as IAnalyzerTreeNodeData;
-				if (n == null || !n.HandleModelUpdated(file)) {
+				if (n == null || !n.HandleModelUpdated(files)) {
 					AnalyzerTreeNodeData.CancelSelfAndChildren(c);
 					node.Children.RemoveAt(i);
 				}

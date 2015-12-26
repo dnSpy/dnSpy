@@ -22,8 +22,8 @@ using System.Diagnostics;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Search;
 using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.UI.Search;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	enum NamedArgType {
@@ -323,7 +323,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickEnumType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var type = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
+			var type = dnlibTypePicker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
 			if (type != null)
 				EnumType = type;
 		}

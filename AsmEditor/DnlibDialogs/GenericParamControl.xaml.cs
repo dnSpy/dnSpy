@@ -21,10 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for GenericParamControl.xaml
-	/// </summary>
-	public partial class GenericParamControl : UserControl {
+	sealed partial class GenericParamControl : UserControl {
 		public GenericParamControl() {
 			InitializeComponent();
 			Loaded += GenericParamControl_Loaded;

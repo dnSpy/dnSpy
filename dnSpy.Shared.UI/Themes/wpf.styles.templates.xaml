@@ -545,24 +545,20 @@
 		<Setter Property="Background" Value="{DynamicResource SystemColorsControl}"/>
 	</Style>
 	<Style x:Key="DialogButton" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
-		<Setter Property="Height" Value="23"/>
-		<Setter Property="Width" Value="75"/>
 		<Setter Property="Padding" Value="10,1,10,1" />
 		<Setter Property="MinWidth" Value="75" />
 		<Setter Property="MinHeight" Value="23" />
-	</Style>
-	<Style x:Key="DialogButton2" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
-		<Setter Property="Padding" Value="10,1,10,1" />
-		<Setter Property="MinWidth" Value="75" />
-		<Setter Property="MinHeight" Value="23" />
+		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 	<Style x:Key="OtherDialogButton" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Height" Value="23"/>
 		<Setter Property="MinHeight" Value="23" />
+		<Setter Property="VerticalAlignment" Value="Center" />
 	</Style>
 	<Style x:Key="EllipsisButton" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Padding" Value="7 0 7 0" />
 		<Setter Property="Content" Value="..." />
+		<Setter Property="VerticalAlignment" Value="Stretch" />
 	</Style>
 	<Style x:Key="TextEditorButton" TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
 		<Setter Property="Padding" Value="10,1,10,1" />

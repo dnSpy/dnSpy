@@ -21,11 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
-using dnlib.PE;
 using dnSpy.Contracts.Files;
 using dnSpy.Shared.UI.Files;
 
@@ -71,7 +69,7 @@ namespace dnSpy.Files {
 		readonly IFileManagerSettings fileManagerSettings;
 
 		[ImportingConstructor]
-		FileManager(IFileManagerSettings fileManagerSettings, [ImportMany] IDnSpyFileCreator[] mefCreators) {
+		public FileManager(IFileManagerSettings fileManagerSettings, [ImportMany] IDnSpyFileCreator[] mefCreators) {
 			this.lockObj = new object();
 			this.files = new List<IDnSpyFile>();
 			this.asmResolver = new AssemblyResolver(this);
@@ -79,8 +77,8 @@ namespace dnSpy.Files {
 			this.fileManagerSettings = fileManagerSettings;
 		}
 
-		void CallCollectionChanged(NotifyFileCollectionChangedEventArgs eventArgs) {
-			if (dispatcher != null)
+		void CallCollectionChanged(NotifyFileCollectionChangedEventArgs eventArgs, bool delayLoad = true) {
+			if (delayLoad && dispatcher != null)
 				dispatcher(() => CallCollectionChanged2(eventArgs));
 			else
 				CallCollectionChanged2(eventArgs);
@@ -104,7 +102,7 @@ namespace dnSpy.Files {
 				files.Clear();
 			}
 			if (oldFiles.Length != 0)
-				CallCollectionChanged(NotifyFileCollectionChangedEventArgs.CreateClear(oldFiles));
+				CallCollectionChanged(NotifyFileCollectionChangedEventArgs.CreateClear(oldFiles, null));
 		}
 
 		public IDnSpyFile FindAssembly(IAssembly assembly) {
@@ -152,8 +150,19 @@ namespace dnSpy.Files {
 			lock (lockObj)
 				result = GetOrAdd_NoLock(file);
 			if (result == file)
-				CallCollectionChanged(NotifyFileCollectionChangedEventArgs.CreateAdd(result));
+				CallCollectionChanged(NotifyFileCollectionChangedEventArgs.CreateAdd(result, null));
 			return result;
+		}
+
+		public IDnSpyFile ForceAdd(IDnSpyFile file, bool delayLoad, object data) {
+			if (file == null)
+				throw new ArgumentNullException();
+
+			lock (lockObj)
+				files.Add(file);
+
+			CallCollectionChanged(NotifyFileCollectionChangedEventArgs.CreateAdd(file, data), delayLoad);
+			return file;
 		}
 
 		internal IDnSpyFile GetOrAddCanDispose(IDnSpyFile file) {
@@ -246,35 +255,7 @@ namespace dnSpy.Files {
 		}
 
 		internal static IDnSpyFile CreateDnSpyFileFromFile(DnSpyFileInfo fileInfo, string filename, bool useMemoryMappedIO, bool loadPDBFiles, IAssemblyResolver asmResolver) {
-			try {
-				// Quick check to prevent exceptions from being thrown
-				if (!File.Exists(filename))
-					return new DnSpyUnknownFile(filename);
-
-				IPEImage peImage;
-
-				if (useMemoryMappedIO)
-					peImage = new PEImage(filename);
-				else
-					peImage = new PEImage(File.ReadAllBytes(filename), filename);
-
-				var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
-				bool isDotNet = dotNetDir.VirtualAddress != 0 && dotNetDir.Size >= 0x48;
-				if (isDotNet) {
-					try {
-						var options = new ModuleCreationOptions(DnSpyDotNetFileBase.CreateModuleContext(asmResolver));
-						return DnSpyDotNetFile.CreateAssembly(fileInfo, ModuleDefMD.Load(peImage, options), loadPDBFiles);
-					}
-					catch {
-					}
-				}
-
-				return new DnSpyPEFile(peImage);
-			}
-			catch {
-			}
-
-			return new DnSpyUnknownFile(filename);
+			return DnSpyFile.CreateDnSpyFileFromFile(fileInfo, filename, useMemoryMappedIO, loadPDBFiles, asmResolver, false);
 		}
 
 		public void Remove(IDnSpyFilenameKey key) {
@@ -288,7 +269,7 @@ namespace dnSpy.Files {
 			Debug.Assert(removedFile != null);
 
 			if (removedFile != null)
-				CallCollectionChanged(NotifyFileCollectionChangedEventArgs.CreateRemove(removedFile));
+				CallCollectionChanged(NotifyFileCollectionChangedEventArgs.CreateRemove(removedFile, null));
 		}
 
 		IDnSpyFile Remove_NoLock(IDnSpyFilenameKey key) {
@@ -303,6 +284,34 @@ namespace dnSpy.Files {
 			}
 
 			return null;
+		}
+
+		public void Remove(IEnumerable<IDnSpyFile> files) {
+			var removedFiles = new List<IDnSpyFile>();
+			lock (lockObj) {
+				var dict = new Dictionary<IDnSpyFile, int>();
+				int i = 0;
+				foreach (var n in this.files)
+					dict[n] = i++;
+				var list = new List<Tuple<IDnSpyFile, int>>(files.Select(a => {
+					int j;
+					bool b = dict.TryGetValue(a, out j);
+					Debug.Assert(b);
+					return Tuple.Create(a, b ? j : -1);
+				}));
+				list.Sort((a, b) => b.Item2.CompareTo(a.Item2));
+				foreach (var t in list) {
+					if (t.Item2 < 0)
+						continue;
+					Debug.Assert((uint)t.Item2 < (uint)this.files.Count);
+					Debug.Assert(this.files[t.Item2] == t.Item1);
+					this.files.RemoveAt(t.Item2);
+					removedFiles.Add(t.Item1);
+				}
+			}
+
+			if (removedFiles.Count > 0)
+				CallCollectionChanged(NotifyFileCollectionChangedEventArgs.CreateRemove(removedFiles.ToArray(), null));
 		}
 
 		public void SetDispatcher(Action<Action> action) {

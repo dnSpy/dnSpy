@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for MethodSpecDlg.xaml
-	/// </summary>
-	public partial class MethodSpecDlg : WindowBase {
+	sealed partial class MethodSpecDlg : WindowBase {
 		public MethodSpecDlg() {
 			InitializeComponent();
 		}

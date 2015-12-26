@@ -48,11 +48,13 @@ namespace dnSpy.Debugger.Exceptions {
 
 		readonly IExceptionManager exceptionManager;
 		readonly ISettingsManager settingsManager;
+		readonly Lazy<IDefaultExceptionSettings> defaultExceptionSettings;
 
 		[ImportingConstructor]
-		ExceptionListSettings(IExceptionManager exceptionManager, ISettingsManager settingsManager) {
+		ExceptionListSettings(IExceptionManager exceptionManager, ISettingsManager settingsManager, Lazy<IDefaultExceptionSettings> defaultExceptionSettings) {
 			this.exceptionManager = exceptionManager;
 			this.settingsManager = settingsManager;
+			this.defaultExceptionSettings = defaultExceptionSettings;
 			exceptionManager.Changed += ExceptionManager_Changed;
 
 			disableSaveCounter++;
@@ -118,7 +120,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		IEnumerable<Tuple<ExceptionDiffType, ExceptionInfo>> GetDiff() {
 			var defaultInfos = new Dictionary<ExceptionInfoKey, ExceptionInfo>();
-			foreach (var info in DefaultExceptionSettings.Instance.ExceptionInfos)
+			foreach (var info in defaultExceptionSettings.Value.ExceptionInfos)
 				defaultInfos[info.Key] = info;
 
 			foreach (var info in exceptionManager.ExceptionInfos) {

@@ -20,10 +20,7 @@
 using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for CreateTypeSigArrayControl.xaml
-	/// </summary>
-	public partial class CreateTypeSigArrayControl : UserControl {
+	sealed partial class CreateTypeSigArrayControl : UserControl {
 		public CreateTypeSigArrayControl() {
 			InitializeComponent();
 		}

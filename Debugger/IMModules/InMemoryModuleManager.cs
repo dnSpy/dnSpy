@@ -28,6 +28,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Shared.UI.Files;
 
@@ -40,8 +41,8 @@ namespace dnSpy.Debugger.IMModules {
 		IEnumerable<IDnSpyFile> AllDnSpyFiles { get; }
 	}
 
-	[Export, Export(typeof(IInMemoryModuleManager)), PartCreationPolicy(CreationPolicy.Shared)]
-	sealed class InMemoryModuleManager : IInMemoryModuleManager {
+	[Export, Export(typeof(IInMemoryModuleManager)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class InMemoryModuleManager : IInMemoryModuleManager, ILoadBeforeDebug {
 		ClassLoader classLoader;
 
 		bool UseDebugSymbols {
@@ -70,16 +71,20 @@ namespace dnSpy.Debugger.IMModules {
 			get { return AllDnSpyFiles.OfType<CorModuleDefFile>(); }
 		}
 
+		readonly IFileTabManager fileTabManager;
 		readonly IFileTreeView fileTreeView;
 		readonly IFileManager fileManager;
+		readonly Lazy<IMethodAnnotations> methodAnnotations;
 		readonly IAppWindow appWindow;
 		readonly ITheDebugger theDebugger;
 
 		[ImportingConstructor]
-		InMemoryModuleManager(ITheDebugger theDebugger, IFileTreeView fileTreeView, IAppWindow appWindow) {
-			this.fileTreeView = fileTreeView;
-			this.fileManager = fileTreeView.FileManager;
+		InMemoryModuleManager(ITheDebugger theDebugger, IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations, IAppWindow appWindow) {
+			this.fileTabManager = fileTabManager;
+			this.fileTreeView = fileTabManager.FileTreeView;
+			this.fileManager = this.fileTreeView.FileManager;
 			this.appWindow = appWindow;
+			this.methodAnnotations = methodAnnotations;
 			this.theDebugger = theDebugger;
 			theDebugger.OnProcessStateChanged2 += TheDebugger_OnProcessStateChanged2;
 		}
@@ -90,7 +95,7 @@ namespace dnSpy.Debugger.IMModules {
 			var dbg = (DnDebugger)sender;
 			switch (theDebugger.ProcessState) {
 			case DebuggerProcessState.Starting:
-				classLoader = new ClassLoader(fileTreeView, appWindow.MainWindow);
+				classLoader = new ClassLoader(fileTabManager, appWindow.MainWindow);
 				dbg.OnCorModuleDefCreated += DnDebugger_OnCorModuleDefCreated;
 				dbg.DebugCallbackEvent += DnDebugger_DebugCallbackEvent;
 				dbg.OnModuleAdded += DnDebugger_OnModuleAdded;
@@ -153,7 +158,7 @@ namespace dnSpy.Debugger.IMModules {
 						UpdateResolver(module.GetOrCreateCorModuleDef());
 						cmdf.Children.Add(newFile);
 						Initialize(module.Debugger, new[] { newFile.DnModule.CorModuleDef });
-						asmNode.TreeNode.Children.Add(fileTreeView.CreateNode(asmNode, newFile).TreeNode);
+						asmNode.TreeNode.Children.Add(fileTreeView.TreeView.Create(fileTreeView.CreateNode(asmNode, newFile)));
 					}
 				}
 			}
@@ -183,7 +188,7 @@ namespace dnSpy.Debugger.IMModules {
 							UpdateResolver(newFile.ModuleDef);
 							mmdf.Children.Add(newFile);
 							asmNode.DnSpyFile.ModuleDef.Assembly.Modules.Add(newFile.ModuleDef);
-							asmNode.TreeNode.Children.Add(fileTreeView.CreateNode(asmNode, newFile).TreeNode);
+							asmNode.TreeNode.Children.Add(fileTreeView.TreeView.Create(fileTreeView.CreateNode(asmNode, newFile)));
 						}
 					}
 				}
@@ -273,10 +278,10 @@ namespace dnSpy.Debugger.IMModules {
 				var md = file.ModuleDef.ResolveToken(new MDToken(Table.Method, rid)) as MethodDef;
 				if (md == null)
 					break;
-				//TODO: MethodAnnotations.Instance.SetBodyModified(md, false);
+				methodAnnotations.Value.SetBodyModified(md, false);
 				md.FreeMethodBody();
 			}
-			//TODO: ModuleModified(file);
+			fileTabManager.RefreshModifiedFile(file);
 
 			// A breakpoint in an encrypted method will fail to be created. Now's a good time to
 			// re-add any failed breakpoints.

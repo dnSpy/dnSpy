@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 	sealed class ModuleSaver : IModuleWriterListener, ILogger {
 		SaveState[] filesToSave;
 
-		class SaveState {
+		sealed class SaveState {
 			public readonly SaveOptionsVM File;
 			public double SizeRatio;
 

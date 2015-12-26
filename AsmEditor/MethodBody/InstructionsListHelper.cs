@@ -28,15 +28,16 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts;
 using dnSpy.NRefactory;
-using dnSpy.Search;
+using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Images;
 using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.UI.Search;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionsListHelper : ListBoxHelperBase<InstructionVM>, IEditOperand, ISelectItems<InstructionVM> {
@@ -240,7 +241,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public static void CopyItemsAsTextToClipboard(InstructionVM[] instrs) {
-			var output = new PlainTextOutput();
+			var output = new NoSyntaxHighlightOutput();
 
 			for (int i = 0; i < instrs.Length; i++) {
 				if (i > 0)
@@ -385,7 +386,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void AddFieldDef(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
-			var field = picker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.FieldDef), opvm.Other as IField, cilBodyVM.OwnerModule);
+			var field = picker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.FieldDef), opvm.Other as IField, cilBodyVM.OwnerModule);
 			if (field != null)
 				opvm.Other = field;
 		}
@@ -402,7 +403,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void AddMethodDef(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
-			var method = picker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef), opvm.Other as IMethod, cilBodyVM.OwnerModule);
+			var method = picker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef), opvm.Other as IMethod, cilBodyVM.OwnerModule);
 			if (method != null)
 				opvm.Other = method;
 		}
@@ -448,7 +449,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void AddType(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
-			var type = picker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.TypeDef), opvm.Other as ITypeDefOrRef, cilBodyVM.OwnerModule);
+			var type = picker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), opvm.Other as ITypeDefOrRef, cilBodyVM.OwnerModule);
 			if (type != null)
 				opvm.Other = type;
 		}
@@ -477,7 +478,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var data = new SwitchOperandVM(cilBodyVM.InstructionsListVM, opvm.Other as InstructionVM[]);
 			var win = new SwitchOperandDlg();
 			win.DataContext = data;
-			win.Owner = Window.GetWindow(listBox) ?? MainWindow.Instance;
+			win.Owner = Window.GetWindow(listBox) ?? Application.Current.MainWindow;
 			if (win.ShowDialog() != true)
 				return;
 

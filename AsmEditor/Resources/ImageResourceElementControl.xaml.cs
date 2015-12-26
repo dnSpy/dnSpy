@@ -22,10 +22,7 @@ using System.Windows.Controls;
 using dnSpy.AsmEditor.ViewHelpers;
 
 namespace dnSpy.AsmEditor.Resources {
-	/// <summary>
-	/// Interaction logic for ImageResourceElementControl.xaml
-	/// </summary>
-	public partial class ImageResourceElementControl : UserControl {
+	sealed partial class ImageResourceElementControl : UserControl {
 		public ImageResourceElementControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

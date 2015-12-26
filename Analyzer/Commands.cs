@@ -50,7 +50,7 @@ namespace dnSpy.Analyzer {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID))
 				return null;
 
-			var nodes = context.FindByType<ITreeNodeData[]>();
+			var nodes = context.Find<ITreeNodeData[]>();
 			if (nodes == null || nodes.Length != 1)
 				return null;
 

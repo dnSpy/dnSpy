@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
@@ -28,7 +29,7 @@ namespace dnSpy.AsmEditor.Hex {
 	/// executed once.
 	/// </summary>
 	[DebuggerDisplay("{Description}")]
-	sealed class HexBoxUndoCommand : IUndoCommand {
+	sealed class HexBoxUndoCommand : IUndoCommand, IDisposable {
 		readonly HexDocument doc;
 		readonly WeakReference hexBoxWeakRef;
 		readonly HexBoxPosition origCaretPos;
@@ -59,7 +60,7 @@ namespace dnSpy.AsmEditor.Hex {
 			get { yield return doc; }
 		}
 
-		public void Dispose() {
+		void IDisposable.Dispose() {
 			canNotAppend = true;
 		}
 		bool canNotAppend = false;

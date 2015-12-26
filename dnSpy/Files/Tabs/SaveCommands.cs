@@ -76,7 +76,7 @@ namespace dnSpy.Files.Tabs {
 		ITabGroup GetTabGroup(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID))
 				return null;
-			var g = context.FindByType<ITabGroup>();
+			var g = context.Find<ITabGroup>();
 			return g != null && fileTabManager.Owns(g) ? g : null;
 		}
 

@@ -96,7 +96,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public override bool IsVisible(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 				return false;
-			var uiContext = context.FindByType<ITextEditorUIContext>();
+			var uiContext = context.Find<ITextEditorUIContext>();
 			return uiContext != null && uiContext.HasSelectedText;
 		}
 	}
@@ -126,7 +126,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (tab == null)
 				return null;
 			var elem = tab.UIContext.FocusedElement ?? tab.UIContext.UIObject as IInputElement;
-			return elem == null ? null : ApplicationCommands.Find.CanExecute(null, elem) ? elem : null;
+			return elem != null && tab.TryGetTextEditorUIContext() != null && ApplicationCommands.Find.CanExecute(null, elem) ? elem : null;
 		}
 	}
 

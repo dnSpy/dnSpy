@@ -22,58 +22,60 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Hex.Nodes;
+using dnSpy.AsmEditor.UndoRedo;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler;
 using dnSpy.Shared.UI.HexEditor;
 using dnSpy.Shared.UI.Menus;
-using dnSpy.Tabs;
-using dnSpy.TreeNodes;
-using dnSpy.TreeNodes.Hex;
-using ICSharpCode.AvalonEdit;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
-using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TextView;
-using ICSharpCode.ILSpy.TreeNodes;
-using ICSharpCode.TreeView;
 
 namespace dnSpy.AsmEditor.Hex {
-	[Export(typeof(IPlugin))]
-	sealed class HexContextMenuPlugin : IPlugin {
-		void IPlugin.EarlyInit() {
-		}
-
-		public void OnLoaded() {
-			OpenHexEditorCommand.OnLoaded();
-			GoToMDTableRowHexEditorCommand.OnLoaded();
-			GoToMDTableRowUIHexEditorCommand.OnLoaded();
+	[ExportAutoLoaded]
+	sealed class HexCommandLoader : IAutoLoaded {
+		[ImportingConstructor]
+		HexCommandLoader(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations) {
+			OpenHexEditorCommand.Initialize(wpfCommandManager, fileTabManager, methodAnnotations);
+			GoToMDTableRowHexEditorCommand.Initialize(wpfCommandManager, fileTabManager);
+			GoToMDTableRowUIHexEditorCommand.Initialize(wpfCommandManager, fileTabManager);
 		}
 	}
 
 	sealed class HexContext {
-		public SharpTreeNode[] Nodes;
-		public bool IsLocalTarget;
-		public object Reference;
-		public int? Line;
-		public int? Column;
-		public GuidObject CreatorObject;
+		public readonly ITreeNodeData[] Nodes;
+		public readonly bool IsLocalTarget;
+		public readonly object Reference;
+		public readonly int? Line;
+		public readonly int? Column;
+		public readonly GuidObject CreatorObject;
 
 		public HexContext() {
 		}
 
-		public HexContext(GuidObject creatorObject, SharpTreeNode[] nodes) {
+		public HexContext(GuidObject creatorObject, ITreeNodeData[] nodes) {
 			this.Nodes = nodes;
 			this.CreatorObject = creatorObject;
 		}
 
-		public HexContext(DecompilerTextView textView, int? line, int? col, object @ref, bool isLocalTarget) {
+		public HexContext(ITextEditorUIContext uiContext, int? line, int? col, object @ref, bool isLocalTarget) {
 			this.Reference = @ref;
 			this.IsLocalTarget = isLocalTarget;
 			this.Line = line;
 			this.Column = col;
-			this.CreatorObject = new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID, textView);
+			this.CreatorObject = new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID, uiContext);
 		}
 	}
 
@@ -85,19 +87,19 @@ namespace dnSpy.AsmEditor.Hex {
 
 		protected sealed override HexContext CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID)) {
-				var refSeg = context.FindByType<CodeReferenceSegment>();
+				var refSeg = context.Find<CodeReference>();
 				bool isLocalTarget = false;
 				object @ref = null;
 				if (refSeg != null) {
 					@ref = refSeg.Reference;
 					isLocalTarget = refSeg.IsLocalTarget;
 				}
-				var pos = context.FindByType<TextViewPosition?>();
-				return new HexContext(context.CreatorObject.Object as DecompilerTextView, pos == null ? (int?)null : pos.Value.Line, pos == null ? (int?)null : pos.Value.Column, @ref, isLocalTarget);
+				var pos = context.Find<TextEditorLocation?>();
+				return new HexContext(context.Find<ITextEditorUIContext>(), pos == null ? (int?)null : pos.Value.Line, pos == null ? (int?)null : pos.Value.Column, @ref, isLocalTarget);
 			}
 
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID)) {
-				var nodes = context.FindByType<SharpTreeNode[]>();
+				var nodes = context.Find<ITreeNodeData[]>();
 				if (nodes == null)
 					return null;
 				return new HexContext(context.CreatorObject, nodes);
@@ -117,46 +119,51 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 		static readonly object ContextKey = new object();
 
+		protected readonly IFileTabManager fileTabManager;
+
+		protected HexMenuCommand(IFileTabManager fileTabManager) {
+			this.fileTabManager = fileTabManager;
+		}
+
 		protected sealed override HexContext CreateContext(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.APP_MENU_EDIT_GUID))
 				return null;
-			return CreateContext();
+			return CreateContext(fileTabManager);
 		}
 
-		internal static HexContext CreateContext() {
-			var textView = MainWindow.Instance.ActiveTextView;
-			if (textView != null && textView.IsKeyboardFocusWithin)
-				return CreateContext(textView);
+		internal static HexContext CreateContext(IFileTabManager fileTabManager) {
+			var uiContext = fileTabManager.ActiveTab.TryGetTextEditorUIContext();
+			if (uiContext != null && ((UIElement)uiContext.UIObject).IsKeyboardFocusWithin)
+				return CreateContext(uiContext);
 
-			if (MainWindow.Instance.TreeView.IsKeyboardFocusWithin)
-				return CreateContext(MainWindow.Instance.TreeView);
+			if (((UIElement)fileTabManager.FileTreeView.TreeView.UIObject).IsKeyboardFocusWithin)
+				return CreateContext(fileTabManager.FileTreeView);
 
-			if (MainWindow.Instance.TreeView.SelectedItems.Count != 0) {
-				bool teFocus = textView != null && textView.TextEditor.TextArea.IsFocused;
+			if (fileTabManager.FileTreeView.TreeView.SelectedItems.Length != 0) {
+				bool teFocus = uiContext != null;
 				if (teFocus)
-					return CreateContext(textView);
-				if (UIUtils.HasSelectedChildrenFocus(MainWindow.Instance.TreeView))
-					return CreateContext(MainWindow.Instance.TreeView);
+					return CreateContext(uiContext);
+				if (UIUtils.HasSelectedChildrenFocus(fileTabManager.FileTreeView.TreeView.UIObject as ListBox))
+					return CreateContext(fileTabManager.FileTreeView);
 			}
 
 			return new HexContext();
 		}
 
-		static HexContext CreateContext(DecompilerTextView textView) {
-			var position = textView.TextEditor.TextArea.Caret.Position;
-			var refSeg = textView.GetReferenceSegmentAt(position);
+		static HexContext CreateContext(ITextEditorUIContext uiContext) {
+			var codeRef = uiContext.SelectedCodeReference;
 			bool isLocalTarget = false;
 			object @ref = null;
-			if (refSeg != null) {
-				@ref = refSeg.Reference;
-				isLocalTarget = refSeg.IsLocalTarget;
+			if (codeRef != null) {
+				@ref = codeRef.Reference;
+				isLocalTarget = codeRef.IsLocalTarget;
 			}
-			var pos = textView.TextEditor.TextArea.Caret.Position;
-			return new HexContext(textView, pos.Line, pos.Column, @ref, isLocalTarget);
+			var pos = uiContext.Location;
+			return new HexContext(uiContext, pos.Line, pos.Column, @ref, isLocalTarget);
 		}
 
-		static HexContext CreateContext(SharpTreeView treeView) {
-			return new HexContext(new GuidObject(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID, treeView), treeView.GetTopLevelSelection().ToArray());
+		static HexContext CreateContext(IFileTreeView fileTreeView) {
+			return new HexContext(new GuidObject(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID, fileTreeView), fileTreeView.TreeView.TopLevelSelection);
 		}
 
 		public override bool IsEnabled(HexContext context) {
@@ -165,112 +172,131 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class OpenHexEditorCommand {
-		internal static void OnLoaded() {
-			MainWindow.Instance.CodeBindings.Add(new RoutedCommand("OpenHexEditor", typeof(OpenHexEditorCommand)),
-				(s, e) => ExecuteCommand(),
-				(s, e) => e.CanExecute = CanExecuteCommand(),
+		static readonly RoutedCommand OpenHexEditor = new RoutedCommand("OpenHexEditor", typeof(OpenHexEditorCommand));
+		internal static void Initialize(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations) {
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			cmds.Add(OpenHexEditor,
+				(s, e) => ExecuteCommand(fileTabManager, methodAnnotations),
+				(s, e) => e.CanExecute = CanExecuteCommand(fileTabManager, methodAnnotations),
 				ModifierKeys.Control, Key.X);
 		}
 
 		[ExportMenuItem(Header = "Open He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 0)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
+			readonly IFileTabManager fileTabManager;
+			readonly Lazy<IMethodAnnotations> methodAnnotations;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations) {
+				this.fileTabManager = fileTabManager;
+				this.methodAnnotations = methodAnnotations;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, methodAnnotations, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
-				return IsVisibleInternal(context);
-			}
-
-			public override string GetHeader(HexContext context) {
-				return GetHeaderInternal(context);
+				return IsVisibleInternal(fileTabManager, methodAnnotations, context);
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Open He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 0)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
+			readonly Lazy<IMethodAnnotations> methodAnnotations;
+
+			[ImportingConstructor]
+			TheHexMenuCommand(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations)
+				: base(fileTabManager) {
+				this.methodAnnotations = methodAnnotations;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, methodAnnotations, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
-				return IsVisibleInternal(context);
-			}
-
-			public override string GetHeader(HexContext context) {
-				return GetHeaderInternal(context);
+				return IsVisibleInternal(fileTabManager, methodAnnotations, context);
 			}
 		}
 
-		static string GetHeaderInternal(HexContext context) {
-			return MainWindow.Instance.GetHexTabState(GetAssemblyTreeNode(context)) == null ? "Open Hex Editor" : "Show Hex Editor";
-		}
-
-		static void ExecuteCommand() {
-			var context = HexMenuCommand.CreateContext();
+		static void ExecuteCommand(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations) {
+			var context = HexMenuCommand.CreateContext(fileTabManager);
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
-				ShowAddressReferenceInHexEditorCommand.ExecuteInternal(context);
-			else if (ShowILRangeInHexEditorCommand.IsVisibleInternal(context))
-				ShowILRangeInHexEditorCommand.ExecuteInternal(context);
-			else if (ShowHexNodeInHexEditorCommand.IsVisibleInternal(context))
-				ShowHexNodeInHexEditorCommand.ExecuteInternal(context);
-			else if (IsVisibleInternal(context))
-				ExecuteInternal(context);
+				ShowAddressReferenceInHexEditorCommand.ExecuteInternal(fileTabManager, context);
+			else if (ShowILRangeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
+				ShowILRangeInHexEditorCommand.ExecuteInternal(fileTabManager, methodAnnotations, context);
+			else if (ShowHexNodeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
+				ShowHexNodeInHexEditorCommand.ExecuteInternal(fileTabManager, methodAnnotations, context);
+			else if (IsVisibleInternal(fileTabManager, methodAnnotations, context))
+				ExecuteInternal(fileTabManager, methodAnnotations, context);
 		}
 
-		static bool CanExecuteCommand() {
-			var context = HexMenuCommand.CreateContext();
+		static bool CanExecuteCommand(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations) {
+			var context = HexMenuCommand.CreateContext(fileTabManager);
 			return ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context) ||
-				ShowILRangeInHexEditorCommand.IsVisibleInternal(context) ||
-				ShowHexNodeInHexEditorCommand.IsVisibleInternal(context) ||
-				IsVisibleInternal(context);
+				ShowILRangeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context) ||
+				ShowHexNodeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context) ||
+				IsVisibleInternal(fileTabManager, methodAnnotations, context);
 		}
 
-		internal static void ExecuteInternal(HexContext context) {
-			var node = GetNode(context);
-			if (node != null)
-				MainWindow.Instance.OpenOrShowHexBox(node.DnSpyFile.Filename);
+		internal static void ExecuteInternal(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
+			var node = GetNode(fileTabManager, methodAnnotations, context);
+			if (node != null) {
+				var tab = fileTabManager.ActiveTab;
+				var uiContext = tab == null ? null : tab.UIContext as HexBoxFileTabUIContext;
+				if (uiContext == null)
+					fileTabManager.FollowReference(new AddressReference(node.DnSpyFile.Filename, false, 0, 0));
+			}
 		}
 
-		static bool IsVisibleInternal(HexContext context) {
-			var node = GetNode(context);
+		static bool IsVisibleInternal(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
+			var node = GetNode(fileTabManager, methodAnnotations, context);
 			return node != null && !string.IsNullOrEmpty(node.DnSpyFile.Filename);
 		}
 
-		static AssemblyTreeNode GetAssemblyTreeNode(HexContext context) {
+		static IDnSpyFileNode GetDnSpyFileNode(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				return null;
-			if (ShowILRangeInHexEditorCommand.IsVisibleInternal(context))
+			if (ShowILRangeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
-			if (ShowHexNodeInHexEditorCommand.IsVisibleInternal(context))
+			if (ShowHexNodeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
-				return GetActiveAssemblyTreeNode();
+				return GetActiveAssemblyTreeNode(fileTabManager);
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID)) {
 				return context.Nodes != null &&
 					context.Nodes.Length == 1 ?
-					context.Nodes[0] as AssemblyTreeNode : null;
+					context.Nodes[0] as IDnSpyFileNode : null;
 			}
 			return null;
 		}
 
-		static AssemblyTreeNode GetActiveAssemblyTreeNode() {
-			var tabState = MainWindow.Instance.GetActiveDecompileTabState();
-			if (tabState == null || tabState.DecompiledNodes.Length == 0)
+		static IDnSpyFileNode GetActiveAssemblyTreeNode(IFileTabManager fileTabManager) {
+			var tab = fileTabManager.ActiveTab;
+			if (tab == null)
 				return null;
-			return ILSpyTreeNode.GetNode<AssemblyTreeNode>(tabState.DecompiledNodes[0]);
+			var node = tab.Content.Nodes.FirstOrDefault();
+			return node.GetDnSpyFileNode();
 		}
 
-		static AssemblyTreeNode GetNode(HexContext context) {
-			return GetAssemblyTreeNode(context);
+		static IDnSpyFileNode GetNode(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
+			return GetDnSpyFileNode(fileTabManager, methodAnnotations, context);
 		}
 	}
 
 	static class ShowAddressReferenceInHexEditorCommand {
 		[ExportMenuItem(Header = "Show in He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 10)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
+			readonly IFileTabManager fileTabManager;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(IFileTabManager fileTabManager) {
+				this.fileTabManager = fileTabManager;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -280,8 +306,13 @@ namespace dnSpy.AsmEditor.Hex {
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show in He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 10)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
+			[ImportingConstructor]
+			TheHexMenuCommand(IFileTabManager fileTabManager)
+				: base(fileTabManager) {
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -289,10 +320,10 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		internal static void ExecuteInternal(HexContext context) {
+		internal static void ExecuteInternal(IFileTabManager fileTabManager, HexContext context) {
 			var @ref = GetAddressReference(context);
 			if (@ref != null)
-				MainWindow.Instance.GoToAddress(@ref);
+				fileTabManager.FollowReference(@ref);
 		}
 
 		internal static bool IsVisibleInternal(HexContext context) {
@@ -307,9 +338,9 @@ namespace dnSpy.AsmEditor.Hex {
 			if (addr != null && File.Exists(addr.Filename))
 				return addr;
 
-			var rsrc = context.Reference as IResourceNode;
+			var rsrc = context.Reference as IResourceDataProvider;
 			if (rsrc != null && rsrc.FileOffset != 0) {
-				var name = GetFilename((ILSpyTreeNode)rsrc);
+				var name = GetFilename((IFileTreeNodeData)rsrc);
 				if (!string.IsNullOrEmpty(name))
 					return new AddressReference(name, false, rsrc.FileOffset, rsrc.Length);
 			}
@@ -317,14 +348,14 @@ namespace dnSpy.AsmEditor.Hex {
 			return null;
 		}
 
-		internal static string GetFilename(ILSpyTreeNode node) {
-			var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
-			if (asmNode == null)
+		internal static string GetFilename(IFileTreeNodeData node) {
+			var fileNode = node.GetDnSpyFileNode();
+			if (fileNode == null)
 				return null;
-			var mod = asmNode.DnSpyFile.ModuleDef;
+			var mod = fileNode.DnSpyFile.ModuleDef;
 			if (mod != null && File.Exists(mod.Location))
 				return mod.Location;
-			var peImage = asmNode.DnSpyFile.PEImage;
+			var peImage = fileNode.DnSpyFile.PEImage;
 			if (peImage != null && File.Exists(peImage.FileName))
 				return peImage.FileName;
 			return null;
@@ -334,40 +365,57 @@ namespace dnSpy.AsmEditor.Hex {
 	static class ShowILRangeInHexEditorCommand {
 		[ExportMenuItem(Header = "Show Instructions in He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 20)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
+			readonly IFileTabManager fileTabManager;
+			readonly Lazy<IMethodAnnotations> methodAnnotations;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations) {
+				this.fileTabManager = fileTabManager;
+				this.methodAnnotations = methodAnnotations;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, methodAnnotations, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
-				return IsVisibleInternal(context);
+				return IsVisibleInternal(methodAnnotations, context);
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show Instructions in He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 20)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
+			readonly Lazy<IMethodAnnotations> methodAnnotations;
+
+			[ImportingConstructor]
+			TheHexMenuCommand(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations)
+				: base(fileTabManager) {
+				this.methodAnnotations = methodAnnotations;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, methodAnnotations, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
-				return IsVisibleInternal(context);
+				return IsVisibleInternal(methodAnnotations, context);
 			}
 		}
 
-		internal static void ExecuteInternal(HexContext context) {
-			var @ref = GetAddressReference(context);
+		internal static void ExecuteInternal(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
+			var @ref = GetAddressReference(methodAnnotations, context);
 			if (@ref != null)
-				MainWindow.Instance.GoToAddress(@ref);
+				fileTabManager.FollowReference(@ref);
 		}
 
-		internal static bool IsVisibleInternal(HexContext context) {
-			return GetAddressReference(context) != null;
+		internal static bool IsVisibleInternal(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
+			return GetAddressReference(methodAnnotations, context) != null;
 		}
 
-		static AddressReference GetAddressReference(HexContext context) {
+		static AddressReference GetAddressReference(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				return null;
-			if (TVShowMethodInstructionsInHexEditorCommand.IsVisibleInternal(context))
+			if (TVShowMethodInstructionsInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 
 			var mappings = GetMappings(context);
@@ -381,7 +429,7 @@ namespace dnSpy.AsmEditor.Hex {
 
 			ulong addr = (ulong)method.RVA;
 			ulong len;
-			if (MethodAnnotations.Instance.IsBodyModified(method))
+			if (methodAnnotations.Value.IsBodyModified(method))
 				len = 0;
 			else if (mappings.Count == 1) {
 				addr += (ulong)method.Body.HeaderSize + mappings[0].ILInstructionOffset.From;
@@ -398,52 +446,69 @@ namespace dnSpy.AsmEditor.Hex {
 		static IList<SourceCodeMapping> GetMappings(HexContext context) {
 			if (context.Line == null || context.Column == null)
 				return null;
-			return MethodBody.EditILInstructionsCommand.GetMappings(context.CreatorObject.Object as DecompilerTextView, context.Line.Value, context.Column.Value);
+			return MethodBody.EditILInstructionsCommand.GetMappings(context.CreatorObject.Object as ITextEditorUIContext, context.Line.Value, context.Column.Value);
 		}
 	}
 
 	static class ShowHexNodeInHexEditorCommand {
 		[ExportMenuItem(Header = "Show in He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 30)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
+			readonly IFileTabManager fileTabManager;
+			readonly Lazy<IMethodAnnotations> methodAnnotations;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations) {
+				this.fileTabManager = fileTabManager;
+				this.methodAnnotations = methodAnnotations;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, methodAnnotations, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
-				return IsVisibleInternal(context);
+				return IsVisibleInternal(methodAnnotations, context);
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show in He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 30)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
+			readonly Lazy<IMethodAnnotations> methodAnnotations;
+
+			[ImportingConstructor]
+			TheHexMenuCommand(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations)
+				: base(fileTabManager) {
+				this.methodAnnotations = methodAnnotations;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, methodAnnotations, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
-				return IsVisibleInternal(context);
+				return IsVisibleInternal(methodAnnotations, context);
 			}
 		}
 
-		internal static void ExecuteInternal(HexContext context) {
-			var @ref = GetAddressReference(context);
+		internal static void ExecuteInternal(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
+			var @ref = GetAddressReference(methodAnnotations, context);
 			if (@ref != null)
-				MainWindow.Instance.GoToAddress(@ref);
+				fileTabManager.FollowReference(@ref);
 		}
 
-		internal static bool IsVisibleInternal(HexContext context) {
-			return GetAddressReference(context) != null;
+		internal static bool IsVisibleInternal(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
+			return GetAddressReference(methodAnnotations, context) != null;
 		}
 
-		static AddressReference GetAddressReference(HexContext context) {
+		static AddressReference GetAddressReference(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				return null;
-			if (ShowILRangeInHexEditorCommand.IsVisibleInternal(context))
+			if (ShowILRangeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 
 			if (context.Nodes == null || context.Nodes.Length != 1)
 				return null;
-			var hexNode = context.Nodes[0] as HexTreeNode;
+			var hexNode = context.Nodes[0] as HexNode;
 			if (hexNode == null)
 				return null;
 
@@ -458,53 +523,70 @@ namespace dnSpy.AsmEditor.Hex {
 	static class ShowStorageStreamDataInHexEditorCommand {
 		[ExportMenuItem(Header = "Show Data in He_x Editor", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 40)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
+			readonly IFileTabManager fileTabManager;
+			readonly Lazy<IMethodAnnotations> methodAnnotations;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations) {
+				this.fileTabManager = fileTabManager;
+				this.methodAnnotations = methodAnnotations;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, methodAnnotations, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
-				return IsVisibleInternal(context);
+				return IsVisibleInternal(methodAnnotations, context);
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show Data in He_x Editor", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 40)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
+			readonly Lazy<IMethodAnnotations> methodAnnotations;
+
+			[ImportingConstructor]
+			TheHexMenuCommand(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations)
+				: base(fileTabManager) {
+				this.methodAnnotations = methodAnnotations;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, methodAnnotations, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
-				return IsVisibleInternal(context);
+				return IsVisibleInternal(methodAnnotations, context);
 			}
 		}
 
-		internal static void ExecuteInternal(HexContext context) {
-			var @ref = GetAddressReference(context);
+		internal static void ExecuteInternal(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
+			var @ref = GetAddressReference(methodAnnotations, context);
 			if (@ref != null)
-				MainWindow.Instance.GoToAddress(@ref);
+				fileTabManager.FollowReference(@ref);
 		}
 
-		internal static bool IsVisibleInternal(HexContext context) {
-			return GetAddressReference(context) != null;
+		internal static bool IsVisibleInternal(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
+			return GetAddressReference(methodAnnotations, context) != null;
 		}
 
-		static AddressReference GetAddressReference(HexContext context) {
+		static AddressReference GetAddressReference(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			if (ShowAddressReferenceInHexEditorCommand.IsVisibleInternal(context))
 				return null;
-			if (ShowILRangeInHexEditorCommand.IsVisibleInternal(context))
+			if (ShowILRangeInHexEditorCommand.IsVisibleInternal(methodAnnotations, context))
 				return null;
 
 			if (context.Nodes == null || context.Nodes.Length != 1)
 				return null;
-			if (!(context.Nodes[0] is HexTreeNode))
+			if (!(context.Nodes[0] is HexNode))
 				return null;
 
-			var mod = ILSpyTreeNode.GetModule(context.Nodes[0]) as ModuleDefMD;
+			var mod = context.Nodes[0].GetModule() as ModuleDefMD;
 			if (mod == null)
 				return null;
 			var pe = mod.MetaData.PEImage;
 
-			var sectNode = context.Nodes[0] as ImageSectionHeaderTreeNode;
+			var sectNode = context.Nodes[0] as ImageSectionHeaderNode;
 			if (sectNode != null) {
 				if (sectNode.SectionNumber >= pe.ImageSectionHeaders.Count)
 					return null;
@@ -512,7 +594,7 @@ namespace dnSpy.AsmEditor.Hex {
 				return new AddressReference(mod.Location, false, sect.PointerToRawData, sect.SizeOfRawData);
 			}
 
-			var stgNode = context.Nodes[0] as StorageStreamTreeNode;
+			var stgNode = context.Nodes[0] as StorageStreamNode;
 			if (stgNode != null) {
 				if (stgNode.StreamNumber >= mod.MetaData.MetaDataHeader.StreamHeaders.Count)
 					return null;
@@ -528,40 +610,67 @@ namespace dnSpy.AsmEditor.Hex {
 	static class TVShowMethodInstructionsInHexEditorCommand {
 		[ExportMenuItem(Header = "Show Instructions in He_x Editor", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 50)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
+			readonly IFileTabManager fileTabManager;
+			readonly Lazy<IMethodAnnotations> methodAnnotations;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations) {
+				this.fileTabManager = fileTabManager;
+				this.methodAnnotations = methodAnnotations;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, methodAnnotations, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
-				return IsVisibleInternal(context);
+				return IsVisibleInternal(methodAnnotations, context);
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show Instructions in He_x Editor", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 50)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
+			readonly Lazy<IMethodAnnotations> methodAnnotations;
+
+			[ImportingConstructor]
+			TheHexMenuCommand(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations)
+				: base(fileTabManager) {
+				this.methodAnnotations = methodAnnotations;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, methodAnnotations, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
-				return IsVisibleInternal(context);
+				return IsVisibleInternal(methodAnnotations, context);
 			}
 		}
 
-		static void ExecuteInternal(HexContext context) {
-			var @ref = GetAddressReference(context);
+		static void ExecuteInternal(IFileTabManager fileTabManager, Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
+			var @ref = GetAddressReference(methodAnnotations, context);
 			if (@ref != null)
-				MainWindow.Instance.GoToAddress(@ref);
+				fileTabManager.FollowReference(@ref);
 		}
 
-		internal static bool IsVisibleInternal(HexContext context) {
-			return GetAddressReference(context) != null;
+		internal static bool IsVisibleInternal(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
+			return GetAddressReference(methodAnnotations, context) != null;
+		}
+
+		static IMemberDef ResolveDef(object mr) {
+			if (mr is ITypeDefOrRef)
+				return ((ITypeDefOrRef)mr).ResolveTypeDef();
+			if (mr is IMethod && ((IMethod)mr).IsMethod)
+				return ((IMethod)mr).ResolveMethodDef();
+			if (mr is IField)
+				return ((IField)mr).ResolveFieldDef();
+			return mr as IMemberDef;
 		}
 
 		internal static IMemberDef GetMemberDef(HexContext context) {
 			IMemberDef def = null;
-			if (context.Nodes != null && context.Nodes.Length == 1 && context.Nodes[0] is IMemberTreeNode)
-				def = MainWindow.ResolveReference(((IMemberTreeNode)context.Nodes[0]).Member);
+			if (context.Nodes != null && context.Nodes.Length == 1 && context.Nodes[0] is IMDTokenNode)
+				def = ResolveDef(((IMDTokenNode)context.Nodes[0]).Reference);
 			else {
 				// Only allow declarations of the defs, i.e., right-clicking a method call with a method
 				// def as reference should return null, not the method def.
@@ -575,7 +684,7 @@ namespace dnSpy.AsmEditor.Hex {
 			return mod is ModuleDefMD ? def : null;
 		}
 
-		static AddressReference GetAddressReference(HexContext context) {
+		static AddressReference GetAddressReference(Lazy<IMethodAnnotations> methodAnnotations, HexContext context) {
 			var md = GetMemberDef(context) as MethodDef;
 			if (md == null)
 				return null;
@@ -584,7 +693,7 @@ namespace dnSpy.AsmEditor.Hex {
 				return null;
 
 			var mod = md.Module;
-			bool modified = MethodAnnotations.Instance.IsBodyModified(md);
+			bool modified = methodAnnotations.Value.IsBodyModified(md);
 			return new AddressReference(mod == null ? null : mod.Location, true, (ulong)md.RVA + body.HeaderSize, modified ? 0 : (ulong)body.GetCodeSize());
 		}
 	}
@@ -592,8 +701,15 @@ namespace dnSpy.AsmEditor.Hex {
 	static class TVShowMethodHeaderInHexEditorCommand {
 		[ExportMenuItem(Header = "Show Method Body in Hex Editor", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 60)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
+			readonly IFileTabManager fileTabManager;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(IFileTabManager fileTabManager) {
+				this.fileTabManager = fileTabManager;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -603,8 +719,13 @@ namespace dnSpy.AsmEditor.Hex {
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show Method Body in Hex Editor", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 60)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
+			[ImportingConstructor]
+			TheHexMenuCommand(IFileTabManager fileTabManager)
+				: base(fileTabManager) {
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -612,10 +733,10 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		static void ExecuteInternal(HexContext context) {
+		static void ExecuteInternal(IFileTabManager fileTabManager, HexContext context) {
 			var @ref = GetAddressReference(context);
 			if (@ref != null)
-				MainWindow.Instance.GoToAddress(@ref);
+				fileTabManager.FollowReference(@ref);
 		}
 
 		static bool IsVisibleInternal(HexContext context) {
@@ -634,8 +755,15 @@ namespace dnSpy.AsmEditor.Hex {
 	static class TVShowFieldInitialValueInHexEditorCommand {
 		[ExportMenuItem(Header = "Show Initial Value in Hex Editor", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 70)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
+			readonly IFileTabManager fileTabManager;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(IFileTabManager fileTabManager) {
+				this.fileTabManager = fileTabManager;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -645,8 +773,13 @@ namespace dnSpy.AsmEditor.Hex {
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show Initial Value in Hex Editor", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 70)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
+			[ImportingConstructor]
+			TheHexMenuCommand(IFileTabManager fileTabManager)
+				: base(fileTabManager) {
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -654,10 +787,10 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		static void ExecuteInternal(HexContext context) {
+		static void ExecuteInternal(IFileTabManager fileTabManager, HexContext context) {
 			var @ref = GetAddressReference(context);
 			if (@ref != null)
-				MainWindow.Instance.GoToAddress(@ref);
+				fileTabManager.FollowReference(@ref);
 		}
 
 		static bool IsVisibleInternal(HexContext context) {
@@ -680,8 +813,15 @@ namespace dnSpy.AsmEditor.Hex {
 	static class TVShowResourceInHexEditorCommand {
 		[ExportMenuItem(Header = "Show in Hex Editor", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 80)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
+			readonly IFileTabManager fileTabManager;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(IFileTabManager fileTabManager) {
+				this.fileTabManager = fileTabManager;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -691,8 +831,13 @@ namespace dnSpy.AsmEditor.Hex {
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show in Hex Editor", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 80)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
+			[ImportingConstructor]
+			TheHexMenuCommand(IFileTabManager fileTabManager)
+				: base(fileTabManager) {
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -700,10 +845,10 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		static void ExecuteInternal(HexContext context) {
+		static void ExecuteInternal(IFileTabManager fileTabManager, HexContext context) {
 			var @ref = GetAddressReference(context);
 			if (@ref != null)
-				MainWindow.Instance.GoToAddress(@ref);
+				fileTabManager.FollowReference(@ref);
 		}
 
 		static bool IsVisibleInternal(HexContext context) {
@@ -714,9 +859,9 @@ namespace dnSpy.AsmEditor.Hex {
 			if (context.Nodes == null || context.Nodes.Length != 1)
 				return null;
 
-			var rsrc = context.Nodes[0] as IResourceNode;
+			var rsrc = context.Nodes[0] as IResourceDataProvider;
 			if (rsrc != null && rsrc.FileOffset != 0) {
-				var mod = ILSpyTreeNode.GetModule((ILSpyTreeNode)rsrc);
+				var mod = (rsrc as IFileTreeNodeData).GetModule();
 				if (mod != null && File.Exists(mod.Location))
 					return new AddressReference(mod.Location, false, rsrc.FileOffset, rsrc.Length);
 			}
@@ -751,16 +896,20 @@ namespace dnSpy.AsmEditor.Hex {
 		internal abstract class TheHexMenuCommand : HexMenuCommand, ITVChangeBodyHexEditorCommand {
 			public abstract byte[] GetData(MethodDef method);
 			public abstract string GetDescription(byte[] data);
+
+			protected TheHexMenuCommand(IFileTabManager fileTabManager)
+				: base(fileTabManager) {
+			}
 		}
 
-		internal static void ExecuteInternal(ITVChangeBodyHexEditorCommand cmd, HexContext context) {
+		internal static void ExecuteInternal(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager, ITVChangeBodyHexEditorCommand cmd, HexContext context) {
 			var data = GetData(cmd, context);
 			if (data == null)
 				return;
 			var info = GetMethodLengthAndOffset(context);
 			if (info == null || info.Value.Size < (ulong)data.Length)
 				return;
-			WriteHexUndoCommand.AddAndExecute(info.Value.Filename, info.Value.Offset, data, cmd.GetDescription(data));
+			WriteHexUndoCommand.AddAndExecute(undoCommandManager.Value, hexDocumentManager.Value, info.Value.Filename, info.Value.Offset, data, cmd.GetDescription(data));
 		}
 
 		internal static bool IsVisibleInternal(ITVChangeBodyHexEditorCommand cmd, HexContext context) {
@@ -794,13 +943,20 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 	}
 
-	
-	
 	static class TVChangeBodyToReturnTrueHexEditorCommand {
 		[ExportMenuItem(Header = "Hex Write 'return true' Body", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 90)]
 		sealed class TheHexTextEditorCommand : TVChangeBodyHexEditorCommand.TheHexTextEditorCommand {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IHexDocumentManager> hexDocumentManager;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager) {
+				this.undoCommandManager = undoCommandManager;
+				this.hexDocumentManager = hexDocumentManager;
+			}
+
 			public override void Execute(HexContext context) {
-				TVChangeBodyHexEditorCommand.ExecuteInternal(this, context);
+				TVChangeBodyHexEditorCommand.ExecuteInternal(undoCommandManager, hexDocumentManager, this, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -818,8 +974,18 @@ namespace dnSpy.AsmEditor.Hex {
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Hex Write 'return true' Body", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 90)]
 		sealed class TheHexMenuCommand : TVChangeBodyHexEditorCommand.TheHexMenuCommand {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IHexDocumentManager> hexDocumentManager;
+
+			[ImportingConstructor]
+			TheHexMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager, IFileTabManager fileTabManager)
+				: base(fileTabManager) {
+				this.undoCommandManager = undoCommandManager;
+				this.hexDocumentManager = hexDocumentManager;
+			}
+
 			public override void Execute(HexContext context) {
-				TVChangeBodyHexEditorCommand.ExecuteInternal(this, context);
+				TVChangeBodyHexEditorCommand.ExecuteInternal(undoCommandManager, hexDocumentManager, this, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -850,8 +1016,17 @@ namespace dnSpy.AsmEditor.Hex {
 	static class TVChangeBodyToReturnFalseHexEditorCommand {
 		[ExportMenuItem(Header = "Hex Write 'return false' Body", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 100)]
 		sealed class TheHexTextEditorCommand : TVChangeBodyHexEditorCommand.TheHexTextEditorCommand {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IHexDocumentManager> hexDocumentManager;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager) {
+				this.undoCommandManager = undoCommandManager;
+				this.hexDocumentManager = hexDocumentManager;
+			}
+
 			public override void Execute(HexContext context) {
-				TVChangeBodyHexEditorCommand.ExecuteInternal(this, context);
+				TVChangeBodyHexEditorCommand.ExecuteInternal(undoCommandManager, hexDocumentManager, this, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -869,8 +1044,18 @@ namespace dnSpy.AsmEditor.Hex {
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Hex Write 'return false' Body", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 100)]
 		sealed class TheHexMenuCommand : TVChangeBodyHexEditorCommand.TheHexMenuCommand {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IHexDocumentManager> hexDocumentManager;
+
+			[ImportingConstructor]
+			TheHexMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager, IFileTabManager fileTabManager)
+				: base(fileTabManager) {
+				this.undoCommandManager = undoCommandManager;
+				this.hexDocumentManager = hexDocumentManager;
+			}
+
 			public override void Execute(HexContext context) {
-				TVChangeBodyHexEditorCommand.ExecuteInternal(this, context);
+				TVChangeBodyHexEditorCommand.ExecuteInternal(undoCommandManager, hexDocumentManager, this, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -901,8 +1086,17 @@ namespace dnSpy.AsmEditor.Hex {
 	static class TVWriteEmptyBodyHexEditorCommand {
 		[ExportMenuItem(Header = "Hex Write Empty Body", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 110)]
 		sealed class TheHexTextEditorCommand : TVChangeBodyHexEditorCommand.TheHexTextEditorCommand {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IHexDocumentManager> hexDocumentManager;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager) {
+				this.undoCommandManager = undoCommandManager;
+				this.hexDocumentManager = hexDocumentManager;
+			}
+
 			public override void Execute(HexContext context) {
-				TVChangeBodyHexEditorCommand.ExecuteInternal(this, context);
+				TVChangeBodyHexEditorCommand.ExecuteInternal(undoCommandManager, hexDocumentManager, this, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -920,8 +1114,18 @@ namespace dnSpy.AsmEditor.Hex {
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Hex Write Empty Body", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 110)]
 		sealed class TheHexMenuCommand : TVChangeBodyHexEditorCommand.TheHexMenuCommand {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IHexDocumentManager> hexDocumentManager;
+
+			[ImportingConstructor]
+			TheHexMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager, IFileTabManager fileTabManager)
+				: base(fileTabManager) {
+				this.undoCommandManager = undoCommandManager;
+				this.hexDocumentManager = hexDocumentManager;
+			}
+
 			public override void Execute(HexContext context) {
-				TVChangeBodyHexEditorCommand.ExecuteInternal(this, context);
+				TVChangeBodyHexEditorCommand.ExecuteInternal(undoCommandManager, hexDocumentManager, this, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -1031,21 +1235,28 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		static readonly byte[] dataVoidReturnType = new byte[] { 0x06, 0x2A };	// ret
-		static readonly byte[] dataInt32ReturnType = new byte[] { 0x0A, 0x16, 0x2A };	// ldc.i4.0, ret
-		static readonly byte[] dataInt64ReturnType = new byte[] { 0x0E, 0x16, 0x6A, 0x2A };	// ldc.i4.0, conv.i8, ret
+		static readonly byte[] dataVoidReturnType = new byte[] { 0x06, 0x2A };					// ret
+		static readonly byte[] dataInt32ReturnType = new byte[] { 0x0A, 0x16, 0x2A };			// ldc.i4.0, ret
+		static readonly byte[] dataInt64ReturnType = new byte[] { 0x0E, 0x16, 0x6A, 0x2A };		// ldc.i4.0, conv.i8, ret
 		static readonly byte[] dataSingleReturnType = new byte[] { 0x0E, 0x16, 0x6B, 0x2A };	// ldc.i4.0, conv.r4, ret
 		static readonly byte[] dataDoubleReturnType = new byte[] { 0x0E, 0x16, 0x6C, 0x2A };	// ldc.i4.0, conv.r8, ret
-		static readonly byte[] dataIntPtrReturnType = new byte[] { 0x0E, 0x16, 0xD3, 0x2A };    // ldc.i4.0, conv.i, ret
-		static readonly byte[] dataUIntPtrReturnType = new byte[] { 0x0E, 0x16, 0xE0, 0x2A };    // ldc.i4.0, conv.u, ret
-		static readonly byte[] dataRefTypeReturnType = new byte[] { 0x0A, 0x14, 0x2A };	// ldnull, ret
+		static readonly byte[] dataIntPtrReturnType = new byte[] { 0x0E, 0x16, 0xD3, 0x2A };	// ldc.i4.0, conv.i, ret
+		static readonly byte[] dataUIntPtrReturnType = new byte[] { 0x0E, 0x16, 0xE0, 0x2A };	// ldc.i4.0, conv.u, ret
+		static readonly byte[] dataRefTypeReturnType = new byte[] { 0x0A, 0x14, 0x2A };			// ldnull, ret
 	}
 
 	static class TVCopyMethodBodyHexEditorCommand {
 		[ExportMenuItem(Header = "Hex Copy Method Body", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 120)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
+			readonly Lazy<IHexDocumentManager> hexDocumentManager;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(Lazy<IHexDocumentManager> hexDocumentManager) {
+				this.hexDocumentManager = hexDocumentManager;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(hexDocumentManager, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -1055,8 +1266,16 @@ namespace dnSpy.AsmEditor.Hex {
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Hex Copy Method Body", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 120)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
+			readonly Lazy<IHexDocumentManager> hexDocumentManager;
+
+			[ImportingConstructor]
+			TheHexMenuCommand(Lazy<IHexDocumentManager> hexDocumentManager, IFileTabManager fileTabManager)
+				: base(fileTabManager) {
+				this.hexDocumentManager = hexDocumentManager;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(hexDocumentManager, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -1064,8 +1283,8 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		static void ExecuteInternal(HexContext context) {
-			var data = GetMethodBodyBytes(context);
+		static void ExecuteInternal(Lazy<IHexDocumentManager> hexDocumentManager, HexContext context) {
+			var data = GetMethodBodyBytes(hexDocumentManager, context);
 			if (data == null)
 				return;
 			ClipboardUtils.SetText(ClipboardUtils.ToHexString(data));
@@ -1075,11 +1294,11 @@ namespace dnSpy.AsmEditor.Hex {
 			return TVChangeBodyHexEditorCommand.GetMethodLengthAndOffset(context) != null;
 		}
 
-		static byte[] GetMethodBodyBytes(HexContext context) {
+		static byte[] GetMethodBodyBytes(Lazy<IHexDocumentManager> hexDocumentManager, HexContext context) {
 			var info = TVChangeBodyHexEditorCommand.GetMethodLengthAndOffset(context);
 			if (info == null || info.Value.Size > int.MaxValue)
 				return null;
-			var doc = HexDocumentManager.Instance.GetOrCreate(info.Value.Filename);
+			var doc = hexDocumentManager.Value.GetOrCreate(info.Value.Filename);
 			if (doc == null)
 				return null;
 			return doc.ReadBytes(info.Value.Offset, (int)info.Value.Size);
@@ -1089,8 +1308,17 @@ namespace dnSpy.AsmEditor.Hex {
 	static class TVPasteMethodBodyHexEditorCommand {
 		[ExportMenuItem(Header = "Hex Paste Method Body", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 130)]
 		sealed class TheHexTextEditorCommand : TVChangeBodyHexEditorCommand.TheHexTextEditorCommand {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IHexDocumentManager> hexDocumentManager;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager) {
+				this.undoCommandManager = undoCommandManager;
+				this.hexDocumentManager = hexDocumentManager;
+			}
+
 			public override void Execute(HexContext context) {
-				TVChangeBodyHexEditorCommand.ExecuteInternal(this, context);
+				TVChangeBodyHexEditorCommand.ExecuteInternal(undoCommandManager, hexDocumentManager, this, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -1108,8 +1336,18 @@ namespace dnSpy.AsmEditor.Hex {
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Hex Paste Method Body", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 130)]
 		sealed class TheHexMenuCommand : TVChangeBodyHexEditorCommand.TheHexMenuCommand {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IHexDocumentManager> hexDocumentManager;
+
+			[ImportingConstructor]
+			TheHexMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager, IFileTabManager fileTabManager)
+				: base(fileTabManager) {
+				this.undoCommandManager = undoCommandManager;
+				this.hexDocumentManager = hexDocumentManager;
+			}
+
 			public override void Execute(HexContext context) {
-				TVChangeBodyHexEditorCommand.ExecuteInternal(this, context);
+				TVChangeBodyHexEditorCommand.ExecuteInternal(undoCommandManager, hexDocumentManager, this, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -1135,25 +1373,34 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class GoToMDTableRowHexEditorCommand {
-		internal static void OnLoaded() {
-			MainWindow.Instance.CodeBindings.Add(new RoutedCommand("GoToMDTableRow", typeof(GoToMDTableRowHexEditorCommand)),
-				(s, e) => Execute(),
-				(s, e) => e.CanExecute = CanExecute(),
+		static readonly RoutedCommand GoToMDTableRow = new RoutedCommand("GoToMDTableRow", typeof(GoToMDTableRowHexEditorCommand));
+		internal static void Initialize(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			cmds.Add(GoToMDTableRow,
+				(s, e) => Execute(fileTabManager),
+				(s, e) => e.CanExecute = CanExecute(fileTabManager),
 				ModifierKeys.Shift | ModifierKeys.Alt, Key.R);
 		}
 
-		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_CODE_HEX_GOTO_MD, Order = 0)]
+		[ExportMenuItem(Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 40)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
+			readonly IFileTabManager fileTabManager;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(IFileTabManager fileTabManager) {
+				this.fileTabManager = fileTabManager;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
-				return IsVisibleInternal(context);
+				return IsVisibleInternal(fileTabManager, context);
 			}
 
 			public override string GetHeader(HexContext context) {
-				return GetHeaderInternal(context);
+				return GetHeaderInternal(fileTabManager, context);
 			}
 
 			public override string GetInputGestureText(HexContext context) {
@@ -1161,18 +1408,23 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_GOTO_MD, Order = 0)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_GOTO_MD, Order = 10)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
+			[ImportingConstructor]
+			TheHexMenuCommand(IFileTabManager fileTabManager)
+				: base(fileTabManager) {
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
-				return IsVisibleInternal(context);
+				return IsVisibleInternal(fileTabManager, context);
 			}
 
 			public override string GetHeader(HexContext context) {
-				return GetHeaderInternal(context);
+				return GetHeaderInternal(fileTabManager, context);
 			}
 
 			public override string GetInputGestureText(HexContext context) {
@@ -1180,16 +1432,16 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		static void Execute() {
-			ExecuteInternal(HexMenuCommand.CreateContext());
+		static void Execute(IFileTabManager fileTabManager) {
+			ExecuteInternal(fileTabManager, HexMenuCommand.CreateContext(fileTabManager));
 		}
 
-		static bool CanExecute() {
-			return IsVisibleInternal(HexMenuCommand.CreateContext());
+		static bool CanExecute(IFileTabManager fileTabManager) {
+			return IsVisibleInternal(fileTabManager, HexMenuCommand.CreateContext(fileTabManager));
 		}
 
-		static string GetHeaderInternal(HexContext context) {
-			var tokRef = GetTokenReference(context);
+		static string GetHeaderInternal(IFileTabManager fileTabManager, HexContext context) {
+			var tokRef = GetTokenReference(fileTabManager, context);
 			return string.Format("Go to MD Table Row ({0:X8})", tokRef.Token);
 		}
 
@@ -1199,32 +1451,28 @@ namespace dnSpy.AsmEditor.Hex {
 			return null;
 		}
 
-		internal static void ExecuteInternal(HexContext context) {
-			var @ref = GetTokenReference(context);
+		internal static void ExecuteInternal(IFileTabManager fileTabManager, HexContext context) {
+			var @ref = GetTokenReference(fileTabManager, context);
 			if (@ref != null)
-				MainWindow.Instance.JumpToReference(@ref);
+				fileTabManager.FollowReference(@ref);
 		}
 
-		internal static bool IsVisibleInternal(HexContext context) {
-			return GetTokenReference(context) != null;
+		internal static bool IsVisibleInternal(IFileTabManager fileTabManager, HexContext context) {
+			return GetTokenReference(fileTabManager, context) != null;
 		}
 
-		static TokenReference GetTokenReference(HexContext context) {
+		static TokenReference GetTokenReference(IFileTabManager fileTabManager, HexContext context) {
 			var @ref = GetTokenReference2(context);
 			if (@ref == null)
 				return null;
-			var node = MainWindow.Instance.DnSpyFileListTreeNode.FindModuleNode(@ref.ModuleDef);
+			var node = fileTabManager.FileTreeView.FindNode(@ref.ModuleDef);
 			return HasPENode(node) ? @ref : null;
 		}
 
-		internal static bool HasPENode(AssemblyTreeNode node) {
+		internal static bool HasPENode(IModuleFileNode node) {
 			if (node == null)
 				return false;
-			// Currently only nodes loaded from files on disk have a PE node
-			//TODO: Update this check
-			return node.DnSpyFile.PEImage != null &&
-					node.DnSpyFile.SerializedFile != null &&
-					node.DnSpyFile.SerializedFile.Value.Type == FilesConstants.FILETYPE_FILE;
+			return PETreeNodeDataCreator.HasPENode(node);
 		}
 
 		static TokenReference GetTokenReference2(HexContext context) {
@@ -1247,11 +1495,11 @@ namespace dnSpy.AsmEditor.Hex {
 				}
 			}
 			if (context.Nodes != null && context.Nodes.Length == 1) {
-				var node = context.Nodes[0] as ITokenTreeNode;
-				if (node != null && node.MDTokenProvider != null) {
-					var mod = ILSpyTreeNode.GetModule((SharpTreeNode)node);
+				var node = context.Nodes[0] as IMDTokenNode;
+				if (node != null && node.Reference != null) {
+					var mod = (node as ITreeNodeData).GetModule();
 					if (mod != null)
-						return new TokenReference(mod, node.MDTokenProvider.MDToken.Raw);
+						return new TokenReference(mod, node.Reference.MDToken.Raw);
 				}
 			}
 
@@ -1270,17 +1518,26 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class GoToMDTableRowUIHexEditorCommand {
-		internal static void OnLoaded() {
-			MainWindow.Instance.CodeBindings.Add(new RoutedCommand("GoToMDTableRowUI", typeof(GoToMDTableRowUIHexEditorCommand)),
-				(s, e) => Execute(),
-				(s, e) => e.CanExecute = CanExecute(),
+		static readonly RoutedCommand GoToMDTableRowUI = new RoutedCommand("GoToMDTableRowUI", typeof(GoToMDTableRowUIHexEditorCommand));
+		internal static void Initialize(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			cmds.Add(GoToMDTableRowUI,
+				(s, e) => Execute(fileTabManager),
+				(s, e) => e.CanExecute = CanExecute(fileTabManager),
 				ModifierKeys.Control | ModifierKeys.Shift, Key.D);
 		}
 
-		[ExportMenuItem(Header = "Go to MD Table Row...", InputGestureText = "Ctrl+Shift+D", Group = MenuConstants.GROUP_CTX_CODE_HEX_GOTO_MD, Order = 10)]
+		[ExportMenuItem(Header = "Go to MD Table Row...", InputGestureText = "Ctrl+Shift+D", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 30)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
+			readonly IFileTabManager fileTabManager;
+
+			[ImportingConstructor]
+			TheHexTextEditorCommand(IFileTabManager fileTabManager) {
+				this.fileTabManager = fileTabManager;
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -1288,10 +1545,15 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Go to MD Table Row...", InputGestureText = "Ctrl+Shift+D", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_GOTO_MD, Order = 10)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Go to MD Table Row...", InputGestureText = "Ctrl+Shift+D", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_GOTO_MD, Order = 0)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
+			[ImportingConstructor]
+			TheHexMenuCommand(IFileTabManager fileTabManager)
+				: base(fileTabManager) {
+			}
+
 			public override void Execute(HexContext context) {
-				ExecuteInternal(context);
+				ExecuteInternal(fileTabManager, context);
 			}
 
 			public override bool IsVisible(HexContext context) {
@@ -1299,16 +1561,16 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		static void Execute() {
-			Execute2(HexMenuCommand.CreateContext());
+		static void Execute(IFileTabManager fileTabManager) {
+			Execute2(fileTabManager, HexMenuCommand.CreateContext(fileTabManager));
 		}
 
-		static bool CanExecute() {
-			return CanExecute(HexMenuCommand.CreateContext());
+		static bool CanExecute(IFileTabManager fileTabManager) {
+			return CanExecute(HexMenuCommand.CreateContext(fileTabManager));
 		}
 
-		static void ExecuteInternal(HexContext context) {
-			Execute2(context);
+		static void ExecuteInternal(IFileTabManager fileTabManager, HexContext context) {
+			Execute2(fileTabManager, context);
 		}
 
 		static bool IsVisibleInternal(HexContext context) {
@@ -1316,52 +1578,83 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static bool CanExecute(HexContext context) {
-			DecompileTabState tabState;
-			return GetModule(context, out tabState) != null;
+			IFileTab tab;
+			return GetModule(context, out tab) != null;
 		}
 
-		static ModuleDef GetModule(HexContext context, out DecompileTabState tabState) {
-			tabState = null;
+		static ModuleDef GetModule(HexContext context, out IFileTab tab) {
+			tab = null;
 			if (context == null)
 				return null;
 
-			var textView = context.CreatorObject.Object as DecompilerTextView;
-			if (textView != null) {
-				tabState = DecompileTabState.GetDecompileTabState(textView);
-				if (tabState != null && tabState.DecompiledNodes != null && tabState.DecompiledNodes.Length > 0)
-					return GetModule(ILSpyTreeNode.GetNode<AssemblyTreeNode>(tabState.DecompiledNodes[0]));
+			var uiContext = context.CreatorObject.Object as ITextEditorUIContext;
+			if (uiContext != null) {
+				tab = uiContext.FileTab;
+				var content = uiContext.FileTab.Content;
+				var node = content.Nodes.FirstOrDefault();
+				if (node != null)
+					return GetModule(GetModuleNode(node));
 			}
 
 			if (context.Nodes != null && context.Nodes.Length == 1)
-				return GetModule(ILSpyTreeNode.GetNode<AssemblyTreeNode>(context.Nodes[0]));
+				return GetModule(GetModuleNode(context.Nodes[0]));
 
 			return null;
 		}
 
-		static ModuleDef GetModule(AssemblyTreeNode node) {
+		static IModuleFileNode GetModuleNode(ITreeNodeData node) {
+			var modNode = node.GetModuleNode();
+			if (modNode != null)
+				return modNode;
+			var asmNode = node as IAssemblyFileNode;
+			if (asmNode != null) {
+				asmNode.TreeNode.EnsureChildrenLoaded();
+				return (IModuleFileNode)asmNode.TreeNode.DataChildren.FirstOrDefault(a => a is IModuleFileNode);
+			}
+			return null;
+		}
+
+		static ModuleDef GetModule(IModuleFileNode node) {
 			return GoToMDTableRowHexEditorCommand.HasPENode(node) ? node.DnSpyFile.ModuleDef : null;
 		}
 
-		static void Execute2(HexContext context) {
-			DecompileTabState tabState;
-			var module = GetModule(context, out tabState);
+		static void Execute2(IFileTabManager fileTabManager, HexContext context) {
+			IFileTab tab;
+			var module = GetModule(context, out tab);
 			if (module == null)
 				return;
 
-			uint? token = GoToTokenCommand.AskForToken("Go to MD Table Row");
+			uint? token = AskForDef("Go to MD Table Row", module);
 			if (token == null)
 				return;
 
 			var tokRef = new TokenReference(module, token.Value);
-			if (MainWindow.Instance.DnSpyFileListTreeNode.FindTokenNode(tokRef) == null) {
-				MainWindow.Instance.ShowMessageBox(string.Format("Token {0:X8} doesn't exist in the metadata", token.Value));
+			if (HexFileTreeNodeDataFinder.FindNode(fileTabManager.FileTreeView, tokRef) == null) {
+				Shared.UI.App.MsgBox.Instance.Show(string.Format("Token {0:X8} doesn't exist in the metadata", token.Value));
 				return;
 			}
 
-			if (tabState != null)
-				MainWindow.Instance.JumpToReference(tabState.TextView, tokRef);
+			if (tab != null)
+				tab.FollowReference(tokRef, false);
 			else
-				MainWindow.Instance.JumpToReference(tokRef);
+				fileTabManager.FollowReference(tokRef);
+		}
+
+		static uint? AskForDef(string title, ITokenResolver resolver) {
+			return Shared.UI.App.MsgBox.Instance.Ask("_Metadata token", null, title, s => {
+				string error;
+				uint token = NumberVMUtils.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
+				return string.IsNullOrEmpty(error) ? token : (uint?)null;
+			}, s => {
+				string error;
+				uint token = NumberVMUtils.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
+				if (!string.IsNullOrEmpty(error))
+					return error;
+				var memberRef = resolver.ResolveToken(token);
+				if (memberRef == null)
+					return string.Format("Invalid metadata token: 0x{0:X8}", token);
+				return string.Empty;
+			});
 		}
 	}
 }

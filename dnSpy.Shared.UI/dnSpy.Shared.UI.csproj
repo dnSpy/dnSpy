@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,11 +33,11 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -44,7 +45,6 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.XML" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
@@ -93,15 +93,18 @@
     <Compile Include="Files\AnnotationsImpl.cs" />
     <Compile Include="Files\DnSpyFile.cs" />
     <Compile Include="Files\GacInfo.cs" />
-    <Compile Include="Files\SerializedDnSpyToken.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeData.cs" />
     <Compile Include="Files\TreeView\NodePrinter.cs" />
+    <Compile Include="Files\TreeView\Resources\Deserializer.cs" />
     <Compile Include="Files\TreeView\Resources\GuessFileType.cs" />
+    <Compile Include="Files\TreeView\Resources\ImageResourceUtils.cs" />
     <Compile Include="Files\TreeView\Resources\ResourceElementNode.cs" />
     <Compile Include="Files\TreeView\Resources\ResourceNode.cs" />
     <Compile Include="Files\TreeView\Resources\ResourceUtils.cs" />
     <Compile Include="Files\TreeView\Resources\SaveResources.cs" />
     <Compile Include="Files\TreeView\Resources\SerializationUtils.cs" />
+    <Compile Include="Files\TreeView\Resources\SerializedImageListStreamerUtils.cs" />
+    <Compile Include="Files\TreeView\Resources\SerializedImageUtils.cs" />
     <Compile Include="Files\TreeView\Resources\SerializedResourceElementNode.cs" />
     <Compile Include="HexEditor\AsciiEncoding.cs" />
     <Compile Include="HexEditor\ByteArrayHexStream.cs" />
@@ -165,6 +168,7 @@
     <Compile Include="Menus\MenuItemBase.cs" />
     <Compile Include="Menus\MenuItemCommand.cs" />
     <Compile Include="Menus\MenuUtils.cs" />
+    <Compile Include="MVVM\Converters\BooleanToThicknessConverter.cs" />
     <Compile Include="MVVM\Converters\FontSizeConverter.cs" />
     <Compile Include="MVVM\Converters\NegateBooleanConverter.cs" />
     <Compile Include="MVVM\DataFieldVM.cs" />
@@ -187,6 +191,7 @@
     <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\ChainFileTreeNodeFilter.cs" />
+    <Compile Include="Search\DelayedAction.cs" />
     <Compile Include="Search\EntryPointFileTreeNodeFilter.cs" />
     <Compile Include="Search\FilterNothingFileTreeNodeFilter.cs" />
     <Compile Include="Search\FlagsFileTreeNodeFilter.cs" />

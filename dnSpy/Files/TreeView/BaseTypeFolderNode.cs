@@ -76,5 +76,10 @@ namespace dnSpy.Files.TreeView {
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {
 			return filter.GetResult(this).FilterType;
 		}
+
+		public void InvalidateChildren() {
+			TreeNode.Children.Clear();
+			TreeNode.LazyLoading = true;
+		}
 	}
 }

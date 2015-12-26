@@ -40,8 +40,9 @@ namespace dnSpy.Files.TreeView {
 
 		public string Name {
 			get { return name; }
+			set { name = value; }
 		}
-		readonly string name;
+		string name;
 
 		public override NodePathName NodePathName {
 			get { return new NodePathName(Guid, Name); }

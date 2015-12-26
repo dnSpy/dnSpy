@@ -35,8 +35,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		void Remove(IEnumerable<BreakpointVM> bps);
 	}
 
-	[Export, Export(typeof(IBreakpointsVM)), PartCreationPolicy(CreationPolicy.Shared)]
-	sealed class BreakpointsVM : ViewModelBase, IBreakpointsVM {
+	[Export, Export(typeof(IBreakpointsVM)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class BreakpointsVM : ViewModelBase, IBreakpointsVM, ILoadBeforeDebug {
 		public ObservableCollection<BreakpointVM> Collection {
 			get { return breakpointList; }
 		}

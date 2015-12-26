@@ -34,14 +34,14 @@ using Microsoft.Win32;
 namespace dnSpy.Themes {
 	[Export, Export(typeof(IThemeManager)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class ThemeManager : IThemeManager {
-		readonly Dictionary<string, Theme> themes;
+		readonly Dictionary<Guid, Theme> themes;
 
 		public ITheme Theme {
 			get { return theme; }
 			internal set {
 				if (theme != value) {
 					theme = value;
-					themeSettings.ThemeName = value.Name;
+					themeSettings.ThemeGuid = value.Guid;
 					InitializeResources();
 					earlyThemeChanged.Raise(this, new ThemeChangedEventArgs());
 					themeChanged.Raise(this, new ThemeChangedEventArgs());
@@ -87,12 +87,12 @@ namespace dnSpy.Themes {
 			this.themeSettings = themeSettings;
 			this.themeChanged = new WeakEventList<ThemeChangedEventArgs>();
 			this.earlyThemeChanged = new WeakEventList<ThemeChangedEventArgs>();
-			this.themes = new Dictionary<string, Theme>();
+			this.themes = new Dictionary<Guid, Theme>();
 			Load();
 			Debug.Assert(themes.Count != 0);
 			SystemEvents.UserPreferenceChanged += (s, e) => IsHighContrast = SystemParameters.HighContrast;
 			IsHighContrast = SystemParameters.HighContrast;
-			Initialize(themeSettings.ThemeName ?? DefaultThemeName);
+			Initialize(themeSettings.ThemeGuid ?? DefaultThemeGuid);
 		}
 
 		void InitializeResources() {
@@ -102,19 +102,24 @@ namespace dnSpy.Themes {
 				((Theme)Theme).UpdateResources(app.Resources);
 		}
 
-		string CurrentDefaultThemeName {
-			get { return IsHighContrast ? DefaultHighContrastThemeName : DefaultThemeName; }
+		Guid CurrentDefaultThemeGuid {
+			get { return IsHighContrast ? DefaultHighContrastThemeGuid : DefaultThemeGuid; }
 		}
-		const string DefaultThemeName = "dark";
-		const string DefaultHighContrastThemeName = "hc";
+		static readonly Guid DefaultThemeGuid = ThemeConstants.THEME_DARK_GUID;
+		static readonly Guid DefaultHighContrastThemeGuid = ThemeConstants.THEME_HIGHCONTRAST_GUID;
 
-		ITheme GetThemeOrDefault(string name) {
-			return themes[name ?? string.Empty] ?? themes[DefaultThemeName] ?? AllThemesSorted.FirstOrDefault();
+		ITheme GetThemeOrDefault(Guid guid) {
+			Theme theme;
+			if (themes.TryGetValue(guid, out theme))
+				return theme;
+			if (themes.TryGetValue(DefaultThemeGuid, out theme))
+				return theme;
+			return AllThemesSorted.FirstOrDefault();
 		}
 
 		void SwitchThemeIfNecessary() {
 			if (Theme == null || Theme.IsHighContrast != IsHighContrast)
-				Theme = GetThemeOrDefault(CurrentDefaultThemeName);
+				Theme = GetThemeOrDefault(CurrentDefaultThemeGuid);
 		}
 
 		void Load() {
@@ -151,10 +156,10 @@ namespace dnSpy.Themes {
 					return null;
 
 				var theme = new Theme(root);
-				if (string.IsNullOrEmpty(theme.Name) || string.IsNullOrEmpty(theme.MenuName))
+				if (string.IsNullOrEmpty(theme.MenuName))
 					return null;
 
-				themes[theme.Name] = theme;
+				themes[theme.Guid] = theme;
 				return theme;
 			}
 			catch (Exception) {
@@ -163,10 +168,10 @@ namespace dnSpy.Themes {
 			return null;
 		}
 
-		void Initialize(string themeName) {
-			var theme = GetThemeOrDefault(themeName);
+		void Initialize(Guid themeGuid) {
+			var theme = GetThemeOrDefault(themeGuid);
 			if (theme.IsHighContrast != IsHighContrast)
-				theme = GetThemeOrDefault(CurrentDefaultThemeName) ?? theme;
+				theme = GetThemeOrDefault(CurrentDefaultThemeGuid) ?? theme;
 			Theme = theme;
 		}
 	}

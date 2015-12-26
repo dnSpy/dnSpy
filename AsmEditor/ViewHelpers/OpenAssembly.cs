@@ -19,11 +19,16 @@
 
 using System.Windows.Forms;
 using dnSpy.Contracts.Files;
-using dnSpy.MVVM;
-using ICSharpCode.ILSpy;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class OpenAssembly : IOpenAssembly {
+		readonly IFileManager fileManager;
+
+		public OpenAssembly(IFileManager fileManager) {
+			this.fileManager = fileManager;
+		}
+
 		public IDnSpyFile Open() {
 			var dialog = new OpenFileDialog() {
 				Filter = PickFilenameConstants.DotNetAssemblyOrModuleFilter,
@@ -34,11 +39,8 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			if (string.IsNullOrEmpty(dialog.FileName))
 				return null;
 
-			var asm = MainWindow.Instance.DnSpyFileList.Find(dialog.FileName);
-			if (asm != null)
-				return null;
-
-			return MainWindow.Instance.DnSpyFileList.OpenFile(dialog.FileName);
+			var info = DnSpyFileInfo.CreateFile(dialog.FileName);
+			return fileManager.TryGetOrCreate(info);
 		}
 	}
 }

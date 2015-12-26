@@ -139,7 +139,8 @@ namespace dnSpy.Shared.UI.Hex {
 			Task.Factory.StartNew(() => FontUtils.GetMonospacedFonts())
 			.ContinueWith(t => {
 				var ex = t.Exception;
-				FontFamilies = t.Result;
+				if (!t.IsCanceled && !t.IsFaulted)
+					FontFamilies = t.Result;
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 	}

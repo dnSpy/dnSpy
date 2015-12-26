@@ -22,20 +22,21 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.UndoRedo;
+using dnSpy.Contracts.App;
+using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
-using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TreeNodes;
+using dnSpy.Contracts.Plugin;
 
 namespace dnSpy.AsmEditor.Namespace {
-	[Export(typeof(IPlugin))]
-	sealed class AssemblyPlugin : IPlugin {
-		void IPlugin.EarlyInit() {
-		}
-
-		public void OnLoaded() {
-			MainWindow.Instance.TreeView.AddCommandBinding(ApplicationCommands.Delete, new EditMenuHandlerCommandProxy(new DeleteNamespaceCommand.EditMenuCommand()));
+	[ExportAutoLoaded]
+	sealed class CommandLoader : IAutoLoaded {
+		[ImportingConstructor]
+		CommandLoader(IWpfCommandManager wpfCommandManager, DeleteNamespaceCommand.EditMenuCommand removeCmd) {
+			wpfCommandManager.AddRemoveCommand(removeCmd);
 		}
 	}
 
@@ -45,12 +46,19 @@ namespace dnSpy.AsmEditor.Namespace {
 		const string CMD_NAME_PLURAL_FORMAT = "Delete {0} Namespaces";
 		[ExportMenuItem(Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 70)]
 		sealed class FilesCommand : FilesContextMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+
+			[ImportingConstructor]
+			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager) {
+				this.undoCommandManager = undoCommandManager;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return DeleteNamespaceCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				DeleteNamespaceCommand.Execute(context.Nodes);
+				DeleteNamespaceCommand.Execute(undoCommandManager, context.Nodes);
 			}
 
 			public override string GetHeader(AsmEditorContext context) {
@@ -58,14 +66,22 @@ namespace dnSpy.AsmEditor.Namespace {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 70)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 70)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+
+			[ImportingConstructor]
+			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeView fileTreeView)
+				: base(fileTreeView) {
+				this.undoCommandManager = undoCommandManager;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return DeleteNamespaceCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				DeleteNamespaceCommand.Execute(context.Nodes);
+				DeleteNamespaceCommand.Execute(undoCommandManager, context.Nodes);
 			}
 
 			public override string GetHeader(AsmEditorContext context) {
@@ -79,24 +95,24 @@ namespace dnSpy.AsmEditor.Namespace {
 				string.Format(CMD_NAME_PLURAL_FORMAT, count);
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(IFileTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length > 0 &&
-				nodes.All(a => a is NamespaceTreeNode);
+				nodes.All(a => a is INamespaceNode);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var nsNodes = nodes.Select(a => (NamespaceTreeNode)a).ToArray();
-			UndoCommandManager.Instance.Add(new DeleteNamespaceCommand(nsNodes));
+			var nsNodes = nodes.Cast<INamespaceNode>().ToArray();
+			undoCommandManager.Value.Add(new DeleteNamespaceCommand(nsNodes));
 		}
 
-		public struct DeleteModelNodes {
+		struct DeleteModelNodes {
 			ModuleInfo[] infos;
 
-			class ModuleInfo {
+			sealed class ModuleInfo {
 				public readonly ModuleDef Module;
 				public readonly TypeDef[] Types;
 				public readonly int[] Indexes;
@@ -108,7 +124,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				}
 			}
 
-			public void Delete(NamespaceTreeNode[] nodes, ILSpyTreeNode[] parents) {
+			public void Delete(INamespaceNode[] nodes, IFileTreeNodeData[] parents) {
 				Debug.Assert(parents != null && nodes.Length == parents.Length);
 				Debug.Assert(infos == null);
 				if (infos != null)
@@ -118,16 +134,16 @@ namespace dnSpy.AsmEditor.Namespace {
 
 				for (int i = 0; i < infos.Length; i++) {
 					var node = nodes[i];
-					var module = ILSpyTreeNode.GetModule(parents[i]);
+					var module = parents[i].GetModule();
 					Debug.Assert(module != null);
 					if (module == null)
 						throw new InvalidOperationException();
 
-					var info = new ModuleInfo(module, node.Children.Count);
+					var info = new ModuleInfo(module, node.TreeNode.Children.Count);
 					infos[i] = info;
 
-					for (int j = 0; j < node.Children.Count; j++) {
-						var typeNode = (TypeTreeNode)node.Children[j];
+					for (int j = 0; j < node.TreeNode.Children.Count; j++) {
+						var typeNode = (ITypeNode)node.TreeNode.Children[j].Data;
 						int index = module.Types.IndexOf(typeNode.TypeDef);
 						Debug.Assert(index >= 0);
 						if (index < 0)
@@ -139,7 +155,7 @@ namespace dnSpy.AsmEditor.Namespace {
 				}
 			}
 
-			public void Restore(NamespaceTreeNode[] nodes, ILSpyTreeNode[] parents) {
+			public void Restore(INamespaceNode[] nodes, IFileTreeNodeData[] parents) {
 				Debug.Assert(infos != null);
 				if (infos == null)
 					throw new InvalidOperationException();
@@ -158,13 +174,13 @@ namespace dnSpy.AsmEditor.Namespace {
 			}
 		}
 
-		ILSpyTreeNode[] parents;
-		DeletableNodes<NamespaceTreeNode> nodes;
+		IFileTreeNodeData[] parents;
+		DeletableNodes<INamespaceNode> nodes;
 		DeleteModelNodes modelNodes;
 
-		DeleteNamespaceCommand(NamespaceTreeNode[] nodes) {
-			this.parents = nodes.Select(a => (ILSpyTreeNode)a.Parent).ToArray();
-			this.nodes = new DeletableNodes<NamespaceTreeNode>(nodes);
+		DeleteNamespaceCommand(INamespaceNode[] nodes) {
+			this.parents = nodes.Select(a => (IFileTreeNodeData)a.TreeNode.Parent.Data).ToArray();
+			this.nodes = new DeletableNodes<INamespaceNode>(nodes);
 			this.modelNodes = new DeleteModelNodes();
 		}
 
@@ -185,9 +201,6 @@ namespace dnSpy.AsmEditor.Namespace {
 		public IEnumerable<object> ModifiedObjects {
 			get { return nodes.Nodes; }
 		}
-
-		public void Dispose() {
-		}
 	}
 
 	struct TypeRefInfo {
@@ -205,66 +218,95 @@ namespace dnSpy.AsmEditor.Namespace {
 		const string CMD_NAME = "Move Types to Empty Namespace";
 		[ExportMenuItem(Header = CMD_NAME, Icon = "Namespace", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 0)]
 		sealed class FilesCommand : FilesContextMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+
+			[ImportingConstructor]
+			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager) {
+				this.undoCommandManager = undoCommandManager;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				MoveNamespaceTypesToEmptypNamespaceCommand.Execute(context.Nodes);
+				MoveNamespaceTypesToEmptypNamespaceCommand.Execute(undoCommandManager, context.Nodes);
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Namespace", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 0)]
 		sealed class EditMenuCommand : EditMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+
+			[ImportingConstructor]
+			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeView fileTreeView)
+				: base(fileTreeView) {
+				this.undoCommandManager = undoCommandManager;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return MoveNamespaceTypesToEmptypNamespaceCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				MoveNamespaceTypesToEmptypNamespaceCommand.Execute(context.Nodes);
+				MoveNamespaceTypesToEmptypNamespaceCommand.Execute(undoCommandManager, context.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(IFileTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length > 0 &&
-				nodes.All(a => a is NamespaceTreeNode) &&
-				nodes.Any(a => ((NamespaceTreeNode)a).Name != string.Empty) &&
-				nodes.IsInSameModule() &&
-				nodes[0].Parent.Children.Any(a => a is NamespaceTreeNode && ((NamespaceTreeNode)a).Name == string.Empty);
+				nodes.All(a => a is INamespaceNode) &&
+				nodes.Any(a => ((INamespaceNode)a).Name != string.Empty) &&
+				IsInSameModule(nodes) &&
+				nodes[0].TreeNode.Parent != null &&
+				nodes[0].TreeNode.Parent.DataChildren.Any(a => a is INamespaceNode && ((INamespaceNode)a).Name == string.Empty);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes) {
+		static bool IsInSameModule(IFileTreeNodeData[] nodes) {
+			if (nodes == null || nodes.Length == 0)
+				return false;
+			var module = nodes[0].GetModule();
+			if (module == null)
+				return false;
+			for (int i = 0; i < nodes.Length; i++) {
+				if (module != nodes[i].GetModule())
+					return false;
+			}
+			return true;
+		}
+
+		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			UndoCommandManager.Instance.Add(new MoveNamespaceTypesToEmptypNamespaceCommand(nodes));
+			undoCommandManager.Value.Add(new MoveNamespaceTypesToEmptypNamespaceCommand(nodes));
 		}
 
-		MoveNamespaceTypesToEmptypNamespaceCommand(ILSpyTreeNode[] nodes) {
-			var nsNodes = nodes.Where(a => ((NamespaceTreeNode)a).Name != string.Empty).Select(a => (NamespaceTreeNode)a).ToArray();
+		MoveNamespaceTypesToEmptypNamespaceCommand(IFileTreeNodeData[] nodes) {
+			var nsNodes = nodes.Cast<INamespaceNode>().Where(a => a.Name != string.Empty).ToArray();
 			Debug.Assert(nsNodes.Length > 0);
-			this.nodes = new DeletableNodes<NamespaceTreeNode>(nsNodes);
+			this.nodes = new DeletableNodes<INamespaceNode>(nsNodes);
 			this.nsTarget = GetTarget();
-			this.typeRefInfos = RenameNamespaceCommand.GetTypeRefInfos(ILSpyTreeNode.GetModule(nodes[0]), nsNodes);
+			this.typeRefInfos = RenameNamespaceCommand.GetTypeRefInfos(nodes[0].GetModule(), nsNodes);
 		}
 
 		public string Description {
 			get { return CMD_NAME; }
 		}
 
-		readonly NamespaceTreeNode nsTarget;
-		DeletableNodes<NamespaceTreeNode> nodes;
+		readonly INamespaceNode nsTarget;
+		DeletableNodes<INamespaceNode> nodes;
 		ModelInfo[] infos;
 		readonly TypeRefInfo[] typeRefInfos;
 
-		class ModelInfo {
+		sealed class ModelInfo {
 			public UTF8String[] Namespaces;
-			public DeletableNodes<TypeTreeNode> TypeNodes;
+			public DeletableNodes<ITypeNode> TypeNodes;
 		}
 
-		NamespaceTreeNode GetTarget() {
-			return nodes.Nodes.Length == 0 ? null : (NamespaceTreeNode)nodes.Nodes[0].Parent.Children.First(a => a is NamespaceTreeNode && ((NamespaceTreeNode)a).Name == string.Empty);
+		INamespaceNode GetTarget() {
+			return nodes.Nodes.Length == 0 ? null : (INamespaceNode)nodes.Nodes[0].TreeNode.Parent.DataChildren.First(a => a is INamespaceNode && ((INamespaceNode)a).Name == string.Empty);
 		}
 
 		public void Execute() {
@@ -280,15 +322,15 @@ namespace dnSpy.AsmEditor.Namespace {
 
 				var info = new ModelInfo();
 				infos[i] = info;
-				info.Namespaces = new UTF8String[nsNode.Children.Count];
-				info.TypeNodes = new DeletableNodes<TypeTreeNode>(nsNode.Children.Cast<TypeTreeNode>());
+				info.Namespaces = new UTF8String[nsNode.TreeNode.Children.Count];
+				info.TypeNodes = new DeletableNodes<ITypeNode>(nsNode.TreeNode.DataChildren.Cast<ITypeNode>());
 				info.TypeNodes.Delete();
 
 				for (int j = 0; j < info.Namespaces.Length; j++) {
 					var typeNode = info.TypeNodes.Nodes[j];
 					info.Namespaces[j] = typeNode.TypeDef.Namespace;
 					typeNode.TypeDef.Namespace = UTF8String.Empty;
-					nsTarget.Append(typeNode);
+					nsTarget.TreeNode.Children.Add(typeNode.TreeNode);
 				}
 			}
 
@@ -305,7 +347,8 @@ namespace dnSpy.AsmEditor.Namespace {
 				var info = infos[i];
 
 				for (int j = info.Namespaces.Length - 1; j >= 0; j--) {
-					var typeNode = nsTarget.RemoveLast();
+					var typeNode = (ITypeNode)nsTarget.TreeNode.Children[nsTarget.TreeNode.Children.Count - 1].Data;
+					nsTarget.TreeNode.Children.RemoveAt(nsTarget.TreeNode.Children.Count - 1);
 					bool b = info.TypeNodes.Nodes[j] == typeNode;
 					Debug.Assert(b);
 					if (!b)
@@ -331,9 +374,6 @@ namespace dnSpy.AsmEditor.Namespace {
 					yield return n;
 			}
 		}
-
-		public void Dispose() {
-		}
 	}
 
 	[DebuggerDisplay("{Description}")]
@@ -341,93 +381,112 @@ namespace dnSpy.AsmEditor.Namespace {
 		const string CMD_NAME = "Rename Namespace";
 		[ExportMenuItem(Header = CMD_NAME, Icon = "Namespace", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 10)]
 		sealed class FilesCommand : FilesContextMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly IAppWindow appWindow;
+
+			[ImportingConstructor]
+			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow) {
+				this.undoCommandManager = undoCommandManager;
+				this.appWindow = appWindow;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return RenameNamespaceCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				RenameNamespaceCommand.Execute(context.Nodes);
+				RenameNamespaceCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Namespace", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 10)]
 		sealed class EditMenuCommand : EditMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly IAppWindow appWindow;
+
+			[ImportingConstructor]
+			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
+				: base(appWindow.FileTreeView) {
+				this.undoCommandManager = undoCommandManager;
+				this.appWindow = appWindow;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return RenameNamespaceCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				RenameNamespaceCommand.Execute(context.Nodes);
+				RenameNamespaceCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(IFileTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
-				nodes[0] is NamespaceTreeNode;
+				nodes[0] is INamespaceNode;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var nsNode = (NamespaceTreeNode)nodes[0];
+			var nsNode = (INamespaceNode)nodes[0];
 
 			var data = new NamespaceVM(nsNode.Name);
 			var win = new NamespaceDlg();
 			win.DataContext = data;
-			win.Owner = MainWindow.Instance;
+			win.Owner = appWindow.MainWindow;
 			if (win.ShowDialog() != true)
 				return;
 
-			if (AssemblyTreeNode.NamespaceStringEqualsComparer.Equals(nsNode.Name, data.Name))
+			if (nsNode.Name == data.Name)
 				return;
 
-			UndoCommandManager.Instance.Add(new RenameNamespaceCommand(data.Name, nsNode));
+			undoCommandManager.Value.Add(new RenameNamespaceCommand(data.Name, nsNode));
 		}
 
 		readonly string newName;
 		readonly string origName;
-		readonly NamespaceTreeNode nsNode;
-		readonly NamespaceTreeNode existingNsNode;
-		readonly ILSpyTreeNode origParentNode;
+		readonly INamespaceNode nsNode;
+		readonly INamespaceNode existingNsNode;
+		readonly IFileTreeNodeData origParentNode;
 		readonly int origParentChildIndex;
 		readonly UTF8String[] typeNamespaces;
-		readonly TypeTreeNode[] origChildren;
+		readonly ITypeNode[] origChildren;
 		readonly TypeRefInfo[] typeRefInfos;
 
-		internal static TypeRefInfo[] GetTypeRefInfos(ModuleDef module, IEnumerable<NamespaceTreeNode> nsNodes) {
+		internal static TypeRefInfo[] GetTypeRefInfos(ModuleDef module, IEnumerable<INamespaceNode> nsNodes) {
 			var types = new HashSet<ITypeDefOrRef>(RefFinder.TypeEqualityComparerInstance);
 			foreach (var nsNode in nsNodes) {
-				foreach (TypeTreeNode typeNode in nsNode.Children)
+				foreach (ITypeNode typeNode in nsNode.TreeNode.DataChildren)
 					types.Add(typeNode.TypeDef);
 			}
 			var typeRefs = RefFinder.FindTypeRefsToThisModule(module);
 			return typeRefs.Where(a => types.Contains(a)).Select(a => new TypeRefInfo(a)).ToArray();
 		}
 
-		RenameNamespaceCommand(string newName, NamespaceTreeNode nsNode) {
+		RenameNamespaceCommand(string newName, INamespaceNode nsNode) {
 			this.newName = newName;
 			this.origName = nsNode.Name;
 			this.nsNode = nsNode;
-			this.existingNsNode = (NamespaceTreeNode)nsNode.Parent.Children.FirstOrDefault(a => a is NamespaceTreeNode && AssemblyTreeNode.NamespaceStringEqualsComparer.Equals(newName, ((NamespaceTreeNode)a).Name));
+			this.existingNsNode = (INamespaceNode)nsNode.TreeNode.Parent.DataChildren.FirstOrDefault(a => a is INamespaceNode && newName == ((INamespaceNode)a).Name);
 
-			var module = ILSpyTreeNode.GetModule(nsNode);
+			var module = nsNode.GetModule();
 			Debug.Assert(module != null);
 			if (module == null)
 				throw new InvalidOperationException();
 
-			this.origParentNode = (ILSpyTreeNode)nsNode.Parent;
-			this.origParentChildIndex = this.origParentNode.Children.IndexOf(nsNode);
+			this.origParentNode = (IFileTreeNodeData)nsNode.TreeNode.Parent.Data;
+			this.origParentChildIndex = this.origParentNode.TreeNode.Children.IndexOf(nsNode.TreeNode);
 			Debug.Assert(this.origParentChildIndex >= 0);
 			if (this.origParentChildIndex < 0)
 				throw new InvalidOperationException();
 
 			// Make sure the exact same namespace names are restored if we undo. The names are UTF8
 			// strings, but not necessarily canonicalized if it's an obfuscated assembly.
-			nsNode.EnsureChildrenFiltered();
-			this.origChildren = nsNode.Children.Cast<TypeTreeNode>().ToArray();
-			this.typeNamespaces = new UTF8String[nsNode.Children.Count];
+			nsNode.TreeNode.EnsureChildrenLoaded();
+			this.origChildren = nsNode.TreeNode.DataChildren.Cast<ITypeNode>().ToArray();
+			this.typeNamespaces = new UTF8String[nsNode.TreeNode.Children.Count];
 			for (int i = 0; i < this.typeNamespaces.Length; i++)
 				this.typeNamespaces[i] = origChildren[i].TypeDef.Namespace;
 
@@ -441,30 +500,26 @@ namespace dnSpy.AsmEditor.Namespace {
 		public void Execute() {
 			UTF8String newNamespace = newName;
 			if (existingNsNode != null) {
-				Debug.Assert(origChildren.Length == nsNode.Children.Count);
-				foreach (var typeNode in origChildren)
-					typeNode.OnBeforeRemoved();
-				nsNode.Children.Clear();
+				Debug.Assert(origChildren.Length == nsNode.TreeNode.Children.Count);
+				nsNode.TreeNode.Children.Clear();
 				foreach (var typeNode in origChildren) {
 					typeNode.TypeDef.Namespace = newNamespace;
-					existingNsNode.AddToChildren(typeNode);
-					typeNode.OnReadded();
+					existingNsNode.TreeNode.AddChild(typeNode.TreeNode);
 				}
 			}
 			else {
-				nsNode.OnBeforeRemoved();
-				bool b = origParentChildIndex < origParentNode.Children.Count && origParentNode.Children[origParentChildIndex] == nsNode;
+				bool b = origParentChildIndex < origParentNode.TreeNode.Children.Count && origParentNode.TreeNode.Children[origParentChildIndex] == nsNode.TreeNode;
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
-				origParentNode.Children.RemoveAt(origParentChildIndex);
+				origParentNode.TreeNode.Children.RemoveAt(origParentChildIndex);
 				nsNode.Name = newName;
 
 				foreach (var typeNode in origChildren)
 					typeNode.TypeDef.Namespace = newNamespace;
 
-				origParentNode.AddToChildren(nsNode);
-				nsNode.OnReadded();
+				origParentNode.TreeNode.AddChild(nsNode.TreeNode);
+				nsNode.TreeNode.RefreshUI();
 			}
 
 			foreach (var info in typeRefInfos)
@@ -473,10 +528,9 @@ namespace dnSpy.AsmEditor.Namespace {
 
 		public void Undo() {
 			if (existingNsNode != null) {
-				Debug.Assert(nsNode.Children.Count == 0);
+				Debug.Assert(nsNode.TreeNode.Children.Count == 0);
 				foreach (var typeNode in origChildren) {
-					typeNode.OnBeforeRemoved();
-					bool b = existingNsNode.Children.Remove(typeNode);
+					bool b = existingNsNode.TreeNode.Children.Remove(typeNode.TreeNode);
 					Debug.Assert(b);
 					if (!b)
 						throw new InvalidOperationException();
@@ -484,13 +538,11 @@ namespace dnSpy.AsmEditor.Namespace {
 				for (int i = 0; i < origChildren.Length; i++) {
 					var typeNode = origChildren[i];
 					typeNode.TypeDef.Namespace = typeNamespaces[i];
-					nsNode.Children.Add(typeNode);
-					typeNode.OnReadded();
+					nsNode.TreeNode.Children.Add(typeNode.TreeNode);
 				}
 			}
 			else {
-				nsNode.OnBeforeRemoved();
-				bool b = origParentNode.Children.Remove(nsNode);
+				bool b = origParentNode.TreeNode.Children.Remove(nsNode.TreeNode);
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
@@ -499,9 +551,8 @@ namespace dnSpy.AsmEditor.Namespace {
 					origChildren[i].TypeDef.Namespace = typeNamespaces[i];
 
 				nsNode.Name = origName;
-				origParentNode.Children.Insert(origParentChildIndex, nsNode);
-
-				nsNode.OnReadded();
+				origParentNode.TreeNode.Children.Insert(origParentChildIndex, nsNode.TreeNode);
+				nsNode.TreeNode.RefreshUI();
 			}
 
 			foreach (var info in typeRefInfos)
@@ -510,9 +561,6 @@ namespace dnSpy.AsmEditor.Namespace {
 
 		public IEnumerable<object> ModifiedObjects {
 			get { yield return nsNode; }
-		}
-
-		public void Dispose() {
 		}
 	}
 }

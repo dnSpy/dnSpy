@@ -22,11 +22,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler;
+using dnSpy.Languages.IL;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	[Flags]
@@ -508,7 +511,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		public static void WriteObject(ITextOutput output, object obj, WriteObjectFlags flags = WriteObjectFlags.None) {
+		public static void WriteObject(ISyntaxHighlightOutput output, object obj, WriteObjectFlags flags = WriteObjectFlags.None) {
 			if (IsNull(obj)) {
 				output.Write("null", TextTokenType.Keyword);
 				return;
@@ -516,7 +519,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			var mr = obj as IMemberRef;
 			if (mr != null) {
-				if (ILLanguage.Write(output, mr))
+				if (ILLanguage.Write(SyntaxHighlightOutputToTextOutput.Create(output), mr))
 					return;
 			}
 
@@ -557,12 +560,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			var methodSig = obj as MethodSig;
 			if (methodSig != null) {
-				output.Write(methodSig);
+				SyntaxHighlightOutputToTextOutput.Create(output).Write(methodSig);
 				return;
 			}
 
 			if (obj is TypeSig) {
-				(obj as TypeSig).WriteTo(output);
+				(obj as TypeSig).WriteTo(SyntaxHighlightOutputToTextOutput.Create(output));
 				return;
 			}
 
@@ -589,13 +592,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return string.Format("A_{0}", index);
 		}
 
-		static void WriteLocalParameterIndex(this ITextOutput output, int index) {
+		static void WriteLocalParameterIndex(this ISyntaxHighlightOutput output, int index) {
 			output.Write("(", TextTokenType.Operator);
 			output.Write(index.ToString(), TextTokenType.Number);
 			output.Write(")", TextTokenType.Operator);
 		}
 
-		static void WriteLong(this ITextOutput output, InstructionVM instr) {
+		static void WriteLong(this ISyntaxHighlightOutput output, InstructionVM instr) {
 			output.WriteShort(instr);
 			output.WriteSpace();
 			output.Write(instr.Code.ToOpCode().Name, TextTokenType.OpCode);
@@ -603,7 +606,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			Write(output, instr.InstructionOperandVM);
 		}
 
-		static void Write(this ITextOutput output, InstructionOperandVM opvm) {
+		static void Write(this ISyntaxHighlightOutput output, InstructionOperandVM opvm) {
 			switch (opvm.InstructionOperandType) {
 			case MethodBody.InstructionOperandType.None:
 				break;
@@ -632,7 +635,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		static void WriteShort(this ITextOutput output, InstructionVM instr) {
+		static void WriteShort(this ISyntaxHighlightOutput output, InstructionVM instr) {
 			output.Write(instr.Index.ToString(), TextTokenType.Number);
 			output.WriteSpace();
 			output.Write("(", TextTokenType.Operator);
@@ -640,7 +643,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			output.Write(")", TextTokenType.Operator);
 		}
 
-		static void Write(this ITextOutput output, IList<InstructionVM> instrs) {
+		static void Write(this ISyntaxHighlightOutput output, IList<InstructionVM> instrs) {
 			output.Write("[", TextTokenType.Operator);
 			for (int i = 0; i < instrs.Count; i++) {
 				if (i > 0) {

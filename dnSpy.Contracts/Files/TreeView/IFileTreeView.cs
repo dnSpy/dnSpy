@@ -22,11 +22,12 @@ using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Contracts.Files.TreeView {
 	/// <summary>
-	/// File tree view
+	/// File treeview
 	/// </summary>
 	public interface IFileTreeView : IFileTreeNodeCreator {
 		/// <summary>
@@ -79,6 +80,12 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="file">New file</param>
 		/// <returns></returns>
 		IDnSpyFileNode CreateNode(IDnSpyFileNode owner, IDnSpyFile file);
+
+		/// <summary>
+		/// Removes <paramref name="nodes"/>. They must be top nodes (eg. <see cref="IAssemblyFileNode"/>s)
+		/// </summary>
+		/// <param name="nodes">Nodes</param>
+		void Remove(IEnumerable<IDnSpyFileNode> nodes);
 
 		/// <summary>
 		/// Returns a node or null if none could be found
@@ -161,5 +168,29 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// </summary>
 		/// <returns></returns>
 		IEnumerable<IModuleFileNode> GetAllModuleNodes();
+
+		/// <summary>
+		/// Gets all created <see cref="IDnSpyFileNode"/>s
+		/// </summary>
+		/// <returns></returns>
+		IEnumerable<IDnSpyFileNode> GetAllCreatedDnSpyFileNodes();
+
+		/// <summary>
+		/// Adds <paramref name="fileNode"/> to the list
+		/// </summary>
+		/// <param name="fileNode">Node</param>
+		/// <param name="index">Index or -1</param>
+		void AddNode(IDnSpyFileNode fileNode, int index);
+
+		/// <summary>
+		/// Sets language
+		/// </summary>
+		/// <param name="language"></param>
+		void SetLanguage(ILanguage language);
+
+		/// <summary>
+		/// Disposes this instance
+		/// </summary>
+		void Dispose();
 	}
 }

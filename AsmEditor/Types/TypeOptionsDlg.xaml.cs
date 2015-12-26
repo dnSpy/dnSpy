@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.Types {
-	/// <summary>
-	/// Interaction logic for TypeOptionsDlg.xaml
-	/// </summary>
-	public partial class TypeOptionsDlg : WindowBase {
+	sealed partial class TypeOptionsDlg : WindowBase {
 		public TypeOptionsDlg() {
 			InitializeComponent();
 		}

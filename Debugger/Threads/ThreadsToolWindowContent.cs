@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Threads {
 
 	sealed class ThreadsToolWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("3C01719C-B6B5-4261-9CD4-3EDCE1032E5C");
-		public static AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Default;
+		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Default;
 
 		public IInputElement FocusedElement {
 			get { return threadsContent.Value.FocusedElement; }

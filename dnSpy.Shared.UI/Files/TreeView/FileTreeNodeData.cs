@@ -31,7 +31,7 @@ using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Shared.UI.Files.TreeView {
 	public abstract class FileTreeNodeData : TreeNodeData, IFileTreeNodeData {
-		public sealed override bool SingleClickExpandsChildren {
+		public override bool SingleClickExpandsChildren {
 			get { return Context.SingleClickExpandsChildren; }
 		}
 
@@ -102,7 +102,9 @@ namespace dnSpy.Shared.UI.Files.TreeView {
 			return Context.FileTreeView.RaiseNodeActivated(this);
 		}
 
-		public abstract FilterType GetFilterType(IFileTreeNodeFilter filter);
+		public virtual FilterType GetFilterType(IFileTreeNodeFilter filter) {
+			return filter.GetResult(this).FilterType;
+		}
 
 		public sealed override void OnEnsureChildrenLoaded() {
 			if (refilter) {
@@ -111,7 +113,7 @@ namespace dnSpy.Shared.UI.Files.TreeView {
 					Filter(node);
 			}
 		}
-		bool refilter = true;
+		bool refilter = false;
 
 		public int FilterVersion {
 			get { return filterVersion; }
@@ -124,7 +126,7 @@ namespace dnSpy.Shared.UI.Files.TreeView {
 		}
 		int filterVersion;
 
-		void Filter(IFileTreeNodeData node) {
+		static void Filter(IFileTreeNodeData node) {
 			if (node == null)
 				return;
 			var res = node.GetFilterType(node.Context.Filter);

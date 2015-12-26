@@ -22,8 +22,10 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.NRefactory;
+using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.AsmEditor.MethodBody {
@@ -60,7 +62,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		protected override void CopyItemsAsText(LocalVM[] locals) {
 			Array.Sort(locals, (a, b) => a.Index.CompareTo(b.Index));
 
-			var output = new PlainTextOutput();
+			var output = new NoSyntaxHighlightOutput();
 
 			for (int i = 0; i < locals.Length; i++) {
 				if (i > 0)

@@ -284,8 +284,12 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
+		public IFileTabContent TryCreateContent(IFileTreeNodeData[] nodes) {
+			return fileTabContentFactoryManager.CreateTabContent(nodes);
+		}
+
 		IFileTabContent CreateTabContent(IFileTreeNodeData[] nodes) {
-			var content = fileTabContentFactoryManager.CreateTabContent(nodes);
+			var content = TryCreateContent(nodes);
 			Debug.Assert(content != null);
 			return content ?? new NullFileTabContent();
 		}
@@ -472,6 +476,56 @@ namespace dnSpy.Files.Tabs {
 					tabs.Add(tab);
 			}
 			Refresh(tabs);
+		}
+
+		HashSet<IDnSpyFile> GetModifiedFiles(IDnSpyFile file) {
+			var fileHash = new HashSet<IDnSpyFile>();
+			fileHash.Add(file);
+			var node = fileTreeView.FindNode(file);
+			if (node is IModuleFileNode) {
+				if (node.DnSpyFile.AssemblyDef != null && node.DnSpyFile.AssemblyDef.ManifestModule == node.DnSpyFile.ModuleDef) {
+					var asmNode = node.GetAssemblyNode();
+					Debug.Assert(asmNode != null);
+					if (asmNode != null)
+						fileHash.Add(asmNode.DnSpyFile);
+				}
+			}
+			else if (node is IAssemblyFileNode) {
+				node.TreeNode.EnsureChildrenLoaded();
+				var manifestModNode = node.TreeNode.DataChildren.FirstOrDefault() as IModuleFileNode;
+				Debug.Assert(manifestModNode != null);
+				if (manifestModNode != null)
+					fileHash.Add(manifestModNode.DnSpyFile);
+			}
+			return fileHash;
+		}
+
+		public void RefreshModifiedFile(IDnSpyFile file) {
+			var fileHash = GetModifiedFiles(file);
+			decompilationCache.Clear(fileHash);
+
+			var tabs = new List<IFileTab>();
+			foreach (var tab in VisibleFirstTabs) {
+				if (MustRefresh(tab, fileHash))
+					tabs.Add(tab);
+			}
+			if (tabs.Count > 0)
+				Refresh(tabs);
+
+			if (FileModified != null)
+				FileModified(this, new FileModifiedEventArgs(fileHash.ToArray()));
+		}
+		public event EventHandler<FileModifiedEventArgs> FileModified;
+
+		bool MustRefresh(IFileTab tab, IEnumerable<IDnSpyFile> files) {
+			var modules = new HashSet<IDnSpyFile>(files);
+			if (InModifiedModuleHelper.IsInModifiedModule(modules, tab.Content.Nodes))
+				return true;
+			var uiContext = tab.TryGetTextEditorUIContext();
+			if (uiContext != null && InModifiedModuleHelper.IsInModifiedModule(FileTreeView.FileManager, modules, uiContext.References))
+				return true;
+
+			return false;
 		}
 
 		public void FollowReference(object @ref, bool newTab, Action<ShowTabContentEventArgs> onShown) {

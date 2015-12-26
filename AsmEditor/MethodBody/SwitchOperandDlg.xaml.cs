@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.MethodBody {
-	/// <summary>
-	/// Interaction logic for SwitchOperandDlg.xaml
-	/// </summary>
-	public partial class SwitchOperandDlg : WindowBase {
+	sealed partial class SwitchOperandDlg : WindowBase {
 		public SwitchOperandDlg() {
 			InitializeComponent();
 		}

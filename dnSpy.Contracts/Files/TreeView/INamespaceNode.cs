@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <summary>
 		/// Name
 		/// </summary>
-		string Name { get; }
+		string Name { get; set; }
 
 		/// <summary>
 		/// Creates a <see cref="ITypeNode"/>

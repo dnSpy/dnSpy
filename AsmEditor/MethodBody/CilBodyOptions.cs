@@ -22,7 +22,6 @@ using dnlib.DotNet.Emit;
 using dnlib.DotNet.Pdb;
 using dnlib.IO;
 using dnlib.PE;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class CilBodyOptions {

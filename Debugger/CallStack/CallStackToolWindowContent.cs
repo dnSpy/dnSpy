@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.CallStack {
 
 	sealed class CallStackToolWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("0E53B79D-EC30-44B6-86A3-DFFCE364EB4A");
-		public static AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Default;
+		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Default;
 
 		public IInputElement FocusedElement {
 			get { return callStackContent.Value.FocusedElement; }

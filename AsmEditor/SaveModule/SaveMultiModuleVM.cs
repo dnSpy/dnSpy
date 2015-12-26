@@ -28,8 +28,9 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.AsmEditor.Hex;
+using dnSpy.Contracts.Files;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	sealed class SaveMultiModuleVM : INotifyPropertyChanged {
@@ -228,35 +229,38 @@ namespace dnSpy.AsmEditor.SaveModule {
 			get { return modules; }
 		}
 
+		readonly IMmapDisabler mmapDisabler;
 		readonly Dispatcher dispatcher;
 
-		public SaveMultiModuleVM(Dispatcher dispatcher, SaveOptionsVM options) {
+		public SaveMultiModuleVM(IMmapDisabler mmapDisabler, Dispatcher dispatcher, SaveOptionsVM options) {
+			this.mmapDisabler = mmapDisabler;
 			this.dispatcher = dispatcher;
 			this.modules.Add(options);
 		}
 
-		public SaveMultiModuleVM(Dispatcher dispatcher, IEnumerable<IUndoObject> objs) {
+		public SaveMultiModuleVM(IMmapDisabler mmapDisabler, Dispatcher dispatcher, IEnumerable<object> objs) {
+			this.mmapDisabler = mmapDisabler;
 			this.dispatcher = dispatcher;
 			this.modules.AddRange(objs.Select(m => Create(m)));
 		}
 
-		static SaveOptionsVM Create(IUndoObject obj) {
-			var file = UndoCommandManager.Instance.TryGetDnSpyFile(obj);
+		static SaveOptionsVM Create(object obj) {
+			var file = obj as IDnSpyFile;
 			if (file != null)
 				return new SaveModuleOptionsVM(file);
 
-			var doc = UndoCommandManager.Instance.TryGetAsmEdHexDocument(obj);
+			var doc = obj as AsmEdHexDocument;
 			if (doc != null)
 				return new SaveHexOptionsVM(doc);
 
 			throw new InvalidOperationException();
 		}
 
-		SaveOptionsVM GetSaveOptionsVM(IUndoObject obj) {
-			return modules.FirstOrDefault(a => a.UndoObject == obj);
+		SaveOptionsVM GetSaveOptionsVM(object obj) {
+			return modules.FirstOrDefault(a => a.UndoDocument == obj);
 		}
 
-		public bool WasSaved(IUndoObject obj) {
+		public bool WasSaved(object obj) {
 			var data = GetSaveOptionsVM(obj);
 			if (data == null)
 				return false;
@@ -265,7 +269,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			return saved;
 		}
 
-		public string GetSavedFileName(IUndoObject obj) {
+		public string GetSavedFileName(object obj) {
 			var data = GetSaveOptionsVM(obj);
 			return data == null ? null : data.FileName;
 		}
@@ -280,7 +284,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			savedFile.Clear();
 
 			var mods = modules.ToArray();
-			MmapUtils.DisableMemoryMappedIO(mods.Select(a => a.FileName));
+			mmapDisabler.Disable(mods.Select(a => a.FileName));
 			new Thread(() => SaveAsync(mods)).Start();
 		}
 

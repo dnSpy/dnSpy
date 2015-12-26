@@ -79,7 +79,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return true;
 		}
 
-		public override bool HandleModelUpdated(IDnSpyFile file) {
+		public override bool HandleModelUpdated(IDnSpyFile[] files) {
 			CancelAndClearChildren();
 			return true;
 		}

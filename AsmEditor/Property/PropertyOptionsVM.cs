@@ -22,8 +22,8 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.Property {
 	sealed class PropertyOptionsVM : ViewModelBase {
@@ -131,11 +131,11 @@ namespace dnSpy.AsmEditor.Property {
 
 		readonly ModuleDef ownerModule;
 
-		public PropertyOptionsVM(PropertyDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType) {
+		public PropertyOptionsVM(PropertyDefOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = true,
@@ -149,10 +149,10 @@ namespace dnSpy.AsmEditor.Property {
 			this.methodSigCreator.PropertyChanged += methodSigCreator_PropertyChanged;
 			this.methodSigCreator.ParametersCreateTypeSigArray.PropertyChanged += methodSigCreator_PropertyChanged;
 			this.methodSigCreator.ParametersCreateTypeSigArray.TypeSigCreator.CanAddFnPtr = false;
-			this.getMethodsVM = new MethodDefsVM(ownerModule, language);
-			this.setMethodsVM = new MethodDefsVM(ownerModule, language);
-			this.otherMethodsVM = new MethodDefsVM(ownerModule, language);
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
+			this.getMethodsVM = new MethodDefsVM(ownerModule, languageManager);
+			this.setMethodsVM = new MethodDefsVM(ownerModule, languageManager);
+			this.otherMethodsVM = new MethodDefsVM(ownerModule, languageManager);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
 			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, "Default value for this property");
 			this.constantVM.PropertyChanged += constantVM_PropertyChanged;
 

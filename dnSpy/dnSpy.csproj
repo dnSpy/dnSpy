@@ -29,6 +29,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -38,6 +39,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>dnSpy.MainApp.StartUpClass</StartupObject>
@@ -50,14 +52,11 @@
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
@@ -82,11 +81,14 @@
     <Compile Include="Files\FileLoader.cs" />
     <Compile Include="Files\FileManager.cs" />
     <Compile Include="Files\FileManagerAppSettingsModifiedListener.cs" />
+    <Compile Include="Files\FileManagerCreator.cs" />
     <Compile Include="Files\FileManagerOptionCreator.cs" />
     <Compile Include="Files\FileManagerSettings.cs" />
     <Compile Include="Files\IDnSpyFileLoader.cs" />
+    <Compile Include="Files\MethodAnnotations.cs" />
     <Compile Include="Files\Tabs\AsyncShowResult.cs" />
     <Compile Include="Files\Tabs\Commands.cs" />
+    <Compile Include="Files\Tabs\CopyTokenCommand.cs" />
     <Compile Include="Files\Tabs\DecompilationCache.cs" />
     <Compile Include="Files\Tabs\DefaultDecompileNode.cs" />
     <Compile Include="Files\Tabs\DefaultFileList.cs" />
@@ -113,6 +115,7 @@
     <Compile Include="Files\Tabs\Dialogs\TabsVMSettings.cs" />
     <Compile Include="Files\Tabs\Dialogs\TabVM.cs" />
     <Compile Include="Files\Tabs\DnSpyFileInfoSerializer.cs" />
+    <Compile Include="Files\Tabs\EntryPointCommands.cs" />
     <Compile Include="Files\Tabs\FileList.cs" />
     <Compile Include="Files\Tabs\FileListLoader.cs" />
     <Compile Include="Files\Tabs\FileListManager.cs" />
@@ -125,6 +128,7 @@
     <Compile Include="Files\Tabs\FileTabUIContextLocator.cs" />
     <Compile Include="Files\Tabs\FileTabUIContextLocatorCreator.cs" />
     <Compile Include="Files\Tabs\FileTreeNodeDecompiler.cs" />
+    <Compile Include="Files\Tabs\GoToTokenCommand.cs" />
     <Compile Include="Files\Tabs\IDecompilationCache.cs" />
     <Compile Include="Files\Tabs\IFileTabUIContextLocatorCreator.cs" />
     <Compile Include="Files\Tabs\MiscOptions.cs" />
@@ -137,6 +141,7 @@
     <Compile Include="Files\Tabs\RefreshResourcesCommand.cs" />
     <Compile Include="Files\Tabs\SaveCommands.cs" />
     <Compile Include="Files\Tabs\SaveManager.cs" />
+    <Compile Include="Files\Tabs\SearchMsdnCommand.cs" />
     <Compile Include="Files\Tabs\SerializedTabs.cs" />
     <Compile Include="Files\Tabs\Dialogs\TabColumnConverter.cs" />
     <Compile Include="Files\Tabs\Settings\DisplaySettingsTab.cs" />
@@ -188,6 +193,7 @@
     <Compile Include="Files\TreeView\FileTreeNodeGroups.cs" />
     <Compile Include="Files\TreeView\FileTreeView.cs" />
     <Compile Include="Files\TreeView\FileTreeViewAppSettingsModifiedListener.cs" />
+    <Compile Include="Files\TreeView\FileTreeViewCreator.cs" />
     <Compile Include="Files\TreeView\FileTreeViewSettings.cs" />
     <Compile Include="Files\TreeView\MessageNode.cs" />
     <Compile Include="Files\TreeView\MethodNode.cs" />
@@ -199,7 +205,6 @@
     <Compile Include="Files\TreeView\ReferencesFolderNode.cs" />
     <Compile Include="Files\TreeView\ResourcesFolderNode.cs" />
     <Compile Include="Files\TreeView\Resources\BuiltInResourceElementNode.cs" />
-    <Compile Include="Files\TreeView\Resources\Deserializer.cs" />
     <Compile Include="Files\TreeView\Resources\ImageResourceNode.cs" />
     <Compile Include="Files\TreeView\Resources\ResourceElementSetNode.cs" />
     <Compile Include="Files\TreeView\Resources\ResourceNodeFactory.cs" />
@@ -260,9 +265,7 @@
       <SubType>Code</SubType>
     </Compile>
     <AppDesigner Include="Properties\" />
-    <Compile Include="Search\BooleanToThicknessConverter.cs" />
     <Compile Include="Search\Commands.cs" />
-    <Compile Include="Search\DelayedAction.cs" />
     <Compile Include="Search\FileSearcher.cs" />
     <Compile Include="Search\FileSearcherCreator.cs" />
     <Compile Include="Search\FilterSearcher.cs" />
@@ -463,6 +466,7 @@
     <Resource Include="Images\DerivedTypesClosed.png" />
     <Resource Include="Images\DerivedTypesOpened.png" />
     <Resource Include="Images\dnSpy-Big.png" />
+    <Resource Include="Images\EntryPoint.png" />
     <Resource Include="Images\Enum.png" />
     <Resource Include="Images\EnumInternal.png" />
     <Resource Include="Images\EnumPrivate.png" />
@@ -630,8 +634,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>mkdir "$(TargetDir)FileLists"
-copy "$(ProjectDir)FileLists\*.FileList.xml" "$(TargetDir)FileLists"</PostBuildEvent>
+    <PostBuildEvent>mkdir "$(TargetDir)FileLists" 2&gt; NUL
+copy "$(ProjectDir)FileLists\*.FileList.xml" "$(TargetDir)FileLists"
+mkdir "$(TargetDir)Licenses" 2&gt; NUL
+copy "$(SolutionDir)Licenses\*" "$(TargetDir)Licenses"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -127,7 +127,7 @@ namespace dnSpy.Files.Tabs {
 		TabGroupContext CreateContextInternal(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID))
 				return null;
-			var tabGroup = context.FindByType<ITabGroup>();
+			var tabGroup = context.Find<ITabGroup>();
 			if (tabGroup == null || !fileTabManager.Owns(tabGroup))
 				return null;
 			return new TabGroupContext(tabGroup);
@@ -422,7 +422,7 @@ namespace dnSpy.Files.Tabs {
 		public override bool IsVisible(IMenuItemContext context) {
 			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID) &&
 				InstallTabCommands.CanOpenNewTabInternal(fileTabManager) &&
-				(context.FindByType<ITreeNodeData[]>() ?? emptyArray).Length > 0;
+				(context.Find<ITreeNodeData[]>() ?? emptyArray).Length > 0;
 		}
 		static readonly ITreeNodeData[] emptyArray = new ITreeNodeData[0];
 
@@ -449,10 +449,10 @@ namespace dnSpy.Files.Tabs {
 			uiContext = null;
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 				return null;
-			uiContext = context.FindByType<ITextEditorUIContext>();
+			uiContext = context.Find<ITextEditorUIContext>();
 			if (uiContext == null)
 				return null;
-			return context.FindByType<CodeReferenceSegment>();
+			return context.Find<CodeReference>();
 		}
 
 		public override string GetInputGestureText(IMenuItemContext context) {

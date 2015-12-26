@@ -34,9 +34,13 @@ using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Files.TreeView {
 	sealed class AssemblyFileNode : DnSpyFileNode, IAssemblyFileNode {
-		public AssemblyFileNode(IDnSpyFile dnSpyFile)
+		public AssemblyFileNode(IDnSpyDotNetFile dnSpyFile)
 			: base(dnSpyFile) {
 			Debug.Assert(dnSpyFile.AssemblyDef != null);
+		}
+
+		public new IDnSpyDotNetFile DnSpyFile {
+			get { return (IDnSpyDotNetFile)base.DnSpyFile; }
 		}
 
 		public override Guid Guid {

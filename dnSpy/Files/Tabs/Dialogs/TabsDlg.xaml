@@ -83,9 +83,9 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="_Activate" Style="{StaticResource DialogButton2}" Margin="0 0 5 0" Click="activateButton_Click" IsDefault="True" />
-            <Button Grid.Column="2" Content="{Binding SaveText}" Style="{StaticResource DialogButton2}" Margin="0 0 5 0" Command="{Binding SaveCommand}" />
-            <Button Grid.Column="3" Content="_Close Window" Style="{StaticResource DialogButton2}" Margin="0 0 0 0" Command="{Binding CloseTabCommand}" />
+            <Button Grid.Column="1" Content="_Activate" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Click="activateButton_Click" IsDefault="True" />
+            <Button Grid.Column="2" Content="{Binding SaveText}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding SaveCommand}" />
+            <Button Grid.Column="3" Content="_Close Window" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Command="{Binding CloseTabCommand}" />
         </Grid>
     </Grid>
 </ctrls:WindowBase>

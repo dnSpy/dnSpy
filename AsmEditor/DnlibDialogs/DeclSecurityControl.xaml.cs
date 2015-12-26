@@ -20,10 +20,7 @@
 using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for DeclSecurityControl.xaml
-	/// </summary>
-	public partial class DeclSecurityControl : UserControl {
+	sealed partial class DeclSecurityControl : UserControl {
 		public DeclSecurityControl() {
 			InitializeComponent();
 		}

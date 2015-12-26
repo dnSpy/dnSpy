@@ -22,21 +22,16 @@ using ICSharpCode.Decompiler.Disassembler;
 
 namespace dnSpy.Languages.IL {
 	public static class InstructionBytesReader {
-		public static IInstructionBytesReader Create(MethodDef method) {
+		public static IInstructionBytesReader Create(MethodDef method, bool isBodyModified) {
 			bool noInstrStream = method is MethodDefUser;
 			//TODO: OriginalInstructionBytesReader can't handle CorModuleDef assemblies since it
 			//		can't get an instruction stream.
 			if (!(method.Module is ModuleDefMD))
 				noInstrStream = true;
-			if (noInstrStream || IsBodyModified(method))
+			if (noInstrStream || isBodyModified)
 				return new ModifiedInstructionBytesReader(method);
 			else
 				return new OriginalInstructionBytesReader(method);
-		}
-
-		static bool IsBodyModified(MethodDef method) {
-			return false;
-			//TODO: Should call MethodAnnotations.Instance.IsBodyModified(method)
 		}
 	}
 }

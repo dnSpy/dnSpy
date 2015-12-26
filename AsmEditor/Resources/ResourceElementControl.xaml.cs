@@ -22,10 +22,7 @@ using System.Windows.Controls;
 using dnSpy.AsmEditor.ViewHelpers;
 
 namespace dnSpy.AsmEditor.Resources {
-	/// <summary>
-	/// Interaction logic for ResourceElementControl.xaml
-	/// </summary>
-	public partial class ResourceElementControl : UserControl {
+	sealed partial class ResourceElementControl : UserControl {
 		public ResourceElementControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

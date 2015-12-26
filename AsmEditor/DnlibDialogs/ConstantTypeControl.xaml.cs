@@ -22,10 +22,7 @@ using System.Windows.Controls;
 using dnSpy.AsmEditor.ViewHelpers;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for ConstantTypeControl.xaml
-	/// </summary>
-	public partial class ConstantTypeControl : UserControl {
+	sealed partial class ConstantTypeControl : UserControl {
 		public ConstantTypeControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

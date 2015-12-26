@@ -17,14 +17,41 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using System.Windows;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
-using dnSpy.TreeNodes;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.App;
+using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.Search;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class DnlibTypePicker : IDnlibTypePicker {
+		static IAppWindow appWindow;
+		static IFileTreeView fileTreeView;
+		static IImageManager imageManager;
+		static IFileSearcherCreator fileSearcherCreator;
+		static ILanguageManager languageManager;
+		static IFileTreeViewCreator fileTreeViewCreator;
+		static IFileTreeViewSettings fileTreeViewSettings;
+
+		[ExportAutoLoaded]
+		sealed class Loader : IAutoLoaded {
+			[ImportingConstructor]
+			Loader(IAppWindow appWindow, IImageManager imageManager, IFileTreeView fileTreeView, IFileSearcherCreator fileSearcherCreator, ILanguageManager languageManager, IFileTreeViewCreator fileTreeViewCreator, IFileTreeViewSettings fileTreeViewSettings) {
+				DnlibTypePicker.appWindow = appWindow;
+				DnlibTypePicker.imageManager = imageManager;
+				DnlibTypePicker.fileTreeView = fileTreeView;
+				DnlibTypePicker.fileSearcherCreator = fileSearcherCreator;
+				DnlibTypePicker.languageManager = languageManager;
+				DnlibTypePicker.fileTreeViewCreator = fileTreeViewCreator;
+				DnlibTypePicker.fileTreeViewSettings = fileTreeViewSettings;
+			}
+		}
+
 		readonly Window ownerWindow;
 
 		public DnlibTypePicker()
@@ -35,16 +62,23 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public T GetDnlibType<T>(ITreeViewNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class {
-			var data = new MemberPickerVM(MainWindow.Instance.DnSpyFileListManager.DnSpyFileListOptions, MainWindow.Instance.CurrentLanguage, filter, MainWindow.Instance.DnSpyFileList.GetDnSpyFiles());
-			var win = new MemberPickerDlg();
-			win.DataContext = data;
-			win.Owner = ownerWindow ?? MainWindow.Instance;
-			data.SelectItem(selectedObject);
-			if (win.ShowDialog() != true)
-				return null;
+		public T GetDnlibType<T>(IFileTreeNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class {
+			var newFileTreeView = fileTreeViewCreator.Create(filter);
+			try {
+				var data = new MemberPickerVM(fileSearcherCreator, newFileTreeView, languageManager, filter, fileTreeView.FileManager.GetFiles());
+				data.SyntaxHighlight = fileTreeViewSettings.SyntaxHighlight;
+				var win = new MemberPickerDlg(fileTreeView, newFileTreeView, imageManager);
+				win.DataContext = data;
+				win.Owner = ownerWindow ?? appWindow.MainWindow;
+				data.SelectItem(selectedObject);
+				if (win.ShowDialog() != true)
+					return null;
 
-			return ImportObject(ownerModule, data.SelectedDnlibObject) as T;
+				return ImportObject(ownerModule, data.SelectedDnlibObject) as T;
+			}
+			finally {
+				newFileTreeView.Dispose();
+			}
 		}
 
 		static object ImportObject(ModuleDef ownerModule, object obj) {

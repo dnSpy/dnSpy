@@ -28,7 +28,7 @@ namespace dnSpy.Files.Tabs {
 
 		public static DnSpyFileInfo? TryLoad(ISettingsSection section) {
 			var name = section.Attribute<string>(FILEINFO_NAME_ATTR);
-			var type = section.Attribute<Guid?>(FILEINFO_TYPE_ATTR) ?? FilesConstants.FILETYPE_FILE;
+			var type = section.Attribute<Guid?>(FILEINFO_TYPE_ATTR) ?? FileConstants.FILETYPE_FILE;
 			if (string.IsNullOrEmpty(name))
 				return null;
 			return new DnSpyFileInfo(name, type);
@@ -36,7 +36,7 @@ namespace dnSpy.Files.Tabs {
 
 		public static void Save(ISettingsSection section, DnSpyFileInfo info) {
 			section.Attribute(FILEINFO_NAME_ATTR, info.Name);
-			if (info.Type != FilesConstants.FILETYPE_FILE)
+			if (info.Type != FileConstants.FILETYPE_FILE)
 				section.Attribute(FILEINFO_TYPE_ATTR, info.Type);
 		}
 	}

@@ -164,7 +164,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			internal static IEnumerable<IMemberRef> GetMemberRefs(IMenuItemContext context, string guid, bool checkRoot, ILanguageManager languageManager, DecompilerSettings decompilerSettings) {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					yield break;
-				var nodes = context.FindByType<ITreeNodeData[]>();
+				var nodes = context.Find<ITreeNodeData[]>();
 				if (nodes == null)
 					yield break;
 
@@ -238,7 +238,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				if (context.CreatorObject.Guid != new Guid(guid))
 					yield break;
 
-				var @ref = context.FindByType<CodeReferenceSegment>();
+				var @ref = context.Find<CodeReference>();
 				if (@ref != null) {
 					var mr = @ref.Reference as IMemberRef;
 					if (mr != null)
@@ -392,7 +392,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		static ITreeNodeData[] GetNodes(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID))
 				return null;
-			return RemoveAnalyzeCommand.GetNodes(context.FindByType<ITreeNodeData[]>());
+			return RemoveAnalyzeCommand.GetNodes(context.Find<ITreeNodeData[]>());
 		}
 
 		public override void Execute(IMenuItemContext context) {

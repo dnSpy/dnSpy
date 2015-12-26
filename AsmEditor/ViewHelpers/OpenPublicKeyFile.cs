@@ -20,8 +20,8 @@
 using System.Windows;
 using System.Windows.Forms;
 using dnlib.DotNet;
-using dnSpy.MVVM;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.App;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class OpenPublicKeyFile : IOpenPublicKeyFile {
@@ -52,7 +52,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			catch {
 			}
 
-			MainWindow.Instance.ShowMessageBox(string.Format("'{0}' is not a strong name key file (snk)", dialog.FileName), MessageBoxButton.OK, ownerWindow);
+			Shared.UI.App.MsgBox.Instance.Show(string.Format("'{0}' is not a strong name key file (snk)", dialog.FileName), MsgBoxButton.OK, ownerWindow);
 			return null;
 		}
 	}

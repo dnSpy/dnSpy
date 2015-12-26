@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
@@ -33,9 +34,13 @@ using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Files.TreeView {
 	sealed class ModuleFileNode : DnSpyFileNode, IModuleFileNode {
-		public ModuleFileNode(IDnSpyFile dnSpyFile)
+		public ModuleFileNode(IDnSpyDotNetFile dnSpyFile)
 			: base(dnSpyFile) {
 			Debug.Assert(dnSpyFile.ModuleDef != null);
+		}
+
+		public new IDnSpyDotNetFile DnSpyFile {
+			get { return (IDnSpyDotNetFile)base.DnSpyFile; }
 		}
 
 		public override Guid Guid {
@@ -92,6 +97,19 @@ namespace dnSpy.Files.TreeView {
 
 		public INamespaceNode Create(string name) {
 			return Context.FileTreeView.Create(name);
+		}
+
+		public INamespaceNode FindNode(string ns) {
+			if (ns == null)
+				return null;
+
+			TreeNode.EnsureChildrenLoaded();
+			foreach (var n in TreeNode.DataChildren.OfType<INamespaceNode>()) {
+				if (n.Name == ns)
+					return n;
+			}
+
+			return null;
 		}
 
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {

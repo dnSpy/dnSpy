@@ -30,13 +30,6 @@ namespace dnSpy.Shared.UI.Files {
 		public abstract DnSpyFileInfo? SerializedFile { get; }
 		public abstract IDnSpyFilenameKey Key { get; }
 
-		public virtual SerializedDnSpyModule? SerializedDnSpyModule {
-			get {
-				var mod = ModuleDef;
-				return mod == null ? (SerializedDnSpyModule?)null : Contracts.Files.SerializedDnSpyModule.CreateFromFile(mod);
-			}
-		}
-
 		public AssemblyDef AssemblyDef {
 			get { var m = ModuleDef; return m == null ? null : m.Assembly; }
 		}
@@ -108,6 +101,40 @@ namespace dnSpy.Shared.UI.Files {
 			annotations.RemoveAnnotations<T>();
 		}
 		readonly AnnotationsImpl annotations = new AnnotationsImpl();
+
+		public static IDnSpyFile CreateDnSpyFileFromFile(DnSpyFileInfo fileInfo, string filename, bool useMemoryMappedIO, bool loadPDBFiles, IAssemblyResolver asmResolver, bool isModule) {
+			try {
+				// Quick check to prevent exceptions from being thrown
+				if (!File.Exists(filename))
+					return new DnSpyUnknownFile(filename);
+
+				IPEImage peImage;
+
+				if (useMemoryMappedIO)
+					peImage = new PEImage(filename);
+				else
+					peImage = new PEImage(File.ReadAllBytes(filename), filename);
+
+				var dotNetDir = peImage.ImageNTHeaders.OptionalHeader.DataDirectories[14];
+				bool isDotNet = dotNetDir.VirtualAddress != 0 && dotNetDir.Size >= 0x48;
+				if (isDotNet) {
+					try {
+						var options = new ModuleCreationOptions(DnSpyDotNetFileBase.CreateModuleContext(asmResolver));
+						if (isModule)
+							return DnSpyDotNetFile.CreateModule(fileInfo, ModuleDefMD.Load(peImage, options), loadPDBFiles);
+						return DnSpyDotNetFile.CreateAssembly(fileInfo, ModuleDefMD.Load(peImage, options), loadPDBFiles);
+					}
+					catch {
+					}
+				}
+
+				return new DnSpyPEFile(peImage);
+			}
+			catch {
+			}
+
+			return new DnSpyUnknownFile(filename);
+		}
 	}
 
 	public sealed class DnSpyUnknownFile : DnSpyFile {
@@ -197,7 +224,7 @@ namespace dnSpy.Shared.UI.Files {
 		}
 	}
 
-	public sealed class DnSpyDotNetFile : DnSpyDotNetFileBase, IDisposable {
+	public class DnSpyDotNetFile : DnSpyDotNetFileBase, IDisposable {
 		readonly bool isAsmNode;
 
 		public override DnSpyFileInfo? SerializedFile {
@@ -209,7 +236,7 @@ namespace dnSpy.Shared.UI.Files {
 			get { return new FilenameKey(Filename); }
 		}
 
-		DnSpyDotNetFile(DnSpyFileInfo fileInfo, ModuleDef module, bool loadSyms, bool isAsmNode)
+		protected DnSpyDotNetFile(DnSpyFileInfo fileInfo, ModuleDef module, bool loadSyms, bool isAsmNode)
 			: base(module, loadSyms) {
 			this.fileInfo = fileInfo;
 			this.isAsmNode = isAsmNode;
@@ -223,6 +250,14 @@ namespace dnSpy.Shared.UI.Files {
 
 		public static DnSpyDotNetFile CreateAssembly(DnSpyFileInfo fileInfo, ModuleDef module, bool loadSyms) {
 			return new DnSpyDotNetFile(fileInfo, module, loadSyms, true);
+		}
+
+		public static DnSpyDotNetFile CreateModule(DnSpyFileInfo fileInfo, ModuleDef module, bool loadSyms) {
+			return new DnSpyDotNetFile(fileInfo, module, loadSyms, false);
+		}
+
+		public static DnSpyDotNetFile CreateAssembly(IDnSpyDotNetFile modFile) {
+			return new DnSpyDotNetFileAsmWithMod(modFile);
 		}
 
 		protected override List<IDnSpyFile> CreateChildren() {
@@ -244,6 +279,24 @@ namespace dnSpy.Shared.UI.Files {
 
 		public void Dispose() {
 			module.Dispose();
+		}
+	}
+
+	sealed class DnSpyDotNetFileAsmWithMod : DnSpyDotNetFile {
+		IDnSpyDotNetFile modFile;
+
+		public DnSpyDotNetFileAsmWithMod(IDnSpyDotNetFile modFile)
+			: base(modFile.SerializedFile ?? new DnSpyFileInfo(), modFile.ModuleDef, false, true) {
+			this.modFile = modFile;
+		}
+
+		protected override List<IDnSpyFile> CreateChildren() {
+			Debug.Assert(this.modFile != null);
+			var list = new List<IDnSpyFile>();
+			if (this.modFile != null)
+				list.Add(this.modFile);
+			this.modFile = null;
+			return list;
 		}
 	}
 }

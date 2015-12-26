@@ -29,7 +29,7 @@
              ResizeMode="NoResize"
              Title="Select"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
-             MinHeight="100" MinWidth="400">
+             MinWidth="400">
     <winlocal:WindowBase.Resources>
         <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
     </winlocal:WindowBase.Resources>

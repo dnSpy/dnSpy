@@ -22,7 +22,7 @@ using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using dnSpy.AsmEditor.Resources;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.App;
 using WF = System.Windows.Forms;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
@@ -59,7 +59,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			catch (Exception ex) {
 				if (imgStream != null)
 					imgStream.Dispose();
-				MainWindow.Instance.ShowMessageBox(string.Format("Could not open file or it's not an image. Error: {0}", ex.Message), MessageBoxButton.OK, ownerWindow);
+				Shared.UI.App.MsgBox.Instance.Show(string.Format("Could not open file or it's not an image. Error: {0}", ex.Message), MsgBoxButton.OK, ownerWindow);
 				return null;
 			}
 		}

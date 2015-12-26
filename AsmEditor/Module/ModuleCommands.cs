@@ -17,31 +17,33 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//TODO: All commands that modify the Modules prop must also update the IDnSpyFile.Children prop
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.SaveModule;
+using dnSpy.AsmEditor.UndoRedo;
+using dnSpy.Contracts.App;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
-using dnSpy.MVVM;
-using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TreeNodes;
+using dnSpy.Contracts.Plugin;
+using dnSpy.Shared.UI.Files;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.Module {
-	[Export(typeof(IPlugin))]
-	sealed class AssemblyPlugin : IPlugin {
-		void IPlugin.EarlyInit() {
-		}
-
-		public void OnLoaded() {
-			MainWindow.Instance.TreeView.AddCommandBinding(ApplicationCommands.Delete, new EditMenuHandlerCommandProxy(new RemoveNetModuleFromAssemblyCommand.EditMenuCommand()));
-			Utils.InstallSettingsCommand(new ModuleSettingsCommand.EditMenuCommand(), null);
+	[ExportAutoLoaded]
+	sealed class CommandLoader : IAutoLoaded {
+		[ImportingConstructor]
+		CommandLoader(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, RemoveNetModuleFromAssemblyCommand.EditMenuCommand removeCmd, ModuleSettingsCommand.EditMenuCommand settingsCmd) {
+			wpfCommandManager.AddRemoveCommand(removeCmd);
+			wpfCommandManager.AddSettingsCommand(fileTabManager, settingsCmd, null);
 		}
 	}
 
@@ -50,52 +52,74 @@ namespace dnSpy.AsmEditor.Module {
 		const string CMD_NAME = "Create NetModule";
 		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 30)]
 		sealed class FilesCommand : FilesContextMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly IAppWindow appWindow;
+
+			[ImportingConstructor]
+			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow) {
+				this.undoCommandManager = undoCommandManager;
+				this.appWindow = appWindow;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return CreateNetModuleCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				CreateNetModuleCommand.Execute(context.Nodes);
+				CreateNetModuleCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 30)]
 		sealed class EditMenuCommand : EditMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly IAppWindow appWindow;
+
+			[ImportingConstructor]
+			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
+				: base(appWindow.FileTreeView) {
+				this.undoCommandManager = undoCommandManager;
+				this.appWindow = appWindow;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return CreateNetModuleCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				CreateNetModuleCommand.Execute(context.Nodes);
+				CreateNetModuleCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(IFileTreeNodeData[] nodes) {
 			return nodes != null &&
-				(nodes.Length == 0 || nodes.Any(a => a is AssemblyTreeNode));
+				(nodes.Length == 0 || nodes.Any(a => a is IDnSpyFileNode));
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
 			var win = new NetModuleOptionsDlg();
 			var data = new NetModuleOptionsVM();
 			win.DataContext = data;
-			win.Owner = MainWindow.Instance;
+			win.Owner = appWindow.MainWindow;
 			if (win.ShowDialog() != true)
 				return;
 
-			var cmd = new CreateNetModuleCommand(data.CreateNetModuleOptions());
-			UndoCommandManager.Instance.Add(cmd);
-			MainWindow.Instance.JumpToReference(cmd.asmNodeCreator.AssemblyTreeNode);
+			var cmd = new CreateNetModuleCommand(undoCommandManager, appWindow.FileTreeView, data.CreateNetModuleOptions());
+			undoCommandManager.Value.Add(cmd);
+			appWindow.FileTabManager.FollowReference(cmd.fileNodeCreator.DnSpyFileNode);
 		}
 
-		AssemblyTreeNodeCreator asmNodeCreator;
+		readonly RootDnSpyFileNodeCreator fileNodeCreator;
+		readonly Lazy<IUndoCommandManager> undoCommandManager;
 
-		CreateNetModuleCommand(NetModuleOptions options) {
+		CreateNetModuleCommand(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeView fileTreeView, NetModuleOptions options) {
+			this.undoCommandManager = undoCommandManager;
 			var module = ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion);
-			this.asmNodeCreator = new AssemblyTreeNodeCreator(MainWindow.Instance.DnSpyFileList.CreateDnSpyFile(module, false));
+			var file = DnSpyDotNetFile.CreateModule(DnSpyFileInfo.CreateFile(string.Empty), module, fileTreeView.FileManager.Settings.LoadPDBFiles);
+			this.fileNodeCreator = RootDnSpyFileNodeCreator.CreateModule(fileTreeView, file);
 		}
 
 		public string Description {
@@ -103,22 +127,16 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public void Execute() {
-			asmNodeCreator.Add();
-			UndoCommandManager.Instance.MarkAsModified(asmNodeCreator.AssemblyTreeNode.DnSpyFile);
+			fileNodeCreator.Add();
+			undoCommandManager.Value.MarkAsModified(undoCommandManager.Value.GetUndoObject(fileNodeCreator.DnSpyFileNode.DnSpyFile));
 		}
 
 		public void Undo() {
-			asmNodeCreator.Remove();
+			fileNodeCreator.Remove();
 		}
 
 		public IEnumerable<object> ModifiedObjects {
-			get { yield return asmNodeCreator.AssemblyTreeNode; }
-		}
-
-		public void Dispose() {
-			if (asmNodeCreator != null)
-				asmNodeCreator.Dispose();
-			asmNodeCreator = null;
+			get { yield return fileNodeCreator.DnSpyFileNode; }
 		}
 	}
 
@@ -127,50 +145,67 @@ namespace dnSpy.AsmEditor.Module {
 		const string CMD_NAME = "Convert NetModule to Assembly";
 		[ExportMenuItem(Header = CMD_NAME, Icon = "ModuleToAssembly", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 20)]
 		sealed class FilesCommand : FilesContextMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+
+			[ImportingConstructor]
+			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager) {
+				this.undoCommandManager = undoCommandManager;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return ConvertNetModuleToAssemblyCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				ConvertNetModuleToAssemblyCommand.Execute(context.Nodes);
+				ConvertNetModuleToAssemblyCommand.Execute(undoCommandManager, context.Nodes);
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "ModuleToAssembly", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 20)]
 		sealed class EditMenuCommand : EditMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+
+			[ImportingConstructor]
+			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeView fileTreeView)
+				: base(fileTreeView) {
+				this.undoCommandManager = undoCommandManager;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return ConvertNetModuleToAssemblyCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				ConvertNetModuleToAssemblyCommand.Execute(context.Nodes);
+				ConvertNetModuleToAssemblyCommand.Execute(undoCommandManager, context.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(IFileTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length > 0 &&
-				nodes.All(n => n is AssemblyTreeNode && ((AssemblyTreeNode)n).IsNetModule);
+				nodes.All(n => n is IModuleFileNode &&
+								n.TreeNode.Parent != null &&
+								!(n.TreeNode.Parent.Data is IAssemblyFileNode));
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			UndoCommandManager.Instance.Add(new ConvertNetModuleToAssemblyCommand(nodes));
+			undoCommandManager.Value.Add(new ConvertNetModuleToAssemblyCommand(nodes));
 		}
 
-		readonly AssemblyTreeNode[] nodes;
+		readonly IModuleFileNode[] nodes;
 		SavedState[] savedStates;
 		bool hasExecuted;
 		sealed class SavedState {
 			public ModuleKind ModuleKind;
 			public Characteristics Characteristics;
-			public AssemblyTreeNode AssemblyTreeNode;
+			public IAssemblyFileNode AssemblyFileNode;
 		}
 
-		ConvertNetModuleToAssemblyCommand(ILSpyTreeNode[] nodes) {
-			this.nodes = nodes.Select(n => (AssemblyTreeNode)n).ToArray();
+		ConvertNetModuleToAssemblyCommand(IFileTreeNodeData[] nodes) {
+			this.nodes = nodes.Cast<IModuleFileNode>().ToArray();
 			this.savedStates = new SavedState[this.nodes.Length];
 			for (int i = 0; i < this.savedStates.Length; i++)
 				this.savedStates[i] = new SavedState();
@@ -196,7 +231,26 @@ namespace dnSpy.AsmEditor.Module {
 
 				savedState.ModuleKind = module.Kind;
 				ModuleUtils.AddToNewAssemblyDef(module, ModuleKind.Dll, out savedState.Characteristics);
-				node.OnConvertedToAssembly(savedState.AssemblyTreeNode);
+
+				if (savedState.AssemblyFileNode == null) {
+					var asmFile = DnSpyDotNetFile.CreateAssembly(node.DnSpyFile);
+					savedState.AssemblyFileNode = node.Context.FileTreeView.CreateAssembly(asmFile);
+				}
+
+				Debug.Assert(savedState.AssemblyFileNode.DnSpyFile.Children.Count == 1);
+				savedState.AssemblyFileNode.DnSpyFile.Children.Remove(node.DnSpyFile);
+				Debug.Assert(savedState.AssemblyFileNode.DnSpyFile.Children.Count == 0);
+				savedState.AssemblyFileNode.TreeNode.EnsureChildrenLoaded();
+				Debug.Assert(savedState.AssemblyFileNode.TreeNode.Children.Count == 0);
+				savedState.AssemblyFileNode.DnSpyFile.Children.Add(node.DnSpyFile);
+
+				int index = node.Context.FileTreeView.TreeView.Root.DataChildren.ToList().IndexOf(node);
+				b = index >= 0;
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+				node.Context.FileTreeView.TreeView.Root.Children[index] = savedState.AssemblyFileNode.TreeNode;
+				savedState.AssemblyFileNode.TreeNode.AddChild(node.TreeNode);
 			}
 			hasExecuted = true;
 		}
@@ -209,26 +263,31 @@ namespace dnSpy.AsmEditor.Module {
 			for (int i = nodes.Length - 1; i >= 0; i--) {
 				var node = nodes[i];
 				var savedState = savedStates[i];
+
+				int index = node.Context.FileTreeView.TreeView.Root.DataChildren.ToList().IndexOf(savedState.AssemblyFileNode);
+				bool b = index >= 0;
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+				savedState.AssemblyFileNode.TreeNode.Children.Remove(node.TreeNode);
+				node.Context.FileTreeView.TreeView.Root.Children[index] = node.TreeNode;
+
 				var module = node.DnSpyFile.ModuleDef;
-				bool b = module != null && module.Assembly != null &&
-						module.Assembly.Modules.Count == 1 &&
-						module.Assembly.ManifestModule == module;
+				b = module != null && module.Assembly != null &&
+					module.Assembly.Modules.Count == 1 &&
+					module.Assembly.ManifestModule == module;
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
 				module.Assembly.Modules.Remove(module);
 				module.Kind = savedState.ModuleKind;
 				module.Characteristics = savedState.Characteristics;
-				savedState.AssemblyTreeNode = node.OnConvertedToNetModule();
 			}
 			hasExecuted = false;
 		}
 
 		public IEnumerable<object> ModifiedObjects {
 			get { return nodes; }
-		}
-
-		public void Dispose() {
 		}
 	}
 
@@ -237,6 +296,13 @@ namespace dnSpy.AsmEditor.Module {
 		const string CMD_NAME = "Convert Assembly to NetModule";
 		[ExportMenuItem(Header = CMD_NAME, Icon = "AssemblyToModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 30)]
 		sealed class FilesCommand : FilesContextMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+
+			[ImportingConstructor]
+			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager) {
+				this.undoCommandManager = undoCommandManager;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return ConvertAssemblyToNetModuleCommand.IsVisible(context.Nodes);
 			}
@@ -246,12 +312,20 @@ namespace dnSpy.AsmEditor.Module {
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				ConvertAssemblyToNetModuleCommand.Execute(context.Nodes);
+				ConvertAssemblyToNetModuleCommand.Execute(undoCommandManager, context.Nodes);
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "AssemblyToModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 30)]
 		sealed class EditMenuCommand : EditMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+
+			[ImportingConstructor]
+			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeView fileTreeView)
+				: base(fileTreeView) {
+				this.undoCommandManager = undoCommandManager;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return ConvertAssemblyToNetModuleCommand.IsVisible(context.Nodes);
 			}
@@ -261,41 +335,42 @@ namespace dnSpy.AsmEditor.Module {
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				ConvertAssemblyToNetModuleCommand.Execute(context.Nodes);
+				ConvertAssemblyToNetModuleCommand.Execute(undoCommandManager, context.Nodes);
 			}
 		}
 
-		static bool IsVisible(ILSpyTreeNode[] nodes) {
+		static bool IsVisible(IFileTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length > 0 &&
-				nodes.All(n => n is AssemblyTreeNode && ((AssemblyTreeNode)n).IsAssembly);
+				nodes.All(n => n is IAssemblyFileNode);
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(IFileTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length > 0 &&
-				nodes.All(n => n is AssemblyTreeNode && ((AssemblyTreeNode)n).IsAssembly &&
-					((AssemblyTreeNode)n).DnSpyFile.AssemblyDef.Modules.Count == 1);
+				nodes.All(n => n is IAssemblyFileNode &&
+					((IAssemblyFileNode)n).DnSpyFile.AssemblyDef != null &&
+					((IAssemblyFileNode)n).DnSpyFile.AssemblyDef.Modules.Count == 1);
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			UndoCommandManager.Instance.Add(new ConvertAssemblyToNetModuleCommand(nodes));
+			undoCommandManager.Value.Add(new ConvertAssemblyToNetModuleCommand(nodes));
 		}
 
-		readonly AssemblyTreeNode[] nodes;
+		readonly IAssemblyFileNode[] nodes;
 		SavedState[] savedStates;
 		sealed class SavedState {
 			public AssemblyDef AssemblyDef;
 			public ModuleKind ModuleKind;
 			public Characteristics Characteristics;
-			public AssemblyTreeNode ModuleNode;
+			public IModuleFileNode ModuleNode;
 		}
 
-		ConvertAssemblyToNetModuleCommand(ILSpyTreeNode[] nodes) {
-			this.nodes = nodes.Select(n => (AssemblyTreeNode)n).ToArray();
+		ConvertAssemblyToNetModuleCommand(IFileTreeNodeData[] nodes) {
+			this.nodes = nodes.Cast<IAssemblyFileNode>().ToArray();
 		}
 
 		public string Description {
@@ -311,19 +386,28 @@ namespace dnSpy.AsmEditor.Module {
 				var node = nodes[i];
 				savedStates[i] = new SavedState();
 				var savedState = savedStates[i];
-				var module = node.DnSpyFile.ModuleDef;
-				bool b = module != null && module.Assembly != null &&
-						module.Assembly.Modules.Count == 1 &&
-						module.Assembly.ManifestModule == module;
+
+				int index = node.TreeNode.Parent.Children.IndexOf(node.TreeNode);
+				bool b = index >= 0;
 				Debug.Assert(b);
 				if (!b)
 					throw new InvalidOperationException();
-				node.EnsureChildrenFiltered();
+				savedState.ModuleNode = (IModuleFileNode)node.TreeNode.Children.First(a => a.Data is IModuleFileNode).Data;
+				node.TreeNode.Children.Remove(savedState.ModuleNode.TreeNode);
+				node.TreeNode.Parent.Children[index] = savedState.ModuleNode.TreeNode;
+
+				var module = node.DnSpyFile.ModuleDef;
+				b = module != null && module.Assembly != null &&
+					module.Assembly.Modules.Count == 1 &&
+					module.Assembly.ManifestModule == module;
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+				node.TreeNode.EnsureChildrenLoaded();
 				savedState.AssemblyDef = module.Assembly;
 				module.Assembly.Modules.Remove(module);
 				savedState.ModuleKind = module.Kind;
 				ModuleUtils.WriteNewModuleKind(module, ModuleKind.NetModule, out savedState.Characteristics);
-				savedState.ModuleNode = node.OnConvertedToNetModule();
 			}
 		}
 
@@ -345,7 +429,15 @@ namespace dnSpy.AsmEditor.Module {
 				module.Kind = savedState.ModuleKind;
 				module.Characteristics = savedState.Characteristics;
 				savedState.AssemblyDef.Modules.Add(module);
-				node.OnConvertedToAssembly(savedState.ModuleNode);
+
+				var parent = savedState.ModuleNode.TreeNode.Parent;
+				int index = parent.Children.IndexOf(savedState.ModuleNode.TreeNode);
+				b = index >= 0;
+				Debug.Assert(b);
+				if (!b)
+					throw new InvalidOperationException();
+				parent.Children[index] = node.TreeNode;
+				node.TreeNode.AddChild(savedState.ModuleNode.TreeNode);
 			}
 			savedStates = null;
 		}
@@ -353,29 +445,25 @@ namespace dnSpy.AsmEditor.Module {
 		public IEnumerable<object> ModifiedObjects {
 			get { return nodes; }
 		}
-
-		public void Dispose() {
-		}
 	}
 
 	abstract class AddNetModuleToAssemblyCommand : IUndoCommand2 {
-		internal static bool CanExecute(ILSpyTreeNode[] nodes) {
+		internal static bool CanExecute(IFileTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
-				nodes[0] is AssemblyTreeNode &&
-				(((AssemblyTreeNode)nodes[0]).IsAssembly || ((AssemblyTreeNode)nodes[0]).IsModuleInAssembly);
+				(nodes[0] is IAssemblyFileNode || nodes[0] is IModuleFileNode);
 		}
 
-		readonly AssemblyTreeNode asmNode;
-		internal readonly AssemblyTreeNode modNode;
+		readonly IUndoCommandManager undoCommandManager;
+		readonly IAssemblyFileNode asmNode;
+		internal readonly IModuleFileNode modNode;
 		readonly bool modNodeWasCreated;
 
-		protected AddNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, AssemblyTreeNode modNode, bool modNodeWasCreated) {
-			if (asmNode.Parent is AssemblyTreeNode)
-				asmNode = (AssemblyTreeNode)asmNode.Parent;
-			Debug.Assert(!(asmNode.Parent is AssemblyTreeNode));
-			Debug.Assert(asmNode.IsAssembly);
-			this.asmNode = asmNode;
+		protected AddNetModuleToAssemblyCommand(IUndoCommandManager undoCommandManager, IDnSpyFileNode asmNode, IModuleFileNode modNode, bool modNodeWasCreated) {
+			this.undoCommandManager = undoCommandManager;
+			if (!(asmNode is IAssemblyFileNode))
+				asmNode = (IAssemblyFileNode)asmNode.TreeNode.Parent.Data;
+			this.asmNode = (IAssemblyFileNode)asmNode;
 			this.modNode = modNode;
 			this.modNodeWasCreated = modNodeWasCreated;
 		}
@@ -383,22 +471,24 @@ namespace dnSpy.AsmEditor.Module {
 		public abstract string Description { get; }
 
 		public void Execute() {
-			Debug.Assert(modNode.Parent == null);
-			if (modNode.Parent != null)
+			Debug.Assert(modNode.TreeNode.Parent == null);
+			if (modNode.TreeNode.Parent != null)
 				throw new InvalidOperationException();
-			asmNode.EnsureChildrenFiltered();
+			asmNode.TreeNode.EnsureChildrenLoaded();
 			asmNode.DnSpyFile.AssemblyDef.Modules.Add(modNode.DnSpyFile.ModuleDef);
-			asmNode.Children.Add(modNode);
+			asmNode.DnSpyFile.Children.Add(modNode.DnSpyFile);
+			asmNode.TreeNode.AddChild(modNode.TreeNode);
 			if (modNodeWasCreated)
-				UndoCommandManager.Instance.MarkAsModified(modNode.DnSpyFile);
+				undoCommandManager.MarkAsModified(undoCommandManager.GetUndoObject(modNode.DnSpyFile));
 		}
 
 		public void Undo() {
-			Debug.Assert(modNode.Parent != null);
-			if (modNode.Parent == null)
+			Debug.Assert(modNode.TreeNode.Parent != null);
+			if (modNode.TreeNode.Parent == null)
 				throw new InvalidOperationException();
 			asmNode.DnSpyFile.AssemblyDef.Modules.Remove(modNode.DnSpyFile.ModuleDef);
-			bool b = asmNode.Children.Remove(modNode);
+			asmNode.DnSpyFile.Children.Remove(modNode.DnSpyFile);
+			bool b = asmNode.TreeNode.Children.Remove(modNode.TreeNode);
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
@@ -414,57 +504,77 @@ namespace dnSpy.AsmEditor.Module {
 					yield return modNode;
 			}
 		}
-
-		public void Dispose() {
-		}
 	}
 
 	sealed class AddNewNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand {
 		const string CMD_NAME = "Add New NetModule to Assembly";
 		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 10)]
 		sealed class FilesCommand : FilesContextMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly IAppWindow appWindow;
+
+			[ImportingConstructor]
+			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow) {
+				this.undoCommandManager = undoCommandManager;
+				this.appWindow = appWindow;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return AddNewNetModuleToAssemblyCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				AddNewNetModuleToAssemblyCommand.Execute(context.Nodes);
+				AddNewNetModuleToAssemblyCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 10)]
 		sealed class EditMenuCommand : EditMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly IAppWindow appWindow;
+
+			[ImportingConstructor]
+			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
+				: base(appWindow.FileTreeView) {
+				this.undoCommandManager = undoCommandManager;
+				this.appWindow = appWindow;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return AddNewNetModuleToAssemblyCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				AddNewNetModuleToAssemblyCommand.Execute(context.Nodes);
+				AddNewNetModuleToAssemblyCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 			}
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!AddNetModuleToAssemblyCommand.CanExecute(nodes))
 				return;
 
-			var asmNode = (AssemblyTreeNode)nodes[0];
-			if (asmNode.Parent is AssemblyTreeNode)
-				asmNode = (AssemblyTreeNode)asmNode.Parent;
+			var asmNode = (IDnSpyFileNode)nodes[0];
+			if (asmNode is IModuleFileNode)
+				asmNode = (IAssemblyFileNode)asmNode.TreeNode.Parent.Data;
 
 			var win = new NetModuleOptionsDlg();
 			var data = new NetModuleOptionsVM(asmNode.DnSpyFile.ModuleDef);
 			win.DataContext = data;
-			win.Owner = MainWindow.Instance;
+			win.Owner = appWindow.MainWindow;
 			if (win.ShowDialog() != true)
 				return;
 
-			var cmd = new AddNewNetModuleToAssemblyCommand((AssemblyTreeNode)nodes[0], data.CreateNetModuleOptions());
-			UndoCommandManager.Instance.Add(cmd);
-			MainWindow.Instance.JumpToReference(cmd.modNode);
+			var options = data.CreateNetModuleOptions();
+			var newModule = ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion);
+			var newFile = DnSpyDotNetFile.CreateModule(DnSpyFileInfo.CreateFile(string.Empty), newModule, appWindow.FileTreeView.FileManager.Settings.LoadPDBFiles);
+			var newModNode = asmNode.Context.FileTreeView.CreateModule(newFile);
+			var cmd = new AddNewNetModuleToAssemblyCommand(undoCommandManager.Value, (IDnSpyFileNode)nodes[0], newModNode);
+			undoCommandManager.Value.Add(cmd);
+			appWindow.FileTabManager.FollowReference(cmd.modNode);
 		}
 
-		AddNewNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, NetModuleOptions options)
-			: base(asmNode, new AssemblyTreeNode(MainWindow.Instance.DnSpyFileList.CreateDnSpyFile(ModuleUtils.CreateNetModule(options.Name, options.Mvid, options.ClrVersion), false)), true) {
+		AddNewNetModuleToAssemblyCommand(IUndoCommandManager undoCommandManager, IDnSpyFileNode asmNode, IModuleFileNode modNode)
+			: base(undoCommandManager, asmNode, modNode, true) {
 		}
 
 		public override string Description {
@@ -476,27 +586,46 @@ namespace dnSpy.AsmEditor.Module {
 		const string CMD_NAME = "Add Existing NetModule to Assembly";
 		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 20)]
 		sealed class FilesCommand : FilesContextMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly IAppWindow appWindow;
+
+			[ImportingConstructor]
+			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow) {
+				this.undoCommandManager = undoCommandManager;
+				this.appWindow = appWindow;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return AddExistingNetModuleToAssemblyCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				AddExistingNetModuleToAssemblyCommand.Execute(context.Nodes);
+				AddExistingNetModuleToAssemblyCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 			}
 		}
 
 		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 20)]
 		sealed class EditMenuCommand : EditMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly IAppWindow appWindow;
+
+			[ImportingConstructor]
+			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
+				: base(appWindow.FileTreeView) {
+				this.undoCommandManager = undoCommandManager;
+				this.appWindow = appWindow;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return AddExistingNetModuleToAssemblyCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				AddExistingNetModuleToAssemblyCommand.Execute(context.Nodes);
+				AddExistingNetModuleToAssemblyCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 			}
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!AddNetModuleToAssemblyCommand.CanExecute(nodes))
 				return;
 
@@ -509,22 +638,25 @@ namespace dnSpy.AsmEditor.Module {
 			if (string.IsNullOrEmpty(dialog.FileName))
 				return;
 
-			var asm = MainWindow.Instance.DnSpyFileList.CreateDnSpyFile(dialog.FileName);
-			if (asm.ModuleDef == null || asm.AssemblyDef != null) {
-				MainWindow.Instance.ShowMessageBox(string.Format("{0} is not a NetModule", asm.Filename), System.Windows.MessageBoxButton.OK);
-				var id = asm as IDisposable;
+			var fm = appWindow.FileTreeView.FileManager;
+			var file = DnSpyFile.CreateDnSpyFileFromFile(DnSpyFileInfo.CreateFile(dialog.FileName), dialog.FileName, fm.Settings.UseMemoryMappedIO, fm.Settings.LoadPDBFiles, fm.AssemblyResolver, true);
+			if (file.ModuleDef == null || file.AssemblyDef != null || !(file is IDnSpyDotNetFile)) {
+				Shared.UI.App.MsgBox.Instance.Show(string.Format("{0} is not a NetModule", file.Filename), MsgBoxButton.OK);
+				var id = file as IDisposable;
 				if (id != null)
 					id.Dispose();
 				return;
 			}
 
-			var cmd = new AddExistingNetModuleToAssemblyCommand((AssemblyTreeNode)nodes[0], asm);
-			UndoCommandManager.Instance.Add(cmd);
-			MainWindow.Instance.JumpToReference(cmd.modNode);
+			var node = (IDnSpyFileNode)nodes[0];
+			var newModNode = node.Context.FileTreeView.CreateModule((IDnSpyDotNetFile)file);
+			var cmd = new AddExistingNetModuleToAssemblyCommand(undoCommandManager.Value, node, newModNode);
+			undoCommandManager.Value.Add(cmd);
+			appWindow.FileTabManager.FollowReference(cmd.modNode);
 		}
 
-		AddExistingNetModuleToAssemblyCommand(AssemblyTreeNode asmNode, IDnSpyFile asm)
-			: base(asmNode, new AssemblyTreeNode(asm), false) {
+		AddExistingNetModuleToAssemblyCommand(IUndoCommandManager undoCommandManager, IDnSpyFileNode asmNode, IModuleFileNode modNode)
+			: base(undoCommandManager, asmNode, modNode, false) {
 		}
 
 		public override string Description {
@@ -536,6 +668,17 @@ namespace dnSpy.AsmEditor.Module {
 		const string CMD_NAME = "Remove NetModule from Assembly";
 		[ExportMenuItem(Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 10)]
 		sealed class FilesCommand : FilesContextMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IDocumentSaver> documentSaver;
+			readonly IAppWindow appWindow;
+
+			[ImportingConstructor]
+			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IDocumentSaver> documentSaver, IAppWindow appWindow) {
+				this.undoCommandManager = undoCommandManager;
+				this.documentSaver = documentSaver;
+				this.appWindow = appWindow;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return RemoveNetModuleFromAssemblyCommand.IsVisible(context.Nodes);
 			}
@@ -545,12 +688,24 @@ namespace dnSpy.AsmEditor.Module {
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				RemoveNetModuleFromAssemblyCommand.Execute(context.Nodes);
+				RemoveNetModuleFromAssemblyCommand.Execute(undoCommandManager, documentSaver, appWindow, context.Nodes);
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 10)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 10)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly Lazy<IDocumentSaver> documentSaver;
+			readonly IAppWindow appWindow;
+
+			[ImportingConstructor]
+			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IDocumentSaver> documentSaver, IAppWindow appWindow)
+				: base(appWindow.FileTreeView) {
+				this.undoCommandManager = undoCommandManager;
+				this.documentSaver = documentSaver;
+				this.appWindow = appWindow;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return RemoveNetModuleFromAssemblyCommand.IsVisible(context.Nodes);
 			}
@@ -560,47 +715,53 @@ namespace dnSpy.AsmEditor.Module {
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				RemoveNetModuleFromAssemblyCommand.Execute(context.Nodes);
+				RemoveNetModuleFromAssemblyCommand.Execute(undoCommandManager, documentSaver, appWindow, context.Nodes);
 			}
 		}
 
-		static bool IsVisible(ILSpyTreeNode[] nodes) {
+		static bool IsVisible(IFileTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
-				nodes[0] is AssemblyTreeNode &&
-				((AssemblyTreeNode)nodes[0]).IsModuleInAssembly;
+				nodes[0] is IModuleFileNode &&
+				nodes[0].TreeNode.Parent != null &&
+				nodes[0].TreeNode.Parent.Data is IAssemblyFileNode;
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(IFileTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
-				nodes[0] is AssemblyTreeNode &&
-				((AssemblyTreeNode)nodes[0]).IsNetModuleInAssembly;
+				nodes[0] is IModuleFileNode &&
+				nodes[0].TreeNode.Parent != null &&
+				nodes[0].TreeNode.Parent.DataChildren.ToList().IndexOf(nodes[0]) > 0;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IDocumentSaver> documentSaver, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var asmNode = (AssemblyTreeNode)nodes[0];
-			if (!SaveModule.Saver.AskUserToSaveIfModified(asmNode))
+			var modNode = (IModuleFileNode)nodes[0];
+			if (!documentSaver.Value.AskUserToSaveIfModified(new[] { modNode.DnSpyFile }))
 				return;
 
-			UndoCommandManager.Instance.Add(new RemoveNetModuleFromAssemblyCommand(asmNode));
+			undoCommandManager.Value.Add(new RemoveNetModuleFromAssemblyCommand(undoCommandManager, modNode));
 		}
 
-		readonly AssemblyTreeNode asmNode;
-		readonly AssemblyTreeNode modNode;
-		readonly int removeIndex;
+		readonly IAssemblyFileNode asmNode;
+		readonly IModuleFileNode modNode;
+		readonly int removeIndex, removeIndexDnSpyFile;
+		readonly Lazy<IUndoCommandManager> undoCommandManager;
 
-		RemoveNetModuleFromAssemblyCommand(AssemblyTreeNode modNode) {
-			this.asmNode = (AssemblyTreeNode)modNode.Parent;
+		RemoveNetModuleFromAssemblyCommand(Lazy<IUndoCommandManager> undoCommandManager, IModuleFileNode modNode) {
+			this.undoCommandManager = undoCommandManager;
+			this.asmNode = (IAssemblyFileNode)modNode.TreeNode.Parent.Data;
 			Debug.Assert(this.asmNode != null);
 			this.modNode = modNode;
-			this.removeIndex = asmNode.Children.IndexOf(modNode);
+			this.removeIndex = asmNode.TreeNode.DataChildren.ToList().IndexOf(modNode);
 			Debug.Assert(this.removeIndex > 0);
 			Debug.Assert(asmNode.DnSpyFile.AssemblyDef != null &&
 				asmNode.DnSpyFile.AssemblyDef.Modules.IndexOf(modNode.DnSpyFile.ModuleDef) == this.removeIndex);
+			this.removeIndexDnSpyFile = asmNode.DnSpyFile.Children.IndexOf(modNode.DnSpyFile);
+			Debug.Assert(this.removeIndexDnSpyFile >= 0);
 		}
 
 		public string Description {
@@ -608,26 +769,32 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public void Execute() {
-			Debug.Assert(modNode.Parent != null);
-			if (modNode.Parent == null)
+			Debug.Assert(modNode.TreeNode.Parent != null);
+			if (modNode.TreeNode.Parent == null)
 				throw new InvalidOperationException();
-			bool b = removeIndex < asmNode.Children.Count && asmNode.Children[removeIndex] == modNode &&
+
+			var children = asmNode.TreeNode.DataChildren.ToArray();
+			bool b = removeIndex < children.Length && children[removeIndex] == modNode &&
 				removeIndex < asmNode.DnSpyFile.AssemblyDef.Modules.Count &&
-				asmNode.DnSpyFile.AssemblyDef.Modules[removeIndex] == modNode.DnSpyFile.ModuleDef;
+				asmNode.DnSpyFile.AssemblyDef.Modules[removeIndex] == modNode.DnSpyFile.ModuleDef &&
+				removeIndexDnSpyFile < asmNode.DnSpyFile.Children.Count &&
+				asmNode.DnSpyFile.Children[removeIndexDnSpyFile] == modNode.DnSpyFile;
 			Debug.Assert(b);
 			if (!b)
 				throw new InvalidOperationException();
 			asmNode.DnSpyFile.AssemblyDef.Modules.RemoveAt(removeIndex);
-			asmNode.Children.RemoveAt(removeIndex);
-			UndoCommandManager.Instance.MarkAsModified(asmNode.DnSpyFile);
+			asmNode.DnSpyFile.Children.RemoveAt(removeIndexDnSpyFile);
+			asmNode.TreeNode.Children.RemoveAt(removeIndex);
+			undoCommandManager.Value.MarkAsModified(undoCommandManager.Value.GetUndoObject(asmNode.DnSpyFile));
 		}
 
 		public void Undo() {
-			Debug.Assert(modNode.Parent == null);
-			if (modNode.Parent != null)
+			Debug.Assert(modNode.TreeNode.Parent == null);
+			if (modNode.TreeNode.Parent != null)
 				throw new InvalidOperationException();
 			asmNode.DnSpyFile.AssemblyDef.Modules.Insert(removeIndex, modNode.DnSpyFile.ModuleDef);
-			asmNode.Children.Insert(removeIndex, modNode);
+			asmNode.DnSpyFile.Children.Insert(removeIndexDnSpyFile, modNode.DnSpyFile);
+			asmNode.TreeNode.Children.Insert(removeIndex, modNode.TreeNode);
 		}
 
 		public IEnumerable<object> ModifiedObjects {
@@ -637,9 +804,6 @@ namespace dnSpy.AsmEditor.Module {
 		public IEnumerable<object> NonModifiedObjects {
 			get { yield return modNode; }
 		}
-
-		public void Dispose() {
-		}
 	}
 
 	[DebuggerDisplay("{Description}")]
@@ -647,55 +811,73 @@ namespace dnSpy.AsmEditor.Module {
 		const string CMD_NAME = "Edit Module";
 		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 10)]
 		sealed class FilesCommand : FilesContextMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly IAppWindow appWindow;
+
+			[ImportingConstructor]
+			FilesCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow) {
+				this.undoCommandManager = undoCommandManager;
+				this.appWindow = appWindow;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return ModuleSettingsCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				ModuleSettingsCommand.Execute(context.Nodes);
+				ModuleSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 10)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 10)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
+			readonly Lazy<IUndoCommandManager> undoCommandManager;
+			readonly IAppWindow appWindow;
+
+			[ImportingConstructor]
+			EditMenuCommand(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow)
+				: base(appWindow.FileTreeView) {
+				this.undoCommandManager = undoCommandManager;
+				this.appWindow = appWindow;
+			}
+
 			public override bool IsVisible(AsmEditorContext context) {
 				return ModuleSettingsCommand.CanExecute(context.Nodes);
 			}
 
 			public override void Execute(AsmEditorContext context) {
-				ModuleSettingsCommand.Execute(context.Nodes);
+				ModuleSettingsCommand.Execute(undoCommandManager, appWindow, context.Nodes);
 			}
 		}
 
-		static bool CanExecute(ILSpyTreeNode[] nodes) {
+		static bool CanExecute(IFileTreeNodeData[] nodes) {
 			return nodes != null &&
 				nodes.Length == 1 &&
-				nodes[0] is AssemblyTreeNode &&
-				((AssemblyTreeNode)nodes[0]).IsModule;
+				nodes[0] is IModuleFileNode;
 		}
 
-		static void Execute(ILSpyTreeNode[] nodes) {
+		static void Execute(Lazy<IUndoCommandManager> undoCommandManager, IAppWindow appWindow, IFileTreeNodeData[] nodes) {
 			if (!CanExecute(nodes))
 				return;
 
-			var asmNode = (AssemblyTreeNode)nodes[0];
+			var asmNode = (IModuleFileNode)nodes[0];
 
 			var module = asmNode.DnSpyFile.ModuleDef;
-			var data = new ModuleOptionsVM(module, new ModuleOptions(module), MainWindow.Instance.CurrentLanguage);
+			var data = new ModuleOptionsVM(module, new ModuleOptions(module), appWindow.LanguageManager);
 			var win = new ModuleOptionsDlg();
 			win.DataContext = data;
-			win.Owner = MainWindow.Instance;
+			win.Owner = appWindow.MainWindow;
 			if (win.ShowDialog() != true)
 				return;
 
-			UndoCommandManager.Instance.Add(new ModuleSettingsCommand(asmNode, data.CreateModuleOptions()));
+			undoCommandManager.Value.Add(new ModuleSettingsCommand(asmNode, data.CreateModuleOptions()));
 		}
 
-		readonly AssemblyTreeNode modNode;
+		readonly IModuleFileNode modNode;
 		readonly ModuleOptions newOptions;
 		readonly ModuleOptions origOptions;
 
-		ModuleSettingsCommand(AssemblyTreeNode modNode, ModuleOptions newOptions) {
+		ModuleSettingsCommand(IModuleFileNode modNode, ModuleOptions newOptions) {
 			this.modNode = modNode;
 			this.newOptions = newOptions;
 			this.origOptions = new ModuleOptions(modNode.DnSpyFile.ModuleDef);
@@ -707,7 +889,7 @@ namespace dnSpy.AsmEditor.Module {
 
 		void WriteModuleOptions(ModuleOptions theOptions) {
 			theOptions.CopyTo(modNode.DnSpyFile.ModuleDef);
-			modNode.RaiseUIPropsChanged();
+			modNode.TreeNode.RefreshUI();
 		}
 
 		public void Execute() {
@@ -720,9 +902,6 @@ namespace dnSpy.AsmEditor.Module {
 
 		public IEnumerable<object> ModifiedObjects {
 			get { yield return modNode; }
-		}
-
-		public void Dispose() {
 		}
 	}
 }

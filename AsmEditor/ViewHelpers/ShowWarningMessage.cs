@@ -18,7 +18,7 @@
 */
 
 using System.Windows;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.App;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class ShowWarningMessage : IShowWarningMessage {
@@ -34,9 +34,9 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public void Show(string key, string msg) {
 			if (key == null)
-				MainWindow.Instance.ShowMessageBox(msg, MessageBoxButton.OK, ownerWindow);
+				Shared.UI.App.MsgBox.Instance.Show(msg, MsgBoxButton.OK, ownerWindow);
 			else
-				MainWindow.Instance.ShowIgnorableMessageBox(key, msg, MessageBoxButton.OK, ownerWindow);
+				Shared.UI.App.MsgBox.Instance.ShowIgnorableMessage(key, msg, MsgBoxButton.OK, ownerWindow);
 		}
 	}
 }

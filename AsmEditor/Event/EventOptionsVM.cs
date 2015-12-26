@@ -24,9 +24,9 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Search;
+using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
+using dnSpy.Shared.UI.Search;
 
 namespace dnSpy.AsmEditor.Event {
 	sealed class EventOptionsVM : ViewModelBase {
@@ -188,9 +188,9 @@ namespace dnSpy.AsmEditor.Event {
 
 		readonly ModuleDef ownerModule;
 
-		public EventOptionsVM(EventDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType) {
+		public EventOptionsVM(EventDefOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = true,
@@ -201,8 +201,8 @@ namespace dnSpy.AsmEditor.Event {
 			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			this.typeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
-			this.otherMethodsVM = new MethodDefsVM(ownerModule, language);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
+			this.otherMethodsVM = new MethodDefsVM(ownerModule, languageManager);
 
 			this.origOptions = options;
 
@@ -223,7 +223,7 @@ namespace dnSpy.AsmEditor.Event {
 		MethodDef PickMethod(MethodDef origMethod) {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			return dnlibTypePicker.GetDnlibType(new SameModuleTreeViewNodeFilter(ownerModule, new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef)), origMethod, ownerModule);
+			return dnlibTypePicker.GetDnlibType(new SameModuleFileTreeNodeFilter(ownerModule, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef)), origMethod, ownerModule);
 		}
 
 		void PickAddMethod() {

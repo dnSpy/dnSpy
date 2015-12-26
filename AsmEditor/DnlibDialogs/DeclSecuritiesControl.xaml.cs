@@ -22,10 +22,7 @@ using System.Windows.Controls;
 using dnSpy.AsmEditor.ViewHelpers;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for DeclSecuritiesControl.xaml
-	/// </summary>
-	public partial class DeclSecuritiesControl : UserControl {
+	sealed partial class DeclSecuritiesControl : UserControl {
 		public DeclSecuritiesControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

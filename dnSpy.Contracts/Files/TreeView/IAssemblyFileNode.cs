@@ -25,6 +25,11 @@ namespace dnSpy.Contracts.Files.TreeView {
 	/// </summary>
 	public interface IAssemblyFileNode : IDnSpyFileNode, IMDTokenNode {
 		/// <summary>
+		/// Gets the <see cref="IDnSpyFile"/> instance
+		/// </summary>
+		new IDnSpyDotNetFile DnSpyFile { get; }
+
+		/// <summary>
 		/// true if it's an .exe file, false if it's a .dll or .netmodule
 		/// </summary>
 		bool IsExe { get; }

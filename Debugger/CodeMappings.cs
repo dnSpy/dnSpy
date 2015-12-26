@@ -19,22 +19,21 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using dndbg.Engine;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Shared.UI.Decompiler;
-using dnSpy.Shared.UI.Files;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
 	sealed class CodeMappingsLoader : IAutoLoaded {
-		readonly ISerializedDnSpyModuleCreator serializedDnSpyModuleCreator;
+		readonly ISerializedDnModuleCreator serializedDnModuleCreator;
 
 		[ImportingConstructor]
-		CodeMappingsLoader(ITextEditorUIContextManager textEditorUIContextManager, ISerializedDnSpyModuleCreator serializedDnSpyModuleCreator) {
-			this.serializedDnSpyModuleCreator = serializedDnSpyModuleCreator;
+		CodeMappingsLoader(ITextEditorUIContextManager textEditorUIContextManager, ISerializedDnModuleCreator serializedDnModuleCreator) {
+			this.serializedDnModuleCreator = serializedDnModuleCreator;
 			textEditorUIContextManager.Add(OnTextEditorEvent, TextEditorUIContextManagerConstants.ORDER_DEBUGGER_CODEMAPPINGSCREATOR);
 		}
 
@@ -46,7 +45,7 @@ namespace dnSpy.Debugger {
 		void AddCodeMappings(ITextEditorUIContext uiContext, AvalonEditTextOutput output) {
 			if (output == null)
 				return;
-			var cm = new CodeMappings(output.DebuggerMemberMappings, serializedDnSpyModuleCreator);
+			var cm = new CodeMappings(output.DebuggerMemberMappings, serializedDnModuleCreator);
 			uiContext.AddOutputData(CodeMappingsKey, cm);
 		}
 		internal static readonly object CodeMappingsKey = new object();
@@ -65,31 +64,31 @@ namespace dnSpy.Debugger {
 	}
 
 	sealed class CodeMappings {
-		readonly Dictionary<SerializedDnSpyToken, MemberMapping> dict;
+		readonly Dictionary<SerializedDnToken, MemberMapping> dict;
 
 		public int Count {
 			get { return dict.Count; }
 		}
 
 		public CodeMappings() {
-			this.dict = new Dictionary<SerializedDnSpyToken, MemberMapping>(0);
+			this.dict = new Dictionary<SerializedDnToken, MemberMapping>(0);
 		}
 
-		public CodeMappings(IList<MemberMapping> mappings, ISerializedDnSpyModuleCreator serializedDnSpyModuleCreator) {
-			this.dict = new Dictionary<SerializedDnSpyToken, MemberMapping>(mappings.Count);
+		public CodeMappings(IList<MemberMapping> mappings, ISerializedDnModuleCreator serializedDnModuleCreator) {
+			this.dict = new Dictionary<SerializedDnToken, MemberMapping>(mappings.Count);
 
-			var serDict = new Dictionary<ModuleDef, SerializedDnSpyModule>();
+			var serDict = new Dictionary<ModuleDef, SerializedDnModule>();
 			foreach (var m in mappings) {
 				var module = m.MethodDef.Module;
 				if (module == null)
 					continue;
 
-				SerializedDnSpyModule serMod;
+				SerializedDnModule serMod;
 				if (!serDict.TryGetValue(module, out serMod)) {
-					serMod = serializedDnSpyModuleCreator.Create(module);
+					serMod = serializedDnModuleCreator.Create(module);
 					serDict.Add(module, serMod);
 				}
-				var key = new SerializedDnSpyToken(serMod, m.MethodDef.MDToken);
+				var key = new SerializedDnToken(serMod, m.MethodDef.MDToken);
 				MemberMapping oldMm;
 				if (this.dict.TryGetValue(key, out oldMm)) {
 					if (m.MemberCodeMappings.Count < oldMm.MemberCodeMappings.Count)
@@ -156,7 +155,7 @@ namespace dnSpy.Debugger {
 			return list;
 		}
 
-		public MemberMapping TryGetMapping(SerializedDnSpyToken key) {
+		public MemberMapping TryGetMapping(SerializedDnToken key) {
 			MemberMapping mm;
 			dict.TryGetValue(key, out mm);
 			return mm;

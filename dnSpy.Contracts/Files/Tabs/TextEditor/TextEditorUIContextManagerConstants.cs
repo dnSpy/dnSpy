@@ -28,6 +28,9 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// <summary>Debugger: create code mappings</summary>
 		public static readonly double ORDER_DEBUGGER_CODEMAPPINGSCREATOR = 1000;
 
+		/// <summary>AsmEditor: create code mappings</summary>
+		public static readonly double ORDER_ASMEDITOR_CODEMAPPINGSCREATOR = 2000;
+
 		/// <summary>Debugger: call stack</summary>
 		public static readonly double ORDER_DEBUGGER_CALLSTACK = 2000;
 

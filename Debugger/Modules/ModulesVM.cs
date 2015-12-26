@@ -35,8 +35,8 @@ namespace dnSpy.Debugger.Modules {
 		void RefreshThemeFields();
 	}
 
-	[Export, Export(typeof(IModulesVM)), PartCreationPolicy(CreationPolicy.Shared)]
-	sealed class ModulesVM : ViewModelBase, IModulesVM {
+	[Export, Export(typeof(IModulesVM)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class ModulesVM : ViewModelBase, IModulesVM, ILoadBeforeDebug {
 		public ObservableCollection<ModuleVM> Collection {
 			get { return modulesList; }
 		}
@@ -114,7 +114,7 @@ namespace dnSpy.Debugger.Modules {
 			}
 		}
 
-		private void DnDebugger_OnNameChanged(object sender, NameChangedDebuggerEventArgs e) {
+		void DnDebugger_OnNameChanged(object sender, NameChangedDebuggerEventArgs e) {
 			if (e.AppDomain != null)
 				RefreshAppDomainNames(e.AppDomain);
 		}

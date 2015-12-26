@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +33,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -119,10 +121,6 @@
     <Compile Include="XmlnsDictionary.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
-      <Project>{6C55B776-26D4-4DB3-A6AB-87E783B2F3D1}</Project>
-      <Name>ICSharpCode.AvalonEdit</Name>
-    </ProjectReference>
     <ProjectReference Include="..\dnlib\src\dnlib.csproj">
       <Project>{FDFC1237-143F-4919-8318-4926901F4639}</Project>
       <Name>dnlib</Name>

@@ -22,10 +22,7 @@ using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.Event {
-	/// <summary>
-	/// Interaction logic for EventOptionsDlg.xaml
-	/// </summary>
-	public partial class EventOptionsDlg : WindowBase {
+	sealed partial class EventOptionsDlg : WindowBase {
 		public EventOptionsDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

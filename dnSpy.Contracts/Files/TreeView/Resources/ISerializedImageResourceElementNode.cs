@@ -17,10 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnlib.DotNet.Resources;
+
 namespace dnSpy.Contracts.Files.TreeView.Resources {
 	/// <summary>
 	/// A resource node created from a serialized image (BMP or ICO)
 	/// </summary>
 	public interface ISerializedImageResourceElementNode : IResourceElementNode {
+		/// <summary>
+		/// Gets the raw <see cref="ResourceElement"/>
+		/// </summary>
+		/// <returns></returns>
+		ResourceElement GetAsRawImage();
 	}
 }

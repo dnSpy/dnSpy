@@ -18,24 +18,24 @@
 */
 
 using dnlib.DotNet;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.Languages;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class SecurityAttributesVM : ListVM<SecurityAttributeVM, SecurityAttribute> {
-		public SecurityAttributesVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Security Attribute", "Create Security Attribute", ownerModule, language, ownerType, ownerMethod) {
+		public SecurityAttributesVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod)
+			: base("Edit Security Attribute", "Create Security Attribute", ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
 		protected override SecurityAttributeVM Create(SecurityAttribute model) {
-			return new SecurityAttributeVM(model, ownerModule, language, ownerType, ownerMethod);
+			return new SecurityAttributeVM(model, ownerModule, languageManager, ownerType, ownerMethod);
 		}
 
 		protected override SecurityAttributeVM Clone(SecurityAttributeVM obj) {
-			return new SecurityAttributeVM(obj.CreateSecurityAttribute(), ownerModule, language, ownerType, ownerMethod);
+			return new SecurityAttributeVM(obj.CreateSecurityAttribute(), ownerModule, languageManager, ownerType, ownerMethod);
 		}
 
 		protected override SecurityAttributeVM Create() {
-			return new SecurityAttributeVM(new SecurityAttribute(), ownerModule, language, ownerType, ownerMethod);
+			return new SecurityAttributeVM(new SecurityAttribute(), ownerModule, languageManager, ownerType, ownerMethod);
 		}
 	}
 }

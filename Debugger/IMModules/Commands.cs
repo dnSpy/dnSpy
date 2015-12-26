@@ -84,7 +84,7 @@ namespace dnSpy.Debugger.IMModules {
 			protected override IFileTreeNodeData GetTreeNode(IMenuItemContext context) {
 				if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
 					return null;
-				var nodes = context.FindByType<ITreeNodeData[]>();
+				var nodes = context.Find<ITreeNodeData[]>();
 				if (nodes != null && nodes.Length != 0)
 					return nodes[0] as IFileTreeNodeData;
 				return null;

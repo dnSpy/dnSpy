@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.Property {
-	/// <summary>
-	/// Interaction logic for PropertyOptionsDlg.xaml
-	/// </summary>
-	public partial class PropertyOptionsDlg : WindowBase {
+	sealed partial class PropertyOptionsDlg : WindowBase {
 		public PropertyOptionsDlg() {
 			InitializeComponent();
 		}

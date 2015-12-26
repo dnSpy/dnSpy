@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		/// <summary>
 		/// Gets the resource
 		/// </summary>
-		Resource Resource { get; }
+		Resource Resource { get; set; }
 
 		/// <summary>
 		/// Gets the name

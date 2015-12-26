@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.Resources {
-	/// <summary>
-	/// Interaction logic for ImageListDlg.xaml
-	/// </summary>
-	public partial class ImageListDlg : WindowBase {
+	sealed partial class ImageListDlg : WindowBase {
 		public ImageListDlg() {
 			InitializeComponent();
 		}

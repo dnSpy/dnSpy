@@ -23,8 +23,8 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.Types {
 	enum TypeKind {
@@ -310,9 +310,9 @@ namespace dnSpy.AsmEditor.Types {
 
 		readonly ModuleDef ownerModule;
 
-		public TypeOptionsVM(TypeDefOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType) {
+		public TypeOptionsVM(TypeDefOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType) {
 			this.ownerModule = ownerModule;
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = false,
@@ -323,10 +323,10 @@ namespace dnSpy.AsmEditor.Types {
 			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			this.typeSigCreator.PropertyChanged += typeSigCreator_PropertyChanged;
 
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, language, ownerType, null);
-			this.declSecuritiesVM = new DeclSecuritiesVM(ownerModule, language, ownerType, null);
-			this.genericParamsVM = new GenericParamsVM(ownerModule, language, ownerType, null);
-			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<InterfaceImpl>("Edit Interface Impl", "Create Interface Impl", ownerModule, language, ownerType, null);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager, ownerType, null);
+			this.declSecuritiesVM = new DeclSecuritiesVM(ownerModule, languageManager, ownerType, null);
+			this.genericParamsVM = new GenericParamsVM(ownerModule, languageManager, ownerType, null);
+			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<InterfaceImpl>("Edit Interface Impl", "Create Interface Impl", ownerModule, languageManager, ownerType, null);
 
 			this.origOptions = options;
 			this.isNestedType = (options.Attributes & TypeAttributes.VisibilityMask) > TypeAttributes.Public;

@@ -17,7 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Threading;
+using dnlib.DotNet;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Contracts.Languages {
@@ -39,6 +41,11 @@ namespace dnSpy.Contracts.Languages {
 		/// </summary>
 		public bool DontShowCreateMethodBodyExceptions { get; set; }
 
+		/// <summary>
+		/// Returns true if the method body has been modified
+		/// </summary>
+		public Func<MethodDef, bool> IsBodyModified { get; set; }
+
 		// *******************************************************************
 		// NOTE: Don't add new props here without also updating the decompilation cache code
 		// *******************************************************************
@@ -51,6 +58,7 @@ namespace dnSpy.Contracts.Languages {
 			this.CancellationToken = CancellationToken.None;
 			this.DecompilerSettings = new DecompilerSettings();
 			this.DontShowCreateMethodBodyExceptions = true;
+			this.IsBodyModified = m => false;
 		}
 	}
 }

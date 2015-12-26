@@ -21,10 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.MethodBody {
-	/// <summary>
-	/// Interaction logic for MethodBodyControl.xaml
-	/// </summary>
-	public partial class MethodBodyControl : UserControl {
+	sealed partial class MethodBodyControl : UserControl {
 		LocalsListHelper localsListHelper;
 		InstructionsListHelper instructionsListHelper;
 		ExceptionHandlersListHelper exceptionHandlersListHelper;

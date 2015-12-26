@@ -30,7 +30,7 @@ using ICSharpCode.Decompiler;
 using Microsoft.Win32;
 
 namespace dnSpy.BamlDecompiler {
-	[ExportTabSaverCreator(Order = TabsConstants.ORDER_BAMLTABSAVERCREATOR)]
+	[ExportTabSaverCreator(Order = TabConstants.ORDER_BAMLTABSAVERCREATOR)]
 	sealed class BamlTabSaverCreator : ITabSaverCreator {
 		readonly IMessageBoxManager messageBoxManager;
 

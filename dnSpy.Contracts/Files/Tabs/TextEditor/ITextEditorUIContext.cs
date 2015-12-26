@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using dnlib.DotNet;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
@@ -63,7 +64,7 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		void HideCancelButton();
 
 		/// <summary>
-		/// Moves the caret to a reference, this can be a <see cref="CodeReferenceSegment"/>,
+		/// Moves the caret to a reference, this can be a <see cref="CodeReference"/>,
 		/// or a <see cref="IMemberDef"/>. Anything else isn't currently supported.
 		/// </summary>
 		/// <param name="ref">Reference</param>
@@ -90,5 +91,21 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// Gets the selected reference or null
 		/// </summary>
 		object SelectedReference { get; }
+
+		/// <summary>
+		/// Gets the selected reference or null
+		/// </summary>
+		CodeReference SelectedCodeReference { get; }
+
+		/// <summary>
+		/// Returns all selected <see cref="CodeReference"/>s
+		/// </summary>
+		/// <returns></returns>
+		IEnumerable<CodeReference> GetSelectedCodeReferences();
+
+		/// <summary>
+		/// Gets the references in the document
+		/// </summary>
+		IEnumerable<object> References { get; }
 	}
 }

@@ -44,7 +44,7 @@ namespace dnSpy.Files.TreeView {
 	[Export, Export(typeof(IFileTreeView)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class FileTreeView : IFileTreeView, ITreeViewListener {
 		readonly FileTreeNodeDataContext context;
-		readonly IDnSpyFileNodeCreator[] dnSpyFileNodeCreators;
+		readonly Lazy<IDnSpyFileNodeCreator, IDnSpyFileNodeCreatorMetadata>[] dnSpyFileNodeCreators;
 		readonly Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>[] nodeFinders;
 
 		public IFileManager FileManager {
@@ -109,8 +109,22 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		[ImportingConstructor]
-		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, DecompilerSettings decompilerSettings, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IDnSpyFileNodeCreator[] dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
-			this.context = new FileTreeNodeDataContext(this, resourceNodeFactory, decompilerSettings, FilterNothingFileTreeNodeFilter.Instance) {
+		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, DecompilerSettings decompilerSettings, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDnSpyFileNodeCreator, IDnSpyFileNodeCreatorMetadata>> dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders)
+			: this(true, null, themeManager, treeViewManager, languageManager, fileManager, fileTreeViewSettings, menuManager, dotNetImageManager, wpfCommandManager, decompilerSettings, resourceNodeFactory, appSettings, dnSpyFileNodeCreators, mefFinders) {
+		}
+
+		readonly ILanguageManager languageManager;
+		readonly IThemeManager themeManager;
+		readonly IFileTreeViewSettings fileTreeViewSettings;
+		readonly IAppSettings appSettings;
+
+		public FileTreeView(bool isGlobal, IFileTreeNodeFilter filter, IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, DecompilerSettings decompilerSettings, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDnSpyFileNodeCreator, IDnSpyFileNodeCreatorMetadata>> dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
+			this.languageManager = languageManager;
+			this.themeManager = themeManager;
+			this.fileTreeViewSettings = fileTreeViewSettings;
+			this.appSettings = appSettings;
+
+			this.context = new FileTreeNodeDataContext(this, resourceNodeFactory, decompilerSettings, filter ?? FilterNothingFileTreeNodeFilter.Instance) {
 				SyntaxHighlight = fileTreeViewSettings.SyntaxHighlight,
 				SingleClickExpandsChildren = fileTreeViewSettings.SingleClickExpandsTreeViewChildren,
 				ShowAssemblyVersion = fileTreeViewSettings.ShowAssemblyVersion,
@@ -129,9 +143,8 @@ namespace dnSpy.Files.TreeView {
 				RootNode = new RootNode(),
 			};
 			this.fileTreeNodeGroups = new FileTreeNodeGroups();
-			this.dnSpyFileNodeCreators = dnSpyFileNodeCreators.OrderBy(a => a.Order).ToArray();
+			this.dnSpyFileNodeCreators = dnSpyFileNodeCreators.OrderBy(a => a.Metadata.Order).ToArray();
 			this.treeView = treeViewManager.Create(new Guid(TVConstants.FILE_TREEVIEW_GUID), options);
-			menuManager.InitializeContextMenu((FrameworkElement)this.treeView.UIObject, new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID), new GuidObjectsCreator(this.treeView));
 			this.fileManager = fileManager;
 			this.dotNetImageManager = dotNetImageManager;
 			var dispatcher = Dispatcher.CurrentDispatcher;
@@ -149,17 +162,36 @@ namespace dnSpy.Files.TreeView {
 					}
 				}
 			});
-			this.fileManager.CollectionChanged += FileManager_CollectionChanged;
+			fileManager.CollectionChanged += FileManager_CollectionChanged;
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			fileTreeViewSettings.PropertyChanged += FileTreeViewSettings_PropertyChanged;
 			appSettings.PropertyChanged += AppSettings_PropertyChanged;
 
-			wpfCommandManager.Add(CommandConstants.GUID_FILE_TREEVIEW, (UIElement)treeView.UIObject);
 			this.wpfCommands = wpfCommandManager.GetCommands(CommandConstants.GUID_FILE_TREEVIEW);
+
+			if (isGlobal) {
+				menuManager.InitializeContextMenu((FrameworkElement)this.treeView.UIObject, new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID), new GuidObjectsCreator(this.treeView));
+				wpfCommandManager.Add(CommandConstants.GUID_FILE_TREEVIEW, (UIElement)treeView.UIObject);
+			}
 
 			this.nodeFinders = mefFinders.OrderBy(a => a.Metadata.Order).ToArray();
 			InitializeFileTreeNodeGroups(decompilerSettings);
+		}
+
+		// It's not using IDisposable.Dispose() because MEF will call Dispose() at app exit which
+		// will trigger code paths that try to call some MEF funcs which will throw since MEF is
+		// closing down.
+		void IFileTreeView.Dispose() {
+			fileManager.CollectionChanged -= FileManager_CollectionChanged;
+			languageManager.LanguageChanged -= LanguageManager_LanguageChanged;
+			themeManager.ThemeChanged -= ThemeManager_ThemeChanged;
+			fileTreeViewSettings.PropertyChanged -= FileTreeViewSettings_PropertyChanged;
+			appSettings.PropertyChanged -= AppSettings_PropertyChanged;
+			fileManager.Clear();
+			treeView.Root.Children.Clear();
+			treeView.SelectItems(new ITreeNodeData[0]);
+			context.Clear();
 		}
 
 		void RefilterNodes() {
@@ -266,10 +298,20 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
-			this.context.Language = ((ILanguageManager)sender).SelectedLanguage;
+			UpdateLanguage(((ILanguageManager)sender).SelectedLanguage);
+		}
+
+		void UpdateLanguage(ILanguage newLanguage) {
+			this.context.Language = newLanguage;
 			RefreshNodes();
 			RefilterNodes();
 			NotifyNodesTextRefreshed();
+		}
+
+		void IFileTreeView.SetLanguage(ILanguage language) {
+			if (language == null)
+				return;
+			UpdateLanguage(language);
 		}
 
 		public void RefreshNodes(bool showMember, bool decompilationOrder) {
@@ -293,25 +335,52 @@ namespace dnSpy.Files.TreeView {
 		void FileManager_CollectionChanged(object sender, NotifyFileCollectionChangedEventArgs e) {
 			switch (e.Type) {
 			case NotifyFileCollectionType.Add:
-				var newNode = CreateNode(null, e.Files[0]);
-				treeView.Root.Children.Add(treeView.Create(newNode));
+				IDnSpyFileNode newNode;
+
+				var addFileInfo = e.Data as AddFileInfo;
+				if (addFileInfo != null) {
+					newNode = addFileInfo.DnSpyFileNode;
+					if (newNode.TreeNode == null)
+						treeView.Create(newNode);
+				}
+				else {
+					newNode = CreateNode(null, e.Files[0]);
+					treeView.Create(newNode);
+				}
+
+				treeView.Root.Children.Add(newNode.TreeNode);
 				CallCollectionChanged(NotifyFileTreeViewCollectionChangedEventArgs.CreateAdd(newNode));
 				break;
 
 			case NotifyFileCollectionType.Remove:
-				int index = -1;
-				foreach (var child in treeView.Root.Children) {
-					index++;
-					if (((IDnSpyFileNode)child.Data).DnSpyFile == e.Files[0])
-						break;
+				var dict = new Dictionary<IDnSpyFileNode, int>();
+				var dict2 = new Dictionary<IDnSpyFile, IDnSpyFileNode>();
+				int i = 0;
+				foreach (var n in TopNodes) {
+					dict[n] = i++;
+					dict2[n.DnSpyFile] = n;
 				}
-				bool b = (uint)index < (uint)treeView.Root.Children.Count;
-				Debug.Assert(b);
-				if (!b)
-					break;
-				var node = (IDnSpyFileNode)treeView.Root.Children[index];
-				DisableMemoryMappedIO(new[] { node });
-				CallCollectionChanged(NotifyFileTreeViewCollectionChangedEventArgs.CreateRemove(node));
+				var list = new List<Tuple<IDnSpyFileNode, int>>(e.Files.Select(a => {
+					IDnSpyFileNode node;
+					bool b = dict2.TryGetValue(a, out node);
+					Debug.Assert(b);
+					int j = -1;
+					b = b && dict.TryGetValue(node, out j);
+					Debug.Assert(b);
+					return Tuple.Create(node, b ? j : -1);
+				}));
+				list.Sort((a, b) => b.Item2.CompareTo(a.Item2));
+				var removed = new List<IDnSpyFileNode>();
+				foreach (var t in list) {
+					if (t.Item2 < 0)
+						continue;
+					Debug.Assert((uint)t.Item2 < (uint)treeView.Root.Children.Count);
+					Debug.Assert(treeView.Root.Children[t.Item2].Data == t.Item1);
+					treeView.Root.Children.RemoveAt(t.Item2);
+					removed.Add(t.Item1);
+				}
+				DisableMemoryMappedIO(list.Select(a => a.Item1).ToArray());
+				CallCollectionChanged(NotifyFileTreeViewCollectionChangedEventArgs.CreateRemove(removed.ToArray()));
 				break;
 
 			case NotifyFileCollectionType.Clear:
@@ -327,16 +396,25 @@ namespace dnSpy.Files.TreeView {
 			}
 		}
 
+		public void Remove(IEnumerable<IDnSpyFileNode> nodes) {
+			fileManager.Remove(nodes.Select(a => a.DnSpyFile));
+		}
+
 		void DisableMemoryMappedIO(IDnSpyFileNode[] nodes) {
 			// The nodes will be GC'd eventually, but it's not safe to call Dispose(), so disable
 			// mmap'd I/O so the files can at least be modified (eg. deleted) by the user.
-			foreach (var m in nodes.SelectMany(n => n.DnSpyFile.GetModules<ModuleDefMD>()))
-				m.MetaData.PEImage.UnsafeDisableMemoryMappedIO();
+			foreach (var node in nodes) {
+				foreach (var f in node.DnSpyFile.GetAllChildrenAndSelf()) {
+					var peImage = f.PEImage;
+					if (peImage != null)
+						peImage.UnsafeDisableMemoryMappedIO();
+				}
+			}
 		}
 
 		public IDnSpyFileNode CreateNode(IDnSpyFileNode owner, IDnSpyFile file) {
 			foreach (var creator in dnSpyFileNodeCreators) {
-				var result = creator.Create(this, owner, file);
+				var result = creator.Value.Create(this, owner, file);
 				if (result != null)
 					return result;
 			}
@@ -353,6 +431,14 @@ namespace dnSpy.Files.TreeView {
 					d.Context = context;
 				return;
 			}
+		}
+
+		public IAssemblyFileNode CreateAssembly(IDnSpyDotNetFile asmFile) {
+			return (IAssemblyFileNode)TreeView.Create(new AssemblyFileNode(asmFile)).Data;
+		}
+
+		public IModuleFileNode CreateModule(IDnSpyDotNetFile modFile) {
+			return (IModuleFileNode)TreeView.Create(new ModuleFileNode(modFile)).Data;
 		}
 
 		public IAssemblyReferenceNode Create(AssemblyRef asmRef, ModuleDef ownerModule) {
@@ -410,12 +496,12 @@ namespace dnSpy.Files.TreeView {
 				return FindNode((AssemblyDef)@ref);
 			if (@ref is ModuleDef)
 				return FindNode((ModuleDef)@ref);
-			if (@ref is TypeDef)
-				return FindNode((TypeDef)@ref);
-			if (@ref is MethodDef)
-				return FindNode((MethodDef)@ref);
-			if (@ref is FieldDef)
-				return FindNode((FieldDef)@ref);
+			if (@ref is ITypeDefOrRef)
+				return FindNode(((ITypeDefOrRef)@ref).ResolveTypeDef());
+			if (@ref is IMethod && ((IMethod)@ref).MethodSig != null)
+				return FindNode(((IMethod)@ref).ResolveMethodDef());
+			if (@ref is IField)
+				return FindNode(((IField)@ref).ResolveFieldDef());
 			if (@ref is PropertyDef)
 				return FindNode((PropertyDef)@ref);
 			if (@ref is EventDef)
@@ -500,7 +586,7 @@ namespace dnSpy.Files.TreeView {
 			if (modNode == null)
 				return null;
 
-			var nsNode = FindNamespaceNode(modNode, types[0].Namespace);
+			var nsNode = modNode.FindNode(types[0].Namespace);
 			if (nsNode == null)
 				return null;
 
@@ -547,20 +633,7 @@ namespace dnSpy.Files.TreeView {
 		public INamespaceNode FindNamespaceNode(IDnSpyFile module, string @namespace) {
 			var modNode = FindNode(module) as IModuleFileNode;
 			if (modNode != null)
-				return FindNamespaceNode(modNode, @namespace);
-			return null;
-		}
-
-		INamespaceNode FindNamespaceNode(IModuleFileNode modNode, string ns) {
-			if (ns == null)
-				return null;
-
-			modNode.TreeNode.EnsureChildrenLoaded();
-			foreach (var n in modNode.TreeNode.DataChildren.OfType<INamespaceNode>()) {
-				if (n.Name == ns)
-					return n;
-			}
-
+				return modNode.FindNode(@namespace);
 			return null;
 		}
 
@@ -666,6 +739,42 @@ namespace dnSpy.Files.TreeView {
 					}
 					continue;
 				}
+			}
+		}
+
+		public IEnumerable<IDnSpyFileNode> GetAllCreatedDnSpyFileNodes() {
+			foreach (var n in GetAllCreatedDnSpyFileNodes(TopNodes))
+				yield return n;
+		}
+
+		IEnumerable<IDnSpyFileNode> GetAllCreatedDnSpyFileNodes(IEnumerable<ITreeNodeData> nodes) {
+			foreach (var n in nodes) {
+				var fn = n as IDnSpyFileNode;
+				if (fn != null) {
+					yield return fn;
+					// Don't call fn.TreeNode.EnsureChildrenLoaded(), only return created nodes
+					foreach (var c in GetAllCreatedDnSpyFileNodes(fn.TreeNode.DataChildren))
+						yield return c;
+				}
+			}
+		}
+
+		public void AddNode(IDnSpyFileNode fileNode, int index) {
+			if (fileNode == null)
+				throw new ArgumentNullException();
+			Debug.Assert(!TreeView.Root.DataChildren.Contains(fileNode));
+			Debug.Assert(fileNode.TreeNode.Parent == null);
+			fileManager.ForceAdd(fileNode.DnSpyFile, false, new AddFileInfo(fileNode, index));
+			Debug.Assert(TreeView.Root.DataChildren.Contains(fileNode));
+		}
+
+		sealed class AddFileInfo {
+			public readonly IDnSpyFileNode DnSpyFileNode;
+			public readonly int Index;
+
+			public AddFileInfo(IDnSpyFileNode fileNode, int index) {
+				this.DnSpyFileNode = fileNode;
+				this.Index = index;
 			}
 		}
 	}

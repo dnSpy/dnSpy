@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
@@ -31,21 +32,21 @@ namespace dnSpy.AsmEditor.Hex {
 		readonly byte[] origData;
 		readonly string descr;
 
-		public static void AddAndExecute(string filename, ulong offset, byte[] data, string descr = null) {
+		public static void AddAndExecute(IUndoCommandManager undoCommandManager, IHexDocumentManager hexDocumentManager, string filename, ulong offset, byte[] data, string descr = null) {
 			if (string.IsNullOrEmpty(filename))
 				throw new ArgumentException();
-			var doc = HexDocumentManager.Instance.GetOrCreate(filename);
+			var doc = hexDocumentManager.GetOrCreate(filename);
 			if (doc == null)
 				return;
-			AddAndExecute(doc, offset, data, descr);
+			AddAndExecute(undoCommandManager, doc, offset, data, descr);
 		}
 
-		public static void AddAndExecute(HexDocument doc, ulong offset, byte[] data, string descr = null) {
+		public static void AddAndExecute(IUndoCommandManager undoCommandManager, HexDocument doc, ulong offset, byte[] data, string descr = null) {
 			if (doc == null)
 				throw new ArgumentNullException();
 			if (data == null || data.Length == 0)
 				return;
-			UndoCommandManager.Instance.Add(new WriteHexUndoCommand(doc, offset, data, descr));
+			undoCommandManager.Add(new WriteHexUndoCommand(doc, offset, data, descr));
 		}
 
 		WriteHexUndoCommand(HexDocument doc, ulong offset, byte[] data, string descr) {
@@ -62,9 +63,6 @@ namespace dnSpy.AsmEditor.Hex {
 
 		public IEnumerable<object> ModifiedObjects {
 			get { yield return doc; }
-		}
-
-		public void Dispose() {
 		}
 
 		public void Execute() {

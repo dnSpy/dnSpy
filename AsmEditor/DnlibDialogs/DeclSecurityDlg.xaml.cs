@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for DeclSecurityDlg.xaml
-	/// </summary>
-	public partial class DeclSecurityDlg : WindowBase {
+	sealed partial class DeclSecurityDlg : WindowBase {
 		public DeclSecurityDlg() {
 			InitializeComponent();
 		}

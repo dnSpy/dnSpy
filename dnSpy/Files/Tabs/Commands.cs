@@ -19,7 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
@@ -32,6 +35,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolBars;
+using dnSpy.Contracts.TreeView;
 using dnSpy.Files.Tabs.Dialogs;
 using dnSpy.Shared.UI.Menus;
 using dnSpy.Shared.UI.ToolBars;
@@ -70,7 +74,8 @@ namespace dnSpy.Files.Tabs {
 			if (file != null) {
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 					var node = fileTreeView.FindNode(file);
-					fileTreeView.TreeView.SelectItems(new IFileTreeNodeData[] { node });
+					if (node != null)
+						fileTreeView.TreeView.SelectItems(new IFileTreeNodeData[] { node });
 				}));
 			}
 		}
@@ -203,6 +208,43 @@ namespace dnSpy.Files.Tabs {
 	sealed class ShowCodeEditorCommand : MenuItemCommand {
 		ShowCodeEditorCommand()
 			: base(ShowCodeEditorCommandLoader.ShowCodeEditorRoutedCommand) {
+		}
+	}
+
+	[ExportMenuItem(Header = "_Open Containing Folder", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 20)]
+	sealed class OpenContainingFolderCtxMenuCommand : MenuItemBase {
+		public override bool IsVisible(IMenuItemContext context) {
+			return GetFilename(context) != null;
+		}
+
+		static string GetFilename(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID))
+				return null;
+			var nodes = context.Find<ITreeNodeData[]>();
+			if (nodes == null || nodes.Length != 1)
+				return null;
+			var fileNode = nodes[0] as IDnSpyFileNode;
+			if (fileNode == null)
+				return null;
+			var filename = fileNode.DnSpyFile.Filename;
+			if (!File.Exists(filename))
+				return null;
+			return filename;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			// Known problem: explorer can't show files in the .NET 2.0 GAC.
+			var filename = GetFilename(context);
+			if (filename == null)
+				return;
+			var args = string.Format("/select,{0}", filename);
+			try {
+				Process.Start(new ProcessStartInfo("explorer.exe", args));
+			}
+			catch (IOException) {
+			}
+			catch (Win32Exception) {
+			}
 		}
 	}
 }

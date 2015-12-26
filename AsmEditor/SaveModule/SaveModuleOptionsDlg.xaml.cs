@@ -17,14 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.MVVM;
 using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
-	/// <summary>
-	/// Interaction logic for SaveModuleOptionsDlg.xaml
-	/// </summary>
-	public partial class SaveModuleOptionsDlg : WindowBase {
+	sealed partial class SaveModuleOptionsDlg : WindowBase {
 		public SaveModuleOptionsDlg() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

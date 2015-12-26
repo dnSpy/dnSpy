@@ -25,9 +25,9 @@ using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Search;
+using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
+using dnSpy.Shared.UI.Search;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class SecurityAttributeVM : ViewModelBase {
@@ -82,10 +82,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly SecurityAttribute origSa;
 		readonly ModuleDef ownerModule;
 
-		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
+		public SecurityAttributeVM(SecurityAttribute sa, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origSa = sa;
 			this.ownerModule = ownerModule;
-			this.caNamedArgumentsVM = new CANamedArgumentsVM(ownerModule, language, ownerType, ownerMethod, a => {
+			this.caNamedArgumentsVM = new CANamedArgumentsVM(ownerModule, languageManager, ownerType, ownerMethod, a => {
 				// The named args blob length must also be at most 0x1FFFFFFF bytes but we can't verify it here
 				return a.Collection.Count < ModelUtils.COMPRESSED_UINT32_MAX;
 			});
@@ -119,7 +119,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickAttributeType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newAttrType = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.TypeDef), AttributeType, ownerModule);
+			var newAttrType = dnlibTypePicker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), AttributeType, ownerModule);
 			if (newAttrType != null)
 				AttributeType = newAttrType;
 		}

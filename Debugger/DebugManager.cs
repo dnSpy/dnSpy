@@ -43,7 +43,6 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Dialogs;
 using dnSpy.Debugger.IMModules;
-using dnSpy.Shared.UI.Files;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger {
@@ -73,6 +72,10 @@ namespace dnSpy.Debugger {
 
 		public void BeforeLoad(bool isReload) {
 		}
+
+		public bool CheckCanLoad(bool isReload) {
+			return true;
+		}
 	}
 
 	[Export, Export(typeof(IDebugManager)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -85,7 +88,7 @@ namespace dnSpy.Debugger {
 		readonly IStackFrameManager stackFrameManager;
 		readonly Lazy<IModuleLoader> moduleLoader;
 		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
-		readonly ISerializedDnSpyModuleCreator serializedDnSpyModuleCreator;
+		readonly ISerializedDnModuleCreator serializedDnModuleCreator;
 
 		public ITheDebugger TheDebugger {
 			get { return theDebugger; }
@@ -99,7 +102,7 @@ namespace dnSpy.Debugger {
 		static extern bool SetForegroundWindow(IntPtr hWnd);
 
 		[ImportingConstructor]
-		DebugManager(IAppWindow appWindow, IFileTabManager fileTabManager, IMessageBoxManager messageBoxManager, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IStackFrameManager stackFrameManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager, ISerializedDnSpyModuleCreator serializedDnSpyModuleCreator) {
+		DebugManager(IAppWindow appWindow, IFileTabManager fileTabManager, IMessageBoxManager messageBoxManager, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IStackFrameManager stackFrameManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager, ISerializedDnModuleCreator serializedDnModuleCreator) {
 			this.appWindow = appWindow;
 			this.fileTabManager = fileTabManager;
 			this.messageBoxManager = messageBoxManager;
@@ -108,7 +111,7 @@ namespace dnSpy.Debugger {
 			this.stackFrameManager = stackFrameManager;
 			this.moduleLoader = moduleLoader;
 			this.inMemoryModuleManager = inMemoryModuleManager;
-			this.serializedDnSpyModuleCreator = serializedDnSpyModuleCreator;
+			this.serializedDnModuleCreator = serializedDnModuleCreator;
 			stackFrameManager.PropertyChanged += StackFrameManager_PropertyChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
@@ -557,7 +560,7 @@ namespace dnSpy.Debugger {
 
 			IFileTreeNodeData node;
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID)) {
-				var uiContext = context.FindByType<ITextEditorUIContext>();
+				var uiContext = context.Find<ITextEditorUIContext>();
 				if (uiContext == null)
 					return null;
 				var nodes = uiContext.FileTab.Content.Nodes.ToArray();
@@ -566,7 +569,7 @@ namespace dnSpy.Debugger {
 				node = nodes[0];
 			}
 			else if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID)) {
-				var nodes = context.FindByType<IFileTreeNodeData[]>();
+				var nodes = context.Find<IFileTreeNodeData[]>();
 				if (nodes == null || nodes.Length == 0)
 					return null;
 				node = nodes[0];
@@ -871,7 +874,7 @@ namespace dnSpy.Debugger {
 				return false;
 			if (currentLocation == null)
 				return false;
-			if (DebugUtils.MoveCaretTo(uiContext, currentLocation.Value.SerializedDnSpyToken, currentLocation.Value.Offset))
+			if (DebugUtils.MoveCaretTo(uiContext, currentLocation.Value.SerializedDnToken, currentLocation.Value.Offset))
 				return true;
 			if (!canRefreshMethods)
 				return false;
@@ -957,12 +960,12 @@ namespace dnSpy.Debugger {
 				get { return (Mapping & CorDebugMappingResult.MAPPING_APPROXIMATE) != 0; }
 			}
 
-			public SerializedDnSpyToken SerializedDnSpyToken {
+			public SerializedDnToken SerializedDnToken {
 				get {
 					var mod = Function.Module;
 					if (mod == null)
-						return new SerializedDnSpyToken();
-					return new SerializedDnSpyToken(mod.SerializedDnModule.ToSerializedDnSpyModule(), Function.Token);
+						return new SerializedDnToken();
+					return new SerializedDnToken(mod.SerializedDnModule, Function.Token);
 				}
 			}
 
@@ -1080,12 +1083,12 @@ namespace dnSpy.Debugger {
 			return stepRanges;
 		}
 
-		static SerializedDnSpyToken? CreateMethodKey(DnDebugger debugger, CorFrame frame) {
+		static SerializedDnToken? CreateMethodKey(DnDebugger debugger, CorFrame frame) {
 			var sma = frame.SerializedDnModule;
 			if (sma == null)
 				return null;
 
-			return new SerializedDnSpyToken(sma.Value.ToSerializedDnSpyModule(), frame.Token);
+			return new SerializedDnToken(sma.Value, frame.Token);
 		}
 
 		CorFrame GetCurrentILFrame() {
@@ -1162,7 +1165,7 @@ namespace dnSpy.Debugger {
 			stackFrameManager.SelectedFrameNumber = 0;
 			if (currentLocation == null)
 				return false;
-			return DebugUtils.MoveCaretTo(uiContext, currentLocation.Value.SerializedDnSpyToken, currentLocation.Value.Offset);
+			return DebugUtils.MoveCaretTo(uiContext, currentLocation.Value.SerializedDnToken, currentLocation.Value.Offset);
 		}
 
 		ITextEditorUIContext TryGetTextEditorUIContext(object parameter) {
@@ -1244,7 +1247,7 @@ namespace dnSpy.Debugger {
 			}
 
 			CodeMappings cm;
-			if (currentLocation == null || !DebugUtils.VerifyAndGetCurrentDebuggedMethod(uiContext, currentLocation.Value.SerializedDnSpyToken, out cm)) {
+			if (currentLocation == null || !DebugUtils.VerifyAndGetCurrentDebuggedMethod(uiContext, currentLocation.Value.SerializedDnToken, out cm)) {
 				errMsg = "No debug information found. Make sure that only the debugged method is selected in the treeview (press 'Alt+Num *' to go to current statement)";
 				return false;
 			}
@@ -1266,8 +1269,8 @@ namespace dnSpy.Debugger {
 				var md = bp.MemberMapping.MethodDef;
 				if (currentLocation.Value.Function.Token != md.MDToken.Raw)
 					continue;
-				var serAsm = serializedDnSpyModuleCreator.Create(md.Module);
-				if (!serAsm.Equals(currentLocation.Value.SerializedDnSpyToken.Module))
+				var serAsm = serializedDnModuleCreator.Create(md.Module);
+				if (!serAsm.Equals(currentLocation.Value.SerializedDnToken.Module))
 					continue;
 
 				mapping = bp;

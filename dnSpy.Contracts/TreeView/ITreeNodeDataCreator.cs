@@ -19,22 +19,50 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 
 namespace dnSpy.Contracts.TreeView {
 	/// <summary>
-	/// Creates <see cref="ITreeNodeData"/>
+	/// Creates <see cref="ITreeNodeData"/>. Use <see cref="ExportTreeNodeDataCreatorAttribute"/> to
+	/// export an instance.
 	/// </summary>
 	public interface ITreeNodeDataCreator {
-		/// <summary>
-		/// Guid of owner <see cref="ITreeNodeData"/> that will receive the new <see cref="ITreeNodeData"/>
-		/// </summary>
-		Guid Guid { get; }
-
 		/// <summary>
 		/// Creates new <see cref="ITreeNodeData"/>
 		/// </summary>
 		/// <param name="context">Context</param>
 		/// <returns></returns>
 		IEnumerable<ITreeNodeData> Create(TreeNodeDataCreatorContext context);
+	}
+
+	/// <summary>Metadata</summary>
+	public interface ITreeNodeDataCreatorMetadata {
+		/// <summary>See <see cref="ExportTreeNodeDataCreatorAttribute.Order"/></summary>
+		double Order { get; }
+		/// <summary>See <see cref="ExportTreeNodeDataCreatorAttribute.Guid"/></summary>
+		string Guid { get; }
+	}
+
+	/// <summary>
+	/// Exports a <see cref="ITreeNodeDataCreator"/> instance
+	/// </summary>
+	[MetadataAttribute, AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
+	public sealed class ExportTreeNodeDataCreatorAttribute : ExportAttribute, ITreeNodeDataCreatorMetadata {
+		/// <summary>Constructor</summary>
+		public ExportTreeNodeDataCreatorAttribute()
+			: base(typeof(ITreeNodeDataCreator)) {
+			Order = double.MaxValue;
+		}
+
+		/// <summary>
+		/// Order of this instance
+		/// </summary>
+		public double Order { get; set; }
+
+		/// <summary>
+		/// Guid of owner <see cref="ITreeNodeData"/> that will receive the new
+		/// <see cref="ITreeNodeData"/> nodes
+		/// </summary>
+		public string Guid { get; set; }
 	}
 }

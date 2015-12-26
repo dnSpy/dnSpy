@@ -21,10 +21,7 @@ using System.Windows;
 using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for ParamDefControl.xaml
-	/// </summary>
-	public partial class ParamDefControl : UserControl {
+	sealed partial class ParamDefControl : UserControl {
 		public ParamDefControl() {
 			InitializeComponent();
 			Loaded += ParamDefControl_Loaded;

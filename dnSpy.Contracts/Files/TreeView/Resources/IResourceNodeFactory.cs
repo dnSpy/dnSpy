@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 	/// </summary>
 	public interface IResourceNodeFactory {
 		/// <summary>
-		/// Creates a <see cref="IResourceNode"/> instance
+		/// Creates a <see cref="IResourceNode"/> instance. Pass it to <see cref="ITreeView.Create(ITreeNodeData)"/>
 		/// </summary>
 		/// <param name="module">Owner module</param>
 		/// <param name="resource">Resource</param>
@@ -36,7 +36,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		IResourceNode Create(ModuleDef module, Resource resource, ITreeNodeGroup treeNodeGroup);
 
 		/// <summary>
-		/// Creates a <see cref="IResourceElementNode"/> instance
+		/// Creates a <see cref="IResourceElementNode"/> instance. Pass it to <see cref="ITreeView.Create(ITreeNodeData)"/>
 		/// </summary>
 		/// <param name="module">Owner module</param>
 		/// <param name="resourceElement">Resource</param>

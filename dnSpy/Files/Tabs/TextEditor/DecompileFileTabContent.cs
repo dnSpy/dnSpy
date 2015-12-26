@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Text;
 using System.Threading;
 using System.Windows.Threading;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
@@ -34,7 +35,7 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.Tabs.TextEditor {
-	[Export, ExportFileTabContentFactory(Order = TabsConstants.ORDER_DECOMPILEFILETABCONTENTFACTORY)]
+	[Export, ExportFileTabContentFactory(Order = TabConstants.ORDER_DECOMPILEFILETABCONTENTFACTORY)]
 	sealed class DecompileFileTabContentFactory : IFileTabContentFactory {
 		public IFileTreeNodeDecompiler FileTreeNodeDecompiler {
 			get { return fileTreeNodeDecompiler; }
@@ -56,12 +57,18 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 		readonly DecompilerSettings _global_decompilerSettings;
 
+		public IMethodAnnotations MethodAnnotations {
+			get { return methodAnnotations; }
+		}
+		readonly IMethodAnnotations methodAnnotations;
+
 		[ImportingConstructor]
-		DecompileFileTabContentFactory(IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguageManager languageManager, IDecompilationCache decompilationCache, DecompilerSettings decompilerSettings) {
+		DecompileFileTabContentFactory(IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguageManager languageManager, IDecompilationCache decompilationCache, DecompilerSettings decompilerSettings, IMethodAnnotations methodAnnotations) {
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
 			this.languageManager = languageManager;
 			this.decompilationCache = decompilationCache;
 			this._global_decompilerSettings = decompilerSettings;
+			this.methodAnnotations = methodAnnotations;
 		}
 
 		public IFileTabContent Create(IFileTabContentFactoryContext context) {
@@ -169,6 +176,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			var decompilationOptions = new DecompilationOptions();
 			decompilationOptions.DecompilerSettings = decompileFileTabContentFactory.CreateDecompilerSettings();
 			decompilationOptions.DontShowCreateMethodBodyExceptions = true;
+			decompilationOptions.IsBodyModified = m => decompileFileTabContentFactory.MethodAnnotations.IsBodyModified(m);
 			var output = new AvalonEditTextOutput();
 			var dispatcher = Dispatcher.CurrentDispatcher;
 			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationOptions, language, output, dispatcher);
@@ -208,10 +216,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public void EndAsyncShow(IFileTabUIContext uiContext, object userData, IAsyncShowResult result) {
 			var decompileContext = (DecompileContext)userData;
-
 			var uiCtx = (ITextEditorUIContext)uiContext;
-
-			AvalonEditTextOutput output;
 
 			IHighlightingDefinition highlighting;
 			if (decompileContext.DecompileNodeContext.HighlightingDefinition != null)
@@ -221,6 +226,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			else
 				highlighting = decompileContext.DecompileNodeContext.Language.GetHighlightingDefinition();
 
+			AvalonEditTextOutput output;
 			if (result.IsCanceled) {
 				output = new AvalonEditTextOutput();
 				output.Write("The operation was canceled", TextTokenType.Error);

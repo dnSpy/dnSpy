@@ -92,10 +92,10 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <ProgressBar Grid.Column="0" IsIndeterminate="True" Margin="0 0 5 0" Visibility="{Binding SearchingForDefaultLists, Converter={StaticResource booleanToVisibilityConverter}}" />
-            <Button Grid.Column="1" Content="_Remove" Style="{StaticResource DialogButton2}" Margin="0 0 5 0" Command="{Binding RemoveCommand}" />
-            <Button Grid.Column="2" Content="_New..." Style="{StaticResource DialogButton2}" Margin="0 0 5 0" Command="{Binding CreateListCommand}" />
-            <Button Grid.Column="3" Content="_Open" Style="{StaticResource DialogButton2}" Margin="0 0 5 0" IsDefault="True" Click="okButton_Click" />
-            <Button Grid.Column="4" Content="_Cancel" Style="{StaticResource DialogButton2}" Margin="0 0 0 0" IsCancel="True" />
+            <Button Grid.Column="1" Content="_Remove" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding RemoveCommand}" />
+            <Button Grid.Column="2" Content="_New..." Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding CreateListCommand}" />
+            <Button Grid.Column="3" Content="_Open" Style="{StaticResource DialogButton}" Margin="0 0 5 0" IsDefault="True" Click="okButton_Click" />
+            <Button Grid.Column="4" Content="_Cancel" Style="{StaticResource DialogButton}" Margin="0 0 0 0" IsCancel="True" />
         </Grid>
     </Grid>
 </ctrls:WindowBase>

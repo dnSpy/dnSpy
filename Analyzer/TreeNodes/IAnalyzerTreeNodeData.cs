@@ -46,8 +46,8 @@ namespace dnSpy.Analyzer.TreeNodes {
 		/// <summary>
 		/// Called when a file has been modified
 		/// </summary>
-		/// <param name="file">File</param>
+		/// <param name="file">Files</param>
 		/// <returns></returns>
-		bool HandleModelUpdated(IDnSpyFile file);
+		bool HandleModelUpdated(IDnSpyFile[] files);
 	}
 }

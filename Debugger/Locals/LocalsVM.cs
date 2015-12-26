@@ -30,7 +30,6 @@ using dnlib.DotNet.Emit;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Images;
 using dnSpy.Debugger.CallStack;
-using dnSpy.Shared.UI.Files;
 using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.TreeView;
@@ -54,8 +53,8 @@ namespace dnSpy.Debugger.Locals {
 		void RefreshThemeFields();
 	}
 
-	[Export, Export(typeof(ILocalsVM)), PartCreationPolicy(CreationPolicy.Shared)]
-	sealed class LocalsVM : ViewModelBase, ILocalsOwner, ILocalsVM {
+	[Export, Export(typeof(ILocalsVM)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class LocalsVM : ViewModelBase, ILocalsOwner, ILocalsVM, ILoadBeforeDebug {
 		public bool IsEnabled {
 			get { return isEnabled; }
 			set {
@@ -220,14 +219,14 @@ namespace dnSpy.Debugger.Locals {
 		sealed class FrameInfo : IEquatable<FrameInfo> {
 			public readonly ValueContext ValueContext;
 
-			public SerializedDnSpyToken? Key {
+			public SerializedDnToken? Key {
 				get {
 					if (ValueContext.Function == null)
 						return null;
 					var mod = ValueContext.Function.Module;
 					if (mod == null)
 						return null;
-					return new SerializedDnSpyToken(mod.SerializedDnModule.ToSerializedDnSpyModule(), ValueContext.Function.Token);
+					return new SerializedDnToken(mod.SerializedDnModule, ValueContext.Function.Token);
 				}
 			}
 
@@ -542,7 +541,7 @@ namespace dnSpy.Debugger.Locals {
 		bool callingReread = false;
 
 		bool ILocalsOwner.AskUser(string msg) {
-			return askUser.AskUser(msg, AskUserButton.YesNo) == MsgBoxButton.OK;
+			return askUser.AskUser(msg, AskUserButton.YesNo) == MsgBoxButton.Yes;
 		}
 
 		DnEval ILocalsOwner.CreateEval(ValueContext context) {

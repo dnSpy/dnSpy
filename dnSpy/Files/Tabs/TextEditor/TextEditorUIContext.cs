@@ -37,7 +37,7 @@ using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	interface ITextEditorHelper {
-		void FollowReference(CodeReferenceSegment refSeg, bool newTab);
+		void FollowReference(CodeReference refSeg, bool newTab);
 		void SetFocus();
 		void SetActive();
 	}
@@ -73,11 +73,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				var teCtrl = (TextEditorControl)creatorObject.Object;
 				var position = openedFromKeyboard ? teCtrl.TextEditor.TextArea.Caret.Position : teCtrl.TextEditor.GetPositionFromMousePosition();
 				if (position != null)
-					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTVIEWPOSITION_GUID, position);
+					yield return new GuidObject(MenuConstants.GUIDOBJ_TEXTEDITORLOCATION_GUID, new TextEditorLocation(position.Value.Line, position.Value.Column));
 
 				var @ref = teCtrl.GetReferenceSegmentAt(position);
 				if (@ref != null)
-					yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, @ref.ToCodeReferenceSegment());
+					yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, @ref.ToCodeReference());
 			}
 		}
 
@@ -247,7 +247,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			textEditorControl.OnUseNewRendererChanged();
 		}
 
-		void ITextEditorHelper.FollowReference(CodeReferenceSegment codeRef, bool newTab) {
+		void ITextEditorHelper.FollowReference(CodeReference codeRef, bool newTab) {
 			Debug.Assert(FileTab != null);
 			if (FileTab == null)
 				return;
@@ -296,6 +296,21 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				var refSeg = textEditorControl.GetCurrentReferenceSegment();
 				return refSeg == null ? null : refSeg.Reference;
 			}
+		}
+
+		public CodeReference SelectedCodeReference {
+			get {
+				var refSeg = textEditorControl.GetCurrentReferenceSegment();
+				return refSeg == null ? null : refSeg.ToCodeReference();
+			}
+		}
+
+		public IEnumerable<CodeReference> GetSelectedCodeReferences() {
+			return textEditorControl.GetSelectedCodeReferences();
+		}
+
+		public IEnumerable<object> References {
+			get { return textEditorControl.AllReferences; }
 		}
 	}
 }

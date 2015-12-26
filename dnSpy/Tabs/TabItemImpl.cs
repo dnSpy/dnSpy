@@ -107,10 +107,19 @@ namespace dnSpy.Tabs {
 			this.DataContext = theHeader;
 			this.Header = theHeader;
 			this.AllowDrop = true;
-			this.AddHandler(UIElement.GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(GotKeyboardFocus2), true);
-			this.AddHandler(UIElement.LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(LostKeyboardFocus2), true);
+			this.AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(GotKeyboardFocus2), true);
+			this.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(LostKeyboardFocus2), true);
 			this.SetStyle(objStyle ?? "FileTabGroupTabItemStyle");
 			AddEvents();
+		}
+
+		protected override void OnMouseDown(MouseButtonEventArgs e) {
+			base.OnMouseDown(e);
+			if (!e.Handled) {
+				tabGroup.SetFocus(TabContent);
+				e.Handled = true;
+				return;
+			}
 		}
 
 		void GotKeyboardFocus2(object sender, KeyboardFocusChangedEventArgs e) {

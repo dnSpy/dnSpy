@@ -20,10 +20,7 @@
 using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for TypeDefOrRefAndCAControl.xaml
-	/// </summary>
-	public partial class TypeDefOrRefAndCAControl : UserControl {
+	sealed partial class TypeDefOrRefAndCAControl : UserControl {
 		public TypeDefOrRefAndCAControl() {
 			InitializeComponent();
 		}

@@ -41,11 +41,6 @@ namespace dnSpy.Contracts.Files {
 		IDnSpyFilenameKey Key { get; }
 
 		/// <summary>
-		/// Gets the assembly and module this file is in or null if it's not a .NET file
-		/// </summary>
-		SerializedDnSpyModule? SerializedDnSpyModule { get; }
-
-		/// <summary>
 		/// Gets the assembly or null if it's not a .NET file or if it's a netmodule
 		/// </summary>
 		AssemblyDef AssemblyDef { get; }
@@ -172,6 +167,35 @@ namespace dnSpy.Contracts.Files {
 						yield return mod;
 					}
 				}
+			}
+		}
+
+		/// <summary>
+		/// Gets self and all its children
+		/// </summary>
+		/// <param name="self">This</param>
+		/// <returns></returns>
+		public static IEnumerable<IDnSpyFile> GetAllChildrenAndSelf(this IDnSpyFile self) {
+			yield return self;
+			foreach (var c in self.GetAllChildren())
+				yield return c;
+		}
+
+		/// <summary>
+		/// Gets all its children and their children
+		/// </summary>
+		/// <param name="self">This</param>
+		/// <returns></returns>
+		public static IEnumerable<IDnSpyFile> GetAllChildren(this IDnSpyFile self) {
+			foreach (var c in GetAllChildren(self.Children))
+				yield return c;
+		}
+
+		static IEnumerable<IDnSpyFile> GetAllChildren(IEnumerable<IDnSpyFile> files) {
+			foreach (var f in files) {
+				yield return f;
+				foreach (var c in GetAllChildren(f.Children))
+					yield return c;
 			}
 		}
 	}

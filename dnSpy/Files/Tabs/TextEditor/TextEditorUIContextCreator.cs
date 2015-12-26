@@ -29,7 +29,7 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Files.Tabs.TextEditor.ToolTips;
 
 namespace dnSpy.Files.Tabs.TextEditor {
-	[ExportFileTabUIContextCreator(Order = TabsConstants.ORDER_TEXTEDITORUICONTEXTCREATOR)]
+	[ExportFileTabUIContextCreator(Order = TabConstants.ORDER_TEXTEDITORUICONTEXTCREATOR)]
 	sealed class TextEditorUIContextCreator : IFileTabUIContextCreator {
 		readonly IThemeManager themeManager;
 		readonly IImageManager imageManager;

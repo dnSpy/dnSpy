@@ -23,10 +23,7 @@ using dnSpy.AsmEditor.ViewHelpers;
 using dnlib.DotNet;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for TypeDefOrRefAndCAsControl.xaml
-	/// </summary>
-	public partial class TypeDefOrRefAndCAsControl : UserControl {
+	sealed partial class TypeDefOrRefAndCAsControl : UserControl {
 		public TypeDefOrRefAndCAsControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

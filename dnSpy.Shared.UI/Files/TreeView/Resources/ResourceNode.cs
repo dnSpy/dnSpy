@@ -38,7 +38,7 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 	public abstract class ResourceNode : FileTreeNodeData, IResourceNode {
 		public Resource Resource {
 			get { return resource; }
-			protected set { resource = value; }
+			set { resource = value; }
 		}
 		Resource resource;
 

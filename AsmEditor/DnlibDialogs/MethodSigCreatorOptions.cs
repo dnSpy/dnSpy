@@ -20,7 +20,7 @@
 using System;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	public sealed class MethodSigCreatorOptions : ICloneable {
+	sealed class MethodSigCreatorOptions : ICloneable {
 		/// <summary>
 		/// True if it's a property signature, false if it's a method signature
 		/// </summary>

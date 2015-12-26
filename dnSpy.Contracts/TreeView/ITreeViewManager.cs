@@ -22,14 +22,14 @@ using System.Collections.Generic;
 
 namespace dnSpy.Contracts.TreeView {
 	/// <summary>
-	/// Tree view manager
+	/// Treeview manager
 	/// </summary>
 	public interface ITreeViewManager {
 		/// <summary>
 		/// Creates a <see cref="ITreeView"/> instance
 		/// </summary>
-		/// <param name="guid">Guid of tree view</param>
-		/// <param name="options">Tree view options</param>
+		/// <param name="guid">Guid of treeview</param>
+		/// <param name="options">Treeview options</param>
 		/// <returns></returns>
 		ITreeView Create(Guid guid, TreeViewOptions options);
 

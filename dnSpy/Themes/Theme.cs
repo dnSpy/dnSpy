@@ -81,16 +81,16 @@ namespace dnSpy.Themes {
 			}
 		}
 
-		public string Name { get; private set; }
+		public Guid Guid { get; private set; }
 		public string MenuName { get; private set; }
 		public bool IsHighContrast { get; private set; }
 		public double Order { get; private set; }
 
 		public Theme(XElement root) {
-			var name = root.Attribute("name");
+			var name = root.Attribute("guid");
 			if (name == null || string.IsNullOrEmpty(name.Value))
-				throw new Exception("Missing or empty name attribute");
-			this.Name = name.Value;
+				throw new Exception("Missing or empty guid attribute");
+			this.Guid = new Guid(name.Value);
 
 			var menuName = root.Attribute("menu-name");
 			if (menuName == null || string.IsNullOrEmpty(menuName.Value))
@@ -365,7 +365,7 @@ namespace dnSpy.Themes {
 		}
 
 		public override string ToString() {
-			return string.Format("Theme: {0}", Name);
+			return string.Format("Theme: {0} {1}", Guid, MenuName);
 		}
 	}
 }

@@ -18,24 +18,24 @@
 */
 
 using dnlib.DotNet;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.Languages;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ParamDefsVM : ListVM<ParamDefVM, ParamDef> {
-		public ParamDefsVM(ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Parameter", "Create Parameter", ownerModule, language, ownerType, ownerMethod) {
+		public ParamDefsVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod)
+			: base("Edit Parameter", "Create Parameter", ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
 		protected override ParamDefVM Create(ParamDef model) {
-			return new ParamDefVM(new ParamDefOptions(model), ownerModule, language, ownerType, ownerMethod);
+			return new ParamDefVM(new ParamDefOptions(model), ownerModule, languageManager, ownerType, ownerMethod);
 		}
 
 		protected override ParamDefVM Clone(ParamDefVM obj) {
-			return new ParamDefVM(obj.CreateParamDefOptions(), ownerModule, language, ownerType, ownerMethod);
+			return new ParamDefVM(obj.CreateParamDefOptions(), ownerModule, languageManager, ownerType, ownerMethod);
 		}
 
 		protected override ParamDefVM Create() {
-			return new ParamDefVM(new ParamDefOptions(), ownerModule, language, ownerType, ownerMethod);
+			return new ParamDefVM(new ParamDefOptions(), ownerModule, languageManager, ownerType, ownerMethod);
 		}
 
 		protected override int GetAddIndex(ParamDefVM obj) {

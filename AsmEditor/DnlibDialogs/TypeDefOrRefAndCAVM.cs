@@ -21,8 +21,8 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class TypeDefOrRefAndCAVM : ViewModelBase {
@@ -46,10 +46,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 		CustomAttributesVM customAttributesVM;
 
-		public TypeDefOrRefAndCAVM(TypeDefOrRefAndCAOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
+		public TypeDefOrRefAndCAVM(TypeDefOrRefAndCAOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origOptions = options;
 
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = false,
@@ -63,7 +63,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 			this.typeSigCreator = new TypeSigCreatorVM(typeSigCreatorOptions);
 			TypeSigCreator.PropertyChanged += TypeSigCreator_PropertyChanged;
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
 
 			Reinitialize();
 		}

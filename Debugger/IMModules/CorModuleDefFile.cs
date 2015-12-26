@@ -29,7 +29,7 @@ namespace dnSpy.Debugger.IMModules {
 	/// A class holding a <see cref="dndbg.DotNet.CorModuleDef"/> reference. Should only be used if
 	/// it's a dynamic module since it uses <c>IMetaDataImport</c> to read the MD.
 	/// </summary>
-	sealed class CorModuleDefFile : DnSpyDotNetFileBase {
+	sealed class CorModuleDefFile : DnSpyDotNetFileBase, ISerializedDnModule {
 		sealed class MyKey : IDnSpyFilenameKey {
 			readonly DnModule dnModule;
 
@@ -51,8 +51,8 @@ namespace dnSpy.Debugger.IMModules {
 			get { return CreateKey(dnModule); }
 		}
 
-		public override SerializedDnSpyModule? SerializedDnSpyModule {
-			get { return Contracts.Files.SerializedDnSpyModule.Create(ModuleDef, DnModule.IsDynamic, DnModule.IsInMemory); }
+		public SerializedDnModule? SerializedDnModule {
+			get { return dndbg.Engine.SerializedDnModule.Create(ModuleDef, DnModule.IsDynamic, DnModule.IsInMemory); }
 		}
 
 		public override DnSpyFileInfo? SerializedFile {

@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 
 namespace dnSpy.Debugger.Exceptions {
@@ -42,9 +43,12 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	sealed class DefaultExceptionSettings {
-		public static readonly DefaultExceptionSettings Instance = new DefaultExceptionSettings();
+	interface IDefaultExceptionSettings {
+		IEnumerable<ExceptionInfo> ExceptionInfos { get; }
+	}
 
+	[Export, Export(typeof(IDefaultExceptionSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class DefaultExceptionSettings : IDefaultExceptionSettings {
 		/*
 		static void Dump() {
 			var sb = new StringBuilder();

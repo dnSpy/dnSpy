@@ -20,7 +20,6 @@
 using System.Windows;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class TypeSigCreator : ITypeSigCreator {
@@ -39,7 +38,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			data.TypeSig = typeSig;
 			var win = new TypeSigCreatorDlg();
 			win.DataContext = data;
-			win.Owner = ownerWindow ?? MainWindow.Instance;
+			win.Owner = ownerWindow ?? Application.Current.MainWindow;
 			if (win.ShowDialog() != true) {
 				canceled = true;
 				return null;

@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.AsmEditor.Commands;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {

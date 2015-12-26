@@ -18,24 +18,24 @@
 */
 
 using dnlib.DotNet;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.Languages;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CustomAttributesVM : ListVM<CustomAttributeVM, CustomAttribute> {
-		public CustomAttributesVM(ModuleDef ownerModule, Language language, TypeDef ownerType = null, MethodDef ownerMethod = null)
-			: base("Edit Custom Attribute", "Create Custom Attribute", ownerModule, language, ownerType, ownerMethod) {
+		public CustomAttributesVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType = null, MethodDef ownerMethod = null)
+			: base("Edit Custom Attribute", "Create Custom Attribute", ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
 		protected override CustomAttributeVM Create(CustomAttribute model) {
-			return new CustomAttributeVM(new CustomAttributeOptions(model), ownerModule, language, ownerType, ownerMethod);
+			return new CustomAttributeVM(new CustomAttributeOptions(model), ownerModule, languageManager, ownerType, ownerMethod);
 		}
 
 		protected override CustomAttributeVM Clone(CustomAttributeVM obj) {
-			return new CustomAttributeVM(obj.CreateCustomAttributeOptions(), ownerModule, language, ownerType, ownerMethod);
+			return new CustomAttributeVM(obj.CreateCustomAttributeOptions(), ownerModule, languageManager, ownerType, ownerMethod);
 		}
 
 		protected override CustomAttributeVM Create() {
-			return new CustomAttributeVM(new CustomAttributeOptions(), ownerModule, language, ownerType, ownerMethod);
+			return new CustomAttributeVM(new CustomAttributeOptions(), ownerModule, languageManager, ownerType, ownerMethod);
 		}
 	}
 }

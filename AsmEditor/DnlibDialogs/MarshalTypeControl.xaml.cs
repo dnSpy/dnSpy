@@ -20,10 +20,7 @@
 using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for MarshalTypeControl.xaml
-	/// </summary>
-	public partial class MarshalTypeControl : UserControl {
+	sealed partial class MarshalTypeControl : UserControl {
 		public MarshalTypeControl() {
 			InitializeComponent();
 		}

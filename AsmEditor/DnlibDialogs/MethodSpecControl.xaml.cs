@@ -22,10 +22,7 @@ using System.Windows.Controls;
 using dnSpy.AsmEditor.ViewHelpers;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for MethodSpecControl.xaml
-	/// </summary>
-	public partial class MethodSpecControl : UserControl {
+	sealed partial class MethodSpecControl : UserControl {
 		public MethodSpecControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

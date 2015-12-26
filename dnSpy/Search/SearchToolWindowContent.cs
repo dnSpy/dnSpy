@@ -65,7 +65,7 @@ namespace dnSpy.Search {
 
 	sealed class SearchToolWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("91802684-9D1F-4491-90FD-AFE1DE7C4D46");
-		public static AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Top;
+		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Top;
 
 		public IInputElement FocusedElement {
 			get { return searchManager.Value.FocusedElement; }

@@ -21,8 +21,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	enum GPVariance {
@@ -137,15 +137,15 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		readonly ModuleDef ownerModule;
 
-		public GenericParamVM(GenericParamOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
+		public GenericParamVM(GenericParamOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 			this.number = new UInt16VM(a => { OnPropertyChanged("FullName"); HasErrorUpdated(); });
-			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<GenericParamConstraint>("Edit Generic Parameter Constraint", "Create Generic Parameter Constraint", ownerModule, language, ownerType, ownerMethod);
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
+			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<GenericParamConstraint>("Edit Generic Parameter Constraint", "Create Generic Parameter Constraint", ownerModule, languageManager, ownerType, ownerMethod);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
 			this.gpVarianceVM = new EnumListVM(EnumVM.Create(typeof(GPVariance)));
 
-			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
+			var typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
 				IsLocal = false,
 				CanAddGenericTypeVar = true,
 				CanAddGenericMethodVar = false,

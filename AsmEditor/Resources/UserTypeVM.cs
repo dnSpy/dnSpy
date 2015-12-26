@@ -21,8 +21,9 @@ using System;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Search;
+using dnSpy.Shared.UI.Files.TreeView.Resources;
 using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.UI.Search;
 
 namespace dnSpy.AsmEditor.Resources {
 	sealed class UserTypeVM : ViewModelBase {
@@ -72,7 +73,7 @@ namespace dnSpy.AsmEditor.Resources {
 		void PickType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newType = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.TypeDef), GetTypeRef(), ownerModule);
+			var newType = dnlibTypePicker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), GetTypeRef(), ownerModule);
 			if (newType != null)
 				TypeFullName = newType.AssemblyQualifiedName;
 		}

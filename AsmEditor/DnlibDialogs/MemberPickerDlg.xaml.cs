@@ -17,35 +17,43 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.ComponentModel;
+using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts;
+using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Shared.UI.Controls;
-using ICSharpCode.ILSpy;
-using ICSharpCode.TreeView;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for MemberPickerDlg.xaml
-	/// </summary>
-	public partial class MemberPickerDlg : WindowBase, IMakeVisible {
-		public MemberPickerDlg() {
+	sealed partial class MemberPickerDlg : WindowBase {
+		public MemberPickerDlg(IFileTreeView globalFileTreeView, IFileTreeView newFileTreeView, IImageManager imageManager) {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {
 				var data = DataContext as MemberPickerVM;
 				if (data != null) {
-					data.OpenAssembly = new OpenAssembly();
-					data.MakeVisible = this;
-					data.DnSpyFileListTreeNode.OwnerTreeView = treeView;
+					data.OpenAssembly = new OpenAssembly(globalFileTreeView.FileManager);
 					data.PropertyChanged += MemberPickerVM_PropertyChanged;
 				}
 			};
-			MainWindow.InitializeAssemblyTreeView(treeView);
-			openImage.Source = DnSpy.App.ImageManager.GetImage(GetType().Assembly, "Open", BackgroundType.DialogWindow);
+			openImage.Source = imageManager.GetImage(GetType().Assembly, "Open", BackgroundType.DialogWindow);
+
+			var treeView = (Control)newFileTreeView.TreeView.UIObject;
+			cpTreeView.Content = treeView;
+			Validation.SetErrorTemplate(treeView, (ControlTemplate)FindResource("noRedBorderOnValidationError"));
+			treeView.AllowDrop = false;
+			treeView.BorderThickness = new Thickness(1);
+
+			var binding = new Binding {
+				ValidatesOnDataErrors = true,
+				ValidatesOnExceptions = true,
+				UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+				Path = new PropertyPath("SelectedItem"),
+				Mode = BindingMode.TwoWay,
+			};
+			treeView.SetBinding(Selector.SelectedItemProperty, binding);
 		}
 
 		void MemberPickerVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -55,19 +63,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					listBox.SetResourceReference(Control.BorderBrushProperty, "CommonControlsTextBoxBorderError");
 				else
 					listBox.ClearValue(Control.BorderBrushProperty);
-			}
-		}
-
-		void IMakeVisible.ScrollIntoView(object item) {
-			var node = item as SharpTreeNode;
-			if (node != null) {
-				// Calling ScrollIntoView() immediately won't always work so delay a little bit.
-				// We must call ScrollIntoView() immediately or the selected item won't be
-				// highlighted for some reason.
-				treeView.ScrollIntoView(node);
-				this.Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(delegate {
-					treeView.ScrollIntoView(node);
-				}));
 			}
 		}
 	}

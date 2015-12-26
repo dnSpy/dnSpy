@@ -22,10 +22,7 @@ using System.Windows.Controls;
 using dnSpy.AsmEditor.ViewHelpers;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for ParamDefsControl.xaml
-	/// </summary>
-	public partial class ParamDefsControl : UserControl {
+	sealed partial class ParamDefsControl : UserControl {
 		public ParamDefsControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

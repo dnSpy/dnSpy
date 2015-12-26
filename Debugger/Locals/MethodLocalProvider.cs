@@ -24,12 +24,11 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
-using dnSpy.Shared.UI.Files;
 using ICSharpCode.Decompiler.ILAst;
 
 namespace dnSpy.Debugger.Locals {
 	interface IMethodLocalProvider {
-		void GetMethodInfo(SerializedDnSpyToken method, out Parameter[] parameters, out Local[] locals, out ILVariable[] decLocals);
+		void GetMethodInfo(SerializedDnToken method, out Parameter[] parameters, out Local[] locals, out ILVariable[] decLocals);
 		event EventHandler NewMethodInfoAvailable;
 	}
 
@@ -50,7 +49,7 @@ namespace dnSpy.Debugger.Locals {
 				NewMethodInfoAvailable(this, EventArgs.Empty);
 		}
 
-		public void GetMethodInfo(SerializedDnSpyToken key, out Parameter[] parameters, out Local[] locals, out ILVariable[] decLocals) {
+		public void GetMethodInfo(SerializedDnToken key, out Parameter[] parameters, out Local[] locals, out ILVariable[] decLocals) {
 			parameters = null;
 			locals = null;
 			decLocals = null;

@@ -223,7 +223,7 @@ namespace dnSpy.TreeView {
 
 		public void SelectItems(IEnumerable<ITreeNodeData> items) {
 			sharpTreeView.SelectedItems.Clear();
-			var nodes = items.Select(a => (TreeNodeImpl)a.TreeNode).ToArray();
+			var nodes = items.Where(a => a != null).Select(a => (TreeNodeImpl)a.TreeNode).ToArray();
 			if (nodes.Length > 0) {
 				sharpTreeView.FocusNode(nodes[0].Node);
 				// This can happen when pressing Ctrl+Shift+Tab when the treeview has keyboard focus
@@ -262,6 +262,19 @@ namespace dnSpy.TreeView {
 		public void RefreshAllNodes() {
 			foreach (var node in this.Root.Descendants())
 				node.RefreshUI();
+		}
+
+		public ITreeNodeData FromImplNode(object selectedItem) {
+			var node = selectedItem as DnSpySharpTreeNode;
+			return node == null ? null : node.TreeNodeImpl.Data;
+		}
+
+		public object ToImplNode(ITreeNodeData node) {
+			if (node == null)
+				return null;
+			var impl = node.TreeNode as TreeNodeImpl;
+			Debug.Assert(impl != null);
+			return impl == null ? null : impl.Node;
 		}
 	}
 }

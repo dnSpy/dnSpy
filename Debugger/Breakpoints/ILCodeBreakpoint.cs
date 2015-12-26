@@ -20,7 +20,6 @@
 using System;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.UI.Files;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 
@@ -29,7 +28,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		sealed class MyMarkedTextLine : MarkedTextLine {
 			readonly ILCodeBreakpoint ilbp;
 
-			public MyMarkedTextLine(ILCodeBreakpoint ilbp, SerializedDnSpyToken methodKey, uint ilOffset)
+			public MyMarkedTextLine(ILCodeBreakpoint ilbp, SerializedDnToken methodKey, uint ilOffset)
 				: base(methodKey, ilOffset, ilbp) {
 				this.ilbp = ilbp;
 			}
@@ -41,7 +40,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			public override bool IsVisible(ITextEditorUIContext uiContext) {
 				TextLocation location, endLocation;
 				var cm = uiContext.GetCodeMappings();
-				var mm = cm.TryGetMapping(SerializedDnSpyToken);
+				var mm = cm.TryGetMapping(SerializedDnToken);
 				if (mm == null)
 					return false;
 				if (!mm.GetInstructionByTokenAndOffset(ILOffset, out location, out endLocation))
@@ -80,8 +79,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			get { return BreakpointType.ILCode; }
 		}
 
-		public SerializedDnSpyToken SerializedDnSpyToken {
-			get { return myMarkedTextLine.SerializedDnSpyToken; }
+		public SerializedDnToken SerializedDnToken {
+			get { return myMarkedTextLine.SerializedDnToken; }
 		}
 
 		public uint ILOffset {
@@ -102,7 +101,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		readonly MyMarkedTextLine myMarkedTextLine;
 
-		public ILCodeBreakpoint(SerializedDnSpyToken methodKey, uint ilOffset, bool isEnabled = true)
+		public ILCodeBreakpoint(SerializedDnToken methodKey, uint ilOffset, bool isEnabled = true)
 			: base(isEnabled) {
 			this.myMarkedTextLine = new MyMarkedTextLine(this, methodKey, ilOffset);
 		}

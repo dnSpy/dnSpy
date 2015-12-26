@@ -99,7 +99,7 @@ namespace dnSpy.Search {
 		object GetReference(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID))
 				return null;
-			var @ref = context.FindByType<CodeReferenceSegment>();
+			var @ref = context.Find<CodeReference>();
 			return @ref == null ? null : @ref.Reference;
 		}
 	}

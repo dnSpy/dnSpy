@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.Assembly {
 	sealed class AssemblyOptions {

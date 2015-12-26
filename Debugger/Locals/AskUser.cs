@@ -21,14 +21,14 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.App;
 
 namespace dnSpy.Debugger.Locals {
-	public enum AskUserButton {
+	enum AskUserButton {
 		OK,
 		OKCancel,
 		YesNoCancel,
 		YesNo,
 	}
 
-	public interface IAskUser {
+	interface IAskUser {
 		MsgBoxButton AskUser(string msg, AskUserButton buttons);
 	}
 

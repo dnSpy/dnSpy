@@ -20,10 +20,7 @@
 using System.Windows.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for ImplMapControl.xaml
-	/// </summary>
-	public partial class ImplMapControl : UserControl {
+	sealed partial class ImplMapControl : UserControl {
 		public ImplMapControl() {
 			InitializeComponent();
 		}

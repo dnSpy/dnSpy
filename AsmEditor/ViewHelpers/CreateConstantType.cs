@@ -20,7 +20,6 @@
 using System.Windows;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class CreateConstantType : ICreateConstantType {
@@ -72,7 +71,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			var data = new ConstantTypeVM(ownerModule, value, validConstants ?? DefaultConstants, true, true, options);
 			var win = new ConstantTypeDlg();
 			win.DataContext = data;
-			win.Owner = ownerWindow ?? MainWindow.Instance;
+			win.Owner = ownerWindow ?? Application.Current.MainWindow;
 			if (win.ShowDialog() != true) {
 				canceled = true;
 				resultNoSpecialNull = null;

@@ -22,5 +22,9 @@ namespace dnSpy.Contracts.Files.TreeView {
 	/// Contains the base type (if any) and all interfaces the type implements
 	/// </summary>
 	public interface IBaseTypeFolderNode : IFileTreeNodeData {
+		/// <summary>
+		/// Invalidates all children
+		/// </summary>
+		void InvalidateChildren();
 	}
 }

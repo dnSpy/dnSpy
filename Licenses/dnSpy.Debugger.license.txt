@@ -1,0 +1,3 @@
+License: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 (see GPLv3.txt)
+
+Copyright (C) 2014-2015 de4dot@gmail.com

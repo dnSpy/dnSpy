@@ -22,7 +22,7 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 
 namespace dnSpy.Files.Tabs {
-	[ExportDecompileNode(Order = TabsConstants.ORDER_DEFAULTDECOMPILENODE)]
+	[ExportDecompileNode(Order = TabConstants.ORDER_DEFAULTDECOMPILENODE)]
 	sealed class DefaultDecompileNode : IDecompileNode {
 		public bool Decompile(IDecompileNodeContext context, IFileTreeNodeData node) {
 			new NodeDecompiler(a => context.ExecuteInUIThread(() => a()), context.Output, context.Language, context.DecompilationOptions).Decompile(node);

@@ -30,7 +30,7 @@ using ICSharpCode.Decompiler;
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class MethodUsedByNode : SearchNode {
 		readonly MethodDef analyzedMethod;
-		private ConcurrentDictionary<MethodDef, int> foundMethods;
+		ConcurrentDictionary<MethodDef, int> foundMethods;
 
 		public MethodUsedByNode(MethodDef analyzedMethod) {
 			if (analyzedMethod == null)

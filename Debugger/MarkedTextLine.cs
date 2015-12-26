@@ -20,7 +20,6 @@
 using System;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.UI.Files;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 
@@ -28,16 +27,16 @@ namespace dnSpy.Debugger {
 	abstract class MarkedTextLine : IMarkedTextLine {
 		readonly IMarkedTextLine senderObj;
 
-		protected MarkedTextLine(SerializedDnSpyToken methodKey, uint ilOffset, IMarkedTextLine senderObj = null) {
+		protected MarkedTextLine(SerializedDnToken methodKey, uint ilOffset, IMarkedTextLine senderObj = null) {
 			this.methodKey = methodKey;
 			this.ilOffset = ilOffset;
 			this.senderObj = senderObj ?? this;
 		}
 
-		public SerializedDnSpyToken SerializedDnSpyToken {
+		public SerializedDnToken SerializedDnToken {
 			get { return methodKey; }
 		}
-		SerializedDnSpyToken methodKey;
+		SerializedDnToken methodKey;
 
 		public uint ILOffset {
 			get { return ilOffset; }
@@ -86,7 +85,7 @@ namespace dnSpy.Debugger {
 			var marker = CreateMarkerInternal(markerService, uiContext);
 			var cm = uiContext.GetCodeMappings();
 			marker.ZOrder = ZOrder;
-			marker.IsVisible = b => cm.TryGetMapping(SerializedDnSpyToken) != null;
+			marker.IsVisible = b => cm.TryGetMapping(SerializedDnToken) != null;
 			marker.TextMarkerObject = this;
 			Initialize(uiContext, markerService, marker);
 			return marker;

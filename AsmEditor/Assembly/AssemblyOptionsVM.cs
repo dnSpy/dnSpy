@@ -23,8 +23,8 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.Assembly {
 	enum AsmProcArch {
@@ -230,7 +230,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 		readonly ModuleDef ownerModule;
 
-		public AssemblyOptionsVM(AssemblyOptions options, ModuleDef ownerModule, Language language) {
+		public AssemblyOptionsVM(AssemblyOptions options, ModuleDef ownerModule, ILanguageManager languageManager) {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 			this.hashAlgorithmVM = new EnumListVM(hashAlgorithmList, (a, b) => OnPropertyChanged("AssemblyFullName"));
@@ -240,8 +240,8 @@ namespace dnSpy.AsmEditor.Assembly {
 			this.versionBuild = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
 			this.versionRevision = new UInt16VM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); }, true);
 			this.publicKey = new HexStringVM(a => { HasErrorUpdated(); OnPropertyChanged("AssemblyFullName"); UpdatePublicKeyFlag(); }) { UpperCaseHex = false };
-			this.customAttributesVM = new CustomAttributesVM(ownerModule, language);
-			this.declSecuritiesVM = new DeclSecuritiesVM(ownerModule, language, null, null);
+			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
+			this.declSecuritiesVM = new DeclSecuritiesVM(ownerModule, languageManager, null, null);
 			Reinitialize();
 		}
 

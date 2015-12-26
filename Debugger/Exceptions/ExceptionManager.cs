@@ -55,8 +55,8 @@ namespace dnSpy.Debugger.Exceptions {
 		bool Exists(ExceptionInfoKey key);
 	}
 
-	[Export, Export(typeof(IExceptionManager)), PartCreationPolicy(CreationPolicy.Shared)]
-	sealed class ExceptionManager : IExceptionManager {
+	[Export, Export(typeof(IExceptionManager)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class ExceptionManager : IExceptionManager, ILoadBeforeDebug {
 		readonly Dictionary<ExceptionInfoKey, ExceptionInfo> exceptions = new Dictionary<ExceptionInfoKey, ExceptionInfo>();
 		readonly ExceptionInfo[] otherExceptions = new ExceptionInfo[(int)ExceptionType.Last];
 
@@ -67,15 +67,17 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		readonly ITheDebugger theDebugger;
+		readonly IDefaultExceptionSettings defaultExceptionSettings;
 
 		[ImportingConstructor]
-		ExceptionManager(ITheDebugger theDebugger) {
+		ExceptionManager(ITheDebugger theDebugger, IDefaultExceptionSettings defaultExceptionSettings) {
 			this.theDebugger = theDebugger;
+			this.defaultExceptionSettings = defaultExceptionSettings;
 			RestoreDefaults();
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 		}
 
-		private void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
+		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
 			var dbg = (DnDebugger)sender;
 			switch (theDebugger.ProcessState) {
 			case DebuggerProcessState.Starting:
@@ -133,7 +135,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		public void RestoreDefaults() {
 			exceptions.Clear();
-			foreach (var info in DefaultExceptionSettings.Instance.ExceptionInfos) {
+			foreach (var info in defaultExceptionSettings.ExceptionInfos) {
 				Debug.Assert(!exceptions.ContainsKey(info.Key));
 				exceptions[info.Key] = info;
 			}

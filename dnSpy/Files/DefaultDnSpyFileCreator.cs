@@ -27,7 +27,7 @@ namespace dnSpy.Files {
 	[Export(typeof(IDnSpyFileCreator))]
 	sealed class DefaultDnSpyFileCreator : IDnSpyFileCreator {
 		public double Order {
-			get { return FilesConstants.ORDER_DEFAULT_FILE_CREATOR; }
+			get { return FileConstants.ORDER_DEFAULT_FILE_CREATOR; }
 		}
 
 		public IDnSpyFile Create(IFileManager fileManager, DnSpyFileInfo fileInfo) {
@@ -45,11 +45,11 @@ namespace dnSpy.Files {
 		}
 
 		static string GetFilename(DnSpyFileInfo fileInfo) {
-			if (fileInfo.Type == FilesConstants.FILETYPE_FILE)
+			if (fileInfo.Type == FileConstants.FILETYPE_FILE)
 				return fileInfo.Name;
-			if (fileInfo.Type == FilesConstants.FILETYPE_GAC)
+			if (fileInfo.Type == FileConstants.FILETYPE_GAC)
 				return GetGacFilename(fileInfo.Name);
-			if (fileInfo.Type == FilesConstants.FILETYPE_REFASM)
+			if (fileInfo.Type == FileConstants.FILETYPE_REFASM)
 				return GetRefFileFilename(fileInfo.Name);
 			return null;
 		}
@@ -59,7 +59,7 @@ namespace dnSpy.Files {
 		}
 
 		static string GetRefFileFilename(string s) {
-			int index = s.LastIndexOf(FilesConstants.REFERENCE_ASSEMBLY_SEPARATOR);
+			int index = s.LastIndexOf(FileConstants.REFERENCE_ASSEMBLY_SEPARATOR);
 			Debug.Assert(index >= 0);
 			if (index < 0)
 				return null;
@@ -67,7 +67,7 @@ namespace dnSpy.Files {
 			var f = GetGacFilename(s.Substring(0, index));
 			if (f != null)
 				return f;
-			return s.Substring(index + FilesConstants.REFERENCE_ASSEMBLY_SEPARATOR.Length).Trim();
+			return s.Substring(index + FileConstants.REFERENCE_ASSEMBLY_SEPARATOR.Length).Trim();
 		}
 	}
 }

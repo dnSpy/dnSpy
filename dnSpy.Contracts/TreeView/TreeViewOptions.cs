@@ -22,7 +22,7 @@ using System.Windows.Controls;
 
 namespace dnSpy.Contracts.TreeView {
 	/// <summary>
-	/// Tree view options
+	/// Treeview options
 	/// </summary>
 	public sealed class TreeViewOptions {
 		/// <summary>

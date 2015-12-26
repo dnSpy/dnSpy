@@ -33,7 +33,7 @@ using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.Documentation;
 
 namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
-	[ExportToolTipContentCreator(Order = TabsConstants.ORDER_DNLIBREFTOOLTIPCONTENTCREATOR)]
+	[ExportToolTipContentCreator(Order = TabConstants.ORDER_DNLIBREFTOOLTIPCONTENTCREATOR)]
 	sealed class DnlibReferenceToolTipContentCreator : IToolTipContentCreator {
 		public object Create(IToolTipContentCreatorContext context, object @ref) {
 			if (@ref is GenericParam)
@@ -58,21 +58,21 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 				return null;
 			string name = method.Name;
 			if (name.StartsWith("set_") || name.StartsWith("get_")) {
-				var md = DnlibExtensions.Resolve(method);
+				var md = Resolve(method) as MethodDef;
 				if (md == null)
 					return null;
 				mr = md.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == md || p.SetMethod == md);
 				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
 			}
 			else if (name.StartsWith("add_")) {
-				var md = DnlibExtensions.Resolve(method);
+				var md = Resolve(method) as MethodDef;
 				if (md == null)
 					return null;
 				mr = md.DeclaringType.Events.FirstOrDefault(p => p.AddMethod == md);
 				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
 			}
 			else if (name.StartsWith("remove_")) {
-				var md = DnlibExtensions.Resolve(method);
+				var md = Resolve(method) as MethodDef;
 				if (md == null)
 					return null;
 				mr = md.DeclaringType.Events.FirstOrDefault(p => p.RemoveMethod == md);

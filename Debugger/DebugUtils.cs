@@ -20,17 +20,17 @@
 using System;
 using System.Diagnostics;
 using System.Windows.Threading;
+using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
-using dnSpy.Shared.UI.Files;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 
 namespace dnSpy.Debugger {
 	static class DebugUtils {
-		public static void GoToIL(IFileTabManager fileTabManager, IModuleLoader moduleLoader, SerializedDnSpyModule serAsm, uint token, uint ilOffset, bool newTab) {
+		public static void GoToIL(IFileTabManager fileTabManager, IModuleLoader moduleLoader, SerializedDnModule serAsm, uint token, uint ilOffset, bool newTab) {
 			var file = moduleLoader.LoadModule(serAsm, true);
 			GoToIL(fileTabManager, file, token, ilOffset, newTab);
 		}
@@ -43,8 +43,8 @@ namespace dnSpy.Debugger {
 			if (method == null)
 				return false;
 
-			var serMod = SerializedDnSpyModuleCreator.Create(fileTabManager.FileTreeView,  method.Module);
-			var key = new SerializedDnSpyToken(serMod, method.MDToken);
+			var serMod = SerializedDnModuleCreator.Create(fileTabManager.FileTreeView,  method.Module);
+			var key = new SerializedDnToken(serMod, method.MDToken);
 
 			bool found = fileTabManager.FileTreeView.FindNode(method.Module) != null;
 			if (found) {
@@ -66,7 +66,7 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		public static bool MoveCaretTo(ITextEditorUIContext uiContext, SerializedDnSpyToken key, uint ilOffset) {
+		public static bool MoveCaretTo(ITextEditorUIContext uiContext, SerializedDnToken key, uint ilOffset) {
 			if (uiContext == null)
 				return false;
 
@@ -82,7 +82,7 @@ namespace dnSpy.Debugger {
 			return true;
 		}
 
-		public static bool VerifyAndGetCurrentDebuggedMethod(ITextEditorUIContext uiContext, SerializedDnSpyToken serToken, out CodeMappings codeMappings) {
+		public static bool VerifyAndGetCurrentDebuggedMethod(ITextEditorUIContext uiContext, SerializedDnToken serToken, out CodeMappings codeMappings) {
 			codeMappings = uiContext.GetCodeMappings();
 			return codeMappings.TryGetMapping(serToken) != null;
 		}

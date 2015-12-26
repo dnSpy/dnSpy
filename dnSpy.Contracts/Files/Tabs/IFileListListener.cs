@@ -39,14 +39,23 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <summary>
 		/// Called before a new file list is loaded
 		/// </summary>
-		/// <param name="isReload">true if it's a reload, false if it's a load</param>
+		/// <param name="isReload">true if it's reload-list, false if it's load-list</param>
 		void BeforeLoad(bool isReload);
 
 		/// <summary>
 		/// Called after a new file list has been loaded
 		/// </summary>
-		/// <param name="isReload">true if it's a reload, false if it's a load</param>
+		/// <param name="isReload">true if it's reload-list, false if it's load-list</param>
 		void AfterLoad(bool isReload);
+
+		/// <summary>
+		/// Returns true if the list can be loaded. It's called before <see cref="BeforeLoad(bool)"/>
+		/// and can be used to show a message box to the user. If false is returned, the list isn't
+		/// loaded.
+		/// </summary>
+		/// <param name="isReload">true if it's reload-list, false if it's load-list</param>
+		/// <returns></returns>
+		bool CheckCanLoad(bool isReload);
 	}
 
 	/// <summary>Metadata</summary>

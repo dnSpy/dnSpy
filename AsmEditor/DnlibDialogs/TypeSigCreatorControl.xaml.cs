@@ -22,10 +22,7 @@ using System.Windows.Controls;
 using dnSpy.AsmEditor.ViewHelpers;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for TypeSigCreatorControl.xaml
-	/// </summary>
-	public partial class TypeSigCreatorControl : UserControl {
+	sealed partial class TypeSigCreatorControl : UserControl {
 		public TypeSigCreatorControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

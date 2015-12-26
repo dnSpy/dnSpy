@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for CreateTypeSigArrayDlg.xaml
-	/// </summary>
-	public partial class CreateTypeSigArrayDlg : WindowBase {
+	sealed partial class CreateTypeSigArrayDlg : WindowBase {
 		public CreateTypeSigArrayDlg() {
 			InitializeComponent();
 		}

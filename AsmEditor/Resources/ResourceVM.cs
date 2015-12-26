@@ -23,8 +23,8 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Files;
-using dnSpy.Search;
 using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.UI.Search;
 
 namespace dnSpy.AsmEditor.Resources {
 	enum ResourceVisibility {
@@ -164,7 +164,7 @@ namespace dnSpy.AsmEditor.Resources {
 		void PickAssembly() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newAsm = dnlibTypePicker.GetDnlibType<IDnSpyFile>(new FlagsTreeViewNodeFilter(VisibleMembersFlags.AssemblyDef), null, ownerModule);
+			var newAsm = dnlibTypePicker.GetDnlibType<IDnSpyFile>(new FlagsFileTreeNodeFilter(VisibleMembersFlags.AssemblyDef), null, ownerModule);
 			if (newAsm != null && newAsm.AssemblyDef != null)
 				Assembly = newAsm.AssemblyDef.ToAssemblyRef();
 		}

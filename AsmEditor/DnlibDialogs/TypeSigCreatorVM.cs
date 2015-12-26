@@ -22,9 +22,10 @@ using System.Collections.Generic;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Search;
+using dnSpy.Contracts.Languages;
+using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
+using dnSpy.Shared.UI.Search;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class TypeSigCreatorVM : ViewModelBase {
@@ -141,7 +142,9 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			get {
 				if (TypeSig == null)
 					return "null";
-				return Language.TypeToString(TypeSig.ToTypeDefOrRef(), true);
+				var output = new NoSyntaxHighlightOutput();
+				Language.WriteType(output, TypeSig.ToTypeDefOrRef(), true);
+				return output.ToString();
 			}
 		}
 
@@ -205,11 +208,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			get { return new RelayCommand(a => AddPinnedSig(), a => AddPinnedSigCanExecute()); }
 		}
 
-		public IEnumerable<Language> AllLanguages {
-			get { return Languages.AllLanguages; }
+		public IEnumerable<ILanguage> AllLanguages {
+			get { return options.LanguageManager.Languages; }
 		}
 
-		public Language Language {
+		public ILanguage Language {
 			get { return options.Language; }
 			set {
 				if (options.Language != value) {
@@ -268,7 +271,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 
-			var type = dnlibTypePicker.GetDnlibType<ITypeDefOrRef>(new FlagsTreeViewNodeFilter(flags), null, options.OwnerModule);
+			var type = dnlibTypePicker.GetDnlibType<ITypeDefOrRef>(new FlagsFileTreeNodeFilter(flags), null, options.OwnerModule);
 			if (type == null)
 				return null;
 

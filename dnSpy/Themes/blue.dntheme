@@ -1,4 +1,4 @@
-<theme name="blue" menu-name="_Blue" order="100" is-high-contrast="false">
+<theme guid="61AA341E-281D-4154-985F-C81E9269034B" menu-name="_Blue" order="100" is-high-contrast="false">
 	<colors>
 		<color name="defaulttext" fg="Black" bg="White" />
 		<color name="brace" fg="#003399" />

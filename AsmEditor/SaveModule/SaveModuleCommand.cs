@@ -19,59 +19,113 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Input;
+using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.Hex;
+using dnSpy.AsmEditor.UndoRedo;
+using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolBars;
+using dnSpy.Shared.UI.Menus;
 using dnSpy.Shared.UI.ToolBars;
-using dnSpy.Tabs;
-using ICSharpCode.ILSpy;
-using ICSharpCode.ILSpy.TreeNodes;
 
 namespace dnSpy.AsmEditor.SaveModule {
+	[ExportAutoLoaded]
+	sealed class SaveModuleCommandLoader : IAutoLoaded {
+		public static readonly RoutedCommand SaveAllCommand = new RoutedCommand("SaveAll", typeof(SaveModuleCommandLoader));
+		readonly Lazy<IUndoCommandManager> undoCommandManager;
+		readonly Lazy<IDocumentSaver> documentSaver;
+
+		[ImportingConstructor]
+		SaveModuleCommandLoader(IWpfCommandManager wpfCommandManager, Lazy<IUndoCommandManager> undoCommandManager, Lazy<IDocumentSaver> documentSaver) {
+			this.undoCommandManager = undoCommandManager;
+			this.documentSaver = documentSaver;
+
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			cmds.Add(SaveAllCommand, (s, e) => SaveAll_Execute(), (s, e) => e.CanExecute = SaveAll_CanExecute, ModifierKeys.Control | ModifierKeys.Shift, Key.S);
+		}
+
+		object[] GetDirtyDocs() {
+			return undoCommandManager.Value.GetModifiedDocuments().ToArray();
+		}
+
+		bool SaveAll_CanExecute {
+			get { return GetDirtyDocs().Length > 0; }
+		}
+
+		void SaveAll_Execute() {
+			documentSaver.Value.Save(GetDirtyDocs());
+		}
+	}
+
+	[ExportToolBarButton(Icon = "SaveAll", ToolTip = "Save All (Ctrl+Shift+S)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 10)]
+	sealed class SaveAllToolbarCommand : ToolBarButtonCommand {
+		SaveAllToolbarCommand()
+			: base(SaveModuleCommandLoader.SaveAllCommand) {
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "Save A_ll...", Icon = "SaveAll", InputGestureText = "Ctrl+Shift+S", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 20)]
+	sealed class SaveAllCommand : MenuItemCommand {
+		SaveAllCommand()
+			: base(SaveModuleCommandLoader.SaveAllCommand) {
+		}
+	}
+
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 10)]
 	sealed class SaveModuleCommand : FileMenuHandler {
-		HashSet<IUndoObject> GetAssemblyNodes(ILSpyTreeNode[] nodes) {
-			var hash = new HashSet<IUndoObject>();
+		readonly IFileTabManager fileTabManager;
+		readonly Lazy<IUndoCommandManager> undoCommandManager;
+		readonly Lazy<IHexDocumentManager> hexDocumentManager;
+		readonly Lazy<IDocumentSaver> documentSaver;
 
-			if (nodes.Length == 0) {
-				var hex = MainWindow.Instance.ActiveTabState as HexTabState;
-				if (hex != null) {
-					var doc = hex.HexBox.Document as AsmEdHexDocument;
-					if (doc != null)
-						hash.Add(UndoCommandManager.Instance.GetUndoObject(doc));
-				}
-			}
+		[ImportingConstructor]
+		SaveModuleCommand(IFileTabManager fileTabManager, Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager, Lazy<IDocumentSaver> documentSaver)
+			: base(fileTabManager.FileTreeView) {
+			this.fileTabManager = fileTabManager;
+			this.undoCommandManager = undoCommandManager;
+			this.hexDocumentManager = hexDocumentManager;
+			this.documentSaver = documentSaver;
+		}
+
+		HashSet<object> GetDocuments(IFileTreeNodeData[] nodes) {
+			var hash = new HashSet<object>();
 
 			foreach (var node in nodes) {
-				var asmNode = ILSpyTreeNode.GetNode<AssemblyTreeNode>(node);
-				if (asmNode == null)
+				var fileNode = node.GetDnSpyFileNode();
+				if (fileNode == null)
 					continue;
 
 				bool added = false;
 
-				if (asmNode.DnSpyFile.ModuleDef != null) {
-					var uo = UndoCommandManager.Instance.GetUndoObject(asmNode.DnSpyFile);
-					if (UndoCommandManager.Instance.IsModified(uo)) {
-						hash.Add(uo);
+				if (fileNode.DnSpyFile.ModuleDef != null) {
+					var file = fileNode.DnSpyFile;
+					var uo = undoCommandManager.Value.GetUndoObject(file);
+					if (undoCommandManager.Value.IsModified(uo)) {
+						hash.Add(file);
 						added = true;
 					}
 				}
 
-				var doc = HexDocumentManager.Instance.TryGet(asmNode.DnSpyFile.Filename);
+				var doc = hexDocumentManager.Value.TryGet(fileNode.DnSpyFile.Filename);
 				if (doc != null) {
-					var uo = UndoCommandManager.Instance.GetUndoObject(doc);
-					if (UndoCommandManager.Instance.IsModified(uo)) {
-						hash.Add(uo);
+					var uo = undoCommandManager.Value.GetUndoObject(doc);
+					if (undoCommandManager.Value.IsModified(uo)) {
+						hash.Add(doc);
 						added = true;
 					}
 				}
 
 				// If nothing was modified, just include the selected module
-				if (!added && asmNode.DnSpyFile.ModuleDef != null)
-					hash.Add(UndoCommandManager.Instance.GetUndoObject(asmNode.DnSpyFile));
+				if (!added && fileNode.DnSpyFile.ModuleDef != null)
+					hash.Add(fileNode.DnSpyFile);
 			}
-			return hash;
+			return new HashSet<object>(undoCommandManager.Value.GetUniqueDocuments(hash));
 		}
 
 		public override bool IsVisible(AsmEditorContext context) {
@@ -79,67 +133,16 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public override bool IsEnabled(AsmEditorContext context) {
-			return GetAssemblyNodes(context.Nodes).Count > 0;
+			return GetDocuments(context.Nodes).Count > 0;
 		}
 
 		public override void Execute(AsmEditorContext context) {
-			var asmNodes = GetAssemblyNodes(context.Nodes);
-			Saver.SaveAssemblies(asmNodes);
+			var asmNodes = GetDocuments(context.Nodes);
+			documentSaver.Value.Save(asmNodes);
 		}
 
 		public override string GetHeader(AsmEditorContext context) {
-			return GetAssemblyNodes(context.Nodes).Count <= 1 ? "Save _Module..." : "Save _Modules...";
-		}
-	}
-
-	[ExportToolBarButton(Icon = "SaveAll", ToolTip = "Save All (Ctrl+Shift+S)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 10)]
-	sealed class SaveAllToolbarCommand : ToolBarButtonBase, ICommand {
-		public SaveAllToolbarCommand() {
-			MainWindow.Instance.InputBindings.Add(new KeyBinding(this, Key.S, ModifierKeys.Control | ModifierKeys.Shift));
-		}
-
-		void ICommand.Execute(object parameter) {
-			ExecuteInternal();
-		}
-
-		bool ICommand.CanExecute(object parameter) {
-			return IsEnabledInternal();
-		}
-
-		event EventHandler ICommand.CanExecuteChanged {
-			add { CommandManager.RequerySuggested += value; }
-			remove { CommandManager.RequerySuggested -= value; }
-		}
-
-		public override void Execute(IToolBarItemContext context) {
-			ExecuteInternal();
-		}
-
-		public override bool IsEnabled(IToolBarItemContext context) {
-			return IsEnabledInternal();
-		}
-
-		static IUndoObject[] GetDirtyObjects() {
-			return UndoCommandManager.Instance.GetModifiedObjects().ToArray();
-		}
-
-		internal static bool IsEnabledInternal() {
-			return GetDirtyObjects().Length > 0;
-		}
-
-		internal static void ExecuteInternal() {
-			Saver.SaveAssemblies(GetDirtyObjects());
-		}
-	}
-
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "Save A_ll...", Icon = "SaveAll", InputGestureText = "Ctrl+Shift+S", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 20)]
-	sealed class SaveAllCommand : FileMenuHandler {
-		public override bool IsEnabled(AsmEditorContext context) {
-			return SaveAllToolbarCommand.IsEnabledInternal();
-		}
-
-		public override void Execute(AsmEditorContext context) {
-			SaveAllToolbarCommand.ExecuteInternal();
+			return GetDocuments(context.Nodes).Count <= 1 ? "Save _Module..." : "Save _Modules...";
 		}
 	}
 }

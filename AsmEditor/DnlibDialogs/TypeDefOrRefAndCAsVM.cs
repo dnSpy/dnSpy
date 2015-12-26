@@ -19,7 +19,7 @@
 
 using System;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.Languages;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class TypeDefOrRefAndCAsVM<TModel> : ListVM<TypeDefOrRefAndCAVM, TModel> where TModel : class {
@@ -28,23 +28,23 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				throw new InvalidOperationException("TModel is an invalid type");
 		}
 
-		public TypeDefOrRefAndCAsVM(string editString, string createString, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod)
-			: base(editString, createString, ownerModule, language, ownerType, ownerMethod) {
+		public TypeDefOrRefAndCAsVM(string editString, string createString, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod)
+			: base(editString, createString, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
 		protected override TypeDefOrRefAndCAVM Create(TModel model) {
 			var gpc = model as GenericParamConstraint;
 			if (gpc != null)
-				return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(gpc), ownerModule, language, ownerType, ownerMethod);
-			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions((InterfaceImpl)(object)model), ownerModule, language, ownerType, ownerMethod);
+				return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(gpc), ownerModule, languageManager, ownerType, ownerMethod);
+			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions((InterfaceImpl)(object)model), ownerModule, languageManager, ownerType, ownerMethod);
 		}
 
 		protected override TypeDefOrRefAndCAVM Clone(TypeDefOrRefAndCAVM obj) {
-			return new TypeDefOrRefAndCAVM(obj.CreateTypeDefOrRefAndCAOptions(), ownerModule, language, ownerType, ownerMethod);
+			return new TypeDefOrRefAndCAVM(obj.CreateTypeDefOrRefAndCAOptions(), ownerModule, languageManager, ownerType, ownerMethod);
 		}
 
 		protected override TypeDefOrRefAndCAVM Create() {
-			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(), ownerModule, language, ownerType, ownerMethod);
+			return new TypeDefOrRefAndCAVM(new TypeDefOrRefAndCAOptions(), ownerModule, languageManager, ownerType, ownerMethod);
 		}
 	}
 }

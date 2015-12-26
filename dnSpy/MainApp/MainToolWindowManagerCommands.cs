@@ -58,7 +58,7 @@ namespace dnSpy.MainApp {
 		protected ToolWindowGroupContext CreateContextInternal(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TOOLWINDOW_TABCONTROL_GUID))
 				return null;
-			var twg = context.FindByType<IToolWindowGroup>();
+			var twg = context.Find<IToolWindowGroup>();
 			if (twg == null || !mainToolWindowManager.Owns(twg))
 				return null;
 			return new ToolWindowGroupContext(mainToolWindowManager, twg);

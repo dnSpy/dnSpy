@@ -34,7 +34,7 @@ using ICSharpCode.Decompiler;
 using Microsoft.Win32;
 
 namespace dnSpy.Files.Tabs {
-	[ExportTabSaverCreator(Order = TabsConstants.ORDER_DEFAULTTABSAVERCREATOR)]
+	[ExportTabSaverCreator(Order = TabConstants.ORDER_DEFAULTTABSAVERCREATOR)]
 	sealed class NodeTabSaverCreator : ITabSaverCreator {
 		readonly IFileTreeNodeDecompiler fileTreeNodeDecompiler;
 		readonly DecompilerSettings decompilerSettings;

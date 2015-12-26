@@ -22,9 +22,8 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Search;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
+using dnSpy.Shared.UI.Search;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MethodSpecVM : ViewModelBase {
@@ -79,7 +78,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public MethodSpecVM(MethodSpecOptions options, TypeSigCreatorOptions typeSigCreatorOptions) {
 			this.origOptions = options;
 			this.typeSigCreatorOptions = typeSigCreatorOptions;
-			this.customAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.Language);
+			this.customAttributesVM = new CustomAttributesVM(typeSigCreatorOptions.OwnerModule, typeSigCreatorOptions.LanguageManager);
 
 			this.typeSigCreatorOptions.CanAddGenericMethodVar = true;
 			this.typeSigCreatorOptions.CanAddGenericTypeVar = true;
@@ -94,7 +93,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickMethod() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newMethod = dnlibTypePicker.GetDnlibType(new FlagsTreeViewNodeFilter(VisibleMembersFlags.MethodDef), Method, typeSigCreatorOptions.OwnerModule);
+			var newMethod = dnlibTypePicker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef), Method, typeSigCreatorOptions.OwnerModule);
 			if (newMethod != null)
 				Method = newMethod;
 		}

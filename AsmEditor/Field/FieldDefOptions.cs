@@ -20,7 +20,6 @@
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.PE;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.Field {
 	sealed class FieldDefOptions {

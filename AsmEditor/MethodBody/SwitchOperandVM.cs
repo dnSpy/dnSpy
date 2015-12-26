@@ -20,8 +20,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
+using dnSpy.AsmEditor.Commands;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class SwitchOperandVM : ViewModelBase {

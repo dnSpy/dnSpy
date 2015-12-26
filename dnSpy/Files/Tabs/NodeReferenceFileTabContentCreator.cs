@@ -25,7 +25,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Shared.UI.Search;
 
 namespace dnSpy.Files.Tabs {
-	[ExportReferenceFileTabContentCreator(Order = TabsConstants.ORDER_CONTENTCREATOR_NODE)]
+	[ExportReferenceFileTabContentCreator(Order = TabConstants.ORDER_CONTENTCREATOR_NODE)]
 	sealed class NodeReferenceFileTabContentCreator : IReferenceFileTabContentCreator {
 		readonly IFileTabContentFactoryManager fileTabContentFactoryManager;
 		readonly IFileTreeView fileTreeView;
@@ -72,12 +72,12 @@ namespace dnSpy.Files.Tabs {
 			return node == null ? null : Create(node);
 		}
 
-		private FileTabReferenceResult Create(AssemblyDef asm) {
+		FileTabReferenceResult Create(AssemblyDef asm) {
 			var node = fileTreeView.FindNode(asm);
 			return node == null ? null : Create(node);
 		}
 
-		private FileTabReferenceResult Create(ModuleDef mod) {
+		FileTabReferenceResult Create(ModuleDef mod) {
 			var node = fileTreeView.FindNode(mod);
 			return node == null ? null : Create(node);
 		}

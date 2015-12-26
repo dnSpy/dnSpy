@@ -25,13 +25,13 @@ namespace dnSpy.Contracts.TreeView {
 	/// </summary>
 	public interface ITreeNode {
 		/// <summary>
-		/// Gets the tree view
+		/// Gets the treeview
 		/// </summary>
 		ITreeView TreeView { get; }
 
 		/// <summary>
 		/// Gets the parent or null if it is the root node or if it hasn't been inserted into the
-		/// tree view yet.
+		/// treeview yet.
 		/// </summary>
 		ITreeNode Parent { get; }
 

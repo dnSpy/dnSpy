@@ -25,9 +25,9 @@ using dnlib.DotNet.MD;
 using dnlib.PE;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Search;
+using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
+using dnSpy.Shared.UI.Search;
 
 namespace dnSpy.AsmEditor.Module {
 	enum EntryPointType {
@@ -484,7 +484,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 		CustomAttributesVM customAttributesVM;
 
-		public ModuleOptionsVM(ModuleDef module, ModuleOptions options, Language language) {
+		public ModuleOptionsVM(ModuleDef module, ModuleOptions options, ILanguageManager languageManager) {
 			this.module = module;
 			this.options = new ModuleOptions();
 			this.origOptions = options;
@@ -503,7 +503,7 @@ namespace dnSpy.AsmEditor.Module {
 			cor20HeaderRuntimeVersion = new NullableUInt32VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
 			tablesHeaderVersion = new NullableUInt16VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
 			nativeEntryPointRva = new UInt32VM(a => HasErrorUpdated());
-			customAttributesVM = new CustomAttributesVM(module, language);
+			customAttributesVM = new CustomAttributesVM(module, languageManager);
 			Reinitialize();
 		}
 
@@ -607,7 +607,7 @@ namespace dnSpy.AsmEditor.Module {
 		void PickManagedEntryPoint() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var ep = dnlibTypePicker.GetDnlibType(new EntryPointTreeViewNodeFilter(module), ManagedEntryPoint, module);
+			var ep = dnlibTypePicker.GetDnlibType(new EntryPointFileTreeNodeFilter(module), ManagedEntryPoint, module);
 			if (ep != null) {
 				ManagedEntryPoint = ep;
 				EntryPointEnum = EntryPointType.Managed;

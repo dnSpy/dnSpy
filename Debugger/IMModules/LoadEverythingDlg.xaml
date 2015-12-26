@@ -41,6 +41,13 @@
         <TextBlock Grid.Row="1" Margin="0 0 0 0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Loading the module. This could take a while if it's a big module." />
         <TextBlock Grid.Row="2" Margin="0 5 0 0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding CurrentItemName}" />
         <ProgressBar Grid.Row="3" Margin="5 5 5 0" IsIndeterminate="True" Height="30" HorizontalAlignment="Stretch" />
-        <Button Grid.Row="5" Margin="5 5 5 5" Content="_Cancel" Style="{StaticResource DialogButton}" Command="{Binding CancelCommand}" />
+        <Grid Grid.Row="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Margin="5 5 5 5" Content="_Cancel" Style="{StaticResource DialogButton}" Command="{Binding CancelCommand}" />
+        </Grid>
     </Grid>
 </winlocal:WindowBase>

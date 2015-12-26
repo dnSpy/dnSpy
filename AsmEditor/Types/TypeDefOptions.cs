@@ -19,7 +19,6 @@
 
 using System.Collections.Generic;
 using dnlib.DotNet;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.Types {
 	sealed class TypeDefOptions {

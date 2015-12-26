@@ -49,7 +49,7 @@ namespace dnSpy.BamlDecompiler {
 		public override bool IsVisible(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
 				return false;
-			var uiContext = context.FindByType<ITextEditorUIContext>();
+			var uiContext = context.Find<ITextEditorUIContext>();
 			if (uiContext == null)
 				return false;
 			var nodes = uiContext.FileTab.Content.Nodes.ToArray();

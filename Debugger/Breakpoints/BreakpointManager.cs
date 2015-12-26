@@ -27,7 +27,6 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
-using dnSpy.Shared.UI.Files;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 
@@ -61,8 +60,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		void Toggle(ITextEditorUIContext uiContext, int line, int column = 0);
 	}
 
-	[Export, Export(typeof(IBreakpointManager)), PartCreationPolicy(CreationPolicy.Shared)]
-	sealed class BreakpointManager : IBreakpointManager {
+	[Export, Export(typeof(IBreakpointManager)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class BreakpointManager : IBreakpointManager, ILoadBeforeDebug {
 		public event EventHandler<BreakpointListModifiedEventArgs> OnListModified;
 
 		readonly HashSet<DebugEventBreakpoint> otherBreakpoints = new HashSet<DebugEventBreakpoint>();
@@ -87,15 +86,15 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly IFileTabManager fileTabManager;
 		readonly ITheDebugger theDebugger;
 		readonly IMessageBoxManager messageBoxManager;
-		readonly ISerializedDnSpyModuleCreator serializedDnSpyModuleCreator;
+		readonly ISerializedDnModuleCreator serializedDnModuleCreator;
 
 		[ImportingConstructor]
-		BreakpointManager(ITextLineObjectManager textLineObjectManager, IFileTabManager fileTabManager, ITheDebugger theDebugger, IMessageBoxManager messageBoxManager, ISerializedDnSpyModuleCreator serializedDnSpyModuleCreator) {
+		BreakpointManager(ITextLineObjectManager textLineObjectManager, IFileTabManager fileTabManager, ITheDebugger theDebugger, IMessageBoxManager messageBoxManager, ISerializedDnModuleCreator serializedDnModuleCreator) {
 			this.textLineObjectManager = textLineObjectManager;
 			this.fileTabManager = fileTabManager;
 			this.theDebugger = theDebugger;
 			this.messageBoxManager = messageBoxManager;
-			this.serializedDnSpyModuleCreator = serializedDnSpyModuleCreator;
+			this.serializedDnModuleCreator = serializedDnModuleCreator;
 			textLineObjectManager.OnListModified += MarkedTextLinesManager_OnListModified;
 			foreach (var bp in Breakpoints)
 				InitializeDebuggerBreakpoint(bp);
@@ -129,22 +128,22 @@ namespace dnSpy.Debugger.Breakpoints {
 			switch (e.Type) {
 			case NotifyFileCollectionType.Clear:
 			case NotifyFileCollectionType.Remove:
-				var existing = new HashSet<SerializedDnSpyModule>(fileTabManager.FileTreeView.GetAllModuleNodes().Select(a => a.DnSpyFile.SerializedDnSpyModule ?? new SerializedDnSpyModule()));
-				var removed = new HashSet<SerializedDnSpyModule>(e.Files.Select(a => a.SerializedDnSpyModule ?? new SerializedDnSpyModule()));
-				existing.Remove(new SerializedDnSpyModule());
-				removed.Remove(new SerializedDnSpyModule());
+				var existing = new HashSet<SerializedDnModule>(fileTabManager.FileTreeView.GetAllModuleNodes().Select(a => a.DnSpyFile.ToSerializedDnModule()));
+				var removed = new HashSet<SerializedDnModule>(e.Files.Select(a => a.ToSerializedDnModule()));
+				existing.Remove(new SerializedDnModule());
+				removed.Remove(new SerializedDnModule());
 				foreach (var ilbp in ILCodeBreakpoints) {
 					// Don't auto-remove BPs in dynamic modules since they have no disk file. The
 					// user must delete these him/herself.
-					if (ilbp.SerializedDnSpyToken.Module.IsDynamic)
+					if (ilbp.SerializedDnToken.Module.IsDynamic)
 						continue;
 
 					// If the file is still in the TV, don't delete anything. This can happen if
 					// we've loaded an in-memory module and the node just got removed.
-					if (existing.Contains(ilbp.SerializedDnSpyToken.Module))
+					if (existing.Contains(ilbp.SerializedDnToken.Module))
 						continue;
 
-					if (removed.Contains(ilbp.SerializedDnSpyToken.Module))
+					if (removed.Contains(ilbp.SerializedDnToken.Module))
 						Remove(ilbp);
 				}
 				break;
@@ -192,7 +191,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				var ilbp = (ILCodeBreakpoint)bp;
 				cond = AlwaysBreakpointCondition.Instance;//TODO: Let user pick what cond to use
 				Debug.Assert(ilbp.DnBreakpoint == null);
-				ilbp.DnBreakpoint = debugger.CreateBreakpoint(ilbp.SerializedDnSpyToken.Module.ToSerializedDnModule(), ilbp.SerializedDnSpyToken.Token, ilbp.ILOffset, cond);
+				ilbp.DnBreakpoint = debugger.CreateBreakpoint(ilbp.SerializedDnToken.Module, ilbp.SerializedDnToken.Token, ilbp.ILOffset, cond);
 				break;
 
 			case BreakpointType.DebugEvent:
@@ -393,8 +392,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			else if (bps.Count > 0) {
 				foreach (var bp in bps) {
 					var md = bp.MemberMapping.MethodDef;
-					var serMod = serializedDnSpyModuleCreator.Create(md.Module);
-					var key = new SerializedDnSpyToken(serMod, md.MDToken);
+					var serMod = serializedDnModuleCreator.Create(md.Module);
+					var key = new SerializedDnToken(serMod, md.MDToken);
 					Add(new ILCodeBreakpoint(key, bp.ILInstructionOffset.From));
 				}
 				uiContext.ScrollAndMoveCaretTo(bps[0].StartLocation.Line, bps[0].StartLocation.Column);

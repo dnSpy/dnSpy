@@ -20,7 +20,6 @@
 using System.Windows;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class CreateTypeSigArray : ICreateTypeSigArray {
@@ -40,7 +39,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 				data.TypeSigCollection.AddRange(typeSigs);
 			var win = new CreateTypeSigArrayDlg();
 			win.DataContext = data;
-			win.Owner = ownerWindow ?? MainWindow.Instance;
+			win.Owner = ownerWindow ?? Application.Current.MainWindow;
 			if (win.ShowDialog() != true)
 				return null;
 

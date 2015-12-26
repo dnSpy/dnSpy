@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Shared.UI.MVVM;

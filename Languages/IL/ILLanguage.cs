@@ -66,8 +66,8 @@ namespace dnSpy.Languages.IL {
 	/// flat IL (detectControlStructure=false) and structured IL (detectControlStructure=true).
 	/// </remarks>
 	[Export(typeof(ILanguage))]
-	sealed class ILLanguage : Language {
-		private readonly bool detectControlStructure;
+	public sealed class ILLanguage : Language {
+		readonly bool detectControlStructure;
 
 		ILLanguage()
 			: this(true) {
@@ -103,7 +103,7 @@ namespace dnSpy.Languages.IL {
 				disOpts.GetOpCodeDocumentation = ILLanguageHelper.GetOpCodeDocumentation;
 			if (options.DecompilerSettings.ShowXmlDocumentation)
 				disOpts.GetXmlDocComments = GetXmlDocComments;
-			disOpts.CreateInstructionBytesReader = InstructionBytesReader.Create;
+			disOpts.CreateInstructionBytesReader = m => InstructionBytesReader.Create(m, options.IsBodyModified != null && options.IsBodyModified(m));
 			disOpts.ShowTokenAndRvaComments = options.DecompilerSettings.ShowTokenAndRvaComments;
 			disOpts.ShowILBytes = options.DecompilerSettings.ShowILBytes;
 			disOpts.SortMembers = options.DecompilerSettings.SortMembers;

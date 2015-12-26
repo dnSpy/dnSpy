@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Files {
 	/// </summary>
 	public struct DnSpyFileInfo {
 		/// <summary>
-		/// Name, eg. filename if <see cref="Type"/> is <see cref="FilesConstants.FILETYPE_FILE"/>
+		/// Name, eg. filename if <see cref="Type"/> is <see cref="FileConstants.FILETYPE_FILE"/>
 		/// </summary>
 		public string Name {
 			get { return name ?? string.Empty; }
@@ -34,7 +34,7 @@ namespace dnSpy.Contracts.Files {
 		readonly string name;
 
 		/// <summary>
-		/// File type, eg. <see cref="FilesConstants.FILETYPE_FILE"/>
+		/// File type, eg. <see cref="FileConstants.FILETYPE_FILE"/>
 		/// </summary>
 		public Guid Type {
 			get { return type; }
@@ -47,7 +47,7 @@ namespace dnSpy.Contracts.Files {
 		/// <param name="filename">Filename</param>
 		/// <returns></returns>
 		public static DnSpyFileInfo CreateFile(string filename) {
-			return new DnSpyFileInfo(filename, FilesConstants.FILETYPE_FILE);
+			return new DnSpyFileInfo(filename, FileConstants.FILETYPE_FILE);
 		}
 
 		/// <summary>
@@ -56,7 +56,7 @@ namespace dnSpy.Contracts.Files {
 		/// <param name="asmFullName">Full name of assembly</param>
 		/// <returns></returns>
 		public static DnSpyFileInfo CreateGacFile(string asmFullName) {
-			return new DnSpyFileInfo(asmFullName, FilesConstants.FILETYPE_GAC);
+			return new DnSpyFileInfo(asmFullName, FileConstants.FILETYPE_GAC);
 		}
 
 		/// <summary>
@@ -67,8 +67,8 @@ namespace dnSpy.Contracts.Files {
 		/// in the GAC.</param>
 		/// <returns></returns>
 		public static DnSpyFileInfo CreateReferenceAssembly(string asmFullName, string refFilePath) {
-			Debug.Assert(!refFilePath.Contains(FilesConstants.REFERENCE_ASSEMBLY_SEPARATOR));
-			return new DnSpyFileInfo(asmFullName + FilesConstants.REFERENCE_ASSEMBLY_SEPARATOR + refFilePath, FilesConstants.FILETYPE_REFASM);
+			Debug.Assert(!refFilePath.Contains(FileConstants.REFERENCE_ASSEMBLY_SEPARATOR));
+			return new DnSpyFileInfo(asmFullName + FileConstants.REFERENCE_ASSEMBLY_SEPARATOR + refFilePath, FileConstants.FILETYPE_REFASM);
 		}
 
 		/// <summary>

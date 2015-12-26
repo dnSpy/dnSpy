@@ -25,10 +25,11 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
+using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class CilBodyVM : ViewModelBase {
@@ -177,12 +178,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 		readonly MethodDef ownerMethod;
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
-		public CilBodyVM(CilBodyOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod, bool initialize) {
+		public CilBodyVM(CilBodyOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod, bool initialize) {
 			this.ownerModule = ownerModule;
 			this.ownerMethod = ownerMethod;
 			this.origOptions = options;
 
-			typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, language) {
+			typeSigCreatorOptions = new TypeSigCreatorOptions(ownerModule, languageManager) {
 				CanAddGenericTypeVar = ownerType.HasGenericParameters,
 				CanAddGenericMethodVar = ownerMethod.MethodSig.GetGenParamCount() > 0,
 				OwnerType = ownerType,

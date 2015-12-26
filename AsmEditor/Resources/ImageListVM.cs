@@ -22,6 +22,7 @@ using System.Drawing;
 using System.Windows.Input;
 using System.Windows.Forms;
 using dnSpy.Shared.UI.MVVM;
+using dnSpy.Contracts.Files.TreeView.Resources;
 
 namespace dnSpy.AsmEditor.Resources {
 	sealed class ImageListVM : ViewModelBase {
@@ -111,8 +112,7 @@ namespace dnSpy.AsmEditor.Resources {
 
 		ImageListOptions CopyTo(ImageListOptions options) {
 			options.Name = Name;
-			options.ImageSize.Height = HeightVM.Value;
-			options.ImageSize.Width = WidthVM.Value;
+			options.ImageSize = new Size(WidthVM.Value, HeightVM.Value);
 			options.TransparentColor = TransparentColorVM.Value;
 			options.ColorDepth = (ColorDepth)ColorDepthVM.SelectedItem;
 			options.ImageSources.Clear();

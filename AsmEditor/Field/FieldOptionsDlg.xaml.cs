@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.Field {
-	/// <summary>
-	/// Interaction logic for FieldOptionsDlg.xaml
-	/// </summary>
-	public partial class FieldOptionsDlg : WindowBase {
+	sealed partial class FieldOptionsDlg : WindowBase {
 		public FieldOptionsDlg() {
 			InitializeComponent();
 		}

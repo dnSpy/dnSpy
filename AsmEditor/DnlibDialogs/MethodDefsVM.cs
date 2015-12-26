@@ -18,12 +18,12 @@
 */
 
 using dnlib.DotNet;
-using ICSharpCode.ILSpy;
+using dnSpy.Contracts.Languages;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MethodDefsVM : ListVM<MethodDefVM, MethodDef> {
-		public MethodDefsVM(ModuleDef ownerModule, Language language, TypeDef ownerType = null, MethodDef ownerMethod = null)
-			: base(null, null, ownerModule, language, ownerType, ownerMethod) {
+		public MethodDefsVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType = null, MethodDef ownerMethod = null)
+			: base(null, null, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
 		protected override MethodDefVM Create(MethodDef model) {

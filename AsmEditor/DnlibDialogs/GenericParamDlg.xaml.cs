@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for GenericParamDlg.xaml
-	/// </summary>
-	public partial class GenericParamDlg : WindowBase {
+	sealed partial class GenericParamDlg : WindowBase {
 		public GenericParamDlg() {
 			InitializeComponent();
 		}

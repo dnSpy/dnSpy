@@ -23,6 +23,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Search"
+             xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
@@ -36,7 +37,7 @@
                 <TextBlock Grid.Column="1" Text="{Binding Name}" HorizontalAlignment="Stretch" />
             </Grid>
         </DataTemplate>
-        <local:BooleanToThicknessConverter x:Key="BooleanToThicknessConverter" />
+        <mvvmvc:BooleanToThicknessConverter x:Key="BooleanToThicknessConverter" />
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -69,7 +70,7 @@
                 <CheckBox Grid.Column="0" Margin="0 5 0 0" Content="Match Whole Words" IsChecked="{Binding MatchWholeWords}" />
                 <CheckBox Grid.Column="1" Margin="5 5 0 0" Content="Case Sensitive Search" IsChecked="{Binding CaseSensitive}" />
                 <CheckBox Grid.Column="2" Margin="5 5 0 0" Content="Match Any Search Term" IsChecked="{Binding MatchAnySearchTerm}" />
-                <CheckBox Grid.Column="3" Margin="5 5 0 0" Content="Decompile (eg. XAML)" IsChecked="{Binding SearchDecompiledData}" />
+                <CheckBox Grid.Column="3" Margin="5 5 0 0" Content="Decompile Resources (eg. XAML)" IsChecked="{Binding SearchDecompiledData}" />
             </Grid>
         </Grid>
         <ListBox Grid.Row="1"

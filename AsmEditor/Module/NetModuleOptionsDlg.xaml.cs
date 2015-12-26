@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.Module {
-	/// <summary>
-	/// Interaction logic for NetModuleOptionsDlg.xaml
-	/// </summary>
-	public partial class NetModuleOptionsDlg : WindowBase {
+	sealed partial class NetModuleOptionsDlg : WindowBase {
 		public NetModuleOptionsDlg() {
 			InitializeComponent();
 		}

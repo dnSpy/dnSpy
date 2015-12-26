@@ -22,10 +22,7 @@ using System.Windows.Controls;
 using dnSpy.AsmEditor.ViewHelpers;
 
 namespace dnSpy.AsmEditor.Resources {
-	/// <summary>
-	/// Interaction logic for ImageListStreamerControl.xaml
-	/// </summary>
-	public partial class ImageListStreamerControl : UserControl {
+	sealed partial class ImageListStreamerControl : UserControl {
 		public ImageListStreamerControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

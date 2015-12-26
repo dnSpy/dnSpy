@@ -28,7 +28,7 @@ namespace dnSpy.Debugger {
 		public static readonly WpfDebugMessageDispatcher Instance = new WpfDebugMessageDispatcher();
 
 		readonly ConcurrentQueue<Action> queue = new ConcurrentQueue<Action>();
-		volatile int callingEmptyQueue;
+		int callingEmptyQueue;
 		readonly Dispatcher dispatcher;
 
 		WpfDebugMessageDispatcher() {

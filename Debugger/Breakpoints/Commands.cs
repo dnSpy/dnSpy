@@ -259,7 +259,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
 			if (ilbp == null)
 				return;
-			DebugUtils.GoToIL(fileTabManager, moduleLoader.Value, ilbp.SerializedDnSpyToken.Module, ilbp.SerializedDnSpyToken.Token, ilbp.ILOffset, newTab);
+			DebugUtils.GoToIL(fileTabManager, moduleLoader.Value, ilbp.SerializedDnToken.Module, ilbp.SerializedDnToken.Token, ilbp.ILOffset, newTab);
 		}
 
 		public override bool IsEnabled(BreakpointCtxMenuContext context) {

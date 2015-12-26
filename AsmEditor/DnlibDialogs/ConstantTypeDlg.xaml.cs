@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for ConstantTypeDlg.xaml
-	/// </summary>
-	public partial class ConstantTypeDlg : WindowBase {
+	sealed partial class ConstantTypeDlg : WindowBase {
 		public ConstantTypeDlg() {
 			InitializeComponent();
 		}

@@ -41,7 +41,7 @@ namespace dnSpy.Shared.UI.HexEditor {
 		}
 
 		public static bool operator ==(HexBoxState a, HexBoxState b) {
-			if ((object)a == b)
+			if ((object)a == (object)b)
 				return true;
 			if ((object)a == null || (object)b == null)
 				return false;

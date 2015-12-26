@@ -70,7 +70,7 @@ namespace dnSpy.Contracts.TreeView {
 		bool ShowExpander(bool defaultValue);
 
 		/// <summary>
-		/// Gets the <see cref="ITreeNode"/> owner instance. Only the tree view may write to this
+		/// Gets the <see cref="ITreeNode"/> owner instance. Only the treeview may write to this
 		/// property.
 		/// </summary>
 		ITreeNode TreeNode { get; set; }

@@ -28,7 +28,6 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.Decompiler;
-using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace dnSpy.Files.Tabs {
@@ -54,6 +53,10 @@ namespace dnSpy.Files.Tabs {
 
 		public void AfterLoad(bool isReload) {
 			decompilationCache.ClearAll();
+		}
+
+		public bool CheckCanLoad(bool isReload) {
+			return true;
 		}
 	}
 
@@ -250,14 +253,10 @@ namespace dnSpy.Files.Tabs {
 				cachedItems.Clear();
 		}
 
-		public void Clear(IDnSpyFile module) {
-			Clear(new HashSet<IDnSpyFile>(new[] { module }));
-		}
-
 		public void Clear(HashSet<IDnSpyFile> modules) {
 			lock (lockObj) {
 				foreach (var kv in cachedItems.ToArray()) {
-					if (IsInModifiedModule(modules, kv.Key.Nodes) ||
+					if (InModifiedModuleHelper.IsInModifiedModule(modules, kv.Key.Nodes) ||
 						IsInModifiedModule(fileManager, modules, kv.Value)) {
 						cachedItems.Remove(kv.Key);
 						continue;
@@ -266,7 +265,21 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		static bool IsInModifiedModule(HashSet<IDnSpyFile> modules, IFileTreeNodeData[] nodes) {
+		static bool IsInModifiedModule(IFileManager fileManager, HashSet<IDnSpyFile> modules, Item item) {
+			var textOutput = item.TextOutput;
+			if (textOutput == null && item.WeakTextOutput != null)
+				textOutput = (AvalonEditTextOutput)item.WeakTextOutput.Target;
+			if (textOutput == null)
+				return true;
+			var refs = textOutput.References;
+			if (refs == null)
+				return false;
+			return InModifiedModuleHelper.IsInModifiedModule(fileManager, modules, refs.Select(a => a.Reference));
+		}
+	}
+
+	static class InModifiedModuleHelper {
+		public static bool IsInModifiedModule(HashSet<IDnSpyFile> modules, IEnumerable<IFileTreeNodeData> nodes) {
 			foreach (var node in nodes) {
 				var modNode = (IDnSpyFileNode)node.GetModuleNode() ?? node.GetAssemblyNode();
 				if (modNode == null || modules.Contains(modNode.DnSpyFile))
@@ -276,22 +289,9 @@ namespace dnSpy.Files.Tabs {
 			return false;
 		}
 
-		static bool IsInModifiedModule(IFileManager fileManager, HashSet<IDnSpyFile> modules, Item item) {
-			var textOutput = item.TextOutput;
-			if (textOutput == null && item.WeakTextOutput != null)
-				textOutput = (AvalonEditTextOutput)item.WeakTextOutput.Target;
-			if (textOutput == null)
-				return true;
-
-			return IsInModifiedModule(fileManager, modules, textOutput.References);
-		}
-
-		static bool IsInModifiedModule(IFileManager fileManager, HashSet<IDnSpyFile> modules, TextSegmentCollection<ReferenceSegment> references) {
-			if (references == null)
-				return false;
+		public static bool IsInModifiedModule(IFileManager fileManager, HashSet<IDnSpyFile> modules, IEnumerable<object> references) {
 			var checkedAsmRefs = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
-			foreach (var refSeg in references) {
-				var r = refSeg.Reference;
+			foreach (var r in references) {
 				IAssembly asmRef = null;
 				if (r is IType)
 					asmRef = (r as IType).DefinitionAssembly;

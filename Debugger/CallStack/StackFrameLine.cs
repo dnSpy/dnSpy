@@ -20,7 +20,6 @@
 using System;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.UI.Files;
 
 namespace dnSpy.Debugger.CallStack {
 	enum StackFrameLineType {
@@ -67,7 +66,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 		readonly ITextEditorUIContext uiContext;
 
-		public StackFrameLine(StackFrameLineType type, ITextEditorUIContext uiContext, SerializedDnSpyToken methodKey, uint ilOffset)
+		public StackFrameLine(StackFrameLineType type, ITextEditorUIContext uiContext, SerializedDnToken methodKey, uint ilOffset)
 			: base(methodKey, ilOffset) {
 			this.type = type;
 			this.uiContext = uiContext;

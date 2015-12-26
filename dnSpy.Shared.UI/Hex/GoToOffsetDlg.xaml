@@ -29,7 +29,7 @@
              ResizeMode="NoResize"
              Title="Go to Offset"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
-             MinHeight="100" MinWidth="200">
+             MinWidth="200">
     <winlocal:WindowBase.Resources>
         <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
     </winlocal:WindowBase.Resources>

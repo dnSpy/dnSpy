@@ -22,11 +22,11 @@ using System.Collections.Generic;
 
 namespace dnSpy.Contracts.TreeView {
 	/// <summary>
-	/// A tree view
+	/// A treeview
 	/// </summary>
 	public interface ITreeView {
 		/// <summary>
-		/// Guid of this tree view
+		/// Guid of this treeview
 		/// </summary>
 		Guid Guid { get; }
 
@@ -37,14 +37,14 @@ namespace dnSpy.Contracts.TreeView {
 
 		/// <summary>
 		/// Creates a new <see cref="ITreeNode"/> instance that can be inserted into this, and only
-		/// this, tree view.
+		/// this, treeview.
 		/// </summary>
 		/// <param name="data">User data</param>
 		/// <returns></returns>
 		ITreeNode Create(ITreeNodeData data);
 
 		/// <summary>
-		/// Gets the tree view UI object
+		/// Gets the treeview UI object
 		/// </summary>
 		object UIObject { get; }
 
@@ -83,5 +83,19 @@ namespace dnSpy.Contracts.TreeView {
 		/// Calls all nodes' <see cref="ITreeNode.RefreshUI()"/> method
 		/// </summary>
 		void RefreshAllNodes();
+
+		/// <summary>
+		/// Converts the selected item to a <see cref="ITreeNodeData"/>. Should rarely be called.
+		/// </summary>
+		/// <param name="selectedItem">Selected item</param>
+		/// <returns></returns>
+		ITreeNodeData FromImplNode(object selectedItem);
+
+		/// <summary>
+		/// Converts <paramref name="node"/> to the real tree node
+		/// </summary>
+		/// <param name="node">Node</param>
+		/// <returns></returns>
+		object ToImplNode(ITreeNodeData node);
 	}
 }

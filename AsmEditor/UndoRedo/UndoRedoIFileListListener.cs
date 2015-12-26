@@ -1,0 +1,66 @@
+﻿/*
+    Copyright (C) 2014-2015 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+using System;
+using System.ComponentModel.Composition;
+using dnSpy.Contracts.App;
+using dnSpy.Contracts.Files.Tabs;
+
+namespace dnSpy.AsmEditor.UndoRedo {
+	[ExportFileListListener]
+	sealed class UndoRedoIFileListListener : IFileListListener {
+		readonly Lazy<IUndoCommandManager> undoCommandManager;
+		readonly IMessageBoxManager messageBoxManager;
+
+		public bool CanLoad {
+			get { return true; }
+		}
+
+		public bool CanReload {
+			get { return true; }
+		}
+
+		[ImportingConstructor]
+		UndoRedoIFileListListener(Lazy<IUndoCommandManager> undoCommandManager, IMessageBoxManager messageBoxManager) {
+			this.undoCommandManager = undoCommandManager;
+			this.messageBoxManager = messageBoxManager;
+		}
+
+		public void BeforeLoad(bool isReload) {
+			undoCommandManager.Value.Clear();
+		}
+
+		public void AfterLoad(bool isReload) {
+		}
+
+		public bool CheckCanLoad(bool isReload) {
+			int count = undoCommandManager.Value.NumberOfModifiedDocuments;
+			if (count == 0)
+				return true;
+
+			var question = isReload ?
+				"Are you sure you want to reload all assemblies and lose all changes?" :
+				"Are you sure you want to load new assemblies and lose all changes?";
+
+			var msg = count == 1 ? "There is an unsaved file." : string.Format("There are {0} unsaved files.", count);
+			var res = messageBoxManager.Show(string.Format("{0} {1}", msg, question), MsgBoxButton.Yes | MsgBoxButton.No);
+			return res == MsgBoxButton.Yes;
+		}
+	}
+}

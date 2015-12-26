@@ -141,13 +141,15 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			.ContinueWith(t => {
 				var ex = t.Exception;
 				SearchingForDefaultLists = false;
-				foreach (var defaultList in t.Result) {
-					if (hash.Contains(defaultList.Name))
-						continue;
-					var fileList = new FileList(defaultList);
-					fileListColl.Add(new FileListVM(this, fileList, false, false));
+				if (!t.IsCanceled && !t.IsFaulted) {
+					foreach (var defaultList in t.Result) {
+						if (hash.Contains(defaultList.Name))
+							continue;
+						var fileList = new FileList(defaultList);
+						fileListColl.Add(new FileListVM(this, fileList, false, false));
+					}
+					Refilter();
 				}
-				Refilter();
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 

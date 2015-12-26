@@ -22,10 +22,7 @@ using System.Windows.Controls;
 using dnSpy.AsmEditor.ViewHelpers;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for CustomAttributeControl.xaml
-	/// </summary>
-	public partial class CustomAttributeControl : UserControl {
+	sealed partial class CustomAttributeControl : UserControl {
 		public CustomAttributeControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

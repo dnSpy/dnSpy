@@ -28,9 +28,12 @@ using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Themes;
+using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Controls;
 using dnSpy.Events;
 using dnSpy.Files.Tabs;
@@ -44,6 +47,18 @@ namespace dnSpy.MainApp {
 			get { return fileTabManager; }
 		}
 		readonly FileTabManager fileTabManager;
+
+		public IFileTreeView FileTreeView {
+			get { return fileTabManager.FileTreeView; }
+		}
+
+		public IMainToolWindowManager ToolWindowManager {
+			get { return mainWindowControl; }
+		}
+
+		public ILanguageManager LanguageManager {
+			get { return languageManager; }
+		}
 
 		public IAppStatusBar StatusBar {
 			get { return statusBar; }
@@ -104,9 +119,10 @@ namespace dnSpy.MainApp {
 		readonly IImageManager imageManager;
 		readonly AppToolBar appToolBar;
 		readonly MainWindowControl mainWindowControl;
+		readonly ILanguageManager languageManager;
 
 		[ImportingConstructor]
-		AppWindow(IThemeManager themeManager, IImageManager imageManager, AppSettingsImpl appSettings, ISettingsManager settingsManager, FileTabManager fileTabManager, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandManager wpfCommandManager) {
+		AppWindow(IThemeManager themeManager, IImageManager imageManager, AppSettingsImpl appSettings, ISettingsManager settingsManager, FileTabManager fileTabManager, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandManager wpfCommandManager, ILanguageManager languageManager) {
 			this.uiSettings = new UISettings(settingsManager);
 			this.uiSettings.Read();
 			this.appSettings = appSettings;
@@ -119,6 +135,7 @@ namespace dnSpy.MainApp {
 			this.appToolBar = appToolBar;
 			this.mainWindowControl = mainWindowControl;
 			this.wpfCommandManager = wpfCommandManager;
+			this.languageManager = languageManager;
 			this.mainWindowCommands = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
 			this.mainWindowClosing = new WeakEventList<CancelEventArgs>();
 			this.mainWindowClosed = new WeakEventList<EventArgs>();

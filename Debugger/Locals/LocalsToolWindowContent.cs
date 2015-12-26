@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Locals {
 
 	sealed class LocalsToolWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("D799829F-CAE3-4F8F-AD81-1732ABC50636");
-		public static AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Default;
+		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Default;
 
 		public IInputElement FocusedElement {
 			get { return localsContent.Value.FocusedElement; }

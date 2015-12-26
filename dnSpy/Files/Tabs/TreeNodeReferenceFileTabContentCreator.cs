@@ -26,7 +26,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Files.Tabs.TextEditor;
 
 namespace dnSpy.Files.Tabs {
-	[ExportReferenceFileTabContentCreator(Order = TabsConstants.ORDER_CONTENTCREATOR_CODEREF)]
+	[ExportReferenceFileTabContentCreator(Order = TabConstants.ORDER_CONTENTCREATOR_CODEREF)]
 	sealed class TreeNodeReferenceFileTabContentCreator : IReferenceFileTabContentCreator {
 		readonly DecompileFileTabContentFactory decompileFileTabContentFactory;
 		readonly IFileTabManagerSettings fileTabManagerSettings;
@@ -79,7 +79,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public FileTabReferenceResult Create(IFileTabManager fileTabManager, IFileTabContent sourceContent, object @ref) {
-			var codeRef = @ref as CodeReferenceSegment;
+			var codeRef = @ref as CodeReference;
 			if (codeRef != null) {
 				var result = CreateMemberRefResult(fileTabManager, codeRef.Reference);
 				if (result != null)
@@ -91,7 +91,7 @@ namespace dnSpy.Files.Tabs {
 			return CreateMemberRefResult(fileTabManager, @ref);
 		}
 
-		FileTabReferenceResult CreateLocalRefResult(IFileTabContent sourceContent, CodeReferenceSegment codeRef) {
+		FileTabReferenceResult CreateLocalRefResult(IFileTabContent sourceContent, CodeReference codeRef) {
 			Debug.Assert(IsSupportedReference(codeRef));
 			if (sourceContent == null)
 				return null;
@@ -120,7 +120,7 @@ namespace dnSpy.Files.Tabs {
 
 		static bool IsSupportedReference(object @ref) {
 			return @ref != null &&
-				(@ref is CodeReferenceSegment || @ref is IMemberDef);
+				(@ref is CodeReference || @ref is IMemberDef);
 		}
 
 		void GoToReference(IFileTabContent content, object @ref) {

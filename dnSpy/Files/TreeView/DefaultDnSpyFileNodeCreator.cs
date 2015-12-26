@@ -17,25 +17,22 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
-	[Export(typeof(IDnSpyFileNodeCreator)), PartCreationPolicy(CreationPolicy.Shared)]
+	[ExportDnSpyFileNodeCreator(Order = double.MaxValue)]
 	sealed class DefaultDnSpyFileNodeCreator : IDnSpyFileNodeCreator {
-		public double Order {
-			get { return double.MaxValue; }
-		}
-
 		public IDnSpyFileNode Create(IFileTreeView fileTreeView, IDnSpyFileNode owner, IDnSpyFile file) {
-			if (file.ModuleDef != null) {
+			var dnFile = file as IDnSpyDotNetFile;
+			if (dnFile != null) {
+				Debug.Assert(file.ModuleDef != null);
 				if (file.AssemblyDef == null || owner != null)
-					return new ModuleFileNode(file);
-				return new AssemblyFileNode(file);
+					return new ModuleFileNode(dnFile);
+				return new AssemblyFileNode(dnFile);
 			}
-			Debug.Assert(file.AssemblyDef == null);
+			Debug.Assert(file.AssemblyDef == null && file.ModuleDef == null);
 			if (file.PEImage != null)
 				return new PEFileNode(file);
 

@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.Namespace {
-	/// <summary>
-	/// Interaction logic for NamespaceDlg.xaml
-	/// </summary>
-	public partial class NamespaceDlg : WindowBase {
+	sealed partial class NamespaceDlg : WindowBase {
 		public NamespaceDlg() {
 			InitializeComponent();
 		}

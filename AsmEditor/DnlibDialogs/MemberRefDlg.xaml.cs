@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for MemberRefDlg.xaml
-	/// </summary>
-	public partial class MemberRefDlg : WindowBase {
+	sealed partial class MemberRefDlg : WindowBase {
 		public MemberRefDlg() {
 			InitializeComponent();
 		}

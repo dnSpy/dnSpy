@@ -90,6 +90,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly IconBarMargin iconBarMargin;
 		readonly SearchPanel searchPanel;
 
+		public IEnumerable<object> AllReferences {
+			get { return references == null ? new object[0] : references.Select(a => a.Reference); }
+		}
+
 		DefinitionLookup definitionLookup;
 		TextSegmentCollection<ReferenceSegment> references;
 		readonly TextMarkerService textMarkerService;
@@ -415,6 +419,25 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			return GetReferenceSegmentAt(TextEditor.TextArea.Caret.Offset);
 		}
 
+		public IEnumerable<CodeReference> GetSelectedCodeReferences() {
+			if (TextEditor.SelectionLength <= 0)
+				yield break;
+			int start = TextEditor.SelectionStart;
+			int end = start + TextEditor.SelectionLength;
+
+			var refs = references;
+			if (refs == null)
+				yield break;
+			var r = refs.FindFirstSegmentWithStartAfter(start);
+			while (r != null) {
+				if (r.StartOffset >= end)
+					break;
+				yield return r.ToCodeReference();
+
+				r = refs.GetNextSegment(r);
+			}
+		}
+
 		public ReferenceSegment GetReferenceSegmentAt(int offset) {
 			if (referenceElementGenerator == null || referenceElementGenerator.References == null)
 				return null;
@@ -444,7 +467,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				Debug.Assert(canJumpToReference);
 				if (!canJumpToReference)
 					return false;
-				textEditorHelper.FollowReference(refSeg.ToCodeReferenceSegment(), newTab);
+				textEditorHelper.FollowReference(refSeg.ToCodeReference(), newTab);
 				return true;
 			}
 
@@ -452,7 +475,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				if (!IsOwnerOf(refSeg)) {
 					if (!canJumpToReference)
 						return false;
-					textEditorHelper.FollowReference(refSeg.ToCodeReferenceSegment(), newTab);
+					textEditorHelper.FollowReference(refSeg.ToCodeReference(), newTab);
 					return true;
 				}
 
@@ -464,7 +487,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					if (canRecordHistory) {
 						if (!canJumpToReference)
 							return false;
-						textEditorHelper.FollowReference(refSeg.ToCodeReferenceSegment(), newTab);
+						textEditorHelper.FollowReference(refSeg.ToCodeReference(), newTab);
 					}
 					else {
 						var line = TextEditor.Document.GetLineByOffset(refSeg.StartOffset);
@@ -478,7 +501,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					return false;
 				if (!canJumpToReference)
 					return false;
-				textEditorHelper.FollowReference(refSeg.ToCodeReferenceSegment(), newTab);
+				textEditorHelper.FollowReference(refSeg.ToCodeReference(), newTab);
 				return true;
 			}
 			else {
@@ -497,7 +520,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					if (canRecordHistory) {
 						if (!canJumpToReference)
 							return false;
-						textEditorHelper.FollowReference(refSeg.ToCodeReferenceSegment(), newTab);
+						textEditorHelper.FollowReference(refSeg.ToCodeReference(), newTab);
 					}
 					else {
 						MarkReferences(refSeg);
@@ -514,7 +537,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				textEditorHelper.SetFocus();
 				if (!canJumpToReference)
 					return false;
-				textEditorHelper.FollowReference(refSeg.ToCodeReferenceSegment(), newTab);
+				textEditorHelper.FollowReference(refSeg.ToCodeReference(), newTab);
 				return true;
 			}
 		}
@@ -686,7 +709,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				return GoToTarget(refSeg, false, false);
 			}
 
-			var codeRef = @ref as CodeReferenceSegment;
+			var codeRef = @ref as CodeReference;
 			if (codeRef != null) {
 				var refSeg = references == null ? null : references.FirstOrDefault(a => a.Equals(codeRef));
 				return GoToTarget(refSeg, false, false);

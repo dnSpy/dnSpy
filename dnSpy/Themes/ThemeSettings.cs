@@ -28,16 +28,16 @@ namespace dnSpy.Themes {
 
 		readonly ISettingsManager settingsManager;
 
-		public string ThemeName {
-			get { return themeName; }
+		public Guid? ThemeGuid {
+			get { return themeGuid; }
 			set {
-				if (themeName != value) {
-					themeName = value;
+				if (themeGuid != value) {
+					themeGuid = value;
 					OnModified();
 				}
 			}
 		}
-		string themeName;
+		Guid? themeGuid;
 
 		public bool ShowAllThemes {
 			get { return showAllThemes; }
@@ -56,7 +56,7 @@ namespace dnSpy.Themes {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.ThemeName = sect.Attribute<string>("ThemeName");
+			this.ThemeGuid = sect.Attribute<Guid?>("ThemeGuid");
 			this.ShowAllThemes = sect.Attribute<bool?>("ShowAllThemes") ?? ShowAllThemes;
 			this.disableSave = false;
 		}
@@ -66,7 +66,7 @@ namespace dnSpy.Themes {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("ThemeName", ThemeName);
+			sect.Attribute("ThemeGuid", ThemeGuid);
 			sect.Attribute("ShowAllThemes", ShowAllThemes);
 		}
 	}

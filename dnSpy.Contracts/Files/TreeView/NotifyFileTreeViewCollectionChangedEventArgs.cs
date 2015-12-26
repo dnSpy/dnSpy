@@ -67,13 +67,13 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <summary>
 		/// Creates a <see cref="NotifyFileTreeViewCollection.Remove"/> instance
 		/// </summary>
-		/// <param name="file">Added file</param>
+		/// <param name="files">Removed files</param>
 		/// <returns></returns>
-		public static NotifyFileTreeViewCollectionChangedEventArgs CreateRemove(IDnSpyFileNode file) {
-			Debug.Assert(file != null);
+		public static NotifyFileTreeViewCollectionChangedEventArgs CreateRemove(IDnSpyFileNode[] files) {
+			Debug.Assert(files != null);
 			var e = new NotifyFileTreeViewCollectionChangedEventArgs();
 			e.Type = NotifyFileTreeViewCollection.Remove;
-			e.Nodes = new IDnSpyFileNode[] { file };
+			e.Nodes = files;
 			return e;
 		}
 	}

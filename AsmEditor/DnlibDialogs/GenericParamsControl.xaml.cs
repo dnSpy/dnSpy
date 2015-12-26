@@ -22,10 +22,7 @@ using System.Windows.Controls;
 using dnSpy.AsmEditor.ViewHelpers;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for GenericParamsControl.xaml
-	/// </summary>
-	public partial class GenericParamsControl : UserControl {
+	sealed partial class GenericParamsControl : UserControl {
 		public GenericParamsControl() {
 			InitializeComponent();
 			DataContextChanged += (s, e) => {

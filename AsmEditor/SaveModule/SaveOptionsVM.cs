@@ -19,13 +19,12 @@
 
 using System;
 using System.Windows.Input;
-using dnSpy.MVVM;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	abstract class SaveOptionsVM : ViewModelBase {
 		public abstract SaveOptionsType Type { get; }
-		public abstract IUndoObject UndoObject { get; }
+		public abstract object UndoDocument { get; }
 
 		public string FileName {
 			get { return filename; }

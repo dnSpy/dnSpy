@@ -32,7 +32,7 @@ namespace dnSpy.Shared.UI.Decompiler {
 		/// </summary>
 		void AddUIElement(Func<UIElement> element);
 
-		void MarkAsNonCached();
+		void DontCacheOutput();
 	}
 
 	public static class SmartTextOutputExtensions {

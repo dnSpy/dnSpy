@@ -45,6 +45,12 @@
     <Optimize>True</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <NoWarn>67,169,1058,728,1720,649,1685</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <NoWarn>67,169,1058,728,1720,649,1685</NoWarn>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="DiffLib">
       <HintPath>..\..\packages\DiffLib.1.0.0.55\lib\net35-Client\DiffLib.dll</HintPath>

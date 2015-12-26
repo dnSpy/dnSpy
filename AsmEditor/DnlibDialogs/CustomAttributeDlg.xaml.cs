@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for CustomAttributeDlg.xaml
-	/// </summary>
-	public partial class CustomAttributeDlg : WindowBase {
+	sealed partial class CustomAttributeDlg : WindowBase {
 		public CustomAttributeDlg() {
 			InitializeComponent();
 		}

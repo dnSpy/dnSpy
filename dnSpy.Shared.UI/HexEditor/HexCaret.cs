@@ -76,7 +76,7 @@ namespace dnSpy.Shared.UI.HexEditor {
 				Redraw();
 		}
 
-		private void HexCaret_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+		void HexCaret_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
 			if (Visibility == Visibility.Visible)
 				UpdateInstallTimer();
 			else

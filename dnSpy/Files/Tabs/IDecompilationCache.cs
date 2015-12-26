@@ -55,12 +55,6 @@ namespace dnSpy.Files.Tabs {
 		void ClearAll();
 
 		/// <summary>
-		/// Clear everything referencing <paramref name="module"/>
-		/// </summary>
-		/// <param name="module">Module</param>
-		void Clear(IDnSpyFile module);
-
-		/// <summary>
 		/// Clear everything referencing <paramref name="modules"/>
 		/// </summary>
 		/// <param name="modules">Module</param>

@@ -25,10 +25,22 @@ namespace dnSpy.Contracts.Files.TreeView {
 	/// </summary>
 	public interface IModuleFileNode : IDnSpyFileNode, IMDTokenNode {
 		/// <summary>
+		/// Gets the <see cref="IDnSpyFile"/> instance
+		/// </summary>
+		new IDnSpyDotNetFile DnSpyFile { get; }
+
+		/// <summary>
 		/// Creates a <see cref="INamespaceNode"/>
 		/// </summary>
 		/// <param name="name">Name</param>
 		/// <returns></returns>
 		INamespaceNode Create(string name);
+
+		/// <summary>
+		/// Returns an existing <see cref="INamespaceNode"/> instance or null
+		/// </summary>
+		/// <param name="ns">Namespace</param>
+		/// <returns></returns>
+		INamespaceNode FindNode(string ns);
 	}
 }

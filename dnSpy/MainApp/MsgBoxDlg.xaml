@@ -48,10 +48,10 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <CheckBox Grid.Column="0" Margin="0 0 0 0" Content="_Don't show again" IsChecked="{Binding DontShowAgain}" Visibility="{Binding HasDontShowAgain, Converter={StaticResource booleanToVisibilityConverter}}" />
-            <Button Grid.Column="1" Margin="5 0 0 0" Content="_OK" IsDefault="True" Style="{StaticResource DialogButton2}" Visibility="{Binding HasOKButton, Converter={StaticResource booleanToVisibilityConverter}}" Command="{Binding OKCommand}" Name="okButton" />
-            <Button Grid.Column="2" Margin="5 0 0 0" Content="_Yes" IsDefault="True" Style="{StaticResource DialogButton2}" Visibility="{Binding HasYesButton, Converter={StaticResource booleanToVisibilityConverter}}" Command="{Binding YesCommand}" Name="yesButton" />
-            <Button Grid.Column="3" Margin="5 0 0 0" Content="_No" Style="{StaticResource DialogButton2}" Visibility="{Binding HasNoButton, Converter={StaticResource booleanToVisibilityConverter}}" Command="{Binding NoCommand}" />
-            <Button Grid.Column="4" Margin="5 0 0 0" Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton2}" Visibility="{Binding HasCancelButton, Converter={StaticResource booleanToVisibilityConverter}}" Command="{Binding CancelCommand}" />
+            <Button Grid.Column="1" Margin="5 0 0 0" Content="_OK" IsDefault="True" Style="{StaticResource DialogButton}" Visibility="{Binding HasOKButton, Converter={StaticResource booleanToVisibilityConverter}}" Command="{Binding OKCommand}" Name="okButton" />
+            <Button Grid.Column="2" Margin="5 0 0 0" Content="_Yes" IsDefault="True" Style="{StaticResource DialogButton}" Visibility="{Binding HasYesButton, Converter={StaticResource booleanToVisibilityConverter}}" Command="{Binding YesCommand}" Name="yesButton" />
+            <Button Grid.Column="3" Margin="5 0 0 0" Content="_No" Style="{StaticResource DialogButton}" Visibility="{Binding HasNoButton, Converter={StaticResource booleanToVisibilityConverter}}" Command="{Binding NoCommand}" />
+            <Button Grid.Column="4" Margin="5 0 0 0" Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Visibility="{Binding HasCancelButton, Converter={StaticResource booleanToVisibilityConverter}}" Command="{Binding CancelCommand}" />
         </Grid>
     </Grid>
 </ctrls:WindowBase>

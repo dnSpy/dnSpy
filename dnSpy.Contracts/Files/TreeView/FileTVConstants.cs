@@ -21,7 +21,7 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 
 namespace dnSpy.Contracts.Files.TreeView {
 	/// <summary>
-	/// Tree view constants
+	/// Treeview constants
 	/// </summary>
 	public static class FileTVConstants {
 		/// <summary>Guid of root node</summary>
@@ -110,6 +110,45 @@ namespace dnSpy.Contracts.Files.TreeView {
 
 		/// <summary><c>BamlResourceElementNode</c></summary>
 		public const string BAML_RESOURCE_ELEMENT_NODE_GUID = "2410E30D-D0D3-4BEA-8FA3-C2DBDDB25D56";
+
+		/// <summary><c>PENode</c></summary>
+		public const string PE_NODE_GUID = "44DCC53A-BC6D-41C4-B902-DE443A3FEA11";
+
+		/// <summary><c>ImageCor20HeaderNode</c></summary>
+		public const string IMGCOR20HEADER_NODE_GUID = "0B86A8A9-2C81-416D-B87F-4D5791471753";
+
+		/// <summary><c>ImageDosHeaderNode</c></summary>
+		public const string IMGDOSHEADER_NODE_GUID = "30741351-D485-42D7-9463-2BD9FAE4A591";
+
+		/// <summary><c>ImageFileHeaderNode</c></summary>
+		public const string IMGFILEHEADER_NODE_GUID = "EFB6A52C-FE1A-4C8B-803A-3163E952C8F7";
+
+		/// <summary><c>ImageOptionalHeader32Node</c></summary>
+		public const string IMGOPTHEADER32_NODE_GUID = "CC55C6DC-80B9-4EF7-B12F-D208FFB68782";
+
+		/// <summary><c>ImageOptionalHeader64Node</c></summary>
+		public const string IMGOPTHEADER64_NODE_GUID = "C35952E9-9886-4A71-A752-C359E3657198";
+
+		/// <summary><c>ImageSectionHeaderNode</c></summary>
+		public const string IMGSECTHEADER_NODE_GUID = "7CE7AA42-48FA-4C25-8AE8-FE07BDDFBF23";
+
+		/// <summary><c>MetaDataTableNode</c></summary>
+		public const string MDTBL_NODE_GUID = "C8477B7C-7F93-4479-B286-CBBBFE6CC102";
+
+		/// <summary><c>MetaDataTableRecordNode</c></summary>
+		public const string MDTBLREC_NODE_GUID = "ACAD28D4-699E-40F9-95D0-7ED34BA1558A";
+
+		/// <summary><c>StorageHeaderNode</c></summary>
+		public const string STRGHEADER_NODE_GUID = "1B171FEC-C3DA-4390-BE7A-FA0A98C00D20";
+
+		/// <summary><c>StorageSignatureNode</c></summary>
+		public const string STRGSIG_NODE_GUID = "5DB376D9-9092-4625-82DC-DC8986EC6F89";
+
+		/// <summary><c>StorageStreamNode</c></summary>
+		public const string STRGSTREAM_NODE_GUID = "037F16E2-0BEA-4BEE-9EDE-8E7CD1732E8E";
+
+		/// <summary><c>TablesStreamNode</c></summary>
+		public const string TBLSSTREAM_NODE_GUID = "8684B8BC-DFEB-4826-B078-A72F5CDFA4A7";
 
 		/// <summary>Order of PE node</summary>
 		public const double ORDER_MODULE_PE = 0;

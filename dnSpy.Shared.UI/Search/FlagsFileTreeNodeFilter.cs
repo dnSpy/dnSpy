@@ -66,8 +66,7 @@ namespace dnSpy.Shared.UI.Search {
 					VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
 					VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
 					VisibleMembersFlags.Local | VisibleMembersFlags.Resource |
-					VisibleMembersFlags.ResourceElement | VisibleMembersFlags.PE |
-					VisibleMembersFlags.Hex;
+					VisibleMembersFlags.ResourceElement | VisibleMembersFlags.Other;
 			return FilterFile(thisFlag, visibleFlags);
 		}
 
@@ -83,14 +82,13 @@ namespace dnSpy.Shared.UI.Search {
 					VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
 					VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
 					VisibleMembersFlags.Local | VisibleMembersFlags.Resource |
-					VisibleMembersFlags.ResourceElement | VisibleMembersFlags.PE |
-					VisibleMembersFlags.Hex;
+					VisibleMembersFlags.ResourceElement | VisibleMembersFlags.Other;
 			return FilterFile(thisFlag, visibleFlags);
 		}
 
 		public override FileTreeNodeFilterResult GetResult(IDnSpyFile file) {
 			var thisFlag = VisibleMembersFlags.NonNetFile;
-			var visibleFlags = thisFlag | VisibleMembersFlags.PE | VisibleMembersFlags.Hex;
+			var visibleFlags = thisFlag | VisibleMembersFlags.Other;
 			return FilterFile(thisFlag, visibleFlags);
 		}
 
@@ -217,24 +215,10 @@ namespace dnSpy.Shared.UI.Search {
 		}
 
 		public override FileTreeNodeFilterResult GetResult(IFileTreeNodeData node) {
-			/*TODO: PE node:
-			var visibleFlags = VisibleMembersFlags.PE | VisibleMembersFlags.Hex;
-			bool isMatch = (flags & VisibleMembersFlags.PE) != 0;
-			if ((flags & visibleFlags) == 0)
-				return new FileTreeNodeFilterResult(FilterType.Hide, isMatch);
-			if (isMatch)
-				return new FileTreeNodeFilterResult(FilterType.Visible, isMatch);
-			return new FileTreeNodeFilterResult(FilterType.CheckChildren, isMatch);
-			*/
-
-			/*TODO: Hex node
-			bool isMatch = (flags & VisibleMembersFlags.Hex) != 0;
+			bool isMatch = (flags & VisibleMembersFlags.Other) != 0;
 			if (!isMatch)
 				return new FileTreeNodeFilterResult(FilterType.Hide, isMatch);
 			return new FileTreeNodeFilterResult(FilterType.Visible, isMatch);
-			*/
-
-			return base.GetResult(node);
 		}
 
 		public override FileTreeNodeFilterResult GetResult(TypeDef type) {

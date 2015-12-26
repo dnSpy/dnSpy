@@ -20,10 +20,7 @@
 using dnSpy.Shared.UI.Controls;
 
 namespace dnSpy.AsmEditor.Resources {
-	/// <summary>
-	/// Interaction logic for ResourceDlg.xaml
-	/// </summary>
-	public partial class ResourceDlg : WindowBase {
+	sealed partial class ResourceDlg : WindowBase {
 		public ResourceDlg() {
 			InitializeComponent();
 		}

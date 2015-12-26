@@ -83,7 +83,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				vm.NameError = false;
 				bool printedToken = false;
 				if (vm.Context.ShowTokens) {
-					WriteToken(output, ilbp.SerializedDnSpyToken.Token);
+					WriteToken(output, ilbp.SerializedDnToken.Token);
 					output.WriteSpace();
 					printedToken = true;
 				}
@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.Breakpoints {
 					if (printedToken)
 						output.Write("???", TextTokenType.Error);
 					else
-						output.Write(string.Format("0x{0:X8}", ilbp.SerializedDnSpyToken.Token), TextTokenType.Number);
+						output.Write(string.Format("0x{0:X8}", ilbp.SerializedDnToken.Token), TextTokenType.Number);
 				}
 				else
 					MethodLanguage.WriteToolTip(output, method, null);
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public void WriteAssembly(BreakpointVM vm) {
 			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
 			if (ilbp != null) {
-				output.Write(new AssemblyNameInfo(ilbp.SerializedDnSpyToken.Module.AssemblyFullName));
+				output.Write(new AssemblyNameInfo(ilbp.SerializedDnToken.Module.AssemblyFullName));
 				return;
 			}
 
@@ -146,7 +146,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			if (ilbp != null) {
 				// Always use the filename since it matches the module names in the call stack and
 				// modules windows
-				output.WriteModule(ModulePathToModuleName(ilbp.SerializedDnSpyToken.Module.ModuleName));
+				output.WriteModule(ModulePathToModuleName(ilbp.SerializedDnToken.Module.ModuleName));
 				return;
 			}
 
@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public void WriteFile(BreakpointVM vm) {
 			var ilbp = vm.Breakpoint as ILCodeBreakpoint;
 			if (ilbp != null) {
-				output.WriteFilename(ilbp.SerializedDnSpyToken.Module.ModuleName);
+				output.WriteFilename(ilbp.SerializedDnToken.Module.ModuleName);
 				return;
 			}
 

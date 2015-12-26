@@ -19,17 +19,15 @@
 
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
-	/// <summary>
-	/// Interaction logic for ListVMControl.xaml
-	/// </summary>
-	public partial class ListVMControl : UserControl {
+	sealed partial class ListVMControl : UserControl {
 		public ListVMControl() {
 			InitializeComponent();
 		}
 
-		private void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+		void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListBoxItem>(listBox, e))
 				return;
 			var data = DataContext as ListVM;

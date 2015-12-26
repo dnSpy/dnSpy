@@ -25,6 +25,20 @@ namespace dnSpy.Contracts.Files.TreeView {
 	/// </summary>
 	public interface IFileTreeNodeCreator {
 		/// <summary>
+		/// Creates a <see cref="IAssemblyFileNode"/>
+		/// </summary>
+		/// <param name="asmFile">Assembly</param>
+		/// <returns></returns>
+		IAssemblyFileNode CreateAssembly(IDnSpyDotNetFile asmFile);
+
+		/// <summary>
+		/// Creates a <see cref="IModuleFileNode"/>
+		/// </summary>
+		/// <param name="modFile">Module</param>
+		/// <returns></returns>
+		IModuleFileNode CreateModule(IDnSpyDotNetFile modFile);
+
+		/// <summary>
 		/// Creates a <see cref="IAssemblyReferenceNode"/>
 		/// </summary>
 		/// <param name="asmRef">Assembly reference</param>

@@ -108,15 +108,9 @@ namespace dnSpy.Analyzer {
 				TreeViewListener = this,
 			};
 			this.treeView = treeViewManager.Create(ANALYZER_TREEVIEW_GUID, options);
+
 			fileManager.CollectionChanged += FileManager_CollectionChanged;
-
-			/*TODO:
-			OnModuleModified += (s, e) => {
-				HandleModelUpdated(treeView.Root, e.DnSpyFile);
-				RefreshNodes();
-			};
-			*/
-
+			fileTabManager.FileModified += FileTabManager_FileModified;
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			analyzerSettings.PropertyChanged += AnalyzerSettings_PropertyChanged;
@@ -127,6 +121,11 @@ namespace dnSpy.Analyzer {
 			var command = new RelayCommand(a => ActivateNode());
 			cmds.Add(command, ModifierKeys.Control, Key.Enter);
 			cmds.Add(command, ModifierKeys.Shift, Key.Enter);
+		}
+
+		void FileTabManager_FileModified(object sender, FileModifiedEventArgs e) {
+			AnalyzerTreeNodeData.HandleModelUpdated(treeView.Root, e.Files);
+			RefreshNodes();
 		}
 
 		void ActivateNode() {

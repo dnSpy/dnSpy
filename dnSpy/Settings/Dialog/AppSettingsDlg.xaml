@@ -46,8 +46,8 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="_OK" Style="{StaticResource DialogButton2}" Margin="0 0 5 0" Click="okButton_Click" IsDefault="True" />
-            <Button Grid.Column="2" Content="_Cancel" Style="{StaticResource DialogButton2}" Margin="0 0 0 0" Click="cancelButton_Click" IsCancel="True" />
+            <Button Grid.Column="1" Content="_OK" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Click="okButton_Click" IsDefault="True" />
+            <Button Grid.Column="2" Content="_Cancel" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Click="cancelButton_Click" IsCancel="True" />
         </Grid>
     </Grid>
 </ctrls:WindowBase>

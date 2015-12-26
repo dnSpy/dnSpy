@@ -20,8 +20,8 @@
 using System;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.ILSpy;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class MethodBodyVM : ViewModelBase {
@@ -64,12 +64,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 		readonly CilBodyVM cilBodyVM;
 
-		public MethodBodyVM(MethodBodyOptions options, ModuleDef ownerModule, Language language, TypeDef ownerType, MethodDef ownerMethod) {
+		public MethodBodyVM(MethodBodyOptions options, ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod) {
 			this.origOptions = options;
 
 			this.nativeMethodBodyVM = new MethodBody.NativeMethodBodyVM(options.NativeMethodBodyOptions, false);
 			NativeMethodBodyVM.PropertyChanged += (s, e) => HasErrorUpdated();
-			this.cilBodyVM = new MethodBody.CilBodyVM(options.CilBodyOptions, ownerModule, language, ownerType, ownerMethod, false);
+			this.cilBodyVM = new MethodBody.CilBodyVM(options.CilBodyOptions, ownerModule, languageManager, ownerType, ownerMethod, false);
 			CilBodyVM.PropertyChanged += (s, e) => HasErrorUpdated();
 			this.methodBodyTypeVM = new EnumListVM(methodBodyTypeList, (a, b) => OnMethodBodyTypeChanged());
 

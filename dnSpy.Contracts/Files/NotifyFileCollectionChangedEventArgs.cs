@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Diagnostics;
 
 namespace dnSpy.Contracts.Files {
 	/// <summary>
@@ -35,6 +34,11 @@ namespace dnSpy.Contracts.Files {
 		/// </summary>
 		public IDnSpyFile[] Files { get; private set; }
 
+		/// <summary>
+		/// User data
+		/// </summary>
+		public object Data { get; private set; }
+
 		NotifyFileCollectionChangedEventArgs() {
 		}
 
@@ -42,12 +46,15 @@ namespace dnSpy.Contracts.Files {
 		/// Creates a <see cref="NotifyFileCollectionType.Clear"/> instance
 		/// </summary>
 		/// <param name="clearedFiles">All cleared files</param>
+		/// <param name="data">Data to send to listeners</param>
 		/// <returns></returns>
-		public static NotifyFileCollectionChangedEventArgs CreateClear(IDnSpyFile[] clearedFiles) {
-			Debug.Assert(clearedFiles != null);
+		public static NotifyFileCollectionChangedEventArgs CreateClear(IDnSpyFile[] clearedFiles, object data) {
+			if (clearedFiles == null)
+				throw new ArgumentNullException();
 			var e = new NotifyFileCollectionChangedEventArgs();
 			e.Type = NotifyFileCollectionType.Clear;
 			e.Files = clearedFiles;
+			e.Data = data;
 			return e;
 		}
 
@@ -55,25 +62,43 @@ namespace dnSpy.Contracts.Files {
 		/// Creates a <see cref="NotifyFileCollectionType.Add"/> instance
 		/// </summary>
 		/// <param name="file">Added file</param>
+		/// <param name="data">Data to send to listeners</param>
 		/// <returns></returns>
-		public static NotifyFileCollectionChangedEventArgs CreateAdd(IDnSpyFile file) {
-			Debug.Assert(file != null);
+		public static NotifyFileCollectionChangedEventArgs CreateAdd(IDnSpyFile file, object data) {
+			if (file == null)
+				throw new ArgumentNullException();
 			var e = new NotifyFileCollectionChangedEventArgs();
 			e.Type = NotifyFileCollectionType.Add;
 			e.Files = new IDnSpyFile[] { file };
+			e.Data = data;
 			return e;
 		}
 
 		/// <summary>
 		/// Creates a <see cref="NotifyFileCollectionType.Remove"/> instance
 		/// </summary>
-		/// <param name="file">Added file</param>
+		/// <param name="file">Removed file</param>
+		/// <param name="data">Data to send to listeners</param>
 		/// <returns></returns>
-		public static NotifyFileCollectionChangedEventArgs CreateRemove(IDnSpyFile file) {
-			Debug.Assert(file != null);
+		public static NotifyFileCollectionChangedEventArgs CreateRemove(IDnSpyFile file, object data) {
+			if (file == null)
+				throw new ArgumentNullException();
+			return CreateRemove(new[] { file }, data);
+		}
+
+		/// <summary>
+		/// Creates a <see cref="NotifyFileCollectionType.Remove"/> instance
+		/// </summary>
+		/// <param name="files">Removed files</param>
+		/// <param name="data">Data to send to listeners</param>
+		/// <returns></returns>
+		public static NotifyFileCollectionChangedEventArgs CreateRemove(IDnSpyFile[] files, object data) {
+			if (files == null)
+				throw new ArgumentNullException();
 			var e = new NotifyFileCollectionChangedEventArgs();
 			e.Type = NotifyFileCollectionType.Remove;
-			e.Files = new IDnSpyFile[] { file };
+			e.Files = files;
+			e.Data = data;
 			return e;
 		}
 	}

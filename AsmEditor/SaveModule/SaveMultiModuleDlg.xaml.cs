@@ -19,25 +19,23 @@
 
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
-	/// <summary>
-	/// Interaction logic for SaveMultiModuleDlg.xaml
-	/// </summary>
-	public partial class SaveMultiModuleDlg : SaveModuleWindow {
+	sealed partial class SaveMultiModuleDlg : SaveModuleWindow {
 		public SaveMultiModuleDlg() {
 			InitializeComponent();
 		}
 
-		private void Options_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
+		void Options_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
 			e.CanExecute = e.Parameter is SaveOptionsVM;
 		}
 
-		private void Options_Executed(object sender, ExecutedRoutedEventArgs e) {
+		void Options_Executed(object sender, ExecutedRoutedEventArgs e) {
 			ShowOptions((SaveOptionsVM)e.Parameter);
 		}
 
-		private void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
+		void listBox_MouseDoubleClick(object sender, MouseButtonEventArgs e) {
 			if (!UIUtils.IsLeftDoubleClick<ListBoxItem>(listBox, e))
 				return;
 			ShowOptions((SaveOptionsVM)listBox.SelectedItem);

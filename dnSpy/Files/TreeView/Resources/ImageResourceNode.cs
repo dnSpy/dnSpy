@@ -21,7 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnlib.IO;
@@ -139,7 +138,7 @@ namespace dnSpy.Files.TreeView.Resources {
 		public ImageResourceNode(ITreeNodeGroup treeNodeGroup, EmbeddedResource resource)
 			: base(treeNodeGroup, resource) {
 			this.imageData = resource.GetResourceData();
-			this.imageSource = ImageResourceElementNode.CreateImageSource(this.imageData);
+			this.imageSource = ImageResourceUtils.CreateImageSource(this.imageData);
 		}
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
@@ -185,30 +184,7 @@ namespace dnSpy.Files.TreeView.Resources {
 
 		void InitializeImageData() {
 			this.imageData = (byte[])((BuiltInResourceData)ResourceElement.ResourceData).Data;
-			this.imageSource = CreateImageSource(this.imageData);
-		}
-
-		internal static ImageSource CreateImageSource(byte[] data) {
-			// Check if CUR
-			if (data.Length >= 4 && BitConverter.ToUInt32(data, 0) == 0x00020000) {
-				try {
-					data[2] = 1;
-					return CreateImageSource2(data);
-				}
-				finally {
-					data[2] = 2;
-				}
-			}
-
-			return CreateImageSource2(data);
-		}
-
-		static ImageSource CreateImageSource2(byte[] data) {
-			var bimg = new BitmapImage();
-			bimg.BeginInit();
-			bimg.StreamSource = new MemoryStream(data);
-			bimg.EndInit();
-			return bimg;
+			this.imageSource = ImageResourceUtils.CreateImageSource(this.imageData);
 		}
 
 		public override void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
@@ -242,7 +218,7 @@ namespace dnSpy.Files.TreeView.Resources {
 				return res;
 
 			try {
-				CreateImageSource((byte[])((BuiltInResourceData)newResElem.ResourceData).Data);
+				ImageResourceUtils.CreateImageSource((byte[])((BuiltInResourceData)newResElem.ResourceData).Data);
 			}
 			catch {
 				return "The new data is not an image.";

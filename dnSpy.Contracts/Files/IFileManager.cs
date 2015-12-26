@@ -18,11 +18,12 @@
 */
 
 using System;
+using System.Collections.Generic;
 using dnlib.DotNet;
 
 namespace dnSpy.Contracts.Files {
 	/// <summary>
-	/// Manages all loaded files (which are shown in the tree view)
+	/// Manages all loaded files (which are shown in the treeview)
 	/// </summary>
 	public interface IFileManager {
 		/// <summary>
@@ -43,6 +44,16 @@ namespace dnSpy.Contracts.Files {
 		/// <param name="file">File</param>
 		/// <returns></returns>
 		IDnSpyFile GetOrAdd(IDnSpyFile file);
+
+		/// <summary>
+		/// Adds <paramref name="file"/> to the list, even if another instance has already been
+		/// inserted. Returns the input.
+		/// </summary>
+		/// <param name="file">File</param>
+		/// <param name="delayLoad">true to delay load</param>
+		/// <param name="data">Data passed to listeners</param>
+		/// <returns></returns>
+		IDnSpyFile ForceAdd(IDnSpyFile file, bool delayLoad, object data);
 
 		/// <summary>
 		/// Creates a new <see cref="IDnSpyFile"/> instance or returns an existing one. null is
@@ -81,6 +92,12 @@ namespace dnSpy.Contracts.Files {
 		/// </summary>
 		/// <param name="key">Key of file to remove. See <see cref="IDnSpyFile.Key"/></param>
 		void Remove(IDnSpyFilenameKey key);
+
+		/// <summary>
+		/// Removes files
+		/// </summary>
+		/// <param name="files">Files</param>
+		void Remove(IEnumerable<IDnSpyFile> files);
 
 		/// <summary>
 		/// Clears all files

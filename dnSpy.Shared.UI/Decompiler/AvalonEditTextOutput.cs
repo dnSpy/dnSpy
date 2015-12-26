@@ -38,15 +38,15 @@ namespace dnSpy.Shared.UI.Decompiler {
 		public bool IsLocal;
 		public bool IsLocalTarget;
 
-		public bool Equals(CodeReferenceSegment codeRef) {
+		public bool Equals(CodeReference codeRef) {
 			return codeRef != null &&
 				Reference == codeRef.Reference &&
 				IsLocal == codeRef.IsLocal &&
 				IsLocalTarget == codeRef.IsLocalTarget;
 		}
 
-		public CodeReferenceSegment ToCodeReferenceSegment() {
-			return new CodeReferenceSegment(Reference, IsLocal, IsLocalTarget);
+		public CodeReference ToCodeReference() {
+			return new CodeReference(Reference, IsLocal, IsLocalTarget);
 		}
 	}
 
@@ -227,7 +227,7 @@ namespace dnSpy.Shared.UI.Decompiler {
 				if (this.UIElements.Count > 0 && this.UIElements.Last().Key == this.TextLength)
 					throw new InvalidOperationException("Only one UIElement is allowed for each position in the document");
 				this.UIElements.Add(new KeyValuePair<int, Lazy<UIElement>>(this.TextLength, new Lazy<UIElement>(element)));
-				MarkAsNonCached();
+				DontCacheOutput();
 			}
 		}
 
@@ -247,7 +247,7 @@ namespace dnSpy.Shared.UI.Decompiler {
 			Debug.Assert(b.Length == tokens.Length);
 		}
 
-		public void MarkAsNonCached() {
+		public void DontCacheOutput() {
 			CanBeCached = false;
 		}
 	}
