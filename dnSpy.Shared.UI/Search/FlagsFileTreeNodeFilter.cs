@@ -286,9 +286,7 @@ namespace dnSpy.Shared.UI.Search {
 
 		static bool HasMethodBodies(TypeDef type) {
 			foreach (var method in type.Methods) {
-				bool hasBody = method.Body != null;
-				//TODO: FreeMethodBody(method);
-				if (hasBody)
+				if (method.Body != null)
 					return true;
 			}
 			return false;
@@ -300,9 +298,7 @@ namespace dnSpy.Shared.UI.Search {
 
 		static bool HasLocals(TypeDef type) {
 			foreach (var method in type.Methods) {
-				bool hasLocal = method.Body != null && method.Body.HasVariables;
-				//TODO: FreeMethodBody(method);
-				if (hasLocal)
+				if (method.Body != null && method.Body.HasVariables)
 					return true;
 			}
 			return false;

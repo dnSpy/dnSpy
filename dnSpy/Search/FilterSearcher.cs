@@ -430,16 +430,6 @@ namespace dnSpy.Search {
 		}
 
 		void SearchBody(IDnSpyFile ownerModule, TypeDef type, MethodDef method) {
-			bool loadedBody;
-			SearchBody(ownerModule, type, method, out loadedBody);
-			/*TODO:
-			if (loadedBody)
-				FreeMethodBody(method);
-			*/
-		}
-
-		void SearchBody(IDnSpyFile ownerModule, TypeDef type, MethodDef method, out bool loadedBody) {
-			loadedBody = false;
 			CilBody body;
 
 			var res = options.Filter.GetResultLocals(method);
@@ -447,7 +437,6 @@ namespace dnSpy.Search {
 				body = method.Body;
 				if (body == null)
 					return; // Return immediately. All code here depends on a non-null body
-				loadedBody = true;
 
 				foreach (var local in body.Variables) {
 					res = options.Filter.GetResult(method, local);
@@ -477,7 +466,6 @@ namespace dnSpy.Search {
 			body = method.Body;
 			if (body == null)
 				return; // Return immediately. All code here depends on a non-null body
-			loadedBody = true;
 			foreach (var instr in body.Instructions) {
 				object operand;
 				// Only check numbers and strings. Don't pass in any type of operand to IsMatch()

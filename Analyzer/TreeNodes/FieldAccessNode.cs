@@ -72,8 +72,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 					}
 				}
 
-				Helpers.FreeMethodBody(method);
-
 				if (found) {
 					MethodDef codeLocation = GetOriginalCodeLocation(method) as MethodDef;
 					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {

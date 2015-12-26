@@ -142,8 +142,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 				}
 			}
 
-			Helpers.FreeMethodBody(method); // discard body to reduce memory pressure & higher GC gen collections
-
 			return found;
 		}
 

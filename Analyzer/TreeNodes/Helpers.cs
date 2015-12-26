@@ -110,8 +110,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 					}
 				}
 
-				FreeMethodBody(method);
-
 				if (found)
 					return method;
 			}
@@ -130,22 +128,10 @@ namespace dnSpy.Analyzer.TreeNodes {
 					}
 				}
 
-				FreeMethodBody(method);
-
 				if (found)
 					return method;
 			}
 			return null;
-		}
-
-		//TODO: Move this method
-		public static void FreeMethodBody(MethodDef method) {
-			if (method != null) {
-				/*TODO:
-				if (!MethodAnnotations.Instance.IsBodyModified(method))
-					method.FreeMethodBody();
-				*/
-			}
 		}
 	}
 }

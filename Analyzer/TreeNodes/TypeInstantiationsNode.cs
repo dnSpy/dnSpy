@@ -71,8 +71,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 					}
 				}
 
-				Helpers.FreeMethodBody(method);
-
 				if (found) {
 					yield return new MethodNode(method) { Context = Context };
 				}
