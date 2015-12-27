@@ -48,13 +48,13 @@ namespace dnSpy.MainApp {
 
 		readonly IAppWindow appWindow;
 		readonly ISettingsManager settingsManager;
-		readonly HashSet<string> ignoredMessages;
+		readonly HashSet<Guid> ignoredMessages;
 
 		[ImportingConstructor]
 		MessageBoxManager(IAppWindow appWindow, ISettingsManager settingsManager) {
 			this.appWindow = appWindow;
 			this.settingsManager = settingsManager;
-			this.ignoredMessages = new HashSet<string>();
+			this.ignoredMessages = new HashSet<Guid>();
 			ReadSettings();
 		}
 
@@ -62,8 +62,10 @@ namespace dnSpy.MainApp {
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			foreach (var ignoredSect in sect.SectionsWithName(IGNORED_SECTION)) {
 				var id = ignoredSect.Attribute<string>(IGNORED_ATTR);
-				if (!string.IsNullOrEmpty(id))
-					ignoredMessages.Add(id);
+				Guid guid;
+				if (!Guid.TryParse(id, out guid))
+					continue;
+				ignoredMessages.Add(guid);
 			}
 		}
 
@@ -80,15 +82,15 @@ namespace dnSpy.MainApp {
 			}
 		}
 
-		public MsgBoxButton? ShowIgnorableMessage(string id, string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null) {
-			if (ignoredMessages.Contains(id))
+		public MsgBoxButton? ShowIgnorableMessage(Guid guid, string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null) {
+			if (ignoredMessages.Contains(guid))
 				return null;
 			MsgBoxDlg win;
 			MsgBoxVM vm;
 			Create(message, buttons, true, ownerWindow, out win, out vm);
 			win.ShowDialog();
 			if (win.ClickedButton != MsgBoxButton.None && vm.DontShowAgain) {
-				ignoredMessages.Add(id);
+				ignoredMessages.Add(guid);
 				SaveSettings();
 			}
 			return win.ClickedButton;

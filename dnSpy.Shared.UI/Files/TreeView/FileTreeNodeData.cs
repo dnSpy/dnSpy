@@ -18,8 +18,10 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
@@ -189,6 +191,32 @@ namespace dnSpy.Shared.UI.Files.TreeView {
 
 			foreach (var node in this.TreeNode.DataChildren)
 				Filter(node as IFileTreeNodeData);
+		}
+
+		public sealed override bool CanDrag(ITreeNodeData[] nodes) {
+			return Context.CanDragAndDrop && nodes.Length != 0 && nodes.All(a => a is IFileTreeNodeData && ((IFileTreeNodeData)a).TreeNode.Parent == Context.FileTreeView.TreeView.Root);
+		}
+
+		public sealed override void StartDrag(DependencyObject dragSource, ITreeNodeData[] nodes) {
+			bool b = CanDrag(nodes);
+			Debug.Assert(b);
+			if (!b)
+				return;
+			DragDrop.DoDragDrop(dragSource, Copy(nodes), DragDropEffects.All);
+		}
+
+		public sealed override IDataObject Copy(ITreeNodeData[] nodes) {
+			var dataObject = new DataObject();
+			if (!Context.CanDragAndDrop)
+				return dataObject;
+			var rootNode = Context.FileTreeView.TreeView.Root;
+			var dict = new Dictionary<ITreeNodeData, int>();
+			for (int i = 0; i < rootNode.Children.Count; i++)
+				dict.Add(rootNode.Children[i].Data, i);
+			var data = nodes.Where(a => dict.ContainsKey(a)).Select(a => dict[a]).ToArray();
+			if (data.Length != 0)
+				dataObject.SetData(FileTVConstants.DATAFORMAT_COPIED_ROOT_NODES, data);
+			return dataObject;
 		}
 	}
 }

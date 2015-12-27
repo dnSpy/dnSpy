@@ -222,6 +222,11 @@ namespace dnSpy.Tabs {
 		readonly IWpfFocusManager wpfFocusManager;
 		readonly TabGroupManagerOptions options;
 
+		public IContextMenuCreator ContextMenuCreator {
+			get { return contextMenuCreator; }
+		}
+		readonly IContextMenuCreator contextMenuCreator;
+
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly TabGroup tabGroup;
 
@@ -244,9 +249,9 @@ namespace dnSpy.Tabs {
 			tabControl.SetStyle(options.TabControlStyle ?? "FileTabGroupTabControlStyle");
 			this.tabControl.SelectionChanged += TabControl_SelectionChanged;
 			if (options.InitializeContextMenu != null)
-				options.InitializeContextMenu(menuManager, this, this.tabControl);
+				this.contextMenuCreator = options.InitializeContextMenu(menuManager, this, this.tabControl);
 			else if (options.TabGroupGuid != Guid.Empty)
-				menuManager.InitializeContextMenu(this.tabControl, options.TabGroupGuid, new GuidObjectsCreator(this));
+				this.contextMenuCreator = menuManager.InitializeContextMenu(this.tabControl, options.TabGroupGuid, new GuidObjectsCreator(this));
 		}
 
 		void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) {

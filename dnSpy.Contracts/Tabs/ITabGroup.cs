@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using dnSpy.Contracts.Menus;
 
 namespace dnSpy.Contracts.Tabs {
 	/// <summary>
@@ -123,5 +124,10 @@ namespace dnSpy.Contracts.Tabs {
 		/// Selects the previous tab
 		/// </summary>
 		void SelectPreviousTab();
+
+		/// <summary>
+		/// Gets the context menu creator
+		/// </summary>
+		IContextMenuCreator ContextMenuCreator { get; }
 	}
 }

@@ -55,7 +55,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		}
 
 		public override void Execute(IToolBarItemContext context) {
-			var res = messageBoxManager.ShowIgnorableMessage("undo: clear history", "Do you want to clear the undo/redo history?", MsgBoxButton.Yes | MsgBoxButton.No);
+			var res = messageBoxManager.ShowIgnorableMessage(new Guid("FC8FC68F-4285-4CDF-BEC0-FF6498EEC4AA"), "Do you want to clear the undo/redo history?", MsgBoxButton.Yes | MsgBoxButton.No);
 			if (res == null || res == MsgBoxButton.Yes)
 				undoCommandManager.Value.Clear();
 		}

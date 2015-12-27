@@ -33,6 +33,10 @@ namespace dnSpy.ToolWindows {
 			get { return new RelayCommand(a => Close(), a => CanClose); }
 		}
 
+		public ICommand ShowWindowPositionCommand {
+			get { return new RelayCommand(a => ShowWindowPositionMenu(a), a => CanShowWindowPositionMenu); }
+		}
+
 		bool IFocusable.CanFocus {
 			get {
 				var focusable = content as IFocusable;
@@ -259,6 +263,20 @@ namespace dnSpy.ToolWindows {
 				return;
 			if (Owner != null)
 				Owner.Close(this);
+		}
+
+		bool CanShowWindowPositionMenu {
+			get { return true; }
+		}
+
+		void ShowWindowPositionMenu(object uiObj) {
+			var fe = uiObj as FrameworkElement;
+			Debug.Assert(fe != null);
+			if (fe == null)
+				return;
+
+			Owner.SetFocus(this);
+			Owner.TabGroup.ContextMenuCreator.Show(fe);
 		}
 	}
 }

@@ -252,10 +252,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.TypeSig = defaultTypeSig;
 		}
 
-		void ShowWarning(string key, string msg) {
+		void ShowWarning(Guid? guid, string msg) {
 			if (showWarningMessage == null)
 				throw new InvalidOperationException();
-			showWarningMessage.Show(key, msg);
+			showWarningMessage.Show(guid, msg);
 		}
 
 		void RemoveLastTypeSig() {

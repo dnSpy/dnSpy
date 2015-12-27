@@ -140,7 +140,7 @@ namespace dnSpy.AsmEditor.Method {
 
 		internal static bool AskDeleteDef(string defName) {
 			var msg = string.Format("There could be code in some assembly that references this {0}. Are you sure you want to delete the {0}?", defName);
-			var res = Shared.UI.App.MsgBox.Instance.ShowIgnorableMessage("delete def", msg, MsgBoxButton.Yes | MsgBoxButton.No);
+			var res = Shared.UI.App.MsgBox.Instance.ShowIgnorableMessage(new Guid("DA7D935C-F5ED-44A4-BFA8-CC794AD0F105"), msg, MsgBoxButton.Yes | MsgBoxButton.No);
 			return res == null || res == MsgBoxButton.Yes;
 		}
 

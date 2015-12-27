@@ -248,7 +248,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		public bool ClearAskUser() {
-			var res = messageBoxManager.ShowIgnorableMessage("debug: delete all bps", "Do you want to delete all breakpoints?", MsgBoxButton.Yes | MsgBoxButton.No);
+			var res = messageBoxManager.ShowIgnorableMessage(new Guid("37250D26-E844-49F4-904B-29600B90476C"), "Do you want to delete all breakpoints?", MsgBoxButton.Yes | MsgBoxButton.No);
 			if (res != null && res != MsgBoxButton.Yes)
 				return false;
 			Clear();

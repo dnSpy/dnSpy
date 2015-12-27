@@ -66,6 +66,14 @@ namespace dnSpy.Contracts.Files {
 		IDnSpyFile TryGetOrCreate(DnSpyFileInfo info, bool isAutoLoaded = false);
 
 		/// <summary>
+		/// Tries to create a new <see cref="IDnSpyFile"/> without adding it to the list. null is
+		/// returned if it couldn't be created.
+		/// </summary>
+		/// <param name="info">File info</param>
+		/// <returns></returns>
+		IDnSpyFile TryCreateOnly(DnSpyFileInfo info);
+
+		/// <summary>
 		/// Resolves an assembly. Returns null if it couldn't be resolved.
 		/// </summary>
 		/// <param name="asm">Assembly</param>

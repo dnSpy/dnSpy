@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Windows;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.TreeView;
 
@@ -80,6 +81,25 @@ namespace dnSpy.Shared.UI.TreeView {
 		}
 
 		public virtual void OnIsExpandedChanged(bool isExpanded) {
+		}
+
+		public virtual bool CanDrag(ITreeNodeData[] nodes) {
+			return false;
+		}
+
+		public virtual void StartDrag(DependencyObject dragSource, ITreeNodeData[] nodes) {
+		}
+
+		public virtual IDataObject Copy(ITreeNodeData[] nodes) {
+			throw new NotSupportedException();
+		}
+
+		public virtual bool CanDrop(DragEventArgs e, int index) {
+			return false;
+		}
+
+		public virtual void Drop(DragEventArgs e, int index) {
+			throw new NotSupportedException();
 		}
 	}
 }

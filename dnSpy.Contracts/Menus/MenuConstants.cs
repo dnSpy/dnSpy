@@ -55,6 +55,9 @@ namespace dnSpy.Contracts.Menus {
 		/// <summary>Guid of app menu: Help</summary>
 		public const string APP_MENU_HELP_GUID = "52504C1B-7C35-464A-A35D-6D9F59E035D9";
 
+		/// <summary>Guid of text editor icon bar</summary>
+		public const string TEXTEDITOR_ICONBAR_GUID = "998FA81E-5B86-43C1-A043-41CDDE090477";
+
 		/// <summary>App menu order: File</summary>
 		public const double ORDER_APP_MENU_FILE = 0;
 
@@ -117,6 +120,12 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary><c>HexBox</c></summary>
 		public const string GUIDOBJ_HEXBOX_GUID = "6D0D8103-1D91-4815-94C3-9AAB41D3175B";
+
+		/// <summary>Text editor icon bar</summary>
+		public const string GUIDOBJ_TEXTEDITOR_ICONBAR_GUID = "7B29633F-85AD-41F6-BD09-9989BB55B7E2";
+
+		/// <summary><see cref="IIconBarObject"/></summary>
+		public const string GUIDOBJ_IICONBAROBJECT_GUID = "16307E6A-7986-477C-9035-18356742E375";
 
 		/// <summary>Group: App Menu: File, Group: Save</summary>
 		public const string GROUP_APP_MENU_FILE_SAVE = "0,557C4B2D-5966-41AF-BFCA-D0A36DB5D6D8";
@@ -405,5 +414,8 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Group: Context Menu, Type: Debugger/Threads, Group: Commands</summary>
 		public const string GROUP_CTX_DBG_THREADS_CMDS = "2000,B7B20F2D-6FE1-4415-BC4A-D92B31EE9342";
+
+		/// <summary>Group: Text Editor Icon Bar, Type: Debugger, Group: Breakpoints</summary>
+		public const string GROUP_TEXTEDITOR_ICONBAR_DEBUG_BPS = "0,02808659-957B-4E18-BB41-C5C61ACF5535";
 	}
 }

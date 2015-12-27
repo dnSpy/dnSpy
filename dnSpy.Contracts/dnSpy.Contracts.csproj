@@ -100,6 +100,8 @@
     <Compile Include="Files\Tabs\TextEditor\IDecompileNodeCollection.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileNodeContext.cs" />
     <Compile Include="Files\Tabs\TextEditor\IDecompileSelf.cs" />
+    <Compile Include="Files\Tabs\TextEditor\IIconBarCommand.cs" />
+    <Compile Include="Files\Tabs\TextEditor\IIconBarCommandContext.cs" />
     <Compile Include="Files\Tabs\TextEditor\IIconBarObject.cs" />
     <Compile Include="Files\Tabs\TextEditor\IMarkedTextLine.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextEditorSettings.cs" />
@@ -192,6 +194,7 @@
     <Compile Include="Menus\ExportMenuAttribute.cs" />
     <Compile Include="Menus\ExportMenuItemAttribute.cs" />
     <Compile Include="Menus\GuidObject.cs" />
+    <Compile Include="Menus\IContextMenuCreator.cs" />
     <Compile Include="Menus\IContextMenuInitializer.cs" />
     <Compile Include="Menus\IGuidObjectsCreator.cs" />
     <Compile Include="Menus\IMenu.cs" />

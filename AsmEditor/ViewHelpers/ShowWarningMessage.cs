@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Windows;
 using dnSpy.Contracts.App;
 
@@ -32,11 +33,11 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public void Show(string key, string msg) {
-			if (key == null)
+		public void Show(Guid? guid, string msg) {
+			if (guid == null)
 				Shared.UI.App.MsgBox.Instance.Show(msg, MsgBoxButton.OK, ownerWindow);
 			else
-				Shared.UI.App.MsgBox.Instance.ShowIgnorableMessage(key, msg, MsgBoxButton.OK, ownerWindow);
+				Shared.UI.App.MsgBox.Instance.ShowIgnorableMessage(guid.Value, msg, MsgBoxButton.OK, ownerWindow);
 		}
 	}
 }

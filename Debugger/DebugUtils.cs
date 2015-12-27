@@ -50,8 +50,10 @@ namespace dnSpy.Debugger {
 			if (found) {
 				fileTabManager.FollowReference(method, newTab, e => {
 					Debug.Assert(e.Tab.UIContext is ITextEditorUIContext);
-					if (e.Success)
+					if (e.Success && !e.HasMovedCaret) {
 						MoveCaretTo(e.Tab.UIContext as ITextEditorUIContext, key, ilOffset);
+						e.HasMovedCaret = true;
+					}
 				});
 				return true;
 			}
@@ -59,8 +61,10 @@ namespace dnSpy.Debugger {
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 				fileTabManager.FollowReference(method, newTab, e => {
 					Debug.Assert(e.Tab.UIContext is ITextEditorUIContext);
-					if (e.Success)
+					if (e.Success && !e.HasMovedCaret) {
 						MoveCaretTo(e.Tab.UIContext as ITextEditorUIContext, key, ilOffset);
+						e.HasMovedCaret = true;
+					}
 				});
 			}));
 			return true;

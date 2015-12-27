@@ -123,5 +123,25 @@ namespace dnSpy.TreeView {
 			Debug.Assert(!IsExpanded);
 			treeNodeImpl.Data.OnIsExpandedChanged(false);
 		}
+
+		public override bool CanDrag(SharpTreeNode[] nodes) {
+			return treeNodeImpl.Data.CanDrag(nodes.OfType<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray());
+		}
+
+		public override void StartDrag(DependencyObject dragSource, SharpTreeNode[] nodes) {
+			treeNodeImpl.Data.StartDrag(dragSource, nodes.OfType<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray());
+		}
+
+		public override IDataObject Copy(SharpTreeNode[] nodes) {
+			return treeNodeImpl.Data.Copy(nodes.OfType<DnSpySharpTreeNode>().Select(a => a.TreeNodeImpl.Data).ToArray());
+		}
+
+		public override bool CanDrop(DragEventArgs e, int index) {
+			return treeNodeImpl.Data.CanDrop(e, index);
+		}
+
+		public override void Drop(DragEventArgs e, int index) {
+			treeNodeImpl.Data.Drop(e, index);
+		}
 	}
 }

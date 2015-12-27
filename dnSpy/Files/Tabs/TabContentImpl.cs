@@ -183,10 +183,13 @@ namespace dnSpy.Files.Tabs {
 			var result = TryCreateContentFromReference(@ref, sourceContent);
 			if (result != null) {
 				Show(result.FileTabContent, result.SerializedUI, e => {
-					if (result.OnShownHandler != null)
-						result.OnShownHandler(e);
+					// Call the original caller (onShown()) first and result last since both could
+					// move the caret. The result should only move the caret if the original caller
+					// hasn't moved the caret.
 					if (onShown != null)
 						onShown(e);
+					if (result.OnShownHandler != null)
+						result.OnShownHandler(e);
 				});
 			}
 		}

@@ -165,7 +165,7 @@ namespace dnSpy.Debugger.CallStack {
 		void OnTextEditorUIContextEvent(TextEditorUIContextListenerEvent @event, ITextEditorUIContext uiContext, object data) {
 			if (@event == TextEditorUIContextListenerEvent.NewContent) {
 				Remove(uiContext);
-				UpdateStackFrameLines(uiContext, true);
+				UpdateStackFrameLines(uiContext, false);
 			}
 		}
 

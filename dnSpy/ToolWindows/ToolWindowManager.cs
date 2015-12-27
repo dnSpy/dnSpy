@@ -62,8 +62,8 @@ namespace dnSpy.ToolWindows {
 				this.tabGroupGuid = tabGroupGuid;
 			}
 
-			public void InitializeContextMenu(IMenuManager menuManager, ITabGroup tabGroup, FrameworkElement elem) {
-				menuManager.InitializeContextMenu(elem, tabGroupGuid, new GuidObjectsCreator(this, tabGroup));
+			public IContextMenuCreator InitializeContextMenu(IMenuManager menuManager, ITabGroup tabGroup, FrameworkElement elem) {
+				return menuManager.InitializeContextMenu(elem, tabGroupGuid, new GuidObjectsCreator(this, tabGroup));
 			}
 
 			sealed class GuidObjectsCreator : IGuidObjectsCreator {
@@ -77,7 +77,7 @@ namespace dnSpy.ToolWindows {
 
 				public IEnumerable<GuidObject> GetGuidObjects(GuidObject creatorObject, bool openedFromKeyboard) {
 					Debug.Assert(owner.ToolWindowGroupManager != null);
-					if (owner.ToolWindowGroupManager != null && tabGroup != null) {
+					if (owner.ToolWindowGroupManager != null) {
 						var twg = owner.ToolWindowGroupManager.GetToolWindowGroup(tabGroup);
 						Debug.Assert(twg != null);
 						if (twg != null)

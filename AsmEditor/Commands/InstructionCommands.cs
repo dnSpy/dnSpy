@@ -94,7 +94,7 @@ namespace dnSpy.AsmEditor.Commands {
 			if (text.Length > 0) {
 				Clipboard.SetText(text);
 				if (copier.FoundUnknownBytes) {
-					Shared.UI.App.MsgBox.Instance.ShowIgnorableMessage("instr: unknown bytes",
+					Shared.UI.App.MsgBox.Instance.ShowIgnorableMessage(new Guid("141A1744-13CD-4835-A804-08D93D8E0D2B"),
 						"Some of the copied bytes are unknown because the method has been edited. New tokens and string offsets are only known once the file has been saved to disk and re-opened.",
 						MsgBoxButton.OK);
 				}

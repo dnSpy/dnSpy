@@ -194,13 +194,14 @@ namespace dnSpy.Files.Tabs {
 
 		[ImportingConstructor]
 		ShowCodeEditorCommandLoader(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
-			wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW).Add(
-				ShowCodeEditorRoutedCommand,
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_MAINWINDOW);
+			cmds.Add(ShowCodeEditorRoutedCommand,
 				(s, e) => { var tab = fileTabManager.ActiveTab; if (tab != null) tab.TrySetFocus(); },
 				(s, e) => e.CanExecute = fileTabManager.ActiveTab != null,
 				ModifierKeys.Control | ModifierKeys.Alt, Key.D0,
 				ModifierKeys.Control | ModifierKeys.Alt, Key.NumPad0,
 				ModifierKeys.None, Key.F7);
+			cmds.Add(ShowCodeEditorRoutedCommand, ModifierKeys.None, Key.Escape);
 		}
 	}
 

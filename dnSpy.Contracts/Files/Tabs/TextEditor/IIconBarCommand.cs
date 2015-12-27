@@ -17,16 +17,23 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace dnSpy.AsmEditor.ViewHelpers {
-	interface IShowWarningMessage {
+namespace dnSpy.Contracts.Files.Tabs.TextEditor {
+	/// <summary>
+	/// Text editor icon bar command
+	/// </summary>
+	public interface IIconBarCommand {
 		/// <summary>
-		/// Shows a warning message
+		/// Returns true if <see cref="Execute(IIconBarCommandContext)"/> can be called
 		/// </summary>
-		/// <param name="guid">null if message can't be ignored (always shown), else a unique guid
-		/// identifying this warning message.</param>
-		/// <param name="msg">Message to show</param>
-		void Show(Guid? guid, string msg);
+		/// <param name="context">Context</param>
+		/// <returns></returns>
+		bool IsEnabled(IIconBarCommandContext context);
+
+		/// <summary>
+		/// Executes the command, only called if <see cref="IsEnabled(IIconBarCommandContext)"/> returned true
+		/// </summary>
+		/// <param name="context">Context</param>
+		/// <returns></returns>
+		void Execute(IIconBarCommandContext context);
 	}
 }

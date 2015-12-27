@@ -43,9 +43,9 @@ namespace dnSpy.Contracts.Tabs {
 
 		/// <summary>
 		/// Called in the <see cref="ITabGroup"/> constructor to initialize the context menu. If
-		/// null, let the instance itself initialize it using <see cref="TabGroupGuid"/>
+		/// null, the instance itself initializes it using <see cref="TabGroupGuid"/>
 		/// </summary>
-		public Action<IMenuManager, ITabGroup, FrameworkElement> InitializeContextMenu;
+		public Func<IMenuManager, ITabGroup, FrameworkElement, IContextMenuCreator> InitializeContextMenu;
 
 		/// <summary>
 		/// Default constructor

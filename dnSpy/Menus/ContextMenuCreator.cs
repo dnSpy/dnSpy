@@ -25,30 +25,32 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Menus {
-	sealed class ContextMenuCreator {
+	sealed class ContextMenuCreator : IContextMenuCreator {
 		readonly MenuManager menuManager;
-		readonly FrameworkElement elem;
+		readonly FrameworkElement element;
 		readonly Guid guid;
 		readonly IGuidObjectsCreator creator;
 		readonly IContextMenuInitializer initCtxMenu;
+		readonly Guid ctxMenuGuid;
 
-		public ContextMenuCreator(MenuManager menuManager, FrameworkElement elem, Guid guid, IGuidObjectsCreator creator, IContextMenuInitializer initCtxMenu) {
+		public ContextMenuCreator(MenuManager menuManager, FrameworkElement elem, Guid guid, IGuidObjectsCreator creator, IContextMenuInitializer initCtxMenu, Guid? ctxMenuGuid) {
 			this.menuManager = menuManager;
-			this.elem = elem;
+			this.element = elem;
 			this.guid = guid;
 			this.creator = creator;
 			this.initCtxMenu = initCtxMenu;
+			this.ctxMenuGuid = ctxMenuGuid ?? new Guid(MenuConstants.CTX_MENU_GUID);
 			elem.ContextMenu = new ContextMenu();
 			elem.ContextMenuOpening += FrameworkElement_ContextMenuOpening;
 		}
 
 		bool IsIgnored(object sender, ContextMenuEventArgs e) {
-			if (!(elem is ListBox))
+			if (!(element is ListBox))
 				return false;
 
 			var o = e.OriginalSource as DependencyObject;
 			while (o != null) {
-				if (o == elem)
+				if (o == element)
 					return false;
 
 				if (o is ScrollBar)
@@ -65,11 +67,20 @@ namespace dnSpy.Menus {
 			if (IsIgnored(sender, e))
 				return;
 
-			bool? b = menuManager.ShowContextMenu(e, elem, new Guid(MenuConstants.CTX_MENU_GUID), new Guid(MenuConstants.CTX_MENU_GUID), new GuidObject(guid, elem), creator, initCtxMenu, e.CursorLeft == -1 && e.CursorTop == -1);
+			bool? b = menuManager.ShowContextMenu(e, element, ctxMenuGuid, ctxMenuGuid, new GuidObject(guid, element), creator, initCtxMenu, e.CursorLeft == -1 && e.CursorTop == -1);
 			if (b == null)
 				return;
 			if (!b.Value)
 				e.Handled = true;
+		}
+
+		public void Show(FrameworkElement elem) {
+			bool? b = menuManager.ShowContextMenu(0, elem, ctxMenuGuid, ctxMenuGuid, new GuidObject(guid, element), creator, initCtxMenu, false);
+			if (b == true) {
+				elem.ContextMenu.Placement = PlacementMode.Bottom;
+				elem.ContextMenu.PlacementTarget = elem;
+				elem.ContextMenu.IsOpen = true;
+			}
 		}
 	}
 }

@@ -117,13 +117,13 @@ namespace dnSpy.Menus {
 			this.mefMenuItems = mefMenuItems;
 		}
 
-		public void InitializeContextMenu(FrameworkElement elem, Guid guid, IGuidObjectsCreator creator, IContextMenuInitializer initCtxMenu) {
+		public IContextMenuCreator InitializeContextMenu(FrameworkElement elem, Guid guid, IGuidObjectsCreator creator, IContextMenuInitializer initCtxMenu, Guid? ctxMenuGuid) {
 			Debug.Assert(guid != Guid.Empty);
-			new ContextMenuCreator(this, elem, guid, creator, initCtxMenu);
+			return new ContextMenuCreator(this, elem, guid, creator, initCtxMenu, ctxMenuGuid);
 		}
 
-		public void InitializeContextMenu(FrameworkElement elem, string guid, IGuidObjectsCreator creator, IContextMenuInitializer initCtxMenu) {
-			InitializeContextMenu(elem, new Guid(guid), creator, initCtxMenu);
+		public IContextMenuCreator InitializeContextMenu(FrameworkElement elem, string guid, IGuidObjectsCreator creator, IContextMenuInitializer initCtxMenu, string ctxMenuGuid) {
+			return InitializeContextMenu(elem, new Guid(guid), creator, initCtxMenu, ctxMenuGuid == null ? (Guid?)null : new Guid(ctxMenuGuid));
 		}
 
 		void InitializeMenuItemObjects() {
@@ -262,7 +262,7 @@ namespace dnSpy.Menus {
 				return false;
 
 			var menu = new ContextMenu();
-			var allItems = CreateMenuItems(ctx, groups, null, null);
+			var allItems = CreateMenuItems(ctx, groups, null, null, true);
 			if (allItems.Count == 0)
 				return false;
 			foreach (var i in allItems)
@@ -281,7 +281,7 @@ namespace dnSpy.Menus {
 		}
 		readonly List<ContextMenu> openedContextMenus = new List<ContextMenu>();
 
-		List<object> CreateMenuItems(IMenuItemContext ctx, List<MenuItemGroupMD> groups, IInputElement commandTarget, MenuItem firstMenuItem) {
+		List<object> CreateMenuItems(IMenuItemContext ctx, List<MenuItemGroupMD> groups, IInputElement commandTarget, MenuItem firstMenuItem, bool isCtxMenu) {
 			var allItems = new List<object>();
 
 			var items = new List<MenuItemMD>();
@@ -302,13 +302,13 @@ namespace dnSpy.Menus {
 					var itemCreator = item.MenuItem as IMenuItemCreator;
 					if (itemCreator != null) {
 						foreach (var createdItem in itemCreator.Create(ctx)) {
-							var menuItem = Create(createdItem.MenuItem, createdItem.Metadata, ctx, commandTarget, firstMenuItem);
+							var menuItem = Create(createdItem.MenuItem, createdItem.Metadata, ctx, commandTarget, firstMenuItem, isCtxMenu);
 							firstMenuItem = null;
 							allItems.Add(menuItem);
 						}
 					}
 					else {
-						var menuItem = Create(item.MenuItem, item.Metadata, ctx, commandTarget, firstMenuItem);
+						var menuItem = Create(item.MenuItem, item.Metadata, ctx, commandTarget, firstMenuItem, isCtxMenu);
 						firstMenuItem = null;
 						allItems.Add(menuItem);
 					}
@@ -318,7 +318,7 @@ namespace dnSpy.Menus {
 			return allItems;
 		}
 
-		MenuItem Create(IMenuItem item, IMenuItemMetadata metadata, IMenuItemContext ctx, IInputElement commandTarget, MenuItem menuItem) {
+		MenuItem Create(IMenuItem item, IMenuItemMetadata metadata, IMenuItemContext ctx, IInputElement commandTarget, MenuItem menuItem, bool isCtxMenu) {
 			if (menuItem == null)
 				menuItem = new MenuItem();
 			menuItem.CommandTarget = commandTarget;
@@ -338,7 +338,6 @@ namespace dnSpy.Menus {
 			menuItem.Header = header;
 			menuItem.InputGestureText = inputGestureText;
 
-			bool isCtxMenu = ctx.MenuGuid == new Guid(MenuConstants.CTX_MENU_GUID);
 			var cmdHolder = item as ICommandHolder;
 			bool lastIsEnabledCallValue = false;
 			if (!string.IsNullOrEmpty(iconName)) {
@@ -358,7 +357,7 @@ namespace dnSpy.Menus {
 					menuItem.Items.Add(new MenuItem());
 					menuItem.SubmenuOpened += (s, e) => {
 						if (e.Source == menuItem)
-							InitializeSubMenu(menuItem, ctx, itemGuid, commandTarget);
+							InitializeSubMenu(menuItem, ctx, itemGuid, commandTarget, isCtxMenu);
 					};
 					menuItem.SubmenuClosed += (s, e) => {
 						if (e.Source == menuItem) {
@@ -388,7 +387,7 @@ namespace dnSpy.Menus {
 			}
 		}
 
-		void InitializeSubMenu(MenuItem menuItem, IMenuItemContext ctx, Guid ownerMenuGuid, IInputElement commandTarget) {
+		void InitializeSubMenu(MenuItem menuItem, IMenuItemContext ctx, Guid ownerMenuGuid, IInputElement commandTarget, bool isCtxMenu) {
 			Reinitialize(menuItem);
 
 			List<MenuItemGroupMD> groups;
@@ -396,7 +395,7 @@ namespace dnSpy.Menus {
 			Debug.Assert(b);
 			if (b) {
 				var firstMenuItem = menuItem.Items.Count == 1 ? menuItem.Items[0] as MenuItem : null;
-				var allItems = CreateMenuItems(ctx, groups, commandTarget, firstMenuItem);
+				var allItems = CreateMenuItems(ctx, groups, commandTarget, firstMenuItem, isCtxMenu);
 				foreach (var i in allItems) {
 					if (firstMenuItem != i)
 						menuItem.Items.Add(i);
@@ -414,7 +413,7 @@ namespace dnSpy.Menus {
 			if (b) {
 				var ctx = new MenuItemContext(guid, true, new GuidObject(guid, null), null);
 				var firstMenuItem = menuItem.Items.Count == 1 ? menuItem.Items[0] as MenuItem : null;
-				var allItems = CreateMenuItems(ctx, groups, commandTarget, firstMenuItem);
+				var allItems = CreateMenuItems(ctx, groups, commandTarget, firstMenuItem, false);
 				foreach (var i in allItems) {
 					if (firstMenuItem != i)
 						menuItem.Items.Add(i);

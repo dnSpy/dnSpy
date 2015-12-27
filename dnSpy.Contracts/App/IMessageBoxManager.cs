@@ -30,12 +30,12 @@ namespace dnSpy.Contracts.App {
 		/// is returned if the message was ignored and no message box was shown. Otherwise, the
 		/// return value is the same as <see cref="Show(string, MsgBoxButton, Window)"/>.
 		/// </summary>
-		/// <param name="id">Unique id for this message</param>
+		/// <param name="guid">Unique guid for this message</param>
 		/// <param name="message">Message to show</param>
 		/// <param name="buttons">Buttons that should be present</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
 		/// <returns></returns>
-		MsgBoxButton? ShowIgnorableMessage(string id, string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null);
+		MsgBoxButton? ShowIgnorableMessage(Guid guid, string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null);
 
 		/// <summary>
 		/// Shows a message box

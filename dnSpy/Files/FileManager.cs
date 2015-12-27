@@ -254,6 +254,10 @@ namespace dnSpy.Files {
 			return null;
 		}
 
+		public IDnSpyFile TryCreateOnly(DnSpyFileInfo info) {
+			return TryCreateDnSpyFile(info);
+		}
+
 		internal static IDnSpyFile CreateDnSpyFileFromFile(DnSpyFileInfo fileInfo, string filename, bool useMemoryMappedIO, bool loadPDBFiles, IAssemblyResolver asmResolver) {
 			return DnSpyFile.CreateDnSpyFileFromFile(fileInfo, filename, useMemoryMappedIO, loadPDBFiles, asmResolver, false);
 		}

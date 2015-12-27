@@ -37,6 +37,7 @@ namespace dnSpy.Files.TreeView {
 		public bool ShowToken { get; internal set; }
 		public bool UseNewRenderer { get; internal set; }
 		public bool DeserializeResources { get; internal set; }
+		public bool CanDragAndDrop { get; set; }
 
 		public FileTreeNodeDataContext(IFileTreeView fileTreeView, IResourceNodeFactory resourceNodeFactory, DecompilerSettings decompilerSettings, IFileTreeNodeFilter filter) {
 			this.FileTreeView = fileTreeView;
@@ -44,6 +45,7 @@ namespace dnSpy.Files.TreeView {
 			this.DecompilerSettings = decompilerSettings;
 			this.Filter = filter;
 			this.FilterVersion = 1;
+			this.CanDragAndDrop = true;
 		}
 
 		public void Clear() {

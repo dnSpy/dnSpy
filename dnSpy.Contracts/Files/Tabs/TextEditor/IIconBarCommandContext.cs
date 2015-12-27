@@ -17,16 +17,19 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
-namespace dnSpy.AsmEditor.ViewHelpers {
-	interface IShowWarningMessage {
+namespace dnSpy.Contracts.Files.Tabs.TextEditor {
+	/// <summary>
+	/// <see cref="IIconBarCommand"/> context
+	/// </summary>
+	public interface IIconBarCommandContext {
 		/// <summary>
-		/// Shows a warning message
+		/// Gets the <see cref="ITextEditorUIContext"/> instance
 		/// </summary>
-		/// <param name="guid">null if message can't be ignored (always shown), else a unique guid
-		/// identifying this warning message.</param>
-		/// <param name="msg">Message to show</param>
-		void Show(Guid? guid, string msg);
+		ITextEditorUIContext UIContext { get; }
+
+		/// <summary>
+		/// Gets the line number
+		/// </summary>
+		int Line { get; }
 	}
 }

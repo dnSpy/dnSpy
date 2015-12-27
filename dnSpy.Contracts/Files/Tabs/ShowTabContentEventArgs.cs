@@ -30,6 +30,11 @@ namespace dnSpy.Contracts.Files.Tabs {
 		public bool Success { get; private set; }
 
 		/// <summary>
+		/// Set to true if the caret has been moved by a previous handler
+		/// </summary>
+		public bool HasMovedCaret { get; set; }
+
+		/// <summary>
 		/// Gets the tab
 		/// </summary>
 		public IFileTab Tab { get; private set; }
@@ -41,6 +46,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// <param name="tab">Tab</param>
 		public ShowTabContentEventArgs(bool success, IFileTab tab) {
 			this.Success = success;
+			this.HasMovedCaret = false;
 			this.Tab = tab;
 		}
 	}

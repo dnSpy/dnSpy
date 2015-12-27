@@ -153,6 +153,7 @@
     <Compile Include="Files\Tabs\TextEditor\DecompileFileTabContent.cs" />
     <Compile Include="Files\Tabs\TextEditor\DecompileNodeContext.cs" />
     <Compile Include="Files\Tabs\TextEditor\EditorPositionState.cs" />
+    <Compile Include="Files\Tabs\TextEditor\IconBarCommandManager.cs" />
     <Compile Include="Files\Tabs\TextEditor\IconBarMargin.cs" />
     <Compile Include="Files\Tabs\TextEditor\NewTextEditor.cs" />
     <Compile Include="Files\Tabs\TextEditor\ReferenceElementGenerator.cs" />

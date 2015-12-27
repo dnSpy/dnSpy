@@ -409,7 +409,7 @@ namespace dnSpy.Debugger {
 
 		void AppWindow_MainWindowClosing(object sender, CancelEventArgs e) {
 			if (IsDebugging) {
-				var result = messageBoxManager.ShowIgnorableMessage("debug: exit program", "Do you want to stop debugging?", MsgBoxButton.Yes | MsgBoxButton.No);
+				var result = messageBoxManager.ShowIgnorableMessage(new Guid("B4B8E13C-B7B7-490A-953B-8ED8EAE7C170"), "Do you want to stop debugging?", MsgBoxButton.Yes | MsgBoxButton.No);
 				if (result == MsgBoxButton.None || result == MsgBoxButton.No)
 					e.Cancel = true;
 			}
@@ -863,8 +863,10 @@ namespace dnSpy.Debugger {
 				tab.FollowReference(currentMethod, false, e => {
 					Debug.Assert(e.Tab == tab);
 					Debug.Assert(e.Tab.UIContext is ITextEditorUIContext);
-					if (e.Success)
+					if (e.Success && !e.HasMovedCaret) {
 						MoveCaretToCurrentStatement(e.Tab.UIContext as ITextEditorUIContext, canRefreshMethods);
+						e.HasMovedCaret = true;
+					}
 				});
 			}));
 		}

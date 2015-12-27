@@ -14,9 +14,22 @@ using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Files.Tabs.TextEditor {
-	sealed class IconBarMargin : AbstractMargin, IDisposable {
+	interface IIconBarMargin {
+		ITextEditorUIContext UIContext { get; }
+		FrameworkElement FrameworkElement { get; }
+		int? GetLineFromMousePosition();
+	}
+
+	sealed class IconBarMargin : AbstractMargin, IIconBarMargin, IDisposable {
 		// 16px wide icon + 1px each side padding + 1px right-side border
 		public const int WIDTH = 1 + 16 + 1 + 1;
+
+		ITextEditorUIContext IIconBarMargin.UIContext {
+			get { return uiContext; }
+		}
+		FrameworkElement IIconBarMargin.FrameworkElement {
+			get { return this; }
+		}
 
 		readonly ITextEditorUIContext uiContext;
 		readonly ITextLineObjectManager textLineObjectManager;
@@ -92,13 +105,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				e.Handled = true;
 		}
 
-		public int GetLineFromMousePosition(MouseEventArgs e) {
-			TextView textView = this.TextView;
+		int? IIconBarMargin.GetLineFromMousePosition() {
+			var textView = this.TextView;
 			if (textView == null)
-				return 0;
-			VisualLine vl = textView.GetVisualLineFromVisualTop(e.GetPosition(textView).Y + textView.ScrollOffset.Y);
+				return null;
+			var vl = textView.GetVisualLineFromVisualTop(Mouse.GetPosition(textView).Y + textView.ScrollOffset.Y);
 			if (vl == null)
-				return 0;
+				return null;
 			return vl.FirstDocumentLine.LineNumber;
 		}
 	}

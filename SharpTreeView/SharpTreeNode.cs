@@ -177,7 +177,7 @@ namespace ICSharpCode.TreeView
 				foreach (SharpTreeNode node in e.OldItems) {
 					Debug.Assert(node.modelParent == this);
 					node.modelParent = null;
-					Debug.WriteLine("Removing {0} from {1}", node, this);
+					//Debug.WriteLine("Removing {0} from {1}", node, this);
 					SharpTreeNode removeEnd = node;
 					while (removeEnd.modelChildren != null && removeEnd.modelChildren.Count > 0)
 						removeEnd = removeEnd.modelChildren.Last();

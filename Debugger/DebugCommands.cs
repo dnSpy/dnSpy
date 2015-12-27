@@ -24,6 +24,8 @@ using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolBars;
@@ -559,9 +561,8 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	/*TODO:
-	[ExportIconBarActionEntry(Icon = "BreakpointMenu", Category = "Debug")]
-	sealed class BreakpointCommand : IIconBarActionEntry {
+	[Export(typeof(IIconBarCommand))]
+	sealed class BreakpointCommand : IIconBarCommand {
 		readonly Lazy<IBreakpointManager> breakpointManager;
 
 		[ImportingConstructor]
@@ -569,19 +570,30 @@ namespace dnSpy.Debugger {
 			this.breakpointManager = breakpointManager;
 		}
 
-		public bool IsEnabled(ITextEditorUIContext uiContext) {
+		public bool IsEnabled(IIconBarCommandContext context) {
 			return true;
 		}
 
-		public void Execute(ITextEditorUIContext uiContext, int line) {
-			breakpointManager.Value.Toggle(uiContext, line);
+		public void Execute(IIconBarCommandContext context) {
+			breakpointManager.Value.Toggle(context.UIContext, context.Line);
 		}
 	}
-	*/
 
-	/*TODO:
-	[ExportIconBarContextMenuEntry(Header = "D_elete Breakpoint", Icon = "BreakpointMenu", Category = "Debug", Order = 100)]
-	sealed class DeleteBreakpointCommand : IIconBarContextMenuEntry {
+	abstract class IconBarCommand : MenuItemBase<ILCodeBreakpoint> {
+		protected sealed override object CachedContextKey {
+			get { return ContextKey; }
+		}
+		static readonly object ContextKey = new object();
+
+		protected sealed override ILCodeBreakpoint CreateContext(IMenuItemContext context) {
+			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_TEXTEDITOR_ICONBAR_GUID))
+				return null;
+			return context.Find<ILCodeBreakpoint>();
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.TEXTEDITOR_ICONBAR_GUID, Header = "D_elete Breakpoint", Icon = "BreakpointMenu", Group = MenuConstants.GROUP_TEXTEDITOR_ICONBAR_DEBUG_BPS, Order = 0)]
+	sealed class DeleteBreakpointCommand : IconBarCommand {
 		readonly Lazy<IBreakpointManager> breakpointManager;
 
 		[ImportingConstructor]
@@ -589,25 +601,13 @@ namespace dnSpy.Debugger {
 			this.breakpointManager = breakpointManager;
 		}
 
-		public bool IsVisible(IIconBarObject context) {
-			return context is ILCodeBreakpoint;
-		}
-
-		public bool IsEnabled(IIconBarObject context) {
-			return IsVisible(context);
-		}
-
-		public void Execute(IIconBarObject context) {
-			var bpm = context as ILCodeBreakpoint;
-			if (bpm != null)
-				breakpointManager.Value.Remove(bpm);
+		public override void Execute(ILCodeBreakpoint context) {
+			breakpointManager.Value.Remove(context);
 		}
 	}
-	*/
 
-	/*TODO:
-	[ExportIconBarContextMenuEntry(InputGestureText = "Ctrl+F9", Category = "Debug", Order = 110)]
-	sealed class EnableAndDisableBreakpointCommand : IIconBarContextMenuEntry2 {
+	[ExportMenuItem(OwnerGuid = MenuConstants.TEXTEDITOR_ICONBAR_GUID, InputGestureText = "Ctrl+F9", Group = MenuConstants.GROUP_TEXTEDITOR_ICONBAR_DEBUG_BPS, Order = 10)]
+	sealed class EnableAndDisableBreakpointCommand : IconBarCommand {
 		readonly IImageManager imageManager;
 
 		[ImportingConstructor]
@@ -615,28 +615,20 @@ namespace dnSpy.Debugger {
 			this.imageManager = imageManager;
 		}
 
-		public bool IsVisible(IIconBarObject context) {
-			return context is ILCodeBreakpoint;
+		public override void Execute(ILCodeBreakpoint context) {
+			context.IsEnabled = !context.IsEnabled;
 		}
 
-		public bool IsEnabled(IIconBarObject context) {
-			return IsVisible(context);
+		public override bool IsEnabled(ILCodeBreakpoint context) {
+			return EnableDisableBreakpointDebugCtxMenuCommand.IsMenuItemEnabledInternal(1);
 		}
 
-		public void Execute(IIconBarObject context) {
-			var bpm = context as ILCodeBreakpoint;
-			if (bpm != null)
-				bpm.IsEnabled = !bpm.IsEnabled;
+		public override string GetHeader(ILCodeBreakpoint context) {
+			return EnableDisableBreakpointDebugCtxMenuCommand.GetHeaderInternal(context.IsEnabled, 1);
 		}
 
-		public void Initialize(IIconBarObject context, MenuItem menuItem) {
-			var bpm = context as ILCodeBreakpoint;
-			if (bpm != null) {
-				menuItem.IsEnabled = EnableDisableBreakpointDebugCtxMenuCommand.IsMenuItemEnabledInternal(1);
-				menuItem.Header = EnableDisableBreakpointDebugCtxMenuCommand.GetHeaderInternal(bpm.IsEnabled, 1);
-				imageManager.Add16x16Image(menuItem, GetType().Assembly, EnableDisableBreakpointDebugCtxMenuCommand.GetIconInternal(), true);
-			}
+		public override string GetIcon(ILCodeBreakpoint context) {
+			return EnableDisableBreakpointDebugCtxMenuCommand.GetIconInternal();
 		}
 	}
-	*/
 }

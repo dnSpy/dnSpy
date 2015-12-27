@@ -62,7 +62,10 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 					if (uiContext != null && fileOffset != null) {
 						if (!IsVisible(uiContext.DnHexBox, fileOffset.Value, addrRef.Length))
 							uiContext.DnHexBox.InitializeStartEndOffsetToDocument();
-						uiContext.DnHexBox.SelectAndMoveCaret(fileOffset.Value, addrRef.Length);
+						if (!e.HasMovedCaret) {
+							uiContext.DnHexBox.SelectAndMoveCaret(fileOffset.Value, addrRef.Length);
+							e.HasMovedCaret = true;
+						}
 					}
 				}
 			});

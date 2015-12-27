@@ -97,8 +97,10 @@ namespace dnSpy.Files.Tabs {
 				return null;
 			var content = sourceContent.Clone();
 			return new FileTabReferenceResult(content, null, a => {
-				if (a.Success)
+				if (a.Success && !a.HasMovedCaret) {
 					GoToReference(content, codeRef);
+					a.HasMovedCaret = true;
+				}
 			});
 		}
 
@@ -113,8 +115,10 @@ namespace dnSpy.Files.Tabs {
 
 			var content = decompileFileTabContentFactory.Create(new IFileTreeNodeData[] { node });
 			return new FileTabReferenceResult(content, null, a => {
-				if (a.Success)
+				if (a.Success && !a.HasMovedCaret) {
 					GoToReference(content, resolvedRef);
+					a.HasMovedCaret = true;
+				}
 			});
 		}
 

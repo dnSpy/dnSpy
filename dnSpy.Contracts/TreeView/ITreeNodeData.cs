@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 using dnSpy.Contracts.Images;
 
 namespace dnSpy.Contracts.TreeView {
@@ -120,6 +121,42 @@ namespace dnSpy.Contracts.TreeView {
 		/// </summary>
 		/// <param name="isExpanded">Value of <see cref="ITreeNode.IsExpanded"/></param>
 		void OnIsExpandedChanged(bool isExpanded);
+
+		/// <summary>
+		/// Returns true if the nodes can be dragged
+		/// </summary>
+		/// <param name="nodes">Nodes</param>
+		/// <returns></returns>
+		bool CanDrag(ITreeNodeData[] nodes);
+
+		/// <summary>
+		/// Starts the drag and drop operation
+		/// </summary>
+		/// <param name="dragSource">Drag source</param>
+		/// <param name="nodes">Nodes</param>
+		void StartDrag(DependencyObject dragSource, ITreeNodeData[] nodes);
+
+		/// <summary>
+		/// Copies nodes
+		/// </summary>
+		/// <param name="nodes">Nodes</param>
+		/// <returns></returns>
+		IDataObject Copy(ITreeNodeData[] nodes);
+
+		/// <summary>
+		/// Returns true if drop can execute
+		/// </summary>
+		/// <param name="e">Event args</param>
+		/// <param name="index">Index</param>
+		/// <returns></returns>
+		bool CanDrop(DragEventArgs e, int index);
+
+		/// <summary>
+		/// Drops data
+		/// </summary>
+		/// <param name="e">Event args</param>
+		/// <param name="index">Index</param>
+		void Drop(DragEventArgs e, int index);
 	}
 
 	/// <summary>

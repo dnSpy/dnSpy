@@ -90,5 +90,10 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// true to deserialize resources
 		/// </summary>
 		bool DeserializeResources { get; }
+
+		/// <summary>
+		/// true if drag and drop is allowed
+		/// </summary>
+		bool CanDragAndDrop { get; }
 	}
 }

@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -133,6 +134,7 @@ namespace dnSpy.Files.TreeView {
 				Language = languageManager.SelectedLanguage,
 				UseNewRenderer = appSettings.UseNewRenderer_FileTreeView,
 				DeserializeResources = fileTreeViewSettings.DeserializeResources,
+				CanDragAndDrop = isGlobal,
 			};
 
 			var options = new TreeViewOptions {
@@ -140,7 +142,10 @@ namespace dnSpy.Files.TreeView {
 				IsVirtualizing = true,
 				VirtualizationMode = VirtualizationMode.Recycling,
 				TreeViewListener = this,
-				RootNode = new RootNode(),
+				RootNode = new RootNode {
+					DropNodes = OnDropNodes,
+					DropFiles = OnDropFiles,
+				},
 			};
 			this.fileTreeNodeGroups = new FileTreeNodeGroups();
 			this.dnSpyFileNodeCreators = dnSpyFileNodeCreators.OrderBy(a => a.Metadata.Order).ToArray();
@@ -338,17 +343,22 @@ namespace dnSpy.Files.TreeView {
 				IDnSpyFileNode newNode;
 
 				var addFileInfo = e.Data as AddFileInfo;
+				int index;
 				if (addFileInfo != null) {
 					newNode = addFileInfo.DnSpyFileNode;
+					index = addFileInfo.Index;
 					if (newNode.TreeNode == null)
 						treeView.Create(newNode);
 				}
 				else {
 					newNode = CreateNode(null, e.Files[0]);
 					treeView.Create(newNode);
+					index = treeView.Root.Children.Count;
 				}
 
-				treeView.Root.Children.Add(newNode.TreeNode);
+				if ((uint)index >= (uint)treeView.Root.Children.Count)
+					index = treeView.Root.Children.Count;
+				treeView.Root.Children.Insert(index, newNode.TreeNode);
 				CallCollectionChanged(NotifyFileTreeViewCollectionChangedEventArgs.CreateAdd(newNode));
 				break;
 
@@ -776,6 +786,62 @@ namespace dnSpy.Files.TreeView {
 				this.DnSpyFileNode = fileNode;
 				this.Index = index;
 			}
+		}
+
+		void OnDropNodes(int index, int[] nodeIndexes) {
+			if (!context.CanDragAndDrop)
+				return;
+
+			nodeIndexes = nodeIndexes.Distinct().ToArray();
+			if (nodeIndexes.Length == 0)
+				return;
+
+			var children = treeView.Root.Children;
+			if ((uint)index > children.Count)
+				return;
+
+			var insertNode = index == children.Count ? null : children[index];
+
+			var movedNodes = new List<ITreeNode>();
+			Array.Sort(nodeIndexes, (a, b) => b.CompareTo(a));
+			for (int i = 0; i < nodeIndexes.Length; i++) {
+				var j = nodeIndexes[i];
+				if ((uint)j >= children.Count)
+					continue;
+				movedNodes.Add(children[j]);
+				children.RemoveAt(j);
+			}
+			movedNodes.Reverse();
+			if (movedNodes.Count == 0)
+				return;
+
+			int insertIndex = children.IndexOf(insertNode);
+			if (insertIndex < 0)
+				insertIndex = children.Count;
+			for (int i = 0; i < movedNodes.Count; i++)
+				children.Insert(insertIndex + i, movedNodes[i]);
+
+			treeView.SelectItems(movedNodes.Select(a => a.Data));
+		}
+
+		void OnDropFiles(int index, string[] filenames) {
+			if (!context.CanDragAndDrop)
+				return;
+
+			var existingFiles = new HashSet<string>(fileManager.GetFiles().Select(a => a.Filename ?? string.Empty), StringComparer.OrdinalIgnoreCase);
+			filenames = filenames.Where(a => File.Exists(a) && !existingFiles.Contains(a)).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+			ITreeNodeData newSelectedNode = null;
+			for (int i = 0, j = 0; i < filenames.Length; i++) {
+				var file = fileManager.TryCreateOnly(DnSpyFileInfo.CreateFile(filenames[i]));
+				if (file == null)
+					continue;
+				var node = CreateNode(null, file);
+				fileManager.ForceAdd(file, false, new AddFileInfo(node, index + j++));
+				if (newSelectedNode == null)
+					newSelectedNode = node;
+			}
+			if (newSelectedNode != null)
+				treeView.SelectItems(new[] { newSelectedNode });
 		}
 	}
 }

@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Windows;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
@@ -48,5 +49,47 @@ namespace dnSpy.Files.TreeView {
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 		}
+
+		public override bool CanDrop(DragEventArgs e, int index) {
+			if (!Context.CanDragAndDrop) {
+				e.Effects = DragDropEffects.None;
+				return false;
+			}
+
+			if (e.Data.GetDataPresent(FileTVConstants.DATAFORMAT_COPIED_ROOT_NODES) || e.Data.GetDataPresent(DataFormats.FileDrop)) {
+				e.Effects = DragDropEffects.Move;
+				return true;
+			}
+
+			e.Effects = DragDropEffects.None;
+			return false;
+		}
+
+		public override void Drop(DragEventArgs e, int index) {
+			Debug.Assert(Context.CanDragAndDrop);
+			if (!Context.CanDragAndDrop)
+				return;
+
+			var nodeIndexes = e.Data.GetData(FileTVConstants.DATAFORMAT_COPIED_ROOT_NODES) as int[];
+			if (nodeIndexes != null) {
+				Debug.Assert(DropNodes != null);
+				if (DropNodes != null)
+					DropNodes(index, nodeIndexes);
+				return;
+			}
+
+			var filenames = e.Data.GetData(DataFormats.FileDrop) as string[];
+			if (filenames != null) {
+				Debug.Assert(DropFiles != null);
+				if (DropFiles != null)
+					DropFiles(index, filenames);
+				return;
+			}
+
+			Debug.Fail("Unknown drop data format");
+		}
+
+		public Action<int, int[]> DropNodes;
+		public Action<int, string[]> DropFiles;
 	}
 }

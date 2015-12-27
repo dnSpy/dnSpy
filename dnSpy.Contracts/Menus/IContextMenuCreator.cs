@@ -17,16 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using System.Windows;
 
-namespace dnSpy.AsmEditor.ViewHelpers {
-	interface IShowWarningMessage {
+namespace dnSpy.Contracts.Menus {
+	/// <summary>
+	/// Shows context menus
+	/// </summary>
+	public interface IContextMenuCreator {
 		/// <summary>
-		/// Shows a warning message
+		/// Shows the context menu
 		/// </summary>
-		/// <param name="guid">null if message can't be ignored (always shown), else a unique guid
-		/// identifying this warning message.</param>
-		/// <param name="msg">Message to show</param>
-		void Show(Guid? guid, string msg);
+		/// <param name="elem">Element</param>
+		void Show(FrameworkElement elem);
 	}
 }

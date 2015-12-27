@@ -81,6 +81,22 @@ namespace dnSpy.MainApp {
 		}
 	}
 
+	[ExportMenuItem(Header = "H_ide All Tabs", Icon = "CloseDocuments", Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 20)]
+	sealed class CloseAllTabsTWCtxMenuCommand : CtxMenuToolWindowGroupCommand {
+		[ImportingConstructor]
+		CloseAllTabsTWCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
+			: base(mainToolWindowManager) {
+		}
+
+		public override bool IsVisible(ToolWindowGroupContext context) {
+			return context.ToolWindowGroupManager.CloseAllTabsCanExecute;
+		}
+
+		public override void Execute(ToolWindowGroupContext context) {
+			context.ToolWindowGroupManager.CloseAllTabs();
+		}
+	}
+
 	static class Constants {
 		public const string MOVE_CONTENT_GUID = "D54D52CB-A6FC-408C-9A52-EA0D53AEEC3A";
 		public const string GROUP_MOVE_CONTENT = "0,92C51A9F-DE4B-4D7F-B1DC-AAA482936B5C";
@@ -88,7 +104,7 @@ namespace dnSpy.MainApp {
 		public const string GROUP_MOVE_GROUP = "0,174B60EE-279F-4DA4-9F07-44FFD03E4421";
 	}
 
-	[ExportMenuItem(Header = "_Move", Guid = Constants.MOVE_CONTENT_GUID, Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 20)]
+	[ExportMenuItem(Header = "_Move", Guid = Constants.MOVE_CONTENT_GUID, Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 30)]
 	sealed class MoveTWCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveTWCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -100,7 +116,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "Move _Group", Guid = Constants.MOVE_GROUP_GUID, Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 30)]
+	[ExportMenuItem(Header = "Move _Group", Guid = Constants.MOVE_GROUP_GUID, Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 40)]
 	sealed class MoveGroupTWCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveGroupTWCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)

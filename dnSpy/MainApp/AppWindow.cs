@@ -36,7 +36,6 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Controls;
 using dnSpy.Events;
-using dnSpy.Files.Tabs;
 using dnSpy.Files.Tabs.TextEditor;
 using ICSharpCode.AvalonEdit.Utils;
 
@@ -46,7 +45,7 @@ namespace dnSpy.MainApp {
 		public IFileTabManager FileTabManager {
 			get { return fileTabManager; }
 		}
-		readonly FileTabManager fileTabManager;
+		readonly IFileTabManager fileTabManager;
 
 		public IFileTreeView FileTreeView {
 			get { return fileTabManager.FileTreeView; }
@@ -81,7 +80,7 @@ namespace dnSpy.MainApp {
 		public IAppSettings AppSettings {
 			get { return appSettings; }
 		}
-		readonly AppSettingsImpl appSettings;
+		readonly IAppSettings appSettings;
 
 		public bool AppLoaded { get; internal set; }
 
@@ -122,7 +121,7 @@ namespace dnSpy.MainApp {
 		readonly ILanguageManager languageManager;
 
 		[ImportingConstructor]
-		AppWindow(IThemeManager themeManager, IImageManager imageManager, AppSettingsImpl appSettings, ISettingsManager settingsManager, FileTabManager fileTabManager, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandManager wpfCommandManager, ILanguageManager languageManager) {
+		AppWindow(IThemeManager themeManager, IImageManager imageManager, IAppSettings appSettings, ISettingsManager settingsManager, IFileTabManager fileTabManager, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandManager wpfCommandManager, ILanguageManager languageManager) {
 			this.uiSettings = new UISettings(settingsManager);
 			this.uiSettings.Read();
 			this.appSettings = appSettings;

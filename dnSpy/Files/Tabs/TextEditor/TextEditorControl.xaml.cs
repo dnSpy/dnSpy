@@ -106,7 +106,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ToolTipHelper toolTipHelper;
 		readonly ITextEditorSettings textEditorSettings;
 
-		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager) {
+		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager) {
 			this.themeManager = themeManager;
 			this.toolTipHelper = toolTipHelper;
 			this.textEditorSettings = textEditorSettings;
@@ -147,6 +147,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			});
 
 			iconBarMargin = new IconBarMargin(uiContext, textLineObjectManager, imageManager, themeManager);
+			iconBarCommandManager.Initialize(iconBarMargin);
 			TextEditor.TextArea.LeftMargins.Insert(0, iconBarMargin);
 			TextEditor.TextArea.TextView.VisualLinesChanged += (s, e) => iconBarMargin.InvalidateVisual();
 

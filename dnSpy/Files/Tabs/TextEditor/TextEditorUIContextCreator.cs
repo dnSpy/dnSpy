@@ -39,9 +39,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ITextEditorSettings textEditorSettings;
 		readonly ITextLineObjectManager textLineObjectManager;
 		readonly ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl;
+		readonly IIconBarCommandManager iconBarCommandManager;
 
 		[ImportingConstructor]
-		TextEditorUIContextCreator(IThemeManager themeManager, IImageManager imageManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager, ITextEditorSettings textEditorSettings, ITextLineObjectManager textLineObjectManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl) {
+		TextEditorUIContextCreator(IThemeManager themeManager, IImageManager imageManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager, ITextEditorSettings textEditorSettings, ITextLineObjectManager textLineObjectManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl, IIconBarCommandManager iconBarCommandManager) {
 			this.themeManager = themeManager;
 			this.imageManager = imageManager;
 			this.wpfCommandManager = wpfCommandManager;
@@ -50,13 +51,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.textEditorSettings = textEditorSettings;
 			this.textLineObjectManager = textLineObjectManager;
 			this.textEditorUIContextManagerImpl = textEditorUIContextManagerImpl;
+			this.iconBarCommandManager = iconBarCommandManager;
 		}
 
 		public IFileTabUIContext Create<T>() where T : class, IFileTabUIContext {
 			if (typeof(T) == typeof(ITextEditorUIContext)) {
 				var ttRefFinder = new ToolTipReferenceFinder();
 				var uiContext = new TextEditorUIContext(wpfCommandManager, textEditorUIContextManagerImpl);
-				var tec = new TextEditorControl(themeManager, new ToolTipHelper(codeToolTipManager, ttRefFinder), textEditorSettings, uiContext, uiContext, textLineObjectManager, imageManager);
+				var tec = new TextEditorControl(themeManager, new ToolTipHelper(codeToolTipManager, ttRefFinder), textEditorSettings, uiContext, uiContext, textLineObjectManager, imageManager, iconBarCommandManager);
 				uiContext.Initialize(menuManager, tec);
 				ttRefFinder.UIContext = uiContext;
 				textEditorUIContextManagerImpl.RaiseAddedEvent(uiContext);
