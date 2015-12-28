@@ -182,7 +182,8 @@ namespace ICSharpCode.NRefactory.VB
 //				if (success && cur2 == null)
 //					return true;
 //			}
-			return false;
+//			return false;
+			throw new NotImplementedException();
 		}
 		
 		public void InsertAfter(T existingItem, T newItem)

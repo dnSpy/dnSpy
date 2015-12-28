@@ -568,7 +568,8 @@ exit Global
 			
 			Assert.IsEmpty(p.Errors);
 			
-			Assert.AreEqual(expectedOutput, p.Output);
+			Assert.AreEqual(expectedOutput.Replace("\r", ""),
+			                p.Output.Replace("\r", ""));
 		}
 	}
 }

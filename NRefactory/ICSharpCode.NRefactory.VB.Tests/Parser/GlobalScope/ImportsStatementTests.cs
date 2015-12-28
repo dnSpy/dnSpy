@@ -27,6 +27,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		}
 		
 		[Test]
+		[Ignore("Collection pattern matching is not implemented")]
 		public void SimpleImportsStatement()
 		{
 			string program = "Imports System\n";
@@ -42,6 +43,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		}
 		
 		[Test]
+		[Ignore("Collection pattern matching is not implemented")]
 		public void QualifiedTypeImportsStatement()
 		{
 			string program = "Imports My.Name.Space\n";
