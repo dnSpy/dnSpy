@@ -25,6 +25,7 @@
              xmlns:local="clr-namespace:dnSpy.Debugger.Locals"
              xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
              xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
+             xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">
     <Grid>
@@ -48,7 +49,7 @@
             <tv:SharpTreeView.View>
                 <tv:SharpGridView AllowsColumnReorder="False">
                     <!-- TODO: Use an attached prop to fix the column widths. Last one is fixed size, first two share the remaining space -->
-                    <GridViewColumn Header="Name" Width="400">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}" Width="400">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Border BorderBrush="{DynamicResource EnvironmentCommandBarMenuSeparator}"
@@ -66,7 +67,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Value" Width="400">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Value}" Width="400">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Border BorderBrush="{DynamicResource EnvironmentCommandBarMenuSeparator}"
@@ -77,7 +78,7 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Type" Width="200">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Type}" Width="200">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Border BorderBrush="{DynamicResource EnvironmentCommandBarMenuSeparator}"

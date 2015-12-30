@@ -23,6 +23,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
 	<Grid>
@@ -38,7 +39,7 @@
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
-			<Button Grid.Column="0" Style="{StaticResource EllipsisButton}" Command="{Binding PickConstructorCommand}" ToolTip="Pick a Constructor" />
+            <Button Grid.Column="0" Style="{StaticResource EllipsisButton}" Command="{Binding PickConstructorCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.Pick_Constructor}" />
 			<TextBox Grid.Column="1" Margin="5 0 0 0" IsReadOnly="True" Background="Transparent" Text="{Binding Constructor.FullName, Mode=OneWay}" />
 		</Grid>
 		<Grid Grid.Row="1" Margin="0 5 0 0">
@@ -46,10 +47,10 @@
 				<ColumnDefinition Width="Auto" />
 				<ColumnDefinition Width="*" />
 			</Grid.ColumnDefinitions>
-			<CheckBox Grid.Column="0" Margin="0 0 0 0" VerticalAlignment="Center" IsChecked="{Binding IsRawData}" Content="Raw Blob" />
+            <CheckBox Grid.Column="0" Margin="0 0 0 0" VerticalAlignment="Center" IsChecked="{Binding IsRawData}" Content="{x:Static p:dnSpy_AsmEditor_Resources.RawCustomAttributeBlob}" />
 			<TextBox Grid.Column="1" Margin="5 0 0 0" Text="{Binding RawData.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsRawData}" />
 		</Grid>
-		<GroupBox Grid.Row="2" Margin="0 5 0 0" Header="Constructor Arguments">
+        <GroupBox Grid.Row="2" Margin="0 5 0 0" Header="{x:Static p:dnSpy_AsmEditor_Resources.ConstructorArguments}">
 			<ListBox Grid.Row="0"
 				  Margin="0 5 0 0"
 				  HorizontalContentAlignment="Stretch"
@@ -66,7 +67,7 @@
 			</ListBox>
 		</GroupBox>
 		<GridSplitter Grid.Row="3" Grid.ZIndex="1" Margin="0 -2 0 -5" BorderThickness="0 2 0 5" BorderBrush="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Center" Focusable="False"/>
-		<GroupBox Grid.Row="4" Margin="0 5 0 0" Header="Named Arguments">
+        <GroupBox Grid.Row="4" Margin="0 5 0 0" Header="{x:Static p:dnSpy_AsmEditor_Resources.NamedArguments}">
 			<dnlibdlgs:CANamedArgumentsControl DataContext="{Binding CANamedArgumentsVM}" />
 		</GroupBox>
 	</Grid>

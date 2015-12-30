@@ -23,6 +23,7 @@ using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Debugger.Dialogs;
+using dnSpy.Debugger.Properties;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger {
@@ -54,7 +55,7 @@ namespace dnSpy.Debugger {
 		}
 
 		public string Title {
-			get { return "Debugger"; }
+			get { return dnSpy_Debugger_Resources.DebuggerOptDlgTab; }
 		}
 
 		public object UIObject {
@@ -83,7 +84,7 @@ namespace dnSpy.Debugger {
 		}
 
 		void PickNewCoreCLRDbgShimFilename() {
-			const string filter = "dbgshim.dll|dbgshim.dll|All files (*.*)|*.*";
+			var filter = string.Format("dbgshim.dll|dbgshim.dll|{0} (*.*)|*.*", dnSpy_Debugger_Resources.AllFiles);
 			var newFilename = pickFilename.GetFilename(Settings.CoreCLRDbgShimFilename, "exe", filter);
 			if (newFilename == null)
 				return;

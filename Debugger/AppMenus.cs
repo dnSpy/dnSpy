@@ -20,7 +20,7 @@
 using dnSpy.Contracts.Menus;
 
 namespace dnSpy.Debugger {
-	[ExportMenu(OwnerGuid = MenuConstants.APP_MENU_GUID, Guid = MenuConstants.APP_MENU_DEBUG_GUID, Order = MenuConstants.ORDER_APP_MENU_DEBUG, Header = "_Debug")]
+	[ExportMenu(OwnerGuid = MenuConstants.APP_MENU_GUID, Guid = MenuConstants.APP_MENU_DEBUG_GUID, Order = MenuConstants.ORDER_APP_MENU_DEBUG, Header = "res:AppMenu_Debug")]
 	sealed class DebugMenu : IMenu {
 	}
 }

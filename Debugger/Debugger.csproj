@@ -100,6 +100,11 @@
     <Compile Include="Dialogs\ProcessContext.cs" />
     <Compile Include="Dialogs\ProcessPrinter.cs" />
     <Compile Include="Dialogs\ProcessVM.cs" />
+    <Compile Include="Properties\dnSpy.Debugger.Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dnSpy.Debugger.Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="EvalUtils.cs" />
     <Compile Include="Exceptions\ClickFocusAP.cs" />
     <Compile Include="Exceptions\Commands.cs" />
@@ -386,6 +391,12 @@
     <Resource Include="Images\VirtualPropertyProtected.png" />
     <Resource Include="Images\VirtualPropertyProtectedInternal.png" />
     <Resource Include="Images\Watch.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.Debugger.Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -25,6 +25,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Security;
 using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.MVVM;
 using dnSpy.Shared.UI.Settings.Dialog;
 using Microsoft.Win32;
@@ -48,13 +49,13 @@ namespace dnSpy.MainApp {
 				WindowsExplorerIntegration = newValue;
 			}) {
 				Order = AppSettingsConstants.ORDER_MISC_EXPLORERINTEGRATION,
-				Text = "Windows Explorer Integration",
-				ToolTip = "Add a context menu entry to Windows Explorer to open assemblies in dnSpy",
+				Text = dnSpy_Resources.Options_Misc_ExplorerIntegration,
+				ToolTip = dnSpy_Resources.Options_Misc_ExplorerIntegration_ToolTip,
 			};
 
 			yield return new SimpleAppOptionButton() {
 				Order = AppSettingsConstants.ORDER_MISC_ENABLEALLWARNINGS,
-				Text = "Enable all warning messages",
+				Text = dnSpy_Resources.Options_Misc_Button_EnableAllWarnings,
 				Command = new RelayCommand(a => messageBoxManager.EnableAllWarnings(), a => messageBoxManager.CanEnableAllWarnings),
 			};
 
@@ -66,7 +67,7 @@ namespace dnSpy.MainApp {
 			};
 		}
 
-		const string EXPLORER_MENU_TEXT = "Open with dnSpy";
+		static readonly string EXPLORER_MENU_TEXT = dnSpy_Resources.ExplorerOpenWithDnSpy;
 		static readonly string[] openExtensions = new string[] {
 			"exe", "dll", "netmodule", "winmd",
 		};

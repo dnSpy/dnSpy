@@ -27,7 +27,8 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300"
              xmlns:winlocal="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
-             Title="Edit Resource"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
+             Title="{x:Static p:dnSpy_AsmEditor_Resources.EditResourceCommand2}"
              Height="400" Width="350"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="250" MinWidth="300">
@@ -55,14 +56,14 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Resource_Name}" />
             <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="Color _Depth" Target="{Binding ElementName=colorDepthComboBox}" />
+            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Resource_ColorDepth}" Target="{Binding ElementName=colorDepthComboBox}" />
             <ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="colorDepthComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ColorDepthVM.Items}" SelectedIndex="{Binding ColorDepthVM.SelectedIndex}" VerticalContentAlignment="Center" />
-            <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="_Transparent Color" Target="{Binding ElementName=transpColorTextBox}" />
+            <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Resource_TransparentColor}" Target="{Binding ElementName=transpColorTextBox}" />
             <TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="transpColorTextBox" Text="{Binding TransparentColorVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=withTextBox}" Content="_Size" />
+            <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=withTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Resource_Size}" />
             <Grid Grid.Row="3" Grid.Column="1">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*" />
@@ -81,9 +82,9 @@
         </ScrollViewer>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
-            <Button Content="_OK" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
-            <Button Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
-            <Button Content="Restore" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" ToolTip="Restore all options" />
+            <Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+            <Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
+            <Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_RestoreSettings}" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" />
         </StackPanel>
     </Grid>
 </winlocal:WindowBase>

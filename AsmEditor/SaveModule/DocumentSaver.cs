@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Threading;
 using dnSpy.AsmEditor.Hex;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
@@ -66,9 +67,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 			if (modifiedDocs.Length == 0)
 				return true;
 
-			var msg = modifiedDocs.Length == 1 ?
-				"The file hasn't been saved yet. Do you want to save it before continuing?" :
-				"The files haven't been saved yet. Do you want to save them before continuing?";
+			var msg = modifiedDocs.Length == 1 ? dnSpy_AsmEditor_Resources.AskSaveFile : dnSpy_AsmEditor_Resources.AskSaveFiles;
 			var res = Shared.UI.App.MsgBox.Instance.Show(msg, MsgBoxButton.Yes | MsgBoxButton.No);
 			if (res == MsgBoxButton.No)
 				return true;

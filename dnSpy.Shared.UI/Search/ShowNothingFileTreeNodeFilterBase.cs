@@ -25,10 +25,6 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 
 namespace dnSpy.Shared.UI.Search {
 	public abstract class ShowNothingFileTreeNodeFilterBase : IFileTreeNodeFilter {
-		public virtual string Description {
-			get { return null; }
-		}
-
 		public virtual FileTreeNodeFilterResult GetResult(TypeDef type) {
 			return new FileTreeNodeFilterResult(FilterType.Hide, false);
 		}

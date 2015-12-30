@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Plugin;
@@ -47,9 +48,8 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			if (count == 0)
 				return;
 
-			var msg = count == 1 ?
-				"There is an unsaved file. Are you sure you want to exit?" :
-				string.Format("There are {0} unsaved files. Are you sure you want to exit?", count);
+			var msg = count == 1 ? dnSpy_AsmEditor_Resources.AskExitUnsavedFile :
+					string.Format(dnSpy_AsmEditor_Resources.AskExitUnsavedFiles, count);
 			var res = messageBoxManager.Show(msg, MsgBoxButton.Yes | MsgBoxButton.No);
 			if (res == MsgBoxButton.No || res == MsgBoxButton.None)
 				e.Cancel = true;

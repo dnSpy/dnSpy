@@ -17,6 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using dnSpy.Debugger.Properties;
+
 namespace dnSpy.Debugger.Memory {
 	static class MemoryWindowsHelper {
 		// Four should be enough, but if more are required, it's as simple as changing this constant.
@@ -25,15 +27,15 @@ namespace dnSpy.Debugger.Memory {
 
 		public static string GetHeaderText(int i) {
 			if (i == 9)
-				return "Memory 1_0";
+				return dnSpy_Debugger_Resources.Window_Memory_10_MenuItem;
 			if (0 <= i && i <= 8)
-				return string.Format("Memory _{0}", (i + 1) % 10);
-			return string.Format("Memory {0}", i + 1);
+				return string.Format(dnSpy_Debugger_Resources.Window_Memory_N_MenuItem, (i + 1) % 10);
+			return string.Format(dnSpy_Debugger_Resources.Window_Memory_N_MenuItem2, i + 1);
 		}
 
 		public static string GetCtrlInputGestureText(int i) {
 			if (0 <= i && i <= 9)
-				return string.Format("Ctrl+{0}", (i + 1) % 10);
+				return string.Format(dnSpy_Debugger_Resources.ShortCutKeyCtrl_DIGIT, (i + 1) % 10);
 			return string.Empty;
 		}
 	}

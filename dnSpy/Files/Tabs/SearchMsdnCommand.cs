@@ -31,7 +31,7 @@ namespace dnSpy.Files.Tabs {
 	static class SearchMsdnCtxMenuCommand {
 		private static string msdnAddress = "http://msdn.microsoft.com/en-us/library/{0}";
 
-		[ExportMenuItem(Header = "Search _MSDN", Icon = "Search", Group = MenuConstants.GROUP_CTX_CODE_OTHER, Order = 10)]
+		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_CODE_OTHER, Order = 10)]
 		sealed class CodeCommand : MenuItemBase {
 			public override bool IsVisible(IMenuItemContext context) {
 				return GetMemberRef(context) != null;
@@ -53,7 +53,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		[ExportMenuItem(Header = "Search _MSDN", Icon = "Search", Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 10)]
+		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 10)]
 		sealed class SearchCommand : MenuItemBase {
 			public override bool IsVisible(IMenuItemContext context) {
 				return GetMemberRef(context) != null;
@@ -68,7 +68,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		[ExportMenuItem(Header = "Search _MSDN", Icon = "Search", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 10)]
+		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 10)]
 		sealed class FilesCommand : MenuItemBase {
 			static IEnumerable<ITreeNodeData> GetNodes(IMenuItemContext context) {
 				return GetNodes(context, MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID);
@@ -106,7 +106,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		[ExportMenuItem(Header = "Search _MSDN", Icon = "Search", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
+		[ExportMenuItem(Header = "res:SearchMsdnCommand", Icon = "Search", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
 		sealed class AnalyzerCommand : MenuItemBase {
 			static IEnumerable<ITreeNodeData> GetNodes(IMenuItemContext context) {
 				return FilesCommand.GetNodes(context, MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);

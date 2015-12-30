@@ -53,7 +53,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(InputGestureText = "Ctrl+S", Icon = "Save", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 0)]
+	[ExportMenuItem(InputGestureText = "res:SaveKey", Icon = "Save", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 0)]
 	sealed class SaveTabCtxMenuCommand : MenuItemCommand {
 		readonly ISaveManager saveManager;
 		readonly IFileTabManager fileTabManager;

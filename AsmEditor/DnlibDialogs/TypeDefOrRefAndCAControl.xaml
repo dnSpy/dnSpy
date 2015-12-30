@@ -23,13 +23,14 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="370" d:DesignWidth="500">
 	<TabControl>
-		<TabItem Header="Type">
+        <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.TypeTab}">
 			<dnlibdlgs:TypeSigCreatorControl DataContext="{Binding TypeSigCreator}" />
 		</TabItem>
-		<TabItem Header="Custom Attrs">
+		<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.CustomAttributesTab}">
 			<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
 		</TabItem>
 	</TabControl>

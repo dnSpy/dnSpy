@@ -21,6 +21,7 @@ using System;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Shared.UI.MVVM;
 using dnSpy.Shared.UI.Search;
@@ -93,7 +94,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickMethod() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newMethod = dnlibTypePicker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef), Method, typeSigCreatorOptions.OwnerModule);
+			var newMethod = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef), Method, typeSigCreatorOptions.OwnerModule);
 			if (newMethod != null)
 				Method = newMethod;
 		}

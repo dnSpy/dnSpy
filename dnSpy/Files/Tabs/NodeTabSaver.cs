@@ -30,6 +30,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
 using dnSpy.Files.Tabs.TextEditor;
 using dnSpy.Languages;
+using dnSpy.Properties;
 using ICSharpCode.Decompiler;
 using Microsoft.Win32;
 
@@ -92,7 +93,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public string MenuHeader {
-			get { return "_Save Code..."; }
+			get { return dnSpy_Resources.Button_SaveCode; }
 		}
 
 		sealed class DecompileContext : IDisposable {
@@ -126,10 +127,12 @@ namespace dnSpy.Files.Tabs {
 		DecompileContext CreateDecompileContext() {
 			if (nodes.Length == 1 && (nodes[0] is IAssemblyFileNode || nodes[0] is IModuleFileNode)) {
 				var dnSpyFile = ((IDnSpyFileNode)nodes[0]).DnSpyFile;
+				var projFile = string.Format(dnSpy_Resources.SaveLanguageProjectFile, language.NameUI);
+				var singleFile = string.Format(dnSpy_Resources.SaveLanguageSingleFile, language.NameUI);
 				var saveDlg = new SaveFileDialog {
 					FileName = FilenameUtils.CleanName(dnSpyFile.GetShortName()) + language.ProjectFileExtension,
 					DefaultExt = language.FileExtension,
-					Filter = string.Format("{0} project|*{1}|{0} single file|*{2}|All files|*.*", language.NameUI, language.ProjectFileExtension, language.FileExtension),
+					Filter = string.Format("{3}|*{1}|{4}|*{2}|{5}|*.*", language.NameUI, language.ProjectFileExtension, language.FileExtension, projFile, singleFile, dnSpy_Resources.AllFiles),
 				};
 				if (saveDlg.ShowDialog() != true)
 					return null;
@@ -142,7 +145,7 @@ namespace dnSpy.Files.Tabs {
 				var saveDlg = new SaveFileDialog {
 					FileName = FilenameUtils.CleanName(nodes[0].ToString(language)) + language.FileExtension,
 					DefaultExt = language.FileExtension,
-					Filter = string.Format("{0}|*{1}|All Files|*.*", language.NameUI, language.FileExtension),
+					Filter = string.Format("{0}|*{1}|{2}|*.*", language.NameUI, language.FileExtension, dnSpy_Resources.AllFiles),
 				};
 				if (saveDlg.ShowDialog() != true)
 					return null;
@@ -160,7 +163,7 @@ namespace dnSpy.Files.Tabs {
 
 			tab.AsyncExec(cs => {
 				ctx.DecompileNodeContext.DecompilationOptions.CancellationToken = cs.Token;
-				uiContext.ShowCancelButton(() => cs.Cancel(), "Saving...");
+				uiContext.ShowCancelButton(() => cs.Cancel(), dnSpy_Resources.SavingCode);
 			}, () => {
 				fileTreeNodeDecompiler.Decompile(ctx.DecompileNodeContext, nodes);
 			}, result => {

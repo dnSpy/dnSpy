@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Shared.UI.MVVM;
 using dnSpy.Shared.UI.Search;
@@ -47,14 +48,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 					return string.Format("{0}.{1}", EnumType, s);
 			}
 			if (!IsArray)
-				return string.Format("({0}){1}", EnumType == null ? (object)"Unknown Enum" : EnumType, Value);
+				return string.Format("({0}){1}", EnumType == null ? (object)dnSpy_AsmEditor_Resources.UnknownEnum : EnumType, Value);
 
 			var list = Value as System.Collections.IList;
 			if (list == null)
-				return string.Format("({0}[])null", EnumType == null ? (object)"Unknown Enum" : EnumType);
+				return string.Format("({0}[])null", EnumType == null ? (object)dnSpy_AsmEditor_Resources.UnknownEnum : EnumType);
 
 			var sb = new StringBuilder();
-			sb.Append(string.Format("new {0}[] {{", EnumType == null ? (object)"Unknown Enum" : EnumType));
+			sb.Append(string.Format("new {0}[] {{", EnumType == null ? (object)dnSpy_AsmEditor_Resources.UnknownEnum : EnumType));
 			for (int i = 0; i < list.Count; i++) {
 				if (i > 0)
 					sb.Append(',');
@@ -101,8 +102,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public string PickEnumToolTip {
 			get {
 				if (enumInfo.EnumType == null)
-					return "Pick an Enum Type";
-				return string.Format("Enum: {0}", enumInfo.EnumType.FullName);
+					return dnSpy_AsmEditor_Resources.Pick_EnumType;
+				return string.Format(dnSpy_AsmEditor_Resources.EnumType, enumInfo.EnumType.FullName);
 			}
 		}
 
@@ -159,7 +160,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickEnumType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var type = dnlibTypePicker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
+			var type = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_EnumType, new FlagsFileTreeNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
 			if (type != null)
 				EnumType = type;
 		}

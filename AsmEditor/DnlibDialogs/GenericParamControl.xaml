@@ -23,10 +23,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="370" d:DesignWidth="500">
 	<TabControl>
-		<TabItem Header="Main" FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
+		<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MainTab}" FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
 			<ScrollViewer VerticalScrollBarVisibility="Auto">
 				<Grid Margin="5">
 					<Grid.RowDefinitions>
@@ -47,22 +48,22 @@
 							<RowDefinition />
 						</Grid.RowDefinitions>
 
-						<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+                        <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.GP_Name}" />
 						<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-						<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=seqTextBox}" Content="N_umber" />
+                        <Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=seqTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.GP_Number}" />
 						<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="seqTextBox" Text="{Binding Number.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 					</Grid>
 
-					<GroupBox Grid.Row="1" Header="Constraints">
+                    <GroupBox Grid.Row="1" Header="{x:Static p:dnSpy_AsmEditor_Resources.GP_GenericParamConstraints}">
 						<Grid>
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition />
 								<ColumnDefinition />
 								<ColumnDefinition />
 							</Grid.ColumnDefinitions>
-							<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ReferenceTypeConstraint}" Content="C_lass" />
-							<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NotNullableValueTypeConstraint}" Content="_Struct" />
-							<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding DefaultConstructorConstraint}" Content="_Default ctor" />
+                            <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding ReferenceTypeConstraint}" Content="{x:Static p:dnSpy_AsmEditor_Resources.GP_Class}" />
+                            <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding NotNullableValueTypeConstraint}" Content="{x:Static p:dnSpy_AsmEditor_Resources.GP_Struct}" />
+                            <CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding DefaultConstructorConstraint}" Content="{x:Static p:dnSpy_AsmEditor_Resources.GP_DefaultConstructor}" />
 						</Grid>
 					</GroupBox>
 
@@ -78,19 +79,19 @@
 							<RowDefinition />
 						</Grid.RowDefinitions>
 
-						<Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="_Variance" Target="{Binding ElementName=varianceComboBox}" />
+                        <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.GP_Variance}" Target="{Binding ElementName=varianceComboBox}" />
 						<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="varianceComboBox" DisplayMemberPath="Name" ItemsSource="{Binding GPVarianceVM.Items}" SelectedIndex="{Binding GPVarianceVM.SelectedIndex}" VerticalContentAlignment="Center" />
 					</Grid>
 				</Grid>
 			</ScrollViewer>
 		</TabItem>
-		<TabItem Header="Constraints">
+        <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.GP_Constraints}">
 			<dnlibdlgs:TypeDefOrRefAndCAsControl Margin="0 5 0 0" DataContext="{Binding TypeDefOrRefAndCAsVM}" />
 		</TabItem>
-		<TabItem Header="Custom Attrs">
+		<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.CustomAttributesTab}">
 			<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
 		</TabItem>
-		<TabItem Header="Kind" ToolTip="Only used if MD header version is 1.1 (0x0101). It's never 1.1 so ignore Kind">
+        <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.GP_Kind}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.GP_Kind_ToolTip}">
 			<dnlibdlgs:TypeSigCreatorControl Grid.Row="0" DataContext="{Binding TypeSigCreator}" />
 		</TabItem>
 	</TabControl>

@@ -30,7 +30,9 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Files.Tabs.Dialogs;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Files.Tabs {
 	[ExportAutoLoaded]
@@ -134,7 +136,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Close", InputGestureText = "Ctrl+W", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 10)]
+	[ExportMenuItem(Header = "res:CloseTabCommand", InputGestureText = "res:CloseTabKey", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 10)]
 	sealed class CloseTabCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		CloseTabCtxMenuCommand(IFileTabManager fileTabManager)
@@ -150,7 +152,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "C_lose All Tabs", Icon = "CloseDocuments", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 20)]
+	[ExportMenuItem(Header = "res:CloseAllTabsCommand", Icon = "CloseDocuments", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 20)]
 	sealed class CloseAllTabsCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		CloseAllTabsCtxMenuCommand(IFileTabManager fileTabManager)
@@ -166,7 +168,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "Close _All But This", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 30)]
+	[ExportMenuItem(Header = "res:CloseAllTabsButThisCommand", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 30)]
 	sealed class CloseAllTabsButThisCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		CloseAllTabsButThisCtxMenuCommand(IFileTabManager fileTabManager)
@@ -186,7 +188,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "New _Tab", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 40)]
+	[ExportMenuItem(Header = "res:NewTabCommand", Group = MenuConstants.GROUP_CTX_TABS_CLOSE, Order = 40)]
 	sealed class NewTabCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		NewTabCtxMenuCommand(IFileTabManager fileTabManager)
@@ -202,7 +204,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "New Hori_zontal Tab Group", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 0)]
+	[ExportMenuItem(Header = "res:NewHorizontalTabGroupCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 0)]
 	sealed class NewHorizontalTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		NewHorizontalTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
@@ -218,7 +220,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "New _Vertical Tab Group", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 10)]
+	[ExportMenuItem(Header = "res:NewVerticalTabGroupCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 10)]
 	sealed class NewVerticalTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		NewVerticalTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
@@ -234,7 +236,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "Move to Ne_xt Tab Group", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 20)]
+	[ExportMenuItem(Header = "res:MoveToNextTabGroupCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 20)]
 	sealed class MoveToNextTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		MoveToNextTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
@@ -250,7 +252,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "Move All to Next Tab Group", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 30)]
+	[ExportMenuItem(Header = "res:MoveAllTabsToNextTabGroupCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 30)]
 	sealed class MoveAllToNextTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		MoveAllToNextTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
@@ -266,7 +268,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "Move to P_revious Tab Group", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 40)]
+	[ExportMenuItem(Header = "res:MoveToPreviousTabGroupCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 40)]
 	sealed class MoveToPreviousTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		MoveToPreviousTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
@@ -282,7 +284,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "Move All to Previous Tab Group", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 50)]
+	[ExportMenuItem(Header = "res:MoveAllToPreviousTabGroupCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPS, Order = 50)]
 	sealed class MoveAllToPreviousTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		MoveAllToPreviousTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
@@ -298,7 +300,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "Close Tab Group", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 0)]
+	[ExportMenuItem(Header = "res:CloseTabGroupCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 0)]
 	sealed class CloseTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		CloseTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
@@ -314,7 +316,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "Close All Tab Groups But This", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 10)]
+	[ExportMenuItem(Header = "res:CloseAllTabGroupsButThisCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 10)]
 	sealed class CloseAllTabGroupsButThisCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		CloseAllTabGroupsButThisCtxMenuCommand(IFileTabManager fileTabManager)
@@ -330,7 +332,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "Move Tab Group After Next Tab Group", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 20)]
+	[ExportMenuItem(Header = "res:MoveTabGroupAfterNextTabGroupCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 20)]
 	sealed class MoveTabGroupAfterNextTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		MoveTabGroupAfterNextTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
@@ -346,7 +348,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "Move Tab Group Before Previous Tab Group", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 30)]
+	[ExportMenuItem(Header = "res:MoveTabGroupBeforePreviousTabGroupCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 30)]
 	sealed class MoveTabGroupBeforePreviousTabGroupCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		MoveTabGroupBeforePreviousTabGroupCtxMenuCommand(IFileTabManager fileTabManager)
@@ -362,7 +364,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "Merge All Tab Groups", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 40)]
+	[ExportMenuItem(Header = "res:MergeAllTabGroupsCommand", Group = MenuConstants.GROUP_CTX_TABS_GROUPSCLOSE, Order = 40)]
 	sealed class MergeAllTabGroupsCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		MergeAllTabGroupsCtxMenuCommand(IFileTabManager fileTabManager)
@@ -378,7 +380,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "Use Vertical Tab Groups", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPSVERT, Order = 0)]
+	[ExportMenuItem(Header = "res:UseVerticalTabGroupsCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPSVERT, Order = 0)]
 	sealed class UseVerticalTabGroupsCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		UseVerticalTabGroupsCtxMenuCommand(IFileTabManager fileTabManager)
@@ -394,7 +396,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "Use Horizontal Tab Groups", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPSVERT, Order = 10)]
+	[ExportMenuItem(Header = "res:UseHorizontalTabGroupsCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TABS_GROUPSVERT, Order = 10)]
 	sealed class UseHorizontalTabGroupsCtxMenuCommand : CtxMenuTabGroupCommand {
 		[ImportingConstructor]
 		UseHorizontalTabGroupsCtxMenuCommand(IFileTabManager fileTabManager)
@@ -410,7 +412,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "Open in New _Tab", InputGestureText = "Ctrl+T", Group = MenuConstants.GROUP_CTX_FILES_TABS, Order = 0)]
+	[ExportMenuItem(Header = "res:OpenInNewTabCommand", InputGestureText = "res:OpenInNewTabKey", Group = MenuConstants.GROUP_CTX_FILES_TABS, Order = 0)]
 	sealed class OpenInNewTabCtxMenuCommand : MenuItemBase {
 		readonly IFileTabManager fileTabManager;
 
@@ -431,7 +433,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "Open in New _Tab", Group = MenuConstants.GROUP_CTX_CODE_TABS, Order = 0)]
+	[ExportMenuItem(Header = "res:OpenInNewTabCommand", Group = MenuConstants.GROUP_CTX_CODE_TABS, Order = 0)]
 	sealed class OpenReferenceInNewTabCtxMenuCommand : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
 			ITextEditorUIContext uiContext;
@@ -456,7 +458,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public override string GetInputGestureText(IMenuItemContext context) {
-			return context.OpenedFromKeyboard ? "Ctrl+F12" : "Ctrl+Click";
+			return context.OpenedFromKeyboard ? dnSpy_Resources.OpenInNewTabKey2 : dnSpy_Resources.OpenInNewTabKey3;
 		}
 	}
 
@@ -490,7 +492,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "_New Window", Icon = "NewWindow", Group = MenuConstants.GROUP_APP_MENU_WINDOW_WINDOW, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:NewWindowCommand", Icon = "NewWindow", Group = MenuConstants.GROUP_APP_MENU_WINDOW_WINDOW, Order = 0)]
 	sealed class NewWindowCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		NewWindowCommand(IFileTabManager fileTabManager)
@@ -506,7 +508,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "_Close", InputGestureText = "Ctrl+W", Group = MenuConstants.GROUP_APP_MENU_WINDOW_WINDOW, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:CloseTabCommand", InputGestureText = "res:CloseTabKey", Group = MenuConstants.GROUP_APP_MENU_WINDOW_WINDOW, Order = 10)]
 	sealed class CloseTabCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		CloseTabCommand(IFileTabManager fileTabManager)
@@ -523,7 +525,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "New Hori_zontal Tab Group", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:NewHorizontalTabGroupCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 0)]
 	sealed class NewHorizontalTabGroupCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		NewHorizontalTabGroupCommand(IFileTabManager fileTabManager)
@@ -539,7 +541,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "New _Vertical Tab Group", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:NewVerticalTabGroupCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 10)]
 	sealed class NewVerticalTabGroupCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		NewVerticalTabGroupCommand(IFileTabManager fileTabManager)
@@ -555,7 +557,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Move to Ne_xt Tab Group", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 20)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:MoveToNextTabGroupCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 20)]
 	sealed class MoveToNextTabGroupCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		MoveToNextTabGroupCommand(IFileTabManager fileTabManager)
@@ -571,7 +573,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Move All to Next Tab Group", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 30)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:MoveAllTabsToNextTabGroupCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 30)]
 	sealed class MoveAllToNextTabGroupCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		MoveAllToNextTabGroupCommand(IFileTabManager fileTabManager)
@@ -587,7 +589,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Move to P_revious Tab Group", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 40)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:MoveToPreviousTabGroupCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 40)]
 	sealed class MoveToPreviousTabGroupCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		MoveToPreviousTabGroupCommand(IFileTabManager fileTabManager)
@@ -603,7 +605,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Move All to Previous Tab Group", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 50)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:MoveAllToPreviousTabGroupCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 50)]
 	sealed class MoveAllToPreviousTabGroupCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		MoveAllToPreviousTabGroupCommand(IFileTabManager fileTabManager)
@@ -619,7 +621,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "C_lose All Tabs", Icon = "CloseDocuments", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 60)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:CloseAllTabsCommand", Icon = "CloseDocuments", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPS, Order = 60)]
 	sealed class CloseAllTabsCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		CloseAllTabsCommand(IFileTabManager fileTabManager)
@@ -639,7 +641,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Close Tab Group", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:CloseTabGroupCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 0)]
 	sealed class CloseTabGroupCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		CloseTabGroupCommand(IFileTabManager fileTabManager)
@@ -655,7 +657,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Close All Tab Groups But This", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:CloseAllTabGroupsButThisCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 10)]
 	sealed class CloseAllTabGroupsButThisCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		CloseAllTabGroupsButThisCommand(IFileTabManager fileTabManager)
@@ -671,7 +673,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Move Tab Group After Next Tab Group", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 20)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:MoveTabGroupAfterNextTabGroupCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 20)]
 	sealed class MoveTabGroupAfterNextTabGroupCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		MoveTabGroupAfterNextTabGroupCommand(IFileTabManager fileTabManager)
@@ -687,7 +689,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Move Tab Group Before Previous Tab Group", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 30)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:MoveTabGroupBeforePreviousTabGroupCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 30)]
 	sealed class MoveTabGroupBeforePreviousTabGroupCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		MoveTabGroupBeforePreviousTabGroupCommand(IFileTabManager fileTabManager)
@@ -703,7 +705,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Merge All Tab Groups", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 40)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:MergeAllTabGroupsCommand", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSCLOSE, Order = 40)]
 	sealed class MergeAllTabGroupsCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		MergeAllTabGroupsCommand(IFileTabManager fileTabManager)
@@ -719,7 +721,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Use Vertical Tab Groups", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSVERT, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:UseVerticalTabGroupsCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSVERT, Order = 0)]
 	sealed class UseVerticalTabGroupsCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		UseVerticalTabGroupsCommand(IFileTabManager fileTabManager)
@@ -735,7 +737,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "Use Horizontal Tab Groups", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSVERT, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_WINDOW_GUID, Header = "res:UseHorizontalTabGroupsCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_APP_MENU_WINDOW_TABGROUPSVERT, Order = 10)]
 	sealed class UseHorizontalTabGroupsCommand : MenuTabGroupCommand {
 		[ImportingConstructor]
 		UseHorizontalTabGroupsCommand(IFileTabManager fileTabManager)
@@ -801,7 +803,7 @@ namespace dnSpy.Files.Tabs {
 					break;
 			}
 
-			var attr2 = new ExportMenuItemAttribute { Header = "_Windows..." };
+			var attr2 = new ExportMenuItemAttribute { Header = dnSpy_Resources.WindowsCommand };
 			var item2 = new MyMenuItem(ctx => ShowTabsDlg(), false);
 			yield return new CreatedMenuItem(attr2, item2);
 		}
@@ -813,7 +815,7 @@ namespace dnSpy.Files.Tabs {
 			const int MAX_LEN = 40;
 			if (s.Length > MAX_LEN)
 				s = s.Substring(0, MAX_LEN) + "...";
-			return MenuUtils.EscapeMenuItemHeader(s);
+			return UIUtils.EscapeMenuItemHeader(s);
 		}
 
 		static string GetHeader(int i, IFileTab tab) {

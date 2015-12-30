@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet.MD;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.TreeView;
@@ -120,9 +121,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write("Storage", TextTokenType.InstanceField);
-			output.WriteSpace();
-			output.Write("Stream", TextTokenType.InstanceField);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_StorageStream, TextTokenType.InstanceField);
 			output.WriteSpace();
 			output.Write("#", TextTokenType.Operator);
 			output.Write(streamNumber.ToString(), TextTokenType.Number);

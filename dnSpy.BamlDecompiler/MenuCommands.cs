@@ -29,7 +29,7 @@ namespace dnSpy.BamlDecompiler {
 		public const string GROUP_CTX_FILES_BAML_OPTIONS = "500,42F3D00A-71E7-4BC6-859E-2ADDAE583213";
 	}
 
-	[ExportMenuItem(Header = "Disassemble BAML", Icon = "XamlFile", Group = Constants.GROUP_CTX_FILES_BAML_OPTIONS, Order = 0)]
+	[ExportMenuItem(Header = "res:DisassembleBAMLCommand", Icon = "XamlFile", Group = Constants.GROUP_CTX_FILES_BAML_OPTIONS, Order = 0)]
 	sealed class DisassembleBamlCommand : MenuItemBase {
 		readonly BamlSettingsImpl bamlSettings;
 

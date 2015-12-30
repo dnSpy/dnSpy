@@ -22,6 +22,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using dnSpy.BamlDecompiler.Properties;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
@@ -50,7 +51,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		public string MenuHeader {
-			get { return bamlNode.DisassembleBaml ? "_Save BAML..." : "_Save XAML..."; }
+			get { return bamlNode.DisassembleBaml ? dnSpy_BamlDecompiler_Resources.SaveBAML : dnSpy_BamlDecompiler_Resources.SaveXAML; }
 		}
 
 		public static BamlTabSaver TryCreate(IFileTab tab, IMessageBoxManager messageBoxManager) {
@@ -107,16 +108,16 @@ namespace dnSpy.BamlDecompiler {
 			string ext, name;
 			if (bamlNode.DisassembleBaml) {
 				ext = ".baml";
-				name = "BAML";
+				name = dnSpy_BamlDecompiler_Resources.BAMLFile;
 			}
 			else {
 				ext = ".xaml";
-				name = "XAML";
+				name = dnSpy_BamlDecompiler_Resources.XAMLFile;
 			}
 			var saveDlg = new SaveFileDialog {
 				FileName = FilenameUtils.CleanName(RemovePath(bamlNode.GetFilename())),
 				DefaultExt = ext,
-				Filter = string.Format("{0} file|*{1}|All files|*.*", name, ext),
+				Filter = string.Format("{1}|*{2}|{0}|*.*", dnSpy_BamlDecompiler_Resources.AllFiles, name, ext),
 			};
 			if (saveDlg.ShowDialog() != true)
 				return null;
@@ -140,7 +141,7 @@ namespace dnSpy.BamlDecompiler {
 
 			tab.AsyncExec(cs => {
 				ctx.Token = cs.Token;
-				uiContext.ShowCancelButton(() => cs.Cancel(), "Saving...");
+				uiContext.ShowCancelButton(() => cs.Cancel(), dnSpy_BamlDecompiler_Resources.Saving);
 			}, () => {
 				bamlNode.Decompile(ctx.Output, ctx.Token);
 			}, result => {

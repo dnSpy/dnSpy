@@ -65,7 +65,7 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
-		[ExportMenuItem(Header = "Reload All Method Bodies", Icon = "Refresh", Group = MenuConstants.GROUP_CTX_FILES_DEBUGRT, Order = 0)]
+		[ExportMenuItem(Header = "res:ReloadAllMethodBodiesCommand", Icon = "Refresh", Group = MenuConstants.GROUP_CTX_FILES_DEBUGRT, Order = 0)]
 		sealed class FilesCommand : CommandBase {
 			protected sealed override object CachedContextKey {
 				get { return ContextKey; }
@@ -91,7 +91,7 @@ namespace dnSpy.Debugger.IMModules {
 			}
 		}
 
-		[ExportMenuItem(Header = "Reload All Method Bodies", Icon = "Refresh", Group = MenuConstants.GROUP_CTX_CODE_DEBUGRT, Order = 0)]
+		[ExportMenuItem(Header = "res:ReloadAllMethodBodiesCommand", Icon = "Refresh", Group = MenuConstants.GROUP_CTX_CODE_DEBUGRT, Order = 0)]
 		sealed class CodeCommand : CommandBase {
 			protected sealed override object CachedContextKey {
 				get { return ContextKey; }

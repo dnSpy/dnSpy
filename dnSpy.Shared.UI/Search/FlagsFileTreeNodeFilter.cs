@@ -28,10 +28,6 @@ namespace dnSpy.Shared.UI.Search {
 	public sealed class FlagsFileTreeNodeFilter : FileTreeNodeFilterBase {
 		readonly VisibleMembersFlags flags;
 
-		public override string Description {
-			get { return flags.GetListString(); }
-		}
-
 		public FlagsFileTreeNodeFilter(VisibleMembersFlags flags) {
 			this.flags = flags;
 		}

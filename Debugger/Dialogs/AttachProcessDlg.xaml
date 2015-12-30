@@ -26,6 +26,7 @@
              xmlns:local="clr-namespace:dnSpy.Debugger.Dialogs"
              xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
              xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
+             xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
              Height="500" Width="1000"
              Title="{Binding Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
@@ -57,49 +58,49 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="False">
-                    <GridViewColumn Header="Process">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Process}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding FilenameObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=Filename}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="ID">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessID}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding PIDObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=PID}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Title">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessTitle}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding TitleObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=Title}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="CLR">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessCLR}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding CLRVersionObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=CLRVersion}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Type">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessType}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding TypeObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=Type}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Arch">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessArchitecture}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding MachineObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=Machine}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Filename">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_ProcessFilename}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding FullPathObject, Mode=OneWay, Converter={StaticResource processColumnConverter}, ConverterParameter=FullPath}" />
@@ -117,11 +118,11 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Content="_Refresh" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding RefreshCommand}" />
+            <Button Grid.Column="0" Content="{x:Static p:dnSpy_Debugger_Resources.Button_Refresh}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding RefreshCommand}" />
             <TextBlock Grid.Column="1" Text="{Binding DebuggingText}" Visibility="{Binding HasDebuggingText, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Center" />
             <ProgressBar Grid.Column="1" IsIndeterminate="True" Visibility="{Binding IsRefreshing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            <Button Grid.Column="2" Content="_Attach" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="5 0 5 0" Click="okButton_Click" />
-            <Button Grid.Column="3" Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0 0 0 0" />
+            <Button Grid.Column="2" Content="{x:Static p:dnSpy_Debugger_Resources.Button_Attach}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="5 0 5 0" Click="okButton_Click" />
+            <Button Grid.Column="3" Content="{x:Static p:dnSpy_Debugger_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0 0 0 0" />
         </Grid>
     </Grid>
 </winlocal:WindowBase>

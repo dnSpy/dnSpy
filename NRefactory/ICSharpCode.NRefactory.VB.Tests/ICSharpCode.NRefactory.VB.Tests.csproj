@@ -91,11 +91,11 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj">
-      <Project>{7B82B671-419F-45F4-B778-D9286F996EFA}</Project>
+      <Project>{7b82b671-419f-45f4-b778-d9286f996efa}</Project>
       <Name>ICSharpCode.NRefactory.VB</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\NRefactory2\ICSharpCode.NRefactory.csproj">
-      <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
+      <Project>{3b2a5653-ec97-4001-bb9b-d90f1af2c371}</Project>
       <Name>ICSharpCode.NRefactory</Name>
     </ProjectReference>
   </ItemGroup>

@@ -23,6 +23,7 @@ using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
 using dnSpy.NRefactory;
@@ -44,7 +45,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write("Used By", TextTokenType.Text);
+			output.Write(dnSpy_Analyzer_Resources.UsedByTreeNode, TextTokenType.Text);
 		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
@@ -87,7 +88,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 			string name = analyzedMethod.Name;
 			foreach (MethodDef method in type.Methods) {
 				bool found = false;
-				string prefix = string.Empty;
 				if (!method.HasBody)
 					continue;
 				foreach (Instruction instr in method.Body.Instructions) {
@@ -98,7 +98,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 							&& Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType)
 							&& DnlibExtensions.Resolve(mr) == analyzedMethod) {
 							found = true;
-							prefix = "(as base) ";
 							break;
 						}
 						// virtual call to base method

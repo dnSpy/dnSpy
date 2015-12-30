@@ -116,7 +116,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_COPY, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_COPY, Order = 0)]
 	sealed class CopyCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		[ImportingConstructor]
 		CopyCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent)
@@ -140,7 +140,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportMenuItem(Header = "Select _All", Icon = "Select", InputGestureText = "Ctrl+A", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_COPY, Order = 10)]
+	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = "Select", InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_COPY, Order = 10)]
 	sealed class SelectAllCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		[ImportingConstructor]
 		SelectAllCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent)
@@ -156,7 +156,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "_Switch To Frame", InputGestureText = "Enter", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:SwitchToFrameCommand", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 0)]
 	sealed class SwitchToFrameCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly Lazy<IStackFrameManager> stackFrameManager;
 		readonly IFileTabManager fileTabManager;
@@ -192,7 +192,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "Switch To Frame (New _Tab)", InputGestureText = "Ctrl+Enter", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 10)]
+	[Export, ExportMenuItem(Header = "res:SwitchToFrameNewTabCommand", InputGestureText = "res:ShortCutKeyCtrlEnter", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 10)]
 	sealed class SwitchToFrameNewTabCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly Lazy<IStackFrameManager> stackFrameManager;
 		readonly IFileTabManager fileTabManager;
@@ -215,7 +215,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Go To Code", Icon = "GoToSourceCode", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 20)]
+	[ExportMenuItem(Header = "res:GoToCodeCommand", Icon = "GoToSourceCode", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 20)]
 	sealed class GoToSourceCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly IFileTabManager fileTabManager;
 		readonly Lazy<IModuleLoader> moduleLoader;
@@ -239,7 +239,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportMenuItem(Header = "Go To _Disassembly", Icon = "DisassemblyWindow", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 30)]
+	[ExportMenuItem(Header = "res:GoToDisassemblyCommand2", Icon = "DisassemblyWindow", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 30)]
 	sealed class GoToDisassemblyCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		[ImportingConstructor]
 		GoToDisassemblyCallStackCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<ICallStackContent> callStackContent)
@@ -258,7 +258,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "Ru_n To Cursor", Icon = "Cursor", InputGestureText = "Ctrl+F10", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 40)]
+	[Export, ExportMenuItem(Header = "res:RunToCursorCommand", Icon = "Cursor", InputGestureText = "res:ShortCutKeyCtrlF10", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_FRAME, Order = 40)]
 	sealed class RunToCursorCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly Lazy<DebugManager> debugManager;
 
@@ -280,7 +280,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Hexadecimal Display", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_HEXOPTS, Order = 0)]
+	[ExportMenuItem(Header = "res:HexDisplayCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_HEXOPTS, Order = 0)]
 	sealed class HexadecimalDisplayCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly DebuggerSettingsImpl debuggerSettings;
 
@@ -299,7 +299,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportMenuItem(Header = "Show _Module Names", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 0)]
+	[ExportMenuItem(Header = "res:ShowModuleNamesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 0)]
 	sealed class ShowModuleNamesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly CallStackSettingsImpl callStackSettings;
 
@@ -318,7 +318,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportMenuItem(Header = "Show Parameter _Types", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 10)]
+	[ExportMenuItem(Header = "res:ShowParameterTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 10)]
 	sealed class ShowParameterTypesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly CallStackSettingsImpl callStackSettings;
 
@@ -337,7 +337,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportMenuItem(Header = "Show _Parameter Names", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 20)]
+	[ExportMenuItem(Header = "res:ShowParameterNamesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 20)]
 	sealed class ShowParameterNamesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly CallStackSettingsImpl callStackSettings;
 
@@ -356,7 +356,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportMenuItem(Header = "Show Parameter _Values", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 30)]
+	[ExportMenuItem(Header = "res:ShowParameterValuesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 30)]
 	sealed class ShowParameterValuesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly CallStackSettingsImpl callStackSettings;
 
@@ -375,7 +375,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportMenuItem(Header = "Show IP", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 40)]
+	[ExportMenuItem(Header = "res:ShowInstructionPointerCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 40)]
 	sealed class ShowIPCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly CallStackSettingsImpl callStackSettings;
 
@@ -394,7 +394,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportMenuItem(Header = "Show Owner Types", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 50)]
+	[ExportMenuItem(Header = "res:ShowOwnerTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 50)]
 	sealed class ShowOwnerTypesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly CallStackSettingsImpl callStackSettings;
 
@@ -413,7 +413,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportMenuItem(Header = "Show Namespaces", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 60)]
+	[ExportMenuItem(Header = "res:ShowNamespacesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 60)]
 	sealed class ShowNamespacesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly CallStackSettingsImpl callStackSettings;
 
@@ -432,7 +432,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportMenuItem(Header = "Show Return Types", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 70)]
+	[ExportMenuItem(Header = "res:ShowReturnTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 70)]
 	sealed class ShowReturnTypesCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly CallStackSettingsImpl callStackSettings;
 
@@ -451,7 +451,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportMenuItem(Header = "Show Type Keywords", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 80)]
+	[ExportMenuItem(Header = "res:ShowTypeKeywordsCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 80)]
 	sealed class ShowTypeKeywordsCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly CallStackSettingsImpl callStackSettings;
 
@@ -470,7 +470,7 @@ namespace dnSpy.Debugger.CallStack {
 		}
 	}
 
-	[ExportMenuItem(Header = "Show Tokens", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 90)]
+	[ExportMenuItem(Header = "res:ShowTokensCommand", Group = MenuConstants.GROUP_CTX_DBG_CALLSTACK_OPTS, Order = 90)]
 	sealed class ShowTokensCallStackCtxMenuCommand : CallStackCtxMenuCommand {
 		readonly CallStackSettingsImpl callStackSettings;
 

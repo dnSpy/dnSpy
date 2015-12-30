@@ -21,6 +21,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Menus;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Menus;
 
 namespace dnSpy.MainApp {
@@ -33,12 +34,12 @@ namespace dnSpy.MainApp {
 				Process.Start(url);
 			}
 			catch {
-				messageBoxManager.Show("Could not start browser");
+				messageBoxManager.Show(dnSpy_Resources.CouldNotStartBrowser);
 			}
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "_Latest Release", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_LatestRelease", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 0)]
 	sealed class OpenReleasesUrlCommand : MenuItemBase {
 		readonly IMessageBoxManager messageBoxManager;
 
@@ -52,7 +53,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "Latest _Build", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_LatestBuild", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 10)]
 	sealed class OpenLatestBuildUrlCommand : MenuItemBase {
 		readonly IMessageBoxManager messageBoxManager;
 
@@ -66,7 +67,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "_Issues", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 20)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_Issues", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 20)]
 	sealed class OpenIssuesUrlCommand : MenuItemBase {
 		readonly IMessageBoxManager messageBoxManager;
 
@@ -80,7 +81,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "_Source Code", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 30)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_SourceCode", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 30)]
 	sealed class OpenSourceCodeUrlCommand : MenuItemBase {
 		readonly IMessageBoxManager messageBoxManager;
 

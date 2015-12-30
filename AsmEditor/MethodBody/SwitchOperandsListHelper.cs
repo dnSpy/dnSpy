@@ -21,11 +21,36 @@ using System;
 using System.Linq;
 using System.Windows.Controls;
 using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.Properties;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class SwitchOperandsListHelper : ListBoxHelperBase<SwitchInstructionVM> {
+		protected override string AddNewBeforeSelectionMessage {
+			get { return dnSpy_AsmEditor_Resources.Instr_Command1; }
+		}
+
+		protected override string AddNewAfterSelectionMessage {
+			get { return dnSpy_AsmEditor_Resources.Instr_Command2; }
+		}
+
+		protected override string AppendNewMessage {
+			get { return dnSpy_AsmEditor_Resources.Instr_Command3; }
+		}
+
+		protected override string RemoveSingularMessage {
+			get { return dnSpy_AsmEditor_Resources.Instr_Command4; }
+		}
+
+		protected override string RemovePluralMessage {
+			get { return dnSpy_AsmEditor_Resources.Instr_Command5; }
+		}
+
+		protected override string RemoveAllMessage {
+			get { return dnSpy_AsmEditor_Resources.Instr_Command6; }
+		}
+
 		public SwitchOperandsListHelper(ListBox listBox)
-			: base(listBox, "Instruction") {
+			: base(listBox) {
 		}
 
 		protected override SwitchInstructionVM[] GetSelectedItems() {

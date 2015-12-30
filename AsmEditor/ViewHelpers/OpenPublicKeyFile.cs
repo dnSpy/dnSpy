@@ -20,6 +20,7 @@
 using System.Windows;
 using System.Windows.Forms;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.App;
 using dnSpy.Shared.UI.MVVM;
 
@@ -52,7 +53,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			catch {
 			}
 
-			Shared.UI.App.MsgBox.Instance.Show(string.Format("'{0}' is not a strong name key file (snk)", dialog.FileName), MsgBoxButton.OK, ownerWindow);
+			Shared.UI.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_NotSNKFile, dialog.FileName), MsgBoxButton.OK, ownerWindow);
 			return null;
 		}
 	}

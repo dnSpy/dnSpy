@@ -31,6 +31,7 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Menus;
 
 namespace dnSpy.MainApp {
@@ -72,7 +73,7 @@ namespace dnSpy.MainApp {
 		}
 
 		public string Title {
-			get { return "Assembly Explorer"; }
+			get { return dnSpy_Resources.AssemblyExplorerTitle; }
 		}
 
 		public object ToolTip {
@@ -119,7 +120,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "Assembly Ex_plorer", InputGestureText = "Ctrl+Alt+L", Icon = "Assembly", Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:AssemblyExplorerCommand", InputGestureText = "res:AssemblyExplorerKey", Icon = "Assembly", Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 10)]
 	sealed class ShowFileTreeViewCommand : MenuItemCommand {
 		ShowFileTreeViewCommand()
 			: base(ShowFileTreeViewCommandLoader.ShowFileTreeViewRoutedCommand) {

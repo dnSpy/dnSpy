@@ -28,6 +28,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
+using dnSpy.Debugger.Properties;
 using dnSpy.Shared.UI.Hex;
 
 namespace dnSpy.Debugger.Memory {
@@ -130,7 +131,7 @@ namespace dnSpy.Debugger.Memory {
 		readonly Guid guid;
 
 		public string Title {
-			get { return string.Format("Memory {0}", windowIndex + 1); }
+			get { return string.Format(dnSpy_Debugger_Resources.Window_Memory_N, windowIndex + 1); }
 		}
 
 		public object ToolTip {

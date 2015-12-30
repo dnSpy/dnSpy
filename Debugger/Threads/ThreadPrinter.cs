@@ -24,6 +24,7 @@ using System.Text;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
+using dnSpy.Debugger.Properties;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
 
@@ -69,23 +70,23 @@ namespace dnSpy.Debugger.Threads {
 		public void WriteCategory(ThreadVM vm) {
 			switch (vm.Type) {
 			case ThreadType.Unknown:
-				output.Write("Unknown Thread", TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.ThreadType_Unknown, TextTokenType.Text);
 				break;
 			case ThreadType.Main:
-				output.Write("Main Thread", TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.ThreadType_Main, TextTokenType.Text);
 				break;
 			case ThreadType.ThreadPool:
-				output.Write("Thread Pool", TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.ThreadType_ThreadPool, TextTokenType.Text);
 				break;
 			case ThreadType.Worker:
-				output.Write("Worker Thread", TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.ThreadType_Worker, TextTokenType.Text);
 				break;
 			case ThreadType.BGCOrFinalizer:
-				output.Write("BGC / Finalizer", TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.ThreadType_BackgroundGC_or_Finalizer, TextTokenType.Text);
 				output.Write("???", TextTokenType.Error);
 				break;
 			case ThreadType.Terminated:
-				output.Write("Terminated Thread", TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.ThreadType_Terminated, TextTokenType.Text);
 				break;
 			default:
 				Debug.Fail(string.Format("Unknown thread type: {0}", vm.Type));
@@ -98,7 +99,7 @@ namespace dnSpy.Debugger.Threads {
 			if (vm.UnknownName)
 				output.Write("???", TextTokenType.Error);
 			else if (name == null)
-				output.Write("<No Name>", TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.Thread_NoName, TextTokenType.Text);
 			else
 				output.Write(DebugOutputUtils.FilterName(name, MAX_THREAD_NAME), TextTokenType.String);
 		}
@@ -106,7 +107,7 @@ namespace dnSpy.Debugger.Threads {
 		public void WriteLocation(ThreadVM vm) {
 			var frame = vm.Thread.CorThread.AllFrames.FirstOrDefault();
 			if (frame == null)
-				output.Write("<not available>", TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.Thread_LocationNotAvailable, TextTokenType.Text);
 			else {
 				var flags = TypePrinterFlags.Default | TypePrinterFlags.ShowIP;
 				if (!useHex)
@@ -117,11 +118,11 @@ namespace dnSpy.Debugger.Threads {
 
 		public void WritePriority(ThreadVM vm) {
 			switch (vm.Priority) {
-			case ThreadPriority.Lowest:			output.Write("Lowest", TextTokenType.EnumField); break;
-			case ThreadPriority.BelowNormal:	output.Write("Below Normal", TextTokenType.EnumField); break;
-			case ThreadPriority.Normal:			output.Write("Normal", TextTokenType.EnumField); break;
-			case ThreadPriority.AboveNormal:	output.Write("Above Normal", TextTokenType.EnumField); break;
-			case ThreadPriority.Highest:		output.Write("Highest", TextTokenType.EnumField); break;
+			case ThreadPriority.Lowest:			output.Write(dnSpy_Debugger_Resources.Thread_Priority_Lowest, TextTokenType.EnumField); break;
+			case ThreadPriority.BelowNormal:	output.Write(dnSpy_Debugger_Resources.Thread_Priority_BelowNormal, TextTokenType.EnumField); break;
+			case ThreadPriority.Normal:			output.Write(dnSpy_Debugger_Resources.Thread_Priority_Normal, TextTokenType.EnumField); break;
+			case ThreadPriority.AboveNormal:	output.Write(dnSpy_Debugger_Resources.Thread_Priority_AboveNormal, TextTokenType.EnumField); break;
+			case ThreadPriority.Highest:		output.Write(dnSpy_Debugger_Resources.Thread_Priority_Highest, TextTokenType.EnumField); break;
 			default:							output.Write(string.Format("???({0})", (int)vm.Priority), TextTokenType.Error); break;
 			}
 		}
@@ -158,15 +159,15 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		static readonly Tuple<CorDebugUserState, string>[] UserStates = new Tuple<CorDebugUserState, string>[] {
-			Tuple.Create(CorDebugUserState.USER_STOP_REQUESTED, "StopRequested"),
-			Tuple.Create(CorDebugUserState.USER_SUSPEND_REQUESTED, "SuspendRequested"),
-			Tuple.Create(CorDebugUserState.USER_BACKGROUND, "Background"),
-			Tuple.Create(CorDebugUserState.USER_UNSTARTED, "Unstarted"),
-			Tuple.Create(CorDebugUserState.USER_STOPPED, "Stopped"),
-			Tuple.Create(CorDebugUserState.USER_WAIT_SLEEP_JOIN, "WaitSleepJoin"),
-			Tuple.Create(CorDebugUserState.USER_SUSPENDED, "Suspended"),
-			Tuple.Create(CorDebugUserState.USER_UNSAFE_POINT, "UnsafePoint"),
-			Tuple.Create(CorDebugUserState.USER_THREADPOOL, "ThreadPool"),
+			Tuple.Create(CorDebugUserState.USER_STOP_REQUESTED, dnSpy_Debugger_Resources.Thread_UserState_StopRequested),
+			Tuple.Create(CorDebugUserState.USER_SUSPEND_REQUESTED, dnSpy_Debugger_Resources.Thread_UserState_SuspendRequested),
+			Tuple.Create(CorDebugUserState.USER_BACKGROUND, dnSpy_Debugger_Resources.Thread_UserState_Background),
+			Tuple.Create(CorDebugUserState.USER_UNSTARTED, dnSpy_Debugger_Resources.Thread_UserState_Unstarted),
+			Tuple.Create(CorDebugUserState.USER_STOPPED, dnSpy_Debugger_Resources.Thread_UserState_Stopped),
+			Tuple.Create(CorDebugUserState.USER_WAIT_SLEEP_JOIN, dnSpy_Debugger_Resources.Thread_UserState_WaitSleepJoin),
+			Tuple.Create(CorDebugUserState.USER_SUSPENDED, dnSpy_Debugger_Resources.Thread_UserState_Suspended),
+			Tuple.Create(CorDebugUserState.USER_UNSAFE_POINT, dnSpy_Debugger_Resources.Thread_UserState_UnsafePoint),
+			Tuple.Create(CorDebugUserState.USER_THREADPOOL, dnSpy_Debugger_Resources.Thread_UserState_ThreadPool),
 		};
 
 		public void WriteUserState(ThreadVM vm) {

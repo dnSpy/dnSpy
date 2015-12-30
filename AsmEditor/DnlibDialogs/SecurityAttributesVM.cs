@@ -18,12 +18,13 @@
 */
 
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class SecurityAttributesVM : ListVM<SecurityAttributeVM, SecurityAttribute> {
 		public SecurityAttributesVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Security Attribute", "Create Security Attribute", ownerModule, languageManager, ownerType, ownerMethod) {
+			: base(dnSpy_AsmEditor_Resources.EditSecurityAttribute, dnSpy_AsmEditor_Resources.CreateSecurityAttribute, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
 		protected override SecurityAttributeVM Create(SecurityAttribute model) {

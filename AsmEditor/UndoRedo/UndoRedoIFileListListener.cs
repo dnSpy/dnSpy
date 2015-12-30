@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 
@@ -54,11 +55,10 @@ namespace dnSpy.AsmEditor.UndoRedo {
 			if (count == 0)
 				return true;
 
-			var question = isReload ?
-				"Are you sure you want to reload all assemblies and lose all changes?" :
-				"Are you sure you want to load new assemblies and lose all changes?";
+			var question = isReload ? dnSpy_AsmEditor_Resources.AskReloadAssembliesLoseChanges :
+						dnSpy_AsmEditor_Resources.AskLoadAssembliesLoseChanges;
 
-			var msg = count == 1 ? "There is an unsaved file." : string.Format("There are {0} unsaved files.", count);
+			var msg = count == 1 ? dnSpy_AsmEditor_Resources.UnsavedFile : string.Format(dnSpy_AsmEditor_Resources.UnsavedFiles, count);
 			var res = messageBoxManager.Show(string.Format("{0} {1}", msg, question), MsgBoxButton.Yes | MsgBoxButton.No);
 			return res == MsgBoxButton.Yes;
 		}

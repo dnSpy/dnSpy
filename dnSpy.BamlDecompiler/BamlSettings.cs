@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using dnSpy.BamlDecompiler.Properties;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Settings;
@@ -102,7 +103,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		public string Title {
-			get { return "BAML"; }
+			get { return dnSpy_BamlDecompiler_Resources.BamlOptionDlgTab; }
 		}
 
 		public object UIObject {

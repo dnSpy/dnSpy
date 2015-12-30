@@ -21,6 +21,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
 
@@ -38,8 +39,6 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 	}
 
 	sealed class MarshalTypeVM : ViewModelBase {
-		const string NOT_INITIALIZED_ENUM_VALUE = "<Not Initialized>";
-
 		static readonly EnumVM[] nativeTypeList = EnumVM.Create(typeof(dnlib.DotNet.NativeType));
 		public EnumListVM NativeType {
 			get { return nativeTypeVM; }
@@ -136,7 +135,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		static readonly EnumVM[] variantTypeList = new EnumVM[] {
-			new EnumVM(VariantType.NotInitialized, NOT_INITIALIZED_ENUM_VALUE),
+			new EnumVM(VariantType.NotInitialized, dnSpy_AsmEditor_Resources.MarshalType_EnumNotInitialized),
 			new EnumVM(VariantType.None, "None"),
 			new EnumVM(VariantType.Null, "Null"),
 			new EnumVM(VariantType.I2, "I2"),
@@ -150,7 +149,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			new EnumVM(VariantType.Error, "Error"),
 			new EnumVM(VariantType.Bool, "Bool"),
 			new EnumVM(VariantType.Variant, "Variant"),
-			new EnumVM(VariantType.Unknown, "Unknown"),
+			new EnumVM(VariantType.Unknown, dnSpy_AsmEditor_Resources.Unknown),
 			new EnumVM(VariantType.Decimal, "Decimal"),
 			new EnumVM(VariantType.I1, "I1"),
 			new EnumVM(VariantType.UI1, "UI1"),
@@ -440,11 +439,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public string SafeArrayMarshalType_UserDefinedSubType_TypeHeader {
-			get { return string.Format("Type: {0}", SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator.TypeSigDnlibFullName); }
+			get { return string.Format(dnSpy_AsmEditor_Resources.Type, SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator.TypeSigDnlibFullName); }
 		}
 
 		public string CustomMarshalType_CustMarshaler_TypeHeader {
-			get { return string.Format("Type: {0}", customMarshalType_custMarshaler_typeSigCreator.TypeSigDnlibFullName); }
+			get { return string.Format(dnSpy_AsmEditor_Resources.Type, customMarshalType_custMarshaler_typeSigCreator.TypeSigDnlibFullName); }
 		}
 
 		void safeArrayMarshalType_userDefinedSubType_typeSigCreator_PropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -483,7 +482,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		static void FixNativeTypeEnum(EnumListVM e, bool canHaveNotInitialized) {
 			e.Items.RemoveAt(e.GetIndex(dnlib.DotNet.NativeType.NotInitialized));
 			if (canHaveNotInitialized)
-				e.Items.Insert(0, new EnumVM(dnlib.DotNet.NativeType.NotInitialized, NOT_INITIALIZED_ENUM_VALUE));
+				e.Items.Insert(0, new EnumVM(dnlib.DotNet.NativeType.NotInitialized, dnSpy_AsmEditor_Resources.MarshalType_EnumNotInitialized));
 		}
 
 		void OnNativeTypeChanged() {

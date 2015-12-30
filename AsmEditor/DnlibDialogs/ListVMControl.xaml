@@ -24,6 +24,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="200" d:DesignWidth="500">
 	<UserControl.Resources>
@@ -50,7 +51,7 @@
 				  SelectedIndex="{Binding Collection.SelectedIndex}" />
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0 5 0 0">
-			<RepeatButton Margin="0 0 5 0" Command="{Binding Collection.MoveSelectedUpCommand}" ToolTip="Move Up">
+			<RepeatButton Margin="0 0 5 0" Command="{Binding Collection.MoveSelectedUpCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MoveUp_ToolTip}">
 				<RepeatButton.Content>
 					<Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
 						<Path.LayoutTransform>
@@ -59,7 +60,7 @@
 					</Path>
 				</RepeatButton.Content>
 			</RepeatButton>
-			<RepeatButton Margin="0 0 5 0" Command="{Binding Collection.MoveSelectedDownCommand}" ToolTip="Move Down">
+			<RepeatButton Margin="0 0 5 0" Command="{Binding Collection.MoveSelectedDownCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MoveDown_ToolTip}">
 				<RepeatButton.Content>
 					<Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
 						<Path.LayoutTransform>
@@ -69,10 +70,10 @@
 				</RepeatButton.Content>
 			</RepeatButton>
 
-			<Button Content="_Edit..." Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding EditCommand}" Visibility="{Binding NotInlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-			<Button Content="_Add..." Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" Visibility="{Binding NotInlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-			<Button Content="_Add" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" Visibility="{Binding InlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
-			<Button Content="_Remove" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Command="{Binding Collection.RemoveSelectedCommand}" />
+			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Edit}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding EditCommand}" Visibility="{Binding NotInlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Add2}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" Visibility="{Binding NotInlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Add}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding AddCommand}" Visibility="{Binding InlineEditing, Converter={StaticResource BooleanToVisibilityConverter}}" />
+			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Remove}" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Command="{Binding Collection.RemoveSelectedCommand}" />
 		</StackPanel>
 	</Grid>
 </UserControl>

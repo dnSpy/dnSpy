@@ -24,6 +24,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Files.TreeView;
 using dnSpy.Shared.UI.TreeView;
 
@@ -57,7 +58,7 @@ namespace dnSpy.Files.TreeView {
 
 			//TODO: If it's not a public type, only check modules in this assembly and any friend assemblies
 
-			AddMessageNode(() => new MessageNode(msgNodeGroup, new Guid(FileTVConstants.MESSAGE_NODE_GUID), new ImageReference(GetType().Assembly, "Search"), "Searching..."));
+			AddMessageNode(() => new MessageNode(msgNodeGroup, new Guid(FileTVConstants.MESSAGE_NODE_GUID), new ImageReference(GetType().Assembly, "Search"), dnSpy_Resources.Searching));
 			foreach (var weakMod in weakModules) {
 				cancellationToken.ThrowIfCancellationRequested();
 				var mod = (ModuleDef)weakMod.Target;

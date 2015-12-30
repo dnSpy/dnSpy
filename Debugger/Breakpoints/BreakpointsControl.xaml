@@ -24,6 +24,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Debugger.Breakpoints"
              xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
+             xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -43,7 +44,7 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
-                    <GridViewColumn Header="Name">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Name}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -59,21 +60,21 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Assembly">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Assembly}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding AssemblyObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Assembly}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Module">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_Module}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding ModuleObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=Module}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="File">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Debugger_Resources.Column_File}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding FileObject, Mode=OneWay, Converter={StaticResource breakpointColumnConverter}, ConverterParameter=File}" />

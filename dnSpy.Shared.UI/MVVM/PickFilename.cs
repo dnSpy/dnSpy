@@ -19,6 +19,7 @@
 
 using System.IO;
 using System.Windows.Forms;
+using dnSpy.Shared.UI.Properties;
 
 namespace dnSpy.Shared.UI.MVVM {
 	/// <summary>
@@ -34,13 +35,13 @@ namespace dnSpy.Shared.UI.MVVM {
 	}
 
 	public static class PickFilenameConstants {
-		public static readonly string ImagesFilter = "Images|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico;*.cur|All files (*.*)|*.*";
-		public static readonly string StrongNameKeyFilter = "Strong Name Key Files (*.snk)|*.snk|All files (*.*)|*.*";
-		public static readonly string AnyFilenameFilter = "All files (*.*)|*.*";
-		public static readonly string DotNetExecutableFilter = ".NET Executables (*.exe)|*.exe|All files (*.*)|*.*";
-		public static readonly string DotNetAssemblyOrModuleFilter = ".NET Executables (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|All files (*.*)|*.*";
-		public static readonly string NetModuleFilter = ".NET NetModules (*.netmodule)|*.netmodule|All files (*.*)|*.*";
-		public static readonly string ExecutableFilter = "Executables (*.exe)|*.exe|All files (*.*)|*.*";
+		public static readonly string ImagesFilter = string.Format("{1}|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico;*.cur|{0} (*.*)|*.*", dnSpy_Shared_UI_Resources.AllFiles, dnSpy_Shared_UI_Resources.Files_Images);
+		public static readonly string StrongNameKeyFilter = string.Format("{1} (*.snk)|*.snk|{0} (*.*)|*.*", dnSpy_Shared_UI_Resources.AllFiles, dnSpy_Shared_UI_Resources.Files_StrongNameKeyFiles);
+		public static readonly string AnyFilenameFilter = string.Format("{0} (*.*)|*.*", dnSpy_Shared_UI_Resources.AllFiles);
+		public static readonly string DotNetExecutableFilter = string.Format("{1} (*.exe)|*.exe|{0} (*.*)|*.*", dnSpy_Shared_UI_Resources.AllFiles, dnSpy_Shared_UI_Resources.Files_DotNetExecutables);
+		public static readonly string DotNetAssemblyOrModuleFilter = string.Format("{1} (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|{0} (*.*)|*.*", dnSpy_Shared_UI_Resources.AllFiles, dnSpy_Shared_UI_Resources.Files_DotNetExecutables);
+		public static readonly string NetModuleFilter = string.Format("{1} (*.netmodule)|*.netmodule|{0} (*.*)|*.*", dnSpy_Shared_UI_Resources.AllFiles, dnSpy_Shared_UI_Resources.Files_DotNetNetModules);
+		public static readonly string ExecutableFilter = string.Format("{1} (*.exe)|*.exe|{0} (*.*)|*.*", dnSpy_Shared_UI_Resources.AllFiles, dnSpy_Shared_UI_Resources.Files_Executables);
 	}
 
 	public sealed class PickFilename : IPickFilename {

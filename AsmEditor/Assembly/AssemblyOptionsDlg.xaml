@@ -25,8 +25,9 @@
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
              xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              Height="400" Width="500"
-             Title="Edit Assembly"
+             Title="{x:Static p:dnSpy_AsmEditor_Resources.EditAssemblyCommand2}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="400" MinWidth="400">
 	<winlocal:WindowBase.Resources>
@@ -43,7 +44,7 @@
 		</Grid.RowDefinitions>
 
 		<TabControl Margin="5 5 5 0">
-			<TabItem Header="Main">
+			<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MainTab}">
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<Grid Margin="5">
 						<Grid.ColumnDefinitions>
@@ -68,7 +69,7 @@
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
 
-							<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+                            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.AssemblyDlg_Main_Name}" />
 							<Grid Grid.Row="0" Grid.Column="1">
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="3*" />
@@ -76,11 +77,11 @@
 									<ColumnDefinition Width="*" />
 								</Grid.ColumnDefinitions>
 								<TextBox Grid.Column="0" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-								<Label Grid.Column="1" Margin="5 0 0 0" Target="{Binding ElementName=cultureTextBox}" Content="C_ulture" />
+								<Label Grid.Column="1" Margin="5 0 0 0" Target="{Binding ElementName=cultureTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.AssemblyDlg_Main_Culture}" />
 								<TextBox Grid.Column="2" Grid.ColumnSpan="2" Margin="5 0 0 0" Name="cultureTextBox" Text="{Binding Culture, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 							</Grid>
 
-							<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=publicKeyTextBox}" Content="_Public Key" />
+							<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=publicKeyTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.AssemblyDlg_Main_PublicKey}" />
 							<Grid Grid.Row="1" Grid.Column="1">
 								<Grid.ColumnDefinitions>
 									<ColumnDefinition Width="*" />
@@ -103,13 +104,13 @@
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
 
-							<Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="_Hash Algorithm" Target="{Binding ElementName=hashAlgorithmComboBox}" />
+							<Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.AssemblyDlg_Main_HashAlgorithm}" Target="{Binding ElementName=hashAlgorithmComboBox}" />
 							<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="hashAlgorithmComboBox" DisplayMemberPath="Name" ItemsSource="{Binding HashAlgorithm.Items}" SelectedIndex="{Binding HashAlgorithm.SelectedIndex}" VerticalContentAlignment="Center" />
-							<Label Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Content="Proce_ssor Arch" Target="{Binding ElementName=processArchitectureComboBox}" />
+							<Label Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.AssemblyDlg_Main_ProcessorArch}" Target="{Binding ElementName=processArchitectureComboBox}" />
 							<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="processArchitectureComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ProcessArchitecture.Items}" SelectedIndex="{Binding ProcessArchitecture.SelectedIndex}" VerticalContentAlignment="Center" />
-							<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="Content _Type" Target="{Binding ElementName=contentTypeComboBox}" />
+							<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.AssemblyDlg_Main_ContentType}" Target="{Binding ElementName=contentTypeComboBox}" />
 							<ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="contentTypeComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ContentType.Items}" SelectedIndex="{Binding ContentType.SelectedIndex}" VerticalContentAlignment="Center" />
-							<Label Grid.Row="1" Grid.Column="2" Margin="0 5 0 0" Content=".NET _Version" Target="{Binding ElementName=clrVersionComboBox}" Visibility="{Binding CanShowClrVersion, Converter={StaticResource BooleanToVisibilityConverter}}" />
+							<Label Grid.Row="1" Grid.Column="2" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.AssemblyDlg_Main_DotNetVersion}" Target="{Binding ElementName=clrVersionComboBox}" Visibility="{Binding CanShowClrVersion, Converter={StaticResource BooleanToVisibilityConverter}}" />
 							<ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" VerticalContentAlignment="Center" Visibility="{Binding CanShowClrVersion, Converter={StaticResource BooleanToVisibilityConverter}}" />
 						</Grid>
 
@@ -128,7 +129,7 @@
 								<ColumnDefinition Width="*" />
 							</Grid.ColumnDefinitions>
 
-							<Label Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=majorVersionTextBox}" Content="_Version" />
+							<Label Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=majorVersionTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.AssemblyDlg_Main_Version}" />
 							<TextBox Grid.Column="1" Margin="0 5 0 0" Text="{Binding VersionMajor.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Name="majorVersionTextBox" />
 							<Label Grid.Column="2" Margin="0 5 0 0" Content="." />
 							<TextBox Grid.Column="3" Margin="0 5 0 0" Text="{Binding VersionMinor.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
@@ -138,7 +139,7 @@
 							<TextBox Grid.Column="7" Margin="0 5 0 0" Text="{Binding VersionRevision.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 						</Grid>
 
-						<GroupBox Grid.Row="3" Header="Flags">
+                        <GroupBox Grid.Row="3" Header="{x:Static p:dnSpy_AsmEditor_Resources.Flags}">
 							<Grid>
 								<Grid.RowDefinitions>
 									<RowDefinition />
@@ -149,11 +150,11 @@
 									<ColumnDefinition />
 									<ColumnDefinition />
 								</Grid.ColumnDefinitions>
-								<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding FlagsPublicKey}" Content="Public _Key" />
-								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding PA_Specified}" Content="Proc_essor Arch Specified" />
-								<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Retargetable}" Content="_Retargetable" />
-								<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding EnableJITcompileTracking}" Content="Enable _JIT Compile Tracking" />
-								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding DisableJITcompileOptimizer}" Content="_Disable JIT Compile Optimizer" />
+								<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding FlagsPublicKey}" Content="{x:Static p:dnSpy_AsmEditor_Resources.AssemblyDlg_Main_CB_PublicKey}" />
+								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding PA_Specified}" Content="{x:Static p:dnSpy_AsmEditor_Resources.AssemblyDlg_Main_CB_ProcessArchSpec}" />
+								<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Retargetable}" Content="{x:Static p:dnSpy_AsmEditor_Resources.AssemblyDlg_Main_CB_Retargetable}" />
+								<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding EnableJITcompileTracking}" Content="{x:Static p:dnSpy_AsmEditor_Resources.AssemblyDlg_Main_CB_EnableJITCompTrck}" />
+								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding DisableJITcompileOptimizer}" Content="{x:Static p:dnSpy_AsmEditor_Resources.AssemblyDlg_Main_CB_DisableJITCompileOpt}" />
 							</Grid>
 						</GroupBox>
 
@@ -161,18 +162,18 @@
 					</Grid>
 				</ScrollViewer>
 			</TabItem>
-			<TabItem Header="Custom Attrs">
+			<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.CustomAttributesTab}">
 				<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
 			</TabItem>
-			<TabItem Header="Sec Decls">
+			<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.SecurityDeclarationsTab}">
 				<dnlibdlgs:DeclSecuritiesControl Margin="0 5 0 0" DataContext="{Binding DeclSecuritiesVM}" />
 			</TabItem>
 		</TabControl>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
-			<Button Content="_OK" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
-			<Button Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
-			<Button Content="Restore" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" ToolTip="Restore all options" />
+			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
+			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_RestoreSettings}" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" />
 		</StackPanel>
 	</Grid>
 </winlocal:WindowBase>

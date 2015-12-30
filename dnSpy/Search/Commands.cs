@@ -61,14 +61,14 @@ namespace dnSpy.Search {
 		}
 	}
 
-	[ExportToolBarButton(Icon = "Find", ToolTip = "Search Assemblies (Ctrl+K)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_SEARCH, Order = 0)]
+	[ExportToolBarButton(Icon = "Find", ToolTip = "res:SearchAssembliesToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_SEARCH, Order = 0)]
 	sealed class SearchAssembliesToolBarButtonCommand : ToolBarButtonCommand {
 		public SearchAssembliesToolBarButtonCommand()
 			: base(SearchCommandLoader.SearchRoutedCommand) {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "_Search Assemblies", InputGestureText = "Ctrl+K", Icon = "Find", Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:SearchAssembliesCommand", InputGestureText = "res:SearchAssembliesKey", Icon = "Find", Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 10)]
 	sealed class SearchAssembliesMenuItemCommand : MenuItemCommand {
 		public SearchAssembliesMenuItemCommand()
 			: base(SearchCommandLoader.SearchRoutedCommand) {
@@ -104,7 +104,7 @@ namespace dnSpy.Search {
 		}
 	}
 
-	[ExportMenuItem(Header = "Go to Reference", InputGestureText = "Dbl Click", Group = MenuConstants.GROUP_CTX_SEARCH_TABS, Order = 0)]
+	[ExportMenuItem(Header = "res:GoToReferenceCommand", InputGestureText = "res:GoToReferenceKey", Group = MenuConstants.GROUP_CTX_SEARCH_TABS, Order = 0)]
 	sealed class OpenReferenceCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
 		[ImportingConstructor]
 		OpenReferenceCtxMenuCommand(IFileTabManager fileTabManager)
@@ -112,7 +112,7 @@ namespace dnSpy.Search {
 		}
 	}
 
-	[ExportMenuItem(Header = "Open in New _Tab", InputGestureText = "Shift+Dbl Click", Group = MenuConstants.GROUP_CTX_SEARCH_TABS, Order = 10)]
+	[ExportMenuItem(Header = "res:OpenInNewTabCommand", InputGestureText = "res:OpenInNewTabKey4", Group = MenuConstants.GROUP_CTX_SEARCH_TABS, Order = 10)]
 	sealed class OpenReferenceNewTabCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
 		[ImportingConstructor]
 		OpenReferenceNewTabCtxMenuCommand(IFileTabManager fileTabManager)
@@ -120,7 +120,7 @@ namespace dnSpy.Search {
 		}
 	}
 
-	[ExportMenuItem(Header = "Syntax Highlight", Group = MenuConstants.GROUP_CTX_SEARCH_OPTIONS, Order = 0)]
+	[ExportMenuItem(Header = "res:SyntaxHighlightCommand", Group = MenuConstants.GROUP_CTX_SEARCH_OPTIONS, Order = 0)]
 	sealed class SyntaxHighlightCtxMenuCommand : MenuItemBase {
 		readonly SearchSettingsImpl searchSettings;
 

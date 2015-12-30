@@ -25,9 +25,10 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Shared.UI.Resources;
 
 namespace dnSpy.Settings.Dialog {
-	[ExportDynamicAppSettingsTab(Guid = AppSettingsConstants.GUID_DYNTAB_MISC, Order = AppSettingsConstants.ORDER_SETTINGS_TAB_MISC, Title = "Misc")]
+	[ExportDynamicAppSettingsTab(Guid = AppSettingsConstants.GUID_DYNTAB_MISC, Order = AppSettingsConstants.ORDER_SETTINGS_TAB_MISC, Title = "res:MiscDlgTabTitle")]
 	sealed class OtherDynamicAppSettingsTab : IDynamicAppSettingsTab {
 	}
 
@@ -63,7 +64,7 @@ namespace dnSpy.Settings.Dialog {
 				else {
 					dynTab = new DynTab {
 						Order = dt.Metadata.Order,
-						Title = dt.Metadata.Title,
+						Title = ResourceHelper.GetString(dt.Value, dt.Metadata.Title),
 					};
 					guidToDynTab.Add(guid, dynTab);
 				}

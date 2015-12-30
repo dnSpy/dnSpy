@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Settings;
@@ -253,6 +254,7 @@ namespace dnSpy.Files.Tabs {
 					var ctx = new AsyncWorkerContext();
 					asyncWorkerContext = ctx;
 					Task.Factory.StartNew(() => {
+						AppCulture.InitializeCulture();
 						asyncTabContent.AsyncWorker(cachedUIContext, userData, ctx.CancellationTokenSource);
 					}, ctx.CancellationTokenSource.Token)
 					.ContinueWith(t => {
@@ -299,6 +301,7 @@ namespace dnSpy.Files.Tabs {
 			asyncWorkerContext = ctx;
 			preExec(ctx.CancellationTokenSource);
 			Task.Factory.StartNew(() => {
+				AppCulture.InitializeCulture();
 				asyncAction();
 			}, ctx.CancellationTokenSource.Token)
 			.ContinueWith(t => {

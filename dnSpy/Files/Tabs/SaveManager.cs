@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Properties;
 
 namespace dnSpy.Files.Tabs {
 	[Export, Export(typeof(ISaveManager)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -51,7 +52,7 @@ namespace dnSpy.Files.Tabs {
 
 		public string GetMenuHeader(IFileTab tab) {
 			var ts = GetTabSaver(tab);
-			return (ts == null ? null : ts.MenuHeader) ?? "_Save...";
+			return (ts == null ? null : ts.MenuHeader) ?? dnSpy_Resources.Button_Save;
 		}
 
 		public void Save(IFileTab tab) {

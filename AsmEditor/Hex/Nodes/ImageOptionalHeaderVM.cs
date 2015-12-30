@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
@@ -230,7 +231,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		HexField[] hexFields;
 
 		static readonly IntegerHexBitFieldEnumInfo[] SubsystemInfos = new IntegerHexBitFieldEnumInfo[] {
-			new IntegerHexBitFieldEnumInfo(0, "Unknown"),
+			new IntegerHexBitFieldEnumInfo(0, dnSpy_AsmEditor_Resources.Unknown),
 			new IntegerHexBitFieldEnumInfo(1, "Native"),
 			new IntegerHexBitFieldEnumInfo(2, "WindowsGui"),
 			new IntegerHexBitFieldEnumInfo(3, "WindowsCui"),

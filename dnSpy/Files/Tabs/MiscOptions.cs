@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Files.TreeView;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Settings.Dialog;
 
 namespace dnSpy.Files.Tabs {
@@ -40,8 +41,8 @@ namespace dnSpy.Files.Tabs {
 				fileTreeViewSettings.DeserializeResources = newValue.Value;
 			}) {
 				Order = AppSettingsConstants.ORDER_MISC_DESERIALIZERSRCS,
-				Text = "Deserialize types in resources (unsafe)",
-				ToolTip = "Any assembly could get loaded and executed with data from the resources.",
+				Text = dnSpy_Resources.Options_Misc_Deserialize,
+				ToolTip = dnSpy_Resources.Options_Misc_Deserialize_ToolTip,
 			};
 		}
 	}

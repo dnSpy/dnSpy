@@ -26,6 +26,7 @@
              xmlns:vc="clr-namespace:dnSpy.AsmEditor.DnlibDialogs.Converters"
              xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
              xmlns:winlocal="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              Height="500" Width="600"
              Title="{Binding Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
@@ -62,9 +63,9 @@
 				<RowDefinition Height="Auto" />
 			</Grid.RowDefinitions>
 
-			<Label Grid.Column="0" Content="_Search" Target="{Binding ElementName=searchTextBox}"/>
+            <Label Grid.Column="0" Content="{x:Static p:dnSpy_AsmEditor_Resources.PickMember_Search}" Target="{Binding ElementName=searchTextBox}"/>
 			<TextBox Grid.Column="1" Margin="5 0 0 0" Name="searchTextBox" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-			<Button Grid.Column="2" Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding OpenCommand}" ToolTip="Open Assembly or NetModule" Visibility="{Binding CanOpenAssembly, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Button Grid.Column="2" Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding OpenCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.PickMember_OpenAsmToolTip}" Visibility="{Binding CanOpenAssembly, Converter={StaticResource BooleanToVisibilityConverter}}">
 				<Image Name="openImage" Width="16" Height="16"/>
 			</Button>
 			<ComboBox Grid.Column="3" Margin="5 0 0 0" DisplayMemberPath="NameUI" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" />
@@ -85,8 +86,8 @@
 		<ContentPresenter Grid.Row="2" Name="cpTreeView" Margin="5 0 5 5" />
 
 		<StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
-			<Button Content="_OK" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
-			<Button Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" />
+			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" />
 		</StackPanel>
 	</Grid>
 </winlocal:WindowBase>

@@ -22,6 +22,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:winlocal="clr-namespace:dnSpy.Shared.UI.Controls"
+             xmlns:p="clr-namespace:dnSpy.Shared.UI.Properties"
              Height="200" Width="400"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="150" MinWidth="300">
@@ -50,7 +51,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Margin="5 5 5 5" Content="_Cancel" Style="{StaticResource DialogButton}" Command="{Binding CancelCommand}" />
+            <Button Grid.Column="1" Margin="5 5 5 5" Content="{x:Static p:dnSpy_Shared_UI_Resources.Button_Cancel}" Style="{StaticResource DialogButton}" Command="{Binding CancelCommand}" />
         </Grid>
     </Grid>
 </winlocal:WindowBase>

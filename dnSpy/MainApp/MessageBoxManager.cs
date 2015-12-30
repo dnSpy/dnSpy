@@ -25,6 +25,7 @@ using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Settings;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.App;
 
 namespace dnSpy.MainApp {
@@ -107,13 +108,13 @@ namespace dnSpy.MainApp {
 		public void Show(Exception exception, string msg = null, Window ownerWindow = null) {
 			string msgToShow;
 			if (exception != null) {
-				msgToShow = string.Format("{0}\n\n{1}", msg ?? "An exception occurred:", exception.ToString());
+				msgToShow = string.Format("{0}\n\n{1}", msg ?? dnSpy_Resources.ExceptionMessage, exception.ToString());
 				const int MAX_LEN = 2048;
 				if (msgToShow.Length > MAX_LEN)
 					msgToShow = msgToShow.Substring(0, MAX_LEN) + "[...]";
 			}
 			else
-				msgToShow = msg ?? "An unknown error occurred";
+				msgToShow = msg ?? dnSpy_Resources.UnknownError;
 			Show(msgToShow, MsgBoxButton.OK, ownerWindow);
 		}
 
@@ -158,7 +159,7 @@ namespace dnSpy.MainApp {
 			return s => {
 				if (c.IsValid(s))
 					return string.Empty;
-				return "The text is invalid";
+				return dnSpy_Resources.InvalidInputTextMessageBox;
 			};
 		}
 	}

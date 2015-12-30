@@ -24,6 +24,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
@@ -119,7 +120,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickAttributeType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newAttrType = dnlibTypePicker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), AttributeType, ownerModule);
+			var newAttrType = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), AttributeType, ownerModule);
 			if (newAttrType != null)
 				AttributeType = newAttrType;
 		}

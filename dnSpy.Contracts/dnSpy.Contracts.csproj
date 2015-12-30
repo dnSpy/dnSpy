@@ -43,6 +43,7 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="App\AppCulture.cs" />
     <Compile Include="App\AppDirectories.cs" />
     <Compile Include="App\IAppSettings.cs" />
     <Compile Include="App\IAppStatusBar.cs" />

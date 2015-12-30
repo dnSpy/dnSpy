@@ -18,6 +18,7 @@
 */
 
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
@@ -56,7 +57,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		protected override string Verify(string columnName) {
 			if (columnName == "Method") {
 				if (Method == null)
-					return "Method can't be null";
+					return dnSpy_AsmEditor_Resources.MethodCantBeNull;
 				return string.Empty;
 			}
 

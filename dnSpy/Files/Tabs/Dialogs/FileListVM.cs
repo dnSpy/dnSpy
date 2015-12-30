@@ -36,10 +36,6 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			get { return owner; }
 		}
 
-		public bool IsDefault {
-			get { return fileList.IsDefault; }
-		}
-
 		public FileList FileList {
 			get { return fileList; }
 		}

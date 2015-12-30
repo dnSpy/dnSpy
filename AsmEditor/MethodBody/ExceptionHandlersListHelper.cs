@@ -26,6 +26,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
@@ -36,8 +37,32 @@ namespace dnSpy.AsmEditor.MethodBody {
 	sealed class ExceptionHandlersListHelper : ListBoxHelperBase<ExceptionHandlerVM> {
 		readonly TypeSigCreator typeSigCreator;
 
+		protected override string AddNewBeforeSelectionMessage {
+			get { return dnSpy_AsmEditor_Resources.EH_Command1; }
+		}
+
+		protected override string AddNewAfterSelectionMessage {
+			get { return dnSpy_AsmEditor_Resources.EH_Command2; }
+		}
+
+		protected override string AppendNewMessage {
+			get { return dnSpy_AsmEditor_Resources.EH_Command3; }
+		}
+
+		protected override string RemoveSingularMessage {
+			get { return dnSpy_AsmEditor_Resources.EH_Command4; }
+		}
+
+		protected override string RemovePluralMessage {
+			get { return dnSpy_AsmEditor_Resources.EH_Command5; }
+		}
+
+		protected override string RemoveAllMessage {
+			get { return dnSpy_AsmEditor_Resources.EH_Command6; }
+		}
+
 		public ExceptionHandlersListHelper(ListView listView, Window ownerWindow)
-			: base(listView, "Exception Handler") {
+			: base(listView) {
 			this.typeSigCreator = new TypeSigCreator(ownerWindow);
 		}
 
@@ -52,10 +77,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			AddStandardMenuHandlers("AddException");
 			Add(new ContextMenuHandler {
-				Header = "Copy _MD Token",
-				HeaderPlural = "Copy _MD Tokens",
+				Header = "res:CopyMetaDataToken",
+				HeaderPlural = "res:CopyMetaDataTokens",
 				Command = new RelayCommand(a => CopyCatchTypeMDTokens((ExceptionHandlerVM[])a), a => CopyCatchTypeMDTokensCanExecute((ExceptionHandlerVM[])a)),
-				InputGestureText = "Ctrl+M",
+				InputGestureText = "res:ShortCutKeyCtrlM",
 				Modifiers = ModifierKeys.Control,
 				Key = Key.M,
 			});

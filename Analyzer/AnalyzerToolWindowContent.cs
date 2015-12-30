@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows;
+using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
@@ -64,7 +65,7 @@ namespace dnSpy.Analyzer {
 		}
 
 		public string Title {
-			get { return "Analyzer"; }
+			get { return dnSpy_Analyzer_Resources.AnalyzerWindowTitle; }
 		}
 
 		public object ToolTip {

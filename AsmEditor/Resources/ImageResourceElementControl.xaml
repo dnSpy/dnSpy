@@ -22,6 +22,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
 	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
@@ -36,9 +37,9 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 
-		<Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+        <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=nameTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Resource_Name}" />
 		<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 5 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-		<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=dataTextBox}" Content="_Data" />
+        <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=dataTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Resource_Data}" />
 		<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="dataTextBox" Text="{Binding DataString, Mode=OneWay}" IsReadOnly="True" Background="Transparent" />
 		<Button Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding FillDataCommand}" />
 	</Grid>

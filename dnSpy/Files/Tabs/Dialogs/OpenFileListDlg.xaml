@@ -25,11 +25,12 @@
         xmlns:local="clr-namespace:dnSpy.Files.Tabs.Dialogs"
         xmlns:ctrls="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
         xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
+        xmlns:p="clr-namespace:dnSpy.Properties"
         mc:Ignorable="d"
         Background="{DynamicResource SystemColorsControl}"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
         MinHeight="200" MinWidth="300"
-        Title="Open List" Height="400" Width="800"
+        Title="{x:Static p:dnSpy_Resources.OpenList_Title}" Height="400" Width="800"
         FocusManager.FocusedElement="{Binding ElementName=searchBox}">
     <Grid>
         <Grid.Resources>
@@ -46,9 +47,9 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Content="_Search" Target="{Binding ElementName=searchBox}" />
+            <Label Grid.Column="0" Content="{x:Static p:dnSpy_Resources.OpenList_Search_Label}" Target="{Binding ElementName=searchBox}" />
             <TextBox Grid.Column="1" Name="searchBox" Margin="5 0 0 0" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <CheckBox Grid.Column="2" Margin="5 0 0 0" Content="S_aved lists" IsChecked="{Binding ShowSavedLists}" />
+            <CheckBox Grid.Column="2" Margin="5 0 0 0" Content="{x:Static p:dnSpy_Resources.OpenList_SavedLists_CheckBox}" IsChecked="{Binding ShowSavedLists}" />
         </Grid>
         <ListView Name="listView"
                   Grid.Row="1"
@@ -65,14 +66,14 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
-                    <GridViewColumn Header="Name" Width="700">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Resources.OpenList_Name_Column}" Width="700">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource fileListColumnConverter}, ConverterParameter=Name}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Files">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Resources.OpenList_Files_Column}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding FileCountObject, Mode=OneWay, Converter={StaticResource fileListColumnConverter}, ConverterParameter=FileCount}" HorizontalAlignment="Right" />
@@ -92,10 +93,10 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <ProgressBar Grid.Column="0" IsIndeterminate="True" Margin="0 0 5 0" Visibility="{Binding SearchingForDefaultLists, Converter={StaticResource booleanToVisibilityConverter}}" />
-            <Button Grid.Column="1" Content="_Remove" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding RemoveCommand}" />
-            <Button Grid.Column="2" Content="_New..." Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding CreateListCommand}" />
-            <Button Grid.Column="3" Content="_Open" Style="{StaticResource DialogButton}" Margin="0 0 5 0" IsDefault="True" Click="okButton_Click" />
-            <Button Grid.Column="4" Content="_Cancel" Style="{StaticResource DialogButton}" Margin="0 0 0 0" IsCancel="True" />
+            <Button Grid.Column="1" Content="{x:Static p:dnSpy_Resources.OpenList_Remove_Button}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding RemoveCommand}" />
+            <Button Grid.Column="2" Content="{x:Static p:dnSpy_Resources.OpenList_New_Button}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding CreateListCommand}" />
+            <Button Grid.Column="3" Content="{x:Static p:dnSpy_Resources.OpenList_Open_Button}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" IsDefault="True" Click="okButton_Click" />
+            <Button Grid.Column="4" Content="{x:Static p:dnSpy_Resources.Button_Cancel}" Style="{StaticResource DialogButton}" Margin="0 0 0 0" IsCancel="True" />
         </Grid>
     </Grid>
 </ctrls:WindowBase>

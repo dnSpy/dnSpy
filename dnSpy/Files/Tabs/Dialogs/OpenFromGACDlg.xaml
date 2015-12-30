@@ -26,10 +26,11 @@
         xmlns:ctrls="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
         xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
         mc:Ignorable="d"
+        xmlns:p="clr-namespace:dnSpy.Properties"
         Background="{DynamicResource SystemColorsControl}"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
         MinHeight="200" MinWidth="300"
-        Title="Open from GAC" Height="540" Width="620"
+        Title="{x:Static p:dnSpy_Resources.OpenGAC_Title}" Height="540" Width="620"
         FocusManager.FocusedElement="{Binding ElementName=searchBox}">
     <Grid>
         <Grid.Resources>
@@ -58,14 +59,14 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="True">
-                        <GridViewColumn Header="Name" Width="320">
+                        <GridViewColumn Header="{x:Static p:dnSpy_Resources.OpenGAC_Name_Column}" Width="320">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <ContentPresenter Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource gacFileColumnConverter}, ConverterParameter=Name}" />
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="Version">
+                        <GridViewColumn Header="{x:Static p:dnSpy_Resources.OpenGAC_Version_Column}">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <ContentPresenter Content="{Binding VersionObject, Mode=OneWay, Converter={StaticResource gacFileColumnConverter}, ConverterParameter=Version}" />
@@ -90,17 +91,17 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <TextBox Grid.Row="0" Name="searchBox" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="Search (Ctrl+E or Ctrl+F)" />
-                <CheckBox Grid.Row="1" Margin="0 5 0 0" Content="_Show duplicates" IsChecked="{Binding ShowDuplicates}" />
-                <TextBlock Grid.Row="2" Margin="10 5 0 0"><Bold>Name:</Bold></TextBlock>
+                <TextBox Grid.Row="0" Name="searchBox" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{x:Static p:dnSpy_Resources.OpenGAC_Search_ToolTip}" />
+                <CheckBox Grid.Row="1" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Resources.OpenGAC_ShowDupes_CheckBox}" IsChecked="{Binding ShowDuplicates}" />
+                <TextBlock Grid.Row="2" Margin="10 5 0 0"><Bold><Run Text="{x:Static p:dnSpy_Resources.OpenGAC_Name_Label}"/></Bold></TextBlock>
                 <TextBlock Grid.Row="3" Margin="15 1 0 0" Text="{Binding ElementName=listView, Path=SelectedItem.Name}" TextWrapping="Wrap" />
-                <TextBlock Grid.Row="4" Margin="10 1 0 0"><Bold>Created by:</Bold></TextBlock>
+                <TextBlock Grid.Row="4" Margin="10 1 0 0"><Bold><Run Text="{x:Static p:dnSpy_Resources.OpenGAC_CreatedBy_Label}"/></Bold></TextBlock>
                 <TextBlock Grid.Row="5" Margin="15 1 0 0" Text="{Binding ElementName=listView, Path=SelectedItem.CreatedBy}" TextWrapping="Wrap" />
-                <TextBlock Grid.Row="6" Margin="10 1 0 0"><Bold>Version:</Bold></TextBlock>
+                <TextBlock Grid.Row="6" Margin="10 1 0 0"><Bold><Run Text="{x:Static p:dnSpy_Resources.OpenGAC_Version_Label}"/></Bold></TextBlock>
                 <TextBlock Grid.Row="7" Margin="15 1 0 0" Text="{Binding ElementName=listView, Path=SelectedItem.Version}" TextWrapping="Wrap" />
-                <TextBlock Grid.Row="8" Margin="10 1 0 0"><Bold>File Version:</Bold></TextBlock>
+                <TextBlock Grid.Row="8" Margin="10 1 0 0"><Bold><Run Text="{x:Static p:dnSpy_Resources.OpenGAC_FileVersion_Label}"/></Bold></TextBlock>
                 <TextBlock Grid.Row="9" Margin="15 1 0 0" Text="{Binding ElementName=listView, Path=SelectedItem.FileVersion}" TextWrapping="Wrap" />
-                <TextBlock Grid.Row="10" Margin="10 1 0 0"><Bold>Path:</Bold></TextBlock>
+                <TextBlock Grid.Row="10" Margin="10 1 0 0"><Bold><Run Text="{x:Static p:dnSpy_Resources.OpenGAC_Path_Label}"/></Bold></TextBlock>
                 <TextBlock Grid.Row="11" Margin="15 1 0 0" Text="{Binding ElementName=listView, Path=SelectedItem.Path}" TextWrapping="Wrap" />
             </Grid>
         </Grid>
@@ -113,8 +114,8 @@
             </Grid.ColumnDefinitions>
             <ProgressBar Grid.Column="0" IsIndeterminate="True" Margin="0 0 5 0" Visibility="{Binding SearchingGAC, Converter={StaticResource booleanToVisibilityConverter}}" />
             <TextBlock Grid.Column="0" Text="{Binding FilesShownInfo}" Visibility="{Binding NotSearchingGAC, Converter={StaticResource booleanToVisibilityConverter}}" />
-            <Button Grid.Column="1" Content="_OK" Style="{StaticResource DialogButton}" Margin="0 0 5 0" IsDefault="True" Click="okButton_Click" />
-            <Button Grid.Column="2" Content="_Cancel" Style="{StaticResource DialogButton}" Margin="0 0 0 0" IsCancel="True" />
+            <Button Grid.Column="1" Content="{x:Static p:dnSpy_Resources.Button_OK}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" IsDefault="True" Click="okButton_Click" />
+            <Button Grid.Column="2" Content="{x:Static p:dnSpy_Resources.Button_Cancel}" Style="{StaticResource DialogButton}" Margin="0 0 0 0" IsCancel="True" />
         </Grid>
     </Grid>
 </ctrls:WindowBase>

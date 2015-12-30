@@ -157,6 +157,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			searchPanel = SearchPanel.Install(TextEditor.TextArea);
 			searchPanel.RegisterCommands(this.CommandBindings);
+			searchPanel.Localization = new AvalonEditSearchPanelLocalization();
 
 			TextEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
 

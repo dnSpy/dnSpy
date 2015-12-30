@@ -24,6 +24,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Hex;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
@@ -63,14 +64,14 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 	}
 
-	[ExportToolBarButton(Icon = "SaveAll", ToolTip = "Save All (Ctrl+Shift+S)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 10)]
+	[ExportToolBarButton(Icon = "SaveAll", ToolTip = "res:SaveAllToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 10)]
 	sealed class SaveAllToolbarCommand : ToolBarButtonCommand {
 		SaveAllToolbarCommand()
 			: base(SaveModuleCommandLoader.SaveAllCommand) {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "Save A_ll...", Icon = "SaveAll", InputGestureText = "Ctrl+Shift+S", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 20)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SaveAllCommand", Icon = "SaveAll", InputGestureText = "res:ShortCutKeyCtrlShiftS", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 20)]
 	sealed class SaveAllCommand : MenuItemCommand {
 		SaveAllCommand()
 			: base(SaveModuleCommandLoader.SaveAllCommand) {
@@ -142,7 +143,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 
 		public override string GetHeader(AsmEditorContext context) {
-			return GetDocuments(context.Nodes).Count <= 1 ? "Save _Module..." : "Save _Modules...";
+			return GetDocuments(context.Nodes).Count <= 1 ? dnSpy_AsmEditor_Resources.SaveModuleCommand : dnSpy_AsmEditor_Resources.SaveModulesCommand;
 		}
 	}
 }

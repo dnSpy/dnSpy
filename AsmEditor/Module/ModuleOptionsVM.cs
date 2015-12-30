@@ -24,6 +24,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.PE;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
@@ -498,7 +499,7 @@ namespace dnSpy.AsmEditor.Module {
 			encId = new NullableGuidVM(a => HasErrorUpdated());
 			encBaseId = new NullableGuidVM(a => HasErrorUpdated());
 			clrVersionVM = new EnumListVM(NetModuleOptionsVM.clrVersionList, (a, b) => OnClrVersionChanged());
-			clrVersionVM.Items.Add(new EnumVM(Module.ClrVersion.Unknown, "Unknown"));
+			clrVersionVM.Items.Add(new EnumVM(Module.ClrVersion.Unknown, dnSpy_AsmEditor_Resources.Unknown));
 			clrVersionVM.SelectedItem = Module.ClrVersion.Unknown;
 			cor20HeaderRuntimeVersion = new NullableUInt32VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
 			tablesHeaderVersion = new NullableUInt16VM(a => { HasErrorUpdated(); UpdateClrVersion(); });
@@ -607,7 +608,7 @@ namespace dnSpy.AsmEditor.Module {
 		void PickManagedEntryPoint() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var ep = dnlibTypePicker.GetDnlibType(new EntryPointFileTreeNodeFilter(module), ManagedEntryPoint, module);
+			var ep = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_EntryPoint, new EntryPointFileTreeNodeFilter(module), ManagedEntryPoint, module);
 			if (ep != null) {
 				ManagedEntryPoint = ep;
 				EntryPointEnum = EntryPointType.Managed;

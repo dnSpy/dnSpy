@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.Contracts.App;
 
 namespace dnSpy.Shared.UI.MVVM.Dialogs {
 	public interface IProgress {
@@ -217,6 +218,7 @@ namespace dnSpy.Shared.UI.MVVM.Dialogs {
 		}
 
 		void ThreadProc() {
+			AppCulture.InitializeCulture();
 			try {
 				task.Execute(this);
 			}

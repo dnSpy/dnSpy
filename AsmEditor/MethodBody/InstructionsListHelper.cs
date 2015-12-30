@@ -30,6 +30,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts;
 using dnSpy.NRefactory;
@@ -43,8 +44,32 @@ namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionsListHelper : ListBoxHelperBase<InstructionVM>, IEditOperand, ISelectItems<InstructionVM> {
 		CilBodyVM cilBodyVM;
 
+		protected override string AddNewBeforeSelectionMessage {
+			get { return dnSpy_AsmEditor_Resources.Instr_Command1; }
+		}
+
+		protected override string AddNewAfterSelectionMessage {
+			get { return dnSpy_AsmEditor_Resources.Instr_Command2; }
+		}
+
+		protected override string AppendNewMessage {
+			get { return dnSpy_AsmEditor_Resources.Instr_Command3; }
+		}
+
+		protected override string RemoveSingularMessage {
+			get { return dnSpy_AsmEditor_Resources.Instr_Command4; }
+		}
+
+		protected override string RemovePluralMessage {
+			get { return dnSpy_AsmEditor_Resources.Instr_Command5; }
+		}
+
+		protected override string RemoveAllMessage {
+			get { return dnSpy_AsmEditor_Resources.Instr_Command6; }
+		}
+
 		public InstructionsListHelper(ListView listView, Window ownerWindow)
-			: base(listView, "Instruction") {
+			: base(listView) {
 		}
 
 		protected override InstructionVM[] GetSelectedItems() {
@@ -59,77 +84,77 @@ namespace dnSpy.AsmEditor.MethodBody {
 			InitializeInstructions(this.coll);
 
 			Add(new ContextMenuHandler {
-				Header = "_NOP Instruction",
-				HeaderPlural = "_NOP Instructions",
+				Header = "res:NopInstrCommand",
+				HeaderPlural = "res:NopInstrsCommand",
 				Command = cilBodyVM.ReplaceInstructionWithNopCommand,
 				Icon = "NOP",
-				InputGestureText = "N",
+				InputGestureText = "res:ShortCutKeyN",
 				Modifiers = ModifierKeys.None,
 				Key = Key.N,
 			});
 			Add(new ContextMenuHandler {
-				Header = "_Invert Branch",
-				HeaderPlural = "_Invert Branches",
+				Header = "res:InvertBranchCommand",
+				HeaderPlural = "res:InvertBranchesCommand",
 				Command = cilBodyVM.InvertBranchCommand,
 				Icon = "Branch",
-				InputGestureText = "I",
+				InputGestureText = "res:ShortCutKeyI",
 				Modifiers = ModifierKeys.None,
 				Key = Key.I,
 			});
 			Add(new ContextMenuHandler {
-				Header = "Convert to Unconditional _Branch",
-				HeaderPlural = "Convert to Unconditional _Branches",
+				Header = "res:ConvertUncondBranchCommand",
+				HeaderPlural = "res:ConvertUncondBranchesCommand",
 				Command = cilBodyVM.ConvertBranchToUnconditionalBranchCommand,
 				Icon = "ToUncondBranch",
-				InputGestureText = "B",
+				InputGestureText = "res:ShortCutKeyB",
 				Modifiers = ModifierKeys.None,
 				Key = Key.B,
 			});
 			Add(new ContextMenuHandler {
-				Header = "R_emove and Add Pops",
+				Header = "res:RemoveAndAddPopsCommand",
 				Command = cilBodyVM.RemoveInstructionAndAddPopsCommand,
-				InputGestureText = "P",
+				InputGestureText = "res:ShortCutKeyP",
 				Modifiers = ModifierKeys.None,
 				Key = Key.P,
 			});
 			AddSeparator();
 			Add(new ContextMenuHandler {
-				Header = "_Simplify All Instructions",
+				Header = "res:SimplifyAllInstructionsCommand",
 				Command = cilBodyVM.SimplifyAllInstructionsCommand,
-				InputGestureText = "S",
+				InputGestureText = "res:ShortCutKeyS",
 				Modifiers = ModifierKeys.None,
 				Key = Key.S,
 			});
 			Add(new ContextMenuHandler {
-				Header = "Optimi_ze All Instructions",
+				Header = "res:OptimizeAllInstructionsCommand",
 				Command = cilBodyVM.OptimizeAllInstructionsCommand,
-				InputGestureText = "O",
+				InputGestureText = "res:ShortCutKeyO",
 				Modifiers = ModifierKeys.None,
 				Key = Key.O,
 			});
 			AddSeparator();
 			AddStandardMenuHandlers();
 			Add(new ContextMenuHandler {
-				Header = "Copy _MD Token",
-				HeaderPlural = "Copy _MD Tokens",
+				Header = "res:CopyMetaDataToken",
+				HeaderPlural = "res:CopyMetaDataTokens",
 				Command = new RelayCommand(a => CopyOperandMDTokens((InstructionVM[])a), a => CopyOperandMDTokensCanExecute((InstructionVM[])a)),
-				InputGestureText = "Ctrl+M",
+				InputGestureText = "res:ShortCutKeyCtrlM",
 				Modifiers = ModifierKeys.Control,
 				Key = Key.M,
 			});
 			Add(new ContextMenuHandler {
-				Header = "C_opy RVA",
-				HeaderPlural = "C_opy RVAs",
+				Header = "res:CopyRVACommand",
+				HeaderPlural = "res:CopyRVAsCommand",
 				Command = new RelayCommand(a => CopyInstructionRVA((InstructionVM[])a), a => CopyInstructionRVACanExecute((InstructionVM[])a)),
-				InputGestureText = "Ctrl+R",
+				InputGestureText = "res:ShortCutKeyCtrlR",
 				Modifiers = ModifierKeys.Control,
 				Key = Key.R,
 			});
 			Add(new ContextMenuHandler {
-				Header = "Copy File Offset",
-				HeaderPlural = "Copy File Offsets",
+				Header = "res:CopyFileOffsetCommand",
+				HeaderPlural = "res:CopyFileOffsetsCommand",
 				Command = new RelayCommand(a => CopyInstructionFileOffset((InstructionVM[])a), a => CopyInstructionFileOffsetCanExecute((InstructionVM[])a)),
-				InputGestureText = "Ctrl+F",
+				InputGestureText = "res:ShortCutKeyCtrlF",
 				Modifiers = ModifierKeys.Control,
 				Key = Key.F,
 			});
@@ -334,47 +359,47 @@ namespace dnSpy.AsmEditor.MethodBody {
 			MenuItem menuItem;
 			if ((flags & (MenuCommandFlags.TypeDef | MenuCommandFlags.TypeRef)) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
-					Header = "_Type...",
+					Header = dnSpy_AsmEditor_Resources.EditOperand_Type,
 					Command = new RelayCommand(a => AddType(opvm)),
 				});
 				DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Class", true, true);
 			}
 			if ((flags & MenuCommandFlags.TypeSpec) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
-					Header = "Type_Spec...",
+					Header = dnSpy_AsmEditor_Resources.EditOperand_TypeSpec,
 					Command = new RelayCommand(a => AddTypeSpec(opvm)),
 				});
 				DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Generic", true, true);
 			}
 			if ((flags & MenuCommandFlags.MethodDef) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
-					Header = "_Method...",
+					Header = dnSpy_AsmEditor_Resources.EditOperand_Method,
 					Command = new RelayCommand(a => AddMethodDef(opvm)),
 				});
 				DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Method", true, true);
 			}
 			if ((flags & MenuCommandFlags.MethodMemberRef) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {
-					Header = "M_ethod MemberRef...",
+					Header = dnSpy_AsmEditor_Resources.EditOperand_Method_MemberRef,
 					Command = new RelayCommand(a => AddMethodMemberRef(opvm)),
 				});
 			}
 			if ((flags & MenuCommandFlags.MethodSpec) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {
-					Header = "Met_hodSpec...",
+					Header = dnSpy_AsmEditor_Resources.EditOperand_MethodSpec,
 					Command = new RelayCommand(a => AddMethodSpec(opvm)),
 				});
 			}
 			if ((flags & MenuCommandFlags.FieldDef) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
-					Header = "_Field...",
+					Header = dnSpy_AsmEditor_Resources.EditOperand_Field,
 					Command = new RelayCommand(a => AddFieldDef(opvm)),
 				});
 				DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Field", true, true);
 			}
 			if ((flags & MenuCommandFlags.FieldMemberRef) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {
-					Header = "F_ield MemberRef...",
+					Header = dnSpy_AsmEditor_Resources.EditOperand_Field_MemberRef,
 					Command = new RelayCommand(a => AddFieldMemberRef(opvm)),
 				});
 			}
@@ -386,7 +411,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void AddFieldDef(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
-			var field = picker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.FieldDef), opvm.Other as IField, cilBodyVM.OwnerModule);
+			var field = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Field, new FlagsFileTreeNodeFilter(VisibleMembersFlags.FieldDef), opvm.Other as IField, cilBodyVM.OwnerModule);
 			if (field != null)
 				opvm.Other = field;
 		}
@@ -403,7 +428,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void AddMethodDef(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
-			var method = picker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef), opvm.Other as IMethod, cilBodyVM.OwnerModule);
+			var method = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef), opvm.Other as IMethod, cilBodyVM.OwnerModule);
 			if (method != null)
 				opvm.Other = method;
 		}
@@ -427,7 +452,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var opts = mr == null ? new MemberRefOptions() : new MemberRefOptions(mr);
 			var vm = new MemberRefVM(opts, cilBodyVM.TypeSigCreatorOptions, isField);
 			var creator = new EditMemberRef(Window.GetWindow(listBox));
-			var title = isField ? "Edit Field MemberRef" : "Edit Method MemberRef";
+			var title = isField ? dnSpy_AsmEditor_Resources.EditFieldMemberRef : dnSpy_AsmEditor_Resources.EditMethodMemberRef;
 			vm = creator.Edit(title, vm);
 			if (vm == null)
 				return;
@@ -440,7 +465,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var opts = ms == null ? new MethodSpecOptions() : new MethodSpecOptions(ms);
 			var vm = new MethodSpecVM(opts, cilBodyVM.TypeSigCreatorOptions);
 			var creator = new EditMethodSpec(Window.GetWindow(listBox));
-			vm = creator.Edit("Edit MethodSpec", vm);
+			vm = creator.Edit(dnSpy_AsmEditor_Resources.EditMethodSpec, vm);
 			if (vm == null)
 				return;
 
@@ -449,14 +474,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void AddType(InstructionOperandVM opvm) {
 			var picker = new DnlibTypePicker(Window.GetWindow(listBox));
-			var type = picker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), opvm.Other as ITypeDefOrRef, cilBodyVM.OwnerModule);
+			var type = picker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), opvm.Other as ITypeDefOrRef, cilBodyVM.OwnerModule);
 			if (type != null)
 				opvm.Other = type;
 		}
 
 		void AddTypeSpec(InstructionOperandVM opvm) {
 			var creator = new TypeSigCreator(Window.GetWindow(listBox));
-			var opts = cilBodyVM.TypeSigCreatorOptions.Clone("Create a TypeSpec");
+			var opts = cilBodyVM.TypeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateTypeSpec);
 			bool canceled;
 			var newSig = creator.Create(opts, (opvm.Other as ITypeDefOrRef).ToTypeSig(), out canceled);
 			if (canceled)
@@ -467,7 +492,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		void EditMethodSig(InstructionOperandVM opvm) {
 			var creator = new CreateMethodPropertySig(Window.GetWindow(listBox));
-			var opts = new MethodSigCreatorOptions(cilBodyVM.TypeSigCreatorOptions.Clone("Create MethodSig"));
+			var opts = new MethodSigCreatorOptions(cilBodyVM.TypeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateMethodSig));
 			opts.CanHaveSentinel = true;
 			var sig = (MethodSig)creator.Create(opts, opvm.Other as MethodSig);
 			if (sig != null)

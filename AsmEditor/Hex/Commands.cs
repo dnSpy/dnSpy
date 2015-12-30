@@ -27,6 +27,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Hex.Nodes;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
@@ -181,7 +182,7 @@ namespace dnSpy.AsmEditor.Hex {
 				ModifierKeys.Control, Key.X);
 		}
 
-		[ExportMenuItem(Header = "Open He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 0)]
+		[ExportMenuItem(Header = "res:OpenHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 0)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IFileTabManager fileTabManager;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -201,7 +202,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Open He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 0)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:OpenHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 0)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
 
@@ -286,7 +287,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class ShowAddressReferenceInHexEditorCommand {
-		[ExportMenuItem(Header = "Show in He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 10)]
+		[ExportMenuItem(Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 10)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IFileTabManager fileTabManager;
 
@@ -304,7 +305,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show in He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 10)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 10)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			[ImportingConstructor]
 			TheHexMenuCommand(IFileTabManager fileTabManager)
@@ -363,7 +364,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class ShowILRangeInHexEditorCommand {
-		[ExportMenuItem(Header = "Show Instructions in He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 20)]
+		[ExportMenuItem(Header = "res:ShowInstrsInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 20)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IFileTabManager fileTabManager;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -383,7 +384,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show Instructions in He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 20)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInstrsInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 20)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
 
@@ -451,7 +452,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class ShowHexNodeInHexEditorCommand {
-		[ExportMenuItem(Header = "Show in He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 30)]
+		[ExportMenuItem(Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 30)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IFileTabManager fileTabManager;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -471,7 +472,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show in He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 30)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 30)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
 
@@ -521,7 +522,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class ShowStorageStreamDataInHexEditorCommand {
-		[ExportMenuItem(Header = "Show Data in He_x Editor", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 40)]
+		[ExportMenuItem(Header = "res:ShowDataInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 40)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IFileTabManager fileTabManager;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -541,7 +542,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show Data in He_x Editor", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 40)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowDataInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 40)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
 
@@ -608,7 +609,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class TVShowMethodInstructionsInHexEditorCommand {
-		[ExportMenuItem(Header = "Show Instructions in He_x Editor", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 50)]
+		[ExportMenuItem(Header = "res:ShowInstrsInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 50)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IFileTabManager fileTabManager;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -628,7 +629,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show Instructions in He_x Editor", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 50)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInstrsInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 50)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
 
@@ -699,7 +700,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class TVShowMethodHeaderInHexEditorCommand {
-		[ExportMenuItem(Header = "Show Method Body in Hex Editor", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 60)]
+		[ExportMenuItem(Header = "res:ShowMethodBodyInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 60)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IFileTabManager fileTabManager;
 
@@ -717,7 +718,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show Method Body in Hex Editor", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 60)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowMethodBodyInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 60)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			[ImportingConstructor]
 			TheHexMenuCommand(IFileTabManager fileTabManager)
@@ -753,7 +754,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class TVShowFieldInitialValueInHexEditorCommand {
-		[ExportMenuItem(Header = "Show Initial Value in Hex Editor", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 70)]
+		[ExportMenuItem(Header = "res:ShowInitialValueInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 70)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IFileTabManager fileTabManager;
 
@@ -771,7 +772,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show Initial Value in Hex Editor", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 70)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInitialValueInHexEditorCommand", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 70)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			[ImportingConstructor]
 			TheHexMenuCommand(IFileTabManager fileTabManager)
@@ -811,7 +812,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class TVShowResourceInHexEditorCommand {
-		[ExportMenuItem(Header = "Show in Hex Editor", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 80)]
+		[ExportMenuItem(Header = "res:ShowInHexEditorCommand2", Icon = "Binary", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 80)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IFileTabManager fileTabManager;
 
@@ -829,7 +830,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show in Hex Editor", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 80)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInHexEditorCommand2", Icon = "Binary", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 80)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			[ImportingConstructor]
 			TheHexMenuCommand(IFileTabManager fileTabManager)
@@ -944,7 +945,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class TVChangeBodyToReturnTrueHexEditorCommand {
-		[ExportMenuItem(Header = "Hex Write 'return true' Body", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 90)]
+		[ExportMenuItem(Header = "res:HexWriteReturnTrueBodyCommand", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 90)]
 		sealed class TheHexTextEditorCommand : TVChangeBodyHexEditorCommand.TheHexTextEditorCommand {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IHexDocumentManager> hexDocumentManager;
@@ -972,7 +973,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Hex Write 'return true' Body", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 90)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:HexWriteReturnTrueBodyCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 90)]
 		sealed class TheHexMenuCommand : TVChangeBodyHexEditorCommand.TheHexMenuCommand {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IHexDocumentManager> hexDocumentManager;
@@ -1002,7 +1003,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static string GetDescription(byte[] data) {
-			return "Hex Write 'return true' Body";
+			return dnSpy_AsmEditor_Resources.HexWriteReturnTrueBodyCommand;
 		}
 
 		static byte[] GetData(MethodDef method) {
@@ -1014,7 +1015,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class TVChangeBodyToReturnFalseHexEditorCommand {
-		[ExportMenuItem(Header = "Hex Write 'return false' Body", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 100)]
+		[ExportMenuItem(Header = "res:HexWriteReturnFalseBodyCommand", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 100)]
 		sealed class TheHexTextEditorCommand : TVChangeBodyHexEditorCommand.TheHexTextEditorCommand {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IHexDocumentManager> hexDocumentManager;
@@ -1042,7 +1043,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Hex Write 'return false' Body", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 100)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:HexWriteReturnFalseBodyCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 100)]
 		sealed class TheHexMenuCommand : TVChangeBodyHexEditorCommand.TheHexMenuCommand {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IHexDocumentManager> hexDocumentManager;
@@ -1072,7 +1073,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static string GetDescription(byte[] data) {
-			return "Hex Write 'return false' Body";
+			return dnSpy_AsmEditor_Resources.HexWriteReturnFalseBodyCommand;
 		}
 
 		static byte[] GetData(MethodDef method) {
@@ -1084,7 +1085,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class TVWriteEmptyBodyHexEditorCommand {
-		[ExportMenuItem(Header = "Hex Write Empty Body", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 110)]
+		[ExportMenuItem(Header = "res:HexWriteEmptyMethodBodyCommand", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 110)]
 		sealed class TheHexTextEditorCommand : TVChangeBodyHexEditorCommand.TheHexTextEditorCommand {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IHexDocumentManager> hexDocumentManager;
@@ -1112,7 +1113,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Hex Write Empty Body", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 110)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:HexWriteEmptyMethodBodyCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 110)]
 		sealed class TheHexMenuCommand : TVChangeBodyHexEditorCommand.TheHexMenuCommand {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IHexDocumentManager> hexDocumentManager;
@@ -1142,7 +1143,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static string GetDescription(byte[] data) {
-			return "Hex Write Empty Body";
+			return dnSpy_AsmEditor_Resources.HexWriteEmptyMethodBodyCommand;
 		}
 
 		static byte[] GetData(MethodDef method) {
@@ -1246,7 +1247,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class TVCopyMethodBodyHexEditorCommand {
-		[ExportMenuItem(Header = "Hex Copy Method Body", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 120)]
+		[ExportMenuItem(Header = "res:HexCopyMethodBodyCommand", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 120)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly Lazy<IHexDocumentManager> hexDocumentManager;
 
@@ -1264,7 +1265,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Hex Copy Method Body", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 120)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:HexCopyMethodBodyCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 120)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			readonly Lazy<IHexDocumentManager> hexDocumentManager;
 
@@ -1306,7 +1307,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class TVPasteMethodBodyHexEditorCommand {
-		[ExportMenuItem(Header = "Hex Paste Method Body", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 130)]
+		[ExportMenuItem(Header = "res:HexPasteMethodBodyCommand", Group = MenuConstants.GROUP_CTX_CODE_HEX, Order = 130)]
 		sealed class TheHexTextEditorCommand : TVChangeBodyHexEditorCommand.TheHexTextEditorCommand {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IHexDocumentManager> hexDocumentManager;
@@ -1334,7 +1335,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Hex Paste Method Body", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 130)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:HexPasteMethodBodyCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX, Order = 130)]
 		sealed class TheHexMenuCommand : TVChangeBodyHexEditorCommand.TheHexMenuCommand {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IHexDocumentManager> hexDocumentManager;
@@ -1364,7 +1365,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static string GetDescription(byte[] data) {
-			return "Hex Paste Method Body";
+			return dnSpy_AsmEditor_Resources.HexPasteMethodBodyCommand;
 		}
 
 		static byte[] GetData(MethodDef method) {
@@ -1442,12 +1443,12 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static string GetHeaderInternal(IFileTabManager fileTabManager, HexContext context) {
 			var tokRef = GetTokenReference(fileTabManager, context);
-			return string.Format("Go to MD Table Row ({0:X8})", tokRef.Token);
+			return string.Format(dnSpy_AsmEditor_Resources.GoToMetaDataTableRowCommand, tokRef.Token);
 		}
 
 		static string GetInputGestureTextInternal(HexContext context) {
 			if (context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID) || context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID))
-				return "Shift+Alt+R";
+				return dnSpy_AsmEditor_Resources.ShortCutKeyShiftAltR;
 			return null;
 		}
 
@@ -1527,7 +1528,7 @@ namespace dnSpy.AsmEditor.Hex {
 				ModifierKeys.Control | ModifierKeys.Shift, Key.D);
 		}
 
-		[ExportMenuItem(Header = "Go to MD Table Row...", InputGestureText = "Ctrl+Shift+D", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 30)]
+		[ExportMenuItem(Header = "res:GoToMetaDataTableRowCommand2", InputGestureText = "res:ShortCutKeyCtrlShiftD", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 30)]
 		sealed class TheHexTextEditorCommand : HexTextEditorCommand {
 			readonly IFileTabManager fileTabManager;
 
@@ -1545,7 +1546,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Go to MD Table Row...", InputGestureText = "Ctrl+Shift+D", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_GOTO_MD, Order = 0)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:GoToMetaDataTableRowCommand2", InputGestureText = "res:ShortCutKeyCtrlShiftD", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_GOTO_MD, Order = 0)]
 		sealed class TheHexMenuCommand : HexMenuCommand {
 			[ImportingConstructor]
 			TheHexMenuCommand(IFileTabManager fileTabManager)
@@ -1624,13 +1625,13 @@ namespace dnSpy.AsmEditor.Hex {
 			if (module == null)
 				return;
 
-			uint? token = AskForDef("Go to MD Table Row", module);
+			uint? token = AskForDef(dnSpy_AsmEditor_Resources.GoToMetaDataTableRowTitle, module);
 			if (token == null)
 				return;
 
 			var tokRef = new TokenReference(module, token.Value);
 			if (HexFileTreeNodeDataFinder.FindNode(fileTabManager.FileTreeView, tokRef) == null) {
-				Shared.UI.App.MsgBox.Instance.Show(string.Format("Token {0:X8} doesn't exist in the metadata", token.Value));
+				Shared.UI.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_TokenDoesNotExist, token.Value));
 				return;
 			}
 
@@ -1641,7 +1642,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static uint? AskForDef(string title, ITokenResolver resolver) {
-			return Shared.UI.App.MsgBox.Instance.Ask("_Metadata token", null, title, s => {
+			return Shared.UI.App.MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_MetadataToken, null, title, s => {
 				string error;
 				uint token = NumberVMUtils.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
 				return string.IsNullOrEmpty(error) ? token : (uint?)null;
@@ -1652,7 +1653,7 @@ namespace dnSpy.AsmEditor.Hex {
 					return error;
 				var memberRef = resolver.ResolveToken(token);
 				if (memberRef == null)
-					return string.Format("Invalid metadata token: 0x{0:X8}", token);
+					return string.Format(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_InvalidMetadataToken, token);
 				return string.Empty;
 			});
 		}

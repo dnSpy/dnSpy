@@ -23,6 +23,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
 
@@ -90,7 +91,7 @@ namespace dnSpy.AsmEditor.Types {
 		readonly bool isNestedType;
 
 		public string VisibilityAccessbilityText {
-			get { return IsNestedType ? "Accessibilit_y" : "Visibilit_y"; }
+			get { return IsNestedType ? dnSpy_AsmEditor_Resources.Type_Flags_Accessibility : dnSpy_AsmEditor_Resources.Type_Flags_Visibility; }
 		}
 
 		static readonly EnumVM[] typeKindList = EnumVM.Create(typeof(TypeKind));
@@ -280,7 +281,7 @@ namespace dnSpy.AsmEditor.Types {
 		}
 
 		public string BaseTypeHeader {
-			get { return string.Format("Base Type: {0}", typeSigCreator.TypeSigDnlibFullName); }
+			get { return string.Format(dnSpy_AsmEditor_Resources.BaseTypeX, typeSigCreator.TypeSigDnlibFullName); }
 		}
 
 		public TypeSigCreatorVM TypeSigCreator {
@@ -326,7 +327,7 @@ namespace dnSpy.AsmEditor.Types {
 			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager, ownerType, null);
 			this.declSecuritiesVM = new DeclSecuritiesVM(ownerModule, languageManager, ownerType, null);
 			this.genericParamsVM = new GenericParamsVM(ownerModule, languageManager, ownerType, null);
-			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<InterfaceImpl>("Edit Interface Impl", "Create Interface Impl", ownerModule, languageManager, ownerType, null);
+			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<InterfaceImpl>(dnSpy_AsmEditor_Resources.EditInterfaceImpl, dnSpy_AsmEditor_Resources.CreateInterfaceImpl, ownerModule, languageManager, ownerType, null);
 
 			this.origOptions = options;
 			this.isNestedType = (options.Attributes & TypeAttributes.VisibilityMask) > TypeAttributes.Public;

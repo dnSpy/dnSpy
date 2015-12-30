@@ -26,6 +26,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.NRefactory;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
@@ -70,7 +71,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write("Base Type and Interfaces", TextTokenType.Text);
+			output.Write(dnSpy_Resources.BaseTypeFolder, TextTokenType.Text);
 		}
 
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {

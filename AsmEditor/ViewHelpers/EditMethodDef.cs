@@ -20,6 +20,7 @@
 using System.Windows;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Shared.UI.Search;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
@@ -37,7 +38,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		}
 
 		public MethodDefVM Edit(string title, MethodDefVM vm) {
-			var method = dnlibTypePicker.GetDnlibType(new SameModuleFileTreeNodeFilter(ownerModule, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef)), vm.Method, ownerModule);
+			var method = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new SameModuleFileTreeNodeFilter(ownerModule, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef)), vm.Method, ownerModule);
 			if (method == null)
 				return null;
 

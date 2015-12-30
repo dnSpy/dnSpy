@@ -23,6 +23,7 @@ using System.Windows.Input;
 using System.Windows.Forms;
 using dnSpy.Shared.UI.MVVM;
 using dnSpy.Contracts.Files.TreeView.Resources;
+using dnSpy.AsmEditor.Properties;
 
 namespace dnSpy.AsmEditor.Resources {
 	sealed class ImageListVM : ViewModelBase {
@@ -44,11 +45,11 @@ namespace dnSpy.AsmEditor.Resources {
 		string name;
 
 		internal static readonly EnumVM[] colorDepthList = new EnumVM[] {
-			new EnumVM(ColorDepth.Depth4Bit, "4-bit"),
-			new EnumVM(ColorDepth.Depth8Bit, "8-bit"),
-			new EnumVM(ColorDepth.Depth16Bit, "16-bit"),
-			new EnumVM(ColorDepth.Depth24Bit, "24-bit"),
-			new EnumVM(ColorDepth.Depth32Bit, "32-bit"),
+			new EnumVM(ColorDepth.Depth4Bit, dnSpy_AsmEditor_Resources.Resource_ColorDepth_4Bit),
+			new EnumVM(ColorDepth.Depth8Bit, dnSpy_AsmEditor_Resources.Resource_ColorDepth_8Bit),
+			new EnumVM(ColorDepth.Depth16Bit, dnSpy_AsmEditor_Resources.Resource_ColorDepth_16Bit),
+			new EnumVM(ColorDepth.Depth24Bit, dnSpy_AsmEditor_Resources.Resource_ColorDepth_24Bit),
+			new EnumVM(ColorDepth.Depth32Bit, dnSpy_AsmEditor_Resources.Resource_ColorDepth_32Bit),
 		};
 		public EnumListVM ColorDepthVM {
 			get { return colorDepthVM; }

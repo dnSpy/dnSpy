@@ -25,6 +25,7 @@ using System.Linq;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.SaveModule;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
@@ -49,8 +50,7 @@ namespace dnSpy.AsmEditor.Module {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateNetModuleCommand : IUndoCommand {
-		const string CMD_NAME = "Create NetModule";
-		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 30)]
+		[ExportMenuItem(Header = "res:CreateNetModuleCommand", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 30)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -70,7 +70,7 @@ namespace dnSpy.AsmEditor.Module {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 30)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateNetModuleCommand", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 30)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -123,7 +123,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public string Description {
-			get { return CMD_NAME; }
+			get { return dnSpy_AsmEditor_Resources.CreateNetModuleCommand2; }
 		}
 
 		public void Execute() {
@@ -142,8 +142,7 @@ namespace dnSpy.AsmEditor.Module {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class ConvertNetModuleToAssemblyCommand : IUndoCommand {
-		const string CMD_NAME = "Convert NetModule to Assembly";
-		[ExportMenuItem(Header = CMD_NAME, Icon = "ModuleToAssembly", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 20)]
+		[ExportMenuItem(Header = "res:ConvNetModuleToAssemblyCommand", Icon = "ModuleToAssembly", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 20)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -161,7 +160,7 @@ namespace dnSpy.AsmEditor.Module {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "ModuleToAssembly", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 20)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ConvNetModuleToAssemblyCommand", Icon = "ModuleToAssembly", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 20)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -212,7 +211,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public string Description {
-			get { return CMD_NAME; }
+			get { return dnSpy_AsmEditor_Resources.ConvNetModuleToAssemblyCommand; }
 		}
 
 		public void Execute() {
@@ -293,8 +292,7 @@ namespace dnSpy.AsmEditor.Module {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class ConvertAssemblyToNetModuleCommand : IUndoCommand {
-		const string CMD_NAME = "Convert Assembly to NetModule";
-		[ExportMenuItem(Header = CMD_NAME, Icon = "AssemblyToModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 30)]
+		[ExportMenuItem(Header = "res:ConvAssemblyToNetModuleCommand", Icon = "AssemblyToModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 30)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -316,7 +314,7 @@ namespace dnSpy.AsmEditor.Module {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "AssemblyToModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 30)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ConvAssemblyToNetModuleCommand", Icon = "AssemblyToModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 30)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -374,7 +372,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public string Description {
-			get { return CMD_NAME; }
+			get { return dnSpy_AsmEditor_Resources.ConvAssemblyToNetModuleCommand; }
 		}
 
 		public void Execute() {
@@ -507,8 +505,7 @@ namespace dnSpy.AsmEditor.Module {
 	}
 
 	sealed class AddNewNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand {
-		const string CMD_NAME = "Add New NetModule to Assembly";
-		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 10)]
+		[ExportMenuItem(Header = "res:AddNewNetModuleToAssemblyCommand", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 10)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -528,7 +525,7 @@ namespace dnSpy.AsmEditor.Module {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 10)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:AddNewNetModuleToAssemblyCommand", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 10)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -578,13 +575,12 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public override string Description {
-			get { return CMD_NAME; }
+			get { return dnSpy_AsmEditor_Resources.AddNewNetModuleToAssemblyCommand2; }
 		}
 	}
 
 	sealed class AddExistingNetModuleToAssemblyCommand : AddNetModuleToAssemblyCommand {
-		const string CMD_NAME = "Add Existing NetModule to Assembly";
-		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 20)]
+		[ExportMenuItem(Header = "res:AddExistingNetModuleToAssemblyCommand", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 20)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -604,7 +600,7 @@ namespace dnSpy.AsmEditor.Module {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 20)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:AddExistingNetModuleToAssemblyCommand", Icon = "NewAssemblyModule", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 20)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -641,7 +637,7 @@ namespace dnSpy.AsmEditor.Module {
 			var fm = appWindow.FileTreeView.FileManager;
 			var file = DnSpyFile.CreateDnSpyFileFromFile(DnSpyFileInfo.CreateFile(dialog.FileName), dialog.FileName, fm.Settings.UseMemoryMappedIO, fm.Settings.LoadPDBFiles, fm.AssemblyResolver, true);
 			if (file.ModuleDef == null || file.AssemblyDef != null || !(file is IDnSpyDotNetFile)) {
-				Shared.UI.App.MsgBox.Instance.Show(string.Format("{0} is not a NetModule", file.Filename), MsgBoxButton.OK);
+				Shared.UI.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_NotNetModule, file.Filename), MsgBoxButton.OK);
 				var id = file as IDisposable;
 				if (id != null)
 					id.Dispose();
@@ -660,13 +656,12 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public override string Description {
-			get { return CMD_NAME; }
+			get { return dnSpy_AsmEditor_Resources.AddExistingNetModuleToAssemblyCommand2; }
 		}
 	}
 
 	sealed class RemoveNetModuleFromAssemblyCommand : IUndoCommand2 {
-		const string CMD_NAME = "Remove NetModule from Assembly";
-		[ExportMenuItem(Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 10)]
+		[ExportMenuItem(Header = "res:RemoveNetModuleCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 10)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IDocumentSaver> documentSaver;
@@ -692,7 +687,7 @@ namespace dnSpy.AsmEditor.Module {
 			}
 		}
 
-		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 10)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RemoveNetModuleCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 10)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IDocumentSaver> documentSaver;
@@ -765,7 +760,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public string Description {
-			get { return CMD_NAME; }
+			get { return dnSpy_AsmEditor_Resources.RemoveNetModuleCommand; }
 		}
 
 		public void Execute() {
@@ -808,8 +803,7 @@ namespace dnSpy.AsmEditor.Module {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class ModuleSettingsCommand : IUndoCommand {
-		const string CMD_NAME = "Edit Module";
-		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 10)]
+		[ExportMenuItem(Header = "res:EditModuleCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 10)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -829,7 +823,7 @@ namespace dnSpy.AsmEditor.Module {
 			}
 		}
 
-		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 10)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditModuleCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 10)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -884,7 +878,7 @@ namespace dnSpy.AsmEditor.Module {
 		}
 
 		public string Description {
-			get { return CMD_NAME; }
+			get { return dnSpy_AsmEditor_Resources.EditModuleCommand2; }
 		}
 
 		void WriteModuleOptions(ModuleOptions theOptions) {

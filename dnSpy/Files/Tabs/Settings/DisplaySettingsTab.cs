@@ -28,9 +28,11 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Files.Tabs.TextEditor;
 using dnSpy.Files.TreeView;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Controls;
 using dnSpy.Shared.UI.MVVM;
 
@@ -59,7 +61,7 @@ namespace dnSpy.Files.Tabs.Settings {
 		}
 
 		public string Title {
-			get { return "Display"; }
+			get { return dnSpy_Resources.DisplayDlgTabTitle; }
 		}
 
 		public object UIObject {
@@ -161,6 +163,7 @@ namespace dnSpy.Files.Tabs.Settings {
 			this.fontFamilies = null;
 			this.fontFamilyVM = new FontFamilyVM(textEditorSettings.FontFamily);
 			Task.Factory.StartNew(() => {
+				AppCulture.InitializeCulture();
 				return Fonts.SystemFontFamilies.Where(a => !FontUtils.IsSymbol(a)).OrderBy(a => a.Source.ToUpperInvariant()).Select(a => new FontFamilyVM(a)).ToArray();
 			})
 			.ContinueWith(t => {

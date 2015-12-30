@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using dnlib.PE;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.NRefactory;
@@ -55,7 +56,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write("DOS Header", TextTokenType.Keyword);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_DOSHeader, TextTokenType.Keyword);
 		}
 	}
 }

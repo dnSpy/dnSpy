@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 0)]
 	sealed class CopyCallThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		readonly IDebuggerSettings debuggerSettings;
 
@@ -164,7 +164,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[ExportMenuItem(Header = "Select _All", Icon = "Select", InputGestureText = "Ctrl+A", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 10)]
+	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = "Select", InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_THREADS_COPY, Order = 10)]
 	sealed class SelectAllThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
 		SelectAllThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent)
@@ -180,7 +180,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Hexadecimal Display", Group = MenuConstants.GROUP_CTX_DBG_THREADS_HEXOPTS, Order = 0)]
+	[ExportMenuItem(Header = "res:HexDisplayCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_HEXOPTS, Order = 0)]
 	sealed class HexadecimalDisplayThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		readonly DebuggerSettingsImpl debuggerSettings;
 
@@ -199,7 +199,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "_Switch To Thread", InputGestureText = "Enter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:SwitchToThreadCommand", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 0)]
 	sealed class SwitchToThreadThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		readonly Lazy<IStackFrameManager> stackFrameManager;
 		readonly IFileTabManager fileTabManager;
@@ -239,7 +239,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "Switch To Thread (New _Tab)", InputGestureText = "Ctrl+Enter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 10)]
+	[Export, ExportMenuItem(Header = "res:SwitchToThreadNewTabCommand", InputGestureText = "res:ShortCutKeyCtrlEnter", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 10)]
 	sealed class SwitchToThreadNewTabThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		readonly Lazy<IStackFrameManager> stackFrameManager;
 		readonly IFileTabManager fileTabManager;
@@ -262,7 +262,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[ExportMenuItem(Header = "Rename", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 20)]
+	[ExportMenuItem(Header = "res:RenameThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 20)]
 	sealed class RenameThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
 		RenameThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent)
@@ -278,7 +278,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Freeze", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 30)]
+	[ExportMenuItem(Header = "res:FreezeThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 30)]
 	sealed class FreezeThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
 		FreezeThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent)
@@ -295,7 +295,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Thaw", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 40)]
+	[ExportMenuItem(Header = "res:ThawThreadCommand", Group = MenuConstants.GROUP_CTX_DBG_THREADS_CMDS, Order = 40)]
 	sealed class ThawThreadsCtxMenuCommand : ThreadsCtxMenuCommand {
 		[ImportingConstructor]
 		ThawThreadsCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IThreadsContent> threadsContent)

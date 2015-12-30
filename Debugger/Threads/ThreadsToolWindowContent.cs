@@ -24,6 +24,7 @@ using System.Windows;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Threads {
 	[Export(typeof(IMainToolWindowContentCreator))]
@@ -64,7 +65,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		public string Title {
-			get { return "Threads"; }
+			get { return dnSpy_Debugger_Resources.Window_Threads; }
 		}
 
 		public object ToolTip {

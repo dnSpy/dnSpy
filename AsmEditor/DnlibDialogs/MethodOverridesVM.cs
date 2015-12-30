@@ -18,12 +18,13 @@
 */
 
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MethodOverridesVM : ListVM<MethodOverrideVM, MethodOverride> {
 		public MethodOverridesVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Method Override", "Create Method Override", ownerModule, languageManager, ownerType, ownerMethod) {
+			: base(dnSpy_AsmEditor_Resources.EditMethodOverride, dnSpy_AsmEditor_Resources.CreateMethodOverride, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
 		protected override MethodOverrideVM Create(MethodOverride model) {

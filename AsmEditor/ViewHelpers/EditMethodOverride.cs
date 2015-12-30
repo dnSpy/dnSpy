@@ -20,6 +20,7 @@
 using System.Windows;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Shared.UI.Search;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
@@ -36,7 +37,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public MethodOverrideVM Edit(string title, MethodOverrideVM mo) {
 			var dnlibPicker = new DnlibTypePicker(ownerWindow);
-			var method = dnlibPicker.GetDnlibType<IMethodDefOrRef>(new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef), mo.MethodDeclaration, mo.OwnerModule);
+			var method = dnlibPicker.GetDnlibType<IMethodDefOrRef>(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef), mo.MethodDeclaration, mo.OwnerModule);
 			if (method == null)
 				return null;
 

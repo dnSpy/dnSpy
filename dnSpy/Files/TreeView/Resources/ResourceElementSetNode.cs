@@ -28,6 +28,7 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Decompiler;
 using dnSpy.Shared.UI.Files.TreeView.Resources;
 using ICSharpCode.Decompiler;
@@ -92,7 +93,7 @@ namespace dnSpy.Files.TreeView.Resources {
 			base.WriteShort(output, language, showOffset);
 			var so = output as ISmartTextOutput;
 			if (so != null) {
-				so.AddButton("Save", (s, e) => Save());
+				so.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());
 				so.WriteLine();
 				so.WriteLine();
 			}

@@ -21,6 +21,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Forms;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.App;
 using dnSpy.Shared.UI.MVVM;
 
@@ -50,7 +51,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 				return File.ReadAllBytes(dialog.FileName);
 			}
 			catch (Exception ex) {
-				Shared.UI.App.MsgBox.Instance.Show(string.Format("Error opening file: {0}", ex.Message), MsgBoxButton.OK, ownerWindow);
+				Shared.UI.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_OpenFile, ex.Message), MsgBoxButton.OK, ownerWindow);
 			}
 
 			return null;

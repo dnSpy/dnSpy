@@ -22,6 +22,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
 
@@ -40,12 +41,12 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (Sequence.HasError)
 					sb.Append("???");
 				else if (Sequence.Value == 0)
-					sb.Append("param(return)");
+					sb.Append(dnSpy_AsmEditor_Resources.ParameterReturn);
 				else
-					sb.Append(string.Format("param({0})", Sequence.Value));
+					sb.Append(string.Format(dnSpy_AsmEditor_Resources.ParameterNumber, Sequence.Value));
 
 				sb.Append(' ');
-				sb.Append(string.IsNullOrEmpty(Name) ? "<<no-name>>" : Name);
+				sb.Append(string.IsNullOrEmpty(Name) ? dnSpy_AsmEditor_Resources.NoName : Name);
 
 				return sb.ToString();
 			}
@@ -138,7 +139,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		readonly MarshalTypeVM marshalTypeVM;
 
 		public string MarshalTypeString {
-			get { return string.Format("Marshal Type: {0}", HasFieldMarshal ? MarshalTypeVM.TypeString : "nothing"); }
+			get { return string.Format(dnSpy_AsmEditor_Resources.MarshalType, HasFieldMarshal ? MarshalTypeVM.TypeString : dnSpy_AsmEditor_Resources.MarshalType_Nothing); }
 		}
 
 		public CustomAttributesVM CustomAttributesVM {
@@ -153,7 +154,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.origOptions = options;
 			this.sequence = new UInt16VM(a => { OnPropertyChanged("FullName"); HasErrorUpdated(); });
 			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
-			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, "Default value for this parameter");
+			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, dnSpy_AsmEditor_Resources.Parameter_DefaultValueInfo);
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
 			this.marshalTypeVM = new MarshalTypeVM(ownerModule, languageManager, ownerType != null ? ownerType : ownerMethod == null ? null : ownerMethod.DeclaringType, ownerMethod);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;

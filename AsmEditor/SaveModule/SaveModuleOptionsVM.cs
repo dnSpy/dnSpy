@@ -24,6 +24,7 @@ using dnlib.DotNet.MD;
 using dnlib.DotNet.Writer;
 using dnlib.PE;
 using dnlib.W32Resources;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files;
 using dnSpy.Shared.UI.MVVM;
 
@@ -1203,7 +1204,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 		internal static string ValidateVersionString(string versionString) {
 			var bytes = Encoding.UTF8.GetBytes(versionString + "\0");
 			if (bytes.Length > 256)
-				return "Version string is too long";
+				return dnSpy_AsmEditor_Resources.Error_VersionStringTooLong;
 
 			return string.Empty;
 		}

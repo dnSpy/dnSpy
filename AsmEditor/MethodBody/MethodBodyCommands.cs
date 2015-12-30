@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
@@ -56,8 +57,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class MethodBodySettingsCommand : IUndoCommand {
-		const string CMD_NAME = "Edit Method Body";
-		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "ILEditor", Group = MenuConstants.GROUP_CTX_FILES_ASMED_ILED, Order = 10)]
+		[ExportMenuItem(Header = "res:EditMethodBodyCommand", Icon = "ILEditor", Group = MenuConstants.GROUP_CTX_FILES_ASMED_ILED, Order = 10)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -79,7 +79,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "ILEditor", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 40)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditMethodBodyCommand", Icon = "ILEditor", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 40)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -102,7 +102,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "ILEditor", Group = MenuConstants.GROUP_CTX_CODE_ASMED_ILED, Order = 10)]
+		[ExportMenuItem(Header = "res:EditMethodBodyCommand", Icon = "ILEditor", Group = MenuConstants.GROUP_CTX_CODE_ASMED_ILED, Order = 10)]
 		sealed class CodeCommand : CodeContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -171,7 +171,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public string Description {
-			get { return CMD_NAME; }
+			get { return dnSpy_AsmEditor_Resources.EditMethodBodyCommand2; }
 		}
 
 		public void Execute() {
@@ -190,7 +190,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "Edit IL Instruction_s...", Icon = "ILEditor", InputGestureText = "Ctrl+E", Group = MenuConstants.GROUP_CTX_CODE_ASMED_ILED, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:EditILInstructionsCommand", Icon = "ILEditor", InputGestureText = "res:ShortCutKeyCtrlE", Group = MenuConstants.GROUP_CTX_CODE_ASMED_ILED, Order = 0)]
 	sealed class EditILInstructionsCommand : MenuItemBase, ICommand {
 		readonly Lazy<IUndoCommandManager> undoCommandManager;
 		readonly Lazy<IMethodAnnotations> methodAnnotations;
@@ -226,7 +226,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var method = list[0].MemberMapping.MethodDef;
 			var methodNode = appWindow.FileTreeView.FindNode(method);
 			if (methodNode == null) {
-				Shared.UI.App.MsgBox.Instance.Show(string.Format("Could not find method: {0}", method));
+				Shared.UI.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotFindMethod, method));
 				return;
 			}
 

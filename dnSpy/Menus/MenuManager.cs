@@ -31,6 +31,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Menus;
 using dnSpy.Shared.UI.Images;
 using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.UI.Resources;
 
 namespace dnSpy.Menus {
 	sealed class MenuItemMD {
@@ -323,8 +324,8 @@ namespace dnSpy.Menus {
 				menuItem = new MenuItem();
 			menuItem.CommandTarget = commandTarget;
 
-			string header = metadata.Header;
-			string inputGestureText = metadata.InputGestureText;
+			string header = ResourceHelper.GetString(item, metadata.Header);
+			string inputGestureText = ResourceHelper.GetString(item, metadata.InputGestureText);
 			string iconName = metadata.Icon;
 
 			var mi2 = item as IMenuItem2;
@@ -436,7 +437,7 @@ namespace dnSpy.Menus {
 				if (!guidToGroups.TryGetValue(guid, out itemGroups))
 					continue;
 
-				var topMenuItem = new MenuItem() { Header = md.Metadata.Header };
+				var topMenuItem = new MenuItem() { Header = ResourceHelper.GetString(md.Menu, md.Metadata.Header) };
 				topMenuItem.Items.Add(new MenuItem());
 				var mdTmp = md;
 				topMenuItem.SubmenuOpened += (s, e) => {

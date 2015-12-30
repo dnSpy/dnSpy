@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using dnlib.DotNet;
+using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
 using dnSpy.NRefactory;
@@ -36,7 +37,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write("Exposed By", TextTokenType.Text);
+			output.Write(dnSpy_Analyzer_Resources.ExposedByTreeNode, TextTokenType.Text);
 		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {

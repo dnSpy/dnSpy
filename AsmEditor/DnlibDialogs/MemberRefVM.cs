@@ -22,6 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Files;
 using dnSpy.Shared.UI.MVVM;
@@ -138,7 +139,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.typeSigCreatorOptions.IsLocal = false;
 			this.typeSigCreatorOptions.NullTypeSigAllowed = false;
 
-			this.typeSigCreatorVM = new TypeSigCreatorVM(this.typeSigCreatorOptions.Clone("Create Field TypeSig"));
+			this.typeSigCreatorVM = new TypeSigCreatorVM(this.typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateFieldTypeSig));
 			TypeSigCreatorVM.PropertyChanged += (s, e) => HasErrorUpdated();
 
 			var mopts = new MethodSigCreatorOptions(this.typeSigCreatorOptions.Clone());
@@ -152,7 +153,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void InitializeFromField() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newField = dnlibTypePicker.GetDnlibType<IField>(new FlagsFileTreeNodeFilter(VisibleMembersFlags.FieldDef), null, typeSigCreatorOptions.OwnerModule);
+			var newField = dnlibTypePicker.GetDnlibType<IField>(dnSpy_AsmEditor_Resources.Pick_Field, new FlagsFileTreeNodeFilter(VisibleMembersFlags.FieldDef), null, typeSigCreatorOptions.OwnerModule);
 			if (newField != null)
 				InitializeFrom(new MemberRefOptions(typeSigCreatorOptions.OwnerModule.Import(newField)));
 		}
@@ -160,7 +161,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void InitializeFromMethod() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newMethod = dnlibTypePicker.GetDnlibType<IMethod>(new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef), null, typeSigCreatorOptions.OwnerModule);
+			var newMethod = dnlibTypePicker.GetDnlibType<IMethod>(dnSpy_AsmEditor_Resources.Pick_Method, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef), null, typeSigCreatorOptions.OwnerModule);
 			if (newMethod != null) {
 				var mr = typeSigCreatorOptions.OwnerModule.Import(newMethod) as MemberRef;
 				if (mr != null)
@@ -171,7 +172,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newType = dnlibTypePicker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), Class as ITypeDefOrRef, typeSigCreatorOptions.OwnerModule);
+			var newType = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), Class as ITypeDefOrRef, typeSigCreatorOptions.OwnerModule);
 			if (newType != null)
 				Class = newType;
 		}
@@ -180,7 +181,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (typeSigCreator == null)
 				throw new InvalidOperationException();
 			bool canceled;
-			var newType = typeSigCreator.Create(typeSigCreatorOptions.Clone("Create TypeSpec"), (Class as ITypeDefOrRef).ToTypeSig(), out canceled);
+			var newType = typeSigCreator.Create(typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateTypeSpec), (Class as ITypeDefOrRef).ToTypeSig(), out canceled);
 			if (!canceled)
 				Class = newType.ToTypeDefOrRef();
 		}
@@ -188,7 +189,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickMethodDef() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newMethod = dnlibTypePicker.GetDnlibType(new SameAssemblyFileTreeNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef)), Class as IMethod, typeSigCreatorOptions.OwnerModule);
+			var newMethod = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new SameAssemblyFileTreeNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef)), Class as IMethod, typeSigCreatorOptions.OwnerModule);
 			if (newMethod != null) {
 				var md = newMethod as MethodDef;
 				Debug.Assert(md != null);
@@ -200,7 +201,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickModuleRef() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var file = dnlibTypePicker.GetDnlibType<IDnSpyFile>(new SameAssemblyFileTreeNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsFileTreeNodeFilter(VisibleMembersFlags.ModuleDef)), null, typeSigCreatorOptions.OwnerModule);
+			var file = dnlibTypePicker.GetDnlibType<IDnSpyFile>(dnSpy_AsmEditor_Resources.Pick_Module, new SameAssemblyFileTreeNodeFilter(typeSigCreatorOptions.OwnerModule, new FlagsFileTreeNodeFilter(VisibleMembersFlags.ModuleDef)), null, typeSigCreatorOptions.OwnerModule);
 			if (file != null) {
 				var module = file.ModuleDef;
 				if (module != null) {

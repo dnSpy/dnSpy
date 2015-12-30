@@ -22,6 +22,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
 
@@ -92,7 +93,7 @@ namespace dnSpy.AsmEditor.Property {
 		}
 
 		public string PropertySigHeader {
-			get { return string.Format("Property: {0}", MethodSigCreator.HasError ? "null" : MethodSigCreator.PropertySig.ToString()); }
+			get { return string.Format(dnSpy_AsmEditor_Resources.PropertyX, MethodSigCreator.HasError ? "null" : MethodSigCreator.PropertySig.ToString()); }
 		}
 
 		public MethodSigCreatorVM MethodSigCreator {
@@ -153,7 +154,7 @@ namespace dnSpy.AsmEditor.Property {
 			this.setMethodsVM = new MethodDefsVM(ownerModule, languageManager);
 			this.otherMethodsVM = new MethodDefsVM(ownerModule, languageManager);
 			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
-			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, "Default value for this property");
+			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, dnSpy_AsmEditor_Resources.Property_DefaultValue);
 			this.constantVM.PropertyChanged += constantVM_PropertyChanged;
 
 			ConstantVM.IsEnabled = HasDefault;

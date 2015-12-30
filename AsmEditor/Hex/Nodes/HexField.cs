@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Shared.UI.HexEditor;
 using dnSpy.Shared.UI.MVVM;
 
@@ -113,7 +114,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			var undoDoc = doc as IUndoHexDocument;
 			Debug.Assert(undoDoc != null);
 			if (undoDoc != null)
-				undoDoc.WriteUndo(startOffset, newData, string.Format("Write {0}.{1}", parentName, Name));
+				undoDoc.WriteUndo(startOffset, newData, string.Format(dnSpy_AsmEditor_Resources.HexField_UndoMessage_Write_Parent_Field, parentName, Name));
 			else
 				doc.Write(startOffset, newData);
 			OnUpdateValue();
@@ -977,8 +978,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 
 		public DataDirVM(HexDocument doc, string parentName, string name, ulong start) {
 			this.name = name;
-			this.rvaVM = new UInt32HexField(doc, parentName, string.Format("{0} RVA", name), start);
-			this.sizeVM = new UInt32HexField(doc, parentName, string.Format("{0} Size", name), start + 4);
+			this.rvaVM = new UInt32HexField(doc, parentName, string.Format(dnSpy_AsmEditor_Resources.HexField_RelativeVirtualAddress, name), start);
+			this.sizeVM = new UInt32HexField(doc, parentName, string.Format(dnSpy_AsmEditor_Resources.HexField_Size, name), start + 4);
 		}
 	}
 }

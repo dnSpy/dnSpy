@@ -22,6 +22,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
 	<UserControl.Resources>
@@ -43,17 +44,17 @@
 		</Grid.RowDefinitions>
 
 		<ComboBox Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="typeComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ResourceElementTypeVM.Items}" SelectedIndex="{Binding ResourceElementTypeVM.SelectedIndex}" VerticalContentAlignment="Center" IsEnabled="{Binding CanChangeType}" />
-		<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+        <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=nameTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Resource_Name}" />
 		<TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 5 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-		<Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=serTypeTextBox}" Content="_Type" Visibility="{Binding IsSerializedType, Converter={StaticResource BooleanToVisibilityConverter}}" />
+		<Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=serTypeTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Resource_Type}" Visibility="{Binding IsSerializedType, Converter={StaticResource BooleanToVisibilityConverter}}" />
 		<TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="serTypeTextBox" Text="{Binding UserTypeVM.TypeFullName, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsSerializedType, Converter={StaticResource BooleanToVisibilityConverter}}" />
 		<Button Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding UserTypeVM.PickTypeCommand}" Visibility="{Binding IsSerializedType, Converter={StaticResource BooleanToVisibilityConverter}}" />
-		<Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=valueTextBox}" Content="_Value" Visibility="{Binding IsSingleLineValue, Converter={StaticResource BooleanToVisibilityConverter}}" />
+		<Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=valueTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Resource_Value}" Visibility="{Binding IsSingleLineValue, Converter={StaticResource BooleanToVisibilityConverter}}" />
 		<TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 5 0 0" Name="valueTextBox" Text="{Binding ValueVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsSingleLineValue, Converter={StaticResource BooleanToVisibilityConverter}}" />
-		<Label Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=rawBytesTextBox}" Content="_Value" Visibility="{Binding IsRawBytes, Converter={StaticResource BooleanToVisibilityConverter}}" />
+		<Label Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=rawBytesTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Resource_Value}" Visibility="{Binding IsRawBytes, Converter={StaticResource BooleanToVisibilityConverter}}" />
 		<TextBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Name="rawBytesTextBox" Text="{Binding DataString, Mode=OneWay}" IsReadOnly="True" Background="Transparent" Visibility="{Binding IsRawBytes, Converter={StaticResource BooleanToVisibilityConverter}}" />
 		<Button Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickRawBytesCommand}" Visibility="{Binding IsRawBytes, Converter={StaticResource BooleanToVisibilityConverter}}" />
-		<Label Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=multiLineTextBox}" Content="_Value" Visibility="{Binding IsMultiLineValue, Converter={StaticResource BooleanToVisibilityConverter}}" />
+		<Label Grid.Row="5" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=multiLineTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Resource_Value}" Visibility="{Binding IsMultiLineValue, Converter={StaticResource BooleanToVisibilityConverter}}" />
 		<TextBox Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 5 0 0" Name="multiLineTextBox" Text="{Binding String}" Visibility="{Binding IsMultiLineValue, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" TextWrapping="Wrap" />
 	</Grid>
 </UserControl>

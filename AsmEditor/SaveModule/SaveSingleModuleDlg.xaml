@@ -24,8 +24,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.AsmEditor.SaveModule"
              xmlns:mvvmvc="clr-namespace:dnSpy.AsmEditor.DnlibDialogs.Converters"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              Height="200" Width="400"
-             Title="Save Module"
+             Title="{x:Static p:dnSpy_AsmEditor_Resources.SaveModule_Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="200" MinWidth="400">
 	<local:SaveModuleWindow.Resources>
@@ -54,7 +55,7 @@
 				<RowDefinition Height="*" />
 			</Grid.RowDefinitions>
 
-			<Label Grid.Row="0" Content="There are errors in the log:" />
+            <Label Grid.Row="0" Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_ErrorsInLog}" />
 
 			<TextBox Grid.Row="1"
 				 Background="{DynamicResource CommonControlsTextBoxErrorBackground}"
@@ -84,7 +85,7 @@
 					   VerticalAlignment="Center"
 					   HorizontalAlignment="Center"
 					   Foreground="Red"
-					   Text="Canceling the save. Please wait..."
+					   Text="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_CancelingSave}"
 					   />
 
 		<Grid Grid.Row="4" Margin="5 0 5 5">
@@ -97,14 +98,14 @@
 			</Grid.RowDefinitions>
 
 			<Button Grid.Column="1"
-					Content="_Cancel"
+					Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}"
 					IsCancel="False"
 					Command="{Binding CancelSaveCommand}"
 					Style="{StaticResource DialogButton}"
 					Visibility="{Binding IsSavingOrCanceling, Converter={StaticResource BooleanToVisibilityConverter}}"
 					/>
 			<Button Grid.Column="1"
-					Content="_Close"
+					Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_Close}"
 					IsCancel="True"
 					Style="{StaticResource DialogButton}"
 					Click="okButton_Click"

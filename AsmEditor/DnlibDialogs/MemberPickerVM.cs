@@ -26,6 +26,7 @@ using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
@@ -227,29 +228,16 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public bool SyntaxHighlight { get; set; }
 
 		public string Title {
-			get {
-				var text = filter.Description;
-				if (!string.IsNullOrEmpty(text)) {
-					if (StartsWithVowel(text))
-						return string.Format("Pick an {0}", text);
-					return string.Format("Pick a {0}", text);
-				}
-				return "Pick a Node";
-			}
+			get { return title; }
 		}
-
-		static bool StartsWithVowel(string text) {
-			if (string.IsNullOrEmpty(text))
-				return false;
-			var c = char.ToUpperInvariant(text[0]);
-			return c == 'A' || c == 'E' || c == 'I' || c == 'O' || c == 'U';
-		}
+		readonly string title;
 
 		bool CaseSensitive { get; set; }
 		bool MatchWholeWords { get; set; }
 		bool MatchAnySearchTerm { get; set; }
 
-		public MemberPickerVM(IFileSearcherCreator fileSearcherCreator, IFileTreeView fileTreeView, ILanguageManager languageManager, IFileTreeNodeFilter filter, IEnumerable<IDnSpyFile> assemblies) {
+		public MemberPickerVM(IFileSearcherCreator fileSearcherCreator, IFileTreeView fileTreeView, ILanguageManager languageManager, IFileTreeNodeFilter filter, string title, IEnumerable<IDnSpyFile> assemblies) {
+			this.title = title;
 			this.fileSearcherCreator = fileSearcherCreator;
 			this.languageManager = languageManager;
 			this.fileTreeView = fileTreeView;
@@ -372,7 +360,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		protected override string Verify(string columnName) {
 			if (columnName == "SelectedItem" || columnName == "SearchResult") {
 				if (SelectedItem == null && SearchResult == null)
-					return "A type must be selected.";
+					return dnSpy_AsmEditor_Resources.PickMember_TypeMustBeSelected;
 				if (SelectedDnlibObject == null)
 					return GetErrorMessage();
 				return string.Empty;
@@ -381,10 +369,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		string GetErrorMessage() {
-			string s = filter.Description;
-			return string.IsNullOrEmpty(s) ?
-				"You must select a correct node" :
-				string.Format("You must select: {0}", s);
+			return dnSpy_AsmEditor_Resources.PickMember_SelectCorrectNode;
 		}
 
 		public override bool HasError {

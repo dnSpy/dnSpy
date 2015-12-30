@@ -53,6 +53,11 @@
     <Compile Include="Baml\KnownThings.cs" />
     <Compile Include="Baml\KnownMembers.cs" />
     <None Include="Baml\KnownThings.gen.cs" />
+    <Compile Include="Properties\dnSpy.BamlDecompiler.Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dnSpy.BamlDecompiler.Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Handlers\Blocks\ConstructorParametersHandler.cs" />
     <Compile Include="Handlers\Blocks\PropertyArrayHandler.cs" />
     <Compile Include="Handlers\Blocks\KeyElementStartHandler.cs" />
@@ -122,19 +127,19 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dnlib\src\dnlib.csproj">
-      <Project>{FDFC1237-143F-4919-8318-4926901F4639}</Project>
+      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
     <ProjectReference Include="..\dnSpy.Contracts\dnSpy.Contracts.csproj">
-      <Project>{9B234472-0E22-428C-9345-C8D9EE5E06AF}</Project>
+      <Project>{9b234472-0e22-428c-9345-c8d9ee5e06af}</Project>
       <Name>dnSpy.Contracts</Name>
     </ProjectReference>
     <ProjectReference Include="..\dnSpy.Shared.UI\dnSpy.Shared.UI.csproj">
-      <Project>{7E7C2CF8-2057-4EAA-9DAD-AB3022CF4037}</Project>
+      <Project>{7e7c2cf8-2057-4eaa-9dad-ab3022cf4037}</Project>
       <Name>dnSpy.Shared.UI</Name>
     </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
-      <Project>{984CC812-9470-4A13-AFF9-CC44068D666C}</Project>
+      <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
     <ProjectReference Include="..\Languages\Languages.csproj">
@@ -142,11 +147,11 @@
       <Name>Languages</Name>
     </ProjectReference>
     <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
-      <Project>{53DCA265-3C3C-42F9-B647-F72BA678122B}</Project>
+      <Project>{53dca265-3c3c-42f9-b647-f72ba678122b}</Project>
       <Name>ICSharpCode.NRefactory.CSharp</Name>
     </ProjectReference>
     <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
-      <Project>{3B2A5653-EC97-4001-BB9B-D90F1AF2C371}</Project>
+      <Project>{3b2a5653-ec97-4001-bb9b-d90f1af2c371}</Project>
       <Name>ICSharpCode.NRefactory</Name>
     </ProjectReference>
   </ItemGroup>
@@ -158,6 +163,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\XamlFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\dnSpy.BamlDecompiler.Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.BamlDecompiler.Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

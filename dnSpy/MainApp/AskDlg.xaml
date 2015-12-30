@@ -25,6 +25,7 @@
         xmlns:local="clr-namespace:dnSpy.MainApp"
         xmlns:ctrls="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
         xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
+        xmlns:p="clr-namespace:dnSpy.Properties"
         mc:Ignorable="d"
         ResizeMode="NoResize"
         SizeToContent="Height"
@@ -52,8 +53,8 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Margin="5 0 0 0" Content="_OK" IsDefault="True" Style="{StaticResource DialogButton}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" Click="okButton_Click" />
-            <Button Grid.Column="2" Margin="5 0 0 0" Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" />
+            <Button Grid.Column="1" Margin="5 0 0 0" Content="{x:Static p:dnSpy_Resources.Button_OK}" IsDefault="True" Style="{StaticResource DialogButton}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" Click="okButton_Click" />
+            <Button Grid.Column="2" Margin="5 0 0 0" Content="{x:Static p:dnSpy_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" />
         </Grid>
     </Grid>
 </ctrls:WindowBase>

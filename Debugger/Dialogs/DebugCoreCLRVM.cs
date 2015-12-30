@@ -21,6 +21,7 @@ using System;
 using System.IO;
 using System.Windows.Input;
 using dndbg.Engine;
+using dnSpy.Debugger.Properties;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Dialogs {
@@ -207,8 +208,8 @@ namespace dnSpy.Debugger.Dialogs {
 		static string VerifyFilename(string filename) {
 			if (!File.Exists(filename)) {
 				if (string.IsNullOrWhiteSpace(filename))
-					return "Missing filename";
-				return "The file doesn't exist";
+					return dnSpy_Debugger_Resources.Error_MissingFilename;
+				return dnSpy_Debugger_Resources.Error_FileDoesNotExist;
 			}
 			return string.Empty;
 		}
@@ -216,7 +217,7 @@ namespace dnSpy.Debugger.Dialogs {
 		protected override string Verify(string columnName) {
 			if (columnName == "HostFilename") {
 				if (string.IsNullOrWhiteSpace(HostFilename))
-					return "The host eg. CoreRun.exe";
+					return dnSpy_Debugger_Resources.Error_HostEgCoreRunExe;
 				return VerifyFilename(HostFilename);
 			}
 			if (columnName == "Filename")

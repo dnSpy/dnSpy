@@ -65,7 +65,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Hide", Icon = "tableviewnameonly", Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 10)]
+	[ExportMenuItem(Header = "res:HideToolWindowCommand", Icon = "tableviewnameonly", Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 10)]
 	sealed class HideTWCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		HideTWCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -81,7 +81,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "H_ide All Tabs", Icon = "CloseDocuments", Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 20)]
+	[ExportMenuItem(Header = "res:HideAllToolWindowsCommand", Icon = "CloseDocuments", Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 20)]
 	sealed class CloseAllTabsTWCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		CloseAllTabsTWCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -104,7 +104,7 @@ namespace dnSpy.MainApp {
 		public const string GROUP_MOVE_GROUP = "0,174B60EE-279F-4DA4-9F07-44FFD03E4421";
 	}
 
-	[ExportMenuItem(Header = "_Move", Guid = Constants.MOVE_CONTENT_GUID, Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 30)]
+	[ExportMenuItem(Header = "res:MoveToolWindowCommand", Guid = Constants.MOVE_CONTENT_GUID, Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 30)]
 	sealed class MoveTWCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveTWCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -116,7 +116,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "Move _Group", Guid = Constants.MOVE_GROUP_GUID, Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 40)]
+	[ExportMenuItem(Header = "res:MoveToolWindowGroupCommand", Guid = Constants.MOVE_GROUP_GUID, Group = MenuConstants.GROUP_CTX_TOOLWINS_CLOSE, Order = 40)]
 	sealed class MoveGroupTWCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveGroupTWCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -132,7 +132,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "_Top", Icon = "toolstrippaneltop", Group = Constants.GROUP_MOVE_CONTENT, Order = 0)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveTopCommand", Icon = "toolstrippaneltop", Group = Constants.GROUP_MOVE_CONTENT, Order = 0)]
 	sealed class MoveTWTopCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveTWTopCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -148,7 +148,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "_Left", Icon = "toolstrippanelleft", Group = Constants.GROUP_MOVE_CONTENT, Order = 10)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveLeftCommand", Icon = "toolstrippanelleft", Group = Constants.GROUP_MOVE_CONTENT, Order = 10)]
 	sealed class MoveTWLeftCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveTWLeftCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -164,7 +164,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "_Right", Icon = "toolstrippanelright", Group = Constants.GROUP_MOVE_CONTENT, Order = 20)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveRightCommand", Icon = "toolstrippanelright", Group = Constants.GROUP_MOVE_CONTENT, Order = 20)]
 	sealed class MoveTWRightCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveTWRightCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -180,7 +180,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "_Bottom", Icon = "toolstrippanelbottom", Group = Constants.GROUP_MOVE_CONTENT, Order = 30)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_CONTENT_GUID, Header = "res:MoveBottomCommand", Icon = "toolstrippanelbottom", Group = Constants.GROUP_MOVE_CONTENT, Order = 30)]
 	sealed class MoveTWBottomCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveTWBottomCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -196,7 +196,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "_Top", Icon = "toolstrippaneltop", Group = Constants.GROUP_MOVE_GROUP, Order = 0)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveTopCommand", Icon = "toolstrippaneltop", Group = Constants.GROUP_MOVE_GROUP, Order = 0)]
 	sealed class MoveGroupTWTopCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveGroupTWTopCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -212,7 +212,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "_Left", Icon = "toolstrippanelleft", Group = Constants.GROUP_MOVE_GROUP, Order = 10)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveLeftCommand", Icon = "toolstrippanelleft", Group = Constants.GROUP_MOVE_GROUP, Order = 10)]
 	sealed class MoveGroupTWLeftCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveGroupTWLeftCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -228,7 +228,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "_Right", Icon = "toolstrippanelright", Group = Constants.GROUP_MOVE_GROUP, Order = 20)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveRightCommand", Icon = "toolstrippanelright", Group = Constants.GROUP_MOVE_GROUP, Order = 20)]
 	sealed class MoveGroupTWRightCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveGroupTWRightCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -244,7 +244,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "_Bottom", Icon = "toolstrippanelbottom", Group = Constants.GROUP_MOVE_GROUP, Order = 30)]
+	[ExportMenuItem(OwnerGuid = Constants.MOVE_GROUP_GUID, Header = "res:MoveBottomCommand", Icon = "toolstrippanelbottom", Group = Constants.GROUP_MOVE_GROUP, Order = 30)]
 	sealed class MoveGroupTWBottomCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveGroupTWBottomCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -260,7 +260,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "New Hori_zontal Tab Group", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 0)]
+	[ExportMenuItem(Header = "res:NewHorizontalTabGroupCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 0)]
 	sealed class NewHorizontalTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		NewHorizontalTabGroupCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -276,7 +276,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "New _Vertical Tab Group", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 10)]
+	[ExportMenuItem(Header = "res:NewVerticalTabGroupCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 10)]
 	sealed class NewVerticalTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		NewVerticalTabGroupCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -292,7 +292,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "Move to Ne_xt Tab Group", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 20)]
+	[ExportMenuItem(Header = "res:MoveToNextTabGroupCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 20)]
 	sealed class MoveToNextTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveToNextTabGroupCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -308,7 +308,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "Move All to Next Tab Group", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 30)]
+	[ExportMenuItem(Header = "res:MoveAllTabsToNextTabGroupCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 30)]
 	sealed class MoveAllToNextTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveAllToNextTabGroupCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -324,7 +324,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "Move to P_revious Tab Group", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 40)]
+	[ExportMenuItem(Header = "res:MoveToPreviousTabGroupCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 40)]
 	sealed class MoveToPreviousTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveToPreviousTabGroupCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -340,7 +340,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "Move All to Previous Tab Group", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 50)]
+	[ExportMenuItem(Header = "res:MoveAllToPreviousTabGroupCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPS, Order = 50)]
 	sealed class MoveAllToPreviousTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveAllToPreviousTabGroupCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -356,7 +356,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "Close Tab Group", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 0)]
+	[ExportMenuItem(Header = "res:CloseTabGroupCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 0)]
 	sealed class CloseTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		CloseTabGroupCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -372,7 +372,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "Close All Tab Groups But This", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 10)]
+	[ExportMenuItem(Header = "res:CloseAllTabGroupsButThisCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 10)]
 	sealed class CloseAllTabGroupsButThisCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		CloseAllTabGroupsButThisCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -388,7 +388,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "Move Tab Group After Next Tab Group", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 20)]
+	[ExportMenuItem(Header = "res:MoveTabGroupAfterNextTabGroupCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 20)]
 	sealed class MoveTabGroupAfterNextTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveTabGroupAfterNextTabGroupCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -404,7 +404,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "Move Tab Group Before Previous Tab Group", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 30)]
+	[ExportMenuItem(Header = "res:MoveTabGroupBeforePreviousTabGroupCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 30)]
 	sealed class MoveTabGroupBeforePreviousTabGroupCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MoveTabGroupBeforePreviousTabGroupCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -420,7 +420,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "Merge All Tab Groups", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 40)]
+	[ExportMenuItem(Header = "res:MergeAllTabGroupsCommand", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSCLOSE, Order = 40)]
 	sealed class MergeAllTabGroupsCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		MergeAllTabGroupsCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -436,7 +436,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "Use Vertical Tab Groups", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSVERT, Order = 0)]
+	[ExportMenuItem(Header = "res:UseVerticalTabGroupsCommand", Icon = "VerticalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSVERT, Order = 0)]
 	sealed class UseVerticalTabGroupsCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		UseVerticalTabGroupsCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)
@@ -452,7 +452,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(Header = "Use Horizontal Tab Groups", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSVERT, Order = 10)]
+	[ExportMenuItem(Header = "res:UseHorizontalTabGroupsCommand", Icon = "HorizontalTabGroup", Group = MenuConstants.GROUP_CTX_TOOLWINS_GROUPSVERT, Order = 10)]
 	sealed class UseHorizontalTabGroupsCtxMenuCommand : CtxMenuToolWindowGroupCommand {
 		[ImportingConstructor]
 		UseHorizontalTabGroupsCtxMenuCommand(IMainToolWindowManager mainToolWindowManager)

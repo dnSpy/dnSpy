@@ -25,6 +25,7 @@
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
              xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              Height="400" Width="500"
              Title="{Binding Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
@@ -55,10 +56,10 @@
 				<ColumnDefinition Width="Auto" />
 			</Grid.ColumnDefinitions>
 			<Label Grid.Column="0" Content="{Binding NumberOfTypesLeftString}" Visibility="{Binding IsFiniteCount, Converter={StaticResource BooleanToVisibilityConverter}}" />
-			<Button Grid.Column="1" Content="_Add" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Command="{Binding AddCommand}" />
-			<Button Grid.Column="2" Content="_Delete" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Command="{Binding TypeSigCollection.RemoveSelectedCommand}" />
-			<Button Grid.Column="3" Content="_OK" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
-			<Button Grid.Column="4" Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" />
+			<Button Grid.Column="1" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Add}" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Command="{Binding AddCommand}" />
+			<Button Grid.Column="2" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Delete}" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Command="{Binding TypeSigCollection.RemoveSelectedCommand}" />
+			<Button Grid.Column="3" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+			<Button Grid.Column="4" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" />
 		</Grid>
 	</Grid>
 </winlocal:WindowBase>

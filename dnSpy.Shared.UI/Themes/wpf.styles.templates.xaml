@@ -4,6 +4,7 @@
                     xmlns:avalonedit="clr-namespace:ICSharpCode.AvalonEdit;assembly=ICSharpCode.AvalonEdit"
                     xmlns:avalonediting="clr-namespace:ICSharpCode.AvalonEdit.Editing;assembly=ICSharpCode.AvalonEdit"
                     xmlns:ctrls="clr-namespace:dnSpy.Shared.UI.Controls"
+                    xmlns:p="clr-namespace:dnSpy.Shared.UI.Properties"
                     xmlns:hex="clr-namespace:dnSpy.Shared.UI.Hex"
                     xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
@@ -323,28 +324,28 @@
                                     Value="{Binding PressedForeground, RelativeSource={RelativeSource Self}}"/>
 						</Trigger>
 						<Trigger Property="CurrentWinSysType" Value="Minimize">
-							<Setter Property="ToolTip" Value="Minimize" />
+							<Setter Property="ToolTip" Value="{x:Static p:dnSpy_Shared_UI_Resources.Window_Minimize}" />
 							<Setter TargetName="path" Property="Width" Value="9" />
 							<Setter TargetName="path" Property="Height" Value="9" />
 							<Setter TargetName="path" Property="Stretch" Value="None" />
 							<Setter TargetName="path" Property="Data" Value="F1M0,6L0,9 9,9 9,6 0,6z" />
 						</Trigger>
 						<Trigger Property="CurrentWinSysType" Value="Maximize">
-							<Setter Property="ToolTip" Value="Maximize" />
+							<Setter Property="ToolTip" Value="{x:Static p:dnSpy_Shared_UI_Resources.Window_Maximize}" />
 							<Setter TargetName="path" Property="Width" Value="9" />
 							<Setter TargetName="path" Property="Height" Value="9" />
 							<Setter TargetName="path" Property="Stretch" Value="Uniform" />
 							<Setter TargetName="path" Property="Data" Value="F1M0,0L0,9 9,9 9,0 0,0 0,3 8,3 8,8 1,8 1,3z" />
 						</Trigger>
 						<Trigger Property="CurrentWinSysType" Value="Restore">
-							<Setter Property="ToolTip" Value="Restore Down" />
+							<Setter Property="ToolTip" Value="{x:Static p:dnSpy_Shared_UI_Resources.Window_Restore}" />
 							<Setter TargetName="path" Property="Width" Value="10" />
 							<Setter TargetName="path" Property="Height" Value="10" />
 							<Setter TargetName="path" Property="Stretch" Value="Uniform" />
 							<Setter TargetName="path" Property="Data" Value="F1M0,10L0,3 3,3 3,0 10,0 10,2 4,2 4,3 7,3 7,6 6,6 6,5 1,5 1,10z M1,10L7,10 7,7 10,7 10,2 9,2 9,6 6,6 6,9 1,9z" />
 						</Trigger>
 						<Trigger Property="CurrentWinSysType" Value="Close">
-							<Setter Property="ToolTip" Value="Close" />
+							<Setter Property="ToolTip" Value="{x:Static p:dnSpy_Shared_UI_Resources.Window_Close}" />
 							<Setter TargetName="path" Property="Width" Value="10" />
 							<Setter TargetName="path" Property="Height" Value="8" />
 							<Setter TargetName="path" Property="Stretch" Value="Uniform" />
@@ -574,7 +575,7 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <GroupBox Grid.Row="0" Header="Font">
+            <GroupBox Grid.Row="0" Header="{x:Static p:dnSpy_Shared_UI_Resources.Font}">
                 <Grid>
                     <Grid.Resources>
                         <mvvmvc:FontSizeConverter x:Key="fontSizeConverter" />
@@ -621,7 +622,7 @@
                 </Grid>
             </GroupBox>
 
-            <GroupBox Grid.Row="1" Header="Other Options">
+            <GroupBox Grid.Row="1" Header="{x:Static p:dnSpy_Shared_UI_Resources.HexEditorSettings_OtherOptions}">
                 <Grid Margin="3">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -636,17 +637,17 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=bytesPerLineTextBox}" Content="B_ytes per Line" />
+                    <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=bytesPerLineTextBox}" Content="{x:Static p:dnSpy_Shared_UI_Resources.LocalHexSettings_BytesPerLine}" />
                     <TextBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Name="bytesPerLineTextBox" Text="{Binding BytesPerLineVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-                    <Label Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=bytesGroupCountTextBox}" Content="Byte _Group Size" />
+                    <Label Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=bytesGroupCountTextBox}" Content="{x:Static p:dnSpy_Shared_UI_Resources.LocalHexSettings_ByteGroupSize}" />
                     <TextBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" Name="bytesGroupCountTextBox" Text="{Binding BytesGroupCountVM.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="E_ncoding" Target="{Binding ElementName=encodingComboBox}" />
+                    <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Shared_UI_Resources.LocalHexSettings_Encoding}" Target="{Binding ElementName=encodingComboBox}" />
                     <ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="encodingComboBox" DisplayMemberPath="Name" ItemsSource="{Binding AsciiEncodingVM.Items}" SelectedIndex="{Binding AsciiEncodingVM.SelectedIndex}" VerticalContentAlignment="Center" />
 
-                    <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.UseHexPrefix}" Content="_Use Hex Prefix (offset)" />
-                    <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding Settings.ShowAscii}" Content="Sho_w ASCII" />
-                    <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.LowerCaseHex}" Content="_Lower Case Hex" />
+                    <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.UseHexPrefix}" Content="{x:Static p:dnSpy_Shared_UI_Resources.LocalHexSettings_UseHexPrefix}" />
+                    <CheckBox Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding Settings.ShowAscii}" Content="{x:Static p:dnSpy_Shared_UI_Resources.LocalHexSettings_ShowASCII}" />
+                    <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.LowerCaseHex}" Content="{x:Static p:dnSpy_Shared_UI_Resources.LocalHexSettings_LowerCaseHex}" />
                 </Grid>
             </GroupBox>
         </Grid>

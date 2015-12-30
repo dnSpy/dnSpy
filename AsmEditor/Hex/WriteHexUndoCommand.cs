@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Shared.UI.HexEditor;
 
@@ -58,7 +59,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		public string Description {
-			get { return descr ?? string.Format("Write {0} bytes to offset {1:X8}", newData.Length, offset); }
+			get { return descr ?? string.Format(dnSpy_AsmEditor_Resources.Hex_Undo_Message_Write_Bytes, newData.Length, offset); }
 		}
 
 		public IEnumerable<object> ModifiedObjects {

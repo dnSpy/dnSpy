@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Threading;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.Shared.UI.TreeView {
@@ -127,6 +128,7 @@ namespace dnSpy.Shared.UI.TreeView {
 		void ThreadMethodImpl() {
 			Debug.Assert(isRunning);
 			Debug.Assert(!completedSuccessfully);
+			AppCulture.InitializeCulture();
 			try {
 				ThreadMethod();
 				completedSuccessfully = true;

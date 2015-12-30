@@ -32,6 +32,7 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.UI.Properties;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Shared.UI.Files.TreeView.Resources {
@@ -145,7 +146,7 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 				extra = string.Format("{0}, {1}, {2}", file.Name, file.ContainsNoMetaData ? "ContainsNoMetaData" : "ContainsMetaData", NumberVMUtils.ByteArrayToString(file.HashValue));
 				break;
 			case ResourceType.Embedded:
-				extra = string.Format("{0} bytes", ((EmbeddedResource)resource).Data.Length);
+				extra = string.Format(dnSpy_Shared_UI_Resources.NumberOfBytes, ((EmbeddedResource)resource).Data.Length);
 				break;
 			}
 			output.Write(string.Format(" ({0}{1}, {2})", extra == null ? string.Empty : string.Format("{0}, ", extra), resource.ResourceType, resource.Attributes), TextTokenType.Comment);

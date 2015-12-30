@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
@@ -42,9 +43,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class DeleteNamespaceCommand : IUndoCommand {
-		const string CMD_NAME_SINGULAR = "Delete Namespace";
-		const string CMD_NAME_PLURAL_FORMAT = "Delete {0} Namespaces";
-		[ExportMenuItem(Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 70)]
+		[ExportMenuItem(Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 70)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -66,7 +65,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			}
 		}
 
-		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 70)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 70)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -91,8 +90,8 @@ namespace dnSpy.AsmEditor.Namespace {
 
 		static string GetCommandName(int count) {
 			return count == 1 ?
-				CMD_NAME_SINGULAR :
-				string.Format(CMD_NAME_PLURAL_FORMAT, count);
+				dnSpy_AsmEditor_Resources.DeleteNamespaceCommand :
+				string.Format(dnSpy_AsmEditor_Resources.DeleteNamespacesCommand, count);
 		}
 
 		static bool CanExecute(IFileTreeNodeData[] nodes) {
@@ -215,8 +214,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class MoveNamespaceTypesToEmptypNamespaceCommand : IUndoCommand {
-		const string CMD_NAME = "Move Types to Empty Namespace";
-		[ExportMenuItem(Header = CMD_NAME, Icon = "Namespace", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 0)]
+		[ExportMenuItem(Header = "res:MoveTypesToEmptyNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 0)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -234,7 +232,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Namespace", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 0)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:MoveTypesToEmptyNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 0)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -292,7 +290,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 
 		public string Description {
-			get { return CMD_NAME; }
+			get { return dnSpy_AsmEditor_Resources.MoveTypesToEmptyNamespaceCommand; }
 		}
 
 		readonly INamespaceNode nsTarget;
@@ -378,8 +376,7 @@ namespace dnSpy.AsmEditor.Namespace {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class RenameNamespaceCommand : IUndoCommand {
-		const string CMD_NAME = "Rename Namespace";
-		[ExportMenuItem(Header = CMD_NAME, Icon = "Namespace", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 10)]
+		[ExportMenuItem(Header = "res:RenameNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_CTX_FILES_ASMED_MISC, Order = 10)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -399,7 +396,7 @@ namespace dnSpy.AsmEditor.Namespace {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Namespace", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 10)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RenameNamespaceCommand", Icon = "Namespace", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_MISC, Order = 10)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -494,7 +491,7 @@ namespace dnSpy.AsmEditor.Namespace {
 		}
 
 		public string Description {
-			get { return CMD_NAME; }
+			get { return dnSpy_AsmEditor_Resources.RenameNamespaceCommand; }
 		}
 
 		public void Execute() {

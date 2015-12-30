@@ -21,6 +21,7 @@ using System;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Shared.UI.MVVM;
 
@@ -195,7 +196,7 @@ namespace dnSpy.AsmEditor.Resources {
 		byte[] data;
 
 		public string DataString {
-			get { return string.Format("{0} bytes", Data == null ? 0 : Data.Length); }
+			get { return string.Format(dnSpy_AsmEditor_Resources.XBytes, Data == null ? 0 : Data.Length); }
 		}
 
 		public UserTypeVM UserTypeVM {

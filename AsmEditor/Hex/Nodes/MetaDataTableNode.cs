@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet.MD;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
@@ -119,7 +120,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public void WriteHeader(ITextOutput output) {
 			var cols = tablesStreamVM.TableInfo.Columns;
 
-			output.Write("RID\tToken\tOffset", TextTokenType.Comment);
+			output.Write(string.Format("{0}\t{1}\t{2}", dnSpy_AsmEditor_Resources.RowIdentifier, dnSpy_AsmEditor_Resources.Token, dnSpy_AsmEditor_Resources.Offset), TextTokenType.Comment);
 			for (int i = 0; i < cols.Count; i++) {
 				output.Write("\t", TextTokenType.Comment);
 				output.Write(tablesStreamVM.GetColumnName(i), TextTokenType.Comment);

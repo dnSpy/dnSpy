@@ -23,6 +23,7 @@ using System.Linq;
 using System.Text;
 using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
+using dnSpy.Debugger.Properties;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.Decompiler;
@@ -50,7 +51,7 @@ namespace dnSpy.Debugger {
 
 		public static T Write<T>(this T output, CorAppDomain appDomain, DnDebugger dbg) where T : ISyntaxHighlightOutput {
 			if (appDomain == null)
-				output.Write("<not available>", TextTokenType.Error);
+				output.Write(dnSpy_Debugger_Resources.AppDomainNotAvailable, TextTokenType.Error);
 			else {
 				output.Write("[", TextTokenType.Operator);
 				output.Write(string.Format("{0}", appDomain.Id), TextTokenType.Number);
@@ -100,9 +101,9 @@ namespace dnSpy.Debugger {
 
 		public static T WriteYesNo<T>(this T output, bool value) where T : ISyntaxHighlightOutput {
 			if (value)
-				output.Write("Yes", TextTokenType.Keyword);
+				output.Write(dnSpy_Debugger_Resources.YesNo_Yes, TextTokenType.Keyword);
 			else
-				output.Write("No", TextTokenType.InstanceMethod);
+				output.Write(dnSpy_Debugger_Resources.YesNo_No, TextTokenType.InstanceMethod);
 			return output;
 		}
 	}

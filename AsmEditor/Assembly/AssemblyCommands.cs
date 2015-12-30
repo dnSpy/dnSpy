@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.SaveModule;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
@@ -48,7 +49,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 	}
 
-	[ExportMenuItem(Header = "Disable Memory Mapped I/O", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 50)]
+	[ExportMenuItem(Header = "res:DisableMMapIOCommand", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 50)]
 	sealed class DisableMemoryMappedIOCommand : MenuItemBase {
 		public override bool IsVisible(IMenuItemContext context) {
 			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_FILES_TREEVIEW_GUID) &&
@@ -88,8 +89,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class RemoveAssemblyCommand : IGCUndoCommand {
-		const string CMD_NAME = "Remove Assembly";
-		[ExportMenuItem(Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 0)]
+		[ExportMenuItem(Header = "res:RemoveAssemblyCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_CTX_FILES_ASMED_DELETE, Order = 0)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IDocumentSaver> documentSaver;
@@ -115,7 +115,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			}
 		}
 
-		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME, Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 0)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RemoveAssemblyCommand", Icon = "Delete", InputGestureText = "res:DeleteCommandKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_DELETE, Order = 0)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly Lazy<IDocumentSaver> documentSaver;
@@ -144,8 +144,8 @@ namespace dnSpy.AsmEditor.Assembly {
 
 		static string GetHeader(ITreeNodeData[] nodes) {
 			if (nodes.Length == 1)
-				return string.Format("Remove {0}", UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
-			return string.Format("Remove {0} assemblies", nodes.Length);
+				return string.Format(dnSpy_AsmEditor_Resources.RemoveCommand, UIUtils.EscapeMenuItemHeader(nodes[0].ToString()));
+			return string.Format(dnSpy_AsmEditor_Resources.RemoveAssembliesCommand, nodes.Length);
 		}
 
 		static bool CanExecute(IFileTreeNodeData[] nodes) {
@@ -242,7 +242,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		public string Description {
-			get { return CMD_NAME; }
+			get { return dnSpy_AsmEditor_Resources.RemoveAssemblyCommand; }
 		}
 
 		public void Execute() {
@@ -269,8 +269,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class AssemblySettingsCommand : IUndoCommand {
-		const string CMD_NAME = "Edit Assembly";
-		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 0)]
+		[ExportMenuItem(Header = "res:EditAssemblyCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_CTX_FILES_ASMED_SETTINGS, Order = 0)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -290,7 +289,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			}
 		}
 
-		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "Settings", InputGestureText = "Alt+Enter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 0)]
+		[Export, ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:EditAssemblyCommand", Icon = "Settings", InputGestureText = "res:ShortcutKeyAltEnter", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_SETTINGS, Order = 0)]
 		internal sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -361,7 +360,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		public string Description {
-			get { return CMD_NAME; }
+			get { return dnSpy_AsmEditor_Resources.EditAssemblyCommand2; }
 		}
 
 		public void Execute() {
@@ -397,8 +396,7 @@ namespace dnSpy.AsmEditor.Assembly {
 
 	[DebuggerDisplay("{Description}")]
 	sealed class CreateAssemblyCommand : IUndoCommand {
-		const string CMD_NAME = "Create Assembly";
-		[ExportMenuItem(Header = CMD_NAME + "...", Icon = "NewAssembly", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 0)]
+		[ExportMenuItem(Header = "res:CreateAssemblyCommand", Icon = "NewAssembly", Group = MenuConstants.GROUP_CTX_FILES_ASMED_NEW, Order = 0)]
 		sealed class FilesCommand : FilesContextMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -418,7 +416,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = CMD_NAME + "...", Icon = "NewAssembly", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 0)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CreateAssemblyCommand", Icon = "NewAssembly", Group = MenuConstants.GROUP_APP_MENU_EDIT_ASMED_NEW, Order = 0)]
 		sealed class EditMenuCommand : EditMenuHandler {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 			readonly IAppWindow appWindow;
@@ -453,7 +451,7 @@ namespace dnSpy.AsmEditor.Assembly {
 			var data = new AssemblyOptionsVM(AssemblyOptions.Create("MyAssembly"), newModule, appWindow.LanguageManager);
 			data.CanShowClrVersion = true;
 			var win = new AssemblyOptionsDlg();
-			win.Title = CMD_NAME;
+			win.Title = dnSpy_AsmEditor_Resources.CreateAssemblyCommand2;
 			win.DataContext = data;
 			win.Owner = appWindow.MainWindow;
 			if (win.ShowDialog() != true)
@@ -476,7 +474,7 @@ namespace dnSpy.AsmEditor.Assembly {
 		}
 
 		public string Description {
-			get { return CMD_NAME; }
+			get { return dnSpy_AsmEditor_Resources.CreateAssemblyCommand2; }
 		}
 
 		public void Execute() {

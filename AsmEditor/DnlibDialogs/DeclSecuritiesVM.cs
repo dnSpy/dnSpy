@@ -18,12 +18,13 @@
 */
 
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class DeclSecuritiesVM : ListVM<DeclSecurityVM, DeclSecurity> {
 		public DeclSecuritiesVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Security Declaration", "Create Security Declaration", ownerModule, languageManager, ownerType, ownerMethod) {
+			: base(dnSpy_AsmEditor_Resources.EditSecurityDeclaration, dnSpy_AsmEditor_Resources.CreateSecurityDeclaration, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
 		protected override DeclSecurityVM Create(DeclSecurity model) {

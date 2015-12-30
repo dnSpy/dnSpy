@@ -24,12 +24,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Search;
 using dnSpy.Images;
 using dnSpy.NRefactory;
+using dnSpy.Properties;
 
 namespace dnSpy.Search {
 	[Serializable]
@@ -108,9 +110,10 @@ namespace dnSpy.Search {
 		public ISearchResult SearchingResult { get; set; }
 
 		void SearchNewThread(object o) {
+			AppCulture.InitializeCulture();
 			var files = (IDnSpyFileNode[])o;
 			try {
-				var searchMsg = SearchResult.CreateMessage(filterSearcherOptions.Context, "Searching...", TextTokenType.Text, true);
+				var searchMsg = SearchResult.CreateMessage(filterSearcherOptions.Context, dnSpy_Resources.Searching, TextTokenType.Text, true);
 				SearchingResult = searchMsg;
 				AddSearchResultNoCheck(searchMsg);
 				var searcher = new FilterSearcher(filterSearcherOptions);
@@ -133,7 +136,7 @@ namespace dnSpy.Search {
 		void AddSearchResult(SearchResult result) {
 			cancellationTokenSource.Token.ThrowIfCancellationRequested();
 			if (totalResultsFound >= options.MaxResults) {
-				AddSearchResultNoCheck(SearchResult.CreateMessage(filterSearcherOptions.Context, string.Format("Search aborted, more than {0:n0} results found.", options.MaxResults), TextTokenType.Error, false));
+				AddSearchResultNoCheck(SearchResult.CreateMessage(filterSearcherOptions.Context, string.Format(dnSpy_Resources.SearchAbortedMessage, options.MaxResults), TextTokenType.Error, false));
 				throw new TooManyResultsException();
 			}
 			totalResultsFound++;

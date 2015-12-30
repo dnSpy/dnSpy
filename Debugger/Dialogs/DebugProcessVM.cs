@@ -21,6 +21,7 @@ using System;
 using System.IO;
 using System.Windows.Input;
 using dndbg.Engine;
+using dnSpy.Debugger.Properties;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Dialogs {
@@ -44,16 +45,16 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 
 		public static readonly EnumVM[] breakProcessTypeList = new EnumVM[(int)BreakProcessType.Last] {
-			new EnumVM(BreakProcessType.None, "Don't Break"),
-			new EnumVM(BreakProcessType.CreateProcess, "CreateProcess Event"),
-			new EnumVM(BreakProcessType.CreateAppDomain, "First CreateAppDomain Event"),
-			new EnumVM(BreakProcessType.LoadModule, "First LoadModule Event"),
-			new EnumVM(BreakProcessType.LoadClass, "First LoadClass Event"),
-			new EnumVM(BreakProcessType.CreateThread, "First CreateThread Event"),
-			new EnumVM(BreakProcessType.ExeLoadModule, "Exe's LoadModule Event"),
-			new EnumVM(BreakProcessType.ExeLoadClass, "Exe's First LoadClass Event"),
-			new EnumVM(BreakProcessType.ModuleCctorOrEntryPoint, "Module .cctor or Entry Point"),
-			new EnumVM(BreakProcessType.EntryPoint, "Entry Point"),
+			new EnumVM(BreakProcessType.None, dnSpy_Debugger_Resources.DbgBreak_Dont),
+			new EnumVM(BreakProcessType.CreateProcess, dnSpy_Debugger_Resources.DbgBreak_CreateProcessEvent),
+			new EnumVM(BreakProcessType.CreateAppDomain, dnSpy_Debugger_Resources.DbgBreak_FirstCreateAppDomainEvent),
+			new EnumVM(BreakProcessType.LoadModule, dnSpy_Debugger_Resources.DbgBreak_FirstLoadModuleEvent),
+			new EnumVM(BreakProcessType.LoadClass, dnSpy_Debugger_Resources.DbgBreak_FirstLoadClassEvent),
+			new EnumVM(BreakProcessType.CreateThread, dnSpy_Debugger_Resources.DbgBreak_FirstCreateThreadEvent),
+			new EnumVM(BreakProcessType.ExeLoadModule, dnSpy_Debugger_Resources.DbgBreak_ExeLoadModuleEvent),
+			new EnumVM(BreakProcessType.ExeLoadClass, dnSpy_Debugger_Resources.DbgBreak_ExeFirstLoadClassEvent),
+			new EnumVM(BreakProcessType.ModuleCctorOrEntryPoint, dnSpy_Debugger_Resources.DbgBreak_ModuleClassConstructorOrEntryPoint),
+			new EnumVM(BreakProcessType.EntryPoint, dnSpy_Debugger_Resources.DbgBreak_EntryPoint),
 		};
 		public EnumListVM BreakProcessTypeVM {
 			get { return breakProcessTypeVM; }
@@ -152,8 +153,8 @@ namespace dnSpy.Debugger.Dialogs {
 			if (columnName == "Filename") {
 				if (!File.Exists(filename)) {
 					if (string.IsNullOrWhiteSpace(filename))
-						return "Missing filename";
-					return "The file doesn't exist";
+						return dnSpy_Debugger_Resources.Error_MissingFilename;
+					return dnSpy_Debugger_Resources.Error_FileDoesNotExist;
 				}
 				return string.Empty;
 			}

@@ -24,9 +24,10 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:winlocal="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
              xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              Width="400"
              SizeToContent="Height"
-             Title="Save Module"
+             Title="{x:Static p:dnSpy_AsmEditor_Resources.SaveModule_Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="100" MinWidth="200">
     <winlocal:WindowBase.Resources>
@@ -52,14 +53,14 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=filenameTextBox}" Content="_Filename" />
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=filenameTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModule_Filename}" />
             <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="filenameTextBox" Text="{Binding FileName, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickNetExecutableFileNameCommand}" />
         </Grid>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
-            <Button Content="_OK" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
-            <Button Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" />
+            <Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+            <Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" />
         </StackPanel>
     </Grid>
 </winlocal:WindowBase>

@@ -22,6 +22,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="350" d:DesignWidth="500">
 	<UserControl.Resources>
@@ -58,8 +59,8 @@
 					 Text="{Binding TypeSigLanguageFullName, Mode=OneWay}"/>
 
 			<StackPanel Grid.Row="2" Margin="0 5 0 0" Orientation="Horizontal">
-				<Button Grid.Column="0" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Content="Cl_ear" Command="{Binding ClearTypeSigCommand}" ToolTip="Clear type"/>
-				<Button Grid.Column="1" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Content="_Remove" Command="{Binding RemoveLastTypeSigCommand}" ToolTip="Remove last added type"/>
+                <Button Grid.Column="0" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Clear}" Command="{Binding ClearTypeSigCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Clear_ToolTip}"/>
+                <Button Grid.Column="1" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Remove}" Command="{Binding RemoveLastTypeSigCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Remove_ToolTip}"/>
 				<ComboBox Grid.Column="2" Margin="0 0 0 0" DisplayMemberPath="NameUI" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" Visibility="{Binding CanShowTypeFullName, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 			</StackPanel>
 
@@ -72,19 +73,19 @@
 					<ColumnDefinition />
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
-				<Button Grid.Column="0" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_Type" Command="{Binding AddTypeDefOrRefCommand}" ToolTip="Add a type"/>
-				<Button Grid.Column="1" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_Var" Command="{Binding AddGenericVarCommand}" ToolTip="Add a type generic variable"/>
-				<Button Grid.Column="2" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_MVar" Command="{Binding AddGenericMVarCommand}" ToolTip="Add a method generic variable"/>
+                <Button Grid.Column="0" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Type}" Command="{Binding AddTypeDefOrRefCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Type_ToolTip}"/>
+                <Button Grid.Column="1" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Var}" Command="{Binding AddGenericVarCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Var_ToolTip}"/>
+                <Button Grid.Column="2" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_MVar}" Command="{Binding AddGenericMVarCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_MVar_ToolTip}"/>
 				<Grid Grid.Column="3" Margin="0 0 5 0" IsEnabled="{Binding CanAddGeneric}">
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="Auto" />
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
-					<Label Grid.Column="0" Content="#" Target="{Binding ElementName=genVarNumberTextBox}" />
-					<TextBox Grid.Column="1" Name="genVarNumberTextBox" Text="{Binding GenericVariableNumber.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="Type/method generic variable number" />
+                    <Label Grid.Column="0" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_GenericsCount}" Target="{Binding ElementName=genVarNumberTextBox}" />
+                    <TextBox Grid.Column="1" Name="genVarNumberTextBox" Text="{Binding GenericVariableNumber.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_GenericsCount_ToolTip}" />
 				</Grid>
-				<Button Grid.Column="4" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_GenericInst" Command="{Binding AddGenericInstSigCommand}" ToolTip="Add a generic instance type"/>
-				<Button Grid.Column="5" Style="{StaticResource OtherDialogButton}" Margin="0 0 0 0" Content="_FnPtr" Command="{Binding AddFnPtrSigCommand}" ToolTip="Add a function pointer"/>
+                <Button Grid.Column="4" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_GenericInst}" Command="{Binding AddGenericInstSigCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_GenericInst_ToolTip}"/>
+                <Button Grid.Column="5" Style="{StaticResource OtherDialogButton}" Margin="0 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_FnPtr}" Command="{Binding AddFnPtrSigCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_FnPtr_ToolTip}"/>
 			</Grid>
 			<Grid Grid.Row="4" Margin="0 5 0 0" Visibility="{Binding AddingNonLeafTypeSig, Converter={StaticResource BooleanToVisibilityConverter}}">
 				<Grid.ColumnDefinitions>
@@ -95,14 +96,14 @@
 					<ColumnDefinition />
 					<ColumnDefinition />
 				</Grid.ColumnDefinitions>
-				<Button Grid.Column="0" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_Pointer" Command="{Binding AddPtrSigCommand}" ToolTip="Convert type to a pointer"/>
-				<Button Grid.Column="1" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="_ByRef" Command="{Binding AddByRefSigCommand}" ToolTip="Convert type to a by-reference"/>
-				<Button Grid.Column="2" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="S_Z Array" Command="{Binding AddSZArraySigCommand}" ToolTip="Convert type to a single-dimension, zero lower-bound array"/>
-				<Button Grid.Column="3" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="C_ModReqd" Command="{Binding AddCModReqdSigCommand}" ToolTip="Add a required C modifier"/>
-				<Button Grid.Column="4" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="CModOp_t" Command="{Binding AddCModOptSigCommand}" ToolTip="Add an optional C modifier"/>
-				<Button Grid.Column="5" Style="{StaticResource OtherDialogButton}" Margin="0 0 0 0" Content="Pi_nned" Command="{Binding AddPinnedSigCommand}" ToolTip="Turn it into a pinned variable"/>
+                <Button Grid.Column="0" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Pointer}" Command="{Binding AddPtrSigCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Pointer_ToolTip}"/>
+                <Button Grid.Column="1" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_ByRef}" Command="{Binding AddByRefSigCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_ByRef_ToolTip}"/>
+                <Button Grid.Column="2" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_SZArray}" Command="{Binding AddSZArraySigCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_SZArray_ToolTip}"/>
+                <Button Grid.Column="3" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_CModReqd}" Command="{Binding AddCModReqdSigCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_CModReqd_ToolTip}"/>
+                <Button Grid.Column="4" Style="{StaticResource OtherDialogButton}" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_CModOpt}" Command="{Binding AddCModOptSigCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_CModOpt_ToolTip}"/>
+                <Button Grid.Column="5" Style="{StaticResource OtherDialogButton}" Margin="0 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Pinned}" Command="{Binding AddPinnedSigCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Pinned_ToolTip}"/>
 			</Grid>
-			<GroupBox Grid.Row="5" Margin="0 5 0 0" Header="Multidimensional Array"
+            <GroupBox Grid.Row="5" Margin="0 5 0 0" Header="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_MultidimensionalArray}"
 					  Visibility="{Binding AddingNonLeafTypeSig, Converter={StaticResource BooleanToVisibilityConverter}}">
 				<Grid IsEnabled="{Binding IsEnabled}" >
 					<Grid.ColumnDefinitions>
@@ -115,8 +116,8 @@
 						<RowDefinition />
 						<RowDefinition />
 					</Grid.RowDefinitions>
-					<Button Grid.Row="0" Grid.Column="0" Margin="0 0 5 0" Style="{StaticResource DialogButton}" Name="arrayButton" Content="Arra_y" Command="{Binding AddArraySigCommand}" ToolTip="Convert type to a multidimensional array"/>
-					<Label Grid.Row="0" Grid.Column="1" Margin="0 5 5 0" Target="{Binding ElementName=rankTextBox}" Content="Ran_k" />
+                    <Button Grid.Row="0" Grid.Column="0" Margin="0 0 5 0" Style="{StaticResource DialogButton}" Name="arrayButton" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Array}" Command="{Binding AddArraySigCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Array_ToolTip}"/>
+                    <Label Grid.Row="0" Grid.Column="1" Margin="0 5 5 0" Target="{Binding ElementName=rankTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Array_Rank}" />
 					<TextBox Grid.Row="0" Grid.Column="2" Margin="0 5 0 0" Name="rankTextBox" Text="{Binding ArrayRank.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
 					<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3">
 						<Grid.ColumnDefinitions>
@@ -125,9 +126,9 @@
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
-						<Label Grid.Row="0" Grid.Column="0" Margin="0 5 5 0" Target="{Binding ElementName=arraySizesTextBox}" Content="S_izes" ToolTip="Comma separated list of array sizes (unsigned integers)" />
+                        <Label Grid.Row="0" Grid.Column="0" Margin="0 5 5 0" Target="{Binding ElementName=arraySizesTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Array_Sizes}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Array_Sizes_ToolTip}" />
 						<TextBox Grid.Row="0" Grid.Column="1" Margin="0 5 0 0" Name="arraySizesTextBox" Text="{Binding ArraySizes.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
-						<Label Grid.Row="1" Grid.Column="2" Margin="0 5 5 0" Target="{Binding ElementName=arrayLowerBoundsTextBox}" Content="Lo_wer Bounds" ToolTip="Comma separated list of array lower bounds (signed integers)" />
+                        <Label Grid.Row="1" Grid.Column="2" Margin="0 5 5 0" Target="{Binding ElementName=arrayLowerBoundsTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Array_LowerBounds}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Array_LowerBounds_ToolTip}" />
 						<TextBox Grid.Row="1" Grid.Column="3" Margin="0 5 0 0" Name="arrayLowerBoundsTextBox" Text="{Binding ArrayLowerBounds.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsEnabled}" />
 					</Grid>
 				</Grid>

@@ -71,6 +71,10 @@
     <Compile Include="Controls\WpfCommandManager.cs" />
     <Compile Include="Controls\WpfCommands.cs" />
     <Compile Include="Controls\WpfFocusManager.cs" />
+    <Compile Include="Culture\Commands.cs" />
+    <Compile Include="Culture\CultureManager.cs" />
+    <Compile Include="Culture\CultureSettings.cs" />
+    <Compile Include="Culture\LanguageInfo.cs" />
     <Compile Include="Decompiler\DecompilerAppSettingsModifiedListener.cs" />
     <Compile Include="Decompiler\DecompilerSettingsImpl.cs" />
     <Compile Include="Decompiler\DecompilerSettingsTab.cs" />
@@ -266,6 +270,11 @@
       <SubType>Code</SubType>
     </Compile>
     <AppDesigner Include="Properties\" />
+    <Compile Include="Properties\dnSpy.Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dnSpy.Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Search\Commands.cs" />
     <Compile Include="Search\FileSearcher.cs" />
     <Compile Include="Search\FileSearcherCreator.cs" />
@@ -328,6 +337,10 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Files\Tabs\TextEditor\IL.xshd" />
+    <EmbeddedResource Include="Properties\dnSpy.Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">

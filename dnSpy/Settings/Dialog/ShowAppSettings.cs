@@ -27,7 +27,7 @@ using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Shared.UI.Menus;
 
 namespace dnSpy.Settings.Dialog {
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "_Options...", Icon = "Settings", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTSDLG, Order = 1000000)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:OptionsCommand", Icon = "Settings", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTSDLG, Order = 1000000)]
 	sealed class ShowOptionsCommand : MenuItemBase {
 		readonly IAppWindow appWindow;
 		readonly Lazy<IAppSettingsTabCreator>[] tabCreators;

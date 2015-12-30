@@ -25,6 +25,7 @@ using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
@@ -67,7 +68,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public string FullName {
 			get {
 				if (IsRawData)
-					return "<raw blob>";
+					return dnSpy_AsmEditor_Resources.RawCustomAttributeBlob2;
 				var sb = new StringBuilder();
 				sb.Append(TypeFullName);
 				sb.Append('(');
@@ -200,7 +201,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickConstructor() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newCtor = dnlibTypePicker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.InstanceConstructor), Constructor, ownerModule);
+			var newCtor = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Constructor, new FlagsFileTreeNodeFilter(VisibleMembersFlags.InstanceConstructor), Constructor, ownerModule);
 			if (newCtor != null)
 				Constructor = newCtor;
 		}

@@ -22,6 +22,7 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Shared.UI.MVVM;
 
@@ -118,7 +119,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		public LocalVM(TypeSigCreatorOptions typeSigCreatorOptions, LocalOptions options) {
-			this.typeSigCreatorOptions = typeSigCreatorOptions.Clone("Create a Local Type");
+			this.typeSigCreatorOptions = typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateLocalType);
 			this.typeSigCreatorOptions.IsLocal = true;
 			this.typeSigCreatorOptions.NullTypeSigAllowed = false;
 			this.origOptions = options;

@@ -20,6 +20,7 @@
 using System;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
 
@@ -40,9 +41,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		internal static readonly EnumVM[] methodBodyTypeList = new EnumVM[] {
-			new EnumVM(MethodBodyType.None, "None"),
-			new EnumVM(MethodBodyType.Cil, "IL"),
-			new EnumVM(MethodBodyType.Native, "Native"),
+			new EnumVM(MethodBodyType.None, dnSpy_AsmEditor_Resources.MethodBodyType_None),
+			new EnumVM(MethodBodyType.Cil, dnSpy_AsmEditor_Resources.MethodBodyType_IL),
+			new EnumVM(MethodBodyType.Native, dnSpy_AsmEditor_Resources.MethodBodyType_Native),
 		};
 		public EnumListVM MethodBodyTypeVM {
 			get { return methodBodyTypeVM; }

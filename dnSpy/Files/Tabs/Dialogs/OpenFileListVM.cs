@@ -27,6 +27,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
+using dnSpy.Contracts.App;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Files.Tabs.Dialogs {
@@ -137,7 +139,10 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			}
 			Refilter();
 
-			Task.Factory.StartNew(() => new DefaultFileListFinder(cancellationTokenSource.Token).Find(), cancellationTokenSource.Token)
+			Task.Factory.StartNew(() => {
+				AppCulture.InitializeCulture();
+				return new DefaultFileListFinder(cancellationTokenSource.Token).Find();
+			}, cancellationTokenSource.Token)
 			.ContinueWith(t => {
 				var ex = t.Exception;
 				SearchingForDefaultLists = false;
@@ -197,7 +202,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		void CreateList() {
 			if (!CanCreateList)
 				return;
-			var name = askUser("_Name");
+			var name = askUser(dnSpy_Resources.OpenList_AskForName);
 			if (string.IsNullOrEmpty(name))
 				return;
 
@@ -237,10 +242,6 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			if (a == null)
 				return -1;
 			if (b == null)
-				return 1;
-			if (a.IsDefault)
-				return -1;
-			if (b.IsDefault)
 				return 1;
 			return StringComparer.OrdinalIgnoreCase.Compare(a.Name, b.Name);
 		}

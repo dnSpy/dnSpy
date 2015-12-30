@@ -23,6 +23,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
@@ -32,8 +33,32 @@ namespace dnSpy.AsmEditor.MethodBody {
 	sealed class LocalsListHelper : ListBoxHelperBase<LocalVM> {
 		readonly TypeSigCreator typeSigCreator;
 
+		protected override string AddNewBeforeSelectionMessage {
+			get { return dnSpy_AsmEditor_Resources.Local_Command1; }
+		}
+
+		protected override string AddNewAfterSelectionMessage {
+			get { return dnSpy_AsmEditor_Resources.Local_Command2; }
+		}
+
+		protected override string AppendNewMessage {
+			get { return dnSpy_AsmEditor_Resources.Local_Command3; }
+		}
+
+		protected override string RemoveSingularMessage {
+			get { return dnSpy_AsmEditor_Resources.Local_Command4; }
+		}
+
+		protected override string RemovePluralMessage {
+			get { return dnSpy_AsmEditor_Resources.Local_Command5; }
+		}
+
+		protected override string RemoveAllMessage {
+			get { return dnSpy_AsmEditor_Resources.Local_Command6; }
+		}
+
 		public LocalsListHelper(ListView listView, Window ownerWindow)
-			: base(listView, "Local") {
+			: base(listView) {
 			this.typeSigCreator = new TypeSigCreator(ownerWindow);
 		}
 
@@ -71,9 +96,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 				var local = locals[i];
 				output.Write(local.Index.ToString(), TextTokenType.Number);
 				output.Write("\t", TextTokenType.Text);
-				output.Write(local.IsPinned ? "P" : string.Empty, TextTokenType.Text);
+				output.Write(local.IsPinned ? dnSpy_AsmEditor_Resources.Local_Pinned_Character : string.Empty, TextTokenType.Text);
 				output.Write("\t", TextTokenType.Text);
-				output.Write(local.IsCompilerGenerated ? "C" : string.Empty, TextTokenType.Text);
+				output.Write(local.IsCompilerGenerated ? dnSpy_AsmEditor_Resources.Local_CompilerGenerated_Character : string.Empty, TextTokenType.Text);
 				output.Write("\t", TextTokenType.Text);
 				output.Write(local.Name ?? string.Empty, TextTokenType.Local);
 				output.Write("\t", TextTokenType.Text);

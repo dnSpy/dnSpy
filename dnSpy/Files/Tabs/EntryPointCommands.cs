@@ -36,7 +36,7 @@ namespace dnSpy.Files.Tabs {
 			return tab.Content.Nodes.FirstOrDefault().GetModule();
 		}
 
-		[ExportMenuItem(Header = "Go to _Entry Point", Icon = "EntryPoint", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 0)]
+		[ExportMenuItem(Header = "res:GoToEntryPointCommand", Icon = "EntryPoint", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 0)]
 		sealed class CodeCommand : MenuItemBase {
 			readonly IFileTabManager fileTabManager;
 
@@ -63,7 +63,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		[ExportMenuItem(Header = "Go to _Entry Point", Icon = "EntryPoint", Group = MenuConstants.GROUP_CTX_FILES_TOKENS, Order = 0)]
+		[ExportMenuItem(Header = "res:GoToEntryPointCommand", Icon = "EntryPoint", Group = MenuConstants.GROUP_CTX_FILES_TOKENS, Order = 0)]
 		sealed class FilesCommand : MenuItemBase {
 			readonly IFileTabManager fileTabManager;
 
@@ -94,7 +94,7 @@ namespace dnSpy.Files.Tabs {
 	}
 
 	static class GoToGlobalTypeCctorCommand {
-		[ExportMenuItem(Header = "Go to <Module> .ccto_r", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 10)]
+		[ExportMenuItem(Header = "res:GoToGlobalCctorCommand", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 10)]
 		sealed class CodeCommand : MenuItemBase {
 			readonly IFileTabManager fileTabManager;
 
@@ -124,7 +124,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		[ExportMenuItem(Header = "Go to <Module> .ccto_r", Group = MenuConstants.GROUP_CTX_FILES_TOKENS, Order = 10)]
+		[ExportMenuItem(Header = "res:GoToGlobalCctorCommand", Group = MenuConstants.GROUP_CTX_FILES_TOKENS, Order = 10)]
 		sealed class FilesCommand : MenuItemBase {
 			readonly IFileTabManager fileTabManager;
 

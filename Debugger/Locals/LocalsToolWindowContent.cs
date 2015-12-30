@@ -24,6 +24,7 @@ using System.Windows;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Locals {
 	[Export(typeof(IMainToolWindowContentCreator))]
@@ -64,7 +65,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public string Title {
-			get { return "Locals"; }
+			get { return dnSpy_Debugger_Resources.Window_Locals; }
 		}
 
 		public object ToolTip {

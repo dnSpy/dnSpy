@@ -24,6 +24,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Locals {
 	sealed partial class EditValueControl : UserControl {
@@ -144,7 +145,7 @@ namespace dnSpy.Debugger.Locals {
 						error = ev.SetValueAsText(newText);
 					}
 					catch (Exception ex) {
-						error = string.Format("Could not set value: {0}", ex.Message);
+						error = string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_CouldNotWriteNewValue, ex.Message);
 					}
 					if (!string.IsNullOrEmpty(error))
 						Shared.UI.App.MsgBox.Instance.Show(error);

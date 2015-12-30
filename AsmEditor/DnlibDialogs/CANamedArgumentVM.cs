@@ -21,6 +21,7 @@ using System;
 using System.Diagnostics;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Shared.UI.MVVM;
 using dnSpy.Shared.UI.Search;
@@ -70,8 +71,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		public string PickEnumToolTip {
 			get {
 				if (EnumType == null)
-					return "Pick an Enum Type";
-				return string.Format("Enum: {0}", EnumType.FullName);
+					return dnSpy_AsmEditor_Resources.Pick_EnumType;
+				return string.Format(dnSpy_AsmEditor_Resources.EnumType, EnumType.FullName);
 			}
 		}
 
@@ -113,6 +114,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			get { return namedArgTypeEnumListVM; }
 		}
 		readonly EnumListVM namedArgTypeEnumListVM;
+		static readonly EnumVM[] namedArgTypeEnumList = new EnumVM[] {
+			new EnumVM(NamedArgType.Field, dnSpy_AsmEditor_Resources.CustomAttribute_NamedArg_Field),
+			new EnumVM(NamedArgType.Property, dnSpy_AsmEditor_Resources.CustomAttribute_NamedArg_Property),
+		};
 
 		public CAArgumentVM CAArgumentVM {
 			get { return caArgumentVM; }
@@ -162,7 +167,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.ownerModule = ownerModule;
 			this.originalNamedArg = namedArg.Clone();
 			this.constantTypeEnumListVM = new EnumListVM(ConstantTypeVM.CreateEnumArray(validTypes), (a, b) => OnConstantTypeChanged());
-			this.namedArgTypeEnumListVM = new EnumListVM(EnumVM.Create(typeof(NamedArgType)), (a, b) => OnNamedArgTypeChanged());
+			this.namedArgTypeEnumListVM = new EnumListVM(namedArgTypeEnumList, (a, b) => OnNamedArgTypeChanged());
 			InitializeFrom(namedArg, options);
 			this.modified = false;
 		}
@@ -323,7 +328,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		void PickEnumType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var type = dnlibTypePicker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
+			var type = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_EnumType, new FlagsFileTreeNodeFilter(VisibleMembersFlags.EnumTypeDef), EnumType, ownerModule);
 			if (type != null)
 				EnumType = type;
 		}

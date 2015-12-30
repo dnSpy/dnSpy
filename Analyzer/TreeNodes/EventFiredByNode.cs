@@ -23,6 +23,7 @@ using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
 using dnSpy.NRefactory;
@@ -49,7 +50,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write("Raised By", TextTokenType.Text);
+			output.Write(dnSpy_Analyzer_Resources.RaisedByTreeNode, TextTokenType.Text);
 		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {

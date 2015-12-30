@@ -37,6 +37,7 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Files.Tabs.Dialogs;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Menus;
 using dnSpy.Shared.UI.ToolBars;
 using Microsoft.Win32;
@@ -54,7 +55,7 @@ namespace dnSpy.Files.Tabs {
 			appWindow.MainWindowCommands.Add(ApplicationCommands.Open, (s, e) => { Open(); e.Handled = true; }, (s, e) => e.CanExecute = true);
 		}
 
-		static readonly string DotNetAssemblyOrModuleFilter = ".NET Executables (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|All files (*.*)|*.*";
+		static readonly string DotNetAssemblyOrModuleFilter = string.Format("{0} (*.exe, *.dll, *.netmodule, *.winmd)|*.exe;*.dll;*.netmodule;*.winmd|{1} (*.*)|*.*", dnSpy_Resources.DotNetExes, dnSpy_Resources.AllFiles);
 
 		void Open() {
 			var openDlg = new OpenFileDialog {
@@ -81,21 +82,21 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "_Open...", InputGestureText = "Ctrl+O", Icon = "Open", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:OpenCommand", InputGestureText = "res:OpenKey", Icon = "Open", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 0)]
 	sealed class MenuFileOpenCommand : MenuItemCommand {
 		public MenuFileOpenCommand()
 			: base(ApplicationCommands.Open) {
 		}
 	}
 
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "Open", ToolTip = "Open (Ctrl+O)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 0)]
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "Open", ToolTip = "res:OpenToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_OPEN, Order = 0)]
 	sealed class ToolbarFileOpenCommand : ToolBarButtonCommand {
 		public ToolbarFileOpenCommand()
 			: base(ApplicationCommands.Open) {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "Open from _GAC...", Icon = "AssemblyListGAC", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:OpenGACCommand", Icon = "AssemblyListGAC", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 10)]
 	sealed class OpenFromGacCommand : MenuItemBase {
 		readonly IFileTreeView fileTreeView;
 		readonly IAppWindow appWindow;
@@ -118,7 +119,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "Open L_ist...", Icon = "AssemblyList", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 20)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:OpenListCommand", Icon = "AssemblyList", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 20)]
 	sealed class OpenListCommand : MenuItemBase {
 		readonly IAppWindow appWindow;
 		readonly IFileListLoader fileListLoader;
@@ -145,7 +146,7 @@ namespace dnSpy.Files.Tabs {
 
 			var win = new OpenFileListDlg();
 			const bool syntaxHighlight = true;
-			var vm = new OpenFileListVM(syntaxHighlight, fileListManager, labelMsg => messageBoxManager.Ask<string>(labelMsg, ownerWindow: win, verifier: s => string.IsNullOrEmpty(s) ? "Missing name" : string.Empty));
+			var vm = new OpenFileListVM(syntaxHighlight, fileListManager, labelMsg => messageBoxManager.Ask<string>(labelMsg, ownerWindow: win, verifier: s => string.IsNullOrEmpty(s) ? dnSpy_Resources.OpenList_MissingName : string.Empty));
 			win.DataContext = vm;
 			win.Owner = appWindow.MainWindow;
 			if (win.ShowDialog() != true)
@@ -170,7 +171,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "_Reload All Assemblies", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 30)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:ReloadAsmsCommand", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 30)]
 	sealed class ReloadCommand : MenuItemBase {
 		readonly IFileListLoader fileListLoader;
 
@@ -205,14 +206,14 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "_Code", InputGestureText = "Ctrl+Alt+0", Icon = "MarkUpTag", Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:ShowCodeCommand", InputGestureText = "res:ShowCodeKey", Icon = "MarkUpTag", Group = MenuConstants.GROUP_APP_MENU_VIEW_WINDOWS, Order = 0)]
 	sealed class ShowCodeEditorCommand : MenuItemCommand {
 		ShowCodeEditorCommand()
 			: base(ShowCodeEditorCommandLoader.ShowCodeEditorRoutedCommand) {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Open Containing Folder", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 20)]
+	[ExportMenuItem(Header = "res:OpenContainingFolderCommand", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 20)]
 	sealed class OpenContainingFolderCtxMenuCommand : MenuItemBase {
 		public override bool IsVisible(IMenuItemContext context) {
 			return GetFilename(context) != null;

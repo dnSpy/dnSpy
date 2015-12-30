@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
+using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
@@ -53,7 +54,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			if (hidesParent) {
 				output.Write("(", TextTokenType.Operator);
-				output.Write("hides", TextTokenType.Text);
+				output.Write(dnSpy_Analyzer_Resources.HidesParent, TextTokenType.Text);
 				output.Write(")", TextTokenType.Operator);
 				output.WriteSpace();
 			}
@@ -64,9 +65,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {
 			if (analyzedProperty.GetMethod != null)
-				yield return new PropertyAccessorNode(analyzedProperty.GetMethod, "get");
+				yield return new PropertyAccessorNode(analyzedProperty.GetMethod, dnSpy_Analyzer_Resources.PropertyGetterTreeNode);
 			if (analyzedProperty.SetMethod != null)
-				yield return new PropertyAccessorNode(analyzedProperty.SetMethod, "set");
+				yield return new PropertyAccessorNode(analyzedProperty.SetMethod, dnSpy_Analyzer_Resources.PropertySetterTreeNode);
 			foreach (var accessor in analyzedProperty.OtherMethods)
 				yield return new PropertyAccessorNode(accessor, null);
 

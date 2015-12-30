@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Shared.UI.MVVM;
 
@@ -42,7 +43,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		protected TypeVMBase(T value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
 			: base(onUpdated) {
 			if (options != null) {
-				this.options = options.Clone("Create a Type");
+				this.options = options.Clone(dnSpy_AsmEditor_Resources.CreateType);
 				this.options.NullTypeSigAllowed = true;
 			}
 			SetValueFromConstructor(value);
@@ -135,7 +136,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		protected TypeListDataFieldVMBase(IList<T> value, Action<DataFieldVM> onUpdated, TypeSigCreatorOptions options)
 			: base(onUpdated) {
 			if (options != null) {
-				this.options = options.Clone("Create a Type");
+				this.options = options.Clone(dnSpy_AsmEditor_Resources.CreateType);
 				this.options.NullTypeSigAllowed = true;
 			}
 			SetValueFromConstructor(value);

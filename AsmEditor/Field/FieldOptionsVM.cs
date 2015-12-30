@@ -22,6 +22,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
 
@@ -44,13 +45,13 @@ namespace dnSpy.AsmEditor.Field {
 		}
 
 		static readonly EnumVM[] fieldAccessList = new EnumVM[] {
-			new EnumVM(Field.FieldAccess.PrivateScope, "PrivateScope"),
-			new EnumVM(Field.FieldAccess.Private, "Private"),
-			new EnumVM(Field.FieldAccess.FamANDAssem, "Family and Assembly"),
-			new EnumVM(Field.FieldAccess.Assembly, "Assembly"),
-			new EnumVM(Field.FieldAccess.Family, "Family"),
-			new EnumVM(Field.FieldAccess.FamORAssem, "Family or Assembly"),
-			new EnumVM(Field.FieldAccess.Public, "Public"),
+			new EnumVM(Field.FieldAccess.PrivateScope, dnSpy_AsmEditor_Resources.FieldAccess_PrivateScope),
+			new EnumVM(Field.FieldAccess.Private, dnSpy_AsmEditor_Resources.FieldAccess_Private),
+			new EnumVM(Field.FieldAccess.FamANDAssem, dnSpy_AsmEditor_Resources.FieldAccess_FamilyAndAssembly),
+			new EnumVM(Field.FieldAccess.Assembly, dnSpy_AsmEditor_Resources.FieldAccess_Assembly),
+			new EnumVM(Field.FieldAccess.Family, dnSpy_AsmEditor_Resources.FieldAccess_Family),
+			new EnumVM(Field.FieldAccess.FamORAssem, dnSpy_AsmEditor_Resources.FieldAccess_FamilyOrAssembly),
+			new EnumVM(Field.FieldAccess.Public, dnSpy_AsmEditor_Resources.FieldAccess_Public),
 		};
 		public EnumListVM FieldAccess {
 			get { return fieldAccessVM; }
@@ -164,7 +165,7 @@ namespace dnSpy.AsmEditor.Field {
 		}
 
 		public string FieldTypeHeader {
-			get { return string.Format("Field Type: {0}", typeSigCreator.TypeSigDnlibFullName); }
+			get { return string.Format(dnSpy_AsmEditor_Resources.FieldType, typeSigCreator.TypeSigDnlibFullName); }
 		}
 
 		public TypeSigCreatorVM TypeSigCreator {
@@ -212,7 +213,7 @@ namespace dnSpy.AsmEditor.Field {
 		readonly ImplMapVM implMapVM;
 
 		public string MarshalTypeString {
-			get { return string.Format("Marshal Type: {0}", HasFieldMarshal ? MarshalTypeVM.TypeString : "nothing"); }
+			get { return string.Format(dnSpy_AsmEditor_Resources.MarshalType, HasFieldMarshal ? MarshalTypeVM.TypeString : dnSpy_AsmEditor_Resources.MarshalType_Nothing); }
 		}
 
 		public CustomAttributesVM CustomAttributesVM {
@@ -238,7 +239,7 @@ namespace dnSpy.AsmEditor.Field {
 			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
 			this.origOptions = options;
 
-			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, "Default value for this field");
+			this.constantVM = new ConstantVM(ownerModule, options.Constant == null ? null : options.Constant.Value, dnSpy_AsmEditor_Resources.Field_DefaultValueInfo);
 			ConstantVM.PropertyChanged += constantVM_PropertyChanged;
 			this.marshalTypeVM = new MarshalTypeVM(ownerModule, languageManager, ownerType, null);
 			MarshalTypeVM.PropertyChanged += marshalTypeVM_PropertyChanged;

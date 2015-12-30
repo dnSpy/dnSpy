@@ -43,6 +43,7 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Dialogs;
 using dnSpy.Debugger.IMModules;
+using dnSpy.Debugger.Properties;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger {
@@ -162,18 +163,17 @@ namespace dnSpy.Debugger {
 		}
 
 		void SetRunningStatusMessage() {
-			appWindow.StatusBar.Show("Running...");
+			appWindow.StatusBar.Show(dnSpy_Debugger_Resources.StatusBar_Running);
 		}
 
 		void SetReadyStatusMessage(string msg) {
 			if (string.IsNullOrEmpty(msg))
-				appWindow.StatusBar.Show("Ready");
+				appWindow.StatusBar.Show(dnSpy_Debugger_Resources.StatusBar_Ready);
 			else
-				appWindow.StatusBar.Show(string.Format("Ready - {0}", msg));
+				appWindow.StatusBar.Show(string.Format(dnSpy_Debugger_Resources.StatusBar_Ready2, msg));
 		}
 
 		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
-			const string DebuggingTitleInfo = "Debugging";
 			var dbg = (DnDebugger)sender;
 			switch (ProcessState) {
 			case DebuggerProcessState.Starting:
@@ -183,7 +183,7 @@ namespace dnSpy.Debugger {
 				currentMethod = null;
 				appWindow.StatusBar.Open();
 				SetRunningStatusMessage();
-				appWindow.AddTitleInfo(DebuggingTitleInfo);
+				appWindow.AddTitleInfo(dnSpy_Debugger_Resources.AppTitle_Debugging);
 				Application.Current.Resources["IsDebuggingKey"] = true;
 				break;
 
@@ -217,7 +217,7 @@ namespace dnSpy.Debugger {
 				currentMethod = null;
 				appWindow.StatusBar.Close();
 				lastDebugProcessOptions = null;
-				appWindow.RemoveTitleInfo(DebuggingTitleInfo);
+				appWindow.RemoveTitleInfo(dnSpy_Debugger_Resources.AppTitle_Debugging);
 				Application.Current.Resources["IsDebuggingKey"] = false;
 				break;
 			}
@@ -251,40 +251,40 @@ namespace dnSpy.Debugger {
 					foreach (var stopState in state.StopStates) {
 						switch (stopState.Reason) {
 						case DebuggerStopReason.Other:
-							Append("Unknown Reason");
+							Append(dnSpy_Debugger_Resources.Debug_StopReason_Unknown);
 							break;
 
 						case DebuggerStopReason.UnhandledException:
-							Append("Unhandled Exception");
+							Append(dnSpy_Debugger_Resources.Debug_StopReason_UnhandledException);
 							break;
 
 						case DebuggerStopReason.Exception:
-							Append("Exception");
+							Append(dnSpy_Debugger_Resources.Debug_StopReason_Exception);
 							break;
 
 						case DebuggerStopReason.DebugEventBreakpoint:
 							if (state.EventArgs != null)
 								Append(GetEventDescription(state.EventArgs));
 							else
-								Append("DebugEvent");
+								Append(dnSpy_Debugger_Resources.Debug_StopReason_DebugEventBreakpoint);
 							break;
 
 						case DebuggerStopReason.AnyDebugEventBreakpoint:
 							if (state.EventArgs != null)
 								Append(GetEventDescription(state.EventArgs));
 							else
-								Append("Any DebugEvent");
+								Append(dnSpy_Debugger_Resources.Debug_StopReason_AnyDebugEventBreakpoint);
 							break;
 
 						case DebuggerStopReason.Break:
-							Append("Break Instruction");
+							Append(dnSpy_Debugger_Resources.Debug_StopReason_BreakInstruction);
 							break;
 
 						case DebuggerStopReason.ILCodeBreakpoint:
 							if (seenIlbp)
 								break;
 							seenIlbp = true;
-							Append("IL Breakpoint");
+							Append(dnSpy_Debugger_Resources.Debug_StopReason_ILCodeBreakpoint);
 							break;
 
 						case DebuggerStopReason.Step:
@@ -301,21 +301,21 @@ namespace dnSpy.Debugger {
 				switch (e.Type) {
 				case DebugCallbackType.Exception:
 					var ex1Args = (ExceptionDebugCallbackEventArgs)e;
-					return ex1Args.Unhandled ? "Unhandled Exception" : "Exception";
+					return ex1Args.Unhandled ? dnSpy_Debugger_Resources.Debug_EventDescription_UnhandledException : dnSpy_Debugger_Resources.Debug_EventDescription_Exception;
 
 				case DebugCallbackType.CreateProcess:
 					var cpArgs = (CreateProcessDebugCallbackEventArgs)e;
 					var p = cpArgs.CorProcess;
 					if (p == null)
 						break;
-					return string.Format("CreateProcess PID={0} CLR v{1}", p.ProcessId, p.CLRVersion);
+					return string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_CreateProcess, p.ProcessId, p.CLRVersion);
 
 				case DebugCallbackType.CreateThread:
 					var ctArgs = (CreateThreadDebugCallbackEventArgs)e;
 					var t = ctArgs.CorThread;
 					if (t == null)
 						break;
-					return string.Format("CreateThread TID={0} VTID={1}", t.ThreadId, t.VolatileThreadId);
+					return string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_CreateThread, t.ThreadId, t.VolatileThreadId);
 
 				case DebugCallbackType.LoadModule:
 					var lmArgs = (LoadModuleDebugCallbackEventArgs)e;
@@ -323,8 +323,8 @@ namespace dnSpy.Debugger {
 					if (mod == null)
 						break;
 					if (mod.IsDynamic || mod.IsInMemory)
-						return string.Format("LoadModule DYN={0} MEM={1} {2:X8} {3:X8} {4}", mod.IsDynamic ? 1 : 0, mod.IsInMemory ? 1 : 0, mod.Address, mod.Size, mod.Name);
-					return string.Format("LoadModule A={0:X8} S={1:X8} {2}", mod.Address, mod.Size, mod.Name);
+						return string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_LoadModule1, mod.IsDynamic ? 1 : 0, mod.IsInMemory ? 1 : 0, mod.Address, mod.Size, mod.Name);
+					return string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_LoadModule2, mod.Address, mod.Size, mod.Name);
 
 				case DebugCallbackType.LoadClass:
 					var lcArgs = (LoadClassDebugCallbackEventArgs)e;
@@ -332,52 +332,52 @@ namespace dnSpy.Debugger {
 					mod = cls == null ? null : cls.Module;
 					if (mod == null)
 						break;
-					return string.Format("LoadClass 0x{0:X8} {1} {2}", cls.Token, FilterLongName(cls.ToString()), mod.Name);
+					return string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_LoadClass, cls.Token, FilterLongName(cls.ToString()), mod.Name);
 
 				case DebugCallbackType.DebuggerError:
 					var deArgs = (DebuggerErrorDebugCallbackEventArgs)e;
-					return string.Format("DebuggerError hr=0x{0:X8} error=0x{1:X8}", deArgs.HError, deArgs.ErrorCode);
+					return string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_DebuggerError, deArgs.HError, deArgs.ErrorCode);
 
 				case DebugCallbackType.CreateAppDomain:
 					var cadArgs = (CreateAppDomainDebugCallbackEventArgs)e;
 					var ad = cadArgs.CorAppDomain;
 					if (ad == null)
 						break;
-					return string.Format("CreateAppDomain {0} {1}", ad.Id, ad.Name);
+					return string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_CreateAppDomain, ad.Id, ad.Name);
 
 				case DebugCallbackType.LoadAssembly:
 					var laArgs = (LoadAssemblyDebugCallbackEventArgs)e;
 					var asm = laArgs.CorAssembly;
 					if (asm == null)
 						break;
-					return string.Format("LoadAssembly {0}", asm.Name);
+					return string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_LoadAssembly, asm.Name);
 
 				case DebugCallbackType.ControlCTrap:
-					return "Ctrl+C";
+					return dnSpy_Debugger_Resources.Debug_EventDescription_ControlCPressed;
 
 				case DebugCallbackType.BreakpointSetError:
 					var bpseArgs = (BreakpointSetErrorDebugCallbackEventArgs)e;
-					return string.Format("BreakpointSetError error=0x{0:X8}", bpseArgs.Error);
+					return string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_BreakpointSetError, bpseArgs.Error);
 
 				case DebugCallbackType.Exception2:
 					var ex2Args = (Exception2DebugCallbackEventArgs)e;
 					var sb = new StringBuilder();
-					sb.Append(string.Format("Exception Offset={0:X4} ", ex2Args.Offset));
+					sb.Append(string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_Exception2 + " ", ex2Args.Offset));
 					switch (ex2Args.EventType) {
 					case CorDebugExceptionCallbackType.DEBUG_EXCEPTION_FIRST_CHANCE:
-						sb.Append("FirstChance");
+						sb.Append(dnSpy_Debugger_Resources.Debug_EventDescription_Exception2_FirstChance);
 						break;
 					case CorDebugExceptionCallbackType.DEBUG_EXCEPTION_USER_FIRST_CHANCE:
-						sb.Append("UserFirstChance");
+						sb.Append(dnSpy_Debugger_Resources.Debug_EventDescription_Exception2_UserFirstChance);
 						break;
 					case CorDebugExceptionCallbackType.DEBUG_EXCEPTION_CATCH_HANDLER_FOUND:
-						sb.Append("CatchHandlerFound");
+						sb.Append(dnSpy_Debugger_Resources.Debug_EventDescription_Exception2_CatchHandlerFound);
 						break;
 					case CorDebugExceptionCallbackType.DEBUG_EXCEPTION_UNHANDLED:
-						sb.Append("Unhandled");
+						sb.Append(dnSpy_Debugger_Resources.Debug_EventDescription_Exception2_Unhandled);
 						break;
 					default:
-						sb.Append("Unknown");
+						sb.Append(dnSpy_Debugger_Resources.Debug_EventDescription_Exception2_Unknown);
 						break;
 					}
 					return sb.ToString();
@@ -386,8 +386,8 @@ namespace dnSpy.Debugger {
 					var mdan = (MDANotificationDebugCallbackEventArgs)e;
 					var mda = mdan.CorMDA;
 					if (mda == null)
-						return "MDA Notification";
-					return string.Format("MDA Notification: TID={0} {1} {2}", mda.OSThreadId, mda.Name, mda.Description);
+						return dnSpy_Debugger_Resources.Debug_EventDescription_MDA_Notification;
+					return string.Format(dnSpy_Debugger_Resources.Debug_EventDescription_MDA_Notification2, mda.OSThreadId, mda.Name, mda.Description);
 				}
 
 				return e.Type.ToString();
@@ -409,7 +409,7 @@ namespace dnSpy.Debugger {
 
 		void AppWindow_MainWindowClosing(object sender, CancelEventArgs e) {
 			if (IsDebugging) {
-				var result = messageBoxManager.ShowIgnorableMessage(new Guid("B4B8E13C-B7B7-490A-953B-8ED8EAE7C170"), "Do you want to stop debugging?", MsgBoxButton.Yes | MsgBoxButton.No);
+				var result = messageBoxManager.ShowIgnorableMessage(new Guid("B4B8E13C-B7B7-490A-953B-8ED8EAE7C170"), dnSpy_Debugger_Resources.AskAppWindowClosingStopDebugging, MsgBoxButton.Yes | MsgBoxButton.No);
 				if (result == MsgBoxButton.None || result == MsgBoxButton.No)
 					e.Cancel = true;
 			}
@@ -417,8 +417,8 @@ namespace dnSpy.Debugger {
 
 		static string GetIncompatiblePlatformErrorMessage() {
 			if (IntPtr.Size == 4)
-				return "Use dnSpy.exe to debug 64-bit applications.";
-			return "Use dnSpy-x86.exe to debug 32-bit applications.";
+				return dnSpy_Debugger_Resources.UseDnSpyExeToDebug64;
+			return dnSpy_Debugger_Resources.UseDnSpy64ExeToDebug32;
 		}
 
 		bool DebugProcess(DebugProcessOptions options) {
@@ -437,13 +437,13 @@ namespace dnSpy.Debugger {
 				var cex = ex as COMException;
 				const int ERROR_NOT_SUPPORTED = unchecked((int)0x80070032);
 				if (cex != null && cex.ErrorCode == ERROR_NOT_SUPPORTED)
-					messageBoxManager.Show(string.Format("Could not start the debugger. {0}", GetIncompatiblePlatformErrorMessage()));
+					messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.Error_CouldNotStartDebugger, GetIncompatiblePlatformErrorMessage()));
 				else if (cex != null && cex.ErrorCode == CordbgErrors.CORDBG_E_UNCOMPATIBLE_PLATFORMS)
-					messageBoxManager.Show(string.Format("Could not start the debugger. {0}", GetIncompatiblePlatformErrorMessage()));
+					messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.Error_CouldNotStartDebugger, GetIncompatiblePlatformErrorMessage()));
 				else if (cex != null && cex.ErrorCode == unchecked((int)0x800702E4))
-					messageBoxManager.Show("Could not start the debugger. The debugged program requires admin privileges. Restart dnSpy with admin rights and try again.");
+					messageBoxManager.Show(dnSpy_Debugger_Resources.Error_CouldNotStartDebuggerRequireAdminPrivLvl);
 				else
-					messageBoxManager.Show(string.Format("Could not start the debugger. Make sure you have access to the file '{0}'\n\nError: {1}", options.Filename, ex.Message));
+					messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.Error_CouldNotStartDebuggerCheckAccessToFile, options.Filename, ex.Message));
 				return false;
 			}
 			TheDebugger.Initialize(newDebugger);
@@ -465,7 +465,7 @@ namespace dnSpy.Debugger {
 				return;
 			var exType = exValue.ExactType;
 			var name = exType == null ? null : exType.ToString(TypePrinterFlags.ShowNamespaces);
-			var msg = string.Format("Exception thrown: '{0}' in {1}\n\nIf there is a handler for this exception, the program may be safely continued.", name, Path.GetFileName(thread.Process.Filename));
+			var msg = string.Format(dnSpy_Debugger_Resources.ExceptionThrownMessage, name, Path.GetFileName(thread.Process.Filename));
 			BringMainWindowToFrontAndActivate();
 			messageBoxManager.Show(msg);
 		}
@@ -502,16 +502,16 @@ namespace dnSpy.Debugger {
 				var exValue = thread == null ? null : thread.CurrentException;
 
 				var sb = new StringBuilder();
-				AddExceptionInfo(sb, exValue, "Exception");
+				AddExceptionInfo(sb, exValue, dnSpy_Debugger_Resources.ExceptionInfo_Exception);
 				var innerExValue = EvalUtils.ReflectionReadExceptionInnerException(exValue);
 				if (innerExValue != null && innerExValue.IsReference && !innerExValue.IsNull)
-					AddExceptionInfo(sb, innerExValue, "\n\nInner Exception");
+					AddExceptionInfo(sb, innerExValue, "\n\n" + dnSpy_Debugger_Resources.ExceptionInfo_InnerException);
 
 				var process = TheDebugger.Debugger.Processes.FirstOrDefault(p => p.Threads.Any(t => t.CorThread == thread));
 				CorProcess cp;
 				var processName = process != null ? Path.GetFileName(process.Filename) : string.Format("pid {0}", (cp = thread.Process) == null ? 0 : cp.ProcessId);
 				BringMainWindowToFrontAndActivate();
-				var res = messageBoxManager.Show(string.Format("An unhandled exception occurred in {0}\n\n{1}\n\nPress OK to stop, and Cancel to let the program run.", processName, sb), MsgBoxButton.OK | MsgBoxButton.Cancel);
+				var res = messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.Error_UnhandledExceptionOccurred, processName, sb), MsgBoxButton.OK | MsgBoxButton.Cancel);
 				if (res != MsgBoxButton.Cancel)
 					e.AddStopReason(DebuggerStopReason.UnhandledException);
 			}
@@ -527,7 +527,7 @@ namespace dnSpy.Debugger {
 			if (e.HError == CordbgErrors.CORDBG_E_UNCOMPATIBLE_PLATFORMS)
 				msg = GetIncompatiblePlatformErrorMessage();
 			else
-				msg = string.Format("A CLR debugger error occurred. Terminate the debugged process and try again.\n\nHR: 0x{0:X8}\nError: 0x{1:X8}", e.HError, e.ErrorCode);
+				msg = string.Format(dnSpy_Debugger_Resources.Error_CLRDebuggerErrorOccurred, e.HError, e.ErrorCode);
 			BringMainWindowToFrontAndActivate();
 			messageBoxManager.Show(msg);
 		}
@@ -536,8 +536,8 @@ namespace dnSpy.Debugger {
 			var exType = exValue == null ? null : exValue.ExactType;
 			int? hr = EvalUtils.ReflectionReadExceptionHResult(exValue);
 			string exMsg = EvalUtils.ReflectionReadExceptionMessage(exValue);
-			string exTypeString = exType == null ? "<Unknown Exception Type>" : exType.ToString();
-			var s = string.Format("{0}: {1}\n\nMessage: {2}\n\nHResult: 0x{3:X8}", msg, exTypeString, exMsg, hr ?? -1);
+			string exTypeString = exType == null ? dnSpy_Debugger_Resources.UnknownExceptionType : exType.ToString();
+			var s = string.Format(dnSpy_Debugger_Resources.ExceptionInfoFormat, msg, exTypeString, exMsg, hr ?? -1);
 			sb.Append(s);
 		}
 
@@ -620,7 +620,7 @@ namespace dnSpy.Debugger {
 				Process.Start(asm.Filename);
 			}
 			catch (Exception ex) {
-				messageBoxManager.Show(string.Format("Could not start '{0}'\n:ERROR: {0}", asm.Filename, ex.Message));
+				messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.Error_StartWithoutDebuggingCouldNotStart, asm.Filename, ex.Message));
 			}
 		}
 
@@ -795,7 +795,7 @@ namespace dnSpy.Debugger {
 				newDebugger = DnDebugger.Attach(options);
 			}
 			catch (Exception ex) {
-				messageBoxManager.Show(string.Format("Could not start debugger.\n\nError: {0}", ex.Message));
+				messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.Error_CouldNotStartDebugger2, ex.Message));
 				return false;
 			}
 			TheDebugger.Initialize(newDebugger);
@@ -813,7 +813,7 @@ namespace dnSpy.Debugger {
 
 			int hr = TheDebugger.Debugger.TryBreakProcesses();
 			if (hr < 0)
-				messageBoxManager.Show(string.Format("Could not break process. Error: 0x{0:X8}", hr));
+				messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.Error_CouldNotBreakProcess, hr));
 		}
 
 		public bool CanStop {
@@ -835,7 +835,7 @@ namespace dnSpy.Debugger {
 				return;
 			int hr = TheDebugger.Debugger.TryDetach();
 			if (hr < 0)
-				messageBoxManager.Show(string.Format("Could not detach process. Error: 0x{0:X8}", hr));
+				messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.Error_CouldNotDetachProcess, hr));
 		}
 
 		public bool CanContinue {
@@ -1199,7 +1199,7 @@ namespace dnSpy.Debugger {
 			string errMsg;
 			if (!DebugSetNextStatement(parameter, out errMsg)) {
 				if (string.IsNullOrEmpty(errMsg))
-					errMsg = "Could not set next statement (unknown reason)";
+					errMsg = dnSpy_Debugger_Resources.Error_CouldNotSetNextStatement_UnknownReason;
 				messageBoxManager.Show(errMsg);
 				return false;
 			}
@@ -1220,7 +1220,7 @@ namespace dnSpy.Debugger {
 			TheDebugger.CallOnProcessStateChanged();
 
 			if (failed) {
-				errMsg = "Could not set the next statement.";
+				errMsg = dnSpy_Debugger_Resources.Error_CouldNotSetNextStatement;
 				return false;
 			}
 
@@ -1232,25 +1232,25 @@ namespace dnSpy.Debugger {
 			mapping = null;
 
 			if (ProcessState == DebuggerProcessState.Terminated) {
-				errMsg = "We're not debugging";
+				errMsg = dnSpy_Debugger_Resources.Error_NotDebugging;
 				return false;
 			}
 			if (ProcessState == DebuggerProcessState.Starting || ProcessState == DebuggerProcessState.Continuing || ProcessState == DebuggerProcessState.Running) {
-				errMsg = "Can't set next statement when the process is running";
+				errMsg = dnSpy_Debugger_Resources.Error_CantSetNextStatementWhenNotStopped;
 				return false;
 			}
 
 			if (uiContext == null) {
 				uiContext = fileTabManager.ActiveTab.TryGetTextEditorUIContext();
 				if (uiContext == null) {
-					errMsg = "No tab is available. Decompile the current method!";
+					errMsg = dnSpy_Debugger_Resources.Error_NoTabAvailableDecompileCurrentMethod;
 					return false;
 				}
 			}
 
 			CodeMappings cm;
 			if (currentLocation == null || !DebugUtils.VerifyAndGetCurrentDebuggedMethod(uiContext, currentLocation.Value.SerializedDnToken, out cm)) {
-				errMsg = "No debug information found. Make sure that only the debugged method is selected in the treeview (press 'Alt+Num *' to go to current statement)";
+				errMsg = dnSpy_Debugger_Resources.Error_NoDebugInfoAvailable;
 				return false;
 			}
 			Debug.Assert(currentLocation != null);
@@ -1258,12 +1258,12 @@ namespace dnSpy.Debugger {
 			var location = uiContext.Location;
 			var bps = cm.Find(location.Line, location.Column);
 			if (bps.Count == 0) {
-				errMsg = "It's not possible to set the next statement here";
+				errMsg = dnSpy_Debugger_Resources.Error_CantSetNextStatementHere;
 				return false;
 			}
 
 			if (GetCurrentMethodILFrame() == null) {
-				errMsg = "There's no IL frame";
+				errMsg = dnSpy_Debugger_Resources.Error_CantSetNextStatementNoILFrame;
 				return false;
 			}
 
@@ -1279,7 +1279,7 @@ namespace dnSpy.Debugger {
 				break;
 			}
 			if (mapping == null) {
-				errMsg = "The next statement cannot be set to another method";
+				errMsg = dnSpy_Debugger_Resources.Error_CantSetNextStatementToAnotherMethod;
 				return false;
 			}
 

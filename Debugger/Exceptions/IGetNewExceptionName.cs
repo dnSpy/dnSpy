@@ -19,6 +19,7 @@
 
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.App;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Exceptions {
 	interface IGetNewExceptionName {
@@ -35,7 +36,10 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public string GetName() {
-			var res = messageBoxManager.Ask("_Full name", null, "Add an Exception", s => s.Trim(), s => !string.IsNullOrWhiteSpace(s) ? null : "Missing full name of exception, eg. System.My.Exception");
+			var res = messageBoxManager.Ask(dnSpy_Debugger_Resources.Exceptions_Add_Label, null,
+				dnSpy_Debugger_Resources.Exceptions_Add_Title,
+				s => s.Trim(),
+				s => !string.IsNullOrWhiteSpace(s) ? null : dnSpy_Debugger_Resources.Exceptions_Add_Error_Name);
 			return string.IsNullOrEmpty(res) ? null : res;
 		}
 	}

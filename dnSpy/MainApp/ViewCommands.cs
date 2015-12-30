@@ -37,7 +37,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "F_ull Screen", InputGestureText = "Shift+Alt+Enter", Icon = "FullScreen", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 20)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:FullScreenCommand", InputGestureText = "res:FullScreenKey", Icon = "FullScreen", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 20)]
 	sealed class FullScreenCommand : MenuItemCommand {
 		readonly MetroWindow window;
 
@@ -56,7 +56,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "E_xit", Icon = "Close", InputGestureText = "Alt+F4", Group = MenuConstants.GROUP_APP_MENU_FILE_EXIT, Order = 1000000)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:ExitAppCommand", Icon = "Close", InputGestureText = "res:ExitAppKey", Group = MenuConstants.GROUP_APP_MENU_FILE_EXIT, Order = 1000000)]
 	sealed class MenuFileExitCommand : MenuItemCommand {
 		public MenuFileExitCommand()
 			: base(ApplicationCommands.Close) {

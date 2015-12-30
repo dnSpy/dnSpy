@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.MainApp {
@@ -65,7 +66,7 @@ namespace dnSpy.MainApp {
 					return string.Empty;
 				}
 				catch (Exception ex) {
-					return string.Format("Can't convert the input to the desired type: {0}", ex.Message);
+					return string.Format(dnSpy_Resources.CantConvertInputToType, ex.Message);
 				}
 			}
 			return string.Empty;

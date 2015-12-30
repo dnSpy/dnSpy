@@ -21,6 +21,7 @@ using System.Diagnostics;
 using dndbg.Engine;
 using dnlib.PE;
 using dnSpy.Contracts.Highlighting;
+using dnSpy.Debugger.Properties;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
 
@@ -63,8 +64,8 @@ namespace dnSpy.Debugger.Dialogs {
 
 		static string TypeToString(CLRType type) {
 			switch (type) {
-			case CLRType.Desktop:	return "Desktop";
-			case CLRType.CoreCLR:	return "CoreCLR";
+			case CLRType.Desktop:	return dnSpy_Debugger_Resources.Process_CLR_Desktop;
+			case CLRType.CoreCLR:	return dnSpy_Debugger_Resources.Process_CLR_CoreCLR;
 			default:
 				Debug.Fail("Unknown CLR type");
 				return "???";

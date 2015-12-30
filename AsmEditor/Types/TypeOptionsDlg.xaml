@@ -25,8 +25,9 @@
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
              xmlns:winlocal="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
              xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
-             Height="400" Width="500"
-             Title="Edit Type"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
+             Height="400" Width="600"
+             Title="{x:Static p:dnSpy_AsmEditor_Resources.EditTypeCommand2}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="400" MinWidth="500">
 	<winlocal:WindowBase.Resources>
@@ -42,7 +43,7 @@
 		</Grid.RowDefinitions>
 
 		<TabControl Margin="5">
-			<TabItem Header="Main">
+			<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MainTab}">
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<Grid Margin="0 5 0 0">
 						<Grid.ColumnDefinitions>
@@ -66,17 +67,17 @@
 								<RowDefinition />
 							</Grid.RowDefinitions>
 
-							<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nsTextBox}" Content="N_amespace" />
+                            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nsTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Namespace}" />
 							<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nsTextBox" Text="{Binding Namespace, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-							<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+                            <Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Name}" />
 							<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-							<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=packingSizeTextBox}" Content="Packing Si_ze" />
+                            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=packingSizeTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_PackingSize}" />
 							<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="packingSizeTextBox" Text="{Binding PackingSize.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-							<Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=classSizeTextBox}" Content="C_lass Size" />
+                            <Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=classSizeTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_ClassSize}" />
 							<TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Name="classSizeTextBox" Text="{Binding ClassSize.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 						</Grid>
 
-						<GroupBox Grid.Row="1" Header="Flags">
+                        <GroupBox Grid.Row="1" Header="{x:Static p:dnSpy_AsmEditor_Resources.Flags}">
 							<Grid>
 								<Grid.RowDefinitions>
 									<RowDefinition />
@@ -88,15 +89,15 @@
 									<ColumnDefinition />
 									<ColumnDefinition />
 								</Grid.ColumnDefinitions>
-								<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Abstract}" Content="A_bstract" />
-								<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Sealed}" Content="Seale_d" />
-								<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Serializable}" Content="S_erializable" />
-								<CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Import}" Content="_Import" />
-								<CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding SpecialName}" Content="S_pecialName" />
-								<CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="_RTSpecialName" />
-								<CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding WindowsRuntime}" Content="_WindowsRuntime" />
-								<CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding BeforeFieldInit}" Content="BeforeFieldIni_t" />
-								<CheckBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Forwarder}" Content="_Forwarder" />
+                                <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Abstract}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Abstract}" />
+                                <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Sealed}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Sealed}" />
+                                <CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Serializable}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Serializable}" />
+                                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Import}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Import}" />
+                                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding SpecialName}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_SpecialName}" />
+                                <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding RTSpecialName}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_RTSpecialName}" />
+                                <CheckBox Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding WindowsRuntime}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_WindowsRuntime}" />
+                                <CheckBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding BeforeFieldInit}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_BeforeFieldInit}" />
+                                <CheckBox Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Forwarder}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Forwarder}" />
 							</Grid>
 						</GroupBox>
 
@@ -114,46 +115,46 @@
 								<RowDefinition Height="Auto" />
 							</Grid.RowDefinitions>
 
-							<Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="_Kind" Target="{Binding ElementName=typeKindComboBox}" />
+                            <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Kind}" Target="{Binding ElementName=typeKindComboBox}" />
 							<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="typeKindComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeKind.Items}" SelectedIndex="{Binding TypeKind.SelectedIndex}" VerticalContentAlignment="Center" />
 							<Label Grid.Row="0" Grid.Column="2" Margin="0 5 0 0" Content="{Binding VisibilityAccessbilityText}" Target="{Binding ElementName=visibilityComboBox}" />
 							<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="visibilityComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeVisibility.Items}" SelectedIndex="{Binding TypeVisibility.SelectedIndex}" VerticalContentAlignment="Center" />
-							<Label Grid.Row="0" Grid.Column="4" Margin="0 5 0 0" Content="Layo_ut" Target="{Binding ElementName=layoutComboBox}" />
+                            <Label Grid.Row="0" Grid.Column="4" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Layout}" Target="{Binding ElementName=layoutComboBox}" />
 							<ComboBox Grid.Row="0" Grid.Column="5" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="layoutComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeLayout.Items}" SelectedIndex="{Binding TypeLayout.SelectedIndex}" VerticalContentAlignment="Center" />
 
-							<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="Strin_g" Target="{Binding ElementName=stringFormatComboBox}" />
+                            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_String}" Target="{Binding ElementName=stringFormatComboBox}" />
 							<ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="stringFormatComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeStringFormat.Items}" SelectedIndex="{Binding TypeStringFormat.SelectedIndex}" VerticalContentAlignment="Center" />
-							<Label Grid.Row="1" Grid.Column="2" Margin="0 5 0 0" Content="_Semantics" Target="{Binding ElementName=semanticsComboBox}" />
+                            <Label Grid.Row="1" Grid.Column="2" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Semantics}" Target="{Binding ElementName=semanticsComboBox}" />
 							<ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="semanticsComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeSemantics.Items}" SelectedIndex="{Binding TypeSemantics.SelectedIndex}" VerticalContentAlignment="Center" />
-							<Label Grid.Row="1" Grid.Column="4" Margin="0 5 0 0" Content="Custo_m" Target="{Binding ElementName=customFormatComboBox}" />
+                            <Label Grid.Row="1" Grid.Column="4" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Type_Flags_Custom}" Target="{Binding ElementName=customFormatComboBox}" />
 							<ComboBox Grid.Row="1" Grid.Column="5" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="customFormatComboBox" DisplayMemberPath="Name" ItemsSource="{Binding TypeCustomFormat.Items}" SelectedIndex="{Binding TypeCustomFormat.SelectedIndex}" VerticalContentAlignment="Center" />
 						</Grid>
 					</Grid>
 				</ScrollViewer>
 			</TabItem>
-			<TabItem Header="Base Type">
+            <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.BaseTypeTab}">
 				<ScrollViewer VerticalScrollBarVisibility="Auto">
 					<dnlibdlgs:TypeSigCreatorControl Grid.Row="0" Margin="0 5 0 0" DataContext="{Binding TypeSigCreator}" />
 				</ScrollViewer>
 			</TabItem>
-			<TabItem Header="Generic Params">
+			<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.GenericParametersTab}">
 				<dnlibdlgs:GenericParamsControl Margin="0 5 0 0" DataContext="{Binding GenericParamsVM}" />
 			</TabItem>
-			<TabItem Header="Interfaces">
+            <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.InterfacesTab}">
 				<dnlibdlgs:TypeDefOrRefAndCAsControl Margin="0 5 0 0" DataContext="{Binding InterfaceImplsVM}" />
 			</TabItem>
-			<TabItem Header="Custom Attrs">
+			<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.CustomAttributesTab}">
 				<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
 			</TabItem>
-			<TabItem Header="Sec Decls">
+			<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.SecurityDeclarationsTab}">
 				<dnlibdlgs:DeclSecuritiesControl Margin="0 5 0 0" DataContext="{Binding DeclSecuritiesVM}" />
 			</TabItem>
 		</TabControl>
 
 		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
-			<Button Content="_OK" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
-			<Button Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
-			<Button Content="Restore" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" ToolTip="Restore all options" />
+			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" />
+			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_RestoreSettings}" Style="{StaticResource DialogButton}" Command="{Binding ReinitializeCommand}" />
 		</StackPanel>
 	</Grid>
 </winlocal:WindowBase>

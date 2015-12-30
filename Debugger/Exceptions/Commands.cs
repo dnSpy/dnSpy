@@ -120,7 +120,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_COPY, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_COPY, Order = 0)]
 	sealed class CopyCallExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		[ImportingConstructor]
 		CopyCallExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
@@ -144,7 +144,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	[ExportMenuItem(Header = "Select _All", Icon = "Select", InputGestureText = "Ctrl+A", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_COPY, Order = 10)]
+	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = "Select", InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_COPY, Order = 10)]
 	sealed class SelectAllExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		[ImportingConstructor]
 		SelectAllExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
@@ -160,7 +160,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "Add E_xception", Icon = "Add", InputGestureText = "Ins", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:AddExceptionCommand", Icon = "Add", InputGestureText = "res:ShortCutKeyInsert", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 0)]
 	sealed class AddExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		[ImportingConstructor]
 		AddExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
@@ -176,7 +176,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "_Remove", Icon = "RemoveCommand", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 10)]
+	[Export, ExportMenuItem(Header = "res:RemoveExceptionCommand", Icon = "RemoveCommand", InputGestureText = "res:ShortCutKeyDelete", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 10)]
 	sealed class RemoveExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		[ImportingConstructor]
 		RemoveExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
@@ -192,7 +192,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	[ExportMenuItem(Header = "Restore Defaults", Icon = "UndoCheckBoxList", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 20)]
+	[ExportMenuItem(Header = "res:RestoreDefaultExceptionSettingsCommand", Icon = "UndoCheckBoxList", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 20)]
 	sealed class RestoreDefaultsExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		[ImportingConstructor]
 		RestoreDefaultsExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
@@ -226,7 +226,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Enable All Filtered Exceptions", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 30)]
+	[ExportMenuItem(Header = "res:EnableAllFilteredExceptionsCommand", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 30)]
 	sealed class EnableAllExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		[ImportingConstructor]
 		EnableAllExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
@@ -242,7 +242,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Disable All Filtered Exceptions", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 40)]
+	[ExportMenuItem(Header = "res:DisableAllFilteredExceptionsCommand", Group = MenuConstants.GROUP_CTX_DBG_EXCEPTIONS_ADD, Order = 40)]
 	sealed class DisableAllExceptionsCtxMenuCommand : ExceptionsCtxMenuCommand {
 		[ImportingConstructor]
 		DisableAllExceptionsCtxMenuCommand(Lazy<IExceptionsContent> exceptionsContent)
@@ -337,7 +337,7 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 		}
 
-		[ExportMenuItem(Header = "Break When Thrown", Icon = "Add", Group = MenuConstants.GROUP_CTX_FILES_DEBUG, Order = 0)]
+		[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = "Add", Group = MenuConstants.GROUP_CTX_FILES_DEBUG, Order = 0)]
 		sealed class FilesCommand : CommandBase {
 			protected sealed override object CachedContextKey {
 				get { return ContextKey; }
@@ -354,7 +354,7 @@ namespace dnSpy.Debugger.Exceptions {
 			}
 		}
 
-		[ExportMenuItem(Header = "Break When Thrown", Icon = "Add", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 1000)]
+		[ExportMenuItem(Header = "res:BreakWhenExceptionThrownCommand", Icon = "Add", Group = MenuConstants.GROUP_CTX_CODE_DEBUG, Order = 1000)]
 		sealed class CodeCommand : CommandBase {
 			protected sealed override object CachedContextKey {
 				get { return ContextKey; }

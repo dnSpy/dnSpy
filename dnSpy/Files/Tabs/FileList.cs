@@ -30,10 +30,6 @@ namespace dnSpy.Files.Tabs {
 		const string FILELIST_NAME_ATTR = "name";
 		const string FILE_SECTION = "File";
 
-		public bool IsDefault {
-			get { return StringComparer.OrdinalIgnoreCase.Equals(Name, DEFAULT_NAME); }
-		}
-
 		public string Name {
 			get { return name; }
 		}

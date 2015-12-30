@@ -31,10 +31,6 @@ namespace dnSpy.Shared.UI.Search {
 			this.filter = filter;
 		}
 
-		public virtual string Description {
-			get { return filter.Description; }
-		}
-
 		public virtual FileTreeNodeFilterResult GetResult(FieldDef field) {
 			return this.filter.GetResult(field);
 		}

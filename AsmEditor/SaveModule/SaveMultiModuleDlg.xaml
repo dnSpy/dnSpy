@@ -24,8 +24,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.AsmEditor.SaveModule"
              xmlns:mvvmvc="clr-namespace:dnSpy.AsmEditor.DnlibDialogs.Converters"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              Height="300" Width="600"
-             Title="Save Modules"
+             Title="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="300" MinWidth="400">
 	<local:SaveModuleWindow.Resources>
@@ -53,7 +54,7 @@
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
 
-		<Label Content="Files that will be saved:" Margin="5 5 5 5" />
+        <Label Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_SavedFiles}" Margin="5 5 5 5" />
 
 		<ListBox Grid.Row="1" Name="listBox" IsEnabled="{Binding IsLoaded}" ItemsSource="{Binding Modules}" DisplayMemberPath="FileName" SelectedIndex="0" Margin="5 0 5 5" MouseDoubleClick="listBox_MouseDoubleClick" />
 
@@ -67,7 +68,7 @@
 				<RowDefinition Height="*" />
 			</Grid.RowDefinitions>
 
-			<Label Grid.Row="0" Content="There are errors in the log:" />
+            <Label Grid.Row="0" Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_ErrorsInLog}" />
 
 			<TextBox Grid.Row="1"
 				 Background="{DynamicResource CommonControlsTextBoxErrorBackground}"
@@ -139,38 +140,38 @@
 					   Visibility="{Binding IsCanceling, Converter={StaticResource BooleanToVisibilityConverter}}"
 					   VerticalAlignment="Center"
 					   Foreground="Red"
-					   Text="Canceling the save. Please wait..."
+					   Text="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_CancelingSave}"
 					   />
 			<Button Grid.Column="1"
 					Name="optionsButton"
-					Content="_Options..."
+					Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_Options}"
 					Style="{StaticResource DialogButton}" Margin="0,0,5,0"
 					Command="{StaticResource OptionsCommand}"
 					CommandParameter="{Binding SelectedItem, ElementName=listBox}"
 					Visibility="{Binding CanSave, Converter={StaticResource BooleanToVisibilityConverter}}"
 					/>
 			<Button Grid.Column="2"
-					Content="_Save All"
+					Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_SaveAll}"
 					IsDefault="True"
 					Style="{StaticResource DialogButton}" Margin="0,0,5,0"
 					Command="{Binding SaveCommand}"
 					Visibility="{Binding CanSave, Converter={StaticResource BooleanToVisibilityConverter}}"
 					/>
 			<Button Grid.Column="3"
-					Content="_Cancel"
+					Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}"
 					IsCancel="True"
 					Style="{StaticResource DialogButton}"
 					Visibility="{Binding IsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}"
 					/>
 			<Button Grid.Column="3"
-					Content="_Cancel"
+					Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}"
 					IsCancel="False"
 					Command="{Binding CancelSaveCommand}"
 					Style="{StaticResource DialogButton}"
 					Visibility="{Binding IsSavingOrCanceling, Converter={StaticResource BooleanToVisibilityConverter}}"
 					/>
 			<Button Grid.Column="3"
-					Content="_Close"
+					Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_Close}"
 					IsCancel="True"
 					Style="{StaticResource DialogButton}"
 					Click="okButton_Click"

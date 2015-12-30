@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Exceptions {
 	enum ExceptionManagerEventType {
@@ -151,7 +152,7 @@ namespace dnSpy.Debugger.Exceptions {
 		static ExceptionInfo CreateOtherExceptionInfo(ExceptionType type) {
 			switch (type) {
 			case ExceptionType.DotNet:
-				return new ExceptionInfo(type, "<All Common Language Runtime Exceptions not in this list>");
+				return new ExceptionInfo(type, dnSpy_Debugger_Resources.Exceptions_AllCLRExceptionsNotInList);
 
 			default:
 				Debug.Fail("Unknown type");

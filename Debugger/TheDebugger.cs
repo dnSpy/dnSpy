@@ -24,6 +24,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Threading;
 using dndbg.Engine;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger {
 	interface ITheDebugger {
@@ -187,11 +188,11 @@ namespace dnSpy.Debugger {
 		}
 
 		public DnEval CreateEval(CorThread thread) {
-			Debug.WriteLineIf(ProcessState != DebuggerProcessState.Stopped, "Can't evaluate unless debugger is stopped");
+			Debug.WriteLineIf(ProcessState != DebuggerProcessState.Stopped, dnSpy_Debugger_Resources.Error_CantEvalUnlessDebuggerStopped);
 			if (ProcessState != DebuggerProcessState.Stopped)
-				throw new EvalException(-1, "Can't evaluate unless debugger is stopped");
+				throw new EvalException(-1, dnSpy_Debugger_Resources.Error_CantEvalUnlessDebuggerStopped);
 			if (unhandledException)
-				throw new EvalException(-1, "Can't evaluate when an unhandled exception has occurred");
+				throw new EvalException(-1, dnSpy_Debugger_Resources.Error_CantEvalWhenUnhandledExceptionHasOccurred);
 			var eval = Debugger.CreateEval();
 			eval.EvalEvent += (s, e) => DnEval_EvalEvent(s, e, eval);
 			eval.SetThread(thread);

@@ -23,6 +23,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="30" d:DesignWidth="300">
 	<UserControl.Resources>
@@ -34,7 +35,7 @@
 			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
 
-		<CheckBox Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Content="Constant" ToolTip="{Binding ConstantCheckBoxToolTip}" />
+        <CheckBox Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Content="{x:Static p:dnSpy_AsmEditor_Resources.ConstantDlg_Constant}" ToolTip="{Binding ConstantCheckBoxToolTip}" />
 
 		<dnlibdlgs:ConstantTypeControl Grid.Column="2" Margin="5 0 0 0" DataContext="{Binding ConstantTypeVM}" />
 	</Grid>

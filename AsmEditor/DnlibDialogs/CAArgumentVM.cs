@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnlib.Threading;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
@@ -399,7 +400,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public override string ToString() {
 			if (ConstantTypeVM.HasError)
-				return "<error>";
+				return dnSpy_AsmEditor_Resources.Error;
 			return DlgUtils.ValueToString(ConstantTypeVM.Value, StorageType);
 		}
 

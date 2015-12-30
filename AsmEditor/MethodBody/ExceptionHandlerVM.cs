@@ -25,6 +25,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Shared.UI.MVVM;
 
@@ -106,7 +107,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		readonly TypeSigCreatorOptions typeSigCreatorOptions;
 
 		public ExceptionHandlerVM(TypeSigCreatorOptions typeSigCreatorOptions, ExceptionHandlerOptions options) {
-			this.typeSigCreatorOptions = typeSigCreatorOptions.Clone("Create an Exception Catch Type");
+			this.typeSigCreatorOptions = typeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateAnExceptionCatchType);
 			this.typeSigCreatorOptions.IsLocal = false;
 			this.typeSigCreatorOptions.NullTypeSigAllowed = true;
 			this.origOptions = options;
@@ -128,10 +129,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var item = list.SelectedItem;
 			var instr = item as InstructionVM;
 			if (item != null && instr == null)
-				return "Only instructions can be selected";
+				return dnSpy_AsmEditor_Resources.Error_OnlyInstrsCanBeSelected;
 
 			if (instr != null && instr.Index == -1)
-				return "Instruction has been removed";
+				return dnSpy_AsmEditor_Resources.Error_InstrHasBeenRemoved;
 
 			return string.Empty;
 		}

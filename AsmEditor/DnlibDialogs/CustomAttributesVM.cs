@@ -18,12 +18,13 @@
 */
 
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CustomAttributesVM : ListVM<CustomAttributeVM, CustomAttribute> {
 		public CustomAttributesVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType = null, MethodDef ownerMethod = null)
-			: base("Edit Custom Attribute", "Create Custom Attribute", ownerModule, languageManager, ownerType, ownerMethod) {
+			: base(dnSpy_AsmEditor_Resources.EditCustomAttribute, dnSpy_AsmEditor_Resources.CreateCustomAttribute, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
 		protected override CustomAttributeVM Create(CustomAttribute model) {

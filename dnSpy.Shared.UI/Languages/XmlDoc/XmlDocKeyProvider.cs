@@ -203,7 +203,6 @@ namespace dnSpy.Shared.UI.Languages.XmlDoc {
 		}
 
 		static IMemberRef FindMember(ModuleDef module, string key, Func<TypeDef, IEnumerable<IMemberRef>> memberSelector) {
-			Debug.WriteLine("Looking for member " + key);
 			int parenPos = key.IndexOf('(');
 			int dotPos;
 			if (parenPos > 0) {
@@ -224,7 +223,6 @@ namespace dnSpy.Shared.UI.Languages.XmlDoc {
 			else {
 				shortName = key.Substring(dotPos + 1);
 			}
-			Debug.WriteLine("Searching in type {0} for {1}", type.FullName, shortName);
 			IMemberRef shortNameMatch = null;
 			foreach (IMemberRef member in memberSelector(type)) {
 				string memberKey = GetKey(member);

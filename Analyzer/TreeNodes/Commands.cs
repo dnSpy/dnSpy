@@ -138,7 +138,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 	}
 
 	static class AnalyzeCommand {
-		[ExportMenuItem(Header = "Analy_ze", Icon = "Search", InputGestureText = "Ctrl+R", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 0)]
+		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:AnalyzeKey", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 0)]
 		sealed class FilesCommand : MenuItemBase {
 			readonly IMainToolWindowManager mainToolWindowManager;
 			readonly ILanguageManager languageManager;
@@ -183,7 +183,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		[ExportMenuItem(Header = "Analy_ze", Icon = "Search", InputGestureText = "Ctrl+R", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 0)]
+		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:AnalyzeKey", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 0)]
 		sealed class AnalyzerCommand : MenuItemBase {
 			readonly IMainToolWindowManager mainToolWindowManager;
 			readonly ILanguageManager languageManager;
@@ -211,7 +211,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		[ExportMenuItem(Header = "Analy_ze", Icon = "Search", InputGestureText = "Ctrl+R", Group = MenuConstants.GROUP_CTX_CODE_OTHER, Order = 0)]
+		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:AnalyzeKey", Group = MenuConstants.GROUP_CTX_CODE_OTHER, Order = 0)]
 		sealed class CodeCommand : MenuItemBase {
 			readonly IMainToolWindowManager mainToolWindowManager;
 			readonly ILanguageManager languageManager;
@@ -251,7 +251,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 		}
 
-		[ExportMenuItem(Header = "Analy_ze", Icon = "Search", InputGestureText = "Ctrl+R", Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 0)]
+		[ExportMenuItem(Header = "res:AnalyzeCommand", Icon = "Search", InputGestureText = "res:AnalyzeKey", Group = MenuConstants.GROUP_CTX_SEARCH_OTHER, Order = 0)]
 		sealed class SearchCommand : MenuItemBase {
 			readonly IMainToolWindowManager mainToolWindowManager;
 			readonly ILanguageManager languageManager;
@@ -383,7 +383,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Remove", Icon = "Delete", InputGestureText = "Del", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
+	[ExportMenuItem(Header = "res:RemoveCommand", Icon = "Delete", InputGestureText = "res:RemoveKey", Group = MenuConstants.GROUP_CTX_ANALYZER_OTHER, Order = 10)]
 	sealed class RemoveAnalyzeCtxMenuCommand : MenuItemBase {
 		public override bool IsVisible(IMenuItemContext context) {
 			return GetNodes(context) != null;

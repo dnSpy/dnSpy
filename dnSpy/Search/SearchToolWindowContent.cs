@@ -26,6 +26,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Search {
@@ -76,7 +77,7 @@ namespace dnSpy.Search {
 		}
 
 		public string Title {
-			get { return "Search"; }
+			get { return dnSpy_Resources.SearchWindow_Title; }
 		}
 
 		public object ToolTip {

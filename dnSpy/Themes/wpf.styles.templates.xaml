@@ -5,9 +5,10 @@
                     xmlns:ctrls="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
                     xmlns:tabs="clr-namespace:dnSpy.Tabs"
                     xmlns:tabssettings="clr-namespace:dnSpy.Files.Tabs.Settings"
-                    xmlns:compiler="clr-namespace:ICSharpCode.Decompiler;assembly=ICSharpCode.Decompiler"
+                    xmlns:compiler="clr-namespace:dnSpy.Decompiler"
                     xmlns:mainapp="clr-namespace:dnSpy.MainApp"
                     xmlns:tw="clr-namespace:dnSpy.ToolWindows"
+                    xmlns:p="clr-namespace:dnSpy.Properties"
                     xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
                     xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
                     xmlns:search="clr-namespace:dnSpy.Search"
@@ -5155,7 +5156,7 @@
 													 PressedBorderBrush="{DynamicResource EnvironmentFileTabButtonDownInactiveBorder}"
 													 PressedForeground="{DynamicResource EnvironmentFileTabButtonDownInactiveGlyph}"
 													 PressedBorderThickness="1"
-													 ToolTip="Close">
+													 ToolTip="{x:Static p:dnSpy_Resources.CloseTabButtonToolTip}">
 										<Path x:Name="CloseButtonCross"
 											  Width="10" Height="8"
 											  Stretch="Uniform"
@@ -5391,7 +5392,7 @@
 										 PressedBorderBrush="{DynamicResource EnvironmentToolWindowButtonDownBorder}"
 										 PressedForeground="{DynamicResource EnvironmentToolWindowButtonDownActiveGlyph}"
 										 PressedBorderThickness="1"
-										 ToolTip="Window Position">
+										 ToolTip="{x:Static p:dnSpy_Resources.ToolWindowWinPosButtonToolTip}">
 							<Path Width="8" Height="4"
 								  Stretch="Uniform"
 								  Data="F1 M0,0 L4,4 L8,0 L0,0"
@@ -5411,7 +5412,7 @@
 										 PressedBorderBrush="{DynamicResource EnvironmentToolWindowButtonDownBorder}"
 										 PressedForeground="{DynamicResource EnvironmentToolWindowButtonDownActiveGlyph}"
 										 PressedBorderThickness="1"
-										 ToolTip="Close">
+										 ToolTip="{x:Static p:dnSpy_Resources.CloseTabButtonToolTip}">
 							<Path x:Name="CloseButtonCross"
 								  Width="10" Height="8"
 								  Stretch="Uniform"
@@ -5456,23 +5457,23 @@
                 Value="False"/>
     </Style>
 
-    <DataTemplate DataType="{x:Type compiler:DecompilerSettings}">
+    <DataTemplate DataType="{x:Type compiler:DecompilerAppSettingsTab}">
         <StackPanel Margin="5">
-            <CheckBox Margin="0 0 0 0" IsChecked="{Binding AnonymousMethods}">Decompile anonymous methods/lambdas</CheckBox>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding YieldReturn}">Decompile enumerators (yield return)</CheckBox>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding AsyncAwait}">Decompile async methods (async/await)</CheckBox>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding QueryExpressions}" IsEnabled="{Binding AnonymousMethods}">Decompile query expressions</CheckBox>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding ExpressionTrees}">Decompile expression trees</CheckBox>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding UseDebugSymbols}">Use variable names from debug symbols, if available</CheckBox>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding ShowXmlDocumentation}">Show XML documentation in decompiled code</CheckBox>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding RemoveEmptyDefaultConstructors}">Remove empty default constructors</CheckBox>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding ShowTokenAndRvaComments}">Show tokens, RVAs and file offsets</CheckBox>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding ShowILBytes}">Show IL instruction bytes</CheckBox>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding ShowILComments}">Show IL opcode comments</CheckBox>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding SortMembers}">Sort methods, fields, properties, events and types</CheckBox>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding ForceShowAllMembers}">Show hidden compiler generated types and methods</CheckBox>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding SortSystemUsingStatementsFirst}">Place 'System' directives first when sorting usings</CheckBox>
-            <GroupBox Margin="0 5 0 0" Header="Decompilation order">
+            <CheckBox Margin="0 0 0 0" IsChecked="{Binding Settings.AnonymousMethods}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_DecompileAnonMethods}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.YieldReturn}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_DecompileEnumerators}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.AsyncAwait}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_DecompileAsyncMethods}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.QueryExpressions}" IsEnabled="{Binding Settings.AnonymousMethods}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_DecompileQueryExpr}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ExpressionTrees}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_DecompileExprTrees}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.UseDebugSymbols}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_UseLocalNameFromSyms}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowXmlDocumentation}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_ShowXMLDocComments}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.RemoveEmptyDefaultConstructors}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_RemoveEmptyDefaultCtors}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowTokenAndRvaComments}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_ShowTokensRvasOffsets}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILBytes}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_ShowILInstrBytes}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILComments}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_ShowILComments}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortMembers}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_SortMethods}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ForceShowAllMembers}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_ShowCompilerGeneratedTypes}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortSystemUsingStatementsFirst}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_SortSystemFirst}"/>
+            <GroupBox Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.DecompilerSettings_DecompilationOrder}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -5481,11 +5482,11 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
-                    <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject0}" />
-                    <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject1}" />
-                    <ComboBox Grid.Column="2" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject2}" />
-                    <ComboBox Grid.Column="3" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject3}" />
-                    <ComboBox Grid.Column="4" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject4}" />
+                    <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject0}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject1}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Column="2" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject2}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Column="3" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject3}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Column="4" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject4}" DisplayMemberPath="Text" />
                 </Grid>
             </GroupBox>
         </StackPanel>
@@ -5501,7 +5502,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
-            <GroupBox Header="Font">
+            <GroupBox Header="{x:Static p:dnSpy_Resources.Font}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
@@ -5544,17 +5545,17 @@
                     </Border>
                 </Grid>
             </GroupBox>
-            <GroupBox Header="Other Options" Grid.Row="1">
+            <GroupBox Header="{x:Static p:dnSpy_Resources.DisplaySettings_OtherOptions}" Grid.Row="1">
                 <StackPanel Margin="3">
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding TextEditorSettings.ShowLineNumbers}">Show line numbers</CheckBox>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding TextEditorSettings.AutoHighlightRefs}">Highlight references</CheckBox>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTabManagerSettings.DecompileFullType}">Decompile the full type instead of a single field / method / etc</CheckBox>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTabManagerSettings.RestoreTabs}">Restore tabs at startup</CheckBox>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.ShowToken}">Show metadata tokens</CheckBox>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.ShowAssemblyVersion}">Show assembly version</CheckBox>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.ShowAssemblyPublicKeyToken}">Show assembly public key token</CheckBox>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.SingleClickExpandsTreeViewChildren}">Single-click expands TreeView nodes</CheckBox>
-                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.SyntaxHighlight}">Syntax highlight TreeView</CheckBox>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding TextEditorSettings.ShowLineNumbers}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowLineNumbers}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding TextEditorSettings.AutoHighlightRefs}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_HighlightReferences}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTabManagerSettings.DecompileFullType}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_DecompileType}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTabManagerSettings.RestoreTabs}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_RestoreTabs}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.ShowToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowTokens}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.ShowAssemblyVersion}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyVersion}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.ShowAssemblyPublicKeyToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyPublicKeyToken}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.SingleClickExpandsTreeViewChildren}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_SingleClickExpandNodes}"/>
+                    <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.SyntaxHighlight}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_SyntaxHighlightTreeView}"/>
                 </StackPanel>
             </GroupBox>
         </Grid>
@@ -5563,7 +5564,7 @@
     <DataTemplate DataType="{x:Type mainapp:UseNewRendererVM}">
         <GroupBox>
             <GroupBox.Header>
-                <CheckBox IsChecked="{Binding UseNewRenderer}" Content="Use the new text formatter" />
+                <CheckBox IsChecked="{Binding UseNewRenderer}" Content="{x:Static p:dnSpy_Resources.UseNewRendererHeader}" />
             </GroupBox.Header>
             <Grid>
                 <Grid.RowDefinitions>
@@ -5576,10 +5577,10 @@
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" TextWrapping="Wrap"
-                           Text="The new text formatter is faster but doesn't support word wrap or all unicode characters." />
-                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding UseNewRenderer_TextEditor}" Content="Text Editor" />
-                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding UseNewRenderer_HexEditor}" Content="Hex Editor" />
-                <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UseNewRenderer_FileTreeView}" Content="File TreeView" />
+                           Text="{x:Static p:dnSpy_Resources.UseNewRendererInfo}" />
+                <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding UseNewRenderer_TextEditor}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_TextEditor}" />
+                <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding UseNewRenderer_HexEditor}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_HexEditor}" />
+                <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding UseNewRenderer_FileTreeView}" Content="{x:Static p:dnSpy_Resources.UseNewRenderer_FileTreeView}" />
             </Grid>
         </GroupBox>
     </DataTemplate>

@@ -26,6 +26,7 @@ using System.Windows;
 using System.Windows.Threading;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Shared.UI.MVVM.Dialogs;
+using dnSpy.Shared.UI.Properties;
 using WF = System.Windows.Forms;
 
 namespace dnSpy.Shared.UI.Files.TreeView.Resources {
@@ -63,13 +64,13 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 			var win = new ProgressDlg();
 			win.DataContext = data;
 			win.Owner = ownerWindow ?? Contracts.DnSpy.App.AppWindow.MainWindow;
-			win.Title = files.Length == 1 ? "Save Resource" : "Save Resources";
+			win.Title = files.Length == 1 ? dnSpy_Shared_UI_Resources.SaveResource : dnSpy_Shared_UI_Resources.SaveResources;
 			var res = win.ShowDialog();
 			if (res != true)
 				return;
 			if (!data.WasError)
 				return;
-			App.MsgBox.Instance.Show(string.Format("An error occurred:\n\n{0}", data.ErrorMessage));
+			App.MsgBox.Instance.Show(string.Format(dnSpy_Shared_UI_Resources.AnErrorOccurred, data.ErrorMessage));
 		}
 
 		static IEnumerable<Tuple<ResourceData, string>> GetFiles(ResourceData[] infos, bool useSubDirs) {

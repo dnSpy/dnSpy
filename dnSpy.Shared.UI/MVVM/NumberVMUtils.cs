@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
+using dnSpy.Shared.UI.Properties;
 
 namespace dnSpy.Shared.UI.MVVM {
 	public static class NumberVMUtils {
@@ -31,7 +32,7 @@ namespace dnSpy.Shared.UI.MVVM {
 			s = s.Replace("\r", string.Empty);
 			s = s.Replace("\n", string.Empty);
 			if (s.Length % 2 != 0) {
-				error = "A hex string must contain an even number of hex digits";
+				error = dnSpy_Shared_UI_Resources.InvalidHexStringSize;
 				return null;
 			}
 			var bytes = new byte[s.Length / 2];
@@ -39,7 +40,7 @@ namespace dnSpy.Shared.UI.MVVM {
 				int upper = TryParseHexChar(s[i]);
 				int lower = TryParseHexChar(s[i + 1]);
 				if (upper < 0 || lower < 0) {
-					error = "A hex string must contain only hex digits: 0-9 and A-F";
+					error = dnSpy_Shared_UI_Resources.InvalidHexCharacter;
 					return null;
 				}
 				bytes[i / 2] = (byte)((upper << 4) | lower);
@@ -233,13 +234,13 @@ namespace dnSpy.Shared.UI.MVVM {
 				isValid = ulong.TryParse(s, NumberStyles.Integer, null, out value);
 			if (!isValid) {
 				if (s.StartsWith("-"))
-					return "Only non-negative integers are allowed";
-				return "The value is not an unsigned hexadecimal or decimal integer";
+					return dnSpy_Shared_UI_Resources.InvalidUnsignedInteger1;
+				return dnSpy_Shared_UI_Resources.InvalidUnsignedInteger2;
 			}
 			if (value < min || value > max) {
 				if (min == 0)
-					return string.Format("Value must be between {0} and {1} (0x{1:X}) inclusive", min, max);
-				return string.Format("Value must be between {0} (0x{0:X}) and {1} (0x{1:X}) inclusive", min, max);
+					return string.Format(dnSpy_Shared_UI_Resources.InvalidUnsignedInteger3, min, max);
+				return string.Format(dnSpy_Shared_UI_Resources.InvalidUnsignedInteger4, min, max);
 			}
 
 			return null;
@@ -259,7 +260,7 @@ namespace dnSpy.Shared.UI.MVVM {
 				error = null;
 				return value;
 			}
-			error = "Value must be a 32-bit floating point number";
+			error = dnSpy_Shared_UI_Resources.InvalidSingle;
 			return 0;
 		}
 
@@ -269,7 +270,7 @@ namespace dnSpy.Shared.UI.MVVM {
 				error = null;
 				return value;
 			}
-			error = "Value must be a 64-bit floating point number";
+			error = dnSpy_Shared_UI_Resources.InvalidDouble;
 			return 0;
 		}
 
@@ -279,7 +280,7 @@ namespace dnSpy.Shared.UI.MVVM {
 				error = null;
 				return value;
 			}
-			error = "Value must be a Decimal";
+			error = dnSpy_Shared_UI_Resources.InvalidDecimal;
 			return 0;
 		}
 
@@ -289,7 +290,7 @@ namespace dnSpy.Shared.UI.MVVM {
 				error = null;
 				return value;
 			}
-			error = "Value must be a DateTime";
+			error = dnSpy_Shared_UI_Resources.InvalidDateTime;
 			return DateTime.MinValue;
 		}
 
@@ -299,7 +300,7 @@ namespace dnSpy.Shared.UI.MVVM {
 				error = null;
 				return value;
 			}
-			error = "Value must be a TimeSpan";
+			error = dnSpy_Shared_UI_Resources.InvalidTimeSpan;
 			return TimeSpan.Zero;
 		}
 
@@ -309,7 +310,7 @@ namespace dnSpy.Shared.UI.MVVM {
 				error = null;
 				return value;
 			}
-			error = "Value must be a boolean value (True or False)";
+			error = dnSpy_Shared_UI_Resources.InvalidBoolean;
 			return false;
 		}
 
@@ -325,7 +326,7 @@ namespace dnSpy.Shared.UI.MVVM {
 		}
 
 		static char SetParseCharError(out string error) {
-			error = "A character must be enclosed in single quotes (')";
+			error = dnSpy_Shared_UI_Resources.InvalidChar;
 			return (char)0;
 		}
 
@@ -366,7 +367,7 @@ namespace dnSpy.Shared.UI.MVVM {
 					break;
 
 				default:
-					error = string.Format("Unknown character escape sequence: \\{0}", c);
+					error = string.Format(dnSpy_Shared_UI_Resources.InvalidEscapeSequence, c);
 					return (char)0;
 				}
 			}
@@ -393,8 +394,8 @@ namespace dnSpy.Shared.UI.MVVM {
 
 		static string SetParseStringError(bool canHaveNull, out string error) {
 			error = canHaveNull ?
-				"A string must contain the value 'null' or must be enclosed in double quotes (\")" :
-				"A string must be enclosed in double quotes (\")";
+				dnSpy_Shared_UI_Resources.InvalidString1 :
+				dnSpy_Shared_UI_Resources.InvalidString2;
 			return null;
 		}
 
@@ -451,7 +452,7 @@ namespace dnSpy.Shared.UI.MVVM {
 						break;
 
 					default:
-						error = string.Format("Unknown string escape sequence: \\{0}", c);
+						error = string.Format(dnSpy_Shared_UI_Resources.InvalidEscapeSequence2, c);
 						return null;
 					}
 				}
@@ -533,21 +534,21 @@ namespace dnSpy.Shared.UI.MVVM {
 			else
 				isValid = ulong.TryParse(s, NumberStyles.Integer, null, out value2);
 			if (!isValid)
-				return "The value is not a hexadecimal or decimal integer";
+				return dnSpy_Shared_UI_Resources.InvalidInteger1;
 			if (isSigned) {
 				if (value2 > (ulong)long.MaxValue + 1)
-					return "The value is too small";
+					return dnSpy_Shared_UI_Resources.InvalidInteger2;
 				value = unchecked(-(long)value2);
 			}
 			else {
 				if (value2 > (ulong)long.MaxValue)
-					return "The value is too big";
+					return dnSpy_Shared_UI_Resources.InvalidInteger3;
 				value = (long)value2;
 			}
 			if (value < min || value > max) {
 				if (min == 0)
-					return string.Format("Value must be between {0} and {1} (0x{1:X}) inclusive", min, max);
-				return string.Format("Value must be between {0} ({2}0x{0:X}) and {1} (0x{1:X}) inclusive", minObject, max, min < 0 ? "-" : string.Empty);
+					return string.Format(dnSpy_Shared_UI_Resources.InvalidInteger4, min, max);
+				return string.Format(dnSpy_Shared_UI_Resources.InvalidInteger5, minObject, max, min < 0 ? "-" : string.Empty);
 			}
 
 			return null;
@@ -653,7 +654,7 @@ namespace dnSpy.Shared.UI.MVVM {
 			foreach (var elem in s.Split(',')) {
 				var value = elem.Trim();
 				if (value == string.Empty) {
-					error = "Value in list can't be empty";
+					error = dnSpy_Shared_UI_Resources.InvalidListValue;
 					return null;
 				}
 				var res = parseValue(value);
@@ -691,7 +692,7 @@ namespace dnSpy.Shared.UI.MVVM {
 				if (index >= s.Length)
 					break;
 				if (s[index] != ',') {
-					error = "List elements must be separated with commas";
+					error = dnSpy_Shared_UI_Resources.InvalidListValue2;
 					return null;
 				}
 				index++;

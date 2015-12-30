@@ -22,6 +22,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="500">
 	<UserControl.Resources>
@@ -42,16 +43,16 @@
 			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
 
-		<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+        <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Resource_Name}" />
 		<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-		<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="_Visibility" Target="{Binding ElementName=visibilityComboBox}" />
+        <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.EditResource_Visibility}" Target="{Binding ElementName=visibilityComboBox}" />
 		<ComboBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="visibilityComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ResourceVisibilityVM.Items}" SelectedIndex="{Binding ResourceVisibilityVM.SelectedIndex}" VerticalContentAlignment="Center" />
-		<Button Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Command="{Binding PickAssemblyCommand}" Content="Assembly" Style="{StaticResource DialogButton}" Visibility="{Binding IsAssemblyLinked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <Button Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Command="{Binding PickAssemblyCommand}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Assembly}" Style="{StaticResource DialogButton}" Visibility="{Binding IsAssemblyLinked, Converter={StaticResource BooleanToVisibilityConverter}}" />
 		<TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" IsReadOnly="True" TextWrapping="Wrap" Text="{Binding AssemblyFullName, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged, Mode=OneWay}" Visibility="{Binding IsAssemblyLinked, Converter={StaticResource BooleanToVisibilityConverter}}" />
-		<Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=fileNameTextBox}" Content="_File" Visibility="{Binding IsLinked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=fileNameTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.EditResource_File}" Visibility="{Binding IsLinked, Converter={StaticResource BooleanToVisibilityConverter}}" />
 		<TextBox Grid.Row="3" Grid.Column="1" Margin="5 5 0 0" Name="fileNameTextBox" Text="{Binding FileName, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsLinked, Converter={StaticResource BooleanToVisibilityConverter}}" />
-		<Label Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=fileHashValueTextBox}" Content="_Hash" Visibility="{Binding IsLinked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <Label Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=fileHashValueTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.EditResource_Hash}" Visibility="{Binding IsLinked, Converter={StaticResource BooleanToVisibilityConverter}}" />
 		<TextBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Name="fileHashValueTextBox" Text="{Binding FileHashValue.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsLinked, Converter={StaticResource BooleanToVisibilityConverter}}" />
-		<CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding FileContainsNoMetaData}" Content="_Does not contain metadata" Visibility="{Binding IsLinked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding FileContainsNoMetaData}" Content="{x:Static p:dnSpy_AsmEditor_Resources.EditResource_ContainsNoMetadata}" Visibility="{Binding IsLinked, Converter={StaticResource BooleanToVisibilityConverter}}" />
 	</Grid>
 </UserControl>

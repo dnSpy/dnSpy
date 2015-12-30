@@ -28,10 +28,10 @@ using System.Windows.Input;
 using dnSpy.Contracts;
 using dnSpy.Shared.UI.Images;
 using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.UI.Resources;
 
 namespace dnSpy.AsmEditor.Commands {
 	abstract class ListBoxHelperBase<T> where T : class, IIndexedItem {
-		readonly string menuTypeName;
 		protected readonly ListBox listBox;
 		protected IndexObservableCollection<T> coll;
 		List<ContextMenuHandler> contextMenuHandlers = new List<ContextMenuHandler>();
@@ -81,8 +81,7 @@ namespace dnSpy.AsmEditor.Commands {
 			return items.Length > 0;
 		}
 
-		protected ListBoxHelperBase(ListBox listBox, string menuTypeName) {
-			this.menuTypeName = menuTypeName;
+		protected ListBoxHelperBase(ListBox listBox) {
 			this.listBox = listBox;
 			this.listBox.ContextMenu = new ContextMenu();
 			this.listBox.ContextMenuOpening += (s, e) => ShowContextMenu(e, listBox, contextMenuHandlers, GetSelectedItems());
@@ -107,29 +106,36 @@ namespace dnSpy.AsmEditor.Commands {
 			AddCopyHandlers();
 		}
 
+		protected abstract string AddNewBeforeSelectionMessage { get; }
+		protected abstract string AddNewAfterSelectionMessage { get; }
+		protected abstract string AppendNewMessage { get; }
+		protected abstract string RemoveSingularMessage { get; }
+		protected abstract string RemovePluralMessage { get; }
+		protected abstract string RemoveAllMessage { get; }
+
 		protected void AddAddNewItemHandlers(string addNewItemIcon = null) {
 			if (!coll.CanCreateNewItems)
 				return;
 			Add(new ContextMenuHandler {
-				Header = string.Format("Add New {0} Be_fore Selection", menuTypeName),
+				Header = AddNewBeforeSelectionMessage,
 				Command = coll.AddItemBeforeCommand,
 				Icon = addNewItemIcon ?? "AddNewItem",
-				InputGestureText = "F",
+				InputGestureText = "res:ShortCutKeyF",
 				Modifiers = ModifierKeys.None,
 				Key = Key.F,
 			});
 			Add(new ContextMenuHandler {
-				Header = string.Format("Add New {0} After Sele_ction", menuTypeName),
+				Header = AddNewAfterSelectionMessage,
 				Command = coll.AddItemAfterCommand,
 				Icon = addNewItemIcon ?? "AddNewItem",
-				InputGestureText = "C",
+				InputGestureText = "res:ShortCutKeyC",
 				Modifiers = ModifierKeys.None,
 				Key = Key.C,
 			});
 			Add(new ContextMenuHandler {
-				Header = string.Format("_Append New {0}", menuTypeName),
+				Header = AppendNewMessage,
 				Command = coll.AppendItemCommand,
-				InputGestureText = "A",
+				InputGestureText = "res:ShortCutKeyA",
 				Modifiers = ModifierKeys.None,
 				Key = Key.A,
 			});
@@ -139,18 +145,18 @@ namespace dnSpy.AsmEditor.Commands {
 			if (!coll.CanMoveItems)
 				return;
 			Add(new ContextMenuHandler {
-				Header = "Move _Up",
+				Header = "res:MoveUpCommand",
 				Command = coll.ItemMoveUpCommand,
 				Icon = "ArrowUp",
-				InputGestureText = "U",
+				InputGestureText = "res:ShortCutKeyU",
 				Modifiers = ModifierKeys.None,
 				Key = Key.U,
 			});
 			Add(new ContextMenuHandler {
-				Header = "Move _Down",
+				Header = "res:MoveDownCommand",
 				Command = coll.ItemMoveDownCommand,
 				Icon = "ArrowDown",
-				InputGestureText = "D",
+				InputGestureText = "res:ShortCutKeyD",
 				Modifiers = ModifierKeys.None,
 				Key = Key.D,
 			});
@@ -160,19 +166,19 @@ namespace dnSpy.AsmEditor.Commands {
 			if (!coll.CanRemoveItems)
 				return;
 			Add(new ContextMenuHandler {
-				Header = string.Format("_Remove {0}", menuTypeName),
-				HeaderPlural = string.Format("_Remove {0}s", menuTypeName),
+				Header = RemoveSingularMessage,
+				HeaderPlural = RemovePluralMessage,
 				Command = coll.RemoveItemCommand,
 				Icon = "Delete",
-				InputGestureText = "Del",
+				InputGestureText = "res:DeleteCommandKey",
 				Modifiers = ModifierKeys.None,
 				Key = Key.Delete,
 			});
 			Add(new ContextMenuHandler {
-				Header = string.Format("Remo_ve All {0}s", menuTypeName),
+				Header = RemoveAllMessage,
 				Command = coll.RemoveAllItemsCommand,
 				Icon = "Delete",
-				InputGestureText = "Ctrl+Del",
+				InputGestureText = "res:ShortCutKeyCtrlDel",
 				Modifiers = ModifierKeys.Control,
 				Key = Key.Delete,
 			});
@@ -180,42 +186,42 @@ namespace dnSpy.AsmEditor.Commands {
 
 		protected void AddCopyHandlers() {
 			Add(new ContextMenuHandler {
-				Header = "Copy as Te_xt",
+				Header = "res:CopyAsTextCommand",
 				Command = new RelayCommand(a => CopyItemsAsText((T[])a), a => CopyItemsAsTextCanExecute((T[])a)),
 				Icon = "Copy",
-				InputGestureText = "Ctrl+T",
+				InputGestureText = "res:ShortCutKeyCtrlT",
 				Modifiers = ModifierKeys.Control,
 				Key = Key.T,
 			});
 			Add(new ContextMenuHandler {
-				Header = string.Format("Cu_t"),
+				Header = "res:CutCommand",
 				Command = new RelayCommand(a => CutItems((T[])a), a => CutItemsCanExecute((T[])a)),
 				Icon = "Cut",
-				InputGestureText = "Ctrl+X",
+				InputGestureText = "res:ShortCutKeyCtrlX",
 				Modifiers = ModifierKeys.Control,
 				Key = Key.X,
 			});
 			Add(new ContextMenuHandler {
-				Header = string.Format("Cop_y"),
+				Header = "res:CopyCommand",
 				Command = new RelayCommand(a => CopyItems((T[])a), a => CopyItemsCanExecute((T[])a)),
 				Icon = "Copy",
-				InputGestureText = "Ctrl+C",
+				InputGestureText = "res:ShortCutKeyCtrlC",
 				Modifiers = ModifierKeys.Control,
 				Key = Key.C,
 			});
 			Add(new ContextMenuHandler {
-				Header = string.Format("_Paste"),
+				Header = "res:PasteCommand",
 				Command = new RelayCommand(a => PasteItems(), a => PasteItemsCanExecute()),
 				Icon = "Paste",
-				InputGestureText = "Ctrl+V",
+				InputGestureText = "res:ShortCutKeyCtrlV",
 				Modifiers = ModifierKeys.Control,
 				Key = Key.V,
 			});
 			Add(new ContextMenuHandler {
-				Header = string.Format("Paste After Se_lection"),
+				Header = "res:PasteAfterSelectionCommand",
 				Command = new RelayCommand(a => PasteAfterItems(), a => PasteAfterItemsCanExecute()),
 				Icon = "Paste",
-				InputGestureText = "Ctrl+Alt+V",
+				InputGestureText = "res:ShortCutKeyCtrlAltV",
 				Modifiers = ModifierKeys.Control | ModifierKeys.Alt,
 				Key = Key.V,
 			});
@@ -280,13 +286,13 @@ namespace dnSpy.AsmEditor.Commands {
 
 				var menuItem = new MenuItem();
 				menuItem.IsEnabled = handler.Command.CanExecute(parameter);
-				menuItem.Header = listBox.SelectedItems.Count > 1 ? handler.HeaderPlural ?? handler.Header : handler.Header;
+				menuItem.Header = ResourceHelper.GetString(handler, listBox.SelectedItems.Count > 1 ? handler.HeaderPlural ?? handler.Header : handler.Header);
 				var tmpHandler = handler;
 				menuItem.Click += (s, e2) => tmpHandler.Command.Execute(parameter);
 				if (handler.Icon != null)
 					DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(ListBoxHelperBase<T>).Assembly, handler.Icon, true, menuItem.IsEnabled);
 				if (handler.InputGestureText != null)
-					menuItem.InputGestureText = handler.InputGestureText;
+					menuItem.InputGestureText = ResourceHelper.GetString(handler, handler.InputGestureText);
 
 				if (addSep) {
 					if (ctxMenu.Items.Count > 0 && !(ctxMenu.Items[ctxMenu.Items.Count - 1] is Separator))

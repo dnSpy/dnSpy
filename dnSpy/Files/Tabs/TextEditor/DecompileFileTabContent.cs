@@ -30,6 +30,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
 using dnSpy.NRefactory;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Decompiler;
 using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.Decompiler;
@@ -127,7 +128,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public string Title {
 			get {
 				if (nodes.Length == 0)
-					return "<empty>";
+					return dnSpy_Resources.EmptyTabTitle;
 				if (nodes.Length == 1)
 					return nodes[0].ToString(language);
 				var sb = new StringBuilder();
@@ -229,11 +230,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			AvalonEditTextOutput output;
 			if (result.IsCanceled) {
 				output = new AvalonEditTextOutput();
-				output.Write("The operation was canceled", TextTokenType.Error);
+				output.Write(dnSpy_Resources.DecompilationCanceled, TextTokenType.Error);
 			}
 			else if (result.Exception != null) {
 				output = new AvalonEditTextOutput();
-				output.Write("An error occurred", TextTokenType.Error);
+				output.Write(dnSpy_Resources.DecompilationException, TextTokenType.Error);
 				output.WriteLine();
 				output.Write(result.Exception.ToString(), TextTokenType.Text);
 			}
@@ -255,7 +256,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				return false;
 
 			var uiCtx = (ITextEditorUIContext)uiContext;
-			uiCtx.ShowCancelButton(() => decompileContext.CancellationTokenSource.Cancel(), "Decompiling...");
+			uiCtx.ShowCancelButton(() => decompileContext.CancellationTokenSource.Cancel(), dnSpy_Resources.Decompiling);
 			return true;
 		}
 	}

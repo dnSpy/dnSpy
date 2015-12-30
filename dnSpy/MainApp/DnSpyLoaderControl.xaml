@@ -23,6 +23,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.MainApp"
+             xmlns:p="clr-namespace:dnSpy.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
@@ -41,7 +42,7 @@
                    FontSize="20"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
-                   Text="Loading dnSpy. Please wait..." />
+                   Text="{x:Static p:dnSpy_Resources.LoadingDnSpyPleaseWait}" />
         <ProgressBar Grid.Row="3" Height="20" Width="150" Margin="0 5 0 0" IsIndeterminate="True" />
     </Grid>
 </UserControl>

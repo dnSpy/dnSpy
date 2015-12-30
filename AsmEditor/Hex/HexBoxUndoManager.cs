@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Shared.UI.HexEditor;
 
@@ -103,10 +104,10 @@ namespace dnSpy.AsmEditor.Hex {
 
 		static string GetDescription(HexBoxWriteEventArgs e) {
 			switch (e.Type) {
-			case HexWriteType.Paste:		return string.Format("Paste {0} bytes @ {1:X8}", e.Size, e.StartOffset);
-			case HexWriteType.ByteInput:	return "Insert Bytes";
-			case HexWriteType.AsciiInput:	return "Insert ASCII";
-			case HexWriteType.Fill:			return string.Format("Fill {0} bytes @ {1:X8}", e.Size, e.StartOffset);
+			case HexWriteType.Paste:		return string.Format(dnSpy_AsmEditor_Resources.Hex_Undo_Message_PasteBytesAtAddress, e.Size, e.StartOffset);
+			case HexWriteType.ByteInput:	return dnSpy_AsmEditor_Resources.Hex_Undo_Message_InsertBytes;
+			case HexWriteType.AsciiInput:	return dnSpy_AsmEditor_Resources.Hex_Undo_Message_InsertASCII;
+			case HexWriteType.Fill:			return string.Format(dnSpy_AsmEditor_Resources.Hex_Undo_Message_FillBytesAtAddress, e.Size, e.StartOffset);
 			default:						return null;
 			}
 		}

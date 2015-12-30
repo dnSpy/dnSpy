@@ -28,6 +28,7 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Decompiler;
 using dnSpy.Shared.UI.Files.TreeView.Resources;
 using ICSharpCode.Decompiler;
@@ -110,13 +111,13 @@ namespace dnSpy.Files.TreeView.Resources {
 			var binData = (BinaryResourceData)newResElem.ResourceData;
 			byte[] imageData;
 			if (!SerializedImageUtils.GetImageData(this.GetModule(), binData.TypeName, binData.Data, out imageData))
-				return "The new data is not an image.";
+				return dnSpy_Resources.NewDataIsNotAnImage;
 
 			try {
 				ImageResourceUtils.CreateImageSource(imageData);
 			}
 			catch {
-				return "The new data is not an image.";
+				return dnSpy_Resources.NewDataIsNotAnImage;
 			}
 
 			return string.Empty;

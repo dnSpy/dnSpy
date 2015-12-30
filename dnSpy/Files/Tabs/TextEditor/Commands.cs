@@ -28,6 +28,7 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Menus;
 
 namespace dnSpy.Files.Tabs.TextEditor {
@@ -50,11 +51,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		void ToggleWordWrap() {
 			textEditorSettings.WordWrap = !textEditorSettings.WordWrap;
 			if (textEditorSettings.WordWrap && appSettings.UseNewRenderer_TextEditor)
-				messageBoxManager.ShowIgnorableMessage(new Guid("AA6167DA-827C-49C6-8EF3-0797FE8FC5E6"), "The text editor is using the new faster text formatter. It doesn't support word wrap or all unicode characters. Enable/disable it in the options.");
+				messageBoxManager.ShowIgnorableMessage(new Guid("AA6167DA-827C-49C6-8EF3-0797FE8FC5E6"), dnSpy_Resources.TextEditorNewFormatterWarningMsg);
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "_Word Wrap", Icon = "WordWrap", InputGestureText = "Ctrl+Alt+W", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:WordWrapHeader", Icon = "WordWrap", InputGestureText = "res:WordWrapKey", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 0)]
 	sealed class WordWrapCommand : MenuItemCommand {
 		readonly TextEditorSettingsImpl textEditorSettings;
 
@@ -69,7 +70,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "_Highlight Current Line", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:HighlightLine", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 10)]
 	sealed class HighlightCurrentLineCommand : MenuItemBase {
 		readonly TextEditorSettingsImpl textEditorSettings;
 
@@ -87,7 +88,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 	}
 
-	[ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 0)]
+	[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:CopyKey", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 0)]
 	internal sealed class CopyCodeCtxMenuCommand : MenuItemCommand {
 		public CopyCodeCtxMenuCommand()
 			: base(ApplicationCommands.Copy) {
@@ -130,14 +131,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "_Find", Icon = "Find", InputGestureText = "Ctrl+F", Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:FindCommand", Icon = "Find", InputGestureText = "res:FindKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 0)]
 	sealed class FindInCodeCommand : MenuItemCommand {
 		public FindInCodeCommand()
 			: base(ApplicationCommands.Find) {
 		}
 	}
 
-	[ExportMenuItem(Header = "Find", Icon = "Find", InputGestureText = "Ctrl+F", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 10)]
+	[ExportMenuItem(Header = "res:FindCommand2", Icon = "Find", InputGestureText = "res:FindKey", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 10)]
 	sealed class FindInCodeContexMenuEntry : MenuItemCommand {
 		FindInCodeContexMenuEntry()
 			: base(ApplicationCommands.Find) {
@@ -176,7 +177,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (uiContext == null)
 				return;
 
-			var res = messageBoxManager.Ask<Tuple<int, int>>("_Line [, column]", null, "Go to Line", s => {
+			var res = messageBoxManager.Ask<Tuple<int, int>>(dnSpy_Resources.GoToLine_Label, null, dnSpy_Resources.GoToLine_Title, s => {
 				int? line, column;
 				TryGetRowCol(s, uiContext.Location.Line, out line, out column);
 				return Tuple.Create(line.Value, column.Value);
@@ -202,8 +203,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 			if (line == null || column == null) {
 				if (string.IsNullOrWhiteSpace(s))
-					return "Enter a line number";
-				return string.Format("Invalid line: {0}", s);
+					return dnSpy_Resources.GoToLine_EnterLineNum;
+				return string.Format(dnSpy_Resources.GoToLine_InvalidLine, s);
 			}
 			return string.Empty;
 		}

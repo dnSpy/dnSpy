@@ -24,6 +24,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Images;
+using dnSpy.Debugger.Properties;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
@@ -229,7 +230,7 @@ namespace dnSpy.Debugger.CallStack {
 					framesList.RemoveAt(framesList.Count - 1);
 			}
 			else if (!oldHadTooManyFrames && tooManyFrames)
-				framesList.Add(new MessageCallStackFrameVM(callStackFrameContext, newFrames.Count, "The maximum number of stack frames supported by dnSpy has been exceeded."));
+				framesList.Add(new MessageCallStackFrameVM(callStackFrameContext, newFrames.Count, dnSpy_Debugger_Resources.CallStack_MaxFramesExceeded));
 		}
 
 		bool IsUserCode(CorFrame frame) {

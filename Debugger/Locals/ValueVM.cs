@@ -27,6 +27,7 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
+using dnSpy.Debugger.Properties;
 using dnSpy.Decompiler;
 using dnSpy.NRefactory;
 using ICSharpCode.TreeView;
@@ -178,7 +179,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public virtual string SetValueAsText(string newText) {
-			return "This field can't be edited";
+			return dnSpy_Debugger_Resources.LocalsEditValue_Error_FieldCanNotBeEdited;
 		}
 
 		protected void ClearAndDisposeChildren() {
@@ -402,19 +403,19 @@ namespace dnSpy.Debugger.Locals {
 
 			if (v == null) {
 				ClearAndDisposeChildren();
-				var msg = "Could not re-create the value";
+				var msg = dnSpy_Debugger_Resources.Locals_Error_CouldNotRecreateTheValue;
 				if (hr_ReadOnlyCorValue == CordbgErrors.CORDBG_E_STATIC_VAR_NOT_AVAILABLE)
-					msg = "Static field is not yet available";//TODO: Do something about it. VS has no problem showing the value
+					msg = dnSpy_Debugger_Resources.Locals_Error_StaticFieldIsNotYetAvailable;//TODO: Do something about it. VS has no problem showing the value
 				else if (hr_ReadOnlyCorValue == ERROR_PropertyEvalDisabled)
-					msg = "Property/function evaluation has been disabled in the settings";
+					msg = dnSpy_Debugger_Resources.Locals_Error_PropertyFuncEvalHasBeenDisabledInSettings;
 				else if (hr_ReadOnlyCorValue == ERROR_EvalTimedOut)
-					msg = "Evaluation timed out";
+					msg = dnSpy_Debugger_Resources.Locals_Error_EvaluationTimedOut;
 				else if (hr_ReadOnlyCorValue == ERROR_EvalDisabledTimedOut)
 					msg = EVAL_DISABLED_TIMEDOUT_ERROR_MSG;
 				else if (hr_ReadOnlyCorValue == ERROR_CantEvaluate)
 					msg = EVAL_DISABLED_CANT_CALL_PROPS_METHS;
 				else if (CordbgErrors.IsCantEvaluateError(hr_ReadOnlyCorValue))
-					msg = "Can't evaluate when the thread is at an unsafe point. Step once or run until a breakpoint hits.";
+					msg = dnSpy_Debugger_Resources.Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint;
 				Children.Add(MessageValueVM.CreateError(context, msg));
 				WriteLazyLoading(false);
 				childrenState = null;
@@ -755,7 +756,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		bool AskUserShowAllArrayElements() {
-			var q = string.Format("This item contains more than {0} child items and will be limited to displaying that number of items when expanded.\n\nAre you sure you want to expand it?", MAX_ARRAY_ELEMS);
+			var q = string.Format(dnSpy_Debugger_Resources.Locals_Ask_TooManyItems, MAX_ARRAY_ELEMS);
 			return context.LocalsOwner.AskUser(q);
 		}
 
@@ -793,7 +794,7 @@ namespace dnSpy.Debugger.Locals {
 
 		public override string SetValueAsText(string newText) {
 			if (!CanEdit)
-				return "This value can't be edited";
+				return dnSpy_Debugger_Resources.LocalsEditValue_Error_ValueCanNotBeEdited;
 			var res = SetValueAsTextInternal(new ValueStringParser(newText));
 			if (string.IsNullOrEmpty(res))
 				context.LocalsOwner.Refresh(this);
@@ -811,7 +812,7 @@ namespace dnSpy.Debugger.Locals {
 		protected string WriteNewValue(ValueStringParser parser, Func<CorValue> getValue) {
 			var value = getValue();
 			if (value == null || value.IsNeutered)
-				return "The value has been neutered and couldn't be recreated";
+				return dnSpy_Debugger_Resources.Locals_Error_ErrorNeuteredCouldNotBeRecreated;
 
 			if (value.IsReference && value.Type == CorElementType.ByRef) {
 				var v = value.NeuterCheckDereferencedValue;
@@ -828,7 +829,7 @@ namespace dnSpy.Debugger.Locals {
 				Debug.Assert(hasValueValue != null && valueValue != null);
 				if (hasValueValue != null && valueValue != null && hasValueValue.Type == CorElementType.Boolean && hasValueValue.Size == 1) {
 					if (valueValue.Size > 0x00100000)
-						return "Value type is too big";
+						return dnSpy_Debugger_Resources.LocalsEditValue_Error_ValueTypeIsTooBig;
 					byte[] newHasValueBuf, newValueBuf;
 					if (parser.IsNull) {
 						newHasValueBuf = new byte[1] { 0 };
@@ -846,7 +847,7 @@ namespace dnSpy.Debugger.Locals {
 						if (hr >= 0)
 							hr = valueValue.WriteGenericValue(newValueBuf);
 						if (hr < 0)
-							return string.Format("Error writing null to nullable type: 0x{0:X8}", hr);
+							return string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_CouldNotWriteNullToNullableType, hr);
 						return null;
 					}
 				}
@@ -870,7 +871,7 @@ namespace dnSpy.Debugger.Locals {
 					int hr = value.WriteGenericValue(bytes);
 					if (hr >= 0)
 						return null;
-					return string.Format("Could not write the value. Error: 0x{0:X8}", hr);
+					return string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_CouldNotWriteTheValue, hr);
 				}
 			}
 
@@ -886,7 +887,7 @@ namespace dnSpy.Debugger.Locals {
 					int hr = context.Process.CorProcess.WriteMemory(value.Address, bytes, 0, bytes.Length, out sizeWritten);
 					if (sizeWritten == bytes.Length)
 						return null;
-					return string.Format("Could not write the value. Error: 0x{0:X8}", hr);
+					return string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_CouldNotWriteTheValue, hr);
 				}
 			}
 
@@ -906,11 +907,11 @@ namespace dnSpy.Debugger.Locals {
 					return error;
 				value = getValue();
 				if (value == null || value.IsNeutered)
-					return "The value has been neutered and couldn't be recreated";
+					return dnSpy_Debugger_Resources.Locals_Error_ErrorNeuteredCouldNotBeRecreated;
 				if (value.IsReference && value.Type == CorElementType.ByRef)
 					value = value.NeuterCheckDereferencedValue;
 				if (value == null || value.IsNeutered)
-					return "The value has been neutered and couldn't be recreated";
+					return dnSpy_Debugger_Resources.Locals_Error_ErrorNeuteredCouldNotBeRecreated;
 				value.ReferenceAddress = newStringValue.ReferenceAddress;
 				return null;
 			}
@@ -920,36 +921,36 @@ namespace dnSpy.Debugger.Locals {
 				value.Type == CorElementType.SZArray || value.Type == CorElementType.String ||
 				value.Type == CorElementType.Object)) {
 				if (!parser.IsNull)
-					return "You can only set it to null";
+					return dnSpy_Debugger_Resources.LocalsEditValue_Error_CanOnlyBeSetToNull;
 				value.ReferenceAddress = 0;
 				return null;
 			}
 
-			return "Can't write a new value to this type.";
+			return dnSpy_Debugger_Resources.LocalsEditValue_Error_CanNotWriteNewValueToThisType;
 		}
 
-		protected const string EVAL_DISABLED_TIMEDOUT_ERROR_MSG = "Evaluation timed out and has been disabled until you continue the debugged program.";
-		protected const string EVAL_DISABLED_CANT_CALL_PROPS_METHS = "It's currently not possible to call properties and methods";
+		protected static readonly string EVAL_DISABLED_TIMEDOUT_ERROR_MSG = dnSpy_Debugger_Resources.Locals_Error_EvalTimedOutIsDisabled;
+		protected static readonly string EVAL_DISABLED_CANT_CALL_PROPS_METHS = dnSpy_Debugger_Resources.Locals_Error_EvalDisabledCantCallPropsAndMethods;
 		protected string CreateString(string s, out CorValue newString) {
 			newString = null;
 
 			if (this.context.LocalsOwner.TheDebugger.EvalDisabled)
-				return "Evaluation timed out and it's not possible to create new strings until you continue the debugged program";
+				return dnSpy_Debugger_Resources.Locals_Error_EvalTimedOutCantCreateNewStringsUntilContinue;
 			if (!this.context.LocalsOwner.TheDebugger.CanEvaluate)
-				return "It's currently not possible to create new strings";
+				return dnSpy_Debugger_Resources.Locals_Error_CantEvaluateCantCreateStrings;
 
 			int hr;
 			EvalResult? res;
 			using (var eval = this.context.LocalsOwner.TheDebugger.CreateEval(context.Thread.CorThread))
 				res = eval.CreateString(s, out hr);
 			if (res == null)
-				return string.Format("Couldn't create a string. Error: 0x{0:X8}", hr);
+				return string.Format(dnSpy_Debugger_Resources.Locals_Error_CouldNotCreateString, hr);
 			if (res.Value.WasException)
-				return "An exception occurred in the debugged program and the string couldn't be created";
+				return dnSpy_Debugger_Resources.Locals_Error_CouldNotCreateStringDueToException;
 
 			newString = res.Value.ResultOrException;
 			if (newString == null)
-				return "Couldn't create the new string";
+				return dnSpy_Debugger_Resources.Locals_Error_CouldNotCreateString2;
 
 			return null;
 		}
@@ -1253,17 +1254,17 @@ namespace dnSpy.Debugger.Locals {
 						args = new CorValue[2] { GetThisArg(), v };
 					var res = eval.Call(func, GetTypeArgs(), args, out hr);
 					if (res == null)
-						return string.Format("Error calling property setter: 0x{0:X8}", hr);
+						return string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_CouldNotCallPropSetter, hr);
 					if (res.Value.WasException) {
 						var ex = res.Value.ResultOrException;
 						var et = ex == null ? null : ex.ExactType;
-						return string.Format("An exception occurred in the debugged process: {0}", et);
+						return string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_ExceptionOccurredInDebuggedProcess, et);
 					}
 					return null;
 				}
 			}
 			catch (Exception ex) {
-				return string.Format("Could not write the value\nERROR: {0}", ex.Message);
+				return string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_CouldNotWriteValueDueToException, ex.Message);
 			}
 		}
 
@@ -1817,7 +1818,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public override void WriteName(ISyntaxHighlightOutput output) {
-			output.Write("Type variables", TextTokenType.TypeGenericParameter);
+			output.Write(dnSpy_Debugger_Resources.Locals_TypeVariables, TextTokenType.TypeGenericParameter);
 		}
 	}
 }

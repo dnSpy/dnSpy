@@ -20,6 +20,7 @@
 using System;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Shared.UI.Files.TreeView.Resources;
 using dnSpy.Shared.UI.MVVM;
@@ -73,7 +74,7 @@ namespace dnSpy.AsmEditor.Resources {
 		void PickType() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newType = dnlibTypePicker.GetDnlibType(new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), GetTypeRef(), ownerModule);
+			var newType = dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Type, new FlagsFileTreeNodeFilter(VisibleMembersFlags.TypeDef), GetTypeRef(), ownerModule);
 			if (newType != null)
 				TypeFullName = newType.AssemblyQualifiedName;
 		}
@@ -113,22 +114,21 @@ namespace dnSpy.AsmEditor.Resources {
 			return SerializationUtils.CreateObjectFromString(type, StringValue, out obj);
 		}
 
-		const string SERIALIZATION_DISABLED_ERROR = "(De)serialization is disabled in the settings.";
 		string LoadType(out Type type) {
 			if (!canDeserialize) {
 				type = null;
-				return SERIALIZATION_DISABLED_ERROR;
+				return dnSpy_AsmEditor_Resources.Error_DeSerializationDisabledInSettings;
 			}
 
 			try {
 				type = Type.GetType(TypeFullName);
 				if (type == null)
-					return "Could not find the type or its assembly.";
+					return dnSpy_AsmEditor_Resources.Error_CouldNotFindTypeOrItsAssembly;
 				return string.Empty;
 			}
 			catch (Exception ex) {
 				type = null;
-				return string.Format("Could not load type '{0}': {1}", typeFullName, ex.Message);
+				return string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotLoadType, typeFullName, ex.Message);
 			}
 		}
 

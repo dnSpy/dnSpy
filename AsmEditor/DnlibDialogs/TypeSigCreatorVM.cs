@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.Highlighting;
@@ -53,7 +54,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			get {
 				if (!string.IsNullOrEmpty(options.Title))
 					return options.Title;
-				return "Create TypeSig";
+				return dnSpy_AsmEditor_Resources.CreateTypeSig;
 			}
 		}
 
@@ -264,14 +265,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		TypeDefOrRefSig GetTypeSig() {
-			return GetTypeSig(VisibleMembersFlags.TypeDef);
+			return GetTypeSig(dnSpy_AsmEditor_Resources.Pick_Type, VisibleMembersFlags.TypeDef);
 		}
 
-		TypeDefOrRefSig GetTypeSig(VisibleMembersFlags flags) {
+		TypeDefOrRefSig GetTypeSig(string title, VisibleMembersFlags flags) {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
 
-			var type = dnlibTypePicker.GetDnlibType<ITypeDefOrRef>(new FlagsFileTreeNodeFilter(flags), null, options.OwnerModule);
+			var type = dnlibTypePicker.GetDnlibType<ITypeDefOrRef>(title, new FlagsFileTreeNodeFilter(flags), null, options.OwnerModule);
 			if (type == null)
 				return null;
 
@@ -321,7 +322,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			if (createMethodPropertySig == null)
 				throw new InvalidOperationException();
 
-			var createOptions = new MethodSigCreatorOptions(options.Clone("Create FnPtr Method Signature"));
+			var createOptions = new MethodSigCreatorOptions(options.Clone(dnSpy_AsmEditor_Resources.CreateFnPtrMethodSignature));
 			createOptions.IsPropertySig = false;
 			createOptions.CanHaveSentinel = true;
 
@@ -350,25 +351,25 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		bool canAddFnPtr = true;
 
 		void AddGenericInstSig() {
-			var origType = GetTypeSig(VisibleMembersFlags.GenericTypeDef);
+			var origType = GetTypeSig(dnSpy_AsmEditor_Resources.Pick_GenericType, VisibleMembersFlags.GenericTypeDef);
 			if (origType == null)
 				return;
 			var type = origType as ClassOrValueTypeSig;
 			if (type == null) {
-				ShowWarning(null, "The type must be a generic type");
+				ShowWarning(null, dnSpy_AsmEditor_Resources.TypeMustBeGeneric);
 				return;
 			}
 			var genericType = type.TypeDefOrRef.ResolveTypeDef();
 			if (genericType == null) {
-				ShowWarning(null, "Could not resolve the type. Make sure that its assembly has already been loaded.");
+				ShowWarning(null, dnSpy_AsmEditor_Resources.CouldNotResolveType);
 				return;
 			}
 			if (genericType.GenericParameters.Count == 0) {
-				ShowWarning(null, string.Format("{0} is not a generic type", genericType.FullName));
+				ShowWarning(null, string.Format(dnSpy_AsmEditor_Resources.NotGenericType, genericType.FullName));
 				return;
 			}
 
-			var genArgs = createTypeSigArray.Create(options.Clone("Create Generic Instance Type Arguments"), genericType.GenericParameters.Count, null);
+			var genArgs = createTypeSigArray.Create(options.Clone(dnSpy_AsmEditor_Resources.CreateGenericInstanceTypeArguments), genericType.GenericParameters.Count, null);
 			if (genArgs == null)
 				return;
 

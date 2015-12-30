@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
+using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
@@ -51,7 +52,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			if (hidesParent) {
 				output.Write("(", TextTokenType.Operator);
-				output.Write("hides", TextTokenType.Text);
+				output.Write(dnSpy_Analyzer_Resources.HidesParent, TextTokenType.Text);
 				output.Write(")", TextTokenType.Operator);
 				output.WriteSpace();
 			}

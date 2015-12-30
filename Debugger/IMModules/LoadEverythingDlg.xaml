@@ -25,8 +25,9 @@
              xmlns:winlocal="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
              xmlns:local="clr-namespace:dnSpy.Debugger.IMModules"
              xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
+             xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
              Height="200" Width="400"
-             Title="Loading Dynamic Modules"
+             Title="{x:Static p:dnSpy_Debugger_Resources.LoadModule_Title}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="150" MinWidth="300">
     <Grid>
@@ -38,7 +39,7 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="1" Margin="0 0 0 0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="Loading the module. This could take a while if it's a big module." />
+        <TextBlock Grid.Row="1" Margin="0 0 0 0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{x:Static p:dnSpy_Debugger_Resources.LoadModule_InfoText}" />
         <TextBlock Grid.Row="2" Margin="0 5 0 0" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding CurrentItemName}" />
         <ProgressBar Grid.Row="3" Margin="5 5 5 0" IsIndeterminate="True" Height="30" HorizontalAlignment="Stretch" />
         <Grid Grid.Row="5">
@@ -47,7 +48,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Margin="5 5 5 5" Content="_Cancel" Style="{StaticResource DialogButton}" Command="{Binding CancelCommand}" />
+            <Button Grid.Column="1" Margin="5 5 5 5" Content="{x:Static p:dnSpy_Debugger_Resources.Button_Cancel}" Style="{StaticResource DialogButton}" Command="{Binding CancelCommand}" />
         </Grid>
     </Grid>
 </winlocal:WindowBase>

@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using dnlib.DotNet;
+using dnSpy.BamlDecompiler.Properties;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.ILAst;
@@ -76,7 +77,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 			}
 
 			if (connIds == null) {
-				var msg = "Class '{0}' has IComponentConnector.Connect method, but cannot be parsed.";
+				var msg = dnSpy_BamlDecompiler_Resources.Error_IComponentConnectorConnetCannotBeParsed;
 				document.Root.AddBeforeSelf(new XComment(string.Format(msg, type.ReflectionFullName)));
 				return;
 			}
@@ -100,7 +101,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 			Action<XamlContext, XElement> cb;
 			if (!connIds.TryGetValue((int)connId.Id, out cb)) {
-				elem.AddBeforeSelf(new XComment("Unknown connection ID: " + connId.Id));
+				elem.AddBeforeSelf(new XComment(string.Format(dnSpy_BamlDecompiler_Resources.Error_UnknownConnectionId, connId.Id)));
 				return;
 			}
 
@@ -184,7 +185,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 
 								if (re.Code != ILCode.Ldsfld || ctor.Code != ILCode.Newobj ||
 								    ctor.Arguments.Count != 2 || ctor.Arguments[1].Code != ILCode.Ldftn) {
-									cb += new Error { Msg = "Attached event '" + reField.Name + "'." }.Callback;
+									cb += new Error { Msg = string.Format(dnSpy_BamlDecompiler_Resources.Error_AttachedEvent, reField.Name) }.Callback;
 									break;
 								}
 								var handler = (IMethod)ctor.Arguments[1].Operand;
@@ -206,7 +207,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 								var ctor = expr.Arguments[1];
 								if (ev == null || ctor.Code != ILCode.Newobj ||
 								    ctor.Arguments.Count != 2 || ctor.Arguments[1].Code != ILCode.Ldftn) {
-									cb += new Error { Msg = "Attached event '" + add.Name + "'." }.Callback;
+									cb += new Error { Msg = string.Format(dnSpy_BamlDecompiler_Resources.Error_AttachedEvent, add.Name) }.Callback;
 									break;
 								}
 								var handler = (IMethod)ctor.Arguments[1].Operand;

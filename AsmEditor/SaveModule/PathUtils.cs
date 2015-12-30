@@ -19,6 +19,7 @@
 
 using System;
 using System.IO;
+using dnSpy.AsmEditor.Properties;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	static class PathUtils {
@@ -31,39 +32,39 @@ namespace dnSpy.AsmEditor.SaveModule {
 		/// <returns></returns>
 		public static string ValidateFileName(this string filename) {
 			if (string.IsNullOrEmpty(filename))
-				return "Filename can't be empty.";
+				return dnSpy_AsmEditor_Resources.Error_Filename_Empty;
 			if (string.IsNullOrWhiteSpace(filename))
-				return "Filename can't contain only white space";
+				return dnSpy_AsmEditor_Resources.Error_Filename_OnlyWhitespace;
 
 			if (filename.Length >= 260)
-				return "Filename is too long.";
+				return dnSpy_AsmEditor_Resources.Error_Filename_TooLong;
 
 			if (filename.IndexOfAny(Path.GetInvalidPathChars()) >= 0)
-				return "Filename contains at least one invalid path character.";
+				return dnSpy_AsmEditor_Resources.Error_Filename_ContainsInvalidPathCharacter;
 
 			filename = filename.Replace('/', '\\');
 			var dirs = filename.Split('\\');
 			int start = Path.IsPathRooted(filename) ? 1 : 0;
 			for (int i = start; i < dirs.Length; i++) {
 				if (dirs[i].IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
-					return "Filename contains at least one invalid path character.";
+					return dnSpy_AsmEditor_Resources.Error_Filename_ContainsInvalidPathCharacter;
 			}
 
 			if (string.IsNullOrEmpty(Path.GetFileName(filename)))
-				return "Filename can't be empty";
+				return dnSpy_AsmEditor_Resources.Error_Filename_Empty;
 			var fnameNoExt = Path.GetFileNameWithoutExtension(filename);
 			foreach (var invalidName in InvalidFileNamesNoExtension) {
 				if (invalidName.Equals(fnameNoExt, StringComparison.OrdinalIgnoreCase))
-					return "The filename is a reserved operating system filename and can't be used.";
+					return dnSpy_AsmEditor_Resources.Error_Filename_ReservedOSFilename;
 			}
 
 			// Don't check for dirs on the network. Could take a while and will block the UI
 			if (!filename.StartsWith(@"\\")) {
 				if (Directory.Exists(filename))
-					return "A folder with the same name as the filename already exists.";
+					return dnSpy_AsmEditor_Resources.Error_Filename_FolderExists;
 				var dir = Path.GetDirectoryName(filename);
 				if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
-					return string.Format("Folder '{0}' doesn't exist.", dir);
+					return string.Format(dnSpy_AsmEditor_Resources.Error_Filename_FolderDoesNotExist, dir);
 			}
 
 			// We should've found most problems so return success

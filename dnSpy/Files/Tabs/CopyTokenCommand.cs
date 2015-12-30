@@ -33,7 +33,7 @@ namespace dnSpy.Files.Tabs {
 			Clipboard.SetText(string.Format("0x{0:X8}", member.MDToken.Raw));
 		}
 
-		[ExportMenuItem(Header = "_Copy MD Token", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 50)]
+		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 50)]
 		sealed class CodeCommand : MenuItemBase {
 			public override bool IsVisible(IMenuItemContext context) {
 				return GetReference(context) != null;
@@ -57,7 +57,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		[ExportMenuItem(Header = "_Copy MD Token", Group = MenuConstants.GROUP_CTX_SEARCH_TOKENS, Order = 0)]
+		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_SEARCH_TOKENS, Order = 0)]
 		sealed class SearchCommand : MenuItemBase {
 			public override bool IsVisible(IMenuItemContext context) {
 				return GetReference(context) != null;
@@ -72,7 +72,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		[ExportMenuItem(Header = "_Copy MD Token", Group = MenuConstants.GROUP_CTX_FILES_TOKENS, Order = 40)]
+		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_FILES_TOKENS, Order = 40)]
 		sealed class FilesCommand : MenuItemBase {
 			public override bool IsVisible(IMenuItemContext context) {
 				return GetReference(context) != null;
@@ -97,7 +97,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		[ExportMenuItem(Header = "_Copy MD Token", Group = MenuConstants.GROUP_CTX_ANALYZER_TOKENS, Order = 0)]
+		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_ANALYZER_TOKENS, Order = 0)]
 		sealed class AnalyzerCommand : MenuItemBase {
 			public override bool IsVisible(IMenuItemContext context) {
 				return GetReference(context) != null;

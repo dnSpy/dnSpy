@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using dnlib.PE;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.NRefactory;
@@ -69,7 +70,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write("Section", TextTokenType.Keyword);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_PE_Section, TextTokenType.Keyword);
 			output.WriteSpace();
 			output.Write("#", TextTokenType.Operator);
 			output.Write(sectionNumber.ToString(), TextTokenType.Number);

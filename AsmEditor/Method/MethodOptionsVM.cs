@@ -22,6 +22,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
 
@@ -73,13 +74,13 @@ namespace dnSpy.AsmEditor.Method {
 		readonly EnumListVM managedTypeVM = new EnumListVM(managedTypeList);
 
 		static readonly EnumVM[] methodAccessList = new EnumVM[] {
-			new EnumVM(Method.MethodAccess.PrivateScope, "PrivateScope"),
-			new EnumVM(Method.MethodAccess.Private, "Private"),
-			new EnumVM(Method.MethodAccess.FamANDAssem, "Family and Assembly"),
-			new EnumVM(Method.MethodAccess.Assembly, "Assembly"),
-			new EnumVM(Method.MethodAccess.Family, "Family"),
-			new EnumVM(Method.MethodAccess.FamORAssem, "Family or Assembly"),
-			new EnumVM(Method.MethodAccess.Public, "Public"),
+			new EnumVM(Method.MethodAccess.PrivateScope, dnSpy_AsmEditor_Resources.FieldAccess_PrivateScope),
+			new EnumVM(Method.MethodAccess.Private, dnSpy_AsmEditor_Resources.FieldAccess_Private),
+			new EnumVM(Method.MethodAccess.FamANDAssem, dnSpy_AsmEditor_Resources.FieldAccess_FamilyAndAssembly),
+			new EnumVM(Method.MethodAccess.Assembly, dnSpy_AsmEditor_Resources.FieldAccess_Assembly),
+			new EnumVM(Method.MethodAccess.Family, dnSpy_AsmEditor_Resources.FieldAccess_Family),
+			new EnumVM(Method.MethodAccess.FamORAssem, dnSpy_AsmEditor_Resources.FieldAccess_FamilyOrAssembly),
+			new EnumVM(Method.MethodAccess.Public, dnSpy_AsmEditor_Resources.FieldAccess_Public),
 		};
 		public EnumListVM MethodAccess {
 			get { return methodAccessVM; }

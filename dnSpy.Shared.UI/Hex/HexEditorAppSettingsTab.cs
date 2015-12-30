@@ -22,10 +22,12 @@ using System.ComponentModel.Composition;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Shared.UI.Controls;
 using dnSpy.Shared.UI.HexEditor;
 using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.UI.Properties;
 
 namespace dnSpy.Shared.UI.Hex {
 	[Export(typeof(IAppSettingsTabCreator))]
@@ -48,7 +50,7 @@ namespace dnSpy.Shared.UI.Hex {
 		}
 
 		public string Title {
-			get { return "Hex Editor"; }
+			get { return dnSpy_Shared_UI_Resources.HexEditorAppDlgTitle; }
 		}
 
 		public object UIObject {
@@ -115,13 +117,13 @@ namespace dnSpy.Shared.UI.Hex {
 		}
 		readonly EnumListVM asciiEncodingVM;
 		readonly EnumVM[] asciiEncodingList = new EnumVM[] {
-			new EnumVM(AsciiEncoding.ASCII, "ASCII"),
-			new EnumVM(AsciiEncoding.ANSI, "ANSI"),
-			new EnumVM(AsciiEncoding.UTF7, "UTF-7"),
-			new EnumVM(AsciiEncoding.UTF8, "UTF-8"),
-			new EnumVM(AsciiEncoding.UTF32, "UTF-32"),
-			new EnumVM(AsciiEncoding.Unicode, "Unicode"),
-			new EnumVM(AsciiEncoding.BigEndianUnicode, "BE Unicode"),
+			new EnumVM(AsciiEncoding.ASCII, dnSpy_Shared_UI_Resources.HexEditor_CharacterEncoding_ASCII_2),
+			new EnumVM(AsciiEncoding.ANSI, dnSpy_Shared_UI_Resources.HexEditor_CharacterEncoding_ANSI_2),
+			new EnumVM(AsciiEncoding.UTF7, dnSpy_Shared_UI_Resources.HexEditor_CharacterEncoding_UTF7_2),
+			new EnumVM(AsciiEncoding.UTF8, dnSpy_Shared_UI_Resources.HexEditor_CharacterEncoding_UTF8_2),
+			new EnumVM(AsciiEncoding.UTF32, dnSpy_Shared_UI_Resources.HexEditor_CharacterEncoding_UTF32_2),
+			new EnumVM(AsciiEncoding.Unicode, dnSpy_Shared_UI_Resources.HexEditor_CharacterEncoding_UNICODE_2),
+			new EnumVM(AsciiEncoding.BigEndianUnicode, dnSpy_Shared_UI_Resources.HexEditor_CharacterEncoding_BIG_ENDIAN_UNICODE_2),
 		};
 
 		public HexEditorAppSettingsVM(HexEditorSettings hexEditorSettings) {
@@ -136,7 +138,10 @@ namespace dnSpy.Shared.UI.Hex {
 			BytesGroupCountVM.Value = hexEditorSettings.BytesGroupCount;
 			BytesPerLineVM.Value = hexEditorSettings.BytesPerLine;
 			FontFamily = hexEditorSettings.FontFamily;
-			Task.Factory.StartNew(() => FontUtils.GetMonospacedFonts())
+			Task.Factory.StartNew(() => {
+				AppCulture.InitializeCulture();
+				return FontUtils.GetMonospacedFonts();
+			})
 			.ContinueWith(t => {
 				var ex = t.Exception;
 				if (!t.IsCanceled && !t.IsFaulted)

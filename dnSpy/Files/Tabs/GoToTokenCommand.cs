@@ -28,6 +28,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Menus;
 using dnSpy.Shared.UI.MVVM;
 
@@ -82,7 +83,7 @@ namespace dnSpy.Files.Tabs {
 			if (resolver == null)
 				return;
 
-			var member = AskForDef("Go to MD Token", resolver);
+			var member = AskForDef(dnSpy_Resources.GoToToken_Title, resolver);
 			if (member == null)
 				return;
 
@@ -90,7 +91,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		static IDnlibDef AskForDef(string title, ITokenResolver resolver) {
-			return Shared.UI.App.MsgBox.Instance.Ask("_Metadata token", null, title, s => {
+			return Shared.UI.App.MsgBox.Instance.Ask(dnSpy_Resources.GoToToken_Label, null, title, s => {
 				string error;
 				uint token = NumberVMUtils.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
 				var memberRef = resolver.ResolveToken(token);
@@ -104,14 +105,14 @@ namespace dnSpy.Files.Tabs {
 				var memberRef = resolver.ResolveToken(token);
 				var member = ResolveDef(memberRef);
 				if (memberRef == null)
-					return string.Format("Invalid metadata token: 0x{0:X8}", token);
+					return string.Format(dnSpy_Resources.GoToToken_InvalidToken, token);
 				else if (member == null)
-					return string.Format("Could not resolve member reference token: 0x{0:X8}", token);
+					return string.Format(dnSpy_Resources.GoToToken_CouldNotResolve, token);
 				return string.Empty;
 			});
 		}
 
-		[ExportMenuItem(Header = "Go to M_D Token...", InputGestureText = "Ctrl+D", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 20)]
+		[ExportMenuItem(Header = "res:GoToTokenCommand", InputGestureText = "res:GoToTokenKey", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 20)]
 		public sealed class CodeCommand : MenuItemBase {
 			readonly IFileTabManager fileTabManager;
 
@@ -133,7 +134,7 @@ namespace dnSpy.Files.Tabs {
 			}
 		}
 
-		[ExportMenuItem(Header = "Go to M_D Token...", InputGestureText = "Ctrl+D", Group = MenuConstants.GROUP_CTX_FILES_TOKENS, Order = 20)]
+		[ExportMenuItem(Header = "res:GoToTokenCommand", InputGestureText = "res:GoToTokenKey", Group = MenuConstants.GROUP_CTX_FILES_TOKENS, Order = 20)]
 		public sealed class FilesCommand : MenuItemBase {
 			readonly IFileTabManager fileTabManager;
 

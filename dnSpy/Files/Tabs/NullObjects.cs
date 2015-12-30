@@ -23,6 +23,7 @@ using System.Windows;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Settings;
+using dnSpy.Properties;
 
 namespace dnSpy.Files.Tabs {
 	sealed class NullFileTabContent : IFileTabContent {
@@ -48,7 +49,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public string Title {
-			get { return "<empty>"; }
+			get { return dnSpy_Resources.EmptyTabTitle; }
 		}
 
 		public object ToolTip {

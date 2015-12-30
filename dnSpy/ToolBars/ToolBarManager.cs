@@ -32,6 +32,7 @@ using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.UI.Resources;
 
 namespace dnSpy.ToolBars {
 	abstract class ToolBarItemMD {
@@ -207,9 +208,9 @@ namespace dnSpy.ToolBars {
 			var cmdHolder = item as ICommandHolder;
 			var cmd = cmdHolder != null ? cmdHolder.Command : new RelayCommand(a => item.Execute(ctx), a => item.IsEnabled(ctx));
 
-			string header = md2.Header;
+			string header = ResourceHelper.GetString(item, md2.Header);
 			string icon = md2.Icon;
-			string toolTip = md2.ToolTip;
+			string toolTip = ResourceHelper.GetString(item, md2.ToolTip);
 			var item2 = item as IToolBarButton2;
 			if (item2 != null) {
 				header = item2.GetHeader(ctx) ?? header;

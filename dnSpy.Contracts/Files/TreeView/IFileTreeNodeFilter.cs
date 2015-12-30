@@ -27,12 +27,6 @@ namespace dnSpy.Contracts.Files.TreeView {
 	/// </summary>
 	public interface IFileTreeNodeFilter {
 		/// <summary>
-		/// Gets a short description of this filter that could be shown in the UI or null, eg.
-		/// <c>"TypeDef"</c> if it filters out everything except <see cref="TypeDef"/>s.
-		/// </summary>
-		string Description { get; }
-
-		/// <summary>
 		/// Returns a filter result. Called if it's a <see cref="IAssemblyFileNode"/>
 		/// </summary>
 		/// <param name="asm">Assembly</param>

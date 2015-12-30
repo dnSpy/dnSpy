@@ -23,6 +23,8 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnSpy.Contracts.App;
+using dnSpy.Debugger.Properties;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Dialogs {
@@ -34,8 +36,9 @@ namespace dnSpy.Debugger.Dialogs {
 		public string Title {
 			get {
 				if (!Environment.Is64BitOperatingSystem)
-					return "Attach to Process";
-				return IntPtr.Size == 4 ? "Attach to Process (32-bit only)" : "Attach to Process (64-bit only)";
+					return dnSpy_Debugger_Resources.Attach_AttachToProcess;
+				return IntPtr.Size == 4 ? dnSpy_Debugger_Resources.Attach_AttachToProcess32 :
+						dnSpy_Debugger_Resources.Attach_AttachToProcess64;
 			}
 		}
 
@@ -45,9 +48,8 @@ namespace dnSpy.Debugger.Dialogs {
 
 		public string DebuggingText {
 			get {
-				return IntPtr.Size == 4 ?
-					"Use dnSpy.exe to attach to 64-bit processes" :
-					"Use dnSpy-x86.exe to attach to 32-bit processes";
+				return IntPtr.Size == 4 ? dnSpy_Debugger_Resources.Attach_UseDnSpy32 :
+						dnSpy_Debugger_Resources.Attach_UseDnSpy64;
 			}
 		}
 
@@ -98,7 +100,10 @@ namespace dnSpy.Debugger.Dialogs {
 
 			Collection.Clear();
 			cancellationToken = new CancellationTokenSource();
-			refreshThread = new Thread(() => RefreshAsync());
+			refreshThread = new Thread(() => {
+				AppCulture.InitializeCulture();
+				RefreshAsync();
+			});
 			OnPropertyChanged("IsRefreshing");
 			refreshThread.Start();
 		}

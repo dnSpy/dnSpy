@@ -21,6 +21,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
 
@@ -45,10 +46,10 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (Number.HasError)
 					sb.Append("???");
 				else
-					sb.Append(string.Format("gparam({0})", Number.Value));
+					sb.Append(string.Format(dnSpy_AsmEditor_Resources.GenericParameterNumber, Number.Value));
 
 				sb.Append(' ');
-				sb.Append(string.IsNullOrEmpty(Name) ? "<<no-name>>" : Name);
+				sb.Append(string.IsNullOrEmpty(Name) ? dnSpy_AsmEditor_Resources.NoName : Name);
 
 				return sb.ToString();
 			}
@@ -141,7 +142,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.ownerModule = ownerModule;
 			this.origOptions = options;
 			this.number = new UInt16VM(a => { OnPropertyChanged("FullName"); HasErrorUpdated(); });
-			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<GenericParamConstraint>("Edit Generic Parameter Constraint", "Create Generic Parameter Constraint", ownerModule, languageManager, ownerType, ownerMethod);
+			this.typeDefOrRefAndCAsVM = new TypeDefOrRefAndCAsVM<GenericParamConstraint>(dnSpy_AsmEditor_Resources.EditGenericParameterConstraint, dnSpy_AsmEditor_Resources.CreateGenericParameterConstraint, ownerModule, languageManager, ownerType, ownerMethod);
 			this.customAttributesVM = new CustomAttributesVM(ownerModule, languageManager);
 			this.gpVarianceVM = new EnumListVM(EnumVM.Create(typeof(GPVariance)));
 

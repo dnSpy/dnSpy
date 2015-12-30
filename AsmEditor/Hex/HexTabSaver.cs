@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.SaveModule;
 using dnSpy.Contracts.Files.Tabs;
 
@@ -44,7 +45,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		public string MenuHeader {
-			get { return "_Save..."; }
+			get { return dnSpy_AsmEditor_Resources.Save; }
 		}
 
 		public static ITabSaver TryCreate(Lazy<IDocumentSaver> documentSaver, IFileTab tab) {

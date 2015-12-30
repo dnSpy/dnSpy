@@ -24,6 +24,7 @@ using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 using dnlib.PE;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
@@ -138,8 +139,8 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				TreeNode.EnsureChildrenLoaded();
 				return TreeNode.DataChildren.OfType<HexNode>().ToArray();
 			});
-			context.Language.WriteCommentLine(context.Output, "PE");
-			context.Language.WriteCommentLine(context.Output, "All tree nodes below use the hex editor to modify the PE file");
+			context.Language.WriteCommentLine(context.Output, dnSpy_AsmEditor_Resources.HexNode_PE);
+			context.Language.WriteCommentLine(context.Output, dnSpy_AsmEditor_Resources.NodesUseHexEditorMsg);
 			foreach (HexNode node in children) {
 				context.Language.WriteCommentLine(context.Output, string.Empty);
 				node.Decompile(context);
@@ -156,7 +157,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write("PE", TextTokenType.Text);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_PE, TextTokenType.Text);
 		}
 
 		public override Guid Guid {

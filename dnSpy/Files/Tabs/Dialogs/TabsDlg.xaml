@@ -26,11 +26,12 @@
         xmlns:ctrls="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
         xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
         mc:Ignorable="d"
+        xmlns:p="clr-namespace:dnSpy.Properties"
         Background="{DynamicResource SystemColorsControl}"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
         Width="1000" Height="400"
         MinWidth="500" MinHeight="300"
-        Title="Windows">
+        Title="{x:Static p:dnSpy_Resources.TabsDlg_Title}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -51,21 +52,21 @@
             </ListView.Resources>
             <ListView.View>
                 <GridView AllowsColumnReorder="True">
-                    <GridViewColumn Header="Name" Width="200">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Resources.TabsDlg_Name_Column}" Width="200">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource tabColumnConverter}, ConverterParameter=Name}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Module">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Resources.TabsDlg_Module_Column}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding ModuleObject, Mode=OneWay, Converter={StaticResource tabColumnConverter}, ConverterParameter=Module}" />
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Path">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Resources.TabsDlg_Path_Column}">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
                                 <ContentPresenter Content="{Binding PathObject, Mode=OneWay, Converter={StaticResource tabColumnConverter}, ConverterParameter=Path}" />
@@ -83,9 +84,9 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="_Activate" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Click="activateButton_Click" IsDefault="True" />
+            <Button Grid.Column="1" Content="{x:Static p:dnSpy_Resources.TabsDlg_Activate_Button}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Click="activateButton_Click" IsDefault="True" />
             <Button Grid.Column="2" Content="{Binding SaveText}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding SaveCommand}" />
-            <Button Grid.Column="3" Content="_Close Window" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Command="{Binding CloseTabCommand}" />
+            <Button Grid.Column="3" Content="{x:Static p:dnSpy_Resources.TabsDlg_CloseWindow_Button}" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Command="{Binding CloseTabCommand}" />
         </Grid>
     </Grid>
 </ctrls:WindowBase>

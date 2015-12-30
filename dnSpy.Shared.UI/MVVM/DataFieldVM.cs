@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using dnSpy.Shared.UI.Properties;
 
 namespace dnSpy.Shared.UI.MVVM {
 	public struct CachedValidationError {
@@ -183,7 +184,7 @@ namespace dnSpy.Shared.UI.MVVM {
 				Debug.Fail("Exception caught in Validate(). ConvertToValue() should return an error string instead of throwing for performance reasons! Throwing is SLOOOOW!");
 				if (!string.IsNullOrEmpty(ex.Message))
 					return ex.Message;
-				return string.Format("Could not convert '{0}'", StringValue);
+				return string.Format(dnSpy_Shared_UI_Resources.CouldNotConvert, StringValue);
 			}
 		}
 	}
@@ -261,7 +262,7 @@ namespace dnSpy.Shared.UI.MVVM {
 				return res;
 			}
 
-			error = "Invalid GUID";
+			error = dnSpy_Shared_UI_Resources.InvalidGuid;
 			return Guid.Empty;
 		}
 	}
@@ -1176,7 +1177,7 @@ namespace dnSpy.Shared.UI.MVVM {
 			}
 			catch (Exception ex) {
 				value = default(T);
-				error = string.Format("Value must be a {0}.\nError: {1}", typeof(T).FullName, ex.Message);
+				error = string.Format(dnSpy_Shared_UI_Resources.ValueMustBeType, typeof(T).FullName, ex.Message);
 			}
 			return error;
 		}

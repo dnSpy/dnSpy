@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
@@ -98,13 +99,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			this.minorRuntimeVersionVM = new UInt16HexField(doc, Name, "MinorRuntimeVersion", startOffset + 6, true);
 			this.metaDataVM = new DataDirVM(doc, Name, "MetaData", startOffset + 8);
 			this.flagsVM = new UInt32FlagsHexField(doc, Name, "Flags", startOffset + 0x10);
-			this.flagsVM.Add(new BooleanHexBitField("IL Only", 0));
-			this.flagsVM.Add(new BooleanHexBitField("32-Bit Required", 1));
-			this.flagsVM.Add(new BooleanHexBitField("IL Library", 2));
-			this.flagsVM.Add(new BooleanHexBitField("Strong Name Signed", 3));
-			this.flagsVM.Add(new BooleanHexBitField("Native EntryPoint", 4));
-			this.flagsVM.Add(new BooleanHexBitField("Track Debug Data", 16));
-			this.flagsVM.Add(new BooleanHexBitField("32-Bit Preferred", 17));
+			this.flagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_IL_Only, 0));
+			this.flagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_32BitReqd, 1));
+			this.flagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_ILLibrary, 2));
+			this.flagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_StrongNameSigned, 3));
+			this.flagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_NativeEntryPoint, 4));
+			this.flagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_TrackDebugData, 16));
+			this.flagsVM.Add(new BooleanHexBitField(dnSpy_AsmEditor_Resources.HexNode_Cor20Header_Flags_32BitPref, 17));
 			this.entryPointTokenRVAVM = new UInt32HexField(doc, Name, "EntryPoint Token/RVA", startOffset + 0x14);
 			this.resourcesVM = new DataDirVM(doc, Name, "Resources", startOffset + 0x18);
 			this.strongNameSignatureVM = new DataDirVM(doc, Name, "StrongNameSignature", startOffset + 0x20);

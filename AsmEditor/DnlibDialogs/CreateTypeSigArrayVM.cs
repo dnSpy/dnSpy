@@ -21,6 +21,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
@@ -63,11 +64,11 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (!string.IsNullOrEmpty(title))
 					return title;
 				if (IsUnlimitedCount)
-					return "Create TypeSigs";
+					return dnSpy_AsmEditor_Resources.Create_TypeSigs;
 				else if (RequiredCount.Value == 1)
-					return "Create a TypeSig";
+					return dnSpy_AsmEditor_Resources.Create_TypeSig;
 				else
-					return string.Format("Create {0} TypeSigs", RequiredCount.Value);
+					return string.Format(dnSpy_AsmEditor_Resources.Create_N_TypeSigs, RequiredCount.Value);
 			}
 		}
 		string title;
@@ -113,8 +114,8 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				if (numLeft < 0)
 					return string.Empty;
 				return numLeft == 0 ? string.Empty :
-					numLeft == 1 ? "One TypeSig left" :
-					string.Format("{0} TypeSigs left", numLeft);
+					numLeft == 1 ? dnSpy_AsmEditor_Resources.Create_TypeSigs_OneLeft :
+					string.Format(dnSpy_AsmEditor_Resources.Create_TypeSigs_N_Left, numLeft);
 			}
 		}
 

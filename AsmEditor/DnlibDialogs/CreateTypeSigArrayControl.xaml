@@ -23,6 +23,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="500">
 	<Grid>
@@ -55,7 +56,7 @@
 			<RepeatButton Grid.Row="0" Grid.Column="1"
 					Margin="5 5 0 0"
 					Command="{Binding TypeSigCollection.MoveSelectedUpCommand}"
-					ToolTip="Move Up">
+					ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MoveUp_ToolTip}">
 				<RepeatButton.Content>
 					<Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
 						<Path.LayoutTransform>
@@ -67,7 +68,7 @@
 			<RepeatButton Grid.Row="2" Grid.Column="1"
 					Margin="5 5 0 0"
 					Command="{Binding TypeSigCollection.MoveSelectedDownCommand}"
-					ToolTip="Move Down">
+					ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MoveDown_ToolTip}">
 				<RepeatButton.Content>
 					<Path Fill="{DynamicResource ListArrowBackground}" Width="16" Height="16" Data="{StaticResource ListUpArrow16x16}">
 						<Path.LayoutTransform>

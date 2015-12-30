@@ -25,6 +25,7 @@
              xmlns:mbody="clr-namespace:dnSpy.AsmEditor.MethodBody"
              xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
              xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">
 	<UserControl.Resources>
@@ -45,7 +46,7 @@
 		</DataTemplate>
 	</UserControl.Resources>
 	<TabControl>
-		<TabItem Header="Instructions">
+        <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.InstructionsTab}">
 			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto" />
@@ -58,9 +59,9 @@
 						<ColumnDefinition Width="Auto" />
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
-					<Label Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=methodBodyTypeComboBox}" Content="_Body Type" />
+                    <Label Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=methodBodyTypeComboBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodBody_Type}" />
 					<ComboBox Grid.Column="1" Margin="5 5 0 0" HorizontalAlignment="Stretch" Name="methodBodyTypeComboBox" DisplayMemberPath="Name" ItemsSource="{Binding MethodBodyTypeVM.Items}" SelectedIndex="{Binding MethodBodyTypeVM.SelectedIndex}" VerticalContentAlignment="Center" />
-					<Label Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=codeTypeComboBox}" Content="Cod_e Type" />
+                    <Label Grid.Column="2" Margin="5 5 0 0" Target="{Binding ElementName=codeTypeComboBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodBody_CodeType}" />
 					<ComboBox Grid.Column="3" Margin="5 5 0 0" Name="codeTypeComboBox" HorizontalAlignment="Stretch" DisplayMemberPath="Name" ItemsSource="{Binding CodeTypeVM.Items}" SelectedIndex="{Binding CodeTypeVM.SelectedIndex}" VerticalContentAlignment="Center" />
 				</Grid>
 				<Grid Grid.Row="1" Visibility="{Binding IsNativeBody, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -72,7 +73,7 @@
 						<ColumnDefinition Width="Auto" />
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
-					<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=rvaTextBox}" Content="_RVA" />
+                    <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=rvaTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodBody_RVA}" />
 					<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="rvaTextBox" Text="{Binding NativeMethodBodyVM.RVA.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 				</Grid>
 				<Grid Grid.Row="1" Visibility="{Binding IsCilBody, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -93,15 +94,15 @@
 							<ColumnDefinition Width="Auto" />
 							<ColumnDefinition Width="*" />
 						</Grid.ColumnDefinitions>
-						<CheckBox Grid.Column="0" Margin="5 0 0 0" IsChecked="{Binding CilBodyVM.KeepOldMaxStack}" Content="_Keep Old MaxStack" ToolTip="Don't recalculate the MaxStack value when saving the file" />
-						<CheckBox Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding CilBodyVM.InitLocals}" Content="_Init Locals" />
-						<Label Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=rva2TextBox}" Content="Header _RVA" />
+                        <CheckBox Grid.Column="0" Margin="5 0 0 0" IsChecked="{Binding CilBodyVM.KeepOldMaxStack}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodBody_KeepOldMaxStack}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.MethodBody_KeepOldMaxStack_ToolTip}" />
+                        <CheckBox Grid.Column="1" Margin="5 0 0 0" IsChecked="{Binding CilBodyVM.InitLocals}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodBody_InitLocals}" />
+                        <Label Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=rva2TextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodBody_HeaderRVA}" />
 						<TextBox Grid.Column="3" Margin="5 0 0 0" Name="rva2TextBox" IsReadOnly="True" Background="Transparent" Text="{Binding CilBodyVM.HeaderRVA.StringValue, Mode=OneWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-						<Label Grid.Column="4" Margin="5 0 0 0" Target="{Binding ElementName=fileOffsetTextBox}" Content="Header O_ffset" />
+                        <Label Grid.Column="4" Margin="5 0 0 0" Target="{Binding ElementName=fileOffsetTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodBody_HeaderOffset}" />
 						<TextBox Grid.Column="5" Margin="5 0 0 0" Name="fileOffsetTextBox" IsReadOnly="True" Background="Transparent" Text="{Binding CilBodyVM.HeaderFileOffset.StringValue, Mode=OneWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-						<Label Grid.Column="6" Margin="5 0 0 0" Target="{Binding ElementName=maxStackTextBox}" Content="_MaxStack" />
+                        <Label Grid.Column="6" Margin="5 0 0 0" Target="{Binding ElementName=maxStackTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodBody_MaxStack}" />
 						<TextBox Grid.Column="7" Margin="5 0 0 0" Name="maxStackTextBox" Text="{Binding CilBodyVM.MaxStack.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-						<Label Grid.Column="8" Margin="5 0 0 0" Target="{Binding ElementName=localVarSigTokTextBox}" Content="_LocalVarSigTok" />
+                        <Label Grid.Column="8" Margin="5 0 0 0" Target="{Binding ElementName=localVarSigTokTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.MethodBody_LocalVariableSignatureToken}" />
 						<TextBox Grid.Column="9" Margin="5 0 0 0" Name="localVarSigTokTextBox" Text="{Binding CilBodyVM.LocalVarSigTok.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 					</Grid>
 					<!-- Use recycling mode or the virtualizer will free the ListViewItems only a
@@ -121,22 +122,21 @@
 						</ListView.Resources>
 						<ListView.View>
 							<GridView AllowsColumnReorder="True">
-								<GridViewColumn Header="Index">
+                                <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Index}">
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
 											<TextBlock Style="{StaticResource CilIndexTextBlockStyle}" Text="{Binding Index}" />
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
 								</GridViewColumn>
-								<GridViewColumn Header="Offset">
+                                <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Offset}">
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
 											<TextBlock Style="{StaticResource CilLabelTextBlockStyle}" Text="{Binding Offset, StringFormat={}{0:X4}}" />
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
 								</GridViewColumn>
-								<!-- Add extra spaces so most opcodes fit -->
-								<GridViewColumn Header="OpCode        ">
+                                <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.MethodBody_Column_OpCode}">
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
 											<!-- Fix hard coded 6,0,6,0 margin -->
@@ -151,7 +151,7 @@
 										</DataTemplate>
 									</GridViewColumn.CellTemplate>
 								</GridViewColumn>
-								<GridViewColumn Header="Operand" Width="1070">
+                                <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.InstructionOperand}" Width="1070">
 									<GridViewColumn.CellTemplate>
 										<DataTemplate>
 											<mbody:InstructionOperandControl
@@ -180,7 +180,7 @@
 				</Grid>
 			</Grid>
 		</TabItem>
-		<TabItem Header="Locals" IsEnabled="{Binding IsCilBody}">
+        <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.LocalsTab}" IsEnabled="{Binding IsCilBody}">
 			<ListView
 				Name="localsListView"
 				SelectionMode="Extended"
@@ -192,28 +192,28 @@
 				</ListView.Resources>
 				<ListView.View>
 					<GridView AllowsColumnReorder="True">
-						<GridViewColumn Header="Index">
+						<GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Index}">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<TextBlock Style="{StaticResource CilIndexTextBlockStyle}" Text="{Binding Index}" />
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="P">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Local_Pinned_Character}">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
-									<CheckBox Style="{StaticResource CilCheckBoxStyle}" IsChecked="{Binding IsPinned}" HorizontalAlignment="Left" ToolTip="Pinned" />
+                                    <CheckBox Style="{StaticResource CilCheckBoxStyle}" IsChecked="{Binding IsPinned}" HorizontalAlignment="Left" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.Local_Pinned_Character_ToolTip}" />
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="C">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Local_CompilerGenerated_Character}">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
-									<CheckBox Style="{StaticResource CilCheckBoxStyle}" IsChecked="{Binding IsCompilerGenerated}" HorizontalAlignment="Left" ToolTip="Compiler generated" />
+                                    <CheckBox Style="{StaticResource CilCheckBoxStyle}" IsChecked="{Binding IsCompilerGenerated}" HorizontalAlignment="Left" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.Local_CompilerGenerated_Character_ToolTip}" />
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="Name" Width="200">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.LocalName}" Width="200">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<!-- Fix hard coded 6,0,6,0 margin -->
@@ -221,7 +221,7 @@
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="Type" Width="950">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.LocalType}" Width="950">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<mbody:FastClickButton Style="{StaticResource CilButtonStyle}" Content="{Binding Type, Mode=OneWay, Converter={StaticResource CilObjectConverter}}" Command="{Binding EditTypeCommand}" ClickMode="Press" />
@@ -232,7 +232,7 @@
 				</ListView.View>
 			</ListView>
 		</TabItem>
-		<TabItem Header="Exception Handlers" IsEnabled="{Binding IsCilBody}">
+        <TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.ExceptionHandlersTab}" IsEnabled="{Binding IsCilBody}">
 			<ListView
 				Name="ehListView"
 				SelectionMode="Extended"
@@ -244,14 +244,14 @@
 				</ListView.Resources>
 				<ListView.View>
 					<GridView AllowsColumnReorder="True">
-						<GridViewColumn Header="Index">
+						<GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Index}">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<TextBlock Style="{StaticResource CilIndexTextBlockStyle}" Text="{Binding Index}" />
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="TryStart">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.ExceptionHandler_Column_TryStart}">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<ComboBox
@@ -264,7 +264,7 @@
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="TryEnd">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.ExceptionHandler_Column_TryEnd}">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<ComboBox
@@ -277,7 +277,7 @@
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="FilterStart">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.ExceptionHandler_Column_FilterStart}">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<ComboBox
@@ -290,7 +290,7 @@
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="HandlerStart">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.ExceptionHandler_Column_HandlerStart}">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<ComboBox
@@ -303,7 +303,7 @@
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="HandlerEnd">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.ExceptionHandler_Column_HandlerEnd}">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<ComboBox
@@ -316,7 +316,7 @@
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="Type      ">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.ExceptionHandler_Column_Type}">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<!-- Fix hard coded 6,0,6,0 margin -->
@@ -331,7 +331,7 @@
 								</DataTemplate>
 							</GridViewColumn.CellTemplate>
 						</GridViewColumn>
-						<GridViewColumn Header="CatchType" Width="750">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.ExceptionHandler_Column_CatchType}" Width="750">
 							<GridViewColumn.CellTemplate>
 								<DataTemplate>
 									<mbody:FastClickButton Style="{StaticResource CilButtonStyle}" Content="{Binding CatchType, Mode=OneWay, Converter={StaticResource CilObjectConverter}}" Command="{Binding EditCatchTypeCommand}" ClickMode="Press" />

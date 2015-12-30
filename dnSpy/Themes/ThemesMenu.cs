@@ -21,6 +21,8 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Themes;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Menus;
 
 namespace dnSpy.Themes {
@@ -58,11 +60,23 @@ namespace dnSpy.Themes {
 			foreach (var theme in themeManager.AllThemesSorted) {
 				if (!themeManager.Settings.ShowAllThemes && !themeManager.IsHighContrast && theme.IsHighContrast)
 					continue;
-				var attr = new ExportMenuItemAttribute { Header = theme.MenuName };
+				var attr = new ExportMenuItemAttribute { Header = GetThemeHeaderName(theme) };
 				var tmp = theme;
 				var item = new MyMenuItem(ctx => themeManager.Theme = tmp, theme == themeManager.Theme);
 				yield return new CreatedMenuItem(attr, item);
 			}
+		}
+
+		static string GetThemeHeaderName(ITheme theme) {
+			if (theme.Guid == ThemeConstants.THEME_HIGHCONTRAST_GUID)
+				return dnSpy_Resources.Theme_HighContrast;
+			if (theme.Guid == ThemeConstants.THEME_BLUE_GUID)
+				return dnSpy_Resources.Theme_Blue;
+			if (theme.Guid == ThemeConstants.THEME_DARK_GUID)
+				return dnSpy_Resources.Theme_Dark;
+			if (theme.Guid == ThemeConstants.THEME_LIGHT_GUID)
+				return dnSpy_Resources.Theme_Light;
+			return theme.MenuName;
 		}
 	}
 }

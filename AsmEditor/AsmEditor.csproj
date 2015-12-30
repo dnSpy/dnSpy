@@ -138,6 +138,11 @@
     <Compile Include="Hex\Nodes\TokenReferenceFileTabContentCreator.cs" />
     <Compile Include="Hex\Nodes\VirtualizedList.cs" />
     <Compile Include="MethodBody\CodeMappings.cs" />
+    <Compile Include="Properties\dnSpy.AsmEditor.Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dnSpy.AsmEditor.Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="SaveModule\DocumentSaver.cs" />
     <Compile Include="SaveModule\MmapDisabler.cs" />
     <Compile Include="UndoRedo\DnSpyFileUndoableDocumentsProvider.cs" />
@@ -825,6 +830,12 @@
     <Resource Include="Images\Settings.png" />
     <Resource Include="Images\ToUncondBranch.png" />
     <Resource Include="Images\Undo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\dnSpy.AsmEditor.Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.AsmEditor.Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

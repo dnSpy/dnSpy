@@ -19,26 +19,27 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Shared.UI.ToolBars;
 
 namespace dnSpy.AsmEditor.UndoRedo {
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "Undo", ToolTip = "Undo (Ctrl+Z)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_ASMED_UNDO, Order = 0)]
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "Undo", ToolTip = "res:UndoToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_ASMED_UNDO, Order = 0)]
 	sealed class UndoAsmEdCommand : ToolBarButtonCommand {
 		public UndoAsmEdCommand()
 			: base(UndoRoutedCommands.Undo) {
 		}
 	}
 
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "Redo", ToolTip = "Redo (Ctrl+Y)", Group = ToolBarConstants.GROUP_APP_TB_MAIN_ASMED_UNDO, Order = 10)]
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "Redo", ToolTip = "res:RedoToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_ASMED_UNDO, Order = 10)]
 	sealed class RedoAsmEdCommand : ToolBarButtonCommand {
 		public RedoAsmEdCommand()
 			: base(UndoRoutedCommands.Redo) {
 		}
 	}
 
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "DeleteHistory", ToolTip = "Clear Undo/Redo History", Group = ToolBarConstants.GROUP_APP_TB_MAIN_ASMED_UNDO, Order = 20)]
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "DeleteHistory", ToolTip = "res:ClearHistoryToolBarToolTip", Group = ToolBarConstants.GROUP_APP_TB_MAIN_ASMED_UNDO, Order = 20)]
 	sealed class DeleteHistoryAsmEdCommand : ToolBarButtonBase {
 		readonly Lazy<IUndoCommandManager> undoCommandManager;
 		readonly IMessageBoxManager messageBoxManager;
@@ -55,7 +56,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		}
 
 		public override void Execute(IToolBarItemContext context) {
-			var res = messageBoxManager.ShowIgnorableMessage(new Guid("FC8FC68F-4285-4CDF-BEC0-FF6498EEC4AA"), "Do you want to clear the undo/redo history?", MsgBoxButton.Yes | MsgBoxButton.No);
+			var res = messageBoxManager.ShowIgnorableMessage(new Guid("FC8FC68F-4285-4CDF-BEC0-FF6498EEC4AA"), dnSpy_AsmEditor_Resources.AskClearUndoHistory, MsgBoxButton.Yes | MsgBoxButton.No);
 			if (res == null || res == MsgBoxButton.Yes)
 				undoCommandManager.Value.Clear();
 		}

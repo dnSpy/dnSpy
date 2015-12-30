@@ -24,6 +24,7 @@ using System.Windows;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
+using dnSpy.Debugger.Properties;
 
 namespace dnSpy.Debugger.Exceptions {
 	[Export(typeof(IMainToolWindowContentCreator))]
@@ -64,7 +65,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		public string Title {
-			get { return "Exception Settings"; }
+			get { return dnSpy_Debugger_Resources.Window_ExceptionSettings; }
 		}
 
 		public object ToolTip {

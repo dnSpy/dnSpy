@@ -27,6 +27,8 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Threading;
 using dnlib.DotNet;
+using dnSpy.Contracts.App;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Files;
 using dnSpy.Shared.UI.MVVM;
 
@@ -112,6 +114,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 
 			var dispatcher = Dispatcher.CurrentDispatcher;
 			Task.Factory.StartNew(() => {
+				AppCulture.InitializeCulture();
 				new GACFileFinder(this, dispatcher, cancellationTokenSource.Token).Find();
 			}, cancellationTokenSource.Token)
 			.ContinueWith(t => {
@@ -125,7 +128,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			get {
 				if (collectionView.Count == gacFileList.Count)
 					return string.Empty;
-				return string.Format("Showing {0} of {1} files", collectionView.Count, gacFileList.Count);
+				return string.Format(dnSpy_Resources.OpenGAC_ShowFiles, collectionView.Count, gacFileList.Count);
 			}
 		}
 

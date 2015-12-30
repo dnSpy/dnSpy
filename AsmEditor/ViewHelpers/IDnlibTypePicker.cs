@@ -26,10 +26,11 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 		/// Asks user to pick a type, method etc in an assembly
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
+		/// <param name="title">Title shown in the UI, eg. "Pick a Type"</param>
 		/// <param name="filter">Decides which nodes to show to the user</param>
 		/// <param name="selectedObject">null or the object that should be selected in the UI</param>
 		/// <param name="ownerModule">Module owning the returned reference</param>
 		/// <returns></returns>
-		T GetDnlibType<T>(IFileTreeNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class;
+		T GetDnlibType<T>(string title, IFileTreeNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class;
 	}
 }

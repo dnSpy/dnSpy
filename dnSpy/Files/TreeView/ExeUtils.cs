@@ -22,6 +22,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using dnlib.DotNet;
 using dnlib.PE;
+using dnSpy.Properties;
 
 namespace dnSpy.Files.TreeView {
 	static class ExeUtils {
@@ -36,13 +37,13 @@ namespace dnSpy.Files.TreeView {
 				case 0: // no special meaning, MachineType and ILONLY flag determine image requirements
 					if (!module.IsILOnly)
 						return "x86";
-					return "AnyCPU";
+					return dnSpy_Resources.Arch_AnyCPU;
 				case 1: // illegal, reserved for future use
 					break;
 				case 2: // image is x86-specific
 					return "x86";
 				case 3: // image is platform neutral and prefers to be loaded 32-bit when possible
-					return "AnyCPU (32-bit preferred)";
+					return dnSpy_Resources.Arch_AnyCPU_Preferred;
 				}
 			}
 
@@ -62,7 +63,7 @@ namespace dnSpy.Files.TreeView {
 
 		public static string GetDotNetVersion(ModuleDef module) {
 			if (module == null)
-				return "Unknown runtime";
+				return dnSpy_Resources.UnknownDotNetRuntime;
 
 			var asm = module.Assembly;
 			if (asm != null && module.IsManifestModule) {
@@ -81,7 +82,7 @@ namespace dnSpy.Files.TreeView {
 			if (module.IsClr40)
 				return ".NET Framework 4.0 - 4.6";
 
-			return "Unknown runtime";
+			return dnSpy_Resources.UnknownDotNetRuntime;
 		}
 
 		static string GetDotNetVersion(AssemblyDef asm) {

@@ -27,8 +27,9 @@
         Background="{DynamicResource SystemColorsControl}"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
         mc:Ignorable="d"
+        xmlns:p="clr-namespace:dnSpy.Properties"
         MinHeight="300" MinWidth="450"
-        Title="Options" Height="480" Width="500">
+        Title="{x:Static p:dnSpy_Resources.OptionsTitle}" Height="480" Width="550">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -46,8 +47,8 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="1" Content="_OK" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Click="okButton_Click" IsDefault="True" />
-            <Button Grid.Column="2" Content="_Cancel" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Click="cancelButton_Click" IsCancel="True" />
+            <Button Grid.Column="1" Content="{x:Static p:dnSpy_Resources.Button_OK}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Click="okButton_Click" IsDefault="True" />
+            <Button Grid.Column="2" Content="{x:Static p:dnSpy_Resources.Button_Cancel}" Style="{StaticResource DialogButton}" Margin="0 0 0 0" Click="cancelButton_Click" IsCancel="True" />
         </Grid>
     </Grid>
 </ctrls:WindowBase>

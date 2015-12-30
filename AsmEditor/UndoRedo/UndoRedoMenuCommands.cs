@@ -21,14 +21,14 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Shared.UI.Menus;
 
 namespace dnSpy.AsmEditor.UndoRedo {
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Undo", InputGestureText = "Ctrl+Z", Icon = "Undo", Group = MenuConstants.GROUP_APP_MENU_EDIT_UNDO, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:UndoCommand", InputGestureText = "res:ShortCutKeyCtrlZ", Icon = "Undo", Group = MenuConstants.GROUP_APP_MENU_EDIT_UNDO, Order = 0)]
 	sealed class UndoMainMenuEntryCommand : MenuItemCommand {
 		public UndoMainMenuEntryCommand()
 			: base(UndoRoutedCommands.Undo) {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Redo", InputGestureText = "Ctrl+Y", Icon = "Redo", Group = MenuConstants.GROUP_APP_MENU_EDIT_UNDO, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:RedoCommand", InputGestureText = "res:ShortCutKeyCtrlY", Icon = "Redo", Group = MenuConstants.GROUP_APP_MENU_EDIT_UNDO, Order = 10)]
 	sealed class RedoMainMenuEntryCommand : MenuItemCommand {
 		public RedoMainMenuEntryCommand()
 			: base(UndoRoutedCommands.Redo) {

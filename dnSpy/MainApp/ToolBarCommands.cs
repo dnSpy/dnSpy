@@ -110,7 +110,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "FullScreen", ToolTip = "Full Screen", Header = "Full Screen", IsToggleButton = true, Group = ToolBarConstants.GROUP_APP_TB_MAIN_FULLSCREEN, Order = 0)]
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, Icon = "FullScreen", Header = "res:FullScreenToolBarCommand", IsToggleButton = true, Group = ToolBarConstants.GROUP_APP_TB_MAIN_FULLSCREEN, Order = 0)]
 	sealed class FullScreenToolbarCommand : ToolBarButtonBase, IToolBarToggleButton {
 		[Import]
 		AppWindow appWindow = null;

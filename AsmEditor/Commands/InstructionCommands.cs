@@ -25,6 +25,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
@@ -60,7 +61,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 	}
 
-	[ExportMenuItem(Header = "Copy IL Bytes", Icon = "Copy", InputGestureText = "Ctrl+B", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 20)]
+	[ExportMenuItem(Header = "res:CopyILBytesCommand", Icon = "Copy", InputGestureText = "res:CopyILBytesKey", Group = MenuConstants.GROUP_CTX_CODE_EDITOR, Order = 20)]
 	sealed class CopyILBytesCodeCommand : MenuItemBase {
 		readonly Lazy<IMethodAnnotations> methodAnnotations;
 
@@ -95,7 +96,7 @@ namespace dnSpy.AsmEditor.Commands {
 				Clipboard.SetText(text);
 				if (copier.FoundUnknownBytes) {
 					Shared.UI.App.MsgBox.Instance.ShowIgnorableMessage(new Guid("141A1744-13CD-4835-A804-08D93D8E0D2B"),
-						"Some of the copied bytes are unknown because the method has been edited. New tokens and string offsets are only known once the file has been saved to disk and re-opened.",
+						dnSpy_AsmEditor_Resources.UnknownBytesMsg,
 						MsgBoxButton.OK);
 				}
 			}

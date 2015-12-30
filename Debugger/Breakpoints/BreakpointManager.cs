@@ -27,6 +27,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Debugger.Properties;
 using ICSharpCode.Decompiler;
 using ICSharpCode.NRefactory;
 
@@ -248,7 +249,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		public bool ClearAskUser() {
-			var res = messageBoxManager.ShowIgnorableMessage(new Guid("37250D26-E844-49F4-904B-29600B90476C"), "Do you want to delete all breakpoints?", MsgBoxButton.Yes | MsgBoxButton.No);
+			var res = messageBoxManager.ShowIgnorableMessage(new Guid("37250D26-E844-49F4-904B-29600B90476C"), dnSpy_Debugger_Resources.AskDeleteAllBreakpoints, MsgBoxButton.Yes | MsgBoxButton.No);
 			if (res != null && res != MsgBoxButton.Yes)
 				return false;
 			Clear();

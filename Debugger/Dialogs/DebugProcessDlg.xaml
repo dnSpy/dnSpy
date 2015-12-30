@@ -24,8 +24,9 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:winlocal="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
              xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
+             xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
              Width="500"
-             Title="Debug Assembly"
+             Title="{x:Static p:dnSpy_Debugger_Resources.DbgAsm_Title}"
              SizeToContent="Height"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="150" MinWidth="300">
@@ -51,14 +52,14 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Content="_Assembly" Target="{Binding ElementName=exeTextBox}" />
+            <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.DbgAsm_Assembly}" Target="{Binding ElementName=exeTextBox}" />
             <TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="exeTextBox" Text="{Binding Filename, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickFilenameCommand}" />
 
-            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="A_rguments" Target="{Binding ElementName=argsTextBox}" />
+            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.DbgAsm_Args}" Target="{Binding ElementName=argsTextBox}" />
             <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="argsTextBox" Text="{Binding CommandLine, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 
-            <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="_Working Directory" Target="{Binding ElementName=cwdTextBox}" />
+            <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.DbgAsm_WorkingDir}" Target="{Binding ElementName=cwdTextBox}" />
             <TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="cwdTextBox" Text="{Binding CurrentDirectory, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
             <Button Grid.Row="2" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickCurrentDirectoryCommand}" />
         </Grid>
@@ -70,10 +71,10 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Label Grid.Column="0" Margin="0 0 5 0" Content="_Break at" Target="{Binding ElementName=breakComboBox}" />
+            <Label Grid.Column="0" Margin="0 0 5 0" Content="{x:Static p:dnSpy_Debugger_Resources.DbgAsm_BreakAt}" Target="{Binding ElementName=breakComboBox}" />
             <ComboBox Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" Name="breakComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BreakProcessTypeVM.Items}" SelectedIndex="{Binding BreakProcessTypeVM.SelectedIndex}" VerticalContentAlignment="Center" />
-            <Button Grid.Column="2" Content="_OK" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Click="okButton_Click" />
-            <Button Grid.Column="3" Content="_Cancel" IsCancel="True" Style="{StaticResource DialogButton}" />
+            <Button Grid.Column="2" Content="{x:Static p:dnSpy_Debugger_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Click="okButton_Click" />
+            <Button Grid.Column="3" Content="{x:Static p:dnSpy_Debugger_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" />
         </Grid>
     </Grid>
 </winlocal:WindowBase>

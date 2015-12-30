@@ -23,6 +23,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using dnlib.DotNet.Resources;
+using dnSpy.Shared.UI.Properties;
 
 namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 	public static class SerializationUtils {
@@ -64,7 +65,7 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 			}
 			catch (Exception ex) {
 				obj = null;
-				return string.Format("Could not deserialize data: {0}", ex.Message);
+				return string.Format(dnSpy_Shared_UI_Resources.CouldNotDeserializeData, ex.Message);
 			}
 		}
 
@@ -78,10 +79,10 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 				}
 			}
 			catch (Exception ex) {
-				return string.Format("Could not convert it from a string: {0}", ex.Message);
+				return string.Format(dnSpy_Shared_UI_Resources.CouldNotConvertFromString, ex.Message);
 			}
 
-			return string.Format("{0} does not have a TypeConverter and can't be converted from a string.", targetType);
+			return string.Format(dnSpy_Shared_UI_Resources.NoTypeConverter, targetType);
 		}
 
 		public static string ConvertObjectToString(object obj) {

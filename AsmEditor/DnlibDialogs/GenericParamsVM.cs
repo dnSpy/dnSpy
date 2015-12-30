@@ -18,12 +18,13 @@
 */
 
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class GenericParamsVM : ListVM<GenericParamVM, GenericParam> {
 		public GenericParamsVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Generic Parameter", "Create Generic Parameter", ownerModule, languageManager, ownerType, ownerMethod) {
+			: base(dnSpy_AsmEditor_Resources.EditGenericParameter, dnSpy_AsmEditor_Resources.CreateGenericParameter, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
 		protected override GenericParamVM Create(GenericParam model) {

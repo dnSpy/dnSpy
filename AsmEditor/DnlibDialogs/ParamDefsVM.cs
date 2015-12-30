@@ -18,12 +18,13 @@
 */
 
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class ParamDefsVM : ListVM<ParamDefVM, ParamDef> {
 		public ParamDefsVM(ModuleDef ownerModule, ILanguageManager languageManager, TypeDef ownerType, MethodDef ownerMethod)
-			: base("Edit Parameter", "Create Parameter", ownerModule, languageManager, ownerType, ownerMethod) {
+			: base(dnSpy_AsmEditor_Resources.EditParameter, dnSpy_AsmEditor_Resources.CreateParameter, ownerModule, languageManager, ownerType, ownerMethod) {
 		}
 
 		protected override ParamDefVM Create(ParamDef model) {

@@ -23,10 +23,11 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="370" d:DesignWidth="500">
 	<TabControl>
-		<TabItem Header="Main" FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
+		<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MainTab}" FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
 			<ScrollViewer VerticalScrollBarVisibility="Auto">
 				<Grid Margin="5">
 					<Grid.RowDefinitions>
@@ -47,22 +48,22 @@
 							<RowDefinition />
 						</Grid.RowDefinitions>
 
-						<Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="_Name" />
+                        <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.ParamDef_Name}" />
 						<TextBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-						<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=seqTextBox}" Content="_Sequence" ToolTip="Sequence 0 is return parameter, sequence 1 is first parameter, etc" />
+                        <Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Target="{Binding ElementName=seqTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.ParamDef_Sequence}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.ParamDef_Sequence_ToolTip}" />
 						<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="seqTextBox" Text="{Binding Sequence.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
 					</Grid>
 
-					<GroupBox Grid.Row="1" Header="Flags">
+                    <GroupBox Grid.Row="1" Header="{x:Static p:dnSpy_AsmEditor_Resources.ParamDef_Flags}">
 						<Grid>
 							<Grid.ColumnDefinitions>
 								<ColumnDefinition />
 								<ColumnDefinition />
 								<ColumnDefinition />
 							</Grid.ColumnDefinitions>
-							<CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding In}" Content="_In" />
-							<CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Out}" Content="O_ut" />
-							<CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Optional}" Content="O_ptional" />
+                            <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding In}" Content="{x:Static p:dnSpy_AsmEditor_Resources.ParamDef_Flags_In}" />
+                            <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Out}" Content="{x:Static p:dnSpy_AsmEditor_Resources.ParamDef_Flags_Out}" />
+                            <CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Optional}" Content="{x:Static p:dnSpy_AsmEditor_Resources.ParamDef_Flags_Optional}" />
 						</Grid>
 					</GroupBox>
 
@@ -70,12 +71,12 @@
 				</Grid>
 			</ScrollViewer>
 		</TabItem>
-		<TabItem Header="Marshal Type">
+		<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.MarshalTypeTab}">
 			<ScrollViewer VerticalScrollBarVisibility="Auto">
 				<dnlibdlgs:MarshalTypeControl Margin="0 5 0 0" DataContext="{Binding MarshalTypeVM}" />
 			</ScrollViewer>
 		</TabItem>
-		<TabItem Header="Custom Attrs">
+		<TabItem Header="{x:Static p:dnSpy_AsmEditor_Resources.CustomAttributesTab}">
 			<dnlibdlgs:CustomAttributesControl Margin="0 5 0 0" DataContext="{Binding CustomAttributesVM}" />
 		</TabItem>
 	</TabControl>

@@ -27,6 +27,7 @@ using System.Windows.Media.Imaging;
 using dnlib.DotNet;
 using dnlib.DotNet.Resources;
 using dnSpy.Contracts.Files.TreeView.Resources;
+using dnSpy.Shared.UI.Properties;
 
 namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 	public static class SerializedImageListStreamerUtils {
@@ -83,13 +84,13 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 			var binData = (BinaryResourceData)newResElem.ResourceData;
 			byte[] imageData;
 			if (!GetImageData(module, binData.TypeName, binData.Data, out imageData))
-				return "The new data is not an image list.";
+				return dnSpy_Shared_UI_Resources.NewDataNotImageList;
 
 			try {
 				ReadImageData(imageData);
 			}
 			catch {
-				return "The new data is not an image list.";
+				return dnSpy_Shared_UI_Resources.NewDataNotImageList;
 			}
 
 			return string.Empty;

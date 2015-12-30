@@ -21,6 +21,7 @@ using System;
 using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Files;
 using dnSpy.Shared.UI.MVVM;
@@ -164,7 +165,7 @@ namespace dnSpy.AsmEditor.Resources {
 		void PickAssembly() {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			var newAsm = dnlibTypePicker.GetDnlibType<IDnSpyFile>(new FlagsFileTreeNodeFilter(VisibleMembersFlags.AssemblyDef), null, ownerModule);
+			var newAsm = dnlibTypePicker.GetDnlibType<IDnSpyFile>(dnSpy_AsmEditor_Resources.Pick_Assembly, new FlagsFileTreeNodeFilter(VisibleMembersFlags.AssemblyDef), null, ownerModule);
 			if (newAsm != null && newAsm.AssemblyDef != null)
 				Assembly = newAsm.AssemblyDef.ToAssemblyRef();
 		}
@@ -209,7 +210,7 @@ namespace dnSpy.AsmEditor.Resources {
 		protected override string Verify(string columnName) {
 			if (columnName == "AssemblyFullName") {
 				if (Assembly == null)
-					return "Assembly must not be empty.";
+					return dnSpy_AsmEditor_Resources.Error_AssemblyFieldMustNotBeEmpty;
 				return string.Empty;
 			}
 			return string.Empty;

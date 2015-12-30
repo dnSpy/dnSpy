@@ -26,10 +26,6 @@ namespace dnSpy.Shared.UI.Search {
 		readonly AssemblyDef assembly;
 		readonly ModuleDef module;
 
-		public override string Description {
-			get { return "Managed Entry Point"; }
-		}
-
 		public EntryPointFileTreeNodeFilter(ModuleDef module) {
 			this.module = module;
 			this.assembly = module.Assembly;

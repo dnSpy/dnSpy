@@ -19,8 +19,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.Linq;
 using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Properties;
+using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Decompiler {
@@ -38,25 +43,107 @@ namespace dnSpy.Decompiler {
 		}
 	}
 
-	sealed class DecompilerAppSettingsTab : IAppSettingsTab {
+	sealed class DecompilerAppSettingsTab : IAppSettingsTab, INotifyPropertyChanged {
 		readonly DecompilerSettings _global_decompilerSettings;
 		readonly DecompilerSettings decompilerSettings;
+
+		public event PropertyChangedEventHandler PropertyChanged;
+		void OnPropertyChanged(string propName) {
+			if (PropertyChanged != null)
+				PropertyChanged(this, new PropertyChangedEventArgs(propName));
+		}
 
 		public double Order {
 			get { return AppSettingsConstants.ORDER_SETTINGS_TAB_DECOMPILER; }
 		}
 
 		public string Title {
-			get { return "Decompiler"; }
+			get { return dnSpy_Resources.DecompilerDlgTabTitle; }
+		}
+
+		public DecompilerSettings Settings {
+			get { return decompilerSettings; }
 		}
 
 		public object UIObject {
-			get { return decompilerSettings; }
+			get { return this; }
+		}
+
+		public DecompilationObjectVM[] DecompilationObjectsArray {
+			get { return decompilationObjectVMs; }
+		}
+		readonly DecompilationObjectVM[] decompilationObjectVMs;
+
+		public DecompilationObjectVM DecompilationObject0 {
+			get { return decompilationObjectVMs[0]; }
+			set { SetDecompilationObject(0, value); }
+		}
+
+		public DecompilationObjectVM DecompilationObject1 {
+			get { return decompilationObjectVMs[1]; }
+			set { SetDecompilationObject(1, value); }
+		}
+
+		public DecompilationObjectVM DecompilationObject2 {
+			get { return decompilationObjectVMs[2]; }
+			set { SetDecompilationObject(2, value); }
+		}
+
+		public DecompilationObjectVM DecompilationObject3 {
+			get { return decompilationObjectVMs[3]; }
+			set { SetDecompilationObject(3, value); }
+		}
+
+		public DecompilationObjectVM DecompilationObject4 {
+			get { return decompilationObjectVMs[4]; }
+			set { SetDecompilationObject(4, value); }
+		}
+
+		void SetDecompilationObject(int index, DecompilationObjectVM newValue) {
+			Debug.Assert(newValue != null);
+			if (newValue == null)
+				throw new ArgumentNullException();
+			if (decompilationObjectVMs[index] == newValue)
+				return;
+
+			int otherIndex = Array.IndexOf(decompilationObjectVMs, newValue);
+			Debug.Assert(otherIndex >= 0);
+			if (otherIndex >= 0) {
+				decompilationObjectVMs[otherIndex] = decompilationObjectVMs[index];
+				decompilationObjectVMs[index] = newValue;
+
+				OnPropertyChanged(string.Format("DecompilationObject{0}", otherIndex));
+			}
+			OnPropertyChanged(string.Format("DecompilationObject{0}", index));
 		}
 
 		public DecompilerAppSettingsTab(DecompilerSettings decompilerSettings) {
 			this._global_decompilerSettings = decompilerSettings;
 			this.decompilerSettings = decompilerSettings.Clone();
+
+			var defObjs = new DecompilerSettings().DecompilationObjectsArray;
+			this.decompilationObjectVMs = new DecompilationObjectVM[defObjs.Length];
+			for (int i = 0; i < defObjs.Length; i++)
+				this.decompilationObjectVMs[i] = new DecompilationObjectVM(defObjs[i], ToString(defObjs[i]));
+
+			this.DecompilationObject0 = this.decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject0);
+			this.DecompilationObject1 = this.decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject1);
+			this.DecompilationObject2 = this.decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject2);
+			this.DecompilationObject3 = this.decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject3);
+			this.DecompilationObject4 = this.decompilationObjectVMs.First(a => a.Object == decompilerSettings.DecompilationObject4);
+		}
+
+		static string ToString(DecompilationObject o) {
+			switch (o) {
+			case DecompilationObject.NestedTypes:	return dnSpy_Resources.DecompilationOrder_NestedTypes;
+			case DecompilationObject.Fields:		return dnSpy_Resources.DecompilationOrder_Fields;
+			case DecompilationObject.Events:		return dnSpy_Resources.DecompilationOrder_Events;
+			case DecompilationObject.Properties:	return dnSpy_Resources.DecompilationOrder_Properties;
+			case DecompilationObject.Methods:		return dnSpy_Resources.DecompilationOrder_Methods;
+			default:
+				Debug.Fail("Shouldn't be here");
+				return "???";
+			}
 		}
 
 		[Flags]
@@ -77,6 +164,13 @@ namespace dnSpy.Decompiler {
 			RefreshFlags flags = 0;
 			var g = _global_decompilerSettings;
 			var d = decompilerSettings;
+
+			d.DecompilationObject0 = DecompilationObject0.Object;
+			d.DecompilationObject1 = DecompilationObject1.Object;
+			d.DecompilationObject2 = DecompilationObject2.Object;
+			d.DecompilationObject3 = DecompilationObject3.Object;
+			d.DecompilationObject4 = DecompilationObject4.Object;
+
 			if (g.AnonymousMethods != d.AnonymousMethods) flags |= RefreshFlags.ILAst | RefreshFlags.ShowMember;
 			if (g.ExpressionTrees != d.ExpressionTrees) flags |= RefreshFlags.ILAst;
 			if (g.YieldReturn != d.YieldReturn) flags |= RefreshFlags.ILAst | RefreshFlags.ShowMember;
@@ -123,6 +217,23 @@ namespace dnSpy.Decompiler {
 				appRefreshSettings.Add(AppSettingsConstants.REDECOMPILE_VB_CODE);
 
 			decompilerSettings.CopyTo(_global_decompilerSettings);
+		}
+	}
+
+	sealed class DecompilationObjectVM : ViewModelBase {
+		public DecompilationObject Object {
+			get { return decompilationObject; }
+		}
+		readonly DecompilationObject decompilationObject;
+
+		public string Text {
+			get { return text; }
+		}
+		readonly string text;
+
+		public DecompilationObjectVM(DecompilationObject decompilationObject, string text) {
+			this.decompilationObject = decompilationObject;
+			this.text = text;
 		}
 	}
 }

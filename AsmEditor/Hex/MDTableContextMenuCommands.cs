@@ -25,6 +25,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.AsmEditor.Hex.Nodes;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
@@ -182,7 +183,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class SortMDTableCommand {
-		[ExportMenuItem(Header = "_Sort Table", InputGestureText = "Ctrl+Shift+T", Group = MenuConstants.GROUP_CTX_CODE_HEX_MD, Order = 0)]
+		[ExportMenuItem(Header = "res:SortMetadataTableCommand", InputGestureText = "res:ShortCutKeyCtrlShiftT", Group = MenuConstants.GROUP_CTX_CODE_HEX_MD, Order = 0)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -200,7 +201,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "_Sort Table", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, InputGestureText = "Ctrl+Shift+T", Order = 0)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:SortMetadataTableCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, InputGestureText = "res:ShortCutKeyCtrlShiftT", Order = 0)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -219,7 +220,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static void ExecuteInternal(Lazy<IUndoCommandManager> undoCommandManager, MDTableContext context) {
-			SortTable(undoCommandManager, context.MetaDataTableVM, 1, context.MetaDataTableVM.Rows, string.Format("Sort {0} table", context.MetaDataTableVM.Table));
+			SortTable(undoCommandManager, context.MetaDataTableVM, 1, context.MetaDataTableVM.Rows, string.Format(dnSpy_AsmEditor_Resources.SortMetadataTableCommand2, context.MetaDataTableVM.Table));
 		}
 
 		internal static void SortTable(Lazy<IUndoCommandManager> undoCommandManager, MetaDataTableVM mdTblVM, uint rid, uint count, string descr) {
@@ -238,7 +239,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class SortSelectionMDTableCommand {
-		[ExportMenuItem(Header = "So_rt Selection", Group = MenuConstants.GROUP_CTX_CODE_HEX_MD, Order = 10)]
+		[ExportMenuItem(Header = "res:SortSelectionCommand", Group = MenuConstants.GROUP_CTX_CODE_HEX_MD, Order = 10)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -256,7 +257,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "So_rt Selection", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, Order = 10)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:SortSelectionCommand", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, Order = 10)]
 		sealed class TheMenuMDTableCommand : MenuMDTableCommand {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -277,7 +278,7 @@ namespace dnSpy.AsmEditor.Hex {
 		static void ExecuteInternal(Lazy<IUndoCommandManager> undoCommandManager, MDTableContext context) {
 			uint rid = context.Records[0].Token.Rid;
 			uint count = (uint)context.Records.Length;
-			SortMDTableCommand.SortTable(undoCommandManager, context.MetaDataTableVM, rid, count, string.Format("Sort {0} table, RID {1} - {2}", context.MetaDataTableVM.Table, rid, rid + count - 1));
+			SortMDTableCommand.SortTable(undoCommandManager, context.MetaDataTableVM, rid, count, string.Format(dnSpy_AsmEditor_Resources.SortTable_RowIdentifier, context.MetaDataTableVM.Table, rid, rid + count - 1));
 		}
 
 		static bool IsEnabledInternal(MDTableContext context) {
@@ -288,14 +289,14 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class GoToRidMDTableCommand {
-		[ExportMenuItem(Header = "_Go to RID...", InputGestureText = "Ctrl+G", Group = MenuConstants.GROUP_CTX_CODE_HEX_MD, Order = 20)]
+		[ExportMenuItem(Header = "res:GoToRowIdentifierCommand", InputGestureText = "res:ShortCutKeyCtrlG", Group = MenuConstants.GROUP_CTX_CODE_HEX_MD, Order = 20)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
 			public override void Execute(MDTableContext context) {
 				ExecuteInternal(context);
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "_Go to RID...", InputGestureText = "Ctrl+G", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, Order = 20)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:GoToRowIdentifierCommand", InputGestureText = "res:ShortCutKeyCtrlG", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, Order = 20)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
 			public override void Execute(MDTableContext context) {
 				ExecuteInternal(context);
@@ -303,13 +304,13 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static void ExecuteInternal(MDTableContext context) {
-			var recVM = Ask("Go to RID", context);
+			var recVM = Ask(dnSpy_AsmEditor_Resources.GoToRowIdentifier_Title, context);
 			if (recVM != null)
 				UIUtils.ScrollSelectAndSetFocus(context.ListView, recVM);
 		}
 
 		static MetaDataTableRecordVM Ask(string title, MDTableContext context) {
-			return Shared.UI.App.MsgBox.Instance.Ask("_Metadata token", null, title, s => {
+			return Shared.UI.App.MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_MetadataToken, null, title, s => {
 				string error;
 				uint rid = NumberVMUtils.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out error);
 				if (!string.IsNullOrEmpty(error))
@@ -321,14 +322,14 @@ namespace dnSpy.AsmEditor.Hex {
 				if (!string.IsNullOrEmpty(error))
 					return error;
 				if (rid == 0 || rid > context.MetaDataTableVM.Rows)
-					return string.Format("Invalid RID: {0}", rid);
+					return string.Format(dnSpy_AsmEditor_Resources.GoToRowIdentifier_InvalidRowIdentifier, rid);
 				return string.Empty;
 			});
 		}
 	}
 
 	static class ShowInHexEditorMDTableCommand {
-		[ExportMenuItem(Header = "Show in He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_CTX_CODE_HEX_MD, Order = 30)]
+		[ExportMenuItem(Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_CODE_HEX_MD, Order = 30)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
 			readonly IFileTabManager fileTabManager;
 
@@ -346,7 +347,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Show in He_x Editor", Icon = "Binary", InputGestureText = "Ctrl+X", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, Order = 30)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:ShowInHexEditorCommand", Icon = "Binary", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_MD, Order = 30)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
 			readonly IFileTabManager fileTabManager;
 
@@ -387,7 +388,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class CopyAsTextMDTableCommand {
-		[ExportMenuItem(Header = "Copy as _Text", InputGestureText = "Ctrl+Shift+C", Group = MenuConstants.GROUP_CTX_CODE_HEX_COPY, Order = 0)]
+		[ExportMenuItem(Header = "res:CopyAsTextCommand2", InputGestureText = "res:ShortCutKeyCtrlShiftC", Group = MenuConstants.GROUP_CTX_CODE_HEX_COPY, Order = 0)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
 			public override void Execute(MDTableContext context) {
 				ExecuteInternal(context);
@@ -398,7 +399,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Copy as _Text", InputGestureText = "Ctrl+Shift+C", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 0)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CopyAsTextCommand2", InputGestureText = "res:ShortCutKeyCtrlShiftC", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 0)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
 			public override void Execute(MDTableContext context) {
 				ExecuteInternal(context);
@@ -426,7 +427,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class CopyMDTableCommand {
-		[ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_CODE_HEX_COPY, Order = 10)]
+		[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_CODE_HEX_COPY, Order = 10)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
 			public override void Execute(MDTableContext context) {
 				ExecuteInternal(context);
@@ -437,7 +438,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 10)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 10)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
 			public override void Execute(MDTableContext context) {
 				ExecuteInternal(context);
@@ -452,7 +453,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var doc = context.MetaDataTableVM.Document;
 			ulong totalSize = (ulong)context.MetaDataTableVM.TableInfo.RowSize * (ulong)context.Records.Length * 2;
 			if (totalSize > int.MaxValue) {
-				Shared.UI.App.MsgBox.Instance.Show("You've selected too many bytes of data");
+				Shared.UI.App.MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.TooManyBytesSelected);
 				return;
 			}
 			var sb = new StringBuilder((int)totalSize);
@@ -473,7 +474,7 @@ namespace dnSpy.AsmEditor.Hex {
 	}
 
 	static class PasteMDTableCommand {
-		[ExportMenuItem(Header = "_Paste", Icon = "Paste", InputGestureText = "Ctrl+V", Group = MenuConstants.GROUP_CTX_CODE_HEX_COPY, Order = 20)]
+		[ExportMenuItem(Header = "res:PasteCommand", Icon = "Paste", InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_CTX_CODE_HEX_COPY, Order = 20)]
 		sealed class TheCtxMenuMDTableCommand : CtxMenuMDTableCommand {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -495,7 +496,7 @@ namespace dnSpy.AsmEditor.Hex {
 			}
 		}
 
-		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "_Paste", Icon = "Paste", InputGestureText = "Ctrl+V", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 20)]
+		[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:PasteCommand", Icon = "Paste", InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_APP_MENU_EDIT_HEX_COPY, Order = 20)]
 		internal sealed class TheMenuMDTableCommand : MenuMDTableCommand {
 			readonly Lazy<IUndoCommandManager> undoCommandManager;
 
@@ -525,7 +526,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var doc = context.MetaDataTableVM.Document;
 			int recs = data.Length / context.MetaDataTableVM.TableInfo.RowSize;
 			WriteHexUndoCommand.AddAndExecute(undoCommandManager.Value, doc, context.Records[0].StartOffset, data,
-				string.Format(recs == 1 ? "Paste {0} {1} record @ {2:X8}, RID {3}" : "Paste {0} {1} records @ {2:X8}, RID {3}",
+				string.Format(recs == 1 ? dnSpy_AsmEditor_Resources.Hex_Undo_Message_Paste_Record : dnSpy_AsmEditor_Resources.Hex_Undo_Message_Paste_Records,
 						recs, context.MetaDataTableVM.Table, context.Records[0].StartOffset, context.Records[0].Token.Rid));
 		}
 
@@ -558,7 +559,7 @@ namespace dnSpy.AsmEditor.Hex {
 			int recs = data.Length / context.MetaDataTableVM.TableInfo.RowSize;
 			if (recs <= 1)
 				return null;
-			return string.Format("_Paste {0} records @ {1:X8}, RID {2}", recs, context.Records[0].StartOffset, context.Records[0].Token.Rid);
+			return string.Format(dnSpy_AsmEditor_Resources.PasteRecordsCommand, recs, context.Records[0].StartOffset, context.Records[0].Token.Rid);
 		}
 	}
 }

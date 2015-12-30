@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using dnSpy.Contracts.Settings;
+using dnSpy.Culture;
 using dnSpy.Settings;
 
 namespace dnSpy.MainApp {
@@ -32,6 +33,7 @@ namespace dnSpy.MainApp {
 		public static AppImpl Create(IEnumerable<Assembly> asms, string pattern) {
 			var container = InitializeCompositionContainer(asms, pattern);
 			ReadSettings(container.GetExportedValue<ISettingsManager>());
+			container.GetExportedValue<ICultureManager>();
 			var appImpl = container.GetExportedValue<AppImpl>();
 			appImpl.CompositionContainer = container;
 			return appImpl;

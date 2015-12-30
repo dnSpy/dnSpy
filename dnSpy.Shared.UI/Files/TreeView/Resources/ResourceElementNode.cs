@@ -33,6 +33,7 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.UI.Properties;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Shared.UI.Files.TreeView.Resources {
@@ -186,12 +187,12 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 				case ResourceTypeCode.ByteArray:
 				case ResourceTypeCode.Stream:
 					var ary = (byte[])((BuiltInResourceData)resourceElement.ResourceData).Data;
-					return string.Format("{0} bytes", ary.Length);
+					return string.Format(dnSpy_Shared_UI_Resources.NumberOfBytes, ary.Length);
 
 				default:
 					var binData = resourceElement.ResourceData as BinaryResourceData;
 					if (binData != null)
-						return string.Format("{0} bytes, Type = {1}", binData.Data.Length, binData.TypeName);
+						return string.Format(dnSpy_Shared_UI_Resources.NumberOfBytesAndType, binData.Data.Length, binData.TypeName);
 					return resourceElement.ResourceData.ToString();
 				}
 			}
@@ -305,7 +306,7 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 
 		public virtual string CheckCanUpdateData(ResourceElement newResElem) {
 			if (resourceElement.ResourceData.Code.FixUserType() != newResElem.ResourceData.Code.FixUserType())
-				return "Resource type can't be changed";
+				return dnSpy_Shared_UI_Resources.ResourceTypeCantBeChanged;
 
 			return string.Empty;
 		}

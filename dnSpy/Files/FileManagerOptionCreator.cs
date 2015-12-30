@@ -20,6 +20,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Settings.Dialog;
 
 namespace dnSpy.Files {
@@ -43,8 +44,8 @@ namespace dnSpy.Files {
 				}
 			}) {
 				Order = AppSettingsConstants.ORDER_MISC_USEMMAPDIO,
-				Text = "Use memory mapped I/O",
-				ToolTip = "Can be disabled per module if you right-click it.",
+				Text = dnSpy_Resources.Options_Misc_UseMmapdIO,
+				ToolTip = dnSpy_Resources.Options_Misc_UseMmapdIO_ToolTip,
 			};
 		}
 	}

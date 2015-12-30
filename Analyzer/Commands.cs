@@ -62,7 +62,7 @@ namespace dnSpy.Analyzer {
 		}
 	}
 
-	[ExportMenuItem(Header = "Go to Reference", InputGestureText = "Dbl Click", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 0)]
+	[ExportMenuItem(Header = "res:GoToReferenceCommand", InputGestureText = "res:GoToReferenceKey", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 0)]
 	sealed class OpenReferenceCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
 		[ImportingConstructor]
 		OpenReferenceCtxMenuCommand(IFileTabManager fileTabManager)
@@ -70,7 +70,7 @@ namespace dnSpy.Analyzer {
 		}
 	}
 
-	[ExportMenuItem(Header = "Open in New _Tab", InputGestureText = "Shift+Dbl Click", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 10)]
+	[ExportMenuItem(Header = "res:OpenInNewTabCommand", InputGestureText = "res:OpenInNewTabKey", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 10)]
 	sealed class OpenReferenceNewTabCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
 		[ImportingConstructor]
 		OpenReferenceNewTabCtxMenuCommand(IFileTabManager fileTabManager)
@@ -78,7 +78,7 @@ namespace dnSpy.Analyzer {
 		}
 	}
 
-	[ExportMenuItem(Header = "Show Tokens", Group = MenuConstants.GROUP_CTX_ANALYZER_OPTIONS, Order = 0)]
+	[ExportMenuItem(Header = "res:ShowMetadataTokensCommand", Group = MenuConstants.GROUP_CTX_ANALYZER_OPTIONS, Order = 0)]
 	sealed class ShowTokensCtxMenuCommand : MenuItemBase {
 		readonly AnalyzerSettingsImpl analyzerSettings;
 
@@ -100,7 +100,7 @@ namespace dnSpy.Analyzer {
 		}
 	}
 
-	[ExportMenuItem(Header = "Syntax Highlight", Group = MenuConstants.GROUP_CTX_ANALYZER_OPTIONS, Order = 10)]
+	[ExportMenuItem(Header = "res:SyntaxHighlightCommand", Group = MenuConstants.GROUP_CTX_ANALYZER_OPTIONS, Order = 10)]
 	sealed class SyntaxHighlightCtxMenuCommand : MenuItemBase {
 		readonly AnalyzerSettingsImpl analyzerSettings;
 

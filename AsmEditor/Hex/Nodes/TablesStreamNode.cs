@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using dnlib.DotNet.MD;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.TreeView;
@@ -77,7 +78,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write("Tables Stream", TextTokenType.InstanceField);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_TablesStream, TextTokenType.InstanceField);
 		}
 
 		public MetaDataTableRecordNode FindTokenNode(uint token) {

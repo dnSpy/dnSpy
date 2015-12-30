@@ -38,6 +38,7 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.IMModules;
 using dnSpy.Debugger.Memory;
+using dnSpy.Debugger.Properties;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Menus;
@@ -129,7 +130,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "Cop_y", Icon = "Copy", InputGestureText = "Ctrl+C", Group = MenuConstants.GROUP_CTX_DBG_MODULES_COPY, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_DBG_MODULES_COPY, Order = 0)]
 	sealed class CopyCallModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		IDebuggerSettings debuggerSettings;
 
@@ -176,7 +177,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportMenuItem(Header = "Select _All", Icon = "Select", InputGestureText = "Ctrl+A", Group = MenuConstants.GROUP_CTX_DBG_MODULES_COPY, Order = 10)]
+	[ExportMenuItem(Header = "res:SelectAllCommand", Icon = "Select", InputGestureText = "res:ShortCutKeyCtrlA", Group = MenuConstants.GROUP_CTX_DBG_MODULES_COPY, Order = 10)]
 	sealed class SelectAllModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		[ImportingConstructor]
 		SelectAllModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent)
@@ -192,7 +193,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "_Go To Module", Icon = "AssemblyModule", InputGestureText = "Enter", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 0)]
+	[Export, ExportMenuItem(Header = "res:GoToModuleCommand", Icon = "AssemblyModule", InputGestureText = "res:ShortCutKeyEnter", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 0)]
 	sealed class GoToModuleModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly IFileTabManager fileTabManager;
 		readonly Lazy<ModuleLoader> moduleLoader;
@@ -234,7 +235,7 @@ namespace dnSpy.Debugger.Modules {
 		internal static bool ShowErrorIfDynamic(Lazy<IInMemoryModuleManager> inMemoryModuleManager, DnModule module) {
 			if (module.IsDynamic && module.Debugger.ProcessState != DebuggerProcessState.Stopped) {
 				if (inMemoryModuleManager.Value.LoadFile(module, false) == null) {
-					Shared.UI.App.MsgBox.Instance.Show("You must break the process before dynamic modules can be loaded.");
+					Shared.UI.App.MsgBox.Instance.Show(dnSpy_Debugger_Resources.Module_BreakProcessBeforeLoadingDynamicModules);
 					return false;
 				}
 			}
@@ -273,7 +274,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportMenuItem(Header = "Open Module from Memory", Icon = "AssemblyModule", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 10)]
+	[ExportMenuItem(Header = "res:OpenModuleFromMemoryCommand", Icon = "AssemblyModule", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 10)]
 	sealed class OpenModuleFromMemoryModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
 		readonly IFileTabManager fileTabManager;
@@ -324,7 +325,7 @@ namespace dnSpy.Debugger.Modules {
 		public const string GROUP_SHOW_IN_MEMORY_WINDOW = "0,E1F6906B-64C8-4411-B8B7-07C331197BFE";
 	}
 
-	[ExportMenuItem(Header = "Show in Memory Window", Icon = "MemoryWindow", Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 20)]
+	[ExportMenuItem(Header = "res:ShowInMemoryWindowCommand", Icon = "MemoryWindow", Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 20)]
 	sealed class ShowInMemoryXModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		[ImportingConstructor]
 		ShowInMemoryXModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent)
@@ -420,7 +421,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Hexadecimal Display", Group = MenuConstants.GROUP_CTX_DBG_MODULES_HEXOPTS, Order = 0)]
+	[ExportMenuItem(Header = "res:HexDisplayCommand", Group = MenuConstants.GROUP_CTX_DBG_MODULES_HEXOPTS, Order = 0)]
 	sealed class HexadecimalDisplayModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly DebuggerSettingsImpl debuggerSettings;
 
@@ -439,7 +440,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportMenuItem(Header = "_Open Containing Folder", Group = MenuConstants.GROUP_CTX_DBG_MODULES_DIRS, Order = 0)]
+	[ExportMenuItem(Header = "res:OpenContainingFolderCommand", Group = MenuConstants.GROUP_CTX_DBG_MODULES_DIRS, Order = 0)]
 	sealed class OpenContainingFolderModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		[ImportingConstructor]
 		OpenContainingFolderModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent)
@@ -468,7 +469,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportMenuItem(Header = "Copy Filename", Group = MenuConstants.GROUP_CTX_DBG_MODULES_DIRS, Order = 10)]
+	[ExportMenuItem(Header = "res:ModuleCopyFilenameCommand", Group = MenuConstants.GROUP_CTX_DBG_MODULES_DIRS, Order = 10)]
 	sealed class CopyFilenameModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		[ImportingConstructor]
 		CopyFilenameModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent)
@@ -542,13 +543,14 @@ namespace dnSpy.Debugger.Modules {
 			var win = new ProgressDlg();
 			win.DataContext = data;
 			win.Owner = appWindow.MainWindow;
-			win.Title = list.Length == 1 ? "Save Module" : "Save Modules";
+			win.Title = list.Length == 1 ? dnSpy_Debugger_Resources.ModuleSaveModuleTitle :
+						dnSpy_Debugger_Resources.ModuleSaveModulesTitle;
 			var res = win.ShowDialog();
 			if (res != true)
 				return;
 			if (!data.WasError)
 				return;
-			messageBoxManager.Show(string.Format("An error occurred:\n\n{0}", data.ErrorMessage));
+			messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.ErrorOccurredX, data.ErrorMessage));
 		}
 
 		public override bool IsEnabled(ModulesCtxMenuContext context) {
@@ -557,7 +559,8 @@ namespace dnSpy.Debugger.Modules {
 
 		public override string GetHeader(ModulesCtxMenuContext context) {
 			var files = GetSavableFiles(context.SelectedItems);
-			return files.Length > 1 ? string.Format("Save {0} Modules...", files.Length) : "Save Module...";
+			return files.Length > 1 ? string.Format(dnSpy_Debugger_Resources.SaveModulesCommand, files.Length) :
+						dnSpy_Debugger_Resources.SaveModuleCommand;
 		}
 
 		static ModuleVM[] GetSavableFiles(ModuleVM[] files) {

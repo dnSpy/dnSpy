@@ -26,6 +26,7 @@ using System.Linq;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnlib.DotNet;
+using dnSpy.Debugger.Properties;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Debugger.Locals {
@@ -47,7 +48,7 @@ namespace dnSpy.Debugger.Locals {
 			Debug.Assert(type != null && type.IsEnum);
 
 			if (text == string.Empty)
-				return "Enter some text";
+				return dnSpy_Debugger_Resources.LocalsEditValue_Error_EnterSomeText;
 
 			var etype = type.EnumUnderlyingType;
 			if (etype == CorElementType.End)
@@ -74,7 +75,7 @@ namespace dnSpy.Debugger.Locals {
 					else
 						newv = ParseIntegerConstant(etype, c, out error);
 					if (newv == null)
-						return string.Format("Unknown enum value '{0}'", c);
+						return string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_UnknownEnumValue, c);
 					value |= newv.Value;
 				}
 
@@ -84,7 +85,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 			else {
 				if (consts.Length != 1)
-					return "Invalid enum value";
+					return dnSpy_Debugger_Resources.LocalsEditValue_Error_InvalidEnumValue;
 
 				var c = consts[0];
 				foreach (var field in fields) {
@@ -123,7 +124,7 @@ namespace dnSpy.Debugger.Locals {
 				}
 			}
 
-			return "Invalid enum value";
+			return dnSpy_Debugger_Resources.LocalsEditValue_Error_InvalidEnumValue;
 		}
 
 		static object ConvertUInt64(CorElementType etype, ulong v) {
@@ -371,7 +372,7 @@ namespace dnSpy.Debugger.Locals {
 
 			ulong? res = ParseIntegerConstant(etype, text, out error);
 			if (res == null)
-				return error ?? "Invalid number";
+				return error ?? dnSpy_Debugger_Resources.LocalsEditValue_Error_InvalidNumber;
 
 			switch (etype) {
 			case CorElementType.I1:

@@ -26,6 +26,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.NRefactory;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
@@ -63,7 +64,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write("Resources", TextTokenType.Text);
+			output.Write(dnSpy_Resources.ResourcesFolder, TextTokenType.Text);
 		}
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

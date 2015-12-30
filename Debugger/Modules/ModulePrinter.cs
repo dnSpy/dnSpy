@@ -21,6 +21,7 @@ using System;
 using System.Globalization;
 using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
+using dnSpy.Debugger.Properties;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
 
@@ -85,7 +86,7 @@ namespace dnSpy.Debugger.Modules {
 			ulong addr = vm.Module.Address;
 			ulong endAddr = addr + vm.Module.Size;
 			if (addr == 0)
-				output.Write("<no address>", TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.Module_NoAddress, TextTokenType.Text);
 			else {
 				WriteAddress(addr);
 				output.Write("-", TextTokenType.Operator);

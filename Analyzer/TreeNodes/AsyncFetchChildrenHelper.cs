@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.TreeView;
@@ -63,7 +64,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 
 			public override object Text {
-				get { return "Searching..."; }
+				get { return dnSpy_Analyzer_Resources.Searching; }
 			}
 
 			public override object ToolTip {

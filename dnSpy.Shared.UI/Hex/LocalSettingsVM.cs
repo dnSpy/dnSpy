@@ -20,6 +20,7 @@
 using System.Windows.Input;
 using dnSpy.Shared.UI.HexEditor;
 using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.UI.Properties;
 
 namespace dnSpy.Shared.UI.Hex {
 	sealed class LocalSettingsVM : ViewModelBase {
@@ -112,14 +113,14 @@ namespace dnSpy.Shared.UI.Hex {
 		}
 		readonly EnumListVM asciiEncodingVM;
 		readonly EnumVM[] asciiEncodingList = new EnumVM[] {
-			new EnumVM(AsciiEncoding.ASCII, "ASCII"),
-			new EnumVM(AsciiEncoding.ANSI, "ANSI"),
-			new EnumVM(AsciiEncoding.UTF7, "UTF-7"),
-			new EnumVM(AsciiEncoding.UTF8, "UTF-8"),
-			new EnumVM(AsciiEncoding.UTF32, "UTF-32"),
-			new EnumVM(AsciiEncoding.Unicode, "Unicode"),
-			new EnumVM(AsciiEncoding.BigEndianUnicode, "BE Unicode"),
-			new EnumVM(AsciiEncoding_DEFAULT, "Default"),
+			new EnumVM(AsciiEncoding.ASCII, dnSpy_Shared_UI_Resources.HexEditor_CharacterEncoding_ASCII_2),
+			new EnumVM(AsciiEncoding.ANSI, dnSpy_Shared_UI_Resources.HexEditor_CharacterEncoding_ANSI_2),
+			new EnumVM(AsciiEncoding.UTF7, dnSpy_Shared_UI_Resources.HexEditor_CharacterEncoding_UTF7_2),
+			new EnumVM(AsciiEncoding.UTF8, dnSpy_Shared_UI_Resources.HexEditor_CharacterEncoding_UTF8_2),
+			new EnumVM(AsciiEncoding.UTF32, dnSpy_Shared_UI_Resources.HexEditor_CharacterEncoding_UTF32_2),
+			new EnumVM(AsciiEncoding.Unicode, dnSpy_Shared_UI_Resources.HexEditor_CharacterEncoding_UNICODE_2),
+			new EnumVM(AsciiEncoding.BigEndianUnicode, dnSpy_Shared_UI_Resources.HexEditor_CharacterEncoding_BIG_ENDIAN_UNICODE_2),
+			new EnumVM(AsciiEncoding_DEFAULT, dnSpy_Shared_UI_Resources.HexEditor_Default2),
 		};
 		const AsciiEncoding AsciiEncoding_DEFAULT = (AsciiEncoding)(-1);
 

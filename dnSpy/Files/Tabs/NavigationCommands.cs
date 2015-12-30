@@ -29,14 +29,14 @@ using dnSpy.Shared.UI.MVVM;
 using dnSpy.Shared.UI.ToolBars;
 
 namespace dnSpy.Files.Tabs {
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, ToolTip = "Navigate Backward (Backspace)", Icon = "Backward", Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 0)]
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, ToolTip = "res:NavigateBackCommand", Icon = "Backward", Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 0)]
 	sealed class BrowseBackCommand : ToolBarButtonCommand {
 		public BrowseBackCommand()
 			: base(NavigationCommands.BrowseBack) {
 		}
 	}
 
-	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, ToolTip = "Navigate Forward (Alt+Right)", Icon = "Forward", Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 10)]
+	[ExportToolBarButton(OwnerGuid = ToolBarConstants.APP_TB_GUID, ToolTip = "res:NavigateForwardCommand", Icon = "Forward", Group = ToolBarConstants.GROUP_APP_TB_MAIN_NAVIGATION, Order = 10)]
 	sealed class BrowseForwardCommand : ToolBarButtonCommand {
 		public BrowseForwardCommand()
 			: base(NavigationCommands.BrowseForward) {

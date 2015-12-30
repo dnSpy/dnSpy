@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Text;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
@@ -99,7 +100,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		public string InfoName {
-			get { return "Info"; }
+			get { return dnSpy_AsmEditor_Resources.Info; }
 		}
 
 		public virtual bool HasInfo {
@@ -269,7 +270,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 				int nextOffs = i + 1 >= info.Columns.Count ? info.RowSize : info.Columns[i + 1].Offset;
 				int padding = nextOffs - (col.Offset + col.Size);
 				for (int j = 0; j < padding; j++) {
-					newCols.Add(new ColumnInfo((byte)(coli++ + 1), "pad", ColumnSize.Byte, (byte)offs, 1));
+					newCols.Add(new ColumnInfo((byte)(coli++ + 1), dnSpy_AsmEditor_Resources.Padding, ColumnSize.Byte, (byte)offs, 1));
 					offs++;
 				}
 			}

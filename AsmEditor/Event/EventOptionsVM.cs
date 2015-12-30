@@ -23,6 +23,7 @@ using System.Linq;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Languages;
 using dnSpy.Shared.UI.MVVM;
@@ -116,7 +117,7 @@ namespace dnSpy.AsmEditor.Event {
 		}
 
 		public string EventTypeHeader {
-			get { return string.Format("Event Type: {0}", typeSigCreator.TypeSigDnlibFullName); }
+			get { return string.Format(dnSpy_AsmEditor_Resources.EventType, typeSigCreator.TypeSigDnlibFullName); }
 		}
 
 		public TypeSigCreatorVM TypeSigCreator {
@@ -223,7 +224,7 @@ namespace dnSpy.AsmEditor.Event {
 		MethodDef PickMethod(MethodDef origMethod) {
 			if (dnlibTypePicker == null)
 				throw new InvalidOperationException();
-			return dnlibTypePicker.GetDnlibType(new SameModuleFileTreeNodeFilter(ownerModule, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef)), origMethod, ownerModule);
+			return dnlibTypePicker.GetDnlibType(dnSpy_AsmEditor_Resources.Pick_Method, new SameModuleFileTreeNodeFilter(ownerModule, new FlagsFileTreeNodeFilter(VisibleMembersFlags.MethodDef)), origMethod, ownerModule);
 		}
 
 		void PickAddMethod() {

@@ -29,6 +29,8 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.AsmEditor.Hex;
+using dnSpy.AsmEditor.Properties;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
 using dnSpy.Shared.UI.MVVM;
 
@@ -138,7 +140,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				for (int i = 0; i < modules.Count; i++) {
 					var module = modules[i];
 					if (module.HasError)
-						return string.Format("File #{0} ({1}) has errors", i + 1, module.FileName.Trim() == string.Empty ? "<empty filename>" : module.FileName);
+						return string.Format(dnSpy_AsmEditor_Resources.SaveModules_FileHasErrors, i + 1, module.FileName.Trim() == string.Empty ? dnSpy_AsmEditor_Resources.EmptyFilename : module.FileName);
 				}
 
 				return null;
@@ -296,25 +298,26 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		ModuleSaver moduleSaver;
 		void SaveAsync(SaveOptionsVM[] mods) {
+			AppCulture.InitializeCulture();
 			try {
 				moduleSaver = new ModuleSaver(mods);
 				moduleSaver.OnProgressUpdated += moduleSaver_OnProgressUpdated;
 				moduleSaver.OnLogMessage += moduleSaver_OnLogMessage;
 				moduleSaver.OnWritingFile += moduleSaver_OnWritingFile;
 				moduleSaver.SaveAll();
-				AsyncAddMessage("All files written to disk.", false, false);
+				AsyncAddMessage(dnSpy_AsmEditor_Resources.SaveModules_Log_AllFilesWritten, false, false);
 			}
 			catch (TaskCanceledException) {
-				AsyncAddMessage("Save was canceled by user.", true, false);
+				AsyncAddMessage(dnSpy_AsmEditor_Resources.SaveModules_Log_SaveWasCanceled, true, false);
 			}
 			catch (UnauthorizedAccessException ex) {
-				AsyncAddMessage(string.Format("Access error: {0}", ex.Message), true, false);
+				AsyncAddMessage(string.Format(dnSpy_AsmEditor_Resources.SaveModules_Log_AccessError, ex.Message), true, false);
 			}
 			catch (IOException ex) {
-				AsyncAddMessage(string.Format("File error: {0}", ex.Message), true, false);
+				AsyncAddMessage(string.Format(dnSpy_AsmEditor_Resources.SaveModules_Log_FileError, ex.Message), true, false);
 			}
 			catch (Exception ex) {
-				AsyncAddMessage(string.Format("An exception occurred\n\n{0}", ex), true, false);
+				AsyncAddMessage(string.Format(dnSpy_AsmEditor_Resources.SaveModules_Log_Exception, ex), true, false);
 			}
 			moduleSaver = null;
 
@@ -329,7 +332,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 				ExecInOldThread(() => {
 					CurrentFileName = e.File.FileName;
 				});
-				AsyncAddMessage(string.Format("Writing {0}...", e.File.FileName), false, false);
+				AsyncAddMessage(string.Format(dnSpy_AsmEditor_Resources.SaveModules_Log_WritingFile, e.File.FileName), false, false);
 			}
 			else {
 				shownMessages.Clear();

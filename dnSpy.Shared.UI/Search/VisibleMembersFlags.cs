@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Text;
 
 namespace dnSpy.Shared.UI.Search {
 	[Flags]
@@ -61,56 +60,5 @@ namespace dnSpy.Shared.UI.Search {
 						  AssemblyRef | BaseTypes | DerivedTypes | ModuleRef |
 						  ResourceList | NonNetFile | Resource | ResourceElement |
 						  Other,
-	}
-
-	public static class VisibleMembersFlagsExtensions {
-		public static string GetListString(this VisibleMembersFlags flags) {
-			int count;
-			return flags.GetListString(out count);
-		}
-
-		public static string GetListString(this VisibleMembersFlags flags, out int count) {
-			var sb = new StringBuilder();
-			count = 0;
-
-			if ((flags & VisibleMembersFlags.AssemblyDef) != 0) AddString(sb, "Assembly", ref count);
-			if ((flags & VisibleMembersFlags.ModuleDef) != 0) AddString(sb, "Module", ref count);
-			if ((flags & VisibleMembersFlags.Namespace) != 0) AddString(sb, "Namespace", ref count);
-			if ((flags & VisibleMembersFlags.TypeDef) != 0) AddString(sb, "Type", ref count);
-			if ((flags & VisibleMembersFlags.FieldDef) != 0) AddString(sb, "Field", ref count);
-			if ((flags & VisibleMembersFlags.MethodDef) != 0) AddString(sb, "Method", ref count);
-			if ((flags & VisibleMembersFlags.PropertyDef) != 0) AddString(sb, "Property", ref count);
-			if ((flags & VisibleMembersFlags.EventDef) != 0) AddString(sb, "Event", ref count);
-			if ((flags & VisibleMembersFlags.AssemblyRef) != 0) AddString(sb, "AssemblyRef", ref count);
-			if ((flags & VisibleMembersFlags.BaseTypes) != 0) AddString(sb, "BaseTypes", ref count);
-			if ((flags & VisibleMembersFlags.DerivedTypes) != 0) AddString(sb, "DerivedTypes", ref count);
-			if ((flags & VisibleMembersFlags.ModuleRef) != 0) AddString(sb, "ModuleRef", ref count);
-			if ((flags & VisibleMembersFlags.ResourceList) != 0) AddString(sb, "Resources", ref count);
-			if ((flags & VisibleMembersFlags.NonNetFile) != 0) AddString(sb, "Non-.NET File", ref count);
-			if ((flags & VisibleMembersFlags.GenericTypeDef) != 0) AddString(sb, "Generic Type", ref count);
-			if ((flags & VisibleMembersFlags.NonGenericTypeDef) != 0) AddString(sb, "Non-Generic Type", ref count);
-			if ((flags & VisibleMembersFlags.EnumTypeDef) != 0) AddString(sb, "Enum", ref count);
-			if ((flags & VisibleMembersFlags.InterfaceTypeDef) != 0) AddString(sb, "Interface", ref count);
-			if ((flags & VisibleMembersFlags.ClassTypeDef) != 0) AddString(sb, "Class", ref count);
-			if ((flags & VisibleMembersFlags.StructTypeDef) != 0) AddString(sb, "Struct", ref count);
-			if ((flags & VisibleMembersFlags.DelegateTypeDef) != 0) AddString(sb, "Delegate", ref count);
-			if ((flags & VisibleMembersFlags.MethodBody) != 0) AddString(sb, "Method Body", ref count);
-			if ((flags & VisibleMembersFlags.ParamDefs) != 0) AddString(sb, "ParamDefs", ref count);
-			if ((flags & VisibleMembersFlags.ParamDef) != 0) AddString(sb, "ParamDef", ref count);
-			if ((flags & VisibleMembersFlags.Locals) != 0) AddString(sb, "Locals", ref count);
-			if ((flags & VisibleMembersFlags.Local) != 0) AddString(sb, "Local", ref count);
-			if ((flags & VisibleMembersFlags.InstanceConstructor) != 0) AddString(sb, "Constructor", ref count);
-			if ((flags & VisibleMembersFlags.Resource) != 0) AddString(sb, "Resource", ref count);
-			if ((flags & VisibleMembersFlags.ResourceElement) != 0) AddString(sb, "ResourceElement", ref count);
-			if ((flags & VisibleMembersFlags.Other) != 0) AddString(sb, "Other", ref count);
-
-			return sb.ToString();
-		}
-
-		static void AddString(StringBuilder sb, string text, ref int count) {
-			if (count++ != 0)
-				sb.Append(", ");
-			sb.Append(text);
-		}
 	}
 }

@@ -62,10 +62,10 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			this.ownerWindow = ownerWindow;
 		}
 
-		public T GetDnlibType<T>(IFileTreeNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class {
+		public T GetDnlibType<T>(string title, IFileTreeNodeFilter filter, T selectedObject, ModuleDef ownerModule) where T : class {
 			var newFileTreeView = fileTreeViewCreator.Create(filter);
 			try {
-				var data = new MemberPickerVM(fileSearcherCreator, newFileTreeView, languageManager, filter, fileTreeView.FileManager.GetFiles());
+				var data = new MemberPickerVM(fileSearcherCreator, newFileTreeView, languageManager, filter, title, fileTreeView.FileManager.GetFiles());
 				data.SyntaxHighlight = fileTreeViewSettings.SyntaxHighlight;
 				var win = new MemberPickerDlg(fileTreeView, newFileTreeView, imageManager);
 				win.DataContext = data;

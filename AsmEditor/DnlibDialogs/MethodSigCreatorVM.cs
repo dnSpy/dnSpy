@@ -21,6 +21,7 @@ using System;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.Threading;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Shared.UI.MVVM;
 
@@ -155,7 +156,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			get {
 				if (!string.IsNullOrEmpty(title))
 					return title;
-				return IsPropertySig ? "Create Property Signature" : "Create Method Signature";
+				return IsPropertySig ? dnSpy_AsmEditor_Resources.CreatePropertySignature : dnSpy_AsmEditor_Resources.CreateMethodSignature;
 			}
 		}
 		string title;
@@ -241,14 +242,14 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				throw new InvalidOperationException();
 
 			bool canceled;
-			var newTypeSig = typeSigCreator.Create(options.TypeSigCreatorOptions.Clone("Create Return Type"), ReturnType, out canceled);
+			var newTypeSig = typeSigCreator.Create(options.TypeSigCreatorOptions.Clone(dnSpy_AsmEditor_Resources.CreateReturnType), ReturnType, out canceled);
 			if (newTypeSig != null)
 				ReturnType = newTypeSig;
 		}
 
 		protected override string Verify(string columnName) {
 			if (columnName == "ReturnType")
-				return ReturnType != null ? string.Empty : "A return type is required";
+				return ReturnType != null ? string.Empty : dnSpy_AsmEditor_Resources.ReturnTypeRequired;
 			return string.Empty;
 		}
 

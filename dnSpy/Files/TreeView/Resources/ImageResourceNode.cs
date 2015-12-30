@@ -30,6 +30,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.NRefactory;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Decompiler;
 using dnSpy.Shared.UI.Files.TreeView.Resources;
 using dnSpy.Shared.UI.Highlighting;
@@ -153,7 +154,7 @@ namespace dnSpy.Files.TreeView.Resources {
 
 			base.WriteShort(output, language, showOffset);
 			if (so != null) {
-				so.AddButton("Save", (s, e) => Save());
+				so.AddButton(dnSpy_Resources.SaveResourceButton, (s, e) => Save());
 				so.WriteLine();
 				so.WriteLine();
 			}
@@ -221,7 +222,7 @@ namespace dnSpy.Files.TreeView.Resources {
 				ImageResourceUtils.CreateImageSource((byte[])((BuiltInResourceData)newResElem.ResourceData).Data);
 			}
 			catch {
-				return "The new data is not an image.";
+				return dnSpy_Resources.NewDataIsNotAnImage;
 			}
 
 			return null;

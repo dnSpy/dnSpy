@@ -26,6 +26,7 @@
              xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
              xmlns:exvc="clr-namespace:dnSpy.Debugger.Exceptions"
              xmlns:vc="clr-namespace:dnSpy.Debugger.Converters"
+             xmlns:p="clr-namespace:dnSpy.Debugger.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">
     <Grid>
@@ -52,22 +53,22 @@
                         </Style.Triggers>
                     </Style>
                 </StackPanel.Resources>
-                <CheckBox Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" IsChecked="{Binding ShowOnlyEnabledExceptions}" ToolTip="Show only enabled exceptions">
+                <CheckBox Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ToggleButtonStyleKey}}" IsChecked="{Binding ShowOnlyEnabledExceptions}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_ShowOnlyEnabledExceptions_ToolTip}">
                     <Image Source="{Binding ShowOnlyEnabledExceptionsImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_Filter}" Width="16" Height="16"/>
                 </CheckBox>
                 <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" />
-                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding AddExceptionCommand}" ToolTip="Add an exception to the list">
+                <Button Margin="0 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding AddExceptionCommand}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Add_ToolTip}">
                     <Image Source="{Binding AddExceptionImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_Add}" Width="16" Height="16"/>
                 </Button>
-                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding RemoveExceptionsCommand}" ToolTip="Remove an exception from the list">
+                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding RemoveExceptionsCommand}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Remove_ToolTip}">
                     <Image Source="{Binding RemoveExceptionImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_RemoveCommand}" Width="16" Height="16"/>
                 </Button>
-                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding RestoreDefaultsCommand}" ToolTip="Restore the list to the default settings">
+                <Button Margin="5 0 0 0" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding RestoreDefaultsCommand}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_RestoreSettings_ToolTip}">
                     <Image Source="{Binding RestoreDefaultsImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_UndoCheckBoxList}" Width="16" Height="16"/>
                 </Button>
             </StackPanel>
-            <Label Grid.Column="1" Margin="5 0 0 0" Content="Search" ToolTip="Search for an exception (Ctrl+F)" exvc:ClickFocusAP.Target="{Binding ElementName=searchTextBox}" />
-            <TextBox Grid.Column="2" Name="searchTextBox" Margin="5 0 0 0" Text="{Binding FilterText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="Search for an exception (Ctrl+F)" />
+            <Label Grid.Column="1" Margin="5 0 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Search}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Search_ToolTip}" exvc:ClickFocusAP.Target="{Binding ElementName=searchTextBox}" />
+            <TextBox Grid.Column="2" Name="searchTextBox" Margin="5 0 0 0" Text="{Binding FilterText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" ToolTip="{x:Static p:dnSpy_Debugger_Resources.Exceptions_Search_ToolTip}" />
         </Grid>
         <ListBox
             Grid.Row="1"

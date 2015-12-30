@@ -21,6 +21,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.Resources;
 using dnSpy.Contracts.App;
 using WF = System.Windows.Forms;
@@ -41,7 +42,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			var dlg = new WF.OpenFileDialog {
 				RestoreDirectory = true,
 				Multiselect = false,
-				Filter = "Images|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico|All files (*.*)|*.*",
+				Filter = string.Format("{1}|*.png;*.gif;*.bmp;*.dib;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.ico|{0} (*.*)|*.*", dnSpy_AsmEditor_Resources.AllFiles, dnSpy_AsmEditor_Resources.Images),
 			};
 			if (dlg.ShowDialog() != WF.DialogResult.OK)
 				return null;
@@ -59,7 +60,7 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			catch (Exception ex) {
 				if (imgStream != null)
 					imgStream.Dispose();
-				Shared.UI.App.MsgBox.Instance.Show(string.Format("Could not open file or it's not an image. Error: {0}", ex.Message), MsgBoxButton.OK, ownerWindow);
+				Shared.UI.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_OpenImage, ex.Message), MsgBoxButton.OK, ownerWindow);
 				return null;
 			}
 		}

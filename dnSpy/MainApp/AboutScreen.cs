@@ -26,6 +26,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
 using dnSpy.NRefactory;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Decompiler;
 using dnSpy.Shared.UI.Menus;
 using ICSharpCode.Decompiler;
@@ -52,7 +53,7 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "_About", Group = MenuConstants.GROUP_APP_MENU_HELP_ABOUT, Order = 1000000)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_Menu", Group = MenuConstants.GROUP_APP_MENU_HELP_ABOUT, Order = 1000000)]
 	sealed class AboutScreenMenuItem : MenuItemBase {
 		readonly IFileTabManager fileTabManager;
 
@@ -76,7 +77,7 @@ namespace dnSpy.MainApp {
 		}
 
 		public string Title {
-			get { return "About"; }
+			get { return dnSpy_Resources.About_TabTitle; }
 		}
 
 		public object ToolTip {
