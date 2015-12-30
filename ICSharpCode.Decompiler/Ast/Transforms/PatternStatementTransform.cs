@@ -57,11 +57,12 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 		public override AstNode VisitExpressionStatement(ExpressionStatement expressionStatement, object data)
 		{
 			AstNode result;
-			if (context.Settings.UsingStatement) {
-				result = TransformUsings(expressionStatement);
+			if (context.Settings.UsingStatement)
+			{
+				result = TransformNonGenericForEach(expressionStatement);
 				if (result != null)
 					return result;
-				result = TransformNonGenericForEach(expressionStatement);
+				result = TransformUsings(expressionStatement);
 				if (result != null)
 					return result;
 			}
@@ -155,7 +156,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			};
 		}
 		
-		static readonly AstNode usingTryCatchPattern = new TryCatchStatement {
+		static readonly AstNode usingTryCatchPattern = new Choice {
+			{ "c#/vb",
+			new TryCatchStatement {
 			TryBlock = new AnyNode(),
 			FinallyBlock = new BlockStatement {
 				new Choice {
@@ -175,6 +178,33 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 						}
 					}
 				}.ToStatement()
+			}
+		}
+		},
+		{ "f#",
+			new TryCatchStatement {
+			TryBlock = new AnyNode(),
+			FinallyBlock =
+					new BlockStatement {
+						new ExpressionStatement(
+							new AssignmentExpression(left: new NamedNode("disposable", new IdentifierExpression(Pattern.AnyString)),
+														right: new AsExpression(expression: new NamedNode("ident", new IdentifierExpression(Pattern.AnyString)),
+																				type: new TypePattern(typeof(IDisposable))
+																				)
+							)
+						),
+						new IfElseStatement {
+							Condition = new BinaryOperatorExpression(
+								new Backreference("disposable"),
+								BinaryOperatorType.InEquality,
+								new NullReferenceExpression()
+							),
+							TrueStatement = new BlockStatement {
+								new ExpressionStatement(InvokeDispose(new Backreference("disposable")))
+							}
+						}
+					}
+				}
 			}
 		};
 		
@@ -212,9 +242,20 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			// Validate that the variable is not used after the using statement:
 			if (!IsVariableValueUnused(varDecl, tryCatch))
 				return null;
-			
+
+			if (m2.Has("f#")) {
+				string variableNameDisposable = m2.Get<IdentifierExpression>("disposable").Single().Identifier;
+				VariableDeclarationStatement varDeclDisposable = FindVariableDeclaration(node, variableNameDisposable);
+				if (varDeclDisposable == null || !(varDeclDisposable.Parent is BlockStatement))
+					return null;
+
+				// Validate that the variable is not used after the using statement:
+				if (!IsVariableValueUnused(varDeclDisposable, tryCatch))
+					return null;
+			}
+
 			node.Remove();
-			
+
 			UsingStatement usingStatement = new UsingStatement();
 			tryCatch.TryBlock.HiddenEnd = tryCatch.FinallyBlock.Detach();
 			usingStatement.EmbeddedStatement = tryCatch.TryBlock.Detach();
