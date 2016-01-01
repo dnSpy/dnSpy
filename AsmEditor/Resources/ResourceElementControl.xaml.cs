@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using dnSpy.AsmEditor.ViewHelpers;
@@ -37,8 +38,14 @@ namespace dnSpy.AsmEditor.Resources {
 		}
 
 		void ResourceElementControl_Loaded(object sender, RoutedEventArgs e) {
-			// I can't get it to work with XAML so do it with code
-			nameTextBox.Focus();
+			var vm = DataContext as ResourceElementVM;
+			Debug.Assert(vm != null);
+			if (vm != null && !string.IsNullOrEmpty(vm.Name) && vm.IsSingleLineValue)
+				valueTextBox.Focus();
+			else if (vm != null && !string.IsNullOrEmpty(vm.Name) && vm.IsMultiLineValue)
+				multiLineTextBox.Focus();
+			else
+				nameTextBox.Focus();
 		}
 	}
 }
