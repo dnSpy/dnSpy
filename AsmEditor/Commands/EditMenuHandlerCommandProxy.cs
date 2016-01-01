@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Windows.Input;
 
 namespace dnSpy.AsmEditor.Commands {
@@ -39,12 +40,14 @@ namespace dnSpy.AsmEditor.Commands {
 
 		bool ICommand.CanExecute(object parameter) {
 			var ctx = CreateContext();
-			return command.IsVisible(ctx) && command.IsEnabled(ctx);
+			return ctx != null && command.IsVisible(ctx) && command.IsEnabled(ctx);
 		}
 
 		void ICommand.Execute(object parameter) {
 			var ctx = CreateContext();
-			command.Execute(ctx);
+			Debug.Assert(ctx != null);
+			if (ctx != null)
+				command.Execute(ctx);
 		}
 	}
 }
