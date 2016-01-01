@@ -65,7 +65,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				foreach (Instruction instr in method.Body.Instructions) {
 					if (CanBeReference(instr.OpCode.Code)) {
 						IField fr = instr.Operand as IField;
-						if (fr != null && new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(fr, analyzedField) &&
+						if (fr.ResolveFieldDef() == analyzedField &&
 							Helpers.IsReferencedBy(analyzedField.DeclaringType, fr.DeclaringType)) {
 							found = true;
 							break;
@@ -92,6 +92,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				return showWrites;
 			case Code.Ldflda:
 			case Code.Ldsflda:
+			case Code.Ldtoken:
 				return true; // always show address-loading
 			default:
 				return false;

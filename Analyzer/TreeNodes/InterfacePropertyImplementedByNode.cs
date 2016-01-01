@@ -72,7 +72,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			foreach (PropertyDef property in type.Properties.Where(e => e.Name.EndsWith(analyzedProperty.Name))) {
 				MethodDef accessor = property.GetMethod ?? property.SetMethod;
-				if (accessor != null && accessor.HasOverrides && accessor.Overrides.Any(m => new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(m.MethodDeclaration, analyzedMethod))) {
+				if (accessor != null && accessor.HasOverrides && accessor.Overrides.Any(m => m.MethodDeclaration.ResolveMethodDef() == analyzedMethod)) {
 					yield return new PropertyNode(property) { Context = Context };
 				}
 			}

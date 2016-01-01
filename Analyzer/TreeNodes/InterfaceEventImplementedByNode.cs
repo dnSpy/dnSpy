@@ -73,7 +73,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (EventDef ev in type.Events.Where(e => e.Name.EndsWith(analyzedEvent.Name))) {
 				MethodDef accessor = ev.AddMethod ?? ev.RemoveMethod;
 				if (accessor != null && accessor.HasOverrides &&
-					accessor.Overrides.Any(m => new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(m.MethodDeclaration, analyzedMethod))) {
+					accessor.Overrides.Any(m => m.MethodDeclaration.ResolveMethodDef() == analyzedMethod)) {
 					yield return new EventNode(ev) { Context = Context };
 				}
 			}

@@ -64,7 +64,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 
 			foreach (MethodDef method in type.Methods) {
-				if (method.HasOverrides && method.Overrides.Any(m => new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(m.MethodDeclaration, analyzedMethod))) {
+				if (method.HasOverrides && method.Overrides.Any(m => m.MethodDeclaration.ResolveMethodDef() == analyzedMethod)) {
 					yield return new MethodNode(method) { Context = Context };
 				}
 			}

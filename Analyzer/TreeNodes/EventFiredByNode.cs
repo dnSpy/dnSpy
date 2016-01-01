@@ -77,7 +77,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					Code code = instr.OpCode.Code;
 					if (code == Code.Ldfld || code == Code.Ldflda) {
 						IField fr = instr.Operand as IField;
-						if (new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(fr, eventBackingField)) {
+						if (fr.ResolveFieldDef() == eventBackingField) {
 							readBackingField = true;
 						}
 					}
