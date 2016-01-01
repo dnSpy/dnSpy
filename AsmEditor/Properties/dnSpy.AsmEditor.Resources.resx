@@ -2130,19 +2130,16 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>TryStart</value>
   </data>
   <data name="ExceptionHandler_Column_Type" xml:space="preserve">
-    <value>Type      </value>
-    <comment>Add enough spaces after Type so the column is wide enough</comment>
+    <value>Type</value>
   </data>
   <data name="Flags" xml:space="preserve">
     <value>Flags</value>
   </data>
   <data name="MethodBody_Column_OpCode" xml:space="preserve">
-    <value>OpCode        </value>
-    <comment>Add enough spaces after OpCode so the column is wide enough</comment>
+    <value>OpCode</value>
   </data>
   <data name="Column_Metadata_RID" xml:space="preserve">
-    <value>RID    </value>
-    <comment>Add extra spaces after RID so the column is wide enough</comment>
+    <value>RID</value>
   </data>
   <data name="EditResource_Visibility" xml:space="preserve">
     <value>_Visibility</value>

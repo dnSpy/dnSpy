@@ -1582,7 +1582,7 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add an Exception.
+        ///   Looks up a localized string similar to Add Exception.
         /// </summary>
         public static string Exceptions_Add_Title {
             get {

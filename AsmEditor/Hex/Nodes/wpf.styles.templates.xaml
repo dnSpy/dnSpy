@@ -2183,7 +2183,7 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
@@ -2231,7 +2231,7 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
@@ -2286,7 +2286,7 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
@@ -2348,7 +2348,7 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
@@ -2417,7 +2417,7 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
@@ -2493,7 +2493,7 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
@@ -2576,7 +2576,7 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
@@ -2680,7 +2680,7 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
@@ -2735,7 +2735,7 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
@@ -2797,7 +2797,7 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
@@ -2866,7 +2866,7 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
@@ -2942,7 +2942,7 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
@@ -3025,7 +3025,7 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />
@@ -3115,7 +3115,7 @@
                 </ListView.Resources>
                 <ListView.View>
                     <GridView AllowsColumnReorder="False">
-                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_AsmEditor_Resources.Column_Metadata_RID}" Width="50">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <TextBlock Style="{StaticResource MDTableIndexTextBlockStyle}" Text="{Binding RidString, Mode=OneTime}" />

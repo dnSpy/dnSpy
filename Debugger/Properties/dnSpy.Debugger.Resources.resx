@@ -637,7 +637,7 @@ HResult: 0x{3:X8}</value>
     <value>_Full name</value>
   </data>
   <data name="Exceptions_Add_Title" xml:space="preserve">
-    <value>Add an Exception</value>
+    <value>Add Exception</value>
   </data>
   <data name="Exceptions_Add_ToolTip" xml:space="preserve">
     <value>Add an exception to the list</value>

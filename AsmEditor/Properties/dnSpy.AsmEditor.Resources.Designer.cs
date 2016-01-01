@@ -530,7 +530,7 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to RID    .
+        ///   Looks up a localized string similar to RID.
         /// </summary>
         public static string Column_Metadata_RID {
             get {
@@ -2366,7 +2366,7 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type      .
+        ///   Looks up a localized string similar to Type.
         /// </summary>
         public static string ExceptionHandler_Column_Type {
             get {
@@ -3995,7 +3995,7 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to OpCode        .
+        ///   Looks up a localized string similar to OpCode.
         /// </summary>
         public static string MethodBody_Column_OpCode {
             get {

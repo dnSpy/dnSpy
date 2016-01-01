@@ -66,7 +66,7 @@
                                 </DataTemplate>
                             </GridViewColumn.CellTemplate>
                         </GridViewColumn>
-                        <GridViewColumn Header="{x:Static p:dnSpy_Resources.OpenGAC_Version_Column}">
+                        <GridViewColumn Header="{x:Static p:dnSpy_Resources.OpenGAC_Version_Column}" Width="75">
                             <GridViewColumn.CellTemplate>
                                 <DataTemplate>
                                     <ContentPresenter Content="{Binding VersionObject, Mode=OneWay, Converter={StaticResource gacFileColumnConverter}, ConverterParameter=Version}" />
