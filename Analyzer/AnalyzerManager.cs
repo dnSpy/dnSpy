@@ -239,8 +239,6 @@ namespace dnSpy.Analyzer {
 
 			bool newTab = Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift;
 			fileTabManager.FollowReference(@ref, newTab);
-			var tab = fileTabManager.ActiveTab;
-			fileTabManager.SetFocus(tab);
 		}
 	}
 }

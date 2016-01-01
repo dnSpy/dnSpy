@@ -134,8 +134,9 @@ namespace dnSpy.Contracts.Files.Tabs {
 		/// </summary>
 		/// <param name="ref">Reference</param>
 		/// <param name="newTab">true to open a new tab</param>
+		/// <param name="setFocus">true to give the tab keyboard focus</param>
 		/// <param name="onShown">Called after the content has been shown. Can be null.</param>
-		void FollowReference(object @ref, bool newTab = false, Action<ShowTabContentEventArgs> onShown = null);
+		void FollowReference(object @ref, bool newTab = false, bool setFocus = true, Action<ShowTabContentEventArgs> onShown = null);
 
 		/// <summary>
 		/// Creates a new <see cref="IFileTabContent"/> instance. Returns null if it couldn't be created

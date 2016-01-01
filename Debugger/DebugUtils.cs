@@ -48,7 +48,7 @@ namespace dnSpy.Debugger {
 
 			bool found = fileTabManager.FileTreeView.FindNode(method.Module) != null;
 			if (found) {
-				fileTabManager.FollowReference(method, newTab, e => {
+				fileTabManager.FollowReference(method, newTab, true, e => {
 					Debug.Assert(e.Tab.UIContext is ITextEditorUIContext);
 					if (e.Success && !e.HasMovedCaret) {
 						MoveCaretTo(e.Tab.UIContext as ITextEditorUIContext, key, ilOffset);
@@ -59,7 +59,7 @@ namespace dnSpy.Debugger {
 			}
 
 			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
-				fileTabManager.FollowReference(method, newTab, e => {
+				fileTabManager.FollowReference(method, newTab, true, e => {
 					Debug.Assert(e.Tab.UIContext is ITextEditorUIContext);
 					if (e.Success && !e.HasMovedCaret) {
 						MoveCaretTo(e.Tab.UIContext as ITextEditorUIContext, key, ilOffset);

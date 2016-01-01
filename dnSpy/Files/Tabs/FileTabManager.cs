@@ -528,7 +528,7 @@ namespace dnSpy.Files.Tabs {
 			return false;
 		}
 
-		public void FollowReference(object @ref, bool newTab, Action<ShowTabContentEventArgs> onShown) {
+		public void FollowReference(object @ref, bool newTab, bool setFocus, Action<ShowTabContentEventArgs> onShown) {
 			if (@ref == null)
 				return;
 
@@ -544,6 +544,8 @@ namespace dnSpy.Files.Tabs {
 				tab = OpenEmptyTab(g);
 			}
 			tab.FollowReference(@ref, sourceTab == null ? null : sourceTab.Content, onShown);
+			if (setFocus)
+				SetFocus(tab);
 		}
 	}
 }

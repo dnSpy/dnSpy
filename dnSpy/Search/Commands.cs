@@ -89,7 +89,6 @@ namespace dnSpy.Search {
 			if (@ref == null)
 				return;
 			fileTabManager.FollowReference(@ref, newTab);
-			fileTabManager.SetFocus(fileTabManager.ActiveTab);
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
