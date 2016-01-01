@@ -18,12 +18,14 @@
 */
 
 using System.Collections.Specialized;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using ICSharpCode.TreeView;
@@ -75,8 +77,17 @@ namespace dnSpy.TreeView {
 			return treeNodeImpl.TreeView.GetIcon(imgRef);
 		}
 
+		[ExportAutoLoaded]
+		sealed class ThemeManagerLoader : IAutoLoaded {
+			[ImportingConstructor]
+			ThemeManagerLoader(IThemeManager themeManager) {
+				DnSpySharpTreeNode.themeManager = themeManager;
+			}
+		}
+		static IThemeManager themeManager;
+
 		public override Brush Foreground {
-			get { return DnSpy.App.ThemeManager.Theme.GetColor(ColorType.TreeViewNode).Foreground; }
+			get { return themeManager.Theme.GetColor(ColorType.TreeViewNode).Foreground; }
 		}
 
 		public void RefreshUI() {

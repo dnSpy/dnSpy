@@ -231,7 +231,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainApp\AppCreator.cs" />
-    <Compile Include="MainApp\AppImpl.cs" />
     <Compile Include="MainApp\AppSettings.cs" />
     <Compile Include="MainApp\AppStatusBar.cs" />
     <Compile Include="MainApp\AppToolBar.cs" />

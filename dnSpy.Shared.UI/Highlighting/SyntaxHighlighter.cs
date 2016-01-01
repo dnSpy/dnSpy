@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
@@ -29,6 +30,7 @@ using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts;
 using dnSpy.Contracts.Highlighting;
+using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Themes;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Controls;
@@ -143,8 +145,17 @@ namespace dnSpy.Shared.UI.Highlighting {
 			return Text;
 		}
 
+		[ExportAutoLoaded]
+		sealed class ThemeManagerLoader : IAutoLoaded {
+			[ImportingConstructor]
+			ThemeManagerLoader(IThemeManager themeManager) {
+				SyntaxHighlighter.themeManager = themeManager;
+			}
+		}
+		static IThemeManager themeManager;
+
 		static IThemeColor GetColor(TextTokenType tokenType) {
-			var color = DnSpy.App.ThemeManager.Theme.GetTextColor(tokenType.ToColorType());
+			var color = themeManager.Theme.GetTextColor(tokenType.ToColorType());
 			Debug.Assert(color != null);
 			return color;
 		}

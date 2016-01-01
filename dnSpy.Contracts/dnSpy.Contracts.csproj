@@ -53,7 +53,6 @@
     <Compile Include="App\LoaderConstants.cs" />
     <Compile Include="App\MsgBoxButton.cs" />
     <Compile Include="Command\ICommandHolder.cs" />
-    <Compile Include="Contracts.cs" />
     <Compile Include="Controls\CommandConstants.cs" />
     <Compile Include="Controls\IFocusable.cs" />
     <Compile Include="Controls\IWpfCommandManager.cs" />

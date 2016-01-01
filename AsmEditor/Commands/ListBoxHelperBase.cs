@@ -19,18 +19,33 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Contracts;
+using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Plugin;
 using dnSpy.Shared.UI.Images;
 using dnSpy.Shared.UI.MVVM;
 using dnSpy.Shared.UI.Resources;
 
 namespace dnSpy.AsmEditor.Commands {
+	[ExportAutoLoaded]
+	sealed class ListBoxHelperBase_ImageManagerLoader : IAutoLoaded {
+		[ImportingConstructor]
+		ListBoxHelperBase_ImageManagerLoader(IImageManager imageManager) {
+			ListBoxHelperBase_ImageManagerLoader.imageManager = imageManager;
+		}
+
+		public static IImageManager ImageManager {
+			get { return imageManager; }
+		}
+		static IImageManager imageManager;
+	}
+
 	abstract class ListBoxHelperBase<T> where T : class, IIndexedItem {
 		protected readonly ListBox listBox;
 		protected IndexObservableCollection<T> coll;
@@ -274,6 +289,10 @@ namespace dnSpy.AsmEditor.Commands {
 			}
 		}
 
+		protected static void Add16x16Image(MenuItem menuItem, string icon, bool isCtxMenu, bool? enable = null) {
+			ListBoxHelperBase_ImageManagerLoader.ImageManager.Add16x16Image(menuItem, typeof(ListBoxHelperBase<T>).Assembly, icon, isCtxMenu, enable);
+		}
+
 		static void ShowContextMenu(ContextMenuEventArgs e, ListBox listBox, IList<ContextMenuHandler> handlers, object parameter) {
 			var ctxMenu = new ContextMenu();
 
@@ -290,7 +309,7 @@ namespace dnSpy.AsmEditor.Commands {
 				var tmpHandler = handler;
 				menuItem.Click += (s, e2) => tmpHandler.Command.Execute(parameter);
 				if (handler.Icon != null)
-					DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(ListBoxHelperBase<T>).Assembly, handler.Icon, true, menuItem.IsEnabled);
+					Add16x16Image(menuItem, handler.Icon, true, menuItem.IsEnabled);
 				if (handler.InputGestureText != null)
 					menuItem.InputGestureText = ResourceHelper.GetString(handler, handler.InputGestureText);
 

@@ -63,7 +63,7 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 			var data = new ProgressVM(Dispatcher.CurrentDispatcher, new ResourceSaver(files));
 			var win = new ProgressDlg();
 			win.DataContext = data;
-			win.Owner = ownerWindow ?? Contracts.DnSpy.App.AppWindow.MainWindow;
+			win.Owner = ownerWindow ?? Application.Current.MainWindow;
 			win.Title = files.Length == 1 ? dnSpy_Shared_UI_Resources.SaveResource : dnSpy_Shared_UI_Resources.SaveResources;
 			var res = win.ShowDialog();
 			if (res != true)

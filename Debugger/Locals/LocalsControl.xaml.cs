@@ -17,8 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.ComponentModel.Composition;
 using System.Windows.Controls;
-using dnSpy.Contracts;
+using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Themes;
 using ICSharpCode.TreeView;
 
@@ -33,9 +34,18 @@ namespace dnSpy.Debugger.Locals {
 			InitializeTreeView(treeView);
 		}
 
+		[ExportAutoLoaded]
+		sealed class ThemeManagerLoader : IAutoLoaded {
+			[ImportingConstructor]
+			ThemeManagerLoader(IThemeManager themeManager) {
+				LocalsControl.themeManager = themeManager;
+			}
+		}
+		static IThemeManager themeManager;
+
 		static void InitializeTreeView(SharpTreeView treeView) {
-			treeView.GetPreviewInsideTextBackground = () => DnSpy.App.ThemeManager.Theme.GetColor(ColorType.SystemColorsHighlight).Background;
-			treeView.GetPreviewInsideForeground = () => DnSpy.App.ThemeManager.Theme.GetColor(ColorType.SystemColorsHighlightText).Foreground;
+			treeView.GetPreviewInsideTextBackground = () => themeManager.Theme.GetColor(ColorType.SystemColorsHighlight).Background;
+			treeView.GetPreviewInsideForeground = () => themeManager.Theme.GetColor(ColorType.SystemColorsHighlightText).Foreground;
 		}
 	}
 }

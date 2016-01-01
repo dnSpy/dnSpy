@@ -32,10 +32,8 @@ using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Contracts;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
-using dnSpy.Shared.UI.Images;
 using dnSpy.Shared.UI.MVVM;
 using dnSpy.Shared.UI.Search;
 using ICSharpCode.Decompiler;
@@ -362,21 +360,21 @@ namespace dnSpy.AsmEditor.MethodBody {
 					Header = dnSpy_AsmEditor_Resources.EditOperand_Type,
 					Command = new RelayCommand(a => AddType(opvm)),
 				});
-				DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Class", true, true);
+				Add16x16Image(menuItem, "Class", true, true);
 			}
 			if ((flags & MenuCommandFlags.TypeSpec) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
 					Header = dnSpy_AsmEditor_Resources.EditOperand_TypeSpec,
 					Command = new RelayCommand(a => AddTypeSpec(opvm)),
 				});
-				DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Generic", true, true);
+				Add16x16Image(menuItem, "Generic", true, true);
 			}
 			if ((flags & MenuCommandFlags.MethodDef) != 0) {
 				ctxMenu.Items.Add(menuItem = new MenuItem() {
 					Header = dnSpy_AsmEditor_Resources.EditOperand_Method,
 					Command = new RelayCommand(a => AddMethodDef(opvm)),
 				});
-				DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Method", true, true);
+				Add16x16Image(menuItem, "Method", true, true);
 			}
 			if ((flags & MenuCommandFlags.MethodMemberRef) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {
@@ -395,7 +393,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 					Header = dnSpy_AsmEditor_Resources.EditOperand_Field,
 					Command = new RelayCommand(a => AddFieldDef(opvm)),
 				});
-				DnSpy.App.ImageManager.Add16x16Image(menuItem, typeof(MethodBodyControl).Assembly, "Field", true, true);
+				Add16x16Image(menuItem, "Field", true, true);
 			}
 			if ((flags & MenuCommandFlags.FieldMemberRef) != 0) {
 				ctxMenu.Items.Add(new MenuItem() {
