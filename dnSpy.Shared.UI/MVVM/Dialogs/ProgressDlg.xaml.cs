@@ -56,11 +56,12 @@ namespace dnSpy.Shared.UI.MVVM.Dialogs {
 			Close();
 		}
 
-		public static void Show(IProgressTask task, Window ownerWindow) {
+		public static void Show(IProgressTask task, string title, Window ownerWindow) {
 			var win = new ProgressDlg();
 			var vm = new ProgressVM(System.Windows.Threading.Dispatcher.CurrentDispatcher, task);
 			win.Owner = ownerWindow;
 			win.DataContext = vm;
+			win.Title = title;
 			win.ShowDialog();
 		}
 	}
