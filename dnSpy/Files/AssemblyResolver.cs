@@ -159,7 +159,7 @@ namespace dnSpy.Files {
 			}
 			finally {
 				if (error) {
-					if (file != null && file is IDisposable)
+					if (file is IDisposable)
 						((IDisposable)file).Dispose();
 				}
 			}
