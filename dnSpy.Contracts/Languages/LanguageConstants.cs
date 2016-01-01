@@ -25,19 +25,19 @@ namespace dnSpy.Contracts.Languages {
 	/// </summary>
 	public static class LanguageConstants {
 		/// <summary>Order of C# language</summary>
-		public const double CSHARP_ORDERUI = 0;
+		public static readonly double CSHARP_ORDERUI = 0;
 
 		/// <summary>Order of VB language</summary>
-		public const double VB_ORDERUI = 100;
+		public static readonly double VB_ORDERUI = 100;
 
 		/// <summary>Order of IL language</summary>
-		public const double IL_ORDERUI = 200;
+		public static readonly double IL_ORDERUI = 200;
 
 		/// <summary>Order of C# debug languages</summary>
-		public const double CSHARP_DEBUG_ORDERUI = 10000;
+		public static readonly double CSHARP_DEBUG_ORDERUI = 10000;
 
 		/// <summary>Order of ILAst debug languages</summary>
-		public const double ILAST_DEBUG_ORDERUI = 20000;
+		public static readonly double ILAST_DEBUG_ORDERUI = 20000;
 
 		/// <summary>IL language</summary>
 		public static readonly Guid LANGUAGE_IL = new Guid("9EF276FD-3293-42A4-B48A-1D6A69086B3D");

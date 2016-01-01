@@ -23,6 +23,6 @@ namespace dnSpy.Contracts.TreeView {
 	/// </summary>
 	public static class TVConstants {
 		/// <summary>Guid of file treeview</summary>
-		public const string FILE_TREEVIEW_GUID = "47F487E1-64D1-4D63-87C6-B4C4F89461A3";
+		public static readonly string FILE_TREEVIEW_GUID = "47F487E1-64D1-4D63-87C6-B4C4F89461A3";
 	}
 }

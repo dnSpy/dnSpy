@@ -80,52 +80,52 @@ namespace dnSpy.Contracts.Menus {
 		public const double ORDER_APP_MENU_HELP = 1001000;
 
 		/// <summary>An unknown object</summary>
-		public const string GUIDOBJ_UNKNOWN_GUID = "9BD7C228-91A0-4140-8E8B-AB0450B418CA";
+		public static readonly string GUIDOBJ_UNKNOWN_GUID = "9BD7C228-91A0-4140-8E8B-AB0450B418CA";
 
 		/// <summary>Files treeview</summary>
-		public const string GUIDOBJ_FILES_TREEVIEW_GUID = "F64505EB-6D8B-4332-B697-73B2D1EE6C37";
+		public static readonly string GUIDOBJ_FILES_TREEVIEW_GUID = "F64505EB-6D8B-4332-B697-73B2D1EE6C37";
 
 		/// <summary>Analyzer's treeview</summary>
-		public const string GUIDOBJ_ANALYZER_TREEVIEW_GUID = "4C7D6317-C84A-42E6-A582-FCE3ED35EBE6";
+		public static readonly string GUIDOBJ_ANALYZER_TREEVIEW_GUID = "4C7D6317-C84A-42E6-A582-FCE3ED35EBE6";
 
 		/// <summary>Search ListBox</summary>
-		public const string GUIDOBJ_SEARCH_GUID = "7B460F9C-424D-48B3-8FD3-72CEE8DD58E5";
+		public static readonly string GUIDOBJ_SEARCH_GUID = "7B460F9C-424D-48B3-8FD3-72CEE8DD58E5";
 
 		/// <summary>Treeview nodes array (<see cref="ITreeNodeData"/>[])</summary>
-		public const string GUIDOBJ_TREEVIEW_NODES_ARRAY_GUID = "B116BABD-BD8B-4870-968A-D1871CC21638";
+		public static readonly string GUIDOBJ_TREEVIEW_NODES_ARRAY_GUID = "B116BABD-BD8B-4870-968A-D1871CC21638";
 
 		/// <summary>Code Reference (<see cref="CodeReference"/>)</summary>
-		public const string GUIDOBJ_CODE_REFERENCE_GUID = "751F4075-D420-4196-BCF0-A0149A8948A4";
+		public static readonly string GUIDOBJ_CODE_REFERENCE_GUID = "751F4075-D420-4196-BCF0-A0149A8948A4";
 
 		/// <summary>Files <see cref="TabControl"/></summary>
-		public const string GUIDOBJ_FILES_TABCONTROL_GUID = "AB1B4BCE-D8C1-43BE-8822-C124FBCAC260";
+		public static readonly string GUIDOBJ_FILES_TABCONTROL_GUID = "AB1B4BCE-D8C1-43BE-8822-C124FBCAC260";
 
 		/// <summary><see cref="ITabGroup"/></summary>
-		public const string GUIDOBJ_TABGROUP_GUID = "87B2F94A-D80B-45FD-BB31-71E390CA6C01";
+		public static readonly string GUIDOBJ_TABGROUP_GUID = "87B2F94A-D80B-45FD-BB31-71E390CA6C01";
 
 		/// <summary><see cref="IToolWindowGroup"/></summary>
-		public const string GUIDOBJ_TOOLWINDOWGROUP_GUID = "3E9743F1-A2E0-4C5A-B463-3E8CF6D677E4";
+		public static readonly string GUIDOBJ_TOOLWINDOWGROUP_GUID = "3E9743F1-A2E0-4C5A-B463-3E8CF6D677E4";
 
 		/// <summary>Tool window <see cref="TabControl"/></summary>
-		public const string GUIDOBJ_TOOLWINDOW_TABCONTROL_GUID = "33FEE79F-7998-4D63-8E6F-B3AD86134960";
+		public static readonly string GUIDOBJ_TOOLWINDOW_TABCONTROL_GUID = "33FEE79F-7998-4D63-8E6F-B3AD86134960";
 
 		/// <summary>Text editor control</summary>
-		public const string GUIDOBJ_TEXTEDITORCONTROL_GUID = "7F9E85C9-05B5-43FE-9CD1-20E61B183454";
+		public static readonly string GUIDOBJ_TEXTEDITORCONTROL_GUID = "7F9E85C9-05B5-43FE-9CD1-20E61B183454";
 
 		/// <summary><see cref="ITextEditorUIContext"/></summary>
-		public const string GUIDOBJ_TEXTEDITORUICONTEXT_GUID = "848AC3FB-7D67-4427-A604-86BFF539E527";
+		public static readonly string GUIDOBJ_TEXTEDITORUICONTEXT_GUID = "848AC3FB-7D67-4427-A604-86BFF539E527";
 
 		/// <summary><see cref="TextEditorLocation"/></summary>
-		public const string GUIDOBJ_TEXTEDITORLOCATION_GUID = "0C5E61BF-FC0D-47F7-8C49-69BD93CD11B5";
+		public static readonly string GUIDOBJ_TEXTEDITORLOCATION_GUID = "0C5E61BF-FC0D-47F7-8C49-69BD93CD11B5";
 
 		/// <summary><c>HexBox</c></summary>
-		public const string GUIDOBJ_HEXBOX_GUID = "6D0D8103-1D91-4815-94C3-9AAB41D3175B";
+		public static readonly string GUIDOBJ_HEXBOX_GUID = "6D0D8103-1D91-4815-94C3-9AAB41D3175B";
 
 		/// <summary>Text editor icon bar</summary>
-		public const string GUIDOBJ_TEXTEDITOR_ICONBAR_GUID = "7B29633F-85AD-41F6-BD09-9989BB55B7E2";
+		public static readonly string GUIDOBJ_TEXTEDITOR_ICONBAR_GUID = "7B29633F-85AD-41F6-BD09-9989BB55B7E2";
 
 		/// <summary><see cref="IIconBarObject"/></summary>
-		public const string GUIDOBJ_IICONBAROBJECT_GUID = "16307E6A-7986-477C-9035-18356742E375";
+		public static readonly string GUIDOBJ_IICONBAROBJECT_GUID = "16307E6A-7986-477C-9035-18356742E375";
 
 		/// <summary>Group: App Menu: File, Group: Save</summary>
 		public const string GROUP_APP_MENU_FILE_SAVE = "0,557C4B2D-5966-41AF-BFCA-D0A36DB5D6D8";

@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.Files.TreeView {
 	/// </summary>
 	public static class FileTVConstants {
 		/// <summary>Drag and drop nodes DataFormat. It's an <see cref="int"/>[] of indexes of the nodes.</summary>
-		public const string DATAFORMAT_COPIED_ROOT_NODES = "610D0A0F-ACDB-4B7B-AA03-8E08C834627D";
+		public static readonly string DATAFORMAT_COPIED_ROOT_NODES = "610D0A0F-ACDB-4B7B-AA03-8E08C834627D";
 
 		/// <summary>Guid of root node</summary>
 		public const string ROOT_NODE_GUID = "E0D1E8A9-4470-4CB8-8DD7-11708EA6ED44";

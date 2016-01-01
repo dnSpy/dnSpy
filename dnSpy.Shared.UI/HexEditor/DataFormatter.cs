@@ -131,7 +131,7 @@ namespace dnSpy.Shared.UI.HexEditor {
 	}
 
 	abstract class LanguageArrayFormatter : DataFormatter {
-		public const int BYTES_PER_LINE = 16;
+		public static readonly int BYTES_PER_LINE = 16;
 
 		protected string allocStringStart;
 		protected string allocStringEnd;
