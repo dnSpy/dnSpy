@@ -20,4 +20,4 @@ Original License: MIT, see below:
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-Copyright (C) 2014-2015 de4dot@gmail.com
+Copyright (C) 2014-2016 de4dot@gmail.com

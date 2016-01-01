@@ -1,6 +1,6 @@
 License: GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 (see GPLv3.txt)
 
-Copyright (C) 2014-2015 de4dot@gmail.com
+Copyright (C) 2014-2016 de4dot@gmail.com
 
 Portions, eg. some text editor code, are from ILSpy:
 
