@@ -71,7 +71,7 @@ namespace dnSpy.MainApp {
 
 			var asms = new List<Assembly>();
 			asms.Add(typeof(Language).Assembly);		// Languages
-			asms.Add(typeof(EnumVM).Assembly);          // dnSpy.Shared.UI
+			asms.Add(typeof(EnumVM).Assembly);			// dnSpy.Shared.UI
 			compositionContainer = AppCreator.Create(asms, "*.Plugin.dll");
 			compositionContainer.ComposeParts(this);
 
