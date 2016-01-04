@@ -80,8 +80,17 @@ namespace dnSpy.Languages {
 			this.WriteCommentLine(output, TypeToString(type, true));
 		}
 
-		public virtual void DecompileNamespace(string nameSpace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationOptions options) {
-			this.WriteCommentLine(output, string.IsNullOrEmpty(nameSpace) ? string.Empty : IdentifierEscaper.Escape(nameSpace));
+		public virtual void DecompileNamespace(string @namespace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationOptions options) {
+			this.WriteCommentLine(output, string.IsNullOrEmpty(@namespace) ? string.Empty : IdentifierEscaper.Escape(@namespace));
+			this.WriteCommentLine(output, string.Empty);
+			this.WriteCommentLine(output, "Types:");
+			this.WriteCommentLine(output, string.Empty);
+			foreach (var type in types) {
+				this.WriteCommentBegin(output, true);
+				output.WriteReference(IdentifierEscaper.Escape(type.Name), type, TextTokenType.Comment);
+				this.WriteCommentEnd(output, true);
+				output.WriteLine();
+			}
 		}
 
 		public virtual void DecompileAssembly(IDnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {

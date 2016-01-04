@@ -209,7 +209,8 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		void Decompile(INamespaceNode node) {
-			language.WriteCommentLine(output, node.Name);
+			var children = GetChildren(node).OfType<ITypeNode>().Select(a => a.TypeDef).ToArray();
+			language.DecompileNamespace(node.Name, children, output, decompilationOptions);
 		}
 
 		void Decompile(IPEFileNode node) {

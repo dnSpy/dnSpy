@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Highlighting;
@@ -118,6 +119,15 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="output">Output</param>
 		/// <param name="options">Options</param>
 		void Decompile(TypeDef type, ITextOutput output, DecompilationOptions options);
+
+		/// <summary>
+		/// Decompiles a namespace
+		/// </summary>
+		/// <param name="namespace">Namespace</param>
+		/// <param name="types">Types in namespace</param>
+		/// <param name="output">Output</param>
+		/// <param name="options">Options</param>
+		void DecompileNamespace(string @namespace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationOptions options);
 
 		/// <summary>
 		/// Decompiles an assembly or module
