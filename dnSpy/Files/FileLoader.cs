@@ -64,6 +64,8 @@ namespace dnSpy.Files {
 		}
 
 		void Load(DnSpyFileInfo info) {
+			if (info.Type == FileConstants.FILETYPE_FILE && string.IsNullOrEmpty(info.Name))
+				return;
 			var file = fileManager.TryGetOrCreate(info);
 			if (file != null && !hash.Contains(file)) {
 				loadedFiles.Add(file);

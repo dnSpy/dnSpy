@@ -91,7 +91,8 @@ namespace dnSpy.Files.Tabs {
 			yield return null;
 
 			foreach (var f in fileListManager.SelectedFileList.Files) {
-				fileManager.TryGetOrCreate(f);
+				if (!(f.Type == FileConstants.FILETYPE_FILE && string.IsNullOrEmpty(f.Name)))
+					fileManager.TryGetOrCreate(f);
 				yield return null;
 			}
 			disable.Dispose();

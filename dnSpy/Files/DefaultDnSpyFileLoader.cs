@@ -32,6 +32,8 @@ namespace dnSpy.Files {
 			var loadedFiles = new List<IDnSpyFile>();
 			var hash = new HashSet<IDnSpyFile>();
 			foreach (var f in files) {
+				if (f.Type == FileConstants.FILETYPE_FILE && string.IsNullOrEmpty(f.Name))
+					continue;
 				var file = fileManager.TryGetOrCreate(f);
 				if (file != null && !hash.Contains(file)) {
 					hash.Add(file);
