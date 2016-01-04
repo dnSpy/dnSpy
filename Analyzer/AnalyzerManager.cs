@@ -25,10 +25,13 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Input;
+using dnlib.DotNet;
 using dnSpy.Analyzer.TreeNodes;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
@@ -61,6 +64,22 @@ namespace dnSpy.Analyzer {
 		/// </summary>
 		/// <param name="node">Activated node (it's the caller)</param>
 		void OnActivated(IAnalyzerTreeNodeData node);
+
+		/// <summary>
+		/// Follows the reference
+		/// </summary>
+		/// <param name="node">Node</param>
+		/// <param name="newTab">true to show it in a new tab</param>
+		/// <param name="useCodeRef">true to show the reference in a method body</param>
+		void FollowNode(ITreeNodeData node, bool newTab, bool? useCodeRef);
+
+		/// <summary>
+		/// Returns true if <see cref="FollowNode(ITreeNodeData, bool, bool?)"/> can execute
+		/// </summary>
+		/// <param name="node">Node</param>
+		/// <param name="useCodeRef">true to show the reference in a method body</param>
+		/// <returns></returns>
+		bool CanFollowNode(ITreeNodeData node, bool useCodeRef);
 	}
 
 	[Export, Export(typeof(IAnalyzerManager)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -231,14 +250,133 @@ namespace dnSpy.Analyzer {
 		public void OnActivated(IAnalyzerTreeNodeData node) {
 			if (node == null)
 				throw new ArgumentNullException();
+			bool newTab = Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift;
+			FollowNode(node, newTab, null);
+		}
 
+		public void FollowNode(ITreeNodeData node, bool newTab, bool? useCodeRef) {
 			var tokNode = node as IMDTokenNode;
 			var @ref = tokNode == null ? null : tokNode.Reference;
-			if (@ref == null)
-				return;
 
-			bool newTab = Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift;
-			fileTabManager.FollowReference(@ref, newTab);
+			var entityNode = node as EntityNode;
+			var srcRef = entityNode == null ? null : entityNode.SourceRef;
+
+			bool code = useCodeRef ?? srcRef != null;
+			if (code) {
+				if (srcRef == null)
+					return;
+				fileTabManager.FollowReference(srcRef.Value.Method, newTab, true, a => {
+					if (!a.HasMovedCaret && a.Success && srcRef != null)
+						a.HasMovedCaret = GoTo(a.Tab, srcRef.Value.Method, srcRef.Value.ILOffset, srcRef.Value.Reference);
+				});
+			}
+			else {
+				if (@ref == null)
+					return;
+				fileTabManager.FollowReference(@ref, newTab);
+			}
+		}
+
+		public bool CanFollowNode(ITreeNodeData node, bool useCodeRef) {
+			var tokNode = node as IMDTokenNode;
+			var @ref = tokNode == null ? null : tokNode.Reference;
+
+			var entityNode = node as EntityNode;
+			var srcRef = entityNode == null ? null : entityNode.SourceRef;
+
+			if (useCodeRef)
+				return srcRef != null;
+			return @ref != null;
+		}
+
+		bool GoTo(IFileTab tab, MethodDef method, uint? ilOffset, object @ref) {
+			if (method == null || ilOffset == null)
+				return false;
+			var uiContext = tab.TryGetTextEditorUIContext();
+			if (uiContext == null)
+				return false;
+			var cm = uiContext.GetCodeMappings();
+			var mapping = cm.Find(method, ilOffset.Value);
+			if (mapping == null)
+				return false;
+
+			var location = mapping.StartLocation;
+			var loc = FindLocation(uiContext.GetCodeReferences(location.Line, location.Column), location.Line, @ref);
+			if (loc == null)
+				loc = new TextEditorLocation(location.Line, location.Column);
+
+			uiContext.ScrollAndMoveCaretTo(loc.Value.Line, loc.Value.Column);
+			return true;
+		}
+
+		TextEditorLocation? FindLocation(IEnumerable<Tuple<CodeReference, TextEditorLocation>> infos, int line, object @ref) {
+			foreach (var info in infos) {
+				if (info.Item2.Line != line)
+					break;
+				if (RefEquals(@ref, info.Item1.Reference))
+					return info.Item2;
+			}
+			return null;
+		}
+
+		static bool RefEquals(object a, object b) {
+			if (Equals(a, b))
+				return true;
+			if (Equals(a, null) || Equals(b, null))
+				return false;
+
+			{
+				var pb = b as PropertyDef;
+				if (pb != null) {
+					var tmp = a;
+					a = b;
+					b = tmp;
+				}
+				var eb = b as EventDef;
+				if (eb != null) {
+					var tmp = a;
+					a = b;
+					b = tmp;
+				}
+			}
+
+			const SigComparerOptions flags = SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable;
+
+			var type = a as IType;
+			if (type != null)
+				return new SigComparer().Equals(type, b as IType);
+
+			var method = a as IMethod;
+			if (method != null && method.IsMethod)
+				return new SigComparer(flags).Equals(method, b as IMethod);
+
+			var field = a as IField;
+			if (field != null && field.IsField)
+				return new SigComparer(flags).Equals(field, b as IField);
+
+			var prop = a as PropertyDef;
+			if (prop != null) {
+				if (new SigComparer(flags).Equals(prop, b as PropertyDef))
+					return true;
+				var bm = b as IMethod;
+				return bm != null &&
+					(new SigComparer(flags).Equals(prop.GetMethod, bm) ||
+					new SigComparer(flags).Equals(prop.SetMethod, bm));
+			}
+
+			var evt = a as EventDef;
+			if (evt != null) {
+				if (new SigComparer(flags).Equals(evt, b as EventDef))
+					return true;
+				var bm = b as IMethod;
+				return bm != null &&
+					(new SigComparer(flags).Equals(evt.AddMethod, bm) ||
+					new SigComparer(flags).Equals(evt.InvokeMethod, bm) ||
+					new SigComparer(flags).Equals(evt.RemoveMethod, bm));
+			}
+
+			Debug.Fail("Shouldn't be here");
+			return false;
 		}
 	}
 }

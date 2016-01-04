@@ -70,15 +70,6 @@ namespace dnSpy.Analyzer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Ctrl+R.
-        /// </summary>
-        public static string AnalyzeKey {
-            get {
-                return ResourceManager.GetString("AnalyzeKey", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Analyzer.
         /// </summary>
         public static string AnalyzerWindowTitle {
@@ -102,6 +93,15 @@ namespace dnSpy.Analyzer.Properties {
         public static string AssignedByTreeNode {
             get {
                 return ResourceManager.GetString("AssignedByTreeNode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dbl Click.
+        /// </summary>
+        public static string DoubleClick {
+            get {
+                return ResourceManager.GetString("DoubleClick", resourceCulture);
             }
         }
         
@@ -151,11 +151,29 @@ namespace dnSpy.Analyzer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dbl Click.
+        ///   Looks up a localized string similar to Show Reference in Method.
         /// </summary>
-        public static string GoToReferenceKey {
+        public static string GoToReferenceInCodeCommand {
             get {
-                return ResourceManager.GetString("GoToReferenceKey", resourceCulture);
+                return ResourceManager.GetString("GoToReferenceInCodeCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Reference in Method (New _Tab).
+        /// </summary>
+        public static string GoToReferenceInCodeNewTabCommand {
+            get {
+                return ResourceManager.GetString("GoToReferenceInCodeNewTabCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Go to Reference (New Ta_b).
+        /// </summary>
+        public static string GoToReferenceNewTabCommand {
+            get {
+                return ResourceManager.GetString("GoToReferenceNewTabCommand", resourceCulture);
             }
         }
         
@@ -183,24 +201,6 @@ namespace dnSpy.Analyzer.Properties {
         public static string InstantiatedByTreeNode {
             get {
                 return ResourceManager.GetString("InstantiatedByTreeNode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Open in New _Tab.
-        /// </summary>
-        public static string OpenInNewTabCommand {
-            get {
-                return ResourceManager.GetString("OpenInNewTabCommand", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Shift+Dbl Click.
-        /// </summary>
-        public static string OpenInNewTabKey {
-            get {
-                return ResourceManager.GetString("OpenInNewTabKey", resourceCulture);
             }
         }
         
@@ -259,20 +259,38 @@ namespace dnSpy.Analyzer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Del.
-        /// </summary>
-        public static string RemoveKey {
-            get {
-                return ResourceManager.GetString("RemoveKey", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Searching....
         /// </summary>
         public static string Searching {
             get {
                 return ResourceManager.GetString("Searching", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shift+Dbl Click.
+        /// </summary>
+        public static string ShiftDoubleClick {
+            get {
+                return ResourceManager.GetString("ShiftDoubleClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+R.
+        /// </summary>
+        public static string ShortCutKeyCtrlR {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Del.
+        /// </summary>
+        public static string ShortCutKeyDelete {
+            get {
+                return ResourceManager.GetString("ShortCutKeyDelete", resourceCulture);
             }
         }
         

@@ -312,5 +312,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public IEnumerable<object> References {
 			get { return textEditorControl.AllReferences; }
 		}
+
+		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column) {
+			return textEditorControl.GetCodeReferences(line, column);
+		}
 	}
 }

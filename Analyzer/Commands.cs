@@ -19,33 +19,34 @@
 
 using System;
 using System.ComponentModel.Composition;
-using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.UI.Menus;
 
 namespace dnSpy.Analyzer {
 	abstract class OpenReferenceCtxMenuCommandBase : MenuItemBase {
-		readonly IFileTabManager fileTabManager;
+		readonly Lazy<IAnalyzerManager> analyzerManager;
 		readonly bool newTab;
+		readonly bool useCodeRef;
 
-		protected OpenReferenceCtxMenuCommandBase(IFileTabManager fileTabManager, bool newTab) {
-			this.fileTabManager = fileTabManager;
+		protected OpenReferenceCtxMenuCommandBase(Lazy<IAnalyzerManager> analyzerManager, bool newTab, bool useCodeRef) {
+			this.analyzerManager = analyzerManager;
 			this.newTab = newTab;
+			this.useCodeRef = useCodeRef;
 		}
 
 		public override void Execute(IMenuItemContext context) {
 			var @ref = GetReference(context);
 			if (@ref == null)
 				return;
-			fileTabManager.FollowReference(@ref, newTab);
+			analyzerManager.Value.FollowNode(@ref, newTab, useCodeRef);
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
 			return GetReference(context) != null;
 		}
 
-		object GetReference(IMenuItemContext context) {
+		ITreeNodeData GetReference(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID))
 				return null;
 
@@ -54,26 +55,45 @@ namespace dnSpy.Analyzer {
 				return null;
 
 			var tokenNode = nodes[0] as IMDTokenNode;
-			if (tokenNode != null && tokenNode.Reference != null)
-				return tokenNode.Reference;
+			if (tokenNode != null && tokenNode.Reference != null) {
+				if (!analyzerManager.Value.CanFollowNode(nodes[0], useCodeRef))
+					return null;
+				return nodes[0];
+			}
 
 			return null;
 		}
 	}
 
-	[ExportMenuItem(Header = "res:GoToReferenceCommand", InputGestureText = "res:GoToReferenceKey", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 0)]
-	sealed class OpenReferenceCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
+	[ExportMenuItem(Header = "res:GoToReferenceInCodeCommand", InputGestureText = "res:DoubleClick", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 0)]
+	sealed class OpenReferenceInCodeCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
 		[ImportingConstructor]
-		OpenReferenceCtxMenuCommand(IFileTabManager fileTabManager)
-			: base(fileTabManager, false) {
+		OpenReferenceInCodeCtxMenuCommand(Lazy<IAnalyzerManager> analyzerManager)
+			: base(analyzerManager, false, true) {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:OpenInNewTabCommand", InputGestureText = "res:OpenInNewTabKey", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 10)]
+	[ExportMenuItem(Header = "res:GoToReferenceInCodeNewTabCommand", InputGestureText = "res:ShiftDoubleClick", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 10)]
+	sealed class OpenReferenceInCodeNewTabCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
+		[ImportingConstructor]
+		OpenReferenceInCodeNewTabCtxMenuCommand(Lazy<IAnalyzerManager> analyzerManager)
+			: base(analyzerManager, true, true) {
+		}
+	}
+
+	[ExportMenuItem(Header = "res:GoToReferenceCommand", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 20)]
+	sealed class OpenReferenceCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
+		[ImportingConstructor]
+		OpenReferenceCtxMenuCommand(Lazy<IAnalyzerManager> analyzerManager)
+			: base(analyzerManager, false, false) {
+		}
+	}
+
+	[ExportMenuItem(Header = "res:GoToReferenceNewTabCommand", Group = MenuConstants.GROUP_CTX_ANALYZER_TABS, Order = 30)]
 	sealed class OpenReferenceNewTabCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
 		[ImportingConstructor]
-		OpenReferenceNewTabCtxMenuCommand(IFileTabManager fileTabManager)
-			: base(fileTabManager, true) {
+		OpenReferenceNewTabCtxMenuCommand(Lazy<IAnalyzerManager> analyzerManager)
+			: base(analyzerManager, true, false) {
 		}
 	}
 

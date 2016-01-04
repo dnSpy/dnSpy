@@ -107,5 +107,13 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// Gets the references in the document
 		/// </summary>
 		IEnumerable<object> References { get; }
+
+		/// <summary>
+		/// Gets all code references starting from a certain location
+		/// </summary>
+		/// <param name="line">Line</param>
+		/// <param name="column">Column</param>
+		/// <returns></returns>
+		IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column);
 	}
 }

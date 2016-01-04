@@ -86,6 +86,7 @@
     <Compile Include="TreeNodes\PropertyOverridesNode.cs" />
     <Compile Include="TreeNodes\ScopedWhereUsedAnalyzer.cs" />
     <Compile Include="TreeNodes\SearchNode.cs" />
+    <Compile Include="TreeNodes\SourceRef.cs" />
     <Compile Include="TreeNodes\TypeExposedByNode.cs" />
     <Compile Include="TreeNodes\TypeExtensionMethodsNode.cs" />
     <Compile Include="TreeNodes\TypeInstantiationsNode.cs" />

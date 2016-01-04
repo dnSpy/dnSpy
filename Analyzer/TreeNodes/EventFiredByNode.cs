@@ -70,9 +70,9 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 			foreach (MethodDef method in type.Methods) {
 				bool readBackingField = false;
-				bool found = false;
 				if (!method.HasBody)
 					continue;
+				Instruction foundInstr = null;
 				foreach (Instruction instr in method.Body.Instructions) {
 					Code code = instr.OpCode.Code;
 					if (code == Code.Ldfld || code == Code.Ldflda) {
@@ -84,16 +84,19 @@ namespace dnSpy.Analyzer.TreeNodes {
 					if (readBackingField && (code == Code.Callvirt || code == Code.Call)) {
 						IMethod mr = instr.Operand as IMethod;
 						if (mr != null && eventFiringMethod != null && mr.Name == eventFiringMethod.Name && DnlibExtensions.Resolve(mr) == eventFiringMethod) {
-							found = true;
+							foundInstr = instr;
 							break;
 						}
 					}
 				}
 
-				if (found) {
+				if (foundInstr != null) {
 					MethodDef codeLocation = GetOriginalCodeLocation(method) as MethodDef;
 					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
-						yield return new MethodNode(codeLocation) { Context = Context };
+						var node = new MethodNode(codeLocation) { Context = Context };
+						if (codeLocation == method)
+							node.SourceRef = new SourceRef(method, foundInstr.Offset, foundInstr.Operand as IMDTokenProvider);
+						yield return node;
 					}
 				}
 			}

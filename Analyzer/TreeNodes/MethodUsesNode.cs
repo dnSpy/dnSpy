@@ -46,33 +46,42 @@ namespace dnSpy.Analyzer.TreeNodes {
 			output.Write(dnSpy_Analyzer_Resources.UsesTreeNode, TextTokenType.Text);
 		}
 
-		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
-			foreach (var f in GetUsedFields().Distinct()) {
-				yield return new FieldNode(f) { Context = Context };
-			}
-			foreach (var m in GetUsedMethods().Distinct()) {
-				yield return new MethodNode(m) { Context = Context };
+		struct DefRef<T> where T : IDnlibDef {
+			public readonly T Def;
+			public readonly SourceRef SourceRef;
+			public DefRef(T def, SourceRef sourceRef) {
+				this.Def = def;
+				this.SourceRef = sourceRef;
 			}
 		}
 
-		IEnumerable<MethodDef> GetUsedMethods() {
+		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
+			foreach (var f in GetUsedFields().Distinct()) {
+				yield return new FieldNode(f.Def) { Context = Context, SourceRef = f.SourceRef };
+			}
+			foreach (var m in GetUsedMethods().Distinct()) {
+				yield return new MethodNode(m.Def) { Context = Context, SourceRef = m.SourceRef };
+			}
+		}
+
+		IEnumerable<DefRef<MethodDef>> GetUsedMethods() {
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
 				IMethod mr = instr.Operand as IMethod;
 				if (mr != null && !mr.IsField) {
 					MethodDef def = DnlibExtensions.Resolve(mr);
 					if (def != null)
-						yield return def;
+						yield return new DefRef<MethodDef>(def, new SourceRef(analyzedMethod, instr.Offset, instr.Operand as IMDTokenProvider));
 				}
 			}
 		}
 
-		IEnumerable<FieldDef> GetUsedFields() {
+		IEnumerable<DefRef<FieldDef>> GetUsedFields() {
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
 				IField fr = instr.Operand as IField;
 				if (fr != null && !fr.IsMethod) {
 					FieldDef def = DnlibExtensions.Resolve(fr);
 					if (def != null)
-						yield return def;
+						yield return new DefRef<FieldDef>(def, new SourceRef(analyzedMethod, instr.Offset, instr.Operand as IMDTokenProvider));
 				}
 			}
 		}

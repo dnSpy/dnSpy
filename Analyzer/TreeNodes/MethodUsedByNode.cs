@@ -58,23 +58,26 @@ namespace dnSpy.Analyzer.TreeNodes {
 		IEnumerable<IAnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
 			string name = analyzedMethod.Name;
 			foreach (MethodDef method in type.Methods) {
-				bool found = false;
 				if (!method.HasBody)
 					continue;
+				Instruction foundInstr = null;
 				foreach (Instruction instr in method.Body.Instructions) {
 					IMethod mr = instr.Operand as IMethod;
 					if (mr != null && !mr.IsField && mr.Name == name &&
 						Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
 						DnlibExtensions.Resolve(mr) == analyzedMethod) {
-						found = true;
+						foundInstr = instr;
 						break;
 					}
 				}
 
-				if (found) {
+				if (foundInstr != null) {
 					MethodDef codeLocation = GetOriginalCodeLocation(method) as MethodDef;
 					if (codeLocation != null && !HasAlreadyBeenFound(codeLocation)) {
-						yield return new MethodNode(codeLocation) { Context = Context };
+						var node = new MethodNode(codeLocation) { Context = Context };
+						if (codeLocation == method)
+							node.SourceRef = new SourceRef(method, foundInstr.Offset, foundInstr.Operand as IMDTokenProvider);
+						yield return node;
 					}
 				}
 			}

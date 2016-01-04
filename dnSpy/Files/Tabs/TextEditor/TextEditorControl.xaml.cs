@@ -440,6 +440,24 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 		}
 
+		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column) {
+			if (referenceElementGenerator == null || referenceElementGenerator.References == null)
+				yield break;
+
+			int offset = TextEditor.Document.GetOffset(line, column);
+			var refSeg = referenceElementGenerator.References.FindFirstSegmentWithStartAfter(offset);
+
+			while (refSeg != null) {
+				yield return Tuple.Create(refSeg.ToCodeReference(), GetLocation(refSeg));
+				refSeg = referenceElementGenerator.References.GetNextSegment(refSeg);
+			}
+		}
+
+		TextEditorLocation GetLocation(ReferenceSegment refSeg) {
+			var loc = TextEditor.Document.GetLocation(refSeg.StartOffset);
+			return new TextEditorLocation(loc.Line, loc.Column);
+		}
+
 		public ReferenceSegment GetReferenceSegmentAt(int offset) {
 			if (referenceElementGenerator == null || referenceElementGenerator.References == null)
 				return null;

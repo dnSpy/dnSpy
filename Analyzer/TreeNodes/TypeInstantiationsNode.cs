@@ -52,7 +52,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		IEnumerable<IAnalyzerTreeNodeData> FindReferencesInType(TypeDef type) {
 			foreach (MethodDef method in type.Methods) {
-				bool found = false;
 				if (!method.HasBody)
 					continue;
 
@@ -62,19 +61,19 @@ namespace dnSpy.Analyzer.TreeNodes {
 					(isSystemObject || analyzedType == type || TypesHierarchyHelpers.IsBaseType(analyzedType, type, false)))
 					continue;
 
+				Instruction foundInstr = null;
 				foreach (Instruction instr in method.Body.Instructions) {
 					IMethod mr = instr.Operand as IMethod;
 					if (mr != null && !mr.IsField && mr.Name == ".ctor") {
 						if (Helpers.IsReferencedBy(analyzedType, mr.DeclaringType)) {
-							found = true;
+							foundInstr = instr;
 							break;
 						}
 					}
 				}
 
-				if (found) {
-					yield return new MethodNode(method) { Context = Context };
-				}
+				if (foundInstr != null)
+					yield return new MethodNode(method) { Context = Context, SourceRef = new SourceRef(method, foundInstr.Offset, foundInstr.Operand as IMDTokenProvider) };
 			}
 		}
 

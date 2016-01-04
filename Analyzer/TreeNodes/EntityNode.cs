@@ -24,6 +24,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 	abstract class EntityNode : AnalyzerTreeNodeData, IMDTokenNode {
 		public abstract IMemberRef Member { get; }
 		public abstract IMDTokenProvider Reference { get; }
+		public SourceRef? SourceRef { get; set; }
 
 		public override bool Activate() {
 			Context.AnalyzerManager.OnActivated(this);

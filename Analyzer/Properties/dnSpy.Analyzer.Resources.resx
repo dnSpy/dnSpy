@@ -120,9 +120,6 @@
   <data name="AnalyzeCommand" xml:space="preserve">
     <value>Analy_ze</value>
   </data>
-  <data name="AnalyzeKey" xml:space="preserve">
-    <value>Ctrl+R</value>
-  </data>
   <data name="AnalyzerWindowTitle" xml:space="preserve">
     <value>Analyzer</value>
   </data>
@@ -131,6 +128,9 @@
   </data>
   <data name="AssignedByTreeNode" xml:space="preserve">
     <value>Assigned By</value>
+  </data>
+  <data name="DoubleClick" xml:space="preserve">
+    <value>Dbl Click</value>
   </data>
   <data name="EventAdderTreeNodeName" xml:space="preserve">
     <value>add</value>
@@ -147,8 +147,14 @@
   <data name="GoToReferenceCommand" xml:space="preserve">
     <value>Go to Reference</value>
   </data>
-  <data name="GoToReferenceKey" xml:space="preserve">
-    <value>Dbl Click</value>
+  <data name="GoToReferenceInCodeCommand" xml:space="preserve">
+    <value>Show Reference in Method</value>
+  </data>
+  <data name="GoToReferenceInCodeNewTabCommand" xml:space="preserve">
+    <value>Show Reference in Method (New _Tab)</value>
+  </data>
+  <data name="GoToReferenceNewTabCommand" xml:space="preserve">
+    <value>Go to Reference (New Ta_b)</value>
   </data>
   <data name="HidesParent" xml:space="preserve">
     <value>hides</value>
@@ -158,12 +164,6 @@
   </data>
   <data name="InstantiatedByTreeNode" xml:space="preserve">
     <value>Instantiated By</value>
-  </data>
-  <data name="OpenInNewTabCommand" xml:space="preserve">
-    <value>Open in New _Tab</value>
-  </data>
-  <data name="OpenInNewTabKey" xml:space="preserve">
-    <value>Shift+Dbl Click</value>
   </data>
   <data name="OverriddenByTreeNode" xml:space="preserve">
     <value>Overridden By</value>
@@ -183,12 +183,17 @@
   <data name="RemoveCommand" xml:space="preserve">
     <value>_Remove</value>
   </data>
-  <data name="RemoveKey" xml:space="preserve">
-    <value>Del</value>
-    <comment>the delete key</comment>
-  </data>
   <data name="Searching" xml:space="preserve">
     <value>Searching...</value>
+  </data>
+  <data name="ShiftDoubleClick" xml:space="preserve">
+    <value>Shift+Dbl Click</value>
+  </data>
+  <data name="ShortCutKeyCtrlR" xml:space="preserve">
+    <value>Ctrl+R</value>
+  </data>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Del</value>
   </data>
   <data name="ShowMetadataTokensCommand" xml:space="preserve">
     <value>Show Tokens</value>
