@@ -1755,6 +1755,24 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open Modules.
+        /// </summary>
+        public static string LoadModulesCommand {
+            get {
+                return ResourceManager.GetString("LoadModulesCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open {0} Modules.
+        /// </summary>
+        public static string LoadXModulesCommand {
+            get {
+                return ResourceManager.GetString("LoadXModulesCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This item contains more than {0} child items and will be limited to displaying that number of items when expanded.
         ///
         ///Are you sure you want to expand it?.

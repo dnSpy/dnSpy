@@ -1206,4 +1206,10 @@ Are you sure you want to expand it?</value>
   <data name="DbgSettings_SyntaxHighlight" xml:space="preserve">
     <value>_Syntax highlight</value>
   </data>
+  <data name="LoadModulesCommand" xml:space="preserve">
+    <value>Open Modules</value>
+  </data>
+  <data name="LoadXModulesCommand" xml:space="preserve">
+    <value>Open {0} Modules</value>
+  </data>
 </root>

@@ -232,10 +232,11 @@ namespace dnSpy.Debugger.Modules {
 				GoToFile(fileTabManager, moduleLoader.Value.LoadModule(vm.Module, true), newTab);
 		}
 
-		internal static bool ShowErrorIfDynamic(Lazy<IInMemoryModuleManager> inMemoryModuleManager, DnModule module) {
+		internal static bool ShowErrorIfDynamic(Lazy<IInMemoryModuleManager> inMemoryModuleManager, DnModule module, bool canShowDlgBox = true) {
 			if (module.IsDynamic && module.Debugger.ProcessState != DebuggerProcessState.Stopped) {
 				if (inMemoryModuleManager.Value.LoadFile(module, false) == null) {
-					Shared.UI.App.MsgBox.Instance.Show(dnSpy_Debugger_Resources.Module_BreakProcessBeforeLoadingDynamicModules);
+					if (canShowDlgBox)
+						Shared.UI.App.MsgBox.Instance.Show(dnSpy_Debugger_Resources.Module_BreakProcessBeforeLoadingDynamicModules);
 					return false;
 				}
 			}
@@ -274,7 +275,44 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:OpenModuleFromMemoryCommand", Icon = "AssemblyModule", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 10)]
+	[Export, ExportMenuItem(Icon = "AssemblyModule", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 10)]
+	sealed class LoadModulesCtxMenuCommand : ModulesCtxMenuCommand {
+		readonly IFileTabManager fileTabManager;
+		readonly Lazy<ModuleLoader> moduleLoader;
+		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
+
+		[ImportingConstructor]
+		LoadModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IFileTabManager fileTabManager, Lazy<ModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager)
+			: base(theDebugger, modulesContent) {
+			this.fileTabManager = fileTabManager;
+			this.moduleLoader = moduleLoader;
+			this.inMemoryModuleManager = inMemoryModuleManager;
+		}
+
+		public override bool IsEnabled(ModulesCtxMenuContext context) {
+			return context.SelectedItems.Length > 1;
+		}
+
+		public override string GetHeader(ModulesCtxMenuContext context) {
+			if (context.SelectedItems.Length <= 1)
+				return dnSpy_Debugger_Resources.LoadModulesCommand;
+			return string.Format(dnSpy_Debugger_Resources.LoadXModulesCommand, context.SelectedItems.Length);
+		}
+
+		public override void Execute(ModulesCtxMenuContext context) {
+			bool canShowDlgBox = true;
+			foreach (var vm in context.SelectedItems) {
+				var mod = vm.Module;
+				bool res = GoToModuleModulesCtxMenuCommand.ShowErrorIfDynamic(inMemoryModuleManager, mod, canShowDlgBox);
+				if (!res)
+					canShowDlgBox = false;
+				if (res)
+					moduleLoader.Value.LoadModule(vm.Module, true);
+			}
+		}
+	}
+
+	[ExportMenuItem(Header = "res:OpenModuleFromMemoryCommand", Icon = "AssemblyModule", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 20)]
 	sealed class OpenModuleFromMemoryModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
 		readonly IFileTabManager fileTabManager;
@@ -325,7 +363,7 @@ namespace dnSpy.Debugger.Modules {
 		public const string GROUP_SHOW_IN_MEMORY_WINDOW = "0,E1F6906B-64C8-4411-B8B7-07C331197BFE";
 	}
 
-	[ExportMenuItem(Header = "res:ShowInMemoryWindowCommand", Icon = "MemoryWindow", Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 20)]
+	[ExportMenuItem(Header = "res:ShowInMemoryWindowCommand", Icon = "MemoryWindow", Guid = Constants.SHOW_IN_MEMORY_WINDOW_GUID, Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 30)]
 	sealed class ShowInMemoryXModulesCtxMenuCommand : ModulesCtxMenuCommand {
 		[ImportingConstructor]
 		ShowInMemoryXModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent)
