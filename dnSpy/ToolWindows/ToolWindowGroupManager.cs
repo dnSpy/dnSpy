@@ -132,7 +132,7 @@ namespace dnSpy.ToolWindows {
 		}
 
 		public bool CloseAllTabsCanExecute {
-			get { return tabGroupManager.CloseAllTabsCanExecute; }
+			get { return tabGroupManager.ActiveTabGroup != null && tabGroupManager.ActiveTabGroup.TabContents.Count() > 1 && tabGroupManager.CloseAllTabsCanExecute; }
 		}
 
 		public void CloseAllTabs() {
