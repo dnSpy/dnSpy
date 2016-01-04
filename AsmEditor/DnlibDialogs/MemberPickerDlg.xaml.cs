@@ -22,10 +22,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Input;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed partial class MemberPickerDlg : WindowBase {
@@ -54,6 +56,13 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				Mode = BindingMode.TwoWay,
 			};
 			treeView.SetBinding(Selector.SelectedItemProperty, binding);
+
+			var cmd = new RelayCommand(a => {
+				searchTextBox.SelectAll();
+				searchTextBox.Focus();
+			});
+			InputBindings.Add(new KeyBinding(cmd, Key.E, ModifierKeys.Control));
+			InputBindings.Add(new KeyBinding(cmd, Key.F, ModifierKeys.Control));
 		}
 
 		void MemberPickerVM_PropertyChanged(object sender, PropertyChangedEventArgs e) {
