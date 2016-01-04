@@ -56,6 +56,14 @@ namespace dnSpy.AsmEditor.UndoRedo {
 					// and they haven't yet been inserted into the treeview.
 					if (dnSpyFileNode is IModuleFileNode)
 						return GetUndoObjectNoChecks(dnSpyFileNode.DnSpyFile);
+					if (dnSpyFileNode is IAssemblyFileNode) {
+						var asmNode = (IAssemblyFileNode)dnSpyFileNode;
+						asmNode.TreeNode.EnsureChildrenLoaded();
+						var modNode = asmNode.TreeNode.DataChildren.FirstOrDefault() as IModuleFileNode;
+						Debug.Assert(modNode != null);
+						if (modNode != null)
+							return GetUndoObjectNoChecks(modNode.DnSpyFile);
+					}
 					return GetUndoObject(dnSpyFileNode.DnSpyFile);
 				}
 			}
