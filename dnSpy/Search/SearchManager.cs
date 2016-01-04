@@ -26,7 +26,9 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
@@ -63,6 +65,13 @@ namespace dnSpy.Search {
 		/// Gives focus to the focused element
 		/// </summary>
 		void Focus();
+
+		/// <summary>
+		/// Follows the reference
+		/// </summary>
+		/// <param name="searchResult">Search result</param>
+		/// <param name="newTab">true to show it in a new tab</param>
+		void FollowResult(ISearchResult searchResult, bool newTab);
 	}
 
 	[Export, Export(typeof(ISearchManager)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -84,6 +93,7 @@ namespace dnSpy.Search {
 				var listBox = (ListBox)creatorObject.Object;
 				var searchResult = listBox.SelectedItem as ISearchResult;
 				if (searchResult != null) {
+					yield return new GuidObject(MenuConstants.GUIDOBJ_SEARCHRESULT_GUID, searchResult);
 					var @ref = searchResult.Reference;
 					if (@ref != null)
 						yield return new GuidObject(MenuConstants.GUIDOBJ_CODE_REFERENCE_GUID, new CodeReference(@ref));
@@ -211,12 +221,35 @@ namespace dnSpy.Search {
 		}
 
 		void FollowSelectedReference() {
-			var res = this.searchControl.ListBox.SelectedItem as ISearchResult;
-			var @ref = res == null ? null : res.Reference;
+			bool newTab = Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift;
+			FollowResult(this.searchControl.ListBox.SelectedItem as ISearchResult, newTab);
+		}
+
+		public void FollowResult(ISearchResult searchResult, bool newTab) {
+			var @ref = searchResult == null ? null : searchResult.Reference;
 			if (@ref != null) {
-				bool newTab = Keyboard.Modifiers == ModifierKeys.Control || Keyboard.Modifiers == ModifierKeys.Shift;
-				fileTabManager.FollowReference(@ref, newTab);
+				fileTabManager.FollowReference(@ref, newTab, true, a => {
+					if (!a.HasMovedCaret && a.Success) {
+						var bodyResult = searchResult.ObjectInfo as BodyResult;
+						if (bodyResult != null)
+							a.HasMovedCaret = GoTo(a.Tab, searchResult.Object as MethodDef, bodyResult.ILOffset);
+					}
+				});
 			}
+		}
+
+		bool GoTo(IFileTab tab, MethodDef method, uint ilOffset) {
+			var uiContext = tab.TryGetTextEditorUIContext();
+			if (uiContext == null || method == null)
+				return false;
+			var cm = uiContext.GetCodeMappings();
+			var mapping = cm.Find(method, ilOffset);
+			if (mapping == null)
+				return false;
+
+			var location = mapping.StartLocation;
+			uiContext.ScrollAndMoveCaretTo(location.Line, location.Column);
+			return true;
 		}
 	}
 }

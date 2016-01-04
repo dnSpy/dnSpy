@@ -30,6 +30,7 @@ using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;

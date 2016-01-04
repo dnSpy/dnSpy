@@ -100,9 +100,9 @@ namespace dnSpy.Debugger {
 
 		public IList<SourceCodeMapping> Find(int line, int column) {
 			if (line <= 0)
-				return new SourceCodeMapping[0];
+				return empty;
 			if (dict.Count == 0)
-				return new SourceCodeMapping[0];
+				return empty;
 
 			var bp = FindByLineColumn(line, column);
 			if (bp == null && column != 0)
@@ -112,8 +112,9 @@ namespace dnSpy.Debugger {
 
 			if (bp != null)
 				return bp;
-			return new SourceCodeMapping[0];
+			return empty;
 		}
+		static readonly SourceCodeMapping[] empty = new SourceCodeMapping[0];
 
 		List<SourceCodeMapping> FindByLineColumn(int line, int column) {
 			List<SourceCodeMapping> list = null;

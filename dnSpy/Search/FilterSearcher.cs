@@ -29,6 +29,7 @@ using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.Search;
 using dnSpy.Shared.UI.Search;
 
 namespace dnSpy.Search {
@@ -465,7 +466,7 @@ namespace dnSpy.Search {
 
 			body = method.Body;
 			if (body == null)
-				return; // Return immediately. All code here depends on a non-null body
+				return;
 			foreach (var instr in body.Instructions) {
 				object operand;
 				// Only check numbers and strings. Don't pass in any type of operand to IsMatch()
@@ -496,6 +497,7 @@ namespace dnSpy.Search {
 						LocationObject = type,
 						LocationImageReference = options.DotNetImageManager.GetImageReference(type),
 						DnSpyFile = ownerModule,
+						ObjectInfo = new BodyResult(instr.Offset),
 					});
 					break;
 				}

@@ -17,18 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// This file is identical to Debugger's CodeMappings.cs except that it doesn't contain any
-// SerializedDnSpyToken references. SerializedDnSpyToken is a debugger-only class and can't be
-// included here.
-
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Shared.UI.Decompiler;
 using ICSharpCode.Decompiler;
 
-namespace dnSpy.AsmEditor.MethodBody {
+namespace dnSpy.Decompiler {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
 	sealed class CodeMappingsLoader : IAutoLoaded {
 		[ImportingConstructor]
@@ -45,24 +43,11 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (output == null)
 				return;
 			var cm = new CodeMappings(output.DebuggerMemberMappings);
-			uiContext.AddOutputData(CodeMappingsKey, cm);
-		}
-		internal static readonly object CodeMappingsKey = new object();
-	}
-
-	static class CodeMappingsExtensions {
-		public static CodeMappings GetCodeMappings(this ITextEditorUIContext self) {
-			return self.TryGetCodeMappings() ?? new CodeMappings();
-		}
-
-		public static CodeMappings TryGetCodeMappings(this ITextEditorUIContext self) {
-			if (self == null)
-				return null;
-			return (CodeMappings)self.GetOutputData(CodeMappingsLoader.CodeMappingsKey);
+			uiContext.AddOutputData(CodeMappingsConstants.CodeMappingsKey, cm);
 		}
 	}
 
-	sealed class CodeMappings {
+	sealed class CodeMappings : ICodeMappings {
 		readonly List<MemberMapping> memberMappings;
 
 		public int Count {
@@ -79,9 +64,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		public IList<SourceCodeMapping> Find(int line, int column) {
 			if (line <= 0)
-				return new SourceCodeMapping[0];
+				return empty;
 			if (memberMappings.Count == 0)
-				return new SourceCodeMapping[0];
+				return empty;
 
 			var bp = FindByLineColumn(line, column);
 			if (bp == null && column != 0)
@@ -91,8 +76,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			if (bp != null)
 				return bp;
-			return new SourceCodeMapping[0];
+			return empty;
 		}
+		static readonly SourceCodeMapping[] empty = new SourceCodeMapping[0];
 
 		List<SourceCodeMapping> FindByLineColumn(int line, int column) {
 			List<SourceCodeMapping> list = null;
@@ -108,7 +94,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		List<SourceCodeMapping> GetClosest(int line) {
-			List<SourceCodeMapping> list = new List<SourceCodeMapping>();
+			var list = new List<SourceCodeMapping>();
 			foreach (var entry in memberMappings) {
 				SourceCodeMapping map = null;
 				foreach (var m in entry.MemberCodeMappings) {
@@ -132,6 +118,18 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (list.Count == 0)
 				return null;
 			return list;
+		}
+
+		public SourceCodeMapping Find(MethodDef method, uint ilOffset) {
+			foreach (var entry in memberMappings) {
+				if (entry.MethodDef != method)
+					continue;
+				foreach (var m in entry.MemberCodeMappings) {
+					if (m.ILInstructionOffset.From <= ilOffset && ilOffset < m.ILInstructionOffset.To)
+						return m;
+				}
+			}
+			return null;
 		}
 	}
 }

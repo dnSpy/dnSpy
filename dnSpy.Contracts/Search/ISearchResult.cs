@@ -52,5 +52,11 @@ namespace dnSpy.Contracts.Search {
 		/// Gets the reference
 		/// </summary>
 		object Reference { get; }
+
+		/// <summary>
+		/// Gets any extra info related to <see cref="Object"/>. <see cref="BodyResult"/> if the
+		/// method body was searched.
+		/// </summary>
+		object ObjectInfo { get; }
 	}
 }

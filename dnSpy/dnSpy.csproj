@@ -75,6 +75,7 @@
     <Compile Include="Culture\CultureManager.cs" />
     <Compile Include="Culture\CultureSettings.cs" />
     <Compile Include="Culture\LanguageInfo.cs" />
+    <Compile Include="Decompiler\CodeMappings.cs" />
     <Compile Include="Decompiler\DecompilerAppSettingsModifiedListener.cs" />
     <Compile Include="Decompiler\DecompilerSettingsImpl.cs" />
     <Compile Include="Decompiler\DecompilerSettingsTab.cs" />

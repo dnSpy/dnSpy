@@ -19,6 +19,7 @@
 
 using System.Windows.Controls;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.TreeView;
@@ -93,6 +94,9 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Treeview nodes array (<see cref="ITreeNodeData"/>[])</summary>
 		public static readonly string GUIDOBJ_TREEVIEW_NODES_ARRAY_GUID = "B116BABD-BD8B-4870-968A-D1871CC21638";
+
+		/// <summary>Code Reference (<see cref="ISearchResult"/>)</summary>
+		public static readonly string GUIDOBJ_SEARCHRESULT_GUID = "50CD0058-6406-4ACA-A386-1A4E07561C62";
 
 		/// <summary>Code Reference (<see cref="CodeReference"/>)</summary>
 		public static readonly string GUIDOBJ_CODE_REFERENCE_GUID = "751F4075-D420-4196-BCF0-A0149A8948A4";

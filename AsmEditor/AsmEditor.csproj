@@ -137,7 +137,6 @@
     <Compile Include="Hex\Nodes\TablesStreamVM.cs" />
     <Compile Include="Hex\Nodes\TokenReferenceFileTabContentCreator.cs" />
     <Compile Include="Hex\Nodes\VirtualizedList.cs" />
-    <Compile Include="MethodBody\CodeMappings.cs" />
     <Compile Include="Properties\dnSpy.AsmEditor.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

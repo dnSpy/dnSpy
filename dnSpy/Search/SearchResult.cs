@@ -63,6 +63,7 @@ namespace dnSpy.Search {
 		public object LocationObject { get; set; }
 		public ImageReference LocationImageReference { get; set; }
 		public IDnSpyFile DnSpyFile { get; set; }
+		public object ObjectInfo { get; set; }
 
 		public void RefreshUI() {
 			OnPropertyChanged("Image");

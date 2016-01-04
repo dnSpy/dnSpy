@@ -21,10 +21,9 @@ using System;
 using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
-using dnSpy.Contracts.Files.Tabs;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.Search;
 using dnSpy.Contracts.ToolBars;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Shared.UI.Menus;
@@ -76,46 +75,45 @@ namespace dnSpy.Search {
 	}
 
 	abstract class OpenReferenceCtxMenuCommandBase : MenuItemBase {
-		readonly IFileTabManager fileTabManager;
+		readonly Lazy<ISearchManager> searchManager;
 		readonly bool newTab;
 
-		protected OpenReferenceCtxMenuCommandBase(IFileTabManager fileTabManager, bool newTab) {
-			this.fileTabManager = fileTabManager;
+		protected OpenReferenceCtxMenuCommandBase(Lazy<ISearchManager> searchManager, bool newTab) {
+			this.searchManager = searchManager;
 			this.newTab = newTab;
 		}
 
 		public override void Execute(IMenuItemContext context) {
-			var @ref = GetReference(context);
-			if (@ref == null)
+			var res = GetReference(context);
+			if (res == null)
 				return;
-			fileTabManager.FollowReference(@ref, newTab);
+			searchManager.Value.FollowResult(res, newTab);
 		}
 
 		public override bool IsVisible(IMenuItemContext context) {
 			return GetReference(context) != null;
 		}
 
-		object GetReference(IMenuItemContext context) {
+		ISearchResult GetReference(IMenuItemContext context) {
 			if (context.CreatorObject.Guid != new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID))
 				return null;
-			var @ref = context.Find<CodeReference>();
-			return @ref == null ? null : @ref.Reference;
+			return context.Find<ISearchResult>();
 		}
 	}
 
 	[ExportMenuItem(Header = "res:GoToReferenceCommand", InputGestureText = "res:GoToReferenceKey", Group = MenuConstants.GROUP_CTX_SEARCH_TABS, Order = 0)]
 	sealed class OpenReferenceCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
 		[ImportingConstructor]
-		OpenReferenceCtxMenuCommand(IFileTabManager fileTabManager)
-			: base(fileTabManager, false) {
+		OpenReferenceCtxMenuCommand(Lazy<ISearchManager> searchManager)
+			: base(searchManager, false) {
 		}
 	}
 
 	[ExportMenuItem(Header = "res:OpenInNewTabCommand", InputGestureText = "res:OpenInNewTabKey4", Group = MenuConstants.GROUP_CTX_SEARCH_TABS, Order = 10)]
 	sealed class OpenReferenceNewTabCtxMenuCommand : OpenReferenceCtxMenuCommandBase {
 		[ImportingConstructor]
-		OpenReferenceNewTabCtxMenuCommand(IFileTabManager fileTabManager)
-			: base(fileTabManager, true) {
+		OpenReferenceNewTabCtxMenuCommand(Lazy<ISearchManager> searchManager)
+			: base(searchManager, true) {
 		}
 	}
 

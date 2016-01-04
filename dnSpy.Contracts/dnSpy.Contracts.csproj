@@ -59,6 +59,7 @@
     <Compile Include="Controls\IWpfCommands.cs" />
     <Compile Include="Controls\IWpfFocusChecker.cs" />
     <Compile Include="Controls\IWpfFocusManager.cs" />
+    <Compile Include="Decompiler\ICodeMappings.cs" />
     <Compile Include="Files\DnSpyFileInfo.cs" />
     <Compile Include="Files\FilenameKey.cs" />
     <Compile Include="Files\FileConstants.cs" />
@@ -212,6 +213,7 @@
     <Compile Include="Plugin\PluginInfo.cs" />
     <Compile Include="Plugin\PluginLicense.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search\BodyResult.cs" />
     <Compile Include="Search\FileSearcherOptions.cs" />
     <Compile Include="Search\IFileSearcher.cs" />
     <Compile Include="Search\IFileSearcherCreator.cs" />
