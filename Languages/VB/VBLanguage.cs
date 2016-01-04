@@ -20,6 +20,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Resources;
@@ -112,6 +113,15 @@ namespace dnSpy.Languages.VB {
 					if (runtimeName != null) {
 						this.WriteCommentLine(output, "Runtime: " + runtimeName);
 					}
+				}
+				if ((decompileMod || decompileAsm) && file.PEImage != null) {
+					this.WriteCommentBegin(output, true);
+					uint ts = file.PEImage.ImageNTHeaders.FileHeader.TimeDateStamp;
+					var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
+					var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
+					output.Write(string.Format("Timestamp: {0:X8} ({1})", ts, dateString), TextTokenType.Comment);
+					this.WriteCommentEnd(output, true);
+					output.WriteLine();
 				}
 				if (decompileMod || decompileAsm)
 					output.WriteLine();
