@@ -62,16 +62,19 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (var field in type.Fields.Where(IsUsedInFieldRef))
 				yield return new FieldNode(field) { Context = Context };
 
-			foreach (var method in type.Methods.Where(IsUsedInMethodDef))
-				yield return HandleSpecialMethodNode(method);
+			foreach (var method in type.Methods) {
+				SourceRef? sourceRef = null;
+				if (IsUsedInMethodDef(method, ref sourceRef))
+					yield return HandleSpecialMethodNode(method, sourceRef);
+			}
 		}
 
-		EntityNode HandleSpecialMethodNode(MethodDef method) {
+		EntityNode HandleSpecialMethodNode(MethodDef method, SourceRef? sourceRef) {
 			var property = method.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == method || p.SetMethod == method);
 			if (property != null)
-				return new PropertyNode(property) { Context = Context };
+				return new PropertyNode(property) { Context = Context, SourceRef = sourceRef };
 
-			return new MethodNode(method) { Context = Context };
+			return new MethodNode(method) { Context = Context, SourceRef = sourceRef };
 		}
 
 		bool IsUsedInTypeRefs(IEnumerable<ITypeDefOrRef> types) {
@@ -112,38 +115,36 @@ namespace dnSpy.Analyzer.TreeNodes {
 				   || IsUsedInMethodParameters(method.GetParameters());
 		}
 
-		bool IsUsedInMethodDef(MethodDef method) {
+		bool IsUsedInMethodDef(MethodDef method, ref SourceRef? sourceRef) {
 			return IsUsedInMethodRef(method)
-				   || IsUsedInMethodBody(method);
+				   || IsUsedInMethodBody(method, ref sourceRef);
 		}
 
-		bool IsUsedInMethodBody(MethodDef method) {
+		bool IsUsedInMethodBody(MethodDef method, ref SourceRef? sourceRef) {
 			if (method == null)
 				return false;
 			if (method.Body == null)
 				return false;
 
-			bool found = false;
-
 			foreach (var instruction in method.Body.Instructions) {
 				ITypeDefOrRef tr = instruction.Operand as ITypeDefOrRef;
 				if (IsUsedInTypeRef(tr)) {
-					found = true;
-					break;
+					sourceRef = new SourceRef(method, instruction.Offset, instruction.Operand as IMDTokenProvider);
+					return true;
 				}
 				IField fr = instruction.Operand as IField;
 				if (IsUsedInFieldRef(fr)) {
-					found = true;
-					break;
+					sourceRef = new SourceRef(method, instruction.Offset, instruction.Operand as IMDTokenProvider);
+					return true;
 				}
 				IMethod mr = instruction.Operand as IMethod;
 				if (IsUsedInMethodRef(mr)) {
-					found = true;
-					break;
+					sourceRef = new SourceRef(method, instruction.Offset, instruction.Operand as IMDTokenProvider);
+					return true;
 				}
 			}
 
-			return found;
+			return false;
 		}
 
 		bool IsUsedInMethodParameters(IEnumerable<Parameter> parameters) {
@@ -151,7 +152,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		bool IsUsedInMethodParameter(Parameter parameter) {
-			return TypeMatches(parameter.Type);
+			return !parameter.IsHiddenThisParameter && TypeMatches(parameter.Type);
 		}
 
 		bool TypeMatches(IType tref) {

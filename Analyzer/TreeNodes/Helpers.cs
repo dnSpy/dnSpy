@@ -59,7 +59,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			return member;
 		}
 
-		public static MethodDef GetOriginalCodeLocation(MethodDef method) {
+		static MethodDef GetOriginalCodeLocation(MethodDef method) {
 			if (method.IsCompilerGenerated()) {
 				return FindMethodUsageInType(method.DeclaringType, method) ?? method;
 			}
@@ -73,7 +73,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		/// Given a compiler-generated type, returns the method where that type is used.
 		/// Used to detect the 'parent method' for a lambda/iterator/async state machine.
 		/// </summary>
-		public static MethodDef GetOriginalCodeLocation(TypeDef type) {
+		static MethodDef GetOriginalCodeLocation(TypeDef type) {
 			if (type != null && type.DeclaringType != null && type.IsCompilerGenerated()) {
 				if (type.IsValueType) {
 					// Value types might not have any constructor; but they must be stored in a local var
