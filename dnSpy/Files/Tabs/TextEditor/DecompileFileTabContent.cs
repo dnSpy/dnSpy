@@ -38,6 +38,11 @@ using ICSharpCode.Decompiler;
 namespace dnSpy.Files.Tabs.TextEditor {
 	[Export, ExportFileTabContentFactory(Order = TabConstants.ORDER_DECOMPILEFILETABCONTENTFACTORY)]
 	sealed class DecompileFileTabContentFactory : IFileTabContentFactory {
+		public IFileManager FileManager {
+			get { return fileManager; }
+		}
+		readonly IFileManager fileManager;
+
 		public IFileTreeNodeDecompiler FileTreeNodeDecompiler {
 			get { return fileTreeNodeDecompiler; }
 		}
@@ -64,7 +69,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly IMethodAnnotations methodAnnotations;
 
 		[ImportingConstructor]
-		DecompileFileTabContentFactory(IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguageManager languageManager, IDecompilationCache decompilationCache, DecompilerSettings decompilerSettings, IMethodAnnotations methodAnnotations) {
+		DecompileFileTabContentFactory(IFileManager fileManager, IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguageManager languageManager, IDecompilationCache decompilationCache, DecompilerSettings decompilerSettings, IMethodAnnotations methodAnnotations) {
+			this.fileManager = fileManager;
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
 			this.languageManager = languageManager;
 			this.decompilationCache = decompilationCache;
@@ -177,6 +183,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			var decompilationOptions = new DecompilationOptions();
 			decompilationOptions.DecompilerSettings = decompileFileTabContentFactory.CreateDecompilerSettings();
 			decompilationOptions.DontShowCreateMethodBodyExceptions = true;
+			decompilationOptions.GetDisableAssemblyLoad = () => decompileFileTabContentFactory.FileManager.DisableAssemblyLoad();
 			decompilationOptions.IsBodyModified = m => decompileFileTabContentFactory.MethodAnnotations.IsBodyModified(m);
 			var output = new AvalonEditTextOutput();
 			var dispatcher = Dispatcher.CurrentDispatcher;

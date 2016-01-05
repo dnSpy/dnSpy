@@ -32,6 +32,7 @@ namespace dnSpy.Files {
 	sealed class FileManager : IFileManager {
 		readonly object lockObj;
 		readonly List<IDnSpyFile> files;
+		readonly List<WeakReference> tempCache;
 		readonly IDnSpyFileCreator[] dnSpyFileCreators;
 
 		public IAssemblyResolver AssemblyResolver {
@@ -48,11 +49,13 @@ namespace dnSpy.Files {
 			}
 
 			public void Dispose() {
-				Interlocked.Decrement(ref fileManager.counter_DisableAssemblyLoad);
+				int value = Interlocked.Decrement(ref fileManager.counter_DisableAssemblyLoad);
+				if (value == 0)
+					fileManager.ClearTempCache();
 			}
 		}
 
-		internal bool AssemblyLoadEnabled {
+		bool AssemblyLoadEnabled {
 			get { return counter_DisableAssemblyLoad == 0; }
 		}
 		int counter_DisableAssemblyLoad;
@@ -72,6 +75,7 @@ namespace dnSpy.Files {
 		public FileManager(IFileManagerSettings fileManagerSettings, [ImportMany] IDnSpyFileCreator[] mefCreators) {
 			this.lockObj = new object();
 			this.files = new List<IDnSpyFile>();
+			this.tempCache = new List<WeakReference>();
 			this.asmResolver = new AssemblyResolver(this);
 			this.dnSpyFileCreators = mefCreators.OrderBy(a => a.Order).ToArray();
 			this.fileManagerSettings = fileManagerSettings;
@@ -106,14 +110,21 @@ namespace dnSpy.Files {
 		}
 
 		public IDnSpyFile FindAssembly(IAssembly assembly) {
+			var comparer = new AssemblyNameComparer(AssemblyNameComparerFlags.All);
 			lock (lockObj) {
-				var comparer = new AssemblyNameComparer(AssemblyNameComparerFlags.All);
 				foreach (var file in files) {
 					if (comparer.Equals(file.AssemblyDef, assembly))
 						return file;
 				}
-				return null;
 			}
+			lock (tempCache) {
+				foreach (var weakRef in tempCache) {
+					var file = weakRef.Target as IDnSpyFile;
+					if (file != null && comparer.Equals(file.AssemblyDef, assembly))
+						return file;
+				}
+			}
+			return null;
 		}
 
 		public IDnSpyFile Resolve(IAssembly asm, ModuleDef sourceModule) {
@@ -170,12 +181,32 @@ namespace dnSpy.Files {
 			var result = Find(file.Key);
 			if (result == null) {
 				if (!AssemblyLoadEnabled)
-					return DisableMMapdIO(file);
+					return AddTempCachedFile(file);
 				result = GetOrAdd(file);
 			}
 			if (result != file)
 				Dispose(file);
 			return result;
+		}
+
+		IDnSpyFile AddTempCachedFile(IDnSpyFile file) {
+			lock (tempCache) {
+				if (!AssemblyLoadEnabled)
+					tempCache.Add(new WeakReference(file));
+			}
+			return DisableMMapdIO(file);
+		}
+
+		void ClearTempCache() {
+			bool collect;
+			lock (tempCache) {
+				collect = tempCache != null && tempCache.Count > 0;
+				tempCache.Clear();
+			}
+			if (collect) {
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
+			}
 		}
 
 		// Should be called if we don't save it in the files list. It will eventually be GC'd but it's
@@ -209,7 +240,7 @@ namespace dnSpy.Files {
 				return null;
 			newFile.IsAutoLoaded = isAutoLoaded;
 			if (!AssemblyLoadEnabled)
-				return DisableMMapdIO(newFile);
+				return AddTempCachedFile(newFile);
 
 			var result = GetOrAdd(newFile);
 			if (result != newFile)

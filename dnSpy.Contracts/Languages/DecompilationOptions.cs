@@ -46,6 +46,11 @@ namespace dnSpy.Contracts.Languages {
 		/// </summary>
 		public Func<MethodDef, bool> IsBodyModified { get; set; }
 
+		/// <summary>
+		/// Disables assembly loading until Dispose() gets called
+		/// </summary>
+		public Func<IDisposable> GetDisableAssemblyLoad { get; set; }
+
 		// *******************************************************************
 		// NOTE: Don't add new props here without also updating the decompilation cache code
 		// *******************************************************************
@@ -59,6 +64,11 @@ namespace dnSpy.Contracts.Languages {
 			this.DecompilerSettings = new DecompilerSettings();
 			this.DontShowCreateMethodBodyExceptions = true;
 			this.IsBodyModified = m => false;
+		}
+
+		/// <summary />
+		public IDisposable DisableAssemblyLoad() {
+			return GetDisableAssemblyLoad == null ? null : GetDisableAssemblyLoad();
 		}
 	}
 }

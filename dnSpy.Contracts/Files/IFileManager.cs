@@ -27,6 +27,13 @@ namespace dnSpy.Contracts.Files {
 	/// </summary>
 	public interface IFileManager {
 		/// <summary>
+		/// Call this to disable loading assemblies in the file list until the return value's
+		/// <see cref="IDisposable.Dispose()"/> method has been called.
+		/// </summary>
+		/// <returns></returns>
+		IDisposable DisableAssemblyLoad();
+
+		/// <summary>
 		/// Notified when the collection gets changed
 		/// </summary>
 		event EventHandler<NotifyFileCollectionChangedEventArgs> CollectionChanged;

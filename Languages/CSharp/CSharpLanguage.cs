@@ -391,10 +391,12 @@ namespace dnSpy.Languages.CSharp {
 				if (decompileMod || decompileAsm)
 					output.WriteLine();
 
-				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: file.ModuleDef);
-				codeDomBuilder.AddAssembly(file.ModuleDef, true, decompileAsm, decompileMod);
-				codeDomBuilder.RunTransformations(transformAbortCondition);
-				codeDomBuilder.GenerateCode(output);
+				using (options.DisableAssemblyLoad()) {
+					AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: file.ModuleDef);
+					codeDomBuilder.AddAssembly(file.ModuleDef, true, decompileAsm, decompileMod);
+					codeDomBuilder.RunTransformations(transformAbortCondition);
+					codeDomBuilder.GenerateCode(output);
+				}
 			}
 		}
 
@@ -714,17 +716,19 @@ namespace dnSpy.Languages.CSharp {
 		}
 
 		IEnumerable<Tuple<string, string>> WriteAssemblyInfo(ModuleDef module, DecompilationOptions options, HashSet<string> directories) {
-			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: module);
-			codeDomBuilder.AddAssembly(module, true, true, true);
-			codeDomBuilder.RunTransformations(transformAbortCondition);
+			using (options.DisableAssemblyLoad()) {
+				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: module);
+				codeDomBuilder.AddAssembly(module, true, true, true);
+				codeDomBuilder.RunTransformations(transformAbortCondition);
 
-			string prop = "Properties";
-			if (directories.Add("Properties"))
-				Directory.CreateDirectory(Path.Combine(options.ProjectOptions.Directory, prop));
-			string assemblyInfo = Path.Combine(prop, "AssemblyInfo" + this.FileExtension);
-			using (StreamWriter w = new StreamWriter(Path.Combine(options.ProjectOptions.Directory, assemblyInfo)))
-				codeDomBuilder.GenerateCode(new PlainTextOutput(w));
-			return new Tuple<string, string>[] { Tuple.Create("Compile", assemblyInfo) };
+				string prop = "Properties";
+				if (directories.Add("Properties"))
+					Directory.CreateDirectory(Path.Combine(options.ProjectOptions.Directory, prop));
+				string assemblyInfo = Path.Combine(prop, "AssemblyInfo" + this.FileExtension);
+				using (StreamWriter w = new StreamWriter(Path.Combine(options.ProjectOptions.Directory, assemblyInfo)))
+					codeDomBuilder.GenerateCode(new PlainTextOutput(w));
+				return new Tuple<string, string>[] { Tuple.Create("Compile", assemblyInfo) };
+			}
 		}
 
 		IEnumerable<Tuple<string, string>> WriteCodeFilesInProject(ModuleDef module, DecompilationOptions options, HashSet<string> directories) {
