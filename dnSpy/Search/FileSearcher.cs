@@ -136,7 +136,7 @@ namespace dnSpy.Search {
 		void AddSearchResult(SearchResult result) {
 			cancellationTokenSource.Token.ThrowIfCancellationRequested();
 			if (totalResultsFound >= options.MaxResults) {
-				AddSearchResultNoCheck(SearchResult.CreateMessage(filterSearcherOptions.Context, string.Format(dnSpy_Resources.SearchAbortedMessage, options.MaxResults), TextTokenType.Error, false));
+				AddSearchResultNoCheck(SearchResult.CreateMessage(filterSearcherOptions.Context, string.Format(dnSpy_Resources.SearchAbortedMessage, options.MaxResults), TextTokenType.Error, true));
 				throw new TooManyResultsException();
 			}
 			totalResultsFound++;
