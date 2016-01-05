@@ -142,6 +142,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you want to load the saved settings?.
+        /// </summary>
+        public static string AskReadSettings {
+            get {
+                return ResourceManager.GetString("AskReadSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Assembly Ex_plorer.
         /// </summary>
         public static string AssemblyExplorerCommand {

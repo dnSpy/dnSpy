@@ -19,6 +19,8 @@
 
 using System;
 using System.Windows;
+using System.Windows.Input;
+using dnSpy.Properties;
 
 namespace dnSpy.MainApp {
 	public static class StartUpClass {
@@ -29,7 +31,16 @@ namespace dnSpy.MainApp {
 				Environment.Exit(1);
 			}
 
-			App.Main();
+			bool readSettings = (Keyboard.Modifiers & ModifierKeys.Shift) == 0;
+			if (!readSettings) {
+				// Need to use DefaultDesktopOnly or the dlg box is shown in the background...
+				var res = MessageBox.Show(dnSpy_Resources.AskReadSettings, "dnSpy", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes, MessageBoxOptions.DefaultDesktopOnly);
+				readSettings = res != MessageBoxResult.No;
+			}
+
+			var app = new App(readSettings);
+			app.InitializeComponent();
+			app.Run();
 		}
 	}
 }

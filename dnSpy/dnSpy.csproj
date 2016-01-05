@@ -393,9 +393,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="MainApp\App.xaml">
+    <Page Include="MainApp\App.xaml">
       <SubType>Designer</SubType>
-    </ApplicationDefinition>
+    </Page>
     <Page Include="Files\Tabs\Dialogs\OpenFileListDlg.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -65,14 +65,14 @@ namespace dnSpy.MainApp {
 		IDnSpyLoaderManager dnSpyLoaderManager = null;
 		CompositionContainer compositionContainer;
 
-		public App() {
+		public App(bool readSettings) {
 			InitializeComponent();
 			UIFixes();
 
 			var asms = new List<Assembly>();
 			asms.Add(typeof(Language).Assembly);		// Languages
 			asms.Add(typeof(EnumVM).Assembly);			// dnSpy.Shared.UI
-			compositionContainer = AppCreator.Create(asms, "*.Plugin.dll");
+			compositionContainer = AppCreator.Create(asms, "*.Plugin.dll", readSettings);
 			compositionContainer.ComposeParts(this);
 
 			this.Exit += App_Exit;

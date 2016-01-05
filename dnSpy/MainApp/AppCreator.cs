@@ -30,9 +30,10 @@ using dnSpy.Settings;
 
 namespace dnSpy.MainApp {
 	static class AppCreator {
-		public static CompositionContainer Create(IEnumerable<Assembly> asms, string pattern) {
+		public static CompositionContainer Create(IEnumerable<Assembly> asms, string pattern, bool readSettings) {
 			var container = InitializeCompositionContainer(asms, pattern);
-			ReadSettings(container.GetExportedValue<ISettingsManager>());
+			if (readSettings)
+				ReadSettings(container.GetExportedValue<ISettingsManager>());
 			container.GetExportedValue<ICultureManager>();
 			return container;
 		}

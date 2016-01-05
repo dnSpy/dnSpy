@@ -891,4 +891,7 @@
   <data name="SortAsmsCommand" xml:space="preserve">
     <value>Sor_t Assemblies</value>
   </data>
+  <data name="AskReadSettings" xml:space="preserve">
+    <value>Do you want to load the saved settings?</value>
+  </data>
 </root>
