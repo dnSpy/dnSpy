@@ -200,7 +200,7 @@ namespace dnSpy.Files {
 		void ClearTempCache() {
 			bool collect;
 			lock (tempCache) {
-				collect = tempCache != null && tempCache.Count > 0;
+				collect = tempCache.Count > 0;
 				tempCache.Clear();
 			}
 			if (collect) {
