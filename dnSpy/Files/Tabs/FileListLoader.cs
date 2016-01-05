@@ -22,8 +22,10 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Threading;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Files.Tabs {
@@ -34,27 +36,26 @@ namespace dnSpy.Files.Tabs {
 		bool Load(FileList fileList, IDnSpyFileLoader dnSpyFileLoader = null);
 		bool CanReload { get; }
 		bool Reload(IDnSpyFileLoader dnSpyFileLoader = null);
+		void SaveCurrentFilesToList();
 	}
 
 	[Export, Export(typeof(IFileListLoader)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class FileListLoader : IFileListLoader {
 		readonly FileListManager fileListManager;
-		readonly IFileManager fileManager;
 		readonly IFileTabManager fileTabManager;
 		readonly FileTabSerializer fileTabSerializer;
 		readonly Lazy<IFileListListener, IFileListListenerMetadata>[] listeners;
 
 		[ImportingConstructor]
-		FileListLoader(FileListManager fileListManager, IFileManager fileManager, IFileTabManager fileTabManager, FileTabSerializer fileTabSerializer, [ImportMany] IEnumerable<Lazy<IFileListListener, IFileListListenerMetadata>> mefListeners) {
+		FileListLoader(IAppWindow appWindow, FileListManager fileListManager, IFileTabManager fileTabManager, FileTabSerializer fileTabSerializer, [ImportMany] IEnumerable<Lazy<IFileListListener, IFileListListenerMetadata>> mefListeners) {
 			this.fileListManager = fileListManager;
-			this.fileManager = fileManager;
 			this.fileTabManager = fileTabManager;
 			this.fileTabSerializer = fileTabSerializer;
 			this.listeners = mefListeners.OrderBy(a => a.Metadata.Order).ToArray();
-			this.fileManager.CollectionChanged += FileManager_CollectionChanged;
+			appWindow.MainWindowClosed += AppWindow_MainWindowClosed;
 		}
 
-		void FileManager_CollectionChanged(object sender, NotifyFileCollectionChangedEventArgs e) {
+		void AppWindow_MainWindowClosed(object sender, EventArgs e) {
 			SaveCurrentFilesToList();
 		}
 
@@ -78,10 +79,10 @@ namespace dnSpy.Files.Tabs {
 			return new Disable_SaveCurrentFilesToList(this);
 		}
 
-		void SaveCurrentFilesToList() {
+		public void SaveCurrentFilesToList() {
 			if (disable_SaveCurrentFilesToList)
 				return;
-			fileListManager.SelectedFileList.Update(fileManager.GetFiles());
+			fileListManager.SelectedFileList.Update(fileTabManager.FileTreeView.TreeView.Root.DataChildren.OfType<IDnSpyFileNode>().Select(a => a.DnSpyFile));
 		}
 		bool disable_SaveCurrentFilesToList;
 
@@ -92,7 +93,7 @@ namespace dnSpy.Files.Tabs {
 
 			foreach (var f in fileListManager.SelectedFileList.Files) {
 				if (!(f.Type == FileConstants.FILETYPE_FILE && string.IsNullOrEmpty(f.Name)))
-					fileManager.TryGetOrCreate(f);
+					fileTabManager.FileTreeView.FileManager.TryGetOrCreate(f);
 				yield return null;
 			}
 			disable.Dispose();
@@ -128,7 +129,7 @@ namespace dnSpy.Files.Tabs {
 		public bool Load(FileList fileList, IDnSpyFileLoader dnSpyFileLoader) {
 			const bool isReload = false;
 			if (dnSpyFileLoader == null)
-				dnSpyFileLoader = new DefaultDnSpyFileLoader(fileManager);
+				dnSpyFileLoader = new DefaultDnSpyFileLoader(fileTabManager.FileTreeView.FileManager);
 			if (!CanLoad)
 				return false;
 			if (!CheckCanLoad(isReload))
@@ -139,7 +140,7 @@ namespace dnSpy.Files.Tabs {
 			NotifyBeforeLoad(isReload);
 			using (DisableSaveToList()) {
 				fileTabManager.CloseAll();
-				fileManager.Clear();
+				fileTabManager.FileTreeView.FileManager.Clear();
 				dnSpyFileLoader.Load(fileList.Files);
 			}
 			NotifyAfterLoad(isReload);
@@ -156,7 +157,7 @@ namespace dnSpy.Files.Tabs {
 		public bool Reload(IDnSpyFileLoader dnSpyFileLoader) {
 			const bool isReload = true;
 			if (dnSpyFileLoader == null)
-				dnSpyFileLoader = new DefaultDnSpyFileLoader(fileManager);
+				dnSpyFileLoader = new DefaultDnSpyFileLoader(fileTabManager.FileTreeView.FileManager);
 			if (!CanReload)
 				return false;
 			if (!CheckCanLoad(isReload))
@@ -167,7 +168,7 @@ namespace dnSpy.Files.Tabs {
 			var tgws = fileTabSerializer.SaveTabs();
 			using (DisableSaveToList()) {
 				fileTabManager.CloseAll();
-				fileManager.Clear();
+				fileTabManager.FileTreeView.FileManager.Clear();
 				dnSpyFileLoader.Load(fileListManager.SelectedFileList.Files);
 			}
 			NotifyAfterLoad(isReload);

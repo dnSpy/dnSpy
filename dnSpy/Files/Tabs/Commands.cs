@@ -166,6 +166,7 @@ namespace dnSpy.Files.Tabs {
 			var flvm = win.SelectedItems.FirstOrDefault();
 			var oldSelected = fileListManager.SelectedFileList;
 			if (flvm != null) {
+				fileListLoader.SaveCurrentFilesToList();
 				fileListManager.Add(flvm.FileList);
 				fileListManager.SelectedFileList = flvm.FileList;
 			}
