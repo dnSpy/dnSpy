@@ -39,6 +39,7 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.UI.MVVM;
 using ICSharpCode.Decompiler;
+using ICSharpCode.NRefactory;
 
 namespace dnSpy.Analyzer {
 	interface IAnalyzerManager {
@@ -301,7 +302,7 @@ namespace dnSpy.Analyzer {
 				return false;
 
 			var location = mapping.StartLocation;
-			var loc = FindLocation(uiContext.GetCodeReferences(location.Line, location.Column), location.Line, @ref);
+			var loc = FindLocation(uiContext.GetCodeReferences(location.Line, location.Column), mapping.EndLocation, @ref);
 			if (loc == null)
 				loc = new TextEditorLocation(location.Line, location.Column);
 
@@ -309,14 +310,23 @@ namespace dnSpy.Analyzer {
 			return true;
 		}
 
-		TextEditorLocation? FindLocation(IEnumerable<Tuple<CodeReference, TextEditorLocation>> infos, int line, object @ref) {
+		TextEditorLocation? FindLocation(IEnumerable<Tuple<CodeReference, TextEditorLocation>> infos, TextLocation endLoc, object @ref) {
 			foreach (var info in infos) {
-				if (info.Item2.Line != line)
+				int c = Compare(info.Item2, endLoc);
+				if (c > 0)
 					break;
 				if (RefEquals(@ref, info.Item1.Reference))
 					return info.Item2;
 			}
 			return null;
+		}
+
+		static int Compare(TextEditorLocation a, TextLocation b) {
+			if (a.Line > b.Line)
+				return 1;
+			if (a.Line == b.Line)
+				return a.Column.CompareTo(b.Column);
+			return -1;
 		}
 
 		static bool RefEquals(object a, object b) {
