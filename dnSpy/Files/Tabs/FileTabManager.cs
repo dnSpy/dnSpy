@@ -226,6 +226,18 @@ namespace dnSpy.Files.Tabs {
 
 		void FileTreeView_NodeActivated(object sender, FileTreeNodeActivatedEventArgs e) {
 			e.Handled = true;
+
+			var asmRefNode = e.Node as IAssemblyReferenceNode;
+			if (asmRefNode != null) {
+				var asm = fileTreeView.FileManager.Resolve(asmRefNode.AssemblyRef, asmRefNode.GetModule());
+				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+					var asmNode = fileTreeView.FindNode(asm);
+					if (asmNode != null)
+						fileTreeView.TreeView.SelectItems(new ITreeNodeData[] { asmNode });
+				}));
+				return;
+			}
+
 			var tab = ActiveTabContentImpl;
 			if (tab == null)
 				return;
