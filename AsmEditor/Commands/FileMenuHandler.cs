@@ -43,7 +43,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		public AsmEditorContext CreateContext() {
-			return new AsmEditorContext(fileTreeView.TreeView.SelectedItems.OfType<IFileTreeNodeData>().ToArray());
+			return new AsmEditorContext(fileTreeView.TreeView.TopLevelSelection.OfType<IFileTreeNodeData>().ToArray());
 		}
 	}
 }
