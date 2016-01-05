@@ -2122,6 +2122,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+O.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftO {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Code.
         /// </summary>
         public static string ShowCodeCommand {

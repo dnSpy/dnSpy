@@ -885,4 +885,7 @@
   <data name="LanguageSwitchMessage" xml:space="preserve">
     <value>You must restart dnSpy for the language change to take effect.</value>
   </data>
+  <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
+    <value>Ctrl+Shift+O</value>
+  </data>
 </root>
