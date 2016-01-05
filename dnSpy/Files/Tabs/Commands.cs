@@ -200,6 +200,24 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SortAsmsCommand", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 40)]
+	sealed class SortAssembliesCommand : MenuItemBase {
+		readonly IFileTreeView fileTreeView;
+
+		[ImportingConstructor]
+		SortAssembliesCommand(IFileTreeView fileTreeView) {
+			this.fileTreeView = fileTreeView;
+		}
+
+		public override bool IsEnabled(IMenuItemContext context) {
+			return fileTreeView.CanSortTopNodes;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			fileTreeView.SortTopNodes();
+		}
+	}
+
 	[ExportAutoLoaded]
 	sealed class ShowCodeEditorCommandLoader : IAutoLoaded {
 		public static readonly RoutedCommand ShowCodeEditorRoutedCommand = new RoutedCommand("ShowCodeEditorRoutedCommand", typeof(ShowCodeEditorCommandLoader));

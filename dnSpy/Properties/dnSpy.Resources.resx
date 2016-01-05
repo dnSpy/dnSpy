@@ -888,4 +888,7 @@
   <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
     <value>Ctrl+Shift+O</value>
   </data>
+  <data name="SortAsmsCommand" xml:space="preserve">
+    <value>Sor_t Assemblies</value>
+  </data>
 </root>

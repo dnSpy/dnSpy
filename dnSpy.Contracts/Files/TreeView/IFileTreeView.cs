@@ -192,5 +192,15 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// Disposes this instance
 		/// </summary>
 		void Dispose();
+
+		/// <summary>
+		/// Sorts all files
+		/// </summary>
+		void SortTopNodes();
+
+		/// <summary>
+		/// true if <see cref="SortTopNodes()"/> can be called
+		/// </summary>
+		bool CanSortTopNodes { get; }
 	}
 }

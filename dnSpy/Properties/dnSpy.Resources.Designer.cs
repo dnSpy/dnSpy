@@ -2149,6 +2149,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Sor_t Assemblies.
+        /// </summary>
+        public static string SortAsmsCommand {
+            get {
+                return ResourceManager.GetString("SortAsmsCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Syntax Highlight.
         /// </summary>
         public static string SyntaxHighlightCommand {

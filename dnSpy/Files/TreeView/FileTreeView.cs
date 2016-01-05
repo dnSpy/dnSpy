@@ -843,5 +843,60 @@ namespace dnSpy.Files.TreeView {
 			if (newSelectedNode != null)
 				treeView.SelectItems(new[] { newSelectedNode });
 		}
+
+		IList<IDnSpyFileNode> GetNewSortedNodes() {
+			var origOrder = TopNodes.ToArray();
+			var files = origOrder.ToList();
+			files.Sort(DnSpyFileNodeComparer.Instance);
+			if (Equals(files, origOrder))
+				return null;
+			return files;
+		}
+
+		public bool CanSortTopNodes {
+			get { return GetNewSortedNodes() != null; }
+		}
+
+		public void SortTopNodes() {
+			var sortedFiles = GetNewSortedNodes();
+			if (sortedFiles == null)
+				return;
+			var selectedNodes = treeView.SelectedItems;
+			treeView.Root.Children.Clear();
+			foreach (var n in sortedFiles)
+				treeView.Root.Children.Add(n.TreeNode);
+			treeView.SelectItems(selectedNodes);
+		}
+
+		static bool Equals(IList<IDnSpyFileNode> a, IList<IDnSpyFileNode> b) {
+			if (a.Count != b.Count)
+				return false;
+			for (int i = 0; i < a.Count; i++) {
+				if (a[i] != b[i])
+					return false;
+			}
+			return true;
+		}
+
+		sealed class DnSpyFileNodeComparer : IComparer<IDnSpyFileNode> {
+			public static readonly DnSpyFileNodeComparer Instance = new DnSpyFileNodeComparer();
+
+			public int Compare(IDnSpyFileNode x, IDnSpyFileNode y) {
+				if (x == y)
+					return 0;
+				if (x == null)
+					return -1;
+				if (y == null)
+					return 1;
+				int c = GetIsAutoLoadedOrder(x.DnSpyFile.IsAutoLoaded).CompareTo(GetIsAutoLoadedOrder(y.DnSpyFile.IsAutoLoaded));
+				if (c != 0)
+					return c;
+				return StringComparer.InvariantCultureIgnoreCase.Compare(x.ToString(), y.ToString());
+			}
+
+			static int GetIsAutoLoadedOrder(bool b) {
+				return b ? 1 : 0;
+			}
+		}
 	}
 }
