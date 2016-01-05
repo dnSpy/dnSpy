@@ -275,16 +275,14 @@ namespace dnSpy.Debugger.Modules {
 		}
 	}
 
-	[Export, ExportMenuItem(Icon = "AssemblyModule", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 10)]
+	[ExportMenuItem(Icon = "AssemblyModule", Group = MenuConstants.GROUP_CTX_DBG_MODULES_GOTO, Order = 10)]
 	sealed class LoadModulesCtxMenuCommand : ModulesCtxMenuCommand {
-		readonly IFileTabManager fileTabManager;
 		readonly Lazy<ModuleLoader> moduleLoader;
 		readonly Lazy<IInMemoryModuleManager> inMemoryModuleManager;
 
 		[ImportingConstructor]
-		LoadModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, IFileTabManager fileTabManager, Lazy<ModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager)
+		LoadModulesCtxMenuCommand(Lazy<ITheDebugger> theDebugger, Lazy<IModulesContent> modulesContent, Lazy<ModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager)
 			: base(theDebugger, modulesContent) {
-			this.fileTabManager = fileTabManager;
 			this.moduleLoader = moduleLoader;
 			this.inMemoryModuleManager = inMemoryModuleManager;
 		}
