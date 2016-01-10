@@ -55,6 +55,10 @@
     <Reference Include="DiffLib">
       <HintPath>..\..\packages\DiffLib.1.0.0.55\lib\net35-Client\DiffLib.dll</HintPath>
     </Reference>
+    <Reference Include="FSharp.Compiler.Service, Version=2.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FSharp.Compiler.Service.2.0.0.2\lib\net45\FSharp.Compiler.Service.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="nunit.core, Version=2.6.4.14350, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <HintPath>..\..\packages\NUnitTestAdapter.2.0.0\lib\nunit.core.dll</HintPath>
       <Private>False</Private>
@@ -92,12 +96,16 @@
     <Compile Include="DoubleConstants.cs" />
     <Compile Include="ExpressionTrees.cs" />
     <None Include="IL\SequenceOfNestedIfs.Output.cs" />
+    <Compile Include="FSharpPatterns\FSharpPatternTests.cs" />
+    <EmbeddedResource Include="FSharpPatterns\FSharpUsing.fs.Debug.cs" />
+    <Compile Include="FSharpPatterns\TestRunner.cs" />
     <Compile Include="IL\ILTests.cs" />
     <Compile Include="LiftedOperators.cs" />
     <Compile Include="CustomShortCircuitOperators.cs" />
     <Compile Include="Helpers\CodeAssert.cs" />
     <Compile Include="IncrementDecrement.cs" />
     <Compile Include="Lock.cs" />
+    <Compile Include="NotUsingBlock.cs" />
     <Compile Include="PInvoke.cs" />
     <Compile Include="QueryExpressions.cs" />
     <Compile Include="Switch.cs" />
@@ -155,12 +163,17 @@
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="FSharpPatterns\FSharpUsing.fs" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="BooleanConsumedAsInteger.il" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FSharpPatterns\FSharpUsing.fs.Release.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

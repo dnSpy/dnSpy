@@ -179,13 +179,20 @@ namespace ICSharpCode.Decompiler.Tests
 		{
 			TestFile(@"..\..\Tests\YieldReturn.cs");
 		}
-		
+
 		[Test]
 		public void TypeAnalysis()
 		{
 			TestFile(@"..\..\Tests\TypeAnalysisTests.cs");
 		}
-		
+
+		// see https://github.com/icsharpcode/ILSpy/pull/671
+		[Test]
+		public void NotUsingBlock()
+		{
+			TestFile(@"..\..\Tests\NotUsingBlock.cs");
+		}
+
 		static void TestFile(string fileName, bool useDebug = false, int compilerVersion = 4)
 		{
 			AssertRoundtripCode(fileName, optimize: false, useDebug: useDebug, compilerVersion: compilerVersion);
