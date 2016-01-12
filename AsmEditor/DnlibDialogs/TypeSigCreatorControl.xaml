@@ -61,7 +61,7 @@
 			<StackPanel Grid.Row="2" Margin="0 5 0 0" Orientation="Horizontal">
                 <Button Grid.Column="0" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Clear}" Command="{Binding ClearTypeSigCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Clear_ToolTip}"/>
                 <Button Grid.Column="1" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Remove}" Command="{Binding RemoveLastTypeSigCommand}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.TypeSigCreator_Remove_ToolTip}"/>
-				<ComboBox Grid.Column="2" Margin="0 0 0 0" DisplayMemberPath="NameUI" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" Visibility="{Binding CanShowTypeFullName, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                <ComboBox Grid.Column="2" Margin="0 0 0 0" DisplayMemberPath="UniqueNameUI" Width="100" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" Visibility="{Binding CanShowTypeFullName, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 			</StackPanel>
 
 			<Grid Grid.Row="3" Margin="0 5 0 0" Visibility="{Binding AddingLeafTypeSig, Converter={StaticResource BooleanToVisibilityConverter}}">

@@ -28,9 +28,6 @@ namespace dnSpy.Contracts.Languages {
 	/// </summary>
 	public class DecompilationOptions {
 		/// <summary />
-		public ProjectOptions ProjectOptions { get; set; }
-
-		/// <summary />
 		public CancellationToken CancellationToken { get; set; }
 
 		/// <summary />
@@ -59,11 +56,24 @@ namespace dnSpy.Contracts.Languages {
 		/// Constructor
 		/// </summary>
 		public DecompilationOptions() {
-			this.ProjectOptions = new ProjectOptions();
 			this.CancellationToken = CancellationToken.None;
 			this.DecompilerSettings = new DecompilerSettings();
 			this.DontShowCreateMethodBodyExceptions = true;
 			this.IsBodyModified = m => false;
+		}
+
+		/// <summary>
+		/// Deep clone of this instance
+		/// </summary>
+		/// <returns></returns>
+		public DecompilationOptions Clone() {
+			var other = new DecompilationOptions();
+			other.CancellationToken = this.CancellationToken;
+			other.DecompilerSettings = this.DecompilerSettings.Clone();
+			other.DontShowCreateMethodBodyExceptions = this.DontShowCreateMethodBodyExceptions;
+			other.IsBodyModified = this.IsBodyModified;
+			other.GetDisableAssemblyLoad = this.GetDisableAssemblyLoad;
+			return other;
 		}
 
 		/// <summary />

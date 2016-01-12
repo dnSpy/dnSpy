@@ -196,6 +196,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Close.
+        /// </summary>
+        public static string Button_Close {
+            get {
+                return ResourceManager.GetString("Button_Close", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _No.
         /// </summary>
         public static string Button_No {
@@ -700,6 +709,44 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A file with the same name as the destination folder already exists..
+        /// </summary>
+        public static string Error_FileAlreadyExists {
+            get {
+                return ResourceManager.GetString("Error_FileAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing destination folder..
+        /// </summary>
+        public static string Error_MissingDestinationFolder {
+            get {
+                return ResourceManager.GetString("Error_MissingDestinationFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing filename.
+        /// </summary>
+        public static string Error_MissingFilename {
+            get {
+                return ResourceManager.GetString("Error_MissingFilename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An exception occurred
+        ///
+        ///{0}.
+        /// </summary>
+        public static string ErrorExceptionOccurred {
+            get {
+                return ResourceManager.GetString("ErrorExceptionOccurred", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An exception occurred:.
         /// </summary>
         public static string ExceptionMessage {
@@ -732,6 +779,141 @@ namespace dnSpy.Properties {
         public static string ExplorerOpenWithDnSpy {
             get {
                 return ResourceManager.GetString("ExplorerOpenWithDnSpy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Export.
+        /// </summary>
+        public static string ExportToProject_Button_Export {
+            get {
+                return ResourceManager.GetString("ExportToProject_Button_Export", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create .res_x files.
+        /// </summary>
+        public static string ExportToProject_CreateResX {
+            get {
+                return ResourceManager.GetString("ExportToProject_CreateResX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Decompile _baml to xaml.
+        /// </summary>
+        public static string ExportToProject_DecompileXaml {
+            get {
+                return ResourceManager.GetString("ExportToProject_DecompileXaml", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Folder.
+        /// </summary>
+        public static string ExportToProject_DestinationFolder {
+            get {
+                return ResourceManager.GetString("ExportToProject_DestinationFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Do not reference mscorlib.dll.
+        /// </summary>
+        public static string ExportToProject_DontReferenceStdLib {
+            get {
+                return ResourceManager.GetString("ExportToProject_DontReferenceStdLib", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error log.
+        /// </summary>
+        public static string ExportToProject_ErrorLogMsg {
+            get {
+                return ResourceManager.GetString("ExportToProject_ErrorLogMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One file will be decompiled. Select more than one assembly to decompile more than one file..
+        /// </summary>
+        public static string ExportToProject_ExportFileMessage {
+            get {
+                return ResourceManager.GetString("ExportToProject_ExportFileMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0:n0} files will be decompiled..
+        /// </summary>
+        public static string ExportToProject_ExportNFilesMessage {
+            get {
+                return ResourceManager.GetString("ExportToProject_ExportNFilesMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Language.
+        /// </summary>
+        public static string ExportToProject_Language {
+            get {
+                return ResourceManager.GetString("ExportToProject_Language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Open project in Visual Studio.
+        /// </summary>
+        public static string ExportToProject_OpenProjectInVisualStudio {
+            get {
+                return ResourceManager.GetString("ExportToProject_OpenProjectInVisualStudio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Version.
+        /// </summary>
+        public static string ExportToProject_ProjectVersion {
+            get {
+                return ResourceManager.GetString("ExportToProject_ProjectVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Solution.
+        /// </summary>
+        public static string ExportToProject_SolutionFilename {
+            get {
+                return ResourceManager.GetString("ExportToProject_SolutionFilename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export to Project.
+        /// </summary>
+        public static string ExportToProject_Title {
+            get {
+                return ResourceManager.GetString("ExportToProject_Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Unpack resources.
+        /// </summary>
+        public static string ExportToProject_UnpackResources {
+            get {
+                return ResourceManager.GetString("ExportToProject_UnpackResources", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Export to Pro_ject....
+        /// </summary>
+        public static string ExportToProjectCommand {
+            get {
+                return ResourceManager.GetString("ExportToProjectCommand", resourceCulture);
             }
         }
         
@@ -1650,24 +1832,6 @@ namespace dnSpy.Properties {
         public static string SaveKey {
             get {
                 return ResourceManager.GetString("SaveKey", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} Project.
-        /// </summary>
-        public static string SaveLanguageProjectFile {
-            get {
-                return ResourceManager.GetString("SaveLanguageProjectFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} Single File.
-        /// </summary>
-        public static string SaveLanguageSingleFile {
-            get {
-                return ResourceManager.GetString("SaveLanguageSingleFile", resourceCulture);
             }
         }
         

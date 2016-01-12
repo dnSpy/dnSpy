@@ -43,15 +43,15 @@ namespace dnSpy.Contracts.Languages {
 		/// <summary>
 		/// Finds a <see cref="ILanguage"/> instance. null is returned if it wasn't found
 		/// </summary>
-		/// <param name="nameUI">Name, see <see cref="ILanguage.NameUI"/></param>
+		/// <param name="guid">Language guid, see <see cref="ILanguage.UniqueGuid"/> and <see cref="ILanguage.GenericGuid"/></param>
 		/// <returns></returns>
-		ILanguage Find(string nameUI);
+		ILanguage Find(Guid guid);
 
 		/// <summary>
 		/// Finds a <see cref="ILanguage"/> instance. Returns the first one if the language wasn't found
 		/// </summary>
-		/// <param name="nameUI">Name, see <see cref="ILanguage.NameUI"/></param>
+		/// <param name="guid">Language guid, see <see cref="ILanguage.UniqueGuid"/> and <see cref="ILanguage.GenericGuid"/></param>
 		/// <returns></returns>
-		ILanguage FindOrDefault(string nameUI);
+		ILanguage FindOrDefault(Guid guid);
 	}
 }

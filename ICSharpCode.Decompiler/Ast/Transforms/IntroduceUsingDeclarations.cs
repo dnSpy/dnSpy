@@ -58,7 +58,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				}
 			}
 			
-			if (!context.Settings.FullyQualifyAmbiguousTypeNames)
+			if (!context.Settings.FullyQualifyAmbiguousTypeNames && !context.Settings.FullyQualifyAllTypes)
 				return;
 
 			if (context.CurrentModule != null) {
@@ -418,6 +418,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			
 			bool IsAmbiguous(string ns, string name)
 			{
+				if (transform.context.Settings.FullyQualifyAllTypes)
+					return true;
 				// If the type name conflicts with an inner class/type parameter, we need to fully-qualify it:
 				if (currentMemberTypes != null && currentMemberTypes.Contains(name))
 					return true;

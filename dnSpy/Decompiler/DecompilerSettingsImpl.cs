@@ -54,6 +54,7 @@ namespace dnSpy.Decompiler {
 // 			this.UsingDeclarations = sect.Attribute<bool?>("UsingDeclarations") ?? this.UsingDeclarations;
 			this.QueryExpressions = sect.Attribute<bool?>("QueryExpressions") ?? this.QueryExpressions;
 // 			this.FullyQualifyAmbiguousTypeNames = sect.Attribute<bool?>("FullyQualifyAmbiguousTypeNames") ?? this.FullyQualifyAmbiguousTypeNames;
+// 			this.FullyQualifyAllTypes = sect.Attribute<bool?>("FullyQualifyAllTypes") ?? this.FullyQualifyAllTypes;
 			this.UseDebugSymbols = sect.Attribute<bool?>("UseDebugSymbols") ?? this.UseDebugSymbols;
 // 			this.ObjectOrCollectionInitializers = sect.Attribute<bool?>("ObjectOrCollectionInitializers") ?? this.ObjectOrCollectionInitializers;
 			this.ShowXmlDocumentation = sect.Attribute<bool?>("ShowXmlDocumentation") ?? this.ShowXmlDocumentation;
@@ -96,6 +97,7 @@ namespace dnSpy.Decompiler {
 // 			sect.Attribute("UsingDeclarations", UsingDeclarations);
 			sect.Attribute("QueryExpressions", QueryExpressions);
 // 			sect.Attribute("FullyQualifyAmbiguousTypeNames", FullyQualifyAmbiguousTypeNames);
+// 			sect.Attribute("FullyQualifyAllTypes", FullyQualifyAllTypes);
 			sect.Attribute("UseDebugSymbols", UseDebugSymbols);
 // 			sect.Attribute("ObjectOrCollectionInitializers", ObjectOrCollectionInitializers);
 			sect.Attribute("ShowXmlDocumentation", ShowXmlDocumentation);

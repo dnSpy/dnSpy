@@ -143,8 +143,8 @@ namespace dnSpy.Shared.UI.Files {
 		static bool IsSubPath(string path, string filename) {
 			filename = Path.GetFullPath(Path.GetDirectoryName(filename));
 			var root = Path.GetPathRoot(filename);
-			while (filename != root) {
-				if (path == filename)
+			while (!StringComparer.OrdinalIgnoreCase.Equals(filename, root)) {
+				if (StringComparer.OrdinalIgnoreCase.Equals(path, filename))
 					return true;
 				filename = Path.GetDirectoryName(filename);
 			}

@@ -97,10 +97,8 @@
 					Visibility="{Binding CanShowModuleErrors, Converter={StaticResource BooleanToVisibilityConverter}}"
 					>
 			<TextBlock Margin="0 0 5 0" Background="{DynamicResource CommonControlsTextBoxErrorBackground}" Foreground="{DynamicResource CommonControlsTextBoxErrorForeground}" Text="{Binding CanExecuteSaveError}" />
-			<TextBlock Background="{DynamicResource CommonControlsTextBoxErrorBackground}" Foreground="{DynamicResource CommonControlsTextBoxErrorForeground}">
-				-- Fix the errors by editing the options.
-			</TextBlock>
-		</StackPanel>
+            <TextBlock Background="{DynamicResource CommonControlsTextBoxErrorBackground}" Foreground="{DynamicResource CommonControlsTextBoxErrorForeground}" Text="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_FixErrorsByEditingSettings}" />
+        </StackPanel>
 		
 		<Grid Grid.Row="5" Margin="5 0 5 5">
 			<Grid.ColumnDefinitions>

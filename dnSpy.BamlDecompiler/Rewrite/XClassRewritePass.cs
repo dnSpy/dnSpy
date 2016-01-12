@@ -51,6 +51,10 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 			var attrName = ctx.GetXamlNsName("Class", elem);
 
 			var attrs = elem.Attributes().ToList();
+			if (typeDef.IsNotPublic) {
+				var classModifierName = ctx.GetXamlNsName("ClassModifier", elem);
+				attrs.Insert(0, new XAttribute(classModifierName, ctx.BamlDecompilerOptions.InternalClassModifier));
+			}
 			attrs.Insert(0, new XAttribute(attrName, type.ResolvedType.ReflectionFullName));
 			elem.ReplaceAttributes(attrs);
 		}

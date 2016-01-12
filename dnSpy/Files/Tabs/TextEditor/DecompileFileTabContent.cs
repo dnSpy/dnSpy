@@ -93,7 +93,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (dc == null)
 				return null;
 
-			section.Attribute("Language", dc.Language.NameUI);
+			section.Attribute("Language", dc.Language.UniqueGuid);
 			return GUID_SerializedContent;
 		}
 
@@ -101,8 +101,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (guid != GUID_SerializedContent)
 				return null;
 
-			var langName = section.Attribute<string>("Language") ?? "C#";
-			var language = languageManager.FindOrDefault(langName);
+			var langGuid = section.Attribute<Guid?>("Language") ?? LanguageConstants.LANGUAGE_CSHARP;
+			var language = languageManager.FindOrDefault(langGuid);
 			return new DecompileFileTabContent(this, context.Nodes, language);
 		}
 	}

@@ -20,29 +20,30 @@
 using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
 using dnSpy.Shared.UI.MVVM;
 
 namespace dnSpy.Languages {
 	interface ILanguageManagerSettings : INotifyPropertyChanged {
-		string LanguageName { get; }
+		Guid LanguageGuid { get; }
 	}
 
 	class LanguageManagerSettings : ViewModelBase, ILanguageManagerSettings {
 		protected virtual void OnModified() {
 		}
 
-		public string LanguageName {
-			get { return languageName; }
+		public Guid LanguageGuid {
+			get { return languageGuid; }
 			set {
-				if (languageName != value) {
-					languageName = value;
-					OnPropertyChanged("LanguageName");
+				if (languageGuid != value) {
+					languageGuid = value;
+					OnPropertyChanged("LanguageGuid");
 					OnModified();
 				}
 			}
 		}
-		string languageName = "C#";
+		Guid languageGuid = LanguageConstants.LANGUAGE_CSHARP;
 	}
 
 	[Export, Export(typeof(ILanguageManagerSettings)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -57,7 +58,7 @@ namespace dnSpy.Languages {
 
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
-			this.LanguageName = sect.Attribute<string>("LanguageName") ?? this.LanguageName;
+			this.LanguageGuid = sect.Attribute<Guid?>("LanguageGuid") ?? this.LanguageGuid;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -66,7 +67,7 @@ namespace dnSpy.Languages {
 			if (disableSave)
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
-			sect.Attribute("LanguageName", LanguageName);
+			sect.Attribute("LanguageGuid", LanguageGuid);
 		}
 	}
 }

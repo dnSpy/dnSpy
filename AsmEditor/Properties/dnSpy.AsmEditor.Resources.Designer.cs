@@ -5754,6 +5754,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to -- Fix the errors by editing the options..
+        /// </summary>
+        public static string SaveModules_FixErrorsByEditingSettings {
+            get {
+                return ResourceManager.GetString("SaveModules_FixErrorsByEditingSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Access error: {0}.
         /// </summary>
         public static string SaveModules_Log_AccessError {

@@ -74,7 +74,7 @@ namespace dnSpy.MainApp {
 		sealed class LanguageInfo {
 			public ILanguage Language;
 			public string Name {
-				get { return Language.NameUI; }
+				get { return Language.UniqueNameUI; }
 			}
 			public override string ToString() {
 				return Name;

@@ -18,14 +18,30 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Threading;
+using dnlib.DotNet;
+using dnlib.PE;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Tabs;
+using dnSpy.Files.Tabs.Dialogs;
+using dnSpy.Languages.MSBuild;
+using dnSpy.Properties;
 using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.UI.MVVM;
+using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.Tabs {
 	[ExportAutoLoaded]
@@ -36,7 +52,240 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Icon = "Save", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 0)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:ExportToProjectCommand", Icon = "Solution", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 0)]
+	sealed class ExportProjectCommand : MenuItemBase {
+		readonly IAppWindow appWindow;
+		readonly IFileTreeView fileTreeView;
+		readonly ILanguageManager languageManager;
+		readonly IFileTreeViewSettings fileTreeViewSettings;
+		readonly DecompilerSettings decompilerSettings;
+		readonly Lazy<IBamlDecompiler> bamlDecompiler;
+
+		[ImportingConstructor]
+		ExportProjectCommand(IAppWindow appWindow, IFileTreeView fileTreeView, ILanguageManager languageManager, IFileTreeViewSettings fileTreeViewSettings, DecompilerSettings decompilerSettings, [ImportMany] IEnumerable<Lazy<IBamlDecompiler>> bamlDecompilers) {
+			this.appWindow = appWindow;
+			this.fileTreeView = fileTreeView;
+			this.languageManager = languageManager;
+			this.fileTreeViewSettings = fileTreeViewSettings;
+			this.decompilerSettings = decompilerSettings;
+			this.bamlDecompiler = bamlDecompilers.FirstOrDefault();
+		}
+
+		public override bool IsEnabled(IMenuItemContext context) {
+			return GetModules().Length > 0 && languageManager.Languages.Any(a => a.ProjectFileExtension != null);
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			var modules = GetModules();
+			if (modules.Length == 0)
+				return;
+
+			var lang = languageManager.SelectedLanguage;
+			if (lang.ProjectFileExtension == null) {
+				lang = languageManager.Languages.FirstOrDefault(a => a.ProjectFileExtension != null);
+				Debug.Assert(lang != null);
+				if (lang == null)
+					return;
+			}
+
+			var task = new ExportTask(this, modules);
+			var vm = new ExportToProjectVM(new PickDirectory(), languageManager, task, bamlDecompiler != null);
+			task.vm = vm;
+			vm.CreateResX = fileTreeViewSettings.DeserializeResources;
+			vm.DontReferenceStdLib = modules.Any(a => a.Assembly.IsCorLib());
+			vm.Language = lang;
+			vm.SolutionFilename = GetSolutionFilename(modules);
+			vm.FilesToExportMessage = CreateFilesToExportMessage(modules);
+
+			var win = new ExportToProjectDlg();
+			task.dlg = win;
+			win.DataContext = vm;
+			win.Owner = appWindow.MainWindow;
+			using (fileTreeView.FileManager.DisableAssemblyLoad())
+				win.ShowDialog();
+		}
+
+		sealed class ExportTask : IExportTask, IMSBuildProjectWriterLogger, IMSBuildProgressListener {
+			readonly ExportProjectCommand owner;
+			readonly ModuleDef[] modules;
+			readonly CancellationTokenSource cancellationTokenSource;
+			readonly Dispatcher dispatcher;
+
+			internal ExportToProjectDlg dlg;
+			internal ExportToProjectVM vm;
+
+			public ExportTask(ExportProjectCommand owner, ModuleDef[] modules) {
+				this.owner = owner;
+				this.modules = modules;
+				this.cancellationTokenSource = new CancellationTokenSource();
+				this.dispatcher = Dispatcher.CurrentDispatcher;
+			}
+
+			public void Cancel(ExportToProjectVM vm) {
+				cancellationTokenSource.Cancel();
+				dlg.Close();
+			}
+
+			public void Execute(ExportToProjectVM vm) {
+				vm.IsIndeterminate = true;
+				Task.Factory.StartNew(() => {
+					var decompilationOptions = new DecompilationOptions {
+						CancellationToken = cancellationTokenSource.Token,
+						DecompilerSettings = owner.decompilerSettings.Clone(),
+						GetDisableAssemblyLoad = () => owner.fileTreeView.FileManager.DisableAssemblyLoad(),
+					};
+					var options = new ProjectCreatorOptions(vm.Directory, cancellationTokenSource.Token);
+					options.ProjectVersion = vm.ProjectVersion;
+					if (vm.CreateSolution)
+						options.SolutionFilename = vm.SolutionFilename;
+					options.Logger = this;
+					options.ProgressListener = this;
+					foreach (var module in modules) {
+						var projOpts = new ProjectModuleOptions(module, vm.Language, decompilationOptions) {
+							DontReferenceStdLib = vm.DontReferenceStdLib,
+							UnpackResources = vm.UnpackResources,
+							CreateResX = vm.CreateResX,
+							DecompileXaml = vm.DecompileXaml,
+						};
+						if (owner.bamlDecompiler != null) {
+							var o = BamlDecompilerOptions.Create(vm.Language);
+							projOpts.DecompileBaml = (a, b, c, d) => owner.bamlDecompiler.Value.Decompile(a, b, c, o, d);
+						}
+						options.ProjectModules.Add(projOpts);
+					}
+					var creator = new MSBuildProjectCreator(options);
+
+					creator.Create();
+					if (vm.CreateSolution)
+						fileToOpen = creator.SolutionFilename;
+					else
+						fileToOpen = creator.ProjectFilenames.FirstOrDefault();
+				}, cancellationTokenSource.Token)
+				.ContinueWith(t => {
+					var ex = t.Exception;
+					if (ex != null)
+						Error(string.Format(dnSpy_Resources.ErrorExceptionOccurred, ex));
+					EmtpyErrorList();
+					vm.OnExportComplete();
+					if (!vm.ExportErrors)
+						dlg.Close();
+					if (vm.OpenProject)
+						OpenProject();
+				}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+			}
+
+			void OpenProject() {
+				if (!File.Exists(fileToOpen))
+					return;
+				try {
+					Process.Start(fileToOpen);
+				}
+				catch {
+				}
+			}
+			string fileToOpen;
+
+			public void Error(string message) {
+				bool start;
+				lock (errorList) {
+					errorList.Add(message);
+					start = errorList.Count == 1;
+				}
+				if (start)
+					dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(EmtpyErrorList));
+
+			}
+			readonly List<string> errorList = new List<string>();
+
+			void EmtpyErrorList() {
+				var list = new List<string>();
+				lock (errorList) {
+					list.AddRange(errorList);
+					errorList.Clear();
+				}
+				if (list.Count > 0)
+					vm.AddError(string.Join(Environment.NewLine, list.ToArray()));
+			}
+
+			void IMSBuildProgressListener.SetMaxProgress(int maxProgress) {
+				dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
+					vm.ProgressMinimum = 0;
+					vm.ProgressMaximum = maxProgress;
+					vm.IsIndeterminate = false;
+				}));
+			}
+
+			void IMSBuildProgressListener.SetProgress(int progress) {
+				bool start;
+				lock (newProgressLock) {
+					start = newProgress == null;
+					if (newProgress == null || progress > newProgress.Value)
+						newProgress = progress;
+				}
+				if (start) {
+					dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+						int? newValue;
+						lock (newProgressLock) {
+							newValue = newProgress;
+							newProgress = null;
+						}
+						Debug.Assert(newValue != null);
+						if (newValue != null)
+							vm.TotalProgress = newValue.Value;
+					}));
+				}
+			}
+			readonly object newProgressLock = new object();
+			int? newProgress;
+		}
+
+		static string CreateFilesToExportMessage(ModuleDef[] modules) {
+			if (modules.Length == 1)
+				return dnSpy_Resources.ExportToProject_ExportFileMessage;
+			return string.Format(dnSpy_Resources.ExportToProject_ExportNFilesMessage, modules.Length);
+		}
+
+		static string GetSolutionFilename(IEnumerable<ModuleDef> modules) {
+			foreach (var e in modules.OrderBy(a => (a.Characteristics & Characteristics.Dll) == 0 ? 0 : 1)) {
+				var name = e.IsManifestModule && e.Assembly != null ? GetSolutionName(e.Assembly.Name) : GetSolutionName(e.Name);
+				if (!string.IsNullOrWhiteSpace(name))
+					return name;
+			}
+			Debug.Fail("Should never be reached");
+			return GetSolutionName("solution");
+		}
+
+		static string GetSolutionName(string name) {
+			if (name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase) || name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+				name = name.Substring(0, name.Length - 4);
+			else if (name.EndsWith(".netmodule", StringComparison.OrdinalIgnoreCase))
+				name = name.Substring(0, name.Length - 10);
+			if (!string.IsNullOrWhiteSpace(name))
+				return name + ".sln";
+			return null;
+		}
+
+		ModuleDef[] GetModules() {
+			var hashSet = new HashSet<ModuleDef>();
+			foreach (var n in fileTreeView.TreeView.TopLevelSelection) {
+				var asmNode = n.GetAssemblyNode();
+				if (asmNode != null) {
+					asmNode.TreeNode.EnsureChildrenLoaded();
+					foreach (var c in asmNode.TreeNode.DataChildren.OfType<IModuleFileNode>())
+						hashSet.Add(c.DnSpyFile.ModuleDef);
+					continue;
+				}
+
+				var modNode = n.GetModuleNode();
+				if (modNode != null)
+					hashSet.Add(modNode.DnSpyFile.ModuleDef);
+			}
+			hashSet.Remove(null);
+			return hashSet.ToArray();
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, InputGestureText = "res:SaveKey", Icon = "Save", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 10)]
 	sealed class MenuSaveCommand : MenuItemCommand {
 		readonly ISaveManager saveManager;
 		readonly IFileTabManager fileTabManager;

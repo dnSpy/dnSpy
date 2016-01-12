@@ -442,9 +442,9 @@ namespace dndbg.Engine {
 											WriteNumber(dims[i]);
 										else {
 											//TODO: How does VS print these arrays?
-											WriteNumber((int)indexes[0]);
+											WriteNumber((int)indexes[i]);
 											OutputWrite("..", TypeColor.Operator);
-											WriteNumber((int)(indexes[0] + dims[0]));
+											WriteNumber((int)(indexes[i] + dims[i]));
 										}
 									}
 								}
@@ -655,7 +655,6 @@ namespace dndbg.Engine {
 					else {
 						Write(gis.GenericType, typeGenArgs, methGenArgs);
 						OutputWrite("<", TypeColor.Operator);
-						var emptyList = new List<CorType>();
 						for (int i = 0; i < gis.GenericArguments.Count; i++) {
 							if (i > 0)
 								WriteCommaSpace();

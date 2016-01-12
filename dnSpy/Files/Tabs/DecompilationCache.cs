@@ -118,7 +118,6 @@ namespace dnSpy.Files.Tabs {
 
 			static DecompilationOptions Clone(DecompilationOptions options) {
 				var newOpts = new DecompilationOptions();
-				newOpts.ProjectOptions = null;
 				newOpts.CancellationToken = CancellationToken.None;
 				newOpts.DecompilerSettings = options.DecompilerSettings.Clone();
 				newOpts.DontShowCreateMethodBodyExceptions = options.DontShowCreateMethodBodyExceptions;
@@ -150,7 +149,7 @@ namespace dnSpy.Files.Tabs {
 
 			public override int GetHashCode() {
 				int h = 0;
-				h = ILanguage.NameUI.GetHashCode();
+				h = ILanguage.UniqueGuid.GetHashCode();
 				foreach (var node in Nodes)
 					h ^= node.GetHashCode();
 				h ^= GetHashCode(Options);

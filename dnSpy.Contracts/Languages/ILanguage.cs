@@ -32,9 +32,16 @@ namespace dnSpy.Contracts.Languages {
 	/// </summary>
 	public interface ILanguage {
 		/// <summary>
-		/// Language name shown to the user
+		/// Real name of the language, eg. "C#" if it's C#. See also <see cref="UniqueNameUI"/>.
+		/// It's used when the real language name must be shown to the user.
 		/// </summary>
-		string NameUI { get; }
+		string GenericNameUI { get; }
+
+		/// <summary>
+		/// Language name shown to the user, and can contain extra info eg. "C# XYZ", see also
+		/// <see cref="GenericNameUI"/>.
+		/// </summary>
+		string UniqueNameUI { get; }
 
 		/// <summary>
 		/// Order of language when shown to the user
@@ -42,9 +49,14 @@ namespace dnSpy.Contracts.Languages {
 		double OrderUI { get; }
 
 		/// <summary>
-		/// Language guid, eg. <see cref="LanguageConstants.LANGUAGE_CSHARP"/>
+		/// Language guid, eg. <see cref="LanguageConstants.LANGUAGE_CSHARP"/>, see also <see cref="UniqueGuid"/>
 		/// </summary>
-		Guid Guid { get; }
+		Guid GenericGuid { get; }
+
+		/// <summary>
+		/// Unique language guid, see also <see cref="GenericGuid"/>
+		/// </summary>
+		Guid UniqueGuid { get; }
 
 		/// <summary>
 		/// File extension, eg. .cs, can't be null
@@ -155,6 +167,14 @@ namespace dnSpy.Contracts.Languages {
 		void WriteToolTip(ISyntaxHighlightOutput output, IVariable variable, string name);
 
 		/// <summary>
+		/// Writes <paramref name="member"/> to <paramref name="output"/>
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="member">Member</param>
+		/// <param name="flags">Flags</param>
+		void Write(ISyntaxHighlightOutput output, IMemberRef member, SimplePrinterFlags flags);
+
+		/// <summary>
 		/// Writes a comment prefix
 		/// </summary>
 		/// <param name="output">Output</param>
@@ -175,6 +195,22 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="decompilerSettings">Decompiler settings</param>
 		/// <returns></returns>
 		bool ShowMember(IMemberRef member, DecompilerSettings decompilerSettings);
+
+		/// <summary>
+		/// Returns true if <paramref name="decompilationType"/> is supported and
+		/// <see cref="Decompile(DecompilationType, object)"/> can be called.
+		/// </summary>
+		/// <param name="decompilationType">Decompilation type</param>
+		/// <returns></returns>
+		bool CanDecompile(DecompilationType decompilationType);
+
+		/// <summary>
+		/// Decompiles some data. Should only be called if <see cref="CanDecompile(DecompilationType)"/>
+		/// returns true
+		/// </summary>
+		/// <param name="decompilationType">Decompilation type</param>
+		/// <param name="data">Data, see <see cref="DecompilationType"/></param>
+		void Decompile(DecompilationType decompilationType, object data);
 	}
 
 	/// <summary>

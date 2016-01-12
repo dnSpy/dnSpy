@@ -97,6 +97,10 @@
     <Compile Include="Files\Tabs\DecompilationCache.cs" />
     <Compile Include="Files\Tabs\DefaultDecompileNode.cs" />
     <Compile Include="Files\Tabs\DefaultFileList.cs" />
+    <Compile Include="Files\Tabs\Dialogs\ExportToProjectDlg.xaml.cs">
+      <DependentUpon>ExportToProjectDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Files\Tabs\Dialogs\ExportToProjectVM.cs" />
     <Compile Include="Files\Tabs\Dialogs\FileListColumnConverter.cs" />
     <Compile Include="Files\Tabs\Dialogs\FileListPrinter.cs" />
     <Compile Include="Files\Tabs\Dialogs\FileListVM.cs" />
@@ -363,8 +367,12 @@
       <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Languages\Languages.csproj">
+    <ProjectReference Include="..\Languages.ILSpy\Languages.ILSpy.csproj">
       <Project>{d7fe873e-df22-4f54-aefa-bcf33afd7e05}</Project>
+      <Name>Languages.ILSpy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Languages\Languages.csproj">
+      <Project>{9265e4ea-eb00-4cb6-8a9a-608871e24fd0}</Project>
       <Name>Languages</Name>
     </ProjectReference>
     <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
@@ -393,6 +401,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Files\Tabs\Dialogs\ExportToProjectDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainApp\App.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -583,6 +595,7 @@
     <Resource Include="Images\Save.png" />
     <Resource Include="Images\Search.png" />
     <Resource Include="Images\Settings.png" />
+    <Resource Include="Images\Solution.png" />
     <Resource Include="Images\StaticClass.png" />
     <Resource Include="Images\StaticEvent.png" />
     <Resource Include="Images\StaticEventCompilerControlled.png" />

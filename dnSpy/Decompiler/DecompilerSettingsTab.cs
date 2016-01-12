@@ -184,6 +184,7 @@ namespace dnSpy.Decompiler {
 			if (g.UsingDeclarations != d.UsingDeclarations) flags |= RefreshFlags.CSharp;
 			if (g.QueryExpressions != d.QueryExpressions) flags |= RefreshFlags.CSharp;
 			if (g.FullyQualifyAmbiguousTypeNames != d.FullyQualifyAmbiguousTypeNames) flags |= RefreshFlags.CSharp;
+			if (g.FullyQualifyAllTypes != d.FullyQualifyAllTypes) flags |= RefreshFlags.CSharp;
 			if (g.UseDebugSymbols != d.UseDebugSymbols) flags |= RefreshFlags.DecompileAll;
 			if (g.ObjectOrCollectionInitializers != d.ObjectOrCollectionInitializers) flags |= RefreshFlags.ILAst;
 			if (g.ShowXmlDocumentation != d.ShowXmlDocumentation) flags |= RefreshFlags.DecompileAll;

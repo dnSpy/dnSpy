@@ -27,7 +27,6 @@
         xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
         mc:Ignorable="d"
         xmlns:p="clr-namespace:dnSpy.Properties"
-        Background="{DynamicResource SystemColorsControl}"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
         MinHeight="200" MinWidth="300"
         Title="{x:Static p:dnSpy_Resources.OpenGAC_Title}" Height="540" Width="620"

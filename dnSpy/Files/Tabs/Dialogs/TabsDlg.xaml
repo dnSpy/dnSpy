@@ -27,7 +27,6 @@
         xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
         mc:Ignorable="d"
         xmlns:p="clr-namespace:dnSpy.Properties"
-        Background="{DynamicResource SystemColorsControl}"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
         Width="1000" Height="400"
         MinWidth="500" MinHeight="300"

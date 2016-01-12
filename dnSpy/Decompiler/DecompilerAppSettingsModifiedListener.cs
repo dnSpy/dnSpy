@@ -48,7 +48,7 @@ namespace dnSpy.Decompiler {
 			if (refreshIL)
 				RefreshCode(LanguageConstants.LANGUAGE_IL);
 			if (refreshILAst)
-				RefreshCode(LanguageConstants.LANGUAGE_ILAST);
+				RefreshCode(LanguageConstants.LANGUAGE_ILAST_ILSPY);
 			if (refreshCSharp)
 				RefreshCode(LanguageConstants.LANGUAGE_CSHARP);
 			if (refreshVB)
@@ -67,7 +67,7 @@ namespace dnSpy.Decompiler {
 		}
 
 		void RefreshCode(Guid guid) {
-			fileTabManager.Refresh(LanguageTabs.Where(t => t.Item2.Guid == guid).Select(a => a.Item1).ToArray());
+			fileTabManager.Refresh(LanguageTabs.Where(t => t.Item2.GenericGuid == guid || t.Item2.UniqueGuid == guid).Select(a => a.Item1).ToArray());
 		}
 	}
 }

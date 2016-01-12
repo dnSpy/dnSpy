@@ -26,6 +26,7 @@ using System.Xml.Linq;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
 using dnSpy.BamlDecompiler.Xaml;
+using dnSpy.Contracts.Languages;
 
 namespace dnSpy.BamlDecompiler {
 	internal class XamlContext {
@@ -41,6 +42,7 @@ namespace dnSpy.BamlDecompiler {
 
 		public ModuleDef Module { get; private set; }
 		public CancellationToken CancellationToken { get; private set; }
+		public BamlDecompilerOptions BamlDecompilerOptions { get; private set; }
 
 		public BamlContext Baml { get; private set; }
 		public BamlNode RootNode { get; private set; }
@@ -48,9 +50,10 @@ namespace dnSpy.BamlDecompiler {
 
 		public XmlnsDictionary XmlNs { get; private set; }
 
-		public static XamlContext Construct(ModuleDef module, BamlDocument document, CancellationToken token) {
+		public static XamlContext Construct(ModuleDef module, BamlDocument document, CancellationToken token, BamlDecompilerOptions bamlDecompilerOptions) {
 			var ctx = new XamlContext(module);
 			ctx.CancellationToken = token;
+			ctx.BamlDecompilerOptions = bamlDecompilerOptions ?? BamlDecompilerOptions.CreateCSharp();
 
 			ctx.Baml = BamlContext.ConstructContext(module, document, token);
 			ctx.RootNode = BamlNode.Parse(document, token);

@@ -528,12 +528,6 @@
   <data name="SaveKey" xml:space="preserve">
     <value>Ctrl+S</value>
   </data>
-  <data name="SaveLanguageProjectFile" xml:space="preserve">
-    <value>{0} Project</value>
-  </data>
-  <data name="SaveLanguageSingleFile" xml:space="preserve">
-    <value>{0} Single File</value>
-  </data>
   <data name="SaveResourceButton" xml:space="preserve">
     <value>Save</value>
   </data>
@@ -893,5 +887,67 @@
   </data>
   <data name="AskReadSettings" xml:space="preserve">
     <value>Do you want to load the saved settings?</value>
+  </data>
+  <data name="ExportToProjectCommand" xml:space="preserve">
+    <value>Export to Pro_ject...</value>
+  </data>
+  <data name="ExportToProject_Title" xml:space="preserve">
+    <value>Export to Project</value>
+  </data>
+  <data name="Error_FileAlreadyExists" xml:space="preserve">
+    <value>A file with the same name as the destination folder already exists.</value>
+  </data>
+  <data name="Error_MissingDestinationFolder" xml:space="preserve">
+    <value>Missing destination folder.</value>
+  </data>
+  <data name="ExportToProject_Button_Export" xml:space="preserve">
+    <value>_Export</value>
+  </data>
+  <data name="ExportToProject_CreateResX" xml:space="preserve">
+    <value>Create .res_x files</value>
+  </data>
+  <data name="ExportToProject_DecompileXaml" xml:space="preserve">
+    <value>Decompile _baml to xaml</value>
+  </data>
+  <data name="ExportToProject_DestinationFolder" xml:space="preserve">
+    <value>_Folder</value>
+  </data>
+  <data name="ExportToProject_DontReferenceStdLib" xml:space="preserve">
+    <value>_Do not reference mscorlib.dll</value>
+  </data>
+  <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
+    <value>One file will be decompiled. Select more than one assembly to decompile more than one file.</value>
+  </data>
+  <data name="ExportToProject_ExportNFilesMessage" xml:space="preserve">
+    <value>{0:n0} files will be decompiled.</value>
+  </data>
+  <data name="ExportToProject_Language" xml:space="preserve">
+    <value>_Language</value>
+  </data>
+  <data name="ExportToProject_OpenProjectInVisualStudio" xml:space="preserve">
+    <value>_Open project in Visual Studio</value>
+  </data>
+  <data name="ExportToProject_ProjectVersion" xml:space="preserve">
+    <value>_Version</value>
+  </data>
+  <data name="ExportToProject_SolutionFilename" xml:space="preserve">
+    <value>_Solution</value>
+  </data>
+  <data name="ExportToProject_UnpackResources" xml:space="preserve">
+    <value>_Unpack resources</value>
+  </data>
+  <data name="Error_MissingFilename" xml:space="preserve">
+    <value>Missing filename</value>
+  </data>
+  <data name="Button_Close" xml:space="preserve">
+    <value>_Close</value>
+  </data>
+  <data name="ErrorExceptionOccurred" xml:space="preserve">
+    <value>An exception occurred
+
+{0}</value>
+  </data>
+  <data name="ExportToProject_ErrorLogMsg" xml:space="preserve">
+    <value>Error log</value>
   </data>
 </root>

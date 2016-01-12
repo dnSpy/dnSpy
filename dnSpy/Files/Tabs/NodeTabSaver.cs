@@ -23,7 +23,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
@@ -125,32 +124,14 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		DecompileContext CreateDecompileContext() {
-			if (nodes.Length == 1 && (nodes[0] is IAssemblyFileNode || nodes[0] is IModuleFileNode)) {
-				var dnSpyFile = ((IDnSpyFileNode)nodes[0]).DnSpyFile;
-				var projFile = string.Format(dnSpy_Resources.SaveLanguageProjectFile, language.NameUI);
-				var singleFile = string.Format(dnSpy_Resources.SaveLanguageSingleFile, language.NameUI);
-				var saveDlg = new SaveFileDialog {
-					FileName = FilenameUtils.CleanName(dnSpyFile.GetShortName()) + language.ProjectFileExtension,
-					DefaultExt = language.FileExtension,
-					Filter = string.Format("{3}|*{1}|{4}|*{2}|{5}|*.*", language.NameUI, language.ProjectFileExtension, language.FileExtension, projFile, singleFile, dnSpy_Resources.AllFiles),
-				};
-				if (saveDlg.ShowDialog() != true)
-					return null;
-				var ctx = CreateDecompileContext(saveDlg.FileName);
-				if (saveDlg.FilterIndex == 1)
-					ctx.DecompileNodeContext.DecompilationOptions.ProjectOptions.Directory = Path.GetDirectoryName(saveDlg.FileName);
-				return ctx;
-			}
-			else {
-				var saveDlg = new SaveFileDialog {
-					FileName = FilenameUtils.CleanName(nodes[0].ToString(language)) + language.FileExtension,
-					DefaultExt = language.FileExtension,
-					Filter = string.Format("{0}|*{1}|{2}|*.*", language.NameUI, language.FileExtension, dnSpy_Resources.AllFiles),
-				};
-				if (saveDlg.ShowDialog() != true)
-					return null;
-				return CreateDecompileContext(saveDlg.FileName);
-			}
+			var saveDlg = new SaveFileDialog {
+				FileName = FilenameUtils.CleanName(nodes[0].ToString(language)) + language.FileExtension,
+				DefaultExt = language.FileExtension,
+				Filter = string.Format("{0}|*{1}|{2}|*.*", language.GenericNameUI, language.FileExtension, dnSpy_Resources.AllFiles),
+			};
+			if (saveDlg.ShowDialog() != true)
+				return null;
+			return CreateDecompileContext(saveDlg.FileName);
 		}
 
 		public void Save() {

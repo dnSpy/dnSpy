@@ -294,6 +294,18 @@ namespace ICSharpCode.Decompiler {
 			}
 		}
 
+		bool fullyQualifyAllTypes = false;
+
+		public bool FullyQualifyAllTypes {
+			get { return fullyQualifyAllTypes; }
+			set {
+				if (fullyQualifyAllTypes != value) {
+					fullyQualifyAllTypes = value;
+					OnPropertyChanged("FullyQualifyAllTypes");
+				}
+			}
+		}
+
 		bool useDebugSymbols = true;
 
 		/// <summary>
@@ -529,6 +541,7 @@ namespace ICSharpCode.Decompiler {
 			if (UsingDeclarations != other.UsingDeclarations) return false;
 			if (QueryExpressions != other.QueryExpressions) return false;
 			if (FullyQualifyAmbiguousTypeNames != other.FullyQualifyAmbiguousTypeNames) return false;
+			if (FullyQualifyAllTypes != other.FullyQualifyAllTypes) return false;
 			if (UseDebugSymbols != other.UseDebugSymbols) return false;
 			if (ObjectOrCollectionInitializers != other.ObjectOrCollectionInitializers) return false;
 			if (ShowXmlDocumentation != other.ShowXmlDocumentation) return false;
@@ -587,6 +600,7 @@ namespace ICSharpCode.Decompiler {
 				h ^= SortMembers					? 0 : 0x00000100U;
 				h ^= ForceShowAllMembers			? 0 : 0x00000080U;
 				h ^= SortSystemUsingStatementsFirst	? 0 : 0x00000040U;
+				h ^= FullyQualifyAllTypes			? 0 : 0x00000020U;
 
 				for (int i = 0; i < decompilationObjects.Length; i++)
 					h ^= (uint)decompilationObjects[i] << (i * 8);
@@ -616,6 +630,7 @@ namespace ICSharpCode.Decompiler {
 			other.UsingDeclarations = this.UsingDeclarations;
 			other.QueryExpressions = this.QueryExpressions;
 			other.FullyQualifyAmbiguousTypeNames = this.FullyQualifyAmbiguousTypeNames;
+			other.FullyQualifyAllTypes = this.FullyQualifyAllTypes;
 			other.UseDebugSymbols = this.UseDebugSymbols;
 			other.ObjectOrCollectionInitializers = this.ObjectOrCollectionInitializers;
 			other.ShowXmlDocumentation = this.ShowXmlDocumentation;

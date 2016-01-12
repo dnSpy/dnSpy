@@ -59,7 +59,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		[ImportingConstructor]
 		BreakpointsVM(ILanguageManager languageManager, IImageManager imageManager, IThemeManager themeManager, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IBreakpointManager breakpointManager, IBreakpointSettings breakpointSettings, Lazy<IModuleLoader> moduleLoader, IInMemoryModuleManager inMemoryModuleManager) {
-			this.breakpointContext = new BreakpointContext(imageManager, languageManager, moduleLoader) {
+			this.breakpointContext = new BreakpointContext(imageManager, moduleLoader) {
 				Language = languageManager.SelectedLanguage,
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightBreakpoints,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,

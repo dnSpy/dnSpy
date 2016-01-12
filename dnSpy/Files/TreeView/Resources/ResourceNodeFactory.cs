@@ -40,9 +40,13 @@ namespace dnSpy.Files.TreeView.Resources {
 			if (module == null || resource == null || treeNodeGroup == null)
 				throw new ArgumentNullException();
 			foreach (var creator in creators) {
-				var node = creator.Value.Create(module, resource, treeNodeGroup);
-				if (node != null)
-					return node;
+				try {
+					var node = creator.Value.Create(module, resource, treeNodeGroup);
+					if (node != null)
+						return node;
+				}
+				catch {
+				}
 			}
 			return new UnknownResourceNode(treeNodeGroup, resource);
 		}
@@ -51,9 +55,13 @@ namespace dnSpy.Files.TreeView.Resources {
 			if (module == null || resourceElement == null || treeNodeGroup == null)
 				throw new ArgumentNullException();
 			foreach (var creator in creators) {
-				var node = creator.Value.Create(module, resourceElement, treeNodeGroup);
-				if (node != null)
-					return node;
+				try {
+					var node = creator.Value.Create(module, resourceElement, treeNodeGroup);
+					if (node != null)
+						return node;
+				}
+				catch {
+				}
 			}
 			return new BuiltInResourceElementNode(treeNodeGroup, resourceElement);
 		}

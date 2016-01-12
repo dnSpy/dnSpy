@@ -3,9 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D7FE873E-DF22-4F54-AEFA-BCF33AFD7E05}</ProjectGuid>
+    <ProjectGuid>{9265E4EA-EB00-4CB6-8A9A-608871E24FD0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>dnSpy.Languages</RootNamespace>
@@ -37,22 +35,56 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.XML" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CSharp\CSharpLanguage.cs" />
-    <Compile Include="ILAst\ILAstLanguage.cs" />
-    <Compile Include="IL\ILLanguage.cs" />
+    <Compile Include="CSharp\SimpleCSharpPrinter.cs" />
+    <Compile Include="FilenameUtils.cs" />
+    <Compile Include="IL\ILLanguageHelper.cs" />
     <Compile Include="IL\InstructionBytesReader.cs" />
     <Compile Include="IL\InstructionUtils.cs" />
     <Compile Include="IL\ModifiedInstructionBytesReader.cs" />
     <Compile Include="IL\OriginalInstructionBytesReader.cs" />
     <Compile Include="Language.cs" />
+    <Compile Include="MSBuild\AppConfigProjectFile.cs" />
+    <Compile Include="MSBuild\ApplicationIcon.cs" />
+    <Compile Include="MSBuild\ApplicationManifest.cs" />
+    <Compile Include="MSBuild\AssemblyInfoProjectFile.cs" />
+    <Compile Include="MSBuild\BamlResourceProjectFile.cs" />
+    <Compile Include="MSBuild\BuildAction.cs" />
+    <Compile Include="MSBuild\DecompileContext.cs" />
+    <Compile Include="MSBuild\DefaultNamespaceFinder.cs" />
+    <Compile Include="MSBuild\DotNetUtils.cs" />
+    <Compile Include="MSBuild\FilenameCreator.cs" />
+    <Compile Include="MSBuild\FileUtils.cs" />
+    <Compile Include="MSBuild\IJob.cs" />
+    <Compile Include="MSBuild\IMSBuildProgressListener.cs" />
+    <Compile Include="MSBuild\IMSBuildProjectWriterLogger.cs" />
+    <Compile Include="MSBuild\MSBuildProjectCreator.cs" />
+    <Compile Include="MSBuild\NoMSBuildProjectWriterLogger.cs" />
+    <Compile Include="MSBuild\Project.cs" />
+    <Compile Include="MSBuild\ProjectCreatorOptions.cs" />
+    <Compile Include="MSBuild\ProjectFile.cs" />
+    <Compile Include="MSBuild\ProjectModuleOptions.cs" />
+    <Compile Include="MSBuild\ProjectVersion.cs" />
+    <Compile Include="MSBuild\ProjectWriter.cs" />
+    <Compile Include="MSBuild\RawEmbeddedResourceProjectFile.cs" />
+    <Compile Include="MSBuild\ResourceNameCreator.cs" />
+    <Compile Include="MSBuild\ResourceProjectFile.cs" />
+    <Compile Include="MSBuild\ResXProjectFile.cs" />
+    <Compile Include="MSBuild\SatelliteAssemblyFinder.cs" />
+    <Compile Include="MSBuild\SolutionWriter.cs" />
+    <Compile Include="MSBuild\SplashScreenProjectFile.cs" />
+    <Compile Include="MSBuild\TypeProjectFile.cs" />
+    <Compile Include="MSBuild\WinFormsProjectFile.cs" />
+    <Compile Include="MSBuild\XamlTypeProjectFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VB\ILSpyEnvironmentProvider.cs" />
-    <Compile Include="VB\VBLanguage.cs" />
-    <Compile Include="VB\VBTextOutputFormatter.cs" />
+    <Compile Include="Properties\Languages.Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Languages.Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dnlib\src\dnlib.csproj">
@@ -71,20 +103,17 @@
       <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
-      <Project>{53dca265-3c3c-42f9-b647-f72ba678122b}</Project>
-      <Name>ICSharpCode.NRefactory.CSharp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
       <Project>{3b2a5653-ec97-4001-bb9b-d90f1af2c371}</Project>
       <Name>ICSharpCode.NRefactory</Name>
     </ProjectReference>
-    <ProjectReference Include="..\NRefactory\ICSharpCode.NRefactory.VB\ICSharpCode.NRefactory.VB.csproj">
-      <Project>{7b82b671-419f-45f4-b778-d9286f996efa}</Project>
-      <Name>ICSharpCode.NRefactory.VB</Name>
-    </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Languages.Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Languages.Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

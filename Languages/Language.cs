@@ -18,16 +18,18 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using dnlib.DotNet;
-using dnlib.DotNet.Emit;
+using dnlib.PE;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler;
+using dnSpy.Languages.CSharp;
+using dnSpy.Languages.Properties;
 using dnSpy.NRefactory;
-using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Languages {
@@ -35,13 +37,12 @@ namespace dnSpy.Languages {
 	/// Base class for language-specific decompiler implementations.
 	/// </summary>
 	public abstract class Language : ILanguage {
-		public abstract string NameUI { get; }
+		public abstract string GenericNameUI { get; }
+		public abstract string UniqueNameUI { get; }
 		public abstract double OrderUI { get; }
-		public abstract Guid Guid { get; }
+		public abstract Guid GenericGuid { get; }
+		public abstract Guid UniqueGuid { get; }
 
-		/// <summary>
-		/// Gets the file extension used by source code files in this language.
-		/// </summary>
 		public abstract string FileExtension { get; }
 
 		public virtual string ProjectFileExtension {
@@ -83,7 +84,7 @@ namespace dnSpy.Languages {
 		public virtual void DecompileNamespace(string @namespace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationOptions options) {
 			this.WriteCommentLine(output, string.IsNullOrEmpty(@namespace) ? string.Empty : IdentifierEscaper.Escape(@namespace));
 			this.WriteCommentLine(output, string.Empty);
-			this.WriteCommentLine(output, "Types:");
+			this.WriteCommentLine(output, Languages_Resources.Decompile_Namespace_Types);
 			this.WriteCommentLine(output, string.Empty);
 			foreach (var type in types) {
 				this.WriteCommentBegin(output, true);
@@ -93,7 +94,48 @@ namespace dnSpy.Languages {
 			}
 		}
 
+		protected void WriteModuleAssembly(IDnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags) {
+			DecompileAssemblyInternal(file, output, options, flags);
+			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
+			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
+			output.WriteLine();
+			ModuleDef mainModule = file.ModuleDef;
+			if (decompileMod && mainModule.Types.Count > 0) {
+				this.WriteCommentBegin(output, true);
+				output.Write(Languages_Resources.Decompile_GlobalType + " ", TextTokenType.Comment);
+				output.WriteReference(IdentifierEscaper.Escape(mainModule.GlobalType.FullName), mainModule.GlobalType, TextTokenType.Comment);
+				output.WriteLine();
+			}
+			if (decompileMod || decompileAsm)
+				this.PrintEntryPoint(file, output);
+			if (decompileMod) {
+				this.WriteCommentLine(output, Languages_Resources.Decompile_Architecture + " " + GetPlatformDisplayName(mainModule));
+				if (!mainModule.IsILOnly) {
+					this.WriteCommentLine(output, Languages_Resources.Decompile_ThisAssemblyContainsUnmanagedCode);
+				}
+				string runtimeName = GetRuntimeDisplayName(mainModule);
+				if (runtimeName != null) {
+					this.WriteCommentLine(output, Languages_Resources.Decompile_Runtime + " " + runtimeName);
+				}
+			}
+			if ((decompileMod || decompileAsm) && file.PEImage != null) {
+				this.WriteCommentBegin(output, true);
+				uint ts = file.PEImage.ImageNTHeaders.FileHeader.TimeDateStamp;
+				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
+				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
+				output.Write(string.Format(Languages_Resources.Decompile_Timestamp, ts, dateString), TextTokenType.Comment);
+				this.WriteCommentEnd(output, true);
+				output.WriteLine();
+			}
+			if (decompileMod || decompileAsm)
+				output.WriteLine();
+		}
+
 		public virtual void DecompileAssembly(IDnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
+			DecompileAssemblyInternal(file, output, options, flags);
+		}
+
+		void DecompileAssemblyInternal(IDnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
 			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
 			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 			this.WriteCommentLine(output, file.Filename);
@@ -113,11 +155,11 @@ namespace dnSpy.Languages {
 		protected void PrintEntryPoint(IDnSpyFile assembly, ITextOutput output) {
 			var ep = GetEntryPoint(assembly.ModuleDef);
 			if (ep is uint)
-				this.WriteCommentLine(output, string.Format("Native Entry point: 0x{0:x8}", (uint)ep));
+				this.WriteCommentLine(output, string.Format(Languages_Resources.Decompile_NativeEntryPoint, (uint)ep));
 			else if (ep is MethodDef) {
 				var epMethod = (MethodDef)ep;
 				WriteCommentBegin(output, true);
-				output.Write("Entry point: ", TextTokenType.Comment);
+				output.Write(Languages_Resources.Decompile_EntryPoint + " ", TextTokenType.Comment);
 				if (epMethod.DeclaringType != null) {
 					output.WriteReference(IdentifierEscaper.Escape(epMethod.DeclaringType.FullName), epMethod.DeclaringType, TextTokenType.Comment);
 					output.Write(".", TextTokenType.Comment);
@@ -189,30 +231,15 @@ namespace dnSpy.Languages {
 		}
 
 		public virtual void WriteToolTip(ISyntaxHighlightOutput output, IMemberRef member, IHasCustomAttribute typeAttributes) {
-			var newOutput = SyntaxHighlightOutputToTextOutput.Create(output);
-			if (member is ITypeDefOrRef)
-				TypeToString(newOutput, (ITypeDefOrRef)member, true, typeAttributes);
-			else if (member is GenericParam) {
-				var gp = (GenericParam)member;
-				output.Write(IdentifierEscaper.Escape(gp.Name), TextTokenHelper.GetTextTokenType(gp));
-				output.WriteSpace();
-				output.Write("in", TextTokenType.Text);
-				output.WriteSpace();
-				WriteToolTip(output, gp.Owner, typeAttributes);
-			}
-			else {
-				//TODO: This should be escaped but since it contains whitespace, parens, etc,
-				//		we can't pass it to IdentifierEscaper.Escape().
-				output.Write(member.ToString(), TextTokenHelper.GetTextTokenType(member));
-			}
+			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteToolTip(member);
 		}
 
 		public virtual void WriteToolTip(ISyntaxHighlightOutput output, IVariable variable, string name) {
-			output.Write(variable is Local ? "(local variable)" : "(parameter)", TextTokenType.Text);
-			output.WriteSpace();
-			WriteToolTip(output, variable.Type.ToTypeDefOrRef(), variable is Parameter ? ((Parameter)variable).ParamDef : null);
-			output.WriteSpace();
-			output.Write(IdentifierEscaper.Escape(GetName(variable, name)), variable is Local ? TextTokenType.Local : TextTokenType.Parameter);
+			new SimpleCSharpPrinter(output, SimplePrinterFlags.Default).WriteToolTip(variable, name);
+		}
+
+		public virtual void Write(ISyntaxHighlightOutput output, IMemberRef member, SimplePrinterFlags flags) {
+			new SimpleCSharpPrinter(output, flags).Write(member);
 		}
 
 		protected static string GetName(IVariable variable, string name) {
@@ -238,6 +265,48 @@ namespace dnSpy.Languages {
 
 		public virtual bool ShowMember(IMemberRef member, DecompilerSettings decompilerSettings) {
 			return true;
+		}
+
+		protected static string GetPlatformDisplayName(ModuleDef module) {
+			switch (module.Machine) {
+			case Machine.I386:
+				if (module.Is32BitPreferred)
+					return Languages_Resources.Decompile_AnyCPU32BitPreferred;
+				else if (module.Is32BitRequired)
+					return "x86";
+				else
+					return Languages_Resources.Decompile_AnyCPU64BitPreferred;
+			case Machine.AMD64:
+				return "x64";
+			case Machine.IA64:
+				return "Itanium";
+			case Machine.ARMNT:
+				return "ARM";
+			case Machine.ARM64:
+				return "ARM64";
+			default:
+				return module.Machine.ToString();
+			}
+		}
+
+		protected static string GetRuntimeDisplayName(ModuleDef module) {
+			if (module.IsClr10)
+				return ".NET 1.0";
+			if (module.IsClr11)
+				return ".NET 1.1";
+			if (module.IsClr20)
+				return ".NET 2.0";
+			if (module.IsClr40)
+				return ".NET 4.0";
+			return null;
+		}
+
+		public virtual bool CanDecompile(DecompilationType decompilationType) {
+			return false;
+		}
+
+		public virtual void Decompile(DecompilationType decompilationType, object data) {
+			throw new NotImplementedException();
 		}
 	}
 }

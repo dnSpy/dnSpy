@@ -31,34 +31,26 @@ namespace dnSpy.Debugger.Breakpoints {
 		readonly ISyntaxHighlightOutput output;
 		readonly bool useHex;
 		readonly ILanguage language;
-		readonly ILanguageManager languageManager;
 
-		public BreakpointPrinter(ISyntaxHighlightOutput output, bool useHex, ILanguage language, ILanguageManager languageManager) {
+		public BreakpointPrinter(ISyntaxHighlightOutput output, bool useHex, ILanguage language) {
 			this.output = output;
 			this.useHex = useHex;
 			this.language = language;
-			this.languageManager = languageManager;
 		}
 
 		ILanguage MethodLanguage {
-			get {
-				var lang = language;
-				if (lang.NameUI != "VB")
-					return lang;
-				// VB's WriteToolTip() hasn't been implemented for methods so use C# instead
-				return languageManager.FindOrDefault("C#");
-			}
+			get { return language; }
 		}
 
 		string GetHexFormatUInt16() {
-			if (language.Guid == LanguageConstants.LANGUAGE_VB)
+			if (language.GenericGuid == LanguageConstants.LANGUAGE_VB)
 				return "&H{0:X4}";
 			else
 				return "0x{0:X4}";
 		}
 
 		string GetHexFormatUInt32() {
-			if (language.NameUI == "VB")
+			if (language.GenericGuid == LanguageConstants.LANGUAGE_VB)
 				return "&H{0:X8}";
 			else
 				return "0x{0:X8}";
@@ -101,7 +93,7 @@ namespace dnSpy.Debugger.Breakpoints {
 						output.Write(string.Format("0x{0:X8}", ilbp.SerializedDnToken.Token), TextTokenType.Number);
 				}
 				else
-					MethodLanguage.WriteToolTip(output, method, null);
+					MethodLanguage.Write(output, method, SimplePrinterFlags.Default);
 				output.WriteSpace();
 				output.Write("+", TextTokenType.Operator);
 				output.WriteSpace();

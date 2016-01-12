@@ -77,11 +77,11 @@ namespace dnSpy.Files.Tabs {
 				break;
 
 			case NodeType.Assembly:
-				language.DecompileAssembly(((IAssemblyFileNode)node).DnSpyFile, output, decompilationOptions, decompilationOptions.ProjectOptions.Directory != null ? DecompileAssemblyFlags.AssemblyAndModule : DecompileAssemblyFlags.Assembly);
+				language.DecompileAssembly(((IAssemblyFileNode)node).DnSpyFile, output, decompilationOptions, DecompileAssemblyFlags.Assembly);
 				break;
 
 			case NodeType.Module:
-				language.DecompileAssembly(((IModuleFileNode)node).DnSpyFile, output, decompilationOptions, decompilationOptions.ProjectOptions.Directory != null ? DecompileAssemblyFlags.AssemblyAndModule : DecompileAssemblyFlags.Module);
+				language.DecompileAssembly(((IModuleFileNode)node).DnSpyFile, output, decompilationOptions, DecompileAssemblyFlags.Module);
 				break;
 
 			case NodeType.Type:

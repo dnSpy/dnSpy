@@ -25,7 +25,7 @@ using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler;
-using dnSpy.Languages.IL;
+using dnSpy.Languages.ILSpy.IL;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.Decompiler;
@@ -519,7 +519,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			var mr = obj as IMemberRef;
 			if (mr != null) {
-				if (ILLanguage.Write(SyntaxHighlightOutputToTextOutput.Create(output), mr))
+				if (ILLanguageUtils.Write(SyntaxHighlightOutputToTextOutput.Create(output), mr))
 					return;
 			}
 

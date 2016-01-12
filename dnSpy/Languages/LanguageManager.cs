@@ -39,7 +39,7 @@ namespace dnSpy.Languages {
 				langs.AddRange(creator.Create());
 			this.languages = langs.OrderBy(a => a.OrderUI).ToArray();
 			Debug.Assert(this.languages.Length != 0);
-			this.selectedLanguage = FindOrDefault(languageManagerSettings.LanguageName);
+			this.selectedLanguage = FindOrDefault(languageManagerSettings.LanguageGuid);
 			this.languageChanged = new WeakEventList<EventArgs>();
 		}
 
@@ -52,7 +52,7 @@ namespace dnSpy.Languages {
 					throw new InvalidOperationException("Can't set a language that isn't part of this instance's language collection");
 				if (selectedLanguage != value) {
 					selectedLanguage = value;
-					languageManagerSettings.LanguageName = value.NameUI;
+					languageManagerSettings.LanguageGuid = value.UniqueGuid;
 					languageChanged.Raise(this, EventArgs.Empty);
 				}
 			}
@@ -69,12 +69,12 @@ namespace dnSpy.Languages {
 			get { return languages.AsEnumerable(); }
 		}
 
-		public ILanguage Find(string nameUI) {
-			return this.Languages.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.NameUI, nameUI));
+		public ILanguage Find(Guid guid) {
+			return this.Languages.FirstOrDefault(a => a.GenericGuid == guid || a.UniqueGuid == guid);
 		}
 
-		public ILanguage FindOrDefault(string nameUI) {
-			return Find(nameUI) ?? Languages.FirstOrDefault();
+		public ILanguage FindOrDefault(Guid guid) {
+			return Find(guid) ?? Languages.FirstOrDefault();
 		}
 	}
 }

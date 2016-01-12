@@ -28,7 +28,6 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.TextFormatting;
-using dnSpy.Contracts;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Themes;

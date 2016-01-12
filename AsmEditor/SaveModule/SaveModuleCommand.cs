@@ -71,14 +71,14 @@ namespace dnSpy.AsmEditor.SaveModule {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SaveAllCommand", Icon = "SaveAll", InputGestureText = "res:ShortCutKeyCtrlShiftS", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 20)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SaveAllCommand", Icon = "SaveAll", InputGestureText = "res:ShortCutKeyCtrlShiftS", Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 30)]
 	sealed class SaveAllCommand : MenuItemCommand {
 		SaveAllCommand()
 			: base(SaveModuleCommandLoader.SaveAllCommand) {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Group = MenuConstants.GROUP_APP_MENU_FILE_SAVE, Order = 20)]
 	sealed class SaveModuleCommand : FileMenuHandler {
 		readonly IFileTabManager fileTabManager;
 		readonly Lazy<IUndoCommandManager> undoCommandManager;

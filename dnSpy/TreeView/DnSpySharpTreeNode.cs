@@ -23,7 +23,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Media;
-using dnSpy.Contracts;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Themes;

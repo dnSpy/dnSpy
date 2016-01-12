@@ -25,7 +25,6 @@ namespace dnSpy.Debugger.Breakpoints {
 	interface IBreakpointContext {
 		IImageManager ImageManager { get; }
 		ILanguage Language { get; }
-		ILanguageManager LanguageManager { get; }
 		IModuleLoader ModuleLoader { get; }
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
@@ -35,7 +34,6 @@ namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointContext : IBreakpointContext {
 		public IImageManager ImageManager { get; private set; }
 		public ILanguage Language { get; set; }
-		public ILanguageManager LanguageManager { get; private set; }
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 		public bool ShowTokens { get; set; }
@@ -45,9 +43,8 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 		readonly Lazy<IModuleLoader> moduleLoader;
 
-		public BreakpointContext(IImageManager imageManager, ILanguageManager languageManager, Lazy<IModuleLoader> moduleLoader) {
+		public BreakpointContext(IImageManager imageManager, Lazy<IModuleLoader> moduleLoader) {
 			this.ImageManager = imageManager;
-			this.LanguageManager = languageManager;
 			this.moduleLoader = moduleLoader;
 		}
 	}

@@ -32,7 +32,7 @@ namespace dnSpy.Files {
 	sealed class FileManager : IFileManager {
 		readonly object lockObj;
 		readonly List<IDnSpyFile> files;
-		readonly List<WeakReference> tempCache;
+		readonly List<IDnSpyFile> tempCache;
 		readonly IDnSpyFileCreator[] dnSpyFileCreators;
 
 		public IAssemblyResolver AssemblyResolver {
@@ -75,7 +75,7 @@ namespace dnSpy.Files {
 		public FileManager(IFileManagerSettings fileManagerSettings, [ImportMany] IDnSpyFileCreator[] mefCreators) {
 			this.lockObj = new object();
 			this.files = new List<IDnSpyFile>();
-			this.tempCache = new List<WeakReference>();
+			this.tempCache = new List<IDnSpyFile>();
 			this.asmResolver = new AssemblyResolver(this);
 			this.dnSpyFileCreators = mefCreators.OrderBy(a => a.Order).ToArray();
 			this.fileManagerSettings = fileManagerSettings;
@@ -118,9 +118,8 @@ namespace dnSpy.Files {
 				}
 			}
 			lock (tempCache) {
-				foreach (var weakRef in tempCache) {
-					var file = weakRef.Target as IDnSpyFile;
-					if (file != null && comparer.Equals(file.AssemblyDef, assembly))
+				foreach (var file in tempCache) {
+					if (comparer.Equals(file.AssemblyDef, assembly))
 						return file;
 				}
 			}
@@ -190,11 +189,15 @@ namespace dnSpy.Files {
 		}
 
 		IDnSpyFile AddTempCachedFile(IDnSpyFile file) {
+			// Disable mmap'd I/O before adding it to the temp cache to prevent another thread from
+			// getting the same file while we're disabling mmap'd I/O. Could lead to crashes.
+			DisableMMapdIO(file);
+
 			lock (tempCache) {
 				if (!AssemblyLoadEnabled)
-					tempCache.Add(new WeakReference(file));
+					tempCache.Add(file);
 			}
-			return DisableMMapdIO(file);
+			return file;
 		}
 
 		void ClearTempCache() {

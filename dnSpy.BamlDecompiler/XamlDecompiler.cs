@@ -20,11 +20,14 @@
 	THE SOFTWARE.
 */
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
 using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
 using dnSpy.BamlDecompiler.Rewrite;
+using dnSpy.Contracts.Languages;
 
 namespace dnSpy.BamlDecompiler {
 	internal class XamlDecompiler {
@@ -36,8 +39,8 @@ namespace dnSpy.BamlDecompiler {
 			new DocumentRewritePass(),
 		};
 
-		public XDocument Decompile(ModuleDef module, BamlDocument document, CancellationToken token) {
-			var ctx = XamlContext.Construct(module, document, token);
+		public XDocument Decompile(ModuleDef module, BamlDocument document, CancellationToken token, BamlDecompilerOptions bamlDecompilerOptions, List<string> assemblyReferences) {
+			var ctx = XamlContext.Construct(module, document, token, bamlDecompilerOptions);
 
 			var handler = HandlerMap.LookupHandler(ctx.RootNode.Type);
 			var elem = handler.Translate(ctx, ctx.RootNode, null);
@@ -49,6 +52,9 @@ namespace dnSpy.BamlDecompiler {
 				token.ThrowIfCancellationRequested();
 				pass.Run(ctx, xaml);
 			}
+
+			if (assemblyReferences != null)
+				assemblyReferences.AddRange(ctx.Baml.AssemblyIdMap.Select(a => a.Value.AssemblyFullName));
 
 			return xaml;
 		}

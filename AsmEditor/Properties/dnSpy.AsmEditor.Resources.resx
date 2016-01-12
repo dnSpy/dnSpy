@@ -2405,4 +2405,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="CustomAttribute_NamedArg_Property" xml:space="preserve">
     <value>Property</value>
   </data>
+  <data name="SaveModules_FixErrorsByEditingSettings" xml:space="preserve">
+    <value>-- Fix the errors by editing the options.</value>
+  </data>
 </root>

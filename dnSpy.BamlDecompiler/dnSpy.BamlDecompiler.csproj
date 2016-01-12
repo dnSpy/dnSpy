@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Annotations.cs" />
+    <Compile Include="BamlDecompiler.cs" />
     <Compile Include="BamlTabSaverCreator.cs" />
     <Compile Include="BamlToolTipContentCreator.cs" />
     <Compile Include="Baml\KnownThings.cs" />
@@ -142,8 +143,12 @@
       <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
       <Name>ICSharpCode.Decompiler</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Languages\Languages.csproj">
+    <ProjectReference Include="..\Languages.ILSpy\Languages.ILSpy.csproj">
       <Project>{d7fe873e-df22-4f54-aefa-bcf33afd7e05}</Project>
+      <Name>Languages.ILSpy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Languages\Languages.csproj">
+      <Project>{9265e4ea-eb00-4cb6-8a9a-608871e24fd0}</Project>
       <Name>Languages</Name>
     </ProjectReference>
     <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
