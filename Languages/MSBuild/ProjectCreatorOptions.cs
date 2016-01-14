@@ -60,6 +60,11 @@ namespace dnSpy.Languages.MSBuild {
 		/// </summary>
 		public string SolutionFilename { get; set; }
 
+		/// <summary>
+		/// User GAC paths. All files stored in any of these directories are considered GAC files.
+		/// </summary>
+		public List<string> UserGACPaths { get; private set; }
+
 		public CancellationToken CancellationToken { get; private set; }
 
 		public ProjectCreatorOptions(string dir, CancellationToken cancellationToken) {
@@ -68,6 +73,7 @@ namespace dnSpy.Languages.MSBuild {
 			this.Directory = dir;
 			this.CancellationToken = cancellationToken;
 			this.ProjectModules = new List<ProjectModuleOptions>();
+			this.UserGACPaths = new List<string>();
 		}
 	}
 }

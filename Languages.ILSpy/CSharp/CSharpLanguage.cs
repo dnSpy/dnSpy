@@ -34,8 +34,8 @@ using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.NRefactory.CSharp;
 
 namespace dnSpy.Languages.ILSpy.CSharp {
-	static class LanguageCreator {
-		public static IEnumerable<ILanguage> Languages {
+	sealed class LanguageProvider : ILanguageProvider {
+		public IEnumerable<ILanguage> Languages {
 			get {
 				yield return new CSharpLanguage(LanguageConstants.CSHARP_ILSPY_ORDERUI);
 				foreach (var l in GetDebugLanguages())
@@ -55,7 +55,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 	[Export(typeof(ILanguageCreator))]
 	sealed class MyLanguageCreator : ILanguageCreator {
 		public IEnumerable<ILanguage> Create() {
-			return LanguageCreator.Languages;
+			return new LanguageProvider().Languages;
 		}
 	}
 

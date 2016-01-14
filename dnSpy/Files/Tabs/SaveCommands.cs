@@ -127,7 +127,10 @@ namespace dnSpy.Files.Tabs {
 			}
 
 			public void Execute(ExportToProjectVM vm) {
-				vm.IsIndeterminate = true;
+				vm.ProgressMinimum = 0;
+				vm.ProgressMaximum = 1;
+				vm.TotalProgress = 0;
+				vm.IsIndeterminate = false;
 				Task.Factory.StartNew(() => {
 					var decompilationOptions = new DecompilationOptions {
 						CancellationToken = cancellationTokenSource.Token,

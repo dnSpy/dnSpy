@@ -17,22 +17,32 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using dnSpy.Contracts.Languages;
+using System;
 
-namespace dnSpy.Languages.ILSpy {
-	public static class LanguageCreator {
-		public static IEnumerable<ILanguage> Languages {
-			get {
-				foreach (var l in CSharp.LanguageCreator.Languages)
-					yield return l;
-				foreach (var l in IL.LanguageCreator.Languages)
-					yield return l;
-				foreach (var l in ILAst.LanguageCreator.Languages)
-					yield return l;
-				foreach (var l in VB.LanguageCreator.Languages)
-					yield return l;
-			}
+namespace dnSpy.Languages {
+	sealed class DummyLanguage : Language {
+		public override string FileExtension {
+			get { return ".xxx"; }
+		}
+
+		public override Guid GenericGuid {
+			get { return new Guid("CAE0EC7B-4311-4C48-AF7C-36E5EA71249A"); }
+		}
+
+		public override string GenericNameUI {
+			get { return "---"; }
+		}
+
+		public override double OrderUI {
+			get { return double.MaxValue; }
+		}
+
+		public override Guid UniqueGuid {
+			get { return new Guid("E4E6F1AA-FF88-48BC-B44C-49585E66DCF0"); }
+		}
+
+		public override string UniqueNameUI {
+			get { return "---"; }
 		}
 	}
 }

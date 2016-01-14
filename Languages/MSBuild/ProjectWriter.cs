@@ -35,11 +35,13 @@ namespace dnSpy.Languages.MSBuild {
 		readonly Project project;
 		readonly ProjectVersion projectVersion;
 		readonly IList<Project> allProjects;
+		readonly IList<string> userGACPaths;
 
-		public ProjectWriter(Project project, ProjectVersion projectVersion, IList<Project> allProjects) {
+		public ProjectWriter(Project project, ProjectVersion projectVersion, IList<Project> allProjects, IList<string> userGACPaths) {
 			this.project = project;
 			this.projectVersion = projectVersion;
 			this.allProjects = allProjects;
+			this.userGACPaths = userGACPaths;
 		}
 
 		public void Write() {
@@ -164,8 +166,9 @@ namespace dnSpy.Languages.MSBuild {
 						writer.WriteEndElement();
 					}
 					foreach (var r in project.ExtraAssemblyReferences) {
-						if (hash.Contains(r))
+						if (hash.Contains(r) || AssemblyExistsInProject(r))
 							continue;
+						hash.Add(r);
 						writer.WriteStartElement("Reference");
 						writer.WriteAttributeString("Include", IdentifierEscaper.Escape(r));
 						writer.WriteEndElement();
@@ -358,7 +361,7 @@ namespace dnSpy.Languages.MSBuild {
 		string GetHintPath(AssemblyDef asm) {
 			if (asm == null)
 				return null;
-			if (GacInfo.IsGacPath(asm.ManifestModule.Location))
+			if (IsGacPath(asm.ManifestModule.Location))
 				return null;
 			if (ExistsInProject(asm.ManifestModule.Location))
 				return null;
@@ -366,8 +369,25 @@ namespace dnSpy.Languages.MSBuild {
 			return GetRelativePath(asm.ManifestModule.Location);
 		}
 
+		bool IsGacPath(string file) {
+			return GacInfo.IsGacPath(file) || IsUserGacPath(file);
+		}
+
+		bool IsUserGacPath(string file) {
+			file = file.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+			foreach (var dir in userGACPaths) {
+				if (file.StartsWith(dir + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+			return false;
+		}
+
 		bool ExistsInProject(string filename) {
 			return FindOtherProject(filename) != null;
+		}
+
+		bool AssemblyExistsInProject(string asmSimpleName) {
+			return allProjects.Any(a => StringComparer.OrdinalIgnoreCase.Equals(a.AssemblyName, asmSimpleName));
 		}
 
 		Project FindOtherProject(string filename) {

@@ -228,6 +228,7 @@
     <Compile Include="Images\DotNetImageManager.cs" />
     <Compile Include="Images\ImageManager.cs" />
     <Compile Include="Images\ThemedImageCreator.cs" />
+    <Compile Include="Languages\DummyLanguage.cs" />
     <Compile Include="Languages\LanguageManager.cs" />
     <Compile Include="Languages\LanguageManagerSettings.cs" />
     <Compile Include="MainApp\AboutCommands.cs" />
@@ -366,10 +367,6 @@
     <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
       <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
       <Name>ICSharpCode.Decompiler</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Languages.ILSpy\Languages.ILSpy.csproj">
-      <Project>{d7fe873e-df22-4f54-aefa-bcf33afd7e05}</Project>
-      <Name>Languages.ILSpy</Name>
     </ProjectReference>
     <ProjectReference Include="..\Languages\Languages.csproj">
       <Project>{9265e4ea-eb00-4cb6-8a9a-608871e24fd0}</Project>

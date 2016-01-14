@@ -193,6 +193,8 @@
     <Compile Include="Languages\ILanguage.cs" />
     <Compile Include="Languages\ILanguageCreator.cs" />
     <Compile Include="Languages\ILanguageManager.cs" />
+    <Compile Include="Languages\ILanguageProvider.cs" />
+    <Compile Include="Languages\ISimpleILPrinter.cs" />
     <Compile Include="Languages\LanguageConstants.cs" />
     <Compile Include="Languages\SimplePrinterFlags.cs" />
     <Compile Include="Languages\SyntaxHighlightOutputToTextOutput.cs" />

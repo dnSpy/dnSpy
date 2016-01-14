@@ -30,6 +30,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
 using dnSpy.Languages.MSBuild;
 using dnSpy_Console.Properties;
+using ICSharpCode.Decompiler;
 
 namespace dnSpy_Console {
 	[Serializable]
@@ -57,22 +58,30 @@ namespace dnSpy_Console {
 	}
 
 	sealed class DnSpyDecompiler : IMSBuildProjectWriterLogger {
-		bool isRecursive;
-		bool noGac;
-		bool noCorlibRef;
-		bool dontCreateSlnFile;
-		bool dontMaskErr;
-		bool dontUnpackResources;
-		bool dontCreateResX;
-		bool dontDecompileXaml;
+		bool isRecursive = false;
+		bool useGac = true;
+		bool addCorlibRef = true;
+		bool createSlnFile = true;
+		bool dontMaskErr = false;
+		bool unpackResources = true;
+		bool createResX = true;
+		bool decompileBaml = true;
+		bool xmlDocComments = true;
+		bool ilComments = false;
+		bool ilBytes = true;
+		bool tokenComments = true;
+		bool sortMembers = true;
 		int numThreads;
 		int mdToken;
+		string typeName;
 		ProjectVersion projectVersion = ProjectVersion.VS2010;
 		string outputDir;
 		string slnName = "solution.sln";
 		readonly List<string> files;
 		readonly List<string> asmPaths;
-		string language = "C#";
+		readonly List<string> userGacPaths;
+		readonly List<string> gacFiles;
+		string language = LanguageConstants.LANGUAGE_CSHARP.ToString();
 		readonly DecompilationOptions decompilationOptions;
 		readonly ModuleContext moduleContext;
 		readonly AssemblyResolver assemblyResolver;
@@ -83,26 +92,70 @@ namespace dnSpy_Console {
 		public DnSpyDecompiler() {
 			this.files = new List<string>();
 			this.asmPaths = new List<string>();
+			this.userGacPaths = new List<string>();
+			this.gacFiles = new List<string>();
 			this.decompilationOptions = new DecompilationOptions();
 			this.moduleContext = ModuleDef.CreateModuleContext(true);
 			this.assemblyResolver = (AssemblyResolver)moduleContext.AssemblyResolver;
+			this.assemblyResolver.EnableTypeDefCache = true;
 			this.bamlDecompiler = TryLoadBamlDecompiler();
+			this.decompileBaml = bamlDecompiler != null;
 
 			var langs = new List<ILanguage>();
-			langs.AddRange(dnSpy.Languages.ILSpy.LanguageCreator.Languages);
+			langs.AddRange(GetAllLanguages());
 			langs.Sort((a, b) => a.OrderUI.CompareTo(b.OrderUI));
 			this.allLanguages = langs.ToArray();
 		}
 
+		static IEnumerable<ILanguage> GetAllLanguages() {
+			var asmNames = new string[] {
+				"Languages.ILSpy.Plugin",
+			};
+			foreach (var asmName in asmNames) {
+				foreach (var l in GetLanguagesInAssembly(asmName))
+					yield return l;
+			}
+		}
+
+		static IEnumerable<ILanguage> GetLanguagesInAssembly(string asmName) {
+			var asm = TryLoad(asmName);
+			if (asm != null) {
+				foreach (var type in asm.GetTypes()) {
+					if (!type.IsAbstract && !type.IsInterface && typeof(ILanguageProvider).IsAssignableFrom(type)) {
+						var p = (ILanguageProvider)Activator.CreateInstance(type);
+						foreach (var l in p.Languages)
+							yield return l;
+					}
+				}
+			}
+		}
+
 		static IBamlDecompiler TryLoadBamlDecompiler() {
-			var asm = Assembly.Load("dnSpy.BamlDecompiler.Plugin");
-			var type = asm.GetType("dnSpy.BamlDecompiler.BamlDecompiler");
-			return type == null ? null : (IBamlDecompiler)Activator.CreateInstance(type);
+			return TryCreateType<IBamlDecompiler>("dnSpy.BamlDecompiler.Plugin", "dnSpy.BamlDecompiler.BamlDecompiler");
+		}
+
+		static Assembly TryLoad(string asmName) {
+			try {
+				return Assembly.Load(asmName);
+			}
+			catch {
+			}
+			return null;
+		}
+
+		static T TryCreateType<T>(string asmName, string typeFullName) {
+			var asm = TryLoad(asmName);
+			var type = asm == null ? null : asm.GetType(typeFullName);
+			return type == null ? default(T) : (T)Activator.CreateInstance(type);
 		}
 
 		public int Run(string[] args) {
 			try {
 				ParseCommandLine(args);
+				if (allLanguages.Length == 0)
+					throw new ErrorException(dnSpy_Console_Resources.NoLanguagesFound);
+				if (GetLanguage() == null)
+					throw new ErrorException(string.Format(dnSpy_Console_Resources.LanguageXDoesNotExist, language));
 				Decompile();
 			}
 			catch (ErrorException ex) {
@@ -192,16 +245,23 @@ namespace dnSpy_Console {
 						i++;
 						break;
 
+					case "-user-gac":
+						if (next == null)
+							throw new ErrorException(dnSpy_Console_Resources.MissingUserGacPath);
+						userGacPaths.AddRange(next.Split(new char[] { PATHS_SEP }, StringSplitOptions.RemoveEmptyEntries));
+						i++;
+						break;
+
 					case "-no-gac":
-						noGac = true;
+						useGac = false;
 						break;
 
 					case "-no-stdlib":
-						noCorlibRef = true;
+						addCorlibRef = false;
 						break;
 
 					case "-no-sln":
-						dontCreateSlnFile = true;
+						createSlnFile = false;
 						break;
 
 					case "-sln-name":
@@ -220,6 +280,7 @@ namespace dnSpy_Console {
 					case "-threads":
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingNumberOfThreads);
+						i++;
 						if (!int.TryParse(next, out numThreads))
 							throw new ErrorException(string.Format(dnSpy_Console_Resources.InvalidInteger, next));
 						break;
@@ -227,6 +288,7 @@ namespace dnSpy_Console {
 					case "-vs":
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingVSVersion);
+						i++;
 						int vsVer;
 						if (!int.TryParse(next, out vsVer))
 							throw new ErrorException(string.Format(dnSpy_Console_Resources.InvalidInteger, next));
@@ -241,28 +303,77 @@ namespace dnSpy_Console {
 						}
 						break;
 
-					case "-dont-unpack-resources":
-						dontUnpackResources = true;
+					case "-no-resources":
+						unpackResources = false;
 						break;
 
-					case "-dont-create-resx":
-						dontCreateResX = true;
+					case "-no-resx":
+						createResX = false;
 						break;
 
-					case "-dont-decompile-baml":
-						dontDecompileXaml = true;
+					case "-no-baml":
+						decompileBaml = false;
 						break;
 
 					case "t":
+					case "-type":
+						if (next == null)
+							throw new ErrorException(dnSpy_Console_Resources.MissingTypeName);
+						i++;
+						typeName = next;
+						break;
+
+					case "-md":
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingMDToken);
+						i++;
 						bool parsedToken;
 						if (next.StartsWith("0x", StringComparison.OrdinalIgnoreCase) || next.StartsWith("&H", StringComparison.OrdinalIgnoreCase))
-							parsedToken = int.TryParse(next, NumberStyles.HexNumber, null, out mdToken);
+							parsedToken = int.TryParse(next.Substring(2), NumberStyles.HexNumber, null, out mdToken);
 						else
 							parsedToken = int.TryParse(next, out mdToken);
 						if (!parsedToken)
 							throw new ErrorException(string.Format(dnSpy_Console_Resources.InvalidInteger, next));
+						break;
+
+					case "-gac-file":
+						if (next == null)
+							throw new ErrorException(dnSpy_Console_Resources.MissingGacFile);
+						i++;
+						gacFiles.Add(next);
+						break;
+
+					case "-no-xmldoc":
+						xmlDocComments = false;
+						break;
+
+					case "-il-comments":
+						ilComments = true;
+						break;
+
+					case "-no-il-bytes":
+						ilBytes = false;
+						break;
+
+					case "-no-tokens":
+						tokenComments = false;
+						break;
+
+					case "-no-sort":
+						sortMembers = false;
+						break;
+
+					case "-order":
+						if (next == null)
+							throw new ErrorException(dnSpy_Console_Resources.MissingOrderArg);
+						i++;
+						if (next.Length != 5)
+							throw new ErrorException(dnSpy_Console_Resources.InvalidOrderArg);
+						decompilationOptions.DecompilerSettings.DecompilationObject0 = GetDecompilationObject(next[0]);
+						decompilationOptions.DecompilerSettings.DecompilationObject1 = GetDecompilationObject(next[1]);
+						decompilationOptions.DecompilerSettings.DecompilationObject2 = GetDecompilationObject(next[2]);
+						decompilationOptions.DecompilerSettings.DecompilationObject3 = GetDecompilationObject(next[3]);
+						decompilationOptions.DecompilerSettings.DecompilationObject4 = GetDecompilationObject(next[4]);
 						break;
 
 					default:
@@ -271,6 +382,17 @@ namespace dnSpy_Console {
 				}
 				else
 					files.Add(arg);
+			}
+		}
+
+		static DecompilationObject GetDecompilationObject(char c) {
+			switch (c) {
+			case 't': return DecompilationObject.NestedTypes;
+			case 'f': return DecompilationObject.Fields;
+			case 'e': return DecompilationObject.Events;
+			case 'p': return DecompilationObject.Properties;
+			case 'm': return DecompilationObject.Methods;
+			default: throw new ErrorException(dnSpy_Console_Resources.InvalidOrderArg);
 			}
 		}
 
@@ -285,35 +407,100 @@ namespace dnSpy_Console {
 		void Decompile() {
 			foreach (var dir in asmPaths)
 				AddSearchPath(dir);
-			assemblyResolver.UseGAC = !noGac;
+			foreach (var dir in userGacPaths)
+				AddSearchPath(dir);
+			assemblyResolver.UseGAC = useGac;
 			decompilationOptions.DontShowCreateMethodBodyExceptions = dontMaskErr;
+			decompilationOptions.DecompilerSettings.ShowXmlDocumentation = xmlDocComments;
+			decompilationOptions.DecompilerSettings.ShowILComments = ilComments;
+			decompilationOptions.DecompilerSettings.ShowILBytes = ilBytes;
+			decompilationOptions.DecompilerSettings.ShowTokenAndRvaComments = tokenComments;
+			decompilationOptions.DecompilerSettings.SortMembers = sortMembers;
 
 			var files = new List<ProjectModuleOptions>(GetDotNetFiles());
-			if (mdToken != 0) {
+			if (mdToken != 0 || typeName != null) {
 				if (files.Count == 0)
 					throw new ErrorException(dnSpy_Console_Resources.MissingDotNetFilename);
 				if (files.Count != 1)
 					throw new ErrorException(dnSpy_Console_Resources.OnlyOneFileCanBeDecompiled);
-				var member = files[0].Module.ResolveToken(mdToken) as IMemberDef;
-				if (member == null)
+
+				IMemberDef member;
+				if (typeName != null)
+					member = FindType(files[0].Module, typeName);
+				else
+					member = files[0].Module.ResolveToken(mdToken) as IMemberDef;
+				if (member == null) {
+					if (typeName != null)
+						throw new ErrorException(string.Format(dnSpy_Console_Resources.CouldNotFindTypeX, typeName));
 					throw new ErrorException(dnSpy_Console_Resources.InvalidToken);
-				//TODO: Decompile to stdout
-				throw new ErrorException("NYI");
+				}
+
+				var writer = Console.Out;
+				var output = new PlainTextOutput(writer);
+
+				var lang = GetLanguage();
+				if (member is MethodDef)
+					lang.Decompile((MethodDef)member, output, decompilationOptions);
+				else if (member is FieldDef)
+					lang.Decompile((FieldDef)member, output, decompilationOptions);
+				else if (member is PropertyDef)
+					lang.Decompile((PropertyDef)member, output, decompilationOptions);
+				else if (member is EventDef)
+					lang.Decompile((EventDef)member, output, decompilationOptions);
+				else if (member is TypeDef)
+					lang.Decompile((TypeDef)member, output, decompilationOptions);
+				else
+					throw new ErrorException(dnSpy_Console_Resources.InvalidMemberToDecompile);
 			}
 			else {
 				if (string.IsNullOrEmpty(outputDir))
 					throw new ErrorException(dnSpy_Console_Resources.MissingOutputDir);
+				if (GetLanguage().ProjectFileExtension == null)
+					throw new ErrorException(string.Format(dnSpy_Console_Resources.LanguageXDoesNotSupportProjects, GetLanguage().UniqueNameUI));
 
 				var options = new ProjectCreatorOptions(outputDir, decompilationOptions.CancellationToken);
 				options.Logger = this;
 				options.ProjectVersion = projectVersion;
 				options.NumberOfThreads = numThreads;
 				options.ProjectModules.AddRange(files);
-				if (!dontCreateSlnFile && !string.IsNullOrEmpty(slnName))
+				options.UserGACPaths.AddRange(userGacPaths);
+				if (createSlnFile && !string.IsNullOrEmpty(slnName))
 					options.SolutionFilename = slnName;
 				var creator = new MSBuildProjectCreator(options);
 				creator.Create();
 			}
+		}
+
+		static TypeDef FindType(ModuleDef module, string name) {
+			return FindTypeFullName(module, name, StringComparer.Ordinal) ??
+				FindTypeFullName(module, name, StringComparer.OrdinalIgnoreCase) ??
+				FindTypeName(module, name, StringComparer.Ordinal) ??
+				FindTypeName(module, name, StringComparer.OrdinalIgnoreCase);
+		}
+
+		static TypeDef FindTypeFullName(ModuleDef module, string name, StringComparer comparer) {
+			return module.GetTypes().FirstOrDefault(a => 
+					comparer.Equals(a.FullName, name) ||
+					comparer.Equals(a.ReflectionFullName, name) ||
+					comparer.Equals(CleanTypeName(a.FullName), name) ||
+					comparer.Equals(CleanTypeName(a.ReflectionFullName), name)
+				);
+		}
+
+		static TypeDef FindTypeName(ModuleDef module, string name, StringComparer comparer) {
+			return module.GetTypes().FirstOrDefault(a =>
+					comparer.Equals(a.Name, name) ||
+					comparer.Equals(a.ReflectionName, name) ||
+					comparer.Equals(CleanTypeName(a.Name), name) ||
+					comparer.Equals(CleanTypeName(a.ReflectionName), name)
+				);
+		}
+
+		static string CleanTypeName(string s) {
+			int i = s.LastIndexOf('`');
+			if (i < 0)
+				return s;
+			return s.Substring(0, i);
 		}
 
 		IEnumerable<ProjectModuleOptions> GetDotNetFiles() {
@@ -338,6 +525,13 @@ namespace dnSpy_Console {
 					else
 						throw new ErrorException(string.Format(dnSpy_Console_Resources.FileOrDirDoesNotExist, file));
 				}
+			}
+
+			foreach (var asmName in gacFiles) {
+				var asm = this.assemblyResolver.Resolve(new AssemblyNameInfo(asmName), null);
+				if (asm == null)
+					throw new ErrorException(string.Format(dnSpy_Console_Resources.CouldNotResolveGacFileX, asmName));
+				yield return CreateProjectModuleOptions(asm.ManifestModule);
 			}
 		}
 
@@ -434,21 +628,26 @@ namespace dnSpy_Console {
 				file = Path.GetFullPath(file);
 				if (!File.Exists(file))
 					return null;
-				var mod = ModuleDefMD.Load(file, moduleContext);
-				moduleContext.AssemblyResolver.AddToCache(mod);
-				AddSearchPath(Path.GetDirectoryName(mod.Location));
-				var proj = new ProjectModuleOptions(mod, GetLanguage(), decompilationOptions);
-				proj.DontReferenceStdLib = noCorlibRef;
-				proj.UnpackResources = !dontUnpackResources;
-				proj.CreateResX = !dontCreateResX;
-				proj.DecompileXaml = !dontDecompileXaml;
-				var o = BamlDecompilerOptions.Create(GetLanguage());
-				proj.DecompileBaml = (a, b, c, d) => bamlDecompiler.Decompile(a, b, c, o, d);
-				return proj;
+				return CreateProjectModuleOptions(ModuleDefMD.Load(file, moduleContext));
 			}
 			catch {
 			}
 			return null;
+		}
+
+		ProjectModuleOptions CreateProjectModuleOptions(ModuleDef mod) {
+			mod.EnableTypeDefFindCache = true;
+			moduleContext.AssemblyResolver.AddToCache(mod);
+			AddSearchPath(Path.GetDirectoryName(mod.Location));
+			var proj = new ProjectModuleOptions(mod, GetLanguage(), decompilationOptions);
+			proj.DontReferenceStdLib = !addCorlibRef;
+			proj.UnpackResources = unpackResources;
+			proj.CreateResX = createResX;
+			proj.DecompileXaml = decompileBaml && bamlDecompiler != null;
+			var o = BamlDecompilerOptions.Create(GetLanguage());
+			if (bamlDecompiler != null)
+				proj.DecompileBaml = (a, b, c, d) => bamlDecompiler.Decompile(a, b, c, o, d);
+			return proj;
 		}
 
 		ILanguage GetLanguage() {
@@ -470,8 +669,7 @@ namespace dnSpy_Console {
 
 		public void Error(string message) {
 			errors++;
-			foreach (var line in message.Split(new string[] { "\n" }, StringSplitOptions.None))
-				Console.Error.WriteLine(string.Format(dnSpy_Console_Resources.Error1, line));
+			Console.Error.WriteLine(string.Format(dnSpy_Console_Resources.Error1, message));
 		}
 		int errors;
 	}

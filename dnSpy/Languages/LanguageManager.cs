@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Languages;
 using dnSpy.Events;
@@ -37,8 +36,9 @@ namespace dnSpy.Languages {
 			var langs = new List<ILanguage>(languages);
 			foreach (var creator in creators)
 				langs.AddRange(creator.Create());
+			if (langs.Count == 0)
+				langs.Add(new DummyLanguage());
 			this.languages = langs.OrderBy(a => a.OrderUI).ToArray();
-			Debug.Assert(this.languages.Length != 0);
 			this.selectedLanguage = FindOrDefault(languageManagerSettings.LanguageGuid);
 			this.languageChanged = new WeakEventList<EventArgs>();
 		}

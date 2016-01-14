@@ -83,10 +83,12 @@ namespace dnSpy.Shared.UI.Highlighting {
 		/// <param name="filterOutNewLines">true to filter out newline characters</param>
 		/// <returns></returns>
 		public FrameworkElement CreateResult(bool useEllipsis = false, bool filterOutNewLines = true) {
-			return CreateResult(TextFormatterProvider.BuiltIn, useEllipsis, filterOutNewLines);
+			return CreateResult2(TextFormatterProvider.BuiltIn, useEllipsis, filterOutNewLines);
 		}
 
-		public FrameworkElement CreateResult(TextFormatterProvider provider, bool useEllipsis = false, bool filterOutNewLines = true) {
+		// Don't use the same name as the above method since VS requires that callers have a
+		// reference to AvalonEdit even if this method is never called.
+		public FrameworkElement CreateResult2(TextFormatterProvider provider, bool useEllipsis = false, bool filterOutNewLines = true) {
 			if (syntaxHighlighter != null)
 				return syntaxHighlighter.Create(provider, useEllipsis, filterOutNewLines);
 

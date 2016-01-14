@@ -19,13 +19,15 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Plugin;
 using dnSpy.Decompiler;
-using dnSpy.Languages.ILSpy.IL;
 using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.Decompiler;
@@ -40,6 +42,29 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 	static class BodyUtils {
 		public static readonly Parameter NullParameter = new Parameter(int.MinValue);
+		static ISimpleILPrinter simpleILPrinter;
+
+		[ExportAutoLoaded]
+		sealed class BodyUtilsInit : IAutoLoaded {
+			[ImportingConstructor]
+			BodyUtilsInit([ImportMany] IEnumerable<ISimpleILPrinter> simpleILPrinters) {
+				BodyUtils.simpleILPrinter = simpleILPrinters.OrderBy(a => a.Order).FirstOrDefault() ?? new DummyPrinter();
+			}
+
+			sealed class DummyPrinter : ISimpleILPrinter {
+				public double Order {
+					get { return 0; }
+				}
+
+				public bool Write(ITextOutput output, IMemberRef member) {
+					if (member == null || member is GenericParam)
+						return false;
+
+					output.Write(string.Format("Missing ISimpleILPrinter: {0}", member.ToString()), TextTokenType.Text);
+					return true;
+				}
+			}
+		}
 
 		public static bool IsNull(object op) {
 			return op == null ||
@@ -519,7 +544,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			var mr = obj as IMemberRef;
 			if (mr != null) {
-				if (ILLanguageUtils.Write(SyntaxHighlightOutputToTextOutput.Create(output), mr))
+				if (simpleILPrinter.Write(SyntaxHighlightOutputToTextOutput.Create(output), mr))
 					return;
 			}
 

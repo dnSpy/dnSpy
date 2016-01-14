@@ -79,7 +79,10 @@ namespace dnSpy.Languages.MSBuild {
 				satelliteAssemblyFinder = new SatelliteAssemblyFinder();
 				Parallel.ForEach(options.ProjectModules, opts, modOpts => {
 					options.CancellationToken.ThrowIfCancellationRequested();
-					var p = new Project(modOpts, filenameCreator.Create(modOpts.Module), satelliteAssemblyFinder);
+					string name;
+					lock (filenameCreator)
+						name = filenameCreator.Create(modOpts.Module);
+					var p = new Project(modOpts, name, satelliteAssemblyFinder);
 					lock (projects)
 						projects.Add(p);
 					p.CreateProjectFiles(ctx);
@@ -112,7 +115,7 @@ namespace dnSpy.Languages.MSBuild {
 				Parallel.ForEach(projects, opts, p => {
 					options.CancellationToken.ThrowIfCancellationRequested();
 					try {
-						var writer = new ProjectWriter(p, options.ProjectVersion, projects);
+						var writer = new ProjectWriter(p, options.ProjectVersion, projects, options.UserGACPaths);
 						writer.Write();
 					}
 					catch (OperationCanceledException) {

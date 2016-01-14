@@ -22,18 +22,26 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using dnlib.PE;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class SolutionWriter {
 		readonly ProjectVersion projectVersion;
-		readonly IList<Project> projects;
+		readonly List<Project> projects;
 		readonly string filename;
 		readonly List<string> configs;
 		readonly List<string> platforms;
 
 		public SolutionWriter(ProjectVersion projectVersion, IList<Project> projects, string filename) {
 			this.projectVersion = projectVersion;
-			this.projects = projects;
+			this.projects = projects.ToList();
+			this.projects.Sort((a, b) => {
+				// Sort exes first since VS picks the first file in the solution to be the
+				// "StartUp Project".
+				int ae = (a.Module.Characteristics & Characteristics.Dll) == 0 ? 0 : 1;
+				int be = (b.Module.Characteristics & Characteristics.Dll) == 0 ? 0 : 1;
+				return ae.CompareTo(be);
+			});
 			this.filename = filename;
 
 			this.configs = new List<string>();

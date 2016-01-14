@@ -34,8 +34,8 @@ using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Visitors;
 
 namespace dnSpy.Languages.ILSpy.VB {
-	static class LanguageCreator {
-		public static IEnumerable<ILanguage> Languages {
+	sealed class LanguageProvider : ILanguageProvider {
+		public IEnumerable<ILanguage> Languages {
 			get { yield return new VBLanguage(); }
 		}
 	}
@@ -43,7 +43,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 	[Export(typeof(ILanguageCreator))]
 	sealed class MyLanguageCreator : ILanguageCreator {
 		public IEnumerable<ILanguage> Create() {
-			return LanguageCreator.Languages;
+			return new LanguageProvider().Languages;
 		}
 	}
 

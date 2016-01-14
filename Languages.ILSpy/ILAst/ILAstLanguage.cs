@@ -29,8 +29,8 @@ using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.Decompiler.ILAst;
 
 namespace dnSpy.Languages.ILSpy.ILAst {
-	static class LanguageCreator {
-		public static IEnumerable<ILanguage> Languages {
+	sealed class LanguageProvider : ILanguageProvider {
+		public IEnumerable<ILanguage> Languages {
 			get {
 #if DEBUG
 				foreach (var l in ILAstLanguage.GetDebugLanguages())
@@ -44,7 +44,7 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 	[Export(typeof(ILanguageCreator))]
 	sealed class MyLanguageCreator : ILanguageCreator {
 		public IEnumerable<ILanguage> Create() {
-			return LanguageCreator.Languages;
+			return new LanguageProvider().Languages;
 		}
 	}
 

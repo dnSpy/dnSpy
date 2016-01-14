@@ -31,8 +31,8 @@ using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 
 namespace dnSpy.Languages.ILSpy.IL {
-	static class LanguageCreator {
-		public static IEnumerable<ILanguage> Languages {
+	sealed class LanguageProvider : ILanguageProvider {
+		public IEnumerable<ILanguage> Languages {
 			get { yield return new ILLanguage(); }
 		}
 	}
@@ -40,7 +40,7 @@ namespace dnSpy.Languages.ILSpy.IL {
 	[Export(typeof(ILanguageCreator))]
 	sealed class MyLanguageCreator : ILanguageCreator {
 		public IEnumerable<ILanguage> Create() {
-			return LanguageCreator.Languages;
+			return new LanguageProvider().Languages;
 		}
 	}
 
@@ -203,7 +203,16 @@ namespace dnSpy.Languages.ILSpy.IL {
 		}
 	}
 
-	public static class ILLanguageUtils {
+	[Export(typeof(ISimpleILPrinter))]
+	sealed class ILLanguageUtils : ISimpleILPrinter {
+		double ISimpleILPrinter.Order {
+			get { return -100; }
+		}
+
+		bool ISimpleILPrinter.Write(ITextOutput output, IMemberRef member) {
+			return Write(output, member);
+		}
+
 		public static bool Write(ITextOutput output, IMemberRef member) {
 			var method = member as IMethod;
 			if (method != null && method.IsMethod) {

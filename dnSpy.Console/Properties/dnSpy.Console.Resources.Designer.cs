@@ -61,6 +61,24 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Type {0} couldn&apos;t be found.
+        /// </summary>
+        internal static string CouldNotFindTypeX {
+            get {
+                return ResourceManager.GetString("CouldNotFindTypeX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Couldn&apos;t resolve GAC assembly &apos;{0}&apos;.
+        /// </summary>
+        internal static string CouldNotResolveGacFileX {
+            get {
+                return ResourceManager.GetString("CouldNotResolveGacFileX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to ERROR: {0}.
         /// </summary>
         internal static string Error1 {
@@ -72,11 +90,14 @@ namespace dnSpy_Console.Properties {
         /// <summary>
         ///   Looks up a localized string similar to Examples:
         ///  {0} -o c:\out\path C:\some\path
-        ///      Decompile all .NET files in the above directory and save files to C:\out\path
+        ///      Decompiles all .NET files in the above directory and saves files to C:\out\path
         ///  {0} -o c:\out\path -r C:\some\path
-        ///      Decompile all .NET files in the above directory and all sub directories
+        ///      Decompiles all .NET files in the above directory and all sub directories
         ///  {0} -o C:\out\path C:\some\path\*.dll
-        ///      Decompile all *.dll .NET files in the above directory and save files to C:\out\path.
+        ///      Decompiles all *.dll .NET files in the above directory and saves files to C:\out\path
+        ///  {0} --md 0x06000123 file.dll
+        ///      Decompiles the member with token 0x06000123
+        ///  {0} -t system.int32 --gac-file &quot;mscorlib,  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Examples {
             get {
@@ -103,11 +124,29 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Only types, methods, fields, events and properties can be decompiled.
+        /// </summary>
+        internal static string InvalidMemberToDecompile {
+            get {
+                return ResourceManager.GetString("InvalidMemberToDecompile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid option: {0}.
         /// </summary>
         internal static string InvalidOption {
             get {
                 return ResourceManager.GetString("InvalidOption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid order argument.
+        /// </summary>
+        internal static string InvalidOrderArg {
+            get {
+                return ResourceManager.GetString("InvalidOrderArg", resourceCulture);
             }
         }
         
@@ -157,6 +196,24 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Language {0} does not exist.
+        /// </summary>
+        internal static string LanguageXDoesNotExist {
+            get {
+                return ResourceManager.GetString("LanguageXDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language {0} doesn&apos;t support creating project files.
+        /// </summary>
+        internal static string LanguageXDoesNotSupportProjects {
+            get {
+                return ResourceManager.GetString("LanguageXDoesNotSupportProjects", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Missing assembly search path.
         /// </summary>
         internal static string MissingAsmSearchPath {
@@ -171,6 +228,15 @@ namespace dnSpy_Console.Properties {
         internal static string MissingDotNetFilename {
             get {
                 return ResourceManager.GetString("MissingDotNetFilename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing GAC assembly name.
+        /// </summary>
+        internal static string MissingGacFile {
+            get {
+                return ResourceManager.GetString("MissingGacFile", resourceCulture);
             }
         }
         
@@ -211,6 +277,15 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing order argument.
+        /// </summary>
+        internal static string MissingOrderArg {
+            get {
+                return ResourceManager.GetString("MissingOrderArg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Missing output directory.
         /// </summary>
         internal static string MissingOutputDir {
@@ -229,11 +304,38 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing full name of type.
+        /// </summary>
+        internal static string MissingTypeName {
+            get {
+                return ResourceManager.GetString("MissingTypeName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing user GAC path.
+        /// </summary>
+        internal static string MissingUserGacPath {
+            get {
+                return ResourceManager.GetString("MissingUserGacPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Missing Visual Studio version.
         /// </summary>
         internal static string MissingVSVersion {
             get {
                 return ResourceManager.GetString("MissingVSVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No languages were found. Make sure that the language dll files exist in the same folder as this program..
+        /// </summary>
+        internal static string NoLanguagesFound {
+            get {
+                return ResourceManager.GetString("NoLanguagesFound", resourceCulture);
             }
         }
         
@@ -257,14 +359,13 @@ namespace dnSpy_Console.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to {0} [options] [fileOrDir1] [fileOrDir2] [...]
-        ///  --asm-path path    assembly search path. Paths can be separated with &apos;{1}&apos; or multiple --asm-path&apos;s can be used
+        ///  --asm-path path    assembly search path. Paths can be separated with &apos;{1}&apos; or you can use multiple --asm-path&apos;s
+        ///  --user-gac path    user GAC path. Paths can be separated with &apos;{1}&apos; or you can use multiple --user-gac&apos;s
         ///  --no-gac     don&apos;t use the GAC to look up assemblies. Useful with --no-stdlib
         ///  --no-stdlib  projects don&apos;t reference mscorlib
         ///  --no-sln     don&apos;t create a .sln file
-        ///  --sln-name name   name of the .sln file
-        ///  --dont-mask-merr   don&apos;t catch method exceptions when decompiling
-        ///  --threads N  number of worker threads
-        ///  --dont-unpack-resources [rest of string was truncated]&quot;;.
+        ///  --no-xmldoc  don&apos;t show XML doc comments
+        ///  --il-comments show IL co [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Usage {
             get {

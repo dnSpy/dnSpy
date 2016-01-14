@@ -28,7 +28,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnSpy.Languages.ILSpy;
 using dnSpy.Plugin;
 using dnSpy.Settings;
 using dnSpy.Shared.UI.MVVM;
@@ -70,7 +69,6 @@ namespace dnSpy.MainApp {
 			UIFixes();
 
 			var asms = new List<Assembly>();
-			asms.Add(typeof(LanguageCreator).Assembly);	// Languages.ILSpy
 			asms.Add(typeof(EnumVM).Assembly);			// dnSpy.Shared.UI
 			compositionContainer = AppCreator.Create(asms, "*.Plugin.dll", readSettings);
 			compositionContainer.ComposeParts(this);

@@ -65,7 +65,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				Write(gen.Output, Context.Language);
 
 				var provider = Context.UseNewRenderer ? TextFormatterProvider.GlyphRunFormatter : TextFormatterProvider.BuiltIn;
-				var text = gen.CreateResult(provider, filterOutNewLines: true);
+				var text = gen.CreateResult2(provider, filterOutNewLines: true);
 				cachedText = new WeakReference(text);
 				return text;
 			}
