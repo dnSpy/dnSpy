@@ -225,7 +225,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 		string splashScreenImageName;
 
-		TypeProjectFile CreateTypeProjectFile(TypeDef type, FilenameCreator filenameCreator) {
+		ProjectFile CreateTypeProjectFile(TypeDef type, FilenameCreator filenameCreator) {
 			var bamlFile = TryGetBamlFile(type);
 			if (bamlFile != null) {
 				var filename = filenameCreator.Create(GetTypeExtension(type), type.FullName);
@@ -245,13 +245,9 @@ namespace dnSpy.Languages.MSBuild {
 				return newFile;
 			}
 
+			const string DESIGNER = ".Designer";
 			var resxFile = TryGetResXFile(type);
-			if (resxFile == null) {
-				var filename = filenameCreator.Create(GetTypeExtension(type), type.FullName);
-				return new TypeProjectFile(type, filename, options.DecompilationOptions, options.Language);
-			}
-			else {
-				const string DESIGNER = ".Designer";
+			if (resxFile != null) {
 				if (DotNetUtils.IsWinForm(type)) {
 					var filename = filenameCreator.CreateFromNamespaceName(GetTypeExtension(type), type.ReflectionNamespace, Path.GetFileNameWithoutExtension(resxFile.Filename));
 					var newFile = new WinFormsProjectFile(type, filename, options.DecompilationOptions, options.Language);
@@ -273,6 +269,32 @@ namespace dnSpy.Languages.MSBuild {
 					return newFile;
 				}
 			}
+
+			var bt = type.BaseType;
+			if (bt != null && bt.FullName == "System.Configuration.ApplicationSettingsBase") {
+				var designerFilename = filenameCreator.Create(DESIGNER + GetTypeExtension(type), type.FullName);
+				var settingsFilename = filenameCreator.Create(".settings", type.FullName);
+				ProjectFile designerTypeFile;
+				if (options.Language.CanDecompile(DecompilationType.PartialType)) {
+					var typeFilename = filenameCreator.Create(GetTypeExtension(type), type.FullName);
+					var settingsTypeFile = new SettingsTypeProjectFile(type, typeFilename, options.DecompilationOptions, options.Language);
+					designerTypeFile = new SettingsDesignerTypeProjectFile(settingsTypeFile, designerFilename);
+					files.Add(settingsTypeFile);
+				}
+				else
+					designerTypeFile = new TypeProjectFile(type, designerFilename, options.DecompilationOptions, options.Language);
+				var settingsFile = new SettingsProjectFile(type, settingsFilename);
+				designerTypeFile.DependentUpon = settingsFile;
+				designerTypeFile.AutoGen = true;
+				designerTypeFile.DesignTimeSharedInput = true;
+				settingsFile.Generator = type.IsPublic ? "PublicSettingsSingleFileGenerator" : "SettingsSingleFileGenerator";
+				settingsFile.LastGenOutput = designerTypeFile;
+				files.Add(settingsFile);
+				return designerTypeFile;
+			}
+
+			var newFilename = filenameCreator.Create(GetTypeExtension(type), type.FullName);
+			return new TypeProjectFile(type, newFilename, options.DecompilationOptions, options.Language);
 		}
 
 		void CreateEmptyAppXamlFile() {

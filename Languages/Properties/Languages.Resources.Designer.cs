@@ -214,6 +214,33 @@ namespace dnSpy.Languages.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create settings designer file.
+        /// </summary>
+        internal static string MSBuild_CreateSettingsDesignerTypeFile {
+            get {
+                return ResourceManager.GetString("MSBuild_CreateSettingsDesignerTypeFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create {0}.
+        /// </summary>
+        internal static string MSBuild_CreateSettingsFile {
+            get {
+                return ResourceManager.GetString("MSBuild_CreateSettingsFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create settings file.
+        /// </summary>
+        internal static string MSBuild_CreateSettingsTypeFile {
+            get {
+                return ResourceManager.GetString("MSBuild_CreateSettingsTypeFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create splash screen resource {0}.
         /// </summary>
         internal static string MSBuild_CreateSplashScreenResource {

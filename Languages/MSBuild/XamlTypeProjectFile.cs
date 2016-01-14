@@ -45,7 +45,7 @@ namespace dnSpy.Languages.MSBuild {
 			var d = FindInitializeComponent();
 			if (d != null) {
 				yield return d;
-				foreach (var f in GetFields(d)) {
+				foreach (var f in DotNetUtils.GetFields(d)) {
 					if (f.FieldType.RemovePinnedAndModifiers().GetElementType() == ElementType.Boolean)
 						yield return f;
 				}
@@ -54,19 +54,8 @@ namespace dnSpy.Languages.MSBuild {
 			var connMeth = FindConnectMethod();
 			if (connMeth != null) {
 				yield return connMeth;
-				foreach (var f in GetFields(connMeth))
+				foreach (var f in DotNetUtils.GetFields(connMeth))
 					yield return f;
-			}
-		}
-
-		IEnumerable<FieldDef> GetFields(MethodDef method) {
-			var body = method.Body;
-			if (body != null) {
-				foreach (var instr in body.Instructions) {
-					var fd = instr.Operand as FieldDef;
-					if (fd != null && fd.DeclaringType == method.DeclaringType)
-						yield return fd;
-				}
 			}
 		}
 

@@ -170,10 +170,11 @@ namespace dnSpy.Files.Tabs {
 						Error(string.Format(dnSpy_Resources.ErrorExceptionOccurred, ex));
 					EmtpyErrorList();
 					vm.OnExportComplete();
-					if (!vm.ExportErrors)
+					if (!vm.ExportErrors) {
 						dlg.Close();
-					if (vm.OpenProject)
-						OpenProject();
+						if (vm.OpenProject)
+							OpenProject();
+					}
 				}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 			}
 

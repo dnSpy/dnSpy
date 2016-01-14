@@ -234,6 +234,8 @@ namespace dnSpy.Languages.MSBuild {
 				return;
 			writer.WriteStartElement("ItemGroup");
 			foreach (var file in files) {
+				if (file.BuildAction == BuildAction.DontIncludeInProjectFile)
+					continue;
 				writer.WriteStartElement(ToString(buildAction));
 				writer.WriteAttributeString("Include", GetRelativePath(file.Filename));
 				if (file.DependentUpon != null)
@@ -248,6 +250,8 @@ namespace dnSpy.Languages.MSBuild {
 					writer.WriteElementString("AutoGen", "True");
 				if (file.DesignTime)
 					writer.WriteElementString("DesignTime", "True");
+				if (file.DesignTimeSharedInput)
+					writer.WriteElementString("DesignTimeSharedInput", "True");
 				writer.WriteEndElement();
 			}
 			writer.WriteEndElement();

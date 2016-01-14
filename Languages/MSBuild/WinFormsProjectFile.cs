@@ -27,7 +27,7 @@ using dnSpy.Languages.Properties;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Languages.MSBuild {
-	sealed class WinFormsProjectFile :TypeProjectFile {
+	sealed class WinFormsProjectFile : TypeProjectFile {
 		public override string Description {
 			get { return Languages_Resources.MSBuild_CreateWinFormsFile; }
 		}
@@ -61,7 +61,7 @@ namespace dnSpy.Languages.MSBuild {
 				return defsToRemove;
 			lock (defsToRemoveLock) {
 				if (defsToRemove == null)
-					defsToRemove = CalculateDefsToRemove().ToArray();
+					defsToRemove = CalculateDefsToRemove().Distinct().ToArray();
 			}
 			return defsToRemove;
 		}
@@ -72,26 +72,15 @@ namespace dnSpy.Languages.MSBuild {
 			var m = GetInitializeComponent();
 			if (m != null) {
 				yield return m;
-				foreach (var f in GetFields(m))
+				foreach (var f in DotNetUtils.GetFields(m))
 					yield return f;
 			}
 
 			m = GetDispose();
 			if (m != null) {
 				yield return m;
-				foreach (var f in GetFields(m))
+				foreach (var f in DotNetUtils.GetFields(m))
 					yield return f;
-			}
-		}
-
-		IEnumerable<FieldDef> GetFields(MethodDef method) {
-			var body = method.Body;
-			if (body != null) {
-				foreach (var instr in body.Instructions) {
-					var fd = instr.Operand as FieldDef;
-					if (fd != null && fd.DeclaringType == method.DeclaringType)
-						yield return fd;
-				}
 			}
 		}
 

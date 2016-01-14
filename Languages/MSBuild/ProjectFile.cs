@@ -28,6 +28,7 @@ namespace dnSpy.Languages.MSBuild {
 		public ProjectFile LastGenOutput { get; set; }
 		public bool AutoGen { get; set; }
 		public bool DesignTime { get; set; }
+		public bool DesignTimeSharedInput { get; set; }
 
 		public abstract void Create(DecompileContext ctx);
 	}

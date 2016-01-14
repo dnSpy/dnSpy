@@ -256,5 +256,37 @@ namespace dnSpy.Languages.MSBuild {
 		public static bool IsUnsafe(ModuleDef module) {
 			return module.CustomAttributes.IsDefined("System.Security.UnverifiableCodeAttribute");
 		}
+
+		public static IEnumerable<FieldDef> GetFields(MethodDef method) {
+			return GetDefs(method).OfType<FieldDef>();
+		}
+
+		public static IEnumerable<IMemberDef> GetDefs(MethodDef method) {
+			var body = method.Body;
+			if (body != null) {
+				foreach (var instr in body.Instructions) {
+					var def = instr.Operand as IMemberDef;
+					if (def != null && def.DeclaringType == method.DeclaringType)
+						yield return def;
+				}
+			}
+		}
+
+		public static IEnumerable<IMemberDef> GetDefs(PropertyDef prop) {
+			foreach (var g in prop.GetMethods) {
+				foreach (var d in GetDefs(g))
+					yield return d;
+			}
+		}
+
+		public static IEnumerable<IMemberDef> GetMethodsAndSelf(PropertyDef p) {
+			yield return p;
+			foreach (var m in p.GetMethods)
+				yield return m;
+			foreach (var m in p.SetMethods)
+				yield return m;
+			foreach (var m in p.OtherMethods)
+				yield return m;
+		}
 	}
 }

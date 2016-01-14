@@ -37,6 +37,7 @@
     <Reference Include="System" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CSharp\SimpleCSharpPrinter.cs" />
@@ -74,6 +75,8 @@
     <Compile Include="MSBuild\ResourceProjectFile.cs" />
     <Compile Include="MSBuild\ResXProjectFile.cs" />
     <Compile Include="MSBuild\SatelliteAssemblyFinder.cs" />
+    <Compile Include="MSBuild\SettingsProjectFile.cs" />
+    <Compile Include="MSBuild\SettingsTypeProjectFile.cs" />
     <Compile Include="MSBuild\SolutionWriter.cs" />
     <Compile Include="MSBuild\SplashScreenProjectFile.cs" />
     <Compile Include="MSBuild\TypeProjectFile.cs" />
