@@ -21,7 +21,7 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 	interface ICodeToolTipSettings : INotifyPropertyChanged {

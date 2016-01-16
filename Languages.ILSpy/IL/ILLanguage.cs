@@ -25,7 +25,7 @@ using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
 using dnSpy.Languages.IL;
-using dnSpy.Shared.UI.Languages.XmlDoc;
+using dnSpy.Shared.Languages.XmlDoc;
 using ICSharpCode.Decompiler.Disassembler;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.ILSpy.XmlDoc;

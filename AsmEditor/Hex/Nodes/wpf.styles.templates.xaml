@@ -20,7 +20,7 @@
                     xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:tnhex="clr-namespace:dnSpy.AsmEditor.Hex.Nodes"
-                    xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
+                    xmlns:mvvm="clr-namespace:dnSpy.Shared.MVVM;assembly=dnSpy.Shared"
                     xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties">
 
     <Style x:Key="MDTableIndexTextBlockStyle"

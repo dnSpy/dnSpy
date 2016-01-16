@@ -21,7 +21,7 @@ using System;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.Menus;
 
 namespace dnSpy.Analyzer {
 	abstract class OpenReferenceCtxMenuCommandBase : MenuItemBase {

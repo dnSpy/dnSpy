@@ -23,7 +23,7 @@ using dnlib.DotNet;
 using dnlib.Threading;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	enum MethodCallingConv {

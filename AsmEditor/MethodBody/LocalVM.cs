@@ -24,7 +24,7 @@ using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class LocalVM : ViewModelBase, IIndexedItem {

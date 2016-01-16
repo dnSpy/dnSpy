@@ -27,7 +27,7 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Properties;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Search {
 	[ExportAutoLoaded]

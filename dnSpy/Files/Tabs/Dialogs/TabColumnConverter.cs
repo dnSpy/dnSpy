@@ -20,7 +20,7 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Shared.UI.Highlighting;
+using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class TabColumnConverter : IValueConverter {

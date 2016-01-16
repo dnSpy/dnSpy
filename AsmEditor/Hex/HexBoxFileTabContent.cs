@@ -29,8 +29,8 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.UI.Hex;
-using dnSpy.Shared.UI.HexEditor;
+using dnSpy.Shared.Hex;
+using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
 	[ExportFileTabContentFactory(Order = TabConstants.ORDER_HEXBOXFILETABCONTENTFACTORY)]

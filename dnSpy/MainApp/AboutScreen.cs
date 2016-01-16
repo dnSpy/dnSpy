@@ -27,8 +27,8 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
-using dnSpy.Shared.UI.Decompiler;
-using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.Decompiler;
+using dnSpy.Shared.Menus;
 
 namespace dnSpy.MainApp {
 	[Export, ExportFileTabContentFactory(Order = double.MaxValue)]

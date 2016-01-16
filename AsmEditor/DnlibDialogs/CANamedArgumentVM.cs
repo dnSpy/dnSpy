@@ -23,8 +23,8 @@ using System.Windows.Input;
 using dnlib.DotNet;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.Shared.UI.MVVM;
-using dnSpy.Shared.UI.Search;
+using dnSpy.Shared.MVVM;
+using dnSpy.Shared.Search;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	enum NamedArgType {

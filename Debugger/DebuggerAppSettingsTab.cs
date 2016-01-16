@@ -24,7 +24,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Debugger.Dialogs;
 using dnSpy.Debugger.Properties;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger {
 	[Export(typeof(IAppSettingsTabCreator))]

@@ -25,8 +25,8 @@ using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Languages.IL;
-using dnSpy.Shared.UI.Highlighting;
-using dnSpy.Shared.UI.Languages.XmlDoc;
+using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Languages.XmlDoc;
 using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Files.Tabs.TextEditor.ToolTips {

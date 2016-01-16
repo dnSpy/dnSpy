@@ -25,7 +25,7 @@ using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.ToolWindows;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.ToolWindows {
 	sealed class TabContentImpl : ITabContent, IFocusable, INotifyPropertyChanged {

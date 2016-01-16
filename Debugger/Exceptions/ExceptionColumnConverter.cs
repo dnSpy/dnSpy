@@ -20,7 +20,7 @@
 using System;
 using System.Globalization;
 using System.Windows.Data;
-using dnSpy.Shared.UI.Highlighting;
+using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.Debugger.Exceptions {
 	sealed class ExceptionColumnConverter : IValueConverter {

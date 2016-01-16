@@ -24,7 +24,7 @@ using System.Linq;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Languages.ILSpy.Properties;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 using ICSharpCode.Decompiler;
 
 namespace dnSpy.Languages.ILSpy.Settings {

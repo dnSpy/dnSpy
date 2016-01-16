@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Windows.Threading;
-using dnSpy.Shared.UI.Files;
+using dnSpy.Shared.Files;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	interface IGACFileReceiver {

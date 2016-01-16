@@ -32,8 +32,8 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Files.TreeView;
-using dnSpy.Shared.UI.HexEditor;
+using dnSpy.Shared.Files.TreeView;
+using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class PENode : FileTreeNodeData, IDecompileSelf {

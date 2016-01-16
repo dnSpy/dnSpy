@@ -23,7 +23,7 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Modules {
 	interface IModuleContext {

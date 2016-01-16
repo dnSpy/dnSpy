@@ -22,7 +22,7 @@ using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows.App;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Memory {
 	[ExportAutoLoaded]

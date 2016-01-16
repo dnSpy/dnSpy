@@ -23,8 +23,8 @@ using System.Windows;
 using System.Xml.Linq;
 using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Highlighting;
-using dnSpy.Shared.UI.Languages.XmlDoc;
+using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Languages.XmlDoc;
 
 namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 	sealed class CodeToolTipWriter : ICodeToolTipWriter, IXmlDocOutput {

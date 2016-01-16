@@ -37,9 +37,9 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Memory;
 using dnSpy.Debugger.Properties;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Highlighting;
-using dnSpy.Shared.UI.Menus;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Menus;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Locals {
 	[ExportAutoLoaded]

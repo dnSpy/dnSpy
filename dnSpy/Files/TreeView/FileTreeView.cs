@@ -38,7 +38,7 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.UI.Search;
+using dnSpy.Shared.Search;
 
 namespace dnSpy.Files.TreeView {
 	[Export, Export(typeof(IFileTreeView)), PartCreationPolicy(CreationPolicy.Shared)]

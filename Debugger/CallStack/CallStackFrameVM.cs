@@ -19,7 +19,7 @@
 
 using dndbg.Engine;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.CallStack {
 	interface ICallStackFrameContext {

@@ -27,7 +27,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Tabs;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs {
 	sealed class TabContentImpl : ViewModelBase, ITabContent, IFileTab, IFocusable {

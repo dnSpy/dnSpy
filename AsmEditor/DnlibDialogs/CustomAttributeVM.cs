@@ -28,8 +28,8 @@ using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Languages;
-using dnSpy.Shared.UI.MVVM;
-using dnSpy.Shared.UI.Search;
+using dnSpy.Shared.MVVM;
+using dnSpy.Shared.Search;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class CustomAttributeVM : ViewModelBase {

@@ -20,7 +20,7 @@
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Themes;
-using dnSpy.Shared.UI.AvalonEdit;
+using dnSpy.Shared.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace dnSpy.Debugger {

@@ -31,7 +31,7 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
-using dnSpy.Shared.UI.Decompiler;
+using dnSpy.Shared.Decompiler;
 using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace dnSpy.Files.Tabs.TextEditor {

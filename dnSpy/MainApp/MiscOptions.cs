@@ -26,8 +26,8 @@ using System.IO;
 using System.Security;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
-using dnSpy.Shared.UI.MVVM;
-using dnSpy.Shared.UI.Settings.Dialog;
+using dnSpy.Shared.MVVM;
+using dnSpy.Shared.Settings.Dialog;
 using Microsoft.Win32;
 
 namespace dnSpy.MainApp {

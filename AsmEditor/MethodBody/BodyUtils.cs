@@ -28,7 +28,7 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Highlighting;
+using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	[Flags]

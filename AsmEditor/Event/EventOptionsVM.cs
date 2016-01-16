@@ -26,8 +26,8 @@ using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Languages;
-using dnSpy.Shared.UI.MVVM;
-using dnSpy.Shared.UI.Search;
+using dnSpy.Shared.MVVM;
+using dnSpy.Shared.Search;
 
 namespace dnSpy.AsmEditor.Event {
 	sealed class EventOptionsVM : ViewModelBase {

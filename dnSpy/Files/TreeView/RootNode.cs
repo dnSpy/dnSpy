@@ -24,7 +24,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
-using dnSpy.Shared.UI.Files.TreeView;
+using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class RootNode : FileTreeNodeData {

@@ -29,7 +29,7 @@ using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Plugin;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.App;

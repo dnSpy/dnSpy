@@ -28,7 +28,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Themes;
 using dnSpy.Debugger.IMModules;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Breakpoints {
 	interface IBreakpointsVM {

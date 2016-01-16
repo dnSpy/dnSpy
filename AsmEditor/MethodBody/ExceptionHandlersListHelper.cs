@@ -29,8 +29,8 @@ using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Highlighting;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class ExceptionHandlersListHelper : ListBoxHelperBase<ExceptionHandlerVM> {

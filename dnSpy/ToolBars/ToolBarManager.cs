@@ -31,8 +31,8 @@ using System.Windows.Media.Imaging;
 using dnSpy.Contracts.Command;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.ToolBars;
-using dnSpy.Shared.UI.MVVM;
-using dnSpy.Shared.UI.Resources;
+using dnSpy.Shared.MVVM;
+using dnSpy.Shared.Resources;
 
 namespace dnSpy.ToolBars {
 	abstract class ToolBarItemMD {

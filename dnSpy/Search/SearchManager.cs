@@ -37,7 +37,7 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Themes;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Search {
 	interface ISearchManager {

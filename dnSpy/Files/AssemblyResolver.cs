@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
-using dnSpy.Shared.UI.Files;
+using dnSpy.Shared.Files;
 
 namespace dnSpy.Files {
 	sealed class AssemblyResolver : IAssemblyResolver {

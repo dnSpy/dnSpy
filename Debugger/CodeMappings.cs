@@ -24,7 +24,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Decompiler;
+using dnSpy.Shared.Decompiler;
 
 namespace dnSpy.Debugger {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]

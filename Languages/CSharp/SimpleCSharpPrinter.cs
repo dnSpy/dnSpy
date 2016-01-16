@@ -28,7 +28,7 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.Properties;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Languages.CSharp {
 	public struct SimpleCSharpPrinter {

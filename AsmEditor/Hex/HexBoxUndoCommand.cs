@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnSpy.AsmEditor.UndoRedo;
-using dnSpy.Shared.UI.HexEditor;
+using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
 	/// <summary>

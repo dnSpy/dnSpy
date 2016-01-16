@@ -23,7 +23,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Highlighting;
+using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointPrinter {

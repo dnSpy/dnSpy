@@ -26,7 +26,7 @@ using System.Windows.Input;
 using dnSpy.Contracts.Languages;
 using dnSpy.Languages.MSBuild;
 using dnSpy.Properties;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	interface IExportTask {

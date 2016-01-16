@@ -35,8 +35,8 @@ using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Files.Tabs.TextEditor;
 using dnSpy.Files.TreeView;
 using dnSpy.Properties;
-using dnSpy.Shared.UI.Controls;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.Controls;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs.Settings {
 	[Export(typeof(IAppSettingsTabCreator))]

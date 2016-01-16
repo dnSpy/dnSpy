@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Shared.UI.HexEditor;
+using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex {
 	sealed class HexBoxUIState {

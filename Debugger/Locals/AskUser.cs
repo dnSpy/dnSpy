@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Locals {
 	[Export(typeof(IAskUser))]
 	sealed class AskUser : IAskUser {
 		MsgBoxButton IAskUser.AskUser(string msg, AskUserButton buttons) {
-			return Shared.UI.App.MsgBox.Instance.Show(msg, Convert(buttons));
+			return Shared.App.MsgBox.Instance.Show(msg, Convert(buttons));
 		}
 
 		static MsgBoxButton Convert(AskUserButton buttons) {

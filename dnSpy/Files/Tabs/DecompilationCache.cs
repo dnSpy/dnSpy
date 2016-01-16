@@ -27,7 +27,7 @@ using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
-using dnSpy.Shared.UI.Decompiler;
+using dnSpy.Shared.Decompiler;
 using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace dnSpy.Files.Tabs {

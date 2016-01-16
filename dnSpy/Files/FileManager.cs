@@ -25,7 +25,7 @@ using System.Linq;
 using System.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
-using dnSpy.Shared.UI.Files;
+using dnSpy.Shared.Files;
 
 namespace dnSpy.Files {
 	[Export, Export(typeof(IFileManager)), PartCreationPolicy(CreationPolicy.Shared)]

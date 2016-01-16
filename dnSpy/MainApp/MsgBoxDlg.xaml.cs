@@ -19,7 +19,7 @@
 
 using System.Windows;
 using dnSpy.Contracts.App;
-using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.MainApp {
 	sealed partial class MsgBoxDlg : WindowBase {

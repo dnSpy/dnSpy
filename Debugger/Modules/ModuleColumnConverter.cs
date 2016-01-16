@@ -21,7 +21,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 using dnSpy.Contracts.Images;
-using dnSpy.Shared.UI.Highlighting;
+using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.Debugger.Modules {
 	sealed class ModuleColumnConverter : IValueConverter {

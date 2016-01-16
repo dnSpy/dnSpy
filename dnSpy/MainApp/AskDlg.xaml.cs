@@ -17,7 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.MainApp {
 	sealed partial class AskDlg : WindowBase {

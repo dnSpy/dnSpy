@@ -21,7 +21,7 @@ using System;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Breakpoints {
 	interface IBreakpointSettings : INotifyPropertyChanged {

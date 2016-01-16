@@ -23,7 +23,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Properties;
-using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.Menus;
 
 namespace dnSpy.Themes {
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_THEMES_GUID, Group = MenuConstants.GROUP_APP_MENU_THEMES_THEMES, Order = 0)]

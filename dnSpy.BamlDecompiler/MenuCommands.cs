@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
-using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.Menus;
 
 namespace dnSpy.BamlDecompiler {
 	static class Constants {

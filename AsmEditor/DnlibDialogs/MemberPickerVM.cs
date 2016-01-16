@@ -34,8 +34,8 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.UI.MVVM;
-using dnSpy.Shared.UI.Search;
+using dnSpy.Shared.MVVM;
+using dnSpy.Shared.Search;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	sealed class MemberPickerVM : ViewModelBase {

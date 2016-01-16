@@ -38,7 +38,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Analyzer {
 	interface IAnalyzerManager {

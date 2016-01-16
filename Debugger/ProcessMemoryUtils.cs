@@ -20,7 +20,7 @@
 using System;
 using dndbg.Engine;
 using dnSpy.Debugger.Memory;
-using dnSpy.Shared.UI.HexEditor;
+using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.Debugger {
 	static class ProcessMemoryUtils {

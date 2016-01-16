@@ -40,10 +40,10 @@ using dnSpy.Debugger.IMModules;
 using dnSpy.Debugger.Memory;
 using dnSpy.Debugger.Properties;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Highlighting;
-using dnSpy.Shared.UI.Menus;
-using dnSpy.Shared.UI.MVVM;
-using dnSpy.Shared.UI.MVVM.Dialogs;
+using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Menus;
+using dnSpy.Shared.MVVM;
+using dnSpy.Shared.MVVM.Dialogs;
 
 namespace dnSpy.Debugger.Modules {
 	[ExportAutoLoaded]
@@ -235,7 +235,7 @@ namespace dnSpy.Debugger.Modules {
 			if (module.IsDynamic && module.Debugger.ProcessState != DebuggerProcessState.Stopped) {
 				if (inMemoryModuleManager.Value.LoadFile(module, false) == null) {
 					if (canShowDlgBox)
-						Shared.UI.App.MsgBox.Instance.Show(dnSpy_Debugger_Resources.Module_BreakProcessBeforeLoadingDynamicModules);
+						Shared.App.MsgBox.Instance.Show(dnSpy_Debugger_Resources.Module_BreakProcessBeforeLoadingDynamicModules);
 					return false;
 				}
 			}

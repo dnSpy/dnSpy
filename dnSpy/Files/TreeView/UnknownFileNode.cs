@@ -26,7 +26,7 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.UI.Files.TreeView;
+using dnSpy.Shared.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
 	sealed class UnknownFileNode : DnSpyFileNode, IUnknownFileNode {

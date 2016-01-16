@@ -30,7 +30,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Plugin;
 using dnSpy.Settings;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.MainApp {
 	sealed partial class App : Application {
@@ -69,7 +69,7 @@ namespace dnSpy.MainApp {
 			UIFixes();
 
 			var asms = new List<Assembly>();
-			asms.Add(typeof(EnumVM).Assembly);			// dnSpy.Shared.UI
+			asms.Add(typeof(EnumVM).Assembly);			// dnSpy.Shared
 			compositionContainer = AppCreator.Create(asms, "*.Plugin.dll", readSettings);
 			compositionContainer.ComposeParts(this);
 

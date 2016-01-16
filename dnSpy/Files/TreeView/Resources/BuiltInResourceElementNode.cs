@@ -28,7 +28,7 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Files.TreeView.Resources;
+using dnSpy.Shared.Files.TreeView.Resources;
 
 namespace dnSpy.Files.TreeView.Resources {
 	sealed class BuiltInResourceElementNode : ResourceElementNode, IBuiltInResourceElementNode, IDecompileSelf {

@@ -6,7 +6,7 @@ using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.Menus;
 
 // Adds a couple of commands to the file treeview context menu.
 // Since there are several commands using the same state, MenuItemBase<TContext> is used
@@ -48,7 +48,7 @@ namespace Example1.Plugin {
 	[ExportMenuItem(Header = "Command #1", Group = Constants.GROUP_TREEVIEW, Order = 0)]
 	sealed class TVCommand1 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) {
-			dnSpy.Shared.UI.App.MsgBox.Instance.Show("Command #1");
+			dnSpy.Shared.App.MsgBox.Instance.Show("Command #1");
 		}
 
 		public override bool IsEnabled(TVContext context) {
@@ -59,7 +59,7 @@ namespace Example1.Plugin {
 	[ExportMenuItem(Header = "Command #2", Group = Constants.GROUP_TREEVIEW, Order = 10)]
 	sealed class TVCommand2 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) {
-			dnSpy.Shared.UI.App.MsgBox.Instance.Show("Command #2");
+			dnSpy.Shared.App.MsgBox.Instance.Show("Command #2");
 		}
 
 		public override bool IsVisible(TVContext context) {
@@ -71,7 +71,7 @@ namespace Example1.Plugin {
 	sealed class TVCommand3 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) {
 			int secretNum = new Random().Next() % 10;
-			dnSpy.Shared.UI.App.MsgBox.Instance.Ask<int?>("Number", null, "Guess a number", null, s => {
+			dnSpy.Shared.App.MsgBox.Instance.Ask<int?>("Number", null, "Guess a number", null, s => {
 				int num;
 				if (string.IsNullOrWhiteSpace(s))
 					return "Enter a number";
@@ -89,7 +89,7 @@ namespace Example1.Plugin {
 	[ExportMenuItem(Header = "Command #4", Group = Constants.GROUP_TREEVIEW, Order = 30)]
 	sealed class TVCommand4 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) {
-			dnSpy.Shared.UI.App.MsgBox.Instance.Show("Command #4");
+			dnSpy.Shared.App.MsgBox.Instance.Show("Command #4");
 		}
 
 		public override bool IsEnabled(TVContext context) {

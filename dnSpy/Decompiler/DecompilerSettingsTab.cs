@@ -24,7 +24,7 @@ using System.Linq;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Properties;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Decompiler {
 	sealed class DecompilerAppSettingsTabSettings {

@@ -28,9 +28,9 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Plugin;
-using dnSpy.Shared.UI.Images;
-using dnSpy.Shared.UI.MVVM;
-using dnSpy.Shared.UI.Resources;
+using dnSpy.Shared.Images;
+using dnSpy.Shared.MVVM;
+using dnSpy.Shared.Resources;
 
 namespace dnSpy.AsmEditor.Commands {
 	[ExportAutoLoaded]

@@ -20,7 +20,7 @@
 using System.ComponentModel.Composition;
 using System.Windows;
 using dnSpy.Contracts.Menus;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.MVVM {
 	[Export(typeof(IInitializeDataTemplate)), PartCreationPolicy(CreationPolicy.Shared)]

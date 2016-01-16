@@ -21,7 +21,7 @@ using System;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
-using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.Menus;
 
 namespace dnSpy.AsmEditor.Commands {
 	sealed class CodeContext {

@@ -22,7 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Themes;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Locals {
 	interface ILocalsContent {

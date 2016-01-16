@@ -8,8 +8,8 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
-using dnSpy.Shared.UI.Menus;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.Menus;
+using dnSpy.Shared.MVVM;
 
 // Adds a tool window and a command that will show it. The command is added to the View menu and a
 // keyboard shortcut is added to the main window. Keyboard shortcut Ctrl+Alt+Z shows the tool window.

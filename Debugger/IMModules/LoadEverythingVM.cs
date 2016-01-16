@@ -24,7 +24,7 @@ using System.Threading;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.Threading;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.IMModules {
 	sealed class MyCancellationToken : ICancellationToken {

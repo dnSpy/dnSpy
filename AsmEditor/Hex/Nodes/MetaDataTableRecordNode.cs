@@ -24,9 +24,9 @@ using dnlib.DotNet.MD;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.HexEditor;
-using dnSpy.Shared.UI.Highlighting;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.HexEditor;
+using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class MetaDataTableRecordNode : HexNode {

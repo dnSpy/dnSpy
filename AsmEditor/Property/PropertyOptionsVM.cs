@@ -24,7 +24,7 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Languages;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Property {
 	sealed class PropertyOptionsVM : ViewModelBase {

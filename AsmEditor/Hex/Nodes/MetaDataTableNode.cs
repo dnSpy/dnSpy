@@ -27,8 +27,8 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.HexEditor;
-using dnSpy.Shared.UI.Highlighting;
+using dnSpy.Shared.HexEditor;
+using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class MetaDataTableNode : HexNode {

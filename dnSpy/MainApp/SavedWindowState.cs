@@ -20,7 +20,7 @@
 using System;
 using System.Windows;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.MainApp {
 	sealed class SavedWindowState {

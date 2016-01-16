@@ -19,7 +19,7 @@
 
 using System.Windows;
 using System.Windows.Input;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.ToolBars {
 	sealed class ToolBarButtonVM : ViewModelBase {

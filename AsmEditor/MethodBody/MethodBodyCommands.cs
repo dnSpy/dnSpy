@@ -38,7 +38,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.Menus;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	[ExportAutoLoaded]
@@ -227,7 +227,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var method = list[0].Mapping.Method;
 			var methodNode = appWindow.FileTreeView.FindNode(method);
 			if (methodNode == null) {
-				Shared.UI.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotFindMethod, method));
+				Shared.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotFindMethod, method));
 				return;
 			}
 

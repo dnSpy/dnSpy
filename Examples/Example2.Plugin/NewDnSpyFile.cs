@@ -8,9 +8,9 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Files;
-using dnSpy.Shared.UI.Files.TreeView;
-using dnSpy.Shared.UI.Highlighting;
+using dnSpy.Shared.Files;
+using dnSpy.Shared.Files.TreeView;
+using dnSpy.Shared.Highlighting;
 
 // Adds a new IDnSpyFile that can be loaded into the file treeview. It gets its own IDnSpyFileNode.
 // Open a .txt/.xml/.cs/.vb (see supportedExtensions) file to trigger this code.

@@ -30,7 +30,7 @@ using System.Windows.Data;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolBars;
-using dnSpy.Shared.UI.ToolBars;
+using dnSpy.Shared.ToolBars;
 
 namespace dnSpy.MainApp {
 	[ExportToolBarObject(OwnerGuid = ToolBarConstants.APP_TB_GUID, Group = ToolBarConstants.GROUP_APP_TB_MAIN_MENU, Order = 0)]

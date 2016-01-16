@@ -20,8 +20,8 @@
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Shared.UI.Controls;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.Controls;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	partial class TabsDlg : WindowBase {

@@ -21,7 +21,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
-using dnSpy.Shared.UI.Files;
+using dnSpy.Shared.Files;
 
 namespace dnSpy.Files {
 	[Export(typeof(IDnSpyFileCreator))]

@@ -20,7 +20,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
-using dnSpy.Shared.UI.Highlighting;
+using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class AssemblyNode : EntityNode {

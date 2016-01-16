@@ -19,7 +19,7 @@
 
 using System.Collections.Generic;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Shared.UI.HexEditor;
+using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageCor20HeaderVM : HexVM {

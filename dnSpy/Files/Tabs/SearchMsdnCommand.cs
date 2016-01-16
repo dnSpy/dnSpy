@@ -22,7 +22,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Menus;
 using System;
 using System.Collections.Generic;
-using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.Menus;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Contracts.Files.TreeView;

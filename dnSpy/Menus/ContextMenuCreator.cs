@@ -22,7 +22,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using dnSpy.Contracts.Menus;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Menus {
 	sealed class ContextMenuCreator : IContextMenuCreator {

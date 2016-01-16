@@ -22,7 +22,7 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Files.TreeView;
 using dnSpy.Properties;
-using dnSpy.Shared.UI.Settings.Dialog;
+using dnSpy.Shared.Settings.Dialog;
 
 namespace dnSpy.Files.Tabs {
 	[ExportSimpleAppOptionCreator(Guid = AppSettingsConstants.GUID_DYNTAB_MISC)]

@@ -22,7 +22,7 @@ using System.IO;
 using System.Linq;
 using dndbg.Engine;
 using dnlib.PE;
-using dnSpy.Shared.UI.MVVM.Dialogs;
+using dnSpy.Shared.MVVM.Dialogs;
 
 namespace dnSpy.Debugger.Modules {
 	sealed class PEFilesSaver : IProgressTask {

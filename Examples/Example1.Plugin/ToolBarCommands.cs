@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.ToolBars;
-using dnSpy.Shared.UI.ToolBars;
+using dnSpy.Shared.ToolBars;
 
 // Adds a toolbar button and combobox between the asm editor and debugger toolbar items
 
@@ -17,7 +17,7 @@ namespace Example1.Plugin {
 	[ExportToolBarButton(Icon = "Assembly", ToolTip = "Click Me", Group = TBConstants.GROUP_APP_TB_PLUGIN, Order = 0)]
 	sealed class TBCommand1 : ToolBarButtonBase {
 		public override void Execute(IToolBarItemContext context) {
-			dnSpy.Shared.UI.App.MsgBox.Instance.Show("Command #1");
+			dnSpy.Shared.App.MsgBox.Instance.Show("Command #1");
 		}
 	}
 

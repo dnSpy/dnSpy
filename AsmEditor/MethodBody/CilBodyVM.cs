@@ -30,7 +30,7 @@ using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.ViewHelpers;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class CilBodyVM : ViewModelBase {

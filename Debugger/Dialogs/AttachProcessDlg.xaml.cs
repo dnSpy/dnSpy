@@ -23,8 +23,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnSpy.Shared.UI.Controls;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.Controls;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed partial class AttachProcessDlg : WindowBase {

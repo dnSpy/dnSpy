@@ -23,7 +23,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:dnSpy.Debugger.Exceptions"
-             xmlns:mvvm="clr-namespace:dnSpy.Shared.UI.MVVM;assembly=dnSpy.Shared.UI"
+             xmlns:mvvm="clr-namespace:dnSpy.Shared.MVVM;assembly=dnSpy.Shared"
              xmlns:exvc="clr-namespace:dnSpy.Debugger.Exceptions"
              xmlns:vc="clr-namespace:dnSpy.Debugger.Converters"
              xmlns:p="clr-namespace:dnSpy.Debugger.Properties"

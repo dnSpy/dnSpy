@@ -29,7 +29,7 @@ using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Properties;
-using dnSpy.Shared.UI.Hex;
+using dnSpy.Shared.Hex;
 
 namespace dnSpy.Debugger.Memory {
 	[Export, Export(typeof(IMainToolWindowContentCreator))]

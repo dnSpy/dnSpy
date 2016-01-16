@@ -24,7 +24,7 @@ using System.Linq;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
-using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.Menus;
 
 namespace dnSpy.MainApp {
 	sealed class ToolWindowGroupContext {

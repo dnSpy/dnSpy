@@ -21,7 +21,7 @@ using System.Linq;
 using System.Drawing;
 using System.Windows.Input;
 using System.Windows.Forms;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.AsmEditor.Properties;
 

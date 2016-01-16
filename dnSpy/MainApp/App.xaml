@@ -6,7 +6,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="../Themes/wpf.styles.templates.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/dnSpy.Shared.UI;component/Themes/wpf.styles.templates.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/dnSpy.Shared;component/Themes/wpf.styles.templates.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

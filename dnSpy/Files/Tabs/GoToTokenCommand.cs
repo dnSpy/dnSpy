@@ -29,8 +29,8 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Properties;
-using dnSpy.Shared.UI.Menus;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.Menus;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs {
 	[ExportAutoLoaded]
@@ -91,7 +91,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		static IDnlibDef AskForDef(string title, ITokenResolver resolver) {
-			return Shared.UI.App.MsgBox.Instance.Ask(dnSpy_Resources.GoToToken_Label, null, title, s => {
+			return Shared.App.MsgBox.Instance.Ask(dnSpy_Resources.GoToToken_Label, null, title, s => {
 				string error;
 				uint token = NumberVMUtils.ParseUInt32(s, uint.MinValue, uint.MaxValue, out error);
 				var memberRef = resolver.ResolveToken(token);

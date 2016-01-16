@@ -22,7 +22,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Shared.UI.Search;
+using dnSpy.Shared.Search;
 
 namespace dnSpy.Files.Tabs {
 	[ExportReferenceFileTabContentCreator(Order = TabConstants.ORDER_CONTENTCREATOR_NODE)]

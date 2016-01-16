@@ -31,10 +31,10 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.HexEditor;
-using dnSpy.Shared.UI.Highlighting;
-using dnSpy.Shared.UI.Menus;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.HexEditor;
+using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.Menus;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Hex {
 	[Export(typeof(IInitializeDataTemplate))]
@@ -310,7 +310,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static MetaDataTableRecordVM Ask(string title, MDTableContext context) {
-			return Shared.UI.App.MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_MetadataToken, null, title, s => {
+			return Shared.App.MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_MetadataToken, null, title, s => {
 				string error;
 				uint rid = NumberVMUtils.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out error);
 				if (!string.IsNullOrEmpty(error))
@@ -453,7 +453,7 @@ namespace dnSpy.AsmEditor.Hex {
 			var doc = context.MetaDataTableVM.Document;
 			ulong totalSize = (ulong)context.MetaDataTableVM.TableInfo.RowSize * (ulong)context.Records.Length * 2;
 			if (totalSize > int.MaxValue) {
-				Shared.UI.App.MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.TooManyBytesSelected);
+				Shared.App.MsgBox.Instance.Show(dnSpy_AsmEditor_Resources.TooManyBytesSelected);
 				return;
 			}
 			var sb = new StringBuilder((int)totalSize);

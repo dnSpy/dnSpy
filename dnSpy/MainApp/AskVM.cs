@@ -19,7 +19,7 @@
 
 using System;
 using dnSpy.Properties;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.MainApp {
 	sealed class AskVM : ViewModelBase {

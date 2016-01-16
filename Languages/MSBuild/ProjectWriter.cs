@@ -28,7 +28,7 @@ using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Files;
+using dnSpy.Shared.Files;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class ProjectWriter {

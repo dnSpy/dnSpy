@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using dnlib.DotNet;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.DnlibDialogs {
 	static class DlgUtils {

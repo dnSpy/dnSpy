@@ -35,7 +35,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.IL;
-using dnSpy.Shared.UI.Menus;
+using dnSpy.Shared.Menus;
 
 namespace dnSpy.AsmEditor.Commands {
 	[ExportAutoLoaded]
@@ -95,7 +95,7 @@ namespace dnSpy.AsmEditor.Commands {
 			if (text.Length > 0) {
 				Clipboard.SetText(text);
 				if (copier.FoundUnknownBytes) {
-					Shared.UI.App.MsgBox.Instance.ShowIgnorableMessage(new Guid("141A1744-13CD-4835-A804-08D93D8E0D2B"),
+					Shared.App.MsgBox.Instance.ShowIgnorableMessage(new Guid("141A1744-13CD-4835-A804-08D93D8E0D2B"),
 						dnSpy_AsmEditor_Resources.UnknownBytesMsg,
 						MsgBoxButton.OK);
 				}

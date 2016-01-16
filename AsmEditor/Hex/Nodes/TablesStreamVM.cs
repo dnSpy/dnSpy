@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet.MD;
-using dnSpy.Shared.UI.HexEditor;
+using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class TablesStreamVM : HexVM {

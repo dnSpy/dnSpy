@@ -34,7 +34,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Files.TreeView.Resources;
+using dnSpy.Shared.Files.TreeView.Resources;
 
 namespace dnSpy.BamlDecompiler {
 	sealed class BamlResourceElementNode : ResourceElementNode, IDecompileSelf {

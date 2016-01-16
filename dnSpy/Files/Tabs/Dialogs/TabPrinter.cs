@@ -19,7 +19,7 @@
 
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Highlighting;
+using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class TabPrinter {

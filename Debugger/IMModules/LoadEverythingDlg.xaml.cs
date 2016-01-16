@@ -22,7 +22,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Threading;
-using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.Debugger.IMModules {
 	sealed partial class LoadEverythingDlg : WindowBase {

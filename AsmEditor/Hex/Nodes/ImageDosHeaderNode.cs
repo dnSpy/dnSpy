@@ -24,7 +24,7 @@ using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.HexEditor;
+using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageDosHeaderNode : HexNode {

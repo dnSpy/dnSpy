@@ -24,8 +24,8 @@ using System.Diagnostics;
 using System.Linq;
 using dnSpy.Contracts.Menus;
 using dnSpy.Properties;
-using dnSpy.Shared.UI.Menus;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.Menus;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Culture {
 	static class Constants {
@@ -89,7 +89,7 @@ namespace dnSpy.Culture {
 		public override void Execute(IMenuItemContext context) {
 			if (!cultureManager.Language.Equals(langInfo)) {
 				cultureManager.Language = langInfo;
-				Shared.UI.App.MsgBox.Instance.ShowIgnorableMessage(new Guid("778A97E0-E7F8-4965-B2A0-BB6E0281B9F9"), dnSpy_Resources.LanguageSwitchMessage);
+				Shared.App.MsgBox.Instance.ShowIgnorableMessage(new Guid("778A97E0-E7F8-4965-B2A0-BB6E0281B9F9"), dnSpy_Resources.LanguageSwitchMessage);
 			}
 		}
 	}

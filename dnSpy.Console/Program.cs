@@ -31,7 +31,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.MSBuild;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 using dnSpy_Console.Properties;
 
 namespace dnSpy_Console {

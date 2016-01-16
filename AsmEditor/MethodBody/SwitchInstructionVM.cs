@@ -18,7 +18,7 @@
 */
 
 using dnSpy.AsmEditor.Commands;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class SwitchInstructionVM : ViewModelBase, IIndexedItem {

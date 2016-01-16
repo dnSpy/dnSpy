@@ -29,7 +29,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Properties;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class OpenFileListVM : ViewModelBase, IDisposable {

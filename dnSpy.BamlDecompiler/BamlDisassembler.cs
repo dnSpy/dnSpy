@@ -28,7 +28,7 @@ using dnlib.DotNet;
 using dnSpy.BamlDecompiler.Baml;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.BamlDecompiler {
 	internal class BamlDisassembler {

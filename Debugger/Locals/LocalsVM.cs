@@ -31,7 +31,7 @@ using dnSpy.Contracts.App;
 using dnSpy.Contracts.Images;
 using dnSpy.Debugger.CallStack;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.Debugger.Locals {

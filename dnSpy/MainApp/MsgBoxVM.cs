@@ -20,7 +20,7 @@
 using System;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.MainApp {
 	sealed class MsgBoxVM : ViewModelBase {

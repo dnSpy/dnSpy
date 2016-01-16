@@ -23,8 +23,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Shared.UI.HexEditor;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.HexEditor;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	[DebuggerDisplay("{StartOffset} {EndOffset} {Name} {DataFieldVM.StringValue}")]

@@ -21,7 +21,7 @@ using System;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
-using dnSpy.Shared.UI.Highlighting;
+using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class ProcessColumnConverter : IValueConverter {

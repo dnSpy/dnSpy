@@ -26,7 +26,7 @@ using dnlib.PE;
 using dnlib.W32Resources;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	sealed class SaveModuleOptionsVM : SaveOptionsVM {

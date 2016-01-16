@@ -26,7 +26,7 @@ using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Debugger.Properties;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Highlighting;
+using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.Debugger.Threads {
 	sealed class ThreadPrinter {

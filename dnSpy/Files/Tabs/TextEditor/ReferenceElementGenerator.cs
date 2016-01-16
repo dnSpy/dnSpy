@@ -18,7 +18,7 @@
 
 using System;
 using System.Windows.Input;
-using dnSpy.Shared.UI.Decompiler;
+using dnSpy.Shared.Decompiler;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
 

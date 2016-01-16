@@ -20,7 +20,7 @@
 using System;
 using System.Windows.Controls;
 using System.Windows.Input;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Search {
 	sealed partial class SearchControl : UserControl {

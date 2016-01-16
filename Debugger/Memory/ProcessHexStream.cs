@@ -19,7 +19,7 @@
 
 using System;
 using System.Runtime.InteropServices;
-using dnSpy.Shared.UI.HexEditor;
+using dnSpy.Shared.HexEditor;
 
 namespace dnSpy.Debugger.Memory {
 	sealed class ProcessHexStream : ISimpleHexStream {

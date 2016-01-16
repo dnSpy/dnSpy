@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.IO;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
-using dnSpy.Shared.UI.Languages.XmlDoc;
+using dnSpy.Shared.Languages.XmlDoc;
 
 namespace dnSpy.Languages.ILSpy.XmlDoc {
 	/// <summary>

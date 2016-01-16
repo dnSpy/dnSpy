@@ -32,7 +32,7 @@ using dnSpy.AsmEditor.Hex;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	sealed class SaveMultiModuleVM : INotifyPropertyChanged {

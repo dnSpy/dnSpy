@@ -23,7 +23,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Languages;
 using dnSpy.Languages.ILSpy.CSharp;
-using dnSpy.Shared.UI.Highlighting;
+using dnSpy.Shared.Highlighting;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;

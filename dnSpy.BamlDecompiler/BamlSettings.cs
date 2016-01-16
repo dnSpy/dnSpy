@@ -29,7 +29,7 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.BamlDecompiler {
 	class BamlSettings : ViewModelBase {

@@ -22,7 +22,7 @@ using System.IO;
 using System.Windows.Input;
 using dndbg.Engine;
 using dnSpy.Debugger.Properties;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class DebugCoreCLRVM : ViewModelBase {

@@ -18,7 +18,7 @@
 */
 
 using System;
-using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed partial class ExportToProjectDlg : WindowBase {

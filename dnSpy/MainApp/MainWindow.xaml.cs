@@ -20,7 +20,7 @@
 using System.Windows.Input;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
-using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.MainApp {
 	sealed partial class MainWindow : MetroWindow {

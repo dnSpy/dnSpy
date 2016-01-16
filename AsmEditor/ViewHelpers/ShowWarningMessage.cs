@@ -35,9 +35,9 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 
 		public void Show(Guid? guid, string msg) {
 			if (guid == null)
-				Shared.UI.App.MsgBox.Instance.Show(msg, MsgBoxButton.OK, ownerWindow);
+				Shared.App.MsgBox.Instance.Show(msg, MsgBoxButton.OK, ownerWindow);
 			else
-				Shared.UI.App.MsgBox.Instance.ShowIgnorableMessage(guid.Value, msg, MsgBoxButton.OK, ownerWindow);
+				Shared.App.MsgBox.Instance.ShowIgnorableMessage(guid.Value, msg, MsgBoxButton.OK, ownerWindow);
 		}
 	}
 }

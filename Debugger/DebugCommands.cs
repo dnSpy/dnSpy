@@ -32,9 +32,9 @@ using dnSpy.Contracts.ToolBars;
 using dnSpy.Debugger.Breakpoints;
 using dnSpy.Debugger.Memory;
 using dnSpy.Debugger.Properties;
-using dnSpy.Shared.UI.Menus;
-using dnSpy.Shared.UI.MVVM;
-using dnSpy.Shared.UI.ToolBars;
+using dnSpy.Shared.Menus;
+using dnSpy.Shared.MVVM;
+using dnSpy.Shared.ToolBars;
 
 namespace dnSpy.Debugger {
 	[ExportAutoLoaded]

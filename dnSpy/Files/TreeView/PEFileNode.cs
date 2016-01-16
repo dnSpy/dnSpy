@@ -28,8 +28,8 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
-using dnSpy.Shared.UI.Files.TreeView;
-using dnSpy.Shared.UI.Highlighting;
+using dnSpy.Shared.Files.TreeView;
+using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.Files.TreeView {
 	sealed class PEFileNode : DnSpyFileNode, IPEFileNode {

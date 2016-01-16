@@ -23,7 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Debugger {
 	interface IDebuggerSettings : INotifyPropertyChanged {

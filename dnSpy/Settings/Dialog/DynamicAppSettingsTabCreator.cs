@@ -25,7 +25,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Shared.UI.Resources;
+using dnSpy.Shared.Resources;
 
 namespace dnSpy.Settings.Dialog {
 	[ExportDynamicAppSettingsTab(Guid = AppSettingsConstants.GUID_DYNTAB_MISC, Order = AppSettingsConstants.ORDER_SETTINGS_TAB_MISC, Title = "res:MiscDlgTabTitle")]

@@ -19,7 +19,7 @@
 
 using System.Windows.Forms;
 using dnSpy.Contracts.Files;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.ViewHelpers {
 	sealed class OpenAssembly : IOpenAssembly {

@@ -20,7 +20,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Shared.UI.Controls;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.Settings.Dialog {
 	sealed partial class AppSettingsDlg : WindowBase {

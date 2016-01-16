@@ -148,7 +148,7 @@ namespace dnSpy.Debugger.Locals {
 						error = string.Format(dnSpy_Debugger_Resources.LocalsEditValue_Error_CouldNotWriteNewValue, ex.Message);
 					}
 					if (!string.IsNullOrEmpty(error))
-						Shared.UI.App.MsgBox.Instance.Show(error);
+						Shared.App.MsgBox.Instance.Show(error);
 				}
 			}
 

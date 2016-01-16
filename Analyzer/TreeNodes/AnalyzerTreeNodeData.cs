@@ -25,8 +25,8 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Shared.UI.Highlighting;
-using dnSpy.Shared.UI.TreeView;
+using dnSpy.Shared.Highlighting;
+using dnSpy.Shared.TreeView;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	abstract class AnalyzerTreeNodeData : TreeNodeData, IAnalyzerTreeNodeData {

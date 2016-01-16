@@ -24,7 +24,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mbody="clr-namespace:dnSpy.AsmEditor.MethodBody"
              xmlns:vc="clr-namespace:dnSpy.AsmEditor.Converters"
-             xmlns:mvvmvc="clr-namespace:dnSpy.Shared.UI.MVVM.Converters;assembly=dnSpy.Shared.UI"
+             xmlns:mvvmvc="clr-namespace:dnSpy.Shared.MVVM.Converters;assembly=dnSpy.Shared"
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              mc:Ignorable="d" 
              d:DesignHeight="100" d:DesignWidth="1000">

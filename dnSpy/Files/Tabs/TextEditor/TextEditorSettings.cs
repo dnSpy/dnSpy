@@ -22,8 +22,8 @@ using System.ComponentModel.Composition;
 using System.Windows.Media;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Settings;
-using dnSpy.Shared.UI.Controls;
-using dnSpy.Shared.UI.MVVM;
+using dnSpy.Shared.Controls;
+using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	class TextEditorSettings : ViewModelBase, ITextEditorSettings {
