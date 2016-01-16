@@ -5,7 +5,7 @@
                     xmlns:ctrls="clr-namespace:dnSpy.Shared.UI.Controls;assembly=dnSpy.Shared.UI"
                     xmlns:tabs="clr-namespace:dnSpy.Tabs"
                     xmlns:tabssettings="clr-namespace:dnSpy.Files.Tabs.Settings"
-                    xmlns:compiler="clr-namespace:dnSpy.Decompiler"
+                    xmlns:decompiler="clr-namespace:dnSpy.Decompiler"
                     xmlns:mainapp="clr-namespace:dnSpy.MainApp"
                     xmlns:tw="clr-namespace:dnSpy.ToolWindows"
                     xmlns:p="clr-namespace:dnSpy.Properties"
@@ -5457,41 +5457,6 @@
                 Value="False"/>
     </Style>
 
-    <DataTemplate DataType="{x:Type compiler:DecompilerAppSettingsTab}">
-        <StackPanel Margin="5">
-            <CheckBox Margin="0 0 0 0" IsChecked="{Binding Settings.AnonymousMethods}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_DecompileAnonMethods}"/>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.YieldReturn}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_DecompileEnumerators}"/>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.AsyncAwait}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_DecompileAsyncMethods}"/>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.QueryExpressions}" IsEnabled="{Binding Settings.AnonymousMethods}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_DecompileQueryExpr}"/>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ExpressionTrees}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_DecompileExprTrees}"/>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.UseDebugSymbols}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_UseLocalNameFromSyms}"/>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowXmlDocumentation}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_ShowXMLDocComments}"/>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.RemoveEmptyDefaultConstructors}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_RemoveEmptyDefaultCtors}"/>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowTokenAndRvaComments}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_ShowTokensRvasOffsets}"/>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILBytes}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_ShowILInstrBytes}"/>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILComments}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_ShowILComments}"/>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortMembers}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_SortMethods}"/>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ForceShowAllMembers}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_ShowCompilerGeneratedTypes}"/>
-            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortSystemUsingStatementsFirst}" Content="{x:Static p:dnSpy_Resources.DecompilerSettings_SortSystemFirst}"/>
-            <GroupBox Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.DecompilerSettings_DecompilationOrder}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject0}" DisplayMemberPath="Text" />
-                    <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject1}" DisplayMemberPath="Text" />
-                    <ComboBox Grid.Column="2" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject2}" DisplayMemberPath="Text" />
-                    <ComboBox Grid.Column="3" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject3}" DisplayMemberPath="Text" />
-                    <ComboBox Grid.Column="4" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject4}" DisplayMemberPath="Text" />
-                </Grid>
-            </GroupBox>
-        </StackPanel>
-    </DataTemplate>
-
     <DataTemplate DataType="{x:Type tabssettings:DisplayAppSettingsVM}">
         <Grid>
             <Grid.Resources>
@@ -5556,6 +5521,22 @@
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.ShowAssemblyPublicKeyToken}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_ShowAssemblyPublicKeyToken}"/>
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.SingleClickExpandsTreeViewChildren}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_SingleClickExpandNodes}"/>
                     <CheckBox Margin="0 5 0 0" IsChecked="{Binding FileTreeViewSettings.SyntaxHighlight}" Content="{x:Static p:dnSpy_Resources.DisplaySettings_SyntaxHighlightTreeView}"/>
+                    <GroupBox Margin="0 5 0 0" Header="{x:Static p:dnSpy_Resources.DisplaySettings_MemberOrder}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind0}" DisplayMemberPath="Text" />
+                            <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind1}" DisplayMemberPath="Text" />
+                            <ComboBox Grid.Column="2" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind2}" DisplayMemberPath="Text" />
+                            <ComboBox Grid.Column="3" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind3}" DisplayMemberPath="Text" />
+                            <ComboBox Grid.Column="4" HorizontalAlignment="Stretch" ItemsSource="{Binding MemberKindsArray}" SelectedItem="{Binding MemberKind4}" DisplayMemberPath="Text" />
+                        </Grid>
+                    </GroupBox>
                 </StackPanel>
             </GroupBox>
         </Grid>
@@ -5602,6 +5583,17 @@
                 <Image Grid.Column="0" Height="16" Width="16" Source="{Binding LocationImage}" HorizontalAlignment="Center" />
                 <ContentPresenter Grid.Column="1" Content="{Binding LocationUI}" Margin="0 0 2 0" />
             </Grid>
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type decompiler:DecompilerAppSettingsTab}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <ComboBox Grid.Row="0" HorizontalAlignment="Stretch" ItemsSource="{Binding LanguageSettings}" SelectedItem="{Binding SelectedLanguageSetting}" DisplayMemberPath="Name" Visibility="{Binding HasMoreThanOneSetting, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <ContentPresenter Grid.Row="1" Margin="0 5 0 0" Content="{Binding CurrentUIObject}"/>
         </Grid>
     </DataTemplate>
 

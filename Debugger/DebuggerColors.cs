@@ -18,7 +18,6 @@
 */
 
 using System.ComponentModel.Composition;
-using System.Windows.Media;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Themes;
 using dnSpy.Shared.UI.AvalonEdit;
@@ -27,23 +26,11 @@ using ICSharpCode.AvalonEdit.Highlighting;
 namespace dnSpy.Debugger {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
 	sealed class DebuggerColors : IAutoLoaded {
-		public static HighlightingColor CodeBreakpointHighlightingColor = new HighlightingColor {
-			Background = new SimpleHighlightingBrush(Color.FromRgb(0xB4, 0x26, 0x26)),
-			Foreground = new SimpleHighlightingBrush(Colors.White),
-		};
-		public static HighlightingColor CodeBreakpointDisabledHighlightingColor = CodeBreakpointHighlightingColor;
-		public static HighlightingColor StackFrameReturnHighlightingColor = new HighlightingColor {
-			Background = new SimpleHighlightingBrush(Color.FromArgb(0x62, 0xEE, 0xEF, 0xE6)),
-			Foreground = new SimpleHighlightingBrush(Colors.Transparent),
-		};
-		public static HighlightingColor StackFrameSelectedHighlightingColor = new HighlightingColor {
-			Background = new SimpleHighlightingBrush(Color.FromArgb(0x68, 0xB4, 0xE4, 0xB4)),
-			Foreground = new SimpleHighlightingBrush(Colors.Black),
-		};
-		public static HighlightingColor StackFrameCurrentHighlightingColor = new HighlightingColor {
-			Background = new SimpleHighlightingBrush(Colors.Yellow),
-			Foreground = new SimpleHighlightingBrush(Colors.Blue),
-		};
+		public static HighlightingColor CodeBreakpointHighlightingColor;
+		public static HighlightingColor CodeBreakpointDisabledHighlightingColor;
+		public static HighlightingColor StackFrameReturnHighlightingColor;
+		public static HighlightingColor StackFrameSelectedHighlightingColor;
+		public static HighlightingColor StackFrameCurrentHighlightingColor;
 
 		[ImportingConstructor]
 		DebuggerColors(IThemeManager themeManager) {

@@ -25,7 +25,7 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
@@ -91,7 +91,7 @@ namespace dnSpy.Files.TreeView {
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			var tdr = TryGetTypeDefOrRef();
 			if (tdr == null)
-				output.Write("???", TextTokenType.Error);
+				output.Write("???", TextTokenKind.Error);
 			else
 				new NodePrinter().Write(output, language, tdr, Context.ShowToken);
 		}

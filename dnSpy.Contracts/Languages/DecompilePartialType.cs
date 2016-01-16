@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>
@@ -69,9 +69,9 @@ namespace dnSpy.Contracts.Languages {
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <param name="output">Output</param>
-		/// <param name="options">Options</param>
-		public DecompilePartialType(TypeDef type, ITextOutput output, DecompilationOptions options)
-			: base(output, options) {
+		/// <param name="ctx">Context</param>
+		public DecompilePartialType(TypeDef type, ITextOutput output, DecompilationContext ctx)
+			: base(output, ctx) {
 			if (type == null)
 				throw new ArgumentNullException();
 			this.Type = type;

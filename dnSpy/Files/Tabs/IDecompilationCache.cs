@@ -34,20 +34,18 @@ namespace dnSpy.Files.Tabs {
 		/// </summary>
 		/// <param name="language">Language</param>
 		/// <param name="nodes">Nodes</param>
-		/// <param name="options">Options</param>
 		/// <param name="highlighting">Highlighting</param>
 		/// <returns></returns>
-		AvalonEditTextOutput Lookup(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options, out IHighlightingDefinition highlighting);
+		AvalonEditTextOutput Lookup(ILanguage language, IFileTreeNodeData[] nodes, out IHighlightingDefinition highlighting);
 
 		/// <summary>
 		/// Cache decompiled output
 		/// </summary>
 		/// <param name="language">Language</param>
 		/// <param name="nodes">Nodes</param>
-		/// <param name="options">Options</param>
 		/// <param name="textOutput">Output</param>
 		/// <param name="highlighting">Highlighting</param>
-		void Cache(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options, AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting);
+		void Cache(ILanguage language, IFileTreeNodeData[] nodes, AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting);
 
 		/// <summary>
 		/// Clear the cache

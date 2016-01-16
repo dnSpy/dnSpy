@@ -18,11 +18,13 @@
 */
 
 using System;
+using System.Collections.Generic;
+using dnSpy.Contracts.Languages;
 
 namespace dnSpy.Languages {
 	sealed class DummyLanguage : Language {
 		public override string FileExtension {
-			get { return ".xxx"; }
+			get { return ".---"; }
 		}
 
 		public override Guid GenericGuid {
@@ -43,6 +45,33 @@ namespace dnSpy.Languages {
 
 		public override string UniqueNameUI {
 			get { return "---"; }
+		}
+
+		public override IDecompilerSettings Settings {
+			get { return dummySettings; }
+		}
+		readonly DummySettings dummySettings;
+
+		sealed class DummySettings : IDecompilerSettings {
+			public IDecompilerSettings Clone() {
+				return new DummySettings();
+			}
+
+			public IEnumerable<IDecompilerOption> Options {
+				get { yield break; }
+			}
+
+			public override bool Equals(object obj) {
+				return obj is DummySettings;
+			}
+
+			public override int GetHashCode() {
+				return 0;
+			}
+		}
+
+		public DummyLanguage() {
+			this.dummySettings = new DummySettings();
 		}
 	}
 }

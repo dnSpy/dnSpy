@@ -27,7 +27,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Themes;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.AvalonEdit;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.MVVM;
@@ -61,18 +61,18 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			SpecialCharacterTextRunOptions.BackgroundBrush = specialBox.Background == null ? null : specialBox.Background;
 			SpecialCharacterTextRunOptions.ForegroundBrush = specialBox.Foreground == null ? null : specialBox.Foreground;
 
-			foreach (var f in typeof(TextTokenType).GetFields()) {
+			foreach (var f in typeof(TextTokenKind).GetFields()) {
 				if (!f.IsLiteral)
 					continue;
-				var val = (TextTokenType)f.GetValue(null);
-				if (val != TextTokenType.Last)
+				var val = (TextTokenKind)f.GetValue(null);
+				if (val != TextTokenKind.Last)
 					UpdateTextEditorResource(val, f.Name);
 			}
 
 			UpdateDefaultHighlighter();
 		}
 
-		void UpdateTextEditorResource(TextTokenType colorType, string name) {
+		void UpdateTextEditorResource(TextTokenKind colorType, string name) {
 			var theme = themeManager.Theme;
 
 			var color = theme.GetTextColor(colorType.ToColorType());
@@ -403,14 +403,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 				while (offs < endOffs) {
 					int defaultTextLength, tokenLength;
-					TextTokenType tokenType;
-					if (!textEditor.LanguageTokens.Find(offs, out defaultTextLength, out tokenType, out tokenLength)) {
+					TextTokenKind tokenKind;
+					if (!textEditor.LanguageTokens.Find(offs, out defaultTextLength, out tokenKind, out tokenLength)) {
 						Debug.Fail("Could not find token info");
 						break;
 					}
 
 					HighlightingColor color;
-					if (tokenLength != 0 && CanAddColor(color = GetColor(tokenType))) {
+					if (tokenLength != 0 && CanAddColor(color = GetColor(tokenKind))) {
 						hl.Sections.Add(new HighlightedSection {
 							Offset = offs + defaultTextLength,
 							Length = tokenLength,
@@ -430,8 +430,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 					color.Foreground != null || color.Background != null);
 			}
 
-			HighlightingColor GetColor(TextTokenType tokenType) {
-				return textEditor.themeManager.Theme.GetTextColor(tokenType.ToColorType()).ToHighlightingColor();
+			HighlightingColor GetColor(TextTokenKind tokenKind) {
+				return textEditor.themeManager.Theme.GetTextColor(tokenKind.ToColorType()).ToHighlightingColor();
 			}
 
 			public IEnumerable<HighlightingColor> GetColorStack(int lineNumber) {

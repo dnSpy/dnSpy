@@ -23,8 +23,7 @@ using dnlib.DotNet;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.NRefactory;
-using ICSharpCode.Decompiler.Ast;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class EventOverridesNode : SearchNode {
@@ -38,7 +37,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(dnSpy_Analyzer_Resources.OverriddenByTreeNode, TextTokenType.Text);
+			output.Write(dnSpy_Analyzer_Resources.OverriddenByTreeNode, TextTokenKind.Text);
 		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {

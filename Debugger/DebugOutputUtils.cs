@@ -24,9 +24,8 @@ using System.Text;
 using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Debugger.Properties;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger {
 	static class DebugOutputUtils {
@@ -51,17 +50,17 @@ namespace dnSpy.Debugger {
 
 		public static T Write<T>(this T output, CorAppDomain appDomain, DnDebugger dbg) where T : ISyntaxHighlightOutput {
 			if (appDomain == null)
-				output.Write(dnSpy_Debugger_Resources.AppDomainNotAvailable, TextTokenType.Error);
+				output.Write(dnSpy_Debugger_Resources.AppDomainNotAvailable, TextTokenKind.Error);
 			else {
-				output.Write("[", TextTokenType.Operator);
-				output.Write(string.Format("{0}", appDomain.Id), TextTokenType.Number);
-				output.Write("]", TextTokenType.Operator);
+				output.Write("[", TextTokenKind.Operator);
+				output.Write(string.Format("{0}", appDomain.Id), TextTokenKind.Number);
+				output.Write("]", TextTokenKind.Operator);
 				output.WriteSpace();
 				var filteredName = FilterName(appDomain.Name, MAX_APP_DOMAIN_NAME);
 				if (HasSameNameAsProcess(dbg, appDomain))
 					output.WriteFilename(filteredName);
 				else
-					output.Write(filteredName, TextTokenType.String);
+					output.Write(filteredName, TextTokenKind.String);
 			}
 			return output;
 		}
@@ -88,12 +87,12 @@ namespace dnSpy.Debugger {
 		}
 
 		public static T Write<T>(this T output, DnProcess p, bool useHex) where T : ISyntaxHighlightOutput {
-			output.Write("[", TextTokenType.Operator);
+			output.Write("[", TextTokenKind.Operator);
 			if (useHex)
-				output.Write(string.Format("0x{0:X}", p.ProcessId), TextTokenType.Number);
+				output.Write(string.Format("0x{0:X}", p.ProcessId), TextTokenKind.Number);
 			else
-				output.Write(string.Format("{0}", p.ProcessId), TextTokenType.Number);
-			output.Write("]", TextTokenType.Operator);
+				output.Write(string.Format("{0}", p.ProcessId), TextTokenKind.Number);
+			output.Write("]", TextTokenKind.Operator);
 			output.WriteSpace();
 			output.WriteFilename(GetFilename(p.Filename));
 			return output;
@@ -101,9 +100,9 @@ namespace dnSpy.Debugger {
 
 		public static T WriteYesNo<T>(this T output, bool value) where T : ISyntaxHighlightOutput {
 			if (value)
-				output.Write(dnSpy_Debugger_Resources.YesNo_Yes, TextTokenType.Keyword);
+				output.Write(dnSpy_Debugger_Resources.YesNo_Yes, TextTokenKind.Keyword);
 			else
-				output.Write(dnSpy_Debugger_Resources.YesNo_No, TextTokenType.InstanceMethod);
+				output.Write(dnSpy_Debugger_Resources.YesNo_No, TextTokenKind.InstanceMethod);
 			return output;
 		}
 	}

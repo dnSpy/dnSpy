@@ -18,12 +18,10 @@
 
 using System;
 using System.Diagnostics;
-using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ICSharpCode.Decompiler.ILAst
-{
+namespace ICSharpCode.Decompiler.ILAst {
 	public class GotoRemoval
 	{
 		Dictionary<ILNode, ILNode> parent = new Dictionary<ILNode, ILNode>();

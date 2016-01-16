@@ -25,23 +25,23 @@ namespace dnSpy.Contracts.Settings.Dialog {
 	/// </summary>
 	public interface IAppRefreshSettings {
 		/// <summary>
-		/// Adds something that must be refreshed, eg. <see cref="AppSettingsConstants.REDECOMPILE_CSHARP_CODE"/>
+		/// Adds something that must be refreshed, eg. <see cref="AppSettingsConstants.REFRESH_LANGUAGE_SHOWMEMBER"/>
 		/// </summary>
-		/// <param name="guid">Guid, eg. <see cref="AppSettingsConstants.REDECOMPILE_CSHARP_CODE"/></param>
+		/// <param name="guid">Guid, eg. <see cref="AppSettingsConstants.REFRESH_LANGUAGE_SHOWMEMBER"/></param>
 		/// <param name="value">Value or null</param>
 		void Add(Guid guid, object value = null);
 
 		/// <summary>
 		/// Returns true if <paramref name="guid"/> has been added by <see cref="Add(Guid, object)"/>
 		/// </summary>
-		/// <param name="guid">Guid, eg. <see cref="AppSettingsConstants.REDECOMPILE_CSHARP_CODE"/></param>
+		/// <param name="guid">Guid, eg. <see cref="AppSettingsConstants.REFRESH_LANGUAGE_SHOWMEMBER"/></param>
 		/// <returns></returns>
 		bool Has(Guid guid);
 
 		/// <summary>
 		/// Gets the value or null if it's not present
 		/// </summary>
-		/// <param name="guid">Guid, eg. <see cref="AppSettingsConstants.REDECOMPILE_CSHARP_CODE"/></param>
+		/// <param name="guid">Guid, eg. <see cref="AppSettingsConstants.REFRESH_LANGUAGE_SHOWMEMBER"/></param>
 		/// <returns></returns>
 		object GetValue(Guid guid);
 	}

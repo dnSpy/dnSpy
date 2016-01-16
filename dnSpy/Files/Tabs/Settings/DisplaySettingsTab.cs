@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
@@ -29,6 +30,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Files.Tabs.TextEditor;
 using dnSpy.Files.TreeView;
@@ -84,6 +86,7 @@ namespace dnSpy.Files.Tabs.Settings {
 			if (!saveSettings)
 				return;
 
+			displayAppSettingsVM.OnBeforeSave(appRefreshSettings);
 			displayAppSettingsVM.TextEditorSettings.CopyTo(textEditorSettings);
 			displayAppSettingsVM.FileTreeViewSettings.CopyTo(fileTreeViewSettings);
 			displayAppSettingsVM.FileTabManagerSettings.CopyTo(fileTabManagerSettings);
@@ -156,6 +159,55 @@ namespace dnSpy.Files.Tabs.Settings {
 		}
 		readonly FileTabManagerSettings fileTabManagerSettings;
 
+		public MemberKindVM[] MemberKindsArray {
+			get { return memberKindVMs2; }
+		}
+		readonly MemberKindVM[] memberKindVMs;
+		readonly MemberKindVM[] memberKindVMs2;
+
+		public MemberKindVM MemberKind0 {
+			get { return memberKindVMs[0]; }
+			set { SetMemberKind(0, value); }
+		}
+
+		public MemberKindVM MemberKind1 {
+			get { return memberKindVMs[1]; }
+			set { SetMemberKind(1, value); }
+		}
+
+		public MemberKindVM MemberKind2 {
+			get { return memberKindVMs[2]; }
+			set { SetMemberKind(2, value); }
+		}
+
+		public MemberKindVM MemberKind3 {
+			get { return memberKindVMs[3]; }
+			set { SetMemberKind(3, value); }
+		}
+
+		public MemberKindVM MemberKind4 {
+			get { return memberKindVMs[4]; }
+			set { SetMemberKind(4, value); }
+		}
+
+		void SetMemberKind(int index, MemberKindVM newValue) {
+			Debug.Assert(newValue != null);
+			if (newValue == null)
+				throw new ArgumentNullException();
+			if (memberKindVMs[index] == newValue)
+				return;
+
+			int otherIndex = Array.IndexOf(memberKindVMs, newValue);
+			Debug.Assert(otherIndex >= 0);
+			if (otherIndex >= 0) {
+				memberKindVMs[otherIndex] = memberKindVMs[index];
+				memberKindVMs[index] = newValue;
+
+				OnPropertyChanged(string.Format("MemberKind{0}", otherIndex));
+			}
+			OnPropertyChanged(string.Format("MemberKind{0}", index));
+		}
+
 		public DisplayAppSettingsVM(TextEditorSettings textEditorSettings, FileTreeViewSettings fileTreeViewSettings, FileTabManagerSettings fileTabManagerSettings) {
 			this.textEditorSettings = textEditorSettings;
 			this.fileTreeViewSettings = fileTreeViewSettings;
@@ -171,6 +223,65 @@ namespace dnSpy.Files.Tabs.Settings {
 				if (!t.IsCanceled && !t.IsFaulted)
 					FontFamilies = t.Result;
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+
+			var defObjs = typeof(MemberKind).GetEnumValues().Cast<MemberKind>().ToArray();
+			this.memberKindVMs = new MemberKindVM[defObjs.Length];
+			for (int i = 0; i < defObjs.Length; i++)
+				this.memberKindVMs[i] = new MemberKindVM(defObjs[i], ToString(defObjs[i]));
+			this.memberKindVMs2 = this.memberKindVMs.ToArray();
+
+			this.MemberKind0 = this.memberKindVMs.First(a => a.Object == fileTreeViewSettings.MemberKind0);
+			this.MemberKind1 = this.memberKindVMs.First(a => a.Object == fileTreeViewSettings.MemberKind1);
+			this.MemberKind2 = this.memberKindVMs.First(a => a.Object == fileTreeViewSettings.MemberKind2);
+			this.MemberKind3 = this.memberKindVMs.First(a => a.Object == fileTreeViewSettings.MemberKind3);
+			this.MemberKind4 = this.memberKindVMs.First(a => a.Object == fileTreeViewSettings.MemberKind4);
+		}
+
+		static string ToString(MemberKind o) {
+			switch (o) {
+			case MemberKind.NestedTypes:	return dnSpy_Resources.MemberKind_NestedTypes;
+			case MemberKind.Fields:			return dnSpy_Resources.MemberKind_Fields;
+			case MemberKind.Events:			return dnSpy_Resources.MemberKind_Events;
+			case MemberKind.Properties:		return dnSpy_Resources.MemberKind_Properties;
+			case MemberKind.Methods:		return dnSpy_Resources.MemberKind_Methods;
+			default:
+				Debug.Fail("Shouldn't be here");
+				return "???";
+			}
+		}
+
+		public void OnBeforeSave(IAppRefreshSettings appRefreshSettings) {
+			bool update =
+				fileTreeViewSettings.MemberKind0 != MemberKind0.Object ||
+				fileTreeViewSettings.MemberKind1 != MemberKind1.Object ||
+				fileTreeViewSettings.MemberKind2 != MemberKind2.Object ||
+				fileTreeViewSettings.MemberKind3 != MemberKind3.Object ||
+				fileTreeViewSettings.MemberKind4 != MemberKind4.Object;
+			if (update)
+				appRefreshSettings.Add(AppSettingsConstants.REFRESH_TREEVIEW_MEMBER_ORDER);
+
+			fileTreeViewSettings.MemberKind0 = MemberKind0.Object;
+			fileTreeViewSettings.MemberKind1 = MemberKind1.Object;
+			fileTreeViewSettings.MemberKind2 = MemberKind2.Object;
+			fileTreeViewSettings.MemberKind3 = MemberKind3.Object;
+			fileTreeViewSettings.MemberKind4 = MemberKind4.Object;
+		}
+	}
+
+	sealed class MemberKindVM : ViewModelBase {
+		public MemberKind Object {
+			get { return memberKind; }
+		}
+		readonly MemberKind memberKind;
+
+		public string Text {
+			get { return text; }
+		}
+		readonly string text;
+
+		public MemberKindVM(MemberKind memberKind, string text) {
+			this.memberKind = memberKind;
+			this.text = text;
 		}
 	}
 

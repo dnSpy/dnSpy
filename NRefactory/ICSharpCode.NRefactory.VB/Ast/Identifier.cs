@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {
@@ -95,7 +95,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 
 		public static Identifier CreateLiteralField(string name)
 		{
-			return new Identifier(TextTokenType.LiteralField, name, TextLocation.Empty);
+			return new Identifier(TextTokenKind.LiteralField, name, TextLocation.Empty);
 		}
 
 		protected internal override bool DoMatch(AstNode other, ICSharpCode.NRefactory.PatternMatching.Match match)

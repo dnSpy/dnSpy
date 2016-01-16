@@ -22,18 +22,29 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
-using dnSpy.Decompiler;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
+using dnSpy.Languages.ILSpy.Settings;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
 using ICSharpCode.Decompiler.ILAst;
 
 namespace dnSpy.Languages.ILSpy.ILAst {
 	sealed class LanguageProvider : ILanguageProvider {
+		readonly LanguageSettingsManager languageSettingsManager;
+
+		// Keep the default ctor. It's used by dnSpy.Console.exe
+		public LanguageProvider()
+			: this(null) {
+		}
+
+		public LanguageProvider(LanguageSettingsManager languageSettingsManager) {
+			this.languageSettingsManager = languageSettingsManager ?? LanguageSettingsManager.__Instance_DONT_USE;
+		}
+
 		public IEnumerable<ILanguage> Languages {
 			get {
 #if DEBUG
-				foreach (var l in ILAstLanguage.GetDebugLanguages())
+				foreach (var l in ILAstLanguage.GetDebugLanguages(languageSettingsManager))
 					yield return l;
 #endif
 				yield break;
@@ -43,8 +54,15 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 
 	[Export(typeof(ILanguageCreator))]
 	sealed class MyLanguageCreator : ILanguageCreator {
+		readonly LanguageSettingsManager languageSettingsManager;
+
+		[ImportingConstructor]
+		MyLanguageCreator(LanguageSettingsManager languageSettingsManager) {
+			this.languageSettingsManager = languageSettingsManager;
+		}
+
 		public IEnumerable<ILanguage> Create() {
-			return new LanguageProvider().Languages;
+			return new LanguageProvider(languageSettingsManager).Languages;
 		}
 	}
 
@@ -58,7 +76,13 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 		bool inlineVariables = true;
 		ILAstOptimizationStep? abortBeforeStep;
 
-		ILAstLanguage(double orderUI) {
+		public override IDecompilerSettings Settings {
+			get { return langSettings; }
+		}
+		readonly IDecompilerSettings langSettings;
+
+		ILAstLanguage(ILAstLanguageDecompilerSettings langSettings, double orderUI) {
+			this.langSettings = langSettings;
 			this.orderUI = orderUI;
 		}
 
@@ -83,10 +107,10 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			get { return uniqueGuid; }
 		}
 
-		public override void Decompile(MethodDef method, ITextOutput output, DecompilationOptions options) {
+		public override void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) {
 			WriteCommentBegin(output, true);
-			output.Write("Method: ", TextTokenType.Comment);
-			output.WriteDefinition(IdentifierEscaper.Escape(method.FullName), method, TextTokenType.Comment, false);
+			output.Write("Method: ", TextTokenKind.Comment);
+			output.WriteDefinition(IdentifierEscaper.Escape(method.FullName), method, TextTokenKind.Comment, false);
 			WriteCommentEnd(output, true);
 			output.WriteLine();
 
@@ -106,30 +130,30 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			}
 
 			if (context.CurrentMethodIsAsync) {
-				output.Write("async", TextTokenType.Keyword);
-				output.Write("/", TextTokenType.Operator);
-				output.WriteLine("await", TextTokenType.Keyword);
+				output.Write("async", TextTokenKind.Keyword);
+				output.Write("/", TextTokenKind.Operator);
+				output.WriteLine("await", TextTokenKind.Keyword);
 			}
 
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
 				.Where(v => v != null && !v.IsParameter).Distinct();
 			foreach (ILVariable v in allVariables) {
-				output.WriteDefinition(IdentifierEscaper.Escape(v.Name), v, v.IsParameter ? TextTokenType.Parameter : TextTokenType.Local);
+				output.WriteDefinition(IdentifierEscaper.Escape(v.Name), v, v.IsParameter ? TextTokenKind.Parameter : TextTokenKind.Local);
 				if (v.Type != null) {
 					output.WriteSpace();
-					output.Write(":", TextTokenType.Operator);
+					output.Write(":", TextTokenKind.Operator);
 					output.WriteSpace();
 					if (v.IsPinned) {
-						output.Write("pinned", TextTokenType.Keyword);
+						output.Write("pinned", TextTokenKind.Keyword);
 						output.WriteSpace();
 					}
 					v.Type.WriteTo(output, ILNameSyntax.ShortTypeName);
 				}
-				if (v.IsGenerated) {
+				if (v.GeneratedByDecompiler) {
 					output.WriteSpace();
-					output.Write("[", TextTokenType.Operator);
-					output.Write("generated", TextTokenType.Keyword);
-					output.Write("]", TextTokenType.Operator);
+					output.Write("[", TextTokenKind.Operator);
+					output.Write("generated", TextTokenKind.Keyword);
+					output.Write("]", TextTokenKind.Operator);
 				}
 				output.WriteLine();
 			}
@@ -145,9 +169,9 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 		}
 
 		void StartKeywordBlock(ITextOutput output, string keyword, IMemberDef member) {
-			output.Write(keyword, TextTokenType.Keyword);
+			output.Write(keyword, TextTokenKind.Keyword);
 			output.WriteSpace();
-			output.WriteDefinition(IdentifierEscaper.Escape(member.Name), member, TextTokenHelper.GetTextTokenType(member), false);
+			output.WriteDefinition(IdentifierEscaper.Escape(member.Name), member, TextTokenKindUtils.GetTextTokenType(member), false);
 			output.WriteSpace();
 			output.WriteLeftBrace();
 			output.WriteLine();
@@ -160,7 +184,7 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			output.WriteLine();
 		}
 
-		public override void Decompile(EventDef ev, ITextOutput output, DecompilationOptions options) {
+		public override void Decompile(EventDef ev, ITextOutput output, DecompilationContext ctx) {
 			StartKeywordBlock(output, ".event", ev);
 
 			if (ev.AddMethod != null) {
@@ -181,28 +205,28 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			EndKeywordBlock(output);
 		}
 
-		public override void Decompile(FieldDef field, ITextOutput output, DecompilationOptions options) {
-			output.WriteReference(IdentifierEscaper.Escape(field.FieldType.GetFullName()), field.FieldType.ToTypeDefOrRef(), TextTokenHelper.GetTextTokenType(field.FieldType));
+		public override void Decompile(FieldDef field, ITextOutput output, DecompilationContext ctx) {
+			output.WriteReference(IdentifierEscaper.Escape(field.FieldType.GetFullName()), field.FieldType.ToTypeDefOrRef(), TextTokenKindUtils.GetTextTokenType(field.FieldType));
 			output.WriteSpace();
-			output.WriteDefinition(IdentifierEscaper.Escape(field.Name), field, TextTokenHelper.GetTextTokenType(field), false);
+			output.WriteDefinition(IdentifierEscaper.Escape(field.Name), field, TextTokenKindUtils.GetTextTokenType(field), false);
 			var c = field.Constant;
 			if (c != null) {
 				output.WriteSpace();
-				output.Write("=", TextTokenType.Operator);
+				output.Write("=", TextTokenKind.Operator);
 				output.WriteSpace();
 				if (c.Value == null)
-					output.Write("null", TextTokenType.Keyword);
+					output.Write("null", TextTokenKind.Keyword);
 				else {
 					switch (c.Type) {
 					case ElementType.Boolean:
 						if (c.Value is bool)
-							output.Write((bool)c.Value ? "true" : "false", TextTokenType.Keyword);
+							output.Write((bool)c.Value ? "true" : "false", TextTokenKind.Keyword);
 						else
 							goto default;
 						break;
 
 					case ElementType.Char:
-						output.Write(string.Format("'{0}'", c.Value), TextTokenType.Char);
+						output.Write(string.Format("'{0}'", c.Value), TextTokenKind.Char);
 						break;
 
 					case ElementType.I1:
@@ -217,22 +241,22 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 					case ElementType.R8:
 					case ElementType.I:
 					case ElementType.U:
-						output.Write(string.Format("{0}", c.Value), TextTokenType.Number);
+						output.Write(string.Format("{0}", c.Value), TextTokenKind.Number);
 						break;
 
 					case ElementType.String:
-						output.Write(string.Format("{0}", c.Value), TextTokenType.String);
+						output.Write(string.Format("{0}", c.Value), TextTokenKind.String);
 						break;
 
 					default:
-						output.Write(string.Format("{0}", c.Value), TextTokenType.Text);
+						output.Write(string.Format("{0}", c.Value), TextTokenKind.Text);
 						break;
 					}
 				}
 			}
 		}
 
-		public override void Decompile(PropertyDef property, ITextOutput output, DecompilationOptions options) {
+		public override void Decompile(PropertyDef property, ITextOutput output, DecompilationContext ctx) {
 			StartKeywordBlock(output, ".property", property);
 
 			foreach (var getter in property.GetMethods) {
@@ -253,52 +277,52 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			EndKeywordBlock(output);
 		}
 
-		public override void Decompile(TypeDef type, ITextOutput output, DecompilationOptions options) {
+		public override void Decompile(TypeDef type, ITextOutput output, DecompilationContext ctx) {
 			this.WriteCommentLine(output, string.Format("Type: {0}", type.FullName));
 			if (type.BaseType != null) {
 				WriteCommentBegin(output, true);
-				output.Write("Base type: ", TextTokenType.Comment);
-				output.WriteReference(IdentifierEscaper.Escape(type.BaseType.FullName), type.BaseType, TextTokenType.Comment);
+				output.Write("Base type: ", TextTokenKind.Comment);
+				output.WriteReference(IdentifierEscaper.Escape(type.BaseType.FullName), type.BaseType, TextTokenKind.Comment);
 				WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
 			foreach (var nested in type.NestedTypes) {
-				Decompile(nested, output, options);
+				Decompile(nested, output, ctx);
 				output.WriteLine();
 			}
 
 			foreach (var field in type.Fields) {
-				Decompile(field, output, options);
+				Decompile(field, output, ctx);
 				output.WriteLine();
 			}
 
 			foreach (var property in type.Properties) {
-				Decompile(property, output, options);
+				Decompile(property, output, ctx);
 				output.WriteLine();
 			}
 
 			foreach (var @event in type.Events) {
-				Decompile(@event, output, options);
+				Decompile(@event, output, ctx);
 				output.WriteLine();
 			}
 
 			foreach (var method in type.Methods) {
-				Decompile(method, output, options);
+				Decompile(method, output, ctx);
 				output.WriteLine();
 			}
 		}
 
-		internal static IEnumerable<ILAstLanguage> GetDebugLanguages() {
+		internal static IEnumerable<ILAstLanguage> GetDebugLanguages(LanguageSettingsManager languageSettingsManager) {
 			double orderUI = LanguageConstants.ILAST_ILSPY_DEBUG_ORDERUI;
 			uint id = 0x64A926A5;
-			yield return new ILAstLanguage(orderUI++) {
+			yield return new ILAstLanguage(languageSettingsManager.ILAstLanguageDecompilerSettings, orderUI++) {
 				uniqueNameUI = "ILAst (unoptimized)",
 				uniqueGuid = new Guid(string.Format("CB470049-6AFB-4BDB-93DC-1BB9{0:X8}", id++)),
 				inlineVariables = false
 			};
 			string nextName = "ILAst (variable splitting)";
 			foreach (ILAstOptimizationStep step in Enum.GetValues(typeof(ILAstOptimizationStep))) {
-				yield return new ILAstLanguage(orderUI++) {
+				yield return new ILAstLanguage(languageSettingsManager.ILAstLanguageDecompilerSettings, orderUI++) {
 					uniqueNameUI = nextName,
 					uniqueGuid = new Guid(string.Format("CB470049-6AFB-4BDB-93DC-1BB9{0:X8}", id++)),
 					abortBeforeStep = step

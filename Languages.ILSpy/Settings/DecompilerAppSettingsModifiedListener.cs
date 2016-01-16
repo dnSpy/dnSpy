@@ -25,7 +25,7 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings.Dialog;
 
-namespace dnSpy.Decompiler {
+namespace dnSpy.Languages.ILSpy.Settings {
 	[ExportAppSettingsModifiedListener(Order = AppSettingsConstants.ORDER_SETTINGS_LISTENER_DECOMPILER)]
 	sealed class DecompilerAppSettingsModifiedListener : IAppSettingsModifiedListener {
 		readonly IFileTabManager fileTabManager;
@@ -36,10 +36,10 @@ namespace dnSpy.Decompiler {
 		}
 
 		public void OnSettingsModified(IAppRefreshSettings appRefreshSettings) {
-			bool refreshIL = appRefreshSettings.Has(AppSettingsConstants.REDISASSEMBLE_IL_CODE);
-			bool refreshILAst = appRefreshSettings.Has(AppSettingsConstants.REDECOMPILE_ILAST_CODE);
-			bool refreshCSharp = appRefreshSettings.Has(AppSettingsConstants.REDECOMPILE_CSHARP_CODE);
-			bool refreshVB = appRefreshSettings.Has(AppSettingsConstants.REDECOMPILE_VB_CODE);
+			bool refreshIL = appRefreshSettings.Has(SettingsConstants.REDISASSEMBLE_IL_ILSPY_CODE);
+			bool refreshILAst = appRefreshSettings.Has(SettingsConstants.REDECOMPILE_ILAST_ILSPY_CODE);
+			bool refreshCSharp = appRefreshSettings.Has(SettingsConstants.REDECOMPILE_CSHARP_ILSPY_CODE);
+			bool refreshVB = appRefreshSettings.Has(SettingsConstants.REDECOMPILE_VB_ILSPY_CODE);
 			if (refreshILAst)
 				refreshCSharp = refreshVB = true;
 			if (refreshCSharp)

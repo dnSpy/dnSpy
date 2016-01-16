@@ -24,10 +24,10 @@ using System.Xml;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Languages;
-using dnSpy.Decompiler;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
+using dnSpy.Languages.ILSpy.Settings;
+using dnSpy.Languages.ILSpy.XmlDoc;
 using dnSpy.Shared.UI.Highlighting;
-using dnSpy.Shared.UI.Languages.XmlDoc;
 using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Ast.Transforms;
@@ -35,27 +35,39 @@ using ICSharpCode.NRefactory.CSharp;
 
 namespace dnSpy.Languages.ILSpy.CSharp {
 	sealed class LanguageProvider : ILanguageProvider {
-		public IEnumerable<ILanguage> Languages {
-			get {
-				yield return new CSharpLanguage(LanguageConstants.CSHARP_ILSPY_ORDERUI);
-				foreach (var l in GetDebugLanguages())
-					yield return l;
-			}
+		readonly LanguageSettingsManager languageSettingsManager;
+
+		// Keep the default ctor. It's used by dnSpy.Console.exe
+		public LanguageProvider()
+			: this(null) {
 		}
 
-		static IEnumerable<ILanguage> GetDebugLanguages() {
+		public LanguageProvider(LanguageSettingsManager languageSettingsManager) {
+			this.languageSettingsManager = languageSettingsManager ?? LanguageSettingsManager.__Instance_DONT_USE;
+		}
+
+		public IEnumerable<ILanguage> Languages {
+			get {
+				yield return new CSharpLanguage(languageSettingsManager.LanguageDecompilerSettings, LanguageConstants.CSHARP_ILSPY_ORDERUI);
 #if DEBUG
-			foreach (var l in CSharpLanguage.GetDebugLanguages())
-				yield return l;
+				foreach (var l in CSharpLanguage.GetDebugLanguages(languageSettingsManager.LanguageDecompilerSettings))
+					yield return l;
 #endif
-			yield break;
+			}
 		}
 	}
 
 	[Export(typeof(ILanguageCreator))]
 	sealed class MyLanguageCreator : ILanguageCreator {
+		readonly LanguageSettingsManager languageSettingsManager;
+
+		[ImportingConstructor]
+		MyLanguageCreator(LanguageSettingsManager languageSettingsManager) {
+			this.languageSettingsManager = languageSettingsManager;
+		}
+
 		public IEnumerable<ILanguage> Create() {
-			return new LanguageProvider().Languages;
+			return new LanguageProvider(languageSettingsManager).Languages;
 		}
 	}
 
@@ -68,19 +80,25 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		bool showAllMembers = false;
 		Predicate<IAstTransform> transformAbortCondition = null;
 
-		public CSharpLanguage(double orderUI) {
+		public override IDecompilerSettings Settings {
+			get { return langSettings; }
+		}
+		readonly LanguageDecompilerSettings langSettings;
+
+		public CSharpLanguage(LanguageDecompilerSettings langSettings, double orderUI) {
+			this.langSettings = langSettings;
 			this.orderUI = orderUI;
 		}
 
 #if DEBUG
-		internal static IEnumerable<CSharpLanguage> GetDebugLanguages() {
+		internal static IEnumerable<CSharpLanguage> GetDebugLanguages(LanguageDecompilerSettings langSettings) {
 			DecompilerContext context = new DecompilerContext(new ModuleDefUser("dummy"));
 			string lastTransformName = "no transforms";
 			double orderUI = LanguageConstants.CSHARP_ILSPY_DEBUG_ORDERUI;
 			uint id = 0xBF67AF3F;
 			foreach (Type _transformType in TransformationPipeline.CreatePipeline(context).Select(v => v.GetType()).Distinct()) {
 				Type transformType = _transformType; // copy for lambda
-				yield return new CSharpLanguage(orderUI++) {
+				yield return new CSharpLanguage(langSettings, orderUI++) {
 					transformAbortCondition = v => transformType.IsInstanceOfType(v),
 					uniqueNameUI = "C# - " + lastTransformName,
 					uniqueGuid = new Guid(string.Format("203F702E-7E87-4F01-84CD-B0E8{0:X8}", id++)),
@@ -88,7 +106,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 				};
 				lastTransformName = "after " + transformType.Name;
 			}
-			yield return new CSharpLanguage(orderUI++) {
+			yield return new CSharpLanguage(langSettings, orderUI++) {
 				uniqueNameUI = "C# - " + lastTransformName,
 				uniqueGuid = new Guid(string.Format("203F702E-7E87-4F01-84CD-B0E8{0:X8}", id++)),
 				showAllMembers = true
@@ -125,17 +143,17 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			get { return ".csproj"; }
 		}
 
-		public override void Decompile(MethodDef method, ITextOutput output, DecompilationOptions options) {
+		public override void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) {
 			WriteCommentLineDeclaringType(output, method);
-			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: method.DeclaringType, isSingleMember: true);
-			if (method.IsConstructor && !method.IsStatic && !DnlibExtensions.IsValueType(method.DeclaringType)) {
+			AstBuilder codeDomBuilder = CreateAstBuilder(ctx, langSettings.Settings, currentType: method.DeclaringType, isSingleMember: true);
+			if (method.IsConstructor && !method.IsStatic && !method.DeclaringType.IsValueType) {
 				// also fields and other ctors so that the field initializers can be shown as such
 				AddFieldsAndCtors(codeDomBuilder, method.DeclaringType, method.IsStatic);
-				RunTransformsAndGenerateCode(codeDomBuilder, output, options, new SelectCtorTransform(method));
+				RunTransformsAndGenerateCode(codeDomBuilder, output, ctx, new SelectCtorTransform(method));
 			}
 			else {
 				codeDomBuilder.AddMethod(method);
-				RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+				RunTransformsAndGenerateCode(codeDomBuilder, output, ctx);
 			}
 		}
 
@@ -173,16 +191,16 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			}
 		}
 
-		public override void Decompile(PropertyDef property, ITextOutput output, DecompilationOptions options) {
+		public override void Decompile(PropertyDef property, ITextOutput output, DecompilationContext ctx) {
 			WriteCommentLineDeclaringType(output, property);
-			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: property.DeclaringType, isSingleMember: true);
+			AstBuilder codeDomBuilder = CreateAstBuilder(ctx, langSettings.Settings, currentType: property.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddProperty(property);
-			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			RunTransformsAndGenerateCode(codeDomBuilder, output, ctx);
 		}
 
-		public override void Decompile(FieldDef field, ITextOutput output, DecompilationOptions options) {
+		public override void Decompile(FieldDef field, ITextOutput output, DecompilationContext ctx) {
 			WriteCommentLineDeclaringType(output, field);
-			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: field.DeclaringType, isSingleMember: true);
+			AstBuilder codeDomBuilder = CreateAstBuilder(ctx, langSettings.Settings, currentType: field.DeclaringType, isSingleMember: true);
 			if (field.IsLiteral) {
 				codeDomBuilder.AddField(field);
 			}
@@ -190,7 +208,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 				// also decompile ctors so that the field initializer can be shown
 				AddFieldsAndCtors(codeDomBuilder, field.DeclaringType, field.IsStatic);
 			}
-			RunTransformsAndGenerateCode(codeDomBuilder, output, options, new SelectFieldTransform(field));
+			RunTransformsAndGenerateCode(codeDomBuilder, output, ctx, new SelectFieldTransform(field));
 		}
 
 		/// <summary>
@@ -224,29 +242,29 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			}
 		}
 
-		public override void Decompile(EventDef ev, ITextOutput output, DecompilationOptions options) {
+		public override void Decompile(EventDef ev, ITextOutput output, DecompilationContext ctx) {
 			WriteCommentLineDeclaringType(output, ev);
-			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: ev.DeclaringType, isSingleMember: true);
+			AstBuilder codeDomBuilder = CreateAstBuilder(ctx, langSettings.Settings, currentType: ev.DeclaringType, isSingleMember: true);
 			codeDomBuilder.AddEvent(ev);
-			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			RunTransformsAndGenerateCode(codeDomBuilder, output, ctx);
 		}
 
-		public override void Decompile(TypeDef type, ITextOutput output, DecompilationOptions options) {
-			AstBuilder codeDomBuilder = CreateAstBuilder(options, currentType: type);
+		public override void Decompile(TypeDef type, ITextOutput output, DecompilationContext ctx) {
+			AstBuilder codeDomBuilder = CreateAstBuilder(ctx, langSettings.Settings, currentType: type);
 			codeDomBuilder.AddType(type);
-			RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+			RunTransformsAndGenerateCode(codeDomBuilder, output, ctx);
 		}
 
-		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationOptions options, IAstTransform additionalTransform = null) {
+		void RunTransformsAndGenerateCode(AstBuilder astBuilder, ITextOutput output, DecompilationContext ctx, IAstTransform additionalTransform = null) {
 			astBuilder.RunTransformations(transformAbortCondition);
 			if (additionalTransform != null) {
 				additionalTransform.Run(astBuilder.SyntaxTree);
 			}
-			AddXmlDocumentation(options.DecompilerSettings, astBuilder);
+			AddXmlDocumentation(langSettings.Settings, astBuilder);
 			astBuilder.GenerateCode(output);
 		}
 
-		static void AddXmlDocumentation(DecompilerSettings settings, AstBuilder astBuilder) { 
+		internal static void AddXmlDocumentation(DecompilerSettings settings, AstBuilder astBuilder) { 
 			if (settings.ShowXmlDocumentation) {
 				try {
 					AddXmlDocTransform.Run(astBuilder.SyntaxTree);
@@ -260,33 +278,31 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			}
 		}
 
-		public override void DecompileAssembly(IDnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
-			WriteModuleAssembly(file, output, options, flags);
+		public override void DecompileAssembly(IDnSpyFile file, ITextOutput output, DecompilationContext ctx, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
+			WriteModuleAssembly(file, output, ctx, flags);
 
 			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
 			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
-			using (options.DisableAssemblyLoad()) {
-				AstBuilder codeDomBuilder = CreateAstBuilder(options, currentModule: file.ModuleDef);
+			using (ctx.DisableAssemblyLoad()) {
+				AstBuilder codeDomBuilder = CreateAstBuilder(ctx, langSettings.Settings, currentModule: file.ModuleDef);
 				codeDomBuilder.AddAssembly(file.ModuleDef, true, decompileAsm, decompileMod);
-				RunTransformsAndGenerateCode(codeDomBuilder, output, options);
+				RunTransformsAndGenerateCode(codeDomBuilder, output, ctx);
 			}
 		}
 
-		AstBuilder CreateAstBuilder(DecompilationOptions options, ModuleDef currentModule = null, TypeDef currentType = null, bool isSingleMember = false) {
+		AstBuilder CreateAstBuilder(DecompilationContext ctx, DecompilerSettings settings, ModuleDef currentModule = null, TypeDef currentType = null, bool isSingleMember = false) {
 			if (currentModule == null)
 				currentModule = currentType.Module;
-			DecompilerSettings settings = options.DecompilerSettings;
 			if (isSingleMember) {
 				settings = settings.Clone();
 				settings.UsingDeclarations = false;
 			}
 			return new AstBuilder(
 				new DecompilerContext(currentModule) {
-					CancellationToken = options.CancellationToken,
+					CancellationToken = ctx.CancellationToken,
 					CurrentType = currentType,
 					Settings = settings
 				}) {
-				DontShowCreateMethodBodyExceptions = options.DontShowCreateMethodBodyExceptions,
 			};
 		}
 
@@ -301,11 +317,11 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		bool WriteRefIfByRef(ITextOutput output, TypeSig typeSig, ParamDef pd) {
 			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
 				if (pd != null && (!pd.IsIn && pd.IsOut)) {
-					output.Write("out", TextTokenType.Keyword);
+					output.Write("out", TextTokenKind.Keyword);
 					output.WriteSpace();
 				}
 				else {
-					output.Write("ref", TextTokenType.Keyword);
+					output.Write("ref", TextTokenKind.Keyword);
 					output.WriteSpace();
 				}
 				return true;
@@ -348,24 +364,24 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 					var methDecl = accessor.Overrides.First().MethodDeclaration;
 					var declaringType = methDecl == null ? null : methDecl.DeclaringType;
 					TypeToString(output, declaringType, includeNamespace: true);
-					output.Write(".", TextTokenType.Operator);
+					output.Write(".", TextTokenKind.Operator);
 				}
-				output.Write("this", TextTokenType.Keyword);
-				output.Write("[", TextTokenType.Operator);
+				output.Write("this", TextTokenKind.Keyword);
+				output.Write("[", TextTokenKind.Operator);
 				bool addSeparator = false;
-				foreach (var p in property.PropertySig.GetParameters()) {
+				foreach (var p in property.PropertySig.GetParams()) {
 					if (addSeparator) {
-						output.Write(",", TextTokenType.Operator);
+						output.Write(",", TextTokenKind.Operator);
 						output.WriteSpace();
 					}
 					else
 						addSeparator = true;
 					TypeToString(output, p.ToTypeDefOrRef(), includeNamespace: true);
 				}
-				output.Write("]", TextTokenType.Operator);
+				output.Write("]", TextTokenKind.Operator);
 			}
 			else
-				WriteIdentifier(output, property.Name, TextTokenHelper.GetTextTokenType(property));
+				WriteIdentifier(output, property.Name, TextTokenKindUtils.GetTextTokenType(property));
 		}
 
 		static readonly HashSet<string> isKeyword = new HashSet<string>(StringComparer.Ordinal) {
@@ -381,10 +397,10 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			"using", "virtual", "void", "volatile", "while",
 		};
 
-		static void WriteIdentifier(ITextOutput output, string id, TextTokenType tokenType) {
+		static void WriteIdentifier(ITextOutput output, string id, TextTokenKind tokenKind) {
 			if (isKeyword.Contains(id))
-				output.Write("@", TextTokenType.Operator);
-			output.Write(IdentifierEscaper.Escape(id), tokenType);
+				output.Write("@", TextTokenKind.Operator);
+			output.Write(IdentifierEscaper.Escape(id), tokenKind);
 		}
 
 		protected override void FormatTypeName(ITextOutput output, TypeDef type) {
@@ -394,8 +410,8 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			TypeToString(output, ConvertTypeOptions.DoNotUsePrimitiveTypeNames | ConvertTypeOptions.IncludeTypeParameterDefinitions | ConvertTypeOptions.DoNotIncludeEnclosingType, type);
 		}
 
-		public override bool ShowMember(IMemberRef member, DecompilerSettings decompilerSettings) {
-			return showAllMembers || !AstBuilder.MemberIsHidden(member, decompilerSettings);
+		public override bool ShowMember(IMemberRef member) {
+			return showAllMembers || !AstBuilder.MemberIsHidden(member, langSettings.Settings);
 		}
 
 		public override bool CanDecompile(DecompilationType decompilationType) {
@@ -420,22 +436,22 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		}
 
 		void DecompilePartial(DecompilePartialType info) {
-			var builder = CreateAstBuilder(CreateDecompilationOptions(info.Options, info.UseUsingDeclarations), currentType: info.Type);
+			var builder = CreateAstBuilder(info.Context, CreateDecompilerSettings(langSettings.Settings, info.UseUsingDeclarations), currentType: info.Type);
 			builder.AddType(info.Type);
-			RunTransformsAndGenerateCode(builder, info.Output, info.Options, new DecompilePartialTransform(info.Type, info.Definitions, info.ShowDefinitions, info.AddPartialKeyword, info.InterfacesToRemove));
+			RunTransformsAndGenerateCode(builder, info.Output, info.Context, new DecompilePartialTransform(info.Type, info.Definitions, info.ShowDefinitions, info.AddPartialKeyword, info.InterfacesToRemove));
 		}
 
-		internal static DecompilationOptions CreateDecompilationOptions(DecompilationOptions options, bool useUsingDeclarations) {
-			var newOne = options.Clone();
-			newOne.DecompilerSettings.UsingDeclarations = useUsingDeclarations;
-			newOne.DecompilerSettings.FullyQualifyAllTypes = !useUsingDeclarations;
+		internal static DecompilerSettings CreateDecompilerSettings(DecompilerSettings settings, bool useUsingDeclarations) {
+			var newOne = settings.Clone();
+			newOne.UsingDeclarations = useUsingDeclarations;
+			newOne.FullyQualifyAllTypes = !useUsingDeclarations;
 			return newOne;
 		}
 
 		void DecompileAssemblyInfo(DecompileAssemblyInfo info) {
-			var builder = CreateAstBuilder(info.Options, currentModule: info.Module);
+			var builder = CreateAstBuilder(info.Context, langSettings.Settings, currentModule: info.Module);
 			builder.AddAssembly(info.Module, true, info.Module.IsManifestModule, true);
-			RunTransformsAndGenerateCode(builder, info.Output, info.Options, new AssemblyInfoTransform());
+			RunTransformsAndGenerateCode(builder, info.Output, info.Context, new AssemblyInfoTransform());
 		}
 	}
 }

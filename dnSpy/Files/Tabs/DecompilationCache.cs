@@ -108,20 +108,12 @@ namespace dnSpy.Files.Tabs {
 		struct Key : IEquatable<Key> {
 			public readonly ILanguage ILanguage;
 			public readonly IFileTreeNodeData[] Nodes;
-			public readonly DecompilationOptions Options;
+			public readonly IDecompilerSettings Settings;
 
-			public Key(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options) {
+			public Key(ILanguage language, IFileTreeNodeData[] nodes, IDecompilerSettings settings) {
 				this.ILanguage = language;
 				this.Nodes = new List<IFileTreeNodeData>(nodes).ToArray();
-				this.Options = Clone(options);
-			}
-
-			static DecompilationOptions Clone(DecompilationOptions options) {
-				var newOpts = new DecompilationOptions();
-				newOpts.CancellationToken = CancellationToken.None;
-				newOpts.DecompilerSettings = options.DecompilerSettings.Clone();
-				newOpts.DontShowCreateMethodBodyExceptions = options.DontShowCreateMethodBodyExceptions;
-				return newOpts;
+				this.Settings = settings.Clone();
 			}
 
 			public bool Equals(Key other) {
@@ -135,7 +127,7 @@ namespace dnSpy.Files.Tabs {
 						return false;
 				}
 
-				if (!Equals(Options, other.Options))
+				if (!Settings.Equals(other.Settings))
 					return false;
 
 				return true;
@@ -152,38 +144,8 @@ namespace dnSpy.Files.Tabs {
 				h = ILanguage.UniqueGuid.GetHashCode();
 				foreach (var node in Nodes)
 					h ^= node.GetHashCode();
-				h ^= GetHashCode(Options);
+				h ^= Settings.GetHashCode();
 				return h;
-			}
-
-			static int GetHashCode(DecompilationOptions options) {
-				int h = 0;
-
-				// Ignore: ProjectOptions
-				// Ignore: CancellationToken
-
-				h ^= options.DecompilerSettings.GetHashCode();
-				h ^= options.DontShowCreateMethodBodyExceptions ? int.MinValue : 0;
-
-				return h;
-			}
-
-			static bool Equals(DecompilationOptions a, DecompilationOptions b) {
-				if (a == b)
-					return true;
-				if (a == null || b == null)
-					return false;
-
-				// Ignore: ProjectOptions
-				// Ignore: CancellationToken
-
-				if (!a.DecompilerSettings.Equals(b.DecompilerSettings))
-					return false;
-
-				if (a.DontShowCreateMethodBodyExceptions != b.DontShowCreateMethodBodyExceptions)
-					return false;
-
-				return true;
 			}
 		}
 
@@ -208,10 +170,11 @@ namespace dnSpy.Files.Tabs {
 			}, null, CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
 		}
 
-		public AvalonEditTextOutput Lookup(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options, out IHighlightingDefinition highlighting) {
+		public AvalonEditTextOutput Lookup(ILanguage language, IFileTreeNodeData[] nodes, out IHighlightingDefinition highlighting) {
 			highlighting = null;
+			var settings = language.Settings;
 			lock (lockObj) {
-				var key = new Key(language, nodes, options);
+				var key = new Key(language, nodes, settings);
 
 				Item item;
 				if (cachedItems.TryGetValue(key, out item)) {
@@ -226,11 +189,12 @@ namespace dnSpy.Files.Tabs {
 			return null;
 		}
 
-		public void Cache(ILanguage language, IFileTreeNodeData[] nodes, DecompilationOptions options, AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting) {
+		public void Cache(ILanguage language, IFileTreeNodeData[] nodes, AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting) {
 			if (!textOutput.CanBeCached)
 				return;
+			var settings = language.Settings;
 			lock (lockObj) {
-				var key = new Key(language, nodes, options);
+				var key = new Key(language, nodes, settings);
 				cachedItems[key] = new Item(textOutput, highlighting);
 			}
 		}

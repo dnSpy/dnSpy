@@ -19,8 +19,7 @@
 using System;
 using System.Windows;
 using System.Windows.Controls;
-
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Shared.UI.Decompiler {
 	/// <summary>

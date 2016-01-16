@@ -30,7 +30,7 @@ using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
-using dnSpy.Decompiler;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.HexEditor;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Menus;

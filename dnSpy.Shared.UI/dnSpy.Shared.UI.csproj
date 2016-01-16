@@ -60,17 +60,9 @@
       <Project>{9b234472-0e22-428c-9345-c8d9ee5e06af}</Project>
       <Name>dnSpy.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
-      <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
-      <Name>ICSharpCode.Decompiler</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
-      <Project>{53dca265-3c3c-42f9-b647-f72ba678122b}</Project>
-      <Name>ICSharpCode.NRefactory.CSharp</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
-      <Project>{3b2a5653-ec97-4001-bb9b-d90f1af2c371}</Project>
-      <Name>ICSharpCode.NRefactory</Name>
+    <ProjectReference Include="..\dnSpy.Decompiler.Shared\dnSpy.Decompiler.Shared.csproj">
+      <Project>{a027546a-cf4b-47f9-bc53-ee1ad424ee41}</Project>
+      <Name>dnSpy.Decompiler.Shared</Name>
     </ProjectReference>
     <ProjectReference Include="..\SharpTreeView\ICSharpCode.TreeView.csproj">
       <Project>{dde2a481-8271-4eac-a330-8fa6a38d13d1}</Project>
@@ -91,6 +83,7 @@
     <Compile Include="Decompiler\AvalonEditTextOutput.cs" />
     <Compile Include="Decompiler\ISmartTextOutput.cs" />
     <Compile Include="Decompiler\OutputLengthExceededException.cs" />
+    <Compile Include="Languages\XmlDoc\XmlDocumentationProvider.cs" />
     <Compile Include="Properties\dnSpy.Shared.UI.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -166,7 +159,6 @@
     <Compile Include="Highlighting\SyntaxHighlighter.cs" />
     <Compile Include="Highlighting\UISyntaxHighlighter.cs" />
     <Compile Include="Images\ImageManagerExtensionMethods.cs" />
-    <Compile Include="Languages\XmlDoc\AddXmlDocTransform.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocKeyProvider.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocLoader.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocRenderer.cs" />

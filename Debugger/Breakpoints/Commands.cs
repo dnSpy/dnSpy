@@ -31,11 +31,10 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows.App;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Menus;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger.Breakpoints {
 	[ExportAutoLoaded]
@@ -129,11 +128,11 @@ namespace dnSpy.Debugger.Breakpoints {
 			foreach (var vm in context.SelectedItems) {
 				var printer = new BreakpointPrinter(output, debuggerSettings.UseHexadecimal, languageManager.SelectedLanguage);
 				printer.WriteName(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteAssembly(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteModule(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteFile(vm);
 				output.WriteLine();
 			}

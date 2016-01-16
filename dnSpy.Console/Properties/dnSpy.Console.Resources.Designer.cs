@@ -142,15 +142,6 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid order argument.
-        /// </summary>
-        internal static string InvalidOrderArg {
-            get {
-                return ResourceManager.GetString("InvalidOrderArg", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to .sln name ({0}) must be relative to project directory.
         /// </summary>
         internal static string InvalidSolutionName {
@@ -183,6 +174,24 @@ namespace dnSpy_Console.Properties {
         internal static string LanguageDoesNotExist {
             get {
                 return ResourceManager.GetString("LanguageDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language options:.
+        /// </summary>
+        internal static string LanguageOptions {
+            get {
+                return ResourceManager.GetString("LanguageOptions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All boolean options can be disabled by using &apos;no-&apos; or &apos;dont-&apos;, eg. --dont-sort-members.
+        /// </summary>
+        internal static string LanguageOptionsDesc {
+            get {
+                return ResourceManager.GetString("LanguageOptionsDesc", resourceCulture);
             }
         }
         
@@ -268,20 +277,20 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Missing option argument.
+        /// </summary>
+        internal static string MissingOptionArgument {
+            get {
+                return ResourceManager.GetString("MissingOptionArgument", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No options specified.
         /// </summary>
         internal static string MissingOptions {
             get {
                 return ResourceManager.GetString("MissingOptions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Missing order argument.
-        /// </summary>
-        internal static string MissingOrderArg {
-            get {
-                return ResourceManager.GetString("MissingOrderArg", resourceCulture);
             }
         }
         
@@ -359,13 +368,14 @@ namespace dnSpy_Console.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to {0} [options] [fileOrDir1] [fileOrDir2] [...]
+        ///
         ///  --asm-path path    assembly search path. Paths can be separated with &apos;{1}&apos; or you can use multiple --asm-path&apos;s
         ///  --user-gac path    user GAC path. Paths can be separated with &apos;{1}&apos; or you can use multiple --user-gac&apos;s
         ///  --no-gac     don&apos;t use the GAC to look up assemblies. Useful with --no-stdlib
         ///  --no-stdlib  projects don&apos;t reference mscorlib
         ///  --no-sln     don&apos;t create a .sln file
-        ///  --no-xmldoc  don&apos;t show XML doc comments
-        ///  --il-comments show IL co [rest of string was truncated]&quot;;.
+        ///  --sln-name name   name of the .sln file
+        ///  --threads N  number of  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string Usage {
             get {

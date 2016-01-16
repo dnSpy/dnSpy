@@ -25,7 +25,7 @@ using dnlib.DotNet.Emit;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class FieldAccessNode : SearchNode {
@@ -43,7 +43,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(showWrites ? dnSpy_Analyzer_Resources.AssignedByTreeNode : dnSpy_Analyzer_Resources.ReadByTreeNode, TextTokenType.Text);
+			output.Write(showWrites ? dnSpy_Analyzer_Resources.AssignedByTreeNode : dnSpy_Analyzer_Resources.ReadByTreeNode, TextTokenKind.Text);
 		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {

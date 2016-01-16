@@ -20,8 +20,7 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using dnSpy.Decompiler;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace ICSharpCode.Decompiler.Disassembler {
 	public enum ILNameSyntax
@@ -56,26 +55,26 @@ namespace ICSharpCode.Decompiler.Disassembler {
 		}
 		static readonly string[] spaces;
 
-		public static void WriteOffsetReference(ITextOutput writer, Instruction instruction, MethodDef method, TextTokenType tokenType = TextTokenType.Label)
+		public static void WriteOffsetReference(ITextOutput writer, Instruction instruction, MethodDef method, TextTokenKind tokenKind = TextTokenKind.Label)
 		{
 			var r = instruction == null ? null : method == null ? (object)instruction : new InstructionReference(method, instruction);
-			writer.WriteReference(DnlibExtensions.OffsetToString(instruction.GetOffset()), r, tokenType);
+			writer.WriteReference(DnlibExtensions.OffsetToString(instruction.GetOffset()), r, tokenKind);
 		}
 		
 		public static void WriteTo(this ExceptionHandler exceptionHandler, ITextOutput writer, MethodDef method)
 		{
-			writer.Write("Try", TextTokenType.Keyword);
+			writer.Write("Try", TextTokenKind.Keyword);
 			writer.WriteSpace();
 			WriteOffsetReference(writer, exceptionHandler.TryStart, method);
-			writer.Write("-", TextTokenType.Operator);
+			writer.Write("-", TextTokenKind.Operator);
 			WriteOffsetReference(writer, exceptionHandler.TryEnd, method);
 			writer.WriteSpace();
-			writer.Write(exceptionHandler.HandlerType.ToString(), TextTokenType.Keyword);
+			writer.Write(exceptionHandler.HandlerType.ToString(), TextTokenKind.Keyword);
 			if (exceptionHandler.FilterStart != null) {
 				writer.WriteSpace();
 				WriteOffsetReference(writer, exceptionHandler.FilterStart, method);
 				writer.WriteSpace();
-				writer.Write("handler", TextTokenType.Keyword);
+				writer.Write("handler", TextTokenKind.Keyword);
 				writer.WriteSpace();
 			}
 			if (exceptionHandler.CatchType != null) {
@@ -84,66 +83,66 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			}
 			writer.WriteSpace();
 			WriteOffsetReference(writer, exceptionHandler.HandlerStart, method);
-			writer.Write("-", TextTokenType.Operator);
+			writer.Write("-", TextTokenKind.Operator);
 			WriteOffsetReference(writer, exceptionHandler.HandlerEnd, method);
 		}
 		
 		public static void WriteTo(this Instruction instruction, ITextOutput writer, DisassemblerOptions options, uint baseRva, long baseOffs, IInstructionBytesReader byteReader, MethodDef method)
 		{
 			if (options != null && (options.ShowTokenAndRvaComments || options.ShowILBytes)) {
-				writer.Write("/* ", TextTokenType.Comment);
+				writer.Write("/* ", TextTokenKind.Comment);
 
 				bool needSpace = false;
 
 				if (options.ShowTokenAndRvaComments) {
 					ulong fileOffset = (ulong)baseOffs + instruction.Offset;
-					writer.WriteReference(string.Format("0x{0:X8}", fileOffset), new AddressReference(options.OwnerModule == null ? null : options.OwnerModule.Location, false, fileOffset, (ulong)instruction.GetSize()), TextTokenType.Comment, false);
+					writer.WriteReference(string.Format("0x{0:X8}", fileOffset), new AddressReference(options.OwnerModule == null ? null : options.OwnerModule.Location, false, fileOffset, (ulong)instruction.GetSize()), TextTokenKind.Comment, false);
 					needSpace = true;
 				}
 
 				if (options.ShowILBytes) {
 					if (needSpace)
-						writer.Write(" ", TextTokenType.Comment);
+						writer.Write(" ", TextTokenKind.Comment);
 					if (byteReader == null)
-						writer.Write("??", TextTokenType.Comment);
+						writer.Write("??", TextTokenKind.Comment);
 					else {
 						int size = instruction.GetSize();
 						for (int i = 0; i < size; i++) {
 							var b = byteReader.ReadByte();
 							if (b < 0)
-								writer.Write("??", TextTokenType.Comment);
+								writer.Write("??", TextTokenKind.Comment);
 							else
-								writer.Write(string.Format("{0:X2}", b), TextTokenType.Comment);
+								writer.Write(string.Format("{0:X2}", b), TextTokenKind.Comment);
 						}
 						// Most instructions should be at most 5 bytes in length, but use 6 since
 						// ldftn/ldvirtftn are 6 bytes long. The longest instructions are those with
 						// 8 byte operands, ldc.i8 and ldc.r8: 9 bytes.
 						const int MIN_BYTES = 6;
 						for (int i = size; i < MIN_BYTES; i++)
-							writer.Write("  ", TextTokenType.Comment);
+							writer.Write("  ", TextTokenKind.Comment);
 					}
 				}
 
-				writer.Write(" */", TextTokenType.Comment);
+				writer.Write(" */", TextTokenKind.Comment);
 				writer.WriteSpace();
 			}
-			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.GetOffset()), new InstructionReference(method, instruction), TextTokenType.Label, false);
-			writer.Write(":", TextTokenType.Operator);
+			writer.WriteDefinition(DnlibExtensions.OffsetToString(instruction.GetOffset()), new InstructionReference(method, instruction), TextTokenKind.Label, false);
+			writer.Write(":", TextTokenKind.Operator);
 			writer.WriteSpace();
-			writer.WriteReference(instruction.OpCode.Name, instruction.OpCode, TextTokenType.OpCode);
+			writer.WriteReference(instruction.OpCode.Name, instruction.OpCode, TextTokenKind.OpCode);
 			if (instruction.Operand != null) {
 				int count = OPERAND_ALIGNMENT - instruction.OpCode.Name.Length;
 				if (count <= 0)
 					count = 1;
-				writer.Write(spaces[count], TextTokenType.Text);
+				writer.Write(spaces[count], TextTokenKind.Text);
 				if (instruction.OpCode == OpCodes.Ldtoken) {
 					var member = instruction.Operand as IMemberRef;
 					if (member != null && member.IsMethod) {
-						writer.Write("method", TextTokenType.Keyword);
+						writer.Write("method", TextTokenKind.Keyword);
 						writer.WriteSpace();
 					}
 					else if (member != null && member.IsField) {
-						writer.Write("field", TextTokenType.Keyword);
+						writer.Write("field", TextTokenKind.Keyword);
 						writer.WriteSpace();
 					}
 				}
@@ -152,23 +151,23 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			if (options != null && options.GetOpCodeDocumentation != null) {
 				var doc = options.GetOpCodeDocumentation(instruction.OpCode);
 				if (doc != null) {
-					writer.Write("\t", TextTokenType.Text);
-					writer.Write("// " + doc, TextTokenType.Comment);
+					writer.Write("\t", TextTokenKind.Text);
+					writer.Write("// " + doc, TextTokenKind.Comment);
 				}
 			}
 		}
 		
 		static void WriteLabelList(ITextOutput writer, IList<Instruction> instructions, MethodDef method)
 		{
-			writer.Write("(", TextTokenType.Operator);
+			writer.Write("(", TextTokenKind.Operator);
 			for(int i = 0; i < instructions.Count; i++) {
 				if (i != 0) {
-					writer.Write(",", TextTokenType.Operator);
+					writer.Write(",", TextTokenKind.Operator);
 					writer.WriteSpace();
 				}
 				WriteOffsetReference(writer, instructions[i], method);
 			}
-			writer.Write(")", TextTokenType.Operator);
+			writer.Write(")", TextTokenKind.Operator);
 		}
 		
 		static string ToInvariantCultureString(object value)
@@ -193,13 +192,13 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			if (sig == null)
 				return;
 			if (sig.ExplicitThis) {
-				writer.Write("instance", TextTokenType.Keyword);
+				writer.Write("instance", TextTokenKind.Keyword);
 				writer.WriteSpace();
-				writer.Write("explicit", TextTokenType.Keyword);
+				writer.Write("explicit", TextTokenKind.Keyword);
 				writer.WriteSpace();
 			}
 			else if (sig.HasThis) {
-				writer.Write("instance", TextTokenType.Keyword);
+				writer.Write("instance", TextTokenKind.Keyword);
 				writer.WriteSpace();
 			}
 			sig.RetType.WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
@@ -207,64 +206,64 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			if (method != null) {
 				if (method.DeclaringType != null) {
 					method.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName);
-					writer.Write("::", TextTokenType.Operator);
+					writer.Write("::", TextTokenKind.Operator);
 				}
 				MethodDef md = method as MethodDef;
 				if (md != null && md.IsCompilerControlled) {
-					writer.WriteReference(Escape(method.Name + "$PST" + method.MDToken.ToInt32().ToString("X8")), method, TextTokenHelper.GetTextTokenType(method));
+					writer.WriteReference(Escape(method.Name + "$PST" + method.MDToken.ToInt32().ToString("X8")), method, TextTokenKindUtils.GetTextTokenType(method));
 				}
 				else {
-					writer.WriteReference(Escape(method.Name), method, TextTokenHelper.GetTextTokenType(method));
+					writer.WriteReference(Escape(method.Name), method, TextTokenKindUtils.GetTextTokenType(method));
 				}
 			}
 			MethodSpec gim = method as MethodSpec;
 			if (gim != null && gim.GenericInstMethodSig != null) {
-				writer.Write("<", TextTokenType.Operator);
+				writer.Write("<", TextTokenKind.Operator);
 				for (int i = 0; i < gim.GenericInstMethodSig.GenericArguments.Count; i++) {
 					if (i > 0) {
-						writer.Write(",", TextTokenType.Operator);
+						writer.Write(",", TextTokenKind.Operator);
 						writer.WriteSpace();
 					}
 					gim.GenericInstMethodSig.GenericArguments[i].WriteTo(writer);
 				}
-				writer.Write(">", TextTokenType.Operator);
+				writer.Write(">", TextTokenKind.Operator);
 			}
-			writer.Write("(", TextTokenType.Operator);
+			writer.Write("(", TextTokenKind.Operator);
 			var parameters = sig.GetParameters();
 			for(int i = 0; i < parameters.Count; ++i) {
 				if (i > 0) {
-					writer.Write(",", TextTokenType.Operator);
+					writer.Write(",", TextTokenKind.Operator);
 					writer.WriteSpace();
 				}
 				parameters[i].WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
 			}
-			writer.Write(")", TextTokenType.Operator);
+			writer.Write(")", TextTokenKind.Operator);
 		}
 
 		public static void WriteTo(this MethodSig sig, ITextOutput writer)
 		{
 			if (sig.ExplicitThis) {
-				writer.Write("instance", TextTokenType.Keyword);
+				writer.Write("instance", TextTokenKind.Keyword);
 				writer.WriteSpace();
-				writer.Write("explicit", TextTokenType.Keyword);
+				writer.Write("explicit", TextTokenKind.Keyword);
 				writer.WriteSpace();
 			}
 			else if (sig.HasThis) {
-				writer.Write("instance", TextTokenType.Keyword);
+				writer.Write("instance", TextTokenKind.Keyword);
 				writer.WriteSpace();
 			}
 			sig.RetType.WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
 			writer.WriteSpace();
-			writer.Write("(", TextTokenType.Operator);
+			writer.Write("(", TextTokenKind.Operator);
 			var parameters = sig.GetParameters();
 			for(int i = 0; i < parameters.Count; ++i) {
 				if (i > 0) {
-					writer.Write(",", TextTokenType.Operator);
+					writer.Write(",", TextTokenKind.Operator);
 					writer.WriteSpace();
 				}
 				parameters[i].WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
 			}
-			writer.Write(")", TextTokenType.Operator);
+			writer.Write(")", TextTokenKind.Operator);
 		}
 		
 		public static void WriteFieldTo(this IField field, ITextOutput writer)
@@ -274,8 +273,8 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			field.FieldSig.Type.WriteTo(writer, ILNameSyntax.SignatureNoNamedTypeParameters);
 			writer.WriteSpace();
 			field.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName);
-			writer.Write("::", TextTokenType.Operator);
-			writer.WriteReference(Escape(field.Name), field, TextTokenHelper.GetTextTokenType(field));
+			writer.Write("::", TextTokenKind.Operator);
+			writer.WriteReference(Escape(field.Name), field, TextTokenKindUtils.GetTextTokenType(field));
 		}
 		
 		static bool IsValidIdentifierCharacter(char c)
@@ -371,79 +370,79 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			if (type is PinnedSig) {
 				((PinnedSig)type).Next.WriteTo(writer, syntaxForElementTypes, depth);
 				writer.WriteSpace();
-				writer.Write("pinned", TextTokenType.Keyword);
+				writer.Write("pinned", TextTokenKind.Keyword);
 			} else if (type is ArraySig) {
 				ArraySig at = (ArraySig)type;
 				at.Next.WriteTo(writer, syntaxForElementTypes, depth);
-				writer.Write("[", TextTokenType.Operator);
+				writer.Write("[", TextTokenKind.Operator);
 				for (int i = 0; i < at.Rank; i++)
 				{
 					if (i != 0) {
-						writer.Write(",", TextTokenType.Operator);
+						writer.Write(",", TextTokenKind.Operator);
 						writer.WriteSpace();
 					}
 					int? lower = i < at.LowerBounds.Count ? at.LowerBounds[i] : (int?)null;
 					uint? size = i < at.Sizes.Count ? at.Sizes[i] : (uint?)null;
 					if (lower != null)
 					{
-						writer.Write(lower.ToString(), TextTokenType.Number);
+						writer.Write(lower.ToString(), TextTokenKind.Number);
 						if (size != null) {
-							writer.Write("..", TextTokenType.Operator);
-							writer.Write((lower.Value + (int)size.Value - 1).ToString(), TextTokenType.Number);
+							writer.Write("..", TextTokenKind.Operator);
+							writer.Write((lower.Value + (int)size.Value - 1).ToString(), TextTokenKind.Number);
 						}
 						else
-							writer.Write("...", TextTokenType.Operator);
+							writer.Write("...", TextTokenKind.Operator);
 					}
 				}
-				writer.Write("]", TextTokenType.Operator);
+				writer.Write("]", TextTokenKind.Operator);
 			} else if (type is SZArraySig) {
 				SZArraySig at = (SZArraySig)type;
 				at.Next.WriteTo(writer, syntaxForElementTypes, depth);
-				writer.Write("[]", TextTokenType.Operator);
+				writer.Write("[]", TextTokenKind.Operator);
 			} else if (type is GenericSig) {
 				if (((GenericSig)type).IsMethodVar)
-					writer.Write("!!", TextTokenType.Operator);
+					writer.Write("!!", TextTokenKind.Operator);
 				else
-					writer.Write("!", TextTokenType.Operator);
+					writer.Write("!", TextTokenKind.Operator);
 				string typeName = type.TypeName;
 				if (string.IsNullOrEmpty(typeName) || typeName[0] == '!' || syntax == ILNameSyntax.SignatureNoNamedTypeParameters)
-					writer.Write(((GenericSig)type).Number.ToString(), TextTokenType.Number);
+					writer.Write(((GenericSig)type).Number.ToString(), TextTokenKind.Number);
 				else
-					writer.Write(Escape(typeName), TextTokenHelper.GetTextTokenType(type));
+					writer.Write(Escape(typeName), TextTokenKindUtils.GetTextTokenType(type));
 			} else if (type is ByRefSig) {
 				((ByRefSig)type).Next.WriteTo(writer, syntaxForElementTypes, depth);
-				writer.Write("&", TextTokenType.Operator);
+				writer.Write("&", TextTokenKind.Operator);
 			} else if (type is PtrSig) {
 				((PtrSig)type).Next.WriteTo(writer, syntaxForElementTypes, depth);
-				writer.Write("*", TextTokenType.Operator);
+				writer.Write("*", TextTokenKind.Operator);
 			} else if (type is GenericInstSig) {
 				((GenericInstSig)type).GenericType.WriteTo(writer, syntaxForElementTypes, depth);
-				writer.Write("<", TextTokenType.Operator);
+				writer.Write("<", TextTokenKind.Operator);
 				var arguments = ((GenericInstSig)type).GenericArguments;
 				for (int i = 0; i < arguments.Count; i++) {
 					if (i > 0) {
-						writer.Write(",", TextTokenType.Operator);
+						writer.Write(",", TextTokenKind.Operator);
 						writer.WriteSpace();
 					}
 					arguments[i].WriteTo(writer, syntaxForElementTypes, depth);
 				}
-				writer.Write(">", TextTokenType.Operator);
+				writer.Write(">", TextTokenKind.Operator);
 			} else if (type is CModOptSig) {
 				((ModifierSig)type).Next.WriteTo(writer, syntax, depth);
 				writer.WriteSpace();
-				writer.Write("modopt", TextTokenType.Keyword);
-				writer.Write("(", TextTokenType.Operator);
+				writer.Write("modopt", TextTokenKind.Keyword);
+				writer.Write("(", TextTokenKind.Operator);
 				((ModifierSig)type).Modifier.WriteTo(writer, ILNameSyntax.TypeName, depth);
-				writer.Write(")", TextTokenType.Operator);
+				writer.Write(")", TextTokenKind.Operator);
 				writer.WriteSpace();
 			}
 			else if (type is CModReqdSig) {
 				((ModifierSig)type).Next.WriteTo(writer, syntax, depth);
 				writer.WriteSpace();
-				writer.Write("modreq", TextTokenType.Keyword);
-				writer.Write("(", TextTokenType.Operator);
+				writer.Write("modreq", TextTokenKind.Keyword);
+				writer.Write("(", TextTokenKind.Operator);
 				((ModifierSig)type).Modifier.WriteTo(writer, ILNameSyntax.TypeName, depth);
-				writer.Write(")", TextTokenType.Operator);
+				writer.Write(")", TextTokenKind.Operator);
 				writer.WriteSpace();
 			}
 			else if (type is TypeDefOrRefSig) {
@@ -481,32 +480,32 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				if (name != null)
 					WriteKeyword(writer, name, typeSig.ToTypeDefOrRef());
 				else
-					writer.WriteReference(Escape(typeName), type, TextTokenHelper.GetTextTokenType(type));
+					writer.WriteReference(Escape(typeName), type, TextTokenKindUtils.GetTextTokenType(type));
 			} else if ((syntax == ILNameSyntax.Signature || syntax == ILNameSyntax.SignatureNoNamedTypeParameters) && name != null) {
 				WriteKeyword(writer, name, typeSig.ToTypeDefOrRef());
 			} else {
 				if (syntax == ILNameSyntax.Signature || syntax == ILNameSyntax.SignatureNoNamedTypeParameters) {
-					writer.Write(DnlibExtensions.IsValueType(type) ? "valuetype" : "class", TextTokenType.Keyword);
+					writer.Write(DnlibExtensions.IsValueType(type) ? "valuetype" : "class", TextTokenKind.Keyword);
 					writer.WriteSpace();
 				}
 
 				if (type.DeclaringType != null) {
 					type.DeclaringType.WriteTo(writer, ILNameSyntax.TypeName, depth);
-					writer.Write("/", TextTokenType.Operator);
-					writer.WriteReference(Escape(typeName), type, TextTokenHelper.GetTextTokenType(type));
+					writer.Write("/", TextTokenKind.Operator);
+					writer.WriteReference(Escape(typeName), type, TextTokenKindUtils.GetTextTokenType(type));
 				} else {
 					if (!(type is TypeDef) && type.Scope != null && !(type is TypeSpec)) {
-						writer.Write("[", TextTokenType.Operator);
-						writer.Write(Escape(type.Scope.GetScopeName()), TextTokenType.ILModule);
-						writer.Write("]", TextTokenType.Operator);
+						writer.Write("[", TextTokenKind.Operator);
+						writer.Write(Escape(type.Scope.GetScopeName()), TextTokenKind.ILModule);
+						writer.Write("]", TextTokenKind.Operator);
 					}
 					if (ts != null || MustEscape(typeFullName))
-						writer.WriteReference(Escape(typeFullName), type, TextTokenHelper.GetTextTokenType(type));
+						writer.WriteReference(Escape(typeFullName), type, TextTokenKindUtils.GetTextTokenType(type));
 					else {
 						WriteNamespace(writer, type.Namespace);
 						if (!string.IsNullOrEmpty(type.Namespace))
-							writer.Write(".", TextTokenType.Operator);
-						writer.WriteReference(IdentifierEscaper.Escape(type.Name), type, TextTokenHelper.GetTextTokenType(type));
+							writer.Write(".", TextTokenKind.Operator);
+						writer.WriteReference(IdentifierEscaper.Escape(type.Name), type, TextTokenKindUtils.GetTextTokenType(type));
 					}
 				}
 			}
@@ -517,10 +516,10 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			var parts = ns.Split('.');
 			for (int i = 0; i < parts.Length; i++) {
 				if (i > 0)
-					writer.Write(".", TextTokenType.Operator);
+					writer.Write(".", TextTokenKind.Operator);
 				var nsPart = parts[i];
 				if (!string.IsNullOrEmpty(nsPart))
-					writer.Write(IdentifierEscaper.Escape(nsPart), TextTokenType.NamespacePart);
+					writer.Write(IdentifierEscaper.Escape(nsPart), TextTokenKind.NamespacePart);
 			}
 		}
 
@@ -531,9 +530,9 @@ namespace ICSharpCode.Decompiler.Disassembler {
 				if (i > 0)
 					writer.WriteSpace();
 				if (tdr != null)
-					writer.WriteReference(parts[i], tdr, TextTokenType.Keyword);
+					writer.WriteReference(parts[i], tdr, TextTokenKind.Keyword);
 				else
-					writer.Write(parts[i], TextTokenType.Keyword);
+					writer.Write(parts[i], TextTokenKind.Keyword);
 			}
 		}
 		
@@ -554,9 +553,9 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			Local variable = operand as Local;
 			if (variable != null) {
 				if (string.IsNullOrEmpty(variable.Name))
-					writer.WriteReference(variable.Index.ToString(), variable, TextTokenType.Number);
+					writer.WriteReference(variable.Index.ToString(), variable, TextTokenKind.Number);
 				else
-					writer.WriteReference(Escape(variable.Name), variable, TextTokenType.Local);
+					writer.WriteReference(Escape(variable.Name), variable, TextTokenKind.Local);
 				return;
 			}
 			
@@ -564,12 +563,12 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			if (paramRef != null) {
 				if (string.IsNullOrEmpty(paramRef.Name)) {
 					if (paramRef.IsHiddenThisParameter)
-						writer.WriteReference("<hidden-this>", paramRef, TextTokenType.Parameter);
+						writer.WriteReference("<hidden-this>", paramRef, TextTokenKind.Parameter);
 					else
-						writer.WriteReference(paramRef.MethodSigIndex.ToString(), paramRef, TextTokenType.Parameter);
+						writer.WriteReference(paramRef.MethodSigIndex.ToString(), paramRef, TextTokenKind.Parameter);
 				}
 				else
-					writer.WriteReference(Escape(paramRef.Name), paramRef, TextTokenType.Parameter);
+					writer.WriteReference(Escape(paramRef.Name), paramRef, TextTokenKind.Parameter);
 				return;
 			}
 			
@@ -614,56 +613,56 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			
 			string s = operand as string;
 			if (s != null) {
-				writer.Write("\"" + NRefactory.CSharp.TextWriterTokenWriter.ConvertString(s) + "\"", TextTokenType.String);
+				writer.Write("\"" + NRefactory.CSharp.TextWriterTokenWriter.ConvertString(s) + "\"", TextTokenKind.String);
 			} else if (operand is char) {
-				writer.Write(((int)(char)operand).ToString(), TextTokenType.Number);
+				writer.Write(((int)(char)operand).ToString(), TextTokenKind.Number);
 			} else if (operand is float) {
 				float val = (float)operand;
 				if (val == 0) {
 					if (1 / val == float.NegativeInfinity) {
 						// negative zero is a special case
-						writer.Write("-0.0", TextTokenType.Number);
+						writer.Write("-0.0", TextTokenKind.Number);
 					}
 					else
-						writer.Write("0.0", TextTokenType.Number);
+						writer.Write("0.0", TextTokenKind.Number);
 				} else if (float.IsInfinity(val) || float.IsNaN(val)) {
 					byte[] data = BitConverter.GetBytes(val);
-					writer.Write("(", TextTokenType.Operator);
+					writer.Write("(", TextTokenKind.Operator);
 					for (int i = 0; i < data.Length; i++) {
 						if (i > 0)
 							writer.WriteSpace();
-						writer.Write(data[i].ToString("X2"), TextTokenType.Number);
+						writer.Write(data[i].ToString("X2"), TextTokenKind.Number);
 					}
-					writer.Write(")", TextTokenType.Operator);
+					writer.Write(")", TextTokenKind.Operator);
 				} else {
-					writer.Write(val.ToString("R", System.Globalization.CultureInfo.InvariantCulture), TextTokenType.Number);
+					writer.Write(val.ToString("R", System.Globalization.CultureInfo.InvariantCulture), TextTokenKind.Number);
 				}
 			} else if (operand is double) {
 				double val = (double)operand;
 				if (val == 0) {
 					if (1 / val == double.NegativeInfinity) {
 						// negative zero is a special case
-						writer.Write("-0.0", TextTokenType.Number);
+						writer.Write("-0.0", TextTokenKind.Number);
 					}
 					else
-						writer.Write("0.0", TextTokenType.Number);
+						writer.Write("0.0", TextTokenKind.Number);
 				} else if (double.IsInfinity(val) || double.IsNaN(val)) {
 					byte[] data = BitConverter.GetBytes(val);
-					writer.Write("(", TextTokenType.Operator);
+					writer.Write("(", TextTokenKind.Operator);
 					for (int i = 0; i < data.Length; i++) {
 						if (i > 0)
 							writer.WriteSpace();
-						writer.Write(data[i].ToString("X2"), TextTokenType.Number);
+						writer.Write(data[i].ToString("X2"), TextTokenKind.Number);
 					}
-					writer.Write(")", TextTokenType.Operator);
+					writer.Write(")", TextTokenKind.Operator);
 				} else {
-					writer.Write(val.ToString("R", System.Globalization.CultureInfo.InvariantCulture), TextTokenType.Number);
+					writer.Write(val.ToString("R", System.Globalization.CultureInfo.InvariantCulture), TextTokenKind.Number);
 				}
 			} else if (operand is bool) {
-				writer.Write((bool)operand ? "true" : "false", TextTokenType.Keyword);
+				writer.Write((bool)operand ? "true" : "false", TextTokenKind.Keyword);
 			} else {
 				s = ToInvariantCultureString(operand);
-				writer.Write(s, TextTokenHelper.GetTextTokenType(operand));
+				writer.Write(s, TextTokenKindUtils.GetTextTokenType(operand));
 			}
 		}
 		

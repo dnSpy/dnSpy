@@ -51,6 +51,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Shared.UI.AvalonEdit;
 using dnSpy.Shared.UI.Decompiler;
@@ -63,7 +64,6 @@ using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
 using ICSharpCode.AvalonEdit.Search;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	sealed partial class TextEditorControl : UserControl, IDisposable {

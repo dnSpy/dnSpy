@@ -20,45 +20,44 @@
 using System;
 using dnlib.DotNet;
 using dnSpy.Contracts.Highlighting;
-using dnSpy.Decompiler;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Shared.UI.Highlighting {
 	public static class SyntaxHighlightOutputExtensionMethods {
 		public static T WriteLine<T>(this T output) where T : ISyntaxHighlightOutput {
-			output.Write(Environment.NewLine, TextTokenType.Text);
+			output.Write(Environment.NewLine, TextTokenKind.Text);
 			return output;
 		}
 
 		public static T WriteSpace<T>(this T output) where T : ISyntaxHighlightOutput {
-			output.Write(" ", TextTokenType.Text);
+			output.Write(" ", TextTokenKind.Text);
 			return output;
 		}
 
 		public static T WriteCommaSpace<T>(this T output) where T : ISyntaxHighlightOutput {
-			output.Write(",", TextTokenType.Operator);
+			output.Write(",", TextTokenKind.Operator);
 			output.WriteSpace();
 			return output;
 		}
 
 		public static T Write<T>(this T output, Version version) where T : ISyntaxHighlightOutput {
 			if (version == null) {
-				output.Write("?", TextTokenType.Error);
-				output.Write(".", TextTokenType.Operator);
-				output.Write("?", TextTokenType.Error);
-				output.Write(".", TextTokenType.Operator);
-				output.Write("?", TextTokenType.Error);
-				output.Write(".", TextTokenType.Operator);
-				output.Write("?", TextTokenType.Error);
+				output.Write("?", TextTokenKind.Error);
+				output.Write(".", TextTokenKind.Operator);
+				output.Write("?", TextTokenKind.Error);
+				output.Write(".", TextTokenKind.Operator);
+				output.Write("?", TextTokenKind.Error);
+				output.Write(".", TextTokenKind.Operator);
+				output.Write("?", TextTokenKind.Error);
 			}
 			else {
-				output.Write(version.Major.ToString(), TextTokenType.Number);
-				output.Write(".", TextTokenType.Operator);
-				output.Write(version.Minor.ToString(), TextTokenType.Number);
-				output.Write(".", TextTokenType.Operator);
-				output.Write(version.Build.ToString(), TextTokenType.Number);
-				output.Write(".", TextTokenType.Operator);
-				output.Write(version.Revision.ToString(), TextTokenType.Number);
+				output.Write(version.Major.ToString(), TextTokenKind.Number);
+				output.Write(".", TextTokenKind.Operator);
+				output.Write(version.Minor.ToString(), TextTokenKind.Number);
+				output.Write(".", TextTokenKind.Operator);
+				output.Write(version.Build.ToString(), TextTokenKind.Number);
+				output.Write(".", TextTokenKind.Operator);
+				output.Write(version.Revision.ToString(), TextTokenKind.Number);
 			}
 			return output;
 		}
@@ -70,42 +69,42 @@ namespace dnSpy.Shared.UI.Highlighting {
 			bool isExe = asmDef != null &&
 				asmDef.ManifestModule != null &&
 				(asmDef.ManifestModule.Characteristics & dnlib.PE.Characteristics.Dll) == 0;
-			output.Write(asm.Name, isExe ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
+			output.Write(asm.Name, isExe ? TextTokenKind.AssemblyExe : TextTokenKind.Assembly);
 
 			output.WriteCommaSpace();
 
-			output.Write("Version", TextTokenType.InstanceProperty);
-			output.Write("=", TextTokenType.Operator);
+			output.Write("Version", TextTokenKind.InstanceProperty);
+			output.Write("=", TextTokenKind.Operator);
 			output.Write(asm.Version);
 
 			output.WriteCommaSpace();
 
-			output.Write("Culture", TextTokenType.InstanceProperty);
-			output.Write("=", TextTokenType.Operator);
-			output.Write(UTF8String.IsNullOrEmpty(asm.Culture) ? "neutral" : asm.Culture.String, TextTokenType.EnumField);
+			output.Write("Culture", TextTokenKind.InstanceProperty);
+			output.Write("=", TextTokenKind.Operator);
+			output.Write(UTF8String.IsNullOrEmpty(asm.Culture) ? "neutral" : asm.Culture.String, TextTokenKind.EnumField);
 
 			output.WriteCommaSpace();
 
 			var publicKey = PublicKeyBase.ToPublicKeyToken(asm.PublicKeyOrToken);
-			output.Write(publicKey == null || publicKey is PublicKeyToken ? "PublicKeyToken" : "PublicKey", TextTokenType.InstanceProperty);
-			output.Write("=", TextTokenType.Operator);
+			output.Write(publicKey == null || publicKey is PublicKeyToken ? "PublicKeyToken" : "PublicKey", TextTokenKind.InstanceProperty);
+			output.Write("=", TextTokenKind.Operator);
 			if (PublicKeyBase.IsNullOrEmpty2(publicKey))
-				output.Write("null", TextTokenType.Keyword);
+				output.Write("null", TextTokenKind.Keyword);
 			else
-				output.Write(publicKey.ToString(), TextTokenType.Number);
+				output.Write(publicKey.ToString(), TextTokenKind.Number);
 
 			if ((asm.Attributes & AssemblyAttributes.Retargetable) != 0) {
 				output.WriteCommaSpace();
-				output.Write("Retargetable", TextTokenType.InstanceProperty);
-				output.Write("=", TextTokenType.Operator);
-				output.Write("Yes", TextTokenType.EnumField);
+				output.Write("Retargetable", TextTokenKind.InstanceProperty);
+				output.Write("=", TextTokenKind.Operator);
+				output.Write("Yes", TextTokenKind.EnumField);
 			}
 
 			if ((asm.Attributes & AssemblyAttributes.ContentType_Mask) == AssemblyAttributes.ContentType_WindowsRuntime) {
 				output.WriteCommaSpace();
-				output.Write("ContentType", TextTokenType.InstanceProperty);
-				output.Write("=", TextTokenType.Operator);
-				output.Write("WindowsRuntime", TextTokenType.EnumField);
+				output.Write("ContentType", TextTokenKind.InstanceProperty);
+				output.Write("=", TextTokenKind.Operator);
+				output.Write("WindowsRuntime", TextTokenKind.EnumField);
 			}
 
 			return output;
@@ -115,20 +114,20 @@ namespace dnSpy.Shared.UI.Highlighting {
 			if (name == null)
 				return output;
 			if (name.Length == 0)
-				output.Write("-", TextTokenType.Operator);
+				output.Write("-", TextTokenKind.Operator);
 			else {
 				var parts = name.Split('.');
 				for (int i = 0; i < parts.Length; i++) {
 					if (i > 0)
-						output.Write(".", TextTokenType.Operator);
-					output.Write(IdentifierEscaper.Escape(parts[i]), TextTokenType.NamespacePart);
+						output.Write(".", TextTokenKind.Operator);
+					output.Write(IdentifierEscaper.Escape(parts[i]), TextTokenKind.NamespacePart);
 				}
 			}
 			return output;
 		}
 
 		public static T WriteModule<T>(this T output, string name) where T : ISyntaxHighlightOutput {
-			output.Write(NameUtils.CleanName(name), TextTokenType.Module);
+			output.Write(NameUtils.CleanName(name), TextTokenKind.Module);
 			return output;
 		}
 
@@ -140,21 +139,21 @@ namespace dnSpy.Shared.UI.Highlighting {
 			var parts = s.Split('/');
 			int slashIndex = 0;
 			for (int i = 0; i < parts.Length - 1; i++) {
-				output.Write(parts[i], TextTokenType.DirectoryPart);
+				output.Write(parts[i], TextTokenKind.DirectoryPart);
 				slashIndex += parts[i].Length;
-				output.Write(name[slashIndex].ToString(), TextTokenType.Text);
+				output.Write(name[slashIndex].ToString(), TextTokenKind.Text);
 				slashIndex++;
 			}
 			var fn = parts[parts.Length - 1];
 			int index = fn.LastIndexOf('.');
 			if (index < 0)
-				output.Write(fn, TextTokenType.FileNameNoExtension);
+				output.Write(fn, TextTokenKind.FileNameNoExtension);
 			else {
 				string ext = fn.Substring(index + 1);
 				fn = fn.Substring(0, index);
-				output.Write(fn, TextTokenType.FileNameNoExtension);
-				output.Write(".", TextTokenType.Text);
-				output.Write(ext, TextTokenType.FileExtension);
+				output.Write(fn, TextTokenKind.FileNameNoExtension);
+				output.Write(".", TextTokenKind.Text);
+				output.Write(ext, TextTokenKind.FileExtension);
 			}
 			return output;
 		}

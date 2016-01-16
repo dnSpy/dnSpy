@@ -25,12 +25,9 @@ using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Languages.IL;
-using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Languages.XmlDoc;
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.NRefactory.Documentation;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 	[ExportToolTipContentCreator(Order = TabConstants.ORDER_DNLIBREFTOOLTIPCONTENTCREATOR)]
@@ -42,8 +39,8 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 				return Create(context, (IMemberRef)@ref);
 			if (@ref is Parameter)
 				return Create(context, (Parameter)@ref);
-			if (@ref is ILVariable)
-				return Create(context, (ILVariable)@ref);
+			if (@ref is IILVariable)
+				return Create(context, (IILVariable)@ref);
 			if (@ref is OpCode)
 				return Create(context, (OpCode)@ref);
 			return null;
@@ -144,7 +141,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 			return Create(context, p, null);
 		}
 
-		object Create(IToolTipContentCreatorContext context, ILVariable local) {
+		object Create(IToolTipContentCreatorContext context, IILVariable local) {
 			return Create(context, local.OriginalVariable, local.Name);
 		}
 
@@ -155,7 +152,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 			if (v == null) {
 				if (name == null)
 					return null;
-				creator.Output.Write(string.Format("(local variable) {0}", name), TextTokenType.Text);
+				creator.Output.Write(string.Format("(local variable) {0}", name), TextTokenKind.Text);
 				return creator.Create();
 			}
 
@@ -189,14 +186,14 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 
 			var s = ILLanguageHelper.GetOpCodeDocumentation(opCode);
 			string opCodeHex = opCode.Size > 1 ? string.Format("0x{0:X4}", opCode.Value) : string.Format("0x{0:X2}", opCode.Value);
-			creator.Output.Write(opCode.Name, TextTokenType.OpCode);
+			creator.Output.Write(opCode.Name, TextTokenKind.OpCode);
 			creator.Output.WriteSpace();
-			creator.Output.Write("(", TextTokenType.Operator);
-			creator.Output.Write(opCodeHex, TextTokenType.Number);
-			creator.Output.Write(")", TextTokenType.Operator);
+			creator.Output.Write("(", TextTokenKind.Operator);
+			creator.Output.Write(opCodeHex, TextTokenKind.Number);
+			creator.Output.Write(")", TextTokenKind.Operator);
 			if (s != null) {
-				creator.Output.Write(" - ", TextTokenType.Text);
-				creator.Output.Write(s, TextTokenType.Text);
+				creator.Output.Write(" - ", TextTokenKind.Text);
+				creator.Output.Write(s, TextTokenKind.Text);
 			}
 
 			return creator.Create();

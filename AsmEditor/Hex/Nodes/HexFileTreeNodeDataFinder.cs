@@ -19,7 +19,7 @@
 
 using System.Linq;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	[ExportFileTreeNodeDataFinder]

@@ -22,15 +22,19 @@ using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Highlighting;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>
 	/// A language
 	/// </summary>
 	public interface ILanguage {
+		/// <summary>
+		/// Gets the settings
+		/// </summary>
+		IDecompilerSettings Settings { get; }
+
 		/// <summary>
 		/// Real name of the language, eg. "C#" if it's C#. See also <see cref="UniqueNameUI"/>.
 		/// It's used when the real language name must be shown to the user.
@@ -44,7 +48,7 @@ namespace dnSpy.Contracts.Languages {
 		string UniqueNameUI { get; }
 
 		/// <summary>
-		/// Order of language when shown to the user
+		/// Order of language when shown to the user, eg. <see cref="LanguageConstants.CSHARP_ILSPY_ORDERUI"/>
 		/// </summary>
 		double OrderUI { get; }
 
@@ -97,40 +101,40 @@ namespace dnSpy.Contracts.Languages {
 		/// </summary>
 		/// <param name="method">Method</param>
 		/// <param name="output">Output</param>
-		/// <param name="options">Options</param>
-		void Decompile(MethodDef method, ITextOutput output, DecompilationOptions options);
+		/// <param name="ctx">Context</param>
+		void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Decompiles a property
 		/// </summary>
 		/// <param name="property">Property</param>
 		/// <param name="output">Output</param>
-		/// <param name="options">Options</param>
-		void Decompile(PropertyDef property, ITextOutput output, DecompilationOptions options);
+		/// <param name="ctx">Context</param>
+		void Decompile(PropertyDef property, ITextOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Decompiles a field
 		/// </summary>
 		/// <param name="field">Field</param>
 		/// <param name="output">Output</param>
-		/// <param name="options">Options</param>
-		void Decompile(FieldDef field, ITextOutput output, DecompilationOptions options);
+		/// <param name="ctx">Context</param>
+		void Decompile(FieldDef field, ITextOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Decompiles an event
 		/// </summary>
 		/// <param name="ev">Event</param>
 		/// <param name="output">Output</param>
-		/// <param name="options">Options</param>
-		void Decompile(EventDef ev, ITextOutput output, DecompilationOptions options);
+		/// <param name="ctx">Context</param>
+		void Decompile(EventDef ev, ITextOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Decompiles a type
 		/// </summary>
 		/// <param name="type">Type</param>
 		/// <param name="output">Output</param>
-		/// <param name="options">Options</param>
-		void Decompile(TypeDef type, ITextOutput output, DecompilationOptions options);
+		/// <param name="ctx">Context</param>
+		void Decompile(TypeDef type, ITextOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Decompiles a namespace
@@ -138,17 +142,17 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="namespace">Namespace</param>
 		/// <param name="types">Types in namespace</param>
 		/// <param name="output">Output</param>
-		/// <param name="options">Options</param>
-		void DecompileNamespace(string @namespace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationOptions options);
+		/// <param name="ctx">Context</param>
+		void DecompileNamespace(string @namespace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Decompiles an assembly or module
 		/// </summary>
 		/// <param name="file">Module</param>
 		/// <param name="output">Output</param>
-		/// <param name="options">Options</param>
+		/// <param name="ctx">Context</param>
 		/// <param name="flags">Flags</param>
-		void DecompileAssembly(IDnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule);
+		void DecompileAssembly(IDnSpyFile file, ITextOutput output, DecompilationContext ctx, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule);
 
 		/// <summary>
 		/// Writes a tooltip
@@ -192,9 +196,8 @@ namespace dnSpy.Contracts.Languages {
 		/// Returns true if the member is visible. Can be used to hide compiler generated types, methods etc
 		/// </summary>
 		/// <param name="member">Member</param>
-		/// <param name="decompilerSettings">Decompiler settings</param>
 		/// <returns></returns>
-		bool ShowMember(IMemberRef member, DecompilerSettings decompilerSettings);
+		bool ShowMember(IMemberRef member);
 
 		/// <summary>
 		/// Returns true if <paramref name="decompilationType"/> is supported and
@@ -225,7 +228,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="comment">Comment</param>
 		public static void WriteCommentLine(this ILanguage self, ITextOutput output, string comment) {
 			self.WriteCommentBegin(output, true);
-			output.Write(comment, TextTokenType.Comment);
+			output.Write(comment, TextTokenKind.Comment);
 			self.WriteCommentEnd(output, true);
 			output.WriteLine();
 		}

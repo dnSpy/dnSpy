@@ -27,7 +27,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace ICSharpCode.NRefactory.VB.Ast {
 	public class SimpleType : AstType
@@ -42,14 +42,14 @@ namespace ICSharpCode.NRefactory.VB.Ast {
 			this.IdentifierToken = Ast.Identifier.Create(annotations, identifier);
 		}
 		
-		public SimpleType(TextTokenType tokenType, string identifier)
+		public SimpleType(TextTokenKind tokenKind, string identifier)
 		{
-			this.IdentifierToken = Ast.Identifier.Create(tokenType, identifier);
+			this.IdentifierToken = Ast.Identifier.Create(tokenKind, identifier);
 		}
 		
-		public SimpleType(TextTokenType tokenType, string identifier, TextLocation location)
+		public SimpleType(TextTokenKind tokenKind, string identifier, TextLocation location)
 		{
-			SetChildByRole (Roles.Identifier, new Identifier (tokenType, identifier, location));
+			SetChildByRole (Roles.Identifier, new Identifier (tokenKind, identifier, location));
 		}
 		
 		public string Identifier {

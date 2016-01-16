@@ -23,9 +23,9 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Decompiler;
 using dnSpy.Shared.UI.Files.TreeView;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	abstract class HexNode : FileTreeNodeData, IDecompileSelf {

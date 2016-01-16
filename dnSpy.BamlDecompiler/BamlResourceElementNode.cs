@@ -33,9 +33,8 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Files.TreeView.Resources;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.BamlDecompiler {
 	sealed class BamlResourceElementNode : ResourceElementNode, IDecompileSelf {
@@ -74,7 +73,7 @@ namespace dnSpy.BamlDecompiler {
 			var decompiler = new XamlDecompiler();
 			var xaml = decompiler.Decompile(module, document, token, BamlDecompilerOptions.Create(lang), null);
 
-			output.Write(xaml.ToString(), TextTokenType.Text);
+			output.Write(xaml.ToString(), TextTokenKind.Text);
 			ext = ".xml";
 		}
 
@@ -108,7 +107,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
-			context.HighlightingExtension = Decompile(context.Output, context.DecompilationOptions.CancellationToken);
+			context.HighlightingExtension = Decompile(context.Output, context.DecompilationContext.CancellationToken);
 			return true;
 		}
 

@@ -20,14 +20,12 @@
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Languages;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.TreeView {
 	sealed class FileTreeNodeDataContext : IFileTreeNodeDataContext {
 		public IFileTreeView FileTreeView { get; private set; }
 		public ILanguage Language { get; internal set; }
 		public IResourceNodeFactory ResourceNodeFactory { get; private set; }
-		public DecompilerSettings DecompilerSettings { get; private set; }
 		public IFileTreeNodeFilter Filter { get; private set; }
 		public int FilterVersion { get; set; }
 		public bool SyntaxHighlight { get; internal set; }
@@ -39,10 +37,9 @@ namespace dnSpy.Files.TreeView {
 		public bool DeserializeResources { get; internal set; }
 		public bool CanDragAndDrop { get; set; }
 
-		public FileTreeNodeDataContext(IFileTreeView fileTreeView, IResourceNodeFactory resourceNodeFactory, DecompilerSettings decompilerSettings, IFileTreeNodeFilter filter) {
+		public FileTreeNodeDataContext(IFileTreeView fileTreeView, IResourceNodeFactory resourceNodeFactory, IFileTreeNodeFilter filter) {
 			this.FileTreeView = fileTreeView;
 			this.ResourceNodeFactory = resourceNodeFactory;
-			this.DecompilerSettings = decompilerSettings;
 			this.Filter = filter;
 			this.FilterVersion = 1;
 			this.CanDragAndDrop = true;
@@ -52,7 +49,6 @@ namespace dnSpy.Files.TreeView {
 			this.FileTreeView = null;
 			this.Language = null;
 			this.ResourceNodeFactory = null;
-			this.DecompilerSettings = null;
 			this.Filter = null;
 		}
 	}

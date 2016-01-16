@@ -25,10 +25,9 @@ using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.TreeView;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.HexEditor;
 using dnSpy.Shared.UI.Highlighting;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	enum StorageStreamType {
@@ -121,13 +120,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_StorageStream, TextTokenType.InstanceField);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_StorageStream, TextTokenKind.InstanceField);
 			output.WriteSpace();
-			output.Write("#", TextTokenType.Operator);
-			output.Write(streamNumber.ToString(), TextTokenType.Number);
-			output.Write(":", TextTokenType.Operator);
+			output.Write("#", TextTokenKind.Operator);
+			output.Write(streamNumber.ToString(), TextTokenKind.Number);
+			output.Write(":", TextTokenKind.Operator);
 			output.WriteSpace();
-			output.Write(string.Format("{0}", storageStreamVM.RCNameVM.StringZ), storageStreamType == StorageStreamType.None ? TextTokenType.Error : TextTokenType.Type);
+			output.Write(string.Format("{0}", storageStreamVM.RCNameVM.StringZ), storageStreamType == StorageStreamType.None ? TextTokenKind.Error : TextTokenKind.Type);
 		}
 
 		public MetaDataTableRecordNode FindTokenNode(uint token) {

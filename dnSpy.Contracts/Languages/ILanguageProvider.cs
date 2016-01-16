@@ -21,7 +21,7 @@ using System.Collections.Generic;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>
-	/// Returns languages
+	/// Returns languages. It must have a default constructor.
 	/// </summary>
 	public interface ILanguageProvider {
 		/// <summary>

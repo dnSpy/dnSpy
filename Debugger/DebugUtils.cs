@@ -25,8 +25,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger {
 	static class DebugUtils {
@@ -78,7 +77,7 @@ namespace dnSpy.Debugger {
 			if (!VerifyAndGetCurrentDebuggedMethod(uiContext, key, out cm))
 				return false;
 
-			TextLocation location, endLocation;
+			TextPosition location, endLocation;
 			if (!cm.TryGetMapping(key).GetInstructionByTokenAndOffset(ilOffset, out location, out endLocation))
 				return false;
 

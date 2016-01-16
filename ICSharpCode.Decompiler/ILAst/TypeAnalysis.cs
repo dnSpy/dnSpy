@@ -21,10 +21,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
-using dnlib.DotNet.Emit;
+using dnSpy.Decompiler.Shared;
 
-namespace ICSharpCode.Decompiler.ILAst
-{
+namespace ICSharpCode.Decompiler.ILAst {
 	/// <summary>
 	/// Assigns C# types to IL expressions.
 	/// </summary>
@@ -1233,7 +1232,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				expr.InferredType = null;
 				expr.ExpectedType = null;
 				ILVariable v = expr.Operand as ILVariable;
-				if (v != null && v.IsGenerated)
+				if (v != null && v.GeneratedByDecompiler)
 					v.Type = null;
 			}
 		}

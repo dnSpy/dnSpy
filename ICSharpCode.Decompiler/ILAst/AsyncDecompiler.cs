@@ -21,10 +21,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
-using dnlib.DotNet.Emit;
 
-namespace ICSharpCode.Decompiler.ILAst
-{
+namespace ICSharpCode.Decompiler.ILAst {
 	/// <summary>
 	/// Decompiler step for C# 5 async/await.
 	/// </summary>
@@ -572,7 +570,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			var expressions = new ILBlock(newTopLevelBody).GetSelfAndChildrenRecursive<ILExpression>();
 			foreach (var v in expressions.Select(e => e.Operand).OfType<ILVariable>()) {
 				if (v.OriginalVariable != null && v.OriginalVariable.Index >= smallestGeneratedVariableIndex)
-					v.IsGenerated = true;
+					v.GeneratedByDecompiler = true;
 			}
 		}
 		#endregion

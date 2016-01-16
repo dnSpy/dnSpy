@@ -1,0 +1,49 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:settings="clr-namespace:dnSpy.Languages.ILSpy.Settings"
+                    xmlns:p="clr-namespace:dnSpy.Languages.ILSpy.Properties"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <DataTemplate DataType="{x:Type settings:CSharpDecompilerSettingsTab}">
+        <StackPanel>
+            <CheckBox Margin="0 0 0 0" IsChecked="{Binding Settings.AnonymousMethods}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_DecompileAnonMethods}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.YieldReturn}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_DecompileEnumerators}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.AsyncAwait}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_DecompileAsyncMethods}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.QueryExpressions}" IsEnabled="{Binding Settings.AnonymousMethods}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_DecompileQueryExpr}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ExpressionTrees}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_DecompileExprTrees}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.UseDebugSymbols}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_UseLocalNameFromSyms}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowXmlDocumentation}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_ShowXMLDocComments}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.RemoveEmptyDefaultConstructors}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_RemoveEmptyDefaultCtors}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowTokenAndRvaComments}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_ShowTokensRvasOffsets}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortMembers}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_SortMethods}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ForceShowAllMembers}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_ShowCompilerGeneratedTypes}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortSystemUsingStatementsFirst}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_SortSystemFirst}"/>
+            <GroupBox Margin="0 5 0 0" Header="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_DecompilationOrder}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ComboBox Grid.Column="0" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject0}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Column="1" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject1}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Column="2" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject2}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Column="3" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject3}" DisplayMemberPath="Text" />
+                    <ComboBox Grid.Column="4" HorizontalAlignment="Stretch" ItemsSource="{Binding DecompilationObjectsArray}" SelectedItem="{Binding DecompilationObject4}" DisplayMemberPath="Text" />
+                </Grid>
+            </GroupBox>
+        </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate DataType="{x:Type settings:ILDecompilerSettingsTab}">
+        <StackPanel>
+            <CheckBox Margin="0 0 0 0" IsChecked="{Binding Settings.ShowXmlDocumentation}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_ShowXMLDocComments}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowTokenAndRvaComments}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_ShowTokensRvasOffsets}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILBytes}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_ShowILInstrBytes}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.ShowILComments}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_ShowILComments}"/>
+            <CheckBox Margin="0 5 0 0" IsChecked="{Binding Settings.SortMembers}" Content="{x:Static p:dnSpy_Languages_ILSpy_Resources.DecompilerSettings_SortMethods}"/>
+        </StackPanel>
+    </DataTemplate>
+
+</ResourceDictionary>

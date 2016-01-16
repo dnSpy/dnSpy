@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using dnSpy.Contracts.Languages;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Files.TreeView.Resources {
 	/// <summary>

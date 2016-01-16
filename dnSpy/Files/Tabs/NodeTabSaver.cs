@@ -27,28 +27,26 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Files.Tabs.TextEditor;
 using dnSpy.Languages;
 using dnSpy.Properties;
-using ICSharpCode.Decompiler;
 using Microsoft.Win32;
 
 namespace dnSpy.Files.Tabs {
 	[ExportTabSaverCreator(Order = TabConstants.ORDER_DEFAULTTABSAVERCREATOR)]
 	sealed class NodeTabSaverCreator : ITabSaverCreator {
 		readonly IFileTreeNodeDecompiler fileTreeNodeDecompiler;
-		readonly DecompilerSettings decompilerSettings;
 		readonly IMessageBoxManager messageBoxManager;
 
 		[ImportingConstructor]
-		NodeTabSaverCreator(IFileTreeNodeDecompiler fileTreeNodeDecompiler, DecompilerSettings decompilerSettings, IMessageBoxManager messageBoxManager) {
+		NodeTabSaverCreator(IFileTreeNodeDecompiler fileTreeNodeDecompiler, IMessageBoxManager messageBoxManager) {
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
-			this.decompilerSettings = decompilerSettings;
 			this.messageBoxManager = messageBoxManager;
 		}
 
 		public ITabSaver Create(IFileTab tab) {
-			return NodeTabSaver.TryCreate(fileTreeNodeDecompiler, tab, decompilerSettings, messageBoxManager);
+			return NodeTabSaver.TryCreate(fileTreeNodeDecompiler, tab, messageBoxManager);
 		}
 	}
 
@@ -59,9 +57,8 @@ namespace dnSpy.Files.Tabs {
 		readonly ILanguage language;
 		readonly IFileTreeNodeData[] nodes;
 		readonly ITextEditorUIContext uiContext;
-		readonly DecompilerSettings _global_decompilerSettings;
 
-		public static NodeTabSaver TryCreate(IFileTreeNodeDecompiler fileTreeNodeDecompiler, IFileTab tab, DecompilerSettings decompilerSettings, IMessageBoxManager messageBoxManager) {
+		public static NodeTabSaver TryCreate(IFileTreeNodeDecompiler fileTreeNodeDecompiler, IFileTab tab, IMessageBoxManager messageBoxManager) {
 			if (tab.IsAsyncExecInProgress)
 				return null;
 			var uiContext = tab.UIContext as ITextEditorUIContext;
@@ -74,17 +71,16 @@ namespace dnSpy.Files.Tabs {
 			var nodes = tab.Content.Nodes.ToArray();
 			if (nodes.Length == 0)
 				return null;
-			return new NodeTabSaver(messageBoxManager, tab, fileTreeNodeDecompiler, lang, uiContext, nodes, decompilerSettings);
+			return new NodeTabSaver(messageBoxManager, tab, fileTreeNodeDecompiler, lang, uiContext, nodes);
 		}
 
-		NodeTabSaver(IMessageBoxManager messageBoxManager, IFileTab tab, IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguage language, ITextEditorUIContext uiContext, IFileTreeNodeData[] nodes, DecompilerSettings decompilerSettings) {
+		NodeTabSaver(IMessageBoxManager messageBoxManager, IFileTab tab, IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguage language, ITextEditorUIContext uiContext, IFileTreeNodeData[] nodes) {
 			this.messageBoxManager = messageBoxManager;
 			this.tab = tab;
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
 			this.language = language;
 			this.uiContext = uiContext;
 			this.nodes = nodes;
-			this._global_decompilerSettings = decompilerSettings;
 		}
 
 		public bool CanSave {
@@ -108,13 +104,11 @@ namespace dnSpy.Files.Tabs {
 		DecompileContext CreateDecompileContext(string filename) {
 			var decompileContext = new DecompileContext();
 			try {
-				var decompilationOptions = new DecompilationOptions();
-				decompilationOptions.DecompilerSettings = _global_decompilerSettings.Clone();
-				decompilationOptions.DontShowCreateMethodBodyExceptions = true;
+				var decompilationContext = new DecompilationContext();
 				decompileContext.Writer = new StreamWriter(filename);
 				var output = new PlainTextOutput(decompileContext.Writer);
 				var dispatcher = Dispatcher.CurrentDispatcher;
-				decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationOptions, language, output, dispatcher);
+				decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, language, output, dispatcher);
 				return decompileContext;
 			}
 			catch {
@@ -143,7 +137,7 @@ namespace dnSpy.Files.Tabs {
 				return;
 
 			tab.AsyncExec(cs => {
-				ctx.DecompileNodeContext.DecompilationOptions.CancellationToken = cs.Token;
+				ctx.DecompileNodeContext.DecompilationContext.CancellationToken = cs.Token;
 				uiContext.ShowCancelButton(() => cs.Cancel(), dnSpy_Resources.SavingCode);
 			}, () => {
 				fileTreeNodeDecompiler.Decompile(ctx.DecompileNodeContext, nodes);

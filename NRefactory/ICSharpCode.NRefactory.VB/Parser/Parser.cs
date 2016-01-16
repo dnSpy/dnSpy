@@ -1,5 +1,5 @@
 ﻿using System.Collections;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using ICSharpCode.NRefactory.VB.Ast;
 using Roles = ICSharpCode.NRefactory.VB.AstNode.Roles;
 
@@ -392,11 +392,11 @@ namespace ICSharpCode.NRefactory.VB.Parser {
 		} else if (StartOf(4)) {
 			Identifier();
 		} else SynErr(246);
-		type = new SimpleType(TextTokenType.Text, t.val, t.Location);
+		type = new SimpleType(TextTokenKind.Text, t.val, t.Location);
 		while (la.kind == 26) {
 			Get();
 			Identifier();
-			type = new QualifiedType(type, new Identifier (TextTokenType.Text, t.val, t.Location));
+			type = new QualifiedType(type, new Identifier (TextTokenKind.Text, t.val, t.Location));
 		}
 	}
 
@@ -439,7 +439,7 @@ namespace ICSharpCode.NRefactory.VB.Parser {
 		var result = new AliasImportsClause(); NodeStart(result);
 		AstType alias;
 		Identifier();
-		result.Name = new Identifier (TextTokenType.Text, t.val, t.Location);
+		result.Name = new Identifier (TextTokenKind.Text, t.val, t.Location);
 		Expect(20);
 		TypeName(out alias);
 		result.Alias = alias;

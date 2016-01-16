@@ -37,9 +37,9 @@ namespace dnSpy.Languages.MSBuild {
 		public ILanguage Language { get; private set; }
 
 		/// <summary>
-		/// Decompilation options
+		/// Decompilation context
 		/// </summary>
-		public DecompilationOptions DecompilationOptions { get; private set; }
+		public DecompilationContext DecompilationContext { get; private set; }
 
 		/// <summary>
 		/// true to not reference mscorlib
@@ -73,12 +73,12 @@ namespace dnSpy.Languages.MSBuild {
 		/// </summary>
 		public Func<ModuleDef, byte[], CancellationToken, Stream, IList<string>> DecompileBaml;
 
-		public ProjectModuleOptions(ModuleDef module, ILanguage language, DecompilationOptions decompilationOptions) {
-			if (language == null || decompilationOptions == null || module == null)
+		public ProjectModuleOptions(ModuleDef module, ILanguage language, DecompilationContext decompilationContext) {
+			if (language == null || decompilationContext == null || module == null)
 				throw new ArgumentNullException();
 			this.Module = module;
 			this.Language = language;
-			this.DecompilationOptions = decompilationOptions;
+			this.DecompilationContext = decompilationContext;
 			this.ProjectGuid = Guid.NewGuid();
 			this.UnpackResources = true;
 			this.CreateResX = true;

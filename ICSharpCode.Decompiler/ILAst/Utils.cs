@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using dnSpy.Decompiler.Shared;
 
-namespace ICSharpCode.Decompiler.ILAst
-{
+namespace ICSharpCode.Decompiler.ILAst {
 	static class Utils
 	{
 		public static void NopMergeILRanges(ILBlockBase block, List<ILNode> newBody, int instrIndexToRemove)

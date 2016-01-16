@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
-using ICSharpCode.NRefactory.Documentation;
 using dnlib.DotNet;
 using dnlib.DotNet.MD;
 

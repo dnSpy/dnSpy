@@ -24,10 +24,9 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Files.TreeView;
 using dnSpy.Shared.UI.Highlighting;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class EventNode : EntityNode {
@@ -59,13 +58,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			if (hidesParent) {
-				output.Write("(", TextTokenType.Operator);
-				output.Write(dnSpy_Analyzer_Resources.HidesParent, TextTokenType.Text);
-				output.Write(")", TextTokenType.Operator);
+				output.Write("(", TextTokenKind.Operator);
+				output.Write(dnSpy_Analyzer_Resources.HidesParent, TextTokenKind.Text);
+				output.Write(")", TextTokenKind.Operator);
 				output.WriteSpace();
 			}
 			language.WriteType(output, analyzedEvent.DeclaringType, true);
-			output.Write(".", TextTokenType.Operator);
+			output.Write(".", TextTokenKind.Operator);
 			new NodePrinter().Write(output, language, analyzedEvent, Context.ShowToken);
 		}
 
@@ -89,19 +88,19 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield return new InterfaceEventImplementedByNode(analyzedEvent);
 		}
 
-		public static IAnalyzerTreeNodeData TryCreateAnalyzer(IMemberRef member, ILanguage language, DecompilerSettings decompilerSettings) {
-			if (CanShow(member, language, decompilerSettings))
+		public static IAnalyzerTreeNodeData TryCreateAnalyzer(IMemberRef member, ILanguage language) {
+			if (CanShow(member, language))
 				return new EventNode(member as EventDef);
 			else
 				return null;
 		}
 
-		public static bool CanShow(IMemberRef member, ILanguage language, DecompilerSettings decompilerSettings) {
+		public static bool CanShow(IMemberRef member, ILanguage language) {
 			var eventDef = member as EventDef;
 			if (eventDef == null)
 				return false;
 
-			return !language.ShowMember(eventDef.AddMethod ?? eventDef.RemoveMethod, decompilerSettings.Clone())
+			return !language.ShowMember(eventDef.AddMethod ?? eventDef.RemoveMethod)
 				|| EventOverridesNode.CanShow(eventDef);
 		}
 	}

@@ -20,7 +20,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using ICSharpCode.NRefactory.Utils;
 using dnlib.DotNet;
 using dnlib.Threading;
 using dnSpy.Contracts.Files;

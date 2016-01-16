@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	interface ITextEditorUIContextManagerImpl : ITextEditorUIContextManager {

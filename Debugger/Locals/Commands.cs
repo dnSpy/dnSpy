@@ -36,11 +36,10 @@ using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.Memory;
 using dnSpy.Debugger.Properties;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Menus;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger.Locals {
 	[ExportAutoLoaded]
@@ -195,13 +194,13 @@ namespace dnSpy.Debugger.Locals {
 				//TODO: Break if it takes too long and the user cancels
 				var printer = new ValuePrinter(output, debuggerSettings.UseHexadecimal);
 				printer.WriteExpander(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				// Add an extra here to emulate VS output
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteName(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteValue(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteType(vm);
 				output.WriteLine();
 			}

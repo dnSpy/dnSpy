@@ -16,15 +16,13 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
 using dnlib.DotNet;
 
-namespace ICSharpCode.Decompiler.ILAst
-{
+namespace ICSharpCode.Decompiler.ILAst {
 	public class SimpleControlFlow
 	{
 		Dictionary<ILLabel, int> labelGlobalRefCount = new Dictionary<ILLabel, int>();
@@ -120,7 +118,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						return false;
 					
 					// Only simplify generated variables
-					if (opCode == ILCode.Stloc && !trueLocVar.IsGenerated)
+					if (opCode == ILCode.Stloc && !trueLocVar.GeneratedByDecompiler)
 						return false;
 					
 					// Create ternary expression

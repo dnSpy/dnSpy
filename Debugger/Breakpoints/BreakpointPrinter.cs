@@ -22,9 +22,8 @@ using System.IO;
 using dnlib.DotNet;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointPrinter {
@@ -59,14 +58,14 @@ namespace dnSpy.Debugger.Breakpoints {
 		void WriteILOffset(ISyntaxHighlightOutput output, uint offset) {
 			// Offsets are always in hex
 			if (offset <= ushort.MaxValue)
-				output.Write(string.Format(GetHexFormatUInt16(), offset), TextTokenType.Number);
+				output.Write(string.Format(GetHexFormatUInt16(), offset), TextTokenKind.Number);
 			else
-				output.Write(string.Format(GetHexFormatUInt32(), offset), TextTokenType.Number);
+				output.Write(string.Format(GetHexFormatUInt32(), offset), TextTokenKind.Number);
 		}
 
 		void WriteToken(ISyntaxHighlightOutput output, uint token) {
 			// Tokens are always in hex
-			output.Write(string.Format(GetHexFormatUInt32(), token), TextTokenType.Number);
+			output.Write(string.Format(GetHexFormatUInt32(), token), TextTokenKind.Number);
 		}
 
 		public void WriteName(BreakpointVM vm) {
@@ -88,14 +87,14 @@ namespace dnSpy.Debugger.Breakpoints {
 				if (method == null) {
 					vm.NameError = true;
 					if (printedToken)
-						output.Write("???", TextTokenType.Error);
+						output.Write("???", TextTokenKind.Error);
 					else
-						output.Write(string.Format("0x{0:X8}", ilbp.SerializedDnToken.Token), TextTokenType.Number);
+						output.Write(string.Format("0x{0:X8}", ilbp.SerializedDnToken.Token), TextTokenKind.Number);
 				}
 				else
 					MethodLanguage.Write(output, method, SimplePrinterFlags.Default);
 				output.WriteSpace();
-				output.Write("+", TextTokenType.Operator);
+				output.Write("+", TextTokenKind.Operator);
 				output.WriteSpace();
 				WriteILOffset(output, ilbp.ILOffset);
 				return;

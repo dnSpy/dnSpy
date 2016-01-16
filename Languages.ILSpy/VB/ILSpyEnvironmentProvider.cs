@@ -20,8 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using dnlib.DotNet;
-using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.NRefactory.TypeSystem;
 using ICSharpCode.NRefactory.VB.Visitors;
@@ -71,7 +70,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 				return TypeKind.Interface;
 			if (definition.IsEnum)
 				return TypeKind.Enum;
-			if (DnlibExtensions.IsValueType(definition))
+			if (definition.IsValueType)
 				return TypeKind.Struct;
 
 			return TypeKind.Unknown;
@@ -83,7 +82,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 			if (annotation == null || annotation.InferredType == null)
 				return TypeCode.Object;
 
-			var definition = annotation.InferredType.Resolve();
+			var definition = annotation.InferredType.ScopeType.ResolveTypeDef();
 
 			if (definition == null)
 				return TypeCode.Object;
@@ -107,12 +106,12 @@ namespace dnSpy.Languages.ILSpy.VB {
 			if (annotation == null || annotation.InferredType == null)
 				return null;
 
-			var definition = annotation.InferredType.Resolve();
+			var definition = annotation.InferredType.ScopeType.ResolveTypeDef();
 
 			if (definition == null)
 				return null;
 
-			return !DnlibExtensions.IsValueType(definition);
+			return !definition.IsValueType;
 		}
 
 		public IEnumerable<ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier> CreateMemberSpecifiersForInterfaces(IEnumerable<ICSharpCode.NRefactory.VB.Ast.AstType> interfaces) {
@@ -121,11 +120,11 @@ namespace dnSpy.Languages.ILSpy.VB {
 				if (def == null)
 					continue;
 				foreach (var method in def.Methods.Where(m => !m.Name.StartsWith("get_") && !m.Name.StartsWith("set_"))) {
-					yield return new ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), method.Name, TextTokenHelper.GetTextTokenType(method));
+					yield return new ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), method.Name, TextTokenKindUtils.GetTextTokenType(method));
 				}
 
 				foreach (var property in def.Properties) {
-					yield return new ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), property.Name, TextTokenHelper.GetTextTokenType(property));
+					yield return new ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), property.Name, TextTokenKindUtils.GetTextTokenType(property));
 				}
 			}
 		}

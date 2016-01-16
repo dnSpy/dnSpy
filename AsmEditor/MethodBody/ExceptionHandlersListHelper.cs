@@ -28,10 +28,9 @@ using dnlib.DotNet;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class ExceptionHandlersListHelper : ListBoxHelperBase<ExceptionHandlerVM> {
@@ -135,20 +134,20 @@ namespace dnSpy.AsmEditor.MethodBody {
 					output.WriteLine();
 
 				var eh = ehs[i];
-				output.Write(eh.Index.ToString(), TextTokenType.Number);
-				output.Write("\t", TextTokenType.Text);
+				output.Write(eh.Index.ToString(), TextTokenKind.Number);
+				output.Write("\t", TextTokenKind.Text);
 				BodyUtils.WriteObject(output, eh.TryStartVM.SelectedItem);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				BodyUtils.WriteObject(output, eh.TryEndVM.SelectedItem);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				BodyUtils.WriteObject(output, eh.FilterStartVM.SelectedItem);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				BodyUtils.WriteObject(output, eh.HandlerStartVM.SelectedItem);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				BodyUtils.WriteObject(output, eh.HandlerEndVM.SelectedItem);
-				output.Write("\t", TextTokenType.Text);
-				output.Write(((EnumVM)eh.HandlerTypeVM.Items[eh.HandlerTypeVM.SelectedIndex]).Name, TextTokenType.Text);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
+				output.Write(((EnumVM)eh.HandlerTypeVM.Items[eh.HandlerTypeVM.SelectedIndex]).Name, TextTokenKind.Text);
+				output.Write("\t", TextTokenKind.Text);
 				BodyUtils.WriteObject(output, eh.CatchType);
 			}
 			if (ehs.Length > 1)

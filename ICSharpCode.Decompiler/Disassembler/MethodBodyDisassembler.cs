@@ -20,9 +20,7 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using dnSpy.Decompiler;
-using dnSpy.NRefactory;
-using ICSharpCode.Decompiler.ILAst;
+using dnSpy.Decompiler.Shared;
 
 namespace ICSharpCode.Decompiler.Disassembler {
 	/// <summary>
@@ -52,46 +50,46 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			long offset = method.Module.ToFileOffset(rva);
 
 			if (options.ShowTokenAndRvaComments) {
-				output.WriteLine(string.Format("// Header Size: {0} {1}", method.Body.HeaderSize, method.Body.HeaderSize == 1 ? "byte" : "bytes"), TextTokenType.Comment);
-				output.WriteLine(string.Format("// Code Size: {0} (0x{0:X}) {1}", codeSize, codeSize == 1 ? "byte" : "bytes"), TextTokenType.Comment);
+				output.WriteLine(string.Format("// Header Size: {0} {1}", method.Body.HeaderSize, method.Body.HeaderSize == 1 ? "byte" : "bytes"), TextTokenKind.Comment);
+				output.WriteLine(string.Format("// Code Size: {0} (0x{0:X}) {1}", codeSize, codeSize == 1 ? "byte" : "bytes"), TextTokenKind.Comment);
 				if (body.LocalVarSigTok != 0) {
-					output.Write("// LocalVarSig Token: ", TextTokenType.Comment);
-					output.WriteReference(string.Format("0x{0:X8}", body.LocalVarSigTok), new TokenReference(method.Module, body.LocalVarSigTok), TextTokenType.Comment, false);
-					output.Write(string.Format(" RID: {0}", body.LocalVarSigTok & 0xFFFFFF), TextTokenType.Comment);
+					output.Write("// LocalVarSig Token: ", TextTokenKind.Comment);
+					output.WriteReference(string.Format("0x{0:X8}", body.LocalVarSigTok), new TokenReference(method.Module, body.LocalVarSigTok), TextTokenKind.Comment, false);
+					output.Write(string.Format(" RID: {0}", body.LocalVarSigTok & 0xFFFFFF), TextTokenKind.Comment);
 					output.WriteLine();
 				}
 			}
-			output.Write(".maxstack", TextTokenType.ILDirective);
+			output.Write(".maxstack", TextTokenKind.ILDirective);
 			output.WriteSpace();
-			output.WriteLine(string.Format("{0}", body.MaxStack), TextTokenType.Number);
+			output.WriteLine(string.Format("{0}", body.MaxStack), TextTokenKind.Number);
             if (method.DeclaringType.Module.EntryPoint == method)
-                output.WriteLine (".entrypoint", TextTokenType.ILDirective);
+                output.WriteLine (".entrypoint", TextTokenKind.ILDirective);
 			
 			if (method.Body.HasVariables) {
-				output.Write(".locals", TextTokenType.ILDirective);
+				output.Write(".locals", TextTokenKind.ILDirective);
 				output.WriteSpace();
 				if (method.Body.InitLocals) {
-					output.Write("init", TextTokenType.Keyword);
+					output.Write("init", TextTokenKind.Keyword);
 					output.WriteSpace();
 				}
-				output.WriteLine("(", TextTokenType.Operator);
+				output.WriteLine("(", TextTokenKind.Operator);
 				output.Indent();
 				foreach (var v in method.Body.Variables) {
-					output.Write("[", TextTokenType.Operator);
-					output.WriteDefinition(v.Index.ToString(), v, TextTokenType.Number);
-					output.Write("]", TextTokenType.Operator);
+					output.Write("[", TextTokenKind.Operator);
+					output.WriteDefinition(v.Index.ToString(), v, TextTokenKind.Number);
+					output.Write("]", TextTokenKind.Operator);
 					output.WriteSpace();
 					v.Type.WriteTo(output);
 					if (!string.IsNullOrEmpty(v.Name)) {
 						output.WriteSpace();
-						output.Write(DisassemblerHelpers.Escape(v.Name), TextTokenType.Local);
+						output.Write(DisassemblerHelpers.Escape(v.Name), TextTokenKind.Local);
 					}
 					if (v.Index + 1 < method.Body.Variables.Count)
-						output.Write(",", TextTokenType.Operator);
+						output.Write(",", TextTokenKind.Operator);
 					output.WriteLine();
 				}
 				output.Unindent();
-				output.WriteLine(")", TextTokenType.Operator);
+				output.WriteLine(")", TextTokenKind.Operator);
 			}
 			output.WriteLine();
 
@@ -113,13 +111,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 						if (debugSymbols != null) {
 							// add IL code mappings - used in debugger
 							var next = i + 1 < instructions.Count ? instructions[i + 1] : null;
-							debugSymbols.MemberCodeMappings.Add(
-								new SourceCodeMapping() {
-									StartLocation = output.Location,
-									EndLocation = output.Location,
-									ILInstructionOffset = new ILRange(inst.Offset, next == null ? (uint)method.Body.GetCodeSize() : next.Offset),
-									MemberMapping = debugSymbols
-								});
+							debugSymbols.MemberCodeMappings.Add(new SourceCodeMapping(new ILRange(inst.Offset, next == null ? (uint)method.Body.GetCodeSize() : next.Offset), output.Location, output.Location, debugSymbols));
 						}
 
 						output.WriteLine();
@@ -155,23 +147,23 @@ namespace ICSharpCode.Decompiler.Disassembler {
 		{
 			switch (s.Type) {
 				case ILStructureType.Loop:
-					output.Write("// loop start", TextTokenType.Comment);
+					output.Write("// loop start", TextTokenKind.Comment);
 					if (s.LoopEntryPoint != null) {
-						output.Write(" (head: ", TextTokenType.Comment);
-						DisassemblerHelpers.WriteOffsetReference(output, s.LoopEntryPoint, null, TextTokenType.Comment);
-						output.Write(")", TextTokenType.Comment);
+						output.Write(" (head: ", TextTokenKind.Comment);
+						DisassemblerHelpers.WriteOffsetReference(output, s.LoopEntryPoint, null, TextTokenKind.Comment);
+						output.Write(")", TextTokenKind.Comment);
 					}
 					output.WriteLine();
 					break;
 				case ILStructureType.Try:
-					output.WriteLine(".try", TextTokenType.ILDirective);
+					output.WriteLine(".try", TextTokenKind.ILDirective);
 					output.WriteLineLeftBrace();
 					break;
 				case ILStructureType.Handler:
 					switch (s.ExceptionHandler.HandlerType) {
 						case ExceptionHandlerType.Catch:
 						case ExceptionHandlerType.Filter:
-							output.Write("catch", TextTokenType.Keyword);
+							output.Write("catch", TextTokenKind.Keyword);
 							if (s.ExceptionHandler.CatchType != null) {
 								output.WriteSpace();
 								s.ExceptionHandler.CatchType.WriteTo(output, ILNameSyntax.TypeName);
@@ -179,19 +171,19 @@ namespace ICSharpCode.Decompiler.Disassembler {
 							output.WriteLine();
 							break;
 						case ExceptionHandlerType.Finally:
-							output.WriteLine("finally", TextTokenType.Keyword);
+							output.WriteLine("finally", TextTokenKind.Keyword);
 							break;
 						case ExceptionHandlerType.Fault:
-							output.WriteLine("fault", TextTokenType.Keyword);
+							output.WriteLine("fault", TextTokenKind.Keyword);
 							break;
 						default:
-							output.WriteLine(s.ExceptionHandler.HandlerType.ToString(), TextTokenType.Keyword);
+							output.WriteLine(s.ExceptionHandler.HandlerType.ToString(), TextTokenKind.Keyword);
 							break;
 					}
 					output.WriteLineLeftBrace();
 					break;
 				case ILStructureType.Filter:
-					output.WriteLine("filter", TextTokenType.Keyword);
+					output.WriteLine("filter", TextTokenKind.Keyword);
 					output.WriteLineLeftBrace();
 					break;
 				default:
@@ -226,13 +218,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 					// add IL code mappings - used in debugger
 					if (debugSymbols != null) {
 						var next = index + 1 < instructions.Count ? instructions[index + 1] : null;
-						debugSymbols.MemberCodeMappings.Add(
-							new SourceCodeMapping() {
-								StartLocation = startLocation,
-								EndLocation = output.Location,
-								ILInstructionOffset = new ILRange(inst.Offset, next == null ? (uint)codeSize : next.Offset),
-								MemberMapping = debugSymbols
-							});
+						debugSymbols.MemberCodeMappings.Add(new SourceCodeMapping(new ILRange(inst.Offset, next == null ? (uint)codeSize : next.Offset), startLocation, output.Location, debugSymbols));
 					}
 					
 					output.WriteLine();
@@ -253,22 +239,22 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			output.Unindent();
 			switch (s.Type) {
 				case ILStructureType.Loop:
-					output.WriteLine("// end loop", TextTokenType.Comment);
+					output.WriteLine("// end loop", TextTokenKind.Comment);
 					break;
 				case ILStructureType.Try:
 					output.WriteRightBrace();
 					output.WriteSpace();
-					output.WriteLine("// end .try", TextTokenType.Comment);
+					output.WriteLine("// end .try", TextTokenKind.Comment);
 					break;
 				case ILStructureType.Handler:
 					output.WriteRightBrace();
 					output.WriteSpace();
-					output.WriteLine("// end handler", TextTokenType.Comment);
+					output.WriteLine("// end handler", TextTokenKind.Comment);
 					break;
 				case ILStructureType.Filter:
 					output.WriteRightBrace();
 					output.WriteSpace();
-					output.WriteLine("// end filter", TextTokenType.Comment);
+					output.WriteLine("// end filter", TextTokenKind.Comment);
 					break;
 				default:
 					throw new NotSupportedException();

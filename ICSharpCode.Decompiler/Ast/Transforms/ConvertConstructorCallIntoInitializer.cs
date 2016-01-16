@@ -24,6 +24,7 @@ using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
 using dnlib.DotNet;
+using dnSpy.Decompiler.Shared;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms
 {

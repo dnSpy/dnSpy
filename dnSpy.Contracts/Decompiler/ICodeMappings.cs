@@ -20,7 +20,7 @@
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Decompiler {
 	/// <summary>

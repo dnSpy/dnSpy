@@ -18,7 +18,7 @@
 */
 
 using dnSpy.Contracts.Highlighting;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Files.Tabs.Dialogs {
@@ -30,7 +30,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 
 		public void WriteName(TabVM vm) {
-			output.Write(vm.Name, TextTokenType.Text);
+			output.Write(vm.Name, TextTokenKind.Text);
 		}
 
 		public void WriteModule(TabVM vm) {

@@ -23,8 +23,7 @@ using dnlib.DotNet;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class TypeExtensionMethodsNode : SearchNode {
@@ -38,7 +37,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(dnSpy_Analyzer_Resources.ExtensionMethodsTreeNode, TextTokenType.Text);
+			output.Write(dnSpy_Analyzer_Resources.ExtensionMethodsTreeNode, TextTokenKind.Text);
 		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
@@ -51,12 +50,20 @@ namespace dnSpy.Analyzer.TreeNodes {
 				yield break;
 			foreach (MethodDef method in type.Methods) {
 				if (method.IsStatic && HasExtensionAttribute(method)) {
-					int skip = DnlibExtensions.GetParametersSkip(method.Parameters);
+					int skip = GetParametersSkip(method.Parameters);
 					if (method.Parameters.Count > skip && new SigComparer().Equals(analyzedType, method.Parameters[skip].Type)) {
 						yield return new MethodNode(method) { Context = Context };
 					}
 				}
 			}
+		}
+
+		static int GetParametersSkip(IList<Parameter> parameters) {
+			if (parameters == null || parameters.Count == 0)
+				return 0;
+			if (parameters[0].IsHiddenThisParameter)
+				return 1;
+			return 0;
 		}
 
 		bool HasExtensionAttribute(IHasCustomAttribute p) {

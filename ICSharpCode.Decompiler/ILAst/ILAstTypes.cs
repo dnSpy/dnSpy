@@ -18,15 +18,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 using ICSharpCode.Decompiler.Disassembler;
-using ICSharpCode.NRefactory;
 
 namespace ICSharpCode.Decompiler.ILAst {
 	public abstract class ILNode
@@ -90,18 +87,12 @@ namespace ICSharpCode.Decompiler.ILAst {
 		
 		public abstract void WriteTo(ITextOutput output, MemberMapping memberMapping);
 
-		protected void UpdateMemberMapping(MemberMapping memberMapping, TextLocation startLoc, TextLocation endLoc, IEnumerable<ILRange> ranges)
+		protected void UpdateMemberMapping(MemberMapping memberMapping, TextPosition startLoc, TextPosition endLoc, IEnumerable<ILRange> ranges)
 		{
 			if (memberMapping == null)
 				return;
-			foreach (var range in ILRange.OrderAndJoin(ranges)) {
-				memberMapping.MemberCodeMappings.Add(new SourceCodeMapping {
-					StartLocation = startLoc,
-					EndLocation = endLoc,
-					ILInstructionOffset = range,
-					MemberMapping = memberMapping
-				});
-			}
+			foreach (var range in ILRange.OrderAndJoin(ranges))
+				memberMapping.MemberCodeMappings.Add(new SourceCodeMapping(range, startLoc, endLoc, memberMapping));
 		}
 
 		protected void WriteHiddenStart(ITextOutput output, MemberMapping memberMapping, IEnumerable<ILRange> extraIlRanges = null)
@@ -222,8 +213,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
 		{
 			var location = output.Location;
-			output.WriteDefinition(Name, this, TextTokenType.Label);
-			output.Write(":", TextTokenType.Operator);
+			output.WriteDefinition(Name, this, TextTokenKind.Label);
+			output.Write(":", TextTokenKind.Operator);
 			UpdateMemberMapping(memberMapping, location, output.Location, ILRanges);
 		}
 	}
@@ -261,23 +252,23 @@ namespace ICSharpCode.Decompiler.ILAst {
 			{
 				var startLoc = output.Location;
 				if (IsFilter) {
-					output.Write("filter", TextTokenType.Keyword);
+					output.Write("filter", TextTokenKind.Keyword);
 					output.WriteSpace();
-					output.WriteReference(ExceptionVariable.Name, ExceptionVariable, TextTokenType.Local);
+					output.WriteReference(ExceptionVariable.Name, ExceptionVariable, TextTokenKind.Local);
 				}
 				else if (ExceptionType != null) {
-					output.Write("catch", TextTokenType.Keyword);
+					output.Write("catch", TextTokenKind.Keyword);
 					output.WriteSpace();
-					output.WriteReference(ExceptionType.FullName, ExceptionType, TextTokenHelper.GetTextTokenType(ExceptionType));
+					output.WriteReference(ExceptionType.FullName, ExceptionType, TextTokenKindUtils.GetTextTokenType(ExceptionType));
 					if (ExceptionVariable != null) {
 						output.WriteSpace();
-						output.WriteReference(ExceptionVariable.Name, ExceptionVariable, TextTokenType.Local);
+						output.WriteReference(ExceptionVariable.Name, ExceptionVariable, TextTokenKind.Local);
 					}
 				}
 				else {
-					output.Write("handler", TextTokenType.Keyword);
+					output.Write("handler", TextTokenKind.Keyword);
 					output.WriteSpace();
-					output.WriteReference(ExceptionVariable.Name, ExceptionVariable, TextTokenType.Local);
+					output.WriteReference(ExceptionVariable.Name, ExceptionVariable, TextTokenKind.Local);
 				}
 				UpdateMemberMapping(memberMapping, startLoc, output.Location, StlocILRanges);
 				output.WriteSpace();
@@ -325,37 +316,37 @@ namespace ICSharpCode.Decompiler.ILAst {
 		
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
 		{
-			output.Write(".try", TextTokenType.Keyword);
+			output.Write(".try", TextTokenKind.Keyword);
 			output.WriteSpace();
 			TryBlock.WriteTo(output, memberMapping, ILRanges);
 			foreach (CatchBlock block in CatchBlocks) {
 				block.WriteTo(output, memberMapping);
 			}
 			if (FaultBlock != null) {
-				output.Write("fault", TextTokenType.Keyword);
+				output.Write("fault", TextTokenKind.Keyword);
 				output.WriteSpace();
 				FaultBlock.WriteTo(output, memberMapping);
 			}
 			if (FinallyBlock != null) {
-				output.Write("finally", TextTokenType.Keyword);
+				output.Write("finally", TextTokenKind.Keyword);
 				output.WriteSpace();
 				FinallyBlock.WriteTo(output, memberMapping);
 			}
 			if (FilterBlock != null) {
-				output.Write("filter", TextTokenType.Keyword);
+				output.Write("filter", TextTokenKind.Keyword);
 				output.WriteSpace();
 				FilterBlock.WriteTo(output, memberMapping);
 			}
 		}
 	}
 	
-	public class ILVariable
+	public class ILVariable : IILVariable
 	{
-		public string Name;
-		public bool   IsGenerated;
+		public string Name { get; set; }
+		public bool GeneratedByDecompiler { get; set; }
 		public TypeSig Type;
-		public Local OriginalVariable;
-		public dnlib.DotNet.Parameter OriginalParameter;
+		public Local OriginalVariable { get; set; }
+		public Parameter OriginalParameter;
 		
 		public bool IsPinned {
 			get { return OriginalVariable != null && OriginalVariable.Type is PinnedSig; }
@@ -368,124 +359,6 @@ namespace ICSharpCode.Decompiler.ILAst {
 		public override string ToString()
 		{
 			return Name;
-		}
-	}
-	
-	public struct ILRange : IEquatable<ILRange>
-	{
-		readonly uint from, to;
-		public uint From {
-			get { return from; }
-		}
-		public uint To {	// Exlusive
-			get { return to; }
-		}
-
-		public static bool operator ==(ILRange a, ILRange b)
-		{
-			return a.Equals(b);
-		}
-
-		public static bool operator !=(ILRange a, ILRange b)
-		{
-			return !a.Equals(b);
-		}
-
-		public bool IsDefault {
-			get { return from == 0 && to == 0; }
-		}
-
-		public ILRange(uint from, uint to)
-		{
-			this.from = from;
-			this.to = to;
-		}
-
-		public bool Equals(ILRange other)
-		{
-			return from == other.from && to == other.to;
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (!(obj is ILRange))
-				return false;
-			return Equals((ILRange)obj);
-		}
-
-		public override int GetHashCode()
-		{
-			return (int)(((from << 16) | from >> 32) | to);
-		}
-		
-		public override string ToString()
-		{
-			return string.Format("{0}-{1}", from.ToString("X"), to.ToString("X"));
-		}
-		
-		public static List<ILRange> OrderAndJoin(IEnumerable<ILRange> input)
-		{
-			if (input == null)
-				throw new ArgumentNullException("Input is null!");
-
-			List<ILRange> ranges = input.ToList();
-			if (ranges.Count <= 1)
-				return ranges;
-
-			ranges.Sort(Sort);
-			var result = new List<ILRange>();
-			var curr = ranges[0];
-			result.Add(curr);
-			for (int i = 1; i < ranges.Count; i++) {
-				var next = ranges[i];
-				if (curr.to == next.from)
-					result[result.Count - 1] = curr = new ILRange(curr.from, next.to);
-				else if (next.from > curr.to) {
-					result.Add(next);
-					curr = next;
-				}
-				else if (next.to > curr.to)
-					result[result.Count - 1] = curr = new ILRange(curr.from, next.to);
-			}
-
-			return result;
-		}
-
-		static int Sort(ILRange a, ILRange b)
-		{
-			int c = unchecked((int)a.from - (int)b.from);
-			if (c != 0)
-				return c;
-			return unchecked((int)b.to - (int)a.to);
-		}
-
-		public static List<ILRange> Invert(IEnumerable<ILRange> input, int codeSize)
-		{
-			if (input == null)
-				throw new ArgumentNullException("Input is null!");
-			
-			if (codeSize <= 0)
-				throw new ArgumentException("Code size must be grater than 0");
-			
-			List<ILRange> ordered = OrderAndJoin(input);
-			List<ILRange> result = new List<ILRange>(ordered.Count + 1);
-			if (ordered.Count == 0) {
-				result.Add(new ILRange(0, (uint)codeSize));
-			} else {
-				// Gap before the first element
-				if (ordered.First().From != 0)
-					result.Add(new ILRange(0, ordered.First().From));
-				
-				// Gaps between elements
-				for (int i = 0; i < ordered.Count - 1; i++)
-					result.Add(new ILRange(ordered[i].To, ordered[i + 1].From));
-				
-				// Gap after the last element
-				Debug.Assert(ordered.Last().To <= codeSize);
-				if (ordered.Last().To != codeSize)
-					result.Add(new ILRange(ordered.Last().To, (uint)codeSize));
-			}
-			return result;
 		}
 	}
 	
@@ -584,26 +457,26 @@ namespace ICSharpCode.Decompiler.ILAst {
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
 		{
 			var startLoc = output.Location;
-			if (Operand is ILVariable && ((ILVariable)Operand).IsGenerated) {
+			if (Operand is ILVariable && ((ILVariable)Operand).GeneratedByDecompiler) {
 				if (Code == ILCode.Stloc && this.InferredType == null) {
-					output.WriteReference(((ILVariable)Operand).Name, Operand, ((ILVariable)Operand).IsParameter ? TextTokenType.Parameter : TextTokenType.Local);
+					output.WriteReference(((ILVariable)Operand).Name, Operand, ((ILVariable)Operand).IsParameter ? TextTokenKind.Parameter : TextTokenKind.Local);
 					output.WriteSpace();
-					output.Write("=", TextTokenType.Operator);
+					output.Write("=", TextTokenKind.Operator);
 					output.WriteSpace();
 					Arguments.First().WriteTo(output, null);
 					UpdateMemberMapping(memberMapping, startLoc, output.Location, this.GetSelfAndChildrenRecursiveILRanges());
 					return;
 				} else if (Code == ILCode.Ldloc) {
-					output.WriteReference(((ILVariable)Operand).Name, Operand, ((ILVariable)Operand).IsParameter ? TextTokenType.Parameter : TextTokenType.Local);
+					output.WriteReference(((ILVariable)Operand).Name, Operand, ((ILVariable)Operand).IsParameter ? TextTokenKind.Parameter : TextTokenKind.Local);
 					if (this.InferredType != null) {
-						output.Write(":", TextTokenType.Operator);
+						output.Write(":", TextTokenKind.Operator);
 						this.InferredType.WriteTo(output, ILNameSyntax.ShortTypeName);
 						if (this.ExpectedType != null && this.ExpectedType.FullName != this.InferredType.FullName) {
-							output.Write("[", TextTokenType.Operator);
-							output.Write("exp", TextTokenType.Keyword);
-							output.Write(":", TextTokenType.Operator);
+							output.Write("[", TextTokenKind.Operator);
+							output.Write("exp", TextTokenKind.Keyword);
+							output.Write(":", TextTokenKind.Operator);
 							this.ExpectedType.WriteTo(output, ILNameSyntax.ShortTypeName);
-							output.Write("]", TextTokenType.Operator);
+							output.Write("]", TextTokenKind.Operator);
 						}
 					}
 					UpdateMemberMapping(memberMapping, startLoc, output.Location, this.GetSelfAndChildrenRecursiveILRanges());
@@ -613,58 +486,58 @@ namespace ICSharpCode.Decompiler.ILAst {
 			
 			if (this.Prefixes != null) {
 				foreach (var prefix in this.Prefixes) {
-					output.Write(prefix.Code.GetName() + ".", TextTokenType.OpCode);
+					output.Write(prefix.Code.GetName() + ".", TextTokenKind.OpCode);
 					output.WriteSpace();
 				}
 			}
 			
-			output.Write(Code.GetName(), TextTokenType.OpCode);
+			output.Write(Code.GetName(), TextTokenKind.OpCode);
 			if (this.InferredType != null) {
-				output.Write(":", TextTokenType.Operator);
+				output.Write(":", TextTokenKind.Operator);
 				this.InferredType.WriteTo(output, ILNameSyntax.ShortTypeName);
 				if (this.ExpectedType != null && this.ExpectedType.FullName != this.InferredType.FullName) {
-					output.Write("[", TextTokenType.Operator);
-					output.Write("exp", TextTokenType.Keyword);
-					output.Write(":", TextTokenType.Operator);
+					output.Write("[", TextTokenKind.Operator);
+					output.Write("exp", TextTokenKind.Keyword);
+					output.Write(":", TextTokenKind.Operator);
 					this.ExpectedType.WriteTo(output, ILNameSyntax.ShortTypeName);
-					output.Write("]", TextTokenType.Operator);
+					output.Write("]", TextTokenKind.Operator);
 				}
 			} else if (this.ExpectedType != null) {
-				output.Write("[", TextTokenType.Operator);
-				output.Write("exp", TextTokenType.Keyword);
-				output.Write(":", TextTokenType.Operator);
+				output.Write("[", TextTokenKind.Operator);
+				output.Write("exp", TextTokenKind.Keyword);
+				output.Write(":", TextTokenKind.Operator);
 				this.ExpectedType.WriteTo(output, ILNameSyntax.ShortTypeName);
-				output.Write("]", TextTokenType.Operator);
+				output.Write("]", TextTokenKind.Operator);
 			}
-			output.Write("(", TextTokenType.Operator);
+			output.Write("(", TextTokenKind.Operator);
 			bool first = true;
 			if (Operand != null) {
 				if (Operand is ILLabel) {
-					output.WriteReference(((ILLabel)Operand).Name, Operand, TextTokenType.Label);
+					output.WriteReference(((ILLabel)Operand).Name, Operand, TextTokenKind.Label);
 				} else if (Operand is ILLabel[]) {
 					ILLabel[] labels = (ILLabel[])Operand;
 					for (int i = 0; i < labels.Length; i++) {
 						if (i > 0) {
-							output.Write(",", TextTokenType.Operator);
+							output.Write(",", TextTokenKind.Operator);
 							output.WriteSpace();
 						}
-						output.WriteReference(labels[i].Name, labels[i], TextTokenType.Label);
+						output.WriteReference(labels[i].Name, labels[i], TextTokenKind.Label);
 					}
 				} else if (Operand is IMethod && (Operand as IMethod).MethodSig != null) {
 					IMethod method = (IMethod)Operand;
 					if (method.DeclaringType != null) {
 						method.DeclaringType.WriteTo(output, ILNameSyntax.ShortTypeName);
-						output.Write("::", TextTokenType.Operator);
+						output.Write("::", TextTokenKind.Operator);
 					}
-					output.WriteReference(method.Name, method, TextTokenHelper.GetTextTokenType(method));
+					output.WriteReference(method.Name, method, TextTokenKindUtils.GetTextTokenType(method));
 				} else if (Operand is IField) {
 					IField field = (IField)Operand;
 					field.DeclaringType.WriteTo(output, ILNameSyntax.ShortTypeName);
-					output.Write("::", TextTokenType.Operator);
-					output.WriteReference(field.Name, field, TextTokenHelper.GetTextTokenType(field));
+					output.Write("::", TextTokenKind.Operator);
+					output.WriteReference(field.Name, field, TextTokenKindUtils.GetTextTokenType(field));
 				} else if (Operand is ILVariable) {
 					var ilvar = (ILVariable)Operand;
-					output.WriteReference(ilvar.Name, Operand, ilvar.IsParameter ? TextTokenType.Parameter : TextTokenType.Local);
+					output.WriteReference(ilvar.Name, Operand, ilvar.IsParameter ? TextTokenKind.Parameter : TextTokenKind.Local);
 				} else {
 					DisassemblerHelpers.WriteOperand(output, Operand);
 				}
@@ -672,13 +545,13 @@ namespace ICSharpCode.Decompiler.ILAst {
 			}
 			foreach (ILExpression arg in this.Arguments) {
 				if (!first) {
-					output.Write(",", TextTokenType.Operator);
+					output.Write(",", TextTokenKind.Operator);
 					output.WriteSpace();
 				}
 				arg.WriteTo(output, null);
 				first = false;
 			}
-			output.Write(")", TextTokenType.Operator);
+			output.Write(")", TextTokenKind.Operator);
 			UpdateMemberMapping(memberMapping, startLoc, output.Location, this.GetSelfAndChildrenRecursiveILRanges());
 		}
 	}
@@ -699,12 +572,12 @@ namespace ICSharpCode.Decompiler.ILAst {
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
 		{
 			var startLoc = output.Location;
-			output.Write("loop", TextTokenType.Keyword);
+			output.Write("loop", TextTokenKind.Keyword);
 			output.WriteSpace();
-			output.Write("(", TextTokenType.Operator);
+			output.Write("(", TextTokenKind.Operator);
 			if (this.Condition != null)
 				this.Condition.WriteTo(output, null);
-			output.Write(")", TextTokenType.Operator);
+			output.Write(")", TextTokenKind.Operator);
 			var ilRanges = new List<ILRange>(ILRanges);
 			if (this.Condition != null)
 				ilRanges.AddRange(this.Condition.GetSelfAndChildrenRecursiveILRanges());
@@ -733,18 +606,18 @@ namespace ICSharpCode.Decompiler.ILAst {
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
 		{
 			var startLoc = output.Location;
-			output.Write("if", TextTokenType.Keyword);
+			output.Write("if", TextTokenKind.Keyword);
 			output.WriteSpace();
-			output.Write("(", TextTokenType.Operator);
+			output.Write("(", TextTokenKind.Operator);
 			Condition.WriteTo(output, null);
-			output.Write(")", TextTokenType.Operator);
+			output.Write(")", TextTokenKind.Operator);
 			var ilRanges = new List<ILRange>(ILRanges);
 			ilRanges.AddRange(Condition.GetSelfAndChildrenRecursiveILRanges());
 			UpdateMemberMapping(memberMapping, startLoc, output.Location, ilRanges);
 			output.WriteSpace();
 			TrueBlock.WriteTo(output, memberMapping);
 			if (FalseBlock != null) {
-				output.Write("else", TextTokenType.Keyword);
+				output.Write("else", TextTokenKind.Keyword);
 				output.WriteSpace();
 				FalseBlock.WriteTo(output, memberMapping);
 			}
@@ -761,14 +634,14 @@ namespace ICSharpCode.Decompiler.ILAst {
 			{
 				if (this.Values != null) {
 					foreach (int i in this.Values) {
-						output.Write("case", TextTokenType.Keyword);
+						output.Write("case", TextTokenKind.Keyword);
 						output.WriteSpace();
-						output.Write(string.Format("{0}", i), TextTokenType.Number);
-						output.WriteLine(":", TextTokenType.Operator);
+						output.Write(string.Format("{0}", i), TextTokenKind.Number);
+						output.WriteLine(":", TextTokenKind.Operator);
 					}
 				} else {
-					output.Write("default", TextTokenType.Keyword);
-					output.WriteLine(":", TextTokenType.Operator);
+					output.Write("default", TextTokenKind.Keyword);
+					output.WriteLine(":", TextTokenKind.Operator);
 				}
 				output.Indent();
 				base.WriteTo(output, memberMapping);
@@ -808,11 +681,11 @@ namespace ICSharpCode.Decompiler.ILAst {
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
 		{
 			var startLoc = output.Location;
-			output.Write("switch", TextTokenType.Keyword);
+			output.Write("switch", TextTokenKind.Keyword);
 			output.WriteSpace();
-			output.Write("(", TextTokenType.Operator);
+			output.Write("(", TextTokenKind.Operator);
 			Condition.WriteTo(output, null);
-			output.Write(")", TextTokenType.Operator);
+			output.Write(")", TextTokenKind.Operator);
 			var ilRanges = new List<ILRange>(ILRanges);
 			ilRanges.AddRange(Condition.GetSelfAndChildrenRecursiveILRanges());
 			UpdateMemberMapping(memberMapping, startLoc, output.Location, ilRanges);
@@ -841,17 +714,17 @@ namespace ICSharpCode.Decompiler.ILAst {
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
 		{
 			var startLoc = output.Location;
-			output.Write("fixed", TextTokenType.Keyword);
+			output.Write("fixed", TextTokenKind.Keyword);
 			output.WriteSpace();
-			output.Write("(", TextTokenType.Operator);
+			output.Write("(", TextTokenKind.Operator);
 			for (int i = 0; i < this.Initializers.Count; i++) {
 				if (i > 0) {
-					output.Write(",", TextTokenType.Operator);
+					output.Write(",", TextTokenKind.Operator);
 					output.WriteSpace();
 				}
 				this.Initializers[i].WriteTo(output, null);
 			}
-			output.Write(")", TextTokenType.Operator);
+			output.Write(")", TextTokenKind.Operator);
 			var ilRanges = new List<ILRange>(ILRanges);
 			foreach (var i in Initializers)
 				ilRanges.AddRange(i.GetSelfAndChildrenRecursiveILRanges());

@@ -17,11 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
+using System.Threading;
 
-namespace ICSharpCode.Decompiler.Disassembler {
-	public interface IInstructionBytesReader : IDisposable {
-		int ReadByte();
-		void SetInstruction(int index, uint offset);
+namespace dnSpy.Contracts.Languages {
+	/// <summary>
+	/// Decompilation context
+	/// </summary>
+	public interface IDecompilationContext {
+		/// <summary>
+		/// Gets the cancellation token
+		/// </summary>
+		CancellationToken CancellationToken { get; }
 	}
 }

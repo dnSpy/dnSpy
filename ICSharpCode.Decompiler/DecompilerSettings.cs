@@ -40,10 +40,8 @@ namespace ICSharpCode.Decompiler {
 		}
 
 		public DecompilerSettings InitializeForTest() {
-			ShowILComments = false;
 			RemoveEmptyDefaultConstructors = true;
 			ShowTokenAndRvaComments = false;
-			ShowILBytes = false;
 			SortMembers = false;
 			ForceShowAllMembers = false;
 			SortSystemUsingStatementsFirst = false;
@@ -65,10 +63,6 @@ namespace ICSharpCode.Decompiler {
 
 		public IEnumerable<DecompilationObject> DecompilationObjects {
 			get { return decompilationObjects.AsEnumerable(); }
-		}
-
-		public DecompilationObject[] DecompilationObjectsArray {
-			get { return typeof(DecompilationObject).GetEnumValues().Cast<DecompilationObject>().ToArray(); }
 		}
 
 		public DecompilationObject DecompilationObject0 {
@@ -351,18 +345,6 @@ namespace ICSharpCode.Decompiler {
 			}
 		}
 
-		bool showILComments = false;
-
-		public bool ShowILComments {
-			get { return showILComments; }
-			set {
-				if (showILComments != value) {
-					showILComments = value;
-					OnPropertyChanged("ShowILComments");
-				}
-			}
-		}
-
 		bool removeEmptyDefaultConstructors = true;
 
 		public bool RemoveEmptyDefaultConstructors {
@@ -433,21 +415,6 @@ namespace ICSharpCode.Decompiler {
 				if (showTokenAndRvaComments != value) {
 					showTokenAndRvaComments = value;
 					OnPropertyChanged("ShowTokenAndRvaComments");
-				}
-			}
-		}
-
-		bool showILBytes = true;
-
-		/// <summary>
-		/// Gets/sets whether to show IL instruction bytes
-		/// </summary>
-		public bool ShowILBytes {
-			get { return showILBytes; }
-			set {
-				if (showILBytes != value) {
-					showILBytes = value;
-					OnPropertyChanged("ShowILBytes");
 				}
 			}
 		}
@@ -545,13 +512,11 @@ namespace ICSharpCode.Decompiler {
 			if (UseDebugSymbols != other.UseDebugSymbols) return false;
 			if (ObjectOrCollectionInitializers != other.ObjectOrCollectionInitializers) return false;
 			if (ShowXmlDocumentation != other.ShowXmlDocumentation) return false;
-			if (ShowILComments != other.ShowILComments) return false;
 			if (RemoveEmptyDefaultConstructors != other.RemoveEmptyDefaultConstructors) return false;
 			if (IntroduceIncrementAndDecrement != other.IntroduceIncrementAndDecrement) return false;
 			if (MakeAssignmentExpressions != other.MakeAssignmentExpressions) return false;
 			if (AlwaysGenerateExceptionVariableForCatchBlocks != other.AlwaysGenerateExceptionVariableForCatchBlocks) return false;
 			if (ShowTokenAndRvaComments != other.ShowTokenAndRvaComments) return false;
-			if (ShowILBytes != other.ShowILBytes) return false;
 			if (DecompilationObject0 != other.DecompilationObject0) return false;
 			if (DecompilationObject1 != other.DecompilationObject1) return false;
 			if (DecompilationObject2 != other.DecompilationObject2) return false;
@@ -590,17 +555,15 @@ namespace ICSharpCode.Decompiler {
 				h ^= UseDebugSymbols				? 0 : 0x00040000U;
 				h ^= ObjectOrCollectionInitializers	? 0 : 0x00020000U;
 				h ^= ShowXmlDocumentation			? 0 : 0x00010000U;
-				h ^= ShowILComments					? 0 : 0x00008000U;
-				h ^= IntroduceIncrementAndDecrement	? 0 : 0x00004000U;
-				h ^= MakeAssignmentExpressions		? 0 : 0x00002000U;
-				h ^= AlwaysGenerateExceptionVariableForCatchBlocks ? 0 : 0x00001000U;
-				h ^= RemoveEmptyDefaultConstructors	? 0 : 0x00000800U;
-				h ^= ShowTokenAndRvaComments		? 0 : 0x00000400U;
-				h ^= ShowILBytes					? 0 : 0x00000200U;
-				h ^= SortMembers					? 0 : 0x00000100U;
-				h ^= ForceShowAllMembers			? 0 : 0x00000080U;
-				h ^= SortSystemUsingStatementsFirst	? 0 : 0x00000040U;
-				h ^= FullyQualifyAllTypes			? 0 : 0x00000020U;
+				h ^= IntroduceIncrementAndDecrement	? 0 : 0x00008000U;
+				h ^= MakeAssignmentExpressions		? 0 : 0x00004000U;
+				h ^= AlwaysGenerateExceptionVariableForCatchBlocks ? 0 : 0x00002000U;
+				h ^= RemoveEmptyDefaultConstructors	? 0 : 0x00001000U;
+				h ^= ShowTokenAndRvaComments		? 0 : 0x00000800U;
+				h ^= SortMembers					? 0 : 0x00000400U;
+				h ^= ForceShowAllMembers			? 0 : 0x00000200U;
+				h ^= SortSystemUsingStatementsFirst	? 0 : 0x00000100U;
+				h ^= FullyQualifyAllTypes			? 0 : 0x00000080U;
 
 				for (int i = 0; i < decompilationObjects.Length; i++)
 					h ^= (uint)decompilationObjects[i] << (i * 8);
@@ -634,13 +597,11 @@ namespace ICSharpCode.Decompiler {
 			other.UseDebugSymbols = this.UseDebugSymbols;
 			other.ObjectOrCollectionInitializers = this.ObjectOrCollectionInitializers;
 			other.ShowXmlDocumentation = this.ShowXmlDocumentation;
-			other.ShowILComments = this.ShowILComments;
 			other.RemoveEmptyDefaultConstructors = this.RemoveEmptyDefaultConstructors;
 			other.IntroduceIncrementAndDecrement = this.IntroduceIncrementAndDecrement;
 			other.MakeAssignmentExpressions = this.MakeAssignmentExpressions;
 			other.AlwaysGenerateExceptionVariableForCatchBlocks = this.AlwaysGenerateExceptionVariableForCatchBlocks;
 			other.ShowTokenAndRvaComments = this.ShowTokenAndRvaComments;
-			other.ShowILBytes = this.ShowILBytes;
 			other.SortMembers = this.SortMembers;
 			other.ForceShowAllMembers = this.ForceShowAllMembers;
 			other.SortSystemUsingStatementsFirst = this.SortSystemUsingStatementsFirst;

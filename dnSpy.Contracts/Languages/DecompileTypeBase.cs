@@ -18,7 +18,7 @@
 */
 
 using System;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>
@@ -33,18 +33,18 @@ namespace dnSpy.Contracts.Languages {
 		/// <summary>
 		/// Options
 		/// </summary>
-		public DecompilationOptions Options { get; private set; }
+		public DecompilationContext Context { get; private set; }
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		/// <param name="output">Output</param>
-		/// <param name="options">Options</param>
-		protected DecompileTypeBase(ITextOutput output, DecompilationOptions options) {
-			if (output == null || options == null)
+		/// <param name="ctx">Context</param>
+		protected DecompileTypeBase(ITextOutput output, DecompilationContext ctx) {
+			if (output == null || ctx == null)
 				throw new ArgumentNullException();
 			this.Output = output;
-			this.Options = options;
+			this.Context = ctx;
 		}
 	}
 }

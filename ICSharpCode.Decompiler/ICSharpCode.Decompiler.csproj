@@ -59,7 +59,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AddressReference.cs" />
     <Compile Include="Ast\Annotations.cs" />
     <Compile Include="Ast\AstBuilder.cs" />
     <Compile Include="Ast\AstMethodBodyBuilder.cs" />
@@ -86,25 +85,19 @@
     <Compile Include="Ast\Transforms\PushNegation.cs" />
     <Compile Include="Ast\Transforms\TransformationPipeline.cs" />
     <Compile Include="Ast\Transforms\PatternStatementTransform.cs" />
-    <Compile Include="Ast\TypesHierarchyHelpers.cs" />
-    <Compile Include="Disassembler\IInstructionBytesReader.cs" />
-    <Compile Include="Disassembler\InstructionReference.cs" />
     <Compile Include="DnlibExtensions.cs" />
-    <Compile Include="CodeMappings.cs" />
     <Compile Include="DecompilerException.cs" />
     <Compile Include="DecompilerSettings.cs" />
     <Compile Include="Disassembler\DisassemblerHelpers.cs" />
     <Compile Include="Disassembler\ILStructure.cs" />
     <Compile Include="Disassembler\MethodBodyDisassembler.cs" />
     <Compile Include="Disassembler\ReflectionDisassembler.cs" />
-    <Compile Include="DnlibExtra\GenericArgumentResolver.cs" />
     <Compile Include="FlowAnalysis\ControlFlowEdge.cs" />
     <Compile Include="FlowAnalysis\ControlFlowGraph.cs" />
-    <Compile Include="TokenReference.cs" />
+    <Compile Include="IdentifierFormatted.cs" />
     <Compile Include="FlowAnalysis\ControlFlowNode.cs" />
     <Compile Include="FlowAnalysis\ControlStructureDetector.cs" />
     <Compile Include="FlowAnalysis\OpCodeInfo.cs" />
-    <Compile Include="IdentifierEscaper.cs" />
     <Compile Include="ILAst\AsyncDecompiler.cs" />
     <Compile Include="ILAst\LiftedOperators.cs" />
     <Compile Include="ILAst\InitializerPeepholeTransforms.cs" />
@@ -124,9 +117,6 @@
     <Compile Include="ILAst\TypeAnalysis.cs" />
     <Compile Include="ILAst\Utils.cs" />
     <Compile Include="ILAst\YieldReturnDecompiler.cs" />
-    <Compile Include="ITextOutput.cs" />
-    <Compile Include="MemberComparer.cs" />
-    <Compile Include="PlainTextOutput.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceResolvingException.cs" />
     <Compile Include="TextOutputWriter.cs" />
@@ -135,6 +125,10 @@
     <ProjectReference Include="..\dnlib\src\dnlib.csproj">
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Decompiler.Shared\dnSpy.Decompiler.Shared.csproj">
+      <Project>{a027546a-cf4b-47f9-bc53-ee1ad424ee41}</Project>
+      <Name>dnSpy.Decompiler.Shared</Name>
     </ProjectReference>
     <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory.CSharp\ICSharpCode.NRefactory.CSharp.csproj">
       <Project>{53dca265-3c3c-42f9-b647-f72ba678122b}</Project>

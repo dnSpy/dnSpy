@@ -37,9 +37,8 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 
 namespace dnSpy.Analyzer {
 	interface IAnalyzerManager {
@@ -108,14 +107,13 @@ namespace dnSpy.Analyzer {
 		readonly IFileTabManager fileTabManager;
 
 		[ImportingConstructor]
-		AnalyzerManager(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, ITreeViewManager treeViewManager, IMenuManager menuManager, IThemeManager themeManager, IAnalyzerSettings analyzerSettings, IDotNetImageManager dotNetImageManager, ILanguageManager languageManager, IFileManager fileManager, DecompilerSettings decompilerSettings) {
+		AnalyzerManager(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, ITreeViewManager treeViewManager, IMenuManager menuManager, IThemeManager themeManager, IAnalyzerSettings analyzerSettings, IDotNetImageManager dotNetImageManager, ILanguageManager languageManager, IFileManager fileManager) {
 			this.fileTabManager = fileTabManager;
 
 			this.context = new AnalyzerTreeNodeDataContext {
 				DotNetImageManager = dotNetImageManager,
 				Language = languageManager.SelectedLanguage,
 				FileManager = fileManager,
-				DecompilerSettings = decompilerSettings,
 				ShowToken = analyzerSettings.ShowToken,
 				SingleClickExpandsChildren = analyzerSettings.SingleClickExpandsChildren,
 				SyntaxHighlight = analyzerSettings.SyntaxHighlight,
@@ -301,8 +299,8 @@ namespace dnSpy.Analyzer {
 			if (mapping == null)
 				return false;
 
-			var location = mapping.StartLocation;
-			var loc = FindLocation(uiContext.GetCodeReferences(location.Line, location.Column), mapping.EndLocation, @ref);
+			var location = mapping.StartPosition;
+			var loc = FindLocation(uiContext.GetCodeReferences(location.Line, location.Column), mapping.EndPosition, @ref);
 			if (loc == null)
 				loc = new TextEditorLocation(location.Line, location.Column);
 
@@ -310,7 +308,7 @@ namespace dnSpy.Analyzer {
 			return true;
 		}
 
-		TextEditorLocation? FindLocation(IEnumerable<Tuple<CodeReference, TextEditorLocation>> infos, TextLocation endLoc, object @ref) {
+		TextEditorLocation? FindLocation(IEnumerable<Tuple<CodeReference, TextEditorLocation>> infos, TextPosition endLoc, object @ref) {
 			foreach (var info in infos) {
 				int c = Compare(info.Item2, endLoc);
 				if (c > 0)
@@ -321,7 +319,7 @@ namespace dnSpy.Analyzer {
 			return null;
 		}
 
-		static int Compare(TextEditorLocation a, TextLocation b) {
+		static int Compare(TextEditorLocation a, TextPosition b) {
 			if (a.Line > b.Line)
 				return 1;
 			if (a.Line == b.Line)

@@ -216,9 +216,6 @@
   <data name="DecompileCancelButton" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="DecompilerDlgTabTitle" xml:space="preserve">
-    <value>Decompiler</value>
-  </data>
   <data name="Decompiling" xml:space="preserve">
     <value>Decompiling...</value>
   </data>
@@ -615,48 +612,6 @@
   <data name="CloseTabButtonToolTip" xml:space="preserve">
     <value>Close</value>
   </data>
-  <data name="DecompilerSettings_DecompileAnonMethods" xml:space="preserve">
-    <value>Decompile anonymous methods/lambdas</value>
-  </data>
-  <data name="DecompilerSettings_DecompileAsyncMethods" xml:space="preserve">
-    <value>Decompile async methods (async/await)</value>
-  </data>
-  <data name="DecompilerSettings_DecompileEnumerators" xml:space="preserve">
-    <value>Decompile enumerators (yield return)</value>
-  </data>
-  <data name="DecompilerSettings_DecompileExprTrees" xml:space="preserve">
-    <value>Decompile expression trees</value>
-  </data>
-  <data name="DecompilerSettings_DecompileQueryExpr" xml:space="preserve">
-    <value>Decompile query expressions</value>
-  </data>
-  <data name="DecompilerSettings_RemoveEmptyDefaultCtors" xml:space="preserve">
-    <value>Remove empty default constructors</value>
-  </data>
-  <data name="DecompilerSettings_ShowCompilerGeneratedTypes" xml:space="preserve">
-    <value>Show hidden compiler generated types and methods</value>
-  </data>
-  <data name="DecompilerSettings_ShowILComments" xml:space="preserve">
-    <value>Show IL opcode comments</value>
-  </data>
-  <data name="DecompilerSettings_ShowILInstrBytes" xml:space="preserve">
-    <value>Show IL instruction bytes</value>
-  </data>
-  <data name="DecompilerSettings_ShowTokensRvasOffsets" xml:space="preserve">
-    <value>Show tokens, RVAs and file offsets</value>
-  </data>
-  <data name="DecompilerSettings_ShowXMLDocComments" xml:space="preserve">
-    <value>Show XML documentation in decompiled code</value>
-  </data>
-  <data name="DecompilerSettings_SortMethods" xml:space="preserve">
-    <value>Sort methods, fields, properties, events and types</value>
-  </data>
-  <data name="DecompilerSettings_SortSystemFirst" xml:space="preserve">
-    <value>Place 'System' directives first when sorting usings</value>
-  </data>
-  <data name="DecompilerSettings_UseLocalNameFromSyms" xml:space="preserve">
-    <value>Use variable names from debug symbols, if available</value>
-  </data>
   <data name="DisplaySettings_DecompileType" xml:space="preserve">
     <value>Decompile the full type instead of a single member</value>
   </data>
@@ -834,9 +789,6 @@
   <data name="UseNewRenderer_TextEditor" xml:space="preserve">
     <value>Text Editor</value>
   </data>
-  <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
-    <value>Decompilation Order</value>
-  </data>
   <data name="DisplaySettings_OtherOptions" xml:space="preserve">
     <value>Other Options</value>
   </data>
@@ -854,21 +806,6 @@
   </data>
   <data name="OpenGAC_Search_ToolTip" xml:space="preserve">
     <value>Search (Ctrl+E or Ctrl+F)</value>
-  </data>
-  <data name="DecompilationOrder_Events" xml:space="preserve">
-    <value>Events</value>
-  </data>
-  <data name="DecompilationOrder_Fields" xml:space="preserve">
-    <value>Fields</value>
-  </data>
-  <data name="DecompilationOrder_Methods" xml:space="preserve">
-    <value>Methods</value>
-  </data>
-  <data name="DecompilationOrder_NestedTypes" xml:space="preserve">
-    <value>Nested Types</value>
-  </data>
-  <data name="DecompilationOrder_Properties" xml:space="preserve">
-    <value>Properties</value>
   </data>
   <data name="LanguageCommand" xml:space="preserve">
     <value>Language</value>
@@ -949,5 +886,26 @@
   </data>
   <data name="ExportToProject_ErrorLogMsg" xml:space="preserve">
     <value>Error log</value>
+  </data>
+  <data name="DecompilerDlgTabTitle" xml:space="preserve">
+    <value>Decompiler</value>
+  </data>
+  <data name="DisplaySettings_MemberOrder" xml:space="preserve">
+    <value>TreeView member order (restart needed)</value>
+  </data>
+  <data name="MemberKind_Events" xml:space="preserve">
+    <value>Events</value>
+  </data>
+  <data name="MemberKind_Fields" xml:space="preserve">
+    <value>Fields</value>
+  </data>
+  <data name="MemberKind_Methods" xml:space="preserve">
+    <value>Methods</value>
+  </data>
+  <data name="MemberKind_NestedTypes" xml:space="preserve">
+    <value>Nested Types</value>
+  </data>
+  <data name="MemberKind_Properties" xml:space="preserve">
+    <value>Properties</value>
   </data>
 </root>

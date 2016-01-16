@@ -18,7 +18,7 @@
 */
 
 using dnlib.DotNet;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>
@@ -37,5 +37,19 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="member">Member</param>
 		/// <returns></returns>
 		bool Write(ITextOutput output, IMemberRef member);
+
+		/// <summary>
+		/// Writes a method signature
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="sig">Signature</param>
+		void Write(ITextOutput output, MethodSig sig);
+
+		/// <summary>
+		/// Writes a type
+		/// </summary>
+		/// <param name="output">Output</param>
+		/// <param name="type">Type</param>
+		void Write(ITextOutput output, TypeSig type);
 	}
 }

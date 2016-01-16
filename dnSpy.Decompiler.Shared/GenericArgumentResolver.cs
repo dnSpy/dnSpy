@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using dnlib.DotNet;
 using dnlib.Threading;
 
-namespace dnlib.DotNet
-{
-    /// <summary>
-    /// Resolves generic arguments
-    /// </summary>
-    public struct GenericArgumentResolver
+namespace dnSpy.Decompiler.Shared {
+	/// <summary>
+	/// Resolves generic arguments
+	/// </summary>
+	public struct GenericArgumentResolver
     {
         GenericArguments genericArguments;
         RecursionCounter recursionCounter;

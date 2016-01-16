@@ -18,7 +18,7 @@
 */
 
 using dnSpy.Contracts.Highlighting;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.Locals {
 	sealed class ValuePrinter {
@@ -32,14 +32,14 @@ namespace dnSpy.Debugger.Locals {
 
 		public void WriteExpander(ValueVM vm) {
 			if (vm.LazyLoading)
-				output.Write("+", TextTokenType.Text);
+				output.Write("+", TextTokenKind.Text);
 			else if (vm.Children.Count == 0) {
 				// VS prints nothing
 			}
 			else if (vm.IsExpanded)
-				output.Write("-", TextTokenType.Text);
+				output.Write("-", TextTokenKind.Text);
 			else
-				output.Write("+", TextTokenType.Text);
+				output.Write("+", TextTokenKind.Text);
 		}
 
 		public void WriteName(ValueVM vm) {

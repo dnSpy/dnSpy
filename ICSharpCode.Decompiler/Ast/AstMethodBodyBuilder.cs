@@ -23,14 +23,13 @@ using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using dnSpy.NRefactory;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
 
 namespace ICSharpCode.Decompiler.Ast {
-	using dnSpy.Decompiler;
+	using dnSpy.Decompiler.Shared;
 	using Ast = ICSharpCode.NRefactory.CSharp;
 
 	public class AstMethodBodyBuilder
@@ -105,7 +104,7 @@ namespace ICSharpCode.Decompiler.Ast {
 				                      join v in astBuilder.Parameters on p.Annotation<Parameter>() equals v.OriginalParameter
 				                      select new { p, v.Name }))
 				{
-					pair.p.NameToken = Identifier.Create(pair.Name).WithAnnotation(TextTokenType.Parameter);
+					pair.p.NameToken = Identifier.Create(pair.Name).WithAnnotation(TextTokenKind.Parameter);
 				}
 			}
 			
@@ -117,15 +116,15 @@ namespace ICSharpCode.Decompiler.Ast {
 			foreach (ILVariable v in localVariablesToDefine) {
 				AstType type;
 				if (v.Type.ContainsAnonymousType())
-					type = new SimpleType("var").WithAnnotation(TextTokenType.Keyword);
+					type = new SimpleType("var").WithAnnotation(TextTokenKind.Keyword);
 				else
 					type = AstBuilder.ConvertType(v.Type);
-				var newVarDecl = new VariableDeclarationStatement(v.IsParameter ? TextTokenType.Parameter : TextTokenType.Local, type, v.Name);
+				var newVarDecl = new VariableDeclarationStatement(v.IsParameter ? TextTokenKind.Parameter : TextTokenKind.Local, type, v.Name);
 				newVarDecl.Variables.Single().AddAnnotation(v);
 				astBlock.Statements.InsertBefore(insertionPoint, newVarDecl);
 			}
-			
-			mm = new MemberMapping(methodDef) { LocalVariables = localVariables.ToList() };
+
+			mm = new MemberMapping(methodDef, localVariables.ToList());
 			
 			return astBlock;
 		}
@@ -220,7 +219,7 @@ namespace ICSharpCode.Decompiler.Ast {
 						tryCatchStmt.CatchClauses.Add(
 							new Ast.CatchClause {
 								Type = AstBuilder.ConvertType(catchClause.ExceptionType),
-								VariableNameToken = catchClause.ExceptionVariable == null ? null : Identifier.Create(catchClause.ExceptionVariable.Name).WithAnnotation(catchClause.ExceptionVariable.IsParameter ? TextTokenType.Parameter : TextTokenType.Local),
+								VariableNameToken = catchClause.ExceptionVariable == null ? null : Identifier.Create(catchClause.ExceptionVariable.Name).WithAnnotation(catchClause.ExceptionVariable.IsParameter ? TextTokenKind.Parameter : TextTokenKind.Local),
 								Body = TransformBlock(catchClause)
 							}.WithAnnotation(catchClause.ExceptionVariable).WithAnnotation(catchClause.StlocILRanges));
 					}
@@ -244,7 +243,7 @@ namespace ICSharpCode.Decompiler.Ast {
 					VariableInitializer vi;
 					fixedStatement.Variables.Add(vi =
 						new VariableInitializer {
-							NameToken = Identifier.Create(v.Name).WithAnnotation(v.IsParameter ? TextTokenType.Parameter : TextTokenType.Local),
+							NameToken = Identifier.Create(v.Name).WithAnnotation(v.IsParameter ? TextTokenKind.Parameter : TextTokenKind.Local),
 							Initializer = (Expression)TransformExpression(initializer.Arguments[0])
 						}.WithAnnotation(v));
 					vi.AddAnnotation(ILRange.OrderAndJoin(initializer.GetSelfAndChildrenRecursiveILRanges()));
@@ -461,7 +460,7 @@ namespace ICSharpCode.Decompiler.Ast {
 						}
 						return ace;
 					}
-					case ILCode.Ldlen: return arg1.Member("Length", TextTokenType.InstanceProperty).WithAnnotation(Create_SystemArray_get_Length());
+					case ILCode.Ldlen: return arg1.Member("Length", TextTokenKind.InstanceProperty).WithAnnotation(Create_SystemArray_get_Length());
 				case ILCode.Ldelem_I:
 				case ILCode.Ldelem_I1:
 				case ILCode.Ldelem_I2:
@@ -671,7 +670,7 @@ namespace ICSharpCode.Decompiler.Ast {
 						var expr = Ast.IdentifierExpression.Create(method.Name, method);
 						expr.TypeArguments.AddRange(ConvertTypeArguments(method));
 						expr.AddAnnotation(method);
-						return IdentifierExpression.Create("ldftn", TextTokenType.OpCode).Invoke(expr)
+						return IdentifierExpression.Create("ldftn", TextTokenKind.OpCode).Invoke(expr)
 							.WithAnnotation(new Transforms.DelegateConstruction.Annotation(false));
 					}
 					case ILCode.Ldvirtftn: {
@@ -679,7 +678,7 @@ namespace ICSharpCode.Decompiler.Ast {
 						var expr = Ast.IdentifierExpression.Create(method.Name, method);
 						expr.TypeArguments.AddRange(ConvertTypeArguments(method));
 						expr.AddAnnotation(method);
-						return IdentifierExpression.Create("ldvirtftn", TextTokenType.OpCode).Invoke(expr)
+						return IdentifierExpression.Create("ldvirtftn", TextTokenKind.OpCode).Invoke(expr)
 							.WithAnnotation(new Transforms.DelegateConstruction.Annotation(true));
 					}
 					case ILCode.Calli:       return InlineAssembly(byteCode, args);
@@ -735,7 +734,7 @@ namespace ICSharpCode.Decompiler.Ast {
 						if (v.IsParameter && v.OriginalParameter.IsHiddenThisParameter)
 							expr = new ThisReferenceExpression().WithAnnotation(methodDef.DeclaringType);
 						else
-							expr = Ast.IdentifierExpression.Create(((ILVariable)operand).Name, ((ILVariable)operand).IsParameter ? TextTokenType.Parameter : TextTokenType.Local).WithAnnotation(operand);
+							expr = Ast.IdentifierExpression.Create(((ILVariable)operand).Name, ((ILVariable)operand).IsParameter ? TextTokenKind.Parameter : TextTokenKind.Local).WithAnnotation(operand);
 						return v.IsParameter && v.Type is ByRefSig ? MakeRef(expr) : expr;
 					}
 					case ILCode.Ldloca: {
@@ -744,14 +743,14 @@ namespace ICSharpCode.Decompiler.Ast {
 							return MakeRef(new ThisReferenceExpression().WithAnnotation(methodDef.DeclaringType));
 						if (!v.IsParameter)
 							localVariablesToDefine.Add((ILVariable)operand);
-						return MakeRef(Ast.IdentifierExpression.Create(((ILVariable)operand).Name, ((ILVariable)operand).IsParameter ? TextTokenType.Parameter : TextTokenType.Local).WithAnnotation(operand));
+						return MakeRef(Ast.IdentifierExpression.Create(((ILVariable)operand).Name, ((ILVariable)operand).IsParameter ? TextTokenKind.Parameter : TextTokenKind.Local).WithAnnotation(operand));
 					}
 					case ILCode.Ldnull: return new Ast.NullReferenceExpression();
 					case ILCode.Ldstr:  return new Ast.PrimitiveExpression(operand);
 				case ILCode.Ldtoken:
 					if (operand is ITypeDefOrRef) {
 						var th = Create_SystemType_get_TypeHandle();
-						return AstBuilder.CreateTypeOfExpression((ITypeDefOrRef)operand).Member("TypeHandle", TextTokenType.InstanceProperty).WithAnnotation(th);
+						return AstBuilder.CreateTypeOfExpression((ITypeDefOrRef)operand).Member("TypeHandle", TextTokenKind.InstanceProperty).WithAnnotation(th);
 					} else {
 						Expression referencedEntity;
 						string loadName;
@@ -771,10 +770,10 @@ namespace ICSharpCode.Decompiler.Ast {
 							loadName = "ldtoken";
 							handleName = "Handle";
 							var ie = IdentifierExpression.Create(FormatByteCodeOperand(byteCode.Operand), byteCode.Operand);
-							ie.IdentifierToken.AddAnnotation(IdentifierEscaper.IdentifierFormatted);
+							ie.IdentifierToken.AddAnnotation(IdentifierFormatted.Instance);
 							referencedEntity = ie;
 						}
-						return IdentifierExpression.Create(loadName, TextTokenType.Keyword).Invoke(referencedEntity).WithAnnotation(new LdTokenAnnotation()).Member(handleName, TextTokenType.InstanceProperty);
+						return IdentifierExpression.Create(loadName, TextTokenKind.Keyword).Invoke(referencedEntity).WithAnnotation(new LdTokenAnnotation()).Member(handleName, TextTokenKind.InstanceProperty);
 					}
 					case ILCode.Leave:    return new GotoStatement() { Label = ((ILLabel)operand).Name };
 				case ILCode.Localloc:
@@ -807,7 +806,7 @@ namespace ICSharpCode.Decompiler.Ast {
 					return new UndocumentedExpression {
 						UndocumentedExpressionType = UndocumentedExpressionType.RefType,
 						Arguments = { arg1 }
-					}.Member("TypeHandle", TextTokenType.InstanceProperty).WithAnnotation(Create_SystemType_get_TypeHandle());
+					}.Member("TypeHandle", TextTokenKind.InstanceProperty).WithAnnotation(Create_SystemType_get_TypeHandle());
 				case ILCode.Refanyval:
 					return MakeRef(
 						new UndocumentedExpression {
@@ -867,7 +866,7 @@ namespace ICSharpCode.Decompiler.Ast {
 						ILVariable locVar = (ILVariable)operand;
 						if (!locVar.IsParameter)
 							localVariablesToDefine.Add(locVar);
-						return new Ast.AssignmentExpression(Ast.IdentifierExpression.Create(locVar.Name, locVar.IsParameter ? TextTokenType.Parameter : TextTokenType.Local).WithAnnotation(locVar), arg1);
+						return new Ast.AssignmentExpression(Ast.IdentifierExpression.Create(locVar.Name, locVar.IsParameter ? TextTokenKind.Parameter : TextTokenKind.Local).WithAnnotation(locVar), arg1);
 					}
 					case ILCode.Switch: return InlineAssembly(byteCode, args);
 					case ILCode.Tailcall: return InlineAssembly(byteCode, args);
@@ -1197,10 +1196,10 @@ namespace ICSharpCode.Decompiler.Ast {
 			// Output the operand of the unknown IL code as well
 			if (byteCode.Operand != null) {
 				var ie = IdentifierExpression.Create(FormatByteCodeOperand(byteCode.Operand), byteCode.Operand);
-				ie.IdentifierToken.AddAnnotation(IdentifierEscaper.IdentifierFormatted);
+				ie.IdentifierToken.AddAnnotation(IdentifierFormatted.Instance);
 				args.Insert(0, ie);
 			}
-			return IdentifierExpression.Create(byteCode.Code.GetName(), TextTokenType.OpCode).Invoke(args);
+			return IdentifierExpression.Create(byteCode.Code.GetName(), TextTokenKind.OpCode).Invoke(args);
 		}
 		
 		static string FormatByteCodeOperand(object operand)

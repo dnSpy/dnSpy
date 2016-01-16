@@ -25,11 +25,10 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
 using dnSpy.Shared.UI.Decompiler;
 using dnSpy.Shared.UI.Menus;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.MainApp {
 	[Export, ExportFileTabContentFactory(Order = double.MaxValue)]
@@ -110,7 +109,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void Write(AvalonEditTextOutput output) {
-			output.WriteLine(string.Format("dnSpy {0}", GetType().Assembly.GetName().Version), TextTokenType.Text);
+			output.WriteLine(string.Format("dnSpy {0}", GetType().Assembly.GetName().Version), TextTokenKind.Text);
 
 			//TODO: Add more stuff...
 		}

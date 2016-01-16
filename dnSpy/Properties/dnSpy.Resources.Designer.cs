@@ -376,51 +376,6 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Events.
-        /// </summary>
-        public static string DecompilationOrder_Events {
-            get {
-                return ResourceManager.GetString("DecompilationOrder_Events", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Fields.
-        /// </summary>
-        public static string DecompilationOrder_Fields {
-            get {
-                return ResourceManager.GetString("DecompilationOrder_Fields", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Methods.
-        /// </summary>
-        public static string DecompilationOrder_Methods {
-            get {
-                return ResourceManager.GetString("DecompilationOrder_Methods", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Nested Types.
-        /// </summary>
-        public static string DecompilationOrder_NestedTypes {
-            get {
-                return ResourceManager.GetString("DecompilationOrder_NestedTypes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Properties.
-        /// </summary>
-        public static string DecompilationOrder_Properties {
-            get {
-                return ResourceManager.GetString("DecompilationOrder_Properties", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         public static string DecompileCancelButton {
@@ -435,141 +390,6 @@ namespace dnSpy.Properties {
         public static string DecompilerDlgTabTitle {
             get {
                 return ResourceManager.GetString("DecompilerDlgTabTitle", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decompilation Order.
-        /// </summary>
-        public static string DecompilerSettings_DecompilationOrder {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_DecompilationOrder", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decompile anonymous methods/lambdas.
-        /// </summary>
-        public static string DecompilerSettings_DecompileAnonMethods {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_DecompileAnonMethods", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decompile async methods (async/await).
-        /// </summary>
-        public static string DecompilerSettings_DecompileAsyncMethods {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_DecompileAsyncMethods", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decompile enumerators (yield return).
-        /// </summary>
-        public static string DecompilerSettings_DecompileEnumerators {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_DecompileEnumerators", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decompile expression trees.
-        /// </summary>
-        public static string DecompilerSettings_DecompileExprTrees {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_DecompileExprTrees", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Decompile query expressions.
-        /// </summary>
-        public static string DecompilerSettings_DecompileQueryExpr {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_DecompileQueryExpr", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Remove empty default constructors.
-        /// </summary>
-        public static string DecompilerSettings_RemoveEmptyDefaultCtors {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_RemoveEmptyDefaultCtors", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show hidden compiler generated types and methods.
-        /// </summary>
-        public static string DecompilerSettings_ShowCompilerGeneratedTypes {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_ShowCompilerGeneratedTypes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show IL opcode comments.
-        /// </summary>
-        public static string DecompilerSettings_ShowILComments {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_ShowILComments", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show IL instruction bytes.
-        /// </summary>
-        public static string DecompilerSettings_ShowILInstrBytes {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_ShowILInstrBytes", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show tokens, RVAs and file offsets.
-        /// </summary>
-        public static string DecompilerSettings_ShowTokensRvasOffsets {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_ShowTokensRvasOffsets", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show XML documentation in decompiled code.
-        /// </summary>
-        public static string DecompilerSettings_ShowXMLDocComments {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_ShowXMLDocComments", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Sort methods, fields, properties, events and types.
-        /// </summary>
-        public static string DecompilerSettings_SortMethods {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_SortMethods", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Place &apos;System&apos; directives first when sorting usings.
-        /// </summary>
-        public static string DecompilerSettings_SortSystemFirst {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_SortSystemFirst", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Use variable names from debug symbols, if available.
-        /// </summary>
-        public static string DecompilerSettings_UseLocalNameFromSyms {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_UseLocalNameFromSyms", resourceCulture);
             }
         }
         
@@ -615,6 +435,15 @@ namespace dnSpy.Properties {
         public static string DisplaySettings_HighlightReferences {
             get {
                 return ResourceManager.GetString("DisplaySettings_HighlightReferences", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to TreeView member order (restart needed).
+        /// </summary>
+        public static string DisplaySettings_MemberOrder {
+            get {
+                return ResourceManager.GetString("DisplaySettings_MemberOrder", resourceCulture);
             }
         }
         
@@ -1175,6 +1004,51 @@ namespace dnSpy.Properties {
         public static string LoadingDnSpyPleaseWait {
             get {
                 return ResourceManager.GetString("LoadingDnSpyPleaseWait", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Events.
+        /// </summary>
+        public static string MemberKind_Events {
+            get {
+                return ResourceManager.GetString("MemberKind_Events", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fields.
+        /// </summary>
+        public static string MemberKind_Fields {
+            get {
+                return ResourceManager.GetString("MemberKind_Fields", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Methods.
+        /// </summary>
+        public static string MemberKind_Methods {
+            get {
+                return ResourceManager.GetString("MemberKind_Methods", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Nested Types.
+        /// </summary>
+        public static string MemberKind_NestedTypes {
+            get {
+                return ResourceManager.GetString("MemberKind_NestedTypes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Properties.
+        /// </summary>
+        public static string MemberKind_Properties {
+            get {
+                return ResourceManager.GetString("MemberKind_Properties", resourceCulture);
             }
         }
         

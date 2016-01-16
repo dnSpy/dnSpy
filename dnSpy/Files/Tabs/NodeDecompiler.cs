@@ -24,7 +24,7 @@ using System.Linq;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Languages;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Files.Tabs {
 	enum NodeType {
@@ -57,13 +57,13 @@ namespace dnSpy.Files.Tabs {
 		readonly Func<Func<object>, object> execInThread;
 		readonly ITextOutput output;
 		readonly ILanguage language;
-		readonly DecompilationOptions decompilationOptions;
+		readonly DecompilationContext decompilationContext;
 
-		public NodeDecompiler(Func<Func<object>, object> execInThread, ITextOutput output, ILanguage language, DecompilationOptions decompilationOptions) {
+		public NodeDecompiler(Func<Func<object>, object> execInThread, ITextOutput output, ILanguage language, DecompilationContext decompilationContext) {
 			this.execInThread = execInThread;
 			this.output = output;
 			this.language = language;
-			this.decompilationOptions = decompilationOptions;
+			this.decompilationContext = decompilationContext;
 		}
 
 		static readonly object lockObj = new object();
@@ -77,31 +77,31 @@ namespace dnSpy.Files.Tabs {
 				break;
 
 			case NodeType.Assembly:
-				language.DecompileAssembly(((IAssemblyFileNode)node).DnSpyFile, output, decompilationOptions, DecompileAssemblyFlags.Assembly);
+				language.DecompileAssembly(((IAssemblyFileNode)node).DnSpyFile, output, decompilationContext, DecompileAssemblyFlags.Assembly);
 				break;
 
 			case NodeType.Module:
-				language.DecompileAssembly(((IModuleFileNode)node).DnSpyFile, output, decompilationOptions, DecompileAssemblyFlags.Module);
+				language.DecompileAssembly(((IModuleFileNode)node).DnSpyFile, output, decompilationContext, DecompileAssemblyFlags.Module);
 				break;
 
 			case NodeType.Type:
-				language.Decompile(((ITypeNode)node).TypeDef, output, decompilationOptions);
+				language.Decompile(((ITypeNode)node).TypeDef, output, decompilationContext);
 				break;
 
 			case NodeType.Method:
-				language.Decompile(((IMethodNode)node).MethodDef, output, decompilationOptions);
+				language.Decompile(((IMethodNode)node).MethodDef, output, decompilationContext);
 				break;
 
 			case NodeType.Field:
-				language.Decompile(((IFieldNode)node).FieldDef, output, decompilationOptions);
+				language.Decompile(((IFieldNode)node).FieldDef, output, decompilationContext);
 				break;
 
 			case NodeType.Property:
-				language.Decompile(((IPropertyNode)node).PropertyDef, output, decompilationOptions);
+				language.Decompile(((IPropertyNode)node).PropertyDef, output, decompilationContext);
 				break;
 
 			case NodeType.Event:
-				language.Decompile(((IEventNode)node).EventDef, output, decompilationOptions);
+				language.Decompile(((IEventNode)node).EventDef, output, decompilationContext);
 				break;
 
 			case NodeType.AssemblyRef:
@@ -210,7 +210,7 @@ namespace dnSpy.Files.Tabs {
 
 		void Decompile(INamespaceNode node) {
 			var children = GetChildren(node).OfType<ITypeNode>().Select(a => a.TypeDef).ToArray();
-			language.DecompileNamespace(node.Name, children, output, decompilationOptions);
+			language.DecompileNamespace(node.Name, children, output, decompilationContext);
 		}
 
 		void Decompile(IPEFileNode node) {
@@ -241,15 +241,15 @@ namespace dnSpy.Files.Tabs {
 			if (node is IResourceElementSetNode)
 				Decompile((IResourceElementSetNode)node);
 			else
-				node.WriteShort(output, language, decompilationOptions.DecompilerSettings.ShowTokenAndRvaComments);
+				node.WriteShort(output, language, language.Settings.GetBoolean(DecompilerOptionConstants.ShowTokenAndRvaComments_GUID));
 		}
 
 		void Decompile(IResourceElementNode node) {
-			node.WriteShort(output, language, decompilationOptions.DecompilerSettings.ShowTokenAndRvaComments);
+			node.WriteShort(output, language, language.Settings.GetBoolean(DecompilerOptionConstants.ShowTokenAndRvaComments_GUID));
 		}
 
 		void Decompile(IResourceElementSetNode node) {
-			node.WriteShort(output, language, decompilationOptions.DecompilerSettings.ShowTokenAndRvaComments);
+			node.WriteShort(output, language, language.Settings.GetBoolean(DecompilerOptionConstants.ShowTokenAndRvaComments_GUID));
 
 			foreach (var child in GetChildren(node)) {
 				if (child is IResourceElementNode)

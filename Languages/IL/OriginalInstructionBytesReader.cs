@@ -19,8 +19,7 @@
 
 using dnlib.DotNet;
 using dnlib.IO;
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Disassembler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Languages.IL {
 	sealed class OriginalInstructionBytesReader : IInstructionBytesReader {

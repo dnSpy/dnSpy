@@ -20,8 +20,8 @@
 using System;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Decompiler.Shared;
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 	/// <summary>
@@ -39,9 +39,9 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		ILanguage Language { get; }
 
 		/// <summary>
-		/// Gets the decompilation options
+		/// Gets the decompilation context
 		/// </summary>
-		DecompilationOptions DecompilationOptions { get; }
+		DecompilationContext DecompilationContext { get; }
 
 		/// <summary>
 		/// Executes <paramref name="func"/> in the UI thread and waits for it to complete, then

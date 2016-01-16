@@ -34,7 +34,6 @@ using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Menus;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger.Exceptions {
 	[ExportAutoLoaded]

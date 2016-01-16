@@ -41,7 +41,6 @@ using dnSpy.Languages.MSBuild;
 using dnSpy.Properties;
 using dnSpy.Shared.UI.Menus;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.Tabs {
 	[ExportAutoLoaded]
@@ -58,16 +57,14 @@ namespace dnSpy.Files.Tabs {
 		readonly IFileTreeView fileTreeView;
 		readonly ILanguageManager languageManager;
 		readonly IFileTreeViewSettings fileTreeViewSettings;
-		readonly DecompilerSettings decompilerSettings;
 		readonly Lazy<IBamlDecompiler> bamlDecompiler;
 
 		[ImportingConstructor]
-		ExportProjectCommand(IAppWindow appWindow, IFileTreeView fileTreeView, ILanguageManager languageManager, IFileTreeViewSettings fileTreeViewSettings, DecompilerSettings decompilerSettings, [ImportMany] IEnumerable<Lazy<IBamlDecompiler>> bamlDecompilers) {
+		ExportProjectCommand(IAppWindow appWindow, IFileTreeView fileTreeView, ILanguageManager languageManager, IFileTreeViewSettings fileTreeViewSettings, [ImportMany] IEnumerable<Lazy<IBamlDecompiler>> bamlDecompilers) {
 			this.appWindow = appWindow;
 			this.fileTreeView = fileTreeView;
 			this.languageManager = languageManager;
 			this.fileTreeViewSettings = fileTreeViewSettings;
-			this.decompilerSettings = decompilerSettings;
 			this.bamlDecompiler = bamlDecompilers.FirstOrDefault();
 		}
 
@@ -132,9 +129,8 @@ namespace dnSpy.Files.Tabs {
 				vm.TotalProgress = 0;
 				vm.IsIndeterminate = false;
 				Task.Factory.StartNew(() => {
-					var decompilationOptions = new DecompilationOptions {
+					var decompilationContext = new DecompilationContext {
 						CancellationToken = cancellationTokenSource.Token,
-						DecompilerSettings = owner.decompilerSettings.Clone(),
 						GetDisableAssemblyLoad = () => owner.fileTreeView.FileManager.DisableAssemblyLoad(),
 					};
 					var options = new ProjectCreatorOptions(vm.Directory, cancellationTokenSource.Token);
@@ -144,7 +140,7 @@ namespace dnSpy.Files.Tabs {
 					options.Logger = this;
 					options.ProgressListener = this;
 					foreach (var module in modules) {
-						var projOpts = new ProjectModuleOptions(module, vm.Language, decompilationOptions) {
+						var projOpts = new ProjectModuleOptions(module, vm.Language, decompilationContext) {
 							DontReferenceStdLib = vm.DontReferenceStdLib,
 							UnpackResources = vm.UnpackResources,
 							CreateResX = vm.CreateResX,

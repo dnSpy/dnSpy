@@ -38,11 +38,10 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.HexEditor;
 using dnSpy.Shared.UI.Menus;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.AsmEditor.Hex {
 	[ExportAutoLoaded]
@@ -423,8 +422,8 @@ namespace dnSpy.AsmEditor.Hex {
 			if (mappings == null || mappings.Count == 0)
 				return null;
 
-			var method = mappings[0].MemberMapping.MethodDef;
-			var mod = mappings[0].MemberMapping.MethodDef.Module as ModuleDefMD;
+			var method = mappings[0].Mapping.Method;
+			var mod = mappings[0].Mapping.Method.Module as ModuleDefMD;
 			if (mod == null || string.IsNullOrEmpty(mod.Location))
 				return null;
 
@@ -433,11 +432,11 @@ namespace dnSpy.AsmEditor.Hex {
 			if (methodAnnotations.Value.IsBodyModified(method))
 				len = 0;
 			else if (mappings.Count == 1) {
-				addr += (ulong)method.Body.HeaderSize + mappings[0].ILInstructionOffset.From;
-				len = mappings[0].ILInstructionOffset.To - mappings[0].ILInstructionOffset.From;
+				addr += (ulong)method.Body.HeaderSize + mappings[0].ILRange.From;
+				len = mappings[0].ILRange.To - mappings[0].ILRange.From;
 			}
 			else {
-				addr += (ulong)method.Body.HeaderSize + mappings[0].ILInstructionOffset.From;
+				addr += (ulong)method.Body.HeaderSize + mappings[0].ILRange.From;
 				len = 0;
 			}
 

@@ -31,7 +31,7 @@ using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Themes;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Controls;
 using dnSpy.Shared.UI.Themes;
 using ICSharpCode.AvalonEdit.Utils;
@@ -54,8 +54,8 @@ namespace dnSpy.Shared.UI.Highlighting {
 			this.sb = new StringBuilder();
 		}
 
-		public void Write(string s, TextTokenType tokenType) {
-			tokens.Append(tokenType, s);
+		public void Write(string s, TextTokenKind tokenKind) {
+			tokens.Append(tokenKind, s);
 			sb.Append(s);
 			Debug.Assert(sb.Length == tokens.Length);
 		}
@@ -102,8 +102,8 @@ namespace dnSpy.Shared.UI.Highlighting {
 
 				while (offs < endOffs) {
 					int defaultTextLength, tokenLength;
-					TextTokenType tokenType;
-					if (!tokens.Find(offs, out defaultTextLength, out tokenType, out tokenLength)) {
+					TextTokenKind tokenKind;
+					if (!tokens.Find(offs, out defaultTextLength, out tokenKind, out tokenLength)) {
 						Debug.Fail("Could not find token info");
 						break;
 					}
@@ -115,7 +115,7 @@ namespace dnSpy.Shared.UI.Highlighting {
 					offs += defaultTextLength;
 
 					if (tokenLength != 0) {
-						var hlColor = GetColor(tokenType);
+						var hlColor = GetColor(tokenKind);
 						var text = textBlockText.Substring(offs, tokenLength);
 						var elem = new Run(text);
 						if (hlColor.FontStyle != null)
@@ -153,8 +153,8 @@ namespace dnSpy.Shared.UI.Highlighting {
 		}
 		static IThemeManager themeManager;
 
-		static IThemeColor GetColor(TextTokenType tokenType) {
-			var color = themeManager.Theme.GetTextColor(tokenType.ToColorType());
+		static IThemeColor GetColor(TextTokenKind tokenKind) {
+			var color = themeManager.Theme.GetTextColor(tokenKind.ToColorType());
 			Debug.Assert(color != null);
 			return color;
 		}
@@ -236,8 +236,8 @@ namespace dnSpy.Shared.UI.Highlighting {
 				}
 
 				int defaultTextLength, tokenLength;
-				TextTokenType tokenType;
-				if (!tokens.Find(index, out defaultTextLength, out tokenType, out tokenLength)) {
+				TextTokenKind tokenKind;
+				if (!tokens.Find(index, out defaultTextLength, out tokenKind, out tokenLength)) {
 					Debug.Fail("Could not find token info");
 					return new TextCharacters(" ", null);
 				}
@@ -261,7 +261,7 @@ namespace dnSpy.Shared.UI.Highlighting {
 				index += defaultTextLength;
 
 				if (tokenLength != 0) {
-					var tc = GetColor(tokenType);
+					var tc = GetColor(tokenKind);
 					var tokenText = text.Substring(index, tokenLength);
 
 					var textProps = new TextProps();

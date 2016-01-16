@@ -25,9 +25,8 @@ using System.Windows.Controls;
 using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class LocalsListHelper : ListBoxHelperBase<LocalVM> {
@@ -94,14 +93,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 					output.WriteLine();
 
 				var local = locals[i];
-				output.Write(local.Index.ToString(), TextTokenType.Number);
-				output.Write("\t", TextTokenType.Text);
-				output.Write(local.IsPinned ? dnSpy_AsmEditor_Resources.Local_Pinned_Character : string.Empty, TextTokenType.Text);
-				output.Write("\t", TextTokenType.Text);
-				output.Write(local.IsCompilerGenerated ? dnSpy_AsmEditor_Resources.Local_CompilerGenerated_Character : string.Empty, TextTokenType.Text);
-				output.Write("\t", TextTokenType.Text);
-				output.Write(local.Name ?? string.Empty, TextTokenType.Local);
-				output.Write("\t", TextTokenType.Text);
+				output.Write(local.Index.ToString(), TextTokenKind.Number);
+				output.Write("\t", TextTokenKind.Text);
+				output.Write(local.IsPinned ? dnSpy_AsmEditor_Resources.Local_Pinned_Character : string.Empty, TextTokenKind.Text);
+				output.Write("\t", TextTokenKind.Text);
+				output.Write(local.IsCompilerGenerated ? dnSpy_AsmEditor_Resources.Local_CompilerGenerated_Character : string.Empty, TextTokenKind.Text);
+				output.Write("\t", TextTokenKind.Text);
+				output.Write(local.Name ?? string.Empty, TextTokenKind.Local);
+				output.Write("\t", TextTokenKind.Text);
 				BodyUtils.WriteObject(output, local.Type);
 			}
 			if (locals.Length > 1)

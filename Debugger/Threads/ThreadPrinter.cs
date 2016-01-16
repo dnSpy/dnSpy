@@ -25,7 +25,7 @@ using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Debugger.Properties;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Debugger.Threads {
@@ -44,13 +44,13 @@ namespace dnSpy.Debugger.Threads {
 
 		void WriteInt32(int value) {
 			if (useHex)
-				output.Write(string.Format("0x{0:X8}", value), TextTokenType.Number);
+				output.Write(string.Format("0x{0:X8}", value), TextTokenKind.Number);
 			else
-				output.Write(string.Format("{0}", value), TextTokenType.Number);
+				output.Write(string.Format("{0}", value), TextTokenKind.Number);
 		}
 
 		public void WriteCurrent(ThreadVM vm) {
-			output.Write(vm.IsCurrent ? ">" : " ", TextTokenType.Text);
+			output.Write(vm.IsCurrent ? ">" : " ", TextTokenKind.Text);
 		}
 
 		public void WriteId(ThreadVM vm) {
@@ -62,7 +62,7 @@ namespace dnSpy.Debugger.Threads {
 			if (id != null)
 				WriteInt32(id.Value);
 			else {
-				output.Write("???", TextTokenType.Error);
+				output.Write("???", TextTokenKind.Error);
 				WriteInt32(vm.Thread.IncrementedId + 1);
 			}
 		}
@@ -70,23 +70,23 @@ namespace dnSpy.Debugger.Threads {
 		public void WriteCategory(ThreadVM vm) {
 			switch (vm.Type) {
 			case ThreadType.Unknown:
-				output.Write(dnSpy_Debugger_Resources.ThreadType_Unknown, TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.ThreadType_Unknown, TextTokenKind.Text);
 				break;
 			case ThreadType.Main:
-				output.Write(dnSpy_Debugger_Resources.ThreadType_Main, TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.ThreadType_Main, TextTokenKind.Text);
 				break;
 			case ThreadType.ThreadPool:
-				output.Write(dnSpy_Debugger_Resources.ThreadType_ThreadPool, TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.ThreadType_ThreadPool, TextTokenKind.Text);
 				break;
 			case ThreadType.Worker:
-				output.Write(dnSpy_Debugger_Resources.ThreadType_Worker, TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.ThreadType_Worker, TextTokenKind.Text);
 				break;
 			case ThreadType.BGCOrFinalizer:
-				output.Write(dnSpy_Debugger_Resources.ThreadType_BackgroundGC_or_Finalizer, TextTokenType.Text);
-				output.Write("???", TextTokenType.Error);
+				output.Write(dnSpy_Debugger_Resources.ThreadType_BackgroundGC_or_Finalizer, TextTokenKind.Text);
+				output.Write("???", TextTokenKind.Error);
 				break;
 			case ThreadType.Terminated:
-				output.Write(dnSpy_Debugger_Resources.ThreadType_Terminated, TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.ThreadType_Terminated, TextTokenKind.Text);
 				break;
 			default:
 				Debug.Fail(string.Format("Unknown thread type: {0}", vm.Type));
@@ -97,17 +97,17 @@ namespace dnSpy.Debugger.Threads {
 		public void WriteName(ThreadVM vm) {
 			var name = vm.Name;
 			if (vm.UnknownName)
-				output.Write("???", TextTokenType.Error);
+				output.Write("???", TextTokenKind.Error);
 			else if (name == null)
-				output.Write(dnSpy_Debugger_Resources.Thread_NoName, TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.Thread_NoName, TextTokenKind.Text);
 			else
-				output.Write(DebugOutputUtils.FilterName(name, MAX_THREAD_NAME), TextTokenType.String);
+				output.Write(DebugOutputUtils.FilterName(name, MAX_THREAD_NAME), TextTokenKind.String);
 		}
 
 		public void WriteLocation(ThreadVM vm) {
 			var frame = vm.Thread.CorThread.AllFrames.FirstOrDefault();
 			if (frame == null)
-				output.Write(dnSpy_Debugger_Resources.Thread_LocationNotAvailable, TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.Thread_LocationNotAvailable, TextTokenKind.Text);
 			else {
 				var flags = TypePrinterFlags.Default | TypePrinterFlags.ShowIP;
 				if (!useHex)
@@ -118,12 +118,12 @@ namespace dnSpy.Debugger.Threads {
 
 		public void WritePriority(ThreadVM vm) {
 			switch (vm.Priority) {
-			case ThreadPriority.Lowest:			output.Write(dnSpy_Debugger_Resources.Thread_Priority_Lowest, TextTokenType.EnumField); break;
-			case ThreadPriority.BelowNormal:	output.Write(dnSpy_Debugger_Resources.Thread_Priority_BelowNormal, TextTokenType.EnumField); break;
-			case ThreadPriority.Normal:			output.Write(dnSpy_Debugger_Resources.Thread_Priority_Normal, TextTokenType.EnumField); break;
-			case ThreadPriority.AboveNormal:	output.Write(dnSpy_Debugger_Resources.Thread_Priority_AboveNormal, TextTokenType.EnumField); break;
-			case ThreadPriority.Highest:		output.Write(dnSpy_Debugger_Resources.Thread_Priority_Highest, TextTokenType.EnumField); break;
-			default:							output.Write(string.Format("???({0})", (int)vm.Priority), TextTokenType.Error); break;
+			case ThreadPriority.Lowest:			output.Write(dnSpy_Debugger_Resources.Thread_Priority_Lowest, TextTokenKind.EnumField); break;
+			case ThreadPriority.BelowNormal:	output.Write(dnSpy_Debugger_Resources.Thread_Priority_BelowNormal, TextTokenKind.EnumField); break;
+			case ThreadPriority.Normal:			output.Write(dnSpy_Debugger_Resources.Thread_Priority_Normal, TextTokenKind.EnumField); break;
+			case ThreadPriority.AboveNormal:	output.Write(dnSpy_Debugger_Resources.Thread_Priority_AboveNormal, TextTokenKind.EnumField); break;
+			case ThreadPriority.Highest:		output.Write(dnSpy_Debugger_Resources.Thread_Priority_Highest, TextTokenKind.EnumField); break;
+			default:							output.Write(string.Format("???({0})", (int)vm.Priority), TextTokenKind.Error); break;
 			}
 		}
 
@@ -143,7 +143,7 @@ namespace dnSpy.Debugger.Threads {
 						sb.Append('0');
 				}
 			}
-			output.Write(sb.ToString(), TextTokenType.Number);
+			output.Write(sb.ToString(), TextTokenKind.Number);
 		}
 
 		public void WriteSuspended(ThreadVM vm) {
@@ -179,13 +179,13 @@ namespace dnSpy.Debugger.Threads {
 					if (needComma)
 						output.WriteCommaSpace();
 					needComma = true;
-					output.Write(t.Item2, TextTokenType.EnumField);
+					output.Write(t.Item2, TextTokenKind.EnumField);
 				}
 			}
 			if (state != 0) {
 				if (needComma)
 					output.WriteCommaSpace();
-				output.Write(string.Format("0x{0:X}", (int)state), TextTokenType.Number);
+				output.Write(string.Format("0x{0:X}", (int)state), TextTokenKind.Number);
 			}
 		}
 	}

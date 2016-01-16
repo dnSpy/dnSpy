@@ -27,7 +27,7 @@ using System.Xml;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Contracts.Languages;
-using dnSpy.Decompiler;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Files;
 
 namespace dnSpy.Languages.MSBuild {

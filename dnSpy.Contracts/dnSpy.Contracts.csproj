@@ -157,6 +157,7 @@
     <Compile Include="Files\TreeView\IResourcesFolderNode.cs" />
     <Compile Include="Files\TreeView\ITypeNode.cs" />
     <Compile Include="Files\TreeView\IUnknownFileNode.cs" />
+    <Compile Include="Files\TreeView\MemberKind.cs" />
     <Compile Include="Files\TreeView\NodePathName.cs" />
     <Compile Include="Files\TreeView\NotifyFileTreeViewCollection.cs" />
     <Compile Include="Files\TreeView\NotifyFileTreeViewCollectionChangedEventArgs.cs" />
@@ -183,13 +184,19 @@
     <Compile Include="Images\IImageManager.cs" />
     <Compile Include="Images\ImageReference.cs" />
     <Compile Include="Languages\BamlDecompilerOptions.cs" />
-    <Compile Include="Languages\DecompilationOptions.cs" />
+    <Compile Include="Languages\DecompilationContext.cs" />
     <Compile Include="Languages\DecompilationType.cs" />
     <Compile Include="Languages\DecompileAssemblyFlags.cs" />
     <Compile Include="Languages\DecompileAssemblyInfo.cs" />
     <Compile Include="Languages\DecompilePartialType.cs" />
+    <Compile Include="Languages\DecompilerOptionConstants.cs" />
     <Compile Include="Languages\DecompileTypeBase.cs" />
     <Compile Include="Languages\IBamlDecompiler.cs" />
+    <Compile Include="Languages\IDecompilationContext.cs" />
+    <Compile Include="Languages\IDecompilerOption.cs" />
+    <Compile Include="Languages\IDecompilerSettings.cs" />
+    <Compile Include="Languages\IDecompilerSettingsTab.cs" />
+    <Compile Include="Languages\IDecompilerSettingsTabCreator.cs" />
     <Compile Include="Languages\ILanguage.cs" />
     <Compile Include="Languages\ILanguageCreator.cs" />
     <Compile Include="Languages\ILanguageManager.cs" />
@@ -317,13 +324,9 @@
       <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
       <Name>dnlib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ICSharpCode.Decompiler\ICSharpCode.Decompiler.csproj">
-      <Project>{984cc812-9470-4a13-aff9-cc44068d666c}</Project>
-      <Name>ICSharpCode.Decompiler</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\NRefactory2\ICSharpCode.NRefactory\ICSharpCode.NRefactory.csproj">
-      <Project>{3b2a5653-ec97-4001-bb9b-d90f1af2c371}</Project>
-      <Name>ICSharpCode.NRefactory</Name>
+    <ProjectReference Include="..\dnSpy.Decompiler.Shared\dnSpy.Decompiler.Shared.csproj">
+      <Project>{a027546a-cf4b-47f9-bc53-ee1ad424ee41}</Project>
+      <Name>dnSpy.Decompiler.Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

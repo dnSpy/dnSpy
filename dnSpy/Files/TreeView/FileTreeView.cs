@@ -39,7 +39,6 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.UI.Search;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.TreeView {
 	[Export, Export(typeof(IFileTreeView)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -110,8 +109,8 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		[ImportingConstructor]
-		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, DecompilerSettings decompilerSettings, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDnSpyFileNodeCreator, IDnSpyFileNodeCreatorMetadata>> dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders)
-			: this(true, null, themeManager, treeViewManager, languageManager, fileManager, fileTreeViewSettings, menuManager, dotNetImageManager, wpfCommandManager, decompilerSettings, resourceNodeFactory, appSettings, dnSpyFileNodeCreators, mefFinders) {
+		FileTreeView(IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDnSpyFileNodeCreator, IDnSpyFileNodeCreatorMetadata>> dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders)
+			: this(true, null, themeManager, treeViewManager, languageManager, fileManager, fileTreeViewSettings, menuManager, dotNetImageManager, wpfCommandManager, resourceNodeFactory, appSettings, dnSpyFileNodeCreators, mefFinders) {
 		}
 
 		readonly ILanguageManager languageManager;
@@ -119,13 +118,13 @@ namespace dnSpy.Files.TreeView {
 		readonly IFileTreeViewSettings fileTreeViewSettings;
 		readonly IAppSettings appSettings;
 
-		public FileTreeView(bool isGlobal, IFileTreeNodeFilter filter, IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, DecompilerSettings decompilerSettings, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDnSpyFileNodeCreator, IDnSpyFileNodeCreatorMetadata>> dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
+		public FileTreeView(bool isGlobal, IFileTreeNodeFilter filter, IThemeManager themeManager, ITreeViewManager treeViewManager, ILanguageManager languageManager, IFileManager fileManager, IFileTreeViewSettings fileTreeViewSettings, IMenuManager menuManager, IDotNetImageManager dotNetImageManager, IWpfCommandManager wpfCommandManager, IResourceNodeFactory resourceNodeFactory, IAppSettings appSettings, [ImportMany] IEnumerable<Lazy<IDnSpyFileNodeCreator, IDnSpyFileNodeCreatorMetadata>> dnSpyFileNodeCreators, [ImportMany] IEnumerable<Lazy<IFileTreeNodeDataFinder, IFileTreeNodeDataFinderMetadata>> mefFinders) {
 			this.languageManager = languageManager;
 			this.themeManager = themeManager;
 			this.fileTreeViewSettings = fileTreeViewSettings;
 			this.appSettings = appSettings;
 
-			this.context = new FileTreeNodeDataContext(this, resourceNodeFactory, decompilerSettings, filter ?? FilterNothingFileTreeNodeFilter.Instance) {
+			this.context = new FileTreeNodeDataContext(this, resourceNodeFactory, filter ?? FilterNothingFileTreeNodeFilter.Instance) {
 				SyntaxHighlight = fileTreeViewSettings.SyntaxHighlight,
 				SingleClickExpandsChildren = fileTreeViewSettings.SingleClickExpandsTreeViewChildren,
 				ShowAssemblyVersion = fileTreeViewSettings.ShowAssemblyVersion,
@@ -181,7 +180,7 @@ namespace dnSpy.Files.TreeView {
 			}
 
 			this.nodeFinders = mefFinders.OrderBy(a => a.Metadata.Order).ToArray();
-			InitializeFileTreeNodeGroups(decompilerSettings);
+			InitializeFileTreeNodeGroups();
 		}
 
 		// It's not using IDisposable.Dispose() because MEF will call Dispose() at app exit which
@@ -212,32 +211,15 @@ namespace dnSpy.Files.TreeView {
 			}
 		}
 
-		void InitializeFileTreeNodeGroups(DecompilerSettings decompilerSettings) {
-			MemberType[] orders;
-			try {
-				orders = new MemberType[] {
-					ToMemberType(decompilerSettings.DecompilationObject0),
-					ToMemberType(decompilerSettings.DecompilationObject1),
-					ToMemberType(decompilerSettings.DecompilationObject2),
-					ToMemberType(decompilerSettings.DecompilationObject3),
-					ToMemberType(decompilerSettings.DecompilationObject4),
-				};
-			}
-			catch (InvalidOperationException) {
-				return;
-			}
+		void InitializeFileTreeNodeGroups() {
+			var orders = new MemberKind[] {
+				fileTreeViewSettings.MemberKind0,
+				fileTreeViewSettings.MemberKind1,
+				fileTreeViewSettings.MemberKind2,
+				fileTreeViewSettings.MemberKind3,
+				fileTreeViewSettings.MemberKind4,
+			};
 			fileTreeNodeGroups.SetMemberOrder(orders);
-		}
-
-		static MemberType ToMemberType(DecompilationObject o) {
-			switch (o) {
-			case DecompilationObject.NestedTypes: return MemberType.NestedTypes;
-			case DecompilationObject.Fields: return MemberType.Fields;
-			case DecompilationObject.Events: return MemberType.Events;
-			case DecompilationObject.Properties: return MemberType.Properties;
-			case DecompilationObject.Methods: return MemberType.Methods;
-			}
-			throw new InvalidOperationException();
 		}
 
 		readonly List<Action> actionsToCall = new List<Action>();
@@ -319,12 +301,12 @@ namespace dnSpy.Files.TreeView {
 			UpdateLanguage(language);
 		}
 
-		public void RefreshNodes(bool showMember, bool decompilationOrder) {
+		public void RefreshNodes(bool showMember, bool memberOrder) {
 			if (showMember) {
 				RefreshNodes();
 				RefilterNodes();
 			}
-			/*TODO: decompilationOrder
+			/*TODO: memberOrder
 			Should call InitializeFileTreeNodeGroups(). Some stuff that must be fixed:
 			The asm editor has some classes that store indexes of nodes, and would need to be
 			updated to just use the normal AddChild() method to restore the node.

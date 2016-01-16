@@ -23,11 +23,10 @@ using System.Diagnostics;
 using dnlib.DotNet.MD;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.HexEditor;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class MetaDataTableRecordNode : HexNode {
@@ -73,10 +72,10 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write(string.Format("{0}", index + 1), TextTokenType.Number);
+			output.Write(string.Format("{0}", index + 1), TextTokenKind.Number);
 			if (infoTuple != null) {
 				output.WriteSpace();
-				output.Write("-", TextTokenType.Operator);
+				output.Write("-", TextTokenKind.Operator);
 				output.WriteSpace();
 				infoTuple.Item2(output);
 			}
@@ -167,25 +166,25 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		void WriteModuleInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), TextTokenType.Module);
+			output.Write(ReadStringsHeap(1), TextTokenKind.Module);
 		}
 
 		void WriteNamespaceName(ISyntaxHighlightOutput output, int nsIndex, int nameIndex) {
 			var ns = ReadStringsHeap(nsIndex);
 			var name = ReadStringsHeap(nameIndex);
 
-			output.Write(name, TextTokenType.Type);
+			output.Write(name, TextTokenKind.Type);
 
 			if (!string.IsNullOrEmpty(ns)) {
 				output.WriteSpace();
-				output.Write("-", TextTokenType.Operator);
+				output.Write("-", TextTokenKind.Operator);
 				output.WriteSpace();
 
 				var parts = ns.Split('.');
 				for (int i = 0; i < parts.Length; i++) {
-					output.Write(parts[i], TextTokenType.NamespacePart);
+					output.Write(parts[i], TextTokenKind.NamespacePart);
 					if (i + 1 < parts.Length)
-						output.Write(".", TextTokenType.Operator);
+						output.Write(".", TextTokenKind.Operator);
 				}
 			}
 		}
@@ -199,43 +198,43 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		void WriteFieldInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), TextTokenType.InstanceField);
+			output.Write(ReadStringsHeap(1), TextTokenKind.InstanceField);
 		}
 
 		void WriteMethodInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(3), TextTokenType.InstanceMethod);
+			output.Write(ReadStringsHeap(3), TextTokenKind.InstanceMethod);
 		}
 
 		void WriteParamInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(2), TextTokenType.Parameter);
+			output.Write(ReadStringsHeap(2), TextTokenKind.Parameter);
 		}
 
 		void WriteMemberRefInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), TextTokenType.InstanceMethod);
+			output.Write(ReadStringsHeap(1), TextTokenKind.InstanceMethod);
 		}
 
 		void WriteEventInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), TextTokenType.InstanceEvent);
+			output.Write(ReadStringsHeap(1), TextTokenKind.InstanceEvent);
 		}
 
 		void WritePropertyInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), TextTokenType.InstanceProperty);
+			output.Write(ReadStringsHeap(1), TextTokenKind.InstanceProperty);
 		}
 
 		void WriteModuleRefInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(0), TextTokenType.Module);
+			output.Write(ReadStringsHeap(0), TextTokenKind.Module);
 		}
 
 		void WriteImplMapInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(2), TextTokenType.InstanceMethod);
+			output.Write(ReadStringsHeap(2), TextTokenKind.InstanceMethod);
 		}
 
 		void WriteAssemblyInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(7), TextTokenType.Assembly);
+			output.Write(ReadStringsHeap(7), TextTokenKind.Assembly);
 		}
 
 		void WriteAssemblyRefInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(6), TextTokenType.Assembly);
+			output.Write(ReadStringsHeap(6), TextTokenKind.Assembly);
 		}
 
 		void WriteFileInfo(ISyntaxHighlightOutput output) {
@@ -251,7 +250,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		void WriteGenericParamInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(3), TextTokenType.TypeGenericParameter);
+			output.Write(ReadStringsHeap(3), TextTokenKind.TypeGenericParameter);
 		}
 	}
 }

@@ -23,8 +23,8 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Decompiler;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Decompiler {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
@@ -98,17 +98,17 @@ namespace dnSpy.Decompiler {
 			foreach (var entry in memberMappings) {
 				SourceCodeMapping map = null;
 				foreach (var m in entry.MemberCodeMappings) {
-					if (line > m.EndLocation.Line)
+					if (line > m.EndPosition.Line)
 						continue;
-					if (map == null || m.StartLocation < map.StartLocation)
+					if (map == null || m.StartPosition < map.StartPosition)
 						map = m;
 				}
 				if (map != null) {
 					if (list.Count == 0)
 						list.Add(map);
-					else if (map.StartLocation == list[0].StartLocation)
+					else if (map.StartPosition == list[0].StartPosition)
 						list.Add(map);
-					else if (map.StartLocation < list[0].StartLocation) {
+					else if (map.StartPosition < list[0].StartPosition) {
 						list.Clear();
 						list.Add(map);
 					}
@@ -122,10 +122,10 @@ namespace dnSpy.Decompiler {
 
 		public SourceCodeMapping Find(MethodDef method, uint ilOffset) {
 			foreach (var entry in memberMappings) {
-				if (entry.MethodDef != method)
+				if (entry.Method != method)
 					continue;
 				foreach (var m in entry.MemberCodeMappings) {
-					if (m.ILInstructionOffset.From <= ilOffset && ilOffset < m.ILInstructionOffset.To)
+					if (m.ILRange.From <= ilOffset && ilOffset < m.ILRange.To)
 						return m;
 				}
 			}

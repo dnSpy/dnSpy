@@ -32,11 +32,10 @@ using dnSpy.AsmEditor.Commands;
 using dnSpy.AsmEditor.DnlibDialogs;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.AsmEditor.ViewHelpers;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.MVVM;
 using dnSpy.Shared.UI.Search;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionsListHelper : ListBoxHelperBase<InstructionVM>, IEditOperand, ISelectItems<InstructionVM> {
@@ -271,49 +270,49 @@ namespace dnSpy.AsmEditor.MethodBody {
 					output.WriteLine();
 
 				var instr = instrs[i];
-				output.Write(instr.Index.ToString(), TextTokenType.Number);
-				output.Write("\t", TextTokenType.Text);
-				output.Write(string.Format("{0:X4}", instr.Offset), TextTokenType.Label);
-				output.Write("\t", TextTokenType.Text);
-				output.Write(instr.Code.ToOpCode().ToString(), TextTokenType.OpCode);
+				output.Write(instr.Index.ToString(), TextTokenKind.Number);
+				output.Write("\t", TextTokenKind.Text);
+				output.Write(string.Format("{0:X4}", instr.Offset), TextTokenKind.Label);
+				output.Write("\t", TextTokenKind.Text);
+				output.Write(instr.Code.ToOpCode().ToString(), TextTokenKind.OpCode);
 
 				switch (instr.InstructionOperandVM.InstructionOperandType) {
 				case InstructionOperandType.None:
 					break;
 
 				case InstructionOperandType.SByte:
-					output.Write("\t", TextTokenType.Text);
-					output.Write(instr.InstructionOperandVM.SByte.StringValue, TextTokenType.Number);
+					output.Write("\t", TextTokenKind.Text);
+					output.Write(instr.InstructionOperandVM.SByte.StringValue, TextTokenKind.Number);
 					break;
 
 				case InstructionOperandType.Byte:
-					output.Write("\t", TextTokenType.Text);
-					output.Write(instr.InstructionOperandVM.Byte.StringValue, TextTokenType.Number);
+					output.Write("\t", TextTokenKind.Text);
+					output.Write(instr.InstructionOperandVM.Byte.StringValue, TextTokenKind.Number);
 					break;
 
 				case InstructionOperandType.Int32:
-					output.Write("\t", TextTokenType.Text);
-					output.Write(instr.InstructionOperandVM.Int32.StringValue, TextTokenType.Number);
+					output.Write("\t", TextTokenKind.Text);
+					output.Write(instr.InstructionOperandVM.Int32.StringValue, TextTokenKind.Number);
 					break;
 
 				case InstructionOperandType.Int64:
-					output.Write("\t", TextTokenType.Text);
-					output.Write(instr.InstructionOperandVM.Int64.StringValue, TextTokenType.Number);
+					output.Write("\t", TextTokenKind.Text);
+					output.Write(instr.InstructionOperandVM.Int64.StringValue, TextTokenKind.Number);
 					break;
 
 				case InstructionOperandType.Single:
-					output.Write("\t", TextTokenType.Text);
-					output.Write(instr.InstructionOperandVM.Single.StringValue, TextTokenType.Number);
+					output.Write("\t", TextTokenKind.Text);
+					output.Write(instr.InstructionOperandVM.Single.StringValue, TextTokenKind.Number);
 					break;
 
 				case InstructionOperandType.Double:
-					output.Write("\t", TextTokenType.Text);
-					output.Write(instr.InstructionOperandVM.Double.StringValue, TextTokenType.Number);
+					output.Write("\t", TextTokenKind.Text);
+					output.Write(instr.InstructionOperandVM.Double.StringValue, TextTokenKind.Number);
 					break;
 
 				case InstructionOperandType.String:
-					output.Write("\t", TextTokenType.Text);
-					output.Write(instr.InstructionOperandVM.String.StringValue, TextTokenType.String);
+					output.Write("\t", TextTokenKind.Text);
+					output.Write(instr.InstructionOperandVM.String.StringValue, TextTokenKind.String);
 					break;
 
 				case InstructionOperandType.Field:
@@ -325,7 +324,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				case InstructionOperandType.SwitchTargets:
 				case InstructionOperandType.Local:
 				case InstructionOperandType.Parameter:
-					output.Write("\t", TextTokenType.Text);
+					output.Write("\t", TextTokenKind.Text);
 					BodyUtils.WriteObject(output, instr.InstructionOperandVM.Value);
 					break;
 

@@ -53,5 +53,20 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// true to deserialize resources
 		/// </summary>
 		bool DeserializeResources { get; }
+
+		/// <summary>Gets 0th member</summary>
+		MemberKind MemberKind0 { get; }
+
+		/// <summary>Gets 1st member</summary>
+		MemberKind MemberKind1 { get; }
+
+		/// <summary>Gets 2nd member</summary>
+		MemberKind MemberKind2 { get; }
+
+		/// <summary>Gets 3rd member</summary>
+		MemberKind MemberKind3 { get; }
+
+		/// <summary>Gets 4th member</summary>
+		MemberKind MemberKind4 { get; }
 	}
 }

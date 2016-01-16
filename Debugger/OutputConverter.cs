@@ -20,7 +20,7 @@
 using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger {
 	sealed class OutputConverter : ITypeOutput {
@@ -34,37 +34,37 @@ namespace dnSpy.Debugger {
 			output.Write(s, Convert(type));
 		}
 
-		static TextTokenType Convert(TypeColor color) {
+		static TextTokenKind Convert(TypeColor color) {
 			switch (color) {
-			case TypeColor.Unknown:				return TextTokenType.Text;
-			case TypeColor.Space:				return TextTokenType.Text;
-			case TypeColor.IPType:				return TextTokenType.Text;
-			case TypeColor.Operator:			return TextTokenType.Operator;
-			case TypeColor.NativeFrame:			return TextTokenType.Text;
-			case TypeColor.InternalFrame:		return TextTokenType.Text;
-			case TypeColor.UnknownFrame:		return TextTokenType.Text;
-			case TypeColor.Number:				return TextTokenType.Number;
-			case TypeColor.Error:				return TextTokenType.Error;
-			case TypeColor.Module:				return TextTokenType.Module;
-			case TypeColor.Token:				return TextTokenType.Number;
-			case TypeColor.NamespacePart:		return TextTokenType.NamespacePart;
-			case TypeColor.Type:				return TextTokenType.Type;
-			case TypeColor.Comment:				return TextTokenType.Comment;
-			case TypeColor.Method:				return TextTokenType.InstanceMethod;
-			case TypeColor.TypeKeyword:			return TextTokenType.Keyword;
-			case TypeColor.TypeGenericParameter:return TextTokenType.TypeGenericParameter;
-			case TypeColor.MethodGenericParameter:return TextTokenType.MethodGenericParameter;
-			case TypeColor.Keyword:				return TextTokenType.Keyword;
-			case TypeColor.Parameter:			return TextTokenType.Parameter;
-			case TypeColor.String:				return TextTokenType.String;
-			case TypeColor.Char:				return TextTokenType.Char;
-			case TypeColor.EnumField:			return TextTokenType.EnumField;
-			case TypeColor.TypeStringBrace:		return TextTokenType.Error;
-			case TypeColor.ToStringBrace:		return TextTokenType.ToStringEval;
-			case TypeColor.ToStringResult:		return TextTokenType.ToStringEval;
+			case TypeColor.Unknown:				return TextTokenKind.Text;
+			case TypeColor.Space:				return TextTokenKind.Text;
+			case TypeColor.IPType:				return TextTokenKind.Text;
+			case TypeColor.Operator:			return TextTokenKind.Operator;
+			case TypeColor.NativeFrame:			return TextTokenKind.Text;
+			case TypeColor.InternalFrame:		return TextTokenKind.Text;
+			case TypeColor.UnknownFrame:		return TextTokenKind.Text;
+			case TypeColor.Number:				return TextTokenKind.Number;
+			case TypeColor.Error:				return TextTokenKind.Error;
+			case TypeColor.Module:				return TextTokenKind.Module;
+			case TypeColor.Token:				return TextTokenKind.Number;
+			case TypeColor.NamespacePart:		return TextTokenKind.NamespacePart;
+			case TypeColor.Type:				return TextTokenKind.Type;
+			case TypeColor.Comment:				return TextTokenKind.Comment;
+			case TypeColor.Method:				return TextTokenKind.InstanceMethod;
+			case TypeColor.TypeKeyword:			return TextTokenKind.Keyword;
+			case TypeColor.TypeGenericParameter:return TextTokenKind.TypeGenericParameter;
+			case TypeColor.MethodGenericParameter:return TextTokenKind.MethodGenericParameter;
+			case TypeColor.Keyword:				return TextTokenKind.Keyword;
+			case TypeColor.Parameter:			return TextTokenKind.Parameter;
+			case TypeColor.String:				return TextTokenKind.String;
+			case TypeColor.Char:				return TextTokenKind.Char;
+			case TypeColor.EnumField:			return TextTokenKind.EnumField;
+			case TypeColor.TypeStringBrace:		return TextTokenKind.Error;
+			case TypeColor.ToStringBrace:		return TextTokenKind.ToStringEval;
+			case TypeColor.ToStringResult:		return TextTokenKind.ToStringEval;
 			default:
 				Debug.Fail(string.Format("Unknown color: {0}", color));
-				return TextTokenType.Text;
+				return TextTokenKind.Text;
 			}
 		}
 	}

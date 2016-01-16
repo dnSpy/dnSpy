@@ -20,8 +20,7 @@
 using System;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class ILCodeBreakpoint : Breakpoint, IMarkedTextLine {
@@ -38,7 +37,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 
 			public override bool IsVisible(ITextEditorUIContext uiContext) {
-				TextLocation location, endLocation;
+				TextPosition location, endLocation;
 				var cm = uiContext.GetCodeMappings();
 				var mm = cm.TryGetMapping(SerializedDnToken);
 				if (mm == null)
@@ -110,7 +109,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			return myMarkedTextLine.GetLineNumber(uiContext);
 		}
 
-		public bool GetLocation(ITextEditorUIContext uiContext, out TextLocation location, out TextLocation endLocation) {
+		public bool GetLocation(ITextEditorUIContext uiContext, out TextPosition location, out TextPosition endLocation) {
 			return myMarkedTextLine.GetLocation(uiContext, out location, out endLocation);
 		}
 

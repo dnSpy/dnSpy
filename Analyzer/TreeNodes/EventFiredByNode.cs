@@ -26,8 +26,7 @@ using dnlib.DotNet.Emit;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class EventFiredByNode : SearchNode {
@@ -50,7 +49,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(dnSpy_Analyzer_Resources.RaisedByTreeNode, TextTokenType.Text);
+			output.Write(dnSpy_Analyzer_Resources.RaisedByTreeNode, TextTokenKind.Text);
 		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
@@ -83,7 +82,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					}
 					if (readBackingField && (code == Code.Callvirt || code == Code.Call)) {
 						IMethod mr = instr.Operand as IMethod;
-						if (mr != null && eventFiringMethod != null && mr.Name == eventFiringMethod.Name && DnlibExtensions.Resolve(mr) == eventFiringMethod) {
+						if (mr != null && eventFiringMethod != null && mr.Name == eventFiringMethod.Name && mr.ResolveMethodDef() == eventFiringMethod) {
 							foundInstr = instr;
 							break;
 						}

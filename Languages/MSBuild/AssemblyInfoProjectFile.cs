@@ -21,8 +21,8 @@ using System.IO;
 using System.Text;
 using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.Properties;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class AssemblyInfoProjectFile : ProjectFile {
@@ -40,20 +40,20 @@ namespace dnSpy.Languages.MSBuild {
 		readonly string filename;
 
 		readonly ModuleDef module;
-		readonly DecompilationOptions decompilationOptions;
+		readonly DecompilationContext decompilationContext;
 		readonly ILanguage language;
 
-		public AssemblyInfoProjectFile(ModuleDef module, string filename, DecompilationOptions decompilationOptions, ILanguage language) {
+		public AssemblyInfoProjectFile(ModuleDef module, string filename, DecompilationContext decompilationContext, ILanguage language) {
 			this.module = module;
 			this.filename = filename;
-			this.decompilationOptions = decompilationOptions;
+			this.decompilationContext = decompilationContext;
 			this.language = language;
 		}
 
 		public override void Create(DecompileContext ctx) {
 			using (var writer = new StreamWriter(Filename, false, Encoding.UTF8)) {
 				var output = new PlainTextOutput(writer);
-				language.Decompile(DecompilationType.AssemblyInfo, new DecompileAssemblyInfo(module, output, decompilationOptions));
+				language.Decompile(DecompilationType.AssemblyInfo, new DecompileAssemblyInfo(module, output, decompilationContext));
 			}
 		}
 	}

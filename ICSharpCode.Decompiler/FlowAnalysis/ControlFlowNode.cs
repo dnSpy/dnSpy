@@ -21,12 +21,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-
-using ICSharpCode.Decompiler.Disassembler;
 using dnlib.DotNet.Emit;
+using dnSpy.Decompiler.Shared;
 
-namespace ICSharpCode.Decompiler.FlowAnalysis
-{
+namespace ICSharpCode.Decompiler.FlowAnalysis {
 	/// <summary>
 	/// Type of the control flow node
 	/// </summary>

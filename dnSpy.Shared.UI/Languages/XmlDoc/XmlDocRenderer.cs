@@ -20,13 +20,13 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Shared.UI.Languages.XmlDoc {
 	public interface IXmlDocOutput {
 		void WriteNewLine();
 		void WriteSpace();
-		void Write(string s, TextTokenType tokenType);
+		void Write(string s, TextTokenKind tokenKind);
 	}
 
 	/// <summary>
@@ -43,7 +43,7 @@ namespace dnSpy.Shared.UI.Languages.XmlDoc {
 			ret.Append(' ');
 		}
 
-		void IXmlDocOutput.Write(string s, TextTokenType tokenType) {
+		void IXmlDocOutput.Write(string s, TextTokenKind tokenKind) {
 			ret.Append(s);
 		}
 
@@ -88,60 +88,60 @@ namespace dnSpy.Shared.UI.Languages.XmlDoc {
 						break;
 					case "example":
 						output.WriteNewLine();
-						output.Write("Example", TextTokenType.XmlDocToolTipExample);
-						output.Write(":", TextTokenType.XmlDocToolTipColon);
+						output.Write("Example", TextTokenKind.XmlDocToolTipExample);
+						output.Write(":", TextTokenKind.XmlDocToolTipColon);
 						output.WriteNewLine();
 						isNewLine = true;
 						break;
 					case "exception":
 						output.WriteNewLine();
-						output.Write(GetCref(xml["cref"]), TextTokenType.XmlDocToolTipExceptionCref);
-						output.Write(":", TextTokenType.XmlDocToolTipColon);
+						output.Write(GetCref(xml["cref"]), TextTokenKind.XmlDocToolTipExceptionCref);
+						output.Write(":", TextTokenKind.XmlDocToolTipColon);
 						output.WriteSpace();
 						isNewLine = false;
 						break;
 					case "returns":
 						output.WriteNewLine();
-						output.Write("Returns", TextTokenType.XmlDocToolTipReturns);
-						output.Write(":", TextTokenType.XmlDocToolTipColon);
+						output.Write("Returns", TextTokenKind.XmlDocToolTipReturns);
+						output.Write(":", TextTokenKind.XmlDocToolTipColon);
 						output.WriteSpace();
 						isNewLine = false;
 						break;
 					case "see":
-						output.Write(GetCref(xml["cref"]), TextTokenType.XmlDocToolTipSeeCref);
-						output.Write((xml["langword"] ?? string.Empty).Trim(), TextTokenType.XmlDocToolTipSeeLangword);
+						output.Write(GetCref(xml["cref"]), TextTokenKind.XmlDocToolTipSeeCref);
+						output.Write((xml["langword"] ?? string.Empty).Trim(), TextTokenKind.XmlDocToolTipSeeLangword);
 						isNewLine = false;
 						break;
 					case "seealso":
 						output.WriteNewLine();
-						output.Write("See also", TextTokenType.XmlDocToolTipSeeAlso);
-						output.Write(":", TextTokenType.XmlDocToolTipColon);
+						output.Write("See also", TextTokenKind.XmlDocToolTipSeeAlso);
+						output.Write(":", TextTokenKind.XmlDocToolTipColon);
 						output.WriteSpace();
-						output.Write(GetCref(xml["cref"]), TextTokenType.XmlDocToolTipSeeAlsoCref);
+						output.Write(GetCref(xml["cref"]), TextTokenKind.XmlDocToolTipSeeAlsoCref);
 						isNewLine = false;
 						break;
 					case "paramref":
-						output.Write((xml["name"] ?? string.Empty).Trim(), TextTokenType.XmlDocToolTipParamRefName);
+						output.Write((xml["name"] ?? string.Empty).Trim(), TextTokenKind.XmlDocToolTipParamRefName);
 						isNewLine = false;
 						break;
 					case "param":
 						output.WriteNewLine();
-						output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), TextTokenType.XmlDocToolTipParamName);
-						output.Write(":", TextTokenType.XmlDocToolTipColon);
+						output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), TextTokenKind.XmlDocToolTipParamName);
+						output.Write(":", TextTokenKind.XmlDocToolTipColon);
 						output.WriteSpace();
 						isNewLine = false;
 						break;
 					case "typeparam":
 						output.WriteNewLine();
-						output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), TextTokenType.XmlDocToolTipTypeParamName);
-						output.Write(":", TextTokenType.XmlDocToolTipColon);
+						output.Write(whitespace.Replace((xml["name"] ?? string.Empty).Trim(), " "), TextTokenKind.XmlDocToolTipTypeParamName);
+						output.Write(":", TextTokenKind.XmlDocToolTipColon);
 						output.WriteSpace();
 						isNewLine = false;
 						break;
 					case "value":
 						output.WriteNewLine();
-						output.Write("Value", TextTokenType.XmlDocToolTipValue);
-						output.Write(":", TextTokenType.XmlDocToolTipColon);
+						output.Write("Value", TextTokenKind.XmlDocToolTipValue);
+						output.Write(":", TextTokenKind.XmlDocToolTipColon);
 						output.WriteNewLine();
 						isNewLine = true;
 						break;
@@ -158,7 +158,7 @@ namespace dnSpy.Shared.UI.Languages.XmlDoc {
 					var s = whitespace.Replace(xml.Value, " ");
 					if (isNewLine)
 						s = s.TrimStart();
-					output.Write(s, lastElemName == "summary" ? TextTokenType.XmlDocSummary : TextTokenType.XmlDocToolTipText);
+					output.Write(s, lastElemName == "summary" ? TextTokenKind.XmlDocSummary : TextTokenKind.XmlDocToolTipText);
 					isNewLine = false;
 				}
 			}

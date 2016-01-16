@@ -55,7 +55,7 @@ namespace dnSpy.Files.Tabs {
 			}
 
 			for (int i = 0; i < nodes.Length; i++) {
-				decompileNodeContext.DecompilationOptions.CancellationToken.ThrowIfCancellationRequested();
+				decompileNodeContext.DecompilationContext.CancellationToken.ThrowIfCancellationRequested();
 				if (i > 0)
 					decompileNodeContext.Output.WriteLine();
 				DecompileNode(decompileNodeContext, nodes[i]);

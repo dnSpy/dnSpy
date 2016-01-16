@@ -19,7 +19,7 @@
 using dnlib.DotNet;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class PropertyAccessorNode : MethodNode {
@@ -32,7 +32,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			if (name != null)
-				output.Write(name, TextTokenType.Keyword);
+				output.Write(name, TextTokenKind.Keyword);
 			else
 				base.Write(output, language);
 		}

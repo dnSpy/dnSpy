@@ -20,16 +20,16 @@
 using System.Collections.Generic;
 using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class XamlTypeProjectFile : TypeProjectFile {
-		public XamlTypeProjectFile(TypeDef type, string filename, DecompilationOptions decompilationOptions, ILanguage language)
-			: base(type, filename, decompilationOptions, language) {
+		public XamlTypeProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language)
+			: base(type, filename, decompilationContext, language) {
 		}
 
 		protected override void Decompile(DecompileContext ctx, ITextOutput output) {
-			var opts = new DecompilePartialType(type, output, decompilationOptions);
+			var opts = new DecompilePartialType(type, output, decompilationContext);
 			foreach (var d in GetDefsToRemove())
 				opts.Definitions.Add(d);
 			opts.InterfacesToRemove.Add(new TypeRefUser(type.Module, "System.Windows.Markup", "IComponentConnector", new AssemblyNameInfo("WindowsBase, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35").ToAssemblyRef()));

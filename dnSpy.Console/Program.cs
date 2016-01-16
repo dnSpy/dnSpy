@@ -21,6 +21,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -28,9 +29,10 @@ using System.Reflection;
 using System.Security;
 using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.MSBuild;
+using dnSpy.Shared.UI.MVVM;
 using dnSpy_Console.Properties;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy_Console {
 	[Serializable]
@@ -62,15 +64,9 @@ namespace dnSpy_Console {
 		bool useGac = true;
 		bool addCorlibRef = true;
 		bool createSlnFile = true;
-		bool dontMaskErr = false;
 		bool unpackResources = true;
 		bool createResX = true;
 		bool decompileBaml = true;
-		bool xmlDocComments = true;
-		bool ilComments = false;
-		bool ilBytes = true;
-		bool tokenComments = true;
-		bool sortMembers = true;
 		int numThreads;
 		int mdToken;
 		string typeName;
@@ -82,10 +78,11 @@ namespace dnSpy_Console {
 		readonly List<string> userGacPaths;
 		readonly List<string> gacFiles;
 		string language = LanguageConstants.LANGUAGE_CSHARP.ToString();
-		readonly DecompilationOptions decompilationOptions;
+		readonly DecompilationContext decompilationContext;
 		readonly ModuleContext moduleContext;
 		readonly AssemblyResolver assemblyResolver;
 		readonly IBamlDecompiler bamlDecompiler;
+		readonly HashSet<string> reservedOptions;
 
 		static readonly char PATHS_SEP = Path.PathSeparator;
 
@@ -94,12 +91,13 @@ namespace dnSpy_Console {
 			this.asmPaths = new List<string>();
 			this.userGacPaths = new List<string>();
 			this.gacFiles = new List<string>();
-			this.decompilationOptions = new DecompilationOptions();
+			this.decompilationContext = new DecompilationContext();
 			this.moduleContext = ModuleDef.CreateModuleContext(true);
 			this.assemblyResolver = (AssemblyResolver)moduleContext.AssemblyResolver;
 			this.assemblyResolver.EnableTypeDefCache = true;
 			this.bamlDecompiler = TryLoadBamlDecompiler();
 			this.decompileBaml = bamlDecompiler != null;
+			this.reservedOptions = GetReservedOptions();
 
 			var langs = new List<ILanguage>();
 			langs.AddRange(GetAllLanguages());
@@ -160,6 +158,7 @@ namespace dnSpy_Console {
 			}
 			catch (ErrorException ex) {
 				PrintHelp();
+				Console.WriteLine();
 				Console.WriteLine(dnSpy_Console_Resources.Error1, ex.Message);
 				return 1;
 			}
@@ -173,10 +172,52 @@ namespace dnSpy_Console {
 		void PrintHelp() {
 			var progName = GetProgramBaseName();
 			Console.WriteLine(dnSpy_Console_Resources.Usage, progName, PATHS_SEP);
+			Console.WriteLine();
 			Console.WriteLine(dnSpy_Console_Resources.Languages);
 			foreach (var lang in AllLanguages)
 				Console.WriteLine("  {0} ({1})", lang.UniqueNameUI, lang.UniqueGuid.ToString("B"));
+
+			var langLists = GetLanguageOptions().Where(a => a[0].Settings.Options.Any()).ToArray();
+			if (langLists.Length > 0) {
+				Console.WriteLine();
+				Console.WriteLine(dnSpy_Console_Resources.LanguageOptions);
+				Console.WriteLine(dnSpy_Console_Resources.LanguageOptionsDesc);
+				foreach (var langList in langLists) {
+					Console.WriteLine();
+					foreach (var lang in langList)
+						Console.WriteLine("  {0} ({1})", lang.UniqueNameUI, lang.UniqueGuid.ToString("B"));
+					foreach (var opt in langList[0].Settings.Options)
+						Console.WriteLine("    {0}\t({1} = {2}) {3}", GetOptionName(opt), opt.Type.Name, opt.Value, opt.Description);
+				}
+			}
+			Console.WriteLine();
 			Console.WriteLine(dnSpy_Console_Resources.Examples, progName);
+		}
+
+		string GetOptionName(IDecompilerOption opt, string extraPrefix = null) {
+			var prefix = "--" + extraPrefix;
+			var o = prefix + FixInvalidSwitchChars((opt.Name != null ? opt.Name : opt.Guid.ToString()));
+			if (reservedOptions.Contains(o))
+				o = prefix + FixInvalidSwitchChars(opt.Guid.ToString());
+			return o;
+		}
+
+		static string FixInvalidSwitchChars(string s) {
+			return s.Replace(' ', '-');
+		}
+
+		List<List<ILanguage>> GetLanguageOptions() {
+			var list = new List<List<ILanguage>>();
+			var dict = new Dictionary<object, List<ILanguage>>();
+			foreach (var lang in AllLanguages) {
+				List<ILanguage> opts;
+				if (!dict.TryGetValue(lang.Settings, out opts)) {
+					dict.Add(lang.Settings, opts = new List<ILanguage>());
+					list.Add(opts);
+				}
+				opts.Add(lang);
+			}
+			return list;
 		}
 
 		void Dump(Exception ex) {
@@ -199,16 +240,59 @@ namespace dnSpy_Console {
 			return name.Substring(index + 1);
 		}
 
+		const string BOOLEAN_NO_PREFIX = "no-";
+		const string BOOLEAN_DONT_PREFIX = "dont-";
+		HashSet<string> GetReservedOptions() {
+			var hash = new HashSet<string>(StringComparer.Ordinal);
+			foreach (var a in ourOptions) {
+				hash.Add("--" + a);
+				hash.Add("--" + BOOLEAN_NO_PREFIX + a);
+				hash.Add("--" + BOOLEAN_DONT_PREFIX + a);
+			}
+			return hash;
+		}
+		static readonly string[] ourOptions = new string[] {
+			// Don't include 'no-' and 'dont-'
+			"recursive",
+			"output-dir",
+			"lang",
+			"asm-path",
+			"user-gac",
+			"gac",
+			"stdlib",
+			"sln",
+			"sln-name",
+			"threads",
+			"vs",
+			"resources",
+			"resx",
+			"baml",
+			"type",
+			"md",
+			"gac-file",
+		};
+
 		void ParseCommandLine(string[] args) {
 			if (args.Length == 0)
 				throw new ErrorException(dnSpy_Console_Resources.MissingOptions);
 
 			bool canParseCommands = true;
+			ILanguage lang = null;
+			Dictionary<string, Tuple<IDecompilerOption, Action<string>>> langDict = null;
 			for (int i = 0; i < args.Length; i++) {
+				if (lang == null) {
+					lang = GetLanguage();
+					langDict = CreateLanguageOptionsDictionary(lang);
+				}
 				var arg = args[i];
 				var next = i + 1 < args.Length ? args[i + 1] : null;
 				if (arg.Length == 0)
 					continue;
+
+				// **********************************************************************
+				// If you add more '--' options here, also update 'string[] ourOptions'
+				// **********************************************************************
+
 				if (canParseCommands && arg[0] == '-') {
 					switch (arg.Remove(0, 1)) {
 					case "":
@@ -236,6 +320,8 @@ namespace dnSpy_Console {
 						i++;
 						if (GetLanguage() == null)
 							throw new ErrorException(string.Format(dnSpy_Console_Resources.LanguageDoesNotExist, language));
+						lang = null;
+						langDict = null;
 						break;
 
 					case "-asm-path":
@@ -271,10 +357,6 @@ namespace dnSpy_Console {
 						i++;
 						if (Path.IsPathRooted(slnName))
 							throw new ErrorException(string.Format(dnSpy_Console_Resources.InvalidSolutionName, slnName));
-						break;
-
-					case "-dont-mask-merr":
-						dontMaskErr = true;
 						break;
 
 					case "-threads":
@@ -343,40 +425,18 @@ namespace dnSpy_Console {
 						gacFiles.Add(next);
 						break;
 
-					case "-no-xmldoc":
-						xmlDocComments = false;
-						break;
-
-					case "-il-comments":
-						ilComments = true;
-						break;
-
-					case "-no-il-bytes":
-						ilBytes = false;
-						break;
-
-					case "-no-tokens":
-						tokenComments = false;
-						break;
-
-					case "-no-sort":
-						sortMembers = false;
-						break;
-
-					case "-order":
-						if (next == null)
-							throw new ErrorException(dnSpy_Console_Resources.MissingOrderArg);
-						i++;
-						if (next.Length != 5)
-							throw new ErrorException(dnSpy_Console_Resources.InvalidOrderArg);
-						decompilationOptions.DecompilerSettings.DecompilationObject0 = GetDecompilationObject(next[0]);
-						decompilationOptions.DecompilerSettings.DecompilationObject1 = GetDecompilationObject(next[1]);
-						decompilationOptions.DecompilerSettings.DecompilationObject2 = GetDecompilationObject(next[2]);
-						decompilationOptions.DecompilerSettings.DecompilationObject3 = GetDecompilationObject(next[3]);
-						decompilationOptions.DecompilerSettings.DecompilationObject4 = GetDecompilationObject(next[4]);
-						break;
-
 					default:
+						Tuple<IDecompilerOption, Action<string>> tuple;
+						if (langDict.TryGetValue(arg, out tuple)) {
+							bool hasArg = tuple.Item1.Type != typeof(bool);
+							if (hasArg && next == null)
+								throw new ErrorException(dnSpy_Console_Resources.MissingOptionArgument);
+							if (hasArg)
+								i++;
+							tuple.Item2(next);
+							break;
+						}
+
 						throw new ErrorException(string.Format(dnSpy_Console_Resources.InvalidOption, arg));
 					}
 				}
@@ -385,15 +445,40 @@ namespace dnSpy_Console {
 			}
 		}
 
-		static DecompilationObject GetDecompilationObject(char c) {
-			switch (c) {
-			case 't': return DecompilationObject.NestedTypes;
-			case 'f': return DecompilationObject.Fields;
-			case 'e': return DecompilationObject.Events;
-			case 'p': return DecompilationObject.Properties;
-			case 'm': return DecompilationObject.Methods;
-			default: throw new ErrorException(dnSpy_Console_Resources.InvalidOrderArg);
+		static int ParseInt32(string s) {
+			string error;
+			var v = NumberVMUtils.ParseInt32(s, int.MinValue, int.MaxValue, out error);
+			if (!string.IsNullOrEmpty(error))
+				throw new ErrorException(error);
+			return v;
+		}
+
+		static string ParseString(string s) {
+			return s;
+		}
+
+		Dictionary<string, Tuple<IDecompilerOption, Action<string>>> CreateLanguageOptionsDictionary(ILanguage language) {
+			var dict = new Dictionary<string, Tuple<IDecompilerOption, Action<string>>>();
+
+			if (language == null)
+				return dict;
+
+			foreach (var tmp in language.Settings.Options) {
+				var opt = tmp;
+				if (opt.Type == typeof(bool)) {
+					dict[GetOptionName(opt)] = Tuple.Create(opt, new Action<string>(a => opt.Value = true));
+					dict[GetOptionName(opt, BOOLEAN_NO_PREFIX)] = Tuple.Create(opt, new Action<string>(a => opt.Value = false));
+					dict[GetOptionName(opt, BOOLEAN_DONT_PREFIX)] = Tuple.Create(opt, new Action<string>(a => opt.Value = false));
+				}
+				else if (opt.Type == typeof(int))
+					dict[GetOptionName(opt)] = Tuple.Create(opt, new Action<string>(a => opt.Value = ParseInt32(a)));
+				else if (opt.Type == typeof(string))
+					dict[GetOptionName(opt)] = Tuple.Create(opt, new Action<string>(a => opt.Value = ParseString(a)));
+				else
+					Debug.Fail(string.Format("Unsupported type: {0}", opt.Type));
 			}
+
+			return dict;
 		}
 
 		void AddSearchPath(string dir) {
@@ -410,12 +495,6 @@ namespace dnSpy_Console {
 			foreach (var dir in userGacPaths)
 				AddSearchPath(dir);
 			assemblyResolver.UseGAC = useGac;
-			decompilationOptions.DontShowCreateMethodBodyExceptions = dontMaskErr;
-			decompilationOptions.DecompilerSettings.ShowXmlDocumentation = xmlDocComments;
-			decompilationOptions.DecompilerSettings.ShowILComments = ilComments;
-			decompilationOptions.DecompilerSettings.ShowILBytes = ilBytes;
-			decompilationOptions.DecompilerSettings.ShowTokenAndRvaComments = tokenComments;
-			decompilationOptions.DecompilerSettings.SortMembers = sortMembers;
 
 			var files = new List<ProjectModuleOptions>(GetDotNetFiles());
 			if (mdToken != 0 || typeName != null) {
@@ -440,15 +519,15 @@ namespace dnSpy_Console {
 
 				var lang = GetLanguage();
 				if (member is MethodDef)
-					lang.Decompile((MethodDef)member, output, decompilationOptions);
+					lang.Decompile((MethodDef)member, output, decompilationContext);
 				else if (member is FieldDef)
-					lang.Decompile((FieldDef)member, output, decompilationOptions);
+					lang.Decompile((FieldDef)member, output, decompilationContext);
 				else if (member is PropertyDef)
-					lang.Decompile((PropertyDef)member, output, decompilationOptions);
+					lang.Decompile((PropertyDef)member, output, decompilationContext);
 				else if (member is EventDef)
-					lang.Decompile((EventDef)member, output, decompilationOptions);
+					lang.Decompile((EventDef)member, output, decompilationContext);
 				else if (member is TypeDef)
-					lang.Decompile((TypeDef)member, output, decompilationOptions);
+					lang.Decompile((TypeDef)member, output, decompilationContext);
 				else
 					throw new ErrorException(dnSpy_Console_Resources.InvalidMemberToDecompile);
 			}
@@ -458,7 +537,7 @@ namespace dnSpy_Console {
 				if (GetLanguage().ProjectFileExtension == null)
 					throw new ErrorException(string.Format(dnSpy_Console_Resources.LanguageXDoesNotSupportProjects, GetLanguage().UniqueNameUI));
 
-				var options = new ProjectCreatorOptions(outputDir, decompilationOptions.CancellationToken);
+				var options = new ProjectCreatorOptions(outputDir, decompilationContext.CancellationToken);
 				options.Logger = this;
 				options.ProjectVersion = projectVersion;
 				options.NumberOfThreads = numThreads;
@@ -639,7 +718,7 @@ namespace dnSpy_Console {
 			mod.EnableTypeDefFindCache = true;
 			moduleContext.AssemblyResolver.AddToCache(mod);
 			AddSearchPath(Path.GetDirectoryName(mod.Location));
-			var proj = new ProjectModuleOptions(mod, GetLanguage(), decompilationOptions);
+			var proj = new ProjectModuleOptions(mod, GetLanguage(), decompilationContext);
 			proj.DontReferenceStdLib = !addCorlibRef;
 			proj.UnpackResources = unpackResources;
 			proj.CreateResX = createResX;

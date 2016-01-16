@@ -27,9 +27,8 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
 
 namespace dnSpy.Debugger.CallStack {
 	sealed class StackFramesUpdatedEventArgs : EventArgs {
@@ -276,7 +275,7 @@ namespace dnSpy.Debugger.CallStack {
 					var key = new SerializedDnToken(serAsm.Value, token);
 					uint offset = frame.GetILOffset(moduleLoader.Value);
 					MethodDef methodDef;
-					TextLocation location, endLocation;
+					TextPosition location, endLocation;
 					var mm = cm.TryGetMapping(key);
 					if (mm != null && mm.GetInstructionByTokenAndOffset(offset, out methodDef, out location, out endLocation)) {
 						var rs = new StackFrameLine(type, uiContext, key, offset);

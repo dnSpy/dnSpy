@@ -22,7 +22,7 @@ using System.IO;
 using System.Windows;
 using System.Xml.Linq;
 using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Languages.XmlDoc;
 
@@ -42,16 +42,16 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 			return uiSyntaxHighlighter.CreateResult(false, false);
 		}
 
-		public void Write(string s, TextTokenType tokenType) {
-			uiSyntaxHighlighter.Output.Write(s, tokenType);
+		public void Write(string s, TextTokenKind tokenKind) {
+			uiSyntaxHighlighter.Output.Write(s, tokenKind);
 		}
 
 		bool needsNewLine = false;
 
-		void IXmlDocOutput.Write(string s, TextTokenType tokenType) {
+		void IXmlDocOutput.Write(string s, TextTokenKind tokenKind) {
 			if (needsNewLine)
 				((IXmlDocOutput)this).WriteNewLine();
-			uiSyntaxHighlighter.Output.Write(s, tokenType);
+			uiSyntaxHighlighter.Output.Write(s, tokenKind);
 		}
 
 		void IXmlDocOutput.WriteNewLine() {
@@ -60,7 +60,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		}
 
 		void IXmlDocOutput.WriteSpace() {
-			((IXmlDocOutput)this).Write(" ", TextTokenType.Text);
+			((IXmlDocOutput)this).Write(" ", TextTokenKind.Text);
 		}
 
 		void InitializeNeedsNewLine() {
@@ -109,22 +109,22 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		static void WriteXmlDocParameter(IXmlDocOutput output, XElement xml) {
 			foreach (var elem in xml.DescendantNodes()) {
 				if (elem is XText)
-					output.Write(XmlDocRenderer.WhitespaceRegex.Replace(((XText)elem).Value, " "), TextTokenType.XmlDocSummary);
+					output.Write(XmlDocRenderer.WhitespaceRegex.Replace(((XText)elem).Value, " "), TextTokenKind.XmlDocSummary);
 				else if (elem is XElement) {
 					var xelem = (XElement)elem;
 					switch (xelem.Name.ToString().ToUpperInvariant()) {
 					case "SEE":
 						var cref = xelem.Attribute("cref");
 						if (cref != null)
-							output.Write(XmlDocRenderer.GetCref((string)cref), TextTokenType.XmlDocToolTipSeeCref);
+							output.Write(XmlDocRenderer.GetCref((string)cref), TextTokenKind.XmlDocToolTipSeeCref);
 						var langword = xelem.Attribute("langword");
 						if (langword != null)
-							output.Write(((string)langword).Trim(), TextTokenType.XmlDocToolTipSeeLangword);
+							output.Write(((string)langword).Trim(), TextTokenKind.XmlDocToolTipSeeLangword);
 						break;
 					case "PARAMREF":
 						var nameAttr = xml.Attribute("name");
 						if (nameAttr != null)
-							output.Write(((string)nameAttr).Trim(), TextTokenType.XmlDocToolTipParamRefName);
+							output.Write(((string)nameAttr).Trim(), TextTokenKind.XmlDocToolTipParamRefName);
 						break;
 					case "BR":
 					case "PARA":
@@ -135,7 +135,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 					}
 				}
 				else
-					output.Write(elem.ToString(), TextTokenType.XmlDocSummary);
+					output.Write(elem.ToString(), TextTokenKind.XmlDocSummary);
 			}
 		}
 	}

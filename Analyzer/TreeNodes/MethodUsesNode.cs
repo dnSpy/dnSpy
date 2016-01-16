@@ -25,8 +25,7 @@ using dnlib.DotNet.Emit;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	/// <summary>
@@ -43,7 +42,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(dnSpy_Analyzer_Resources.UsesTreeNode, TextTokenType.Text);
+			output.Write(dnSpy_Analyzer_Resources.UsesTreeNode, TextTokenKind.Text);
 		}
 
 		struct DefRef<T> where T : IDnlibDef {
@@ -68,7 +67,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
 				IMethod mr = instr.Operand as IMethod;
 				if (mr != null && !mr.IsField) {
-					MethodDef def = DnlibExtensions.Resolve(mr);
+					MethodDef def = mr.ResolveMethodDef();
 					if (def != null)
 						yield return new DefRef<MethodDef>(def, new SourceRef(analyzedMethod, instr.Offset, instr.Operand as IMDTokenProvider));
 				}
@@ -79,7 +78,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			foreach (Instruction instr in analyzedMethod.Body.Instructions) {
 				IField fr = instr.Operand as IField;
 				if (fr != null && !fr.IsMethod) {
-					FieldDef def = DnlibExtensions.Resolve(fr);
+					FieldDef def = fr.ResolveFieldDef();
 					if (def != null)
 						yield return new DefRef<FieldDef>(def, new SourceRef(analyzedMethod, instr.Offset, instr.Operand as IMDTokenProvider));
 				}

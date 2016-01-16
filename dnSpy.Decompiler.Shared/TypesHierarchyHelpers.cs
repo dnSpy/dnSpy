@@ -16,15 +16,11 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using dnlib.DotNet;
 
-namespace ICSharpCode.Decompiler.Ast
-{
+namespace dnSpy.Decompiler.Shared {
 	public static class TypesHierarchyHelpers
 	{
 		public static bool IsBaseType(TypeDef baseType, TypeDef derivedType, bool resolveTypeArguments)
@@ -34,7 +30,7 @@ namespace ICSharpCode.Decompiler.Ast
 			if (resolveTypeArguments)
 				return BaseTypes(derivedType).Any(t => t.Resolve() == baseType);
 			else {
-				var comparableBaseType = baseType.Resolve();
+				var comparableBaseType = baseType.ResolveTypeDef();
 				if (comparableBaseType == null)
 					return false;
 				while (derivedType.BaseType != null) {
@@ -66,10 +62,10 @@ namespace ICSharpCode.Decompiler.Ast
 			if (parentMethod.Name != childMethod.Name)
 				return false;
 
-			var parentParams = parentMethod.MethodSig.GetParameters();
-			var childParams = childMethod.MethodSig.GetParameters();
-			if (parentParams.Count > 0 || childParams.Count > 0)
-				if (parentParams.Count == 0 || childParams.Count == 0 || parentParams.Count != childParams.Count)
+			var parentParams = parentMethod.MethodSig.GetParamCount();
+			var childParams = childMethod.MethodSig.GetParamCount();
+			if (parentParams > 0 || childParams > 0)
+				if (parentParams == 0 || childParams == 0 || parentParams != childParams)
 					return false;
 
 			return FindBaseMethods(childMethod).Any(m => m == parentMethod);// || (parentMethod.HasGenericParameters && m.);
@@ -92,10 +88,10 @@ namespace ICSharpCode.Decompiler.Ast
 			if (parentProperty.Name != childProperty.Name)
 				return false;
 
-			var parentParams = parentProperty.PropertySig.GetParameters();
-			var childParams = childProperty.PropertySig.GetParameters();
-			if (parentParams.Count > 0 || childParams.Count > 0)
-				if (parentParams.Count == 0 || childParams.Count == 0 || parentParams.Count != childParams.Count)
+			var parentParams = parentProperty.PropertySig.GetParamCount();
+			var childParams = childProperty.PropertySig.GetParamCount();
+			if (parentParams > 0 || childParams > 0)
+				if (parentParams == 0 || childParams == 0 || parentParams != childParams)
 					return false;
 
 			return FindBaseProperties(childProperty).Any(m => m == parentProperty);

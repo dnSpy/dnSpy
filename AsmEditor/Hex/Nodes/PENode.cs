@@ -31,7 +31,7 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Files.TreeView;
 using dnSpy.Shared.UI.HexEditor;
 
@@ -157,7 +157,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_PE, TextTokenType.Text);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_PE, TextTokenKind.Text);
 		}
 
 		public override Guid Guid {

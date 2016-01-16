@@ -30,8 +30,8 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Search;
 using dnSpy.Images;
-using dnSpy.NRefactory;
 using dnSpy.Properties;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Search {
 	[Serializable]
@@ -113,7 +113,7 @@ namespace dnSpy.Search {
 			AppCulture.InitializeCulture();
 			var files = (IDnSpyFileNode[])o;
 			try {
-				var searchMsg = SearchResult.CreateMessage(filterSearcherOptions.Context, dnSpy_Resources.Searching, TextTokenType.Text, true);
+				var searchMsg = SearchResult.CreateMessage(filterSearcherOptions.Context, dnSpy_Resources.Searching, TextTokenKind.Text, true);
 				SearchingResult = searchMsg;
 				AddSearchResultNoCheck(searchMsg);
 				var searcher = new FilterSearcher(filterSearcherOptions);
@@ -136,7 +136,7 @@ namespace dnSpy.Search {
 		void AddSearchResult(SearchResult result) {
 			cancellationTokenSource.Token.ThrowIfCancellationRequested();
 			if (totalResultsFound >= options.MaxResults) {
-				AddSearchResultNoCheck(SearchResult.CreateMessage(filterSearcherOptions.Context, string.Format(dnSpy_Resources.SearchAbortedMessage, options.MaxResults), TextTokenType.Error, true));
+				AddSearchResultNoCheck(SearchResult.CreateMessage(filterSearcherOptions.Context, string.Format(dnSpy_Resources.SearchAbortedMessage, options.MaxResults), TextTokenKind.Error, true));
 				throw new TooManyResultsException();
 			}
 			totalResultsFound++;

@@ -20,12 +20,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-
-using ICSharpCode.NRefactory.Utils;
 using dnlib.DotNet;
 
-namespace ICSharpCode.Decompiler.ILAst
-{
+namespace ICSharpCode.Decompiler.ILAst {
 	public partial class ILAstOptimizer
 	{
 		#region TypeConversionSimplifications
@@ -320,7 +317,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			// exprVar = stloc(v, ...))
 			ILVariable exprVar;
 			ILExpression initializer;
-			if (!(expr.Match(ILCode.Stloc, out exprVar, out initializer) && exprVar.IsGenerated))
+			if (!(expr.Match(ILCode.Stloc, out exprVar, out initializer) && exprVar.GeneratedByDecompiler))
 				return false;
 			ILExpression nextExpr = body.ElementAtOrDefault(pos + 1) as ILExpression;
 			if (nextExpr == null)
@@ -443,7 +440,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				ILVariable inputVar;
 				if (!expr.Arguments[i].Match(ILCode.Ldloc, out inputVar))
 					return false;
-				hasGeneratedVar |= inputVar.IsGenerated;
+				hasGeneratedVar |= inputVar.GeneratedByDecompiler;
 			}
 			// At least one of the variables must be generated; otherwise we just keep the expanded form.
 			// We do this because we want compound assignments to be represented in ILAst only when strictly necessary;
@@ -556,7 +553,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			// expr = postincrement(1, ldloca(i))
 			ILVariable exprVar;
 			ILExpression exprInit;
-			if (!(expr.Match(ILCode.Stloc, out exprVar, out exprInit) && exprVar.IsGenerated))
+			if (!(expr.Match(ILCode.Stloc, out exprVar, out exprInit) && exprVar.GeneratedByDecompiler))
 				return false;
 			
 			//The next expression
@@ -937,7 +934,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression varAssignment, ptrInitialization;
 			if (!(body[pos].Match(ILCode.Stloc, out var1, out varAssignment) && varAssignment.Match(ILCode.Stloc, out var2, out ptrInitialization)))
 				return false;
-			if (!(var1.IsGenerated && var2.IsGenerated))
+			if (!(var1.GeneratedByDecompiler && var2.GeneratedByDecompiler))
 				return false;
 			if (ptrInitialization.Code == ILCode.Conv_I || ptrInitialization.Code == ILCode.Conv_U)
 				ptrInitialization = ptrInitialization.Arguments[0];
@@ -1136,7 +1133,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILExpression init;
 			if (!expr.Match(ILCode.Stloc, out v, out init))
 				return false;
-			if (v.IsGenerated || v.IsParameter || v.IsPinned)
+			if (v.GeneratedByDecompiler || v.IsParameter || v.IsPinned)
 				return false;
 			if (v.Type == null || v.Type.FullName != "System.Linq.Expressions.ParameterExpression")
 				return false;

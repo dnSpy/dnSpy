@@ -23,10 +23,9 @@ using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.HexEditor;
 using dnSpy.Shared.UI.Highlighting;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
 	sealed class ImageSectionHeaderNode : HexNode {
@@ -70,13 +69,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_PE_Section, TextTokenType.Keyword);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_PE_Section, TextTokenKind.Keyword);
 			output.WriteSpace();
-			output.Write("#", TextTokenType.Operator);
-			output.Write(sectionNumber.ToString(), TextTokenType.Number);
-			output.Write(":", TextTokenType.Operator);
+			output.Write("#", TextTokenKind.Operator);
+			output.Write(sectionNumber.ToString(), TextTokenKind.Number);
+			output.Write(":", TextTokenKind.Operator);
 			output.WriteSpace();
-			output.Write(string.Format("{0}", imageSectionHeaderVM.NameVM.String), TextTokenType.Type);
+			output.Write(string.Format("{0}", imageSectionHeaderVM.NameVM.String), TextTokenKind.Type);
 		}
 	}
 }

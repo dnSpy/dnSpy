@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.CSharp.Analysis;
@@ -228,7 +228,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 					Type = (AstType)varDecl.Type.Clone(),
 					Variables = {
 						new VariableInitializer {
-							NameToken = Identifier.Create(variableName).WithAnnotation(TextTokenType.Local),
+							NameToken = Identifier.Create(variableName).WithAnnotation(TextTokenKind.Local),
 							Initializer = m1.Get<Expression>("initializer").Single().Detach()
 						}.CopyAnnotationsFrom(node.Expression)
 							.WithAnnotation(m1.Get<AstNode>("variable").Single().Annotation<ILVariable>())
@@ -346,7 +346,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 						new AssignmentExpression {
 							Left = new IdentifierExpression(Pattern.AnyString).WithName("itemVariable"),
 							Operator = AssignmentOperatorType.Assign,
-							Right = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Member("Current", TextTokenType.InstanceProperty)
+							Right = new IdentifierExpressionBackreference("enumeratorVariable").ToExpression().Member("Current", TextTokenKind.InstanceProperty)
 						}.WithName("getCurrent"),
 						new Repeat(new AnyNode("statement")).ToStatement()
 					}
@@ -427,10 +427,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 						new AssignmentExpression(
 							new IdentifierExpression(Pattern.AnyString).WithName("itemVar"),
 							new Choice {
-								new Backreference("enumerator").ToExpression().Member("Current", TextTokenType.InstanceProperty),
+								new Backreference("enumerator").ToExpression().Member("Current", TextTokenKind.InstanceProperty),
 								new CastExpression {
 									Type = new AnyNode("castType"),
-									Expression = new Backreference("enumerator").ToExpression().Member("Current", TextTokenType.InstanceProperty)
+									Expression = new Backreference("enumerator").ToExpression().Member("Current", TextTokenKind.InstanceProperty)
 								}
 							}
 						).WithName("getCurrent"),
@@ -620,14 +620,14 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				foreach (var varDecl in block.Statements.OfType<VariableDeclarationStatement>()) {
 					VariableInitializer v = varDecl.Variables.Single();
 					if (doLoop.Condition.DescendantsAndSelf.OfType<IdentifierExpression>().Any(i => i.Identifier == v.Name)) {
-						TextTokenType? tokenType = null;
+						TextTokenKind? tokenKind = null;
 						var ilv = v.Annotation<ILVariable>();
 						if (ilv != null)
-							tokenType = ilv.IsParameter ? TextTokenType.Parameter : TextTokenType.Local;
+							tokenKind = ilv.IsParameter ? TextTokenKind.Parameter : TextTokenKind.Local;
 						var locParam = v.Annotation<IVariable>();
-						if (tokenType == null && locParam != null)
-							tokenType = TextTokenHelper.GetTextTokenType(locParam);
-						AssignmentExpression assign = new AssignmentExpression(IdentifierExpression.Create(v.Name, tokenType ?? TextTokenType.Local), v.Initializer.Detach());
+						if (tokenKind == null && locParam != null)
+							tokenKind = TextTokenKindUtils.GetTextTokenType(locParam);
+						AssignmentExpression assign = new AssignmentExpression(IdentifierExpression.Create(v.Name, tokenKind ?? TextTokenKind.Local), v.Initializer.Detach());
 						// move annotations from v to assign:
 						assign.CopyAnnotationsFrom(v);
 						v.RemoveAnnotations<object>();
@@ -656,7 +656,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			TryBlock = new BlockStatement {
 				new OptionalNode(new VariableDeclarationStatement()).ToStatement(),
 				new TypePattern(typeof(System.Threading.Monitor)).ToType().Invoke2(
-					TextTokenType.StaticMethod,
+					TextTokenKind.StaticMethod,
 					"Enter", new AnyNode("enter"),
 					new DirectionExpression {
 						FieldDirection = FieldDirection.Ref,
@@ -668,7 +668,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				new IfElseStatement {
 					Condition = new Backreference("flag"),
 					TrueStatement = new BlockStatement {
-						new TypePattern(typeof(System.Threading.Monitor)).ToType().Invoke2(TextTokenType.StaticMethod, "Exit", new AnyNode("exit"))
+						new TypePattern(typeof(System.Threading.Monitor)).ToType().Invoke2(TextTokenKind.StaticMethod, "Exit", new AnyNode("exit"))
 					}
 				}
 			}};
@@ -947,7 +947,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				Body = new BlockStatement {
 					new AssignmentExpression {
 						Left = new Backreference("fieldReference"),
-						Right = IdentifierExpression.Create("value", TextTokenType.Keyword)
+						Right = IdentifierExpression.Create("value", TextTokenKind.Keyword)
 					}
 				}}};
 		
@@ -1022,13 +1022,13 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 							Operator = AssignmentOperatorType.Assign,
 							Right = new AnyNode("delegateCombine").ToExpression().Invoke(
 								new IdentifierExpressionBackreference("var2"),
-								IdentifierExpression.Create("value", TextTokenType.Keyword)
+								IdentifierExpression.Create("value", TextTokenKind.Keyword)
 							).CastTo(new Backreference("type"))
 						},
 						new AssignmentExpression {
 							Left = new IdentifierExpressionBackreference("var1"),
 							Right = new TypePattern(typeof(System.Threading.Interlocked)).ToType().Invoke(
-								TextTokenType.StaticMethod,
+								TextTokenKind.StaticMethod,
 								"CompareExchange",
 								new AstType[] { new Backreference("type") }, // type argument
 								new Expression[] { // arguments
@@ -1075,7 +1075,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			}
 			ed.ReturnType = ev.ReturnType.Detach();
 			ed.Modifiers = ev.Modifiers;
-			ed.Variables.Add(new VariableInitializer(TextTokenHelper.GetTextTokenType(ev.Annotation<EventDef>()), ev.Name));
+			ed.Variables.Add(new VariableInitializer(TextTokenKindUtils.GetTextTokenType(ev.Annotation<EventDef>()), ev.Name));
 			ed.CopyAnnotationsFrom(ev);
 
 			// Keep the token comments

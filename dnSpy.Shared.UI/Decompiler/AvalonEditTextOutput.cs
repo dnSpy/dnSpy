@@ -23,11 +23,10 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Rendering;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Shared.UI.Decompiler {
 	/// <summary>
@@ -135,9 +134,9 @@ namespace dnSpy.Shared.UI.Decompiler {
 			return b.ToString();
 		}
 
-		public ICSharpCode.NRefactory.TextLocation Location {
+		public TextPosition Location {
 			get {
-				return new ICSharpCode.NRefactory.TextLocation(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
+				return new TextPosition(lineNumber, b.Length - lastLineStart + 1 + (needsIndent ? indent : 0));
 			}
 		}
 
@@ -184,14 +183,14 @@ namespace dnSpy.Shared.UI.Decompiler {
 			if (needsIndent) {
 				needsIndent = false;
 				for (int i = 0; i < indent; i++) {
-					Append(TextTokenType.Text, "\t");
+					Append(TextTokenKind.Text, "\t");
 				}
 			}
 		}
 
-		public void Write(string text, TextTokenType tokenType) {
+		public void Write(string text, TextTokenKind tokenKind) {
 			WriteIndent();
-			Append(tokenType, text);
+			Append(tokenKind, text);
 		}
 
 		public void WriteLine() {
@@ -205,19 +204,19 @@ namespace dnSpy.Shared.UI.Decompiler {
 			}
 		}
 
-		public void WriteDefinition(string text, object definition, TextTokenType tokenType, bool isLocal) {
+		public void WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal) {
 			WriteIndent();
 			int start = this.TextLength;
-			Append(tokenType, text);
+			Append(tokenKind, text);
 			int end = this.TextLength;
 			this.DefinitionLookup.AddDefinition(definition, this.TextLength);
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = definition, IsLocal = isLocal, IsLocalTarget = true });
 		}
 
-		public void WriteReference(string text, object reference, TextTokenType tokenType, bool isLocal) {
+		public void WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal) {
 			WriteIndent();
 			int start = this.TextLength;
-			Append(tokenType, text);
+			Append(tokenKind, text);
 			int end = this.TextLength;
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = isLocal });
 		}
@@ -235,8 +234,8 @@ namespace dnSpy.Shared.UI.Decompiler {
 			DebuggerMemberMappings.Add(methodDebugSymbols);
 		}
 
-		void Append(TextTokenType tokenType, string s) {
-			tokens.Append(tokenType, s);
+		void Append(TextTokenKind tokenKind, string s) {
+			tokens.Append(tokenKind, s);
 			b.Append(s);
 			Debug.Assert(b.Length == tokens.Length);
 		}

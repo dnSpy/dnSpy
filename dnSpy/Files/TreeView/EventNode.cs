@@ -83,7 +83,7 @@ namespace dnSpy.Files.TreeView {
 			var res = filter.GetResult(this.EventDef);
 			if (res.FilterType != FilterType.Default)
 				return res.FilterType;
-			if (Context.Language.ShowMember(this.EventDef, Context.DecompilerSettings))
+			if (Context.Language.ShowMember(this.EventDef))
 				return FilterType.Visible;
 			return FilterType.Hide;
 		}

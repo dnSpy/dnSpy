@@ -21,12 +21,13 @@ using System.Collections.Generic;
 using System.IO;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
+using dnSpy.Shared.UI.Languages.XmlDoc;
 
-namespace dnSpy.Shared.UI.Languages.XmlDoc {
+namespace dnSpy.Languages.ILSpy.XmlDoc {
 	/// <summary>
 	/// Adds XML documentation for member definitions.
 	/// </summary>
-	public static class AddXmlDocTransform {
+	static class AddXmlDocTransform {
 		public static void Run(AstNode node) {
 			if (node is EntityDeclaration) {
 				IMemberRef mr = node.Annotation<IMemberRef>();

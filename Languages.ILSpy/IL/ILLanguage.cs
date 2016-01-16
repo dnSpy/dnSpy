@@ -25,22 +25,41 @@ using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
 using dnSpy.Languages.IL;
-using dnSpy.NRefactory;
 using dnSpy.Shared.UI.Languages.XmlDoc;
-using ICSharpCode.Decompiler;
 using ICSharpCode.Decompiler.Disassembler;
+using dnSpy.Decompiler.Shared;
+using dnSpy.Languages.ILSpy.XmlDoc;
+using dnSpy.Languages.ILSpy.Settings;
 
 namespace dnSpy.Languages.ILSpy.IL {
 	sealed class LanguageProvider : ILanguageProvider {
+		readonly LanguageSettingsManager languageSettingsManager;
+
+		// Keep the default ctor. It's used by dnSpy.Console.exe
+		public LanguageProvider()
+			: this(null) {
+		}
+
+		public LanguageProvider(LanguageSettingsManager languageSettingsManager) {
+			this.languageSettingsManager = languageSettingsManager ?? LanguageSettingsManager.__Instance_DONT_USE;
+		}
+
 		public IEnumerable<ILanguage> Languages {
-			get { yield return new ILLanguage(); }
+			get { yield return new ILLanguage(languageSettingsManager.ILLanguageDecompilerSettings); }
 		}
 	}
 
 	[Export(typeof(ILanguageCreator))]
 	sealed class MyLanguageCreator : ILanguageCreator {
+		readonly LanguageSettingsManager languageSettingsManager;
+
+		[ImportingConstructor]
+		MyLanguageCreator(LanguageSettingsManager languageSettingsManager) {
+			this.languageSettingsManager = languageSettingsManager;
+		}
+
 		public IEnumerable<ILanguage> Create() {
-			return new LanguageProvider().Languages;
+			return new LanguageProvider(languageSettingsManager).Languages;
 		}
 	}
 
@@ -54,11 +73,17 @@ namespace dnSpy.Languages.ILSpy.IL {
 	sealed class ILLanguage : Language {
 		readonly bool detectControlStructure;
 
-		public ILLanguage()
-			: this(true) {
+		public override IDecompilerSettings Settings {
+			get { return langSettings; }
+		}
+		readonly ILLanguageDecompilerSettings langSettings;
+
+		public ILLanguage(ILLanguageDecompilerSettings langSettings)
+			: this(langSettings, true) {
 		}
 
-		public ILLanguage(bool detectControlStructure) {
+		public ILLanguage(ILLanguageDecompilerSettings langSettings, bool detectControlStructure) {
+			this.langSettings = langSettings;
 			this.detectControlStructure = detectControlStructure;
 		}
 
@@ -86,20 +111,20 @@ namespace dnSpy.Languages.ILSpy.IL {
 			get { return ".il"; }
 		}
 
-		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationOptions options, IMemberDef member) {
-			return CreateReflectionDisassembler(output, options, member.Module);
+		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationContext ctx, IMemberDef member) {
+			return CreateReflectionDisassembler(output, ctx, member.Module);
 		}
 
-		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationOptions options, ModuleDef ownerModule) {
-			var disOpts = new DisassemblerOptions(options.CancellationToken, ownerModule);
-			if (options.DecompilerSettings.ShowILComments)
+		ReflectionDisassembler CreateReflectionDisassembler(ITextOutput output, DecompilationContext ctx, ModuleDef ownerModule) {
+			var disOpts = new DisassemblerOptions(ctx.CancellationToken, ownerModule);
+			if (langSettings.Settings.ShowILComments)
 				disOpts.GetOpCodeDocumentation = ILLanguageHelper.GetOpCodeDocumentation;
-			if (options.DecompilerSettings.ShowXmlDocumentation)
+			if (langSettings.Settings.ShowXmlDocumentation)
 				disOpts.GetXmlDocComments = GetXmlDocComments;
-			disOpts.CreateInstructionBytesReader = m => InstructionBytesReader.Create(m, options.IsBodyModified != null && options.IsBodyModified(m));
-			disOpts.ShowTokenAndRvaComments = options.DecompilerSettings.ShowTokenAndRvaComments;
-			disOpts.ShowILBytes = options.DecompilerSettings.ShowILBytes;
-			disOpts.SortMembers = options.DecompilerSettings.SortMembers;
+			disOpts.CreateInstructionBytesReader = m => InstructionBytesReader.Create(m, ctx.IsBodyModified != null && ctx.IsBodyModified(m));
+			disOpts.ShowTokenAndRvaComments = langSettings.Settings.ShowTokenAndRvaComments;
+			disOpts.ShowILBytes = langSettings.Settings.ShowILBytes;
+			disOpts.SortMembers = langSettings.Settings.SortMembers;
 			return new ReflectionDisassembler(output, detectControlStructure, disOpts);
 		}
 
@@ -117,18 +142,18 @@ namespace dnSpy.Languages.ILSpy.IL {
 				yield return line;
 		}
 
-		public override void Decompile(MethodDef method, ITextOutput output, DecompilationOptions options) {
-			var dis = CreateReflectionDisassembler(output, options, method);
+		public override void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) {
+			var dis = CreateReflectionDisassembler(output, ctx, method);
 			dis.DisassembleMethod(method);
 		}
 
-		public override void Decompile(FieldDef field, ITextOutput output, DecompilationOptions options) {
-			var dis = CreateReflectionDisassembler(output, options, field);
+		public override void Decompile(FieldDef field, ITextOutput output, DecompilationContext ctx) {
+			var dis = CreateReflectionDisassembler(output, ctx, field);
 			dis.DisassembleField(field);
 		}
 
-		public override void Decompile(PropertyDef property, ITextOutput output, DecompilationOptions options) {
-			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options, property);
+		public override void Decompile(PropertyDef property, ITextOutput output, DecompilationContext ctx) {
+			ReflectionDisassembler rd = CreateReflectionDisassembler(output, ctx, property);
 			rd.DisassembleProperty(property);
 			if (property.GetMethod != null) {
 				output.WriteLine();
@@ -144,8 +169,8 @@ namespace dnSpy.Languages.ILSpy.IL {
 			}
 		}
 
-		public override void Decompile(EventDef ev, ITextOutput output, DecompilationOptions options) {
-			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options, ev);
+		public override void Decompile(EventDef ev, ITextOutput output, DecompilationContext ctx) {
+			ReflectionDisassembler rd = CreateReflectionDisassembler(output, ctx, ev);
 			rd.DisassembleEvent(ev);
 			if (ev.AddMethod != null) {
 				output.WriteLine();
@@ -161,20 +186,20 @@ namespace dnSpy.Languages.ILSpy.IL {
 			}
 		}
 
-		public override void Decompile(TypeDef type, ITextOutput output, DecompilationOptions options) {
-			var dis = CreateReflectionDisassembler(output, options, type);
+		public override void Decompile(TypeDef type, ITextOutput output, DecompilationContext ctx) {
+			var dis = CreateReflectionDisassembler(output, ctx, type);
 			dis.DisassembleType(type);
 		}
 
-		public override void DecompileAssembly(IDnSpyFile file, ITextOutput output, DecompilationOptions options, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
+		public override void DecompileAssembly(IDnSpyFile file, ITextOutput output, DecompilationContext ctx, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
 			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
 			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
-			output.WriteLine("// " + file.Filename, TextTokenType.Comment);
+			output.WriteLine("// " + file.Filename, TextTokenKind.Comment);
 			if (decompileMod || decompileAsm)
 				PrintEntryPoint(file, output);
 			output.WriteLine();
 
-			ReflectionDisassembler rd = CreateReflectionDisassembler(output, options, file.ModuleDef);
+			ReflectionDisassembler rd = CreateReflectionDisassembler(output, ctx, file.ModuleDef);
 			bool decompileAll = false;
 			if (decompileAll)
 				rd.WriteAssemblyReferences(file.ModuleDef);
@@ -211,6 +236,14 @@ namespace dnSpy.Languages.ILSpy.IL {
 
 		bool ISimpleILPrinter.Write(ITextOutput output, IMemberRef member) {
 			return Write(output, member);
+		}
+
+		void ISimpleILPrinter.Write(ITextOutput output, MethodSig sig) {
+			output.Write(sig);
+		}
+
+		void ISimpleILPrinter.Write(ITextOutput output, TypeSig type) {
+			type.WriteTo(output);
 		}
 
 		public static bool Write(ITextOutput output, IMemberRef member) {

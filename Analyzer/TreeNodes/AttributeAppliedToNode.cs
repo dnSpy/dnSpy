@@ -26,9 +26,7 @@ using dnlib.Threading;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory.Utils;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class AttributeAppliedToNode : SearchNode {
@@ -97,7 +95,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(dnSpy_Analyzer_Resources.AppliedToTreeNode, TextTokenType.Text);
+			output.Write(dnSpy_Analyzer_Resources.AppliedToTreeNode, TextTokenKind.Text);
 		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
@@ -161,7 +159,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			bool searchRequired = (type.IsClass && usage.HasFlag(AttributeTargets.Class))
 				|| (type.IsEnum && usage.HasFlag(AttributeTargets.Enum))
 				|| (type.IsInterface && usage.HasFlag(AttributeTargets.Interface))
-				|| (DnlibExtensions.IsValueType(type) && usage.HasFlag(AttributeTargets.Struct));
+				|| (type.IsValueType && usage.HasFlag(AttributeTargets.Struct));
 			if (searchRequired) {
 				if (type.HasCustomAttributes) {
 					foreach (var attribute in type.CustomAttributes) {

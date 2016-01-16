@@ -18,55 +18,45 @@
 
 using System;
 using System.IO;
-using dnSpy.NRefactory;
-using ICSharpCode.NRefactory;
 
-namespace ICSharpCode.Decompiler
-{
-	public sealed class PlainTextOutput : ITextOutput
-	{
+namespace dnSpy.Decompiler.Shared {
+	public sealed class PlainTextOutput : ITextOutput {
 		readonly TextWriter writer;
 		int indent;
 		bool needsIndent;
-		
+
 		int line = 1;
 		int column = 1;
-		
-		public PlainTextOutput(TextWriter writer)
-		{
+
+		public PlainTextOutput(TextWriter writer) {
 			if (writer == null)
 				throw new ArgumentNullException("writer");
 			this.writer = writer;
 		}
-		
-		public PlainTextOutput()
-		{
+
+		public PlainTextOutput() {
 			this.writer = new StringWriter();
 		}
-		
-		public TextLocation Location {
+
+		public TextPosition Location {
 			get {
-				return new TextLocation(line, column + (needsIndent ? indent : 0));
+				return new TextPosition(line, column + (needsIndent ? indent : 0));
 			}
 		}
-		
-		public override string ToString()
-		{
+
+		public override string ToString() {
 			return writer.ToString();
 		}
-		
-		public void Indent()
-		{
+
+		public void Indent() {
 			indent++;
 		}
-		
-		public void Unindent()
-		{
+
+		public void Unindent() {
 			indent--;
 		}
-		
-		void WriteIndent()
-		{
+
+		void WriteIndent() {
 			if (needsIndent) {
 				needsIndent = false;
 				for (int i = 0; i < indent; i++) {
@@ -75,34 +65,29 @@ namespace ICSharpCode.Decompiler
 				column += indent;
 			}
 		}
-		
-		public void Write(string text, TextTokenType tokenType)
-		{
+
+		public void Write(string text, TextTokenKind tokenKind) {
 			WriteIndent();
 			writer.Write(text);
 			column += text.Length;
 		}
-		
-		public void WriteLine()
-		{
+
+		public void WriteLine() {
 			writer.WriteLine();
 			needsIndent = true;
 			line++;
 			column = 1;
 		}
-		
-		public void WriteDefinition(string text, object definition, TextTokenType tokenType, bool isLocal)
-		{
-			Write(text, TextTokenType.Text);
+
+		public void WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal) {
+			Write(text, TextTokenKind.Text);
 		}
-		
-		public void WriteReference(string text, object reference, TextTokenType tokenType, bool isLocal)
-		{
-			Write(text, TextTokenType.Text);
+
+		public void WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal) {
+			Write(text, TextTokenKind.Text);
 		}
-		
-		void ITextOutput.AddDebugSymbols(MemberMapping methodDebugSymbols)
-		{
+
+		void ITextOutput.AddDebugSymbols(MemberMapping methodDebugSymbols) {
 		}
 	}
 }

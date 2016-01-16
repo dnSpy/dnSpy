@@ -19,7 +19,7 @@
 
 using System;
 using dnlib.DotNet;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>
@@ -36,9 +36,9 @@ namespace dnSpy.Contracts.Languages {
 		/// </summary>
 		/// <param name="module">Type</param>
 		/// <param name="output">Output</param>
-		/// <param name="options">Options</param>
-		public DecompileAssemblyInfo(ModuleDef module, ITextOutput output, DecompilationOptions options)
-			: base(output, options) {
+		/// <param name="ctx">Context</param>
+		public DecompileAssemblyInfo(ModuleDef module, ITextOutput output, DecompilationContext ctx)
+			: base(output, ctx) {
 			if (module == null)
 				throw new ArgumentNullException();
 			this.Module = module;

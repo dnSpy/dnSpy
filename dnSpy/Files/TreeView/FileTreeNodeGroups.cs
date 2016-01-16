@@ -22,18 +22,10 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Files.TreeView.Resources;
 
 namespace dnSpy.Files.TreeView {
-	enum MemberType {
-		NestedTypes,
-		Fields,
-		Events,
-		Properties,
-		Methods,
-	}
-
 	interface ITreeNodeGroup2 : ITreeNodeGroup {
 		new double Order { get; set; }
 	}
@@ -104,21 +96,21 @@ namespace dnSpy.Files.TreeView {
 		readonly ITreeNodeGroup2 ResourceTreeNodeGroup = new ResourceTreeNodeGroup(FileTVConstants.ORDER_RESOURCE);
 		readonly ITreeNodeGroup2 ResourceElementTreeNodeGroup = new ResourceElementTreeNodeGroup(FileTVConstants.ORDER_RESOURCE_ELEM);
 
-		public void SetMemberOrder(MemberType[] newOrders) {
+		public void SetMemberOrder(MemberKind[] newOrders) {
 			if (newOrders == null)
 				throw new ArgumentNullException();
 
-			var infos = new Tuple<double, MemberType, ITreeNodeGroup2>[] {
-				Tuple.Create(FileTVConstants.ORDER_TYPE_METHOD, MemberType.Methods, MethodTreeNodeGroupType),
-				Tuple.Create(FileTVConstants.ORDER_TYPE_PROPERTY, MemberType.Properties, PropertyTreeNodeGroupType),
-				Tuple.Create(FileTVConstants.ORDER_TYPE_EVENT, MemberType.Events, EventTreeNodeGroupType),
-				Tuple.Create(FileTVConstants.ORDER_TYPE_FIELD, MemberType.Fields, FieldTreeNodeGroupType),
-				Tuple.Create(FileTVConstants.ORDER_TYPE_TYPE, MemberType.NestedTypes, TypeTreeNodeGroupType),
+			var infos = new Tuple<double, MemberKind, ITreeNodeGroup2>[] {
+				Tuple.Create(FileTVConstants.ORDER_TYPE_METHOD, MemberKind.Methods, MethodTreeNodeGroupType),
+				Tuple.Create(FileTVConstants.ORDER_TYPE_PROPERTY, MemberKind.Properties, PropertyTreeNodeGroupType),
+				Tuple.Create(FileTVConstants.ORDER_TYPE_EVENT, MemberKind.Events, EventTreeNodeGroupType),
+				Tuple.Create(FileTVConstants.ORDER_TYPE_FIELD, MemberKind.Fields, FieldTreeNodeGroupType),
+				Tuple.Create(FileTVConstants.ORDER_TYPE_TYPE, MemberKind.NestedTypes, TypeTreeNodeGroupType),
 			};
 			if (infos.Length != newOrders.Length)
 				throw new ArgumentException();
 
-			var dict = new Dictionary<MemberType, ITreeNodeGroup2>(infos.Length);
+			var dict = new Dictionary<MemberKind, ITreeNodeGroup2>(infos.Length);
 			foreach (var info in infos)
 				dict[info.Item2] = info.Item3;
 			for (int i = 0; i < newOrders.Length; i++)

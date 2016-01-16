@@ -24,7 +24,7 @@ using dnlib.PE;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Shared.UI.Files.TreeView {
@@ -57,20 +57,20 @@ namespace dnSpy.Shared.UI.Files.TreeView {
 			var filename = GetFilename(file);
 			var peImage = file.PEImage;
 			if (peImage != null)
-				output.Write(NameUtils.CleanName(filename), IsExe(peImage) ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
+				output.Write(NameUtils.CleanName(filename), IsExe(peImage) ? TextTokenKind.AssemblyExe : TextTokenKind.Assembly);
 			else
-				output.Write(NameUtils.CleanName(filename), TextTokenType.Text);
+				output.Write(NameUtils.CleanName(filename), TextTokenKind.Text);
 		}
 
 		public void Write(ISyntaxHighlightOutput output, ILanguage language, AssemblyDef asm, bool showToken, bool showAssemblyVersion, bool showAssemblyPublicKeyToken) {
-			output.Write(asm.Name, IsExe(asm.ManifestModule) ? TextTokenType.AssemblyExe : TextTokenType.Assembly);
+			output.Write(asm.Name, IsExe(asm.ManifestModule) ? TextTokenKind.AssemblyExe : TextTokenKind.Assembly);
 
 			bool showAsmVer = showAssemblyVersion;
 			bool showPublicKeyToken = showAssemblyPublicKeyToken && !PublicKeyBase.IsNullOrEmpty2(asm.PublicKeyToken);
 
 			if (showAsmVer || showPublicKeyToken) {
 				output.WriteSpace();
-				output.Write("(", TextTokenType.Operator);
+				output.Write("(", TextTokenKind.Operator);
 
 				bool needComma = false;
 				if (showAsmVer) {
@@ -88,12 +88,12 @@ namespace dnSpy.Shared.UI.Files.TreeView {
 
 					var pkt = asm.PublicKeyToken;
 					if (PublicKeyBase.IsNullOrEmpty2(pkt))
-						output.Write("null", TextTokenType.Keyword);
+						output.Write("null", TextTokenKind.Keyword);
 					else
-						output.Write(pkt.ToString(), TextTokenType.Number);
+						output.Write(pkt.ToString(), TextTokenKind.Number);
 				}
 
-				output.Write(")", TextTokenType.Operator);
+				output.Write(")", TextTokenKind.Operator);
 			}
 
 			WriteToken(output, asm, showToken);
@@ -108,17 +108,17 @@ namespace dnSpy.Shared.UI.Files.TreeView {
 			if (!showToken)
 				return;
 			output.WriteSpace();
-			output.Write("@", TextTokenType.Operator);
-			output.Write(string.Format("{0:X8}", tok.MDToken.Raw), TextTokenType.Number);
+			output.Write("@", TextTokenKind.Operator);
+			output.Write(string.Format("{0:X8}", tok.MDToken.Raw), TextTokenKind.Number);
 		}
 
 		public void Write(ISyntaxHighlightOutput output, ILanguage language, AssemblyRef asmRef, bool showToken) {
-			output.Write(NameUtils.CleanIdentifier(asmRef.Name), TextTokenType.Text);
+			output.Write(NameUtils.CleanIdentifier(asmRef.Name), TextTokenKind.Text);
 			WriteToken(output, asmRef, showToken);
 		}
 
 		public void Write(ISyntaxHighlightOutput output, ILanguage language, ModuleRef modRef, bool showToken) {
-			output.Write(NameUtils.CleanIdentifier(modRef.Name), TextTokenType.Text);
+			output.Write(NameUtils.CleanIdentifier(modRef.Name), TextTokenKind.Text);
 			WriteToken(output, modRef, showToken);
 		}
 
@@ -133,9 +133,9 @@ namespace dnSpy.Shared.UI.Files.TreeView {
 		}
 
 		public void Write(ISyntaxHighlightOutput output, ILanguage language, EventDef @event, bool showToken) {
-			output.Write(NameUtils.CleanIdentifier(@event.Name), TextTokenHelper.GetTextTokenType(@event));
+			output.Write(NameUtils.CleanIdentifier(@event.Name), TextTokenKindUtils.GetTextTokenType(@event));
 			output.WriteSpace();
-			output.Write(":", TextTokenType.Operator);
+			output.Write(":", TextTokenKind.Operator);
 			output.WriteSpace();
 			language.WriteType(output, @event.EventType, false);
 			WriteToken(output, @event, showToken);
@@ -144,24 +144,24 @@ namespace dnSpy.Shared.UI.Files.TreeView {
 		public void Write(ISyntaxHighlightOutput output, ILanguage language, PropertyDef property, bool showToken, bool? isIndexer) {
 			language.WriteName(output, property, isIndexer);
 			output.WriteSpace();
-			output.Write(":", TextTokenType.Operator);
+			output.Write(":", TextTokenKind.Operator);
 			output.WriteSpace();
 			language.WriteType(output, property.PropertySig.GetRetType().ToTypeDefOrRef(), false);
 			WriteToken(output, property, showToken);
 		}
 
 		public void Write(ISyntaxHighlightOutput output, ILanguage language, FieldDef field, bool showToken) {
-			output.Write(NameUtils.CleanIdentifier(field.Name), TextTokenHelper.GetTextTokenType(field));
+			output.Write(NameUtils.CleanIdentifier(field.Name), TextTokenKindUtils.GetTextTokenType(field));
 			output.WriteSpace();
-			output.Write(":", TextTokenType.Operator);
+			output.Write(":", TextTokenKind.Operator);
 			output.WriteSpace();
 			language.WriteType(output, field.FieldType.ToTypeDefOrRef(), false);
 			WriteToken(output, field, showToken);
 		}
 
 		public void Write(ISyntaxHighlightOutput output, ILanguage language, MethodDef method, bool showToken) {
-			output.Write(NameUtils.CleanIdentifier(method.Name), TextTokenHelper.GetTextTokenType(method));
-			output.Write("(", TextTokenType.Operator);
+			output.Write(NameUtils.CleanIdentifier(method.Name), TextTokenKindUtils.GetTextTokenType(method));
+			output.Write("(", TextTokenKind.Operator);
 			foreach (var p in method.Parameters) {
 				if (p.IsHiddenThisParameter)
 					continue;
@@ -172,11 +172,11 @@ namespace dnSpy.Shared.UI.Files.TreeView {
 			if (method.CallingConvention == CallingConvention.VarArg || method.CallingConvention == CallingConvention.NativeVarArg) {
 				if (method.MethodSig.GetParamCount() > 0)
 					output.WriteCommaSpace();
-				output.Write("...", TextTokenType.Operator);
+				output.Write("...", TextTokenKind.Operator);
 			}
-			output.Write(")", TextTokenType.Operator);
+			output.Write(")", TextTokenKind.Operator);
 			output.WriteSpace();
-			output.Write(":", TextTokenType.Operator);
+			output.Write(":", TextTokenKind.Operator);
 			output.WriteSpace();
 			language.WriteType(output, method.ReturnType.ToTypeDefOrRef(), false, method.Parameters.ReturnParameter.ParamDef);
 			WriteToken(output, method, showToken);

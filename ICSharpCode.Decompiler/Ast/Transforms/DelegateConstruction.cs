@@ -21,7 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
@@ -373,7 +373,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 					ExpressionStatement closureFieldAssignmentPattern = new ExpressionStatement(
 						new AssignmentExpression(
 							new NamedNode("left", new MemberReferenceExpression { 
-							              	Target = IdentifierExpression.Create(variable.Name, variable.IsParameter ? TextTokenType.Parameter : TextTokenType.Local),
+							              	Target = IdentifierExpression.Create(variable.Name, variable.IsParameter ? TextTokenKind.Parameter : TextTokenKind.Local),
 							              	MemberName = Pattern.AnyString
 							              }),
 							new AnyNode("right")
@@ -439,12 +439,12 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 					currentlyUsedVariableNames.Add(capturedVariableName);
 					ILVariable ilVar = new ILVariable
 					{
-						IsGenerated = true,
+						GeneratedByDecompiler = true,
 						Name = capturedVariableName,
 						Type = field.FieldType,
 					};
 					variablesToDeclare.Add(Tuple.Create(AstBuilder.ConvertType(field.FieldType, field), ilVar));
-					dict[field] = IdentifierExpression.Create(capturedVariableName, TextTokenType.Local).WithAnnotation(ilVar);
+					dict[field] = IdentifierExpression.Create(capturedVariableName, TextTokenKind.Local).WithAnnotation(ilVar);
 				}
 				
 				// Now figure out where the closure was accessed and use the simpler replacement expression there:
@@ -463,7 +463,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				// Now insert the variable declarations (we can do this after the replacements only so that the scope detection works):
 				Statement insertionPoint = blockStatement.Statements.FirstOrDefault();
 				foreach (var tuple in variablesToDeclare) {
-					var newVarDecl = new VariableDeclarationStatement(tuple.Item2.IsParameter ? TextTokenType.Parameter : TextTokenType.Local, tuple.Item1, tuple.Item2.Name);
+					var newVarDecl = new VariableDeclarationStatement(tuple.Item2.IsParameter ? TextTokenKind.Parameter : TextTokenKind.Local, tuple.Item1, tuple.Item2.Name);
 					newVarDecl.Variables.Single().AddAnnotation(new CapturedVariableAnnotation());
 					newVarDecl.Variables.Single().AddAnnotation(tuple.Item2);
 					blockStatement.Statements.InsertBefore(insertionPoint, newVarDecl);

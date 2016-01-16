@@ -19,7 +19,7 @@
 
 using System.Text;
 using dnSpy.Contracts.Highlighting;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Shared.UI.Highlighting {
 	public sealed class NoSyntaxHighlightOutput : ISyntaxHighlightOutput {
@@ -37,7 +37,7 @@ namespace dnSpy.Shared.UI.Highlighting {
 			this.sb = new StringBuilder();
 		}
 
-		public void Write(string s, TextTokenType tokenType) {
+		public void Write(string s, TextTokenKind tokenKind) {
 			sb.Append(s);
 		}
 

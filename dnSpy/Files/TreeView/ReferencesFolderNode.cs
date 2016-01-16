@@ -26,7 +26,7 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
 using dnSpy.Shared.UI.Files.TreeView;
 
@@ -37,11 +37,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		protected override ImageReference GetIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference(GetType().Assembly, "ReferenceFolderClosed");
-		}
-
-		protected override ImageReference? GetExpandedIcon(IDotNetImageManager dnImgMgr) {
-			return new ImageReference(GetType().Assembly, "ReferenceFolderOpened");
+			return new ImageReference(GetType().Assembly, "ReferenceFolder");
 		}
 
 		public override NodePathName NodePathName {
@@ -66,7 +62,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(dnSpy_Resources.ReferencesFolder, TextTokenType.Text);
+			output.Write(dnSpy_Resources.ReferencesFolder, TextTokenKind.Text);
 		}
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

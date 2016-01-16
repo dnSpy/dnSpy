@@ -20,8 +20,7 @@
 using System;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger {
 	abstract class MarkedTextLine : IMarkedTextLine {
@@ -52,29 +51,29 @@ namespace dnSpy.Debugger {
 		}
 
 		public int GetLineNumber(ITextEditorUIContext uiContext) {
-			TextLocation location, endLocation;
+			TextPosition location, endLocation;
 			if (GetLocation(uiContext, out location, out endLocation))
 				return location.Line;
 			return -1;
 		}
 
-		public bool GetLocation(ITextEditorUIContext uiContext, out TextLocation location, out TextLocation endLocation) {
+		public bool GetLocation(ITextEditorUIContext uiContext, out TextPosition location, out TextPosition endLocation) {
 			var cm = uiContext.GetCodeMappings();
 			var mapping = cm.TryGetMapping(methodKey);
 			if (mapping == null) {
-				location = endLocation = new TextLocation();
+				location = endLocation = new TextPosition();
 				return false;
 			}
 
 			bool isMatch;
 			var map = mapping.GetInstructionByOffset(ilOffset, out isMatch);
 			if (map == null) {
-				location = endLocation = new TextLocation();
+				location = endLocation = new TextPosition();
 				return false;
 			}
 
-			location = map.StartLocation;
-			endLocation = map.EndLocation;
+			location = map.StartPosition;
+			endLocation = map.EndPosition;
 			return true;
 		}
 
@@ -92,7 +91,7 @@ namespace dnSpy.Debugger {
 		}
 
 		ITextMarker CreateMarkerInternal(ITextMarkerService markerService, ITextEditorUIContext uiContext) {
-			TextLocation location, endLocation;
+			TextPosition location, endLocation;
 			if (!GetLocation(uiContext, out location, out endLocation))
 				throw new InvalidOperationException();
 

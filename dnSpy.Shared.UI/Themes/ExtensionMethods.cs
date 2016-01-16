@@ -18,11 +18,11 @@
 */
 
 using dnSpy.Contracts.Themes;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Shared.UI.Themes {
 	public static class ExtensionMethods {
-		public static ColorType ToColorType(this TextTokenType self) {
+		public static ColorType ToColorType(this TextTokenKind self) {
 			return (uint)self + ColorType.FirstNR;
 		}
 	}

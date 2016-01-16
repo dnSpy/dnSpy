@@ -25,8 +25,8 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Files.TreeView;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.TreeView {
 	sealed class TypeNode : FileTreeNodeData, ITypeNode {
@@ -69,7 +69,7 @@ namespace dnSpy.Files.TreeView {
 			yield return new BaseTypeFolderNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.BaseTypeFolderTreeNodeGroupType), type);
 			yield return new DerivedTypesFolderNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.DerivedTypesFolderTreeNodeGroupType), type);
 
-			var hash = type.GetAccessorMethods();
+			var hash = type.GetPropEventMethods();
 			foreach (var m in type.Methods) {
 				if (!hash.Contains(m))
 					yield return new MethodNode(Context.FileTreeView.FileTreeNodeGroups.GetGroup(FileTreeNodeGroupType.MethodTreeNodeGroupType), m);
@@ -112,7 +112,7 @@ namespace dnSpy.Files.TreeView {
 			var res = filter.GetResult(TypeDef);
 			if (res.FilterType != FilterType.Default)
 				return res.FilterType;
-			if (Context.Language.ShowMember(type, Context.DecompilerSettings))
+			if (Context.Language.ShowMember(type))
 				return FilterType.Visible;
 			return FilterType.Hide;
 		}

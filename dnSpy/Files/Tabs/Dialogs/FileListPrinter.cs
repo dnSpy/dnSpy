@@ -18,7 +18,7 @@
 */
 
 using dnSpy.Contracts.Highlighting;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Files.Tabs.Dialogs {
 	sealed class FileListPrinter {
@@ -29,11 +29,11 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 
 		public void WriteName(FileListVM vm) {
-			output.Write(vm.Name, TextTokenType.Assembly);
+			output.Write(vm.Name, TextTokenKind.Assembly);
 		}
 
 		public void WriteFileCount(FileListVM vm) {
-			output.Write(vm.FileCount.ToString(), TextTokenType.Number);
+			output.Write(vm.FileCount.ToString(), TextTokenKind.Number);
 		}
 	}
 }

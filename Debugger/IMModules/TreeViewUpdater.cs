@@ -24,7 +24,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.TreeView;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.IMModules {
 	struct TreeViewUpdater {
@@ -181,7 +181,7 @@ namespace dnSpy.Debugger.IMModules {
 				typeNode.TreeNode.AddChild(fileTabManager.FileTreeView.TreeView.Create(fileTabManager.FileTreeView.Create(ed)));
 			}
 
-			var accessorMethods = typeNode.TypeDef.GetAccessorMethods();
+			var accessorMethods = typeNode.TypeDef.GetPropEventMethods();
 			foreach (var md in typeNode.TypeDef.Methods) {
 				if (existing.Contains(md))
 					continue;

@@ -18,8 +18,7 @@
 */
 
 using dnSpy.Contracts.Highlighting;
-using dnSpy.Decompiler;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Debugger.Exceptions {
@@ -32,7 +31,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		public void WriteName(ExceptionVM vm) {
 			if (vm.ExceptionInfo.IsOtherExceptions)
-				output.Write(vm.Name, TextTokenType.Text);
+				output.Write(vm.Name, TextTokenKind.Text);
 			else
 				WriteFullTypeName(vm.Name);
 		}
@@ -42,9 +41,9 @@ namespace dnSpy.Debugger.Exceptions {
 			SplitTypeName(fullName, out ns, out name);
 			if (!string.IsNullOrEmpty(ns)) {
 				output.WriteNamespace(ns);
-				output.Write(".", TextTokenType.Operator);
+				output.Write(".", TextTokenKind.Operator);
 			}
-			output.Write(IdentifierEscaper.Escape(name), TextTokenType.Type);
+			output.Write(IdentifierEscaper.Escape(name), TextTokenKind.Type);
 		}
 
 		static void SplitTypeName(string fullName, out string ns, out string name) {

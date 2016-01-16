@@ -21,7 +21,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Analyzer.TreeNodes {
@@ -45,7 +45,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(NameUtils.CleanIdentifier(module.Name), TextTokenType.Module);
+			output.Write(NameUtils.CleanIdentifier(module.Name), TextTokenKind.Module);
 		}
 	}
 }

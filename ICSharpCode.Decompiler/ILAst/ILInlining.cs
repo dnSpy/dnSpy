@@ -18,13 +18,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
-using dnlib.DotNet.Emit;
 
-namespace ICSharpCode.Decompiler.ILAst
-{
+namespace ICSharpCode.Decompiler.ILAst {
 	/// <summary>
 	/// Performs inlining transformations.
 	/// </summary>
@@ -99,7 +96,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			List<ILNode> body = block.Body;
 			if (block is ILTryCatchBlock.CatchBlock && body.Count > 1) {
 				ILVariable v = ((ILTryCatchBlock.CatchBlock)block).ExceptionVariable;
-				if (v != null && v.IsGenerated) {
+				if (v != null && v.GeneratedByDecompiler) {
 					if (numLdloca.GetOrDefault(v) == 0 && numStloc.GetOrDefault(v) == 1 && numLdloc.GetOrDefault(v) == 1) {
 						ILVariable v2;
 						ILExpression ldException;
@@ -204,7 +201,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						Utils.AddILRanges(block, body, pos);
 						body.RemoveAt(pos);
 						return true;
-					} else if (inlinedExpression.CanBeExpressionStatement() && v.IsGenerated) {
+					} else if (inlinedExpression.CanBeExpressionStatement() && v.GeneratedByDecompiler) {
 						// Assign the ranges of the stloc instruction:
 						inlinedExpression.ILRanges.AddRange(body[pos].ILRanges);
 						// Remove the stloc, but keep the inner expression
@@ -240,7 +237,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (!IsGeneratedValueTypeTemporary((ILExpression)next, parent, pos, v, inlinedExpression))
 						return false;
 				} else {
-					if (!aggressive && !v.IsGenerated && !NonAggressiveInlineInto((ILExpression)next, parent, inlinedExpression))
+					if (!aggressive && !v.GeneratedByDecompiler && !NonAggressiveInlineInto((ILExpression)next, parent, inlinedExpression))
 						return false;
 				}
 				
@@ -473,7 +470,7 @@ namespace ICSharpCode.Decompiler.ILAst
 						// un-inline the arguments of the ldArg instruction
 						ILVariable[] uninlinedArgs = new ILVariable[copiedExpr.Arguments.Count];
 						for (int j = 0; j < uninlinedArgs.Length; j++) {
-							uninlinedArgs[j] = new ILVariable { IsGenerated = true, Name = v.Name + "_cp_" + j };
+							uninlinedArgs[j] = new ILVariable { GeneratedByDecompiler = true, Name = v.Name + "_cp_" + j };
 							block.Body.Insert(i++, new ILExpression(ILCode.Stloc, uninlinedArgs[j], copiedExpr.Arguments[j]));
 						}
 						
@@ -520,7 +517,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					} else {
 						// Variables are be copied only if both they and the target copy variable are generated,
 						// and if the variable has only a single assignment
-						return v.IsGenerated && copyVariable.IsGenerated && numLdloca.GetOrDefault(v) == 0 && numStloc.GetOrDefault(v) == 1;
+						return v.GeneratedByDecompiler && copyVariable.GeneratedByDecompiler && numLdloca.GetOrDefault(v) == 0 && numStloc.GetOrDefault(v) == 1;
 					}
 				default:
 					return false;

@@ -22,7 +22,7 @@ using System.Globalization;
 using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Debugger.Properties;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Debugger.Modules {
@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		public void WriteOrder(ModuleVM vm) {
-			output.Write(string.Format("{0}", vm.Module.ModuleOrder), TextTokenType.Number);
+			output.Write(string.Format("{0}", vm.Module.ModuleOrder), TextTokenKind.Number);
 		}
 
 		public void WriteVersion(ModuleVM vm) {
@@ -77,7 +77,7 @@ namespace dnSpy.Debugger.Modules {
 			if (ts != null) {
 				var date = Epoch.AddSeconds(ts.Value);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
-				output.Write(dateString, TextTokenType.Text);
+				output.Write(dateString, TextTokenKind.Text);
 			}
 		}
 		static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -86,19 +86,19 @@ namespace dnSpy.Debugger.Modules {
 			ulong addr = vm.Module.Address;
 			ulong endAddr = addr + vm.Module.Size;
 			if (addr == 0)
-				output.Write(dnSpy_Debugger_Resources.Module_NoAddress, TextTokenType.Text);
+				output.Write(dnSpy_Debugger_Resources.Module_NoAddress, TextTokenKind.Text);
 			else {
 				WriteAddress(addr);
-				output.Write("-", TextTokenType.Operator);
+				output.Write("-", TextTokenKind.Operator);
 				WriteAddress(endAddr);
 			}
 		}
 
 		void WriteAddress(ulong addr) {
 			if (IntPtr.Size == 4)
-				output.Write(string.Format("{0:X8}", addr), TextTokenType.Number);
+				output.Write(string.Format("{0:X8}", addr), TextTokenKind.Number);
 			else
-				output.Write(string.Format("{0:X16}", addr), TextTokenType.Number);
+				output.Write(string.Format("{0:X16}", addr), TextTokenKind.Number);
 		}
 
 		public void WriteProcess(ModuleVM vm) {

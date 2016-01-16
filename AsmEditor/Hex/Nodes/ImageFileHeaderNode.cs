@@ -23,7 +23,7 @@ using dnlib.PE;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.HexEditor;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_FileHeader, TextTokenType.Keyword);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_FileHeader, TextTokenKind.Keyword);
 		}
 	}
 }

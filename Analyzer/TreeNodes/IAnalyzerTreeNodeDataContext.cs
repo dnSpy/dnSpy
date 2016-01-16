@@ -20,7 +20,6 @@
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	interface IAnalyzerTreeNodeDataContext {
@@ -31,7 +30,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 		ILanguage Language { get; }
 		IDotNetImageManager DotNetImageManager { get; }
 		IFileManager FileManager { get; }
-		DecompilerSettings DecompilerSettings { get; }
 		IAnalyzerManager AnalyzerManager { get; }
 	}
 }

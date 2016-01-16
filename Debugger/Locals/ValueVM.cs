@@ -28,8 +28,7 @@ using dnlib.DotNet;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Debugger.Properties;
-using dnSpy.Decompiler;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.Debugger.Locals {
@@ -223,7 +222,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public override void WriteName(ISyntaxHighlightOutput output) {
-			output.Write(msg, TextTokenType.Error);
+			output.Write(msg, TextTokenKind.Error);
 		}
 	}
 
@@ -258,7 +257,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public override void WriteName(ISyntaxHighlightOutput output) {
-			FieldValueType.WriteName(output, info.Name, TextTokenType.LiteralField, info.OwnerType, overridden);
+			FieldValueType.WriteName(output, info.Name, TextTokenKind.LiteralField, info.OwnerType, overridden);
 		}
 	}
 
@@ -1321,7 +1320,7 @@ namespace dnSpy.Debugger.Locals {
 			var n = name;
 			if (string.IsNullOrEmpty(n))
 				n = string.Format("V_{0}", index);
-			output.Write(IdentifierEscaper.Escape(n), TextTokenType.Local);
+			output.Write(IdentifierEscaper.Escape(n), TextTokenKind.Local);
 		}
 	}
 
@@ -1351,12 +1350,12 @@ namespace dnSpy.Debugger.Locals {
 
 		public override void WriteName(ISyntaxHighlightOutput output) {
 			if (isThis)
-				output.Write("this", TextTokenType.Keyword);
+				output.Write("this", TextTokenKind.Keyword);
 			else {
 				var n = name;
 				if (string.IsNullOrEmpty(n))
 					n = string.Format("A_{0}", index);
-				output.Write(IdentifierEscaper.Escape(n), TextTokenType.Parameter);
+				output.Write(IdentifierEscaper.Escape(n), TextTokenKind.Parameter);
 			}
 		}
 	}
@@ -1372,7 +1371,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public override void WriteName(ISyntaxHighlightOutput output) {
-			output.Write("$exception", TextTokenType.Local);
+			output.Write("$exception", TextTokenKind.Local);
 		}
 	}
 
@@ -1390,12 +1389,12 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public override void WriteName(ISyntaxHighlightOutput output) {
-			output.Write("[", TextTokenType.Operator);
+			output.Write("[", TextTokenKind.Operator);
 
 			if (state.Dimensions.Length == 1 && state.Indices.Length == 1 && state.Indices[0] == 0) {
 				long i2 = (long)index + (int)state.Indices[0];
 				// It's always in decimal
-				output.Write(i2.ToString(), TextTokenType.Number);
+				output.Write(i2.ToString(), TextTokenKind.Number);
 			}
 			else {
 				var ary = new uint[state.Dimensions.Length];
@@ -1409,16 +1408,16 @@ namespace dnSpy.Debugger.Locals {
 				}
 				for (int i = 0; i < ary.Length; i++) {
 					if (i > 0) {
-						output.Write(",", TextTokenType.Operator);
-						output.Write(" ", TextTokenType.Text);
+						output.Write(",", TextTokenKind.Operator);
+						output.Write(" ", TextTokenKind.Text);
 					}
 					long i2 = (long)ary[i] + (int)state.Indices[i];
 					// It's always in decimal
-					output.Write(i2.ToString(), TextTokenType.Number);
+					output.Write(i2.ToString(), TextTokenKind.Number);
 				}
 			}
 
-			output.Write("]", TextTokenType.Operator);
+			output.Write("]", TextTokenKind.Operator);
 		}
 	}
 
@@ -1520,24 +1519,24 @@ namespace dnSpy.Debugger.Locals {
 			WriteName(output, name, GetTextTokenType(), vm.OwnerType, vm.Overridden);
 		}
 
-		internal static void WriteName(ISyntaxHighlightOutput output, string name, TextTokenType type, CorType ownerType, bool overridden) {
+		internal static void WriteName(ISyntaxHighlightOutput output, string name, TextTokenKind type, CorType ownerType, bool overridden) {
 			output.Write(IdentifierEscaper.Escape(name), type);
 			if (overridden) {
-				output.Write(" ", TextTokenType.Text);
-				output.Write("(", TextTokenType.Operator);
+				output.Write(" ", TextTokenKind.Text);
+				output.Write("(", TextTokenKind.Operator);
 				ownerType.Write(new OutputConverter(output), TypePrinterFlags.Default);
-				output.Write(")", TextTokenType.Operator);
+				output.Write(")", TextTokenKind.Operator);
 			}
 		}
 
-		TextTokenType GetTextTokenType() {
+		TextTokenKind GetTextTokenType() {
 			if (IsEnum)
-				return TextTokenType.EnumField;
+				return TextTokenKind.EnumField;
 			if ((vm.FieldAttributes & FieldAttributes.Literal) != 0)
-				return TextTokenType.LiteralField;
+				return TextTokenKind.LiteralField;
 			if ((vm.FieldAttributes & FieldAttributes.Static) != 0)
-				return TextTokenType.StaticField;
-			return TextTokenType.InstanceField;
+				return TextTokenKind.StaticField;
+			return TextTokenKind.InstanceField;
 		}
 	}
 
@@ -1617,10 +1616,10 @@ namespace dnSpy.Debugger.Locals {
 			FieldValueType.WriteName(output, name, GetTextTokenType(), vm.OwnerType, vm.Overridden);
 		}
 
-		TextTokenType GetTextTokenType() {
+		TextTokenKind GetTextTokenType() {
 			if ((vm.GetMethodAttributes & MethodAttributes.Static) != 0)
-				return TextTokenType.StaticProperty;
-			return TextTokenType.InstanceProperty;
+				return TextTokenKind.StaticProperty;
+			return TextTokenKind.InstanceProperty;
 		}
 	}
 
@@ -1744,14 +1743,14 @@ namespace dnSpy.Debugger.Locals {
 
 		public override void WriteName(ISyntaxHighlightOutput output) {
 			if (!string.IsNullOrEmpty(name))
-				output.Write(IdentifierEscaper.Escape(name), isTypeVar ? TextTokenType.TypeGenericParameter : TextTokenType.MethodGenericParameter);
+				output.Write(IdentifierEscaper.Escape(name), isTypeVar ? TextTokenKind.TypeGenericParameter : TextTokenKind.MethodGenericParameter);
 			else if (isTypeVar) {
-				output.Write("!", TextTokenType.Operator);
-				output.Write(string.Format("{0}", index), TextTokenType.Number);
+				output.Write("!", TextTokenKind.Operator);
+				output.Write(string.Format("{0}", index), TextTokenKind.Number);
 			}
 			else {
-				output.Write("!!", TextTokenType.Operator);
-				output.Write(string.Format("{0}", index), TextTokenType.Number);
+				output.Write("!!", TextTokenKind.Operator);
+				output.Write(string.Format("{0}", index), TextTokenKind.Number);
 			}
 		}
 	}
@@ -1818,7 +1817,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		public override void WriteName(ISyntaxHighlightOutput output) {
-			output.Write(dnSpy_Debugger_Resources.Locals_TypeVariables, TextTokenType.TypeGenericParameter);
+			output.Write(dnSpy_Debugger_Resources.Locals_TypeVariables, TextTokenKind.TypeGenericParameter);
 		}
 	}
 }

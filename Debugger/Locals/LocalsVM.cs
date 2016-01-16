@@ -30,8 +30,8 @@ using dnlib.DotNet.Emit;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Images;
 using dnSpy.Debugger.CallStack;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.TreeView;
 
 namespace dnSpy.Debugger.Locals {
@@ -437,7 +437,7 @@ namespace dnSpy.Debugger.Locals {
 
 			Parameter[] parameters;
 			Local[] locals;
-			ILVariable[] decLocals;
+			IILVariable[] decLocals;
 			methodLocalProvider.GetMethodInfo(key.Value, out parameters, out locals, out decLocals);
 			if (!hasInitializedArgNames && parameters != null) {
 				hasInitializedArgNames = true;

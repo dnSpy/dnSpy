@@ -30,11 +30,10 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.MVVM;
 using dnSpy.Shared.UI.Properties;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 	public abstract class ResourceElementNode : FileTreeNodeData, IResourceElementNode {
@@ -124,8 +123,8 @@ namespace dnSpy.Shared.UI.Files.TreeView.Resources {
 		public virtual void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
 			language.WriteCommentBegin(output, true);
 			output.WriteOffsetComment(this, showOffset);
-			output.WriteDefinition(NameUtils.CleanName(Name), this, TextTokenType.Comment);
-			output.Write(string.Format(" = {0}", ValueString), TextTokenType.Comment);
+			output.WriteDefinition(NameUtils.CleanName(Name), this, TextTokenKind.Comment);
+			output.Write(string.Format(" = {0}", ValueString), TextTokenKind.Comment);
 			language.WriteCommentEnd(output, true);
 			output.WriteLine();
 		}

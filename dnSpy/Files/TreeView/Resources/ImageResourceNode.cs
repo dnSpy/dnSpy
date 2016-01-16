@@ -29,12 +29,11 @@ using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
 using dnSpy.Shared.UI.Decompiler;
 using dnSpy.Shared.UI.Files.TreeView.Resources;
 using dnSpy.Shared.UI.Highlighting;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.TreeView.Resources {
 	[ExportResourceNodeCreator(Order = FileTVConstants.ORDER_RSRCCREATOR_IMAGE_RESOURCE_NODE)]
@@ -198,8 +197,8 @@ namespace dnSpy.Files.TreeView.Resources {
 						Source = imageSource,
 					};
 				});
-				output.Write(" = ", TextTokenType.Comment);
-				output.WriteDefinition(NameUtils.CleanName(Name), this, TextTokenType.Comment);
+				output.Write(" = ", TextTokenKind.Comment);
+				output.WriteDefinition(NameUtils.CleanName(Name), this, TextTokenKind.Comment);
 				language.WriteCommentEnd(output, true);
 				output.WriteLine();
 				return;

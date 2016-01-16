@@ -21,15 +21,15 @@ using System;
 using System.Windows.Threading;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Languages;
+using dnSpy.Decompiler.Shared;
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	sealed class DecompileNodeContext : IDecompileNodeContext {
-		public DecompilationOptions DecompilationOptions {
-			get { return decompilationOptions; }
+		public DecompilationContext DecompilationContext {
+			get { return decompilationContext; }
 		}
-		readonly DecompilationOptions decompilationOptions;
+		readonly DecompilationContext decompilationContext;
 
 		public ILanguage Language {
 			get { return language; }
@@ -46,8 +46,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		readonly Dispatcher dispatcher;
 
-		public DecompileNodeContext(DecompilationOptions decompilationOptions, ILanguage language, ITextOutput output, Dispatcher dispatcher) {
-			if (decompilationOptions == null)
+		public DecompileNodeContext(DecompilationContext decompilationContext, ILanguage language, ITextOutput output, Dispatcher dispatcher) {
+			if (decompilationContext == null)
 				throw new ArgumentNullException();
 			if (language == null)
 				throw new ArgumentNullException();
@@ -55,7 +55,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				throw new ArgumentNullException();
 			if (dispatcher == null)
 				throw new ArgumentNullException();
-			this.decompilationOptions = decompilationOptions;
+			this.decompilationContext = decompilationContext;
 			this.language = language;
 			this.output = output;
 			this.dispatcher = dispatcher;

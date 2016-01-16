@@ -39,12 +39,11 @@ using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.IMModules;
 using dnSpy.Debugger.Memory;
 using dnSpy.Debugger.Properties;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Menus;
 using dnSpy.Shared.UI.MVVM;
 using dnSpy.Shared.UI.MVVM.Dialogs;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger.Modules {
 	[ExportAutoLoaded]
@@ -145,25 +144,25 @@ namespace dnSpy.Debugger.Modules {
 			foreach (var vm in context.SelectedItems) {
 				var printer = new ModulePrinter(output, debuggerSettings.UseHexadecimal, theDebugger.Value.Debugger);
 				printer.WriteName(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteOptimized(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteDynamic(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteInMemory(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteOrder(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteVersion(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteTimestamp(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteAddress(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteProcess(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteAppDomain(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WritePath(vm);
 				output.WriteLine();
 			}

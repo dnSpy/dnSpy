@@ -30,11 +30,10 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows.App;
 using dnSpy.Debugger.CallStack;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.Menus;
 using dnSpy.Shared.UI.MVVM;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger.Threads {
 	[ExportAutoLoaded]
@@ -130,27 +129,27 @@ namespace dnSpy.Debugger.Threads {
 			foreach (var vm in context.SelectedItems) {
 				var printer = new ThreadPrinter(output, debuggerSettings.UseHexadecimal, theDebugger.Value.Debugger);
 				printer.WriteCurrent(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteId(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteManagedId(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteCategory(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteName(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteLocation(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WritePriority(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteAffinityMask(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteSuspended(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteProcess(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteAppDomain(vm);
-				output.Write("\t", TextTokenType.Text);
+				output.Write("\t", TextTokenKind.Text);
 				printer.WriteUserState(vm);
 				output.WriteLine();
 			}

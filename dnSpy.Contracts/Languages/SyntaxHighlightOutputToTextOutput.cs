@@ -19,9 +19,7 @@
 
 using System;
 using dnSpy.Contracts.Highlighting;
-using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Languages {
 	/// <summary>
@@ -48,8 +46,8 @@ namespace dnSpy.Contracts.Languages {
 			this.indent = 0;
 		}
 
-		TextLocation ITextOutput.Location {
-			get { return new TextLocation(line, col + indent); }
+		TextPosition ITextOutput.Location {
+			get { return new TextPosition(line, col + indent); }
 		}
 
 		void ITextOutput.AddDebugSymbols(MemberMapping methodDebugSymbols) {
@@ -63,10 +61,10 @@ namespace dnSpy.Contracts.Languages {
 			indent--;
 		}
 
-		void ITextOutput.Write(string text, TextTokenType tokenType) {
+		void ITextOutput.Write(string text, TextTokenKind tokenKind) {
 			if (col == 1 && indent > 0)
-				output.Write(new string('\t', indent), TextTokenType.Text);
-			output.Write(text, tokenType);
+				output.Write(new string('\t', indent), TextTokenKind.Text);
+			output.Write(text, tokenKind);
 			int index = text.LastIndexOfAny(newLineChars);
 			if (index >= 0) {
 				line += text.Split(new char[] { '\n' }).Length - 1;	// good enough for our purposes
@@ -78,16 +76,16 @@ namespace dnSpy.Contracts.Languages {
 		}
 		static readonly char[] newLineChars = new char[] { '\r', '\n' };
 
-		void ITextOutput.WriteDefinition(string text, object definition, TextTokenType tokenType, bool isLocal) {
-			((ITextOutput)this).Write(text, tokenType);
+		void ITextOutput.WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal) {
+			((ITextOutput)this).Write(text, tokenKind);
 		}
 
 		void ITextOutput.WriteLine() {
-			((ITextOutput)this).Write(Environment.NewLine, TextTokenType.Text);
+			((ITextOutput)this).Write(Environment.NewLine, TextTokenKind.Text);
 		}
 
-		void ITextOutput.WriteReference(string text, object reference, TextTokenType tokenType, bool isLocal) {
-			((ITextOutput)this).Write(text, tokenType);
+		void ITextOutput.WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal) {
+			((ITextOutput)this).Write(text, tokenKind);
 		}
 	}
 }

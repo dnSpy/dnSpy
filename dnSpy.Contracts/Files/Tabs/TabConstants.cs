@@ -20,7 +20,7 @@
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>

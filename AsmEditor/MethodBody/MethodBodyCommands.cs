@@ -37,8 +37,8 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Menus;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	[ExportAutoLoaded]
@@ -211,9 +211,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 		static bool IsVisible(IList<SourceCodeMapping> list) {
 			return list != null &&
 				list.Count != 0 &&
-				list[0].MemberMapping.MethodDef != null &&
-				list[0].MemberMapping.MethodDef.Body != null &&
-				list[0].MemberMapping.MethodDef.Body.Instructions.Count > 0;
+				list[0].Mapping.Method != null &&
+				list[0].Mapping.Method.Body != null &&
+				list[0].Mapping.Method.Body.Instructions.Count > 0;
 		}
 
 		public override void Execute(IMenuItemContext context) {
@@ -224,7 +224,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (list == null)
 				return;
 
-			var method = list[0].MemberMapping.MethodDef;
+			var method = list[0].Mapping.Method;
 			var methodNode = appWindow.FileTreeView.FindNode(method);
 			if (methodNode == null) {
 				Shared.UI.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_CouldNotFindMethod, method));
@@ -253,7 +253,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var list = cm.Find(line, col);
 			if (list.Count == 0)
 				return null;
-			if (!(list[0].StartLocation.Line <= line && line <= list[0].EndLocation.Line))
+			if (!(list[0].StartPosition.Line <= line && line <= list[0].EndPosition.Line))
 				return null;
 			return list;
 		}
@@ -268,7 +268,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var foundInstrs = new HashSet<uint>();
 			// The instructions' offset field is assumed to be valid
 			var instrs = body.Instructions.Select(a => a.Offset).ToArray();
-			foreach (var range in list.Select(a => a.ILInstructionOffset)) {
+			foreach (var range in list.Select(a => a.ILRange)) {
 				int index = Array.BinarySearch(instrs, range.From);
 				if (index < 0)
 					continue;

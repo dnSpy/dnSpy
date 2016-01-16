@@ -23,7 +23,7 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnlib.IO;
 using dnlib.PE;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class MethodBodyOptions {

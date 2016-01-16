@@ -18,13 +18,12 @@
 
 using System;
 using System.Collections.Generic;
-using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
 using dnlib.DotNet;
+using dnSpy.Decompiler.Shared;
 
-namespace ICSharpCode.Decompiler.Ast
-{
+namespace ICSharpCode.Decompiler.Ast {
 	public static class NRefactoryExtensions
 	{
 		public static T WithAnnotation<T>(this T node, object annotation) where T : AstNode

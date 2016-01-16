@@ -25,7 +25,7 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Files.TreeView;
 
 namespace dnSpy.Files.TreeView {
@@ -87,7 +87,7 @@ namespace dnSpy.Files.TreeView {
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			var td = TryGetTypeDef();
 			if (td == null)
-				output.Write("???", TextTokenType.Error);
+				output.Write("???", TextTokenKind.Error);
 			else
 				new NodePrinter().Write(output, language, td, Context.ShowToken);
 		}
@@ -97,7 +97,7 @@ namespace dnSpy.Files.TreeView {
 			if (res.FilterType != FilterType.Default)
 				return res.FilterType;
 			var type = TypeDef;
-			if (type.IsNested && !Context.Language.ShowMember(type, Context.DecompilerSettings))
+			if (type.IsNested && !Context.Language.ShowMember(type))
 				return FilterType.Hide;
 			return FilterType.Visible;
 		}

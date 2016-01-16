@@ -27,7 +27,6 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.TreeView;
-using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	abstract class AnalyzerTreeNodeData : TreeNodeData, IAnalyzerTreeNodeData {
@@ -64,8 +63,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 				Write(gen.Output, Context.Language);
 
-				var provider = Context.UseNewRenderer ? TextFormatterProvider.GlyphRunFormatter : TextFormatterProvider.BuiltIn;
-				var text = gen.CreateResult2(provider, filterOutNewLines: true);
+				var text = gen.CreateResultNewFormatter(Context.UseNewRenderer, filterOutNewLines: true);
 				cachedText = new WeakReference(text);
 				return text;
 			}
@@ -131,7 +129,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			// Emulate the original code. Only the C# override returned something other than the input
 			if (Context.Language.UniqueGuid != LanguageConstants.LANGUAGE_CSHARP_ILSPY)
 				return member;
-			if (!Context.DecompilerSettings.AnonymousMethods)
+			if (!Context.Language.Settings.GetBoolean(DecompilerOptionConstants.AnonymousMethods_GUID))
 				return member;
 			return Helpers.GetOriginalCodeLocation(member);
 		}

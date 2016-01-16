@@ -25,7 +25,7 @@ using dnlib.PE;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
-using dnSpy.Decompiler;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Hex;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {

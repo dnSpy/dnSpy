@@ -24,11 +24,11 @@ using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
-using ICSharpCode.Decompiler.ILAst;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.Locals {
 	interface IMethodLocalProvider {
-		void GetMethodInfo(SerializedDnToken method, out Parameter[] parameters, out Local[] locals, out ILVariable[] decLocals);
+		void GetMethodInfo(SerializedDnToken method, out Parameter[] parameters, out Local[] locals, out IILVariable[] decLocals);
 		event EventHandler NewMethodInfoAvailable;
 	}
 
@@ -49,7 +49,7 @@ namespace dnSpy.Debugger.Locals {
 				NewMethodInfoAvailable(this, EventArgs.Empty);
 		}
 
-		public void GetMethodInfo(SerializedDnToken key, out Parameter[] parameters, out Local[] locals, out ILVariable[] decLocals) {
+		public void GetMethodInfo(SerializedDnToken key, out Parameter[] parameters, out Local[] locals, out IILVariable[] decLocals) {
 			parameters = null;
 			locals = null;
 			decLocals = null;
@@ -65,12 +65,12 @@ namespace dnSpy.Debugger.Locals {
 				var mapping = cm.TryGetMapping(key);
 				if (mapping == null)
 					continue;
-				var method = mapping.MethodDef;
+				var method = mapping.Method;
 				if (mapping.LocalVariables != null && method.Body != null) {
 					locals = method.Body.Variables.ToArray();
-					decLocals = new ILVariable[method.Body.Variables.Count];
+					decLocals = new IILVariable[method.Body.Variables.Count];
 					foreach (var v in mapping.LocalVariables) {
-						if (v.IsGenerated)
+						if (v.GeneratedByDecompiler)
 							continue;
 						if (v.OriginalVariable == null)
 							continue;

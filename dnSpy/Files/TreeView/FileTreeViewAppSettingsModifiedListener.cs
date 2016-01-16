@@ -32,9 +32,9 @@ namespace dnSpy.Files.TreeView {
 
 		public void OnSettingsModified(IAppRefreshSettings appRefreshSettings) {
 			bool showMember = appRefreshSettings.Has(AppSettingsConstants.REFRESH_LANGUAGE_SHOWMEMBER);
-			bool decompilationOrder = appRefreshSettings.Has(AppSettingsConstants.REFRESH_LANGUAGE_DECOMPILATION_ORDER);
-			if (showMember || decompilationOrder)
-				fileTreeView.RefreshNodes(showMember, decompilationOrder);
+			bool memberOrder = appRefreshSettings.Has(AppSettingsConstants.REFRESH_TREEVIEW_MEMBER_ORDER);
+			if (showMember || memberOrder)
+				fileTreeView.RefreshNodes(showMember, memberOrder);
 		}
 	}
 }

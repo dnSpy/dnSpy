@@ -3,7 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {
@@ -65,7 +65,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			InvocationExpression ie = new InvocationExpression();
 			MemberAccessExpression mre = new MemberAccessExpression();
 			mre.Target = this;
-			mre.MemberName = Identifier.Create(TextTokenType.InstanceMethod, methodName);
+			mre.MemberName = Identifier.Create(TextTokenKind.InstanceMethod, methodName);
 			mre.TypeArguments.AddRange(typeArguments);
 			ie.Target = mre;
 			ie.Arguments.AddRange(arguments);

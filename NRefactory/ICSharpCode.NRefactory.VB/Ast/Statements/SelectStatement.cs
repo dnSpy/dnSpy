@@ -3,8 +3,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
-using ICSharpCode.Decompiler.ILAst;
+using dnSpy.Decompiler.Shared;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {

@@ -24,10 +24,9 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Files.TreeView;
 using dnSpy.Shared.UI.Highlighting;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	class MethodNode : EntityNode {
@@ -51,13 +50,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			if (hidesParent) {
-				output.Write("(", TextTokenType.Operator);
-				output.Write(dnSpy_Analyzer_Resources.HidesParent, TextTokenType.Text);
-				output.Write(")", TextTokenType.Operator);
+				output.Write("(", TextTokenKind.Operator);
+				output.Write(dnSpy_Analyzer_Resources.HidesParent, TextTokenKind.Text);
+				output.Write(")", TextTokenKind.Operator);
 				output.WriteSpace();
 			}
 			language.WriteType(output, analyzedMethod.DeclaringType, true);
-			output.Write(".", TextTokenType.Operator);
+			output.Write(".", TextTokenKind.Operator);
 			new NodePrinter().Write(output, language, analyzedMethod, Context.ShowToken);
 		}
 

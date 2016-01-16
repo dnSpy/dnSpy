@@ -17,16 +17,15 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
+using dnSpy.Decompiler.Shared;
 
-namespace ICSharpCode.Decompiler.ILAst
-{
+namespace ICSharpCode.Decompiler.ILAst {
 	/// <summary>
 	/// Converts stack-based bytecode to variable-based bytecode by calculating use-define chains
 	/// </summary>
@@ -453,7 +452,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				int argIdx = 0;
 				int popCount = byteCode.PopCount ?? byteCode.StackBefore.Length;
 				for (int i = byteCode.StackBefore.Length - popCount; i < byteCode.StackBefore.Length; i++) {
-					ILVariable tmpVar = new ILVariable() { Name = string.Format("arg_{0:X2}_{1}", byteCode.Offset, argIdx), IsGenerated = true };
+					ILVariable tmpVar = new ILVariable() { Name = string.Format("arg_{0:X2}_{1}", byteCode.Offset, argIdx), GeneratedByDecompiler = true };
 					byteCode.StackBefore[i] = new StackSlot(byteCode.StackBefore[i].Definitions, tmpVar);
 					foreach(ByteCode pushedBy in byteCode.StackBefore[i].Definitions) {
 						if (pushedBy.StoreTo == null) {
@@ -476,7 +475,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					// Let's make sure that they have also a single store - us
 					if (loadedBy.All(slot => slot.Definitions.Length == 1 && slot.Definitions[0] == byteCode)) {
 						// Great - we can reduce everything into single variable
-						ILVariable tmpVar = new ILVariable() { Name = string.Format("expr_{0:X2}", byteCode.Offset), IsGenerated = true };
+						ILVariable tmpVar = new ILVariable() { Name = string.Format("expr_{0:X2}", byteCode.Offset), GeneratedByDecompiler = true };
 						byteCode.StoreTo = new List<ILVariable>() { tmpVar };
 						foreach(ByteCode bc in body) {
 							for (int i = 0; i < bc.StackBefore.Length; i++) {
@@ -778,7 +777,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				{
 					// The exception is just poped - optimize it all away;
 					if (context.Settings.AlwaysGenerateExceptionVariableForCatchBlocks)
-						catchBlock.ExceptionVariable = new ILVariable() { Name = "ex_" + eh.HandlerStart.GetOffset().ToString("X2"), IsGenerated = true };
+						catchBlock.ExceptionVariable = new ILVariable() { Name = "ex_" + eh.HandlerStart.GetOffset().ToString("X2"), GeneratedByDecompiler = true };
 					else
 						catchBlock.ExceptionVariable = null;
 					catchBlock.StlocILRanges.AddRange(catchBlock.Body[0].GetSelfAndChildrenRecursiveILRanges());
@@ -787,7 +786,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					catchBlock.ExceptionVariable = ldexception.StoreTo[0];
 				}
 			} else {
-				ILVariable exTemp = new ILVariable() { Name = "ex_" + eh.HandlerStart.GetOffset().ToString("X2"), IsGenerated = true };
+				ILVariable exTemp = new ILVariable() { Name = "ex_" + eh.HandlerStart.GetOffset().ToString("X2"), GeneratedByDecompiler = true };
 				catchBlock.ExceptionVariable = exTemp;
 				foreach (ILVariable storeTo in ldexception.StoreTo) {
 					catchBlock.Body.Insert(0, new ILExpression(ILCode.Stloc, storeTo, new ILExpression(ILCode.Ldloc, exTemp)));
@@ -836,7 +835,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				} else if (byteCode.StoreTo.Count == 1) {
 					ast.Add(new ILExpression(ILCode.Stloc, byteCode.StoreTo[0], expr));
 				} else {
-					ILVariable tmpVar = new ILVariable() { Name = "expr_" + byteCode.Offset.ToString("X2"), IsGenerated = true };
+					ILVariable tmpVar = new ILVariable() { Name = "expr_" + byteCode.Offset.ToString("X2"), GeneratedByDecompiler = true };
 					ast.Add(new ILExpression(ILCode.Stloc, tmpVar, expr));
 					foreach(ILVariable storeTo in byteCode.StoreTo.AsEnumerable().Reverse()) {
 						ast.Add(new ILExpression(ILCode.Stloc, storeTo, new ILExpression(ILCode.Ldloc, tmpVar)));

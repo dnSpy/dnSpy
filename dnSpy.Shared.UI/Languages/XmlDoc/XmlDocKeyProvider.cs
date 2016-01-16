@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using dnlib.DotNet;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Shared.UI.Languages.XmlDoc {
 	/// <summary>
@@ -53,7 +53,7 @@ namespace dnSpy.Shared.UI.Languages.XmlDoc {
 				IList<Parameter> parameters;
 				TypeSig explicitReturnType = null;
 				if (member.IsPropertyDef) {
-					parameters = DnlibExtensions.GetParameters((PropertyDef)member).ToList();
+					parameters = GetParameters((PropertyDef)member).ToList();
 				}
 				else if (member.IsMethod) {
 					var mr = (IMethod)member;
@@ -61,7 +61,7 @@ namespace dnSpy.Shared.UI.Languages.XmlDoc {
 						b.Append("``");
 						b.Append(mr.NumberOfGenericParameters);
 					}
-					parameters = DnlibExtensions.GetParameters(mr);
+					parameters = mr.GetParameters();
 					if (mr.Name == "op_Implicit" || mr.Name == "op_Explicit") {
 						explicitReturnType = mr.MethodSig.GetRetType();
 					}
@@ -69,7 +69,7 @@ namespace dnSpy.Shared.UI.Languages.XmlDoc {
 				else {
 					parameters = null;
 				}
-				if (parameters != null && DnlibExtensions.HasNormalParameter(parameters)) {
+				if (parameters != null && parameters.Any(a => a.IsNormalMethodParameter)) {
 					b.Append('(');
 					for (int i = 0; i < parameters.Count; i++) {
 						var param = parameters[i];
@@ -87,6 +87,30 @@ namespace dnSpy.Shared.UI.Languages.XmlDoc {
 				}
 			}
 			return b.ToString();
+		}
+
+		static IEnumerable<Parameter> GetParameters(PropertyDef property) {
+			if (property == null)
+				yield break;
+			if (property.GetMethod != null) {
+				foreach (var param in property.GetMethod.Parameters)
+					yield return param;
+				yield break;
+			}
+			if (property.SetMethod != null) {
+				int last = property.SetMethod.Parameters.Count - 1;
+				foreach (var param in property.SetMethod.Parameters) {
+					if (param.Index != last)
+						yield return param;
+				}
+				yield break;
+			}
+
+			int i = 0;
+			foreach (var param in property.PropertySig.GetParams()) {
+				yield return new Parameter(i, i, param);
+				i++;
+			}
 		}
 
 		static void AppendTypeName(StringBuilder b, TypeSig type) {
@@ -164,7 +188,7 @@ namespace dnSpy.Shared.UI.Languages.XmlDoc {
 				b.Append('.');
 			}
 			int localTypeParameterCount = 0;
-			b.Append(ICSharpCode.NRefactory.TypeSystem.ReflectionHelper.SplitTypeParameterCountFromReflectionName(type.Name, out localTypeParameterCount));
+			b.Append(SplitTypeParameterCountFromReflectionName(type.Name, out localTypeParameterCount));
 
 			if (localTypeParameterCount > 0) {
 				int totalTypeParameterCount = outerTypeParameterCount + localTypeParameterCount;
@@ -177,6 +201,25 @@ namespace dnSpy.Shared.UI.Languages.XmlDoc {
 				b.Append('}');
 			}
 			return outerTypeParameterCount + localTypeParameterCount;
+		}
+
+		/// <summary>
+		/// Removes the ` with type parameter count from the reflection name.
+		/// </summary>
+		/// <remarks>Do not use this method with the full name of inner classes.</remarks>
+		public static string SplitTypeParameterCountFromReflectionName(string reflectionName, out int typeParameterCount) {
+			int pos = reflectionName.LastIndexOf('`');
+			if (pos < 0) {
+				typeParameterCount = 0;
+				return reflectionName;
+			}
+			else {
+				string typeCount = reflectionName.Substring(pos + 1);
+				if (int.TryParse(typeCount, out typeParameterCount))
+					return reflectionName.Substring(0, pos);
+				else
+					return reflectionName;
+			}
 		}
 		#endregion
 

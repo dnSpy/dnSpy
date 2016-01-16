@@ -247,7 +247,7 @@ namespace dnSpy.Search {
 			if (mapping == null)
 				return false;
 
-			var location = mapping.StartLocation;
+			var location = mapping.StartPosition;
 			uiContext.ScrollAndMoveCaretTo(location.Line, location.Column);
 			return true;
 		}

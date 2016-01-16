@@ -26,8 +26,8 @@ using dnSpy.BamlDecompiler.Properties;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Languages;
-using ICSharpCode.Decompiler;
 using Microsoft.Win32;
 
 namespace dnSpy.BamlDecompiler {

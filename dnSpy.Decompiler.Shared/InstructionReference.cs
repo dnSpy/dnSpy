@@ -21,7 +21,7 @@ using System;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
 
-namespace ICSharpCode.Decompiler.Disassembler {
+namespace dnSpy.Decompiler.Shared {
 	public sealed class InstructionReference : IEquatable<InstructionReference> {
 		public readonly MethodDef Method;
 		public readonly Instruction Instruction;

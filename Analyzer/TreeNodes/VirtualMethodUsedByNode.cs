@@ -26,9 +26,7 @@ using dnlib.DotNet.Emit;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
-using ICSharpCode.Decompiler.Ast;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class VirtualMethodUsedByNode : SearchNode {
@@ -45,7 +43,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(dnSpy_Analyzer_Resources.UsedByTreeNode, TextTokenType.Text);
+			output.Write(dnSpy_Analyzer_Resources.UsedByTreeNode, TextTokenKind.Text);
 		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
@@ -96,13 +94,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 						// explicit call to the requested method 
 						if (instr.OpCode.Code == Code.Call
 							&& Helpers.IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType)
-							&& DnlibExtensions.Resolve(mr) == analyzedMethod) {
+							&& mr.ResolveMethodDef() == analyzedMethod) {
 							foundInstr = instr;
 							break;
 						}
 						// virtual call to base method
 						if (instr.OpCode.Code == Code.Callvirt) {
-							MethodDef md = DnlibExtensions.Resolve(mr);
+							MethodDef md = mr.ResolveMethodDef();
 							if (md == null) {
 								// cannot resolve the operand, so ignore this method
 								break;

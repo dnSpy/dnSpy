@@ -33,9 +33,9 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.IL;
 using dnSpy.Shared.UI.Menus;
-using ICSharpCode.Decompiler.Disassembler;
 
 namespace dnSpy.AsmEditor.Commands {
 	[ExportAutoLoaded]

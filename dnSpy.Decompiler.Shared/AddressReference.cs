@@ -19,7 +19,7 @@
 
 using System;
 
-namespace dnSpy.Decompiler {
+namespace dnSpy.Decompiler.Shared {
 	public sealed class AddressReference : IEquatable<AddressReference> {
 		public readonly string Filename;
 		public readonly bool IsRVA;

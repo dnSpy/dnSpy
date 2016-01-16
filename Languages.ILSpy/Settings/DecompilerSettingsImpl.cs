@@ -22,8 +22,8 @@ using System.ComponentModel.Composition;
 using dnSpy.Contracts.Settings;
 using ICSharpCode.Decompiler;
 
-namespace dnSpy.Decompiler {
-	[Export, Export(typeof(DecompilerSettings)), PartCreationPolicy(CreationPolicy.Shared)]
+namespace dnSpy.Languages.ILSpy.Settings {
+	[Export, PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class DecompilerSettingsImpl : DecompilerSettings {
 		static readonly Guid SETTINGS_GUID = new Guid("6745457F-254B-4B7B-90F1-F948F0721C3B");
 
@@ -58,13 +58,11 @@ namespace dnSpy.Decompiler {
 			this.UseDebugSymbols = sect.Attribute<bool?>("UseDebugSymbols") ?? this.UseDebugSymbols;
 // 			this.ObjectOrCollectionInitializers = sect.Attribute<bool?>("ObjectOrCollectionInitializers") ?? this.ObjectOrCollectionInitializers;
 			this.ShowXmlDocumentation = sect.Attribute<bool?>("ShowXmlDocumentation") ?? this.ShowXmlDocumentation;
-			this.ShowILComments = sect.Attribute<bool?>("ShowILComments") ?? this.ShowILComments;
 			this.RemoveEmptyDefaultConstructors = sect.Attribute<bool?>("RemoveEmptyDefaultConstructors") ?? this.RemoveEmptyDefaultConstructors;
 // 			this.IntroduceIncrementAndDecrement = sect.Attribute<bool?>("IntroduceIncrementAndDecrement") ?? this.IntroduceIncrementAndDecrement;
 // 			this.MakeAssignmentExpressions = sect.Attribute<bool?>("MakeAssignmentExpressions") ?? this.MakeAssignmentExpressions;
 // 			this.AlwaysGenerateExceptionVariableForCatchBlocks = sect.Attribute<bool?>("AlwaysGenerateExceptionVariableForCatchBlocks") ?? this.AlwaysGenerateExceptionVariableForCatchBlocks;
 			this.ShowTokenAndRvaComments = sect.Attribute<bool?>("ShowTokenAndRvaComments") ?? this.ShowTokenAndRvaComments;
-			this.ShowILBytes = sect.Attribute<bool?>("ShowILBytes") ?? this.ShowILBytes;
 			this.SortMembers = sect.Attribute<bool?>("SortMembers") ?? this.SortMembers;
 			this.ForceShowAllMembers = sect.Attribute<bool?>("ForceShowAllMembers") ?? this.ForceShowAllMembers;
 			this.SortSystemUsingStatementsFirst = sect.Attribute<bool?>("SortSystemUsingStatementsFirst") ?? this.SortSystemUsingStatementsFirst;
@@ -101,13 +99,11 @@ namespace dnSpy.Decompiler {
 			sect.Attribute("UseDebugSymbols", UseDebugSymbols);
 // 			sect.Attribute("ObjectOrCollectionInitializers", ObjectOrCollectionInitializers);
 			sect.Attribute("ShowXmlDocumentation", ShowXmlDocumentation);
-			sect.Attribute("ShowILComments", ShowILComments);
 			sect.Attribute("RemoveEmptyDefaultConstructors", RemoveEmptyDefaultConstructors);
 // 			sect.Attribute("IntroduceIncrementAndDecrement", IntroduceIncrementAndDecrement);
 // 			sect.Attribute("MakeAssignmentExpressions", MakeAssignmentExpressions);
 // 			sect.Attribute("AlwaysGenerateExceptionVariableForCatchBlocks", AlwaysGenerateExceptionVariableForCatchBlocks);
 			sect.Attribute("ShowTokenAndRvaComments", ShowTokenAndRvaComments);
-			sect.Attribute("ShowILBytes", ShowILBytes);
 			sect.Attribute("SortMembers", SortMembers);
 			sect.Attribute("ForceShowAllMembers", ForceShowAllMembers);
 			sect.Attribute("SortSystemUsingStatementsFirst", SortSystemUsingStatementsFirst);

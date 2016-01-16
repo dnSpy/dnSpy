@@ -28,8 +28,7 @@ using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Debugger.Properties;
-using ICSharpCode.Decompiler;
-using ICSharpCode.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger.Breakpoints {
 	sealed class BreakpointListModifiedEventArgs : EventArgs {
@@ -365,10 +364,10 @@ namespace dnSpy.Debugger.Breakpoints {
 				return list;
 			var mapping = mappings[0];
 			foreach (var ilbp in ILCodeBreakpoints) {
-				TextLocation location, endLocation;
+				TextPosition location, endLocation;
 				if (!ilbp.GetLocation(uiContext, out location, out endLocation))
 					continue;
-				if (location != mapping.StartLocation || endLocation != mapping.EndLocation)
+				if (location != mapping.StartPosition || endLocation != mapping.EndPosition)
 					continue;
 
 				list.Add(ilbp);
@@ -392,12 +391,12 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 			else if (bps.Count > 0) {
 				foreach (var bp in bps) {
-					var md = bp.MemberMapping.MethodDef;
+					var md = bp.Mapping.Method;
 					var serMod = serializedDnModuleCreator.Create(md.Module);
 					var key = new SerializedDnToken(serMod, md.MDToken);
-					Add(new ILCodeBreakpoint(key, bp.ILInstructionOffset.From));
+					Add(new ILCodeBreakpoint(key, bp.ILRange.From));
 				}
-				uiContext.ScrollAndMoveCaretTo(bps[0].StartLocation.Line, bps[0].StartLocation.Column);
+				uiContext.ScrollAndMoveCaretTo(bps[0].StartPosition.Line, bps[0].StartPosition.Column);
 			}
 		}
 	}

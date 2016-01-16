@@ -23,8 +23,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using dnlib.DotNet;
-using dnSpy.Decompiler;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using ICSharpCode.Decompiler.Ast.Transforms;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
@@ -469,7 +468,7 @@ namespace ICSharpCode.Decompiler.Ast {
 			MemberType mType = type as MemberType;
 			if (sType != null) {
 				while (typeDef.GenericParameters.Count > sType.TypeArguments.Count) {
-					sType.TypeArguments.Add(new SimpleType("").WithAnnotation(TextTokenType.TypeGenericParameter).WithAnnotation(SimpleType.DummyTypeGenericParam));
+					sType.TypeArguments.Add(new SimpleType("").WithAnnotation(TextTokenKind.TypeGenericParameter).WithAnnotation(SimpleType.DummyTypeGenericParam));
 				}
 			}
 			
@@ -479,7 +478,7 @@ namespace ICSharpCode.Decompiler.Ast {
 				int outerTypeParamCount = typeDef.DeclaringType == null ? 0 : typeDef.DeclaringType.GenericParameters.Count;
 				
 				while (typeDef.GenericParameters.Count - outerTypeParamCount > mType.TypeArguments.Count) {
-					mType.TypeArguments.Add(new SimpleType("").WithAnnotation(TextTokenType.TypeGenericParameter).WithAnnotation(SimpleType.DummyTypeGenericParam));
+					mType.TypeArguments.Add(new SimpleType("").WithAnnotation(TextTokenKind.TypeGenericParameter).WithAnnotation(SimpleType.DummyTypeGenericParam));
 				}
 			}
 			
@@ -639,9 +638,9 @@ namespace ICSharpCode.Decompiler.Ast {
 					AstType astType;
 					if ((options & ConvertTypeOptions.IncludeNamespace) == ConvertTypeOptions.IncludeNamespace && ns.Length > 0) {
 						string[] parts = ns.Split('.');
-						AstType nsType = new SimpleType(parts[0]).WithAnnotation(TextTokenType.NamespacePart);
+						AstType nsType = new SimpleType(parts[0]).WithAnnotation(TextTokenKind.NamespacePart);
 						for (int i = 1; i < parts.Length; i++) {
-							nsType = new MemberType { Target = nsType, MemberNameToken = Identifier.Create(parts[i]).WithAnnotation(TextTokenType.NamespacePart) }.WithAnnotation(TextTokenType.NamespacePart);
+							nsType = new MemberType { Target = nsType, MemberNameToken = Identifier.Create(parts[i]).WithAnnotation(TextTokenKind.NamespacePart) }.WithAnnotation(TextTokenKind.NamespacePart);
 						}
 						astType = new MemberType { Target = nsType, MemberNameToken = Identifier.Create(name).WithAnnotation(type) };
 					} else {
@@ -929,7 +928,7 @@ namespace ICSharpCode.Decompiler.Ast {
 			foreach (var gp in genericParameters) {
 				TypeParameterDeclaration tp = new TypeParameterDeclaration();
 				tp.AddAnnotation(gp);
-				tp.NameToken = Identifier.Create(CleanName(gp.Name)).WithAnnotation(TextTokenHelper.GetTextTokenType(gp));
+				tp.NameToken = Identifier.Create(CleanName(gp.Name)).WithAnnotation(TextTokenKindUtils.GetTextTokenType(gp));
 				if (gp.IsContravariant)
 					tp.Variance = VarianceModifier.Contravariant;
 				else if (gp.IsCovariant)
@@ -1145,7 +1144,6 @@ namespace ICSharpCode.Decompiler.Ast {
 		}
 		
 		public bool DecompileMethodBodies { get; set; }
-		public bool DontShowCreateMethodBodyExceptions { get; set; }
 		
 		BlockStatement CreateMethodBody(MethodDef method, IEnumerable<ParameterDeclaration> parameters, out MemberMapping mm)
 		{
@@ -1158,8 +1156,6 @@ namespace ICSharpCode.Decompiler.Ast {
 					throw;
 				}
 				catch (Exception ex) {
-					if (DontShowCreateMethodBodyExceptions)
-						throw;
 					msg = string.Format("{0}An exception occurred when decompiling this method ({1:X8}){0}{0}{2}{0}",
 							Environment.NewLine, method.MDToken.ToUInt32(), ex.ToString());
 				}
@@ -1255,7 +1251,7 @@ namespace ICSharpCode.Decompiler.Ast {
 				method.CallingConvention == dnlib.DotNet.CallingConvention.NativeVarArg) {
 				var pd = new ParameterDeclaration {
 					Type = new PrimitiveType("__arglist"),
-					NameToken = Identifier.Create("").WithAnnotation(TextTokenType.Parameter)
+					NameToken = Identifier.Create("").WithAnnotation(TextTokenKind.Parameter)
 				};
 				return parameters.Concat(new[] { pd });
 			} else {
@@ -1652,14 +1648,14 @@ namespace ICSharpCode.Decompiler.Ast {
 						TypeDef resolvedAttributeType = customAttribute.AttributeType.ResolveTypeDef();
 						foreach (var propertyNamedArg in customAttribute.Properties) {
 							var propertyReference = resolvedAttributeType != null ? resolvedAttributeType.Properties.FirstOrDefault(pr => pr.Name == propertyNamedArg.Name) : null;
-							var propertyName = IdentifierExpression.Create(propertyNamedArg.Name, TextTokenHelper.GetTextTokenType((object)propertyReference ?? TextTokenType.InstanceProperty), true).WithAnnotation(propertyReference);
+							var propertyName = IdentifierExpression.Create(propertyNamedArg.Name, TextTokenKindUtils.GetTextTokenType((object)propertyReference ?? TextTokenKind.InstanceProperty), true).WithAnnotation(propertyReference);
 							var argumentValue = ConvertArgumentValue(propertyNamedArg.Argument);
 							attribute.Arguments.Add(new AssignmentExpression(propertyName, argumentValue));
 						}
 
 						foreach (var fieldNamedArg in customAttribute.Fields) {
 							var fieldReference = resolvedAttributeType != null ? resolvedAttributeType.Fields.FirstOrDefault(f => f.Name == fieldNamedArg.Name) : null;
-							var fieldName = IdentifierExpression.Create(fieldNamedArg.Name, TextTokenHelper.GetTextTokenType((object)fieldReference ?? TextTokenType.InstanceField), true).WithAnnotation(fieldReference);
+							var fieldName = IdentifierExpression.Create(fieldNamedArg.Name, TextTokenKindUtils.GetTextTokenType((object)fieldReference ?? TextTokenKind.InstanceField), true).WithAnnotation(fieldReference);
 							var argumentValue = ConvertArgumentValue(fieldNamedArg.Argument);
 							attribute.Arguments.Add(new AssignmentExpression(fieldName, argumentValue));
 						}
@@ -1713,14 +1709,14 @@ namespace ICSharpCode.Decompiler.Ast {
 						TypeDef resolvedAttributeType = secAttribute.AttributeType.ResolveTypeDef();
 						foreach (var propertyNamedArg in secAttribute.Properties) {
 							var propertyReference = resolvedAttributeType != null ? resolvedAttributeType.Properties.FirstOrDefault(pr => pr.Name == propertyNamedArg.Name) : null;
-							var propertyName = IdentifierExpression.Create(propertyNamedArg.Name, TextTokenHelper.GetTextTokenType((object)propertyReference ?? TextTokenType.InstanceProperty), true).WithAnnotation(propertyReference);
+							var propertyName = IdentifierExpression.Create(propertyNamedArg.Name, TextTokenKindUtils.GetTextTokenType((object)propertyReference ?? TextTokenKind.InstanceProperty), true).WithAnnotation(propertyReference);
 							var argumentValue = ConvertArgumentValue(propertyNamedArg.Argument);
 							attribute.Arguments.Add(new AssignmentExpression(propertyName, argumentValue));
 						}
 
 						foreach (var fieldNamedArg in secAttribute.Fields) {
 							var fieldReference = resolvedAttributeType != null ? resolvedAttributeType.Fields.FirstOrDefault(f => f.Name == fieldNamedArg.Name) : null;
-							var fieldName = IdentifierExpression.Create(fieldNamedArg.Name, TextTokenHelper.GetTextTokenType((object)fieldReference ?? TextTokenType.InstanceField), true).WithAnnotation(fieldReference);
+							var fieldName = IdentifierExpression.Create(fieldNamedArg.Name, TextTokenKindUtils.GetTextTokenType((object)fieldReference ?? TextTokenKind.InstanceField), true).WithAnnotation(fieldReference);
 							var argumentValue = ConvertArgumentValue(fieldNamedArg.Argument);
 							attribute.Arguments.Add(new AssignmentExpression(fieldName, argumentValue));
 						}

@@ -23,7 +23,7 @@ using dnlib.DotNet;
 using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	sealed class TypeExposedByNode : SearchNode {
@@ -37,7 +37,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(dnSpy_Analyzer_Resources.ExposedByTreeNode, TextTokenType.Text);
+			output.Write(dnSpy_Analyzer_Resources.ExposedByTreeNode, TextTokenKind.Text);
 		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {
@@ -49,7 +49,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			if (analyzedType.IsEnum && type == analyzedType)
 				yield break;
 
-			if (!this.Context.Language.ShowMember(type, Context.DecompilerSettings.Clone()))
+			if (!this.Context.Language.ShowMember(type))
 				yield break;
 
 			foreach (FieldDef field in type.Fields) {

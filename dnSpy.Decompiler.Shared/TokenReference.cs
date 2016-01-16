@@ -20,7 +20,7 @@
 using System;
 using dnlib.DotNet;
 
-namespace dnSpy.Decompiler {
+namespace dnSpy.Decompiler.Shared {
 	public class TokenReference : IEquatable<TokenReference> {
 		public readonly ModuleDef ModuleDef;
 		public readonly uint Token;

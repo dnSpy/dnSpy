@@ -44,7 +44,7 @@ using dnSpy.Debugger.CallStack;
 using dnSpy.Debugger.Dialogs;
 using dnSpy.Debugger.IMModules;
 using dnSpy.Debugger.Properties;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Debugger {
 	interface IDebugManager {
@@ -1191,7 +1191,7 @@ namespace dnSpy.Debugger {
 				return false;
 
 			if (currentLocation != null && currentLocation.Value.IsExact)
-				return currentLocation.Value.Offset != mapping.ILInstructionOffset.From;
+				return currentLocation.Value.Offset != mapping.ILRange.From;
 			return true;
 		}
 
@@ -1212,7 +1212,7 @@ namespace dnSpy.Debugger {
 			if (!DebugGetSourceCodeMappingForSetNextStatement(TryGetTextEditorUIContext(parameter), out errMsg, out mapping))
 				return false;
 
-			uint ilOffset = mapping.ILInstructionOffset.From;
+			uint ilOffset = mapping.ILRange.From;
 			var ilFrame = GetCurrentMethodILFrame();
 			bool failed = ilFrame == null || !ilFrame.SetILFrameIP(ilOffset);
 
@@ -1268,7 +1268,7 @@ namespace dnSpy.Debugger {
 			}
 
 			foreach (var bp in bps) {
-				var md = bp.MemberMapping.MethodDef;
+				var md = bp.Mapping.Method;
 				if (currentLocation.Value.Function.Token != md.MDToken.Raw)
 					continue;
 				var serAsm = serializedDnModuleCreator.Create(md.Module);

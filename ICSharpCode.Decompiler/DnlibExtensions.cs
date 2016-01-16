@@ -22,16 +22,13 @@ using System.Linq;
 using System.Text;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using dnlib.PE;
-using dnlib.IO;
-using dnSpy.Decompiler;
+using dnSpy.Decompiler.Shared;
 
-namespace ICSharpCode.Decompiler
-{
+namespace ICSharpCode.Decompiler {
 	/// <summary>
 	/// dnlib helper methods.
 	/// </summary>
-	public static class DnlibExtensions
+	static class DnlibExtensions
 	{
 		public static IEnumerable<TypeDef> GetNestedTypes(this TypeDef type, bool sortMembers)
 		{
@@ -76,39 +73,6 @@ namespace ICSharpCode.Decompiler
 			var ary = type.Methods.ToArray();
 			Array.Sort(ary, MethodDefComparer.Instance);
 			return ary;
-		}
-
-		public static bool GetRVA(this IMemberDef member, out uint rva, out long fileOffset)
-		{
-			rva = 0;
-			fileOffset = 0;
-
-			if (member is MethodDef)
-				rva = (uint)(member as MethodDef).RVA;
-			else if (member is FieldDef)
-				rva = (uint)(member as FieldDef).RVA;
-			if (rva == 0)
-				return false;
-
-			fileOffset = member.Module.ToFileOffset(rva);
-			return true;
-		}
-
-		public static IImageStream GetImageStream(this ModuleDef module, uint rva)
-		{
-			var m = module as ModuleDefMD;//TODO: Support CorModuleDef
-			if (m == null)
-				return null;
-
-			return m.MetaData.PEImage.CreateStream((RVA)rva);
-		}
-
-		public static long ToFileOffset(this ModuleDef module, uint rva)
-		{
-			var m = module as ModuleDefMD;//TODO: Support CorModuleDef
-			if (m == null)
-				return (uint)rva;
-			return (long)m.MetaData.PEImage.ToFileOffset((RVA)rva);
 		}
 
 		#region GetPushDelta / GetPopDelta
@@ -179,29 +143,6 @@ namespace ICSharpCode.Decompiler
 		public static string OffsetToString(uint offset)
 		{
 			return string.Format("IL_{0:X4}", offset);
-		}
-		
-		public static HashSet<MethodDef> GetAccessorMethods(this TypeDef type)
-		{
-			HashSet<MethodDef> accessorMethods = new HashSet<MethodDef>();
-			foreach (var property in type.Properties) {
-				accessorMethods.Add(property.GetMethod);
-				accessorMethods.Add(property.SetMethod);
-				if (property.HasOtherMethods) {
-					foreach (var m in property.OtherMethods)
-						accessorMethods.Add(m);
-				}
-			}
-			foreach (EventDef ev in type.Events) {
-				accessorMethods.Add(ev.AddMethod);
-				accessorMethods.Add(ev.RemoveMethod);
-				accessorMethods.Add(ev.InvokeMethod);
-				if (ev.HasOtherMethods) {
-					foreach (var m in ev.OtherMethods)
-						accessorMethods.Add(m);
-				}
-			}
-			return accessorMethods;
 		}
 		
 		public static TypeDef ResolveWithinSameModule(this ITypeDefOrRef type)
@@ -367,31 +308,12 @@ namespace ICSharpCode.Decompiler
 			return false;
 		}
 
-		public static int GetCodeSize(this CilBody body)
-		{
-			if (body.Instructions.Count == 0)
-				return 0;
-			else
-			{
-				var instr = body.Instructions.Last();
-				return instr.GetEndOffset();
-			}
-		}
-
 		public static Instruction GetPrevious(this CilBody body, Instruction instr)
 		{
 			int index = body.Instructions.IndexOf(instr);
 			if (index <= 0)
 				return null;
 			return body.Instructions[index - 1];
-		}
-
-		public static bool HasNormalParameter(this IEnumerable<Parameter> list)
-		{
-			foreach (var p in list)
-				if (p.IsNormalMethodParameter)
-					return true;
-			return false;
 		}
 
 		public static IList<TypeSig> GetParameters(this MethodBaseSig methodSig)
@@ -425,24 +347,6 @@ namespace ICSharpCode.Decompiler
 		public static bool IsCorlibType(this ITypeDefOrRef type, string ns, string name)
 		{
 			return type != null && type.DefinitionAssembly.IsCorLib() && type.Namespace == ns && type.Name == name;
-		}
-
-		public static IList<Parameter> GetParameters(this IMethod method)
-		{
-			if (method == null || method.MethodSig == null)
-				return new List<Parameter>();
-
-			var md = method as MethodDef;
-			if (md != null)
-				return md.Parameters;
-
-			var list = new List<Parameter>();
-			int paramIndex = 0, methodSigIndex = 0;
-			if (method.MethodSig.HasThis)
-				list.Add(new Parameter(paramIndex++, Parameter.HIDDEN_THIS_METHOD_SIG_INDEX, method.DeclaringType.ToTypeSig()));
-			foreach (var type in method.MethodSig.GetParameters())
-				list.Add(new Parameter(paramIndex++, methodSigIndex++, type));
-			return list;
 		}
 
 		public static IEnumerable<Parameter> GetParameters(this PropertyDef property)

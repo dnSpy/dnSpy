@@ -2,7 +2,7 @@
 // This code is distributed under MIT X11 license (for details please see \doc\license.txt)
 
 using System.Collections.Generic;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace ICSharpCode.NRefactory.VB.Ast {
 	public class InterfaceMemberSpecifier : AstNode
@@ -15,7 +15,7 @@ namespace ICSharpCode.NRefactory.VB.Ast {
 			Member = member;
 		}
 		
-		public InterfaceMemberSpecifier(AstType target, string member, TextTokenType typeToken)
+		public InterfaceMemberSpecifier(AstType target, string member, TextTokenKind typeToken)
 		{
 			Target = new TypeReferenceExpression(target);
 			Member = new Identifier(typeToken, member, TextLocation.Empty);

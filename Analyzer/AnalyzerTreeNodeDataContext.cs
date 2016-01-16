@@ -21,14 +21,12 @@ using dnSpy.Analyzer.TreeNodes;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Analyzer {
 	sealed class AnalyzerTreeNodeDataContext : IAnalyzerTreeNodeDataContext {
 		public IDotNetImageManager DotNetImageManager { get; set; }
 		public ILanguage Language { get; set; }
 		public IFileManager FileManager { get; set; }
-		public DecompilerSettings DecompilerSettings { get; set; }
 		public IAnalyzerManager AnalyzerManager { get; set; }
 		public bool ShowToken { get; set; }
 		public bool SingleClickExpandsChildren { get; set; }

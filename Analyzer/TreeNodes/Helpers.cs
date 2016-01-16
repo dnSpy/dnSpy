@@ -19,7 +19,6 @@
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Analyzer.TreeNodes {
 	static class Helpers {
@@ -60,7 +59,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		static MethodDef GetOriginalCodeLocation(MethodDef method) {
-			if (method.IsCompilerGenerated()) {
+			if (IsCompilerGenerated(method)) {
 				return FindMethodUsageInType(method.DeclaringType, method) ?? method;
 			}
 
@@ -74,7 +73,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		/// Used to detect the 'parent method' for a lambda/iterator/async state machine.
 		/// </summary>
 		static MethodDef GetOriginalCodeLocation(TypeDef type) {
-			if (type != null && type.DeclaringType != null && type.IsCompilerGenerated()) {
+			if (type != null && type.DeclaringType != null && IsCompilerGenerated(type)) {
 				if (type.IsValueType) {
 					// Value types might not have any constructor; but they must be stored in a local var
 					// because 'initobj' (or 'call .ctor') expects a managed ref.
@@ -104,7 +103,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 					IMethod mr = instr.Operand as IMethod;
 					if (mr != null && !mr.IsField && mr.Name == name &&
 						IsReferencedBy(analyzedMethod.DeclaringType, mr.DeclaringType) &&
-						mr.Resolve() == analyzedMethod) {
+						mr.ResolveMethodDef() == analyzedMethod) {
 						found = true;
 						break;
 					}
@@ -122,7 +121,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 				if (!method.HasBody)
 					continue;
 				foreach (var v in method.Body.Variables) {
-					if (v.Type.ToTypeDefOrRef().ResolveWithinSameModule() == variableType) {
+					if (ResolveWithinSameModule(v.Type.ToTypeDefOrRef()) == variableType) {
 						found = true;
 						break;
 					}
@@ -132,6 +131,16 @@ namespace dnSpy.Analyzer.TreeNodes {
 					return method;
 			}
 			return null;
+		}
+
+		static TypeDef ResolveWithinSameModule(ITypeDefOrRef type) {
+			if (type != null && type.Scope == type.Module)
+				return type.ResolveTypeDef();
+			return null;
+		}
+
+		static bool IsCompilerGenerated(this IHasCustomAttribute hca) {
+			return hca != null && hca.CustomAttributes.IsDefined("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
 		}
 	}
 }

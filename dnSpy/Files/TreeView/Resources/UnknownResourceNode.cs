@@ -26,10 +26,10 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
 using dnSpy.Shared.UI.Decompiler;
 using dnSpy.Shared.UI.Files.TreeView.Resources;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.TreeView.Resources {
 	sealed class UnknownResourceNode : ResourceNode, IUnknownResourceNode, IDecompileSelf {

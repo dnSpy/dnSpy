@@ -23,8 +23,8 @@ using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Decompiler;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Debugger {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
@@ -79,7 +79,7 @@ namespace dnSpy.Debugger {
 
 			var serDict = new Dictionary<ModuleDef, SerializedDnModule>();
 			foreach (var m in mappings) {
-				var module = m.MethodDef.Module;
+				var module = m.Method.Module;
 				if (module == null)
 					continue;
 
@@ -88,7 +88,7 @@ namespace dnSpy.Debugger {
 					serMod = serializedDnModuleCreator.Create(module);
 					serDict.Add(module, serMod);
 				}
-				var key = new SerializedDnToken(serMod, m.MethodDef.MDToken);
+				var key = new SerializedDnToken(serMod, m.Method.MDToken);
 				MemberMapping oldMm;
 				if (this.dict.TryGetValue(key, out oldMm)) {
 					if (m.MemberCodeMappings.Count < oldMm.MemberCodeMappings.Count)
@@ -134,17 +134,17 @@ namespace dnSpy.Debugger {
 			foreach (var entry in dict.Values) {
 				SourceCodeMapping map = null;
 				foreach (var m in entry.MemberCodeMappings) {
-					if (line > m.EndLocation.Line)
+					if (line > m.EndPosition.Line)
 						continue;
-					if (map == null || m.StartLocation < map.StartLocation)
+					if (map == null || m.StartPosition < map.StartPosition)
 						map = m;
 				}
 				if (map != null) {
 					if (list.Count == 0)
 						list.Add(map);
-					else if (map.StartLocation == list[0].StartLocation)
+					else if (map.StartPosition == list[0].StartPosition)
 						list.Add(map);
-					else if (map.StartLocation < list[0].StartLocation) {
+					else if (map.StartPosition < list[0].StartPosition) {
 						list.Clear();
 						list.Add(map);
 					}

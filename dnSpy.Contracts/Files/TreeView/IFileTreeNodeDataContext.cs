@@ -19,7 +19,6 @@
 
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Languages;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Contracts.Files.TreeView {
 	/// <summary>
@@ -40,11 +39,6 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// Gets the <see cref="IResourceNodeFactory"/> instance
 		/// </summary>
 		IResourceNodeFactory ResourceNodeFactory { get; }
-
-		/// <summary>
-		/// Gets the decompiler settings
-		/// </summary>
-		DecompilerSettings DecompilerSettings { get; }
 
 		/// <summary>
 		/// Gets the filter

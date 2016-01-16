@@ -19,7 +19,7 @@
 using System;
 using System.IO;
 using System.Text;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace ICSharpCode.Decompiler {
 	public class TextOutputWriter : TextWriter
@@ -39,7 +39,7 @@ namespace ICSharpCode.Decompiler {
 		
 		public override void Write(string value)
 		{
-			output.Write(value, TextTokenType.Text);
+			output.Write(value, TextTokenKind.Text);
 		}
 		
 		public override void WriteLine()

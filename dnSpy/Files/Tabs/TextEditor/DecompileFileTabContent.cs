@@ -29,11 +29,10 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
 using dnSpy.Shared.UI.Decompiler;
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	[Export, ExportFileTabContentFactory(Order = TabConstants.ORDER_DECOMPILEFILETABCONTENTFACTORY)]
@@ -58,23 +57,17 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 		readonly IDecompilationCache decompilationCache;
 
-		public DecompilerSettings CreateDecompilerSettings() {
-			return _global_decompilerSettings.Clone();
-		}
-		readonly DecompilerSettings _global_decompilerSettings;
-
 		public IMethodAnnotations MethodAnnotations {
 			get { return methodAnnotations; }
 		}
 		readonly IMethodAnnotations methodAnnotations;
 
 		[ImportingConstructor]
-		DecompileFileTabContentFactory(IFileManager fileManager, IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguageManager languageManager, IDecompilationCache decompilationCache, DecompilerSettings decompilerSettings, IMethodAnnotations methodAnnotations) {
+		DecompileFileTabContentFactory(IFileManager fileManager, IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguageManager languageManager, IDecompilationCache decompilationCache, IMethodAnnotations methodAnnotations) {
 			this.fileManager = fileManager;
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
 			this.languageManager = languageManager;
 			this.decompilationCache = decompilationCache;
-			this._global_decompilerSettings = decompilerSettings;
 			this.methodAnnotations = methodAnnotations;
 		}
 
@@ -180,14 +173,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		DecompileContext CreateDecompileContext() {
 			var decompileContext = new DecompileContext();
-			var decompilationOptions = new DecompilationOptions();
-			decompilationOptions.DecompilerSettings = decompileFileTabContentFactory.CreateDecompilerSettings();
-			decompilationOptions.DontShowCreateMethodBodyExceptions = true;
-			decompilationOptions.GetDisableAssemblyLoad = () => decompileFileTabContentFactory.FileManager.DisableAssemblyLoad();
-			decompilationOptions.IsBodyModified = m => decompileFileTabContentFactory.MethodAnnotations.IsBodyModified(m);
+			var decompilationContext = new DecompilationContext();
+			decompilationContext.GetDisableAssemblyLoad = () => decompileFileTabContentFactory.FileManager.DisableAssemblyLoad();
+			decompilationContext.IsBodyModified = m => decompileFileTabContentFactory.MethodAnnotations.IsBodyModified(m);
 			var output = new AvalonEditTextOutput();
 			var dispatcher = Dispatcher.CurrentDispatcher;
-			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationOptions, language, output, dispatcher);
+			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, language, output, dispatcher);
 			return decompileContext;
 		}
 
@@ -210,7 +201,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			UpdateLanguage();
 			var decompileContext = CreateDecompileContext();
 			IHighlightingDefinition highlighting;
-			decompileContext.CachedOutput = decompileFileTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Language, nodes, decompileContext.DecompileNodeContext.DecompilationOptions, out highlighting);
+			decompileContext.CachedOutput = decompileFileTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Language, nodes, out highlighting);
 			decompileContext.DecompileNodeContext.HighlightingDefinition = highlighting;
 			return decompileContext;
 		}
@@ -218,7 +209,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public void AsyncWorker(IFileTabUIContext uiContext, object userData, CancellationTokenSource source) {
 			var decompileContext = (DecompileContext)userData;
 			decompileContext.CancellationTokenSource = source;
-			decompileContext.DecompileNodeContext.DecompilationOptions.CancellationToken = source.Token;
+			decompileContext.DecompileNodeContext.DecompilationContext.CancellationToken = source.Token;
 			decompileFileTabContentFactory.FileTreeNodeDecompiler.Decompile(decompileContext.DecompileNodeContext, nodes);
 		}
 
@@ -237,19 +228,19 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			AvalonEditTextOutput output;
 			if (result.IsCanceled) {
 				output = new AvalonEditTextOutput();
-				output.Write(dnSpy_Resources.DecompilationCanceled, TextTokenType.Error);
+				output.Write(dnSpy_Resources.DecompilationCanceled, TextTokenKind.Error);
 			}
 			else if (result.Exception != null) {
 				output = new AvalonEditTextOutput();
-				output.Write(dnSpy_Resources.DecompilationException, TextTokenType.Error);
+				output.Write(dnSpy_Resources.DecompilationException, TextTokenKind.Error);
 				output.WriteLine();
-				output.Write(result.Exception.ToString(), TextTokenType.Text);
+				output.Write(result.Exception.ToString(), TextTokenKind.Text);
 			}
 			else {
 				output = decompileContext.CachedOutput;
 				if (output == null) {
 					output = (AvalonEditTextOutput)decompileContext.DecompileNodeContext.Output;
-					decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Language, nodes, decompileContext.DecompileNodeContext.DecompilationOptions, output, highlighting);
+					decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Language, nodes, output, highlighting);
 				}
 			}
 

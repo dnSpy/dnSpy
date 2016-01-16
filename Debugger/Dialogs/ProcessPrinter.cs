@@ -22,7 +22,7 @@ using dndbg.Engine;
 using dnlib.PE;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Debugger.Properties;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 
 namespace dnSpy.Debugger.Dialogs {
@@ -49,17 +49,17 @@ namespace dnSpy.Debugger.Dialogs {
 
 		public void WritePID(ProcessVM vm) {
 			if (useHex)
-				output.Write(string.Format("0x{0:X8}", vm.PID), TextTokenType.Number);
+				output.Write(string.Format("0x{0:X8}", vm.PID), TextTokenKind.Number);
 			else
-				output.Write(string.Format("{0}", vm.PID), TextTokenType.Number);
+				output.Write(string.Format("{0}", vm.PID), TextTokenKind.Number);
 		}
 
 		public void WriteCLRVersion(ProcessVM vm) {
-			output.Write(vm.CLRVersion, TextTokenType.Number);
+			output.Write(vm.CLRVersion, TextTokenKind.Number);
 		}
 
 		public void WriteType(ProcessVM vm) {
-			output.Write(TypeToString(vm.CLRTypeInfo.CLRType), TextTokenType.EnumField);
+			output.Write(TypeToString(vm.CLRTypeInfo.CLRType), TextTokenKind.EnumField);
 		}
 
 		static string TypeToString(CLRType type) {
@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 
 		public void WriteMachine(ProcessVM vm) {
-			output.Write(ToString(vm.Machine), TextTokenType.InstanceMethod);
+			output.Write(ToString(vm.Machine), TextTokenKind.InstanceMethod);
 		}
 
 		static string ToString(Machine machine) {
@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 
 		public void WriteTitle(ProcessVM vm) {
-			output.Write(vm.Title, TextTokenType.String);
+			output.Write(vm.Title, TextTokenKind.String);
 		}
 	}
 }

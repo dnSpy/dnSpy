@@ -30,7 +30,7 @@ namespace dnSpy.Languages.ILSpy {
 		}
 
 		public IEnumerable<string> MergedResourceDictionaries {
-			get { yield break; }
+			get { yield return "Themes/wpf.styles.templates.xaml"; }
 		}
 
 		public PluginInfo PluginInfo {

@@ -21,7 +21,7 @@ using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
 
-namespace dnSpy.Decompiler {
+namespace dnSpy.Decompiler.Shared {
 	public abstract class MemberRefComparer<T> : IComparer<T> where T : IMemberRef {
 		public int Compare(T x, T y) {
 			int c = StringComparer.OrdinalIgnoreCase.Compare(x.Name, y.Name);

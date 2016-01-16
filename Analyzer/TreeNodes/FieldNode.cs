@@ -23,7 +23,7 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Files.TreeView;
 
 namespace dnSpy.Analyzer.TreeNodes {
@@ -46,7 +46,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			language.WriteType(output, analyzedField.DeclaringType, true);
-			output.Write(".", TextTokenType.Operator);
+			output.Write(".", TextTokenKind.Operator);
 			new NodePrinter().Write(output, language, analyzedField, Context.ShowToken);
 		}
 

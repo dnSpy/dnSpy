@@ -28,8 +28,7 @@ using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.TreeView;
-using dnSpy.Decompiler;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.UI.Highlighting;
 using dnSpy.Shared.UI.MVVM;
 using dnSpy.Shared.UI.Search;
@@ -142,25 +141,25 @@ namespace dnSpy.Search {
 
 			var md = o as MethodDef;
 			if (md != null) {
-				output.Write(IdentifierEscaper.Escape(md.Name), TextTokenHelper.GetTextTokenType(md));
+				output.Write(IdentifierEscaper.Escape(md.Name), TextTokenKindUtils.GetTextTokenType(md));
 				return;
 			}
 
 			var fd = o as FieldDef;
 			if (fd != null) {
-				output.Write(IdentifierEscaper.Escape(fd.Name), TextTokenHelper.GetTextTokenType(fd));
+				output.Write(IdentifierEscaper.Escape(fd.Name), TextTokenKindUtils.GetTextTokenType(fd));
 				return;
 			}
 
 			var pd = o as PropertyDef;
 			if (pd != null) {
-				output.Write(IdentifierEscaper.Escape(pd.Name), TextTokenHelper.GetTextTokenType(pd));
+				output.Write(IdentifierEscaper.Escape(pd.Name), TextTokenKindUtils.GetTextTokenType(pd));
 				return;
 			}
 
 			var ed = o as EventDef;
 			if (ed != null) {
-				output.Write(IdentifierEscaper.Escape(ed.Name), TextTokenHelper.GetTextTokenType(ed));
+				output.Write(IdentifierEscaper.Escape(ed.Name), TextTokenKindUtils.GetTextTokenType(ed));
 				return;
 			}
 
@@ -191,7 +190,7 @@ namespace dnSpy.Search {
 			// non-.NET file
 			var file = o as IDnSpyFile;
 			if (file != null) {
-				output.Write(file.GetShortName(), TextTokenType.Text);
+				output.Write(file.GetShortName(), TextTokenKind.Text);
 				return;
 			}
 
@@ -216,7 +215,7 @@ namespace dnSpy.Search {
 			Debug.Assert(o == null);
 		}
 
-		public static SearchResult CreateMessage(SearchResultContext context, string msg, TextTokenType type, bool first) {
+		public static SearchResult CreateMessage(SearchResultContext context, string msg, TextTokenKind type, bool first) {
 			return new MessageSearchResult(msg, type, first) { Context = context };
 		}
 
@@ -249,12 +248,12 @@ namespace dnSpy.Search {
 		}
 		readonly string msg;
 
-		public TextTokenType Type {
+		public TextTokenKind Type {
 			get { return type; }
 		}
-		readonly TextTokenType type;
+		readonly TextTokenKind type;
 
-		public ErrorMessage(string msg, TextTokenType type) {
+		public ErrorMessage(string msg, TextTokenKind type) {
 			this.msg = msg;
 			this.type = type;
 		}
@@ -267,7 +266,7 @@ namespace dnSpy.Search {
 		}
 		readonly int order;
 
-		public MessageSearchResult(string msg, TextTokenType type, bool first) {
+		public MessageSearchResult(string msg, TextTokenKind type, bool first) {
 			this.msg = msg;
 			this.NameObject = new ErrorMessage(msg, type);
 			this.order = first ? int.MinValue : int.MaxValue;

@@ -20,8 +20,8 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
+using dnSpy.Decompiler.Shared;
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 	/// <summary>

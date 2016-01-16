@@ -20,13 +20,8 @@
 using System.Text;
 using System.Globalization;
 
-namespace dnSpy.Decompiler {
-	public sealed class IdentifierFormatted {
-	}
-
+namespace dnSpy.Decompiler.Shared {
 	public static class IdentifierEscaper {
-		public static readonly IdentifierFormatted IdentifierFormatted = new IdentifierFormatted();
-
 		const int MAX_IDENTIFIER_LENGTH = 512;
 		const string EMPTY_NAME = "<<EMPTY_NAME>>";
 

@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Settings;
 using dnSpy.Shared.UI.MVVM;
@@ -100,6 +101,55 @@ namespace dnSpy.Files.TreeView {
 		}
 		bool deserializeResources = true;
 
+		MemberKind[] memberKinds = new MemberKind[5] {
+			MemberKind.Methods,
+			MemberKind.Properties,
+			MemberKind.Events,
+			MemberKind.Fields,
+			MemberKind.NestedTypes,
+		};
+
+		public MemberKind MemberKind0 {
+			get { return memberKinds[0]; }
+			set { SetMemberKind(0, value); }
+		}
+
+		public MemberKind MemberKind1 {
+			get { return memberKinds[1]; }
+			set { SetMemberKind(1, value); }
+		}
+
+		public MemberKind MemberKind2 {
+			get { return memberKinds[2]; }
+			set { SetMemberKind(2, value); }
+		}
+
+		public MemberKind MemberKind3 {
+			get { return memberKinds[3]; }
+			set { SetMemberKind(3, value); }
+		}
+
+		public MemberKind MemberKind4 {
+			get { return memberKinds[4]; }
+			set { SetMemberKind(4, value); }
+		}
+
+		void SetMemberKind(int index, MemberKind newValue) {
+			if (memberKinds[index] == newValue)
+				return;
+
+			int otherIndex = Array.IndexOf(memberKinds, newValue);
+			Debug.Assert(otherIndex >= 0);
+			if (otherIndex >= 0) {
+				memberKinds[otherIndex] = memberKinds[index];
+				memberKinds[index] = newValue;
+
+				OnPropertyChanged(string.Format("MemberKind{0}", otherIndex));
+			}
+			OnPropertyChanged(string.Format("MemberKind{0}", index));
+			OnModified();
+		}
+
 		public FileTreeViewSettings Clone() {
 			return CopyTo(new FileTreeViewSettings());
 		}
@@ -111,6 +161,11 @@ namespace dnSpy.Files.TreeView {
 			other.ShowAssemblyPublicKeyToken = this.ShowAssemblyPublicKeyToken;
 			other.ShowToken = this.ShowToken;
 			other.DeserializeResources = this.DeserializeResources;
+			other.MemberKind0 = this.MemberKind0;
+			other.MemberKind1 = this.MemberKind1;
+			other.MemberKind2 = this.MemberKind2;
+			other.MemberKind3 = this.MemberKind3;
+			other.MemberKind4 = this.MemberKind4;
 			return other;
 		}
 	}
@@ -133,6 +188,11 @@ namespace dnSpy.Files.TreeView {
 			this.ShowAssemblyPublicKeyToken = sect.Attribute<bool?>("ShowAssemblyPublicKeyToken") ?? this.ShowAssemblyPublicKeyToken;
 			this.ShowToken = sect.Attribute<bool?>("ShowToken") ?? this.ShowToken;
 			this.DeserializeResources = sect.Attribute<bool?>("DeserializeResources") ?? this.DeserializeResources;
+			this.MemberKind0 = sect.Attribute<MemberKind?>("MemberKind0") ?? this.MemberKind0;
+			this.MemberKind1 = sect.Attribute<MemberKind?>("MemberKind1") ?? this.MemberKind1;
+			this.MemberKind2 = sect.Attribute<MemberKind?>("MemberKind2") ?? this.MemberKind2;
+			this.MemberKind3 = sect.Attribute<MemberKind?>("MemberKind3") ?? this.MemberKind3;
+			this.MemberKind4 = sect.Attribute<MemberKind?>("MemberKind4") ?? this.MemberKind4;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -147,6 +207,11 @@ namespace dnSpy.Files.TreeView {
 			sect.Attribute("ShowAssemblyPublicKeyToken", ShowAssemblyPublicKeyToken);
 			sect.Attribute("ShowToken", ShowToken);
 			sect.Attribute("DeserializeResources", DeserializeResources);
+			sect.Attribute("MemberKind0", MemberKind0);
+			sect.Attribute("MemberKind1", MemberKind1);
+			sect.Attribute("MemberKind2", MemberKind2);
+			sect.Attribute("MemberKind3", MemberKind3);
+			sect.Attribute("MemberKind4", MemberKind4);
 		}
 	}
 }

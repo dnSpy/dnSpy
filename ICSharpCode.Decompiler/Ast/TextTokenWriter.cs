@@ -21,8 +21,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
-using dnSpy.Decompiler;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.CSharp;
@@ -37,7 +36,7 @@ namespace ICSharpCode.Decompiler.Ast {
 		bool firstUsingDeclaration;
 		bool lastUsingDeclaration;
 		
-		TextLocation? lastEndOfLine;
+		TextPosition? lastEndOfLine;
 		
 		public bool FoldBraces = false;
 		
@@ -51,37 +50,37 @@ namespace ICSharpCode.Decompiler.Ast {
 			this.context = context;
 		}
 		
-		public override void WriteIdentifier(Identifier identifier, TextTokenType tokenType)
+		public override void WriteIdentifier(Identifier identifier, TextTokenKind tokenKind)
 		{
-			if (tokenType == TextTokenType.Text)
-				tokenType = TextTokenHelper.GetTextTokenType(identifier.AnnotationVT<TextTokenType>() ?? identifier.Annotation<object>());
+			if (tokenKind == TextTokenKind.Text)
+				tokenKind = TextTokenKindUtils.GetTextTokenType(identifier.AnnotationVT<TextTokenKind>() ?? identifier.Annotation<object>());
 
-			if (tokenType != TextTokenType.Keyword && (identifier.IsVerbatim || CSharpOutputVisitor.IsKeyword(identifier.Name, identifier))) {
-				output.Write("@", TextTokenType.Operator);
+			if (tokenKind != TextTokenKind.Keyword && (identifier.IsVerbatim || CSharpOutputVisitor.IsKeyword(identifier.Name, identifier))) {
+				output.Write("@", TextTokenKind.Operator);
 			}
 			
 			var definition = GetCurrentDefinition(identifier);
 			if (definition != null) {
-				output.WriteDefinition(IdentifierEscaper.Escape(identifier.Name), definition, tokenType, false);
+				output.WriteDefinition(IdentifierEscaper.Escape(identifier.Name), definition, tokenKind, false);
 				return;
 			}
 			
 			object memberRef = GetCurrentMemberReference();
 
 			if (memberRef != null) {
-				output.WriteReference(IdentifierEscaper.Escape(identifier.Name), memberRef, tokenType);
+				output.WriteReference(IdentifierEscaper.Escape(identifier.Name), memberRef, tokenKind);
 				return;
 			}
 
 			definition = GetCurrentLocalDefinition();
 			if (definition != null) {
-				output.WriteDefinition(IdentifierEscaper.Escape(identifier.Name), definition, tokenType);
+				output.WriteDefinition(IdentifierEscaper.Escape(identifier.Name), definition, tokenKind);
 				return;
 			}
 
 			memberRef = GetCurrentLocalReference();
 			if (memberRef != null) {
-				output.WriteReference(IdentifierEscaper.Escape(identifier.Name), memberRef, tokenType, true);
+				output.WriteReference(IdentifierEscaper.Escape(identifier.Name), memberRef, tokenKind, true);
 				return;
 			}
 
@@ -92,7 +91,7 @@ namespace ICSharpCode.Decompiler.Ast {
 			var s = identifier.Name;
 			if (identifier.Annotation<IdentifierFormatted>() == null)
 				s = IdentifierEscaper.Escape(s);
-			output.Write(s, tokenType);
+			output.Write(s, tokenKind);
 		}
 
 		IMemberRef GetCurrentMemberReference()
@@ -219,14 +218,14 @@ namespace ICSharpCode.Decompiler.Ast {
 			if (node is IndexerDeclaration)
 				memberRef = node.Annotation<PropertyDef>();
 			if (memberRef != null && (node is PrimitiveType || node is ConstructorInitializer || node is BaseReferenceExpression || node is ThisReferenceExpression || node is ObjectCreateExpression || node is AnonymousMethodExpression))
-				output.WriteReference(keyword, memberRef, TextTokenType.Keyword);
+				output.WriteReference(keyword, memberRef, TextTokenKind.Keyword);
 			else if (memberRef != null && node is IndexerDeclaration && keyword == "this")
-				output.WriteDefinition(keyword, memberRef, TextTokenType.Keyword, false);
+				output.WriteDefinition(keyword, memberRef, TextTokenKind.Keyword, false);
 			else
-				output.Write(keyword, TextTokenType.Keyword);
+				output.Write(keyword, TextTokenKind.Keyword);
 		}
 		
-		public override void WriteToken(Role role, string token, TextTokenType tokenType)
+		public override void WriteToken(Role role, string token, TextTokenKind tokenKind)
 		{
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
@@ -245,9 +244,9 @@ namespace ICSharpCode.Decompiler.Ast {
 			}
 
 			if (addRef)
-				output.WriteReference(token, memberRef, tokenType);
+				output.WriteReference(token, memberRef, tokenKind);
 			else
-				output.Write(token, tokenType);
+				output.Write(token, tokenKind);
 		}
 		
 		public override void Space()
@@ -255,7 +254,7 @@ namespace ICSharpCode.Decompiler.Ast {
 			output.WriteSpace();
 		}
 		
-		public void OpenBrace(BraceStyle style, out TextLocation? start, out TextLocation? end)
+		public void OpenBrace(BraceStyle style, out TextPosition? start, out TextPosition? end)
 		{
 			if (braceLevelWithinType >= 0 || nodeStack.Peek() is TypeDeclaration)
 				braceLevelWithinType++;
@@ -267,7 +266,7 @@ namespace ICSharpCode.Decompiler.Ast {
 			output.Indent();
 		}
 		
-		public void CloseBrace(BraceStyle style, out TextLocation? start, out TextLocation? end)
+		public void CloseBrace(BraceStyle style, out TextPosition? start, out TextPosition? end)
 		{
 			output.Unindent();
 			start = output.Location;
@@ -300,18 +299,18 @@ namespace ICSharpCode.Decompiler.Ast {
 		{
 			switch (commentType) {
 				case CommentType.SingleLine:
-					output.Write("//", TextTokenType.Comment);
+					output.Write("//", TextTokenKind.Comment);
 					Write(content, refs);
 					output.WriteLine();
 					break;
 				case CommentType.MultiLine:
-					output.Write("/*", TextTokenType.Comment);
+					output.Write("/*", TextTokenKind.Comment);
 					Write(content, refs);
-					output.Write("*/", TextTokenType.Comment);
+					output.Write("*/", TextTokenKind.Comment);
 					break;
 				case CommentType.Documentation:
 					bool isLastLine = !(nodeStack.Peek().NextSibling is Comment);
-					output.Write("///", TextTokenType.XmlDocTag);
+					output.Write("///", TextTokenKind.XmlDocTag);
 					Debug.Assert(refs == null);
 					output.WriteXmlDoc(content);
 					output.WriteLine();
@@ -325,7 +324,7 @@ namespace ICSharpCode.Decompiler.Ast {
 		void Write(string content, CommentReference[] refs)
 		{
 			if (refs == null) {
-				output.Write(content, TextTokenType.Comment);
+				output.Write(content, TextTokenKind.Comment);
 				return;
 			}
 
@@ -335,9 +334,9 @@ namespace ICSharpCode.Decompiler.Ast {
 				var s = content.Substring(offs, @ref.Length);
 				offs += @ref.Length;
 				if (@ref.Reference == null)
-					output.Write(s, TextTokenType.Comment);
+					output.Write(s, TextTokenKind.Comment);
 				else
-					output.WriteReference(s, @ref.Reference, TextTokenType.Comment, @ref.IsLocal);
+					output.WriteReference(s, @ref.Reference, TextTokenKind.Comment, @ref.IsLocal);
 			}
 			Debug.Assert(offs == content.Length);
 		}
@@ -345,27 +344,27 @@ namespace ICSharpCode.Decompiler.Ast {
 		public override void WritePreProcessorDirective(PreProcessorDirectiveType type, string argument)
 		{
 			// pre-processor directive must start on its own line
-			output.Write("#", TextTokenType.Text);
-			output.Write(type.ToString().ToLowerInvariant(), TextTokenType.Text);
+			output.Write("#", TextTokenKind.Text);
+			output.Write(type.ToString().ToLowerInvariant(), TextTokenKind.Text);
 			if (!string.IsNullOrEmpty(argument)) {
 				output.WriteSpace();
-				output.Write(argument, TextTokenType.Text);
+				output.Write(argument, TextTokenKind.Text);
 			}
 			output.WriteLine();
 		}
 		
-		public override void WritePrimitiveValue(object value, TextTokenType? tokenType = null, string literalValue = null)
+		public override void WritePrimitiveValue(object value, TextTokenKind? tokenKind = null, string literalValue = null)
 		{
 			int column = 0;
-			TextWriterTokenWriter.WritePrimitiveValue(value, tokenType, literalValue, ref column, (a, b) => output.Write(a, b), (a, b, c) => WriteToken(a, b, c));
+			TextWriterTokenWriter.WritePrimitiveValue(value, tokenKind, literalValue, ref column, (a, b) => output.Write(a, b), (a, b, c) => WriteToken(a, b, c));
 		}
 		
 		public override void WritePrimitiveType(string type)
 		{
 			WriteKeyword(type);
 			if (type == "new") {
-				output.Write("(", TextTokenType.Operator);
-				output.Write(")", TextTokenType.Operator);
+				output.Write("(", TextTokenKind.Operator);
+				output.Write(")", TextTokenKind.Operator);
 			}
 		}
 		
@@ -435,10 +434,10 @@ namespace ICSharpCode.Decompiler.Ast {
 		class DebugState
 		{
 			public List<AstNode> Nodes = new List<AstNode>();
-			public TextLocation StartLocation;
+			public TextPosition StartLocation;
 		}
 		readonly Stack<DebugState> debugStack = new Stack<DebugState>();
-		public override void DebugStart(AstNode node, TextLocation? start)
+		public override void DebugStart(AstNode node, TextPosition? start)
 		{
 			debugStack.Push(new DebugState { StartLocation = start ?? output.Location });
 		}
@@ -458,31 +457,17 @@ namespace ICSharpCode.Decompiler.Ast {
 		}
 
 		static readonly IEnumerable<ILRange> emptyILRange = new ILRange[0];
-		public override void DebugEnd(AstNode node, TextLocation? end)
+		public override void DebugEnd(AstNode node, TextPosition? end)
 		{
 			var state = debugStack.Pop();
 			if (currentMemberMapping != null) {
-				foreach (var range in ILRange.OrderAndJoin(GetILRanges(state))) {
-					currentMemberMapping.MemberCodeMappings.Add(
-						new SourceCodeMapping {
-							ILInstructionOffset = range,
-							StartLocation = state.StartLocation,
-							EndLocation = end ?? output.Location,
-							MemberMapping = currentMemberMapping
-						});
-				}
+				foreach (var range in ILRange.OrderAndJoin(GetILRanges(state)))
+					currentMemberMapping.MemberCodeMappings.Add(new SourceCodeMapping(range, state.StartLocation, end ?? output.Location, currentMemberMapping));
 			}
 			else if (multiMappings != null) {
 				foreach (var mm in multiMappings) {
-					foreach (var range in ILRange.OrderAndJoin(mm.Item2)) {
-						mm.Item1.MemberCodeMappings.Add(
-							new SourceCodeMapping {
-								ILInstructionOffset = range,
-								StartLocation = state.StartLocation,
-								EndLocation = end ?? output.Location,
-								MemberMapping = mm.Item1
-							});
-					}
+					foreach (var range in ILRange.OrderAndJoin(mm.Item2))
+						mm.Item1.MemberCodeMappings.Add(new SourceCodeMapping(range, state.StartLocation, end ?? output.Location, mm.Item1));
 				}
 			}
 		}
@@ -500,7 +485,7 @@ namespace ICSharpCode.Decompiler.Ast {
 			}
 		}
 
-		public override TextLocation? GetLocation()
+		public override TextPosition? GetLocation()
 		{
 			return output.Location;
 		}

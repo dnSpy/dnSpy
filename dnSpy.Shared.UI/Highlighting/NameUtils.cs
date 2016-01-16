@@ -18,7 +18,7 @@
 */
 
 using System.Text;
-using dnSpy.Decompiler;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Shared.UI.Highlighting {
 	public static class NameUtils {

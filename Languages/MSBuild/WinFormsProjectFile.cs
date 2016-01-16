@@ -23,8 +23,8 @@ using System.Linq;
 using System.Text;
 using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.Properties;
-using ICSharpCode.Decompiler;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class WinFormsProjectFile : TypeProjectFile {
@@ -36,12 +36,12 @@ namespace dnSpy.Languages.MSBuild {
 			get { return language; }
 		}
 
-		public DecompilationOptions DecompilationOptions {
-			get { return decompilationOptions; }
+		public DecompilationContext DecompilationContext {
+			get { return decompilationContext; }
 		}
 
-		public WinFormsProjectFile(TypeDef type, string filename, DecompilationOptions decompilationOptions, ILanguage language)
-			: base(type, filename, decompilationOptions, language) {
+		public WinFormsProjectFile(TypeDef type, string filename, DecompilationContext decompilationContext, ILanguage language)
+			: base(type, filename, decompilationContext, language) {
 			this.SubType = "Form";
 		}
 
@@ -49,7 +49,7 @@ namespace dnSpy.Languages.MSBuild {
 			if (!language.CanDecompile(DecompilationType.PartialType))
 				base.Decompile(ctx, output);
 			else {
-				var opts = new DecompilePartialType(type, output, decompilationOptions);
+				var opts = new DecompilePartialType(type, output, decompilationContext);
 				foreach (var d in GetDefsToRemove())
 					opts.Definitions.Add(d);
 				language.Decompile(DecompilationType.PartialType, opts);
@@ -144,7 +144,7 @@ namespace dnSpy.Languages.MSBuild {
 			using (var writer = new StreamWriter(Filename, false, Encoding.UTF8)) {
 				if (winFormsFile.Language.CanDecompile(DecompilationType.PartialType)) {
 					var output = new PlainTextOutput(writer);
-					var opts = new DecompilePartialType(winFormsFile.Type, output, winFormsFile.DecompilationOptions);
+					var opts = new DecompilePartialType(winFormsFile.Type, output, winFormsFile.DecompilationContext);
 					foreach (var d in winFormsFile.GetDefsToRemove())
 						opts.Definitions.Add(d);
 					opts.ShowDefinitions = true;

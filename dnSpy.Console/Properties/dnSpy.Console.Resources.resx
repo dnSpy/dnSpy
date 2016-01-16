@@ -130,7 +130,7 @@
       Decompiles all *.dll .NET files in the above directory and saves files to C:\out\path
   {0} --md 0x06000123 file.dll
       Decompiles the member with token 0x06000123
-  {0} -t system.int32 --gac-file "mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
+  {0} -t system.int32 --gac-file "mscorlib, Version=4.0.0.0"
       Decompiles System.Int32 from mscorlib</value>
   </data>
   <data name="FileOrDirDoesNotExist" xml:space="preserve">
@@ -198,19 +198,13 @@
   </data>
   <data name="Usage" xml:space="preserve">
     <value>{0} [options] [fileOrDir1] [fileOrDir2] [...]
+
   --asm-path path    assembly search path. Paths can be separated with '{1}' or you can use multiple --asm-path's
   --user-gac path    user GAC path. Paths can be separated with '{1}' or you can use multiple --user-gac's
   --no-gac     don't use the GAC to look up assemblies. Useful with --no-stdlib
   --no-stdlib  projects don't reference mscorlib
   --no-sln     don't create a .sln file
-  --no-xmldoc  don't show XML doc comments
-  --il-comments show IL comments
-  --no-il-bytes don't show IL bytes in IL disassembly output
-  --no-tokens  don't show tokens, RVAs and file offsets in comments
-  --no-sort    don't sort members
-  --order X    decompilation order of members, default is 'mpeft'
   --sln-name name   name of the .sln file
-  --dont-mask-merr   don't catch method exceptions when decompiling
   --threads N  number of worker threads. Default is to use one thread per CPU core
   --no-resources   don't unpack resources
   --no-resx    don't create .resx files
@@ -236,19 +230,22 @@
   <data name="CouldNotResolveGacFileX" xml:space="preserve">
     <value>Couldn't resolve GAC assembly '{0}'</value>
   </data>
-  <data name="InvalidOrderArg" xml:space="preserve">
-    <value>Invalid order argument</value>
-  </data>
   <data name="MissingGacFile" xml:space="preserve">
     <value>Missing GAC assembly name</value>
-  </data>
-  <data name="MissingOrderArg" xml:space="preserve">
-    <value>Missing order argument</value>
   </data>
   <data name="MissingTypeName" xml:space="preserve">
     <value>Missing full name of type</value>
   </data>
   <data name="LanguageXDoesNotSupportProjects" xml:space="preserve">
     <value>Language {0} doesn't support creating project files</value>
+  </data>
+  <data name="LanguageOptions" xml:space="preserve">
+    <value>Language options:</value>
+  </data>
+  <data name="LanguageOptionsDesc" xml:space="preserve">
+    <value>All boolean options can be disabled by using 'no-' or 'dont-', eg. --dont-sort-members</value>
+  </data>
+  <data name="MissingOptionArgument" xml:space="preserve">
+    <value>Missing option argument</value>
   </data>
 </root>

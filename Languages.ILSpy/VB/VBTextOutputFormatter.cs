@@ -20,11 +20,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using dnlib.DotNet;
-using dnSpy.Decompiler;
-using dnSpy.NRefactory;
-using ICSharpCode.Decompiler;
+using dnSpy.Decompiler.Shared;
 using ICSharpCode.Decompiler.ILAst;
-using ICSharpCode.NRefactory;
 using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Ast;
 
@@ -100,32 +97,32 @@ namespace dnSpy.Languages.ILSpy.VB {
 			}
 		}
 
-		public void WriteIdentifier(string identifier, TextTokenType tokenType) {
+		public void WriteIdentifier(string identifier, TextTokenKind tokenKind) {
 			var definition = GetCurrentDefinition();
 			if (definition != null) {
-				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, tokenType);
+				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, tokenKind);
 				return;
 			}
 
 			object memberRef = GetCurrentMemberReference();
 			if (memberRef != null) {
-				output.WriteReference(IdentifierEscaper.Escape(identifier), memberRef, tokenType);
+				output.WriteReference(IdentifierEscaper.Escape(identifier), memberRef, tokenKind);
 				return;
 			}
 
 			definition = GetCurrentLocalDefinition();
 			if (definition != null) {
-				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, tokenType);
+				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, tokenKind);
 				return;
 			}
 
 			memberRef = GetCurrentLocalReference();
 			if (memberRef != null) {
-				output.WriteReference(IdentifierEscaper.Escape(identifier), memberRef, tokenType, true);
+				output.WriteReference(IdentifierEscaper.Escape(identifier), memberRef, tokenKind, true);
 				return;
 			}
 
-			output.Write(IdentifierEscaper.Escape(identifier), tokenType);
+			output.Write(IdentifierEscaper.Escape(identifier), tokenKind);
 		}
 
 		IMemberRef GetCurrentMemberReference() {
@@ -192,18 +189,18 @@ namespace dnSpy.Languages.ILSpy.VB {
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
 			if (memberRef != null && node is PrimitiveType)
-				output.WriteReference(keyword, memberRef, TextTokenType.Keyword);
+				output.WriteReference(keyword, memberRef, TextTokenKind.Keyword);
 			else
-				output.Write(keyword, TextTokenType.Keyword);
+				output.Write(keyword, TextTokenKind.Keyword);
 		}
 
-		public void WriteToken(string token, TextTokenType tokenType) {
+		public void WriteToken(string token, TextTokenKind tokenKind) {
 			// Attach member reference to token only if there's no identifier in the current node.
 			IMemberRef memberRef = GetCurrentMemberReference();
 			if (memberRef != null && nodeStack.Peek().GetChildByRole(AstNode.Roles.Identifier).IsNull)
-				output.WriteReference(token, memberRef, tokenType);
+				output.WriteReference(token, memberRef, tokenKind);
 			else
-				output.Write(token, tokenType);
+				output.Write(token, tokenKind);
 		}
 
 		public void Space() {
@@ -224,12 +221,12 @@ namespace dnSpy.Languages.ILSpy.VB {
 
 		public void WriteComment(bool isDocumentation, string content) {
 			if (isDocumentation) {
-				output.Write("'''", TextTokenType.XmlDocTag);
+				output.Write("'''", TextTokenKind.XmlDocTag);
 				output.WriteXmlDoc(content);
 				output.WriteLine();
 			}
 			else
-				output.WriteLine("'" + content, TextTokenType.Comment);
+				output.WriteLine("'" + content, TextTokenKind.Comment);
 		}
 
 		static bool IsDefinition(AstNode node) {
@@ -246,7 +243,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 		class DebugState {
 			public List<AstNode> Nodes = new List<AstNode>();
 			public List<ILRange> ExtraILRanges = new List<ILRange>();
-			public TextLocation StartLocation;
+			public TextPosition StartLocation;
 		}
 		readonly Stack<DebugState> debugStack = new Stack<DebugState>();
 		public void DebugStart(AstNode node) {
@@ -270,27 +267,13 @@ namespace dnSpy.Languages.ILSpy.VB {
 		public void DebugEnd(AstNode node) {
 			var state = debugStack.Pop();
 			if (currentMemberMapping != null) {
-				foreach (var range in ILRange.OrderAndJoin(GetILRanges(state))) {
-					currentMemberMapping.MemberCodeMappings.Add(
-						new SourceCodeMapping {
-							ILInstructionOffset = range,
-							StartLocation = state.StartLocation,
-							EndLocation = output.Location,
-							MemberMapping = currentMemberMapping
-						});
-				}
+				foreach (var range in ILRange.OrderAndJoin(GetILRanges(state)))
+					currentMemberMapping.MemberCodeMappings.Add(new SourceCodeMapping(range, state.StartLocation, output.Location, currentMemberMapping));
 			}
 			else if (multiMappings != null) {
 				foreach (var mm in multiMappings) {
-					foreach (var range in ILRange.OrderAndJoin(mm.Item2)) {
-						mm.Item1.MemberCodeMappings.Add(
-							new SourceCodeMapping {
-								ILInstructionOffset = range,
-								StartLocation = state.StartLocation,
-								EndLocation = output.Location,
-								MemberMapping = mm.Item1
-							});
-					}
+					foreach (var range in ILRange.OrderAndJoin(mm.Item2))
+						mm.Item1.MemberCodeMappings.Add(new SourceCodeMapping(range, state.StartLocation, output.Location, mm.Item1));
 				}
 			}
 		}

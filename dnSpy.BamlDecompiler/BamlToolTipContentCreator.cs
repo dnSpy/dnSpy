@@ -18,7 +18,7 @@
 */
 
 using dnSpy.Contracts.Files.Tabs.TextEditor.ToolTips;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.BamlDecompiler {
 	[ExportToolTipContentCreator(Order = 0)]
@@ -27,7 +27,7 @@ namespace dnSpy.BamlDecompiler {
 			var bref = @ref as BamlToolTipReference;
 			if (bref != null) {
 				var creator = context.Create();
-				creator.Output.Write(bref.String, TextTokenType.Text);
+				creator.Output.Write(bref.String, TextTokenKind.Text);
 				return creator.Create();
 			}
 

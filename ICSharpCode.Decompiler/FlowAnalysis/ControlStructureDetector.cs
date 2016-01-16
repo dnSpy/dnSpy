@@ -18,13 +18,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using dnlib.DotNet.Emit;
 
-namespace ICSharpCode.Decompiler.FlowAnalysis
-{
+namespace ICSharpCode.Decompiler.FlowAnalysis {
 	/// <summary>
 	/// Detects the structure of the control flow (exception blocks and loops).
 	/// </summary>

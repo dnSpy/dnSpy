@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace ICSharpCode.NRefactory.VB.Ast
 {
@@ -73,20 +73,20 @@ namespace ICSharpCode.NRefactory.VB.Ast
 			return new ComposedType { BaseType = this }.MakeArrayType(rank);
 		}
 		
-		public static AstType FromName(string fullName, TextTokenType tokenType)
+		public static AstType FromName(string fullName, TextTokenKind tokenKind)
 		{
 			if (string.IsNullOrEmpty(fullName))
 				throw new ArgumentNullException("fullName");
 			fullName = fullName.Trim();
 			if (!fullName.Contains("."))
-				return new SimpleType(tokenType, fullName);
+				return new SimpleType(tokenKind, fullName);
 			string[] parts = fullName.Split('.');
 			
-			AstType type = new SimpleType(TextTokenType.NamespacePart, parts.First());
+			AstType type = new SimpleType(TextTokenKind.NamespacePart, parts.First());
 			
 			for (int i = 1; i < parts.Length; i++) {
 				var part = parts[i];
-				var tt = i + 1 == parts.Length ? tokenType : TextTokenType.NamespacePart;
+				var tt = i + 1 == parts.Length ? tokenKind : TextTokenKind.NamespacePart;
 				type = new QualifiedType(type, Identifier.Create(tt, part));
 			}
 			
@@ -161,7 +161,7 @@ namespace ICSharpCode.NRefactory.VB.Ast
 				case TypeCode.DateTime:
 					return new PrimitiveType("Date");
 			}
-			return new SimpleType(TextTokenHelper.GetTextTokenType(type), type.FullName); // TODO: implement this correctly
+			return new SimpleType(TextTokenKindUtils.GetTextTokenType(type), type.FullName); // TODO: implement this correctly
 		}
 	}
 }

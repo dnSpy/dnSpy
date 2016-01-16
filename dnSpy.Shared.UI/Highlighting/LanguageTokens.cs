@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Shared.UI.Highlighting {
 	public sealed class LanguageTokens {
@@ -37,7 +37,7 @@ namespace dnSpy.Shared.UI.Highlighting {
 		// current length of token. Valid when isAppendingDefaultText == false
 		int currentTokenLength;
 		// current token type. Valid when isAppendingDefaultText == false
-		TextTokenType currentTokenType;
+		TextTokenKind currentTokenType;
 		bool isAppendingDefaultText = true;
 
 		// Convert offset to an index into the token list
@@ -65,23 +65,23 @@ namespace dnSpy.Shared.UI.Highlighting {
 		const int TEXT_TOKEN_LENGTH_MAX = (1 << TEXT_TOKEN_LENGTH_BITS) - 1;
 
 		static LanguageTokens() {
-			if ((int)TextTokenType.Last > (1 << TOKEN_TYPE_BITS))
+			if ((int)TextTokenKind.Last > (1 << TOKEN_TYPE_BITS))
 				throw new InvalidProgramException("TOKEN_TYPE_BITS is too small");
 		}
 
-		public bool Find(int offset, out int defaultTextLength, out TextTokenType tokenType, out int tokenLength) {
+		public bool Find(int offset, out int defaultTextLength, out TextTokenKind tokenKind, out int tokenLength) {
 			Debug.Assert(tokenInfos != null, "You must call Finish() before you call this method");
 			int index;
 			if (!offsetToTokenInfoIndex.TryGetValue(offset, out index)) {
 				defaultTextLength = 0;
-				tokenType = TextTokenType.Last;
+				tokenKind = TextTokenKind.Last;
 				tokenLength = 0;
 				return false;
 			}
 
 			ushort val = tokenInfos[index];
 			defaultTextLength = (val >> TEXT_TOKEN_LENGTH_BIT) & TEXT_TOKEN_LENGTH_MAX;
-			tokenType = (TextTokenType)((val >> TOKEN_TYPE_BIT) & TOKEN_TYPE_MAX);
+			tokenKind = (TextTokenKind)((val >> TOKEN_TYPE_BIT) & TOKEN_TYPE_MAX);
 			tokenLength = (val >> TOKEN_LENGTH_BIT) & TOKEN_LENGTH_MAX;
 			return true;
 		}
@@ -94,7 +94,7 @@ namespace dnSpy.Shared.UI.Highlighting {
 			tokenInfosList = null;
 		}
 
-		public void Append(TextTokenType tokenType, string s) {
+		public void Append(TextTokenKind tokenKind, string s) {
 			if (s == null)
 				return;
 
@@ -105,7 +105,7 @@ namespace dnSpy.Shared.UI.Highlighting {
 			while (so < s.Length) {
 				int nlOffs = s.IndexOfAny(newLineChars, so);
 				if (nlOffs >= 0) {
-					AppendInternal(tokenType, nlOffs - so);
+					AppendInternal(tokenKind, nlOffs - so);
 					so = nlOffs;
 					int nlLen = s[so] == '\r' && so + 1 < s.Length && s[so + 1] == '\n' ? 2 : 1;
 					currentOffset += nlLen;
@@ -113,7 +113,7 @@ namespace dnSpy.Shared.UI.Highlighting {
 					so += nlLen;
 				}
 				else {
-					AppendInternal(tokenType, s.Length - so);
+					AppendInternal(tokenKind, s.Length - so);
 					break;
 				}
 			}
@@ -123,18 +123,18 @@ namespace dnSpy.Shared.UI.Highlighting {
 
 		public void AppendLine() {
 			// We must append the same type of new line string as StringBuilder
-			Append(TextTokenType.Text, Environment.NewLine);
+			Append(TextTokenKind.Text, Environment.NewLine);
 		}
 
 		// Gets called to add one token. No newlines are allowed
-		void AppendInternal(TextTokenType tokenType, int length) {
+		void AppendInternal(TextTokenKind tokenKind, int length) {
 			Debug.Assert(length >= 0);
 			if (length == 0)
 				return;
 
 redo:
 			if (isAppendingDefaultText) {
-				if (tokenType == TextTokenType.Text) {
+				if (tokenKind == TextTokenKind.Text) {
 					int newLength = currentDefaultTextLength + length;
 					while (newLength > TEXT_TOKEN_LENGTH_MAX) {
 						currentDefaultTextLength = Math.Min(newLength, TEXT_TOKEN_LENGTH_MAX);
@@ -146,10 +146,10 @@ redo:
 					return;
 				}
 				isAppendingDefaultText = false;
-				currentTokenType = tokenType;
+				currentTokenType = tokenKind;
 			}
 
-			if (currentTokenType != tokenType) {
+			if (currentTokenType != tokenKind) {
 				EndCurrentToken(0);
 				goto redo;
 			}
@@ -161,7 +161,7 @@ redo:
 					EndCurrentToken(0);
 					newLength -= TOKEN_LENGTH_MAX;
 					isAppendingDefaultText = false;
-					currentTokenType = tokenType;
+					currentTokenType = tokenKind;
 				}
 				currentTokenLength = newLength;
 				if (currentTokenLength == 0)
@@ -188,7 +188,7 @@ redo:
 			currentTokenOffset += totalLength + lengthTillNextToken;
 			currentDefaultTextLength = 0;
 			currentTokenLength = 0;
-			currentTokenType = TextTokenType.Last;
+			currentTokenType = TextTokenKind.Last;
 			isAppendingDefaultText = true;
 		}
 	}

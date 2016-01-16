@@ -3,7 +3,7 @@
 
 using System.Linq;
 using System.Text;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 
 namespace ICSharpCode.NRefactory.VB.Ast {
 	/// <summary>
@@ -26,7 +26,7 @@ namespace ICSharpCode.NRefactory.VB.Ast {
 				return builder.ToString ();
 			}
 			set {
-				GetChildrenByRole(Roles.Identifier).ReplaceWith(value.Split('.').Select(ident => new Identifier (TextTokenType.NamespacePart, ident, TextLocation.Empty)));
+				GetChildrenByRole(Roles.Identifier).ReplaceWith(value.Split('.').Select(ident => new Identifier (TextTokenKind.NamespacePart, ident, TextLocation.Empty)));
 			}
 		}
 		

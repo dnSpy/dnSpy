@@ -18,11 +18,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using dnlib.DotNet;
 
-namespace ICSharpCode.Decompiler.ILAst
-{
+namespace ICSharpCode.Decompiler.ILAst {
 	/// <summary>
 	/// This exception is thrown when we find something else than we expect from the C# compiler.
 	/// This aborts the analysis and makes the whole transform fail.

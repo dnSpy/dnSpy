@@ -19,7 +19,7 @@
 using System.Linq;
 using System.Reflection;
 using dnlib.DotNet;
-using dnSpy.NRefactory;
+using dnSpy.Decompiler.Shared;
 using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
 
@@ -328,10 +328,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 		
 		static readonly Expression getMethodOrConstructorFromHandlePattern =
 			new TypePattern(typeof(MethodBase)).ToType().Invoke2(
-				TextTokenType.StaticMethod,
+				TextTokenKind.StaticMethod,
 				"GetMethodFromHandle",
-				new NamedNode("ldtokenNode", new LdTokenPattern("method")).ToExpression().Member("MethodHandle", TextTokenType.InstanceProperty),
-				new OptionalNode(new TypeOfExpression(new AnyNode("declaringType")).Member("TypeHandle", TextTokenType.InstanceProperty))
+				new NamedNode("ldtokenNode", new LdTokenPattern("method")).ToExpression().Member("MethodHandle", TextTokenKind.InstanceProperty),
+				new OptionalNode(new TypeOfExpression(new AnyNode("declaringType")).Member("TypeHandle", TextTokenKind.InstanceProperty))
 			).CastTo(new Choice {
 		         	new TypePattern(typeof(MethodInfo)),
 		         	new TypePattern(typeof(ConstructorInfo))
