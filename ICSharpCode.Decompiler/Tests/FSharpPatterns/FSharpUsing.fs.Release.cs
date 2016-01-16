@@ -1,9 +1,6 @@
-﻿using Microsoft.FSharp.Core;
-using System;
+﻿using System;
 using System.IO;
 
-[assembly: FSharpInterfaceDataVersion(2, 0, 0)]
-[CompilationMapping(SourceConstructFlags.Module)]
 public static class FSharpUsingPatterns
 {
 	public static void sample1()

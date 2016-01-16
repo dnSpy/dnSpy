@@ -5,9 +5,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using static ICSharpCode.Decompiler.Tests.FS2CS.TestRunner;
+using static ICSharpCode.Decompiler.Tests.FSharpPatterns.TestHelpers;
 
-namespace ICSharpCode.Decompiler.Tests.FS2CS
+namespace ICSharpCode.Decompiler.Tests.FSharpPatterns
 {
 	[TestFixture]
 	public class FSharpPatternTests
@@ -15,17 +15,17 @@ namespace ICSharpCode.Decompiler.Tests.FS2CS
 		[Test]
 		public void FSharpUsingDecompilesToCSharpUsing_Debug()
 		{
-			var fsharpCode = FuzzyReadResource("FSharpUsing.fs");
+			var ilCode = FuzzyReadResource("FSharpUsing.fs.Debug.il");
 			var csharpCode = FuzzyReadResource("FSharpUsing.fs.Debug.cs");
-			Run(fsharpCode, csharpCode, false);
+			RunIL(ilCode, csharpCode);
 		}
 
 		[Test]
 		public void FSharpUsingDecompilesToCSharpUsing_Release()
 		{
-			var fsharpCode = FuzzyReadResource("FSharpUsing.fs");
+			var ilCode = FuzzyReadResource("FSharpUsing.fs.Release.il");
 			var csharpCode = FuzzyReadResource("FSharpUsing.fs.Release.cs");
-			Run(fsharpCode, csharpCode, true);
+			RunIL(ilCode, csharpCode);
 		}
 	}
 }

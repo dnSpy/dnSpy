@@ -95,10 +95,12 @@
     <Compile Include="ControlFlow.cs" />
     <Compile Include="DoubleConstants.cs" />
     <Compile Include="ExpressionTrees.cs" />
+    <EmbeddedResource Include="FSharpPatterns\FSharpUsing.fs.Debug.il" />
     <None Include="IL\SequenceOfNestedIfs.Output.cs" />
     <Compile Include="FSharpPatterns\FSharpPatternTests.cs" />
     <EmbeddedResource Include="FSharpPatterns\FSharpUsing.fs.Debug.cs" />
-    <Compile Include="FSharpPatterns\TestRunner.cs" />
+    <Compile Include="FSharpPatterns\TestHelpers.cs" />
+    <Compile Include="FSharpPatterns\ToolLocator.cs" />
     <Compile Include="IL\ILTests.cs" />
     <Compile Include="LiftedOperators.cs" />
     <Compile Include="CustomShortCircuitOperators.cs" />
@@ -174,6 +176,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FSharpPatterns\FSharpUsing.fs.Release.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="FSharpPatterns\FSharpUsing.fs.Release.il" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.Targets" />
 </Project>

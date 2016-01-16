@@ -1,9 +1,6 @@
-﻿using Microsoft.FSharp.Core;
-using System;
+﻿using System;
 using System.IO;
 
-[assembly: FSharpInterfaceDataVersion(2, 0, 0)]
-[CompilationMapping(SourceConstructFlags.Module)]
 public static class FSharpUsingPatterns
 {
 	public static void sample1()
@@ -56,10 +53,10 @@ public static class FSharpUsingPatterns
 		}
 		int firstByte = num;
 		int num3;
-		using (FileStream fs2 = File.OpenRead("x.txt"))
+		using (FileStream fs = File.OpenRead("x.txt"))
 		{
-			int num2 = fs2.ReadByte();
-			num3 = fs2.ReadByte();
+			int num2 = fs.ReadByte();
+			num3 = fs.ReadByte();
 		}
 		int secondByte = num3;
 		Console.WriteLine("read: {0}, {1}", firstByte, secondByte);
