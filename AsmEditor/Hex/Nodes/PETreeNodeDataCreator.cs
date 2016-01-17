@@ -27,29 +27,27 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.TreeView;
 
 namespace dnSpy.AsmEditor.Hex.Nodes {
-	[ExportTreeNodeDataCreator(Guid = FileTVConstants.MODULE_NODE_GUID)]
-	sealed class PETreeNodeDataCreator : ITreeNodeDataCreator {
+	abstract class PETreeNodeDataCreatorBase : ITreeNodeDataCreator {
 		readonly Lazy<IHexDocumentManager> hexDocumentManager;
 
-		[ImportingConstructor]
-		PETreeNodeDataCreator(Lazy<IHexDocumentManager> hexDocumentManager) {
+		protected PETreeNodeDataCreatorBase(Lazy<IHexDocumentManager> hexDocumentManager) {
 			this.hexDocumentManager = hexDocumentManager;
 		}
 
 		public IEnumerable<ITreeNodeData> Create(TreeNodeDataCreatorContext context) {
-			var modNode = context.Owner.Data as IModuleFileNode;
-			Debug.Assert(modNode != null);
-			if (modNode == null)
+			var fileNode = context.Owner.Data as IDnSpyFileNode;
+			Debug.Assert(fileNode != null);
+			if (fileNode == null)
 				yield break;
 
-			bool hasPENode = HasPENode(modNode);
-			var peImage = modNode.DnSpyFile.PEImage;
+			bool hasPENode = HasPENode(fileNode);
+			var peImage = fileNode.DnSpyFile.PEImage;
 			Debug.Assert(!hasPENode || peImage != null);
 			if (hasPENode && peImage != null)
-				yield return new PENode(hexDocumentManager.Value, peImage, modNode.DnSpyFile.ModuleDef as ModuleDefMD);
+				yield return new PENode(hexDocumentManager.Value, peImage, fileNode.DnSpyFile.ModuleDef as ModuleDefMD);
 		}
 
-		public static bool HasPENode(IModuleFileNode node) {
+		public static bool HasPENode(IDnSpyFileNode node) {
 			if (node == null)
 				return false;
 
@@ -61,6 +59,22 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 			// storage stream nodes.
 			bool loadedFromFile = node.DnSpyFile.Key is FilenameKey;
 			return loadedFromFile && peImage != null;
+		}
+	}
+
+	[ExportTreeNodeDataCreator(Guid = FileTVConstants.MODULE_NODE_GUID)]
+	sealed class ModulePETreeNodeDataCreator : PETreeNodeDataCreatorBase {
+		[ImportingConstructor]
+		ModulePETreeNodeDataCreator(Lazy<IHexDocumentManager> hexDocumentManager)
+			: base(hexDocumentManager) {
+		}
+	}
+
+	[ExportTreeNodeDataCreator(Guid = FileTVConstants.PEFILE_NODE_GUID)]
+	sealed class PEFilePETreeNodeDataCreator : PETreeNodeDataCreatorBase {
+		[ImportingConstructor]
+		PEFilePETreeNodeDataCreator(Lazy<IHexDocumentManager> hexDocumentManager)
+			: base(hexDocumentManager) {
 		}
 	}
 }

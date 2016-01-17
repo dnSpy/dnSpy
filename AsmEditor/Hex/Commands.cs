@@ -1472,7 +1472,7 @@ namespace dnSpy.AsmEditor.Hex {
 		internal static bool HasPENode(IModuleFileNode node) {
 			if (node == null)
 				return false;
-			return PETreeNodeDataCreator.HasPENode(node);
+			return PETreeNodeDataCreatorBase.HasPENode(node);
 		}
 
 		static TokenReference GetTokenReference2(HexContext context) {
