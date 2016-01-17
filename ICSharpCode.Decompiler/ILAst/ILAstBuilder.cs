@@ -387,6 +387,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 				
 				// Apply the state to successors
 				foreach (ByteCode branchTarget in branchTargets) {
+					if (branchTarget == null)
+						continue;
 					if (branchTarget.StackBefore == null && branchTarget.VariablesBefore == null) {
 						if (branchTargets.Count == 1) {
 							branchTarget.StackBefore = newStack;
