@@ -1246,6 +1246,10 @@ namespace dndbg.Engine {
 						return;
 					}
 					var rv = res.Value.ResultOrException;
+					if (rv != null && rv.IsNull) {
+						WriteTypeOfValue(value);
+						return;
+					}
 					if (rv != null && rv.IsReference)
 						rv = rv.NeuterCheckDereferencedValue;
 					if (rv == null || !rv.IsString) {
