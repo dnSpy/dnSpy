@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel.Composition;
+using dnSpy.AsmEditor.Hex;
 using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
@@ -27,6 +28,7 @@ namespace dnSpy.AsmEditor.UndoRedo {
 	[ExportFileListListener]
 	sealed class UndoRedoIFileListListener : IFileListListener {
 		readonly Lazy<IUndoCommandManager> undoCommandManager;
+		readonly Lazy<IHexDocumentManager> hexDocumentManager;
 		readonly IMessageBoxManager messageBoxManager;
 
 		public bool CanLoad {
@@ -38,13 +40,15 @@ namespace dnSpy.AsmEditor.UndoRedo {
 		}
 
 		[ImportingConstructor]
-		UndoRedoIFileListListener(Lazy<IUndoCommandManager> undoCommandManager, IMessageBoxManager messageBoxManager) {
+		UndoRedoIFileListListener(Lazy<IUndoCommandManager> undoCommandManager, Lazy<IHexDocumentManager> hexDocumentManager, IMessageBoxManager messageBoxManager) {
 			this.undoCommandManager = undoCommandManager;
+			this.hexDocumentManager = hexDocumentManager;
 			this.messageBoxManager = messageBoxManager;
 		}
 
 		public void BeforeLoad(bool isReload) {
 			undoCommandManager.Value.Clear();
+			hexDocumentManager.Value.Clear();
 		}
 
 		public void AfterLoad(bool isReload) {

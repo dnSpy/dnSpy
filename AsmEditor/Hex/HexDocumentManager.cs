@@ -35,6 +35,7 @@ namespace dnSpy.AsmEditor.Hex {
 		HexDocument GetOrCreate(string filename);
 		AsmEdHexDocument[] GetDocuments();
 		AsmEdHexDocument TryGet(string filename);
+		void Clear();
 	}
 
 	[Export, Export(typeof(IHexDocumentManager)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -89,6 +90,11 @@ namespace dnSpy.AsmEditor.Hex {
 
 		public bool Exists(string filename) {
 			return TryGet(filename) != null;
+		}
+
+		public void Clear() {
+			lock (lockObj)
+				filenameToDoc.Clear();
 		}
 
 		public AsmEdHexDocument TryGet(string filename) {
