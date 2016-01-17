@@ -103,7 +103,7 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		void WriteString(string value) {
-			string str = string.Format("\"{0}\"", NumberVMUtils.ToString(value, true));
+			string str = NumberVMUtils.ToString(value, true);
 			output.Write(str, TextTokenKind.String);
 		}
 
@@ -197,12 +197,12 @@ namespace dnSpy.BamlDecompiler {
 				str = null;
 			string reference = null;
 			if (str != null)
-				reference = string.Format("\"{0}\"", NumberVMUtils.ToString(str, true));
+				reference = NumberVMUtils.ToString(str, true);
 			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), TextTokenKind.Number, true);
 		}
 
 		void WriteDefinition(string value, string def = null) {
-			string str = string.Format("\"{0}\"", NumberVMUtils.ToString(value, true));
+			string str = NumberVMUtils.ToString(value, true);
 			output.WriteDefinition(str, BamlToolTipReference.Create(def ?? IdentifierEscaper.Escape(value)), TextTokenKind.String, true);
 		}
 
