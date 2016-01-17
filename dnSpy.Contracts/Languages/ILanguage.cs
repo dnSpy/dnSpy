@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Decompiler.Shared;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -146,13 +145,20 @@ namespace dnSpy.Contracts.Languages {
 		void DecompileNamespace(string @namespace, IEnumerable<TypeDef> types, ITextOutput output, DecompilationContext ctx);
 
 		/// <summary>
-		/// Decompiles an assembly or module
+		/// Decompiles an assembly
 		/// </summary>
-		/// <param name="file">Module</param>
+		/// <param name="asm">Assembly</param>
 		/// <param name="output">Output</param>
 		/// <param name="ctx">Context</param>
-		/// <param name="flags">Flags</param>
-		void DecompileAssembly(IDnSpyFile file, ITextOutput output, DecompilationContext ctx, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule);
+		void Decompile(AssemblyDef asm, ITextOutput output, DecompilationContext ctx);
+
+		/// <summary>
+		/// Decompiles a module
+		/// </summary>
+		/// <param name="mod">Module</param>
+		/// <param name="output">Output</param>
+		/// <param name="ctx">Context</param>
+		void Decompile(ModuleDef mod, ITextOutput output, DecompilationContext ctx);
 
 		/// <summary>
 		/// Writes a tooltip

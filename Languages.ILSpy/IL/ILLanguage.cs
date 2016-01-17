@@ -21,7 +21,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
 using dnSpy.Languages.IL;
@@ -191,29 +190,23 @@ namespace dnSpy.Languages.ILSpy.IL {
 			dis.DisassembleType(type);
 		}
 
-		public override void DecompileAssembly(IDnSpyFile file, ITextOutput output, DecompilationContext ctx, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
-			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
-			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
-			output.WriteLine("// " + file.Filename, TextTokenKind.Comment);
-			if (decompileMod || decompileAsm)
-				PrintEntryPoint(file, output);
+		public override void Decompile(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
+			output.WriteLine("// " + asm.ManifestModule.Location, TextTokenKind.Comment);
+			PrintEntryPoint(asm.ManifestModule, output);
 			output.WriteLine();
 
-			ReflectionDisassembler rd = CreateReflectionDisassembler(output, ctx, file.ModuleDef);
-			bool decompileAll = false;
-			if (decompileAll)
-				rd.WriteAssemblyReferences(file.ModuleDef);
-			if (decompileAsm && file.AssemblyDef != null)
-				rd.WriteAssemblyHeader(file.AssemblyDef);
-			if (decompileMod) {
-				output.WriteLine();
-				rd.WriteModuleHeader(file.ModuleDef);
-				if (decompileAll) {
-					output.WriteLine();
-					output.WriteLine();
-					rd.WriteModuleContents(file.ModuleDef);
-				}
-			}
+			ReflectionDisassembler rd = CreateReflectionDisassembler(output, ctx, asm.ManifestModule);
+			rd.WriteAssemblyHeader(asm);
+		}
+
+		public override void Decompile(ModuleDef mod, ITextOutput output, DecompilationContext ctx) {
+			output.WriteLine("// " + mod.Location, TextTokenKind.Comment);
+			PrintEntryPoint(mod, output);
+			output.WriteLine();
+
+			ReflectionDisassembler rd = CreateReflectionDisassembler(output, ctx, mod);
+			output.WriteLine();
+			rd.WriteModuleHeader(mod);
 		}
 
 		protected override void TypeToString(ITextOutput output, ITypeDefOrRef t, bool includeNamespace, IHasCustomAttribute attributeProvider = null) {

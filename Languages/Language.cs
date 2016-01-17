@@ -23,7 +23,6 @@ using System.IO;
 using System.Linq;
 using dnlib.DotNet;
 using dnlib.PE;
-using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Shared;
@@ -93,66 +92,82 @@ namespace dnSpy.Languages {
 			}
 		}
 
-		protected void WriteModuleAssembly(IDnSpyFile file, ITextOutput output, DecompilationContext ctx, DecompileAssemblyFlags flags) {
-			DecompileAssemblyInternal(file, output, ctx, flags);
-			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
-			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
+		static IPEImage TryGetPEImage(ModuleDef mod) {
+			var m = mod as ModuleDefMD;
+			return m == null ? null : m.MetaData.PEImage;
+		}
+
+		protected void WriteAssembly(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
+			DecompileInternal(asm, output, ctx);
 			output.WriteLine();
-			ModuleDef mainModule = file.ModuleDef;
-			if (decompileMod && mainModule.Types.Count > 0) {
+			this.PrintEntryPoint(asm.ManifestModule, output);
+			var peImage = TryGetPEImage(asm.ManifestModule);
+			if (peImage != null) {
 				this.WriteCommentBegin(output, true);
-				output.Write(Languages_Resources.Decompile_GlobalType + " ", TextTokenKind.Comment);
-				output.WriteReference(IdentifierEscaper.Escape(mainModule.GlobalType.FullName), mainModule.GlobalType, TextTokenKind.Comment);
-				output.WriteLine();
-			}
-			if (decompileMod || decompileAsm)
-				this.PrintEntryPoint(file, output);
-			if (decompileMod) {
-				this.WriteCommentLine(output, Languages_Resources.Decompile_Architecture + " " + GetPlatformDisplayName(mainModule));
-				if (!mainModule.IsILOnly) {
-					this.WriteCommentLine(output, Languages_Resources.Decompile_ThisAssemblyContainsUnmanagedCode);
-				}
-				string runtimeName = GetRuntimeDisplayName(mainModule);
-				if (runtimeName != null) {
-					this.WriteCommentLine(output, Languages_Resources.Decompile_Runtime + " " + runtimeName);
-				}
-			}
-			if ((decompileMod || decompileAsm) && file.PEImage != null) {
-				this.WriteCommentBegin(output, true);
-				uint ts = file.PEImage.ImageNTHeaders.FileHeader.TimeDateStamp;
+				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
 				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
 				output.Write(string.Format(Languages_Resources.Decompile_Timestamp, ts, dateString), TextTokenKind.Comment);
 				this.WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
-			if (decompileMod || decompileAsm)
+			output.WriteLine();
+		}
+
+		protected void WriteModule(ModuleDef mod, ITextOutput output, DecompilationContext ctx) {
+			DecompileInternal(mod, output, ctx);
+			output.WriteLine();
+			if (mod.Types.Count > 0) {
+				this.WriteCommentBegin(output, true);
+				output.Write(Languages_Resources.Decompile_GlobalType + " ", TextTokenKind.Comment);
+				output.WriteReference(IdentifierEscaper.Escape(mod.GlobalType.FullName), mod.GlobalType, TextTokenKind.Comment);
 				output.WriteLine();
-		}
-
-		public virtual void DecompileAssembly(IDnSpyFile file, ITextOutput output, DecompilationContext ctx, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
-			DecompileAssemblyInternal(file, output, ctx, flags);
-		}
-
-		void DecompileAssemblyInternal(IDnSpyFile file, ITextOutput output, DecompilationContext ctx, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
-			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
-			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
-			this.WriteCommentLine(output, file.Filename);
-			if (decompileAsm && file.AssemblyDef != null) {
-				if (file.AssemblyDef.IsContentTypeWindowsRuntime) {
-					this.WriteCommentLine(output, file.AssemblyDef.Name + " [WinRT]");
-				}
-				else {
-					this.WriteCommentLine(output, file.AssemblyDef.FullName);
-				}
 			}
-			else if (decompileMod) {
-				this.WriteCommentLine(output, file.ModuleDef.Name);
+			this.PrintEntryPoint(mod, output);
+			this.WriteCommentLine(output, Languages_Resources.Decompile_Architecture + " " + GetPlatformDisplayName(mod));
+			if (!mod.IsILOnly) {
+				this.WriteCommentLine(output, Languages_Resources.Decompile_ThisAssemblyContainsUnmanagedCode);
 			}
+			string runtimeName = GetRuntimeDisplayName(mod);
+			if (runtimeName != null) {
+				this.WriteCommentLine(output, Languages_Resources.Decompile_Runtime + " " + runtimeName);
+			}
+			var peImage = TryGetPEImage(mod);
+			if (peImage != null) {
+				this.WriteCommentBegin(output, true);
+				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
+				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
+				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
+				output.Write(string.Format(Languages_Resources.Decompile_Timestamp, ts, dateString), TextTokenKind.Comment);
+				this.WriteCommentEnd(output, true);
+				output.WriteLine();
+			}
+			output.WriteLine();
 		}
 
-		protected void PrintEntryPoint(IDnSpyFile assembly, ITextOutput output) {
-			var ep = GetEntryPoint(assembly.ModuleDef);
+		public virtual void Decompile(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
+			DecompileInternal(asm, output, ctx);
+		}
+
+		public virtual void Decompile(ModuleDef mod, ITextOutput output, DecompilationContext ctx) {
+			DecompileInternal(mod, output, ctx);
+		}
+
+		void DecompileInternal(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
+			this.WriteCommentLine(output, asm.ManifestModule.Location);
+			if (asm.IsContentTypeWindowsRuntime)
+				this.WriteCommentLine(output, asm.Name + " [WinRT]");
+			else
+				this.WriteCommentLine(output, asm.FullName);
+		}
+
+		void DecompileInternal(ModuleDef mod, ITextOutput output, DecompilationContext ctx) {
+			this.WriteCommentLine(output, mod.Location);
+			this.WriteCommentLine(output, mod.Name);
+		}
+
+		protected void PrintEntryPoint(ModuleDef mod, ITextOutput output) {
+			var ep = GetEntryPoint(mod);
 			if (ep is uint)
 				this.WriteCommentLine(output, string.Format(Languages_Resources.Decompile_NativeEntryPoint, (uint)ep));
 			else if (ep is MethodDef) {

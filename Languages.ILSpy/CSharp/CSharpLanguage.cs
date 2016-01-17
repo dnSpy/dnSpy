@@ -22,7 +22,6 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Xml;
 using dnlib.DotNet;
-using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.ILSpy.Settings;
@@ -278,14 +277,22 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			}
 		}
 
-		public override void DecompileAssembly(IDnSpyFile file, ITextOutput output, DecompilationContext ctx, DecompileAssemblyFlags flags = DecompileAssemblyFlags.AssemblyAndModule) {
-			WriteModuleAssembly(file, output, ctx, flags);
+		public override void Decompile(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
+			WriteAssembly(asm, output, ctx);
 
-			bool decompileAsm = (flags & DecompileAssemblyFlags.Assembly) != 0;
-			bool decompileMod = (flags & DecompileAssemblyFlags.Module) != 0;
 			using (ctx.DisableAssemblyLoad()) {
-				AstBuilder codeDomBuilder = CreateAstBuilder(ctx, langSettings.Settings, currentModule: file.ModuleDef);
-				codeDomBuilder.AddAssembly(file.ModuleDef, true, decompileAsm, decompileMod);
+				AstBuilder codeDomBuilder = CreateAstBuilder(ctx, langSettings.Settings, currentModule: asm.ManifestModule);
+				codeDomBuilder.AddAssembly(asm.ManifestModule, true, true, false);
+				RunTransformsAndGenerateCode(codeDomBuilder, output, ctx);
+			}
+		}
+
+		public override void Decompile(ModuleDef mod, ITextOutput output, DecompilationContext ctx) {
+			WriteModule(mod, output, ctx);
+
+			using (ctx.DisableAssemblyLoad()) {
+				AstBuilder codeDomBuilder = CreateAstBuilder(ctx, langSettings.Settings, currentModule: mod);
+				codeDomBuilder.AddAssembly(mod, true, false, true);
 				RunTransformsAndGenerateCode(codeDomBuilder, output, ctx);
 			}
 		}

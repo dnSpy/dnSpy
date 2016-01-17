@@ -186,7 +186,6 @@
     <Compile Include="Languages\BamlDecompilerOptions.cs" />
     <Compile Include="Languages\DecompilationContext.cs" />
     <Compile Include="Languages\DecompilationType.cs" />
-    <Compile Include="Languages\DecompileAssemblyFlags.cs" />
     <Compile Include="Languages\DecompileAssemblyInfo.cs" />
     <Compile Include="Languages\DecompilePartialType.cs" />
     <Compile Include="Languages\DecompilerOptionConstants.cs" />
