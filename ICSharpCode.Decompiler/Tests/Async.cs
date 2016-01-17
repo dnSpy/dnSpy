@@ -37,6 +37,10 @@ public class Async
 		Console.WriteLine("No Await");
 	}
 	
+	public async void EmptyVoidMethod()
+	{
+	}
+	
 	public async void AwaitYield()
 	{
 		await Task.Yield();

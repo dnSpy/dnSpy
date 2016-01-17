@@ -275,14 +275,23 @@ namespace ICSharpCode.Decompiler.ILAst {
 
 			if (pos > 0 && body[pos - 1] is ILLabel) {
 				pos--;
-			} else {
-				// ensure that the first element at body[pos] is a label:
-				ILLabel newLabel = new ILLabel();
-				newLabel.Name = "YieldReturnEntryPoint";
-				ranges[newLabel] = ranges[body[pos]]; // give the label the range of the instruction at body[pos]
-				body.Insert(pos, newLabel);
-				bodyLength++;
+				return; // label found
 			}
+
+			// ensure that the first element at body[pos] is a label:
+			ILLabel newLabel = new ILLabel();
+			newLabel.Name = "YieldReturnEntryPoint";
+
+			ILExpression expr = pos == 1 && body.Count == 1 ? body[0] as ILExpression : null;
+			if (expr != null && expr.Code == ILCode.Leave && expr.Operand is ILLabel) {
+				ranges[newLabel] = ranges[(ILLabel)expr.Operand];
+				pos = 0;
+			} else {
+				ranges[newLabel] = ranges[body[pos]]; // give the label the range of the instruction at body[pos]
+			}
+
+			body.Insert(pos, newLabel);
+			bodyLength++;
 		}
 		
 		public LabelRangeMapping CreateLabelRangeMapping(List<ILNode> body, int pos, int bodyLength)
