@@ -310,7 +310,7 @@ namespace dnSpy.AsmEditor.Hex {
 		}
 
 		static MetaDataTableRecordVM Ask(string title, MDTableContext context) {
-			return Shared.App.MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_MetadataToken, null, title, s => {
+			return Shared.App.MsgBox.Instance.Ask(dnSpy_AsmEditor_Resources.GoToMetaDataTableRow_RID, null, title, s => {
 				string error;
 				uint rid = NumberVMUtils.ParseUInt32(s, 1, context.MetaDataTableVM.Rows, out error);
 				if (!string.IsNullOrEmpty(error))

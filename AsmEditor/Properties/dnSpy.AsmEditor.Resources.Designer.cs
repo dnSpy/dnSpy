@@ -2618,6 +2618,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _RID.
+        /// </summary>
+        public static string GoToMetaDataTableRow_RID {
+            get {
+                return ResourceManager.GetString("GoToMetaDataTableRow_RID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Token {0:X8} doesn&apos;t exist in the metadata.
         /// </summary>
         public static string GoToMetaDataTableRow_TokenDoesNotExist {
