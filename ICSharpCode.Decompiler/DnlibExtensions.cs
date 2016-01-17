@@ -41,7 +41,7 @@ namespace ICSharpCode.Decompiler {
 
 		public static IEnumerable<FieldDef> GetFields(this TypeDef type, bool sortMembers)
 		{
-			if (!sortMembers)
+			if (!sortMembers || !type.CanSortFields())
 				return type.Fields;
 			var ary = type.Fields.ToArray();
 			Array.Sort(ary, FieldDefComparer.Instance);
@@ -50,7 +50,7 @@ namespace ICSharpCode.Decompiler {
 
 		public static IEnumerable<EventDef> GetEvents(this TypeDef type, bool sortMembers)
 		{
-			if (!sortMembers)
+			if (!sortMembers || !type.CanSortMethods())
 				return type.Events;
 			var ary = type.Events.ToArray();
 			Array.Sort(ary, EventDefComparer.Instance);
@@ -59,7 +59,7 @@ namespace ICSharpCode.Decompiler {
 
 		public static IEnumerable<PropertyDef> GetProperties(this TypeDef type, bool sortMembers)
 		{
-			if (!sortMembers)
+			if (!sortMembers || !type.CanSortMethods())
 				return type.Properties;
 			var ary = type.Properties.ToArray();
 			Array.Sort(ary, PropertyDefComparer.Instance);
@@ -68,7 +68,7 @@ namespace ICSharpCode.Decompiler {
 
 		public static IEnumerable<MethodDef> GetMethods(this TypeDef type, bool sortMembers)
 		{
-			if (!sortMembers)
+			if (!sortMembers || !type.CanSortMethods())
 				return type.Methods;
 			var ary = type.Methods.ToArray();
 			Array.Sort(ary, MethodDefComparer.Instance);

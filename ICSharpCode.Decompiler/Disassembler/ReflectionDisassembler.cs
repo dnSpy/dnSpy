@@ -1335,7 +1335,7 @@ namespace ICSharpCode.Decompiler.Disassembler {
 			}
 			if (type.HasFields) {
 				output.WriteLine("// Fields", TextTokenKind.Comment);
-				foreach (var field in type.GetFields(type.IsAutoLayout ? options.SortMembers : false)) {
+				foreach (var field in type.GetFields(options.SortMembers)) {
 					options.CancellationToken.ThrowIfCancellationRequested();
 					DisassembleField(field);
 				}
@@ -1356,7 +1356,6 @@ namespace ICSharpCode.Decompiler.Disassembler {
 					DisassembleEvent(ev);
 					output.WriteLine();
 				}
-				output.WriteLine();
 			}
 			if (type.HasProperties) {
 				output.WriteLine("// Properties", TextTokenKind.Comment);
