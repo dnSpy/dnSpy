@@ -60,18 +60,20 @@ namespace ICSharpCode.Decompiler.Ast {
 		
 		public static bool MemberIsHidden(IMemberRef member, DecompilerSettings settings)
 		{
-			if (settings.ForceShowAllMembers)
-				return false;
 			MethodDef method = member as MethodDef;
 			if (method != null) {
 				if (method.IsGetter || method.IsSetter || method.IsAddOn || method.IsRemoveOn)
 					return true;
+				if (settings.ForceShowAllMembers)
+					return false;
 				if (settings.AnonymousMethods && method.HasGeneratedName() && method.IsCompilerGenerated())
 					return true;
 			}
 
 			TypeDef type = member as TypeDef;
 			if (type != null) {
+				if (settings.ForceShowAllMembers)
+					return false;
 				if (type.DeclaringType != null) {
 					if (settings.AnonymousMethods && IsClosureType(type))
 						return true;
@@ -89,6 +91,8 @@ namespace ICSharpCode.Decompiler.Ast {
 			
 			FieldDef field = member as FieldDef;
 			if (field != null) {
+				if (settings.ForceShowAllMembers)
+					return false;
 				if (field.IsCompilerGenerated()) {
 					if (settings.AnonymousMethods && IsAnonymousMethodCacheField(field))
 						return true;
@@ -811,6 +815,7 @@ namespace ICSharpCode.Decompiler.Ast {
 		
 		void AddTypeMembers(TypeDeclaration astType, TypeDef typeDef)
 		{
+			bool hasShownMethods = false;
 			foreach (var d in this.context.Settings.DecompilationObjects) {
 				switch (d) {
 				case DecompilationObject.NestedTypes:
@@ -824,13 +829,20 @@ namespace ICSharpCode.Decompiler.Ast {
 					break;
 
 				case DecompilationObject.Fields:
-					foreach (FieldDef fieldDef in typeDef.GetFields(typeDef.IsAutoLayout ? context.Settings.SortMembers : false)) {
+					foreach (FieldDef fieldDef in typeDef.GetFields(context.Settings.SortMembers)) {
 						if (MemberIsHidden(fieldDef, context.Settings)) continue;
 						astType.AddChild(CreateField(fieldDef), Roles.TypeMemberRole);
 					}
 					break;
 
 				case DecompilationObject.Events:
+					if (hasShownMethods)
+						break;
+					if (!typeDef.CanSortMethods()) {
+						ShowAllMethods(astType, typeDef);
+						hasShownMethods = true;
+						break;
+					}
 					foreach (EventDef eventDef in typeDef.GetEvents(context.Settings.SortMembers)) {
 						if (eventDef.AddMethod == null && eventDef.RemoveMethod == null)
 							continue;
@@ -839,6 +851,13 @@ namespace ICSharpCode.Decompiler.Ast {
 					break;
 
 				case DecompilationObject.Properties:
+					if (hasShownMethods)
+						break;
+					if (!typeDef.CanSortMethods()) {
+						ShowAllMethods(astType, typeDef);
+						hasShownMethods = true;
+						break;
+					}
 					foreach (PropertyDef propDef in typeDef.GetProperties(context.Settings.SortMembers)) {
 						if (propDef.GetMethod == null && propDef.SetMethod == null)
 							continue;
@@ -847,7 +866,14 @@ namespace ICSharpCode.Decompiler.Ast {
 					break;
 
 				case DecompilationObject.Methods:
-					foreach (MethodDef methodDef in typeDef.GetMethods(typeDef.IsInterface ? false : context.Settings.SortMembers)) {
+					if (hasShownMethods)
+						break;
+					if (!typeDef.CanSortMethods()) {
+						ShowAllMethods(astType, typeDef);
+						hasShownMethods = true;
+						break;
+					}
+					foreach (MethodDef methodDef in typeDef.GetMethods(context.Settings.SortMembers)) {
 						if (MemberIsHidden(methodDef, context.Settings)) continue;
 
 						if (methodDef.IsConstructor)
@@ -859,6 +885,40 @@ namespace ICSharpCode.Decompiler.Ast {
 
 				default: throw new InvalidOperationException();
 				}
+			}
+		}
+
+		void ShowAllMethods(TypeDeclaration astType, TypeDef type)
+		{
+			foreach (var def in type.GetNonSortedMethodsPropsEvents()) {
+				var md = def as MethodDef;
+				if (md != null) {
+					if (MemberIsHidden(md, context.Settings))
+						continue;
+					if (md.IsConstructor)
+						astType.Members.Add(CreateConstructor(md));
+					else
+						astType.Members.Add(CreateMethod(md));
+					continue;
+				}
+
+				var pd = def as PropertyDef;
+				if (pd != null) {
+					if (pd.GetMethod == null && pd.SetMethod == null)
+						continue;
+					astType.Members.Add(CreateProperty(pd));
+					continue;
+				}
+
+				var ed = def as EventDef;
+				if (ed != null) {
+					if (ed.AddMethod == null && ed.RemoveMethod == null)
+						continue;
+					astType.AddChild(CreateEvent(ed), Roles.TypeMemberRole);
+					continue;
+				}
+
+				Debug.Fail("Shouldn't be here");
 			}
 		}
 
