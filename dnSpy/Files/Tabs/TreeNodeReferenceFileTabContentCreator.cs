@@ -20,10 +20,12 @@
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using dnlib.DotNet;
+using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Files.Tabs.TextEditor;
+using dnSpy.Shared.Files;
 
 namespace dnSpy.Files.Tabs {
 	[ExportReferenceFileTabContentCreator(Order = TabConstants.ORDER_CONTENTCREATOR_CODEREF)]
@@ -109,9 +111,29 @@ namespace dnSpy.Files.Tabs {
 			if (!IsSupportedReference(resolvedRef))
 				return null;
 			var newRef = GetReference(@ref);
-			var node = fileTabManager.FileTreeView.FindNode(GetReference(@ref));
-			if (node == null)
+			var node = fileTabManager.FileTreeView.FindNode(newRef);
+			if (node == null) {
+				// If it's eg. a TypeDef, its assembly has been removed from the file list or it
+				// was never inserted because adding an assembly had been temporarily disabled.
+				// Add the assembly to the list again. Next time the user clicks on the link,
+				// FindNode() above will succeed.
+				var def = @ref as IMemberDef;
+				if (def != null) {
+					DnSpyFile file = null;
+					var mod = def.Module;
+					if (mod != null && mod.Assembly != null)
+						file = DnSpyDotNetFile.CreateAssembly(DnSpyFileInfo.CreateFile(mod.Location), mod, false);
+					else if (mod != null)
+						file = DnSpyDotNetFile.CreateModule(DnSpyFileInfo.CreateFile(mod.Location), mod, false);
+					if (file != null) {
+						var existingFile = fileTabManager.FileTreeView.FileManager.GetOrAdd(file);
+						if (existingFile != file)
+							fileTabManager.FileTreeView.FileManager.ForceAdd(file, true, null);
+					}
+				}
+
 				return null;
+			}
 
 			var content = decompileFileTabContentFactory.Create(new IFileTreeNodeData[] { node });
 			return new FileTabReferenceResult(content, null, a => {
@@ -123,8 +145,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		static bool IsSupportedReference(object @ref) {
-			return @ref != null &&
-				(@ref is CodeReference || @ref is IMemberDef);
+			return @ref is CodeReference || @ref is IMemberDef;
 		}
 
 		void GoToReference(IFileTabContent content, object @ref) {
