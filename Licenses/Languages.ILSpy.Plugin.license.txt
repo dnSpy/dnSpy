@@ -1,4 +1,4 @@
-Most code is from ILSpy/Languages and ILSpy/VB.
+The language code is from ILSpy/Languages and ILSpy/VB.
 
 Original port to dnlib by Ki. Various other features needed by dnSpy have also been added.
 
@@ -23,3 +23,5 @@ Original license: MIT, see below:
 // FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
+
+Copyright (C) 2014-2016 de4dot@gmail.com
