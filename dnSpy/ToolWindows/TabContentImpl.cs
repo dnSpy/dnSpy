@@ -84,6 +84,7 @@ namespace dnSpy.ToolWindows {
 							e.Handled = true;
 						}
 					};
+					contentPresenter.InputBindings.Add(new KeyBinding(CloseCommand, Key.Escape, ModifierKeys.Shift));
 					// Needed if the content already has keyboard focus, eg. happens when moving
 					// the tool window from one side to the other.
 					contentPresenter.IsVisibleChanged += ContentPresenter_IsVisibleChanged;
