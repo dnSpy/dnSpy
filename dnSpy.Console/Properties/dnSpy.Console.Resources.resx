@@ -136,9 +136,6 @@
   <data name="FileOrDirDoesNotExist" xml:space="preserve">
     <value>File/directory '{0}' doesn't exist</value>
   </data>
-  <data name="InvalidInteger" xml:space="preserve">
-    <value>Invalid integer: '{0}'</value>
-  </data>
   <data name="InvalidOption" xml:space="preserve">
     <value>Invalid option: {0}</value>
   </data>

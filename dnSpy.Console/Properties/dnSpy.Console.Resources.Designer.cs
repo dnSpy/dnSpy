@@ -115,15 +115,6 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Invalid integer: &apos;{0}&apos;.
-        /// </summary>
-        internal static string InvalidInteger {
-            get {
-                return ResourceManager.GetString("InvalidInteger", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Only types, methods, fields, events and properties can be decompiled.
         /// </summary>
         internal static string InvalidMemberToDecompile {

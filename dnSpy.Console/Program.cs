@@ -294,6 +294,7 @@ namespace dnSpy_Console {
 				// **********************************************************************
 
 				if (canParseCommands && arg[0] == '-') {
+					string error;
 					switch (arg.Remove(0, 1)) {
 					case "":
 						canParseCommands = false;
@@ -363,8 +364,9 @@ namespace dnSpy_Console {
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingNumberOfThreads);
 						i++;
-						if (!int.TryParse(next, out numThreads))
-							throw new ErrorException(string.Format(dnSpy_Console_Resources.InvalidInteger, next));
+						numThreads = NumberVMUtils.ParseInt32(next, int.MinValue, int.MaxValue, out error);
+						if (!string.IsNullOrEmpty(error))
+							throw new ErrorException(error);
 						break;
 
 					case "-vs":
@@ -372,8 +374,9 @@ namespace dnSpy_Console {
 							throw new ErrorException(dnSpy_Console_Resources.MissingVSVersion);
 						i++;
 						int vsVer;
-						if (!int.TryParse(next, out vsVer))
-							throw new ErrorException(string.Format(dnSpy_Console_Resources.InvalidInteger, next));
+						vsVer = NumberVMUtils.ParseInt32(next, int.MinValue, int.MaxValue, out error);
+						if (!string.IsNullOrEmpty(error))
+							throw new ErrorException(error);
 						switch (vsVer) {
 						case 2005: projectVersion = ProjectVersion.VS2005; break;
 						case 2008: projectVersion = ProjectVersion.VS2008; break;
@@ -409,13 +412,9 @@ namespace dnSpy_Console {
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingMDToken);
 						i++;
-						bool parsedToken;
-						if (next.StartsWith("0x", StringComparison.OrdinalIgnoreCase) || next.StartsWith("&H", StringComparison.OrdinalIgnoreCase))
-							parsedToken = int.TryParse(next.Substring(2), NumberStyles.HexNumber, null, out mdToken);
-						else
-							parsedToken = int.TryParse(next, out mdToken);
-						if (!parsedToken)
-							throw new ErrorException(string.Format(dnSpy_Console_Resources.InvalidInteger, next));
+						mdToken = NumberVMUtils.ParseInt32(next, int.MinValue, int.MaxValue, out error);
+						if (!string.IsNullOrEmpty(error))
+							throw new ErrorException(error);
 						break;
 
 					case "-gac-file":
