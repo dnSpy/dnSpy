@@ -826,13 +826,14 @@ namespace dnSpy.Files.TreeView {
 				treeView.SelectItems(new[] { newSelectedNode });
 		}
 
-		IList<IDnSpyFileNode> GetNewSortedNodes() {
+		IDnSpyFileNode[] GetNewSortedNodes() {
 			var origOrder = TopNodes.ToArray();
-			var files = origOrder.ToList();
+			var files = origOrder.Select((a, i) => Tuple.Create(a, i)).ToList();
 			files.Sort(DnSpyFileNodeComparer.Instance);
-			if (Equals(files, origOrder))
+			var sorted = files.Select(a => a.Item1).ToArray();
+			if (Equals(sorted, origOrder))
 				return null;
-			return files;
+			return sorted;
 		}
 
 		public bool CanSortTopNodes {
@@ -860,20 +861,23 @@ namespace dnSpy.Files.TreeView {
 			return true;
 		}
 
-		sealed class DnSpyFileNodeComparer : IComparer<IDnSpyFileNode> {
+		sealed class DnSpyFileNodeComparer : IComparer<Tuple<IDnSpyFileNode, int>> {
 			public static readonly DnSpyFileNodeComparer Instance = new DnSpyFileNodeComparer();
 
-			public int Compare(IDnSpyFileNode x, IDnSpyFileNode y) {
+			public int Compare(Tuple<IDnSpyFileNode, int> x, Tuple<IDnSpyFileNode, int> y) {
 				if (x == y)
 					return 0;
 				if (x == null)
 					return -1;
 				if (y == null)
 					return 1;
-				int c = GetIsAutoLoadedOrder(x.DnSpyFile.IsAutoLoaded).CompareTo(GetIsAutoLoadedOrder(y.DnSpyFile.IsAutoLoaded));
+				int c = GetIsAutoLoadedOrder(x.Item1.DnSpyFile.IsAutoLoaded).CompareTo(GetIsAutoLoadedOrder(y.Item1.DnSpyFile.IsAutoLoaded));
 				if (c != 0)
 					return c;
-				return StringComparer.InvariantCultureIgnoreCase.Compare(x.ToString(), y.ToString());
+				c = StringComparer.InvariantCultureIgnoreCase.Compare(x.ToString(), y.ToString());
+				if (c != 0)
+					return c;
+				return x.Item2.CompareTo(y.Item2);
 			}
 
 			static int GetIsAutoLoadedOrder(bool b) {
