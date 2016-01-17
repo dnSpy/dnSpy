@@ -354,7 +354,7 @@ namespace dnSpy.Debugger {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:DetachCommand", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 30)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_DEBUG_GUID, Header = "res:DetachCommand", Icon = "Delete", Group = MenuConstants.GROUP_APP_MENU_DEBUG_CONTINUE, Order = 30)]
 	sealed class DetachDebugMainMenuCommand : DebugMainMenuCommand {
 		[ImportingConstructor]
 		public DetachDebugMainMenuCommand(Lazy<ITheDebugger> theDebugger)
