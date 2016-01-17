@@ -446,6 +446,7 @@ namespace dnSpy.Languages.CSharp {
 			}
 
 			var info = new MethodInfo(method);
+			WriteModuleName(info);
 			WriteReturnType(info);
 
 			if (ShowOwnerTypes) {
@@ -604,6 +605,7 @@ namespace dnSpy.Languages.CSharp {
 					prop.OtherMethods.FirstOrDefault();
 
 			var info = new MethodInfo(md);
+			WriteModuleName(info);
 			WriteReturnType(info);
 			if (ShowOwnerTypes) {
 				Write(prop.DeclaringType);
@@ -710,6 +712,7 @@ namespace dnSpy.Languages.CSharp {
 				WriteSpace();
 
 				var info = new MethodInfo(invoke);
+				WriteModuleName(info);
 				WriteReturnType(info);
 
 				// Always print the namespace here because that's what VS does

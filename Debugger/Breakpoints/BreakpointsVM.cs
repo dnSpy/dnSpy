@@ -64,6 +64,13 @@ namespace dnSpy.Debugger.Breakpoints {
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightBreakpoints,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 				ShowTokens = breakpointSettings.ShowTokens,
+				ShowModuleNames = breakpointSettings.ShowModuleNames,
+				ShowParameterTypes = breakpointSettings.ShowParameterTypes,
+				ShowParameterNames = breakpointSettings.ShowParameterNames,
+				ShowOwnerTypes = breakpointSettings.ShowOwnerTypes,
+				ShowReturnTypes = breakpointSettings.ShowReturnTypes,
+				ShowNamespaces = breakpointSettings.ShowNamespaces,
+				ShowTypeKeywords = breakpointSettings.ShowTypeKeywords,
 			};
 			this.breakpointManager = breakpointManager;
 			this.theDebugger = theDebugger;
@@ -155,9 +162,39 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		void BreakpointSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var breakpointSettings = (IBreakpointSettings)sender;
-			if (e.PropertyName == "ShowTokens") {
+			switch (e.PropertyName) {
+			case "ShowTokens":
 				breakpointContext.ShowTokens = breakpointSettings.ShowTokens;
 				RefreshNameField();
+				break;
+			case "ShowModuleNames":
+				breakpointContext.ShowModuleNames = breakpointSettings.ShowModuleNames;
+				RefreshNameField();
+				break;
+			case "ShowParameterTypes":
+				breakpointContext.ShowParameterTypes = breakpointSettings.ShowParameterTypes;
+				RefreshNameField();
+				break;
+			case "ShowParameterNames":
+				breakpointContext.ShowParameterNames = breakpointSettings.ShowParameterNames;
+				RefreshNameField();
+				break;
+			case "ShowOwnerTypes":
+				breakpointContext.ShowOwnerTypes = breakpointSettings.ShowOwnerTypes;
+				RefreshNameField();
+				break;
+			case "ShowReturnTypes":
+				breakpointContext.ShowReturnTypes = breakpointSettings.ShowReturnTypes;
+				RefreshNameField();
+				break;
+			case "ShowNamespaces":
+				breakpointContext.ShowNamespaces = breakpointSettings.ShowNamespaces;
+				RefreshNameField();
+				break;
+			case "ShowTypeKeywords":
+				breakpointContext.ShowTypeKeywords = breakpointSettings.ShowTypeKeywords;
+				RefreshNameField();
+				break;
 			}
 		}
 

@@ -29,6 +29,13 @@ namespace dnSpy.Debugger.Breakpoints {
 		bool SyntaxHighlight { get; }
 		bool UseHexadecimal { get; }
 		bool ShowTokens { get; }
+		bool ShowModuleNames { get; }
+		bool ShowParameterTypes { get; }
+		bool ShowParameterNames { get; }
+		bool ShowOwnerTypes { get; }
+		bool ShowReturnTypes { get; }
+		bool ShowNamespaces { get; }
+		bool ShowTypeKeywords { get; }
 	}
 
 	sealed class BreakpointContext : IBreakpointContext {
@@ -37,6 +44,13 @@ namespace dnSpy.Debugger.Breakpoints {
 		public bool SyntaxHighlight { get; set; }
 		public bool UseHexadecimal { get; set; }
 		public bool ShowTokens { get; set; }
+		public bool ShowModuleNames { get; set; }
+		public bool ShowParameterTypes { get; set; }
+		public bool ShowParameterNames { get; set; }
+		public bool ShowOwnerTypes { get; set; }
+		public bool ShowReturnTypes { get; set; }
+		public bool ShowNamespaces { get; set; }
+		public bool ShowTypeKeywords { get; set; }
 
 		public IModuleLoader ModuleLoader {
 			get { return moduleLoader.Value; }

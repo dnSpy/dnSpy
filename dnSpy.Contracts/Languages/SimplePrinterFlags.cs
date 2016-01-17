@@ -38,7 +38,6 @@ namespace dnSpy.Contracts.Languages {
 		ShowArrayValueSizes			= 0x00000200,
 
 		Default =
-			ShowModuleNames |
 			ShowParameterTypes |
 			ShowParameterNames |
 			ShowOwnerTypes |

@@ -92,7 +92,7 @@ namespace dnSpy.Debugger.Breakpoints {
 						output.Write(string.Format("0x{0:X8}", ilbp.SerializedDnToken.Token), TextTokenKind.Number);
 				}
 				else
-					MethodLanguage.Write(output, method, SimplePrinterFlags.Default);
+					MethodLanguage.Write(output, method, GetFlags(vm.Context));
 				output.WriteSpace();
 				output.Write("+", TextTokenKind.Operator);
 				output.WriteSpace();
@@ -107,6 +107,18 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 
 			Debug.Fail(string.Format("Unknown breakpoint type: {0}", vm.Breakpoint.GetType()));
+		}
+
+		static SimplePrinterFlags GetFlags(IBreakpointContext ctx) {
+			SimplePrinterFlags flags = 0;
+			if (ctx.ShowModuleNames)	flags |= SimplePrinterFlags.ShowModuleNames;
+			if (ctx.ShowParameterTypes)	flags |= SimplePrinterFlags.ShowParameterTypes;
+			if (ctx.ShowParameterNames)	flags |= SimplePrinterFlags.ShowParameterNames;
+			if (ctx.ShowOwnerTypes)		flags |= SimplePrinterFlags.ShowOwnerTypes;
+			if (ctx.ShowReturnTypes)	flags |= SimplePrinterFlags.ShowReturnTypes;
+			if (ctx.ShowNamespaces)		flags |= SimplePrinterFlags.ShowNamespaces;
+			if (ctx.ShowTypeKeywords)	flags |= SimplePrinterFlags.ShowTypeKeywords;
+			return flags;
 		}
 
 		public void WriteAssembly(BreakpointVM vm) {

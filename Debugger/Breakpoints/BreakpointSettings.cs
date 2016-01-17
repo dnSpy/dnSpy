@@ -26,6 +26,13 @@ using dnSpy.Shared.MVVM;
 namespace dnSpy.Debugger.Breakpoints {
 	interface IBreakpointSettings : INotifyPropertyChanged {
 		bool ShowTokens { get; }
+		bool ShowModuleNames { get; }
+		bool ShowParameterTypes { get; }
+		bool ShowParameterNames { get; }
+		bool ShowOwnerTypes { get; }
+		bool ShowReturnTypes { get; }
+		bool ShowNamespaces { get; }
+		bool ShowTypeKeywords { get; }
 	}
 
 	class BreakpointSettings : ViewModelBase, IBreakpointSettings {
@@ -43,6 +50,90 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 		bool showTokens = true;
+
+		public bool ShowModuleNames {
+			get { return showModuleNames; }
+			set {
+				if (showModuleNames != value) {
+					showModuleNames = value;
+					OnPropertyChanged("ShowModuleNames");
+					OnModified();
+				}
+			}
+		}
+		bool showModuleNames = false;
+
+		public bool ShowParameterTypes {
+			get { return showParameterTypes; }
+			set {
+				if (showParameterTypes != value) {
+					showParameterTypes = value;
+					OnPropertyChanged("ShowParameterTypes");
+					OnModified();
+				}
+			}
+		}
+		bool showParameterTypes = true;
+
+		public bool ShowParameterNames {
+			get { return showParameterNames; }
+			set {
+				if (showParameterNames != value) {
+					showParameterNames = value;
+					OnPropertyChanged("ShowParameterNames");
+					OnModified();
+				}
+			}
+		}
+		bool showParameterNames = true;
+
+		public bool ShowOwnerTypes {
+			get { return showOwnerTypes; }
+			set {
+				if (showOwnerTypes != value) {
+					showOwnerTypes = value;
+					OnPropertyChanged("ShowOwnerTypes");
+					OnModified();
+				}
+			}
+		}
+		bool showOwnerTypes = true;
+
+		public bool ShowReturnTypes {
+			get { return showReturnTypes; }
+			set {
+				if (showReturnTypes != value) {
+					showReturnTypes = value;
+					OnPropertyChanged("ShowReturnTypes");
+					OnModified();
+				}
+			}
+		}
+		bool showReturnTypes = true;
+
+		public bool ShowNamespaces {
+			get { return showNamespaces; }
+			set {
+				if (showNamespaces != value) {
+					showNamespaces = value;
+					OnPropertyChanged("ShowNamespaces");
+					OnModified();
+				}
+			}
+		}
+		bool showNamespaces = false;
+
+		public bool ShowTypeKeywords {
+			get { return showTypeKeywords; }
+			set {
+				if (showTypeKeywords != value) {
+					showTypeKeywords = value;
+					OnPropertyChanged("ShowTypeKeywords");
+					OnModified();
+				}
+			}
+		}
+		bool showTypeKeywords = true;
 	}
 
 	[Export, Export(typeof(IBreakpointSettings)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -58,6 +149,13 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			ShowTokens = sect.Attribute<bool?>("ShowTokens") ?? ShowTokens;
+			ShowModuleNames = sect.Attribute<bool?>("ShowModuleNames") ?? ShowModuleNames;
+			ShowParameterTypes = sect.Attribute<bool?>("ShowParameterTypes") ?? ShowParameterTypes;
+			ShowParameterNames = sect.Attribute<bool?>("ShowParameterNames") ?? ShowParameterNames;
+			ShowOwnerTypes = sect.Attribute<bool?>("ShowOwnerTypes") ?? ShowOwnerTypes;
+			ShowReturnTypes = sect.Attribute<bool?>("ShowReturnTypes") ?? ShowReturnTypes;
+			ShowNamespaces = sect.Attribute<bool?>("ShowNamespaces") ?? ShowNamespaces;
+			ShowTypeKeywords = sect.Attribute<bool?>("ShowTypeKeywords") ?? ShowTypeKeywords;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -67,6 +165,13 @@ namespace dnSpy.Debugger.Breakpoints {
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 			sect.Attribute("ShowTokens", ShowTokens);
+			sect.Attribute("ShowModuleNames", ShowModuleNames);
+			sect.Attribute("ShowParameterTypes", ShowParameterTypes);
+			sect.Attribute("ShowParameterNames", ShowParameterNames);
+			sect.Attribute("ShowOwnerTypes", ShowOwnerTypes);
+			sect.Attribute("ShowReturnTypes", ShowReturnTypes);
+			sect.Attribute("ShowNamespaces", ShowNamespaces);
+			sect.Attribute("ShowTypeKeywords", ShowTypeKeywords);
 		}
 	}
 }

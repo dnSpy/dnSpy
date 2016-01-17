@@ -335,4 +335,137 @@ namespace dnSpy.Debugger.Breakpoints {
 			return breakpointSettings.ShowTokens;
 		}
 	}
+
+	[ExportMenuItem(Header = "res:ShowModuleNamesCommand", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 10)]
+	sealed class ShowModuleNamesBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
+		readonly BreakpointSettingsImpl breakpointSettings;
+
+		[ImportingConstructor]
+		ShowModuleNamesBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
+			: base(breakpointsContent) {
+			this.breakpointSettings = breakpointSettings;
+		}
+
+		public override void Execute(BreakpointCtxMenuContext context) {
+			breakpointSettings.ShowModuleNames = !breakpointSettings.ShowModuleNames;
+		}
+
+		public override bool IsChecked(BreakpointCtxMenuContext context) {
+			return breakpointSettings.ShowModuleNames;
+		}
+	}
+
+	[ExportMenuItem(Header = "res:ShowParameterTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 20)]
+	sealed class ShowParameterTypesBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
+		readonly BreakpointSettingsImpl breakpointSettings;
+
+		[ImportingConstructor]
+		ShowParameterTypesBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
+			: base(breakpointsContent) {
+			this.breakpointSettings = breakpointSettings;
+		}
+
+		public override void Execute(BreakpointCtxMenuContext context) {
+			breakpointSettings.ShowParameterTypes = !breakpointSettings.ShowParameterTypes;
+		}
+
+		public override bool IsChecked(BreakpointCtxMenuContext context) {
+			return breakpointSettings.ShowParameterTypes;
+		}
+	}
+
+	[ExportMenuItem(Header = "res:ShowParameterNamesCommand", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 30)]
+	sealed class ShowParameterNamesBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
+		readonly BreakpointSettingsImpl breakpointSettings;
+
+		[ImportingConstructor]
+		ShowParameterNamesBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
+			: base(breakpointsContent) {
+			this.breakpointSettings = breakpointSettings;
+		}
+
+		public override void Execute(BreakpointCtxMenuContext context) {
+			breakpointSettings.ShowParameterNames = !breakpointSettings.ShowParameterNames;
+		}
+
+		public override bool IsChecked(BreakpointCtxMenuContext context) {
+			return breakpointSettings.ShowParameterNames;
+		}
+	}
+
+	[ExportMenuItem(Header = "res:ShowOwnerTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 40)]
+	sealed class ShowOwnerTypesBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
+		readonly BreakpointSettingsImpl breakpointSettings;
+
+		[ImportingConstructor]
+		ShowOwnerTypesBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
+			: base(breakpointsContent) {
+			this.breakpointSettings = breakpointSettings;
+		}
+
+		public override void Execute(BreakpointCtxMenuContext context) {
+			breakpointSettings.ShowOwnerTypes = !breakpointSettings.ShowOwnerTypes;
+		}
+
+		public override bool IsChecked(BreakpointCtxMenuContext context) {
+			return breakpointSettings.ShowOwnerTypes;
+		}
+	}
+
+	[ExportMenuItem(Header = "res:ShowNamespacesCommand", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 50)]
+	sealed class ShowNamespacesBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
+		readonly BreakpointSettingsImpl breakpointSettings;
+
+		[ImportingConstructor]
+		ShowNamespacesBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
+			: base(breakpointsContent) {
+			this.breakpointSettings = breakpointSettings;
+		}
+
+		public override void Execute(BreakpointCtxMenuContext context) {
+			breakpointSettings.ShowNamespaces = !breakpointSettings.ShowNamespaces;
+		}
+
+		public override bool IsChecked(BreakpointCtxMenuContext context) {
+			return breakpointSettings.ShowNamespaces;
+		}
+	}
+
+	[ExportMenuItem(Header = "res:ShowReturnTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 60)]
+	sealed class ShowReturnTypesBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
+		readonly BreakpointSettingsImpl breakpointSettings;
+
+		[ImportingConstructor]
+		ShowReturnTypesBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
+			: base(breakpointsContent) {
+			this.breakpointSettings = breakpointSettings;
+		}
+
+		public override void Execute(BreakpointCtxMenuContext context) {
+			breakpointSettings.ShowReturnTypes = !breakpointSettings.ShowReturnTypes;
+		}
+
+		public override bool IsChecked(BreakpointCtxMenuContext context) {
+			return breakpointSettings.ShowReturnTypes;
+		}
+	}
+
+	[ExportMenuItem(Header = "res:ShowTypeKeywordsCommand", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 70)]
+	sealed class ShowTypeKeywordsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
+		readonly BreakpointSettingsImpl breakpointSettings;
+
+		[ImportingConstructor]
+		ShowTypeKeywordsBreakpointCtxMenuCommand(Lazy<IBreakpointsContent> breakpointsContent, BreakpointSettingsImpl breakpointSettings)
+			: base(breakpointsContent) {
+			this.breakpointSettings = breakpointSettings;
+		}
+
+		public override void Execute(BreakpointCtxMenuContext context) {
+			breakpointSettings.ShowTypeKeywords = !breakpointSettings.ShowTypeKeywords;
+		}
+
+		public override bool IsChecked(BreakpointCtxMenuContext context) {
+			return breakpointSettings.ShowTypeKeywords;
+		}
+	}
 }
