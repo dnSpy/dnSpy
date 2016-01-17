@@ -169,6 +169,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public object Serialize() {
+			if (cachedEditorPositionState != null)
+				return cachedEditorPositionState;
 			return new EditorPositionState(textEditorControl.TextEditor);
 		}
 
@@ -177,10 +179,33 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (state == null)
 				return;
 
+			// It can't scroll until it's gotten its scrollviewer
+			if (textEditorControl.TextEditor.Template == null) {
+				bool start = cachedEditorPositionState == null;
+				cachedEditorPositionState = state;
+				if (start) {
+					textEditorControl.TextEditor.IsVisibleChanged -= TextEditor_IsVisibleChanged;
+					textEditorControl.TextEditor.IsVisibleChanged += TextEditor_IsVisibleChanged;
+				}
+			}
+			else
+				InitializeState(state);
+		}
+		EditorPositionState cachedEditorPositionState;
+
+		void InitializeState(EditorPositionState state) {
 			textEditorControl.TextEditor.ScrollToVerticalOffset(state.VerticalOffset);
 			textEditorControl.TextEditor.ScrollToHorizontalOffset(state.HorizontalOffset);
 			textEditorControl.TextEditor.TextArea.Caret.Position = state.TextViewPosition;
 			textEditorControl.TextEditor.TextArea.Caret.DesiredXPos = state.DesiredXPos;
+		}
+
+		void TextEditor_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e) {
+			textEditorControl.TextEditor.IsVisibleChanged -= TextEditor_IsVisibleChanged;
+			if (cachedEditorPositionState == null)
+				return;
+			InitializeState(cachedEditorPositionState);
+			cachedEditorPositionState = null;
 		}
 
 		public object CreateSerialized(ISettingsSection section) {
