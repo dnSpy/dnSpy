@@ -29,7 +29,7 @@ namespace dnSpy.Files {
 		readonly Window ownerWindow;
 		readonly HashSet<IDnSpyFile> hash;
 		readonly List<IDnSpyFile> loadedFiles;
-		DnSpyFileInfo[] filesToLoad;
+		FileToLoad[] filesToLoad;
 
 		public bool IsIndeterminate {
 			get { return false; }
@@ -48,7 +48,7 @@ namespace dnSpy.Files {
 			this.hash = new HashSet<IDnSpyFile>();
 		}
 
-		public IDnSpyFile[] Load(IEnumerable<DnSpyFileInfo> files) {
+		public IDnSpyFile[] Load(IEnumerable<FileToLoad> files) {
 			filesToLoad = files.ToArray();
 			ProgressMaximum = filesToLoad.Length;
 
@@ -63,10 +63,10 @@ namespace dnSpy.Files {
 			return loadedFiles.ToArray();
 		}
 
-		void Load(DnSpyFileInfo info) {
-			if (info.Type == FileConstants.FILETYPE_FILE && string.IsNullOrEmpty(info.Name))
+		void Load(FileToLoad f) {
+			if (f.Info.Type == FileConstants.FILETYPE_FILE && string.IsNullOrEmpty(f.Info.Name))
 				return;
-			var file = fileManager.TryGetOrCreate(info);
+			var file = fileManager.TryGetOrCreate(f.Info, f.IsAutoLoaded);
 			if (file != null && !hash.Contains(file)) {
 				loadedFiles.Add(file);
 				hash.Add(file);
@@ -76,10 +76,10 @@ namespace dnSpy.Files {
 		public void Execute(IProgress progress) {
 			for (int i = 0; i < filesToLoad.Length; i++) {
 				progress.ThrowIfCancellationRequested();
-				var info = filesToLoad[i];
+				var f = filesToLoad[i];
 				progress.SetTotalProgress(i);
-				progress.SetDescription(GetDescription(info));
-				Load(info);
+				progress.SetDescription(GetDescription(f.Info));
+				Load(f);
 			}
 
 			progress.SetTotalProgress(filesToLoad.Length);

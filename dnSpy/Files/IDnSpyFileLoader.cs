@@ -21,7 +21,16 @@ using System.Collections.Generic;
 using dnSpy.Contracts.Files;
 
 namespace dnSpy.Files {
+	struct FileToLoad {
+		public readonly DnSpyFileInfo Info;
+		public readonly bool IsAutoLoaded;
+		public FileToLoad(DnSpyFileInfo info, bool isAutoLoaded = false) {
+			this.Info = info;
+			this.IsAutoLoaded = isAutoLoaded;
+		}
+	}
+
 	interface IDnSpyFileLoader {
-		IDnSpyFile[] Load(IEnumerable<DnSpyFileInfo> files);
+		IDnSpyFile[] Load(IEnumerable<FileToLoad> files);
 	}
 }

@@ -28,13 +28,13 @@ namespace dnSpy.Files {
 			this.fileManager = fileManager;
 		}
 
-		public IDnSpyFile[] Load(IEnumerable<DnSpyFileInfo> files) {
+		public IDnSpyFile[] Load(IEnumerable<FileToLoad> files) {
 			var loadedFiles = new List<IDnSpyFile>();
 			var hash = new HashSet<IDnSpyFile>();
 			foreach (var f in files) {
-				if (f.Type == FileConstants.FILETYPE_FILE && string.IsNullOrEmpty(f.Name))
+				if (f.Info.Type == FileConstants.FILETYPE_FILE && string.IsNullOrEmpty(f.Info.Name))
 					continue;
-				var file = fileManager.TryGetOrCreate(f);
+				var file = fileManager.TryGetOrCreate(f.Info, f.IsAutoLoaded);
 				if (file != null && !hash.Contains(file)) {
 					hash.Add(file);
 					loadedFiles.Add(file);

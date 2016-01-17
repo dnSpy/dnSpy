@@ -141,7 +141,7 @@ namespace dnSpy.Files.Tabs {
 			using (DisableSaveToList()) {
 				fileTabManager.CloseAll();
 				fileTabManager.FileTreeView.FileManager.Clear();
-				dnSpyFileLoader.Load(fileList.Files);
+				dnSpyFileLoader.Load(fileList.Files.Select(a => new FileToLoad(a)));
 			}
 			NotifyAfterLoad(isReload);
 
@@ -169,7 +169,16 @@ namespace dnSpy.Files.Tabs {
 			using (DisableSaveToList()) {
 				fileTabManager.CloseAll();
 				fileTabManager.FileTreeView.FileManager.Clear();
-				dnSpyFileLoader.Load(fileListManager.SelectedFileList.Files);
+				var files = fileListManager.SelectedFileList.Files.Select(a => new FileToLoad(a)).ToList();
+				foreach (var tgw in tgws) {
+					foreach (var g in tgw.TabGroups) {
+						foreach (var t in g.Tabs) {
+							foreach (var f in t.AutoLoadedFiles)
+								files.Add(new FileToLoad(f, true));
+						}
+					}
+				}
+				dnSpyFileLoader.Load(files);
 			}
 			NotifyAfterLoad(isReload);
 
