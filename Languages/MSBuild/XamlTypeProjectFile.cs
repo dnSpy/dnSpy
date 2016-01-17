@@ -57,6 +57,10 @@ namespace dnSpy.Languages.MSBuild {
 				foreach (var f in DotNetUtils.GetFields(connMeth))
 					yield return f;
 			}
+
+			var delMeth = FindCreateDelegateMethod();
+			if (delMeth != null)
+				yield return delMeth;
 		}
 
 		MethodDef FindInitializeComponent() {
@@ -102,6 +106,29 @@ namespace dnSpy.Languages.MSBuild {
 			}
 
 			return md.Name == "Connect";
+		}
+
+		// Finds 'internal Delegate _CreateDelegate(Type delegateType, string handler)' which is
+		// called by XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateDelegate()
+		MethodDef FindCreateDelegateMethod() {
+			foreach (var m in type.Methods) {
+				if (m.Name != "_CreateDelegate")
+					continue;
+				if (m.IsStatic || !m.IsAssembly)
+					continue;
+				var sig = m.MethodSig;
+				if (sig.GetParamCount() != 2)
+					continue;
+				if (sig.RetType.RemovePinnedAndModifiers() == null || sig.RetType.RemovePinnedAndModifiers().ToString() != "System.Delegate")
+					continue;
+				if (sig.Params[0].RemovePinnedAndModifiers() == null || sig.Params[0].RemovePinnedAndModifiers().ToString() != "System.Type")
+					continue;
+				if (sig.Params[1].RemovePinnedAndModifiers() == null || sig.Params[1].RemovePinnedAndModifiers().GetElementType() != ElementType.String)
+					continue;
+
+				return m;
+			}
+			return null;
 		}
 	}
 }
