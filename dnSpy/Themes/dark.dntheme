@@ -30,7 +30,7 @@
 		<color name="instanceevent" fg="#CC6699" />
 		<color name="staticevent" fg="#DB94B8" />
 		<color name="instanceproperty" fg="#248F8F" />
-		<color name="staticproperty" fg="#196464" />
+		<color name="staticproperty" fg="#1F8E8E" />
 		<color name="variable" fg="#BDB76B" />
 		<color name="parameter" fg="#BDB76B" bold="true" />
 		<color name="label" fg="#806F4D" />
