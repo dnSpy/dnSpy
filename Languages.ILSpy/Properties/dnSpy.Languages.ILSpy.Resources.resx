@@ -142,7 +142,7 @@
     <value>Always generate exception variables in catch blocks</value>
   </data>
   <data name="DecompilerSettings_DecompilationOrder" xml:space="preserve">
-    <value>Decompilation Order</value>
+    <value>Decompilation order</value>
   </data>
   <data name="DecompilerSettings_DecompileAnonMethods" xml:space="preserve">
     <value>Decompile anonymous methods/lambdas</value>
@@ -188,9 +188,6 @@
   </data>
   <data name="DecompilerSettings_MakeAssignmentExpressions" xml:space="preserve">
     <value>Use assignment expressions such as in while ((count = Do()) != 0) ;</value>
-  </data>
-  <data name="DecompilerSettings_MemberOrder" xml:space="preserve">
-    <value>Order of members, eg. mpeft (m = method, etc)</value>
   </data>
   <data name="DecompilerSettings_ObjectOrCollectionInitializers" xml:space="preserve">
     <value>Decompile object or collection initializers</value>

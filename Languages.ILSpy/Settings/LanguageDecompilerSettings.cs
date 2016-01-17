@@ -49,7 +49,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 		IEnumerable<IDecompilerOption> CreateOptions() {
 			yield return new DecompilerOption<string>(DecompilerOptionConstants.MemberOrder_GUID,
 						() => GetMemberOrder(), a => SetMemberOrder(a)) {
-				Description = dnSpy_Languages_ILSpy_Resources.DecompilerSettings_MemberOrder,
+				Description = dnSpy_Languages_ILSpy_Resources.DecompilerSettings_DecompilationOrder,
 				Name = DecompilerOptionConstants.MemberOrder_NAME,
 			};
 			yield return new DecompilerOption<bool>(DecompilerOptionConstants.AnonymousMethods_GUID,

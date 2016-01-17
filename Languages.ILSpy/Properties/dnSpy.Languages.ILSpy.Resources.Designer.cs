@@ -133,7 +133,7 @@ namespace dnSpy.Languages.ILSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Decompilation Order.
+        ///   Looks up a localized string similar to Decompilation order.
         /// </summary>
         public static string DecompilerSettings_DecompilationOrder {
             get {
@@ -273,15 +273,6 @@ namespace dnSpy.Languages.ILSpy.Properties {
         public static string DecompilerSettings_MakeAssignmentExpressions {
             get {
                 return ResourceManager.GetString("DecompilerSettings_MakeAssignmentExpressions", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Order of members, eg. mpeft (m = method, etc).
-        /// </summary>
-        public static string DecompilerSettings_MemberOrder {
-            get {
-                return ResourceManager.GetString("DecompilerSettings_MemberOrder", resourceCulture);
             }
         }
         
