@@ -71,7 +71,7 @@ namespace dnSpy.Shared.Files {
 
 		static string GetCachePath(ASM_CACHE_FLAGS flags) {
 			var sb = new StringBuilder(0x400);
-			uint len = (uint)sb.MaxCapacity;
+			uint len = (uint)sb.Capacity;
 			int hr = GetCachePath(flags, sb, ref len);
 			Debug.Assert(hr == 0);
 			if (hr != 0)

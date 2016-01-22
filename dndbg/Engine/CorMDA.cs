@@ -66,7 +66,7 @@ namespace dndbg.Engine {
 				StringBuilder sb = null;
 				if (hr >= 0) {
 					sb = new StringBuilder((int)cchName);
-					hr = obj.GetName((uint)sb.MaxCapacity, out cchName, sb);
+					hr = obj.GetName((uint)sb.Capacity, out cchName, sb);
 				}
 				return hr < 0 ? null : sb.ToString();
 			}
@@ -82,7 +82,7 @@ namespace dndbg.Engine {
 				StringBuilder sb = null;
 				if (hr >= 0) {
 					sb = new StringBuilder((int)cchName);
-					hr = obj.GetDescription((uint)sb.MaxCapacity, out cchName, sb);
+					hr = obj.GetDescription((uint)sb.Capacity, out cchName, sb);
 				}
 				return hr < 0 ? null : sb.ToString();
 			}
@@ -98,7 +98,7 @@ namespace dndbg.Engine {
 				StringBuilder sb = null;
 				if (hr >= 0) {
 					sb = new StringBuilder((int)cchName);
-					hr = obj.GetXML((uint)sb.MaxCapacity, out cchName, sb);
+					hr = obj.GetXML((uint)sb.Capacity, out cchName, sb);
 				}
 				return hr < 0 ? null : sb.ToString();
 			}

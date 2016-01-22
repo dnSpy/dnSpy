@@ -124,7 +124,7 @@ namespace dnSpy.MainApp {
 
 		unsafe bool EnumWindowsHandler(IntPtr hWnd, IntPtr lParam) {
 			var sb = new StringBuilder(256);
-			GetWindowText(hWnd, sb, sb.MaxCapacity);
+			GetWindowText(hWnd, sb, sb.Capacity);
 			if (sb.ToString().StartsWith("dnSpy ", StringComparison.Ordinal)) {
 				var args = Environment.GetCommandLineArgs();
 				args[0] = COPYDATASTRUCT_HEADER;

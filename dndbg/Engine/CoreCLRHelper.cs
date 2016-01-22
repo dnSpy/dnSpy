@@ -94,10 +94,10 @@ namespace dndbg.Engine {
 			var sb = new StringBuilder(0x1000);
 			moduleFilename = Marshal.PtrToStringUni(ps);
 			uint verLen;
-			int hr = dbgShimState.CreateVersionStringFromModule(pid, moduleFilename, sb, (uint)sb.MaxCapacity, out verLen);
+			int hr = dbgShimState.CreateVersionStringFromModule(pid, moduleFilename, sb, (uint)sb.Capacity, out verLen);
 			if (hr != 0) {
 				sb.EnsureCapacity((int)verLen);
-				hr = dbgShimState.CreateVersionStringFromModule(pid, moduleFilename, sb, (uint)sb.MaxCapacity, out verLen);
+				hr = dbgShimState.CreateVersionStringFromModule(pid, moduleFilename, sb, (uint)sb.Capacity, out verLen);
 			}
 			return hr < 0 ? null : sb.ToString();
 		}
