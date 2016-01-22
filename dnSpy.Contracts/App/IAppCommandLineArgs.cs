@@ -17,28 +17,25 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Plugin {
+using System.Collections.Generic;
+using dnSpy.Contracts.Languages;
+
+namespace dnSpy.Contracts.App {
 	/// <summary>
-	/// Author information
+	/// Application command line arguments
 	/// </summary>
-	public sealed class PluginAuthor {
-		/// <summary>
-		/// Name
-		/// </summary>
-		public string Name { get; set; }
+	public interface IAppCommandLineArgs {
+		/// <summary>Filenames to load</summary>
+		IEnumerable<string> Filenames { get; }
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		public PluginAuthor() {
-		}
+		/// <summary>true if single-instance</summary>
+		bool SingleInstance { get; }
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="name">Name, see <see cref="Name"/></param>
-		public PluginAuthor(string name) {
-			this.Name = name;
-		}
+		/// <summary>true to activate the window</summary>
+		bool Activate { get; }
+
+		/// <summary>Language, either human readable or a language guid
+		/// (<see cref="ILanguage.GenericGuid"/> or <see cref="ILanguage.UniqueGuid"/>)</summary>
+		string Language { get; }
 	}
 }

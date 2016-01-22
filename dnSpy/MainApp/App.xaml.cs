@@ -22,14 +22,23 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Threading;
+using dnSpy.Contracts.App;
+using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Languages;
+using dnSpy.Files.Tabs;
 using dnSpy.Plugin;
 using dnSpy.Settings;
+using dnSpy.Shared.Controls;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.MainApp {
@@ -62,9 +71,19 @@ namespace dnSpy.MainApp {
 		PluginManager pluginManager = null;
 		[Import]
 		IDnSpyLoaderManager dnSpyLoaderManager = null;
+		[Import]
+		Lazy<IFileTreeView> fileTreeView = null;
+		[Import]
+		Lazy<ILanguageManager> languageManager = null;
 		CompositionContainer compositionContainer;
 
+		readonly IAppCommandLineArgs args;
+
 		public App(bool readSettings) {
+			this.args = new AppCommandLineArgs();
+			if (args.SingleInstance)
+				SwitchToOtherInstance();
+
 			InitializeComponent();
 			UIFixes();
 
@@ -72,8 +91,86 @@ namespace dnSpy.MainApp {
 			asms.Add(typeof(EnumVM).Assembly);			// dnSpy.Shared
 			compositionContainer = AppCreator.Create(asms, "*.Plugin.dll", readSettings);
 			compositionContainer.ComposeParts(this);
+			this.appWindow.CommandLineArgs = this.args;
 
 			this.Exit += App_Exit;
+		}
+
+		[return: MarshalAs(UnmanagedType.Bool)]
+		[DllImport("user32")]
+		static extern bool SetForegroundWindow(IntPtr hWnd);
+		[DllImport("user32")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
+		[return: MarshalAs(UnmanagedType.Bool)]
+		delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+		[DllImport("user32", CharSet = CharSet.Auto, SetLastError = true)]
+		static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+		[DllImport("user32", CharSet = CharSet.Auto)]
+		static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, ref COPYDATASTRUCT lParam);
+		[StructLayout(LayoutKind.Sequential)]
+		struct COPYDATASTRUCT {
+			public IntPtr dwData;
+			public int cbData;
+			public IntPtr lpData;
+		}
+		static readonly IntPtr COPYDATASTRUCT_dwData = new IntPtr(0x11C9B152);
+		static readonly IntPtr COPYDATASTRUCT_result = new IntPtr(0x615F9D6E);
+		const string COPYDATASTRUCT_HEADER = "dnSpy";	// One line only
+
+		void SwitchToOtherInstance() {
+			EnumWindows(EnumWindowsHandler, IntPtr.Zero);
+		}
+
+		unsafe bool EnumWindowsHandler(IntPtr hWnd, IntPtr lParam) {
+			var sb = new StringBuilder(256);
+			GetWindowText(hWnd, sb, sb.MaxCapacity);
+			if (sb.ToString().StartsWith("dnSpy ", StringComparison.Ordinal)) {
+				var args = Environment.GetCommandLineArgs();
+				args[0] = COPYDATASTRUCT_HEADER;
+				var msg = string.Join(Environment.NewLine, args);
+				COPYDATASTRUCT data;
+				data.dwData = COPYDATASTRUCT_dwData;
+				data.cbData = msg.Length * 2;
+				fixed (void* pmsg = msg) {
+					data.lpData = new IntPtr(pmsg);
+					var res = SendMessage(hWnd, 0x4A, IntPtr.Zero, ref data);
+					if (res == COPYDATASTRUCT_result) {
+						if (this.args.Activate)
+							SetForegroundWindow(hWnd);
+						Environment.Exit(0);
+					}
+				}
+			}
+
+			return true;
+		}
+
+		unsafe IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
+			if (msg != 0x4A)
+				return IntPtr.Zero;
+
+			var data = *(COPYDATASTRUCT*)lParam;
+			if (data.dwData != COPYDATASTRUCT_dwData)
+				return IntPtr.Zero;
+
+			var argsString = new string((char*)data.lpData, 0, data.cbData / 2);
+			var args = argsString.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+			if (args[0] != COPYDATASTRUCT_HEADER)
+				return IntPtr.Zero;
+
+			HandleAppArgs(new AppCommandLineArgs(args.Skip(1).ToArray()));
+			handled = true;
+			return COPYDATASTRUCT_result;
+		}
+
+		void MainWindow_SourceInitialized(object sender, EventArgs e) {
+			appWindow.MainWindow.SourceInitialized -= MainWindow_SourceInitialized;
+
+			var hwndSource = PresentationSource.FromVisual(appWindow.MainWindow) as HwndSource;
+			Debug.Assert(hwndSource != null);
+			if (hwndSource != null)
+				hwndSource.AddHook(WndProc);
 		}
 
 		void App_Exit(object sender, ExitEventArgs e) {
@@ -115,6 +212,7 @@ namespace dnSpy.MainApp {
 			base.OnStartup(e);
 
 			var win = appWindow.InitializeMainWindow();
+			appWindow.MainWindow.SourceInitialized += MainWindow_SourceInitialized;
 			dnSpyLoaderManager.OnAppLoaded += DnSpyLoaderManager_OnAppLoaded;
 			dnSpyLoaderManager.Initialize(appWindow, win);
 			pluginManager.LoadPlugins(this.Resources.MergedDictionaries);
@@ -125,6 +223,35 @@ namespace dnSpy.MainApp {
 			dnSpyLoaderManager.OnAppLoaded -= DnSpyLoaderManager_OnAppLoaded;
 			appWindow.AppLoaded = true;
 			pluginManager.OnAppLoaded();
+			HandleAppArgs(args);
+		}
+
+		void HandleAppArgs(IAppCommandLineArgs appArgs) {
+			if (appArgs.Activate && appWindow.MainWindow.WindowState == WindowState.Minimized)
+				WindowUtils.SetState(appWindow.MainWindow, WindowState.Normal);
+
+			var lang = GetLanguage(appArgs.Language);
+			if (lang != null)
+				languageManager.Value.SelectedLanguage = lang;
+
+			var files = appArgs.Filenames.ToArray();
+			if (files.Length > 0)
+				OpenFileInit.OpenFiles(fileTreeView.Value, appWindow.MainWindow, files);
+		}
+
+		ILanguage GetLanguage(string language) {
+			if (string.IsNullOrEmpty(language))
+				return null;
+
+			Guid guid;
+			if (Guid.TryParse(language, out guid)) {
+				var lang = languageManager.Value.Find(guid);
+				if (lang != null)
+					return lang;
+			}
+
+			return languageManager.Value.Languages.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.UniqueNameUI, language)) ??
+				languageManager.Value.Languages.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.GenericNameUI, language));
 		}
 	}
 }

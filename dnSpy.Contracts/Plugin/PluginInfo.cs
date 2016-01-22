@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-
 namespace dnSpy.Contracts.Plugin {
 	/// <summary>
 	/// Plugin information
@@ -26,9 +24,6 @@ namespace dnSpy.Contracts.Plugin {
 	public sealed class PluginInfo {
 		/// <summary>Short description</summary>
 		public string ShortDescription { get; set; }
-		/// <summary>Licenses or empty</summary>
-		public IEnumerable<PluginLicense> PluginLicenses { get; set; }
-		/// <summary>Authors or empty</summary>
-		public IEnumerable<PluginAuthor> Authors { get; set; }
+		//TODO: Add more stuff...
 	}
 }

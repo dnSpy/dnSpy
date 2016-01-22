@@ -23,6 +23,7 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
@@ -84,6 +85,17 @@ namespace dnSpy.MainApp {
 
 		public bool AppLoaded { get; internal set; }
 
+		public string AssemblyInformationalVersion {
+			get { return assemblyInformationalVersion; }
+		}
+		readonly string assemblyInformationalVersion;
+
+		public IAppCommandLineArgs CommandLineArgs {
+			get { return commandLineArgs; }
+			set { commandLineArgs = value; }
+		}
+		IAppCommandLineArgs commandLineArgs;
+
 		sealed class UISettings {
 			static readonly Guid SETTINGS_GUID = new Guid("33E1988B-8EFF-4F4C-A064-FA99A7D0C64D");
 			const string SAVEDWINDOWSTATE_SECTION = "SavedWindowState";
@@ -122,6 +134,7 @@ namespace dnSpy.MainApp {
 
 		[ImportingConstructor]
 		AppWindow(IThemeManager themeManager, IImageManager imageManager, IAppSettings appSettings, ISettingsManager settingsManager, IFileTabManager fileTabManager, AppToolBar appToolBar, MainWindowControl mainWindowControl, IWpfCommandManager wpfCommandManager, ILanguageManager languageManager) {
+			this.assemblyInformationalVersion = CalculateAssemblyInformationalVersion(GetType().Assembly);
 			this.uiSettings = new UISettings(settingsManager);
 			this.uiSettings.Read();
 			this.appSettings = appSettings;
@@ -140,6 +153,15 @@ namespace dnSpy.MainApp {
 			this.mainWindowClosed = new WeakEventList<EventArgs>();
 			this.appSettings.PropertyChanged += AppSettings_PropertyChanged;
 			InitializeTextFormatterProvider();
+		}
+
+		static string CalculateAssemblyInformationalVersion(Assembly asm) {
+			var attrs = asm.GetCustomAttributes(typeof(AssemblyInformationalVersionAttribute), false);
+			var attr = attrs.Length == 0 ? null : attrs[0] as AssemblyInformationalVersionAttribute;
+			Debug.Assert(attr != null);
+			if (attr != null)
+				return attr.InformationalVersion;
+			return asm.GetName().Version.ToString();
 		}
 
 		void AppSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
@@ -235,7 +257,7 @@ namespace dnSpy.MainApp {
 		}
 
 		string GetDefaultTitle() {
-			var t = string.Format("dnSpy {0} ({1})", GetType().Assembly.GetName().Version, string.Join(", ", titleInfos.ToArray()));
+			var t = string.Format("dnSpy {0} ({1})", AssemblyInformationalVersion, string.Join(", ", titleInfos.ToArray()));
 			return t;
 		}
 		readonly List<string> titleInfos = new List<string>();

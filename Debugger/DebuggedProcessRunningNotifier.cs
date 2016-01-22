@@ -39,11 +39,6 @@ namespace dnSpy.Debugger {
 
 	sealed class DebuggedProcessRunningNotifier {
 		const int WAIT_TIME_MS = 1000;
-
-		[return: MarshalAs(UnmanagedType.Bool)]
-		[DllImport("user32")]
-		static extern bool SetForegroundWindow(IntPtr hWnd);
-
 		readonly Dispatcher dispatcher;
 		readonly ITheDebugger theDebugger;
 

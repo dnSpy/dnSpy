@@ -19,6 +19,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Reflection;
 using System.Windows;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
@@ -102,5 +103,15 @@ namespace dnSpy.Contracts.App {
 		/// Refreshes the toolbar
 		/// </summary>
 		void RefreshToolBar();
+
+		/// <summary>
+		/// Gets the version (stored in an <see cref="AssemblyInformationalVersionAttribute"/> attribute)
+		/// </summary>
+		string AssemblyInformationalVersion { get; }
+
+		/// <summary>
+		/// Gets the command line args
+		/// </summary>
+		IAppCommandLineArgs CommandLineArgs { get; }
 	}
 }

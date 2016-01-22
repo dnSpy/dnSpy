@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
@@ -33,6 +34,13 @@ using dnSpy.Shared.Menus;
 namespace dnSpy.MainApp {
 	[Export, ExportFileTabContentFactory(Order = double.MaxValue)]
 	sealed class DecompileFileTabContentFactory : IFileTabContentFactory {
+		readonly IAppWindow appWindow;
+
+		[ImportingConstructor]
+		DecompileFileTabContentFactory(IAppWindow appWindow) {
+			this.appWindow = appWindow;
+		}
+
 		public IFileTabContent Create(IFileTabContentFactoryContext context) {
 			return null;
 		}
@@ -41,7 +49,7 @@ namespace dnSpy.MainApp {
 
 		public IFileTabContent Deserialize(Guid guid, ISettingsSection section, IFileTabContentFactoryContext context) {
 			if (guid == GUID_SerializedContent)
-				return new AboutScreenFileTabContent();
+				return new AboutScreenFileTabContent(appWindow);
 			return null;
 		}
 
@@ -55,15 +63,17 @@ namespace dnSpy.MainApp {
 	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_Menu", Group = MenuConstants.GROUP_APP_MENU_HELP_ABOUT, Order = 1000000)]
 	sealed class AboutScreenMenuItem : MenuItemBase {
 		readonly IFileTabManager fileTabManager;
+		readonly IAppWindow appWindow;
 
 		[ImportingConstructor]
-		AboutScreenMenuItem(IFileTabManager fileTabManager) {
+		AboutScreenMenuItem(IFileTabManager fileTabManager, IAppWindow appWindow) {
 			this.fileTabManager = fileTabManager;
+			this.appWindow = appWindow;
 		}
 
 		public override void Execute(IMenuItemContext context) {
 			var tab = fileTabManager.GetOrCreateActiveTab();
-			tab.Show(new AboutScreenFileTabContent(), null, null);
+			tab.Show(new AboutScreenFileTabContent(appWindow), null, null);
 			fileTabManager.SetFocus(tab);
 		}
 	}
@@ -83,8 +93,14 @@ namespace dnSpy.MainApp {
 			get { return null; }
 		}
 
+		readonly IAppWindow appWindow;
+
+		public AboutScreenFileTabContent(IAppWindow appWindow) {
+			this.appWindow = appWindow;
+		}
+
 		public IFileTabContent Clone() {
-			return new AboutScreenFileTabContent();
+			return new AboutScreenFileTabContent(appWindow);
 		}
 
 		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) {
@@ -109,7 +125,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void Write(AvalonEditTextOutput output) {
-			output.WriteLine(string.Format("dnSpy {0}", GetType().Assembly.GetName().Version), TextTokenKind.Text);
+			output.WriteLine(string.Format("dnSpy {0}", appWindow.AssemblyInformationalVersion), TextTokenKind.Text);
 
 			//TODO: Add more stuff...
 		}
