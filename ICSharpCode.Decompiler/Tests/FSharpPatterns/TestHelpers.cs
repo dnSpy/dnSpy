@@ -20,7 +20,7 @@ namespace ICSharpCode.Decompiler.Tests.FSharpPatterns
 		{
 			var asm = Assembly.GetExecutingAssembly();
 			var allResources = asm.GetManifestResourceNames();
-			var fullResourceName = allResources.Single(r => r.ToLowerInvariant().EndsWith(resourceName.ToLowerInvariant()));
+			var fullResourceName = allResources.Single(r => r.EndsWith(resourceName, StringComparison.OrdinalIgnoreCase));
 			return new StreamReader(asm.GetManifestResourceStream(fullResourceName)).ReadToEnd();
 		}
 
@@ -33,7 +33,7 @@ namespace ICSharpCode.Decompiler.Tests.FSharpPatterns
 			File.WriteAllText(sourceFile, source);
 			var asmFile = Path.ChangeExtension(sourceFile, ".dll");
 			var sscs = new Microsoft.FSharp.Compiler.SimpleSourceCodeServices.SimpleSourceCodeServices();
-			var result = sscs.Compile(new[] { "fsc.exe", "--debug:full", $"--optimize{(optimize ? "+" : "-")}", "--target:library", "-o", asmFile, sourceFile });
+			var result = sscs.Compile(new[] { "fsc.exe", "--debug:full", "--optimize" + (optimize ? "+" : "-"), "--target:library", "-o", asmFile, sourceFile });
 			File.Delete(sourceFile);
 			Assert.AreEqual(0, result.Item1.Length);
 			Assert.AreEqual(0, result.Item2);
@@ -54,7 +54,7 @@ namespace ICSharpCode.Decompiler.Tests.FSharpPatterns
 			File.WriteAllText(sourceFile, source);
 			var asmFile = Path.ChangeExtension(sourceFile, ".dll");
 
-			var args = $"{sourceFile} /dll /debug /output:{asmFile}";
+			var args = string.Format("{0} /dll /debug /output:{1}", sourceFile, asmFile);
 			using (var proc = Process.Start(new ProcessStartInfo(ilasm.Value, args) { UseShellExecute = false,  }))
 			{
 				proc.WaitForExit();
@@ -91,8 +91,9 @@ namespace ICSharpCode.Decompiler.Tests.FSharpPatterns
 
 				// the F# assembly contains a namespace `<StartupCode$tmp6D55>` where the part after tmp is randomly generated.
 				// remove this from the ast to simplify the diff
-				var startupCodeNode = decompiler.SyntaxTree.Children.SingleOrDefault(d => (d as NamespaceDeclaration)?.Name?.StartsWith("<StartupCode$") ?? false);
-				startupCodeNode?.Remove();
+				var startupCodeNode = decompiler.SyntaxTree.Children.OfType<NamespaceDeclaration>().SingleOrDefault(d => d.Name.StartsWith("<StartupCode$", StringComparison.Ordinal));
+				if (startupCodeNode != null)
+					startupCodeNode.Remove();
 
 				decompiler.GenerateCode(new PlainTextOutput(output));
 				var fullCSharpCode = output.ToString();

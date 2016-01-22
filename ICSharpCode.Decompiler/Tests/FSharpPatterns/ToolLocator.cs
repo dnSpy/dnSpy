@@ -19,19 +19,19 @@ namespace ICSharpCode.Decompiler.Tests.FSharpPatterns
 		{
 			string[] windowsSdkPaths = new[]
 			{
-	@"Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\",
-	@"Microsoft SDKs\Windows\v8.0A\bin\",
-	@"Microsoft SDKs\Windows\v8.0\bin\NETFX 4.0 Tools\",
-	@"Microsoft SDKs\Windows\v8.0\bin\",
-	@"Microsoft SDKs\Windows\v7.1A\bin\NETFX 4.0 Tools\",
-	@"Microsoft SDKs\Windows\v7.1A\bin\",
-	@"Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\",
-	@"Microsoft SDKs\Windows\v7.0A\bin\",
-	@"Microsoft SDKs\Windows\v6.1A\bin\",
-	@"Microsoft SDKs\Windows\v6.0A\bin\",
-	@"Microsoft SDKs\Windows\v6.0\bin\",
-	@"Microsoft.NET\FrameworkSDK\bin"
-  };
+				@"Microsoft SDKs\Windows\v8.0A\bin\NETFX 4.0 Tools\",
+				@"Microsoft SDKs\Windows\v8.0A\bin\",
+				@"Microsoft SDKs\Windows\v8.0\bin\NETFX 4.0 Tools\",
+				@"Microsoft SDKs\Windows\v8.0\bin\",
+				@"Microsoft SDKs\Windows\v7.1A\bin\NETFX 4.0 Tools\",
+				@"Microsoft SDKs\Windows\v7.1A\bin\",
+				@"Microsoft SDKs\Windows\v7.0A\bin\NETFX 4.0 Tools\",
+				@"Microsoft SDKs\Windows\v7.0A\bin\",
+				@"Microsoft SDKs\Windows\v6.1A\bin\",
+				@"Microsoft SDKs\Windows\v6.0A\bin\",
+				@"Microsoft SDKs\Windows\v6.0\bin\",
+				@"Microsoft.NET\FrameworkSDK\bin"
+			};
 
 			foreach (var possiblePath in windowsSdkPaths)
 			{
@@ -71,9 +71,9 @@ namespace ICSharpCode.Decompiler.Tests.FSharpPatterns
 		{
 			string[] frameworkPaths = new[]
 			{
-	@"Microsoft.NET\Framework\v4.0.30319",
-	@"Microsoft.NET\Framework\v2.0.50727"
-  };
+				@"Microsoft.NET\Framework\v4.0.30319",
+				@"Microsoft.NET\Framework\v2.0.50727"
+			};
 
 			foreach (var possiblePath in frameworkPaths)
 			{
