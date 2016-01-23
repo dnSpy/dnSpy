@@ -24,10 +24,7 @@ using dnSpy.Shared.Controls;
 
 namespace dnSpy.Settings.Dialog {
 	sealed partial class AppSettingsDlg : WindowBase {
-		readonly IAppSettingsTab[] tabs;
-
 		public AppSettingsDlg(IAppSettingsTab[] tabs) {
-			this.tabs = tabs;
 			InitializeComponent();
 			foreach (var tab in tabs) {
 				var ti = new TabItem();

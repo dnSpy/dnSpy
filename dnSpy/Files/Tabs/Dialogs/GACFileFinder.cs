@@ -44,7 +44,6 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 
 		public void Find() {
-			var t = target;
 			foreach (var info in GacInfo.GetAssemblies(4)) {
 				cancellationToken.ThrowIfCancellationRequested();
 				Add(info);

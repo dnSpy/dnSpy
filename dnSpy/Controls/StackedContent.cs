@@ -26,9 +26,6 @@ using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace dnSpy.Controls {
-	interface IStackedContent {	// Needed by IStackedContentChild since the interface doesn't know about TChild
-	}
-
 	struct GridChildLength {
 		public GridLength? GridLength;
 		public double? MinLength;
@@ -83,7 +80,7 @@ namespace dnSpy.Controls {
 		}
 	}
 
-	sealed class StackedContent<TChild> : IStackedContent, IStackedContentChild where TChild : class, IStackedContentChild {
+	sealed class StackedContent<TChild> : IStackedContentChild where TChild : class, IStackedContentChild {
 		public const double DEFAULT_SPLITTER_LENGTH = 6;
 
 		public TChild this[int index] {
