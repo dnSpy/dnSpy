@@ -62,7 +62,8 @@ namespace dnSpy.Shared.Search {
 					VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
 					VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
 					VisibleMembersFlags.Local | VisibleMembersFlags.Resource |
-					VisibleMembersFlags.ResourceElement | VisibleMembersFlags.Other;
+					VisibleMembersFlags.ResourceElement | VisibleMembersFlags.Other |
+					VisibleMembersFlags.Attributes;
 			return FilterFile(thisFlag, visibleFlags);
 		}
 
@@ -78,13 +79,14 @@ namespace dnSpy.Shared.Search {
 					VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
 					VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
 					VisibleMembersFlags.Local | VisibleMembersFlags.Resource |
-					VisibleMembersFlags.ResourceElement | VisibleMembersFlags.Other;
+					VisibleMembersFlags.ResourceElement | VisibleMembersFlags.Other |
+					VisibleMembersFlags.Attributes;
 			return FilterFile(thisFlag, visibleFlags);
 		}
 
 		public override FileTreeNodeFilterResult GetResult(IDnSpyFile file) {
 			var thisFlag = VisibleMembersFlags.NonNetFile;
-			var visibleFlags = thisFlag | VisibleMembersFlags.Other;
+			var visibleFlags = thisFlag | VisibleMembersFlags.Other | VisibleMembersFlags.Attributes;
 			return FilterFile(thisFlag, visibleFlags);
 		}
 
@@ -106,7 +108,7 @@ namespace dnSpy.Shared.Search {
 			var visibleFlags = VisibleMembersFlags.EventDef | VisibleMembersFlags.MethodDef |
 								VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
 								VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
-								VisibleMembersFlags.Local;
+								VisibleMembersFlags.Local | VisibleMembersFlags.Attributes;
 			bool isMatch = (flags & VisibleMembersFlags.EventDef) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new FileTreeNodeFilterResult(FilterType.Hide, isMatch);
@@ -116,16 +118,19 @@ namespace dnSpy.Shared.Search {
 		}
 
 		public override FileTreeNodeFilterResult GetResult(FieldDef field) {
+			var visibleFlags = VisibleMembersFlags.FieldDef | VisibleMembersFlags.Attributes;
 			bool isMatch = (flags & VisibleMembersFlags.FieldDef) != 0;
-			if (!isMatch)
+			if ((flags & visibleFlags) == 0)
 				return new FileTreeNodeFilterResult(FilterType.Hide, isMatch);
-			return new FileTreeNodeFilterResult(FilterType.Visible, isMatch);
+			if (isMatch)
+				return new FileTreeNodeFilterResult(FilterType.Visible, isMatch);   // Make sure it's not hidden
+			return new FileTreeNodeFilterResult(FilterType.CheckChildren, isMatch);
 		}
 
 		public override FileTreeNodeFilterResult GetResult(MethodDef method) {
 			var childrenFlags = VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
 								VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
-								VisibleMembersFlags.Local;
+								VisibleMembersFlags.Local | VisibleMembersFlags.Attributes;
 			var visibleFlags = childrenFlags | VisibleMembersFlags.MethodDef | VisibleMembersFlags.InstanceConstructor;
 			bool isMatch = (flags & VisibleMembersFlags.MethodDef) != 0 ||
 							(method.IsInstanceConstructor && (flags & VisibleMembersFlags.InstanceConstructor) != 0);
@@ -152,7 +157,8 @@ namespace dnSpy.Shared.Search {
 					VisibleMembersFlags.EventDef | VisibleMembersFlags.BaseTypes |
 					VisibleMembersFlags.DerivedTypes | VisibleMembersFlags.MethodBody |
 					VisibleMembersFlags.ParamDefs | VisibleMembersFlags.ParamDef |
-					VisibleMembersFlags.Locals | VisibleMembersFlags.Local;
+					VisibleMembersFlags.Locals | VisibleMembersFlags.Local |
+					VisibleMembersFlags.Attributes;
 			bool isMatch = (flags & VisibleMembersFlags.Namespace) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new FileTreeNodeFilterResult(FilterType.Hide, isMatch);
@@ -165,7 +171,7 @@ namespace dnSpy.Shared.Search {
 			var visibleFlags = VisibleMembersFlags.PropertyDef | VisibleMembersFlags.MethodDef |
 								VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
 								VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
-								VisibleMembersFlags.Local;
+								VisibleMembersFlags.Local | VisibleMembersFlags.Attributes;
 			bool isMatch = (flags & VisibleMembersFlags.PropertyDef) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new FileTreeNodeFilterResult(FilterType.Hide, isMatch);
@@ -184,7 +190,7 @@ namespace dnSpy.Shared.Search {
 
 		public override FileTreeNodeFilterResult GetResult(IResourcesFolderNode node) {
 			var visibleFlags = VisibleMembersFlags.ResourceList | VisibleMembersFlags.Resource |
-								VisibleMembersFlags.ResourceElement;
+								VisibleMembersFlags.ResourceElement | VisibleMembersFlags.Attributes;
 			bool isMatch = (flags & VisibleMembersFlags.ResourceList) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new FileTreeNodeFilterResult(FilterType.Hide, isMatch);
@@ -194,7 +200,8 @@ namespace dnSpy.Shared.Search {
 		}
 
 		public override FileTreeNodeFilterResult GetResult(IResourceNode node) {
-			var visibleFlags = VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement;
+			var visibleFlags = VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement |
+								VisibleMembersFlags.Attributes;
 			bool isMatch = (flags & VisibleMembersFlags.Resource) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new FileTreeNodeFilterResult(FilterType.Hide, isMatch);
@@ -224,7 +231,7 @@ namespace dnSpy.Shared.Search {
 					VisibleMembersFlags.BaseTypes | VisibleMembersFlags.DerivedTypes |
 					VisibleMembersFlags.MethodBody | VisibleMembersFlags.ParamDefs |
 					VisibleMembersFlags.ParamDef | VisibleMembersFlags.Locals |
-					VisibleMembersFlags.Local;
+					VisibleMembersFlags.Local | VisibleMembersFlags.Attributes;
 			var visibleFlags = VisibleMembersFlags.AnyTypeDef | childrenFlags;
 			if ((flags & visibleFlags) == 0)
 				return new FileTreeNodeFilterResult(FilterType.Hide, false);
@@ -308,7 +315,8 @@ namespace dnSpy.Shared.Search {
 		}
 
 		public override FileTreeNodeFilterResult GetResultParamDefs(MethodDef method) {
-			var visibleFlags = VisibleMembersFlags.ParamDefs | VisibleMembersFlags.ParamDef;
+			var visibleFlags = VisibleMembersFlags.ParamDefs | VisibleMembersFlags.ParamDef |
+								VisibleMembersFlags.Attributes;
 			bool isMatch = (flags & VisibleMembersFlags.ParamDefs) != 0;
 			if ((flags & visibleFlags) == 0)
 				return new FileTreeNodeFilterResult(FilterType.Hide, isMatch);
@@ -318,10 +326,13 @@ namespace dnSpy.Shared.Search {
 		}
 
 		public override FileTreeNodeFilterResult GetResult(MethodDef method, ParamDef param) {
+			var visibleFlags = VisibleMembersFlags.ParamDef | VisibleMembersFlags.Attributes;
 			bool isMatch = (flags & VisibleMembersFlags.ParamDef) != 0;
-			if (!isMatch)
+			if ((flags & visibleFlags) == 0)
 				return new FileTreeNodeFilterResult(FilterType.Hide, isMatch);
-			return new FileTreeNodeFilterResult(FilterType.Visible, isMatch);
+			if (isMatch)
+				return new FileTreeNodeFilterResult(FilterType.Visible, isMatch);   // Make sure it's not hidden
+			return new FileTreeNodeFilterResult(FilterType.CheckChildren, isMatch);
 		}
 
 		public override FileTreeNodeFilterResult GetResultLocals(MethodDef method) {
@@ -336,6 +347,13 @@ namespace dnSpy.Shared.Search {
 
 		public override FileTreeNodeFilterResult GetResult(MethodDef method, Local local) {
 			bool isMatch = (flags & VisibleMembersFlags.Local) != 0;
+			if (!isMatch)
+				return new FileTreeNodeFilterResult(FilterType.Hide, isMatch);
+			return new FileTreeNodeFilterResult(FilterType.Visible, isMatch);
+		}
+
+		public override FileTreeNodeFilterResult GetResultAttributes(IHasCustomAttribute hca) {
+			bool isMatch = (flags & VisibleMembersFlags.Attributes) != 0;
 			if (!isMatch)
 				return new FileTreeNodeFilterResult(FilterType.Hide, isMatch);
 			return new FileTreeNodeFilterResult(FilterType.Visible, isMatch);

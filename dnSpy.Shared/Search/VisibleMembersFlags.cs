@@ -52,6 +52,7 @@ namespace dnSpy.Shared.Search {
 		Resource		= 0x08000000,
 		ResourceElement	= 0x10000000,
 		Other			= 0x20000000,
+		Attributes		= 0x40000000,
 		TypeDefOther	= GenericTypeDef | NonGenericTypeDef | EnumTypeDef | InterfaceTypeDef | ClassTypeDef | StructTypeDef | DelegateTypeDef,
 		AnyTypeDef		= TypeDef | TypeDefOther,
 		// What's shown in the normal treeview

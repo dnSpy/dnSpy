@@ -57,6 +57,66 @@ namespace dnSpy.Search {
 			}
 		}
 
+		void CheckCustomAttributes(IDnSpyFile file, IHasCustomAttribute hca, object parent) {
+			var res = options.Filter.GetResultAttributes(hca);
+			if (!res.IsMatch)
+				return;
+			foreach (var ca in hca.CustomAttributes) {
+				foreach (var o in ca.ConstructorArguments) {
+					if (CheckCA(file, hca, parent, o))
+						return;
+				}
+				foreach (var o in ca.NamedArguments) {
+					if (CheckCA(file, hca, parent, o.Argument))
+						return;
+				}
+			}
+		}
+
+		bool CheckCA(IDnSpyFile file, IHasCustomAttribute hca, object parent, CAArgument o) {
+			var value = o.Value;
+			var u = value as UTF8String;
+			if (!ReferenceEquals(u, null))
+				value = u.String;
+			if (!IsMatch(null, value))
+				return false;
+			options.OnMatch(new SearchResult {
+				Context = options.Context,
+				Object = hca,
+				NameObject = hca,
+				ObjectImageReference = GetImageReference(hca),
+				LocationObject = parent is string ? new NamespaceSearchResult((string)parent) : parent,
+				LocationImageReference = GetImageReference(parent),
+				DnSpyFile = file,
+			});
+			return true;
+		}
+
+		ImageReference GetImageReference(object obj) {
+			if (obj is ModuleDef)
+				return options.DotNetImageManager.GetImageReference((ModuleDef)obj);
+			if (obj is AssemblyDef)
+				return options.DotNetImageManager.GetImageReference((AssemblyDef)obj);
+			if (obj is TypeDef)
+				return options.DotNetImageManager.GetImageReference((TypeDef)obj);
+			if (obj is MethodDef)
+				return options.DotNetImageManager.GetImageReference((MethodDef)obj);
+			if (obj is FieldDef)
+				return options.DotNetImageManager.GetImageReference((FieldDef)obj);
+			if (obj is PropertyDef)
+				return options.DotNetImageManager.GetImageReference((PropertyDef)obj);
+			if (obj is EventDef)
+				return options.DotNetImageManager.GetImageReference((EventDef)obj);
+			if (obj is ParamDef)
+				return options.DotNetImageManager.GetImageReferenceParameter();
+			if (obj is GenericParam)
+				return options.DotNetImageManager.GetImageReferenceGenericParameter();
+			if (obj is string)
+				return options.DotNetImageManager.GetNamespaceImageReference();
+
+			return new ImageReference();
+		}
+
 		void SearchAssemblyInternal(IAssemblyFileNode asmNode) {
 			if (asmNode == null)
 				return;
@@ -67,6 +127,7 @@ namespace dnSpy.Search {
 			var res = options.Filter.GetResult(asm);
 			if (res.FilterType == FilterType.Hide)
 				return;
+			CheckCustomAttributes(asmNode.DnSpyFile, asm, null);
 
 			if (res.IsMatch && IsMatch(asm.FullName, asmNode.DnSpyFile)) {
 				options.OnMatch(new SearchResult {
@@ -107,6 +168,7 @@ namespace dnSpy.Search {
 			var res = options.Filter.GetResult(mod);
 			if (res.FilterType == FilterType.Hide)
 				return;
+			CheckCustomAttributes(module, mod, mod.Assembly);
 
 			if (res.IsMatch && IsMatch(mod.FullName, module)) {
 				options.OnMatch(new SearchResult {
@@ -332,6 +394,7 @@ namespace dnSpy.Search {
 			var res = options.Filter.GetResult(type);
 			if (res.FilterType == FilterType.Hide)
 				return;
+			CheckCustomAttributes(ownerModule, type, nsOwner);
 
 			if (res.IsMatch && (IsMatch(type.FullName, type) || IsMatch(type.Name, type))) {
 				options.OnMatch(new SearchResult {
@@ -357,6 +420,7 @@ namespace dnSpy.Search {
 			var res = options.Filter.GetResult(type);
 			if (res.FilterType == FilterType.Hide)
 				return;
+			CheckCustomAttributes(ownerModule, type, type.DeclaringType);
 
 			if (res.IsMatch && (IsMatch(type.FullName, type) || IsMatch(type.Name, type))) {
 				options.OnMatch(new SearchResult {
@@ -391,6 +455,7 @@ namespace dnSpy.Search {
 			var res = options.Filter.GetResult(method);
 			if (res.FilterType == FilterType.Hide)
 				return;
+			CheckCustomAttributes(ownerModule, method, type);
 
 			ImplMap im;
 			if (res.IsMatch && (IsMatch(method.Name, method) || ((im = method.ImplMap) != null && (IsMatch(im.Name, im) || IsMatch(im.Module == null ? null : im.Module.Name, null))))) {
@@ -409,6 +474,7 @@ namespace dnSpy.Search {
 			res = options.Filter.GetResultParamDefs(method);
 			if (res.FilterType != FilterType.Hide) {
 				foreach (var pd in method.ParamDefs) {
+					CheckCustomAttributes(ownerModule, pd, method);
 					res = options.Filter.GetResult(method, pd);
 					if (res.FilterType == FilterType.Hide)
 						continue;
@@ -508,6 +574,7 @@ namespace dnSpy.Search {
 			var res = options.Filter.GetResult(field);
 			if (res.FilterType == FilterType.Hide)
 				return;
+			CheckCustomAttributes(ownerModule, field, type);
 
 			ImplMap im;
 			if (res.IsMatch && (IsMatch(field.Name, field) || ((im = field.ImplMap) != null && (IsMatch(im.Name, im) || IsMatch(im.Module == null ? null : im.Module.Name, null))))) {
@@ -527,6 +594,7 @@ namespace dnSpy.Search {
 			var res = options.Filter.GetResult(prop);
 			if (res.FilterType == FilterType.Hide)
 				return;
+			CheckCustomAttributes(ownerModule, prop, type);
 
 			if (res.IsMatch && IsMatch(prop.Name, prop)) {
 				options.OnMatch(new SearchResult {
@@ -545,6 +613,7 @@ namespace dnSpy.Search {
 			var res = options.Filter.GetResult(evt);
 			if (res.FilterType == FilterType.Hide)
 				return;
+			CheckCustomAttributes(ownerModule, evt, type);
 
 			if (res.IsMatch && IsMatch(evt.Name, evt)) {
 				options.OnMatch(new SearchResult {

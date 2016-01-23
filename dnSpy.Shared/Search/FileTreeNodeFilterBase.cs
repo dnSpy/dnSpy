@@ -124,5 +124,9 @@ namespace dnSpy.Shared.Search {
 		public virtual FileTreeNodeFilterResult GetResultParamDefs(MethodDef method) {
 			return new FileTreeNodeFilterResult();
 		}
+
+		public virtual FileTreeNodeFilterResult GetResultAttributes(IHasCustomAttribute hca) {
+			return new FileTreeNodeFilterResult();
+		}
 	}
 }

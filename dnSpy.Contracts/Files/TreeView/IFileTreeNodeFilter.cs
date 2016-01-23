@@ -204,5 +204,12 @@ namespace dnSpy.Contracts.Files.TreeView {
 		/// <param name="node">Node, can't be null</param>
 		/// <returns></returns>
 		FileTreeNodeFilterResult GetResult(IFileTreeNodeData node);
+
+		/// <summary>
+		/// Returns a filter result
+		/// </summary>
+		/// <param name="hca">Object with custom attributes</param>
+		/// <returns></returns>
+		FileTreeNodeFilterResult GetResultAttributes(IHasCustomAttribute hca);
 	}
 }
