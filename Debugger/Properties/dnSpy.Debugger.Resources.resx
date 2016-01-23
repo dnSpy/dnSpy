@@ -1212,4 +1212,10 @@ Are you sure you want to expand it?</value>
   <data name="LoadXModulesCommand" xml:space="preserve">
     <value>Open {0} Modules</value>
   </data>
+  <data name="DeleteAllBreakpointsCommand2" xml:space="preserve">
+    <value>Delete All Breakpoints</value>
+  </data>
+  <data name="ShowParameterTypesCommand2" xml:space="preserve">
+    <value>Show Parameter Types</value>
+  </data>
 </root>

@@ -1177,6 +1177,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete All Breakpoints.
+        /// </summary>
+        public static string DeleteAllBreakpointsCommand2 {
+            get {
+                return ResourceManager.GetString("DeleteAllBreakpointsCommand2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to D_elete Breakpoint.
         /// </summary>
         public static string DeleteBreakpointCommand {
@@ -2691,6 +2700,15 @@ namespace dnSpy.Debugger.Properties {
         public static string ShowParameterTypesCommand {
             get {
                 return ResourceManager.GetString("ShowParameterTypesCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show Parameter Types.
+        /// </summary>
+        public static string ShowParameterTypesCommand2 {
+            get {
+                return ResourceManager.GetString("ShowParameterTypesCommand2", resourceCulture);
             }
         }
         

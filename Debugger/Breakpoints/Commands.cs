@@ -178,7 +178,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:DeleteAllBreakpointsCommand", Icon = "DeleteAllBreakpoints", InputGestureText = "res:ShortCutKeyCtrlShiftF9", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 30)]
+	[ExportMenuItem(Header = "res:DeleteAllBreakpointsCommand2", Icon = "DeleteAllBreakpoints", InputGestureText = "res:ShortCutKeyCtrlShiftF9", Group = MenuConstants.GROUP_CTX_DBG_BPS_COPY, Order = 30)]
 	sealed class DeleteAllBPsBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		readonly IAppWindow appWindow;
 
@@ -355,7 +355,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:ShowParameterTypesCommand", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 20)]
+	[ExportMenuItem(Header = "res:ShowParameterTypesCommand2", Group = MenuConstants.GROUP_CTX_DBG_BPS_OPTS, Order = 20)]
 	sealed class ShowParameterTypesBreakpointCtxMenuCommand : BreakpointCtxMenuCommand {
 		readonly BreakpointSettingsImpl breakpointSettings;
 
