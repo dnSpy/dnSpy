@@ -24,23 +24,6 @@ namespace ICSharpCode.Decompiler.Tests.FSharpPatterns
 			return new StreamReader(asm.GetManifestResourceStream(fullResourceName)).ReadToEnd();
 		}
 
-		// see https://fsharp.github.io/FSharp.Compiler.Service/compiler.html
-		public static string CompileFsToAssembly(string source, bool optimize)
-		{
-			var tmp = Path.GetTempFileName();
-			File.Delete(tmp);
-			var sourceFile = Path.ChangeExtension(tmp, ".fs");
-			File.WriteAllText(sourceFile, source);
-			var asmFile = Path.ChangeExtension(sourceFile, ".dll");
-			var sscs = new Microsoft.FSharp.Compiler.SimpleSourceCodeServices.SimpleSourceCodeServices();
-			var result = sscs.Compile(new[] { "fsc.exe", "--debug:full", "--optimize" + (optimize ? "+" : "-"), "--target:library", "-o", asmFile, sourceFile });
-			File.Delete(sourceFile);
-			Assert.AreEqual(0, result.Item1.Length);
-			Assert.AreEqual(0, result.Item2);
-			Assert.True(File.Exists(asmFile), "Assembly File does not exist");
-			return asmFile;
-		}
-
 		static Lazy<string> ilasm = new Lazy<string>(() => ToolLocator.FindTool("ilasm.exe"));
 		static Lazy<string> ildasm = new Lazy<string>(() => ToolLocator.FindTool("ildasm.exe"));
 
@@ -69,12 +52,6 @@ namespace ICSharpCode.Decompiler.Tests.FSharpPatterns
 		public static void RunIL(string ilCode, string expectedCSharpCode)
 		{
 			var asmFilePath = CompileIL(ilCode);
-			CompareAssemblyAgainstCSharp(expectedCSharpCode, asmFilePath);
-		}
-
-		public static void RunFSharp(string fsharpCode, string expectedCSharpCode, bool optimize)
-		{
-			var asmFilePath = CompileFsToAssembly(fsharpCode, optimize);
 			CompareAssemblyAgainstCSharp(expectedCSharpCode, asmFilePath);
 		}
 
