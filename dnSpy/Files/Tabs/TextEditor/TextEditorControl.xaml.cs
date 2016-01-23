@@ -91,7 +91,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly SearchPanel searchPanel;
 
 		public IEnumerable<object> AllReferences {
-			get { return references == null ? new object[0] : references.Select(a => a.Reference); }
+			get { return references.Select(a => a.Reference); }
 		}
 
 		DefinitionLookup definitionLookup;
@@ -107,6 +107,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ITextEditorSettings textEditorSettings;
 
 		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager) {
+			this.references = new TextSegmentCollection<ReferenceSegment>();
 			this.themeManager = themeManager;
 			this.toolTipHelper = toolTipHelper;
 			this.textEditorSettings = textEditorSettings;
@@ -165,6 +166,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(true)), Key.Tab, ModifierKeys.None));
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(false)), Key.Tab, ModifierKeys.Shift));
+			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveToNextDefinition(true)), Key.Down, ModifierKeys.Alt));
+			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveToNextDefinition(false)), Key.Up, ModifierKeys.Alt));
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReference()), Key.F12, ModifierKeys.None));
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReference()), Key.Enter, ModifierKeys.None));
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReferenceNewTab()), Key.F12, ModifierKeys.Control));
@@ -441,15 +444,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column) {
-			if (referenceElementGenerator == null || referenceElementGenerator.References == null)
-				yield break;
-
 			int offset = TextEditor.Document.GetOffset(line, column);
-			var refSeg = referenceElementGenerator.References.FindFirstSegmentWithStartAfter(offset);
+			var refSeg = references.FindFirstSegmentWithStartAfter(offset);
 
 			while (refSeg != null) {
 				yield return Tuple.Create(refSeg.ToCodeReference(), GetLocation(refSeg));
-				refSeg = referenceElementGenerator.References.GetNextSegment(refSeg);
+				refSeg = references.GetNextSegment(refSeg);
 			}
 		}
 
@@ -459,9 +459,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public ReferenceSegment GetReferenceSegmentAt(int offset) {
-			if (referenceElementGenerator == null || referenceElementGenerator.References == null)
-				return null;
-			var segs = referenceElementGenerator.References.FindSegmentsContaining(offset).ToArray();
+			var segs = references.FindSegmentsContaining(offset).ToArray();
 			foreach (var seg in segs) {
 				if (seg.StartOffset <= offset && offset < seg.EndOffset)
 					return seg;
@@ -563,8 +561,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		void MoveReference(bool forward) {
-			if (references == null)
-				return;
 			var refSeg = GetCurrentReferenceSegment();
 			if (refSeg == null)
 				return;
@@ -579,8 +575,24 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 		}
 
+		void MoveToNextDefinition(bool forward) {
+			int offset = TextEditor.CaretOffset;
+			var refSeg = references.FindFirstSegmentWithStartAfter(offset) ?? (forward ? references.LastSegment : references.FirstSegment);
+			if (refSeg == null)
+				return;
+
+			foreach (var newSeg in GetReferenceSegmentsFrom(refSeg, forward)) {
+				if (newSeg.IsLocalTarget && newSeg.Reference is IMemberDef) {
+					var line = TextEditor.Document.GetLineByOffset(newSeg.StartOffset);
+					int column = newSeg.StartOffset - line.Offset + 1;
+					ScrollAndMoveCaretTo(line.LineNumber, column);
+					break;
+				}
+			}
+		}
+
 		IEnumerable<ReferenceSegment> GetReferenceSegmentsFrom(ReferenceSegment refSeg, bool forward) {
-			if (references == null || refSeg == null)
+			if (refSeg == null)
 				yield break;
 
 			var currSeg = refSeg;
@@ -602,8 +614,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		bool IsOwnerOf(ReferenceSegment refSeg) {
-			if (references == null)
-				return false;
 			foreach (var r in references) {
 				if (r == refSeg)
 					return true;
@@ -612,7 +622,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		ReferenceSegment FindReferenceSegment(ReferenceSegment refSeg) {
-			if (references == null || refSeg == null)
+			if (refSeg == null)
 				return null;
 			foreach (var r in references) {
 				if (r.IsLocal == refSeg.IsLocal && r.IsLocalTarget == refSeg.IsLocalTarget && RefSegEquals(r, refSeg))
@@ -622,8 +632,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		ReferenceSegment FindLocalTarget(ReferenceSegment refSeg) {
-			if (references == null)
-				return null;
 			if (refSeg.IsLocalTarget)
 				return refSeg;
 			foreach (var r in references) {
@@ -690,7 +698,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			if (previousReferenceSegment == referenceSegment)
 				return true;
 			object reference = referenceSegment.Reference;
-			if (references == null || reference == null)
+			if (reference == null)
 				return false;
 			ClearMarkedReferences();
 			previousReferenceSegment = referenceSegment;
@@ -725,13 +733,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			var member = @ref as IMemberDef;
 			if (member != null) {
-				var refSeg = references == null ? null : references.FirstOrDefault(a => a.IsLocalTarget && a.Reference == member);
+				var refSeg = references.FirstOrDefault(a => a.IsLocalTarget && a.Reference == member);
 				return GoToTarget(refSeg, false, false);
 			}
 
 			var codeRef = @ref as CodeReference;
 			if (codeRef != null) {
-				var refSeg = references == null ? null : references.FirstOrDefault(a => a.Equals(codeRef));
+				var refSeg = references.FirstOrDefault(a => a.Equals(codeRef));
 				return GoToTarget(refSeg, false, false);
 			}
 

@@ -96,7 +96,7 @@ namespace dnSpy.Shared.Decompiler {
 		public readonly List<VisualLineElementGenerator> ElementGenerators = new List<VisualLineElementGenerator>();
 
 		/// <summary>List of all references that were written to the output</summary>
-		TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
+		readonly TextSegmentCollection<ReferenceSegment> references = new TextSegmentCollection<ReferenceSegment>();
 
 		public readonly DefinitionLookup DefinitionLookup = new DefinitionLookup();
 
