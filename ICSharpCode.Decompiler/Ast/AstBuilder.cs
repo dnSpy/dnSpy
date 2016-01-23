@@ -1162,6 +1162,10 @@ namespace ICSharpCode.Decompiler.Ast {
 				astEvent.ReturnType = ConvertType(eventDef.EventType, eventDef);
 				if (!eventDef.DeclaringType.IsInterface)
 					astEvent.Modifiers = ConvertModifiers(eventDef.AddMethod);
+				if (eventDef.RemoveMethod != null)
+					AddComment(astEvent, eventDef.RemoveMethod);
+				if (eventDef.AddMethod != null)
+					AddComment(astEvent, eventDef.AddMethod);
 				AddComment(astEvent, eventDef);
 				return astEvent;
 			} else {
