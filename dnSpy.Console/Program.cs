@@ -28,6 +28,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security;
 using dnlib.DotNet;
+using dnSpy.Contracts.App;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.MSBuild;
@@ -48,6 +49,9 @@ namespace dnSpy_Console {
 				Console.WriteLine("dnlib wasn't compiled with THREAD_SAFE defined");
 				return 1;
 			}
+
+			// Make sure its static ctor gets called so it can initialize its fields
+			var u = AppCulture.UICulture;
 
 			try {
 				return new DnSpyDecompiler().Run(args);

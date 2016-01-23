@@ -24,6 +24,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using dnSpy.Contracts.App;
 using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
@@ -78,6 +79,7 @@ namespace dnSpy.Languages.MSBuild {
 				var ctx = new DecompileContext(options.CancellationToken, logger);
 				satelliteAssemblyFinder = new SatelliteAssemblyFinder();
 				Parallel.ForEach(options.ProjectModules, opts, modOpts => {
+					AppCulture.InitializeCulture();
 					options.CancellationToken.ThrowIfCancellationRequested();
 					string name;
 					lock (filenameCreator)
@@ -96,6 +98,7 @@ namespace dnSpy.Languages.MSBuild {
 				progressListener.SetMaxProgress(maxProgress);
 
 				Parallel.ForEach(GetJobs(), opts, job => {
+					AppCulture.InitializeCulture();
 					options.CancellationToken.ThrowIfCancellationRequested();
 					try {
 						job.Create(ctx);
@@ -113,6 +116,7 @@ namespace dnSpy.Languages.MSBuild {
 					progressListener.SetProgress(Interlocked.Increment(ref totalProgress));
 				});
 				Parallel.ForEach(projects, opts, p => {
+					AppCulture.InitializeCulture();
 					options.CancellationToken.ThrowIfCancellationRequested();
 					try {
 						var writer = new ProjectWriter(p, options.ProjectVersion, projects, options.UserGACPaths);
