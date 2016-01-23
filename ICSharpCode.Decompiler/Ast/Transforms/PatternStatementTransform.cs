@@ -106,7 +106,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 		
 		public override AstNode VisitPropertyDeclaration(PropertyDeclaration propertyDeclaration, object data)
 		{
-			if (context.Settings.AutomaticProperties) {
+			if (context.Settings.AutomaticProperties && !context.Settings.ForceShowAllMembers) {
 				AstNode result = TransformAutomaticProperties(propertyDeclaration);
 				if (result != null)
 					return result;
@@ -118,7 +118,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 		{
 			// first apply transforms to the accessor bodies
 			base.VisitCustomEventDeclaration(eventDeclaration, data);
-			if (context.Settings.AutomaticEvents) {
+			if (context.Settings.AutomaticEvents && !context.Settings.ForceShowAllMembers) {
 				AstNode result = TransformAutomaticEvents(eventDeclaration);
 				if (result != null)
 					return result;
