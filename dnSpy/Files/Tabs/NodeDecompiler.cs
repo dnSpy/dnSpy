@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Languages;
@@ -58,12 +59,14 @@ namespace dnSpy.Files.Tabs {
 		readonly ITextOutput output;
 		readonly ILanguage language;
 		readonly DecompilationContext decompilationContext;
+		readonly IDecompileNodeContext decompileNodeContext;
 
-		public NodeDecompiler(Func<Func<object>, object> execInThread, ITextOutput output, ILanguage language, DecompilationContext decompilationContext) {
+		public NodeDecompiler(Func<Func<object>, object> execInThread, ITextOutput output, ILanguage language, DecompilationContext decompilationContext, IDecompileNodeContext decompileNodeContext = null) {
 			this.execInThread = execInThread;
 			this.output = output;
 			this.language = language;
 			this.decompilationContext = decompilationContext;
+			this.decompileNodeContext = decompileNodeContext;
 		}
 
 		static readonly object lockObj = new object();
@@ -179,6 +182,11 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		void DecompileUnknown(IFileTreeNodeData node) {
+			var decompileSelf = node as IDecompileSelf;
+			if (decompileSelf != null && decompileNodeContext != null) {
+				if (decompileSelf.Decompile(decompileNodeContext))
+					return;
+			}
 			language.WriteCommentLine(output, node.ToString(language));
 		}
 
