@@ -115,6 +115,15 @@ namespace dnSpy_Console.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Invalid GUID.
+        /// </summary>
+        internal static string InvalidGuid {
+            get {
+                return ResourceManager.GetString("InvalidGuid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Only types, methods, fields, events and properties can be decompiled.
         /// </summary>
         internal static string InvalidMemberToDecompile {

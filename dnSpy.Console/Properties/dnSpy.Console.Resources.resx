@@ -207,6 +207,7 @@
   --no-resx    don't create .resx files
   --no-baml    don't decompile baml to xaml
   --vs N       Visual Studio version, 2005, 2008, ..., 2015
+  --project-guid N    project guid
   -t name      decompile the type with the specified name to stdout. Either Namespace.Name or Name, case insensitive
   --type name  same as -t
   --md N       decompile the member with metadata token N to stdout
@@ -244,5 +245,8 @@
   </data>
   <data name="MissingOptionArgument" xml:space="preserve">
     <value>Missing option argument</value>
+  </data>
+  <data name="InvalidGuid" xml:space="preserve">
+    <value>Invalid GUID</value>
   </data>
 </root>

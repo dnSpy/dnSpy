@@ -71,6 +71,7 @@ namespace dnSpy_Console {
 		bool unpackResources = true;
 		bool createResX = true;
 		bool decompileBaml = true;
+		Guid projectGuid = Guid.NewGuid();
 		int numThreads;
 		int mdToken;
 		string typeName;
@@ -428,6 +429,12 @@ namespace dnSpy_Console {
 						gacFiles.Add(next);
 						break;
 
+					case "-project-guid":
+						if (next == null || !Guid.TryParse(next, out projectGuid))
+							throw new ErrorException(dnSpy_Console_Resources.InvalidGuid);
+						i++;
+						break;
+
 					default:
 						Tuple<IDecompilerOption, Action<string>> tuple;
 						if (langDict.TryGetValue(arg, out tuple)) {
@@ -500,6 +507,12 @@ namespace dnSpy_Console {
 			assemblyResolver.UseGAC = useGac;
 
 			var files = new List<ProjectModuleOptions>(GetDotNetFiles());
+			string guidStr = projectGuid.ToString();
+			int guidNum = int.Parse(guidStr.Substring(36 - 8, 8), NumberStyles.HexNumber);
+			string guidFormat = guidStr.Substring(0, 36 - 8) + "{0:X8}";
+			foreach (var file in files.OrderBy(a => a.Module.Location, StringComparer.InvariantCultureIgnoreCase))
+				file.ProjectGuid = new Guid(string.Format(guidFormat, guidNum++));
+
 			if (mdToken != 0 || typeName != null) {
 				if (files.Count == 0)
 					throw new ErrorException(dnSpy_Console_Resources.MissingDotNetFilename);
