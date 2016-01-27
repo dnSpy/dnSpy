@@ -90,13 +90,13 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 			if (type != null && type.ResolvedType != null) {
 				var typeDef = type.ResolvedType.GetBaseType();
 				bool isExt = false;
-				do {
+				while (typeDef != null) {
 					if (typeDef.FullName == "System.Windows.Markup.MarkupExtension") {
 						isExt = true;
 						break;
 					}
 					typeDef = typeDef.GetBaseType();
-				} while (typeDef != null);
+				}
 				if (!isExt)
 					return false;
 			}
