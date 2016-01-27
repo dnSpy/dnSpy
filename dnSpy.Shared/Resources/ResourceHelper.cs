@@ -44,7 +44,7 @@ namespace dnSpy.Shared.Resources {
 			if (asmToMgr.TryGetValue(assembly, out mgr))
 				return mgr;
 
-			foreach (var type in assembly.ManifestModule.GetTypes().Where(a => a.Namespace.Contains("Properties"))) {
+			foreach (var type in assembly.ManifestModule.GetTypes().Where(a => a.Namespace != null && a.Namespace.Contains("Properties"))) {
 				var prop = type.GetProperty("ResourceManager", BindingFlags.Public | BindingFlags.Static);
 				if (prop == null)
 					continue;
