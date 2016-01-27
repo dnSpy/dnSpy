@@ -275,6 +275,7 @@ namespace dnSpy_Console {
 			"type",
 			"md",
 			"gac-file",
+			"project-guid",
 		};
 
 		void ParseCommandLine(string[] args) {
