@@ -17,5 +17,13 @@ EXE
 
 [B](https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts)
 
+Translate
+---------
+[T](https://crowdin.com/project/dnspy)
+
+Wiki
+----
+[W](https://github.com/0xd4d/dnSpy/wiki)
+
 EOF
 ---
