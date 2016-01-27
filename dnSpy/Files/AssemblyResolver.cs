@@ -62,8 +62,6 @@ namespace dnSpy.Files {
 		}
 
 		public IDnSpyFile Resolve(IAssembly assembly, ModuleDef sourceModule = null) {
-			FrameworkRedirect.ApplyFrameworkRedirect(ref assembly, sourceModule);
-
 			if (assembly.IsContentTypeWindowsRuntime)
 				return ResolveWinMD(assembly, sourceModule);
 
