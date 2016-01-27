@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using dndbg.COM.CorDebug;
 using dndbg.COM.MetaData;
@@ -98,6 +99,7 @@ namespace dndbg.Engine {
 		public string FullName {
 			get {
 				var module = ManifestModule;
+				Debug.Assert(module != null);
 				if (module == null)
 					return Name;
 				return CalculateFullName(module);

@@ -159,8 +159,9 @@ namespace dndbg.Engine {
 		readonly DnAssembly ownerAssembly;
 
 		public SerializedDnModule SerializedDnModule {
-			get { return module.SerializedDnModule; }
+			get { return serializedDnModule; }
 		}
+		SerializedDnModule serializedDnModule;
 
 		/// <summary>
 		/// Gets the JIT compiler flags. This is a cached value and never gets updated
@@ -175,6 +176,7 @@ namespace dndbg.Engine {
 			this.module = new CorModule(module);
 			this.incrementedId = incrementedId;
 			this.moduleOrder = moduleOrder;
+			this.serializedDnModule = this.module.SerializedDnModule;
 		}
 
 		internal void InitializeCachedValues() {
