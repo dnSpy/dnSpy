@@ -112,13 +112,13 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		public string LookupXmlns(IAssembly asm, string clrNs) {
+			var comparer = new AssemblyNameComparer(AssemblyNameComparerFlags.All);
 			foreach (var map in piMappings) {
-				if (map.Value.Assembly == asm && map.Value.CLRNamespace == clrNs)
+				if (comparer.Equals(map.Value.Assembly, asm) && map.Value.CLRNamespace == clrNs)
 					return map.Key;
 			}
 
 			var scope = CurrentScope;
-			var comparer = new AssemblyNameComparer(AssemblyNameComparerFlags.All);
 			while (scope != null) {
 				foreach (var ns in scope) {
 					if (comparer.Equals(ns.Assembly, asm) && ns.CLRNamespace == clrNs)

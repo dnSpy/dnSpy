@@ -67,7 +67,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 					prefix = nsName + count;
 				}
 
-				xmlNs = string.Format("clr-namespace:{0};assembly={1}", TypeNamespace, Assembly);
+				xmlNs = string.Format("clr-namespace:{0};assembly={1}", TypeNamespace, Assembly.Name);
 				elem.Add(new XAttribute(XNamespace.Xmlns + XmlConvert.EncodeLocalName(prefix),
 					ctx.GetXmlNamespace(xmlNs)));
 			}
