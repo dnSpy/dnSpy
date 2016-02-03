@@ -46,7 +46,7 @@ namespace dnSpy.BamlDecompiler.Xaml {
 		}
 
 		public void ResolveNamespace(XElement elem, XamlContext ctx) {
-			if (Namespace != null)
+			if (Namespace != null || string.IsNullOrEmpty(TypeNamespace))
 				return;
 
 			// Since XmlnsProperty records are inside the element,
