@@ -23,6 +23,7 @@
 using System.Xml;
 using System.Xml.Linq;
 using dnlib.DotNet;
+using dnSpy.BamlDecompiler.Properties;
 
 namespace dnSpy.BamlDecompiler.Xaml {
 	internal class XamlType {
@@ -58,20 +59,34 @@ namespace dnSpy.BamlDecompiler.Xaml {
 				xmlNs = ctx.XmlNs.LookupXmlns(Assembly, TypeNamespace);
 
 			if (xmlNs == null) {
-				var nsSeg = TypeNamespace.Split('.');
-				var nsName = nsSeg[nsSeg.Length - 1].ToLowerInvariant();
-				var prefix = nsName;
+				if (AssemblyNameComparer.CompareAll.Equals(Assembly, ctx.Module.Assembly))
+					xmlNs = string.Format("clr-namespace:{0}", TypeNamespace);
+				else
+					xmlNs = string.Format("clr-namespace:{0};assembly={1}", TypeNamespace, Assembly.Name);
+
+				var nsSeg = TypeNamespace.Split('.');	
+				var prefix = nsSeg[nsSeg.Length - 1].ToLowerInvariant();
+				if (string.IsNullOrEmpty(prefix)) {
+					if (string.IsNullOrEmpty(TypeNamespace))
+						prefix = "global";
+					else
+						prefix = "empty";
+				}
 				int count = 0;
-				while (elem.GetNamespaceOfPrefix(prefix) != null) {
+				var truePrefix = prefix;
+				XNamespace prefixNs, ns = ctx.GetXmlNamespace(xmlNs);
+				while ((prefixNs = elem.GetNamespaceOfPrefix(truePrefix)) != null && prefixNs != ns) {
 					count++;
-					prefix = nsName + count;
+					truePrefix = prefix + count;
 				}
 
-				xmlNs = string.Format("clr-namespace:{0};assembly={1}", TypeNamespace, Assembly.Name);
-				elem.Add(new XAttribute(XNamespace.Xmlns + XmlConvert.EncodeLocalName(prefix),
-					ctx.GetXmlNamespace(xmlNs)));
+				if (prefixNs == null) {
+					elem.Add(new XAttribute(XNamespace.Xmlns + XmlConvert.EncodeLocalName(truePrefix), ns));
+					if (string.IsNullOrEmpty(TypeNamespace))
+						elem.AddBeforeSelf(new XComment(string.Format(dnSpy_BamlDecompiler_Resources.Msg_GlobalNamespace, truePrefix)));
+				}
 			}
-			Namespace = xmlNs;
+			Namespace = ctx.GetXmlNamespace(xmlNs);
 		}
 
 		public XName ToXName(XamlContext ctx) {

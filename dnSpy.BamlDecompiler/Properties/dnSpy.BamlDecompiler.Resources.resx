@@ -144,6 +144,9 @@
   <data name="Error_UnknownConnectionId" xml:space="preserve">
     <value>Unknown connection ID: {0}</value>
   </data>
+  <data name="Msg_GlobalNamespace" xml:space="preserve">
+    <value>'{0}' is prefix for the global namespace.</value>
+  </data>
   <data name="SaveBAML" xml:space="preserve">
     <value>_Save BAML...</value>
   </data>

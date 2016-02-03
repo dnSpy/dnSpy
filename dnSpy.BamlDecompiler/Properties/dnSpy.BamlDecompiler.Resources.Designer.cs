@@ -142,6 +142,15 @@ namespace dnSpy.BamlDecompiler.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; is prefix for the global namespace..
+        /// </summary>
+        public static string Msg_GlobalNamespace {
+            get {
+                return ResourceManager.GetString("Msg_GlobalNamespace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Save BAML....
         /// </summary>
         public static string SaveBAML {
