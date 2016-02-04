@@ -155,6 +155,8 @@ namespace dnSpy.Files.Tabs {
 			if (!fileListLoader.CanLoad)
 				return;
 
+			fileListLoader.SaveCurrentFilesToList();
+
 			var win = new OpenFileListDlg();
 			const bool syntaxHighlight = true;
 			var vm = new OpenFileListVM(syntaxHighlight, fileListManager, labelMsg => messageBoxManager.Ask<string>(labelMsg, ownerWindow: win, verifier: s => string.IsNullOrEmpty(s) ? dnSpy_Resources.OpenList_MissingName : string.Empty));
