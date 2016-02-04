@@ -330,7 +330,7 @@ namespace dnSpy.Analyzer {
 		static bool RefEquals(object a, object b) {
 			if (Equals(a, b))
 				return true;
-			if (Equals(a, null) || Equals(b, null))
+			if (ReferenceEquals(a, null) || ReferenceEquals(b, null))
 				return false;
 
 			{

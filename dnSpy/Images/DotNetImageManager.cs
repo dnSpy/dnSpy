@@ -28,7 +28,7 @@ namespace dnSpy.Images {
 	[Export, Export(typeof(IDotNetImageManager)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class DotNetImageManager : IDotNetImageManager {
 		public ImageReference GetImageReference(IPEImage peImage) {
-			return GetGetImageReference(peImage.ImageNTHeaders.FileHeader.Characteristics);
+			return GetImageReference(peImage.ImageNTHeaders.FileHeader.Characteristics);
 		}
 
 		public ImageReference GetNamespaceImageReference() {
@@ -282,7 +282,7 @@ namespace dnSpy.Images {
 		}
 
 		static bool IsSystemDecimal(TypeSig ts) {
-			return ts != null && ts.DefinitionAssembly.IsCorLib() && ts.FullName != "System.Decimal";
+			return ts != null && ts.DefinitionAssembly.IsCorLib() && ts.FullName == "System.Decimal";
 		}
 
 		static bool IsDecimalConstant(FieldDef field) {
@@ -562,7 +562,7 @@ namespace dnSpy.Images {
 
 		public ImageReference GetImageReference(AssemblyDef assembly) {
 			var mod = assembly.ManifestModule;
-			return GetGetImageReference(mod != null ? mod.Characteristics : Characteristics.Dll);
+			return GetImageReference(mod != null ? mod.Characteristics : Characteristics.Dll);
 		}
 
 		public ImageReference GetImageReferenceAssemblyRef() {
@@ -593,7 +593,7 @@ namespace dnSpy.Images {
 			return new ImageReference(GetType().Assembly, "Field");
 		}
 
-		ImageReference GetGetImageReference(Characteristics ch) {
+		ImageReference GetImageReference(Characteristics ch) {
 			bool isExe = (ch & Characteristics.Dll) == 0;
 			return new ImageReference(GetType().Assembly, isExe ? "AssemblyExe" : "Assembly");
 		}

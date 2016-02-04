@@ -70,7 +70,7 @@ namespace dndbg.Engine {
 		/// <param name="asmFullName">Assembly full name</param>
 		/// <param name="moduleName">Module name</param>
 		/// <param name="isDynamic">true if it's a dynamic module</param>
-		/// <param name="isInMemory">ture if it's an in-memory module</param>
+		/// <param name="isInMemory">true if it's an in-memory module</param>
 		public SerializedDnModule(string asmFullName, string moduleName, bool isDynamic, bool isInMemory) {
 			Debug.Assert(asmFullName == null || !asmFullName.Contains("\\:"));
 			this.asmFullName = asmFullName ?? string.Empty;
