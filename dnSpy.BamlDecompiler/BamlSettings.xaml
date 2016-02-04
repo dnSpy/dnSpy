@@ -1,5 +1,5 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:baml="clr-namespace:dnSpy.BamlDecompiler;assembly=dnSpy.BamlDecompiler.Plugin"
+                    xmlns:baml="clr-namespace:dnSpy.BamlDecompiler"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:p="clr-namespace:dnSpy.BamlDecompiler.Properties;assembly=dnSpy.BamlDecompiler.Plugin">
 	<DataTemplate DataType="{x:Type baml:BamlSettings}">
