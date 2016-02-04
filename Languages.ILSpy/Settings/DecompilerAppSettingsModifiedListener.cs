@@ -46,13 +46,15 @@ namespace dnSpy.Languages.ILSpy.Settings {
 				refreshVB = true;
 
 			if (refreshIL)
-				RefreshCode(LanguageConstants.LANGUAGE_IL);
+				RefreshCode<IL.ILLanguage>();
+#if DEBUG
 			if (refreshILAst)
-				RefreshCode(LanguageConstants.LANGUAGE_ILAST_ILSPY);
+				RefreshCode<ILAst.ILAstLanguage>();
+#endif
 			if (refreshCSharp)
-				RefreshCode(LanguageConstants.LANGUAGE_CSHARP);
+				RefreshCode<CSharp.CSharpLanguage>();
 			if (refreshVB)
-				RefreshCode(LanguageConstants.LANGUAGE_VB);
+				RefreshCode<VB.VBLanguage>();
 		}
 
 		IEnumerable<Tuple<IFileTab, ILanguage>> LanguageTabs {
@@ -66,8 +68,8 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			}
 		}
 
-		void RefreshCode(Guid guid) {
-			fileTabManager.Refresh(LanguageTabs.Where(t => t.Item2.GenericGuid == guid || t.Item2.UniqueGuid == guid).Select(a => a.Item1).ToArray());
+		void RefreshCode<T>() {
+			fileTabManager.Refresh(LanguageTabs.Where(t => t.Item2 is T).Select(a => a.Item1).ToArray());
 		}
 	}
 }
