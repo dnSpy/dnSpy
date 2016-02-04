@@ -231,6 +231,10 @@ namespace dnSpy.Files {
 		}
 
 		public IDnSpyFile TryGetOrCreate(DnSpyFileInfo info, bool isAutoLoaded) {
+			return TryGetOrCreateInternal(info, isAutoLoaded, false);
+		}
+
+		internal IDnSpyFile TryGetOrCreateInternal(DnSpyFileInfo info, bool isAutoLoaded, bool isResolve) {
 			var key = TryCreateKey(info);
 			if (key == null)
 				return null;
@@ -242,7 +246,7 @@ namespace dnSpy.Files {
 			if (newFile == null)
 				return null;
 			newFile.IsAutoLoaded = isAutoLoaded;
-			if (!AssemblyLoadEnabled)
+			if (isResolve && !AssemblyLoadEnabled)
 				return AddTempCachedFile(newFile);
 
 			var result = GetOrAdd(newFile);
