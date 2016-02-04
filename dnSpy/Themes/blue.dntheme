@@ -97,7 +97,7 @@
 		<color name="systemcolorswindow" bg="#FFFFFFFF" />
 		<color name="systemcolorswindowtext" fg="#FF000000" />
 		<color name="pehex" fg="Black" bg="White" />
-		<color name="pehexborder" bg="Black" />
+		<color name="pehexborder" bg="White" />
 		<color name="dialogwindow" fg="#FF1E1E1E" bg="#FFD6DBE9" />
 		<color name="dialogwindowactivecaption" fg="#FF000000" bg="#FFC9CEDB" />
 		<color name="dialogwindowactivedebuggingborder" bg="#FF0D202D" />

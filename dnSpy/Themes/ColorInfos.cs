@@ -115,7 +115,7 @@ namespace dnSpy.Themes {
 				BackgroundResourceKey = "PEHexBackground"
 			},
 			new BrushColorInfo(ColorType.PEHexBorder, "PE Hex Border") {
-				DefaultBackground = "#FFCCCEDB",
+				DefaultBackground = "#FFF5F5F5",
 				BackgroundResourceKey = "PEHexBorder",
 			},
 			new BrushColorInfo(ColorType.DialogWindow, "Dialog Window") {
