@@ -228,4 +228,7 @@
   <data name="MSBuild_CreateSettingsTypeFile" xml:space="preserve">
     <value>Create settings file</value>
   </data>
+  <data name="MSBuild_CreateResXFile" xml:space="preserve">
+    <value>Create ResX file</value>
+  </data>
 </root>

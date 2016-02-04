@@ -21,11 +21,12 @@ using System;
 using System.Collections.Generic;
 using System.Resources;
 using dnlib.DotNet;
+using dnSpy.Languages.Properties;
 
 namespace dnSpy.Languages.MSBuild {
 	sealed class ResXProjectFile : ProjectFile {
 		public override string Description {
-			get { return "Create ResX file"; }
+			get { return Languages_Resources.MSBuild_CreateResXFile; }
 		}
 
 		public override BuildAction BuildAction {

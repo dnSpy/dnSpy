@@ -214,6 +214,15 @@ namespace dnSpy.Languages.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create ResX file.
+        /// </summary>
+        internal static string MSBuild_CreateResXFile {
+            get {
+                return ResourceManager.GetString("MSBuild_CreateResXFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Create settings designer file.
         /// </summary>
         internal static string MSBuild_CreateSettingsDesignerTypeFile {
