@@ -47,16 +47,15 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 				if (def == null)
 					continue;
 				if (def == type) {
-					if (addPartialKeyword) {
-						var tdecl = en as TypeDeclaration;
-						Debug.Assert(tdecl != null);
-						if (tdecl != null) {
+					var tdecl = en as TypeDeclaration;
+					Debug.Assert(tdecl != null);
+					if (tdecl != null) {
+						if (addPartialKeyword)
 							tdecl.Modifiers |= Modifiers.Partial;
-							foreach (var iface in tdecl.BaseTypes) {
-								var tdr = iface.Annotation<ITypeDefOrRef>();
-								if (tdr != null && ifacesToRemove.Contains(tdr))
-									iface.Remove();
-							}
+						foreach (var iface in tdecl.BaseTypes) {
+							var tdr = iface.Annotation<ITypeDefOrRef>();
+							if (tdr != null && ifacesToRemove.Contains(tdr))
+								iface.Remove();
 						}
 					}
 				}
