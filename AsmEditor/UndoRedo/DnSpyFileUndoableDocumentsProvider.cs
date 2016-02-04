@@ -101,10 +101,9 @@ namespace dnSpy.AsmEditor.UndoRedo {
 				if (module == null)
 					throw new InvalidOperationException();
 				var modFile = FindModule(module);
-				Debug.Assert(modFile != null);
-				if (modFile == null)
-					throw new InvalidOperationException();
-				return modFile;
+				// It could've been removed but some menu item handler could still have a reference
+				// to the module.
+				return modFile ?? file;
 			}
 
 			return file;

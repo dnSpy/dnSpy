@@ -102,6 +102,11 @@ namespace dnSpy.AsmEditor.SaveModule {
 				if (fileNode == null)
 					continue;
 
+				// Removed nodes could still be used, don't use them.
+				var topNode = fileNode.GetTopNode();
+				if (topNode == null || topNode.TreeNode.Parent == null)
+					continue;
+
 				bool added = false;
 
 				if (fileNode.DnSpyFile.ModuleDef != null) {

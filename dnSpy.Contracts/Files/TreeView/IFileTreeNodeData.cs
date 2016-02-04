@@ -105,7 +105,6 @@ namespace dnSpy.Contracts.Files.TreeView {
 				var found = self as IDnSpyFileNode;
 				if (found != null) {
 					var p = found.TreeNode.Parent;
-					Debug.Assert(p != null);
 					if (p == null || p == root)
 						return found;
 				}
