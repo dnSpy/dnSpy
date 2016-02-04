@@ -30,6 +30,7 @@ using ICSharpCode.NRefactory.VB;
 using ICSharpCode.NRefactory.VB.Visitors;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.ILSpy.Settings;
+using System.Diagnostics;
 
 namespace dnSpy.Languages.ILSpy.VB {
 	sealed class LanguageProvider : ILanguageProvider {
@@ -37,11 +38,14 @@ namespace dnSpy.Languages.ILSpy.VB {
 
 		// Keep the default ctor. It's used by dnSpy.Console.exe
 		public LanguageProvider()
-			: this(null) {
+			: this(LanguageSettingsManager.__Instance_DONT_USE) {
 		}
 
 		public LanguageProvider(LanguageSettingsManager languageSettingsManager) {
-			this.languageSettingsManager = languageSettingsManager ?? LanguageSettingsManager.__Instance_DONT_USE;
+			Debug.Assert(languageSettingsManager != null);
+			if (languageSettingsManager == null)
+				throw new ArgumentNullException();
+			this.languageSettingsManager = languageSettingsManager;
 		}
 
 		public IEnumerable<ILanguage> Languages {

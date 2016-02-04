@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
@@ -34,11 +35,14 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 
 		// Keep the default ctor. It's used by dnSpy.Console.exe
 		public LanguageProvider()
-			: this(null) {
+			: this(LanguageSettingsManager.__Instance_DONT_USE) {
 		}
 
 		public LanguageProvider(LanguageSettingsManager languageSettingsManager) {
-			this.languageSettingsManager = languageSettingsManager ?? LanguageSettingsManager.__Instance_DONT_USE;
+			Debug.Assert(languageSettingsManager != null);
+			if (languageSettingsManager == null)
+				throw new ArgumentNullException();
+			this.languageSettingsManager = languageSettingsManager;
 		}
 
 		public IEnumerable<ILanguage> Languages {
