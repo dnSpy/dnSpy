@@ -59,7 +59,7 @@ namespace dnSpy.Languages {
 		// ("C:\dir1\dir2\dir3", "d:\Dir1\Dir2\Dir3\file.dll") = "d:\Dir1\Dir2\Dir3\file.dll"
 		// ("C:\dir1\dir2\dir3", "c:\Dir1\dirA\dirB\file.dll") = "..\..\dirA\dirB\file.dll"
 		// ("C:\dir1\dir2\dir3", "c:\Dir1\Dir2\Dir3\Dir4\Dir5\file.dll") = "Dir4\Dir5\file.dll"
-		public static string GetRelativePath(string sourceDir, string destFile) {
+		internal static string GetRelativePath(string sourceDir, string destFile) {
 			sourceDir = Path.GetFullPath(sourceDir);
 			destFile = Path.GetFullPath(destFile);
 			if (!Path.GetPathRoot(sourceDir).Equals(Path.GetPathRoot(destFile), StringComparison.OrdinalIgnoreCase))

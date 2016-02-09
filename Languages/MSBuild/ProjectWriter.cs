@@ -224,8 +224,17 @@ namespace dnSpy.Languages.MSBuild {
 			}
 		}
 
+		static string GetRelativePath(string sourceDir, string destFile) {
+			var s = FilenameUtils.GetRelativePath(sourceDir, destFile);
+			if (Path.DirectorySeparatorChar != '\\')
+				s = s.Replace(Path.DirectorySeparatorChar, '\\');
+			if (Path.AltDirectorySeparatorChar != '\\')
+				s = s.Replace(Path.AltDirectorySeparatorChar, '\\');
+			return s;
+		}
+
 		string GetRelativePath(string filename) {
-			return FilenameUtils.GetRelativePath(project.Directory, filename);
+			return GetRelativePath(project.Directory, filename);
 		}
 
 		void Write(XmlWriter writer, BuildAction buildAction) {
@@ -239,13 +248,13 @@ namespace dnSpy.Languages.MSBuild {
 				writer.WriteStartElement(ToString(buildAction));
 				writer.WriteAttributeString("Include", GetRelativePath(file.Filename));
 				if (file.DependentUpon != null)
-					writer.WriteElementString("DependentUpon", FilenameUtils.GetRelativePath(Path.GetDirectoryName(file.Filename), file.DependentUpon.Filename));
+					writer.WriteElementString("DependentUpon", GetRelativePath(Path.GetDirectoryName(file.Filename), file.DependentUpon.Filename));
 				if (file.SubType != null)
 					writer.WriteElementString("SubType", file.SubType);
 				if (file.Generator != null)
 					writer.WriteElementString("Generator", file.Generator);
 				if (file.LastGenOutput != null)
-					writer.WriteElementString("LastGenOutput", FilenameUtils.GetRelativePath(Path.GetDirectoryName(file.Filename), file.LastGenOutput.Filename));
+					writer.WriteElementString("LastGenOutput", GetRelativePath(Path.GetDirectoryName(file.Filename), file.LastGenOutput.Filename));
 				if (file.AutoGen)
 					writer.WriteElementString("AutoGen", "True");
 				if (file.DesignTime)
