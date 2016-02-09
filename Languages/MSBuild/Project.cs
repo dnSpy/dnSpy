@@ -336,7 +336,7 @@ namespace dnSpy.Languages.MSBuild {
 				extraAssemblyReferences.Add("WindowsBase");
 				extraAssemblyReferences.Add("PresentationCore");
 				extraAssemblyReferences.Add("PresentationFramework");
-				if (options.Module.IsClr40)
+				if (!options.Module.IsClr1x && !options.Module.IsClr20)
 					extraAssemblyReferences.Add("System.Xaml");
 			}
 
