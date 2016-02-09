@@ -25,17 +25,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy", "dnSpy\dnSpy.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Shared", "dnSpy.Shared\dnSpy.Shared.csproj", "{7E7C2CF8-2057-4EAA-9DAD-AB3022CF4037}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Languages.ILSpy", "Languages.ILSpy\Languages.ILSpy.csproj", "{D7FE873E-DF22-4F54-AEFA-BCF33AFD7E05}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Languages.ILSpy", "dnSpy.Languages.ILSpy\dnSpy.Languages.ILSpy.csproj", "{D7FE873E-DF22-4F54-AEFA-BCF33AFD7E05}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy-x86", "dnSpy-x86\dnSpy-x86.csproj", "{0F407613-E15D-4FB5-89DF-EE866DB6A7EC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.BamlDecompiler", "dnSpy.BamlDecompiler\dnSpy.BamlDecompiler.csproj", "{6D647069-5C94-4388-AC0C-E059D125AC51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Analyzer", "Analyzer\Analyzer.csproj", "{82E9DEC4-564F-42D5-8856-AA17D3962829}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Analyzer", "dnSpy.Analyzer\dnSpy.Analyzer.csproj", "{82E9DEC4-564F-42D5-8856-AA17D3962829}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Debugger", "Debugger\Debugger.csproj", "{52995BD1-DB91-4654-89B7-1DEB3B0D3155}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Debugger", "dnSpy.Debugger\dnSpy.Debugger.csproj", "{52995BD1-DB91-4654-89B7-1DEB3B0D3155}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsmEditor", "AsmEditor\AsmEditor.csproj", "{87772B51-FA94-47A5-83F4-4E8E69369A2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.AsmEditor", "dnSpy.AsmEditor\dnSpy.AsmEditor.csproj", "{87772B51-FA94-47A5-83F4-4E8E69369A2D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{4553202F-A2FF-4C9F-B939-A0141FC146B0}"
 EndProject
@@ -43,7 +43,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example1.Plugin", "Examples
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Example2.Plugin", "Examples\Example2.Plugin\Example2.Plugin.csproj", "{4613C8A1-28DC-4586-9F9B-D201864CFE1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Languages", "Languages\Languages.csproj", "{9265E4EA-EB00-4CB6-8A9A-608871E24FD0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Languages", "dnSpy.Languages\dnSpy.Languages.csproj", "{9265E4EA-EB00-4CB6-8A9A-608871E24FD0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Console", "dnSpy.Console\dnSpy.Console.csproj", "{DA111693-97C8-413B-9102-4DCBEE8885B7}"
 EndProject
