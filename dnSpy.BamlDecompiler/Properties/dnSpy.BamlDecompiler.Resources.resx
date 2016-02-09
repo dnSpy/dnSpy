@@ -147,6 +147,9 @@
   <data name="Msg_GlobalNamespace" xml:space="preserve">
     <value>'{0}' is prefix for the global namespace.</value>
   </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>BAML decompiler</value>
+  </data>
   <data name="SaveBAML" xml:space="preserve">
     <value>_Save BAML...</value>
   </data>

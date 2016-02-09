@@ -168,6 +168,9 @@
   <data name="OverriddenByTreeNode" xml:space="preserve">
     <value>Overridden By</value>
   </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Analyzes assemblies</value>
+  </data>
   <data name="PropertyGetterTreeNode" xml:space="preserve">
     <value>get</value>
   </data>

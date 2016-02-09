@@ -17,13 +17,21 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Reflection;
+
 namespace dnSpy.Contracts.Plugin {
 	/// <summary>
 	/// Plugin information
 	/// </summary>
 	public sealed class PluginInfo {
-		/// <summary>Short description</summary>
+		/// <summary>
+		/// Short description or null
+		/// </summary>
 		public string ShortDescription { get; set; }
-		//TODO: Add more stuff...
+
+		/// <summary>
+		/// Copyright message or null to get it from the assembly's <see cref="AssemblyCopyrightAttribute"/>
+		/// </summary>
+		public string Copyright { get; set; }
 	}
 }

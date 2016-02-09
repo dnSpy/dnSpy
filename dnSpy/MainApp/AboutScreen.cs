@@ -20,13 +20,17 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.IO;
+using System.Reflection;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Settings;
 using dnSpy.Decompiler.Shared;
+using dnSpy.Plugin;
 using dnSpy.Properties;
 using dnSpy.Shared.Decompiler;
 using dnSpy.Shared.Menus;
@@ -35,10 +39,12 @@ namespace dnSpy.MainApp {
 	[Export, ExportFileTabContentFactory(Order = double.MaxValue)]
 	sealed class DecompileFileTabContentFactory : IFileTabContentFactory {
 		readonly IAppWindow appWindow;
+		readonly IPluginManager pluginManager;
 
 		[ImportingConstructor]
-		DecompileFileTabContentFactory(IAppWindow appWindow) {
+		DecompileFileTabContentFactory(IAppWindow appWindow, IPluginManager pluginManager) {
 			this.appWindow = appWindow;
+			this.pluginManager = pluginManager;
 		}
 
 		public IFileTabContent Create(IFileTabContentFactoryContext context) {
@@ -49,7 +55,7 @@ namespace dnSpy.MainApp {
 
 		public IFileTabContent Deserialize(Guid guid, ISettingsSection section, IFileTabContentFactoryContext context) {
 			if (guid == GUID_SerializedContent)
-				return new AboutScreenFileTabContent(appWindow);
+				return new AboutScreenFileTabContent(appWindow, pluginManager);
 			return null;
 		}
 
@@ -64,16 +70,18 @@ namespace dnSpy.MainApp {
 	sealed class AboutScreenMenuItem : MenuItemBase {
 		readonly IFileTabManager fileTabManager;
 		readonly IAppWindow appWindow;
+		readonly IPluginManager pluginManager;
 
 		[ImportingConstructor]
-		AboutScreenMenuItem(IFileTabManager fileTabManager, IAppWindow appWindow) {
+		AboutScreenMenuItem(IFileTabManager fileTabManager, IAppWindow appWindow, IPluginManager pluginManager) {
 			this.fileTabManager = fileTabManager;
 			this.appWindow = appWindow;
+			this.pluginManager = pluginManager;
 		}
 
 		public override void Execute(IMenuItemContext context) {
 			var tab = fileTabManager.GetOrCreateActiveTab();
-			tab.Show(new AboutScreenFileTabContent(appWindow), null, null);
+			tab.Show(new AboutScreenFileTabContent(appWindow, pluginManager), null, null);
 			fileTabManager.SetFocus(tab);
 		}
 	}
@@ -94,13 +102,15 @@ namespace dnSpy.MainApp {
 		}
 
 		readonly IAppWindow appWindow;
+		readonly IPluginManager pluginManager;
 
-		public AboutScreenFileTabContent(IAppWindow appWindow) {
+		public AboutScreenFileTabContent(IAppWindow appWindow, IPluginManager pluginManager) {
 			this.appWindow = appWindow;
+			this.pluginManager = pluginManager;
 		}
 
 		public IFileTabContent Clone() {
-			return new AboutScreenFileTabContent(appWindow);
+			return new AboutScreenFileTabContent(appWindow, pluginManager);
 		}
 
 		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) {
@@ -124,10 +134,100 @@ namespace dnSpy.MainApp {
 			return null;
 		}
 
+		sealed class Info {
+			public readonly Assembly Assembly;
+			public readonly PluginInfo PluginInfo;
+
+			public string Name {
+				get {
+					var s = Path.GetFileNameWithoutExtension(Assembly.Location);
+					const string PLUGIN = ".Plugin";
+					if (s.EndsWith(PLUGIN, StringComparison.OrdinalIgnoreCase))
+						s = s.Substring(0, s.Length - PLUGIN.Length);
+					return s;
+				}
+			}
+
+			public string Copyright {
+				get {
+					var c = PluginInfo.Copyright;
+					if (!string.IsNullOrEmpty(c))
+						return c;
+					var attr = Assembly.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
+					if (attr.Length == 0)
+						return string.Empty;
+					return ((AssemblyCopyrightAttribute)attr[0]).Copyright;
+				}
+			}
+
+			public string ShortDescription {
+				get {
+					var s = PluginInfo.ShortDescription;
+					if (!string.IsNullOrEmpty(s))
+						return s;
+					var attr = Assembly.GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false);
+					if (attr.Length == 0)
+						return string.Empty;
+					return ((AssemblyDescriptionAttribute)attr[0]).Description;
+				}
+			}
+
+			public Info(Assembly asm, PluginInfo info) {
+				this.Assembly = asm;
+				this.PluginInfo = info;
+			}
+		}
+
 		void Write(AvalonEditTextOutput output) {
 			output.WriteLine(string.Format("dnSpy {0}", appWindow.AssemblyInformationalVersion), TextTokenKind.Text);
+			output.WriteLine();
+			output.WriteLine(dnSpy_Resources.AboutScreen_LicenseInfo, TextTokenKind.Text);
+			output.WriteLine();
+			output.WriteLine(dnSpy_Resources.AboutScreen_LoadedFiles, TextTokenKind.Text);
+			foreach (var info in GetInfos()) {
+				output.WriteLine();
+				WriteShortInfo(output, info.Name);
+				WriteShortInfo(output, info.Copyright);
+				WriteShortInfo(output, info.ShortDescription);
+			}
+		}
 
-			//TODO: Add more stuff...
+		void WriteShortInfo(AvalonEditTextOutput output, string s) {
+			if (string.IsNullOrEmpty(s))
+				return;
+			const int MAX_SHORT_LEN = 128;
+			if (s.Length > MAX_SHORT_LEN)
+				s = s.Substring(0, MAX_SHORT_LEN) + "[...]";
+			output.WriteLine(string.Format("  {0}", s), TextTokenKind.Text);
+		}
+
+		List<Info> GetInfos() {
+			var infos = new List<Info>();
+
+			infos.Add(new Info(GetType().Assembly, CreateDnSpyInfo()));
+
+			var toPlugin = new Dictionary<Assembly, IPlugin>();
+			foreach (var plugin in pluginManager.Plugins)
+				toPlugin[plugin.GetType().Assembly] = plugin;
+
+			// The plugins in LoadedPlugins were added in random order, and will also be shown in
+			// the same random order.
+			foreach (var x in pluginManager.LoadedPlugins) {
+				PluginInfo pluginInfo;
+				IPlugin plugin;
+				if (toPlugin.TryGetValue(x.Assembly, out plugin))
+					pluginInfo = plugin.PluginInfo;
+				else
+					pluginInfo = new PluginInfo();
+
+				infos.Add(new Info(x.Assembly, pluginInfo));
+			}
+
+			return infos;
+		}
+
+		static PluginInfo CreateDnSpyInfo() {
+			return new PluginInfo();
 		}
 	}
 }

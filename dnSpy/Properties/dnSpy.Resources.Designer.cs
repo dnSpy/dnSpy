@@ -115,6 +115,24 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to dnSpy is licensed under GPLv3..
+        /// </summary>
+        public static string AboutScreen_LicenseInfo {
+            get {
+                return ResourceManager.GetString("AboutScreen_LicenseInfo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loaded files:.
+        /// </summary>
+        public static string AboutScreen_LoadedFiles {
+            get {
+                return ResourceManager.GetString("AboutScreen_LoadedFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to All Files.
         /// </summary>
         public static string AllFiles {

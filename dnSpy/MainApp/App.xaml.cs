@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -35,6 +36,8 @@ using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Settings;
+using dnSpy.Culture;
 using dnSpy.Files.Tabs;
 using dnSpy.Plugin;
 using dnSpy.Settings;
@@ -75,6 +78,7 @@ namespace dnSpy.MainApp {
 		Lazy<IFileTreeView> fileTreeView = null;
 		[Import]
 		Lazy<ILanguageManager> languageManager = null;
+		readonly List<LoadedPlugin> loadedPlugins = new List<LoadedPlugin>();
 		CompositionContainer compositionContainer;
 
 		readonly IAppCommandLineArgs args;
@@ -87,13 +91,51 @@ namespace dnSpy.MainApp {
 			InitializeComponent();
 			UIFixes();
 
-			var asms = new List<Assembly>();
-			asms.Add(typeof(EnumVM).Assembly);			// dnSpy.Shared
-			compositionContainer = AppCreator.Create(asms, "*.Plugin.dll", readSettings);
+			InitializeMEF(readSettings);
 			compositionContainer.ComposeParts(this);
+			this.pluginManager.LoadedPlugins = this.loadedPlugins;
 			this.appWindow.CommandLineArgs = this.args;
 
 			this.Exit += App_Exit;
+		}
+
+		void InitializeMEF(bool readSettings) {
+			compositionContainer = InitializeCompositionContainer();
+			if (readSettings) {
+				var settingsManager = compositionContainer.GetExportedValue<ISettingsManager>();
+				try {
+					new XmlSettingsReader(settingsManager).Read();
+				}
+				catch {
+				}
+			}
+
+			// Make sure its ctor gets called early so it can initialize the culture
+			compositionContainer.GetExportedValue<ICultureManager>();
+		}
+
+		CompositionContainer InitializeCompositionContainer() {
+			var aggregateCatalog = new AggregateCatalog();
+			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(GetType().Assembly));
+			aggregateCatalog.Catalogs.Add(new AssemblyCatalog(typeof(EnumVM).Assembly));// dnSpy.Shared
+			AddPluginFiles(aggregateCatalog);
+			return new CompositionContainer(aggregateCatalog);
+		}
+
+		void AddPluginFiles(AggregateCatalog aggregateCatalog) {
+			var dir = Path.GetDirectoryName(GetType().Assembly.Location);
+			var random = new Random();
+			var files = Directory.GetFiles(dir, "*.Plugin.dll").OrderBy(a => random.Next()).ToArray();
+			foreach (var file in files) {
+				try {
+					var asm = Assembly.LoadFile(file);
+					aggregateCatalog.Catalogs.Add(new AssemblyCatalog(asm));
+					loadedPlugins.Add(new LoadedPlugin(asm));
+				}
+				catch (Exception ex) {
+					Debug.Fail(string.Format("Failed to load file '{0}', msg: {1}", file, ex.Message));
+				}
+			}
 		}
 
 		[return: MarshalAs(UnmanagedType.Bool)]

@@ -2236,6 +2236,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to .NET debugger.
+        /// </summary>
+        public static string Plugin_ShortDescription {
+            get {
+                return ResourceManager.GetString("Plugin_ShortDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to CoreCLR.
         /// </summary>
         public static string Process_CLR_CoreCLR {

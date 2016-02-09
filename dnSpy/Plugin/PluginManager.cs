@@ -21,15 +21,39 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using dnSpy.Contracts.Plugin;
 
 namespace dnSpy.Plugin {
-	[Export, PartCreationPolicy(CreationPolicy.Shared)]
-	sealed class PluginManager {
+	interface IPluginManager {
+		IEnumerable<IPlugin> Plugins { get; }
+		IEnumerable<LoadedPlugin> LoadedPlugins { get; }
+	}
+
+	[Export, Export(typeof(IPluginManager)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class PluginManager : IPluginManager {
 		readonly Lazy<IAutoLoaded, IAutoLoadedMetadata>[] mefAutoLoaded;
 		readonly Lazy<IPlugin, IPluginMetadata>[] mefPlugins;
+
+		public IEnumerable<IPlugin> Plugins {
+			get { return mefPlugins.Select(a => a.Value); }
+		}
+
+		public IEnumerable<LoadedPlugin> LoadedPlugins {
+			get {
+				Debug.Assert(loadedPlugins != null, "Called too early");
+				return (loadedPlugins ?? new LoadedPlugin[0]).AsEnumerable();
+			}
+			internal set {
+				Debug.Assert(loadedPlugins == null);
+				if (loadedPlugins != null)
+					throw new InvalidOperationException();
+				loadedPlugins = value.ToArray();
+			}
+		}
+		LoadedPlugin[] loadedPlugins = null;
 
 		[ImportingConstructor]
 		PluginManager([ImportMany] IEnumerable<Lazy<IAutoLoaded, IAutoLoadedMetadata>> mefAutoLoaded, [ImportMany] IEnumerable<Lazy<IPlugin, IPluginMetadata>> mefPlugins) {

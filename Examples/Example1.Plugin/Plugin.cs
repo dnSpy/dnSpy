@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using dnSpy.Contracts.Plugin;
 
 // Each plugin should export one class implementing IPlugin
@@ -16,7 +15,9 @@ namespace Example1.Plugin {
 
 		public PluginInfo PluginInfo {
 			get {
-				throw new NotImplementedException();
+				return new PluginInfo {
+					ShortDescription = "Example1 plugin",
+				};
 			}
 		}
 

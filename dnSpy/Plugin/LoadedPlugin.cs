@@ -17,26 +17,14 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using dnSpy.Contracts.Plugin;
-using dnSpy.Debugger.Properties;
+using System.Reflection;
 
-namespace dnSpy.Debugger {
-	[ExportPlugin]
-	sealed class Plugin : IPlugin {
-		public IEnumerable<string> MergedResourceDictionaries {
-			get { yield return "Themes/wpf.styles.templates.xaml"; }
-		}
+namespace dnSpy.Plugin {
+	sealed class LoadedPlugin {
+		public Assembly Assembly { get; private set; }
 
-		public PluginInfo PluginInfo {
-			get {
-				return new PluginInfo {
-					ShortDescription = dnSpy_Debugger_Resources.Plugin_ShortDescription,
-				};
-			}
-		}
-
-		public void OnEvent(PluginEvent @event, object obj) {
+		public LoadedPlugin(Assembly asm) {
+			this.Assembly = asm;
 		}
 	}
 }

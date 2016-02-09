@@ -374,5 +374,14 @@ namespace dnSpy.Languages.ILSpy.Properties {
                 return ResourceManager.GetString("ILDecompilerSettingsTabName", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ILSpy decompiler.
+        /// </summary>
+        public static string Plugin_ShortDescription {
+            get {
+                return ResourceManager.GetString("Plugin_ShortDescription", resourceCulture);
+            }
+        }
     }
 }

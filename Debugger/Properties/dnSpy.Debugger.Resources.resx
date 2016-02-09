@@ -1218,4 +1218,7 @@ Are you sure you want to expand it?</value>
   <data name="ShowParameterTypesCommand2" xml:space="preserve">
     <value>Show Parameter Types</value>
   </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>.NET debugger</value>
+  </data>
 </root>

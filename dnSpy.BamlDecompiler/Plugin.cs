@@ -20,9 +20,9 @@
 	THE SOFTWARE.
 */
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using dnSpy.BamlDecompiler.Properties;
 using dnSpy.Contracts.Plugin;
 
 namespace dnSpy.BamlDecompiler {
@@ -38,7 +38,9 @@ namespace dnSpy.BamlDecompiler {
 
 		public PluginInfo PluginInfo {
 			get {
-				throw new NotImplementedException();//TODO:
+				return new PluginInfo {
+					ShortDescription = dnSpy_BamlDecompiler_Resources.Plugin_ShortDescription,
+				};
 			}
 		}
 

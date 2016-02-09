@@ -4931,6 +4931,15 @@ namespace dnSpy.AsmEditor.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Assembly editor.
+        /// </summary>
+        public static string Plugin_ShortDescription {
+            get {
+                return ResourceManager.GetString("Plugin_ShortDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Default value for this property.
         /// </summary>
         public static string Property_DefaultValue {

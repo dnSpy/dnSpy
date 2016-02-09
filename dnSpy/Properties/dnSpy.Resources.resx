@@ -908,4 +908,10 @@
   <data name="MemberKind_Properties" xml:space="preserve">
     <value>Properties</value>
   </data>
+  <data name="AboutScreen_LicenseInfo" xml:space="preserve">
+    <value>dnSpy is licensed under GPLv3.</value>
+  </data>
+  <data name="AboutScreen_LoadedFiles" xml:space="preserve">
+    <value>Loaded files:</value>
+  </data>
 </root>

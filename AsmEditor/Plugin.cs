@@ -17,11 +17,11 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Windows;
+using dnSpy.AsmEditor.Properties;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Plugin;
 
@@ -52,7 +52,9 @@ namespace dnSpy.AsmEditor {
 
 		public PluginInfo PluginInfo {
 			get {
-				throw new NotImplementedException();
+				return new PluginInfo {
+					ShortDescription = dnSpy_AsmEditor_Resources.Plugin_ShortDescription,
+				};
 			}
 		}
 

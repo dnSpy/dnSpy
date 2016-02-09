@@ -214,6 +214,15 @@ namespace dnSpy.Analyzer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Analyzes assemblies.
+        /// </summary>
+        public static string Plugin_ShortDescription {
+            get {
+                return ResourceManager.GetString("Plugin_ShortDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to get.
         /// </summary>
         public static string PropertyGetterTreeNode {

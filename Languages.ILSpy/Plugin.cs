@@ -17,10 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Languages.ILSpy.Properties;
 
 namespace dnSpy.Languages.ILSpy {
 	[ExportPlugin]
@@ -35,7 +35,9 @@ namespace dnSpy.Languages.ILSpy {
 
 		public PluginInfo PluginInfo {
 			get {
-				throw new NotImplementedException();//TODO:
+				return new PluginInfo {
+					ShortDescription = dnSpy_Languages_ILSpy_Resources.Plugin_ShortDescription,
+				};
 			}
 		}
 

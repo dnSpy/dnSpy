@@ -17,9 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using dnSpy.Analyzer.Properties;
 using dnSpy.Contracts.Plugin;
 
 namespace dnSpy.Analyzer {
@@ -35,7 +35,9 @@ namespace dnSpy.Analyzer {
 
 		public PluginInfo PluginInfo {
 			get {
-				throw new NotImplementedException();//TODO:
+				return new PluginInfo {
+					ShortDescription = dnSpy_Analyzer_Resources.Plugin_ShortDescription,
+				};
 			}
 		}
 

@@ -151,6 +151,15 @@ namespace dnSpy.BamlDecompiler.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to BAML decompiler.
+        /// </summary>
+        public static string Plugin_ShortDescription {
+            get {
+                return ResourceManager.GetString("Plugin_ShortDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Save BAML....
         /// </summary>
         public static string SaveBAML {

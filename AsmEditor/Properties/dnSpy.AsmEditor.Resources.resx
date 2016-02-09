@@ -2411,4 +2411,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
   <data name="GoToMetaDataTableRow_RID" xml:space="preserve">
     <value>_RID</value>
   </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Assembly editor</value>
+  </data>
 </root>

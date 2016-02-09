@@ -232,7 +232,6 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainApp\AppCommandLineArgs.cs" />
-    <Compile Include="MainApp\AppCreator.cs" />
     <Compile Include="MainApp\AppSettings.cs" />
     <Compile Include="MainApp\AppStatusBar.cs" />
     <Compile Include="MainApp\AppToolBar.cs" />
@@ -266,6 +265,7 @@
     <Compile Include="Menus\MenuItemContext.cs" />
     <Compile Include="Menus\MenuManager.cs" />
     <Compile Include="MVVM\InitializeDataTemplateContextMenu.cs" />
+    <Compile Include="Plugin\LoadedPlugin.cs" />
     <Compile Include="Plugin\PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

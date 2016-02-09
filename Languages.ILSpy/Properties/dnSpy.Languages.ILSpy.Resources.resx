@@ -222,4 +222,7 @@
   <data name="ILDecompilerSettingsTabName" xml:space="preserve">
     <value>IL</value>
   </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>ILSpy decompiler</value>
+  </data>
 </root>
