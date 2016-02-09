@@ -85,6 +85,7 @@ namespace dnSpy.Languages.MSBuild {
 
 		List<ResXDataNode> ReadResourceEntries(DecompileContext ctx) {
 			var list = new List<ResXDataNode>();
+			int errors = 0;
 			try {
 				using (var reader = new ResourceReader(embeddedResource.GetResourceStream())) {
 					var iter = reader.GetEnumerator();
@@ -100,7 +101,8 @@ namespace dnSpy.Languages.MSBuild {
 							list.Add(new ResXDataNode(key, iter.Value, TypeNameConverter));
 						}
 						catch (Exception ex) {
-							ctx.Logger.Error(string.Format("Could not add resource '{0}', Message: {1}", key, ex.Message));
+							if (errors++ < 30)
+								ctx.Logger.Error(string.Format("Could not add resource '{0}', Message: {1}", key, ex.Message));
 						}
 					}
 				}
