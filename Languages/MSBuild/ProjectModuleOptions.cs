@@ -47,6 +47,11 @@ namespace dnSpy.Languages.MSBuild {
 		public bool DontReferenceStdLib { get; set; }
 
 		/// <summary>
+		/// Project version or null to use <see cref="ProjectCreatorOptions.ProjectVersion"/>
+		/// </summary>
+		public ProjectVersion? ProjectVersion { get; set; }
+
+		/// <summary>
 		/// Project guid, initialized to a random guid in the constructor
 		/// </summary>
 		public Guid ProjectGuid { get; set; }

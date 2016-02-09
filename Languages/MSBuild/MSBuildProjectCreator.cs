@@ -119,7 +119,7 @@ namespace dnSpy.Languages.MSBuild {
 					AppCulture.InitializeCulture();
 					options.CancellationToken.ThrowIfCancellationRequested();
 					try {
-						var writer = new ProjectWriter(p, options.ProjectVersion, projects, options.UserGACPaths);
+						var writer = new ProjectWriter(p, p.Options.ProjectVersion ?? options.ProjectVersion, projects, options.UserGACPaths);
 						writer.Write();
 					}
 					catch (OperationCanceledException) {
