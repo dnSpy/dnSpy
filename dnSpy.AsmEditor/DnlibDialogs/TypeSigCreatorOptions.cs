@@ -61,7 +61,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 
 		public TypeSigCreatorOptions(ModuleDef ownerModule, ILanguageManager languageManager) {
 			this.OwnerModule = ownerModule;
-			this.Language = languageManager.SelectedLanguage;
+			this.Language = languageManager.Language;
 			this.LanguageManager = languageManager;
 		}
 

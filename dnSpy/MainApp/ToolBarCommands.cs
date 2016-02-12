@@ -63,7 +63,7 @@ namespace dnSpy.MainApp {
 			set {
 				if (selectedItem != value) {
 					selectedItem = value;
-					languageManager.SelectedLanguage = ((LanguageInfo)value).Language;
+					languageManager.Language = ((LanguageInfo)value).Language;
 					if (PropertyChanged != null)
 						PropertyChanged(this, new PropertyChangedEventArgs("SelectedItem"));
 				}
@@ -84,7 +84,7 @@ namespace dnSpy.MainApp {
 		[ImportingConstructor]
 		LanguageComboBoxToolbarCommand(ILanguageManager languageManager) {
 			this.languageManager = languageManager;
-			this.infos = languageManager.Languages.OrderBy(a => a.OrderUI).Select(a => new LanguageInfo { Language = a }).ToList();
+			this.infos = languageManager.AllLanguages.OrderBy(a => a.OrderUI).Select(a => new LanguageInfo { Language = a }).ToList();
 			UpdateSelectedItem();
 			this.comboBox = new ComboBox {
 				DisplayMemberPath = "Name",
@@ -98,7 +98,7 @@ namespace dnSpy.MainApp {
 		}
 
 		void UpdateSelectedItem() {
-			SelectedItem = infos.First(a => a.Language == languageManager.SelectedLanguage);
+			SelectedItem = infos.First(a => a.Language == languageManager.Language);
 		}
 
 		void LanguageManager_LanguageChanged(object sender, EventArgs e) {

@@ -47,9 +47,9 @@ namespace dnSpy.Files.Tabs {
 			if (langContent == null)
 				return;
 			var languageManager = (ILanguageManager)sender;
-			if (langContent.Language == languageManager.SelectedLanguage)
+			if (langContent.Language == languageManager.Language)
 				return;
-			langContent.Language = languageManager.SelectedLanguage;
+			langContent.Language = languageManager.Language;
 			fileTabManager.Refresh(new IFileTab[] { tab });
 		}
 	}

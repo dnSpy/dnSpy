@@ -126,7 +126,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		public override void Execute(BreakpointCtxMenuContext context) {
 			var output = new NoSyntaxHighlightOutput();
 			foreach (var vm in context.SelectedItems) {
-				var printer = new BreakpointPrinter(output, debuggerSettings.UseHexadecimal, languageManager.SelectedLanguage);
+				var printer = new BreakpointPrinter(output, debuggerSettings.UseHexadecimal, languageManager.Language);
 				printer.WriteName(vm);
 				output.Write("\t", TextTokenKind.Text);
 				printer.WriteAssembly(vm);

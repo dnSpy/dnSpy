@@ -28,15 +28,15 @@ namespace dnSpy.Contracts.Languages {
 		/// <summary>
 		/// Gets all languages
 		/// </summary>
-		IEnumerable<ILanguage> Languages { get; }
+		IEnumerable<ILanguage> AllLanguages { get; }
 
 		/// <summary>
 		/// Current default language
 		/// </summary>
-		ILanguage SelectedLanguage { get; set; }
+		ILanguage Language { get; set; }
 
 		/// <summary>
-		/// Raised when <see cref="SelectedLanguage"/> has been updated
+		/// Raised when <see cref="Language"/> has been updated
 		/// </summary>
 		event EventHandler<EventArgs> LanguageChanged;
 

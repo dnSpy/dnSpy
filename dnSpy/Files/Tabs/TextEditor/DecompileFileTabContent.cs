@@ -72,11 +72,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public IFileTabContent Create(IFileTabContentFactoryContext context) {
-			return new DecompileFileTabContent(this, context.Nodes, languageManager.SelectedLanguage);
+			return new DecompileFileTabContent(this, context.Nodes, languageManager.Language);
 		}
 
 		public IFileTabContent Create(IFileTreeNodeData[] nodes) {
-			return new DecompileFileTabContent(this, nodes, languageManager.SelectedLanguage);
+			return new DecompileFileTabContent(this, nodes, languageManager.Language);
 		}
 
 		static readonly Guid GUID_SerializedContent = new Guid("DE0390B0-747C-4F53-9CFF-1D10B93DD5DD");
@@ -184,7 +184,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		void UpdateLanguage() {
 			if (FileTab.IsActiveTab)
-				decompileFileTabContentFactory.LanguageManager.SelectedLanguage = language;
+				decompileFileTabContentFactory.LanguageManager.Language = language;
 		}
 
 		public void OnSelected() {

@@ -206,7 +206,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		ISearchResult searchResult;
 
 		public IEnumerable<ILanguage> AllLanguages {
-			get { return languageManager.Languages; }
+			get { return languageManager.AllLanguages; }
 		}
 
 		public ILanguage Language {
@@ -241,7 +241,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 			this.fileSearcherCreator = fileSearcherCreator;
 			this.languageManager = languageManager;
 			this.fileTreeView = fileTreeView;
-			this.language = languageManager.SelectedLanguage;
+			this.language = languageManager.Language;
 			this.filter = filter;
 			this.delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
 			this.searchResults = new ObservableCollection<ISearchResult>();

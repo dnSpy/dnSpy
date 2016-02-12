@@ -60,7 +60,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		[ImportingConstructor]
 		BreakpointsVM(ILanguageManager languageManager, IImageManager imageManager, IThemeManager themeManager, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IBreakpointManager breakpointManager, IBreakpointSettings breakpointSettings, Lazy<IModuleLoader> moduleLoader, IInMemoryModuleManager inMemoryModuleManager) {
 			this.breakpointContext = new BreakpointContext(imageManager, moduleLoader) {
-				Language = languageManager.SelectedLanguage,
+				Language = languageManager.Language,
 				SyntaxHighlight = debuggerSettings.SyntaxHighlightBreakpoints,
 				UseHexadecimal = debuggerSettings.UseHexadecimal,
 				ShowTokens = breakpointSettings.ShowTokens,
@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
 			var languageManager = (ILanguageManager)sender;
-			breakpointContext.Language = languageManager.SelectedLanguage;
+			breakpointContext.Language = languageManager.Language;
 			RefreshLanguageFields();
 		}
 

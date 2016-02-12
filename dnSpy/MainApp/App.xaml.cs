@@ -274,7 +274,7 @@ namespace dnSpy.MainApp {
 
 			var lang = GetLanguage(appArgs.Language);
 			if (lang != null)
-				languageManager.Value.SelectedLanguage = lang;
+				languageManager.Value.Language = lang;
 
 			var files = appArgs.Filenames.ToArray();
 			if (files.Length > 0)
@@ -292,8 +292,8 @@ namespace dnSpy.MainApp {
 					return lang;
 			}
 
-			return languageManager.Value.Languages.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.UniqueNameUI, language)) ??
-				languageManager.Value.Languages.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.GenericNameUI, language));
+			return languageManager.Value.AllLanguages.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.UniqueNameUI, language)) ??
+				languageManager.Value.AllLanguages.FirstOrDefault(a => StringComparer.OrdinalIgnoreCase.Equals(a.GenericNameUI, language));
 		}
 	}
 }

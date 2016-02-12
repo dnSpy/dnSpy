@@ -210,7 +210,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 		}
 
 		public IEnumerable<ILanguage> AllLanguages {
-			get { return options.LanguageManager.Languages; }
+			get { return options.LanguageManager.AllLanguages; }
 		}
 
 		public ILanguage Language {

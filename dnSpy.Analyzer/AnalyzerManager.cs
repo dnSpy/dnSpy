@@ -112,7 +112,7 @@ namespace dnSpy.Analyzer {
 
 			this.context = new AnalyzerTreeNodeDataContext {
 				DotNetImageManager = dotNetImageManager,
-				Language = languageManager.SelectedLanguage,
+				Language = languageManager.Language,
 				FileManager = fileManager,
 				ShowToken = analyzerSettings.ShowToken,
 				SingleClickExpandsChildren = analyzerSettings.SingleClickExpandsChildren,
@@ -173,7 +173,7 @@ namespace dnSpy.Analyzer {
 		}
 
 		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
-			this.context.Language = ((ILanguageManager)sender).SelectedLanguage;
+			this.context.Language = ((ILanguageManager)sender).Language;
 			RefreshNodes();
 		}
 

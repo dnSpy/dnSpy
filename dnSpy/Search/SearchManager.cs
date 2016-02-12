@@ -106,7 +106,7 @@ namespace dnSpy.Search {
 			this.fileTabManager = fileTabManager;
 			this.searchControl = new SearchControl();
 			this.vmSearch = new SearchControlVM(imageManager, fileSearcherCreator, fileTabManager.FileTreeView, searchSettings) {
-				Language = languageManager.SelectedLanguage,
+				Language = languageManager.Language,
 				BackgroundType = BackgroundType.Search,
 			};
 			this.searchControl.DataContext = this.vmSearch;
@@ -177,7 +177,7 @@ namespace dnSpy.Search {
 
 		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
 			var languageManager = (ILanguageManager)sender;
-			vmSearch.Language = languageManager.SelectedLanguage;
+			vmSearch.Language = languageManager.Language;
 			RefreshSearchResults();
 		}
 

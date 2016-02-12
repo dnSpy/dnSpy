@@ -43,7 +43,7 @@ namespace dnSpy.Languages {
 			this.languageChanged = new WeakEventList<EventArgs>();
 		}
 
-		public ILanguage SelectedLanguage {
+		public ILanguage Language {
 			get { return selectedLanguage; }
 			set {
 				if (value == null)
@@ -65,16 +65,16 @@ namespace dnSpy.Languages {
 		}
 		readonly WeakEventList<EventArgs> languageChanged;
 
-		public IEnumerable<ILanguage> Languages {
+		public IEnumerable<ILanguage> AllLanguages {
 			get { return languages.AsEnumerable(); }
 		}
 
 		public ILanguage Find(Guid guid) {
-			return this.Languages.FirstOrDefault(a => a.GenericGuid == guid || a.UniqueGuid == guid);
+			return this.AllLanguages.FirstOrDefault(a => a.GenericGuid == guid || a.UniqueGuid == guid);
 		}
 
 		public ILanguage FindOrDefault(Guid guid) {
-			return Find(guid) ?? Languages.FirstOrDefault();
+			return Find(guid) ?? AllLanguages.FirstOrDefault();
 		}
 	}
 }

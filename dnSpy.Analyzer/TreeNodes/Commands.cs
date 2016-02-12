@@ -77,11 +77,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		void TextEditor_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = AnalyzeCommand.CanAnalyze(TextEditor_GetMemberRef(), languageManager.SelectedLanguage);
+			e.CanExecute = AnalyzeCommand.CanAnalyze(TextEditor_GetMemberRef(), languageManager.Language);
 		}
 
 		void TextEditor_Executed(object sender, ExecutedRoutedEventArgs e) {
-			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.SelectedLanguage, TextEditor_GetMemberRef());
+			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, TextEditor_GetMemberRef());
 		}
 
 		IMemberRef TextEditor_GetMemberRef() {
@@ -93,11 +93,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		void FileTreeView_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = AnalyzeCommand.CanAnalyze(FileTreeView_GetMemberRef(), languageManager.SelectedLanguage);
+			e.CanExecute = AnalyzeCommand.CanAnalyze(FileTreeView_GetMemberRef(), languageManager.Language);
 		}
 
 		void FileTreeView_Executed(object sender, ExecutedRoutedEventArgs e) {
-			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.SelectedLanguage, FileTreeView_GetMemberRef());
+			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, FileTreeView_GetMemberRef());
 		}
 
 		IMemberRef FileTreeView_GetMemberRef() {
@@ -107,11 +107,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		void AnalyzerTreeView_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = AnalyzeCommand.CanAnalyze(AnalyzerTreeView_GetMemberRef(), languageManager.SelectedLanguage);
+			e.CanExecute = AnalyzeCommand.CanAnalyze(AnalyzerTreeView_GetMemberRef(), languageManager.Language);
 		}
 
 		void AnalyzerTreeView_Executed(object sender, ExecutedRoutedEventArgs e) {
-			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.SelectedLanguage, AnalyzerTreeView_GetMemberRef());
+			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, AnalyzerTreeView_GetMemberRef());
 		}
 
 		IMemberRef AnalyzerTreeView_GetMemberRef() {
@@ -121,11 +121,11 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		void SearchListBox_CanExecute(object sender, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = AnalyzeCommand.CanAnalyze(SearchListBox_GetMemberRef(e.Source as ListBox), languageManager.SelectedLanguage);
+			e.CanExecute = AnalyzeCommand.CanAnalyze(SearchListBox_GetMemberRef(e.Source as ListBox), languageManager.Language);
 		}
 
 		void SearchListBox_Executed(object sender, ExecutedRoutedEventArgs e) {
-			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.SelectedLanguage, SearchListBox_GetMemberRef(e.Source as ListBox));
+			AnalyzeCommand.Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, SearchListBox_GetMemberRef(e.Source as ListBox));
 		}
 
 		IMemberRef SearchListBox_GetMemberRef(ListBox listBox) {
@@ -168,13 +168,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 				foreach (var node in nodes) {
 					var mr = node as IMDTokenNode;
-					if (mr != null && CanAnalyze(mr.Reference as IMemberRef, languageManager.SelectedLanguage))
+					if (mr != null && CanAnalyze(mr.Reference as IMemberRef, languageManager.Language))
 						yield return mr.Reference as IMemberRef;
 				}
 			}
 
 			public override void Execute(IMenuItemContext context) {
-				Analyze(mainToolWindowManager, analyzerManager, languageManager.SelectedLanguage, GetMemberRefs(context));
+				Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, GetMemberRefs(context));
 			}
 		}
 
@@ -200,7 +200,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 
 			public override void Execute(IMenuItemContext context) {
-				Analyze(mainToolWindowManager, analyzerManager, languageManager.SelectedLanguage, GetMemberRefs(context));
+				Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, GetMemberRefs(context));
 			}
 		}
 
@@ -238,7 +238,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 
 			public override void Execute(IMenuItemContext context) {
-				Analyze(mainToolWindowManager, analyzerManager, languageManager.SelectedLanguage, GetMemberRefs(context));
+				Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, GetMemberRefs(context));
 			}
 		}
 
@@ -264,7 +264,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 			}
 
 			public override void Execute(IMenuItemContext context) {
-				Analyze(mainToolWindowManager, analyzerManager, languageManager.SelectedLanguage, GetMemberRefs(context));
+				Analyze(mainToolWindowManager, analyzerManager, languageManager.Language, GetMemberRefs(context));
 			}
 		}
 

@@ -43,7 +43,7 @@ namespace dnSpy.Search {
 		public IFileSearcher Create(FileSearcherOptions options) {
 			var searchResultContext = new SearchResultContext {
 				SyntaxHighlight = true,
-				Language = languageManager.SelectedLanguage,
+				Language = languageManager.Language,
 				ImageManager = imageManager,
 				BackgroundType = BackgroundType.Search,
 			};

@@ -71,7 +71,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		public override bool IsEnabled(IMenuItemContext context) {
-			return GetModules().Length > 0 && languageManager.Languages.Any(a => a.ProjectFileExtension != null);
+			return GetModules().Length > 0 && languageManager.AllLanguages.Any(a => a.ProjectFileExtension != null);
 		}
 
 		public override void Execute(IMenuItemContext context) {
@@ -79,9 +79,9 @@ namespace dnSpy.Files.Tabs {
 			if (modules.Length == 0)
 				return;
 
-			var lang = languageManager.SelectedLanguage;
+			var lang = languageManager.Language;
 			if (lang.ProjectFileExtension == null) {
-				lang = languageManager.Languages.FirstOrDefault(a => a.ProjectFileExtension != null);
+				lang = languageManager.AllLanguages.FirstOrDefault(a => a.ProjectFileExtension != null);
 				Debug.Assert(lang != null);
 				if (lang == null)
 					return;

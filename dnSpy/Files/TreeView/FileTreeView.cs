@@ -130,7 +130,7 @@ namespace dnSpy.Files.TreeView {
 				ShowAssemblyVersion = fileTreeViewSettings.ShowAssemblyVersion,
 				ShowAssemblyPublicKeyToken = fileTreeViewSettings.ShowAssemblyPublicKeyToken,
 				ShowToken = fileTreeViewSettings.ShowToken,
-				Language = languageManager.SelectedLanguage,
+				Language = languageManager.Language,
 				UseNewRenderer = appSettings.UseNewRenderer_FileTreeView,
 				DeserializeResources = fileTreeViewSettings.DeserializeResources,
 				CanDragAndDrop = isGlobal,
@@ -285,7 +285,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		void LanguageManager_LanguageChanged(object sender, EventArgs e) {
-			UpdateLanguage(((ILanguageManager)sender).SelectedLanguage);
+			UpdateLanguage(((ILanguageManager)sender).Language);
 		}
 
 		void UpdateLanguage(ILanguage newLanguage) {

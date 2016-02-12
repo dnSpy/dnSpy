@@ -96,7 +96,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		readonly EnumListVM projectVersionVM = new EnumListVM(EnumVM.Create(typeof(ProjectVersion)));
 
 		public IEnumerable<ILanguage> AllLanguages {
-			get { return languageManager.Languages.Where(a => a.ProjectFileExtension != null); }
+			get { return languageManager.AllLanguages.Where(a => a.ProjectFileExtension != null); }
 		}
 		readonly ILanguageManager languageManager;
 
@@ -272,7 +272,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			this.decompileXaml = canDecompileBaml;
 			this.createSolution = true;
 			this.projectVersionVM.SelectedItem = ProjectVersion.VS2010;
-			this.language = languageManager.Languages.FirstOrDefault(a => a.ProjectFileExtension != null);
+			this.language = languageManager.AllLanguages.FirstOrDefault(a => a.ProjectFileExtension != null);
 			this.isIndeterminate = false;
 		}
 
