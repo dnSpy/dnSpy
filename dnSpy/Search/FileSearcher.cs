@@ -123,13 +123,35 @@ namespace dnSpy.Search {
 				var searchMsg = SearchResult.CreateMessage(filterSearcherOptions.Context, dnSpy_Resources.Searching, TextTokenKind.Text, true);
 				SearchingResult = searchMsg;
 				AddSearchResultNoCheck(searchMsg);
-				var searcher = new FilterSearcher(filterSearcherOptions);
-				if (o is IDnSpyFileNode[])
-					searcher.SearchAssemblies((IDnSpyFileNode[])o);
-				else if (o is SearchTypeInfo[])
-					searcher.SearchTypes((SearchTypeInfo[])o);
+				var opts = new ParallelOptions {
+					CancellationToken = cancellationTokenSource.Token,
+					MaxDegreeOfParallelism = Environment.ProcessorCount,
+				};
+
+				if (o is IDnSpyFileNode[]) {
+					Parallel.ForEach((IDnSpyFileNode[])o, opts, node => {
+						AppCulture.InitializeCulture();
+						cancellationTokenSource.Token.ThrowIfCancellationRequested();
+						var searcher = new FilterSearcher(filterSearcherOptions);
+						searcher.SearchAssemblies(new IDnSpyFileNode[] { node });
+					});
+				}
+				else if (o is SearchTypeInfo[]) {
+					Parallel.ForEach((SearchTypeInfo[])o, opts, info => {
+						AppCulture.InitializeCulture();
+						cancellationTokenSource.Token.ThrowIfCancellationRequested();
+						var searcher = new FilterSearcher(filterSearcherOptions);
+						searcher.SearchTypes(new SearchTypeInfo[] { info });
+					});
+				}
 				else
 					throw new InvalidOperationException();
+			}
+			catch (AggregateException ex) {
+				if (ex.InnerExceptions.All(a => a is TooManyResultsException))
+					TooManyResults = true;
+				else
+					throw;
 			}
 			catch (TooManyResultsException) {
 				TooManyResults = true;
@@ -147,11 +169,13 @@ namespace dnSpy.Search {
 
 		void AddSearchResult(SearchResult result) {
 			cancellationTokenSource.Token.ThrowIfCancellationRequested();
-			if (totalResultsFound >= options.MaxResults) {
-				AddSearchResultNoCheck(SearchResult.CreateMessage(filterSearcherOptions.Context, string.Format(dnSpy_Resources.SearchAbortedMessage, options.MaxResults), TextTokenKind.Error, true));
-				throw new TooManyResultsException();
+			lock (lockObj) {
+				if (totalResultsFound++ >= options.MaxResults) {
+					if (totalResultsFound == options.MaxResults + 1)
+						AddSearchResultNoCheck(SearchResult.CreateMessage(filterSearcherOptions.Context, string.Format(dnSpy_Resources.SearchAbortedMessage, options.MaxResults), TextTokenKind.Error, true));
+					throw new TooManyResultsException();
+				}
 			}
-			totalResultsFound++;
 			AddSearchResultNoCheck(result);
 		}
 
