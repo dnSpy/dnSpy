@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Diagnostics;
 using dnSpy.Shared.Controls;
 using dnSpy.Shared.MVVM;
 
@@ -31,6 +32,18 @@ namespace dnSpy.Debugger.Dialogs {
 					data.PickFilename = new PickFilename();
 				}
 			};
+			Loaded += DebugProcessDlg_Loaded;
+		}
+
+		void DebugProcessDlg_Loaded(object sender, System.Windows.RoutedEventArgs e) {
+			Loaded -= DebugProcessDlg_Loaded;
+			var vm = DataContext as DebugProcessVM;
+			Debug.Assert(vm != null);
+			bool focusArgs = vm == null || !string.IsNullOrEmpty(vm.Filename);
+			if (focusArgs)
+				argsTextBox.Focus();
+			else
+				exeTextBox.Focus();
 		}
 	}
 }

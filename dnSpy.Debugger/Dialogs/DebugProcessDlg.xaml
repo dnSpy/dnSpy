@@ -33,7 +33,7 @@
     <winlocal:WindowBase.Resources>
         <mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
     </winlocal:WindowBase.Resources>
-    <Grid FocusManager.FocusedElement="{Binding ElementName=argsTextBox}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
