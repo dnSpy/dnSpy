@@ -95,6 +95,7 @@
     <Compile Include="Files\Tabs\Dialogs\ExportToProjectDlg.xaml.cs">
       <DependentUpon>ExportToProjectDlg.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Files\Tabs\Dialogs\ExportToProjectSettings.cs" />
     <Compile Include="Files\Tabs\Dialogs\ExportToProjectVM.cs" />
     <Compile Include="Files\Tabs\Dialogs\FileListColumnConverter.cs" />
     <Compile Include="Files\Tabs\Dialogs\FileListPrinter.cs" />

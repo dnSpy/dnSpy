@@ -87,6 +87,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 
 		public ProjectVersion ProjectVersion {
 			get { return (ProjectVersion)projectVersionVM.SelectedItem; }
+			set { projectVersionVM.SelectedItem = value; }
 		}
 
 		public EnumListVM ProjectVersionVM {

@@ -57,14 +57,16 @@ namespace dnSpy.Files.Tabs {
 		readonly IFileTreeView fileTreeView;
 		readonly ILanguageManager languageManager;
 		readonly IFileTreeViewSettings fileTreeViewSettings;
+		readonly IExportToProjectSettings exportToProjectSettings;
 		readonly Lazy<IBamlDecompiler> bamlDecompiler;
 
 		[ImportingConstructor]
-		ExportProjectCommand(IAppWindow appWindow, IFileTreeView fileTreeView, ILanguageManager languageManager, IFileTreeViewSettings fileTreeViewSettings, [ImportMany] IEnumerable<Lazy<IBamlDecompiler>> bamlDecompilers) {
+		ExportProjectCommand(IAppWindow appWindow, IFileTreeView fileTreeView, ILanguageManager languageManager, IFileTreeViewSettings fileTreeViewSettings, IExportToProjectSettings exportToProjectSettings, [ImportMany] IEnumerable<Lazy<IBamlDecompiler>> bamlDecompilers) {
 			this.appWindow = appWindow;
 			this.fileTreeView = fileTreeView;
 			this.languageManager = languageManager;
 			this.fileTreeViewSettings = fileTreeViewSettings;
+			this.exportToProjectSettings = exportToProjectSettings;
 			this.bamlDecompiler = bamlDecompilers.FirstOrDefault();
 		}
 
@@ -88,6 +90,7 @@ namespace dnSpy.Files.Tabs {
 			var task = new ExportTask(this, modules);
 			var vm = new ExportToProjectVM(new PickDirectory(), languageManager, task, bamlDecompiler != null);
 			task.vm = vm;
+			vm.ProjectVersion = exportToProjectSettings.ProjectVersion;
 			vm.CreateResX = fileTreeViewSettings.DeserializeResources;
 			vm.DontReferenceStdLib = modules.Any(a => a.Assembly.IsCorLib());
 			vm.Language = lang;
@@ -100,6 +103,8 @@ namespace dnSpy.Files.Tabs {
 			win.Owner = appWindow.MainWindow;
 			using (fileTreeView.FileManager.DisableAssemblyLoad())
 				win.ShowDialog();
+			if (vm.IsComplete)
+				exportToProjectSettings.ProjectVersion = vm.ProjectVersion;
 		}
 
 		sealed class ExportTask : IExportTask, IMSBuildProjectWriterLogger, IMSBuildProgressListener {
