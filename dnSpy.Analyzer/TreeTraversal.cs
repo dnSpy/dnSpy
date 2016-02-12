@@ -23,7 +23,7 @@ namespace dnSpy.Analyzer {
 	/// <summary>
 	/// Static helper methods for traversing trees.
 	/// </summary>
-	public static class TreeTraversal {
+	static class TreeTraversal {
 		/// <summary>
 		/// Converts a tree data structure into a flat list by traversing it in pre-order.
 		/// </summary>

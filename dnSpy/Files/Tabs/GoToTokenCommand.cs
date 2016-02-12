@@ -54,7 +54,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	public static class GoToTokenCommand {
+	static class GoToTokenCommand {
 		static ITokenResolver GetResolver(IFileTabManager fileTabManager, out IFileTab tab) {
 			tab = fileTabManager.ActiveTab;
 			if (tab == null)
