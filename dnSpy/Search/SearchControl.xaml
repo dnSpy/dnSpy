@@ -51,6 +51,7 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -59,12 +60,14 @@
             <TextBox Grid.Row="0" Grid.Column="0" Name="searchTextBox" VerticalAlignment="Stretch" Margin="0 0 5 0" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
             <Expander Grid.Row="0" Grid.Column="1" Name="expander" VerticalContentAlignment="Center" IsExpanded="False" Header="{x:Static p:dnSpy_Resources.SearchWindow_Options}" />
             <Label Grid.Row="0" Grid.Column="2" VerticalContentAlignment="Center" Content="{x:Static p:dnSpy_Resources.SearchWindow_SearchFor}"/>
-            <ComboBox Grid.Row="0" Grid.Column="3" Width="130" Margin="1" ItemsSource="{Binding SearchTypeVMs}" SelectedItem="{Binding SelectedSearchTypeVM}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
-            <WrapPanel Grid.Row="1" Grid.ColumnSpan="4" Margin="2 0 2 2" Orientation="Horizontal" Visibility="{Binding IsExpanded, ElementName=expander, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_MatchWholeWords}" IsChecked="{Binding MatchWholeWords}" />
-                <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_CaseSensitiveSearch}" IsChecked="{Binding CaseSensitive}" />
-                <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_MatchAny}" IsChecked="{Binding MatchAnySearchTerm}" />
-                <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_DecompileResources}" IsChecked="{Binding SearchDecompiledData}" />
+            <ComboBox Grid.Row="0" Grid.Column="3" Width="130" Margin="1 1 0 1" ItemsSource="{Binding SearchTypeVMs}" SelectedItem="{Binding SelectedSearchTypeVM}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
+            <ComboBox Grid.Row="0" Grid.Column="4" Width="130" Margin="1" ItemsSource="{Binding SearchLocationVM.Items}" SelectedIndex="{Binding SearchLocationVM.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
+            <WrapPanel Grid.Row="1" Grid.ColumnSpan="5" Margin="2 0 2 2" Orientation="Horizontal" Visibility="{Binding IsExpanded, ElementName=expander, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_MatchWholeWords}" IsChecked="{Binding SearchSettings.MatchWholeWords}" />
+                <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_CaseSensitiveSearch}" IsChecked="{Binding SearchSettings.CaseSensitive}" />
+                <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_MatchAny}" IsChecked="{Binding SearchSettings.MatchAnySearchTerm}" />
+                <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_DecompileResources}" IsChecked="{Binding SearchSettings.SearchDecompiledData}" />
+                <CheckBox Margin="0 5 5 0" Content="{x:Static p:dnSpy_Resources.SearchWindow_SearchGacAssemblies}" IsChecked="{Binding SearchSettings.SearchGacAssemblies}" />
             </WrapPanel>
         </Grid>
         <ListBox Grid.Row="1"

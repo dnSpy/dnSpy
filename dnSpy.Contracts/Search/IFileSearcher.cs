@@ -65,6 +65,12 @@ namespace dnSpy.Contracts.Search {
 		void Start(IEnumerable<IDnSpyFileNode> files);
 
 		/// <summary>
+		/// Starts the search
+		/// </summary>
+		/// <param name="typeInfos">Types to search</param>
+		void Start(IEnumerable<SearchTypeInfo> typeInfos);
+
+		/// <summary>
 		/// Cancels the search
 		/// </summary>
 		void Cancel();

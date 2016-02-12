@@ -25,7 +25,12 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Search {
 	interface ISearchSettings : INotifyPropertyChanged {
-		bool SyntaxHighlight { get; }
+		bool SyntaxHighlight { get; set; }
+		bool MatchWholeWords { get; set; }
+		bool CaseSensitive { get; set; }
+		bool MatchAnySearchTerm { get; set; }
+		bool SearchDecompiledData { get; set; }
+		bool SearchGacAssemblies { get; set; }
 	}
 
 	class SearchSettings : ViewModelBase, ISearchSettings {
@@ -44,12 +49,77 @@ namespace dnSpy.Search {
 		}
 		bool syntaxHighlight = true;
 
+		public bool MatchWholeWords {
+			get { return matchWholeWords; }
+			set {
+				if (matchWholeWords != value) {
+					matchWholeWords = value;
+					OnPropertyChanged("MatchWholeWords");
+					OnModified();
+				}
+			}
+		}
+		bool matchWholeWords = false;
+
+		public bool CaseSensitive {
+			get { return caseSensitive; }
+			set {
+				if (caseSensitive != value) {
+					caseSensitive = value;
+					OnPropertyChanged("CaseSensitive");
+					OnModified();
+				}
+			}
+		}
+		bool caseSensitive = false;
+
+		public bool MatchAnySearchTerm {
+			get { return matchAnySearchTerm; }
+			set {
+				if (matchAnySearchTerm != value) {
+					matchAnySearchTerm = value;
+					OnPropertyChanged("MatchAnySearchTerm");
+					OnModified();
+				}
+			}
+		}
+		bool matchAnySearchTerm = false;
+
+		public bool SearchDecompiledData {
+			get { return searchDecompiledData; }
+			set {
+				if (searchDecompiledData != value) {
+					searchDecompiledData = value;
+					OnPropertyChanged("SearchDecompiledData");
+					OnModified();
+				}
+			}
+		}
+		bool searchDecompiledData = true;
+
+		public bool SearchGacAssemblies {
+			get { return searchGacAssemblies; }
+			set {
+				if (searchGacAssemblies != value) {
+					searchGacAssemblies = value;
+					OnPropertyChanged("SearchGacAssemblies");
+					OnModified();
+				}
+			}
+		}
+		bool searchGacAssemblies = true;
+
 		public SearchSettings Clone() {
 			return CopyTo(new SearchSettings());
 		}
 
 		public SearchSettings CopyTo(SearchSettings other) {
 			other.SyntaxHighlight = this.SyntaxHighlight;
+			other.MatchWholeWords = this.MatchWholeWords;
+			other.CaseSensitive = this.CaseSensitive;
+			other.MatchAnySearchTerm = this.MatchAnySearchTerm;
+			other.SearchDecompiledData = this.SearchDecompiledData;
+			other.SearchGacAssemblies = this.SearchGacAssemblies;
 			return other;
 		}
 	}
@@ -67,6 +137,11 @@ namespace dnSpy.Search {
 			this.disableSave = true;
 			var sect = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 			this.SyntaxHighlight = sect.Attribute<bool?>("SyntaxHighlight") ?? this.SyntaxHighlight;
+			this.MatchWholeWords = sect.Attribute<bool?>("MatchWholeWords") ?? this.MatchWholeWords;
+			this.CaseSensitive = sect.Attribute<bool?>("CaseSensitive") ?? this.CaseSensitive;
+			this.MatchAnySearchTerm = sect.Attribute<bool?>("MatchAnySearchTerm") ?? this.MatchAnySearchTerm;
+			this.SearchDecompiledData = sect.Attribute<bool?>("SearchDecompiledData") ?? this.SearchDecompiledData;
+			this.SearchGacAssemblies = sect.Attribute<bool?>("SearchGacAssemblies") ?? this.SearchGacAssemblies;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -76,6 +151,11 @@ namespace dnSpy.Search {
 				return;
 			var sect = settingsManager.RecreateSection(SETTINGS_GUID);
 			sect.Attribute("SyntaxHighlight", SyntaxHighlight);
+			sect.Attribute("MatchWholeWords", MatchWholeWords);
+			sect.Attribute("CaseSensitive", CaseSensitive);
+			sect.Attribute("MatchAnySearchTerm", MatchAnySearchTerm);
+			sect.Attribute("SearchDecompiledData", SearchDecompiledData);
+			sect.Attribute("SearchGacAssemblies", SearchGacAssemblies);
 		}
 	}
 }

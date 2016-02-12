@@ -57,6 +57,16 @@ namespace dnSpy.Search {
 			}
 		}
 
+		public void SearchTypes(IEnumerable<SearchTypeInfo> types) {
+			foreach (var info in types) {
+				options.CancellationToken.ThrowIfCancellationRequested();
+				if (info.Type.DeclaringType == null)
+					Search(info.DnSpyFile, info.Type.Namespace, info.Type);
+				else
+					Search(info.DnSpyFile, info.Type);
+			}
+		}
+
 		void CheckCustomAttributes(IDnSpyFile file, IHasCustomAttribute hca, object parent) {
 			var res = options.Filter.GetResultAttributes(hca);
 			if (!res.IsMatch)

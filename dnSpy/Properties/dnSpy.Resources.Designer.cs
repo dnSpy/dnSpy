@@ -2151,6 +2151,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search in GAC assemblies.
+        /// </summary>
+        public static string SearchWindow_SearchGacAssemblies {
+            get {
+                return ResourceManager.GetString("SearchWindow_SearchGacAssemblies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Struct.
         /// </summary>
         public static string SearchWindow_Struct {
@@ -2183,6 +2192,42 @@ namespace dnSpy.Properties {
         public static string SearchWindow_Type_Key {
             get {
                 return ResourceManager.GetString("SearchWindow_Type_Key", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All Files.
+        /// </summary>
+        public static string SearchWindow_Where_AllFiles {
+            get {
+                return ResourceManager.GetString("SearchWindow_Where_AllFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Files in Same Folder.
+        /// </summary>
+        public static string SearchWindow_Where_FilesInSameFolder {
+            get {
+                return ResourceManager.GetString("SearchWindow_Where_FilesInSameFolder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selected Files.
+        /// </summary>
+        public static string SearchWindow_Where_SelectedFiles {
+            get {
+                return ResourceManager.GetString("SearchWindow_Where_SelectedFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Selected Type.
+        /// </summary>
+        public static string SearchWindow_Where_SelectedType {
+            get {
+                return ResourceManager.GetString("SearchWindow_Where_SelectedType", resourceCulture);
             }
         }
         

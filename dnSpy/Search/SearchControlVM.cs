@@ -18,20 +18,33 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Data;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Search;
+using dnSpy.Contracts.TreeView;
 using dnSpy.Properties;
+using dnSpy.Shared.Files;
 using dnSpy.Shared.MVVM;
 using dnSpy.Shared.Search;
 
 namespace dnSpy.Search {
+	enum SearchLocation {
+		AllFiles,
+		SelectedFiles,
+		AllFilesInSameDir,
+		SelectedType,
+
+		Last,
+	}
+
 	sealed class SearchControlVM : ViewModelBase {
 		const int DEFAULT_DELAY_SEARCH_MS = 500;
 
@@ -41,53 +54,9 @@ namespace dnSpy.Search {
 		}
 		bool canSearch;
 
-		public bool MatchWholeWords {
-			get { return matchWholeWords; }
-			set {
-				if (matchWholeWords != value) {
-					matchWholeWords = value;
-					OnPropertyChanged("MatchWholeWords");
-					Restart();
-				}
-			}
+		public ISearchSettings SearchSettings {
+			get { return searchSettings; }
 		}
-		bool matchWholeWords;
-
-		public bool CaseSensitive {
-			get { return caseSensitive; }
-			set {
-				if (caseSensitive != value) {
-					caseSensitive = value;
-					OnPropertyChanged("CaseSensitive");
-					Restart();
-				}
-			}
-		}
-		bool caseSensitive;
-
-		public bool MatchAnySearchTerm {
-			get { return matchAnySearchTerm; }
-			set {
-				if (matchAnySearchTerm != value) {
-					matchAnySearchTerm = value;
-					OnPropertyChanged("MatchAnySearchTerm");
-					Restart();
-				}
-			}
-		}
-		bool matchAnySearchTerm;
-
-		public bool SearchDecompiledData {
-			get { return searchDecompiledData; }
-			set {
-				if (searchDecompiledData != value) {
-					searchDecompiledData = value;
-					OnPropertyChanged("SearchDecompiledData");
-					Restart();
-				}
-			}
-		}
-		bool searchDecompiledData;
 
 		public bool TooManyResults {
 			get { return tooManyResults; }
@@ -99,6 +68,17 @@ namespace dnSpy.Search {
 			}
 		}
 		bool tooManyResults;
+
+		static readonly EnumVM[] searchLocationList = new EnumVM[(int)SearchLocation.Last] {
+			new EnumVM(SearchLocation.AllFiles, dnSpy_Resources.SearchWindow_Where_AllFiles),
+			new EnumVM(SearchLocation.SelectedFiles, dnSpy_Resources.SearchWindow_Where_SelectedFiles),
+			new EnumVM(SearchLocation.AllFilesInSameDir, dnSpy_Resources.SearchWindow_Where_FilesInSameFolder),
+			new EnumVM(SearchLocation.SelectedType, dnSpy_Resources.SearchWindow_Where_SelectedType),
+		};
+		public EnumListVM SearchLocationVM {
+			get { return searchLocationVM; }
+		}
+		readonly EnumListVM searchLocationVM;
 
 		public ObservableCollection<SearchTypeVM> SearchTypeVMs {
 			get { return searchTypeVMs; }
@@ -151,18 +131,6 @@ namespace dnSpy.Search {
 		string searchText;
 		readonly DelayedAction delayedSearch;
 
-		public bool SyntaxHighlight {
-			get { return syntaxHighlight; }
-			set {
-				if (syntaxHighlight != value) {
-					syntaxHighlight = value;
-					if (fileSearcher != null)
-						fileSearcher.SyntaxHighlight = value;
-				}
-			}
-		}
-		bool syntaxHighlight;
-
 		public ILanguage Language {
 			get { return language; }
 			set {
@@ -190,16 +158,21 @@ namespace dnSpy.Search {
 		readonly IImageManager imageManager;
 		readonly IFileSearcherCreator fileSearcherCreator;
 		readonly IFileTreeView fileTreeView;
+		readonly ISearchSettings searchSettings;
 
-		public SearchControlVM(IImageManager imageManager, IFileSearcherCreator fileSearcherCreator, IFileTreeView fileTreeView) {
+		public SearchControlVM(IImageManager imageManager, IFileSearcherCreator fileSearcherCreator, IFileTreeView fileTreeView, ISearchSettings searchSettings) {
 			this.imageManager = imageManager;
 			this.fileSearcherCreator = fileSearcherCreator;
 			this.fileTreeView = fileTreeView;
+			this.searchSettings = searchSettings;
+			this.searchSettings.PropertyChanged += SearchSettings_PropertyChanged;
 			this.delayedSearch = new DelayedAction(DEFAULT_DELAY_SEARCH_MS, DelayStartSearch);
 			this.searchTypeVMs = new ObservableCollection<SearchTypeVM>();
 			this.searchResults = new ObservableCollection<ISearchResult>();
 			this.searchResultsCollectionView = (ListCollectionView)CollectionViewSource.GetDefaultView(searchResults);
 			this.searchResultsCollectionView.CustomSort = new SearchResult_Comparer();
+			this.searchLocationVM = new EnumListVM(searchLocationList, (a, b) => Restart());
+			this.searchLocationVM.SelectedItem = SearchLocation.AllFiles;
 
 			Add(SearchType.AssemblyDef, dnSpy_Resources.SearchWindow_Assembly, "Assembly", null, VisibleMembersFlags.AssemblyDef);
 			Add(SearchType.ModuleDef, dnSpy_Resources.SearchWindow_Module, "AssemblyModule", null, VisibleMembersFlags.ModuleDef);
@@ -250,19 +223,67 @@ namespace dnSpy.Search {
 				var options = new FileSearcherOptions {
 					SearchComparer = CreateSearchComparer(),
 					Filter = new FlagsFileTreeNodeFilter(selectedSearchTypeVM.Flags),
-					SearchDecompiledData = SearchDecompiledData,
+					SearchDecompiledData = SearchSettings.SearchDecompiledData,
 				};
 				fileSearcher = fileSearcherCreator.Create(options);
-				fileSearcher.SyntaxHighlight = SyntaxHighlight;
+				fileSearcher.SyntaxHighlight = SearchSettings.SyntaxHighlight;
 				fileSearcher.Language = Language;
 				fileSearcher.BackgroundType = BackgroundType;
 				fileSearcher.OnSearchCompleted += FileSearcher_OnSearchCompleted;
 				fileSearcher.OnNewSearchResults += FileSearcher_OnNewSearchResults;
-				fileSearcher.Start(fileTreeView.TreeView.Root.DataChildren.OfType<IDnSpyFileNode>());
+
+				switch ((SearchLocation)searchLocationVM.SelectedItem) {
+				case SearchLocation.AllFiles:
+					fileSearcher.Start(GetAllFilesToSearch());
+					break;
+
+				case SearchLocation.SelectedFiles:
+					fileSearcher.Start(GetSelectedFilesToSearch());
+					break;
+
+				case SearchLocation.AllFilesInSameDir:
+					fileSearcher.Start(GetAllFilesInSameDirToSearch());
+					break;
+
+				case SearchLocation.SelectedType:
+					fileSearcher.Start(GetSelectedTypeToSearch());
+					break;
+
+				default:
+					throw new InvalidOperationException();
+				}
 			}
 		}
 		IFileSearcher fileSearcher;
 		bool searchCompleted;
+
+		bool CanSearchFile(IDnSpyFileNode node) {
+			return SearchSettings.SearchGacAssemblies || !GacInfo.IsGacPath(node.DnSpyFile.Filename);
+		}
+
+		IEnumerable<IDnSpyFileNode> GetAllFilesToSearch() {
+			return fileTreeView.TreeView.Root.DataChildren.OfType<IDnSpyFileNode>().Where(a => CanSearchFile(a));
+		}
+
+		IEnumerable<IDnSpyFileNode> GetSelectedFilesToSearch() {
+			return fileTreeView.TreeView.TopLevelSelection.Select(a => a.GetTopNode()).Where(a => a != null && CanSearchFile(a)).Distinct();
+		}
+
+		IEnumerable<IDnSpyFileNode> GetAllFilesInSameDirToSearch() {
+			var dirsEnum = GetSelectedFilesToSearch().Where(a => File.Exists(a.DnSpyFile.Filename)).Select(a => Path.GetDirectoryName(a.DnSpyFile.Filename));
+			var dirs = new HashSet<string>(dirsEnum, StringComparer.OrdinalIgnoreCase);
+			return GetAllFilesToSearch().Where(a => File.Exists(a.DnSpyFile.Filename) && dirs.Contains(Path.GetDirectoryName(a.DnSpyFile.Filename)));
+		}
+
+		IEnumerable<SearchTypeInfo> GetSelectedTypeToSearch() {
+			foreach (var node in fileTreeView.TreeView.TopLevelSelection.Select(a => a.GetAncestorOrSelf<ITypeNode>()).Where(a => a != null).Distinct()) {
+				var fileNode = node.GetDnSpyFileNode();
+				Debug.Assert(fileNode != null);
+				if (fileNode == null)
+					continue;
+				yield return new SearchTypeInfo(fileNode.DnSpyFile, node.TypeDef);
+			}
+		}
 
 		void FileSearcher_OnSearchCompleted(object sender, EventArgs e) {
 			if (sender == null || sender != fileSearcher || searchCompleted)
@@ -284,8 +305,8 @@ namespace dnSpy.Search {
 
 		ISearchComparer CreateSearchComparer() {
 			if (SelectedSearchTypeVM.SearchType == SearchType.Literal)
-				return SearchComparerFactory.CreateLiteral(SearchText, CaseSensitive, MatchWholeWords, MatchAnySearchTerm);
-			return SearchComparerFactory.Create(SearchText, CaseSensitive, MatchWholeWords, MatchAnySearchTerm);
+				return SearchComparerFactory.CreateLiteral(SearchText, SearchSettings.CaseSensitive, SearchSettings.MatchWholeWords, SearchSettings.MatchAnySearchTerm);
+			return SearchComparerFactory.Create(SearchText, SearchSettings.CaseSensitive, SearchSettings.MatchWholeWords, SearchSettings.MatchAnySearchTerm);
 		}
 
 		public void Restart() {
@@ -313,6 +334,22 @@ namespace dnSpy.Search {
 				fileSearcher = null;
 			}
 			searchCompleted = false;
+		}
+
+		void SearchSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
+			switch (e.PropertyName) {
+			case "SyntaxHighlight":
+				if (fileSearcher != null)
+					fileSearcher.SyntaxHighlight = searchSettings.SyntaxHighlight;
+				break;
+			case "MatchWholeWords":
+			case "CaseSensitive":
+			case "MatchAnySearchTerm":
+			case "SearchDecompiledData":
+			case "SearchGacAssemblies":
+				Restart();
+				break;
+			}
 		}
 	}
 

@@ -95,11 +95,19 @@ namespace dnSpy.Search {
 		}
 
 		public void Start(IEnumerable<IDnSpyFileNode> files) {
+			StartInternal(files.ToArray());
+		}
+
+		public void Start(IEnumerable<SearchTypeInfo> typeInfos) {
+			StartInternal(typeInfos.ToArray());
+		}
+
+		void StartInternal(object o) {
 			Debug.Assert(!hasStarted);
 			if (hasStarted)
 				throw new InvalidOperationException();
 			hasStarted = true;
-			var task = Task.Factory.StartNew(SearchNewThread, files.ToArray(), cancellationTokenSource.Token)
+			var task = Task.Factory.StartNew(SearchNewThread, o, cancellationTokenSource.Token)
 			.ContinueWith(t => {
 				var ex = t.Exception;
 				Debug.Assert(ex == null);
@@ -111,13 +119,17 @@ namespace dnSpy.Search {
 
 		void SearchNewThread(object o) {
 			AppCulture.InitializeCulture();
-			var files = (IDnSpyFileNode[])o;
 			try {
 				var searchMsg = SearchResult.CreateMessage(filterSearcherOptions.Context, dnSpy_Resources.Searching, TextTokenKind.Text, true);
 				SearchingResult = searchMsg;
 				AddSearchResultNoCheck(searchMsg);
 				var searcher = new FilterSearcher(filterSearcherOptions);
-				searcher.SearchAssemblies(files);
+				if (o is IDnSpyFileNode[])
+					searcher.SearchAssemblies((IDnSpyFileNode[])o);
+				else if (o is SearchTypeInfo[])
+					searcher.SearchTypes((SearchTypeInfo[])o);
+				else
+					throw new InvalidOperationException();
 			}
 			catch (TooManyResultsException) {
 				TooManyResults = true;

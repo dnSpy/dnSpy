@@ -227,6 +227,7 @@
     <Compile Include="Search\ISearchComparer.cs" />
     <Compile Include="Search\ISearchResult.cs" />
     <Compile Include="Search\SearchResultEventArgs.cs" />
+    <Compile Include="Search\SearchTypeInfo.cs" />
     <Compile Include="Settings\Dialog\AppSettingsConstants.cs" />
     <Compile Include="Settings\Dialog\IAppRefreshSettings.cs" />
     <Compile Include="Settings\Dialog\IAppSettingsModifiedListener.cs" />

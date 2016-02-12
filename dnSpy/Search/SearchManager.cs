@@ -105,11 +105,9 @@ namespace dnSpy.Search {
 		SearchManager(IImageManager imageManager, ILanguageManager languageManager, IThemeManager themeManager, ISearchSettings searchSettings, IFileSearcherCreator fileSearcherCreator, IMenuManager menuManager, IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager) {
 			this.fileTabManager = fileTabManager;
 			this.searchControl = new SearchControl();
-			this.vmSearch = new SearchControlVM(imageManager, fileSearcherCreator, fileTabManager.FileTreeView) {
-				SyntaxHighlight = searchSettings.SyntaxHighlight,
+			this.vmSearch = new SearchControlVM(imageManager, fileSearcherCreator, fileTabManager.FileTreeView, searchSettings) {
 				Language = languageManager.SelectedLanguage,
 				BackgroundType = BackgroundType.Search,
-				SearchDecompiledData = true,
 			};
 			this.searchControl.DataContext = this.vmSearch;
 
@@ -190,10 +188,8 @@ namespace dnSpy.Search {
 
 		void SearchSettings_PropertyChanged(object sender, PropertyChangedEventArgs e) {
 			var searchSettings = (ISearchSettings)sender;
-			if (e.PropertyName == "SyntaxHighlight") {
-				vmSearch.SyntaxHighlight = searchSettings.SyntaxHighlight;
+			if (e.PropertyName == "SyntaxHighlight")
 				RefreshSearchResults();
-			}
 		}
 
 		void RefreshSearchResults() {
