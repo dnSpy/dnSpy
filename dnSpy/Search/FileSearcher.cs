@@ -148,7 +148,7 @@ namespace dnSpy.Search {
 					throw new InvalidOperationException();
 			}
 			catch (AggregateException ex) {
-				if (ex.InnerExceptions.All(a => a is TooManyResultsException))
+				if (ex.InnerExceptions.Any(a => a is TooManyResultsException))
 					TooManyResults = true;
 				else
 					throw;
