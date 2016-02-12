@@ -53,6 +53,13 @@ namespace dnSpy.AsmEditor.ViewHelpers {
 			catch {
 			}
 
+			try {
+				var snk = new StrongNamePublicKey(dialog.FileName);
+				return new PublicKey(snk.CreatePublicKey());
+			}
+			catch {
+			}
+
 			Shared.App.MsgBox.Instance.Show(string.Format(dnSpy_AsmEditor_Resources.Error_NotSNKFile, dialog.FileName), MsgBoxButton.OK, ownerWindow);
 			return null;
 		}
