@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Globalization;
 using System.Threading;
 
@@ -28,16 +29,33 @@ namespace dnSpy.Contracts.App {
 		/// <summary>
 		/// Culture
 		/// </summary>
-		public static readonly CultureInfo Culture;
+		public static CultureInfo Culture {
+			get { return culture; }
+		}
+		static CultureInfo culture;
 
 		/// <summary>
 		/// UI Culture
 		/// </summary>
-		public static readonly CultureInfo UICulture;
+		public static CultureInfo UICulture {
+			get { return uiCulture; }
+		}
+		static CultureInfo uiCulture;
 
 		static AppCulture() {
-			Culture = Thread.CurrentThread.CurrentCulture;
-			UICulture = Thread.CurrentThread.CurrentUICulture;
+			__Initialize(Thread.CurrentThread.CurrentCulture, Thread.CurrentThread.CurrentUICulture);
+		}
+
+		/// <summary>
+		/// Initializes the culture. Don't call this method.
+		/// </summary>
+		/// <param name="culture">Culture</param>
+		/// <param name="uiCulture">UI culture</param>
+		public static void __Initialize(CultureInfo culture, CultureInfo uiCulture) {
+			if (culture == null || uiCulture == null)
+				throw new ArgumentNullException();
+			AppCulture.culture = culture;
+			AppCulture.uiCulture = uiCulture;
 		}
 
 		/// <summary>

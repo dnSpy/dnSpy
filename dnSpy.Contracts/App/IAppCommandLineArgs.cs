@@ -37,5 +37,8 @@ namespace dnSpy.Contracts.App {
 		/// <summary>Language, either human readable or a language guid
 		/// (<see cref="ILanguage.GenericGuid"/> or <see cref="ILanguage.UniqueGuid"/>)</summary>
 		string Language { get; }
+
+		/// <summary>Culture</summary>
+		string Culture { get; }
 	}
 }

@@ -110,8 +110,8 @@ namespace dnSpy.MainApp {
 				}
 			}
 
-			// Make sure its ctor gets called early so it can initialize the culture
-			compositionContainer.GetExportedValue<ICultureManager>();
+			var cultureManager = compositionContainer.GetExportedValue<CultureManager>();
+			cultureManager.Initialize(this.args);
 		}
 
 		CompositionContainer InitializeCompositionContainer() {

@@ -94,13 +94,20 @@ namespace dnSpy.Culture {
 		[ImportingConstructor]
 		CultureManager(CultureSettingsImpl cultureSettings) {
 			this.cultureSettings = cultureSettings;
+			InitializeCulture(UICulture ?? Thread.CurrentThread.CurrentUICulture);
+		}
 
-			var cultureInfo = UICulture;
-			if (cultureInfo != null)
-				Thread.CurrentThread.CurrentUICulture = cultureInfo;
-			// Make sure its static ctor gets called so it can initialize its fields
-			var u = AppCulture.UICulture;
-			Debug.Assert(Thread.CurrentThread.CurrentUICulture.Equals(u));
+		public void Initialize(IAppCommandLineArgs args) {
+			InitializeCulture(TryCreateCultureInfo(args.Culture));
+		}
+
+		void InitializeCulture(CultureInfo info) {
+			if (info == null)
+				return;
+
+			Thread.CurrentThread.CurrentUICulture = info;
+			AppCulture.__Initialize(Thread.CurrentThread.CurrentCulture, info);
+			Debug.Assert(Thread.CurrentThread.CurrentUICulture.Equals(info));
 		}
 
 		static CultureInfo TryCreateCultureInfo(string name) {

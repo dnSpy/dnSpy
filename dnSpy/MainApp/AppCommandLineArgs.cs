@@ -45,6 +45,11 @@ namespace dnSpy.MainApp {
 		}
 		readonly string language = string.Empty;
 
+		public string Culture {
+			get { return culture; }
+		}
+		readonly string culture = string.Empty;
+
 		public AppCommandLineArgs()
 			: this(Environment.GetCommandLineArgs().Skip(1).ToArray()) {
 		}
@@ -68,6 +73,11 @@ namespace dnSpy.MainApp {
 					case "-l":
 					case "--language":
 						language = next;
+						i++;
+						break;
+
+					case "--culture":
+						culture = next;
 						i++;
 						break;
 
