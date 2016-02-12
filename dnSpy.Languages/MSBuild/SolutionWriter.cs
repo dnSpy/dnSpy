@@ -40,7 +40,10 @@ namespace dnSpy.Languages.MSBuild {
 				// "StartUp Project".
 				int ae = (a.Module.Characteristics & Characteristics.Dll) == 0 ? 0 : 1;
 				int be = (b.Module.Characteristics & Characteristics.Dll) == 0 ? 0 : 1;
-				return ae.CompareTo(be);
+				int c = ae.CompareTo(be);
+				if (c != 0)
+					return c;
+				return StringComparer.OrdinalIgnoreCase.Compare(a.Filename, b.Filename);
 			});
 			this.filename = filename;
 
