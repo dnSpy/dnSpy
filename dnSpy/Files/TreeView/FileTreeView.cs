@@ -810,6 +810,7 @@ namespace dnSpy.Files.TreeView {
 			if (!context.CanDragAndDrop)
 				return;
 
+			var origFilenames = filenames;
 			var existingFiles = new HashSet<string>(fileManager.GetFiles().Select(a => a.Filename ?? string.Empty), StringComparer.OrdinalIgnoreCase);
 			filenames = filenames.Where(a => File.Exists(a) && !existingFiles.Contains(a)).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
 			ITreeNodeData newSelectedNode = null;
@@ -821,6 +822,14 @@ namespace dnSpy.Files.TreeView {
 				fileManager.ForceAdd(file, false, new AddFileInfo(node, index + j++));
 				if (newSelectedNode == null)
 					newSelectedNode = node;
+			}
+			if (newSelectedNode == null) {
+				var filename = origFilenames.FirstOrDefault(a => File.Exists(a));
+				if (filename != null) {
+					var key = new FilenameKey(filename);
+					var file = fileManager.GetFiles().FirstOrDefault(a => key.Equals(a.Key));
+					newSelectedNode = FindNode(file);
+				}
 			}
 			if (newSelectedNode != null)
 				treeView.SelectItems(new[] { newSelectedNode });
