@@ -245,7 +245,7 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(Header = "res:OpenContainingFolderCommand", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 20)]
+	[ExportMenuItem(Header = "res:OpenContainingFolderCommand", Group = MenuConstants.GROUP_CTX_FILES_OTHER, Order = 30)]
 	sealed class OpenContainingFolderCtxMenuCommand : MenuItemBase {
 		public override bool IsVisible(IMenuItemContext context) {
 			return GetFilename(context) != null;

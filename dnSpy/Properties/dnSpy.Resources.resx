@@ -929,4 +929,7 @@
   <data name="SearchWindow_Where_SelectedType" xml:space="preserve">
     <value>Selected Type</value>
   </data>
+  <data name="GoToResourceCommand" xml:space="preserve">
+    <value>Go to Re_source</value>
+  </data>
 </root>

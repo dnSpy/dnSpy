@@ -900,6 +900,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Go to Re_source.
+        /// </summary>
+        public static string GoToResourceCommand {
+            get {
+                return ResourceManager.GetString("GoToResourceCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not resolve member reference token: 0x{0:X8}.
         /// </summary>
         public static string GoToToken_CouldNotResolve {

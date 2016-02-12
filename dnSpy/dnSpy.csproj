@@ -144,6 +144,7 @@
     <Compile Include="Files\Tabs\NullObjects.cs" />
     <Compile Include="Files\Tabs\RedecompileTabs.cs" />
     <Compile Include="Files\Tabs\RefreshResourcesCommand.cs" />
+    <Compile Include="Files\Tabs\ResourceCommands.cs" />
     <Compile Include="Files\Tabs\SaveCommands.cs" />
     <Compile Include="Files\Tabs\SaveManager.cs" />
     <Compile Include="Files\Tabs\SearchMsdnCommand.cs" />
