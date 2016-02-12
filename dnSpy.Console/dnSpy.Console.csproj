@@ -66,7 +66,7 @@
     </ProjectReference>
     <ProjectReference Include="..\dnSpy.Languages\dnSpy.Languages.csproj">
       <Project>{9265e4ea-eb00-4cb6-8a9a-608871e24fd0}</Project>
-      <Name>Languages</Name>
+      <Name>dnSpy.Languages</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
