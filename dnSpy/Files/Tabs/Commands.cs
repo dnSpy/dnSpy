@@ -123,14 +123,14 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:OpenGACCommand", InputGestureText = "res:ShortCutKeyCtrlShiftO", Icon = "AssemblyListGAC", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 10)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:OpenGACCommand", InputGestureText = "res:ShortCutKeyCtrlShiftO", Icon = "Library", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 10)]
 	sealed class OpenFromGacCommand : MenuItemCommand {
 		OpenFromGacCommand()
 			: base(OpenFromGacCommandLoader.OpenFromGac) {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:OpenListCommand", Icon = "AssemblyList", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 20)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:OpenListCommand", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 20)]
 	sealed class OpenListCommand : MenuItemBase {
 		readonly IAppWindow appWindow;
 		readonly IFileListLoader fileListLoader;

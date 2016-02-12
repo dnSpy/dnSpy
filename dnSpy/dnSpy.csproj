@@ -449,8 +449,6 @@
   <ItemGroup>
     <Resource Include="Images\Assembly.png" />
     <Resource Include="Images\AssemblyExe.png" />
-    <Resource Include="Images\AssemblyList.png" />
-    <Resource Include="Images\AssemblyListGAC.png" />
     <Resource Include="Images\AssemblyModule.png" />
     <Resource Include="Images\AssemblyReference.png" />
     <Resource Include="Images\AssemblyWarning.png" />
@@ -540,6 +538,7 @@
     <Resource Include="Images\InterfacePrivate.png" />
     <Resource Include="Images\InterfaceProtected.png" />
     <Resource Include="Images\InterfaceProtectedInternal.png" />
+    <Resource Include="Images\Library.png" />
     <Resource Include="Images\Literal.png" />
     <Resource Include="Images\LiteralCompilerControlled.png" />
     <Resource Include="Images\LiteralInternal.png" />
