@@ -21,10 +21,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using dnlib.DotNet;
+using Microsoft.Win32;
 
 namespace dnSpy.Shared.Files {
 	public struct GacFileInfo {
@@ -99,6 +101,9 @@ namespace dnSpy.Shared.Files {
 				AddIfExists(newOtherGacPaths, windir, @"Microsoft.NET\Framework\v1.0.3705");
 			}
 
+			foreach (var path in GetDotNetInstallDirectories())
+				AddIfExists(newOtherGacPaths, path, string.Empty);
+
 			var dirPF = Environment.GetEnvironmentVariable("ProgramFiles");
 			AddWinMDPaths(newWinmdPaths, dirPF);
 			var dirPFx86 = Environment.GetEnvironmentVariable("ProgramFiles(x86)");
@@ -108,6 +113,44 @@ namespace dnSpy.Shared.Files {
 
 			OtherGacPaths = newOtherGacPaths.ToArray();
 			WinmdPaths = newWinmdPaths.ToArray();
+		}
+
+		static IEnumerable<string> GetDotNetInstallDirectories() {
+			var hash = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+			try {
+				using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\.NETFramework")) {
+					var path = key == null ? null : key.GetValue("InstallRoot") as string;
+					if (Directory.Exists(path))
+						hash.Add(path);
+				}
+			}
+			catch {
+			}
+			try {
+				using (var key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\WOW6432Node\Microsoft\.NETFramework")) {
+					var path = key == null ? null : key.GetValue("InstallRoot") as string;
+					if (Directory.Exists(path))
+						hash.Add(path);
+				}
+			}
+			catch {
+			}
+			var dirs = hash.ToArray();
+			hash.Clear();
+			hash.Add(Path.GetDirectoryName(typeof(int).Assembly.Location));
+			foreach (var tmp in dirs) {
+				// Remove last backslash
+				var dir = Path.Combine(Path.GetDirectoryName(tmp), Path.GetFileName(tmp));
+				hash.Add(dir);
+				var name = Path.GetFileName(dir);
+				if (name.Equals("Framework", StringComparison.OrdinalIgnoreCase) || name.Equals("Framework64", StringComparison.OrdinalIgnoreCase)) {
+					var d = Path.GetDirectoryName(dir);
+					hash.Add(Path.Combine(d, "Framework"));
+					hash.Add(Path.Combine(d, "Framework64"));
+				}
+			}
+			return hash;
 		}
 
 		static void AddWinMDPaths(IList<string> paths, string path) {
