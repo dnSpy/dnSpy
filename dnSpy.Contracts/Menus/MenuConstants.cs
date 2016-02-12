@@ -228,7 +228,7 @@ namespace dnSpy.Contracts.Menus {
 		public const string GROUP_CTX_CODE_ASMED_SAVE = "2000,57ED92C1-3292-47DD-99CD-FB777DDF1276";
 
 		/// <summary>Group: Context Menu, Type: Code, Group: AsmEditor Delete</summary>
-		public const string GROUP_CTX_CODE_ASMED_DELTE = "3000,7A3E4F42-37A5-4A85-B403-62E6CD091E1D";
+		public const string GROUP_CTX_CODE_ASMED_DELETE = "3000,7A3E4F42-37A5-4A85-B403-62E6CD091E1D";
 
 		/// <summary>Group: Context Menu, Type: Code, Group: AsmEditor New</summary>
 		public const string GROUP_CTX_CODE_ASMED_NEW = "4000,15776B90-55EF-4ABE-9EC8-FB4A1E49A76F";
