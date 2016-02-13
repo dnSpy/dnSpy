@@ -66,10 +66,6 @@
       <Project>{9265e4ea-eb00-4cb6-8a9a-608871e24fd0}</Project>
       <Name>dnSpy.Languages</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SharpTreeView\ICSharpCode.TreeView.csproj">
-      <Project>{dde2a481-8271-4eac-a330-8fa6a38d13d1}</Project>
-      <Name>ICSharpCode.TreeView</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CommandUtils.cs" />

@@ -24,7 +24,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mvvmvc="clr-namespace:dnSpy.Shared.MVVM.Converters;assembly=dnSpy.Shared"
              xmlns:vc="clr-namespace:dnSpy.AsmEditor.DnlibDialogs.Converters"
-             xmlns:tv="clr-namespace:ICSharpCode.TreeView;assembly=ICSharpCode.TreeView"
              xmlns:winlocal="clr-namespace:dnSpy.Shared.Controls;assembly=dnSpy.Shared"
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
              Height="500" Width="600"
