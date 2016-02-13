@@ -105,7 +105,7 @@ namespace dnSpy.MainApp {
 					messageBoxManager.Show("Cannot locate dnSpy!");
 					return;
 				}
-				path = string.Format("\"{0}\" \"%1\"", path);
+				path = string.Format("\"{0}\" -- \"%1\"", path);
 
 				try {
 					foreach (var ext in openExtensions) {
