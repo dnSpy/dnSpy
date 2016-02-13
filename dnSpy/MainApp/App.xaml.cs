@@ -34,7 +34,7 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
-using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
 using dnSpy.Culture;
@@ -75,9 +75,11 @@ namespace dnSpy.MainApp {
 		[Import]
 		IDnSpyLoaderManager dnSpyLoaderManager = null;
 		[Import]
-		Lazy<IFileTreeView> fileTreeView = null;
+		Lazy<IFileTabManager> fileTabManager = null;
 		[Import]
 		Lazy<ILanguageManager> languageManager = null;
+		[ImportMany]
+		IEnumerable<Lazy<IAppCommandLineArgsHandler>> appCommandLineArgsHandlers = null;
 		readonly List<LoadedPlugin> loadedPlugins = new List<LoadedPlugin>();
 		CompositionContainer compositionContainer;
 
@@ -256,7 +258,7 @@ namespace dnSpy.MainApp {
 			var win = appWindow.InitializeMainWindow();
 			appWindow.MainWindow.SourceInitialized += MainWindow_SourceInitialized;
 			dnSpyLoaderManager.OnAppLoaded += DnSpyLoaderManager_OnAppLoaded;
-			dnSpyLoaderManager.Initialize(appWindow, win);
+			dnSpyLoaderManager.Initialize(appWindow, win, args);
 			pluginManager.LoadPlugins(this.Resources.MergedDictionaries);
 			win.Show();
 		}
@@ -276,9 +278,27 @@ namespace dnSpy.MainApp {
 			if (lang != null)
 				languageManager.Value.Language = lang;
 
+			if (appArgs.FullScreen != null)
+				appWindow.MainWindow.IsFullScreen = appArgs.FullScreen.Value;
+
+			if (appArgs.NewTab)
+				fileTabManager.Value.OpenEmptyTab();
+
 			var files = appArgs.Filenames.ToArray();
 			if (files.Length > 0)
-				OpenFileInit.OpenFiles(fileTreeView.Value, appWindow.MainWindow, files);
+				OpenFileInit.OpenFiles(fileTabManager.Value.FileTreeView, appWindow.MainWindow, files, false);
+
+			// The files were lazily added to the treeview. Make sure they've been added to the TV
+			// before we process the remaining command line args.
+			if (files.Length > 0)
+				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => HandleAppArgs2(appArgs)));
+			else
+				HandleAppArgs2(appArgs);
+		}
+
+		void HandleAppArgs2(IAppCommandLineArgs appArgs) {
+			foreach (var handler in appCommandLineArgsHandlers.OrderBy(a => a.Value.Order))
+				handler.Value.OnNewArgs(appArgs);
 		}
 
 		ILanguage GetLanguage(string language) {

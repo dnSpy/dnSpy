@@ -30,7 +30,7 @@ using dnSpy.Contracts.Settings;
 
 namespace dnSpy.Files.Tabs {
 	interface IFileListLoader {
-		IEnumerable<object> Load(ISettingsSection section);
+		IEnumerable<object> Load(ISettingsSection section, bool loadFiles);
 		void Save(ISettingsSection section);
 		bool CanLoad { get; }
 		bool Load(FileList fileList, IDnSpyFileLoader dnSpyFileLoader = null);
@@ -86,15 +86,17 @@ namespace dnSpy.Files.Tabs {
 		}
 		bool disable_SaveCurrentFilesToList;
 
-		public IEnumerable<object> Load(ISettingsSection section) {
+		public IEnumerable<object> Load(ISettingsSection section, bool loadFiles) {
 			var disable = DisableSaveToList();
 			fileListManager.Load(section);
 			yield return null;
 
-			foreach (var f in fileListManager.SelectedFileList.Files) {
-				if (!(f.Type == FileConstants.FILETYPE_FILE && string.IsNullOrEmpty(f.Name)))
-					fileTabManager.FileTreeView.FileManager.TryGetOrCreate(f);
-				yield return null;
+			if (loadFiles) {
+				foreach (var f in fileListManager.SelectedFileList.Files) {
+					if (!(f.Type == FileConstants.FILETYPE_FILE && string.IsNullOrEmpty(f.Name)))
+						fileTabManager.FileTreeView.FileManager.TryGetOrCreate(f);
+					yield return null;
+				}
 			}
 			disable.Dispose();
 		}

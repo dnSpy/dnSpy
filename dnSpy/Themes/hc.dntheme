@@ -1,4 +1,4 @@
-<theme guid="D0EA082A-BF0D-439F-B396-547C29D97E37" menu-name="_High Contrast" order="100000" is-high-contrast="true">
+<theme guid="D0EA082A-BF0D-439F-B396-547C29D97E37" name="hc" menu-name="_High Contrast" order="100000" is-high-contrast="true">
 	<colors>
 		<color name="defaulttext" fg="#FFFFFFFF" bg="#FF000000" />
 		<color name="selection" bg="#33FFFFFF" />

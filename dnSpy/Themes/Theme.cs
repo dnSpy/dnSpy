@@ -82,15 +82,19 @@ namespace dnSpy.Themes {
 		}
 
 		public Guid Guid { get; private set; }
+		public string Name { get; private set; }
 		public string MenuName { get; private set; }
 		public bool IsHighContrast { get; private set; }
 		public double Order { get; private set; }
 
 		public Theme(XElement root) {
-			var name = root.Attribute("guid");
-			if (name == null || string.IsNullOrEmpty(name.Value))
+			var guid = root.Attribute("guid");
+			if (guid == null || string.IsNullOrEmpty(guid.Value))
 				throw new Exception("Missing or empty guid attribute");
-			this.Guid = new Guid(name.Value);
+			this.Guid = new Guid(guid.Value);
+
+			var name = root.Attribute("name");
+			this.Name = name == null ? string.Empty : (string)name;
 
 			var menuName = root.Attribute("menu-name");
 			if (menuName == null || string.IsNullOrEmpty(menuName.Value))

@@ -3,7 +3,7 @@ using System.Resources;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("Debugger")]
-[assembly: AssemblyDescription("Debugger")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Debugger")]

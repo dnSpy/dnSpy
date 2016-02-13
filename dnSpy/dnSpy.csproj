@@ -86,6 +86,7 @@
     <Compile Include="Files\FileManagerSettings.cs" />
     <Compile Include="Files\IDnSpyFileLoader.cs" />
     <Compile Include="Files\MethodAnnotations.cs" />
+    <Compile Include="Files\Tabs\AppCommandLineArgsHandler.cs" />
     <Compile Include="Files\Tabs\AsyncShowResult.cs" />
     <Compile Include="Files\Tabs\Commands.cs" />
     <Compile Include="Files\Tabs\CopyTokenCommand.cs" />
@@ -234,6 +235,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="MainApp\AppCommandLineArgs.cs" />
+    <Compile Include="MainApp\AppCommandLineArgsHandler.cs" />
     <Compile Include="MainApp\AppSettings.cs" />
     <Compile Include="MainApp\AppStatusBar.cs" />
     <Compile Include="MainApp\AppToolBar.cs" />
@@ -278,6 +280,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Search\AppCommandLineArgsHandler.cs" />
     <Compile Include="Search\Commands.cs" />
     <Compile Include="Search\FileSearcher.cs" />
     <Compile Include="Search\FileSearcherCreator.cs" />
@@ -315,6 +318,7 @@
     <Compile Include="Tabs\TabManager.cs" />
     <Compile Include="Tabs\TabManagerCreator.cs" />
     <Compile Include="Tabs\TabUtils.cs" />
+    <Compile Include="Themes\AppCommandLineArgsHandler.cs" />
     <Compile Include="Themes\Color.cs" />
     <Compile Include="Themes\ColorInfo.cs" />
     <Compile Include="Themes\ColorInfos.cs" />

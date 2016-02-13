@@ -3,7 +3,7 @@ using System.Resources;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("dnSpy.Contracts")]
-[assembly: AssemblyDescription("dnSpy contracts")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("dnSpy.Contracts")]

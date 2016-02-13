@@ -41,28 +41,30 @@ namespace dnSpy.Files.Tabs {
 			this.fileListLoader = fileListLoader;
 		}
 
-		public IEnumerable<object> Load(ISettingsManager settingsManager) {
+		public IEnumerable<object> Load(ISettingsManager settingsManager, IAppCommandLineArgs args) {
 			var section = settingsManager.GetOrCreateSection(SETTINGS_GUID);
 
-			foreach (var o in fileListLoader.Load(section.GetOrCreateSection(FILE_LISTS_SECTION)))
+			foreach (var o in fileListLoader.Load(section.GetOrCreateSection(FILE_LISTS_SECTION), args.LoadFiles))
 				yield return o;
 
-			var tgws = new List<SerializedTabGroupWindow>();
-			var tgwsHash = new HashSet<string>();
-			foreach (var tgwSection in section.SectionsWithName(TABGROUPWINDOW_SECTION)) {
-				var tgw = SerializedTabGroupWindow.Load(tgwSection);
-				yield return null;
-				if (tgwsHash.Contains(tgw.Name))
-					continue;
-				tgws.Add(tgw);
+			if (args.LoadFiles) {
+				var tgws = new List<SerializedTabGroupWindow>();
+				var tgwsHash = new HashSet<string>();
+				foreach (var tgwSection in section.SectionsWithName(TABGROUPWINDOW_SECTION)) {
+					var tgw = SerializedTabGroupWindow.Load(tgwSection);
+					yield return null;
+					if (tgwsHash.Contains(tgw.Name))
+						continue;
+					tgws.Add(tgw);
+				}
+
+				// The files are added to the treeview with a slight delay. Make sure the files have
+				// been added to the TV or the node lookup code will fail to find the nodes it needs.
+				yield return LoaderConstants.Delay;
+
+				foreach (var o in fileTabSerializer.Restore(tgws))
+					yield return o;
 			}
-
-			// The files are added to the treeview with a slight delay. Make sure the files have
-			// been added to the TV or the node lookup code will fail to find the nodes it needs.
-			yield return LoaderConstants.Delay;
-
-			foreach (var o in fileTabSerializer.Restore(tgws))
-				yield return o;
 
 			fileTabManager.OnTabsLoaded();
 		}

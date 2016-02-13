@@ -42,13 +42,20 @@ namespace dnSpy.Contracts.ToolWindows.App {
 		/// <param name="location">Location or null to use the default location
 		/// (<see cref="ToolWindowContentInfo.Location"/>). It's ignored if the content is already
 		/// present in the UI.</param>
-		void Show(Guid guid, AppToolWindowLocation? location = null);
+		/// <returns></returns>
+		IToolWindowContent Show(Guid guid, AppToolWindowLocation? location = null);
 
 		/// <summary>
 		/// Removes <paramref name="content"/> from the UI
 		/// </summary>
 		/// <param name="content">Content</param>
 		void Close(IToolWindowContent content);
+
+		/// <summary>
+		/// Removes the tool window from the UI
+		/// </summary>
+		/// <param name="guid">Guid</param>
+		void Close(Guid guid);
 
 		/// <summary>
 		/// Returns true if <paramref name="content"/> is shown in the UI

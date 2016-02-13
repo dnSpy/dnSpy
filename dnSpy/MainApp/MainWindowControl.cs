@@ -516,16 +516,17 @@ namespace dnSpy.MainApp {
 			ui.Length = length.Value;
 		}
 
-		public void Show(Guid guid, AppToolWindowLocation? location) {
-			Show(guid, GetLocation(guid, location), true, true);
+		public IToolWindowContent Show(Guid guid, AppToolWindowLocation? location) {
+			return Show(guid, GetLocation(guid, location), true, true);
 		}
 
-		void Show(Guid guid, AppToolWindowLocation location, bool active, bool focus) {
+		IToolWindowContent Show(Guid guid, AppToolWindowLocation location, bool active, bool focus) {
 			var content = Create(guid);
 			Debug.Assert(content != null);
 			if (content == null)
-				return;
+				return null;
 			Show(content, location, active, focus);
+			return content;
 		}
 
 		IToolWindowContent Create(Guid guid) {
@@ -580,6 +581,12 @@ namespace dnSpy.MainApp {
 			if (t == null)
 				throw new InvalidOperationException();
 			t.Item2.Close(content);
+		}
+
+		public void Close(Guid guid) {
+			if (!IsShown(guid))
+				return;
+			Close(Create(guid));
 		}
 
 		public bool Owns(IToolWindowGroup toolWindowGroup) {

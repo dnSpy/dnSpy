@@ -301,26 +301,26 @@ namespace dnSpy_Console {
 
 				if (canParseCommands && arg[0] == '-') {
 					string error;
-					switch (arg.Remove(0, 1)) {
-					case "":
+					switch (arg) {
+					case "--":
 						canParseCommands = false;
 						break;
 
-					case "r":
-					case "-recursive":
+					case "-r":
+					case "--recursive":
 						isRecursive = true;
 						break;
 
-					case "o":
-					case "-output-dir":
+					case "-o":
+					case "--output-dir":
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingOutputDir);
 						outputDir = next;
 						i++;
 						break;
 
-					case "l":
-					case "-lang":
+					case "-l":
+					case "--lang":
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingLanguageName);
 						language = next;
@@ -331,33 +331,33 @@ namespace dnSpy_Console {
 						langDict = null;
 						break;
 
-					case "-asm-path":
+					case "--asm-path":
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingAsmSearchPath);
 						asmPaths.AddRange(next.Split(new char[] { PATHS_SEP }, StringSplitOptions.RemoveEmptyEntries));
 						i++;
 						break;
 
-					case "-user-gac":
+					case "--user-gac":
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingUserGacPath);
 						userGacPaths.AddRange(next.Split(new char[] { PATHS_SEP }, StringSplitOptions.RemoveEmptyEntries));
 						i++;
 						break;
 
-					case "-no-gac":
+					case "--no-gac":
 						useGac = false;
 						break;
 
-					case "-no-stdlib":
+					case "--no-stdlib":
 						addCorlibRef = false;
 						break;
 
-					case "-no-sln":
+					case "--no-sln":
 						createSlnFile = false;
 						break;
 
-					case "-sln-name":
+					case "--sln-name":
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingSolutionName);
 						slnName = next;
@@ -366,7 +366,7 @@ namespace dnSpy_Console {
 							throw new ErrorException(string.Format(dnSpy_Console_Resources.InvalidSolutionName, slnName));
 						break;
 
-					case "-threads":
+					case "--threads":
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingNumberOfThreads);
 						i++;
@@ -375,7 +375,7 @@ namespace dnSpy_Console {
 							throw new ErrorException(error);
 						break;
 
-					case "-vs":
+					case "--vs":
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingVSVersion);
 						i++;
@@ -394,27 +394,27 @@ namespace dnSpy_Console {
 						}
 						break;
 
-					case "-no-resources":
+					case "--no-resources":
 						unpackResources = false;
 						break;
 
-					case "-no-resx":
+					case "--no-resx":
 						createResX = false;
 						break;
 
-					case "-no-baml":
+					case "--no-baml":
 						decompileBaml = false;
 						break;
 
-					case "t":
-					case "-type":
+					case "-t":
+					case "--type":
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingTypeName);
 						i++;
 						typeName = next;
 						break;
 
-					case "-md":
+					case "--md":
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingMDToken);
 						i++;
@@ -423,14 +423,14 @@ namespace dnSpy_Console {
 							throw new ErrorException(error);
 						break;
 
-					case "-gac-file":
+					case "--gac-file":
 						if (next == null)
 							throw new ErrorException(dnSpy_Console_Resources.MissingGacFile);
 						i++;
 						gacFiles.Add(next);
 						break;
 
-					case "-project-guid":
+					case "--project-guid":
 						if (next == null || !Guid.TryParse(next, out projectGuid))
 							throw new ErrorException(dnSpy_Console_Resources.InvalidGuid);
 						i++;

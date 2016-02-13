@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Diagnostics;
 using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;

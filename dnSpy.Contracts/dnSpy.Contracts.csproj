@@ -41,6 +41,7 @@
     <Compile Include="App\AppCulture.cs" />
     <Compile Include="App\AppDirectories.cs" />
     <Compile Include="App\IAppCommandLineArgs.cs" />
+    <Compile Include="App\IAppCommandLineArgsHandler.cs" />
     <Compile Include="App\IAppSettings.cs" />
     <Compile Include="App\IAppStatusBar.cs" />
     <Compile Include="App\IAppWindow.cs" />

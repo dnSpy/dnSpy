@@ -72,6 +72,10 @@ namespace dnSpy.Search {
 		/// <param name="searchResult">Search result</param>
 		/// <param name="newTab">true to show it in a new tab</param>
 		void FollowResult(ISearchResult searchResult, bool newTab);
+
+		SearchLocation SearchLocation { get; set; }
+		SearchType SearchType { get; set; }
+		string SearchText { get; set; }
 	}
 
 	[Export, Export(typeof(ISearchManager)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -79,6 +83,21 @@ namespace dnSpy.Search {
 		readonly SearchControl searchControl;
 		readonly SearchControlVM vmSearch;
 		readonly IFileTabManager fileTabManager;
+
+		public SearchLocation SearchLocation {
+			get { return (SearchLocation)vmSearch.SearchLocationVM.SelectedItem; }
+			set { vmSearch.SearchLocationVM.SelectedItem = value; }
+		}
+
+		public SearchType SearchType {
+			get { return vmSearch.SelectedSearchTypeVM.SearchType; }
+			set { vmSearch.SelectedSearchTypeVM = vmSearch.SearchTypeVMs.First(a => a.SearchType == value); }
+		}
+
+		public string SearchText {
+			get { return vmSearch.SearchText; }
+			set { vmSearch.SearchText = value; }
+		}
 
 		public IInputElement FocusedElement {
 			get { return searchControl.SearchTextBox; }

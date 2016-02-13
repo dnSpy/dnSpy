@@ -32,7 +32,7 @@ using dnSpy.Contracts.Themes;
 
 namespace dnSpy.MainApp {
 	interface IDnSpyLoaderManager {
-		void Initialize(IDnSpyLoaderContentProvider content, Window window);
+		void Initialize(IDnSpyLoaderContentProvider content, Window window, IAppCommandLineArgs args);
 		void Save();
 		event EventHandler OnAppLoaded;
 	}
@@ -62,9 +62,9 @@ namespace dnSpy.MainApp {
 			this.windowLoader = new WindowLoader(this, imageManager, themeManager, settingsManager, loaders);
 		}
 
-		public void Initialize(IDnSpyLoaderContentProvider content, Window window) {
+		public void Initialize(IDnSpyLoaderContentProvider content, Window window, IAppCommandLineArgs args) {
 			Debug.Assert(windowLoader != null);
-			windowLoader.Initialize(content, window);
+			windowLoader.Initialize(content, window, args);
 		}
 
 		internal void LoadAllCodeFinished() {
@@ -92,6 +92,7 @@ namespace dnSpy.MainApp {
 		IDnSpyLoaderContentProvider content;
 		DnSpyLoaderControl dnSpyLoaderControl;
 		IEnumerator<object> loaderEnumerator;
+		IAppCommandLineArgs appArgs;
 
 		public WindowLoader(DnSpyLoaderManager dnSpyLoaderManager, IImageManager imageManager, IThemeManager themeManager, ISettingsManager settingsManager, Lazy<IDnSpyLoader, IDnSpyLoaderMetadata>[] loaders) {
 			this.dnSpyLoaderManager = dnSpyLoaderManager;
@@ -101,8 +102,9 @@ namespace dnSpy.MainApp {
 			this.loaders = loaders;
 		}
 
-		public void Initialize(IDnSpyLoaderContentProvider content, Window window) {
+		public void Initialize(IDnSpyLoaderContentProvider content, Window window, IAppCommandLineArgs appArgs) {
 			this.window = window;
+			this.appArgs = appArgs;
 			this.dnSpyLoaderControl = new DnSpyLoaderControl();
 			this.dnSpyLoaderControl.Image.Source = imageManager.GetImage(GetType().Assembly, "dnSpy-Big", ((SolidColorBrush)themeManager.Theme.GetColor(ColorType.EnvironmentBackground).Background).Color);
 			this.content = content;
@@ -123,7 +125,7 @@ namespace dnSpy.MainApp {
 			foreach (var l in loaders) {
 				var o = l.Value;
 				yield return null;
-				foreach (var a in o.Load(settingsManager))
+				foreach (var a in o.Load(settingsManager, appArgs))
 					yield return a;
 			}
 		}

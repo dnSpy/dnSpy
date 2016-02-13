@@ -17,8 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.Themes;
 
 namespace dnSpy.Contracts.App {
 	/// <summary>
@@ -40,5 +42,55 @@ namespace dnSpy.Contracts.App {
 
 		/// <summary>Culture</summary>
 		string Culture { get; }
+
+		/// <summary>Member to select, either an MD token or an XML doc name</summary>
+		string SelectMember { get; }
+
+		/// <summary>Show the file in a new tab</summary>
+		bool NewTab { get; }
+
+		/// <summary>Search string or null if none</summary>
+		string SearchText { get; }
+
+		/// <summary>Search type</summary>
+		string SearchFor { get; }
+
+		/// <summary>Search location</summary>
+		string SearchIn { get; }
+
+		/// <summary>Theme name (<see cref="ITheme.Guid"/> or <see cref="ITheme.Name"/>)</summary>
+		string Theme { get; }
+
+		/// <summary>true to load all saved files at startup</summary>
+		bool LoadFiles { get; }
+
+		/// <summary>Full screen</summary>
+		bool? FullScreen { get; }
+
+		/// <summary>Tool windows to show</summary>
+		string ShowToolWindow { get; }
+
+		/// <summary>Tool windows to hide</summary>
+		string HideToolWindow { get; }
+
+		/// <summary>
+		/// Returns true if the argument is present
+		/// </summary>
+		/// <param name="argName">Argument name, eg. <c>--my-arg</c></param>
+		/// <returns></returns>
+		bool HasArgument(string argName);
+
+		/// <summary>
+		/// Gets the argument value or null if the argument isn't present
+		/// </summary>
+		/// <param name="argName">Argument name, eg. <c>--my-arg</c></param>
+		/// <returns></returns>
+		string GetArgumentValue(string argName);
+
+		/// <summary>
+		/// Gets all user arguments and values
+		/// </summary>
+		/// <returns></returns>
+		IEnumerable<Tuple<string, string>> GetArguments();
 	}
 }

@@ -40,8 +40,9 @@ namespace dnSpy.Contracts.App {
 		/// are used by the loader, anything else is ignored.
 		/// </summary>
 		/// <param name="settingsManager">Settings manager</param>
+		/// <param name="args">Command line arguments</param>
 		/// <returns></returns>
-		IEnumerable<object> Load(ISettingsManager settingsManager);
+		IEnumerable<object> Load(ISettingsManager settingsManager, IAppCommandLineArgs args);
 
 		/// <summary>
 		/// Called when everything has been loaded

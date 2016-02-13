@@ -27,6 +27,9 @@ namespace dnSpy.Contracts.Themes {
 		/// <summary>Guid</summary>
 		Guid Guid { get; }
 
+		/// <summary>Name or an empty string</summary>
+		string Name { get; }
+
 		/// <summary>Name of theme that can be used in a MenuItem</summary>
 		string MenuName { get; }
 

@@ -68,11 +68,11 @@ namespace dnSpy.Files.Tabs {
 			OpenFiles(fileTreeView, appWindow.MainWindow, openDlg.FileNames);
 		}
 
-		public static void OpenFiles(IFileTreeView fileTreeView, Window ownerWindow, IEnumerable<string> filenames) {
+		public static void OpenFiles(IFileTreeView fileTreeView, Window ownerWindow, IEnumerable<string> filenames, bool selectFile = true) {
 			var fileLoader = new FileLoader(fileTreeView.FileManager, ownerWindow);
 			var loadedFiles = fileLoader.Load(filenames.Select(a => new FileToLoad(DnSpyFileInfo.CreateFile(a))));
 			var file = loadedFiles.Length == 0 ? null : loadedFiles[loadedFiles.Length - 1];
-			if (file != null) {
+			if (selectFile && file != null) {
 				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
 					var node = fileTreeView.FindNode(file);
 					if (node != null)

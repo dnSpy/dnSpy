@@ -3,7 +3,7 @@ using System.Resources;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("AsmEditor")]
-[assembly: AssemblyDescription("Assembly Editor")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("AsmEditor")]

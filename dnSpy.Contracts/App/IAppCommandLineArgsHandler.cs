@@ -17,31 +17,20 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Search {
-	enum SearchType {
-		AssemblyDef,
-		ModuleDef,
-		Namespace,
-		TypeDef,
-		FieldDef,
-		MethodDef,
-		PropertyDef,
-		EventDef,
-		ParamDef,
-		Local,
-		ParamLocal,
-		AssemblyRef,
-		ModuleRef,
-		Resource,
-		GenericTypeDef,
-		NonGenericTypeDef,
-		EnumTypeDef,
-		InterfaceTypeDef,
-		ClassTypeDef,
-		StructTypeDef,
-		DelegateTypeDef,
-		Member,
-		Any,
-		Literal,
+namespace dnSpy.Contracts.App {
+	/// <summary>
+	/// Gets notified when new command line arguments have been passed to dnSpy
+	/// </summary>
+	public interface IAppCommandLineArgsHandler {
+		/// <summary>
+		/// Order
+		/// </summary>
+		double Order { get; }
+
+		/// <summary>
+		/// Called whenever there are new command line arguments
+		/// </summary>
+		/// <param name="args">Command line arguments</param>
+		void OnNewArgs(IAppCommandLineArgs args);
 	}
 }
