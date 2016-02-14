@@ -21,7 +21,7 @@ using System;
 
 namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>
-	/// Result passed to <see cref="IAsyncFileTabContent.EndAsyncShow(IFileTabUIContext, object, IAsyncShowResult)"/>
+	/// Result passed to <see cref="IAsyncFileTabContent.EndAsyncShow(IShowContext, IAsyncShowResult)"/>
 	/// </summary>
 	public interface IAsyncShowResult {
 		/// <summary>

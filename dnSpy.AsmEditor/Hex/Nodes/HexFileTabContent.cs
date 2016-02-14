@@ -94,8 +94,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public void OnSelected() {
 		}
 
-		public object OnShow(IFileTabUIContext uiContext) {
-			return null;
+		public void OnShow(IShowContext ctx) {
 		}
 
 		public void OnUnselected() {

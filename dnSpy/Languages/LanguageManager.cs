@@ -39,25 +39,25 @@ namespace dnSpy.Languages {
 			if (langs.Count == 0)
 				langs.Add(new DummyLanguage());
 			this.languages = langs.OrderBy(a => a.OrderUI).ToArray();
-			this.selectedLanguage = FindOrDefault(languageManagerSettings.LanguageGuid);
+			this.language = FindOrDefault(languageManagerSettings.LanguageGuid);
 			this.languageChanged = new WeakEventList<EventArgs>();
 		}
 
 		public ILanguage Language {
-			get { return selectedLanguage; }
+			get { return language; }
 			set {
 				if (value == null)
 					throw new ArgumentNullException();
 				if (Array.IndexOf(languages, value) < 0)
 					throw new InvalidOperationException("Can't set a language that isn't part of this instance's language collection");
-				if (selectedLanguage != value) {
-					selectedLanguage = value;
+				if (language != value) {
+					language = value;
 					languageManagerSettings.LanguageGuid = value.UniqueGuid;
 					languageChanged.Raise(this, EventArgs.Empty);
 				}
 			}
 		}
-		ILanguage selectedLanguage;
+		ILanguage language;
 
 		public event EventHandler<EventArgs> LanguageChanged {
 			add { languageChanged.Add(value); }

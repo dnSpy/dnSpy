@@ -169,9 +169,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			public DecompileNodeContext DecompileNodeContext;
 			public AvalonEditTextOutput CachedOutput;
 			public CancellationTokenSource CancellationTokenSource;
+			public object SavedRefPos;
 		}
 
-		DecompileContext CreateDecompileContext() {
+		DecompileContext CreateDecompileContext(IShowContext ctx) {
 			var decompileContext = new DecompileContext();
 			var decompilationContext = new DecompilationContext();
 			decompilationContext.GetDisableAssemblyLoad = () => decompileFileTabContentFactory.FileManager.DisableAssemblyLoad();
@@ -179,6 +180,20 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			var output = new AvalonEditTextOutput();
 			var dispatcher = Dispatcher.CurrentDispatcher;
 			decompileContext.DecompileNodeContext = new DecompileNodeContext(decompilationContext, language, output, dispatcher);
+			if (ctx.IsRefresh) {
+				decompileContext.SavedRefPos = ((ITextEditorUIContext)ctx.UIContext).SaveReferencePosition();
+				if (decompileContext.SavedRefPos != null) {
+					ctx.OnShown = e => {
+						if (e.Success && !e.HasMovedCaret) {
+							e.HasMovedCaret = ((ITextEditorUIContext)ctx.UIContext).RestoreReferencePosition(decompileContext.SavedRefPos);
+							if (!e.HasMovedCaret) {
+								((ITextEditorUIContext)ctx.UIContext).ScrollAndMoveCaretTo(1, 1);
+								e.HasMovedCaret = true;
+							}
+						}
+					};
+				}
+			}
 			return decompileContext;
 		}
 
@@ -197,25 +212,25 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public void OnHide() {
 		}
 
-		public object OnShow(IFileTabUIContext uiContext) {
+		public void OnShow(IShowContext ctx) {
 			UpdateLanguage();
-			var decompileContext = CreateDecompileContext();
+			var decompileContext = CreateDecompileContext(ctx);
 			IHighlightingDefinition highlighting;
 			decompileContext.CachedOutput = decompileFileTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Language, nodes, out highlighting);
 			decompileContext.DecompileNodeContext.HighlightingDefinition = highlighting;
-			return decompileContext;
+			ctx.UserData = decompileContext;
 		}
 
-		public void AsyncWorker(IFileTabUIContext uiContext, object userData, CancellationTokenSource source) {
-			var decompileContext = (DecompileContext)userData;
+		public void AsyncWorker(IShowContext ctx, CancellationTokenSource source) {
+			var decompileContext = (DecompileContext)ctx.UserData;
 			decompileContext.CancellationTokenSource = source;
 			decompileContext.DecompileNodeContext.DecompilationContext.CancellationToken = source.Token;
 			decompileFileTabContentFactory.FileTreeNodeDecompiler.Decompile(decompileContext.DecompileNodeContext, nodes);
 		}
 
-		public void EndAsyncShow(IFileTabUIContext uiContext, object userData, IAsyncShowResult result) {
-			var decompileContext = (DecompileContext)userData;
-			var uiCtx = (ITextEditorUIContext)uiContext;
+		public void EndAsyncShow(IShowContext ctx, IAsyncShowResult result) {
+			var decompileContext = (DecompileContext)ctx.UserData;
+			var uiCtx = (ITextEditorUIContext)ctx.UIContext;
 
 			IHighlightingDefinition highlighting;
 			if (decompileContext.DecompileNodeContext.HighlightingDefinition != null)
@@ -248,12 +263,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				uiCtx.SetOutput(output, highlighting);
 		}
 
-		public bool CanStartAsyncWorker(IFileTabUIContext uiContext, object userData) {
-			var decompileContext = (DecompileContext)userData;
+		public bool CanStartAsyncWorker(IShowContext ctx) {
+			var decompileContext = (DecompileContext)ctx.UserData;
 			if (decompileContext.CachedOutput != null)
 				return false;
 
-			var uiCtx = (ITextEditorUIContext)uiContext;
+			var uiCtx = (ITextEditorUIContext)ctx.UIContext;
 			uiCtx.ShowCancelButton(() => decompileContext.CancellationTokenSource.Cancel(), dnSpy_Resources.Decompiling);
 			return true;
 		}

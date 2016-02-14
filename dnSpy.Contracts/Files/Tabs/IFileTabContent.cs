@@ -32,12 +32,11 @@ namespace dnSpy.Contracts.Files.Tabs {
 
 		/// <summary>
 		/// Called to show its content in the UI. Implement <see cref="IAsyncFileTabContent"/> to
-		/// create the content in a worker thread. The return value is the input to methods in
-		/// <see cref="IAsyncFileTabContent"/>.
+		/// create the content in a worker thread.
 		/// </summary>
-		/// <param name="uiContext">UI Context created by <see cref="CreateUIContext(IFileTabUIContextLocator)"/></param>
+		/// <param name="ctx">UI Context created by <see cref="CreateUIContext(IFileTabUIContextLocator)"/></param>
 		/// <returns></returns>
-		object OnShow(IFileTabUIContext uiContext);
+		void OnShow(IShowContext ctx);
 
 		/// <summary>
 		/// Called when the content is hidden

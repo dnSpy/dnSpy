@@ -17,33 +17,31 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Threading;
+using System;
 
 namespace dnSpy.Contracts.Files.Tabs {
 	/// <summary>
-	/// <see cref="IFileTabContent"/> that creates its output asynchronously in another thread
+	/// Passed to <see cref="IFileTabContent.OnShow(IShowContext)"/>
 	/// </summary>
-	public interface IAsyncFileTabContent : IFileTabContent {
+	public interface IShowContext {
 		/// <summary>
-		/// Returns true if <see cref="AsyncWorker(IShowContext, CancellationTokenSource)"/>
-		/// should be called
+		/// UI Context created by <see cref="IFileTabContent.CreateUIContext(IFileTabUIContextLocator)"/>
 		/// </summary>
-		/// <param name="ctx">Context</param>
-		/// <returns></returns>
-		bool CanStartAsyncWorker(IShowContext ctx);
+		IFileTabUIContext UIContext { get; }
 
 		/// <summary>
-		/// Called in the worker thread
+		/// true if the view is refreshed
 		/// </summary>
-		/// <param name="ctx">Context</param>
-		/// <param name="source">Cancellation token source</param>
-		void AsyncWorker(IShowContext ctx, CancellationTokenSource source);
+		bool IsRefresh { get; }
 
 		/// <summary>
-		/// Called in the main UI thread after the worker thread has exited or was interrupted
+		/// If non-null, gets called after the content has been shown
 		/// </summary>
-		/// <param name="ctx">Context</param>
-		/// <param name="result">Result</param>
-		void EndAsyncShow(IShowContext ctx, IAsyncShowResult result);
+		Action<ShowTabContentEventArgs> OnShown { get; set; }
+
+		/// <summary>
+		/// Can be initialized by the <see cref="IFileTabContent"/> instance
+		/// </summary>
+		object UserData { get; set; }
 	}
 }

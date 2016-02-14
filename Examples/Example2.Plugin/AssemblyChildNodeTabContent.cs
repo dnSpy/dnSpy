@@ -86,14 +86,12 @@ namespace Example2.Plugin {
 			return locator.Get(key, () => new AssemblyChildNodeUIContext());
 		}
 
-		public object OnShow(IFileTabUIContext uiContext) {
+		public void OnShow(IShowContext ctx) {
 			// Get the real type, created by CreateUIContext() above.
-			var ctx = (AssemblyChildNodeUIContext)uiContext;
+			var uiCtx = (AssemblyChildNodeUIContext)ctx.UIContext;
 
 			// You could initialize some stuff, eg. update its DataContext or whatever
-			ctx.Initialize("some input"); // pretend we need to initialize something
-
-			return null;
+			uiCtx.Initialize("some input"); // pretend we need to initialize something
 		}
 
 		public void OnHide() {

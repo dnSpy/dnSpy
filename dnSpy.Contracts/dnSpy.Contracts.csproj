@@ -89,6 +89,7 @@
     <Compile Include="Files\Tabs\ILanguageTabContent.cs" />
     <Compile Include="Files\Tabs\IReferenceFileTabContentCreator.cs" />
     <Compile Include="Files\Tabs\ISaveManager.cs" />
+    <Compile Include="Files\Tabs\IShowContext.cs" />
     <Compile Include="Files\Tabs\ITabSaver.cs" />
     <Compile Include="Files\Tabs\ITabSaverCreator.cs" />
     <Compile Include="Files\Tabs\ShowTabContentEventArgs.cs" />

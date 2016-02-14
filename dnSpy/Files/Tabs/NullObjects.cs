@@ -63,8 +63,7 @@ namespace dnSpy.Files.Tabs {
 		public void OnHide() {
 		}
 
-		public object OnShow(IFileTabUIContext uiContext) {
-			return null;
+		public void OnShow(IShowContext ctx) {
 		}
 
 		public void OnSelected() {

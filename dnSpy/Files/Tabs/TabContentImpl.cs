@@ -226,7 +226,7 @@ namespace dnSpy.Files.Tabs {
 			Debug.Assert(tabContent.FileTab == null || tabContent.FileTab == this);
 			HideCurrentContent();
 			Content = tabContent;
-			ShowInternal(tabContent, serializedUI, onShown);
+			ShowInternal(tabContent, serializedUI, onShown, false);
 		}
 
 		void HideCurrentContent() {
@@ -235,7 +235,18 @@ namespace dnSpy.Files.Tabs {
 				Content.OnHide();
 		}
 
-		void ShowInternal(IFileTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShownHandler) {
+		sealed class ShowContext : IShowContext {
+			public IFileTabUIContext UIContext { get; private set; }
+			public bool IsRefresh { get; private set; }
+			public object UserData { get; set; }
+			public Action<ShowTabContentEventArgs> OnShown { get; set; }
+			public ShowContext(IFileTabUIContext uiCtx, bool isRefresh) {
+				this.UIContext = uiCtx;
+				this.IsRefresh = isRefresh;
+			}
+		}
+
+		void ShowInternal(IFileTabContent tabContent, object serializedUI, Action<ShowTabContentEventArgs> onShownHandler, bool isRefresh) {
 			Debug.Assert(asyncWorkerContext == null);
 			var oldUIContext = UIContext;
 			UIContext = tabContent.CreateUIContext(fileTabUIContextLocator);
@@ -248,17 +259,18 @@ namespace dnSpy.Files.Tabs {
 			Debug.Assert(tabContent.FileTab == this);
 
 			UpdateTitleAndToolTip();
-			var userData = tabContent.OnShow(cachedUIContext);
+			var showCtx = new ShowContext(cachedUIContext, isRefresh);
+			tabContent.OnShow(showCtx);
 			bool asyncShow = false;
 			var asyncTabContent = tabContent as IAsyncFileTabContent;
 			if (asyncTabContent != null) {
-				if (asyncTabContent.CanStartAsyncWorker(cachedUIContext, userData)) {
+				if (asyncTabContent.CanStartAsyncWorker(showCtx)) {
 					asyncShow = true;
 					var ctx = new AsyncWorkerContext();
 					asyncWorkerContext = ctx;
 					Task.Factory.StartNew(() => {
 						AppCulture.InitializeCulture();
-						asyncTabContent.AsyncWorker(cachedUIContext, userData, ctx.CancellationTokenSource);
+						asyncTabContent.AsyncWorker(showCtx, ctx.CancellationTokenSource);
 					}, ctx.CancellationTokenSource.Token)
 					.ContinueWith(t => {
 						bool canShowAsyncOutput = ctx == asyncWorkerContext &&
@@ -267,16 +279,16 @@ namespace dnSpy.Files.Tabs {
 						if (asyncWorkerContext == ctx)
 							asyncWorkerContext = null;
 						ctx.Dispose();
-						asyncTabContent.EndAsyncShow(cachedUIContext, userData, new AsyncShowResult(t, canShowAsyncOutput));
+						asyncTabContent.EndAsyncShow(showCtx, new AsyncShowResult(t, canShowAsyncOutput));
 						bool success = !t.IsFaulted && !t.IsCanceled;
-						OnShown(serializedUI, onShownHandler, success);
+						OnShown(serializedUI, onShownHandler, showCtx, success);
 					}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 				}
 				else
-					asyncTabContent.EndAsyncShow(cachedUIContext, userData, new AsyncShowResult());
+					asyncTabContent.EndAsyncShow(showCtx, new AsyncShowResult());
 			}
 			if (!asyncShow)
-				OnShown(serializedUI, onShownHandler, true);
+				OnShown(serializedUI, onShownHandler, showCtx, true);
 			fileTabManager.OnNewTabContentShown(this);
 		}
 
@@ -322,11 +334,16 @@ namespace dnSpy.Files.Tabs {
 			asyncWorkerContext = null;
 		}
 
-		void OnShown(object serializedUI, Action<ShowTabContentEventArgs> onShownHandler, bool success) {
+		void OnShown(object serializedUI, Action<ShowTabContentEventArgs> onShownHandler, IShowContext showCtx, bool success) {
 			if (serializedUI != null)
 				Deserialize(serializedUI);
-			if (onShownHandler != null)
-				onShownHandler(new ShowTabContentEventArgs(success, this));
+			if (onShownHandler != null || showCtx.OnShown != null) {
+				var e = new ShowTabContentEventArgs(success, this);
+				if (onShownHandler != null)
+					onShownHandler(e);
+				if (showCtx.OnShown != null)
+					showCtx.OnShown(e);
+			}
 		}
 
 		void Deserialize(object serializedUI) {
@@ -377,7 +394,7 @@ namespace dnSpy.Files.Tabs {
 				return;
 			HideCurrentContent();
 			var serialized = tabHistory.NavigateBackward();
-			ShowInternal(tabHistory.Current, serialized, null);
+			ShowInternal(tabHistory.Current, serialized, null, false);
 		}
 
 		public void NavigateForward() {
@@ -385,13 +402,13 @@ namespace dnSpy.Files.Tabs {
 				return;
 			HideCurrentContent();
 			var serialized = tabHistory.NavigateForward();
-			ShowInternal(tabHistory.Current, serialized, null);
+			ShowInternal(tabHistory.Current, serialized, null, false);
 		}
 
 		public void Refresh() {
 			// Pretend it gets hidden and then shown again. Will also cancel any async output threads
 			HideCurrentContent();
-			ShowInternal(Content, UIContext.Serialize(), null);
+			ShowInternal(Content, UIContext.Serialize(), null, true);
 		}
 
 		public void TrySetFocus() {
@@ -412,7 +429,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		internal void OnTabsLoaded() {
-			// Make sure that the tab initializes eg. SelectedLanguage to the language it's using.
+			// Make sure that the tab initializes eg. Language to the language it's using.
 			OnSelected();
 		}
 

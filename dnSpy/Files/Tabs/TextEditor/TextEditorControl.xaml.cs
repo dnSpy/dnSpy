@@ -48,6 +48,7 @@ using System.Windows.Media;
 using System.Windows.Media.Animation;
 using System.Xml;
 using dnlib.DotNet;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Themes;
@@ -782,6 +783,85 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			Clear();
 			BindingOperations.ClearAllBindings(TextEditor);
 			textMarkerService.Dispose();
+		}
+
+		public object SaveReferencePosition(ICodeMappings cms) {
+			return GetRefPos(cms);
+		}
+
+		public bool RestoreReferencePosition(ICodeMappings cms, object obj) {
+			var refPos = obj as RefPos;
+			if (refPos == null)
+				return false;
+			return GoTo(cms, refPos);
+		}
+
+		sealed class RefPos {
+			public SourceCodeMapping SourceCodeMapping;
+			public ReferenceSegment ReferenceSegment;
+
+			public RefPos(IList<SourceCodeMapping> sourceCodeMappings) {
+				this.SourceCodeMapping = sourceCodeMappings.Count > 0 ? sourceCodeMappings[0] : null;
+			}
+
+			public RefPos(ReferenceSegment refSeg) {
+				this.ReferenceSegment = refSeg;
+			}
+		}
+
+		RefPos GetRefPos(ICodeMappings cms) {
+			var mappings = cms.Find(textEditor.TextArea.Caret.Line, textEditor.TextArea.Caret.Column).ToList();
+			mappings.Sort(Sort);
+			var mapping = mappings.Count == 0 ? null : mappings[0];
+
+			var doc = textEditor.TextArea.Document;
+			int offset = doc == null ? 0 : doc.GetOffset(textEditor.TextArea.Caret.Line, 0);
+			var refSeg = references.FindFirstSegmentWithStartAfter(offset);
+			while (refSeg != null) {
+				if (refSeg.Reference is IMemberDef && refSeg.IsLocalTarget && !refSeg.IsLocal)
+					break;
+				refSeg = references.GetNextSegment(refSeg);
+			}
+			if (mapping == null) {
+				if (refSeg != null)
+					return new RefPos(refSeg);
+			}
+			else if (refSeg == null)
+				return new RefPos(mappings);
+			else {
+				offset = doc == null ? 0 : doc.GetOffset(mapping.StartPosition.Line, mapping.StartPosition.Column);
+				if (offset < refSeg.StartOffset)
+					return new RefPos(mappings);
+				return new RefPos(refSeg);
+			}
+
+			return null;
+		}
+
+		static int Sort(SourceCodeMapping a, SourceCodeMapping b) {
+			return a.StartPosition.CompareTo(b.StartPosition);
+		}
+
+		bool GoTo(ICodeMappings cms, RefPos pos) {
+			if (pos == null)
+				return false;
+
+			if (pos.SourceCodeMapping != null) {
+				var mapping = pos.SourceCodeMapping;
+				var scm = cms.Find(mapping.Mapping.Method, mapping.ILRange.From);
+				if (scm != null) {
+					ScrollAndMoveCaretTo(scm.StartPosition.Line, scm.StartPosition.Column);
+					return true;
+				}
+			}
+
+			if (pos.ReferenceSegment != null) {
+				var refSeg = FindReferenceSegment(pos.ReferenceSegment);
+				if (refSeg != null)
+					return GoToTarget(refSeg, false, false);
+			}
+
+			return false;
 		}
 	}
 }

@@ -25,6 +25,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
+using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
@@ -340,6 +341,14 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column) {
 			return textEditorControl.GetCodeReferences(line, column);
+		}
+
+		public object SaveReferencePosition() {
+			return textEditorControl.SaveReferencePosition(this.GetCodeMappings());
+		}
+
+		public bool RestoreReferencePosition(object obj) {
+			return textEditorControl.RestoreReferencePosition(this.GetCodeMappings(), obj);
 		}
 	}
 }

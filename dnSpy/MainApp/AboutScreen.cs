@@ -126,12 +126,11 @@ namespace dnSpy.MainApp {
 		public void OnUnselected() {
 		}
 
-		public object OnShow(IFileTabUIContext uiContext) {
-			var ctx = (ITextEditorUIContext)uiContext;
+		public void OnShow(IShowContext ctx) {
+			var uiCtx = (ITextEditorUIContext)ctx.UIContext;
 			var output = new AvalonEditTextOutput();
 			Write(output);
-			ctx.SetOutput(output, null);
-			return null;
+			uiCtx.SetOutput(output, null);
 		}
 
 		sealed class Info {

@@ -115,5 +115,19 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// <param name="column">Column</param>
 		/// <returns></returns>
 		IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column);
+
+		/// <summary>
+		/// Saves current location relative to some reference in the code. Return value can be
+		/// passed to <see cref="RestoreReferencePosition(object)"/>
+		/// </summary>
+		/// <returns></returns>
+		object SaveReferencePosition();
+
+		/// <summary>
+		/// Restores location saved by <see cref="SaveReferencePosition()"/>
+		/// </summary>
+		/// <param name="obj">Saved position</param>
+		/// <returns></returns>
+		bool RestoreReferencePosition(object obj);
 	}
 }
