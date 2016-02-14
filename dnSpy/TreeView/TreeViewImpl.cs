@@ -72,6 +72,7 @@ namespace dnSpy.TreeView {
 		readonly ITreeViewListener treeViewListener;
 
 		public event EventHandler<TVSelectionChangedEventArgs> SelectionChanged;
+		public event EventHandler<TVNodeRemovedEventArgs> NodeRemoved;
 
 		public TreeViewImpl(ITreeViewManager treeViewManager, IThemeManager themeManager, IImageManager imageManager, Guid guid, TreeViewOptions options) {
 			this.guid = guid;
@@ -275,6 +276,11 @@ namespace dnSpy.TreeView {
 			var impl = node.TreeNode as TreeNodeImpl;
 			Debug.Assert(impl != null);
 			return impl == null ? null : impl.Node;
+		}
+
+		public void OnRemoved(ITreeNodeData node) {
+			if (NodeRemoved != null)
+				NodeRemoved(this, new TVNodeRemovedEventArgs(node, true));
 		}
 	}
 }

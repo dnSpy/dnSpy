@@ -56,6 +56,12 @@ namespace dnSpy.Files.Tabs {
 			newList.Clear();
 		}
 
+		public void OverwriteCurrent(IFileTabContent content) {
+			if (content == null)
+				throw new ArgumentNullException();
+			this.current = content;
+		}
+
 		public bool CanNavigateBackward {
 			get { return oldList.Count > 0; }
 		}
@@ -84,6 +90,22 @@ namespace dnSpy.Files.Tabs {
 			oldList.Add(new TabContentState(current, current.FileTab.UIContext.Serialize()));
 			current = old.FileTabContent;
 			return old.SerializedData;
+		}
+
+		public void RemoveFromBackwardList(Func<IFileTabContent, bool> handler) {
+			Remove(oldList, handler);
+		}
+
+		public void RemoveFromForwardList(Func<IFileTabContent, bool> handler) {
+			Remove(newList, handler);
+		}
+
+		void Remove(List<TabContentState> list, Func<IFileTabContent, bool> handler) {
+			for (int i = list.Count - 1; i >= 0; i--) {
+				var c = list[i];
+				if (handler(c.FileTabContent))
+					list.RemoveAt(i);
+			}
 		}
 	}
 }

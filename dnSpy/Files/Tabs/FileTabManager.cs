@@ -190,10 +190,40 @@ namespace dnSpy.Files.Tabs {
 			this.fileTreeView.SelectionChanged += FileTreeView_SelectionChanged;
 			this.fileTreeView.NodesTextChanged += FileTreeView_NodesTextChanged;
 			this.fileTreeView.NodeActivated += FileTreeView_NodeActivated;
+			this.fileTreeView.TreeView.NodeRemoved += TreeView_NodeRemoved;
 			this.tabManager = tabManagerCreator.Create();
 			this.tabGroupManager = this.tabManager.Create(new TabGroupManagerOptions(MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID));
 			this.tabGroupManager.TabSelectionChanged += TabGroupManager_TabSelectionChanged;
 			this.tabGroupManager.TabGroupSelectionChanged += TabGroupManager_TabGroupSelectionChanged;
+		}
+
+		void TreeView_NodeRemoved(object sender, TVNodeRemovedEventArgs e) {
+			if (!e.Removed)
+				return;
+
+			var fileNode = e.Node as IDnSpyFileNode;
+			if (fileNode == null)
+				return;
+			OnNodeRemoved(fileNode);
+		}
+
+		void OnNodeRemoved(IDnSpyFileNode node) {
+			var hash = GetSelfAndDnSpyFileNodeChildren(node);
+			foreach (TabContentImpl tab in VisibleFirstTabs)
+				tab.OnNodesRemoved(hash, () => this.CreateTabContent(new IFileTreeNodeData[0]));
+			decompilationCache.Clear(new HashSet<IDnSpyFile>(hash.Select(a => a.DnSpyFile)));
+		}
+
+		static HashSet<IDnSpyFileNode> GetSelfAndDnSpyFileNodeChildren(IDnSpyFileNode node, HashSet<IDnSpyFileNode> hash = null) {
+			if (hash == null)
+				hash = new HashSet<IDnSpyFileNode>();
+			hash.Add(node);
+			foreach (var c in node.TreeNode.DataChildren) {
+				var fileNode = c as IDnSpyFileNode;
+				if (fileNode != null)
+					GetSelfAndDnSpyFileNodeChildren(fileNode, hash);
+			}
+			return hash;
 		}
 
 		public event EventHandler<NotifyFileCollectionChangedEventArgs> FileCollectionChanged;

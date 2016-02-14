@@ -98,11 +98,17 @@ namespace dnSpy.TreeView {
 		public bool Remove(ITreeNode item) {
 			if (item == null)
 				return false;
-			return node.Children.Remove(GetAndVerifyTreeNodeImpl(item).Node);
+			var removedNode = GetAndVerifyTreeNodeImpl(item).Node;
+			bool b = node.Children.Remove(removedNode);
+			if (b)
+				node.TreeNodeImpl.TreeView.OnRemoved(removedNode.TreeNodeImpl.Data);
+			return b;
 		}
 
 		public void RemoveAt(int index) {
+			var removedNode = (DnSpySharpTreeNode)node.Children[index];
 			node.Children.RemoveAt(index);
+			node.TreeNodeImpl.TreeView.OnRemoved(removedNode.TreeNodeImpl.Data);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() {

@@ -298,6 +298,7 @@
     <Compile Include="TreeView\TreeViewListenerEventArgs.cs" />
     <Compile Include="TreeView\TreeViewOptions.cs" />
     <Compile Include="TreeView\TVConstants.cs" />
+    <Compile Include="TreeView\TVNodeRemovedEventArgs.cs" />
     <Compile Include="TreeView\TVSelectionChangedEventArgs.cs" />
   </ItemGroup>
   <ItemGroup>

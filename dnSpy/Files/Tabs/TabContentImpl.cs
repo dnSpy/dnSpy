@@ -18,13 +18,16 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files.Tabs;
+using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Settings;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Shared.MVVM;
@@ -422,6 +425,19 @@ namespace dnSpy.Files.Tabs {
 
 		public void SerializeUI(ISettingsSection tabContentUI) {
 			tabContentUI.Attribute(SCALE_ATTR, elementScaler.ScaleValue);
+		}
+
+		public void OnNodesRemoved(HashSet<IDnSpyFileNode> removedFiles, Func<IFileTabContent> createEmptyContent) {
+			tabHistory.RemoveFromBackwardList(a => CheckRemove(a, removedFiles));
+			tabHistory.RemoveFromForwardList(a => CheckRemove(a, removedFiles));
+			if (CheckRemove(tabHistory.Current, removedFiles)) {
+				tabHistory.OverwriteCurrent(createEmptyContent());
+				Refresh();
+			}
+		}
+
+		bool CheckRemove(IFileTabContent content, HashSet<IDnSpyFileNode> removedFiles) {
+			return content.Nodes.Any(a => removedFiles.Contains(a.GetDnSpyFileNode()));
 		}
 	}
 }
