@@ -1,7 +1,6 @@
 ﻿using ICSharpCode.Decompiler.Ast;
 using ICSharpCode.Decompiler.Tests.Helpers;
 using ICSharpCode.NRefactory.CSharp;
-using Mono.Cecil;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
@@ -11,6 +10,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using dnlib.DotNet;
+using dnSpy.Decompiler.Shared;
 
 namespace ICSharpCode.Decompiler.Tests.FSharpPatterns
 {
@@ -57,12 +58,12 @@ namespace ICSharpCode.Decompiler.Tests.FSharpPatterns
 
 		private static void CompareAssemblyAgainstCSharp(string expectedCSharpCode, string asmFilePath)
 		{
-			var module = ModuleDefinition.ReadModule(asmFilePath);
+			var module = Utils.OpenModule(asmFilePath);
 			try
 			{
-				try { module.ReadSymbols(); } catch { }
-				AstBuilder decompiler = new AstBuilder(new DecompilerContext(module));
-				decompiler.AddAssembly(module);
+				try { module.LoadPdb(); } catch { }
+				AstBuilder decompiler = new AstBuilder(DecompilerContext.CreateTestContext(module));
+				decompiler.AddAssembly(module, false, true, true);
 				new Helpers.RemoveCompilerAttribute().Run(decompiler.SyntaxTree);
 				StringWriter output = new StringWriter();
 

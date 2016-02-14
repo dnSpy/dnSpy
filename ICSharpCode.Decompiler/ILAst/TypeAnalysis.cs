@@ -1191,7 +1191,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 		{
 			if (type == null)
 				return TypeCode.Empty;
-			switch (type.ElementType) {
+			switch (type.RemovePinnedAndModifiers().GetElementType()) {
 				case ElementType.Boolean:
 					return TypeCode.Boolean;
 				case ElementType.Char:
@@ -1218,9 +1218,6 @@ namespace ICSharpCode.Decompiler.ILAst {
 					return TypeCode.Double;
 				case ElementType.String:
 					return TypeCode.String;
-				case MetadataType.RequiredModifier:
-				case MetadataType.OptionalModifier:
-					return GetTypeCode(((IModifierType)type).ElementType);
 				default:
 					return TypeCode.Object;
 			}

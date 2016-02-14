@@ -76,7 +76,7 @@ namespace ICSharpCode.Decompiler.Tests
 					}
 					throw new Exception(b.ToString());
 				}
-				return Utils.OpenAssembly(results.PathToAssembly);
+				return Utils.OpenModule(results.PathToAssembly).Assembly;
 			}
 			finally
 			{

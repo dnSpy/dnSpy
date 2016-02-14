@@ -38,7 +38,7 @@ namespace ICSharpCode.Decompiler.Tests
 		void Run(string compiledFile, string expectedOutputFile)
 		{
 			string expectedOutput = File.ReadAllText(Path.Combine(path, expectedOutputFile));
-			var assembly = Utils.OpenAssembly(Path.Combine(path, compiledFile));
+			var assembly = Utils.OpenModule(Path.Combine(path, compiledFile)).Assembly;
 			AstBuilder decompiler = new AstBuilder(DecompilerContext.CreateTestContext(assembly.ManifestModule));
 			decompiler.AddAssembly(assembly);
 			new Helpers.RemoveCompilerAttribute().Run(decompiler.SyntaxTree);
