@@ -112,6 +112,7 @@ namespace dnSpy.Files.Tabs {
 			readonly ModuleDef[] modules;
 			readonly CancellationTokenSource cancellationTokenSource;
 			readonly Dispatcher dispatcher;
+			readonly IBamlDecompiler bamlDecompiler;
 
 			internal ExportToProjectDlg dlg;
 			internal ExportToProjectVM vm;
@@ -121,6 +122,8 @@ namespace dnSpy.Files.Tabs {
 				this.modules = modules;
 				this.cancellationTokenSource = new CancellationTokenSource();
 				this.dispatcher = Dispatcher.CurrentDispatcher;
+				if (owner.bamlDecompiler != null)
+					this.bamlDecompiler = owner.bamlDecompiler.Value;
 			}
 
 			public void Cancel(ExportToProjectVM vm) {
@@ -152,9 +155,9 @@ namespace dnSpy.Files.Tabs {
 							CreateResX = vm.CreateResX,
 							DecompileXaml = vm.DecompileXaml,
 						};
-						if (owner.bamlDecompiler != null) {
+						if (bamlDecompiler != null) {
 							var o = BamlDecompilerOptions.Create(vm.Language);
-							projOpts.DecompileBaml = (a, b, c, d) => owner.bamlDecompiler.Value.Decompile(a, b, c, o, d);
+							projOpts.DecompileBaml = (a, b, c, d) => bamlDecompiler.Decompile(a, b, c, o, d);
 						}
 						options.ProjectModules.Add(projOpts);
 					}
