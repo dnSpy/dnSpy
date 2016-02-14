@@ -162,21 +162,8 @@ namespace dnSpy.Files.TreeView {
 			this.treeView.SelectionChanged += TreeView_SelectionChanged;
 			this.fileManager = fileManager;
 			this.dotNetImageManager = dotNetImageManager;
-			var dispatcher = Dispatcher.CurrentDispatcher;
-			this.fileManager.SetDispatcher(a => {
-				if (!dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted) {
-					bool callInvoke;
-					lock (actionsToCall) {
-						actionsToCall.Add(a);
-						callInvoke = actionsToCall.Count == 1;
-					}
-					if (callInvoke) {
-						// Always notify with a delay because adding stuff to the tree view could
-						// cause some problems with the tree view or the list box it derives from.
-						dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(CallActions));
-					}
-				}
-			});
+			this.dispatcher = Dispatcher.CurrentDispatcher;
+			this.fileManager.SetDispatcher(AddAction);
 			fileManager.CollectionChanged += FileManager_CollectionChanged;
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
@@ -192,6 +179,22 @@ namespace dnSpy.Files.TreeView {
 
 			this.nodeFinders = mefFinders.OrderBy(a => a.Metadata.Order).ToArray();
 			InitializeFileTreeNodeGroups();
+		}
+
+		readonly Dispatcher dispatcher;
+		internal void AddAction(Action action) {
+			if (!dispatcher.HasShutdownFinished && !dispatcher.HasShutdownStarted) {
+				bool callInvoke;
+				lock (actionsToCall) {
+					actionsToCall.Add(action);
+					callInvoke = actionsToCall.Count == 1;
+				}
+				if (callInvoke) {
+					// Always notify with a delay because adding stuff to the tree view could
+					// cause some problems with the tree view or the list box it derives from.
+					dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(CallActions));
+				}
+			}
 		}
 
 		// It's not using IDisposable.Dispose() because MEF will call Dispose() at app exit which

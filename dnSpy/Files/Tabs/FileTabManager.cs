@@ -186,6 +186,7 @@ namespace dnSpy.Files.Tabs {
 				isTreeViewVisible = tvElem.IsVisible;
 			}
 			this.fileTreeView = fileTreeView;
+			this.fileTreeView.FileManager.CollectionChanged += FileManager_CollectionChanged;
 			this.fileTreeView.SelectionChanged += FileTreeView_SelectionChanged;
 			this.fileTreeView.NodesTextChanged += FileTreeView_NodesTextChanged;
 			this.fileTreeView.NodeActivated += FileTreeView_NodeActivated;
@@ -193,6 +194,18 @@ namespace dnSpy.Files.Tabs {
 			this.tabGroupManager = this.tabManager.Create(new TabGroupManagerOptions(MenuConstants.GUIDOBJ_FILES_TABCONTROL_GUID));
 			this.tabGroupManager.TabSelectionChanged += TabGroupManager_TabSelectionChanged;
 			this.tabGroupManager.TabGroupSelectionChanged += TabGroupManager_TabGroupSelectionChanged;
+		}
+
+		public event EventHandler<NotifyFileCollectionChangedEventArgs> FileCollectionChanged;
+		bool disable_FileCollectionChanged = false;
+		void FileManager_CollectionChanged(object sender, NotifyFileCollectionChangedEventArgs e) {
+			CallFileCollectionChanged(e);
+		}
+		void CallFileCollectionChanged(NotifyFileCollectionChangedEventArgs e) {
+			if (disable_FileCollectionChanged)
+				return;
+			if (FileCollectionChanged != null)
+				FileCollectionChanged(this, e);
 		}
 
 		void TabGroupManager_TabGroupSelectionChanged(object sender, TabGroupSelectedEventArgs e) {
@@ -558,6 +571,64 @@ namespace dnSpy.Files.Tabs {
 			tab.FollowReference(@ref, sourceTab == null ? null : sourceTab.Content, onShown);
 			if (setFocus)
 				SetFocus(tab);
+		}
+
+		sealed class ReloadAllHelper : IDisposable {
+			readonly FileTabManager fileTabManager;
+			readonly HashSet<IDnSpyFile> originalFiles;
+			readonly bool old_disable_FileCollectionChanged;
+
+			public ReloadAllHelper(FileTabManager fileTabManager) {
+				this.fileTabManager = fileTabManager;
+				this.originalFiles = new HashSet<IDnSpyFile>(fileTabManager.FileTreeView.FileManager.GetFiles(), new DnSpyFileComparer());
+				this.old_disable_FileCollectionChanged = fileTabManager.disable_FileCollectionChanged;
+				fileTabManager.disable_FileCollectionChanged = true;
+			}
+
+			public void Dispose() {
+				foreach (var file in fileTabManager.FileTreeView.FileManager.GetFiles())
+					originalFiles.Remove(file);
+				var removedFiles = originalFiles.ToArray();
+				// Files are added with a delay to the TV. Make sure our code executes after all
+				// of the pending events.
+				fileTabManager.fileTreeView.AddAction(() => {
+					fileTabManager.disable_FileCollectionChanged = old_disable_FileCollectionChanged;
+					if (removedFiles.Length > 0)
+						fileTabManager.CallFileCollectionChanged(NotifyFileCollectionChangedEventArgs.CreateRemove(removedFiles, null));
+				});
+			}
+
+			sealed class DnSpyFileComparer : IEqualityComparer<IDnSpyFile> {
+				public bool Equals(IDnSpyFile x, IDnSpyFile y) {
+					if (x == y)
+						return true;
+
+					var fx = x.SerializedFile;
+					var fy = y.SerializedFile;
+					if (fx == null || fy == null)
+						return false;
+
+					return Equals(fx.Value, fy.Value);
+				}
+
+				public int GetHashCode(IDnSpyFile obj) {
+					var f = obj.SerializedFile;
+					return f == null ? 0 : GetHashCode(f.Value);
+				}
+
+				static bool Equals(DnSpyFileInfo x, DnSpyFileInfo y) {
+					return StringComparer.Ordinal.Equals(x.Name, y.Name) &&
+							x.Type.Equals(y.Type);
+				}
+
+				static int GetHashCode(DnSpyFileInfo obj) {
+					return obj.Name.GetHashCode() ^ obj.Type.GetHashCode();
+				}
+			}
+		}
+
+		internal IDisposable OnReloadAll() {
+			return new ReloadAllHelper(this);
 		}
 	}
 }

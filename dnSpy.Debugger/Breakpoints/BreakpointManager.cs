@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			foreach (var bp in Breakpoints)
 				InitializeDebuggerBreakpoint(bp);
 
-			fileTabManager.FileTreeView.FileManager.CollectionChanged += FileManager_CollectionChanged;
+			fileTabManager.FileCollectionChanged += FileTabManager_FileCollectionChanged;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			if (theDebugger.IsDebugging)
 				AddDebuggerBreakpoints();
@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
-		void FileManager_CollectionChanged(object sender, NotifyFileCollectionChangedEventArgs e) {
+		void FileTabManager_FileCollectionChanged(object sender, NotifyFileCollectionChangedEventArgs e) {
 			switch (e.Type) {
 			case NotifyFileCollectionType.Clear:
 			case NotifyFileCollectionType.Remove:

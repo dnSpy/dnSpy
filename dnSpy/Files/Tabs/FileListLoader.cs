@@ -42,12 +42,12 @@ namespace dnSpy.Files.Tabs {
 	[Export, Export(typeof(IFileListLoader)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class FileListLoader : IFileListLoader {
 		readonly FileListManager fileListManager;
-		readonly IFileTabManager fileTabManager;
+		readonly FileTabManager fileTabManager;
 		readonly FileTabSerializer fileTabSerializer;
 		readonly Lazy<IFileListListener, IFileListListenerMetadata>[] listeners;
 
 		[ImportingConstructor]
-		FileListLoader(IAppWindow appWindow, FileListManager fileListManager, IFileTabManager fileTabManager, FileTabSerializer fileTabSerializer, [ImportMany] IEnumerable<Lazy<IFileListListener, IFileListListenerMetadata>> mefListeners) {
+		FileListLoader(IAppWindow appWindow, FileListManager fileListManager, FileTabManager fileTabManager, FileTabSerializer fileTabSerializer, [ImportMany] IEnumerable<Lazy<IFileListListener, IFileListListenerMetadata>> mefListeners) {
 			this.fileListManager = fileListManager;
 			this.fileTabManager = fileTabManager;
 			this.fileTabSerializer = fileTabSerializer;
@@ -147,8 +147,10 @@ namespace dnSpy.Files.Tabs {
 			}
 			NotifyAfterLoad(isReload);
 
-			GC.Collect();
-			GC.WaitForPendingFinalizers();
+			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
+			}));
 			return true;
 		}
 
@@ -168,7 +170,8 @@ namespace dnSpy.Files.Tabs {
 
 			NotifyBeforeLoad(isReload);
 			var tgws = fileTabSerializer.SaveTabs();
-			using (DisableSaveToList()) {
+			using (DisableSaveToList())
+			using (fileTabManager.OnReloadAll()) {
 				fileTabManager.CloseAll();
 				fileTabManager.FileTreeView.FileManager.Clear();
 				var files = fileListManager.SelectedFileList.Files.Select(a => new FileToLoad(a)).ToList();

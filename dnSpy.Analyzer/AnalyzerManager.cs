@@ -107,13 +107,13 @@ namespace dnSpy.Analyzer {
 		readonly IFileTabManager fileTabManager;
 
 		[ImportingConstructor]
-		AnalyzerManager(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, ITreeViewManager treeViewManager, IMenuManager menuManager, IThemeManager themeManager, IAnalyzerSettings analyzerSettings, IDotNetImageManager dotNetImageManager, ILanguageManager languageManager, IFileManager fileManager) {
+		AnalyzerManager(IWpfCommandManager wpfCommandManager, IFileTabManager fileTabManager, ITreeViewManager treeViewManager, IMenuManager menuManager, IThemeManager themeManager, IAnalyzerSettings analyzerSettings, IDotNetImageManager dotNetImageManager, ILanguageManager languageManager) {
 			this.fileTabManager = fileTabManager;
 
 			this.context = new AnalyzerTreeNodeDataContext {
 				DotNetImageManager = dotNetImageManager,
 				Language = languageManager.Language,
-				FileManager = fileManager,
+				FileManager = fileTabManager.FileTreeView.FileManager,
 				ShowToken = analyzerSettings.ShowToken,
 				SingleClickExpandsChildren = analyzerSettings.SingleClickExpandsChildren,
 				SyntaxHighlight = analyzerSettings.SyntaxHighlight,
@@ -127,7 +127,7 @@ namespace dnSpy.Analyzer {
 			};
 			this.treeView = treeViewManager.Create(ANALYZER_TREEVIEW_GUID, options);
 
-			fileManager.CollectionChanged += FileManager_CollectionChanged;
+			fileTabManager.FileTreeView.FileManager.CollectionChanged += FileManager_CollectionChanged;
 			fileTabManager.FileModified += FileTabManager_FileModified;
 			languageManager.LanguageChanged += LanguageManager_LanguageChanged;
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;

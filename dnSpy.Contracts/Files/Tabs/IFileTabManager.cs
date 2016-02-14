@@ -105,6 +105,11 @@ namespace dnSpy.Contracts.Files.Tabs {
 		event EventHandler<FileModifiedEventArgs> FileModified;
 
 		/// <summary>
+		/// Notified when the file collection gets changed
+		/// </summary>
+		event EventHandler<NotifyFileCollectionChangedEventArgs> FileCollectionChanged;
+
+		/// <summary>
 		/// Returns true if <paramref name="tabGroup"/> is owned by this instance
 		/// </summary>
 		/// <param name="tabGroup">Tab group</param>
