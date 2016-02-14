@@ -186,7 +186,7 @@ namespace dnSpy.Files.Tabs {
 				isTreeViewVisible = tvElem.IsVisible;
 			}
 			this.fileTreeView = fileTreeView;
-			this.fileTreeView.TreeView.SelectionChanged += TreeView_SelectionChanged;
+			this.fileTreeView.SelectionChanged += FileTreeView_SelectionChanged;
 			this.fileTreeView.NodesTextChanged += FileTreeView_NodesTextChanged;
 			this.fileTreeView.NodeActivated += FileTreeView_NodeActivated;
 			this.tabManager = tabManagerCreator.Create();
@@ -249,10 +249,10 @@ namespace dnSpy.Files.Tabs {
 				impl.UpdateTitleAndToolTip();
 		}
 
-		void TreeView_SelectionChanged(object sender, TVSelectionChangedEventArgs e) {
+		void FileTreeView_SelectionChanged(object sender, TVSelectionChangedEventArgs e) {
 			if (disableSelectionChangedEventCounter > 0)
 				return;
-			var nodes = ((ITreeView)sender).TopLevelSelection.OfType<IFileTreeNodeData>().ToArray();
+			var nodes = ((IFileTreeView)sender).TreeView.TopLevelSelection.OfType<IFileTreeNodeData>().ToArray();
 
 			// Prevent a new empty tab from opening when closing the last tab
 			if (nodes.Length == 0 && ActiveTabContentImpl == null)

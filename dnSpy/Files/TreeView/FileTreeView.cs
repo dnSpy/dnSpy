@@ -96,6 +96,16 @@ namespace dnSpy.Files.TreeView {
 			return e.Handled;
 		}
 
+		public event EventHandler<TVSelectionChangedEventArgs> SelectionChanged;
+		bool disable_SelectionChanged = false;
+
+		void TreeView_SelectionChanged(object sender, TVSelectionChangedEventArgs e) {
+			if (disable_SelectionChanged)
+				return;
+			if (SelectionChanged != null)
+				SelectionChanged(this, e);
+		}
+
 		sealed class GuidObjectsCreator : IGuidObjectsCreator {
 			readonly ITreeView treeView;
 
@@ -149,6 +159,7 @@ namespace dnSpy.Files.TreeView {
 			this.fileTreeNodeGroups = new FileTreeNodeGroups();
 			this.dnSpyFileNodeCreators = dnSpyFileNodeCreators.OrderBy(a => a.Metadata.Order).ToArray();
 			this.treeView = treeViewManager.Create(new Guid(TVConstants.FILE_TREEVIEW_GUID), options);
+			this.treeView.SelectionChanged += TreeView_SelectionChanged;
 			this.fileManager = fileManager;
 			this.dotNetImageManager = dotNetImageManager;
 			var dispatcher = Dispatcher.CurrentDispatcher;
@@ -853,11 +864,19 @@ namespace dnSpy.Files.TreeView {
 			var sortedFiles = GetNewSortedNodes();
 			if (sortedFiles == null)
 				return;
+
 			var selectedNodes = treeView.SelectedItems;
-			treeView.Root.Children.Clear();
-			foreach (var n in sortedFiles)
-				treeView.Root.Children.Add(n.TreeNode);
-			treeView.SelectItems(selectedNodes);
+			var old = disable_SelectionChanged;
+			try {
+				disable_SelectionChanged = true;
+				treeView.Root.Children.Clear();
+				foreach (var n in sortedFiles)
+					treeView.Root.Children.Add(n.TreeNode);
+				treeView.SelectItems(selectedNodes);
+			}
+			finally {
+				disable_SelectionChanged = old;
+			}
 		}
 
 		static bool Equals(IList<IDnSpyFileNode> a, IList<IDnSpyFileNode> b) {

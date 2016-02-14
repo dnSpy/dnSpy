@@ -66,6 +66,11 @@ namespace dnSpy.Contracts.Files.TreeView {
 		event EventHandler<FileTreeNodeActivatedEventArgs> NodeActivated;
 
 		/// <summary>
+		/// Raised when selection has changed
+		/// </summary>
+		event EventHandler<TVSelectionChangedEventArgs> SelectionChanged;
+
+		/// <summary>
 		/// Should only be called by the node that gets activated. Returns true if someone handled it.
 		/// </summary>
 		/// <param name="node">The activated node (should be the caller)</param>
