@@ -416,10 +416,21 @@ namespace dnSpy.Files.Tabs {
 				bool? isDefault = (bool?)root.Attribute("default");
 				var l = new DefaultFileList(name);
 				foreach (var sect in root.Elements("File")) {
-					var asmFullName = (string)sect.Attribute("name");
-					if (string.IsNullOrWhiteSpace(asmFullName))
+					var name2 = (string)sect.Attribute("name");
+					if (string.IsNullOrWhiteSpace(name2))
 						return null;
-					l.Add(DnSpyFileInfo.CreateGacFile(asmFullName));
+					var type = (string)sect.Attribute("type") ?? "gac";
+					var guidStr = (string)sect.Attribute("guid");
+					Guid guid = Guid.Empty;
+					bool hasGuid = guidStr != null && Guid.TryParse(guidStr, out guid);
+					if (type.Equals("file"))
+						l.Add(DnSpyFileInfo.CreateFile(name2));
+					else if (type.Equals("refasm"))
+						l.Add(new DnSpyFileInfo(name2, FileConstants.FILETYPE_REFASM));
+					else if (type.Equals("user-file") && hasGuid)
+						l.Add(new DnSpyFileInfo(name2, guid));
+					else // should be "gac"
+						l.Add(DnSpyFileInfo.CreateGacFile(name2));
 				}
 				return Tuple.Create(l, isDefault ?? false);
 			}

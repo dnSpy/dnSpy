@@ -1,5 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<!-- If you add your own list, remove default or set it to False -->
+<!-- If you add your own list, remove default or set it to False
+GAC: type="gac" (optional)
+	name="myasm, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1111111111111111"
+File:
+	name="c:\my\file.dll" type="file"
+Reference assembly:
+	name="myasm, Version=1.0.0.0, Culture=neutral, PublicKeyToken=1111111111111111|c:\my\file.dll" type="refasm"
+Custom:
+	name="XXXXXXXXXXXXXXXXX" type="user-file" guid="11111111-1111-1111-1111-111111111111"
+-->
 <FileList name=".NET Framework 3.5 Client Profile" default="True">
   <File name="Accessibility, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <File name="AspNetMMCExt, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
