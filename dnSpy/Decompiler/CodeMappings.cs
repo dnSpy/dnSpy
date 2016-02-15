@@ -19,6 +19,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
@@ -90,7 +91,7 @@ namespace dnSpy.Decompiler {
 					list.Add(bp);
 				}
 			}
-			return list;
+			return list == null ? null : list.Distinct().ToList();
 		}
 
 		List<SourceCodeMapping> GetClosest(int line) {
@@ -117,7 +118,7 @@ namespace dnSpy.Decompiler {
 
 			if (list.Count == 0)
 				return null;
-			return list;
+			return list.Distinct().ToList();
 		}
 
 		public SourceCodeMapping Find(MethodDef method, uint ilOffset) {

@@ -25,7 +25,7 @@ namespace dnSpy.Decompiler.Shared {
 	/// <summary>
 	/// Maps the source code to IL.
 	/// </summary>
-	public sealed class SourceCodeMapping {
+	public sealed class SourceCodeMapping : IEquatable<SourceCodeMapping> {
 		public SourceCodeMapping(ILRange ilRange, TextPosition start, TextPosition end, MemberMapping mapping) {
 			this.ilRange = ilRange;
 			this.startPos = start;
@@ -76,6 +76,22 @@ namespace dnSpy.Decompiler.Shared {
 			currentList.Add(ILRange);
 
 			return Mapping.ToArray(currentList, isMatch);
+		}
+
+		public bool Equals(SourceCodeMapping other) {
+			return other != null &&
+				ReferenceEquals(Mapping, other.Mapping) &&
+				ILRange.Equals(other.ILRange) &&
+				StartPosition.Equals(other.StartPosition) &&
+				EndPosition.Equals(other.EndPosition);
+		}
+
+		public override bool Equals(object obj) {
+			return Equals(obj as SourceCodeMapping);
+		}
+
+		public override int GetHashCode() {
+			return Mapping.GetHashCode() ^ ILRange.GetHashCode() ^ StartPosition.GetHashCode() ^ EndPosition.GetHashCode();
 		}
 
 		public override string ToString() {

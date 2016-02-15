@@ -19,6 +19,7 @@
 
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Linq;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
@@ -126,7 +127,7 @@ namespace dnSpy.Debugger {
 					list.Add(bp);
 				}
 			}
-			return list;
+			return list == null ? null : list.Distinct().ToList();
 		}
 
 		List<SourceCodeMapping> GetClosest(int line) {
@@ -153,7 +154,7 @@ namespace dnSpy.Debugger {
 
 			if (list.Count == 0)
 				return null;
-			return list;
+			return list.Distinct().ToList();
 		}
 
 		public MemberMapping TryGetMapping(SerializedDnToken key) {
