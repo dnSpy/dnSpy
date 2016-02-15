@@ -31,9 +31,9 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 		public void SimpleImportsStatement()
 		{
 			string program = "Imports System\n";
-			
+
 			var clause1 = new MemberImportsClause {
-				Member = new SimpleType("System")
+				Member = new SimpleType(new Identifier(null, "System", TextLocation.Empty))
 			};
 			
 			var node = new ImportsStatement();
@@ -49,7 +49,7 @@ namespace ICSharpCode.NRefactory.VB.Tests.Ast
 			string program = "Imports My.Name.Space\n";
 			
 			var clause2 = new MemberImportsClause {
-				Member = new QualifiedType(new QualifiedType(new SimpleType("My"), new Identifier ("Name", AstLocation.Empty)), new Identifier ("Space", AstLocation.Empty))
+				Member = new QualifiedType(new QualifiedType(new SimpleType(new Identifier(null, "My", TextLocation.Empty)), new Identifier (null, "Name", TextLocation.Empty)), new Identifier (null, "Space", TextLocation.Empty))
 			};
 			
 			var node = new ImportsStatement();
