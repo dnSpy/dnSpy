@@ -246,12 +246,22 @@ namespace dnSpy.Tabs {
 			this.wpfFocusManager = wpfFocusManager;
 			this.tabControl = new TabControl();
 			this.tabControl.DataContext = this;
-			tabControl.SetStyle(options.TabControlStyle ?? "FileTabGroupTabControlStyle");
+			this.tabControl.SetStyle(options.TabControlStyle ?? "FileTabGroupTabControlStyle");
 			this.tabControl.SelectionChanged += TabControl_SelectionChanged;
+			this.tabControl.PreviewKeyDown += TabControl_PreviewKeyDown;
 			if (options.InitializeContextMenu != null)
 				this.contextMenuCreator = options.InitializeContextMenu(menuManager, this, this.tabControl);
 			else if (options.TabGroupGuid != Guid.Empty)
 				this.contextMenuCreator = menuManager.InitializeContextMenu(this.tabControl, options.TabGroupGuid, new GuidObjectsCreator(this));
+		}
+
+		void TabControl_PreviewKeyDown(object sender, KeyEventArgs e) {
+			// Tool windows hack: if there's only one tool window in the TabControl, the tab is
+			// hidden, but this causes a crash in TabControl when we press Ctrl+Tab.
+			if (tabControl.Items.Count == 1 && e.Key == Key.Tab && (Keyboard.Modifiers & ModifierKeys.Control) == ModifierKeys.Control) {
+				e.Handled = true;
+				return;
+			}
 		}
 
 		void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e) {
