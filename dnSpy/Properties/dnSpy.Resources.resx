@@ -935,4 +935,7 @@
   <data name="CollapseTreeViewNodesCommand" xml:space="preserve">
     <value>Collapse Tree_View Nodes</value>
   </data>
+  <data name="CloseAllCommand" xml:space="preserve">
+    <value>Close All</value>
+  </data>
 </root>

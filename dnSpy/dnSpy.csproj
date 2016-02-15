@@ -468,6 +468,7 @@
     <Resource Include="Images\ClassProtected.png" />
     <Resource Include="Images\ClassProtectedInternal.png" />
     <Resource Include="Images\Close.png" />
+    <Resource Include="Images\CloseAll.png" />
     <Resource Include="Images\CloseDocuments.png" />
     <Resource Include="Images\Constructor.png" />
     <Resource Include="Images\ConstructorCompilerControlled.png" />

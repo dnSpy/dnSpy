@@ -58,6 +58,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		bool? GetAddRemoveBreakpointsInfo(out int count);
 		bool GetEnableDisableBreakpointsInfo(out int count);
 		void Toggle(ITextEditorUIContext uiContext, int line, int column = 0);
+		Func<object, object> OnRemoveBreakpoints { get; set; }
 	}
 
 	[Export, Export(typeof(IBreakpointManager)), Export(typeof(ILoadBeforeDebug)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -124,6 +125,7 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
+		public Func<object, object> OnRemoveBreakpoints { get; set; }
 		void FileTabManager_FileCollectionChanged(object sender, NotifyFileCollectionChangedEventArgs e) {
 			switch (e.Type) {
 			case NotifyFileCollectionType.Clear:
@@ -132,6 +134,9 @@ namespace dnSpy.Debugger.Breakpoints {
 				var removed = new HashSet<SerializedDnModule>(e.Files.Select(a => a.ToSerializedDnModule()));
 				existing.Remove(new SerializedDnModule());
 				removed.Remove(new SerializedDnModule());
+				object orbArg = null;
+				if (OnRemoveBreakpoints != null)
+					orbArg = OnRemoveBreakpoints(orbArg);
 				foreach (var ilbp in ILCodeBreakpoints) {
 					// Don't auto-remove BPs in dynamic modules since they have no disk file. The
 					// user must delete these him/herself.
@@ -146,6 +151,8 @@ namespace dnSpy.Debugger.Breakpoints {
 					if (removed.Contains(ilbp.SerializedDnToken.Module))
 						Remove(ilbp);
 				}
+				if (OnRemoveBreakpoints != null)
+					OnRemoveBreakpoints(orbArg);
 				break;
 
 			case NotifyFileCollectionType.Add:

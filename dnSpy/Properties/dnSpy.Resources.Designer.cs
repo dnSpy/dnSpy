@@ -277,6 +277,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close All.
+        /// </summary>
+        public static string CloseAllCommand {
+            get {
+                return ResourceManager.GetString("CloseAllCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Close All Tab Groups But This.
         /// </summary>
         public static string CloseAllTabGroupsButThisCommand {

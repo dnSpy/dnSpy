@@ -51,7 +51,33 @@ namespace dnSpy.Debugger.Breakpoints {
 			this.moduleLoader = moduleLoader;
 			this.breakpointManager = breakpointManager;
 			breakpointManager.OnListModified += BreakpointManager_OnListModified;
+
+			// Prevent Save() from opening assemblies when all files are closed (Close All)
+			breakpointManager.OnRemoveBreakpoints = a => {
+				if (a == null)
+					return new DisableSaveHelper(this);
+				((DisableSaveHelper)a).Dispose();
+				return null;
+			};
+
 			Load();
+		}
+
+		sealed class DisableSaveHelper : IDisposable {
+			readonly BreakpointListSettings settings;
+			readonly int saveId;
+
+			public DisableSaveHelper(BreakpointListSettings settings) {
+				this.settings = settings;
+				this.saveId = settings.saveId;
+				settings.disableSaveCounter++;
+			}
+
+			public void Dispose() {
+				settings.disableSaveCounter--;
+				if (saveId != settings.saveId)
+					settings.Save();
+			}
 		}
 
 		void BreakpointManager_OnListModified(object sender, BreakpointListModifiedEventArgs e) {
@@ -118,7 +144,9 @@ namespace dnSpy.Debugger.Breakpoints {
 			}
 		}
 
+		int saveId = 0;
 		void Save() {
+			saveId++;
 			// Prevent Load() from saving the settings every time a new BP is added
 			if (disableSaveCounter != 0)
 				return;

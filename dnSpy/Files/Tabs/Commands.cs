@@ -203,7 +203,25 @@ namespace dnSpy.Files.Tabs {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SortAsmsCommand", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 40)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:CloseAllCommand", Icon = "CloseAll", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 40)]
+	sealed class CloseAllFilesCommand : MenuItemBase {
+		readonly IFileListLoader fileListLoader;
+
+		[ImportingConstructor]
+		CloseAllFilesCommand(IFileListLoader fileListLoader) {
+			this.fileListLoader = fileListLoader;
+		}
+
+		public override bool IsEnabled(IMenuItemContext context) {
+			return fileListLoader.CanCloseAll;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			fileListLoader.CloseAll();
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_FILE_GUID, Header = "res:SortAsmsCommand", Group = MenuConstants.GROUP_APP_MENU_FILE_OPEN, Order = 50)]
 	sealed class SortAssembliesCommand : MenuItemBase {
 		readonly IFileTreeView fileTreeView;
 

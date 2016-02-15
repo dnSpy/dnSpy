@@ -36,6 +36,8 @@ namespace dnSpy.Files.Tabs {
 		bool Load(FileList fileList, IDnSpyFileLoader dnSpyFileLoader = null);
 		bool CanReload { get; }
 		bool Reload(IDnSpyFileLoader dnSpyFileLoader = null);
+		bool CanCloseAll { get; }
+		void CloseAll();
 		void SaveCurrentFilesToList();
 	}
 
@@ -200,5 +202,27 @@ namespace dnSpy.Files.Tabs {
 			return true;
 		}
 		bool disableLoadAndReload;
+
+		public bool CanCloseAll {
+			get { return fileTabManager.FileTreeView.TreeView.Root.Children.Count > 0; }
+		}
+
+		public void CloseAll() {
+			const bool isReload = false;
+			if (!CanCloseAll)
+				return;
+			if (!CheckCanLoad(isReload))
+				return;
+
+			NotifyBeforeLoad(isReload);
+			fileTabManager.CloseAll();
+			fileTabManager.FileTreeView.FileManager.Clear();
+			NotifyAfterLoad(isReload);
+
+			Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+				GC.Collect();
+				GC.WaitForPendingFinalizers();
+			}));
+		}
 	}
 }
