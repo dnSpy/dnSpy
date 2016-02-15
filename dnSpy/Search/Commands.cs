@@ -138,4 +138,114 @@ namespace dnSpy.Search {
 			searchSettings.SyntaxHighlight = !searchSettings.SyntaxHighlight;
 		}
 	}
+
+	[ExportMenuItem(Header = "res:SearchWindow_MatchWholeWords", Group = MenuConstants.GROUP_CTX_SEARCH_OPTIONS, Order = 10)]
+	sealed class MatchWholeWordsCtxMenuCommand : MenuItemBase {
+		readonly SearchSettingsImpl searchSettings;
+
+		[ImportingConstructor]
+		MatchWholeWordsCtxMenuCommand(SearchSettingsImpl searchSettings) {
+			this.searchSettings = searchSettings;
+		}
+
+		public override bool IsVisible(IMenuItemContext context) {
+			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
+		}
+
+		public override bool IsChecked(IMenuItemContext context) {
+			return searchSettings.MatchWholeWords;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			searchSettings.MatchWholeWords = !searchSettings.MatchWholeWords;
+		}
+	}
+
+	[ExportMenuItem(Header = "res:SearchWindow_CaseSensitiveSearch", Group = MenuConstants.GROUP_CTX_SEARCH_OPTIONS, Order = 20)]
+	sealed class CaseSensitiveCtxMenuCommand : MenuItemBase {
+		readonly SearchSettingsImpl searchSettings;
+
+		[ImportingConstructor]
+		CaseSensitiveCtxMenuCommand(SearchSettingsImpl searchSettings) {
+			this.searchSettings = searchSettings;
+		}
+
+		public override bool IsVisible(IMenuItemContext context) {
+			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
+		}
+
+		public override bool IsChecked(IMenuItemContext context) {
+			return searchSettings.CaseSensitive;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			searchSettings.CaseSensitive = !searchSettings.CaseSensitive;
+		}
+	}
+
+	[ExportMenuItem(Header = "res:SearchWindow_MatchAny", Group = MenuConstants.GROUP_CTX_SEARCH_OPTIONS, Order = 30)]
+	sealed class MatchAnyCtxMenuCommand : MenuItemBase {
+		readonly SearchSettingsImpl searchSettings;
+
+		[ImportingConstructor]
+		MatchAnyCtxMenuCommand(SearchSettingsImpl searchSettings) {
+			this.searchSettings = searchSettings;
+		}
+
+		public override bool IsVisible(IMenuItemContext context) {
+			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
+		}
+
+		public override bool IsChecked(IMenuItemContext context) {
+			return searchSettings.MatchAnySearchTerm;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			searchSettings.MatchAnySearchTerm = !searchSettings.MatchAnySearchTerm;
+		}
+	}
+
+	[ExportMenuItem(Header = "res:SearchWindow_DecompileResources", Group = MenuConstants.GROUP_CTX_SEARCH_OPTIONS, Order = 40)]
+	sealed class DecompileResourcesCtxMenuCommand : MenuItemBase {
+		readonly SearchSettingsImpl searchSettings;
+
+		[ImportingConstructor]
+		DecompileResourcesCtxMenuCommand(SearchSettingsImpl searchSettings) {
+			this.searchSettings = searchSettings;
+		}
+
+		public override bool IsVisible(IMenuItemContext context) {
+			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
+		}
+
+		public override bool IsChecked(IMenuItemContext context) {
+			return searchSettings.SearchDecompiledData;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			searchSettings.SearchDecompiledData = !searchSettings.SearchDecompiledData;
+		}
+	}
+
+	[ExportMenuItem(Header = "res:SearchWindow_SearchGacAssemblies", Group = MenuConstants.GROUP_CTX_SEARCH_OPTIONS, Order = 50)]
+	sealed class SearchGacAssembliesCtxMenuCommand : MenuItemBase {
+		readonly SearchSettingsImpl searchSettings;
+
+		[ImportingConstructor]
+		SearchGacAssembliesCtxMenuCommand(SearchSettingsImpl searchSettings) {
+			this.searchSettings = searchSettings;
+		}
+
+		public override bool IsVisible(IMenuItemContext context) {
+			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_SEARCH_GUID);
+		}
+
+		public override bool IsChecked(IMenuItemContext context) {
+			return searchSettings.SearchGacAssemblies;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			searchSettings.SearchGacAssemblies = !searchSettings.SearchGacAssemblies;
+		}
+	}
 }
