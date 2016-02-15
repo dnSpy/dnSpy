@@ -102,5 +102,10 @@ namespace dnSpy.Contracts.TreeView {
 		/// <param name="node">Node</param>
 		/// <returns></returns>
 		object ToImplNode(ITreeNodeData node);
+
+		/// <summary>
+		/// Collapses all unselected nodes
+		/// </summary>
+		void CollapseUnusedNodes();
 	}
 }

@@ -340,6 +340,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Collapse Tree_View Nodes.
+        /// </summary>
+        public static string CollapseTreeViewNodesCommand {
+            get {
+                return ResourceManager.GetString("CollapseTreeViewNodesCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cop_y.
         /// </summary>
         public static string CopyCommand {

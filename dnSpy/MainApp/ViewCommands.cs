@@ -20,6 +20,7 @@
 using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnSpy.Contracts.App;
+using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Shared.Controls;
@@ -60,6 +61,20 @@ namespace dnSpy.MainApp {
 	sealed class MenuFileExitCommand : MenuItemCommand {
 		public MenuFileExitCommand()
 			: base(ApplicationCommands.Close) {
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_VIEW_GUID, Header = "res:CollapseTreeViewNodesCommand", Icon = "OneLevelUp", Group = MenuConstants.GROUP_APP_MENU_VIEW_OPTS, Order = 30)]
+	sealed class CollapseTreeViewCommand : MenuItemBase {
+		readonly IFileTreeView fileTreeView;
+
+		[ImportingConstructor]
+		CollapseTreeViewCommand(IFileTreeView fileTreeView) {
+			this.fileTreeView = fileTreeView;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			fileTreeView.TreeView.CollapseUnusedNodes();
 		}
 	}
 }

@@ -282,5 +282,28 @@ namespace dnSpy.TreeView {
 			if (NodeRemoved != null)
 				NodeRemoved(this, new TVNodeRemovedEventArgs(node, true));
 		}
+
+		public void CollapseUnusedNodes() {
+			var usedNodes = new HashSet<ITreeNodeData>(TopLevelSelection);
+			CollapseUnusedNodes(Root.DataChildren, usedNodes);
+		}
+
+		bool CollapseUnusedNodes(IEnumerable<ITreeNodeData> nodes, HashSet<ITreeNodeData> usedNodes) {
+			bool isExpanded = false;
+			foreach (var node in nodes) {
+				var tn = node.TreeNode;
+				if (usedNodes.Contains(node))
+					isExpanded = true;
+				if (!tn.IsExpanded)
+					continue;
+				if (CollapseUnusedNodes(tn.DataChildren, usedNodes)) {
+					isExpanded = true;
+					tn.IsExpanded = true;
+				}
+				else
+					tn.IsExpanded = false;
+			}
+			return isExpanded;
+		}
 	}
 }

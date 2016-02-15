@@ -562,6 +562,7 @@
     <Resource Include="Images\ModuleReference.png" />
     <Resource Include="Images\Namespace.png" />
     <Resource Include="Images\NewWindow.png" />
+    <Resource Include="Images\OneLevelUp.png" />
     <Resource Include="Images\Open.png" />
     <Resource Include="Images\Operator.png" />
     <Resource Include="Images\OperatorCompilerControlled.png" />

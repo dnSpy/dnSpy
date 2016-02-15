@@ -932,4 +932,7 @@
   <data name="GoToResourceCommand" xml:space="preserve">
     <value>Go to Re_source</value>
   </data>
+  <data name="CollapseTreeViewNodesCommand" xml:space="preserve">
+    <value>Collapse Tree_View Nodes</value>
+  </data>
 </root>
