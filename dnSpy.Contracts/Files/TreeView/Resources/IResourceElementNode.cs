@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		string Name { get; }
 
 		/// <summary>
-		/// Checks whether <see cref="UpdateData(ResourceElement)"/> can execute. Used by the
+		/// Checks whether <see cref="UpdateData"/> can execute. Used by the
 		/// assembly editor. Returns null or an empty string if the data can be updated, else an
 		/// error string that can be shown to the user.
 		/// </summary>
@@ -45,7 +45,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 
 		/// <summary>
 		/// Updates the internal resource data. Must only be called if
-		/// <see cref="CheckCanUpdateData(ResourceElement)"/> returned true. Used by the assembly
+		/// <see cref="CheckCanUpdateData"/> returned true. Used by the assembly
 		/// editor.
 		/// </summary>
 		/// <param name="newResElem">New data</param>
