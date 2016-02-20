@@ -130,6 +130,8 @@ namespace dnSpy.MainApp {
 			var files = Directory.GetFiles(dir, "*.Plugin.dll").OrderBy(a => random.Next()).ToArray();
 			foreach (var file in files) {
 				try {
+					if (!CanLoadPlugin(file))
+						continue;
 					var asm = Assembly.LoadFile(file);
 					aggregateCatalog.Catalogs.Add(new AssemblyCatalog(asm));
 					loadedPlugins.Add(new LoadedPlugin(asm));
@@ -138,6 +140,14 @@ namespace dnSpy.MainApp {
 					Debug.Fail(string.Format("Failed to load file '{0}', msg: {1}", file, ex.Message));
 				}
 			}
+		}
+
+		bool CanLoadPlugin(string file) {
+			var xmlFile = file + ".xml";
+			var config = PluginConfigReader.Read(xmlFile);
+			return config.IsSupportedOSversion(Environment.OSVersion.Version) &&
+				config.IsSupportedFrameworkVersion(Environment.Version) &&
+				config.IsSupportedAppVersion(new Version(FileVersionInfo.GetVersionInfo(GetType().Assembly.Location).FileVersion));
 		}
 
 		[return: MarshalAs(UnmanagedType.Bool)]

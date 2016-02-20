@@ -270,6 +270,8 @@
     <Compile Include="Menus\MenuManager.cs" />
     <Compile Include="MVVM\InitializeDataTemplateContextMenu.cs" />
     <Compile Include="Plugin\LoadedPlugin.cs" />
+    <Compile Include="Plugin\PluginConfig.cs" />
+    <Compile Include="Plugin\PluginConfigReader.cs" />
     <Compile Include="Plugin\PluginManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
