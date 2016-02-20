@@ -18,8 +18,14 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Text;
+using System.Windows;
+using System.Windows.Input;
+using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
+using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Shared.Menus;
 
@@ -94,6 +100,86 @@ namespace dnSpy.Analyzer {
 		[ImportingConstructor]
 		OpenReferenceNewTabCtxMenuCommand(Lazy<IAnalyzerManager> analyzerManager)
 			: base(analyzerManager, true, false) {
+		}
+	}
+
+	[ExportAutoLoaded]
+	sealed class BreakpointsContentCommandLoader : IAutoLoaded {
+		[ImportingConstructor]
+		BreakpointsContentCommandLoader(IWpfCommandManager wpfCommandManager, Lazy<IAnalyzerManager> analyzerManager) {
+			var cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_ANALYZER_TREEVIEW);
+			cmds.Add(ApplicationCommands.Copy,
+				(s, e) => CopyCtxMenuCommand.ExecuteInternal(analyzerManager),
+				(s, e) => e.CanExecute = CopyCtxMenuCommand.CanExecuteInternal(analyzerManager));
+		}
+	}
+
+	[ExportMenuItem(Header = "res:CopyCommand", InputGestureText = "res:ShortCutKeyCtrlC", Icon = "Copy", Group = MenuConstants.GROUP_CTX_ANALYZER_TOKENS, Order = -1)]
+	sealed class CopyCtxMenuCommand : MenuItemBase {
+		readonly Lazy<IAnalyzerManager> analyzerManager;
+
+		[ImportingConstructor]
+		CopyCtxMenuCommand(Lazy<IAnalyzerManager> analyzerManager) {
+			this.analyzerManager = analyzerManager;
+		}
+
+		public override bool IsVisible(IMenuItemContext context) {
+			return context.CreatorObject.Guid == new Guid(MenuConstants.GUIDOBJ_ANALYZER_TREEVIEW_GUID);
+		}
+
+		public override bool IsEnabled(IMenuItemContext context) {
+			return CanExecuteInternal(analyzerManager);
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			ExecuteInternal(analyzerManager);
+		}
+
+		public static bool CanExecuteInternal(Lazy<IAnalyzerManager> analyzerManager) {
+			return analyzerManager.Value.TreeView.SelectedItems.Length > 0;
+		}
+
+		public static void ExecuteInternal(Lazy<IAnalyzerManager> analyzerManager) {
+			var items = analyzerManager.Value.TreeView.SelectedItems;
+			var sb = new StringBuilder();
+			int count = 0;
+			foreach (var t in GetNodes(analyzerManager.Value.TreeView, items)) {
+				if (count > 0)
+					sb.Append(Environment.NewLine);
+				sb.Append(new string('\t', t.Item1));
+				sb.Append(t.Item2.ToString());
+				count++;
+			}
+			if (count > 1)
+				sb.Append(Environment.NewLine);
+			if (sb.Length > 0)
+				Clipboard.SetText(sb.ToString());
+		}
+
+		sealed class State {
+			public readonly int Level;
+			public int Index;
+			public readonly IList<ITreeNode> Nodes;
+			public State(ITreeNode node, int level) {
+				this.Level = level;
+				this.Nodes = node.Children;
+			}
+		}
+
+		static IEnumerable<Tuple<int, ITreeNodeData>> GetNodes(ITreeView treeView, IEnumerable<ITreeNodeData> nodes) {
+			var hash = new HashSet<ITreeNodeData>(nodes);
+			var stack = new Stack<State>();
+			stack.Push(new State(treeView.Root, 0));
+			while (stack.Count > 0) {
+				var state = stack.Pop();
+				if (state.Index >= state.Nodes.Count)
+					continue;
+				var child = state.Nodes[state.Index++];
+				if (hash.Contains(child.Data))
+					yield return Tuple.Create(state.Level, child.Data);
+				stack.Push(state);
+				stack.Push(new State(child, state.Level + 1));
+			}
 		}
 	}
 

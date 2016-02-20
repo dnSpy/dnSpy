@@ -112,6 +112,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="Images\Copy.png" />
     <Resource Include="Images\Delete.png" />
     <Resource Include="Images\Search.png" />
   </ItemGroup>

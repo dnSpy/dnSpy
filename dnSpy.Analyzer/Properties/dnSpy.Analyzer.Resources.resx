@@ -129,6 +129,9 @@
   <data name="AssignedByTreeNode" xml:space="preserve">
     <value>Assigned By</value>
   </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>Cop_y</value>
+  </data>
   <data name="DoubleClick" xml:space="preserve">
     <value>Dbl Click</value>
   </data>
@@ -191,6 +194,9 @@
   </data>
   <data name="ShiftDoubleClick" xml:space="preserve">
     <value>Shift+Dbl Click</value>
+  </data>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
   </data>
   <data name="ShortCutKeyCtrlR" xml:space="preserve">
     <value>Ctrl+R</value>

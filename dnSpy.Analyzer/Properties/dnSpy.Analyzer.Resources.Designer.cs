@@ -97,6 +97,15 @@ namespace dnSpy.Analyzer.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cop_y.
+        /// </summary>
+        public static string CopyCommand {
+            get {
+                return ResourceManager.GetString("CopyCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dbl Click.
         /// </summary>
         public static string DoubleClick {
@@ -282,6 +291,15 @@ namespace dnSpy.Analyzer.Properties {
         public static string ShiftDoubleClick {
             get {
                 return ResourceManager.GetString("ShiftDoubleClick", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+C.
+        /// </summary>
+        public static string ShortCutKeyCtrlC {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlC", resourceCulture);
             }
         }
         
