@@ -37,15 +37,15 @@ namespace dnSpy.Plugin {
 		public Version AppVersion { get; set; }
 
 		public bool IsSupportedOSversion(Version version) {
-			return OSVersion == null || OSVersion >= version;
+			return OSVersion == null || OSVersion <= version;
 		}
 
 		public bool IsSupportedFrameworkVersion(Version version) {
-			return FrameworkVersion == null || FrameworkVersion >= version;
+			return FrameworkVersion == null || FrameworkVersion <= version;
 		}
 
 		public bool IsSupportedAppVersion(Version version) {
-			return AppVersion == null || AppVersion >= version;
+			return AppVersion == null || AppVersion <= version;
 		}
 	}
 }
