@@ -75,10 +75,23 @@ namespace dnSpy.Files.Tabs {
 			}
 
 			foreach (var mod in GetLoadedFiles(args)) {
-				var member = XmlDocKeyProvider.FindMemberByKey(mod, args.SelectMember);
-				if (member != null) {
-					fileTabManager.FollowReference(member);
-					return true;
+				const string XMLDOC_NS_PREFIX = "N:";
+				bool isNamespace = args.SelectMember.StartsWith(XMLDOC_NS_PREFIX);
+				if (isNamespace) {
+					var ns = args.SelectMember.Substring(XMLDOC_NS_PREFIX.Length);
+					var modNode = fileTabManager.FileTreeView.FindNode(mod);
+					var nsNode = modNode == null ? null : fileTabManager.FileTreeView.FindNamespaceNode(modNode.DnSpyFile, ns);
+					if (nsNode != null) {
+						fileTabManager.FollowReference(nsNode);
+						return true;
+					}
+				}
+				else {
+					var member = XmlDocKeyProvider.FindMemberByKey(mod, args.SelectMember);
+					if (member != null) {
+						fileTabManager.FollowReference(member);
+						return true;
+					}
 				}
 			}
 
