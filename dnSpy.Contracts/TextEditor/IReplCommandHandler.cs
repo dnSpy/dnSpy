@@ -17,42 +17,24 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.ComponentModel;
-using System.Windows.Media;
-
-namespace dnSpy.Contracts.Files.Tabs.TextEditor {
+namespace dnSpy.Contracts.TextEditor {
 	/// <summary>
-	/// Settings used by all text editors
+	/// Gets notified by a <see cref="IReplEditor"/> instance
 	/// </summary>
-	public interface ITextEditorSettings : INotifyPropertyChanged {
+	public interface IReplCommandHandler {
 		/// <summary>
-		/// Font family
+		/// Called by <see cref="IReplEditor"/> after enter has been pressed. Returns true if
+		/// <paramref name="input"/> is a command. If false is returned, the user can enter more
+		/// text.
 		/// </summary>
-		FontFamily FontFamily { get; }
+		/// <param name="input">Current user input</param>
+		/// <returns></returns>
+		bool IsCommand(string input);
 
 		/// <summary>
-		/// Font size
+		/// Called after <see cref="IsCommand(string)"/> has returned true
 		/// </summary>
-		double FontSize { get; }
-
-		/// <summary>
-		/// true if line numbers should be shown
-		/// </summary>
-		bool ShowLineNumbers { get; }
-
-		/// <summary>
-		/// true if references are highlighted
-		/// </summary>
-		bool AutoHighlightRefs { get; }
-
-		/// <summary>
-		/// true if current line should be highlighted
-		/// </summary>
-		bool HighlightCurrentLine { get; }
-
-		/// <summary>
-		/// true if word wrapping is enabled
-		/// </summary>
-		bool WordWrap { get; }
+		/// <param name="input">User input</param>
+		void ExecuteCommand(string input);
 	}
 }

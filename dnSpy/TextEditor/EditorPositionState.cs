@@ -19,7 +19,7 @@
 
 using ICSharpCode.AvalonEdit;
 
-namespace dnSpy.Files.Tabs.TextEditor {
+namespace dnSpy.TextEditor {
 	sealed class EditorPositionState {
 		public readonly double VerticalOffset;
 		public readonly double HorizontalOffset;

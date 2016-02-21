@@ -103,7 +103,6 @@
     <Compile Include="Files\Tabs\TextEditor\IIconBarCommandContext.cs" />
     <Compile Include="Files\Tabs\TextEditor\IIconBarObject.cs" />
     <Compile Include="Files\Tabs\TextEditor\IMarkedTextLine.cs" />
-    <Compile Include="Files\Tabs\TextEditor\ITextEditorSettings.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextEditorUIContext.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextEditorUIContextManager.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextLineObject.cs" />
@@ -111,7 +110,6 @@
     <Compile Include="Files\Tabs\TextEditor\ITextMarker.cs" />
     <Compile Include="Files\Tabs\TextEditor\ITextMarkerObject.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorConstants.cs" />
-    <Compile Include="Files\Tabs\TextEditor\TextEditorLocation.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextListenerEvent.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextManagerConstants.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextLineObjectEventArgs.cs" />
@@ -222,6 +220,7 @@
     <Compile Include="Plugin\PluginEvent.cs" />
     <Compile Include="Plugin\PluginInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scripting\IServiceLocator.cs" />
     <Compile Include="Search\BodyResult.cs" />
     <Compile Include="Search\FileSearcherOptions.cs" />
     <Compile Include="Search\IFileSearcher.cs" />
@@ -252,6 +251,13 @@
     <Compile Include="Tabs\TabGroupManagerOptions.cs" />
     <Compile Include="Tabs\TabGroupSelectedEventArgs.cs" />
     <Compile Include="Tabs\TabSelectedEventArgs.cs" />
+    <Compile Include="TextEditor\IReplCommandHandler.cs" />
+    <Compile Include="TextEditor\IReplEditor.cs" />
+    <Compile Include="TextEditor\IReplEditorCreator.cs" />
+    <Compile Include="TextEditor\IReplEditorUI.cs" />
+    <Compile Include="TextEditor\ITextEditorSettings.cs" />
+    <Compile Include="TextEditor\ReplEditorOptions.cs" />
+    <Compile Include="TextEditor\TextEditorLocation.cs" />
     <Compile Include="Themes\ColorType.cs" />
     <Compile Include="Themes\ITheme.cs" />
     <Compile Include="Themes\IThemeColor.cs" />

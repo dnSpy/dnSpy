@@ -19,6 +19,7 @@
 
 using System;
 using System.IO;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace dnSpy.Plugin {
@@ -55,7 +56,7 @@ namespace dnSpy.Plugin {
 			if (verElem == null)
 				return null;
 			var fn = verElem.FirstNode;
-			if (fn == null || fn.NodeType != System.Xml.XmlNodeType.Text)
+			if (fn == null || fn.NodeType != XmlNodeType.Text)
 				return null;
 
 			var s = ((XText)fn).Value;

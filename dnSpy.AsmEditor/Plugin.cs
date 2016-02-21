@@ -22,8 +22,8 @@ using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Windows;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.AsmEditor {
 	[ExportPlugin]

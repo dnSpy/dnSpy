@@ -21,8 +21,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Decompiler;
@@ -30,11 +28,12 @@ using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Settings;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Events;
+using dnSpy.TextEditor;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Rendering;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	interface ITextEditorHelper {
@@ -82,30 +81,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 		}
 
-		sealed class ContextMenuInitializer : IContextMenuInitializer {
-			public void Initialize(IMenuItemContext context, ContextMenu menu) {
-				var teCtrl = (TextEditorControl)context.CreatorObject.Object;
-				if (context.OpenedFromKeyboard) {
-					IScrollInfo scrollInfo = teCtrl.TextEditor.TextArea.TextView;
-					var pos = teCtrl.TextEditor.TextArea.TextView.GetVisualPosition(teCtrl.TextEditor.TextArea.Caret.Position, VisualYPosition.TextBottom);
-					pos = new Point(pos.X - scrollInfo.HorizontalOffset, pos.Y - scrollInfo.VerticalOffset);
-
-					menu.HorizontalOffset = pos.X;
-					menu.VerticalOffset = pos.Y;
-					ContextMenuService.SetPlacement(teCtrl, PlacementMode.Relative);
-					ContextMenuService.SetPlacementTarget(teCtrl, teCtrl.TextEditor.TextArea.TextView);
-					menu.Closed += (s, e2) => {
-						teCtrl.ClearValue(ContextMenuService.PlacementProperty);
-						teCtrl.ClearValue(ContextMenuService.PlacementTargetProperty);
-					};
-				}
-				else {
-					teCtrl.ClearValue(ContextMenuService.PlacementProperty);
-					teCtrl.ClearValue(ContextMenuService.PlacementTargetProperty);
-				}
-			}
-		}
-
 		public TextEditorUIContext(IWpfCommandManager wpfCommandManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl) {
 			this.wpfCommandManager = wpfCommandManager;
 			this.textEditorUIContextManagerImpl = textEditorUIContextManagerImpl;
@@ -117,7 +92,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT, textEditorControl);
 			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTEDITOR, textEditorControl.TextEditor);
 			this.wpfCommandManager.Add(CommandConstants.GUID_TEXTEDITOR_UICONTEXT_TEXTAREA, textEditorControl.TextEditor.TextArea);
-			menuManager.InitializeContextMenu(this.textEditorControl, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer());
+			menuManager.InitializeContextMenu(this.textEditorControl, MenuConstants.GUIDOBJ_TEXTEDITORCONTROL_GUID, new GuidObjectsCreator(this), new ContextMenuInitializer(textEditorControl, textEditorControl.TextEditor));
 		}
 
 		public IFileTab FileTab {
@@ -138,7 +113,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				var button = textEditorControl.CancelButton;
 				if (button != null && button.IsVisible)
 					return button;
-				return textEditorControl.TextEditor.TextArea;
+				return textEditorControl.TextEditor.FocusedElement;
 			}
 		}
 

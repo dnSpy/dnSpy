@@ -17,29 +17,16 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.Files.Tabs.TextEditor {
-	/// <summary>
-	/// Text editor location
-	/// </summary>
-	public struct TextEditorLocation {
-		/// <summary>
-		/// Line
-		/// </summary>
-		public int Line;
+using System.Windows.Controls;
 
-		/// <summary>
-		/// Column
-		/// </summary>
-		public int Column;
+namespace dnSpy.Scripting.Common {
+	sealed partial class ScriptControl : UserControl {
+		public ScriptControl() {
+			InitializeComponent();
+		}
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
-		/// <param name="line">Line</param>
-		/// <param name="column">Column</param>
-		public TextEditorLocation(int line, int column) {
-			this.Line = line;
-			this.Column = column;
+		public void SetTextEditorObject(object obj) {
+			this.textEditorContentPresenter.Content = obj;
 		}
 	}
 }

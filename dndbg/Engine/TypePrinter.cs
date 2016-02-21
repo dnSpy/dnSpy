@@ -975,7 +975,6 @@ namespace dndbg.Engine {
 			Initialize(mdi, token, ref methodSig);
 			Debug.Assert(methodSig != null);
 			Debug.Assert(methodSig == null || methodSig.GenParamCount == methGenArgs.Count);
-			Debug.Assert(methodSig == null || methodSig.GenParamCount <= args.Count);
 			for (int i = methodSig == null ? 0 : methodSig.HasThis ? 1 : 0, mi = 0; i < args.Count; i++, mi++) {
 				if (mi > 0)
 					WriteCommaSpace();

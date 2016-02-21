@@ -44,13 +44,12 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Xml;
 using dnlib.DotNet;
 using dnSpy.Contracts.Decompiler;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Files.Tabs.TextEditor.ToolTips;
@@ -58,27 +57,15 @@ using dnSpy.Shared.AvalonEdit;
 using dnSpy.Shared.Decompiler;
 using dnSpy.Shared.Highlighting;
 using dnSpy.Shared.MVVM;
+using dnSpy.TextEditor;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
-using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
-using ICSharpCode.AvalonEdit.Search;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	sealed partial class TextEditorControl : UserControl, IDisposable {
-		static TextEditorControl() {
-			HighlightingManager.Instance.RegisterHighlighting(
-				"IL", new string[] { ".il" }, () => {
-					using (var s = typeof(TextEditorControl).Assembly.GetManifestResourceStream(typeof(TextEditorControl), "IL.xshd")) {
-						using (var reader = new XmlTextReader(s))
-							return HighlightingLoader.Load(reader, HighlightingManager.Instance);
-					}
-				}
-			);
-		}
-
 		readonly ITextEditorHelper textEditorHelper;
 
 		public NewTextEditor TextEditor {
@@ -89,7 +76,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly IThemeManager themeManager;
 
 		readonly IconBarMargin iconBarMargin;
-		readonly SearchPanel searchPanel;
 
 		public IEnumerable<object> AllReferences {
 			get { return references.Select(a => a.Reference); }
@@ -118,35 +104,18 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			textEditor = new NewTextEditor(themeManager);
+			textEditor = new NewTextEditor(themeManager, textEditorSettings);
 			this.toolTipHelper.Initialize(TextEditor);
 			RemoveCommands(TextEditor);
 			newTextEditor.Content = TextEditor;
 			TextEditor.IsReadOnly = true;
 			TextEditor.ShowLineNumbers = true;
-			TextEditor.Options.RequireControlModifierForHyperlinkClick = false;
 
 			referenceElementGenerator = new ReferenceElementGenerator(JumpToReference, a => true);
 			// Add the ref elem generator first in case one of the refs looks like a http link etc
 			TextEditor.TextArea.TextView.ElementGenerators.Insert(0, referenceElementGenerator);
 			this.uiElementGenerator = new UIElementGenerator();
 			textEditor.TextArea.TextView.ElementGenerators.Add(uiElementGenerator);
-
-			TextEditor.SetBinding(FontFamilyProperty, new Binding {
-				Source = textEditorSettings,
-				Path = new PropertyPath("FontFamily"),
-				Mode = BindingMode.OneWay,
-			});
-			TextEditor.SetBinding(FontSizeProperty, new Binding {
-				Source = textEditorSettings,
-				Path = new PropertyPath("FontSize"),
-				Mode = BindingMode.OneWay,
-			});
-			TextEditor.SetBinding(ICSharpCode.AvalonEdit.TextEditor.WordWrapProperty, new Binding {
-				Source = textEditorSettings,
-				Path = new PropertyPath("WordWrap"),
-				Mode = BindingMode.OneWay,
-			});
 
 			iconBarMargin = new IconBarMargin(uiContext, textLineObjectManager, imageManager, themeManager);
 			iconBarCommandManager.Initialize(iconBarMargin);
@@ -157,13 +126,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			TextEditor.TextArea.TextView.BackgroundRenderers.Add(textMarkerService);
 			TextEditor.TextArea.TextView.LineTransformers.Add(textMarkerService);
 
-			searchPanel = SearchPanel.Install(TextEditor.TextArea);
-			searchPanel.RegisterCommands(this.CommandBindings);
-			searchPanel.Localization = new AvalonEditSearchPanelLocalization();
-
 			TextEditor.TextArea.Caret.PositionChanged += Caret_PositionChanged;
-
-			TextEditor.TextArea.MouseRightButtonDown += (s, e) => TextEditor.GoToMousePosition();
 
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(true)), Key.Tab, ModifierKeys.None));
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => MoveReference(false)), Key.Tab, ModifierKeys.Shift));
@@ -175,25 +138,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => FollowReferenceNewTab()), Key.Enter, ModifierKeys.Control));
 			InputBindings.Add(new KeyBinding(new RelayCommand(a => ClearMarkedReferencesAndToolTip()), Key.Escape, ModifierKeys.None));
 
-			this.AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnGotKeyboardFocus), true);
-			this.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnLostKeyboardFocus), true);
-
-			OnHighlightCurrentLineChanged();
-			OnShowLineNumbersChanged();
+			TextEditor.OnShowLineNumbersChanged();
 			OnAutoHighlightRefsChanged();
-		}
-
-		protected override void OnDragOver(DragEventArgs e) {
-			base.OnDragOver(e);
-
-			if (!e.Handled) {
-				// The text editor seems to allow anything
-				if (e.Data.GetDataPresent(typeof(dnSpy.Tabs.TabItemImpl))) {
-					e.Effects = DragDropEffects.None;
-					e.Handled = true;
-					return;
-				}
-			}
 		}
 
 		public Button CancelButton {
@@ -377,18 +323,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			lastOutput = new LastOutput();
 		}
 
-		void OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
-			OnHighlightCurrentLineChanged();
-		}
-
-		void OnLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
-			// Do as VS: don't hide the highlighted line
-		}
-
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
-			var theme = themeManager.Theme;
-			var marker = theme.GetColor(ColorType.SearchResultMarker);
-			searchPanel.MarkerBrush = marker.Background == null ? Brushes.LightGreen : marker.Background;
 			iconBarMargin.InvalidateVisual();
 		}
 
@@ -749,20 +684,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		void TextEditorSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
-			if (e.PropertyName == "HighlightCurrentLine")
-				OnHighlightCurrentLineChanged();
-			else if (e.PropertyName == "ShowLineNumbers")
-				OnShowLineNumbersChanged();
-			else if (e.PropertyName == "AutoHighlightRefs")
+			if (e.PropertyName == "AutoHighlightRefs")
 				OnAutoHighlightRefsChanged();
-		}
-
-		void OnHighlightCurrentLineChanged() {
-			TextEditor.Options.HighlightCurrentLine = textEditorSettings.HighlightCurrentLine;
-		}
-
-		void OnShowLineNumbersChanged() {
-			TextEditor.ShowLineMargin(textEditorSettings.ShowLineNumbers);
 		}
 
 		void OnAutoHighlightRefsChanged() {

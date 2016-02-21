@@ -541,7 +541,10 @@ namespace dnSpy.Tabs {
 		void AddToTabControl(TabItemImpl tabItem, int insertIndex) {
 			tabControl.Items.Insert(insertIndex, tabItem);
 			if (tabControl.Items.Count == 1) {
-				tabControl.SelectedItem = tabItem;
+				// Don't select the item because it will always make the first tab active at startup.
+				// The tab will then get an IsVisible event which could initialize stuff that takes
+				// a long time to initialize (eg. the C# Interactive tool window)
+				// DON'T: tabControl.SelectedItem = tabItem;
 				OnStylePropChange();
 			}
 		}

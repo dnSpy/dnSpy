@@ -21,6 +21,7 @@ using System.Windows.Controls;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Search;
 using dnSpy.Contracts.Tabs;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.TreeView;
 
@@ -130,6 +131,12 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary><see cref="IIconBarObject"/></summary>
 		public static readonly string GUIDOBJ_IICONBAROBJECT_GUID = "16307E6A-7986-477C-9035-18356742E375";
+
+		/// <summary>REPL text editor control</summary>
+		public static readonly string GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID = "18953907-F276-43F8-B267-DFEA192DD9B8";
+
+		/// <summary><see cref="IReplEditorUI"/></summary>
+		public static readonly string GUIDOBJ_REPL_EDITOR_GUID = "530F5283-6FCF-49EC-A7D1-52D456C9C846";
 
 		/// <summary>Group: App Menu: File, Group: Save</summary>
 		public const string GROUP_APP_MENU_FILE_SAVE = "0,557C4B2D-5966-41AF-BFCA-D0A36DB5D6D8";
@@ -418,6 +425,15 @@ namespace dnSpy.Contracts.Menus {
 
 		/// <summary>Group: Context Menu, Type: Debugger/Threads, Group: Commands</summary>
 		public const string GROUP_CTX_DBG_THREADS_CMDS = "2000,B7B20F2D-6FE1-4415-BC4A-D92B31EE9342";
+
+		/// <summary>Group: Context Menu, Type: REPL text editor, Group: Reset</summary>
+		public const string GROUP_CTX_REPL_RESET = "0,407111D9-B090-4151-83FF-2C01C3816DF3";
+
+		/// <summary>Group: Context Menu, Type: REPL text editor, Group: Copy</summary>
+		public const string GROUP_CTX_REPL_COPY = "1000,E246D458-5DBD-41A6-866B-948793A1D125";
+
+		/// <summary>Group: Context Menu, Type: REPL text editor, Group: Clear</summary>
+		public const string GROUP_CTX_REPL_CLEAR = "2000,1B3A6F12-AB30-4750-AB62-BB34DE4D9D0C";
 
 		/// <summary>Group: Text Editor Icon Bar, Type: Debugger, Group: Breakpoints</summary>
 		public const string GROUP_TEXTEDITOR_ICONBAR_DEBUG_BPS = "0,02808659-957B-4E18-BB41-C5C61ACF5535";

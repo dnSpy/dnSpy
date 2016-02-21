@@ -103,6 +103,7 @@ namespace dnSpy.MainApp {
 
 		void InitializeMEF(bool readSettings) {
 			compositionContainer = InitializeCompositionContainer();
+			compositionContainer.GetExportedValue<ServiceLocator>().SetCompositionContainer(compositionContainer);
 			if (readSettings) {
 				var settingsManager = compositionContainer.GetExportedValue<ISettingsManager>();
 				try {
@@ -147,7 +148,7 @@ namespace dnSpy.MainApp {
 			var config = PluginConfigReader.Read(xmlFile);
 			return config.IsSupportedOSversion(Environment.OSVersion.Version) &&
 				config.IsSupportedFrameworkVersion(Environment.Version) &&
-				config.IsSupportedAppVersion(new Version(FileVersionInfo.GetVersionInfo(GetType().Assembly.Location).FileVersion));
+				config.IsSupportedAppVersion(GetType().Assembly.GetName().Version);
 		}
 
 		[return: MarshalAs(UnmanagedType.Bool)]

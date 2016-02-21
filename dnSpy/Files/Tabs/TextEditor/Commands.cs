@@ -30,6 +30,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Properties;
 using dnSpy.Shared.Menus;
+using dnSpy.TextEditor;
 
 namespace dnSpy.Files.Tabs.TextEditor {
 	[ExportAutoLoaded]

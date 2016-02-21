@@ -32,11 +32,11 @@ using System.Windows.Media;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Settings.Dialog;
-using dnSpy.Files.Tabs.TextEditor;
 using dnSpy.Files.TreeView;
 using dnSpy.Properties;
 using dnSpy.Shared.Controls;
 using dnSpy.Shared.MVVM;
+using dnSpy.TextEditor;
 
 namespace dnSpy.Files.Tabs.Settings {
 	[Export(typeof(IAppSettingsTabCreator))]

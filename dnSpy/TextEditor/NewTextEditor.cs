@@ -22,10 +22,13 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Xml;
 using dnSpy.Contracts.Plugin;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.Themes;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.AvalonEdit;
@@ -36,9 +39,11 @@ using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
 using ICSharpCode.AvalonEdit.Highlighting;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using ICSharpCode.AvalonEdit.Rendering;
+using ICSharpCode.AvalonEdit.Search;
 
-namespace dnSpy.Files.Tabs.TextEditor {
+namespace dnSpy.TextEditor {
 	[ExportAutoLoaded(LoadType = AutoLoadedLoadType.BeforePlugins)]
 	sealed class NewTextEditorThemeInitializer : IAutoLoaded {
 		readonly IThemeManager themeManager;
@@ -166,15 +171,39 @@ namespace dnSpy.Files.Tabs.TextEditor {
 	}
 
 	sealed class NewTextEditor : ICSharpCode.AvalonEdit.TextEditor {
-		readonly IThemeManager themeManager;
+		static NewTextEditor() {
+			HighlightingManager.Instance.RegisterHighlighting(
+				"IL", new string[] { ".il" }, () => {
+					using (var s = typeof(NewTextEditor).Assembly.GetManifestResourceStream(typeof(NewTextEditor), "IL.xshd")) {
+						using (var reader = new XmlTextReader(s))
+							return HighlightingLoader.Load(reader, HighlightingManager.Instance);
+					}
+				}
+			);
+		}
+
+		public IInputElement FocusedElement {
+			get { return this.TextArea; }
+		}
 
 		public LanguageTokens LanguageTokens { get; set; }
 
-		public NewTextEditor(IThemeManager themeManager) {
+		readonly IThemeManager themeManager;
+		readonly ITextEditorSettings textEditorSettings;
+		readonly SearchPanel searchPanel;
+
+		public NewTextEditor(IThemeManager themeManager, ITextEditorSettings textEditorSettings) {
 			this.themeManager = themeManager;
+			this.textEditorSettings = textEditorSettings;
+			this.textEditorSettings.PropertyChanged += TextEditorSettings_PropertyChanged;
 			this.themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			Options.AllowToggleOverstrikeMode = true;
+			Options.RequireControlModifierForHyperlinkClick = false;
 			UpdateColors(false);
+
+			searchPanel = SearchPanel.Install(TextArea);
+			searchPanel.RegisterCommands(this.CommandBindings);
+			searchPanel.Localization = new AvalonEditSearchPanelLocalization();
 
 			TextArea.SelectionCornerRadius = 0;
 			TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
@@ -184,6 +213,55 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			TextArea.InputBindings.Add(new KeyBinding(new RelayCommand(a => UpDownLine(true)), Key.Up, ModifierKeys.Control));
 			this.AddHandler(GotKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnGotKeyboardFocus), true);
 			this.AddHandler(LostKeyboardFocusEvent, new KeyboardFocusChangedEventHandler(OnLostKeyboardFocus), true);
+
+			TextArea.MouseRightButtonDown += (s, e) => GoToMousePosition();
+
+			SetBinding(FontFamilyProperty, new Binding {
+				Source = textEditorSettings,
+				Path = new PropertyPath("FontFamily"),
+				Mode = BindingMode.OneWay,
+			});
+			SetBinding(FontSizeProperty, new Binding {
+				Source = textEditorSettings,
+				Path = new PropertyPath("FontSize"),
+				Mode = BindingMode.OneWay,
+			});
+			SetBinding(WordWrapProperty, new Binding {
+				Source = textEditorSettings,
+				Path = new PropertyPath("WordWrap"),
+				Mode = BindingMode.OneWay,
+			});
+
+			OnHighlightCurrentLineChanged();
+			OnShowLineNumbersChanged();
+		}
+
+		protected override void OnDragOver(DragEventArgs e) {
+			base.OnDragOver(e);
+
+			if (!e.Handled) {
+				// The text editor seems to allow anything
+				if (e.Data.GetDataPresent(typeof(dnSpy.Tabs.TabItemImpl))) {
+					e.Effects = DragDropEffects.None;
+					e.Handled = true;
+					return;
+				}
+			}
+		}
+
+		void TextEditorSettings_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e) {
+			if (e.PropertyName == "HighlightCurrentLine")
+				OnHighlightCurrentLineChanged();
+			else if (e.PropertyName == "ShowLineNumbers")
+				OnShowLineNumbersChanged();
+		}
+
+		void OnHighlightCurrentLineChanged() {
+			Options.HighlightCurrentLine = textEditorSettings.HighlightCurrentLine;
+		}
+
+		public void OnShowLineNumbersChanged() {
+			ShowLineMargin(textEditorSettings.ShowLineNumbers);
 		}
 
 		public void ShowLineMargin(bool enable) {
@@ -198,11 +276,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		void OnGotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			TextArea.Caret.Show();
 			UpdateCurrentLineColors(true);
+			OnHighlightCurrentLineChanged();
 		}
 
 		void OnLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
 			TextArea.Caret.Hide();
 			UpdateCurrentLineColors(true);
+			// Do as VS: don't hide the highlighted line
 		}
 
 		public void GoToMousePosition() {
@@ -323,6 +403,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
+			var theme = themeManager.Theme;
+			var marker = theme.GetColor(ColorType.SearchResultMarker);
+			searchPanel.MarkerBrush = marker.Background == null ? Brushes.LightGreen : marker.Background;
 			UpdateColors(true);
 		}
 

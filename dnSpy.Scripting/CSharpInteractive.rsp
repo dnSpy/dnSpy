@@ -1,0 +1,18 @@
+﻿# C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\PrivateAssemblies\CSharpInteractive.rsp
+/r:System
+/r:System.Core
+/r:Microsoft.CSharp
+/u:System
+/u:System.IO
+/u:System.Collections.Generic
+/u:System.Diagnostics
+/u:System.Dynamic
+/u:System.Linq
+/u:System.Linq.Expressions
+/u:System.Text
+/u:System.Threading.Tasks
+
+# Add extra stuff
+# /rx adds <bindir>XXX.dll to the references, use /r:FULL_PATH for full paths
+/rx:dnSpy.Contracts
+/u:dnSpy.Contracts.Scripting

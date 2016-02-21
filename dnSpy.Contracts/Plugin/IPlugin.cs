@@ -35,7 +35,7 @@ namespace dnSpy.Contracts.Plugin {
 		void OnEvent(PluginEvent @event, object obj);
 
 		/// <summary>
-		/// Gets the <see cref="PluginInfo"/> instance
+		/// Gets the <see cref="Plugin.PluginInfo"/> instance
 		/// </summary>
 		PluginInfo PluginInfo { get; }
 

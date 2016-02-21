@@ -61,6 +61,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.BamlDecompiler", "dnS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.VB.Tests", "NRefactory\ICSharpCode.NRefactory.VB.Tests\ICSharpCode.NRefactory.VB.Tests.csproj", "{870115DD-960A-4406-A6B9-600BCDC36A03}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Scripting", "dnSpy.Scripting\dnSpy.Scripting.csproj", "{D2EFF1AF-6E3A-4025-9E67-52772384B73F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -359,6 +361,18 @@ Global
 		{870115DD-960A-4406-A6B9-600BCDC36A03}.Release|Mixed Platforms.Build.0 = Release|x86
 		{870115DD-960A-4406-A6B9-600BCDC36A03}.Release|x86.ActiveCfg = Release|x86
 		{870115DD-960A-4406-A6B9-600BCDC36A03}.Release|x86.Build.0 = Release|x86
+		{D2EFF1AF-6E3A-4025-9E67-52772384B73F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2EFF1AF-6E3A-4025-9E67-52772384B73F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2EFF1AF-6E3A-4025-9E67-52772384B73F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{D2EFF1AF-6E3A-4025-9E67-52772384B73F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{D2EFF1AF-6E3A-4025-9E67-52772384B73F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D2EFF1AF-6E3A-4025-9E67-52772384B73F}.Debug|x86.Build.0 = Debug|Any CPU
+		{D2EFF1AF-6E3A-4025-9E67-52772384B73F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2EFF1AF-6E3A-4025-9E67-52772384B73F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2EFF1AF-6E3A-4025-9E67-52772384B73F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{D2EFF1AF-6E3A-4025-9E67-52772384B73F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{D2EFF1AF-6E3A-4025-9E67-52772384B73F}.Release|x86.ActiveCfg = Release|Any CPU
+		{D2EFF1AF-6E3A-4025-9E67-52772384B73F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -391,5 +405,6 @@ Global
 		{87772B51-FA94-47A5-83F4-4E8E69369A2D} = {01A442C1-3CE6-45A7-BE1B-9E288ADC33F3}
 		{6D647069-5C94-4388-AC0C-E059D125AC51} = {01A442C1-3CE6-45A7-BE1B-9E288ADC33F3}
 		{870115DD-960A-4406-A6B9-600BCDC36A03} = {6C439ABB-7252-4F00-9A21-121C11E98895}
+		{D2EFF1AF-6E3A-4025-9E67-52772384B73F} = {01A442C1-3CE6-45A7-BE1B-9E288ADC33F3}
 	EndGlobalSection
 EndGlobal

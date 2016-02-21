@@ -20,12 +20,12 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Windows.Media;
-using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Settings;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Shared.Controls;
 using dnSpy.Shared.MVVM;
 
-namespace dnSpy.Files.Tabs.TextEditor {
+namespace dnSpy.TextEditor {
 	class TextEditorSettings : ViewModelBase, ITextEditorSettings {
 		protected virtual void OnModified() {
 		}

@@ -159,15 +159,12 @@
     <Compile Include="Files\Tabs\TextEditor\Commands.cs" />
     <Compile Include="Files\Tabs\TextEditor\DecompileFileTabContent.cs" />
     <Compile Include="Files\Tabs\TextEditor\DecompileNodeContext.cs" />
-    <Compile Include="Files\Tabs\TextEditor\EditorPositionState.cs" />
     <Compile Include="Files\Tabs\TextEditor\IconBarCommandManager.cs" />
     <Compile Include="Files\Tabs\TextEditor\IconBarMargin.cs" />
-    <Compile Include="Files\Tabs\TextEditor\NewTextEditor.cs" />
     <Compile Include="Files\Tabs\TextEditor\ReferenceElementGenerator.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorControl.xaml.cs">
       <DependentUpon>TextEditorControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Files\Tabs\TextEditor\TextEditorSettings.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorUIContext.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextCreator.cs" />
     <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextManagerImpl.cs" />
@@ -261,6 +258,7 @@
     </Compile>
     <Compile Include="MainApp\MsgBoxVM.cs" />
     <Compile Include="MainApp\SavedWindowState.cs" />
+    <Compile Include="MainApp\ServiceLocator.cs" />
     <Compile Include="MainApp\StartUpClass.cs" />
     <Compile Include="MainApp\ToolBarCommands.cs" />
     <Compile Include="MainApp\ViewCommands.cs" />
@@ -320,6 +318,13 @@
     <Compile Include="Tabs\TabManager.cs" />
     <Compile Include="Tabs\TabManagerCreator.cs" />
     <Compile Include="Tabs\TabUtils.cs" />
+    <Compile Include="TextEditor\ContextMenuInitializer.cs" />
+    <Compile Include="TextEditor\EditorPositionState.cs" />
+    <Compile Include="TextEditor\NewTextEditor.cs" />
+    <Compile Include="TextEditor\ReplCommands.cs" />
+    <Compile Include="TextEditor\ReplEditorCreator.cs" />
+    <Compile Include="TextEditor\ReplEditorUI.cs" />
+    <Compile Include="TextEditor\TextEditorSettings.cs" />
     <Compile Include="Themes\AppCommandLineArgsHandler.cs" />
     <Compile Include="Themes\Color.cs" />
     <Compile Include="Themes\ColorInfo.cs" />
@@ -345,7 +350,6 @@
     <Compile Include="TreeView\TreeViewManager.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Files\Tabs\TextEditor\IL.xshd" />
     <EmbeddedResource Include="Properties\dnSpy.Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Resources.Designer.cs</LastGenOutput>
@@ -384,6 +388,7 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="app.manifest" />
+    <EmbeddedResource Include="TextEditor\IL.xshd" />
     <None Include="Themes\blue.dntheme">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
