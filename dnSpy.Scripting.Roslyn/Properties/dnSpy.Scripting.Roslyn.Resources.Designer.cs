@@ -97,6 +97,159 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show next command.
+        /// </summary>
+        public static string HelpAltDown {
+            get {
+                return ResourceManager.GetString("HelpAltDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show previous command.
+        /// </summary>
+        public static string HelpAltUp {
+            get {
+                return ResourceManager.GetString("HelpAltUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear the script editor.
+        /// </summary>
+        public static string HelpClearDescription {
+            get {
+                return ResourceManager.GetString("HelpClearDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select input text. Press again to select all text.
+        /// </summary>
+        public static string HelpCtrlA {
+            get {
+                return ResourceManager.GetString("HelpCtrlA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show next command matching the current input text.
+        /// </summary>
+        public static string HelpCtrlAltDown {
+            get {
+                return ResourceManager.GetString("HelpCtrlAltDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show previous command matching the current input text.
+        /// </summary>
+        public static string HelpCtrlAltUp {
+            get {
+                return ResourceManager.GetString("HelpCtrlAltUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Execute the command.
+        /// </summary>
+        public static string HelpCtrlEnter {
+            get {
+                return ResourceManager.GetString("HelpCtrlEnter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Execute the command.
+        /// </summary>
+        public static string HelpEnter {
+            get {
+                return ResourceManager.GetString("HelpEnter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear current input.
+        /// </summary>
+        public static string HelpEscape {
+            get {
+                return ResourceManager.GetString("HelpEscape", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Display the help.
+        /// </summary>
+        public static string HelpHelpDescription {
+            get {
+                return ResourceManager.GetString("HelpHelpDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Keyboard shortcuts:.
+        /// </summary>
+        public static string HelpKeyboardShortcuts {
+            get {
+                return ResourceManager.GetString("HelpKeyboardShortcuts", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to REPL commands:.
+        /// </summary>
+        public static string HelpReplCommands {
+            get {
+                return ResourceManager.GetString("HelpReplCommands", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset the execution environment.
+        /// </summary>
+        public static string HelpResetDescription {
+            get {
+                return ResourceManager.GetString("HelpResetDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Load and execute a script, #load &quot;myscript.csx&quot;.
+        /// </summary>
+        public static string HelpScriptDirective_load {
+            get {
+                return ResourceManager.GetString("HelpScriptDirective_load", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add a reference, either an assembly or a path to a file on disk or a path relative to the dnSpy or user directory, #r &quot;myfile.dll&quot;.
+        /// </summary>
+        public static string HelpScriptDirective_r {
+            get {
+                return ResourceManager.GetString("HelpScriptDirective_r", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Script directives:.
+        /// </summary>
+        public static string HelpScriptDirectives {
+            get {
+                return ResourceManager.GetString("HelpScriptDirectives", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Insert a new line.
+        /// </summary>
+        public static string HelpShiftEnter {
+            get {
+                return ResourceManager.GetString("HelpShiftEnter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Type &quot;#help&quot; for more information..
         /// </summary>
         public static string HelpString {
@@ -178,6 +331,42 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Alt+Down Arrow.
+        /// </summary>
+        public static string ShortCutKeyAltDown {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAltDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Alt+Up Arrow.
+        /// </summary>
+        public static string ShortCutKeyAltUp {
+            get {
+                return ResourceManager.GetString("ShortCutKeyAltUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+A.
+        /// </summary>
+        public static string ShortCutKeyCtrlA {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Alt+Down Arrow.
+        /// </summary>
+        public static string ShortCutKeyCtrlAltDown {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlAltDown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+Alt+N.
         /// </summary>
         public static string ShortCutKeyCtrlAltN {
@@ -187,11 +376,29 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Alt+Up Arrow.
+        /// </summary>
+        public static string ShortCutKeyCtrlAltUp {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlAltUp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+C.
         /// </summary>
         public static string ShortCutKeyCtrlC {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Enter.
+        /// </summary>
+        public static string ShortCutKeyCtrlEnter {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlEnter", resourceCulture);
             }
         }
         
@@ -210,6 +417,33 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         public static string ShortCutKeyCtrlX {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enter.
+        /// </summary>
+        public static string ShortCutKeyEnter {
+            get {
+                return ResourceManager.GetString("ShortCutKeyEnter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Esc.
+        /// </summary>
+        public static string ShortCutKeyEscape {
+            get {
+                return ResourceManager.GetString("ShortCutKeyEscape", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shift+Enter.
+        /// </summary>
+        public static string ShortCutKeyShiftEnter {
+            get {
+                return ResourceManager.GetString("ShortCutKeyShiftEnter", resourceCulture);
             }
         }
         

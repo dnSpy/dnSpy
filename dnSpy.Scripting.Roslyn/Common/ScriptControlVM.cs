@@ -18,21 +18,28 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.TextEditor;
 using dnSpy.Scripting.Roslyn.Properties;
 using dnSpy.Shared.MVVM;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	abstract class ScriptControlVM : ViewModelBase, IReplCommandHandler, IScriptGlobalsHelper {
+		internal const string CMD_PREFIX = "#";
+
 		public ICommand ResetCommand {
 			get { return new RelayCommand(a => Reset(), a => CanReset); }
 		}
@@ -70,17 +77,40 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			InitializeExecutionEngine(loadConfig, false);
 		}
 
+		public IReplEditor ReplEditor {
+			get { return replEditor; }
+		}
 		protected readonly IReplEditor replEditor;
 
+		public IEnumerable<IScriptCommand> ScriptCommands {
+			get { return toScriptCommand.Values; }
+		}
+		readonly Dictionary<string, IScriptCommand> toScriptCommand;
+
+		IEnumerable<IScriptCommand> CreateScriptCommands() {
+			yield return new ClearCommand();
+			yield return new HelpCommand();
+			yield return new ResetCommand();
+		}
+
+		readonly Dispatcher dispatcher;
+
 		protected ScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator) {
+			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.replEditor = replEditor;
 			this.replEditor.CommandHandler = this;
 			this.serviceLocator = serviceLocator;
+
+			this.toScriptCommand = new Dictionary<string, IScriptCommand>(StringComparer.Ordinal);
+			foreach (var sc in CreateScriptCommands()) {
+				foreach (var name in sc.Names)
+					this.toScriptCommand.Add(name, sc);
+			}
 		}
 
 		protected abstract string Logo { get; }
 		protected abstract string Help { get; }
-		protected abstract Script<object> Create(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader assemblyLoader);
+		protected abstract Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader assemblyLoader);
 
 		public void OnVisible() {
 			if (hasInitialized)
@@ -100,6 +130,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		public bool IsCommand(string text) {
+			if (ParseScriptCommand(text) != null)
+				return true;
 			return true;//TODO: Ask Roslyn whether it's something that appears to be a valid command
 		}
 
@@ -120,6 +152,18 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		ExecState execState;
 		readonly object lockObj = new object();
 
+		IEnumerable<string> GetMetadataResolverSearchPaths() {
+			string dir;
+			if (!string.IsNullOrEmpty(dir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)))
+				yield return dir;
+		}
+
+		IEnumerable<string> GetScriptSourceResolverSearchPaths() {
+			string dir;
+			if (!string.IsNullOrEmpty(dir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)))
+				yield return dir;
+		}
+
 		void InitializeExecutionEngine(bool loadConfig, bool showHelp) {
 			Debug.Assert(execState == null);
 			if (execState != null)
@@ -132,11 +176,17 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				execStateCache.CancellationTokenSource.Token.ThrowIfCancellationRequested();
 
 				var opts = ScriptOptions.Default;
+				opts = opts.WithMetadataResolver(ScriptMetadataResolver.Default
+								.WithBaseDirectory(AppDirectories.BinDirectory)
+								.WithSearchPaths(GetMetadataResolverSearchPaths()));
+				opts = opts.WithSourceResolver(ScriptSourceResolver.Default
+								.WithBaseDirectory(AppDirectories.BinDirectory)
+								.WithSearchPaths(GetScriptSourceResolverSearchPaths()));
 				if (loadConfig)
 					opts = CreateScriptOptions(opts);
 				execStateCache.ScriptOptions = opts;
 
-				var script = Create(string.Empty, execStateCache.ScriptOptions, execStateCache.Globals.GetType(), null);
+				var script = Create<object>(string.Empty, execStateCache.ScriptOptions, execStateCache.Globals.GetType(), null);
 				execStateCache.CancellationTokenSource.Token.ThrowIfCancellationRequested();
 				execStateCache.ScriptState = script.RunAsync(execStateCache.Globals, execStateCache.CancellationTokenSource.Token).Result;
 				if (showHelp)
@@ -177,6 +227,19 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			}
 
 			try {
+				var scState = ParseScriptCommand(input);
+				if (scState != null) {
+					if (execState != null) {
+						lock (lockObj)
+							execState.Executing = false;
+					}
+					scState.Command.Execute(this, scState.Arguments);
+					bool isReset = scState.Command is ResetCommand;
+					if (!isReset)
+						CommandExecuted();
+					return true;
+				}
+
 				var oldState = execState;
 
 				var taskSched = TaskScheduler.FromCurrentSynchronizationContext();
@@ -184,7 +247,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					AppCulture.InitializeCulture();
 					oldState.CancellationTokenSource.Token.ThrowIfCancellationRequested();
 
-					var execTask = oldState.ScriptState.ContinueWithAsync(input, oldState.ScriptOptions, oldState.CancellationTokenSource.Token);
+					var opts = oldState.ScriptOptions.WithReferences(Array.Empty<MetadataReference>()).WithImports(Array.Empty<string>());
+					var execTask = oldState.ScriptState.ContinueWithAsync(input, opts, oldState.CancellationTokenSource.Token);
 					oldState.CancellationTokenSource.Token.ThrowIfCancellationRequested();
 					lock (lockObj) {
 						if (oldState == execState)
@@ -223,16 +287,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					var ex = t.Exception;
 					if (ex != null && ex.InnerException is CompilationErrorException) {
 						var cee = (CompilationErrorException)ex.InnerException;
-						const int MAX_DIAGS = 5;
-						for (int i = 0; i < cee.Diagnostics.Length && i < MAX_DIAGS; i++)
-							replEditor.OutputPrintLine(cee.Diagnostics[i].ToString());
-						int extraErrors = cee.Diagnostics.Length - MAX_DIAGS;
-						if (extraErrors > 0) {
-							if (extraErrors == 1)
-								replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.CompilationAdditionalError, extraErrors));
-							else
-								replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.CompilationAdditionalErrors, extraErrors));
-						}
+						PrintDiagnostics(cee.Diagnostics);
 						CommandExecuted();
 					}
 					else
@@ -251,10 +306,63 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			}
 		}
 
+		bool UnpackScriptCommand(string input, out string name, out string[] args) {
+			name = null;
+			args = null;
+
+			var s = input.TrimStart();
+			if (!s.StartsWith(CMD_PREFIX))
+				return false;
+			s = s.Substring(CMD_PREFIX.Length).TrimStart();
+
+			var parts = s.Split(argSeps, StringSplitOptions.RemoveEmptyEntries);
+			args = parts.Skip(1).ToArray();
+			name = parts[0];
+			return true;
+		}
+		static readonly char[] argSeps = new char[] { ' ', '\t', '\r', '\n' };
+
+		sealed class ExecScriptCommandState {
+			public readonly IScriptCommand Command;
+			public readonly string[] Arguments;
+			public ExecScriptCommandState(IScriptCommand sc, string[] args) {
+				this.Command = sc;
+				this.Arguments = args;
+			}
+		}
+
+		ExecScriptCommandState ParseScriptCommand(string input) {
+			string name;
+			string[] args;
+			if (!UnpackScriptCommand(input, out name, out args))
+				return null;
+
+			IScriptCommand sc;
+			if (!toScriptCommand.TryGetValue(name, out sc))
+				return null;
+
+			return new ExecScriptCommandState(sc, args);
+		}
+
+		void PrintDiagnostics(ImmutableArray<Diagnostic> diagnostics) {
+			const int MAX_DIAGS = 5;
+			for (int i = 0; i < diagnostics.Length && i < MAX_DIAGS; i++)
+				replEditor.OutputPrintLine(DiagnosticFormatter.Format(diagnostics[i], Thread.CurrentThread.CurrentUICulture));
+			int extraErrors = diagnostics.Length - MAX_DIAGS;
+			if (extraErrors > 0) {
+				if (extraErrors == 1)
+					replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.CompilationAdditionalError, extraErrors));
+				else
+					replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.CompilationAdditionalErrors, extraErrors));
+			}
+		}
+
 		void ReportException(Task t) {
 			var ex = t.Exception;
-			if (ex != null)
+			if (ex != null) {
 				replEditor.OutputPrintLine(ex.ToString());
+				CommandExecuted();
+			}
 		}
 
 		void CommandExecuted() {
@@ -265,6 +373,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public event EventHandler OnCommandExecuted;
 
 		protected abstract ObjectFormatter ObjectFormatter { get; }
+		protected abstract DiagnosticFormatter DiagnosticFormatter { get; }
 
 		string Format(object value) {
 			return ObjectFormatter.FormatObject(value);

@@ -241,11 +241,11 @@ namespace dnSpy.TextEditor {
 			}
 
 			if (mod == ModifierKeys.None && key == Key.Enter)
-				return HandleEnter();
+				return HandleEnter(false);
 			if (mod == ModifierKeys.Control && key == Key.Enter) {
 				this.textEditor.TextArea.Caret.Offset = LastLine.EndOffset;
 				this.textEditor.TextArea.Selection = Selection.Create(this.textEditor.TextArea, 0, 0);
-				return HandleEnter();
+				return HandleEnter(true);
 			}
 			if (mod == ModifierKeys.Shift && key == Key.Enter)
 				return UpdateCaretForEdit();
@@ -296,7 +296,7 @@ namespace dnSpy.TextEditor {
 			AddUserInput(string.Empty);
 		}
 
-		bool HandleEnter() {
+		bool HandleEnter(bool force) {
 			if (!UpdateCaretForEdit())
 				return false;
 			if (this.textEditor.TextArea.Caret.Offset != LastLine.EndOffset)
@@ -305,7 +305,7 @@ namespace dnSpy.TextEditor {
 				return true;
 
 			var input = CurrentInput;
-			bool isCmd = this.CommandHandler.IsCommand(input);
+			bool isCmd = force || this.CommandHandler.IsCommand(input);
 			if (!isCmd) {
 				AddUserInput(Environment.NewLine);
 				return false;
@@ -549,11 +549,13 @@ namespace dnSpy.TextEditor {
 			if (command == null)
 				return;
 
+			this.textEditor.TextArea.Caret.Offset = LastLine.EndOffset;
 			var currentInput = CurrentInput;
 			if (currentInput.Equals(command))
 				return;
 
 			this.textEditor.TextArea.Selection = Selection.Create(this.textEditor.TextArea, FilterOffset(offsetOfPrompt.Value), LastLine.EndOffset);
+			this.textEditor.TextArea.Caret.Offset = FilterOffset(offsetOfPrompt.Value);
 			AddUserInput(command, clearSearchText);
 		}
 

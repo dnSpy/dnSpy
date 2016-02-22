@@ -129,6 +129,48 @@
   <data name="CutCommand" xml:space="preserve">
     <value>Cu_t</value>
   </data>
+  <data name="HelpAltDown" xml:space="preserve">
+    <value>Show next command</value>
+  </data>
+  <data name="HelpAltUp" xml:space="preserve">
+    <value>Show previous command</value>
+  </data>
+  <data name="HelpCtrlA" xml:space="preserve">
+    <value>Select input text. Press again to select all text</value>
+  </data>
+  <data name="HelpCtrlAltDown" xml:space="preserve">
+    <value>Show next command matching the current input text</value>
+  </data>
+  <data name="HelpCtrlAltUp" xml:space="preserve">
+    <value>Show previous command matching the current input text</value>
+  </data>
+  <data name="HelpCtrlEnter" xml:space="preserve">
+    <value>Execute the command</value>
+  </data>
+  <data name="HelpEnter" xml:space="preserve">
+    <value>Execute the command</value>
+  </data>
+  <data name="HelpEscape" xml:space="preserve">
+    <value>Clear current input</value>
+  </data>
+  <data name="HelpKeyboardShortcuts" xml:space="preserve">
+    <value>Keyboard shortcuts:</value>
+  </data>
+  <data name="HelpReplCommands" xml:space="preserve">
+    <value>REPL commands:</value>
+  </data>
+  <data name="HelpScriptDirectives" xml:space="preserve">
+    <value>Script directives:</value>
+  </data>
+  <data name="HelpScriptDirective_load" xml:space="preserve">
+    <value>Load and execute a script, #load "myscript.csx"</value>
+  </data>
+  <data name="HelpScriptDirective_r" xml:space="preserve">
+    <value>Add a reference, either an assembly or a path to a file on disk or a path relative to the dnSpy or user directory, #r "myfile.dll"</value>
+  </data>
+  <data name="HelpShiftEnter" xml:space="preserve">
+    <value>Insert a new line</value>
+  </data>
   <data name="HelpString" xml:space="preserve">
     <value>Type "#help" for more information.</value>
   </data>
@@ -156,11 +198,29 @@
   <data name="Script_ToolTip_Reset" xml:space="preserve">
     <value>Reset</value>
   </data>
+  <data name="ShortCutKeyAltDown" xml:space="preserve">
+    <value>Alt+Down Arrow</value>
+  </data>
+  <data name="ShortCutKeyAltUp" xml:space="preserve">
+    <value>Alt+Up Arrow</value>
+  </data>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Ctrl+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltDown" xml:space="preserve">
+    <value>Ctrl+Alt+Down Arrow</value>
+  </data>
   <data name="ShortCutKeyCtrlAltN" xml:space="preserve">
     <value>Ctrl+Alt+N</value>
   </data>
+  <data name="ShortCutKeyCtrlAltUp" xml:space="preserve">
+    <value>Ctrl+Alt+Up Arrow</value>
+  </data>
   <data name="ShortCutKeyCtrlC" xml:space="preserve">
     <value>Ctrl+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlEnter" xml:space="preserve">
+    <value>Ctrl+Enter</value>
   </data>
   <data name="ShortCutKeyCtrlV" xml:space="preserve">
     <value>Ctrl+V</value>
@@ -168,7 +228,25 @@
   <data name="ShortCutKeyCtrlX" xml:space="preserve">
     <value>Ctrl+X</value>
   </data>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="ShortCutKeyEscape" xml:space="preserve">
+    <value>Esc</value>
+  </data>
+  <data name="ShortCutKeyShiftEnter" xml:space="preserve">
+    <value>Shift+Enter</value>
+  </data>
   <data name="Window_CSharp" xml:space="preserve">
     <value>C# Interactive</value>
+  </data>
+  <data name="HelpClearDescription" xml:space="preserve">
+    <value>Clear the script editor</value>
+  </data>
+  <data name="HelpHelpDescription" xml:space="preserve">
+    <value>Display the help</value>
+  </data>
+  <data name="HelpResetDescription" xml:space="preserve">
+    <value>Reset the execution environment</value>
   </data>
 </root>

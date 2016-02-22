@@ -134,25 +134,25 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		/// <summary>
-		/// Resolves a service, and throws if it wasn't found. Must be called from the UI thread,
-		/// use eg. <see cref="UI{T}(Func{T})"/>
+		/// Resolves a service, and throws if it wasn't found
 		/// </summary>
 		/// <typeparam name="T">Type of service</typeparam>
 		/// <returns></returns>
 		public T Resolve<T>() {
-			UIDispatcher.VerifyAccess();
-			return owner.ServiceLocator.Resolve<T>();
+			if (UIDispatcher.CheckAccess())
+				return owner.ServiceLocator.Resolve<T>();
+			return UI(() => owner.ServiceLocator.Resolve<T>());
 		}
 
 		/// <summary>
-		/// Resolves a service or returns null if not found. Must be called from the UI thread,
-		/// use eg. <see cref="UI{T}(Func{T})"/>
+		/// Resolves a service or returns null if not found
 		/// </summary>
 		/// <typeparam name="T">Type of service</typeparam>
 		/// <returns></returns>
 		public T TryResolve<T>() {
-			UIDispatcher.VerifyAccess();
-			return owner.ServiceLocator.TryResolve<T>();
+			if (UIDispatcher.CheckAccess())
+				return owner.ServiceLocator.TryResolve<T>();
+			return UI(() => owner.ServiceLocator.TryResolve<T>());
 		}
 	}
 }

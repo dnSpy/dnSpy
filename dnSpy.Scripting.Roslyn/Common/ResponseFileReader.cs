@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -34,10 +33,6 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					continue;
 				if (line.StartsWith("#"))
 					continue;
-				if (line.StartsWith("@")) {
-					Debug.Fail("@ not supported");
-					continue;
-				}
 				var parts = line.Split(seps, StringSplitOptions.RemoveEmptyEntries);
 				if (parts.Length == 0)
 					continue;

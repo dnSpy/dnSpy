@@ -18,14 +18,13 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.TextEditor;
 using dnSpy.Scripting.Roslyn.Common;
 using dnSpy.Scripting.Roslyn.Properties;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
@@ -50,12 +49,16 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 			get { return CSharpObjectFormatter.Instance; }
 		}
 
+		protected override DiagnosticFormatter DiagnosticFormatter {
+			get { return CSharpDiagnosticFormatter.Instance; }
+		}
+
 		public CSharpControlVM(IReplEditor replEditor, IServiceLocator serviceLocator)
 			: base(replEditor, serviceLocator) {
 		}
 
-		protected override Script<object> Create(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader assemblyLoader) {
-			return CSharpScript.Create(code, options, globalsType, assemblyLoader);
+		protected override Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader assemblyLoader) {
+			return CSharpScript.Create<T>(code, options, globalsType, assemblyLoader);
 		}
 
 		protected override ScriptOptions CreateScriptOptions(ScriptOptions options) {
@@ -63,32 +66,22 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 			if (rspFile == null)
 				return options;
 			this.replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.LoadingContextFromFile, Path.GetFileName(rspFile)));
-			var usings = new List<string>();
-			var refs = new List<string>();
 			foreach (var t in ResponseFileReader.Read(rspFile)) {
 				if (t.Item1 == "/r") {
 					Debug.Assert(t.Item3.Length == 0);
 					if (t.Item3.Length != 0)
 						continue;
-					refs.Add(t.Item2);
-				}
-				else if (t.Item1 == "/rx") {
-					Debug.Assert(t.Item3.Length == 0);
-					if (t.Item3.Length != 0)
-						continue;
-					refs.Add(Path.Combine(AppDirectories.BinDirectory, t.Item2 + ".dll"));
+					options = options.AddReferences(t.Item2);
 				}
 				else if (t.Item1 == "/u") {
 					Debug.Assert(t.Item3.Length == 0);
 					if (t.Item3.Length != 0)
 						continue;
-					usings.Add(t.Item2);
+					options = options.AddImports(t.Item2);
 				}
 				else
 					Debug.Fail(string.Format("Unknown option: '{0}'", t.Item1));
 			}
-			options = options.WithReferences(refs);
-			options = options.WithImports(usings);
 			return options;
 		}
 	}

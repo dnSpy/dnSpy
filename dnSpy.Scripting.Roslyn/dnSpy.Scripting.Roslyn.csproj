@@ -82,8 +82,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\ClearCommand.cs" />
     <Compile Include="Common\Commands.cs" />
+    <Compile Include="Common\HelpCommand.cs" />
+    <Compile Include="Common\IScriptCommand.cs" />
     <Compile Include="Common\IScriptGlobalsHelper.cs" />
+    <Compile Include="Common\ResetCommand.cs" />
     <Compile Include="Common\ResponseFileReader.cs" />
     <Compile Include="Common\ScriptContent.cs" />
     <Compile Include="Common\ScriptControl.xaml.cs">

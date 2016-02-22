@@ -13,6 +13,7 @@
 /u:System.Threading.Tasks
 
 # Add extra stuff
-# /rx adds <bindir>XXX.dll to the references, use /r:FULL_PATH for full paths
-/rx:dnSpy.Contracts
+/r:dnSpy.Contracts.dll
+/r:dnSpy.Shared.dll
+/r:dnlib.dll
 /u:dnSpy.Contracts.Scripting
