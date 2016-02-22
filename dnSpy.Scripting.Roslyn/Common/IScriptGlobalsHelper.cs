@@ -19,7 +19,7 @@
 
 using dnSpy.Contracts.Scripting;
 
-namespace dnSpy.Scripting.Common {
+namespace dnSpy.Scripting.Roslyn.Common {
 	interface IScriptGlobalsHelper {
 		/// <summary>
 		/// Prints text. Method can be called from any thread

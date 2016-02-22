@@ -24,15 +24,15 @@ using System.IO;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.TextEditor;
-using dnSpy.Scripting.Common;
-using dnSpy.Scripting.Properties;
+using dnSpy.Scripting.Roslyn.Common;
+using dnSpy.Scripting.Roslyn.Properties;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 
-namespace dnSpy.Scripting.CSharp {
+namespace dnSpy.Scripting.Roslyn.CSharp {
 	sealed class CSharpControlVM : ScriptControlVM {
 		protected override string Logo {
 			get {
@@ -43,7 +43,7 @@ namespace dnSpy.Scripting.CSharp {
 		}
 
 		protected override string Help {
-			get { return dnSpy_Scripting_Resources.HelpString; }
+			get { return dnSpy_Scripting_Roslyn_Resources.HelpString; }
 		}
 
 		protected override ObjectFormatter ObjectFormatter {
@@ -62,7 +62,7 @@ namespace dnSpy.Scripting.CSharp {
 			var rspFile = GetResponseFile("CSharpInteractive.rsp");
 			if (rspFile == null)
 				return options;
-			this.replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Resources.LoadingContextFromFile, Path.GetFileName(rspFile)));
+			this.replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.LoadingContextFromFile, Path.GetFileName(rspFile)));
 			var usings = new List<string>();
 			var refs = new List<string>();
 			foreach (var t in ResponseFileReader.Read(rspFile)) {

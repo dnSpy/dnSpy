@@ -19,9 +19,9 @@
 
 using System.Collections.Generic;
 using dnSpy.Contracts.Plugin;
-using dnSpy.Scripting.Properties;
+using dnSpy.Scripting.Roslyn.Properties;
 
-namespace dnSpy.Scripting {
+namespace dnSpy.Scripting.Roslyn {
 	[ExportPlugin]
 	sealed class Plugin : IPlugin {
 		public IEnumerable<string> MergedResourceDictionaries {
@@ -31,7 +31,7 @@ namespace dnSpy.Scripting {
 		public PluginInfo PluginInfo {
 			get {
 				return new PluginInfo {
-					ShortDescription = dnSpy_Scripting_Resources.Plugin_ShortDescription,
+					ShortDescription = dnSpy_Scripting_Roslyn_Resources.Plugin_ShortDescription,
 				};
 			}
 		}

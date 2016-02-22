@@ -25,11 +25,11 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.ToolWindows.App;
-using dnSpy.Scripting.Common;
-using dnSpy.Scripting.Properties;
+using dnSpy.Scripting.Roslyn.Common;
+using dnSpy.Scripting.Roslyn.Properties;
 using dnSpy.Shared.Menus;
 
-namespace dnSpy.Scripting.CSharp {
+namespace dnSpy.Scripting.Roslyn.CSharp {
 	[Export(typeof(IMainToolWindowContentCreator))]
 	sealed class CSharpToolWindowContentCreator : ScriptToolWindowContentCreator {
 		readonly Lazy<ICSharpContent> csharpContent;
@@ -54,7 +54,7 @@ namespace dnSpy.Scripting.CSharp {
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Default;
 
 		public override string Title {
-			get { return dnSpy_Scripting_Resources.Window_CSharp; }
+			get { return dnSpy_Scripting_Roslyn_Resources.Window_CSharp; }
 		}
 
 		protected override IScriptContent ScriptContent {

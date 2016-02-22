@@ -24,7 +24,7 @@ using System.Windows.Data;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Plugin;
 
-namespace dnSpy.Scripting.Converters {
+namespace dnSpy.Scripting.Roslyn.Converters {
 	sealed class ImageConverter : IValueConverter {
 		static IImageManager imageManager;
 

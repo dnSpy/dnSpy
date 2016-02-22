@@ -26,12 +26,12 @@ using System.Windows.Input;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.TextEditor;
-using dnSpy.Scripting.Properties;
+using dnSpy.Scripting.Roslyn.Properties;
 using dnSpy.Shared.MVVM;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 
-namespace dnSpy.Scripting.Common {
+namespace dnSpy.Scripting.Roslyn.Common {
 	abstract class ScriptControlVM : ViewModelBase, IReplCommandHandler, IScriptGlobalsHelper {
 		public ICommand ResetCommand {
 			get { return new RelayCommand(a => Reset(), a => CanReset); }
@@ -65,7 +65,7 @@ namespace dnSpy.Scripting.Common {
 				execState.CancellationTokenSource.Cancel();
 			execState = null;
 			replEditor.Reset();
-			replEditor.OutputPrintLine(dnSpy_Scripting_Resources.ResettingExecutionEngine);
+			replEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.ResettingExecutionEngine);
 			bool loadConfig = true;//TODO: set to false if "noconfig" was used
 			InitializeExecutionEngine(loadConfig, false);
 		}
@@ -229,9 +229,9 @@ namespace dnSpy.Scripting.Common {
 						int extraErrors = cee.Diagnostics.Length - MAX_DIAGS;
 						if (extraErrors > 0) {
 							if (extraErrors == 1)
-								replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Resources.CompilationAdditionalError, extraErrors));
+								replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.CompilationAdditionalError, extraErrors));
 							else
-								replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Resources.CompilationAdditionalErrors, extraErrors));
+								replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.CompilationAdditionalErrors, extraErrors));
 						}
 						CommandExecuted();
 					}

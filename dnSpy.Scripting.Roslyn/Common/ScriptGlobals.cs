@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Windows.Threading;
 
-namespace dnSpy.Scripting.Common {
+namespace dnSpy.Scripting.Roslyn.Common {
 	/// <summary>
 	/// The script's global class
 	/// </summary>

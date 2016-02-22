@@ -23,7 +23,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
-namespace dnSpy.Scripting.Common {
+namespace dnSpy.Scripting.Roslyn.Common {
 	static class ResponseFileReader {
 		public static IEnumerable<Tuple<string, string, string[]>> Read(string filename) {
 			if (!File.Exists(filename))

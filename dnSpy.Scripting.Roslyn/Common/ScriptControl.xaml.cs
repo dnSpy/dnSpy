@@ -19,7 +19,7 @@
 
 using System.Windows.Controls;
 
-namespace dnSpy.Scripting.Common {
+namespace dnSpy.Scripting.Roslyn.Common {
 	sealed partial class ScriptControl : UserControl {
 		public ScriptControl() {
 			InitializeComponent();

@@ -7,8 +7,8 @@
     <ProjectGuid>{D2EFF1AF-6E3A-4025-9E67-52772384B73F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>dnSpy.Scripting</RootNamespace>
-    <AssemblyName>dnSpy.Scripting.Plugin</AssemblyName>
+    <RootNamespace>dnSpy.Scripting.Roslyn</RootNamespace>
+    <AssemblyName>dnSpy.Scripting.Roslyn.Plugin</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>True</SignAssembly>
@@ -22,7 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\dnSpy\bin\Debug\dnSpy.Scripting.Plugin.XML</DocumentationFile>
+    <DocumentationFile>..\dnSpy\bin\Debug\dnSpy.Scripting.Roslyn.Plugin.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -31,7 +31,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\dnSpy\bin\Release\dnSpy.Scripting.Plugin.XML</DocumentationFile>
+    <DocumentationFile>..\dnSpy\bin\Release\dnSpy.Scripting.Roslyn.Plugin.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CodeAnalysis, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -97,10 +97,10 @@
     <Compile Include="CSharp\CSharpControlVM.cs" />
     <Compile Include="CSharp\CSharpToolWindowContent.cs" />
     <Compile Include="Plugin.cs" />
-    <Compile Include="Properties\dnSpy.Scripting.Resources.Designer.cs">
+    <Compile Include="Properties\dnSpy.Scripting.Roslyn.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>dnSpy.Scripting.Resources.resx</DependentUpon>
+      <DependentUpon>dnSpy.Scripting.Roslyn.Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -119,9 +119,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\dnSpy.Scripting.Resources.resx">
+    <EmbeddedResource Include="Properties\dnSpy.Scripting.Roslyn.Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>dnSpy.Scripting.Resources.Designer.cs</LastGenOutput>
+      <LastGenOutput>dnSpy.Scripting.Roslyn.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -151,7 +151,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="dnSpy.Scripting.Plugin.dll.xml">
+    <Content Include="dnSpy.Scripting.Roslyn.Plugin.dll.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

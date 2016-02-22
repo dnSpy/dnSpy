@@ -23,7 +23,7 @@ using System.Windows;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Contracts.ToolWindows.App;
 
-namespace dnSpy.Scripting.Common {
+namespace dnSpy.Scripting.Roslyn.Common {
 	abstract class ScriptToolWindowContentCreator : IMainToolWindowContentCreator {
 		public ScriptToolWindowContent ScriptToolWindowContent {
 			get { return scriptToolWindowContent ?? (scriptToolWindowContent = CreateContent()); }

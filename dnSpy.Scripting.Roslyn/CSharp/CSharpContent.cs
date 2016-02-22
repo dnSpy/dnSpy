@@ -24,9 +24,9 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.Themes;
-using dnSpy.Scripting.Common;
+using dnSpy.Scripting.Roslyn.Common;
 
-namespace dnSpy.Scripting.CSharp {
+namespace dnSpy.Scripting.Roslyn.CSharp {
 	interface ICSharpContent : IScriptContent {
 	}
 

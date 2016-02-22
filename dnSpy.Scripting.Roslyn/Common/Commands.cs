@@ -24,7 +24,7 @@ using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TextEditor;
 using dnSpy.Shared.Menus;
 
-namespace dnSpy.Scripting.Common {
+namespace dnSpy.Scripting.Roslyn.Common {
 	sealed class ReplEditorCtxMenuContext {
 		public readonly IReplEditorUI UI;
 		public readonly ScriptControlVM VM;

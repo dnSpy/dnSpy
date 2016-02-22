@@ -61,7 +61,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.BamlDecompiler", "dnS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICSharpCode.NRefactory.VB.Tests", "NRefactory\ICSharpCode.NRefactory.VB.Tests\ICSharpCode.NRefactory.VB.Tests.csproj", "{870115DD-960A-4406-A6B9-600BCDC36A03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Scripting", "dnSpy.Scripting\dnSpy.Scripting.csproj", "{D2EFF1AF-6E3A-4025-9E67-52772384B73F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dnSpy.Scripting.Roslyn", "dnSpy.Scripting.Roslyn\dnSpy.Scripting.Roslyn.csproj", "{D2EFF1AF-6E3A-4025-9E67-52772384B73F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

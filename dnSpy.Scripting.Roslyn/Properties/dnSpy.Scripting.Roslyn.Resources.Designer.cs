@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace dnSpy.Scripting.Properties {
+namespace dnSpy.Scripting.Roslyn.Properties {
     using System;
     
     
@@ -22,14 +22,14 @@ namespace dnSpy.Scripting.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    public class dnSpy_Scripting_Resources {
+    public class dnSpy_Scripting_Roslyn_Resources {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal dnSpy_Scripting_Resources() {
+        internal dnSpy_Scripting_Roslyn_Resources() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace dnSpy.Scripting.Properties {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("dnSpy.Scripting.Properties.dnSpy.Scripting.Resources", typeof(dnSpy_Scripting_Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("dnSpy.Scripting.Roslyn.Properties.dnSpy.Scripting.Roslyn.Resources", typeof(dnSpy_Scripting_Roslyn_Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
