@@ -185,11 +185,8 @@ namespace dnSpy.AsmEditor.Assembly {
 				// We can't free the asm since older commands might reference it so we must record
 				// it in the history. The user can click Clear History to free everything.
 				foreach (var node in keepNodes) {
-					foreach (var f in node.DnSpyFile.GetAllChildrenAndSelf()) {
-						var peImage = f.PEImage;
-						if (peImage != null)
-							peImage.UnsafeDisableMemoryMappedIO();
-					}
+					foreach (var f in node.DnSpyFile.GetAllChildrenAndSelf())
+						MemoryMappedIOHelper.DisableMemoryMappedIO(f);
 				}
 				if (keepNodes.Count != 0)
 					undoCommandManager.Value.Add(new RemoveAssemblyCommand(appWindow.FileTreeView, keepNodes.ToArray()));

@@ -215,9 +215,7 @@ namespace dnSpy.Files {
 		// Should be called if we don't save it in the files list. It will eventually be GC'd but it's
 		// better to disable mmap'd I/O as soon as possible. The file must've been created by us.
 		static IDnSpyFile DisableMMapdIO(IDnSpyFile file) {
-			var peImage = file.PEImage;
-			if (peImage != null)
-				peImage.UnsafeDisableMemoryMappedIO();
+			MemoryMappedIOHelper.DisableMemoryMappedIO(file);
 			return file;
 		}
 

@@ -38,6 +38,7 @@ using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Themes;
 using dnSpy.Contracts.TreeView;
+using dnSpy.Shared.Files;
 using dnSpy.Shared.Search;
 
 namespace dnSpy.Files.TreeView {
@@ -410,11 +411,8 @@ namespace dnSpy.Files.TreeView {
 			// The nodes will be GC'd eventually, but it's not safe to call Dispose(), so disable
 			// mmap'd I/O so the files can at least be modified (eg. deleted) by the user.
 			foreach (var node in nodes) {
-				foreach (var f in node.DnSpyFile.GetAllChildrenAndSelf()) {
-					var peImage = f.PEImage;
-					if (peImage != null)
-						peImage.UnsafeDisableMemoryMappedIO();
-				}
+				foreach (var f in node.DnSpyFile.GetAllChildrenAndSelf())
+					MemoryMappedIOHelper.DisableMemoryMappedIO(f);
 			}
 		}
 

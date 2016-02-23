@@ -24,6 +24,7 @@ using dnlib.PE;
 using dnSpy.AsmEditor.UndoRedo;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.TreeView;
+using dnSpy.Shared.Files;
 
 namespace dnSpy.AsmEditor.SaveModule {
 	interface IMmapDisabler {
@@ -65,7 +66,7 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		static void DisableMemoryMappedIO(HashSet<string> filenames, IPEImage peImage) {
 			if (peImage != null && filenames.Contains(peImage.FileName))
-				peImage.UnsafeDisableMemoryMappedIO();
+				MemoryMappedIOHelper.DisableMemoryMappedIO(peImage);
 		}
 	}
 }

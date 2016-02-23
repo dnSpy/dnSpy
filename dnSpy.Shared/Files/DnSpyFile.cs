@@ -299,4 +299,22 @@ namespace dnSpy.Shared.Files {
 			return list;
 		}
 	}
+
+	public static class MemoryMappedIOHelper {
+		public static void DisableMemoryMappedIO(IDnSpyFile file) {
+			if (file == null)
+				return;
+			DisableMemoryMappedIO(file.PEImage);
+		}
+
+		public static void DisableMemoryMappedIO(IPEImage peImage) {
+			if (peImage == null)
+				return;
+			// Files in the GAC are read-only so there's no need to disable memory mapped I/O to
+			// allow other programs to write to the file.
+			if (GacInfo.IsGacPath(peImage.FileName))
+				return;
+			peImage.UnsafeDisableMemoryMappedIO();
+		}
+	}
 }

@@ -20,6 +20,7 @@
 using System.ComponentModel.Composition;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Settings.Dialog;
+using dnSpy.Shared.Files;
 
 namespace dnSpy.Files {
 	[ExportAppSettingsModifiedListener(Order = AppSettingsConstants.ORDER_SETTINGS_LISTENER_FILEMANAGER)]
@@ -38,11 +39,8 @@ namespace dnSpy.Files {
 
 		void DisableMemoryMappedIO() {
 			foreach (var m in fileManager.GetFiles()) {
-				foreach (var f in m.GetAllChildrenAndSelf()) {
-					var peImage = f.PEImage;
-					if (peImage != null)
-						peImage.UnsafeDisableMemoryMappedIO();
-				}
+				foreach (var f in m.GetAllChildrenAndSelf())
+					MemoryMappedIOHelper.DisableMemoryMappedIO(f);
 			}
 		}
 	}
