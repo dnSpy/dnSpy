@@ -128,7 +128,7 @@ namespace dndbg.Engine {
 		}
 
 		void ICorDebugManagedCallback.UpdateModuleSymbols(IntPtr pAppDomain, IntPtr pModule, IntPtr pSymbolStream) {
-			dbg.OnManagedCallbackFromAnyThread(() => new UpdateModuleSymbolsDebugCallbackEventArgs(I<ICorDebugAppDomain>(pAppDomain), I<ICorDebugModule>(pModule), I<IStream>(pSymbolStream)));
+			dbg.OnManagedCallbackFromAnyThread2(() => new UpdateModuleSymbolsDebugCallbackEventArgs(I<ICorDebugAppDomain>(pAppDomain), I<ICorDebugModule>(pModule), I<IStream>(pSymbolStream)));
 		}
 
 		void ICorDebugManagedCallback.EditAndContinueRemap(IntPtr pAppDomain, IntPtr pThread, IntPtr pFunction, int fAccurate) {
