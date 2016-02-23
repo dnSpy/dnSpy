@@ -701,5 +701,9 @@ namespace dnSpy.TextEditor {
 		bool IsExecMode {
 			get { return offsetOfPrompt == null; }
 		}
+
+		public void Dispose() {
+			this.textEditor.Dispose();
+		}
 	}
 }

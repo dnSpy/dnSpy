@@ -703,9 +703,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public void Dispose() {
 			this.textEditorSettings.PropertyChanged -= TextEditorSettings_PropertyChanged;
+			this.themeManager.ThemeChanged -= ThemeManager_ThemeChanged;
 			Clear();
 			BindingOperations.ClearAllBindings(TextEditor);
 			textMarkerService.Dispose();
+			textEditor.Dispose();
 		}
 
 		public object SaveReferencePosition(ICodeMappings cms) {

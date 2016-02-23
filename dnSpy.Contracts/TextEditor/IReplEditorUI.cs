@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Windows;
 using System.Windows.Media;
 
@@ -24,7 +25,7 @@ namespace dnSpy.Contracts.TextEditor {
 	/// <summary>
 	/// A REPL (Read, Eval, Print, Loop) editor
 	/// </summary>
-	public interface IReplEditorUI : IReplEditor {
+	public interface IReplEditorUI : IReplEditor, IDisposable {
 		/// <summary>
 		/// UI object
 		/// </summary>

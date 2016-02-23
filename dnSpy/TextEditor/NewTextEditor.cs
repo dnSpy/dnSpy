@@ -170,7 +170,7 @@ namespace dnSpy.TextEditor {
 		}
 	}
 
-	sealed class NewTextEditor : ICSharpCode.AvalonEdit.TextEditor {
+	sealed class NewTextEditor : ICSharpCode.AvalonEdit.TextEditor, IDisposable {
 		static NewTextEditor() {
 			HighlightingManager.Instance.RegisterHighlighting(
 				"IL", new string[] { ".il" }, () => {
@@ -234,6 +234,11 @@ namespace dnSpy.TextEditor {
 
 			OnHighlightCurrentLineChanged();
 			OnShowLineNumbersChanged();
+		}
+
+		public void Dispose() {
+			this.textEditorSettings.PropertyChanged -= TextEditorSettings_PropertyChanged;
+			this.themeManager.ThemeChanged -= ThemeManager_ThemeChanged;
 		}
 
 		protected override void OnDragOver(DragEventArgs e) {
