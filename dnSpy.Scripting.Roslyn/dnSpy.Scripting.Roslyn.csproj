@@ -22,6 +22,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>1685</NoWarn>
     <DocumentationFile>..\dnSpy\bin\Debug\dnSpy.Scripting.Roslyn.Plugin.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -31,6 +32,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>1685</NoWarn>
     <DocumentationFile>..\dnSpy\bin\Release\dnSpy.Scripting.Roslyn.Plugin.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
