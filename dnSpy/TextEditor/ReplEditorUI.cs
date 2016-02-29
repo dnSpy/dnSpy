@@ -257,6 +257,10 @@ namespace dnSpy.TextEditor {
 				HandleEscape();
 				return false;
 			}
+			if (mod == ModifierKeys.Control && key == Key.L) {
+				Clear();
+				return false;
+			}
 			if (mod == ModifierKeys.Alt && key == Key.Up) {
 				SelectPreviousCommand();
 				return false;
