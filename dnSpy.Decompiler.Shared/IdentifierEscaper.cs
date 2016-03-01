@@ -52,7 +52,7 @@ namespace dnSpy.Decompiler.Shared {
 			if (i != 0)
 				sb.Append(id, 0, i);
 
-			for (; ; i++) {
+			for (; i < id.Length; i++) {
 				char c = id[i];
 				if (!IsValidChar(c))
 					sb.Append(string.Format(@"\u{0:X4}", (ushort)c));
