@@ -50,6 +50,7 @@ namespace ICSharpCode.Decompiler {
 			DecompilationObject2 = DecompilationObject.Events;
 			DecompilationObject3 = DecompilationObject.Properties;
 			DecompilationObject4 = DecompilationObject.Methods;
+			MaxArrayElements = int.MaxValue;
 			return this;
 		}
 
@@ -456,6 +457,19 @@ namespace ICSharpCode.Decompiler {
 		}
 		bool sortSystemUsingStatementsFirst = true;
 
+		public int MaxArrayElements {
+			get { return maxArrayElements; }
+			set {
+				if (maxArrayElements != value) {
+					maxArrayElements = value;
+					OnPropertyChanged("MaxArrayElements");
+				}
+			}
+		}
+		// Don't show too big arrays, no-one will read every single element, and too big
+		// arrays could cause OOM exceptions.
+		int maxArrayElements = 10000;
+
 		CSharpFormattingOptions csharpFormattingOptions;
 
 		public CSharpFormattingOptions CSharpFormattingOptions {
@@ -525,6 +539,7 @@ namespace ICSharpCode.Decompiler {
 			if (SortMembers != other.SortMembers) return false;
 			if (ForceShowAllMembers != other.ForceShowAllMembers) return false;
 			if (SortSystemUsingStatementsFirst != other.SortSystemUsingStatementsFirst) return false;
+			if (MaxArrayElements != other.MaxArrayElements) return false;
 
 			//TODO: CSharpFormattingOptions. This isn't currently used but it has a ton of properties
 
@@ -568,6 +583,8 @@ namespace ICSharpCode.Decompiler {
 				for (int i = 0; i < decompilationObjects.Length; i++)
 					h ^= (uint)decompilationObjects[i] << (i * 8);
 
+				h ^= (uint)MaxArrayElements;
+
 				//TODO: CSharpFormattingOptions. This isn't currently used but it has a ton of properties
 
 				return (int)h;
@@ -605,6 +622,7 @@ namespace ICSharpCode.Decompiler {
 			other.SortMembers = this.SortMembers;
 			other.ForceShowAllMembers = this.ForceShowAllMembers;
 			other.SortSystemUsingStatementsFirst = this.SortSystemUsingStatementsFirst;
+			other.MaxArrayElements = this.MaxArrayElements;
 			//TODO: CSharpFormattingOptions
 			return other;
 		}

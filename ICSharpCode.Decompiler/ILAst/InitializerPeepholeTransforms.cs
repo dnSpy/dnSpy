@@ -45,6 +45,7 @@ namespace ICSharpCode.Decompiler.ILAst
 				int initArrayPos;
 				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, new SZArraySig(elementType.ToTypeSig()), arrayLength, out newArr, out initArrayPos)) {
 					var arrayType = new ArraySig(elementType.ToTypeSig(), 1, new uint[1], new int[1]);
+					arrayLength = newArr.Length;
 					arrayType.Sizes[0] = (uint)(arrayLength + 1);
 					var newStloc = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType.ToTypeDefOrRef(), newArr));
 					body[pos].AddSelfAndChildrenRecursiveILRanges(newStloc.ILRanges);
@@ -148,9 +149,11 @@ namespace ICSharpCode.Decompiler.ILAst
 			{
 				FieldDef fieldDef = fieldRef.ResolveFieldWithinSameModule();
 				if (fieldDef != null && fieldDef.InitialValue != null) {
-					ILExpression[] newArr = new ILExpression[arrayLength];
+					var newArr = new ILExpression[Math.Min(context.Settings.MaxArrayElements, arrayLength)];
 					if (DecodeArrayInitializer(arrayType.Next, fieldDef.InitialValue, newArr))
 					{
+						if (arrayLength != newArr.Length && newArr.Length > 0)
+							newArr[newArr.Length - 1] = new ILExpression(ILCode.Ldstr, "Array too big!");
 						values = newArr;
 						foundPos = pos;
 						return true;

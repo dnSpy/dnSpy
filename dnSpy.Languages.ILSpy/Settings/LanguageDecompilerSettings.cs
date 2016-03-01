@@ -177,6 +177,11 @@ namespace dnSpy.Languages.ILSpy.Settings {
 				Description = dnSpy_Languages_ILSpy_Resources.DecompilerSettings_SortSystemFirst,
 				Name = DecompilerOptionConstants.SortSystemUsingStatementsFirst_NAME,
 			};
+			yield return new DecompilerOption<int>(DecompilerOptionConstants.MaxArrayElements_GUID,
+						() => decompilerSettings.MaxArrayElements, a => decompilerSettings.MaxArrayElements = a) {
+				Description = dnSpy_Languages_ILSpy_Resources.DecompilerSettings_MaxArrayElements,
+				Name = DecompilerOptionConstants.MaxArrayElements_NAME,
+			};
 		}
 
 		string GetMemberOrder() {

@@ -66,6 +66,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			this.SortMembers = sect.Attribute<bool?>("SortMembers") ?? this.SortMembers;
 			this.ForceShowAllMembers = sect.Attribute<bool?>("ForceShowAllMembers") ?? this.ForceShowAllMembers;
 			this.SortSystemUsingStatementsFirst = sect.Attribute<bool?>("SortSystemUsingStatementsFirst") ?? this.SortSystemUsingStatementsFirst;
+// 			this.MaxArrayElements = sect.Attribute<int?>("MaxArrayElements") ?? this.MaxArrayElements;
 			//TODO: CSharpFormattingOptions
 			this.disableSave = false;
 		}
@@ -107,6 +108,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			sect.Attribute("SortMembers", SortMembers);
 			sect.Attribute("ForceShowAllMembers", ForceShowAllMembers);
 			sect.Attribute("SortSystemUsingStatementsFirst", SortSystemUsingStatementsFirst);
+// 			sect.Attribute("MaxArrayElements", MaxArrayElements);
 			//TODO: CSharpFormattingOptions
 		}
 	}

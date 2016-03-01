@@ -186,6 +186,7 @@ namespace dnSpy.Languages.ILSpy.Settings {
 			if (g.SortMembers != d.SortMembers) flags |= RefreshFlags.CSharp;
 			if (g.ForceShowAllMembers != d.ForceShowAllMembers) flags |= RefreshFlags.CSharp | RefreshFlags.ShowMember;
 			if (g.SortSystemUsingStatementsFirst != d.SortSystemUsingStatementsFirst) flags |= RefreshFlags.CSharp;
+			if (g.MaxArrayElements != d.MaxArrayElements) flags |= RefreshFlags.CSharp;
 
 			if ((flags & RefreshFlags.ShowMember) != 0)
 				appRefreshSettings.Add(AppSettingsConstants.REFRESH_LANGUAGE_SHOWMEMBER);
