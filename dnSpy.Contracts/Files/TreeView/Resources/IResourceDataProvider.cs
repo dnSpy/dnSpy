@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Files.TreeView.Resources {
 		IEnumerable<ResourceData> GetResourceData(ResourceDataType type);
 
 		/// <summary>
-		/// Writes a little, typically one line, to <paramref name="output"/>
+		/// Write a short string (typically one line) to <paramref name="output"/>
 		/// </summary>
 		/// <param name="output">Output</param>
 		/// <param name="language">Language</param>

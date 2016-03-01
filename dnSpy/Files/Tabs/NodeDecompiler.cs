@@ -26,6 +26,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Languages;
 using dnSpy.Decompiler.Shared;
+using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.Files.Tabs {
 	enum NodeType {
@@ -187,11 +188,11 @@ namespace dnSpy.Files.Tabs {
 				if (decompileSelf.Decompile(decompileNodeContext))
 					return;
 			}
-			language.WriteCommentLine(output, node.ToString(language));
+			language.WriteCommentLine(output, NameUtils.CleanName(node.ToString(language)));
 		}
 
 		void Decompile(IAssemblyReferenceNode node) {
-			language.WriteCommentLine(output, node.AssemblyRef.ToString());
+			language.WriteCommentLine(output, NameUtils.CleanName(node.AssemblyRef.ToString()));
 		}
 
 		void Decompile(IBaseTypeFolderNode node) {
@@ -200,11 +201,11 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		void Decompile(IBaseTypeNode node) {
-			language.WriteCommentLine(output, node.TypeDefOrRef.ReflectionFullName);
+			language.WriteCommentLine(output, NameUtils.CleanName(node.TypeDefOrRef.ReflectionFullName));
 		}
 
 		void Decompile(IDerivedTypeNode node) {
-			language.WriteCommentLine(output, node.TypeDef.ReflectionFullName);
+			language.WriteCommentLine(output, NameUtils.CleanName(node.TypeDef.ReflectionFullName));
 		}
 
 		void Decompile(IDerivedTypesFolderNode node) {
@@ -213,7 +214,7 @@ namespace dnSpy.Files.Tabs {
 		}
 
 		void Decompile(IModuleReferenceNode node) {
-			language.WriteCommentLine(output, node.ModuleRef.ToString());
+			language.WriteCommentLine(output, NameUtils.CleanName(node.ModuleRef.ToString()));
 		}
 
 		void Decompile(INamespaceNode node) {
