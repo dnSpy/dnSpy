@@ -72,7 +72,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			get { return hasInitialized && (execState == null || !execState.IsInitializing); }
 		}
 
-		public void Reset() {
+		public void Reset(bool loadConfig = true) {
 			if (!CanReset)
 				return;
 			if (execState != null)
@@ -80,7 +80,6 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			execState = null;
 			replEditor.Reset();
 			replEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.ResettingExecutionEngine);
-			bool loadConfig = true;//TODO: set to false if "noconfig" was used
 			InitializeExecutionEngine(loadConfig, false);
 		}
 

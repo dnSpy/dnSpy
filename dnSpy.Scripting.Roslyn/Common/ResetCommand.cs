@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using dnSpy.Scripting.Roslyn.Properties;
 
 namespace dnSpy.Scripting.Roslyn.Common {
@@ -31,7 +32,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		public void Execute(ScriptControlVM vm, string[] args) {
-			vm.Reset();
+			bool noconfig = args.Any(a => a == "noconfig");
+			vm.Reset(!noconfig);
 		}
 	}
 }
