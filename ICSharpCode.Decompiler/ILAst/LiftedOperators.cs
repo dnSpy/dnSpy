@@ -28,9 +28,9 @@ namespace ICSharpCode.Decompiler.ILAst
 	{
 		bool SimplifyLiftedOperators(ILBlockBase block, List<ILNode> body, ILExpression expr, int pos)
 		{
-			if (!new PatternMatcher(corLib).SimplifyLiftedOperators(expr)) return false;
+			if (!GetPatternMatcher(corLib).SimplifyLiftedOperators(expr)) return false;
 
-			var inlining = new ILInlining(method);
+			var inlining = GetILInlining(method);
 			while (--pos >= 0 && inlining.InlineIfPossible(block, body, ref pos)) ;
 
 			return true;
@@ -38,10 +38,19 @@ namespace ICSharpCode.Decompiler.ILAst
 
 		sealed class PatternMatcher
 		{
-			readonly ICorLibTypes corLib;
+			ICorLibTypes corLib;
+			ILVariable A, B;
+			ILExpression Operator, SimpleOperand;
+			bool SimpleLeftOperand;
 			public PatternMatcher(ICorLibTypes corLib)
 			{
 				this.corLib = corLib;
+			}
+
+			public void Initialize(ICorLibTypes corLib)
+			{
+				this.corLib = corLib;
+				Reset();
 			}
 
 			public bool SimplifyLiftedOperators(ILExpression expr)
@@ -325,11 +334,10 @@ namespace ICSharpCode.Decompiler.ILAst
 					return true;
 				}
 
-				static readonly ILExpression[] EmptyArguments = new ILExpression[0];
 				public override ILExpression BuildNew(PatternMatcher pm)
 				{
 					var v = this.b ? pm.B : pm.A;
-					var e = new ILExpression(ILCode.Ldloc, v, EmptyArguments);
+					var e = new ILExpression(ILCode.Ldloc, v);
 					if (TypeAnalysis.IsNullableType(v.Type)) e = new ILExpression(ILCode.ValueOf, null, e);
 					return e;
 				}
@@ -462,10 +470,6 @@ namespace ICSharpCode.Decompiler.ILAst
 				new ILPattern(ILCode.TernaryOp, VariableAHasValue, NewObj(OperatorNV(OperatorType.Other)), new ILPattern(ILCode.DefaultValue)),
 				OperatorVariableAB,
 			};
-
-			ILVariable A, B;
-			ILExpression Operator, SimpleOperand;
-			bool SimpleLeftOperand;
 
 			void Reset()
 			{

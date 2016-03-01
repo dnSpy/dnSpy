@@ -26,8 +26,8 @@ using ICSharpCode.NRefactory.PatternMatching;
 namespace ICSharpCode.Decompiler.Ast.Transforms {
 	sealed class TypePattern : Pattern
 	{
-		readonly string ns;
-		readonly string name;
+		readonly UTF8String ns;
+		readonly UTF8String name;
 		
 		public TypePattern(Type type)
 		{
@@ -49,7 +49,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 					return false;
 			}
 			ITypeDefOrRef tr = o.Annotation<ITypeDefOrRef>();
-			return tr != null && tr.Namespace == ns && tr.Name == name;
+			return tr.Compare(ns, name);
 		}
 		
 		public override string ToString()

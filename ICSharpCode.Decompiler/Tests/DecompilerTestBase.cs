@@ -48,7 +48,7 @@ namespace ICSharpCode.Decompiler.Tests
 			var code = RemoveIgnorableLines(File.ReadLines(fileName));
 			AssemblyDef assembly = CompileLegacy(code, optimize, useDebug, compilerVersion);
 
-			AstBuilder decompiler = new AstBuilder(DecompilerContext.CreateTestContext(assembly.ManifestModule));
+			AstBuilder decompiler = AstBuilder.CreateAstBuilderTestContext(assembly.ManifestModule);
 			decompiler.AddAssembly(assembly);
 			new Helpers.RemoveCompilerAttribute().Run(decompiler.SyntaxTree);
 

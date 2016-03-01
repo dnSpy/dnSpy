@@ -18,12 +18,14 @@
 
 using System;
 using System.IO;
+using System.Text;
 
 namespace dnSpy.Decompiler.Shared {
 	public sealed class PlainTextOutput : ITextOutput {
 		readonly TextWriter writer;
 		int indent;
 		bool needsIndent;
+		readonly char[] outputBuffer;
 
 		int line = 1;
 		int column = 1;
@@ -32,6 +34,7 @@ namespace dnSpy.Decompiler.Shared {
 			if (writer == null)
 				throw new ArgumentNullException("writer");
 			this.writer = writer;
+			this.outputBuffer = new char[256];
 		}
 
 		public PlainTextOutput() {
@@ -70,6 +73,40 @@ namespace dnSpy.Decompiler.Shared {
 			WriteIndent();
 			writer.Write(text);
 			column += text.Length;
+		}
+
+		public void Write(string text, int index, int count, TextTokenKind tokenKind) {
+			WriteIndent();
+			if (index == 0 && text.Length == count)
+				writer.Write(text);
+			else if (count == 1)
+				writer.Write(text[index]);
+			else {
+				int left = count;
+				while (left > 0) {
+					int len = Math.Min(outputBuffer.Length, left);
+					text.CopyTo(index, outputBuffer, 0, len);
+					writer.Write(outputBuffer, 0, len);
+					left -= len;
+				}
+			}
+			column += count;
+		}
+
+		public void Write(StringBuilder sb, int index, int count, TextTokenKind tokenKind) {
+			WriteIndent();
+			if (count == 1)
+				writer.Write(sb[index]);
+			else {
+				int left = count;
+				while (left > 0) {
+					int len = Math.Min(outputBuffer.Length, left);
+					sb.CopyTo(index, outputBuffer, 0, len);
+					writer.Write(outputBuffer, 0, len);
+					left -= len;
+				}
+			}
+			column += count;
 		}
 
 		public void WriteLine() {

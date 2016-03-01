@@ -19,7 +19,7 @@
 using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms {
-	public class IntroduceUnsafeModifier : DepthFirstAstVisitor<object, bool>, IAstTransform
+	public class IntroduceUnsafeModifier : DepthFirstAstVisitor<object, bool>, IAstTransformPoolObject
 	{
 		public static readonly object PointerArithmeticAnnotation = new PointerArithmetic();
 		
@@ -28,6 +28,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 		public void Run(AstNode compilationUnit)
 		{
 			compilationUnit.AcceptVisitor(this, null);
+		}
+
+		public void Reset(DecompilerContext context)
+		{
 		}
 		
 		protected override bool VisitChildren(AstNode node, object data)

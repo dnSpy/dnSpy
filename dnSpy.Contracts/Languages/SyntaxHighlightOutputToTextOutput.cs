@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Text;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Decompiler.Shared;
 
@@ -61,19 +62,32 @@ namespace dnSpy.Contracts.Languages {
 			indent--;
 		}
 
+		void ITextOutput.Write(string text, int index, int count, TextTokenKind tokenKind) {
+			if (index == 0 && text.Length == count)
+				((ITextOutput)this).Write(text, tokenKind);
+			((ITextOutput)this).Write(text.Substring(index, count), tokenKind);
+		}
+
+		void ITextOutput.Write(StringBuilder sb, int index, int count, TextTokenKind tokenKind) {
+			if (index == 0 && sb.Length == count)
+				((ITextOutput)this).Write(sb.ToString(), tokenKind);
+			((ITextOutput)this).Write(sb.ToString(index, count), tokenKind);
+		}
+
 		void ITextOutput.Write(string text, TextTokenKind tokenKind) {
 			if (col == 1 && indent > 0)
 				output.Write(new string('\t', indent), TextTokenKind.Text);
 			output.Write(text, tokenKind);
 			int index = text.LastIndexOfAny(newLineChars);
 			if (index >= 0) {
-				line += text.Split(new char[] { '\n' }).Length - 1;	// good enough for our purposes
+				line += text.Split(lineFeedChar).Length - 1;	// good enough for our purposes
 				col = text.Length - (index + 1) + 1;
 				indent = 0;
 			}
 			else
 				col += text.Length;
 		}
+		static readonly char[] lineFeedChar = new char[] { '\n' };
 		static readonly char[] newLineChars = new char[] { '\r', '\n' };
 
 		void ITextOutput.WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal) {

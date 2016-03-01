@@ -19,9 +19,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using dnlib.DotNet;
+using ICSharpCode.Decompiler.Ast;
 
-namespace ICSharpCode.Decompiler
-{
+namespace ICSharpCode.Decompiler {
 	public class DecompilerContext
 	{
 		public ModuleDef CurrentModule;
@@ -30,7 +30,8 @@ namespace ICSharpCode.Decompiler
 		public MethodDef CurrentMethod;
 		public DecompilerSettings Settings = new DecompilerSettings();
 		public bool CurrentMethodIsAsync;
-		
+		public readonly DecompilerCache Cache;
+
 		public static DecompilerContext CreateTestContext(ModuleDef currentModule)
 		{
 			var ctx = new DecompilerContext(currentModule);
@@ -38,9 +39,10 @@ namespace ICSharpCode.Decompiler
 			return ctx;
 		}
 
-		public DecompilerContext(ModuleDef currentModule)
+		public DecompilerContext(ModuleDef currentModule = null)
 		{
 			this.CurrentModule = currentModule;
+			this.Cache = new DecompilerCache(this);
 		}
 		
 		/// <summary>
@@ -53,6 +55,17 @@ namespace ICSharpCode.Decompiler
 			DecompilerContext ctx = (DecompilerContext)MemberwiseClone();
 			ctx.ReservedVariableNames = new List<string>(ctx.ReservedVariableNames);
 			return ctx;
+		}
+
+		public void Reset()
+		{
+			this.CurrentModule = null;
+			this.CancellationToken = CancellationToken.None;
+			this.CurrentType = null;
+			this.CurrentMethod = null;
+			this.Settings = new DecompilerSettings();
+			this.CurrentMethodIsAsync = false;
+			this.Cache.Reset();
 		}
 	}
 }

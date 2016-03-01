@@ -24,10 +24,16 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 	/// <summary>
 	/// Transforms decimal constant fields.
 	/// </summary>
-	public class DecimalConstantTransform : DepthFirstAstVisitor<object, object>, IAstTransform
+	public class DecimalConstantTransform : DepthFirstAstVisitor<object, object>, IAstTransformPoolObject
 	{
 		static readonly PrimitiveType decimalType = new PrimitiveType("decimal");
-		
+
+		public void Reset(DecompilerContext context)
+		{
+		}
+
+		static readonly UTF8String systemRuntimeCompilerServicesString = new UTF8String("System.Runtime.CompilerServices");
+		static readonly UTF8String decimalConstantAttributeString = new UTF8String("DecimalConstantAttribute");
 		public override object VisitFieldDeclaration(FieldDeclaration fieldDeclaration, object data)
 		{
 			const Modifiers staticReadOnly = Modifiers.Static | Modifiers.Readonly;
@@ -35,7 +41,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				foreach (var attributeSection in fieldDeclaration.Attributes) {
 					foreach (var attribute in attributeSection.Attributes) {
 						ITypeDefOrRef tr = attribute.Type.Annotation<ITypeDefOrRef>();
-						if (tr != null && tr.Name == "DecimalConstantAttribute" && tr.Namespace == "System.Runtime.CompilerServices") {
+						if (tr != null && tr.Compare(systemRuntimeCompilerServicesString, decimalConstantAttributeString)) {
 							attribute.Remove();
 							if (attributeSection.Attributes.Count == 0)
 								attributeSection.Remove();

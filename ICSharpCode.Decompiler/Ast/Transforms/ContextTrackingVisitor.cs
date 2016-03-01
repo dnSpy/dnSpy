@@ -28,7 +28,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 	/// </summary>
 	public abstract class ContextTrackingVisitor<TResult> : DepthFirstAstVisitor<object, TResult>, IAstTransform
 	{
-		protected readonly DecompilerContext context;
+		protected DecompilerContext context;
 		
 		protected ContextTrackingVisitor(DecompilerContext context)
 		{

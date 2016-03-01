@@ -27,15 +27,22 @@ namespace ICSharpCode.Decompiler.ILAst {
 	/// </summary>
 	public class LoopsAndConditions
 	{
-		Dictionary<ILLabel, ControlFlowNode> labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
+		readonly Dictionary<ILLabel, ControlFlowNode> labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
 		
-		readonly DecompilerContext context;
+		DecompilerContext context;
 		
-		uint nextLabelIndex = 0;
+		uint nextLabelIndex;
 		
 		public LoopsAndConditions(DecompilerContext context)
 		{
+			Initialize(context);
+		}
+
+		public void Initialize(DecompilerContext context)
+		{
 			this.context = context;
+			this.labelToCfNode.Clear();
+			this.nextLabelIndex = 0;
 		}
 		
 		public void FindLoops(ILBlock block)
@@ -72,10 +79,11 @@ namespace ICSharpCode.Decompiler.ILAst {
 			cfNodes.Add(regularExit);
 			ControlFlowNode exceptionalExit = new ControlFlowNode(index++, null, ControlFlowNodeType.ExceptionalExit);
 			cfNodes.Add(exceptionalExit);
-			
+
 			// Create graph nodes
-			labelToCfNode = new Dictionary<ILLabel, ControlFlowNode>();
+			labelToCfNode.Clear();
 			Dictionary<ILNode, ControlFlowNode> astNodeToCfNode = new Dictionary<ILNode, ControlFlowNode>();
+			List<ILLabel> listLabels = null;
 			foreach(ILBasicBlock node in nodes) {
 				ControlFlowNode cfNode = new ControlFlowNode(index++, null, ControlFlowNodeType.Normal);
 				cfNodes.Add(cfNode);
@@ -83,7 +91,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 				cfNode.UserData = node;
 				
 				// Find all contained labels
-				foreach(ILLabel label in node.GetSelfAndChildrenRecursive<ILLabel>()) {
+				foreach(ILLabel label in node.GetSelfAndChildrenRecursive<ILLabel>(listLabels ?? (listLabels = new List<ILLabel>()))) {
 					labelToCfNode[label] = cfNode;
 				}
 			}
@@ -93,13 +101,14 @@ namespace ICSharpCode.Decompiler.ILAst {
 			ControlFlowEdge entryEdge = new ControlFlowEdge(entryPoint, entryNode, JumpType.Normal);
 			entryPoint.Outgoing.Add(entryEdge);
 			entryNode.Incoming.Add(entryEdge);
-			
+
 			// Create edges
+			List<ILExpression> listExpressions = null;
 			foreach(ILBasicBlock node in nodes) {
 				ControlFlowNode source = astNodeToCfNode[node];
 				
 				// Find all branches
-				foreach(ILLabel target in node.GetSelfAndChildrenRecursive<ILExpression>(e => e.IsBranch()).SelectMany(e => e.GetBranchTargets())) {
+				foreach(ILLabel target in node.GetSelfAndChildrenRecursive<ILExpression>(listExpressions ?? (listExpressions = new List<ILExpression>()), e => e.IsBranch()).SelectMany(e => e.GetBranchTargets())) {
 					ControlFlowNode destination;
 					// Labels which are out of out scope will not be in the collection
 					// Insert self edge only if we are sure we are a loop
@@ -182,8 +191,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 									Body = FindLoops(loopContents, node, false)
 								}
 							});
-							whileLoop.ILRanges.AddRange(tail[0].ILRanges);	// no recursive add
-							whileLoop.ILRanges.AddRange(tail[1].GetSelfAndChildrenRecursiveILRanges());
+							whileLoop.ILRanges.AddRange(tail[0].ILRanges);  // no recursive add
+							tail[1].AddSelfAndChildrenRecursiveILRanges(whileLoop.ILRanges);
 							basicBlock.Body.Add(new ILExpression(ILCode.Br, falseLabel));
 							result.Add(basicBlock);
 							
@@ -195,7 +204,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 					if (scope.Contains(node)) {
 						result.Add(new ILBasicBlock() {
 							Body = new List<ILNode>() {
-								new ILLabel() { Name = "Loop_" + (nextLabelIndex++) },
+								new ILLabel() { Name = "Loop_" + (nextLabelIndex++).ToString() },
 								new ILWhileLoop() {
 									BodyBlock = new ILBlock() {
 										EntryGoto = new ILExpression(ILCode.Br, (ILLabel)basicBlock.Body.First()),
@@ -251,8 +260,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 							// Replace the switch code with ILSwitch
 							ILSwitch ilSwitch = new ILSwitch() { Condition = switchArg };
 							var tail = block.Body.RemoveTail(ILCode.Switch, ILCode.Br);
-							ilSwitch.ILRanges.AddRange(tail[0].ILRanges);	// no recursive add
-							ilSwitch.ILRanges.AddRange(tail[1].GetSelfAndChildrenRecursiveILRanges());
+							ilSwitch.ILRanges.AddRange(tail[0].ILRanges);   // no recursive add
+							tail[1].AddSelfAndChildrenRecursiveILRanges(ilSwitch.ILRanges);
 							block.Body.Add(ilSwitch);
 							block.Body.Add(new ILExpression(ILCode.Br, fallLabel));
 							result.Add(block);
@@ -266,9 +275,9 @@ namespace ICSharpCode.Decompiler.ILAst {
 							if (ilSwitch.Condition.Match(ILCode.Sub, out subArgs) && subArgs[1].Match(ILCode.Ldc_I4, out addValue)) {
 								var old = ilSwitch.Condition;
 								ilSwitch.Condition = subArgs[0];
-								ilSwitch.Condition.ILRanges.AddRange(old.ILRanges);	// no recursive add
+								ilSwitch.Condition.ILRanges.AddRange(old.ILRanges); // no recursive add
 								for (int i = 1; i < subArgs.Count; i++)
-									ilSwitch.Condition.ILRanges.AddRange(subArgs[i].GetSelfAndChildrenRecursiveILRanges());
+									subArgs[i].AddSelfAndChildrenRecursiveILRanges(ilSwitch.Condition.ILRanges);
 							}
 							
 							// Pull in code of cases
@@ -307,7 +316,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 										// Add explicit break which should not be used by default, but the goto removal might decide to use it
 										caseBlock.Body.Add(new ILBasicBlock() {
 											Body = {
-												new ILLabel() { Name = "SwitchBreak_" + (nextLabelIndex++) },
+												new ILLabel() { Name = "SwitchBreak_" + (nextLabelIndex++).ToString() },
 												new ILExpression(ILCode.LoopOrSwitchBreak, null)
 											}
 										});
@@ -323,14 +332,14 @@ namespace ICSharpCode.Decompiler.ILAst {
 									var caseBlock = new ILSwitch.CaseBlock() { EntryGoto = new ILExpression(ILCode.Br, fallLabel) };
 									ilSwitch.CaseBlocks.Add(caseBlock);
 									tail = block.Body.RemoveTail(ILCode.Br);
-									caseBlock.ILRanges.AddRange(tail[0].GetSelfAndChildrenRecursiveILRanges());
+									tail[0].AddSelfAndChildrenRecursiveILRanges(caseBlock.ILRanges);
 									
 									scope.ExceptWith(content);
 									caseBlock.Body.AddRange(FindConditions(content, fallTarget));
 									// Add explicit break which should not be used by default, but the goto removal might decide to use it
 									caseBlock.Body.Add(new ILBasicBlock() {
 										Body = {
-											new ILLabel() { Name = "SwitchBreak_" + (nextLabelIndex++) },
+											new ILLabel() { Name = "SwitchBreak_" + (nextLabelIndex++).ToString() },
 											new ILExpression(ILCode.LoopOrSwitchBreak, null)
 										}
 									});
@@ -357,8 +366,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 								FalseBlock = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, falseLabel) }
 							};
 							var tail = block.Body.RemoveTail(ILCode.Brtrue, ILCode.Br);
-							condExpr.ILRanges.AddRange(tail[0].ILRanges);	// no recursive add
-							ilCond.FalseBlock.ILRanges.AddRange(tail[1].GetSelfAndChildrenRecursiveILRanges());
+							condExpr.ILRanges.AddRange(tail[0].ILRanges);   // no recursive add
+							tail[1].AddSelfAndChildrenRecursiveILRanges(ilCond.FalseBlock.ILRanges);
 							block.Body.Add(ilCond);
 							result.Add(block);
 							
@@ -421,8 +430,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 				agenda.Remove(addNode);
 				
 				if (scope.Contains(addNode) && head.Dominates(addNode) && result.Add(addNode)) {
-					foreach (var successor in addNode.Successors) {
-						agenda.Add(successor);
+					for (int i = 0; i < addNode.Outgoing.Count; i++) {
+						agenda.Add(addNode.Outgoing[i].Target);
 					}
 				}
 			}
@@ -432,8 +441,12 @@ namespace ICSharpCode.Decompiler.ILAst {
 		
 		static HashSet<ControlFlowNode> FindLoopContent(HashSet<ControlFlowNode> scope, ControlFlowNode head)
 		{
-			var viaBackEdges = head.Predecessors.Where(p => head.Dominates(p));
-			HashSet<ControlFlowNode> agenda = new HashSet<ControlFlowNode>(viaBackEdges);
+			HashSet<ControlFlowNode> agenda = new HashSet<ControlFlowNode>();
+			for (int i = 0; i < head.Incoming.Count; i++) {
+				var p = head.Incoming[i].Source;
+				if (head.Dominates(p))
+					agenda.Add(p);
+			}
 			HashSet<ControlFlowNode> result = new HashSet<ControlFlowNode>();
 			
 			while(agenda.Count > 0) {
@@ -441,9 +454,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 				agenda.Remove(addNode);
 				
 				if (scope.Contains(addNode) && head.Dominates(addNode) && result.Add(addNode)) {
-					foreach (var predecessor in addNode.Predecessors) {
-						agenda.Add(predecessor);
-					}
+					for (int i = 0; i < addNode.Incoming.Count; i++)
+						agenda.Add(addNode.Incoming[i].Source);
 				}
 			}
 			if (scope.Contains(head))

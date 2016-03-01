@@ -62,7 +62,7 @@ namespace ICSharpCode.Decompiler.Tests.FSharpPatterns
 			try
 			{
 				try { module.LoadPdb(); } catch { }
-				AstBuilder decompiler = new AstBuilder(DecompilerContext.CreateTestContext(module));
+				AstBuilder decompiler = AstBuilder.CreateAstBuilderTestContext(module);
 				decompiler.AddAssembly(module, false, true, true);
 				new Helpers.RemoveCompilerAttribute().Run(decompiler.SyntaxTree);
 				StringWriter output = new StringWriter();

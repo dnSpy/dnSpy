@@ -16,27 +16,31 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
-using System;
-using System.Collections.Generic;
-using System.IO;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
 using dnSpy.Shared.Languages.XmlDoc;
+using System.Text;
 
 namespace dnSpy.Languages.ILSpy.XmlDoc {
 	/// <summary>
 	/// Adds XML documentation for member definitions.
 	/// </summary>
-	static class AddXmlDocTransform {
-		public static void Run(AstNode node) {
+	struct AddXmlDocTransform {
+		readonly StringBuilder stringBuilder;
+
+		public AddXmlDocTransform(StringBuilder sb) {
+			this.stringBuilder = sb;
+		}
+
+		public void Run(AstNode node) {
 			if (node is EntityDeclaration) {
 				IMemberRef mr = node.Annotation<IMemberRef>();
 				if (mr != null && mr.Module != null) {
 					var xmldoc = XmlDocLoader.LoadDocumentation(mr.Module);
 					if (xmldoc != null) {
-						string doc = xmldoc.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
-						if (doc != null) {
-							InsertXmlDocumentation(node, new StringReader(doc));
+						string doc = xmldoc.GetDocumentation(XmlDocKeyProvider.GetKey(mr, stringBuilder));
+						if (!string.IsNullOrEmpty(doc)) {
+							InsertXmlDocumentation(node, doc);
 						}
 					}
 				}
@@ -47,37 +51,14 @@ namespace dnSpy.Languages.ILSpy.XmlDoc {
 				Run(child);
 		}
 
-		static void InsertXmlDocumentation(AstNode node, StringReader r) {
-			foreach (var line in GetXmlDocLines(r))
-				node.Parent.InsertChildBefore(node, new Comment(line, CommentType.Documentation), Roles.Comment);
-		}
-
-		public static IEnumerable<string> GetXmlDocLines(StringReader r) {
-			// Find the first non-empty line:
-			string firstLine;
-			do {
-				firstLine = r.ReadLine();
-				if (firstLine == null)
-					yield break;
-			} while (string.IsNullOrWhiteSpace(firstLine));
-			string indentation = firstLine.Substring(0, firstLine.Length - firstLine.TrimStart().Length);
-			string line = firstLine;
-			int skippedWhitespaceLines = 0;
-			// Copy all lines from input to output, except for empty lines at the end.
-			while (line != null) {
-				if (string.IsNullOrWhiteSpace(line)) {
-					skippedWhitespaceLines++;
+		void InsertXmlDocumentation(AstNode node, string doc) {
+			foreach (var info in new XmlDocLine(doc)) {
+				stringBuilder.Clear();
+				if (info != null) {
+					stringBuilder.Append(' ');
+					info.Value.WriteTo(stringBuilder);
 				}
-				else {
-					while (skippedWhitespaceLines > 0) {
-						yield return string.Empty;
-						skippedWhitespaceLines--;
-					}
-					if (line.StartsWith(indentation, StringComparison.Ordinal))
-						line = line.Substring(indentation.Length);
-					yield return " " + line;
-				}
-				line = r.ReadLine();
+				node.Parent.InsertChildBefore(node, new Comment(stringBuilder.ToString(), CommentType.Documentation), Roles.Comment);
 			}
 		}
 	}

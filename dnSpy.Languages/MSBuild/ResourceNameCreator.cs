@@ -239,9 +239,15 @@ namespace dnSpy.Languages.MSBuild {
 			var pmap2 = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 			var pmap3 = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
 			var pnsmap = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+			var stringCache = new Dictionary<string, string>(StringComparer.Ordinal);
 			// Don't include nested types
 			foreach (var t in module.Types) {
-				var fullName = t.ReflectionFullName;
+				string fullName;
+				var nsu = t.Namespace;
+				if (UTF8String.IsNullOrEmpty(nsu))
+					fullName = (t.Name ?? UTF8String.Empty).String;
+				else
+					fullName = nsu.String + "." + (t.Name ?? UTF8String.Empty).String;
 				pmap3[fullName] = fullName;
 				var name = fullName;
 				while (name.Length > 0) {
@@ -253,8 +259,13 @@ namespace dnSpy.Languages.MSBuild {
 					name = name.Substring(index + 1);
 				}
 
-				var ns = t.ReflectionNamespace;
+				var ns = (t.Namespace ?? UTF8String.Empty).String;
 				while (ns.Length > 0) {
+					string tmp;
+					if (stringCache.TryGetValue(ns, out tmp))
+						ns = tmp;
+					else
+						stringCache[ns] = ns;
 					pnsmap[ns] = ns;
 					int index = ns.IndexOf('.');
 					if (index < 0)

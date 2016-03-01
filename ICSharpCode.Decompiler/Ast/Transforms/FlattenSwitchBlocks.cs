@@ -2,8 +2,12 @@
 using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms {
-	class FlattenSwitchBlocks : IAstTransform
+	class FlattenSwitchBlocks : IAstTransformPoolObject
 	{
+		public void Reset(DecompilerContext context)
+		{
+		}
+
 		public void Run(AstNode compilationUnit)
 		{
 			foreach (var switchSection in compilationUnit.Descendants.OfType<SwitchSection>())

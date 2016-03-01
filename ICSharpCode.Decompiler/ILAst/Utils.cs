@@ -58,26 +58,40 @@ namespace ICSharpCode.Decompiler.ILAst {
 		{
 			if (removed == null)
 				return;
-			AddILRangesTryPreviousFirst(prev, next, block, removed.GetSelfAndChildrenRecursiveILRanges());
+			AddILRangesTryPreviousFirst(prev, next, block, removed);
 		}
 
 		public static void AddILRangesTryNextFirst(ILNode removed, ILNode prev, ILNode next, ILBlockBase block)
 		{
 			if (removed == null)
 				return;
-			AddILRangesTryNextFirst(prev, next, block, removed.GetSelfAndChildrenRecursiveILRanges());
+			AddILRangesTryNextFirst(prev, next, block, removed);
 		}
 
-		public static void AddILRangesTryPreviousFirst(ILNode prev, ILNode next, ILBlockBase block, IEnumerable<ILRange> ilRanges)
+		public static void AddILRangesTryPreviousFirst(ILNode prev, ILNode next, ILBlockBase block, ILNode removed)
 		{
 			if (prev != null && prev.SafeToAddToEndILRanges)
-				prev.EndILRanges.AddRange(ilRanges);
+				removed.AddSelfAndChildrenRecursiveILRanges(prev.EndILRanges);
 			else if (next != null)
-				next.ILRanges.AddRange(ilRanges);
+				removed.AddSelfAndChildrenRecursiveILRanges(next.ILRanges);
 			else if (prev != null)
-				block.EndILRanges.AddRange(ilRanges);
+				removed.AddSelfAndChildrenRecursiveILRanges(block.EndILRanges);
 			else
-				block.ILRanges.AddRange(ilRanges);
+				removed.AddSelfAndChildrenRecursiveILRanges(block.ILRanges);
+		}
+
+		public static void AddILRangesTryNextFirst(ILNode prev, ILNode next, ILBlockBase block, ILNode removed)
+		{
+			if (next != null)
+				removed.AddSelfAndChildrenRecursiveILRanges(next.ILRanges);
+			else if (prev != null) {
+				if (prev.SafeToAddToEndILRanges)
+					removed.AddSelfAndChildrenRecursiveILRanges(prev.EndILRanges);
+				else
+					removed.AddSelfAndChildrenRecursiveILRanges(block.EndILRanges);
+			}
+			else
+				removed.AddSelfAndChildrenRecursiveILRanges(block.ILRanges);
 		}
 
 		public static void AddILRangesTryNextFirst(ILNode prev, ILNode next, ILBlockBase block, IEnumerable<ILRange> ilRanges)
@@ -144,7 +158,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 				node = next ?? prev;	// Using next before prev should work better
 
 			for (int i = 0; i < numRemoved; i++)
-				AddILRangesToInstruction(node, prev, next, block, body[removedIndex + i].GetSelfAndChildrenRecursiveILRanges());
+				AddILRangesToInstruction(node, prev, next, block, body[removedIndex + i]);
 		}
 
 		public static void AddILRanges(ILBlockBase block, List<ILNode> body, int removedIndex, IEnumerable<ILRange> ilRanges)
@@ -165,6 +179,22 @@ namespace ICSharpCode.Decompiler.ILAst {
 				node = next ?? prev;	// Using next before prev should work better
 
 			AddILRangesToInstruction(node, prev, next, block, ilRanges);
+		}
+
+		public static void AddILRangesToInstruction(ILNode nodeToAddTo, ILNode prev, ILNode next, ILBlockBase block, ILNode removed)
+		{
+			Debug.Assert(nodeToAddTo == prev || nodeToAddTo == next || nodeToAddTo == block);
+			if (nodeToAddTo != null) {
+				if (nodeToAddTo == prev && prev.SafeToAddToEndILRanges) {
+					removed.AddSelfAndChildrenRecursiveILRanges(prev.EndILRanges);
+					return;
+				}
+				else if (nodeToAddTo != null && nodeToAddTo == next) {
+					removed.AddSelfAndChildrenRecursiveILRanges(next.ILRanges);
+					return;
+				}
+			}
+			AddILRangesTryNextFirst(prev, next, block, removed);
 		}
 
 		public static void AddILRangesToInstruction(ILNode nodeToAddTo, ILNode prev, ILNode next, ILBlockBase block, IEnumerable<ILRange> ilRanges)

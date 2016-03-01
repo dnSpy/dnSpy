@@ -17,22 +17,31 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System.Linq;
-using ICSharpCode.NRefactory.CSharp;
+using System.Text;
 using dnlib.DotNet;
+using dnSpy.Decompiler.Shared;
+using ICSharpCode.NRefactory.CSharp;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms {
 	/// <summary>
 	/// Converts extension method calls into infix syntax.
 	/// </summary>
-	public class IntroduceExtensionMethods : IAstTransform
+	public class IntroduceExtensionMethods : IAstTransformPoolObject
 	{
-		readonly DecompilerContext context;
-		
+		readonly StringBuilder stringBuilder;
+
 		public IntroduceExtensionMethods(DecompilerContext context)
 		{
-			this.context = context;
+			this.stringBuilder = new StringBuilder();
+			Reset(context);
 		}
-		
+
+		public void Reset(DecompilerContext context)
+		{
+		}
+
+		static readonly UTF8String systemRuntimeCompilerServicesString = new UTF8String("System.Runtime.CompilerServices");
+		static readonly UTF8String extensionAttributeString = new UTF8String("ExtensionAttribute");
 		public void Run(AstNode compilationUnit)
 		{
 			foreach (InvocationExpression invocation in compilationUnit.Descendants.OfType<InvocationExpression>()) {
@@ -41,26 +50,24 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				if (mre != null && mre.Target is TypeReferenceExpression && methodReference != null && invocation.Arguments.Any()) {
 					MethodDef d = methodReference.Resolve();
 					if (d != null) {
-						foreach (var ca in d.CustomAttributes) {
-							if (ca.AttributeType != null && ca.AttributeType.Name == "ExtensionAttribute" && ca.AttributeType.Namespace == "System.Runtime.CompilerServices") {
-								var firstArgument = invocation.Arguments.First();
-								if (firstArgument is NullReferenceExpression)
-									firstArgument = firstArgument.ReplaceWith(expr => expr.CastTo(AstBuilder.ConvertType(d.Parameters.SkipNonNormal().First().Type)));
-								else {
-									var ilRanges = mre.Target.GetAllRecursiveILRanges();
-									mre.Target = firstArgument.Detach();
-									if (ilRanges.Count > 0)
-										mre.Target.AddAnnotation(ilRanges);
-								}
-								if (invocation.Arguments.Any()) {
-									// HACK: removing type arguments should be done indepently from whether a method is an extension method,
-									// just by testing whether the arguments can be inferred
-									var ilRanges = mre.TypeArguments.GetAllRecursiveILRanges();
-									mre.TypeArguments.Clear();
-									if (ilRanges.Count > 0)
-										mre.AddAnnotation(ilRanges);
-								}
-								break;
+						var ca = d.Find(systemRuntimeCompilerServicesString, extensionAttributeString);
+						if (ca != null) {
+							var firstArgument = invocation.Arguments.First();
+							if (firstArgument is NullReferenceExpression)
+								firstArgument = firstArgument.ReplaceWith(expr => expr.CastTo(AstBuilder.ConvertType(d.Parameters.SkipNonNormal().First().Type, stringBuilder)));
+							else {
+								var ilRanges = mre.Target.GetAllRecursiveILRanges();
+								mre.Target = firstArgument.Detach();
+								if (ilRanges.Count > 0)
+									mre.Target.AddAnnotation(ilRanges);
+							}
+							if (invocation.Arguments.Any()) {
+								// HACK: removing type arguments should be done indepently from whether a method is an extension method,
+								// just by testing whether the arguments can be inferred
+								var ilRanges = mre.TypeArguments.GetAllRecursiveILRanges();
+								mre.TypeArguments.Clear();
+								if (ilRanges.Count > 0)
+									mre.AddAnnotation(ilRanges);
 							}
 						}
 					}

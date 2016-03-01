@@ -31,11 +31,16 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 	/// <summary>
 	/// If the first element of a constructor is a chained constructor call, convert it into a constructor initializer.
 	/// </summary>
-	public class ConvertConstructorCallIntoInitializer : DepthFirstAstVisitor<object, object>, IAstTransform
+	public class ConvertConstructorCallIntoInitializer : DepthFirstAstVisitor<object, object>, IAstTransformPoolObject
 	{
-		readonly DecompilerContext context;
+		DecompilerContext context;
 
 		public ConvertConstructorCallIntoInitializer(DecompilerContext context)
+		{
+			Reset(context);
+		}
+
+		public void Reset(DecompilerContext context)
 		{
 			this.context = context;
 		}
@@ -66,7 +71,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					ci.AddAnnotation(ilRanges);
 				}
 				else
-					constructorDeclaration.Body.HiddenStart = NRefactoryExtensions.CreateHidden(ilRanges, constructorDeclaration.Body.HiddenStart);
+					constructorDeclaration.Body.HiddenStart = NRefactoryExtensions.CreateHidden(ILRange.OrderAndJoinList(ilRanges), constructorDeclaration.Body.HiddenStart);
 				// Remove the statement:
 				stmt.Remove();
 			}

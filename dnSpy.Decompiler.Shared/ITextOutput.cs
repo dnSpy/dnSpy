@@ -16,13 +16,17 @@
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 // DEALINGS IN THE SOFTWARE.
 
+using System.Text;
+
 namespace dnSpy.Decompiler.Shared {
 	public interface ITextOutput {
 		TextPosition Location { get; }
 
 		void Indent();
 		void Unindent();
-		void Write(string text, TextTokenKind tokenKind);
+		void Write(string text, TextTokenKind tokenKind);//TODO: Try to use one of the methods below
+		void Write(string text, int index, int count, TextTokenKind tokenKind);
+		void Write(StringBuilder sb, int index, int count, TextTokenKind tokenKind);
 		void WriteLine();
 		void WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal = true);
 		void WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal = false);

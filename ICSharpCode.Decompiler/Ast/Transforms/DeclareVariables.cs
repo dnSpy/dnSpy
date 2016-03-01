@@ -29,7 +29,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 	/// <summary>
 	/// Moves variable declarations to improved positions.
 	/// </summary>
-	public class DeclareVariables : IAstTransform
+	public class DeclareVariables : IAstTransformPoolObject
 	{
 		sealed class VariableToDeclare
 		{
@@ -41,14 +41,22 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			public Statement InsertionPoint;
 		}
 		
-		readonly CancellationToken cancellationToken;
-		List<VariableToDeclare> variablesToDeclare = new List<VariableToDeclare>();
+		DecompilerContext context;
+		CancellationToken cancellationToken;
+		readonly List<VariableToDeclare> variablesToDeclare = new List<VariableToDeclare>();
 		
 		public DeclareVariables(DecompilerContext context)
 		{
-			this.cancellationToken = context.CancellationToken;
+			Reset(context);
 		}
-		
+
+		public void Reset(DecompilerContext context)
+		{
+			this.context = context;
+			this.cancellationToken = context.CancellationToken;
+			this.variablesToDeclare.Clear();
+		}
+
 		public void Run(AstNode node)
 		{
 			Run(node, null);
@@ -87,7 +95,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 					}
 				}
 			}
-			variablesToDeclare = null;
+			variablesToDeclare.Clear();
 		}
 		
 		void Run(AstNode node, DefiniteAssignmentAnalysis daa)

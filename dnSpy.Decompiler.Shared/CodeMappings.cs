@@ -178,7 +178,7 @@ namespace dnSpy.Decompiler.Shared {
 
 			// set the output
 			var resultList = new List<uint>();
-			foreach (var element in ILRange.OrderAndJoin(currentList)) {
+			foreach (var element in ILRange.OrderAndJoinList(currentList)) {
 				resultList.Add(element.From);
 				resultList.Add(element.To);
 			}

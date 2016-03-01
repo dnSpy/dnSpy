@@ -23,7 +23,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 	/// <summary>
 	/// Add checked/unchecked blocks.
 	/// </summary>
-	public class AddCheckedBlocks : IAstTransform
+	public class AddCheckedBlocks : IAstTransformPoolObject
 	{
 		#region Annotation
 		sealed class CheckedUncheckedAnnotation {
@@ -223,7 +223,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 		/// <summary>
 		/// Holds the result of an insertion operation.
 		/// </summary>
-		class Result
+		struct Result
 		{
 			public Cost CostInCheckedContext;
 			public InsertedNode NodesToInsertInCheckedContext;
@@ -244,6 +244,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				if (r.NodesToInsertInUncheckedContext != null)
 					r.NodesToInsertInUncheckedContext.Insert();
 			}
+		}
+
+		public void Reset(DecompilerContext context)
+		{
 		}
 		
 		Result GetResultFromBlock(BlockStatement block)

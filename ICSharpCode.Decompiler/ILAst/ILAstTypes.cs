@@ -17,6 +17,7 @@
 // DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,7 +27,7 @@ using dnSpy.Decompiler.Shared;
 using ICSharpCode.Decompiler.Disassembler;
 
 namespace ICSharpCode.Decompiler.ILAst {
-	public abstract class ILNode
+	public abstract class ILNode : IEnumerable<ILNode>
 	{
 		public readonly List<ILRange> ILRanges = new List<ILRange>(1);
 
@@ -54,9 +55,32 @@ namespace ICSharpCode.Decompiler.ILAst {
 			return GetSelfAndChildrenRecursive<ILNode>().SelectMany(e => e.AllILRanges);
 		}
 
+		public void AddSelfAndChildrenRecursiveILRanges(List<ILRange> coll)
+		{
+			foreach (var a in GetSelfAndChildrenRecursive<ILNode>()) {
+				foreach (var b in a.AllILRanges)
+					coll.Add(b);
+			}
+		}
+
+		public List<ILRange> GetSelfAndChildrenRecursiveILRanges_OrderAndJoin() {
+			// The current callers save the list as an annotation so always create a new list here
+			// instead of having them pass in a cached list.
+			var list = new List<ILRange>();
+			AddSelfAndChildrenRecursiveILRanges(list);
+			return ILRange.OrderAndJoinList(list);
+		}
+
 		public List<T> GetSelfAndChildrenRecursive<T>(Func<T, bool> predicate = null) where T: ILNode
 		{
 			List<T> result = new List<T>(16);
+			AccumulateSelfAndChildrenRecursive(result, predicate);
+			return result;
+		}
+
+		public List<T> GetSelfAndChildrenRecursive<T>(List<T> result, Func<T, bool> predicate = null) where T: ILNode
+		{
+			result.Clear();
 			AccumulateSelfAndChildrenRecursive(result, predicate);
 			return result;
 		}
@@ -67,17 +91,78 @@ namespace ICSharpCode.Decompiler.ILAst {
 			T thisAsT = this as T;
 			if (thisAsT != null && (predicate == null || predicate(thisAsT)))
 				list.Add(thisAsT);
-			foreach (ILNode node in this.GetChildren()) {
-				if (node != null)
-					node.AccumulateSelfAndChildrenRecursive(list, predicate);
+			int index = 0;
+			for (;;) {
+				var node = GetNext(ref index);
+				if (node == null)
+					break;
+				node.AccumulateSelfAndChildrenRecursive(list, predicate);
 			}
 		}
-		
-		public virtual IEnumerable<ILNode> GetChildren()
+
+		internal virtual ILNode GetNext(ref int index)
 		{
-			yield break;
+			return null;
 		}
 		
+		public ILNode GetChildren()
+		{
+			return this;
+		}
+
+		public ILNode_Enumerator GetEnumerator()
+		{
+			return new ILNode_Enumerator(this);
+		}
+
+		IEnumerator<ILNode> IEnumerable<ILNode>.GetEnumerator()
+		{
+			return new ILNode_Enumerator(this);
+		}
+
+		IEnumerator IEnumerable.GetEnumerator()
+		{
+			return new ILNode_Enumerator(this);
+		}
+
+		public struct ILNode_Enumerator : IEnumerator<ILNode>
+		{
+			readonly ILNode node;
+			int index;
+			ILNode current;
+
+			internal ILNode_Enumerator(ILNode node)
+			{
+				this.node = node;
+				this.index = 0;
+				this.current = null;
+			}
+
+			public ILNode Current
+			{
+				get { return current; }
+			}
+
+			object IEnumerator.Current
+			{
+				get { return current; }
+			}
+
+			public void Dispose()
+			{
+			}
+
+			public bool MoveNext()
+			{
+				return (this.current = this.node.GetNext(ref index)) != null;
+			}
+
+			public void Reset()
+			{
+				this.index = 0;
+			}
+		}
+
 		public override string ToString()
 		{
 			StringWriter w = new StringWriter();
@@ -153,9 +238,11 @@ namespace ICSharpCode.Decompiler.ILAst {
 			this.Body = body;
 		}
 
-		public override IEnumerable<ILNode> GetChildren()
+		internal override ILNode GetNext(ref int index)
 		{
-			return this.Body;
+			if (index < this.Body.Count)
+				return this.Body[index++];
+			return null;
 		}
 		
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
@@ -187,13 +274,17 @@ namespace ICSharpCode.Decompiler.ILAst {
 		{
 		}
 		
-		public override IEnumerable<ILNode> GetChildren()
+		internal override ILNode GetNext(ref int index)
 		{
-			if (this.EntryGoto != null)
-				yield return this.EntryGoto;
-			foreach(ILNode child in this.Body) {
-				yield return child;
+			if (index == 0) {
+				index = 1;
+				if (this.EntryGoto != null)
+					return this.EntryGoto;
 			}
+			if (index <= this.Body.Count)
+				return this.Body[index++ - 1];
+
+			return null;
 		}
 	}
 	
@@ -245,7 +336,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 			{
 				this.Body = body;
 				if (body.Count > 0 && body[0].Match(ILCode.Pop))
-					StlocILRanges.AddRange(body[0].GetSelfAndChildrenRecursiveILRanges());
+					body[0].AddSelfAndChildrenRecursiveILRanges(StlocILRanges);
 			}
 			
 			public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
@@ -297,23 +388,38 @@ namespace ICSharpCode.Decompiler.ILAst {
 		public ILBlock          FaultBlock;
 		public FilterILBlock    FilterBlock;
 		
-		public override IEnumerable<ILNode> GetChildren()
+		internal override ILNode GetNext(ref int index)
 		{
-			if (this.TryBlock != null)
-				yield return this.TryBlock;
-			foreach (var catchBlock in this.CatchBlocks) {
-				yield return catchBlock;
+			if (index == 0) {
+				index = 1;
+				if (this.TryBlock != null)
+					return this.TryBlock;
 			}
-			if (this.FaultBlock != null)
-				yield return this.FaultBlock;
-			if (this.FinallyBlock != null)
-				yield return this.FinallyBlock;
-			if (this.FilterBlock != null) {
-				yield return this.FilterBlock;
-				yield return this.FilterBlock.HandlerBlock;
+			if (index <= this.CatchBlocks.Count)
+				return this.CatchBlocks[index++ - 1];
+			if (index == this.CatchBlocks.Count + 1) {
+				index++;
+				if (this.FaultBlock != null)
+					return this.FaultBlock;
 			}
+			if (index == this.CatchBlocks.Count + 2) {
+				index++;
+				if (this.FinallyBlock != null)
+					return this.FinallyBlock;
+			}
+			if (index == this.CatchBlocks.Count + 3) {
+				index++;
+				if (this.FilterBlock != null)
+					return this.FilterBlock;
+			}
+			if (index == this.CatchBlocks.Count + 4) {
+				index++;
+				if (this.FilterBlock != null && this.FilterBlock.HandlerBlock != null)
+					return this.FilterBlock.HandlerBlock;
+			}
+			return null;
 		}
-		
+
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
 		{
 			output.Write(".try", TextTokenKind.Keyword);
@@ -399,8 +505,48 @@ namespace ICSharpCode.Decompiler.ILAst {
 			this.Operand = operand;
 			this.Arguments = new List<ILExpression>(args);
 		}
-		
-		public ILExpression(ILCode code, object operand, params ILExpression[] args)
+
+		public ILExpression(ILCode code, object operand)
+		{
+			if (operand is ILExpression)
+				throw new ArgumentException("operand");
+			
+			this.Code = code;
+			this.Operand = operand;
+			this.Arguments = new List<ILExpression>();
+		}
+
+		public ILExpression(ILCode code, object operand, ILExpression arg1)
+		{
+			if (operand is ILExpression)
+				throw new ArgumentException("operand");
+			
+			this.Code = code;
+			this.Operand = operand;
+			this.Arguments = new List<ILExpression>() { arg1 };
+		}
+
+		public ILExpression(ILCode code, object operand, ILExpression arg1, ILExpression arg2)
+		{
+			if (operand is ILExpression)
+				throw new ArgumentException("operand");
+			
+			this.Code = code;
+			this.Operand = operand;
+			this.Arguments = new List<ILExpression>() { arg1, arg2 };
+		}
+
+		public ILExpression(ILCode code, object operand, ILExpression arg1, ILExpression arg2, ILExpression arg3)
+		{
+			if (operand is ILExpression)
+				throw new ArgumentException("operand");
+			
+			this.Code = code;
+			this.Operand = operand;
+			this.Arguments = new List<ILExpression>() { arg1, arg2, arg3 };
+		}
+
+		public ILExpression(ILCode code, object operand, ILExpression[] args)
 		{
 			if (operand is ILExpression)
 				throw new ArgumentException("operand");
@@ -433,9 +579,11 @@ namespace ICSharpCode.Decompiler.ILAst {
 			return null;
 		}
 		
-		public override IEnumerable<ILNode> GetChildren()
+		internal override ILNode GetNext(ref int index)
 		{
-			return Arguments;
+			if (index < Arguments.Count)
+				return Arguments[index++];
+			return null;
 		}
 		
 		public bool IsBranch()
@@ -561,14 +709,21 @@ namespace ICSharpCode.Decompiler.ILAst {
 		public ILExpression Condition;
 		public ILBlock      BodyBlock;
 		
-		public override IEnumerable<ILNode> GetChildren()
+		internal override ILNode GetNext(ref int index)
 		{
-			if (this.Condition != null)
-				yield return this.Condition;
-			if (this.BodyBlock != null)
-				yield return this.BodyBlock;
+			if (index == 0) {
+				index = 1;
+				if (this.Condition != null)
+					return this.Condition;
+			}
+			if (index == 1) {
+				index = 2;
+				if (this.BodyBlock != null)
+					return this.BodyBlock;
+			}
+			return null;
 		}
-		
+
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
 		{
 			var startLoc = output.Location;
@@ -580,7 +735,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 			output.Write(")", TextTokenKind.Operator);
 			var ilRanges = new List<ILRange>(ILRanges);
 			if (this.Condition != null)
-				ilRanges.AddRange(this.Condition.GetSelfAndChildrenRecursiveILRanges());
+				this.Condition.AddSelfAndChildrenRecursiveILRanges(ilRanges);
 			UpdateMemberMapping(memberMapping, startLoc, output.Location, ilRanges);
 			output.WriteSpace();
 			this.BodyBlock.WriteTo(output, memberMapping);
@@ -593,16 +748,26 @@ namespace ICSharpCode.Decompiler.ILAst {
 		public ILBlock TrueBlock;   // Branch was taken
 		public ILBlock FalseBlock;  // Fall-though
 		
-		public override IEnumerable<ILNode> GetChildren()
+		internal override ILNode GetNext(ref int index)
 		{
-			if (this.Condition != null)
-				yield return this.Condition;
-			if (this.TrueBlock != null)
-				yield return this.TrueBlock;
-			if (this.FalseBlock != null)
-				yield return this.FalseBlock;
+			if (index == 0) {
+				index = 1;
+				if (this.Condition != null)
+					return this.Condition;
+			}
+			if (index == 1) {
+				index = 2;
+				if (this.TrueBlock != null)
+					return this.TrueBlock;
+			}
+			if (index == 2) {
+				index = 3;
+				if (this.FalseBlock != null)
+					return this.FalseBlock;
+			}
+			return null;
 		}
-		
+
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
 		{
 			var startLoc = output.Location;
@@ -612,7 +777,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 			Condition.WriteTo(output, null);
 			output.Write(")", TextTokenKind.Operator);
 			var ilRanges = new List<ILRange>(ILRanges);
-			ilRanges.AddRange(Condition.GetSelfAndChildrenRecursiveILRanges());
+			Condition.AddSelfAndChildrenRecursiveILRanges(ilRanges);
 			UpdateMemberMapping(memberMapping, startLoc, output.Location, ilRanges);
 			output.WriteSpace();
 			TrueBlock.WriteTo(output, memberMapping);
@@ -669,13 +834,15 @@ namespace ICSharpCode.Decompiler.ILAst {
 			get { return true; }
 		}
 		
-		public override IEnumerable<ILNode> GetChildren()
+		internal override ILNode GetNext(ref int index)
 		{
-			if (this.Condition != null)
-				yield return this.Condition;
-			foreach (ILBlock caseBlock in this.CaseBlocks) {
-				yield return caseBlock;
+			if (index == 0) {
+				index = 1;
+				return this.Condition;
 			}
+			if (index <= this.CaseBlocks.Count)
+				return this.CaseBlocks[index++ - 1];
+			return null;
 		}
 		
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
@@ -687,7 +854,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 			Condition.WriteTo(output, null);
 			output.Write(")", TextTokenKind.Operator);
 			var ilRanges = new List<ILRange>(ILRanges);
-			ilRanges.AddRange(Condition.GetSelfAndChildrenRecursiveILRanges());
+			Condition.AddSelfAndChildrenRecursiveILRanges(ilRanges);
 			UpdateMemberMapping(memberMapping, startLoc, output.Location, ilRanges);
 			output.WriteSpace();
 			WriteHiddenStart(output, memberMapping);
@@ -703,14 +870,18 @@ namespace ICSharpCode.Decompiler.ILAst {
 		public List<ILExpression> Initializers = new List<ILExpression>();
 		public ILBlock      BodyBlock;
 		
-		public override IEnumerable<ILNode> GetChildren()
+		internal override ILNode GetNext(ref int index)
 		{
-			foreach (ILExpression initializer in this.Initializers)
-				yield return initializer;
-			if (this.BodyBlock != null)
-				yield return this.BodyBlock;
+			if (index < this.Initializers.Count)
+				return this.Initializers[index++];
+			if (index == this.Initializers.Count) {
+				index++;
+				if (this.BodyBlock != null)
+					return this.BodyBlock;
+			}
+			return null;
 		}
-		
+
 		public override void WriteTo(ITextOutput output, MemberMapping memberMapping)
 		{
 			var startLoc = output.Location;
@@ -727,7 +898,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 			output.Write(")", TextTokenKind.Operator);
 			var ilRanges = new List<ILRange>(ILRanges);
 			foreach (var i in Initializers)
-				ilRanges.AddRange(i.GetSelfAndChildrenRecursiveILRanges());
+				i.AddSelfAndChildrenRecursiveILRanges(ilRanges);
 			UpdateMemberMapping(memberMapping, startLoc, output.Location, ilRanges);
 			output.WriteSpace();
 			this.BodyBlock.WriteTo(output, memberMapping);

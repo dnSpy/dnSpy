@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using dnlib.DotNet;
 
@@ -26,6 +27,8 @@ namespace dnSpy.Contracts.Languages {
 	/// Decompilation options
 	/// </summary>
 	public class DecompilationContext : IDecompilationContext {
+		const int STRINGBUILDER_POOL_SIZE = 256;
+
 		/// <summary />
 		public CancellationToken CancellationToken { get; set; }
 
@@ -50,6 +53,41 @@ namespace dnSpy.Contracts.Languages {
 		/// <summary />
 		public IDisposable DisableAssemblyLoad() {
 			return GetDisableAssemblyLoad == null ? null : GetDisableAssemblyLoad();
+		}
+
+		/// <summary>
+		/// Gets or creates a cached object
+		/// </summary>
+		/// <typeparam name="T">Type</typeparam>
+		/// <returns></returns>
+		public T GetOrCreate<T>() where T : class, new() {
+			lock (lockObj) {
+				object obj;
+				if (cachedObjs.TryGetValue(typeof(T), out obj))
+					return (T)obj;
+				T res = new T();
+				cachedObjs.Add(typeof(T), res);
+				return res;
+			}
+		}
+		readonly object lockObj = new object();
+		readonly Dictionary<Type, object> cachedObjs = new Dictionary<Type, object>();
+
+		/// <summary>
+		/// Gets or creates a cached object
+		/// </summary>
+		/// <typeparam name="T">Type</typeparam>
+		/// <param name="creator">Creates the object if necessary</param>
+		/// <returns></returns>
+		public T GetOrCreate<T>(Func<T> creator) where T : class {
+			lock (lockObj) {
+				object obj;
+				if (cachedObjs.TryGetValue(typeof(T), out obj))
+					return (T)obj;
+				T res = creator();
+				cachedObjs.Add(typeof(T), res);
+				return res;
+			}
 		}
 	}
 }

@@ -34,11 +34,29 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 				var ca = attr.Annotation<CustomAttribute>();
 				if (ca == null)
 					continue;
-				if (ca.TypeFullName != "System.Runtime.Versioning.TargetFrameworkAttribute" &&
-					ca.TypeFullName != "System.Security.UnverifiableCodeAttribute")
+				if (!Compare(ca.AttributeType, systemRuntimeVersioningString, targetFrameworkAttributeString) &&
+					!Compare(ca.AttributeType, systemSecurityString, unverifiableCodeAttributeString))
 					continue;
 				attrSect.Remove();
 			}
+		}
+		static readonly UTF8String systemRuntimeVersioningString = new UTF8String("System.Runtime.Versioning");
+		static readonly UTF8String targetFrameworkAttributeString = new UTF8String("TargetFrameworkAttribute");
+		static readonly UTF8String systemSecurityString = new UTF8String("System.Security");
+		static readonly UTF8String unverifiableCodeAttributeString = new UTF8String("UnverifiableCodeAttribute");
+
+		static bool Compare(ITypeDefOrRef type, UTF8String expNs, UTF8String expName) {
+			if (type == null)
+				return false;
+
+			var tr = type as TypeRef;
+			if (tr != null)
+				return tr.Namespace == expNs && tr.Name == expName;
+			var td = type as TypeDef;
+			if (td != null)
+				return td.Namespace == expNs && td.Name == expName;
+
+			return false;
 		}
 	}
 }

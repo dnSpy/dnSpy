@@ -68,7 +68,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 		ILExpression resultExpr;
 		
 		#region RunStep1() method
-		public static void RunStep1(DecompilerContext context, ILBlock method)
+		public static void RunStep1(DecompilerContext context, ILBlock method, List<ILExpression> listExpr, List<ILBlock> listBlock, Dictionary<ILLabel, int> labelRefCount)
 		{
 			if (!context.Settings.AsyncAwait)
 				return; // abort if async decompilation is disabled
@@ -94,7 +94,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 			method.Body.Clear();
 			method.EntryGoto = null;
 			method.Body.AddRange(yrd.newTopLevelBody);//TODO: Make sure that the removed ILRanges from Clear() above is saved in the new body
-			ILAstOptimizer.RemoveRedundantCode(method);
+			ILAstOptimizer.RemoveRedundantCode(method, listExpr, listBlock, labelRefCount);
 		}
 		
 		void Run()
@@ -293,10 +293,23 @@ namespace ICSharpCode.Decompiler.ILAst {
 				throw new SymbolicAnalysisFailedException();
 			
 			ILBlock ilMethod = new ILBlock();
-			ILAstBuilder astBuilder = new ILAstBuilder();
-			ilMethod.Body = astBuilder.Build(method, true, context);
-			ILAstOptimizer optimizer = new ILAstOptimizer();
-			optimizer.Optimize(context, ilMethod, ILAstOptimizationStep.YieldReturn);
+
+			var astBuilder = context.Cache.GetILAstBuilder();
+			try {
+				ilMethod.Body = astBuilder.Build(method, true, context);
+			}
+			finally {
+				context.Cache.Return(astBuilder);
+			}
+
+			var optimizer = this.context.Cache.GetILAstOptimizer();
+			try {
+				optimizer.Optimize(context, ilMethod, ILAstOptimizationStep.YieldReturn);
+			}
+			finally {
+				this.context.Cache.Return(optimizer);
+			}
+
 			return ilMethod;
 		}
 		
@@ -576,16 +589,16 @@ namespace ICSharpCode.Decompiler.ILAst {
 		#endregion
 		
 		#region RunStep2() method
-		public static void RunStep2(DecompilerContext context, ILBlock method)
+		public static void RunStep2(DecompilerContext context, ILBlock method, List<ILExpression> listExpr, List<ILBlock> listBlock, Dictionary<ILLabel, int> labelRefCount, List<ILNode> list_ILNode, Func<ILBlock, ILInlining> getILInlining)
 		{
 			if (context.CurrentMethodIsAsync) {
 				Step2(method.Body);
-				ILAstOptimizer.RemoveRedundantCode(method);
+				ILAstOptimizer.RemoveRedundantCode(method, listExpr, listBlock, labelRefCount);
 				// Repeat the inlining/copy propagation optimization because the conversion of field access
 				// to local variables can open up additional inlining possibilities.
-				ILInlining inlining = new ILInlining(method);
+				ILInlining inlining = getILInlining(method);
 				inlining.InlineAllVariables();
-				inlining.CopyPropagation();
+				inlining.CopyPropagation(list_ILNode);
 			}
 		}
 		

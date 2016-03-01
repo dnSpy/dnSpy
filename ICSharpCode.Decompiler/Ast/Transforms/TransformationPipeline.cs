@@ -24,12 +24,17 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 	{
 		void Run(AstNode compilationUnit);
 	}
-	
+
+	public interface IAstTransformPoolObject : IAstTransform
+	{
+		void Reset(DecompilerContext context);
+	}
+
 	public static class TransformationPipeline
 	{
-		public static IAstTransform[] CreatePipeline(DecompilerContext context)
+		public static IAstTransformPoolObject[] CreatePipeline(DecompilerContext context)
 		{
-			return new IAstTransform[] {
+			return new IAstTransformPoolObject[] {
 				new PushNegation(),
 				new DelegateConstruction(context),
 				new PatternStatementTransform(context),
@@ -51,12 +56,19 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 		{
 			if (node == null)
 				return;
-			
-			foreach (var transform in CreatePipeline(context)) {
-				context.CancellationToken.ThrowIfCancellationRequested();
-				if (abortCondition != null && abortCondition(transform))
-					return;
-				transform.Run(node);
+
+			var pipeline = context.Cache.GetPipelinePool();
+			try {
+				foreach (var transform in pipeline) {
+					transform.Reset(context);
+					context.CancellationToken.ThrowIfCancellationRequested();
+					if (abortCondition != null && abortCondition(transform))
+						return;
+					transform.Run(node);
+				}
+			}
+			finally {
+				context.Cache.Return(pipeline);
 			}
 		}
 	}

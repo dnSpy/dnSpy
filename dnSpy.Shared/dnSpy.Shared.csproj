@@ -81,6 +81,7 @@
     <Compile Include="Decompiler\AvalonEditTextOutput.cs" />
     <Compile Include="Decompiler\ISmartTextOutput.cs" />
     <Compile Include="Decompiler\OutputLengthExceededException.cs" />
+    <Compile Include="Languages\StringBuilderExtensions.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocumentationProvider.cs" />
     <Compile Include="Properties\dnSpy.Shared.Resources.Designer.cs">
       <AutoGen>True</AutoGen>

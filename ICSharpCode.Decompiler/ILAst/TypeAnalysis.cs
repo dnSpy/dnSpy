@@ -148,9 +148,10 @@ namespace ICSharpCode.Decompiler.ILAst {
 			var q = from expr in allExpressions
 				from v in expr.Dependencies
 				group expr by v;
+			List<ILExpression> listExpr = null;
 			foreach (var g in q.ToArray()) {
 				ILVariable v = g.Key;
-				if (g.Count() == 1 && g.Single().Expression.GetSelfAndChildrenRecursive<ILExpression>().Count(e => e.Operand == v) == 1) {
+				if (g.Count() == 1 && g.First().Expression.GetSelfAndChildrenRecursive<ILExpression>(listExpr ?? (listExpr = new List<ILExpression>())).Count(e => e.Operand == v) == 1) {
 					singleLoadVariables.Add(v);
 					// Mark the assignments as dependent on the type from the single load:
 					foreach (var assignment in assignmentExpressions[v]) {
@@ -1226,9 +1227,9 @@ namespace ICSharpCode.Decompiler.ILAst {
 		/// <summary>
 		/// Clears the type inference data on the method.
 		/// </summary>
-		public static void Reset(ILBlock method)
+		public static void Reset(ILBlock method, List<ILExpression> list_ILExpression)
 		{
-			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+			foreach (ILExpression expr in method.GetSelfAndChildrenRecursive<ILExpression>(list_ILExpression)) {
 				expr.InferredType = null;
 				expr.ExpectedType = null;
 				ILVariable v = expr.Operand as ILVariable;

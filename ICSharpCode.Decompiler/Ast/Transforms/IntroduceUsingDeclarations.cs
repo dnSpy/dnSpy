@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using dnlib.DotNet;
 using dnSpy.Decompiler.Shared;
 using ICSharpCode.NRefactory.CSharp;
@@ -28,28 +29,45 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 	/// <summary>
 	/// Introduces using declarations.
 	/// </summary>
-	public class IntroduceUsingDeclarations : IAstTransform
+	public class IntroduceUsingDeclarations : IAstTransformPoolObject
 	{
 		DecompilerContext context;
-		
+		readonly StringBuilder stringBuilder;
+		readonly Dictionary<string, List<TypeDef>> typesWithNamespace_currentModule = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
+		readonly List<Dictionary<string, List<TypeDef>>> typesWithNamespace_allAsms_list = new List<Dictionary<string, List<TypeDef>>>();
+		ModuleDef lastCheckedModule;
+
 		public IntroduceUsingDeclarations(DecompilerContext context)
 		{
-			this.context = context;
+			this.stringBuilder = new StringBuilder();
+			Reset(context);
 		}
-		
+
+		public void Reset(DecompilerContext context)
+		{
+			this.context = context;
+			ambiguousTypeNames.Clear();
+			availableTypeNames.Clear();
+			importedNamespaces.Clear();
+			importedOrDeclaredNamespaces.Clear();
+			importedOrDeclaredNamespaces.Add(string.Empty);
+			// Don't clear lastCheckedModule, typesWithNamespace_currentModule, typesWithNamespace_allAsms_list since they're cached between resets
+		}
+
 		public void Run(AstNode compilationUnit)
 		{
 			// First determine all the namespaces that need to be imported:
 			compilationUnit.AcceptVisitor(new FindRequiredImports(this), null);
 			
 			importedNamespaces.Add("System"); // always import System, even when not necessary
+			importedOrDeclaredNamespaces.Add("System");
 			
 			if (context.Settings.UsingDeclarations) {
 				// Now add using declarations for those namespaces:
 				foreach (string ns in GetNamespacesInReverseOrder()) {
 					// we go backwards (OrderByDescending) through the list of namespaces because we insert them backwards
 					// (always inserting at the start of the list)
-					string[] parts = ns.Split('.');
+					string[] parts = ns.Split(namespaceSep);
 					AstType nsType = new SimpleType(parts[0]).WithAnnotation(TextTokenKind.NamespacePart);
 					for (int i = 1; i < parts.Length; i++) {
 						nsType = new MemberType { Target = nsType, MemberNameToken = Identifier.Create(parts[i]).WithAnnotation(TextTokenKind.NamespacePart) }.WithAnnotation(TextTokenKind.NamespacePart);
@@ -62,32 +80,49 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				return;
 
 			if (context.CurrentModule != null) {
-				FindAmbiguousTypeNames(context.CurrentModule.Types, internalsVisible: true);
-				var asmDict = new Dictionary<AssemblyDef, List<AssemblyDef>>(AssemblyEqualityComparer.Instance);
-				foreach (var r in context.CurrentModule.GetAssemblyRefs()) {
-					AssemblyDef d = context.CurrentModule.Context.AssemblyResolver.Resolve(r, context.CurrentModule);
-					if (d == null)
-						continue;
-					List<AssemblyDef> list;
-					if (!asmDict.TryGetValue(d, out list))
-						asmDict.Add(d, list = new List<AssemblyDef>());
-					list.Add(d);
+				if (lastCheckedModule != context.CurrentModule) {
+					typesWithNamespace_currentModule.Clear();
+					BuildAmbiguousTypeNamesTable(typesWithNamespace_currentModule, context.CurrentModule.Types, true);
 				}
-				foreach (var list in asmDict.Values) {
-					FindAmbiguousTypeNames(GetTypes(list), internalsVisible: false);
+				FindAmbiguousTypeNames(typesWithNamespace_currentModule, true);
+				if (lastCheckedModule != context.CurrentModule) {
+					var asmDict = new Dictionary<AssemblyDef, List<AssemblyDef>>(AssemblyEqualityComparer.Instance);
+					lastCheckedModule = context.CurrentModule;
+					foreach (var r in context.CurrentModule.GetAssemblyRefs()) {
+						AssemblyDef d = context.CurrentModule.Context.AssemblyResolver.Resolve(r, context.CurrentModule);
+						if (d == null)
+							continue;
+						List<AssemblyDef> list;
+						if (!asmDict.TryGetValue(d, out list))
+							asmDict.Add(d, list = new List<AssemblyDef>());
+						list.Add(d);
+					}
+					typesWithNamespace_allAsms_list.Clear();
+					foreach (var list in asmDict.Values) {
+						var dict = new Dictionary<string, List<TypeDef>>(StringComparer.Ordinal);
+						BuildAmbiguousTypeNamesTable(dict, GetTypes(list), false);
+						typesWithNamespace_allAsms_list.Add(dict);
+					}
+				}
+				foreach (var dict in typesWithNamespace_allAsms_list) {
+					FindAmbiguousTypeNames(dict, false);
 				}
 			}
 			
 			// verify that the SimpleTypes refer to the correct type (no ambiguities)
 			compilationUnit.AcceptVisitor(new FullyQualifyAmbiguousTypeNamesVisitor(this), null);
 		}
+		static readonly char[] namespaceSep = new char[] { '.' };
 
-		IEnumerable<string> GetNamespacesInReverseOrder()
+		string[] GetNamespacesInReverseOrder()
 		{
-			var list = new List<string>(importedNamespaces);
+			var ary = new string[importedNamespaces.Count];
+			int i = 0;
+			foreach (var s in importedNamespaces)
+				ary[i++] = s;
 
 			if (context.Settings.SortSystemUsingStatementsFirst) {
-				list.Sort((a, b) => {
+				Array.Sort(ary, (a, b) => {
 					bool sa = a == "System" || a.StartsWith("System.");
 					bool sb = b == "System" || b.StartsWith("System.");
 					if (sa && sb)
@@ -100,9 +135,9 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				});
 			}
 			else
-				list.Sort((a, b) => StringComparer.OrdinalIgnoreCase.Compare(b, a));
+				Array.Sort(ary, (a, b) => StringComparer.OrdinalIgnoreCase.Compare(b, a));
 
-			return list;
+			return ary;
 		}
 
 		static IEnumerable<TypeDef> GetTypes(List<AssemblyDef> asms)
@@ -158,12 +193,12 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			}
 		}
 		
-		readonly HashSet<string> declaredNamespaces = new HashSet<string>() { string.Empty };
-		readonly HashSet<string> importedNamespaces = new HashSet<string>();
+		readonly HashSet<string> importedOrDeclaredNamespaces = new HashSet<string>(StringComparer.Ordinal);
+		readonly HashSet<string> importedNamespaces = new HashSet<string>(StringComparer.Ordinal);
 		
 		// Note that we store type names with `n suffix, so we automatically disambiguate based on number of type parameters.
-		readonly HashSet<string> availableTypeNames = new HashSet<string>();
-		readonly HashSet<string> ambiguousTypeNames = new HashSet<string>();
+		readonly HashSet<string> availableTypeNames = new HashSet<string>(StringComparer.Ordinal);
+		readonly HashSet<string> ambiguousTypeNames = new HashSet<string>(StringComparer.Ordinal);
 		
 		sealed class FindRequiredImports : DepthFirstAstVisitor<object, object>
 		{
@@ -176,14 +211,14 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				this.currentNamespace = transform.context.CurrentType != null ? transform.context.CurrentType.Namespace.String : string.Empty;
 			}
 			
-			bool IsParentOfCurrentNamespace(string ns)
+			bool IsParentOfCurrentNamespace(StringBuilder sb)
 			{
-				if (ns.Length == 0)
+				if (sb.Length == 0)
 					return true;
-				if (currentNamespace.StartsWith(ns, StringComparison.Ordinal)) {
-					if (currentNamespace.Length == ns.Length)
+				if (currentNamespace.StartsWith(sb)) {
+					if (currentNamespace.Length == sb.Length)
 						return true;
-					if (currentNamespace[ns.Length] == '.')
+					if (currentNamespace[sb.Length] == '.')
 						return true;
 				}
 				return false;
@@ -192,10 +227,23 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			public override object VisitSimpleType(SimpleType simpleType, object data)
 			{
 				ITypeDefOrRef tr = simpleType.Annotation<ITypeDefOrRef>();
-				if (tr != null && !IsParentOfCurrentNamespace(tr.Namespace)) {
-					transform.importedNamespaces.Add(tr.Namespace);
+				if (tr != null) {
+					var sb = GetNamespace(tr);
+					if (!IsParentOfCurrentNamespace(sb)) {
+						string ns = sb.ToString();
+						transform.importedNamespaces.Add(ns);
+						transform.importedOrDeclaredNamespaces.Add(ns);
+					}
 				}
 				return base.VisitSimpleType(simpleType, data); // also visit type arguments
+			}
+
+			StringBuilder GetNamespace(IType type)
+			{
+				this.transform.stringBuilder.Clear();
+				if (type == null)
+					return this.transform.stringBuilder;
+				return FullNameCreator.NamespaceSB(type, false, this.transform.stringBuilder);
 			}
 			
 			public override object VisitNamespaceDeclaration(NamespaceDeclaration namespaceDeclaration, object data)
@@ -203,22 +251,39 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				string oldNamespace = currentNamespace;
 				foreach (string ident in namespaceDeclaration.Identifiers) {
 					currentNamespace = NamespaceDeclaration.BuildQualifiedName(currentNamespace, ident);
-					transform.declaredNamespaces.Add(currentNamespace);
+					transform.importedOrDeclaredNamespaces.Add(currentNamespace);
 				}
 				base.VisitNamespaceDeclaration(namespaceDeclaration, data);
 				currentNamespace = oldNamespace;
 				return null;
 			}
 		}
-		
-		void FindAmbiguousTypeNames(IEnumerable<TypeDef> types, bool internalsVisible)
+
+		void BuildAmbiguousTypeNamesTable(Dictionary<string, List<TypeDef>> dict, IEnumerable<TypeDef> types, bool internalsVisible)
 		{
 			foreach (TypeDef type in types) {
-				if (internalsVisible || type.IsPublic) {
-					if (importedNamespaces.Contains(type.Namespace) || declaredNamespaces.Contains(type.Namespace)) {
-						if (!availableTypeNames.Add(type.Name))
-							ambiguousTypeNames.Add(type.Name);
-					}
+				if (!internalsVisible && !type.IsPublic)
+					continue;
+				List<TypeDef> list;
+				string ns = type.Namespace;
+				if (!dict.TryGetValue(ns, out list))
+					dict.Add(ns, list = new List<TypeDef>());
+				list.Add(type);
+			}
+		}
+		
+		void FindAmbiguousTypeNames(Dictionary<string, List<TypeDef>> dict, bool internalsVisible)
+		{
+			foreach (var ns in importedOrDeclaredNamespaces) {
+				List<TypeDef> list;
+				if (!dict.TryGetValue(ns, out list))
+					continue;
+				foreach (var type in list) {
+					if (!internalsVisible && !type.IsPublic)
+						continue;
+					string name = type.Name;
+					if (!availableTypeNames.Add(name))
+						ambiguousTypeNames.Add(name);
 				}
 			}
 		}
@@ -381,13 +446,16 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				base.VisitSimpleType(simpleType, data);
 				ITypeDefOrRef tr = simpleType.Annotation<ITypeDefOrRef>();
 				// Fully qualify any ambiguous type names.
-				if (tr != null && IsAmbiguous(tr.Namespace, tr.Name)) {
+				if (tr == null)
+					return null;
+				var nss = GetNamespace(tr).ToString();
+				if (IsAmbiguous(nss, null, GetName(tr))) {
 					AstType ns;
-					if (string.IsNullOrEmpty(tr.Namespace)) {
+					if (string.IsNullOrEmpty(nss)) {
 						ns = new SimpleType("global").WithAnnotation(TextTokenKind.Keyword);
 					} else {
-						string[] parts = tr.Namespace.Split('.');
-						if (IsAmbiguous(string.Empty, parts[0])) {
+						string[] parts = nss.Split('.');
+						if (IsAmbiguous(string.Empty, parts[0], null)) {
 							// conflict between namespace and type name/member name
 							ns = new MemberType { Target = new SimpleType("global").WithAnnotation(TextTokenKind.Keyword), IsDoubleColon = true, MemberNameToken = Identifier.Create(parts[0]).WithAnnotation(TextTokenKind.NamespacePart) }.WithAnnotation(TextTokenKind.NamespacePart);
 						} else {
@@ -399,7 +467,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 					}
 					MemberType mt = new MemberType();
 					mt.Target = ns;
-					mt.IsDoubleColon = string.IsNullOrEmpty(tr.Namespace);
+					mt.IsDoubleColon = string.IsNullOrEmpty(nss);
 					mt.MemberNameToken = (Identifier)simpleType.IdentifierToken.Clone();
 					mt.CopyAnnotationsFrom(simpleType);
 					simpleType.TypeArguments.MoveTo(mt.TypeArguments);
@@ -415,25 +483,27 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				isWithinTypeReferenceExpression = false;
 				return null;
 			}
-			
-			bool IsAmbiguous(string ns, string name)
+
+			bool IsAmbiguous(string ns, string name, StringBuilder sbName)
 			{
 				if (transform.context.Settings.FullyQualifyAllTypes)
 					return true;
 				// If the type name conflicts with an inner class/type parameter, we need to fully-qualify it:
-				if (currentMemberTypes != null && currentMemberTypes.Contains(name))
+				if (currentMemberTypes != null && currentMemberTypes.Contains(name ?? (name = sbName.ToString())))
 					return true;
 				// If the type name conflicts with a field/property etc. on the current class, we need to fully-qualify it,
 				// if we're inside an expression.
 				if (isWithinTypeReferenceExpression && currentMembers != null) {
 					IMemberRef mr;
+					if (name == null)
+						name = sbName.ToString();
 					if (currentMembers.TryGetValue(name, out mr)) {
 						// However, in the special case where the member is a field or property with the same type
 						// as is requested, then we can use the short name (if it's not otherwise ambiguous)
 						PropertyDef prop = mr as PropertyDef;
 						FieldDef field = mr as FieldDef;
-						if (!(prop != null && prop.PropertySig.GetRetType().GetNamespace() == ns && prop.PropertySig.GetRetType().GetName() == name)
-							&& !(field != null && field.FieldType != null && field.FieldType.Namespace == ns && field.FieldType.TypeName == name))
+						if (!(prop != null && GetNamespace(prop.PropertySig.GetRetType()).CheckEquals(ns) && GetName(prop.PropertySig.GetRetType()).CheckEquals(name))
+							&& !(field != null && field.FieldType != null && GetNamespace(field.FieldType).CheckEquals(ns) && GetName(field.FieldType).CheckEquals(name)))
 							return true;
 					}
 				}
@@ -441,7 +511,23 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				// then we can use the short name even if we imported type with same name from another namespace.
 				if (ns == currentNamespace && !string.IsNullOrEmpty(ns))
 					return false;
-				return transform.ambiguousTypeNames.Contains(name);
+				return transform.ambiguousTypeNames.Contains(name ?? (name = sbName.ToString()));
+			}
+
+			StringBuilder GetNamespace(IType type)
+			{
+				this.transform.stringBuilder.Clear();
+				if (type == null)
+					return this.transform.stringBuilder;
+				return FullNameCreator.NamespaceSB(type, false, this.transform.stringBuilder);
+			}
+
+			StringBuilder GetName(IType type)
+			{
+				this.transform.stringBuilder.Clear();
+				if (type == null)
+					return this.transform.stringBuilder;
+				return FullNameCreator.NameSB(type, false, this.transform.stringBuilder);
 			}
 		}
 	}

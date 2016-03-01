@@ -3,6 +3,7 @@ using System.Diagnostics;
 using ICSharpCode.Decompiler.ILAst;
 using ICSharpCode.NRefactory.CSharp;
 using dnlib.DotNet;
+using System.Text;
 
 namespace ICSharpCode.Decompiler.Ast {
 	public class TypeInformation
@@ -26,7 +27,7 @@ namespace ICSharpCode.Decompiler.Ast {
 	{
 		public readonly List<ParameterDeclaration> Parameters = new List<ParameterDeclaration>();
 		
-		public ParameterDeclarationAnnotation(ILExpression expr)
+		public ParameterDeclarationAnnotation(ILExpression expr, StringBuilder sb)
 		{
 			Debug.Assert(expr.Code == ILCode.ExpressionTreeParameterDeclarations);
 			for (int i = 0; i < expr.Arguments.Count - 1; i++) {
@@ -36,7 +37,7 @@ namespace ICSharpCode.Decompiler.Ast {
 				ILVariable v = (ILVariable)p.Operand;
 				ITypeDefOrRef typeRef = (ITypeDefOrRef)p.Arguments[0].Arguments[0].Arguments[0].Operand;
 				string name = (string)p.Arguments[0].Arguments[1].Operand;
-				Parameters.Add(new ParameterDeclaration(AstBuilder.ConvertType(typeRef), name).WithAnnotation(v));
+				Parameters.Add(new ParameterDeclaration(AstBuilder.ConvertType(typeRef, sb), name).WithAnnotation(v));
 			}
 		}
 	}

@@ -62,7 +62,9 @@
     <Compile Include="Ast\Annotations.cs" />
     <Compile Include="Ast\AstBuilder.cs" />
     <Compile Include="Ast\AstMethodBodyBuilder.cs" />
+    <Compile Include="Ast\Cache\ObjectPool.cs" />
     <Compile Include="Ast\CommentStatement.cs" />
+    <Compile Include="Ast\DecompilerCache.cs" />
     <Compile Include="Ast\DecompilerContext.cs" />
     <Compile Include="Ast\NameVariables.cs" />
     <Compile Include="Ast\NRefactoryExtensions.cs" />
@@ -119,6 +121,7 @@
     <Compile Include="ILAst\YieldReturnDecompiler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReferenceResolvingException.cs" />
+    <Compile Include="StringBuilderExtensions.cs" />
     <Compile Include="TextOutputWriter.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -19,7 +19,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.IO;
 using dnlib.DotNet;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Languages;
@@ -30,6 +29,7 @@ using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.ILSpy.XmlDoc;
 using dnSpy.Languages.ILSpy.Settings;
 using System.Diagnostics;
+using System.Text;
 
 namespace dnSpy.Languages.ILSpy.IL {
 	sealed class LanguageProvider : ILanguageProvider {
@@ -122,8 +122,9 @@ namespace dnSpy.Languages.ILSpy.IL {
 			var disOpts = new DisassemblerOptions(ctx.CancellationToken, ownerModule);
 			if (langSettings.Settings.ShowILComments)
 				disOpts.GetOpCodeDocumentation = ILLanguageHelper.GetOpCodeDocumentation;
+			var sb = new StringBuilder();
 			if (langSettings.Settings.ShowXmlDocumentation)
-				disOpts.GetXmlDocComments = GetXmlDocComments;
+				disOpts.GetXmlDocComments = a => GetXmlDocComments(a, sb);
 			disOpts.CreateInstructionBytesReader = m => InstructionBytesReader.Create(m, ctx.IsBodyModified != null && ctx.IsBodyModified(m));
 			disOpts.ShowTokenAndRvaComments = langSettings.Settings.ShowTokenAndRvaComments;
 			disOpts.ShowILBytes = langSettings.Settings.ShowILBytes;
@@ -131,18 +132,24 @@ namespace dnSpy.Languages.ILSpy.IL {
 			return new ReflectionDisassembler(output, detectControlStructure, disOpts);
 		}
 
-		static IEnumerable<string> GetXmlDocComments(IMemberRef mr) {
+		static IEnumerable<string> GetXmlDocComments(IMemberRef mr, StringBuilder sb) {
 			if (mr == null || mr.Module == null)
 				yield break;
 			var xmldoc = XmlDocLoader.LoadDocumentation(mr.Module);
 			if (xmldoc == null)
 				yield break;
-			string doc = xmldoc.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
-			if (doc == null)
+			string doc = xmldoc.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
+			if (string.IsNullOrEmpty(doc))
 				yield break;
 
-			foreach (var line in AddXmlDocTransform.GetXmlDocLines(new StringReader(doc)))
-				yield return line;
+			foreach (var info in new XmlDocLine(doc)) {
+				sb.Clear();
+				if (info != null) {
+					sb.Append(' ');
+					info.Value.WriteTo(sb);
+				}
+				yield return sb.ToString();
+			}
 		}
 
 		public override void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) {

@@ -335,6 +335,17 @@ namespace dnSpy.Shared.Languages.XmlDoc {
 			return GetDocumentation(key, true);
 		}
 		
+		/// <summary>
+		/// Get the documentation for the member with the specified documentation key.
+		/// </summary>
+		public string GetDocumentation(StringBuilder key)
+		{
+			if (key == null)
+				return null;
+			//TODO: Try to prevent ToString()
+			return GetDocumentation(key.ToString(), true);
+		}
+		
 		string GetDocumentation(string key, bool allowReload)
 		{
 			int hashcode = GetHashCode(key);

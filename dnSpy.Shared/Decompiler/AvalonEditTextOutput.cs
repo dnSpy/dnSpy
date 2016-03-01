@@ -188,6 +188,18 @@ namespace dnSpy.Shared.Decompiler {
 			}
 		}
 
+		public void Write(string text, int index, int count, TextTokenKind tokenKind) {
+			if (index == 0 && text.Length == count)
+				Write(text, tokenKind);
+			Write(text.Substring(index, count), tokenKind);
+		}
+
+		public void Write(StringBuilder sb, int index, int count, TextTokenKind tokenKind) {
+			if (index == 0 && sb.Length == count)
+				Write(sb.ToString(), tokenKind);
+			Write(sb.ToString(index, count), tokenKind);
+		}
+
 		public void Write(string text, TextTokenKind tokenKind) {
 			WriteIndent();
 			Append(tokenKind, text);

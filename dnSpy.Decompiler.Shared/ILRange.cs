@@ -67,10 +67,10 @@ namespace dnSpy.Decompiler.Shared {
 		}
 
 		public static List<ILRange> OrderAndJoin(IEnumerable<ILRange> input) {
-			if (input == null)
-				throw new ArgumentNullException("Input is null!");
+			return OrderAndJoinList(input.ToList());
+		}
 
-			List<ILRange> ranges = input.ToList();
+		public static List<ILRange> OrderAndJoinList(List<ILRange> ranges) {// Don't rename to OrderAndJoin() since some pass in a list that shouldn't be modified
 			if (ranges.Count <= 1)
 				return ranges;
 

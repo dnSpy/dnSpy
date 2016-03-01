@@ -28,6 +28,7 @@ using dnSpy.Languages.IL;
 using dnSpy.Shared.Highlighting;
 using dnSpy.Shared.Languages.XmlDoc;
 using dnSpy.Decompiler.Shared;
+using System.Text;
 
 namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 	[ExportToolTipContentCreator(Order = TabConstants.ORDER_DNLIBREFTOOLTIPCONTENTCREATOR)]
@@ -47,7 +48,8 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		}
 
 		string GetDocumentation(XmlDocumentationProvider docProvider, IMemberRef mr) {
-			var doc = docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
+			var sb = new StringBuilder();
+			var doc = docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
 			if (doc != null)
 				return doc;
 			var method = mr as IMethod;
@@ -59,21 +61,21 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 				if (md == null)
 					return null;
 				mr = md.DeclaringType.Properties.FirstOrDefault(p => p.GetMethod == md || p.SetMethod == md);
-				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
+				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
 			}
 			else if (name.StartsWith("add_")) {
 				var md = Resolve(method) as MethodDef;
 				if (md == null)
 					return null;
 				mr = md.DeclaringType.Events.FirstOrDefault(p => p.AddMethod == md);
-				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
+				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
 			}
 			else if (name.StartsWith("remove_")) {
 				var md = Resolve(method) as MethodDef;
 				if (md == null)
 					return null;
 				mr = md.DeclaringType.Events.FirstOrDefault(p => p.RemoveMethod == md);
-				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr));
+				return docProvider.GetDocumentation(XmlDocKeyProvider.GetKey(mr, sb));
 			}
 			return null;
 		}

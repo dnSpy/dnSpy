@@ -27,17 +27,25 @@ namespace ICSharpCode.Decompiler.ILAst {
 	/// </summary>
 	public class ILInlining
 	{
-		readonly ILBlock method;
-		internal Dictionary<ILVariable, int> numStloc  = new Dictionary<ILVariable, int>();
-		internal Dictionary<ILVariable, int> numLdloc  = new Dictionary<ILVariable, int>();
-		internal Dictionary<ILVariable, int> numLdloca = new Dictionary<ILVariable, int>();
-		
+		ILBlock method;
+		internal readonly Dictionary<ILVariable, int> numStloc  = new Dictionary<ILVariable, int>();
+		internal readonly Dictionary<ILVariable, int> numLdloc  = new Dictionary<ILVariable, int>();
+		internal readonly Dictionary<ILVariable, int> numLdloca = new Dictionary<ILVariable, int>();
+		readonly List<ILBlock> list_ILBlock = new List<ILBlock>();
+		readonly List<ILExpression> list_ILExpression = new List<ILExpression>();
+		readonly List<ILNode> list_ILNode = new List<ILNode>();
+
 		public ILInlining(ILBlock method)
+		{
+			Initialize(method);
+		}
+
+		public void Initialize(ILBlock method)
 		{
 			this.method = method;
 			AnalyzeMethod();
 		}
-		
+
 		void AnalyzeMethod()
 		{
 			numStloc.Clear();
@@ -80,15 +88,25 @@ namespace ICSharpCode.Decompiler.ILAst {
 					AnalyzeNode(child, direction);
 			}
 		}
-		
+
 		public bool InlineAllVariables()
 		{
 			bool modified = false;
-			ILInlining i = new ILInlining(method);
-			foreach (ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>())
+			ILInlining i = GetILInlining(method);
+			foreach (ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>(list_ILBlock))
 				modified |= i.InlineAllInBlock(block);
 			return modified;
 		}
+
+		ILInlining GetILInlining(ILBlock method)
+		{
+			if (cached_ILInlining == null)
+				cached_ILInlining = new ILInlining(method);
+			else
+				cached_ILInlining.Initialize(method);
+			return cached_ILInlining;
+		}
+		ILInlining cached_ILInlining;
 		
 		public bool InlineAllInBlock(ILBlock block)
 		{
@@ -101,7 +119,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 						ILVariable v2;
 						ILExpression ldException;
 						if (body[0].Match(ILCode.Stloc, out v2, out ldException) && ldException.MatchLdloc(v)) {
-							((ILTryCatchBlock.CatchBlock)block).StlocILRanges.AddRange(body[0].GetSelfAndChildrenRecursiveILRanges());
+							body[0].AddSelfAndChildrenRecursiveILRanges(((ILTryCatchBlock.CatchBlock)block).StlocILRanges);
 							body.RemoveAt(0);
 							((ILTryCatchBlock.CatchBlock)block).ExceptionVariable = v2;
 							modified = true;
@@ -240,9 +258,9 @@ namespace ICSharpCode.Decompiler.ILAst {
 					if (!aggressive && !v.GeneratedByDecompiler && !NonAggressiveInlineInto((ILExpression)next, parent, inlinedExpression))
 						return false;
 				}
-				
+
 				// Assign the ranges of the ldloc instruction:
-				inlinedExpression.ILRanges.AddRange(parent.Arguments[pos].GetSelfAndChildrenRecursiveILRanges());
+				parent.Arguments[pos].AddSelfAndChildrenRecursiveILRanges(inlinedExpression.ILRanges);
 				
 				if (ldloc == 0) {
 					// it was an ldloca instruction, so we need to use the pseudo-opcode 'addressof' so that the types
@@ -411,7 +429,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 			else
 				return false; // abort, inlining not possible
 		}
-		
+
 		/// <summary>
 		/// Determines whether it is safe to move 'expressionBeingMoved' past 'expr'
 		/// </summary>
@@ -424,7 +442,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 						// abort, inlining is not possible
 						return false;
 					}
-					foreach (ILExpression potentialStore in expressionBeingMoved.GetSelfAndChildrenRecursive<ILExpression>()) {
+					foreach (ILExpression potentialStore in expressionBeingMoved.GetSelfAndChildrenRecursive<ILExpression>(list_ILExpression)) {
 						if (potentialStore.Code == ILCode.Stloc && potentialStore.Operand == loadedVar)
 							return false;
 					}
@@ -457,9 +475,15 @@ namespace ICSharpCode.Decompiler.ILAst {
 		///    then we can replace the variable with the argument.
 		/// 2) assignments of address-loading instructions to local variables
 		/// </summary>
-		public void CopyPropagation()
+		public void CopyPropagation(List<ILNode> newList)
 		{
-			foreach (ILBlock block in method.GetSelfAndChildrenRecursive<ILBlock>()) {
+			var newListTemp = newList;
+			method.GetSelfAndChildrenRecursive<ILNode>(newList);
+			bool recalc = false;
+			foreach (var node1 in newList) {
+				var block = node1 as ILBlock;
+				if (block == null)
+					continue;
 				for (int i = 0; i < block.Body.Count; i++) {
 					ILVariable v;
 					ILExpression copiedExpr;
@@ -472,10 +496,14 @@ namespace ICSharpCode.Decompiler.ILAst {
 						for (int j = 0; j < uninlinedArgs.Length; j++) {
 							uninlinedArgs[j] = new ILVariable { GeneratedByDecompiler = true, Name = v.Name + "_cp_" + j };
 							block.Body.Insert(i++, new ILExpression(ILCode.Stloc, uninlinedArgs[j], copiedExpr.Arguments[j]));
+							recalc = true;
 						}
 						
 						// perform copy propagation:
-						foreach (var expr in method.GetSelfAndChildrenRecursive<ILExpression>()) {
+						foreach (var node2 in newListTemp) {
+							var expr = node2 as ILExpression;
+							if (expr == null)
+								continue;
 							if (expr.Code == ILCode.Ldloc && expr.Operand == v) {
 								expr.Code = copiedExpr.Code;
 								expr.Operand = copiedExpr.Operand;
@@ -494,6 +522,11 @@ namespace ICSharpCode.Decompiler.ILAst {
 						}
 						InlineInto(block, block.Body, i, aggressive: false); // maybe inlining gets possible after the removal of block.Body[i]
 						i -= uninlinedArgs.Length + 1;
+
+						if (recalc) {
+							recalc = false;
+							newListTemp = method.GetSelfAndChildrenRecursive<ILNode>(newListTemp == newList ? (newListTemp = list_ILNode) : newListTemp);
+						}
 					}
 				}
 			}

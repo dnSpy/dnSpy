@@ -82,7 +82,7 @@ namespace dnSpy.AsmEditor.DnlibDialogs {
 				var sig = MethodBaseSig;
 				if (sig.GenParamCount > 100)
 					sig.GenParamCount = 100;
-				return FullNameCreator.MethodBaseSigFullName(null, null, sig, options.TypeSigCreatorOptions.OwnerMethod);
+				return FullNameCreator.MethodBaseSigFullName(null, null, sig, options.TypeSigCreatorOptions.OwnerMethod, null);
 			}
 		}
 

@@ -35,9 +35,25 @@ namespace dnSpy.Decompiler.Shared {
 		public static string Escape(string id) {
 			if (string.IsNullOrEmpty(id))
 				return EMPTY_NAME;
-			var sb = new StringBuilder();
 
-			foreach (var c in id) {
+			// Common case is a valid string
+			int i = 0;
+			if (id.Length <= MAX_IDENTIFIER_LENGTH) {
+				for (; ; i++) {
+					if (i >= id.Length)
+						return id;
+					if (!IsValidChar(id[i]))
+						break;
+				}
+			}
+
+			// Here if obfuscated or weird string
+			var sb = new StringBuilder(id.Length + 10);
+			if (i != 0)
+				sb.Append(id, 0, i);
+
+			for (; ; i++) {
+				char c = id[i];
 				if (!IsValidChar(c))
 					sb.Append(string.Format(@"\u{0:X4}", (ushort)c));
 				else

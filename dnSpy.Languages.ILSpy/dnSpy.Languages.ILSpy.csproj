@@ -23,6 +23,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>1685</NoWarn>
+    <DocumentationFile>..\dnSpy\bin\Debug\Languages.ILSpy.Plugin.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -32,6 +33,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <NoWarn>1685</NoWarn>
+    <DocumentationFile>..\dnSpy\bin\Release\Languages.ILSpy.Plugin.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -43,8 +45,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CSharp\AssemblyInfoTransform.cs" />
+    <Compile Include="CSharp\BuilderCache.cs" />
+    <Compile Include="CSharp\BuilderState.cs" />
     <Compile Include="CSharp\CSharpLanguage.cs" />
     <Compile Include="CSharp\DecompilePartialTransform.cs" />
+    <Compile Include="CSharp\ThreadSafeObjectPool.cs" />
     <Compile Include="Properties\dnSpy.Languages.ILSpy.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -69,6 +74,9 @@
     <Compile Include="VB\VBLanguage.cs" />
     <Compile Include="VB\VBTextOutputFormatter.cs" />
     <Compile Include="XmlDoc\AddXmlDocTransform.cs" />
+    <Compile Include="XmlDoc\StringLineIterator.cs" />
+    <Compile Include="XmlDoc\SubString.cs" />
+    <Compile Include="XmlDoc\XmlDocLine.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dnlib\src\dnlib.csproj">

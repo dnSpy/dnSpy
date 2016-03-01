@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using dnlib.DotNet;
 using dnSpy.Decompiler.Shared;
 using ICSharpCode.Decompiler.ILAst;
@@ -31,10 +32,19 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 	/// <summary>
 	/// Finds the expanded form of using statements using pattern matching and replaces it with a UsingStatement.
 	/// </summary>
-	public sealed class PatternStatementTransform : ContextTrackingVisitor<AstNode>, IAstTransform
+	public sealed class PatternStatementTransform : ContextTrackingVisitor<AstNode>, IAstTransformPoolObject
 	{
+		readonly StringBuilder stringBuilder;
+
 		public PatternStatementTransform(DecompilerContext context) : base(context)
 		{
+			this.stringBuilder = new StringBuilder();
+			Reset(context);
+		}
+
+		public void Reset(DecompilerContext context)
+		{
+			this.context = context;
 		}
 		
 		#region Visitor Overrides
@@ -454,13 +464,13 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 		#endregion
 		
 		#region foreach (non-generic)
-		ExpressionStatement getEnumeratorPattern = new ExpressionStatement(
+		static readonly ExpressionStatement getEnumeratorPattern = new ExpressionStatement(
 			new AssignmentExpression(
 				new NamedNode("left", new IdentifierExpression(Pattern.AnyString)),
 				new AnyNode("collection").ToExpression().Invoke("GetEnumerator")
 			).WithName("getEnumeratorAssignment"));
 		
-		TryCatchStatement nonGenericForeachPattern = new TryCatchStatement {
+		static readonly TryCatchStatement nonGenericForeachPattern = new TryCatchStatement {
 			TryBlock = new BlockStatement {
 				new WhileStatement {
 					Condition = new IdentifierExpression(Pattern.AnyString).WithName("enumerator").Invoke("MoveNext"),
@@ -556,7 +566,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 
 			var tc = (TryCatchStatement)tryCatch;
 			foreachStatement.HiddenGetEnumeratorNode = NRefactoryExtensions.CreateHidden(tc.TryBlock.HiddenStart, m1.Get<AssignmentExpression>("getEnumeratorAssignment").Single());
-			foreachStatement.HiddenGetEnumeratorNode = NRefactoryExtensions.CreateHidden(tc.TryBlock.GetAllILRanges(), foreachStatement.HiddenGetEnumeratorNode);
+			foreachStatement.HiddenGetEnumeratorNode = NRefactoryExtensions.CreateHidden(ILRange.OrderAndJoinList(tc.TryBlock.GetAllILRanges()), foreachStatement.HiddenGetEnumeratorNode);
 			foreachStatement.HiddenMoveNextNode = loop.Condition;
 			foreachStatement.HiddenGetCurrentNode = m2.Get<AstNode>("getCurrent").Single();
 			var oldBody = loop.EmbeddedStatement as BlockStatement;
@@ -655,7 +665,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				ifStmt.AddAllRecursiveILRangesTo(doLoop.Condition);
 				doLoop.EmbeddedStatement = block.Detach();
 				whileLoop.ReplaceWith(doLoop);
-				block.HiddenStart = NRefactoryExtensions.CreateHidden(whileLoop.Condition.GetAllRecursiveILRanges(), block.HiddenStart);
+				block.HiddenStart = NRefactoryExtensions.CreateHidden(ILRange.OrderAndJoinList(whileLoop.Condition.GetAllRecursiveILRanges()), block.HiddenStart);
 				
 				// we may have to extract variable definitions out of the loop if they were used in the condition:
 				foreach (var varDecl in block.Statements.OfType<VariableDeclarationStatement>()) {
@@ -1022,13 +1032,15 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			// Since the event instance is not changed, we can continue in the visitor as usual, so return null
 			return null;
 		}
-		
+
+		static readonly UTF8String systemRuntimeCompilerServicesString = new UTF8String("System.Runtime.CompilerServices");
+		static readonly UTF8String compilerGeneratedAttributeString = new UTF8String("CompilerGeneratedAttribute");
 		void RemoveCompilerGeneratedAttribute(AstNodeCollection<AttributeSection> attributeSections)
 		{
 			foreach (AttributeSection section in attributeSections) {
 				foreach (var attr in section.Attributes) {
 					ITypeDefOrRef tr = attr.Type.Annotation<ITypeDefOrRef>();
-					if (tr != null && tr.Namespace == "System.Runtime.CompilerServices" && tr.Name == "CompilerGeneratedAttribute") {
+					if (tr != null && tr.Compare(systemRuntimeCompilerServicesString, compilerGeneratedAttributeString)) {
 						attr.Remove();
 					}
 				}
@@ -1143,7 +1155,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				FieldDef field = eventDef.DeclaringType.Fields.FirstOrDefault(f => f.Name == ev.Name);
 				if (field != null) {
 					ed.AddAnnotation(field);
-					AstBuilder.ConvertAttributes(ed, field, "field");
+					AstBuilder.ConvertAttributes(ed, field, stringBuilder, "field");
 				}
 			}
 			

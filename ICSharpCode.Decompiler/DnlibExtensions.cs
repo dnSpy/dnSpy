@@ -204,9 +204,11 @@ namespace ICSharpCode.Decompiler {
 
 		public static bool IsCompilerGenerated(this IHasCustomAttribute provider)
 		{
-			return provider != null && provider.CustomAttributes.IsDefined("System.Runtime.CompilerServices.CompilerGeneratedAttribute");
+			return provider.IsDefined(systemRuntimeCompilerServicesString, compilerGeneratedAttributeString);
 		}
-		
+		static readonly UTF8String systemRuntimeCompilerServicesString = new UTF8String("System.Runtime.CompilerServices");
+		static readonly UTF8String compilerGeneratedAttributeString = new UTF8String("CompilerGeneratedAttribute");
+	
 		public static bool IsCompilerGeneratedOrIsInCompilerGeneratedClass(this IMemberDef member)
 		{
 			for (int i = 0; i < 50; i++) {
@@ -223,7 +225,8 @@ namespace ICSharpCode.Decompiler {
 		{
 			if (type == null)
 				return false;
-			if (string.IsNullOrEmpty(type.Namespace) && type.HasGeneratedName() && (type.Name.Contains("AnonType") || type.Name.Contains("AnonymousType"))) {
+			string name;
+			if (type.HasGeneratedName() && string.IsNullOrEmpty(type.GetNamespaceInternal()) && ((name = type.Name).Contains("AnonType") || name.Contains("AnonymousType"))) {
 				TypeDef td = type.ResolveTypeDef();
 				return td != null && td.IsCompilerGenerated();
 			}
@@ -232,7 +235,10 @@ namespace ICSharpCode.Decompiler {
 
 		public static bool HasGeneratedName(this IMemberRef member)
 		{
-			return member != null && member.Name.StartsWith("<", StringComparison.Ordinal);
+			if (member == null)
+				return false;
+			var u = member.Name;
+			return (object)u != null && u.Data != null && u.Data.Length > 0 && u.Data[0] == '<';
 		}
 		
 		public static bool ContainsAnonymousType(this TypeSig type)
@@ -344,9 +350,42 @@ namespace ICSharpCode.Decompiler {
 				return null;
 		}
 
-		public static bool IsCorlibType(this ITypeDefOrRef type, string ns, string name)
+		public static bool IsSystemBoolean(this ITypeDefOrRef type)
 		{
-			return type != null && type.DefinitionAssembly.IsCorLib() && type.Namespace == ns && type.Name == name;
+			if (type == null)
+				return false;
+			if (!type.DefinitionAssembly.IsCorLib())
+				return false;
+
+			var tr = type as TypeRef;
+			if (tr != null)
+				return tr.Namespace == systemString && tr.Name == booleanString;
+			var td = type as TypeDef;
+			if (td != null)
+				return td.Namespace == systemString && td.Name == booleanString;
+
+			return false;
+		}
+		static readonly UTF8String systemString = new UTF8String("System");
+		static readonly UTF8String booleanString = new UTF8String("Boolean");
+		static readonly UTF8String objectString = new UTF8String("Object");
+		static readonly UTF8String nullableString = new UTF8String("Nullable`1");
+
+		public static bool IsSystemObject(this ITypeDefOrRef type)
+		{
+			if (type == null)
+				return false;
+			if (!type.DefinitionAssembly.IsCorLib())
+				return false;
+
+			var tr = type as TypeRef;
+			if (tr != null)
+				return tr.Namespace == systemString && tr.Name == objectString;
+			var td = type as TypeDef;
+			if (td != null)
+				return td.Namespace == systemString && td.Name == objectString;
+
+			return false;
 		}
 
 		public static IEnumerable<Parameter> GetParameters(this PropertyDef property)
@@ -431,7 +470,7 @@ namespace ICSharpCode.Decompiler {
 			var sb = new StringBuilder();
 
 			sb.Append("method ");
-			sb.Append(FullNameCreator.FullName(methodSig.RetType, false));
+			FullNameCreator.FullNameSB(methodSig.RetType, false, null, null, null, sb);
 			sb.Append(" *(");
 			PrintArgs(sb, methodSig.Params, true);
 			if (methodSig.ParamsAfterSentinel != null) {
@@ -451,7 +490,7 @@ namespace ICSharpCode.Decompiler {
 				return string.Empty;
 			var sb = new StringBuilder();
 
-			sb.Append(FullNameCreator.FullName(methodSig.RetType, false));
+			FullNameCreator.FullNameSB(methodSig.RetType, false, null, null, null, sb);
 			sb.Append("(");
 			PrintArgs(sb, methodSig.Params, true);
 			if (methodSig.ParamsAfterSentinel != null) {
@@ -470,7 +509,7 @@ namespace ICSharpCode.Decompiler {
 				if (!isFirst)
 					sb.Append(",");
 				isFirst = false;
-				sb.Append(FullNameCreator.FullName(arg, false));
+				FullNameCreator.FullNameSB(arg, false, null, null, null, sb);
 			}
 		}
 
@@ -509,17 +548,54 @@ namespace ICSharpCode.Decompiler {
 			}
 		}
 
-		public static bool IsDelegate(this TypeDef type)
-		{
+		static string GetNamespaceInternal(this ITypeDefOrRef tdr) {
+			var tr = tdr as TypeRef;
+			if (tr != null)
+				return tr.Namespace;
+			var td = tdr as TypeDef;
+			if (td != null)
+				return td.Namespace;
+			return tdr.Namespace;
+		}
+
+		public static string GetNamespace(this IType type, StringBuilder sb) {
+			var td = type as TypeDef;
+			if (td != null)
+				return td.Namespace;
+			var tr = type as TypeRef;
+			if (tr != null)
+				return tr.Namespace;
+			sb.Length = 0;
+			return FullNameCreator.Namespace(type, false, sb);
+		}
+
+		public static string GetName(this IType type, StringBuilder sb) {
+			var td = type as TypeDef;
+			if (td != null)
+				return td.Name;
+			var tr = type as TypeRef;
+			if (tr != null)
+				return tr.Name;
+			sb.Length = 0;
+			return FullNameCreator.Name(type, false, sb);
+		}
+
+		public static bool Compare(this ITypeDefOrRef type, UTF8String expNs, UTF8String expName) {
 			if (type == null)
 				return false;
-			if (type.BaseType != null && type.BaseType.Namespace == "System") {
-				if (type.BaseType.Name == "MulticastDelegate")
-					return true;
-				if (type.BaseType.Name == "Delegate" && type.Name != "MulticastDelegate")
-					return true;
-			}
+
+			var tr = type as TypeRef;
+			if (tr != null)
+				return tr.Namespace == expNs && tr.Name == expName;
+			var td = type as TypeDef;
+			if (td != null)
+				return td.Namespace == expNs && td.Name == expName;
+
 			return false;
+		}
+
+		public static bool IsSystemNullable(this ClassOrValueTypeSig sig) {
+			return sig is ValueTypeSig && sig.TypeDefOrRef.Compare(systemString, nullableString);
 		}
 	}
 }

@@ -27,6 +27,48 @@ using dnlib.PE;
 
 namespace dnSpy.Decompiler.Shared {
 	public static class Extensions {
+		public static bool IsDefined(this IHasCustomAttribute provider, UTF8String ns, UTF8String name) {
+			if (provider == null || provider.CustomAttributes.Count == 0)
+				return false;
+			foreach (var ca in provider.CustomAttributes) {
+				var tr = ca.AttributeType as TypeRef;
+				if (tr != null) {
+					if (tr.Namespace == ns && tr.Name == name)
+						return true;
+					continue;
+				}
+
+				var td = ca.AttributeType as TypeDef;
+				if (td != null) {
+					if (td.Namespace == ns && td.Name == name)
+						return true;
+					continue;
+				}
+			}
+			return false;
+		}
+
+		public static CustomAttribute Find(this IHasCustomAttribute provider, UTF8String ns, UTF8String name) {
+			if (provider == null || provider.CustomAttributes.Count == 0)
+				return null;
+			foreach (var ca in provider.CustomAttributes) {
+				var tr = ca.AttributeType as TypeRef;
+				if (tr != null) {
+					if (tr.Namespace == ns && tr.Name == name)
+						return ca;
+					continue;
+				}
+
+				var td = ca.AttributeType as TypeDef;
+				if (td != null) {
+					if (td.Namespace == ns && td.Name == name)
+						return ca;
+					continue;
+				}
+			}
+			return null;
+		}
+
 		public static bool GetRVA(this IMemberDef member, out uint rva, out long fileOffset) {
 			rva = 0;
 			fileOffset = 0;

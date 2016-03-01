@@ -102,7 +102,7 @@ namespace ICSharpCode.Decompiler.Ast {
 				memberRef = null;
 			if ((node is SimpleType || node is MemberType) && node.Parent is ObjectCreateExpression) {
 				var td = (memberRef as IType).Resolve();
-				if (td == null || !td.IsDelegate())
+				if (td == null || !td.IsDelegate)
 					memberRef = node.Parent.Annotation<IMemberRef>() ?? memberRef;
 			}
 			if (memberRef == null && node.Role == Roles.TargetExpression && (node.Parent is InvocationExpression || node.Parent is ObjectCreateExpression)) {
@@ -110,7 +110,7 @@ namespace ICSharpCode.Decompiler.Ast {
 			}
 			if (node is IdentifierExpression && node.Role == Roles.TargetExpression && node.Parent is InvocationExpression && memberRef != null) {
 				var declaringType = memberRef.DeclaringType.Resolve();
-				if (declaringType != null && declaringType.IsDelegate())
+				if (declaringType != null && declaringType.IsDelegate)
 					return null;
 			}
 			return FilterMemberReference(memberRef);
@@ -239,7 +239,7 @@ namespace ICSharpCode.Decompiler.Ast {
 			// Add a ref to the method if it's a delegate call
 			if (!addRef && node is InvocationExpression && memberRef is IMethod) {
 				var md = (memberRef as IMethod).Resolve();
-				if (md != null && md.DeclaringType.IsDelegate())
+				if (md != null && md.DeclaringType != null && md.DeclaringType.IsDelegate)
 					addRef = true;
 			}
 
@@ -356,7 +356,7 @@ namespace ICSharpCode.Decompiler.Ast {
 		public override void WritePrimitiveValue(object value, TextTokenKind? tokenKind = null, string literalValue = null)
 		{
 			int column = 0;
-			TextWriterTokenWriter.WritePrimitiveValue(value, tokenKind, literalValue, ref column, (a, b) => output.Write(a, b), (a, b, c) => WriteToken(a, b, c));
+			TextWriterTokenWriter.WritePrimitiveValue(value, tokenKind, literalValue, ref column, (a, b) => output.Write(a, b), WriteToken);
 		}
 		
 		public override void WritePrimitiveType(string type)

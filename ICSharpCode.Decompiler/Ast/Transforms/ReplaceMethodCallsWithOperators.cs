@@ -18,6 +18,7 @@
 
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using dnlib.DotNet;
 using dnSpy.Decompiler.Shared;
 using ICSharpCode.NRefactory.CSharp;
@@ -28,7 +29,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 	/// Replaces method calls with the appropriate operator expressions.
 	/// Also simplifies "x = x op y" into "x op= y" where possible.
 	/// </summary>
-	public class ReplaceMethodCallsWithOperators : DepthFirstAstVisitor<object, object>, IAstTransform
+	public class ReplaceMethodCallsWithOperators : DepthFirstAstVisitor<object, object>, IAstTransformPoolObject
 	{
 		static readonly MemberReferenceExpression typeHandleOnTypeOfPattern = new MemberReferenceExpression {
 			Target = new Choice {
@@ -39,20 +40,43 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 		};
 		
 		DecompilerContext context;
-		
+		readonly StringBuilder stringBuilder;
+
 		public ReplaceMethodCallsWithOperators(DecompilerContext context)
+		{
+			this.stringBuilder = new StringBuilder();
+			Reset(context);
+		}
+
+		public void Reset(DecompilerContext context)
 		{
 			this.context = context;
 		}
-		
+
 		public override object VisitInvocationExpression(InvocationExpression invocationExpression, object data)
 		{
 			base.VisitInvocationExpression(invocationExpression, data);
-			ProcessInvocationExpression(invocationExpression);
+			ProcessInvocationExpression(invocationExpression, stringBuilder);
 			return null;
 		}
 
-		internal static void ProcessInvocationExpression(InvocationExpression invocationExpression)
+		static bool CheckType(ITypeDefOrRef tdr, UTF8String expNs, UTF8String expName)
+		{
+			// PERF: Don't allocate a System.String by calling FullName etc.
+			var tr = tdr as TypeRef;
+			if (tr != null)
+				return tr.Name == expName && tr.Namespace == expNs;
+			var td = tdr as TypeDef;
+			if (td != null)
+				return td.Name == expName && td.Namespace == expNs;
+			return false;
+		}
+		static readonly UTF8String systemString = new UTF8String("System");
+		static readonly UTF8String typeString = new UTF8String("Type");
+		static readonly UTF8String systemReflectionString = new UTF8String("System.Reflection");
+		static readonly UTF8String fieldInfoString = new UTF8String("FieldInfo");
+
+		internal static void ProcessInvocationExpression(InvocationExpression invocationExpression, StringBuilder sb)
 		{
 			IMethod methodRef = invocationExpression.Annotation<IMethod>();
 			if (methodRef == null)
@@ -60,7 +84,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			var arguments = invocationExpression.Arguments.ToArray();
 			
 			// Reduce "String.Concat(a, b)" to "a + b"
-			if (methodRef.Name == "Concat" && methodRef.DeclaringType != null && methodRef.DeclaringType.FullName == "System.String" && arguments.Length >= 2)
+			if (methodRef.Name == "Concat" && methodRef.DeclaringType != null && arguments.Length >= 2 && methodRef.DeclaringType.FullName == "System.String")
 			{
 				invocationExpression.Arguments.Clear(); // detach arguments from invocationExpression
 				Expression expr = arguments[0];
@@ -71,10 +95,12 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				expr.AddAnnotation(invocationExpression.GetAllRecursiveILRanges());
 				return;
 			}
-			
-			switch (methodRef.FullName) {
-				case "System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle)":
-					if (arguments.Length == 1) {
+
+			bool isSupportedType = CheckType(methodRef.DeclaringType, systemString, typeString) ||
+									CheckType(methodRef.DeclaringType, systemReflectionString, fieldInfoString);
+			switch (isSupportedType ? methodRef.Name.String : string.Empty) {
+				case "GetTypeFromHandle":
+					if (arguments.Length == 1 && methodRef.FullName == "System.Type System.Type::GetTypeFromHandle(System.RuntimeTypeHandle)") {
 						if (typeHandleOnTypeOfPattern.IsMatch(arguments[0])) {
 							invocationExpression.ReplaceWith(((MemberReferenceExpression)arguments[0]).Target
 								.WithAnnotation(invocationExpression.GetAllRecursiveILRanges()));
@@ -82,8 +108,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 						}
 					}
 					break;
-				case "System.Reflection.FieldInfo System.Reflection.FieldInfo::GetFieldFromHandle(System.RuntimeFieldHandle)":
-					if (arguments.Length == 1) {
+				case "GetFieldFromHandle":
+					if (arguments.Length == 1 && methodRef.FullName == "System.Reflection.FieldInfo System.Reflection.FieldInfo::GetFieldFromHandle(System.RuntimeFieldHandle)") {
 						MemberReferenceExpression mre = arguments[0] as MemberReferenceExpression;
 						if (mre != null && mre.MemberName == "FieldHandle" && mre.Target.Annotation<LdTokenAnnotation>() != null) {
 							invocationExpression.ReplaceWith(mre.Target
@@ -91,9 +117,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 							return;
 						}
 					}
-					break;
-				case "System.Reflection.FieldInfo System.Reflection.FieldInfo::GetFieldFromHandle(System.RuntimeFieldHandle,System.RuntimeTypeHandle)":
-					if (arguments.Length == 2) {
+					else if (arguments.Length == 2 && methodRef.FullName == "System.Reflection.FieldInfo System.Reflection.FieldInfo::GetFieldFromHandle(System.RuntimeFieldHandle,System.RuntimeTypeHandle)") {
 						MemberReferenceExpression mre1 = arguments[0] as MemberReferenceExpression;
 						MemberReferenceExpression mre2 = arguments[1] as MemberReferenceExpression;
 						if (mre1 != null && mre1.MemberName == "FieldHandle" && mre1.Target.Annotation<LdTokenAnnotation>() != null) {
@@ -134,7 +158,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			if (methodRef.Name == "op_Explicit" && arguments.Length == 1) {
 				arguments[0].Remove(); // detach argument
 				invocationExpression.ReplaceWith(
-					arguments[0].CastTo(AstBuilder.ConvertType(methodRef.MethodSig.GetRetType()))
+					arguments[0].CastTo(AstBuilder.ConvertType(methodRef.MethodSig.GetRetType(), sb))
 					.WithAnnotation(methodRef)
 					.WithAnnotation(invocationExpression.GetAllRecursiveILRanges())
 				);
@@ -347,7 +371,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				IMethod method = m.Get<AstNode>("method").Single().Annotation<IMethod>();
 				if (method != null && m.Has("declaringType")) {
 					Expression newNode = m.Get<AstType>("declaringType").Single().Detach().Member(method.Name, method);
-					newNode = newNode.Invoke(method.MethodSig.GetParameters().Select(p => new TypeReferenceExpression(AstBuilder.ConvertType(p))));
+					newNode = newNode.Invoke(method.MethodSig.GetParameters().Select(p => new TypeReferenceExpression(AstBuilder.ConvertType(p, stringBuilder))));
 					newNode.AddAnnotation(method);
 					m.Get<AstNode>("method").Single().ReplaceWith(newNode);
 				}

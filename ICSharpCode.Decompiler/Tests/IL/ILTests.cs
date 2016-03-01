@@ -39,7 +39,7 @@ namespace ICSharpCode.Decompiler.Tests
 		{
 			string expectedOutput = File.ReadAllText(Path.Combine(path, expectedOutputFile));
 			var assembly = Utils.OpenModule(Path.Combine(path, compiledFile)).Assembly;
-			AstBuilder decompiler = new AstBuilder(DecompilerContext.CreateTestContext(assembly.ManifestModule));
+			AstBuilder decompiler = AstBuilder.CreateAstBuilderTestContext(assembly.ManifestModule);
 			decompiler.AddAssembly(assembly);
 			new Helpers.RemoveCompilerAttribute().Run(decompiler.SyntaxTree);
 			StringWriter output = new StringWriter();

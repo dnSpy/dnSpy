@@ -20,13 +20,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading;
 
 using ICSharpCode.NRefactory.Utils;
 
-namespace ICSharpCode.Decompiler.FlowAnalysis
-{
+namespace ICSharpCode.Decompiler.FlowAnalysis {
 	/// <summary>
 	/// Contains the control flow graph.
 	/// </summary>
@@ -120,9 +118,19 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 					b => b.Successors,
 					b => {
 						if (b != EntryPoint) {
-							ControlFlowNode newIdom = b.Predecessors.First(block => block.Visited && block != b);
+							ControlFlowNode newIdom = null;
+							for (int i = 0; i < b.Incoming.Count; i++) {
+								var block = b.Incoming[i].Source;
+								if (block.Visited && block != b) {
+									newIdom = block;
+									break;
+								}
+							}
+							if (newIdom == null)
+								throw new InvalidOperationException();
 							// for all other predecessors p of b
-							foreach (ControlFlowNode p in b.Predecessors) {
+							for (int i = 0; i < b.Incoming.Count; i++) {
+								var p = b.Incoming[i].Source;
 								if (p != b && p.ImmediateDominator != null) {
 									newIdom = FindCommonDominator(p, newIdom);
 								}
@@ -170,7 +178,8 @@ namespace ICSharpCode.Decompiler.FlowAnalysis
 					//logger.WriteLine("Calculating dominance frontier for " + n.Name);
 					n.DominanceFrontier = new HashSet<ControlFlowNode>();
 					// DF_local computation
-					foreach (ControlFlowNode succ in n.Successors) {
+					for (int i = 0; i < n.Outgoing.Count; i++) {
+						var succ = n.Outgoing[i].Target;
 						if (succ.ImmediateDominator != n) {
 							//logger.WriteLine("  local: " + succ.Name);
 							n.DominanceFrontier.Add(succ);

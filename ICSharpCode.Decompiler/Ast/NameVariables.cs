@@ -22,6 +22,7 @@ using System.Linq;
 
 using ICSharpCode.Decompiler.ILAst;
 using dnlib.DotNet;
+using System.Text;
 
 namespace ICSharpCode.Decompiler.Ast
 {
@@ -45,10 +46,14 @@ namespace ICSharpCode.Decompiler.Ast
 			{ "System.Char", "c" }
 		};
 		
-		
-		public static void AssignNamesToVariables(DecompilerContext context, IEnumerable<ILVariable> parameters, IEnumerable<ILVariable> variables, ILBlock methodBody)
+		public NameVariables(StringBuilder sb) {
+			this.stringBuilder = sb;
+		}
+		readonly StringBuilder stringBuilder;
+
+		public static void AssignNamesToVariables(DecompilerContext context, IEnumerable<ILVariable> parameters, IEnumerable<ILVariable> variables, ILBlock methodBody, StringBuilder stringBuilder)
 		{
-			NameVariables nv = new NameVariables();
+			NameVariables nv = new NameVariables(stringBuilder);
 			nv.context = context;
 			nv.fieldNamesInCurrentType = context.CurrentType.Fields.Select(f => f.Name.String).ToList();
 			// First mark existing variable names as reserved.
@@ -298,13 +303,15 @@ namespace ICSharpCode.Decompiler.Ast
 			}
 			return null;
 		}
-		
+
+		static readonly UTF8String systemString = new UTF8String("System");
+		static readonly UTF8String nullableString = new UTF8String("Nullable`1");
 		string GetNameByType(TypeSig type)
 		{
 			type = type.RemoveModifiers();
 			
 			GenericInstSig git = type as GenericInstSig;
-			if (git != null && git.GenericType != null && git.GenericType.FullName == "System.Nullable`1" && git.GenericArguments.Count == 1) {
+			if (git != null && git.GenericType != null && git.GenericArguments.Count == 1 && git.GenericType.TypeDefOrRef.Compare(systemString, nullableString)) {
 				type = ((GenericInstSig)type).GenericArguments[0];
 			}
 			
@@ -315,14 +322,22 @@ namespace ICSharpCode.Decompiler.Ast
 				name = "array";
 			} else if (type.IsPointer || type.IsByRef) {
 				name = "ptr";
-			} else if (type.TypeName.EndsWith("Exception", StringComparison.Ordinal)) {
-				name = "ex";
-			} else if (!typeNameToVariableNameDict.TryGetValue(type.FullName, out name)) {
-				name = type.TypeName;
-				// remove the 'I' for interfaces
-				if (name.Length >= 3 && name[0] == 'I' && char.IsUpper(name[1]) && char.IsLower(name[2]))
-					name = name.Substring(1);
-				name = CleanUpVariableName(name);
+			} else {
+				stringBuilder.Clear();
+				if (FullNameCreator.NameSB(type, false, stringBuilder).EndsWith("Exception")) {
+					name = "ex";
+				}
+				else {
+					stringBuilder.Clear();
+					if (!typeNameToVariableNameDict.TryGetValue(FullNameCreator.FullName(type, false, null, null, null, stringBuilder), out name)) {
+						stringBuilder.Clear();
+						name = FullNameCreator.Name(type, false, stringBuilder);
+						// remove the 'I' for interfaces
+						if (name.Length >= 3 && name[0] == 'I' && char.IsUpper(name[1]) && char.IsLower(name[2]))
+							name = name.Substring(1);
+						name = CleanUpVariableName(name);
+					}
+				}
 			}
 			return name;
 		}
@@ -335,15 +350,19 @@ namespace ICSharpCode.Decompiler.Ast
 				name = name.Substring(0, pos);
 			
 			// remove field prefix:
-			if (name.Length > 2 && name.StartsWith("m_", StringComparison.Ordinal))
+			if (name.Length > 2 && name[0] == 'm' && name[1] == '_')
 				name = name.Substring(2);
 			else if (name.Length > 1 && name[0] == '_')
 				name = name.Substring(1);
 			
 			if (name.Length == 0)
 				return "obj";
-			else
-				return char.ToLowerInvariant(name[0]) + name.Substring(1);
+
+			var origChar = name[0];
+			var newChar = char.ToLowerInvariant(name[0]);
+			if (origChar == newChar)
+				return name;
+			return newChar.ToString() + name.Substring(1);
 		}
 	}
 }

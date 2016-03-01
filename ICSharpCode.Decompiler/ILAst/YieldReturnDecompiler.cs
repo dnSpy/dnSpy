@@ -47,7 +47,7 @@ namespace ICSharpCode.Decompiler.ILAst
 		List<ILNode> newBody;
 		
 		#region Run() method
-		public static void Run(DecompilerContext context, ILBlock method)
+		public static void Run(DecompilerContext context, ILBlock method, List<ILNode> list_ILNode, Func<ILBlock, ILInlining> getILInlining)
 		{
 			if (!context.Settings.YieldReturn)
 				return; // abort if enumerator decompilation is disabled
@@ -75,9 +75,9 @@ namespace ICSharpCode.Decompiler.ILAst
 			
 			// Repeat the inlining/copy propagation optimization because the conversion of field access
 			// to local variables can open up additional inlining possibilities.
-			ILInlining inlining = new ILInlining(method);
+			var inlining = getILInlining(method);
 			inlining.InlineAllVariables();
-			inlining.CopyPropagation();
+			inlining.CopyPropagation(list_ILNode);
 		}
 		
 		void Run()
@@ -181,7 +181,7 @@ namespace ICSharpCode.Decompiler.ILAst
 			foreach (var i in type.Interfaces) {
 				if (i.Interface == null)
 					continue;
-				if (i.Interface.Namespace == "System.Collections" && i.Interface.Name == "IEnumerator")
+				if (i.Interface.Name == "IEnumerator" && i.Interface.Namespace == "System.Collections")
 					return true;
 			}
 			return false;
@@ -222,10 +222,23 @@ namespace ICSharpCode.Decompiler.ILAst
 				throw new SymbolicAnalysisFailedException();
 			
 			ILBlock ilMethod = new ILBlock();
-			ILAstBuilder astBuilder = new ILAstBuilder();
-			ilMethod.Body = astBuilder.Build(method, true, context);
-			ILAstOptimizer optimizer = new ILAstOptimizer();
-			optimizer.Optimize(context, ilMethod, ILAstOptimizationStep.YieldReturn);
+
+			var astBuilder = context.Cache.GetILAstBuilder();
+			try {
+				ilMethod.Body = astBuilder.Build(method, true, context);
+			}
+			finally {
+				context.Cache.Return(astBuilder);
+			}
+
+			var optimizer = this.context.Cache.GetILAstOptimizer();
+			try {
+				optimizer.Optimize(context, ilMethod, ILAstOptimizationStep.YieldReturn);
+			}
+			finally {
+				this.context.Cache.Return(optimizer);
+			}
+
 			return ilMethod;
 		}
 		#endregion
@@ -523,7 +536,7 @@ namespace ICSharpCode.Decompiler.ILAst
 							throw new SymbolicAnalysisFailedException();
 						
 						ILLabel label = new ILLabel();
-						label.Name = "JumpOutOfTryFinally" + stateChanges[index].NewState;
+						label.Name = "JumpOutOfTryFinally" + stateChanges[index].NewState.ToString();
 						newBody.Add(new ILExpression(ILCode.Leave, label));
 						
 						SetState stateChange = stateChanges[index];
@@ -590,8 +603,9 @@ namespace ICSharpCode.Decompiler.ILAst
 		internal static void TranslateFieldsToLocalAccess(List<ILNode> newBody, Dictionary<FieldDef, ILVariable> fieldToParameterMap)
 		{
 			var fieldToLocalMap = new DefaultDictionary<FieldDef, ILVariable>(f => new ILVariable { Name = f.Name.String, Type = f.FieldType });
+			List<ILExpression> listExpr = null;
 			foreach (ILNode node in newBody) {
-				foreach (ILExpression expr in node.GetSelfAndChildrenRecursive<ILExpression>()) {
+				foreach (ILExpression expr in node.GetSelfAndChildrenRecursive<ILExpression>(listExpr ?? (listExpr = new List<ILExpression>()))) {
 					FieldDef field = GetFieldDefinition(expr.Operand as IField);
 					if (field != null) {
 						switch (expr.Code) {

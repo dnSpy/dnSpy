@@ -295,9 +295,9 @@ namespace dnSpy.Decompiler.Shared {
 				var asm = baseMember.DeclaringType.Module.Assembly;
 
 				if (derivedTypeAsm != null && asm != null && asm.HasCustomAttributes) {
-					var attributes = asm.CustomAttributes
-						.Where(attr => attr.TypeFullName == "System.Runtime.CompilerServices.InternalsVisibleToAttribute");
-					foreach (var attribute in attributes) {
+					foreach (var attribute in asm.CustomAttributes) {
+						if (!Compare(attribute.AttributeType, systemRuntimeCompilerServicesString, internalsVisibleToAttributeString))
+							continue;
 						if (attribute.ConstructorArguments.Count == 0)
 							continue;
 						string assemblyName = attribute.ConstructorArguments[0].Value as UTF8String;
@@ -313,6 +313,23 @@ namespace dnSpy.Decompiler.Shared {
 			}
 
 			return true;
+		}
+		static readonly UTF8String systemRuntimeCompilerServicesString = new UTF8String("System.Runtime.CompilerServices");
+		static readonly UTF8String internalsVisibleToAttributeString = new UTF8String("InternalsVisibleToAttribute");
+
+		static bool Compare(ITypeDefOrRef type, UTF8String expNs, UTF8String expName)
+		{
+			if (type == null)
+				return false;
+
+			var tr = type as TypeRef;
+			if (tr != null)
+				return tr.Namespace == expNs && tr.Name == expName;
+			var td = type as TypeDef;
+			if (td != null)
+				return td.Namespace == expNs && td.Name == expName;
+
+			return false;
 		}
 
 		private static MethodAttributes GetAccessAttributes(IMemberDef member)

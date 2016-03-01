@@ -27,6 +27,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security;
+using System.Text;
 using dnlib.DotNet;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Languages;
@@ -575,21 +576,39 @@ namespace dnSpy_Console {
 		}
 
 		static TypeDef FindTypeFullName(ModuleDef module, string name, StringComparer comparer) {
-			return module.GetTypes().FirstOrDefault(a => 
-					comparer.Equals(a.FullName, name) ||
-					comparer.Equals(a.ReflectionFullName, name) ||
-					comparer.Equals(CleanTypeName(a.FullName), name) ||
-					comparer.Equals(CleanTypeName(a.ReflectionFullName), name)
-				);
+			var sb = new StringBuilder();
+			return module.GetTypes().FirstOrDefault(a => {
+				sb.Clear();
+				string s1, s2;
+				if (comparer.Equals(s1 = FullNameCreator.FullName(a, false, null, sb), name))
+					return true;
+				sb.Clear();
+				if (comparer.Equals(s2 = FullNameCreator.FullName(a, true, null, sb), name))
+					return true;
+				sb.Clear();
+				if (comparer.Equals(CleanTypeName(s1), name))
+					return true;
+				sb.Clear();
+				return comparer.Equals(CleanTypeName(s2), name);
+			});
 		}
 
 		static TypeDef FindTypeName(ModuleDef module, string name, StringComparer comparer) {
-			return module.GetTypes().FirstOrDefault(a =>
-					comparer.Equals(a.Name, name) ||
-					comparer.Equals(a.ReflectionName, name) ||
-					comparer.Equals(CleanTypeName(a.Name), name) ||
-					comparer.Equals(CleanTypeName(a.ReflectionName), name)
-				);
+			var sb = new StringBuilder();
+			return module.GetTypes().FirstOrDefault(a => {
+				sb.Clear();
+				string s1, s2;
+				if (comparer.Equals(s1 = FullNameCreator.Name(a, false, sb), name))
+					return true;
+				sb.Clear();
+				if (comparer.Equals(s2 = FullNameCreator.Name(a, true, sb), name))
+					return true;
+				sb.Clear();
+				if (comparer.Equals(CleanTypeName(s1), name))
+					return true;
+				sb.Clear();
+				return comparer.Equals(CleanTypeName(s2), name);
+			});
 		}
 
 		static string CleanTypeName(string s) {

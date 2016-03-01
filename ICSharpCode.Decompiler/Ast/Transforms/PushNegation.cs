@@ -21,13 +21,17 @@ using ICSharpCode.NRefactory.CSharp;
 using ICSharpCode.NRefactory.PatternMatching;
 
 namespace ICSharpCode.Decompiler.Ast.Transforms {
-	public class PushNegation: DepthFirstAstVisitor<object, object>, IAstTransform
+	public class PushNegation: DepthFirstAstVisitor<object, object>, IAstTransformPoolObject
 	{
 		sealed class LiftedOperator { }
 		/// <summary>
 		/// Annotation for lifted operators that cannot be transformed by PushNegation
 		/// </summary>
 		public static readonly object LiftedOperatorAnnotation = new LiftedOperator();
+
+		public void Reset(DecompilerContext context)
+		{
+		}
 
 		public override object VisitUnaryOperatorExpression(UnaryOperatorExpression unary, object data)
 		{

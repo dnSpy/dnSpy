@@ -337,15 +337,29 @@ namespace dnSpy.Decompiler.Shared {
 			if (td.IsValueType)
 				return TextTokenKind.ValueType;
 
-			var bt = td.BaseType;
-			if (bt != null && bt.DefinitionAssembly.IsCorLib() && bt.FullName == "System.MulticastDelegate")
+			if (td.IsDelegate)
 				return TextTokenKind.Delegate;
 
-			if (td.IsSealed && td.IsAbstract && td.BaseType != null && td.BaseType.FullName == "System.Object")
-				return TextTokenKind.StaticType;
+			if (td.IsSealed && td.IsAbstract) {
+				var bt = td.BaseType;
+				if (bt != null && bt.DefinitionAssembly.IsCorLib()) {
+					var baseTr = bt as TypeRef;
+					if (baseTr != null) {
+						if (baseTr.Namespace == systemString && baseTr.Name == objectString)
+							return TextTokenKind.StaticType;
+					}
+					else {
+						var baseTd = bt as TypeDef;
+						if (baseTd.Namespace == systemString && baseTd.Name == objectString)
+							return TextTokenKind.StaticType;
+					}
+				}
+			}
 
 			return TextTokenKind.Type;
 		}
+		static readonly UTF8String systemString = new UTF8String("System");
+		static readonly UTF8String objectString = new UTF8String("Object");
 
 		public static TextTokenKind GetTextTokenType(TypeRef tr) {
 			if (tr == null)
@@ -358,6 +372,8 @@ namespace dnSpy.Decompiler.Shared {
 			return TextTokenKind.Type;
 		}
 
+		static readonly UTF8String systemRuntimeCompilerServicesString = new UTF8String("System.Runtime.CompilerServices");
+		static readonly UTF8String extensionAttributeString = new UTF8String("ExtensionAttribute");
 		public static TextTokenKind GetTextTokenType(IMemberRef r) {
 			if (r == null)
 				return TextTokenKind.Text;
@@ -382,7 +398,7 @@ namespace dnSpy.Decompiler.Shared {
 				if (md != null && md.IsConstructor)
 					return GetTextTokenType(md.DeclaringType);
 				if (!mr.MethodSig.HasThis) {
-					if (md != null && md.CustomAttributes.Find("System.Runtime.CompilerServices.ExtensionAttribute") != null)
+					if (md != null && md.IsDefined(systemRuntimeCompilerServicesString, extensionAttributeString))
 						return TextTokenKind.ExtensionMethod;
 					return TextTokenKind.StaticMethod;
 				}
@@ -514,11 +530,11 @@ namespace dnSpy.Decompiler.Shared {
 			if (op is MethodSig)
 				return TextTokenKind.Text;//TODO:
 
-			if (op.GetType().ToString() == "ICSharpCode.Decompiler.ILAst.ILVariable")
-				return TextTokenKind.Local;
-
 			if (op is string)
 				return TextTokenKind.String;
+
+			if (op.GetType().ToString() == "ICSharpCode.Decompiler.ILAst.ILVariable")
+				return TextTokenKind.Local;
 
 			return TextTokenKind.Text;
 		}
@@ -544,8 +560,7 @@ namespace dnSpy.Decompiler.Shared {
 			if (type.IsValueType)
 				return TextTokenKind.ValueType;
 
-			var bt = type.BaseType;
-			if (bt != null && bt.Assembly == typeof(object).Assembly && bt.FullName == "System.MulticastDelegate")
+			if (type.BaseType == typeof(MulticastDelegate))
 				return TextTokenKind.Delegate;
 
 			return TextTokenKind.Type;

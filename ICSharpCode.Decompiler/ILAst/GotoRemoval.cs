@@ -24,8 +24,20 @@ using System.Linq;
 namespace ICSharpCode.Decompiler.ILAst {
 	public class GotoRemoval
 	{
-		Dictionary<ILNode, ILNode> parent = new Dictionary<ILNode, ILNode>();
-		Dictionary<ILNode, ILNode> nextSibling = new Dictionary<ILNode, ILNode>();
+		readonly Dictionary<ILNode, ILNode> parent = new Dictionary<ILNode, ILNode>();
+		readonly Dictionary<ILNode, ILNode> nextSibling = new Dictionary<ILNode, ILNode>();
+		readonly DecompilerContext context;
+
+		public GotoRemoval(DecompilerContext context)
+		{
+			this.context = context;
+		}
+
+		public void Reset()
+		{
+			this.parent.Clear();
+			this.nextSibling.Clear();
+		}
 		
 		public void RemoveGotos(ILBlock method)
 		{
@@ -56,10 +68,10 @@ namespace ICSharpCode.Decompiler.ILAst {
 				}
 			} while(modified);
 			
-			RemoveRedundantCode(method);
+			RemoveRedundantCode(method, context);
 		}
 		
-		public static void RemoveRedundantCode(ILBlock method)
+		public static void RemoveRedundantCode(ILBlock method, DecompilerContext context)
 		{
 			// Remove dead lables and nops
 			HashSet<ILLabel> liveLabels = new HashSet<ILLabel>(method.GetSelfAndChildrenRecursive<ILExpression>(e => e.IsBranch()).SelectMany(e => e.GetBranchTargets()));
@@ -81,7 +93,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 			foreach(ILWhileLoop loop in method.GetSelfAndChildrenRecursive<ILWhileLoop>()) {
 				var body = loop.BodyBlock.Body;
 				if (body.Count > 0 && body.Last().Match(ILCode.LoopContinue)) {
-					loop.EndILRanges.AddRange(body[body.Count - 1].GetSelfAndChildrenRecursiveILRanges());
+					body[body.Count - 1].AddSelfAndChildrenRecursiveILRanges(loop.EndILRanges);
 					body.RemoveAt(body.Count - 1);
 				}
 			}
@@ -98,7 +110,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 						    ilCase.Body[count - 1].Match(ILCode.LoopOrSwitchBreak)) 
 						{
 							var prev = ilCase.Body[count - 2];
-							prev.EndILRanges.AddRange(ilCase.Body[count - 1].GetSelfAndChildrenRecursiveILRanges());
+							ilCase.Body[count - 1].AddSelfAndChildrenRecursiveILRanges(prev.EndILRanges);
 							ilCase.Body.RemoveAt(count - 1);
 						}
 					}
@@ -111,7 +123,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 						var caseBlock = ilSwitch.CaseBlocks[i];
 						if (caseBlock.Body.Count != 1 || !caseBlock.Body.Single().Match(ILCode.LoopOrSwitchBreak))
 							continue;
-						ilSwitch.EndILRanges.AddRange(caseBlock.Body[0].GetSelfAndChildrenRecursiveILRanges());
+						caseBlock.Body[0].AddSelfAndChildrenRecursiveILRanges(ilSwitch.EndILRanges);
 						ilSwitch.CaseBlocks.RemoveAt(i);
 					}
 				}
@@ -119,7 +131,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 			
 			// Remove redundant return at the end of method
 			if (method.Body.Count > 0 && method.Body.Last().Match(ILCode.Ret) && ((ILExpression)method.Body.Last()).Arguments.Count == 0) {
-				method.EndILRanges.AddRange(method.Body[method.Body.Count - 1].GetSelfAndChildrenRecursiveILRanges());
+				method.Body[method.Body.Count - 1].AddSelfAndChildrenRecursiveILRanges(method.EndILRanges);
 				method.Body.RemoveAt(method.Body.Count - 1);
 			}
 			
@@ -129,7 +141,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 				for (int i = 0; i < block.Body.Count - 1;) {
 					if (block.Body[i].IsUnconditionalControlFlow() && block.Body[i+1].Match(ILCode.Ret)) {
 						modified = true;
-						block.EndILRanges.AddRange(block.Body[i+1].GetSelfAndChildrenRecursiveILRanges());
+						block.Body[i + 1].AddSelfAndChildrenRecursiveILRanges(block.EndILRanges);
 						block.Body.RemoveAt(i+1);
 					} else {
 						i++;
@@ -138,7 +150,13 @@ namespace ICSharpCode.Decompiler.ILAst {
 			}
 			if (modified) {
 				// More removals might be possible
-				new GotoRemoval().RemoveGotos(method);
+				var gr = context.Cache.GetGotoRemoval();
+				try {
+					gr.RemoveGotos(method);
+				}
+				finally {
+					context.Cache.Return(gr);
+				}
 			}
 		}
 		
