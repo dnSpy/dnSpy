@@ -37,6 +37,13 @@ using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
 
 namespace dnSpy.Scripting.Roslyn.Common {
+	sealed class UserScriptOptions {
+		public readonly List<string> References = new List<string>();
+		public readonly List<string> Imports = new List<string>();
+		public readonly List<string> LibPaths = new List<string>();
+		public readonly List<string> LoadPaths = new List<string>();
+	}
+
 	abstract class ScriptControlVM : ViewModelBase, IReplCommandHandler, IScriptGlobalsHelper {
 		internal const string CMD_PREFIX = "#";
 
@@ -152,16 +159,20 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		ExecState execState;
 		readonly object lockObj = new object();
 
-		IEnumerable<string> GetMetadataResolverSearchPaths() {
+		IEnumerable<string> GetMetadataResolverSearchPaths(UserScriptOptions userOptions) {
 			string dir;
 			if (!string.IsNullOrEmpty(dir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)))
 				yield return dir;
+			foreach (var p in userOptions.LibPaths)
+				yield return p;
 		}
 
-		IEnumerable<string> GetScriptSourceResolverSearchPaths() {
+		IEnumerable<string> GetScriptSourceResolverSearchPaths(UserScriptOptions userOptions) {
 			string dir;
 			if (!string.IsNullOrEmpty(dir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)))
 				yield return dir;
+			foreach (var p in userOptions.LoadPaths)
+				yield return p;
 		}
 
 		void InitializeExecutionEngine(bool loadConfig, bool showHelp) {
@@ -175,15 +186,18 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				AppCulture.InitializeCulture();
 				execStateCache.CancellationTokenSource.Token.ThrowIfCancellationRequested();
 
+				var userOpts = new UserScriptOptions();
+				if (loadConfig)
+					InitializeUserScriptOptions(userOpts);
 				var opts = ScriptOptions.Default;
 				opts = opts.WithMetadataResolver(ScriptMetadataResolver.Default
 								.WithBaseDirectory(AppDirectories.BinDirectory)
-								.WithSearchPaths(GetMetadataResolverSearchPaths()));
+								.WithSearchPaths(GetMetadataResolverSearchPaths(userOpts).Distinct(StringComparer.OrdinalIgnoreCase)));
 				opts = opts.WithSourceResolver(ScriptSourceResolver.Default
 								.WithBaseDirectory(AppDirectories.BinDirectory)
-								.WithSearchPaths(GetScriptSourceResolverSearchPaths()));
-				if (loadConfig)
-					opts = CreateScriptOptions(opts);
+								.WithSearchPaths(GetScriptSourceResolverSearchPaths(userOpts).Distinct(StringComparer.OrdinalIgnoreCase)));
+				opts = opts.WithImports(userOpts.Imports);
+				opts = opts.WithReferences(userOpts.References);
 				execStateCache.ScriptOptions = opts;
 
 				var script = Create<object>(string.Empty, execStateCache.ScriptOptions, execStateCache.Globals.GetType(), null);
@@ -202,7 +216,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
-		protected abstract ScriptOptions CreateScriptOptions(ScriptOptions options);
+		protected abstract void InitializeUserScriptOptions(UserScriptOptions options);
 
 		public void ExecuteCommand(string input) {
 			try {

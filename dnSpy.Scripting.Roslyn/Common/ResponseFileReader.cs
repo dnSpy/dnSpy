@@ -24,7 +24,7 @@ using System.Linq;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	static class ResponseFileReader {
-		public static IEnumerable<Tuple<string, string, string[]>> Read(string filename) {
+		public static IEnumerable<Tuple<string, string>> Read(string filename) {
 			if (!File.Exists(filename))
 				yield break;
 			foreach (var tmp in File.ReadAllLines(filename)) {
@@ -33,10 +33,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					continue;
 				if (line.StartsWith("#"))
 					continue;
-				var parts = line.Split(seps, StringSplitOptions.RemoveEmptyEntries);
-				if (parts.Length == 0)
-					continue;
-				var cmd = parts[0];
+				var cmd = line;
 				string arg1;
 				int index = cmd.IndexOf(':');
 				if (index < 0)
@@ -45,7 +42,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					arg1 = cmd.Substring(index + 1);
 					cmd = cmd.Substring(0, index);
 				}
-				yield return Tuple.Create(cmd, arg1, parts.Skip(1).ToArray());
+				yield return Tuple.Create(cmd, arg1);
 			}
 		}
 		static readonly char[] seps = new char[] { ' ' };
