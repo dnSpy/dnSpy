@@ -28,8 +28,8 @@
         xmlns:p="clr-namespace:dnSpy.Properties"
         mc:Ignorable="d"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
-        MinWidth="300" MinHeight="300"
-        Title="{x:Static p:dnSpy_Resources.ExportToProject_Title}" Width="400" Height="350"
+        MinWidth="300" MinHeight="380"
+        Title="{x:Static p:dnSpy_Resources.ExportToProject_Title}" Width="400" Height="380"
         FocusManager.FocusedElement="{Binding ElementName=destDirTextBox}">
     <ctrls:WindowBase.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
@@ -58,8 +58,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=destDirTextBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_DestinationFolder}" />
             <TextBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Name="destDirTextBox" Text="{Binding Directory, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
@@ -75,13 +75,17 @@
             <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=languageComboBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_Language}" />
             <ComboBox Grid.Row="3" Grid.Column="1" Margin="5 0 0 0" Name="languageComboBox" DisplayMemberPath="UniqueNameUI" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
 
-            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding DontReferenceStdLib}" Content="{x:Static p:dnSpy_Resources.ExportToProject_DontReferenceStdLib}" />
-            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding UnpackResources}" Content="{x:Static p:dnSpy_Resources.ExportToProject_UnpackResources}" />
-            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding CreateResX}" Content="{x:Static p:dnSpy_Resources.ExportToProject_CreateResX}" IsEnabled="{Binding CanCreateResX}" />
-            <CheckBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding DecompileXaml}" Content="{x:Static p:dnSpy_Resources.ExportToProject_DecompileXaml}" IsEnabled="{Binding CanDecompileBaml}" />
-            <CheckBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding OpenProject}" Content="{x:Static p:dnSpy_Resources.ExportToProject_OpenProjectInVisualStudio}" />
+            <Label Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=projectGuidTextBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_ProjectGuid}" />
+            <TextBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Name="projectGuidTextBox" Text="{Binding ProjectGuid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <Button Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_Resources.ExportToProject_NewGuid}" Command="{Binding GenerateNewProjectGuidCommand}" />
 
-            <TextBlock Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="3" Margin="5 5 5 0" TextWrapping="Wrap" Text="{Binding FilesToExportMessage}" />
+            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding DontReferenceStdLib}" Content="{x:Static p:dnSpy_Resources.ExportToProject_DontReferenceStdLib}" />
+            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding UnpackResources}" Content="{x:Static p:dnSpy_Resources.ExportToProject_UnpackResources}" />
+            <CheckBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding CreateResX}" Content="{x:Static p:dnSpy_Resources.ExportToProject_CreateResX}" IsEnabled="{Binding CanCreateResX}" />
+            <CheckBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding DecompileXaml}" Content="{x:Static p:dnSpy_Resources.ExportToProject_DecompileXaml}" IsEnabled="{Binding CanDecompileBaml}" />
+            <CheckBox Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding OpenProject}" Content="{x:Static p:dnSpy_Resources.ExportToProject_OpenProjectInVisualStudio}" />
+
+            <TextBlock Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="3" Margin="5 5 5 0" TextWrapping="Wrap" Text="{Binding FilesToExportMessage}" />
         </Grid>
 
         <Grid Grid.Row="0" Margin="5 5 5 0"

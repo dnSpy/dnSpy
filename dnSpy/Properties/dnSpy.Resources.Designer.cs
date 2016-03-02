@@ -729,11 +729,29 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _New.
+        /// </summary>
+        public static string ExportToProject_NewGuid {
+            get {
+                return ResourceManager.GetString("ExportToProject_NewGuid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Open project in Visual Studio.
         /// </summary>
         public static string ExportToProject_OpenProjectInVisualStudio {
             get {
                 return ResourceManager.GetString("ExportToProject_OpenProjectInVisualStudio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to _Project GUID.
+        /// </summary>
+        public static string ExportToProject_ProjectGuid {
+            get {
+                return ResourceManager.GetString("ExportToProject_ProjectGuid", resourceCulture);
             }
         }
         

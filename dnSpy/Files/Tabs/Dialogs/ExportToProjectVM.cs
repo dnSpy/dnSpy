@@ -49,6 +49,10 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			get { return new RelayCommand(a => ExportProjects(), a => CanExportProjects); }
 		}
 
+		public ICommand GenerateNewProjectGuidCommand {
+			get { return new RelayCommand(a => ProjectGuid.Value = Guid.NewGuid()); }
+		}
+
 		public string Directory {
 			get { return directory; }
 			set {
@@ -110,6 +114,11 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			}
 		}
 		ILanguage language;
+
+		public NullableGuidVM ProjectGuid {
+			get { return projectGuidVM; }
+		}
+		readonly NullableGuidVM projectGuidVM;
 
 		public bool DontReferenceStdLib {
 			get { return dontReferenceStdLib; }
@@ -274,6 +283,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			this.projectVersionVM.SelectedItem = ProjectVersion.VS2010;
 			this.language = languageManager.AllLanguages.FirstOrDefault(a => a.ProjectFileExtension != null);
 			this.isIndeterminate = false;
+			this.projectGuidVM = new NullableGuidVM(Guid.NewGuid(), a => HasErrorUpdated());
 		}
 
 		bool CanPickDestDir {
@@ -367,7 +377,8 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		public override bool HasError {
 			get {
 				return !string.IsNullOrEmpty(Verify("Directory")) ||
-					!string.IsNullOrEmpty(Verify("SolutionFilename"));
+					!string.IsNullOrEmpty(Verify("SolutionFilename")) ||
+					projectGuidVM.HasError;
 			}
 		}
 	}

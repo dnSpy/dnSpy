@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -148,12 +149,22 @@ namespace dnSpy.Files.Tabs {
 						options.SolutionFilename = vm.SolutionFilename;
 					options.Logger = this;
 					options.ProgressListener = this;
-					foreach (var module in modules) {
+
+					bool hasProjectGuid = vm.ProjectGuid.Value != null;
+					string guidFormat = null;
+					int guidNum = 0;
+					if (hasProjectGuid) {
+						string guidStr = vm.ProjectGuid.Value.ToString();
+						guidNum = int.Parse(guidStr.Substring(36 - 8, 8), NumberStyles.HexNumber);
+						guidFormat = guidStr.Substring(0, 36 - 8) + "{0:X8}";
+					}
+					foreach (var module in modules.OrderBy(a => a.Location, StringComparer.InvariantCultureIgnoreCase)) {
 						var projOpts = new ProjectModuleOptions(module, vm.Language, decompilationContext) {
 							DontReferenceStdLib = vm.DontReferenceStdLib,
 							UnpackResources = vm.UnpackResources,
 							CreateResX = vm.CreateResX,
 							DecompileXaml = vm.DecompileXaml,
+							ProjectGuid = hasProjectGuid ? new Guid(string.Format(guidFormat, guidNum++)) : Guid.NewGuid(),
 						};
 						if (bamlDecompiler != null) {
 							var o = BamlDecompilerOptions.Create(vm.Language);

@@ -938,4 +938,10 @@
   <data name="CloseAllCommand" xml:space="preserve">
     <value>Close All</value>
   </data>
+  <data name="ExportToProject_NewGuid" xml:space="preserve">
+    <value>_New</value>
+  </data>
+  <data name="ExportToProject_ProjectGuid" xml:space="preserve">
+    <value>_Project GUID</value>
+  </data>
 </root>
