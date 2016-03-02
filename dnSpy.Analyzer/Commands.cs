@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -152,8 +153,12 @@ namespace dnSpy.Analyzer {
 			}
 			if (count > 1)
 				sb.Append(Environment.NewLine);
-			if (sb.Length > 0)
-				Clipboard.SetText(sb.ToString());
+			if (sb.Length > 0) {
+				try {
+					Clipboard.SetText(sb.ToString());
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		sealed class State {

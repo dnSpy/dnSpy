@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -1901,7 +1902,10 @@ namespace dnSpy.Shared.HexEditor {
 		void CopyOffset(ulong offset) {
 			ulong visibleOffs = PhysicalToVisibleOffset(offset);
 			var s = string.Format(offsetFormatString, UseHexPrefix ? "0x" : string.Empty, visibleOffs & offsetMask);
-			Clipboard.SetText(s);
+			try {
+				Clipboard.SetText(s);
+			}
+			catch (ExternalException) { }
 		}
 
 		void CopyHexString(ulong start, ulong end) {
@@ -1996,7 +2000,10 @@ namespace dnSpy.Shared.HexEditor {
 		}
 
 		public void PasteUtf8() {
-			PasteUtf8(Clipboard.GetText());
+			try {
+				PasteUtf8(Clipboard.GetText());
+			}
+			catch (ExternalException) { }
 		}
 
 		public void PasteUtf8(string s) {
@@ -2006,7 +2013,10 @@ namespace dnSpy.Shared.HexEditor {
 		}
 
 		public bool CanPasteUtf8() {
-			return CanPasteUtf8(Clipboard.GetText());
+			try {
+				return CanPasteUtf8(Clipboard.GetText());
+			}
+			catch (ExternalException) { return false; }
 		}
 
 		public bool CanPasteUtf8(string s) {
@@ -2014,7 +2024,10 @@ namespace dnSpy.Shared.HexEditor {
 		}
 
 		public void PasteUnicode() {
-			PasteUnicode(Clipboard.GetText());
+			try {
+				PasteUnicode(Clipboard.GetText());
+			}
+			catch (ExternalException) { }
 		}
 
 		public void PasteUnicode(string s) {
@@ -2024,7 +2037,10 @@ namespace dnSpy.Shared.HexEditor {
 		}
 
 		public bool CanPasteUnicode() {
-			return CanPasteUnicode(Clipboard.GetText());
+			try {
+				return CanPasteUnicode(Clipboard.GetText());
+			}
+			catch (ExternalException) { return false; }
 		}
 
 		public bool CanPasteUnicode(string s) {
@@ -2032,7 +2048,10 @@ namespace dnSpy.Shared.HexEditor {
 		}
 
 		public void Paste() {
-			Paste(ClipboardUtils.GetData());
+			try {
+				Paste(ClipboardUtils.GetData());
+			}
+			catch (ExternalException) { }
 		}
 
 		public void Paste(byte[] data) {
@@ -2049,7 +2068,10 @@ namespace dnSpy.Shared.HexEditor {
 		}
 
 		public bool CanPaste() {
-			return CanPaste(ClipboardUtils.GetData());
+			try {
+				return CanPaste(ClipboardUtils.GetData());
+			}
+			catch (ExternalException) { return false; }
 		}
 
 		public bool CanPaste(byte[] data) {

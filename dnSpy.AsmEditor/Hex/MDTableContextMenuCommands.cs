@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -417,8 +418,12 @@ namespace dnSpy.AsmEditor.Hex {
 			foreach (var rec in context.Records)
 				context.Node.Write(output2, rec);
 			var s = output.ToString();
-			if (s.Length > 0)
-				Clipboard.SetText(s);
+			if (s.Length > 0) {
+				try {
+					Clipboard.SetText(s);
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		static bool IsEnabledInternal(MDTableContext context) {
@@ -464,8 +469,12 @@ namespace dnSpy.AsmEditor.Hex {
 					sb.Append(string.Format("{0:X2}", b));
 			}
 			var s = sb.ToString();
-			if (s.Length > 0)
-				Clipboard.SetText(s);
+			if (s.Length > 0) {
+				try {
+					Clipboard.SetText(s);
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		static bool IsEnabledInternal(MDTableContext context) {

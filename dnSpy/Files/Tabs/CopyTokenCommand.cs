@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Runtime.InteropServices;
 using System.Windows;
 using dnlib.DotNet;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
@@ -29,8 +30,12 @@ using dnSpy.Shared.Menus;
 namespace dnSpy.Files.Tabs {
 	static class CopyTokenCommand {
 		static void ExecuteInternal(uint? token) {
-			if (token != null)
-				Clipboard.SetText(string.Format("0x{0:X8}", token.Value));
+			if (token != null) {
+				try {
+					Clipboard.SetText(string.Format("0x{0:X8}", token.Value));
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		[ExportMenuItem(Header = "res:CopyMDTokenCommand", Group = MenuConstants.GROUP_CTX_CODE_TOKENS, Order = 50)]

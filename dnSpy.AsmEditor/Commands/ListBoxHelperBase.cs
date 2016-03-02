@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -329,7 +330,10 @@ namespace dnSpy.AsmEditor.Commands {
 
 		void AddToClipboard(T[] items) {
 			copiedData = items;
-			Clipboard.SetDataObject(new DataObject(DataFormat, new ClipboardData(copiedDataId)), false);
+			try {
+				Clipboard.SetDataObject(new DataObject(DataFormat, new ClipboardData(copiedDataId)), false);
+			}
+			catch (ExternalException) { }
 		}
 
 		static T[] SortClipboardItems(T[] items) {
@@ -378,9 +382,13 @@ namespace dnSpy.AsmEditor.Commands {
 		ClipboardData GetClipboardData() {
 			if (copiedData == null)
 				return null;
-			if (!Clipboard.ContainsData(DataFormat))
-				return null;
-			var data = Clipboard.GetData(DataFormat) as ClipboardData;
+			ClipboardData data;
+			try {
+				if (!Clipboard.ContainsData(DataFormat))
+					return null;
+				data = Clipboard.GetData(DataFormat) as ClipboardData;
+			}
+			catch (ExternalException) { return null; }
 			if (data == null)
 				return null;
 			if (data.Id != copiedDataId)

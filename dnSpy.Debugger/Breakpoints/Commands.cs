@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -137,8 +138,12 @@ namespace dnSpy.Debugger.Breakpoints {
 				output.WriteLine();
 			}
 			var s = output.ToString();
-			if (s.Length > 0)
-				Clipboard.SetText(s);
+			if (s.Length > 0) {
+				try {
+					Clipboard.SetText(s);
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		public override bool IsEnabled(BreakpointCtxMenuContext context) {

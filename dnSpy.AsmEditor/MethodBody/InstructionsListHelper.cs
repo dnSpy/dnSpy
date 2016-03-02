@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -170,8 +171,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 				sb.AppendLine();
 
 			var text = sb.ToString();
-			if (text.Length > 0)
-				Clipboard.SetText(text);
+			if (text.Length > 0) {
+				try {
+					Clipboard.SetText(text);
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		void CopyInstructionRVA(InstructionVM[] instrs) {
@@ -207,8 +212,12 @@ namespace dnSpy.AsmEditor.MethodBody {
 				sb.AppendLine();
 
 			var text = sb.ToString();
-			if (text.Length > 0)
-				Clipboard.SetText(text);
+			if (text.Length > 0) {
+				try {
+					Clipboard.SetText(text);
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		bool CopyOperandMDTokensCanExecute(InstructionVM[] instrs) {
@@ -335,7 +344,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (instrs.Length > 1)
 				output.WriteLine();
 
-			Clipboard.SetText(output.ToString());
+			try {
+				Clipboard.SetText(output.ToString());
+			}
+			catch (ExternalException) { }
 		}
 
 		[Flags]

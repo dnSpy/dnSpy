@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -93,7 +94,10 @@ namespace dnSpy.AsmEditor.Commands {
 			var copier = new InstructionILBytesCopier();
 			var text = copier.Copy(FindInstructions(uiContext), methodAnnotations);
 			if (text.Length > 0) {
-				Clipboard.SetText(text);
+				try {
+					Clipboard.SetText(text);
+				}
+				catch (ExternalException) { }
 				if (copier.FoundUnknownBytes) {
 					Shared.App.MsgBox.Instance.ShowIgnorableMessage(new Guid("141A1744-13CD-4835-A804-08D93D8E0D2B"),
 						dnSpy_AsmEditor_Resources.UnknownBytesMsg,

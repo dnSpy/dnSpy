@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using dnlib.DotNet.Emit;
 using dnSpy.Contracts.Files.TreeView;
@@ -102,8 +103,12 @@ namespace Example1.Plugin {
 	sealed class TVCommand5 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) {
 			var node = GetTokenNode(context);
-			if (node != null)
-				Clipboard.SetText(string.Format("{0:X8}", node.Reference.MDToken.Raw));
+			if (node != null) {
+				try {
+					Clipboard.SetText(string.Format("{0:X8}", node.Reference.MDToken.Raw));
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		IMDTokenNode GetTokenNode(TVContext context) {
@@ -128,8 +133,12 @@ namespace Example1.Plugin {
 	sealed class TVCommand6 : TVCtxMenuCommand {
 		public override void Execute(TVContext context) {
 			var instr = GetSecondInstruction(context);
-			if (instr != null)
-				Clipboard.SetText(string.Format("Second instruction: {0}", instr));
+			if (instr != null) {
+				try {
+					Clipboard.SetText(string.Format("Second instruction: {0}", instr));
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		Instruction GetSecondInstruction(TVContext context) {

@@ -24,7 +24,11 @@ using System.Runtime.InteropServices;
 namespace dnSpy.Shared.HexEditor {
 	public static class ClipboardUtils {
 		public static byte[] GetData() {
-			var s = Clipboard.GetText();
+			string s;
+			try {
+				s = Clipboard.GetText();
+			}
+			catch (ExternalException) { return null; }
 			if (s == null)
 				return null;
 			if (s.Length == 0)
@@ -79,8 +83,7 @@ namespace dnSpy.Shared.HexEditor {
 			try {
 				Clipboard.SetText(text);
 			}
-			catch (ExternalException) {
-			}
+			catch (ExternalException) { }
 		}
 	}
 }

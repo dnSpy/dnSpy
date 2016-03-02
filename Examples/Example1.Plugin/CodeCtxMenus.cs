@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.Composition;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Input;
 using dnlib.DotNet;
@@ -90,8 +91,12 @@ namespace Example1.Plugin {
 	sealed class TextEditorCommand3 : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
 			var md = GetTokenObj(context);
-			if (md != null)
-				Clipboard.SetText(string.Format("{0:X8}", md.MDToken.Raw));
+			if (md != null) {
+				try {
+					Clipboard.SetText(string.Format("{0:X8}", md.MDToken.Raw));
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		public override string GetHeader(IMenuItemContext context) {
@@ -128,8 +133,12 @@ namespace Example1.Plugin {
 	sealed class TextEditorCommand4 : MenuItemBase {
 		public override void Execute(IMenuItemContext context) {
 			var uiContext = GetUIContext(context);
-			if (uiContext != null)
-				Clipboard.SetText(string.Format("Line,col: {0},{1}", uiContext.Location.Line, uiContext.Location.Column));
+			if (uiContext != null) {
+				try {
+					Clipboard.SetText(string.Format("Line,col: {0},{1}", uiContext.Location.Line, uiContext.Location.Column));
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		public override string GetHeader(IMenuItemContext context) {

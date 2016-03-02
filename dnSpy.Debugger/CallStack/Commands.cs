@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -131,8 +132,12 @@ namespace dnSpy.Debugger.CallStack {
 				sb.Append(item.Name);
 				sb.AppendLine();
 			}
-			if (sb.Length > 0)
-				Clipboard.SetText(sb.ToString());
+			if (sb.Length > 0) {
+				try {
+					Clipboard.SetText(sb.ToString());
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		public override bool IsEnabled(CallStackCtxMenuContext context) {

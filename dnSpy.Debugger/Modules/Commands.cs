@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -167,8 +168,12 @@ namespace dnSpy.Debugger.Modules {
 				output.WriteLine();
 			}
 			var s = output.ToString();
-			if (s.Length > 0)
-				Clipboard.SetText(s);
+			if (s.Length > 0) {
+				try {
+					Clipboard.SetText(s);
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		public override bool IsEnabled(ModulesCtxMenuContext context) {
@@ -512,8 +517,12 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		public override void Execute(ModulesCtxMenuContext context) {
-			if (context.SelectedItems.Length > 0)
-				Clipboard.SetText(context.SelectedItems[0].Module.Name);
+			if (context.SelectedItems.Length > 0) {
+				try {
+					Clipboard.SetText(context.SelectedItems[0].Module.Name);
+				}
+				catch (ExternalException) { }
+			}
 		}
 
 		public override bool IsEnabled(ModulesCtxMenuContext context) {

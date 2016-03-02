@@ -130,16 +130,18 @@ namespace dnSpy.TextEditor {
 			try {
 				Clipboard.SetText(text);
 			}
-			catch (ExternalException) {
-				return;
-			}
+			catch (ExternalException) { return; }
 			AddUserInput(string.Empty);
 		}
 
 		bool CanPaste {
 			get {
-				return this.textEditor.TextArea.ReadOnlySectionProvider.CanInsert(this.textEditor.TextArea.Caret.Offset) &&
-					Clipboard.ContainsText();
+				if (!this.textEditor.TextArea.ReadOnlySectionProvider.CanInsert(this.textEditor.TextArea.Caret.Offset))
+					return false;
+				try {
+					return Clipboard.ContainsText();
+				}
+				catch (ExternalException) { return false; }
 			}
 		}
 
@@ -152,9 +154,7 @@ namespace dnSpy.TextEditor {
 					return;
 				text = Clipboard.GetText();
 			}
-			catch (ExternalException) {
-				return;
-			}
+			catch (ExternalException) { return; }
 			if (string.IsNullOrEmpty(text))
 				return;
 			AddUserInput(text);

@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
 using dnSpy.AsmEditor.Commands;
@@ -106,7 +107,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 			if (locals.Length > 1)
 				output.WriteLine();
 
-			Clipboard.SetText(output.ToString());
+			try {
+				Clipboard.SetText(output.ToString());
+			}
+			catch (ExternalException) { }
 		}
 	}
 }
