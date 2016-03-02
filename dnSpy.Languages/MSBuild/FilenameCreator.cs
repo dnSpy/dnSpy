@@ -84,6 +84,7 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		string Create(string[] parts, string fileExt) {
+			fileExt = FilenameUtils.CleanName(fileExt);
 			string tempName = string.Empty;
 			foreach (var part in parts) {
 				tempName = Path.Combine(tempName, FilenameUtils.CleanName(part));

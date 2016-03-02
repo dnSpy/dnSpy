@@ -63,6 +63,13 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 			return CSharpScript.Create<T>(code, options, globalsType, assemblyLoader);
 		}
 
+		protected override bool IsCompleteSubmission(string text) {
+			return SyntaxFactory.IsCompleteSubmission(SyntaxFactory.ParseSyntaxTree(text, parseOptions));
+		}
+		// See roslyn/src/Interactive/EditorFeatures/CSharp/Interactive/CSharpInteractiveEvaluator.cs
+		// Needs to be updated whenever the above file gets updated (eg when CSharp7 gets added)
+		static readonly CSharpParseOptions parseOptions = new CSharpParseOptions(languageVersion: LanguageVersion.CSharp6, kind: SourceCodeKind.Script);
+
 		protected override void InitializeUserScriptOptions(UserScriptOptions options) {
 			var rspFile = GetResponseFile("CSharpInteractive.rsp");
 			if (rspFile == null)

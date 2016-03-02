@@ -138,8 +138,10 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public bool IsCommand(string text) {
 			if (ParseScriptCommand(text) != null)
 				return true;
-			return true;//TODO: Ask Roslyn whether it's something that appears to be a valid command
+			return IsCompleteSubmission(text);
 		}
+
+		protected abstract bool IsCompleteSubmission(string text);
 
 		sealed class ExecState {
 			public ScriptOptions ScriptOptions;
@@ -303,6 +305,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 						PrintDiagnostics(cee.Diagnostics);
 						CommandExecuted();
 					}
+					else if (ex != null && ex.InnerException is OperationCanceledException)
+						CommandExecuted();
 					else
 						ReportException(t);
 				}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());

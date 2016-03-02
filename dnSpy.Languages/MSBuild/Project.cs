@@ -189,16 +189,29 @@ namespace dnSpy.Languages.MSBuild {
 
 			applicationIcon = ApplicationIcon.TryCreate(options.Module.Win32Resources, Path.GetFileName(Directory), filenameCreator);
 
-			var dirs = new HashSet<string>(files.Select(a => Path.GetDirectoryName(a.Filename)), StringComparer.OrdinalIgnoreCase);
+			var dirs = new HashSet<string>(files.Select(a => GetDirectoryName(a.Filename)).Where(a => a != null), StringComparer.OrdinalIgnoreCase);
+			int errors = 0;
 			foreach (var dir in dirs) {
 				ctx.CancellationToken.ThrowIfCancellationRequested();
 				try {
 					System.IO.Directory.CreateDirectory(dir);
 				}
 				catch (Exception ex) {
-					ctx.Logger.Error(string.Format(Languages_Resources.MSBuild_CouldNotCreateDirectory2, dir, ex.Message));
+					if (errors++ < 20)
+						ctx.Logger.Error(string.Format(Languages_Resources.MSBuild_CouldNotCreateDirectory2, dir, ex.Message));
 				}
 			}
+		}
+
+		static string GetDirectoryName(string s) {
+			try {
+				return Path.GetDirectoryName(s);
+			}
+			catch (ArgumentException) {
+			}
+			catch (PathTooLongException) {
+			}
+			return null;
 		}
 
 		void InitializeSplashScreen() {

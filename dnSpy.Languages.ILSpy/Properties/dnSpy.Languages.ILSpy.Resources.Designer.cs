@@ -277,7 +277,7 @@ namespace dnSpy.Languages.ILSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Max array elements to show.
+        ///   Looks up a localized string similar to Max number of array elements to show.
         /// </summary>
         public static string DecompilerSettings_MaxArrayElements {
             get {

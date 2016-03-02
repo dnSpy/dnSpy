@@ -671,7 +671,7 @@ namespace dnSpy.TextEditor {
 		}
 
 		void PrintPrompt() {
-			Debug.Assert(offsetOfPrompt == null);
+			// Can happen if we reset the script and it throws an OperationCanceledException
 			if (offsetOfPrompt != null)
 				return;
 
