@@ -103,39 +103,21 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 	}
 
-	[ExportAutoLoaded]
-	sealed class FindInCodeInit : IAutoLoaded {
-		readonly IFileTabManager fileTabManager;
-
-		[ImportingConstructor]
-		FindInCodeInit(IAppWindow appWindow, IFileTabManager fileTabManager) {
-			this.fileTabManager = fileTabManager;
-			appWindow.MainWindowCommands.Add(ApplicationCommands.Find, Execute, CanExecute);
-		}
-
-		void Execute(object s, ExecutedRoutedEventArgs e) {
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:FindCommand", Icon = "Find", InputGestureText = "res:FindKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 0)]
+	sealed class FindInCodeCommand : MenuItemBase {
+		public override void Execute(IMenuItemContext context) {
 			var elem = GetInputElement();
 			if (elem != null)
 				ApplicationCommands.Find.Execute(null, elem);
 		}
 
-		void CanExecute(object s, CanExecuteRoutedEventArgs e) {
-			e.CanExecute = GetInputElement() != null;
+		public override bool IsEnabled(IMenuItemContext context) {
+			return GetInputElement() != null;
 		}
 
 		IInputElement GetInputElement() {
-			var tab = fileTabManager.ActiveTab;
-			if (tab == null)
-				return null;
-			var elem = tab.UIContext.FocusedElement ?? tab.UIContext.UIObject as IInputElement;
-			return elem != null && tab.TryGetTextEditorUIContext() != null && ApplicationCommands.Find.CanExecute(null, elem) ? elem : null;
-		}
-	}
-
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_EDIT_GUID, Header = "res:FindCommand", Icon = "Find", InputGestureText = "res:FindKey", Group = MenuConstants.GROUP_APP_MENU_EDIT_FIND, Order = 0)]
-	sealed class FindInCodeCommand : MenuItemCommand {
-		public FindInCodeCommand()
-			: base(ApplicationCommands.Find) {
+			var elem = Keyboard.FocusedElement;
+			return elem != null && ApplicationCommands.Find.CanExecute(null, elem) ? elem : null;
 		}
 	}
 
