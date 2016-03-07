@@ -94,7 +94,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 			method.Body.Clear();
 			method.EntryGoto = null;
 			method.Body.AddRange(yrd.newTopLevelBody);//TODO: Make sure that the removed ILRanges from Clear() above is saved in the new body
-			ILAstOptimizer.RemoveRedundantCode(method, listExpr, listBlock, labelRefCount);
+			ILAstOptimizer.RemoveRedundantCode(context, method, listExpr, listBlock, labelRefCount);
 		}
 		
 		void Run()
@@ -593,7 +593,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 		{
 			if (context.CurrentMethodIsAsync) {
 				Step2(method.Body);
-				ILAstOptimizer.RemoveRedundantCode(method, listExpr, listBlock, labelRefCount);
+				ILAstOptimizer.RemoveRedundantCode(context, method, listExpr, listBlock, labelRefCount);
 				// Repeat the inlining/copy propagation optimization because the conversion of field access
 				// to local variables can open up additional inlining possibilities.
 				ILInlining inlining = getILInlining(method);

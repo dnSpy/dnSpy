@@ -71,7 +71,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 					ci.AddAnnotation(ilRanges);
 				}
 				else
-					constructorDeclaration.Body.HiddenStart = NRefactoryExtensions.CreateHidden(ILRange.OrderAndJoinList(ilRanges), constructorDeclaration.Body.HiddenStart);
+					constructorDeclaration.Body.HiddenStart = NRefactoryExtensions.CreateHidden(!context.CalculateILRanges ? null : ILRange.OrderAndJoinList(ilRanges), constructorDeclaration.Body.HiddenStart);
 				// Remove the statement:
 				stmt.Remove();
 			}

@@ -39,6 +39,7 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			this.ctx = ctx;
 			this.cache = cache;
 			this.State = cache.AllocateAstBuilderState();
+			this.State.AstBuilder.Context.CalculateILRanges = ctx.CalculateILRanges;
 		}
 
 		public void Dispose() {

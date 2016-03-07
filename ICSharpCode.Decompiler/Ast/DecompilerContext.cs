@@ -31,6 +31,7 @@ namespace ICSharpCode.Decompiler {
 		public DecompilerSettings Settings = new DecompilerSettings();
 		public bool CurrentMethodIsAsync;
 		public readonly DecompilerCache Cache;
+		public bool CalculateILRanges;
 
 		public static DecompilerContext CreateTestContext(ModuleDef currentModule)
 		{
@@ -39,9 +40,14 @@ namespace ICSharpCode.Decompiler {
 			return ctx;
 		}
 
-		public DecompilerContext(ModuleDef currentModule = null)
+		public DecompilerContext(ModuleDef currentModule)
+			: this(currentModule, false) {
+		}
+
+		public DecompilerContext(ModuleDef currentModule, bool calculateILRanges)
 		{
 			this.CurrentModule = currentModule;
+			this.CalculateILRanges = calculateILRanges;
 			this.Cache = new DecompilerCache(this);
 		}
 		

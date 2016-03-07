@@ -34,9 +34,11 @@ namespace ICSharpCode.Decompiler.ILAst {
 		readonly List<ILBlock> list_ILBlock = new List<ILBlock>();
 		readonly List<ILExpression> list_ILExpression = new List<ILExpression>();
 		readonly List<ILNode> list_ILNode = new List<ILNode>();
+		readonly DecompilerContext context;
 
-		public ILInlining(ILBlock method)
+		public ILInlining(DecompilerContext context, ILBlock method)
 		{
+			this.context = context;
 			Initialize(method);
 		}
 
@@ -101,7 +103,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 		ILInlining GetILInlining(ILBlock method)
 		{
 			if (cached_ILInlining == null)
-				cached_ILInlining = new ILInlining(method);
+				cached_ILInlining = new ILInlining(context, method);
 			else
 				cached_ILInlining.Initialize(method);
 			return cached_ILInlining;
@@ -119,7 +121,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 						ILVariable v2;
 						ILExpression ldException;
 						if (body[0].Match(ILCode.Stloc, out v2, out ldException) && ldException.MatchLdloc(v)) {
-							body[0].AddSelfAndChildrenRecursiveILRanges(((ILTryCatchBlock.CatchBlock)block).StlocILRanges);
+							if (context.CalculateILRanges)
+								body[0].AddSelfAndChildrenRecursiveILRanges(((ILTryCatchBlock.CatchBlock)block).StlocILRanges);
 							body.RemoveAt(0);
 							((ILTryCatchBlock.CatchBlock)block).ExceptionVariable = v2;
 							modified = true;
@@ -207,7 +210,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 			if (body[pos].Match(ILCode.Stloc, out v, out inlinedExpression) && !v.IsPinned) {
 				if (InlineIfPossible(v, inlinedExpression, body.ElementAtOrDefault(pos+1), aggressive)) {
 					// Assign the ranges of the stloc instruction:
-					inlinedExpression.ILRanges.AddRange(body[pos].ILRanges);
+					if (context.CalculateILRanges)
+						inlinedExpression.ILRanges.AddRange(body[pos].ILRanges);
 					// Remove the stloc instruction:
 					body.RemoveAt(pos);
 					return true;
@@ -216,12 +220,14 @@ namespace ICSharpCode.Decompiler.ILAst {
 					if (inlinedExpression.HasNoSideEffects()) {
 						// Remove completely
 						AnalyzeNode(body[pos], -1);
-						Utils.AddILRanges(block, body, pos);
+						if (context.CalculateILRanges)
+							Utils.AddILRanges(block, body, pos);
 						body.RemoveAt(pos);
 						return true;
 					} else if (inlinedExpression.CanBeExpressionStatement() && v.GeneratedByDecompiler) {
 						// Assign the ranges of the stloc instruction:
-						inlinedExpression.ILRanges.AddRange(body[pos].ILRanges);
+						if (context.CalculateILRanges)
+							inlinedExpression.ILRanges.AddRange(body[pos].ILRanges);
 						// Remove the stloc, but keep the inner expression
 						body[pos] = inlinedExpression;
 						return true;
@@ -260,7 +266,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 				}
 
 				// Assign the ranges of the ldloc instruction:
-				parent.Arguments[pos].AddSelfAndChildrenRecursiveILRanges(inlinedExpression.ILRanges);
+				if (context.CalculateILRanges)
+					parent.Arguments[pos].AddSelfAndChildrenRecursiveILRanges(inlinedExpression.ILRanges);
 				
 				if (ldloc == 0) {
 					// it was an ldloca instruction, so we need to use the pseudo-opcode 'addressof' so that the types
@@ -512,9 +519,11 @@ namespace ICSharpCode.Decompiler.ILAst {
 								}
 							}
 						}
-						
-						Utils.AddILRanges(block, block.Body, i, block.Body[i].ILRanges);
-						Utils.AddILRanges(block, block.Body, i, copiedExpr.ILRanges);
+
+						if (context.CalculateILRanges) {
+							Utils.AddILRanges(block, block.Body, i, block.Body[i].ILRanges);
+							Utils.AddILRanges(block, block.Body, i, copiedExpr.ILRanges);
+						}
 						block.Body.RemoveAt(i);
 						if (uninlinedArgs.Length > 0) {
 							// if we un-inlined stuff; we need to update the usage counters

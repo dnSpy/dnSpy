@@ -794,7 +794,7 @@ done:
 					ehs.ExceptWith(nestedEHs);
 					List<ILNode> handlerAst = ConvertToAst(body.CutRange(startIdx, endIdx - startIdx), nestedEHs);
 					if (eh.HandlerType == ExceptionHandlerType.Catch) {
-						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock(handlerAst) {
+						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock(context.CalculateILRanges, handlerAst) {
 							ExceptionType = eh.CatchType.ToTypeSig(),
 						};
 						// Handle the automatically pushed exception on the stack
@@ -806,7 +806,7 @@ done:
 					} else if (eh.HandlerType == ExceptionHandlerType.Fault) {
 						tryCatchBlock.FaultBlock = new ILBlock(handlerAst);
 					} else if (useNewFilterCode && eh.HandlerType == ExceptionHandlerType.Filter) {
-						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock(handlerAst) {
+						ILTryCatchBlock.CatchBlock catchBlock = new ILTryCatchBlock.CatchBlock(context.CalculateILRanges, handlerAst) {
 							ExceptionType = eh.CatchType.ToTypeSig(),
 						};
 						// Handle the automatically pushed exception on the stack
@@ -860,7 +860,8 @@ done:
 						catchBlock.ExceptionVariable = new ILVariable() { Name = "ex_" + eh.HandlerStart.GetOffset().ToString("X2"), GeneratedByDecompiler = true };
 					else
 						catchBlock.ExceptionVariable = null;
-					catchBlock.Body[0].AddSelfAndChildrenRecursiveILRanges(catchBlock.StlocILRanges);
+					if (context.CalculateILRanges)
+						catchBlock.Body[0].AddSelfAndChildrenRecursiveILRanges(catchBlock.StlocILRanges);
 					catchBlock.Body.RemoveAt(0);
 				} else {
 					catchBlock.ExceptionVariable = ldexception.StoreTo[0];
@@ -880,15 +881,14 @@ done:
 			
 			// Convert stack-based IL code to ILAst tree
 			foreach(ByteCode byteCode in body) {
-				ILRange ilRange = new ILRange(byteCode.Offset, byteCode.EndOffset);
-				
 				if (byteCode.StackBefore == null) {
 					// Unreachable code
 					continue;
 				}
 				
 				ILExpression expr = new ILExpression(byteCode.Code, byteCode.Operand);
-				expr.ILRanges.Add(ilRange);
+				if (context.CalculateILRanges)
+					expr.ILRanges.Add(new ILRange(byteCode.Offset, byteCode.EndOffset));
 				if (byteCode.Prefixes != null && byteCode.Prefixes.Length > 0) {
 					ILExpressionPrefix[] prefixes = new ILExpressionPrefix[byteCode.Prefixes.Length];
 					for (int i = 0; i < prefixes.Length; i++) {

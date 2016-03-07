@@ -565,8 +565,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 			}
 
 			var tc = (TryCatchStatement)tryCatch;
-			foreachStatement.HiddenGetEnumeratorNode = NRefactoryExtensions.CreateHidden(tc.TryBlock.HiddenStart, m1.Get<AssignmentExpression>("getEnumeratorAssignment").Single());
-			foreachStatement.HiddenGetEnumeratorNode = NRefactoryExtensions.CreateHidden(ILRange.OrderAndJoinList(tc.TryBlock.GetAllILRanges()), foreachStatement.HiddenGetEnumeratorNode);
+			foreachStatement.HiddenGetEnumeratorNode = !context.CalculateILRanges ? tc.TryBlock.HiddenStart : NRefactoryExtensions.CreateHidden(tc.TryBlock.HiddenStart, m1.Get<AssignmentExpression>("getEnumeratorAssignment").Single());
+			foreachStatement.HiddenGetEnumeratorNode = NRefactoryExtensions.CreateHidden(!context.CalculateILRanges ? null : ILRange.OrderAndJoinList(tc.TryBlock.GetAllILRanges()), foreachStatement.HiddenGetEnumeratorNode);
 			foreachStatement.HiddenMoveNextNode = loop.Condition;
 			foreachStatement.HiddenGetCurrentNode = m2.Get<AstNode>("getCurrent").Single();
 			var oldBody = loop.EmbeddedStatement as BlockStatement;
@@ -574,7 +574,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				body.HiddenStart = oldBody.HiddenStart;
 				body.HiddenEnd = oldBody.HiddenEnd;
 			}
-			body.HiddenEnd = NRefactoryExtensions.CreateHidden(body.HiddenEnd, tc.TryBlock.HiddenEnd, tc.FinallyBlock);
+			if (context.CalculateILRanges)
+				body.HiddenEnd = NRefactoryExtensions.CreateHidden(body.HiddenEnd, tc.TryBlock.HiddenEnd, tc.FinallyBlock);
 			
 			// Now create the correct body for the foreach statement:
 			foreachStatement.InExpression = m1.Get<Expression>("collection").Single().Detach();
@@ -665,7 +666,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				ifStmt.AddAllRecursiveILRangesTo(doLoop.Condition);
 				doLoop.EmbeddedStatement = block.Detach();
 				whileLoop.ReplaceWith(doLoop);
-				block.HiddenStart = NRefactoryExtensions.CreateHidden(ILRange.OrderAndJoinList(whileLoop.Condition.GetAllRecursiveILRanges()), block.HiddenStart);
+				block.HiddenStart = NRefactoryExtensions.CreateHidden(!context.CalculateILRanges ? null : ILRange.OrderAndJoinList(whileLoop.Condition.GetAllRecursiveILRanges()), block.HiddenStart);
 				
 				// we may have to extract variable definitions out of the loop if they were used in the condition:
 				foreach (var varDecl in block.Statements.OfType<VariableDeclarationStatement>()) {
@@ -796,7 +797,8 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 					enterCall.AddAllRecursiveILRangesTo(l.Expression);
 				}
 				tryCatch.ReplaceWith(l);
-				block.HiddenEnd = NRefactoryExtensions.CreateHidden(block.HiddenEnd, tryCatch.FinallyBlock);
+				if (context.CalculateILRanges)
+					block.HiddenEnd = NRefactoryExtensions.CreateHidden(block.HiddenEnd, tryCatch.FinallyBlock);
 				node.AddAllRecursiveILRangesTo(l.Expression);
 				node.Remove(); // remove flag variable
 				return l;
@@ -1192,8 +1194,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				dd.Body = m.Get<BlockStatement>("body").Single().Detach();
 				dd.Body.AddAnnotation(methodDef.Body.Annotation<MemberMapping>());
 				var tc = (TryCatchStatement)methodDef.Body.FirstChild;
-				dd.Body.HiddenStart = NRefactoryExtensions.CreateHidden(dd.Body.HiddenStart, methodDef.Body.HiddenStart);
-				dd.Body.HiddenEnd = NRefactoryExtensions.CreateHidden(dd.Body.HiddenEnd, methodDef.Body.HiddenEnd, tc.FinallyBlock);
+				if (context.CalculateILRanges) {
+					dd.Body.HiddenStart = NRefactoryExtensions.CreateHidden(dd.Body.HiddenStart, methodDef.Body.HiddenStart);
+					dd.Body.HiddenEnd = NRefactoryExtensions.CreateHidden(dd.Body.HiddenEnd, methodDef.Body.HiddenEnd, tc.FinallyBlock);
+				}
 				dd.NameToken = Identifier.Create(AstBuilder.CleanName(context.CurrentType.Name)).WithAnnotation(context.CurrentType);
 				methodDef.ReplaceWith(dd);
 				foreach (var child in methodDef.Children.Reverse().ToArray()) {
@@ -1228,8 +1232,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 		{
 			if (tryCatchFinallyPattern.IsMatch(tryFinally)) {
 				TryCatchStatement tryCatch = (TryCatchStatement)tryFinally.TryBlock.Statements.Single();
-				tryCatch.TryBlock.HiddenStart = NRefactoryExtensions.CreateHidden(tryCatch.TryBlock.HiddenStart, tryFinally.TryBlock.HiddenStart);
-				tryCatch.TryBlock.HiddenEnd = NRefactoryExtensions.CreateHidden(tryCatch.TryBlock.HiddenEnd, tryFinally.TryBlock.HiddenEnd);
+				if (context.CalculateILRanges) {
+					tryCatch.TryBlock.HiddenStart = NRefactoryExtensions.CreateHidden(tryCatch.TryBlock.HiddenStart, tryFinally.TryBlock.HiddenStart);
+					tryCatch.TryBlock.HiddenEnd = NRefactoryExtensions.CreateHidden(tryCatch.TryBlock.HiddenEnd, tryFinally.TryBlock.HiddenEnd);
+				}
 				tryFinally.TryBlock = tryCatch.TryBlock.Detach();
 				tryCatch.CatchClauses.MoveTo(tryFinally.CatchClauses);
 			}
@@ -1268,8 +1274,10 @@ namespace ICSharpCode.Decompiler.Ast.Transforms {
 				if (block.HiddenEnd != null) {
 					var stmt = elseIf.FalseStatement.IsNull ? elseIf.TrueStatement : elseIf.FalseStatement;
 					var block2 = stmt as BlockStatement;
-					if (block2 != null)
-						block2.HiddenEnd = NRefactoryExtensions.CreateHidden(block2.HiddenEnd, block.HiddenEnd);
+					if (block2 != null) {
+						if (context.CalculateILRanges)
+							block2.HiddenEnd = NRefactoryExtensions.CreateHidden(block2.HiddenEnd, block.HiddenEnd);
+					}
 					else
 						block.HiddenEnd.AddAllRecursiveILRangesTo(stmt);
 				}

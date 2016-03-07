@@ -68,11 +68,13 @@ namespace ICSharpCode.Decompiler.ILAst {
 				block.Body = FindConditions(new HashSet<ControlFlowNode>(graph.Nodes.Skip(3)), graph.EntryPoint);
 			}
 		}
-		
+
+		readonly ControlFlowGraph cached_ControlFlowGraph = new ControlFlowGraph();
 		ControlFlowGraph BuildGraph(List<ILNode> nodes, ILLabel entryLabel)
 		{
+			cached_ControlFlowGraph.Nodes.Clear();
 			int index = 0;
-			List<ControlFlowNode> cfNodes = new List<ControlFlowNode>();
+			var cfNodes = cached_ControlFlowGraph.Nodes;
 			ControlFlowNode entryPoint = new ControlFlowNode(index++, 0, ControlFlowNodeType.EntryPoint);
 			cfNodes.Add(entryPoint);
 			ControlFlowNode regularExit = new ControlFlowNode(index++, null, ControlFlowNodeType.RegularExit);
@@ -119,8 +121,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 					}
 				}
 			}
-			
-			return new ControlFlowGraph(cfNodes.ToArray());
+
+			return cached_ControlFlowGraph;
 		}
 		
 		List<ILNode> FindLoops(HashSet<ControlFlowNode> scope, ControlFlowNode entryPoint, bool excludeEntryPoint)
@@ -191,8 +193,10 @@ namespace ICSharpCode.Decompiler.ILAst {
 									Body = FindLoops(loopContents, node, false)
 								}
 							});
-							whileLoop.ILRanges.AddRange(tail[0].ILRanges);  // no recursive add
-							tail[1].AddSelfAndChildrenRecursiveILRanges(whileLoop.ILRanges);
+							if (context.CalculateILRanges) {
+								whileLoop.ILRanges.AddRange(tail[0].ILRanges);  // no recursive add
+								tail[1].AddSelfAndChildrenRecursiveILRanges(whileLoop.ILRanges);
+							}
 							basicBlock.Body.Add(new ILExpression(ILCode.Br, falseLabel));
 							result.Add(basicBlock);
 							
@@ -260,8 +264,10 @@ namespace ICSharpCode.Decompiler.ILAst {
 							// Replace the switch code with ILSwitch
 							ILSwitch ilSwitch = new ILSwitch() { Condition = switchArg };
 							var tail = block.Body.RemoveTail(ILCode.Switch, ILCode.Br);
-							ilSwitch.ILRanges.AddRange(tail[0].ILRanges);   // no recursive add
-							tail[1].AddSelfAndChildrenRecursiveILRanges(ilSwitch.ILRanges);
+							if (context.CalculateILRanges) {
+								ilSwitch.ILRanges.AddRange(tail[0].ILRanges);   // no recursive add
+								tail[1].AddSelfAndChildrenRecursiveILRanges(ilSwitch.ILRanges);
+							}
 							block.Body.Add(ilSwitch);
 							block.Body.Add(new ILExpression(ILCode.Br, fallLabel));
 							result.Add(block);
@@ -275,9 +281,11 @@ namespace ICSharpCode.Decompiler.ILAst {
 							if (ilSwitch.Condition.Match(ILCode.Sub, out subArgs) && subArgs[1].Match(ILCode.Ldc_I4, out addValue)) {
 								var old = ilSwitch.Condition;
 								ilSwitch.Condition = subArgs[0];
-								ilSwitch.Condition.ILRanges.AddRange(old.ILRanges); // no recursive add
-								for (int i = 1; i < subArgs.Count; i++)
-									subArgs[i].AddSelfAndChildrenRecursiveILRanges(ilSwitch.Condition.ILRanges);
+								if (context.CalculateILRanges) {
+									ilSwitch.Condition.ILRanges.AddRange(old.ILRanges); // no recursive add
+									for (int i = 1; i < subArgs.Count; i++)
+										subArgs[i].AddSelfAndChildrenRecursiveILRanges(ilSwitch.Condition.ILRanges);
+								}
 							}
 							
 							// Pull in code of cases
@@ -332,7 +340,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 									var caseBlock = new ILSwitch.CaseBlock() { EntryGoto = new ILExpression(ILCode.Br, fallLabel) };
 									ilSwitch.CaseBlocks.Add(caseBlock);
 									tail = block.Body.RemoveTail(ILCode.Br);
-									tail[0].AddSelfAndChildrenRecursiveILRanges(caseBlock.ILRanges);
+									if (context.CalculateILRanges)
+										tail[0].AddSelfAndChildrenRecursiveILRanges(caseBlock.ILRanges);
 									
 									scope.ExceptWith(content);
 									caseBlock.Body.AddRange(FindConditions(content, fallTarget));
@@ -366,8 +375,10 @@ namespace ICSharpCode.Decompiler.ILAst {
 								FalseBlock = new ILBlock() { EntryGoto = new ILExpression(ILCode.Br, falseLabel) }
 							};
 							var tail = block.Body.RemoveTail(ILCode.Brtrue, ILCode.Br);
-							condExpr.ILRanges.AddRange(tail[0].ILRanges);   // no recursive add
-							tail[1].AddSelfAndChildrenRecursiveILRanges(ilCond.FalseBlock.ILRanges);
+							if (context.CalculateILRanges) {
+								condExpr.ILRanges.AddRange(tail[0].ILRanges);   // no recursive add
+								tail[1].AddSelfAndChildrenRecursiveILRanges(ilCond.FalseBlock.ILRanges);
+							}
 							block.Body.Add(ilCond);
 							result.Add(block);
 							

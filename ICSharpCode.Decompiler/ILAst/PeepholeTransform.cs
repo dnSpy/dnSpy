@@ -26,7 +26,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 	public partial class ILAstOptimizer
 	{
 		#region TypeConversionSimplifications
-		static bool TypeConversionSimplifications(ILBlockBase block, List<ILNode> body, ILExpression expr, int pos)
+		bool TypeConversionSimplifications(ILBlockBase block, List<ILNode> body, ILExpression expr, int pos)
 		{
 			bool modified = false;
 			modified |= TransformDecimalCtorToConstant(expr);
@@ -40,7 +40,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 
 		static readonly UTF8String systemString = new UTF8String("System");
 		static readonly UTF8String decimalString = new UTF8String("Decimal");
-		static bool TransformDecimalCtorToConstant(ILExpression expr)
+		bool TransformDecimalCtorToConstant(ILExpression expr)
 		{
 			IMethod r;
 			List<ILExpression> args;
@@ -53,8 +53,10 @@ namespace ICSharpCode.Decompiler.ILAst {
 						expr.Code = ILCode.Ldc_Decimal;
 						expr.Operand = new decimal(val);
 						expr.InferredType = r.DeclaringType.ToTypeSig();
-						foreach (var arg in expr.Arguments)
-							arg.AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
+						if (context.CalculateILRanges) {
+							foreach (var arg in expr.Arguments)
+								arg.AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
+						}
 						expr.Arguments.Clear();
 						return true;
 					}
@@ -69,8 +71,10 @@ namespace ICSharpCode.Decompiler.ILAst {
 						expr.Code = ILCode.Ldc_Decimal;
 						expr.Operand = new decimal(lo, mid, hi, isNegative != 0, (byte)scale);
 						expr.InferredType = r.DeclaringType.ToTypeSig();
-						foreach (var arg in expr.Arguments)
-							arg.AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
+						if (context.CalculateILRanges) {
+							foreach (var arg in expr.Arguments)
+								arg.AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
+						}
 						expr.Arguments.Clear();
 						return true;
 					}
@@ -79,22 +83,24 @@ namespace ICSharpCode.Decompiler.ILAst {
 			return false;
 		}
 		
-		static bool SimplifyLdcI4ConvI8(ILExpression expr)
+		bool SimplifyLdcI4ConvI8(ILExpression expr)
 		{
 			ILExpression ldc;
 			int val;
 			if (expr.Match(ILCode.Conv_I8, out ldc) && ldc.Match(ILCode.Ldc_I4, out val)) {
 				expr.Code = ILCode.Ldc_I8;
 				expr.Operand = (long)val;
-				foreach (var arg in expr.Arguments)
-					arg.AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
+				if (context.CalculateILRanges) {
+					foreach (var arg in expr.Arguments)
+						arg.AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
+				}
 				expr.Arguments.Clear();
 				return true;
 			}
 			return false;
 		}
 		
-		static bool RemoveConvIFromArrayCreation(ILExpression expr)
+		bool RemoveConvIFromArrayCreation(ILExpression expr)
 		{
 			ITypeDefOrRef typeRef;
 			ILExpression length;
@@ -104,7 +110,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 				    || length.Match(ILCode.Conv_Ovf_I_Un, out input) || length.Match(ILCode.Conv_U, out input))
 				{
 					expr.Arguments[0] = input;
-					input.ILRanges.AddRange(length.ILRanges);	// no recursive add
+					if (context.CalculateILRanges)
+						input.ILRanges.AddRange(length.ILRanges);	// no recursive add
 					return true;
 				}
 			}
@@ -113,7 +120,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 		#endregion
 		
 		#region SimplifyLdObjAndStObj
-		static bool SimplifyLdObjAndStObj(ILBlockBase block, List<ILNode> body, ILExpression expr, int pos)
+		bool SimplifyLdObjAndStObj(ILBlockBase block, List<ILNode> body, ILExpression expr, int pos)
 		{
 			bool modified = false;
 			expr = SimplifyLdObjAndStObj(expr, ref modified);
@@ -126,7 +133,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 			return modified;
 		}
 		
-		static ILExpression SimplifyLdObjAndStObj(ILExpression expr, ref bool modified)
+		ILExpression SimplifyLdObjAndStObj(ILExpression expr, ref bool modified)
 		{
 			if (expr.Code == ILCode.Initobj) {
 				expr.Code = ILCode.Stobj;
@@ -162,7 +169,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 					arg.ExpectedType = expr.ExpectedType;
 					arg.Arguments.Add(arg2);
 				}
-				arg.ILRanges.AddRange(expr.ILRanges);
+				if (context.CalculateILRanges)
+					arg.ILRanges.AddRange(expr.ILRanges);
 				modified = true;
 				return arg;
 			} else {
@@ -216,17 +224,34 @@ namespace ICSharpCode.Decompiler.ILAst {
 				foreach (ILExpression parent in Optimize_List_ILExpression) {
 					for (int j = 0; j < parent.Arguments.Count; j++) {
 						if (parent.Arguments[j].Code == ILCode.Ldsfld && ((IField)parent.Arguments[j].Operand).ResolveFieldWithinSameModule() == field) {
-							newObj.ILRanges.AddRange(c.AllILRanges);
-							c.Condition.AddSelfAndChildrenRecursiveILRanges(newObj.ILRanges);
-							c.FalseBlock.AddSelfAndChildrenRecursiveILRanges(newObj.ILRanges);
-							newObj.ILRanges.AddRange(c.TrueBlock.AllILRanges);
-							foreach (var instr in c.TrueBlock.Body.Skip(1))
-								instr.AddSelfAndChildrenRecursiveILRanges(newObj.ILRanges);
-							newObj.ILRanges.AddRange(stsfld.ILRanges);
-							foreach (var arg in stsfld.Arguments.Skip(1))
-								arg.AddSelfAndChildrenRecursiveILRanges(newObj.ILRanges);
+							if (context.CalculateILRanges) {
+								long index = 0;
+								bool done = false;
+								for (;;) {
+									var b = c.GetAllILRanges(ref index, ref done);
+									if (done)
+										break;
+									newObj.ILRanges.Add(b);
+								}
+								c.Condition.AddSelfAndChildrenRecursiveILRanges(newObj.ILRanges);
+								c.FalseBlock.AddSelfAndChildrenRecursiveILRanges(newObj.ILRanges);
 
-							newObj.ILRanges.AddRange(parent.Arguments[j].ILRanges);
+								index = 0;
+								done = false;
+								for (;;) {
+									var b = c.TrueBlock.GetAllILRanges(ref index, ref done);
+									if (done)
+										break;
+									newObj.ILRanges.Add(b);
+								}
+								foreach (var instr in c.TrueBlock.Body.Skip(1))
+									instr.AddSelfAndChildrenRecursiveILRanges(newObj.ILRanges);
+								newObj.ILRanges.AddRange(stsfld.ILRanges);
+								foreach (var arg in stsfld.Arguments.Skip(1))
+									arg.AddSelfAndChildrenRecursiveILRanges(newObj.ILRanges);
+
+								newObj.ILRanges.AddRange(parent.Arguments[j].ILRanges);
+							}
 							parent.Arguments[j] = newObj;
 							block.Body.RemoveAt(i);
 							i -= GetILInlining(method).InlineInto(block, block.Body, i, aggressive: false);
@@ -285,7 +310,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 						ILExpression storedExpr;
 						if (storeBlock.Body[j].Match(ILCode.Stloc, out storedVar, out storedExpr) && storedVar == v && storedExpr.Match(ILCode.Ldnull)) {
 							// Remove the instruction
-							Utils.AddILRanges(storeBlock, storeBlock.Body, j);
+							if (context.CalculateILRanges)
+								Utils.AddILRanges(storeBlock, storeBlock.Body, j);
 							storeBlock.Body.RemoveAt(j);
 							if (storeBlock == block && j < i)
 								i--;
@@ -293,13 +319,32 @@ namespace ICSharpCode.Decompiler.ILAst {
 						}
 					}
 				}
-				
-				stloc.ILRanges.AddRange(c.AllILRanges);
-				c.Condition.AddSelfAndChildrenRecursiveILRanges(stloc.ILRanges);
-				c.FalseBlock.AddSelfAndChildrenRecursiveILRanges(stloc.ILRanges);
-				stloc.ILRanges.AddRange(c.TrueBlock.AllILRanges);
-				foreach (var instr in c.TrueBlock.Body.Skip(1))
-					instr.AddSelfAndChildrenRecursiveILRanges(stloc.ILRanges);
+
+				if (context.CalculateILRanges) {
+					long index = 0;
+					bool done = false;
+					for (;;) {
+						var b = c.GetAllILRanges(ref index, ref done);
+						if (done)
+							break;
+						stloc.ILRanges.Add(b);
+					}
+
+					c.Condition.AddSelfAndChildrenRecursiveILRanges(stloc.ILRanges);
+					c.FalseBlock.AddSelfAndChildrenRecursiveILRanges(stloc.ILRanges);
+
+					index = 0;
+					done = false;
+					for (;;) {
+						var b = c.TrueBlock.GetAllILRanges(ref index, ref done);
+						if (done)
+							break;
+						stloc.ILRanges.Add(b);
+					}
+
+					foreach (var instr in c.TrueBlock.Body.Skip(1))
+						instr.AddSelfAndChildrenRecursiveILRanges(stloc.ILRanges);
+				}
 
 				block.Body[i] = stloc; // remove the 'if (v==null)'
 				inlining = GetILInlining(method);
@@ -336,10 +381,13 @@ namespace ICSharpCode.Decompiler.ILAst {
 					if (inlining.numLdloc.GetOrDefault(exprVar) == 2 && inlining.numStloc.GetOrDefault(exprVar) == 1) {
 						body.RemoveAt(pos + 2); // remove store2
 						body.RemoveAt(pos); // remove expr = ...
-						nextExpr.Arguments[0].AddSelfAndChildrenRecursiveILRanges(nextExpr.ILRanges);
+						if (context.CalculateILRanges)
+							nextExpr.Arguments[0].AddSelfAndChildrenRecursiveILRanges(nextExpr.ILRanges);
 						nextExpr.Arguments[0] = store2;
-						expr.AddSelfAndChildrenRecursiveILRanges(store2.ILRanges);
-						store2.Arguments[store2.Arguments.Count - 1].AddSelfAndChildrenRecursiveILRanges(store2.ILRanges);
+						if (context.CalculateILRanges) {
+							expr.AddSelfAndChildrenRecursiveILRanges(store2.ILRanges);
+							store2.Arguments[store2.Arguments.Count - 1].AddSelfAndChildrenRecursiveILRanges(store2.ILRanges);
+						}
 						store2.Arguments[store2.Arguments.Count - 1] = initializer;
 						
 						inlining.InlineIfPossible(block, body, ref pos);
@@ -349,9 +397,11 @@ namespace ICSharpCode.Decompiler.ILAst {
 				}
 				
 				body.RemoveAt(pos + 1); // remove stloc
-				nextExpr.Arguments[0].AddSelfAndChildrenRecursiveILRanges(nextExpr.ILRanges);
+				if (context.CalculateILRanges)
+					nextExpr.Arguments[0].AddSelfAndChildrenRecursiveILRanges(nextExpr.ILRanges);
 				nextExpr.Arguments[0] = initializer;
-				expr.Arguments[0].AddSelfAndChildrenRecursiveILRanges(nextExpr.ILRanges);
+				if (context.CalculateILRanges)
+					expr.Arguments[0].AddSelfAndChildrenRecursiveILRanges(nextExpr.ILRanges);
 				expr.Arguments[0] = nextExpr;
 				return true;
 			} else if ((nextExpr.Code == ILCode.Stsfld || nextExpr.Code == ILCode.CallSetter || nextExpr.Code == ILCode.CallvirtSetter) && nextExpr.Arguments.Count == 1) {
@@ -361,9 +411,11 @@ namespace ICSharpCode.Decompiler.ILAst {
 				// exprVar = stsfld(fld, ...))
 				if (nextExpr.Arguments[0].MatchLdloc(exprVar)) {
 					body.RemoveAt(pos + 1); // remove stsfld
-					nextExpr.Arguments[0].AddSelfAndChildrenRecursiveILRanges(nextExpr.ILRanges);
+					if (context.CalculateILRanges)
+						nextExpr.Arguments[0].AddSelfAndChildrenRecursiveILRanges(nextExpr.ILRanges);
 					nextExpr.Arguments[0] = initializer;
-					expr.Arguments[0].AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
+					if (context.CalculateILRanges)
+						expr.Arguments[0].AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
 					expr.Arguments[0] = nextExpr;
 					return true;
 				}
@@ -474,8 +526,10 @@ namespace ICSharpCode.Decompiler.ILAst {
 			}
 			expr.Code = ILCode.CompoundAssignment;
 			expr.Operand = null;
-			for (int i = 0; i < ldelem.Arguments.Count; i++)
-				expr.Arguments[i].AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
+			if (context.CalculateILRanges) {
+				for (int i = 0; i < ldelem.Arguments.Count; i++)
+					expr.Arguments[i].AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
+			}
 			expr.Arguments.RemoveRange(0, ldelem.Arguments.Count);
 			// result is "CompoundAssignment(<OP>(ldelem.any(...), <RIGHT>))"
 			return true;
@@ -624,7 +678,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 					break;
 			}
 			expr.Arguments[0] = new ILExpression(incrementCode, incrementAmount, exprInit);
-			nextExpr.AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
+			if (context.CalculateILRanges)
+				nextExpr.AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
 			body.RemoveAt(pos + 1);
 			return true;
 		}
@@ -714,13 +769,15 @@ namespace ICSharpCode.Decompiler.ILAst {
 			}
 			
 			ILExpression stloc = addExpr.Arguments[0];
-			stloc.Arguments[0].AddSelfAndChildrenRecursiveILRanges(stloc.ILRanges);
-			stloc.ILRanges.AddRange(expr.ILRanges);		// no recursive add
-			stloc.ILRanges.AddRange(addExpr.ILRanges);  // no recursive add
-			for (int i = 0; i < expr.Arguments.Count - 1; i++)
-				expr.Arguments[i].AddSelfAndChildrenRecursiveILRanges(stloc.ILRanges);
-			for (int i = 1; i < addExpr.Arguments.Count; i++)
-				addExpr.Arguments[i].AddSelfAndChildrenRecursiveILRanges(stloc.ILRanges);
+			if (context.CalculateILRanges) {
+				stloc.Arguments[0].AddSelfAndChildrenRecursiveILRanges(stloc.ILRanges);
+				stloc.ILRanges.AddRange(expr.ILRanges);     // no recursive add
+				stloc.ILRanges.AddRange(addExpr.ILRanges);  // no recursive add
+				for (int i = 0; i < expr.Arguments.Count - 1; i++)
+					expr.Arguments[i].AddSelfAndChildrenRecursiveILRanges(stloc.ILRanges);
+				for (int i = 1; i < addExpr.Arguments.Count; i++)
+					addExpr.Arguments[i].AddSelfAndChildrenRecursiveILRanges(stloc.ILRanges);
+			}
 			if (expr.Code == ILCode.Stobj) {
 				stloc.Arguments[0] = new ILExpression(ILCode.PostIncrement, incrementAmount, initialValue.Arguments[0]);
 			} else if (expr.Code == ILCode.CallSetter || expr.Code == ILCode.CallvirtSetter) {
@@ -791,10 +848,13 @@ namespace ICSharpCode.Decompiler.ILAst {
 				if (expr != null && expr.Code == ILCode.Stloc && expr.Operand == pinnedVar && IsNullOrZero(expr.Arguments[0])) {
 					// we found a second initializer for the existing fixed statement
 					fixedStmt.Initializers.Insert(0, initValue);
-					for (int k = i; k < initEndPos; k++)
-						initValue.ILRanges.AddRange(body[k].GetSelfAndChildrenRecursiveILRanges().ToArray());
+					if (context.CalculateILRanges) {
+						for (int k = i; k < initEndPos; k++)
+							initValue.ILRanges.AddRange(body[k].GetSelfAndChildrenRecursiveILRanges().ToArray());
+					}
 					body.RemoveRange(i, initEndPos - i);
-					Utils.AddILRanges(fixedStmt.BodyBlock, fixedStmt.BodyBlock.Body, fixedStmt.BodyBlock.Body.Count - 1);
+					if (context.CalculateILRanges)
+						Utils.AddILRanges(fixedStmt.BodyBlock, fixedStmt.BodyBlock.Body, fixedStmt.BodyBlock.Body.Count - 1);
 					fixedStmt.BodyBlock.Body.RemoveAt(fixedStmt.BodyBlock.Body.Count - 1);
 					if (pinnedVar.Type is ByRefSig)
 						pinnedVar.Type = new PtrSig(((ByRefSig)pinnedVar.Type).Next);
@@ -818,8 +878,10 @@ namespace ICSharpCode.Decompiler.ILAst {
 			fixedStmt = new ILFixedStatement();
 			fixedStmt.Initializers.Add(initValue);
 			fixedStmt.BodyBlock = new ILBlock(body.GetRange(initEndPos, j - initEndPos)); // from initEndPos to j-1 (inclusive)
-			for (int k = i; k < initEndPos; k++)
-				initValue.ILRanges.AddRange(body[k].GetSelfAndChildrenRecursiveILRanges().ToArray());
+			if (context.CalculateILRanges) {
+				for (int k = i; k < initEndPos; k++)
+					initValue.ILRanges.AddRange(body[k].GetSelfAndChildrenRecursiveILRanges().ToArray());
+			}
 			body.RemoveRange(i + 1, Math.Min(j, body.Count - 1) - i); // from i+1 to j (inclusive)
 			body[i] = fixedStmt;
 			if (pinnedVar.Type is ByRefSig)
@@ -969,7 +1031,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 		#endregion
 		
 		#region SimplifyLogicNot
-		static bool SimplifyLogicNot(ILBlockBase block, List<ILNode> body, ILExpression expr, int pos)
+		bool SimplifyLogicNot(ILBlockBase block, List<ILNode> body, ILExpression expr, int pos)
 		{
 			bool modified = false;
 			expr = SimplifyLogicNot(expr, ref modified);
@@ -977,13 +1039,14 @@ namespace ICSharpCode.Decompiler.ILAst {
 			return modified;
 		}
 
-		static ILExpression SimplifyLogicNot(ILExpression expr, ref bool modified)
+		ILExpression SimplifyLogicNot(ILExpression expr, ref bool modified)
 		{
 			ILExpression a;
 			// "ceq(a, ldc.i4.0)" becomes "logicnot(a)" if the inferred type for expression "a" is boolean
 			if (expr.Code == ILCode.Ceq && expr.Arguments[0].InferredType.GetElementType() == ElementType.Boolean && (a = expr.Arguments[1]).Code == ILCode.Ldc_I4 && (int)a.Operand == 0) {
 				expr.Code = ILCode.LogicNot;
-				a.AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
+				if (context.CalculateILRanges)
+					a.AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
 				expr.Arguments.RemoveAt(1);
 				modified = true;
 			}
@@ -994,8 +1057,10 @@ namespace ICSharpCode.Decompiler.ILAst {
 				// remove double negation
 				if (a.Code == ILCode.LogicNot) {
 					res = a.Arguments[0];
-					res.ILRanges.AddRange(expr.ILRanges);
-					res.ILRanges.AddRange(a.ILRanges);
+					if (context.CalculateILRanges) {
+						res.ILRanges.AddRange(expr.ILRanges);
+						res.ILRanges.AddRange(a.ILRanges);
+					}
 					expr = res;
 				} else {
 					if (SimplifyLogicNotArgument(expr)) res = expr = a;
@@ -1017,7 +1082,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 		/// <summary>
 		/// If the argument is a binary comparison operation then the negation is pushed through it
 		/// </summary>
-		static bool SimplifyLogicNotArgument(ILExpression expr)
+		bool SimplifyLogicNotArgument(ILExpression expr)
 		{
 			var a = expr.Arguments[0];
 			ILCode c;
@@ -1035,13 +1100,14 @@ namespace ICSharpCode.Decompiler.ILAst {
 					default: return false;
 			}
 			a.Code = c;
-			a.ILRanges.AddRange(expr.ILRanges);
+			if (context.CalculateILRanges)
+				a.ILRanges.AddRange(expr.ILRanges);
 			return true;
 		}
 		#endregion
 
 		#region SimplifyShiftOperators
-		static bool SimplifyShiftOperators(ILBlockBase block, List<ILNode> body, ILExpression expr, int pos)
+		bool SimplifyShiftOperators(ILBlockBase block, List<ILNode> body, ILExpression expr, int pos)
 		{
 			// C# compiles "a << b" to "a << (b & 31)", so we will remove the "& 31" if possible.
 			bool modified = false;
@@ -1049,7 +1115,7 @@ namespace ICSharpCode.Decompiler.ILAst {
 			return modified;
 		}
 
-		static void SimplifyShiftOperators(ILExpression expr, ref bool modified)
+		void SimplifyShiftOperators(ILExpression expr, ref bool modified)
 		{
 			for (int i = 0; i < expr.Arguments.Count; i++)
 				SimplifyShiftOperators(expr.Arguments[i], ref modified);
@@ -1068,8 +1134,10 @@ namespace ICSharpCode.Decompiler.ILAst {
 			}
 			if ((int)a.Arguments[1].Operand != mask) return;
 			var res = a.Arguments[0];
-			res.ILRanges.AddRange(a.ILRanges);
-			res.ILRanges.AddRange(a.Arguments[1].ILRanges);
+			if (context.CalculateILRanges) {
+				res.ILRanges.AddRange(a.ILRanges);
+				res.ILRanges.AddRange(a.Arguments[1].ILRanges);
+			}
 			expr.Arguments[1] = res;
 			modified = true;
 		}

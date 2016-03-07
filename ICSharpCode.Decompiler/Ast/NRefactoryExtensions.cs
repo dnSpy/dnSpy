@@ -176,7 +176,7 @@ namespace ICSharpCode.Decompiler.Ast {
 
 		public static AstNode CreateHidden(List<ILRange> list, AstNode stmt)
 		{
-			if (list.Count == 0)
+			if (list == null || list.Count == 0)
 				return stmt;
 			if (stmt == null)
 				stmt = new EmptyStatement();

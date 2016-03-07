@@ -42,8 +42,10 @@ namespace ICSharpCode.Decompiler.ILAst
 			ILVariable A, B;
 			ILExpression Operator, SimpleOperand;
 			bool SimpleLeftOperand;
-			public PatternMatcher(ICorLibTypes corLib)
+			readonly DecompilerContext context;
+			public PatternMatcher(DecompilerContext context, ICorLibTypes corLib)
 			{
+				this.context = context;
 				this.corLib = corLib;
 			}
 
@@ -502,9 +504,11 @@ namespace ICSharpCode.Decompiler.ILAst
 						if (n.Code == ILCode.NullCoalescing) {
 							// if both operands are nullable then the result is also nullable
 							if (n.Arguments[1].Code == ILCode.ValueOf) {
-								n.Arguments[0].Arguments[0].ILRanges.AddRange(n.Arguments[0].ILRanges);
+								if (context.CalculateILRanges)
+									n.Arguments[0].Arguments[0].ILRanges.AddRange(n.Arguments[0].ILRanges);
 								n.Arguments[0] = n.Arguments[0].Arguments[0];
-								n.Arguments[1].Arguments[0].ILRanges.AddRange(n.Arguments[1].ILRanges);
+								if (context.CalculateILRanges)
+									n.Arguments[1].Arguments[0].ILRanges.AddRange(n.Arguments[1].ILRanges);
 								n.Arguments[1] = n.Arguments[1].Arguments[0];
 							}
 						} else if (n.Code != ILCode.Ceq && n.Code != ILCode.Cne) {
@@ -517,16 +521,18 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 			}
 
-			static void SetResult(ILExpression expr, ILExpression n)
+			void SetResult(ILExpression expr, ILExpression n)
 			{
 				// IL ranges from removed nodes are assigned to the new operator expression
 				var removednodes = expr.GetSelfAndChildrenRecursive<ILExpression>().Except(n.GetSelfAndChildrenRecursive<ILExpression>());
-				n.ILRanges.AddRange(removednodes.SelectMany(el => el.ILRanges));
+				if (context.CalculateILRanges)
+					n.ILRanges.AddRange(removednodes.SelectMany(el => el.ILRanges));
 				// the new expression is wrapped in a container so that negations aren't pushed through lifted comparison operations
 				expr.Code = ILCode.Wrap;
 				expr.Arguments.Clear();
 				expr.Arguments.Add(n);
-				expr.ILRanges.Clear();
+				if (context.CalculateILRanges)
+					expr.ILRanges.Clear();
 				expr.InferredType = n.InferredType;
 			}
 		}

@@ -34,8 +34,11 @@ namespace ICSharpCode.Decompiler.ILAst {
 		public virtual List<ILRange> EndILRanges {
 			get { return ILRanges; }
 		}
-		public virtual IEnumerable<ILRange> AllILRanges {
-			get { return ILRanges; }
+		public virtual ILRange GetAllILRanges(ref long index, ref bool done) {
+			if (index < ILRanges.Count)
+				return ILRanges[(int)index++];
+			done = true;
+			return default(ILRange);
 		}
 
 		public bool HasEndILRanges {
@@ -52,14 +55,29 @@ namespace ICSharpCode.Decompiler.ILAst {
 
 		public IEnumerable<ILRange> GetSelfAndChildrenRecursiveILRanges()
 		{
-			return GetSelfAndChildrenRecursive<ILNode>().SelectMany(e => e.AllILRanges);
+			foreach (var node in GetSelfAndChildrenRecursive<ILNode>()) {
+				long index = 0;
+				bool done = false;
+				for (;;) {
+					var b = node.GetAllILRanges(ref index, ref done);
+					if (done)
+						break;
+					yield return b;
+				}
+			}
 		}
 
 		public void AddSelfAndChildrenRecursiveILRanges(List<ILRange> coll)
 		{
 			foreach (var a in GetSelfAndChildrenRecursive<ILNode>()) {
-				foreach (var b in a.AllILRanges)
+				long index = 0;
+				bool done = false;
+				for (;;) {
+					var b = a.GetAllILRanges(ref index, ref done);
+					if (done)
+						break;
 					coll.Add(b);
+				}
 			}
 		}
 
@@ -210,13 +228,16 @@ namespace ICSharpCode.Decompiler.ILAst {
 		public override List<ILRange> EndILRanges {
 			get { return endILRanges; }
 		}
-		public override IEnumerable<ILRange> AllILRanges {
-			get {
-				foreach (var ilr in ILRanges)
-					yield return ilr;
-				foreach (var ilr in endILRanges)
-					yield return ilr;
+		public override ILRange GetAllILRanges(ref long index, ref bool done) {
+			if (index < ILRanges.Count)
+				return ILRanges[(int)index++];
+			int i = (int)index - ILRanges.Count;
+			if (i < endILRanges.Count) {
+				index++;
+				return endILRanges[i];
 			}
+			done = true;
+			return default(ILRange);
 		}
 
 		public override bool SafeToAddToEndILRanges {
@@ -319,23 +340,26 @@ namespace ICSharpCode.Decompiler.ILAst {
 			public ILVariable ExceptionVariable;
 			public List<ILRange> StlocILRanges = new List<ILRange>(1);
 
-			public override IEnumerable<ILRange> AllILRanges {
-				get {
-					foreach (var ilr in base.AllILRanges)
-						yield return ilr;
-					foreach (var ilr in StlocILRanges)
-						yield return ilr;
+			public override ILRange GetAllILRanges(ref long index, ref bool done) {
+				if (index < ILRanges.Count)
+					return ILRanges[(int)index++];
+				int i = (int)index - ILRanges.Count;
+				if (i < StlocILRanges.Count) {
+					index++;
+					return StlocILRanges[i];
 				}
+				done = true;
+				return default(ILRange);
 			}
 
 			public CatchBlock()
 			{
 			}
 
-			public CatchBlock(List<ILNode> body)
+			public CatchBlock(bool calculateILRanges, List<ILNode> body)
 			{
 				this.Body = body;
-				if (body.Count > 0 && body[0].Match(ILCode.Pop))
+				if (calculateILRanges && body.Count > 0 && body[0].Match(ILCode.Pop))
 					body[0].AddSelfAndChildrenRecursiveILRanges(StlocILRanges);
 			}
 			
@@ -821,13 +845,16 @@ namespace ICSharpCode.Decompiler.ILAst {
 		public override List<ILRange> EndILRanges {
 			get { return endILRanges; }
 		}
-		public override IEnumerable<ILRange> AllILRanges {
-			get {
-				foreach (var ilr in ILRanges)
-					yield return ilr;
-				foreach (var ilr in endILRanges)
-					yield return ilr;
+		public override ILRange GetAllILRanges(ref long index, ref bool done) {
+			if (index < ILRanges.Count)
+				return ILRanges[(int)index++];
+			int i = (int)index - ILRanges.Count;
+			if (i < endILRanges.Count) {
+				index++;
+				return endILRanges[i];
 			}
+			done = true;
+			return default(ILRange);
 		}
 
 		public override bool SafeToAddToEndILRanges {

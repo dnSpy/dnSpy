@@ -31,7 +31,7 @@ namespace ICSharpCode.Decompiler.FlowAnalysis {
 	/// <remarks>Use ControlFlowGraph builder to create instances of the ControlFlowGraph.</remarks>
 	public sealed class ControlFlowGraph
 	{
-		readonly ReadOnlyCollection<ControlFlowNode> nodes;
+		readonly List<ControlFlowNode> nodes;
 		
 		public ControlFlowNode EntryPoint {
 			get { return nodes[0]; }
@@ -45,16 +45,13 @@ namespace ICSharpCode.Decompiler.FlowAnalysis {
 			get { return nodes[2]; }
 		}
 		
-		public ReadOnlyCollection<ControlFlowNode> Nodes {
+		public List<ControlFlowNode> Nodes {
 			get { return nodes; }
 		}
 		
-		internal ControlFlowGraph(ControlFlowNode[] nodes)
+		internal ControlFlowGraph()
 		{
-			this.nodes = new ReadOnlyCollection<ControlFlowNode>(nodes);
-			Debug.Assert(EntryPoint.NodeType == ControlFlowNodeType.EntryPoint);
-			Debug.Assert(RegularExit.NodeType == ControlFlowNodeType.RegularExit);
-			Debug.Assert(ExceptionalExit.NodeType == ControlFlowNodeType.ExceptionalExit);
+			this.nodes = new List<ControlFlowNode>();
 		}
 		
 		public GraphVizGraph ExportGraph()
@@ -148,15 +145,16 @@ namespace ICSharpCode.Decompiler.FlowAnalysis {
 					node.ImmediateDominator.DominatorTreeChildren.Add(node);
 			}
 		}
-		
-		static ControlFlowNode FindCommonDominator(ControlFlowNode b1, ControlFlowNode b2)
+
+		readonly HashSet<ControlFlowNode> FindCommonDominator_path1 = new HashSet<ControlFlowNode>();
+		ControlFlowNode FindCommonDominator(ControlFlowNode b1, ControlFlowNode b2)
 		{
 			// Here we could use the postorder numbers to get rid of the hashset, see "A Simple, Fast Dominance Algorithm"
-			HashSet<ControlFlowNode> path1 = new HashSet<ControlFlowNode>();
-			while (b1 != null && path1.Add(b1))
+			FindCommonDominator_path1.Clear();
+			while (b1 != null && FindCommonDominator_path1.Add(b1))
 				b1 = b1.ImmediateDominator;
 			while (b2 != null) {
-				if (path1.Contains(b2))
+				if (FindCommonDominator_path1.Contains(b2))
 					return b2;
 				else
 					b2 = b2.ImmediateDominator;

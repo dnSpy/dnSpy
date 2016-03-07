@@ -175,6 +175,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		DecompileContext CreateDecompileContext(IShowContext ctx) {
 			var decompileContext = new DecompileContext();
 			var decompilationContext = new DecompilationContext();
+			decompilationContext.CalculateILRanges = true;
 			decompilationContext.GetDisableAssemblyLoad = () => decompileFileTabContentFactory.FileManager.DisableAssemblyLoad();
 			decompilationContext.IsBodyModified = m => decompileFileTabContentFactory.MethodAnnotations.IsBodyModified(m);
 			var output = new AvalonEditTextOutput();

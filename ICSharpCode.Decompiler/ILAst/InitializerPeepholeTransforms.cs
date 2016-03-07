@@ -48,8 +48,10 @@ namespace ICSharpCode.Decompiler.ILAst
 					arrayLength = newArr.Length;
 					arrayType.Sizes[0] = (uint)(arrayLength + 1);
 					var newStloc = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, arrayType.ToTypeDefOrRef(), newArr));
-					body[pos].AddSelfAndChildrenRecursiveILRanges(newStloc.ILRanges);
-					body[initArrayPos].AddSelfAndChildrenRecursiveILRanges(newStloc.ILRanges);
+					if (context.CalculateILRanges) {
+						body[pos].AddSelfAndChildrenRecursiveILRanges(newStloc.ILRanges);
+						body[initArrayPos].AddSelfAndChildrenRecursiveILRanges(newStloc.ILRanges);
+					}
 					body[pos] = newStloc;
 					body.RemoveAt(initArrayPos);
 				}
@@ -82,9 +84,11 @@ namespace ICSharpCode.Decompiler.ILAst
 					var arrayType = new ArraySig(elementType.ToTypeSig(), 1, new uint[1], new int[1]);
 					arrayType.Sizes[0] = (uint)(arrayLength + 1);
 					expr.Arguments[0] = new ILExpression(ILCode.InitArray, arrayType.ToTypeDefOrRef(), operands);
-					newarrExpr.AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
-					for (int i = 0; i < numberOfInstructionsToRemove; i++)
-						body[pos + 1 + i].AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
+					if (context.CalculateILRanges) {
+						newarrExpr.AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
+						for (int i = 0; i < numberOfInstructionsToRemove; i++)
+							body[pos + 1 + i].AddSelfAndChildrenRecursiveILRanges(expr.ILRanges);
+					}
 					body.RemoveRange(pos + 1, numberOfInstructionsToRemove);
 
 					GetILInlining(method).InlineIfPossible(block, body, ref pos);
@@ -122,8 +126,10 @@ namespace ICSharpCode.Decompiler.ILAst
 				int initArrayPos;
 				if (ForwardScanInitializeArrayRuntimeHelper(body, pos + 1, v, multAry, totalElements, out newArr, out initArrayPos)) {
 					var newStloc = new ILExpression(ILCode.Stloc, v, new ILExpression(ILCode.InitArray, multAry.ToTypeDefOrRef(), newArr));
-					body[pos].AddSelfAndChildrenRecursiveILRanges(newStloc.ILRanges);
-					body[initArrayPos].AddSelfAndChildrenRecursiveILRanges(newStloc.ILRanges);
+					if (context.CalculateILRanges) {
+						body[pos].AddSelfAndChildrenRecursiveILRanges(newStloc.ILRanges);
+						body[initArrayPos].AddSelfAndChildrenRecursiveILRanges(newStloc.ILRanges);
+					}
 					body[pos] = newStloc;
 					body.RemoveAt(initArrayPos);
 					return true;
@@ -298,7 +304,8 @@ namespace ICSharpCode.Decompiler.ILAst
 					var old = ctorArgs[0];
 					ctorArgs.RemoveAt(0);
 					newObjExpr = new ILExpression(ILCode.Newobj, ctor, ctorArgs);
-					old.AddSelfAndChildrenRecursiveILRanges(newObjExpr.ILRanges);
+					if (context.CalculateILRanges)
+						old.AddSelfAndChildrenRecursiveILRanges(newObjExpr.ILRanges);
 				} else {
 					return false;
 				}
@@ -349,20 +356,25 @@ namespace ICSharpCode.Decompiler.ILAst
 				return false;
 
 			if (expr.Code == ILCode.Stloc) {
-				expr.Arguments[0].AddSelfAndChildrenRecursiveILRanges(initializer.ILRanges);
+				if (context.CalculateILRanges)
+					expr.Arguments[0].AddSelfAndChildrenRecursiveILRanges(initializer.ILRanges);
 				expr.Arguments[0] = initializer;
 			} else {
 				Debug.Assert(expr.Code == ILCode.Call);
 				expr.Code = ILCode.Stloc;
 				expr.Operand = v;
-				foreach (var arg in expr.Arguments)
-					arg.AddSelfAndChildrenRecursiveILRanges(initializer.ILRanges);
+				if (context.CalculateILRanges) {
+					foreach (var arg in expr.Arguments)
+						arg.AddSelfAndChildrenRecursiveILRanges(initializer.ILRanges);
+				}
 				expr.Arguments.Clear();
 				expr.Arguments.Add(initializer);
 			}
 			// remove all the instructions that were pulled into the initializer
-			for (int i = originalPos + 1; i < pos; i++)
-				body[i].AddSelfAndChildrenRecursiveILRanges(initializer.ILRanges);
+			if (context.CalculateILRanges) {
+				for (int i = originalPos + 1; i < pos; i++)
+					body[i].AddSelfAndChildrenRecursiveILRanges(initializer.ILRanges);
+			}
 			body.RemoveRange(originalPos + 1, pos - originalPos - 1);
 
 			// now that we know that it's an object initializer, change all the first arguments to 'InitializedObject'
@@ -537,19 +549,20 @@ namespace ICSharpCode.Decompiler.ILAst
 			}
 		}
 
-		static void CleanupInitializerStackAfterFailedAdjustment(List<ILExpression> initializerStack)
+		void CleanupInitializerStackAfterFailedAdjustment(List<ILExpression> initializerStack)
 		{
 			// There might be empty nested initializers left over; so we'll remove those:
 			while (initializerStack.Count > 1 && initializerStack[initializerStack.Count - 1].Arguments.Count == 1) {
 				ILExpression parent = initializerStack[initializerStack.Count - 2];
 				Debug.Assert(parent.Arguments.Last() == initializerStack[initializerStack.Count - 1]);
-				parent.Arguments[parent.Arguments.Count - 1].AddSelfAndChildrenRecursiveILRanges(parent.ILRanges);
+				if (context.CalculateILRanges)
+					parent.Arguments[parent.Arguments.Count - 1].AddSelfAndChildrenRecursiveILRanges(parent.ILRanges);
 				parent.Arguments.RemoveAt(parent.Arguments.Count - 1);
 				initializerStack.RemoveAt(initializerStack.Count - 1);
 			}
 		}
 
-		static void ChangeFirstArgumentToInitializedObject(ILExpression initializer)
+		void ChangeFirstArgumentToInitializedObject(ILExpression initializer)
 		{
 			// Go through all elements in the initializer (so skip the newobj-instr. at the start)
 			for (int i = 1; i < initializer.Arguments.Count; i++) {
@@ -558,12 +571,14 @@ namespace ICSharpCode.Decompiler.ILAst
 					// nested collection/object initializer
 					ILExpression getCollection = element.Arguments[0];
 					var newExpr = new ILExpression(ILCode.InitializedObject, null);
-					getCollection.Arguments[0].AddSelfAndChildrenRecursiveILRanges(newExpr.ILRanges);
+					if (context.CalculateILRanges)
+						getCollection.Arguments[0].AddSelfAndChildrenRecursiveILRanges(newExpr.ILRanges);
 					getCollection.Arguments[0] = newExpr;
 					ChangeFirstArgumentToInitializedObject(element); // handle the collection elements
 				} else {
 					var newExpr = new ILExpression(ILCode.InitializedObject, null);
-					element.Arguments[0].AddSelfAndChildrenRecursiveILRanges(newExpr.ILRanges);
+					if (context.CalculateILRanges)
+						element.Arguments[0].AddSelfAndChildrenRecursiveILRanges(newExpr.ILRanges);
 					element.Arguments[0] = newExpr;
 				}
 			}

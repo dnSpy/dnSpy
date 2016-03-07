@@ -79,10 +79,14 @@ namespace ICSharpCode.Decompiler.ILAst {
 				var newBody = new List<ILNode>(block.Body.Count);
 				for (int i = 0; i < block.Body.Count; i++) {
 					var node = block.Body[i];
-					if (node.Match(ILCode.Nop))
-						Utils.NopMergeILRanges(block, newBody, i);
-					else if (node is ILLabel && !liveLabels.Contains((ILLabel)node))
-						Utils.LabelMergeILRanges(block, newBody, i);
+					if (node.Match(ILCode.Nop)) {
+						if (context.CalculateILRanges)
+							Utils.NopMergeILRanges(block, newBody, i);
+					}
+					else if (node is ILLabel && !liveLabels.Contains((ILLabel)node)) {
+						if (context.CalculateILRanges)
+							Utils.LabelMergeILRanges(block, newBody, i);
+					}
 					else
 						newBody.Add(node);
 				}
@@ -93,7 +97,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 			foreach(ILWhileLoop loop in method.GetSelfAndChildrenRecursive<ILWhileLoop>()) {
 				var body = loop.BodyBlock.Body;
 				if (body.Count > 0 && body.Last().Match(ILCode.LoopContinue)) {
-					body[body.Count - 1].AddSelfAndChildrenRecursiveILRanges(loop.EndILRanges);
+					if (context.CalculateILRanges)
+						body[body.Count - 1].AddSelfAndChildrenRecursiveILRanges(loop.EndILRanges);
 					body.RemoveAt(body.Count - 1);
 				}
 			}
@@ -110,7 +115,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 						    ilCase.Body[count - 1].Match(ILCode.LoopOrSwitchBreak)) 
 						{
 							var prev = ilCase.Body[count - 2];
-							ilCase.Body[count - 1].AddSelfAndChildrenRecursiveILRanges(prev.EndILRanges);
+							if (context.CalculateILRanges)
+								ilCase.Body[count - 1].AddSelfAndChildrenRecursiveILRanges(prev.EndILRanges);
 							ilCase.Body.RemoveAt(count - 1);
 						}
 					}
@@ -123,7 +129,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 						var caseBlock = ilSwitch.CaseBlocks[i];
 						if (caseBlock.Body.Count != 1 || !caseBlock.Body.Single().Match(ILCode.LoopOrSwitchBreak))
 							continue;
-						caseBlock.Body[0].AddSelfAndChildrenRecursiveILRanges(ilSwitch.EndILRanges);
+						if (context.CalculateILRanges)
+							caseBlock.Body[0].AddSelfAndChildrenRecursiveILRanges(ilSwitch.EndILRanges);
 						ilSwitch.CaseBlocks.RemoveAt(i);
 					}
 				}
@@ -131,7 +138,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 			
 			// Remove redundant return at the end of method
 			if (method.Body.Count > 0 && method.Body.Last().Match(ILCode.Ret) && ((ILExpression)method.Body.Last()).Arguments.Count == 0) {
-				method.Body[method.Body.Count - 1].AddSelfAndChildrenRecursiveILRanges(method.EndILRanges);
+				if (context.CalculateILRanges)
+					method.Body[method.Body.Count - 1].AddSelfAndChildrenRecursiveILRanges(method.EndILRanges);
 				method.Body.RemoveAt(method.Body.Count - 1);
 			}
 			
@@ -141,7 +149,8 @@ namespace ICSharpCode.Decompiler.ILAst {
 				for (int i = 0; i < block.Body.Count - 1;) {
 					if (block.Body[i].IsUnconditionalControlFlow() && block.Body[i+1].Match(ILCode.Ret)) {
 						modified = true;
-						block.Body[i + 1].AddSelfAndChildrenRecursiveILRanges(block.EndILRanges);
+						if (context.CalculateILRanges)
+							block.Body[i + 1].AddSelfAndChildrenRecursiveILRanges(block.EndILRanges);
 						block.Body.RemoveAt(i+1);
 					} else {
 						i++;
