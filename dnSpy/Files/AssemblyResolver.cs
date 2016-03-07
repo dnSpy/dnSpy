@@ -27,12 +27,14 @@ using dnSpy.Shared.Files;
 namespace dnSpy.Files {
 	sealed class AssemblyResolver : IAssemblyResolver {
 		readonly FileManager fileManager;
+		readonly FailedAssemblyResolveCache failedAssemblyResolveCache;
 
 		static readonly Version invalidMscorlibVersion = new Version(255, 255, 255, 255);
 		static readonly Version newMscorlibVersion = new Version(4, 0, 0, 0);
 
 		public AssemblyResolver(FileManager fileManager) {
 			this.fileManager = fileManager;
+			this.failedAssemblyResolveCache = new FailedAssemblyResolveCache();
 		}
 
 		public void AddSearchPath(string s) {
@@ -44,6 +46,39 @@ namespace dnSpy.Files {
 		readonly object asmSearchPathsLockObj = new object();
 		readonly List<string> asmSearchPaths = new List<string>();
 		string[] asmSearchPathsArray = new string[0];
+
+		// PERF: Sometimes various pieces of code tries to resolve the same assembly and this
+		// assembly isn't found. This class caches these failed resolves so null is returned
+		// without searching for the assembly. It forgets about it after some number of seconds
+		// in case the user adds the assembly to one of the search paths or loads it in dnSpy.
+		sealed class FailedAssemblyResolveCache {
+			const int MAX_CACHE_TIME_SECONDS = 10;
+			readonly HashSet<IAssembly> failedAsms = new HashSet<IAssembly>(AssemblyNameComparer.CompareAll);
+			readonly object lockObj = new object();
+			DateTime lastTime = DateTime.UtcNow;
+
+			public bool IsFailed(IAssembly asm) {
+				lock (lockObj) {
+					var now = DateTime.UtcNow;
+					bool isOld = (now - lastTime).TotalSeconds > MAX_CACHE_TIME_SECONDS;
+					if (isOld) {
+						failedAsms.Clear();
+						return false;
+					}
+					return failedAsms.Contains(asm);
+				}
+			}
+
+			public void MarkFailed(IAssembly asm) {
+				// Use ToAssemblyRef() to prevent storing a reference to an AssemblyDef
+				var asmKey = asm.ToAssemblyRef();
+				lock (lockObj) {
+					if (failedAsms.Count == 0)
+						lastTime = DateTime.UtcNow;
+					failedAsms.Add(asmKey);
+				}
+			}
+		}
 
 		bool IAssemblyResolver.AddToCache(AssemblyDef asm) {
 			return false;
@@ -62,16 +97,28 @@ namespace dnSpy.Files {
 		}
 
 		public IDnSpyFile Resolve(IAssembly assembly, ModuleDef sourceModule = null) {
-			if (assembly.IsContentTypeWindowsRuntime)
-				return ResolveWinMD(assembly, sourceModule);
+			if (assembly.IsContentTypeWindowsRuntime) {
+				if (failedAssemblyResolveCache.IsFailed(assembly))
+					return null;
+				var file = ResolveWinMD(assembly, sourceModule);
+				if (file == null)
+					failedAssemblyResolveCache.MarkFailed(assembly);
+				return file;
+			}
+			else {
+				// WinMD files have a reference to mscorlib but its version is always 255.255.255.255
+				// since mscorlib isn't really loaded. The resolver only loads exact versions, so
+				// we must change the version or the resolve will fail.
+				if (assembly.Name == "mscorlib" && assembly.Version == invalidMscorlibVersion)
+					assembly = new AssemblyNameInfo(assembly) { Version = newMscorlibVersion };
 
-			// WinMD files have a reference to mscorlib but its version is always 255.255.255.255
-			// since mscorlib isn't really loaded. The resolver only loads exact versions, so
-			// we must change the version or the resolve will fail.
-			if (assembly.Name == "mscorlib" && assembly.Version == invalidMscorlibVersion)
-				assembly = new AssemblyNameInfo(assembly) { Version = newMscorlibVersion };
-
-			return ResolveNormal(assembly, sourceModule);
+				if (failedAssemblyResolveCache.IsFailed(assembly))
+					return null;
+				var file = ResolveNormal(assembly, sourceModule);
+				if (file == null)
+					failedAssemblyResolveCache.MarkFailed(assembly);
+				return file;
+			}
 		}
 
 		IDnSpyFile ResolveNormal(IAssembly assembly, ModuleDef sourceModule) {

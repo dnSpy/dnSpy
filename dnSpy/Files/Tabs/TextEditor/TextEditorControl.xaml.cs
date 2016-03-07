@@ -589,11 +589,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			var ma = a.Reference as IMemberRef;
 			var mb = b.Reference as IMemberRef;
-			if (ma != null && mb != null) {
-				ma = Resolve(ma) ?? ma;
-				mb = Resolve(mb) ?? mb;
+			if (ma != null && mb != null)
 				return new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(ma, mb);
-			}
 
 			return false;
 		}
