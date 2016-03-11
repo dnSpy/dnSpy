@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
@@ -209,9 +210,9 @@ namespace dnSpy.MainApp {
 			foreach (var plugin in pluginManager.Plugins)
 				toPlugin[plugin.GetType().Assembly] = plugin;
 
-			// The plugins in LoadedPlugins were added in random order, and will also be shown in
-			// the same random order.
-			foreach (var x in pluginManager.LoadedPlugins) {
+			// Show the plugins in random order
+			var random = new Random();
+			foreach (var x in pluginManager.LoadedPlugins.OrderBy(a => random.Next())) {
 				PluginInfo pluginInfo;
 				IPlugin plugin;
 				if (toPlugin.TryGetValue(x.Assembly, out plugin))

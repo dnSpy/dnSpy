@@ -127,8 +127,10 @@ namespace dnSpy.MainApp {
 
 		void AddPluginFiles(AggregateCatalog aggregateCatalog) {
 			var dir = Path.GetDirectoryName(GetType().Assembly.Location);
-			var random = new Random();
-			var files = Directory.GetFiles(dir, "*.Plugin.dll").OrderBy(a => random.Next()).ToArray();
+			// Load the modules in a predictable order or multicore-JIT could stop recording. See
+			// "Understanding Background JIT compilation -> What can go wrong with background JIT compilation"
+			// in the PerfView docs for more info.
+			var files = Directory.GetFiles(dir, "*.Plugin.dll").OrderBy(a => a, StringComparer.OrdinalIgnoreCase).ToArray();
 			foreach (var file in files) {
 				try {
 					if (!CanLoadPlugin(file))

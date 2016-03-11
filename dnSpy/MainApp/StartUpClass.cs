@@ -18,14 +18,40 @@
 */
 
 using System;
+using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using dnSpy.Properties;
 
 namespace dnSpy.MainApp {
 	public static class StartUpClass {
+		static void OptimizeStartup() {
+			// Use multicore JIT.
+			// This requires .NET Framework 4.5 but dnSpy targets 4.0 at the moment.
+			// Simple test: x86: ~18% faster startup, x64: ~12% faster startup.
+
+			var profType = Type.GetType("System.Runtime.ProfileOptimization", false);
+			if (profType == null)
+				return;
+			var setProfileRootMethod = profType.GetMethod("SetProfileRoot", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string) }, null);
+			var startProfileMethod = profType.GetMethod("StartProfile", BindingFlags.Public | BindingFlags.Static, null, new Type[] { typeof(string) }, null);
+			if (setProfileRootMethod == null || startProfileMethod == null)
+				return;
+			try {
+				var profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "dnSpy", "Startup");
+				Directory.CreateDirectory(profileDir);
+				setProfileRootMethod.Invoke(null, new object[1] { profileDir });
+				startProfileMethod.Invoke(null, new object[1] { string.Format("startup-{0}.profile", IntPtr.Size * 8) });
+			}
+			catch {
+			}
+		}
+
 		[STAThread]
 		public static void Main() {
+			OptimizeStartup();
+
 			if (!dnlib.Settings.IsThreadSafe) {
 				MessageBox.Show("dnlib wasn't compiled with THREAD_SAFE defined.");
 				Environment.Exit(1);
