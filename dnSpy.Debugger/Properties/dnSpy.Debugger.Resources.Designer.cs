@@ -1078,6 +1078,15 @@ namespace dnSpy.Debugger.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Breakpoint.
+        /// </summary>
+        public static string Debug_StopReason_Breakpoint {
+            get {
+                return ResourceManager.GetString("Debug_StopReason_Breakpoint", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DebugEvent.
         /// </summary>
         public static string Debug_StopReason_DebugEventBreakpoint {

@@ -1221,4 +1221,7 @@ Are you sure you want to expand it?</value>
   <data name="Plugin_ShortDescription" xml:space="preserve">
     <value>.NET debugger</value>
   </data>
+  <data name="Debug_StopReason_Breakpoint" xml:space="preserve">
+    <value>Breakpoint</value>
+  </data>
 </root>

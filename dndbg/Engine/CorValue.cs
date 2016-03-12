@@ -441,8 +441,8 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
-		/// Gets the value. Only values of simple types are currently returned: integers, floating points,
-		/// decimal, string and null.
+		/// Gets the value. Only values of simple types are currently returned: boolean, integers,
+		/// floating points, decimal, string and null.
 		/// </summary>
 		public CorValueResult Value {
 			get { return CorValueReader.ReadSimpleTypeValue(this); }
@@ -527,6 +527,16 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
+		/// Gets the value at a specified index in the array or null. The array is treated as a
+		/// zero-based, single-dimensional array
+		/// </summary>
+		/// <param name="index">Index of element</param>
+		/// <returns></returns>
+		public CorValue GetElementAtPosition(int index) {
+			return GetElementAtPosition((uint)index);
+		}
+
+		/// <summary>
 		/// Gets the value at the specified indices or null
 		/// </summary>
 		/// <param name="indices">Indices into the array</param>
@@ -539,6 +549,24 @@ namespace dndbg.Engine {
 			int hr;
 			ICorDebugValue value;
 			fixed (uint* p = &indices[0]) {
+				hr = a.GetElement((uint)indices.Length, new IntPtr(p), out value);
+			}
+			return hr < 0 || value == null ? null : new CorValue(value);
+		}
+
+		/// <summary>
+		/// Gets the value at the specified indices or null
+		/// </summary>
+		/// <param name="indices">Indices into the array</param>
+		/// <returns></returns>
+		public unsafe CorValue GetElement(int[] indices) {
+			Debug.Assert(indices != null && (uint)indices.Length == Rank);
+			var a = obj as ICorDebugArrayValue;
+			if (a == null)
+				return null;
+			int hr;
+			ICorDebugValue value;
+			fixed (int* p = &indices[0]) {
 				hr = a.GetElement((uint)indices.Length, new IntPtr(p), out value);
 			}
 			return hr < 0 || value == null ? null : new CorValue(value);
@@ -600,7 +628,7 @@ namespace dndbg.Engine {
 		/// Creates a handle to this <see cref="ICorDebugHeapValue"/>. The returned value is a
 		/// <see cref="ICorDebugHandleValue"/>.
 		/// </summary>
-		/// <param name="type"></param>
+		/// <param name="type">Type</param>
 		/// <returns></returns>
 		public CorValue CreateHandle(CorDebugHandleType type) {
 			var h2 = obj as ICorDebugHeapValue2;
@@ -685,7 +713,7 @@ namespace dndbg.Engine {
 			if (hasValueValue == null)
 				return false;
 			var hasValueRes = hasValueValue.Value;
-			if (!hasValueRes.IsValueValid || !(hasValueRes.Value is bool))
+			if (!hasValueRes.IsValid || !(hasValueRes.Value is bool))
 				return false;
 			if (!(bool)hasValueRes.Value)
 				return true;

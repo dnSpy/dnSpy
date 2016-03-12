@@ -328,7 +328,7 @@ namespace dnSpy.Debugger.Locals {
 			if (hasValueValue == null || valueValue == null || hasValueValue.Type != CorElementType.Boolean || hasValueValue.Size != 1)
 				return false;
 			var res = hasValueValue.Value;
-			if (!res.IsValueValid || !(res.Value is bool))
+			if (!res.IsValid || !(res.Value is bool))
 				return false;
 
 			nullableIsNull = !(bool)res.Value;
@@ -433,7 +433,7 @@ namespace dnSpy.Debugger.Locals {
 
 			// Check if it's a simple type: integer, floating point number, ptr, decimal, string
 			var res = v.Value;
-			if (res.IsValueValid && res.Value != null) {
+			if (res.IsValid && res.Value != null) {
 				ClearAndDisposeChildren();
 				WriteLazyLoading(false);
 				childrenState = null;
@@ -955,7 +955,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		protected static ValueContext CreateValueContext(ValueContext context, CorType type) {
-			return new ValueContext(context.LocalsOwner, context.FrameCouldBeNeutered, context.Thread, type.TypeParameters.ToArray());
+			return new ValueContext(context.LocalsOwner, context.FrameCouldBeNeutered, context.Thread, type.TypeParameters.ToList());
 		}
 	}
 

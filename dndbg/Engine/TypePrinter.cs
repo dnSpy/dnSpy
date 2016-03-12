@@ -809,8 +809,8 @@ namespace dndbg.Engine {
 				Debug.Assert(func != null);
 
 				var args = new List<CorValue>();
-				IList<CorType> typeGenArgs = new List<CorType>();
-				IList<CorType> methGenArgs = new List<CorType>();
+				var typeGenArgs = new List<CorType>();
+				var methGenArgs = new List<CorType>();
 				if (frame != null) {
 					args.AddRange(frame.ILArguments);
 					frame.GetTypeAndMethodGenericParameters(out typeGenArgs, out methGenArgs);
@@ -1160,7 +1160,7 @@ namespace dndbg.Engine {
 		}
 
 		public void Write(CorValue value, CorValueResult result) {
-			if (result.IsValueValid) {
+			if (result.IsValid) {
 				var et = value == null ? null : value.ExactType;
 				if (et != null && et.IsEnum)
 					WriteEnum(et, result.Value);

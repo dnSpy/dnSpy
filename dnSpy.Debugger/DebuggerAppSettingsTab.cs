@@ -62,14 +62,14 @@ namespace dnSpy.Debugger {
 			get { return this; }
 		}
 
-		public EnumListVM BreakProcessTypeVM {
-			get { return breakProcessTypeVM; }
+		public EnumListVM BreakProcessKindVM {
+			get { return breakProcessKindVM; }
 		}
-		readonly EnumListVM breakProcessTypeVM = new EnumListVM(DebugProcessVM.breakProcessTypeList);
+		readonly EnumListVM breakProcessKindVM = new EnumListVM(DebugProcessVM.breakProcessKindList);
 
-		public BreakProcessType BreakProcessType {
-			get { return (BreakProcessType)BreakProcessTypeVM.SelectedItem; }
-			set { BreakProcessTypeVM.SelectedItem = value; }
+		public BreakProcessKind BreakProcessKind {
+			get { return (BreakProcessKind)BreakProcessKindVM.SelectedItem; }
+			set { BreakProcessKindVM.SelectedItem = value; }
 		}
 
 		public ICommand PickCoreCLRDbgShimFilenameCommand {
@@ -79,7 +79,7 @@ namespace dnSpy.Debugger {
 		public DebuggerAppSettingsTab(DebuggerSettingsImpl debuggerSettingsImpl, IPickFilename pickFilename) {
 			this._global_settings = debuggerSettingsImpl;
 			this.debuggerSettings = debuggerSettingsImpl.Clone();
-			this.BreakProcessType = debuggerSettingsImpl.BreakProcessType;
+			this.BreakProcessKind = debuggerSettingsImpl.BreakProcessKind;
 			this.pickFilename = pickFilename;
 		}
 
@@ -96,7 +96,7 @@ namespace dnSpy.Debugger {
 			if (!saveSettings)
 				return;
 			debuggerSettings.CopyTo(_global_settings);
-			_global_settings.BreakProcessType = this.BreakProcessType;
+			_global_settings.BreakProcessKind = this.BreakProcessKind;
 		}
 	}
 }

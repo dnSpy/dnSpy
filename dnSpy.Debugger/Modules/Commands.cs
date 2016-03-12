@@ -237,7 +237,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		internal static bool ShowErrorIfDynamic(Lazy<IInMemoryModuleManager> inMemoryModuleManager, DnModule module, bool canShowDlgBox = true) {
-			if (module.IsDynamic && module.Debugger.ProcessState != DebuggerProcessState.Stopped) {
+			if (module.IsDynamic && module.Debugger.ProcessState != DebuggerProcessState.Paused) {
 				if (inMemoryModuleManager.Value.LoadFile(module, false) == null) {
 					if (canShowDlgBox)
 						Shared.App.MsgBox.Instance.Show(dnSpy_Debugger_Resources.Module_BreakProcessBeforeLoadingDynamicModules);

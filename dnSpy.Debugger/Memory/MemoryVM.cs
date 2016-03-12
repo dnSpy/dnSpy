@@ -91,8 +91,8 @@ namespace dnSpy.Debugger.Memory {
 			this.theDebugger = theDebugger;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
-			CanNotEditMemory = theDebugger.ProcessState != DebuggerProcessState.Stopped;
-			IsStopped = theDebugger.ProcessState == DebuggerProcessState.Stopped;
+			CanNotEditMemory = theDebugger.ProcessState != DebuggerProcessState.Paused;
+			IsStopped = theDebugger.ProcessState == DebuggerProcessState.Paused;
 			InitializeHexDocument();
 		}
 
@@ -132,7 +132,7 @@ namespace dnSpy.Debugger.Memory {
 
 			case DebuggerProcessState.Continuing:
 			case DebuggerProcessState.Running:
-			case DebuggerProcessState.Stopped:
+			case DebuggerProcessState.Paused:
 				break;
 
 			case DebuggerProcessState.Terminated:
@@ -140,9 +140,9 @@ namespace dnSpy.Debugger.Memory {
 				break;
 			}
 
-			IsStopped = state == DebuggerProcessState.Stopped;
+			IsStopped = state == DebuggerProcessState.Paused;
 			if (state != DebuggerProcessState.Continuing && state != DebuggerProcessState.Running)
-				CanNotEditMemory = state != DebuggerProcessState.Stopped;
+				CanNotEditMemory = state != DebuggerProcessState.Paused;
 
 			InitializeMemory();
 		}

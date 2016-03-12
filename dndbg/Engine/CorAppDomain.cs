@@ -161,7 +161,6 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				this.id = -1;
 
-			//TODO: ICorDebugAppDomain::GetObject
 			//TODO: ICorDebugAppDomain3
 			//TODO: ICorDebugAppDomain4::GetObjectForCCW 
 		}

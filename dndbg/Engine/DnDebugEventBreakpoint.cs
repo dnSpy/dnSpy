@@ -17,8 +17,10 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dndbg.Engine {
-	public enum DebugEventBreakpointType {
+	public enum DebugEventBreakpointKind {
 		CreateProcess,
 		ExitProcess,
 		CreateThread,
@@ -63,37 +65,43 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class DnDebugEventBreakpoint : DnBreakpoint {
-		public DebugEventBreakpointType EventType {
-			get { return eventType; }
+		internal Func<DebugEventBreakpointConditionContext, bool> Condition {
+			get { return cond; }
 		}
-		readonly DebugEventBreakpointType eventType;
+		readonly Func<DebugEventBreakpointConditionContext, bool> cond;
 
-		internal DnDebugEventBreakpoint(DebugEventBreakpointType eventType, IBreakpointCondition bpCond)
-			: base(bpCond) {
-			this.eventType = eventType;
+		public DebugEventBreakpointKind EventKind {
+			get { return eventKind; }
 		}
+		readonly DebugEventBreakpointKind eventKind;
 
-		public static DebugEventBreakpointType? GetDebugEventBreakpointType(DebugCallbackEventArgs e) {
-			switch (e.Type) {
-			case DebugCallbackType.CreateProcess:		return DebugEventBreakpointType.CreateProcess;
-			case DebugCallbackType.ExitProcess:			return DebugEventBreakpointType.ExitProcess;
-			case DebugCallbackType.CreateThread:		return DebugEventBreakpointType.CreateThread;
-			case DebugCallbackType.ExitThread:			return DebugEventBreakpointType.ExitThread;
-			case DebugCallbackType.LoadModule:			return DebugEventBreakpointType.LoadModule;
-			case DebugCallbackType.UnloadModule:		return DebugEventBreakpointType.UnloadModule;
-			case DebugCallbackType.LoadClass:			return DebugEventBreakpointType.LoadClass;
-			case DebugCallbackType.UnloadClass:			return DebugEventBreakpointType.UnloadClass;
-			case DebugCallbackType.LogMessage:			return DebugEventBreakpointType.LogMessage;
-			case DebugCallbackType.LogSwitch:			return DebugEventBreakpointType.LogSwitch;
-			case DebugCallbackType.CreateAppDomain:		return DebugEventBreakpointType.CreateAppDomain;
-			case DebugCallbackType.ExitAppDomain:		return DebugEventBreakpointType.ExitAppDomain;
-			case DebugCallbackType.LoadAssembly:		return DebugEventBreakpointType.LoadAssembly;
-			case DebugCallbackType.UnloadAssembly:		return DebugEventBreakpointType.UnloadAssembly;
-			case DebugCallbackType.ControlCTrap:		return DebugEventBreakpointType.ControlCTrap;
-			case DebugCallbackType.NameChange:			return DebugEventBreakpointType.NameChange;
-			case DebugCallbackType.UpdateModuleSymbols:	return DebugEventBreakpointType.UpdateModuleSymbols;
-			case DebugCallbackType.MDANotification:		return DebugEventBreakpointType.MDANotification;
-			case DebugCallbackType.CustomNotification:	return DebugEventBreakpointType.CustomNotification;
+		internal DnDebugEventBreakpoint(DebugEventBreakpointKind eventKind, Func<DebugEventBreakpointConditionContext, bool> cond) {
+			this.eventKind = eventKind;
+			this.cond = cond ?? defaultCond;
+		}
+		static readonly Func<DebugEventBreakpointConditionContext, bool> defaultCond = a => true;
+
+		public static DebugEventBreakpointKind? GetDebugEventBreakpointKind(DebugCallbackEventArgs e) {
+			switch (e.Kind) {
+			case DebugCallbackKind.CreateProcess:		return DebugEventBreakpointKind.CreateProcess;
+			case DebugCallbackKind.ExitProcess:			return DebugEventBreakpointKind.ExitProcess;
+			case DebugCallbackKind.CreateThread:		return DebugEventBreakpointKind.CreateThread;
+			case DebugCallbackKind.ExitThread:			return DebugEventBreakpointKind.ExitThread;
+			case DebugCallbackKind.LoadModule:			return DebugEventBreakpointKind.LoadModule;
+			case DebugCallbackKind.UnloadModule:		return DebugEventBreakpointKind.UnloadModule;
+			case DebugCallbackKind.LoadClass:			return DebugEventBreakpointKind.LoadClass;
+			case DebugCallbackKind.UnloadClass:			return DebugEventBreakpointKind.UnloadClass;
+			case DebugCallbackKind.LogMessage:			return DebugEventBreakpointKind.LogMessage;
+			case DebugCallbackKind.LogSwitch:			return DebugEventBreakpointKind.LogSwitch;
+			case DebugCallbackKind.CreateAppDomain:		return DebugEventBreakpointKind.CreateAppDomain;
+			case DebugCallbackKind.ExitAppDomain:		return DebugEventBreakpointKind.ExitAppDomain;
+			case DebugCallbackKind.LoadAssembly:		return DebugEventBreakpointKind.LoadAssembly;
+			case DebugCallbackKind.UnloadAssembly:		return DebugEventBreakpointKind.UnloadAssembly;
+			case DebugCallbackKind.ControlCTrap:		return DebugEventBreakpointKind.ControlCTrap;
+			case DebugCallbackKind.NameChange:			return DebugEventBreakpointKind.NameChange;
+			case DebugCallbackKind.UpdateModuleSymbols:	return DebugEventBreakpointKind.UpdateModuleSymbols;
+			case DebugCallbackKind.MDANotification:		return DebugEventBreakpointKind.MDANotification;
+			case DebugCallbackKind.CustomNotification:	return DebugEventBreakpointKind.CustomNotification;
 			default: return null;
 			}
 		}

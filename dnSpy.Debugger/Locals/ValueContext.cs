@@ -65,12 +65,12 @@ namespace dnSpy.Debugger.Locals {
 		public IList<CorType> GenericTypeArguments {
 			get { return genericTypeArguments; }
 		}
-		readonly IList<CorType> genericTypeArguments;
+		readonly List<CorType> genericTypeArguments;
 
 		public IList<CorType> GenericMethodArguments {
 			get { return genericMethodArguments; }
 		}
-		readonly IList<CorType> genericMethodArguments;
+		readonly List<CorType> genericMethodArguments;
 
 		public ValueContext(ILocalsOwner localsOwner, CorFrame frame, DnThread thread, DnProcess process) {
 			this.LocalsOwner = localsOwner;
@@ -90,7 +90,7 @@ namespace dnSpy.Debugger.Locals {
 			}
 		}
 
-		public ValueContext(ILocalsOwner localsOwner, CorFrame frame, DnThread thread, IList<CorType> genericTypeArguments) {
+		public ValueContext(ILocalsOwner localsOwner, CorFrame frame, DnThread thread, List<CorType> genericTypeArguments) {
 			this.LocalsOwner = localsOwner;
 			this.Thread = thread;
 			this.Process = thread.Process;
@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.Locals {
 			// Read everything immediately since the frame will be neutered when Continue() is called
 			this.FrameCouldBeNeutered = frame;
 			this.genericTypeArguments = genericTypeArguments;
-			this.genericMethodArguments = new CorType[0];
+			this.genericMethodArguments = new List<CorType>();
 			this.Function = frame == null ? null : frame.Function;
 		}
 	}

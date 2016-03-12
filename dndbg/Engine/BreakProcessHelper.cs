@@ -29,11 +29,11 @@ using dnlib.PE;
 namespace dndbg.Engine {
 	sealed class BreakProcessHelper {
 		readonly DnDebugger debugger;
-		readonly BreakProcessType type;
+		readonly BreakProcessKind type;
 		readonly string filename;
 		DnBreakpoint breakpoint;
 
-		public BreakProcessHelper(DnDebugger debugger, BreakProcessType type, string filename) {
+		public BreakProcessHelper(DnDebugger debugger, BreakProcessKind type, string filename) {
 			if (debugger == null)
 				throw new ArgumentNullException();
 			this.debugger = debugger;
@@ -44,43 +44,43 @@ namespace dndbg.Engine {
 
 		void AddStartupBreakpoint() {
 			switch (type) {
-			case BreakProcessType.None:
+			case BreakProcessKind.None:
 				break;
 
-			case BreakProcessType.CreateProcess:
-				CreateStartupDebugBreakEvent(DebugEventBreakpointType.CreateProcess);
+			case BreakProcessKind.CreateProcess:
+				CreateStartupDebugBreakEvent(DebugEventBreakpointKind.CreateProcess);
 				break;
 
-			case BreakProcessType.CreateAppDomain:
-				CreateStartupDebugBreakEvent(DebugEventBreakpointType.CreateAppDomain);
+			case BreakProcessKind.CreateAppDomain:
+				CreateStartupDebugBreakEvent(DebugEventBreakpointKind.CreateAppDomain);
 				break;
 
-			case BreakProcessType.CreateThread:
-				CreateStartupDebugBreakEvent(DebugEventBreakpointType.CreateThread);
+			case BreakProcessKind.CreateThread:
+				CreateStartupDebugBreakEvent(DebugEventBreakpointKind.CreateThread);
 				break;
 
-			case BreakProcessType.LoadModule:
-				CreateStartupDebugBreakEvent(DebugEventBreakpointType.LoadModule);
+			case BreakProcessKind.LoadModule:
+				CreateStartupDebugBreakEvent(DebugEventBreakpointKind.LoadModule);
 				break;
 
-			case BreakProcessType.LoadClass:
+			case BreakProcessKind.LoadClass:
 				bool oldLoadClass = debugger.Options.ModuleClassLoadCallbacks;
 				debugger.Options.ModuleClassLoadCallbacks = true;
-				CreateStartupDebugBreakEvent(DebugEventBreakpointType.LoadClass, ctx => {
+				CreateStartupDebugBreakEvent(DebugEventBreakpointKind.LoadClass, ctx => {
 					ctx.Debugger.Options.ModuleClassLoadCallbacks = oldLoadClass;
 					return true;
 				});
 				break;
 
-			case BreakProcessType.ExeLoadClass:
+			case BreakProcessKind.ExeLoadClass:
 				CreateStartupAnyDebugBreakEvent(ctx => {
-					if (ctx.EventArgs.Type == DebugCallbackType.LoadModule) {
+					if (ctx.EventArgs.Kind == DebugCallbackKind.LoadModule) {
 						var lm = (LoadModuleDebugCallbackEventArgs)ctx.EventArgs;
 						var mod = lm.CorModule;
 						if (IsOurModule(mod))
 							mod.EnableClassLoadCallbacks(true);
 					}
-					else if (ctx.EventArgs.Type == DebugCallbackType.LoadClass) {
+					else if (ctx.EventArgs.Kind == DebugCallbackKind.LoadClass) {
 						var lc = (LoadClassDebugCallbackEventArgs)ctx.EventArgs;
 						var cls = lc.CorClass;
 						var mod = cls == null ? null : cls.Module;
@@ -91,8 +91,8 @@ namespace dndbg.Engine {
 				});
 				break;
 
-			case BreakProcessType.ExeLoadModule:
-				CreateStartupDebugBreakEvent(DebugEventBreakpointType.LoadModule, ctx => {
+			case BreakProcessKind.ExeLoadModule:
+				CreateStartupDebugBreakEvent(DebugEventBreakpointKind.LoadModule, ctx => {
 					var e = (LoadModuleDebugCallbackEventArgs)ctx.EventArgs;
 					var mod = e.CorModule;
 					if (mod == null)
@@ -101,22 +101,22 @@ namespace dndbg.Engine {
 				});
 				break;
 
-			case BreakProcessType.ModuleCctorOrEntryPoint:
-			case BreakProcessType.EntryPoint:
-				breakpoint = debugger.CreateBreakpoint(DebugEventBreakpointType.LoadModule, OnLoadModule);
+			case BreakProcessKind.ModuleCctorOrEntryPoint:
+			case BreakProcessKind.EntryPoint:
+				breakpoint = debugger.CreateBreakpoint(DebugEventBreakpointKind.LoadModule, OnLoadModule);
 				break;
 
 			default:
-				Debug.Fail(string.Format("Unknown BreakProcessType: {0}", type));
+				Debug.Fail(string.Format("Unknown BreakProcessKind: {0}", type));
 				break;
 			}
 		}
 
-		void CreateStartupDebugBreakEvent(DebugEventBreakpointType evt, Predicate<DebugEventBreakpointConditionContext> cond = null) {
+		void CreateStartupDebugBreakEvent(DebugEventBreakpointKind evt, Func<DebugEventBreakpointConditionContext, bool> cond = null) {
 			Debug.Assert(debugger.ProcessState == DebuggerProcessState.Starting);
 			DnDebugEventBreakpoint bp = null;
 			bp = debugger.CreateBreakpoint(evt, ctx => {
-				if (cond == null || cond((DebugEventBreakpointConditionContext)ctx)) {
+				if (cond == null || cond(ctx)) {
 					debugger.RemoveBreakpoint(bp);
 					return true;
 				}
@@ -124,11 +124,11 @@ namespace dndbg.Engine {
 			});
 		}
 
-		void CreateStartupAnyDebugBreakEvent(Predicate<AnyDebugEventBreakpointConditionContext> cond = null) {
+		void CreateStartupAnyDebugBreakEvent(Func<AnyDebugEventBreakpointConditionContext, bool> cond = null) {
 			Debug.Assert(debugger.ProcessState == DebuggerProcessState.Starting);
 			DnAnyDebugEventBreakpoint bp = null;
 			bp = debugger.CreateAnyDebugEventBreakpoint(ctx => {
-				if (cond == null || cond((AnyDebugEventBreakpointConditionContext)ctx)) {
+				if (cond == null || cond(ctx)) {
 					debugger.RemoveBreakpoint(bp);
 					return true;
 				}
@@ -153,8 +153,7 @@ namespace dndbg.Engine {
 			});
 		}
 
-		bool OnLoadModule(BreakpointConditionContext context) {
-			var ctx = (DebugEventBreakpointConditionContext)context;
+		bool OnLoadModule(DebugEventBreakpointConditionContext ctx) {
 			var lmArgs = (LoadModuleDebugCallbackEventArgs)ctx.EventArgs;
 			var mod = lmArgs.CorModule;
 			if (!IsOurModule(mod))
@@ -163,7 +162,7 @@ namespace dndbg.Engine {
 			breakpoint = null;
 			var serMod = mod.SerializedDnModule;
 
-			if (type == BreakProcessType.ModuleCctorOrEntryPoint) {
+			if (type == BreakProcessKind.ModuleCctorOrEntryPoint) {
 				uint cctorToken = MetaDataUtils.GetGlobalStaticConstructor(mod.GetMetaDataInterface<IMetaDataImport>());
 				if (cctorToken != 0) {
 					SetILBreakpoint(serMod, cctorToken);
@@ -184,7 +183,7 @@ namespace dndbg.Engine {
 					otherModuleFullName = GetOtherModuleFullName(otherModuleName);
 					if (otherModuleFullName != null) {
 						thisAssembly = mod.Assembly;
-						breakpoint = debugger.CreateBreakpoint(DebugEventBreakpointType.LoadModule, OnLoadOtherModule);
+						breakpoint = debugger.CreateBreakpoint(DebugEventBreakpointKind.LoadModule, OnLoadOtherModule);
 						return false;
 					}
 				}
@@ -196,8 +195,7 @@ namespace dndbg.Engine {
 		CorAssembly thisAssembly;
 		string otherModuleFullName;
 
-		bool OnLoadOtherModule(BreakpointConditionContext context) {
-			var ctx = (DebugEventBreakpointConditionContext)context;
+		bool OnLoadOtherModule(DebugEventBreakpointConditionContext ctx) {
 			var lmArgs = (LoadModuleDebugCallbackEventArgs)ctx.EventArgs;
 			var mod = lmArgs.CorModule;
 			if (!IsModule(mod, otherModuleFullName) || mod.Assembly != thisAssembly)

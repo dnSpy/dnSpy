@@ -31,7 +31,7 @@ namespace dndbg.Engine {
 		}
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
-			if (e.Type == DebugCallbackType.CreateProcess) {
+			if (e.Kind == DebugCallbackKind.CreateProcess) {
 				dbg.DebugCallbackEvent -= DnDebugger_DebugCallbackEvent;
 				var cpArgs = (CreateProcessDebugCallbackEventArgs)e;
 				bool b = Initialize(cpArgs.CorProcess, dbg.DebuggeeVersion);

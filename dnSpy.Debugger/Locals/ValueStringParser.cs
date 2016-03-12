@@ -307,7 +307,7 @@ namespace dnSpy.Debugger.Locals {
 				return GetEnumValue(type, out bytes);
 
 			string error;
-			var etype = type.TryGetPrimitiveType;
+			var etype = type.TryGetPrimitiveType();
 
 			switch (etype) {
 			case CorElementType.Boolean:

@@ -189,7 +189,7 @@ namespace dndbg.Engine {
 		}
 
 		public override string ToString() {
-			return string.Format("{0} DYN={1} MEM={2} A={3:X8} S={4:X8} {5}", IncrementedId, IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, Address, Size, Name);
+			return string.Format("{0} DYN={1} MEM={2} A={3:X8} S={4:X8} {5}", ModuleOrder, IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, Address, Size, Name);
 		}
 	}
 }

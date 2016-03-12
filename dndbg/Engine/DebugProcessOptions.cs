@@ -122,14 +122,14 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Decides when to break the created process
 		/// </summary>
-		public BreakProcessType BreakProcessType { get; set; }
+		public BreakProcessKind BreakProcessKind { get; set; }
 
 		public static readonly ProcessCreationFlags DefaultProcessCreationFlags = Engine.ProcessCreationFlags.CREATE_NEW_CONSOLE;
 
 		public DebugProcessOptions(CLRTypeDebugInfo info) {
 			this.CLRTypeDebugInfo = info;
 			this.DebugOptions = new DebugOptions();
-			this.BreakProcessType = BreakProcessType.None;
+			this.BreakProcessKind = BreakProcessKind.None;
 		}
 
 		public DebugProcessOptions CopyTo(DebugProcessOptions other) {
@@ -141,7 +141,7 @@ namespace dndbg.Engine {
 			other.ProcessCreationFlags = this.ProcessCreationFlags;
 			other.DebugMessageDispatcher = this.DebugMessageDispatcher;
 			other.DebugOptions = this.DebugOptions == null ? null : this.DebugOptions.Clone();
-			other.BreakProcessType = this.BreakProcessType;
+			other.BreakProcessKind = this.BreakProcessKind;
 			return other;
 		}
 

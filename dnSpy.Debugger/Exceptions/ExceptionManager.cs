@@ -87,7 +87,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 			case DebuggerProcessState.Continuing:
 			case DebuggerProcessState.Running:
-			case DebuggerProcessState.Stopped:
+			case DebuggerProcessState.Paused:
 				break;
 
 			case DebuggerProcessState.Terminated:
@@ -97,7 +97,7 @@ namespace dnSpy.Debugger.Exceptions {
 		}
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
-			if (e.Type == DebugCallbackType.Exception2)
+			if (e.Kind == DebugCallbackKind.Exception2)
 				OnException((Exception2DebugCallbackEventArgs)e);
 		}
 

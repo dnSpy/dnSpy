@@ -29,6 +29,7 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Scripting;
+using dnSpy.Contracts.Scripting.Roslyn;
 using dnSpy.Contracts.TextEditor;
 using dnSpy.Scripting.Roslyn.Properties;
 using dnSpy.Shared.MVVM;
@@ -75,8 +76,15 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public void Reset(bool loadConfig = true) {
 			if (!CanReset)
 				return;
-			if (execState != null)
+			if (execState != null) {
 				execState.CancellationTokenSource.Cancel();
+				try {
+					execState.Globals.RaiseScriptReset();
+				}
+				catch {
+					// Ignore buggy script exceptions
+				}
+			}
 			execState = null;
 			replEditor.Reset();
 			replEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.ResettingExecutionEngine);
@@ -160,22 +168,6 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		ExecState execState;
 		readonly object lockObj = new object();
 
-		IEnumerable<string> GetMetadataResolverSearchPaths(UserScriptOptions userOptions) {
-			string dir;
-			if (!string.IsNullOrEmpty(dir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)))
-				yield return dir;
-			foreach (var p in userOptions.LibPaths)
-				yield return p;
-		}
-
-		IEnumerable<string> GetScriptSourceResolverSearchPaths(UserScriptOptions userOptions) {
-			string dir;
-			if (!string.IsNullOrEmpty(dir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)))
-				yield return dir;
-			foreach (var p in userOptions.LoadPaths)
-				yield return p;
-		}
-
 		void InitializeExecutionEngine(bool loadConfig, bool showHelp) {
 			Debug.Assert(execState == null);
 			if (execState != null)
@@ -188,20 +180,26 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				execStateCache.CancellationTokenSource.Token.ThrowIfCancellationRequested();
 
 				var userOpts = new UserScriptOptions();
-				if (loadConfig)
+				if (loadConfig) {
+					string userProfileDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+					if (!string.IsNullOrEmpty(userProfileDir)) {
+						userOpts.LibPaths.Add(userProfileDir);
+						userOpts.LoadPaths.Add(userProfileDir);
+					}
 					InitializeUserScriptOptions(userOpts);
+				}
 				var opts = ScriptOptions.Default;
 				opts = opts.WithMetadataResolver(ScriptMetadataResolver.Default
 								.WithBaseDirectory(AppDirectories.BinDirectory)
-								.WithSearchPaths(GetMetadataResolverSearchPaths(userOpts).Distinct(StringComparer.OrdinalIgnoreCase)));
+								.WithSearchPaths(userOpts.LibPaths.Distinct(StringComparer.OrdinalIgnoreCase)));
 				opts = opts.WithSourceResolver(ScriptSourceResolver.Default
 								.WithBaseDirectory(AppDirectories.BinDirectory)
-								.WithSearchPaths(GetScriptSourceResolverSearchPaths(userOpts).Distinct(StringComparer.OrdinalIgnoreCase)));
+								.WithSearchPaths(userOpts.LoadPaths.Distinct(StringComparer.OrdinalIgnoreCase)));
 				opts = opts.WithImports(userOpts.Imports);
 				opts = opts.WithReferences(userOpts.References);
 				execStateCache.ScriptOptions = opts;
 
-				var script = Create<object>(string.Empty, execStateCache.ScriptOptions, execStateCache.Globals.GetType(), null);
+				var script = Create<object>(string.Empty, execStateCache.ScriptOptions, typeof(IScriptGlobals), null);
 				execStateCache.CancellationTokenSource.Token.ThrowIfCancellationRequested();
 				execStateCache.ScriptState = script.RunAsync(execStateCache.Globals, execStateCache.CancellationTokenSource.Token).Result;
 				if (showHelp)
@@ -270,8 +268,6 @@ namespace dnSpy.Scripting.Roslyn.Common {
 							oldState.ExecTask = execTask;
 					}
 					execTask.ContinueWith(t => {
-						AppCulture.InitializeCulture();
-
 						var ex = t.Exception;
 						bool isActive;
 						lock (lockObj) {
@@ -299,17 +295,17 @@ namespace dnSpy.Scripting.Roslyn.Common {
 						lock (lockObj)
 							execState.Executing = false;
 					}
-					var ex = t.Exception;
-					if (ex != null && ex.InnerException is CompilationErrorException) {
-						var cee = (CompilationErrorException)ex.InnerException;
+					var innerEx = t.Exception?.InnerException;
+					if (innerEx is CompilationErrorException) {
+						var cee = (CompilationErrorException)innerEx;
 						PrintDiagnostics(cee.Diagnostics);
 						CommandExecuted();
 					}
-					else if (ex != null && ex.InnerException is OperationCanceledException)
+					else if (innerEx is OperationCanceledException)
 						CommandExecuted();
 					else
 						ReportException(t);
-				}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
+				}, CancellationToken.None, TaskContinuationOptions.None, taskSched);
 
 				return true;
 			}
@@ -384,8 +380,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 		void CommandExecuted() {
 			this.replEditor.OnCommandExecuted();
-			if (OnCommandExecuted != null)
-				OnCommandExecuted(this, EventArgs.Empty);
+			OnCommandExecuted?.Invoke(this, EventArgs.Empty);
 		}
 		public event EventHandler OnCommandExecuted;
 
@@ -402,8 +397,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		/// <param name="globals">Globals</param>
 		/// <returns></returns>
 		bool IsCurrentScript(ScriptGlobals globals) {
-			var es = execState;
-			return es != null && es.Globals == globals;
+			return execState?.Globals == globals;
 		}
 
 		void IScriptGlobalsHelper.Print(ScriptGlobals globals, string text) {

@@ -37,7 +37,7 @@ namespace dndbg.Engine {
 		/// <summary>
 		/// Process is temporarily stopped
 		/// </summary>
-		Stopped,
+		Paused,
 
 		/// <summary>
 		/// All processes have terminated

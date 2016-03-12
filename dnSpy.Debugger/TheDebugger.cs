@@ -33,7 +33,8 @@ namespace dnSpy.Debugger {
 		/// </summary>
 		DnDebugger Debugger { get; }
 		event EventHandler<DebuggerEventArgs> OnProcessStateChanged;
-		event EventHandler<DebuggerEventArgs> OnProcessStateChanged2;
+		event EventHandler<DebuggerEventArgs> OnProcessStateChanged_First;
+		event EventHandler<DebuggerEventArgs> OnProcessStateChanged_Last;
 
 		/// <summary>
 		/// Called when the process has been running for a short amount of time. Usually won't
@@ -73,7 +74,9 @@ namespace dnSpy.Debugger {
 		}
 		DnDebugger debugger;
 
+		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged_First;
 		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged;
+		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged_Last;
 		public event EventHandler ProcessRunning;
 
 		public DebuggerProcessState ProcessState {
@@ -91,21 +94,11 @@ namespace dnSpy.Debugger {
 			this.loadBeforeDebugInsts = loadBeforeDebugInsts.ToArray();
 			debuggedProcessRunningNotifier = new DebuggedProcessRunningNotifier(this);
 			debuggedProcessRunningNotifier.ProcessRunning += DebuggedProcessRunningNotifier_ProcessRunning;
-			OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 		}
 
 		void DebuggedProcessRunningNotifier_ProcessRunning(object sender, DebuggedProcessRunningEventArgs e) {
 			if (ProcessRunning != null)
 				ProcessRunning(this, e);
-		}
-
-		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged2;
-		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
-			// InMemoryModuleManager should be notified here. It needs to execute first so it can
-			// call LoadEverything() and load all dynamic modules so ResolveToken() of new methods
-			// and types work.
-			if (OnProcessStateChanged2 != null)
-				OnProcessStateChanged2(sender, e);
 		}
 
 		public void Initialize(DnDebugger newDebugger) {
@@ -128,8 +121,18 @@ namespace dnSpy.Debugger {
 		}
 
 		void CallOnProcessStateChanged(object sender, DebuggerEventArgs e) {
+			// InMemoryModuleManager should be notified here. It needs to execute first so it can
+			// call LoadEverything() and load all dynamic modules so ResolveToken() of new methods
+			// and types work.
+			if (OnProcessStateChanged_First != null)
+				OnProcessStateChanged_First(sender, e);
+
 			if (OnProcessStateChanged != null)
 				OnProcessStateChanged(sender, e ?? DebuggerEventArgs.Empty);
+
+			// The script code uses this event to make sure it always executes last
+			if (OnProcessStateChanged_Last != null)
+				OnProcessStateChanged_Last(sender, e);
 		}
 
 		void DnDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
@@ -142,7 +145,7 @@ namespace dnSpy.Debugger {
 				evalDisabled = false;
 				break;
 
-			case DebuggerProcessState.Stopped:
+			case DebuggerProcessState.Paused:
 				if (debugger.IsEvaluating || debugger.EvalCompleted)
 					break;
 				evalDisabled = false;
@@ -188,8 +191,8 @@ namespace dnSpy.Debugger {
 		}
 
 		public DnEval CreateEval(CorThread thread) {
-			Debug.WriteLineIf(ProcessState != DebuggerProcessState.Stopped, dnSpy_Debugger_Resources.Error_CantEvalUnlessDebuggerStopped);
-			if (ProcessState != DebuggerProcessState.Stopped)
+			Debug.WriteLineIf(ProcessState != DebuggerProcessState.Paused, dnSpy_Debugger_Resources.Error_CantEvalUnlessDebuggerStopped);
+			if (ProcessState != DebuggerProcessState.Paused)
 				throw new EvalException(-1, dnSpy_Debugger_Resources.Error_CantEvalUnlessDebuggerStopped);
 			if (unhandledException)
 				throw new EvalException(-1, dnSpy_Debugger_Resources.Error_CantEvalWhenUnhandledExceptionHasOccurred);
@@ -215,7 +218,7 @@ namespace dnSpy.Debugger {
 			if (!dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished) {
 				dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => {
 					callingEvalComplete = false;
-					if (ProcessState == DebuggerProcessState.Stopped)
+					if (ProcessState == DebuggerProcessState.Paused)
 						Debugger.SignalEvalComplete();
 				}));
 			}

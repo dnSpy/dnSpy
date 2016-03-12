@@ -44,26 +44,26 @@ namespace dnSpy.Debugger.Dialogs {
 			get { return new RelayCommand(a => PickNewCurrentDirectory()); }
 		}
 
-		public static readonly EnumVM[] breakProcessTypeList = new EnumVM[(int)BreakProcessType.Last] {
-			new EnumVM(BreakProcessType.None, dnSpy_Debugger_Resources.DbgBreak_Dont),
-			new EnumVM(BreakProcessType.CreateProcess, dnSpy_Debugger_Resources.DbgBreak_CreateProcessEvent),
-			new EnumVM(BreakProcessType.CreateAppDomain, dnSpy_Debugger_Resources.DbgBreak_FirstCreateAppDomainEvent),
-			new EnumVM(BreakProcessType.LoadModule, dnSpy_Debugger_Resources.DbgBreak_FirstLoadModuleEvent),
-			new EnumVM(BreakProcessType.LoadClass, dnSpy_Debugger_Resources.DbgBreak_FirstLoadClassEvent),
-			new EnumVM(BreakProcessType.CreateThread, dnSpy_Debugger_Resources.DbgBreak_FirstCreateThreadEvent),
-			new EnumVM(BreakProcessType.ExeLoadModule, dnSpy_Debugger_Resources.DbgBreak_ExeLoadModuleEvent),
-			new EnumVM(BreakProcessType.ExeLoadClass, dnSpy_Debugger_Resources.DbgBreak_ExeFirstLoadClassEvent),
-			new EnumVM(BreakProcessType.ModuleCctorOrEntryPoint, dnSpy_Debugger_Resources.DbgBreak_ModuleClassConstructorOrEntryPoint),
-			new EnumVM(BreakProcessType.EntryPoint, dnSpy_Debugger_Resources.DbgBreak_EntryPoint),
+		public static readonly EnumVM[] breakProcessKindList = new EnumVM[(int)BreakProcessKind.Last] {
+			new EnumVM(BreakProcessKind.None, dnSpy_Debugger_Resources.DbgBreak_Dont),
+			new EnumVM(BreakProcessKind.CreateProcess, dnSpy_Debugger_Resources.DbgBreak_CreateProcessEvent),
+			new EnumVM(BreakProcessKind.CreateAppDomain, dnSpy_Debugger_Resources.DbgBreak_FirstCreateAppDomainEvent),
+			new EnumVM(BreakProcessKind.LoadModule, dnSpy_Debugger_Resources.DbgBreak_FirstLoadModuleEvent),
+			new EnumVM(BreakProcessKind.LoadClass, dnSpy_Debugger_Resources.DbgBreak_FirstLoadClassEvent),
+			new EnumVM(BreakProcessKind.CreateThread, dnSpy_Debugger_Resources.DbgBreak_FirstCreateThreadEvent),
+			new EnumVM(BreakProcessKind.ExeLoadModule, dnSpy_Debugger_Resources.DbgBreak_ExeLoadModuleEvent),
+			new EnumVM(BreakProcessKind.ExeLoadClass, dnSpy_Debugger_Resources.DbgBreak_ExeFirstLoadClassEvent),
+			new EnumVM(BreakProcessKind.ModuleCctorOrEntryPoint, dnSpy_Debugger_Resources.DbgBreak_ModuleClassConstructorOrEntryPoint),
+			new EnumVM(BreakProcessKind.EntryPoint, dnSpy_Debugger_Resources.DbgBreak_EntryPoint),
 		};
-		public EnumListVM BreakProcessTypeVM {
-			get { return breakProcessTypeVM; }
+		public EnumListVM BreakProcessKindVM {
+			get { return breakProcessKindVM; }
 		}
-		readonly EnumListVM breakProcessTypeVM = new EnumListVM(breakProcessTypeList);
+		readonly EnumListVM breakProcessKindVM = new EnumListVM(breakProcessKindList);
 
-		public BreakProcessType BreakProcessType {
-			get { return (BreakProcessType)BreakProcessTypeVM.SelectedItem; }
-			set { BreakProcessTypeVM.SelectedItem = value; }
+		public BreakProcessKind BreakProcessKind {
+			get { return (BreakProcessKind)BreakProcessKindVM.SelectedItem; }
+			set { BreakProcessKindVM.SelectedItem = value; }
 		}
 
 		public string Filename {
@@ -145,7 +145,7 @@ namespace dnSpy.Debugger.Dialogs {
 			other.Filename = this.Filename;
 			other.CommandLine = this.CommandLine;
 			other.CurrentDirectory = this.CurrentDirectory;
-			other.BreakProcessType = this.BreakProcessType;
+			other.BreakProcessKind = this.BreakProcessKind;
 			return other;
 		}
 

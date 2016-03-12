@@ -114,6 +114,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				string moduleName = bpx.Attribute<string>("ModuleName");
 				bool? isDynamic = bpx.Attribute<bool?>("IsDynamic");
 				bool? isInMemory = bpx.Attribute<bool?>("IsInMemory");
+				bool moduleNameOnly = bpx.Attribute<bool?>("ModuleNameOnly") ?? false;
 				uint? ilOffset = bpx.Attribute<uint?>("ILOffset");
 				bool? isEnabled = bpx.Attribute<bool?>("IsEnabled");
 
@@ -121,7 +122,7 @@ namespace dnSpy.Debugger.Breakpoints {
 					continue;
 				if (isDynamic == null || isInMemory == null)
 					continue;
-				if (string.IsNullOrEmpty(asmFullName))
+				if (string.IsNullOrEmpty(asmFullName) && !moduleNameOnly)
 					continue;
 				if (string.IsNullOrEmpty(moduleName))
 					continue;
@@ -130,7 +131,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				if (isEnabled == null)
 					continue;
 
-				var snModule = SerializedDnModule.Create(asmFullName, moduleName, isDynamic.Value, isInMemory.Value);
+				var snModule = SerializedDnModule.Create(asmFullName, moduleName, isDynamic.Value, isInMemory.Value, moduleNameOnly);
 				var key = new SerializedDnToken(snModule, token.Value);
 
 				if (!isInMemory.Value && !isDynamic.Value) {
@@ -158,7 +159,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				if (ilbp != null) {
 					if (string.IsNullOrEmpty(ilbp.SerializedDnToken.Module.ModuleName))
 						continue;
-					if (string.IsNullOrEmpty(ilbp.SerializedDnToken.Module.AssemblyFullName))
+					if (string.IsNullOrEmpty(ilbp.SerializedDnToken.Module.AssemblyFullName) && !ilbp.SerializedDnToken.Module.ModuleNameOnly)
 						continue;
 
 					var bpx = section.CreateSection("Breakpoint");
@@ -167,6 +168,8 @@ namespace dnSpy.Debugger.Breakpoints {
 					bpx.Attribute("ModuleName", ilbp.SerializedDnToken.Module.ModuleName);
 					bpx.Attribute("IsDynamic", ilbp.SerializedDnToken.Module.IsDynamic);
 					bpx.Attribute("IsInMemory", ilbp.SerializedDnToken.Module.IsInMemory);
+					if (ilbp.SerializedDnToken.Module.ModuleNameOnly)
+						bpx.Attribute("ModuleNameOnly", ilbp.SerializedDnToken.Module.ModuleNameOnly);
 					bpx.Attribute("ILOffset", ilbp.ILOffset);
 					bpx.Attribute("IsEnabled", ilbp.IsEnabled);
 					if (!ilbp.SerializedDnToken.Module.IsInMemory && !ilbp.SerializedDnToken.Module.IsDynamic) {

@@ -99,7 +99,7 @@ namespace dnSpy.Debugger.Threads {
 		protected sealed override ThreadsCtxMenuContext CreateContext(IMenuItemContext context) {
 			if (!(context.CreatorObject.Object is ListView))
 				return null;
-			if (theDebugger.Value.ProcessState != DebuggerProcessState.Stopped)
+			if (theDebugger.Value.ProcessState != DebuggerProcessState.Paused)
 				return null;
 			if (context.CreatorObject.Object != threadsContent.Value.ListView)
 				return null;

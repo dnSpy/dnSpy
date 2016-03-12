@@ -17,8 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
-using dndbg.COM.CorDebug;
+using System;
 
 namespace dndbg.Engine {
 	public sealed class ILCodeBreakpointConditionContext : BreakpointConditionContext {
@@ -37,97 +36,20 @@ namespace dndbg.Engine {
 		}
 	}
 
-	sealed class ModuleILCodeBreakpoint {
-		public DnModule Module {
-			get { return module; }
+	public sealed class DnILCodeBreakpoint : DnCodeBreakpoint {
+		internal Func<ILCodeBreakpointConditionContext, bool> Condition {
+			get { return cond; }
 		}
-		readonly DnModule module;
+		readonly Func<ILCodeBreakpointConditionContext, bool> cond;
 
-		public CorFunctionBreakpoint FunctionBreakpoint {
-			get { return funcBp; }
+		internal DnILCodeBreakpoint(SerializedDnModule module, uint token, uint offset, Func<ILCodeBreakpointConditionContext, bool> cond)
+			: base(module, token, offset) {
+			this.cond = cond ?? defaultCond;
 		}
-		readonly CorFunctionBreakpoint funcBp;
+		static readonly Func<ILCodeBreakpointConditionContext, bool> defaultCond = a => true;
 
-		public ModuleILCodeBreakpoint(DnModule module, CorFunctionBreakpoint funcBp) {
-			this.module = module;
-			this.funcBp = funcBp;
-		}
-	}
-
-	public sealed class DnILCodeBreakpoint : DnBreakpoint {
-		public SerializedDnModule Module {
-			get { return module; }
-		}
-		readonly SerializedDnModule module;
-
-		public uint Token {
-			get { return token; }
-		}
-		readonly uint token;
-
-		public uint ILOffset {
-			get { return ilOffset; }
-		}
-		readonly uint ilOffset;
-
-		readonly List<ModuleILCodeBreakpoint> rawBps = new List<ModuleILCodeBreakpoint>();
-
-		internal DnILCodeBreakpoint(SerializedDnModule module, uint token, uint ilOffset, IBreakpointCondition bpCond)
-			: base(bpCond) {
-			this.module = module;
-			this.token = token;
-			this.ilOffset = ilOffset;
-		}
-
-		protected override void OnIsEnabledChanged() {
-			foreach (var bp in rawBps)
-				bp.FunctionBreakpoint.IsActive = IsEnabled;
-		}
-
-		internal bool AddBreakpoint(DnModule module) {
-			foreach (var bp in rawBps) {
-				if (bp.Module == module)
-					return true;
-			}
-
-			var func = module.CorModule.GetFunctionFromToken(Token);
-			if (func == null)
-				return false;
-
-			var ilCode = func.ILCode;
-			if (ilCode == null)
-				return false;
-
-			var funcBp = ilCode.CreateBreakpoint(ILOffset);
-			if (funcBp == null)
-				return false;
-
-			var modIlBp = new ModuleILCodeBreakpoint(module, funcBp);
-			rawBps.Add(modIlBp);
-			funcBp.IsActive = IsEnabled;
-
-			return true;
-		}
-
-		internal override void OnRemoved() {
-			foreach (var bp in rawBps)
-				bp.FunctionBreakpoint.IsActive = false;
-			rawBps.Clear();
-		}
-
-		public bool IsBreakpoint(ICorDebugBreakpoint comBp) {
-			foreach (var bp in rawBps) {
-				if (bp.FunctionBreakpoint.RawObject == comBp)
-					return true;
-			}
-			return false;
-		}
-
-		internal void RemoveModule(DnModule module) {
-			foreach (var bp in rawBps.ToArray()) {
-				if (bp.Module == module)
-					rawBps.Remove(bp);
-			}
+		internal override CorCode GetCode(CorFunction func) {
+			return func.ILCode;
 		}
 	}
 }

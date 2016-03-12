@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 			case DebuggerProcessState.Continuing:
 			case DebuggerProcessState.Running:
-			case DebuggerProcessState.Stopped:
+			case DebuggerProcessState.Paused:
 				break;
 
 			case DebuggerProcessState.Terminated:
@@ -115,7 +115,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		}
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
-			if (nameErrorCounter != 0 && e.Type == DebugCallbackType.LoadClass) {
+			if (nameErrorCounter != 0 && e.Kind == DebugCallbackKind.LoadClass) {
 				var lcArgs = (LoadClassDebugCallbackEventArgs)e;
 				var module = dbg.TryGetModule(lcArgs.CorAppDomain, lcArgs.CorClass);
 				Debug.Assert(module != null);

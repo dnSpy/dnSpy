@@ -37,9 +37,8 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 			: base(themeManager, replEditorCreator, CreateReplEditorOptions(), serviceLocator) {
 		}
 
-		protected override ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator) {
-			return new CSharpControlVM(replEditor, serviceLocator);
-		}
+		protected override ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator) =>
+			new CSharpControlVM(replEditor, serviceLocator);
 
 		static ReplEditorOptions CreateReplEditorOptions() {
 			return new ReplEditorOptions {

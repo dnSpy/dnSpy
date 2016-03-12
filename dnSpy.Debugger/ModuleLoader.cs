@@ -176,7 +176,7 @@ namespace dnSpy.Debugger {
 			string moduleFilename = serMod.ModuleName;
 			if (!File.Exists(moduleFilename))
 				return null;
-			string asmFilename = GetAssemblyFilename(moduleFilename, serMod.AssemblyFullName);
+			string asmFilename = GetAssemblyFilename(moduleFilename, serMod.AssemblyFullName, serMod.ModuleNameOnly);
 
 			if (!string.IsNullOrEmpty(asmFilename)) {
 				file = fileManager.TryGetOrCreate(DnSpyFileInfo.CreateFile(asmFilename), isAutoLoaded);
@@ -197,9 +197,11 @@ namespace dnSpy.Debugger {
 			return fileManager.TryGetOrCreate(DnSpyFileInfo.CreateFile(moduleFilename), isAutoLoaded);
 		}
 
-		static string GetAssemblyFilename(string moduleFilename, string assemblyFullName) {
-			if (string.IsNullOrEmpty(moduleFilename) || string.IsNullOrEmpty(assemblyFullName))
+		static string GetAssemblyFilename(string moduleFilename, string assemblyFullName, bool moduleNameOnly) {
+			if (string.IsNullOrEmpty(moduleFilename) || (string.IsNullOrEmpty(assemblyFullName) && !moduleNameOnly))
 				return null;
+			if (moduleNameOnly)
+				return moduleFilename;
 			try {
 				var asm = new AssemblyNameInfo(assemblyFullName);
 				if (Path.GetFileName(asm.Name) != asm.Name || asm.Name.Length == 0)

@@ -20,18 +20,18 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
+using System.Windows;
 using System.Windows.Threading;
+using dnSpy.Contracts.App;
+using dnSpy.Contracts.Scripting.Roslyn;
 
 namespace dnSpy.Scripting.Roslyn.Common {
-	/// <summary>
-	/// The script's global class
-	/// </summary>
-	public sealed class ScriptGlobals {	// Must be public so the scripts can access it
+	sealed class ScriptGlobals : IScriptGlobals {
 		readonly IScriptGlobalsHelper owner;
 		readonly Dispatcher dispatcher;
 		readonly CancellationToken token;
 
-		internal ScriptGlobals(IScriptGlobalsHelper owner, CancellationToken token) {
+		public ScriptGlobals(IScriptGlobalsHelper owner, CancellationToken token) {
 			if (owner == null)
 				throw new ArgumentNullException();
 			this.owner = owner;
@@ -39,120 +39,112 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 		}
 
-		/// <summary>
-		/// Cancellation token that gets signalled when the script gets reset
-		/// </summary>
+		public event EventHandler ScriptReset;
+
+		public void RaiseScriptReset() {
+			ScriptReset?.Invoke(this, EventArgs.Empty);
+		}
+
+		public IScriptGlobals Instance {
+			get { return this; }
+		}
+
 		public CancellationToken Token {
 			get { return token; }
 		}
 
-		/// <summary>
-		/// Prints text to the screen
-		/// </summary>
-		/// <param name="text">Text</param>
 		public void Print(string text) {
-			// Method is thread safe
 			owner.Print(this, text);
 		}
 
-		/// <summary>
-		/// Prints text to the screen
-		/// </summary>
-		/// <param name="fmt">Format</param>
-		/// <param name="args">Args</param>
 		public void Print(string fmt, params object[] args) {
 			Print(string.Format(fmt, args));
 		}
 
-		/// <summary>
-		/// Prints text followed by a new line to the screen
-		/// </summary>
-		/// <param name="text">Text or null</param>
 		public void PrintLine(string text = null) {
-			// Method is thread safe
 			owner.PrintLine(this, text);
 		}
 
-		/// <summary>
-		/// Prints text followed by a new line to the screen
-		/// </summary>
-		/// <param name="fmt">Format</param>
-		/// <param name="args">Args</param>
 		public void PrintLine(string fmt, params object[] args) {
 			PrintLine(string.Format(fmt, args));
 		}
 
-		/// <summary>
-		/// Formats and prints a value to the screen
-		/// </summary>
-		/// <param name="value">Value, can be null</param>
 		public void Print(object value) {
-			// Method is thread safe
 			owner.Print(this, value);
 		}
 
-		/// <summary>
-		/// Formats and prints a value followed by a new line to the screen
-		/// </summary>
-		/// <param name="value">Value or null</param>
 		public void PrintLine(object value) {
-			// Method is thread safe
 			owner.PrintLine(this, value);
 		}
 
-		/// <summary>
-		/// UI thread dispatcher
-		/// </summary>
 		public Dispatcher UIDispatcher {
 			get { return dispatcher; }
 		}
 
-		/// <summary>
-		/// Executes <paramref name="action"/> in the UI thread
-		/// </summary>
-		/// <param name="action">Code</param>
 		public void UI(Action action) {
-			UIDispatcher.Invoke(action);
+			UIDispatcher.Invoke(action, DispatcherPriority.Send);
 		}
 
-		/// <summary>
-		/// Executes <paramref name="func"/> in the UI thread
-		/// </summary>
-		/// <typeparam name="T">Return type</typeparam>
-		/// <param name="func">Code</param>
-		/// <returns></returns>
 		public T UI<T>(Func<T> func) {
-			return UIDispatcher.Invoke(func);
+			return UIDispatcher.Invoke(func, DispatcherPriority.Send);
 		}
 
-		/// <summary>
-		/// Calls <see cref="Debugger.Break"/>. Use dnSpy to debug itself (dnSpy --multiple) and
-		/// then call this method from your script in the debugged dnSpy process.
-		/// </summary>
+		void _UI(Action a) {
+			if (UIDispatcher.CheckAccess()) {
+				a();
+				return;
+			}
+			UIDispatcher.Invoke(a, DispatcherPriority.Send);
+		}
+
+		T _UI<T>(Func<T> a) {
+			if (UIDispatcher.CheckAccess())
+				return a();
+			return UIDispatcher.Invoke(a, DispatcherPriority.Send);
+		}
+
 		public void Break() {
 			Debugger.Break();
 		}
 
-		/// <summary>
-		/// Resolves a service, and throws if it wasn't found
-		/// </summary>
-		/// <typeparam name="T">Type of service</typeparam>
-		/// <returns></returns>
 		public T Resolve<T>() {
-			if (UIDispatcher.CheckAccess())
-				return owner.ServiceLocator.Resolve<T>();
-			return UI(() => owner.ServiceLocator.Resolve<T>());
+			return _UI(() => owner.ServiceLocator.Resolve<T>());
 		}
 
-		/// <summary>
-		/// Resolves a service or returns null if not found
-		/// </summary>
-		/// <typeparam name="T">Type of service</typeparam>
-		/// <returns></returns>
 		public T TryResolve<T>() {
-			if (UIDispatcher.CheckAccess())
-				return owner.ServiceLocator.TryResolve<T>();
-			return UI(() => owner.ServiceLocator.TryResolve<T>());
+			return _UI(() => owner.ServiceLocator.TryResolve<T>());
+		}
+
+		public MsgBoxButton Show(string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null) {
+			return _UI(() => Shared.App.MsgBox.Instance.Show(message, buttons, ownerWindow));
+		}
+
+		public MsgBoxButton ShowOKCancel(string message, Window ownerWindow = null) {
+			return _UI(() => Shared.App.MsgBox.Instance.Show(message, MsgBoxButton.OK | MsgBoxButton.Cancel, ownerWindow));
+		}
+
+		public MsgBoxButton ShowYesNo(string message, Window ownerWindow = null) {
+			return _UI(() => Shared.App.MsgBox.Instance.Show(message, MsgBoxButton.Yes | MsgBoxButton.No, ownerWindow));
+		}
+
+		public MsgBoxButton ShowYN(string message, Window ownerWindow = null) {
+			return ShowYesNo(message, ownerWindow);
+		}
+
+		public MsgBoxButton ShowYesNoCancel(string message, Window ownerWindow = null) {
+			return _UI(() => Shared.App.MsgBox.Instance.Show(message, MsgBoxButton.Yes | MsgBoxButton.No | MsgBoxButton.Cancel, ownerWindow));
+		}
+
+		public MsgBoxButton ShowYNC(string message, Window ownerWindow = null) {
+			return ShowYesNoCancel(message, ownerWindow);
+		}
+
+		public T Ask<T>(string labelMessage, string defaultText = null, string title = null, Func<string, T> converter = null, Func<string, string> verifier = null, Window ownerWindow = null) {
+			return _UI(() => Shared.App.MsgBox.Instance.Ask(labelMessage, defaultText, title, converter, verifier, ownerWindow));
+		}
+
+		public void Show(Exception exception, string msg = null, Window ownerWindow = null) {
+			_UI(() => Shared.App.MsgBox.Instance.Show(exception, msg, ownerWindow));
 		}
 	}
 }

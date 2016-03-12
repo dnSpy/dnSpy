@@ -649,7 +649,7 @@
     <value>_Options...</value>
   </data>
   <data name="SearchWindow_AllAbove" xml:space="preserve">
-    <value>All Above</value>
+    <value>All of the Above</value>
   </data>
   <data name="SearchWindow_AllAbove_Key" xml:space="preserve">
     <value>Ctrl+B</value>

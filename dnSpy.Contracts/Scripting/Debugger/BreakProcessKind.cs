@@ -17,8 +17,13 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dndbg.Engine {
-	public enum BreakProcessType {
+namespace dnSpy.Contracts.Scripting.Debugger {
+	/// <summary>
+	/// When to break the debugged process
+	/// </summary>
+	public enum BreakProcessKind {
+		// IMPORTANT: This enum should match dndbg.Engine.BreakProcessKind (enum field names may be different)
+
 		/// <summary>
 		/// Don't break
 		/// </summary>
@@ -59,10 +64,5 @@ namespace dndbg.Engine {
 		/// Break at the entry point
 		/// </summary>
 		EntryPoint,
-
-		/// <summary>
-		/// Always last and shouldn't be used except to count the number of elements in this enum
-		/// </summary>
-		Last,
 	}
 }

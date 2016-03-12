@@ -61,6 +61,15 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear Screen.
+        /// </summary>
+        public static string ClearScreenCommand {
+            get {
+                return ResourceManager.GetString("ClearScreenCommand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to + additional {0} error.
         /// </summary>
         public static string CompilationAdditionalError {
@@ -295,7 +304,7 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clear Screen.
+        ///   Looks up a localized string similar to Clear Screen (Ctrl+L).
         /// </summary>
         public static string Script_ToolTip_ClearScreen {
             get {
@@ -399,6 +408,15 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         public static string ShortCutKeyCtrlEnter {
             get {
                 return ResourceManager.GetString("ShortCutKeyCtrlEnter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ctrl+L.
+        /// </summary>
+        public static string ShortCutKeyCtrlL {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlL", resourceCulture);
             }
         }
         

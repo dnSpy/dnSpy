@@ -125,7 +125,7 @@ namespace dnSpy.Debugger.Threads {
 
 			case DebuggerProcessState.Continuing:
 			case DebuggerProcessState.Running:
-			case DebuggerProcessState.Stopped:
+			case DebuggerProcessState.Paused:
 				break;
 
 			case DebuggerProcessState.Terminated:
@@ -163,7 +163,7 @@ namespace dnSpy.Debugger.Threads {
 		}
 
 		void InitializeThreads() {
-			if (!IsEnabled || theDebugger.ProcessState != DebuggerProcessState.Stopped) {
+			if (!IsEnabled || theDebugger.ProcessState != DebuggerProcessState.Paused) {
 				Collection.Clear();
 				return;
 			}

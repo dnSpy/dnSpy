@@ -186,6 +186,7 @@
     <Compile Include="Controls\WindowBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\ResourceHelper.cs" />
+    <Compile Include="Scripting\UIUtils.cs" />
     <Compile Include="Search\ChainFileTreeNodeFilter.cs" />
     <Compile Include="Search\DelayedAction.cs" />
     <Compile Include="Search\EntryPointFileTreeNodeFilter.cs" />

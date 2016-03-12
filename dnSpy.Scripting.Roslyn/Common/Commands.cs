@@ -71,7 +71,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:Script_ToolTip_Reset", Icon = "Reset", Group = MenuConstants.GROUP_CTX_REPL_RESET, Order = 0)]
+	[ExportMenuItem(Header = "res:Script_ToolTip_Reset", Icon = "Reset", Group = MenuConstants.GROUP_CTX_REPL_RESET, Order = 0)]
 	sealed class ResetReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand {
 		public override void Execute(ReplEditorCtxMenuContext context) {
 			context.VM.Reset();
@@ -82,28 +82,28 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:CutCommand", Icon = "Cut", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 0)]
+	[ExportMenuItem(Header = "res:CutCommand", Icon = "Cut", InputGestureText = "res:ShortCutKeyCtrlX", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 0)]
 	sealed class CutReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand2 {
 		CutReplEditorCtxMenuCommand()
 			: base(ApplicationCommands.Cut) {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 10)]
+	[ExportMenuItem(Header = "res:CopyCommand", Icon = "Copy", InputGestureText = "res:ShortCutKeyCtrlC", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 10)]
 	sealed class CopyReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand2 {
 		CopyReplEditorCtxMenuCommand()
 			: base(ApplicationCommands.Copy) {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:PasteCommand", Icon = "Paste", InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 20)]
+	[ExportMenuItem(Header = "res:PasteCommand", Icon = "Paste", InputGestureText = "res:ShortCutKeyCtrlV", Group = MenuConstants.GROUP_CTX_REPL_COPY, Order = 20)]
 	sealed class PasteReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand2 {
 		PasteReplEditorCtxMenuCommand()
 			: base(ApplicationCommands.Paste) {
 		}
 	}
 
-	[Export, ExportMenuItem(Header = "res:Script_ToolTip_ClearScreen", Icon = "ClearWindowContent", Group = MenuConstants.GROUP_CTX_REPL_CLEAR, Order = 0)]
+	[ExportMenuItem(Header = "res:ClearScreenCommand", Icon = "ClearWindowContent", InputGestureText = "res:ShortCutKeyCtrlL", Group = MenuConstants.GROUP_CTX_REPL_CLEAR, Order = 0)]
 	sealed class ClearReplEditorCtxMenuCommand : ReplEditorCtxMenuCommand {
 		public override void Execute(ReplEditorCtxMenuContext context) {
 			context.UI.Clear();

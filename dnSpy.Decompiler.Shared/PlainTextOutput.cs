@@ -88,6 +88,7 @@ namespace dnSpy.Decompiler.Shared {
 					text.CopyTo(index, outputBuffer, 0, len);
 					writer.Write(outputBuffer, 0, len);
 					left -= len;
+					index += len;
 				}
 			}
 			column += count;
@@ -104,6 +105,7 @@ namespace dnSpy.Decompiler.Shared {
 					sb.CopyTo(index, outputBuffer, 0, len);
 					writer.Write(outputBuffer, 0, len);
 					left -= len;
+					index += len;
 				}
 			}
 			column += count;

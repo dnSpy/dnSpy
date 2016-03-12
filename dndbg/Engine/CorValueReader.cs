@@ -23,18 +23,18 @@ using dndbg.COM.CorDebug;
 namespace dndbg.Engine {
 	public struct CorValueResult : IEquatable<CorValueResult> {
 		/// <summary>
-		/// The value. Only valid if <see cref="IsValueValid"/> is true, else it shouldn't be used
+		/// The value. Only valid if <see cref="IsValid"/> is true, else it shouldn't be used
 		/// </summary>
 		public readonly object Value;
 
 		/// <summary>
 		/// true if <see cref="Value"/> is valid
 		/// </summary>
-		public readonly bool IsValueValid;
+		public readonly bool IsValid;
 
 		public CorValueResult(object value) {
 			this.Value = value;
-			this.IsValueValid = true;
+			this.IsValid = true;
 		}
 
 		public T Write<T>(T output, CorValue value, TypePrinterFlags flags, Func<DnEval> getEval = null) where T : ITypeOutput {
@@ -47,9 +47,9 @@ namespace dndbg.Engine {
 		}
 
 		public bool Equals(CorValueResult other) {
-			if (IsValueValid != other.IsValueValid)
+			if (IsValid != other.IsValid)
 				return false;
-			if (!IsValueValid)
+			if (!IsValid)
 				return true;
 			if (ReferenceEquals(Value, other.Value))
 				return true;
@@ -65,13 +65,13 @@ namespace dndbg.Engine {
 		}
 
 		public override int GetHashCode() {
-			if (!IsValueValid)
+			if (!IsValid)
 				return 0x12345678;
 			return Value == null ? 0 : Value.GetHashCode();
 		}
 
 		public override string ToString() {
-			if (!IsValueValid)
+			if (!IsValid)
 				return "<invalid>";
 			if (Value == null)
 				return "null";
@@ -120,7 +120,7 @@ namespace dndbg.Engine {
 			var type = value.ExactType;
 			if (type == null)
 				return new CorValueResult();
-			var vres = GetSimpleResult(value, type.TryGetPrimitiveType, type);
+			var vres = GetSimpleResult(value, type.TryGetPrimitiveType(), type);
 			return vres ?? new CorValueResult();
 		}
 
@@ -302,7 +302,7 @@ namespace dndbg.Engine {
 				return new CorValueResult(null);
 
 			var valueRes = nullableValue.Value;
-			if (!valueRes.IsValueValid)
+			if (!valueRes.IsValid)
 				return null;
 			return valueRes;
 		}

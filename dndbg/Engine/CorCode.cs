@@ -98,7 +98,6 @@ namespace dndbg.Engine {
 				this.address = 0;
 
 			//TODO: ICorDebugCode::GetCode
-			//TODO: ICorDebugCode2::GetCodeChunks
 			//TODO: ICorDebugCode::GetILToNativeMapping
 			//TODO: ICorDebugCode3::GetReturnValueLiveOffset
 		}
@@ -112,6 +111,28 @@ namespace dndbg.Engine {
 			ICorDebugFunctionBreakpoint fnbp;
 			int hr = obj.CreateBreakpoint(offset, out fnbp);
 			return hr < 0 || fnbp == null ? null : new CorFunctionBreakpoint(fnbp);
+		}
+
+		/// <summary>
+		/// Gets all code chunks
+		/// </summary>
+		/// <returns></returns>
+		public unsafe CodeChunkInfo[] GetCodeChunks() {
+			var c2 = obj as ICorDebugCode2;
+			if (c2 == null)
+				return new CodeChunkInfo[0];
+			uint cnumChunks;
+			int hr = c2.GetCodeChunks(0, out cnumChunks, IntPtr.Zero);
+			if (hr < 0)
+				return new CodeChunkInfo[0];
+			var infos = new CodeChunkInfo[cnumChunks];
+			if (cnumChunks != 0) {
+				fixed (void* p = &infos[0])
+					hr = c2.GetCodeChunks(cnumChunks, out cnumChunks, new IntPtr(p));
+				if (hr < 0)
+					return new CodeChunkInfo[0];
+			}
+			return infos;
 		}
 
 		public static bool operator ==(CorCode a, CorCode b) {

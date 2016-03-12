@@ -205,7 +205,7 @@ namespace dnSpy.Debugger.Locals {
 			case DebuggerProcessState.Running:
 				break;
 
-			case DebuggerProcessState.Stopped:
+			case DebuggerProcessState.Paused:
 				// Handled in StackFrameManager_StackFramesUpdated
 				break;
 
@@ -275,7 +275,7 @@ namespace dnSpy.Debugger.Locals {
 		}
 
 		void InitializeLocals(LocalInitType initType) {
-			if (!IsEnabled || theDebugger.ProcessState != DebuggerProcessState.Stopped) {
+			if (!IsEnabled || theDebugger.ProcessState != DebuggerProcessState.Paused) {
 				ClearAllLocals();
 				return;
 			}

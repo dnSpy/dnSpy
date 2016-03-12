@@ -166,6 +166,11 @@ namespace dndbg.COM.CorDebug {
 		Sentinel	= 0x41,
 		Pinned		= 0x45,
 	}
+	public struct CodeChunkInfo {
+		public ulong StartAddr;
+		public uint Length;
+		uint pad;
+	};
 	[StructLayout(LayoutKind.Sequential)]
 	public struct CorDebugExceptionObjectStackFrame {
 		[MarshalAs(UnmanagedType.Interface)]
@@ -977,7 +982,8 @@ namespace dndbg.COM.CorDebug {
 	[Guid("5F696509-452F-4436-A3FE-4D11FE7E2347"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugCode2 {
-		void GetCodeChunks([In] uint cbufSize, out uint pcnumChunks, [MarshalAs(UnmanagedType.Interface)] [Out] ICorDebugCode2 chunks);
+		[PreserveSig]
+		int GetCodeChunks([In] uint cbufSize, out uint pcnumChunks, IntPtr chunks);
 		[PreserveSig]
 		int GetCompilerFlags(out CorDebugJITCompilerFlags pdwFlags);
 	}
@@ -1557,7 +1563,8 @@ namespace dndbg.COM.CorDebug {
 		int GetToken(out uint pToken);
 		[PreserveSig]
 		int IsDynamic(out int pDynamic);
-		void GetGlobalVariableValue([In] uint fieldDef, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
+		[PreserveSig]
+		int GetGlobalVariableValue([In] uint fieldDef, [MarshalAs(UnmanagedType.Interface)] out ICorDebugValue ppValue);
 		[PreserveSig]
 		int GetSize(out uint pcBytes);
 		[PreserveSig]
@@ -2098,7 +2105,13 @@ namespace dndbg.COM.CorDebug {
 		void Next();
 	}
 	public enum ILCodeKind {
+		/// <summary>
+		/// The debugger does not have access to information from ReJIT instrumentation.
+		/// </summary>
 		ILCODE_ORIGINAL_IL = 1,
+		/// <summary>
+		/// The debugger has access to information from ReJIT instrumentation.
+		/// </summary>
 		ILCODE_REJIT_IL
 	}
 	[Guid("0C733A30-2A1C-11CE-ADE5-00AA0044773D"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]

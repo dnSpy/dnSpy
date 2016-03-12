@@ -74,8 +74,8 @@ namespace dnSpy.Debugger.Breakpoints {
 			remove { myMarkedTextLine.ObjPropertyChanged -= value; }
 		}
 
-		public override BreakpointType Type {
-			get { return BreakpointType.ILCode; }
+		public override BreakpointKind Kind {
+			get { return BreakpointKind.ILCode; }
 		}
 
 		public SerializedDnToken SerializedDnToken {

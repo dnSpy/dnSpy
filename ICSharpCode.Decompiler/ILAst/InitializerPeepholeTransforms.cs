@@ -159,7 +159,7 @@ namespace ICSharpCode.Decompiler.ILAst
 					if (DecodeArrayInitializer(arrayType.Next, fieldDef.InitialValue, newArr))
 					{
 						if (arrayLength != newArr.Length && newArr.Length > 0)
-							newArr[newArr.Length - 1] = new ILExpression(ILCode.Ldstr, "Array too big!");
+							newArr[newArr.Length - 1] = new ILExpression(ILCode.Ldstr, string.Format("Not showing all elements because this array is too big ({0} elements)", arrayLength));
 						values = newArr;
 						foundPos = pos;
 						return true;

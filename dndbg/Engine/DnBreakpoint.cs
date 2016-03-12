@@ -32,11 +32,6 @@ namespace dndbg.Engine {
 	}
 
 	public abstract class DnBreakpoint {
-		public IBreakpointCondition Condition {
-			get { return bpCond; }
-		}
-		readonly IBreakpointCondition bpCond;
-
 		/// <summary>
 		/// The user can set this property to any value. It's not used by the debugger.
 		/// </summary>
@@ -54,10 +49,6 @@ namespace dndbg.Engine {
 		bool isEnabled = true;
 
 		protected virtual void OnIsEnabledChanged() {
-		}
-
-		protected DnBreakpoint(IBreakpointCondition bpCond) {
-			this.bpCond = bpCond ?? AlwaysBreakpointCondition.Instance;
 		}
 
 		internal virtual void OnRemoved() {

@@ -57,6 +57,11 @@ namespace dndbg.Engine {
 		ILCodeBreakpoint,
 
 		/// <summary>
+		/// A native code breakpoint got triggered
+		/// </summary>
+		NativeCodeBreakpoint,
+
+		/// <summary>
 		/// A step in, step out or step over command has completed
 		/// </summary>
 		Step,
@@ -120,6 +125,18 @@ namespace dndbg.Engine {
 
 		public ILCodeBreakpointStopState(DnILCodeBreakpoint bp)
 			: base(DebuggerStopReason.ILCodeBreakpoint) {
+			this.bp = bp;
+		}
+	}
+
+	public sealed class NativeCodeBreakpointStopState : DebuggerStopState {
+		public DnNativeCodeBreakpoint Breakpoint {
+			get { return bp; }
+		}
+		readonly DnNativeCodeBreakpoint bp;
+
+		public NativeCodeBreakpointStopState(DnNativeCodeBreakpoint bp)
+			: base(DebuggerStopReason.NativeCodeBreakpoint) {
 			this.bp = bp;
 		}
 	}

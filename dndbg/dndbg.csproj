@@ -70,7 +70,7 @@
     <Compile Include="Engine\AttachProcessOptions.cs" />
     <Compile Include="Engine\BreakpointList.cs" />
     <Compile Include="Engine\BreakProcessHelper.cs" />
-    <Compile Include="Engine\BreakProcessType.cs" />
+    <Compile Include="Engine\BreakProcessKind.cs" />
     <Compile Include="Engine\COMObject.cs" />
     <Compile Include="Engine\CorAppDomain.cs" />
     <Compile Include="Engine\CorAssembly.cs" />
@@ -112,16 +112,17 @@
     <Compile Include="Engine\DnAppDomain.cs" />
     <Compile Include="Engine\DnAssembly.cs" />
     <Compile Include="Engine\DnBreakpoint.cs" />
+    <Compile Include="Engine\DnCodeBreakpoint.cs" />
     <Compile Include="Engine\DndbgSignatureReader.cs" />
     <Compile Include="Engine\DnDebugEventBreakpoint.cs" />
     <Compile Include="Engine\DnDebugger.cs" />
     <Compile Include="Engine\DnEval.cs" />
     <Compile Include="Engine\DnILCodeBreakpoint.cs" />
     <Compile Include="Engine\DnModule.cs" />
+    <Compile Include="Engine\DnNativeCodeBreakpoint.cs" />
     <Compile Include="Engine\DnProcess.cs" />
     <Compile Include="Engine\DnThread.cs" />
     <Compile Include="Engine\ECallManager.cs" />
-    <Compile Include="Engine\IBreakpointCondition.cs" />
     <Compile Include="Engine\IDebugMessageDispatcher.cs" />
     <Compile Include="Engine\IdentifierEscaper.cs" />
     <Compile Include="Engine\ILFrameIP.cs" />

@@ -168,7 +168,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 			case DebuggerProcessState.Continuing:
 			case DebuggerProcessState.Running:
-			case DebuggerProcessState.Stopped:
+			case DebuggerProcessState.Paused:
 				break;
 
 			case DebuggerProcessState.Terminated:
@@ -192,16 +192,15 @@ namespace dnSpy.Debugger.Breakpoints {
 			if (debugger == null || theDebugger.ProcessState == DebuggerProcessState.Terminated)
 				return;
 
-			IBreakpointCondition cond;
-			switch (bp.Type) {
-			case BreakpointType.ILCode:
+			switch (bp.Kind) {
+			case BreakpointKind.ILCode:
 				var ilbp = (ILCodeBreakpoint)bp;
-				cond = AlwaysBreakpointCondition.Instance;//TODO: Let user pick what cond to use
+				Func<ILCodeBreakpointConditionContext, bool> cond = null;//TODO: Let user pick what cond to use
 				Debug.Assert(ilbp.DnBreakpoint == null);
 				ilbp.DnBreakpoint = debugger.CreateBreakpoint(ilbp.SerializedDnToken.Module, ilbp.SerializedDnToken.Token, ilbp.ILOffset, cond);
 				break;
 
-			case BreakpointType.DebugEvent:
+			case BreakpointKind.DebugEvent:
 				//TODO:
 				break;
 

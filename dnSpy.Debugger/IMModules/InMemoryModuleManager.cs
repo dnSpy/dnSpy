@@ -86,12 +86,12 @@ namespace dnSpy.Debugger.IMModules {
 			this.appWindow = appWindow;
 			this.methodAnnotations = methodAnnotations;
 			this.theDebugger = theDebugger;
-			theDebugger.OnProcessStateChanged2 += TheDebugger_OnProcessStateChanged2;
+			theDebugger.OnProcessStateChanged_First += TheDebugger_OnProcessStateChanged_First;
 		}
 
 		public event EventHandler DynamicModulesLoaded;
 
-		void TheDebugger_OnProcessStateChanged2(object sender, DebuggerEventArgs e) {
+		void TheDebugger_OnProcessStateChanged_First(object sender, DebuggerEventArgs e) {
 			var dbg = (DnDebugger)sender;
 			switch (theDebugger.ProcessState) {
 			case DebuggerProcessState.Starting:
@@ -105,7 +105,7 @@ namespace dnSpy.Debugger.IMModules {
 			case DebuggerProcessState.Running:
 				break;
 
-			case DebuggerProcessState.Stopped:
+			case DebuggerProcessState.Paused:
 				if (dbg.IsEvaluating)
 					break;
 
@@ -196,13 +196,13 @@ namespace dnSpy.Debugger.IMModules {
 		}
 
 		void DnDebugger_DebugCallbackEvent(DnDebugger dbg, DebugCallbackEventArgs e) {
-			if (e.Type == DebugCallbackType.LoadClass) {
+			if (e.Kind == DebugCallbackKind.LoadClass) {
 				var lc = (LoadClassDebugCallbackEventArgs)e;
 				var cls = lc.CorClass;
 				var dnModule = dbg.TryGetModule(lc.CorAppDomain, cls);
 				OnLoadClass(dnModule, cls);
 			}
-			else if (e.Type == DebugCallbackType.UnloadClass) {
+			else if (e.Kind == DebugCallbackKind.UnloadClass) {
 				var uc = (UnloadClassDebugCallbackEventArgs)e;
 				var cls = uc.CorClass;
 				var dnModule = dbg.TryGetModule(uc.CorAppDomain, cls);
@@ -325,7 +325,7 @@ namespace dnSpy.Debugger.IMModules {
 			if (file != null)
 				return file;
 
-			if (dnModule.Debugger.ProcessState != DebuggerProcessState.Stopped)
+			if (dnModule.Debugger.ProcessState != DebuggerProcessState.Paused)
 				return null;
 			if (!canLoadDynFile)
 				return null;
@@ -441,7 +441,7 @@ namespace dnSpy.Debugger.IMModules {
 		}
 
 		void Initialize(DnDebugger dbg, IEnumerable<CorModuleDef> modules) {
-			Debug.Assert(dbg.ProcessState == DebuggerProcessState.Stopped);
+			Debug.Assert(dbg.ProcessState == DebuggerProcessState.Paused);
 			var list = modules.ToArray();
 			foreach (var cmd in list)
 				cmd.DisableMDAPICalls = true;

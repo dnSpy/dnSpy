@@ -152,7 +152,7 @@ namespace dndbg.Engine {
 		public SerializedDnModule SerializedDnModule {
 			get {
 				var asm = Assembly;
-				return new SerializedDnModule(asm == null ? string.Empty : asm.FullName, SerializedName, IsDynamic, IsInMemory);
+				return new SerializedDnModule(asm == null ? string.Empty : asm.FullName, SerializedName, IsDynamic, IsInMemory, false);
 			}
 		}
 
@@ -198,7 +198,6 @@ namespace dndbg.Engine {
 			hr = module.IsInMemory(out b);
 			this.isInMemory = hr >= 0 && b != 0;
 
-			//TODO: ICorDebugModule::GetGlobalVariableValue
 			//TODO: ICorDebugModule2::ApplyChanges
 		}
 
@@ -233,6 +232,17 @@ namespace dndbg.Engine {
 			if (m2 == null)
 				return;
 			int hr = m2.SetJMCStatus(isJustMyCode ? 1 : 0, 0, IntPtr.Zero);
+		}
+
+		/// <summary>
+		/// Gets the value of a global field
+		/// </summary>
+		/// <param name="fdToken">Token of a global field</param>
+		/// <returns></returns>
+		public CorValue GetGlobalVariableValue(uint fdToken) {
+			ICorDebugValue value;
+			int hr = obj.GetGlobalVariableValue(fdToken, out value);
+			return hr < 0 || value == null ? null : new CorValue(value);
 		}
 
 		/// <summary>

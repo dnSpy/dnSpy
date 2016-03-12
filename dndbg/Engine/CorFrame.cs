@@ -50,7 +50,7 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
-		/// Gets the chain that this frame is part of
+		/// Gets its chain
 		/// </summary>
 		public CorChain Chain {
 			get {
@@ -246,7 +246,7 @@ namespace dndbg.Engine {
 
 		/// <summary>
 		/// Gets all type and/or method generic parameters. The first returned values are the generic
-		/// type params, followed by the generic method params. See also <see cref="GetTypeAndMethodGenericParameters"/>
+		/// type params, followed by the generic method params. See also <see cref="GetTypeAndMethodGenericParameters(out List{CorType}, out List{CorType})"/>
 		/// </summary>
 		public IEnumerable<CorType> TypeParameters {
 			get {
@@ -379,6 +379,16 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
+		/// Gets a local variable or null if it's not an <see cref="ICorDebugILFrame"/> or if there
+		/// was an error
+		/// </summary>
+		/// <param name="index">Index of local</param>
+		/// <returns></returns>
+		public CorValue GetILLocal(int index) {
+			return GetILLocal((uint)index);
+		}
+
+		/// <summary>
 		/// Gets an argument or null if it's not an <see cref="ICorDebugILFrame"/> or if there
 		/// was an error
 		/// </summary>
@@ -391,6 +401,16 @@ namespace dndbg.Engine {
 			ICorDebugValue value;
 			int hr = ilf.GetArgument(index, out value);
 			return hr < 0 || value == null ? null : new CorValue(value);
+		}
+
+		/// <summary>
+		/// Gets an argument or null if it's not an <see cref="ICorDebugILFrame"/> or if there
+		/// was an error
+		/// </summary>
+		/// <param name="index">Index of argument</param>
+		/// <returns></returns>
+		public CorValue GetILArgument(int index) {
+			return GetILArgument((uint)index);
 		}
 
 		/// <summary>
@@ -432,13 +452,23 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
-		/// Gets the code or null if it's not an <see cref="ICorDebugILFrame4"/> or if there was an
-		/// error
+		/// Gets a local variable or null if it's not an <see cref="ICorDebugILFrame4"/> or if there
+		/// was an error
 		/// </summary>
 		/// <param name="kind">Kind</param>
 		/// <param name="index">Index of local</param>
 		/// <returns></returns>
-		public CorCode GetCode(ILCodeKind kind, uint index) {
+		public CorValue GetILLocal(ILCodeKind kind, int index) {
+			return GetILLocal(kind, (uint)index);
+		}
+
+		/// <summary>
+		/// Gets the code or null if it's not an <see cref="ICorDebugILFrame4"/> or if there was an
+		/// error
+		/// </summary>
+		/// <param name="kind">Kind</param>
+		/// <returns></returns>
+		public CorCode GetCode(ILCodeKind kind) {
 			var ilf4 = obj as ICorDebugILFrame4;
 			if (ilf4 == null)
 				return null;
@@ -453,7 +483,7 @@ namespace dndbg.Engine {
 		/// <param name="typeGenArgs">Gets updated with a list containing all generic type arguments</param>
 		/// <param name="methGenArgs">Gets updated with a list containing all generic method arguments</param>
 		/// <returns></returns>
-		public bool GetTypeAndMethodGenericParameters(out IList<CorType> typeGenArgs, out IList<CorType> methGenArgs) {
+		public bool GetTypeAndMethodGenericParameters(out List<CorType> typeGenArgs, out List<CorType> methGenArgs) {
 			typeGenArgs = new List<CorType>();
 			methGenArgs = new List<CorType>();
 

@@ -22,7 +22,7 @@ using System.Diagnostics;
 using dndbg.Engine;
 
 namespace dnSpy.Debugger.Breakpoints {
-	enum BreakpointType {
+	enum BreakpointKind {
 		ILCode,
 		DebugEvent,
 	}
@@ -35,7 +35,7 @@ namespace dnSpy.Debugger.Breakpoints {
 				PropertyChanged(this, new PropertyChangedEventArgs(propName));
 		}
 
-		public abstract BreakpointType Type { get; }
+		public abstract BreakpointKind Kind { get; }
 
 		internal DnBreakpoint DnBreakpoint {
 			get { return dnbp; }
@@ -49,11 +49,11 @@ namespace dnSpy.Debugger.Breakpoints {
 		DnBreakpoint dnbp;
 
 		public bool IsILCode {
-			get { return Type == BreakpointType.ILCode; }
+			get { return Kind == BreakpointKind.ILCode; }
 		}
 
 		public bool IsDebugEvent {
-			get { return Type == BreakpointType.DebugEvent; }
+			get { return Kind == BreakpointKind.DebugEvent; }
 		}
 
 		public bool IsEnabled {

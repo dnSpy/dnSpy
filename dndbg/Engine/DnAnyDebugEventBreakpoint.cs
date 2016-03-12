@@ -17,13 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+
 namespace dndbg.Engine {
 	public sealed class AnyDebugEventBreakpointConditionContext : BreakpointConditionContext {
 		public override DnBreakpoint Breakpoint {
 			get { return bp; }
 		}
 
-		public DnAnyDebugEventBreakpoint DebugEventBreakpoint {
+		public DnAnyDebugEventBreakpoint AnyDebugEventBreakpoint {
 			get { return bp; }
 		}
 		readonly DnAnyDebugEventBreakpoint bp;
@@ -41,8 +43,14 @@ namespace dndbg.Engine {
 	}
 
 	public sealed class DnAnyDebugEventBreakpoint : DnBreakpoint {
-		internal DnAnyDebugEventBreakpoint(IBreakpointCondition bpCond)
-			: base(bpCond) {
+		internal Func<AnyDebugEventBreakpointConditionContext, bool> Condition {
+			get { return cond; }
 		}
+		readonly Func<AnyDebugEventBreakpointConditionContext, bool> cond;
+
+		internal DnAnyDebugEventBreakpoint(Func<AnyDebugEventBreakpointConditionContext, bool> cond) {
+			this.cond = cond ?? defaultCond;
+		}
+		static readonly Func<AnyDebugEventBreakpointConditionContext, bool> defaultCond = a => true;
 	}
 }

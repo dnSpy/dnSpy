@@ -98,8 +98,10 @@ namespace dnSpy_Console {
 			this.userGacPaths = new List<string>();
 			this.gacFiles = new List<string>();
 			this.decompilationContext = new DecompilationContext();
-			this.moduleContext = ModuleDef.CreateModuleContext(true);
+			this.moduleContext = ModuleDef.CreateModuleContext(false); // Same as dnSpy.exe
 			this.assemblyResolver = (AssemblyResolver)moduleContext.AssemblyResolver;
+			this.assemblyResolver.EnableFrameworkRedirect = false; // Same as dnSpy.exe
+			this.assemblyResolver.FindExactMatch = true; // Same as dnSpy.exe
 			this.assemblyResolver.EnableTypeDefCache = true;
 			this.bamlDecompiler = TryLoadBamlDecompiler();
 			this.decompileBaml = bamlDecompiler != null;

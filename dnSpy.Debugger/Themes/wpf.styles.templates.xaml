@@ -49,7 +49,7 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <Label Grid.Row="0" Grid.Column="0" Margin="-5 0 5 0" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_BreakAt}" Target="{Binding ElementName=breakComboBox}" />
-            <ComboBox Grid.Row="0" Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" Name="breakComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BreakProcessTypeVM.Items}" SelectedIndex="{Binding BreakProcessTypeVM.SelectedIndex}" VerticalContentAlignment="Center" />
+            <ComboBox Grid.Row="0" Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" Name="breakComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BreakProcessKindVM.Items}" SelectedIndex="{Binding BreakProcessKindVM.SelectedIndex}" VerticalContentAlignment="Center" />
             <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.DisableManagedDebuggerDetection}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_DisableManagedDebuggerDetection}" />
             <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.PropertyEvalAndFunctionCalls}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_PropertyEvalAndFunctionCalls}" />
             <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.UseStringConversionFunction}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_UseStringConversionFunction}" IsEnabled="{Binding Settings.PropertyEvalAndFunctionCalls}" />

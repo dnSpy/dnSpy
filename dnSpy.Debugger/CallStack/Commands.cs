@@ -101,7 +101,7 @@ namespace dnSpy.Debugger.CallStack {
 		protected sealed override CallStackCtxMenuContext CreateContext(IMenuItemContext context) {
 			if (!(context.CreatorObject.Object is ListView))
 				return null;
-			if (theDebugger.Value.ProcessState != DebuggerProcessState.Stopped)
+			if (theDebugger.Value.ProcessState != DebuggerProcessState.Paused)
 				return null;
 			if (context.CreatorObject.Object != callStackContent.Value.ListView)
 				return null;

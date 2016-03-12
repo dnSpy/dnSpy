@@ -244,7 +244,7 @@ namespace dnSpy.TextEditor {
 				return HandleEnter(false);
 			if (mod == ModifierKeys.Control && key == Key.Enter) {
 				this.textEditor.TextArea.Caret.Offset = LastLine.EndOffset;
-				this.textEditor.TextArea.Selection = Selection.Create(this.textEditor.TextArea, 0, 0);
+				this.textEditor.TextArea.ClearSelection();
 				return HandleEnter(true);
 			}
 			if (mod == ModifierKeys.Shift && key == Key.Enter)
@@ -289,15 +289,21 @@ namespace dnSpy.TextEditor {
 			ClearCurrentInput();
 		}
 
-		void ClearCurrentInput() {
+		void ClearCurrentInput(bool removePrompt = false) {
 			Debug.Assert(IsCommandMode);
 			if (!IsCommandMode)
 				return;
-			int offs = FilterOffset(offsetOfPrompt.Value);
+			int offs = removePrompt ? offsetOfPrompt.Value : FilterOffset(offsetOfPrompt.Value);
 			this.textEditor.TextArea.Caret.Offset = offs;
 			var sel = Selection.Create(this.textEditor.TextArea, offs, LastLine.EndOffset);
 			this.textEditor.TextArea.Selection = sel;
-			AddUserInput(string.Empty);
+
+			this.textEditor.TextArea.Selection.ReplaceSelectionWithText(string.Empty);
+			this.textEditor.TextArea.Caret.BringCaretToView();
+			SearchText = null;
+
+			if (removePrompt)
+				offsetOfPrompt = null;
 		}
 
 		bool HandleEnter(bool force) {
@@ -578,15 +584,15 @@ namespace dnSpy.TextEditor {
 			}
 
 			string currentCommand = null;
-			if (IsCommandMode) {
+			bool isCommandMode = IsCommandMode;
+			if (isCommandMode) {
 				currentCommand = CurrentInput;
-				ClearCurrentInput();
+				ClearCurrentInput(true);
 			}
 			RawAppend(output);
 			this.textEditor.TextArea.Caret.Offset = LastLine.EndOffset;
-			if (IsCommandMode) {
-				CreateEmptyLastLineIfNeededAndMoveCaret();
-				ClearCurrentInput();
+			if (isCommandMode) {
+				PrintPrompt();
 				AddUserInput(currentCommand);
 			}
 

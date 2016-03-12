@@ -35,6 +35,12 @@ using Microsoft.CodeAnalysis.Scripting.Hosting;
 
 namespace dnSpy.Scripting.Roslyn.CSharp {
 	sealed class CSharpControlVM : ScriptControlVM {
+		static CSharpControlVM() {
+			const LanguageVersion latestVersion = LanguageVersion.CSharp6;
+			Debug.Assert(!Enum.IsDefined(typeof(LanguageVersion), (LanguageVersion)((int)latestVersion + 1)));
+			parseOptions = new CSharpParseOptions(languageVersion: latestVersion, kind: SourceCodeKind.Script);
+		}
+
 		protected override string Logo {
 			get {
 				// This is how MS gets the version, see roslyn/src/Interactive/EditorFeatures/CSharp/Interactive/CSharpReplServiceProvider.cs
@@ -43,32 +49,20 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 			}
 		}
 
-		protected override string Help {
-			get { return dnSpy_Scripting_Roslyn_Resources.HelpString; }
-		}
-
-		protected override ObjectFormatter ObjectFormatter {
-			get { return CSharpObjectFormatter.Instance; }
-		}
-
-		protected override DiagnosticFormatter DiagnosticFormatter {
-			get { return CSharpDiagnosticFormatter.Instance; }
-		}
+		protected override string Help => dnSpy_Scripting_Roslyn_Resources.HelpString;
+		protected override ObjectFormatter ObjectFormatter => CSharpObjectFormatter.Instance;
+		protected override DiagnosticFormatter DiagnosticFormatter => CSharpDiagnosticFormatter.Instance;
 
 		public CSharpControlVM(IReplEditor replEditor, IServiceLocator serviceLocator)
 			: base(replEditor, serviceLocator) {
 		}
 
-		protected override Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader assemblyLoader) {
-			return CSharpScript.Create<T>(code, options, globalsType, assemblyLoader);
-		}
+		protected override Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader assemblyLoader) =>
+			CSharpScript.Create<T>(code, options, globalsType, assemblyLoader);
 
-		protected override bool IsCompleteSubmission(string text) {
-			return SyntaxFactory.IsCompleteSubmission(SyntaxFactory.ParseSyntaxTree(text, parseOptions));
-		}
-		// See roslyn/src/Interactive/EditorFeatures/CSharp/Interactive/CSharpInteractiveEvaluator.cs
-		// Needs to be updated whenever the above file gets updated (eg when CSharp7 gets added)
-		static readonly CSharpParseOptions parseOptions = new CSharpParseOptions(languageVersion: LanguageVersion.CSharp6, kind: SourceCodeKind.Script);
+		protected override bool IsCompleteSubmission(string text) =>
+			SyntaxFactory.IsCompleteSubmission(SyntaxFactory.ParseSyntaxTree(text, parseOptions));
+		static readonly CSharpParseOptions parseOptions;
 
 		protected override void InitializeUserScriptOptions(UserScriptOptions options) {
 			var rspFile = GetResponseFile("CSharpInteractive.rsp");
@@ -109,9 +103,8 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 			}
 		}
 
-		IEnumerable<string> GetReferencePaths(string s) {
-			return s.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(a => RemoveQuotes(a));
-		}
+		IEnumerable<string> GetReferencePaths(string s) =>
+			s.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(a => RemoveQuotes(a));
 
 		IEnumerable<string> GetReferences(string s) {
 			if (s.Length == 0)

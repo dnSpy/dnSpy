@@ -60,7 +60,7 @@ namespace dnSpy.Debugger {
 				return false;
 
 			var dval = val.Value;
-			if (!dval.IsValueValid)
+			if (!dval.IsValid)
 				return false;
 			if (!(dval.Value is T || Equals(default(T), dval.Value)))
 				return false;

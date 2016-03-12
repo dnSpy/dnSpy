@@ -5,6 +5,7 @@
 /u:System
 /u:System.IO
 /u:System.Collections.Generic
+#/u:System.Console
 /u:System.Diagnostics
 /u:System.Dynamic
 /u:System.Linq
@@ -17,3 +18,4 @@
 /r:dnSpy.Shared.dll
 /r:dnlib.dll
 /u:dnSpy.Contracts.Scripting
+/u:dnSpy.Contracts.Scripting.Roslyn

@@ -43,7 +43,7 @@ namespace dndbg.Engine {
 		readonly uint rank;
 
 		/// <summary>
-		/// Gets the first type parameter if it's a generic type
+		/// Gets the first type parameter
 		/// </summary>
 		public CorType FirstTypeParameter {
 			get {
@@ -59,8 +59,8 @@ namespace dndbg.Engine {
 		/// a <see cref="CorElementType.FnPtr"/>, the first type is the return type, followed by
 		/// all the method argument types in correct order. If it's a <see cref="CorElementType.Array"/>,
 		/// <see cref="CorElementType.SZArray"/>, <see cref="CorElementType.ByRef"/> or a
-		/// <see cref="CorElementType.Ptr"/>, the returned type is the inner type, eg. int if the
-		/// type is int[]. In this case, <see cref="FirstTypeParameter"/> can be called instead.
+		/// <see cref="CorElementType.Ptr"/>, the returned type is the inner type, eg. <c>int</c> if the
+		/// type is <int>int[]</c>. In this case, <see cref="FirstTypeParameter"/> can be called instead.
 		/// </summary>
 		public IEnumerable<CorType> TypeParameters {
 			get {
@@ -252,59 +252,56 @@ namespace dndbg.Engine {
 		/// Same as <see cref="ElementType"/> except that it tries to return a primitive element
 		/// type (eg. <see cref="CorElementType.U4"/>) if it's a primitive type.
 		/// </summary>
-		public CorElementType TryGetPrimitiveType {
-			get {
-				var etype = ElementType;
-				if (etype != CorElementType.Class && etype != CorElementType.ValueType)
-					return etype;
-
-				uint token;
-				var mdi = GetMetaDataImport(out token);
-				var list = MetaDataUtils.GetTypeDefFullNames(mdi, token);
-				if (list.Count != 1)
-					return etype;
-				if (DerivesFromSystemValueType) {
-					switch (list[0].Name) {
-					case "System.Boolean":	return CorElementType.Boolean;
-					case "System.Byte":		return CorElementType.U1;
-					case "System.Char":		return CorElementType.Char;
-					case "System.Double":	return CorElementType.R8;
-					case "System.Int16":	return CorElementType.I2;
-					case "System.Int32":	return CorElementType.I4;
-					case "System.Int64":	return CorElementType.I8;
-					case "System.IntPtr":	return CorElementType.I;
-					case "System.SByte":	return CorElementType.I1;
-					case "System.Single":	return CorElementType.R4;
-					case "System.TypedReference": return CorElementType.TypedByRef;
-					case "System.UInt16":	return CorElementType.U2;
-					case "System.UInt32":	return CorElementType.U4;
-					case "System.UInt64":	return CorElementType.U8;
-					case "System.UIntPtr":	return CorElementType.U;
-					case "System.Void":		return CorElementType.Void;
-					}
-				}
-				else {
-					switch (list[0].Name) {
-					case "System.Object":
-						if (Base == null)
-							return CorElementType.Object;
-						break;
-					case "System.String":
-						var b = Base;
-						if (b != null && b.IsSystemObject)
-							return CorElementType.String;
-						break;
-					}
-				}
+		public CorElementType TryGetPrimitiveType() {
+			var etype = ElementType;
+			if (etype != CorElementType.Class && etype != CorElementType.ValueType)
 				return etype;
+
+			uint token;
+			var mdi = GetMetaDataImport(out token);
+			var list = MetaDataUtils.GetTypeDefFullNames(mdi, token);
+			if (list.Count != 1)
+				return etype;
+			if (DerivesFromSystemValueType) {
+				switch (list[0].Name) {
+				case "System.Boolean":	return CorElementType.Boolean;
+				case "System.Byte":		return CorElementType.U1;
+				case "System.Char":		return CorElementType.Char;
+				case "System.Double":	return CorElementType.R8;
+				case "System.Int16":	return CorElementType.I2;
+				case "System.Int32":	return CorElementType.I4;
+				case "System.Int64":	return CorElementType.I8;
+				case "System.IntPtr":	return CorElementType.I;
+				case "System.SByte":	return CorElementType.I1;
+				case "System.Single":	return CorElementType.R4;
+				case "System.TypedReference": return CorElementType.TypedByRef;
+				case "System.UInt16":	return CorElementType.U2;
+				case "System.UInt32":	return CorElementType.U4;
+				case "System.UInt64":	return CorElementType.U8;
+				case "System.UIntPtr":	return CorElementType.U;
+				case "System.Void":		return CorElementType.Void;
+				}
 			}
+			else {
+				switch (list[0].Name) {
+				case "System.Object":
+					if (Base == null)
+						return CorElementType.Object;
+					break;
+				case "System.String":
+					var b = Base;
+					if (b != null && b.IsSystemObject)
+						return CorElementType.String;
+					break;
+				}
+			}
+			return etype;
 		}
 
 		/// <summary>
 		/// Returns the enum underlying type and shouldn't be called unless <see cref="IsEnum"/>
 		/// is true. <see cref="CorElementType.End"/> is returned if the underlying type wasn't found.
 		/// </summary>
-		/// <returns></returns>
 		public CorElementType EnumUnderlyingType {
 			get {
 				foreach (var info in MetaDataUtils.GetFieldInfos(this, false)) {

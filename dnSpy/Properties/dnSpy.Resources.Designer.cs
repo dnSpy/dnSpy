@@ -1845,7 +1845,7 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to All Above.
+        ///   Looks up a localized string similar to All of the Above.
         /// </summary>
         public static string SearchWindow_AllAbove {
             get {

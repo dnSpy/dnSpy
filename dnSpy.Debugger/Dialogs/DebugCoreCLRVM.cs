@@ -52,14 +52,14 @@ namespace dnSpy.Debugger.Dialogs {
 			get { return new RelayCommand(a => PickNewCurrentDirectory()); }
 		}
 
-		public EnumListVM BreakProcessTypeVM {
-			get { return breakProcessTypeVM; }
+		public EnumListVM BreakProcessKindVM {
+			get { return breakProcessKindVM; }
 		}
-		readonly EnumListVM breakProcessTypeVM = new EnumListVM(DebugProcessVM.breakProcessTypeList);
+		readonly EnumListVM breakProcessKindVM = new EnumListVM(DebugProcessVM.breakProcessKindList);
 
-		public BreakProcessType BreakProcessType {
-			get { return (BreakProcessType)BreakProcessTypeVM.SelectedItem; }
-			set { BreakProcessTypeVM.SelectedItem = value; }
+		public BreakProcessKind BreakProcessKind {
+			get { return (BreakProcessKind)BreakProcessKindVM.SelectedItem; }
+			set { BreakProcessKindVM.SelectedItem = value; }
 		}
 
 		public string DbgShimFilename {
@@ -201,7 +201,7 @@ namespace dnSpy.Debugger.Dialogs {
 			other.Filename = this.Filename;
 			other.CommandLine = this.CommandLine;
 			other.CurrentDirectory = this.CurrentDirectory;
-			other.BreakProcessType = this.BreakProcessType;
+			other.BreakProcessKind = this.BreakProcessKind;
 			return other;
 		}
 

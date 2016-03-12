@@ -59,6 +59,8 @@ namespace dnSpy.Files {
 
 			public bool IsFailed(IAssembly asm) {
 				lock (lockObj) {
+					if (failedAsms.Count == 0)
+						return false;
 					var now = DateTime.UtcNow;
 					bool isOld = (now - lastTime).TotalSeconds > MAX_CACHE_TIME_SECONDS;
 					if (isOld) {

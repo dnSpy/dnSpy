@@ -128,7 +128,7 @@ namespace dnSpy.Debugger.Locals {
 		protected sealed override LocalsCtxMenuContext CreateContext(IMenuItemContext context) {
 			if (!(context.CreatorObject.Object is ListView))
 				return null;
-			if (theDebugger.Value.ProcessState != DebuggerProcessState.Stopped)
+			if (theDebugger.Value.ProcessState != DebuggerProcessState.Paused)
 				return null;
 			if (context.CreatorObject.Object != localsContent.Value.ListView)
 				return null;

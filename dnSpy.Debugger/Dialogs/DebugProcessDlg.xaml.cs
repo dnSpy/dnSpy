@@ -18,6 +18,7 @@
 */
 
 using System.Diagnostics;
+using System.Windows;
 using dnSpy.Shared.Controls;
 using dnSpy.Shared.MVVM;
 
@@ -35,7 +36,7 @@ namespace dnSpy.Debugger.Dialogs {
 			Loaded += DebugProcessDlg_Loaded;
 		}
 
-		void DebugProcessDlg_Loaded(object sender, System.Windows.RoutedEventArgs e) {
+		void DebugProcessDlg_Loaded(object sender, RoutedEventArgs e) {
 			Loaded -= DebugProcessDlg_Loaded;
 			var vm = DataContext as DebugProcessVM;
 			Debug.Assert(vm != null);

@@ -39,9 +39,9 @@ namespace dnSpy.Debugger {
 			cmds.Add(DebugRoutedCommands.Stop, (s, e) => debugManager.Value.Stop(), (s, e) => e.CanExecute = debugManager.Value.CanStop, ModifierKeys.Shift, Key.F5);
 			cmds.Add(DebugRoutedCommands.Detach, (s, e) => debugManager.Value.Detach(), (s, e) => e.CanExecute = debugManager.Value.CanDetach);
 			cmds.Add(DebugRoutedCommands.Continue, (s, e) => debugManager.Value.Continue(), (s, e) => e.CanExecute = debugManager.Value.CanContinue, ModifierKeys.None, Key.F5);
-			cmds.Add(DebugRoutedCommands.StepInto, (s, e) => debugManager.Value.StepInto(), (s, e) => e.CanExecute = debugManager.Value.CanStepInto, ModifierKeys.None, Key.F11);
-			cmds.Add(DebugRoutedCommands.StepOver, (s, e) => debugManager.Value.StepOver(), (s, e) => e.CanExecute = debugManager.Value.CanStepOver, ModifierKeys.None, Key.F10);
-			cmds.Add(DebugRoutedCommands.StepOut, (s, e) => debugManager.Value.StepOut(), (s, e) => e.CanExecute = debugManager.Value.CanStepOut, ModifierKeys.Shift, Key.F11);
+			cmds.Add(DebugRoutedCommands.StepInto, (s, e) => debugManager.Value.StepInto(), (s, e) => e.CanExecute = debugManager.Value.CanStepInto(), ModifierKeys.None, Key.F11);
+			cmds.Add(DebugRoutedCommands.StepOver, (s, e) => debugManager.Value.StepOver(), (s, e) => e.CanExecute = debugManager.Value.CanStepOver(), ModifierKeys.None, Key.F10);
+			cmds.Add(DebugRoutedCommands.StepOut, (s, e) => debugManager.Value.StepOut(), (s, e) => e.CanExecute = debugManager.Value.CanStepOut(), ModifierKeys.Shift, Key.F11);
 			cmds.Add(DebugRoutedCommands.ShowNextStatement, (s, e) => debugManager.Value.ShowNextStatement(), (s, e) => e.CanExecute = debugManager.Value.CanShowNextStatement, ModifierKeys.Alt, Key.Multiply);
 			cmds.Add(DebugRoutedCommands.SetNextStatement, (s, e) => debugManager.Value.SetNextStatement(e.Parameter), (s, e) => e.CanExecute = debugManager.Value.CanSetNextStatement(e.Parameter), ModifierKeys.Control | ModifierKeys.Shift, Key.F10);
 			cmds.Add(DebugRoutedCommands.Continue, (s, e) => debugManager.Value.DebugAssembly(), (s, e) => e.CanExecute = debugManager.Value.CanDebugAssembly, ModifierKeys.None, Key.F5);

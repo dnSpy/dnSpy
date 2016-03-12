@@ -88,7 +88,7 @@ namespace dnSpy.Debugger.CallStack {
 
 		[Conditional("DEBUG")]
 		void VerifyDebuggeeStopped() {
-			Debug.Assert(theDebugger.ProcessState == DebuggerProcessState.Stopped);
+			Debug.Assert(theDebugger.ProcessState == DebuggerProcessState.Paused);
 		}
 
 		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.CallStack {
 					ClearStackFrameLines();
 				break;
 
-			case DebuggerProcessState.Stopped:
+			case DebuggerProcessState.Paused:
 				if (dbg.IsEvaluating)
 					break;
 
@@ -249,7 +249,7 @@ namespace dnSpy.Debugger.CallStack {
 			Remove(uiContext);
 			bool movedCaret = false;
 			var cm = uiContext.TryGetCodeMappings();
-			bool updateReturnStatements = cm != null && theDebugger.ProcessState == DebuggerProcessState.Stopped;
+			bool updateReturnStatements = cm != null && theDebugger.ProcessState == DebuggerProcessState.Paused;
 			if (updateReturnStatements) {
 				int frameNo = -1;
 				bool tooManyFrames;

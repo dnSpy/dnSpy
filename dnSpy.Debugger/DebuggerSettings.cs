@@ -35,7 +35,7 @@ namespace dnSpy.Debugger {
 		bool SyntaxHighlightLocals { get; }
 		bool SyntaxHighlightAttach { get; }
 		bool SyntaxHighlightExceptions { get; }
-		BreakProcessType BreakProcessType { get; }
+		BreakProcessKind BreakProcessKind { get; }
 		bool PropertyEvalAndFunctionCalls { get; }
 		bool UseStringConversionFunction { get; }
 		bool CanEvaluateToString { get; }
@@ -187,17 +187,17 @@ namespace dnSpy.Debugger {
 		}
 		bool syntaxHighlightExceptions = true;
 
-		public BreakProcessType BreakProcessType {
-			get { return breakProcessType; }
+		public BreakProcessKind BreakProcessKind {
+			get { return breakProcessKind; }
 			set {
-				if (breakProcessType != value) {
-					breakProcessType = value;
-					OnPropertyChanged("BreakProcessType");
+				if (breakProcessKind != value) {
+					breakProcessKind = value;
+					OnPropertyChanged("BreakProcessKind");
 					OnModified();
 				}
 			}
 		}
-		BreakProcessType breakProcessType = BreakProcessType.ModuleCctorOrEntryPoint;
+		BreakProcessKind breakProcessKind = BreakProcessKind.ModuleCctorOrEntryPoint;
 
 		public bool PropertyEvalAndFunctionCalls {
 			get { return propertyEvalAndFunctionCalls; }
@@ -324,7 +324,7 @@ namespace dnSpy.Debugger {
 			other.SyntaxHighlightLocals = this.SyntaxHighlightLocals;
 			other.SyntaxHighlightAttach = this.SyntaxHighlightAttach;
 			other.SyntaxHighlightExceptions = this.SyntaxHighlightExceptions;
-			other.BreakProcessType = this.BreakProcessType;
+			other.BreakProcessKind = this.BreakProcessKind;
 			other.PropertyEvalAndFunctionCalls = this.PropertyEvalAndFunctionCalls;
 			other.UseStringConversionFunction = this.UseStringConversionFunction;
 			other.DebuggerBrowsableAttributesCanHidePropsFields = this.DebuggerBrowsableAttributesCanHidePropsFields;
@@ -358,7 +358,7 @@ namespace dnSpy.Debugger {
 			SyntaxHighlightLocals = sect.Attribute<bool?>("SyntaxHighlightLocals") ?? SyntaxHighlightLocals;
 			SyntaxHighlightAttach = sect.Attribute<bool?>("SyntaxHighlightAttach") ?? SyntaxHighlightAttach;
 			SyntaxHighlightExceptions = sect.Attribute<bool?>("SyntaxHighlightExceptions") ?? SyntaxHighlightExceptions;
-			BreakProcessType = sect.Attribute<BreakProcessType?>("BreakProcessType") ?? BreakProcessType;
+			BreakProcessKind = sect.Attribute<BreakProcessKind?>("BreakProcessKind") ?? BreakProcessKind;
 			PropertyEvalAndFunctionCalls = sect.Attribute<bool?>("PropertyEvalAndFunctionCalls") ?? PropertyEvalAndFunctionCalls;
 			UseStringConversionFunction = sect.Attribute<bool?>("UseStringConversionFunction") ?? UseStringConversionFunction;
 			DebuggerBrowsableAttributesCanHidePropsFields = sect.Attribute<bool?>("DebuggerBrowsableAttributesCanHidePropsFields") ?? DebuggerBrowsableAttributesCanHidePropsFields;
@@ -384,7 +384,7 @@ namespace dnSpy.Debugger {
 			sect.Attribute("SyntaxHighlightLocals", SyntaxHighlightLocals);
 			sect.Attribute("SyntaxHighlightAttach", SyntaxHighlightAttach);
 			sect.Attribute("SyntaxHighlightExceptions", SyntaxHighlightExceptions);
-			sect.Attribute("BreakProcessType", BreakProcessType);
+			sect.Attribute("BreakProcessKind", BreakProcessKind);
 			sect.Attribute("PropertyEvalAndFunctionCalls", PropertyEvalAndFunctionCalls);
 			sect.Attribute("UseStringConversionFunction", UseStringConversionFunction);
 			sect.Attribute("DebuggerBrowsableAttributesCanHidePropsFields", DebuggerBrowsableAttributesCanHidePropsFields);
