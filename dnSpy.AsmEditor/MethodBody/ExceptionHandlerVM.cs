@@ -207,7 +207,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 		}
 
-		public object Clone() {
+		public IIndexedItem Clone() {
 			return new ExceptionHandlerVM(typeSigCreatorOptions, CreateExceptionHandlerOptions());
 		}
 	}

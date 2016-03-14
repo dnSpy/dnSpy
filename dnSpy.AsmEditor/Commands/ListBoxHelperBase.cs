@@ -22,9 +22,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using dnSpy.Contracts.Images;
@@ -52,16 +50,13 @@ namespace dnSpy.AsmEditor.Commands {
 		protected IndexObservableCollection<T> coll;
 		List<ContextMenuHandler> contextMenuHandlers = new List<ContextMenuHandler>();
 
-		// Data on the clipboard must be serializable but our data isn't and would require too
-		// much work to fix so store the copied data here and serializable data in the clipboard.
-		T[] copiedData;
-		readonly int copiedDataId;  // unique id per instance
 		static int classCopiedDataId;
-		static readonly string DataFormat = typeof(ListBoxHelperBase<T>).ToString();
-		[Serializable]
+		readonly int copiedDataId;
 		sealed class ClipboardData {
+			public readonly T[] Data;
 			public readonly int Id;
-			public ClipboardData(int id) {
+			public ClipboardData(T[] data, int id) {
+				this.Data = data;
 				this.Id = id;
 			}
 		}
@@ -329,11 +324,7 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		void AddToClipboard(T[] items) {
-			copiedData = items;
-			try {
-				Clipboard.SetDataObject(new DataObject(DataFormat, new ClipboardData(copiedDataId)), false);
-			}
-			catch (ExternalException) { }
+			ClipboardDataHolder.Add(new ClipboardData(items, copiedDataId));
 		}
 
 		static T[] SortClipboardItems(T[] items) {
@@ -380,33 +371,37 @@ namespace dnSpy.AsmEditor.Commands {
 		}
 
 		ClipboardData GetClipboardData() {
-			if (copiedData == null)
+			var cpData = ClipboardDataHolder.TryGet<ClipboardData>();
+			if (cpData == null)
 				return null;
-			ClipboardData data;
-			try {
-				if (!Clipboard.ContainsData(DataFormat))
-					return null;
-				data = Clipboard.GetData(DataFormat) as ClipboardData;
-			}
-			catch (ExternalException) { return null; }
-			if (data == null)
+			if (!CanUseClipboardData(cpData.Data, cpData.Id == copiedDataId))
 				return null;
-			if (data.Id != copiedDataId)
-				return null;
+			return cpData;
+		}
 
+		protected virtual bool CanUseClipboardData(T[] data, bool fromThisInstance) {
+			return fromThisInstance;
+		}
+
+		protected virtual T[] BeforeCopyingData(T[] data, bool fromThisInstance) {
 			return data;
 		}
 
+		protected virtual void AfterCopyingData(T[] data, T[] origData, bool fromThisInstance) {
+		}
+
 		void PasteItems(int relIndex) {
-			var data = GetClipboardData();
-			if (data == null)
+			var cpData = GetClipboardData();
+			if (cpData == null)
 				return;
+			var copiedData = cpData.Data;
 
 			int index = GetPasteIndex(relIndex);
+			var origClonedData = CloneData(copiedData);
+			copiedData = BeforeCopyingData(origClonedData, cpData.Id == copiedDataId);
 			for (int i = 0; i < copiedData.Length; i++)
 				coll.Insert(index + i, copiedData[i]);
-
-			copiedData = CloneData(copiedData);
+			AfterCopyingData(copiedData, origClonedData, cpData.Id == copiedDataId);
 		}
 
 		void PasteItems() {

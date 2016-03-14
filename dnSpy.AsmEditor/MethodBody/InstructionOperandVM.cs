@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows.Input;
 using dnlib.DotNet;
 using dnlib.DotNet.Emit;
@@ -395,6 +396,54 @@ namespace dnSpy.AsmEditor.MethodBody {
 			this.String.StringValue = other.String.StringValue;
 			this.Other = other.Other;
 			this.OperandListItem = other.OperandListItem;
+		}
+
+		public void ImportFrom(ModuleDef ownerModule, InstructionOperandVM other) {
+			this.InstructionOperandType = other.InstructionOperandType;
+
+			switch (other.InstructionOperandType) {
+			case MethodBody.InstructionOperandType.None:	break;
+			case MethodBody.InstructionOperandType.SByte:	SByte.StringValue = other.SByte.StringValue; break;
+			case MethodBody.InstructionOperandType.Byte:	Byte.StringValue = other.Byte.StringValue; break;
+			case MethodBody.InstructionOperandType.Int32:	Int32.StringValue = other.Int32.StringValue; break;
+			case MethodBody.InstructionOperandType.Int64:	Int64.StringValue = other.Int64.StringValue; break;
+			case MethodBody.InstructionOperandType.Single:	Single.StringValue = other.Single.StringValue; break;
+			case MethodBody.InstructionOperandType.Double:	Double.StringValue = other.Double.StringValue; break;
+			case MethodBody.InstructionOperandType.String:	String.StringValue = other.String.StringValue; break;
+			case MethodBody.InstructionOperandType.Field:	Other = Import(ownerModule, other.Other); break;
+			case MethodBody.InstructionOperandType.Method:	Other = Import(ownerModule, other.Other); break;
+			case MethodBody.InstructionOperandType.Token:	Other = Import(ownerModule, other.Other); break;
+			case MethodBody.InstructionOperandType.Type:	Other = Import(ownerModule, other.Other); break;
+			case MethodBody.InstructionOperandType.MethodSig: Other = Import(ownerModule, other.Other); break;
+			case MethodBody.InstructionOperandType.BranchTarget: OperandListItem = InstructionVM.Null; break;
+			case MethodBody.InstructionOperandType.SwitchTargets: Other = new InstructionVM[0]; break;
+			case MethodBody.InstructionOperandType.Local:	OperandListItem = LocalVM.Null; break;
+			case MethodBody.InstructionOperandType.Parameter: OperandListItem = BodyUtils.NullParameter; break;
+			default: throw new InvalidOperationException();
+			}
+		}
+
+		object Import(ModuleDef ownerModule, object o) {
+			var importer = new Importer(ownerModule, ImporterOptions.TryToUseDefs);
+
+			var tdr = o as ITypeDefOrRef;
+			if (tdr != null)
+				return importer.Import(tdr);
+
+			var method = o as IMethod;
+			if (method != null && method.IsMethod)
+				return importer.Import(method);
+
+			var field = o as IField;
+			if (field != null && field.IsField)
+				return importer.Import(field);
+
+			var msig = o as MethodSig;
+			if (msig != null)
+				return importer.Import(msig);
+
+			Debug.Assert(o == null);
+			return null;
 		}
 
 		protected override string Verify(string columnName) {

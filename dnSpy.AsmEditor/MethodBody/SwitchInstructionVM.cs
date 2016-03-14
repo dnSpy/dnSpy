@@ -42,7 +42,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 			this.instr = instr;
 		}
 
-		public object Clone() {
+		public IIndexedItem Clone() {
 			return new SwitchInstructionVM(instr);
 		}
 	}

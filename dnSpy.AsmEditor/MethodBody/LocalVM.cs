@@ -160,8 +160,15 @@ namespace dnSpy.AsmEditor.MethodBody {
 			return options;
 		}
 
-		public object Clone() {
+		public IIndexedItem Clone() {
 			return new LocalVM(typeSigCreatorOptions, CreateLocalOptions());
+		}
+
+		public LocalVM Import(TypeSigCreatorOptions typeSigCreatorOptions, ModuleDef ownerModule) {
+			var opts = CreateLocalOptions();
+			var importer = new Importer(ownerModule, ImporterOptions.TryToUseDefs);
+			opts.Type = importer.Import(opts.Type);
+			return new LocalVM(typeSigCreatorOptions, opts);
 		}
 	}
 }

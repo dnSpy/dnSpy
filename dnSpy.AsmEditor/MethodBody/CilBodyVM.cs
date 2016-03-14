@@ -285,7 +285,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		InstructionVM CreateInstructionVM(Code code = Code.Nop) {
-			return new InstructionVM(ownerModule) { Code = code };
+			return new InstructionVM() { Code = code };
 		}
 
 		void UpdateExceptionHandlerInstructionReferences() {
@@ -805,7 +805,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				foreach (var local in options.Locals)
 					ops.Add(local, new LocalVM(typeSigCreatorOptions, new LocalOptions(local)));
 				foreach (var instr in options.Instructions)
-					ops.Add(instr, new InstructionVM(ownerModule));
+					ops.Add(instr, new InstructionVM());
 				foreach (var instr in options.Instructions)
 					((InstructionVM)ops[instr]).Initialize(new InstructionOptions(ops, instr));
 

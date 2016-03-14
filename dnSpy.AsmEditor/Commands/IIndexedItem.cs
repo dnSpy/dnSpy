@@ -17,10 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-
 namespace dnSpy.AsmEditor.Commands {
-	interface IIndexedItem : ICloneable {
+	interface IIndexedItem {
 		int Index { get; set; }
+		IIndexedItem Clone();
 	}
 }

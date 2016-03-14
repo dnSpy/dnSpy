@@ -29,7 +29,7 @@ using dnSpy.Shared.MVVM;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class InstructionVM : ViewModelBase, IIndexedItem {
-		public static readonly InstructionVM Null = new InstructionVM();
+		public static readonly InstructionVM Null = new InstructionVM(false);
 		InstructionOptions origOptions;
 
 		static readonly Code[] codeList;
@@ -102,13 +102,10 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 		SequencePoint sequencePoint;
 
-		readonly ModuleDef ownerModule;
-
-		InstructionVM() {
+		InstructionVM(bool dummy) {
 		}
 
-		public InstructionVM(ModuleDef ownerModule) {
-			this.ownerModule = ownerModule;
+		public InstructionVM() {
 			this.instructionOperandVM = new InstructionOperandVM();
 			this.InstructionOperandVM.PropertyChanged += (a, b) => HasErrorUpdated();
 			this.codeVM = new ListVM<Code>(codeList, (a, b) => OnCodeUpdated());
@@ -236,14 +233,23 @@ namespace dnSpy.AsmEditor.MethodBody {
 			get { return InstructionOperandVM.HasError; }
 		}
 
-		public object Clone() {
-			var inst = new InstructionVM(ownerModule);
+		public IIndexedItem Clone() {
+			var instr = new InstructionVM();
 
-			inst.Code = this.Code;
-			inst.InstructionOperandVM.InitializeFrom(this.InstructionOperandVM);
-			inst.SequencePoint = this.SequencePoint;
+			instr.Code = this.Code;
+			instr.InstructionOperandVM.InitializeFrom(this.InstructionOperandVM);
+			instr.SequencePoint = this.SequencePoint;
+			instr.Offset = this.offset;
 
-			return inst;
+			return instr;
+		}
+
+		public InstructionVM Import(ModuleDef ownerModule) {
+			var instr = new InstructionVM();
+			instr.Code = this.Code;
+			instr.InstructionOperandVM.ImportFrom(ownerModule, this.InstructionOperandVM);
+			instr.Offset = this.offset;
+			return instr;
 		}
 	}
 }

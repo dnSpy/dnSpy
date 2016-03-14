@@ -31,6 +31,7 @@ using dnSpy.Shared.Highlighting;
 
 namespace dnSpy.AsmEditor.MethodBody {
 	sealed class LocalsListHelper : ListBoxHelperBase<LocalVM> {
+		CilBodyVM cilBodyVM;
 		readonly TypeSigCreator typeSigCreator;
 
 		protected override string AddNewBeforeSelectionMessage {
@@ -67,6 +68,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		protected override void OnDataContextChangedInternal(object dataContext) {
+			this.cilBodyVM = ((MethodBodyVM)dataContext).CilBodyVM;
 			this.coll = ((MethodBodyVM)dataContext).CilBodyVM.LocalsListVM;
 			this.coll.CollectionChanged += coll_CollectionChanged;
 			InitializeLocals(this.coll);
@@ -111,6 +113,19 @@ namespace dnSpy.AsmEditor.MethodBody {
 				Clipboard.SetText(output.ToString());
 			}
 			catch (ExternalException) { }
+		}
+
+		protected override bool CanUseClipboardData(LocalVM[] data, bool fromThisInstance) {
+			return true;
+		}
+
+		protected override LocalVM[] BeforeCopyingData(LocalVM[] data, bool fromThisInstance) {
+			if (fromThisInstance)
+				return data;
+			var newData = new LocalVM[data.Length];
+			for (int i = 0; i < data.Length; i++)
+				newData[i] = data[i].Import(this.cilBodyVM.TypeSigCreatorOptions, this.cilBodyVM.OwnerModule);
+			return newData;
 		}
 	}
 }

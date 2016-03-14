@@ -68,6 +68,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\ClipboardDataHolder.cs" />
     <Compile Include="Commands\CommandUtils.cs" />
     <Compile Include="Commands\ContextMenuHandler.cs" />
     <Compile Include="Commands\IIndexedItem.cs" />

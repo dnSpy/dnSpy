@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -567,6 +568,79 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			// Select the last one because the selected item is usually the last visible item in the view.
 			listBox.ScrollIntoView(instrs[instrs.Length - 1]);
+		}
+
+		protected override bool CanUseClipboardData(InstructionVM[] data, bool fromThisInstance) {
+			return true;
+		}
+
+		protected override InstructionVM[] BeforeCopyingData(InstructionVM[] data, bool fromThisInstance) {
+			if (fromThisInstance)
+				return data;
+			var newData = new InstructionVM[data.Length];
+			for (int i = 0; i < data.Length; i++)
+				newData[i] = data[i].Import(cilBodyVM.OwnerModule);
+			return newData;
+		}
+
+		protected override void AfterCopyingData(InstructionVM[] data, InstructionVM[] origData, bool fromThisInstance) {
+			var dict = new Dictionary<uint, InstructionVM>();
+			for (int i = 0; i < data.Length; i++) {
+				if (origData[i] == InstructionVM.Null)
+					continue;
+				Debug.Assert(!dict.ContainsKey(origData[i].Offset));
+				dict[origData[i].Offset] = data[i];
+			}
+			var createdLocals = new Dictionary<LocalVM, LocalVM>();
+			createdLocals[LocalVM.Null] = LocalVM.Null;
+
+			// Need to fix references to instructions and locals
+			InstructionVM oldInstr, newInstr;
+			for (int i = 0; i < data.Length; i++) {
+				var instr = data[i];
+				var origInstr = origData[i];
+				var op = instr.InstructionOperandVM;
+				switch (op.InstructionOperandType) {
+				case MethodBody.InstructionOperandType.BranchTarget:
+					oldInstr = (origInstr.InstructionOperandVM.OperandListItem as InstructionVM) ?? InstructionVM.Null;
+					if (oldInstr == InstructionVM.Null || !dict.TryGetValue(oldInstr.Offset, out newInstr))
+						newInstr = fromThisInstance ? oldInstr : InstructionVM.Null;
+					op.OperandListItem = newInstr;
+					break;
+
+				case MethodBody.InstructionOperandType.SwitchTargets:
+					var oldInstrs = (origInstr.InstructionOperandVM.Other as InstructionVM[]) ?? new InstructionVM[0];
+					var newInstrs = new InstructionVM[oldInstrs.Length];
+					for (int j = 0; j < oldInstrs.Length; j++) {
+						oldInstr = oldInstrs[j] ?? InstructionVM.Null;
+						if (oldInstr == InstructionVM.Null || !dict.TryGetValue(oldInstr.Offset, out newInstr))
+							newInstr = fromThisInstance ? oldInstr : InstructionVM.Null;
+						newInstrs[j] = newInstr;
+					}
+					op.Other = newInstrs;
+					break;
+
+				case MethodBody.InstructionOperandType.Local:
+					if (!fromThisInstance) {
+						var oldLocal = (origInstr.InstructionOperandVM.OperandListItem as LocalVM) ?? LocalVM.Null;
+						LocalVM newLocal;
+						if (!createdLocals.TryGetValue(oldLocal, out newLocal)) {
+							newLocal = oldLocal.Import(cilBodyVM.TypeSigCreatorOptions, cilBodyVM.OwnerModule);
+							this.cilBodyVM.LocalsListVM.Add(newLocal);
+							createdLocals.Add(oldLocal, newLocal);
+						}
+						op.OperandListItem = newLocal;
+					}
+					break;
+
+				case MethodBody.InstructionOperandType.Parameter:
+					if (!fromThisInstance) {
+						// Can't reference a parameter in another method
+						op.OperandListItem = BodyUtils.NullParameter;
+					}
+					break;
+				}
+			}
 		}
 	}
 }
