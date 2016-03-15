@@ -26,6 +26,11 @@ namespace dnSpy.MainApp {
 	sealed class AppCommandLineArgs : IAppCommandLineArgs {
 		const char ARG_SEP = ':';
 
+		public string SettingsFilename {
+			get { return settingsFilename; }
+		}
+		readonly string settingsFilename = null;
+
 		public IEnumerable<string> Filenames {
 			get { return filenames.AsEnumerable(); }
 		}
@@ -117,6 +122,11 @@ namespace dnSpy.MainApp {
 					switch (arg) {
 					case "--":
 						canParseCommands = false;
+						break;
+
+					case "--settings-file":
+						settingsFilename = next;
+						i++;
 						break;
 
 					case "--multiple":

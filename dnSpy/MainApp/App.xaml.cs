@@ -87,6 +87,7 @@ namespace dnSpy.MainApp {
 
 		public App(bool readSettings) {
 			this.args = new AppCommandLineArgs();
+			AppDirectories.__SetSettingsFilename(this.args.SettingsFilename);
 			if (args.SingleInstance)
 				SwitchToOtherInstance();
 

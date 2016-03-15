@@ -27,6 +27,9 @@ namespace dnSpy.Contracts.App {
 	/// Application command line arguments
 	/// </summary>
 	public interface IAppCommandLineArgs {
+		/// <summary>Settings filename</summary>
+		string SettingsFilename { get; }
+
 		/// <summary>Filenames to load</summary>
 		IEnumerable<string> Filenames { get; }
 

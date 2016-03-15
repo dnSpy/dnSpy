@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Reflection;
 
@@ -52,7 +53,22 @@ namespace dnSpy.Contracts.App {
 		public static string SettingsFilename {
 			get { return settingsFilename; }
 		}
-		static readonly string settingsFilename;
+		static string settingsFilename;
+
+		/// <summary>
+		/// Don't call this method. It's called by dnSpy to initialize <see cref="SettingsFilename"/>
+		/// </summary>
+		/// <param name="filename">Settings filename</param>
+		/// <returns></returns>
+		[EditorBrowsable(EditorBrowsableState.Never)]
+		public static void __SetSettingsFilename(string filename) {
+			if (hasCalledSetSettingsFilename)
+				throw new InvalidOperationException();
+			hasCalledSetSettingsFilename = true;
+			if (!string.IsNullOrEmpty(filename))
+				settingsFilename = filename;
+		}
+		static bool hasCalledSetSettingsFilename = false;
 
 		static AppDirectories() {
 			binDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
