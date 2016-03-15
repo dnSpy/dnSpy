@@ -1,0 +1,26 @@
+﻿dnSpy credits:
+
+	0xd4d
+	Ki
+
+
+ILSpy decompiler and analyzer credits:
+
+	Daniel Grunwald
+	David Srbecky
+	Ed Harvey
+	Siegfried Pammer
+	Artur Zgodzinski
+	Eusebiu Marcu
+	Pent Ploompuu
+	Ki
+	0xd4d
+
+
+Translators:
+
+<language>
+	<translators>
+
+
+If your name should be on this list but isn't, contact me or send a PR.

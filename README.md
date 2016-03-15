@@ -7,9 +7,8 @@ License
 -------
 [GPLv3](https://github.com/0xd4d/dnSpy/blob/master/Licenses/GPLv3.txt)
 
-Credits
--------
-See the [*.license.txt](https://github.com/0xd4d/dnSpy/blob/master/Licenses) files.
+[Credits](https://github.com/0xd4d/dnSpy/blob/master/Licenses)
+--------------------------------------------------------------
 
 EXE
 ---
@@ -17,13 +16,11 @@ EXE
 
 [B](https://ci.appveyor.com/project/0xd4d/dnspy/build/artifacts)
 
-Translate
----------
-[T](https://crowdin.com/project/dnspy)
+[Translate](https://crowdin.com/project/dnspy)
+----------------------------------------------
 
-Wiki
-----
-[W](https://github.com/0xd4d/dnSpy/wiki)
+[Wiki](https://github.com/0xd4d/dnSpy/wiki)
+-------------------------------------------
 
 EOF
 ---

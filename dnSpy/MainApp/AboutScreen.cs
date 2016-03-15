@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
@@ -190,6 +191,22 @@ namespace dnSpy.MainApp {
 				WriteShortInfo(output, info.Copyright);
 				WriteShortInfo(output, info.ShortDescription);
 			}
+			output.WriteLine();
+			WriteResourceFile(output, "dnSpy.CREDITS.txt");
+		}
+
+		void WriteResourceFile(AvalonEditTextOutput output, string name, bool addNewLine = true) {
+			if (addNewLine)
+				output.WriteLine();
+			using (var stream = GetType().Assembly.GetManifestResourceStream(name))
+			using (var streamReader = new StreamReader(stream, Encoding.UTF8)) {
+				for (;;) {
+					var line = streamReader.ReadLine();
+					if (line == null)
+						break;
+					output.WriteLine(line, TextTokenKind.Text);
+				}
+			}
 		}
 
 		void WriteShortInfo(AvalonEditTextOutput output, string s) {
@@ -198,7 +215,7 @@ namespace dnSpy.MainApp {
 			const int MAX_SHORT_LEN = 128;
 			if (s.Length > MAX_SHORT_LEN)
 				s = s.Substring(0, MAX_SHORT_LEN) + "[...]";
-			output.WriteLine(string.Format("  {0}", s), TextTokenKind.Text);
+			output.WriteLine(string.Format("\t{0}", s), TextTokenKind.Text);
 		}
 
 		List<Info> GetInfos() {
