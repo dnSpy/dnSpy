@@ -110,7 +110,7 @@ namespace dnSpy.Debugger.Scripting {
 			get { return stackStart; }
 		}
 
-		public IThread Thread {
+		public IDebuggerThread Thread {
 			get { return debugger.Dispatcher.UI(() => debugger.FindThreadUI(chain.Thread)); }
 		}
 

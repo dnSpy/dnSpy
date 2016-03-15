@@ -164,6 +164,44 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		bool HasAttribute(string attributeName);
 
 		/// <summary>
+		/// Creates a pointer type
+		/// </summary>
+		/// <returns></returns>
+		IDebuggerType ToPtr();
+
+		/// <summary>
+		/// Creates a pointer type
+		/// </summary>
+		/// <returns></returns>
+		IDebuggerType ToPointer();
+
+		/// <summary>
+		/// Creates a by-ref type
+		/// </summary>
+		/// <returns></returns>
+		IDebuggerType ToByReference();
+
+		/// <summary>
+		/// Creates a by-ref type
+		/// </summary>
+		/// <returns></returns>
+		IDebuggerType ToByRef();
+
+		/// <summary>
+		/// Creates a single-dimension zero-lower bound array type
+		/// </summary>
+		/// <returns></returns>
+		IDebuggerType ToSZArray();
+
+		/// <summary>
+		/// Creates a multi-dimensional array type. If <paramref name="rank"/> is <c>1</c>, you most
+		/// likely want to call <see cref="ToSZArray"/> instead of this method.
+		/// </summary>
+		/// <param name="rank">Number of dimensions</param>
+		/// <returns></returns>
+		IDebuggerType ToArray(int rank);
+
+		/// <summary>
 		/// Write this to <paramref name="output"/>
 		/// </summary>
 		/// <param name="output">Destination</param>

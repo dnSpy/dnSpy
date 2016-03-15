@@ -38,12 +38,28 @@ namespace dndbg.Engine {
 		readonly CorAssembly assembly;
 
 		/// <summary>
-		/// Unique id per AppDomain. Each new created assembly gets an incremented value.
+		/// Unique id per debugger
 		/// </summary>
-		public int IncrementedId {
-			get { return incrementedId; }
+		public int UniqueId {
+			get { return uniqueId; }
 		}
-		readonly int incrementedId;
+		readonly int uniqueId;
+
+		/// <summary>
+		/// Unique id per process
+		/// </summary>
+		public int UniqueIdProcess {
+			get { return uniqueIdProcess; }
+		}
+		readonly int uniqueIdProcess;
+
+		/// <summary>
+		/// Unique id per AppDomain
+		/// </summary>
+		public int UniqueIdAppDomain {
+			get { return uniqueIdAppDomain; }
+		}
+		readonly int uniqueIdAppDomain;
 
 		/// <summary>
 		/// Assembly name, and is usually the full path to the manifest (first) module on disk
@@ -99,15 +115,17 @@ namespace dndbg.Engine {
 		}
 		readonly DnAppDomain appDomain;
 
-		internal DnAssembly(DnAppDomain appDomain, ICorDebugAssembly assembly, int incrementedId) {
+		internal DnAssembly(DnAppDomain appDomain, ICorDebugAssembly assembly, int uniqueId, int uniqueIdProcess, int uniqueIdAppDomain) {
 			this.appDomain = appDomain;
 			this.modules = new DebuggerCollection<ICorDebugModule, DnModule>(CreateModule);
 			this.assembly = new CorAssembly(assembly);
-			this.incrementedId = incrementedId;
+			this.uniqueId = uniqueId;
+			this.uniqueIdProcess = uniqueIdProcess;
+			this.uniqueIdAppDomain = uniqueIdAppDomain;
 		}
 
-		DnModule CreateModule(ICorDebugModule comModule, int id) {
-			return new DnModule(this, comModule, id, Debugger.GetNextModuleId());
+		DnModule CreateModule(ICorDebugModule comModule) {
+			return new DnModule(this, comModule, Debugger.GetNextModuleId(), Process.GetNextModuleId(), AppDomain.GetNextModuleId());
 		}
 
 		internal void SetHasUnloaded() {
@@ -126,7 +144,7 @@ namespace dndbg.Engine {
 			get {
 				Debugger.DebugVerifyThread();
 				var list = modules.GetAll();
-				Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
+				Array.Sort(list, (a, b) => a.UniqueId.CompareTo(b.UniqueId));
 				return list;
 			}
 		}
@@ -173,7 +191,7 @@ namespace dndbg.Engine {
 		CorAssemblyDef corAssemblyDef;
 
 		public override string ToString() {
-			return string.Format("{0} {1}", IncrementedId, Name);
+			return string.Format("{0} {1}", UniqueId, Name);
 		}
 	}
 }

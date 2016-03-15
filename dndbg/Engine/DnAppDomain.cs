@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -35,12 +36,20 @@ namespace dndbg.Engine {
 		readonly CorAppDomain appDomain;
 
 		/// <summary>
-		/// Unique id per process. Each new created AppDomain gets an incremented value.
+		/// Unique id per debugger
 		/// </summary>
-		public int IncrementedId {
-			get { return incrementedId; }
+		public int UniqueId {
+			get { return uniqueId; }
 		}
-		readonly int incrementedId;
+		readonly int uniqueId;
+
+		/// <summary>
+		/// Unique id per process
+		/// </summary>
+		public int UniqueIdProcess {
+			get { return uniqueIdProcess; }
+		}
+		readonly int uniqueIdProcess;
 
 		/// <summary>
 		/// AppDomain Id
@@ -79,16 +88,22 @@ namespace dndbg.Engine {
 		}
 		readonly DnProcess ownerProcess;
 
-		internal DnAppDomain(DnProcess ownerProcess, ICorDebugAppDomain appDomain, int incrementedId) {
+		internal DnAppDomain(DnProcess ownerProcess, ICorDebugAppDomain appDomain, int uniqueId, int uniqueIdProcess) {
 			this.ownerProcess = ownerProcess;
 			this.assemblies = new DebuggerCollection<ICorDebugAssembly, DnAssembly>(CreateAssembly);
 			this.appDomain = new CorAppDomain(appDomain);
-			this.incrementedId = incrementedId;
+			this.uniqueId = uniqueId;
+			this.uniqueIdProcess = uniqueIdProcess;
 			NameChanged();
 		}
 
-		DnAssembly CreateAssembly(ICorDebugAssembly comAssembly, int id) {
-			return new DnAssembly(this, comAssembly, id);
+		DnAssembly CreateAssembly(ICorDebugAssembly comAssembly) {
+			return new DnAssembly(this, comAssembly, Debugger.GetNextAssemblyId(), Process.GetNextAssemblyId(), Interlocked.Increment(ref nextAssemblyId));
+		}
+		int nextAssemblyId = -1, nextModuleId = -1;
+
+		internal int GetNextModuleId() {
+			return Interlocked.Increment(ref nextModuleId);
 		}
 
 		internal void NameChanged() {
@@ -117,7 +132,7 @@ namespace dndbg.Engine {
 			get {
 				Debugger.DebugVerifyThread();
 				var list = assemblies.GetAll();
-				Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
+				Array.Sort(list, (a, b) => a.UniqueId.CompareTo(b.UniqueId));
 				return list;
 			}
 		}
@@ -162,7 +177,7 @@ namespace dndbg.Engine {
 		}
 
 		public override string ToString() {
-			return string.Format("{0} {1} {2}", IncrementedId, Id, Name);
+			return string.Format("{0} {1} {2}", UniqueId, Id, Name);
 		}
 	}
 }

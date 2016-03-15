@@ -31,12 +31,20 @@ namespace dndbg.Engine {
 		readonly CorThread thread;
 
 		/// <summary>
-		/// Unique id per process. Each new created thread gets an incremented value.
+		/// Unique id per debugger
 		/// </summary>
-		public int IncrementedId {
-			get { return incrementedId; }
+		public int UniqueId {
+			get { return uniqueId; }
 		}
-		readonly int incrementedId;
+		readonly int uniqueId;
+
+		/// <summary>
+		/// Unique id per process
+		/// </summary>
+		public int UniqueIdProcess {
+			get { return uniqueIdProcess; }
+		}
+		readonly int uniqueIdProcess;
 
 		/// <summary>
 		/// Gets the thread ID (calls ICorDebugThread::GetID()). This is not necessarily the OS
@@ -101,10 +109,11 @@ namespace dndbg.Engine {
 			get { return thread.AllFrames; }
 		}
 
-		internal DnThread(DnProcess ownerProcess, ICorDebugThread thread, int incrementedId) {
+		internal DnThread(DnProcess ownerProcess, ICorDebugThread thread, int uniqueId, int uniqueIdProcess) {
 			this.ownerProcess = ownerProcess;
 			this.thread = new CorThread(thread);
-			this.incrementedId = incrementedId;
+			this.uniqueId = uniqueId;
+			this.uniqueIdProcess = uniqueIdProcess;
 		}
 
 		internal void SetHasExited() {
@@ -123,7 +132,7 @@ namespace dndbg.Engine {
 		}
 
 		public override string ToString() {
-			return string.Format("{0} {1} {2}", IncrementedId, ThreadId, VolatileThreadId);
+			return string.Format("{0} {1} {2}", UniqueId, ThreadId, VolatileThreadId);
 		}
 	}
 }

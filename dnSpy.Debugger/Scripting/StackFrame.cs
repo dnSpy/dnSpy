@@ -125,7 +125,7 @@ namespace dnSpy.Debugger.Scripting {
 			}
 		}
 
-		public IDebuggerValue[] ILArguments {
+		public IDebuggerValue[] Arguments {
 			get {
 				return debugger.Dispatcher.UI(() => {
 					var list = new List<IDebuggerValue>();
@@ -136,7 +136,7 @@ namespace dnSpy.Debugger.Scripting {
 			}
 		}
 
-		public IDebuggerValue[] ILLocals {
+		public IDebuggerValue[] Locals {
 			get {
 				return debugger.Dispatcher.UI(() => {
 					var list = new List<IDebuggerValue>();
@@ -209,35 +209,35 @@ namespace dnSpy.Debugger.Scripting {
 				this.sfFlags |= SFFlags.RuntimeUnwindableFrame;
 		}
 
-		public IDebuggerValue GetILLocal(uint index) {
+		public IDebuggerValue GetLocal(uint index) {
 			return debugger.Dispatcher.UI(() => {
 				var value = frame.GetILLocal(index);
 				return value == null ? null : new DebuggerValue(debugger, value);
 			});
 		}
 
-		public IDebuggerValue GetILLocal(int index) {
+		public IDebuggerValue GetLocal(int index) {
 			return debugger.Dispatcher.UI(() => {
 				var value = frame.GetILLocal(index);
 				return value == null ? null : new DebuggerValue(debugger, value);
 			});
 		}
 
-		public IDebuggerValue GetILArgument(uint index) {
+		public IDebuggerValue GetArgument(uint index) {
 			return debugger.Dispatcher.UI(() => {
 				var value = frame.GetILArgument(index);
 				return value == null ? null : new DebuggerValue(debugger, value);
 			});
 		}
 
-		public IDebuggerValue GetILArgument(int index) {
+		public IDebuggerValue GetArgument(int index) {
 			return debugger.Dispatcher.UI(() => {
 				var value = frame.GetILArgument(index);
 				return value == null ? null : new DebuggerValue(debugger, value);
 			});
 		}
 
-		public IDebuggerValue[] GetILLocals(ILCodeKind kind) {
+		public IDebuggerValue[] GetLocals(ILCodeKind kind) {
 			return debugger.Dispatcher.UI(() => {
 				var list = new List<IDebuggerValue>();
 				foreach (var v in frame.GetILLocals((dndbg.COM.CorDebug.ILCodeKind)kind))
@@ -246,14 +246,14 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public IDebuggerValue GetILLocal(ILCodeKind kind, uint index) {
+		public IDebuggerValue GetLocal(ILCodeKind kind, uint index) {
 			return debugger.Dispatcher.UI(() => {
 				var value = frame.GetILLocal((dndbg.COM.CorDebug.ILCodeKind)kind, index);
 				return value == null ? null : new DebuggerValue(debugger, value);
 			});
 		}
 
-		public IDebuggerValue GetILLocal(ILCodeKind kind, int index) {
+		public IDebuggerValue GetLocal(ILCodeKind kind, int index) {
 			return debugger.Dispatcher.UI(() => {
 				var value = frame.GetILLocal((dndbg.COM.CorDebug.ILCodeKind)kind, index);
 				return value == null ? null : new DebuggerValue(debugger, value);

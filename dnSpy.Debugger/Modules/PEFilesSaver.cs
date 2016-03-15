@@ -92,6 +92,8 @@ namespace dnSpy.Debugger.Modules {
 					if (buf2 == null)
 						buf2 = new byte[buf.Length];
 					data = buf2;
+					progress.ThrowIfCancellationRequested();
+					Array.Clear(buf2, 0, dataSize);
 					WritePEFile(buf, buf2, dataSize, out dataSize);
 				}
 
@@ -114,10 +116,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		// Very simple, will probably fail if various fields have been overwritten with invalid values
-		void WritePEFile(byte[] raw, byte[] dst, int rawSize, out int finalSize) {
-			progress.ThrowIfCancellationRequested();
-			for (int i = 0; i < rawSize; i++)
-				dst[i] = 0;
+		public static void WritePEFile(byte[] raw, byte[] dst, int rawSize, out int finalSize) {
 			try {
 				var peImage = new PEImage(raw, ImageLayout.Memory, true);
 				int offset = 0;

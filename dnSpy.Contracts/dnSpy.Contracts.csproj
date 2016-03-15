@@ -244,6 +244,7 @@
     <Compile Include="Scripting\Debugger\IDebuggerCode.cs" />
     <Compile Include="Scripting\Debugger\IDebuggerFunction.cs" />
     <Compile Include="Scripting\Debugger\IDebuggerModule.cs" />
+    <Compile Include="Scripting\Debugger\IDebuggerThread.cs" />
     <Compile Include="Scripting\Debugger\IDebuggerType.cs" />
     <Compile Include="Scripting\Debugger\IDebuggerValue.cs" />
     <Compile Include="Scripting\Debugger\IEventBreakpoint.cs" />
@@ -254,7 +255,6 @@
     <Compile Include="Scripting\Debugger\InternalFrameType.cs" />
     <Compile Include="Scripting\Debugger\IStackChain.cs" />
     <Compile Include="Scripting\Debugger\IStackFrame.cs" />
-    <Compile Include="Scripting\Debugger\IThread.cs" />
     <Compile Include="Scripting\Debugger\MappingResult.cs" />
     <Compile Include="Scripting\Debugger\ModuleName.cs" />
     <Compile Include="Scripting\Debugger\ThreadState.cs" />

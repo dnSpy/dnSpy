@@ -25,9 +25,9 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 	/// </summary>
 	public interface IDebuggerAssembly {
 		/// <summary>
-		/// Unique id per AppDomain. Each new created assembly gets an incremented value.
+		/// Unique id per debugger
 		/// </summary>
-		int IncrementedId { get; }
+		int UniqueId { get; }
 
 		/// <summary>
 		/// Gets the AppDomain

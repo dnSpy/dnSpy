@@ -98,7 +98,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		uint NativeOffset { get; set; }
 
 		/// <summary>
-		/// Gets the internal frame type or <see cref="InternalFrameType.None"/>
+		/// Gets the internal frame type or <see cref="Debugger.InternalFrameType.None"/>
 		/// if it's not an internal frame
 		/// </summary>
 		InternalFrameType InternalFrameType { get; }
@@ -126,12 +126,12 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Gets all arguments
 		/// </summary>
-		IDebuggerValue[] ILArguments { get; }
+		IDebuggerValue[] Arguments { get; }
 
 		/// <summary>
 		/// Gets all locals
 		/// </summary>
-		IDebuggerValue[] ILLocals { get; }
+		IDebuggerValue[] Locals { get; }
 
 		/// <summary>
 		/// Gets all generic type and/or method arguments. The first returned values are the generic
@@ -156,34 +156,34 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="index">Index of local</param>
 		/// <returns></returns>
-		IDebuggerValue GetILLocal(uint index);
+		IDebuggerValue GetLocal(uint index);
 
 		/// <summary>
 		/// Gets a local variable or null if <see cref="IsILFrame"/> is false
 		/// </summary>
 		/// <param name="index">Index of local</param>
 		/// <returns></returns>
-		IDebuggerValue GetILLocal(int index);
+		IDebuggerValue GetLocal(int index);
 
 		/// <summary>
 		/// Gets an argument or null if <see cref="IsILFrame"/> is false
 		/// </summary>
 		/// <param name="index">Index of argument</param>
 		/// <returns></returns>
-		IDebuggerValue GetILArgument(uint index);
+		IDebuggerValue GetArgument(uint index);
 
 		/// <summary>
 		/// Gets an argument or null if <see cref="IsILFrame"/> is false
 		/// </summary>
 		/// <param name="index">Index of argument</param>
 		/// <returns></returns>
-		IDebuggerValue GetILArgument(int index);
+		IDebuggerValue GetArgument(int index);
 
 		/// <summary>
 		/// Gets all locals
 		/// </summary>
 		/// <param name="kind">Kind</param>
-		IDebuggerValue[] GetILLocals(ILCodeKind kind);
+		IDebuggerValue[] GetLocals(ILCodeKind kind);
 
 		/// <summary>
 		/// Gets a local variable or null
@@ -191,7 +191,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="kind">Kind</param>
 		/// <param name="index">Index of local</param>
 		/// <returns></returns>
-		IDebuggerValue GetILLocal(ILCodeKind kind, uint index);
+		IDebuggerValue GetLocal(ILCodeKind kind, uint index);
 
 		/// <summary>
 		/// Gets a local variable or null
@@ -199,7 +199,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="kind">Kind</param>
 		/// <param name="index">Index of local</param>
 		/// <returns></returns>
-		IDebuggerValue GetILLocal(ILCodeKind kind, int index);
+		IDebuggerValue GetLocal(ILCodeKind kind, int index);
 
 		/// <summary>
 		/// Gets the code or null

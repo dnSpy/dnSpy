@@ -124,7 +124,7 @@ namespace dnSpy.Debugger.Modules {
 		internal ModulesCtxMenuContext Create() {
 			var vm = modulesContent.Value.ModulesVM;
 			var elems = modulesContent.Value.ListView.SelectedItems.OfType<ModuleVM>().ToArray();
-			Array.Sort(elems, (a, b) => a.Module.ModuleOrder.CompareTo(b.Module.ModuleOrder));
+			Array.Sort(elems, (a, b) => a.Module.UniqueId.CompareTo(b.Module.UniqueId));
 
 			return new ModulesCtxMenuContext(vm, elems);
 		}

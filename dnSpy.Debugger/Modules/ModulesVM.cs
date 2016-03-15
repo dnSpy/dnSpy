@@ -98,7 +98,7 @@ namespace dnSpy.Debugger.Modules {
 			dbg.OnModuleAdded += DnDebugger_OnModuleAdded;
 			dbg.OnNameChanged += DnDebugger_OnNameChanged;
 			var modules = GetAllModules(dbg).ToArray();
-			Array.Sort(modules, (a, b) => a.ModuleOrder.CompareTo(b.ModuleOrder));
+			Array.Sort(modules, (a, b) => a.UniqueId.CompareTo(b.UniqueId));
 			foreach (var module in modules)
 				Add(module);
 		}

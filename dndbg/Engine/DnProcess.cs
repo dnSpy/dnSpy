@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -35,12 +36,12 @@ namespace dndbg.Engine {
 		readonly CorProcess process;
 
 		/// <summary>
-		/// Unique id per debugger. Each new created process gets an incremented value.
+		/// Unique id per debugger
 		/// </summary>
-		public int IncrementedId {
-			get { return incrementedId; }
+		public int UniqueId {
+			get { return uniqueId; }
 		}
-		readonly int incrementedId;
+		readonly int uniqueId;
 
 		/// <summary>
 		/// Gets the process id (pid) of the process
@@ -99,20 +100,29 @@ namespace dndbg.Engine {
 		}
 		readonly DnDebugger ownerDebugger;
 
-		internal DnProcess(DnDebugger ownerDebugger, ICorDebugProcess process, int incrementedId) {
+		internal DnProcess(DnDebugger ownerDebugger, ICorDebugProcess process, int uniqueId) {
 			this.ownerDebugger = ownerDebugger;
 			this.appDomains = new DebuggerCollection<ICorDebugAppDomain, DnAppDomain>(CreateAppDomain);
 			this.threads = new DebuggerCollection<ICorDebugThread, DnThread>(CreateThread);
 			this.process = new CorProcess(process);
-			this.incrementedId = incrementedId;
+			this.uniqueId = uniqueId;
+		}
+		int nextAppDomainId = -1, nextAssemblyId = -1, nextModuleId = -1, nextThreadId = -1;
+
+		internal int GetNextAssemblyId() {
+			return Interlocked.Increment(ref nextAssemblyId);
 		}
 
-		DnAppDomain CreateAppDomain(ICorDebugAppDomain appDomain, int id) {
-			return new DnAppDomain(this, appDomain, id);
+		internal int GetNextModuleId() {
+			return Interlocked.Increment(ref nextModuleId);
 		}
 
-		DnThread CreateThread(ICorDebugThread thread, int id) {
-			return new DnThread(this, thread, id);
+		DnAppDomain CreateAppDomain(ICorDebugAppDomain appDomain) {
+			return new DnAppDomain(this, appDomain, Debugger.GetNextAppDomainId(), Interlocked.Increment(ref nextAppDomainId));
+		}
+
+		DnThread CreateThread(ICorDebugThread thread) {
+			return new DnThread(this, thread, Debugger.GetNextThreadId(), Interlocked.Increment(ref nextThreadId));
 		}
 
 		public bool Terminate(int exitCode) {
@@ -158,7 +168,7 @@ namespace dndbg.Engine {
 			get {
 				Debugger.DebugVerifyThread();
 				var list = appDomains.GetAll();
-				Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
+				Array.Sort(list, (a, b) => a.UniqueId.CompareTo(b.UniqueId));
 				return list;
 			}
 		}
@@ -202,7 +212,7 @@ namespace dndbg.Engine {
 			get {
 				Debugger.DebugVerifyThread();
 				var list = threads.GetAll();
-				Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
+				Array.Sort(list, (a, b) => a.UniqueId.CompareTo(b.UniqueId));
 				return list;
 			}
 		}
@@ -288,7 +298,7 @@ namespace dndbg.Engine {
 		}
 
 		public override string ToString() {
-			return string.Format("{0} {1} {2}", IncrementedId, ProcessId, Filename);
+			return string.Format("{0} {1} {2}", UniqueId, ProcessId, Filename);
 		}
 	}
 }

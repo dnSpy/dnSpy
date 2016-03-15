@@ -17,7 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Scripting.Debugger;
@@ -166,6 +168,59 @@ namespace dnSpy.Debugger.Scripting {
 			return debugger.Dispatcher.UI(() => {
 				var value = type.GetStaticFieldValue(token, ((StackFrame)frame).CorFrame);
 				return value == null ? null : new DebuggerValue(debugger, value);
+			});
+		}
+
+		CorAppDomain CorAppDomain {
+			get {
+				var t = type;
+				int i = 0;
+				while (t != null && !t.HasClass && i++ < 1000)
+					t = t.FirstTypeParameter;
+				var cls = t == null ? null : t.Class;
+				var mod = cls == null ? null : cls.Module;
+				var asm = mod == null ? null : mod.Assembly;
+				return asm == null ? null : asm.AppDomain;
+			}
+		}
+
+		public IDebuggerType ToPtr() {
+			return debugger.Dispatcher.UI(() => {
+				var ad = CorAppDomain;
+				var res = ad == null ? null : ad.GetPtr(type);
+				return res == null ? null : new DebuggerType(debugger, res);
+			});
+		}
+
+		public IDebuggerType ToPointer() {
+			return ToPtr();
+		}
+
+		public IDebuggerType ToByRef() {
+			return debugger.Dispatcher.UI(() => {
+				var ad = CorAppDomain;
+				var res = ad == null ? null : ad.GetByRef(type);
+				return res == null ? null : new DebuggerType(debugger, res);
+			});
+		}
+
+		public IDebuggerType ToByReference() {
+			return ToByRef();
+		}
+
+		public IDebuggerType ToSZArray() {
+			return debugger.Dispatcher.UI(() => {
+				var ad = CorAppDomain;
+				var res = ad == null ? null : ad.GetSZArray(type);
+				return res == null ? null : new DebuggerType(debugger, res);
+			});
+		}
+
+		public IDebuggerType ToArray(int rank) {
+			return debugger.Dispatcher.UI(() => {
+				var ad = CorAppDomain;
+				var res = ad == null ? null : ad.GetArray(type, (uint)rank);
+				return res == null ? null : new DebuggerType(debugger, res);
 			});
 		}
 

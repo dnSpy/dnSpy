@@ -130,13 +130,6 @@ namespace dnSpy.Debugger {
 		}
 		readonly IDebuggerSettings debuggerSettings;
 
-		[DllImport("user32")]
-		static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
-
-		[return: MarshalAs(UnmanagedType.Bool)]
-		[DllImport("user32")]
-		static extern bool SetForegroundWindow(IntPtr hWnd);
-
 		[ImportingConstructor]
 		DebugManager(IAppWindow appWindow, IFileTabManager fileTabManager, IMessageBoxManager messageBoxManager, IDebuggerSettings debuggerSettings, ITheDebugger theDebugger, IStackFrameManager stackFrameManager, Lazy<IModuleLoader> moduleLoader, Lazy<IInMemoryModuleManager> inMemoryModuleManager, ISerializedDnModuleCreator serializedDnModuleCreator) {
 			this.appWindow = appWindow;
@@ -165,7 +158,7 @@ namespace dnSpy.Debugger {
 				var e2 = (DebuggedProcessRunningEventArgs)e;
 				var hWnd = e2.Process.MainWindowHandle;
 				if (hWnd != IntPtr.Zero)
-					SetForegroundWindow(hWnd);
+					NativeMethods.SetForegroundWindow(hWnd);
 			}
 			catch {
 			}
@@ -276,7 +269,7 @@ namespace dnSpy.Debugger {
 		CodeLocation? currentLocation = null;
 
 		void BringMainWindowToFrontAndActivate() {
-			SetWindowPos(new WindowInteropHelper(appWindow.MainWindow).Handle, IntPtr.Zero, 0, 0, 0, 0, 3);
+			NativeMethods.SetWindowPos(new WindowInteropHelper(appWindow.MainWindow).Handle, IntPtr.Zero, 0, 0, 0, 0, 3);
 			appWindow.MainWindow.Activate();
 		}
 

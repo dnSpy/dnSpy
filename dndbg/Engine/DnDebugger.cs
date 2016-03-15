@@ -177,8 +177,8 @@ namespace dndbg.Engine {
 			debuggerStates.Add(debuggerState);
 		}
 
-		DnProcess CreateDnProcess(ICorDebugProcess comProcess, int id) {
-			return new DnProcess(this, comProcess, id);
+		DnProcess CreateDnProcess(ICorDebugProcess comProcess) {
+			return new DnProcess(this, comProcess, GetNextProcessId());
 		}
 
 		[Conditional("DEBUG")]
@@ -1229,7 +1229,7 @@ namespace dndbg.Engine {
 			get {
 				DebugVerifyThread();
 				var list = processes.GetAll();
-				Array.Sort(list, (a, b) => a.IncrementedId.CompareTo(b.IncrementedId));
+				Array.Sort(list, (a, b) => a.UniqueId.CompareTo(b.UniqueId));
 				return list;
 			}
 		}
@@ -1585,10 +1585,22 @@ namespace dndbg.Engine {
 			}
 		}
 
-		internal int GetNextModuleId() {
-			return moduleOrder++;
+		int nextThreadId = -1, nextProcessId = -1, nextModuleId = -1, nextAssemblyId = -1, nextAppDomainId = -1;
+		internal int GetNextThreadId() {
+			return Interlocked.Increment(ref nextThreadId);
 		}
-		int moduleOrder;
+		internal int GetNextProcessId() {
+			return Interlocked.Increment(ref nextProcessId);
+		}
+		internal int GetNextModuleId() {
+			return Interlocked.Increment(ref nextModuleId);
+		}
+		internal int GetNextAssemblyId() {
+			return Interlocked.Increment(ref nextAssemblyId);
+		}
+		internal int GetNextAppDomainId() {
+			return Interlocked.Increment(ref nextAppDomainId);
+		}
 
 		public DnEval CreateEval() {
 			DebugVerifyThread();

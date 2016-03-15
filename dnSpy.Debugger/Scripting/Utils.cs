@@ -19,6 +19,7 @@
 
 using System;
 using System.Diagnostics;
+using System.IO;
 using dnSpy.Contracts.Scripting.Debugger;
 
 using DBG = dndbg.Engine;
@@ -204,6 +205,17 @@ namespace dnSpy.Debugger.Scripting {
 
 		public static DBG.CorValueResult ToCorValueResult(this ValueResult value) {
 			return value.IsValid ? new DBG.CorValueResult(value.Value) : new DBG.CorValueResult();
+		}
+
+		public static bool IsSameFile(string filename, string nameToMatch) {
+			if (StringComparer.OrdinalIgnoreCase.Equals(filename, nameToMatch))
+				return true;
+			if (StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileName(filename), nameToMatch))
+				return true;
+			if (StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileNameWithoutExtension(filename), nameToMatch))
+				return true;
+
+			return false;
 		}
 	}
 }

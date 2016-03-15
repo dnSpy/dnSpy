@@ -24,14 +24,13 @@ using System.Linq;
 namespace dndbg.Engine {
 	sealed class DebuggerCollection<TKey, TValue> where TKey : class where TValue : class {
 		readonly Dictionary<TKey, TValue> dict = new Dictionary<TKey, TValue>();
-		readonly Func<TKey, int, TValue> createValue;
-		int idCounter;
+		readonly Func<TKey, TValue> createValue;
 
 		public int Count {
 			get { return dict.Count; }
 		}
 
-		public DebuggerCollection(Func<TKey, int, TValue> createValue) {
+		public DebuggerCollection(Func<TKey, TValue> createValue) {
 			this.createValue = createValue;
 		}
 
@@ -63,7 +62,7 @@ namespace dndbg.Engine {
 			if (value != null)
 				return value;
 
-			var createdValue = createValue(key, idCounter++);
+			var createdValue = createValue(key);
 			dict.Add(key, createdValue);
 			return createdValue;
 		}

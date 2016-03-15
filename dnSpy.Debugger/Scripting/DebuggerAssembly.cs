@@ -37,8 +37,8 @@ namespace dnSpy.Debugger.Scripting {
 			get { return debugger.Dispatcher.UI(() => asm.HasUnloaded); }
 		}
 
-		public int IncrementedId {
-			get { return incrementedId; }
+		public int UniqueId {
+			get { return uniqueId; }
 		}
 
 		public bool IsFullyTrusted {
@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.Scripting {
 		readonly Debugger debugger;
 		readonly DnAssembly asm;
 		readonly int hashCode;
-		readonly int incrementedId;
+		readonly int uniqueId;
 		readonly string name;
 
 		public DebuggerAssembly(Debugger debugger, DnAssembly asm) {
@@ -81,7 +81,7 @@ namespace dnSpy.Debugger.Scripting {
 			this.debugger = debugger;
 			this.asm = asm;
 			this.hashCode = asm.GetHashCode();
-			this.incrementedId = asm.IncrementedId;
+			this.uniqueId = asm.UniqueId;
 			this.name = asm.Name;
 		}
 

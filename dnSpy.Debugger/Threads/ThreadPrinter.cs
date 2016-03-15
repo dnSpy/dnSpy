@@ -63,7 +63,7 @@ namespace dnSpy.Debugger.Threads {
 				WriteInt32(id.Value);
 			else {
 				output.Write("???", TextTokenKind.Error);
-				WriteInt32(vm.Thread.IncrementedId + 1);
+				WriteInt32(vm.Thread.UniqueIdProcess + 1);
 			}
 		}
 

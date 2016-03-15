@@ -347,6 +347,7 @@ namespace dndbg.Engine {
 				return null;
 
 			switch (list[0].Name) {
+			case "System.Void":		return "void";
 			case "System.Boolean":	return "bool";
 			case "System.Byte":		return "byte";
 			case "System.Char":		return "char";

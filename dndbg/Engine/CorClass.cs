@@ -172,6 +172,21 @@ namespace dndbg.Engine {
 			return MDAPI.HasAttribute(mdi, Token, attributeName);
 		}
 
+		/// <summary>
+		/// Finds a method
+		/// </summary>
+		/// <param name="name">Method name</param>
+		/// <returns></returns>
+		public CorFunction FindFunction(string name) {
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			foreach (var mdToken in MDAPI.GetMethodTokens(mdi, token)) {
+				if (MDAPI.GetMethodName(mdi, mdToken) == name)
+					return mod.GetFunctionFromToken(mdToken);
+			}
+			return null;
+		}
+
 		public static bool operator ==(CorClass a, CorClass b) {
 			if (ReferenceEquals(a, b))
 				return true;

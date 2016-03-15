@@ -19,6 +19,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Scripting.Debugger;
@@ -537,6 +539,113 @@ namespace dnSpy.Debugger.Scripting {
 			dest[index + 1] = (byte)(v >> 8);
 			dest[index + 2] = (byte)(v >> 16);
 			dest[index + 3] = (byte)(v >> 24);
+		}
+
+		CorValue GetDataValue() {
+			var v = value;
+			for (int i = 0; i < 2; i++) {
+				if (!v.IsReference)
+					break;
+				if (v.IsNull)
+					return null;
+				if (v.Type == dndbg.COM.CorDebug.CorElementType.Ptr || v.Type == dndbg.COM.CorDebug.CorElementType.FnPtr)
+					return null;
+				v = v.NeuterCheckDereferencedValue;
+				if (v == null)
+					return null;
+			}
+			if (v.IsReference)
+				return null;
+			if (v.IsBox) {
+				v = v.BoxedValue;
+				if (v == null)
+					return null;
+			}
+			return v;
+		}
+
+		public byte[] SaveData() {
+			return debugger.Dispatcher.UI(() => {
+				byte[] data;
+				int? dataIndex = null, dataSize = null;
+				var v = GetDataValue();
+				if (v == null)
+					return new byte[0];
+				if (v.IsString) {
+					var s = v.String;
+					data = s == null ? null : Encoding.Unicode.GetBytes(s);
+				}
+				else if (v.IsArray) {
+					if (v.ArrayCount == 0)
+						data = new byte[0];
+					else {
+						var elemValue = v.GetElementAtPosition(0);
+						ulong elemSize = elemValue == null ? 0 : elemValue.Size;
+						ulong elemAddr = elemValue == null ? 0 : elemValue.Address;
+						ulong addr = v.Address;
+						ulong totalSize = elemSize * v.ArrayCount;
+						if (elemAddr == 0 || elemAddr < addr || elemAddr - addr > int.MaxValue || totalSize > int.MaxValue)
+							return new byte[0];
+						data = v.ReadGenericValue();
+						dataIndex = (int)(elemAddr - addr);
+						dataSize = (int)totalSize;
+					}
+				}
+				else
+					data = v.ReadGenericValue();
+				if (data == null)
+					return new byte[0];
+
+				if (dataIndex == null)
+					dataIndex = 0;
+				if (dataSize == null)
+					dataSize = data.Length - dataIndex.Value;
+				var data2 = new byte[dataSize.Value];
+				Array.Copy(data, dataIndex.Value, data2, 0, data2.Length);
+				return data2;
+			});
+		}
+
+		public void SaveData(Stream stream) {
+			var bytes = SaveData();
+			stream.Write(bytes, 0, bytes.Length);
+		}
+
+		public void SaveData(string filename) {
+			using (var stream = File.Create(filename))
+				SaveData(stream);
+		}
+
+		public ulong GetArrayDataAddress() {
+			ulong elemSize;
+			return GetArrayDataAddress(out elemSize);
+		}
+
+		public ulong GetArrayDataAddress(out ulong elemSize2) {
+			ulong elemSizeTmp = 0;
+			var res = debugger.Dispatcher.UI(() => {
+				var v = GetDataValue();
+				if (v == null)
+					return 0UL;
+				if (!v.IsArray)
+					return 0UL;
+				if (v.ArrayCount == 0)
+					return 0UL;
+
+				var elemValue = v.GetElementAtPosition(0);
+				ulong elemSize = elemValue == null ? 0 : elemValue.Size;
+				ulong elemAddr = elemValue == null ? 0 : elemValue.Address;
+				ulong addr = v.Address;
+				ulong totalSize = elemSize * v.ArrayCount;
+				if (elemAddr == 0 || elemAddr < addr || elemAddr - addr > int.MaxValue || totalSize > int.MaxValue)
+					return 0UL;
+
+				ulong dataIndex = elemAddr - addr;
+				elemSizeTmp = elemSize;
+				return v.Address + dataIndex;
+			});
+			elemSize2 = elemSizeTmp;
+			return res;
 		}
 
 		public override bool Equals(object obj) {

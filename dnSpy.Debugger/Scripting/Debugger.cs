@@ -44,6 +44,8 @@ namespace dnSpy.Debugger.Scripting {
 		readonly Lazy<IDebugManager> debugManager;
 		readonly ManualResetEvent pausedOrTerminatedEvent;
 		readonly ManualResetEvent runningEvent;
+		// Cache this so it's possible for scripts to read process memory from any thread
+		IntPtr hProcess_debuggee;
 
 		public DebuggerProcessState State {
 			get { return dispatcher.UI(() => Utils.Convert(theDebugger.ProcessState)); }
@@ -74,7 +76,7 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public bool HasAttached {
-			get { return dispatcher.UI(() => debugManager.Value.HasAttached);			}
+			get { return dispatcher.UI(() => debugManager.Value.HasAttached); }
 		}
 
 		public bool IsEvaluating {
@@ -94,10 +96,30 @@ namespace dnSpy.Debugger.Scripting {
 			this.debugManager = debugManager;
 			this.pausedOrTerminatedEvent = new ManualResetEvent(false);
 			this.runningEvent = new ManualResetEvent(false);
+			InitializeProcessHandle();
 			InitializePausedOrTerminatedEvent();
 		}
 
 		public event EventHandler<DebuggerEventArgs> OnProcessStateChanged;
+
+		void InitializeProcessHandle() {
+			this.hProcess_debuggee = GetProcessHandle();
+		}
+
+		IntPtr GetProcessHandle() {
+			var dbg = theDebugger.Debugger;
+			if (dbg == null || dbg.ProcessState == DBG.DebuggerProcessState.Terminated)
+				return IntPtr.Zero;
+			else {
+				var ps = dbg.Processes;
+				Debug.Assert(ps.Length > 0);
+				if (ps.Length > 0) {
+					Debug.Assert(ps.Length == 1);
+					return ps[0].CorProcess.Handle;
+				}
+				return IntPtr.Zero;
+			}
+		}
 
 		void TheDebugger_OnProcessStateChanged_Last(object sender, DBG.DebuggerEventArgs e) {
 			switch (theDebugger.ProcessState) {
@@ -105,13 +127,19 @@ namespace dnSpy.Debugger.Scripting {
 				foreach (var bp in breakpointsToInitialize)
 					Initialize(bp);
 				breakpointsToInitialize.Clear();
+				InitializeProcessHandle();
+				Debug.Assert(hProcess_debuggee != IntPtr.Zero);
 				break;
 
 			case DBG.DebuggerProcessState.Terminated:
 				Debug.Assert(breakpointsToInitialize.Count == 0);
 				breakpointsToInitialize.Clear();
+				hProcess_debuggee = IntPtr.Zero;
 				break;
 			}
+
+			Debug.Assert((theDebugger.ProcessState == DBG.DebuggerProcessState.Terminated && hProcess_debuggee == IntPtr.Zero) ||
+						 (theDebugger.ProcessState != DBG.DebuggerProcessState.Terminated && hProcess_debuggee != IntPtr.Zero && hProcess_debuggee == GetProcessHandle()));
 
 			var c = OnProcessStateChanged;
 			if (c != null) {
@@ -358,11 +386,11 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public IEnumerable<IThread> Threads {
+		public IEnumerable<IDebuggerThread> Threads {
 			get { return dispatcher.UIIter(GetThreadsUI); }
 		}
 
-		IEnumerable<IThread> GetThreadsUI() {
+		IEnumerable<IDebuggerThread> GetThreadsUI() {
 			var dbg = theDebugger.Debugger;
 			if (dbg == null)
 				yield break;
@@ -373,7 +401,7 @@ namespace dnSpy.Debugger.Scripting {
 			}
 		}
 
-		public IThread ActiveThread {
+		public IDebuggerThread ActiveThread {
 			get {
 				return dispatcher.UI(() => {
 					var thread = debugManager.Value.StackFrameManager.SelectedThread;
@@ -426,6 +454,32 @@ namespace dnSpy.Debugger.Scripting {
 			get { return dispatcher.UI(() => AppDomains.FirstOrDefault()); }
 		}
 
+		public IEnumerable<IDebuggerAssembly> Assemblies {
+			get { return dispatcher.UIIter(GetAssembliesUI); }
+		}
+
+		IEnumerable<IDebuggerAssembly> GetAssembliesUI() {
+			var ad = FirstAppDomain;
+			if (ad == null)
+				yield break;
+			foreach (var a in ad.Assemblies)
+				yield return a;
+		}
+
+		public IEnumerable<IDebuggerModule> Modules {
+			get { return dispatcher.UIIter(GetModulesUI); }
+		}
+
+		IEnumerable<IDebuggerModule> GetModulesUI() {
+			var ad = FirstAppDomain;
+			if (ad == null)
+				yield break;
+			foreach (var a in ad.Assemblies) {
+				foreach (var m in a.Modules)
+					yield return m;
+			}
+		}
+
 		internal IDebuggerAssembly FindAssemblyUI(DBG.CorAssembly corAssembly) {
 			dispatcher.VerifyAccess();
 			var dbg = theDebugger.Debugger;
@@ -450,7 +504,7 @@ namespace dnSpy.Debugger.Scripting {
 			return null;
 		}
 
-		internal IThread FindThreadUI(DBG.CorThread thread) {
+		internal IDebuggerThread FindThreadUI(DBG.CorThread thread) {
 			dispatcher.VerifyAccess();
 			var dbg = theDebugger.Debugger;
 			if (dbg == null)
@@ -577,36 +631,25 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public void BreakOnLoad(string name, Action action) {
+		public void BreakOnLoad(string name, Action<IDebuggerModule> action) {
 			if (name == null)
 				throw new ArgumentNullException();
 			CreateBreakpoint(DebugEventKind.LoadModule, (bp, ctx) => {
 				var c = (ModuleEventContext)ctx;
-				if (!IsSameModule(c.Module.ModuleName.Name, name))
+				if (!Utils.IsSameFile(c.Module.ModuleName.Name, name))
 					return false;
 				bp.Remove();
 				if (action != null)
-					action();
+					action(c.Module);
 				return true;
 			});
 		}
 
-		static bool IsSameModule(string modName, string s) {
-			if (StringComparer.OrdinalIgnoreCase.Equals(modName, s))
-				return true;
-			if (StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileName(modName), s))
-				return true;
-			if (StringComparer.OrdinalIgnoreCase.Equals(Path.GetFileNameWithoutExtension(modName), s))
-				return true;
-
-			return false;
-		}
-
-		public void BreakOnLoadAssembly(string assemblyName, Action action, AssemblyNameComparerFlags flags) {
+		public void BreakOnLoadAssembly(string assemblyName, Action<IDebuggerAssembly> action, AssemblyNameComparerFlags flags) {
 			BreakOnLoadAssembly(new AssemblyNameInfo(assemblyName), action, flags);
 		}
 
-		public void BreakOnLoadAssembly(IAssembly assembly, Action action, AssemblyNameComparerFlags flags) {
+		public void BreakOnLoadAssembly(IAssembly assembly, Action<IDebuggerAssembly> action, AssemblyNameComparerFlags flags) {
 			if (assembly == null)
 				throw new ArgumentNullException();
 			assembly = assembly.ToAssemblyRef();// Prevent storing AssemblyDef refs
@@ -614,11 +657,12 @@ namespace dnSpy.Debugger.Scripting {
 			CreateBreakpoint(DebugEventKind.LoadModule, (bp, ctx) => {
 				var c = (ModuleEventContext)ctx;
 				var comparer = new AssemblyNameComparer(flags);
-				if (!comparer.Equals(assembly, new AssemblyNameInfo(c.Module.Assembly.FullName)))
+				var asm = c.Module.Assembly;
+				if (!comparer.Equals(assembly, new AssemblyNameInfo(asm.FullName)))
 					return false;
 				bp.Remove();
 				if (action != null)
-					action();
+					action(asm);
 				return true;
 			});
 		}
@@ -652,6 +696,465 @@ namespace dnSpy.Debugger.Scripting {
 					Debug.Assert(b);
 				}
 			});
+		}
+
+		public unsafe void ReadMemory(ulong address, byte[] array, long index, uint count) {
+			if (hProcess_debuggee == IntPtr.Zero || (IntPtr.Size == 4 && address > uint.MaxValue)) {
+				Clear(array, index, count);
+				return;
+			}
+			ulong endAddr = IntPtr.Size == 4 ? (ulong)uint.MaxValue + 1 : 0;
+			while (count != 0) {
+				int len = (int)Math.Min((uint)Environment.SystemPageSize, count);
+
+				ulong nextPage = (address + (ulong)Environment.SystemPageSize) & ~((ulong)Environment.SystemPageSize - 1);
+				ulong pageSizeLeft = nextPage - address;
+				if ((ulong)len > pageSizeLeft)
+					len = (int)pageSizeLeft;
+
+				IntPtr sizeRead;
+				bool b;
+				fixed (void* p = &array[index])
+					b = NativeMethods.ReadProcessMemory(hProcess_debuggee, new IntPtr((void*)address), new IntPtr(p), len, out sizeRead);
+
+				int read = !b ? 0 : (int)sizeRead.ToInt64();
+				Debug.Assert(read <= len);
+				Debug.Assert(read == 0 || read == len);
+				if (read != len)
+					Clear(array, index + read, len - read);
+
+				address += (ulong)len;
+				count -= (uint)len;
+				index += len;
+
+				if (address == endAddr) {
+					Clear(array, index, count);
+					break;
+				}
+			}
+		}
+
+		void Clear(byte[] array, long index, long len) {
+			if (index <= int.MaxValue && len <= int.MaxValue)
+				Array.Clear(array, (int)index, (int)len);
+			else {
+				long end = index + len;
+				for (long i = index; i < len; i++)
+					array[i] = 0;
+			}
+		}
+
+		public void ReadMemory(ulong address, byte[] array, long index, int count) {
+			if (count < 0)
+				throw new ArgumentOutOfRangeException();
+			ReadMemory(address, array, index, (uint)count);
+		}
+
+		public byte[] ReadMemory(ulong address, uint count) {
+			var array = new byte[count];
+			ReadMemory(address, array, 0, count);
+			return array;
+		}
+
+		public byte[] ReadMemory(ulong address, int count) {
+			if (count < 0)
+				throw new ArgumentOutOfRangeException();
+			return ReadMemory(address, (uint)count);
+		}
+
+		public unsafe uint WriteMemory(ulong address, byte[] array, long index, uint count) {
+			if (hProcess_debuggee == IntPtr.Zero || (IntPtr.Size == 4 && address > uint.MaxValue))
+				return 0;
+
+			ulong endAddr = IntPtr.Size == 4 ? (ulong)uint.MaxValue + 1 : 0;
+			uint totalWritten = 0;
+			while (count != 0) {
+				int len = (int)Math.Min((uint)Environment.SystemPageSize, count);
+
+				ulong nextPage = (address + (ulong)Environment.SystemPageSize) & ~((ulong)Environment.SystemPageSize - 1);
+				ulong pageSizeLeft = nextPage - address;
+				if ((ulong)len > pageSizeLeft)
+					len = (int)pageSizeLeft;
+
+				uint oldProtect;
+				bool restoreOldProtect = NativeMethods.VirtualProtectEx(hProcess_debuggee, new IntPtr((void*)address), len, NativeMethods.PAGE_EXECUTE_READWRITE, out oldProtect);
+				IntPtr sizeWritten;
+				bool b;
+				fixed (void* p = &array[index])
+					b = NativeMethods.WriteProcessMemory(hProcess_debuggee, new IntPtr((void*)address), new IntPtr(p), len, out sizeWritten);
+				if (restoreOldProtect)
+					NativeMethods.VirtualProtectEx(hProcess_debuggee, new IntPtr((void*)address), len, oldProtect, out oldProtect);
+
+				address += (ulong)len;
+				count -= (uint)len;
+				index += len;
+				totalWritten += (uint)len;
+
+				if (address == endAddr)
+					break;
+			}
+			return totalWritten;
+		}
+
+		public int WriteMemory(ulong address, byte[] array, long index, int count) {
+			if (count < 0)
+				throw new ArgumentOutOfRangeException();
+			return (int)WriteMemory(address, array, index, (uint)count);
+		}
+
+		public void WriteMemory(ulong address, byte[] array) {
+			if (array.LongLength > uint.MaxValue)
+				throw new ArgumentException();
+			uint writtenBytes = WriteMemory(address, array, 0, (uint)array.LongLength);
+			if (writtenBytes != array.LongLength)
+				throw new IOException(string.Format("Couldn't write all bytes. Wrote {0} bytes, expected {1} bytes", writtenBytes, array.LongLength));
+		}
+
+		public bool ReadBoolean(ulong address) {
+			return BitConverter.ToBoolean(ReadMemory(address, 1), 0);
+		}
+
+		public char ReadChar(ulong address) {
+			return BitConverter.ToChar(ReadMemory(address, 2), 0);
+		}
+
+		public sbyte ReadSByte(ulong address) {
+			return (sbyte)ReadMemory(address, 1)[0];
+		}
+
+		public byte ReadByte(ulong address) {
+			return ReadMemory(address, 1)[0];
+		}
+
+		public short ReadInt16(ulong address) {
+			return BitConverter.ToInt16(ReadMemory(address, 2), 0);
+		}
+
+		public ushort ReadUInt16(ulong address) {
+			return BitConverter.ToUInt16(ReadMemory(address, 2), 0);
+		}
+
+		public int ReadInt32(ulong address) {
+			return BitConverter.ToInt32(ReadMemory(address, 4), 0);
+		}
+
+		public uint ReadUInt32(ulong address) {
+			return BitConverter.ToUInt32(ReadMemory(address, 4), 0);
+		}
+
+		public long ReadInt64(ulong address) {
+			return BitConverter.ToInt64(ReadMemory(address, 8), 0);
+		}
+
+		public ulong ReadUInt64(ulong address) {
+			return BitConverter.ToUInt64(ReadMemory(address, 8), 0);
+		}
+
+		public float ReadSingle(ulong address) {
+			return BitConverter.ToSingle(ReadMemory(address, 4), 0);
+		}
+
+		public double ReadDouble(ulong address) {
+			return BitConverter.ToDouble(ReadMemory(address, 8), 0);
+		}
+
+		public void Write(ulong address, bool value) {
+			WriteMemory(address, BitConverter.GetBytes(value));
+		}
+
+		public void Write(ulong address, char value) {
+			WriteMemory(address, BitConverter.GetBytes(value));
+		}
+
+		public void Write(ulong address, sbyte value) {
+			WriteMemory(address, new byte[1] { (byte)value });
+		}
+
+		public void Write(ulong address, byte value) {
+			WriteMemory(address, new byte[1] { value });
+		}
+
+		public void Write(ulong address, short value) {
+			WriteMemory(address, BitConverter.GetBytes(value));
+		}
+
+		public void Write(ulong address, ushort value) {
+			WriteMemory(address, BitConverter.GetBytes(value));
+		}
+
+		public void Write(ulong address, int value) {
+			WriteMemory(address, BitConverter.GetBytes(value));
+		}
+
+		public void Write(ulong address, uint value) {
+			WriteMemory(address, BitConverter.GetBytes(value));
+		}
+
+		public void Write(ulong address, long value) {
+			WriteMemory(address, BitConverter.GetBytes(value));
+		}
+
+		public void Write(ulong address, ulong value) {
+			WriteMemory(address, BitConverter.GetBytes(value));
+		}
+
+		public void Write(ulong address, float value) {
+			WriteMemory(address, BitConverter.GetBytes(value));
+		}
+
+		public void Write(ulong address, double value) {
+			WriteMemory(address, BitConverter.GetBytes(value));
+		}
+
+		public IDebuggerModule CorLib {
+			get {
+				if (corLib != null)
+					return corLib;
+				return dispatcher.UI(() => {
+					if (corLib != null)
+						return corLib;
+					var ad = FirstAppDomain;
+					if (ad == null)
+						return null;
+					corLib = ad.CorLib;
+					return corLib;
+				});
+			}
+		}
+		IDebuggerModule corLib;
+
+		public IDebuggerModule FindModule(ModuleName name) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.FindModule(name);
+			});
+		}
+
+		public IDebuggerModule FindModuleByName(string name) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.FindModuleByName(name);
+			});
+		}
+
+		public IDebuggerAssembly FindAssembly(string name) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.FindAssembly(name);
+			});
+		}
+
+		public IDebuggerClass FindClass(string modName, string className) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.FindClass(modName, className);
+			});
+		}
+
+		public IDebuggerFunction FindMethod(string modName, string className, string methodName) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.FindMethod(modName, className, methodName);
+			});
+		}
+
+		public IDebuggerType CreateRefType(string modName, string className) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.CreateRefType(modName, className);
+			});
+		}
+
+		public IDebuggerType CreateValueType(string modName, string className) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.CreateValueType(modName, className);
+			});
+		}
+
+		public IDebuggerType CreateRefType(string modName, string className, params IDebuggerType[] genericArguments) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.CreateRefType(modName, className, genericArguments);
+			});
+		}
+
+		public IDebuggerType CreateValueType(string modName, string className, params IDebuggerType[] genericArguments) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.CreateValueType(modName, className, genericArguments);
+			});
+		}
+
+		IDebuggerType IDebugger.Void {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.Void;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.Boolean {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.Boolean;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.Char {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.Char;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.SByte {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.SByte;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.Byte {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.Byte;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.Int16 {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.Int16;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.UInt16 {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.UInt16;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.Int32 {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.Int32;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.UInt32 {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.UInt32;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.Int64 {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.Int64;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.UInt64 {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.UInt64;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.Single {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.Single;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.Double {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.Double;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.String {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.String;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.TypedReference {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.TypedReference;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.IntPtr {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.IntPtr;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.UIntPtr {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.UIntPtr;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.Object {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.Object;
+				});
+			}
+		}
+
+		IDebuggerType IDebugger.Decimal {
+			get {
+				return dispatcher.UI(() => {
+					var ad = FirstAppDomain;
+					return ad == null ? null : ad.Decimal;
+				});
+			}
 		}
 	}
 }

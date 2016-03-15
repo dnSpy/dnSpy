@@ -32,20 +32,6 @@ using Microsoft.Win32.SafeHandles;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class ManagedProcessesFinder {
-		[DllImport("mscoree", PreserveSig = false)]
-		[return: MarshalAs(UnmanagedType.Interface)]
-		public static extern object CLRCreateInstance(ref Guid clsid, ref Guid riid);
-
-		[DllImport("kernel32")]
-		static extern SafeFileHandle OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
-		const int STANDARD_RIGHTS_REQUIRED = 0x000F0000;
-		const int SYNCHRONIZE = 0x00100000;
-		const int PROCESS_ALL_ACCESS = STANDARD_RIGHTS_REQUIRED | SYNCHRONIZE | 0xFFFF;
-
-		[DllImport("kernel32", SetLastError = true)]
-		[return: MarshalAs(UnmanagedType.Bool)]
-		internal static extern bool IsWow64Process([In] IntPtr hProcess, [Out] out bool Wow64Process);
-
 		public sealed class Info {
 			public int ProcessId;
 			public Machine Machine;
@@ -71,7 +57,7 @@ namespace dnSpy.Debugger.Dialogs {
 		public IEnumerable<Info> FindAll(CancellationToken cancellationToken) {
 			var clsid = new Guid("9280188D-0E8E-4867-B30C-7FA83884E8DE");
 			var riid = typeof(ICLRMetaHost).GUID;
-			var mh = (ICLRMetaHost)CLRCreateInstance(ref clsid, ref riid);
+			var mh = (ICLRMetaHost)NativeMethods.CLRCreateInstance(ref clsid, ref riid);
 
 			int ourPid = Process.GetCurrentProcess().Id;
 			var processes = new List<Process>();
@@ -87,13 +73,13 @@ namespace dnSpy.Debugger.Dialogs {
 				if (pid == ourPid)
 					continue;
 				// Prevent slow exceptions by filtering out processes we can't access
-				using (var fh = OpenProcess(PROCESS_ALL_ACCESS, false, process.Id)) {
+				using (var fh = NativeMethods.OpenProcess(NativeMethods.PROCESS_ALL_ACCESS, false, process.Id)) {
 					if (fh.IsInvalid)
 						continue;
 				}
 				if (Environment.Is64BitOperatingSystem) {
 					bool isWow64Process;
-					if (IsWow64Process(process.Handle, out isWow64Process)) {
+					if (NativeMethods.IsWow64Process(process.Handle, out isWow64Process)) {
 						if (IntPtr.Size == 4 && !isWow64Process)
 							continue;
 					}

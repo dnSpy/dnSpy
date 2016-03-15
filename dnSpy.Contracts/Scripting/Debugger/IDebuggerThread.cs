@@ -24,11 +24,11 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 	/// <summary>
 	/// A thread in the debugged process
 	/// </summary>
-	public interface IThread {
+	public interface IDebuggerThread {
 		/// <summary>
-		/// Unique id per process. Each new created thread gets an incremented value.
+		/// Unique id per debugger
 		/// </summary>
-		int IncrementedId { get; }
+		int UniqueId { get; }
 
 		/// <summary>
 		/// Gets the thread ID (calls ICorDebugThread::GetID()). This is not necessarily the OS

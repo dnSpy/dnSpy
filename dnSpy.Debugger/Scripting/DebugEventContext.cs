@@ -53,7 +53,7 @@ namespace dnSpy.Debugger.Scripting {
 			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
 		}
 
-		public IThread Thread {
+		public IDebuggerThread Thread {
 			get { return debugger.FindThreadUI(args.CorThread); }
 		}
 	}
@@ -138,7 +138,7 @@ namespace dnSpy.Debugger.Scripting {
 			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
 		}
 
-		public IThread Thread {
+		public IDebuggerThread Thread {
 			get { return debugger.FindThreadUI(args.CorThread); }
 		}
 
@@ -176,7 +176,7 @@ namespace dnSpy.Debugger.Scripting {
 			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
 		}
 
-		public IThread Thread {
+		public IDebuggerThread Thread {
 			get { return debugger.FindThreadUI(args.CorThread); }
 		}
 
@@ -227,7 +227,7 @@ namespace dnSpy.Debugger.Scripting {
 			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
 		}
 
-		public IThread Thread {
+		public IDebuggerThread Thread {
 			get { return debugger.FindThreadUI(args.CorThread); }
 		}
 	}
@@ -259,7 +259,7 @@ namespace dnSpy.Debugger.Scripting {
 			this.mda = e.CorMDA;
 		}
 
-		public IThread Thread {
+		public IDebuggerThread Thread {
 			get { return debugger.FindThreadUI(args.CorThread); }
 		}
 
@@ -318,7 +318,7 @@ namespace dnSpy.Debugger.Scripting {
 			get { return debugger.FindAppDomainUI(args.CorAppDomain); }
 		}
 
-		public IThread Thread {
+		public IDebuggerThread Thread {
 			get { return debugger.FindThreadUI(args.CorThread); }
 		}
 	}

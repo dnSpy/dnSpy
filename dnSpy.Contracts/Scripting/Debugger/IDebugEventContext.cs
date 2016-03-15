@@ -46,7 +46,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Gets the thread
 		/// </summary>
-		IThread Thread { get; }
+		IDebuggerThread Thread { get; }
 	}
 
 	/// <summary>
@@ -116,7 +116,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Gets the thread
 		/// </summary>
-		IThread Thread { get; }
+		IDebuggerThread Thread { get; }
 
 		/// <summary>
 		/// Gets the logging level
@@ -178,7 +178,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Gets the thread
 		/// </summary>
-		IThread Thread { get; }
+		IDebuggerThread Thread { get; }
 
 		/// <summary>
 		/// Gets the logging level
@@ -219,7 +219,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Gets the thread or null
 		/// </summary>
-		IThread Thread { get; }
+		IDebuggerThread Thread { get; }
 	}
 
 	/// <summary>
@@ -256,7 +256,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Gets the thread or null
 		/// </summary>
-		IThread Thread { get; }
+		IDebuggerThread Thread { get; }
 
 		/// <summary>
 		/// true if the thread on which the MDA was fired has slipped since the MDA was fired.
@@ -305,6 +305,6 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Gets the thread
 		/// </summary>
-		IThread Thread { get; }
+		IDebuggerThread Thread { get; }
 	}
 }

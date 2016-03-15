@@ -52,7 +52,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Gets all threads
 		/// </summary>
-		IEnumerable<IThread> Threads { get; }
+		IEnumerable<IDebuggerThread> Threads { get; }
 
 		/// <summary>
 		/// Gets all assemblies
@@ -65,15 +65,202 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		IEnumerable<IDebuggerModule> Modules { get; }
 
 		/// <summary>
+		/// Gets the core module (mscorlib)
+		/// </summary>
+		IDebuggerModule CorLib { get; }
+
+		/// <summary>
+		/// Finds a module
+		/// </summary>
+		/// <param name="name">Module name</param>
+		/// <returns></returns>
+		IDebuggerModule FindModule(ModuleName name);
+
+		/// <summary>
+		/// Finds a module
+		/// </summary>
+		/// <param name="name">Full path, filename, or filename without extension of module</param>
+		/// <returns></returns>
+		IDebuggerModule FindModuleByName(string name);
+
+		/// <summary>
+		/// Finds an assembly
+		/// </summary>
+		/// <param name="name">Full path, filename, or filename without extension of assembly, or
+		/// assembly simple name or assembly full name</param>
+		/// <returns></returns>
+		IDebuggerAssembly FindAssembly(string name);
+
+		/// <summary>
+		/// Finds a class
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <returns></returns>
+		IDebuggerClass FindClass(string modName, string className);
+
+		/// <summary>
+		/// Finds a method
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <param name="methodName">Method name</param>
+		/// <returns></returns>
+		IDebuggerFunction FindMethod(string modName, string className, string methodName);
+
+		/// <summary>
+		/// Creates a reference type
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <returns></returns>
+		IDebuggerType CreateRefType(string modName, string className);
+
+		/// <summary>
+		/// Creates a value type
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <returns></returns>
+		IDebuggerType CreateValueType(string modName, string className);
+
+		/// <summary>
+		/// Creates a reference type
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <param name="genericArguments">Generic arguments</param>
+		/// <returns></returns>
+		IDebuggerType CreateRefType(string modName, string className, params IDebuggerType[] genericArguments);
+
+		/// <summary>
+		/// Creates a value type
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <param name="genericArguments">Generic arguments</param>
+		/// <returns></returns>
+		IDebuggerType CreateValueType(string modName, string className, params IDebuggerType[] genericArguments);
+
+		/// <summary>
+		/// Creates a function pointer type
+		/// </summary>
+		/// <param name="types">Function types. The first type is the return type.</param>
+		/// <returns></returns>
+		IDebuggerType CreateFnPtr(params IDebuggerType[] types);
+
+		/// <summary>
+		/// Creates a function pointer type
+		/// </summary>
+		/// <param name="types">Function types. The first type is the return type.</param>
+		/// <returns></returns>
+		IDebuggerType CreateFunctionPointer(params IDebuggerType[] types);
+
+		/// <summary>
+		/// Gets type <see cref="void"/>
+		/// </summary>
+		IDebuggerType Void { get; }
+
+		/// <summary>
+		/// Gets type <see cref="bool"/>
+		/// </summary>
+		IDebuggerType Boolean { get; }
+
+		/// <summary>
+		/// Gets type <see cref="char"/>
+		/// </summary>
+		IDebuggerType Char { get; }
+
+		/// <summary>
+		/// Gets type <see cref="sbyte"/>
+		/// </summary>
+		IDebuggerType SByte { get; }
+
+		/// <summary>
+		/// Gets type <see cref="byte"/>
+		/// </summary>
+		IDebuggerType Byte { get; }
+
+		/// <summary>
+		/// Gets type <see cref="short"/>
+		/// </summary>
+		IDebuggerType Int16 { get; }
+
+		/// <summary>
+		/// Gets type <see cref="ushort"/>
+		/// </summary>
+		IDebuggerType UInt16 { get; }
+
+		/// <summary>
+		/// Gets type <see cref="int"/>
+		/// </summary>
+		IDebuggerType Int32 { get; }
+
+		/// <summary>
+		/// Gets type <see cref="uint"/>
+		/// </summary>
+		IDebuggerType UInt32 { get; }
+
+		/// <summary>
+		/// Gets type <see cref="long"/>
+		/// </summary>
+		IDebuggerType Int64 { get; }
+
+		/// <summary>
+		/// Gets type <see cref="ulong"/>
+		/// </summary>
+		IDebuggerType UInt64 { get; }
+
+		/// <summary>
+		/// Gets type <see cref="float"/>
+		/// </summary>
+		IDebuggerType Single { get; }
+
+		/// <summary>
+		/// Gets type <see cref="double"/>
+		/// </summary>
+		IDebuggerType Double { get; }
+
+		/// <summary>
+		/// Gets type <see cref="string"/>
+		/// </summary>
+		IDebuggerType String { get; }
+
+		/// <summary>
+		/// Gets type <see cref="TypedReference"/>
+		/// </summary>
+		IDebuggerType TypedReference { get; }
+
+		/// <summary>
+		/// Gets type <see cref="IntPtr"/>
+		/// </summary>
+		IDebuggerType IntPtr { get; }
+
+		/// <summary>
+		/// Gets type <see cref="UIntPtr"/>
+		/// </summary>
+		IDebuggerType UIntPtr { get; }
+
+		/// <summary>
+		/// Gets type <see cref="Object"/>
+		/// </summary>
+		IDebuggerType Object { get; }
+
+		/// <summary>
+		/// Gets type <see cref="Decimal"/>
+		/// </summary>
+		IDebuggerType Decimal { get; }
+
+		/// <summary>
 		/// Gets the CLR AppDomain object or null if it hasn't been constructed yet
 		/// </summary>
-		IDebuggerValue Object { get; }
+		IDebuggerValue CLRObject { get; }
 
 		/// <summary>
 		/// Sets the debug state of all managed threads
 		/// </summary>
 		/// <param name="state">New state</param>
 		/// <param name="thread">Thread to exempt from the new state or null</param>
-		void SetAllThreadsDebugState(ThreadState state, IThread thread = null);
+		void SetAllThreadsDebugState(ThreadState state, IDebuggerThread thread = null);
 	}
 }

@@ -82,17 +82,33 @@ namespace dnSpy.Debugger.Scripting {
 			this.token = cls.Token;
 		}
 
-		public IDebuggerType GetParameterizedType(CorElementType etype, IDebuggerType[] typeArgs) {
+		public IDebuggerType ToType(bool isValueType, IDebuggerType[] typeArgs) {
 			return debugger.Dispatcher.UI(() => {
-				var type = cls.GetParameterizedType((dndbg.COM.CorDebug.CorElementType)etype, typeArgs.ToCorType());
+				var etype = isValueType ? dndbg.COM.CorDebug.CorElementType.ValueType : dndbg.COM.CorDebug.CorElementType.Class;
+				var type = cls.GetParameterizedType(etype, typeArgs.ToCorType());
 				return type == null ? null : new DebuggerType(debugger, type);
 			});
+		}
+
+		public IDebuggerType ToRefType(IDebuggerType[] typeArgs) {
+			return ToType(false, typeArgs);
+		}
+
+		public IDebuggerType ToValueType(IDebuggerType[] typeArgs) {
+			return ToType(true, typeArgs);
 		}
 
 		public IDebuggerValue GetStaticFieldValue(uint token, IStackFrame frame) {
 			return debugger.Dispatcher.UI(() => {
 				var value = cls.GetStaticFieldValue(token, ((StackFrame)frame).CorFrame);
 				return value == null ? null : new DebuggerValue(debugger, value);
+			});
+		}
+
+		public IDebuggerFunction FindMethod(string methodName) {
+			return debugger.Dispatcher.UI(() => {
+				var func = cls.FindFunction(methodName);
+				return func == null ? null : new DebuggerFunction(debugger, func);
 			});
 		}
 

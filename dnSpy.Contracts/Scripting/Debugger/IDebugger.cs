@@ -313,12 +313,12 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Gets all threads
 		/// </summary>
-		IEnumerable<IThread> Threads { get; }
+		IEnumerable<IDebuggerThread> Threads { get; }
 
 		/// <summary>
 		/// Gets/sets the active thread shown in the UI
 		/// </summary>
-		IThread ActiveThread { get; set; }
+		IDebuggerThread ActiveThread { get; set; }
 
 		/// <summary>
 		/// Gets/sets the active stack frame of the active thread shown in the UI. See also
@@ -346,6 +346,189 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// Gets the first <see cref="IAppDomain"/> in <see cref="AppDomains"/>
 		/// </summary>
 		IAppDomain FirstAppDomain { get; }
+
+		/// <summary>
+		/// Gets all assemblies in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IEnumerable<IDebuggerAssembly> Assemblies { get; }
+
+		/// <summary>
+		/// Gets all modules in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IEnumerable<IDebuggerModule> Modules { get; }
+
+		/// <summary>
+		/// Gets the core module (mscorlib) in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerModule CorLib { get; }
+
+		/// <summary>
+		/// Finds a module in <see cref="FirstAppDomain"/>
+		/// </summary>
+		/// <param name="name">Module name</param>
+		/// <returns></returns>
+		IDebuggerModule FindModule(ModuleName name);
+
+		/// <summary>
+		/// Finds a module in <see cref="FirstAppDomain"/>
+		/// </summary>
+		/// <param name="name">Full path, filename, or filename without extension of module</param>
+		/// <returns></returns>
+		IDebuggerModule FindModuleByName(string name);
+
+		/// <summary>
+		/// Finds an assembly in <see cref="FirstAppDomain"/>
+		/// </summary>
+		/// <param name="name">Full path, filename, or filename without extension of assembly, or
+		/// assembly simple name or assembly full name</param>
+		/// <returns></returns>
+		IDebuggerAssembly FindAssembly(string name);
+
+		/// <summary>
+		/// Finds a class in <see cref="FirstAppDomain"/>
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <returns></returns>
+		IDebuggerClass FindClass(string modName, string className);
+
+		/// <summary>
+		/// Finds a method in <see cref="FirstAppDomain"/>
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <param name="methodName">Method name</param>
+		/// <returns></returns>
+		IDebuggerFunction FindMethod(string modName, string className, string methodName);
+
+		/// <summary>
+		/// Creates a reference type in <see cref="FirstAppDomain"/>
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <returns></returns>
+		IDebuggerType CreateRefType(string modName, string className);
+
+		/// <summary>
+		/// Creates a value type in <see cref="FirstAppDomain"/>
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <returns></returns>
+		IDebuggerType CreateValueType(string modName, string className);
+
+		/// <summary>
+		/// Creates a reference type in <see cref="FirstAppDomain"/>
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <param name="genericArguments">Generic arguments</param>
+		/// <returns></returns>
+		IDebuggerType CreateRefType(string modName, string className, params IDebuggerType[] genericArguments);
+
+		/// <summary>
+		/// Creates a value type in <see cref="FirstAppDomain"/>
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <param name="genericArguments">Generic arguments</param>
+		/// <returns></returns>
+		IDebuggerType CreateValueType(string modName, string className, params IDebuggerType[] genericArguments);
+
+		/// <summary>
+		/// Gets type <see cref="void"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType Void { get; }
+
+		/// <summary>
+		/// Gets type <see cref="bool"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType Boolean { get; }
+
+		/// <summary>
+		/// Gets type <see cref="char"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType Char { get; }
+
+		/// <summary>
+		/// Gets type <see cref="sbyte"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType SByte { get; }
+
+		/// <summary>
+		/// Gets type <see cref="byte"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType Byte { get; }
+
+		/// <summary>
+		/// Gets type <see cref="short"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType Int16 { get; }
+
+		/// <summary>
+		/// Gets type <see cref="ushort"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType UInt16 { get; }
+
+		/// <summary>
+		/// Gets type <see cref="int"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType Int32 { get; }
+
+		/// <summary>
+		/// Gets type <see cref="uint"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType UInt32 { get; }
+
+		/// <summary>
+		/// Gets type <see cref="long"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType Int64 { get; }
+
+		/// <summary>
+		/// Gets type <see cref="ulong"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType UInt64 { get; }
+
+		/// <summary>
+		/// Gets type <see cref="float"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType Single { get; }
+
+		/// <summary>
+		/// Gets type <see cref="double"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType Double { get; }
+
+		/// <summary>
+		/// Gets type <see cref="string"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType String { get; }
+
+		/// <summary>
+		/// Gets type <see cref="TypedReference"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType TypedReference { get; }
+
+		/// <summary>
+		/// Gets type <see cref="IntPtr"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType IntPtr { get; }
+
+		/// <summary>
+		/// Gets type <see cref="UIntPtr"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType UIntPtr { get; }
+
+		/// <summary>
+		/// Gets type <see cref="Object"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType Object { get; }
+
+		/// <summary>
+		/// Gets type <see cref="decimal"/> in <see cref="FirstAppDomain"/>
+		/// </summary>
+		IDebuggerType Decimal { get; }
 
 		/// <summary>
 		/// Creates an IL code breakpoint that's only valid for the current debugging session (or
@@ -449,7 +632,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="name">Module name. Can be the full path or just the filename or filename
 		/// without the extension</param>
 		/// <param name="action">Called (on the UI thread) when the module gets loaded</param>
-		void BreakOnLoad(string name, Action action = null);
+		void BreakOnLoad(string name, Action<IDebuggerModule> action = null);
 
 		/// <summary>
 		/// Breaks when an assembly gets loaded
@@ -457,7 +640,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="assemblyName">Assembly name or just part of the full name</param>
 		/// <param name="action">Called (on the UI thread) when the module gets loaded</param>
 		/// <param name="flags">Assembly name comparer flags</param>
-		void BreakOnLoadAssembly(string assemblyName, Action action = null, AssemblyNameComparerFlags flags = AssemblyNameComparerFlags.Name);
+		void BreakOnLoadAssembly(string assemblyName, Action<IDebuggerAssembly> action = null, AssemblyNameComparerFlags flags = AssemblyNameComparerFlags.Name);
 
 		/// <summary>
 		/// Breaks when an assembly gets loaded
@@ -465,12 +648,241 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="assembly">Assembly</param>
 		/// <param name="action">Called (on the UI thread) when the module gets loaded</param>
 		/// <param name="flags">Assembly name comparer flags</param>
-		void BreakOnLoadAssembly(IAssembly assembly, Action action = null, AssemblyNameComparerFlags flags = AssemblyNameComparerFlags.All);
+		void BreakOnLoadAssembly(IAssembly assembly, Action<IDebuggerAssembly> action = null, AssemblyNameComparerFlags flags = AssemblyNameComparerFlags.All);
 
 		/// <summary>
 		/// Removes a breakpoint
 		/// </summary>
 		/// <param name="bp">Breakpoint</param>
 		void Remove(IBreakpoint bp);
+
+		/// <summary>
+		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="array">Destination</param>
+		/// <param name="index">Index in <paramref name="array"/></param>
+		/// <param name="count">Number of bytes to read</param>
+		void ReadMemory(ulong address, byte[] array, long index, uint count);
+
+		/// <summary>
+		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="array">Destination</param>
+		/// <param name="index">Index in <paramref name="array"/></param>
+		/// <param name="count">Number of bytes to read</param>
+		void ReadMemory(ulong address, byte[] array, long index, int count);
+
+		/// <summary>
+		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="count">Number of bytes to read</param>
+		/// <returns></returns>
+		byte[] ReadMemory(ulong address, uint count);
+
+		/// <summary>
+		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="count">Number of bytes to read</param>
+		/// <returns></returns>
+		byte[] ReadMemory(ulong address, int count);
+
+		/// <summary>
+		/// Writes data to memory in the debugged process. Returns the number of bytes written.
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="array">Source</param>
+		/// <param name="index">Index in <paramref name="array"/></param>
+		/// <param name="count">Number of bytes to write</param>
+		/// <returns></returns>
+		uint WriteMemory(ulong address, byte[] array, long index, uint count);
+
+		/// <summary>
+		/// Writes data to memory in the debugged process. Returns the number of bytes written.
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="array">Source</param>
+		/// <param name="index">Index in <paramref name="array"/></param>
+		/// <param name="count">Number of bytes to write</param>
+		/// <returns></returns>
+		int WriteMemory(ulong address, byte[] array, long index, int count);
+
+		/// <summary>
+		/// Writes data to memory in the debugged process. Throws if all bytes couldn't be written.
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="array">Source</param>
+		void WriteMemory(ulong address, byte[] array);
+
+		/// <summary>
+		/// Reads a <see cref="bool"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		bool ReadBoolean(ulong address);
+
+		/// <summary>
+		/// Reads a <see cref="char"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		char ReadChar(ulong address);
+
+		/// <summary>
+		/// Reads a <see cref="sbyte"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		sbyte ReadSByte(ulong address);
+
+		/// <summary>
+		/// Reads a <see cref="byte"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		byte ReadByte(ulong address);
+
+		/// <summary>
+		/// Reads a <see cref="short"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		short ReadInt16(ulong address);
+
+		/// <summary>
+		/// Reads a <see cref="ushort"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		ushort ReadUInt16(ulong address);
+
+		/// <summary>
+		/// Reads a <see cref="int"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		int ReadInt32(ulong address);
+
+		/// <summary>
+		/// Reads a <see cref="uint"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		uint ReadUInt32(ulong address);
+
+		/// <summary>
+		/// Reads a <see cref="long"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		long ReadInt64(ulong address);
+
+		/// <summary>
+		/// Reads a <see cref="ulong"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		ulong ReadUInt64(ulong address);
+
+		/// <summary>
+		/// Reads a <see cref="float"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		float ReadSingle(ulong address);
+
+		/// <summary>
+		/// Reads a <see cref="double"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		double ReadDouble(ulong address);
+
+		/// <summary>
+		/// Writes a <see cref="bool"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="value">Value</param>
+		void Write(ulong address, bool value);
+
+		/// <summary>
+		/// Writes a <see cref="char"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="value">Value</param>
+		void Write(ulong address, char value);
+
+		/// <summary>
+		/// Writes a <see cref="sbyte"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="value">Value</param>
+		void Write(ulong address, sbyte value);
+
+		/// <summary>
+		/// Writes a <see cref="byte"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="value">Value</param>
+		void Write(ulong address, byte value);
+
+		/// <summary>
+		/// Writes a <see cref="short"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="value">Value</param>
+		void Write(ulong address, short value);
+
+		/// <summary>
+		/// Writes a <see cref="ushort"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="value">Value</param>
+		void Write(ulong address, ushort value);
+
+		/// <summary>
+		/// Writes a <see cref="int"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="value">Value</param>
+		void Write(ulong address, int value);
+
+		/// <summary>
+		/// Writes a <see cref="uint"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="value">Value</param>
+		void Write(ulong address, uint value);
+
+		/// <summary>
+		/// Writes a <see cref="long"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="value">Value</param>
+		void Write(ulong address, long value);
+
+		/// <summary>
+		/// Writes a <see cref="ulong"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="value">Value</param>
+		void Write(ulong address, ulong value);
+
+		/// <summary>
+		/// Writes a <see cref="float"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="value">Value</param>
+		void Write(ulong address, float value);
+
+		/// <summary>
+		/// Writes a <see cref="double"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="value">Value</param>
+		void Write(ulong address, double value);
 	}
 }

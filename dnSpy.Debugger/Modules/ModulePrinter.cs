@@ -64,7 +64,7 @@ namespace dnSpy.Debugger.Modules {
 		}
 
 		public void WriteOrder(ModuleVM vm) {
-			output.Write(string.Format("{0}", vm.Module.ModuleOrder), TextTokenKind.Number);
+			output.Write(string.Format("{0}", vm.Module.UniqueId), TextTokenKind.Number);
 		}
 
 		public void WriteVersion(ModuleVM vm) {

@@ -109,7 +109,7 @@ namespace dnSpy.Debugger.Threads {
 		internal ThreadsCtxMenuContext Create() {
 			var vm = threadsContent.Value.ThreadsVM;
 			var elems = threadsContent.Value.ListView.SelectedItems.OfType<ThreadVM>().ToArray();
-			Array.Sort(elems, (a, b) => a.Thread.IncrementedId.CompareTo(b.Thread.IncrementedId));
+			Array.Sort(elems, (a, b) => a.Thread.UniqueId.CompareTo(b.Thread.UniqueId));
 
 			return new ThreadsCtxMenuContext(vm, elems);
 		}

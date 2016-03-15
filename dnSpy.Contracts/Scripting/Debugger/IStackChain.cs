@@ -27,7 +27,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Gets the thread
 		/// </summary>
-		IThread Thread { get; }
+		IDebuggerThread Thread { get; }
 
 		/// <summary>
 		/// true if this is a managed chain

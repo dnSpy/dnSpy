@@ -26,7 +26,7 @@ using dnSpy.Contracts.Scripting.Debugger;
 using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Debugger.Scripting {
-	sealed class DebuggerThread : IThread {
+	sealed class DebuggerThread : IDebuggerThread {
 		public IAppDomain AppDomain {
 			get {
 				return debugger.Dispatcher.UI(() => {
@@ -73,8 +73,8 @@ namespace dnSpy.Debugger.Scripting {
 			get { return debugger.Dispatcher.UI(() => thread.HasExited); }
 		}
 
-		public int IncrementedId {
-			get { return incrementedId; }
+		public int UniqueId {
+			get { return uniqueId; }
 		}
 
 		public int ThreadId {
@@ -181,7 +181,7 @@ namespace dnSpy.Debugger.Scripting {
 
 		readonly Debugger debugger;
 		readonly int hashCode;
-		readonly int incrementedId;
+		readonly int uniqueId;
 
 		public DnThread DnThread {
 			get { return thread; }
@@ -192,7 +192,7 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
 			this.thread = thread;
-			this.incrementedId = thread.IncrementedId;
+			this.uniqueId = thread.UniqueId;
 			this.hashCode = thread.GetHashCode();
 		}
 

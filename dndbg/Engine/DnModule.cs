@@ -55,20 +55,28 @@ namespace dndbg.Engine {
 		readonly CorModule module;
 
 		/// <summary>
-		/// Unique id per Assembly. Each new created module gets an incremented value.
+		/// Unique id per debugger
 		/// </summary>
-		public int IncrementedId {
-			get { return incrementedId; }
+		public int UniqueId {
+			get { return uniqueId; }
 		}
-		readonly int incrementedId;
+		readonly int uniqueId;
 
 		/// <summary>
-		/// Unique id per debugger. Incremented each time a new module is created.
+		/// Unique id per process
 		/// </summary>
-		public int ModuleOrder {
-			get { return moduleOrder; }
+		public int UniqueIdProcess {
+			get { return uniqueIdProcess; }
 		}
-		readonly int moduleOrder;
+		readonly int uniqueIdProcess;
+
+		/// <summary>
+		/// Unique id per AppDomain
+		/// </summary>
+		public int UniqueIdAppDomain {
+			get { return uniqueIdAppDomain; }
+		}
+		readonly int uniqueIdAppDomain;
 
 		/// <summary>
 		/// For on-disk modules this is a full path. For dynamic modules this is just the filename
@@ -171,11 +179,12 @@ namespace dndbg.Engine {
 		}
 		CorDebugJITCompilerFlags jitFlags;
 
-		internal DnModule(DnAssembly ownerAssembly, ICorDebugModule module, int incrementedId, int moduleOrder) {
+		internal DnModule(DnAssembly ownerAssembly, ICorDebugModule module, int uniqueId, int uniqueIdProcess, int uniqueIdAppDomain) {
 			this.ownerAssembly = ownerAssembly;
 			this.module = new CorModule(module);
-			this.incrementedId = incrementedId;
-			this.moduleOrder = moduleOrder;
+			this.uniqueId = uniqueId;
+			this.uniqueIdProcess = uniqueIdProcess;
+			this.uniqueIdAppDomain = uniqueIdAppDomain;
 			this.serializedDnModule = this.module.SerializedDnModule;
 		}
 
@@ -189,7 +198,7 @@ namespace dndbg.Engine {
 		}
 
 		public override string ToString() {
-			return string.Format("{0} DYN={1} MEM={2} A={3:X8} S={4:X8} {5}", ModuleOrder, IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, Address, Size, Name);
+			return string.Format("{0} DYN={1} MEM={2} A={3:X8} S={4:X8} {5}", UniqueId, IsDynamic ? 1 : 0, IsInMemory ? 1 : 0, Address, Size, Name);
 		}
 	}
 }

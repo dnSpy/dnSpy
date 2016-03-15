@@ -796,6 +796,7 @@ namespace dnSpy.Languages.CSharp {
 			if (type == null || type.DeclaringType != null || type.Namespace != "System" || !type.DefinitionAssembly.IsCorLib())
 				return null;
 			switch (type.TypeName) {
+			case "Void":	return "void";
 			case "Boolean":	return "bool";
 			case "Byte":	return "byte";
 			case "Char":	return "char";

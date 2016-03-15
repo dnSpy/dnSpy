@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.IO;
 using dnSpy.Contracts.Highlighting;
 
 namespace dnSpy.Contracts.Scripting.Debugger {
@@ -441,6 +442,37 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// is null or if it's not a nullable value</param>
 		/// <returns></returns>
 		bool GetNullableValue(out IDebuggerValue value);
+
+		/// <summary>
+		/// Reads the data but doesn't return internal values such as array length if it's an array.
+		/// </summary>
+		/// <returns></returns>
+		byte[] SaveData();
+
+		/// <summary>
+		/// Reads the data but doesn't return internal values such as array length if it's an array.
+		/// </summary>
+		/// <param name="stream">Destination stream</param>
+		void SaveData(Stream stream);
+
+		/// <summary>
+		/// Reads the data but doesn't return internal values such as array length if it's an array.
+		/// </summary>
+		/// <param name="filename">Filename</param>
+		void SaveData(string filename);
+
+		/// <summary>
+		/// Returns the address of the first element in the array
+		/// </summary>
+		/// <returns></returns>
+		ulong GetArrayDataAddress();
+
+		/// <summary>
+		/// Returns the address of the first element in the array
+		/// </summary>
+		/// <param name="elemSize">Element size</param>
+		/// <returns></returns>
+		ulong GetArrayDataAddress(out ulong elemSize);
 
 		/// <summary>
 		/// Write this to <paramref name="output"/>

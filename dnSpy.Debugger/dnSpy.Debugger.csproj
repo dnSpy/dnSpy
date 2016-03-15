@@ -98,6 +98,7 @@
     <Compile Include="Dialogs\ProcessContext.cs" />
     <Compile Include="Dialogs\ProcessPrinter.cs" />
     <Compile Include="Dialogs\ProcessVM.cs" />
+    <Compile Include="NativeMethods.cs" />
     <Compile Include="Properties\dnSpy.Debugger.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

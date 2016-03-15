@@ -785,8 +785,10 @@ namespace dndbg.COM.CorDebug {
 	[Guid("096E81D5-ECDA-4202-83F5-C65980A9EF75"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]
 	public interface ICorDebugAppDomain2 {
-		void GetArrayOrPointerType([In] CorElementType elementType, [In] uint nRank, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugType pTypeArg, [MarshalAs(UnmanagedType.Interface)] out ICorDebugType ppType);
-		void GetFunctionPointerType([In] uint nTypeArgs, [MarshalAs(UnmanagedType.Interface)] [In] ref ICorDebugType ppTypeArgs, [MarshalAs(UnmanagedType.Interface)] out ICorDebugType ppType);
+		[PreserveSig]
+		int GetArrayOrPointerType([In] CorElementType elementType, [In] uint nRank, [MarshalAs(UnmanagedType.Interface)] [In] ICorDebugType pTypeArg, [MarshalAs(UnmanagedType.Interface)] out ICorDebugType ppType);
+		[PreserveSig]
+		int GetFunctionPointerType([In] int nTypeArgs, [MarshalAs(UnmanagedType.LPArray)] [In] ICorDebugType[] ppTypeArgs, [MarshalAs(UnmanagedType.Interface)] out ICorDebugType ppType);
 	}
 	[Guid("8CB96A16-B588-42E2-B71C-DD849FC2ECCC"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
 	[ComImport]

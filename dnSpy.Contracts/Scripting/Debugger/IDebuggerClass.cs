@@ -73,10 +73,24 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Creates a <see cref="IDebuggerType"/>
 		/// </summary>
-		/// <param name="etype">Element type, must be <see cref="CorElementType.Class"/> or <see cref="CorElementType.ValueType"/></param>
+		/// <param name="isValueType">true if it's value type, false if it's a reference type</param>
 		/// <param name="typeArgs">Generic type arguments or null</param>
 		/// <returns></returns>
-		IDebuggerType GetParameterizedType(CorElementType etype, IDebuggerType[] typeArgs = null);
+		IDebuggerType ToType(bool isValueType, IDebuggerType[] typeArgs = null);
+
+		/// <summary>
+		/// Creates a <see cref="IDebuggerType"/> (reference type)
+		/// </summary>
+		/// <param name="typeArgs">Generic type arguments or null</param>
+		/// <returns></returns>
+		IDebuggerType ToRefType(IDebuggerType[] typeArgs = null);
+
+		/// <summary>
+		/// Creates a <see cref="IDebuggerType"/> (value type)
+		/// </summary>
+		/// <param name="typeArgs">Generic type arguments or null</param>
+		/// <returns></returns>
+		IDebuggerType ToValueType(IDebuggerType[] typeArgs = null);
 
 		/// <summary>
 		/// Reads a static field
@@ -85,6 +99,13 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="frame">Frame</param>
 		/// <returns></returns>
 		IDebuggerValue GetStaticFieldValue(uint token, IStackFrame frame);
+
+		/// <summary>
+		/// Finds a method
+		/// </summary>
+		/// <param name="name">Method name</param>
+		/// <returns></returns>
+		IDebuggerFunction FindMethod(string name);
 
 		/// <summary>
 		/// Write this to <paramref name="output"/>

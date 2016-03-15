@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.IO;
 using dnlib.DotNet;
 
 namespace dnSpy.Contracts.Scripting.Debugger {
@@ -30,14 +31,9 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		ModuleName ModuleName { get; }
 
 		/// <summary>
-		/// Unique id per Assembly. Each new created module gets an incremented value.
+		/// Unique id per debugger
 		/// </summary>
-		int IncrementedId { get; }
-
-		/// <summary>
-		/// Unique id per debugger. Incremented each time a new module is created.
-		/// </summary>
-		int ModuleOrder { get; }
+		int UniqueId { get; }
 
 		/// <summary>
 		/// Gets the owner AppDomain
@@ -110,14 +106,14 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="token"><c>Method</c> token</param>
 		/// <returns></returns>
-		IDebuggerFunction GetFunction(uint token);
+		IDebuggerFunction FindMethod(uint token);
 
 		/// <summary>
 		/// Gets a type in this module
 		/// </summary>
 		/// <param name="token"><c>TypeDef</c> token</param>
 		/// <returns></returns>
-		IDebuggerClass GetClass(uint token);
+		IDebuggerClass FindClass(uint token);
 
 		/// <summary>
 		/// Gets the value of a global field
@@ -131,5 +127,584 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="isJustMyCode">true if it's user code</param>
 		void SetJMCStatus(bool isJustMyCode);
+
+		/// <summary>
+		/// true if the memory layout is identical to file layout
+		/// </summary>
+		bool IsFileLayout { get; }
+
+		/// <summary>
+		/// true if the OS loader has mapped the executable in memory
+		/// </summary>
+		bool IsMemoryLayout { get; }
+
+		/// <summary>
+		/// Can be called to initialize cached PE data in case that data is destroyed by the program
+		/// at runtime.
+		/// </summary>
+		void InitializePE();
+
+		/// <summary>
+		/// Converts <paramref name="rva"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		ulong RVAToAddress(uint rva);
+
+		/// <summary>
+		/// Converts <paramref name="offset"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <returns></returns>
+		ulong OffsetToAddress(uint offset);
+
+		/// <summary>
+		/// Converts <paramref name="address"/> to an RVA
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		uint AddressToRVA(ulong address);
+
+		/// <summary>
+		/// Converts <paramref name="address"/> to a file offset
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		uint AddressToOffset(ulong address);
+
+		/// <summary>
+		/// Converts <paramref name="rva"/> to a file offset
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		uint RVAToOffset(uint rva);
+
+		/// <summary>
+		/// Converts <paramref name="offset"/> to an RVA
+		/// </summary>
+		/// <param name="offset"></param>
+		/// <returns></returns>
+		uint OffsetToRVA(uint offset);
+
+		/// <summary>
+		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="array">Destination</param>
+		/// <param name="index">Index in <paramref name="array"/></param>
+		/// <param name="count">Number of bytes to read</param>
+		void Read(uint rva, byte[] array, long index, uint count);
+
+		/// <summary>
+		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="array">Destination</param>
+		/// <param name="index">Index in <paramref name="array"/></param>
+		/// <param name="count">Number of bytes to read</param>
+		void Read(uint rva, byte[] array, long index, int count);
+
+		/// <summary>
+		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="count">Number of bytes to read</param>
+		/// <returns></returns>
+		byte[] Read(uint rva, uint count);
+
+		/// <summary>
+		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="count">Number of bytes to read</param>
+		/// <returns></returns>
+		byte[] Read(uint rva, int count);
+
+		/// <summary>
+		/// Writes data to memory in the debugged process. Returns the number of bytes written.
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="array">Source</param>
+		/// <param name="index">Index in <paramref name="array"/></param>
+		/// <param name="count">Number of bytes to write</param>
+		/// <returns></returns>
+		uint Write(uint rva, byte[] array, long index, uint count);
+
+		/// <summary>
+		/// Writes data to memory in the debugged process. Returns the number of bytes written.
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="array">Source</param>
+		/// <param name="index">Index in <paramref name="array"/></param>
+		/// <param name="count">Number of bytes to write</param>
+		/// <returns></returns>
+		int Write(uint rva, byte[] array, long index, int count);
+
+		/// <summary>
+		/// Writes data to memory in the debugged process. Throws if all bytes couldn't be written.
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="array">Source</param>
+		void Write(uint rva, byte[] array);
+
+		/// <summary>
+		/// Reads a <see cref="bool"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		bool ReadBoolean(uint rva);
+
+		/// <summary>
+		/// Reads a <see cref="char"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		char ReadChar(uint rva);
+
+		/// <summary>
+		/// Reads a <see cref="sbyte"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		sbyte ReadSByte(uint rva);
+
+		/// <summary>
+		/// Reads a <see cref="byte"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		byte ReadByte(uint rva);
+
+		/// <summary>
+		/// Reads a <see cref="short"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		short ReadInt16(uint rva);
+
+		/// <summary>
+		/// Reads a <see cref="ushort"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		ushort ReadUInt16(uint rva);
+
+		/// <summary>
+		/// Reads a <see cref="int"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		int ReadInt32(uint rva);
+
+		/// <summary>
+		/// Reads a <see cref="uint"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		uint ReadUInt32(uint rva);
+
+		/// <summary>
+		/// Reads a <see cref="long"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		long ReadInt64(uint rva);
+
+		/// <summary>
+		/// Reads a <see cref="ulong"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		ulong ReadUInt64(uint rva);
+
+		/// <summary>
+		/// Reads a <see cref="float"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		float ReadSingle(uint rva);
+
+		/// <summary>
+		/// Reads a <see cref="double"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		double ReadDouble(uint rva);
+
+		/// <summary>
+		/// Writes a <see cref="bool"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="value">Value</param>
+		void Write(uint rva, bool value);
+
+		/// <summary>
+		/// Writes a <see cref="char"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="value">Value</param>
+		void Write(uint rva, char value);
+
+		/// <summary>
+		/// Writes a <see cref="sbyte"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="value">Value</param>
+		void Write(uint rva, sbyte value);
+
+		/// <summary>
+		/// Writes a <see cref="byte"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="value">Value</param>
+		void Write(uint rva, byte value);
+
+		/// <summary>
+		/// Writes a <see cref="short"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="value">Value</param>
+		void Write(uint rva, short value);
+
+		/// <summary>
+		/// Writes a <see cref="ushort"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="value">Value</param>
+		void Write(uint rva, ushort value);
+
+		/// <summary>
+		/// Writes a <see cref="int"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="value">Value</param>
+		void Write(uint rva, int value);
+
+		/// <summary>
+		/// Writes a <see cref="uint"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="value">Value</param>
+		void Write(uint rva, uint value);
+
+		/// <summary>
+		/// Writes a <see cref="long"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="value">Value</param>
+		void Write(uint rva, long value);
+
+		/// <summary>
+		/// Writes a <see cref="ulong"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="value">Value</param>
+		void Write(uint rva, ulong value);
+
+		/// <summary>
+		/// Writes a <see cref="float"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="value">Value</param>
+		void Write(uint rva, float value);
+
+		/// <summary>
+		/// Writes a <see cref="double"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="value">Value</param>
+		void Write(uint rva, double value);
+
+		/// <summary>
+		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="array">Destination</param>
+		/// <param name="index">Index in <paramref name="array"/></param>
+		/// <param name="count">Number of bytes to read</param>
+		void ReadOffset(uint offset, byte[] array, long index, uint count);
+
+		/// <summary>
+		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="array">Destination</param>
+		/// <param name="index">Index in <paramref name="array"/></param>
+		/// <param name="count">Number of bytes to read</param>
+		void ReadOffset(uint offset, byte[] array, long index, int count);
+
+		/// <summary>
+		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="count">Number of bytes to read</param>
+		/// <returns></returns>
+		byte[] ReadOffset(uint offset, uint count);
+
+		/// <summary>
+		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="count">Number of bytes to read</param>
+		/// <returns></returns>
+		byte[] ReadOffset(uint offset, int count);
+
+		/// <summary>
+		/// Writes data to memory in the debugged process. Returns the number of bytes written.
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="array">Source</param>
+		/// <param name="index">Index in <paramref name="array"/></param>
+		/// <param name="count">Number of bytes to write</param>
+		/// <returns></returns>
+		uint WriteOffset(uint offset, byte[] array, long index, uint count);
+
+		/// <summary>
+		/// Writes data to memory in the debugged process. Returns the number of bytes written.
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="array">Source</param>
+		/// <param name="index">Index in <paramref name="array"/></param>
+		/// <param name="count">Number of bytes to write</param>
+		/// <returns></returns>
+		int WriteOffset(uint offset, byte[] array, long index, int count);
+
+		/// <summary>
+		/// Writes data to memory in the debugged process. Throws if all bytes couldn't be written.
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="array">Source</param>
+		void WriteOffset(uint offset, byte[] array);
+
+		/// <summary>
+		/// Reads a <see cref="bool"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <returns></returns>
+		bool ReadBooleanOffset(uint offset);
+
+		/// <summary>
+		/// Reads a <see cref="char"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <returns></returns>
+		char ReadCharOffset(uint offset);
+
+		/// <summary>
+		/// Reads a <see cref="sbyte"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <returns></returns>
+		sbyte ReadSByteOffset(uint offset);
+
+		/// <summary>
+		/// Reads a <see cref="byte"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <returns></returns>
+		byte ReadByteOffset(uint offset);
+
+		/// <summary>
+		/// Reads a <see cref="short"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <returns></returns>
+		short ReadInt16Offset(uint offset);
+
+		/// <summary>
+		/// Reads a <see cref="ushort"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <returns></returns>
+		ushort ReadUInt16Offset(uint offset);
+
+		/// <summary>
+		/// Reads a <see cref="int"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <returns></returns>
+		int ReadInt32Offset(uint offset);
+
+		/// <summary>
+		/// Reads a <see cref="uint"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <returns></returns>
+		uint ReadUInt32Offset(uint offset);
+
+		/// <summary>
+		/// Reads a <see cref="long"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <returns></returns>
+		long ReadInt64Offset(uint offset);
+
+		/// <summary>
+		/// Reads a <see cref="ulong"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <returns></returns>
+		ulong ReadUInt64Offset(uint offset);
+
+		/// <summary>
+		/// Reads a <see cref="float"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <returns></returns>
+		float ReadSingleOffset(uint offset);
+
+		/// <summary>
+		/// Reads a <see cref="double"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <returns></returns>
+		double ReadDoubleOffset(uint offset);
+
+		/// <summary>
+		/// Writes a <see cref="bool"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="value">Value</param>
+		void WriteOffset(uint offset, bool value);
+
+		/// <summary>
+		/// Writes a <see cref="char"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="value">Value</param>
+		void WriteOffset(uint offset, char value);
+
+		/// <summary>
+		/// Writes a <see cref="sbyte"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="value">Value</param>
+		void WriteOffset(uint offset, sbyte value);
+
+		/// <summary>
+		/// Writes a <see cref="byte"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="value">Value</param>
+		void WriteOffset(uint offset, byte value);
+
+		/// <summary>
+		/// Writes a <see cref="short"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="value">Value</param>
+		void WriteOffset(uint offset, short value);
+
+		/// <summary>
+		/// Writes a <see cref="ushort"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="value">Value</param>
+		void WriteOffset(uint offset, ushort value);
+
+		/// <summary>
+		/// Writes a <see cref="int"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="value">Value</param>
+		void WriteOffset(uint offset, int value);
+
+		/// <summary>
+		/// Writes a <see cref="uint"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="value">Value</param>
+		void WriteOffset(uint offset, uint value);
+
+		/// <summary>
+		/// Writes a <see cref="long"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="value">Value</param>
+		void WriteOffset(uint offset, long value);
+
+		/// <summary>
+		/// Writes a <see cref="ulong"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="value">Value</param>
+		void WriteOffset(uint offset, ulong value);
+
+		/// <summary>
+		/// Writes a <see cref="float"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="value">Value</param>
+		void WriteOffset(uint offset, float value);
+
+		/// <summary>
+		/// Writes a <see cref="double"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="value">Value</param>
+		void WriteOffset(uint offset, double value);
+
+		/// <summary>
+		/// Save the module to a byte[]. Can't be called if it's a dynamic assembly (<see cref="IsDynamic"/> is true)
+		/// </summary>
+		/// <returns></returns>
+		byte[] Save();
+
+		/// <summary>
+		/// Save the module to a stream. Can't be called if it's a dynamic assembly (<see cref="IsDynamic"/> is true)
+		/// </summary>
+		/// <param name="stream">Destination stream</param>
+		void Save(Stream stream);
+
+		/// <summary>
+		/// Save the module to a file. Can't be called if it's a dynamic assembly (<see cref="IsDynamic"/> is true)
+		/// </summary>
+		/// <param name="filename">Filename</param>
+		void Save(string filename);
+
+		/// <summary>
+		/// Finds a class
+		/// </summary>
+		/// <param name="className">Class name</param>
+		/// <returns></returns>
+		IDebuggerClass FindClass(string className);
+
+		/// <summary>
+		/// Finds a method
+		/// </summary>
+		/// <param name="className">Class name</param>
+		/// <param name="methodName">Method name</param>
+		/// <returns></returns>
+		IDebuggerFunction FindMethod(string className, string methodName);
+
+		/// <summary>
+		/// Creates a reference type
+		/// </summary>
+		/// <param name="className">Class name</param>
+		/// <returns></returns>
+		IDebuggerType CreateRefType(string className);
+
+		/// <summary>
+		/// Creates a value type
+		/// </summary>
+		/// <param name="className">Class name</param>
+		/// <returns></returns>
+		IDebuggerType CreateValueType(string className);
+
+		/// <summary>
+		/// Creates a reference type
+		/// </summary>
+		/// <param name="className">Class name</param>
+		/// <param name="genericArguments">Generic arguments</param>
+		/// <returns></returns>
+		IDebuggerType CreateRefType(string className, params IDebuggerType[] genericArguments);
+
+		/// <summary>
+		/// Creates a value type
+		/// </summary>
+		/// <param name="className">Class name</param>
+		/// <param name="genericArguments">Generic arguments</param>
+		/// <returns></returns>
+		IDebuggerType CreateValueType(string className, params IDebuggerType[] genericArguments);
 	}
 }

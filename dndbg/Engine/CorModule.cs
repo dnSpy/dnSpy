@@ -56,7 +56,7 @@ namespace dndbg.Engine {
 			get {
 				var mdi = this.GetMetaDataInterface<IMetaDataImport>();
 				// Only the manifest module should have an assembly row
-				return mdi.IsValidToken(new MDToken(Table.Assembly, 1).Raw);
+				return mdi != null && mdi.IsValidToken(new MDToken(Table.Assembly, 1).Raw);
 			}
 		}
 
@@ -281,6 +281,20 @@ namespace dndbg.Engine {
 			var riid = typeof(T).GUID;
 			int hr = obj.GetMetaDataInterface(ref riid, out o);
 			return o as T;
+		}
+
+		/// <summary>
+		/// Finds a class
+		/// </summary>
+		/// <param name="name">Full class name</param>
+		/// <returns></returns>
+		public CorClass FindClass(string name) {
+			var mdi = this.GetMetaDataInterface<IMetaDataImport>();
+			foreach (var tdToken in MDAPI.GetTypeDefTokens(mdi)) {
+				if (MDAPI.GetTypeDefName(mdi, tdToken) == name)
+					return this.GetClassFromToken(tdToken);
+			}
+			return null;
 		}
 
 		public static bool operator ==(CorModule a, CorModule b) {

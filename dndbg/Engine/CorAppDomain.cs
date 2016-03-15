@@ -190,6 +190,51 @@ namespace dndbg.Engine {
 			return hr >= 0;
 		}
 
+		public CorType GetPtr(CorType type) {
+			var ad2 = obj as ICorDebugAppDomain2;
+			if (ad2 == null)
+				return null;
+			ICorDebugType res;
+			int hr = ad2.GetArrayOrPointerType(CorElementType.Ptr, 0, type.RawObject, out res);
+			return res == null ? null : new CorType(res);
+		}
+
+		public CorType GetByRef(CorType type) {
+			var ad2 = obj as ICorDebugAppDomain2;
+			if (ad2 == null)
+				return null;
+			ICorDebugType res;
+			int hr = ad2.GetArrayOrPointerType(CorElementType.ByRef, 0, type.RawObject, out res);
+			return res == null ? null : new CorType(res);
+		}
+
+		public CorType GetSZArray(CorType type) {
+			var ad2 = obj as ICorDebugAppDomain2;
+			if (ad2 == null)
+				return null;
+			ICorDebugType res;
+			int hr = ad2.GetArrayOrPointerType(CorElementType.SZArray, 1, type.RawObject, out res);
+			return res == null ? null : new CorType(res);
+		}
+
+		public CorType GetArray(CorType type, uint rank) {
+			var ad2 = obj as ICorDebugAppDomain2;
+			if (ad2 == null)
+				return null;
+			ICorDebugType res;
+			int hr = ad2.GetArrayOrPointerType(CorElementType.Array, rank, type.RawObject, out res);
+			return res == null ? null : new CorType(res);
+		}
+
+		public CorType GetFnPtr(CorType[] args) {
+			var ad2 = obj as ICorDebugAppDomain2;
+			if (ad2 == null)
+				return null;
+			ICorDebugType res;
+			int hr = ad2.GetFunctionPointerType(args.Length, args.ToCorDebugArray(), out res);
+			return res == null ? null : new CorType(res);
+		}
+
 		public static bool operator ==(CorAppDomain a, CorAppDomain b) {
 			if (ReferenceEquals(a, b))
 				return true;

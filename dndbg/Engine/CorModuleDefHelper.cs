@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Diagnostics;
 using System.Linq;
 using dndbg.DotNet;
@@ -58,7 +59,7 @@ namespace dndbg.Engine {
 		}
 
 		public bool? IsCorLib {
-			get { return this.module.Assembly.IncrementedId == 0 && this.module.IncrementedId == 0; }
+			get { return this.module.Assembly.UniqueIdAppDomain == 0 && this.module.UniqueIdAppDomain == 0; }
 		}
 
 		public string Filename {
@@ -174,7 +175,7 @@ namespace dndbg.Engine {
 
 		uint? RVAToFileOffset(uint rva) {
 			foreach (var sh in GetOrCreateSectionHeaders()) {
-				if ((uint)sh.VirtualAddress <= rva && rva < (uint)sh.VirtualAddress + sh.SizeOfRawData)
+				if ((uint)sh.VirtualAddress <= rva && rva < (uint)sh.VirtualAddress + Math.Max(sh.SizeOfRawData, sh.VirtualSize))
 					return rva - (uint)sh.VirtualAddress + sh.PointerToRawData;
 			}
 

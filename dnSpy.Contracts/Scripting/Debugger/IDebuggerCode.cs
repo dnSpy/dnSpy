@@ -58,6 +58,12 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		CodeChunkInfo[] GetCodeChunks();
 
 		/// <summary>
+		/// Reads the (IL or native) code at <see cref="Address"/>
+		/// </summary>
+		/// <returns></returns>
+		byte[] ReadCode();
+
+		/// <summary>
 		/// Creates an IL code breakpoint that's only valid for the current debugging session. The
 		/// breakpoint is not added to the breakpoints shown in the UI.
 		/// </summary>
