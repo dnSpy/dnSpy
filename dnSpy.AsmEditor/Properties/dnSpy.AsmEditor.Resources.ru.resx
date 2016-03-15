@@ -1,0 +1,2417 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppendObject" xml:space="preserve">
+    <value>Добавить объект</value>
+  </data>
+  <data name="AppendType" xml:space="preserve">
+    <value>Добавить тип</value>
+  </data>
+  <data name="AssemblyDlg_Main_CB_DisableJITCompileOpt" xml:space="preserve">
+    <value>В_ыключить оптимизиатор JIT компиляции</value>
+  </data>
+  <data name="AssemblyDlg_Main_CB_EnableJITCompTrck" xml:space="preserve">
+    <value>Enable _JIT Compile Tracking</value>
+  </data>
+  <data name="AssemblyDlg_Main_CB_ProcessArchSpec" xml:space="preserve">
+    <value>Proc_essor Arch Specified</value>
+  </data>
+  <data name="AssemblyDlg_Main_CB_PublicKey" xml:space="preserve">
+    <value>Открытый _ключ</value>
+  </data>
+  <data name="AssemblyDlg_Main_CB_Retargetable" xml:space="preserve">
+    <value>_Retargetable</value>
+  </data>
+  <data name="AssemblyDlg_Main_ContentType" xml:space="preserve">
+    <value>Тип _содержимого</value>
+  </data>
+  <data name="AssemblyDlg_Main_Culture" xml:space="preserve">
+    <value>_Локаль</value>
+  </data>
+  <data name="AssemblyDlg_Main_DotNetVersion" xml:space="preserve">
+    <value>_Версия .NET</value>
+  </data>
+  <data name="AssemblyDlg_Main_HashAlgorithm" xml:space="preserve">
+    <value>_Хэш-алгоритм</value>
+  </data>
+  <data name="AssemblyDlg_Main_Name" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="AssemblyDlg_Main_ProcessorArch" xml:space="preserve">
+    <value>Архитектура проце_ссора</value>
+  </data>
+  <data name="AssemblyDlg_Main_PublicKey" xml:space="preserve">
+    <value>_Публичный ключ</value>
+  </data>
+  <data name="AssemblyDlg_Main_Version" xml:space="preserve">
+    <value>_Версия</value>
+  </data>
+  <data name="Button_Add" xml:space="preserve">
+    <value>_Добавить</value>
+  </data>
+  <data name="Button_Add2" xml:space="preserve">
+    <value>_Добавить...</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>_Отмена</value>
+  </data>
+  <data name="Button_Delete" xml:space="preserve">
+    <value>_Удалить</value>
+  </data>
+  <data name="Button_Edit" xml:space="preserve">
+    <value>_Правка...</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="Button_Remove" xml:space="preserve">
+    <value>У_брать</value>
+  </data>
+  <data name="Button_RestoreSettings" xml:space="preserve">
+    <value>Сброс</value>
+  </data>
+  <data name="CA_NA_Name" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="CA_NA_PropertyFieldTypeToolTip" xml:space="preserve">
+    <value>Тип свойства/поля</value>
+  </data>
+  <data name="ClearCharacter" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="ClearCharacter_ToolTip" xml:space="preserve">
+    <value>Очестить объекты</value>
+  </data>
+  <data name="ClearTypesCharacter" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="ClearTypesCharacter_ToolTip" xml:space="preserve">
+    <value>Очистить типы</value>
+  </data>
+  <data name="ConstantDlg_Constant" xml:space="preserve">
+    <value>Константа</value>
+  </data>
+  <data name="ConstructorArguments" xml:space="preserve">
+    <value>Аргументы Конструктора</value>
+  </data>
+  <data name="CopyAsTextCommand" xml:space="preserve">
+    <value>Копировать как те_кст</value>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>Коп_ировать</value>
+  </data>
+  <data name="CopyILBytesCommand" xml:space="preserve">
+    <value>Копировать байты IL</value>
+  </data>
+  <data name="CopyILBytesKey" xml:space="preserve">
+    <value>Ctrl+B</value>
+  </data>
+  <data name="CouldNotResolveType" xml:space="preserve">
+    <value>Не могу определить тип. Убедитесь, что сборка для этого типа была загружена.</value>
+  </data>
+  <data name="CreateAssemblyCommand" xml:space="preserve">
+    <value>Создать сборку...</value>
+  </data>
+  <data name="CreateAssemblyCommand2" xml:space="preserve">
+    <value>Создать сборку</value>
+  </data>
+  <data name="CreateConstant_Title" xml:space="preserve">
+    <value>Создать константу</value>
+  </data>
+  <data name="CreateCustomAttribute" xml:space="preserve">
+    <value>Создать пользовательский атрибут</value>
+  </data>
+  <data name="CreateEventCommand" xml:space="preserve">
+    <value>Создать событие...</value>
+  </data>
+  <data name="CreateEventCommand2" xml:space="preserve">
+    <value>Создать событие</value>
+  </data>
+  <data name="CreateFieldCommand" xml:space="preserve">
+    <value>Создать поле...</value>
+  </data>
+  <data name="CreateFieldCommand2" xml:space="preserve">
+    <value>Создать поле</value>
+  </data>
+  <data name="CreateFieldTypeSig" xml:space="preserve">
+    <value>Create Field TypeSig</value>
+  </data>
+  <data name="CreateFnPtrMethodSignature" xml:space="preserve">
+    <value>Create FnPtr Method Signature</value>
+  </data>
+  <data name="CreateGenericInstanceTypeArguments" xml:space="preserve">
+    <value>Create Generic Instance Type Arguments</value>
+  </data>
+  <data name="CreateGenericParameter" xml:space="preserve">
+    <value>Создать параметр обобщения</value>
+  </data>
+  <data name="CreateGenericParameterConstraint" xml:space="preserve">
+    <value>Создать ограничение параметра обобщения</value>
+  </data>
+  <data name="CreateMethodOverride" xml:space="preserve">
+    <value>Создать перегрузку метода</value>
+  </data>
+  <data name="CreateMethodSignature" xml:space="preserve">
+    <value>Создать сигнатуру метода</value>
+  </data>
+  <data name="CreateParameter" xml:space="preserve">
+    <value>Создать параметр</value>
+  </data>
+  <data name="CreatePropertySignature" xml:space="preserve">
+    <value>Создать сигнатуру свойства</value>
+  </data>
+  <data name="CreateReturnType" xml:space="preserve">
+    <value>Создать возвращаемый тип</value>
+  </data>
+  <data name="CreateSecurityAttribute" xml:space="preserve">
+    <value>Создать атрибут безопасности</value>
+  </data>
+  <data name="CreateSecurityDeclaration" xml:space="preserve">
+    <value>Создать определение безопасности</value>
+  </data>
+  <data name="CreateType" xml:space="preserve">
+    <value>Создать тип</value>
+  </data>
+  <data name="CreateTypeSig" xml:space="preserve">
+    <value>Create TypeSig</value>
+  </data>
+  <data name="CreateTypeSpec" xml:space="preserve">
+    <value>Create TypeSpec</value>
+  </data>
+  <data name="Create_N_TypeSigs" xml:space="preserve">
+    <value>Create {0} TypeSigs</value>
+  </data>
+  <data name="Create_TypeSig" xml:space="preserve">
+    <value>Create a TypeSig</value>
+  </data>
+  <data name="Create_TypeSigs" xml:space="preserve">
+    <value>Create TypeSigs</value>
+  </data>
+  <data name="Create_TypeSigs_N_Left" xml:space="preserve">
+    <value>{0} TypeSigs left</value>
+  </data>
+  <data name="Create_TypeSigs_OneLeft" xml:space="preserve">
+    <value>One TypeSig left</value>
+  </data>
+  <data name="CustomAttributesTab" xml:space="preserve">
+    <value>Custom Attrs</value>
+  </data>
+  <data name="CutCommand" xml:space="preserve">
+    <value>Выреза_ть</value>
+  </data>
+  <data name="DeleteCommandKey" xml:space="preserve">
+    <value>Del</value>
+    <comment>the delete key</comment>
+  </data>
+  <data name="DeleteEventCommand" xml:space="preserve">
+    <value>Delete Event</value>
+  </data>
+  <data name="DeleteEvents" xml:space="preserve">
+    <value>Удалить {0} событий</value>
+  </data>
+  <data name="DeleteFieldCommand" xml:space="preserve">
+    <value>Удалить поле</value>
+  </data>
+  <data name="DeleteFieldsCommand" xml:space="preserve">
+    <value>Удалить {0} полей</value>
+  </data>
+  <data name="DeleteX" xml:space="preserve">
+    <value>Удалить {0}</value>
+  </data>
+  <data name="DisableMMapIOCommand" xml:space="preserve">
+    <value>Disable Memory Mapped I/O</value>
+  </data>
+  <data name="EditAssemblyCommand" xml:space="preserve">
+    <value>Изменить сборку...</value>
+  </data>
+  <data name="EditAssemblyCommand2" xml:space="preserve">
+    <value>Изменить сборку</value>
+  </data>
+  <data name="EditCustomAttribute" xml:space="preserve">
+    <value>Изменить пользовательский атрибут</value>
+  </data>
+  <data name="EditEventCommand" xml:space="preserve">
+    <value>Изменить событие...</value>
+  </data>
+  <data name="EditEventCommand2" xml:space="preserve">
+    <value>Изменить событие</value>
+  </data>
+  <data name="EditFieldCommand" xml:space="preserve">
+    <value>Изменить поле...</value>
+  </data>
+  <data name="EditFieldCommand2" xml:space="preserve">
+    <value>Изменить поле</value>
+  </data>
+  <data name="EditGenericParameter" xml:space="preserve">
+    <value>Изменить параметр обобщения</value>
+  </data>
+  <data name="EditGenericParameterConstraint" xml:space="preserve">
+    <value>Изменить ограничение параметра обобщения</value>
+  </data>
+  <data name="EditMemberRef" xml:space="preserve">
+    <value>Edit MemberRef</value>
+  </data>
+  <data name="EditMethodOverride" xml:space="preserve">
+    <value>Edit Method Override</value>
+  </data>
+  <data name="EditMethodSpec" xml:space="preserve">
+    <value>Edit MethodSpec</value>
+  </data>
+  <data name="EditParamDef" xml:space="preserve">
+    <value>Edit ParamDef</value>
+  </data>
+  <data name="EditParameter" xml:space="preserve">
+    <value>Изменить параметр</value>
+  </data>
+  <data name="EditSecurityAttribute" xml:space="preserve">
+    <value>Изменить атрибут безопасности</value>
+  </data>
+  <data name="EditSecurityDeclaration" xml:space="preserve">
+    <value>Edit Security Declaration</value>
+  </data>
+  <data name="EnumType" xml:space="preserve">
+    <value>Enum: {0}</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>&lt;ошибка&gt;</value>
+  </data>
+  <data name="EventType" xml:space="preserve">
+    <value>Тип события: {0}</value>
+  </data>
+  <data name="Event_ClearCharacter" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="Event_ClearCharacter_ToolTip" xml:space="preserve">
+    <value>Установить в null</value>
+  </data>
+  <data name="Event_InvokeMethod" xml:space="preserve">
+    <value>В_ызвать...</value>
+  </data>
+  <data name="Event_Name" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="Event_RemoveMethod" xml:space="preserve">
+    <value>_Убрать...</value>
+  </data>
+  <data name="Event_RTSpecialName" xml:space="preserve">
+    <value>_RTSpecialName</value>
+  </data>
+  <data name="Event_SpecialName" xml:space="preserve">
+    <value>_SpecialName</value>
+  </data>
+  <data name="FieldAccess_Assembly" xml:space="preserve">
+    <value>Сборка</value>
+  </data>
+  <data name="FieldAccess_Family" xml:space="preserve">
+    <value>Семейство типов</value>
+  </data>
+  <data name="FieldAccess_FamilyAndAssembly" xml:space="preserve">
+    <value>Семейство типов и сборка</value>
+  </data>
+  <data name="FieldAccess_FamilyOrAssembly" xml:space="preserve">
+    <value>Семейство типов или сборка</value>
+  </data>
+  <data name="FieldAccess_Private" xml:space="preserve">
+    <value>Приватный</value>
+  </data>
+  <data name="FieldAccess_PrivateScope" xml:space="preserve">
+    <value>PrivateScope</value>
+  </data>
+  <data name="FieldAccess_Public" xml:space="preserve">
+    <value>Public</value>
+  </data>
+  <data name="FieldType" xml:space="preserve">
+    <value>Тип поля: {0}</value>
+  </data>
+  <data name="Field_Access" xml:space="preserve">
+    <value>_Access</value>
+  </data>
+  <data name="Field_DefaultValueInfo" xml:space="preserve">
+    <value>Default value for this field</value>
+  </data>
+  <data name="Field_Flags" xml:space="preserve">
+    <value>Flags</value>
+  </data>
+  <data name="Field_Flags_InitOnly" xml:space="preserve">
+    <value>_InitOnly</value>
+  </data>
+  <data name="Field_Flags_Literal" xml:space="preserve">
+    <value>_Literal</value>
+  </data>
+  <data name="Field_Flags_NotSerialized" xml:space="preserve">
+    <value>NotSeriali_zed</value>
+  </data>
+  <data name="Field_Flags_RTSpecialName" xml:space="preserve">
+    <value>R_TSpecialName</value>
+  </data>
+  <data name="Field_Flags_SpecialName" xml:space="preserve">
+    <value>S_pecialName</value>
+  </data>
+  <data name="Field_Flags_Static" xml:space="preserve">
+    <value>_Static</value>
+  </data>
+  <data name="Field_InitialValue" xml:space="preserve">
+    <value>Initial_Value</value>
+  </data>
+  <data name="Field_Name" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="Field_Offset" xml:space="preserve">
+    <value>O_ffset</value>
+  </data>
+  <data name="Field_RVA" xml:space="preserve">
+    <value>_RVA</value>
+  </data>
+  <data name="GenericParameterNumber" xml:space="preserve">
+    <value>gparam({0})</value>
+  </data>
+  <data name="GP_Class" xml:space="preserve">
+    <value>C_lass</value>
+  </data>
+  <data name="GP_Constraints" xml:space="preserve">
+    <value>Constraints</value>
+  </data>
+  <data name="GP_DefaultConstructor" xml:space="preserve">
+    <value>_Default ctor</value>
+  </data>
+  <data name="GP_Kind" xml:space="preserve">
+    <value>Kind</value>
+  </data>
+  <data name="GP_Kind_ToolTip" xml:space="preserve">
+    <value>Only used if MD header version is 1.1 (0x0101). It's never 1.1 so ignore Kind</value>
+  </data>
+  <data name="GP_Name" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="GP_Number" xml:space="preserve">
+    <value>N_umber</value>
+  </data>
+  <data name="GP_Struct" xml:space="preserve">
+    <value>_Struct</value>
+  </data>
+  <data name="GP_Variance" xml:space="preserve">
+    <value>_Variance</value>
+  </data>
+  <data name="HexField_RelativeVirtualAddress" xml:space="preserve">
+    <value>{0} RVA</value>
+  </data>
+  <data name="HexField_Size" xml:space="preserve">
+    <value>{0} Size</value>
+  </data>
+  <data name="HexField_UndoMessage_Write_Parent_Field" xml:space="preserve">
+    <value>Write {0}.{1}</value>
+  </data>
+  <data name="HexNode_Cor20Header_Flags_32BitPref" xml:space="preserve">
+    <value>32-Bit Preferred</value>
+  </data>
+  <data name="HexNode_Cor20Header_Flags_32BitReqd" xml:space="preserve">
+    <value>32-Bit Required</value>
+  </data>
+  <data name="HexNode_Cor20Header_Flags_ILLibrary" xml:space="preserve">
+    <value>IL Library</value>
+  </data>
+  <data name="HexNode_Cor20Header_Flags_IL_Only" xml:space="preserve">
+    <value>IL Only</value>
+  </data>
+  <data name="HexNode_Cor20Header_Flags_NativeEntryPoint" xml:space="preserve">
+    <value>Native EntryPoint</value>
+  </data>
+  <data name="HexNode_Cor20Header_Flags_StrongNameSigned" xml:space="preserve">
+    <value>Strong Name Signed</value>
+  </data>
+  <data name="HexNode_Cor20Header_Flags_TrackDebugData" xml:space="preserve">
+    <value>Track Debug Data</value>
+  </data>
+  <data name="HexNode_Cor20_Header" xml:space="preserve">
+    <value>Cor20 Header</value>
+  </data>
+  <data name="HexNode_DOSHeader" xml:space="preserve">
+    <value>DOS Header</value>
+  </data>
+  <data name="HexNode_FileHeader" xml:space="preserve">
+    <value>File Header</value>
+  </data>
+  <data name="HexNode_OptHeader32" xml:space="preserve">
+    <value>Optional Header (32-bit)</value>
+  </data>
+  <data name="HexNode_OptHeader64" xml:space="preserve">
+    <value>Optional Header (64-bit)</value>
+  </data>
+  <data name="ImplMapTab" xml:space="preserve">
+    <value>ImplMap</value>
+  </data>
+  <data name="ImplMap_BestFit" xml:space="preserve">
+    <value>_BestFit</value>
+  </data>
+  <data name="ImplMap_CallingConvention" xml:space="preserve">
+    <value>CallCon_v</value>
+  </data>
+  <data name="ImplMap_CharacterSet" xml:space="preserve">
+    <value>C_harSet</value>
+  </data>
+  <data name="ImplMap_Enable" xml:space="preserve">
+    <value>_Enable</value>
+  </data>
+  <data name="ImplMap_Module" xml:space="preserve">
+    <value>Mo_dule</value>
+  </data>
+  <data name="ImplMap_Name" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="ImplMap_NoMangle" xml:space="preserve">
+    <value>No_Mangle</value>
+  </data>
+  <data name="ImplMap_SupportsLastError" xml:space="preserve">
+    <value>Supports_LastError</value>
+  </data>
+  <data name="ImplMap_ThrowOn_SHORT" xml:space="preserve">
+    <value>_ThrowOn...</value>
+  </data>
+  <data name="ImplMap_ThrowOn_ToolTip" xml:space="preserve">
+    <value>ThrowOnUnmappableChar</value>
+  </data>
+  <data name="MainTab" xml:space="preserve">
+    <value>Main</value>
+  </data>
+  <data name="MarshalType" xml:space="preserve">
+    <value>Marshal Type: {0}</value>
+  </data>
+  <data name="MarshalTypeTab" xml:space="preserve">
+    <value>Marshal Type</value>
+  </data>
+  <data name="MarshalType_Array" xml:space="preserve">
+    <value>_Array</value>
+  </data>
+  <data name="MarshalType_ByRef" xml:space="preserve">
+    <value>_ByRef</value>
+  </data>
+  <data name="MarshalType_Cookie" xml:space="preserve">
+    <value>Coo_kie</value>
+  </data>
+  <data name="MarshalType_Data" xml:space="preserve">
+    <value>_Data</value>
+  </data>
+  <data name="MarshalType_ElemType" xml:space="preserve">
+    <value>Elem_Type</value>
+  </data>
+  <data name="MarshalType_Enable" xml:space="preserve">
+    <value>_Enable</value>
+  </data>
+  <data name="MarshalType_EnumNotInitialized" xml:space="preserve">
+    <value>&lt;Not Initialized&gt;</value>
+  </data>
+  <data name="MarshalType_Flags" xml:space="preserve">
+    <value>_Flags</value>
+  </data>
+  <data name="MarshalType_GUID" xml:space="preserve">
+    <value>_GUID</value>
+  </data>
+  <data name="MarshalType_NativeType" xml:space="preserve">
+    <value>_NativeType</value>
+  </data>
+  <data name="MarshalType_Nothing" xml:space="preserve">
+    <value>nothing</value>
+  </data>
+  <data name="MarshalType_NumElems" xml:space="preserve">
+    <value>_NumElems</value>
+  </data>
+  <data name="MarshalType_ParamIndex" xml:space="preserve">
+    <value>ParamIndex</value>
+  </data>
+  <data name="MarshalType_ParamIndex2" xml:space="preserve">
+    <value>_ParamIndex</value>
+  </data>
+  <data name="MarshalType_ParamNum" xml:space="preserve">
+    <value>_ParamNum</value>
+  </data>
+  <data name="MarshalType_Reserved" xml:space="preserve">
+    <value>_Reserved</value>
+  </data>
+  <data name="MarshalType_Size" xml:space="preserve">
+    <value>_Size</value>
+  </data>
+  <data name="MarshalType_Vector" xml:space="preserve">
+    <value>Vec_tor</value>
+  </data>
+  <data name="MarshalType_VT" xml:space="preserve">
+    <value>_VT</value>
+  </data>
+  <data name="MemberRef_Class" xml:space="preserve">
+    <value>Class</value>
+  </data>
+  <data name="MemberRef_ClassTab" xml:space="preserve">
+    <value>Class</value>
+  </data>
+  <data name="MemberRef_FieldSigTab" xml:space="preserve">
+    <value>FieldSig</value>
+  </data>
+  <data name="MemberRef_InitFromField" xml:space="preserve">
+    <value>Initialize from Field...</value>
+  </data>
+  <data name="MemberRef_InitFromMethod" xml:space="preserve">
+    <value>Initialize from Method...</value>
+  </data>
+  <data name="MemberRef_MethodDef" xml:space="preserve">
+    <value>_MethodDef</value>
+  </data>
+  <data name="MemberRef_MethodDef_ToolTip" xml:space="preserve">
+    <value>Initialize Class to a MethodDef</value>
+  </data>
+  <data name="MemberRef_MethodSigTab" xml:space="preserve">
+    <value>MethodSig</value>
+  </data>
+  <data name="MemberRef_ModuleRef" xml:space="preserve">
+    <value>Mo_duleRef</value>
+  </data>
+  <data name="MemberRef_ModuleRef_ToolTip" xml:space="preserve">
+    <value>Initialize Class to a ModuleRef</value>
+  </data>
+  <data name="MemberRef_Name" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="MemberRef_Type" xml:space="preserve">
+    <value>_Type</value>
+  </data>
+  <data name="MemberRef_TypeSpec" xml:space="preserve">
+    <value>Type_Spec</value>
+  </data>
+  <data name="MemberRef_TypeSpec_ToolTip" xml:space="preserve">
+    <value>Initialize Class to a TypeSpec</value>
+  </data>
+  <data name="MemberRef_Type_ToolTip" xml:space="preserve">
+    <value>Initialize Class to a Type</value>
+  </data>
+  <data name="MethodCantBeNull" xml:space="preserve">
+    <value>Method can't be null</value>
+  </data>
+  <data name="MethodInstantiationTypesTab" xml:space="preserve">
+    <value>Method Instantiation Types</value>
+  </data>
+  <data name="MethodSig_CallingConv" xml:space="preserve">
+    <value>Ca_lling Conv</value>
+  </data>
+  <data name="MethodSig_ExplicitThis" xml:space="preserve">
+    <value>E_xplicitThis</value>
+  </data>
+  <data name="MethodSig_HasThis" xml:space="preserve">
+    <value>_HasThis</value>
+  </data>
+  <data name="MethodSig_MethodParameterTypes" xml:space="preserve">
+    <value>Method Parameter Types</value>
+  </data>
+  <data name="MethodSig_MethodVarArgParameterTypes" xml:space="preserve">
+    <value>Method VarArg Parameter Types</value>
+  </data>
+  <data name="MethodSig_NumGenerics" xml:space="preserve">
+    <value># Generic_s</value>
+  </data>
+  <data name="MethodSig_ReturnType" xml:space="preserve">
+    <value>Ret_urn Type...</value>
+  </data>
+  <data name="MethodSpec_Method" xml:space="preserve">
+    <value>_Method</value>
+  </data>
+  <data name="MethodsTab" xml:space="preserve">
+    <value>Methods</value>
+  </data>
+  <data name="MoveDownCommand" xml:space="preserve">
+    <value>Move _Down</value>
+  </data>
+  <data name="MoveDown_ToolTip" xml:space="preserve">
+    <value>Move Down</value>
+  </data>
+  <data name="MoveUpCommand" xml:space="preserve">
+    <value>Move _Up</value>
+  </data>
+  <data name="MoveUp_ToolTip" xml:space="preserve">
+    <value>Move Up</value>
+  </data>
+  <data name="NamedArguments" xml:space="preserve">
+    <value>Named Arguments</value>
+  </data>
+  <data name="NoName" xml:space="preserve">
+    <value>&lt;&lt;no-name&gt;&gt;</value>
+  </data>
+  <data name="NotGenericType" xml:space="preserve">
+    <value>{0} is not a generic type</value>
+  </data>
+  <data name="OtherMethodsTab" xml:space="preserve">
+    <value>Other Methods</value>
+  </data>
+  <data name="ParamDef_Flags" xml:space="preserve">
+    <value>Flags</value>
+  </data>
+  <data name="ParamDef_Flags_In" xml:space="preserve">
+    <value>_In</value>
+  </data>
+  <data name="ParamDef_Flags_Optional" xml:space="preserve">
+    <value>O_ptional</value>
+  </data>
+  <data name="ParamDef_Flags_Out" xml:space="preserve">
+    <value>O_ut</value>
+  </data>
+  <data name="ParamDef_Name" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="ParamDef_Sequence" xml:space="preserve">
+    <value>_Sequence</value>
+  </data>
+  <data name="ParamDef_Sequence_ToolTip" xml:space="preserve">
+    <value>Sequence 0 is return parameter, sequence 1 is first parameter, etc</value>
+  </data>
+  <data name="ParameterNumber" xml:space="preserve">
+    <value>param({0})</value>
+  </data>
+  <data name="ParameterReturn" xml:space="preserve">
+    <value>param(return)</value>
+  </data>
+  <data name="Parameter_DefaultValueInfo" xml:space="preserve">
+    <value>Default value for this parameter</value>
+  </data>
+  <data name="PasteAfterSelectionCommand" xml:space="preserve">
+    <value>Paste After Se_lection</value>
+  </data>
+  <data name="PasteCommand" xml:space="preserve">
+    <value>_Paste</value>
+  </data>
+  <data name="PickMember_OpenAsmToolTip" xml:space="preserve">
+    <value>Open Assembly or NetModule</value>
+  </data>
+  <data name="PickMember_Search" xml:space="preserve">
+    <value>_Search</value>
+  </data>
+  <data name="PickMember_SelectCorrectNode" xml:space="preserve">
+    <value>You must select a correct node</value>
+  </data>
+  <data name="PickMember_TypeMustBeSelected" xml:space="preserve">
+    <value>A type must be selected.</value>
+  </data>
+  <data name="Pick_Constructor" xml:space="preserve">
+    <value>Pick a Constructor</value>
+  </data>
+  <data name="Pick_EnumType" xml:space="preserve">
+    <value>Pick an Enum Type</value>
+  </data>
+  <data name="Pick_Type" xml:space="preserve">
+    <value>Pick a Type</value>
+  </data>
+  <data name="RawCustomAttributeBlob" xml:space="preserve">
+    <value>Raw Blob</value>
+  </data>
+  <data name="RawCustomAttributeBlob2" xml:space="preserve">
+    <value>&lt;raw blob&gt;</value>
+  </data>
+  <data name="RemoveAssembliesCommand" xml:space="preserve">
+    <value>Remove {0} assemblies</value>
+  </data>
+  <data name="RemoveAssemblyCommand" xml:space="preserve">
+    <value>Remove Assembly</value>
+  </data>
+  <data name="RemoveCharacter" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="RemoveCharacter_ToolTip" xml:space="preserve">
+    <value>Remove Last Object</value>
+  </data>
+  <data name="RemoveCommand" xml:space="preserve">
+    <value>Remove {0}</value>
+  </data>
+  <data name="RemoveLastTypeCharacter" xml:space="preserve">
+    <value>R</value>
+  </data>
+  <data name="RemoveLastTypeCharacter_ToolTip" xml:space="preserve">
+    <value>Remove Last Type</value>
+  </data>
+  <data name="ReturnTypeRequired" xml:space="preserve">
+    <value>A return type is required</value>
+  </data>
+  <data name="SecurityDeclarationsTab" xml:space="preserve">
+    <value>Sec Decls</value>
+  </data>
+  <data name="ShortCutKeyA" xml:space="preserve">
+    <value>A</value>
+  </data>
+  <data name="ShortcutKeyAltEnter" xml:space="preserve">
+    <value>Alt+Enter</value>
+  </data>
+  <data name="ShortCutKeyC" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltV" xml:space="preserve">
+    <value>Ctrl+Alt+V</value>
+  </data>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlDel" xml:space="preserve">
+    <value>Ctrl+Del</value>
+  </data>
+  <data name="ShortCutKeyCtrlT" xml:space="preserve">
+    <value>Ctrl+T</value>
+  </data>
+  <data name="ShortCutKeyCtrlV" xml:space="preserve">
+    <value>Ctrl+V</value>
+  </data>
+  <data name="ShortCutKeyCtrlX" xml:space="preserve">
+    <value>Ctrl+X</value>
+  </data>
+  <data name="ShortCutKeyD" xml:space="preserve">
+    <value>D</value>
+  </data>
+  <data name="ShortCutKeyF" xml:space="preserve">
+    <value>F</value>
+  </data>
+  <data name="ShortCutKeyU" xml:space="preserve">
+    <value>U</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type: {0}</value>
+  </data>
+  <data name="TypeMustBeGeneric" xml:space="preserve">
+    <value>The type must be a generic type</value>
+  </data>
+  <data name="TypeSigCreator_Array" xml:space="preserve">
+    <value>Arra_y</value>
+  </data>
+  <data name="TypeSigCreator_Array_LowerBounds" xml:space="preserve">
+    <value>Lo_wer Bounds</value>
+  </data>
+  <data name="TypeSigCreator_Array_LowerBounds_ToolTip" xml:space="preserve">
+    <value>Comma separated list of array lower bounds (signed integers)</value>
+  </data>
+  <data name="TypeSigCreator_Array_Rank" xml:space="preserve">
+    <value>Ran_k</value>
+  </data>
+  <data name="TypeSigCreator_Array_Sizes" xml:space="preserve">
+    <value>S_izes</value>
+  </data>
+  <data name="TypeSigCreator_Array_Sizes_ToolTip" xml:space="preserve">
+    <value>Comma separated list of array sizes (unsigned integers)</value>
+  </data>
+  <data name="TypeSigCreator_Array_ToolTip" xml:space="preserve">
+    <value>Convert type to a multidimensional array</value>
+  </data>
+  <data name="TypeSigCreator_ByRef" xml:space="preserve">
+    <value>_ByRef</value>
+  </data>
+  <data name="TypeSigCreator_ByRef_ToolTip" xml:space="preserve">
+    <value>Convert type to a by-reference</value>
+  </data>
+  <data name="TypeSigCreator_Clear" xml:space="preserve">
+    <value>Cl_ear</value>
+  </data>
+  <data name="TypeSigCreator_Clear_ToolTip" xml:space="preserve">
+    <value>Clear type</value>
+  </data>
+  <data name="TypeSigCreator_CModOpt" xml:space="preserve">
+    <value>CModOp_t</value>
+  </data>
+  <data name="TypeSigCreator_CModOpt_ToolTip" xml:space="preserve">
+    <value>Add an optional C modifier</value>
+  </data>
+  <data name="TypeSigCreator_CModReqd" xml:space="preserve">
+    <value>C_ModReqd</value>
+  </data>
+  <data name="TypeSigCreator_CModReqd_ToolTip" xml:space="preserve">
+    <value>Add a required C modifier</value>
+  </data>
+  <data name="TypeSigCreator_FnPtr" xml:space="preserve">
+    <value>_FnPtr</value>
+  </data>
+  <data name="TypeSigCreator_FnPtr_ToolTip" xml:space="preserve">
+    <value>Add a function pointer</value>
+  </data>
+  <data name="TypeSigCreator_GenericInst" xml:space="preserve">
+    <value>_GenericInst</value>
+  </data>
+  <data name="TypeSigCreator_GenericInst_ToolTip" xml:space="preserve">
+    <value>Add a generic instance type</value>
+  </data>
+  <data name="TypeSigCreator_GenericsCount" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="TypeSigCreator_GenericsCount_ToolTip" xml:space="preserve">
+    <value>Type/method generic variable number</value>
+  </data>
+  <data name="TypeSigCreator_MultidimensionalArray" xml:space="preserve">
+    <value>Multidimensional Array</value>
+  </data>
+  <data name="TypeSigCreator_MVar" xml:space="preserve">
+    <value>_MVar</value>
+  </data>
+  <data name="TypeSigCreator_MVar_ToolTip" xml:space="preserve">
+    <value>Add a method generic variable</value>
+  </data>
+  <data name="TypeSigCreator_Pinned" xml:space="preserve">
+    <value>Pi_nned</value>
+  </data>
+  <data name="TypeSigCreator_Pinned_ToolTip" xml:space="preserve">
+    <value>Turn it into a pinned variable</value>
+  </data>
+  <data name="TypeSigCreator_Pointer" xml:space="preserve">
+    <value>_Pointer</value>
+  </data>
+  <data name="TypeSigCreator_Pointer_ToolTip" xml:space="preserve">
+    <value>Convert type to a pointer</value>
+  </data>
+  <data name="TypeSigCreator_Remove_ToolTip" xml:space="preserve">
+    <value>Remove last added type</value>
+  </data>
+  <data name="TypeSigCreator_SZArray" xml:space="preserve">
+    <value>S_Z Array</value>
+  </data>
+  <data name="TypeSigCreator_SZArray_ToolTip" xml:space="preserve">
+    <value>Convert type to a single-dimension, zero lower-bound array</value>
+  </data>
+  <data name="TypeSigCreator_Type" xml:space="preserve">
+    <value>_Type</value>
+  </data>
+  <data name="TypeSigCreator_Type_ToolTip" xml:space="preserve">
+    <value>Add a type</value>
+  </data>
+  <data name="TypeSigCreator_Var" xml:space="preserve">
+    <value>_Var</value>
+  </data>
+  <data name="TypeSigCreator_Var_ToolTip" xml:space="preserve">
+    <value>Add a type generic variable</value>
+  </data>
+  <data name="TypeTab" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="UnknownBytesMsg" xml:space="preserve">
+    <value>Some of the copied bytes are unknown because the method has been edited. New tokens and string offsets are only known once the file has been saved to disk and re-opened.</value>
+  </data>
+  <data name="UnknownEnum" xml:space="preserve">
+    <value>Unknown Enum</value>
+  </data>
+  <data name="Value" xml:space="preserve">
+    <value>_Value</value>
+  </data>
+  <data name="ValueType_ToolTip" xml:space="preserve">
+    <value>Value type</value>
+  </data>
+  <data name="XML" xml:space="preserve">
+    <value>_XML</value>
+  </data>
+  <data name="AddExistingNetModuleToAssemblyCommand" xml:space="preserve">
+    <value>Add Existing NetModule to Assembly...</value>
+  </data>
+  <data name="AddExistingNetModuleToAssemblyCommand2" xml:space="preserve">
+    <value>Add Existing NetModule to Assembly</value>
+  </data>
+  <data name="AddNewNetModuleToAssemblyCommand" xml:space="preserve">
+    <value>Add New NetModule to Assembly...</value>
+  </data>
+  <data name="AddNewNetModuleToAssemblyCommand2" xml:space="preserve">
+    <value>Add New NetModule to Assembly</value>
+  </data>
+  <data name="AllFiles" xml:space="preserve">
+    <value>All files</value>
+  </data>
+  <data name="AskCancelSave" xml:space="preserve">
+    <value>Are you sure you want to cancel the save?</value>
+  </data>
+  <data name="AskCancelSaveCloseWindow" xml:space="preserve">
+    <value>The save is being canceled.
+Are you sure you want to close the window?</value>
+  </data>
+  <data name="AskClearUndoHistory" xml:space="preserve">
+    <value>Do you want to clear the undo/redo history?</value>
+  </data>
+  <data name="AskDeleteField" xml:space="preserve">
+    <value>There could be code in some assembly that references this field. Are you sure you want to delete the field?</value>
+  </data>
+  <data name="AskDeleteMethod" xml:space="preserve">
+    <value>There could be code in some assembly that references this method. Are you sure you want to delete the method?</value>
+  </data>
+  <data name="AskDeleteType" xml:space="preserve">
+    <value>There could be code in some assembly that references this type. Are you sure you want to delete the type?</value>
+  </data>
+  <data name="AskExitUnsavedFile" xml:space="preserve">
+    <value>There is an unsaved file. Are you sure you want to exit?</value>
+  </data>
+  <data name="AskExitUnsavedFiles" xml:space="preserve">
+    <value>There are {0} unsaved files. Are you sure you want to exit?</value>
+  </data>
+  <data name="AskLoadAssembliesLoseChanges" xml:space="preserve">
+    <value>Are you sure you want to load new assemblies and lose all changes?</value>
+  </data>
+  <data name="AskReloadAssembliesLoseChanges" xml:space="preserve">
+    <value>Are you sure you want to reload all assemblies and lose all changes?</value>
+  </data>
+  <data name="AskSaveFile" xml:space="preserve">
+    <value>The file hasn't been saved yet. Do you want to save it before continuing?</value>
+  </data>
+  <data name="AskSaveFiles" xml:space="preserve">
+    <value>The files haven't been saved yet. Do you want to save them before continuing?</value>
+  </data>
+  <data name="BaseTypeTab" xml:space="preserve">
+    <value>Base Type</value>
+  </data>
+  <data name="BaseTypeX" xml:space="preserve">
+    <value>Base Type: {0}</value>
+  </data>
+  <data name="Button_Append" xml:space="preserve">
+    <value>A_ppend</value>
+  </data>
+  <data name="Button_Assembly" xml:space="preserve">
+    <value>Сборка</value>
+  </data>
+  <data name="ClearHistoryToolBarToolTip" xml:space="preserve">
+    <value>Clear Undo/Redo History</value>
+  </data>
+  <data name="ConvAssemblyToNetModuleCommand" xml:space="preserve">
+    <value>Convert Assembly to NetModule</value>
+  </data>
+  <data name="ConvertUncondBranchCommand" xml:space="preserve">
+    <value>Convert to Unconditional _Branch</value>
+  </data>
+  <data name="ConvertUncondBranchesCommand" xml:space="preserve">
+    <value>Convert to Unconditional _Branches</value>
+  </data>
+  <data name="ConvNetModuleToAssemblyCommand" xml:space="preserve">
+    <value>Convert NetModule to Assembly</value>
+  </data>
+  <data name="CopyAsTextCommand2" xml:space="preserve">
+    <value>Copy as _Text</value>
+  </data>
+  <data name="CopyFileOffsetCommand" xml:space="preserve">
+    <value>Copy File Offset</value>
+  </data>
+  <data name="CopyFileOffsetsCommand" xml:space="preserve">
+    <value>Copy File Offsets</value>
+  </data>
+  <data name="CopyMetaDataToken" xml:space="preserve">
+    <value>Copy _MD Token</value>
+  </data>
+  <data name="CopyMetaDataTokens" xml:space="preserve">
+    <value>Copy _MD Tokens</value>
+  </data>
+  <data name="CopyRVACommand" xml:space="preserve">
+    <value>C_opy RVA</value>
+  </data>
+  <data name="CopyRVAsCommand" xml:space="preserve">
+    <value>C_opy RVAs</value>
+  </data>
+  <data name="CreateAnExceptionCatchType" xml:space="preserve">
+    <value>Create an Exception Catch Type</value>
+  </data>
+  <data name="CreateAssemblyLinkedResourceCommand" xml:space="preserve">
+    <value>Create Assembly Linked Resource...</value>
+  </data>
+  <data name="CreateAssemblyLinkedResourceCommand2" xml:space="preserve">
+    <value>Create Assembly Linked Resource</value>
+  </data>
+  <data name="CreateBitMapIconResourceCommand" xml:space="preserve">
+    <value>Create System.Data.Bitmap/Icon Resource...</value>
+  </data>
+  <data name="CreateBitMapIconResourceCommand2" xml:space="preserve">
+    <value>Create System.Data.Bitmap/Icon Resource</value>
+  </data>
+  <data name="CreateByteArrayResourceCommand" xml:space="preserve">
+    <value>Create Byte Array Resource...</value>
+  </data>
+  <data name="CreateByteArrayResourceCommand2" xml:space="preserve">
+    <value>Create Byte Array Resource</value>
+  </data>
+  <data name="CreateFileLinkedResourceCommand" xml:space="preserve">
+    <value>Create File Linked Resource...</value>
+  </data>
+  <data name="CreateFileLinkedResourceCommand2" xml:space="preserve">
+    <value>Create File Linked Resource</value>
+  </data>
+  <data name="CreateFileResourceCommand" xml:space="preserve">
+    <value>Create File Resource...</value>
+  </data>
+  <data name="CreateFileResourceCommand2" xml:space="preserve">
+    <value>Create File Resource</value>
+  </data>
+  <data name="CreateImageListStreamerResourceCommand" xml:space="preserve">
+    <value>Create System.Windows.Forms.ImageListStreamer Resource...</value>
+  </data>
+  <data name="CreateImageListStreamerResourceCommand2" xml:space="preserve">
+    <value>Create System.Windows.Forms.ImageListStreamer Resource</value>
+  </data>
+  <data name="CreateInterfaceImpl" xml:space="preserve">
+    <value>Create Interface Impl</value>
+  </data>
+  <data name="CreateLocalType" xml:space="preserve">
+    <value>Create a Local Type</value>
+  </data>
+  <data name="CreateMethodCommand" xml:space="preserve">
+    <value>Create Method...</value>
+  </data>
+  <data name="CreateMethodCommand2" xml:space="preserve">
+    <value>Create Method</value>
+  </data>
+  <data name="CreateMethodSig" xml:space="preserve">
+    <value>Create MethodSig</value>
+  </data>
+  <data name="CreateMultiFileResourceCommand" xml:space="preserve">
+    <value>Create Multi File Resource...</value>
+  </data>
+  <data name="CreateMultiFileResourceCommand2" xml:space="preserve">
+    <value>Create Multi File Resource</value>
+  </data>
+  <data name="CreateNestedTypeCommand" xml:space="preserve">
+    <value>Create Nested Type...</value>
+  </data>
+  <data name="CreateNestedTypeCommand2" xml:space="preserve">
+    <value>Create Nested Type</value>
+  </data>
+  <data name="CreateNetModuleCommand" xml:space="preserve">
+    <value>Create NetModule...</value>
+  </data>
+  <data name="CreateNetModuleCommand2" xml:space="preserve">
+    <value>Create NetModule</value>
+  </data>
+  <data name="CreatePropertyCommand" xml:space="preserve">
+    <value>Create Property...</value>
+  </data>
+  <data name="CreatePropertyCommand2" xml:space="preserve">
+    <value>Create Property</value>
+  </data>
+  <data name="CreateResourceCommand" xml:space="preserve">
+    <value>Create Resource...</value>
+  </data>
+  <data name="CreateResourceCommand2" xml:space="preserve">
+    <value>Create Resource</value>
+  </data>
+  <data name="CreateStreamResourceCommand" xml:space="preserve">
+    <value>Create System.IO.Stream Resource...</value>
+  </data>
+  <data name="CreateStreamResourceCommand2" xml:space="preserve">
+    <value>Create System.IO.Stream Resource</value>
+  </data>
+  <data name="CreateTypeCommand" xml:space="preserve">
+    <value>Create Type...</value>
+  </data>
+  <data name="CreateTypeCommand2" xml:space="preserve">
+    <value>Create Type</value>
+  </data>
+  <data name="DeleteMethodCommand" xml:space="preserve">
+    <value>Delete Method</value>
+  </data>
+  <data name="DeleteMethodsCommand" xml:space="preserve">
+    <value>Delete {0} methods</value>
+  </data>
+  <data name="DeleteNamespaceCommand" xml:space="preserve">
+    <value>Delete Namespace</value>
+  </data>
+  <data name="DeleteNamespacesCommand" xml:space="preserve">
+    <value>Delete {0} Namespaces</value>
+  </data>
+  <data name="DeletePropertiesCommand" xml:space="preserve">
+    <value>Delete {0} properties</value>
+  </data>
+  <data name="DeletePropertyCommand" xml:space="preserve">
+    <value>Delete Property</value>
+  </data>
+  <data name="DeleteResourceCommand" xml:space="preserve">
+    <value>Delete Resource</value>
+  </data>
+  <data name="DeleteResourcesCommand" xml:space="preserve">
+    <value>Delete {0} resources</value>
+  </data>
+  <data name="DeleteTypeCommand" xml:space="preserve">
+    <value>Delete Type</value>
+  </data>
+  <data name="DeleteTypesCommand" xml:space="preserve">
+    <value>Delete {0} types</value>
+  </data>
+  <data name="EditFieldMemberRef" xml:space="preserve">
+    <value>Edit Field MemberRef</value>
+  </data>
+  <data name="EditILInstructionsCommand" xml:space="preserve">
+    <value>Edit IL Instruction_s...</value>
+  </data>
+  <data name="EditInterfaceImpl" xml:space="preserve">
+    <value>Edit Interface Impl</value>
+  </data>
+  <data name="EditMethodBodyCommand" xml:space="preserve">
+    <value>Edit Method Body...</value>
+  </data>
+  <data name="EditMethodBodyCommand2" xml:space="preserve">
+    <value>Edit Method Body</value>
+  </data>
+  <data name="EditMethodCommand" xml:space="preserve">
+    <value>Edit Method...</value>
+  </data>
+  <data name="EditMethodCommand2" xml:space="preserve">
+    <value>Edit Method</value>
+  </data>
+  <data name="EditMethodMemberRef" xml:space="preserve">
+    <value>Edit Method MemberRef</value>
+  </data>
+  <data name="EditModuleCommand" xml:space="preserve">
+    <value>Edit Module...</value>
+  </data>
+  <data name="EditModuleCommand2" xml:space="preserve">
+    <value>Edit Module</value>
+  </data>
+  <data name="EditNamespace" xml:space="preserve">
+    <value>Edit Namespace</value>
+  </data>
+  <data name="EditOperand_Field" xml:space="preserve">
+    <value>_Field...</value>
+  </data>
+  <data name="EditOperand_Field_MemberRef" xml:space="preserve">
+    <value>F_ield MemberRef...</value>
+  </data>
+  <data name="EditOperand_Method" xml:space="preserve">
+    <value>_Method...</value>
+  </data>
+  <data name="EditOperand_MethodSpec" xml:space="preserve">
+    <value>Met_hodSpec...</value>
+  </data>
+  <data name="EditOperand_Method_MemberRef" xml:space="preserve">
+    <value>M_ethod MemberRef...</value>
+  </data>
+  <data name="EditOperand_Type" xml:space="preserve">
+    <value>_Type...</value>
+  </data>
+  <data name="EditOperand_TypeSpec" xml:space="preserve">
+    <value>Type_Spec...</value>
+  </data>
+  <data name="EditPropertyCommand" xml:space="preserve">
+    <value>Edit Property...</value>
+  </data>
+  <data name="EditPropertyCommand2" xml:space="preserve">
+    <value>Edit Property</value>
+  </data>
+  <data name="EditResourceCommand" xml:space="preserve">
+    <value>Edit Resource...</value>
+  </data>
+  <data name="EditResourceCommand2" xml:space="preserve">
+    <value>Edit Resource</value>
+  </data>
+  <data name="EditResource_ContainsNoMetadata" xml:space="preserve">
+    <value>_Does not contain metadata</value>
+  </data>
+  <data name="EditResource_File" xml:space="preserve">
+    <value>_File</value>
+  </data>
+  <data name="EditResource_Hash" xml:space="preserve">
+    <value>_Hash</value>
+  </data>
+  <data name="EditSwitchInstructionOperand" xml:space="preserve">
+    <value>Edit Switch Operand</value>
+  </data>
+  <data name="EditTypeCommand" xml:space="preserve">
+    <value>Edit Type...</value>
+  </data>
+  <data name="EditTypeCommand2" xml:space="preserve">
+    <value>Edit Type</value>
+  </data>
+  <data name="EH_Command1" xml:space="preserve">
+    <value>Add New Exception Handler Be_fore Selection</value>
+  </data>
+  <data name="EH_Command2" xml:space="preserve">
+    <value>Add New Exception Handler After Sele_ction</value>
+  </data>
+  <data name="EH_Command3" xml:space="preserve">
+    <value>_Append New Exception Handler</value>
+  </data>
+  <data name="EH_Command4" xml:space="preserve">
+    <value>_Remove Exception Handler</value>
+  </data>
+  <data name="EH_Command5" xml:space="preserve">
+    <value>_Remove Exception Handlers</value>
+  </data>
+  <data name="EH_Command6" xml:space="preserve">
+    <value>Remo_ve All Exception Handlers</value>
+  </data>
+  <data name="EmptyFilename" xml:space="preserve">
+    <value>&lt;empty filename&gt;</value>
+  </data>
+  <data name="Error_AssemblyFieldMustNotBeEmpty" xml:space="preserve">
+    <value>Assembly must not be empty.</value>
+  </data>
+  <data name="Error_CouldNotFindMethod" xml:space="preserve">
+    <value>Could not find method: {0}</value>
+  </data>
+  <data name="Error_CouldNotFindTypeOrItsAssembly" xml:space="preserve">
+    <value>Could not find the type or its assembly.</value>
+  </data>
+  <data name="Error_CouldNotLoadType" xml:space="preserve">
+    <value>Could not load type '{0}': {1}</value>
+  </data>
+  <data name="Error_CouldNotSerializeImages" xml:space="preserve">
+    <value>Couldn't serialize the images. Error: {0}</value>
+  </data>
+  <data name="Error_DeSerializationDisabledInSettings" xml:space="preserve">
+    <value>(De)serialization is disabled in the settings.</value>
+  </data>
+  <data name="Error_EmptyImageList" xml:space="preserve">
+    <value>It's not possible to create an empty image list</value>
+  </data>
+  <data name="Error_Filename_ContainsInvalidPathCharacter" xml:space="preserve">
+    <value>Filename contains at least one invalid path character.</value>
+  </data>
+  <data name="Error_Filename_Empty" xml:space="preserve">
+    <value>Filename can't be empty.</value>
+  </data>
+  <data name="Error_Filename_FolderDoesNotExist" xml:space="preserve">
+    <value>Folder '{0}' doesn't exist.</value>
+  </data>
+  <data name="Error_Filename_FolderExists" xml:space="preserve">
+    <value>A folder with the same name as the filename already exists.</value>
+  </data>
+  <data name="Error_Filename_OnlyWhitespace" xml:space="preserve">
+    <value>Filename can't contain only white space</value>
+  </data>
+  <data name="Error_Filename_ReservedOSFilename" xml:space="preserve">
+    <value>The filename is a reserved operating system filename and can't be used.</value>
+  </data>
+  <data name="Error_Filename_TooLong" xml:space="preserve">
+    <value>Filename is too long.</value>
+  </data>
+  <data name="Error_InstrHasBeenRemoved" xml:space="preserve">
+    <value>Instruction has been removed</value>
+  </data>
+  <data name="Error_InstrTargetHasBeenRemoved" xml:space="preserve">
+    <value>Instruction target has been removed</value>
+  </data>
+  <data name="Error_InvalidResourceData" xml:space="preserve">
+    <value>Can't use this data: {0}</value>
+  </data>
+  <data name="Error_LocalHasBeenRemoved" xml:space="preserve">
+    <value>Local has been removed</value>
+  </data>
+  <data name="Error_NewResourceDataMustBeImage" xml:space="preserve">
+    <value>New data must be an image. Error: {0}</value>
+  </data>
+  <data name="Error_NotNetModule" xml:space="preserve">
+    <value>{0} is not a NetModule</value>
+  </data>
+  <data name="Error_NotSNKFile" xml:space="preserve">
+    <value>'{0}' is not a strong name key file (snk)</value>
+  </data>
+  <data name="Error_OnlyInstrsCanBeSelected" xml:space="preserve">
+    <value>Only instructions can be selected</value>
+  </data>
+  <data name="Error_OpenFile" xml:space="preserve">
+    <value>Error opening file: {0}</value>
+  </data>
+  <data name="Error_OpenImage" xml:space="preserve">
+    <value>Could not open file or it's not an image. Error: {0}</value>
+  </data>
+  <data name="Error_OpMustBeField" xml:space="preserve">
+    <value>Operand must be a field</value>
+  </data>
+  <data name="Error_OpMustBeInstr" xml:space="preserve">
+    <value>Operand must be an instruction</value>
+  </data>
+  <data name="Error_OpMustBeListInstrs" xml:space="preserve">
+    <value>Operand must be a list of instructions</value>
+  </data>
+  <data name="Error_OpMustBeLocal" xml:space="preserve">
+    <value>Operand must be a local</value>
+  </data>
+  <data name="Error_OpMustBeMethod" xml:space="preserve">
+    <value>Operand must be a method</value>
+  </data>
+  <data name="Error_OpMustBeMethodSig" xml:space="preserve">
+    <value>Operand must be a method signature</value>
+  </data>
+  <data name="Error_OpMustBeParam" xml:space="preserve">
+    <value>Operand must be a parameter</value>
+  </data>
+  <data name="Error_OpMustBeType" xml:space="preserve">
+    <value>Operand must be a type</value>
+  </data>
+  <data name="Error_OpMustBeTypeMethodField" xml:space="preserve">
+    <value>Operand must be a type, method, field</value>
+  </data>
+  <data name="Error_ReadingFiles" xml:space="preserve">
+    <value>Error reading files: {0}</value>
+  </data>
+  <data name="Error_SwitchInstrTargetHasBeenRemoved" xml:space="preserve">
+    <value>Switch instruction target has been removed</value>
+  </data>
+  <data name="Error_VersionStringTooLong" xml:space="preserve">
+    <value>Version string is too long</value>
+  </data>
+  <data name="ExceptionHandlersTab" xml:space="preserve">
+    <value>Exception Handlers</value>
+  </data>
+  <data name="GenericParametersTab" xml:space="preserve">
+    <value>Generic Params</value>
+  </data>
+  <data name="GoToMetaDataTableRowCommand" xml:space="preserve">
+    <value>Go to MD Table Row ({0:X8})</value>
+  </data>
+  <data name="GoToMetaDataTableRowCommand2" xml:space="preserve">
+    <value>Go to MD Table Row...</value>
+  </data>
+  <data name="GoToMetaDataTableRowTitle" xml:space="preserve">
+    <value>Go to MD Table Row</value>
+  </data>
+  <data name="GoToMetaDataTableRow_InvalidMetadataToken" xml:space="preserve">
+    <value>Invalid metadata token: 0x{0:X8}</value>
+  </data>
+  <data name="GoToMetaDataTableRow_MetadataToken" xml:space="preserve">
+    <value>_Metadata token</value>
+  </data>
+  <data name="GoToMetaDataTableRow_TokenDoesNotExist" xml:space="preserve">
+    <value>Token {0:X8} doesn't exist in the metadata</value>
+  </data>
+  <data name="GoToRowIdentifierCommand" xml:space="preserve">
+    <value>_Go to RID...</value>
+  </data>
+  <data name="GoToRowIdentifier_InvalidRowIdentifier" xml:space="preserve">
+    <value>Invalid RID: {0}</value>
+  </data>
+  <data name="GoToRowIdentifier_Title" xml:space="preserve">
+    <value>Go to RID</value>
+  </data>
+  <data name="HexCopyMethodBodyCommand" xml:space="preserve">
+    <value>Hex Copy Method Body</value>
+  </data>
+  <data name="HexNode_PE" xml:space="preserve">
+    <value>PE</value>
+  </data>
+  <data name="HexNode_PE_Section" xml:space="preserve">
+    <value>Section</value>
+  </data>
+  <data name="HexNode_StorageHeader" xml:space="preserve">
+    <value>Storage Header</value>
+  </data>
+  <data name="HexNode_StorageSignature" xml:space="preserve">
+    <value>Storage Signature</value>
+  </data>
+  <data name="HexNode_StorageStream" xml:space="preserve">
+    <value>Storage Stream</value>
+  </data>
+  <data name="HexNode_TablesStream" xml:space="preserve">
+    <value>Tables Stream</value>
+  </data>
+  <data name="HexPasteMethodBodyCommand" xml:space="preserve">
+    <value>Hex Paste Method Body</value>
+  </data>
+  <data name="HexWriteEmptyMethodBodyCommand" xml:space="preserve">
+    <value>Hex Write Empty Body</value>
+  </data>
+  <data name="HexWriteReturnFalseBodyCommand" xml:space="preserve">
+    <value>Hex Write 'return false' Body</value>
+  </data>
+  <data name="HexWriteReturnTrueBodyCommand" xml:space="preserve">
+    <value>Hex Write 'return true' Body</value>
+  </data>
+  <data name="Hex_Undo_Message_FillBytesAtAddress" xml:space="preserve">
+    <value>Fill {0} bytes @ {1:X8}</value>
+  </data>
+  <data name="Hex_Undo_Message_InsertASCII" xml:space="preserve">
+    <value>Insert ASCII</value>
+  </data>
+  <data name="Hex_Undo_Message_InsertBytes" xml:space="preserve">
+    <value>Insert Bytes</value>
+  </data>
+  <data name="Hex_Undo_Message_PasteBytesAtAddress" xml:space="preserve">
+    <value>Paste {0} bytes @ {1:X8}</value>
+  </data>
+  <data name="Hex_Undo_Message_Paste_Record" xml:space="preserve">
+    <value>Paste {0} {1} record @ {2:X8}, RID {3}</value>
+  </data>
+  <data name="Hex_Undo_Message_Paste_Records" xml:space="preserve">
+    <value>Paste {0} {1} records @ {2:X8}, RID {3}</value>
+  </data>
+  <data name="Hex_Undo_Message_Write_Bytes" xml:space="preserve">
+    <value>Write {0} bytes to offset {1:X8}</value>
+  </data>
+  <data name="Images" xml:space="preserve">
+    <value>Images</value>
+  </data>
+  <data name="Index" xml:space="preserve">
+    <value>Index</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="InstructionOperand" xml:space="preserve">
+    <value>Operand</value>
+  </data>
+  <data name="Instr_Command1" xml:space="preserve">
+    <value>Add New Instruction Be_fore Selection</value>
+  </data>
+  <data name="Instr_Command2" xml:space="preserve">
+    <value>Add New Instruction After Sele_ction</value>
+  </data>
+  <data name="Instr_Command3" xml:space="preserve">
+    <value>_Append New Instruction</value>
+  </data>
+  <data name="Instr_Command4" xml:space="preserve">
+    <value>_Remove Instruction</value>
+  </data>
+  <data name="Instr_Command5" xml:space="preserve">
+    <value>_Remove Instructions</value>
+  </data>
+  <data name="Instr_Command6" xml:space="preserve">
+    <value>Remo_ve All Instructions</value>
+  </data>
+  <data name="InterfacesTab" xml:space="preserve">
+    <value>Interfaces</value>
+  </data>
+  <data name="InvertBranchCommand" xml:space="preserve">
+    <value>_Invert Branch</value>
+  </data>
+  <data name="InvertBranchesCommand" xml:space="preserve">
+    <value>_Invert Branches</value>
+  </data>
+  <data name="LocalName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="LocalsTab" xml:space="preserve">
+    <value>Locals</value>
+  </data>
+  <data name="LocalType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Local_Command1" xml:space="preserve">
+    <value>Add New Local Be_fore Selection</value>
+  </data>
+  <data name="Local_Command2" xml:space="preserve">
+    <value>Add New Local After Sele_ction</value>
+  </data>
+  <data name="Local_Command3" xml:space="preserve">
+    <value>_Append New Local</value>
+  </data>
+  <data name="Local_Command4" xml:space="preserve">
+    <value>_Remove Local</value>
+  </data>
+  <data name="Local_Command5" xml:space="preserve">
+    <value>_Remove Locals</value>
+  </data>
+  <data name="Local_Command6" xml:space="preserve">
+    <value>Remo_ve All Locals</value>
+  </data>
+  <data name="Local_CompilerGenerated_Character" xml:space="preserve">
+    <value>C</value>
+  </data>
+  <data name="Local_CompilerGenerated_Character_ToolTip" xml:space="preserve">
+    <value>Compiler generated</value>
+  </data>
+  <data name="Local_Pinned_Character" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="Local_Pinned_Character_ToolTip" xml:space="preserve">
+    <value>Pinned</value>
+  </data>
+  <data name="MDWriterOptionsTab" xml:space="preserve">
+    <value>MD Writer Options</value>
+  </data>
+  <data name="MetadataTab" xml:space="preserve">
+    <value>Metadata</value>
+  </data>
+  <data name="MethodBodyType_IL" xml:space="preserve">
+    <value>IL</value>
+  </data>
+  <data name="MethodBodyType_Native" xml:space="preserve">
+    <value>Native</value>
+  </data>
+  <data name="MethodBodyType_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="MethodBody_CodeType" xml:space="preserve">
+    <value>Cod_e Type</value>
+  </data>
+  <data name="MethodBody_HeaderOffset" xml:space="preserve">
+    <value>Header O_ffset</value>
+  </data>
+  <data name="MethodBody_HeaderRVA" xml:space="preserve">
+    <value>Header _RVA</value>
+  </data>
+  <data name="MethodBody_InitLocals" xml:space="preserve">
+    <value>_Init Locals</value>
+  </data>
+  <data name="MethodBody_KeepOldMaxStack" xml:space="preserve">
+    <value>_Keep Old MaxStack</value>
+  </data>
+  <data name="MethodBody_KeepOldMaxStack_ToolTip" xml:space="preserve">
+    <value>Don't recalculate the MaxStack value when saving the file</value>
+  </data>
+  <data name="MethodBody_LocalVariableSignatureToken" xml:space="preserve">
+    <value>_LocalVarSigTok</value>
+  </data>
+  <data name="MethodBody_MaxStack" xml:space="preserve">
+    <value>_MaxStack</value>
+  </data>
+  <data name="MethodBody_RVA" xml:space="preserve">
+    <value>_RVA</value>
+  </data>
+  <data name="MethodBody_Type" xml:space="preserve">
+    <value>_Body Type</value>
+  </data>
+  <data name="MethodOverridesTab" xml:space="preserve">
+    <value>Overrides</value>
+  </data>
+  <data name="MethodParametersTab" xml:space="preserve">
+    <value>Params</value>
+  </data>
+  <data name="MethodSignatureTab" xml:space="preserve">
+    <value>Signature</value>
+  </data>
+  <data name="Method_Name" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="Module_DotNetVersion" xml:space="preserve">
+    <value>_Версия .NET</value>
+  </data>
+  <data name="Module_EntryPoint" xml:space="preserve">
+    <value>Entry Point</value>
+  </data>
+  <data name="Module_EntryPoint_Managed" xml:space="preserve">
+    <value>Mana_ged</value>
+  </data>
+  <data name="Module_EntryPoint_Native" xml:space="preserve">
+    <value>Native</value>
+  </data>
+  <data name="Module_EntryPoint_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Module_GUIDs" xml:space="preserve">
+    <value>GUIDs</value>
+  </data>
+  <data name="Module_Metadata" xml:space="preserve">
+    <value>Metadata</value>
+  </data>
+  <data name="Module_ModuleType" xml:space="preserve">
+    <value>Module _Type</value>
+  </data>
+  <data name="Module_Name" xml:space="preserve">
+    <value>N_ame</value>
+  </data>
+  <data name="MoveTypesToEmptyNamespaceCommand" xml:space="preserve">
+    <value>Move Types to Empty Namespace</value>
+  </data>
+  <data name="Namespace_Name" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="NetModule_DotNetVersion" xml:space="preserve">
+    <value>_Версия .NET</value>
+  </data>
+  <data name="NetModule_Name" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="NodesUseHexEditorMsg" xml:space="preserve">
+    <value>All tree nodes below use the hex editor to modify the PE file</value>
+  </data>
+  <data name="NopInstrCommand" xml:space="preserve">
+    <value>_NOP Instruction</value>
+  </data>
+  <data name="NopInstrsCommand" xml:space="preserve">
+    <value>_NOP Instructions</value>
+  </data>
+  <data name="Offset" xml:space="preserve">
+    <value>Offset</value>
+  </data>
+  <data name="OpenHexEditorCommand" xml:space="preserve">
+    <value>Open He_x Editor</value>
+  </data>
+  <data name="OptimizeAllInstructionsCommand" xml:space="preserve">
+    <value>Optimi_ze All Instructions</value>
+  </data>
+  <data name="Padding" xml:space="preserve">
+    <value>pad</value>
+  </data>
+  <data name="PasteRecordsCommand" xml:space="preserve">
+    <value>_Paste {0} records @ {1:X8}, RID {2}</value>
+  </data>
+  <data name="PropertyX" xml:space="preserve">
+    <value>Property: {0}</value>
+  </data>
+  <data name="Property_DefaultValue" xml:space="preserve">
+    <value>Default value for this property</value>
+  </data>
+  <data name="Property_GetterMethods" xml:space="preserve">
+    <value>Getters</value>
+  </data>
+  <data name="Property_Name" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="Property_OtherMethods" xml:space="preserve">
+    <value>Other Methods</value>
+  </data>
+  <data name="Property_SetterMethods" xml:space="preserve">
+    <value>Setters</value>
+  </data>
+  <data name="Property_Signature" xml:space="preserve">
+    <value>Signature</value>
+  </data>
+  <data name="RawSaveResourceCommand" xml:space="preserve">
+    <value>Raw Save {0}</value>
+  </data>
+  <data name="RawSaveResourcesCommand" xml:space="preserve">
+    <value>Raw Save {0} resources</value>
+  </data>
+  <data name="RawSaveResourcesSubDirectoriesCommand" xml:space="preserve">
+    <value>Raw Save {0} resources, use sub dirs</value>
+  </data>
+  <data name="RedoCommand" xml:space="preserve">
+    <value>Redo</value>
+  </data>
+  <data name="RedoToolBarToolTip" xml:space="preserve">
+    <value>Redo (Ctrl+Y)</value>
+  </data>
+  <data name="RemoveAndAddPopsCommand" xml:space="preserve">
+    <value>R_emove and Add Pops</value>
+  </data>
+  <data name="RemoveNetModuleCommand" xml:space="preserve">
+    <value>Remove NetModule from Assembly</value>
+  </data>
+  <data name="RenameNamespaceCommand" xml:space="preserve">
+    <value>Rename Namespace</value>
+  </data>
+  <data name="Resource_ColorDepth" xml:space="preserve">
+    <value>Color _Depth</value>
+  </data>
+  <data name="Resource_ColorDepth_16Bit" xml:space="preserve">
+    <value>16-bit</value>
+  </data>
+  <data name="Resource_ColorDepth_24Bit" xml:space="preserve">
+    <value>24-bit</value>
+  </data>
+  <data name="Resource_ColorDepth_32Bit" xml:space="preserve">
+    <value>32-bit</value>
+  </data>
+  <data name="Resource_ColorDepth_4Bit" xml:space="preserve">
+    <value>4-bit</value>
+  </data>
+  <data name="Resource_ColorDepth_8Bit" xml:space="preserve">
+    <value>8-bit</value>
+  </data>
+  <data name="Resource_Data" xml:space="preserve">
+    <value>_Data</value>
+  </data>
+  <data name="Resource_Name" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="Resource_Size" xml:space="preserve">
+    <value>_Size</value>
+  </data>
+  <data name="Resource_TransparentColor" xml:space="preserve">
+    <value>_Transparent Color</value>
+  </data>
+  <data name="Resource_Type" xml:space="preserve">
+    <value>_Type</value>
+  </data>
+  <data name="Resource_Value" xml:space="preserve">
+    <value>_Value</value>
+  </data>
+  <data name="RowIdentifier" xml:space="preserve">
+    <value>RID</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>_Save...</value>
+  </data>
+  <data name="SaveAllCommand" xml:space="preserve">
+    <value>Save A_ll...</value>
+  </data>
+  <data name="SaveAllToolBarToolTip" xml:space="preserve">
+    <value>Save All (Ctrl+Shift+S)</value>
+  </data>
+  <data name="SaveModuleCommand" xml:space="preserve">
+    <value>Save _Module...</value>
+  </data>
+  <data name="SaveModuleCommand2" xml:space="preserve">
+    <value>Save Module</value>
+  </data>
+  <data name="SaveModulesCommand" xml:space="preserve">
+    <value>Save _Modules...</value>
+  </data>
+  <data name="SaveModules_CancelingSave" xml:space="preserve">
+    <value>Canceling the save. Please wait...</value>
+  </data>
+  <data name="SaveModules_Close" xml:space="preserve">
+    <value>_Close</value>
+  </data>
+  <data name="SaveModules_ErrorsInLog" xml:space="preserve">
+    <value>There are errors in the log:</value>
+  </data>
+  <data name="SaveModules_FileHasErrors" xml:space="preserve">
+    <value>File #{0} ({1}) has errors</value>
+  </data>
+  <data name="SaveModules_Log_AccessError" xml:space="preserve">
+    <value>Access error: {0}</value>
+  </data>
+  <data name="SaveModules_Log_AllFilesWritten" xml:space="preserve">
+    <value>All files written to disk.</value>
+  </data>
+  <data name="SaveModules_Log_Exception" xml:space="preserve">
+    <value>An exception occurred
+
+{0}</value>
+  </data>
+  <data name="SaveModules_Log_FileError" xml:space="preserve">
+    <value>File error: {0}</value>
+  </data>
+  <data name="SaveModules_Log_SaveWasCanceled" xml:space="preserve">
+    <value>Save was canceled by user.</value>
+  </data>
+  <data name="SaveModules_Log_WritingFile" xml:space="preserve">
+    <value>Writing {0}...</value>
+  </data>
+  <data name="SaveModules_Options" xml:space="preserve">
+    <value>_Options...</value>
+  </data>
+  <data name="SaveModules_SaveAll" xml:space="preserve">
+    <value>_Save All</value>
+  </data>
+  <data name="SaveModules_SavedFiles" xml:space="preserve">
+    <value>Files that will be saved:</value>
+  </data>
+  <data name="SaveModules_Title" xml:space="preserve">
+    <value>Save Modules</value>
+  </data>
+  <data name="SaveModule_AddPECheckSum" xml:space="preserve">
+    <value>_Add PE Checksum</value>
+  </data>
+  <data name="SaveModule_CreateHeapEvenIfEmpty" xml:space="preserve">
+    <value>Create Heap Even If Empty</value>
+  </data>
+  <data name="SaveModule_Filename" xml:space="preserve">
+    <value>_Filename</value>
+  </data>
+  <data name="SaveModule_KeepOldMaxStack" xml:space="preserve">
+    <value>_Keep Old MaxStack Value</value>
+  </data>
+  <data name="SaveModule_KeepOldMaxStack_ToolTip" xml:space="preserve">
+    <value>Use the MaxStack value from the method instead of calculating a new MaxStack value.
+Needed if the methods are still obfuscated</value>
+  </data>
+  <data name="SaveModule_MetadataHeaderOptions" xml:space="preserve">
+    <value>Metadata Header Options</value>
+  </data>
+  <data name="SaveModule_MiscOptions" xml:space="preserve">
+    <value>Misc Options</value>
+  </data>
+  <data name="SaveModule_ModuleType" xml:space="preserve">
+    <value>Module _Type</value>
+  </data>
+  <data name="SaveModule_PreserveExtraSigData" xml:space="preserve">
+    <value>Preserve E_xtra Signature Data</value>
+  </data>
+  <data name="SaveModule_PreserveExtraSigData_ToolTip" xml:space="preserve">
+    <value>Preserve any extra data after the signatures.
+Some obfuscators put data there</value>
+  </data>
+  <data name="SaveModule_PreserveHeapOffsets" xml:space="preserve">
+    <value>Preserve Heap Offsets</value>
+  </data>
+  <data name="SaveModule_PreserveTokens" xml:space="preserve">
+    <value>P_reserve All MD Tokens</value>
+  </data>
+  <data name="SaveModule_PreserveTokens_ToolTip" xml:space="preserve">
+    <value>If the file is still obfuscated, RIDs might need to be preserved</value>
+  </data>
+  <data name="SaveModule_ShareMethodBodies" xml:space="preserve">
+    <value>Shared Method _Bodies</value>
+  </data>
+  <data name="SaveModule_ShareMethodBodies_ToolTip" xml:space="preserve">
+    <value>.NET methods that have the exact same code will share method bodies.
+The output file will be a little bit smaller</value>
+  </data>
+  <data name="SaveModule_Title" xml:space="preserve">
+    <value>Save Module</value>
+  </data>
+  <data name="SaveModule_UseMixedMode" xml:space="preserve">
+    <value>_Mixed-Mode Module</value>
+  </data>
+  <data name="SaveModule_UseMixedMode_ToolTip" xml:space="preserve">
+    <value>Should be checked if it's a mixed-mode module (eg. C++/.NET).
+Most options will be re-initialized when this checkbox is clicked</value>
+  </data>
+  <data name="SaveModule_WritePdb" xml:space="preserve">
+    <value>Save _PDB File</value>
+  </data>
+  <data name="SaveResourceCommand" xml:space="preserve">
+    <value>Save {0}</value>
+  </data>
+  <data name="SaveResourcesCommand" xml:space="preserve">
+    <value>Save {0} resources</value>
+  </data>
+  <data name="SaveResourcesSubDirectoriesCommand" xml:space="preserve">
+    <value>Save {0} resources, use sub dirs</value>
+  </data>
+  <data name="ShortCutKeyB" xml:space="preserve">
+    <value>B</value>
+  </data>
+  <data name="ShortCutKeyCtrlE" xml:space="preserve">
+    <value>Ctrl+E</value>
+  </data>
+  <data name="ShortCutKeyCtrlF" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="ShortCutKeyCtrlG" xml:space="preserve">
+    <value>Ctrl+G</value>
+  </data>
+  <data name="ShortCutKeyCtrlM" xml:space="preserve">
+    <value>Ctrl+M</value>
+  </data>
+  <data name="ShortCutKeyCtrlR" xml:space="preserve">
+    <value>Ctrl+R</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftD" xml:space="preserve">
+    <value>Ctrl+Shift+D</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftS" xml:space="preserve">
+    <value>Ctrl+Shift+S</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftT" xml:space="preserve">
+    <value>Ctrl+Shift+T</value>
+  </data>
+  <data name="ShortCutKeyCtrlY" xml:space="preserve">
+    <value>Ctrl+Y</value>
+  </data>
+  <data name="ShortCutKeyCtrlZ" xml:space="preserve">
+    <value>Ctrl+Z</value>
+  </data>
+  <data name="ShortCutKeyI" xml:space="preserve">
+    <value>I</value>
+  </data>
+  <data name="ShortCutKeyN" xml:space="preserve">
+    <value>N</value>
+  </data>
+  <data name="ShortCutKeyO" xml:space="preserve">
+    <value>O</value>
+  </data>
+  <data name="ShortCutKeyP" xml:space="preserve">
+    <value>P</value>
+  </data>
+  <data name="ShortCutKeyS" xml:space="preserve">
+    <value>S</value>
+  </data>
+  <data name="ShortCutKeyShiftAltR" xml:space="preserve">
+    <value>Shift+Alt+R</value>
+  </data>
+  <data name="ShowDataInHexEditorCommand" xml:space="preserve">
+    <value>Show Data in He_x Editor</value>
+  </data>
+  <data name="ShowInHexEditorCommand" xml:space="preserve">
+    <value>Show in He_x Editor</value>
+  </data>
+  <data name="ShowInHexEditorCommand2" xml:space="preserve">
+    <value>Show in Hex Editor</value>
+  </data>
+  <data name="ShowInitialValueInHexEditorCommand" xml:space="preserve">
+    <value>Show Initial Value in Hex Editor</value>
+  </data>
+  <data name="ShowInstrsInHexEditorCommand" xml:space="preserve">
+    <value>Show Instructions in He_x Editor</value>
+  </data>
+  <data name="ShowMethodBodyInHexEditorCommand" xml:space="preserve">
+    <value>Show Method Body in Hex Editor</value>
+  </data>
+  <data name="SimplifyAllInstructionsCommand" xml:space="preserve">
+    <value>_Simplify All Instructions</value>
+  </data>
+  <data name="SortMetadataTableCommand" xml:space="preserve">
+    <value>_Sort Table</value>
+  </data>
+  <data name="SortMetadataTableCommand2" xml:space="preserve">
+    <value>Sort {0} table</value>
+  </data>
+  <data name="SortSelectionCommand" xml:space="preserve">
+    <value>So_rt Selection</value>
+  </data>
+  <data name="SortTable_RowIdentifier" xml:space="preserve">
+    <value>Sort {0} table, RID {1} - {2}</value>
+  </data>
+  <data name="TablesHeapOptionsTab" xml:space="preserve">
+    <value>Tables Heap Options</value>
+  </data>
+  <data name="Token" xml:space="preserve">
+    <value>Token</value>
+  </data>
+  <data name="TooManyBytesSelected" xml:space="preserve">
+    <value>You've selected too many bytes of data</value>
+  </data>
+  <data name="Type_ClassSize" xml:space="preserve">
+    <value>C_lass Size</value>
+  </data>
+  <data name="Type_Name" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="Type_Namespace" xml:space="preserve">
+    <value>N_amespace</value>
+  </data>
+  <data name="Type_PackingSize" xml:space="preserve">
+    <value>Packing Si_ze</value>
+  </data>
+  <data name="UndoCommand" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="UndoToolBarToolTip" xml:space="preserve">
+    <value>Undo (Ctrl+Z)</value>
+  </data>
+  <data name="UnsavedFile" xml:space="preserve">
+    <value>There is an unsaved file.</value>
+  </data>
+  <data name="UnsavedFiles" xml:space="preserve">
+    <value>There are {0} unsaved files.</value>
+  </data>
+  <data name="XBytes" xml:space="preserve">
+    <value>{0} bytes</value>
+  </data>
+  <data name="AddAfterSelInstr_ToolTip" xml:space="preserve">
+    <value>Add the instruction after the selected instruction</value>
+  </data>
+  <data name="InstructionsTab" xml:space="preserve">
+    <value>Instructions</value>
+  </data>
+  <data name="Module_NewGuid1" xml:space="preserve">
+    <value>_New</value>
+  </data>
+  <data name="Module_NewGuid2" xml:space="preserve">
+    <value>N_ew</value>
+  </data>
+  <data name="Module_NewGuid3" xml:space="preserve">
+    <value>Ne_w</value>
+  </data>
+  <data name="NetModule_NewGuid1" xml:space="preserve">
+    <value>Ne_w</value>
+  </data>
+  <data name="Pick_Assembly" xml:space="preserve">
+    <value>Pick an Assembly</value>
+  </data>
+  <data name="Pick_EntryPoint" xml:space="preserve">
+    <value>Pick an Entry Point</value>
+  </data>
+  <data name="Pick_Field" xml:space="preserve">
+    <value>Pick a Field</value>
+  </data>
+  <data name="Pick_GenericType" xml:space="preserve">
+    <value>Pick a Generic Type</value>
+  </data>
+  <data name="Pick_Method" xml:space="preserve">
+    <value>Pick a Method</value>
+  </data>
+  <data name="Pick_Module" xml:space="preserve">
+    <value>Pick a Module</value>
+  </data>
+  <data name="ExceptionHandler_Column_CatchType" xml:space="preserve">
+    <value>CatchType</value>
+  </data>
+  <data name="ExceptionHandler_Column_FilterStart" xml:space="preserve">
+    <value>FilterStart</value>
+  </data>
+  <data name="ExceptionHandler_Column_HandlerEnd" xml:space="preserve">
+    <value>HandlerEnd</value>
+  </data>
+  <data name="ExceptionHandler_Column_HandlerStart" xml:space="preserve">
+    <value>HandlerStart</value>
+  </data>
+  <data name="ExceptionHandler_Column_TryEnd" xml:space="preserve">
+    <value>TryEnd</value>
+  </data>
+  <data name="ExceptionHandler_Column_TryStart" xml:space="preserve">
+    <value>TryStart</value>
+  </data>
+  <data name="ExceptionHandler_Column_Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Flags" xml:space="preserve">
+    <value>Flags</value>
+  </data>
+  <data name="MethodBody_Column_OpCode" xml:space="preserve">
+    <value>OpCode</value>
+  </data>
+  <data name="Column_Metadata_RID" xml:space="preserve">
+    <value>RID</value>
+  </data>
+  <data name="EditResource_Visibility" xml:space="preserve">
+    <value>_Visibility</value>
+  </data>
+  <data name="GP_GenericParamConstraints" xml:space="preserve">
+    <value>Constraints</value>
+  </data>
+  <data name="Metadata_Sorted_Rows" xml:space="preserve">
+    <value>Sorted</value>
+  </data>
+  <data name="Metadata_Valid_Rows" xml:space="preserve">
+    <value>Valid</value>
+  </data>
+  <data name="Method_Access" xml:space="preserve">
+    <value>Access</value>
+  </data>
+  <data name="Method_CodeType" xml:space="preserve">
+    <value>Cod_eType</value>
+  </data>
+  <data name="Method_Flags_Abstract" xml:space="preserve">
+    <value>_Abstract</value>
+  </data>
+  <data name="Method_Flags_CheckAccessOnOverride" xml:space="preserve">
+    <value>Chec_kAccessOnOverride</value>
+  </data>
+  <data name="Method_Flags_Final" xml:space="preserve">
+    <value>_Final</value>
+  </data>
+  <data name="Method_Flags_HideBySig" xml:space="preserve">
+    <value>Hi_deBySig</value>
+  </data>
+  <data name="Method_Flags_RequireSecObject" xml:space="preserve">
+    <value>Re_quireSecObject</value>
+  </data>
+  <data name="Method_Flags_RTSpecialName" xml:space="preserve">
+    <value>R_TSpecialName</value>
+  </data>
+  <data name="Method_Flags_SpecialName" xml:space="preserve">
+    <value>S_pecialName</value>
+  </data>
+  <data name="Method_Flags_Static" xml:space="preserve">
+    <value>_Static</value>
+  </data>
+  <data name="Method_Flags_UnmanagedExport" xml:space="preserve">
+    <value>UnmanagedE_xport</value>
+  </data>
+  <data name="Method_Flags_Virtual" xml:space="preserve">
+    <value>_Virtual</value>
+  </data>
+  <data name="Method_ImplFlags" xml:space="preserve">
+    <value>ImplFlags</value>
+  </data>
+  <data name="Method_ImplFlags_AggressiveInlining" xml:space="preserve">
+    <value>A_ggressiveInlining</value>
+  </data>
+  <data name="Method_ImplFlags_ForwardRef" xml:space="preserve">
+    <value>For_wardRef</value>
+  </data>
+  <data name="Method_ImplFlags_InternalCall" xml:space="preserve">
+    <value>Interna_lCall</value>
+  </data>
+  <data name="Method_ImplFlags_NoInlining" xml:space="preserve">
+    <value>No_Inlining</value>
+  </data>
+  <data name="Method_ImplFlags_NoOptimization" xml:space="preserve">
+    <value>NoOptimi_zation</value>
+  </data>
+  <data name="Method_ImplFlags_PreserveSig" xml:space="preserve">
+    <value>Prese_rveSig</value>
+  </data>
+  <data name="Method_ImplFlags_Synchronized" xml:space="preserve">
+    <value>Sync_hronized</value>
+  </data>
+  <data name="Method_ManagedType" xml:space="preserve">
+    <value>_ManagedType</value>
+  </data>
+  <data name="Method_VtableLayout" xml:space="preserve">
+    <value>Vta_bleLayout</value>
+  </data>
+  <data name="Module_Cor20" xml:space="preserve">
+    <value>Cor20</value>
+  </data>
+  <data name="Module_Cor20_RuntimeVersion" xml:space="preserve">
+    <value>_Runtime Version</value>
+  </data>
+  <data name="Module_EncBaseId" xml:space="preserve">
+    <value>Enc_BaseId</value>
+  </data>
+  <data name="Module_EncId" xml:space="preserve">
+    <value>EncI_d</value>
+  </data>
+  <data name="Module_Flags_Bit32Preferred" xml:space="preserve">
+    <value>32-Bit _Preferred</value>
+  </data>
+  <data name="Module_Flags_Bit32Required" xml:space="preserve">
+    <value>_32-Bit Required</value>
+  </data>
+  <data name="Module_Flags_ILLibrary" xml:space="preserve">
+    <value>IL _Library</value>
+  </data>
+  <data name="Module_Flags_ILOnly" xml:space="preserve">
+    <value>_IL Only</value>
+  </data>
+  <data name="Module_Flags_StrongNameSigned" xml:space="preserve">
+    <value>_Strong Name Signed</value>
+  </data>
+  <data name="Module_Flags_TrackDebugData" xml:space="preserve">
+    <value>_Track Debug Data</value>
+  </data>
+  <data name="Module_Metadata_HeaderVersion" xml:space="preserve">
+    <value>_Header Version</value>
+  </data>
+  <data name="Module_Metadata_VersionString" xml:space="preserve">
+    <value>_VersionString</value>
+  </data>
+  <data name="Module_Mvid" xml:space="preserve">
+    <value>_Mvid</value>
+  </data>
+  <data name="Module_PE" xml:space="preserve">
+    <value>PE</value>
+  </data>
+  <data name="Module_PE_Machine" xml:space="preserve">
+    <value>_Machine</value>
+  </data>
+  <data name="NetModule_Mvid" xml:space="preserve">
+    <value>_Mvid</value>
+  </data>
+  <data name="PE_Header_Characteristics" xml:space="preserve">
+    <value>Characteristics</value>
+  </data>
+  <data name="PE_Header_DllCharacteristics" xml:space="preserve">
+    <value>DllCharacteristics</value>
+  </data>
+  <data name="Property_Flags_RTSpecialName" xml:space="preserve">
+    <value>_RTSpecialName</value>
+  </data>
+  <data name="Property_Flags_SpecialName" xml:space="preserve">
+    <value>_SpecialName</value>
+  </data>
+  <data name="SaveModule_Cor20_EntryPoint" xml:space="preserve">
+    <value>_Entry Point</value>
+  </data>
+  <data name="SaveModule_Cor20_Flags_Bit32Preferred" xml:space="preserve">
+    <value>32-Bit _Preferred</value>
+  </data>
+  <data name="SaveModule_Cor20_Flags_Bit32Required" xml:space="preserve">
+    <value>_32-Bit Required</value>
+  </data>
+  <data name="SaveModule_Cor20_Flags_ILLibrary" xml:space="preserve">
+    <value>IL _Library</value>
+  </data>
+  <data name="SaveModule_Cor20_Flags_ILOnly" xml:space="preserve">
+    <value>_IL Only</value>
+  </data>
+  <data name="SaveModule_Cor20_Flags_StrongNameSigned" xml:space="preserve">
+    <value>_Strong Name Signed</value>
+  </data>
+  <data name="SaveModule_Cor20_Flags_TrackDebugData" xml:space="preserve">
+    <value>_Track Debug Data</value>
+  </data>
+  <data name="SaveModule_Cor20_MajorRuntimeVersion" xml:space="preserve">
+    <value>_Major RT Ver</value>
+  </data>
+  <data name="SaveModule_Cor20_MinorRuntimeVersion" xml:space="preserve">
+    <value>Mino_r RT Ver</value>
+  </data>
+  <data name="SaveModule_Metadata_MajorVersion" xml:space="preserve">
+    <value>_MajorVersion</value>
+  </data>
+  <data name="SaveModule_Metadata_MinorVersion" xml:space="preserve">
+    <value>MinorVe_rsion</value>
+  </data>
+  <data name="SaveModule_Metadata_Reserved1" xml:space="preserve">
+    <value>Reserved_1</value>
+  </data>
+  <data name="SaveModule_Metadata_Reserved2" xml:space="preserve">
+    <value>Reserved_2</value>
+  </data>
+  <data name="SaveModule_Metadata_Signature" xml:space="preserve">
+    <value>_Signature</value>
+  </data>
+  <data name="SaveModule_Metadata_StorageFlags" xml:space="preserve">
+    <value>S_torageFlags</value>
+  </data>
+  <data name="SaveModule_Metadata_VersionString" xml:space="preserve">
+    <value>_VersionString</value>
+  </data>
+  <data name="SaveModule_PE_Machine" xml:space="preserve">
+    <value>_Machine</value>
+  </data>
+  <data name="SaveModule_PE_Subsystem" xml:space="preserve">
+    <value>_Subsystem</value>
+  </data>
+  <data name="SaveModule_TablesHeap_ExtraData" xml:space="preserve">
+    <value>Extra_Data</value>
+  </data>
+  <data name="SaveModule_TablesHeap_HasDeletedRows" xml:space="preserve">
+    <value>_HasDeletedRows</value>
+  </data>
+  <data name="SaveModule_TablesHeap_MajorVersion" xml:space="preserve">
+    <value>M_ajorVersion</value>
+  </data>
+  <data name="SaveModule_TablesHeap_MinorVersion" xml:space="preserve">
+    <value>Reserv_ed1</value>
+  </data>
+  <data name="SaveModule_TablesHeap_Reserved1" xml:space="preserve">
+    <value>Reserv_ed1</value>
+  </data>
+  <data name="SaveModule_TablesHeap_UseENC" xml:space="preserve">
+    <value>_Use #- Table</value>
+  </data>
+  <data name="Type_Flags_Abstract" xml:space="preserve">
+    <value>A_bstract</value>
+  </data>
+  <data name="Type_Flags_Accessibility" xml:space="preserve">
+    <value>Accessibilit_y</value>
+  </data>
+  <data name="Type_Flags_BeforeFieldInit" xml:space="preserve">
+    <value>BeforeFieldIni_t</value>
+  </data>
+  <data name="Type_Flags_Custom" xml:space="preserve">
+    <value>Custo_m</value>
+  </data>
+  <data name="Type_Flags_Forwarder" xml:space="preserve">
+    <value>_Forwarder</value>
+  </data>
+  <data name="Type_Flags_Import" xml:space="preserve">
+    <value>_Import</value>
+  </data>
+  <data name="Type_Flags_Kind" xml:space="preserve">
+    <value>_Kind</value>
+  </data>
+  <data name="Type_Flags_Layout" xml:space="preserve">
+    <value>Layo_ut</value>
+  </data>
+  <data name="Type_Flags_RTSpecialName" xml:space="preserve">
+    <value>_RTSpecialName</value>
+  </data>
+  <data name="Type_Flags_Sealed" xml:space="preserve">
+    <value>Seale_d</value>
+  </data>
+  <data name="Type_Flags_Semantics" xml:space="preserve">
+    <value>_Semantics</value>
+  </data>
+  <data name="Type_Flags_Serializable" xml:space="preserve">
+    <value>S_erializable</value>
+  </data>
+  <data name="Type_Flags_SpecialName" xml:space="preserve">
+    <value>S_pecialName</value>
+  </data>
+  <data name="Type_Flags_String" xml:space="preserve">
+    <value>Strin_g</value>
+  </data>
+  <data name="Type_Flags_Visibility" xml:space="preserve">
+    <value>Visibilit_y</value>
+  </data>
+  <data name="Type_Flags_WindowsRuntime" xml:space="preserve">
+    <value>_WindowsRuntime</value>
+  </data>
+  <data name="CustomAttribute_NamedArg_Field" xml:space="preserve">
+    <value>Field</value>
+  </data>
+  <data name="CustomAttribute_NamedArg_Property" xml:space="preserve">
+    <value>Property</value>
+  </data>
+  <data name="SaveModules_FixErrorsByEditingSettings" xml:space="preserve">
+    <value>-- Fix the errors by editing the options.</value>
+  </data>
+  <data name="GoToMetaDataTableRow_RID" xml:space="preserve">
+    <value>_RID</value>
+  </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Assembly editor</value>
+  </data>
+</root>

@@ -1,0 +1,1227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddBreakpointCommand" xml:space="preserve">
+    <value>添加断点(_A)</value>
+  </data>
+  <data name="AddExceptionCommand" xml:space="preserve">
+    <value>添加异常(_X)</value>
+  </data>
+  <data name="AllFiles" xml:space="preserve">
+    <value>所有文件</value>
+  </data>
+  <data name="AppDomainNotAvailable" xml:space="preserve">
+    <value>&lt; 不可用 &gt;</value>
+  </data>
+  <data name="AppMenu_Debug" xml:space="preserve">
+    <value>调试(_D)</value>
+  </data>
+  <data name="AppTitle_Debugging" xml:space="preserve">
+    <value>调试中</value>
+  </data>
+  <data name="AskAppWindowClosingStopDebugging" xml:space="preserve">
+    <value>要停止调试吗？</value>
+  </data>
+  <data name="AskDeleteAllBreakpoints" xml:space="preserve">
+    <value>要删除所有的断点吗？</value>
+  </data>
+  <data name="AttachToProcessCommand" xml:space="preserve">
+    <value>附加到进程(_P)...</value>
+  </data>
+  <data name="Attach_AttachToProcess" xml:space="preserve">
+    <value>附加到进程</value>
+  </data>
+  <data name="Attach_AttachToProcess32" xml:space="preserve">
+    <value>附加到进程（仅32位）</value>
+  </data>
+  <data name="Attach_AttachToProcess64" xml:space="preserve">
+    <value>附加到进程（仅64位）</value>
+  </data>
+  <data name="Attach_UseDnSpy32" xml:space="preserve">
+    <value>请改用dnSpy.exe来附加到64位进程</value>
+  </data>
+  <data name="Attach_UseDnSpy64" xml:space="preserve">
+    <value>请改用dnSpy-x86.exe来附加到32位进程</value>
+  </data>
+  <data name="BreakCommand" xml:space="preserve">
+    <value>中断(_K)</value>
+  </data>
+  <data name="BreakpointsCommand" xml:space="preserve">
+    <value>断点(_B)</value>
+  </data>
+  <data name="BreakWhenExceptionThrownCommand" xml:space="preserve">
+    <value>引发异常时中断</value>
+  </data>
+  <data name="Button_Attach" xml:space="preserve">
+    <value>附加(_A)</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>取消(_C)</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="Button_Refresh" xml:space="preserve">
+    <value>刷新(_R)</value>
+  </data>
+  <data name="CallStackCommand" xml:space="preserve">
+    <value>堆栈调用(_S)</value>
+  </data>
+  <data name="CallStack_MaxFramesExceeded" xml:space="preserve">
+    <value>堆栈帧数量已超出dnSpy所支持的最大值。</value>
+  </data>
+  <data name="Column_Address" xml:space="preserve">
+    <value>地址</value>
+  </data>
+  <data name="Column_AppDomain" xml:space="preserve">
+    <value>AppDomain</value>
+  </data>
+  <data name="Column_Assembly" xml:space="preserve">
+    <value>程序集</value>
+  </data>
+  <data name="Column_DynamicModule" xml:space="preserve">
+    <value>Dynamic</value>
+  </data>
+  <data name="Column_File" xml:space="preserve">
+    <value>文件</value>
+  </data>
+  <data name="Column_InMemoryModule" xml:space="preserve">
+    <value>InMemory</value>
+  </data>
+  <data name="Column_Module" xml:space="preserve">
+    <value>模块</value>
+  </data>
+  <data name="Column_Name" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="Column_OptimizedModule" xml:space="preserve">
+    <value>已优化</value>
+  </data>
+  <data name="Column_Order" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="Column_Path" xml:space="preserve">
+    <value>路径</value>
+  </data>
+  <data name="Column_Process" xml:space="preserve">
+    <value>进程</value>
+  </data>
+  <data name="Column_ProcessArchitecture" xml:space="preserve">
+    <value>架构</value>
+  </data>
+  <data name="Column_ProcessCLR" xml:space="preserve">
+    <value>CLR</value>
+  </data>
+  <data name="Column_ProcessFilename" xml:space="preserve">
+    <value>文件名</value>
+  </data>
+  <data name="Column_ProcessID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_ProcessTitle" xml:space="preserve">
+    <value>标题</value>
+  </data>
+  <data name="Column_ProcessType" xml:space="preserve">
+    <value>类型</value>
+  </data>
+  <data name="Column_ThreadAffinityMask" xml:space="preserve">
+    <value>关联掩码</value>
+  </data>
+  <data name="Column_ThreadCategory" xml:space="preserve">
+    <value>类别</value>
+  </data>
+  <data name="Column_ThreadID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_ThreadLocation" xml:space="preserve">
+    <value>位置</value>
+  </data>
+  <data name="Column_ThreadManagedId" xml:space="preserve">
+    <value>托管ID</value>
+  </data>
+  <data name="Column_ThreadPriority" xml:space="preserve">
+    <value>优先级</value>
+  </data>
+  <data name="Column_ThreadState" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="Column_ThreadSuspended" xml:space="preserve">
+    <value>Suspended</value>
+  </data>
+  <data name="Column_Timestamp" xml:space="preserve">
+    <value>时间戳</value>
+  </data>
+  <data name="Column_Type" xml:space="preserve">
+    <value>类型</value>
+  </data>
+  <data name="Column_Value" xml:space="preserve">
+    <value>值</value>
+  </data>
+  <data name="Column_Version" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="ContinueDebuggingCommand" xml:space="preserve">
+    <value>继续(_C)</value>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>复制(_Y)</value>
+  </data>
+  <data name="DbgAsm_Args" xml:space="preserve">
+    <value>参数(_R)</value>
+  </data>
+  <data name="DbgAsm_Assembly" xml:space="preserve">
+    <value>程序集(_A)</value>
+  </data>
+  <data name="DbgAsm_BreakAt" xml:space="preserve">
+    <value>中断于(_B)</value>
+  </data>
+  <data name="DbgAsm_DbgShimDllPath" xml:space="preserve">
+    <value>_dbgshim.dll</value>
+  </data>
+  <data name="DbgAsm_Host" xml:space="preserve">
+    <value>宿主(_H)</value>
+  </data>
+  <data name="DbgAsm_HostArgs" xml:space="preserve">
+    <value>宿主参数(_G)</value>
+  </data>
+  <data name="DbgAsm_Title" xml:space="preserve">
+    <value>调试程序集</value>
+  </data>
+  <data name="DbgAsm_WorkingDir" xml:space="preserve">
+    <value>工作目录(_W)</value>
+  </data>
+  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
+    <value>CreateProcess事件</value>
+  </data>
+  <data name="DbgBreak_Dont" xml:space="preserve">
+    <value>不要中断</value>
+  </data>
+  <data name="DbgBreak_EntryPoint" xml:space="preserve">
+    <value>入口点</value>
+  </data>
+  <data name="DbgBreak_ExeFirstLoadClassEvent" xml:space="preserve">
+    <value>程序的第一个LoadClass事件</value>
+  </data>
+  <data name="DbgBreak_ExeLoadModuleEvent" xml:space="preserve">
+    <value>程序的LoadModule事件</value>
+  </data>
+  <data name="DbgBreak_FirstCreateAppDomainEvent" xml:space="preserve">
+    <value>第一个CreateAppDomain事件</value>
+  </data>
+  <data name="DbgBreak_FirstCreateThreadEvent" xml:space="preserve">
+    <value>第一个CreateThread事件</value>
+  </data>
+  <data name="DbgBreak_FirstLoadClassEvent" xml:space="preserve">
+    <value>第一个LoadClass事件</value>
+  </data>
+  <data name="DbgBreak_FirstLoadModuleEvent" xml:space="preserve">
+    <value>第一个LoadModule事件</value>
+  </data>
+  <data name="DbgBreak_ModuleClassConstructorOrEntryPoint" xml:space="preserve">
+    <value>模块的静态构造函数或入口点</value>
+  </data>
+  <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
+    <value>在调试器启动时显示局部变量窗口</value>
+  </data>
+  <data name="DbgSettings_BreakAt" xml:space="preserve">
+    <value>中断于(_B)</value>
+  </data>
+  <data name="DbgSettings_CompilerGeneratedAttributesCanHideFields" xml:space="preserve">
+    <value>CompilerGeneratedAttributes 可以隐藏字段</value>
+  </data>
+  <data name="DbgSettings_CoreCLRDbgShimFilename" xml:space="preserve">
+    <value>CoreCLR dbgshim.dll</value>
+  </data>
+  <data name="DbgSettings_DebuggerBrowsableAttributesCanHidePropsFields" xml:space="preserve">
+    <value>DebuggerBrowsableAttributes 可以隐藏字段和属性</value>
+  </data>
+  <data name="DbgSettings_DisableManagedDebuggerDetection" xml:space="preserve">
+    <value>防止代码检测托管调试器</value>
+  </data>
+  <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
+    <value>忽略 Debugger.Break() 和中断指令</value>
+  </data>
+  <data name="DbgSettings_PropertyEvalAndFunctionCalls" xml:space="preserve">
+    <value>Enable property evaluation and other implicit function calls</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlightAttach" xml:space="preserve">
+    <value>附加(_H)</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlightBreakpoints" xml:space="preserve">
+    <value>断点(_R)</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlightCallStack" xml:space="preserve">
+    <value>堆栈调用(_A)</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlightExceptions" xml:space="preserve">
+    <value>异常(_X)</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlightLocals" xml:space="preserve">
+    <value>局部变量(_L)</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlightModules" xml:space="preserve">
+    <value>模块(_M)</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlightThreads" xml:space="preserve">
+    <value>线程(_T)</value>
+  </data>
+  <data name="DbgSettings_UseMemoryModules" xml:space="preserve">
+    <value>调试从进程内存加载的文件（取消选中以使用磁盘文件）</value>
+  </data>
+  <data name="DbgSettings_UseStringConversionFunction" xml:space="preserve">
+    <value>Call string-conversion function on objects in variables windows</value>
+  </data>
+  <data name="DebugAssemblyCommand" xml:space="preserve">
+    <value>调试程序集(_D)</value>
+  </data>
+  <data name="DebugAssemblyCommand2" xml:space="preserve">
+    <value>调试一个程序集(_Y)...</value>
+  </data>
+  <data name="DebugCoreCLRAssemblyCommand" xml:space="preserve">
+    <value>调试一个CoreCLR程序集(_Y)...</value>
+  </data>
+  <data name="DebuggerOptDlgTab" xml:space="preserve">
+    <value>调试器</value>
+  </data>
+  <data name="DebugProgramX" xml:space="preserve">
+    <value>调试 {0} (_D)</value>
+  </data>
+  <data name="Debug_EventDescription_BreakpointSetError" xml:space="preserve">
+    <value>BreakpointSetError error=0x{0:X8}</value>
+  </data>
+  <data name="Debug_EventDescription_ControlCPressed" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="Debug_EventDescription_CreateAppDomain" xml:space="preserve">
+    <value>CreateAppDomain {0} {1}</value>
+  </data>
+  <data name="Debug_EventDescription_CreateProcess" xml:space="preserve">
+    <value>CreateProcess PID={0} CLR v{1}</value>
+  </data>
+  <data name="Debug_EventDescription_CreateThread" xml:space="preserve">
+    <value>CreateThread TID={0} VTID={1}</value>
+  </data>
+  <data name="Debug_EventDescription_DebuggerError" xml:space="preserve">
+    <value>DebuggerError hr=0x{0:X8} error=0x{1:X8}</value>
+  </data>
+  <data name="Debug_EventDescription_Exception" xml:space="preserve">
+    <value>例外</value>
+  </data>
+  <data name="Debug_EventDescription_Exception2" xml:space="preserve">
+    <value>例外 Offset={0:X4}</value>
+  </data>
+  <data name="Debug_EventDescription_Exception2_CatchHandlerFound" xml:space="preserve">
+    <value>CatchHandlerFound</value>
+  </data>
+  <data name="Debug_EventDescription_Exception2_FirstChance" xml:space="preserve">
+    <value>FirstChance</value>
+  </data>
+  <data name="Debug_EventDescription_Exception2_Unhandled" xml:space="preserve">
+    <value>未处理</value>
+  </data>
+  <data name="Debug_EventDescription_Exception2_Unknown" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="Debug_EventDescription_Exception2_UserFirstChance" xml:space="preserve">
+    <value>UserFirstChance</value>
+  </data>
+  <data name="Debug_EventDescription_LoadAssembly" xml:space="preserve">
+    <value>LoadAssembly {0}</value>
+  </data>
+  <data name="Debug_EventDescription_LoadClass" xml:space="preserve">
+    <value>LoadClass 0x{0:X8} {1} {2}</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule1" xml:space="preserve">
+    <value>LoadModule DYN={0} MEM={1} {2:X8} {3:X8} {4}</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule2" xml:space="preserve">
+    <value>LoadModule A={0:X8} S={1:X8} {2}</value>
+  </data>
+  <data name="Debug_EventDescription_MDA_Notification" xml:space="preserve">
+    <value>MDA 通知</value>
+  </data>
+  <data name="Debug_EventDescription_MDA_Notification2" xml:space="preserve">
+    <value>MDA 通知：TID={0} {1} {2}</value>
+  </data>
+  <data name="Debug_EventDescription_UnhandledException" xml:space="preserve">
+    <value>未处理的异常</value>
+  </data>
+  <data name="Debug_StopReason_AnyDebugEventBreakpoint" xml:space="preserve">
+    <value>Any DebugEvent</value>
+  </data>
+  <data name="Debug_StopReason_BreakInstruction" xml:space="preserve">
+    <value>中断指令</value>
+  </data>
+  <data name="Debug_StopReason_DebugEventBreakpoint" xml:space="preserve">
+    <value>DebugEvent</value>
+  </data>
+  <data name="Debug_StopReason_Exception" xml:space="preserve">
+    <value>例外</value>
+  </data>
+  <data name="Debug_StopReason_ILCodeBreakpoint" xml:space="preserve">
+    <value>IL 断点</value>
+  </data>
+  <data name="Debug_StopReason_UnhandledException" xml:space="preserve">
+    <value>未处理的异常</value>
+  </data>
+  <data name="Debug_StopReason_Unknown" xml:space="preserve">
+    <value>未知原因</value>
+  </data>
+  <data name="DeleteAllBreakpointsCommand" xml:space="preserve">
+    <value>删除所有断点(_A)</value>
+  </data>
+  <data name="DeleteBreakpointCommand" xml:space="preserve">
+    <value>删除断点(_E)</value>
+  </data>
+  <data name="DeleteBreakpointsCommand" xml:space="preserve">
+    <value>删除断点(_E)</value>
+  </data>
+  <data name="DeleteCommand" xml:space="preserve">
+    <value>删除(_D)</value>
+  </data>
+  <data name="DetachCommand" xml:space="preserve">
+    <value>分离(_D)</value>
+  </data>
+  <data name="DisableAllBreakpointsCommand" xml:space="preserve">
+    <value>禁用所有断点(_N)</value>
+  </data>
+  <data name="DisableAllFilteredExceptionsCommand" xml:space="preserve">
+    <value>禁用所有已筛选的异常(_D)</value>
+  </data>
+  <data name="DisableBreakpointCommand2" xml:space="preserve">
+    <value>禁用断点(_D)</value>
+  </data>
+  <data name="DisableBreakpointsCommand2" xml:space="preserve">
+    <value>禁用断点(_D)</value>
+  </data>
+  <data name="EnableAllBreakpointsCommand" xml:space="preserve">
+    <value>启用所有断点(_N)</value>
+  </data>
+  <data name="EnableAllFilteredExceptionsCommand" xml:space="preserve">
+    <value>_ 启用所有已筛选的异常(_E)</value>
+  </data>
+  <data name="EnableBreakpointCommand" xml:space="preserve">
+    <value>启用断点(_E)</value>
+  </data>
+  <data name="EnableBreakpointCommand2" xml:space="preserve">
+    <value>启用断点(_L)</value>
+  </data>
+  <data name="EnableBreakpointsCommand" xml:space="preserve">
+    <value>启用断点(_E)</value>
+  </data>
+  <data name="EnableBreakpointsCommand2" xml:space="preserve">
+    <value>启用断点(_L)</value>
+  </data>
+  <data name="ErrorOccurredX" xml:space="preserve">
+    <value>发生错误：
+
+{0}</value>
+  </data>
+  <data name="Error_CantEvalUnlessDebuggerStopped" xml:space="preserve">
+    <value>Can't evaluate unless debugger is stopped</value>
+  </data>
+  <data name="Error_CantEvalWhenUnhandledExceptionHasOccurred" xml:space="preserve">
+    <value>Can't evaluate when an unhandled exception has occurred</value>
+  </data>
+  <data name="Error_CantSetNextStatementHere" xml:space="preserve">
+    <value>It's not possible to set the next statement here</value>
+  </data>
+  <data name="Error_CantSetNextStatementNoILFrame" xml:space="preserve">
+    <value>没有 IL 框架</value>
+  </data>
+  <data name="Error_CantSetNextStatementToAnotherMethod" xml:space="preserve">
+    <value>无法将下一条语句设置到其它方法中</value>
+  </data>
+  <data name="Error_CantSetNextStatementWhenNotStopped" xml:space="preserve">
+    <value>当进程运行时无法设置下一声明</value>
+  </data>
+  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
+    <value>CLR 调试器发生错误。请终止调试的进程并再试。
+
+HR: 0x{0:X8}
+错误：0x{1:X8}</value>
+  </data>
+  <data name="Error_CouldNotBreakProcess" xml:space="preserve">
+    <value>无法中断进程。错误：0x{0:X8}</value>
+  </data>
+  <data name="Error_CouldNotDetachProcess" xml:space="preserve">
+    <value>无法分离进程。错误：0x{0:X8}</value>
+  </data>
+  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
+    <value>无法设置下一条语句。</value>
+  </data>
+  <data name="Error_CouldNotSetNextStatement_UnknownReason" xml:space="preserve">
+    <value>无法设置下一声明（原因未知）</value>
+  </data>
+  <data name="Error_CouldNotStartDebugger" xml:space="preserve">
+    <value>无法启动调试器。{0}</value>
+  </data>
+  <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
+    <value>无法启动调试器。
+
+错误：{0}</value>
+  </data>
+  <data name="Error_CouldNotStartDebuggerCheckAccessToFile" xml:space="preserve">
+    <value>无法启动调试器。请确保您有权限访问文件 '{0}'
+
+错误：{1}</value>
+  </data>
+  <data name="Error_CouldNotStartDebuggerRequireAdminPrivLvl" xml:space="preserve">
+    <value>无法启动调试器。调试的程序需要管理员权限。请以管理员权限重启 dnSpy 并再试。</value>
+  </data>
+  <data name="Error_FileDoesNotExist" xml:space="preserve">
+    <value>文件不存在</value>
+  </data>
+  <data name="Error_HostEgCoreRunExe" xml:space="preserve">
+    <value>The host eg. CoreRun.exe</value>
+  </data>
+  <data name="Error_MissingFilename" xml:space="preserve">
+    <value>缺少文件名</value>
+  </data>
+  <data name="Error_NoDebugInfoAvailable" xml:space="preserve">
+    <value>No debug information found. Make sure that only the debugged method is selected in the treeview (press 'Alt+Num *' to go to current statement)</value>
+  </data>
+  <data name="Error_NoTabAvailableDecompileCurrentMethod" xml:space="preserve">
+    <value>No tab is available. Decompile the current method!</value>
+  </data>
+  <data name="Error_NotDebugging" xml:space="preserve">
+    <value>We're not debugging</value>
+  </data>
+  <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
+    <value>无法启动 '{0}' 
+错误: {0}</value>
+  </data>
+  <data name="Error_UnhandledExceptionOccurred" xml:space="preserve">
+    <value>未处理的异常于 {0}
+
+{1}
+
+点击 “OK” 停止调试，或点击“取消”让程序继续运行。</value>
+  </data>
+  <data name="ExceptionInfoFormat" xml:space="preserve">
+    <value>{0}: {1}
+
+Message: {2}
+
+HResult: 0x{3:X8}</value>
+  </data>
+  <data name="ExceptionInfo_Exception" xml:space="preserve">
+    <value>异常</value>
+  </data>
+  <data name="ExceptionInfo_InnerException" xml:space="preserve">
+    <value>Inner Exception</value>
+  </data>
+  <data name="ExceptionSettingsCommand" xml:space="preserve">
+    <value>异常设置(_X)</value>
+  </data>
+  <data name="Exceptions_Add_Error_Name" xml:space="preserve">
+    <value>需要异常的完整名称。如 System.My.Exception</value>
+  </data>
+  <data name="Exceptions_Add_Label" xml:space="preserve">
+    <value>完整名称</value>
+  </data>
+  <data name="Exceptions_Add_Title" xml:space="preserve">
+    <value>添加异常</value>
+  </data>
+  <data name="Exceptions_Add_ToolTip" xml:space="preserve">
+    <value>添加异常到列表</value>
+  </data>
+  <data name="Exceptions_AllCLRExceptionsNotInList" xml:space="preserve">
+    <value>&lt;所有不在此列表内的CLR异常&gt;</value>
+  </data>
+  <data name="Exceptions_Remove_ToolTip" xml:space="preserve">
+    <value>从列表中删除异常</value>
+  </data>
+  <data name="Exceptions_RestoreSettings_ToolTip" xml:space="preserve">
+    <value>恢复列表到默认设置</value>
+  </data>
+  <data name="Exceptions_Search" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+  <data name="Exceptions_Search_ToolTip" xml:space="preserve">
+    <value>搜索异常(Ctrl + F)</value>
+  </data>
+  <data name="Exceptions_ShowOnlyEnabledExceptions_ToolTip" xml:space="preserve">
+    <value>仅显示已启用的异常</value>
+  </data>
+  <data name="ExceptionThrownMessage" xml:space="preserve">
+    <value>Exception thrown: '{0}' in {1}
+
+If there is a handler for this exception, the program may be safely continued.</value>
+  </data>
+  <data name="FreezeThreadCommand" xml:space="preserve">
+    <value>冻结(_F)</value>
+  </data>
+  <data name="GoToCodeCommand" xml:space="preserve">
+    <value>转到代码(_G)</value>
+  </data>
+  <data name="GoToCodeNewTabCommand" xml:space="preserve">
+    <value>转到代码（新标签页）(_T)</value>
+  </data>
+  <data name="GoToDisassemblyCommand" xml:space="preserve">
+    <value>转到反汇编</value>
+  </data>
+  <data name="GoToDisassemblyCommand2" xml:space="preserve">
+    <value>转到反汇编(_D)</value>
+  </data>
+  <data name="GoToModuleCommand" xml:space="preserve">
+    <value>转到模块(_G)</value>
+  </data>
+  <data name="HexDisplayCommand" xml:space="preserve">
+    <value>十六进制显示(_H)</value>
+  </data>
+  <data name="LoadModule_InfoText" xml:space="preserve">
+    <value>正在加载模块。如果它是个大模块则需要一些时间。</value>
+  </data>
+  <data name="LoadModule_Title" xml:space="preserve">
+    <value>加载动态模块中</value>
+  </data>
+  <data name="LocalsAddWatchCommand" xml:space="preserve">
+    <value>添加监视(_W)</value>
+  </data>
+  <data name="LocalsCollapseChildrenNodesCommand" xml:space="preserve">
+    <value>折叠子节点(_C)</value>
+  </data>
+  <data name="LocalsCollapseParentNodeCommand" xml:space="preserve">
+    <value>折叠父节点(_O)</value>
+  </data>
+  <data name="LocalsCommand" xml:space="preserve">
+    <value>局部变量(_L)</value>
+  </data>
+  <data name="LocalsCopyValueCommand" xml:space="preserve">
+    <value>复制值(_L)</value>
+  </data>
+  <data name="LocalsEditValueCommand" xml:space="preserve">
+    <value>编辑值(_E)</value>
+  </data>
+  <data name="LocalsEditValue_Error_CanNotWriteNewValueToThisType" xml:space="preserve">
+    <value>无法写新值给此类型。</value>
+  </data>
+  <data name="LocalsEditValue_Error_CanOnlyBeSetToNull" xml:space="preserve">
+    <value>您仅能设置它为 null</value>
+  </data>
+  <data name="LocalsEditValue_Error_CouldNotCallPropSetter" xml:space="preserve">
+    <value>Error calling property setter: 0x{0:X8}</value>
+  </data>
+  <data name="LocalsEditValue_Error_CouldNotWriteNewValue" xml:space="preserve">
+    <value>无法设置值：{0}</value>
+  </data>
+  <data name="LocalsEditValue_Error_CouldNotWriteNullToNullableType" xml:space="preserve">
+    <value>Error writing null to nullable type: 0x{0:X8}</value>
+  </data>
+  <data name="LocalsEditValue_Error_CouldNotWriteTheValue" xml:space="preserve">
+    <value>无法写此值。错误：0x{0:X8}</value>
+  </data>
+  <data name="LocalsEditValue_Error_CouldNotWriteValueDueToException" xml:space="preserve">
+    <value>无法写此值
+错误：{0}</value>
+  </data>
+  <data name="LocalsEditValue_Error_EnterSomeText" xml:space="preserve">
+    <value>在此输入文本</value>
+  </data>
+  <data name="LocalsEditValue_Error_ExceptionOccurredInDebuggedProcess" xml:space="preserve">
+    <value>调试的进程发生意外：{0}</value>
+  </data>
+  <data name="LocalsEditValue_Error_FieldCanNotBeEdited" xml:space="preserve">
+    <value>不能编辑此字段</value>
+  </data>
+  <data name="LocalsEditValue_Error_InvalidEnumValue" xml:space="preserve">
+    <value>枚举值无效</value>
+  </data>
+  <data name="LocalsEditValue_Error_InvalidNumber" xml:space="preserve">
+    <value>数字无效</value>
+  </data>
+  <data name="LocalsEditValue_Error_UnknownEnumValue" xml:space="preserve">
+    <value>未知枚举值 '{0}'</value>
+  </data>
+  <data name="LocalsEditValue_Error_ValueCanNotBeEdited" xml:space="preserve">
+    <value>无法编辑此值</value>
+  </data>
+  <data name="LocalsEditValue_Error_ValueTypeIsTooBig" xml:space="preserve">
+    <value>值类型过大</value>
+  </data>
+  <data name="LocalsExpandChildrenNodesCommand" xml:space="preserve">
+    <value>展开子节点</value>
+  </data>
+  <data name="LocalsSaveCommand" xml:space="preserve">
+    <value>保存(_S)...</value>
+  </data>
+  <data name="LocalsSave_Error_CouldNotGetArrayData" xml:space="preserve">
+    <value>无法取得数组数据</value>
+  </data>
+  <data name="LocalsSave_Error_CouldNotReadAnyData" xml:space="preserve">
+    <value>无法读取数据</value>
+  </data>
+  <data name="LocalsSave_Error_CouldNotSaveDataToFilename" xml:space="preserve">
+    <value>保存数据到 '{0}' 错误
+错误：{1}</value>
+  </data>
+  <data name="Locals_Ask_TooManyItems" xml:space="preserve">
+    <value>此项目包含有超过 {0} 个子项目。当展开时会限制要显示的项目数量。
+
+您确定要展开它？</value>
+  </data>
+  <data name="Locals_Error_CantEvaluateCantCreateStrings" xml:space="preserve">
+    <value>它当前不能创建新字符串</value>
+  </data>
+  <data name="Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint" xml:space="preserve">
+    <value>Can't evaluate when the thread is at an unsafe point. Step once or run until a breakpoint hits.</value>
+  </data>
+  <data name="Locals_Error_CouldNotCreateString" xml:space="preserve">
+    <value>无法创建字符串。错误：0x{0:X8}</value>
+  </data>
+  <data name="Locals_Error_CouldNotCreateString2" xml:space="preserve">
+    <value>无法创建新字符串</value>
+  </data>
+  <data name="Locals_Error_CouldNotCreateStringDueToException" xml:space="preserve">
+    <value>调试的程序发生了异常，无法创建字符串</value>
+  </data>
+  <data name="Locals_Error_CouldNotRecreateTheValue" xml:space="preserve">
+    <value>无法重新创建值</value>
+  </data>
+  <data name="Locals_Error_ErrorNeuteredCouldNotBeRecreated" xml:space="preserve">
+    <value>The value has been neutered and couldn't be recreated</value>
+  </data>
+  <data name="Locals_Error_EvalDisabledCantCallPropsAndMethods" xml:space="preserve">
+    <value>当前无法调用属性和方法</value>
+  </data>
+  <data name="Locals_Error_EvalTimedOutCantCreateNewStringsUntilContinue" xml:space="preserve">
+    <value>求值超时且无法创建新字符串，直到您继续调试为止</value>
+  </data>
+  <data name="Locals_Error_EvalTimedOutIsDisabled" xml:space="preserve">
+    <value>求值已超时并已被禁用，直到您继续调试为止。</value>
+  </data>
+  <data name="Locals_Error_EvaluationTimedOut" xml:space="preserve">
+    <value>求值超时</value>
+  </data>
+  <data name="Locals_Error_PropertyFuncEvalHasBeenDisabledInSettings" xml:space="preserve">
+    <value>在设置中已禁用属性/函数求值</value>
+  </data>
+  <data name="Locals_Error_StaticFieldIsNotYetAvailable" xml:space="preserve">
+    <value>Static field is not yet available</value>
+  </data>
+  <data name="Locals_TypeVariables" xml:space="preserve">
+    <value>类型变量</value>
+  </data>
+  <data name="MemoryWindowCommand" xml:space="preserve">
+    <value>内存(_M)</value>
+  </data>
+  <data name="ModuleCopyFilenameCommand" xml:space="preserve">
+    <value>复制文件名</value>
+  </data>
+  <data name="ModuleSaveModulesTitle" xml:space="preserve">
+    <value>保存模块</value>
+  </data>
+  <data name="ModuleSaveModuleTitle" xml:space="preserve">
+    <value>保存模块</value>
+  </data>
+  <data name="ModulesCommand" xml:space="preserve">
+    <value>模块(_U)</value>
+  </data>
+  <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
+    <value>加载动态模块前您必须先中断此进程。</value>
+  </data>
+  <data name="Module_NoAddress" xml:space="preserve">
+    <value>&lt;无地址&gt;</value>
+  </data>
+  <data name="OpenContainingFolderCommand" xml:space="preserve">
+    <value>打开所在文件夹</value>
+  </data>
+  <data name="OpenModuleFromMemoryCommand" xml:space="preserve">
+    <value>从内存打开模块</value>
+  </data>
+  <data name="Process_CLR_CoreCLR" xml:space="preserve">
+    <value>CoreCLR</value>
+  </data>
+  <data name="Process_CLR_Desktop" xml:space="preserve">
+    <value>Desktop</value>
+  </data>
+  <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
+    <value>重新加载所有方法体</value>
+  </data>
+  <data name="RemoveExceptionCommand" xml:space="preserve">
+    <value>删除(_R)</value>
+  </data>
+  <data name="RenameThreadCommand" xml:space="preserve">
+    <value>重命名</value>
+  </data>
+  <data name="RestartCommand" xml:space="preserve">
+    <value>重新开始(_R)</value>
+  </data>
+  <data name="RestoreDefaultExceptionSettingsCommand" xml:space="preserve">
+    <value>恢复默认值</value>
+  </data>
+  <data name="RunToCursorCommand" xml:space="preserve">
+    <value>运行到光标处(_N)</value>
+  </data>
+  <data name="SaveModuleCommand" xml:space="preserve">
+    <value>保存模块...</value>
+  </data>
+  <data name="SaveModulesCommand" xml:space="preserve">
+    <value>保存 {0} 模块...</value>
+  </data>
+  <data name="SelectAllCommand" xml:space="preserve">
+    <value>全选(_A)</value>
+  </data>
+  <data name="SetNextStatementCommand" xml:space="preserve">
+    <value>设为下一条语句(_X)</value>
+  </data>
+  <data name="ShortCutAltAsterisk" xml:space="preserve">
+    <value>Alt + 数字键 *</value>
+  </data>
+  <data name="ShortCutKeyAlt4" xml:space="preserve">
+    <value>Alt+4</value>
+  </data>
+  <data name="ShortCutKeyAlt6" xml:space="preserve">
+    <value>Alt+6</value>
+  </data>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Ctrl+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltB" xml:space="preserve">
+    <value>Ctrl+Alt+B</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltC" xml:space="preserve">
+    <value>Ctrl+Alt+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltE" xml:space="preserve">
+    <value>Ctrl+Alt+E</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltH" xml:space="preserve">
+    <value>Ctrl+Alt+H</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltP" xml:space="preserve">
+    <value>Ctrl+Alt+P</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltU" xml:space="preserve">
+    <value>Ctrl+Alt+U</value>
+  </data>
+  <data name="ShortCutKeyCtrlAlt_DIGIT" xml:space="preserve">
+    <value>Ctrl+Alt+{0}</value>
+  </data>
+  <data name="ShortCutKeyCtrlBreak" xml:space="preserve">
+    <value>Ctrl+Break</value>
+  </data>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlEnter" xml:space="preserve">
+    <value>Ctrl+Enter</value>
+  </data>
+  <data name="ShortCutKeyCtrlF10" xml:space="preserve">
+    <value>Ctrl+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlF5" xml:space="preserve">
+    <value>Ctrl+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlF9" xml:space="preserve">
+    <value>Ctrl+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF10" xml:space="preserve">
+    <value>Ctrl+Shift+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF5" xml:space="preserve">
+    <value>Ctrl+Shift+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF9" xml:space="preserve">
+    <value>Ctrl+Shift+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
+    <value>Ctrl+{0}</value>
+  </data>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Del</value>
+  </data>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="ShortCutKeyF10" xml:space="preserve">
+    <value>F10</value>
+  </data>
+  <data name="ShortCutKeyF11" xml:space="preserve">
+    <value>F11</value>
+  </data>
+  <data name="ShortCutKeyF2" xml:space="preserve">
+    <value>F2</value>
+  </data>
+  <data name="ShortCutKeyF5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="ShortCutKeyF9" xml:space="preserve">
+    <value>F9</value>
+  </data>
+  <data name="ShortCutKeyInsert" xml:space="preserve">
+    <value>Ins</value>
+  </data>
+  <data name="ShortCutKeyShiftF11" xml:space="preserve">
+    <value>Shift+F11</value>
+  </data>
+  <data name="ShortCutKeyShiftF5" xml:space="preserve">
+    <value>Shift+F5</value>
+  </data>
+  <data name="ShowInMemoryWindowCommand" xml:space="preserve">
+    <value>在内存窗口中显示</value>
+  </data>
+  <data name="ShowInstructionPointerCommand" xml:space="preserve">
+    <value>显示IP</value>
+  </data>
+  <data name="ShowModuleNamesCommand" xml:space="preserve">
+    <value>显示模块名称(_M)</value>
+  </data>
+  <data name="ShowNamespacesCommand" xml:space="preserve">
+    <value>显示命名空间</value>
+  </data>
+  <data name="ShowNextStatementCommand" xml:space="preserve">
+    <value>显示下一语句(_H)</value>
+  </data>
+  <data name="ShowOwnerTypesCommand" xml:space="preserve">
+    <value>显示所有者类型</value>
+  </data>
+  <data name="ShowParameterNamesCommand" xml:space="preserve">
+    <value>显示参数名称(_P)</value>
+  </data>
+  <data name="ShowParameterTypesCommand" xml:space="preserve">
+    <value>显示参数类型(_T)</value>
+  </data>
+  <data name="ShowParameterValuesCommand" xml:space="preserve">
+    <value>显示参数值(_V)</value>
+  </data>
+  <data name="ShowReturnTypesCommand" xml:space="preserve">
+    <value>显示返回类型</value>
+  </data>
+  <data name="ShowTokensCommand" xml:space="preserve">
+    <value>显示Tokens</value>
+  </data>
+  <data name="ShowTypeKeywordsCommand" xml:space="preserve">
+    <value>显示类型关键字</value>
+  </data>
+  <data name="StartWithoutDebuggingCommand" xml:space="preserve">
+    <value>启动但不调试</value>
+  </data>
+  <data name="StatusBar_Ready" xml:space="preserve">
+    <value>就绪</value>
+  </data>
+  <data name="StatusBar_Ready2" xml:space="preserve">
+    <value>就绪 - {0}</value>
+  </data>
+  <data name="StatusBar_Running" xml:space="preserve">
+    <value>运行中...</value>
+  </data>
+  <data name="StepIntoCommand" xml:space="preserve">
+    <value>逐语句(_I)</value>
+  </data>
+  <data name="StepOutCommand" xml:space="preserve">
+    <value>逐过程(_T)</value>
+  </data>
+  <data name="StepOverCommand" xml:space="preserve">
+    <value>跳出(_O)</value>
+  </data>
+  <data name="StopDebuggingCommand" xml:space="preserve">
+    <value>停止调试(_E)</value>
+  </data>
+  <data name="SwitchToFrameCommand" xml:space="preserve">
+    <value>_Switch To Frame</value>
+  </data>
+  <data name="SwitchToFrameNewTabCommand" xml:space="preserve">
+    <value>Switch To Frame (New _Tab)</value>
+  </data>
+  <data name="SwitchToThreadCommand" xml:space="preserve">
+    <value>切换到线程(_S)</value>
+  </data>
+  <data name="SwitchToThreadNewTabCommand" xml:space="preserve">
+    <value>切换到线程（新标签）(_T)</value>
+  </data>
+  <data name="ThawThreadCommand" xml:space="preserve">
+    <value>解冻(_T)</value>
+  </data>
+  <data name="ThreadsCommand" xml:space="preserve">
+    <value>线程(_H)</value>
+  </data>
+  <data name="ThreadType_BackgroundGC_or_Finalizer" xml:space="preserve">
+    <value>BGC / Finalizer</value>
+  </data>
+  <data name="ThreadType_Main" xml:space="preserve">
+    <value>主线程</value>
+  </data>
+  <data name="ThreadType_Terminated" xml:space="preserve">
+    <value>终止的线程</value>
+  </data>
+  <data name="ThreadType_ThreadPool" xml:space="preserve">
+    <value>线程池</value>
+  </data>
+  <data name="ThreadType_Unknown" xml:space="preserve">
+    <value>未知线程</value>
+  </data>
+  <data name="ThreadType_Worker" xml:space="preserve">
+    <value>工作线程</value>
+  </data>
+  <data name="Thread_LocationNotAvailable" xml:space="preserve">
+    <value>&lt; 不可用 &gt;</value>
+  </data>
+  <data name="Thread_NoName" xml:space="preserve">
+    <value>&lt;无名称&gt;</value>
+  </data>
+  <data name="Thread_Priority_AboveNormal" xml:space="preserve">
+    <value>高于正常</value>
+  </data>
+  <data name="Thread_Priority_BelowNormal" xml:space="preserve">
+    <value>低于正常</value>
+  </data>
+  <data name="Thread_Priority_Highest" xml:space="preserve">
+    <value>高</value>
+  </data>
+  <data name="Thread_Priority_Lowest" xml:space="preserve">
+    <value>低</value>
+  </data>
+  <data name="Thread_Priority_Normal" xml:space="preserve">
+    <value>正常</value>
+  </data>
+  <data name="Thread_UserState_Background" xml:space="preserve">
+    <value>Background</value>
+  </data>
+  <data name="Thread_UserState_Stopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="Thread_UserState_StopRequested" xml:space="preserve">
+    <value>StopRequested</value>
+  </data>
+  <data name="Thread_UserState_Suspended" xml:space="preserve">
+    <value>Suspended</value>
+  </data>
+  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
+    <value>SuspendRequested</value>
+  </data>
+  <data name="Thread_UserState_ThreadPool" xml:space="preserve">
+    <value>ThreadPool</value>
+  </data>
+  <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
+    <value>UnsafePoint</value>
+  </data>
+  <data name="Thread_UserState_Unstarted" xml:space="preserve">
+    <value>Unstarted</value>
+  </data>
+  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
+    <value>WaitSleepJoin</value>
+  </data>
+  <data name="ToggleBreakpointCommand" xml:space="preserve">
+    <value>设置/取消断点(_G)</value>
+  </data>
+  <data name="ToolBarBreakToolTip" xml:space="preserve">
+    <value>中断(Ctrl+Break)</value>
+  </data>
+  <data name="ToolBarContinueDebuggingButton" xml:space="preserve">
+    <value>继续</value>
+  </data>
+  <data name="ToolBarContinueDebuggingToolTip" xml:space="preserve">
+    <value>继续(F5)</value>
+  </data>
+  <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
+    <value>调试程序集(F5)</value>
+  </data>
+  <data name="ToolBarRestartToolTip" xml:space="preserve">
+    <value>重新开始(Ctrl + Shift + F5)</value>
+  </data>
+  <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
+    <value>显示下一语句 (Alt + 数字键 *)</value>
+  </data>
+  <data name="ToolBarStartDebuggingButton" xml:space="preserve">
+    <value>启动</value>
+  </data>
+  <data name="ToolBarStepIntoToolTip" xml:space="preserve">
+    <value>逐语句 (F11)</value>
+  </data>
+  <data name="ToolBarStepOutToolTip" xml:space="preserve">
+    <value>逐过程 (Shift+F11)</value>
+  </data>
+  <data name="ToolBarStepOverToolTip" xml:space="preserve">
+    <value>跳出 (F10)</value>
+  </data>
+  <data name="ToolBarStopDebuggingToolTip" xml:space="preserve">
+    <value>停止调试 (Shift+F5)</value>
+  </data>
+  <data name="UnknownExceptionType" xml:space="preserve">
+    <value>&lt;未知的异常类型&gt;</value>
+  </data>
+  <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
+    <value>请改用 dnSpy-x86.exe 调试 32 位应用程序。</value>
+  </data>
+  <data name="UseDnSpyExeToDebug64" xml:space="preserve">
+    <value>请改用 dnSpy.exe 调试 64 位应用程序。</value>
+  </data>
+  <data name="Window_Breakpoints" xml:space="preserve">
+    <value>断点</value>
+  </data>
+  <data name="Window_CallStack" xml:space="preserve">
+    <value>堆栈调用</value>
+  </data>
+  <data name="Window_ExceptionSettings" xml:space="preserve">
+    <value>异常设置</value>
+  </data>
+  <data name="Window_Locals" xml:space="preserve">
+    <value>局部变量</value>
+  </data>
+  <data name="Window_Memory_10_MenuItem" xml:space="preserve">
+    <value>Memory 1_0</value>
+  </data>
+  <data name="Window_Memory_N" xml:space="preserve">
+    <value>内存 {0}</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem" xml:space="preserve">
+    <value>内存 _{0}</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem2" xml:space="preserve">
+    <value>内存 {0}</value>
+  </data>
+  <data name="Window_Modules" xml:space="preserve">
+    <value>模块</value>
+  </data>
+  <data name="Window_Threads" xml:space="preserve">
+    <value>线程</value>
+  </data>
+  <data name="YesNo_No" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="YesNo_Yes" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlight" xml:space="preserve">
+    <value>语法高亮(_S)</value>
+  </data>
+  <data name="LoadModulesCommand" xml:space="preserve">
+    <value>打开模块</value>
+  </data>
+  <data name="LoadXModulesCommand" xml:space="preserve">
+    <value>打开 {0} 模块</value>
+  </data>
+  <data name="DeleteAllBreakpointsCommand2" xml:space="preserve">
+    <value>删除所有断点</value>
+  </data>
+  <data name="ShowParameterTypesCommand2" xml:space="preserve">
+    <value>显示参数类型</value>
+  </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>.NET 调试器</value>
+  </data>
+  <data name="Debug_StopReason_Breakpoint" xml:space="preserve">
+    <value>Breakpoint</value>
+  </data>
+</root>

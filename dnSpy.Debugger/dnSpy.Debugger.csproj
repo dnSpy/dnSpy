@@ -410,6 +410,8 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Debugger.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Debugger.Resources.zh-CN.resx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

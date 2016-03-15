@@ -54,12 +54,19 @@ namespace dnSpy_Console {
 			// Make sure its static ctor gets called so it can initialize its fields
 			var u = AppCulture.UICulture;
 
+			var oldEncoding = Console.OutputEncoding;
 			try {
+				// Make sure russian and chinese characters are shown correctly
+				Console.OutputEncoding = Encoding.UTF8;
+
 				return new DnSpyDecompiler().Run(args);
 			}
 			catch (Exception ex) {
 				Console.Error.WriteLine(string.Format("{0}", ex));
 				return 1;
+			}
+			finally {
+				Console.OutputEncoding = oldEncoding;
 			}
 		}
 	}

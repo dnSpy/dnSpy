@@ -1,0 +1,947 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="About_Issues" xml:space="preserve">
+    <value>汇报_Issues</value>
+  </data>
+  <data name="About_LatestBuild" xml:space="preserve">
+    <value>最新生成版本(_B)</value>
+  </data>
+  <data name="About_LatestRelease" xml:space="preserve">
+    <value>最新发布版本(_L)</value>
+  </data>
+  <data name="About_Menu" xml:space="preserve">
+    <value>关于(_A)</value>
+  </data>
+  <data name="About_SourceCode" xml:space="preserve">
+    <value>源代码(_S)</value>
+  </data>
+  <data name="About_TabTitle" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="AllFiles" xml:space="preserve">
+    <value>所有文件</value>
+  </data>
+  <data name="Arch_AnyCPU" xml:space="preserve">
+    <value>AnyCPU</value>
+  </data>
+  <data name="Arch_AnyCPU_Preferred" xml:space="preserve">
+    <value>AnyCPU (32位优先)</value>
+  </data>
+  <data name="AssemblyExplorerCommand" xml:space="preserve">
+    <value>程序集资源管理器(_P)</value>
+  </data>
+  <data name="AssemblyExplorerKey" xml:space="preserve">
+    <value>Ctrl+Alt+L</value>
+  </data>
+  <data name="AssemblyExplorerTitle" xml:space="preserve">
+    <value>程序集资源管理器</value>
+  </data>
+  <data name="BaseTypeFolder" xml:space="preserve">
+    <value>基类型和接口</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>取消(_C)</value>
+  </data>
+  <data name="Button_No" xml:space="preserve">
+    <value>否(_N)</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="Button_Save" xml:space="preserve">
+    <value>保存(_S)...</value>
+  </data>
+  <data name="Button_SaveCode" xml:space="preserve">
+    <value>保存代码(_S)...</value>
+  </data>
+  <data name="Button_Yes" xml:space="preserve">
+    <value>是(_Y)</value>
+  </data>
+  <data name="CantConvertInputToType" xml:space="preserve">
+    <value>无法转换输入位所需类型：{0}</value>
+  </data>
+  <data name="CloseAllTabGroupsButThisCommand" xml:space="preserve">
+    <value>关闭除当前外的所有标签组</value>
+  </data>
+  <data name="CloseAllTabsButThisCommand" xml:space="preserve">
+    <value>仅保留此标签页(_A)</value>
+  </data>
+  <data name="CloseAllTabsCommand" xml:space="preserve">
+    <value>关闭所有标签页(_L)</value>
+  </data>
+  <data name="CloseTabCommand" xml:space="preserve">
+    <value>关闭(_C)</value>
+  </data>
+  <data name="CloseTabGroupCommand" xml:space="preserve">
+    <value>关闭标签组</value>
+  </data>
+  <data name="CloseTabKey" xml:space="preserve">
+    <value>Ctrl+W</value>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>复制(_Y)</value>
+  </data>
+  <data name="CopyKey" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="CopyMDTokenCommand" xml:space="preserve">
+    <value>复制MD Token (_C)</value>
+  </data>
+  <data name="CouldNotStartBrowser" xml:space="preserve">
+    <value>无法启动浏览器</value>
+  </data>
+  <data name="DecompilationCanceled" xml:space="preserve">
+    <value>操作已取消</value>
+  </data>
+  <data name="DecompilationException" xml:space="preserve">
+    <value>发生错误</value>
+  </data>
+  <data name="DecompileCancelButton" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Decompiling" xml:space="preserve">
+    <value>反编译中…</value>
+  </data>
+  <data name="DerivedTypes" xml:space="preserve">
+    <value>派生类型</value>
+  </data>
+  <data name="DisplayDlgTabTitle" xml:space="preserve">
+    <value>显示</value>
+  </data>
+  <data name="DotNetExes" xml:space="preserve">
+    <value>.NET 可执行文件</value>
+  </data>
+  <data name="EmptyTabTitle" xml:space="preserve">
+    <value>&lt;空&gt;</value>
+  </data>
+  <data name="ExceptionMessage" xml:space="preserve">
+    <value>发生意外：</value>
+  </data>
+  <data name="ExitAppCommand" xml:space="preserve">
+    <value>退出(_X)</value>
+  </data>
+  <data name="ExitAppKey" xml:space="preserve">
+    <value>Alt+F4</value>
+  </data>
+  <data name="ExplorerOpenWithDnSpy" xml:space="preserve">
+    <value>用 dnSpy 打开</value>
+  </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>查找(_F)</value>
+  </data>
+  <data name="FindCommand2" xml:space="preserve">
+    <value>查找</value>
+  </data>
+  <data name="FindKey" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="FullScreenCommand" xml:space="preserve">
+    <value>全屏(_U)</value>
+  </data>
+  <data name="FullScreenKey" xml:space="preserve">
+    <value>Shift+Alt+Enter</value>
+  </data>
+  <data name="FullScreenToolBarCommand" xml:space="preserve">
+    <value>全屏显示</value>
+  </data>
+  <data name="GoToEntryPointCommand" xml:space="preserve">
+    <value>转到入口点(_E)</value>
+  </data>
+  <data name="GoToGlobalCctorCommand" xml:space="preserve">
+    <value>转到 &lt;模块&gt;.cctor (_R)</value>
+  </data>
+  <data name="GoToLine_EnterLineNum" xml:space="preserve">
+    <value>输入行号</value>
+  </data>
+  <data name="GoToLine_InvalidLine" xml:space="preserve">
+    <value>行无效：{0}</value>
+  </data>
+  <data name="GoToLine_Label" xml:space="preserve">
+    <value>行 [, 列] (_L)</value>
+  </data>
+  <data name="GoToLine_Title" xml:space="preserve">
+    <value>转到行</value>
+  </data>
+  <data name="GoToReferenceCommand" xml:space="preserve">
+    <value>转到引用</value>
+  </data>
+  <data name="GoToReferenceKey" xml:space="preserve">
+    <value>双击</value>
+  </data>
+  <data name="GoToTokenCommand" xml:space="preserve">
+    <value>转到MD Token (_D)...</value>
+  </data>
+  <data name="GoToTokenKey" xml:space="preserve">
+    <value>Ctrl+D</value>
+  </data>
+  <data name="GoToToken_CouldNotResolve" xml:space="preserve">
+    <value>无法解析程序引用令牌：0x{0:X8}</value>
+  </data>
+  <data name="GoToToken_InvalidToken" xml:space="preserve">
+    <value>元数据令牌无效：0x{0:X8}</value>
+  </data>
+  <data name="GoToToken_Label" xml:space="preserve">
+    <value>_Metadata token</value>
+  </data>
+  <data name="GoToToken_Title" xml:space="preserve">
+    <value>转到 MD Token</value>
+  </data>
+  <data name="HideAllToolWindowsCommand" xml:space="preserve">
+    <value>隐藏所有选项卡(_I)</value>
+  </data>
+  <data name="HideToolWindowCommand" xml:space="preserve">
+    <value>隐藏(_H)</value>
+  </data>
+  <data name="HighlightLine" xml:space="preserve">
+    <value>高亮当前行(_H)</value>
+  </data>
+  <data name="InvalidInputTextMessageBox" xml:space="preserve">
+    <value>文本输入无效</value>
+  </data>
+  <data name="LoadingDnSpyPleaseWait" xml:space="preserve">
+    <value>dnSpy正在加载，请稍候...</value>
+  </data>
+  <data name="Menu_Edit" xml:space="preserve">
+    <value>编辑(_E)</value>
+  </data>
+  <data name="Menu_File" xml:space="preserve">
+    <value>文件(_F)</value>
+  </data>
+  <data name="Menu_Help" xml:space="preserve">
+    <value>帮助 (_H)</value>
+  </data>
+  <data name="Menu_Themes" xml:space="preserve">
+    <value>主题(_T)</value>
+  </data>
+  <data name="Menu_View" xml:space="preserve">
+    <value>视图(_V)</value>
+  </data>
+  <data name="Menu_Windows" xml:space="preserve">
+    <value>窗口(_W)</value>
+  </data>
+  <data name="MergeAllTabGroupsCommand" xml:space="preserve">
+    <value>合并所有标签组</value>
+  </data>
+  <data name="MessageBoxDontShowAgain" xml:space="preserve">
+    <value>不再显示(_D)</value>
+  </data>
+  <data name="MoveAllTabsToNextTabGroupCommand" xml:space="preserve">
+    <value>移动全部到下一标签组</value>
+  </data>
+  <data name="MoveAllToPreviousTabGroupCommand" xml:space="preserve">
+    <value>移动全部到前一标签组</value>
+  </data>
+  <data name="MoveBottomCommand" xml:space="preserve">
+    <value>底部</value>
+  </data>
+  <data name="MoveLeftCommand" xml:space="preserve">
+    <value>左侧</value>
+  </data>
+  <data name="MoveRightCommand" xml:space="preserve">
+    <value>右侧</value>
+  </data>
+  <data name="MoveTabGroupAfterNextTabGroupCommand" xml:space="preserve">
+    <value>移动标签组到下一标签组之后</value>
+  </data>
+  <data name="MoveTabGroupBeforePreviousTabGroupCommand" xml:space="preserve">
+    <value>移动标签组到前一标签组之前</value>
+  </data>
+  <data name="MoveToNextTabGroupCommand" xml:space="preserve">
+    <value>移动到下一标签组</value>
+  </data>
+  <data name="MoveToolWindowCommand" xml:space="preserve">
+    <value>移动(_M)</value>
+  </data>
+  <data name="MoveToolWindowGroupCommand" xml:space="preserve">
+    <value>移动组</value>
+  </data>
+  <data name="MoveTopCommand" xml:space="preserve">
+    <value>顶部</value>
+  </data>
+  <data name="MoveToPreviousTabGroupCommand" xml:space="preserve">
+    <value>移动到前一标签组</value>
+  </data>
+  <data name="NavigateBackCommand" xml:space="preserve">
+    <value>向后导航(Backspace)</value>
+  </data>
+  <data name="NavigateForwardCommand" xml:space="preserve">
+    <value>向前导航(Alt+→)</value>
+  </data>
+  <data name="NewDataIsNotAnImage" xml:space="preserve">
+    <value>新数据不是映像。</value>
+  </data>
+  <data name="NewHorizontalTabGroupCommand" xml:space="preserve">
+    <value>新建水平标签组</value>
+  </data>
+  <data name="NewTabCommand" xml:space="preserve">
+    <value>新标签页(_T)</value>
+  </data>
+  <data name="NewVerticalTabGroupCommand" xml:space="preserve">
+    <value>新建垂直标签组</value>
+  </data>
+  <data name="NewWindowCommand" xml:space="preserve">
+    <value>新窗口(_N)</value>
+  </data>
+  <data name="OpenCommand" xml:space="preserve">
+    <value>打开(_O)...</value>
+  </data>
+  <data name="OpenContainingFolderCommand" xml:space="preserve">
+    <value>打开所在文件夹</value>
+  </data>
+  <data name="OpenGACCommand" xml:space="preserve">
+    <value>从GAC打开(_G)...</value>
+  </data>
+  <data name="OpenGAC_CreatedBy_Label" xml:space="preserve">
+    <value>创建者:</value>
+  </data>
+  <data name="OpenGAC_FileVersion_Label" xml:space="preserve">
+    <value>文件版本:</value>
+  </data>
+  <data name="OpenGAC_Name_Column" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="OpenGAC_Name_Label" xml:space="preserve">
+    <value>名称:</value>
+  </data>
+  <data name="OpenGAC_Path_Label" xml:space="preserve">
+    <value>路径:</value>
+  </data>
+  <data name="OpenGAC_ShowDupes_CheckBox" xml:space="preserve">
+    <value>显示重复显示重复</value>
+  </data>
+  <data name="OpenGAC_ShowFiles" xml:space="preserve">
+    <value>正在显示 {0:n0} /{1:n0} 文件</value>
+  </data>
+  <data name="OpenGAC_Title" xml:space="preserve">
+    <value>从GAC中打开</value>
+  </data>
+  <data name="OpenGAC_Version_Column" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="OpenGAC_Version_Label" xml:space="preserve">
+    <value>版本:</value>
+  </data>
+  <data name="OpenInNewTabCommand" xml:space="preserve">
+    <value>在新标签页中打开(_T)</value>
+  </data>
+  <data name="OpenInNewTabKey" xml:space="preserve">
+    <value>Ctrl+T</value>
+  </data>
+  <data name="OpenInNewTabKey2" xml:space="preserve">
+    <value>Ctrl+F12</value>
+  </data>
+  <data name="OpenInNewTabKey3" xml:space="preserve">
+    <value>Ctrl+单击</value>
+  </data>
+  <data name="OpenKey" xml:space="preserve">
+    <value>Ctrl+O</value>
+  </data>
+  <data name="OpenListCommand" xml:space="preserve">
+    <value>打开列表...</value>
+  </data>
+  <data name="OpenList_AskForName" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="OpenList_Files_Column" xml:space="preserve">
+    <value>文件</value>
+  </data>
+  <data name="OpenList_MissingName" xml:space="preserve">
+    <value>缺失名称</value>
+  </data>
+  <data name="OpenList_Name_Column" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="OpenList_New_Button" xml:space="preserve">
+    <value>新建(_N)...</value>
+  </data>
+  <data name="OpenList_Open_Button" xml:space="preserve">
+    <value>打开(_O)</value>
+  </data>
+  <data name="OpenList_Remove_Button" xml:space="preserve">
+    <value>删除(_R)</value>
+  </data>
+  <data name="OpenList_SavedLists_CheckBox" xml:space="preserve">
+    <value>已保存的列表</value>
+  </data>
+  <data name="OpenList_Search_Label" xml:space="preserve">
+    <value>搜索(_S)</value>
+  </data>
+  <data name="OpenList_Title" xml:space="preserve">
+    <value>打开列表</value>
+  </data>
+  <data name="OpenToolBarToolTip" xml:space="preserve">
+    <value>打开 (Ctrl+O)</value>
+  </data>
+  <data name="OptionsTitle" xml:space="preserve">
+    <value>选项</value>
+  </data>
+  <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
+    <value>开启所有警告讯息</value>
+  </data>
+  <data name="Options_Misc_Deserialize" xml:space="preserve">
+    <value>反序列化资源中的类型 （不安全）</value>
+  </data>
+  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
+    <value>Any assembly could get loaded and executed with data from the resources.</value>
+  </data>
+  <data name="Options_Misc_ExplorerIntegration" xml:space="preserve">
+    <value>Windows 资源管理器整合</value>
+  </data>
+  <data name="Options_Misc_ExplorerIntegration_ToolTip" xml:space="preserve">
+    <value>添加上下文菜单项目“用 dnSpy 打开程序集”到 Windows 资源管理器</value>
+  </data>
+  <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
+    <value>使用内存映射 I/O</value>
+  </data>
+  <data name="Options_Misc_UseMmapdIO_ToolTip" xml:space="preserve">
+    <value>您可以右击各模块以禁用之。</value>
+  </data>
+  <data name="ReferencesFolder" xml:space="preserve">
+    <value>引用</value>
+  </data>
+  <data name="ReloadAsmsCommand" xml:space="preserve">
+    <value>重载所有程序集</value>
+  </data>
+  <data name="ResourcesFolder" xml:space="preserve">
+    <value>资源</value>
+  </data>
+  <data name="SaveKey" xml:space="preserve">
+    <value>Ctrl+S</value>
+  </data>
+  <data name="SaveResourceButton" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="SavingCode" xml:space="preserve">
+    <value>保存中…</value>
+  </data>
+  <data name="SearchAbortedMessage" xml:space="preserve">
+    <value>搜索中止，找到超过 {0:n0} 个结果。</value>
+  </data>
+  <data name="SearchAssembliesCommand" xml:space="preserve">
+    <value>搜索程序集</value>
+  </data>
+  <data name="SearchAssembliesKey" xml:space="preserve">
+    <value>Ctrl + K</value>
+  </data>
+  <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
+    <value>搜索程序集 (Ctrl+K)</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>搜索中…</value>
+  </data>
+  <data name="SearchMsdnCommand" xml:space="preserve">
+    <value>搜索 MSDN</value>
+  </data>
+  <data name="SearchWindow_Options" xml:space="preserve">
+    <value>选项</value>
+  </data>
+  <data name="SearchWindow_SearchFor" xml:space="preserve">
+    <value>搜索：</value>
+  </data>
+  <data name="ShowCodeCommand" xml:space="preserve">
+    <value>代码(_C)</value>
+  </data>
+  <data name="ShowCodeKey" xml:space="preserve">
+    <value>Ctrl+Alt+0</value>
+  </data>
+  <data name="OpenInNewTabKey4" xml:space="preserve">
+    <value>Shift+双击</value>
+  </data>
+  <data name="SyntaxHighlightCommand" xml:space="preserve">
+    <value>语法高亮</value>
+  </data>
+  <data name="TabsDlg_Activate_Button" xml:space="preserve">
+    <value>_Activate</value>
+  </data>
+  <data name="TabsDlg_CloseWindow_Button" xml:space="preserve">
+    <value>关闭窗口(_C)</value>
+  </data>
+  <data name="TabsDlg_Module_Column" xml:space="preserve">
+    <value>模块</value>
+  </data>
+  <data name="TabsDlg_Name_Column" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="TabsDlg_Path_Column" xml:space="preserve">
+    <value>路径</value>
+  </data>
+  <data name="TabsDlg_Title" xml:space="preserve">
+    <value>窗口</value>
+  </data>
+  <data name="TextEditorNewFormatterWarningMsg" xml:space="preserve">
+    <value>文本编辑器当前正使用新的文本格式化程序，此时不支持自动换行及Unicode字符（如中文）。在设置中可以启用/禁用此选项。</value>
+  </data>
+  <data name="UnknownDotNetRuntime" xml:space="preserve">
+    <value>未知运行时间</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>发生未知错误</value>
+  </data>
+  <data name="UseHorizontalTabGroupsCommand" xml:space="preserve">
+    <value>使用水平标签组</value>
+  </data>
+  <data name="UseVerticalTabGroupsCommand" xml:space="preserve">
+    <value>使用垂直标签组</value>
+  </data>
+  <data name="WindowsCommand" xml:space="preserve">
+    <value>窗口...</value>
+  </data>
+  <data name="WordWrapHeader" xml:space="preserve">
+    <value>自动换行(_W)</value>
+  </data>
+  <data name="WordWrapKey" xml:space="preserve">
+    <value>Ctrl+Alt+W</value>
+  </data>
+  <data name="CloseTabButtonToolTip" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="DisplaySettings_DecompileType" xml:space="preserve">
+    <value>反编译整个类型而不是单个成员</value>
+  </data>
+  <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
+    <value>高亮引用</value>
+  </data>
+  <data name="DisplaySettings_RestoreTabs" xml:space="preserve">
+    <value>启动时恢复上次的标签页</value>
+  </data>
+  <data name="DisplaySettings_ShowAssemblyPublicKeyToken" xml:space="preserve">
+    <value>显示程序集的公钥标记</value>
+  </data>
+  <data name="DisplaySettings_ShowAssemblyVersion" xml:space="preserve">
+    <value>显示程序集版本</value>
+  </data>
+  <data name="DisplaySettings_ShowLineNumbers" xml:space="preserve">
+    <value>显示行号</value>
+  </data>
+  <data name="DisplaySettings_ShowTokens" xml:space="preserve">
+    <value>显示元数据标记</value>
+  </data>
+  <data name="DisplaySettings_SingleClickExpandNodes" xml:space="preserve">
+    <value>单击展开 TreeView 节点</value>
+  </data>
+  <data name="DisplaySettings_SyntaxHighlightTreeView" xml:space="preserve">
+    <value>TreeView 语法高亮</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>字体</value>
+  </data>
+  <data name="MiscDlgTabTitle" xml:space="preserve">
+    <value>其它</value>
+  </data>
+  <data name="OptionsCommand" xml:space="preserve">
+    <value>选项(_O)...</value>
+  </data>
+  <data name="SearchWindow_AllAbove" xml:space="preserve">
+    <value>以上所有</value>
+  </data>
+  <data name="SearchWindow_AllAbove_Key" xml:space="preserve">
+    <value>Ctrl+B</value>
+  </data>
+  <data name="SearchWindow_Assembly" xml:space="preserve">
+    <value>程序集</value>
+  </data>
+  <data name="SearchWindow_AssemblyRef" xml:space="preserve">
+    <value>AssemblyRef</value>
+  </data>
+  <data name="SearchWindow_CaseSensitiveSearch" xml:space="preserve">
+    <value>区分大小写</value>
+  </data>
+  <data name="SearchWindow_Class" xml:space="preserve">
+    <value>类</value>
+  </data>
+  <data name="SearchWindow_DecompileResources" xml:space="preserve">
+    <value>反编译资源 (如XAML)</value>
+  </data>
+  <data name="SearchWindow_Delegate" xml:space="preserve">
+    <value>委托</value>
+  </data>
+  <data name="SearchWindow_Enum" xml:space="preserve">
+    <value>枚举</value>
+  </data>
+  <data name="SearchWindow_Event" xml:space="preserve">
+    <value>事件</value>
+  </data>
+  <data name="SearchWindow_Event_Key" xml:space="preserve">
+    <value>Ctrl+E</value>
+  </data>
+  <data name="SearchWindow_Field" xml:space="preserve">
+    <value>字段</value>
+  </data>
+  <data name="SearchWindow_Field_Key" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="SearchWindow_Generic" xml:space="preserve">
+    <value>普通类型</value>
+  </data>
+  <data name="SearchWindow_Interface" xml:space="preserve">
+    <value>接口</value>
+  </data>
+  <data name="SearchWindow_Literal" xml:space="preserve">
+    <value>数字/字符串</value>
+  </data>
+  <data name="SearchWindow_Literal_Key" xml:space="preserve">
+    <value>Ctrl+L</value>
+  </data>
+  <data name="SearchWindow_Local" xml:space="preserve">
+    <value>局部变量</value>
+  </data>
+  <data name="SearchWindow_Local_Key" xml:space="preserve">
+    <value>Ctrl+I</value>
+  </data>
+  <data name="SearchWindow_MatchAny" xml:space="preserve">
+    <value>匹配任何搜索条件</value>
+  </data>
+  <data name="SearchWindow_MatchWholeWords" xml:space="preserve">
+    <value>全词匹配</value>
+  </data>
+  <data name="SearchWindow_Member" xml:space="preserve">
+    <value>成员</value>
+  </data>
+  <data name="SearchWindow_Member_Key" xml:space="preserve">
+    <value>Ctrl+U</value>
+  </data>
+  <data name="SearchWindow_Method" xml:space="preserve">
+    <value>方法</value>
+  </data>
+  <data name="SearchWindow_Method_Key" xml:space="preserve">
+    <value>Ctrl+M</value>
+  </data>
+  <data name="SearchWindow_Module" xml:space="preserve">
+    <value>模块</value>
+  </data>
+  <data name="SearchWindow_ModuleRef" xml:space="preserve">
+    <value>ModuleRef</value>
+  </data>
+  <data name="SearchWindow_Namespace" xml:space="preserve">
+    <value>命名空间</value>
+  </data>
+  <data name="SearchWindow_NonGeneric" xml:space="preserve">
+    <value>非泛型类型</value>
+  </data>
+  <data name="SearchWindow_Parameter" xml:space="preserve">
+    <value>参数</value>
+  </data>
+  <data name="SearchWindow_ParameterLocal" xml:space="preserve">
+    <value>参数/局部变量</value>
+  </data>
+  <data name="SearchWindow_ParameterLocal_Key" xml:space="preserve">
+    <value>Ctrl+N</value>
+  </data>
+  <data name="SearchWindow_Parameter_Key" xml:space="preserve">
+    <value>Ctrl+J</value>
+  </data>
+  <data name="SearchWindow_Property" xml:space="preserve">
+    <value>属性</value>
+  </data>
+  <data name="SearchWindow_Property_Key" xml:space="preserve">
+    <value>Ctrl+P</value>
+  </data>
+  <data name="SearchWindow_Resource" xml:space="preserve">
+    <value>资源</value>
+  </data>
+  <data name="SearchWindow_Resource_Key" xml:space="preserve">
+    <value>Ctrl+R</value>
+  </data>
+  <data name="SearchWindow_Struct" xml:space="preserve">
+    <value>结构</value>
+  </data>
+  <data name="SearchWindow_Title" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+  <data name="SearchWindow_Type" xml:space="preserve">
+    <value>类型</value>
+  </data>
+  <data name="SearchWindow_Type_Key" xml:space="preserve">
+    <value>Ctrl+T</value>
+  </data>
+  <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
+    <value>窗口位置</value>
+  </data>
+  <data name="UseNewRendererHeader" xml:space="preserve">
+    <value>使用新版文本格式化程序</value>
+  </data>
+  <data name="UseNewRendererInfo" xml:space="preserve">
+    <value>新版文本格式化程序速度快，但不支持自动换行以及 unicode 字符（如中文字符）。</value>
+  </data>
+  <data name="UseNewRenderer_FileTreeView" xml:space="preserve">
+    <value>文件TreeView</value>
+  </data>
+  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
+    <value>HEX 编辑器</value>
+  </data>
+  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
+    <value>文本编辑器</value>
+  </data>
+  <data name="DisplaySettings_OtherOptions" xml:space="preserve">
+    <value>其它选项</value>
+  </data>
+  <data name="Theme_Blue" xml:space="preserve">
+    <value>蓝色(_B)</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>深色(_D)</value>
+  </data>
+  <data name="Theme_HighContrast" xml:space="preserve">
+    <value>高对比度(_H)</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>浅色(_L)</value>
+  </data>
+  <data name="OpenGAC_Search_ToolTip" xml:space="preserve">
+    <value>搜索 (Ctrl+E 或 Ctrl+F)</value>
+  </data>
+  <data name="LanguageCommand" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="Language_OperatingSystemLanguage" xml:space="preserve">
+    <value>系统</value>
+  </data>
+  <data name="LanguageSwitchMessage" xml:space="preserve">
+    <value>重新启动 dnSpy 后，语言更改才会生效。</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
+    <value>Ctrl+Shift+O</value>
+  </data>
+  <data name="SortAsmsCommand" xml:space="preserve">
+    <value>程序集排序(_T)</value>
+  </data>
+  <data name="AskReadSettings" xml:space="preserve">
+    <value>您要加载保存的设置？</value>
+  </data>
+  <data name="ExportToProjectCommand" xml:space="preserve">
+    <value>导出到工程...</value>
+  </data>
+  <data name="ExportToProject_Title" xml:space="preserve">
+    <value>导出到工程</value>
+  </data>
+  <data name="Error_FileAlreadyExists" xml:space="preserve">
+    <value>目标文件夹内已存在有相同名称的文件。</value>
+  </data>
+  <data name="Error_MissingDestinationFolder" xml:space="preserve">
+    <value>目标文件夹缺失。</value>
+  </data>
+  <data name="ExportToProject_Button_Export" xml:space="preserve">
+    <value>导出(_E)</value>
+  </data>
+  <data name="ExportToProject_CreateResX" xml:space="preserve">
+    <value>创建 .res_x 文件</value>
+  </data>
+  <data name="ExportToProject_DecompileXaml" xml:space="preserve">
+    <value>将BAML反编译为XAML (_B)</value>
+  </data>
+  <data name="ExportToProject_DestinationFolder" xml:space="preserve">
+    <value>文件夹(_F)</value>
+  </data>
+  <data name="ExportToProject_DontReferenceStdLib" xml:space="preserve">
+    <value>不引用 mscorlib.dll (_D)</value>
+  </data>
+  <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
+    <value>一个文件将反编译。要反编译多个文件请选择多个程序集。</value>
+  </data>
+  <data name="ExportToProject_ExportNFilesMessage" xml:space="preserve">
+    <value>{0:n0} 个文件将反编译。</value>
+  </data>
+  <data name="ExportToProject_Language" xml:space="preserve">
+    <value>语言(_L)</value>
+  </data>
+  <data name="ExportToProject_OpenProjectInVisualStudio" xml:space="preserve">
+    <value>在Visual Studio中打开项目</value>
+  </data>
+  <data name="ExportToProject_ProjectVersion" xml:space="preserve">
+    <value>版本(_V)</value>
+  </data>
+  <data name="ExportToProject_SolutionFilename" xml:space="preserve">
+    <value>解决方案(_S)</value>
+  </data>
+  <data name="ExportToProject_UnpackResources" xml:space="preserve">
+    <value>解包资源(_U)</value>
+  </data>
+  <data name="Error_MissingFilename" xml:space="preserve">
+    <value>缺少文件名</value>
+  </data>
+  <data name="Button_Close" xml:space="preserve">
+    <value>关闭(_C)</value>
+  </data>
+  <data name="ErrorExceptionOccurred" xml:space="preserve">
+    <value>发生意外
+
+{0}</value>
+  </data>
+  <data name="ExportToProject_ErrorLogMsg" xml:space="preserve">
+    <value>错误日志</value>
+  </data>
+  <data name="DecompilerDlgTabTitle" xml:space="preserve">
+    <value>反编译器</value>
+  </data>
+  <data name="DisplaySettings_MemberOrder" xml:space="preserve">
+    <value>TreeView成员顺序（重启程序生效）</value>
+  </data>
+  <data name="MemberKind_Events" xml:space="preserve">
+    <value>事件</value>
+  </data>
+  <data name="MemberKind_Fields" xml:space="preserve">
+    <value>字段</value>
+  </data>
+  <data name="MemberKind_Methods" xml:space="preserve">
+    <value>方法</value>
+  </data>
+  <data name="MemberKind_NestedTypes" xml:space="preserve">
+    <value>嵌套类</value>
+  </data>
+  <data name="MemberKind_Properties" xml:space="preserve">
+    <value>属性</value>
+  </data>
+  <data name="AboutScreen_LicenseInfo" xml:space="preserve">
+    <value>dnSpy is licensed under GPLv3.</value>
+  </data>
+  <data name="AboutScreen_LoadedFiles" xml:space="preserve">
+    <value>已加载的文件：</value>
+  </data>
+  <data name="SearchWindow_SearchGacAssemblies" xml:space="preserve">
+    <value>在 GAC 程序集内搜索</value>
+  </data>
+  <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
+    <value>所有文件</value>
+  </data>
+  <data name="SearchWindow_Where_FilesInSameFolder" xml:space="preserve">
+    <value>在同一文件夹内的文件</value>
+  </data>
+  <data name="SearchWindow_Where_SelectedFiles" xml:space="preserve">
+    <value>所选文件</value>
+  </data>
+  <data name="SearchWindow_Where_SelectedType" xml:space="preserve">
+    <value>所选类型</value>
+  </data>
+  <data name="GoToResourceCommand" xml:space="preserve">
+    <value>转到资源</value>
+  </data>
+  <data name="CollapseTreeViewNodesCommand" xml:space="preserve">
+    <value>折叠 Tree_View 节点</value>
+  </data>
+  <data name="CloseAllCommand" xml:space="preserve">
+    <value>关闭全部</value>
+  </data>
+  <data name="ExportToProject_NewGuid" xml:space="preserve">
+    <value>新建(_N)</value>
+  </data>
+  <data name="ExportToProject_ProjectGuid" xml:space="preserve">
+    <value>项目GUID (_P)</value>
+  </data>
+</root>

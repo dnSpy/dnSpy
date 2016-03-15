@@ -19,8 +19,15 @@ ILSpy decompiler and analyzer credits:
 
 Translators:
 
-<language>
-	<translators>
+Chinese Simplified
+	Ulysses Wu
+	YanJun Sun
+	SquallATF
+	linkinshi
+
+Russian
+	Igor
+	Konctantin
 
 
 If your name should be on this list but isn't, contact me or send a PR.

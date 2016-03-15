@@ -1,0 +1,947 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="About_Issues" xml:space="preserve">
+    <value>_Задачи</value>
+  </data>
+  <data name="About_LatestBuild" xml:space="preserve">
+    <value>П_оследний билд</value>
+  </data>
+  <data name="About_LatestRelease" xml:space="preserve">
+    <value>_Последний релиз</value>
+  </data>
+  <data name="About_Menu" xml:space="preserve">
+    <value>О_ программе</value>
+  </data>
+  <data name="About_SourceCode" xml:space="preserve">
+    <value>_Исходный код</value>
+  </data>
+  <data name="About_TabTitle" xml:space="preserve">
+    <value>О программе</value>
+  </data>
+  <data name="AllFiles" xml:space="preserve">
+    <value>Все файлы</value>
+  </data>
+  <data name="Arch_AnyCPU" xml:space="preserve">
+    <value>AnyCPU</value>
+  </data>
+  <data name="Arch_AnyCPU_Preferred" xml:space="preserve">
+    <value>AnyCPU (предпочтительно 32-бит)</value>
+  </data>
+  <data name="AssemblyExplorerCommand" xml:space="preserve">
+    <value>Обозреватель _сборок</value>
+  </data>
+  <data name="AssemblyExplorerKey" xml:space="preserve">
+    <value>Ctrl+Alt+L</value>
+  </data>
+  <data name="AssemblyExplorerTitle" xml:space="preserve">
+    <value>Обозреватель сборок</value>
+  </data>
+  <data name="BaseTypeFolder" xml:space="preserve">
+    <value>Базовый тип и интерфейсы</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>_Отмена</value>
+  </data>
+  <data name="Button_No" xml:space="preserve">
+    <value>_Нет</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="Button_Save" xml:space="preserve">
+    <value>_Сохранить...</value>
+  </data>
+  <data name="Button_SaveCode" xml:space="preserve">
+    <value>_Сохранить код...</value>
+  </data>
+  <data name="Button_Yes" xml:space="preserve">
+    <value>_Да</value>
+  </data>
+  <data name="CantConvertInputToType" xml:space="preserve">
+    <value>Не удается преобразовать входные данные в требуемый тип: {0}</value>
+  </data>
+  <data name="CloseAllTabGroupsButThisCommand" xml:space="preserve">
+    <value>Закрыть все группы вкладок, кроме этой</value>
+  </data>
+  <data name="CloseAllTabsButThisCommand" xml:space="preserve">
+    <value>Закрыть _все, кроме текущей</value>
+  </data>
+  <data name="CloseAllTabsCommand" xml:space="preserve">
+    <value>З_акрыть все вкладки</value>
+  </data>
+  <data name="CloseTabCommand" xml:space="preserve">
+    <value>_Закрыть</value>
+  </data>
+  <data name="CloseTabGroupCommand" xml:space="preserve">
+    <value>Закрыть группу вкладок</value>
+  </data>
+  <data name="CloseTabKey" xml:space="preserve">
+    <value>Ctrl+W</value>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>_Копировать</value>
+  </data>
+  <data name="CopyKey" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="CopyMDTokenCommand" xml:space="preserve">
+    <value>_Копировать токен метаданных</value>
+  </data>
+  <data name="CouldNotStartBrowser" xml:space="preserve">
+    <value>Не могу запустить браузер</value>
+  </data>
+  <data name="DecompilationCanceled" xml:space="preserve">
+    <value>Операция отменена</value>
+  </data>
+  <data name="DecompilationException" xml:space="preserve">
+    <value>Произошла ошибка</value>
+  </data>
+  <data name="DecompileCancelButton" xml:space="preserve">
+    <value>Отмена</value>
+  </data>
+  <data name="Decompiling" xml:space="preserve">
+    <value>Декомпиляция...</value>
+  </data>
+  <data name="DerivedTypes" xml:space="preserve">
+    <value>Дочерние типы</value>
+  </data>
+  <data name="DisplayDlgTabTitle" xml:space="preserve">
+    <value>Отображение</value>
+  </data>
+  <data name="DotNetExes" xml:space="preserve">
+    <value>Исполняемые файлы .NET</value>
+  </data>
+  <data name="EmptyTabTitle" xml:space="preserve">
+    <value>&lt;пусто&gt;</value>
+  </data>
+  <data name="ExceptionMessage" xml:space="preserve">
+    <value>Произошло исключение:</value>
+  </data>
+  <data name="ExitAppCommand" xml:space="preserve">
+    <value>В_ыход</value>
+  </data>
+  <data name="ExitAppKey" xml:space="preserve">
+    <value>Alt+F4</value>
+  </data>
+  <data name="ExplorerOpenWithDnSpy" xml:space="preserve">
+    <value>Открыть с помощью dnSpy</value>
+  </data>
+  <data name="FindCommand" xml:space="preserve">
+    <value>_Найти</value>
+  </data>
+  <data name="FindCommand2" xml:space="preserve">
+    <value>Найти</value>
+  </data>
+  <data name="FindKey" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="FullScreenCommand" xml:space="preserve">
+    <value>П_олный экран</value>
+  </data>
+  <data name="FullScreenKey" xml:space="preserve">
+    <value>Shift+Alt+Enter</value>
+  </data>
+  <data name="FullScreenToolBarCommand" xml:space="preserve">
+    <value>Во весь экран</value>
+  </data>
+  <data name="GoToEntryPointCommand" xml:space="preserve">
+    <value>Перейти к _точке входа</value>
+  </data>
+  <data name="GoToGlobalCctorCommand" xml:space="preserve">
+    <value>Перейти к &lt;Module&gt; .ccto_r</value>
+  </data>
+  <data name="GoToLine_EnterLineNum" xml:space="preserve">
+    <value>Введите номер строки</value>
+  </data>
+  <data name="GoToLine_InvalidLine" xml:space="preserve">
+    <value>Недопустимая строка: {0}</value>
+  </data>
+  <data name="GoToLine_Label" xml:space="preserve">
+    <value>_Строка [, столбец]</value>
+  </data>
+  <data name="GoToLine_Title" xml:space="preserve">
+    <value>Перейти к строке</value>
+  </data>
+  <data name="GoToReferenceCommand" xml:space="preserve">
+    <value>Перейти по ссылке</value>
+  </data>
+  <data name="GoToReferenceKey" xml:space="preserve">
+    <value>Двойной клик</value>
+  </data>
+  <data name="GoToTokenCommand" xml:space="preserve">
+    <value>Перейти к токену мета_данных...</value>
+  </data>
+  <data name="GoToTokenKey" xml:space="preserve">
+    <value>Ctrl+D</value>
+  </data>
+  <data name="GoToToken_CouldNotResolve" xml:space="preserve">
+    <value>Не могу определить токен ссылки: 0x{0:X8}</value>
+  </data>
+  <data name="GoToToken_InvalidToken" xml:space="preserve">
+    <value>Неверный токен метаданных: 0x{0:X8}</value>
+  </data>
+  <data name="GoToToken_Label" xml:space="preserve">
+    <value>Токен _метаданных</value>
+  </data>
+  <data name="GoToToken_Title" xml:space="preserve">
+    <value>Перейти к токену метаданных</value>
+  </data>
+  <data name="HideAllToolWindowsCommand" xml:space="preserve">
+    <value>Ск_рыть все вкладки</value>
+  </data>
+  <data name="HideToolWindowCommand" xml:space="preserve">
+    <value>_Скрыть</value>
+  </data>
+  <data name="HighlightLine" xml:space="preserve">
+    <value>П_одсветить текущую строку</value>
+  </data>
+  <data name="InvalidInputTextMessageBox" xml:space="preserve">
+    <value>Неверный текст</value>
+  </data>
+  <data name="LoadingDnSpyPleaseWait" xml:space="preserve">
+    <value>Загрузка dnSpy. Пожалуйста, подождите...</value>
+  </data>
+  <data name="Menu_Edit" xml:space="preserve">
+    <value>_Правка</value>
+  </data>
+  <data name="Menu_File" xml:space="preserve">
+    <value>_Файл</value>
+  </data>
+  <data name="Menu_Help" xml:space="preserve">
+    <value>_Помощь</value>
+  </data>
+  <data name="Menu_Themes" xml:space="preserve">
+    <value>_Темы</value>
+  </data>
+  <data name="Menu_View" xml:space="preserve">
+    <value>_Вид</value>
+  </data>
+  <data name="Menu_Windows" xml:space="preserve">
+    <value>_Окно</value>
+  </data>
+  <data name="MergeAllTabGroupsCommand" xml:space="preserve">
+    <value>Объединить все группы вкладок</value>
+  </data>
+  <data name="MessageBoxDontShowAgain" xml:space="preserve">
+    <value>_Больше не показывать</value>
+  </data>
+  <data name="MoveAllTabsToNextTabGroupCommand" xml:space="preserve">
+    <value>Перенести все в следующую группу вкладок</value>
+  </data>
+  <data name="MoveAllToPreviousTabGroupCommand" xml:space="preserve">
+    <value>Перенести все в предыдущую группу вкладок</value>
+  </data>
+  <data name="MoveBottomCommand" xml:space="preserve">
+    <value>В_низ</value>
+  </data>
+  <data name="MoveLeftCommand" xml:space="preserve">
+    <value>В_лево</value>
+  </data>
+  <data name="MoveRightCommand" xml:space="preserve">
+    <value>В_право</value>
+  </data>
+  <data name="MoveTabGroupAfterNextTabGroupCommand" xml:space="preserve">
+    <value>Переместить группу вкладок после следующей</value>
+  </data>
+  <data name="MoveTabGroupBeforePreviousTabGroupCommand" xml:space="preserve">
+    <value>Переместить группу вкладок перед предыдущей</value>
+  </data>
+  <data name="MoveToNextTabGroupCommand" xml:space="preserve">
+    <value>Переместить в _следующую группу вкладок</value>
+  </data>
+  <data name="MoveToolWindowCommand" xml:space="preserve">
+    <value>_Переместить</value>
+  </data>
+  <data name="MoveToolWindowGroupCommand" xml:space="preserve">
+    <value>Переместить _группу</value>
+  </data>
+  <data name="MoveTopCommand" xml:space="preserve">
+    <value>В_верх</value>
+  </data>
+  <data name="MoveToPreviousTabGroupCommand" xml:space="preserve">
+    <value>Переместить в _предыдущую группу вкладок</value>
+  </data>
+  <data name="NavigateBackCommand" xml:space="preserve">
+    <value>Перейти назад (Backspace)</value>
+  </data>
+  <data name="NavigateForwardCommand" xml:space="preserve">
+    <value>Перейти вперед (Alt+Right)</value>
+  </data>
+  <data name="NewDataIsNotAnImage" xml:space="preserve">
+    <value>Новые данные не являются картинкой.</value>
+  </data>
+  <data name="NewHorizontalTabGroupCommand" xml:space="preserve">
+    <value>Новая _горизонтальная группа вкладок</value>
+  </data>
+  <data name="NewTabCommand" xml:space="preserve">
+    <value>Новая _вкладка</value>
+  </data>
+  <data name="NewVerticalTabGroupCommand" xml:space="preserve">
+    <value>Новая _вертикальная группа вкладок</value>
+  </data>
+  <data name="NewWindowCommand" xml:space="preserve">
+    <value>_Новое окно</value>
+  </data>
+  <data name="OpenCommand" xml:space="preserve">
+    <value>_Открыть...</value>
+  </data>
+  <data name="OpenContainingFolderCommand" xml:space="preserve">
+    <value>_Открыть каталог</value>
+  </data>
+  <data name="OpenGACCommand" xml:space="preserve">
+    <value>Открыть из _GAC...</value>
+  </data>
+  <data name="OpenGAC_CreatedBy_Label" xml:space="preserve">
+    <value>Создано:</value>
+  </data>
+  <data name="OpenGAC_FileVersion_Label" xml:space="preserve">
+    <value>Версия файла:</value>
+  </data>
+  <data name="OpenGAC_Name_Column" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="OpenGAC_Name_Label" xml:space="preserve">
+    <value>Имя:</value>
+  </data>
+  <data name="OpenGAC_Path_Label" xml:space="preserve">
+    <value>Путь:</value>
+  </data>
+  <data name="OpenGAC_ShowDupes_CheckBox" xml:space="preserve">
+    <value>_Показывать дубликаты</value>
+  </data>
+  <data name="OpenGAC_ShowFiles" xml:space="preserve">
+    <value>Показано {0:n0} из {1:n0} файлов</value>
+  </data>
+  <data name="OpenGAC_Title" xml:space="preserve">
+    <value>Открыть из GAC</value>
+  </data>
+  <data name="OpenGAC_Version_Column" xml:space="preserve">
+    <value>Версия</value>
+  </data>
+  <data name="OpenGAC_Version_Label" xml:space="preserve">
+    <value>Версия:</value>
+  </data>
+  <data name="OpenInNewTabCommand" xml:space="preserve">
+    <value>Открыть новую _вкладку</value>
+  </data>
+  <data name="OpenInNewTabKey" xml:space="preserve">
+    <value>Ctrl+T</value>
+  </data>
+  <data name="OpenInNewTabKey2" xml:space="preserve">
+    <value>Ctrl+F12</value>
+  </data>
+  <data name="OpenInNewTabKey3" xml:space="preserve">
+    <value>Ctrl+Click</value>
+  </data>
+  <data name="OpenKey" xml:space="preserve">
+    <value>Ctrl+O</value>
+  </data>
+  <data name="OpenListCommand" xml:space="preserve">
+    <value>Открыть сп_исок...</value>
+  </data>
+  <data name="OpenList_AskForName" xml:space="preserve">
+    <value>_Имя</value>
+  </data>
+  <data name="OpenList_Files_Column" xml:space="preserve">
+    <value>Файлы</value>
+  </data>
+  <data name="OpenList_MissingName" xml:space="preserve">
+    <value>Имя пропущено</value>
+  </data>
+  <data name="OpenList_Name_Column" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="OpenList_New_Button" xml:space="preserve">
+    <value>_Новый...</value>
+  </data>
+  <data name="OpenList_Open_Button" xml:space="preserve">
+    <value>_Открыть</value>
+  </data>
+  <data name="OpenList_Remove_Button" xml:space="preserve">
+    <value>_Убрать</value>
+  </data>
+  <data name="OpenList_SavedLists_CheckBox" xml:space="preserve">
+    <value>С_охраненные списки</value>
+  </data>
+  <data name="OpenList_Search_Label" xml:space="preserve">
+    <value>_Поиск</value>
+  </data>
+  <data name="OpenList_Title" xml:space="preserve">
+    <value>Открыть список</value>
+  </data>
+  <data name="OpenToolBarToolTip" xml:space="preserve">
+    <value>Открыть (Ctrl+O)</value>
+  </data>
+  <data name="OptionsTitle" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="Options_Misc_Button_EnableAllWarnings" xml:space="preserve">
+    <value>Включить все предупреждения</value>
+  </data>
+  <data name="Options_Misc_Deserialize" xml:space="preserve">
+    <value>Десериализовывать типы в ресурсах (небезопасно)</value>
+  </data>
+  <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
+    <value>Любая сборка может быть загружена и выполнена с данными из ресурсов.</value>
+  </data>
+  <data name="Options_Misc_ExplorerIntegration" xml:space="preserve">
+    <value>Интеграция с Windows Explorer</value>
+  </data>
+  <data name="Options_Misc_ExplorerIntegration_ToolTip" xml:space="preserve">
+    <value>Добавить пункт открытия сборок через dnSpy в контекстное меню Windows Explorer</value>
+  </data>
+  <data name="Options_Misc_UseMmapdIO" xml:space="preserve">
+    <value>Использовать отображаемый в память ввод/вывод</value>
+  </data>
+  <data name="Options_Misc_UseMmapdIO_ToolTip" xml:space="preserve">
+    <value>Может быть выключено для модуля, если дважды кликнуть.</value>
+  </data>
+  <data name="ReferencesFolder" xml:space="preserve">
+    <value>Ссылки</value>
+  </data>
+  <data name="ReloadAsmsCommand" xml:space="preserve">
+    <value>_Перегрузить все сборки</value>
+  </data>
+  <data name="ResourcesFolder" xml:space="preserve">
+    <value>Ресурсы</value>
+  </data>
+  <data name="SaveKey" xml:space="preserve">
+    <value>Ctrl+S</value>
+  </data>
+  <data name="SaveResourceButton" xml:space="preserve">
+    <value>Сохранить</value>
+  </data>
+  <data name="SavingCode" xml:space="preserve">
+    <value>Сохранение...</value>
+  </data>
+  <data name="SearchAbortedMessage" xml:space="preserve">
+    <value>Поиск остановлен, найдено более {0:n0} результатов.</value>
+  </data>
+  <data name="SearchAssembliesCommand" xml:space="preserve">
+    <value>_Искать в сборках</value>
+  </data>
+  <data name="SearchAssembliesKey" xml:space="preserve">
+    <value>Ctrl+K</value>
+  </data>
+  <data name="SearchAssembliesToolBarToolTip" xml:space="preserve">
+    <value>Искать в сборках (Ctrl+K)</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Поиск...</value>
+  </data>
+  <data name="SearchMsdnCommand" xml:space="preserve">
+    <value>Искать в _MSDN</value>
+  </data>
+  <data name="SearchWindow_Options" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="SearchWindow_SearchFor" xml:space="preserve">
+    <value>Искать:</value>
+  </data>
+  <data name="ShowCodeCommand" xml:space="preserve">
+    <value>_Код</value>
+  </data>
+  <data name="ShowCodeKey" xml:space="preserve">
+    <value>Ctrl+Alt+0</value>
+  </data>
+  <data name="OpenInNewTabKey4" xml:space="preserve">
+    <value>Shift+Dbl Click</value>
+  </data>
+  <data name="SyntaxHighlightCommand" xml:space="preserve">
+    <value>Подсветка синтаксиса</value>
+  </data>
+  <data name="TabsDlg_Activate_Button" xml:space="preserve">
+    <value>_Активировать</value>
+  </data>
+  <data name="TabsDlg_CloseWindow_Button" xml:space="preserve">
+    <value>_Закрыть окно</value>
+  </data>
+  <data name="TabsDlg_Module_Column" xml:space="preserve">
+    <value>Модуль</value>
+  </data>
+  <data name="TabsDlg_Name_Column" xml:space="preserve">
+    <value>Имя</value>
+  </data>
+  <data name="TabsDlg_Path_Column" xml:space="preserve">
+    <value>Путь</value>
+  </data>
+  <data name="TabsDlg_Title" xml:space="preserve">
+    <value>Окна</value>
+  </data>
+  <data name="TextEditorNewFormatterWarningMsg" xml:space="preserve">
+    <value>Текстовый редактор использует новый быстрый форматтер. Он не поддерживает перенос слов и все символы unicode. Можете включить/выключить это в настройках.</value>
+  </data>
+  <data name="UnknownDotNetRuntime" xml:space="preserve">
+    <value>Неизвестный рантайм</value>
+  </data>
+  <data name="UnknownError" xml:space="preserve">
+    <value>Возникла неизвестная ошибка</value>
+  </data>
+  <data name="UseHorizontalTabGroupsCommand" xml:space="preserve">
+    <value>Использовать горизонтальные группы вкладок</value>
+  </data>
+  <data name="UseVerticalTabGroupsCommand" xml:space="preserve">
+    <value>Использовать вертикальные группы вкладок</value>
+  </data>
+  <data name="WindowsCommand" xml:space="preserve">
+    <value>_Окна...</value>
+  </data>
+  <data name="WordWrapHeader" xml:space="preserve">
+    <value>_Перенос слов</value>
+  </data>
+  <data name="WordWrapKey" xml:space="preserve">
+    <value>Ctrl+Alt+W</value>
+  </data>
+  <data name="CloseTabButtonToolTip" xml:space="preserve">
+    <value>Закрыть</value>
+  </data>
+  <data name="DisplaySettings_DecompileType" xml:space="preserve">
+    <value>Декомпилировать весь тип вместо одного члена типа</value>
+  </data>
+  <data name="DisplaySettings_HighlightReferences" xml:space="preserve">
+    <value>Выделить ссылки</value>
+  </data>
+  <data name="DisplaySettings_RestoreTabs" xml:space="preserve">
+    <value>Восстановить вкладки при запуске</value>
+  </data>
+  <data name="DisplaySettings_ShowAssemblyPublicKeyToken" xml:space="preserve">
+    <value>Показать публичный ключ сборки</value>
+  </data>
+  <data name="DisplaySettings_ShowAssemblyVersion" xml:space="preserve">
+    <value>Показать информацию о сборке</value>
+  </data>
+  <data name="DisplaySettings_ShowLineNumbers" xml:space="preserve">
+    <value>Показать количество строк</value>
+  </data>
+  <data name="DisplaySettings_ShowTokens" xml:space="preserve">
+    <value>Показать токены метаданных</value>
+  </data>
+  <data name="DisplaySettings_SingleClickExpandNodes" xml:space="preserve">
+    <value>Разворачивать узлы дерева одним кликом</value>
+  </data>
+  <data name="DisplaySettings_SyntaxHighlightTreeView" xml:space="preserve">
+    <value>Синтаксическая подсветка в дереве</value>
+  </data>
+  <data name="Font" xml:space="preserve">
+    <value>Шрифт</value>
+  </data>
+  <data name="MiscDlgTabTitle" xml:space="preserve">
+    <value>Остальное</value>
+  </data>
+  <data name="OptionsCommand" xml:space="preserve">
+    <value>_Параметры...</value>
+  </data>
+  <data name="SearchWindow_AllAbove" xml:space="preserve">
+    <value>Все возможное</value>
+  </data>
+  <data name="SearchWindow_AllAbove_Key" xml:space="preserve">
+    <value>Ctrl+B</value>
+  </data>
+  <data name="SearchWindow_Assembly" xml:space="preserve">
+    <value>Сборки</value>
+  </data>
+  <data name="SearchWindow_AssemblyRef" xml:space="preserve">
+    <value>Ссылки на сборки</value>
+  </data>
+  <data name="SearchWindow_CaseSensitiveSearch" xml:space="preserve">
+    <value>Регистрозависимый поиск</value>
+  </data>
+  <data name="SearchWindow_Class" xml:space="preserve">
+    <value>Классы</value>
+  </data>
+  <data name="SearchWindow_DecompileResources" xml:space="preserve">
+    <value>Декомпилировать ресурсы (пр. XAML)</value>
+  </data>
+  <data name="SearchWindow_Delegate" xml:space="preserve">
+    <value>Делегаты</value>
+  </data>
+  <data name="SearchWindow_Enum" xml:space="preserve">
+    <value>Перечисления</value>
+  </data>
+  <data name="SearchWindow_Event" xml:space="preserve">
+    <value>События</value>
+  </data>
+  <data name="SearchWindow_Event_Key" xml:space="preserve">
+    <value>Ctrl+E</value>
+  </data>
+  <data name="SearchWindow_Field" xml:space="preserve">
+    <value>Поля</value>
+  </data>
+  <data name="SearchWindow_Field_Key" xml:space="preserve">
+    <value>Ctrl+F</value>
+  </data>
+  <data name="SearchWindow_Generic" xml:space="preserve">
+    <value>Обобщенные типы</value>
+  </data>
+  <data name="SearchWindow_Interface" xml:space="preserve">
+    <value>Интерфейсы</value>
+  </data>
+  <data name="SearchWindow_Literal" xml:space="preserve">
+    <value>Числа/строки</value>
+  </data>
+  <data name="SearchWindow_Literal_Key" xml:space="preserve">
+    <value>Ctrl+L</value>
+  </data>
+  <data name="SearchWindow_Local" xml:space="preserve">
+    <value>Локальные переменные</value>
+  </data>
+  <data name="SearchWindow_Local_Key" xml:space="preserve">
+    <value>Ctrl+I</value>
+  </data>
+  <data name="SearchWindow_MatchAny" xml:space="preserve">
+    <value>Совпадение с любым словом</value>
+  </data>
+  <data name="SearchWindow_MatchWholeWords" xml:space="preserve">
+    <value>Только полные совпадения слов</value>
+  </data>
+  <data name="SearchWindow_Member" xml:space="preserve">
+    <value>Член</value>
+  </data>
+  <data name="SearchWindow_Member_Key" xml:space="preserve">
+    <value>Ctrl+U</value>
+  </data>
+  <data name="SearchWindow_Method" xml:space="preserve">
+    <value>Метод</value>
+  </data>
+  <data name="SearchWindow_Method_Key" xml:space="preserve">
+    <value>Ctrl+M</value>
+  </data>
+  <data name="SearchWindow_Module" xml:space="preserve">
+    <value>Модуль</value>
+  </data>
+  <data name="SearchWindow_ModuleRef" xml:space="preserve">
+    <value>Ссылки на модуль</value>
+  </data>
+  <data name="SearchWindow_Namespace" xml:space="preserve">
+    <value>Пространства имен</value>
+  </data>
+  <data name="SearchWindow_NonGeneric" xml:space="preserve">
+    <value>Необобщенные типы</value>
+  </data>
+  <data name="SearchWindow_Parameter" xml:space="preserve">
+    <value>Параметры</value>
+  </data>
+  <data name="SearchWindow_ParameterLocal" xml:space="preserve">
+    <value>Параметры/Локальные переменные</value>
+  </data>
+  <data name="SearchWindow_ParameterLocal_Key" xml:space="preserve">
+    <value>Ctrl+N</value>
+  </data>
+  <data name="SearchWindow_Parameter_Key" xml:space="preserve">
+    <value>Ctrl+J</value>
+  </data>
+  <data name="SearchWindow_Property" xml:space="preserve">
+    <value>Свойство</value>
+  </data>
+  <data name="SearchWindow_Property_Key" xml:space="preserve">
+    <value>Ctrl+P</value>
+  </data>
+  <data name="SearchWindow_Resource" xml:space="preserve">
+    <value>Ресурс</value>
+  </data>
+  <data name="SearchWindow_Resource_Key" xml:space="preserve">
+    <value>Ctrl+R</value>
+  </data>
+  <data name="SearchWindow_Struct" xml:space="preserve">
+    <value>Структура</value>
+  </data>
+  <data name="SearchWindow_Title" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
+  <data name="SearchWindow_Type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="SearchWindow_Type_Key" xml:space="preserve">
+    <value>Ctrl+T</value>
+  </data>
+  <data name="ToolWindowWinPosButtonToolTip" xml:space="preserve">
+    <value>Позиция окна</value>
+  </data>
+  <data name="UseNewRendererHeader" xml:space="preserve">
+    <value>Использовать новый форматтер</value>
+  </data>
+  <data name="UseNewRendererInfo" xml:space="preserve">
+    <value>Новый форматтер быстрее старого, но не поддерживает перенос слов и все символы unicode.</value>
+  </data>
+  <data name="UseNewRenderer_FileTreeView" xml:space="preserve">
+    <value>Дерево файлов</value>
+  </data>
+  <data name="UseNewRenderer_HexEditor" xml:space="preserve">
+    <value>Редактор Hex</value>
+  </data>
+  <data name="UseNewRenderer_TextEditor" xml:space="preserve">
+    <value>Текстовый редактор</value>
+  </data>
+  <data name="DisplaySettings_OtherOptions" xml:space="preserve">
+    <value>Остальные настройки</value>
+  </data>
+  <data name="Theme_Blue" xml:space="preserve">
+    <value>_Синяя</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>_Темная</value>
+  </data>
+  <data name="Theme_HighContrast" xml:space="preserve">
+    <value>_Высокая контрастность</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>С_ветлая</value>
+  </data>
+  <data name="OpenGAC_Search_ToolTip" xml:space="preserve">
+    <value>Поиск (Ctrl+E или Ctrl+F)</value>
+  </data>
+  <data name="LanguageCommand" xml:space="preserve">
+    <value>Язык</value>
+  </data>
+  <data name="Language_OperatingSystemLanguage" xml:space="preserve">
+    <value>Системный</value>
+  </data>
+  <data name="LanguageSwitchMessage" xml:space="preserve">
+    <value>Для использования нового языка вы должны перезапустить dnSpy.</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftO" xml:space="preserve">
+    <value>Ctrl+Shift+O</value>
+  </data>
+  <data name="SortAsmsCommand" xml:space="preserve">
+    <value>Сор_тировать сборки</value>
+  </data>
+  <data name="AskReadSettings" xml:space="preserve">
+    <value>Вы хотите загрузить сохраненные настройки?</value>
+  </data>
+  <data name="ExportToProjectCommand" xml:space="preserve">
+    <value>Экспорт в Про_ект...</value>
+  </data>
+  <data name="ExportToProject_Title" xml:space="preserve">
+    <value>Экспорт в проект</value>
+  </data>
+  <data name="Error_FileAlreadyExists" xml:space="preserve">
+    <value>Файл с таким же именем как и каталог уже существует.</value>
+  </data>
+  <data name="Error_MissingDestinationFolder" xml:space="preserve">
+    <value>Не указан выходной каталог.</value>
+  </data>
+  <data name="ExportToProject_Button_Export" xml:space="preserve">
+    <value>_Экспорт</value>
+  </data>
+  <data name="ExportToProject_CreateResX" xml:space="preserve">
+    <value>Создать файлы .res_x</value>
+  </data>
+  <data name="ExportToProject_DecompileXaml" xml:space="preserve">
+    <value>Декомпилировать _baml в xaml</value>
+  </data>
+  <data name="ExportToProject_DestinationFolder" xml:space="preserve">
+    <value>_Каталог</value>
+  </data>
+  <data name="ExportToProject_DontReferenceStdLib" xml:space="preserve">
+    <value>_Не ссылаться на mscorlib.dll</value>
+  </data>
+  <data name="ExportToProject_ExportFileMessage" xml:space="preserve">
+    <value>Будет декомпилирован один файл. Для того, чтобы декомпилировать больше файлов, выберите больше сборок.</value>
+  </data>
+  <data name="ExportToProject_ExportNFilesMessage" xml:space="preserve">
+    <value>Будет декомпилировано {0:n0} файлов.</value>
+  </data>
+  <data name="ExportToProject_Language" xml:space="preserve">
+    <value>_Язык</value>
+  </data>
+  <data name="ExportToProject_OpenProjectInVisualStudio" xml:space="preserve">
+    <value>_Открыть проект в Visual Studio</value>
+  </data>
+  <data name="ExportToProject_ProjectVersion" xml:space="preserve">
+    <value>_Версия</value>
+  </data>
+  <data name="ExportToProject_SolutionFilename" xml:space="preserve">
+    <value>_Решение</value>
+  </data>
+  <data name="ExportToProject_UnpackResources" xml:space="preserve">
+    <value>_Распаковать ресурсы</value>
+  </data>
+  <data name="Error_MissingFilename" xml:space="preserve">
+    <value>Пропущено имя файла</value>
+  </data>
+  <data name="Button_Close" xml:space="preserve">
+    <value>_Закрыть</value>
+  </data>
+  <data name="ErrorExceptionOccurred" xml:space="preserve">
+    <value>Произошло исключение
+
+{0}</value>
+  </data>
+  <data name="ExportToProject_ErrorLogMsg" xml:space="preserve">
+    <value>Журнал ошибок</value>
+  </data>
+  <data name="DecompilerDlgTabTitle" xml:space="preserve">
+    <value>Декомпилятор</value>
+  </data>
+  <data name="DisplaySettings_MemberOrder" xml:space="preserve">
+    <value>Порядок членов в дереве (перезапуск)</value>
+  </data>
+  <data name="MemberKind_Events" xml:space="preserve">
+    <value>События</value>
+  </data>
+  <data name="MemberKind_Fields" xml:space="preserve">
+    <value>Поля</value>
+  </data>
+  <data name="MemberKind_Methods" xml:space="preserve">
+    <value>Методы</value>
+  </data>
+  <data name="MemberKind_NestedTypes" xml:space="preserve">
+    <value>Вложенные типы</value>
+  </data>
+  <data name="MemberKind_Properties" xml:space="preserve">
+    <value>Свойства</value>
+  </data>
+  <data name="AboutScreen_LicenseInfo" xml:space="preserve">
+    <value>dnSpy лицензирован GPLv3.</value>
+  </data>
+  <data name="AboutScreen_LoadedFiles" xml:space="preserve">
+    <value>Загруженные файлы:</value>
+  </data>
+  <data name="SearchWindow_SearchGacAssemblies" xml:space="preserve">
+    <value>Искать в сборках GAC</value>
+  </data>
+  <data name="SearchWindow_Where_AllFiles" xml:space="preserve">
+    <value>Все файлы</value>
+  </data>
+  <data name="SearchWindow_Where_FilesInSameFolder" xml:space="preserve">
+    <value>Файлы в том же каталоге</value>
+  </data>
+  <data name="SearchWindow_Where_SelectedFiles" xml:space="preserve">
+    <value>Выбранные файлы</value>
+  </data>
+  <data name="SearchWindow_Where_SelectedType" xml:space="preserve">
+    <value>Выбранный тип</value>
+  </data>
+  <data name="GoToResourceCommand" xml:space="preserve">
+    <value>Перейти к ре_сурсу</value>
+  </data>
+  <data name="CollapseTreeViewNodesCommand" xml:space="preserve">
+    <value>Свернуть узлы _дерева</value>
+  </data>
+  <data name="CloseAllCommand" xml:space="preserve">
+    <value>Закрыть все</value>
+  </data>
+  <data name="ExportToProject_NewGuid" xml:space="preserve">
+    <value>_Новый</value>
+  </data>
+  <data name="ExportToProject_ProjectGuid" xml:space="preserve">
+    <value>_GUID проекта</value>
+  </data>
+</root>

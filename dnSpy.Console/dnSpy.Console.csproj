@@ -74,6 +74,8 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Console.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Console.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Console.Resources.zh-CN.resx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\dnSpy\App.config">

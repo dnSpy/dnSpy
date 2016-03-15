@@ -121,6 +121,8 @@
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Languages.ILSpy.Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Languages.ILSpy.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Languages.ILSpy.Resources.zh-CN.resx" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="Themes\wpf.styles.templates.xaml">
