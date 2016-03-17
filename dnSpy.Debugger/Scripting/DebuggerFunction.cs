@@ -19,12 +19,29 @@
 
 using System;
 using dndbg.Engine;
+using dnlib.DotNet;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Scripting.Debugger;
 using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Debugger.Scripting {
 	sealed class DebuggerFunction : IDebuggerFunction {
+		public MethodSig MethodSig {
+			get {
+				if (methodSig != null)
+					return methodSig;
+				return debugger.Dispatcher.UI(() => {
+					if (methodSig != null)
+						return methodSig;
+					methodSig = func.GetMethodSig();
+					if (methodSig == null)
+						methodSig = MethodSig.CreateStatic(new CorLibTypes(new ModuleDefUser()).Void);
+					return methodSig;
+				});
+			}
+		}
+		MethodSig methodSig;
+
 		public IDebuggerClass Class {
 			get {
 				return debugger.Dispatcher.UI(() => {
@@ -85,8 +102,12 @@ namespace dnSpy.Debugger.Scripting {
 			get { return debugger.Dispatcher.UI(() => func.VersionNumber); }
 		}
 
-		readonly Debugger debugger;
+		public CorFunction CorFunction {
+			get { return func; }
+		}
 		readonly CorFunction func;
+
+		readonly Debugger debugger;
 		readonly int hashCode;
 		readonly uint localVarSigToken;
 		readonly uint token;

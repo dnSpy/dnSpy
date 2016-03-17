@@ -17,7 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace dnSpy.Contracts.Scripting.Debugger {
 	/// <summary>
@@ -72,6 +74,13 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Finds a module
 		/// </summary>
+		/// <param name="module">Module</param>
+		/// <returns></returns>
+		IDebuggerModule FindModule(Module module);
+
+		/// <summary>
+		/// Finds a module
+		/// </summary>
 		/// <param name="name">Module name</param>
 		/// <returns></returns>
 		IDebuggerModule FindModule(ModuleName name);
@@ -82,6 +91,13 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="name">Full path, filename, or filename without extension of module</param>
 		/// <returns></returns>
 		IDebuggerModule FindModuleByName(string name);
+
+		/// <summary>
+		/// Finds an assembly
+		/// </summary>
+		/// <param name="asm">Assembly</param>
+		/// <returns></returns>
+		IDebuggerAssembly FindAssembly(Assembly asm);
 
 		/// <summary>
 		/// Finds an assembly
@@ -109,38 +125,37 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		IDebuggerFunction FindMethod(string modName, string className, string methodName);
 
 		/// <summary>
-		/// Creates a reference type
+		/// Finds a method
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="token">Method token</param>
+		/// <returns></returns>
+		IDebuggerFunction FindMethod(string modName, uint token);
+
+		/// <summary>
+		/// Finds a type
 		/// </summary>
 		/// <param name="modName">Full path, filename, or filename without extension of module</param>
 		/// <param name="className">Class name</param>
 		/// <returns></returns>
-		IDebuggerType CreateRefType(string modName, string className);
+		IDebuggerType FindType(string modName, string className);
 
 		/// <summary>
-		/// Creates a value type
-		/// </summary>
-		/// <param name="modName">Full path, filename, or filename without extension of module</param>
-		/// <param name="className">Class name</param>
-		/// <returns></returns>
-		IDebuggerType CreateValueType(string modName, string className);
-
-		/// <summary>
-		/// Creates a reference type
+		/// Finds a type
 		/// </summary>
 		/// <param name="modName">Full path, filename, or filename without extension of module</param>
 		/// <param name="className">Class name</param>
 		/// <param name="genericArguments">Generic arguments</param>
 		/// <returns></returns>
-		IDebuggerType CreateRefType(string modName, string className, params IDebuggerType[] genericArguments);
+		IDebuggerType FindType(string modName, string className, params IDebuggerType[] genericArguments);
 
 		/// <summary>
-		/// Creates a value type
+		/// Finds a type
 		/// </summary>
-		/// <param name="modName">Full path, filename, or filename without extension of module</param>
-		/// <param name="className">Class name</param>
-		/// <param name="genericArguments">Generic arguments</param>
+		/// <param name="type">A type that must exist in one of the loaded assemblies in the
+		/// debugged process.</param>
 		/// <returns></returns>
-		IDebuggerType CreateValueType(string modName, string className, params IDebuggerType[] genericArguments);
+		IDebuggerType FindType(Type type);
 
 		/// <summary>
 		/// Creates a function pointer type

@@ -196,6 +196,7 @@
     <Compile Include="Scripting\DebuggerThread.cs" />
     <Compile Include="Scripting\DebuggerType.cs" />
     <Compile Include="Scripting\DebuggerValue.cs" />
+    <Compile Include="Scripting\Eval.cs" />
     <Compile Include="Scripting\EventBreakpoint.cs" />
     <Compile Include="Scripting\IDnBreakpointHolder.cs" />
     <Compile Include="Scripting\ILBreakpoint.cs" />

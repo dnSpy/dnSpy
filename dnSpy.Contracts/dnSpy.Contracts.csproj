@@ -221,6 +221,7 @@
     <Compile Include="Plugin\PluginInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scripting\Debugger\AttachOptions.cs" />
+    <Compile Include="Scripting\Debugger\Box.cs" />
     <Compile Include="Scripting\Debugger\BreakpointKind.cs" />
     <Compile Include="Scripting\Debugger\BreakProcessKind.cs" />
     <Compile Include="Scripting\Debugger\ChainReason.cs" />
@@ -247,6 +248,7 @@
     <Compile Include="Scripting\Debugger\IDebuggerThread.cs" />
     <Compile Include="Scripting\Debugger\IDebuggerType.cs" />
     <Compile Include="Scripting\Debugger\IDebuggerValue.cs" />
+    <Compile Include="Scripting\Debugger\IEval.cs" />
     <Compile Include="Scripting\Debugger\IEventBreakpoint.cs" />
     <Compile Include="Scripting\Debugger\IILBreakpoint.cs" />
     <Compile Include="Scripting\Debugger\ILCodeKind.cs" />

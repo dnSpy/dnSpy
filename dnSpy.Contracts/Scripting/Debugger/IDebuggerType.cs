@@ -17,7 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Collections.Generic;
 using dnSpy.Contracts.Highlighting;
 
 namespace dnSpy.Contracts.Scripting.Debugger {
@@ -89,7 +88,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <see cref="CorElementType.Ptr"/>, the returned type is the inner type, eg. <c>int</c> if the
 		/// type is <c>int[]</c>. In this case, <see cref="FirstTypeParameter"/> can be called instead.
 		/// </summary>
-		IEnumerable<IDebuggerType> TypeParameters { get; }
+		IDebuggerType[] TypeParameters { get; }
 
 		/// <summary>
 		/// Gets the non-instantiated type, only valid if <see cref="ElementType"/> is a
@@ -200,6 +199,26 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="rank">Number of dimensions</param>
 		/// <returns></returns>
 		IDebuggerType ToArray(int rank);
+
+		/// <summary>
+		/// Finds a method
+		/// </summary>
+		/// <param name="name">Method name</param>
+		/// <returns></returns>
+		IDebuggerFunction FindMethod(string name);
+
+		/// <summary>
+		/// Finds methods
+		/// </summary>
+		/// <param name="name">Method name</param>
+		/// <returns></returns>
+		IDebuggerFunction[] FindMethods(string name);
+
+		/// <summary>
+		/// Returns all constructors
+		/// </summary>
+		/// <returns></returns>
+		IDebuggerFunction[] FindConstructors();
 
 		/// <summary>
 		/// Write this to <paramref name="output"/>

@@ -523,7 +523,10 @@ namespace dnSpy.Debugger.Scripting {
 
 		public IDebuggerClass FindClass(string className) {
 			return debugger.Dispatcher.UI(() => {
-				var cls = mod.CorModule.FindClass(className);
+				// Dynamic modules can get extra types, so use the slower linear search.
+				var cls = IsDynamic ?
+						mod.CorModule.FindClass(className) :
+						mod.CorModule.FindClassCache(className);
 				return cls == null ? null : new DebuggerClass(debugger, cls);
 			});
 		}
@@ -535,29 +538,17 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public IDebuggerType CreateRefType(string className) {
-			return CreateType(false, className, null);
+		public IDebuggerType FindType(string className) {
+			return FindType(className, null);
 		}
 
-		public IDebuggerType CreateValueType(string className) {
-			return CreateType(true, className, null);
-		}
-
-		public IDebuggerType CreateRefType(string className, params IDebuggerType[] genericArguments) {
-			return CreateType(false, className, genericArguments);
-		}
-
-		public IDebuggerType CreateValueType(string className, params IDebuggerType[] genericArguments) {
-			return CreateType(true, className, genericArguments);
-		}
-
-		IDebuggerType CreateType(bool isValueType, string className, params IDebuggerType[] genericArguments) {
+		public IDebuggerType FindType(string className, params IDebuggerType[] genericArguments) {
 			return debugger.Dispatcher.UI(() => {
 				var cls = (DebuggerClass)FindClass(className);
 				if (cls == null)
 					return null;
-				var etype = isValueType ? dndbg.COM.CorDebug.CorElementType.ValueType : dndbg.COM.CorDebug.CorElementType.Class;
-				var type = cls.CorClass.GetParameterizedType(etype, genericArguments.ToCorType());
+				// We can use Class all the time, even for value types
+				var type = cls.CorClass.GetParameterizedType(dndbg.COM.CorDebug.CorElementType.Class, genericArguments.ToCorTypes());
 				Debug.Assert(type != null);
 				return type == null ? null : new DebuggerType(debugger, type);
 			});

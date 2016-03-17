@@ -19,7 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using dndbg.Engine;
 using dnlib.DotNet;
 using dnSpy.Contracts.Scripting.Debugger;
@@ -118,6 +120,22 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.Dispatcher.UI(() => appDomain.CorAppDomain.SetAllThreadsDebugState((dndbg.COM.CorDebug.CorDebugThreadState)state, thread == null ? null : ((DebuggerThread)thread).DnThread.CorThread));
 		}
 
+		public IDebuggerModule FindModule(Module module) {
+			return debugger.Dispatcher.UI(() => {
+				if (File.Exists(module.FullyQualifiedName)) {
+					var name = Path.GetFileName(module.FullyQualifiedName);
+					foreach (var m in Modules) {
+						if (m.IsInMemory)
+							continue;
+						if (Utils.IsSameFile(m.ModuleName.Name, name))
+							return m;
+					}
+					return null;
+				}
+				return null;
+			});
+		}
+
 		public IDebuggerModule FindModule(ModuleName name) {
 			return debugger.Dispatcher.UI(() => {
 				foreach (var m in Modules) {
@@ -133,6 +151,23 @@ namespace dnSpy.Debugger.Scripting {
 				foreach (var m in Modules) {
 					if (Utils.IsSameFile(m.ModuleName.Name, name))
 						return m;
+				}
+				return null;
+			});
+		}
+
+		public IDebuggerAssembly FindAssembly(Assembly asm) {
+			return debugger.Dispatcher.UI(() => {
+				string fn = null;
+				bool hasLoc = File.Exists(asm.Location);
+				if (hasLoc)
+					fn = Path.GetFileName(asm.Location);
+				var asmName = asm.GetName().Name;
+				foreach (var a in Assemblies) {
+					if (hasLoc && Utils.IsSameFile(a.Name, fn))
+						return a;
+					if (StringComparer.OrdinalIgnoreCase.Equals(new AssemblyNameInfo(a.FullName).Name, asmName))
+						return a;
 				}
 				return null;
 			});
@@ -166,37 +201,66 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public IDebuggerType CreateRefType(string modName, string className) {
+		public IDebuggerFunction FindMethod(string modName, uint token) {
 			return debugger.Dispatcher.UI(() => {
 				var mod = FindModuleByName(modName);
-				return mod == null ? null : mod.CreateRefType(className);
+				return mod == null ? null : mod.FindMethod(token);
 			});
 		}
 
-		public IDebuggerType CreateValueType(string modName, string className) {
+		public IDebuggerType FindType(string modName, string className) {
 			return debugger.Dispatcher.UI(() => {
 				var mod = FindModuleByName(modName);
-				return mod == null ? null : mod.CreateValueType(className);
+				return mod == null ? null : mod.FindType(className);
 			});
 		}
 
-		public IDebuggerType CreateRefType(string modName, string className, params IDebuggerType[] genericArguments) {
+		public IDebuggerType FindType(string modName, string className, params IDebuggerType[] genericArguments) {
 			return debugger.Dispatcher.UI(() => {
 				var mod = FindModuleByName(modName);
-				return mod == null ? null : mod.CreateRefType(className, genericArguments);
+				return mod == null ? null : mod.FindType(className, genericArguments);
 			});
 		}
 
-		public IDebuggerType CreateValueType(string modName, string className, params IDebuggerType[] genericArguments) {
+		public IDebuggerType FindType(Type type) {
 			return debugger.Dispatcher.UI(() => {
-				var mod = FindModuleByName(modName);
-				return mod == null ? null : mod.CreateValueType(className, genericArguments);
+				if (type.IsPointer) {
+					var r = FindType(type.GetElementType());
+					return r == null ? null : r.ToPointer();
+				}
+				else if (type.IsArray) {
+					var r = FindType(type.GetElementType());
+					if (r == null)
+						return null;
+					if (type.FullName.EndsWith("[]"))
+						return r.ToSZArray();
+					return r.ToArray(type.GetArrayRank());
+				}
+				else if (type.IsByRef) {
+					var r = FindType(type.GetElementType());
+					return r == null ? null : r.ToByRef();
+				}
+				else {
+					var mod = FindModule(type.Module);
+					if (mod == null)
+						return null;
+					if (type.IsGenericType)
+						return mod.FindType(type.GetGenericTypeDefinition().FullName, GetTypes(type.GetGenericArguments()));
+					return mod.FindType(type.FullName);
+				}
 			});
+		}
+
+		IDebuggerType[] GetTypes(Type[] types) {
+			var res = new IDebuggerType[types.Length];
+			for (int i = 0; i < res.Length; i++)
+				res[i] = FindType(types[i]);
+			return res;
 		}
 
 		public IDebuggerType CreateFnPtr(params IDebuggerType[] types) {
 			return debugger.Dispatcher.UI(() => {
-				var type = appDomain.CorAppDomain.GetFnPtr(types.ToCorType());
+				var type = appDomain.CorAppDomain.GetFnPtr(types.ToCorTypes());
 				return type == null ? null : new DebuggerType(debugger, type);
 			});
 		}
@@ -213,7 +277,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_Void != null)
 						return _Void;
 					var mod = CorLib;
-					return _Void = mod == null ? null : mod.CreateValueType("System.Void");
+					return _Void = mod == null ? null : mod.FindType("System.Void");
 				});
 			}
 		}
@@ -227,7 +291,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_Boolean != null)
 						return _Boolean;
 					var mod = CorLib;
-					return _Boolean = mod == null ? null : mod.CreateValueType("System.Boolean");
+					return _Boolean = mod == null ? null : mod.FindType("System.Boolean");
 				});
 			}
 		}
@@ -241,7 +305,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_Char != null)
 						return _Char;
 					var mod = CorLib;
-					return _Char = mod == null ? null : mod.CreateValueType("System.Char");
+					return _Char = mod == null ? null : mod.FindType("System.Char");
 				});
 			}
 		}
@@ -255,7 +319,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_SByte != null)
 						return _SByte;
 					var mod = CorLib;
-					return _SByte = mod == null ? null : mod.CreateValueType("System.SByte");
+					return _SByte = mod == null ? null : mod.FindType("System.SByte");
 				});
 			}
 		}
@@ -269,7 +333,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_Byte != null)
 						return _Byte;
 					var mod = CorLib;
-					return _Byte = mod == null ? null : mod.CreateValueType("System.Byte");
+					return _Byte = mod == null ? null : mod.FindType("System.Byte");
 				});
 			}
 		}
@@ -283,7 +347,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_Int16 != null)
 						return _Int16;
 					var mod = CorLib;
-					return _Int16 = mod == null ? null : mod.CreateValueType("System.Int16");
+					return _Int16 = mod == null ? null : mod.FindType("System.Int16");
 				});
 			}
 		}
@@ -297,7 +361,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_UInt16 != null)
 						return _UInt16;
 					var mod = CorLib;
-					return _UInt16 = mod == null ? null : mod.CreateValueType("System.UInt16");
+					return _UInt16 = mod == null ? null : mod.FindType("System.UInt16");
 				});
 			}
 		}
@@ -311,7 +375,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_Int32 != null)
 						return _Int32;
 					var mod = CorLib;
-					return _Int32 = mod == null ? null : mod.CreateValueType("System.Int32");
+					return _Int32 = mod == null ? null : mod.FindType("System.Int32");
 				});
 			}
 		}
@@ -325,7 +389,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_UInt32 != null)
 						return _UInt32;
 					var mod = CorLib;
-					return _UInt32 = mod == null ? null : mod.CreateValueType("System.UInt32");
+					return _UInt32 = mod == null ? null : mod.FindType("System.UInt32");
 				});
 			}
 		}
@@ -339,7 +403,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_Int64 != null)
 						return _Int64;
 					var mod = CorLib;
-					return _Int64 = mod == null ? null : mod.CreateValueType("System.Int64");
+					return _Int64 = mod == null ? null : mod.FindType("System.Int64");
 				});
 			}
 		}
@@ -353,7 +417,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_UInt64 != null)
 						return _UInt64;
 					var mod = CorLib;
-					return _UInt64 = mod == null ? null : mod.CreateValueType("System.UInt64");
+					return _UInt64 = mod == null ? null : mod.FindType("System.UInt64");
 				});
 			}
 		}
@@ -367,7 +431,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_Single != null)
 						return _Single;
 					var mod = CorLib;
-					return _Single = mod == null ? null : mod.CreateValueType("System.Single");
+					return _Single = mod == null ? null : mod.FindType("System.Single");
 				});
 			}
 		}
@@ -381,7 +445,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_Double != null)
 						return _Double;
 					var mod = CorLib;
-					return _Double = mod == null ? null : mod.CreateValueType("System.Double");
+					return _Double = mod == null ? null : mod.FindType("System.Double");
 				});
 			}
 		}
@@ -395,7 +459,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_String != null)
 						return _String;
 					var mod = CorLib;
-					return _String = mod == null ? null : mod.CreateRefType("System.String");
+					return _String = mod == null ? null : mod.FindType("System.String");
 				});
 			}
 		}
@@ -409,7 +473,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_TypedReference != null)
 						return _TypedReference;
 					var mod = CorLib;
-					return _TypedReference = mod == null ? null : mod.CreateValueType("System.TypedReference");
+					return _TypedReference = mod == null ? null : mod.FindType("System.TypedReference");
 				});
 			}
 		}
@@ -423,7 +487,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_IntPtr != null)
 						return _IntPtr;
 					var mod = CorLib;
-					return _IntPtr = mod == null ? null : mod.CreateValueType("System.IntPtr");
+					return _IntPtr = mod == null ? null : mod.FindType("System.IntPtr");
 				});
 			}
 		}
@@ -437,7 +501,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_UIntPtr != null)
 						return _UIntPtr;
 					var mod = CorLib;
-					return _UIntPtr = mod == null ? null : mod.CreateValueType("System.UIntPtr");
+					return _UIntPtr = mod == null ? null : mod.FindType("System.UIntPtr");
 				});
 			}
 		}
@@ -451,7 +515,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_Object != null)
 						return _Object;
 					var mod = CorLib;
-					return _Object = mod == null ? null : mod.CreateRefType("System.Object");
+					return _Object = mod == null ? null : mod.FindType("System.Object");
 				});
 			}
 		}
@@ -465,7 +529,7 @@ namespace dnSpy.Debugger.Scripting {
 					if (_Decimal != null)
 						return _Decimal;
 					var mod = CorLib;
-					return _Decimal = mod == null ? null : mod.CreateValueType("System.Decimal");
+					return _Decimal = mod == null ? null : mod.FindType("System.Decimal");
 				});
 			}
 		}

@@ -21,9 +21,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using dndbg.COM.CorDebug;
-using dndbg.Engine;
 using dnSpy.Contracts.Scripting.Debugger;
 using dnSpy.Shared.Scripting;
+using DBG = dndbg.Engine;
 
 namespace dnSpy.Debugger.Scripting {
 	sealed class DebuggerThread : IDebuggerThread {
@@ -183,12 +183,12 @@ namespace dnSpy.Debugger.Scripting {
 		readonly int hashCode;
 		readonly int uniqueId;
 
-		public DnThread DnThread {
+		public DBG.DnThread DnThread {
 			get { return thread; }
 		}
-		readonly DnThread thread;
+		readonly DBG.DnThread thread;
 
-		public DebuggerThread(Debugger debugger, DnThread thread) {
+		public DebuggerThread(Debugger debugger, DBG.DnThread thread) {
 			debugger.Dispatcher.VerifyAccess();
 			this.debugger = debugger;
 			this.thread = thread;
@@ -198,6 +198,116 @@ namespace dnSpy.Debugger.Scripting {
 
 		public bool InterceptCurrentException(IStackFrame frame) {
 			return debugger.Dispatcher.UI(() => thread.CorThread.InterceptCurrentException(((StackFrame)frame).CorFrame));
+		}
+
+		IAppDomain GetAppDomainUIThrow() {
+			debugger.Dispatcher.VerifyAccess();
+			var appDomain = this.AppDomain;
+			if (appDomain == null)
+				throw new InvalidOperationException("The thread doesn't have an AppDomain");
+			return appDomain;
+		}
+
+		IDebuggerFunction FindMethodUIThrow(string modName, string className, string methodName) {
+			var func = GetAppDomainUIThrow().FindMethod(modName, className, methodName);
+			if (func == null)
+				throw new ArgumentException(string.Format("Couldn't find method [{0}] {1}::{2}", modName, className, methodName));
+			return func;
+		}
+
+		IDebuggerFunction FindMethodUIThrow(string modName, uint token) {
+			var func = GetAppDomainUIThrow().FindMethod(modName, token);
+			if (func == null)
+				throw new ArgumentException(string.Format("Couldn't find method [{0}] 0x{1:X8}", modName, token));
+			return func;
+		}
+
+		public IDebuggerValue Call(IDebuggerFunction func, params object[] args) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Call(func, args);
+			});
+		}
+
+		public IDebuggerValue Call(string modName, string className, string methodName, params object[] args) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Call(FindMethodUIThrow(modName, className, methodName), args);
+			});
+		}
+
+		public IDebuggerValue Call(string modName, uint token, params object[] args) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Call(FindMethodUIThrow(modName, token), args);
+			});
+		}
+
+		public IDebuggerValue Call(IDebuggerType[] genericArgs, IDebuggerFunction func, params object[] args) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Call(genericArgs, func, args);
+			});
+		}
+
+		public IDebuggerValue Call(Type[] genericArgs, IDebuggerFunction func, params object[] args) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Call(genericArgs, func, args);
+			});
+		}
+
+		public IDebuggerValue Call(IDebuggerType[] genericArgs, string modName, string className, string methodName, params object[] args) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Call(genericArgs, FindMethodUIThrow(modName, className, methodName), args);
+			});
+		}
+
+		public IDebuggerValue Call(Type[] genericArgs, string modName, string className, string methodName, params object[] args) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Call(genericArgs, FindMethodUIThrow(modName, className, methodName), args);
+			});
+		}
+
+		public IDebuggerValue Call(IDebuggerType[] genericArgs, string modName, uint token, params object[] args) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Call(genericArgs, FindMethodUIThrow(modName, token), args);
+			});
+		}
+
+		public IDebuggerValue Call(Type[] genericArgs, string modName, uint token, params object[] args) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Call(genericArgs, FindMethodUIThrow(modName, token), args);
+			});
+		}
+
+		public IDebuggerValue AssemblyLoad(byte[] rawAssembly) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.AssemblyLoad(rawAssembly);
+			});
+		}
+
+		public IDebuggerValue AssemblyLoadFile(string filename) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.AssemblyLoadFile(filename);
+			});
+		}
+
+		public string ToString(IDebuggerValue value) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.ToString(value);
+			});
+		}
+
+		public IEval CreateEval() {
+			return debugger.Dispatcher.UI(() => debugger.CreateEvalUI(this));
 		}
 
 		public override bool Equals(object obj) {

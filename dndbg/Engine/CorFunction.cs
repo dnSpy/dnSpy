@@ -199,6 +199,14 @@ namespace dndbg.Engine {
 			typeParams = cls == null ? new List<TokenAndName>() : cls.GetGenericParameters();
 		}
 
+		public MethodSig GetMethodSig() {
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			if (mdi == null)
+				return null;
+			return MetaDataUtils.GetMethodSignature(mdi, Token);
+		}
+
 		public static bool operator ==(CorFunction a, CorFunction b) {
 			if (ReferenceEquals(a, b))
 				return true;

@@ -20,8 +20,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using dndbg.COM.CorDebug;
 using dndbg.COM.MetaData;
+using dnlib.DotNet;
 
 namespace dndbg.Engine {
 	public sealed class CorClass : COMObject<ICorDebugClass>, IEquatable<CorClass> {
@@ -177,14 +179,61 @@ namespace dndbg.Engine {
 		/// </summary>
 		/// <param name="name">Method name</param>
 		/// <returns></returns>
-		public CorFunction FindFunction(string name) {
+		public CorFunction FindFunction(string name, bool checkBaseClasses = true) {
+			return FindFunctions(name, checkBaseClasses).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Finds methods
+		/// </summary>
+		/// <param name="name">Method name</param>
+		/// <returns></returns>
+		public IEnumerable<CorFunction> FindFunctions(string name, bool checkBaseClasses = true) {
 			var mod = Module;
 			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
 			foreach (var mdToken in MDAPI.GetMethodTokens(mdi, token)) {
-				if (MDAPI.GetMethodName(mdi, mdToken) == name)
-					return mod.GetFunctionFromToken(mdToken);
+				if (MDAPI.GetMethodName(mdi, mdToken) == name) {
+					var func = mod.GetFunctionFromToken(mdToken);
+					Debug.Assert(func != null);
+					if (func != null)
+						yield return func;
+				}
 			}
-			return null;
+			if (checkBaseClasses) {
+				var type = GetParameterizedType(CorElementType.Class);
+				if (type != null)
+					type = type.Base;
+				if (type != null) {
+					foreach (var func in type.FindFunctions(name, checkBaseClasses))
+						yield return func;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Finds all constructors
+		/// </summary>
+		/// <returns></returns>
+		public CorFunction[] FindConstructors() {
+			var ctors = new List<CorFunction>();
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			foreach (var mdToken in MDAPI.GetMethodTokens(mdi, token)) {
+				MethodAttributes attrs;
+				MethodImplAttributes implAttrs;
+				if (!MDAPI.GetMethodAttributes(mdi, mdToken, out attrs, out implAttrs))
+					continue;
+				if ((attrs & MethodAttributes.RTSpecialName) == 0)
+					continue;
+				if (MDAPI.GetMethodName(mdi, mdToken) != ".ctor")
+					continue;
+
+				var ctor = mod.GetFunctionFromToken(mdToken);
+				Debug.Assert(ctor != null);
+				if (ctor != null)
+					ctors.Add(ctor);
+			}
+			return ctors.ToArray();
 		}
 
 		public static bool operator ==(CorClass a, CorClass b) {

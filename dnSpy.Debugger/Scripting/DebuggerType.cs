@@ -17,9 +17,8 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Scripting.Debugger;
@@ -126,13 +125,15 @@ namespace dnSpy.Debugger.Scripting {
 			get { return debugger.Dispatcher.UI(() => type.Rank); }
 		}
 
-		public IEnumerable<IDebuggerType> TypeParameters {
-			get { return debugger.Dispatcher.UIIter(GetTypeParametersUI); }
-		}
-
-		IEnumerable<IDebuggerType> GetTypeParametersUI() {
-			foreach (var t in type.TypeParameters)
-				yield return new DebuggerType(debugger, t);
+		public IDebuggerType[] TypeParameters {
+			get {
+				return debugger.Dispatcher.UI(() => {
+					var list = new List<IDebuggerType>();
+					foreach (var t in type.TypeParameters)
+						list.Add(new DebuggerType(debugger, t));
+					return list.ToArray();
+				});
+			}
 		}
 
 		internal CorType CorType {
@@ -221,6 +222,32 @@ namespace dnSpy.Debugger.Scripting {
 				var ad = CorAppDomain;
 				var res = ad == null ? null : ad.GetArray(type, (uint)rank);
 				return res == null ? null : new DebuggerType(debugger, res);
+			});
+		}
+
+		public IDebuggerFunction FindMethod(string name) {
+			return debugger.Dispatcher.UI(() => {
+				var func = type.FindFunction(name);
+				return func == null ? null : new DebuggerFunction(debugger, func);
+			});
+		}
+
+		public IDebuggerFunction[] FindMethods(string name) {
+			return debugger.Dispatcher.UI(() => {
+				var funcs = type.FindFunctions(name).ToList();
+				var res = new IDebuggerFunction[funcs.Count];
+				for (int i = 0; i < res.Length; i++)
+					res[i] = new DebuggerFunction(debugger, funcs[i]);
+				return res;
+			});
+		}
+
+		public IDebuggerFunction[] FindConstructors() {
+			return debugger.Dispatcher.UI(() => {
+				if (!type.HasClass)
+					return new IDebuggerFunction[0];
+				var cls = Class;
+				return cls == null ? new IDebuggerFunction[0] : cls.FindConstructors();
 			});
 		}
 

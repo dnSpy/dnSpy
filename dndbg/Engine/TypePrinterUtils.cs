@@ -57,7 +57,7 @@ namespace dndbg.Engine {
 		}
 
 		static TypeSig ToTypeSig(CorElementType etype) {
-			var corlib = new DebugSignatureReader.CorLibTypes();
+			var corlib = DebugSignatureReader.CorLibTypes;
 			switch (etype) {
 			case CorElementType.Void:		return corlib.Void;
 			case CorElementType.Boolean:	return corlib.Boolean;

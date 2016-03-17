@@ -76,7 +76,7 @@ namespace dnSpy.Debugger.Scripting {
 			return o;
 		}
 
-		public static DBG.CorType[] ToCorType(this IDebuggerType[] types) {
+		public static DBG.CorType[] ToCorTypes(this IDebuggerType[] types) {
 			if (types == null)
 				return null;
 			var ctypes = new DBG.CorType[types.Length];
@@ -85,6 +85,17 @@ namespace dnSpy.Debugger.Scripting {
 				ctypes[i] = t.CorType;
 			}
 			return ctypes;
+		}
+
+		public static DBG.CorValue[] ToCorValues(this IDebuggerValue[] values) {
+			if (values == null)
+				return null;
+			var cvalues = new DBG.CorValue[values.Length];
+			for (int i = 0; i < values.Length; i++) {
+				var v = (DebuggerValue)values[i];
+				cvalues[i] = v.CorValue;
+			}
+			return cvalues;
 		}
 
 		public static DBG.SerializedDnModule ToSerializedDnModule(this ModuleName moduleName) {
@@ -216,6 +227,46 @@ namespace dnSpy.Debugger.Scripting {
 				return true;
 
 			return false;
+		}
+
+		public static IDebuggerValue ToDebuggerValue(this DBG.EvalResult res, Debugger debugger) {
+			if (res.ResultOrException == null)
+				throw new InvalidOperationException("Result of evaluation was a null CorValue");
+			return new DebuggerValue(debugger, res.ResultOrException);
+		}
+
+		public static decimal CreateDecimal(byte[] data) {
+			if (data == null || data.Length != 16)
+				return decimal.Zero;
+
+			var decimalBits = new int[4];
+			decimalBits[3] = BitConverter.ToInt32(data, 0);
+			decimalBits[2] = BitConverter.ToInt32(data, 4);
+			decimalBits[0] = BitConverter.ToInt32(data, 8);
+			decimalBits[1] = BitConverter.ToInt32(data, 12);
+			try {
+				return new decimal(decimalBits);
+			}
+			catch (ArgumentException) {
+			}
+			return decimal.Zero;
+		}
+
+		public static byte[] GetBytes(decimal d) {
+			var decimalBits = decimal.GetBits(d);
+			var bytes = new byte[16];
+			WriteInt32(bytes, 0, decimalBits[3]);
+			WriteInt32(bytes, 4, decimalBits[2]);
+			WriteInt32(bytes, 8, decimalBits[0]);
+			WriteInt32(bytes, 12, decimalBits[1]);
+			return bytes;
+		}
+
+		static void WriteInt32(byte[] dest, int index, int v) {
+			dest[index + 0] = (byte)v;
+			dest[index + 1] = (byte)(v >> 8);
+			dest[index + 2] = (byte)(v >> 16);
+			dest[index + 3] = (byte)(v >> 24);
 		}
 	}
 }

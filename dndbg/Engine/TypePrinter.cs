@@ -498,14 +498,13 @@ namespace dndbg.Engine {
 					OutputWrite("&", TypeColor.Operator);
 					break;
 
+				case CorElementType.Class:
 				case CorElementType.ValueType:
 					if (type.IsSystemNullable) {
 						Write(type.FirstTypeParameter);
 						OutputWrite("?", TypeColor.Operator);
 						break;
 					}
-					goto case CorElementType.Class;
-				case CorElementType.Class:
 					var cls = type.Class;
 					Write(cls);
 					if (cls != null)
@@ -1197,7 +1196,7 @@ namespace dndbg.Engine {
 					return;
 				}
 
-				WriteToStringData(value, info, func);
+				WriteToStringData(value, func);
 			}
 		}
 
@@ -1219,7 +1218,7 @@ namespace dndbg.Engine {
 			return et.GetSystemObjectToStringMethod();
 		}
 
-		void WriteToStringData(CorValue value, CorMethodInfo info, CorFunction func) {
+		void WriteToStringData(CorValue value, CorFunction func) {
 			Debug.Assert(value != null && func != null && getEval != null);
 
 			try {

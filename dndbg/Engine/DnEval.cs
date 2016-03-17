@@ -89,7 +89,13 @@ namespace dndbg.Engine {
 			this.debugger = debugger;
 			this.debugMessageDispatcher = debugMessageDispatcher;
 			this.suspendOtherThreads = true;
+			this.useTotalTimeout = true;
 		}
+
+		public void SetNoTotalTimeout() {
+			useTotalTimeout = false;
+		}
+		bool useTotalTimeout;
 
 		public void SetThread(DnThread thread) {
 			SetThread(thread.CorThread);
@@ -112,7 +118,6 @@ namespace dndbg.Engine {
 		}
 
 		public CorValue Box(CorValue value) {
-			Debug.Assert(value != null && value.IsGeneric && !value.IsBox && !value.IsHeap && value.ExactType.IsValueType);
 			if (value == null || !value.IsGeneric || value.IsBox || value.IsHeap || !value.ExactType.IsValueType)
 				return value;
 			var res = WaitForResult(eval.NewParameterizedObjectNoConstructor(value.ExactType.Class, value.ExactType.TypeParameters.ToArray()));
@@ -127,6 +132,14 @@ namespace dndbg.Engine {
 			if (hr < 0)
 				return null;
 			return newObj;
+		}
+
+		public CorValue CreateSZArray(CorType type, int numElems) {
+			int hr;
+			var res = WaitForResult(hr = eval.NewParameterizedArray(type, new uint[1] { (uint)numElems }));
+			if (res == null || res.Value.WasException)
+				throw new EvalException(hr, string.Format("Could not create an array, HR=0x{0:X8}", hr));
+			return res.Value.ResultOrException;
 		}
 
 		public CorValueResult CallResult(CorFunction func, CorValue[] args) {
@@ -147,6 +160,18 @@ namespace dndbg.Engine {
 			return res.Value.ResultOrException.Value;
 		}
 
+		public EvalResult CallConstructor(CorFunction ctor, CorValue[] args) {
+			return CallConstructor(ctor, null, args);
+		}
+
+		public EvalResult CallConstructor(CorFunction ctor, CorType[] typeArgs, CorValue[] args) {
+			int hr;
+			var res = CallConstructor(ctor, typeArgs, args, out hr);
+			if (res != null)
+				return res.Value;
+			throw new EvalException(hr, string.Format("Could not call .ctor {0:X8}, HR=0x{1:X8}", ctor.Token, hr));
+		}
+
 		public EvalResult Call(CorFunction func, CorValue[] args) {
 			return Call(func, null, args);
 		}
@@ -157,6 +182,26 @@ namespace dndbg.Engine {
 			if (res != null)
 				return res.Value;
 			throw new EvalException(hr, string.Format("Could not call method {0:X8}, HR=0x{1:X8}", func.Token, hr));
+		}
+
+		public CorValue CreateValue(CorElementType et, CorClass cls = null) {
+			return eval.CreateValue(et, cls);
+		}
+
+		public CorValue CreateValue(CorType type) {
+			return eval.CreateValueForType(type);
+		}
+
+		public EvalResult? CreateDontCallConstructor(CorType type, out int hr) {
+			if (!type.HasClass) {
+				hr = -1;
+				return null;
+			}
+			return WaitForResult(hr = eval.NewParameterizedObjectNoConstructor(type.Class, type.TypeParameters.ToArray()));
+		}
+
+		public EvalResult? CallConstructor(CorFunction func, CorType[] typeArgs, CorValue[] args, out int hr) {
+			return WaitForResult(hr = eval.NewParameterizedObject(func, typeArgs, args));
 		}
 
 		public EvalResult? Call(CorFunction func, CorType[] typeArgs, CorValue[] args, out int hr) {
@@ -245,6 +290,8 @@ namespace dndbg.Engine {
 			if (now >= endTime)
 				now = endTime;
 			var timeLeft = endTime - now;
+			if (!useTotalTimeout)
+				timeLeft = TimeSpan.FromMilliseconds(TIMEOUT_MS);
 
 			var infos = new ThreadInfos(thread, SuspendOtherThreads);
 			object dispResult;

@@ -23,6 +23,7 @@ using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows.Threading;
 using dnlib.DotNet;
@@ -810,6 +811,15 @@ namespace dnSpy.Debugger.Scripting {
 				throw new IOException(string.Format("Couldn't write all bytes. Wrote {0} bytes, expected {1} bytes", writtenBytes, array.LongLength));
 		}
 
+		// Assumes memory is writable
+		internal unsafe int WriteMemory(ulong address, IntPtr sourceData, int sourceSize) {
+			if (hProcess_debuggee == IntPtr.Zero || address == 0)
+				return 0;
+			IntPtr sizeWritten;
+			bool b = NativeMethods.WriteProcessMemory(hProcess_debuggee, new IntPtr((void*)address), sourceData, sourceSize, out sizeWritten);
+			return !b ? 0 : (int)sizeWritten.ToInt64();
+		}
+
 		public bool ReadBoolean(ulong address) {
 			return BitConverter.ToBoolean(ReadMemory(address, 1), 0);
 		}
@@ -923,6 +933,13 @@ namespace dnSpy.Debugger.Scripting {
 		}
 		IDebuggerModule corLib;
 
+		public IDebuggerModule FindModule(Module module) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.FindModule(module);
+			});
+		}
+
 		public IDebuggerModule FindModule(ModuleName name) {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
@@ -934,6 +951,13 @@ namespace dnSpy.Debugger.Scripting {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
 				return ad == null ? null : ad.FindModuleByName(name);
+			});
+		}
+
+		public IDebuggerAssembly FindAssembly(Assembly asm) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.FindAssembly(asm);
 			});
 		}
 
@@ -958,31 +982,24 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public IDebuggerType CreateRefType(string modName, string className) {
+		public IDebuggerType FindType(string modName, string className) {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
-				return ad == null ? null : ad.CreateRefType(modName, className);
+				return ad == null ? null : ad.FindType(modName, className);
 			});
 		}
 
-		public IDebuggerType CreateValueType(string modName, string className) {
+		public IDebuggerType FindType(string modName, string className, params IDebuggerType[] genericArguments) {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
-				return ad == null ? null : ad.CreateValueType(modName, className);
+				return ad == null ? null : ad.FindType(modName, className, genericArguments);
 			});
 		}
 
-		public IDebuggerType CreateRefType(string modName, string className, params IDebuggerType[] genericArguments) {
+		public IDebuggerType FindType(Type type) {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
-				return ad == null ? null : ad.CreateRefType(modName, className, genericArguments);
-			});
-		}
-
-		public IDebuggerType CreateValueType(string modName, string className, params IDebuggerType[] genericArguments) {
-			return dispatcher.UI(() => {
-				var ad = FirstAppDomain;
-				return ad == null ? null : ad.CreateValueType(modName, className, genericArguments);
+				return ad == null ? null : ad.FindType(type);
 			});
 		}
 
@@ -1155,6 +1172,16 @@ namespace dnSpy.Debugger.Scripting {
 					return ad == null ? null : ad.Decimal;
 				});
 			}
+		}
+
+		public IEval CreateEvalUI(DebuggerThread thread) {
+			dispatcher.VerifyAccess();
+			var dbg = theDebugger.Debugger;
+			if (dbg == null || dbg.ProcessState != DBG.DebuggerProcessState.Paused)
+				throw new InvalidOperationException("Can only evaluate when the debugged process has paused at a safe location. Wait for a breakpoint to hit.");
+			if (dbg.IsEvaluating)
+				throw new InvalidOperationException("Only one evaluation at a time can be in progress");
+			return new Eval(this, thread.AppDomain, theDebugger.CreateEval(thread.DnThread.CorThread));
 		}
 	}
 }

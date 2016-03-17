@@ -50,7 +50,8 @@ namespace dnSpy.Debugger {
 		void DisposeHandle(CorValue value);
 
 		/// <summary>
-		/// Creates an eval. Don't call this if <see cref="EvalDisabled"/> is true
+		/// Creates an eval. Should normally not be called if <see cref="EvalDisabled"/> is true
+		/// since it means that an evaluation failed (eg. timed out)
 		/// </summary>
 		/// <param name="thread">Thread to use</param>
 		/// <returns></returns>

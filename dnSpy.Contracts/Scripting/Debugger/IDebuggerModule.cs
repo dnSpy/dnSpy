@@ -678,33 +678,18 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		IDebuggerFunction FindMethod(string className, string methodName);
 
 		/// <summary>
-		/// Creates a reference type
+		/// Finds a type
 		/// </summary>
 		/// <param name="className">Class name</param>
 		/// <returns></returns>
-		IDebuggerType CreateRefType(string className);
+		IDebuggerType FindType(string className);
 
 		/// <summary>
-		/// Creates a value type
-		/// </summary>
-		/// <param name="className">Class name</param>
-		/// <returns></returns>
-		IDebuggerType CreateValueType(string className);
-
-		/// <summary>
-		/// Creates a reference type
+		/// Finds a type
 		/// </summary>
 		/// <param name="className">Class name</param>
 		/// <param name="genericArguments">Generic arguments</param>
 		/// <returns></returns>
-		IDebuggerType CreateRefType(string className, params IDebuggerType[] genericArguments);
-
-		/// <summary>
-		/// Creates a value type
-		/// </summary>
-		/// <param name="className">Class name</param>
-		/// <param name="genericArguments">Generic arguments</param>
-		/// <returns></returns>
-		IDebuggerType CreateValueType(string className, params IDebuggerType[] genericArguments);
+		IDebuggerType FindType(string className, params IDebuggerType[] genericArguments);
 	}
 }

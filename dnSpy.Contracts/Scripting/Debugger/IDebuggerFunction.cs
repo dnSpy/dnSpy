@@ -18,6 +18,7 @@
 */
 
 using System;
+using dnlib.DotNet;
 using dnSpy.Contracts.Highlighting;
 
 namespace dnSpy.Contracts.Scripting.Debugger {
@@ -25,6 +26,13 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 	/// A method in a module in the debugged process (<c>ICorDebugFunction</c>)
 	/// </summary>
 	public interface IDebuggerFunction {
+		/// <summary>
+		/// Gets the method signature. It's currently using custom <see cref="TypeDef"/>,
+		/// <see cref="TypeRef"/> and <see cref="TypeSpec"/> instances that don't reveal all
+		/// information available in the metadata.
+		/// </summary>
+		MethodSig MethodSig { get; }
+
 		/// <summary>
 		/// Owner module
 		/// </summary>

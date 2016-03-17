@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.Runtime.InteropServices;
 using dndbg.COM.CorDebug;
 using dndbg.Engine;
 using dnSpy.Contracts.Images;

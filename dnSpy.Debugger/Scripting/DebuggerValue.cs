@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.Scripting {
 		public IDebuggerValue DereferencedValue {
 			get {
 				return debugger.Dispatcher.UI(() => {
-					var res = value.DereferencedValue;
+					var res = value.NeuterCheckDereferencedValue;
 					return res == null ? null : new DebuggerValue(debugger, res);
 				});
 			}
@@ -173,15 +173,6 @@ namespace dnSpy.Debugger.Scripting {
 			get { return (this.vflags & VFlags.ValueClass) != 0; }
 		}
 
-		public IDebuggerValue NeuterCheckDereferencedValue {
-			get {
-				return debugger.Dispatcher.UI(() => {
-					var res = value.NeuterCheckDereferencedValue;
-					return res == null ? null : new DebuggerValue(debugger, res);
-				});
-			}
-		}
-
 		public uint Rank {
 			get { return debugger.Dispatcher.UI(() => value.Rank); }
 		}
@@ -221,8 +212,12 @@ namespace dnSpy.Debugger.Scripting {
 			}
 		}
 
-		readonly Debugger debugger;
+		public CorValue CorValue {
+			get { return value; }
+		}
 		readonly CorValue value;
+
+		readonly Debugger debugger;
 		readonly int hashCode;
 		readonly ulong address;
 		readonly ulong size;
@@ -450,23 +445,7 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public decimal ReadDecimal() {
-			return debugger.Dispatcher.UI(() => {
-				var d = value.ReadGenericValue();
-				if (d == null || d.Length != 16)
-					return decimal.Zero;
-
-				var decimalBits = new int[4];
-				decimalBits[3] = BitConverter.ToInt32(d, 0);
-				decimalBits[2] = BitConverter.ToInt32(d, 4);
-				decimalBits[0] = BitConverter.ToInt32(d, 8);
-				decimalBits[1] = BitConverter.ToInt32(d, 12);
-				try {
-					return new decimal(decimalBits);
-				}
-				catch (ArgumentException) {
-				}
-				return decimal.Zero;
-			});
+			return debugger.Dispatcher.UI(() => Utils.CreateDecimal(value.ReadGenericValue()));
 		}
 
 		public void Write(bool value) {
@@ -518,27 +497,7 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public void Write(decimal value) {
-			debugger.Dispatcher.UI(() => {
-				var d = GetBytes(value);
-				this.value.WriteGenericValue(d);
-			});
-		}
-
-		static byte[] GetBytes(decimal d) {
-			var decimalBits = decimal.GetBits(d);
-			var bytes = new byte[16];
-			WriteInt32(bytes, 0, decimalBits[3]);
-			WriteInt32(bytes, 4, decimalBits[2]);
-			WriteInt32(bytes, 8, decimalBits[0]);
-			WriteInt32(bytes, 12, decimalBits[1]);
-			return bytes;
-		}
-
-		static void WriteInt32(byte[] dest, int index, int v) {
-			dest[index + 0] = (byte)v;
-			dest[index + 1] = (byte)(v >> 8);
-			dest[index + 2] = (byte)(v >> 16);
-			dest[index + 3] = (byte)(v >> 24);
+			debugger.Dispatcher.UI(() => this.value.WriteGenericValue(Utils.GetBytes(value)));
 		}
 
 		CorValue GetDataValue() {

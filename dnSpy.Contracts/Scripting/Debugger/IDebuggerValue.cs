@@ -200,11 +200,6 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		bool IsNeutered { get; }
 
 		/// <summary>
-		/// Returns <see cref="DereferencedValue"/>
-		/// </summary>
-		IDebuggerValue NeuterCheckDereferencedValue { get; }
-
-		/// <summary>
 		/// Disposes the handle if it's a handle (<see cref="IsHandle"/>)
 		/// </summary>
 		/// <returns></returns>

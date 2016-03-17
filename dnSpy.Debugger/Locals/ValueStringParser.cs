@@ -346,6 +346,7 @@ namespace dnSpy.Debugger.Locals {
 					return null;
 				}
 
+			case CorElementType.Class:
 			case CorElementType.ValueType:
 				if (type.IsSystemDecimal) {
 					var value = NumberVMUtils.ParseDecimal(text, out error);
@@ -354,9 +355,6 @@ namespace dnSpy.Debugger.Locals {
 					bytes = GetBytes(value);
 					return null;
 				}
-				return null;
-
-			case CorElementType.Class:
 				return null;
 
 			case CorElementType.I:

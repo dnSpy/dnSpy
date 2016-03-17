@@ -108,6 +108,19 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		IDebuggerFunction FindMethod(string name);
 
 		/// <summary>
+		/// Finds methods
+		/// </summary>
+		/// <param name="name">Method name</param>
+		/// <returns></returns>
+		IDebuggerFunction[] FindMethods(string name);
+
+		/// <summary>
+		/// Returns all constructors
+		/// </summary>
+		/// <returns></returns>
+		IDebuggerFunction[] FindConstructors();
+
+		/// <summary>
 		/// Write this to <paramref name="output"/>
 		/// </summary>
 		/// <param name="output">Destination</param>

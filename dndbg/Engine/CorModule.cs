@@ -18,6 +18,8 @@
 */
 
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using dndbg.COM.CorDebug;
@@ -295,6 +297,45 @@ namespace dndbg.Engine {
 					return this.GetClassFromToken(tdToken);
 			}
 			return null;
+		}
+
+		/// <summary>
+		/// Finds a class using a cache. Shouldn't be called if it's a dynamic module since types
+		/// can be added.
+		/// </summary>
+		/// <param name="name">Full class name</param>
+		/// <returns></returns>
+		public CorClass FindClassCache(string name) {
+			uint token;
+			if (findClassCacheDict != null && findClassCacheDict.TryGetValue(name, out token))
+				return this.GetClassFromToken(token);
+
+			if (findClassCacheDict == null) {
+				Debug.Assert(findClassCacheEnum == null);
+				findClassCacheDict = new Dictionary<string, uint>(StringComparer.Ordinal);
+				findClassCacheEnum = GetClasses().GetEnumerator();
+			}
+			else if (findClassCacheEnum == null)
+				return null;
+			while (findClassCacheEnum.MoveNext()) {
+				var t = findClassCacheEnum.Current;
+				var typeName = t.Item1;
+				if (!findClassCacheDict.ContainsKey(typeName))
+					findClassCacheDict[typeName] = t.Item2;
+				if (typeName == name)
+					return this.GetClassFromToken(t.Item2);
+			}
+			findClassCacheEnum.Dispose();
+			findClassCacheEnum = null;
+			return null;
+		}
+		Dictionary<string, uint> findClassCacheDict;
+		IEnumerator<Tuple<string, uint>> findClassCacheEnum;
+
+		IEnumerable<Tuple<string, uint>> GetClasses() {
+			var mdi = this.GetMetaDataInterface<IMetaDataImport>();
+			foreach (var tdToken in MDAPI.GetTypeDefTokens(mdi))
+				yield return Tuple.Create(MDAPI.GetTypeDefName(mdi, tdToken), tdToken);
 		}
 
 		public static bool operator ==(CorModule a, CorModule b) {

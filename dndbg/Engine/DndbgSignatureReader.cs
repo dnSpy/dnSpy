@@ -25,108 +25,15 @@ using dnlib.DotNet.MD;
 
 namespace dndbg.Engine {
 	struct DebugSignatureReader {
-		static readonly CorLibTypes corLibTypes = new CorLibTypes();
+		static DebugSignatureReader() {
+			noOwnerModule = new ModuleDefUser();
+			corLibTypes = new CorLibTypes(noOwnerModule);
+		}
+		static readonly ModuleDef noOwnerModule;
+		static readonly CorLibTypes corLibTypes;
 
-		internal sealed class CorLibTypes : ICorLibTypes {
-			static readonly ITypeDefOrRef dummyRef = new TypeDefUser(UTF8String.Empty);
-			static readonly CorLibTypeSig sigVoid = new CorLibTypeSig(dummyRef, ElementType.Void);
-			static readonly CorLibTypeSig sigBoolean = new CorLibTypeSig(dummyRef, ElementType.Boolean);
-			static readonly CorLibTypeSig sigChar = new CorLibTypeSig(dummyRef, ElementType.Char);
-			static readonly CorLibTypeSig sigI1 = new CorLibTypeSig(dummyRef, ElementType.I1);
-			static readonly CorLibTypeSig sigU1 = new CorLibTypeSig(dummyRef, ElementType.U1);
-			static readonly CorLibTypeSig sigI2 = new CorLibTypeSig(dummyRef, ElementType.I2);
-			static readonly CorLibTypeSig sigU2 = new CorLibTypeSig(dummyRef, ElementType.U2);
-			static readonly CorLibTypeSig sigI4 = new CorLibTypeSig(dummyRef, ElementType.I4);
-			static readonly CorLibTypeSig sigU4 = new CorLibTypeSig(dummyRef, ElementType.U4);
-			static readonly CorLibTypeSig sigI8 = new CorLibTypeSig(dummyRef, ElementType.I8);
-			static readonly CorLibTypeSig sigU8 = new CorLibTypeSig(dummyRef, ElementType.U8);
-			static readonly CorLibTypeSig sigR4 = new CorLibTypeSig(dummyRef, ElementType.R4);
-			static readonly CorLibTypeSig sigR8 = new CorLibTypeSig(dummyRef, ElementType.R8);
-			static readonly CorLibTypeSig sigString = new CorLibTypeSig(dummyRef, ElementType.String);
-			static readonly CorLibTypeSig sigTypedByRef = new CorLibTypeSig(dummyRef, ElementType.TypedByRef);
-			static readonly CorLibTypeSig sigI = new CorLibTypeSig(dummyRef, ElementType.I);
-			static readonly CorLibTypeSig sigU = new CorLibTypeSig(dummyRef, ElementType.U);
-			static readonly CorLibTypeSig sigObject = new CorLibTypeSig(dummyRef, ElementType.Object);
-
-			public CorLibTypeSig Void {
-				get { return sigVoid; }
-			}
-
-			public CorLibTypeSig Boolean {
-				get { return sigBoolean; }
-			}
-
-			public CorLibTypeSig Char {
-				get { return sigChar; }
-			}
-
-			public CorLibTypeSig SByte {
-				get { return sigI1; }
-			}
-
-			public CorLibTypeSig Byte {
-				get { return sigU1; }
-			}
-
-			public CorLibTypeSig Int16 {
-				get { return sigI2; }
-			}
-
-			public CorLibTypeSig UInt16 {
-				get { return sigU2; }
-			}
-
-			public CorLibTypeSig Int32 {
-				get { return sigI4; }
-			}
-
-			public CorLibTypeSig UInt32 {
-				get { return sigU4; }
-			}
-
-			public CorLibTypeSig Int64 {
-				get { return sigI8; }
-			}
-
-			public CorLibTypeSig UInt64 {
-				get { return sigU8; }
-			}
-
-			public CorLibTypeSig Single {
-				get { return sigR4; }
-			}
-
-			public CorLibTypeSig Double {
-				get { return sigR8; }
-			}
-
-			public CorLibTypeSig String {
-				get { return sigString; }
-			}
-
-			public CorLibTypeSig TypedReference {
-				get { return sigTypedByRef; }
-			}
-
-			public CorLibTypeSig IntPtr {
-				get { return sigI; }
-			}
-
-			public CorLibTypeSig UIntPtr {
-				get { return sigU; }
-			}
-
-			public CorLibTypeSig Object {
-				get { return sigObject; }
-			}
-
-			public AssemblyRef AssemblyRef {
-				get { throw new NotImplementedException(); }
-			}
-
-			public TypeRef GetTypeRef(string @namespace, string name) {
-				throw new NotImplementedException();
-			}
+		internal static CorLibTypes CorLibTypes {
+			get { return corLibTypes; }
 		}
 
 		sealed class SignatureReaderHelper : ISignatureReaderHelper {
@@ -145,9 +52,9 @@ namespace dndbg.Engine {
 					return null;
 				uint rid = MDToken.ToRID(token);
 				switch (MDToken.ToTable(token)) {
-				case Table.TypeDef:		return new TypeDefDndbg(mdi) { Rid = rid };
-				case Table.TypeRef:		return new TypeRefDndbg(mdi) { Rid = rid };
-				case Table.TypeSpec:	return new TypeSpecDndbg(mdi) { Rid = rid };
+				case Table.TypeDef:		return new TypeDefDndbg(mdi, rid);
+				case Table.TypeRef:		return new TypeRefDndbg(mdi, rid);
+				case Table.TypeSpec:	return new TypeSpecDndbg(mdi, rid, this);
 				}
 				return null;
 			}
@@ -166,7 +73,7 @@ namespace dndbg.Engine {
 		}
 
 		public static TypeDef CreateTypeDef(IMetaDataImport mdi, uint rid) {
-			return new TypeDefDndbg(mdi) { Rid = rid };
+			return new TypeDefDndbg(mdi, rid);
 		}
 	}
 
@@ -180,9 +87,24 @@ namespace dndbg.Engine {
 		}
 		readonly IMetaDataImport mdi;
 
-		public TypeDefDndbg(IMetaDataImport mdi)
+		public TypeDefDndbg(IMetaDataImport mdi, uint rid)
 			: base(UTF8String.Empty) {
 			this.mdi = mdi;
+			this.rid = rid;
+			InitializeName(MDAPI.GetTypeDefName(mdi, MDToken.Raw), out @namespace, out name);
+		}
+
+		internal static void InitializeName(string fullname, out UTF8String @namespace, out UTF8String name) {
+			string s = fullname ?? string.Empty;
+			int index = s.LastIndexOf('.');
+			if (index < 0) {
+				@namespace = UTF8String.Empty;
+				name = s;
+			}
+			else {
+				@namespace = s.Substring(0, index);
+				name = s.Substring(index + 1);
+			}
 		}
 	}
 
@@ -192,9 +114,11 @@ namespace dndbg.Engine {
 		}
 		readonly IMetaDataImport mdi;
 
-		public TypeRefDndbg(IMetaDataImport mdi)
+		public TypeRefDndbg(IMetaDataImport mdi, uint rid)
 			: base(null, UTF8String.Empty) {
 			this.mdi = mdi;
+			this.rid = rid;
+			TypeDefDndbg.InitializeName(MDAPI.GetTypeRefName(mdi, MDToken.Raw), out @namespace, out name);
 		}
 	}
 
@@ -204,9 +128,31 @@ namespace dndbg.Engine {
 		}
 		readonly IMetaDataImport mdi;
 
-		public TypeSpecDndbg(IMetaDataImport mdi)
+		readonly ISignatureReaderHelper helper;
+
+		public TypeSpecDndbg(IMetaDataImport mdi, uint rid, ISignatureReaderHelper helper)
 			: base() {
 			this.mdi = mdi;
+			this.rid = rid;
+			this.helper = helper;
 		}
+
+		protected override TypeSig GetTypeSigAndExtraData_NoLock(out byte[] extraData) {
+			var sigData = MDAPI.GetTypeSpecSignatureBlob(mdi, MDToken.Raw);
+			var sig = ReadTypeSignature(sigData, new GenericParamContext(), out extraData);
+			if (sig != null)
+				sig.Rid = rid;
+			return sig;
+		}
+
+		TypeSig ReadTypeSignature(byte[] data, GenericParamContext gpContext, out byte[] extraData) {
+			if (data == null) {
+				extraData = null;
+				return null;
+			}
+
+			return SignatureReader.ReadTypeSig(helper, new CorLibTypes(noOwnerModule), data, gpContext, out extraData);
+		}
+		static readonly ModuleDef noOwnerModule = new ModuleDefUser();
 	}
 }

@@ -22,13 +22,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using dndbg.COM.MetaHost;
 using dndbg.Engine;
 using dnlib.PE;
-using Microsoft.Win32.SafeHandles;
 
 namespace dnSpy.Debugger.Dialogs {
 	sealed class ManagedProcessesFinder {

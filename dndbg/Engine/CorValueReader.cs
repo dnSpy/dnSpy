@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
@@ -241,9 +242,10 @@ namespace dndbg.Engine {
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
+				Debug.Assert(Utils.DebuggeeIntPtrSize == IntPtr.Size, "Invalid IntPtr size");
 				if (Utils.DebuggeeIntPtrSize == 4)
-					return new CorValueResult(BitConverter.ToInt32(data, 0));
-				return new CorValueResult(BitConverter.ToInt64(data, 0));
+					return new CorValueResult(new IntPtr(BitConverter.ToInt32(data, 0)));
+				return new CorValueResult(new IntPtr(BitConverter.ToInt64(data, 0)));
 
 			case CorElementType.U:
 			case CorElementType.Ptr:
@@ -253,10 +255,12 @@ namespace dndbg.Engine {
 				data = value.ReadGenericValue();
 				if (data == null)
 					break;
+				Debug.Assert(Utils.DebuggeeIntPtrSize == UIntPtr.Size, "Invalid UIntPtr size");
 				if (Utils.DebuggeeIntPtrSize == 4)
-					return new CorValueResult(BitConverter.ToUInt32(data, 0));
-				return new CorValueResult(BitConverter.ToUInt64(data, 0));
+					return new CorValueResult(new UIntPtr(BitConverter.ToUInt32(data, 0)));
+				return new CorValueResult(new UIntPtr(BitConverter.ToUInt64(data, 0)));
 
+			case CorElementType.Class:
 			case CorElementType.ValueType:
 				var res = GetDecimalResult(value);
 				if (res != null)

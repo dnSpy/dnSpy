@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Scripting.Debugger;
@@ -85,7 +86,7 @@ namespace dnSpy.Debugger.Scripting {
 		public IDebuggerType ToType(bool isValueType, IDebuggerType[] typeArgs) {
 			return debugger.Dispatcher.UI(() => {
 				var etype = isValueType ? dndbg.COM.CorDebug.CorElementType.ValueType : dndbg.COM.CorDebug.CorElementType.Class;
-				var type = cls.GetParameterizedType(etype, typeArgs.ToCorType());
+				var type = cls.GetParameterizedType(etype, typeArgs.ToCorTypes());
 				return type == null ? null : new DebuggerType(debugger, type);
 			});
 		}
@@ -105,10 +106,30 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public IDebuggerFunction FindMethod(string methodName) {
+		public IDebuggerFunction FindMethod(string name) {
 			return debugger.Dispatcher.UI(() => {
-				var func = cls.FindFunction(methodName);
+				var func = cls.FindFunction(name);
 				return func == null ? null : new DebuggerFunction(debugger, func);
+			});
+		}
+
+		public IDebuggerFunction[] FindMethods(string name) {
+			return debugger.Dispatcher.UI(() => {
+				var funcs = cls.FindFunctions(name).ToList();
+				var res = new IDebuggerFunction[funcs.Count];
+				for (int i = 0; i < res.Length; i++)
+					res[i] = new DebuggerFunction(debugger, funcs[i]);
+				return res;
+			});
+		}
+
+		public IDebuggerFunction[] FindConstructors() {
+			return debugger.Dispatcher.UI(() => {
+				var ctors = cls.FindConstructors();
+				var res = new IDebuggerFunction[ctors.Length];
+				for (int i = 0; i < res.Length; i++)
+					res[i] = new DebuggerFunction(debugger, ctors[i]);
+				return res;
 			});
 		}
 

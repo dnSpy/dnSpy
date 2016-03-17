@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using dndbg.COM.CorDebug;
 using dndbg.COM.MetaData;
@@ -115,7 +116,8 @@ namespace dndbg.Engine {
 		/// </summary>
 		public bool IsEnum {
 			get {
-				if (ElementType != CorElementType.ValueType)
+				// Also check for Class since the CLR debugger doesn't care if it's correct
+				if (ElementType != CorElementType.ValueType && ElementType != CorElementType.Class)
 					return false;
 				var b = Base;
 				if (b == null)
@@ -444,6 +446,43 @@ namespace dndbg.Engine {
 		public bool HasAttribute(string attributeName) {
 			var cls = Class;
 			return cls != null && cls.HasAttribute(attributeName);
+		}
+
+		/// <summary>
+		/// Finds a method
+		/// </summary>
+		/// <param name="name">Method name</param>
+		/// <returns></returns>
+		public CorFunction FindFunction(string name, bool checkBaseClasses = true) {
+			return FindFunctions(name, checkBaseClasses).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Finds methods
+		/// </summary>
+		/// <param name="name">Method name</param>
+		/// <returns></returns>
+		public IEnumerable<CorFunction> FindFunctions(string name, bool checkBaseClasses = true) {
+			for (var type = this; type != null; type = type.Base) {
+				if (!checkBaseClasses && (object)this != type)
+					break;
+				if (!type.HasClass)
+					continue;
+				var cls = type.Class;
+				if (cls == null)
+					continue;
+
+				var mod = cls.Module;
+				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				foreach (var mdToken in MDAPI.GetMethodTokens(mdi, cls.Token)) {
+					if (MDAPI.GetMethodName(mdi, mdToken) == name) {
+						var func = mod.GetFunctionFromToken(mdToken);
+						Debug.Assert(func != null);
+						if (func != null)
+							yield return func;
+					}
+				}
+			}
 		}
 
 		public static bool operator ==(CorType a, CorType b) {
