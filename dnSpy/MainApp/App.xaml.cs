@@ -136,7 +136,7 @@ namespace dnSpy.MainApp {
 				try {
 					if (!CanLoadPlugin(file))
 						continue;
-					var asm = Assembly.LoadFile(file);
+					var asm = Assembly.LoadFrom(file);
 					aggregateCatalog.Catalogs.Add(new AssemblyCatalog(asm));
 					loadedPlugins.Add(new LoadedPlugin(asm));
 				}
