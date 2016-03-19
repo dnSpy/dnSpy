@@ -442,7 +442,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		IDebuggerType FindType(Type type);
 
 		/// <summary>
-		/// Gets type <see cref="void"/> in <see cref="FirstAppDomain"/>
+		/// Gets type <see cref="Void"/> in <see cref="FirstAppDomain"/>
 		/// </summary>
 		IDebuggerType Void { get; }
 

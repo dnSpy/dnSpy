@@ -172,7 +172,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		IDebuggerType CreateFunctionPointer(params IDebuggerType[] types);
 
 		/// <summary>
-		/// Gets type <see cref="void"/>
+		/// Gets type <see cref="Void"/>
 		/// </summary>
 		IDebuggerType Void { get; }
 

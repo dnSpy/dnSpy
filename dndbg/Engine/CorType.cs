@@ -464,7 +464,7 @@ namespace dndbg.Engine {
 		/// <returns></returns>
 		public IEnumerable<CorFunction> FindFunctions(string name, bool checkBaseClasses = true) {
 			for (var type = this; type != null; type = type.Base) {
-				if (!checkBaseClasses && (object)this != type)
+				if (!checkBaseClasses && (object)this != (object)type)
 					break;
 				if (!type.HasClass)
 					continue;
