@@ -172,7 +172,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="value">A simple type (ints, doubles, string, null),
 		/// arrays (<c>int[]</c>, <c>string[]</c>), <see cref="IDebuggerValue"/> (same
 		/// instance is returned), <see cref="IDebuggerType"/>, <see cref="Type"/>.
-		/// Use <see cref="Box"/> to box values or call <see cref="CreateBox(object)"/>.</param>
+		/// Use <see cref="Debugger.Box"/> to box values or call <see cref="CreateBox(object)"/>.</param>
 		/// <returns></returns>
 		IDebuggerValue Create(object value);
 
@@ -529,6 +529,20 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="rawAssembly">Assembly bytes</param>
 		/// <returns></returns>
 		IDebuggerValue AssemblyLoad(byte[] rawAssembly);
+
+		/// <summary>
+		/// Loads the assembly in the debugged process by calling <see cref="Assembly.Load(string)"/>
+		/// </summary>
+		/// <param name="assemblyString">Assembly name</param>
+		/// <returns></returns>
+		IDebuggerValue AssemblyLoad(string assemblyString);
+
+		/// <summary>
+		/// Loads the assembly in the debugged process by calling <see cref="Assembly.LoadFrom(string)"/>
+		/// </summary>
+		/// <param name="assemblyFile">Assembly filename</param>
+		/// <returns></returns>
+		IDebuggerValue AssemblyLoadFrom(string assemblyFile);
 
 		/// <summary>
 		/// Loads the assembly in the debugged process by calling <see cref="Assembly.LoadFile(string)"/>

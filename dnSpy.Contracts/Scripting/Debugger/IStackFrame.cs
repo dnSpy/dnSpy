@@ -18,6 +18,7 @@
 */
 
 using System.Collections.Generic;
+using System.Threading;
 using dnSpy.Contracts.Highlighting;
 
 namespace dnSpy.Contracts.Scripting.Debugger {
@@ -222,9 +223,43 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		void StepInto();
 
 		/// <summary>
+		/// Step into the method and call <see cref="IDebugger.Wait(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepIntoWait(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step into the method and call <see cref="IDebugger.Wait(CancellationToken, int)"/>
+		/// </summary>
+		/// <param name="token">Cancellation token</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepIntoWait(CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
 		/// Step over the method
 		/// </summary>
 		void StepOver();
+
+		/// <summary>
+		/// Step over the method and call <see cref="IDebugger.Wait(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepOverWait(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step over the method and call <see cref="IDebugger.Wait(CancellationToken, int)"/>
+		/// </summary>
+		/// <param name="token">Cancellation token</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepOverWait(CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
 		/// Step out of the method
@@ -232,10 +267,44 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		void StepOut();
 
 		/// <summary>
+		/// Step out of the method and call <see cref="IDebugger.Wait(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepOutWait(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step out of the method and call <see cref="IDebugger.Wait(CancellationToken, int)"/>
+		/// </summary>
+		/// <param name="token">Cancellation token</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepOutWait(CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
 		/// Let the program execute until it returns to this frame
 		/// </summary>
 		/// <returns></returns>
 		bool RunTo();
+
+		/// <summary>
+		/// Let the program execute until it returns to this frame and call <see cref="IDebugger.Wait(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool RunToWait(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Let the program execute until it returns to this frame and call <see cref="IDebugger.Wait(CancellationToken, int)"/>
+		/// </summary>
+		/// <param name="token">Cancellation token</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool RunToWait(CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
 		/// Set next instruction to execute. All <see cref="IStackFrame"/> and <see cref="IDebuggerValue"/>

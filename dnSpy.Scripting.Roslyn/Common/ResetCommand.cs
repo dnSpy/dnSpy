@@ -27,9 +27,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			get { yield return "reset"; }
 		}
 
-		public string ShortDescription {
-			get { return dnSpy_Scripting_Roslyn_Resources.HelpResetDescription; }
-		}
+		public string ShortDescription => dnSpy_Scripting_Roslyn_Resources.HelpResetDescription;
 
 		public void Execute(ScriptControlVM vm, string[] args) {
 			bool noconfig = args.Any(a => a == "noconfig");

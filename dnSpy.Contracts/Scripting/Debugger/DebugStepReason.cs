@@ -19,27 +19,38 @@
 
 namespace dnSpy.Contracts.Scripting.Debugger {
 	/// <summary>
-	/// Breakpoint
+	/// Step reason
 	/// </summary>
-	public interface IBreakpoint {
-		/// <summary>
-		/// Gets the breakpoint kind
-		/// </summary>
-		BreakpointKind Kind { get; }
+	public enum DebugStepReason {
+		// IMPORTANT: This enum should match dndbg.COM.CorDebug.CorDebugStepReason (enum field names may be different)
 
 		/// <summary>
-		/// true if the breakpoint is enabled
+		/// Stepping completed normally, within the same function.
 		/// </summary>
-		bool IsEnabled { get; set; }
-
+		Normal,
 		/// <summary>
-		/// The user can set this property to any value. It's not used by the debugger.
+		/// Stepping continued normally, after the function returned.
 		/// </summary>
-		object Tag { get; set; }
-
+		Return,
 		/// <summary>
-		/// Removes the breakpoint
+		/// Stepping continued normally, at the beginning of a newly called function.
 		/// </summary>
-		void Remove();
+		Call,
+		/// <summary>
+		/// An exception was generated and control was passed to an exception filter.
+		/// </summary>
+		ExceptionFilter,
+		/// <summary>
+		/// An exception was generated and control was passed to an exception handler.
+		/// </summary>
+		ExceptionHandler,
+		/// <summary>
+		/// Control was passed to an interceptor.
+		/// </summary>
+		Intercept,
+		/// <summary>
+		/// The thread exited before the step was completed.
+		/// </summary>
+		Exit,
 	}
 }

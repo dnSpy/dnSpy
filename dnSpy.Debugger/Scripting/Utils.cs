@@ -235,7 +235,7 @@ namespace dnSpy.Debugger.Scripting {
 			return new DebuggerValue(debugger, res.ResultOrException);
 		}
 
-		public static decimal CreateDecimal(byte[] data) {
+		public static decimal ToDecimal(byte[] data) {
 			if (data == null || data.Length != 16)
 				return decimal.Zero;
 
@@ -267,6 +267,50 @@ namespace dnSpy.Debugger.Scripting {
 			dest[index + 1] = (byte)(v >> 8);
 			dest[index + 2] = (byte)(v >> 16);
 			dest[index + 3] = (byte)(v >> 24);
+		}
+
+		public static DebuggerPauseState Convert(DBG.DebuggerPauseState ps) {
+			switch (ps.Reason) {
+			case DBG.DebuggerPauseReason.Other:
+				return new DebuggerPauseState(PauseReason.Other);
+
+			case DBG.DebuggerPauseReason.UnhandledException:
+				return new DebuggerPauseState(PauseReason.UnhandledException);
+
+			case DBG.DebuggerPauseReason.Exception:
+				return new DebuggerPauseState(PauseReason.Exception);
+
+			case DBG.DebuggerPauseReason.DebugEventBreakpoint:
+				var deb = (DBG.DebugEventBreakpointPauseState)ps;
+				return new EventBreakpointPauseState(deb.Breakpoint.Tag as IEventBreakpoint ?? NullEventBreakpoint.Instance);
+
+			case DBG.DebuggerPauseReason.AnyDebugEventBreakpoint:
+				var adeb = (DBG.AnyDebugEventBreakpointPauseState)ps;
+				return new AnyEventBreakpointPauseState(adeb.Breakpoint.Tag as IAnyEventBreakpoint ?? NullAnyEventBreakpoint.Instance);
+
+			case DBG.DebuggerPauseReason.Break:
+				return new DebuggerPauseState(PauseReason.Break);
+
+			case DBG.DebuggerPauseReason.ILCodeBreakpoint:
+				var ilbp = (DBG.ILCodeBreakpointPauseState)ps;
+				return new ILBreakpointPauseState(ilbp.Breakpoint.Tag as IILBreakpoint ?? NullILBreakpoint.Instance);
+
+			case DBG.DebuggerPauseReason.NativeCodeBreakpoint:
+				var nbp = (DBG.NativeCodeBreakpointPauseState)ps;
+				return new NativeBreakpointPauseState(nbp.Breakpoint.Tag as INativeBreakpoint ?? NullNativeBreakpoint.Instance);
+
+			case DBG.DebuggerPauseReason.Step:
+				return new StepPauseState((DebugStepReason)((DBG.StepPauseState)ps).StepReason);
+
+			case DBG.DebuggerPauseReason.UserBreak:
+				return new DebuggerPauseState(PauseReason.UserBreak);
+
+			case DBG.DebuggerPauseReason.Eval:
+				return new DebuggerPauseState(PauseReason.Eval);
+
+			default:
+				return new DebuggerPauseState(PauseReason.Other);
+			}
 		}
 	}
 }

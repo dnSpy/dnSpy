@@ -39,56 +39,6 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 		}
 
-		public event EventHandler ScriptReset;
-
-		public void RaiseScriptReset() {
-			ScriptReset?.Invoke(this, EventArgs.Empty);
-		}
-
-		public IScriptGlobals Instance {
-			get { return this; }
-		}
-
-		public CancellationToken Token {
-			get { return token; }
-		}
-
-		public void Print(string text) {
-			owner.Print(this, text);
-		}
-
-		public void Print(string fmt, params object[] args) {
-			Print(string.Format(fmt, args));
-		}
-
-		public void PrintLine(string text = null) {
-			owner.PrintLine(this, text);
-		}
-
-		public void PrintLine(string fmt, params object[] args) {
-			PrintLine(string.Format(fmt, args));
-		}
-
-		public void Print(object value) {
-			owner.Print(this, value);
-		}
-
-		public void PrintLine(object value) {
-			owner.PrintLine(this, value);
-		}
-
-		public Dispatcher UIDispatcher {
-			get { return dispatcher; }
-		}
-
-		public void UI(Action action) {
-			UIDispatcher.Invoke(action, DispatcherPriority.Send);
-		}
-
-		public T UI<T>(Func<T> func) {
-			return UIDispatcher.Invoke(func, DispatcherPriority.Send);
-		}
-
 		void _UI(Action a) {
 			if (UIDispatcher.CheckAccess()) {
 				a();
@@ -103,48 +53,45 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			return UIDispatcher.Invoke(a, DispatcherPriority.Send);
 		}
 
-		public void Break() {
-			Debugger.Break();
-		}
+		public event EventHandler ScriptReset;
+		public void RaiseScriptReset() => ScriptReset?.Invoke(this, EventArgs.Empty);
+		public IScriptGlobals Instance => this;
+		public CancellationToken Token => token;
+		public void Print(string text) => owner.Print(this, text);
+		public void Print(string fmt, params object[] args) => Print(string.Format(fmt, args));
+		public void PrintLine(string text = null) => owner.PrintLine(this, text);
+		public void PrintLine(string fmt, params object[] args) => PrintLine(string.Format(fmt, args));
+		public void Print(object value) => owner.Print(this, value);
+		public void PrintLine(object value) => owner.PrintLine(this, value);
+		public Dispatcher UIDispatcher => dispatcher;
+		public void UI(Action action) => _UI(action);
+		public T UI<T>(Func<T> func) => _UI(func);
+		public void Break() => Debugger.Break();
+		public T Resolve<T>() => _UI(() => owner.ServiceLocator.Resolve<T>());
+		public T TryResolve<T>() => _UI(() => owner.ServiceLocator.TryResolve<T>());
 
-		public T Resolve<T>() {
-			return _UI(() => owner.ServiceLocator.Resolve<T>());
-		}
+		public MsgBoxButton Show(string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null) =>
+			_UI(() => Shared.App.MsgBox.Instance.Show(message, buttons, ownerWindow));
 
-		public T TryResolve<T>() {
-			return _UI(() => owner.ServiceLocator.TryResolve<T>());
-		}
+		public MsgBoxButton ShowOKCancel(string message, Window ownerWindow = null) =>
+			_UI(() => Shared.App.MsgBox.Instance.Show(message, MsgBoxButton.OK | MsgBoxButton.Cancel, ownerWindow));
 
-		public MsgBoxButton Show(string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null) {
-			return _UI(() => Shared.App.MsgBox.Instance.Show(message, buttons, ownerWindow));
-		}
+		public MsgBoxButton ShowOC(string message, Window ownerWindow = null) => ShowOKCancel(message, ownerWindow);
 
-		public MsgBoxButton ShowOKCancel(string message, Window ownerWindow = null) {
-			return _UI(() => Shared.App.MsgBox.Instance.Show(message, MsgBoxButton.OK | MsgBoxButton.Cancel, ownerWindow));
-		}
+		public MsgBoxButton ShowYesNo(string message, Window ownerWindow = null) =>
+			_UI(() => Shared.App.MsgBox.Instance.Show(message, MsgBoxButton.Yes | MsgBoxButton.No, ownerWindow));
 
-		public MsgBoxButton ShowYesNo(string message, Window ownerWindow = null) {
-			return _UI(() => Shared.App.MsgBox.Instance.Show(message, MsgBoxButton.Yes | MsgBoxButton.No, ownerWindow));
-		}
+		public MsgBoxButton ShowYN(string message, Window ownerWindow = null) => ShowYesNo(message, ownerWindow);
 
-		public MsgBoxButton ShowYN(string message, Window ownerWindow = null) {
-			return ShowYesNo(message, ownerWindow);
-		}
+		public MsgBoxButton ShowYesNoCancel(string message, Window ownerWindow = null) =>
+			_UI(() => Shared.App.MsgBox.Instance.Show(message, MsgBoxButton.Yes | MsgBoxButton.No | MsgBoxButton.Cancel, ownerWindow));
 
-		public MsgBoxButton ShowYesNoCancel(string message, Window ownerWindow = null) {
-			return _UI(() => Shared.App.MsgBox.Instance.Show(message, MsgBoxButton.Yes | MsgBoxButton.No | MsgBoxButton.Cancel, ownerWindow));
-		}
+		public MsgBoxButton ShowYNC(string message, Window ownerWindow = null) => ShowYesNoCancel(message, ownerWindow);
 
-		public MsgBoxButton ShowYNC(string message, Window ownerWindow = null) {
-			return ShowYesNoCancel(message, ownerWindow);
-		}
+		public T Ask<T>(string labelMessage, string defaultText = null, string title = null, Func<string, T> converter = null, Func<string, string> verifier = null, Window ownerWindow = null) =>
+			_UI(() => Shared.App.MsgBox.Instance.Ask(labelMessage, defaultText, title, converter, verifier, ownerWindow));
 
-		public T Ask<T>(string labelMessage, string defaultText = null, string title = null, Func<string, T> converter = null, Func<string, string> verifier = null, Window ownerWindow = null) {
-			return _UI(() => Shared.App.MsgBox.Instance.Ask(labelMessage, defaultText, title, converter, verifier, ownerWindow));
-		}
-
-		public void Show(Exception exception, string msg = null, Window ownerWindow = null) {
+		public void Show(Exception exception, string msg = null, Window ownerWindow = null) =>
 			_UI(() => Shared.App.MsgBox.Instance.Show(exception, msg, ownerWindow));
-		}
 	}
 }

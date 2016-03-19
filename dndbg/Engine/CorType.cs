@@ -134,10 +134,23 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
+		/// true if it's one of the primitive value types
+		/// </summary>
+		public bool IsPrimitiveValueType {
+			get {
+				return (CorElementType.Void <= elemType && elemType <= CorElementType.R8) ||
+						elemType == CorElementType.I || elemType == CorElementType.U ||
+						elemType == CorElementType.TypedByRef;
+			}
+		}
+
+		/// <summary>
 		/// true if this class directly derives from <c>System.ValueType</c>
 		/// </summary>
 		public bool DerivesFromSystemValueType {
 			get {
+				if (IsPrimitiveValueType)
+					return true;
 				var b = Base;
 				return b != null && b.IsSystemValueType;
 			}

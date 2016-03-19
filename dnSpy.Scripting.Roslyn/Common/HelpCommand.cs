@@ -46,9 +46,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			get { yield return "help"; }
 		}
 
-		public string ShortDescription {
-			get { return dnSpy_Scripting_Roslyn_Resources.HelpHelpDescription; }
-		}
+		public string ShortDescription => dnSpy_Scripting_Roslyn_Resources.HelpHelpDescription;
 
 		public void Execute(ScriptControlVM vm, string[] args) {
 			vm.ReplEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.HelpKeyboardShortcuts);

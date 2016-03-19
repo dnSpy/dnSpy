@@ -332,6 +332,13 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		double ReadDouble(uint rva);
 
 		/// <summary>
+		/// Reads a <see cref="decimal"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <returns></returns>
+		decimal ReadDecimal(uint rva);
+
+		/// <summary>
 		/// Writes a <see cref="bool"/> to an address in the debugged process
 		/// </summary>
 		/// <param name="rva">RVA</param>
@@ -414,6 +421,13 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="rva">RVA</param>
 		/// <param name="value">Value</param>
 		void Write(uint rva, double value);
+
+		/// <summary>
+		/// Writes a <see cref="decimal"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="rva">RVA</param>
+		/// <param name="value">Value</param>
+		void Write(uint rva, decimal value);
 
 		/// <summary>
 		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
@@ -561,6 +575,13 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		double ReadDoubleOffset(uint offset);
 
 		/// <summary>
+		/// Reads a <see cref="decimal"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <returns></returns>
+		decimal ReadDecimalOffset(uint offset);
+
+		/// <summary>
 		/// Writes a <see cref="bool"/> to an address in the debugged process
 		/// </summary>
 		/// <param name="offset">File offset</param>
@@ -643,6 +664,13 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="offset">File offset</param>
 		/// <param name="value">Value</param>
 		void WriteOffset(uint offset, double value);
+
+		/// <summary>
+		/// Writes a <see cref="decimal"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="offset">File offset</param>
+		/// <param name="value">Value</param>
+		void WriteOffset(uint offset, decimal value);
 
 		/// <summary>
 		/// Save the module to a byte[]. Can't be called if it's a dynamic assembly (<see cref="IsDynamic"/> is true)

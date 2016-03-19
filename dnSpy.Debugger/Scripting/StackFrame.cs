@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Scripting.Debugger;
@@ -293,16 +294,48 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.StepInto(this);
 		}
 
+		public bool StepIntoWait(int millisecondsTimeout) {
+			return debugger.StepIntoWait(this, millisecondsTimeout);
+		}
+
+		public bool StepIntoWait(CancellationToken token, int millisecondsTimeout) {
+			return debugger.StepIntoWait(this, token, millisecondsTimeout);
+		}
+
 		public void StepOver() {
 			debugger.StepOver(this);
+		}
+
+		public bool StepOverWait(int millisecondsTimeout) {
+			return debugger.StepOverWait(this, millisecondsTimeout);
+		}
+
+		public bool StepOverWait(CancellationToken token, int millisecondsTimeout) {
+			return debugger.StepOverWait(this, token, millisecondsTimeout);
 		}
 
 		public void StepOut() {
 			debugger.StepOut(this);
 		}
 
+		public bool StepOutWait(int millisecondsTimeout) {
+			return debugger.StepOutWait(this, millisecondsTimeout);
+		}
+
+		public bool StepOutWait(CancellationToken token, int millisecondsTimeout) {
+			return debugger.StepOutWait(this, token, millisecondsTimeout);
+		}
+
 		public bool RunTo() {
 			return debugger.RunTo(this);
+		}
+
+		public bool RunToWait(int millisecondsTimeout) {
+			return debugger.RunToWait(this, millisecondsTimeout);
+		}
+
+		public bool RunToWait(CancellationToken token, int millisecondsTimeout) {
+			return debugger.RunToWait(this, token, millisecondsTimeout);
 		}
 
 		public bool SetOffset(int offset) {

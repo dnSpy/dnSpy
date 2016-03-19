@@ -24,6 +24,27 @@ using dnSpy.Contracts.Scripting.Debugger;
 using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Debugger.Scripting {
+	sealed class NullAnyEventBreakpoint : IAnyEventBreakpoint {
+		public static readonly NullAnyEventBreakpoint Instance = new NullAnyEventBreakpoint();
+
+		public bool IsEnabled {
+			get { return false; }
+			set { }
+		}
+
+		public object Tag {
+			get { return null; }
+			set { }
+		}
+
+		public BreakpointKind Kind {
+			get { return BreakpointKind.AnyEvent; }
+		}
+
+		public void Remove() {
+		}
+	}
+
 	sealed class AnyEventBreakpoint : IAnyEventBreakpoint, IDnBreakpointHolder {
 		public BreakpointKind Kind {
 			get { return BreakpointKind.AnyEvent; }
@@ -44,6 +65,8 @@ namespace dnSpy.Debugger.Scripting {
 			}
 		}
 		bool isEnabled;
+
+		public object Tag { get; set; }
 
 		public DnBreakpoint DnBreakpoint {
 			get { return dbgBreakpoint; }
@@ -70,6 +93,7 @@ namespace dnSpy.Debugger.Scripting {
 				throw new InvalidOperationException();
 			dbgBreakpoint = dbg.CreateAnyDebugEventBreakpoint(HitHandler);
 			dbgBreakpoint.IsEnabled = isEnabled;
+			dbgBreakpoint.Tag = this;
 		}
 
 		bool HitHandler(AnyDebugEventBreakpointConditionContext ctx) {

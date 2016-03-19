@@ -322,6 +322,10 @@ namespace dnSpy.Debugger.Scripting {
 			return debugger.ReadDouble(RVAToAddress(rva));
 		}
 
+		public decimal ReadDecimal(uint rva) {
+			return debugger.ReadDecimal(RVAToAddress(rva));
+		}
+
 		public void Write(uint rva, bool value) {
 			debugger.Write(RVAToAddress(rva), value);
 		}
@@ -367,6 +371,10 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public void Write(uint rva, double value) {
+			debugger.Write(RVAToAddress(rva), value);
+		}
+
+		public void Write(uint rva, decimal value) {
 			debugger.Write(RVAToAddress(rva), value);
 		}
 
@@ -446,6 +454,10 @@ namespace dnSpy.Debugger.Scripting {
 			return debugger.ReadDouble(OffsetToAddress(offset));
 		}
 
+		public decimal ReadDecimalOffset(uint offset) {
+			return debugger.ReadDecimal(OffsetToAddress(offset));
+		}
+
 		public void WriteOffset(uint offset, bool value) {
 			debugger.Write(OffsetToAddress(offset), value);
 		}
@@ -494,10 +506,14 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.Write(OffsetToAddress(offset), value);
 		}
 
+		public void WriteOffset(uint offset, decimal value) {
+			debugger.Write(OffsetToAddress(offset), value);
+		}
+
 		public byte[] Save() {
 			if (Address == 0 || Size == 0)
 				throw new InvalidOperationException("Can't save a dynamic assembly");
-			//TODO: Allocate less arrays...
+			//TODO: This code allocates 3 arrays
 			var allBytes = Read(0, Size);
 			if (IsInMemory)
 				return allBytes;

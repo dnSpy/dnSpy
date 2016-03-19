@@ -73,24 +73,9 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Creates a <see cref="IDebuggerType"/>
 		/// </summary>
-		/// <param name="isValueType">true if it's value type, false if it's a reference type</param>
 		/// <param name="typeArgs">Generic type arguments or null</param>
 		/// <returns></returns>
-		IDebuggerType ToType(bool isValueType, IDebuggerType[] typeArgs = null);
-
-		/// <summary>
-		/// Creates a <see cref="IDebuggerType"/> (reference type)
-		/// </summary>
-		/// <param name="typeArgs">Generic type arguments or null</param>
-		/// <returns></returns>
-		IDebuggerType ToRefType(IDebuggerType[] typeArgs = null);
-
-		/// <summary>
-		/// Creates a <see cref="IDebuggerType"/> (value type)
-		/// </summary>
-		/// <param name="typeArgs">Generic type arguments or null</param>
-		/// <returns></returns>
-		IDebuggerType ToValueType(IDebuggerType[] typeArgs = null);
+		IDebuggerType ToType(IDebuggerType[] typeArgs = null);
 
 		/// <summary>
 		/// Reads a static field
@@ -101,24 +86,60 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		IDebuggerValue GetStaticFieldValue(uint token, IStackFrame frame);
 
 		/// <summary>
-		/// Finds a method
+		/// Finds a method. If only one method is found, it's returned, else the method that takes
+		/// no arguments is returned, or null if it doesn't exist.
 		/// </summary>
 		/// <param name="name">Method name</param>
+		/// <param name="checkBaseClasses">true to check base classes</param>
 		/// <returns></returns>
-		IDebuggerFunction FindMethod(string name);
+		IDebuggerFunction FindMethod(string name, bool checkBaseClasses = true);
+
+		/// <summary>
+		/// Finds a method with a certain signature. Base classes are also searched.
+		/// </summary>
+		/// <param name="name">Method name</param>
+		/// <param name="argTypes">Argument types. This can be <see cref="System.Type"/>s or strings
+		/// with the full name of the argument types</param>
+		/// <returns></returns>
+		IDebuggerFunction FindMethod(string name, params object[] argTypes);
+
+		/// <summary>
+		/// Finds a method with a certain signature.
+		/// </summary>
+		/// <param name="name">Method name</param>
+		/// <param name="checkBaseClasses">true to check base classes</param>
+		/// <param name="argTypes">Argument types. This can be <see cref="System.Type"/>s or strings
+		/// with the full name of the argument types</param>
+		/// <returns></returns>
+		IDebuggerFunction FindMethod(string name, bool checkBaseClasses, params object[] argTypes);
 
 		/// <summary>
 		/// Finds methods
 		/// </summary>
 		/// <param name="name">Method name</param>
+		/// <param name="checkBaseClasses">true to check base classes</param>
 		/// <returns></returns>
-		IDebuggerFunction[] FindMethods(string name);
+		IDebuggerFunction[] FindMethods(string name, bool checkBaseClasses = true);
 
 		/// <summary>
 		/// Returns all constructors
 		/// </summary>
 		/// <returns></returns>
 		IDebuggerFunction[] FindConstructors();
+
+		/// <summary>
+		/// Returns the default constructor or null if not found
+		/// </summary>
+		/// <returns></returns>
+		IDebuggerFunction FindConstructor();
+
+		/// <summary>
+		/// Returns a constructor
+		/// </summary>
+		/// <param name="argTypes">Argument types. This can be <see cref="System.Type"/>s or strings
+		/// with the full name of the argument types</param>
+		/// <returns></returns>
+		IDebuggerFunction FindConstructor(params object[] argTypes);
 
 		/// <summary>
 		/// Write this to <paramref name="output"/>

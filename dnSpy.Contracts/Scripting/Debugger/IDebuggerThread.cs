@@ -299,6 +299,20 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		IDebuggerValue AssemblyLoad(byte[] assembly);
 
 		/// <summary>
+		/// Loads the assembly in the debugged process by calling <see cref="Assembly.Load(string)"/>
+		/// </summary>
+		/// <param name="assemblyString">Assembly name</param>
+		/// <returns></returns>
+		IDebuggerValue AssemblyLoad(string assemblyString);
+
+		/// <summary>
+		/// Loads the assembly in the debugged process by calling <see cref="Assembly.LoadFrom(string)"/>
+		/// </summary>
+		/// <param name="assemblyFile">Assembly filename</param>
+		/// <returns></returns>
+		IDebuggerValue AssemblyLoadFrom(string assemblyFile);
+
+		/// <summary>
 		/// Loads the assembly in the debugged process by calling <see cref="Assembly.LoadFile(string)"/>
 		/// </summary>
 		/// <param name="filename">Filename</param>

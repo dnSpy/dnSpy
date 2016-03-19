@@ -120,7 +120,11 @@ namespace dndbg.Engine {
 		public CorValue Box(CorValue value) {
 			if (value == null || !value.IsGeneric || value.IsBox || value.IsHeap || !value.ExactType.IsValueType)
 				return value;
-			var res = WaitForResult(eval.NewParameterizedObjectNoConstructor(value.ExactType.Class, value.ExactType.TypeParameters.ToArray()));
+			var et = value.ExactType;
+			var cls = et == null ? null : et.Class;
+			if (cls == null)
+				return null;
+			var res = WaitForResult(eval.NewParameterizedObjectNoConstructor(cls, value.ExactType.TypeParameters.ToArray()));
 			if (res == null || res.Value.WasException)
 				return null;
 			var newObj = res.Value.ResultOrException;
@@ -337,7 +341,7 @@ namespace dndbg.Engine {
 
 			if (ee.Eval == eval.RawObject) {
 				debugger.DebugCallbackEvent -= Debugger_DebugCallbackEvent;
-				e.AddStopReason(DebuggerStopReason.Eval);
+				e.AddPauseReason(DebuggerPauseReason.Eval);
 				debugMessageDispatcher.CancelDispatchQueue(ee.WasException);
 				return;
 			}

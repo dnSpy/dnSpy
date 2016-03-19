@@ -20,7 +20,7 @@
 using dndbg.COM.CorDebug;
 
 namespace dndbg.Engine {
-	public enum DebuggerStopReason {
+	public enum DebuggerPauseReason {
 		/// <summary>
 		/// Some unknown reason
 		/// </summary>
@@ -77,78 +77,78 @@ namespace dndbg.Engine {
 		Eval,
 
 		/// <summary>
-		/// Start of user stop reasons
+		/// Start of user pause reasons
 		/// </summary>
 		UserReason = 0x10000000,
 	}
 
-	public class DebuggerStopState {
-		public DebuggerStopReason Reason {
+	public class DebuggerPauseState {
+		public DebuggerPauseReason Reason {
 			get { return reason; }
 		}
-		readonly DebuggerStopReason reason;
+		readonly DebuggerPauseReason reason;
 
-		public DebuggerStopState(DebuggerStopReason reason) {
+		public DebuggerPauseState(DebuggerPauseReason reason) {
 			this.reason = reason;
 		}
 	}
 
-	public sealed class DebugEventBreakpointStopState : DebuggerStopState {
+	public sealed class DebugEventBreakpointPauseState : DebuggerPauseState {
 		public DnDebugEventBreakpoint Breakpoint {
 			get { return bp; }
 		}
 		readonly DnDebugEventBreakpoint bp;
 
-		public DebugEventBreakpointStopState(DnDebugEventBreakpoint bp)
-			: base(DebuggerStopReason.DebugEventBreakpoint) {
+		public DebugEventBreakpointPauseState(DnDebugEventBreakpoint bp)
+			: base(DebuggerPauseReason.DebugEventBreakpoint) {
 			this.bp = bp;
 		}
 	}
 
-	public sealed class AnyDebugEventBreakpointStopState : DebuggerStopState {
+	public sealed class AnyDebugEventBreakpointPauseState : DebuggerPauseState {
 		public DnAnyDebugEventBreakpoint Breakpoint {
 			get { return bp; }
 		}
 		readonly DnAnyDebugEventBreakpoint bp;
 
-		public AnyDebugEventBreakpointStopState(DnAnyDebugEventBreakpoint bp)
-			: base(DebuggerStopReason.AnyDebugEventBreakpoint) {
+		public AnyDebugEventBreakpointPauseState(DnAnyDebugEventBreakpoint bp)
+			: base(DebuggerPauseReason.AnyDebugEventBreakpoint) {
 			this.bp = bp;
 		}
 	}
 
-	public sealed class ILCodeBreakpointStopState : DebuggerStopState {
+	public sealed class ILCodeBreakpointPauseState : DebuggerPauseState {
 		public DnILCodeBreakpoint Breakpoint {
 			get { return bp; }
 		}
 		readonly DnILCodeBreakpoint bp;
 
-		public ILCodeBreakpointStopState(DnILCodeBreakpoint bp)
-			: base(DebuggerStopReason.ILCodeBreakpoint) {
+		public ILCodeBreakpointPauseState(DnILCodeBreakpoint bp)
+			: base(DebuggerPauseReason.ILCodeBreakpoint) {
 			this.bp = bp;
 		}
 	}
 
-	public sealed class NativeCodeBreakpointStopState : DebuggerStopState {
+	public sealed class NativeCodeBreakpointPauseState : DebuggerPauseState {
 		public DnNativeCodeBreakpoint Breakpoint {
 			get { return bp; }
 		}
 		readonly DnNativeCodeBreakpoint bp;
 
-		public NativeCodeBreakpointStopState(DnNativeCodeBreakpoint bp)
-			: base(DebuggerStopReason.NativeCodeBreakpoint) {
+		public NativeCodeBreakpointPauseState(DnNativeCodeBreakpoint bp)
+			: base(DebuggerPauseReason.NativeCodeBreakpoint) {
 			this.bp = bp;
 		}
 	}
 
-	public sealed class StepStopState : DebuggerStopState {
+	public sealed class StepPauseState : DebuggerPauseState {
 		public CorDebugStepReason StepReason {
 			get { return stepReason; }
 		}
 		readonly CorDebugStepReason stepReason;
 
-		public StepStopState(CorDebugStepReason stepReason)
-			: base(DebuggerStopReason.Step) {
+		public StepPauseState(CorDebugStepReason stepReason)
+			: base(DebuggerPauseReason.Step) {
 			this.stepReason = stepReason;
 		}
 	}

@@ -40,6 +40,16 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		DebuggerProcessState State { get; }
 
 		/// <summary>
+		/// Gets all <see cref="DebuggerPauseState"/>s
+		/// </summary>
+		DebuggerPauseState[] PauseStates { get; }
+
+		/// <summary>
+		/// Gets the first <see cref="Debugger.PauseReason"/> from <see cref="PauseStates"/>
+		/// </summary>
+		PauseReason PauseReason { get; }
+
+		/// <summary>
 		/// true if <see cref="State"/> equals <see cref="DebuggerProcessState.Starting"/>
 		/// </summary>
 		bool IsStarting { get; }
@@ -86,31 +96,38 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		bool EvalCompleted { get; }
 
 		/// <summary>
-		/// Waits until the debugged process is paused or terminated. Returns true if the wait
-		/// didn't time out.
+		/// Waits until the debugged process is paused or terminated. Returns true if the wait didn't time out.
 		/// </summary>
 		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
 		/// to wait indefinitely</param>
+		/// <returns></returns>
 		bool Wait(int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
-		/// Waits until the debugged process is paused or terminated.
+		/// Waits until the debugged process is paused or terminated. Returns true if the wait didn't time out.
 		/// </summary>
 		/// <param name="token">Cancellation token</param>
-		void Wait(CancellationToken token);
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool Wait(CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
 		/// Waits until the debugged process is not paused. Returns true if the wait didn't time out.
 		/// </summary>
 		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
 		/// to wait indefinitely</param>
+		/// <returns></returns>
 		bool WaitRun(int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
-		/// Waits until the debugged process is not paused.
+		/// Waits until the debugged process is not paused. Returns true if the wait didn't time out.
 		/// </summary>
 		/// <param name="token">Cancellation token</param>
-		void WaitRun(CancellationToken token);
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool WaitRun(CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
 		/// Shows a dialog box and debugs the selected process
@@ -204,6 +221,23 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		void Continue();
 
 		/// <summary>
+		/// Let the debugged program run and call <see cref="Wait(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool ContinueWait(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Let the debugged program run and call <see cref="Wait(CancellationToken, int)"/>
+		/// </summary>
+		/// <param name="token">Cancellation token</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool ContinueWait(CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
 		/// Step into the method
 		/// </summary>
 		void StepInto();
@@ -213,6 +247,42 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="frame">Frame</param>
 		void StepInto(IStackFrame frame);
+
+		/// <summary>
+		/// Step into the method and call <see cref="Wait(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepIntoWait(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step into the method and call <see cref="Wait(CancellationToken, int)"/>
+		/// </summary>
+		/// <param name="token">Cancellation token</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepIntoWait(CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step into the method and call <see cref="Wait(int)"/>
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepIntoWait(IStackFrame frame, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step into the method and call <see cref="Wait(CancellationToken, int)"/>
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <param name="token">Cancellation token</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepIntoWait(IStackFrame frame, CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
 		/// Step over the method
@@ -226,6 +296,42 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		void StepOver(IStackFrame frame);
 
 		/// <summary>
+		/// Step over the method and call <see cref="Wait(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepOverWait(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step over the method and call <see cref="Wait(CancellationToken, int)"/>
+		/// </summary>
+		/// <param name="token">Cancellation token</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepOverWait(CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step over the method and call <see cref="Wait(int)"/>
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepOverWait(IStackFrame frame, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step over the method and call <see cref="Wait(CancellationToken, int)"/>
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <param name="token">Cancellation token</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepOverWait(IStackFrame frame, CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
 		/// Step out of the method
 		/// </summary>
 		void StepOut();
@@ -237,11 +343,66 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		void StepOut(IStackFrame frame);
 
 		/// <summary>
+		/// Step out of the method and call <see cref="Wait(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepOutWait(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step out of the method and call <see cref="Wait(CancellationToken, int)"/>
+		/// </summary>
+		/// <param name="token">Cancellation token</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepOutWait(CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step out of the method and call <see cref="Wait(int)"/>
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepOutWait(IStackFrame frame, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step out of the method and call <see cref="Wait(CancellationToken, int)"/>
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <param name="token">Cancellation token</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool StepOutWait(IStackFrame frame, CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
 		/// Let the program execute until it returns to <paramref name="frame"/>
 		/// </summary>
 		/// <param name="frame">Frame</param>
 		/// <returns></returns>
 		bool RunTo(IStackFrame frame);
+
+		/// <summary>
+		/// Let the program execute until it returns to <paramref name="frame"/> and call <see cref="Wait(int)"/>
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool RunToWait(IStackFrame frame, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Let the program execute until it returns to <paramref name="frame"/> and call <see cref="Wait(CancellationToken, int)"/>
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <param name="token">Cancellation token</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		bool RunToWait(IStackFrame frame, CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
 		/// Set next instruction to execute. All <see cref="IStackFrame"/> and <see cref="IDebuggerValue"/>
@@ -808,6 +969,13 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		double ReadDouble(ulong address);
 
 		/// <summary>
+		/// Reads a <see cref="decimal"/> from an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <returns></returns>
+		decimal ReadDecimal(ulong address);
+
+		/// <summary>
 		/// Writes a <see cref="bool"/> to an address in the debugged process
 		/// </summary>
 		/// <param name="address">Address</param>
@@ -890,5 +1058,12 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="address">Address</param>
 		/// <param name="value">Value</param>
 		void Write(ulong address, double value);
+
+		/// <summary>
+		/// Writes a <see cref="decimal"/> to an address in the debugged process
+		/// </summary>
+		/// <param name="address">Address</param>
+		/// <param name="value">Value</param>
+		void Write(ulong address, decimal value);
 	}
 }

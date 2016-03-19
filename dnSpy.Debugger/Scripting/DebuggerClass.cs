@@ -83,20 +83,12 @@ namespace dnSpy.Debugger.Scripting {
 			this.token = cls.Token;
 		}
 
-		public IDebuggerType ToType(bool isValueType, IDebuggerType[] typeArgs) {
+		public IDebuggerType ToType(IDebuggerType[] typeArgs) {
 			return debugger.Dispatcher.UI(() => {
-				var etype = isValueType ? dndbg.COM.CorDebug.CorElementType.ValueType : dndbg.COM.CorDebug.CorElementType.Class;
-				var type = cls.GetParameterizedType(etype, typeArgs.ToCorTypes());
+				// We can use Class all the time, even for value types
+				var type = cls.GetParameterizedType(dndbg.COM.CorDebug.CorElementType.Class, typeArgs.ToCorTypes());
 				return type == null ? null : new DebuggerType(debugger, type);
 			});
-		}
-
-		public IDebuggerType ToRefType(IDebuggerType[] typeArgs) {
-			return ToType(false, typeArgs);
-		}
-
-		public IDebuggerType ToValueType(IDebuggerType[] typeArgs) {
-			return ToType(true, typeArgs);
 		}
 
 		public IDebuggerValue GetStaticFieldValue(uint token, IStackFrame frame) {
@@ -106,16 +98,35 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public IDebuggerFunction FindMethod(string name) {
+		public IDebuggerFunction FindMethod(string name, bool checkBaseClasses) {
 			return debugger.Dispatcher.UI(() => {
-				var func = cls.FindFunction(name);
-				return func == null ? null : new DebuggerFunction(debugger, func);
+				var methods = FindMethods(name, checkBaseClasses);
+				foreach (var m in methods) {
+					if (m.MethodSig.Params.Count == 0)
+						return m;
+				}
+				return methods.Length == 1 ? methods[0] : null;
 			});
 		}
 
-		public IDebuggerFunction[] FindMethods(string name) {
+		public IDebuggerFunction FindMethod(string name, params object[] argTypes) {
+			return FindMethod(name, true, argTypes);
+		}
+
+		public IDebuggerFunction FindMethod(string name, bool checkBaseClasses, params object[] argTypes) {
 			return debugger.Dispatcher.UI(() => {
-				var funcs = cls.FindFunctions(name).ToList();
+				var comparer = new TypeComparer();
+				foreach (var m in FindMethods(name, checkBaseClasses)) {
+					if (comparer.ArgListsEquals(m.MethodSig.Params, argTypes))
+						return m;
+				}
+				return null;
+			});
+		}
+
+		public IDebuggerFunction[] FindMethods(string name, bool checkBaseClasses) {
+			return debugger.Dispatcher.UI(() => {
+				var funcs = cls.FindFunctions(name, checkBaseClasses).ToList();
 				var res = new IDebuggerFunction[funcs.Count];
 				for (int i = 0; i < res.Length; i++)
 					res[i] = new DebuggerFunction(debugger, funcs[i]);
@@ -130,6 +141,22 @@ namespace dnSpy.Debugger.Scripting {
 				for (int i = 0; i < res.Length; i++)
 					res[i] = new DebuggerFunction(debugger, ctors[i]);
 				return res;
+			});
+		}
+
+		public IDebuggerFunction FindConstructor() {
+			return FindConstructor(emptyArgTypes);
+		}
+		static readonly object[] emptyArgTypes = new object[0];
+
+		public IDebuggerFunction FindConstructor(params object[] argTypes) {
+			return debugger.Dispatcher.UI(() => {
+				var comparer = new TypeComparer();
+				foreach (var m in FindConstructors()) {
+					if (comparer.ArgListsEquals(m.MethodSig.Params, argTypes))
+						return m;
+				}
+				return null;
 			});
 		}
 

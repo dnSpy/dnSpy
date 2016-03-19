@@ -24,6 +24,47 @@ using dnSpy.Contracts.Scripting.Debugger;
 using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Debugger.Scripting {
+	sealed class NullILBreakpoint : IILBreakpoint {
+		public static readonly NullILBreakpoint Instance = new NullILBreakpoint();
+
+		public bool IsEnabled {
+			get { return false; }
+			set { }
+		}
+
+		public object Tag {
+			get { return null; }
+			set { }
+		}
+
+		public bool IsIL {
+			get { return true; }
+		}
+
+		public bool IsNative {
+			get { return false; }
+		}
+
+		public BreakpointKind Kind {
+			get { return BreakpointKind.IL; }
+		}
+
+		public ModuleName Module {
+			get { return ModuleName.Create(string.Empty, string.Empty, true, true, false); }
+		}
+
+		public uint Offset {
+			get { return 0; }
+		}
+
+		public uint Token {
+			get { return 0x06000000; }
+		}
+
+		public void Remove() {
+		}
+	}
+
 	sealed class ILBreakpoint : IILBreakpoint, IDnBreakpointHolder {
 		public BreakpointKind Kind {
 			get { return BreakpointKind.IL; }
@@ -44,6 +85,8 @@ namespace dnSpy.Debugger.Scripting {
 			}
 		}
 		bool isEnabled;
+
+		public object Tag { get; set; }
 
 		public bool IsIL {
 			get { return true; }
@@ -97,6 +140,7 @@ namespace dnSpy.Debugger.Scripting {
 				throw new InvalidOperationException();
 			dbgBreakpoint = dbg.CreateBreakpoint(module.ToSerializedDnModule(), token, offset, a => cond(this));
 			dbgBreakpoint.IsEnabled = isEnabled;
+			dbgBreakpoint.Tag = this;
 		}
 	}
 }

@@ -102,9 +102,9 @@
     <Compile Include="Engine\DebuggeeVersionDetector.cs" />
     <Compile Include="Engine\DebuggerCollection.cs" />
     <Compile Include="Engine\DebuggerEventArgs.cs" />
+    <Compile Include="Engine\DebuggerPauseState.cs" />
     <Compile Include="Engine\DebuggerProcessState.cs" />
     <Compile Include="Engine\DebuggerState.cs" />
-    <Compile Include="Engine\DebuggerStopState.cs" />
     <Compile Include="Engine\DebugOptions.cs" />
     <Compile Include="Engine\DebugProcessOptions.cs" />
     <Compile Include="Engine\DisableSystemDebuggerDetection.cs" />

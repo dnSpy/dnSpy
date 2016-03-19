@@ -445,7 +445,7 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public decimal ReadDecimal() {
-			return debugger.Dispatcher.UI(() => Utils.CreateDecimal(value.ReadGenericValue()));
+			return debugger.Dispatcher.UI(() => Utils.ToDecimal(value.ReadGenericValue()));
 		}
 
 		public void Write(bool value) {

@@ -63,16 +63,16 @@ namespace dndbg.Engine {
 
 	public abstract class DebugCallbackEventArgs {
 		/// <summary>
-		/// true if the debugged process should be stopped
+		/// true if the debugged process should be paused
 		/// </summary>
-		public bool Stop {
-			get { return debuggerStopStates.Count != 0; }
+		public bool Pause {
+			get { return debuggerPauseStates.Count != 0; }
 		}
 
-		public DebuggerStopState[] StopStates {
-			get { return debuggerStopStates.ToArray(); }
+		public DebuggerPauseState[] PauseStates {
+			get { return debuggerPauseStates.ToArray(); }
 		}
-		readonly List<DebuggerStopState> debuggerStopStates = new List<DebuggerStopState>();
+		readonly List<DebuggerPauseState> debuggerPauseStates = new List<DebuggerPauseState>();
 
 		/// <summary>
 		/// Type of event
@@ -91,18 +91,18 @@ namespace dndbg.Engine {
 			this.ctrl = ctrl;
 		}
 
-		public void AddStopReason(DebuggerStopReason reason) {
-			AddStopState(new DebuggerStopState(reason));
+		public void AddPauseReason(DebuggerPauseReason reason) {
+			AddPauseState(new DebuggerPauseState(reason));
 		}
 
-		public void AddStopState(DebuggerStopState state) {
+		public void AddPauseState(DebuggerPauseState state) {
 			if (state == null)
 				throw new ArgumentNullException();
-			debuggerStopStates.Add(state);
+			debuggerPauseStates.Add(state);
 		}
 
-		public DebuggerStopState GetStopState(DebuggerStopReason reason) {
-			foreach (var state in debuggerStopStates) {
+		public DebuggerPauseState GetPauseState(DebuggerPauseReason reason) {
+			foreach (var state in debuggerPauseStates) {
 				if (state.Reason == reason)
 					return state;
 			}

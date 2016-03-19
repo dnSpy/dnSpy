@@ -52,6 +52,31 @@ namespace dnSpy.Debugger.Scripting {
 			get { return dispatcher.UI(() => Utils.Convert(theDebugger.ProcessState)); }
 		}
 
+		public DebuggerPauseState[] PauseStates {
+			get {
+				return dispatcher.UI(() => {
+					var list = new List<DebuggerPauseState>();
+
+					var dbg = theDebugger.Debugger;
+					if (dbg != null && dbg.ProcessState == DBG.DebuggerProcessState.Paused) {
+						foreach (var ds in dbg.DebuggerStates) {
+							foreach (var ps in ds.PauseStates)
+								list.Add(Utils.Convert(ps));
+						}
+					}
+
+					return list.ToArray();
+				});
+			}
+		}
+
+		public PauseReason PauseReason {
+			get {
+				var ps = PauseStates;
+				return ps.Length == 0 ? PauseReason.Other : ps[0].Reason;
+			}
+		}
+
 		public bool IsStarting {
 			get { return State == DebuggerProcessState.Starting; }
 		}
@@ -189,22 +214,18 @@ namespace dnSpy.Debugger.Scripting {
 			return pausedOrTerminatedEvent.WaitOne(millisecondsTimeout);
 		}
 
-		const int POLL_WAIT_MS = 50;
-		public void Wait(CancellationToken token) {
+		public bool Wait(CancellationToken token, int millisecondsTimeout) {
 			Debug.Assert(!dispatcher.CheckAccess());
 			if (dispatcher.CheckAccess())
 				throw new InvalidOperationException("Wait() can't be called on the UI / debugger thread");
 
-			if (token.Equals(CancellationToken.None)) {
-				Wait(Timeout.Infinite);
-				return;
-			}
+			if (!token.CanBeCanceled)
+				return Wait(millisecondsTimeout);
 
-			for (;;) {
-				token.ThrowIfCancellationRequested();
-				if (pausedOrTerminatedEvent.WaitOne(POLL_WAIT_MS))
-					return;
-			}
+			var waitHandles = new[] { token.WaitHandle, pausedOrTerminatedEvent };
+			int index = WaitHandle.WaitAny(waitHandles, millisecondsTimeout);
+			token.ThrowIfCancellationRequested();
+			return index != WaitHandle.WaitTimeout;
 		}
 
 		public bool WaitRun(int millisecondsTimeout) {
@@ -214,21 +235,18 @@ namespace dnSpy.Debugger.Scripting {
 			return runningEvent.WaitOne(millisecondsTimeout);
 		}
 
-		public void WaitRun(CancellationToken token) {
+		public bool WaitRun(CancellationToken token, int millisecondsTimeout) {
 			Debug.Assert(!dispatcher.CheckAccess());
 			if (dispatcher.CheckAccess())
 				throw new InvalidOperationException("WaitRun() can't be called on the UI / debugger thread");
 
-			if (token.Equals(CancellationToken.None)) {
-				WaitRun(Timeout.Infinite);
-				return;
-			}
+			if (!token.CanBeCanceled)
+				return WaitRun(millisecondsTimeout);
 
-			for (;;) {
-				token.ThrowIfCancellationRequested();
-				if (runningEvent.WaitOne(POLL_WAIT_MS))
-					return;
-			}
+			var waitHandles = new[] { token.WaitHandle, runningEvent };
+			int index = WaitHandle.WaitAny(waitHandles, millisecondsTimeout);
+			token.ThrowIfCancellationRequested();
+			return index != WaitHandle.WaitTimeout;
 		}
 
 		public bool Start() {
@@ -303,12 +321,42 @@ namespace dnSpy.Debugger.Scripting {
 			dispatcher.UI(() => debugManager.Value.Continue());
 		}
 
+		public bool ContinueWait(int millisecondsTimeout) {
+			Continue();
+			return Wait(millisecondsTimeout);
+		}
+
+		public bool ContinueWait(CancellationToken token, int millisecondsTimeout) {
+			Continue();
+			return Wait(token, millisecondsTimeout);
+		}
+
 		public void StepInto() {
 			dispatcher.UI(() => debugManager.Value.StepInto());
 		}
 
 		public void StepInto(IStackFrame frame) {
 			dispatcher.UI(() => debugManager.Value.StepInto(((StackFrame)frame).CorFrame));
+		}
+
+		public bool StepIntoWait(int millisecondsTimeout) {
+			StepInto();
+			return Wait(millisecondsTimeout);
+		}
+
+		public bool StepIntoWait(CancellationToken token, int millisecondsTimeout) {
+			StepInto();
+			return Wait(token, millisecondsTimeout);
+		}
+
+		public bool StepIntoWait(IStackFrame frame, int millisecondsTimeout) {
+			StepInto(frame);
+			return Wait(millisecondsTimeout);
+		}
+
+		public bool StepIntoWait(IStackFrame frame, CancellationToken token, int millisecondsTimeout) {
+			StepInto(frame);
+			return Wait(token, millisecondsTimeout);
 		}
 
 		public void StepOver() {
@@ -319,6 +367,26 @@ namespace dnSpy.Debugger.Scripting {
 			dispatcher.UI(() => debugManager.Value.StepOver(((StackFrame)frame).CorFrame));
 		}
 
+		public bool StepOverWait(int millisecondsTimeout) {
+			StepOver();
+			return Wait(millisecondsTimeout);
+		}
+
+		public bool StepOverWait(CancellationToken token, int millisecondsTimeout) {
+			StepOver();
+			return Wait(token, millisecondsTimeout);
+		}
+
+		public bool StepOverWait(IStackFrame frame, int millisecondsTimeout) {
+			StepOver(frame);
+			return Wait(millisecondsTimeout);
+		}
+
+		public bool StepOverWait(IStackFrame frame, CancellationToken token, int millisecondsTimeout) {
+			StepOver(frame);
+			return Wait(token, millisecondsTimeout);
+		}
+
 		public void StepOut() {
 			dispatcher.UI(() => debugManager.Value.StepOut());
 		}
@@ -327,8 +395,38 @@ namespace dnSpy.Debugger.Scripting {
 			dispatcher.UI(() => debugManager.Value.StepOut(((StackFrame)frame).CorFrame));
 		}
 
+		public bool StepOutWait(int millisecondsTimeout) {
+			StepOut();
+			return Wait(millisecondsTimeout);
+		}
+
+		public bool StepOutWait(CancellationToken token, int millisecondsTimeout) {
+			StepOut();
+			return Wait(token, millisecondsTimeout);
+		}
+
+		public bool StepOutWait(IStackFrame frame, int millisecondsTimeout) {
+			StepOut(frame);
+			return Wait(millisecondsTimeout);
+		}
+
+		public bool StepOutWait(IStackFrame frame, CancellationToken token, int millisecondsTimeout) {
+			StepOut(frame);
+			return Wait(token, millisecondsTimeout);
+		}
+
 		public bool RunTo(IStackFrame frame) {
 			return dispatcher.UI(() => debugManager.Value.RunTo(((StackFrame)frame).CorFrame));
+		}
+
+		public bool RunToWait(IStackFrame frame, int millisecondsTimeout) {
+			RunTo(frame);
+			return Wait(millisecondsTimeout);
+		}
+
+		public bool RunToWait(IStackFrame frame, CancellationToken token, int millisecondsTimeout) {
+			RunTo(frame);
+			return Wait(token, millisecondsTimeout);
 		}
 
 		public bool SetOffset(int offset) {
@@ -868,6 +966,10 @@ namespace dnSpy.Debugger.Scripting {
 			return BitConverter.ToDouble(ReadMemory(address, 8), 0);
 		}
 
+		public decimal ReadDecimal(ulong address) {
+			return Utils.ToDecimal(ReadMemory(address, 8));
+		}
+
 		public void Write(ulong address, bool value) {
 			WriteMemory(address, BitConverter.GetBytes(value));
 		}
@@ -914,6 +1016,10 @@ namespace dnSpy.Debugger.Scripting {
 
 		public void Write(ulong address, double value) {
 			WriteMemory(address, BitConverter.GetBytes(value));
+		}
+
+		public void Write(ulong address, decimal value) {
+			WriteMemory(address, Utils.GetBytes(value));
 		}
 
 		public IDebuggerModule CorLib {

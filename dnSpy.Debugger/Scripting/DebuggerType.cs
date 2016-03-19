@@ -225,16 +225,35 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public IDebuggerFunction FindMethod(string name) {
+		public IDebuggerFunction FindMethod(string name, bool checkBaseClasses) {
 			return debugger.Dispatcher.UI(() => {
-				var func = type.FindFunction(name);
-				return func == null ? null : new DebuggerFunction(debugger, func);
+				var methods = FindMethods(name, checkBaseClasses);
+				foreach (var m in methods) {
+					if (m.MethodSig.Params.Count == 0)
+						return m;
+				}
+				return methods.Length == 1 ? methods[0] : null;
 			});
 		}
 
-		public IDebuggerFunction[] FindMethods(string name) {
+		public IDebuggerFunction FindMethod(string name, params object[] argTypes) {
+			return FindMethod(name, true, argTypes);
+		}
+
+		public IDebuggerFunction FindMethod(string name, bool checkBaseClasses, params object[] argTypes) {
 			return debugger.Dispatcher.UI(() => {
-				var funcs = type.FindFunctions(name).ToList();
+				var comparer = new TypeComparer();
+				foreach (var m in FindMethods(name, checkBaseClasses)) {
+					if (comparer.ArgListsEquals(m.MethodSig.Params, argTypes))
+						return m;
+				}
+				return null;
+			});
+		}
+
+		public IDebuggerFunction[] FindMethods(string name, bool checkBaseClasses) {
+			return debugger.Dispatcher.UI(() => {
+				var funcs = type.FindFunctions(name, checkBaseClasses).ToList();
 				var res = new IDebuggerFunction[funcs.Count];
 				for (int i = 0; i < res.Length; i++)
 					res[i] = new DebuggerFunction(debugger, funcs[i]);
@@ -248,6 +267,22 @@ namespace dnSpy.Debugger.Scripting {
 					return new IDebuggerFunction[0];
 				var cls = Class;
 				return cls == null ? new IDebuggerFunction[0] : cls.FindConstructors();
+			});
+		}
+
+		public IDebuggerFunction FindConstructor() {
+			return FindConstructor(emptyArgTypes);
+		}
+		static readonly object[] emptyArgTypes = new object[0];
+
+		public IDebuggerFunction FindConstructor(params object[] argTypes) {
+			return debugger.Dispatcher.UI(() => {
+				var comparer = new TypeComparer();
+				foreach (var m in FindConstructors()) {
+					if (comparer.ArgListsEquals(m.MethodSig.Params, argTypes))
+						return m;
+				}
+				return null;
 			});
 		}
 

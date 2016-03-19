@@ -51,8 +51,46 @@ namespace dnSpy.Debugger.Scripting {
 			valuesToKeep.Add(v);
 		}
 
+		IDebuggerType GetPrimitiveType(CorElementType etype) {
+			switch (etype) {
+			case CorElementType.Void:		return appDomain.Void;
+			case CorElementType.Boolean:	return appDomain.Boolean;
+			case CorElementType.Char:		return appDomain.Char;
+			case CorElementType.I1:			return appDomain.SByte;
+			case CorElementType.U1:			return appDomain.Byte;
+			case CorElementType.I2:			return appDomain.Int16;
+			case CorElementType.U2:			return appDomain.UInt16;
+			case CorElementType.I4:			return appDomain.Int32;
+			case CorElementType.U4:			return appDomain.UInt32;
+			case CorElementType.I8:			return appDomain.Int64;
+			case CorElementType.U8:			return appDomain.UInt64;
+			case CorElementType.R4:			return appDomain.Single;
+			case CorElementType.R8:			return appDomain.Double;
+			case CorElementType.String:		return appDomain.String;
+			case CorElementType.TypedByRef:	return appDomain.TypedReference;
+			case CorElementType.I:			return appDomain.IntPtr;
+			case CorElementType.U:			return appDomain.UIntPtr;
+			case CorElementType.Object:		return appDomain.Object;
+			default: return null;
+			}
+		}
+
 		public IDebuggerValue Box(IDebuggerValue value) {
 			return debugger.Dispatcher.UI(() => {
+				var valueTmp = (DebuggerValue)value;
+				if (valueTmp.CorValue.IsGeneric) {
+					var et = valueTmp.CorValue.ExactType;
+					if (et != null && et.IsPrimitiveValueType) {
+						var type = GetPrimitiveType((CorElementType)et.ElementType);
+						Debug.Assert(type != null);
+						if (type != null) {
+							value = CreateNoConstructorUI(type);
+							value.DereferencedValue.BoxedValue.Write(valueTmp.Read());
+							return value;
+						}
+					}
+				}
+
 				var boxedValue = eval.Box(((DebuggerValue)value).CorValue);
 				if (boxedValue == null)
 					throw new ScriptException("Could not box the value");
@@ -942,7 +980,12 @@ namespace dnSpy.Debugger.Scripting {
 
 		public string ToString(IDebuggerValue value) {
 			return debugger.Dispatcher.UI(() => {
-				var v = ((DebuggerValue)value).CorValue;
+				var valueTmp = (DebuggerValue)value;
+				var et = valueTmp.CorValue.ExactType;
+				if (et != null && et.IsPrimitiveValueType)
+					valueTmp = (DebuggerValue)Box(valueTmp);
+
+				var v = valueTmp.CorValue;
 				var objType = ((DebuggerType)appDomain.Object).CorType;
 				var info = objType.GetToStringMethod();
 				Debug.Assert(info != null);
@@ -975,8 +1018,15 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		IDebuggerFunction FindAssemblyLoadByteArrayThrow(IDebuggerClass cls) {
-			foreach (var method in cls.FindMethods("Load")) {
+		IDebuggerClass FindAssemblyClassThrow() {
+			var cls = appDomain.CorLib.FindClass("System.Reflection.Assembly");
+			if (cls == null)
+				throw new ScriptException("Couldn't find System.Reflection.Assembly class");
+			return cls;
+		}
+
+		IDebuggerFunction FindAssemblyLoadByteArrayThrow() {
+			foreach (var method in FindAssemblyClassThrow().FindMethods("Load")) {
 				var sig = method.MethodSig;
 				if (sig.HasThis || sig.Params.Count != 1)
 					continue;
@@ -991,8 +1041,34 @@ namespace dnSpy.Debugger.Scripting {
 			throw new ScriptException("Could not find System.Reflection.Assembly.Load(byte[])");
 		}
 
-		IDebuggerFunction FindAssemblyLoadFileStringThrow(IDebuggerClass cls) {
-			foreach (var method in cls.FindMethods("LoadFile")) {
+		IDebuggerFunction FindAssemblyLoadStringThrow() {
+			foreach (var method in FindAssemblyClassThrow().FindMethods("Load")) {
+				var sig = method.MethodSig;
+				if (sig.HasThis || sig.Params.Count != 1)
+					continue;
+				if (sig.Params[0].RemovePinnedAndModifiers().ElementType != ElementType.String)
+					continue;
+
+				return method;
+			}
+			throw new ScriptException("Could not find System.Reflection.Assembly.Load(string)");
+		}
+
+		IDebuggerFunction FindAssemblyLoadFromStringThrow() {
+			foreach (var method in FindAssemblyClassThrow().FindMethods("LoadFrom")) {
+				var sig = method.MethodSig;
+				if (sig.HasThis || sig.Params.Count != 1)
+					continue;
+				if (sig.Params[0].RemovePinnedAndModifiers().ElementType != ElementType.String)
+					continue;
+
+				return method;
+			}
+			throw new ScriptException("Could not find System.Reflection.Assembly.LoadFrom(string)");
+		}
+
+		IDebuggerFunction FindAssemblyLoadFileStringThrow() {
+			foreach (var method in FindAssemblyClassThrow().FindMethods("LoadFile")) {
 				var sig = method.MethodSig;
 				if (sig.HasThis || sig.Params.Count != 1)
 					continue;
@@ -1005,23 +1081,19 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public IDebuggerValue AssemblyLoad(byte[] rawAssembly) {
-			return debugger.Dispatcher.UI(() => {
-				var cls = appDomain.CorLib.FindClass("System.Reflection.Assembly");
-				if (cls == null)
-					throw new ScriptException("Couldn't find System.Reflection.Assembly class");
-				var func = FindAssemblyLoadByteArrayThrow(cls);
-				return Call(func, rawAssembly);
-			});
+			return debugger.Dispatcher.UI(() => Call(FindAssemblyLoadByteArrayThrow(), rawAssembly));
+		}
+
+		public IDebuggerValue AssemblyLoad(string assemblyString) {
+			return debugger.Dispatcher.UI(() => Call(FindAssemblyLoadStringThrow(), assemblyString));
+		}
+
+		public IDebuggerValue AssemblyLoadFrom(string assemblyFile) {
+			return debugger.Dispatcher.UI(() => Call(FindAssemblyLoadFromStringThrow(), assemblyFile));
 		}
 
 		public IDebuggerValue AssemblyLoadFile(string filename) {
-			return debugger.Dispatcher.UI(() => {
-				var cls = appDomain.CorLib.FindClass("System.Reflection.Assembly");
-				if (cls == null)
-					throw new ScriptException("Couldn't find System.Reflection.Assembly class");
-				var func = FindAssemblyLoadFileStringThrow(cls);
-				return Call(func, filename);
-			});
+			return debugger.Dispatcher.UI(() => Call(FindAssemblyLoadFileStringThrow(), filename));
 		}
 
 		public void Dispose() {

@@ -44,22 +44,15 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 			get { yield return new ToolWindowContentInfo(CSharpToolWindowContent.THE_GUID, CSharpToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_SCRIPTING_CSHARP, false); }
 		}
 
-		protected override ScriptToolWindowContent CreateContent() {
-			return new CSharpToolWindowContent(csharpContent);
-		}
+		protected override ScriptToolWindowContent CreateContent() => new CSharpToolWindowContent(csharpContent);
 	}
 
 	sealed class CSharpToolWindowContent : ScriptToolWindowContent {
 		public static readonly Guid THE_GUID = new Guid("FFD1F456-DC69-46D7-8C96-858B36C57BC3");
 		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Default;
 
-		public override string Title {
-			get { return dnSpy_Scripting_Roslyn_Resources.Window_CSharp; }
-		}
-
-		protected override IScriptContent ScriptContent {
-			get { return csharpContent.Value; }
-		}
+		public override string Title => dnSpy_Scripting_Roslyn_Resources.Window_CSharp;
+		protected override IScriptContent ScriptContent => csharpContent.Value;
 		readonly Lazy<ICSharpContent> csharpContent;
 
 		public CSharpToolWindowContent(Lazy<ICSharpContent> csharpContent)

@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.Exceptions {
 			if (!info.BreakOnFirstChance)
 				return;
 
-			e.AddStopReason(DebuggerStopReason.Exception);
+			e.AddPauseReason(DebuggerPauseReason.Exception);
 		}
 
 		public void BreakOnFirstChanceChanged(ExceptionInfo info) {

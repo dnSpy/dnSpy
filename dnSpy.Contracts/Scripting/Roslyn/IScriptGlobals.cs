@@ -131,7 +131,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		MsgBoxButton Show(string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null);
 
 		/// <summary>
-		/// Shows a message box
+		/// Shows a message box with buttons OK and Cancel
 		/// </summary>
 		/// <param name="message">Message to show</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
@@ -139,7 +139,15 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		MsgBoxButton ShowOKCancel(string message, Window ownerWindow = null);
 
 		/// <summary>
-		/// Shows a message box
+		/// Shows a message box with buttons OK and Cancel
+		/// </summary>
+		/// <param name="message">Message to show</param>
+		/// <param name="ownerWindow">Owner window or null to use the main window</param>
+		/// <returns></returns>
+		MsgBoxButton ShowOC(string message, Window ownerWindow = null);
+
+		/// <summary>
+		/// Shows a message box with buttons Yes and No
 		/// </summary>
 		/// <param name="message">Message to show</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
@@ -147,7 +155,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		MsgBoxButton ShowYesNo(string message, Window ownerWindow = null);
 
 		/// <summary>
-		/// Shows a message box
+		/// Shows a message box with buttons Yes and No
 		/// </summary>
 		/// <param name="message">Message to show</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
@@ -155,7 +163,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		MsgBoxButton ShowYN(string message, Window ownerWindow = null);
 
 		/// <summary>
-		/// Shows a message box
+		/// Shows a message box with buttons Yes, No and Cancel
 		/// </summary>
 		/// <param name="message">Message to show</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>
@@ -163,7 +171,7 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		MsgBoxButton ShowYesNoCancel(string message, Window ownerWindow = null);
 
 		/// <summary>
-		/// Shows a message box
+		/// Shows a message box with buttons Yes, No and Cancel
 		/// </summary>
 		/// <param name="message">Message to show</param>
 		/// <param name="ownerWindow">Owner window or null to use the main window</param>

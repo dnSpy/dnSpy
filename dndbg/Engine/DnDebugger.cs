@@ -273,7 +273,7 @@ namespace dndbg.Engine {
 				throw;
 			}
 
-			Current.StopStates = e.StopStates;
+			Current.PauseStates = e.PauseStates;
 			if (HasQueuedCallbacks(e)) {
 				ContinueAndDecrementCounter(e);
 				// DON'T call anything, DON'T write any fields now, the CLR debugger could've already called us again when Continue() was called
@@ -290,7 +290,7 @@ namespace dndbg.Engine {
 
 		bool ShouldStopQueued() {
 			foreach (var state in debuggerStates) {
-				if (state.StopStates.Length != 0)
+				if (state.PauseStates.Length != 0)
 					return true;
 			}
 			return false;
@@ -718,7 +718,7 @@ namespace dndbg.Engine {
 				}
 				// Don't stop on step/breakpoints when we're evaluating
 				if (!calledStepInfoOnCompleted && !IsEvaluating)
-					scArgs.AddStopState(new StepStopState(scArgs.Reason));
+					scArgs.AddPauseState(new StepPauseState(scArgs.Reason));
 				break;
 
 			case DebugCallbackKind.Break:
@@ -1002,13 +1002,13 @@ namespace dndbg.Engine {
 			if (type != null) {
 				foreach (var bp in DebugEventBreakpoints) {
 					if (bp.IsEnabled && bp.EventKind == type.Value && bp.Condition(new DebugEventBreakpointConditionContext(this, bp, e)))
-						e.AddStopState(new DebugEventBreakpointStopState(bp));
+						e.AddPauseState(new DebugEventBreakpointPauseState(bp));
 				}
 			}
 
 			foreach (var bp in AnyDebugEventBreakpoints) {
 				if (bp.IsEnabled && bp.Condition(new AnyDebugEventBreakpointConditionContext(this, bp, e)))
-					e.AddStopState(new AnyDebugEventBreakpointStopState(bp));
+					e.AddPauseState(new AnyDebugEventBreakpointPauseState(bp));
 			}
 
 			if (e.Kind == DebugCallbackKind.Breakpoint) {
@@ -1019,7 +1019,7 @@ namespace dndbg.Engine {
 						continue;
 
 					if (bp.IsEnabled && bp.Condition(new ILCodeBreakpointConditionContext(this, bp)))
-						e.AddStopState(new ILCodeBreakpointStopState(bp));
+						e.AddPauseState(new ILCodeBreakpointPauseState(bp));
 					break;
 				}
 				foreach (var bp in nativeCodeBreakpointList.GetBreakpoints()) {
@@ -1027,13 +1027,13 @@ namespace dndbg.Engine {
 						continue;
 
 					if (bp.IsEnabled && bp.Condition(new NativeCodeBreakpointConditionContext(this, bp)))
-						e.AddStopState(new NativeCodeBreakpointStopState(bp));
+						e.AddPauseState(new NativeCodeBreakpointPauseState(bp));
 					break;
 				}
 			}
 
 			if (e.Kind == DebugCallbackKind.Break && !debugOptions.IgnoreBreakInstructions)
-				e.AddStopReason(DebuggerStopReason.Break);
+				e.AddPauseReason(DebuggerPauseReason.Break);
 
 			//TODO: DebugCallbackType.BreakpointSetError
 		}
@@ -1509,8 +1509,8 @@ namespace dndbg.Engine {
 			DnThread thread = process.GetMainThread();
 			DnAppDomain appDomain = thread == null ? process.GetMainAppDomain() : thread.AppDomainOrNull;
 			AddDebuggerState(new DebuggerState(null, process, appDomain, thread) {
-				StopStates = new DebuggerStopState[] {
-					new DebuggerStopState(DebuggerStopReason.UserBreak),
+				PauseStates = new DebuggerPauseState[] {
+					new DebuggerPauseState(DebuggerPauseReason.UserBreak),
 				}
 			});
 

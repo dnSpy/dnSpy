@@ -24,6 +24,47 @@ using dnSpy.Contracts.Scripting.Debugger;
 using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Debugger.Scripting {
+	sealed class NullNativeBreakpoint : INativeBreakpoint {
+		public static readonly NullNativeBreakpoint Instance = new NullNativeBreakpoint();
+
+		public bool IsEnabled {
+			get { return false; }
+			set { }
+		}
+
+		public object Tag {
+			get { return null; }
+			set { }
+		}
+
+		public bool IsIL {
+			get { return false; }
+		}
+
+		public bool IsNative {
+			get { return true; }
+		}
+
+		public BreakpointKind Kind {
+			get { return BreakpointKind.Native; }
+		}
+
+		public ModuleName Module {
+			get { return ModuleName.Create(string.Empty, string.Empty, true, true, false); }
+		}
+
+		public uint Offset {
+			get { return 0; }
+		}
+
+		public uint Token {
+			get { return 0x06000000; }
+		}
+
+		public void Remove() {
+		}
+	}
+
 	sealed class NativeBreakpoint : INativeBreakpoint {
 		public BreakpointKind Kind {
 			get { return BreakpointKind.Native; }
@@ -44,6 +85,8 @@ namespace dnSpy.Debugger.Scripting {
 			}
 		}
 		bool isEnabled;
+
+		public object Tag { get; set; }
 
 		public bool IsIL {
 			get { return false; }
@@ -113,6 +156,7 @@ namespace dnSpy.Debugger.Scripting {
 			else
 				dbgBreakpoint = dbg.CreateNativeBreakpoint(code.CorCode, offset, a => cond(this));
 			dbgBreakpoint.IsEnabled = isEnabled;
+			dbgBreakpoint.Tag = this;
 		}
 	}
 }

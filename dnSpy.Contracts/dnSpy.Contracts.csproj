@@ -230,9 +230,11 @@
     <Compile Include="Scripting\Debugger\CorElementType.cs" />
     <Compile Include="Scripting\Debugger\DebugEventKind.cs" />
     <Compile Include="Scripting\Debugger\DebuggerEventArgs.cs" />
+    <Compile Include="Scripting\Debugger\DebuggerPauseState.cs" />
     <Compile Include="Scripting\Debugger\DebuggerProcessState.cs" />
     <Compile Include="Scripting\Debugger\DebugHandleType.cs" />
     <Compile Include="Scripting\Debugger\DebugOptions.cs" />
+    <Compile Include="Scripting\Debugger\DebugStepReason.cs" />
     <Compile Include="Scripting\Debugger\ExceptionObjectStackFrame.cs" />
     <Compile Include="Scripting\Debugger\IAnyEventBreakpoint.cs" />
     <Compile Include="Scripting\Debugger\IAppDomain.cs" />

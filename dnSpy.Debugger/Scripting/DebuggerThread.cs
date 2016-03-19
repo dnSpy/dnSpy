@@ -292,6 +292,20 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
+		public IDebuggerValue AssemblyLoad(string assemblyString) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.AssemblyLoad(assemblyString);
+			});
+		}
+
+		public IDebuggerValue AssemblyLoadFrom(string assemblyFile) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.AssemblyLoadFrom(assemblyFile);
+			});
+		}
+
 		public IDebuggerValue AssemblyLoadFile(string filename) {
 			return debugger.Dispatcher.UI(() => {
 				using (var eval = debugger.CreateEvalUI(this))

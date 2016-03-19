@@ -25,8 +25,6 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			InitializeComponent();
 		}
 
-		public void SetTextEditorObject(object obj) {
-			this.textEditorContentPresenter.Content = obj;
-		}
+		public void SetTextEditorObject(object obj) => this.textEditorContentPresenter.Content = obj;
 	}
 }

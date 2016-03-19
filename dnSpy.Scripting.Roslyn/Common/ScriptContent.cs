@@ -35,24 +35,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 	}
 
 	abstract class ScriptContent : IScriptContent {
-		public object UIObject {
-			get { return scriptControl; }
-		}
-
-		public IInputElement FocusedElement {
-			get { return replEditorUI.FocusedElement; }
-		}
-
-		public FrameworkElement ScaleElement {
-			get { return replEditorUI.ScaleElement; }
-		}
+		public object UIObject => scriptControl;
+		public IInputElement FocusedElement => replEditorUI.FocusedElement;
+		public FrameworkElement ScaleElement => replEditorUI.ScaleElement;
+		public ScriptControlVM ScriptControlVM => scriptControlVM;
 
 		readonly IReplEditorUI replEditorUI;
 		readonly ScriptControl scriptControl;
-
-		public ScriptControlVM ScriptControlVM {
-			get { return scriptControlVM; }
-		}
 		readonly ScriptControlVM scriptControlVM;
 
 		protected ScriptContent(IThemeManager themeManager, IReplEditorCreator replEditorCreator, ReplEditorOptions replOpts, IServiceLocator serviceLocator) {
@@ -71,15 +60,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			CommandManager.InvalidateRequerySuggested();
 		}
 
-		public static ScriptContent GetScriptContent(IReplEditorUI replEditorUI) {
-			return (ScriptContent)replEditorUI.Tag;
-		}
+		public static ScriptContent GetScriptContent(IReplEditorUI replEditorUI) =>
+			(ScriptContent)replEditorUI.Tag;
 
 		protected abstract ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator);
 
-		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) {
+		void ThemeManager_ThemeChanged(object sender, ThemeChangedEventArgs e) =>
 			scriptControlVM.RefreshThemeFields();
-		}
 
 		public void OnClose() {
 		}
@@ -90,8 +77,6 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public void OnHidden() {
 		}
 
-		public void OnVisible() {
-			scriptControlVM.OnVisible();
-		}
+		public void OnVisible() => scriptControlVM.OnVisible();
 	}
 }

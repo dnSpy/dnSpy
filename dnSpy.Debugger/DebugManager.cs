@@ -280,57 +280,60 @@ namespace dnSpy.Debugger {
 				if (debugger == null || debugger.ProcessState != DebuggerProcessState.Paused)
 					return null;
 
-				sb = new StringBuilder();
+				if (sb == null)
+					sb = new StringBuilder();
+				else
+					sb.Clear();
 
 				bool seenCodeBp = false;
 				foreach (var state in debugger.DebuggerStates) {
-					foreach (var stopState in state.StopStates) {
-						switch (stopState.Reason) {
-						case DebuggerStopReason.Other:
+					foreach (var pauseState in state.PauseStates) {
+						switch (pauseState.Reason) {
+						case DebuggerPauseReason.Other:
 							Append(dnSpy_Debugger_Resources.Debug_StopReason_Unknown);
 							break;
 
-						case DebuggerStopReason.UnhandledException:
+						case DebuggerPauseReason.UnhandledException:
 							Append(dnSpy_Debugger_Resources.Debug_StopReason_UnhandledException);
 							break;
 
-						case DebuggerStopReason.Exception:
+						case DebuggerPauseReason.Exception:
 							Append(dnSpy_Debugger_Resources.Debug_StopReason_Exception);
 							break;
 
-						case DebuggerStopReason.DebugEventBreakpoint:
+						case DebuggerPauseReason.DebugEventBreakpoint:
 							if (state.EventArgs != null)
 								Append(GetEventDescription(state.EventArgs));
 							else
 								Append(dnSpy_Debugger_Resources.Debug_StopReason_DebugEventBreakpoint);
 							break;
 
-						case DebuggerStopReason.AnyDebugEventBreakpoint:
+						case DebuggerPauseReason.AnyDebugEventBreakpoint:
 							if (state.EventArgs != null)
 								Append(GetEventDescription(state.EventArgs));
 							else
 								Append(dnSpy_Debugger_Resources.Debug_StopReason_AnyDebugEventBreakpoint);
 							break;
 
-						case DebuggerStopReason.Break:
+						case DebuggerPauseReason.Break:
 							Append(dnSpy_Debugger_Resources.Debug_StopReason_BreakInstruction);
 							break;
 
-						case DebuggerStopReason.ILCodeBreakpoint:
+						case DebuggerPauseReason.ILCodeBreakpoint:
 							if (seenCodeBp)
 								break;
 							seenCodeBp = true;
 							Append(dnSpy_Debugger_Resources.Debug_StopReason_ILCodeBreakpoint);
 							break;
 
-						case DebuggerStopReason.NativeCodeBreakpoint:
+						case DebuggerPauseReason.NativeCodeBreakpoint:
 							if (seenCodeBp)
 								break;
 							seenCodeBp = true;
 							Append(dnSpy_Debugger_Resources.Debug_StopReason_Breakpoint);
 							break;
 
-						case DebuggerStopReason.Step:
+						case DebuggerPauseReason.Step:
 							break;
 						}
 					}
@@ -501,7 +504,7 @@ namespace dnSpy.Debugger {
 			var dbg = TheDebugger.Debugger;
 			if (dbg == null)
 				return;
-			if (dbg.Current.GetStopState(DebuggerStopReason.Exception) == null)
+			if (dbg.Current.GetPauseState(DebuggerPauseReason.Exception) == null)
 				return;
 			var thread = dbg.Current.Thread;
 			if (thread == null)
@@ -559,7 +562,7 @@ namespace dnSpy.Debugger {
 				BringMainWindowToFrontAndActivate();
 				var res = messageBoxManager.Show(string.Format(dnSpy_Debugger_Resources.Error_UnhandledExceptionOccurred, processName, sb), MsgBoxButton.OK | MsgBoxButton.Cancel);
 				if (res != MsgBoxButton.Cancel)
-					e.AddStopReason(DebuggerStopReason.UnhandledException);
+					e.AddPauseReason(DebuggerPauseReason.UnhandledException);
 			}
 			finally {
 				UnhandledException_counter--;
