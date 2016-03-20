@@ -201,6 +201,13 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		IDebuggerType ToArray(int rank);
 
 		/// <summary>
+		/// Returns all methods
+		/// </summary>
+		/// <param name="checkBaseClasses">true to check base classes</param>
+		/// <returns></returns>
+		IDebuggerFunction[] GetMethods(bool checkBaseClasses = true);
+
+		/// <summary>
 		/// Finds a method. If only one method is found, it's returned, else the method that takes
 		/// no arguments is returned, or null if it doesn't exist.
 		/// </summary>

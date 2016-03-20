@@ -498,6 +498,31 @@ namespace dndbg.Engine {
 			}
 		}
 
+		/// <summary>
+		/// Finds methods
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<CorFunction> FindFunctions(bool checkBaseClasses = true) {
+			for (var type = this; type != null; type = type.Base) {
+				if (!checkBaseClasses && (object)this != (object)type)
+					break;
+				if (!type.HasClass)
+					continue;
+				var cls = type.Class;
+				if (cls == null)
+					continue;
+
+				var mod = cls.Module;
+				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				foreach (var mdToken in MDAPI.GetMethodTokens(mdi, cls.Token)) {
+					var func = mod.GetFunctionFromToken(mdToken);
+					Debug.Assert(func != null);
+					if (func != null)
+						yield return func;
+				}
+			}
+		}
+
 		public static bool operator ==(CorType a, CorType b) {
 			if (ReferenceEquals(a, b))
 				return true;

@@ -211,6 +211,30 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
+		/// Finds methods
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<CorFunction> FindFunctions(bool checkBaseClasses = true) {
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			foreach (var mdToken in MDAPI.GetMethodTokens(mdi, token)) {
+				var func = mod.GetFunctionFromToken(mdToken);
+				Debug.Assert(func != null);
+				if (func != null)
+					yield return func;
+			}
+			if (checkBaseClasses) {
+				var type = GetParameterizedType(CorElementType.Class);
+				if (type != null)
+					type = type.Base;
+				if (type != null) {
+					foreach (var func in type.FindFunctions(checkBaseClasses))
+						yield return func;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Finds all constructors
 		/// </summary>
 		/// <returns></returns>

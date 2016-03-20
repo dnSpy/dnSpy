@@ -225,6 +225,16 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
+		public IDebuggerFunction[] GetMethods(bool checkBaseClasses) {
+			return debugger.Dispatcher.UI(() => {
+				var funcs = type.FindFunctions(checkBaseClasses).ToList();
+				var res = new IDebuggerFunction[funcs.Count];
+				for (int i = 0; i < res.Length; i++)
+					res[i] = new DebuggerFunction(debugger, funcs[i]);
+				return res;
+			});
+		}
+
 		public IDebuggerFunction FindMethod(string name, bool checkBaseClasses) {
 			return debugger.Dispatcher.UI(() => {
 				var methods = FindMethods(name, checkBaseClasses);
