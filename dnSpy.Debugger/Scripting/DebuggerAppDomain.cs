@@ -252,10 +252,13 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		IDebuggerType[] GetTypes(Type[] types) {
-			var res = new IDebuggerType[types.Length];
-			for (int i = 0; i < res.Length; i++)
-				res[i] = FindType(types[i]);
-			return res;
+			var res = new List<IDebuggerType>(types.Length);
+			for (int i = 0; i < res.Count; i++) {
+				var t = FindType(types[i]);
+				if (t != null)
+					res.Add(t);
+			}
+			return res.ToArray();
 		}
 
 		public IDebuggerType CreateFnPtr(params IDebuggerType[] types) {
