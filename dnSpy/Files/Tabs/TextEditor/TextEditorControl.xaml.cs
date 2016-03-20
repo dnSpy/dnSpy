@@ -603,8 +603,15 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			var ma = a.Reference as IMemberRef;
 			var mb = b.Reference as IMemberRef;
-			if (ma != null && mb != null)
+			if (ma != null && mb != null) {
+				// PERF: Prevent expensive resolves by doing a quick name check
+				if (ma.Name != mb.Name)
+					return false;
+
+				ma = Resolve(ma) ?? ma;
+				mb = Resolve(mb) ?? mb;
 				return new SigComparer(SigComparerOptions.CompareDeclaringTypes | SigComparerOptions.PrivateScopeIsComparable).Equals(ma, mb);
+			}
 
 			return false;
 		}
