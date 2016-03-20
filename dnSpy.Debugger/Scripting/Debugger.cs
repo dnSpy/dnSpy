@@ -72,8 +72,13 @@ namespace dnSpy.Debugger.Scripting {
 
 		public PauseReason PauseReason {
 			get {
-				var ps = PauseStates;
-				return ps.Length == 0 ? PauseReason.Other : ps[0].Reason;
+				return dispatcher.UI(() => {
+					var dbg = theDebugger.Debugger;
+					if (dbg == null || dbg.ProcessState == DBG.DebuggerProcessState.Terminated)
+						return PauseReason.Terminated;
+					var ps = PauseStates;
+					return ps.Length == 0 ? PauseReason.Other : ps[0].Reason;
+				});
 			}
 		}
 

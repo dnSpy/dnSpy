@@ -76,6 +76,11 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// Evaluation completed
 		/// </summary>
 		Eval,
+
+		/// <summary>
+		/// The process has been terminated
+		/// </summary>
+		Terminated,
 	}
 
 	/// <summary>
