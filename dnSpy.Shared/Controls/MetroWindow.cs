@@ -26,6 +26,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
+using System.Windows.Shell;
 using dnSpy.Shared.MVVM;
 
 namespace dnSpy.Shared.Controls {
@@ -33,7 +34,7 @@ namespace dnSpy.Shared.Controls {
 		public static readonly RoutedCommand FullScreenCommand = new RoutedCommand("FullScreen", typeof(MetroWindow));
 
 		public MetroWindow() {
-			SetValue(winChrome_WindowChromeProperty, CreateWindowChromeObject());
+			SetValue(WindowChrome.WindowChromeProperty, CreateWindowChromeObject());
 			// Since the system menu had to be disabled, we must add this command
 			var cmd = new RelayCommand(a => ShowSystemMenu(this), a => !IsFullScreen);
 			InputBindings.Add(new KeyBinding(cmd, Key.Space, ModifierKeys.Alt));
@@ -61,7 +62,7 @@ namespace dnSpy.Shared.Controls {
 
 		static void OnIsFullScreenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var window = (MetroWindow)d;
-			var obj = (DependencyObject)window.GetValue(winChrome_WindowChromeProperty);
+			var obj = (DependencyObject)window.GetValue(WindowChrome.WindowChromeProperty);
 			if (window.IsFullScreen)
 				window.InitializeWindowCaptionAndResizeBorder(obj, false);
 			else
@@ -86,7 +87,7 @@ namespace dnSpy.Shared.Controls {
 		static void OnIsHitTestVisibleInChromeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var elem = d as UIElement;
 			if (elem != null)
-				elem.SetValue(winChrome_IsHitTestVisibleInChromeProperty, e.NewValue);
+				elem.SetValue(WindowChrome.IsHitTestVisibleInChromeProperty, e.NewValue);
 		}
 
 		public static void SetIsHitTestVisibleInChrome(UIElement element, bool value) {
@@ -190,7 +191,7 @@ namespace dnSpy.Shared.Controls {
 
 		static void OnUseResizeBorderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var win = (MetroWindow)d;
-			var obj = (DependencyObject)win.GetValue(winChrome_WindowChromeProperty);
+			var obj = (DependencyObject)win.GetValue(WindowChrome.WindowChromeProperty);
 			if (obj == null)
 				return;
 
@@ -333,59 +334,24 @@ namespace dnSpy.Shared.Controls {
 			set { SetValue(ShowCloseButtonProperty, value); }
 		}
 
-		static Type windowChromeType;
-		static Type nonClientFrameEdgesType;
-		static DependencyProperty winChrome_CaptionHeightProperty;
-		static DependencyProperty winChrome_CornerRadiusProperty;
-		static DependencyProperty winChrome_GlassFrameThicknessProperty;
-		static DependencyProperty winChrome_NonClientFrameEdgesProperty;
-		static DependencyProperty winChrome_ResizeBorderThicknessProperty;
-		static DependencyProperty winChrome_WindowChromeProperty;
-		static DependencyProperty winChrome_IsHitTestVisibleInChromeProperty;
-
 		static MetroWindow() {
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(MetroWindow), new FrameworkPropertyMetadata(typeof(MetroWindow)));
-			Initialize();
 		}
 
 		// If these get updated, also update the templates if necessary
 		static readonly CornerRadius CornerRadius = new CornerRadius(0, 0, 0, 0);
 		static readonly Thickness GlassFrameThickness = new Thickness(0);
-		static readonly int NonClientFrameEdges = 0; // 0=None
-													 // NOTE: Keep these in sync: CaptionHeight + ResizeBorderThickness.Top = GridCaptionHeight
+		// NOTE: Keep these in sync: CaptionHeight + ResizeBorderThickness.Top = GridCaptionHeight
 		static readonly double CaptionHeight = 20;
 		static readonly Thickness ResizeBorderThickness = new Thickness(10, 10, 5, 5);
 		public static readonly GridLength GridCaptionHeight = new GridLength(CaptionHeight + ResizeBorderThickness.Top, GridUnitType.Pixel);
-
-		static void Initialize() {
-			// Available in .NET 4.5. Also available in Microsoft.Windows.Shell.dll (Microsoft Ribbon for WPF)
-			var asm = typeof(Window).Assembly;
-			var ns = "System.Windows.Shell.";
-			windowChromeType = asm.GetType(ns + "WindowChrome", false, false);
-			if (windowChromeType == null) {
-				asm = Assembly.Load("Microsoft.Windows.Shell, Version=3.5.41019.1, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
-				ns = "Microsoft.Windows.Shell.";
-				windowChromeType = asm.GetType(ns + "WindowChrome", false, false);
-			}
-			if (windowChromeType == null)
-				throw new ApplicationException("Could not find WindowChrome class");
-
-			nonClientFrameEdgesType = asm.GetType(ns + "NonClientFrameEdges", false, false);
-			winChrome_CaptionHeightProperty = (DependencyProperty)windowChromeType.GetField("CaptionHeightProperty").GetValue(null);
-			winChrome_CornerRadiusProperty = (DependencyProperty)windowChromeType.GetField("CornerRadiusProperty").GetValue(null);
-			winChrome_GlassFrameThicknessProperty = (DependencyProperty)windowChromeType.GetField("GlassFrameThicknessProperty").GetValue(null);
-			winChrome_NonClientFrameEdgesProperty = (DependencyProperty)windowChromeType.GetField("NonClientFrameEdgesProperty").GetValue(null);
-			winChrome_ResizeBorderThicknessProperty = (DependencyProperty)windowChromeType.GetField("ResizeBorderThicknessProperty").GetValue(null);
-			winChrome_WindowChromeProperty = (DependencyProperty)windowChromeType.GetField("WindowChromeProperty").GetValue(null);
-			winChrome_IsHitTestVisibleInChromeProperty = (DependencyProperty)windowChromeType.GetField("IsHitTestVisibleInChromeProperty").GetValue(null);
-		}
 
 		protected override void OnStateChanged(EventArgs e) {
 			base.OnStateChanged(e);
 			if (WindowState == WindowState.Normal)
 				ClearValue(Window.WindowStateProperty);
 
-			var obj = (DependencyObject)GetValue(winChrome_WindowChromeProperty);
+			var obj = (DependencyObject)GetValue(WindowChrome.WindowChromeProperty);
 			switch (WindowState) {
 			case WindowState.Normal:
 				InitializeWindowCaptionAndResizeBorder(obj);
@@ -402,16 +368,13 @@ namespace dnSpy.Shared.Controls {
 			}
 		}
 
-		DependencyObject CreateWindowChromeObject() {
-			var ctor = windowChromeType.GetConstructor(new Type[0]);
-			var obj = (DependencyObject)ctor.Invoke(new object[0]);
-
-			obj.SetValue(winChrome_CornerRadiusProperty, CornerRadius);
-			obj.SetValue(winChrome_GlassFrameThicknessProperty, GlassFrameThickness);
-			obj.SetValue(winChrome_NonClientFrameEdgesProperty, Enum.ToObject(nonClientFrameEdgesType, NonClientFrameEdges));
-			InitializeWindowCaptionAndResizeBorder(obj);
-
-			return obj;
+		WindowChrome CreateWindowChromeObject() {
+			var wc = new WindowChrome();
+			wc.SetValue(WindowChrome.CornerRadiusProperty, CornerRadius);
+			wc.SetValue(WindowChrome.GlassFrameThicknessProperty, GlassFrameThickness);
+			wc.SetValue(WindowChrome.NonClientFrameEdgesProperty, NonClientFrameEdges.None);
+			InitializeWindowCaptionAndResizeBorder(wc);
+			return wc;
 		}
 
 		void InitializeWindowCaptionAndResizeBorder(DependencyObject obj) {
@@ -420,15 +383,15 @@ namespace dnSpy.Shared.Controls {
 
 		void InitializeWindowCaptionAndResizeBorder(DependencyObject obj, bool useResizeBorder) {
 			if (useResizeBorder) {
-				obj.SetValue(winChrome_CaptionHeightProperty, CaptionHeight);
-				obj.SetValue(winChrome_ResizeBorderThicknessProperty, ResizeBorderThickness);
+				obj.SetValue(WindowChrome.CaptionHeightProperty, CaptionHeight);
+				obj.SetValue(WindowChrome.ResizeBorderThicknessProperty, ResizeBorderThickness);
 			}
 			else {
 				if (IsFullScreen)
-					obj.SetValue(winChrome_CaptionHeightProperty, 0d);
+					obj.SetValue(WindowChrome.CaptionHeightProperty, 0d);
 				else
-					obj.SetValue(winChrome_CaptionHeightProperty, GridCaptionHeight.Value);
-				obj.SetValue(winChrome_ResizeBorderThicknessProperty, new Thickness(0));
+					obj.SetValue(WindowChrome.CaptionHeightProperty, GridCaptionHeight.Value);
+				obj.SetValue(WindowChrome.ResizeBorderThicknessProperty, new Thickness(0));
 			}
 		}
 
