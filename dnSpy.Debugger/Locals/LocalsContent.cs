@@ -28,6 +28,7 @@ namespace dnSpy.Debugger.Locals {
 	interface ILocalsContent {
 		object UIObject { get; }
 		IInputElement FocusedElement { get; }
+		FrameworkElement ScaleElement { get; }
 		void OnShow();
 		void OnClose();
 		void OnVisible();
@@ -45,6 +46,10 @@ namespace dnSpy.Debugger.Locals {
 
 		public IInputElement FocusedElement {
 			get { return localsControl.ListView; }
+		}
+
+		public FrameworkElement ScaleElement {
+			get { return localsControl; }
 		}
 
 		public ListView ListView {

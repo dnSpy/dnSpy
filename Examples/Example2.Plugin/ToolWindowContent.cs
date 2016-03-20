@@ -101,6 +101,12 @@ namespace Example2.Plugin {
 			get { return toolWindowControl.option1TextBox; }
 		}
 
+		// The element that gets scaled when the user zooms in or out. Return null if zooming isn't
+		// possible
+		public FrameworkElement ScaleElement {
+			get { return toolWindowControl; }
+		}
+
 		readonly ToolWindowControl toolWindowControl;
 		readonly ToolWindowVM toolWindowVM;
 

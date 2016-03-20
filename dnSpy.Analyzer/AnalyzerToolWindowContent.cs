@@ -60,6 +60,10 @@ namespace dnSpy.Analyzer {
 			get { return null; }
 		}
 
+		public FrameworkElement ScaleElement {
+			get { return analyzerManager.Value.TreeView.UIObject as FrameworkElement; }
+		}
+
 		public Guid Guid {
 			get { return THE_GUID; }
 		}

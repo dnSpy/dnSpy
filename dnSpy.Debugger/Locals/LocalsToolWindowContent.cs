@@ -60,6 +60,10 @@ namespace dnSpy.Debugger.Locals {
 			get { return localsContent.Value.FocusedElement; }
 		}
 
+		public FrameworkElement ScaleElement {
+			get { return localsContent.Value.ScaleElement; }
+		}
+
 		public Guid Guid {
 			get { return THE_GUID; }
 		}

@@ -31,6 +31,7 @@ namespace dnSpy.Debugger.Memory {
 	interface IMemoryContent {
 		object UIObject { get; }
 		IInputElement FocusedElement { get; }
+		FrameworkElement ScaleElement { get; }
 		void OnShow();
 		void OnClose();
 		void OnVisible();
@@ -45,6 +46,10 @@ namespace dnSpy.Debugger.Memory {
 
 		public IInputElement FocusedElement {
 			get { return memoryControl.DnHexBox; }
+		}
+
+		public FrameworkElement ScaleElement {
+			get { return memoryControl; }
 		}
 
 		public DnHexBox DnHexBox {

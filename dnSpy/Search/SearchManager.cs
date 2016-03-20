@@ -52,6 +52,11 @@ namespace dnSpy.Search {
 		IInputElement FocusedElement { get; }
 
 		/// <summary>
+		/// Gets the element that gets the <see cref="ScaleTransform"/> or null if none
+		/// </summary>
+		FrameworkElement ScaleElement { get; }
+
+		/// <summary>
 		/// Called when it's been added to the UI
 		/// </summary>
 		void OnShow();
@@ -101,6 +106,10 @@ namespace dnSpy.Search {
 
 		public IInputElement FocusedElement {
 			get { return searchControl.SearchTextBox; }
+		}
+
+		public FrameworkElement ScaleElement {
+			get { return searchControl; }
 		}
 
 		public object UIObject {

@@ -48,6 +48,7 @@ namespace dnSpy.Debugger.Breakpoints {
 		void Focus();
 		object UIObject { get; }
 		IInputElement FocusedElement { get; }
+		FrameworkElement ScaleElement { get; }
 		IBreakpointsVM BreakpointsVM { get; }
 		ListView ListView { get; }
 	}
@@ -60,6 +61,10 @@ namespace dnSpy.Debugger.Breakpoints {
 
 		public IInputElement FocusedElement {
 			get { return BreakpointsControl.ListView; }
+		}
+
+		public FrameworkElement ScaleElement {
+			get { return BreakpointsControl; }
 		}
 
 		public ListView ListView {

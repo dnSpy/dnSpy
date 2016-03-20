@@ -60,6 +60,10 @@ namespace dnSpy.Debugger.Threads {
 			get { return threadsContent.Value.FocusedElement; }
 		}
 
+		public FrameworkElement ScaleElement {
+			get { return threadsContent.Value.ScaleElement; }
+		}
+
 		public Guid Guid {
 			get { return THE_GUID; }
 		}

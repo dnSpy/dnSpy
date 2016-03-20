@@ -68,6 +68,10 @@ namespace dnSpy.MainApp {
 			get { return null; }
 		}
 
+		public FrameworkElement ScaleElement {
+			get { return treeView.UIObject as FrameworkElement; }
+		}
+
 		public Guid Guid {
 			get { return THE_GUID; }
 		}

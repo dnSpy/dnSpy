@@ -32,6 +32,7 @@ namespace dnSpy.Debugger.Modules {
 	interface IModulesContent {
 		object UIObject { get; }
 		IInputElement FocusedElement { get; }
+		FrameworkElement ScaleElement { get; }
 		void OnShow();
 		void OnClose();
 		void OnVisible();
@@ -49,6 +50,10 @@ namespace dnSpy.Debugger.Modules {
 
 		public IInputElement FocusedElement {
 			get { return modulesControl.ListView; }
+		}
+
+		public FrameworkElement ScaleElement {
+			get { return modulesControl; }
 		}
 
 		public ListView ListView {

@@ -60,6 +60,10 @@ namespace dnSpy.Debugger.Breakpoints {
 			get { return breakpointsContent.Value.FocusedElement; }
 		}
 
+		public FrameworkElement ScaleElement {
+			get { return breakpointsContent.Value.ScaleElement; }
+		}
+
 		public Guid Guid {
 			get { return THE_GUID; }
 		}

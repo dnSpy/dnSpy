@@ -72,6 +72,10 @@ namespace dnSpy.Search {
 			get { return searchManager.Value.FocusedElement; }
 		}
 
+		public FrameworkElement ScaleElement {
+			get { return searchManager.Value.ScaleElement; }
+		}
+
 		public Guid Guid {
 			get { return THE_GUID; }
 		}

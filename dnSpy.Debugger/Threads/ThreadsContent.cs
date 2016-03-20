@@ -32,6 +32,7 @@ namespace dnSpy.Debugger.Threads {
 	interface IThreadsContent {
 		object UIObject { get; }
 		IInputElement FocusedElement { get; }
+		FrameworkElement ScaleElement { get; }
 		void OnShow();
 		void OnClose();
 		void OnVisible();
@@ -49,6 +50,10 @@ namespace dnSpy.Debugger.Threads {
 
 		public IInputElement FocusedElement {
 			get { return threadsControl.ListView; }
+		}
+
+		public FrameworkElement ScaleElement {
+			get { return threadsControl; }
 		}
 
 		public ListView ListView {

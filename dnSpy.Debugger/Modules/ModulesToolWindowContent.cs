@@ -60,6 +60,10 @@ namespace dnSpy.Debugger.Modules {
 			get { return modulesContent.Value.FocusedElement; }
 		}
 
+		public FrameworkElement ScaleElement {
+			get { return modulesContent.Value.ScaleElement; }
+		}
+
 		public Guid Guid {
 			get { return THE_GUID; }
 		}

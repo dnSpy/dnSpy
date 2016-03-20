@@ -31,6 +31,7 @@ namespace dnSpy.Debugger.CallStack {
 	interface ICallStackContent {
 		object UIObject { get; }
 		IInputElement FocusedElement { get; }
+		FrameworkElement ScaleElement { get; }
 		void OnShow();
 		void OnClose();
 		void OnVisible();
@@ -48,6 +49,10 @@ namespace dnSpy.Debugger.CallStack {
 
 		public IInputElement FocusedElement {
 			get { return callStackControl.ListView; }
+		}
+
+		public FrameworkElement ScaleElement {
+			get { return callStackControl; }
 		}
 
 		public ListView ListView {

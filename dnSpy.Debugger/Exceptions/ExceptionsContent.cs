@@ -29,6 +29,7 @@ namespace dnSpy.Debugger.Exceptions {
 	interface IExceptionsContent {
 		object UIObject { get; }
 		IInputElement FocusedElement { get; }
+		FrameworkElement ScaleElement { get; }
 		void Focus();
 		void FocusSearchTextBox();
 		ListBox ListBox { get; }
@@ -43,6 +44,10 @@ namespace dnSpy.Debugger.Exceptions {
 
 		public IInputElement FocusedElement {
 			get { return ExceptionsControl.ListBox; }
+		}
+
+		public FrameworkElement ScaleElement {
+			get { return ExceptionsControl; }
 		}
 
 		public ListBox ListBox {

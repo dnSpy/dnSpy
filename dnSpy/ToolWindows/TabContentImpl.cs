@@ -26,6 +26,7 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Tabs;
 using dnSpy.Contracts.ToolWindows;
 using dnSpy.Shared.MVVM;
+using dnSpy.Tabs;
 
 namespace dnSpy.ToolWindows {
 	sealed class TabContentImpl : ITabContent, IFocusable, INotifyPropertyChanged {
@@ -84,6 +85,7 @@ namespace dnSpy.ToolWindows {
 							e.Handled = true;
 						}
 					};
+					elementScaler.InstallScale(content.ScaleElement);
 					contentPresenter.InputBindings.Add(new KeyBinding(CloseCommand, Key.Escape, ModifierKeys.Shift));
 					// Needed if the content already has keyboard focus, eg. happens when moving
 					// the tool window from one side to the other.
@@ -146,7 +148,10 @@ namespace dnSpy.ToolWindows {
 		}
 		ToolWindowGroup owner;
 
+		readonly TabElementScaler elementScaler;
+
 		public TabContentImpl(ToolWindowGroup owner, IToolWindowContent content) {
+			this.elementScaler = new TabElementScaler();
 			this.owner = owner;
 			this.content = content;
 			AddEvents();
@@ -194,6 +199,7 @@ namespace dnSpy.ToolWindows {
 
 			switch (visEvent) {
 			case TabContentVisibilityEvent.Removed:
+				elementScaler.Dispose();
 				RemoveEvents();
 				if (contentPresenter != null)
 					contentPresenter.Content = null;

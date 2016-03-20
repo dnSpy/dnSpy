@@ -60,6 +60,10 @@ namespace dnSpy.Debugger.Exceptions {
 			get { return exceptionsContent.Value.FocusedElement; }
 		}
 
+		public FrameworkElement ScaleElement {
+			get { return exceptionsContent.Value.ScaleElement; }
+		}
+
 		public Guid Guid {
 			get { return THE_GUID; }
 		}

@@ -54,6 +54,10 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			get { return ScriptContent.FocusedElement; }
 		}
 
+		public FrameworkElement ScaleElement {
+			get { return ScriptContent.ScaleElement; }
+		}
+
 		public Guid Guid {
 			get { return contentGuid; }
 		}

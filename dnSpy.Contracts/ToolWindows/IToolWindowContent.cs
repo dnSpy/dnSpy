@@ -20,6 +20,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows;
+using System.Windows.Media;
 using dnSpy.Contracts.Controls;
 
 namespace dnSpy.Contracts.ToolWindows {
@@ -52,6 +53,11 @@ namespace dnSpy.Contracts.ToolWindows {
 		/// <see cref="UIObject"/>. Implement <see cref="IFocusable"/> to set focus yourself.
 		/// </summary>
 		IInputElement FocusedElement { get; }
+
+		/// <summary>
+		/// Gets the element that gets the <see cref="ScaleTransform"/> or null if none
+		/// </summary>
+		FrameworkElement ScaleElement { get; }
 
 		/// <summary>
 		/// Called when the visibility changes

@@ -154,7 +154,6 @@
     <Compile Include="Files\Tabs\Settings\DisplaySettingsTab.cs" />
     <Compile Include="Files\Tabs\TabCommands.cs" />
     <Compile Include="Files\Tabs\TabContentImpl.cs" />
-    <Compile Include="Files\Tabs\TabElementScaler.cs" />
     <Compile Include="Files\Tabs\TabHistory.cs" />
     <Compile Include="Files\Tabs\TextEditor\Commands.cs" />
     <Compile Include="Files\Tabs\TextEditor\DecompileFileTabContent.cs" />
@@ -312,6 +311,7 @@
     <Compile Include="Settings\XmlSettingsWriter.cs" />
     <Compile Include="Settings\XmlUtils.cs" />
     <Compile Include="Tabs\FileTabBackgroundConverter.cs" />
+    <Compile Include="Tabs\TabElementScaler.cs" />
     <Compile Include="Tabs\TabGroup.cs" />
     <Compile Include="Tabs\TabGroupManager.cs" />
     <Compile Include="Tabs\TabItemImpl.cs" />

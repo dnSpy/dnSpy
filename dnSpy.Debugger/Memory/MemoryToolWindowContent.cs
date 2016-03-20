@@ -125,6 +125,10 @@ namespace dnSpy.Debugger.Memory {
 			get { return memoryContent.Value.FocusedElement; }
 		}
 
+		public FrameworkElement ScaleElement {
+			get { return memoryContent.Value.ScaleElement; }
+		}
+
 		public Guid Guid {
 			get { return guid; }
 		}

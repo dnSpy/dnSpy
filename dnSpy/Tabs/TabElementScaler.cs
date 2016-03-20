@@ -23,7 +23,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 
-namespace dnSpy.Files.Tabs {
+namespace dnSpy.Tabs {
 	sealed class TabElementScaler : IDisposable {
 		readonly List<CommandBinding> commandBindings;
 		readonly List<KeyBinding> keyBindings;
@@ -49,7 +49,8 @@ namespace dnSpy.Files.Tabs {
 			scaleElement = elem;
 			if (scaleElement == null)
 				return;
-			scaleElement.MouseWheel += ScaleElement_MouseWheel;
+			// A scrollviewer will prevent our code from getting called so use AddHandler()
+			scaleElement.AddHandler(UIElement.MouseWheelEvent, new MouseWheelEventHandler(ScaleElement_MouseWheel), true);
 			scaleElement.CommandBindings.AddRange(commandBindings);
 			scaleElement.InputBindings.AddRange(keyBindings);
 			ScaleValue = ScaleValue;
@@ -58,7 +59,7 @@ namespace dnSpy.Files.Tabs {
 		void UninstallScale() {
 			if (scaleElement == null)
 				return;
-			scaleElement.MouseWheel -= ScaleElement_MouseWheel;
+			scaleElement.RemoveHandler(UIElement.MouseWheelEvent, new MouseWheelEventHandler(ScaleElement_MouseWheel));
 			foreach (var b in commandBindings)
 				scaleElement.CommandBindings.Remove(b);
 			foreach (var b in keyBindings)

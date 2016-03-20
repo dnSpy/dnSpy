@@ -28,6 +28,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 	interface IScriptContent {
 		object UIObject { get; }
 		IInputElement FocusedElement { get; }
+		FrameworkElement ScaleElement { get; }
 		void OnShow();
 		void OnClose();
 		void OnVisible();
