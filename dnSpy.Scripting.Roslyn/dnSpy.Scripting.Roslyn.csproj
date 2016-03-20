@@ -96,6 +96,7 @@
     <None Include="CSharpInteractive.rsp">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\ArrowDown.png" />
