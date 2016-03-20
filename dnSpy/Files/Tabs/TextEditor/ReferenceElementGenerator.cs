@@ -91,10 +91,16 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			this.referenceSegment = referenceSegment;
 		}
 
+		bool CanClick {
+			get {
+				return (Keyboard.Modifiers == ModifierKeys.None || Keyboard.Modifiers == ModifierKeys.Control) &&
+					!referenceSegment.IsLocalTarget;
+			}
+		}
+
 		/// <inheritdoc/>
 		protected override void OnQueryCursor(QueryCursorEventArgs e) {
-			// See comment in OnMouseDown()
-			if (!(Keyboard.Modifiers == ModifierKeys.None || Keyboard.Modifiers == ModifierKeys.Control))
+			if (!CanClick)
 				return;
 
 			e.Handled = true;
@@ -106,8 +112,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			// Only allow left click or ctrl + left click, nothing else. That way the user can eg.
 			// hold down shift or alt or shift+ctrl etc and select text where a reference is located
 			// without being taken to the definition.
-			if (!e.Handled && e.ChangedButton == MouseButton.Left &&
-				(Keyboard.Modifiers == ModifierKeys.None || Keyboard.Modifiers == ModifierKeys.Control)) {
+			if (!e.Handled && e.ChangedButton == MouseButton.Left && CanClick) {
 				parent.JumpToReference(referenceSegment, e);
 			}
 		}
