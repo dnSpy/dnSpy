@@ -149,6 +149,26 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		ExecState execState;
 		readonly object lockObj = new object();
 
+		IEnumerable<string> GetDefaultScriptFilePaths() {
+			const string SCRIPTS_DIR = "scripts";
+			var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+			Debug.Assert(Directory.Exists(userProfile));
+			if (Directory.Exists(userProfile)) {
+				yield return Path.Combine(userProfile, SCRIPTS_DIR);
+				yield return userProfile;
+			}
+			yield return Path.Combine(AppDirectories.DataDirectory, SCRIPTS_DIR);
+			yield return Path.Combine(AppDirectories.BinDirectory, SCRIPTS_DIR);
+		}
+
+		IEnumerable<string> GetDefaultLibPaths() {
+			return GetDefaultScriptFilePaths();
+		}
+
+		IEnumerable<string> GetDefaultLoadPaths() {
+			return GetDefaultScriptFilePaths();
+		}
+
 		void InitializeExecutionEngine(bool loadConfig, bool showHelp) {
 			Debug.Assert(execState == null);
 			if (execState != null)
@@ -162,11 +182,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 				var userOpts = new UserScriptOptions();
 				if (loadConfig) {
-					string userProfileDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-					if (!string.IsNullOrEmpty(userProfileDir)) {
-						userOpts.LibPaths.Add(userProfileDir);
-						userOpts.LoadPaths.Add(userProfileDir);
-					}
+					userOpts.LibPaths.AddRange(GetDefaultLibPaths());
+					userOpts.LoadPaths.AddRange(GetDefaultLoadPaths());
 					InitializeUserScriptOptions(userOpts);
 				}
 				var opts = ScriptOptions.Default;
