@@ -8,3 +8,4 @@ _ReSharper*/
 /packages
 *.ide/
 *.tmp_proj
+project.lock.json
