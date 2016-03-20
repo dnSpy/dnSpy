@@ -27,7 +27,7 @@ namespace dnSpy.Shared.Hex {
 		UInt64VM offsetVM;
 
 		public GoToOffsetVM(ulong offset, ulong min, ulong max) {
-			this.offsetVM = new UInt64VM(offset, a => HasErrorUpdated()) {
+			this.offsetVM = new UInt64VM(offset, a => HasErrorUpdated(), false) {
 				Min = min,
 				Max = max,
 			};

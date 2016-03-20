@@ -32,11 +32,11 @@ namespace dnSpy.Shared.Hex {
 		UInt64VM endVM;
 
 		public SelectVM(ulong start, ulong end, ulong min, ulong max) {
-			this.startVM = new UInt64VM(start, a => HasErrorUpdated()) {
+			this.startVM = new UInt64VM(start, a => HasErrorUpdated(), false) {
 				Min = min,
 				Max = max,
 			};
-			this.endVM = new UInt64VM(end, a => HasErrorUpdated()) {
+			this.endVM = new UInt64VM(end, a => HasErrorUpdated(), false) {
 				Min = min,
 				Max = max,
 			};
