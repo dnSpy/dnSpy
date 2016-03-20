@@ -26,7 +26,7 @@ namespace dnSpy.Contracts.Languages {
 	/// <summary>
 	/// Decompilation options
 	/// </summary>
-	public class DecompilationContext : IDecompilationContext {
+	public class DecompilationContext {
 		const int STRINGBUILDER_POOL_SIZE = 256;
 
 		/// <summary />

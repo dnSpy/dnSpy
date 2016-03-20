@@ -186,7 +186,6 @@
     <Compile Include="Languages\DecompilerOptionConstants.cs" />
     <Compile Include="Languages\DecompileTypeBase.cs" />
     <Compile Include="Languages\IBamlDecompiler.cs" />
-    <Compile Include="Languages\IDecompilationContext.cs" />
     <Compile Include="Languages\IDecompilerOption.cs" />
     <Compile Include="Languages\IDecompilerSettings.cs" />
     <Compile Include="Languages\IDecompilerSettingsTab.cs" />
