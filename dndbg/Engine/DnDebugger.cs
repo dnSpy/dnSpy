@@ -165,6 +165,10 @@ namespace dndbg.Engine {
 			this.debugOptions = debugOptions ?? new DebugOptions();
 			this.debuggeeVersion = debuggeeVersion ?? string.Empty;
 
+			// I have not tested debugging with CLR 1.x. It's too old to support it so this is a won't fix
+			if (this.debuggeeVersion.StartsWith("1."))
+				throw new NotImplementedException("Can't debug .NET 1.x assemblies. Add an App.config file to force using .NET 2.0 or later");
+
 			corDebug.Initialize();
 			corDebug.SetManagedHandler(new CorDebugManagedCallback(this));
 		}
