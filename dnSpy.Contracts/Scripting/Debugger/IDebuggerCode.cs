@@ -42,14 +42,14 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		ulong Address { get; }
 
 		/// <summary>
-		/// Gets the EnC (edit and continue) version number of this function
+		/// Gets the EnC (edit and continue) version number of this method
 		/// </summary>
 		uint VersionNumber { get; }
 
 		/// <summary>
-		/// Gets the function
+		/// Gets the method
 		/// </summary>
-		IDebuggerFunction Function { get; }
+		IDebuggerMethod Method { get; }
 
 		/// <summary>
 		/// Gets all code chunks if <see cref="IsIL"/> is <c>false</c>

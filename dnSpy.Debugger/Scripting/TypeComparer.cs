@@ -20,7 +20,9 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using dnlib.DotNet;
+using dnSpy.Contracts.Scripting.Debugger;
 
 namespace dnSpy.Debugger.Scripting {
 	/// <summary>
@@ -38,6 +40,56 @@ namespace dnSpy.Debugger.Scripting {
 				if (!Equals(a[i], b[i]))
 					return false;
 			}
+			return true;
+		}
+
+		public bool PropertySignatureEquals(IDebuggerProperty a, PropertyInfo b) {
+			var ag = a.Getter;
+			var bg = b.GetMethod;
+			if ((ag == null) != (bg == null))
+				return false;
+			if (ag != null) {
+				if (!MethodSigEquals(ag.MethodSig, bg))
+					return false;
+			}
+
+			// Should be enough, even if there's no getter
+
+			return true;
+		}
+
+		public bool MethodSigEquals(MethodBaseSig sig, MethodBase method) {
+			if (sig == null || method == null)
+				return false;
+			if (sig.HasThis != !method.IsStatic)
+				return false;
+			if (sig.Generic != method.IsGenericMethod)
+				return false;
+			if (sig.Generic) {
+				if (sig.GenParamCount != method.GetGenericArguments().Length)
+					return false;
+			}
+			if (method.IsMethodSpec())
+				method = method.Module.ResolveMethod(method.MetadataToken) ?? method;
+			var mps = method.GetParameters();
+			if (sig.Params.Count != mps.Length)
+				return false;
+
+			var minfo = method as MethodInfo;
+			if (minfo != null) {
+				if (!Equals(sig.RetType, minfo.ReturnType))
+					return false;
+			}
+			else {
+				if (sig.RetType.RemovePinnedAndModifiers().GetElementType() != ElementType.Void)
+					return false;
+			}
+
+			for (int i = 0; i < mps.Length; i++) {
+				if (!Equals(sig.Params[i], mps[i].ParameterType))
+					return false;
+			}
+
 			return true;
 		}
 

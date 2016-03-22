@@ -251,11 +251,25 @@ namespace dndbg.Engine {
 			return new DebugSignatureReader().ReadSignature(mdi, sig) as MethodSig;
 		}
 
-		public static unsafe CallingConventionSig ReadCallingConventionSig(IMetaDataImport mdi, uint token) {
+		public static unsafe CallingConventionSig ReadStandAloneSig(IMetaDataImport mdi, uint token) {
 			var sig = MDAPI.GetStandAloneSigBlob(mdi, token);
 			if (sig == null)
 				return null;
 			return new DebugSignatureReader().ReadSignature(mdi, sig);
+		}
+
+		public static unsafe FieldSig ReadFieldSig(IMetaDataImport mdi, uint token) {
+			var sig = MDAPI.GetFieldSignatureBlob(mdi, token);
+			if (sig == null)
+				return null;
+			return new DebugSignatureReader().ReadSignature(mdi, sig) as FieldSig;
+		}
+
+		public static unsafe PropertySig ReadPropertySig(IMetaDataImport mdi, uint token) {
+			var sig = MDAPI.GetPropertySignatureBlob(mdi, token);
+			if (sig == null)
+				return null;
+			return new DebugSignatureReader().ReadSignature(mdi, sig) as PropertySig;
 		}
 
 		public static uint GetGlobalStaticConstructor(IMetaDataImport mdi) {

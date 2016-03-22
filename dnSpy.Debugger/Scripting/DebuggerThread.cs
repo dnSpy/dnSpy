@@ -208,24 +208,94 @@ namespace dnSpy.Debugger.Scripting {
 			return appDomain;
 		}
 
-		IDebuggerFunction FindMethodUIThrow(string modName, string className, string methodName) {
-			var func = GetAppDomainUIThrow().FindMethod(modName, className, methodName);
-			if (func == null)
+		IDebuggerMethod FindMethodUIThrow(string modName, string className, string methodName) {
+			var method = GetAppDomainUIThrow().GetMethod(modName, className, methodName);
+			if (method == null)
 				throw new ArgumentException(string.Format("Couldn't find method [{0}] {1}::{2}", modName, className, methodName));
-			return func;
+			return method;
 		}
 
-		IDebuggerFunction FindMethodUIThrow(string modName, uint token) {
-			var func = GetAppDomainUIThrow().FindMethod(modName, token);
-			if (func == null)
+		IDebuggerMethod FindMethodUIThrow(string modName, uint token) {
+			var method = GetAppDomainUIThrow().GetMethod(modName, token);
+			if (method == null)
 				throw new ArgumentException(string.Format("Couldn't find method [{0}] 0x{1:X8}", modName, token));
-			return func;
+			return method;
 		}
 
-		public IDebuggerValue Call(IDebuggerFunction func, params object[] args) {
+		public IDebuggerValue CreateBox(object value) {
 			return debugger.Dispatcher.UI(() => {
 				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Call(func, args);
+					return eval.CreateBox(value);
+			});
+		}
+
+		public IDebuggerValue CreateBox(IDebuggerType type) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.CreateBox(type);
+			});
+		}
+
+		public IDebuggerValue CreateBox(Type type) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.CreateBox(type);
+			});
+		}
+
+		public IDebuggerValue Create(object value) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Create(value);
+			});
+		}
+
+		public IDebuggerValue Create(IDebuggerType type) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Create(type);
+			});
+		}
+
+		public IDebuggerValue Create(Type type) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Create(type);
+			});
+		}
+
+		public IDebuggerValue CreateArray(IDebuggerType elementType, int length) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.CreateArray(elementType, length);
+			});
+		}
+
+		public IDebuggerValue CreateArray(Type elementType, int length) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.CreateArray(elementType, length);
+			});
+		}
+
+		public IDebuggerValue Create(IDebuggerMethod ctor, params object[] args) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Create(ctor, args);
+			});
+		}
+
+		public IDebuggerValue Create(object[] genericArgs, IDebuggerMethod ctor, params object[] args) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Create(genericArgs, ctor, args);
+			});
+		}
+
+		public IDebuggerValue Call(IDebuggerMethod method, params object[] args) {
+			return debugger.Dispatcher.UI(() => {
+				using (var eval = debugger.CreateEvalUI(this))
+					return eval.Call(method, args);
 			});
 		}
 
@@ -243,42 +313,21 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public IDebuggerValue Call(IDebuggerType[] genericArgs, IDebuggerFunction func, params object[] args) {
+		public IDebuggerValue Call(object[] genericArgs, IDebuggerMethod method, params object[] args) {
 			return debugger.Dispatcher.UI(() => {
 				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Call(genericArgs, func, args);
+					return eval.Call(genericArgs, method, args);
 			});
 		}
 
-		public IDebuggerValue Call(Type[] genericArgs, IDebuggerFunction func, params object[] args) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Call(genericArgs, func, args);
-			});
-		}
-
-		public IDebuggerValue Call(IDebuggerType[] genericArgs, string modName, string className, string methodName, params object[] args) {
+		public IDebuggerValue Call(object[] genericArgs, string modName, string className, string methodName, params object[] args) {
 			return debugger.Dispatcher.UI(() => {
 				using (var eval = debugger.CreateEvalUI(this))
 					return eval.Call(genericArgs, FindMethodUIThrow(modName, className, methodName), args);
 			});
 		}
 
-		public IDebuggerValue Call(Type[] genericArgs, string modName, string className, string methodName, params object[] args) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Call(genericArgs, FindMethodUIThrow(modName, className, methodName), args);
-			});
-		}
-
-		public IDebuggerValue Call(IDebuggerType[] genericArgs, string modName, uint token, params object[] args) {
-			return debugger.Dispatcher.UI(() => {
-				using (var eval = debugger.CreateEvalUI(this))
-					return eval.Call(genericArgs, FindMethodUIThrow(modName, token), args);
-			});
-		}
-
-		public IDebuggerValue Call(Type[] genericArgs, string modName, uint token, params object[] args) {
+		public IDebuggerValue Call(object[] genericArgs, string modName, uint token, params object[] args) {
 			return debugger.Dispatcher.UI(() => {
 				using (var eval = debugger.CreateEvalUI(this))
 					return eval.Call(genericArgs, FindMethodUIThrow(modName, token), args);

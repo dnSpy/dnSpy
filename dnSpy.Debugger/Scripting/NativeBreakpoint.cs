@@ -134,8 +134,8 @@ namespace dnSpy.Debugger.Scripting {
 		public NativeBreakpoint(Debugger debugger, DebuggerCode code, uint offset, Func<INativeBreakpoint, bool> cond) {
 			Debug.Assert(!code.IsIL);
 			this.debugger = debugger;
-			this.module = code.Function.Module.ModuleName;
-			this.token = code.Function.Token;
+			this.module = code.Method.Module.ModuleName;
+			this.token = code.Method.Token;
 			this.offset = offset;
 			this.cond = cond ?? condAlwaysTrue;
 			this.isEnabled = true;

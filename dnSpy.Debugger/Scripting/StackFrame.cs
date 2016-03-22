@@ -98,11 +98,11 @@ namespace dnSpy.Debugger.Scripting {
 		}
 		readonly int frameNo;
 
-		public IDebuggerFunction Function {
+		public IDebuggerMethod Method {
 			get {
 				return debugger.Dispatcher.UI(() => {
 					var func = frame.Function;
-					return func == null ? null : new DebuggerFunction(debugger, func);
+					return func == null ? null : new DebuggerMethod(debugger, func);
 				});
 			}
 		}
@@ -352,6 +352,30 @@ namespace dnSpy.Debugger.Scripting {
 
 		public bool SetNativeOffset(uint offset) {
 			return debugger.SetNativeOffset(this, offset);
+		}
+
+		public IDebuggerValue ReadStaticField(IDebuggerField field) {
+			return field.Class.ReadStaticField(this, field);
+		}
+
+		public IDebuggerValue ReadStaticField(IDebuggerClass cls, uint token) {
+			return cls.ReadStaticField(this, token);
+		}
+
+		public IDebuggerValue ReadStaticField(IDebuggerType type, uint token) {
+			return type.ReadStaticField(this, token);
+		}
+
+		public IDebuggerValue ReadStaticField(IDebuggerClass cls, string name, bool checkBaseClasses) {
+			return cls.ReadStaticField(this, name, checkBaseClasses);
+		}
+
+		public IDebuggerValue ReadStaticField(IDebuggerType type, string name, bool checkBaseClasses) {
+			return type.ReadStaticField(this, name, checkBaseClasses);
+		}
+
+		public IDebuggerValue ReadStaticField(IDebuggerType type, IDebuggerField field) {
+			return type.ReadStaticField(this, field);
 		}
 
 		public override bool Equals(object obj) {

@@ -17,7 +17,9 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using System.IO;
+using System.Reflection;
 using dnlib.DotNet;
 
 namespace dnSpy.Contracts.Scripting.Debugger {
@@ -102,18 +104,46 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		IDebuggerAssembly ResolveAssembly(uint asmRefToken);
 
 		/// <summary>
-		/// Gets a function in this module
+		/// Gets a method in this module
 		/// </summary>
 		/// <param name="token"><c>Method</c> token</param>
 		/// <returns></returns>
-		IDebuggerFunction FindMethod(uint token);
+		IDebuggerMethod GetMethod(uint token);
+
+		/// <summary>
+		/// Gets a field in this module
+		/// </summary>
+		/// <param name="token"><c>Field</c> token</param>
+		/// <returns></returns>
+		IDebuggerField GetField(uint token);
+
+		/// <summary>
+		/// Gets a property in this module
+		/// </summary>
+		/// <param name="token"><c>Property</c> token</param>
+		/// <returns></returns>
+		IDebuggerProperty GetProperty(uint token);
+
+		/// <summary>
+		/// Gets an event in this module
+		/// </summary>
+		/// <param name="token"><c>Event</c> token</param>
+		/// <returns></returns>
+		IDebuggerEvent GetEvent(uint token);
 
 		/// <summary>
 		/// Gets a type in this module
 		/// </summary>
 		/// <param name="token"><c>TypeDef</c> token</param>
 		/// <returns></returns>
-		IDebuggerClass FindClass(uint token);
+		IDebuggerClass GetClass(uint token);
+
+		/// <summary>
+		/// Gets a type in this module
+		/// </summary>
+		/// <param name="token"><c>TypeDef</c> token</param>
+		/// <returns></returns>
+		IDebuggerType GetType(uint token);
 
 		/// <summary>
 		/// Gets the value of a global field
@@ -695,7 +725,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="className">Class name</param>
 		/// <returns></returns>
-		IDebuggerClass FindClass(string className);
+		IDebuggerClass GetClass(string className);
 
 		/// <summary>
 		/// Finds a method
@@ -703,14 +733,38 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="className">Class name</param>
 		/// <param name="methodName">Method name</param>
 		/// <returns></returns>
-		IDebuggerFunction FindMethod(string className, string methodName);
+		IDebuggerMethod GetMethod(string className, string methodName);
+
+		/// <summary>
+		/// Finds a field
+		/// </summary>
+		/// <param name="className">Class name</param>
+		/// <param name="fieldName">Field name</param>
+		/// <returns></returns>
+		IDebuggerField GetField(string className, string fieldName);
+
+		/// <summary>
+		/// Finds a property
+		/// </summary>
+		/// <param name="className">Class name</param>
+		/// <param name="propertyName">Property name</param>
+		/// <returns></returns>
+		IDebuggerProperty GetProperty(string className, string propertyName);
+
+		/// <summary>
+		/// Finds an event
+		/// </summary>
+		/// <param name="className">Class name</param>
+		/// <param name="eventName">Event name</param>
+		/// <returns></returns>
+		IDebuggerEvent GetEvent(string className, string eventName);
 
 		/// <summary>
 		/// Finds a type
 		/// </summary>
 		/// <param name="className">Class name</param>
 		/// <returns></returns>
-		IDebuggerType FindType(string className);
+		IDebuggerType GetType(string className);
 
 		/// <summary>
 		/// Finds a type
@@ -718,6 +772,42 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="className">Class name</param>
 		/// <param name="genericArguments">Generic arguments</param>
 		/// <returns></returns>
-		IDebuggerType FindType(string className, params IDebuggerType[] genericArguments);
+		IDebuggerType GetType(string className, params IDebuggerType[] genericArguments);
+
+		/// <summary>
+		/// Finds a type
+		/// </summary>
+		/// <param name="type">A type that must exist in one of the loaded assemblies in the
+		/// debugged process.</param>
+		/// <returns></returns>
+		IDebuggerType GetType(Type type);
+
+		/// <summary>
+		/// Gets a field
+		/// </summary>
+		/// <param name="field">Field</param>
+		/// <returns></returns>
+		IDebuggerField GetField(FieldInfo field);
+
+		/// <summary>
+		/// Gets a method
+		/// </summary>
+		/// <param name="method">Method</param>
+		/// <returns></returns>
+		IDebuggerMethod GetMethod(MethodBase method);
+
+		/// <summary>
+		/// Gets a property
+		/// </summary>
+		/// <param name="prop">Property</param>
+		/// <returns></returns>
+		IDebuggerProperty GetProperty(PropertyInfo prop);
+
+		/// <summary>
+		/// Gets an event
+		/// </summary>
+		/// <param name="evt">Event</param>
+		/// <returns></returns>
+		IDebuggerEvent GetEvent(EventInfo evt);
 	}
 }

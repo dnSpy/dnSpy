@@ -41,6 +41,8 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		ShowTokens					= 0x00000200,
 		ShowIP						= 0x00000400,
 		ShowArrayValueSizes			= 0x00000800,
+		ShowFieldLiteralValues		= 0x00001000,
+		ShowParameterLiteralValues	= 0x00002000,
 
 		Default =
 			ShowModuleNames |
@@ -49,7 +51,8 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 			ShowOwnerTypes |
 			ShowNamespaces |
 			ShowTypeKeywords |
-			ShowArrayValueSizes,
+			ShowArrayValueSizes |
+			ShowFieldLiteralValues,
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

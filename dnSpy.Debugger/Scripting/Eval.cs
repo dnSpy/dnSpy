@@ -324,18 +324,24 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		IDebuggerType FindTypeThrow(Type type) {
-			var t = appDomain.FindType(type);
+			var t = appDomain.GetType(type);
 			if (t != null)
 				return t;
 			throw new ArgumentException(string.Format("Couldn't find type `{0}' in one of the loaded assemblies", type.FullName));
 		}
 
-		IDebuggerType[] CreateTypesThrow(Type[] types) {
+		DBG.CorType[] CreateTypesThrow(object[] types) {
 			if (types == null)
 				return null;
-			var res = new IDebuggerType[types.Length];
-			for (int i = 0; i < res.Length; i++)
-				res[i] = FindTypeThrow(types[i]);
+			var res = new DBG.CorType[types.Length];
+			for (int i = 0; i < res.Length; i++) {
+				var type = types[i];
+				var dt = type as DebuggerType;
+				if (dt != null)
+					res[i] = dt.CorType;
+				else
+					res[i] = ((DebuggerType)FindTypeThrow(type as Type)).CorType;
+			}
 			return res;
 		}
 
@@ -634,15 +640,15 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public IDebuggerValue CreateSZArray(IDebuggerType elementType, int length) {
+		public IDebuggerValue CreateArray(IDebuggerType elementType, int length) {
 			return debugger.Dispatcher.UI(() => {
 				var res = eval.CreateSZArray(((DebuggerType)elementType).CorType, length);
 				return new DebuggerValue(debugger, res);
 			});
 		}
 
-		public IDebuggerValue CreateSZArray(Type elementType, int length) {
-			return debugger.Dispatcher.UI(() => CreateSZArray(FindTypeThrow(elementType), length));
+		public IDebuggerValue CreateArray(Type elementType, int length) {
+			return debugger.Dispatcher.UI(() => CreateArray(FindTypeThrow(elementType), length));
 		}
 
 		public unsafe IDebuggerValue Create(bool[] array) {
@@ -929,44 +935,20 @@ namespace dnSpy.Debugger.Scripting {
 			return (DebuggerValue)res.Value.ToDebuggerValue(debugger);
 		}
 
-		public IDebuggerValue Create(IDebuggerFunction func, IDebuggerValue[] args) {
-			return debugger.Dispatcher.UI(() => eval.CallConstructor(((DebuggerFunction)func).CorFunction, args.ToCorValues()).ToDebuggerValue(debugger));
+		public IDebuggerValue Create(IDebuggerMethod ctor, params object[] args) {
+			return debugger.Dispatcher.UI(() => eval.CallConstructor(((DebuggerMethod)ctor).CorFunction, CreateArgs(args)).ToDebuggerValue(debugger));
 		}
 
-		public IDebuggerValue Create(IDebuggerType[] genericArgs, IDebuggerFunction func, IDebuggerValue[] args) {
-			return debugger.Dispatcher.UI(() => eval.CallConstructor(((DebuggerFunction)func).CorFunction, genericArgs.ToCorTypes(), args.ToCorValues()).ToDebuggerValue(debugger));
+		public IDebuggerValue Create(object[] genericArgs, IDebuggerMethod ctor, params object[] args) {
+			return debugger.Dispatcher.UI(() => eval.CallConstructor(((DebuggerMethod)ctor).CorFunction, CreateTypesThrow(genericArgs), CreateArgs(args)).ToDebuggerValue(debugger));
 		}
 
-		public IDebuggerValue Create(IDebuggerFunction func, params object[] args) {
-			return debugger.Dispatcher.UI(() => eval.CallConstructor(((DebuggerFunction)func).CorFunction, CreateArgs(args)).ToDebuggerValue(debugger));
+		public IDebuggerValue Call(IDebuggerMethod method, params object[] args) {
+			return debugger.Dispatcher.UI(() => eval.Call(((DebuggerMethod)method).CorFunction, CreateArgs(args)).ToDebuggerValue(debugger));
 		}
 
-		public IDebuggerValue Create(IDebuggerType[] genericArgs, IDebuggerFunction ctor, params object[] args) {
-			return debugger.Dispatcher.UI(() => eval.CallConstructor(((DebuggerFunction)ctor).CorFunction, genericArgs.ToCorTypes(), CreateArgs(args)).ToDebuggerValue(debugger));
-		}
-
-		public IDebuggerValue Create(Type[] genericArgs, IDebuggerFunction ctor, params object[] args) {
-			return debugger.Dispatcher.UI(() => Create(CreateTypesThrow(genericArgs), ctor, args));
-		}
-
-		public IDebuggerValue Call(IDebuggerFunction func, IDebuggerValue[] args) {
-			return debugger.Dispatcher.UI(() => eval.Call(((DebuggerFunction)func).CorFunction, args.ToCorValues()).ToDebuggerValue(debugger));
-		}
-
-		public IDebuggerValue Call(IDebuggerType[] genericArgs, IDebuggerFunction func, IDebuggerValue[] args) {
-			return debugger.Dispatcher.UI(() => eval.Call(((DebuggerFunction)func).CorFunction, genericArgs.ToCorTypes(), args.ToCorValues()).ToDebuggerValue(debugger));
-		}
-
-		public IDebuggerValue Call(IDebuggerFunction func, params object[] args) {
-			return debugger.Dispatcher.UI(() => eval.Call(((DebuggerFunction)func).CorFunction, CreateArgs(args)).ToDebuggerValue(debugger));
-		}
-
-		public IDebuggerValue Call(IDebuggerType[] genericArgs, IDebuggerFunction func, params object[] args) {
-			return debugger.Dispatcher.UI(() => eval.Call(((DebuggerFunction)func).CorFunction, genericArgs.ToCorTypes(), CreateArgs(args)).ToDebuggerValue(debugger));
-		}
-
-		public IDebuggerValue Call(Type[] genericArgs, IDebuggerFunction func, params object[] args) {
-			return debugger.Dispatcher.UI(() => Call(CreateTypesThrow(genericArgs), func, args));
+		public IDebuggerValue Call(object[] genericArgs, IDebuggerMethod method, params object[] args) {
+			return debugger.Dispatcher.UI(() => eval.Call(((DebuggerMethod)method).CorFunction, CreateTypesThrow(genericArgs), CreateArgs(args)).ToDebuggerValue(debugger));
 		}
 
 		DBG.CorValue[] CreateArgs(object[] args) {
@@ -1019,14 +1001,14 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		IDebuggerClass FindAssemblyClassThrow() {
-			var cls = appDomain.CorLib.FindClass("System.Reflection.Assembly");
+			var cls = appDomain.CorLib.GetClass("System.Reflection.Assembly");
 			if (cls == null)
 				throw new ScriptException("Couldn't find System.Reflection.Assembly class");
 			return cls;
 		}
 
-		IDebuggerFunction FindAssemblyLoadByteArrayThrow() {
-			foreach (var method in FindAssemblyClassThrow().FindMethods("Load")) {
+		IDebuggerMethod FindAssemblyLoadByteArrayThrow() {
+			foreach (var method in FindAssemblyClassThrow().GetMethods("Load")) {
 				var sig = method.MethodSig;
 				if (sig.HasThis || sig.Params.Count != 1)
 					continue;
@@ -1041,8 +1023,8 @@ namespace dnSpy.Debugger.Scripting {
 			throw new ScriptException("Could not find System.Reflection.Assembly.Load(byte[])");
 		}
 
-		IDebuggerFunction FindAssemblyLoadStringThrow() {
-			foreach (var method in FindAssemblyClassThrow().FindMethods("Load")) {
+		IDebuggerMethod FindAssemblyLoadStringThrow() {
+			foreach (var method in FindAssemblyClassThrow().GetMethods("Load")) {
 				var sig = method.MethodSig;
 				if (sig.HasThis || sig.Params.Count != 1)
 					continue;
@@ -1054,8 +1036,8 @@ namespace dnSpy.Debugger.Scripting {
 			throw new ScriptException("Could not find System.Reflection.Assembly.Load(string)");
 		}
 
-		IDebuggerFunction FindAssemblyLoadFromStringThrow() {
-			foreach (var method in FindAssemblyClassThrow().FindMethods("LoadFrom")) {
+		IDebuggerMethod FindAssemblyLoadFromStringThrow() {
+			foreach (var method in FindAssemblyClassThrow().GetMethods("LoadFrom")) {
 				var sig = method.MethodSig;
 				if (sig.HasThis || sig.Params.Count != 1)
 					continue;
@@ -1067,8 +1049,8 @@ namespace dnSpy.Debugger.Scripting {
 			throw new ScriptException("Could not find System.Reflection.Assembly.LoadFrom(string)");
 		}
 
-		IDebuggerFunction FindAssemblyLoadFileStringThrow() {
-			foreach (var method in FindAssemblyClassThrow().FindMethods("LoadFile")) {
+		IDebuggerMethod FindAssemblyLoadFileStringThrow() {
+			foreach (var method in FindAssemblyClassThrow().GetMethods("LoadFile")) {
 				var sig = method.MethodSig;
 				if (sig.HasThis || sig.Params.Count != 1)
 					continue;

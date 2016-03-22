@@ -81,6 +81,12 @@ namespace dndbg.Engine {
 				this.token = 0;
 		}
 
+		public TypeAttributes GetTypeAttributes() {
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			return MDAPI.GetTypeDefAttributes(mdi, token) ?? 0;
+		}
+
 		/// <summary>
 		/// Creates a <see cref="CorType"/>
 		/// </summary>
@@ -235,6 +241,162 @@ namespace dndbg.Engine {
 		}
 
 		/// <summary>
+		/// Finds a field
+		/// </summary>
+		/// <param name="name">Field name</param>
+		/// <returns></returns>
+		public CorField FindField(string name, bool checkBaseClasses = true) {
+			return FindFields(name, checkBaseClasses).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Finds fields
+		/// </summary>
+		/// <param name="name">Field name</param>
+		/// <returns></returns>
+		public IEnumerable<CorField> FindFields(string name, bool checkBaseClasses = true) {
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			foreach (var fdToken in MDAPI.GetFieldTokens(mdi, token)) {
+				if (MDAPI.GetFieldName(mdi, fdToken) == name)
+					yield return new CorField(this, fdToken);
+			}
+			if (checkBaseClasses) {
+				var type = GetParameterizedType(CorElementType.Class);
+				if (type != null)
+					type = type.Base;
+				if (type != null) {
+					foreach (var func in type.FindFields(name, checkBaseClasses))
+						yield return func;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Finds fields
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<CorField> FindFields(bool checkBaseClasses = true) {
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			foreach (var fdToken in MDAPI.GetFieldTokens(mdi, token))
+				yield return new CorField(this, fdToken);
+			if (checkBaseClasses) {
+				var type = GetParameterizedType(CorElementType.Class);
+				if (type != null)
+					type = type.Base;
+				if (type != null) {
+					foreach (var func in type.FindFields(checkBaseClasses))
+						yield return func;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Finds a property
+		/// </summary>
+		/// <param name="name">Property name</param>
+		/// <returns></returns>
+		public CorProperty FindProperty(string name, bool checkBaseClasses = true) {
+			return FindProperties(name, checkBaseClasses).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Finds properties
+		/// </summary>
+		/// <param name="name">Property name</param>
+		/// <returns></returns>
+		public IEnumerable<CorProperty> FindProperties(string name, bool checkBaseClasses = true) {
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			foreach (var pdToken in MDAPI.GetPropertyTokens(mdi, token)) {
+				if (MDAPI.GetPropertyName(mdi, pdToken) == name)
+					yield return new CorProperty(this, pdToken);
+			}
+			if (checkBaseClasses) {
+				var type = GetParameterizedType(CorElementType.Class);
+				if (type != null)
+					type = type.Base;
+				if (type != null) {
+					foreach (var prop in type.FindProperties(name, checkBaseClasses))
+						yield return prop;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Finds properties
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<CorProperty> FindProperties(bool checkBaseClasses = true) {
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			foreach (var pdToken in MDAPI.GetPropertyTokens(mdi, token))
+				yield return new CorProperty(this, pdToken);
+			if (checkBaseClasses) {
+				var type = GetParameterizedType(CorElementType.Class);
+				if (type != null)
+					type = type.Base;
+				if (type != null) {
+					foreach (var prop in type.FindProperties(checkBaseClasses))
+						yield return prop;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Finds an event
+		/// </summary>
+		/// <param name="name">Event name</param>
+		/// <returns></returns>
+		public CorEvent FindEvent(string name, bool checkBaseClasses = true) {
+			return FindEvents(name, checkBaseClasses).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Finds event
+		/// </summary>
+		/// <param name="name">Event name</param>
+		/// <returns></returns>
+		public IEnumerable<CorEvent> FindEvents(string name, bool checkBaseClasses = true) {
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			foreach (var edToken in MDAPI.GetEventTokens(mdi, token)) {
+				if (MDAPI.GetEventName(mdi, edToken) == name)
+					yield return new CorEvent(this, edToken);
+			}
+			if (checkBaseClasses) {
+				var type = GetParameterizedType(CorElementType.Class);
+				if (type != null)
+					type = type.Base;
+				if (type != null) {
+					foreach (var evt in type.FindEvents(name, checkBaseClasses))
+						yield return evt;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Finds events
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<CorEvent> FindEvents(bool checkBaseClasses = true) {
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			foreach (var edToken in MDAPI.GetEventTokens(mdi, token))
+				yield return new CorEvent(this, edToken);
+			if (checkBaseClasses) {
+				var type = GetParameterizedType(CorElementType.Class);
+				if (type != null)
+					type = type.Base;
+				if (type != null) {
+					foreach (var evt in type.FindEvents(checkBaseClasses))
+						yield return evt;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Finds all constructors
 		/// </summary>
 		/// <returns></returns>
@@ -258,6 +420,26 @@ namespace dndbg.Engine {
 					ctors.Add(ctor);
 			}
 			return ctors.ToArray();
+		}
+
+		public void GetName(out string ns, out string name) {
+			var mod = Module;
+			var fn = MDAPI.GetTypeDefName(mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>(), Token);
+			if (fn == null) {
+				ns = null;
+				name = null;
+				return;
+			}
+
+			int i = fn.LastIndexOf('.');
+			if (i < 0) {
+				ns = null;
+				name = fn;
+			}
+			else {
+				ns = fn.Substring(0, i);
+				name = fn.Substring(i + 1);
+			}
 		}
 
 		public static bool operator ==(CorClass a, CorClass b) {

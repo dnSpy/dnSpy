@@ -111,6 +111,14 @@ namespace dnSpy.Languages.CSharp {
 			get { return (flags & SimplePrinterFlags.ShowArrayValueSizes) != 0; }
 		}
 
+		bool ShowFieldLiteralValues {
+			get { return (flags & SimplePrinterFlags.ShowFieldLiteralValues) != 0; }
+		}
+
+		bool ShowParameterLiteralValues {
+			get { return (flags & SimplePrinterFlags.ShowParameterLiteralValues) != 0; }
+		}
+
 		public SimpleCSharpPrinter(ISyntaxHighlightOutput output, SimplePrinterFlags flags) {
 			this.output = output;
 			this.flags = flags;
@@ -502,7 +510,7 @@ namespace dnSpy.Languages.CSharp {
 			bool isEnumOwner = td != null && td.IsEnum;
 
 			var fd = field.ResolveFieldDef();
-			if (!isEnumOwner) {
+			if (!isEnumOwner || (fd != null && !fd.IsLiteral)) {
 				if (isToolTip)
 					OutputWrite(string.Format("({0})", fd != null && fd.IsLiteral ? Languages_Resources.ToolTip_Constant : Languages_Resources.ToolTip_Field), TextTokenKind.Text);
 				WriteSpace();
@@ -515,7 +523,7 @@ namespace dnSpy.Languages.CSharp {
 			}
 			WriteIdentifier(field.Name, TextTokenKindUtils.GetTextTokenType(field));
 			WriteToken(field);
-			if (fd != null && fd.IsLiteral && fd.Constant != null) {
+			if (ShowFieldLiteralValues && fd != null && fd.IsLiteral && fd.Constant != null) {
 				WriteSpace();
 				OutputWrite("=", TextTokenKind.Operator);
 				WriteSpace();
@@ -599,12 +607,15 @@ namespace dnSpy.Languages.CSharp {
 				return;
 			}
 
-			var sig = prop.PropertySig;
-			var md = prop.GetMethods.FirstOrDefault() ??
-					prop.SetMethods.FirstOrDefault() ??
-					prop.OtherMethods.FirstOrDefault();
+			var getMethod = prop.GetMethods.FirstOrDefault();
+			var setMethod = prop.SetMethods.FirstOrDefault();
+			var md = getMethod ?? setMethod;
+			if (md == null) {
+				WriteError();
+				return;
+			}
 
-			var info = new MethodInfo(md);
+			var info = new MethodInfo(md, md == setMethod);
 			WriteModuleName(info);
 			WriteReturnType(info);
 			if (ShowOwnerTypes) {
@@ -1013,12 +1024,14 @@ namespace dnSpy.Languages.CSharp {
 			public readonly IList<TypeSig> MethodGenericParams;
 			public readonly MethodDef MethodDef;
 			public readonly MethodSig MethodSig;
+			public readonly bool RetTypeIsLastArgType;
 
-			public MethodInfo(IMethod method) {
+			public MethodInfo(IMethod method, bool retTypeIsLastArgType = false) {
 				this.ModuleDef = method.Module;
 				this.TypeGenericParams = null;
 				this.MethodGenericParams = null;
 				this.MethodSig = method.MethodSig ?? new MethodSig(CallingConvention.Default);
+				this.RetTypeIsLastArgType = retTypeIsLastArgType;
 
 				this.MethodDef = method as MethodDef;
 				var ms = method as MethodSpec;
@@ -1080,7 +1093,22 @@ namespace dnSpy.Languages.CSharp {
 			if (!ShowReturnTypes)
 				return;
 			if (!(info.MethodDef != null && info.MethodDef.IsConstructor)) {
-				Write(info.MethodSig.RetType, info.MethodDef == null ? null : info.MethodDef.Parameters.ReturnParameter.ParamDef, info.TypeGenericParams, info.MethodGenericParams);
+				TypeSig retType;
+				ParamDef retParamDef;
+				if (info.RetTypeIsLastArgType) {
+					retType = info.MethodSig.Params.LastOrDefault();
+					if (info.MethodDef == null)
+						retParamDef = null;
+					else {
+						var l = info.MethodDef.Parameters.LastOrDefault();
+						retParamDef = l == null ? null : l.ParamDef;
+					}
+				}
+				else {
+					retType = info.MethodSig.RetType;
+					retParamDef = info.MethodDef == null ? null : info.MethodDef.Parameters.ReturnParameter.ParamDef;
+				}
+				Write(retType, retParamDef, info.TypeGenericParams, info.MethodGenericParams);
 				WriteSpace();
 			}
 		}
@@ -1100,7 +1128,10 @@ namespace dnSpy.Languages.CSharp {
 
 			OutputWrite(lparen, TextTokenKind.Operator);
 			int baseIndex = info.MethodSig.HasThis ? 1 : 0;
-			for (int i = 0; i < info.MethodSig.Params.Count; i++) {
+			int count = info.MethodSig.Params.Count;
+			if (info.RetTypeIsLastArgType)
+				count--;
+			for (int i = 0; i < count; i++) {
 				if (i > 0)
 					WriteCommaSpace();
 				ParamDef pd;
@@ -1111,6 +1142,7 @@ namespace dnSpy.Languages.CSharp {
 				bool needSpace = false;
 				if (ShowParameterTypes) {
 					needSpace = true;
+
 					if (pd != null && pd.CustomAttributes.IsDefined("System.ParamArrayAttribute")) {
 						OutputWrite("params", TextTokenKind.Keyword);
 						WriteSpace();
@@ -1121,12 +1153,36 @@ namespace dnSpy.Languages.CSharp {
 				if (ShowParameterNames) {
 					if (needSpace)
 						WriteSpace();
+					needSpace = true;
+
 					if (pd != null) {
 						WriteIdentifier(pd.Name, TextTokenKind.Parameter);
 						WriteToken(pd);
 					}
 					else
 						WriteIdentifier(string.Format("A_{0}", i), TextTokenKind.Parameter);
+				}
+				if (ShowParameterLiteralValues && pd != null && pd.Constant != null) {
+					if (needSpace)
+						WriteSpace();
+					needSpace = true;
+
+					var c = pd.Constant.Value;
+					WriteSpace();
+					OutputWrite("=", TextTokenKind.Operator);
+					WriteSpace();
+
+					var t = info.MethodSig.Params[i].RemovePinnedAndModifiers();
+					if (t.GetElementType() == ElementType.ByRef)
+						t = t.Next;
+					if (c == null && t != null && t.IsValueType) {
+						OutputWrite("default", TextTokenKind.Keyword);
+						OutputWrite("(", TextTokenKind.Operator);
+						Write(t, pd, info.TypeGenericParams, info.MethodGenericParams);
+						OutputWrite(")", TextTokenKind.Operator);
+					}
+					else
+						WriteConstant(c);
 				}
 			}
 			OutputWrite(rparen, TextTokenKind.Operator);

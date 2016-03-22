@@ -19,7 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
@@ -309,10 +311,22 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
+		CorValue ReadField(IDebuggerClass cls, uint token) {
+			var v = value;
+			if (v.IsReference)
+				v = v.DereferencedValue;
+			if (v != null && v.IsBox)
+				v = v.BoxedValue;
+			if (v == null)
+				return null;
+			Debug.Assert(v.IsObject);
+			return v.GetFieldValue(((DebuggerClass)cls).CorClass, token);
+		}
+
 		public IDebuggerValue GetFieldValue(IDebuggerClass cls, uint token) {
 			return debugger.Dispatcher.UI(() => {
-				var corValue = value.GetFieldValue(((DebuggerClass)cls).CorClass, token);
-				return corValue == null ? null : new DebuggerValue(debugger, corValue);
+				var res = ReadField(cls, token);
+				return res == null ? null : new DebuggerValue(debugger, res);
 			});
 		}
 
@@ -326,6 +340,67 @@ namespace dnSpy.Debugger.Scripting {
 			});
 			value = valueTmp;
 			return res;
+		}
+
+		public IDebuggerValue Read(IDebuggerField field) {
+			return debugger.Dispatcher.UI(() => {
+				var res = ReadField(field.Class, field.Token);
+				return res == null ? null : new DebuggerValue(debugger, res);
+			});
+		}
+
+		public IDebuggerValue Read(uint token) {
+			return debugger.Dispatcher.UI(() => {
+				var type = Type;
+				var field = type == null ? null : Type.GetFields().FirstOrDefault(a => a.Token == token);
+				if (field == null)
+					return null;
+				var res = ReadField(field.Class, field.Token);
+				return res == null ? null : new DebuggerValue(debugger, res);
+			});
+		}
+
+		public IDebuggerValue Read(string name, bool checkBaseClasses) {
+			return debugger.Dispatcher.UI(() => {
+				var type = Type;
+				var field = type == null ? null : Type.GetField(name, checkBaseClasses);
+				if (field == null)
+					return null;
+				var res = ReadField(field.Class, field.Token);
+				return res == null ? null : new DebuggerValue(debugger, res);
+			});
+		}
+
+		object[] CreateArguments(object[] args) {
+			var res = new object[args.Length + 1];
+			res[0] = new Box(this);
+			for (int i = 0; i < args.Length; i++)
+				res[i + 1] = args[i];
+			return res;
+		}
+
+		public IDebuggerValue Call(IDebuggerThread thread, IDebuggerMethod method, params object[] args) {
+			return debugger.Dispatcher.UI(() => thread.Call(method, CreateArguments(args)));
+		}
+
+		public IDebuggerValue Call(IDebuggerThread thread, object[] genericArgs, IDebuggerMethod method, params object[] args) {
+			return debugger.Dispatcher.UI(() => thread.Call(genericArgs, method, CreateArguments(args)));
+		}
+
+		public IDebuggerValue Call(IDebuggerThread thread, string modName, string className, string methodName, params object[] args) {
+			return debugger.Dispatcher.UI(() => thread.Call(modName, className, methodName, CreateArguments(args)));
+		}
+
+		public IDebuggerValue Call(IDebuggerThread thread, string modName, uint token, params object[] args) {
+			return debugger.Dispatcher.UI(() => thread.Call(modName, token, CreateArguments(args)));
+		}
+
+		public IDebuggerValue Call(IDebuggerThread thread, object[] genericArgs, string modName, string className, string methodName, params object[] args) {
+			return debugger.Dispatcher.UI(() => thread.Call(genericArgs, modName, className, methodName, CreateArguments(args)));
+		}
+
+		public IDebuggerValue Call(IDebuggerThread thread, object[] genericArgs, string modName, uint token, params object[] args) {
+			return debugger.Dispatcher.UI(() => thread.Call(genericArgs, modName, token, CreateArguments(args)));
 		}
 
 		public byte[] Read() {

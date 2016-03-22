@@ -541,7 +541,7 @@ namespace dndbg.Engine {
 
 			uint localVarSigTok = func.LocalVarSigToken;
 			if ((localVarSigTok & 0x00FFFFFF) != 0) {
-				var localSig = MetaDataUtils.ReadCallingConventionSig(mdi, localVarSigTok) as LocalSig;
+				var localSig = MetaDataUtils.ReadStandAloneSig(mdi, localVarSigTok) as LocalSig;
 				if (localSig != null)
 					localTypes.AddRange(localSig.Locals);
 			}

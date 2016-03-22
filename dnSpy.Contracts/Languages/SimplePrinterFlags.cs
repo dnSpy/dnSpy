@@ -36,13 +36,16 @@ namespace dnSpy.Contracts.Languages {
 		UseDecimal					= 0x00000080,
 		ShowTokens					= 0x00000100,
 		ShowArrayValueSizes			= 0x00000200,
+		ShowFieldLiteralValues		= 0x00000400,
+		ShowParameterLiteralValues	= 0x00000800,
 
 		Default =
 			ShowParameterTypes |
 			ShowParameterNames |
 			ShowOwnerTypes |
 			ShowReturnTypes |
-			ShowTypeKeywords,
+			ShowTypeKeywords |
+			ShowFieldLiteralValues,
 #pragma warning restore 1591 // Missing XML comment for publicly visible type or member
 	}
 }

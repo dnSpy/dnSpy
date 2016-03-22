@@ -529,28 +529,28 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="module">Module</param>
 		/// <returns></returns>
-		IDebuggerModule FindModule(Module module);
+		IDebuggerModule GetModule(Module module);
 
 		/// <summary>
 		/// Finds a module in <see cref="FirstAppDomain"/>
 		/// </summary>
 		/// <param name="name">Module name</param>
 		/// <returns></returns>
-		IDebuggerModule FindModule(ModuleName name);
+		IDebuggerModule GetModule(ModuleName name);
 
 		/// <summary>
 		/// Finds a module in <see cref="FirstAppDomain"/>
 		/// </summary>
 		/// <param name="name">Full path, filename, or filename without extension of module</param>
 		/// <returns></returns>
-		IDebuggerModule FindModuleByName(string name);
+		IDebuggerModule GetModuleByName(string name);
 
 		/// <summary>
 		/// Finds an assembly in <see cref="FirstAppDomain"/>
 		/// </summary>
 		/// <param name="asm">Assembly</param>
 		/// <returns></returns>
-		IDebuggerAssembly FindAssembly(Assembly asm);
+		IDebuggerAssembly GetAssembly(Assembly asm);
 
 		/// <summary>
 		/// Finds an assembly in <see cref="FirstAppDomain"/>
@@ -558,7 +558,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="name">Full path, filename, or filename without extension of assembly, or
 		/// assembly simple name or assembly full name</param>
 		/// <returns></returns>
-		IDebuggerAssembly FindAssembly(string name);
+		IDebuggerAssembly GetAssembly(string name);
 
 		/// <summary>
 		/// Finds a class in <see cref="FirstAppDomain"/>
@@ -566,7 +566,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="modName">Full path, filename, or filename without extension of module</param>
 		/// <param name="className">Class name</param>
 		/// <returns></returns>
-		IDebuggerClass FindClass(string modName, string className);
+		IDebuggerClass GetClass(string modName, string className);
 
 		/// <summary>
 		/// Finds a method in <see cref="FirstAppDomain"/>
@@ -575,7 +575,34 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="className">Class name</param>
 		/// <param name="methodName">Method name</param>
 		/// <returns></returns>
-		IDebuggerFunction FindMethod(string modName, string className, string methodName);
+		IDebuggerMethod GetMethod(string modName, string className, string methodName);
+
+		/// <summary>
+		/// Finds a field in <see cref="FirstAppDomain"/>
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <param name="fieldName">Field name</param>
+		/// <returns></returns>
+		IDebuggerField GetField(string modName, string className, string fieldName);
+
+		/// <summary>
+		/// Finds a property in <see cref="FirstAppDomain"/>
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <param name="propertyName">Property name</param>
+		/// <returns></returns>
+		IDebuggerProperty GetProperty(string modName, string className, string propertyName);
+
+		/// <summary>
+		/// Finds an event in <see cref="FirstAppDomain"/>
+		/// </summary>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <param name="eventName">Event name</param>
+		/// <returns></returns>
+		IDebuggerEvent GetEvent(string modName, string className, string eventName);
 
 		/// <summary>
 		/// Finds a type in <see cref="FirstAppDomain"/>
@@ -583,7 +610,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="modName">Full path, filename, or filename without extension of module</param>
 		/// <param name="className">Class name</param>
 		/// <returns></returns>
-		IDebuggerType FindType(string modName, string className);
+		IDebuggerType GetType(string modName, string className);
 
 		/// <summary>
 		/// Finds a type in <see cref="FirstAppDomain"/>
@@ -592,7 +619,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="className">Class name</param>
 		/// <param name="genericArguments">Generic arguments</param>
 		/// <returns></returns>
-		IDebuggerType FindType(string modName, string className, params IDebuggerType[] genericArguments);
+		IDebuggerType GetType(string modName, string className, params IDebuggerType[] genericArguments);
 
 		/// <summary>
 		/// Finds a type in <see cref="FirstAppDomain"/>
@@ -600,7 +627,35 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="type">A type that must exist in one of the loaded assemblies in the
 		/// debugged process.</param>
 		/// <returns></returns>
-		IDebuggerType FindType(Type type);
+		IDebuggerType GetType(Type type);
+
+		/// <summary>
+		/// Gets a field
+		/// </summary>
+		/// <param name="field">Field</param>
+		/// <returns></returns>
+		IDebuggerField GetField(FieldInfo field);
+
+		/// <summary>
+		/// Gets a method
+		/// </summary>
+		/// <param name="method">Method</param>
+		/// <returns></returns>
+		IDebuggerMethod GetMethod(MethodBase method);
+
+		/// <summary>
+		/// Gets a property
+		/// </summary>
+		/// <param name="prop">Property</param>
+		/// <returns></returns>
+		IDebuggerProperty GetProperty(PropertyInfo prop);
+
+		/// <summary>
+		/// Gets an event
+		/// </summary>
+		/// <param name="evt">Event</param>
+		/// <returns></returns>
+		IDebuggerEvent GetEvent(EventInfo evt);
 
 		/// <summary>
 		/// Gets type <see cref="Void"/> in <see cref="FirstAppDomain"/>

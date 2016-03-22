@@ -20,6 +20,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using dnSpy.Contracts.Scripting.Debugger;
 
 using DBG = dndbg.Engine;
@@ -311,6 +312,10 @@ namespace dnSpy.Debugger.Scripting {
 			default:
 				return new DebuggerPauseState(PauseReason.Other);
 			}
+		}
+
+		public static bool IsMethodSpec(this MethodBase mb) {
+			return mb != null && !mb.IsGenericMethodDefinition && mb.IsGenericMethod;
 		}
 	}
 }

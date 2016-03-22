@@ -190,8 +190,11 @@
     <Compile Include="Scripting\DebuggerAppDomain.cs" />
     <Compile Include="Scripting\DebuggerClass.cs" />
     <Compile Include="Scripting\DebuggerCode.cs" />
-    <Compile Include="Scripting\DebuggerFunction.cs" />
+    <Compile Include="Scripting\DebuggerEvent.cs" />
+    <Compile Include="Scripting\DebuggerField.cs" />
+    <Compile Include="Scripting\DebuggerMethod.cs" />
     <Compile Include="Scripting\DebuggerModule.cs" />
+    <Compile Include="Scripting\DebuggerProperty.cs" />
     <Compile Include="Scripting\DebuggerThread.cs" />
     <Compile Include="Scripting\DebuggerType.cs" />
     <Compile Include="Scripting\DebuggerValue.cs" />

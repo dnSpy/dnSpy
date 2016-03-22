@@ -110,9 +110,9 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		int Index { get; }
 
 		/// <summary>
-		/// Gets the function or null
+		/// Gets the method or null
 		/// </summary>
-		IDebuggerFunction Function { get; }
+		IDebuggerMethod Method { get; }
 
 		/// <summary>
 		/// Gets the IL code or null
@@ -337,6 +337,55 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="offset">New offset within the current method</param>
 		/// <returns></returns>
 		bool SetNativeOffset(uint offset);
+
+		/// <summary>
+		/// Reads a static field
+		/// </summary>
+		/// <param name="field">Field</param>
+		/// <returns></returns>
+		IDebuggerValue ReadStaticField(IDebuggerField field);
+
+		/// <summary>
+		/// Reads a static field
+		/// </summary>
+		/// <param name="cls">Class</param>
+		/// <param name="token">Field token</param>
+		/// <returns></returns>
+		IDebuggerValue ReadStaticField(IDebuggerClass cls, uint token);
+
+		/// <summary>
+		/// Reads a static field
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <param name="token">Field token</param>
+		/// <returns></returns>
+		IDebuggerValue ReadStaticField(IDebuggerType type, uint token);
+
+		/// <summary>
+		/// Reads a static field
+		/// </summary>
+		/// <param name="cls">Class</param>
+		/// <param name="name">Field name</param>
+		/// <param name="checkBaseClasses">true to check base classes</param>
+		/// <returns></returns>
+		IDebuggerValue ReadStaticField(IDebuggerClass cls, string name, bool checkBaseClasses = true);
+
+		/// <summary>
+		/// Reads a static field
+		/// </summary>
+		/// <param name="type">Type</param>
+		/// <param name="name">Field name</param>
+		/// <param name="checkBaseClasses">true to check base classes</param>
+		/// <returns></returns>
+		IDebuggerValue ReadStaticField(IDebuggerType type, string name, bool checkBaseClasses = true);
+
+		/// <summary>
+		/// Reads a static field
+		/// </summary>
+		/// <param name="type">Declaring type</param>
+		/// <param name="field">Field</param>
+		/// <returns></returns>
+		IDebuggerValue ReadStaticField(IDebuggerType type, IDebuggerField field);
 
 		/// <summary>
 		/// Write this to <paramref name="output"/>

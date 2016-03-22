@@ -360,6 +360,13 @@ namespace dndbg.Engine {
 				this.rank = 0;
 		}
 
+		public TypeAttributes GetTypeAttributes() {
+			var cls = Class;
+			var mod = cls == null ? null : cls.Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			return MDAPI.GetTypeDefAttributes(mdi, cls.Token) ?? 0;
+		}
+
 		/// <summary>
 		/// Returns true if it's a System.XXX type in the corlib (eg. mscorlib)
 		/// </summary>
@@ -520,6 +527,168 @@ namespace dndbg.Engine {
 					if (func != null)
 						yield return func;
 				}
+			}
+		}
+
+		/// <summary>
+		/// Finds a field
+		/// </summary>
+		/// <param name="name">Field name</param>
+		/// <returns></returns>
+		public CorField FindField(string name, bool checkBaseClasses = true) {
+			return FindFields(name, checkBaseClasses).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Finds fields
+		/// </summary>
+		/// <param name="name">Field name</param>
+		/// <returns></returns>
+		public IEnumerable<CorField> FindFields(string name, bool checkBaseClasses = true) {
+			for (var type = this; type != null; type = type.Base) {
+				if (!checkBaseClasses && (object)this != (object)type)
+					break;
+				if (!type.HasClass)
+					continue;
+				var cls = type.Class;
+				if (cls == null)
+					continue;
+
+				var mod = cls.Module;
+				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				foreach (var fdToken in MDAPI.GetFieldTokens(mdi, cls.Token)) {
+					if (MDAPI.GetFieldName(mdi, fdToken) == name)
+						yield return new CorField(cls, fdToken);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Finds fields
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<CorField> FindFields(bool checkBaseClasses = true) {
+			for (var type = this; type != null; type = type.Base) {
+				if (!checkBaseClasses && (object)this != (object)type)
+					break;
+				if (!type.HasClass)
+					continue;
+				var cls = type.Class;
+				if (cls == null)
+					continue;
+
+				var mod = cls.Module;
+				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				foreach (var fdToken in MDAPI.GetFieldTokens(mdi, cls.Token))
+					yield return new CorField(cls, fdToken);
+			}
+		}
+
+		/// <summary>
+		/// Finds a property
+		/// </summary>
+		/// <param name="name">Property name</param>
+		/// <returns></returns>
+		public CorProperty FindProperty(string name, bool checkBaseClasses = true) {
+			return FindProperties(name, checkBaseClasses).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Finds properties
+		/// </summary>
+		/// <param name="name">Property name</param>
+		/// <returns></returns>
+		public IEnumerable<CorProperty> FindProperties(string name, bool checkBaseClasses = true) {
+			for (var type = this; type != null; type = type.Base) {
+				if (!checkBaseClasses && (object)this != (object)type)
+					break;
+				if (!type.HasClass)
+					continue;
+				var cls = type.Class;
+				if (cls == null)
+					continue;
+
+				var mod = cls.Module;
+				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				foreach (var pdToken in MDAPI.GetPropertyTokens(mdi, cls.Token)) {
+					if (MDAPI.GetPropertyName(mdi, pdToken) == name)
+						yield return new CorProperty(cls, pdToken);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Finds properties
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<CorProperty> FindProperties(bool checkBaseClasses = true) {
+			for (var type = this; type != null; type = type.Base) {
+				if (!checkBaseClasses && (object)this != (object)type)
+					break;
+				if (!type.HasClass)
+					continue;
+				var cls = type.Class;
+				if (cls == null)
+					continue;
+
+				var mod = cls.Module;
+				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				foreach (var pdToken in MDAPI.GetPropertyTokens(mdi, cls.Token))
+					yield return new CorProperty(cls, pdToken);
+			}
+		}
+
+		/// <summary>
+		/// Finds an event
+		/// </summary>
+		/// <param name="name">Event name</param>
+		/// <returns></returns>
+		public CorEvent FindEvent(string name, bool checkBaseClasses = true) {
+			return FindEvents(name, checkBaseClasses).FirstOrDefault();
+		}
+
+		/// <summary>
+		/// Finds events
+		/// </summary>
+		/// <param name="name">Event name</param>
+		/// <returns></returns>
+		public IEnumerable<CorEvent> FindEvents(string name, bool checkBaseClasses = true) {
+			for (var type = this; type != null; type = type.Base) {
+				if (!checkBaseClasses && (object)this != (object)type)
+					break;
+				if (!type.HasClass)
+					continue;
+				var cls = type.Class;
+				if (cls == null)
+					continue;
+
+				var mod = cls.Module;
+				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				foreach (var edToken in MDAPI.GetEventTokens(mdi, cls.Token)) {
+					if (MDAPI.GetEventName(mdi, edToken) == name)
+						yield return new CorEvent(cls, edToken);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Finds events
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<CorEvent> FindEvents(bool checkBaseClasses = true) {
+			for (var type = this; type != null; type = type.Base) {
+				if (!checkBaseClasses && (object)this != (object)type)
+					break;
+				if (!type.HasClass)
+					continue;
+				var cls = type.Class;
+				if (cls == null)
+					continue;
+
+				var mod = cls.Module;
+				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				foreach (var edToken in MDAPI.GetEventTokens(mdi, cls.Token))
+					yield return new CorEvent(cls, edToken);
 			}
 		}
 

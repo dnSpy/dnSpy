@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using dndbg.COM.CorDebug;
 using dndbg.COM.MetaData;
 using dnlib.DotNet;
@@ -30,11 +31,14 @@ namespace dndbg.Engine {
 		/// </summary>
 		public CorModule Module {
 			get {
-				ICorDebugModule module;
-				int hr = obj.GetModule(out module);
-				return hr < 0 || module == null ? null : new CorModule(module);
+				if (module != null)
+					return module;
+				ICorDebugModule mod;
+				int hr = obj.GetModule(out mod);
+				return module = hr < 0 || mod == null ? null : new CorModule(mod);
 			}
 		}
+		CorModule module;
 
 		/// <summary>
 		/// Gets the class or null
@@ -43,7 +47,16 @@ namespace dndbg.Engine {
 			get {
 				ICorDebugClass cls;
 				int hr = obj.GetClass(out cls);
-				return hr < 0 || cls == null ? null : new CorClass(cls);
+				if (hr >= 0 && cls != null)
+					return new CorClass(cls);
+
+				// Here if it's an extern method, eg. it's not IL code, but native code
+
+				var mod = Module;
+				Debug.Assert(mod != null);
+				var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+				uint tdOwner = 0x02000000 + MDAPI.GetMethodOwnerRid(mdi, Token);
+				return mod == null ? null : mod.GetClassFromToken(tdOwner);
 			}
 		}
 
@@ -140,10 +153,25 @@ namespace dndbg.Engine {
 			}
 		}
 
-		public CorFunction(ICorDebugFunction func)
+		public CorFunction(ICorDebugFunction func, CorModule module = null)
 			: base(func) {
 			//TODO: ICorDebugFunction2::EnumerateNativeCode
 			//TODO: ICorDebugFunction3::GetActiveReJitRequestILCode
+		}
+
+		public void GetAttributes(out MethodImplAttributes implAttributes, out MethodAttributes attributes) {
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			MDAPI.GetMethodAttributes(mdi, Token, out attributes, out implAttributes);
+		}
+
+		public MethodAttributes GetAttributes() {
+			MethodImplAttributes implAttributes;
+			MethodAttributes attributes;
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			MDAPI.GetMethodAttributes(mdi, Token, out attributes, out implAttributes);
+			return attributes;
 		}
 
 		/// <summary>
@@ -197,6 +225,27 @@ namespace dndbg.Engine {
 			methodParams = GetGenericParameters();
 			var cls = Class;
 			typeParams = cls == null ? new List<TokenAndName>() : cls.GetGenericParameters();
+		}
+
+		public CorOverride[] GetOverrides() {
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			var info = MDAPI.GetMethodOverrides(mdi, Token);
+			if (info.Length == 0)
+				return emptyCorOverrides;
+			var res = new CorOverride[info.Length];
+			for (int i = 0; i < res.Length; i++)
+				res[i] = new CorOverride(mod, info[i]);
+			return res;
+		}
+		static readonly CorOverride[] emptyCorOverrides = new CorOverride[0];
+
+		public string GetName() {
+			var mod = Module;
+			var mdi = mod == null ? null : mod.GetMetaDataInterface<IMetaDataImport>();
+			if (mdi == null)
+				return null;
+			return MDAPI.GetMethodName(mdi, Token);
 		}
 
 		public MethodSig GetMethodSig() {

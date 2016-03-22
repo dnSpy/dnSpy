@@ -1044,73 +1044,122 @@ namespace dnSpy.Debugger.Scripting {
 		}
 		IDebuggerModule corLib;
 
-		public IDebuggerModule FindModule(Module module) {
+		public IDebuggerModule GetModule(Module module) {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
-				return ad == null ? null : ad.FindModule(module);
+				return ad == null ? null : ad.GetModule(module);
 			});
 		}
 
-		public IDebuggerModule FindModule(ModuleName name) {
+		public IDebuggerModule GetModule(ModuleName name) {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
-				return ad == null ? null : ad.FindModule(name);
+				return ad == null ? null : ad.GetModule(name);
 			});
 		}
 
-		public IDebuggerModule FindModuleByName(string name) {
+		public IDebuggerModule GetModuleByName(string name) {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
-				return ad == null ? null : ad.FindModuleByName(name);
+				return ad == null ? null : ad.GetModuleByName(name);
 			});
 		}
 
-		public IDebuggerAssembly FindAssembly(Assembly asm) {
+		public IDebuggerAssembly GetAssembly(Assembly asm) {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
-				return ad == null ? null : ad.FindAssembly(asm);
+				return ad == null ? null : ad.GetAssembly(asm);
 			});
 		}
 
-		public IDebuggerAssembly FindAssembly(string name) {
+		public IDebuggerAssembly GetAssembly(string name) {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
-				return ad == null ? null : ad.FindAssembly(name);
+				return ad == null ? null : ad.GetAssembly(name);
 			});
 		}
 
-		public IDebuggerClass FindClass(string modName, string className) {
+		public IDebuggerClass GetClass(string modName, string className) {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
-				return ad == null ? null : ad.FindClass(modName, className);
+				return ad == null ? null : ad.GetClass(modName, className);
 			});
 		}
 
-		public IDebuggerFunction FindMethod(string modName, string className, string methodName) {
+		public IDebuggerMethod GetMethod(string modName, string className, string methodName) {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
-				return ad == null ? null : ad.FindMethod(modName, className, methodName);
+				return ad == null ? null : ad.GetMethod(modName, className, methodName);
 			});
 		}
 
-		public IDebuggerType FindType(string modName, string className) {
+		public IDebuggerField GetField(string modName, string className, string fieldName) {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
-				return ad == null ? null : ad.FindType(modName, className);
+				return ad == null ? null : ad.GetField(modName, className, fieldName);
 			});
 		}
 
-		public IDebuggerType FindType(string modName, string className, params IDebuggerType[] genericArguments) {
+		public IDebuggerProperty GetProperty(string modName, string className, string propertyName) {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
-				return ad == null ? null : ad.FindType(modName, className, genericArguments);
+				return ad == null ? null : ad.GetProperty(modName, className, propertyName);
 			});
 		}
 
-		public IDebuggerType FindType(Type type) {
+		public IDebuggerEvent GetEvent(string modName, string className, string eventName) {
 			return dispatcher.UI(() => {
 				var ad = FirstAppDomain;
-				return ad == null ? null : ad.FindType(type);
+				return ad == null ? null : ad.GetEvent(modName, className, eventName);
+			});
+		}
+
+		public IDebuggerType GetType(string modName, string className) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.GetType(modName, className);
+			});
+		}
+
+		public IDebuggerType GetType(string modName, string className, params IDebuggerType[] genericArguments) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.GetType(modName, className, genericArguments);
+			});
+		}
+
+		public IDebuggerType GetType(Type type) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.GetType(type);
+			});
+		}
+
+		public IDebuggerField GetField(FieldInfo field) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.GetField(field);
+			});
+		}
+
+		public IDebuggerMethod GetMethod(MethodBase method) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.GetMethod(method);
+			});
+		}
+
+		public IDebuggerProperty GetProperty(PropertyInfo prop) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.GetProperty(prop);
+			});
+		}
+
+		public IDebuggerEvent GetEvent(EventInfo evt) {
+			return dispatcher.UI(() => {
+				var ad = FirstAppDomain;
+				return ad == null ? null : ad.GetEvent(evt);
 			});
 		}
 

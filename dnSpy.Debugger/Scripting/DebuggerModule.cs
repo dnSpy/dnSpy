@@ -21,6 +21,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using dndbg.Engine;
 using dnlib.PE;
@@ -123,19 +124,48 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public IDebuggerFunction FindMethod(uint token) {
+		public IDebuggerMethod GetMethod(uint token) {
 			return debugger.Dispatcher.UI(() => {
 				var func = mod.CorModule.GetFunctionFromToken(token);
-				return func == null ? null : new DebuggerFunction(debugger, func);
+				return func == null ? null : new DebuggerMethod(debugger, func);
 			});
 		}
 
-		public IDebuggerClass FindClass(uint token) {
+		public IDebuggerField GetField(uint token) {
+			return debugger.Dispatcher.UI(() => {
+				var field = mod.CorModule.GetFieldFromToken(token);
+				return field == null ? null : new DebuggerField(debugger, field);
+			});
+		}
+
+		public IDebuggerProperty GetProperty(uint token) {
+			return debugger.Dispatcher.UI(() => {
+				var prop = mod.CorModule.GetPropertyFromToken(token);
+				return prop == null ? null : new DebuggerProperty(debugger, prop);
+			});
+		}
+
+		public IDebuggerEvent GetEvent(uint token) {
+			return debugger.Dispatcher.UI(() => {
+				var evt = mod.CorModule.GetEventFromToken(token);
+				return evt == null ? null : new DebuggerEvent(debugger, evt);
+			});
+		}
+
+		public IDebuggerClass GetClass(uint token) {
 			return debugger.Dispatcher.UI(() => {
 				var cls = mod.CorModule.GetClassFromToken(token);
 				return cls == null ? null : new DebuggerClass(debugger, cls);
 			});
 		}
+
+		public IDebuggerType GetType(uint token) {
+			return debugger.Dispatcher.UI(() => {
+				var cls = mod.CorModule.GetClassFromToken(token);
+				return cls == null ? null : new DebuggerClass(debugger, cls).ToType(emptyDebuggerTypes);
+			});
+		}
+		static readonly IDebuggerType[] emptyDebuggerTypes = new IDebuggerType[0];
 
 		public IDebuggerValue GetGlobalVariableValue(uint fdToken) {
 			return debugger.Dispatcher.UI(() => {
@@ -537,7 +567,7 @@ namespace dnSpy.Debugger.Scripting {
 				Save(stream);
 		}
 
-		public IDebuggerClass FindClass(string className) {
+		public IDebuggerClass GetClass(string className) {
 			return debugger.Dispatcher.UI(() => {
 				// Dynamic modules can get extra types, so use the slower linear search.
 				var cls = IsDynamic ?
@@ -547,26 +577,82 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public IDebuggerFunction FindMethod(string className, string methodName) {
+		public IDebuggerMethod GetMethod(string className, string methodName) {
 			return debugger.Dispatcher.UI(() => {
-				var cls = FindClass(className);
-				return cls == null ? null : cls.FindMethod(methodName);
+				var cls = GetClass(className);
+				return cls == null ? null : cls.GetMethod(methodName);
 			});
 		}
 
-		public IDebuggerType FindType(string className) {
-			return FindType(className, null);
+		public IDebuggerField GetField(string className, string fieldName) {
+			return debugger.Dispatcher.UI(() => {
+				var cls = GetClass(className);
+				return cls == null ? null : cls.GetField(fieldName);
+			});
 		}
 
-		public IDebuggerType FindType(string className, params IDebuggerType[] genericArguments) {
+		public IDebuggerProperty GetProperty(string className, string propertyName) {
 			return debugger.Dispatcher.UI(() => {
-				var cls = (DebuggerClass)FindClass(className);
+				var cls = GetClass(className);
+				return cls == null ? null : cls.GetProperty(propertyName);
+			});
+		}
+
+		public IDebuggerEvent GetEvent(string className, string eventName) {
+			return debugger.Dispatcher.UI(() => {
+				var cls = GetClass(className);
+				return cls == null ? null : cls.GetEvent(eventName);
+			});
+		}
+
+		public IDebuggerType GetType(string className) {
+			return GetType(className, null);
+		}
+
+		public IDebuggerType GetType(string className, params IDebuggerType[] genericArguments) {
+			return debugger.Dispatcher.UI(() => {
+				var cls = (DebuggerClass)GetClass(className);
 				if (cls == null)
 					return null;
 				// We can use Class all the time, even for value types
 				var type = cls.CorClass.GetParameterizedType(dndbg.COM.CorDebug.CorElementType.Class, genericArguments.ToCorTypes());
 				Debug.Assert(type != null);
-				return type == null ? null : new DebuggerType(debugger, type);
+				return type == null ? null : new DebuggerType(debugger, type, cls.Token);
+			});
+		}
+
+		public IDebuggerType GetType(Type type) {
+			return debugger.Dispatcher.UI(() => {
+				var ad = debugger.FindAppDomainUI(mod.AppDomain.CorAppDomain);
+				return ad == null ? null : ad.GetType(type);
+			});
+		}
+
+		public IDebuggerField GetField(FieldInfo field) {
+			return debugger.Dispatcher.UI(() => {
+				var type = GetType(field.DeclaringType);
+				return type == null ? null : type.GetField(field);
+			});
+		}
+
+		public IDebuggerMethod GetMethod(MethodBase method) {
+			return debugger.Dispatcher.UI(() => {
+				var type = GetType(method.DeclaringType);
+				return type == null ? null : type.GetMethod(method);
+			});
+		}
+
+		public IDebuggerProperty GetProperty(PropertyInfo prop) {
+			return debugger.Dispatcher.UI(() => {
+				var type = GetType(prop.DeclaringType);
+				return type == null ? null : type.GetProperty(prop);
+			});
+		}
+
+		public IDebuggerEvent GetEvent(EventInfo evt) {
+			return debugger.Dispatcher.UI(() => {
+				var type = GetType(evt.DeclaringType);
+				return type == null ? null : type.GetEvent(evt);
 			});
 		}
 

@@ -215,10 +215,31 @@ namespace dndbg.Engine {
 			return sb.ToString();
 		}
 
+		public CorField GetFieldFromToken(uint token) {
+			var mdi = this.GetMetaDataInterface<IMetaDataImport>();
+			uint tdToken = 0x02000000 + MDAPI.GetFieldOwnerRid(mdi, token);
+			var cls = GetClassFromToken(tdToken);
+			return cls == null ? null : new CorField(cls, token);
+		}
+
+		public CorProperty GetPropertyFromToken(uint token) {
+			var mdi = this.GetMetaDataInterface<IMetaDataImport>();
+			uint tdToken = 0x02000000 + MDAPI.GetPropertyOwnerRid(mdi, token);
+			var cls = GetClassFromToken(tdToken);
+			return cls == null ? null : new CorProperty(cls, token);
+		}
+
+		public CorEvent GetEventFromToken(uint token) {
+			var mdi = this.GetMetaDataInterface<IMetaDataImport>();
+			uint tdToken = 0x02000000 + MDAPI.GetEventOwnerRid(mdi, token);
+			var cls = GetClassFromToken(tdToken);
+			return cls == null ? null : new CorEvent(cls, token);
+		}
+
 		public CorFunction GetFunctionFromToken(uint token) {
 			ICorDebugFunction func;
 			int hr = obj.GetFunctionFromToken(token, out func);
-			return hr < 0 || func == null ? null : new CorFunction(func);
+			return hr < 0 || func == null ? null : new CorFunction(func, this);
 		}
 
 		public void EnableJITDebugging(bool trackJITInfo, bool allowJitOpts) {
@@ -336,6 +357,10 @@ namespace dndbg.Engine {
 			var mdi = this.GetMetaDataInterface<IMetaDataImport>();
 			foreach (var tdToken in MDAPI.GetTypeDefTokens(mdi))
 				yield return Tuple.Create(MDAPI.GetTypeDefName(mdi, tdToken), tdToken);
+		}
+
+		public CorType CreateTypeFromTypeDefOrRef(uint token) {
+			return null;//TODO:
 		}
 
 		public static bool operator ==(CorModule a, CorModule b) {

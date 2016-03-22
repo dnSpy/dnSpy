@@ -22,7 +22,7 @@ using System.Reflection;
 
 namespace dnSpy.Contracts.Scripting.Debugger {
 	/// <summary>
-	/// Calls a function in the debugged process. Call its <see cref="IDisposable.Dispose"/> method
+	/// Calls a method in the debugged process. Call its <see cref="IDisposable.Dispose"/> method
 	/// once you don't need the instance anymore so the debugger knows the evaluation has ended.
 	/// </summary>
 	public interface IEval : IDisposable {
@@ -170,8 +170,8 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// Creates a <see cref="IDebuggerValue"/> that can be passed to the debugged process
 		/// </summary>
 		/// <param name="value">A simple type (ints, doubles, string, null),
-		/// arrays (<c>int[]</c>, <c>string[]</c>), <see cref="IDebuggerValue"/> (same
-		/// instance is returned), <see cref="IDebuggerType"/>, <see cref="Type"/>.
+		/// arrays (<c>int[]</c>, <c>string[]</c>), <see cref="IDebuggerValue"/>,
+		/// <see cref="IDebuggerType"/>, <see cref="Type"/>.
 		/// Use <see cref="Debugger.Box"/> to box values or call <see cref="CreateBox(object)"/>.</param>
 		/// <returns></returns>
 		IDebuggerValue Create(object value);
@@ -309,7 +309,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="elementType">Array element type</param>
 		/// <param name="length">Number of elements</param>
 		/// <returns></returns>
-		IDebuggerValue CreateSZArray(IDebuggerType elementType, int length);
+		IDebuggerValue CreateArray(IDebuggerType elementType, int length);
 
 		/// <summary>
 		/// Creates an array. <paramref name="elementType"/> must be a primitive type (but not
@@ -318,7 +318,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="elementType">Array element type</param>
 		/// <param name="length">Number of elements</param>
 		/// <returns></returns>
-		IDebuggerValue CreateSZArray(Type elementType, int length);
+		IDebuggerValue CreateArray(Type elementType, int length);
 
 		/// <summary>
 		/// Creates a <see cref="bool"/> array
@@ -416,105 +416,43 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// If it's a value type, the returned type is a reference to a boxed value.
 		/// </summary>
 		/// <param name="ctor">Constructor to call</param>
-		/// <param name="args">Arguments</param>
+		/// <param name="args">Arguments. Each argument is passed to <see cref="Create(object)"/>,
+		/// see its documentation for more details.</param>
 		/// <returns></returns>
-		IDebuggerValue Create(IDebuggerFunction ctor, IDebuggerValue[] args);
+		IDebuggerValue Create(IDebuggerMethod ctor, params object[] args);
 
 		/// <summary>
 		/// Creates a new type instance. The returned type is a reference.
 		/// If it's a value type, the returned type is a reference to a boxed value.
 		/// </summary>
-		/// <param name="genericArgs">Generic type arguments</param>
+		/// <param name="genericArgs">Generic type arguments (<see cref="Type"/> or <see cref="IDebuggerType"/> instances)</param>
 		/// <param name="ctor">Constructor to call</param>
-		/// <param name="args">Arguments</param>
+		/// <param name="args">Arguments. Each argument is passed to <see cref="Create(object)"/>,
+		/// see its documentation for more details.</param>
 		/// <returns></returns>
-		IDebuggerValue Create(IDebuggerType[] genericArgs, IDebuggerFunction ctor, IDebuggerValue[] args);
+		IDebuggerValue Create(object[] genericArgs, IDebuggerMethod ctor, params object[] args);
 
 		/// <summary>
-		/// Creates a new type instance. The returned type is a reference.
-		/// If it's a value type, the returned type is a reference to a boxed value.
+		/// Calls <paramref name="method"/> in the debugged process
 		/// </summary>
-		/// <param name="ctor">Constructor to call</param>
+		/// <param name="method">Method to call</param>
 		/// <param name="args">Arguments. If it's an instance method, the first argument is the
 		/// <c>this</c> pointer. Each argument is passed to <see cref="Create(object)"/>, see its
 		/// documentation for more details.</param>
 		/// <returns></returns>
-		IDebuggerValue Create(IDebuggerFunction ctor, params object[] args);
+		IDebuggerValue Call(IDebuggerMethod method, params object[] args);
 
 		/// <summary>
-		/// Creates a new type instance. The returned type is a reference.
-		/// If it's a value type, the returned type is a reference to a boxed value.
+		/// Calls <paramref name="method"/> in the debugged process
 		/// </summary>
-		/// <param name="genericArgs">Generic type arguments</param>
-		/// <param name="ctor">Constructor to call</param>
+		/// <param name="genericArgs">Generic type arguments followed by generic method arguments
+		/// (<see cref="Type"/> or <see cref="IDebuggerType"/> instances)</param>
+		/// <param name="method">Method to call</param>
 		/// <param name="args">Arguments. If it's an instance method, the first argument is the
 		/// <c>this</c> pointer. Each argument is passed to <see cref="Create(object)"/>, see its
 		/// documentation for more details.</param>
 		/// <returns></returns>
-		IDebuggerValue Create(IDebuggerType[] genericArgs, IDebuggerFunction ctor, params object[] args);
-
-		/// <summary>
-		/// Creates a new type instance. The returned type is a reference.
-		/// If it's a value type, the returned type is a reference to a boxed value.
-		/// </summary>
-		/// <param name="genericArgs">Generic type arguments</param>
-		/// <param name="ctor">Constructor to call</param>
-		/// <param name="args">Arguments. If it's an instance method, the first argument is the
-		/// <c>this</c> pointer. Each argument is passed to <see cref="Create(object)"/>, see its
-		/// documentation for more details.</param>
-		/// <returns></returns>
-		IDebuggerValue Create(Type[] genericArgs, IDebuggerFunction ctor, params object[] args);
-
-		/// <summary>
-		/// Calls <paramref name="func"/> in the debugged process
-		/// </summary>
-		/// <param name="func">Function to call</param>
-		/// <param name="args">Arguments. If it's an instance method, the first argument is the
-		/// <c>this</c> pointer.</param>
-		/// <returns></returns>
-		IDebuggerValue Call(IDebuggerFunction func, IDebuggerValue[] args);
-
-		/// <summary>
-		/// Calls <paramref name="func"/> in the debugged process
-		/// </summary>
-		/// <param name="genericArgs">Generic type arguments followed by generic method arguments</param>
-		/// <param name="func">Function to call</param>
-		/// <param name="args">Arguments. If it's an instance method, the first argument is the
-		/// <c>this</c> pointer.</param>
-		/// <returns></returns>
-		IDebuggerValue Call(IDebuggerType[] genericArgs, IDebuggerFunction func, IDebuggerValue[] args);
-
-		/// <summary>
-		/// Calls <paramref name="func"/> in the debugged process
-		/// </summary>
-		/// <param name="func">Function to call</param>
-		/// <param name="args">Arguments. If it's an instance method, the first argument is the
-		/// <c>this</c> pointer. Each argument is passed to <see cref="Create(object)"/>, see its
-		/// documentation for more details.</param>
-		/// <returns></returns>
-		IDebuggerValue Call(IDebuggerFunction func, params object[] args);
-
-		/// <summary>
-		/// Calls <paramref name="func"/> in the debugged process
-		/// </summary>
-		/// <param name="genericArgs">Generic type arguments followed by generic method arguments</param>
-		/// <param name="func">Function to call</param>
-		/// <param name="args">Arguments. If it's an instance method, the first argument is the
-		/// <c>this</c> pointer. Each argument is passed to <see cref="Create(object)"/>, see its
-		/// documentation for more details.</param>
-		/// <returns></returns>
-		IDebuggerValue Call(IDebuggerType[] genericArgs, IDebuggerFunction func, params object[] args);
-
-		/// <summary>
-		/// Calls <paramref name="func"/> in the debugged process
-		/// </summary>
-		/// <param name="genericArgs">Generic type arguments followed by generic method arguments</param>
-		/// <param name="func">Function to call</param>
-		/// <param name="args">Arguments. If it's an instance method, the first argument is the
-		/// <c>this</c> pointer. Each argument is passed to <see cref="Create(object)"/>, see its
-		/// documentation for more details.</param>
-		/// <returns></returns>
-		IDebuggerValue Call(Type[] genericArgs, IDebuggerFunction func, params object[] args);
+		IDebuggerValue Call(object[] genericArgs, IDebuggerMethod method, params object[] args);
 
 		/// <summary>
 		/// Calls the <c>ToString()</c> method
@@ -547,7 +485,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Loads the assembly in the debugged process by calling <see cref="Assembly.LoadFile(string)"/>
 		/// </summary>
-		/// <param name="filename">Filename</param>
+		/// <param name="filename">Assembly filename</param>
 		/// <returns></returns>
 		IDebuggerValue AssemblyLoadFile(string filename);
 	}

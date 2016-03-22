@@ -591,6 +591,8 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint GetTypeDefExtends(IMetaDataImport mdi, uint token) {
+			if (mdi == null)
+				return 0;
 			uint tkExtends;
 			int hr = mdi.GetTypeDefProps(token, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, new IntPtr(&tkExtends));
 			return hr != 0 ? 0 : tkExtends;
@@ -616,6 +618,8 @@ namespace dndbg.Engine {
 		}
 
 		public static unsafe TypeAttributes? GetTypeDefAttributes(IMetaDataImport mdi, uint token) {
+			if (mdi == null)
+				return null;
 			uint dwTypeDefFlags;
 			int hr = mdi.GetTypeDefProps(token, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwTypeDefFlags), IntPtr.Zero);
 			return hr == 0 ? (TypeAttributes)dwTypeDefFlags : (TypeAttributes?)null;
@@ -896,6 +900,8 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static FieldAttributes GetFieldAttributes(IMetaDataImport mdi, uint token) {
+			if (mdi == null)
+				return 0;
 			uint dwAttr;
 			int hr = mdi.GetFieldProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, new IntPtr(&dwAttr), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero);
 			Debug.Assert(hr == 0);
@@ -962,6 +968,8 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string GetEventName(IMetaDataImport mdi, uint token) {
+			if (mdi == null)
+				return null;
 			uint chEvent;
 			int hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chEvent), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
 			char[] nameBuf = null;
@@ -1001,6 +1009,8 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetEventOtherMethodTokens(IMetaDataImport mdi, uint token) {
+			if (mdi == null)
+				return new uint[0];
 			uint count;
 			int hr = mdi.GetEventProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&count));
 			uint[] tokens = null;
@@ -1092,6 +1102,8 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static string GetPropertyName(IMetaDataImport mdi, uint token) {
+			if (mdi == null)
+				return null;
 			uint chProperty;
 			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&chProperty), IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero);
 			char[] nameBuf = null;
@@ -1121,6 +1133,8 @@ namespace dndbg.Engine {
 		}
 
 		public unsafe static uint[] GetPropertyOtherMethodTokens(IMetaDataImport mdi, uint token) {
+			if (mdi == null)
+				return new uint[0];
 			uint count;
 			int hr = mdi.GetPropertyProps(token, IntPtr.Zero, IntPtr.Zero, 0, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, IntPtr.Zero, 0, new IntPtr(&count));
 			uint[] tokens = null;

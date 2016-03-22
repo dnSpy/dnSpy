@@ -243,8 +243,11 @@
     <Compile Include="Scripting\Debugger\IDebuggerAssembly.cs" />
     <Compile Include="Scripting\Debugger\IDebuggerClass.cs" />
     <Compile Include="Scripting\Debugger\IDebuggerCode.cs" />
-    <Compile Include="Scripting\Debugger\IDebuggerFunction.cs" />
+    <Compile Include="Scripting\Debugger\IDebuggerEvent.cs" />
+    <Compile Include="Scripting\Debugger\IDebuggerField.cs" />
+    <Compile Include="Scripting\Debugger\IDebuggerMethod.cs" />
     <Compile Include="Scripting\Debugger\IDebuggerModule.cs" />
+    <Compile Include="Scripting\Debugger\IDebuggerProperty.cs" />
     <Compile Include="Scripting\Debugger\IDebuggerThread.cs" />
     <Compile Include="Scripting\Debugger\IDebuggerType.cs" />
     <Compile Include="Scripting\Debugger\IDebuggerValue.cs" />

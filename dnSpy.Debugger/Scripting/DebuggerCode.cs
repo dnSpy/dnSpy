@@ -25,11 +25,11 @@ using dnSpy.Shared.Scripting;
 
 namespace dnSpy.Debugger.Scripting {
 	sealed class DebuggerCode : IDebuggerCode {
-		public IDebuggerFunction Function {
+		public IDebuggerMethod Method {
 			get {
 				return debugger.Dispatcher.UI(() => {
 					var func = code.Function;
-					return func == null ? null : new DebuggerFunction(debugger, func);
+					return func == null ? null : new DebuggerMethod(debugger, func);
 				});
 			}
 		}

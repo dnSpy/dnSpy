@@ -439,6 +439,112 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		bool GetNullableValue(out IDebuggerValue value);
 
 		/// <summary>
+		/// Reads an instance field. To read a static field, see eg. <see cref="IDebuggerType.ReadStaticField(IStackFrame, IDebuggerField)"/>
+		/// </summary>
+		/// <param name="field">Field</param>
+		/// <returns></returns>
+		IDebuggerValue Read(IDebuggerField field);
+
+		/// <summary>
+		/// Reads an instance field. To read a static field, see eg. <see cref="IDebuggerType.ReadStaticField(IStackFrame, uint)"/>
+		/// </summary>
+		/// <param name="token">Field token</param>
+		/// <returns></returns>
+		IDebuggerValue Read(uint token);
+
+		/// <summary>
+		/// Reads an instance field. To read a static field, see eg. <see cref="IDebuggerType.ReadStaticField(IStackFrame, string, bool)"/>
+		/// </summary>
+		/// <param name="name">Field name</param>
+		/// <param name="checkBaseClasses">true to check base classes</param>
+		/// <returns></returns>
+		IDebuggerValue Read(string name, bool checkBaseClasses = true);
+
+		/// <summary>
+		/// Calls an instance method in the debugged process
+		/// </summary>
+		/// <param name="thread">Thread to use</param>
+		/// <param name="method">Instance method to call</param>
+		/// <param name="args">Arguments, either simple types (ints, doubles, strings, null),
+		/// arrays (<c>int[], string[])</c>, <see cref="IDebuggerValue"/>, <see cref="Type"/>,
+		/// <see cref="IDebuggerType"/> instances.
+		/// Use <see cref="Box"/> to box values.</param>
+		/// <returns></returns>
+		IDebuggerValue Call(IDebuggerThread thread, IDebuggerMethod method, params object[] args);
+
+		/// <summary>
+		/// Calls an instance method in the debugged process
+		/// </summary>
+		/// <param name="thread">Thread to use</param>
+		/// <param name="genericArgs">Generic type arguments followed by generic method arguments
+		/// (<see cref="Type"/> or <see cref="IDebuggerType"/> instances)</param>
+		/// <param name="method">Instance method to call</param>
+		/// <param name="args">Arguments, either simple types (ints, doubles, strings, null),
+		/// arrays (<c>int[], string[])</c>, <see cref="IDebuggerValue"/>, <see cref="Type"/>,
+		/// <see cref="IDebuggerType"/> instances.
+		/// Use <see cref="Box"/> to box values.</param>
+		/// <returns></returns>
+		IDebuggerValue Call(IDebuggerThread thread, object[] genericArgs, IDebuggerMethod method, params object[] args);
+
+		/// <summary>
+		/// Calls an instance method in the debugged process
+		/// </summary>
+		/// <param name="thread">Thread to use</param>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <param name="methodName">Method name</param>
+		/// <param name="args">Arguments, either simple types (ints, doubles, strings, null),
+		/// arrays (<c>int[], string[])</c>, <see cref="IDebuggerValue"/>, <see cref="Type"/>,
+		/// <see cref="IDebuggerType"/> instances.
+		/// Use <see cref="Box"/> to box values.</param>
+		/// <returns></returns>
+		IDebuggerValue Call(IDebuggerThread thread, string modName, string className, string methodName, params object[] args);
+
+		/// <summary>
+		/// Calls an instance method in the debugged process
+		/// </summary>
+		/// <param name="thread">Thread to use</param>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="token">Method token</param>
+		/// <param name="args">Arguments, either simple types (ints, doubles, strings, null),
+		/// arrays (<c>int[], string[])</c>, <see cref="IDebuggerValue"/>, <see cref="Type"/>,
+		/// <see cref="IDebuggerType"/> instances.
+		/// Use <see cref="Box"/> to box values.</param>
+		/// <returns></returns>
+		IDebuggerValue Call(IDebuggerThread thread, string modName, uint token, params object[] args);
+
+		/// <summary>
+		/// Calls an instance method in the debugged process
+		/// </summary>
+		/// <param name="thread">Thread to use</param>
+		/// <param name="genericArgs">Generic type arguments followed by generic method arguments
+		/// (<see cref="Type"/> or <see cref="IDebuggerType"/> instances)</param>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="className">Class name</param>
+		/// <param name="methodName">Method name</param>
+		/// <param name="args">Arguments, either simple types (ints, doubles, strings, null),
+		/// arrays (<c>int[], string[])</c>, <see cref="IDebuggerValue"/>, <see cref="Type"/>,
+		/// <see cref="IDebuggerType"/> instances.
+		/// Use <see cref="Box"/> to box values.</param>
+		/// <returns></returns>
+		IDebuggerValue Call(IDebuggerThread thread, object[] genericArgs, string modName, string className, string methodName, params object[] args);
+
+		/// <summary>
+		/// Calls an instance method in the debugged process
+		/// </summary>
+		/// <param name="thread">Thread to use</param>
+		/// <param name="genericArgs">Generic type arguments followed by generic method arguments
+		/// (<see cref="Type"/> or <see cref="IDebuggerType"/> instances)</param>
+		/// <param name="modName">Full path, filename, or filename without extension of module</param>
+		/// <param name="token">Method token</param>
+		/// <param name="args">Arguments, either simple types (ints, doubles, strings, null),
+		/// arrays (<c>int[], string[])</c>, <see cref="IDebuggerValue"/>, <see cref="Type"/>,
+		/// <see cref="IDebuggerType"/> instances.
+		/// Use <see cref="Box"/> to box values.</param>
+		/// <returns></returns>
+		IDebuggerValue Call(IDebuggerThread thread, object[] genericArgs, string modName, uint token, params object[] args);
+
+		/// <summary>
 		/// Reads the data but doesn't return internal values such as array length if it's an array.
 		/// </summary>
 		/// <returns></returns>
