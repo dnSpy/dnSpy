@@ -131,9 +131,11 @@ namespace dnSpy.MainApp {
 			// Load the modules in a predictable order or multicore-JIT could stop recording. See
 			// "Understanding Background JIT compilation -> What can go wrong with background JIT compilation"
 			// in the PerfView docs for more info.
-			var files = Directory.GetFiles(dir, "*.Plugin.dll").OrderBy(a => a, StringComparer.OrdinalIgnoreCase).ToArray();
+			var files = GetPluginFiles(dir).OrderBy(a => a, StringComparer.OrdinalIgnoreCase).ToArray();
 			foreach (var file in files) {
 				try {
+					if (!File.Exists(file))
+						continue;
 					if (!CanLoadPlugin(file))
 						continue;
 					var asm = Assembly.LoadFrom(file);
@@ -143,6 +145,40 @@ namespace dnSpy.MainApp {
 				catch (Exception ex) {
 					Debug.Fail(string.Format("Failed to load file '{0}', msg: {1}", file, ex.Message));
 				}
+			}
+		}
+
+		IEnumerable<string> GetPluginFiles(string baseDir) {
+			const string PLUGIN_SEARCH_PATTERN = "*.Plugin.dll";
+			const string PLUGINS_SUBDIR = "Plugins";
+			foreach (var f in GetFiles(baseDir, PLUGIN_SEARCH_PATTERN))
+				yield return f;
+			var pluginsSubDir = Path.Combine(baseDir, PLUGINS_SUBDIR);
+			if (Directory.Exists(pluginsSubDir)) {
+				foreach (var f in GetFiles(pluginsSubDir, PLUGIN_SEARCH_PATTERN))
+					yield return f;
+				foreach (var d in GetDirectories(pluginsSubDir)) {
+					foreach (var f in GetFiles(d, PLUGIN_SEARCH_PATTERN))
+						yield return f;
+				}
+			}
+		}
+
+		static string[] GetFiles(string dir, string searchPattern) {
+			try {
+				return Directory.GetFiles(dir, searchPattern);
+			}
+			catch {
+				return new string[0];
+			}
+		}
+
+		static string[] GetDirectories(string dir) {
+			try {
+				return Directory.GetDirectories(dir);
+			}
+			catch {
+				return new string[0];
 			}
 		}
 
