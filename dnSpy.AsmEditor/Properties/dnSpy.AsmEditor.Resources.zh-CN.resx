@@ -292,22 +292,22 @@
     <value>创建 TypeSig</value>
   </data>
   <data name="CreateTypeSpec" xml:space="preserve">
-    <value>Create TypeSpec</value>
+    <value>创建 TypeSpec</value>
   </data>
   <data name="Create_N_TypeSigs" xml:space="preserve">
-    <value>Create {0} TypeSigs</value>
+    <value>创建 {0} TypeSig</value>
   </data>
   <data name="Create_TypeSig" xml:space="preserve">
-    <value>Create a TypeSig</value>
+    <value>创建 TypeSig</value>
   </data>
   <data name="Create_TypeSigs" xml:space="preserve">
-    <value>Create TypeSigs</value>
+    <value>创建 TypeSig</value>
   </data>
   <data name="Create_TypeSigs_N_Left" xml:space="preserve">
-    <value>{0} TypeSigs left</value>
+    <value>{0} TypeSigs 剩余</value>
   </data>
   <data name="Create_TypeSigs_OneLeft" xml:space="preserve">
-    <value>One TypeSig left</value>
+    <value>一个 TypeSig 剩余</value>
   </data>
   <data name="CustomAttributesTab" xml:space="preserve">
     <value>Custom Attrs</value>
@@ -398,7 +398,7 @@
     <value>C</value>
   </data>
   <data name="Event_ClearCharacter_ToolTip" xml:space="preserve">
-    <value>Set to null</value>
+    <value>设置为 Null</value>
   </data>
   <data name="Event_InvokeMethod" xml:space="preserve">
     <value>调用(_I)...</value>
@@ -536,22 +536,22 @@
     <value>Strong Name Signed</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_TrackDebugData" xml:space="preserve">
-    <value>Track Debug Data</value>
+    <value>跟踪调试数据</value>
   </data>
   <data name="HexNode_Cor20_Header" xml:space="preserve">
-    <value>Cor20 Header</value>
+    <value>Cor20 头</value>
   </data>
   <data name="HexNode_DOSHeader" xml:space="preserve">
-    <value>DOS Header</value>
+    <value>DOS 头</value>
   </data>
   <data name="HexNode_FileHeader" xml:space="preserve">
-    <value>File Header</value>
+    <value>文件头</value>
   </data>
   <data name="HexNode_OptHeader32" xml:space="preserve">
-    <value>Optional Header (32-bit)</value>
+    <value>可选头（32 -位）</value>
   </data>
   <data name="HexNode_OptHeader64" xml:space="preserve">
-    <value>Optional Header (64-bit)</value>
+    <value>可选头（64 - 位）</value>
   </data>
   <data name="ImplMapTab" xml:space="preserve">
     <value>ImplMap</value>
@@ -563,13 +563,13 @@
     <value>CallCon_v</value>
   </data>
   <data name="ImplMap_CharacterSet" xml:space="preserve">
-    <value>C_harSet</value>
+    <value>字符集(_H)</value>
   </data>
   <data name="ImplMap_Enable" xml:space="preserve">
-    <value>_Enable</value>
+    <value>启用(_E)</value>
   </data>
   <data name="ImplMap_Module" xml:space="preserve">
-    <value>Mo_dule</value>
+    <value>模块(_D)</value>
   </data>
   <data name="ImplMap_Name" xml:space="preserve">
     <value>_Name</value>
@@ -611,7 +611,7 @@
     <value>Elem_Type</value>
   </data>
   <data name="MarshalType_Enable" xml:space="preserve">
-    <value>_Enable</value>
+    <value>启用(_E)</value>
   </data>
   <data name="MarshalType_EnumNotInitialized" xml:space="preserve">
     <value>&lt;Not Initialized&gt;</value>

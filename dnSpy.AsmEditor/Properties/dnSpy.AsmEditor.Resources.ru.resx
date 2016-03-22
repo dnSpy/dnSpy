@@ -446,7 +446,7 @@
     <value>Default value for this field</value>
   </data>
   <data name="Field_Flags" xml:space="preserve">
-    <value>Flags</value>
+    <value>Флаги</value>
   </data>
   <data name="Field_Flags_InitOnly" xml:space="preserve">
     <value>_InitOnly</value>
@@ -755,7 +755,7 @@
     <value>Other Methods</value>
   </data>
   <data name="ParamDef_Flags" xml:space="preserve">
-    <value>Flags</value>
+    <value>Флаги</value>
   </data>
   <data name="ParamDef_Flags_In" xml:space="preserve">
     <value>_In</value>
@@ -2133,7 +2133,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Type</value>
   </data>
   <data name="Flags" xml:space="preserve">
-    <value>Flags</value>
+    <value>Флаги</value>
   </data>
   <data name="MethodBody_Column_OpCode" xml:space="preserve">
     <value>OpCode</value>

@@ -1222,6 +1222,6 @@ If there is a handler for this exception, the program may be safely continued.</
     <value>.NET 调试器</value>
   </data>
   <data name="Debug_StopReason_Breakpoint" xml:space="preserve">
-    <value>Breakpoint</value>
+    <value>断点</value>
   </data>
 </root>

@@ -397,7 +397,7 @@
     <value>_Отладить сборку CoreCLR...</value>
   </data>
   <data name="DebuggerOptDlgTab" xml:space="preserve">
-    <value>Дебаггер</value>
+    <value>Отладчик</value>
   </data>
   <data name="DebugProgramX" xml:space="preserve">
     <value>_Отладить {0}</value>
@@ -1222,6 +1222,6 @@ HResult: 0x{3:X8}</value>
     <value>Дебаггер .NET</value>
   </data>
   <data name="Debug_StopReason_Breakpoint" xml:space="preserve">
-    <value>Breakpoint</value>
+    <value>Точки останова</value>
   </data>
 </root>

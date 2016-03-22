@@ -187,7 +187,7 @@
     <value>Сброс ядра выполнения.</value>
   </data>
   <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
-    <value>Clear Screen (Ctrl+L)</value>
+    <value>Очистить экран (Ctrl+L)</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
     <value>Вперед по истории (Alt+Down Arrow)</value>
@@ -250,7 +250,7 @@
     <value>Сбросить окружение выполнения</value>
   </data>
   <data name="ClearScreenCommand" xml:space="preserve">
-    <value>Clear Screen</value>
+    <value>Очистить экран</value>
   </data>
   <data name="ShortCutKeyCtrlL" xml:space="preserve">
     <value>Ctrl+L</value>
