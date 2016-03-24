@@ -20,8 +20,8 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.ExceptionServices;
 using System.Windows.Threading;
-using dnSpy.Contracts.Scripting;
 
 namespace dnSpy.Shared.Scripting {
 	public static class UIUtils {
@@ -38,22 +38,18 @@ namespace dnSpy.Shared.Scripting {
 
 			Debugger.NotifyOfCrossThreadDependency();
 
-			Exception caughtException = null;
+			ExceptionDispatchInfo exInfo = null;
 			dispatcher.Invoke(new Action(() => {
 				try {
 					a();
 				}
 				catch (Exception ex) {
-					caughtException = ex;
+					exInfo = ExceptionDispatchInfo.Capture(ex);
 					return;
 				}
 			}), DispatcherPriority.Send);
-			if (caughtException != null) {
-				var opc = caughtException as OperationCanceledException;
-				if (opc != null)
-					throw new OperationCanceledException(opc.Message, opc, opc.CancellationToken);
-				throw new ScriptException(string.Empty, caughtException);
-			}
+			if (exInfo != null)
+				exInfo.Throw();
 		}
 
 		/// <summary>
@@ -69,22 +65,18 @@ namespace dnSpy.Shared.Scripting {
 
 			Debugger.NotifyOfCrossThreadDependency();
 
-			Exception caughtException = null;
+			ExceptionDispatchInfo exInfo = null;
 			var res = (T)dispatcher.Invoke(new Func<T>(() => {
 				try {
 					return f();
 				}
 				catch (Exception ex) {
-					caughtException = ex;
+					exInfo = ExceptionDispatchInfo.Capture(ex);
 					return default(T);
 				}
 			}), DispatcherPriority.Send);
-			if (caughtException != null) {
-				var opc = caughtException as OperationCanceledException;
-				if (opc != null)
-					throw new OperationCanceledException(opc.Message, opc, opc.CancellationToken);
-				throw new ScriptException(string.Empty, caughtException);
-			}
+			if (exInfo != null)
+				exInfo.Throw();
 			return res;
 		}
 
@@ -108,7 +100,7 @@ namespace dnSpy.Shared.Scripting {
 			IEnumerator<T> enumerator = null;
 			for (;;) {
 				bool canContinue = false;
-				Exception caughtException = null;
+				ExceptionDispatchInfo exInfo = null;
 				var res = (T)dispatcher.Invoke(new Func<T>(() => {
 					try {
 						if (enumerator == null)
@@ -119,16 +111,12 @@ namespace dnSpy.Shared.Scripting {
 					}
 					catch (Exception ex) {
 						canContinue = false;
-						caughtException = ex;
+						exInfo = ExceptionDispatchInfo.Capture(ex);
 						return default(T);
 					}
 				}), DispatcherPriority.Send);
-				if (caughtException != null) {
-					var opc = caughtException as OperationCanceledException;
-					if (opc != null)
-						throw new OperationCanceledException(opc.Message, opc, opc.CancellationToken);
-					throw new ScriptException(string.Empty, caughtException);
-				}
+				if (exInfo != null)
+					exInfo.Throw();
 				if (!canContinue)
 					break;
 				yield return res;
