@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
 using dnlib.DotNet;
@@ -98,22 +99,82 @@ namespace dnSpy.Files.TreeView {
 			var s = arg.Value as UTF8String;
 			if (UTF8String.IsNullOrEmpty(s))
 				return null;
+
+			// See corclr/src/mscorlib/src/System/Runtime/Versioning/BinaryCompatibility.cs
 			var values = s.String.Split(new char[] { ',' });
-			bool isDNF = values.Any(a => StringComparer.OrdinalIgnoreCase.Equals(a, ".NETFramework"));
-			const string VERSION_PREFIX = "Version=v";
-			var verString = values.FirstOrDefault(a => a.StartsWith(VERSION_PREFIX, StringComparison.OrdinalIgnoreCase));
-			if (isDNF && verString != null) {
-				var ver = verString.Substring(VERSION_PREFIX.Length);
-				var match = new Regex(@"^\d+(?:\.\d+(?:\.\d+(?:\.\d+)?)?)?$").Match(ver);
-				// "65535.65535.65535.65535"
-				if (match.Success && ver.Length <= 5 * 4 + 3) {
-					if (ver == "4.0")
-						ver = "4";
-					return ".NET Framework " + ver;
+			if (values.Length < 2 || values.Length > 3)
+				return null;
+			var id = values[0].Trim();
+			if (id.Length == 0)
+				return null;
+
+			string versionString = null;
+			string profile = null;
+			for (int i = 1; i < values.Length; i++) {
+				var kvp = values[i].Split('=');
+				if (kvp.Length != 2)
+					return null;
+
+				var key = kvp[0].Trim();
+				var value = kvp[1].Trim();
+
+				if (key.Equals("Version", StringComparison.OrdinalIgnoreCase)) {
+					if (value.StartsWith("v", StringComparison.OrdinalIgnoreCase))
+						value = value.Substring(1);
+					versionString = value;
+					Version version = null;
+					if (!Version.TryParse(value, out version))
+						return null;
+				}
+				else if (key.Equals("Profile", StringComparison.OrdinalIgnoreCase)) {
+					if (!string.IsNullOrEmpty(value))
+						profile = value;
 				}
 			}
 
-			return null;
+			var name = GetFrameworkName(id, versionString);
+			if (name == null)
+				return null;
+
+			if (profile != null)
+				name = name + " (" + profile + ")";
+			return name;
+		}
+
+		static string GetFrameworkName(string id, string versionString) {
+			if (versionString == null)
+				return null;
+
+			switch (id) {
+			case ".NETFramework":
+				if (versionString == "4.0")
+					versionString = "4";
+				return ".NET Framework " + versionString;
+
+			case ".NETPortable":
+				return ".NET Portable " + versionString;
+
+			case ".NETCore":
+				return ".NET Core " + versionString;
+
+			case "DNXCore":
+				return "DNX Core " + versionString;
+
+			case "WindowsPhone":
+				return "Windows Phone " + versionString;
+
+			case "WindowsPhoneApp":
+				return "Windows Phone App " + versionString;
+
+			case "Silverlight":
+				return "Silverlight " + versionString;
+
+			default:
+				Debug.Fail("Unknown target framework: " + id);
+				if (id.Length > 20)
+					return null;
+				return id;
+			}
 		}
 	}
 }
