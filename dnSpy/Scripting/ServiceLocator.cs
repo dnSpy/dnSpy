@@ -21,23 +21,31 @@ using System;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.Windows.Threading;
 using dnSpy.Contracts.Scripting;
+using dnSpy.Shared.Scripting;
 
-namespace dnSpy.MainApp {
+namespace dnSpy.Scripting {
 	[Export, Export(typeof(IServiceLocator)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class ServiceLocator : IServiceLocator {
+		readonly Dispatcher dispatcher;
+
+		ServiceLocator() {
+			this.dispatcher = Dispatcher.CurrentDispatcher;
+		}
+
 		public T Resolve<T>() {
 			Debug.Assert(compositionContainer != null);
 			if (compositionContainer == null)
 				throw new InvalidOperationException();
-			return compositionContainer.GetExportedValue<T>();
+			return dispatcher.UI(() => compositionContainer.GetExportedValue<T>());
 		}
 
 		public T TryResolve<T>() {
 			Debug.Assert(compositionContainer != null);
 			if (compositionContainer == null)
 				throw new InvalidOperationException();
-			return compositionContainer.GetExportedValueOrDefault<T>();
+			return dispatcher.UI(() => compositionContainer.GetExportedValueOrDefault<T>());
 		}
 
 		public void SetCompositionContainer(CompositionContainer compositionContainer) {

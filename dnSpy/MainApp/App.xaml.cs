@@ -40,6 +40,7 @@ using dnSpy.Contracts.Settings;
 using dnSpy.Culture;
 using dnSpy.Files.Tabs;
 using dnSpy.Plugin;
+using dnSpy.Scripting;
 using dnSpy.Settings;
 using dnSpy.Shared.Controls;
 using dnSpy.Shared.MVVM;

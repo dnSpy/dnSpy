@@ -67,8 +67,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public void UI(Action action) => _UI(action);
 		public T UI<T>(Func<T> func) => _UI(func);
 		public void Break() => Debugger.Break();
-		public T Resolve<T>() => _UI(() => owner.ServiceLocator.Resolve<T>());
-		public T TryResolve<T>() => _UI(() => owner.ServiceLocator.TryResolve<T>());
+		public T Resolve<T>() => owner.ServiceLocator.Resolve<T>();
+		public T TryResolve<T>() => owner.ServiceLocator.TryResolve<T>();
 
 		public MsgBoxButton Show(string message, MsgBoxButton buttons = MsgBoxButton.OK, Window ownerWindow = null) =>
 			_UI(() => Shared.App.MsgBox.Instance.Show(message, buttons, ownerWindow));

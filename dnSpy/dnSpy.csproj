@@ -257,7 +257,6 @@
     </Compile>
     <Compile Include="MainApp\MsgBoxVM.cs" />
     <Compile Include="MainApp\SavedWindowState.cs" />
-    <Compile Include="MainApp\ServiceLocator.cs" />
     <Compile Include="MainApp\StartUpClass.cs" />
     <Compile Include="MainApp\ToolBarCommands.cs" />
     <Compile Include="MainApp\ViewCommands.cs" />
@@ -279,6 +278,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dnSpy.Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Scripting\ServiceLocator.cs" />
     <Compile Include="Search\AppCommandLineArgsHandler.cs" />
     <Compile Include="Search\Commands.cs" />
     <Compile Include="Search\FileSearcher.cs" />
