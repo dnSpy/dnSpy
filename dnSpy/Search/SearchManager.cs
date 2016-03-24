@@ -166,11 +166,26 @@ namespace dnSpy.Search {
 			Add(SearchType.Member, Key.U);
 			Add(SearchType.Any, Key.B);
 			Add(SearchType.Literal, Key.L);
+
+			Add(SearchLocation.AllFiles, Key.G);
+			Add(SearchLocation.SelectedFiles, Key.S);
+			Add(SearchLocation.AllFilesInSameDir, Key.D);
+			Add(SearchLocation.SelectedType, Key.Q);
 		}
 
 		void Add(SearchType searchType, Key key) {
 			var command = new RelayCommand(a => {
 				this.vmSearch.SelectedSearchTypeVM = this.vmSearch.SearchTypeVMs.First(b => b.SearchType == searchType);
+				if (!this.searchControl.SearchTextBox.IsKeyboardFocusWithin)
+					this.searchControl.SearchTextBox.SelectAll();
+				this.searchControl.SearchTextBox.Focus();
+			});
+			this.searchControl.InputBindings.Add(new KeyBinding(command, new KeyGesture(key, ModifierKeys.Control)));
+		}
+
+		void Add(SearchLocation loc, Key key) {
+			var command = new RelayCommand(a => {
+				this.vmSearch.SearchLocationVM.SelectedItem = loc;
 				if (!this.searchControl.SearchTextBox.IsKeyboardFocusWithin)
 					this.searchControl.SearchTextBox.SelectAll();
 				this.searchControl.SearchTextBox.Focus();
