@@ -24,7 +24,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
@@ -118,7 +117,6 @@ namespace dnSpy.Search {
 		public ISearchResult SearchingResult { get; set; }
 
 		void SearchNewThread(object o) {
-			AppCulture.InitializeCulture();
 			try {
 				var searchMsg = SearchResult.CreateMessage(filterSearcherOptions.Context, dnSpy_Resources.Searching, TextTokenKind.Text, true);
 				SearchingResult = searchMsg;
@@ -130,7 +128,6 @@ namespace dnSpy.Search {
 
 				if (o is IDnSpyFileNode[]) {
 					Parallel.ForEach((IDnSpyFileNode[])o, opts, node => {
-						AppCulture.InitializeCulture();
 						cancellationTokenSource.Token.ThrowIfCancellationRequested();
 						var searcher = new FilterSearcher(filterSearcherOptions);
 						searcher.SearchAssemblies(new IDnSpyFileNode[] { node });
@@ -138,7 +135,6 @@ namespace dnSpy.Search {
 				}
 				else if (o is SearchTypeInfo[]) {
 					Parallel.ForEach((SearchTypeInfo[])o, opts, info => {
-						AppCulture.InitializeCulture();
 						cancellationTokenSource.Token.ThrowIfCancellationRequested();
 						var searcher = new FilterSearcher(filterSearcherOptions);
 						searcher.SearchTypes(new SearchTypeInfo[] { info });

@@ -27,7 +27,6 @@ using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Threading;
 using dnlib.DotNet;
-using dnSpy.Contracts.App;
 using dnSpy.Properties;
 using dnSpy.Shared.Files;
 using dnSpy.Shared.MVVM;
@@ -113,10 +112,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			this.uniqueFiles = new HashSet<GACFileVM>(new GACFileVM_EqualityComparer());
 
 			var dispatcher = Dispatcher.CurrentDispatcher;
-			Task.Factory.StartNew(() => {
-				AppCulture.InitializeCulture();
-				new GACFileFinder(this, dispatcher, cancellationTokenSource.Token).Find();
-			}, cancellationTokenSource.Token)
+			Task.Factory.StartNew(() => new GACFileFinder(this, dispatcher, cancellationTokenSource.Token).Find(), cancellationTokenSource.Token)
 			.ContinueWith(t => {
 				var ex = t.Exception;
 				SearchingGAC = false;

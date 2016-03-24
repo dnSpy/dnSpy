@@ -37,7 +37,6 @@
     <NoWarn>1685</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="App\AppCulture.cs" />
     <Compile Include="App\AppDirectories.cs" />
     <Compile Include="App\IAppCommandLineArgs.cs" />
     <Compile Include="App\IAppCommandLineArgsHandler.cs" />

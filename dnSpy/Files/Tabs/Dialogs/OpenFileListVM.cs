@@ -27,7 +27,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows.Input;
-using dnSpy.Contracts.App;
 using dnSpy.Properties;
 using dnSpy.Shared.MVVM;
 
@@ -139,10 +138,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 			}
 			Refilter();
 
-			Task.Factory.StartNew(() => {
-				AppCulture.InitializeCulture();
-				return new DefaultFileListFinder(cancellationTokenSource.Token).Find();
-			}, cancellationTokenSource.Token)
+			Task.Factory.StartNew(() => new DefaultFileListFinder(cancellationTokenSource.Token).Find(), cancellationTokenSource.Token)
 			.ContinueWith(t => {
 				var ex = t.Exception;
 				SearchingForDefaultLists = false;

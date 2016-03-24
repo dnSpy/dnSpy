@@ -23,7 +23,6 @@ using System.Collections.ObjectModel;
 using System.Threading;
 using System.Windows.Input;
 using System.Windows.Threading;
-using dnSpy.Contracts.App;
 using dnSpy.Debugger.Properties;
 using dnSpy.Shared.MVVM;
 
@@ -100,10 +99,7 @@ namespace dnSpy.Debugger.Dialogs {
 
 			Collection.Clear();
 			cancellationToken = new CancellationTokenSource();
-			refreshThread = new Thread(() => {
-				AppCulture.InitializeCulture();
-				RefreshAsync();
-			});
+			refreshThread = new Thread(RefreshAsync);
 			OnPropertyChanged("IsRefreshing");
 			refreshThread.Start();
 		}

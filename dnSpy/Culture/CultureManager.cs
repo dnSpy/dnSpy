@@ -106,7 +106,7 @@ namespace dnSpy.Culture {
 				return;
 
 			Thread.CurrentThread.CurrentUICulture = info;
-			AppCulture.__Initialize(Thread.CurrentThread.CurrentCulture, info);
+			CultureInfo.DefaultThreadCurrentUICulture = info;
 			Debug.Assert(Thread.CurrentThread.CurrentUICulture.Equals(info));
 		}
 

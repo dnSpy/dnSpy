@@ -138,7 +138,6 @@ namespace dnSpy.Files.Tabs {
 				vm.TotalProgress = 0;
 				vm.IsIndeterminate = false;
 				Task.Factory.StartNew(() => {
-					AppCulture.InitializeCulture();
 					var decompilationContext = new DecompilationContext {
 						CancellationToken = cancellationTokenSource.Token,
 						GetDisableAssemblyLoad = () => owner.fileTreeView.FileManager.DisableAssemblyLoad(),

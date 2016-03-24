@@ -29,7 +29,6 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Media;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Settings.Dialog;
 using dnSpy.Files.TreeView;
@@ -214,10 +213,9 @@ namespace dnSpy.Files.Tabs.Settings {
 			this.fileTabManagerSettings = fileTabManagerSettings;
 			this.fontFamilies = null;
 			this.fontFamilyVM = new FontFamilyVM(textEditorSettings.FontFamily);
-			Task.Factory.StartNew(() => {
-				AppCulture.InitializeCulture();
-				return Fonts.SystemFontFamilies.Where(a => !FontUtils.IsSymbol(a)).OrderBy(a => a.Source.ToUpperInvariant()).Select(a => new FontFamilyVM(a)).ToArray();
-			})
+			Task.Factory.StartNew(() =>
+				Fonts.SystemFontFamilies.Where(a => !FontUtils.IsSymbol(a)).OrderBy(a => a.Source.ToUpperInvariant()).Select(a => new FontFamilyVM(a)).ToArray()
+			)
 			.ContinueWith(t => {
 				var ex = t.Exception;
 				if (!t.IsCanceled && !t.IsFaulted)

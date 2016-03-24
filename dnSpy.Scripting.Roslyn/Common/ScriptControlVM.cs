@@ -177,7 +177,6 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			execState = new ExecState(this, new CancellationTokenSource());
 			var execStateCache = execState;
 			Task.Run(() => {
-				AppCulture.InitializeCulture();
 				execStateCache.CancellationTokenSource.Token.ThrowIfCancellationRequested();
 
 				var userOpts = new UserScriptOptions();
@@ -255,7 +254,6 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 				var taskSched = TaskScheduler.FromCurrentSynchronizationContext();
 				Task.Run(() => {
-					AppCulture.InitializeCulture();
 					oldState.CancellationTokenSource.Token.ThrowIfCancellationRequested();
 
 					var opts = oldState.ScriptOptions.WithReferences(Array.Empty<MetadataReference>()).WithImports(Array.Empty<string>());

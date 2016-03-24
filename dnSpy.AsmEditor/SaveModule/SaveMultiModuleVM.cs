@@ -30,7 +30,6 @@ using System.Windows.Input;
 using System.Windows.Threading;
 using dnSpy.AsmEditor.Hex;
 using dnSpy.AsmEditor.Properties;
-using dnSpy.Contracts.App;
 using dnSpy.Contracts.Files;
 using dnSpy.Shared.MVVM;
 
@@ -298,7 +297,6 @@ namespace dnSpy.AsmEditor.SaveModule {
 
 		ModuleSaver moduleSaver;
 		void SaveAsync(SaveOptionsVM[] mods) {
-			AppCulture.InitializeCulture();
 			try {
 				moduleSaver = new ModuleSaver(mods);
 				moduleSaver.OnProgressUpdated += moduleSaver_OnProgressUpdated;
