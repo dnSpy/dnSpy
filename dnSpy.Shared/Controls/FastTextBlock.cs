@@ -21,6 +21,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
 using System.Windows.Documents;
@@ -92,10 +93,20 @@ namespace dnSpy.Shared.Controls {
 			hash = hash * 23 + H(FlowDirection);
 			hash = hash * 23 + H(CultureInfo.CurrentUICulture);
 
+			var newMode = TextOptions.GetTextFormattingMode(this);
+			hash = hash * 23 + (int)newMode;
+
+			if (textFormattingMode != newMode) {
+				textFormattingMode = newMode;
+				fmt = null;
+				Debug.Assert(hash != cache);
+			}
+
 			return hash;
 		}
 
 		int cache;
+		TextFormattingMode? textFormattingMode;
 
 		class TextProps : TextRunProperties {
 			FastTextBlock tb;
