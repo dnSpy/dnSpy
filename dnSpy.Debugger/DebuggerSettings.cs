@@ -46,6 +46,8 @@ namespace dnSpy.Debugger {
 		bool AutoOpenLocalsWindow { get; }
 		bool UseMemoryModules { get; }
 		string CoreCLRDbgShimFilename { get; }
+		string CoreCLRDbgShimFilename32 { get; }
+		string CoreCLRDbgShimFilename64 { get; }
 	}
 
 	class DebuggerSettings : ViewModelBase, IDebuggerSettings {
@@ -300,16 +302,42 @@ namespace dnSpy.Debugger {
 		bool useMemoryModules = false;
 
 		public string CoreCLRDbgShimFilename {
-			get { return coreCLRDbgShimFilename; }
+			get { return IntPtr.Size == 4 ? CoreCLRDbgShimFilename32 : CoreCLRDbgShimFilename64; }
 			set {
-				if (coreCLRDbgShimFilename != value) {
-					coreCLRDbgShimFilename = value;
-					OnPropertyChanged("CoreCLRDbgShimFilename");
+				if (IntPtr.Size == 4)
+					CoreCLRDbgShimFilename32 = value;
+				else
+					CoreCLRDbgShimFilename64 = value;
+			}
+		}
+
+		public string CoreCLRDbgShimFilename32 {
+			get { return coreCLRDbgShimFilename32; }
+			set {
+				if (coreCLRDbgShimFilename32 != value) {
+					coreCLRDbgShimFilename32 = value;
+					OnPropertyChanged("CoreCLRDbgShimFilename32");
+					if (IntPtr.Size == 4)
+						OnPropertyChanged("CoreCLRDbgShimFilename");
 					OnModified();
 				}
 			}
 		}
-		string coreCLRDbgShimFilename = string.Empty;
+		string coreCLRDbgShimFilename32 = string.Empty;
+
+		public string CoreCLRDbgShimFilename64 {
+			get { return coreCLRDbgShimFilename64; }
+			set {
+				if (coreCLRDbgShimFilename64 != value) {
+					coreCLRDbgShimFilename64 = value;
+					OnPropertyChanged("CoreCLRDbgShimFilename64");
+					if (IntPtr.Size == 8)
+						OnPropertyChanged("CoreCLRDbgShimFilename");
+					OnModified();
+				}
+			}
+		}
+		string coreCLRDbgShimFilename64 = string.Empty;
 
 		public DebuggerSettings Clone() {
 			return CopyTo(new DebuggerSettings());
@@ -333,7 +361,8 @@ namespace dnSpy.Debugger {
 			other.IgnoreBreakInstructions = this.IgnoreBreakInstructions;
 			other.AutoOpenLocalsWindow = this.AutoOpenLocalsWindow;
 			other.UseMemoryModules = this.UseMemoryModules;
-			other.CoreCLRDbgShimFilename = this.CoreCLRDbgShimFilename;
+			other.CoreCLRDbgShimFilename32 = this.CoreCLRDbgShimFilename32;
+			other.CoreCLRDbgShimFilename64 = this.CoreCLRDbgShimFilename64;
 			return other;
 		}
 	}
@@ -367,7 +396,8 @@ namespace dnSpy.Debugger {
 			IgnoreBreakInstructions = sect.Attribute<bool?>("IgnoreBreakInstructions") ?? IgnoreBreakInstructions;
 			AutoOpenLocalsWindow = sect.Attribute<bool?>("AutoOpenLocalsWindow") ?? AutoOpenLocalsWindow;
 			UseMemoryModules = sect.Attribute<bool?>("UseMemoryModules") ?? UseMemoryModules;
-			CoreCLRDbgShimFilename = sect.Attribute<string>("CoreCLRDbgShimFilename") ?? CoreCLRDbgShimFilename;
+			CoreCLRDbgShimFilename32 = sect.Attribute<string>("CoreCLRDbgShimFilename32") ?? CoreCLRDbgShimFilename32;
+			CoreCLRDbgShimFilename64 = sect.Attribute<string>("CoreCLRDbgShimFilename64") ?? CoreCLRDbgShimFilename64;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -393,7 +423,8 @@ namespace dnSpy.Debugger {
 			sect.Attribute("IgnoreBreakInstructions", IgnoreBreakInstructions);
 			sect.Attribute("AutoOpenLocalsWindow", AutoOpenLocalsWindow);
 			sect.Attribute("UseMemoryModules", UseMemoryModules);
-			sect.Attribute("CoreCLRDbgShimFilename", CoreCLRDbgShimFilename);
+			sect.Attribute("CoreCLRDbgShimFilename32", CoreCLRDbgShimFilename32);
+			sect.Attribute("CoreCLRDbgShimFilename64", CoreCLRDbgShimFilename64);
 		}
 	}
 }

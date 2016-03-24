@@ -150,7 +150,8 @@ namespace dnSpy.Debugger.Dialogs {
 			if (pickFilename == null)
 				throw new InvalidOperationException();
 
-			var newFilename = pickFilename.GetFilename(DbgShimFilename, "exe", PickFilenameConstants.ExecutableFilter);
+			var filter = string.Format("dbgshim.dll|dbgshim.dll|{0} (*.*)|*.*", dnSpy_Debugger_Resources.AllFiles);
+			var newFilename = pickFilename.GetFilename(DbgShimFilename, "exe", filter);
 			if (newFilename == null)
 				return;
 

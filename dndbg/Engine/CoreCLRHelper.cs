@@ -211,7 +211,7 @@ namespace dndbg.Engine {
 		public unsafe static DnDebugger CreateDnDebugger(DebugProcessOptions options, CoreCLRTypeDebugInfo info, Func<bool> keepWaiting, Func<ICorDebug, uint, DnDebugger> createDnDebugger) {
 			var dbgShimState = GetOrCreateDbgShimState(info.HostFilename, info.DbgShimFilename);
 			if (dbgShimState == null)
-				throw new Exception(string.Format("Could not load dbgshim.dll: '{0}'", info.DbgShimFilename));
+				throw new Exception(string.Format("Could not load dbgshim.dll: '{0}' . Make sure you use the {1}-bit version", info.DbgShimFilename, IntPtr.Size * 8));
 
 			IntPtr startupEvent = IntPtr.Zero;
 			IntPtr hThread = IntPtr.Zero;
