@@ -66,7 +66,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 				if (accessor != null && TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
 					yield return new PropertyNode(property) { Context = Context };
 				}
-				yield break;
 			}
 
 			foreach (PropertyDef property in type.Properties.Where(e => e.Name.EndsWith(analyzedProperty.Name))) {

@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using dndbg.Engine;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Scripting.Debugger;
@@ -294,6 +295,10 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.StepInto(this);
 		}
 
+		public Task<bool> StepIntoAsync(int millisecondsTimeout) {
+			return debugger.StepIntoAsync(this, millisecondsTimeout);
+		}
+
 		public bool StepIntoWait(int millisecondsTimeout) {
 			return debugger.StepIntoWait(this, millisecondsTimeout);
 		}
@@ -304,6 +309,10 @@ namespace dnSpy.Debugger.Scripting {
 
 		public void StepOver() {
 			debugger.StepOver(this);
+		}
+
+		public Task<bool> StepOverAsync(int millisecondsTimeout) {
+			return debugger.StepOverAsync(this, millisecondsTimeout);
 		}
 
 		public bool StepOverWait(int millisecondsTimeout) {
@@ -318,6 +327,10 @@ namespace dnSpy.Debugger.Scripting {
 			debugger.StepOut(this);
 		}
 
+		public Task<bool> StepOutAsync(int millisecondsTimeout) {
+			return debugger.StepOutAsync(this, millisecondsTimeout);
+		}
+
 		public bool StepOutWait(int millisecondsTimeout) {
 			return debugger.StepOutWait(this, millisecondsTimeout);
 		}
@@ -328,6 +341,10 @@ namespace dnSpy.Debugger.Scripting {
 
 		public bool RunTo() {
 			return debugger.RunTo(this);
+		}
+
+		public Task<bool> RunToAsync(int millisecondsTimeout) {
+			return debugger.RunToAsync(this, millisecondsTimeout);
 		}
 
 		public bool RunToWait(int millisecondsTimeout) {

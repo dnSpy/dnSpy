@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using dnlib.DotNet;
 
 namespace dnSpy.Decompiler.Shared {
@@ -533,6 +534,7 @@ namespace dnSpy.Decompiler.Shared {
 			if (op is string)
 				return TextTokenKind.String;
 
+			Debug.Assert(op.GetType().ToString() != "ICSharpCode.Decompiler.ILAst.ILVariable", "Fix caller, there should be no special type checks here");
 			if (op.GetType().ToString() == "ICSharpCode.Decompiler.ILAst.ILVariable")
 				return TextTokenKind.Local;
 

@@ -25,6 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Threading;
 using dnlib.DotNet;
 using dnSpy.Contracts.Scripting.Debugger;
@@ -188,7 +189,7 @@ namespace dnSpy.Debugger.Scripting {
 			var dbg = theDebugger.Debugger;
 			if (dbg != null && dbg.ProcessState == DBG.DebuggerProcessState.Terminated)
 				dbg = null;
-			bool eval = (dbg != null && (dbg.IsEvaluating || dbg.EvalCompleted));
+			bool eval = dbg != null && (dbg.IsEvaluating || dbg.EvalCompleted);
 			if (eval)
 				return;
 
@@ -210,6 +211,21 @@ namespace dnSpy.Debugger.Scripting {
 				Debug.Fail("Unknown process state");
 				goto case DBG.DebuggerProcessState.Terminated;
 			}
+		}
+
+		static Task<bool> GetWaitTask(WaitHandle handle, int millisecondsTimeout) {
+			var tcs = new TaskCompletionSource<bool>();
+			var rwh = ThreadPool.RegisterWaitForSingleObject(handle, (state, timedOut) => tcs.TrySetResult(!timedOut), null, millisecondsTimeout, true);
+			tcs.Task.ContinueWith(a => rwh.Unregister(null));
+			return tcs.Task;
+		}
+
+		public Task<bool> WaitAsync(int millisecondsTimeout) {
+			return GetWaitTask(pausedOrTerminatedEvent, millisecondsTimeout);
+		}
+
+		public Task<bool> WaitRunAsync(int millisecondsTimeout) {
+			return GetWaitTask(runningEvent, millisecondsTimeout);
 		}
 
 		public bool Wait(int millisecondsTimeout) {
@@ -326,6 +342,11 @@ namespace dnSpy.Debugger.Scripting {
 			dispatcher.UI(() => debugManager.Value.Continue());
 		}
 
+		public Task<bool> ContinueAsync(int millisecondsTimeout) {
+			Continue();
+			return WaitAsync(millisecondsTimeout);
+		}
+
 		public bool ContinueWait(int millisecondsTimeout) {
 			Continue();
 			return Wait(millisecondsTimeout);
@@ -344,6 +365,11 @@ namespace dnSpy.Debugger.Scripting {
 			dispatcher.UI(() => debugManager.Value.StepInto(((StackFrame)frame).CorFrame));
 		}
 
+		public Task<bool> StepIntoAsync(int millisecondsTimeout) {
+			StepInto();
+			return WaitAsync(millisecondsTimeout);
+		}
+
 		public bool StepIntoWait(int millisecondsTimeout) {
 			StepInto();
 			return Wait(millisecondsTimeout);
@@ -352,6 +378,11 @@ namespace dnSpy.Debugger.Scripting {
 		public bool StepIntoWait(CancellationToken token, int millisecondsTimeout) {
 			StepInto();
 			return Wait(token, millisecondsTimeout);
+		}
+
+		public Task<bool> StepIntoAsync(IStackFrame frame, int millisecondsTimeout) {
+			StepInto(frame);
+			return WaitAsync(millisecondsTimeout);
 		}
 
 		public bool StepIntoWait(IStackFrame frame, int millisecondsTimeout) {
@@ -372,6 +403,11 @@ namespace dnSpy.Debugger.Scripting {
 			dispatcher.UI(() => debugManager.Value.StepOver(((StackFrame)frame).CorFrame));
 		}
 
+		public Task<bool> StepOverAsync(int millisecondsTimeout) {
+			StepOver();
+			return WaitAsync(millisecondsTimeout);
+		}
+
 		public bool StepOverWait(int millisecondsTimeout) {
 			StepOver();
 			return Wait(millisecondsTimeout);
@@ -380,6 +416,11 @@ namespace dnSpy.Debugger.Scripting {
 		public bool StepOverWait(CancellationToken token, int millisecondsTimeout) {
 			StepOver();
 			return Wait(token, millisecondsTimeout);
+		}
+
+		public Task<bool> StepOverAsync(IStackFrame frame, int millisecondsTimeout) {
+			StepOver(frame);
+			return WaitAsync(millisecondsTimeout);
 		}
 
 		public bool StepOverWait(IStackFrame frame, int millisecondsTimeout) {
@@ -400,6 +441,11 @@ namespace dnSpy.Debugger.Scripting {
 			dispatcher.UI(() => debugManager.Value.StepOut(((StackFrame)frame).CorFrame));
 		}
 
+		public Task<bool> StepOutAsync(int millisecondsTimeout) {
+			StepOut();
+			return WaitAsync(millisecondsTimeout);
+		}
+
 		public bool StepOutWait(int millisecondsTimeout) {
 			StepOut();
 			return Wait(millisecondsTimeout);
@@ -408,6 +454,11 @@ namespace dnSpy.Debugger.Scripting {
 		public bool StepOutWait(CancellationToken token, int millisecondsTimeout) {
 			StepOut();
 			return Wait(token, millisecondsTimeout);
+		}
+
+		public Task<bool> StepOutAsync(IStackFrame frame, int millisecondsTimeout) {
+			StepOut(frame);
+			return WaitAsync(millisecondsTimeout);
 		}
 
 		public bool StepOutWait(IStackFrame frame, int millisecondsTimeout) {
@@ -422,6 +473,11 @@ namespace dnSpy.Debugger.Scripting {
 
 		public bool RunTo(IStackFrame frame) {
 			return dispatcher.UI(() => debugManager.Value.RunTo(((StackFrame)frame).CorFrame));
+		}
+
+		public Task<bool> RunToAsync(IStackFrame frame, int millisecondsTimeout) {
+			RunTo(frame);
+			return WaitAsync(millisecondsTimeout);
 		}
 
 		public bool RunToWait(IStackFrame frame, int millisecondsTimeout) {
@@ -534,7 +590,7 @@ namespace dnSpy.Debugger.Scripting {
 			}
 		}
 
-		public int ActiveStackFrameIndex {
+		public int ActiveFrameIndex {
 			get { return dispatcher.UI(() => debugManager.Value.StackFrameManager.SelectedFrameNumber); }
 			set { dispatcher.UI(() => debugManager.Value.StackFrameManager.SelectedFrameNumber = value); }
 		}

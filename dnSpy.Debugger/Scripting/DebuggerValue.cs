@@ -532,7 +532,7 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public void Write(sbyte value) {
-			debugger.Dispatcher.UI(() => this.value.WriteGenericValue(BitConverter.GetBytes(value)));
+			debugger.Dispatcher.UI(() => this.value.WriteGenericValue(new byte[] { (byte)value }));
 		}
 
 		public void Write(short value) {
@@ -548,7 +548,7 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public void Write(byte value) {
-			debugger.Dispatcher.UI(() => this.value.WriteGenericValue(BitConverter.GetBytes(value)));
+			debugger.Dispatcher.UI(() => this.value.WriteGenericValue(new byte[] { value }));
 		}
 
 		public void Write(ushort value) {

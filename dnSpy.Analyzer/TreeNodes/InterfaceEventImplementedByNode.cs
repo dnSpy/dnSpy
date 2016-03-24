@@ -66,7 +66,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 				if (accessor != null && TypesHierarchyHelpers.MatchInterfaceMethod(accessor, analyzedMethod, implementedInterfaceRef)) {
 					yield return new EventNode(ev) { Context = Context };
 				}
-				yield break;
 			}
 
 			foreach (EventDef ev in type.Events.Where(e => e.Name.EndsWith(analyzedEvent.Name))) {

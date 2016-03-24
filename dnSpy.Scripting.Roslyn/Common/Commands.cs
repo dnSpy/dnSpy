@@ -18,7 +18,6 @@
 */
 
 using System;
-using System.ComponentModel.Composition;
 using System.Windows.Input;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TextEditor;

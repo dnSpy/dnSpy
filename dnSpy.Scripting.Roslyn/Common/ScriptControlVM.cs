@@ -140,9 +140,9 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			public Task<ScriptState<object>> ExecTask;
 			public bool Executing;
 			public bool IsInitializing;
-			public ExecState(ScriptControlVM vm, CancellationTokenSource cts) {
+			public ExecState(ScriptControlVM vm, Dispatcher dispatcher, CancellationTokenSource cts) {
 				this.CancellationTokenSource = cts;
-				this.Globals = new ScriptGlobals(vm, cts.Token);
+				this.Globals = new ScriptGlobals(vm, dispatcher, cts.Token);
 				this.IsInitializing = true;
 			}
 		}
@@ -174,7 +174,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			if (execState != null)
 				throw new InvalidOperationException();
 
-			execState = new ExecState(this, new CancellationTokenSource());
+			execState = new ExecState(this, dispatcher, new CancellationTokenSource());
 			var execStateCache = execState;
 			Task.Run(() => {
 				execStateCache.CancellationTokenSource.Token.ThrowIfCancellationRequested();

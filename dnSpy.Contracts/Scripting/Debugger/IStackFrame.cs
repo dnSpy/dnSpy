@@ -19,6 +19,7 @@
 
 using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
 using dnSpy.Contracts.Highlighting;
 
 namespace dnSpy.Contracts.Scripting.Debugger {
@@ -223,6 +224,14 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		void StepInto();
 
 		/// <summary>
+		/// Step into the method and call <see cref="IDebugger.WaitAsync(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		Task<bool> StepIntoAsync(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
 		/// Step into the method and call <see cref="IDebugger.Wait(int)"/>
 		/// </summary>
 		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
@@ -243,6 +252,14 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// Step over the method
 		/// </summary>
 		void StepOver();
+
+		/// <summary>
+		/// Step over the method and call <see cref="IDebugger.WaitAsync(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		Task<bool> StepOverAsync(int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
 		/// Step over the method and call <see cref="IDebugger.Wait(int)"/>
@@ -267,6 +284,14 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		void StepOut();
 
 		/// <summary>
+		/// Step out of the method and call <see cref="IDebugger.WaitAsync(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		Task<bool> StepOutAsync(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
 		/// Step out of the method and call <see cref="IDebugger.Wait(int)"/>
 		/// </summary>
 		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
@@ -288,6 +313,14 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <returns></returns>
 		bool RunTo();
+
+		/// <summary>
+		/// Let the program execute until it returns to this frame and call <see cref="IDebugger.WaitAsync(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		Task<bool> RunToAsync(int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
 		/// Let the program execute until it returns to this frame and call <see cref="IDebugger.Wait(int)"/>

@@ -32,12 +32,12 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		readonly Dispatcher dispatcher;
 		readonly CancellationToken token;
 
-		public ScriptGlobals(IScriptGlobalsHelper owner, CancellationToken token) {
+		public ScriptGlobals(IScriptGlobalsHelper owner, Dispatcher dispatcher, CancellationToken token) {
 			if (owner == null)
 				throw new ArgumentNullException();
 			this.owner = owner;
 			this.token = token;
-			this.dispatcher = Dispatcher.CurrentDispatcher;
+			this.dispatcher = dispatcher;
 		}
 
 		public event EventHandler ScriptReset;

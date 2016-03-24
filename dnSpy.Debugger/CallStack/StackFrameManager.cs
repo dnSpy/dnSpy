@@ -85,9 +85,8 @@ namespace dnSpy.Debugger.CallStack {
 			theDebugger.ProcessRunning += TheDebugger_ProcessRunning;
 		}
 
-		[Conditional("DEBUG")]
-		void VerifyDebuggeeStopped() {
-			Debug.Assert(theDebugger.ProcessState == DebuggerProcessState.Paused);
+		bool IsPaused {
+			get { return theDebugger.ProcessState == DebuggerProcessState.Paused; }
 		}
 
 		void TheDebugger_OnProcessStateChanged(object sender, DebuggerEventArgs e) {
@@ -180,14 +179,16 @@ namespace dnSpy.Debugger.CallStack {
 
 		public CorFrame SelectedFrame {
 			get {
-				VerifyDebuggeeStopped();
+				if (!IsPaused)
+					return null;
 				return GetFrameByNumber(SelectedFrameNumber);
 			}
 		}
 
 		public CorFrame FirstILFrame {
 			get {
-				VerifyDebuggeeStopped();
+				if (!IsPaused)
+					return null;
 				var thread = currentState.Thread;
 				if (thread == null)
 					return null;
@@ -196,9 +197,10 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		public DnThread SelectedThread {
-			get { VerifyDebuggeeStopped(); return currentState.Thread; }
+			get { return !IsPaused ? null : currentState.Thread; }
 			set {
-				VerifyDebuggeeStopped();
+				if (!IsPaused)
+					return;
 				if (currentState.Thread != value) {
 					var oldThread = currentState.Thread;
 					currentState.Thread = value;
@@ -211,9 +213,10 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		public int SelectedFrameNumber {
-			get { VerifyDebuggeeStopped(); return currentState.FrameNumber; }
+			get { return !IsPaused ? 0 : currentState.FrameNumber; }
 			set {
-				VerifyDebuggeeStopped();
+				if (!IsPaused)
+					return;
 				if (value != currentState.FrameNumber) {
 					var old = currentState.FrameNumber;
 					currentState.FrameNumber = value;

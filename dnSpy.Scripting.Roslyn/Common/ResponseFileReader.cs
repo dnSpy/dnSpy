@@ -20,7 +20,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	static class ResponseFileReader {
@@ -45,6 +44,5 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				yield return Tuple.Create(cmd, arg1);
 			}
 		}
-		static readonly char[] seps = new char[] { ' ' };
 	}
 }

@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
+using System.Threading.Tasks;
 using dnlib.DotNet;
 
 namespace dnSpy.Contracts.Scripting.Debugger {
@@ -94,6 +95,22 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// true if an eval has completed
 		/// </summary>
 		bool EvalCompleted { get; }
+
+		/// <summary>
+		/// Waits until the debugged process is paused or terminated. Returns true if the wait didn't time out.
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		Task<bool> WaitAsync(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Waits until the debugged process is not paused. Returns true if the wait didn't time out.
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		Task<bool> WaitRunAsync(int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
 		/// Waits until the debugged process is paused or terminated. Returns true if the wait didn't time out.
@@ -221,6 +238,14 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		void Continue();
 
 		/// <summary>
+		/// Let the debugged program run and call <see cref="WaitAsync(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		Task<bool> ContinueAsync(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
 		/// Let the debugged program run and call <see cref="Wait(int)"/>
 		/// </summary>
 		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
@@ -249,6 +274,14 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		void StepInto(IStackFrame frame);
 
 		/// <summary>
+		/// Step into the method and call <see cref="WaitAsync(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		Task<bool> StepIntoAsync(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
 		/// Step into the method and call <see cref="Wait(int)"/>
 		/// </summary>
 		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
@@ -264,6 +297,15 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// to wait indefinitely</param>
 		/// <returns></returns>
 		bool StepIntoWait(CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step into the method and call <see cref="WaitAsync(int)"/>
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		Task<bool> StepIntoAsync(IStackFrame frame, int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
 		/// Step into the method and call <see cref="Wait(int)"/>
@@ -296,6 +338,14 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		void StepOver(IStackFrame frame);
 
 		/// <summary>
+		/// Step over the method and call <see cref="WaitAsync(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		Task<bool> StepOverAsync(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
 		/// Step over the method and call <see cref="Wait(int)"/>
 		/// </summary>
 		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
@@ -311,6 +361,15 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// to wait indefinitely</param>
 		/// <returns></returns>
 		bool StepOverWait(CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step over the method and call <see cref="WaitAsync(int)"/>
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		Task<bool> StepOverAsync(IStackFrame frame, int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
 		/// Step over the method and call <see cref="Wait(int)"/>
@@ -343,6 +402,14 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		void StepOut(IStackFrame frame);
 
 		/// <summary>
+		/// Step out of the method and call <see cref="WaitAsync(int)"/>
+		/// </summary>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		Task<bool> StepOutAsync(int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
 		/// Step out of the method and call <see cref="Wait(int)"/>
 		/// </summary>
 		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
@@ -358,6 +425,15 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// to wait indefinitely</param>
 		/// <returns></returns>
 		bool StepOutWait(CancellationToken token, int millisecondsTimeout = Timeout.Infinite);
+
+		/// <summary>
+		/// Step out of the method and call <see cref="WaitAsync(int)"/>
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		Task<bool> StepOutAsync(IStackFrame frame, int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
 		/// Step out of the method and call <see cref="Wait(int)"/>
@@ -384,6 +460,15 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="frame">Frame</param>
 		/// <returns></returns>
 		bool RunTo(IStackFrame frame);
+
+		/// <summary>
+		/// Let the program execute until it returns to <paramref name="frame"/> and call <see cref="WaitAsync(int)"/>
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <param name="millisecondsTimeout">Millisecs to wait or -1 (<see cref="Timeout.Infinite"/>)
+		/// to wait indefinitely</param>
+		/// <returns></returns>
+		Task<bool> RunToAsync(IStackFrame frame, int millisecondsTimeout = Timeout.Infinite);
 
 		/// <summary>
 		/// Let the program execute until it returns to <paramref name="frame"/> and call <see cref="Wait(int)"/>
@@ -497,7 +582,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <summary>
 		/// Gets/sets the active stack frame index of the active thread shown in the UI
 		/// </summary>
-		int ActiveStackFrameIndex { get; set; }
+		int ActiveFrameIndex { get; set; }
 
 		/// <summary>
 		/// Gets all AppDomains

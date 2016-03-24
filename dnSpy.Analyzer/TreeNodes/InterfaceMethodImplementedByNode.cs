@@ -59,7 +59,6 @@ namespace dnSpy.Analyzer.TreeNodes {
 				if (TypesHierarchyHelpers.MatchInterfaceMethod(method, analyzedMethod, implementedInterfaceRef)) {
 					yield return new MethodNode(method) { Context = Context };
 				}
-				yield break;
 			}
 
 			foreach (MethodDef method in type.Methods) {
