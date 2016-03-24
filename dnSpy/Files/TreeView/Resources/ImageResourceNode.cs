@@ -198,7 +198,8 @@ namespace dnSpy.Files.TreeView.Resources {
 					};
 				});
 				output.Write(" = ", TextTokenKind.Comment);
-				output.WriteDefinition(NameUtils.CleanName(Name), this, TextTokenKind.Comment);
+				const string LTR = "\u200E";
+				output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, TextTokenKind.Comment);
 				language.WriteCommentEnd(output, true);
 				output.WriteLine();
 				return;

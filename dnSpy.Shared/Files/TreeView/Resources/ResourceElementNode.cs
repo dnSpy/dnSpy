@@ -123,7 +123,8 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 		public virtual void WriteShort(ITextOutput output, ILanguage language, bool showOffset) {
 			language.WriteCommentBegin(output, true);
 			output.WriteOffsetComment(this, showOffset);
-			output.WriteDefinition(NameUtils.CleanName(Name), this, TextTokenKind.Comment);
+			const string LTR = "\u200E";
+			output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, TextTokenKind.Comment);
 			output.Write(string.Format(" = {0}", ValueString), TextTokenKind.Comment);
 			language.WriteCommentEnd(output, true);
 			output.WriteLine();
