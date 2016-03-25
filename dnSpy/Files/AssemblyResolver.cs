@@ -99,6 +99,13 @@ namespace dnSpy.Files {
 		}
 
 		public IDnSpyFile Resolve(IAssembly assembly, ModuleDef sourceModule = null) {
+			var tempAsm = assembly;
+			FrameworkRedirect.ApplyFrameworkRedirect(ref tempAsm, sourceModule);
+			// OK : System.Runtime 4.0.20.0 => 4.0.0.0
+			// BAD: System 4.0.0.0 => 2.0.0.0
+			if (tempAsm.Version.Major >= assembly.Version.Major)
+				assembly = tempAsm;
+
 			if (assembly.IsContentTypeWindowsRuntime) {
 				if (failedAssemblyResolveCache.IsFailed(assembly))
 					return null;
@@ -111,7 +118,7 @@ namespace dnSpy.Files {
 				// WinMD files have a reference to mscorlib but its version is always 255.255.255.255
 				// since mscorlib isn't really loaded. The resolver only loads exact versions, so
 				// we must change the version or the resolve will fail.
-				if (assembly.Name == "mscorlib" && assembly.Version == invalidMscorlibVersion)
+				if (assembly.Name == mscorlibName && assembly.Version == invalidMscorlibVersion)
 					assembly = new AssemblyNameInfo(assembly) { Version = newMscorlibVersion };
 
 				if (failedAssemblyResolveCache.IsFailed(assembly))
@@ -122,6 +129,7 @@ namespace dnSpy.Files {
 				return file;
 			}
 		}
+		static readonly UTF8String mscorlibName = new UTF8String("mscorlib");
 
 		IDnSpyFile ResolveNormal(IAssembly assembly, ModuleDef sourceModule) {
 			var existingFile = fileManager.FindAssembly(assembly);
