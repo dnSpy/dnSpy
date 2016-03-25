@@ -28,10 +28,10 @@
              xmlns:local="clr-namespace:dnSpy.AsmEditor.Module"
              xmlns:winlocal="clr-namespace:dnSpy.Shared.Controls;assembly=dnSpy.Shared"
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
-             Height="380" Width="400"
+             Height="420" Width="400"
              Title="{x:Static p:dnSpy_AsmEditor_Resources.EditModuleCommand2}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
-             MinHeight="380" MinWidth="400">
+             MinHeight="400" MinWidth="400">
 	<winlocal:WindowBase.Resources>
 		<vc:RadioButtonConverter x:Key="RadioButtonConverter" />
 		<mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />

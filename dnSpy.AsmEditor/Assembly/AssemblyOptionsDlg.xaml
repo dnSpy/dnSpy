@@ -26,7 +26,7 @@
              xmlns:winlocal="clr-namespace:dnSpy.Shared.Controls;assembly=dnSpy.Shared"
              xmlns:mvvmvc="clr-namespace:dnSpy.Shared.MVVM.Converters;assembly=dnSpy.Shared"
              xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
-             Height="400" Width="500"
+             Height="420" Width="500"
              Title="{x:Static p:dnSpy_AsmEditor_Resources.EditAssemblyCommand2}"
              Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
              MinHeight="400" MinWidth="400">

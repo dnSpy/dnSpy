@@ -98,7 +98,7 @@ namespace dnSpy.MainApp {
 				var rect = new System.Drawing.Rectangle((int)bounds.X, (int)bounds.Y, (int)bounds.Width, (int)bounds.Height);
 				rect.Intersect(screen.Bounds);
 				if (rect.Height >= MIN_HEIGHT && rect.Width >= MIN_WIDTH)
-					return bounds;
+					return savedBounds;
 			}
 
 			return null;

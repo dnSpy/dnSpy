@@ -28,7 +28,7 @@
         mc:Ignorable="d"
         xmlns:p="clr-namespace:dnSpy.Properties"
         MinHeight="300" MinWidth="450"
-        Title="{x:Static p:dnSpy_Resources.OptionsTitle}" Height="480" Width="550">
+        Title="{x:Static p:dnSpy_Resources.OptionsTitle}" Height="500" Width="550">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />

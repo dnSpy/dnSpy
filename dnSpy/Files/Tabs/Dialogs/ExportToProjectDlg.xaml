@@ -28,8 +28,8 @@
         xmlns:p="clr-namespace:dnSpy.Properties"
         mc:Ignorable="d"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
-        MinWidth="300" MinHeight="380"
-        Title="{x:Static p:dnSpy_Resources.ExportToProject_Title}" Width="400" Height="380"
+        MinWidth="300" MinHeight="400"
+        Title="{x:Static p:dnSpy_Resources.ExportToProject_Title}" Width="400" Height="400"
         FocusManager.FocusedElement="{Binding ElementName=destDirTextBox}">
     <ctrls:WindowBase.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
