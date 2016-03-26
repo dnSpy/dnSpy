@@ -79,11 +79,13 @@ namespace dnSpy.MainApp {
 				window.Width = defaultWindowLocation.Width;
 			}
 			else {
-				var rect = GetSavedWindowSettings() ?? defaultWindowLocation;
+				var savedSettings = GetSavedWindowSettings();
+				var rect = savedSettings ?? defaultWindowLocation;
 				window.Top = rect.Top;
 				window.Left = rect.Left;
 				window.Height = rect.Height;
 				window.Width = rect.Width;
+				window.DisableDpiScaleAtStartup = savedSettings != null;
 			}
 		}
 

@@ -378,7 +378,7 @@
 	</Style>
 	<Style x:Key="{x:Type ctrls:MetroWindow}" TargetType="{x:Type ctrls:MetroWindow}">
 		<Setter Property="UseLayoutRounding" Value="True"/>
-		<Setter Property="TextOptions.TextFormattingMode" Value="Display"/>
+		<Setter Property="SnapsToDevicePixels" Value="True"/>
 		<Setter Property="Icon" Value="../Images/dnSpy.ico"/>
 		<Setter Property="IsDebugging" Value="{DynamicResource IsDebuggingKey}" />
 		<Setter Property="Template">
@@ -405,7 +405,7 @@
 								>
 								<ctrls:SysMenuButton
 									DockPanel.Dock="Left"
-									ctrls:MetroWindow.IsHitTestVisibleInChrome="True"
+									WindowChrome.IsHitTestVisibleInChrome="True"
 									Command="{x:Static ctrls:MetroWindow.ShowSystemMenuCommand}"
 									CommandParameter="{Binding RelativeSource={RelativeSource Self}}"
 									Width="16"
@@ -417,7 +417,7 @@
 									Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShowMenuButton, Converter={StaticResource BooleanToVisibilityConverter}}" >
 									<Image Source="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=SystemMenuImage}" />
 								</ctrls:SysMenuButton>
-								<StackPanel DockPanel.Dock="Right" Orientation="Horizontal" ctrls:MetroWindow.IsHitTestVisibleInChrome="True">
+								<StackPanel DockPanel.Dock="Right" Orientation="Horizontal" WindowChrome.IsHitTestVisibleInChrome="True">
 									<ctrls:WinSysButton x:Name="minButton" WinSysType="Minimize" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShowMinimizeButton, Converter={StaticResource BooleanToVisibilityConverter}}" />
 									<ctrls:WinSysButton x:Name="maxButton" WinSysType="Maximize" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShowMaximizeButton, Converter={StaticResource BooleanToVisibilityConverter}}" />
 									<ctrls:WinSysButton x:Name="closeButton" WinSysType="Close" Visibility="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=ShowCloseButton, Converter={StaticResource BooleanToVisibilityConverter}}" />

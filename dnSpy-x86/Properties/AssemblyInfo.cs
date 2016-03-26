@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using System.Resources;
 using System.Runtime.InteropServices;
+using System.Windows.Media;
 
 [assembly: AssemblyTitle("dnSpy-x86")]
 [assembly: AssemblyDescription("")]
@@ -15,3 +16,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("2.0.0.0")]
 [assembly: AssemblyInformationalVersion("2.0.0.0-beta")]
 [assembly: NeutralResourcesLanguage("en")]
+[assembly: DisableDpiAwareness]

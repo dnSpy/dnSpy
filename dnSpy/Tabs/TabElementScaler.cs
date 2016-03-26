@@ -19,9 +19,10 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
+using dnSpy.Shared.Controls;
 
 namespace dnSpy.Tabs {
 	sealed class TabElementScaler : IDisposable {
@@ -59,6 +60,7 @@ namespace dnSpy.Tabs {
 		void UninstallScale() {
 			if (scaleElement == null)
 				return;
+			scaleElement.Loaded -= ScaleElement_Loaded;
 			scaleElement.RemoveHandler(UIElement.MouseWheelEvent, new MouseWheelEventHandler(ScaleElement_MouseWheel));
 			foreach (var b in commandBindings)
 				scaleElement.CommandBindings.Remove(b);
@@ -107,29 +109,57 @@ namespace dnSpy.Tabs {
 				var scale = value;
 				if (double.IsNaN(scale))
 					scale = 1.0;
-				if (scaleElement == null) {
-				}
-				else if (scale == 1) {
-					scaleElement.LayoutTransform = Transform.Identity;
-					scaleElement.ClearValue(TextOptions.TextFormattingModeProperty);
-				}
-				else {
-					if (scale < MIN_ZOOM)
-						scale = MIN_ZOOM;
-					else if (scale > MAX_ZOOM)
-						scale = MAX_ZOOM;
 
-					// We must set it to Ideal or the text will be blurry
-					TextOptions.SetTextFormattingMode(scaleElement, TextFormattingMode.Ideal);
+				if (scale < MIN_ZOOM)
+					scale = MIN_ZOOM;
+				else if (scale > MAX_ZOOM)
+					scale = MAX_ZOOM;
 
-					var st = new ScaleTransform(scale, scale);
-					st.Freeze();
-					scaleElement.LayoutTransform = st;
-				}
 				currentScaleValue = scale;
+
+				if (scaleElement != null)
+					AddScaleTransform();
 			}
 		}
 		double currentScaleValue = 1;
+		MetroWindow metroWindow;
+
+		void AddScaleTransform() {
+			var mwin = GetWindow();
+			if (mwin != null)
+				mwin.SetScaleTransform(scaleElement, currentScaleValue);
+		}
+
+		MetroWindow GetWindow() {
+			Debug.Assert(scaleElement != null);
+			if (metroWindow != null)
+				return metroWindow;
+			if (scaleElement == null)
+				return null;
+
+			var win = Window.GetWindow(scaleElement);
+			metroWindow = win as MetroWindow;
+			if (metroWindow != null) {
+				metroWindow.WindowDPIChanged += MetroWindow_WindowDPIChanged;
+				return metroWindow;
+			}
+
+			Debug.Assert(!scaleElement.IsLoaded);
+			if (!scaleElement.IsLoaded)
+				scaleElement.Loaded += ScaleElement_Loaded;
+			return null;
+		}
+
+		void MetroWindow_WindowDPIChanged(object sender, EventArgs e) {
+			Debug.Assert(sender != null && sender == metroWindow);
+			((MetroWindow)sender).SetScaleTransform(scaleElement, currentScaleValue);
+		}
+
+		void ScaleElement_Loaded(object sender, RoutedEventArgs e) {
+			var fe = (FrameworkElement)sender;
+			fe.Loaded -= ScaleElement_Loaded;
+			AddScaleTransform();
+		}
 
 		public void Dispose() {
 			UninstallScale();

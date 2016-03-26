@@ -39,9 +39,153 @@ namespace dnSpy.Shared.Controls {
 			InputBindings.Add(new KeyBinding(cmd, Key.Space, ModifierKeys.Alt));
 		}
 
+		public bool DisableDpiScaleAtStartup { get; set; }
+
 		protected override void OnSourceInitialized(EventArgs e) {
 			base.OnSourceInitialized(e);
+
+			var hwndSource = PresentationSource.FromVisual(this) as HwndSource;
+			Debug.Assert(hwndSource != null);
+			if (hwndSource != null) {
+				hwndSource.AddHook(WndProc);
+				wpfDpi = 96.0 * hwndSource.CompositionTarget.TransformToDevice.M11;
+
+				var w = Width;
+				var h = Height;
+				WindowDPI = GetDpi(hwndSource.Handle, (int)wpfDpi);
+
+				// For some reason, we can't initialize the non-fit-to-size property, so always force
+				// manual mode. When we're here, we should already have a valid Width and Height
+				Debug.Assert(Height > 0 && !double.IsNaN(Height));
+				Debug.Assert(Width > 0 && !double.IsNaN(Width));
+				SizeToContent = SizeToContent.Manual;
+
+				double scale = DisableDpiScaleAtStartup ? 1 : WpfPixelScaleFactor;
+				Width = w * scale;
+				Height = h * scale;
+			}
+
 			WindowUtils.UpdateWin32Style(this);
+		}
+
+		static int GetDpi(IntPtr hWnd, int defaultValue) {
+			try {
+				return GetDpi_Win81(hWnd);
+			}
+			catch (EntryPointNotFoundException) {
+			}
+			catch (DllNotFoundException) {
+			}
+			return defaultValue;
+		}
+
+		static int GetDpi_Win81(IntPtr hWnd) {
+			const int MONITOR_DEFAULTTONEAREST = 0x00000002;
+			var hMonitor = MonitorFromWindow(hWnd, MONITOR_DEFAULTTONEAREST);
+			int dpiX, dpiY;
+			const int MDT_EFFECTIVE_DPI = 0;
+			int hr = GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, out dpiX, out dpiY);
+			Debug.Assert(hr == 0);
+			if (hr != 0)
+				return 96;
+			return dpiX;
+		}
+
+		struct RECT {
+			public int left, top, right, bottom;
+			RECT(bool dummy) { left = top = right = bottom = 0; }// disable compiler warning
+		}
+
+		[DllImport("user32", SetLastError = true)]
+		static extern IntPtr MonitorFromWindow(IntPtr hwnd, uint dwFlags);
+		[DllImport("shcore", SetLastError = true)]
+		static extern int GetDpiForMonitor(IntPtr hmonitor, int dpiType, out int dpiX, out int dpiY);
+		[DllImport("user32", SetLastError = true)]
+		static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+
+		IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
+			const int WM_DPICHANGED = 0x02E0;
+
+			if (msg == WM_DPICHANGED) {
+				int newDpi = (ushort)(wParam.ToInt64() >> 16);
+				var rect = Marshal.PtrToStructure<RECT>(lParam);
+
+				WindowDPI = newDpi;
+
+				const int SWP_NOZORDER = 0x0004;
+				const int SWP_NOACTIVATE = 0x0010;
+				const int SWP_NOOWNERZORDER = 0x0200;
+				bool b = SetWindowPos(hwnd, IntPtr.Zero, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
+				Debug.Assert(b);
+
+				handled = true;
+				return IntPtr.Zero;
+			}
+
+			return IntPtr.Zero;
+		}
+
+		double SafeWpfPixelScaleFactor {
+			get {
+				if (wpfDpi == 0)
+					return 1;
+				return WpfPixelScaleFactor;
+			}
+		}
+
+		double WpfPixelScaleFactor {
+			get {
+				Debug.Assert(wpfDpi != 0);
+				if (wpfDpi == 0)
+					return 1;
+				return windowDpi / wpfDpi;
+			}
+		}
+
+		int WindowDPI {
+			get { return windowDpi; }
+			set {
+				if (windowDpi != value) {
+					var origScale = SafeWpfPixelScaleFactor;
+					if (origScale == 0)
+						origScale = 1;
+					windowDpi = value;
+					var relScale = WpfPixelScaleFactor / origScale;
+					MinWidth *= relScale;
+					MinHeight *= relScale;
+					MaxWidth *= relScale;
+					MaxHeight *= relScale;
+					UpdateWindowChromeProperties();
+					ScaleWindow(WpfPixelScaleFactor);
+
+					if (WindowDPIChanged != null)
+						WindowDPIChanged(this, EventArgs.Empty);
+				}
+			}
+		}
+		int windowDpi;
+		double wpfDpi;
+
+		public event EventHandler WindowDPIChanged;
+
+		void UpdateWindowChromeProperties() {
+			var wc = (WindowChrome)GetValue(WindowChrome.WindowChromeProperty);
+			Debug.Assert(wc != null);
+			if (wc != null) {
+				bool useResizeBorder = !(IsFullScreen || WindowState == WindowState.Maximized || WindowState == WindowState.Minimized);
+				InitializeWindowCaptionAndResizeBorder(wc, useResizeBorder);
+			}
+		}
+
+		void ScaleWindow(double scale) {
+			var border = GetVisualChild(0) as Border;
+			Debug.Assert(border != null);
+			var vc = border == null ? null : VisualTreeHelper.GetChild(border, 0);
+			Debug.Assert(vc != null);
+			if (vc == null)
+				return;
+
+			SetScaleTransform(this, vc, scale);
 		}
 
 		public static ICommand ShowSystemMenuCommand {
@@ -61,11 +205,11 @@ namespace dnSpy.Shared.Controls {
 
 		static void OnIsFullScreenChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var window = (MetroWindow)d;
-			var obj = (DependencyObject)window.GetValue(WindowChrome.WindowChromeProperty);
+			var wc = (WindowChrome)window.GetValue(WindowChrome.WindowChromeProperty);
 			if (window.IsFullScreen)
-				window.InitializeWindowCaptionAndResizeBorder(obj, false);
+				window.InitializeWindowCaptionAndResizeBorder(wc, false);
 			else
-				window.InitializeWindowCaptionAndResizeBorder(obj);
+				window.InitializeWindowCaptionAndResizeBorder(wc);
 
 			if (window.IsFullScreenChanged != null)
 				window.IsFullScreenChanged(window, EventArgs.Empty);
@@ -80,23 +224,6 @@ namespace dnSpy.Shared.Controls {
 			set { SetValue(SystemMenuImageProperty, value); }
 		}
 
-		public static readonly DependencyProperty IsHitTestVisibleInChromeProperty = DependencyProperty.RegisterAttached(
-			"IsHitTestVisibleInChrome", typeof(bool), typeof(MetroWindow), new UIPropertyMetadata(false, OnIsHitTestVisibleInChromeChanged));
-
-		static void OnIsHitTestVisibleInChromeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
-			var elem = d as UIElement;
-			if (elem != null)
-				elem.SetValue(WindowChrome.IsHitTestVisibleInChromeProperty, e.NewValue);
-		}
-
-		public static void SetIsHitTestVisibleInChrome(UIElement element, bool value) {
-			element.SetValue(IsHitTestVisibleInChromeProperty, value);
-		}
-
-		public static bool GetIsHitTestVisibleInChrome(UIElement element) {
-			return (bool)element.GetValue(IsHitTestVisibleInChromeProperty);
-		}
-
 		public static readonly DependencyProperty MaximizedElementProperty = DependencyProperty.RegisterAttached(
 			"MaximizedElement", typeof(bool), typeof(MetroWindow), new UIPropertyMetadata(false, OnMaximizedElementChanged));
 
@@ -105,7 +232,7 @@ namespace dnSpy.Shared.Controls {
 			Debug.Assert(border != null);
 			if (border == null)
 				return;
-			var win = Window.GetWindow(border);
+			var win = Window.GetWindow(border) as MetroWindow;
 			if (win == null)
 				return;
 
@@ -118,20 +245,22 @@ namespace dnSpy.Shared.Controls {
 		sealed class MaximizedWindowFixer {
 			readonly Border border;
 			readonly Thickness oldThickness;
+			readonly MetroWindow metroWindow;
 
-			public MaximizedWindowFixer(Window win, Border border) {
+			public MaximizedWindowFixer(MetroWindow metroWindow, Border border) {
 				this.border = border;
 				this.oldThickness = border.BorderThickness;
-				win.StateChanged += win_StateChanged;
+				this.metroWindow = metroWindow;
+				metroWindow.StateChanged += MetroWindow_StateChanged;
 				border.Loaded += border_Loaded;
 			}
 
 			void border_Loaded(object sender, RoutedEventArgs e) {
 				border.Loaded -= border_Loaded;
-				UpdatePadding((MetroWindow)Window.GetWindow(border));
+				UpdatePadding(metroWindow);
 			}
 
-			void win_StateChanged(object sender, EventArgs e) {
+			void MetroWindow_StateChanged(object sender, EventArgs e) {
 				UpdatePadding((MetroWindow)sender);
 			}
 
@@ -190,11 +319,11 @@ namespace dnSpy.Shared.Controls {
 
 		static void OnUseResizeBorderChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) {
 			var win = (MetroWindow)d;
-			var obj = (DependencyObject)win.GetValue(WindowChrome.WindowChromeProperty);
-			if (obj == null)
+			var wc = (WindowChrome)win.GetValue(WindowChrome.WindowChromeProperty);
+			if (wc == null)
 				return;
 
-			win.InitializeWindowCaptionAndResizeBorder(obj);
+			win.InitializeWindowCaptionAndResizeBorder(wc);
 		}
 
 		public static void SetUseResizeBorder(UIElement element, bool value) {
@@ -350,16 +479,16 @@ namespace dnSpy.Shared.Controls {
 			if (WindowState == WindowState.Normal)
 				ClearValue(Window.WindowStateProperty);
 
-			var obj = (DependencyObject)GetValue(WindowChrome.WindowChromeProperty);
+			var wc = (WindowChrome)GetValue(WindowChrome.WindowChromeProperty);
 			switch (WindowState) {
 			case WindowState.Normal:
-				InitializeWindowCaptionAndResizeBorder(obj);
+				InitializeWindowCaptionAndResizeBorder(wc);
 				ClearValue(Window.WindowStateProperty);
 				break;
 
 			case WindowState.Minimized:
 			case WindowState.Maximized:
-				InitializeWindowCaptionAndResizeBorder(obj, false);
+				InitializeWindowCaptionAndResizeBorder(wc, false);
 				break;
 
 			default:
@@ -368,29 +497,35 @@ namespace dnSpy.Shared.Controls {
 		}
 
 		WindowChrome CreateWindowChromeObject() {
-			var wc = new WindowChrome();
-			wc.SetValue(WindowChrome.CornerRadiusProperty, CornerRadius);
-			wc.SetValue(WindowChrome.GlassFrameThicknessProperty, GlassFrameThickness);
-			wc.SetValue(WindowChrome.NonClientFrameEdgesProperty, NonClientFrameEdges.None);
+			var wc = new WindowChrome {
+				CornerRadius = CornerRadius,
+				GlassFrameThickness = GlassFrameThickness,
+				NonClientFrameEdges = NonClientFrameEdges.None,
+			};
 			InitializeWindowCaptionAndResizeBorder(wc);
 			return wc;
 		}
 
-		void InitializeWindowCaptionAndResizeBorder(DependencyObject obj) {
-			InitializeWindowCaptionAndResizeBorder(obj, UseResizeBorder);
+		void InitializeWindowCaptionAndResizeBorder(WindowChrome wc) {
+			InitializeWindowCaptionAndResizeBorder(wc, UseResizeBorder);
 		}
 
-		void InitializeWindowCaptionAndResizeBorder(DependencyObject obj, bool useResizeBorder) {
+		void InitializeWindowCaptionAndResizeBorder(WindowChrome wc, bool useResizeBorder) {
+			var scale = SafeWpfPixelScaleFactor;
 			if (useResizeBorder) {
-				obj.SetValue(WindowChrome.CaptionHeightProperty, CaptionHeight);
-				obj.SetValue(WindowChrome.ResizeBorderThicknessProperty, ResizeBorderThickness);
+				wc.CaptionHeight = CaptionHeight * scale;
+				wc.ResizeBorderThickness = new Thickness(
+					ResizeBorderThickness.Left * scale,
+					ResizeBorderThickness.Top * scale,
+					ResizeBorderThickness.Right * scale,
+					ResizeBorderThickness.Bottom * scale);
 			}
 			else {
 				if (IsFullScreen)
-					obj.SetValue(WindowChrome.CaptionHeightProperty, 0d);
+					wc.CaptionHeight = 0d;
 				else
-					obj.SetValue(WindowChrome.CaptionHeightProperty, GridCaptionHeight.Value);
-				obj.SetValue(WindowChrome.ResizeBorderThicknessProperty, new Thickness(0));
+					wc.CaptionHeight = GridCaptionHeight.Value * scale;
+				wc.ResizeBorderThickness = new Thickness(0);
 			}
 		}
 
@@ -402,8 +537,37 @@ namespace dnSpy.Shared.Controls {
 			if (win == null)
 				return;
 
-			var p = win.PointToScreen(new Point(0, GridCaptionHeight.Value));
+			var mwin = win as MetroWindow;
+			Debug.Assert(mwin != null);
+			var scale = mwin == null ? 0 : mwin.WpfPixelScaleFactor;
+
+			var p = win.PointToScreen(new Point(0 * scale, GridCaptionHeight.Value * scale));
 			WindowUtils.ShowSystemMenu(win, p);
+		}
+
+		public void SetScaleTransform(DependencyObject vc, double scale) {
+			SetScaleTransform(vc, vc, scale);
+		}
+
+		void SetScaleTransform(DependencyObject textObj, DependencyObject vc, double scale) {
+			if (vc == null || textObj == null)
+				return;
+
+			if (scale == 1) {
+				vc.SetValue(LayoutTransformProperty, Transform.Identity);
+				if (WindowDPI == 96)
+					TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Display);
+				else
+					TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Ideal);
+			}
+			else {
+				var st = new ScaleTransform(scale, scale);
+				st.Freeze();
+				vc.SetValue(LayoutTransformProperty, st);
+
+				// We must set it to Ideal or the text will be blurry
+				TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Ideal);
+			}
 		}
 	}
 
@@ -421,7 +585,7 @@ namespace dnSpy.Shared.Controls {
 		[DllImport("user32")]
 		extern static int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
-		public static void UpdateWin32Style(MetroWindow window) {
+		internal static void UpdateWin32Style(MetroWindow window) {
 			const int GWL_STYLE = -16;
 			const int WS_SYSMENU = 0x00080000;
 
@@ -432,7 +596,7 @@ namespace dnSpy.Shared.Controls {
 			SetWindowLong(hWnd, GWL_STYLE, GetWindowLong(hWnd, GWL_STYLE) & ~WS_SYSMENU);
 		}
 
-		public static void ShowSystemMenu(Window window, Point p) {
+		internal static void ShowSystemMenu(Window window, Point p) {
 			var hWnd = new WindowInteropHelper(window).Handle;
 			if (hWnd == IntPtr.Zero)
 				return;
