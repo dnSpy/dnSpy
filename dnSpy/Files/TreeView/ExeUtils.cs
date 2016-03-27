@@ -19,8 +19,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Text.RegularExpressions;
 using dnlib.DotNet;
 using dnlib.PE;
 using dnSpy.Properties;
@@ -173,7 +171,7 @@ namespace dnSpy.Files.TreeView {
 				Debug.Fail("Unknown target framework: " + id);
 				if (id.Length > 20)
 					return null;
-				return id;
+				return id + " " + versionString;
 			}
 		}
 	}

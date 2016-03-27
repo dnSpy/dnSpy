@@ -28,7 +28,7 @@
         xmlns:p="clr-namespace:dnSpy.Properties"
         mc:Ignorable="d"
         Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
-        MinWidth="300" MinHeight="400"
+        MinWidth="300" MinHeight="200"
         Title="{x:Static p:dnSpy_Resources.ExportToProject_Title}" Width="400" Height="400"
         FocusManager.FocusedElement="{Binding ElementName=destDirTextBox}">
     <ctrls:WindowBase.Resources>
@@ -40,63 +40,67 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" Margin="0 5 5 0" IsEnabled="{Binding CanEditSettings}"
-              Visibility="{Binding NoExportErrors, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=destDirTextBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_DestinationFolder}" />
-            <TextBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Name="destDirTextBox" Text="{Binding Directory, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickDestDirCommand}"  />
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <Grid Grid.Row="0" Margin="0 5 5 0" IsEnabled="{Binding CanEditSettings}"
+                      Visibility="{Binding NoExportErrors, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Label Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=destDirTextBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_DestinationFolder}" />
+                    <TextBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" Name="destDirTextBox" Text="{Binding Directory, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickDestDirCommand}"  />
 
-            <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=solutionTextBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_SolutionFilename}" />
-            <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="solutionTextBox" Text="{Binding SolutionFilename, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CreateSolution}" />
-            <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding CreateSolution}" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                    <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=solutionTextBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_SolutionFilename}" />
+                    <TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="solutionTextBox" Text="{Binding SolutionFilename, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding CreateSolution}" />
+                    <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding CreateSolution}" VerticalAlignment="Center" HorizontalAlignment="Left" />
 
-            <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=versionComboBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_ProjectVersion}" />
-            <ComboBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="versionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ProjectVersionVM.Items}" SelectedIndex="{Binding ProjectVersionVM.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
+                    <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=versionComboBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_ProjectVersion}" />
+                    <ComboBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="versionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ProjectVersionVM.Items}" SelectedIndex="{Binding ProjectVersionVM.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
 
-            <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=languageComboBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_Language}" />
-            <ComboBox Grid.Row="3" Grid.Column="1" Margin="5 0 0 0" Name="languageComboBox" DisplayMemberPath="UniqueNameUI" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
+                    <Label Grid.Row="3" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=languageComboBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_Language}" />
+                    <ComboBox Grid.Row="3" Grid.Column="1" Margin="5 0 0 0" Name="languageComboBox" DisplayMemberPath="UniqueNameUI" ItemsSource="{Binding AllLanguages}" SelectedItem="{Binding Language}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" />
 
-            <Label Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=projectGuidTextBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_ProjectGuid}" />
-            <TextBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Name="projectGuidTextBox" Text="{Binding ProjectGuid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
-            <Button Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_Resources.ExportToProject_NewGuid}" Command="{Binding GenerateNewProjectGuidCommand}" />
+                    <Label Grid.Row="4" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=projectGuidTextBox}" Content="{x:Static p:dnSpy_Resources.ExportToProject_ProjectGuid}" />
+                    <TextBox Grid.Row="4" Grid.Column="1" Margin="5 5 0 0" Name="projectGuidTextBox" Text="{Binding ProjectGuid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+                    <Button Grid.Row="4" Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_Resources.ExportToProject_NewGuid}" Command="{Binding GenerateNewProjectGuidCommand}" />
 
-            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding DontReferenceStdLib}" Content="{x:Static p:dnSpy_Resources.ExportToProject_DontReferenceStdLib}" />
-            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding UnpackResources}" Content="{x:Static p:dnSpy_Resources.ExportToProject_UnpackResources}" />
-            <CheckBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding CreateResX}" Content="{x:Static p:dnSpy_Resources.ExportToProject_CreateResX}" IsEnabled="{Binding CanCreateResX}" />
-            <CheckBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding DecompileXaml}" Content="{x:Static p:dnSpy_Resources.ExportToProject_DecompileXaml}" IsEnabled="{Binding CanDecompileBaml}" />
-            <CheckBox Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding OpenProject}" Content="{x:Static p:dnSpy_Resources.ExportToProject_OpenProjectInVisualStudio}" />
+                    <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding DontReferenceStdLib}" Content="{x:Static p:dnSpy_Resources.ExportToProject_DontReferenceStdLib}" />
+                    <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding UnpackResources}" Content="{x:Static p:dnSpy_Resources.ExportToProject_UnpackResources}" />
+                    <CheckBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding CreateResX}" Content="{x:Static p:dnSpy_Resources.ExportToProject_CreateResX}" IsEnabled="{Binding CanCreateResX}" />
+                    <CheckBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding DecompileXaml}" Content="{x:Static p:dnSpy_Resources.ExportToProject_DecompileXaml}" IsEnabled="{Binding CanDecompileBaml}" />
+                    <CheckBox Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Margin="5 5 0 0" IsChecked="{Binding OpenProject}" Content="{x:Static p:dnSpy_Resources.ExportToProject_OpenProjectInVisualStudio}" />
 
-            <TextBlock Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="3" Margin="5 5 5 0" TextWrapping="Wrap" Text="{Binding FilesToExportMessage}" />
-        </Grid>
+                    <TextBlock Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="3" Margin="5 5 5 0" TextWrapping="Wrap" Text="{Binding FilesToExportMessage}" />
+                </Grid>
 
-        <Grid Grid.Row="0" Margin="5 5 5 0"
-              Visibility="{Binding ExportErrors, Converter={StaticResource BooleanToVisibilityConverter}}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Margin="0 0 0 0" Text="{x:Static p:dnSpy_Resources.ExportToProject_ErrorLogMsg}" />
-            <TextBox Grid.Row="1" Margin="0 5 0 0" Text="{Binding ErrorLog, Mode=OneWay}" Background="{DynamicResource CommonControlsTextBoxErrorBackground}" Foreground="{DynamicResource CommonControlsTextBoxErrorForeground}" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" IsReadOnly="True" VerticalScrollBarVisibility="Auto" />
-        </Grid>
+                <Grid Grid.Row="0" Margin="5 5 5 0"
+                      Visibility="{Binding ExportErrors, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Margin="0 0 0 0" Text="{x:Static p:dnSpy_Resources.ExportToProject_ErrorLogMsg}" />
+                    <TextBox Grid.Row="1" Margin="0 5 0 0" Text="{Binding ErrorLog, Mode=OneWay}" Background="{DynamicResource CommonControlsTextBoxErrorBackground}" Foreground="{DynamicResource CommonControlsTextBoxErrorForeground}" TextWrapping="Wrap" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" HorizontalContentAlignment="Left" VerticalContentAlignment="Top" IsReadOnly="True" VerticalScrollBarVisibility="Auto" />
+                </Grid>
+            </Grid>
+        </ScrollViewer>
 
         <Grid Grid.Row="1" Margin="5">
             <Grid.ColumnDefinitions>
