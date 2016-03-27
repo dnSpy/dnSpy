@@ -56,26 +56,37 @@ namespace dnSpy.Shared.Controls {
 
 				// For some reason, we can't initialize the non-fit-to-size property, so always force
 				// manual mode. When we're here, we should already have a valid Width and Height
-				Debug.Assert(Height > 0 && !double.IsNaN(Height));
-				Debug.Assert(Width > 0 && !double.IsNaN(Width));
+				Debug.Assert(h > 0 && !double.IsNaN(h));
+				Debug.Assert(w > 0 && !double.IsNaN(w));
 				SizeToContent = SizeToContent.Manual;
 
 				double scale = DisableDpiScaleAtStartup ? 1 : WpfPixelScaleFactor;
 				Width = w * scale;
 				Height = h * scale;
+
+				if (WindowStartupLocation == WindowStartupLocation.CenterOwner || WindowStartupLocation == WindowStartupLocation.CenterScreen) {
+					Left -= (w * scale - w) / 2;
+					Top -= (h * scale - h) / 2;
+				}
 			}
 
 			WindowUtils.UpdateWin32Style(this);
 		}
 
+		static bool? canCall_GetDpi = null;
 		static int GetDpi(IntPtr hWnd, int defaultValue) {
+			if (canCall_GetDpi == false)
+				return defaultValue;
 			try {
-				return GetDpi_Win81(hWnd);
+				var res = GetDpi_Win81(hWnd);
+				canCall_GetDpi = true;
+				return res;
 			}
 			catch (EntryPointNotFoundException) {
 			}
 			catch (DllNotFoundException) {
 			}
+			canCall_GetDpi = false;
 			return defaultValue;
 		}
 
