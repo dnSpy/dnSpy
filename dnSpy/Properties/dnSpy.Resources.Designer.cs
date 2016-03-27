@@ -2286,6 +2286,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Shift+W.
+        /// </summary>
+        public static string ShortCutKeyCtrlShiftW {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlShiftW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to _Code.
         /// </summary>
         public static string ShowCodeCommand {

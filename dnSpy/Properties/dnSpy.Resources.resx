@@ -944,4 +944,7 @@
   <data name="ExportToProject_ProjectGuid" xml:space="preserve">
     <value>_Project GUID</value>
   </data>
+  <data name="ShortCutKeyCtrlShiftW" xml:space="preserve">
+    <value>Ctrl+Shift+W</value>
+  </data>
 </root>
