@@ -89,13 +89,13 @@ namespace dnSpy.Tabs {
 
 		void ZoomIncrease() {
 			var scale = ScaleValue;
-			scale += scale / 10;
+			scale *= 1.1;
 			ScaleValue = scale;
 		}
 
 		void ZoomDecrease() {
 			var scale = ScaleValue;
-			scale -= scale / 10;
+			scale /= 1.1;
 			ScaleValue = scale;
 		}
 
@@ -107,7 +107,7 @@ namespace dnSpy.Tabs {
 			get { return currentScaleValue; }
 			set {
 				var scale = value;
-				if (double.IsNaN(scale))
+				if (double.IsNaN(scale) || Math.Abs(scale - 1.0) < 0.05)
 					scale = 1.0;
 
 				if (scale < MIN_ZOOM)
