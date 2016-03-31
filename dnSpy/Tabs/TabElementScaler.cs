@@ -60,6 +60,8 @@ namespace dnSpy.Tabs {
 		void UninstallScale() {
 			if (scaleElement == null)
 				return;
+			if (metroWindow != null)
+				metroWindow.WindowDPIChanged -= MetroWindow_WindowDPIChanged;
 			scaleElement.Loaded -= ScaleElement_Loaded;
 			scaleElement.RemoveHandler(UIElement.MouseWheelEvent, new MouseWheelEventHandler(ScaleElement_MouseWheel));
 			foreach (var b in commandBindings)
@@ -144,9 +146,11 @@ namespace dnSpy.Tabs {
 				return metroWindow;
 			}
 
-			Debug.Assert(!scaleElement.IsLoaded);
-			if (!scaleElement.IsLoaded)
-				scaleElement.Loaded += ScaleElement_Loaded;
+			// scaleElement.IsLoaded can be true if we've moved a tool window, so always hook the
+			// loaded event.
+			scaleElement.Loaded -= ScaleElement_Loaded;
+			scaleElement.Loaded += ScaleElement_Loaded;
+
 			return null;
 		}
 

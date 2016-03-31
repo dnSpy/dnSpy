@@ -114,23 +114,32 @@ namespace dnSpy.Shared.Controls {
 		[DllImport("user32", SetLastError = true)]
 		static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
 
+		int WM_DPICHANGED_counter = 0;
 		IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled) {
 			const int WM_DPICHANGED = 0x02E0;
 
 			if (msg == WM_DPICHANGED) {
-				int newDpi = (ushort)(wParam.ToInt64() >> 16);
-				var rect = Marshal.PtrToStructure<RECT>(lParam);
+				if (WM_DPICHANGED_counter != 0)
+					return IntPtr.Zero;
+				WM_DPICHANGED_counter++;
+				try {
+					int newDpi = (ushort)(wParam.ToInt64() >> 16);
+					var rect = Marshal.PtrToStructure<RECT>(lParam);
 
-				WindowDPI = newDpi;
+					WindowDPI = newDpi;
 
-				const int SWP_NOZORDER = 0x0004;
-				const int SWP_NOACTIVATE = 0x0010;
-				const int SWP_NOOWNERZORDER = 0x0200;
-				bool b = SetWindowPos(hwnd, IntPtr.Zero, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
-				Debug.Assert(b);
+					const int SWP_NOZORDER = 0x0004;
+					const int SWP_NOACTIVATE = 0x0010;
+					const int SWP_NOOWNERZORDER = 0x0200;
+					bool b = SetWindowPos(hwnd, IntPtr.Zero, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
+					Debug.Assert(b);
 
-				handled = true;
-				return IntPtr.Zero;
+					handled = true;
+					return IntPtr.Zero;
+				}
+				finally {
+					WM_DPICHANGED_counter--;
+				}
 			}
 
 			return IntPtr.Zero;
