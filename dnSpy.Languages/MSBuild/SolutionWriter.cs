@@ -105,6 +105,7 @@ namespace dnSpy.Languages.MSBuild {
 					writer.Write("# Visual Studio 14" + crlf);
 					// 2015 RTM = 14.0.23107.0
 					// 2015.1 = 14.0.24720.0
+					// 2015.2 = 14.0.25123.0
 					writer.Write("VisualStudioVersion = 14.0.23107.0" + crlf);
 					writer.Write("MinimumVisualStudioVersion = 10.0.40219.1" + crlf);
 					break;
