@@ -25,6 +25,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
+using dnlib.DotNet;
 using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
@@ -277,6 +278,31 @@ namespace dnSpy.Files.Tabs {
 					var asmNode = fileTreeView.FindNode(asm);
 					if (asmNode != null)
 						fileTreeView.TreeView.SelectItems(new ITreeNodeData[] { asmNode });
+				}));
+				return;
+			}
+
+			var derivedTypeNode = e.Node as IDerivedTypeNode;
+			if (derivedTypeNode != null) {
+				var td = derivedTypeNode.TypeDef;
+				Debug.Assert(td != null);
+				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+					var typeNode = fileTreeView.FindNode(td);
+					if (typeNode != null)
+						fileTreeView.TreeView.SelectItems(new ITreeNodeData[] { typeNode });
+				}));
+				return;
+			}
+
+			var baseTypeNode = e.Node as IBaseTypeNode;
+			if (baseTypeNode != null) {
+				var tdr = baseTypeNode.TypeDefOrRef;
+				Debug.Assert(tdr != null);
+				var td = tdr?.ScopeType.ResolveTypeDef();
+				Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => {
+					var typeNode = fileTreeView.FindNode(td);
+					if (typeNode != null)
+						fileTreeView.TreeView.SelectItems(new ITreeNodeData[] { typeNode });
 				}));
 				return;
 			}

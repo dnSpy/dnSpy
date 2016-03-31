@@ -227,9 +227,6 @@ namespace dnSpy.TreeView {
 			var nodes = items.Where(a => a != null).Select(a => (TreeNodeImpl)a.TreeNode).ToArray();
 			if (nodes.Length > 0) {
 				sharpTreeView.FocusNode(nodes[0].Node);
-				// This can happen when pressing Ctrl+Shift+Tab when the treeview has keyboard focus
-				if (sharpTreeView.SelectedItems.Count != 0)
-					sharpTreeView.SelectedItems.Clear();
 				sharpTreeView.SelectedItem = nodes[0].Node;
 
 				// FocusNode() should already call ScrollIntoView() but for some reason,
