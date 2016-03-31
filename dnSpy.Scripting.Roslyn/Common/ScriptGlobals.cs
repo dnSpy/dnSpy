@@ -31,6 +31,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		readonly IScriptGlobalsHelper owner;
 		readonly Dispatcher dispatcher;
 		readonly CancellationToken token;
+		readonly PrintOptionsImpl printOptionsImpl;
 
 		public ScriptGlobals(IScriptGlobalsHelper owner, Dispatcher dispatcher, CancellationToken token) {
 			if (owner == null)
@@ -38,18 +39,23 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			this.owner = owner;
 			this.token = token;
 			this.dispatcher = dispatcher;
+			this.printOptionsImpl = new PrintOptionsImpl();
 		}
 
 		public event EventHandler ScriptReset;
 		public void RaiseScriptReset() => ScriptReset?.Invoke(this, EventArgs.Empty);
 		public IScriptGlobals Instance => this;
 		public CancellationToken Token => token;
+		IPrintOptions IScriptGlobals.PrintOptions => printOptionsImpl;
+		public PrintOptionsImpl PrintOptions => printOptionsImpl;
 		public void Print(string text) => owner.Print(this, text);
 		public void Print(string fmt, params object[] args) => Print(string.Format(fmt, args));
 		public void PrintLine(string text = null) => owner.PrintLine(this, text);
 		public void PrintLine(string fmt, params object[] args) => PrintLine(string.Format(fmt, args));
-		public void Print(object value) => owner.Print(this, value);
-		public void PrintLine(object value) => owner.PrintLine(this, value);
+		public void Print(object value) => owner.Print(this, printOptionsImpl, value);
+		public void PrintLine(object value) => owner.PrintLine(this, printOptionsImpl, value);
+		public void Print(Exception ex) => owner.Print(this, ex);
+		public void PrintLine(Exception ex) => owner.PrintLine(this, ex);
 		public Dispatcher UIDispatcher => dispatcher;
 		public void UI(Action action) => dispatcher.UI(action);
 		public T UI<T>(Func<T> func) => dispatcher.UI(func);

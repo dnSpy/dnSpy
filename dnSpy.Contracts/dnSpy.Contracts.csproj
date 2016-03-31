@@ -267,7 +267,9 @@
     <Compile Include="Scripting\Debugger\TypeFormatFlags.cs" />
     <Compile Include="Scripting\Debugger\ValueResult.cs" />
     <Compile Include="Scripting\IServiceLocator.cs" />
+    <Compile Include="Scripting\Roslyn\IPrintOptions.cs" />
     <Compile Include="Scripting\Roslyn\IScriptGlobals.cs" />
+    <Compile Include="Scripting\Roslyn\MemberDisplayFormat.cs" />
     <Compile Include="Scripting\ScriptException.cs" />
     <Compile Include="Search\BodyResult.cs" />
     <Compile Include="Search\FileSearcherOptions.cs" />

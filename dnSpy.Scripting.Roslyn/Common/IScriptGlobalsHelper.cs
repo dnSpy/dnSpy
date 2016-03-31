@@ -17,6 +17,7 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
 using dnSpy.Contracts.Scripting;
 
 namespace dnSpy.Scripting.Roslyn.Common {
@@ -39,15 +40,31 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		/// Prints text. Method can be called from any thread
 		/// </summary>
 		/// <param name="globals">Globals</param>
+		/// <param name="printOptions">Print options</param>
 		/// <param name="value">Value</param>
-		void Print(ScriptGlobals globals, object value);
+		void Print(ScriptGlobals globals, PrintOptionsImpl printOptions, object value);
 
 		/// <summary>
 		/// Prints text plus a new line. Method can be called from any thread
 		/// </summary>
 		/// <param name="globals">Globals</param>
+		/// <param name="printOptions">Print options</param>
 		/// <param name="value">Value</param>
-		void PrintLine(ScriptGlobals globals, object value);
+		void PrintLine(ScriptGlobals globals, PrintOptionsImpl printOptions, object value);
+
+		/// <summary>
+		/// Prints text. Method can be called from any thread
+		/// </summary>
+		/// <param name="globals">Globals</param>
+		/// <param name="ex">Exception</param>
+		void Print(ScriptGlobals globals, Exception ex);
+
+		/// <summary>
+		/// Prints text plus a new line. Method can be called from any thread
+		/// </summary>
+		/// <param name="globals">Globals</param>
+		/// <param name="ex">Exception</param>
+		void PrintLine(ScriptGlobals globals, Exception ex);
 
 		/// <summary>
 		/// Gets the service locator

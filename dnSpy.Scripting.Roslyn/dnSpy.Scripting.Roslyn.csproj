@@ -49,6 +49,7 @@
     <Compile Include="Common\HelpCommand.cs" />
     <Compile Include="Common\IScriptCommand.cs" />
     <Compile Include="Common\IScriptGlobalsHelper.cs" />
+    <Compile Include="Common\PrintOptionsImpl.cs" />
     <Compile Include="Common\ResetCommand.cs" />
     <Compile Include="Common\ResponseFileReader.cs" />
     <Compile Include="Common\ScriptContent.cs" />

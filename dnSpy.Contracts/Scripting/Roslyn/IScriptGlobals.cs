@@ -45,6 +45,11 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		CancellationToken Token { get; }
 
 		/// <summary>
+		/// Print options
+		/// </summary>
+		IPrintOptions PrintOptions { get; }
+
+		/// <summary>
 		/// Prints text to the screen
 		/// </summary>
 		/// <param name="text">Text</param>
@@ -81,6 +86,18 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// </summary>
 		/// <param name="value">Value or null</param>
 		void PrintLine(object value);
+
+		/// <summary>
+		/// Formats and prints an exception to the screen
+		/// </summary>
+		/// <param name="ex">Exception</param>
+		void Print(Exception ex);
+
+		/// <summary>
+		/// Formats and prints an exception followed by a new line to the screen
+		/// </summary>
+		/// <param name="ex">Exception</param>
+		void PrintLine(Exception ex);
 
 		/// <summary>
 		/// UI thread dispatcher

@@ -272,17 +272,20 @@ namespace dnSpy.Scripting.Roslyn.Common {
 								oldState.ExecTask = null;
 						}
 						if (isActive) {
-							if (ex != null)
-								replEditor.OutputPrintLine(ex.ToString());
+							try {
+								if (ex != null)
+									replEditor.OutputPrintLine(Format(ex.InnerException));
 
-							if (!t.IsCanceled && !t.IsFaulted) {
-								oldState.ScriptState = t.Result;
-								var val = t.Result.ReturnValue;
-								if (val != null)
-									replEditor.OutputPrintLine(Format(val));
+								if (!t.IsCanceled && !t.IsFaulted) {
+									oldState.ScriptState = t.Result;
+									var val = t.Result.ReturnValue;
+									if (val != null)
+										replEditor.OutputPrintLine(Format(val, oldState.Globals.PrintOptions.RoslynPrintOptions));
+								}
 							}
-
-							CommandExecuted();
+							finally {
+								CommandExecuted();
+							}
 						}
 					}, CancellationToken.None, TaskContinuationOptions.None, taskSched);
 				})
@@ -299,8 +302,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					}
 					else if (innerEx is OperationCanceledException)
 						CommandExecuted();
-					else
-						ReportException(t);
+					else {
+						var ex = t.Exception;
+						if (ex != null) {
+							replEditor.OutputPrintLine(ex.ToString());
+							CommandExecuted();
+						}
+					}
 				}, CancellationToken.None, TaskContinuationOptions.None, taskSched);
 
 				return true;
@@ -366,14 +374,6 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			}
 		}
 
-		void ReportException(Task t) {
-			var ex = t.Exception;
-			if (ex != null) {
-				replEditor.OutputPrintLine(ex.ToString());
-				CommandExecuted();
-			}
-		}
-
 		void CommandExecuted() {
 			this.replEditor.OnCommandExecuted();
 			OnCommandExecuted?.Invoke(this, EventArgs.Empty);
@@ -382,7 +382,8 @@ namespace dnSpy.Scripting.Roslyn.Common {
 
 		protected abstract ObjectFormatter ObjectFormatter { get; }
 		protected abstract DiagnosticFormatter DiagnosticFormatter { get; }
-		string Format(object value) => ObjectFormatter.FormatObject(value);
+		string Format(object value, PrintOptions printOptions) => ObjectFormatter.FormatObject(value, printOptions);
+		string Format(Exception ex) => ObjectFormatter.FormatException(ex);
 
 		/// <summary>
 		/// Returns true if it's the current script
@@ -403,16 +404,28 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			replEditor.OutputPrintLine(text);
 		}
 
-		void IScriptGlobalsHelper.Print(ScriptGlobals globals, object value) {
+		void IScriptGlobalsHelper.Print(ScriptGlobals globals, PrintOptionsImpl printOptions, object value) {
 			if (!IsCurrentScript(globals))
 				return;
-			replEditor.OutputPrint(Format(value));
+			replEditor.OutputPrint(Format(value, printOptions.RoslynPrintOptions));
 		}
 
-		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, object value) {
+		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, PrintOptionsImpl printOptions, object value) {
 			if (!IsCurrentScript(globals))
 				return;
-			replEditor.OutputPrintLine(Format(value));
+			replEditor.OutputPrintLine(Format(value, printOptions.RoslynPrintOptions));
+		}
+
+		void IScriptGlobalsHelper.Print(ScriptGlobals globals, Exception ex) {
+			if (!IsCurrentScript(globals))
+				return;
+			replEditor.OutputPrint(Format(ex));
+		}
+
+		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, Exception ex) {
+			if (!IsCurrentScript(globals))
+				return;
+			replEditor.OutputPrintLine(Format(ex));
 		}
 
 		IServiceLocator IScriptGlobalsHelper.ServiceLocator => serviceLocator;
