@@ -491,7 +491,7 @@
     <value>_Default ctor</value>
   </data>
   <data name="GP_Kind" xml:space="preserve">
-    <value>Kind</value>
+    <value>Вид</value>
   </data>
   <data name="GP_Kind_ToolTip" xml:space="preserve">
     <value>Only used if MD header version is 1.1 (0x0101). It's never 1.1 so ignore Kind</value>
@@ -521,7 +521,7 @@
     <value>32-Bit Preferred</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_32BitReqd" xml:space="preserve">
-    <value>32-Bit Required</value>
+    <value>Требуется 32-bit</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_ILLibrary" xml:space="preserve">
     <value>IL Library</value>
@@ -656,7 +656,7 @@
     <value>Class</value>
   </data>
   <data name="MemberRef_ClassTab" xml:space="preserve">
-    <value>Class</value>
+    <value>Класс</value>
   </data>
   <data name="MemberRef_FieldSigTab" xml:space="preserve">
     <value>FieldSig</value>
@@ -698,7 +698,7 @@
     <value>Initialize Class to a Type</value>
   </data>
   <data name="MethodCantBeNull" xml:space="preserve">
-    <value>Method can't be null</value>
+    <value>Метод не может быть пустым</value>
   </data>
   <data name="MethodInstantiationTypesTab" xml:space="preserve">
     <value>Method Instantiation Types</value>
@@ -728,7 +728,7 @@
     <value>_Method</value>
   </data>
   <data name="MethodsTab" xml:space="preserve">
-    <value>Methods</value>
+    <value>Методы</value>
   </data>
   <data name="MoveDownCommand" xml:space="preserve">
     <value>Move _Down</value>
@@ -740,7 +740,7 @@
     <value>Move _Up</value>
   </data>
   <data name="MoveUp_ToolTip" xml:space="preserve">
-    <value>Move Up</value>
+    <value>Переместить вверх</value>
   </data>
   <data name="NamedArguments" xml:space="preserve">
     <value>Named Arguments</value>
@@ -827,7 +827,7 @@
     <value>R</value>
   </data>
   <data name="RemoveCharacter_ToolTip" xml:space="preserve">
-    <value>Remove Last Object</value>
+    <value>Удалить последний объект</value>
   </data>
   <data name="RemoveCommand" xml:space="preserve">
     <value>Remove {0}</value>
@@ -836,7 +836,7 @@
     <value>R</value>
   </data>
   <data name="RemoveLastTypeCharacter_ToolTip" xml:space="preserve">
-    <value>Remove Last Type</value>
+    <value>Удалить последний тип</value>
   </data>
   <data name="ReturnTypeRequired" xml:space="preserve">
     <value>A return type is required</value>
@@ -881,7 +881,7 @@
     <value>U</value>
   </data>
   <data name="Type" xml:space="preserve">
-    <value>Type: {0}</value>
+    <value>Тип: {0}</value>
   </data>
   <data name="TypeMustBeGeneric" xml:space="preserve">
     <value>The type must be a generic type</value>
@@ -935,7 +935,7 @@
     <value>_FnPtr</value>
   </data>
   <data name="TypeSigCreator_FnPtr_ToolTip" xml:space="preserve">
-    <value>Add a function pointer</value>
+    <value>Добавить в указатель на функцию</value>
   </data>
   <data name="TypeSigCreator_GenericInst" xml:space="preserve">
     <value>_GenericInst</value>
@@ -983,7 +983,7 @@
     <value>_Type</value>
   </data>
   <data name="TypeSigCreator_Type_ToolTip" xml:space="preserve">
-    <value>Add a type</value>
+    <value>Добавить тип</value>
   </data>
   <data name="TypeSigCreator_Var" xml:space="preserve">
     <value>_Var</value>
@@ -992,7 +992,7 @@
     <value>Add a type generic variable</value>
   </data>
   <data name="TypeTab" xml:space="preserve">
-    <value>Type</value>
+    <value>Тип</value>
   </data>
   <data name="Unknown" xml:space="preserve">
     <value>Unknown</value>
@@ -1068,10 +1068,10 @@ Are you sure you want to close the window?</value>
     <value>Base Type</value>
   </data>
   <data name="BaseTypeX" xml:space="preserve">
-    <value>Base Type: {0}</value>
+    <value>Базовый тип: {0}</value>
   </data>
   <data name="Button_Append" xml:space="preserve">
-    <value>A_ppend</value>
+    <value>Д_обавить</value>
   </data>
   <data name="Button_Assembly" xml:space="preserve">
     <value>Сборка</value>
@@ -1584,7 +1584,7 @@ Are you sure you want to close the window?</value>
     <value>Locals</value>
   </data>
   <data name="LocalType" xml:space="preserve">
-    <value>Type</value>
+    <value>Тип</value>
   </data>
   <data name="Local_Command1" xml:space="preserve">
     <value>Add New Local Be_fore Selection</value>
@@ -2130,7 +2130,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>TryStart</value>
   </data>
   <data name="ExceptionHandler_Column_Type" xml:space="preserve">
-    <value>Type</value>
+    <value>Тип</value>
   </data>
   <data name="Flags" xml:space="preserve">
     <value>Флаги</value>
