@@ -376,6 +376,15 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ctrl+Alt+I.
+        /// </summary>
+        public static string ShortCutKeyCtrlAltI {
+            get {
+                return ResourceManager.GetString("ShortCutKeyCtrlAltI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ctrl+Alt+N.
         /// </summary>
         public static string ShortCutKeyCtrlAltN {
@@ -471,6 +480,15 @@ namespace dnSpy.Scripting.Roslyn.Properties {
         public static string Window_CSharp {
             get {
                 return ResourceManager.GetString("Window_CSharp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Visual Basic Interactive.
+        /// </summary>
+        public static string Window_VisualBasic {
+            get {
+                return ResourceManager.GetString("Window_VisualBasic", resourceCulture);
             }
         }
     }

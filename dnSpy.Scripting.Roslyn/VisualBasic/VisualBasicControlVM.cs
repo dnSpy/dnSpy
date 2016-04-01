@@ -18,54 +18,52 @@
 */
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using dnSpy.Contracts.Scripting;
 using dnSpy.Contracts.TextEditor;
 using dnSpy.Scripting.Roslyn.Common;
 using dnSpy.Scripting.Roslyn.Properties;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.CSharp.Scripting.Hosting;
 using Microsoft.CodeAnalysis.Scripting;
 using Microsoft.CodeAnalysis.Scripting.Hosting;
+using Microsoft.CodeAnalysis.VisualBasic;
+using Microsoft.CodeAnalysis.VisualBasic.Scripting;
+using Microsoft.CodeAnalysis.VisualBasic.Scripting.Hosting;
 
-namespace dnSpy.Scripting.Roslyn.CSharp {
-	sealed class CSharpControlVM : ScriptControlVM {
-		static CSharpControlVM() {
-			const LanguageVersion latestVersion = LanguageVersion.CSharp6;
+namespace dnSpy.Scripting.Roslyn.VisualBasic {
+	sealed class VisualBasicControlVM : ScriptControlVM {
+		static VisualBasicControlVM() {
+			const LanguageVersion latestVersion = LanguageVersion.VisualBasic14;
 			Debug.Assert(!Enum.IsDefined(typeof(LanguageVersion), (LanguageVersion)((int)latestVersion + 1)));
-			parseOptions = new CSharpParseOptions(languageVersion: latestVersion, kind: SourceCodeKind.Script);
+			parseOptions = new VisualBasicParseOptions(languageVersion: latestVersion, kind: SourceCodeKind.Script);
 		}
 
 		protected override string Logo {
 			get {
-				// This is how MS gets the version, see roslyn/src/Interactive/EditorFeatures/CSharp/Interactive/CSharpReplServiceProvider.cs
-				return string.Format("Microsoft (R) Roslyn C# Compiler version {0}",
-					FileVersionInfo.GetVersionInfo(typeof(CSharpCommandLineArguments).Assembly.Location).FileVersion);
+				// This is how MS gets the version, see roslyn/src/Interactive/EditorFeatures/VisualBasic/Interactive/VisualBasicReplServiceProvider.vb
+				return string.Format("Microsoft (R) Roslyn Visual Basic Compiler version {0}",
+					FileVersionInfo.GetVersionInfo(typeof(VisualBasicCommandLineArguments).Assembly.Location).FileVersion);
 			}
 		}
 
 		protected override string Help => dnSpy_Scripting_Roslyn_Resources.HelpString;
-		protected override ObjectFormatter ObjectFormatter => CSharpObjectFormatter.Instance;
-		protected override DiagnosticFormatter DiagnosticFormatter => CSharpDiagnosticFormatter.Instance;
+		protected override ObjectFormatter ObjectFormatter => VisualBasicObjectFormatter.Instance;
+		protected override DiagnosticFormatter DiagnosticFormatter => VisualBasicDiagnosticFormatter.Instance;
 
-		public CSharpControlVM(IReplEditor replEditor, IServiceLocator serviceLocator)
+		public VisualBasicControlVM(IReplEditor replEditor, IServiceLocator serviceLocator)
 			: base(replEditor, serviceLocator) {
 		}
 
 		protected override Script<T> Create<T>(string code, ScriptOptions options, Type globalsType, InteractiveAssemblyLoader assemblyLoader) =>
-			CSharpScript.Create<T>(code, options, globalsType, assemblyLoader);
+			VisualBasicScript.Create<T>(code, options, globalsType, assemblyLoader);
 
 		protected override bool IsCompleteSubmission(string text) =>
 			SyntaxFactory.IsCompleteSubmission(SyntaxFactory.ParseSyntaxTree(text, parseOptions));
-		static readonly CSharpParseOptions parseOptions;
+		static readonly VisualBasicParseOptions parseOptions;
 
 		protected override void InitializeUserScriptOptions(UserScriptOptions options) {
-			var rspFile = GetResponseFile("CSharpInteractive.rsp");
+			var rspFile = GetResponseFile("VisualBasicInteractive.rsp");
 			if (rspFile == null)
 				return;
 			this.replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.LoadingContextFromFile, Path.GetFileName(rspFile)));
@@ -77,9 +75,6 @@ namespace dnSpy.Scripting.Roslyn.CSharp {
 					options.References.AddRange(RespFileUtils.GetReferences(t.Item2));
 					break;
 
-				case "u":
-				case "using":
-				case "usings":
 				case "import":
 				case "imports":
 					options.Imports.AddRange(t.Item2.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries));

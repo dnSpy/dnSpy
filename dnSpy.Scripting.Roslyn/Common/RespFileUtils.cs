@@ -19,35 +19,31 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.Linq;
 
 namespace dnSpy.Scripting.Roslyn.Common {
-	static class ResponseFileReader {
-		public static IEnumerable<Tuple<string, string>> Read(string filename) {
-			if (!File.Exists(filename))
+	static class RespFileUtils {
+		public static IEnumerable<string> GetReferencePaths(string s) =>
+			s.Split(new char[] { ';', ',' }, StringSplitOptions.RemoveEmptyEntries).Select(a => RemoveQuotes(a));
+
+		public static IEnumerable<string> GetReferences(string s) {
+			if (s.Length == 0)
 				yield break;
-			foreach (var tmp in File.ReadAllLines(filename)) {
-				var line = tmp.TrimStart();
-				if (string.IsNullOrEmpty(line))
-					continue;
-				if (line.StartsWith("#"))
-					continue;
-				var cmd = line;
-				string arg1;
-				int index = cmd.IndexOf(':');
-				if (index < 0)
-					arg1 = string.Empty;
-				else {
-					arg1 = cmd.Substring(index + 1);
-					cmd = cmd.Substring(0, index);
-				}
-				if (cmd.Length == 0)
-					continue;
-				if (cmd[0] != '/' && cmd[0] != '-')
-					continue;
-				cmd = cmd.Substring(1);
-				yield return Tuple.Create(cmd.Trim(), arg1.Trim());
+			if (s[0] == '"') {
+				yield return RemoveQuotes(s);
+				yield break;
 			}
+			foreach (var x in s.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+				yield return x;
+		}
+
+		static string RemoveQuotes(string s) {
+			if (s.Length == 0 || s[0] != '"')
+				return s;
+			s = s.Substring(1);
+			if (s.Length > 0 && s[s.Length - 1] == '"')
+				s = s.Substring(0, s.Length - 1);
+			return s;
 		}
 	}
 }
