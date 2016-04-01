@@ -970,7 +970,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="array">Destination</param>
 		/// <param name="index">Index in <paramref name="array"/></param>
 		/// <param name="count">Number of bytes to read</param>
-		void ReadMemory(ulong address, byte[] array, long index, uint count);
+		void Read(ulong address, byte[] array, long index, uint count);
 
 		/// <summary>
 		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
@@ -979,7 +979,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="array">Destination</param>
 		/// <param name="index">Index in <paramref name="array"/></param>
 		/// <param name="count">Number of bytes to read</param>
-		void ReadMemory(ulong address, byte[] array, long index, int count);
+		void Read(ulong address, byte[] array, long index, int count);
 
 		/// <summary>
 		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
@@ -987,7 +987,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="address">Address</param>
 		/// <param name="count">Number of bytes to read</param>
 		/// <returns></returns>
-		byte[] ReadMemory(ulong address, uint count);
+		byte[] Read(ulong address, uint count);
 
 		/// <summary>
 		/// Reads memory from the debugged process. Unmapped memory is read as 0s.
@@ -995,7 +995,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="address">Address</param>
 		/// <param name="count">Number of bytes to read</param>
 		/// <returns></returns>
-		byte[] ReadMemory(ulong address, int count);
+		byte[] Read(ulong address, int count);
 
 		/// <summary>
 		/// Writes data to memory in the debugged process. Returns the number of bytes written.
@@ -1005,7 +1005,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="index">Index in <paramref name="array"/></param>
 		/// <param name="count">Number of bytes to write</param>
 		/// <returns></returns>
-		uint WriteMemory(ulong address, byte[] array, long index, uint count);
+		uint Write(ulong address, byte[] array, long index, uint count);
 
 		/// <summary>
 		/// Writes data to memory in the debugged process. Returns the number of bytes written.
@@ -1015,14 +1015,14 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="index">Index in <paramref name="array"/></param>
 		/// <param name="count">Number of bytes to write</param>
 		/// <returns></returns>
-		int WriteMemory(ulong address, byte[] array, long index, int count);
+		int Write(ulong address, byte[] array, long index, int count);
 
 		/// <summary>
 		/// Writes data to memory in the debugged process. Throws if all bytes couldn't be written.
 		/// </summary>
 		/// <param name="address">Address</param>
 		/// <param name="array">Source</param>
-		void WriteMemory(ulong address, byte[] array);
+		void Write(ulong address, byte[] array);
 
 		/// <summary>
 		/// Reads a <see cref="bool"/> from an address in the debugged process

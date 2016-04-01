@@ -82,7 +82,7 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public byte[] ReadCode() {
-			return debugger.ReadMemory(Address, Size);
+			return debugger.Read(Address, Size);
 		}
 
 		public IILBreakpoint CreateBreakpoint(uint offset, Func<IILBreakpoint, bool> cond) {

@@ -204,7 +204,7 @@ namespace dnSpy.Debugger.Scripting {
 				if (addr == 0)
 					return PEState.Null;
 				var data = new byte[0x1000];
-				debugger.ReadMemory(Address, data, 0, data.Length);
+				debugger.Read(Address, data, 0, data.Length);
 				using (var peImage = new PEImage(data, IsFileLayout ? ImageLayout.File : ImageLayout.Memory, true))
 					return new PEState(peImage.ImageSectionHeaders.ToArray());
 			}
@@ -277,31 +277,31 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public void Read(uint rva, byte[] array, long index, uint count) {
-			debugger.ReadMemory(RVAToAddress(rva), array, index, count);
+			debugger.Read(RVAToAddress(rva), array, index, count);
 		}
 
 		public void Read(uint rva, byte[] array, long index, int count) {
-			debugger.ReadMemory(RVAToAddress(rva), array, index, count);
+			debugger.Read(RVAToAddress(rva), array, index, count);
 		}
 
 		public byte[] Read(uint rva, uint count) {
-			return debugger.ReadMemory(RVAToAddress(rva), count);
+			return debugger.Read(RVAToAddress(rva), count);
 		}
 
 		public byte[] Read(uint rva, int count) {
-			return debugger.ReadMemory(RVAToAddress(rva), count);
+			return debugger.Read(RVAToAddress(rva), count);
 		}
 
 		public uint Write(uint rva, byte[] array, long index, uint count) {
-			return debugger.WriteMemory(RVAToAddress(rva), array, index, count);
+			return debugger.Write(RVAToAddress(rva), array, index, count);
 		}
 
 		public int Write(uint rva, byte[] array, long index, int count) {
-			return debugger.WriteMemory(RVAToAddress(rva), array, index, count);
+			return debugger.Write(RVAToAddress(rva), array, index, count);
 		}
 
 		public void Write(uint rva, byte[] array) {
-			debugger.WriteMemory(RVAToAddress(rva), array);
+			debugger.Write(RVAToAddress(rva), array);
 		}
 
 		public bool ReadBoolean(uint rva) {
@@ -409,31 +409,31 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public void ReadOffset(uint offset, byte[] array, long index, uint count) {
-			debugger.ReadMemory(OffsetToAddress(offset), array, index, count);
+			debugger.Read(OffsetToAddress(offset), array, index, count);
 		}
 
 		public void ReadOffset(uint offset, byte[] array, long index, int count) {
-			debugger.ReadMemory(OffsetToAddress(offset), array, index, count);
+			debugger.Read(OffsetToAddress(offset), array, index, count);
 		}
 
 		public byte[] ReadOffset(uint offset, uint count) {
-			return debugger.ReadMemory(OffsetToAddress(offset), count);
+			return debugger.Read(OffsetToAddress(offset), count);
 		}
 
 		public byte[] ReadOffset(uint offset, int count) {
-			return debugger.ReadMemory(OffsetToAddress(offset), count);
+			return debugger.Read(OffsetToAddress(offset), count);
 		}
 
 		public uint WriteOffset(uint offset, byte[] array, long index, uint count) {
-			return debugger.WriteMemory(OffsetToAddress(offset), array, index, count);
+			return debugger.Write(OffsetToAddress(offset), array, index, count);
 		}
 
 		public int WriteOffset(uint offset, byte[] array, long index, int count) {
-			return debugger.WriteMemory(OffsetToAddress(offset), array, index, count);
+			return debugger.Write(OffsetToAddress(offset), array, index, count);
 		}
 
 		public void WriteOffset(uint offset, byte[] array) {
-			debugger.WriteMemory(OffsetToAddress(offset), array);
+			debugger.Write(OffsetToAddress(offset), array);
 		}
 
 		public bool ReadBooleanOffset(uint offset) {

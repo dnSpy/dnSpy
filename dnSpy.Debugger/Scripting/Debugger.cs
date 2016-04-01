@@ -858,7 +858,7 @@ namespace dnSpy.Debugger.Scripting {
 			});
 		}
 
-		public unsafe void ReadMemory(ulong address, byte[] array, long index, uint count) {
+		public unsafe void Read(ulong address, byte[] array, long index, uint count) {
 			if (hProcess_debuggee == IntPtr.Zero || (IntPtr.Size == 4 && address > uint.MaxValue)) {
 				Clear(array, index, count);
 				return;
@@ -904,25 +904,25 @@ namespace dnSpy.Debugger.Scripting {
 			}
 		}
 
-		public void ReadMemory(ulong address, byte[] array, long index, int count) {
+		public void Read(ulong address, byte[] array, long index, int count) {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException();
-			ReadMemory(address, array, index, (uint)count);
+			Read(address, array, index, (uint)count);
 		}
 
-		public byte[] ReadMemory(ulong address, uint count) {
+		public byte[] Read(ulong address, uint count) {
 			var array = new byte[count];
-			ReadMemory(address, array, 0, count);
+			Read(address, array, 0, count);
 			return array;
 		}
 
-		public byte[] ReadMemory(ulong address, int count) {
+		public byte[] Read(ulong address, int count) {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException();
-			return ReadMemory(address, (uint)count);
+			return Read(address, (uint)count);
 		}
 
-		public unsafe uint WriteMemory(ulong address, byte[] array, long index, uint count) {
+		public unsafe uint Write(ulong address, byte[] array, long index, uint count) {
 			if (hProcess_debuggee == IntPtr.Zero || (IntPtr.Size == 4 && address > uint.MaxValue))
 				return 0;
 
@@ -956,16 +956,16 @@ namespace dnSpy.Debugger.Scripting {
 			return totalWritten;
 		}
 
-		public int WriteMemory(ulong address, byte[] array, long index, int count) {
+		public int Write(ulong address, byte[] array, long index, int count) {
 			if (count < 0)
 				throw new ArgumentOutOfRangeException();
-			return (int)WriteMemory(address, array, index, (uint)count);
+			return (int)Write(address, array, index, (uint)count);
 		}
 
-		public void WriteMemory(ulong address, byte[] array) {
+		public void Write(ulong address, byte[] array) {
 			if (array.LongLength > uint.MaxValue)
 				throw new ArgumentException();
-			uint writtenBytes = WriteMemory(address, array, 0, (uint)array.LongLength);
+			uint writtenBytes = Write(address, array, 0, (uint)array.LongLength);
 			if (writtenBytes != array.LongLength)
 				throw new IOException(string.Format("Couldn't write all bytes. Wrote {0} bytes, expected {1} bytes", writtenBytes, array.LongLength));
 		}
@@ -980,107 +980,107 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public bool ReadBoolean(ulong address) {
-			return BitConverter.ToBoolean(ReadMemory(address, 1), 0);
+			return BitConverter.ToBoolean(Read(address, 1), 0);
 		}
 
 		public char ReadChar(ulong address) {
-			return BitConverter.ToChar(ReadMemory(address, 2), 0);
+			return BitConverter.ToChar(Read(address, 2), 0);
 		}
 
 		public sbyte ReadSByte(ulong address) {
-			return (sbyte)ReadMemory(address, 1)[0];
+			return (sbyte)Read(address, 1)[0];
 		}
 
 		public byte ReadByte(ulong address) {
-			return ReadMemory(address, 1)[0];
+			return Read(address, 1)[0];
 		}
 
 		public short ReadInt16(ulong address) {
-			return BitConverter.ToInt16(ReadMemory(address, 2), 0);
+			return BitConverter.ToInt16(Read(address, 2), 0);
 		}
 
 		public ushort ReadUInt16(ulong address) {
-			return BitConverter.ToUInt16(ReadMemory(address, 2), 0);
+			return BitConverter.ToUInt16(Read(address, 2), 0);
 		}
 
 		public int ReadInt32(ulong address) {
-			return BitConverter.ToInt32(ReadMemory(address, 4), 0);
+			return BitConverter.ToInt32(Read(address, 4), 0);
 		}
 
 		public uint ReadUInt32(ulong address) {
-			return BitConverter.ToUInt32(ReadMemory(address, 4), 0);
+			return BitConverter.ToUInt32(Read(address, 4), 0);
 		}
 
 		public long ReadInt64(ulong address) {
-			return BitConverter.ToInt64(ReadMemory(address, 8), 0);
+			return BitConverter.ToInt64(Read(address, 8), 0);
 		}
 
 		public ulong ReadUInt64(ulong address) {
-			return BitConverter.ToUInt64(ReadMemory(address, 8), 0);
+			return BitConverter.ToUInt64(Read(address, 8), 0);
 		}
 
 		public float ReadSingle(ulong address) {
-			return BitConverter.ToSingle(ReadMemory(address, 4), 0);
+			return BitConverter.ToSingle(Read(address, 4), 0);
 		}
 
 		public double ReadDouble(ulong address) {
-			return BitConverter.ToDouble(ReadMemory(address, 8), 0);
+			return BitConverter.ToDouble(Read(address, 8), 0);
 		}
 
 		public decimal ReadDecimal(ulong address) {
-			return Utils.ToDecimal(ReadMemory(address, 8));
+			return Utils.ToDecimal(Read(address, 8));
 		}
 
 		public void Write(ulong address, bool value) {
-			WriteMemory(address, BitConverter.GetBytes(value));
+			Write(address, BitConverter.GetBytes(value));
 		}
 
 		public void Write(ulong address, char value) {
-			WriteMemory(address, BitConverter.GetBytes(value));
+			Write(address, BitConverter.GetBytes(value));
 		}
 
 		public void Write(ulong address, sbyte value) {
-			WriteMemory(address, new byte[1] { (byte)value });
+			Write(address, new byte[1] { (byte)value });
 		}
 
 		public void Write(ulong address, byte value) {
-			WriteMemory(address, new byte[1] { value });
+			Write(address, new byte[1] { value });
 		}
 
 		public void Write(ulong address, short value) {
-			WriteMemory(address, BitConverter.GetBytes(value));
+			Write(address, BitConverter.GetBytes(value));
 		}
 
 		public void Write(ulong address, ushort value) {
-			WriteMemory(address, BitConverter.GetBytes(value));
+			Write(address, BitConverter.GetBytes(value));
 		}
 
 		public void Write(ulong address, int value) {
-			WriteMemory(address, BitConverter.GetBytes(value));
+			Write(address, BitConverter.GetBytes(value));
 		}
 
 		public void Write(ulong address, uint value) {
-			WriteMemory(address, BitConverter.GetBytes(value));
+			Write(address, BitConverter.GetBytes(value));
 		}
 
 		public void Write(ulong address, long value) {
-			WriteMemory(address, BitConverter.GetBytes(value));
+			Write(address, BitConverter.GetBytes(value));
 		}
 
 		public void Write(ulong address, ulong value) {
-			WriteMemory(address, BitConverter.GetBytes(value));
+			Write(address, BitConverter.GetBytes(value));
 		}
 
 		public void Write(ulong address, float value) {
-			WriteMemory(address, BitConverter.GetBytes(value));
+			Write(address, BitConverter.GetBytes(value));
 		}
 
 		public void Write(ulong address, double value) {
-			WriteMemory(address, BitConverter.GetBytes(value));
+			Write(address, BitConverter.GetBytes(value));
 		}
 
 		public void Write(ulong address, decimal value) {
-			WriteMemory(address, Utils.GetBytes(value));
+			Write(address, Utils.GetBytes(value));
 		}
 
 		public IDebuggerModule CorLib {
