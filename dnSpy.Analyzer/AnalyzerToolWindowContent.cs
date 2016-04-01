@@ -54,7 +54,7 @@ namespace dnSpy.Analyzer {
 
 	sealed class AnalyzerToolWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("5827D693-A5DF-4D65-B1F8-ACF249508A96");
-		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Default;
+		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
 		public IInputElement FocusedElement {
 			get { return null; }

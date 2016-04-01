@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 	sealed class ExceptionsToolWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("82575354-AB18-408B-846B-AA585B7B2B4A");
-		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Default;
+		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
 		public IInputElement FocusedElement {
 			get { return exceptionsContent.Value.FocusedElement; }

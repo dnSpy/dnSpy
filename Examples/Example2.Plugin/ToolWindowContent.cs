@@ -75,7 +75,7 @@ namespace Example2.Plugin {
 	sealed class ToolWindowContent : IToolWindowContent {
 		//TODO: Use your own guid
 		public static readonly Guid THE_GUID = new Guid("18785447-21A8-41DB-B8AD-0F166AEC0D08");
-		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Default;
+		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
 		public Guid Guid {
 			get { return THE_GUID; }

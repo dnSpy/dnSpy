@@ -395,8 +395,10 @@ namespace dnSpy.MainApp {
 			case AppToolWindowLocation.Top:
 			case AppToolWindowLocation.Bottom:
 				return location;
-			case AppToolWindowLocation.Default:
+			case AppToolWindowLocation.DefaultHorizontal:
 				return AppToolWindowLocation.Bottom;
+			case AppToolWindowLocation.DefaultVertical:
+				return AppToolWindowLocation.Left;
 			default: throw new ArgumentException();
 			}
 		}
@@ -419,7 +421,7 @@ namespace dnSpy.MainApp {
 						return info.Location;
 				}
 			}
-			return AppToolWindowLocation.Default;
+			return AppToolWindowLocation.DefaultHorizontal;
 		}
 
 		public void Show(IToolWindowContent content, AppToolWindowLocation? location) {

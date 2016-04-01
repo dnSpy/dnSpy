@@ -30,7 +30,11 @@ namespace dnSpy.Contracts.ToolWindows.App {
 		Top,
 		/// <summary>Bottom</summary>
 		Bottom,
-		/// <summary>Default location, eg. <see cref="Bottom"/></summary>
-		Default,
+		/// <summary>Default horizontal location, eg. <see cref="Bottom"/></summary>
+		DefaultHorizontal,
+		/// <summary>Default horizontal location, eg. <see cref="Bottom"/></summary>
+		Default = DefaultHorizontal,
+		/// <summary>Default vertical location, eg. <see cref="Left"/></summary>
+		DefaultVertical,
 	}
 }

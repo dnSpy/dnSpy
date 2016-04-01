@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.Breakpoints {
 
 	sealed class BreakpointsToolWindowContent : IToolWindowContent, IFocusable {
 		public static readonly Guid THE_GUID = new Guid("E5745D58-4DCB-4D92-B786-4E1635C86EED");
-		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Default;
+		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
 		public IInputElement FocusedElement {
 			get { return breakpointsContent.Value.FocusedElement; }

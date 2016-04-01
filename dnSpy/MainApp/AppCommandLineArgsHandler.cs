@@ -96,6 +96,14 @@ namespace dnSpy.MainApp {
 			case "d":
 			case "default":
 				return AppToolWindowLocation.Default;
+			case "dh":
+			case "default-horiz":
+			case "default-horizontal":
+				return AppToolWindowLocation.DefaultHorizontal;
+			case "dv":
+			case "default-vert":
+			case "default-vertical":
+				return AppToolWindowLocation.DefaultVertical;
 			}
 			Debug.Fail("Invalid option");
 			return null;

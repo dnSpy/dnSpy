@@ -51,7 +51,7 @@ namespace dnSpy.Debugger.Memory {
 			readonly Guid guid;
 
 			public AppToolWindowLocation DefaultLocation {
-				get { return AppToolWindowLocation.Default; }
+				get { return AppToolWindowLocation.DefaultHorizontal; }
 			}
 
 			public MemoryToolWindowContent Content {

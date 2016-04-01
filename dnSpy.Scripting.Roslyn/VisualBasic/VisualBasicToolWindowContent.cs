@@ -49,7 +49,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 
 	sealed class VisualBasicToolWindowContent : ScriptToolWindowContent {
 		public static readonly Guid THE_GUID = new Guid("C0D88168-7750-4B15-AE72-215BFE214DA5");
-		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.Default;
+		public const AppToolWindowLocation DEFAULT_LOCATION = AppToolWindowLocation.DefaultHorizontal;
 
 		public override string Title => dnSpy_Scripting_Roslyn_Resources.Window_VisualBasic;
 		protected override IScriptContent ScriptContent => visualBasicContent.Value;
