@@ -581,7 +581,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="output">Destination</param>
 		/// <param name="valueResult">Value result</param>
 		/// <param name="flags">Flags</param>
-		void Write(ISyntaxHighlightOutput output, ValueResult valueResult, TypeFormatFlags flags);
+		void Write(ISyntaxHighlightOutput output, ValueResult valueResult, TypeFormatFlags flags = TypeFormatFlags.Default);
 
 		/// <summary>
 		/// ToString()
@@ -589,14 +589,14 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="valueResult">Value result</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		string ToString(ValueResult valueResult, TypeFormatFlags flags);
+		string ToString(ValueResult valueResult, TypeFormatFlags flags = TypeFormatFlags.Default);
 
 		/// <summary>
 		/// Write this to <paramref name="output"/>
 		/// </summary>
 		/// <param name="output">Destination</param>
 		/// <param name="flags">Flags</param>
-		void Write(ISyntaxHighlightOutput output, TypeFormatFlags flags);
+		void Write(ISyntaxHighlightOutput output, TypeFormatFlags flags = TypeFormatFlags.Default);
 
 		/// <summary>
 		/// Write this to <paramref name="output"/>
@@ -604,7 +604,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="output">Destination</param>
 		/// <param name="type">Type</param>
 		/// <param name="flags">Flags</param>
-		void WriteType(ISyntaxHighlightOutput output, IDebuggerType type, TypeFormatFlags flags);
+		void WriteType(ISyntaxHighlightOutput output, IDebuggerType type, TypeFormatFlags flags = TypeFormatFlags.Default);
 
 		/// <summary>
 		/// Write this to <paramref name="output"/>
@@ -612,7 +612,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="output">Destination</param>
 		/// <param name="cls">Class</param>
 		/// <param name="flags">Flags</param>
-		void WriteType(ISyntaxHighlightOutput output, IDebuggerClass cls, TypeFormatFlags flags);
+		void WriteType(ISyntaxHighlightOutput output, IDebuggerClass cls, TypeFormatFlags flags = TypeFormatFlags.Default);
 
 		/// <summary>
 		/// ToString()

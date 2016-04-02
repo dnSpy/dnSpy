@@ -50,7 +50,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="output">Destination</param>
 		/// <param name="value">Owner <see cref="IDebuggerValue"/> instance</param>
 		/// <param name="flags">Flags</param>
-		public void Write(ISyntaxHighlightOutput output, IDebuggerValue value, TypeFormatFlags flags) {
+		public void Write(ISyntaxHighlightOutput output, IDebuggerValue value, TypeFormatFlags flags = TypeFormatFlags.Default) {
 			value.Write(output, this, flags);
 		}
 
@@ -60,7 +60,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// <param name="value">Owner <see cref="IDebuggerValue"/> instance</param>
 		/// <param name="flags">Flags</param>
 		/// <returns></returns>
-		public string ToString(IDebuggerValue value, TypeFormatFlags flags) {
+		public string ToString(IDebuggerValue value, TypeFormatFlags flags = TypeFormatFlags.Default) {
 			return value.ToString(this, flags);
 		}
 

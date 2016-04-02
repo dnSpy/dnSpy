@@ -170,7 +170,7 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 		/// </summary>
 		/// <param name="output">Destination</param>
 		/// <param name="flags">Flags</param>
-		void Write(ISyntaxHighlightOutput output, TypeFormatFlags flags);
+		void Write(ISyntaxHighlightOutput output, TypeFormatFlags flags = TypeFormatFlags.ShowNamespaces | TypeFormatFlags.ShowTypeKeywords);
 
 		/// <summary>
 		/// ToString()
