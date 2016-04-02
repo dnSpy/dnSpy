@@ -2066,9 +2066,9 @@ namespace dndbg.Engine {
 				case TypeCode.UInt64:	return string.Format("0x{0:X16}", value);
 				}
 				if (value is IntPtr)
-					return string.Format("0x{0:X}", ((IntPtr)value).ToInt64());
+					return string.Format(IntPtr.Size == 4 ? "0x{0:X8}": "0x{0:X16}", ((IntPtr)value).ToInt64());
 				if (value is UIntPtr)
-					return string.Format("0x{0:X}", ((UIntPtr)value).ToUInt64());
+					return string.Format(UIntPtr.Size == 4 ? "0x{0:X8}" : "0x{0:X16}", ((UIntPtr)value).ToUInt64());
 			}
 			return value.ToString();
 		}
