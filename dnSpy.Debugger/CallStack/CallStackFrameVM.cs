@@ -135,35 +135,43 @@ namespace dnSpy.Debugger.CallStack {
 		}
 
 		public CorFrame Frame {
-			get { return frame; }
-			internal set {
-				frame = value;
+			get {
+				if (frame.IsNeutered)
+					frame = process.FindFrame(frame) ?? frame;
+				return frame;
+			}
+		}
 
-				if (cachedOutput == null || !HasPropertyChangedHandlers) {
-					cachedOutput = null;
-					OnPropertyChanged("NameObject");
-				}
-				else {
-					var newCachedOutput = CachedOutput.Create(frame, Context.TypePrinterFlags);
-					if (newCachedOutput.Equals(cachedOutput.Value))
-						return;
+		public void SetFrame(CorFrame frame, DnProcess process) {
+			this.frame = frame;
+			this.process = process;
 
-					cachedOutput = newCachedOutput;
-					OnPropertyChanged("NameObject");
-				}
+			if (cachedOutput == null || !HasPropertyChangedHandlers) {
+				cachedOutput = null;
+				OnPropertyChanged("NameObject");
+			}
+			else {
+				var newCachedOutput = CachedOutput.Create(frame, Context.TypePrinterFlags);
+				if (newCachedOutput.Equals(cachedOutput.Value))
+					return;
+
+				cachedOutput = newCachedOutput;
+				OnPropertyChanged("NameObject");
 			}
 		}
 		CorFrame frame;
+		DnProcess process;
 
 		public ICallStackFrameContext Context {
 			get { return context; }
 		}
 		readonly ICallStackFrameContext context;
 
-		public CallStackFrameVM(ICallStackFrameContext context, int index, CorFrame frame) {
+		public CallStackFrameVM(ICallStackFrameContext context, int index, CorFrame frame, DnProcess process) {
 			this.context = context;
 			this.index = index;
 			this.frame = frame;
+			this.process = process;
 		}
 
 		string ComputeName() {

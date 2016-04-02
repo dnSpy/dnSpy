@@ -56,7 +56,15 @@ namespace dnSpy.Debugger.Locals {
 		/// <summary>
 		/// The current frame but could be neutered if Continue() has been called
 		/// </summary>
-		public readonly CorFrame FrameCouldBeNeutered;
+		public CorFrame FrameCouldBeNeutered {
+			get {
+				if (frameCouldBeNeutered?.IsNeutered == true)
+					frameCouldBeNeutered = Process?.FindFrame(frameCouldBeNeutered) ?? frameCouldBeNeutered;
+				return frameCouldBeNeutered;
+			}
+			set { frameCouldBeNeutered = value; }
+		}
+		CorFrame frameCouldBeNeutered;
 		public readonly CorFunction Function;
 		public readonly DnThread Thread;
 		public readonly DnProcess Process;

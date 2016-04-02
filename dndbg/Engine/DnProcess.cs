@@ -297,6 +297,23 @@ namespace dndbg.Engine {
 			}
 		}
 
+		/// <summary>
+		/// Finds a frame. Can be called if <paramref name="frame"/> has been neutered
+		/// </summary>
+		/// <param name="frame">Frame</param>
+		/// <returns></returns>
+		public CorFrame FindFrame(CorFrame frame) {
+			if (frame == null)
+				return null;
+			foreach (var thread in threads.GetAll()) {
+				foreach (var f in thread.AllFrames) {
+					if (f.StackStart == frame.StackStart && f.StackEnd == frame.StackEnd)
+						return f;
+				}
+			}
+			return null;
+		}
+
 		public override string ToString() {
 			return string.Format("{0} {1} {2}", UniqueId, ProcessId, Filename);
 		}

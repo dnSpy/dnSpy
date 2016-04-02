@@ -22,6 +22,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
+using System.Linq;
 using dndbg.Engine;
 using dnSpy.Contracts.Images;
 using dnSpy.Debugger.Properties;
@@ -177,6 +178,13 @@ namespace dnSpy.Debugger.CallStack {
 				return;
 			}
 
+			var process = theDebugger.Debugger?.Processes?.FirstOrDefault();
+			Debug.Assert(process != null);
+			if (process == null) {
+				framesList.Clear();
+				return;
+			}
+
 			bool tooManyFrames;
 			var newFrames = stackFrameManager.GetFrames(out tooManyFrames);
 
@@ -195,7 +203,7 @@ namespace dnSpy.Debugger.CallStack {
 			if (framesToAdd > 0) {
 				for (int i = 0; i < framesToAdd; i++) {
 					var frame = newFrames[i];
-					var vm = new CallStackFrameVM(callStackFrameContext, i, frame);
+					var vm = new CallStackFrameVM(callStackFrameContext, i, frame, process);
 					vm.IsCurrentFrame = i == stackFrameManager.SelectedFrameNumber;
 					vm.IsUserCode = IsUserCode(frame);
 
@@ -218,7 +226,7 @@ namespace dnSpy.Debugger.CallStack {
 				vm.Index = i;
 				vm.IsCurrentFrame = i == stackFrameManager.SelectedFrameNumber;
 				vm.IsUserCode = IsUserCode(frame);
-				vm.Frame = frame;
+				vm.SetFrame(frame, process);
 			}
 
 			if (oldHadTooManyFrames == tooManyFrames) {

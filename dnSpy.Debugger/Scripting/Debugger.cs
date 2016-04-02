@@ -692,7 +692,7 @@ namespace dnSpy.Debugger.Scripting {
 			return null;
 		}
 
-		internal IStackFrame TryGetNewFrameUI(uint token, ulong stackStart, ulong stackEnd) {
+		internal Tuple<DBG.CorFrame, int> TryGetNewCorFrameUI(uint token, ulong stackStart, ulong stackEnd) {
 			dispatcher.VerifyAccess();
 			var dbg = theDebugger.Debugger;
 			if (dbg == null || dbg.ProcessState != DBG.DebuggerProcessState.Paused)
@@ -702,7 +702,7 @@ namespace dnSpy.Debugger.Scripting {
 					int frameNo = 0;
 					foreach (var f in t.AllFrames) {
 						if (f.StackStart == stackStart && f.StackEnd == stackEnd && f.Token == token)
-							return new StackFrame(this, f, frameNo);
+							return Tuple.Create(f, frameNo);
 						frameNo++;
 					}
 				}

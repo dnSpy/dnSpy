@@ -29,16 +29,8 @@ namespace dnSpy.Contracts.Scripting.Debugger {
 	/// </summary>
 	public interface IStackFrame {
 		/// <summary>
-		/// Can be called if this instance has been neutered (eg. the program has continued or the
-		/// instruction pointer was changed) to get a new instance of this frame that isn't neutered.
-		/// Returns null if the frame wasn't found or if the debugged process isn't paused.
-		/// </summary>
-		/// <returns></returns>
-		IStackFrame TryGetNewFrame();
-
-		/// <summary>
 		/// true if it has been neutered. It gets neutered when the program continues or if the
-		/// instruction pointer is changed. See <see cref="TryGetNewFrame"/>.
+		/// instruction pointer is changed.
 		/// </summary>
 		bool IsNeutered { get; }
 

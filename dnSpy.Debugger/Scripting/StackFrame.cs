@@ -39,14 +39,14 @@ namespace dnSpy.Debugger.Scripting {
 		public IStackChain Chain {
 			get {
 				return debugger.Dispatcher.UI(() => {
-					var chain = frame.Chain;
+					var chain = CorFrame.Chain;
 					return chain == null ? null : new StackChain(debugger, chain);
 				});
 			}
 		}
 
 		public bool IsNeutered {
-			get { return debugger.Dispatcher.UI(() => frame.IsNeutered); }
+			get { return debugger.Dispatcher.UI(() => CorFrame.IsNeutered); }
 		}
 
 		public Contracts.Scripting.Debugger.ILFrameIP ILFrameIP {
@@ -54,7 +54,7 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public InternalFrameType InternalFrameType {
-			get { return debugger.Dispatcher.UI(() => (InternalFrameType)frame.InternalFrameType); }
+			get { return debugger.Dispatcher.UI(() => (InternalFrameType)CorFrame.InternalFrameType); }
 		}
 
 		public bool IsILFrame {
@@ -97,12 +97,12 @@ namespace dnSpy.Debugger.Scripting {
 		public int Index {
 			get { return frameNo; }
 		}
-		readonly int frameNo;
+		int frameNo;
 
 		public IDebuggerMethod Method {
 			get {
 				return debugger.Dispatcher.UI(() => {
-					var func = frame.Function;
+					var func = CorFrame.Function;
 					return func == null ? null : new DebuggerMethod(debugger, func);
 				});
 			}
@@ -111,7 +111,7 @@ namespace dnSpy.Debugger.Scripting {
 		public IDebuggerCode ILCode {
 			get {
 				return debugger.Dispatcher.UI(() => {
-					var func = frame.Function;
+					var func = CorFrame.Function;
 					var code = func == null ? null : func.ILCode;
 					return code == null ? null : new DebuggerCode(debugger, code);
 				});
@@ -121,7 +121,7 @@ namespace dnSpy.Debugger.Scripting {
 		public IDebuggerCode Code {
 			get {
 				return debugger.Dispatcher.UI(() => {
-					var code = frame.Code;
+					var code = CorFrame.Code;
 					return code == null ? null : new DebuggerCode(debugger, code);
 				});
 			}
@@ -131,7 +131,7 @@ namespace dnSpy.Debugger.Scripting {
 			get {
 				return debugger.Dispatcher.UI(() => {
 					var list = new List<IDebuggerValue>();
-					foreach (var v in frame.ILArguments)
+					foreach (var v in CorFrame.ILArguments)
 						list.Add(new DebuggerValue(debugger, v));
 					return list.ToArray();
 				});
@@ -142,7 +142,7 @@ namespace dnSpy.Debugger.Scripting {
 			get {
 				return debugger.Dispatcher.UI(() => {
 					var list = new List<IDebuggerValue>();
-					foreach (var v in frame.ILLocals)
+					foreach (var v in CorFrame.ILLocals)
 						list.Add(new DebuggerValue(debugger, v));
 					return list.ToArray();
 				});
@@ -153,7 +153,7 @@ namespace dnSpy.Debugger.Scripting {
 			get {
 				return debugger.Dispatcher.UI(() => {
 					var list = new List<IDebuggerType>();
-					foreach (var t in frame.TypeParameters)
+					foreach (var t in CorFrame.TypeParameters)
 						list.Add(new DebuggerType(debugger, t));
 					return list.ToArray();
 				});
@@ -177,11 +177,20 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		internal CorFrame CorFrame {
-			get { return frame; }
+			get {
+				if (frame.IsNeutered) {
+					var t = debugger.TryGetNewCorFrameUI(token, stackStart, stackEnd);
+					if (t != null) {
+						frame = t.Item1;
+						frameNo = t.Item2;
+					}
+				}
+				return frame;
+			}
 		}
+		CorFrame frame;
 
 		readonly Debugger debugger;
-		readonly CorFrame frame;
 		readonly int hashCode;
 		readonly uint nativeFrameIP;
 		readonly uint token;
@@ -213,28 +222,28 @@ namespace dnSpy.Debugger.Scripting {
 
 		public IDebuggerValue GetLocal(uint index) {
 			return debugger.Dispatcher.UI(() => {
-				var value = frame.GetILLocal(index);
+				var value = CorFrame.GetILLocal(index);
 				return value == null ? null : new DebuggerValue(debugger, value);
 			});
 		}
 
 		public IDebuggerValue GetLocal(int index) {
 			return debugger.Dispatcher.UI(() => {
-				var value = frame.GetILLocal(index);
+				var value = CorFrame.GetILLocal(index);
 				return value == null ? null : new DebuggerValue(debugger, value);
 			});
 		}
 
 		public IDebuggerValue GetArgument(uint index) {
 			return debugger.Dispatcher.UI(() => {
-				var value = frame.GetILArgument(index);
+				var value = CorFrame.GetILArgument(index);
 				return value == null ? null : new DebuggerValue(debugger, value);
 			});
 		}
 
 		public IDebuggerValue GetArgument(int index) {
 			return debugger.Dispatcher.UI(() => {
-				var value = frame.GetILArgument(index);
+				var value = CorFrame.GetILArgument(index);
 				return value == null ? null : new DebuggerValue(debugger, value);
 			});
 		}
@@ -242,7 +251,7 @@ namespace dnSpy.Debugger.Scripting {
 		public IDebuggerValue[] GetLocals(ILCodeKind kind) {
 			return debugger.Dispatcher.UI(() => {
 				var list = new List<IDebuggerValue>();
-				foreach (var v in frame.GetILLocals((dndbg.COM.CorDebug.ILCodeKind)kind))
+				foreach (var v in CorFrame.GetILLocals((dndbg.COM.CorDebug.ILCodeKind)kind))
 					list.Add(new DebuggerValue(debugger, v));
 				return list.ToArray();
 			});
@@ -250,21 +259,21 @@ namespace dnSpy.Debugger.Scripting {
 
 		public IDebuggerValue GetLocal(ILCodeKind kind, uint index) {
 			return debugger.Dispatcher.UI(() => {
-				var value = frame.GetILLocal((dndbg.COM.CorDebug.ILCodeKind)kind, index);
+				var value = CorFrame.GetILLocal((dndbg.COM.CorDebug.ILCodeKind)kind, index);
 				return value == null ? null : new DebuggerValue(debugger, value);
 			});
 		}
 
 		public IDebuggerValue GetLocal(ILCodeKind kind, int index) {
 			return debugger.Dispatcher.UI(() => {
-				var value = frame.GetILLocal((dndbg.COM.CorDebug.ILCodeKind)kind, index);
+				var value = CorFrame.GetILLocal((dndbg.COM.CorDebug.ILCodeKind)kind, index);
 				return value == null ? null : new DebuggerValue(debugger, value);
 			});
 		}
 
 		public IDebuggerCode GetCode(ILCodeKind kind) {
 			return debugger.Dispatcher.UI(() => {
-				var code = frame.GetCode((dndbg.COM.CorDebug.ILCodeKind)kind);
+				var code = CorFrame.GetCode((dndbg.COM.CorDebug.ILCodeKind)kind);
 				return code == null ? null : new DebuggerCode(debugger, code);
 			});
 		}
@@ -273,7 +282,7 @@ namespace dnSpy.Debugger.Scripting {
 			List<IDebuggerType> typeGenArgsTmp = null, methGenArgsTmp = null;
 			bool res = debugger.Dispatcher.UI(() => {
 				List<CorType> corTypeGenArgs, corMethGenArgs;
-				var res2 = frame.GetTypeAndMethodGenericParameters(out corTypeGenArgs, out corMethGenArgs);
+				var res2 = CorFrame.GetTypeAndMethodGenericParameters(out corTypeGenArgs, out corMethGenArgs);
 				typeGenArgsTmp = new List<IDebuggerType>(corTypeGenArgs.Count);
 				methGenArgsTmp = new List<IDebuggerType>(corMethGenArgs.Count);
 				foreach (var t in corTypeGenArgs)
@@ -285,10 +294,6 @@ namespace dnSpy.Debugger.Scripting {
 			typeGenArgs = typeGenArgsTmp;
 			methGenArgs = methGenArgsTmp;
 			return res;
-		}
-
-		public IStackFrame TryGetNewFrame() {
-			return debugger.Dispatcher.UI(() => debugger.TryGetNewFrameUI(token, stackStart, stackEnd));
 		}
 
 		public void StepInto() {
@@ -397,7 +402,7 @@ namespace dnSpy.Debugger.Scripting {
 
 		public override bool Equals(object obj) {
 			var other = obj as StackFrame;
-			return other != null && other.frame == frame;
+			return other != null && other.CorFrame == CorFrame;
 		}
 
 		public override int GetHashCode() {
@@ -405,15 +410,15 @@ namespace dnSpy.Debugger.Scripting {
 		}
 
 		public void Write(ISyntaxHighlightOutput output, TypeFormatFlags flags) {
-			debugger.Dispatcher.UI(() => frame.Write(new OutputConverter(output), (TypePrinterFlags)flags));
+			debugger.Dispatcher.UI(() => CorFrame.Write(new OutputConverter(output), (TypePrinterFlags)flags));
 		}
 
 		public string ToString(TypeFormatFlags flags) {
-			return debugger.Dispatcher.UI(() => frame.ToString((TypePrinterFlags)flags));
+			return debugger.Dispatcher.UI(() => CorFrame.ToString((TypePrinterFlags)flags));
 		}
 
 		public override string ToString() {
-			return debugger.Dispatcher.UI(() => frame.ToString());
+			return debugger.Dispatcher.UI(() => CorFrame.ToString());
 		}
 	}
 }

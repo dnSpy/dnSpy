@@ -593,6 +593,8 @@ namespace dnSpy.Debugger.Locals {
 			}
 
 			CorValue GetNewCorValue() {
+				if (!theDebugger.IsDebugging)
+					return null;
 				if (locals.frameInfo == null)
 					return null;
 				var frame = locals.frameInfo.ValueContext.FrameCouldBeNeutered;
