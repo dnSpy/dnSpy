@@ -947,4 +947,7 @@
   <data name="ShortCutKeyCtrlShiftW" xml:space="preserve">
     <value>Ctrl+Shift+W</value>
   </data>
+  <data name="About_Wiki" xml:space="preserve">
+    <value>_Wiki</value>
+  </data>
 </root>

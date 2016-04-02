@@ -81,7 +81,21 @@ namespace dnSpy.MainApp {
 		}
 	}
 
-	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_SourceCode", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 30)]
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_Wiki", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 30)]
+	sealed class OpenWikiUrlCommand : MenuItemBase {
+		readonly IMessageBoxManager messageBoxManager;
+
+		[ImportingConstructor]
+		OpenWikiUrlCommand(IMessageBoxManager messageBoxManager) {
+			this.messageBoxManager = messageBoxManager;
+		}
+
+		public override void Execute(IMenuItemContext context) {
+			AboutHelpers.OpenWebPage(AboutHelpers.BASE_URL + @"wiki", messageBoxManager);
+		}
+	}
+
+	[ExportMenuItem(OwnerGuid = MenuConstants.APP_MENU_HELP_GUID, Header = "res:About_SourceCode", Group = MenuConstants.GROUP_APP_MENU_HELP_LINKS, Order = 40)]
 	sealed class OpenSourceCodeUrlCommand : MenuItemBase {
 		readonly IMessageBoxManager messageBoxManager;
 

@@ -115,6 +115,15 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to _Wiki.
+        /// </summary>
+        public static string About_Wiki {
+            get {
+                return ResourceManager.GetString("About_Wiki", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to dnSpy is licensed under GPLv3..
         /// </summary>
         public static string AboutScreen_LicenseInfo {
