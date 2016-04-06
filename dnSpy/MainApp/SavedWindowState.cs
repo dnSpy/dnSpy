@@ -18,6 +18,7 @@
 */
 
 using System;
+using System.Diagnostics;
 using System.Windows;
 using dnSpy.Contracts.Settings;
 using dnSpy.Shared.Controls;
@@ -33,6 +34,13 @@ namespace dnSpy.MainApp {
 
 		public SavedWindowState(MetroWindow window) {
 			this.Bounds = window.RestoreBounds;
+			var source = PresentationSource.FromVisual(window);
+			Debug.Assert(source != null);
+			if (source != null) {
+				var t = this.Bounds;
+				t = Rect.Transform(Bounds, source.CompositionTarget.TransformToDevice);
+				this.Bounds = new Rect(t.TopLeft, this.Bounds.Size);
+			}
 			this.IsFullScreen = window.IsFullScreen;
 			this.WindowState = window.WindowState;
 		}
@@ -94,13 +102,15 @@ namespace dnSpy.MainApp {
 			if (savedBounds == Rect.Empty)
 				return null;
 
-			var bounds = Rect.Transform(savedBounds, PresentationSource.FromVisual(window).CompositionTarget.TransformToDevice);
 			const int MIN_WIDTH = 50, MIN_HEIGHT = 50;
 			foreach (var screen in System.Windows.Forms.Screen.AllScreens) {
-				var rect = new System.Drawing.Rectangle((int)bounds.X, (int)bounds.Y, (int)bounds.Width, (int)bounds.Height);
+				var rect = new System.Drawing.Rectangle((int)savedBounds.X, (int)savedBounds.Y, (int)savedBounds.Width, (int)savedBounds.Height);
 				rect.Intersect(screen.Bounds);
-				if (rect.Height >= MIN_HEIGHT && rect.Width >= MIN_WIDTH)
-					return savedBounds;
+				if (rect.Height >= MIN_HEIGHT && rect.Width >= MIN_WIDTH) {
+					var t = savedBounds;
+					t = Rect.Transform(savedBounds, PresentationSource.FromVisual(window).CompositionTarget.TransformFromDevice);
+					return new Rect(t.TopLeft, savedBounds.Size);
+				}
 			}
 
 			return null;

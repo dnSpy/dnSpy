@@ -60,13 +60,15 @@ namespace dnSpy.Shared.Controls {
 				Debug.Assert(w > 0 && !double.IsNaN(w));
 				SizeToContent = SizeToContent.Manual;
 
-				double scale = DisableDpiScaleAtStartup ? 1 : WpfPixelScaleFactor;
-				Width = w * scale;
-				Height = h * scale;
+				if (!wpfSupportsPerMonitorDpi) {
+					double scale = DisableDpiScaleAtStartup ? 1 : WpfPixelScaleFactor;
+					Width = w * scale;
+					Height = h * scale;
 
-				if (WindowStartupLocation == WindowStartupLocation.CenterOwner || WindowStartupLocation == WindowStartupLocation.CenterScreen) {
-					Left -= (w * scale - w) / 2;
-					Top -= (h * scale - h) / 2;
+					if (WindowStartupLocation == WindowStartupLocation.CenterOwner || WindowStartupLocation == WindowStartupLocation.CenterScreen) {
+						Left -= (w * scale - w) / 2;
+						Top -= (h * scale - h) / 2;
+					}
 				}
 			}
 
@@ -131,10 +133,12 @@ namespace dnSpy.Shared.Controls {
 					const int SWP_NOZORDER = 0x0004;
 					const int SWP_NOACTIVATE = 0x0010;
 					const int SWP_NOOWNERZORDER = 0x0200;
-					bool b = SetWindowPos(hwnd, IntPtr.Zero, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
-					Debug.Assert(b);
+					if (!wpfSupportsPerMonitorDpi) {
+						bool b = SetWindowPos(hwnd, IntPtr.Zero, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
+						Debug.Assert(b);
+						handled = true;
+					}
 
-					handled = true;
 					return IntPtr.Zero;
 				}
 				finally {
@@ -147,6 +151,8 @@ namespace dnSpy.Shared.Controls {
 
 		double SafeWpfPixelScaleFactor {
 			get {
+				if (wpfSupportsPerMonitorDpi)
+					return 1;
 				if (wpfDpi == 0)
 					return 1;
 				return WpfPixelScaleFactor;
@@ -155,6 +161,8 @@ namespace dnSpy.Shared.Controls {
 
 		double WpfPixelScaleFactor {
 			get {
+				if (wpfSupportsPerMonitorDpi)
+					return 1;
 				Debug.Assert(wpfDpi != 0);
 				if (wpfDpi == 0)
 					return 1;
@@ -166,17 +174,23 @@ namespace dnSpy.Shared.Controls {
 			get { return windowDpi; }
 			set {
 				if (windowDpi != value) {
-					var origScale = SafeWpfPixelScaleFactor;
-					if (origScale == 0)
-						origScale = 1;
-					windowDpi = value;
-					var relScale = WpfPixelScaleFactor / origScale;
-					MinWidth *= relScale;
-					MinHeight *= relScale;
-					MaxWidth *= relScale;
-					MaxHeight *= relScale;
-					UpdateWindowChromeProperties();
-					ScaleWindow(WpfPixelScaleFactor);
+					if (wpfSupportsPerMonitorDpi) {
+						windowDpi = value;
+						SetTextFormattingMode(this, WpfPixelScaleFactor);
+					}
+					else {
+						var origScale = SafeWpfPixelScaleFactor;
+						if (origScale == 0)
+							origScale = 1;
+						windowDpi = value;
+						var relScale = WpfPixelScaleFactor / origScale;
+						MinWidth *= relScale;
+						MinHeight *= relScale;
+						MaxWidth *= relScale;
+						MaxHeight *= relScale;
+						UpdateWindowChromeProperties();
+						ScaleWindow(WpfPixelScaleFactor);
+					}
 
 					if (WindowDPIChanged != null)
 						WindowDPIChanged(this, EventArgs.Empty);
@@ -189,6 +203,8 @@ namespace dnSpy.Shared.Controls {
 		public event EventHandler WindowDPIChanged;
 
 		void UpdateWindowChromeProperties() {
+			if (wpfSupportsPerMonitorDpi)
+				return;
 			var wc = (WindowChrome)GetValue(WindowChrome.WindowChromeProperty);
 			Debug.Assert(wc != null);
 			if (wc != null) {
@@ -198,6 +214,8 @@ namespace dnSpy.Shared.Controls {
 		}
 
 		void ScaleWindow(double scale) {
+			if (wpfSupportsPerMonitorDpi)
+				return;
 			var border = GetVisualChild(0) as Border;
 			Debug.Assert(border != null);
 			var vc = border == null ? null : VisualTreeHelper.GetChild(border, 0);
@@ -484,7 +502,10 @@ namespace dnSpy.Shared.Controls {
 
 		static MetroWindow() {
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(MetroWindow), new FrameworkPropertyMetadata(typeof(MetroWindow)));
+			// Available in .NET Framework 4.6.2
+			wpfSupportsPerMonitorDpi = typeof(Window).GetEvent("DpiChanged") != null;
 		}
+		static readonly bool wpfSupportsPerMonitorDpi;
 
 		// If these get updated, also update the templates if necessary
 		static readonly CornerRadius CornerRadius = new CornerRadius(0, 0, 0, 0);
@@ -559,7 +580,7 @@ namespace dnSpy.Shared.Controls {
 
 			var mwin = win as MetroWindow;
 			Debug.Assert(mwin != null);
-			var scale = mwin == null ? 0 : mwin.WpfPixelScaleFactor;
+			var scale = mwin?.WpfPixelScaleFactor ?? 1;
 
 			var p = win.PointToScreen(new Point(0 * scale, GridCaptionHeight.Value * scale));
 			WindowUtils.ShowSystemMenu(win, p);
@@ -570,21 +591,29 @@ namespace dnSpy.Shared.Controls {
 		}
 
 		void SetScaleTransform(DependencyObject textObj, DependencyObject vc, double scale) {
+			Debug.Assert(textObj != this || !wpfSupportsPerMonitorDpi);
 			if (vc == null || textObj == null)
 				return;
 
-			if (scale == 1) {
+			if (scale == 1)
 				vc.SetValue(LayoutTransformProperty, Transform.Identity);
+			else {
+				var st = new ScaleTransform(scale, scale);
+				st.Freeze();
+				vc.SetValue(LayoutTransformProperty, st);
+			}
+
+			SetTextFormattingMode(textObj, scale);
+		}
+
+		void SetTextFormattingMode(DependencyObject textObj, double scale) {
+			if (scale == 1) {
 				if (WindowDPI == 96)
 					TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Display);
 				else
 					TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Ideal);
 			}
 			else {
-				var st = new ScaleTransform(scale, scale);
-				st.Freeze();
-				vc.SetValue(LayoutTransformProperty, st);
-
 				// We must set it to Ideal or the text will be blurry
 				TextOptions.SetTextFormattingMode(textObj, TextFormattingMode.Ideal);
 			}
