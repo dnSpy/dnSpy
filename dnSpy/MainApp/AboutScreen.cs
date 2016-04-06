@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -139,6 +140,21 @@ namespace dnSpy.MainApp {
 			public readonly Assembly Assembly;
 			public readonly PluginInfo PluginInfo;
 
+			string VersionString {
+				get {
+					var version = Assembly.GetName().Version;
+					try {
+						var info = FileVersionInfo.GetVersionInfo(Assembly.Location);
+						var fileVer = info.FileVersion;
+						if (!string.IsNullOrEmpty(fileVer))
+							return fileVer;
+					}
+					catch {
+					}
+					return version.ToString();
+				}
+			}
+
 			public string Name {
 				get {
 					var s = Path.GetFileNameWithoutExtension(Assembly.Location);
@@ -146,6 +162,16 @@ namespace dnSpy.MainApp {
 					if (s.EndsWith(PLUGIN, StringComparison.OrdinalIgnoreCase))
 						s = s.Substring(0, s.Length - PLUGIN.Length);
 					return s;
+				}
+			}
+
+			public string NameAndVersion {
+				get {
+					var name = Name;
+					var verStr = VersionString;
+					if (string.IsNullOrEmpty(verStr))
+						return name;
+					return string.Format($"{name} ({verStr})");
 				}
 			}
 
@@ -187,7 +213,7 @@ namespace dnSpy.MainApp {
 			output.WriteLine(dnSpy_Resources.AboutScreen_LoadedFiles, TextTokenKind.Text);
 			foreach (var info in GetInfos()) {
 				output.WriteLine();
-				WriteShortInfo(output, info.Name);
+				WriteShortInfo(output, info.NameAndVersion);
 				WriteShortInfo(output, info.Copyright);
 				WriteShortInfo(output, info.ShortDescription);
 			}
