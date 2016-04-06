@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using dnSpy.Contracts.App;
 
@@ -125,7 +126,7 @@ namespace dnSpy.MainApp {
 						break;
 
 					case "--settings-file":
-						settingsFilename = next;
+						settingsFilename = GetFullPath(next);
 						i++;
 						break;
 
@@ -218,8 +219,17 @@ namespace dnSpy.MainApp {
 					}
 				}
 				else
-					filenames.Add(arg);
+					filenames.Add(GetFullPath(arg));
 			}
+		}
+
+		static string GetFullPath(string file) {
+			try {
+				return Path.GetFullPath(file);
+			}
+			catch {
+			}
+			return file;
 		}
 
 		public bool HasArgument(string argName) {
