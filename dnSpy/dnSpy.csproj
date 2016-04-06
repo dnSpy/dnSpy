@@ -270,6 +270,7 @@
     <Compile Include="Plugin\PluginConfig.cs" />
     <Compile Include="Plugin\PluginConfigReader.cs" />
     <Compile Include="Plugin\PluginManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.Shared.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

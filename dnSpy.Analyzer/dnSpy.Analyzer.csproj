@@ -117,6 +117,9 @@
     <Resource Include="Images\Search.png" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\dnSpy\Properties\AssemblyInfo.Shared.cs">
+      <Link>Properties\AssemblyInfo.Shared.cs</Link>
+    </Compile>
     <EmbeddedResource Include="Properties\dnSpy.Analyzer.Resources.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <LastGenOutput>dnSpy.Analyzer.Resources.Designer.cs</LastGenOutput>
