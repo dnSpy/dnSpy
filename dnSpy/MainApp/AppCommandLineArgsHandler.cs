@@ -95,7 +95,6 @@ namespace dnSpy.MainApp {
 				return AppToolWindowLocation.Bottom;
 			case "d":
 			case "default":
-				return AppToolWindowLocation.Default;
 			case "dh":
 			case "default-horiz":
 			case "default-horizontal":
