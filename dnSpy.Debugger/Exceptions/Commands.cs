@@ -49,6 +49,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 			cmds = wpfCommandManager.GetCommands(CommandConstants.GUID_DEBUGGER_EXCEPTIONS_CONTROL);
 			cmds.Add(new RelayCommand(a => exceptionsContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.F);
+			cmds.Add(new RelayCommand(a => exceptionsContent.Value.FocusSearchTextBox()), ModifierKeys.Control, Key.E);
 		}
 	}
 
