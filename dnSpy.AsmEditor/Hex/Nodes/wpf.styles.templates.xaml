@@ -2668,6 +2668,7 @@
     <DataTemplate DataType="{x:Type tnhex:MetaDataTable1InfoVM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
+                ScrollViewer.IsDeferredScrollingEnabled="True"
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
@@ -2723,6 +2724,7 @@
     <DataTemplate DataType="{x:Type tnhex:MetaDataTable2InfoVM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
+                ScrollViewer.IsDeferredScrollingEnabled="True"
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
@@ -2785,6 +2787,7 @@
     <DataTemplate DataType="{x:Type tnhex:MetaDataTable3InfoVM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
+                ScrollViewer.IsDeferredScrollingEnabled="True"
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
@@ -2854,6 +2857,7 @@
     <DataTemplate DataType="{x:Type tnhex:MetaDataTable4InfoVM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
+                ScrollViewer.IsDeferredScrollingEnabled="True"
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
@@ -2930,6 +2934,7 @@
     <DataTemplate DataType="{x:Type tnhex:MetaDataTable5InfoVM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
+                ScrollViewer.IsDeferredScrollingEnabled="True"
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
@@ -3013,6 +3018,7 @@
     <DataTemplate DataType="{x:Type tnhex:MetaDataTable6InfoVM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
+                ScrollViewer.IsDeferredScrollingEnabled="True"
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
@@ -3103,6 +3109,7 @@
     <DataTemplate DataType="{x:Type tnhex:MetaDataTable9InfoVM}">
         <Border TextBlock.Foreground="{DynamicResource PEHexForeground}" Background="{DynamicResource PEHexBackground}" BorderBrush="{DynamicResource PEHexBorder}" BorderThickness="1" SnapsToDevicePixels="True">
             <ListView
+                ScrollViewer.IsDeferredScrollingEnabled="True"
                 VirtualizingStackPanel.IsVirtualizing="True"
                 VirtualizingStackPanel.VirtualizationMode="Recycling"
                 mvvm:InitDataTemplateAP.Initialize="True"
