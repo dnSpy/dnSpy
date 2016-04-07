@@ -168,7 +168,7 @@ namespace dnSpy.Files.TreeView {
 				return "Silverlight " + versionString;
 
             case "MonoAndroid":
-                return "Mono Android" + versionString;
+                return "Mono Android " + versionString;
 
             default:
 				Debug.Fail("Unknown target framework: " + id);
