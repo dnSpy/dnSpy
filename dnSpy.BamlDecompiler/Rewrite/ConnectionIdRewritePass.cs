@@ -128,7 +128,7 @@ namespace dnSpy.BamlDecompiler.Rewrite {
 				if (AttachedType != null) {
 					var clrNs = AttachedType.ReflectionNamespace;
 					var xmlNs = ctx.XmlNs.LookupXmlns(AttachedType.DefinitionAssembly, clrNs);
-					name = ctx.GetXmlNamespace(xmlNs).GetName(EventName);
+					name = ctx.GetXmlNamespace(xmlNs)?.GetName(EventName) ?? AttachedType.Name + "." + EventName;
 				}
 				else
 					name = EventName;
