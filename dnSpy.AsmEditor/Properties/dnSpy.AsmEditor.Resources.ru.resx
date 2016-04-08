@@ -320,7 +320,7 @@
     <comment>the delete key</comment>
   </data>
   <data name="DeleteEventCommand" xml:space="preserve">
-    <value>Delete Event</value>
+    <value>Удалить событие</value>
   </data>
   <data name="DeleteEvents" xml:space="preserve">
     <value>Удалить {0} событий</value>
@@ -485,7 +485,7 @@
     <value>C_lass</value>
   </data>
   <data name="GP_Constraints" xml:space="preserve">
-    <value>Constraints</value>
+    <value>Ограничения</value>
   </data>
   <data name="GP_DefaultConstructor" xml:space="preserve">
     <value>_Default ctor</value>
@@ -503,7 +503,7 @@
     <value>N_umber</value>
   </data>
   <data name="GP_Struct" xml:space="preserve">
-    <value>_Struct</value>
+    <value>_Структ</value>
   </data>
   <data name="GP_Variance" xml:space="preserve">
     <value>_Variance</value>
@@ -512,7 +512,7 @@
     <value>{0} RVA</value>
   </data>
   <data name="HexField_Size" xml:space="preserve">
-    <value>{0} Size</value>
+    <value>{0} Размер</value>
   </data>
   <data name="HexField_UndoMessage_Write_Parent_Field" xml:space="preserve">
     <value>Write {0}.{1}</value>
@@ -731,19 +731,19 @@
     <value>Методы</value>
   </data>
   <data name="MoveDownCommand" xml:space="preserve">
-    <value>Move _Down</value>
+    <value>Переместить _Вниз</value>
   </data>
   <data name="MoveDown_ToolTip" xml:space="preserve">
-    <value>Move Down</value>
+    <value>Переместить вниз</value>
   </data>
   <data name="MoveUpCommand" xml:space="preserve">
-    <value>Move _Up</value>
+    <value>Переместить _Вверх</value>
   </data>
   <data name="MoveUp_ToolTip" xml:space="preserve">
     <value>Переместить вверх</value>
   </data>
   <data name="NamedArguments" xml:space="preserve">
-    <value>Named Arguments</value>
+    <value>Именованные аргументы</value>
   </data>
   <data name="NoName" xml:space="preserve">
     <value>&lt;&lt;no-name&gt;&gt;</value>
@@ -1140,28 +1140,28 @@ Are you sure you want to close the window?</value>
     <value>Create File Linked Resource</value>
   </data>
   <data name="CreateFileResourceCommand" xml:space="preserve">
-    <value>Create File Resource...</value>
+    <value>Создание файла ресурсов...</value>
   </data>
   <data name="CreateFileResourceCommand2" xml:space="preserve">
-    <value>Create File Resource</value>
+    <value>Создать файл ресурсов</value>
   </data>
   <data name="CreateImageListStreamerResourceCommand" xml:space="preserve">
-    <value>Create System.Windows.Forms.ImageListStreamer Resource...</value>
+    <value>Создание ресурса System.Windows.Forms.ImageListStreamer...</value>
   </data>
   <data name="CreateImageListStreamerResourceCommand2" xml:space="preserve">
-    <value>Create System.Windows.Forms.ImageListStreamer Resource</value>
+    <value>Создать ресурс System.Windows.Forms.ImageListStreamer</value>
   </data>
   <data name="CreateInterfaceImpl" xml:space="preserve">
     <value>Create Interface Impl</value>
   </data>
   <data name="CreateLocalType" xml:space="preserve">
-    <value>Create a Local Type</value>
+    <value>Создать локальный тип</value>
   </data>
   <data name="CreateMethodCommand" xml:space="preserve">
-    <value>Create Method...</value>
+    <value>Создание метода...</value>
   </data>
   <data name="CreateMethodCommand2" xml:space="preserve">
-    <value>Create Method</value>
+    <value>Создать метод</value>
   </data>
   <data name="CreateMethodSig" xml:space="preserve">
     <value>Create MethodSig</value>
@@ -1173,10 +1173,10 @@ Are you sure you want to close the window?</value>
     <value>Create Multi File Resource</value>
   </data>
   <data name="CreateNestedTypeCommand" xml:space="preserve">
-    <value>Create Nested Type...</value>
+    <value>Создание вложенного типа...</value>
   </data>
   <data name="CreateNestedTypeCommand2" xml:space="preserve">
-    <value>Create Nested Type</value>
+    <value>Создать вложенный тип</value>
   </data>
   <data name="CreateNetModuleCommand" xml:space="preserve">
     <value>Create NetModule...</value>
@@ -1185,16 +1185,16 @@ Are you sure you want to close the window?</value>
     <value>Create NetModule</value>
   </data>
   <data name="CreatePropertyCommand" xml:space="preserve">
-    <value>Create Property...</value>
+    <value>Создание свойства...</value>
   </data>
   <data name="CreatePropertyCommand2" xml:space="preserve">
-    <value>Create Property</value>
+    <value>Создать свойство</value>
   </data>
   <data name="CreateResourceCommand" xml:space="preserve">
-    <value>Create Resource...</value>
+    <value>Создание ресурса...</value>
   </data>
   <data name="CreateResourceCommand2" xml:space="preserve">
-    <value>Create Resource</value>
+    <value>Создать ресурс</value>
   </data>
   <data name="CreateStreamResourceCommand" xml:space="preserve">
     <value>Create System.IO.Stream Resource...</value>
@@ -1203,37 +1203,37 @@ Are you sure you want to close the window?</value>
     <value>Create System.IO.Stream Resource</value>
   </data>
   <data name="CreateTypeCommand" xml:space="preserve">
-    <value>Create Type...</value>
+    <value>Создание типа...</value>
   </data>
   <data name="CreateTypeCommand2" xml:space="preserve">
-    <value>Create Type</value>
+    <value>Создать тип</value>
   </data>
   <data name="DeleteMethodCommand" xml:space="preserve">
-    <value>Delete Method</value>
+    <value>Удалить метод</value>
   </data>
   <data name="DeleteMethodsCommand" xml:space="preserve">
-    <value>Delete {0} methods</value>
+    <value>Удалить {0} методов</value>
   </data>
   <data name="DeleteNamespaceCommand" xml:space="preserve">
-    <value>Delete Namespace</value>
+    <value>Удалить пространство имен</value>
   </data>
   <data name="DeleteNamespacesCommand" xml:space="preserve">
-    <value>Delete {0} Namespaces</value>
+    <value>Удаление {0} пространств имен</value>
   </data>
   <data name="DeletePropertiesCommand" xml:space="preserve">
     <value>Delete {0} properties</value>
   </data>
   <data name="DeletePropertyCommand" xml:space="preserve">
-    <value>Delete Property</value>
+    <value>Удалить свойство</value>
   </data>
   <data name="DeleteResourceCommand" xml:space="preserve">
-    <value>Delete Resource</value>
+    <value>Удалить ресурс</value>
   </data>
   <data name="DeleteResourcesCommand" xml:space="preserve">
-    <value>Delete {0} resources</value>
+    <value>Удалить {0} ресурсов</value>
   </data>
   <data name="DeleteTypeCommand" xml:space="preserve">
-    <value>Delete Type</value>
+    <value>Удалить тип</value>
   </data>
   <data name="DeleteTypesCommand" xml:space="preserve">
     <value>Delete {0} types</value>
@@ -1293,25 +1293,25 @@ Are you sure you want to close the window?</value>
     <value>Type_Spec...</value>
   </data>
   <data name="EditPropertyCommand" xml:space="preserve">
-    <value>Edit Property...</value>
+    <value>Редактирование свойства...</value>
   </data>
   <data name="EditPropertyCommand2" xml:space="preserve">
-    <value>Edit Property</value>
+    <value>Редактировать свойство</value>
   </data>
   <data name="EditResourceCommand" xml:space="preserve">
-    <value>Edit Resource...</value>
+    <value>Редактирование ресурсов...</value>
   </data>
   <data name="EditResourceCommand2" xml:space="preserve">
-    <value>Edit Resource</value>
+    <value>Редактировать ресурсы</value>
   </data>
   <data name="EditResource_ContainsNoMetadata" xml:space="preserve">
-    <value>_Does not contain metadata</value>
+    <value>_Метаданные отсутствуют</value>
   </data>
   <data name="EditResource_File" xml:space="preserve">
     <value>_Файл</value>
   </data>
   <data name="EditResource_Hash" xml:space="preserve">
-    <value>_Hash</value>
+    <value>_Хеш</value>
   </data>
   <data name="EditSwitchInstructionOperand" xml:space="preserve">
     <value>Edit Switch Operand</value>
@@ -1323,34 +1323,34 @@ Are you sure you want to close the window?</value>
     <value>Редактировать тип</value>
   </data>
   <data name="EH_Command1" xml:space="preserve">
-    <value>Add New Exception Handler Be_fore Selection</value>
+    <value>Добавить новый обработчик исключений Пе_ред выделенным</value>
   </data>
   <data name="EH_Command2" xml:space="preserve">
-    <value>Add New Exception Handler After Sele_ction</value>
+    <value>Добавить новый обработчик исключений По_сле выделенного</value>
   </data>
   <data name="EH_Command3" xml:space="preserve">
-    <value>_Append New Exception Handler</value>
+    <value>_Добавить новый обработчик исключений</value>
   </data>
   <data name="EH_Command4" xml:space="preserve">
-    <value>_Remove Exception Handler</value>
+    <value>_Удалить обработчик исключений</value>
   </data>
   <data name="EH_Command5" xml:space="preserve">
-    <value>_Remove Exception Handlers</value>
+    <value>_Удалить обработчики исключений</value>
   </data>
   <data name="EH_Command6" xml:space="preserve">
-    <value>Remo_ve All Exception Handlers</value>
+    <value>Удали_ть все обработчики исключений</value>
   </data>
   <data name="EmptyFilename" xml:space="preserve">
-    <value>&lt;empty filename&gt;</value>
+    <value>&lt;пустое имя файла&gt;</value>
   </data>
   <data name="Error_AssemblyFieldMustNotBeEmpty" xml:space="preserve">
-    <value>Assembly must not be empty.</value>
+    <value>Сборка не должна быть пустой.</value>
   </data>
   <data name="Error_CouldNotFindMethod" xml:space="preserve">
-    <value>Could not find method: {0}</value>
+    <value>Не удалось найти метод: {0}</value>
   </data>
   <data name="Error_CouldNotFindTypeOrItsAssembly" xml:space="preserve">
-    <value>Could not find the type or its assembly.</value>
+    <value>Не удалось найти тип или его сборку.</value>
   </data>
   <data name="Error_CouldNotLoadType" xml:space="preserve">
     <value>Could not load type '{0}': {1}</value>
@@ -1365,40 +1365,40 @@ Are you sure you want to close the window?</value>
     <value>It's not possible to create an empty image list</value>
   </data>
   <data name="Error_Filename_ContainsInvalidPathCharacter" xml:space="preserve">
-    <value>Filename contains at least one invalid path character.</value>
+    <value>Имя файла содержит недопустимые символы.</value>
   </data>
   <data name="Error_Filename_Empty" xml:space="preserve">
-    <value>Filename can't be empty.</value>
+    <value>Имя файла не может быть пустым.</value>
   </data>
   <data name="Error_Filename_FolderDoesNotExist" xml:space="preserve">
-    <value>Folder '{0}' doesn't exist.</value>
+    <value>Папка «{0}» не существует.</value>
   </data>
   <data name="Error_Filename_FolderExists" xml:space="preserve">
-    <value>A folder with the same name as the filename already exists.</value>
+    <value>Уже существует папка с тем же именем, как имя файла.</value>
   </data>
   <data name="Error_Filename_OnlyWhitespace" xml:space="preserve">
-    <value>Filename can't contain only white space</value>
+    <value>Имя файла не может содержать только пустые символы</value>
   </data>
   <data name="Error_Filename_ReservedOSFilename" xml:space="preserve">
-    <value>The filename is a reserved operating system filename and can't be used.</value>
+    <value>Имя файла зарезервировано операционной системой и не может быть использовано.</value>
   </data>
   <data name="Error_Filename_TooLong" xml:space="preserve">
-    <value>Filename is too long.</value>
+    <value>Имя файла слишком длинное.</value>
   </data>
   <data name="Error_InstrHasBeenRemoved" xml:space="preserve">
-    <value>Instruction has been removed</value>
+    <value>Инструкция была удалена</value>
   </data>
   <data name="Error_InstrTargetHasBeenRemoved" xml:space="preserve">
-    <value>Instruction target has been removed</value>
+    <value>Целевая инструкция была удалена</value>
   </data>
   <data name="Error_InvalidResourceData" xml:space="preserve">
-    <value>Can't use this data: {0}</value>
+    <value>Нельзя использовать эти данные: {0}</value>
   </data>
   <data name="Error_LocalHasBeenRemoved" xml:space="preserve">
     <value>Local has been removed</value>
   </data>
   <data name="Error_NewResourceDataMustBeImage" xml:space="preserve">
-    <value>New data must be an image. Error: {0}</value>
+    <value>Новые данные должны быть изображением. Ошибка: {0}</value>
   </data>
   <data name="Error_NotNetModule" xml:space="preserve">
     <value>{0} is not a NetModule</value>
@@ -1407,52 +1407,52 @@ Are you sure you want to close the window?</value>
     <value>'{0}' is not a strong name key file (snk)</value>
   </data>
   <data name="Error_OnlyInstrsCanBeSelected" xml:space="preserve">
-    <value>Only instructions can be selected</value>
+    <value>Можно выбрать только инструкцию</value>
   </data>
   <data name="Error_OpenFile" xml:space="preserve">
-    <value>Error opening file: {0}</value>
+    <value>Ошибка при открытии файла: {0}</value>
   </data>
   <data name="Error_OpenImage" xml:space="preserve">
     <value>Could not open file or it's not an image. Error: {0}</value>
   </data>
   <data name="Error_OpMustBeField" xml:space="preserve">
-    <value>Operand must be a field</value>
+    <value>Операнд должен быть полем</value>
   </data>
   <data name="Error_OpMustBeInstr" xml:space="preserve">
-    <value>Operand must be an instruction</value>
+    <value>Операнд должен быть инструкцией</value>
   </data>
   <data name="Error_OpMustBeListInstrs" xml:space="preserve">
-    <value>Operand must be a list of instructions</value>
+    <value>Операнд должен быть списком инструкций</value>
   </data>
   <data name="Error_OpMustBeLocal" xml:space="preserve">
-    <value>Operand must be a local</value>
+    <value>Операнд должен быть локальный</value>
   </data>
   <data name="Error_OpMustBeMethod" xml:space="preserve">
-    <value>Operand must be a method</value>
+    <value>Операнд должен быть методом</value>
   </data>
   <data name="Error_OpMustBeMethodSig" xml:space="preserve">
     <value>Operand must be a method signature</value>
   </data>
   <data name="Error_OpMustBeParam" xml:space="preserve">
-    <value>Operand must be a parameter</value>
+    <value>Операнд должен быть параметром</value>
   </data>
   <data name="Error_OpMustBeType" xml:space="preserve">
-    <value>Operand must be a type</value>
+    <value>Операнд должен быть типом</value>
   </data>
   <data name="Error_OpMustBeTypeMethodField" xml:space="preserve">
-    <value>Operand must be a type, method, field</value>
+    <value>Операнд должен быть тип, метод, поле</value>
   </data>
   <data name="Error_ReadingFiles" xml:space="preserve">
-    <value>Error reading files: {0}</value>
+    <value>Ошибка при чтении файлов: {0}</value>
   </data>
   <data name="Error_SwitchInstrTargetHasBeenRemoved" xml:space="preserve">
     <value>Switch instruction target has been removed</value>
   </data>
   <data name="Error_VersionStringTooLong" xml:space="preserve">
-    <value>Version string is too long</value>
+    <value>Строка версии слишком длинная</value>
   </data>
   <data name="ExceptionHandlersTab" xml:space="preserve">
-    <value>Exception Handlers</value>
+    <value>Обработчики исключений</value>
   </data>
   <data name="GenericParametersTab" xml:space="preserve">
     <value>Generic Params</value>
@@ -2145,7 +2145,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>_Visibility</value>
   </data>
   <data name="GP_GenericParamConstraints" xml:space="preserve">
-    <value>Constraints</value>
+    <value>Ограничения</value>
   </data>
   <data name="Metadata_Sorted_Rows" xml:space="preserve">
     <value>Sorted</value>
