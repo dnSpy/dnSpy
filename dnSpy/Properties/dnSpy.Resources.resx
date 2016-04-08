@@ -138,12 +138,6 @@
   <data name="AllFiles" xml:space="preserve">
     <value>All Files</value>
   </data>
-  <data name="Arch_AnyCPU" xml:space="preserve">
-    <value>AnyCPU</value>
-  </data>
-  <data name="Arch_AnyCPU_Preferred" xml:space="preserve">
-    <value>AnyCPU (32-bit preferred)</value>
-  </data>
   <data name="AssemblyExplorerCommand" xml:space="preserve">
     <value>Assembly Ex_plorer</value>
   </data>
@@ -587,9 +581,6 @@
   </data>
   <data name="TextEditorNewFormatterWarningMsg" xml:space="preserve">
     <value>The text editor is using the new faster text formatter. It doesn't support word wrap or all unicode characters. Enable/disable it in the options.</value>
-  </data>
-  <data name="UnknownDotNetRuntime" xml:space="preserve">
-    <value>Unknown runtime</value>
   </data>
   <data name="UnknownError" xml:space="preserve">
     <value>An unknown error occurred</value>

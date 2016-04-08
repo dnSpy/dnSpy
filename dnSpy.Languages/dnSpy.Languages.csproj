@@ -89,6 +89,8 @@
       <DependentUpon>Languages.Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Settings\DecompilerOption.cs" />
+    <Compile Include="TargetFrameworkInfo.cs" />
+    <Compile Include="TargetFrameworkUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\dnlib\src\dnlib.csproj">

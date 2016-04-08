@@ -28,6 +28,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
+using dnSpy.Languages;
 using dnSpy.Shared.Files.TreeView;
 using dnSpy.Shared.Highlighting;
 
@@ -64,7 +65,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		protected override void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(ExeUtils.GetArchString(DnSpyFile.PEImage.ImageNTHeaders.FileHeader.Machine), TextTokenKind.EnumField);
+			output.Write(TargetFrameworkUtils.GetArchString(DnSpyFile.PEImage.ImageNTHeaders.FileHeader.Machine), TextTokenKind.EnumField);
 
 			output.WriteLine();
 			output.WriteFilename(DnSpyFile.Filename);

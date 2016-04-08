@@ -282,37 +282,11 @@ namespace dnSpy.Languages {
 		}
 
 		protected static string GetPlatformDisplayName(ModuleDef module) {
-			switch (module.Machine) {
-			case Machine.I386:
-				if (module.Is32BitPreferred)
-					return Languages_Resources.Decompile_AnyCPU32BitPreferred;
-				else if (module.Is32BitRequired)
-					return "x86";
-				else
-					return Languages_Resources.Decompile_AnyCPU64BitPreferred;
-			case Machine.AMD64:
-				return "x64";
-			case Machine.IA64:
-				return "Itanium";
-			case Machine.ARMNT:
-				return "ARM";
-			case Machine.ARM64:
-				return "ARM64";
-			default:
-				return module.Machine.ToString();
-			}
+			return TargetFrameworkUtils.GetArchString(module);
 		}
 
 		protected static string GetRuntimeDisplayName(ModuleDef module) {
-			if (module.IsClr10)
-				return ".NET 1.0";
-			if (module.IsClr11)
-				return ".NET 1.1";
-			if (module.IsClr20)
-				return ".NET 2.0";
-			if (module.IsClr40)
-				return ".NET 4.0";
-			return null;
+			return TargetFrameworkInfo.Create(module).ToString();
 		}
 
 		public virtual bool CanDecompile(DecompilationType decompilationType) {

@@ -29,6 +29,7 @@ using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
+using dnSpy.Languages;
 using dnSpy.Shared.Files.TreeView;
 using dnSpy.Shared.Highlighting;
 
@@ -86,10 +87,10 @@ namespace dnSpy.Files.TreeView {
 			output.WriteModule(DnSpyFile.ModuleDef.Name);
 
 			output.WriteLine();
-			output.Write(ExeUtils.GetDotNetVersion(DnSpyFile.ModuleDef), TextTokenKind.EnumField);
+			output.Write(TargetFrameworkInfo.Create(DnSpyFile.ModuleDef).ToString(), TextTokenKind.EnumField);
 
 			output.WriteLine();
-			output.Write(ExeUtils.GetArchString(DnSpyFile.ModuleDef), TextTokenKind.EnumField);
+			output.Write(TargetFrameworkUtils.GetArchString(DnSpyFile.ModuleDef), TextTokenKind.EnumField);
 
 			output.WriteLine();
 			output.WriteFilename(DnSpyFile.Filename);

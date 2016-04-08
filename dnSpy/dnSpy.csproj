@@ -192,7 +192,6 @@
     <Compile Include="Files\TreeView\DerivedTypesFolderNode.cs" />
     <Compile Include="Files\TreeView\DnSpyFileNode.cs" />
     <Compile Include="Files\TreeView\EventNode.cs" />
-    <Compile Include="Files\TreeView\ExeUtils.cs" />
     <Compile Include="Files\TreeView\FieldNode.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeDataContext.cs" />
     <Compile Include="Files\TreeView\FileTreeNodeGroups.cs" />

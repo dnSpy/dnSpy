@@ -151,24 +151,6 @@ namespace dnSpy.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AnyCPU.
-        /// </summary>
-        public static string Arch_AnyCPU {
-            get {
-                return ResourceManager.GetString("Arch_AnyCPU", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to AnyCPU (32-bit preferred).
-        /// </summary>
-        public static string Arch_AnyCPU_Preferred {
-            get {
-                return ResourceManager.GetString("Arch_AnyCPU_Preferred", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Do you want to load the saved settings?.
         /// </summary>
         public static string AskReadSettings {
@@ -2444,15 +2426,6 @@ namespace dnSpy.Properties {
         public static string ToolWindowWinPosButtonToolTip {
             get {
                 return ResourceManager.GetString("ToolWindowWinPosButtonToolTip", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unknown runtime.
-        /// </summary>
-        public static string UnknownDotNetRuntime {
-            get {
-                return ResourceManager.GetString("UnknownDotNetRuntime", resourceCulture);
             }
         }
         

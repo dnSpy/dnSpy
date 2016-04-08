@@ -126,14 +126,14 @@ namespace dnSpy.Shared.Controls {
 				WM_DPICHANGED_counter++;
 				try {
 					int newDpi = (ushort)(wParam.ToInt64() >> 16);
-					var rect = Marshal.PtrToStructure<RECT>(lParam);
 
 					WindowDPI = newDpi;
 
-					const int SWP_NOZORDER = 0x0004;
-					const int SWP_NOACTIVATE = 0x0010;
-					const int SWP_NOOWNERZORDER = 0x0200;
 					if (!wpfSupportsPerMonitorDpi) {
+						const int SWP_NOZORDER = 0x0004;
+						const int SWP_NOACTIVATE = 0x0010;
+						const int SWP_NOOWNERZORDER = 0x0200;
+						var rect = Marshal.PtrToStructure<RECT>(lParam);
 						bool b = SetWindowPos(hwnd, IntPtr.Zero, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOACTIVATE);
 						Debug.Assert(b);
 						handled = true;

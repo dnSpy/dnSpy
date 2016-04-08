@@ -90,12 +90,13 @@ namespace dnSpy.Languages.MSBuild {
 				var asmName = GetAssemblyName();
 				if (!string.IsNullOrEmpty(asmName))
 					writer.WriteElementString("AssemblyName", GetAssemblyName());
-				string profile;
-				var targetFrameworkVersion = GetTargetFrameworkVersion(out profile);
-				if (projectVersion > ProjectVersion.VS2005 || targetFrameworkVersion != "v2.0")
-					writer.WriteElementString("TargetFrameworkVersion", targetFrameworkVersion);
-				if (!string.IsNullOrEmpty(profile))
-					writer.WriteElementString("TargetFrameworkProfile", profile);
+				var fwkInfo = TargetFrameworkInfo.Create(project.Module);
+				if (projectVersion > ProjectVersion.VS2005 || !fwkInfo.IsDotNetFramework || fwkInfo.Version != "2.0")
+					writer.WriteElementString("TargetFrameworkVersion", "v" + fwkInfo.Version);
+				if (!string.IsNullOrEmpty(fwkInfo.Profile))
+					writer.WriteElementString("TargetFrameworkProfile", fwkInfo.Profile);
+				if (!fwkInfo.IsDotNetFramework)
+					writer.WriteElementString("TargetFrameworkIdentifier", fwkInfo.Framework);
 				writer.WriteElementString("FileAlignment", GetFileAlignment());
 				if (project.ProjectTypeGuids.Count != 0) {
 					var text = string.Join(";", project.ProjectTypeGuids.Select(a => a.ToString("B")).ToArray());
@@ -319,13 +320,16 @@ namespace dnSpy.Languages.MSBuild {
 		}
 
 		string GetOutputType() {
+			if (project.Module.IsWinMD)
+				return "WinMDObj";
 			switch (project.Module.Kind) {
 			case ModuleKind.Console:	return "Exe";
 			case ModuleKind.Windows:	return "WinExe";
 			case ModuleKind.Dll:		return "Library";
+			case ModuleKind.NetModule:	return "Module";
 
-			case ModuleKind.NetModule:
 			default:
+				Debug.Fail("Unknown module kind: " + project.Module.Kind);
 				return "Library";
 			}
 		}
@@ -350,10 +354,6 @@ namespace dnSpy.Languages.MSBuild {
 
 		string GetAssemblyName() {
 			return project.AssemblyName;
-		}
-
-		string GetTargetFrameworkVersion(out string profile) {
-			return project.Module.GetDotNetVersion(out profile);
 		}
 
 		string GetFileAlignment() {

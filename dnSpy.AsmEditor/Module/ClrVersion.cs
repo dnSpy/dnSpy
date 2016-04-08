@@ -25,22 +25,22 @@ namespace dnSpy.AsmEditor.Module {
 		Unknown,
 
 		/// <summary>
-		/// .NET 1.0
+		/// .NET Framework 1.0
 		/// </summary>
 		CLR10,
 
 		/// <summary>
-		/// .NET 1.1
+		/// .NET Framework 1.1
 		/// </summary>
 		CLR11,
 
 		/// <summary>
-		/// .NET 2.0 - 3.5
+		/// .NET Framework 2.0 - 3.5
 		/// </summary>
 		CLR20,
 
 		/// <summary>
-		/// .NET 4.0 - 4.6
+		/// .NET Framework 4 - 4.6
 		/// </summary>
 		CLR40,
 

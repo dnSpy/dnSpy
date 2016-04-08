@@ -142,7 +142,6 @@ namespace dnSpy.MainApp {
 
 			string VersionString {
 				get {
-					var version = Assembly.GetName().Version;
 					try {
 						var info = FileVersionInfo.GetVersionInfo(Assembly.Location);
 						var fileVer = info.FileVersion;
@@ -151,7 +150,7 @@ namespace dnSpy.MainApp {
 					}
 					catch {
 					}
-					return version.ToString();
+					return Assembly.GetName().Version.ToString();
 				}
 			}
 
@@ -169,9 +168,10 @@ namespace dnSpy.MainApp {
 				get {
 					var name = Name;
 					var verStr = VersionString;
+					Debug.Assert(!string.IsNullOrEmpty(verStr));
 					if (string.IsNullOrEmpty(verStr))
 						return name;
-					return string.Format($"{name} ({verStr})");
+					return $"{name} ({verStr})";
 				}
 			}
 
