@@ -226,6 +226,6 @@
     <value>IL</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>ILSpay 翻译器</value>
+    <value>ILSpy 反编译器</value>
   </data>
 </root>
