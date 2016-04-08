@@ -542,7 +542,7 @@ namespace dnSpy.Debugger {
 			if (i == 0)
 				return dnSpy_Debugger_Resources.ShortCutKeyAlt6;
 			if (1 <= i && i <= 9)
-				return string.Format(dnSpy_Debugger_Resources.ShortCutKeyCtrlAlt_DIGIT, (i + 1) % 10);
+				return string.Format(dnSpy_Debugger_Resources.ShortCutKeyCtrlShift_DIGIT, (i + 1) % 10);
 			return string.Empty;
 		}
 

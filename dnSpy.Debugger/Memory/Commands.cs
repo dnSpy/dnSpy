@@ -38,7 +38,7 @@ namespace dnSpy.Debugger.Memory {
 				var cmd = DebugRoutedCommands.ShowMemoryCommands[i];
 				if (i == 0)
 					cmds.Add(cmd, ModifierKeys.Alt, Key.D6);
-				cmds.Add(cmd, ModifierKeys.Control | ModifierKeys.Alt, Key.D0 + (i + 1) % 10);
+				cmds.Add(cmd, ModifierKeys.Control | ModifierKeys.Shift, Key.D0 + (i + 1) % 10);
 			}
 		}
 	}
