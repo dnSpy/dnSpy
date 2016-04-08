@@ -155,6 +155,9 @@ namespace dnSpy.Files.TreeView {
 			case ".NETCore":
 				return ".NET Core " + versionString;
 
+			case ".NETCoreApp":
+				return ".NET Core App " + versionString;
+
 			case "DNXCore":
 				return "DNX Core " + versionString;
 

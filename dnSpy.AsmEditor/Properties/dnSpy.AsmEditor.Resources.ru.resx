@@ -524,10 +524,10 @@
     <value>Требуется 32-bit</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_ILLibrary" xml:space="preserve">
-    <value>IL Library</value>
+    <value>IL Библиотека</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_IL_Only" xml:space="preserve">
-    <value>IL Only</value>
+    <value>Только IL</value>
   </data>
   <data name="HexNode_Cor20Header_Flags_NativeEntryPoint" xml:space="preserve">
     <value>Native EntryPoint</value>
@@ -542,16 +542,16 @@
     <value>Cor20 Header</value>
   </data>
   <data name="HexNode_DOSHeader" xml:space="preserve">
-    <value>DOS Header</value>
+    <value>DOS заголовок</value>
   </data>
   <data name="HexNode_FileHeader" xml:space="preserve">
-    <value>File Header</value>
+    <value>Заголовок файла</value>
   </data>
   <data name="HexNode_OptHeader32" xml:space="preserve">
-    <value>Optional Header (32-bit)</value>
+    <value>Необязательный заголовок (32-bit)</value>
   </data>
   <data name="HexNode_OptHeader64" xml:space="preserve">
-    <value>Optional Header (64-bit)</value>
+    <value>Необязательный заголовок (64-bit)</value>
   </data>
   <data name="ImplMapTab" xml:space="preserve">
     <value>ImplMap</value>
@@ -587,7 +587,7 @@
     <value>ThrowOnUnmappableChar</value>
   </data>
   <data name="MainTab" xml:space="preserve">
-    <value>Main</value>
+    <value>Главная</value>
   </data>
   <data name="MarshalType" xml:space="preserve">
     <value>Marshal Type: {0}</value>
@@ -596,7 +596,7 @@
     <value>Marshal Type</value>
   </data>
   <data name="MarshalType_Array" xml:space="preserve">
-    <value>_Array</value>
+    <value>_Массив</value>
   </data>
   <data name="MarshalType_ByRef" xml:space="preserve">
     <value>_ByRef</value>
@@ -617,10 +617,10 @@
     <value>&lt;Not Initialized&gt;</value>
   </data>
   <data name="MarshalType_Flags" xml:space="preserve">
-    <value>_Flags</value>
+    <value>_Флаги</value>
   </data>
   <data name="MarshalType_GUID" xml:space="preserve">
-    <value>_GUID</value>
+    <value>_ГУИД</value>
   </data>
   <data name="MarshalType_NativeType" xml:space="preserve">
     <value>_NativeType</value>
@@ -644,16 +644,16 @@
     <value>_Reserved</value>
   </data>
   <data name="MarshalType_Size" xml:space="preserve">
-    <value>_Size</value>
+    <value>_Размер</value>
   </data>
   <data name="MarshalType_Vector" xml:space="preserve">
-    <value>Vec_tor</value>
+    <value>Век_тор</value>
   </data>
   <data name="MarshalType_VT" xml:space="preserve">
     <value>_VT</value>
   </data>
   <data name="MemberRef_Class" xml:space="preserve">
-    <value>Class</value>
+    <value>Класс</value>
   </data>
   <data name="MemberRef_ClassTab" xml:space="preserve">
     <value>Класс</value>
@@ -686,7 +686,7 @@
     <value>_Имя</value>
   </data>
   <data name="MemberRef_Type" xml:space="preserve">
-    <value>_Type</value>
+    <value>_Тип</value>
   </data>
   <data name="MemberRef_TypeSpec" xml:space="preserve">
     <value>Type_Spec</value>
@@ -788,13 +788,13 @@
     <value>Paste After Se_lection</value>
   </data>
   <data name="PasteCommand" xml:space="preserve">
-    <value>_Paste</value>
+    <value>_Вставить</value>
   </data>
   <data name="PickMember_OpenAsmToolTip" xml:space="preserve">
     <value>Open Assembly or NetModule</value>
   </data>
   <data name="PickMember_Search" xml:space="preserve">
-    <value>_Search</value>
+    <value>_Поиск</value>
   </data>
   <data name="PickMember_SelectCorrectNode" xml:space="preserve">
     <value>You must select a correct node</value>
@@ -830,7 +830,7 @@
     <value>Удалить последний объект</value>
   </data>
   <data name="RemoveCommand" xml:space="preserve">
-    <value>Remove {0}</value>
+    <value>Удаление {0}</value>
   </data>
   <data name="RemoveLastTypeCharacter" xml:space="preserve">
     <value>R</value>
@@ -887,7 +887,7 @@
     <value>The type must be a generic type</value>
   </data>
   <data name="TypeSigCreator_Array" xml:space="preserve">
-    <value>Arra_y</value>
+    <value>Масси_в</value>
   </data>
   <data name="TypeSigCreator_Array_LowerBounds" xml:space="preserve">
     <value>Lo_wer Bounds</value>
@@ -965,13 +965,13 @@
     <value>Turn it into a pinned variable</value>
   </data>
   <data name="TypeSigCreator_Pointer" xml:space="preserve">
-    <value>_Pointer</value>
+    <value>_Указатель</value>
   </data>
   <data name="TypeSigCreator_Pointer_ToolTip" xml:space="preserve">
-    <value>Convert type to a pointer</value>
+    <value>Преобразовать тип в указатель</value>
   </data>
   <data name="TypeSigCreator_Remove_ToolTip" xml:space="preserve">
-    <value>Remove last added type</value>
+    <value>Удалить последний добавлений тип</value>
   </data>
   <data name="TypeSigCreator_SZArray" xml:space="preserve">
     <value>S_Z Array</value>
@@ -980,7 +980,7 @@
     <value>Convert type to a single-dimension, zero lower-bound array</value>
   </data>
   <data name="TypeSigCreator_Type" xml:space="preserve">
-    <value>_Type</value>
+    <value>_Тип</value>
   </data>
   <data name="TypeSigCreator_Type_ToolTip" xml:space="preserve">
     <value>Добавить тип</value>
@@ -989,13 +989,13 @@
     <value>_Var</value>
   </data>
   <data name="TypeSigCreator_Var_ToolTip" xml:space="preserve">
-    <value>Add a type generic variable</value>
+    <value>Добавить переменную универсального типа</value>
   </data>
   <data name="TypeTab" xml:space="preserve">
     <value>Тип</value>
   </data>
   <data name="Unknown" xml:space="preserve">
-    <value>Unknown</value>
+    <value>Неизвестно</value>
   </data>
   <data name="UnknownBytesMsg" xml:space="preserve">
     <value>Some of the copied bytes are unknown because the method has been edited. New tokens and string offsets are only known once the file has been saved to disk and re-opened.</value>
@@ -1007,7 +1007,7 @@
     <value>_Value</value>
   </data>
   <data name="ValueType_ToolTip" xml:space="preserve">
-    <value>Value type</value>
+    <value>Тип значения</value>
   </data>
   <data name="XML" xml:space="preserve">
     <value>_XML</value>
@@ -1025,7 +1025,7 @@
     <value>Add New NetModule to Assembly</value>
   </data>
   <data name="AllFiles" xml:space="preserve">
-    <value>All files</value>
+    <value>Все файлы</value>
   </data>
   <data name="AskCancelSave" xml:space="preserve">
     <value>Are you sure you want to cancel the save?</value>
@@ -1065,7 +1065,7 @@ Are you sure you want to close the window?</value>
     <value>The files haven't been saved yet. Do you want to save them before continuing?</value>
   </data>
   <data name="BaseTypeTab" xml:space="preserve">
-    <value>Base Type</value>
+    <value>Базовый тип</value>
   </data>
   <data name="BaseTypeX" xml:space="preserve">
     <value>Базовый тип: {0}</value>
@@ -1308,7 +1308,7 @@ Are you sure you want to close the window?</value>
     <value>_Does not contain metadata</value>
   </data>
   <data name="EditResource_File" xml:space="preserve">
-    <value>_File</value>
+    <value>_Файл</value>
   </data>
   <data name="EditResource_Hash" xml:space="preserve">
     <value>_Hash</value>
@@ -1317,10 +1317,10 @@ Are you sure you want to close the window?</value>
     <value>Edit Switch Operand</value>
   </data>
   <data name="EditTypeCommand" xml:space="preserve">
-    <value>Edit Type...</value>
+    <value>Редактировать тип...</value>
   </data>
   <data name="EditTypeCommand2" xml:space="preserve">
-    <value>Edit Type</value>
+    <value>Редактировать тип</value>
   </data>
   <data name="EH_Command1" xml:space="preserve">
     <value>Add New Exception Handler Be_fore Selection</value>
@@ -1521,10 +1521,10 @@ Are you sure you want to close the window?</value>
     <value>Fill {0} bytes @ {1:X8}</value>
   </data>
   <data name="Hex_Undo_Message_InsertASCII" xml:space="preserve">
-    <value>Insert ASCII</value>
+    <value>Вставить ASCII</value>
   </data>
   <data name="Hex_Undo_Message_InsertBytes" xml:space="preserve">
-    <value>Insert Bytes</value>
+    <value>Вставить байты</value>
   </data>
   <data name="Hex_Undo_Message_PasteBytesAtAddress" xml:space="preserve">
     <value>Paste {0} bytes @ {1:X8}</value>
@@ -1539,16 +1539,16 @@ Are you sure you want to close the window?</value>
     <value>Write {0} bytes to offset {1:X8}</value>
   </data>
   <data name="Images" xml:space="preserve">
-    <value>Images</value>
+    <value>Изображения</value>
   </data>
   <data name="Index" xml:space="preserve">
-    <value>Index</value>
+    <value>Индекс</value>
   </data>
   <data name="Info" xml:space="preserve">
-    <value>Info</value>
+    <value>Информация</value>
   </data>
   <data name="InstructionOperand" xml:space="preserve">
-    <value>Operand</value>
+    <value>Операнд</value>
   </data>
   <data name="Instr_Command1" xml:space="preserve">
     <value>Add New Instruction Be_fore Selection</value>
@@ -1578,7 +1578,7 @@ Are you sure you want to close the window?</value>
     <value>_Invert Branches</value>
   </data>
   <data name="LocalName" xml:space="preserve">
-    <value>Name</value>
+    <value>Имя</value>
   </data>
   <data name="LocalsTab" xml:space="preserve">
     <value>Locals</value>
@@ -1614,13 +1614,13 @@ Are you sure you want to close the window?</value>
     <value>P</value>
   </data>
   <data name="Local_Pinned_Character_ToolTip" xml:space="preserve">
-    <value>Pinned</value>
+    <value>Закрепленный</value>
   </data>
   <data name="MDWriterOptionsTab" xml:space="preserve">
     <value>MD Writer Options</value>
   </data>
   <data name="MetadataTab" xml:space="preserve">
-    <value>Metadata</value>
+    <value>Метаданные</value>
   </data>
   <data name="MethodBodyType_IL" xml:space="preserve">
     <value>IL</value>
@@ -1629,7 +1629,7 @@ Are you sure you want to close the window?</value>
     <value>Native</value>
   </data>
   <data name="MethodBodyType_None" xml:space="preserve">
-    <value>None</value>
+    <value>Нет</value>
   </data>
   <data name="MethodBody_CodeType" xml:space="preserve">
     <value>Cod_e Type</value>
@@ -1665,10 +1665,10 @@ Are you sure you want to close the window?</value>
     <value>Overrides</value>
   </data>
   <data name="MethodParametersTab" xml:space="preserve">
-    <value>Params</value>
+    <value>Параметры</value>
   </data>
   <data name="MethodSignatureTab" xml:space="preserve">
-    <value>Signature</value>
+    <value>Подпись</value>
   </data>
   <data name="Method_Name" xml:space="preserve">
     <value>_Имя</value>
@@ -1677,22 +1677,22 @@ Are you sure you want to close the window?</value>
     <value>_Версия .NET</value>
   </data>
   <data name="Module_EntryPoint" xml:space="preserve">
-    <value>Entry Point</value>
+    <value>Точка входа</value>
   </data>
   <data name="Module_EntryPoint_Managed" xml:space="preserve">
-    <value>Mana_ged</value>
+    <value>Управ_ляемый</value>
   </data>
   <data name="Module_EntryPoint_Native" xml:space="preserve">
     <value>Native</value>
   </data>
   <data name="Module_EntryPoint_None" xml:space="preserve">
-    <value>None</value>
+    <value>Нет</value>
   </data>
   <data name="Module_GUIDs" xml:space="preserve">
     <value>GUIDs</value>
   </data>
   <data name="Module_Metadata" xml:space="preserve">
-    <value>Metadata</value>
+    <value>Метаданные</value>
   </data>
   <data name="Module_ModuleType" xml:space="preserve">
     <value>Module _Type</value>
@@ -1722,10 +1722,10 @@ Are you sure you want to close the window?</value>
     <value>_NOP Instructions</value>
   </data>
   <data name="Offset" xml:space="preserve">
-    <value>Offset</value>
+    <value>Смещение</value>
   </data>
   <data name="OpenHexEditorCommand" xml:space="preserve">
-    <value>Open He_x Editor</value>
+    <value>Открыть He_x редактор</value>
   </data>
   <data name="OptimizeAllInstructionsCommand" xml:space="preserve">
     <value>Optimi_ze All Instructions</value>
@@ -1755,7 +1755,7 @@ Are you sure you want to close the window?</value>
     <value>Setters</value>
   </data>
   <data name="Property_Signature" xml:space="preserve">
-    <value>Signature</value>
+    <value>Подпись</value>
   </data>
   <data name="RawSaveResourceCommand" xml:space="preserve">
     <value>Raw Save {0}</value>
@@ -1767,10 +1767,10 @@ Are you sure you want to close the window?</value>
     <value>Raw Save {0} resources, use sub dirs</value>
   </data>
   <data name="RedoCommand" xml:space="preserve">
-    <value>Redo</value>
+    <value>Отменить</value>
   </data>
   <data name="RedoToolBarToolTip" xml:space="preserve">
-    <value>Redo (Ctrl+Y)</value>
+    <value>Отменить (Ctrl+Y)</value>
   </data>
   <data name="RemoveAndAddPopsCommand" xml:space="preserve">
     <value>R_emove and Add Pops</value>
@@ -1779,25 +1779,25 @@ Are you sure you want to close the window?</value>
     <value>Remove NetModule from Assembly</value>
   </data>
   <data name="RenameNamespaceCommand" xml:space="preserve">
-    <value>Rename Namespace</value>
+    <value>Переименовать пространство имен</value>
   </data>
   <data name="Resource_ColorDepth" xml:space="preserve">
     <value>Color _Depth</value>
   </data>
   <data name="Resource_ColorDepth_16Bit" xml:space="preserve">
-    <value>16-bit</value>
+    <value>16-бит</value>
   </data>
   <data name="Resource_ColorDepth_24Bit" xml:space="preserve">
-    <value>24-bit</value>
+    <value>24-бита</value>
   </data>
   <data name="Resource_ColorDepth_32Bit" xml:space="preserve">
-    <value>32-bit</value>
+    <value>32-бита</value>
   </data>
   <data name="Resource_ColorDepth_4Bit" xml:space="preserve">
-    <value>4-bit</value>
+    <value>4-бита</value>
   </data>
   <data name="Resource_ColorDepth_8Bit" xml:space="preserve">
-    <value>8-bit</value>
+    <value>8-бит</value>
   </data>
   <data name="Resource_Data" xml:space="preserve">
     <value>_Data</value>
@@ -1806,43 +1806,43 @@ Are you sure you want to close the window?</value>
     <value>_Имя</value>
   </data>
   <data name="Resource_Size" xml:space="preserve">
-    <value>_Size</value>
+    <value>_Размер</value>
   </data>
   <data name="Resource_TransparentColor" xml:space="preserve">
     <value>_Transparent Color</value>
   </data>
   <data name="Resource_Type" xml:space="preserve">
-    <value>_Type</value>
+    <value>_Тип</value>
   </data>
   <data name="Resource_Value" xml:space="preserve">
-    <value>_Value</value>
+    <value>_Значение</value>
   </data>
   <data name="RowIdentifier" xml:space="preserve">
     <value>RID</value>
   </data>
   <data name="Save" xml:space="preserve">
-    <value>_Save...</value>
+    <value>_Сохранение...</value>
   </data>
   <data name="SaveAllCommand" xml:space="preserve">
     <value>Save A_ll...</value>
   </data>
   <data name="SaveAllToolBarToolTip" xml:space="preserve">
-    <value>Save All (Ctrl+Shift+S)</value>
+    <value>Сохранить все (Ctrl+Shift+S)</value>
   </data>
   <data name="SaveModuleCommand" xml:space="preserve">
-    <value>Save _Module...</value>
+    <value>Сохранить _Модуль...</value>
   </data>
   <data name="SaveModuleCommand2" xml:space="preserve">
-    <value>Save Module</value>
+    <value>Сохранить модуль</value>
   </data>
   <data name="SaveModulesCommand" xml:space="preserve">
-    <value>Save _Modules...</value>
+    <value>Сохранить _Модули...</value>
   </data>
   <data name="SaveModules_CancelingSave" xml:space="preserve">
     <value>Canceling the save. Please wait...</value>
   </data>
   <data name="SaveModules_Close" xml:space="preserve">
-    <value>_Close</value>
+    <value>_Закрыть</value>
   </data>
   <data name="SaveModules_ErrorsInLog" xml:space="preserve">
     <value>There are errors in the log:</value>
@@ -1851,10 +1851,10 @@ Are you sure you want to close the window?</value>
     <value>File #{0} ({1}) has errors</value>
   </data>
   <data name="SaveModules_Log_AccessError" xml:space="preserve">
-    <value>Access error: {0}</value>
+    <value>Ошибка доступа: {0}</value>
   </data>
   <data name="SaveModules_Log_AllFilesWritten" xml:space="preserve">
-    <value>All files written to disk.</value>
+    <value>Все файлы записаны на диск.</value>
   </data>
   <data name="SaveModules_Log_Exception" xml:space="preserve">
     <value>An exception occurred
@@ -1865,22 +1865,22 @@ Are you sure you want to close the window?</value>
     <value>File error: {0}</value>
   </data>
   <data name="SaveModules_Log_SaveWasCanceled" xml:space="preserve">
-    <value>Save was canceled by user.</value>
+    <value>Сохранение было отменено пользователем.</value>
   </data>
   <data name="SaveModules_Log_WritingFile" xml:space="preserve">
-    <value>Writing {0}...</value>
+    <value>Запись {0}...</value>
   </data>
   <data name="SaveModules_Options" xml:space="preserve">
-    <value>_Options...</value>
+    <value>_Параметры...</value>
   </data>
   <data name="SaveModules_SaveAll" xml:space="preserve">
-    <value>_Save All</value>
+    <value>_Сохранить все</value>
   </data>
   <data name="SaveModules_SavedFiles" xml:space="preserve">
     <value>Files that will be saved:</value>
   </data>
   <data name="SaveModules_Title" xml:space="preserve">
-    <value>Save Modules</value>
+    <value>Сохранить модули</value>
   </data>
   <data name="SaveModule_AddPECheckSum" xml:space="preserve">
     <value>_Add PE Checksum</value>
@@ -1889,7 +1889,7 @@ Are you sure you want to close the window?</value>
     <value>Create Heap Even If Empty</value>
   </data>
   <data name="SaveModule_Filename" xml:space="preserve">
-    <value>_Filename</value>
+    <value>_Имя файла</value>
   </data>
   <data name="SaveModule_KeepOldMaxStack" xml:space="preserve">
     <value>_Keep Old MaxStack Value</value>
@@ -1902,10 +1902,10 @@ Needed if the methods are still obfuscated</value>
     <value>Metadata Header Options</value>
   </data>
   <data name="SaveModule_MiscOptions" xml:space="preserve">
-    <value>Misc Options</value>
+    <value>Прочие параметры</value>
   </data>
   <data name="SaveModule_ModuleType" xml:space="preserve">
-    <value>Module _Type</value>
+    <value>_Тип модуля</value>
   </data>
   <data name="SaveModule_PreserveExtraSigData" xml:space="preserve">
     <value>Preserve E_xtra Signature Data</value>
@@ -1931,7 +1931,7 @@ Some obfuscators put data there</value>
 The output file will be a little bit smaller</value>
   </data>
   <data name="SaveModule_Title" xml:space="preserve">
-    <value>Save Module</value>
+    <value>Сохранить модуль</value>
   </data>
   <data name="SaveModule_UseMixedMode" xml:space="preserve">
     <value>_Mixed-Mode Module</value>
@@ -1944,7 +1944,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Save _PDB File</value>
   </data>
   <data name="SaveResourceCommand" xml:space="preserve">
-    <value>Save {0}</value>
+    <value>Сохранить {0}</value>
   </data>
   <data name="SaveResourcesCommand" xml:space="preserve">
     <value>Save {0} resources</value>
@@ -2007,13 +2007,13 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Shift+Alt+R</value>
   </data>
   <data name="ShowDataInHexEditorCommand" xml:space="preserve">
-    <value>Show Data in He_x Editor</value>
+    <value>Показать данные в He_x редакторе</value>
   </data>
   <data name="ShowInHexEditorCommand" xml:space="preserve">
-    <value>Show in He_x Editor</value>
+    <value>Показать в He_x редакторе</value>
   </data>
   <data name="ShowInHexEditorCommand2" xml:space="preserve">
-    <value>Show in Hex Editor</value>
+    <value>Показать в Hex редакторе</value>
   </data>
   <data name="ShowInitialValueInHexEditorCommand" xml:space="preserve">
     <value>Show Initial Value in Hex Editor</value>
@@ -2061,10 +2061,10 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Packing Si_ze</value>
   </data>
   <data name="UndoCommand" xml:space="preserve">
-    <value>Undo</value>
+    <value>Отменить</value>
   </data>
   <data name="UndoToolBarToolTip" xml:space="preserve">
-    <value>Undo (Ctrl+Z)</value>
+    <value>Отменить (Ctrl+Z)</value>
   </data>
   <data name="UnsavedFile" xml:space="preserve">
     <value>There is an unsaved file.</value>
@@ -2073,16 +2073,16 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>There are {0} unsaved files.</value>
   </data>
   <data name="XBytes" xml:space="preserve">
-    <value>{0} bytes</value>
+    <value>{0} байт</value>
   </data>
   <data name="AddAfterSelInstr_ToolTip" xml:space="preserve">
-    <value>Add the instruction after the selected instruction</value>
+    <value>Добавить инструкцию после текущей</value>
   </data>
   <data name="InstructionsTab" xml:space="preserve">
-    <value>Instructions</value>
+    <value>Инструкции</value>
   </data>
   <data name="Module_NewGuid1" xml:space="preserve">
-    <value>_New</value>
+    <value>_Новый</value>
   </data>
   <data name="Module_NewGuid2" xml:space="preserve">
     <value>N_ew</value>
@@ -2100,16 +2100,16 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Pick an Entry Point</value>
   </data>
   <data name="Pick_Field" xml:space="preserve">
-    <value>Pick a Field</value>
+    <value>Выбрать поле</value>
   </data>
   <data name="Pick_GenericType" xml:space="preserve">
-    <value>Pick a Generic Type</value>
+    <value>Выберать универсальный тип</value>
   </data>
   <data name="Pick_Method" xml:space="preserve">
-    <value>Pick a Method</value>
+    <value>Выбрать метод</value>
   </data>
   <data name="Pick_Module" xml:space="preserve">
-    <value>Pick a Module</value>
+    <value>Выберать модуль</value>
   </data>
   <data name="ExceptionHandler_Column_CatchType" xml:space="preserve">
     <value>CatchType</value>
@@ -2136,7 +2136,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Флаги</value>
   </data>
   <data name="MethodBody_Column_OpCode" xml:space="preserve">
-    <value>OpCode</value>
+    <value>Код операции</value>
   </data>
   <data name="Column_Metadata_RID" xml:space="preserve">
     <value>RID</value>
@@ -2151,10 +2151,10 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>Sorted</value>
   </data>
   <data name="Metadata_Valid_Rows" xml:space="preserve">
-    <value>Valid</value>
+    <value>Допустимый</value>
   </data>
   <data name="Method_Access" xml:space="preserve">
-    <value>Access</value>
+    <value>Доступ</value>
   </data>
   <data name="Method_CodeType" xml:space="preserve">
     <value>Cod_eType</value>
@@ -2367,7 +2367,7 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>_Forwarder</value>
   </data>
   <data name="Type_Flags_Import" xml:space="preserve">
-    <value>_Import</value>
+    <value>_Импорт</value>
   </data>
   <data name="Type_Flags_Kind" xml:space="preserve">
     <value>_Kind</value>
@@ -2400,10 +2400,10 @@ Most options will be re-initialized when this checkbox is clicked</value>
     <value>_WindowsRuntime</value>
   </data>
   <data name="CustomAttribute_NamedArg_Field" xml:space="preserve">
-    <value>Field</value>
+    <value>Поле</value>
   </data>
   <data name="CustomAttribute_NamedArg_Property" xml:space="preserve">
-    <value>Property</value>
+    <value>Свойство</value>
   </data>
   <data name="SaveModules_FixErrorsByEditingSettings" xml:space="preserve">
     <value>-- Fix the errors by editing the options.</value>

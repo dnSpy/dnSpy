@@ -199,7 +199,7 @@ namespace dnSpy.Search {
 			Add(SearchType.Any, dnSpy_Resources.SearchWindow_AllAbove, "Class", dnSpy_Resources.SearchWindow_AllAbove_Key, VisibleMembersFlags.TreeViewAll | VisibleMembersFlags.ParamDef | VisibleMembersFlags.Local);
 			Add(SearchType.Literal, dnSpy_Resources.SearchWindow_Literal, "Literal", dnSpy_Resources.SearchWindow_Literal_Key, VisibleMembersFlags.MethodBody | VisibleMembersFlags.FieldDef | VisibleMembersFlags.ParamDef | VisibleMembersFlags.PropertyDef | VisibleMembersFlags.Resource | VisibleMembersFlags.ResourceElement | VisibleMembersFlags.Attributes);
 
-			this.SelectedSearchTypeVM = SearchTypeVMs.First(a => a.SearchType == SearchType.TypeDef);
+			this.SelectedSearchTypeVM = SearchTypeVMs.First(a => a.SearchType == SearchType.Any);
 		}
 
 		void Add(SearchType searchType, string name, string icon, string toolTip, VisibleMembersFlags flags) {
