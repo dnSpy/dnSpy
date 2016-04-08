@@ -24,6 +24,21 @@ using dnSpy.Scripting.Roslyn.Properties;
 namespace dnSpy.Scripting.Roslyn {
 	[ExportPlugin]
 	sealed class Plugin : IPlugin {
+		Plugin() {
+#if DEBUG
+			// Make sure the checks in the cctors are always executed in debug builds
+			System.Type t;
+			t = GetType().Assembly.GetType("dnSpy.Scripting.Roslyn.VisualBasic.VisualBasicControlVM");
+			//TODO: System.Diagnostics.Debug.Assert(t != null);
+			if (t != null)
+				System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(t.TypeHandle);
+			t = GetType().Assembly.GetType("dnSpy.Scripting.Roslyn.CSharp.CSharpControlVM");
+			System.Diagnostics.Debug.Assert(t != null);
+			if (t != null)
+				System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(t.TypeHandle);
+#endif
+		}
+
 		public IEnumerable<string> MergedResourceDictionaries {
 			get { yield break; }
 		}
