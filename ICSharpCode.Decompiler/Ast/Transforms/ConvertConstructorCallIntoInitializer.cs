@@ -209,7 +209,7 @@ namespace ICSharpCode.Decompiler.Ast.Transforms
 						fieldDecl.AddAnnotation(ctorIlRanges);
 						es.Remove();
 					}
-					if (context.Settings.RemoveEmptyDefaultConstructors && staticCtor.Body.Statements.Count == 0)
+					if (!context.Settings.ForceShowAllMembers && context.Settings.RemoveEmptyDefaultConstructors && staticCtor.Body.Statements.Count == 0)
 						staticCtor.Remove();
 				}
 			}
