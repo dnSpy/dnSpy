@@ -325,6 +325,9 @@ namespace dnSpy.Languages {
 			case "Silverlight":
 				return "Silverlight " + Version;
 
+			case "MonoAndroid":
+				return "Mono Android " + Version;
+
 			default:
 				Debug.Fail("Unknown target framework: " + Framework);
 				if (Framework.Length > 20)
