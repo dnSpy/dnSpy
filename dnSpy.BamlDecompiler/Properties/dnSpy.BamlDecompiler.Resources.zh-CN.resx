@@ -148,7 +148,7 @@
     <value>'{0}' 是全局 namespace（命名空间）的前缀。</value>
   </data>
   <data name="Plugin_ShortDescription" xml:space="preserve">
-    <value>BAML decompiler</value>
+    <value>BAML反编译器</value>
   </data>
   <data name="SaveBAML" xml:space="preserve">
     <value>保存BAML (_S)...</value>

@@ -912,8 +912,8 @@ HResult: 0x{3:X8}</value>
   <data name="ShortCutKeyCtrlAltU" xml:space="preserve">
     <value>Ctrl+Alt+U</value>
   </data>
-  <data name="ShortCutKeyCtrlAlt_DIGIT" xml:space="preserve">
-    <value>Ctrl+Alt+{0}</value>
+  <data name="ShortCutKeyCtrlShift_DIGIT" xml:space="preserve">
+    <value>Ctrl+Shift+{0}</value>
   </data>
   <data name="ShortCutKeyCtrlBreak" xml:space="preserve">
     <value>Ctrl+Break</value>

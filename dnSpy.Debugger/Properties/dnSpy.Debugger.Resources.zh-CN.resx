@@ -214,7 +214,7 @@
     <value>已优化</value>
   </data>
   <data name="Column_Order" xml:space="preserve">
-    <value>Order</value>
+    <value>排序</value>
   </data>
   <data name="Column_Path" xml:space="preserve">
     <value>路径</value>
@@ -262,7 +262,7 @@
     <value>状态</value>
   </data>
   <data name="Column_ThreadSuspended" xml:space="preserve">
-    <value>Suspended</value>
+    <value>已挂起</value>
   </data>
   <data name="Column_Timestamp" xml:space="preserve">
     <value>时间戳</value>
@@ -358,7 +358,7 @@
     <value>忽略 Debugger.Break() 和中断指令</value>
   </data>
   <data name="DbgSettings_PropertyEvalAndFunctionCalls" xml:space="preserve">
-    <value>Enable property evaluation and other implicit function calls</value>
+    <value>启用属性计算和其它隐式函数调用</value>
   </data>
   <data name="DbgSettings_SyntaxHighlightAttach" xml:space="preserve">
     <value>附加(_H)</value>
@@ -385,7 +385,7 @@
     <value>调试从进程内存加载的文件（取消选中以使用磁盘文件）</value>
   </data>
   <data name="DbgSettings_UseStringConversionFunction" xml:space="preserve">
-    <value>Call string-conversion function on objects in variables windows</value>
+    <value>在变量窗口中对对象调用字符串转换方法</value>
   </data>
   <data name="DebugAssemblyCommand" xml:space="preserve">
     <value>调试程序集(_D)</value>
@@ -403,7 +403,7 @@
     <value>调试 {0} (_D)</value>
   </data>
   <data name="Debug_EventDescription_BreakpointSetError" xml:space="preserve">
-    <value>BreakpointSetError error=0x{0:X8}</value>
+    <value>设置断点错误，错误=0x{0:X8}</value>
   </data>
   <data name="Debug_EventDescription_ControlCPressed" xml:space="preserve">
     <value>Ctrl+C</value>
@@ -427,10 +427,10 @@
     <value>例外 Offset={0:X4}</value>
   </data>
   <data name="Debug_EventDescription_Exception2_CatchHandlerFound" xml:space="preserve">
-    <value>CatchHandlerFound</value>
+    <value>发现异常捕捉句柄</value>
   </data>
   <data name="Debug_EventDescription_Exception2_FirstChance" xml:space="preserve">
-    <value>FirstChance</value>
+    <value>第一次遇到</value>
   </data>
   <data name="Debug_EventDescription_Exception2_Unhandled" xml:space="preserve">
     <value>未处理</value>
@@ -445,13 +445,13 @@
     <value>LoadAssembly {0}</value>
   </data>
   <data name="Debug_EventDescription_LoadClass" xml:space="preserve">
-    <value>LoadClass 0x{0:X8} {1} {2}</value>
+    <value>加载类 0x{0:X8} {1} {2}</value>
   </data>
   <data name="Debug_EventDescription_LoadModule1" xml:space="preserve">
-    <value>LoadModule DYN={0} MEM={1} {2:X8} {3:X8} {4}</value>
+    <value>加载模块 DYN={0} MEM={1} {2:X8} {3:X8} {4}</value>
   </data>
   <data name="Debug_EventDescription_LoadModule2" xml:space="preserve">
-    <value>LoadModule A={0:X8} S={1:X8} {2}</value>
+    <value>加载模块 A={0:X8} S={1:X8} {2}</value>
   </data>
   <data name="Debug_EventDescription_MDA_Notification" xml:space="preserve">
     <value>MDA 通知</value>
@@ -463,13 +463,13 @@
     <value>未处理的异常</value>
   </data>
   <data name="Debug_StopReason_AnyDebugEventBreakpoint" xml:space="preserve">
-    <value>Any DebugEvent</value>
+    <value>所有调试事件</value>
   </data>
   <data name="Debug_StopReason_BreakInstruction" xml:space="preserve">
     <value>中断指令</value>
   </data>
   <data name="Debug_StopReason_DebugEventBreakpoint" xml:space="preserve">
-    <value>DebugEvent</value>
+    <value>调试事件</value>
   </data>
   <data name="Debug_StopReason_Exception" xml:space="preserve">
     <value>例外</value>
@@ -534,13 +534,13 @@
 {0}</value>
   </data>
   <data name="Error_CantEvalUnlessDebuggerStopped" xml:space="preserve">
-    <value>Can't evaluate unless debugger is stopped</value>
+    <value>除非调试器停止，否则无法计算</value>
   </data>
   <data name="Error_CantEvalWhenUnhandledExceptionHasOccurred" xml:space="preserve">
-    <value>Can't evaluate when an unhandled exception has occurred</value>
+    <value>当未捕捉异常发生时无法计算</value>
   </data>
   <data name="Error_CantSetNextStatementHere" xml:space="preserve">
-    <value>It's not possible to set the next statement here</value>
+    <value>无法在此处设置下一语句</value>
   </data>
   <data name="Error_CantSetNextStatementNoILFrame" xml:space="preserve">
     <value>没有 IL 框架</value>
@@ -589,19 +589,19 @@ HR: 0x{0:X8}
     <value>文件不存在</value>
   </data>
   <data name="Error_HostEgCoreRunExe" xml:space="preserve">
-    <value>The host eg. CoreRun.exe</value>
+    <value>宿主，如 CoreRun.exe</value>
   </data>
   <data name="Error_MissingFilename" xml:space="preserve">
     <value>缺少文件名</value>
   </data>
   <data name="Error_NoDebugInfoAvailable" xml:space="preserve">
-    <value>No debug information found. Make sure that only the debugged method is selected in the treeview (press 'Alt+Num *' to go to current statement)</value>
+    <value>未找到调试信息。请确定在树中仅选择了已调试的方法（按 "Alt+Num *" 转到当前语句）</value>
   </data>
   <data name="Error_NoTabAvailableDecompileCurrentMethod" xml:space="preserve">
-    <value>No tab is available. Decompile the current method!</value>
+    <value>无可用标签页，反编译当前方法!</value>
   </data>
   <data name="Error_NotDebugging" xml:space="preserve">
-    <value>We're not debugging</value>
+    <value>不在调试中</value>
   </data>
   <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
     <value>无法启动 '{0}' 
@@ -617,7 +617,7 @@ HR: 0x{0:X8}
   <data name="ExceptionInfoFormat" xml:space="preserve">
     <value>{0}: {1}
 
-Message: {2}
+信息: {2}
 
 HResult: 0x{3:X8}</value>
   </data>
@@ -661,9 +661,9 @@ HResult: 0x{3:X8}</value>
     <value>仅显示已启用的异常</value>
   </data>
   <data name="ExceptionThrownMessage" xml:space="preserve">
-    <value>Exception thrown: '{0}' in {1}
+    <value>抛出异常: '{0}' 在 {1}
 
-If there is a handler for this exception, the program may be safely continued.</value>
+如果此异常可以被捕捉，那么程序应该可以正常继续运行。</value>
   </data>
   <data name="FreezeThreadCommand" xml:space="preserve">
     <value>冻结(_F)</value>
@@ -717,13 +717,13 @@ If there is a handler for this exception, the program may be safely continued.</
     <value>您仅能设置它为 null</value>
   </data>
   <data name="LocalsEditValue_Error_CouldNotCallPropSetter" xml:space="preserve">
-    <value>Error calling property setter: 0x{0:X8}</value>
+    <value>调用写属性错误： 0x{0:X8}</value>
   </data>
   <data name="LocalsEditValue_Error_CouldNotWriteNewValue" xml:space="preserve">
     <value>无法设置值：{0}</value>
   </data>
   <data name="LocalsEditValue_Error_CouldNotWriteNullToNullableType" xml:space="preserve">
-    <value>Error writing null to nullable type: 0x{0:X8}</value>
+    <value>写入 null 到可空类型错误： 0x{0:X8}</value>
   </data>
   <data name="LocalsEditValue_Error_CouldNotWriteTheValue" xml:space="preserve">
     <value>无法写此值。错误：0x{0:X8}</value>
@@ -781,7 +781,7 @@ If there is a handler for this exception, the program may be safely continued.</
     <value>它当前不能创建新字符串</value>
   </data>
   <data name="Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint" xml:space="preserve">
-    <value>Can't evaluate when the thread is at an unsafe point. Step once or run until a breakpoint hits.</value>
+    <value>当线程位于不安全状态时无法计算表达式。按步调试或运行直到触发断点。</value>
   </data>
   <data name="Locals_Error_CouldNotCreateString" xml:space="preserve">
     <value>无法创建字符串。错误：0x{0:X8}</value>
@@ -796,7 +796,7 @@ If there is a handler for this exception, the program may be safely continued.</
     <value>无法重新创建值</value>
   </data>
   <data name="Locals_Error_ErrorNeuteredCouldNotBeRecreated" xml:space="preserve">
-    <value>The value has been neutered and couldn't be recreated</value>
+    <value>值已经不完整并且无法重建。</value>
   </data>
   <data name="Locals_Error_EvalDisabledCantCallPropsAndMethods" xml:space="preserve">
     <value>当前无法调用属性和方法</value>
@@ -814,7 +814,7 @@ If there is a handler for this exception, the program may be safely continued.</
     <value>在设置中已禁用属性/函数求值</value>
   </data>
   <data name="Locals_Error_StaticFieldIsNotYetAvailable" xml:space="preserve">
-    <value>Static field is not yet available</value>
+    <value>静态字段尚不可用。</value>
   </data>
   <data name="Locals_TypeVariables" xml:space="preserve">
     <value>类型变量</value>
@@ -912,8 +912,8 @@ If there is a handler for this exception, the program may be safely continued.</
   <data name="ShortCutKeyCtrlAltU" xml:space="preserve">
     <value>Ctrl+Alt+U</value>
   </data>
-  <data name="ShortCutKeyCtrlAlt_DIGIT" xml:space="preserve">
-    <value>Ctrl+Alt+{0}</value>
+  <data name="ShortCutKeyCtrlShift_DIGIT" xml:space="preserve">
+    <value>Ctrl+Shift+{0}</value>
   </data>
   <data name="ShortCutKeyCtrlBreak" xml:space="preserve">
     <value>Ctrl+Break</value>
@@ -1030,19 +1030,19 @@ If there is a handler for this exception, the program may be safely continued.</
     <value>逐语句(_I)</value>
   </data>
   <data name="StepOutCommand" xml:space="preserve">
-    <value>逐过程(_T)</value>
+    <value>跳出(_T)</value>
   </data>
   <data name="StepOverCommand" xml:space="preserve">
-    <value>跳出(_O)</value>
+    <value>逐过程(_O)</value>
   </data>
   <data name="StopDebuggingCommand" xml:space="preserve">
     <value>停止调试(_E)</value>
   </data>
   <data name="SwitchToFrameCommand" xml:space="preserve">
-    <value>_Switch To Frame</value>
+    <value>切换到帧(_S)</value>
   </data>
   <data name="SwitchToFrameNewTabCommand" xml:space="preserve">
-    <value>Switch To Frame (New _Tab)</value>
+    <value>切换到帧 (新标签页 _T)</value>
   </data>
   <data name="SwitchToThreadCommand" xml:space="preserve">
     <value>切换到线程(_S)</value>
@@ -1057,7 +1057,7 @@ If there is a handler for this exception, the program may be safely continued.</
     <value>线程(_H)</value>
   </data>
   <data name="ThreadType_BackgroundGC_or_Finalizer" xml:space="preserve">
-    <value>BGC / Finalizer</value>
+    <value>BGC / 终结器</value>
   </data>
   <data name="ThreadType_Main" xml:space="preserve">
     <value>主线程</value>
@@ -1150,10 +1150,10 @@ If there is a handler for this exception, the program may be safely continued.</
     <value>逐语句 (F11)</value>
   </data>
   <data name="ToolBarStepOutToolTip" xml:space="preserve">
-    <value>逐过程 (Shift+F11)</value>
+    <value>跳出 (Shift+F11)</value>
   </data>
   <data name="ToolBarStepOverToolTip" xml:space="preserve">
-    <value>跳出 (F10)</value>
+    <value>逐过程 (F10)</value>
   </data>
   <data name="ToolBarStopDebuggingToolTip" xml:space="preserve">
     <value>停止调试 (Shift+F5)</value>
@@ -1180,7 +1180,7 @@ If there is a handler for this exception, the program may be safely continued.</
     <value>局部变量</value>
   </data>
   <data name="Window_Memory_10_MenuItem" xml:space="preserve">
-    <value>Memory 1_0</value>
+    <value>内存 1_0</value>
   </data>
   <data name="Window_Memory_N" xml:space="preserve">
     <value>内存 {0}</value>

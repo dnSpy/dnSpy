@@ -22,6 +22,7 @@ Translators:
 Chinese Simplified
 	Ulysses Wu
 	YanJun Sun
+	iFish
 	SquallATF
 	linkinshi
 

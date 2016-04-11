@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="About_Issues" xml:space="preserve">
-    <value>汇报_Issues</value>
+    <value>上报错误(_I)</value>
   </data>
   <data name="About_LatestBuild" xml:space="preserve">
     <value>最新生成版本(_B)</value>
@@ -493,7 +493,7 @@
     <value>反序列化资源中的类型 （不安全）</value>
   </data>
   <data name="Options_Misc_Deserialize_ToolTip" xml:space="preserve">
-    <value>Any assembly could get loaded and executed with data from the resources.</value>
+    <value>可以从资源中的数据里加载任意程序集并运行.</value>
   </data>
   <data name="Options_Misc_ExplorerIntegration" xml:space="preserve">
     <value>Windows 资源管理器整合</value>
@@ -562,7 +562,7 @@
     <value>语法高亮</value>
   </data>
   <data name="TabsDlg_Activate_Button" xml:space="preserve">
-    <value>_Activate</value>
+    <value>活动(_A)</value>
   </data>
   <data name="TabsDlg_CloseWindow_Button" xml:space="preserve">
     <value>关闭窗口(_C)</value>

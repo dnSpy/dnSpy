@@ -187,7 +187,7 @@
     <value>重置执行引擎。</value>
   </data>
   <data name="Script_ToolTip_ClearScreen" xml:space="preserve">
-    <value>Clear Screen (Ctrl+L)</value>
+    <value>清空屏幕(Ctrl+L)</value>
   </data>
   <data name="Script_ToolTip_HistoryNext" xml:space="preserve">
     <value>下一历史（Alt + ↓）</value>
@@ -250,13 +250,13 @@
     <value>重置执行环境</value>
   </data>
   <data name="ClearScreenCommand" xml:space="preserve">
-    <value>Clear Screen</value>
+    <value>清空屏幕</value>
   </data>
   <data name="ShortCutKeyCtrlL" xml:space="preserve">
     <value>Ctrl+L</value>
   </data>
   <data name="Window_VisualBasic" xml:space="preserve">
-    <value>Visual Basic Interactive</value>
+    <value>Visual Basic 交互窗口</value>
   </data>
   <data name="ShortCutKeyCtrlAltI" xml:space="preserve">
     <value>Ctrl+Alt+I</value>

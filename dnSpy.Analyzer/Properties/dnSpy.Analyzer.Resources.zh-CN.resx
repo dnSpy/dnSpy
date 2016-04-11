@@ -160,7 +160,7 @@
     <value>转到引用（新标签）(_B)</value>
   </data>
   <data name="HidesParent" xml:space="preserve">
-    <value>hides</value>
+    <value>隐藏</value>
   </data>
   <data name="ImplementedByTreeNode" xml:space="preserve">
     <value>被实现</value>
