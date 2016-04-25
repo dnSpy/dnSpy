@@ -1,0 +1,1227 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddBreakpointCommand" xml:space="preserve">
+    <value>Доб_авить точку останова</value>
+  </data>
+  <data name="AddExceptionCommand" xml:space="preserve">
+    <value>Добавить _Исключение</value>
+  </data>
+  <data name="AllFiles" xml:space="preserve">
+    <value>Все файлы</value>
+  </data>
+  <data name="AppDomainNotAvailable" xml:space="preserve">
+    <value>&lt;не существует&gt;</value>
+  </data>
+  <data name="AppMenu_Debug" xml:space="preserve">
+    <value>О_тладка</value>
+  </data>
+  <data name="AppTitle_Debugging" xml:space="preserve">
+    <value>Отладка</value>
+  </data>
+  <data name="AskAppWindowClosingStopDebugging" xml:space="preserve">
+    <value>Вы хотите остановить отладку?</value>
+  </data>
+  <data name="AskDeleteAllBreakpoints" xml:space="preserve">
+    <value>Вы хотите удалить все точки останова?</value>
+  </data>
+  <data name="AttachToProcessCommand" xml:space="preserve">
+    <value>Присоединиться к _Процессу...</value>
+  </data>
+  <data name="Attach_AttachToProcess" xml:space="preserve">
+    <value>Присоединется к процессу</value>
+  </data>
+  <data name="Attach_AttachToProcess32" xml:space="preserve">
+    <value>Присоединиться к Процессу (только 32-bit)</value>
+  </data>
+  <data name="Attach_AttachToProcess64" xml:space="preserve">
+    <value>Присоединиться к процессу (только 64-бит)</value>
+  </data>
+  <data name="Attach_UseDnSpy32" xml:space="preserve">
+    <value>Используйте dnSpy.exe для присоединения к 64-битным процессам</value>
+  </data>
+  <data name="Attach_UseDnSpy64" xml:space="preserve">
+    <value>Используйте dnSpy-x86.exe для присоединения к 32-битным процессам</value>
+  </data>
+  <data name="BreakCommand" xml:space="preserve">
+    <value>Ос_тановить</value>
+  </data>
+  <data name="BreakpointsCommand" xml:space="preserve">
+    <value>Точки _останова</value>
+  </data>
+  <data name="BreakWhenExceptionThrownCommand" xml:space="preserve">
+    <value>Остановить при появлении исключения</value>
+  </data>
+  <data name="Button_Attach" xml:space="preserve">
+    <value>_Присоединиться</value>
+  </data>
+  <data name="Button_Cancel" xml:space="preserve">
+    <value>_Отмена</value>
+  </data>
+  <data name="Button_OK" xml:space="preserve">
+    <value>_OK</value>
+  </data>
+  <data name="Button_Refresh" xml:space="preserve">
+    <value>_Обновить</value>
+  </data>
+  <data name="CallStackCommand" xml:space="preserve">
+    <value>Стэк вызовов</value>
+  </data>
+  <data name="CallStack_MaxFramesExceeded" xml:space="preserve">
+    <value>Максимальное количество фреймов стека превышено.</value>
+  </data>
+  <data name="Column_Address" xml:space="preserve">
+    <value>Адрес</value>
+  </data>
+  <data name="Column_AppDomain" xml:space="preserve">
+    <value>Домен приложения</value>
+  </data>
+  <data name="Column_Assembly" xml:space="preserve">
+    <value>Сборка</value>
+  </data>
+  <data name="Column_DynamicModule" xml:space="preserve">
+    <value>Дин. модуль</value>
+  </data>
+  <data name="Column_File" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="Column_InMemoryModule" xml:space="preserve">
+    <value>InMemory</value>
+  </data>
+  <data name="Column_Module" xml:space="preserve">
+    <value>Модуль</value>
+  </data>
+  <data name="Column_Name" xml:space="preserve">
+    <value>Наименование</value>
+  </data>
+  <data name="Column_OptimizedModule" xml:space="preserve">
+    <value>Optimized</value>
+  </data>
+  <data name="Column_Order" xml:space="preserve">
+    <value>Порядок</value>
+  </data>
+  <data name="Column_Path" xml:space="preserve">
+    <value>Путь</value>
+  </data>
+  <data name="Column_Process" xml:space="preserve">
+    <value>Процесс</value>
+  </data>
+  <data name="Column_ProcessArchitecture" xml:space="preserve">
+    <value>Архитектура</value>
+  </data>
+  <data name="Column_ProcessCLR" xml:space="preserve">
+    <value>CLR</value>
+  </data>
+  <data name="Column_ProcessFilename" xml:space="preserve">
+    <value>Имя файла</value>
+  </data>
+  <data name="Column_ProcessID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_ProcessTitle" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="Column_ProcessType" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="Column_ThreadAffinityMask" xml:space="preserve">
+    <value>Маска сходства</value>
+  </data>
+  <data name="Column_ThreadCategory" xml:space="preserve">
+    <value>Категория</value>
+  </data>
+  <data name="Column_ThreadID" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="Column_ThreadLocation" xml:space="preserve">
+    <value>Размещение</value>
+  </data>
+  <data name="Column_ThreadManagedId" xml:space="preserve">
+    <value>Managed ID</value>
+  </data>
+  <data name="Column_ThreadPriority" xml:space="preserve">
+    <value>Приоритет</value>
+  </data>
+  <data name="Column_ThreadState" xml:space="preserve">
+    <value>Состояние</value>
+  </data>
+  <data name="Column_ThreadSuspended" xml:space="preserve">
+    <value>Приостановлен</value>
+  </data>
+  <data name="Column_Timestamp" xml:space="preserve">
+    <value>Штамп времени</value>
+  </data>
+  <data name="Column_Type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="Column_Value" xml:space="preserve">
+    <value>Значение</value>
+  </data>
+  <data name="Column_Version" xml:space="preserve">
+    <value>Версия</value>
+  </data>
+  <data name="ContinueDebuggingCommand" xml:space="preserve">
+    <value>П_родолжить</value>
+  </data>
+  <data name="CopyCommand" xml:space="preserve">
+    <value>К_опировать</value>
+  </data>
+  <data name="DbgAsm_Args" xml:space="preserve">
+    <value>А_ргументы</value>
+  </data>
+  <data name="DbgAsm_Assembly" xml:space="preserve">
+    <value>_Сборка</value>
+  </data>
+  <data name="DbgAsm_BreakAt" xml:space="preserve">
+    <value>_Остановиться в</value>
+  </data>
+  <data name="DbgAsm_DbgShimDllPath" xml:space="preserve">
+    <value>_dbgshim.dll</value>
+  </data>
+  <data name="DbgAsm_Host" xml:space="preserve">
+    <value>_Хост</value>
+  </data>
+  <data name="DbgAsm_HostArgs" xml:space="preserve">
+    <value>Ар_гументы хоста</value>
+  </data>
+  <data name="DbgAsm_Title" xml:space="preserve">
+    <value>Отладка сборки</value>
+  </data>
+  <data name="DbgAsm_WorkingDir" xml:space="preserve">
+    <value>_Рабочий каталог</value>
+  </data>
+  <data name="DbgBreak_CreateProcessEvent" xml:space="preserve">
+    <value>Событие CreateProcess</value>
+  </data>
+  <data name="DbgBreak_Dont" xml:space="preserve">
+    <value>Не прерывать</value>
+  </data>
+  <data name="DbgBreak_EntryPoint" xml:space="preserve">
+    <value>Точка входа</value>
+  </data>
+  <data name="DbgBreak_ExeFirstLoadClassEvent" xml:space="preserve">
+    <value>Первое событие LoadClass в приложении</value>
+  </data>
+  <data name="DbgBreak_ExeLoadModuleEvent" xml:space="preserve">
+    <value>Событие LoadModule в приложении</value>
+  </data>
+  <data name="DbgBreak_FirstCreateAppDomainEvent" xml:space="preserve">
+    <value>Первое событие CreateAppDomain</value>
+  </data>
+  <data name="DbgBreak_FirstCreateThreadEvent" xml:space="preserve">
+    <value>Первое событие CreateThread</value>
+  </data>
+  <data name="DbgBreak_FirstLoadClassEvent" xml:space="preserve">
+    <value>Первое событие LoadClass</value>
+  </data>
+  <data name="DbgBreak_FirstLoadModuleEvent" xml:space="preserve">
+    <value>Первое событие LoadModule</value>
+  </data>
+  <data name="DbgBreak_ModuleClassConstructorOrEntryPoint" xml:space="preserve">
+    <value>.cctor модуля или точка входа</value>
+  </data>
+  <data name="DbgSettings_AutoOpenLocalsWindow" xml:space="preserve">
+    <value>Показать окно локальных переменных при старте дебаггера</value>
+  </data>
+  <data name="DbgSettings_BreakAt" xml:space="preserve">
+    <value>_Остановиться в</value>
+  </data>
+  <data name="DbgSettings_CompilerGeneratedAttributesCanHideFields" xml:space="preserve">
+    <value>Атрибуты CompilerGenerated могут скрывать поля</value>
+  </data>
+  <data name="DbgSettings_CoreCLRDbgShimFilename" xml:space="preserve">
+    <value>CoreCLR dbgshim.dll</value>
+  </data>
+  <data name="DbgSettings_DebuggerBrowsableAttributesCanHidePropsFields" xml:space="preserve">
+    <value>Атрибуты DebuggerBrowsable могут скрывать поля и свойства</value>
+  </data>
+  <data name="DbgSettings_DisableManagedDebuggerDetection" xml:space="preserve">
+    <value>Запретить коду определять managed дебаггер</value>
+  </data>
+  <data name="DbgSettings_IgnoreBreakInstructions" xml:space="preserve">
+    <value>Игнорировать Debugger.Break() и другие инструкции останова</value>
+  </data>
+  <data name="DbgSettings_PropertyEvalAndFunctionCalls" xml:space="preserve">
+    <value>Включить вычисление свойств и другие неявные вызовы функций</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlightAttach" xml:space="preserve">
+    <value>Присоеди_ниться</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlightBreakpoints" xml:space="preserve">
+    <value>То_чки останова</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlightCallStack" xml:space="preserve">
+    <value>Ст_эк вызовов</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlightExceptions" xml:space="preserve">
+    <value>И_сключения</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlightLocals" xml:space="preserve">
+    <value>_Локальные переменные</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlightModules" xml:space="preserve">
+    <value>_Модули</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlightThreads" xml:space="preserve">
+    <value>По_токи</value>
+  </data>
+  <data name="DbgSettings_UseMemoryModules" xml:space="preserve">
+    <value>Отлаживать файлы, загруженные из памяти процесса (снимите флажок для того, чтобы использовать файлы с диска)</value>
+  </data>
+  <data name="DbgSettings_UseStringConversionFunction" xml:space="preserve">
+    <value>Вызывать функции конвертирования строк в окнах переменных</value>
+  </data>
+  <data name="DebugAssemblyCommand" xml:space="preserve">
+    <value>_Отладить сборку</value>
+  </data>
+  <data name="DebugAssemblyCommand2" xml:space="preserve">
+    <value>_Отладить сборку...</value>
+  </data>
+  <data name="DebugCoreCLRAssemblyCommand" xml:space="preserve">
+    <value>_Отладить сборку CoreCLR...</value>
+  </data>
+  <data name="DebuggerOptDlgTab" xml:space="preserve">
+    <value>Отладчик</value>
+  </data>
+  <data name="DebugProgramX" xml:space="preserve">
+    <value>_Отладить {0}</value>
+  </data>
+  <data name="Debug_EventDescription_BreakpointSetError" xml:space="preserve">
+    <value>Ошибка BreakpointSetError 0x{0:X8}</value>
+  </data>
+  <data name="Debug_EventDescription_ControlCPressed" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="Debug_EventDescription_CreateAppDomain" xml:space="preserve">
+    <value>CreateAppDomain {0} {1}</value>
+  </data>
+  <data name="Debug_EventDescription_CreateProcess" xml:space="preserve">
+    <value>CreateProcess PID={0} CLR v{1}</value>
+  </data>
+  <data name="Debug_EventDescription_CreateThread" xml:space="preserve">
+    <value>CreateThread TID={0} VTID={1}</value>
+  </data>
+  <data name="Debug_EventDescription_DebuggerError" xml:space="preserve">
+    <value>DebuggerError hr=0x{0:X8} error=0x{1:X8}</value>
+  </data>
+  <data name="Debug_EventDescription_Exception" xml:space="preserve">
+    <value>Исключение</value>
+  </data>
+  <data name="Debug_EventDescription_Exception2" xml:space="preserve">
+    <value>Исключение offset={0:X4}</value>
+  </data>
+  <data name="Debug_EventDescription_Exception2_CatchHandlerFound" xml:space="preserve">
+    <value>CatchHandlerFound</value>
+  </data>
+  <data name="Debug_EventDescription_Exception2_FirstChance" xml:space="preserve">
+    <value>FirstChance</value>
+  </data>
+  <data name="Debug_EventDescription_Exception2_Unhandled" xml:space="preserve">
+    <value>Необработанное</value>
+  </data>
+  <data name="Debug_EventDescription_Exception2_Unknown" xml:space="preserve">
+    <value>Неизвестное</value>
+  </data>
+  <data name="Debug_EventDescription_Exception2_UserFirstChance" xml:space="preserve">
+    <value>UserFirstChance</value>
+  </data>
+  <data name="Debug_EventDescription_LoadAssembly" xml:space="preserve">
+    <value>LoadAssembly {0}</value>
+  </data>
+  <data name="Debug_EventDescription_LoadClass" xml:space="preserve">
+    <value>LoadClass 0x{0:X8} {1} {2}</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule1" xml:space="preserve">
+    <value>LoadModule DYN={0} MEM={1} {2:X8} {3:X8} {4}</value>
+  </data>
+  <data name="Debug_EventDescription_LoadModule2" xml:space="preserve">
+    <value>LoadModule A={0:X8} S={1:X8} {2}</value>
+  </data>
+  <data name="Debug_EventDescription_MDA_Notification" xml:space="preserve">
+    <value>Сообщение MDA</value>
+  </data>
+  <data name="Debug_EventDescription_MDA_Notification2" xml:space="preserve">
+    <value>Сообщение MDA: TID={0} {1} {2}</value>
+  </data>
+  <data name="Debug_EventDescription_UnhandledException" xml:space="preserve">
+    <value>Необработанное исключение</value>
+  </data>
+  <data name="Debug_StopReason_AnyDebugEventBreakpoint" xml:space="preserve">
+    <value>Любой DebugEvent</value>
+  </data>
+  <data name="Debug_StopReason_BreakInstruction" xml:space="preserve">
+    <value>Инструкция останова</value>
+  </data>
+  <data name="Debug_StopReason_DebugEventBreakpoint" xml:space="preserve">
+    <value>DebugEvent</value>
+  </data>
+  <data name="Debug_StopReason_Exception" xml:space="preserve">
+    <value>Исключение</value>
+  </data>
+  <data name="Debug_StopReason_ILCodeBreakpoint" xml:space="preserve">
+    <value>Точка останова IL</value>
+  </data>
+  <data name="Debug_StopReason_UnhandledException" xml:space="preserve">
+    <value>Необработанное исключение</value>
+  </data>
+  <data name="Debug_StopReason_Unknown" xml:space="preserve">
+    <value>Неизвестная причина</value>
+  </data>
+  <data name="DeleteAllBreakpointsCommand" xml:space="preserve">
+    <value>Удалить _все точки останова</value>
+  </data>
+  <data name="DeleteBreakpointCommand" xml:space="preserve">
+    <value>У_далить точку останова</value>
+  </data>
+  <data name="DeleteBreakpointsCommand" xml:space="preserve">
+    <value>У_далить точки останова</value>
+  </data>
+  <data name="DeleteCommand" xml:space="preserve">
+    <value>_Удалить</value>
+  </data>
+  <data name="DetachCommand" xml:space="preserve">
+    <value>_Отсоединить</value>
+  </data>
+  <data name="DisableAllBreakpointsCommand" xml:space="preserve">
+    <value>Выключить все точки оста_нова</value>
+  </data>
+  <data name="DisableAllFilteredExceptionsCommand" xml:space="preserve">
+    <value>_Выключить все отфильтрованные исключения</value>
+  </data>
+  <data name="DisableBreakpointCommand2" xml:space="preserve">
+    <value>В_ыключить точку останова</value>
+  </data>
+  <data name="DisableBreakpointsCommand2" xml:space="preserve">
+    <value>В_ыключить точки останова</value>
+  </data>
+  <data name="EnableAllBreakpointsCommand" xml:space="preserve">
+    <value>Включить все точки оста_нова</value>
+  </data>
+  <data name="EnableAllFilteredExceptionsCommand" xml:space="preserve">
+    <value>_Включить все отфильтрованные исключения</value>
+  </data>
+  <data name="EnableBreakpointCommand" xml:space="preserve">
+    <value>_Включить точку останова</value>
+  </data>
+  <data name="EnableBreakpointCommand2" xml:space="preserve">
+    <value>Вк_лючить точку останова</value>
+  </data>
+  <data name="EnableBreakpointsCommand" xml:space="preserve">
+    <value>_Включить точки останова</value>
+  </data>
+  <data name="EnableBreakpointsCommand2" xml:space="preserve">
+    <value>Вк_лючить точки останова</value>
+  </data>
+  <data name="ErrorOccurredX" xml:space="preserve">
+    <value>Произошла ошибка:
+
+{0}</value>
+  </data>
+  <data name="Error_CantEvalUnlessDebuggerStopped" xml:space="preserve">
+    <value>Не могу вычислить пока дебаггер остановлен</value>
+  </data>
+  <data name="Error_CantEvalWhenUnhandledExceptionHasOccurred" xml:space="preserve">
+    <value>Не могу вычислить пока появляется необработанное исключение</value>
+  </data>
+  <data name="Error_CantSetNextStatementHere" xml:space="preserve">
+    <value>Невозможно установить следующую инструкцию</value>
+  </data>
+  <data name="Error_CantSetNextStatementNoILFrame" xml:space="preserve">
+    <value>Фрейм IL отсутствует</value>
+  </data>
+  <data name="Error_CantSetNextStatementToAnotherMethod" xml:space="preserve">
+    <value>Следующая инструкция не может быть назначена на другой метод</value>
+  </data>
+  <data name="Error_CantSetNextStatementWhenNotStopped" xml:space="preserve">
+    <value>Не могу назначить следующую инструкцию в процессе отладки</value>
+  </data>
+  <data name="Error_CLRDebuggerErrorOccurred" xml:space="preserve">
+    <value>Произошла ошибка дебаггера CLR. Уничтожьте процесс дебаггера и попробуйте снова.
+
+HR: 0x{0:X8}
+Ошибка: 0x{1:X8}</value>
+  </data>
+  <data name="Error_CouldNotBreakProcess" xml:space="preserve">
+    <value>Не могу прервать процесс. Ошибка: 0x{0:X8}</value>
+  </data>
+  <data name="Error_CouldNotDetachProcess" xml:space="preserve">
+    <value>Не могу отсоединиться от процесса. Ошибка: 0x{0:X8}</value>
+  </data>
+  <data name="Error_CouldNotSetNextStatement" xml:space="preserve">
+    <value>Не могу установить следующую инструкцию.</value>
+  </data>
+  <data name="Error_CouldNotSetNextStatement_UnknownReason" xml:space="preserve">
+    <value>Не могу установить следующую инструкцию (неизвестная причина)</value>
+  </data>
+  <data name="Error_CouldNotStartDebugger" xml:space="preserve">
+    <value>Не могу запустить дебаггер. {0}</value>
+  </data>
+  <data name="Error_CouldNotStartDebugger2" xml:space="preserve">
+    <value>Не могу запустить дебаггер.
+
+Ошибка: {0}</value>
+  </data>
+  <data name="Error_CouldNotStartDebuggerCheckAccessToFile" xml:space="preserve">
+    <value>Не могу запустить дебаггер. Убедитесь, что есть доступ к файлу '{0}'
+
+Ошибка: {1}</value>
+  </data>
+  <data name="Error_CouldNotStartDebuggerRequireAdminPrivLvl" xml:space="preserve">
+    <value>Не могу запустить дебаггер. Отлаживаемое приложение требует административных полномочий. Перезапустите dnSpy в режиме администратора и попробуйте снова.</value>
+  </data>
+  <data name="Error_FileDoesNotExist" xml:space="preserve">
+    <value>Файл не существует</value>
+  </data>
+  <data name="Error_HostEgCoreRunExe" xml:space="preserve">
+    <value>Хост, например CoreRun.exe</value>
+  </data>
+  <data name="Error_MissingFilename" xml:space="preserve">
+    <value>Файл отсутствует</value>
+  </data>
+  <data name="Error_NoDebugInfoAvailable" xml:space="preserve">
+    <value>Не найдена отладочная информация. Убедитесь, что в дереве выбраны только отлаживаемые методы (нажмите 'Alt+Num *' для перехода к текущей инструкции)</value>
+  </data>
+  <data name="Error_NoTabAvailableDecompileCurrentMethod" xml:space="preserve">
+    <value>Нет ни одной вкладки. Декомпилируйте текущий метод!</value>
+  </data>
+  <data name="Error_NotDebugging" xml:space="preserve">
+    <value>Мы не находится в режиме отладки</value>
+  </data>
+  <data name="Error_StartWithoutDebuggingCouldNotStart" xml:space="preserve">
+    <value>Не могу запустить '{0}'
+ОШИБКА: {0}</value>
+  </data>
+  <data name="Error_UnhandledExceptionOccurred" xml:space="preserve">
+    <value>Необработанное исключение произошло в {0}
+
+{1}
+
+Нажмите OK для останова или Cancel для продолжения.</value>
+  </data>
+  <data name="ExceptionInfoFormat" xml:space="preserve">
+    <value>{0}: {1}
+
+Сообщение: {2}
+
+HResult: 0x{3:X8}</value>
+  </data>
+  <data name="ExceptionInfo_Exception" xml:space="preserve">
+    <value>Исключение</value>
+  </data>
+  <data name="ExceptionInfo_InnerException" xml:space="preserve">
+    <value>Внутреннее исключение</value>
+  </data>
+  <data name="ExceptionSettingsCommand" xml:space="preserve">
+    <value>Настройки и_сключения</value>
+  </data>
+  <data name="Exceptions_Add_Error_Name" xml:space="preserve">
+    <value>Не указано полное имя исключения, например System.My.Exception</value>
+  </data>
+  <data name="Exceptions_Add_Label" xml:space="preserve">
+    <value>_Полное имя</value>
+  </data>
+  <data name="Exceptions_Add_Title" xml:space="preserve">
+    <value>Добавить исключение</value>
+  </data>
+  <data name="Exceptions_Add_ToolTip" xml:space="preserve">
+    <value>Добавляет исключение в список</value>
+  </data>
+  <data name="Exceptions_AllCLRExceptionsNotInList" xml:space="preserve">
+    <value>&lt;Все исключения CLR отсутствуют в списке&gt;</value>
+  </data>
+  <data name="Exceptions_Remove_ToolTip" xml:space="preserve">
+    <value>Удаляет исключение из списка</value>
+  </data>
+  <data name="Exceptions_RestoreSettings_ToolTip" xml:space="preserve">
+    <value>Восстанавливает список по умолчанию</value>
+  </data>
+  <data name="Exceptions_Search" xml:space="preserve">
+    <value>Поиск</value>
+  </data>
+  <data name="Exceptions_Search_ToolTip" xml:space="preserve">
+    <value>Поиск исключения (Ctrl+F)</value>
+  </data>
+  <data name="Exceptions_ShowOnlyEnabledExceptions_ToolTip" xml:space="preserve">
+    <value>Показывает только включенные исключения</value>
+  </data>
+  <data name="ExceptionThrownMessage" xml:space="preserve">
+    <value>Произошло исключение: '{0}' в {1}
+
+Если для него есть обработчик, то программа может быть продолжена.</value>
+  </data>
+  <data name="FreezeThreadCommand" xml:space="preserve">
+    <value>_Заморозить</value>
+  </data>
+  <data name="GoToCodeCommand" xml:space="preserve">
+    <value>_Перейти к коду</value>
+  </data>
+  <data name="GoToCodeNewTabCommand" xml:space="preserve">
+    <value>Перейти к коду (новая _вкладка)</value>
+  </data>
+  <data name="GoToDisassemblyCommand" xml:space="preserve">
+    <value>К дизассемблированному коду</value>
+  </data>
+  <data name="GoToDisassemblyCommand2" xml:space="preserve">
+    <value>К _дизассемблированному коду</value>
+  </data>
+  <data name="GoToModuleCommand" xml:space="preserve">
+    <value>Перейти _к модулю</value>
+  </data>
+  <data name="HexDisplayCommand" xml:space="preserve">
+    <value>_Hex отображение</value>
+  </data>
+  <data name="LoadModule_InfoText" xml:space="preserve">
+    <value>Загрузка модуля. Это может занять некоторое время.</value>
+  </data>
+  <data name="LoadModule_Title" xml:space="preserve">
+    <value>Загрузка динамических модулей</value>
+  </data>
+  <data name="LocalsAddWatchCommand" xml:space="preserve">
+    <value>Добавить watch</value>
+  </data>
+  <data name="LocalsCollapseChildrenNodesCommand" xml:space="preserve">
+    <value>_Свернуть дочерние узлы</value>
+  </data>
+  <data name="LocalsCollapseParentNodeCommand" xml:space="preserve">
+    <value>С_вернуть родительский узел</value>
+  </data>
+  <data name="LocalsCommand" xml:space="preserve">
+    <value>_Локальные переменные</value>
+  </data>
+  <data name="LocalsCopyValueCommand" xml:space="preserve">
+    <value>Копировать зна_чение</value>
+  </data>
+  <data name="LocalsEditValueCommand" xml:space="preserve">
+    <value>_Изменить значение</value>
+  </data>
+  <data name="LocalsEditValue_Error_CanNotWriteNewValueToThisType" xml:space="preserve">
+    <value>Не могу записать новое значение в этот тип.</value>
+  </data>
+  <data name="LocalsEditValue_Error_CanOnlyBeSetToNull" xml:space="preserve">
+    <value>Вы можете только установить в null</value>
+  </data>
+  <data name="LocalsEditValue_Error_CouldNotCallPropSetter" xml:space="preserve">
+    <value>Ошибка вызова сеттера свойства: 0x{0:X8}</value>
+  </data>
+  <data name="LocalsEditValue_Error_CouldNotWriteNewValue" xml:space="preserve">
+    <value>Не могу установить значение: {0}</value>
+  </data>
+  <data name="LocalsEditValue_Error_CouldNotWriteNullToNullableType" xml:space="preserve">
+    <value>Ошибка записи null в nullable тип: 0x{0:X8}</value>
+  </data>
+  <data name="LocalsEditValue_Error_CouldNotWriteTheValue" xml:space="preserve">
+    <value>Не могу записать значение. Ошибка: 0x{0:X8}</value>
+  </data>
+  <data name="LocalsEditValue_Error_CouldNotWriteValueDueToException" xml:space="preserve">
+    <value>Не могу записать значение
+ОШИБКА: {0}</value>
+  </data>
+  <data name="LocalsEditValue_Error_EnterSomeText" xml:space="preserve">
+    <value>Введите текст</value>
+  </data>
+  <data name="LocalsEditValue_Error_ExceptionOccurredInDebuggedProcess" xml:space="preserve">
+    <value>В процессе отладки появилось исключение: {0}</value>
+  </data>
+  <data name="LocalsEditValue_Error_FieldCanNotBeEdited" xml:space="preserve">
+    <value>Это поле не может быть изменено</value>
+  </data>
+  <data name="LocalsEditValue_Error_InvalidEnumValue" xml:space="preserve">
+    <value>Неверное значение enum</value>
+  </data>
+  <data name="LocalsEditValue_Error_InvalidNumber" xml:space="preserve">
+    <value>Неверное число</value>
+  </data>
+  <data name="LocalsEditValue_Error_UnknownEnumValue" xml:space="preserve">
+    <value>Неизвестное значение enum '{0}'</value>
+  </data>
+  <data name="LocalsEditValue_Error_ValueCanNotBeEdited" xml:space="preserve">
+    <value>Это значение не может быть изменено</value>
+  </data>
+  <data name="LocalsEditValue_Error_ValueTypeIsTooBig" xml:space="preserve">
+    <value>Тип-значение слишком велик</value>
+  </data>
+  <data name="LocalsExpandChildrenNodesCommand" xml:space="preserve">
+    <value>_Развернуть дочерние узлы</value>
+  </data>
+  <data name="LocalsSaveCommand" xml:space="preserve">
+    <value>_Сохранить...</value>
+  </data>
+  <data name="LocalsSave_Error_CouldNotGetArrayData" xml:space="preserve">
+    <value>Не могу получить данные массива</value>
+  </data>
+  <data name="LocalsSave_Error_CouldNotReadAnyData" xml:space="preserve">
+    <value>Не могу прочитать данные</value>
+  </data>
+  <data name="LocalsSave_Error_CouldNotSaveDataToFilename" xml:space="preserve">
+    <value>Ошибка при сохранении данных в '{0}'
+ОШИБКА: {1}</value>
+  </data>
+  <data name="Locals_Ask_TooManyItems" xml:space="preserve">
+    <value>У этого элемента более {0} дочерних элементов, их отображение будет ограничено.
+
+Вы действительно хотите развернуть элемент?</value>
+  </data>
+  <data name="Locals_Error_CantEvaluateCantCreateStrings" xml:space="preserve">
+    <value>Сейчас невозможно создать новые строки</value>
+  </data>
+  <data name="Locals_Error_CantEvaluateWhenThreadIsAtUnsafePoint" xml:space="preserve">
+    <value>Не могу вычислить, когда поток в небезопасном состоянии. Шагните через вызов или запустите до точки останова.</value>
+  </data>
+  <data name="Locals_Error_CouldNotCreateString" xml:space="preserve">
+    <value>Не могу создать строку. Ошибка: 0x{0:X8}</value>
+  </data>
+  <data name="Locals_Error_CouldNotCreateString2" xml:space="preserve">
+    <value>Не могу создать новую строку</value>
+  </data>
+  <data name="Locals_Error_CouldNotCreateStringDueToException" xml:space="preserve">
+    <value>В отлаживаемой программе возникло исключение и строку создать невозможно</value>
+  </data>
+  <data name="Locals_Error_CouldNotRecreateTheValue" xml:space="preserve">
+    <value>Не могу пересоздать значение</value>
+  </data>
+  <data name="Locals_Error_ErrorNeuteredCouldNotBeRecreated" xml:space="preserve">
+    <value>Значение было neutered и не может быть пересоздано</value>
+  </data>
+  <data name="Locals_Error_EvalDisabledCantCallPropsAndMethods" xml:space="preserve">
+    <value>Сейчас невозможно вызвать свойства и методы</value>
+  </data>
+  <data name="Locals_Error_EvalTimedOutCantCreateNewStringsUntilContinue" xml:space="preserve">
+    <value>Время выполнения истекло. Невозможно создать новые строки, пока вы не продолжите отладку</value>
+  </data>
+  <data name="Locals_Error_EvalTimedOutIsDisabled" xml:space="preserve">
+    <value>Время выполнения истекло. Вычисление будет отключено до тех пор, пока вы не продолжите отладку.</value>
+  </data>
+  <data name="Locals_Error_EvaluationTimedOut" xml:space="preserve">
+    <value>Время выполнения истекло</value>
+  </data>
+  <data name="Locals_Error_PropertyFuncEvalHasBeenDisabledInSettings" xml:space="preserve">
+    <value>Выполнение свойства/функции выключено в настройках</value>
+  </data>
+  <data name="Locals_Error_StaticFieldIsNotYetAvailable" xml:space="preserve">
+    <value>Статическое поле еще не существует</value>
+  </data>
+  <data name="Locals_TypeVariables" xml:space="preserve">
+    <value>Переменные типа</value>
+  </data>
+  <data name="MemoryWindowCommand" xml:space="preserve">
+    <value>_Память</value>
+  </data>
+  <data name="ModuleCopyFilenameCommand" xml:space="preserve">
+    <value>Копировать имя файла</value>
+  </data>
+  <data name="ModuleSaveModulesTitle" xml:space="preserve">
+    <value>Сохранить модули</value>
+  </data>
+  <data name="ModuleSaveModuleTitle" xml:space="preserve">
+    <value>Сохранить модуль</value>
+  </data>
+  <data name="ModulesCommand" xml:space="preserve">
+    <value>Мод_ули</value>
+  </data>
+  <data name="Module_BreakProcessBeforeLoadingDynamicModules" xml:space="preserve">
+    <value>Перед загрузкой динамических модулей необходимо остановить процесс.</value>
+  </data>
+  <data name="Module_NoAddress" xml:space="preserve">
+    <value>&lt;нет адреса&gt;</value>
+  </data>
+  <data name="OpenContainingFolderCommand" xml:space="preserve">
+    <value>_Открыть каталог</value>
+  </data>
+  <data name="OpenModuleFromMemoryCommand" xml:space="preserve">
+    <value>Открыть модуль из памяти</value>
+  </data>
+  <data name="Process_CLR_CoreCLR" xml:space="preserve">
+    <value>CoreCLR</value>
+  </data>
+  <data name="Process_CLR_Desktop" xml:space="preserve">
+    <value>Рабочий стол</value>
+  </data>
+  <data name="ReloadAllMethodBodiesCommand" xml:space="preserve">
+    <value>Перегрузить тела всех методов</value>
+  </data>
+  <data name="RemoveExceptionCommand" xml:space="preserve">
+    <value>_Убрать</value>
+  </data>
+  <data name="RenameThreadCommand" xml:space="preserve">
+    <value>Переименовать</value>
+  </data>
+  <data name="RestartCommand" xml:space="preserve">
+    <value>_Рестарт</value>
+  </data>
+  <data name="RestoreDefaultExceptionSettingsCommand" xml:space="preserve">
+    <value>Восстановить настройки по умолчанию</value>
+  </data>
+  <data name="RunToCursorCommand" xml:space="preserve">
+    <value>В_ыполнить до курсора</value>
+  </data>
+  <data name="SaveModuleCommand" xml:space="preserve">
+    <value>Сохранить модуль...</value>
+  </data>
+  <data name="SaveModulesCommand" xml:space="preserve">
+    <value>Сохранить {0} модулей...</value>
+  </data>
+  <data name="SelectAllCommand" xml:space="preserve">
+    <value>Выбр_ать все</value>
+  </data>
+  <data name="SetNextStatementCommand" xml:space="preserve">
+    <value>Установить сле_дующую инструкцию</value>
+  </data>
+  <data name="ShortCutAltAsterisk" xml:space="preserve">
+    <value>Alt+Num *</value>
+  </data>
+  <data name="ShortCutKeyAlt4" xml:space="preserve">
+    <value>Alt+4</value>
+  </data>
+  <data name="ShortCutKeyAlt6" xml:space="preserve">
+    <value>Alt+6</value>
+  </data>
+  <data name="ShortCutKeyCtrlA" xml:space="preserve">
+    <value>Ctrl+A</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltB" xml:space="preserve">
+    <value>Ctrl+Alt+B</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltC" xml:space="preserve">
+    <value>Ctrl+Alt+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltE" xml:space="preserve">
+    <value>Ctrl+Alt+E</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltH" xml:space="preserve">
+    <value>Ctrl+Alt+H</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltP" xml:space="preserve">
+    <value>Ctrl+Alt+P</value>
+  </data>
+  <data name="ShortCutKeyCtrlAltU" xml:space="preserve">
+    <value>Ctrl+Alt+U</value>
+  </data>
+  <data name="ShortCutKeyCtrlShift_DIGIT" xml:space="preserve">
+    <value>Ctrl+Shift+{0}</value>
+  </data>
+  <data name="ShortCutKeyCtrlBreak" xml:space="preserve">
+    <value>Ctrl+Break</value>
+  </data>
+  <data name="ShortCutKeyCtrlC" xml:space="preserve">
+    <value>Ctrl+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlEnter" xml:space="preserve">
+    <value>Ctrl+Enter</value>
+  </data>
+  <data name="ShortCutKeyCtrlF10" xml:space="preserve">
+    <value>Ctrl+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlF5" xml:space="preserve">
+    <value>Ctrl+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlF9" xml:space="preserve">
+    <value>Ctrl+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftC" xml:space="preserve">
+    <value>Ctrl+Shift+C</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF10" xml:space="preserve">
+    <value>Ctrl+Shift+F10</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF5" xml:space="preserve">
+    <value>Ctrl+Shift+F5</value>
+  </data>
+  <data name="ShortCutKeyCtrlShiftF9" xml:space="preserve">
+    <value>Ctrl+Shift+F9</value>
+  </data>
+  <data name="ShortCutKeyCtrl_DIGIT" xml:space="preserve">
+    <value>Ctrl+{0}</value>
+  </data>
+  <data name="ShortCutKeyDelete" xml:space="preserve">
+    <value>Del</value>
+  </data>
+  <data name="ShortCutKeyEnter" xml:space="preserve">
+    <value>Enter</value>
+  </data>
+  <data name="ShortCutKeyF10" xml:space="preserve">
+    <value>F10</value>
+  </data>
+  <data name="ShortCutKeyF11" xml:space="preserve">
+    <value>F11</value>
+  </data>
+  <data name="ShortCutKeyF2" xml:space="preserve">
+    <value>F2</value>
+  </data>
+  <data name="ShortCutKeyF5" xml:space="preserve">
+    <value>F5</value>
+  </data>
+  <data name="ShortCutKeyF9" xml:space="preserve">
+    <value>F9</value>
+  </data>
+  <data name="ShortCutKeyInsert" xml:space="preserve">
+    <value>Ins</value>
+  </data>
+  <data name="ShortCutKeyShiftF11" xml:space="preserve">
+    <value>Shift+F11</value>
+  </data>
+  <data name="ShortCutKeyShiftF5" xml:space="preserve">
+    <value>Shift+F5</value>
+  </data>
+  <data name="ShowInMemoryWindowCommand" xml:space="preserve">
+    <value>Показать в окне Память</value>
+  </data>
+  <data name="ShowInstructionPointerCommand" xml:space="preserve">
+    <value>Показать IP</value>
+  </data>
+  <data name="ShowModuleNamesCommand" xml:space="preserve">
+    <value>Показать имена _модулей</value>
+  </data>
+  <data name="ShowNamespacesCommand" xml:space="preserve">
+    <value>Показать пространства имен</value>
+  </data>
+  <data name="ShowNextStatementCommand" xml:space="preserve">
+    <value>По_казать следующую инструкцию</value>
+  </data>
+  <data name="ShowOwnerTypesCommand" xml:space="preserve">
+    <value>Показать базовые типы</value>
+  </data>
+  <data name="ShowParameterNamesCommand" xml:space="preserve">
+    <value>Показать имена _параметров</value>
+  </data>
+  <data name="ShowParameterTypesCommand" xml:space="preserve">
+    <value>Показать _типы параметров</value>
+  </data>
+  <data name="ShowParameterValuesCommand" xml:space="preserve">
+    <value>Показать _значения параметров</value>
+  </data>
+  <data name="ShowReturnTypesCommand" xml:space="preserve">
+    <value>Показать возвращаемые типы</value>
+  </data>
+  <data name="ShowTokensCommand" xml:space="preserve">
+    <value>Показать токены</value>
+  </data>
+  <data name="ShowTypeKeywordsCommand" xml:space="preserve">
+    <value>Показывать псевдонимы типов</value>
+  </data>
+  <data name="StartWithoutDebuggingCommand" xml:space="preserve">
+    <value>Старт б_ез отладки</value>
+  </data>
+  <data name="StatusBar_Ready" xml:space="preserve">
+    <value>Готово</value>
+  </data>
+  <data name="StatusBar_Ready2" xml:space="preserve">
+    <value>Готово - {0}</value>
+  </data>
+  <data name="StatusBar_Running" xml:space="preserve">
+    <value>Выполняется...</value>
+  </data>
+  <data name="StepIntoCommand" xml:space="preserve">
+    <value>Шаг _внутрь</value>
+  </data>
+  <data name="StepOutCommand" xml:space="preserve">
+    <value>Шаг _наружу</value>
+  </data>
+  <data name="StepOverCommand" xml:space="preserve">
+    <value>Шаг _через</value>
+  </data>
+  <data name="StopDebuggingCommand" xml:space="preserve">
+    <value>Остановить _отладку</value>
+  </data>
+  <data name="SwitchToFrameCommand" xml:space="preserve">
+    <value>_Переключиться на фрейм</value>
+  </data>
+  <data name="SwitchToFrameNewTabCommand" xml:space="preserve">
+    <value>Переключиться на фрейм (новая _вкладка)</value>
+  </data>
+  <data name="SwitchToThreadCommand" xml:space="preserve">
+    <value>_Переключиться на поток</value>
+  </data>
+  <data name="SwitchToThreadNewTabCommand" xml:space="preserve">
+    <value>Переключиться на поток (новая _вкладка)</value>
+  </data>
+  <data name="ThawThreadCommand" xml:space="preserve">
+    <value>_Разморозить</value>
+  </data>
+  <data name="ThreadsCommand" xml:space="preserve">
+    <value>По_токи</value>
+  </data>
+  <data name="ThreadType_BackgroundGC_or_Finalizer" xml:space="preserve">
+    <value>Фоновый GC / финализатор</value>
+  </data>
+  <data name="ThreadType_Main" xml:space="preserve">
+    <value>Главный поток</value>
+  </data>
+  <data name="ThreadType_Terminated" xml:space="preserve">
+    <value>Завершен</value>
+  </data>
+  <data name="ThreadType_ThreadPool" xml:space="preserve">
+    <value>Пул потоков</value>
+  </data>
+  <data name="ThreadType_Unknown" xml:space="preserve">
+    <value>Неизвестный поток</value>
+  </data>
+  <data name="ThreadType_Worker" xml:space="preserve">
+    <value>Рабочий поток</value>
+  </data>
+  <data name="Thread_LocationNotAvailable" xml:space="preserve">
+    <value>&lt;не существует&gt;</value>
+  </data>
+  <data name="Thread_NoName" xml:space="preserve">
+    <value>&lt;Без имени&gt;</value>
+  </data>
+  <data name="Thread_Priority_AboveNormal" xml:space="preserve">
+    <value>Выше среднего</value>
+  </data>
+  <data name="Thread_Priority_BelowNormal" xml:space="preserve">
+    <value>Ниже среднего</value>
+  </data>
+  <data name="Thread_Priority_Highest" xml:space="preserve">
+    <value>Наивысший</value>
+  </data>
+  <data name="Thread_Priority_Lowest" xml:space="preserve">
+    <value>Низший</value>
+  </data>
+  <data name="Thread_Priority_Normal" xml:space="preserve">
+    <value>Нормальный</value>
+  </data>
+  <data name="Thread_UserState_Background" xml:space="preserve">
+    <value>Фоновый</value>
+  </data>
+  <data name="Thread_UserState_Stopped" xml:space="preserve">
+    <value>Остановлен</value>
+  </data>
+  <data name="Thread_UserState_StopRequested" xml:space="preserve">
+    <value>Запрос останова</value>
+  </data>
+  <data name="Thread_UserState_Suspended" xml:space="preserve">
+    <value>Приостановлен</value>
+  </data>
+  <data name="Thread_UserState_SuspendRequested" xml:space="preserve">
+    <value>Запрос приостановки</value>
+  </data>
+  <data name="Thread_UserState_ThreadPool" xml:space="preserve">
+    <value>ThreadPool</value>
+  </data>
+  <data name="Thread_UserState_UnsafePoint" xml:space="preserve">
+    <value>UnsafePoint</value>
+  </data>
+  <data name="Thread_UserState_Unstarted" xml:space="preserve">
+    <value>Незапущен</value>
+  </data>
+  <data name="Thread_UserState_WaitSleepJoin" xml:space="preserve">
+    <value>WaitSleepJoin</value>
+  </data>
+  <data name="ToggleBreakpointCommand" xml:space="preserve">
+    <value>Пер_еключить точку останова</value>
+  </data>
+  <data name="ToolBarBreakToolTip" xml:space="preserve">
+    <value>Остановить (Ctrl+Break)</value>
+  </data>
+  <data name="ToolBarContinueDebuggingButton" xml:space="preserve">
+    <value>Продолжить</value>
+  </data>
+  <data name="ToolBarContinueDebuggingToolTip" xml:space="preserve">
+    <value>Продолжить (F5)</value>
+  </data>
+  <data name="ToolBarDebugAssemblyToolTip" xml:space="preserve">
+    <value>Отладить сборку (F5)</value>
+  </data>
+  <data name="ToolBarRestartToolTip" xml:space="preserve">
+    <value>Рестарт (Ctrl+Shift+F5)</value>
+  </data>
+  <data name="ToolBarShowNextStatementToolTip" xml:space="preserve">
+    <value>Показать следующую инструкцию (Alt+Num *)</value>
+  </data>
+  <data name="ToolBarStartDebuggingButton" xml:space="preserve">
+    <value>Старт</value>
+  </data>
+  <data name="ToolBarStepIntoToolTip" xml:space="preserve">
+    <value>Шаг внутрь (F11)</value>
+  </data>
+  <data name="ToolBarStepOutToolTip" xml:space="preserve">
+    <value>Шаг наружу (Shift+F11)</value>
+  </data>
+  <data name="ToolBarStepOverToolTip" xml:space="preserve">
+    <value>Шаг через (F10)</value>
+  </data>
+  <data name="ToolBarStopDebuggingToolTip" xml:space="preserve">
+    <value>Остановить отладку (Shift+F5)</value>
+  </data>
+  <data name="UnknownExceptionType" xml:space="preserve">
+    <value>&lt;Неизвестный тип исключения&gt;</value>
+  </data>
+  <data name="UseDnSpy64ExeToDebug32" xml:space="preserve">
+    <value>Для отладки 32-битных приложений используйте dnSpy-x86.exe.</value>
+  </data>
+  <data name="UseDnSpyExeToDebug64" xml:space="preserve">
+    <value>Для отладки 64-битных приложений используйте dnSpy.exe.</value>
+  </data>
+  <data name="Window_Breakpoints" xml:space="preserve">
+    <value>Точки останова</value>
+  </data>
+  <data name="Window_CallStack" xml:space="preserve">
+    <value>Стэк</value>
+  </data>
+  <data name="Window_ExceptionSettings" xml:space="preserve">
+    <value>Настройки исключений</value>
+  </data>
+  <data name="Window_Locals" xml:space="preserve">
+    <value>Локальные переменные</value>
+  </data>
+  <data name="Window_Memory_10_MenuItem" xml:space="preserve">
+    <value>Память 1_0</value>
+  </data>
+  <data name="Window_Memory_N" xml:space="preserve">
+    <value>Память {0}</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem" xml:space="preserve">
+    <value>Память _{0}</value>
+  </data>
+  <data name="Window_Memory_N_MenuItem2" xml:space="preserve">
+    <value>Память {0}</value>
+  </data>
+  <data name="Window_Modules" xml:space="preserve">
+    <value>Модули</value>
+  </data>
+  <data name="Window_Threads" xml:space="preserve">
+    <value>Потоки</value>
+  </data>
+  <data name="YesNo_No" xml:space="preserve">
+    <value>Нет</value>
+  </data>
+  <data name="YesNo_Yes" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="DbgSettings_SyntaxHighlight" xml:space="preserve">
+    <value>Подсветка _синтаксиса</value>
+  </data>
+  <data name="LoadModulesCommand" xml:space="preserve">
+    <value>Загрузить модули</value>
+  </data>
+  <data name="LoadXModulesCommand" xml:space="preserve">
+    <value>Загрузить {0} модулей</value>
+  </data>
+  <data name="DeleteAllBreakpointsCommand2" xml:space="preserve">
+    <value>Удалить все точки останова</value>
+  </data>
+  <data name="ShowParameterTypesCommand2" xml:space="preserve">
+    <value>Показать типы параметров</value>
+  </data>
+  <data name="Plugin_ShortDescription" xml:space="preserve">
+    <value>Дебаггер .NET</value>
+  </data>
+  <data name="Debug_StopReason_Breakpoint" xml:space="preserve">
+    <value>Точки останова</value>
+  </data>
+</root>

@@ -1,0 +1,70 @@
+﻿<!--
+    Copyright (C) 2014-2016 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<UserControl x:Class="dnSpy.Scripting.Roslyn.Common.ScriptControl"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:dnSpy.Scripting.Roslyn.Common"
+             xmlns:mvvm="clr-namespace:dnSpy.Shared.MVVM;assembly=dnSpy.Shared"
+             xmlns:p="clr-namespace:dnSpy.Scripting.Roslyn.Properties"
+             xmlns:vc="clr-namespace:dnSpy.Scripting.Roslyn.Converters"
+             mc:Ignorable="d" 
+             d:DesignHeight="200" d:DesignWidth="1000">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Background="{DynamicResource EnvironmentCommandBar}" mvvm:InitDataTemplateAP.Initialize="True">
+            <Grid.Resources>
+                <vc:ImageConverter x:Key="imageConverter" />
+            </Grid.Resources>
+            <StackPanel Grid.Column="0" Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style TargetType="{x:Type Image}">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type Control}, AncestorLevel=1}, Path=IsEnabled}" Value="False">
+                                <Setter Property="Opacity" Value="0.30" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Resources>
+                <Button Margin="5 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding ResetCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_Reset}">
+                    <Image Source="{Binding ResetImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_Reset}" Width="16" Height="16"/>
+                </Button>
+                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding ClearCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_ClearScreen}">
+                    <Image Source="{Binding ClearWindowContentImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_ClearWindowContent}" Width="16" Height="16"/>
+                </Button>
+                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding HistoryPreviousCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_HistoryPrevious}">
+                    <Image Source="{Binding HistoryPreviousImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_ArrowUp}" Width="16" Height="16"/>
+                </Button>
+                <Button Margin="0 2 0 2" Focusable="False" Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}" Command="{Binding HistoryNextCommand}" ToolTip="{x:Static p:dnSpy_Scripting_Roslyn_Resources.Script_ToolTip_HistoryNext}">
+                    <Image Source="{Binding HistoryNextImageObject, Converter={StaticResource imageConverter}, ConverterParameter=CommandBar_ArrowDown}" Width="16" Height="16"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+        <ContentPresenter
+            Grid.Row="1"
+            Name="textEditorContentPresenter"
+            mvvm:InitDataTemplateAP.Initialize="True">
+        </ContentPresenter>
+    </Grid>
+</UserControl>

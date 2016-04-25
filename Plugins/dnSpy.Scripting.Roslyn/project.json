@@ -1,0 +1,11 @@
+{
+	"dependencies": {
+		"Microsoft.CodeAnalysis.CSharp.Scripting": "1.2.1"
+	},
+	"frameworks": {
+		"net46": { }
+	},
+	"runtimes": {
+		"win": { }
+	}
+}

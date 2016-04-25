@@ -1,0 +1,252 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Error1" xml:space="preserve">
+    <value>ОШИБКА: {0}</value>
+  </data>
+  <data name="Examples" xml:space="preserve">
+    <value>Примеры:
+  {0} -o c:\out\path C:\some\path
+      Декомпилирует все файлы .NET в каталоге C:\some\path и сохранить в c:\out\path
+  {0} -o c:\out\path -r C:\some\path
+      Декомпилирует все файлы .NET в каталоге C:\some\path и всех нижележащих каталогах
+  {0} -o C:\out\path C:\some\path\*.dll
+      Декомпилирует все файлы dll .NET в каталоге C:\some\path и сохранить файлы в C:\out\path
+  {0} --md 0x06000123 file.dll
+      Декомпилирует члена с токеном 0x06000123
+  {0} -t system.int32 --gac-file "mscorlib, Version=4.0.0.0"
+      Декомпилирует System.Int32 из сборки mscorlib</value>
+  </data>
+  <data name="FileOrDirDoesNotExist" xml:space="preserve">
+    <value>Файл/каталог '{0}' не существует</value>
+  </data>
+  <data name="InvalidOption" xml:space="preserve">
+    <value>Неверная опция: {0}</value>
+  </data>
+  <data name="InvalidSolutionName" xml:space="preserve">
+    <value>Имя решения ({0}) должно быть указано относительно каталога проекта</value>
+  </data>
+  <data name="InvalidToken" xml:space="preserve">
+    <value>Неверный токен метаданных</value>
+  </data>
+  <data name="InvalidVSVersion" xml:space="preserve">
+    <value>Неверная версия Visual Studio: {0}</value>
+  </data>
+  <data name="LanguageDoesNotExist" xml:space="preserve">
+    <value>Язык '{0}' не существует</value>
+  </data>
+  <data name="Languages" xml:space="preserve">
+    <value>Языки:</value>
+  </data>
+  <data name="LanguageXDoesNotExist" xml:space="preserve">
+    <value>Язык {0} не существует</value>
+  </data>
+  <data name="MissingAsmSearchPath" xml:space="preserve">
+    <value>Отсутствует путь поиска сборки</value>
+  </data>
+  <data name="MissingDotNetFilename" xml:space="preserve">
+    <value>Отсутствует имя файла .NET</value>
+  </data>
+  <data name="MissingLanguageName" xml:space="preserve">
+    <value>Отсутствует имя языка</value>
+  </data>
+  <data name="MissingMDToken" xml:space="preserve">
+    <value>Отсутствует токен метаданных</value>
+  </data>
+  <data name="MissingNumberOfThreads" xml:space="preserve">
+    <value>Отсутствует количество потоков</value>
+  </data>
+  <data name="MissingOptions" xml:space="preserve">
+    <value>Не указана ни одна опция</value>
+  </data>
+  <data name="MissingOutputDir" xml:space="preserve">
+    <value>Отсутствует выходной каталог</value>
+  </data>
+  <data name="MissingSolutionName" xml:space="preserve">
+    <value>Отсутствует имя файла решения</value>
+  </data>
+  <data name="MissingVSVersion" xml:space="preserve">
+    <value>Отсутствует версия Visual Studio</value>
+  </data>
+  <data name="NoLanguagesFound" xml:space="preserve">
+    <value>Языки не найдены. Убедитесь, что файлы dll с языками расположены в каталоге с программой.</value>
+  </data>
+  <data name="NotDotNetFile" xml:space="preserve">
+    <value>{0} не файла .NET</value>
+  </data>
+  <data name="OnlyOneFileCanBeDecompiled" xml:space="preserve">
+    <value>С --md может быть декомпилирован только один файл</value>
+  </data>
+  <data name="Usage" xml:space="preserve">
+    <value>{0} [опции] [файла_или_каталог1] [файл_или_каталог2] [...]
+
+  --asm-path path    путь поиска сборок. Несколько путей должны быть разделены '{1}' или используйте несколько опций --asm-path
+  --user-gac path    путь к пользовательскому GAC. Несколько путей должны быть разделены '{1}' или используйте несколько опций --user-gac
+  --no-gac     не использовать GAC для поиска сборок. Полезно вместе с --no-stdlib.
+  --no-stdlib  проекты не ссылаются на mscorlib
+  --no-sln     не создавать файл решения
+  --sln-name name   имя файла решения
+  --threads N  количество рабочих потоков. По умолчанию один поток на каждое ядро CPU
+  --no-resources   не распаковывать ресурсы
+  --no-resx    не создавать resx файлы
+  --no-baml    не декомпилировать baml в xaml
+  --vs N       версия Visual Studio (2005, 2008, ... 2015)
+  --project-guid N    GUID проекта
+  -t name      декомпилировать указанный тип в консоль. Или частичное, или полное имя типа. Без учета регистра.
+  --type name  то же, что и -t
+  --md N       декомпилировать член с токеном N в консоль
+  --gac-file N декомпилировать сбоки из GAC. Укажите полное имя сборки для определения точной версии.
+  -r           рекурсивный поиск файлов для декомпиляции
+  -o outdir    каталог для вывода
+  -l lang      установить язык. По умолчанию C#. Можно использовать GUID языка.</value>
+  </data>
+  <data name="MissingUserGacPath" xml:space="preserve">
+    <value>Отсутствует путь к пользовательскому GAC</value>
+  </data>
+  <data name="InvalidMemberToDecompile" xml:space="preserve">
+    <value>Декомпилированы могут быть только типы, методы, поля, события и свойства</value>
+  </data>
+  <data name="CouldNotFindTypeX" xml:space="preserve">
+    <value>Тип {0} не найден</value>
+  </data>
+  <data name="CouldNotResolveGacFileX" xml:space="preserve">
+    <value>Не могу найти сборку GAC '{0}'</value>
+  </data>
+  <data name="MissingGacFile" xml:space="preserve">
+    <value>Отсутствует имя сборки GAC</value>
+  </data>
+  <data name="MissingTypeName" xml:space="preserve">
+    <value>Отсутствует полное имя типа</value>
+  </data>
+  <data name="LanguageXDoesNotSupportProjects" xml:space="preserve">
+    <value>Язык {0} не поддерживает создание файлов проекта</value>
+  </data>
+  <data name="LanguageOptions" xml:space="preserve">
+    <value>Языковые настройки:</value>
+  </data>
+  <data name="LanguageOptionsDesc" xml:space="preserve">
+    <value>Все опции могут быть выключены, используя префиксы 'no-' или 'dont-', например --dont-sort-members</value>
+  </data>
+  <data name="MissingOptionArgument" xml:space="preserve">
+    <value>Отсутствует аргумент опции</value>
+  </data>
+  <data name="InvalidGuid" xml:space="preserve">
+    <value>Недопустимый GUID</value>
+  </data>
+</root>

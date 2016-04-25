@@ -1,0 +1,125 @@
+﻿<!--
+    Copyright (C) 2014-2016 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<UserControl x:Class="dnSpy.AsmEditor.DnlibDialogs.MarshalTypeControl"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:dnlibdlgs="clr-namespace:dnSpy.AsmEditor.DnlibDialogs"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
+             mc:Ignorable="d" 
+             d:DesignHeight="150" d:DesignWidth="400">
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+	</UserControl.Resources>
+	<Grid Margin="0 5 0 0">
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+        <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" IsChecked="{Binding IsEnabled}" VerticalAlignment="Center" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_Enable}" />
+
+		<ComboBox Grid.Row="0" Grid.Column="1" Margin="5 0 0 0" DisplayMemberPath="Name" ItemsSource="{Binding NativeType.Items}" SelectedIndex="{Binding NativeType.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" IsEnabled="{Binding NativeType_IsEnabled}" />
+
+		<!-- Make sure that most controls don't change size -->
+        <Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_ParamIndex}" Visibility="Hidden" />
+		<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Visibility="Hidden" />
+
+		<!-- RawMarshalType -->
+        <Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_Data}" Target="{Binding ElementName=rawDataTextBox}" Visibility="{Binding IsRawMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding RawMarshalType_Data_IsEnabled}" />
+		<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="rawDataTextBox" Text="{Binding RawMarshalType_Data.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsRawMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding RawMarshalType_Data_IsEnabled}" />
+
+		<!-- FixedSysStringMarshalType -->
+		<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_Size}" Target="{Binding ElementName=fixedSysStrLenTextBox}" Visibility="{Binding IsFixedSysStringMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedSysStringMarshalType_Size_IsEnabled}" />
+		<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="fixedSysStrLenTextBox" Text="{Binding FixedSysStringMarshalType_Size.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsFixedSysStringMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedSysStringMarshalType_Size_IsEnabled}" />
+
+		<!-- SafeArrayMarshalType -->
+        <Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_VT}" Target="{Binding ElementName=safeArrayVTComboBox}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_IsEnabled}" />
+		<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="safeArrayVTComboBox" DisplayMemberPath="Name" ItemsSource="{Binding SafeArrayMarshalType_VariantType.Items}" SelectedIndex="{Binding SafeArrayMarshalType_VariantType.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_IsEnabled}" />
+		<Grid Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+				<ColumnDefinition />
+				<ColumnDefinition />
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+            <CheckBox Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_Vector}" IsChecked="{Binding SafeArrayMarshalType_VT_Vector}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_Flags_IsEnabled}" />
+            <CheckBox Grid.Column="1" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_Array}" IsChecked="{Binding SafeArrayMarshalType_VT_Array}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_Flags_IsEnabled}" />
+            <CheckBox Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_ByRef}" IsChecked="{Binding SafeArrayMarshalType_VT_ByRef}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_Flags_IsEnabled}" />
+            <CheckBox Grid.Column="3" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_Reserved}" IsChecked="{Binding SafeArrayMarshalType_VT_Reserved}" Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding SafeArrayMarshalType_VT_Flags_IsEnabled}" />
+		</Grid>
+		<Expander Grid.Row="2"
+				  Grid.Column="0"
+				  Grid.ColumnSpan="4"
+				  Margin="0 5 0 0"
+				  IsExpanded="False"
+				  Header="{Binding SafeArrayMarshalType_UserDefinedSubType_TypeHeader}"
+				  Visibility="{Binding IsSafeArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}"
+				  IsEnabled="{Binding SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator_IsEnabled}">
+			<dnlibdlgs:TypeSigCreatorControl Margin="0 5 0 0" DataContext="{Binding SafeArrayMarshalType_UserDefinedSubType_TypeSigCreator}" IsEnabled="{Binding IsEnabled}" />
+		</Expander>
+
+		<!-- FixedArrayMarshalType -->
+		<Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_Size}" Target="{Binding ElementName=fixedArraySizeTextBox}" Visibility="{Binding IsFixedArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedArrayMarshalType_Size_IsEnabled}" />
+		<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="fixedArraySizeTextBox" Text="{Binding FixedArrayMarshalType_Size.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsFixedArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedArrayMarshalType_Size_IsEnabled}" />
+		<Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_ElemType}" Target="{Binding ElementName=fixedArrayElemTypeComboBox}" Visibility="{Binding IsFixedArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedArrayMarshalType_NativeType_IsEnabled}" />
+		<ComboBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Name="fixedArrayElemTypeComboBox" DisplayMemberPath="Name" ItemsSource="{Binding FixedArrayMarshalType_NativeType.Items}" SelectedIndex="{Binding FixedArrayMarshalType_NativeType.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Visibility="{Binding IsFixedArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding FixedArrayMarshalType_NativeType_IsEnabled}" />
+
+		<!-- ArrayMarshalType -->
+		<Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_ElemType}" Target="{Binding ElementName=arrayElemTypeComboBox}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_NativeType_IsEnabled}" />
+		<ComboBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="arrayElemTypeComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ArrayMarshalType_NativeType.Items}" SelectedIndex="{Binding ArrayMarshalType_NativeType.SelectedIndex}" HorizontalAlignment="Stretch" VerticalContentAlignment="Center" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_NativeType_IsEnabled}" />
+        <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_ParamNum}" Target="{Binding ElementName=arrayParamNumTextBox}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_ParamNum_IsEnabled}" />
+		<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="arrayParamNumTextBox" Text="{Binding ArrayMarshalType_ParamNum.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_ParamNum_IsEnabled}" />
+        <Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_NumElems}" Target="{Binding ElementName=arrayNumElemsTextBox}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_NumElems_IsEnabled}" />
+		<TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Name="arrayNumElemsTextBox" Text="{Binding ArrayMarshalType_NumElems.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_NumElems_IsEnabled}" />
+        <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_Flags}" Target="{Binding ElementName=arrayFlagsTextBox}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_Flags_IsEnabled}" />
+		<TextBox Grid.Row="2" Grid.Column="1" Margin="5 5 0 0" Name="arrayFlagsTextBox" Text="{Binding ArrayMarshalType_Flags.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsArrayMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding ArrayMarshalType_Flags_IsEnabled}" />
+
+		<!-- CustomMarshalType -->
+        <Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_GUID}" Target="{Binding ElementName=customGuidTextBox}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_GUID_IsEnabled}" />
+		<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="customGuidTextBox" Text="{Binding CustomMarshalType_GUID, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_GUID_IsEnabled}" />
+        <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_NativeType}" Target="{Binding ElementName=customNativeTypeNameTextBox}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_NativeTypeName_IsEnabled}" />
+		<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="customNativeTypeNameTextBox" Text="{Binding CustomMarshalType_NativeTypeName, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_NativeTypeName_IsEnabled}" />
+        <Label Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_Cookie}" Target="{Binding ElementName=customCookieTextBox}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_Cookie_IsEnabled}" />
+		<TextBox Grid.Row="1" Grid.Column="3" Margin="5 5 0 0" Name="customCookieTextBox" Text="{Binding CustomMarshalType_Cookie, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding CustomMarshalType_Cookie_IsEnabled}" />
+		<Expander Grid.Row="2"
+				  Grid.Column="0"
+				  Grid.ColumnSpan="4"
+				  Margin="0 5 0 0"
+				  IsExpanded="False"
+				  Header="{Binding CustomMarshalType_CustMarshaler_TypeHeader}"
+				  Visibility="{Binding IsCustomMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}"
+				  IsEnabled="{Binding CustomMarshalType_CustMarshaler_TypeSigCreator_IsEnabled}">
+			<dnlibdlgs:TypeSigCreatorControl Margin="0 5 0 0" DataContext="{Binding CustomMarshalType_CustMarshaler_TypeSigCreator}" IsEnabled="{Binding IsEnabled}" />
+		</Expander>
+
+		<!-- InterfaceMarshalType -->
+        <Label Grid.Row="0" Grid.Column="2" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.MarshalType_ParamIndex2}" Target="{Binding ElementName=ifaceIndexTextBox}" Visibility="{Binding IsInterfaceMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding InterfaceMarshalType_IidParamIndex_IsEnabled}" />
+		<TextBox Grid.Row="0" Grid.Column="3" Margin="5 0 0 0" Name="ifaceIndexTextBox" Text="{Binding InterfaceMarshalType_IidParamIndex.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding IsInterfaceMarshalType, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding InterfaceMarshalType_IidParamIndex_IsEnabled}" />
+	</Grid>
+</UserControl>

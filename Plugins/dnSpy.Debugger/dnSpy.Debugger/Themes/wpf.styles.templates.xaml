@@ -1,0 +1,98 @@
+<!--
+    Copyright (C) 2014-2016 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:p="clr-namespace:dnSpy.Debugger.Properties;assembly=dnSpy.Debugger.Plugin"
+                    xmlns:dbg="clr-namespace:dnSpy.Debugger">
+
+    <Style x:Key="DbgTableGridViewScrollViewerStyle"
+           BasedOn="{StaticResource {x:Static GridView.GridViewScrollViewerStyleKey}}"
+           TargetType="{x:Type ScrollViewer}">
+        <Setter Property="Focusable" Value="True"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+    </Style>
+
+    <DataTemplate DataType="{x:Type dbg:DebuggerAppSettingsTab}">
+        <Grid Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Row="0" Grid.Column="0" Margin="-5 0 5 0" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_BreakAt}" Target="{Binding ElementName=breakComboBox}" />
+            <ComboBox Grid.Row="0" Grid.Column="1" Margin="0 0 5 0" HorizontalAlignment="Stretch" Name="breakComboBox" DisplayMemberPath="Name" ItemsSource="{Binding BreakProcessKindVM.Items}" SelectedIndex="{Binding BreakProcessKindVM.SelectedIndex}" VerticalContentAlignment="Center" />
+            <CheckBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.DisableManagedDebuggerDetection}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_DisableManagedDebuggerDetection}" />
+            <CheckBox Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.PropertyEvalAndFunctionCalls}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_PropertyEvalAndFunctionCalls}" />
+            <CheckBox Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.UseStringConversionFunction}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_UseStringConversionFunction}" IsEnabled="{Binding Settings.PropertyEvalAndFunctionCalls}" />
+            <CheckBox Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.DebuggerBrowsableAttributesCanHidePropsFields}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_DebuggerBrowsableAttributesCanHidePropsFields}" />
+            <CheckBox Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.CompilerGeneratedAttributesCanHideFields}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_CompilerGeneratedAttributesCanHideFields}" />
+            <CheckBox Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.IgnoreBreakInstructions}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_IgnoreBreakInstructions}" />
+            <CheckBox Grid.Row="7" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.AutoOpenLocalsWindow}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_AutoOpenLocalsWindow}" />
+            <CheckBox Grid.Row="8" Grid.Column="0" Grid.ColumnSpan="2" Margin="0 5 0 0" IsChecked="{Binding Settings.UseMemoryModules}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_UseMemoryModules}" />
+            <Grid Grid.Row="9" Grid.Column="0" Grid.ColumnSpan="2" Margin="-5 5 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Label Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_CoreCLRDbgShimFilename}" Target="{Binding ElementName=dbgshimTextBox}" />
+                <TextBox Grid.Column="1" Margin="5 5 0 0" Name="dbgshimTextBox" Text="{Binding Settings.CoreCLRDbgShimFilename}" />
+                <Button Grid.Column="2" Margin="5 5 0 0" Style="{StaticResource EllipsisButton}" Command="{Binding PickCoreCLRDbgShimFilenameCommand}" />
+            </Grid>
+
+            <GroupBox Grid.Row="10" Grid.ColumnSpan="3" Margin="0 5 0 0">
+                <GroupBox.Header>
+                    <CheckBox Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_SyntaxHighlight}" IsThreeState="False" IsChecked="{Binding Settings.SyntaxHighlight}" />
+                </GroupBox.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Grid.Row="0" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightBreakpoints}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_SyntaxHighlightBreakpoints}" />
+                    <CheckBox Grid.Row="0" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightCallStack}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_SyntaxHighlightCallStack}" />
+                    <CheckBox Grid.Row="0" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightThreads}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_SyntaxHighlightThreads}" />
+                    <CheckBox Grid.Row="0" Grid.Column="3" Margin="5 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightModules}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_SyntaxHighlightModules}" />
+                    <CheckBox Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightLocals}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_SyntaxHighlightLocals}" />
+                    <CheckBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightAttach}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_SyntaxHighlightAttach}" />
+                    <CheckBox Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" IsChecked="{Binding Settings.SyntaxHighlightExceptions}" Content="{x:Static p:dnSpy_Debugger_Resources.DbgSettings_SyntaxHighlightExceptions}" />
+                </Grid>
+            </GroupBox>
+        </Grid>
+    </DataTemplate>
+
+</ResourceDictionary>

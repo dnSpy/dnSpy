@@ -1,0 +1,264 @@
+﻿<!--
+    Copyright (C) 2014-2016 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<UserControl x:Class="dnSpy.AsmEditor.DnlibDialogs.ConstantTypeControl"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
+             mc:Ignorable="d" 
+             d:DesignHeight="30" d:DesignWidth="300">
+	<UserControl.Resources>
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+	</UserControl.Resources>
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+
+        <ComboBox Grid.Column="0" Margin="0 0 0 0" DisplayMemberPath="Name" Width="70" ItemsSource="{Binding ConstantTypeEnumList.Items}" SelectedIndex="{Binding ConstantTypeEnumList.SelectedIndex}" VerticalContentAlignment="Center" IsEnabled="{Binding IsEnabled}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.ValueType_ToolTip}" />
+
+		<!-- Make sure nothing is resized when Null is selected -->
+		<Label Grid.Column="1" Margin="0 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="Hidden" />
+		<TextBox Grid.Column="2" Margin="0 0 0 0" Visibility="Hidden" />
+
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=booleanTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding BooleanIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<TextBox Grid.Column="2" Margin="0 0 0 0" Name="booleanTextBox" Text="{Binding Boolean.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding BooleanIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=charTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding CharIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<TextBox Grid.Column="2" Margin="0 0 0 0" Name="charTextBox" Text="{Binding Char.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding CharIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=sbyteTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding SByteIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<TextBox Grid.Column="2" Margin="0 0 0 0" Name="sbyteTextBox" Text="{Binding SByte.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding SByteIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=int16TextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding Int16IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<TextBox Grid.Column="2" Margin="0 0 0 0" Name="int16TextBox" Text="{Binding Int16.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Int16IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=int32TextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding Int32IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<TextBox Grid.Column="2" Margin="0 0 0 0" Name="int32TextBox" Text="{Binding Int32.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Int32IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=int64TextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding Int64IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<TextBox Grid.Column="2" Margin="0 0 0 0" Name="int64TextBox" Text="{Binding Int64.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Int64IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=byteTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding ByteIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<TextBox Grid.Column="2" Margin="0 0 0 0" Name="byteTextBox" Text="{Binding Byte.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding ByteIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=uint16TextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding UInt16IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<TextBox Grid.Column="2" Margin="0 0 0 0" Name="uint16TextBox" Text="{Binding UInt16.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding UInt16IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=uint32TextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding UInt32IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<TextBox Grid.Column="2" Margin="0 0 0 0" Name="uint32TextBox" Text="{Binding UInt32.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding UInt32IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=uint64TextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding UInt64IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<TextBox Grid.Column="2" Margin="0 0 0 0" Name="uint64TextBox" Text="{Binding UInt64.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding UInt64IsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=singleTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding SingleIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<TextBox Grid.Column="2" Margin="0 0 0 0" Name="singleTextBox" Text="{Binding Single.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding SingleIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=doubleTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding DoubleIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<TextBox Grid.Column="2" Margin="0 0 0 0" Name="doubleTextBox" Text="{Binding Double.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding DoubleIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=stringTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding StringIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<TextBox Grid.Column="2" Margin="0 0 0 0" Name="stringTextBox" Text="{Binding String.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding StringIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=enumTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding EnumIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding EnumIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<TextBox Grid.Column="0" Name="enumTextBox" Text="{Binding Enum.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding EnumIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Button Grid.Column="1" Margin="5 0 0 0" Style="{StaticResource EllipsisButton}" ToolTip="{Binding Enum.PickEnumToolTip}" Command="{Binding Enum.PickEnumTypeCommand}" Visibility="{Binding EnumIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=typeTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding TypeIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding TypeIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<TextBox Grid.Column="0" Name="typeTextBox" Background="Transparent" IsReadOnly="True" ToolTip="{Binding Type.StringValue}" Text="{Binding Type.StringValue, Mode=OneWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding TypeIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+            <Button Grid.Column="1" Margin="5 0 0 0" Style="{StaticResource EllipsisButton}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.Pick_Type}" Command="{Binding Type.PickTypeCommand}" Visibility="{Binding TypeIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" />
+		</Grid>
+
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=objectArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding ObjectArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding ObjectArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding ObjectArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="objectArrayTextBox" Background="Transparent" IsReadOnly="True" ToolTip="{Binding ObjectArray.StringValue}" Text="{Binding ObjectArray.StringValue, Mode=OneWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding ObjectArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding ObjectArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+            <Button Grid.Column="2" Margin="5 0 0 0" Style="{StaticResource EllipsisButton}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.AppendObject}" Command="{Binding ObjectArray.AddObjectCommand}" Visibility="{Binding ObjectArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Grid.Column="3" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.RemoveCharacter}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.RemoveCharacter_ToolTip}" Width="25" Command="{Binding ObjectArray.RemoveObjectCommand}" Visibility="{Binding ObjectArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Grid.Column="4" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.ClearCharacter}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.ClearCharacter_ToolTip}" Width="25" Command="{Binding ObjectArray.ClearObjectsCommand}" Visibility="{Binding ObjectArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=booleanArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding BooleanArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding BooleanArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding BooleanArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="booleanArrayTextBox" Text="{Binding BooleanArray.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding BooleanArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding BooleanArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=charArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding CharArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding CharArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding CharArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="charArrayTextBox" Text="{Binding CharArray.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding CharArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding CharArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=sbyteArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding SByteArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding SByteArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding SByteArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="sbyteArrayTextBox" Text="{Binding SByteArray.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding SByteArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding SByteArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=int16ArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding Int16ArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding Int16ArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding Int16ArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="int16ArrayTextBox" Text="{Binding Int16Array.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Int16ArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding Int16ArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=int32ArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding Int32ArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding Int32ArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding Int32ArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="int32ArrayTextBox" Text="{Binding Int32Array.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Int32ArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding Int32ArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=int64ArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding Int64ArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding Int64ArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding Int64ArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="int64ArrayTextBox" Text="{Binding Int64Array.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Int64ArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding Int64ArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=byteArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding ByteArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding ByteArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding ByteArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="byteArrayTextBox" Text="{Binding ByteArray.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding ByteArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding ByteArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=uint16ArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding UInt16ArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding UInt16ArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding UInt16ArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="uint16ArrayTextBox" Text="{Binding UInt16Array.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding UInt16ArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding UInt16ArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=uint32ArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding UInt32ArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding UInt32ArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding UInt32ArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="uint32ArrayTextBox" Text="{Binding UInt32Array.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding UInt32ArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding UInt32ArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=uint64ArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding UInt64ArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding UInt64ArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding UInt64ArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="uint64ArrayTextBox" Text="{Binding UInt64Array.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding UInt64ArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding UInt64ArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=singleArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding SingleArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding SingleArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding SingleArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="singleArrayTextBox" Text="{Binding SingleArray.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding SingleArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding SingleArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=doubleArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding DoubleArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding DoubleArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding DoubleArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="doubleArrayTextBox" Text="{Binding DoubleArray.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding DoubleArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding DoubleArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=stringArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding StringArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding StringArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding StringArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="stringArrayTextBox" Text="{Binding StringArray.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding StringArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding StringArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=enumArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding EnumArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding EnumArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding EnumArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="enumArrayTextBox" Text="{Binding EnumArray.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding EnumArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding EnumArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Button Grid.Column="2" Margin="5 0 0 0" Style="{StaticResource EllipsisButton}" ToolTip="{Binding EnumArray.PickEnumToolTip}" Command="{Binding EnumArray.PickEnumTypeCommand}" Visibility="{Binding EnumArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" />
+		</Grid>
+		<Label Grid.Column="1" Margin="0 0 0 0" Target="{Binding ElementName=typeArrayTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.Value}" Visibility="{Binding TypeArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+		<Grid Grid.Column="2" Margin="0 0 0 0" Visibility="{Binding TypeArrayIsSelected, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<CheckBox Grid.Column="0" Margin="0 0 5 0" VerticalAlignment="Center" IsChecked="{Binding TypeArrayIsNull}" Visibility="{Binding ArraysCanBeNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<TextBox Grid.Column="1" Name="typeArrayTextBox" Background="Transparent" IsReadOnly="True" ToolTip="{Binding TypeArray.StringValue}" Text="{Binding TypeArray.StringValue, Mode=OneWay, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding TypeArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+			<Label Grid.Column="1" Content="null" Visibility="{Binding TypeArrayIsNull, Converter={StaticResource BooleanToVisibilityConverter}}" IsEnabled="{Binding IsEnabled}" />
+            <Button Grid.Column="2" Margin="5 0 0 0" Style="{StaticResource EllipsisButton}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.AppendType}" Command="{Binding TypeArray.AddTypeCommand}" Visibility="{Binding TypeArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Grid.Column="3" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.RemoveLastTypeCharacter}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.RemoveLastTypeCharacter_ToolTip}" Width="25" Command="{Binding TypeArray.RemoveTypeCommand}" Visibility="{Binding TypeArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Button Grid.Column="4" Margin="5 0 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.ClearTypesCharacter}" ToolTip="{x:Static p:dnSpy_AsmEditor_Resources.ClearTypesCharacter_ToolTip}" Width="25" Command="{Binding TypeArray.ClearTypesCommand}" Visibility="{Binding TypeArrayIsSelectedAndNotNull, Converter={StaticResource BooleanToVisibilityConverter}}" />
+		</Grid>
+	</Grid>
+</UserControl>

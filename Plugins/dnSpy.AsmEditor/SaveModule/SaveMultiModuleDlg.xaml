@@ -1,0 +1,180 @@
+﻿<!--
+    Copyright (C) 2014-2016 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<local:SaveModuleWindow x:Class="dnSpy.AsmEditor.SaveModule.SaveMultiModuleDlg"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:dnSpy.AsmEditor.SaveModule"
+             xmlns:mvvmvc="clr-namespace:dnSpy.AsmEditor.DnlibDialogs.Converters"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
+             Height="300" Width="600"
+             Title="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_Title}"
+             Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
+             MinHeight="300" MinWidth="400">
+	<local:SaveModuleWindow.Resources>
+		<RoutedUICommand x:Key="OptionsCommand" Text="Options..." />
+		<BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+		<mvvmvc:BooleanToGridrowLengthConverter x:Key="BooleanToGridrowLengthConverter" />
+	</local:SaveModuleWindow.Resources>
+	<local:SaveModuleWindow.CommandBindings>
+		<CommandBinding
+			Command="{StaticResource OptionsCommand}"
+			CanExecute="Options_CanExecute"
+			Executed="Options_Executed"
+			/>
+	</local:SaveModuleWindow.CommandBindings>
+    <Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="{Binding HasError, Converter={StaticResource BooleanToGridrowLengthConverter}, ConverterParameter=2.0}" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+
+        <Label Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_SavedFiles}" Margin="5 5 5 5" />
+
+		<ListBox Grid.Row="1" Name="listBox" IsEnabled="{Binding IsLoaded}" ItemsSource="{Binding Modules}" DisplayMemberPath="FileName" SelectedIndex="0" Margin="5 0 5 5" MouseDoubleClick="listBox_MouseDoubleClick" />
+
+		<Grid Grid.Row="2" Margin="5 0 5 5"
+			  Visibility="{Binding HasError, Converter={StaticResource BooleanToVisibilityConverter}}">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+			</Grid.RowDefinitions>
+
+            <Label Grid.Row="0" Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_ErrorsInLog}" />
+
+			<TextBox Grid.Row="1"
+				 Background="{DynamicResource CommonControlsTextBoxErrorBackground}"
+				 Foreground="{DynamicResource CommonControlsTextBoxErrorForeground}"
+				 TextWrapping="Wrap"
+				 IsReadOnly="True"
+				 HorizontalAlignment="Stretch"
+				 VerticalAlignment="Stretch"
+				 VerticalContentAlignment="Top"
+				 Text="{Binding LogMessage, Mode=OneWay}"
+				 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+				 ScrollViewer.VerticalScrollBarVisibility="Auto"
+				 />
+		</Grid>
+		
+		<TextBlock Grid.Row="3"
+				   Margin="5 0 5 5"
+				   Text="{Binding CurrentFileName}"
+				   Visibility="{Binding IsSaving, Converter={StaticResource BooleanToVisibilityConverter}}"
+				   />
+
+		<StackPanel Grid.Row="4"
+					Margin="5 0 5 5"
+					Orientation="Horizontal"
+					Background="{DynamicResource CommonControlsTextBoxErrorBackground}"
+					Visibility="{Binding CanShowModuleErrors, Converter={StaticResource BooleanToVisibilityConverter}}"
+					>
+			<TextBlock Margin="0 0 5 0" Background="{DynamicResource CommonControlsTextBoxErrorBackground}" Foreground="{DynamicResource CommonControlsTextBoxErrorForeground}" Text="{Binding CanExecuteSaveError}" />
+            <TextBlock Background="{DynamicResource CommonControlsTextBoxErrorBackground}" Foreground="{DynamicResource CommonControlsTextBoxErrorForeground}" Text="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_FixErrorsByEditingSettings}" />
+        </StackPanel>
+		
+		<Grid Grid.Row="5" Margin="5 0 5 5">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+				<ColumnDefinition Width="Auto" />
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+
+			<Grid Grid.Column="0"
+				  Margin="0,0,5,0"
+				  Visibility="{Binding IsSaving, Converter={StaticResource BooleanToVisibilityConverter}}"
+				  >
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				<ProgressBar Grid.Row="0"
+						 Minimum="{Binding ProgressMinimum}"
+						 Maximum="{Binding ProgressMaximum}"
+						 Value="{Binding CurrentFileProgress, Mode=OneWay}"
+						 />
+				<ProgressBar Grid.Row="1"
+						 Minimum="{Binding ProgressMinimum}"
+						 Maximum="{Binding ProgressMaximum}"
+						 Value="{Binding TotalProgress, Mode=OneWay}"
+						 />
+			</Grid>
+			<TextBlock Grid.Column="0"
+					   Margin="0,0,5,0"
+					   Visibility="{Binding IsCanceling, Converter={StaticResource BooleanToVisibilityConverter}}"
+					   VerticalAlignment="Center"
+					   Foreground="Red"
+					   Text="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_CancelingSave}"
+					   />
+			<Button Grid.Column="1"
+					Name="optionsButton"
+					Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_Options}"
+					Style="{StaticResource DialogButton}" Margin="0,0,5,0"
+					Command="{StaticResource OptionsCommand}"
+					CommandParameter="{Binding SelectedItem, ElementName=listBox}"
+					Visibility="{Binding CanSave, Converter={StaticResource BooleanToVisibilityConverter}}"
+					/>
+			<Button Grid.Column="2"
+					Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_SaveAll}"
+					IsDefault="True"
+					Style="{StaticResource DialogButton}" Margin="0,0,5,0"
+					Command="{Binding SaveCommand}"
+					Visibility="{Binding CanSave, Converter={StaticResource BooleanToVisibilityConverter}}"
+					/>
+			<Button Grid.Column="3"
+					Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}"
+					IsCancel="True"
+					Style="{StaticResource DialogButton}"
+					Visibility="{Binding IsLoaded, Converter={StaticResource BooleanToVisibilityConverter}}"
+					/>
+			<Button Grid.Column="3"
+					Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}"
+					IsCancel="False"
+					Command="{Binding CancelSaveCommand}"
+					Style="{StaticResource DialogButton}"
+					Visibility="{Binding IsSavingOrCanceling, Converter={StaticResource BooleanToVisibilityConverter}}"
+					/>
+			<Button Grid.Column="3"
+					Content="{x:Static p:dnSpy_AsmEditor_Resources.SaveModules_Close}"
+					IsCancel="True"
+					Style="{StaticResource DialogButton}"
+					Click="okButton_Click"
+					Visibility="{Binding IsSaved, Converter={StaticResource BooleanToVisibilityConverter}}"
+					/>
+		</Grid>
+	</Grid>
+</local:SaveModuleWindow>

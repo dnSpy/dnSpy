@@ -1,0 +1,167 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{989A5C51-8C4C-4F4D-90A2-042CD1846075}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>dndbg</RootNamespace>
+    <AssemblyName>dndbg</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;THREAD_SAFE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>1685</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;THREAD_SAFE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>1685</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="COM\CorDebug.cs" />
+    <Compile Include="COM\MetaData.cs" />
+    <Compile Include="COM\MetaHost.cs" />
+    <Compile Include="DotNet\CorAssemblyDef.cs" />
+    <Compile Include="DotNet\CorAssemblyRef.cs" />
+    <Compile Include="DotNet\CorDeclSecurity.cs" />
+    <Compile Include="DotNet\CorEventDef.cs" />
+    <Compile Include="DotNet\CorExportedType.cs" />
+    <Compile Include="DotNet\CorFieldDef.cs" />
+    <Compile Include="DotNet\CorFileDef.cs" />
+    <Compile Include="DotNet\CorGenericParam.cs" />
+    <Compile Include="DotNet\CorGenericParamConstraint.cs" />
+    <Compile Include="DotNet\CorInterfaceImpl.cs" />
+    <Compile Include="DotNet\CorManifestResource.cs" />
+    <Compile Include="DotNet\CorMemberRef.cs" />
+    <Compile Include="DotNet\CorMethodDef.cs" />
+    <Compile Include="DotNet\CorMethodSpec.cs" />
+    <Compile Include="DotNet\CorModuleDef.cs" />
+    <Compile Include="DotNet\CorModuleRef.cs" />
+    <Compile Include="DotNet\CorParamDef.cs" />
+    <Compile Include="DotNet\CorPropertyDef.cs" />
+    <Compile Include="DotNet\CorStandAloneSig.cs" />
+    <Compile Include="DotNet\CorTypeDef.cs" />
+    <Compile Include="DotNet\CorTypeRef.cs" />
+    <Compile Include="DotNet\CorTypeSpec.cs" />
+    <Compile Include="DotNet\ICorMDTokenProvider.cs" />
+    <Compile Include="DotNet\ICorModuleDefHelper.cs" />
+    <Compile Include="DotNet\IProcessReader.cs" />
+    <Compile Include="DotNet\ProcessBinaryReader.cs" />
+    <Compile Include="DotNet\TypeUpdatedEventArgs.cs" />
+    <Compile Include="DotNet\Utils.cs" />
+    <Compile Include="Engine\AttachProcessOptions.cs" />
+    <Compile Include="Engine\BreakpointList.cs" />
+    <Compile Include="Engine\BreakProcessHelper.cs" />
+    <Compile Include="Engine\BreakProcessKind.cs" />
+    <Compile Include="Engine\COMObject.cs" />
+    <Compile Include="Engine\CorAppDomain.cs" />
+    <Compile Include="Engine\CorAssembly.cs" />
+    <Compile Include="Engine\CorChain.cs" />
+    <Compile Include="Engine\CorClass.cs" />
+    <Compile Include="Engine\CorCode.cs" />
+    <Compile Include="Engine\CordbgErrors.cs" />
+    <Compile Include="Engine\CorDebugExtensions.cs" />
+    <Compile Include="Engine\CorDebugManagedCallback.cs" />
+    <Compile Include="Engine\CoreCLRHelper.cs" />
+    <Compile Include="Engine\CorEval.cs" />
+    <Compile Include="Engine\CorEvent.cs" />
+    <Compile Include="Engine\CorExceptionObjectStackFrame.cs" />
+    <Compile Include="Engine\CorField.cs" />
+    <Compile Include="Engine\CorFrame.cs" />
+    <Compile Include="Engine\CorFunction.cs" />
+    <Compile Include="Engine\CorFunctionBreakpoint.cs" />
+    <Compile Include="Engine\CorMDA.cs" />
+    <Compile Include="Engine\CorModule.cs" />
+    <Compile Include="Engine\CorModuleDefHelper.cs" />
+    <Compile Include="Engine\CorOverride.cs" />
+    <Compile Include="Engine\CorProcess.cs" />
+    <Compile Include="Engine\CorProcessReader.cs" />
+    <Compile Include="Engine\CorProperty.cs" />
+    <Compile Include="Engine\CorStepper.cs" />
+    <Compile Include="Engine\CorThread.cs" />
+    <Compile Include="Engine\CorType.cs" />
+    <Compile Include="Engine\CorValue.cs" />
+    <Compile Include="Engine\CorValueHolder.cs" />
+    <Compile Include="Engine\CorValueReader.cs" />
+    <Compile Include="Engine\DebugCallbackEventArgs.cs" />
+    <Compile Include="Engine\DebugEventBreakpointList.cs" />
+    <Compile Include="Engine\DebuggeeVersionDetector.cs" />
+    <Compile Include="Engine\DebuggerCollection.cs" />
+    <Compile Include="Engine\DebuggerEventArgs.cs" />
+    <Compile Include="Engine\DebuggerPauseState.cs" />
+    <Compile Include="Engine\DebuggerProcessState.cs" />
+    <Compile Include="Engine\DebuggerState.cs" />
+    <Compile Include="Engine\DebugOptions.cs" />
+    <Compile Include="Engine\DebugProcessOptions.cs" />
+    <Compile Include="Engine\DisableSystemDebuggerDetection.cs" />
+    <Compile Include="Engine\DnAnyDebugEventBreakpoint.cs" />
+    <Compile Include="Engine\DnAppDomain.cs" />
+    <Compile Include="Engine\DnAssembly.cs" />
+    <Compile Include="Engine\DnBreakpoint.cs" />
+    <Compile Include="Engine\DnCodeBreakpoint.cs" />
+    <Compile Include="Engine\DndbgSignatureReader.cs" />
+    <Compile Include="Engine\DnDebugEventBreakpoint.cs" />
+    <Compile Include="Engine\DnDebugger.cs" />
+    <Compile Include="Engine\DnEval.cs" />
+    <Compile Include="Engine\DnILCodeBreakpoint.cs" />
+    <Compile Include="Engine\DnModule.cs" />
+    <Compile Include="Engine\DnNativeCodeBreakpoint.cs" />
+    <Compile Include="Engine\DnProcess.cs" />
+    <Compile Include="Engine\DnThread.cs" />
+    <Compile Include="Engine\ECallManager.cs" />
+    <Compile Include="Engine\IDebugMessageDispatcher.cs" />
+    <Compile Include="Engine\IdentifierEscaper.cs" />
+    <Compile Include="Engine\ILFrameIP.cs" />
+    <Compile Include="Engine\MDAPI.cs" />
+    <Compile Include="Engine\MetaDataUtils.cs" />
+    <Compile Include="Engine\NativeMethods.cs" />
+    <Compile Include="Engine\ProcessCreationFlags.cs" />
+    <Compile Include="Engine\SerializedDnModule.cs" />
+    <Compile Include="Engine\StepRange.cs" />
+    <Compile Include="Engine\TypeComparer.cs" />
+    <Compile Include="Engine\TypePrinter.cs" />
+    <Compile Include="Engine\TypePrinterUtils.cs" />
+    <Compile Include="Engine\Utils.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\dnlib\src\dnlib.csproj">
+      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\dnSpy\dnSpy\Properties\AssemblyInfo.Shared.cs">
+      <Link>Properties\AssemblyInfo.Shared.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

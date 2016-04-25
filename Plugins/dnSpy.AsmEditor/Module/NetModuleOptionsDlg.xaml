@@ -1,0 +1,74 @@
+﻿<!--
+    Copyright (C) 2014-2016 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<winlocal:WindowBase x:Class="dnSpy.AsmEditor.Module.NetModuleOptionsDlg"
+             x:ClassModifier="internal"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:winlocal="clr-namespace:dnSpy.Shared.Controls;assembly=dnSpy.Shared"
+             xmlns:mvvmvc="clr-namespace:dnSpy.Shared.MVVM.Converters;assembly=dnSpy.Shared"
+             xmlns:p="clr-namespace:dnSpy.AsmEditor.Properties"
+             Height="195" Width="400"
+             Title="{x:Static p:dnSpy_AsmEditor_Resources.CreateNetModuleCommand2}"
+             Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
+             MinHeight="195" MinWidth="400">
+	<winlocal:WindowBase.Resources>
+		<mvvmvc:NegateBooleanConverter x:Key="NegateBooleanConverter" />
+	</winlocal:WindowBase.Resources>
+	<Grid FocusManager.FocusedElement="{Binding ElementName=nameTextBox}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition />
+		</Grid.ColumnDefinitions>
+
+		<Border Grid.Row="0" Margin="5" Style="{StaticResource DialogBorderStyle}">
+			<Grid Margin="5">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="Auto" />
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+
+                <Label Grid.Row="0" Grid.Column="0" Margin="0 0 0 0" Target="{Binding ElementName=nameTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.NetModule_Name}" />
+				<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 0 0 0" Name="nameTextBox" Text="{Binding Name, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+
+                <Label Grid.Row="1" Grid.Column="0" Margin="0 5 0 0" Target="{Binding ElementName=mvidTextBox}" Content="{x:Static p:dnSpy_AsmEditor_Resources.NetModule_Mvid}" />
+				<TextBox Grid.Row="1" Grid.Column="1" Margin="5 5 0 0" Name="mvidTextBox" Text="{Binding Mvid.StringValue, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+                <Button Grid.Row="1" Grid.Column="2" Margin="5 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.NetModule_NewGuid1}" Command="{Binding GenerateNewMvidCommand}" />
+
+                <Label Grid.Row="2" Grid.Column="0" Margin="0 5 0 0" Content="{x:Static p:dnSpy_AsmEditor_Resources.NetModule_DotNetVersion}" Target="{Binding ElementName=clrVersionComboBox}" />
+				<ComboBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Margin="5 5 0 0" Name="clrVersionComboBox" DisplayMemberPath="Name" ItemsSource="{Binding ClrVersion.Items}" SelectedIndex="{Binding ClrVersion.SelectedIndex}" Width="100" VerticalContentAlignment="Center" HorizontalAlignment="Left" />
+			</Grid>
+		</Border>
+
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5 0 5 5">
+			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_OK}" IsEnabled="{Binding HasError, Converter={StaticResource NegateBooleanConverter}}" IsDefault="True" Style="{StaticResource DialogButton}" Margin="0,0,5,0" Click="okButton_Click" />
+			<Button Content="{x:Static p:dnSpy_AsmEditor_Resources.Button_Cancel}" IsCancel="True" Style="{StaticResource DialogButton}" Margin="0,0,0,0" />
+		</StackPanel>
+    </Grid>
+</winlocal:WindowBase>

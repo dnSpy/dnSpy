@@ -1,0 +1,129 @@
+<theme guid="B3D71E74-C353-4206-9AD1-05847BE95CBE" name="light" menu-name="_Light" order="300" is-high-contrast="false">
+	<colors>
+		<color name="defaulttext" fg="Black" bg="White" />
+		<color name="brace" fg="#003399" />
+		<color name="operator" fg="#6666FF" />
+		<color name="number" fg="#5B2DA8" />
+		<color name="comment" fg="#008000" />
+		<color name="xmldoctag" fg="#808080" />
+		<color name="xmldocattribute" fg="#7373C0" />
+		<color name="xmldoccomment" fg="#008000" italics="true" />
+		<color name="keyword" fg="#0000FF" />
+		<color name="string" fg="#A31515" />
+		<color name="char" fg="#A31515" />
+		<color name="namespacepart" fg="#216F85" />
+		<color name="type" fg="#2B91AF" />
+		<color name="statictype" fg="#1B5D70" />
+		<color name="delegate" fg="#6666FF" />
+		<color name="enum" fg="#336600" />
+		<color name="interface" fg="#1E667A" />
+		<color name="valuetype" fg="#009933" />
+		<color name="typegenericparameter" fg="#2B91AF" />
+		<color name="methodgenericparameter" fg="#2B91AF" />
+		<color name="instancemethod" fg="#880000" />
+		<color name="staticmethod" fg="#880000" />
+		<color name="extensionmethod" fg="#91571D" italics="true" />
+		<color name="instancefield" fg="#CC3399" />
+		<color name="enumfield" fg="#6F008A" />
+		<color name="literalfield" fg="#9900FF" />
+		<color name="staticfield" fg="#990099" />
+		<color name="instanceevent" fg="#990033" />
+		<color name="staticevent" fg="#660033" />
+		<color name="instanceproperty" fg="#996633" />
+		<color name="staticproperty" fg="#7A5229" />
+		<color name="variable" fg="#000080" />
+		<color name="parameter" fg="#000080" bold="true" />
+		<color name="label" fg="#663300" />
+		<color name="opcode" fg="#993366" />
+		<color name="ildirective" fg="#009900" />
+		<color name="ilmodule" fg="#660033" />
+		<color name="xmldoctooltipdescriptiontext" italics="true" bold="true" />
+		<color name="xmldoctooltiptext" italics="true" bold="false" />
+		<color name="assembly" fg="#414141" />
+		<color name="assemblyexe" fg="#C17B19" />
+		<color name="module" fg="#642C8F" />
+		<color name="directorypart" fg="#216F85" />
+		<color name="filenamenoextension" fg="#990000" />
+		<color name="fileextension" fg="#3366CC" />
+		<color name="error" fg="Red" />
+		<color name="tostringeval" fg="#2E387C" />
+		<color name="linenumber" fg="#2B91AF" />
+		<color name="xmlcomment" fg="#FF008000" italics="true" />
+		<color name="xmlcdata" fg="#FF808080" />
+		<color name="xmldoctype" fg="Blue" />
+		<color name="xmldeclaration" fg="#FFA31515" />
+		<color name="xmltag" fg="#FFA31515" />
+		<color name="xmlattributename" fg="#FFFF0000" />
+		<color name="xmlattributevalue" fg="#FF0000FF" />
+		<color name="xmlentity" fg="#FFFF0000" />
+		<color name="xmlbrokenentity" fg="#FFFF0000" />
+		<color name="link" fg="Blue" />
+		<color name="selection" bg="#663399FF" />
+		<color name="localdefinition" bg="#DBE0CC" />
+		<color name="localreference" bg="#DBE0CC" />
+		<color name="currentstatement" fg="Black" bg="#8FFFEE62" />
+		<color name="breakpointstatement" fg="White" bg="#963A46" />
+		<color name="disabledbreakpointstatement" bg="#30963A46" />
+		<color name="specialcharacterbox" fg="#FFFFFFFF" bg="#C8808080" />
+		<color name="searchresultmarker" bg="#FFFFB7" />
+		<color name="currentline" fg="#EAEAF2" bg="#FFFFFFFF" />
+		<color name="currentlinenofocus" fg="#EEEEEE" bg="#FFFFFFFF" />
+		<color name="selectedreturnstatement" fg="Black" bg="#94B4E4B4" />
+		<color name="returnstatement" bg="#88C0C0C0" />
+		<color name="hextext" fg="Black" bg="White" />
+		<color name="hexoffset" fg="#FF000000" />
+		<color name="hexbyte0" fg="#FF3333CC" />
+		<color name="hexbyte1" fg="#FF993366" />
+		<color name="hexbyteerror" fg="#FFFF0000" />
+		<color name="hexascii" fg="#FF000000" />
+		<color name="hexcaret" bg="#66000000" />
+		<color name="hexinactivecaret" bg="#FFFF0000" />
+		<color name="hexselection" bg="#663399FF" />
+		<color name="replprompt1" fg="Black" />
+		<color name="replprompt2" fg="Black" />
+		<color name="reploutputtext" fg="Black" />
+		<color name="replscriptoutputtext" fg="Black" />
+		<color name="black" fg="#FF000000" />
+		<color name="blue" fg="#FF0000FF" />
+		<color name="cyan" fg="#FF00C0C0" />
+		<color name="darkblue" fg="#FF00007F" />
+		<color name="darkcyan" fg="#FF007F7F" />
+		<color name="darkgray" fg="#FF7F7F7F" />
+		<color name="darkgreen" fg="#FF007F00" />
+		<color name="darkmagenta" fg="#FF7F007F" />
+		<color name="darkred" fg="#FF7F0000" />
+		<color name="darkyellow" fg="#FF7F7F00" />
+		<color name="gray" fg="#FFC0C0C0" />
+		<color name="green" fg="#FF00C000" />
+		<color name="magenta" fg="#FFFF00FF" />
+		<color name="red" fg="#FFFF0000" />
+		<color name="white" fg="#FF7F7F7F" />
+		<color name="yellow" fg="#FFC0C020" />
+		<color name="invblack" fg="White" bg="#FF000000" />
+		<color name="invblue" fg="White" bg="#FF0000FF" />
+		<color name="invcyan" fg="White" bg="#FF00C0C0" />
+		<color name="invdarkblue" fg="White" bg="#FF00007F" />
+		<color name="invdarkcyan" fg="White" bg="#FF007F7F" />
+		<color name="invdarkgray" fg="White" bg="#FF7F7F7F" />
+		<color name="invdarkgreen" fg="White" bg="#FF007F00" />
+		<color name="invdarkmagenta" fg="White" bg="#FF7F007F" />
+		<color name="invdarkred" fg="White" bg="#FF7F0000" />
+		<color name="invdarkyellow" fg="White" bg="#FF7F7F00" />
+		<color name="invgray" fg="White" bg="#FFC0C0C0" />
+		<color name="invgreen" fg="White" bg="#FF00C000" />
+		<color name="invmagenta" fg="White" bg="#FFFF00FF" />
+		<color name="invred" fg="White" bg="#FFFF0000" />
+		<color name="invwhite" fg="White" bg="#FF7F7F7F" />
+		<color name="invyellow" fg="White" bg="#FFC0C020" />
+		<color name="debuglogexceptionhandled" fg="#FFFF0000" />
+		<color name="debuglogexceptionunhandled" fg="#FFFF0000" />
+		<color name="debuglogstepfiltering" fg="#FFCC00CC" />
+		<color name="debuglogloadmodule" fg="#FF996633" />
+		<color name="debuglogunloadmodule" fg="#FF6600FF" />
+		<color name="debuglogexitprocess" fg="#FF000000" />
+		<color name="debuglogexitthread" fg="#FF006699" />
+		<color name="debuglogprogramoutput" fg="#FF996600" />
+		<color name="debuglogmda" fg="#FFFF0000" />
+		<color name="debuglogtimestamp" fg="#FF6600CC" />
+	</colors>
+</theme>

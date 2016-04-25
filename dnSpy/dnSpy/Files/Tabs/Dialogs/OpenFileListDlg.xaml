@@ -1,0 +1,101 @@
+﻿<!--
+    Copyright (C) 2014-2016 de4dot@gmail.com
+
+    This file is part of dnSpy
+
+    dnSpy is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    dnSpy is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<ctrls:WindowBase x:Class="dnSpy.Files.Tabs.Dialogs.OpenFileListDlg"
+        x:ClassModifier="internal"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:dnSpy.Files.Tabs.Dialogs"
+        xmlns:ctrls="clr-namespace:dnSpy.Shared.Controls;assembly=dnSpy.Shared"
+        xmlns:mvvm="clr-namespace:dnSpy.Shared.MVVM;assembly=dnSpy.Shared"
+        xmlns:p="clr-namespace:dnSpy.Properties"
+        mc:Ignorable="d"
+        Style="{StaticResource DialogWindowStyle}" WindowStartupLocation="CenterOwner"
+        MinHeight="200" MinWidth="300"
+        Title="{x:Static p:dnSpy_Resources.OpenList_Title}" Height="400" Width="800"
+        FocusManager.FocusedElement="{Binding ElementName=searchBox}">
+    <Grid>
+        <Grid.Resources>
+            <BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter" />
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0" Margin="5 5 5 0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Label Grid.Column="0" Content="{x:Static p:dnSpy_Resources.OpenList_Search_Label}" Target="{Binding ElementName=searchBox}" />
+            <TextBox Grid.Column="1" Name="searchBox" Margin="5 0 0 0" Text="{Binding SearchText, ValidatesOnDataErrors=True, ValidatesOnExceptions=True, UpdateSourceTrigger=PropertyChanged}" />
+            <CheckBox Grid.Column="2" Margin="5 0 0 0" Content="{x:Static p:dnSpy_Resources.OpenList_SavedLists_CheckBox}" IsChecked="{Binding ShowSavedLists}" />
+        </Grid>
+        <ListView Name="listView"
+                  Grid.Row="1"
+                  Margin="5 5 5 0"
+                  MouseDoubleClick="listView_MouseDoubleClick"
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling"
+                  mvvm:InitDataTemplateAP.Initialize="True"
+                  SelectionMode="Extended"
+                  ItemsSource="{Binding CollectionView}"
+                  SelectedItem="{Binding SelectedItem}">
+            <ListView.Resources>
+                <local:FileListColumnConverter x:Key="fileListColumnConverter" />
+            </ListView.Resources>
+            <ListView.View>
+                <GridView AllowsColumnReorder="True">
+                    <GridViewColumn Header="{x:Static p:dnSpy_Resources.OpenList_Name_Column}" Width="700">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding NameObject, Mode=OneWay, Converter={StaticResource fileListColumnConverter}, ConverterParameter=Name}" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="{x:Static p:dnSpy_Resources.OpenList_Files_Column}">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ContentPresenter Content="{Binding FileCountObject, Mode=OneWay, Converter={StaticResource fileListColumnConverter}, ConverterParameter=FileCount}" HorizontalAlignment="Right" />
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <Grid Grid.Row="2" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ProgressBar Grid.Column="0" IsIndeterminate="True" Margin="0 0 5 0" Visibility="{Binding SearchingForDefaultLists, Converter={StaticResource booleanToVisibilityConverter}}" />
+            <Button Grid.Column="1" Content="{x:Static p:dnSpy_Resources.OpenList_Remove_Button}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding RemoveCommand}" />
+            <Button Grid.Column="2" Content="{x:Static p:dnSpy_Resources.OpenList_New_Button}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" Command="{Binding CreateListCommand}" />
+            <Button Grid.Column="3" Content="{x:Static p:dnSpy_Resources.OpenList_Open_Button}" Style="{StaticResource DialogButton}" Margin="0 0 5 0" IsDefault="True" Click="okButton_Click" />
+            <Button Grid.Column="4" Content="{x:Static p:dnSpy_Resources.Button_Cancel}" Style="{StaticResource DialogButton}" Margin="0 0 0 0" IsCancel="True" />
+        </Grid>
+    </Grid>
+</ctrls:WindowBase>

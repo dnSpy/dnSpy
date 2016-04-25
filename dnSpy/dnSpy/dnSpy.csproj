@@ -1,0 +1,703 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{722257A9-1B14-4D63-B886-18A4229AF4EB}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>dnSpy</RootNamespace>
+    <AssemblyName>dnSpy</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1685</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>1685</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>dnSpy.MainApp.StartUpClass</StartupObject>
+    <ApplicationIcon>Images\dnSpy.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationFramework.Aero" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\IStackedContentChild.cs" />
+    <Compile Include="Controls\StackedContent.cs" />
+    <Compile Include="Controls\StackedContentState.cs" />
+    <Compile Include="Controls\WpfCommandManager.cs" />
+    <Compile Include="Controls\WpfCommands.cs" />
+    <Compile Include="Controls\WpfFocusManager.cs" />
+    <Compile Include="Converters\ImageConverter.cs" />
+    <Compile Include="Culture\Commands.cs" />
+    <Compile Include="Culture\CultureManager.cs" />
+    <Compile Include="Culture\CultureSettings.cs" />
+    <Compile Include="Culture\LanguageInfo.cs" />
+    <Compile Include="Decompiler\CodeMappings.cs" />
+    <Compile Include="Decompiler\DecompilerSettingsTab.cs" />
+    <Compile Include="Events\WeakEventList.cs" />
+    <Compile Include="Files\AssemblyResolver.cs" />
+    <Compile Include="Files\DefaultDnSpyFileCreator.cs" />
+    <Compile Include="Files\DefaultDnSpyFileLoader.cs" />
+    <Compile Include="Files\FileLoader.cs" />
+    <Compile Include="Files\FileManager.cs" />
+    <Compile Include="Files\FileManagerAppSettingsModifiedListener.cs" />
+    <Compile Include="Files\FileManagerCreator.cs" />
+    <Compile Include="Files\FileManagerOptionCreator.cs" />
+    <Compile Include="Files\FileManagerSettings.cs" />
+    <Compile Include="Files\IDnSpyFileLoader.cs" />
+    <Compile Include="Files\MethodAnnotations.cs" />
+    <Compile Include="Files\Tabs\AppCommandLineArgsHandler.cs" />
+    <Compile Include="Files\Tabs\AsyncShowResult.cs" />
+    <Compile Include="Files\Tabs\Commands.cs" />
+    <Compile Include="Files\Tabs\CopyTokenCommand.cs" />
+    <Compile Include="Files\Tabs\DecompilationCache.cs" />
+    <Compile Include="Files\Tabs\DefaultDecompileNode.cs" />
+    <Compile Include="Files\Tabs\DefaultFileList.cs" />
+    <Compile Include="Files\Tabs\Dialogs\ExportToProjectDlg.xaml.cs">
+      <DependentUpon>ExportToProjectDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Files\Tabs\Dialogs\ExportToProjectSettings.cs" />
+    <Compile Include="Files\Tabs\Dialogs\ExportToProjectVM.cs" />
+    <Compile Include="Files\Tabs\Dialogs\FileListColumnConverter.cs" />
+    <Compile Include="Files\Tabs\Dialogs\FileListPrinter.cs" />
+    <Compile Include="Files\Tabs\Dialogs\FileListVM.cs" />
+    <Compile Include="Files\Tabs\Dialogs\GACFileColumnConverter.cs" />
+    <Compile Include="Files\Tabs\Dialogs\GACFileFinder.cs" />
+    <Compile Include="Files\Tabs\Dialogs\GACFilePrinter.cs" />
+    <Compile Include="Files\Tabs\Dialogs\GACFileVM.cs" />
+    <Compile Include="Files\Tabs\Dialogs\OpenFileListDlg.xaml.cs">
+      <DependentUpon>OpenFileListDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Files\Tabs\Dialogs\OpenFileListVM.cs" />
+    <Compile Include="Files\Tabs\Dialogs\OpenFromGACDlg.xaml.cs">
+      <DependentUpon>OpenFromGACDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Files\Tabs\Dialogs\OpenFromGACVM.cs" />
+    <Compile Include="Files\Tabs\Dialogs\TabPrinter.cs" />
+    <Compile Include="Files\Tabs\Dialogs\TabsDlg.xaml.cs">
+      <DependentUpon>TabsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Files\Tabs\Dialogs\TabsVM.cs" />
+    <Compile Include="Files\Tabs\Dialogs\TabsVMSettings.cs" />
+    <Compile Include="Files\Tabs\Dialogs\TabVM.cs" />
+    <Compile Include="Files\Tabs\DnSpyFileInfoSerializer.cs" />
+    <Compile Include="Files\Tabs\EntryPointCommands.cs" />
+    <Compile Include="Files\Tabs\FileList.cs" />
+    <Compile Include="Files\Tabs\FileListLoader.cs" />
+    <Compile Include="Files\Tabs\FileListManager.cs" />
+    <Compile Include="Files\Tabs\FileTabContentFactoryContext.cs" />
+    <Compile Include="Files\Tabs\FileTabContentFactoryManager.cs" />
+    <Compile Include="Files\Tabs\FileTabManager.cs" />
+    <Compile Include="Files\Tabs\FileTabManagerLoader.cs" />
+    <Compile Include="Files\Tabs\FileTabManagerSettings.cs" />
+    <Compile Include="Files\Tabs\FileTabSerializer.cs" />
+    <Compile Include="Files\Tabs\FileTabUIContextLocator.cs" />
+    <Compile Include="Files\Tabs\FileTabUIContextLocatorCreator.cs" />
+    <Compile Include="Files\Tabs\FileTreeNodeDecompiler.cs" />
+    <Compile Include="Files\Tabs\GoToTokenCommand.cs" />
+    <Compile Include="Files\Tabs\IDecompilationCache.cs" />
+    <Compile Include="Files\Tabs\IFileTabUIContextLocatorCreator.cs" />
+    <Compile Include="Files\Tabs\MiscOptions.cs" />
+    <Compile Include="Files\Tabs\NavigationCommands.cs" />
+    <Compile Include="Files\Tabs\NodeDecompiler.cs" />
+    <Compile Include="Files\Tabs\NodeReferenceFileTabContentCreator.cs" />
+    <Compile Include="Files\Tabs\NodeTabSaver.cs" />
+    <Compile Include="Files\Tabs\NullObjects.cs" />
+    <Compile Include="Files\Tabs\RedecompileTabs.cs" />
+    <Compile Include="Files\Tabs\RefreshResourcesCommand.cs" />
+    <Compile Include="Files\Tabs\ResourceCommands.cs" />
+    <Compile Include="Files\Tabs\SaveCommands.cs" />
+    <Compile Include="Files\Tabs\SaveManager.cs" />
+    <Compile Include="Files\Tabs\SearchMsdnCommand.cs" />
+    <Compile Include="Files\Tabs\SerializedTabs.cs" />
+    <Compile Include="Files\Tabs\Dialogs\TabColumnConverter.cs" />
+    <Compile Include="Files\Tabs\Settings\DisplaySettingsTab.cs" />
+    <Compile Include="Files\Tabs\TabCommands.cs" />
+    <Compile Include="Files\Tabs\TabContentImpl.cs" />
+    <Compile Include="Files\Tabs\TabHistory.cs" />
+    <Compile Include="Files\Tabs\TextEditor\Commands.cs" />
+    <Compile Include="Files\Tabs\TextEditor\DecompileFileTabContent.cs" />
+    <Compile Include="Files\Tabs\TextEditor\DecompileNodeContext.cs" />
+    <Compile Include="Files\Tabs\TextEditor\IconBarCommandManager.cs" />
+    <Compile Include="Files\Tabs\TextEditor\IconBarMargin.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ReferenceElementGenerator.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextEditorControl.xaml.cs">
+      <DependentUpon>TextEditorControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Files\Tabs\TextEditor\TextEditorUIContext.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextCreator.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextEditorUIContextManagerImpl.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextLineObjectManager.cs" />
+    <Compile Include="Files\Tabs\TextEditor\TextMarkerService.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ToolTips\CodeToolTipCreator.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ToolTips\CodeToolTipManager.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ToolTips\CodeToolTipSettings.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ToolTips\CodeToolTipWriter.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ToolTips\DnlibReferenceToolTipContentCreator.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ToolTips\ToolTipContentCreatorContext.cs" />
+    <Compile Include="Files\Tabs\TextEditor\ToolTips\ToolTipHelper.cs" />
+    <Compile Include="Files\Tabs\TextEditor\UIElementGenerator.cs" />
+    <Compile Include="Files\Tabs\TextEditor\WaitAdorner.xaml.cs">
+      <DependentUpon>WaitAdorner.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Files\Tabs\TreeNodeReferenceFileTabContentCreator.cs" />
+    <Compile Include="Files\TreeView\AssemblyFileNode.cs" />
+    <Compile Include="Files\TreeView\AssemblyReferenceNode.cs" />
+    <Compile Include="Files\TreeView\BaseTypeFolderNode.cs" />
+    <Compile Include="Files\TreeView\BaseTypeNode.cs" />
+    <Compile Include="Files\TreeView\DefaultDnSpyFileNodeCreator.cs" />
+    <Compile Include="Files\TreeView\DerivedTypeNode.cs" />
+    <Compile Include="Files\TreeView\DerivedTypesFinder.cs" />
+    <Compile Include="Files\TreeView\DerivedTypesFolderNode.cs" />
+    <Compile Include="Files\TreeView\DnSpyFileNode.cs" />
+    <Compile Include="Files\TreeView\EventNode.cs" />
+    <Compile Include="Files\TreeView\FieldNode.cs" />
+    <Compile Include="Files\TreeView\FileTreeNodeDataContext.cs" />
+    <Compile Include="Files\TreeView\FileTreeNodeGroups.cs" />
+    <Compile Include="Files\TreeView\FileTreeView.cs" />
+    <Compile Include="Files\TreeView\FileTreeViewAppSettingsModifiedListener.cs" />
+    <Compile Include="Files\TreeView\FileTreeViewCreator.cs" />
+    <Compile Include="Files\TreeView\FileTreeViewSettings.cs" />
+    <Compile Include="Files\TreeView\MessageNode.cs" />
+    <Compile Include="Files\TreeView\MethodNode.cs" />
+    <Compile Include="Files\TreeView\ModuleFileNode.cs" />
+    <Compile Include="Files\TreeView\ModuleReferenceNode.cs" />
+    <Compile Include="Files\TreeView\NamespaceNode.cs" />
+    <Compile Include="Files\TreeView\PEFileNode.cs" />
+    <Compile Include="Files\TreeView\PropertyNode.cs" />
+    <Compile Include="Files\TreeView\ReferencesFolderNode.cs" />
+    <Compile Include="Files\TreeView\ResourcesFolderNode.cs" />
+    <Compile Include="Files\TreeView\Resources\BuiltInResourceElementNode.cs" />
+    <Compile Include="Files\TreeView\Resources\ImageResourceNode.cs" />
+    <Compile Include="Files\TreeView\Resources\ResourceElementSetNode.cs" />
+    <Compile Include="Files\TreeView\Resources\ResourceNodeFactory.cs" />
+    <Compile Include="Files\TreeView\Resources\SerializedImageListStreamerResourceElementNode.cs" />
+    <Compile Include="Files\TreeView\Resources\SerializedImageResourceElementNode.cs" />
+    <Compile Include="Files\TreeView\Resources\UnknownResourceNode.cs" />
+    <Compile Include="Files\TreeView\Resources\UnknownSerializedResourceElementNode.cs" />
+    <Compile Include="Files\TreeView\RootNode.cs" />
+    <Compile Include="Files\TreeView\TypeNode.cs" />
+    <Compile Include="Files\TreeView\UnknownFileNode.cs" />
+    <Compile Include="Images\DotNetImageManager.cs" />
+    <Compile Include="Images\ImageManager.cs" />
+    <Compile Include="Images\ThemedImageCreator.cs" />
+    <Compile Include="Languages\DummyLanguage.cs" />
+    <Compile Include="Languages\LanguageManager.cs" />
+    <Compile Include="Languages\LanguageManagerSettings.cs" />
+    <Compile Include="MainApp\AboutCommands.cs" />
+    <Compile Include="MainApp\AboutScreen.cs" />
+    <Compile Include="MainApp\App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainApp\AppCommandLineArgs.cs" />
+    <Compile Include="MainApp\AppCommandLineArgsHandler.cs" />
+    <Compile Include="MainApp\AppSettings.cs" />
+    <Compile Include="MainApp\AppStatusBar.cs" />
+    <Compile Include="MainApp\AppToolBar.cs" />
+    <Compile Include="MainApp\AppWindow.cs" />
+    <Compile Include="MainApp\AskDlg.xaml.cs">
+      <DependentUpon>AskDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainApp\AskVM.cs" />
+    <Compile Include="MainApp\DnSpyLoaderControl.xaml.cs">
+      <DependentUpon>DnSpyLoaderControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainApp\DnSpyLoaderManager.cs" />
+    <Compile Include="MainApp\FileTreeViewWindowContent.cs" />
+    <Compile Include="MainApp\MainToolWindowManagerCommands.cs" />
+    <Compile Include="MainApp\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainApp\MainWindowControl.cs" />
+    <Compile Include="MainApp\MessageBoxManager.cs" />
+    <Compile Include="MainApp\MiscOptions.cs" />
+    <Compile Include="MainApp\MsgBoxDlg.xaml.cs">
+      <DependentUpon>MsgBoxDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="MainApp\MsgBoxVM.cs" />
+    <Compile Include="MainApp\SavedWindowState.cs" />
+    <Compile Include="MainApp\StartUpClass.cs" />
+    <Compile Include="MainApp\ToolBarCommands.cs" />
+    <Compile Include="MainApp\ViewCommands.cs" />
+    <Compile Include="Menus\AppMenus.cs" />
+    <Compile Include="Menus\ContextMenuCreator.cs" />
+    <Compile Include="Menus\MenuItemContext.cs" />
+    <Compile Include="Menus\MenuManager.cs" />
+    <Compile Include="MVVM\InitializeDataTemplateContextMenu.cs" />
+    <Compile Include="Output\CachedWriter.cs" />
+    <Compile Include="Output\Commands.cs" />
+    <Compile Include="Output\NotPresentOutputWriter.cs" />
+    <Compile Include="Output\NullOutputTextPane.cs" />
+    <Compile Include="Output\OutputBufferVM.cs" />
+    <Compile Include="Output\OutputCommands.cs" />
+    <Compile Include="Output\OutputContent.cs" />
+    <Compile Include="Output\OutputControl.xaml.cs">
+      <DependentUpon>OutputControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Output\OutputManager.cs" />
+    <Compile Include="Output\OutputManagerSettings.cs" />
+    <Compile Include="Output\OutputToolWindowContent.cs" />
+    <Compile Include="Plugin\LoadedPlugin.cs" />
+    <Compile Include="Plugin\PluginConfig.cs" />
+    <Compile Include="Plugin\PluginConfigReader.cs" />
+    <Compile Include="Plugin\PluginManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.Shared.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <AppDesigner Include="Properties\" />
+    <Compile Include="Properties\dnSpy.Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dnSpy.Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Scripting\ServiceLocator.cs" />
+    <Compile Include="Search\AppCommandLineArgsHandler.cs" />
+    <Compile Include="Search\Commands.cs" />
+    <Compile Include="Search\FileSearcher.cs" />
+    <Compile Include="Search\FileSearcherCreator.cs" />
+    <Compile Include="Search\FilterSearcher.cs" />
+    <Compile Include="Search\FilterSearcherOptions.cs" />
+    <Compile Include="Search\SearchControl.xaml.cs">
+      <DependentUpon>SearchControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Search\SearchControlVM.cs" />
+    <Compile Include="Search\SearchManager.cs" />
+    <Compile Include="Search\SearchResult.cs" />
+    <Compile Include="Search\SearchResultContext.cs" />
+    <Compile Include="Search\SearchSettings.cs" />
+    <Compile Include="Search\SearchToolWindowContent.cs" />
+    <Compile Include="Search\SearchType.cs" />
+    <Compile Include="Search\SearchTypeVM.cs" />
+    <Compile Include="Settings\Dialog\AppRefreshSettings.cs" />
+    <Compile Include="Settings\Dialog\AppSettingsDlg.xaml.cs">
+      <DependentUpon>AppSettingsDlg.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Settings\Dialog\DynamicAppSettingsTabCreator.cs" />
+    <Compile Include="Settings\Dialog\ShowAppSettings.cs" />
+    <Compile Include="Settings\SectionAttributes.cs" />
+    <Compile Include="Settings\SettingsManager.cs" />
+    <Compile Include="Settings\SettingsSection.cs" />
+    <Compile Include="Settings\SettingsSectionCreator.cs" />
+    <Compile Include="Settings\XmlSettingsConstants.cs" />
+    <Compile Include="Settings\XmlSettingsReader.cs" />
+    <Compile Include="Settings\XmlSettingsWriter.cs" />
+    <Compile Include="Settings\XmlUtils.cs" />
+    <Compile Include="Tabs\FileTabBackgroundConverter.cs" />
+    <Compile Include="Tabs\TabElementScaler.cs" />
+    <Compile Include="Tabs\TabGroup.cs" />
+    <Compile Include="Tabs\TabGroupManager.cs" />
+    <Compile Include="Tabs\TabItemImpl.cs" />
+    <Compile Include="Tabs\TabManager.cs" />
+    <Compile Include="Tabs\TabManagerCreator.cs" />
+    <Compile Include="Tabs\TabUtils.cs" />
+    <Compile Include="TextEditor\ContextMenuInitializer.cs" />
+    <Compile Include="TextEditor\DnSpyTextEditor.cs" />
+    <Compile Include="TextEditor\EditorPositionState.cs" />
+    <Compile Include="TextEditor\LogEditorCreator.cs" />
+    <Compile Include="TextEditor\LogEditorUI.cs" />
+    <Compile Include="TextEditor\ReplCommands.cs" />
+    <Compile Include="TextEditor\ReplEditorCreator.cs" />
+    <Compile Include="TextEditor\ReplEditorUI.cs" />
+    <Compile Include="TextEditor\TextEditorSettings.cs" />
+    <Compile Include="Themes\AppCommandLineArgsHandler.cs" />
+    <Compile Include="Themes\Color.cs" />
+    <Compile Include="Themes\ColorInfo.cs" />
+    <Compile Include="Themes\ColorInfos.cs" />
+    <Compile Include="Themes\Theme.cs" />
+    <Compile Include="Themes\ThemeColor.cs" />
+    <Compile Include="Themes\ThemeManager.cs" />
+    <Compile Include="Themes\ThemeSettings.cs" />
+    <Compile Include="Themes\ThemesMenu.cs" />
+    <Compile Include="ToolBars\ToolBarButtonVM.cs" />
+    <Compile Include="ToolBars\ToolBarItemContext.cs" />
+    <Compile Include="ToolBars\ToolBarManager.cs" />
+    <Compile Include="ToolWindows\TabContentImpl.cs" />
+    <Compile Include="ToolWindows\ToolWindowGroup.cs" />
+    <Compile Include="ToolWindows\ToolWindowGroupManager.cs" />
+    <Compile Include="ToolWindows\ToolWindowManager.cs" />
+    <Compile Include="ToolWindows\ToolWindowManagerCreator.cs" />
+    <Compile Include="TreeView\DnSpySharpTreeNode.cs" />
+    <Compile Include="TreeView\SharpTreeNodeChildrenList.cs" />
+    <Compile Include="TreeView\TreeNodeDataImpl.cs" />
+    <Compile Include="TreeView\TreeNodeImpl.cs" />
+    <Compile Include="TreeView\TreeViewImpl.cs" />
+    <Compile Include="TreeView\TreeViewManager.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\dnSpy.Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>dnSpy.Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\dnSpy.Resources.ru.resx" />
+    <EmbeddedResource Include="Properties\dnSpy.Resources.zh-CN.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit\ICSharpCode.AvalonEdit.csproj">
+      <Project>{6c55b776-26d4-4db3-a6ab-87e783b2f3d1}</Project>
+      <Name>ICSharpCode.AvalonEdit</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\dnlib\src\dnlib.csproj">
+      <Project>{fdfc1237-143f-4919-8318-4926901f4639}</Project>
+      <Name>dnlib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Contracts\dnSpy.Contracts.csproj">
+      <Project>{9b234472-0e22-428c-9345-c8d9ee5e06af}</Project>
+      <Name>dnSpy.Contracts</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Decompiler.Shared\dnSpy.Decompiler.Shared.csproj">
+      <Project>{a027546a-cf4b-47f9-bc53-ee1ad424ee41}</Project>
+      <Name>dnSpy.Decompiler.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Shared\dnSpy.Shared.csproj">
+      <Project>{7e7c2cf8-2057-4eaa-9dad-ab3022cf4037}</Project>
+      <Name>dnSpy.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\dnSpy.Languages\dnSpy.Languages.csproj">
+      <Project>{9265e4ea-eb00-4cb6-8a9a-608871e24fd0}</Project>
+      <Name>dnSpy.Languages</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libraries\ICSharpCode.TreeView\ICSharpCode.TreeView.csproj">
+      <Project>{dde2a481-8271-4eac-a330-8fa6a38d13d1}</Project>
+      <Name>ICSharpCode.TreeView</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="app.manifest" />
+    <EmbeddedResource Include="TextEditor\IL.xshd" />
+    <None Include="Themes\blue.dntheme">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Themes\dark.dntheme">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Themes\hc.dntheme">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Themes\light.dntheme">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Files\Tabs\Dialogs\ExportToProjectDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainApp\App.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Files\Tabs\Dialogs\OpenFileListDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Files\Tabs\Dialogs\OpenFromGACDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Files\Tabs\Dialogs\TabsDlg.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Files\Tabs\TextEditor\TextEditorControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Files\Tabs\TextEditor\WaitAdorner.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainApp\AskDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainApp\DnSpyLoaderControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="MainApp\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="MainApp\MsgBoxDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Output\OutputControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Search\SearchControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Settings\Dialog\AppSettingsDlg.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\wpf.styles.templates.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\Assembly.png" />
+    <Resource Include="Images\AssemblyExe.png" />
+    <Resource Include="Images\AssemblyModule.png" />
+    <Resource Include="Images\AssemblyReference.png" />
+    <Resource Include="Images\AssemblyWarning.png" />
+    <Resource Include="Images\Backward.png" />
+    <Resource Include="Images\BaseTypeClosed.png" />
+    <Resource Include="Images\BaseTypeOpened.png" />
+    <Resource Include="Images\Binary.png" />
+    <Resource Include="Images\Class.png" />
+    <Resource Include="Images\ClassInternal.png" />
+    <Resource Include="Images\ClassPrivate.png" />
+    <Resource Include="Images\ClassProtected.png" />
+    <Resource Include="Images\ClassProtectedInternal.png" />
+    <Resource Include="Images\ClearWindowContent.png" />
+    <Resource Include="Images\Close.png" />
+    <Resource Include="Images\CloseAll.png" />
+    <Resource Include="Images\CloseDocuments.png" />
+    <Resource Include="Images\Constructor.png" />
+    <Resource Include="Images\ConstructorCompilerControlled.png" />
+    <Resource Include="Images\ConstructorInternal.png" />
+    <Resource Include="Images\ConstructorPrivate.png" />
+    <Resource Include="Images\ConstructorProtected.png" />
+    <Resource Include="Images\ConstructorProtectedInternal.png" />
+    <Resource Include="Images\Copy.png" />
+    <Resource Include="Images\CSharpFile.png" />
+    <Resource Include="Images\Delegate.png" />
+    <Resource Include="Images\DelegateInternal.png" />
+    <Resource Include="Images\DelegatePrivate.png" />
+    <Resource Include="Images\DelegateProtected.png" />
+    <Resource Include="Images\DelegateProtectedInternal.png" />
+    <Resource Include="Images\DerivedTypesClosed.png" />
+    <Resource Include="Images\DerivedTypesOpened.png" />
+    <Resource Include="Images\dnSpy-Big.png" />
+    <Resource Include="Images\EntryPoint.png" />
+    <Resource Include="Images\Enum.png" />
+    <Resource Include="Images\EnumInternal.png" />
+    <Resource Include="Images\EnumPrivate.png" />
+    <Resource Include="Images\EnumProtected.png" />
+    <Resource Include="Images\EnumProtectedInternal.png" />
+    <Resource Include="Images\EnumValue.png" />
+    <Resource Include="Images\EnumValueCompilerControlled.png" />
+    <Resource Include="Images\EnumValueInternal.png" />
+    <Resource Include="Images\EnumValuePrivate.png" />
+    <Resource Include="Images\EnumValueProtected.png" />
+    <Resource Include="Images\EnumValueProtectedInternal.png" />
+    <Resource Include="Images\Event.png" />
+    <Resource Include="Images\EventCompilerControlled.png" />
+    <Resource Include="Images\EventInternal.png" />
+    <Resource Include="Images\EventPrivate.png" />
+    <Resource Include="Images\EventProtected.png" />
+    <Resource Include="Images\EventProtectedInternal.png" />
+    <Resource Include="Images\Exception.png" />
+    <Resource Include="Images\ExceptionInternal.png" />
+    <Resource Include="Images\ExceptionPrivate.png" />
+    <Resource Include="Images\ExceptionProtected.png" />
+    <Resource Include="Images\ExceptionProtectedInternal.png" />
+    <Resource Include="Images\ExtensionMethod.png" />
+    <Resource Include="Images\ExtensionMethodCompilerControlled.png" />
+    <Resource Include="Images\ExtensionMethodInternal.png" />
+    <Resource Include="Images\ExtensionMethodPrivate.png" />
+    <Resource Include="Images\ExtensionMethodProtected.png" />
+    <Resource Include="Images\ExtensionMethodProtectedInternal.png" />
+    <Resource Include="Images\Field.png" />
+    <Resource Include="Images\FieldCompilerControlled.png" />
+    <Resource Include="Images\FieldInternal.png" />
+    <Resource Include="Images\FieldPrivate.png" />
+    <Resource Include="Images\FieldProtected.png" />
+    <Resource Include="Images\FieldProtectedInternal.png" />
+    <Resource Include="Images\FieldReadOnly.png" />
+    <Resource Include="Images\FieldReadOnlyCompilerControlled.png" />
+    <Resource Include="Images\FieldReadOnlyInternal.png" />
+    <Resource Include="Images\FieldReadOnlyPrivate.png" />
+    <Resource Include="Images\FieldReadOnlyProtected.png" />
+    <Resource Include="Images\FieldReadOnlyProtectedInternal.png" />
+    <Resource Include="Images\Find.png" />
+    <Resource Include="Images\FolderClosed.png" />
+    <Resource Include="Images\FolderOpened.png" />
+    <Resource Include="Images\Forward.png" />
+    <Resource Include="Images\FullScreen.png" />
+    <Resource Include="Images\Generic.png" />
+    <Resource Include="Images\GenericInternal.png" />
+    <Resource Include="Images\GenericParameter.png" />
+    <Resource Include="Images\GenericPrivate.png" />
+    <Resource Include="Images\GenericProtected.png" />
+    <Resource Include="Images\GenericProtectedInternal.png" />
+    <Resource Include="Images\HorizontalTabGroup.png" />
+    <Resource Include="Images\ImageFile.png" />
+    <Resource Include="Images\Interface.png" />
+    <Resource Include="Images\InterfaceInternal.png" />
+    <Resource Include="Images\InterfacePrivate.png" />
+    <Resource Include="Images\InterfaceProtected.png" />
+    <Resource Include="Images\InterfaceProtectedInternal.png" />
+    <Resource Include="Images\Library.png" />
+    <Resource Include="Images\Literal.png" />
+    <Resource Include="Images\LiteralCompilerControlled.png" />
+    <Resource Include="Images\LiteralInternal.png" />
+    <Resource Include="Images\LiteralPrivate.png" />
+    <Resource Include="Images\LiteralProtected.png" />
+    <Resource Include="Images\LiteralProtectedInternal.png" />
+    <Resource Include="Images\Local.png" />
+    <Resource Include="Images\MarkUpTag.png" />
+    <Resource Include="Images\Method.png" />
+    <Resource Include="Images\MethodCompilerControlled.png" />
+    <Resource Include="Images\MethodInternal.png" />
+    <Resource Include="Images\MethodPrivate.png" />
+    <Resource Include="Images\MethodProtected.png" />
+    <Resource Include="Images\MethodProtectedInternal.png" />
+    <Resource Include="Images\ModuleReference.png" />
+    <Resource Include="Images\Namespace.png" />
+    <Resource Include="Images\NewWindow.png" />
+    <Resource Include="Images\OneLevelUp.png" />
+    <Resource Include="Images\Open.png" />
+    <Resource Include="Images\Operator.png" />
+    <Resource Include="Images\OperatorCompilerControlled.png" />
+    <Resource Include="Images\OperatorInternal.png" />
+    <Resource Include="Images\OperatorPrivate.png" />
+    <Resource Include="Images\OperatorProtected.png" />
+    <Resource Include="Images\OperatorProtectedInternal.png" />
+    <Resource Include="Images\Output.png" />
+    <Resource Include="Images\Parameter.png" />
+    <Resource Include="Images\PInvokeMethod.png" />
+    <Resource Include="Images\PInvokeMethodCompilerControlled.png" />
+    <Resource Include="Images\PInvokeMethodInternal.png" />
+    <Resource Include="Images\PInvokeMethodPrivate.png" />
+    <Resource Include="Images\PInvokeMethodProtected.png" />
+    <Resource Include="Images\PInvokeMethodProtectedInternal.png" />
+    <Resource Include="Images\Property.png" />
+    <Resource Include="Images\PropertyCompilerControlled.png" />
+    <Resource Include="Images\PropertyInternal.png" />
+    <Resource Include="Images\PropertyPrivate.png" />
+    <Resource Include="Images\PropertyProtected.png" />
+    <Resource Include="Images\PropertyProtectedInternal.png" />
+    <Resource Include="Images\ReferenceFolder.png" />
+    <Resource Include="Images\Resource.png" />
+    <Resource Include="Images\ResourcesFile.png" />
+    <Resource Include="Images\Save.png" />
+    <Resource Include="Images\Search.png" />
+    <Resource Include="Images\Settings.png" />
+    <Resource Include="Images\Solution.png" />
+    <Resource Include="Images\StaticClass.png" />
+    <Resource Include="Images\StaticEvent.png" />
+    <Resource Include="Images\StaticEventCompilerControlled.png" />
+    <Resource Include="Images\StaticEventInternal.png" />
+    <Resource Include="Images\StaticEventPrivate.png" />
+    <Resource Include="Images\StaticEventProtected.png" />
+    <Resource Include="Images\StaticEventProtectedInternal.png" />
+    <Resource Include="Images\StaticMethod.png" />
+    <Resource Include="Images\StaticMethodCompilerControlled.png" />
+    <Resource Include="Images\StaticMethodInternal.png" />
+    <Resource Include="Images\StaticMethodPrivate.png" />
+    <Resource Include="Images\StaticMethodProtected.png" />
+    <Resource Include="Images\StaticMethodProtectedInternal.png" />
+    <Resource Include="Images\StaticProperty.png" />
+    <Resource Include="Images\StaticPropertyCompilerControlled.png" />
+    <Resource Include="Images\StaticPropertyInternal.png" />
+    <Resource Include="Images\StaticPropertyPrivate.png" />
+    <Resource Include="Images\StaticPropertyProtected.png" />
+    <Resource Include="Images\StaticPropertyProtectedInternal.png" />
+    <Resource Include="Images\Strings.png" />
+    <Resource Include="Images\Struct.png" />
+    <Resource Include="Images\StructInternal.png" />
+    <Resource Include="Images\StructPrivate.png" />
+    <Resource Include="Images\StructProtected.png" />
+    <Resource Include="Images\StructProtectedInternal.png" />
+    <Resource Include="Images\tableviewnameonly.png" />
+    <Resource Include="Images\TextFile.png" />
+    <Resource Include="Images\toolstrippanelbottom.png" />
+    <Resource Include="Images\toolstrippanelleft.png" />
+    <Resource Include="Images\toolstrippanelright.png" />
+    <Resource Include="Images\toolstrippaneltop.png" />
+    <Resource Include="Images\UserDefinedDataType.png" />
+    <Resource Include="Images\VerticalTabGroup.png" />
+    <Resource Include="Images\VirtualEvent.png" />
+    <Resource Include="Images\VirtualEventCompilerControlled.png" />
+    <Resource Include="Images\VirtualEventInternal.png" />
+    <Resource Include="Images\VirtualEventPrivate.png" />
+    <Resource Include="Images\VirtualEventProtected.png" />
+    <Resource Include="Images\VirtualEventProtectedInternal.png" />
+    <Resource Include="Images\VirtualMethod.png" />
+    <Resource Include="Images\VirtualMethodCompilerControlled.png" />
+    <Resource Include="Images\VirtualMethodInternal.png" />
+    <Resource Include="Images\VirtualMethodPrivate.png" />
+    <Resource Include="Images\VirtualMethodProtected.png" />
+    <Resource Include="Images\VirtualMethodProtectedInternal.png" />
+    <Resource Include="Images\VirtualProperty.png" />
+    <Resource Include="Images\VirtualPropertyCompilerControlled.png" />
+    <Resource Include="Images\VirtualPropertyInternal.png" />
+    <Resource Include="Images\VirtualPropertyPrivate.png" />
+    <Resource Include="Images\VirtualPropertyProtected.png" />
+    <Resource Include="Images\VirtualPropertyProtectedInternal.png" />
+    <Resource Include="Images\VisualBasicFile.png" />
+    <Resource Include="Images\WordWrap.png" />
+    <Resource Include="Images\XamlFile.png" />
+    <Resource Include="Images\XmlFile.png" />
+    <Resource Include="Images\XsdFile.png" />
+    <Resource Include="Images\XsltFile.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\Licenses\CREDITS.txt">
+      <Link>CREDITS.txt</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>mkdir "$(TargetDir)FileLists" 2&gt; NUL
+copy "$(ProjectDir)FileLists\*.FileList.xml" "$(TargetDir)FileLists"
+mkdir "$(TargetDir)Licenses" 2&gt; NUL
+copy "$(SolutionDir)Licenses\*" "$(TargetDir)Licenses"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
