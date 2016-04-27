@@ -41,5 +41,11 @@ namespace dnSpy.Contracts.Output {
 		/// <param name="guid">Guid of text pane</param>
 		/// <returns></returns>
 		IOutputTextPane GetTextPane(Guid guid);
+
+		/// <summary>
+		/// Selects a <see cref="IOutputTextPane"/>
+		/// </summary>
+		/// <param name="guid">Guid of text pane</param>
+		void Select(Guid guid);
 	}
 }

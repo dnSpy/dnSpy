@@ -190,6 +190,13 @@ namespace dnSpy.Output {
 		public IOutputTextPane Find(Guid guid) => OutputBuffers.FirstOrDefault(a => a.Guid == guid);
 		public IOutputTextPane GetTextPane(Guid guid) => Find(guid) ?? new NotPresentOutputWriter(this, guid);
 
+		public void Select(Guid guid) {
+			var vm = OutputBuffers.FirstOrDefault(a => a.Guid == guid);
+			Debug.Assert(vm != null);
+			if (vm != null)
+				this.SelectedOutputBufferVM = vm;
+		}
+
 		public void RefreshThemeFields() {
 			OnPropertyChanged("ClearAllImageObject");
 			OnPropertyChanged("SaveImageObject");

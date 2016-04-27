@@ -33,6 +33,7 @@ namespace dnSpy.Debugger.Logger {
 		bool ShowThreadExitMessages { get; }
 		bool ShowProgramOutputMessages { get; }
 		bool ShowMDAMessages { get; }
+		bool ShowDebugOutputLog { get; }
 	}
 
 	class OutputLoggerSettings : ViewModelBase, IOutputLoggerSettings {
@@ -134,6 +135,18 @@ namespace dnSpy.Debugger.Logger {
 			}
 		}
 		bool showMDAMessages = true;
+
+		public bool ShowDebugOutputLog {
+			get { return showDebugOutputLog; }
+			set {
+				if (showDebugOutputLog != value) {
+					showDebugOutputLog = value;
+					OnPropertyChanged("ShowDebugOutputLog");
+					OnModified();
+				}
+			}
+		}
+		bool showDebugOutputLog = true;
 	}
 
 	[Export, Export(typeof(IOutputLoggerSettings)), PartCreationPolicy(CreationPolicy.Shared)]
@@ -156,6 +169,7 @@ namespace dnSpy.Debugger.Logger {
 			this.ShowThreadExitMessages = sect.Attribute<bool?>("ShowThreadExitMessages") ?? this.ShowThreadExitMessages;
 			this.ShowProgramOutputMessages = sect.Attribute<bool?>("ShowProgramOutputMessages") ?? this.ShowProgramOutputMessages;
 			this.ShowMDAMessages = sect.Attribute<bool?>("ShowMDAMessages") ?? this.ShowMDAMessages;
+			this.ShowDebugOutputLog = sect.Attribute<bool?>("ShowDebugOutputLog") ?? this.ShowDebugOutputLog;
 			this.disableSave = false;
 		}
 		readonly bool disableSave;
@@ -172,6 +186,7 @@ namespace dnSpy.Debugger.Logger {
 			sect.Attribute("ShowThreadExitMessages", ShowThreadExitMessages);
 			sect.Attribute("ShowProgramOutputMessages", ShowProgramOutputMessages);
 			sect.Attribute("ShowMDAMessages", ShowMDAMessages);
+			sect.Attribute("ShowDebugOutputLog", ShowDebugOutputLog);
 		}
 	}
 }
