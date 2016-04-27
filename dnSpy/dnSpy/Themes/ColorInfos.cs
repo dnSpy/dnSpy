@@ -1873,6 +1873,8 @@ namespace dnSpy.Themes {
 											new BrushColorInfo(ColorType.Parameter, "Method parameter")
 										},
 									},
+									new BrushColorInfo(ColorType.PreprocessorKeyword, "Preprocessor Keyword"),
+									new BrushColorInfo(ColorType.PreprocessorText, "Preprocessor Text"),
 									new BrushColorInfo(ColorType.Label, "Label"),
 									new BrushColorInfo(ColorType.OpCode, "Opcode"),
 									new BrushColorInfo(ColorType.ILDirective, "IL directive"),

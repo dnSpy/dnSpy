@@ -60,6 +60,8 @@ namespace dnSpy.Contracts.TextEditor {
 		StaticProperty,
 		Local,
 		Parameter,
+		PreprocessorKeyword,
+		PreprocessorText,
 		Label,
 		OpCode,
 		ILDirective,

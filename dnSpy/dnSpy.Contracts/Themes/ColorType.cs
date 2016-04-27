@@ -58,6 +58,8 @@ namespace dnSpy.Contracts.Themes {
 		StaticProperty,
 		Local,
 		Parameter,
+		PreprocessorKeyword,
+		PreprocessorText,
 		Label,
 		OpCode,
 		ILDirective,

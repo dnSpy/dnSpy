@@ -189,6 +189,16 @@ namespace dnSpy.Decompiler.Shared {
 		Parameter,
 
 		/// <summary>
+		/// preprocessor keyword
+		/// </summary>
+		PreprocessorKeyword,
+
+		/// <summary>
+		/// preprocessor text
+		/// </summary>
+		PreprocessorText,
+
+		/// <summary>
 		/// labels
 		/// </summary>
 		Label,

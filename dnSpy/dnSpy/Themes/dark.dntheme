@@ -33,6 +33,8 @@
 		<color name="staticproperty" fg="#1F8E8E" />
 		<color name="variable" fg="#BDB76B" />
 		<color name="parameter" fg="#BDB76B" bold="true" />
+		<color name="preprocessorkeyword" fg="#FF9B9B9B" />
+		<color name="preprocessortext" fg="#FFDCDCDC" />
 		<color name="label" fg="#806F4D" />
 		<color name="opcode" fg="#AD5C85" />
 		<color name="ildirective" fg="#9999FF" />
