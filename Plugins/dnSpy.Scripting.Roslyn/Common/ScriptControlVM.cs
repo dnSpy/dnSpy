@@ -226,7 +226,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					CommandExecuted();
 			}
 			catch (Exception ex) {
-				replEditor.OutputPrintLine(ex.ToString(), OutputColor.Error, true);
+				replEditor.OutputPrint(ex.ToString(), OutputColor.Error, true);
 				CommandExecuted();
 			}
 		}
@@ -323,7 +323,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 						if (isActive) {
 							try {
 								if (ex != null)
-									replEditor.OutputPrintLine(Format(ex.InnerException), OutputColor.Error, true);
+									replEditor.OutputPrint(Format(ex.InnerException), OutputColor.Error, true);
 
 								if (!t.IsCanceled && !t.IsFaulted) {
 									oldState.ScriptState = t.Result;
@@ -354,7 +354,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					else {
 						var ex = t.Exception;
 						if (ex != null) {
-							replEditor.OutputPrintLine(ex.ToString(), OutputColor.Error, true);
+							replEditor.OutputPrint(ex.ToString(), OutputColor.Error, true);
 							CommandExecuted();
 						}
 					}
