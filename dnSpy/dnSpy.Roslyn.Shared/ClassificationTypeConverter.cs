@@ -45,7 +45,7 @@ namespace dnSpy.Roslyn.Shared {
 			if (nodeDict == null) {
 				nodeDict = new Dictionary<TextSpan, List<SyntaxNode>>();
 
-				foreach (var tmp in semanticModel.SyntaxTree.GetRoot(cancellationToken).DescendantNodesAndTokens()) {
+				foreach (var tmp in semanticModel.SyntaxTree.GetRoot(cancellationToken).DescendantNodesAndTokens(null, descendIntoTrivia: true)) {
 					TextSpan textSpan;
 					SyntaxNode node;
 					if (tmp.IsNode) {
@@ -139,6 +139,8 @@ namespace dnSpy.Roslyn.Shared {
 the_switch:
 					switch (sym.Kind) {
 					case SymbolKind.Alias:
+						return OutputColor.NamespacePart;
+
 					case SymbolKind.ArrayType:
 					case SymbolKind.Assembly:
 					case SymbolKind.DynamicType:
@@ -177,6 +179,10 @@ the_switch:
 							goto the_switch;
 
 						case MethodKind.Ordinary:
+						case MethodKind.DelegateInvoke:
+						case MethodKind.ExplicitInterfaceImplementation:
+							if (methSym.IsExtensionMethod)
+								return OutputColor.ExtensionMethod;
 							if (methSym.IsStatic)
 								return OutputColor.StaticMethod;
 							return OutputColor.InstanceMethod;
@@ -186,11 +192,9 @@ the_switch:
 
 						case MethodKind.AnonymousFunction:
 						case MethodKind.Conversion:
-						case MethodKind.DelegateInvoke:
 						case MethodKind.EventAdd:
 						case MethodKind.EventRaise:
 						case MethodKind.EventRemove:
-						case MethodKind.ExplicitInterfaceImplementation:
 						case MethodKind.UserDefinedOperator:
 						case MethodKind.PropertyGet:
 						case MethodKind.PropertySet:
@@ -252,6 +256,8 @@ the_switch:
 						return propSym.IsStatic ? OutputColor.StaticProperty : OutputColor.InstanceProperty;
 
 					case SymbolKind.RangeVariable:
+						return OutputColor.Local;
+
 					case SymbolKind.TypeParameter:
 					case SymbolKind.Preprocessing:
 						break;
@@ -278,10 +284,10 @@ the_switch:
 				return OutputColor.Operator;
 
 			case ClassificationTypeNames.PreprocessorKeyword:
-				return OutputColor.Keyword;
+				return OutputColor.PreprocessorKeyword;
 
 			case ClassificationTypeNames.PreprocessorText:
-				return OutputColor.Text;
+				return OutputColor.PreprocessorText;
 
 			case ClassificationTypeNames.Punctuation:
 				return OutputColor.Operator;
