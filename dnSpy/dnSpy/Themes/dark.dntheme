@@ -5,7 +5,7 @@
 		<color name="operator" fg="#B4B4B4" />
 		<color name="number" fg="#B5CEA8" />
 		<color name="comment" fg="#57A64A" />
-		<color name="xmldoctag" fg="#C8C8C8" />
+		<color name="xmldoctag" fg="#608B4E" />
 		<color name="xmldocattribute" fg="#70704D" />
 		<color name="xmldoccomment" fg="#608B4E" italics="true" />
 		<color name="keyword" fg="#569CD6" />
