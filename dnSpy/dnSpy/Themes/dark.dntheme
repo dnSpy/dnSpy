@@ -5,9 +5,6 @@
 		<color name="operator" fg="#B4B4B4" />
 		<color name="number" fg="#B5CEA8" />
 		<color name="comment" fg="#57A64A" />
-		<color name="xmldoctag" fg="#608B4E" />
-		<color name="xmldocattribute" fg="#70704D" />
-		<color name="xmldoccomment" fg="#608B4E" italics="true" />
 		<color name="keyword" fg="#569CD6" />
 		<color name="string" fg="#D69D85" />
 		<color name="char" fg="#9999FF" />
@@ -40,6 +37,37 @@
 		<color name="opcode" fg="#AD5C85" />
 		<color name="ildirective" fg="#9999FF" />
 		<color name="ilmodule" fg="#666699" />
+		<color name="xmldoccommentattributename" fg="#FFC8C8C8" />
+		<color name="xmldoccommentattributequotes" fg="#FFC8C8C8" />
+		<color name="xmldoccommentattributevalue" fg="#FFC8C8C8" />
+		<color name="xmldoccommentcdatasection" fg="#FFE9D585" />
+		<color name="xmldoccommentcomment" fg="#FF608B4E" />
+		<color name="xmldoccommentdelimiter" fg="#FF608B4E" />
+		<color name="xmldoccommententityreference" fg="#FF608B4E" />
+		<color name="xmldoccommentname" fg="#FF608B4E" />
+		<color name="xmldoccommentprocessinginstruction" fg="#FF608B4E" />
+		<color name="xmldoccommenttext" fg="#FF608B4E" />
+		<color name="xmlliteralattributename" fg="#FFC8C8C8" />
+		<color name="xmlliteralattributequotes" fg="#FF92CAF4" />
+		<color name="xmlliteralattributevalue" fg="#FFC8C8C8" />
+		<color name="xmlliteralcdatasection" fg="#FFE9D585" />
+		<color name="xmlliteralcomment" fg="#FF608B4E" />
+		<color name="xmlliteraldelimiter" fg="#FF89BB82" />
+		<color name="xmlliteralembeddedexpression" fg="#FF717171" />
+		<color name="xmlliteralentityreference" fg="#FF92CAF4" />
+		<color name="xmlliteralname" fg="#FF569CD6" />
+		<color name="xmlliteralprocessinginstruction" fg="#FFAEAEAE" />
+		<color name="xmlliteraltext" fg="#FFC8C8C8" />
+		<color name="xmlattributename" fg="#FF92CAF4" />
+		<color name="xmlattributequotes" fg="#FF808080" />
+		<color name="xmlattributevalue" fg="#FFC8C8C8" />
+		<color name="xmlcdatasection" fg="#FFE9D585" />
+		<color name="xmlcomment" fg="#FF57A64A" />
+		<color name="xmldelimiter" fg="#FF808080" />
+		<color name="xmlkeyword" fg="#FF569CD6" />
+		<color name="xmlname" fg="#FF569CD6" />
+		<color name="xmlprocessinginstruction" fg="#FFC8C8C8" />
+		<color name="xmltext" fg="#FFC8C8C8" />
 		<color name="xmldoctooltipdescriptiontext" italics="true" bold="true" />
 		<color name="xmldoctooltiptext" italics="true" bold="false" />
 		<color name="assembly" fg="#C4C4C4" />
@@ -51,15 +79,6 @@
 		<color name="error" fg="Red" />
 		<color name="tostringeval" fg="#6BF0FF" />
 		<color name="linenumber" fg="#2B91AF" />
-		<color name="xmlcomment" fg="#FF57A64A" italics="true" />
-		<color name="xmlcdata" fg="#FFE9D585" />
-		<color name="xmldoctype" fg="#669999" />
-		<color name="xmldeclaration" fg="#FF569CD6" />
-		<color name="xmltag" fg="#FF569CD6" />
-		<color name="xmlattributename" fg="#FF92CAF4" />
-		<color name="xmlattributevalue" fg="#FFC8C8C8" />
-		<color name="xmlentity" fg="#FF92CAF4" />
-		<color name="xmlbrokenentity" fg="#FF92CAF4" />
 		<color name="link" fg="#CCFF33" />
 		<color name="selection" bg="#663399FF" />
 		<color name="localdefinition" fg="#C0D3AD" bg="#48830E" />

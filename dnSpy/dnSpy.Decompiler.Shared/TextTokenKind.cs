@@ -49,21 +49,6 @@ namespace dnSpy.Decompiler.Shared {
 		Comment,
 
 		/// <summary>
-		/// XML tag in XML doc comment. This includes the "///" (C#) or "'''" (VB) part
-		/// </summary>
-		XmlDocTag,
-
-		/// <summary>
-		/// XML attribute in an XML doc tag
-		/// </summary>
-		XmlDocAttribute,
-
-		/// <summary>
-		/// XML doc comments. Whatever is not an XML doc tag / attribute
-		/// </summary>
-		XmlDocComment,
-
-		/// <summary>
 		/// keywords
 		/// </summary>
 		Keyword,
@@ -222,6 +207,40 @@ namespace dnSpy.Decompiler.Shared {
 		/// IL module names, eg. [module]SomeClass
 		/// </summary>
 		ILModule,
+
+		XmlDocCommentAttributeName,
+		XmlDocCommentAttributeQuotes,
+		XmlDocCommentAttributeValue,
+		XmlDocCommentCDataSection,
+		XmlDocCommentComment,
+		XmlDocCommentDelimiter,
+		XmlDocCommentEntityReference,
+		XmlDocCommentName,
+		XmlDocCommentProcessingInstruction,
+		XmlDocCommentText,
+
+		XmlLiteralAttributeName,
+		XmlLiteralAttributeQuotes,
+		XmlLiteralAttributeValue,
+		XmlLiteralCDataSection,
+		XmlLiteralComment,
+		XmlLiteralDelimiter,
+		XmlLiteralEmbeddedExpression,
+		XmlLiteralEntityReference,
+		XmlLiteralName,
+		XmlLiteralProcessingInstruction,
+		XmlLiteralText,
+
+		XmlAttributeName,
+		XmlAttributeQuotes,
+		XmlAttributeValue,
+		XmlCDataSection,
+		XmlComment,
+		XmlDelimiter,
+		XmlKeyword,
+		XmlName,
+		XmlProcessingInstruction,
+		XmlText,
 
 		/// <summary>
 		/// ":" string

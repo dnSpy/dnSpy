@@ -221,7 +221,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 
 		public void WriteComment(bool isDocumentation, string content) {
 			if (isDocumentation) {
-				output.Write("'''", TextTokenKind.XmlDocTag);
+				output.Write("'''", TextTokenKind.XmlDocCommentDelimiter);
 				output.WriteXmlDoc(content);
 				output.WriteLine();
 			}

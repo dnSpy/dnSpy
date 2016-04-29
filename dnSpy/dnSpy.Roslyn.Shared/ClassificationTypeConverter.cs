@@ -318,67 +318,67 @@ the_switch:
 				return OutputColor.Text;
 
 			case ClassificationTypeNames.XmlDocCommentAttributeName:
-				return OutputColor.XmlDocTag;
+				return OutputColor.XmlDocCommentAttributeName;
 
 			case ClassificationTypeNames.XmlDocCommentAttributeQuotes:
-				return OutputColor.XmlDocAttribute;
+				return OutputColor.XmlDocCommentAttributeQuotes;
 
 			case ClassificationTypeNames.XmlDocCommentAttributeValue:
-				return OutputColor.XmlDocAttribute;
+				return OutputColor.XmlDocCommentAttributeValue;
 
 			case ClassificationTypeNames.XmlDocCommentCDataSection:
-				return OutputColor.XmlDocComment;
+				return OutputColor.XmlDocCommentCDataSection;
 
 			case ClassificationTypeNames.XmlDocCommentComment:
-				return OutputColor.XmlDocComment;
+				return OutputColor.XmlDocCommentComment;
 
 			case ClassificationTypeNames.XmlDocCommentDelimiter:
-				return OutputColor.XmlDocTag;
+				return OutputColor.XmlDocCommentDelimiter;
 
 			case ClassificationTypeNames.XmlDocCommentEntityReference:
-				return OutputColor.XmlDocComment;
+				return OutputColor.XmlDocCommentEntityReference;
 
 			case ClassificationTypeNames.XmlDocCommentName:
-				return OutputColor.XmlDocTag;
+				return OutputColor.XmlDocCommentName;
 
 			case ClassificationTypeNames.XmlDocCommentProcessingInstruction:
-				return OutputColor.XmlDocComment;
+				return OutputColor.XmlDocCommentProcessingInstruction;
 
 			case ClassificationTypeNames.XmlDocCommentText:
-				return OutputColor.XmlDocComment;
+				return OutputColor.XmlDocCommentText;
 
 			case ClassificationTypeNames.XmlLiteralAttributeName:
-				return OutputColor.XmlDocTag;
+				return OutputColor.XmlLiteralAttributeName;
 
 			case ClassificationTypeNames.XmlLiteralAttributeQuotes:
-				return OutputColor.XmlDocAttribute;
+				return OutputColor.XmlLiteralAttributeQuotes;
 
 			case ClassificationTypeNames.XmlLiteralAttributeValue:
-				return OutputColor.XmlDocAttribute;
+				return OutputColor.XmlLiteralAttributeValue;
 
 			case ClassificationTypeNames.XmlLiteralCDataSection:
-				return OutputColor.XmlDocComment;
+				return OutputColor.XmlLiteralCDataSection;
 
 			case ClassificationTypeNames.XmlLiteralComment:
-				return OutputColor.XmlDocComment;
+				return OutputColor.XmlLiteralComment;
 
 			case ClassificationTypeNames.XmlLiteralDelimiter:
-				return OutputColor.XmlDocTag;
+				return OutputColor.XmlLiteralDelimiter;
 
 			case ClassificationTypeNames.XmlLiteralEmbeddedExpression:
-				return OutputColor.XmlDocComment;
+				return OutputColor.XmlLiteralEmbeddedExpression;
 
 			case ClassificationTypeNames.XmlLiteralEntityReference:
-				return OutputColor.XmlDocComment;
+				return OutputColor.XmlLiteralEntityReference;
 
 			case ClassificationTypeNames.XmlLiteralName:
-				return OutputColor.XmlDocTag;
+				return OutputColor.XmlLiteralName;
 
 			case ClassificationTypeNames.XmlLiteralProcessingInstruction:
-				return OutputColor.XmlDocComment;
+				return OutputColor.XmlLiteralProcessingInstruction;
 
 			case ClassificationTypeNames.XmlLiteralText:
-				return OutputColor.XmlDocComment;
+				return OutputColor.XmlLiteralText;
 
 			default:
 				return OutputColor.Error;

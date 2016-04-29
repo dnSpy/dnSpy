@@ -36,21 +36,21 @@ namespace dnSpy.Decompiler.Shared {
 			while (index < text.Length) {
 				int specialIndex = text.IndexOfAny(inTag ? specialCharsTag : specialChars, index);
 				if (specialIndex < 0) {
-					yield return new KeyValuePair<string, TextTokenKind>(text.Substring(index), TextTokenKind.XmlDocComment);
+					yield return new KeyValuePair<string, TextTokenKind>(text.Substring(index), TextTokenKind.XmlDocCommentText);
 					break;
 				}
 
 				var c = text[specialIndex];
 				if (c == '>') {
-					yield return new KeyValuePair<string, TextTokenKind>(text.Substring(index, specialIndex - index + 1), TextTokenKind.XmlDocTag);
+					yield return new KeyValuePair<string, TextTokenKind>(text.Substring(index, specialIndex - index + 1), TextTokenKind.XmlDocCommentText);
 					index = specialIndex + 1;
 				}
 				else {
 					if (specialIndex - index > 0) {
 						if (c == '<')
-							yield return new KeyValuePair<string, TextTokenKind>(text.Substring(index, specialIndex - index), TextTokenKind.XmlDocComment);
+							yield return new KeyValuePair<string, TextTokenKind>(text.Substring(index, specialIndex - index), TextTokenKind.XmlDocCommentText);
 						else // c == '"'
-							yield return new KeyValuePair<string, TextTokenKind>(text.Substring(index, specialIndex - index), inTag ? TextTokenKind.XmlDocTag : TextTokenKind.XmlDocComment);
+							yield return new KeyValuePair<string, TextTokenKind>(text.Substring(index, specialIndex - index), inTag ? TextTokenKind.XmlDocCommentName : TextTokenKind.XmlDocCommentText);
 					}
 
 					index = specialIndex;
@@ -60,20 +60,20 @@ namespace dnSpy.Decompiler.Shared {
 					while (index < endIndex) {
 						int attrIndex = text.IndexOf('"', index, endIndex - index);
 						if (attrIndex < 0) {
-							yield return new KeyValuePair<string, TextTokenKind>(text.Substring(index, endIndex - index), TextTokenKind.XmlDocTag);
+							yield return new KeyValuePair<string, TextTokenKind>(text.Substring(index, endIndex - index), TextTokenKind.XmlDocCommentName);
 							break;
 						}
 
 						if (attrIndex - index > 0)
-							yield return new KeyValuePair<string, TextTokenKind>(text.Substring(index, attrIndex - index), TextTokenKind.XmlDocTag);
+							yield return new KeyValuePair<string, TextTokenKind>(text.Substring(index, attrIndex - index), TextTokenKind.XmlDocCommentName);
 
 						int endAttrIndex = text.IndexOf('"', attrIndex + 1, endIndex - attrIndex - 1);
 						if (endAttrIndex < 0) {
-							yield return new KeyValuePair<string, TextTokenKind>(text.Substring(attrIndex, endIndex - attrIndex), TextTokenKind.XmlDocAttribute);
+							yield return new KeyValuePair<string, TextTokenKind>(text.Substring(attrIndex, endIndex - attrIndex), TextTokenKind.XmlDocCommentAttributeValue);
 							break;
 						}
 
-						yield return new KeyValuePair<string, TextTokenKind>(text.Substring(attrIndex, endAttrIndex - attrIndex + 1), TextTokenKind.XmlDocAttribute);
+						yield return new KeyValuePair<string, TextTokenKind>(text.Substring(attrIndex, endAttrIndex - attrIndex + 1), TextTokenKind.XmlDocCommentAttributeValue);
 						index = endAttrIndex + 1;
 					}
 

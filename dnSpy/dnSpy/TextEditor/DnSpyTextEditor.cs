@@ -134,14 +134,14 @@ namespace dnSpy.TextEditor {
 			new Tuple<string, Dictionary<string, ColorType>>("XML",
 				new Dictionary<string, ColorType>(StringComparer.Ordinal) {
 					{ "Comment", ColorType.XmlComment },
-					{ "CData", ColorType.XmlCData },
-					{ "DocType", ColorType.XmlDocType },
-					{ "XmlDeclaration", ColorType.XmlDeclaration },
-					{ "XmlTag", ColorType.XmlTag },
+					{ "CData", ColorType.XmlCDataSection },
+					{ "DocType", ColorType.XmlName },
+					{ "XmlDeclaration", ColorType.XmlName },
+					{ "XmlTag", ColorType.XmlName },
 					{ "AttributeName", ColorType.XmlAttributeName },
 					{ "AttributeValue", ColorType.XmlAttributeValue },
-					{ "Entity", ColorType.XmlEntity },
-					{ "BrokenEntity", ColorType.XmlBrokenEntity },
+					{ "Entity", ColorType.XmlAttributeName },
+					{ "BrokenEntity", ColorType.XmlAttributeName },
 				}
 			)
 		};
