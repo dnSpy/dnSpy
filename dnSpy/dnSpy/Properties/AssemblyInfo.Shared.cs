@@ -29,8 +29,8 @@ using System.Reflection;
 
 static class DnSpyAssemblyConstants {
 	// Don't change the stable version number unless there are breaking changes
-	public const string STABLE_ASSEMBLY_VERSION						= "2.1.0.0";
-	public const string NONSTABLE_ASSEMBLY_VERSION					= "2.1.0.0";
-	public const string ASSEMBLY_INFORMATIONAL_VERSION				= "2.1.0.0-beta";
+	public const string STABLE_ASSEMBLY_VERSION						= "3.0.0.0";
+	public const string NONSTABLE_ASSEMBLY_VERSION					= "3.0.0.0";
+	public const string ASSEMBLY_INFORMATIONAL_VERSION				= "3.0.0.0-beta";
 	public const string ASSEMBLY_FILE_VERSION						= NONSTABLE_ASSEMBLY_VERSION;
 }
