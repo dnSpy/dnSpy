@@ -13,6 +13,7 @@
 		<color name="char" fg="#9999FF" />
 		<color name="namespacepart" fg="#FFD700" />
 		<color name="type" fg="#4EC9B0" />
+		<color name="sealedtype" fg="#4EC9B0" />
 		<color name="statictype" fg="#378D7B" />
 		<color name="delegate" fg="#33CCFF" />
 		<color name="enum" fg="#B8D7A3" />

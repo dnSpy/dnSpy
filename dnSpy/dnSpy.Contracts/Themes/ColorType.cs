@@ -38,6 +38,7 @@ namespace dnSpy.Contracts.Themes {
 		Char,
 		NamespacePart,
 		Type,
+		SealedType,
 		StaticType,
 		Delegate,
 		Enum,

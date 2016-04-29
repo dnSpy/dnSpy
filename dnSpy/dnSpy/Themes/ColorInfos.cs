@@ -1827,6 +1827,7 @@ namespace dnSpy.Themes {
 									new BrushColorInfo(ColorType.NamespacePart, "Namespace"),
 									new BrushColorInfo(ColorType.Type, "Type") {
 										Children = new ColorInfo[] {
+											new BrushColorInfo(ColorType.SealedType, "Sealed type"),
 											new BrushColorInfo(ColorType.StaticType, "Static type"),
 											new BrushColorInfo(ColorType.Delegate, "Delegate"),
 											new BrushColorInfo(ColorType.Enum, "Enum"),

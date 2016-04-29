@@ -53,6 +53,7 @@ namespace dnSpy.Debugger {
 			case TypeColor.InstanceEvent:		return TextTokenKind.InstanceEvent;
 			case TypeColor.StaticEvent:			return TextTokenKind.StaticEvent;
 			case TypeColor.Type:				return TextTokenKind.Type;
+			case TypeColor.SealedType:			return TextTokenKind.SealedType;
 			case TypeColor.StaticType:			return TextTokenKind.StaticType;
 			case TypeColor.Delegate:			return TextTokenKind.Delegate;
 			case TypeColor.Enum:				return TextTokenKind.Enum;

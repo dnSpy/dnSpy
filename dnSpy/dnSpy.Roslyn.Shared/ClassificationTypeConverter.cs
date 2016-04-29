@@ -116,6 +116,8 @@ namespace dnSpy.Roslyn.Shared {
 					return symRes.Color.Value;
 				if (symRes.Symbol?.IsStatic == true)
 					return OutputColor.StaticType;
+				if (symRes.Symbol?.IsSealed == true)
+					return OutputColor.SealedType;
 				return OutputColor.Type;
 
 			case ClassificationTypeNames.Comment:
@@ -214,6 +216,8 @@ the_switch:
 						case TypeKind.Class:
 							if (nts.IsStatic)
 								return OutputColor.StaticType;
+							if (nts.IsSealed)
+								return OutputColor.SealedType;
 							return OutputColor.Type;
 
 						case TypeKind.Delegate:

@@ -40,6 +40,7 @@ namespace dnSpy.Contracts.TextEditor {
 		Char,
 		NamespacePart,
 		Type,
+		SealedType,
 		StaticType,
 		Delegate,
 		Enum,

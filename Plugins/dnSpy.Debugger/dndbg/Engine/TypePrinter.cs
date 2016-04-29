@@ -46,6 +46,7 @@ namespace dndbg.Engine {
 		InstanceEvent,
 		StaticEvent,
 		Type,
+		SealedType,
 		StaticType,
 		Delegate,
 		Enum,
@@ -400,6 +401,8 @@ namespace dndbg.Engine {
 				return TypeColor.StaticType;
 			}
 
+			if ((attrs & TypeAttributes.Sealed) != 0)
+				return TypeColor.SealedType;
 			return TypeColor.Type;
 		}
 
@@ -612,7 +615,7 @@ namespace dndbg.Engine {
 				case CorElementType.U8:			WriteSystemTypeKeyword("UInt64", "ulong", TypeColor.ValueType); break;
 				case CorElementType.R4:			WriteSystemTypeKeyword("Single", "float", TypeColor.ValueType); break;
 				case CorElementType.R8:			WriteSystemTypeKeyword("Double", "double", TypeColor.ValueType); break;
-				case CorElementType.String:		WriteSystemTypeKeyword("String", "string", TypeColor.Type); break;
+				case CorElementType.String:		WriteSystemTypeKeyword("String", "string", TypeColor.SealedType); break;
 				case CorElementType.Object:		WriteSystemTypeKeyword("Object", "object", TypeColor.Type); break;
 
 				case CorElementType.TypedByRef:	WriteSystemType("TypedReference", TypeColor.ValueType); break;
@@ -745,7 +748,7 @@ namespace dndbg.Engine {
 				case ElementType.U8:			WriteSystemTypeKeyword("UInt64", "ulong", TypeColor.ValueType); break;
 				case ElementType.R4:			WriteSystemTypeKeyword("Single", "float", TypeColor.ValueType); break;
 				case ElementType.R8:			WriteSystemTypeKeyword("Double", "double", TypeColor.ValueType); break;
-				case ElementType.String:		WriteSystemTypeKeyword("String", "string", TypeColor.Type); break;
+				case ElementType.String:		WriteSystemTypeKeyword("String", "string", TypeColor.SealedType); break;
 				case ElementType.Object:		WriteSystemTypeKeyword("Object", "object", TypeColor.Type); break;
 
 				case ElementType.TypedByRef:	WriteSystemType("TypedReference", TypeColor.ValueType); break;

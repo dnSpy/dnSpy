@@ -89,6 +89,11 @@ namespace dnSpy.Decompiler.Shared {
 		Type,
 
 		/// <summary>
+		/// sealed classes
+		/// </summary>
+		SealedType,
+
+		/// <summary>
 		/// static types
 		/// </summary>
 		StaticType,
@@ -431,6 +436,8 @@ namespace dnSpy.Decompiler.Shared {
 				}
 			}
 
+			if (td.IsSealed)
+				return TextTokenKind.SealedType;
 			return TextTokenKind.Type;
 		}
 		static readonly UTF8String systemString = new UTF8String("System");
@@ -639,6 +646,8 @@ namespace dnSpy.Decompiler.Shared {
 			if (type.BaseType == typeof(MulticastDelegate))
 				return TextTokenKind.Delegate;
 
+			if (type.IsSealed)
+				return TextTokenKind.SealedType;
 			return TextTokenKind.Type;
 		}
 	}
