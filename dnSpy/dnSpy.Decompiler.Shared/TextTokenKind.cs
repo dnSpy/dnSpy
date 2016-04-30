@@ -305,7 +305,7 @@ namespace dnSpy.Decompiler.Shared {
 		/// <summary>
 		/// Summary text
 		/// </summary>
-		XmlDocSummary,
+		XmlDocToolTipSummary,
 
 		/// <summary>
 		/// Any other XML doc text

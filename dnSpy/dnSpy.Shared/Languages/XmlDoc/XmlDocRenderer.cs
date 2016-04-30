@@ -158,7 +158,7 @@ namespace dnSpy.Shared.Languages.XmlDoc {
 					var s = whitespace.Replace(xml.Value, " ");
 					if (isNewLine)
 						s = s.TrimStart();
-					output.Write(s, lastElemName == "summary" ? TextTokenKind.XmlDocSummary : TextTokenKind.XmlDocToolTipText);
+					output.Write(s, lastElemName == "summary" ? TextTokenKind.XmlDocToolTipSummary : TextTokenKind.XmlDocToolTipText);
 					isNewLine = false;
 				}
 			}

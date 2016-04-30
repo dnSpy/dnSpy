@@ -107,7 +107,7 @@ namespace dnSpy.Contracts.TextEditor {
 		XmlDocToolTipParamName,
 		XmlDocToolTipTypeParamName,
 		XmlDocToolTipValue,
-		XmlDocSummary,
+		XmlDocToolTipSummary,
 		XmlDocToolTipText,
 		Assembly,
 		AssemblyExe,

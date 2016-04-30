@@ -105,7 +105,7 @@ namespace dnSpy.Contracts.Themes {
 		XmlDocToolTipParamName,
 		XmlDocToolTipTypeParamName,
 		XmlDocToolTipValue,
-		XmlDocSummary,
+		XmlDocToolTipSummary,
 		XmlDocToolTipText,
 		Assembly,
 		AssemblyExe,

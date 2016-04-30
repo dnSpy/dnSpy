@@ -109,7 +109,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		static void WriteXmlDocParameter(IXmlDocOutput output, XElement xml) {
 			foreach (var elem in xml.DescendantNodes()) {
 				if (elem is XText)
-					output.Write(XmlDocRenderer.WhitespaceRegex.Replace(((XText)elem).Value, " "), TextTokenKind.XmlDocSummary);
+					output.Write(XmlDocRenderer.WhitespaceRegex.Replace(((XText)elem).Value, " "), TextTokenKind.XmlDocToolTipSummary);
 				else if (elem is XElement) {
 					var xelem = (XElement)elem;
 					switch (xelem.Name.ToString().ToUpperInvariant()) {
@@ -135,7 +135,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 					}
 				}
 				else
-					output.Write(elem.ToString(), TextTokenKind.XmlDocSummary);
+					output.Write(elem.ToString(), TextTokenKind.XmlDocToolTipSummary);
 			}
 		}
 	}

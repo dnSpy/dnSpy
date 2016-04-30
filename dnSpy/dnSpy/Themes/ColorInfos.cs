@@ -1081,7 +1081,7 @@ namespace dnSpy.Themes {
 							new BrushColorInfo(ColorType.XmlDocToolTipValue, "XML doc tooltip: \"Value\" string"),
 						}
 					},
-					new BrushColorInfo(ColorType.XmlDocSummary, "XML doc tooltip: summary text"),
+					new BrushColorInfo(ColorType.XmlDocToolTipSummary, "XML doc tooltip: summary text"),
 					new BrushColorInfo(ColorType.XmlDocToolTipText, "XML doc tooltip: XML doc text"),
 				}
 			},
