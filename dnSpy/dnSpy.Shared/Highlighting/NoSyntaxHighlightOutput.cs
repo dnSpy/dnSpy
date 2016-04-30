@@ -19,30 +19,19 @@
 
 using System.Text;
 using dnSpy.Contracts.Highlighting;
-using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Shared.Highlighting {
 	public sealed class NoSyntaxHighlightOutput : ISyntaxHighlightOutput {
 		readonly StringBuilder sb;
 
-		public bool IsEmpty {
-			get { return sb.Length == 0; }
-		}
-
-		public string Text {
-			get { return sb.ToString(); }
-		}
+		public bool IsEmpty => sb.Length == 0;
+		public string Text => sb.ToString();
 
 		public NoSyntaxHighlightOutput() {
 			this.sb = new StringBuilder();
 		}
 
-		public void Write(string s, TextTokenKind tokenKind) {
-			sb.Append(s);
-		}
-
-		public override string ToString() {
-			return sb.ToString();
-		}
+		public void Write(string s, object data) => sb.Append(s);
+		public override string ToString() => sb.ToString();
 	}
 }

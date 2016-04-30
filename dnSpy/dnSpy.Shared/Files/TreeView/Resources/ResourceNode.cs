@@ -135,7 +135,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 			language.WriteCommentBegin(output, true);
 			output.WriteOffsetComment(this, showOffset);
 			const string LTR = "\u200E";
-			output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, TextTokenKind.Comment);
+			output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, BoxedTextTokenKind.Comment);
 			string extra = null;
 			switch (resource.ResourceType) {
 			case ResourceType.AssemblyLinked:
@@ -149,7 +149,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 				extra = string.Format(dnSpy_Shared_Resources.NumberOfBytes, ((EmbeddedResource)resource).Data.Length);
 				break;
 			}
-			output.Write(string.Format(" ({0}{1}, {2})", extra == null ? string.Empty : string.Format("{0}, ", extra), resource.ResourceType, resource.Attributes), TextTokenKind.Comment);
+			output.Write(string.Format(" ({0}{1}, {2})", extra == null ? string.Empty : string.Format("{0}, ", extra), resource.ResourceType, resource.Attributes), BoxedTextTokenKind.Comment);
 			language.WriteCommentEnd(output, true);
 			output.WriteLine();
 		}

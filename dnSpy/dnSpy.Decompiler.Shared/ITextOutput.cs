@@ -24,10 +24,17 @@ namespace dnSpy.Decompiler.Shared {
 
 		void Indent();
 		void Unindent();
-		void Write(string text, TextTokenKind tokenKind);//TODO: Try to use one of the methods below
+		void WriteLine();
+
+		void Write(string text, object data);//TODO: Try to use one of the methods below
+		void Write(string text, int index, int count, object data);
+		void Write(StringBuilder sb, int index, int count, object data);
+		void WriteDefinition(string text, object definition, object data, bool isLocal = true);
+		void WriteReference(string text, object reference, object data, bool isLocal = false);
+
+		void Write(string text, TextTokenKind tokenKind);
 		void Write(string text, int index, int count, TextTokenKind tokenKind);
 		void Write(StringBuilder sb, int index, int count, TextTokenKind tokenKind);
-		void WriteLine();
 		void WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal = true);
 		void WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal = false);
 
@@ -35,32 +42,32 @@ namespace dnSpy.Decompiler.Shared {
 	}
 
 	public static class TextOutputExtensions {
-		public static void WriteLine(this ITextOutput output, string text, TextTokenKind tokenKind) {
-			output.Write(text, tokenKind);
+		public static void WriteLine(this ITextOutput output, string text, TextTokenKind tokenKind) =>
+			output.WriteLine(text, tokenKind.Box());
+
+		public static void WriteLine(this ITextOutput output, string text, object data) {
+			output.Write(text, data);
 			output.WriteLine();
 		}
 
-		public static void WriteSpace(this ITextOutput output) {
-			output.Write(" ", TextTokenKind.Text);
-		}
+		public static void WriteSpace(this ITextOutput output) =>
+			output.Write(" ", BoxedTextTokenKind.Text);
 
 		public static void WriteLineLeftBrace(this ITextOutput output) {
-			output.Write("{", TextTokenKind.Brace);
+			output.Write("{", BoxedTextTokenKind.Brace);
 			output.WriteLine();
 		}
 
 		public static void WriteLineRightBrace(this ITextOutput output) {
-			output.Write("}", TextTokenKind.Brace);
+			output.Write("}", BoxedTextTokenKind.Brace);
 			output.WriteLine();
 		}
 
-		public static void WriteLeftBrace(this ITextOutput output) {
-			output.Write("{", TextTokenKind.Brace);
-		}
+		public static void WriteLeftBrace(this ITextOutput output) =>
+			output.Write("{", BoxedTextTokenKind.Brace);
 
-		public static void WriteRightBrace(this ITextOutput output) {
-			output.Write("}", TextTokenKind.Brace);
-		}
+		public static void WriteRightBrace(this ITextOutput output) =>
+			output.Write("}", BoxedTextTokenKind.Brace);
 
 		public static void WriteXmlDoc(this ITextOutput output, string text) {
 			foreach (var kv in SimpleXmlParser.Parse(text))

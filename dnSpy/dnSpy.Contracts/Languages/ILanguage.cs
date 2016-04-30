@@ -234,7 +234,7 @@ namespace dnSpy.Contracts.Languages {
 		/// <param name="comment">Comment</param>
 		public static void WriteCommentLine(this ILanguage self, ITextOutput output, string comment) {
 			self.WriteCommentBegin(output, true);
-			output.Write(comment, TextTokenKind.Comment);
+			output.Write(comment, BoxedTextTokenKind.Comment);
 			self.WriteCommentEnd(output, true);
 			output.WriteLine();
 		}

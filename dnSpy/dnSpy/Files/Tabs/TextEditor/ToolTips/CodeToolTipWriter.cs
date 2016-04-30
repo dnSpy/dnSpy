@@ -42,16 +42,14 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 			return uiSyntaxHighlighter.CreateResult(false, false);
 		}
 
-		public void Write(string s, TextTokenKind tokenKind) {
-			uiSyntaxHighlighter.Output.Write(s, tokenKind);
-		}
+		public void Write(string s, object data) => uiSyntaxHighlighter.Output.Write(s, data);
 
 		bool needsNewLine = false;
 
-		void IXmlDocOutput.Write(string s, TextTokenKind tokenKind) {
+		void IXmlDocOutput.Write(string s, object data) {
 			if (needsNewLine)
 				((IXmlDocOutput)this).WriteNewLine();
-			uiSyntaxHighlighter.Output.Write(s, tokenKind);
+			uiSyntaxHighlighter.Output.Write(s, data);
 		}
 
 		void IXmlDocOutput.WriteNewLine() {
@@ -60,7 +58,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		}
 
 		void IXmlDocOutput.WriteSpace() {
-			((IXmlDocOutput)this).Write(" ", TextTokenKind.Text);
+			((IXmlDocOutput)this).Write(" ", BoxedTextTokenKind.Text);
 		}
 
 		void InitializeNeedsNewLine() {
@@ -109,22 +107,22 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 		static void WriteXmlDocParameter(IXmlDocOutput output, XElement xml) {
 			foreach (var elem in xml.DescendantNodes()) {
 				if (elem is XText)
-					output.Write(XmlDocRenderer.WhitespaceRegex.Replace(((XText)elem).Value, " "), TextTokenKind.XmlDocToolTipSummary);
+					output.Write(XmlDocRenderer.WhitespaceRegex.Replace(((XText)elem).Value, " "), BoxedTextTokenKind.XmlDocToolTipSummary);
 				else if (elem is XElement) {
 					var xelem = (XElement)elem;
 					switch (xelem.Name.ToString().ToUpperInvariant()) {
 					case "SEE":
 						var cref = xelem.Attribute("cref");
 						if (cref != null)
-							output.Write(XmlDocRenderer.GetCref((string)cref), TextTokenKind.XmlDocToolTipSeeCref);
+							output.Write(XmlDocRenderer.GetCref((string)cref), BoxedTextTokenKind.XmlDocToolTipSeeCref);
 						var langword = xelem.Attribute("langword");
 						if (langword != null)
-							output.Write(((string)langword).Trim(), TextTokenKind.XmlDocToolTipSeeLangword);
+							output.Write(((string)langword).Trim(), BoxedTextTokenKind.XmlDocToolTipSeeLangword);
 						break;
 					case "PARAMREF":
 						var nameAttr = xml.Attribute("name");
 						if (nameAttr != null)
-							output.Write(((string)nameAttr).Trim(), TextTokenKind.XmlDocToolTipParamRefName);
+							output.Write(((string)nameAttr).Trim(), BoxedTextTokenKind.XmlDocToolTipParamRefName);
 						break;
 					case "BR":
 					case "PARA":
@@ -135,7 +133,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 					}
 				}
 				else
-					output.Write(elem.ToString(), TextTokenKind.XmlDocToolTipSummary);
+					output.Write(elem.ToString(), BoxedTextTokenKind.XmlDocToolTipSummary);
 			}
 		}
 	}

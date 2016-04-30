@@ -29,11 +29,11 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 
 		public void WriteName(FileListVM vm) {
-			output.Write(vm.Name, TextTokenKind.Assembly);
+			output.Write(vm.Name, BoxedTextTokenKind.Assembly);
 		}
 
 		public void WriteFileCount(FileListVM vm) {
-			output.Write(vm.FileCount.ToString(), TextTokenKind.Number);
+			output.Write(vm.FileCount.ToString(), BoxedTextTokenKind.Number);
 		}
 	}
 }

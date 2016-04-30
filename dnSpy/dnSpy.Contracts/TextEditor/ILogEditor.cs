@@ -29,7 +29,21 @@ namespace dnSpy.Contracts.TextEditor {
 		/// </summary>
 		/// <param name="text">Text</param>
 		/// <param name="color">Color</param>
+		void Write(string text, object color);
+
+		/// <summary>
+		/// Writes text
+		/// </summary>
+		/// <param name="text">Text</param>
+		/// <param name="color">Color</param>
 		void Write(string text, OutputColor color);
+
+		/// <summary>
+		/// Writes text
+		/// </summary>
+		/// <param name="text">Text</param>
+		/// <param name="color">Color</param>
+		void WriteLine(string text, object color);
 
 		/// <summary>
 		/// Writes text

@@ -56,7 +56,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_OptHeader64, TextTokenKind.Keyword);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_OptHeader64, BoxedTextTokenKind.Keyword);
 		}
 	}
 }

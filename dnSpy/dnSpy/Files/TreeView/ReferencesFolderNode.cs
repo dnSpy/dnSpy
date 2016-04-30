@@ -62,7 +62,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(dnSpy_Resources.ReferencesFolder, TextTokenKind.Text);
+			output.Write(dnSpy_Resources.ReferencesFolder, BoxedTextTokenKind.Text);
 		}
 
 		public override IEnumerable<ITreeNodeData> CreateChildren() {

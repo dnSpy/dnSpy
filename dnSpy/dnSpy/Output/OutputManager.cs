@@ -147,7 +147,7 @@ namespace dnSpy.Output {
 			}
 		}
 
-		public IOutputTextPane Create(Guid guid, string name, Guid? textEditorCommandGuid, Guid? textAreaCommandGuid) {
+		public IOutputTextPane Create(Guid guid, string name, Guid contentType, Guid? textEditorCommandGuid, Guid? textAreaCommandGuid) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 
@@ -160,6 +160,7 @@ namespace dnSpy.Output {
 				TextEditorCommandGuid = textEditorCommandGuid,
 				TextAreaCommandGuid = textAreaCommandGuid,
 				MenuGuid = new Guid(MenuConstants.GUIDOBJ_LOG_TEXTEDITORCONTROL_GUID),
+				ContentType = contentType,
 				CreateGuidObjects = (creatorObject, openedFromKeyboard) => CreateGuidObjects(creatorObject, openedFromKeyboard),
 			};
 			var logEditor = logEditorCreator.Create(logEditorOptions);

@@ -31,14 +31,13 @@ using System.Windows.Media.TextFormatting;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Themes;
-using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Controls;
 using dnSpy.Shared.Themes;
 using ICSharpCode.AvalonEdit.Utils;
 
 namespace dnSpy.Shared.Highlighting {
 	sealed class SyntaxHighlighter : ISyntaxHighlightOutput {
-		readonly TextTokenInfo textTokenInfo;
+		readonly CachedTextTokenColors cachedTextTokenColors;
 		readonly StringBuilder sb;
 
 		public bool IsEmpty {
@@ -50,14 +49,14 @@ namespace dnSpy.Shared.Highlighting {
 		}
 
 		public SyntaxHighlighter() {
-			this.textTokenInfo = new TextTokenInfo();
+			this.cachedTextTokenColors = new CachedTextTokenColors();
 			this.sb = new StringBuilder();
 		}
 
-		public void Write(string s, TextTokenKind tokenKind) {
-			textTokenInfo.Append(tokenKind, s);
+		public void Write(string s, object data) {
+			cachedTextTokenColors.Append(data, s);
 			sb.Append(s);
-			Debug.Assert(sb.Length == textTokenInfo.Length);
+			Debug.Assert(sb.Length == cachedTextTokenColors.Length);
 		}
 
 		IEnumerable<Tuple<string, int>> GetLines(string s) {
@@ -82,12 +81,12 @@ namespace dnSpy.Shared.Highlighting {
 
 		public FrameworkElement Create(TextFormatterProvider provider, bool useEllipsis, bool filterOutNewLines) {
 			var textBlockText = sb.ToString();
-			textTokenInfo.Finish();
+			cachedTextTokenColors.Finish();
 
 			if (!useEllipsis && filterOutNewLines) {
 				return new FastTextBlock(provider, new TextSrc {
 					text = textBlockText,
-					textTokenInfo = textTokenInfo,
+					cachedTextTokenColors = cachedTextTokenColors,
 				});
 			}
 
@@ -102,8 +101,8 @@ namespace dnSpy.Shared.Highlighting {
 
 				while (offs < endOffs) {
 					int defaultTextLength, tokenLength;
-					TextTokenKind tokenKind;
-					if (!textTokenInfo.Find(offs, out defaultTextLength, out tokenKind, out tokenLength)) {
+					object color;
+					if (!cachedTextTokenColors.Find(offs, out defaultTextLength, out color, out tokenLength)) {
 						Debug.Fail("Could not find token info");
 						break;
 					}
@@ -115,7 +114,7 @@ namespace dnSpy.Shared.Highlighting {
 					offs += defaultTextLength;
 
 					if (tokenLength != 0) {
-						var hlColor = GetColor(tokenKind);
+						var hlColor = ThemeUtils.GetTextColor(themeManager.Theme, color);
 						var text = textBlockText.Substring(offs, tokenLength);
 						var elem = new Run(text);
 						if (hlColor.FontStyle != null)
@@ -153,16 +152,10 @@ namespace dnSpy.Shared.Highlighting {
 		}
 		static IThemeManager themeManager;
 
-		static IThemeColor GetColor(TextTokenKind tokenKind) {
-			var color = themeManager.Theme.GetTextColor(tokenKind.ToColorType());
-			Debug.Assert(color != null);
-			return color;
-		}
-
 		class TextSrc : TextSource, FastTextBlock.IFastTextSource {
 			FastTextBlock parent;
 			internal string text;
-			internal TextTokenInfo textTokenInfo;
+			internal CachedTextTokenColors cachedTextTokenColors;
 
 			class TextProps : TextRunProperties {
 				internal Brush background;
@@ -236,8 +229,8 @@ namespace dnSpy.Shared.Highlighting {
 				}
 
 				int defaultTextLength, tokenLength;
-				TextTokenKind tokenKind;
-				if (!textTokenInfo.Find(index, out defaultTextLength, out tokenKind, out tokenLength)) {
+				object color;
+				if (!cachedTextTokenColors.Find(index, out defaultTextLength, out color, out tokenLength)) {
 					Debug.Fail("Could not find token info");
 					return new TextCharacters(" ", null);
 				}
@@ -261,7 +254,7 @@ namespace dnSpy.Shared.Highlighting {
 				index += defaultTextLength;
 
 				if (tokenLength != 0) {
-					var tc = GetColor(tokenKind);
+					var tc = ThemeUtils.GetTextColor(themeManager.Theme, color);
 					var tokenText = text.Substring(index, tokenLength);
 
 					var textProps = new TextProps();

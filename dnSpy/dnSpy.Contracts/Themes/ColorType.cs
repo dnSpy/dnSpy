@@ -33,7 +33,7 @@ namespace dnSpy.Contracts.Themes {
 		Keyword,
 		String,
 		Char,
-		NamespacePart,
+		Namespace,
 		Type,
 		SealedType,
 		StaticType,

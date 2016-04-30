@@ -195,13 +195,13 @@ namespace dnSpy.Debugger.Locals {
 				//TODO: Break if it takes too long and the user cancels
 				var printer = new ValuePrinter(output, debuggerSettings.UseHexadecimal);
 				printer.WriteExpander(vm);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				// Add an extra here to emulate VS output
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				printer.WriteName(vm);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				printer.WriteValue(vm);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				printer.WriteType(vm);
 				output.WriteLine();
 			}

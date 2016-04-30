@@ -87,7 +87,7 @@ namespace dnSpy.Files.TreeView {
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			var td = TryGetTypeDef();
 			if (td == null)
-				output.Write("???", TextTokenKind.Error);
+				output.Write("???", BoxedTextTokenKind.Error);
 			else
 				new NodePrinter().Write(output, language, td, Context.ShowToken);
 		}

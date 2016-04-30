@@ -118,7 +118,7 @@ namespace dnSpy.Search {
 
 		void SearchNewThread(object o) {
 			try {
-				var searchMsg = SearchResult.CreateMessage(filterSearcherOptions.Context, dnSpy_Resources.Searching, TextTokenKind.Text, true);
+				var searchMsg = SearchResult.CreateMessage(filterSearcherOptions.Context, dnSpy_Resources.Searching, BoxedTextTokenKind.Text, true);
 				SearchingResult = searchMsg;
 				AddSearchResultNoCheck(searchMsg);
 				var opts = new ParallelOptions {
@@ -168,7 +168,7 @@ namespace dnSpy.Search {
 			lock (lockObj) {
 				if (totalResultsFound++ >= options.MaxResults) {
 					if (totalResultsFound == options.MaxResults + 1)
-						AddSearchResultNoCheck(SearchResult.CreateMessage(filterSearcherOptions.Context, string.Format(dnSpy_Resources.SearchAbortedMessage, options.MaxResults), TextTokenKind.Error, true));
+						AddSearchResultNoCheck(SearchResult.CreateMessage(filterSearcherOptions.Context, string.Format(dnSpy_Resources.SearchAbortedMessage, options.MaxResults), BoxedTextTokenKind.Error, true));
 					throw new TooManyResultsException();
 				}
 			}

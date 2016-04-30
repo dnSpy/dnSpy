@@ -91,8 +91,8 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 
 			var mod = (node as IFileTreeNodeData).GetModule();
 			var filename = mod == null ? null : mod.Location;
-			output.WriteReference(string.Format("0x{0:X8}", fo), new AddressReference(filename, false, fo, node.Length), TextTokenKind.Comment);
-			output.Write(": ", TextTokenKind.Comment);
+			output.WriteReference(string.Format("0x{0:X8}", fo), new AddressReference(filename, false, fo, node.Length), BoxedTextTokenKind.Comment);
+			output.Write(": ", BoxedTextTokenKind.Comment);
 		}
 
 		public static string TryGetString(Stream stream) {
@@ -117,7 +117,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 				return false;
 
 			stream.Position = 0;
-			context.Output.Write(FileReader.OpenStream(stream, Encoding.UTF8).ReadToEnd(), TextTokenKind.Text);
+			context.Output.Write(FileReader.OpenStream(stream, Encoding.UTF8).ReadToEnd(), BoxedTextTokenKind.Text);
 			string ext;
 			if (type == FileType.Xml)
 				ext = ".xml";

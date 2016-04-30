@@ -244,13 +244,13 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			AvalonEditTextOutput output;
 			if (result.IsCanceled) {
 				output = new AvalonEditTextOutput();
-				output.Write(dnSpy_Resources.DecompilationCanceled, TextTokenKind.Error);
+				output.Write(dnSpy_Resources.DecompilationCanceled, BoxedTextTokenKind.Error);
 			}
 			else if (result.Exception != null) {
 				output = new AvalonEditTextOutput();
-				output.Write(dnSpy_Resources.DecompilationException, TextTokenKind.Error);
+				output.Write(dnSpy_Resources.DecompilationException, BoxedTextTokenKind.Error);
 				output.WriteLine();
-				output.Write(result.Exception.ToString(), TextTokenKind.Text);
+				output.Write(result.Exception.ToString(), BoxedTextTokenKind.Text);
 			}
 			else {
 				output = decompileContext.CachedOutput;

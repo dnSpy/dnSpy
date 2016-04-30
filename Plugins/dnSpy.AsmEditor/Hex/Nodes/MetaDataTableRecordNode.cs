@@ -72,10 +72,10 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write(string.Format("{0}", index + 1), TextTokenKind.Number);
+			output.Write(string.Format("{0}", index + 1), BoxedTextTokenKind.Number);
 			if (infoTuple != null) {
 				output.WriteSpace();
-				output.Write("-", TextTokenKind.Operator);
+				output.Write("-", BoxedTextTokenKind.Operator);
 				output.WriteSpace();
 				infoTuple.Item2(output);
 			}
@@ -166,25 +166,25 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		void WriteModuleInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), TextTokenKind.Module);
+			output.Write(ReadStringsHeap(1), BoxedTextTokenKind.Module);
 		}
 
 		void WriteNamespaceName(ISyntaxHighlightOutput output, int nsIndex, int nameIndex) {
 			var ns = ReadStringsHeap(nsIndex);
 			var name = ReadStringsHeap(nameIndex);
 
-			output.Write(name, TextTokenKind.Type);
+			output.Write(name, BoxedTextTokenKind.Type);
 
 			if (!string.IsNullOrEmpty(ns)) {
 				output.WriteSpace();
-				output.Write("-", TextTokenKind.Operator);
+				output.Write("-", BoxedTextTokenKind.Operator);
 				output.WriteSpace();
 
 				var parts = ns.Split('.');
 				for (int i = 0; i < parts.Length; i++) {
-					output.Write(parts[i], TextTokenKind.NamespacePart);
+					output.Write(parts[i], BoxedTextTokenKind.Namespace);
 					if (i + 1 < parts.Length)
-						output.Write(".", TextTokenKind.Operator);
+						output.Write(".", BoxedTextTokenKind.Operator);
 				}
 			}
 		}
@@ -198,43 +198,43 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		void WriteFieldInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), TextTokenKind.InstanceField);
+			output.Write(ReadStringsHeap(1), BoxedTextTokenKind.InstanceField);
 		}
 
 		void WriteMethodInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(3), TextTokenKind.InstanceMethod);
+			output.Write(ReadStringsHeap(3), BoxedTextTokenKind.InstanceMethod);
 		}
 
 		void WriteParamInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(2), TextTokenKind.Parameter);
+			output.Write(ReadStringsHeap(2), BoxedTextTokenKind.Parameter);
 		}
 
 		void WriteMemberRefInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), TextTokenKind.InstanceMethod);
+			output.Write(ReadStringsHeap(1), BoxedTextTokenKind.InstanceMethod);
 		}
 
 		void WriteEventInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), TextTokenKind.InstanceEvent);
+			output.Write(ReadStringsHeap(1), BoxedTextTokenKind.InstanceEvent);
 		}
 
 		void WritePropertyInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(1), TextTokenKind.InstanceProperty);
+			output.Write(ReadStringsHeap(1), BoxedTextTokenKind.InstanceProperty);
 		}
 
 		void WriteModuleRefInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(0), TextTokenKind.Module);
+			output.Write(ReadStringsHeap(0), BoxedTextTokenKind.Module);
 		}
 
 		void WriteImplMapInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(2), TextTokenKind.InstanceMethod);
+			output.Write(ReadStringsHeap(2), BoxedTextTokenKind.InstanceMethod);
 		}
 
 		void WriteAssemblyInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(7), TextTokenKind.Assembly);
+			output.Write(ReadStringsHeap(7), BoxedTextTokenKind.Assembly);
 		}
 
 		void WriteAssemblyRefInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(6), TextTokenKind.Assembly);
+			output.Write(ReadStringsHeap(6), BoxedTextTokenKind.Assembly);
 		}
 
 		void WriteFileInfo(ISyntaxHighlightOutput output) {
@@ -250,7 +250,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		void WriteGenericParamInfo(ISyntaxHighlightOutput output) {
-			output.Write(ReadStringsHeap(3), TextTokenKind.TypeGenericParameter);
+			output.Write(ReadStringsHeap(3), BoxedTextTokenKind.TypeGenericParameter);
 		}
 	}
 }

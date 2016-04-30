@@ -190,7 +190,7 @@ namespace dnSpy.Search {
 			// non-.NET file
 			var file = o as IDnSpyFile;
 			if (file != null) {
-				output.Write(file.GetShortName(), TextTokenKind.Text);
+				output.Write(file.GetShortName(), BoxedTextTokenKind.Text);
 				return;
 			}
 
@@ -208,16 +208,15 @@ namespace dnSpy.Search {
 
 			var em = o as ErrorMessage;
 			if (em != null) {
-				output.Write(em.Text, em.Type);
+				output.Write(em.Text, em.Color);
 				return;
 			}
 
 			Debug.Assert(o == null);
 		}
 
-		public static SearchResult CreateMessage(SearchResultContext context, string msg, TextTokenKind type, bool first) {
-			return new MessageSearchResult(msg, type, first) { Context = context };
-		}
+		public static SearchResult CreateMessage(SearchResultContext context, string msg, object color, bool first) =>
+			new MessageSearchResult(msg, color, first) { Context = context };
 
 		public int CompareTo(ISearchResult other) {
 			if (other == null)
@@ -248,14 +247,14 @@ namespace dnSpy.Search {
 		}
 		readonly string msg;
 
-		public TextTokenKind Type {
-			get { return type; }
+		public object Color {
+			get { return color; }
 		}
-		readonly TextTokenKind type;
+		readonly object color;
 
-		public ErrorMessage(string msg, TextTokenKind type) {
+		public ErrorMessage(string msg, object color) {
 			this.msg = msg;
-			this.type = type;
+			this.color = color;
 		}
 	}
 
@@ -266,9 +265,9 @@ namespace dnSpy.Search {
 		}
 		readonly int order;
 
-		public MessageSearchResult(string msg, TextTokenKind type, bool first) {
+		public MessageSearchResult(string msg, object color, bool first) {
 			this.msg = msg;
-			this.NameObject = new ErrorMessage(msg, type);
+			this.NameObject = new ErrorMessage(msg, color);
 			this.order = first ? int.MinValue : int.MaxValue;
 		}
 

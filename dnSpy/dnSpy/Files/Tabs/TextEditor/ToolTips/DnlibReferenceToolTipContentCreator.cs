@@ -154,7 +154,7 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 			if (v == null) {
 				if (name == null)
 					return null;
-				creator.Output.Write(string.Format("(local variable) {0}", name), TextTokenKind.Text);
+				creator.Output.Write(string.Format("(local variable) {0}", name), BoxedTextTokenKind.Text);
 				return creator.Create();
 			}
 
@@ -188,14 +188,14 @@ namespace dnSpy.Files.Tabs.TextEditor.ToolTips {
 
 			var s = ILLanguageHelper.GetOpCodeDocumentation(opCode);
 			string opCodeHex = opCode.Size > 1 ? string.Format("0x{0:X4}", opCode.Value) : string.Format("0x{0:X2}", opCode.Value);
-			creator.Output.Write(opCode.Name, TextTokenKind.OpCode);
+			creator.Output.Write(opCode.Name, BoxedTextTokenKind.OpCode);
 			creator.Output.WriteSpace();
-			creator.Output.Write("(", TextTokenKind.Operator);
-			creator.Output.Write(opCodeHex, TextTokenKind.Number);
-			creator.Output.Write(")", TextTokenKind.Operator);
+			creator.Output.Write("(", BoxedTextTokenKind.Operator);
+			creator.Output.Write(opCodeHex, BoxedTextTokenKind.Number);
+			creator.Output.Write(")", BoxedTextTokenKind.Operator);
 			if (s != null) {
-				creator.Output.Write(" - ", TextTokenKind.Text);
-				creator.Output.Write(s, TextTokenKind.Text);
+				creator.Output.Write(" - ", BoxedTextTokenKind.Text);
+				creator.Output.Write(s, BoxedTextTokenKind.Text);
 			}
 
 			return creator.Create();

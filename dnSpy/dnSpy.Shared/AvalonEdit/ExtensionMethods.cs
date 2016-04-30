@@ -51,11 +51,11 @@ namespace dnSpy.Shared.AvalonEdit {
 		/// </summary>
 		/// <param name="self">This</param>
 		/// <returns></returns>
-		public static HighlightingColor ToHighlightingColor(this IThemeColor self) {
+		public static HighlightingColor ToHighlightingColor(this ITextColor self) {
 			if (self == null)
 				return null;
 			var hl = new HighlightingColor {
-				Name = self.Name,
+				Name = "???",
 				FontWeight = self.FontWeight,
 				FontStyle = self.FontStyle,
 				Underline = null,

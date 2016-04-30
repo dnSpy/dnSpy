@@ -113,8 +113,8 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 
 		public override void Decompile(MethodDef method, ITextOutput output, DecompilationContext ctx) {
 			WriteCommentBegin(output, true);
-			output.Write("Method: ", TextTokenKind.Comment);
-			output.WriteDefinition(IdentifierEscaper.Escape(method.FullName), method, TextTokenKind.Comment, false);
+			output.Write("Method: ", BoxedTextTokenKind.Comment);
+			output.WriteDefinition(IdentifierEscaper.Escape(method.FullName), method, BoxedTextTokenKind.Comment, false);
 			WriteCommentEnd(output, true);
 			output.WriteLine();
 
@@ -134,30 +134,30 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			}
 
 			if (context.CurrentMethodIsAsync) {
-				output.Write("async", TextTokenKind.Keyword);
-				output.Write("/", TextTokenKind.Operator);
-				output.WriteLine("await", TextTokenKind.Keyword);
+				output.Write("async", BoxedTextTokenKind.Keyword);
+				output.Write("/", BoxedTextTokenKind.Operator);
+				output.WriteLine("await", BoxedTextTokenKind.Keyword);
 			}
 
 			var allVariables = ilMethod.GetSelfAndChildrenRecursive<ILExpression>().Select(e => e.Operand as ILVariable)
 				.Where(v => v != null && !v.IsParameter).Distinct();
 			foreach (ILVariable v in allVariables) {
-				output.WriteDefinition(IdentifierEscaper.Escape(v.Name), v, v.IsParameter ? TextTokenKind.Parameter : TextTokenKind.Local);
+				output.WriteDefinition(IdentifierEscaper.Escape(v.Name), v, v.IsParameter ? BoxedTextTokenKind.Parameter : BoxedTextTokenKind.Local);
 				if (v.Type != null) {
 					output.WriteSpace();
-					output.Write(":", TextTokenKind.Operator);
+					output.Write(":", BoxedTextTokenKind.Operator);
 					output.WriteSpace();
 					if (v.IsPinned) {
-						output.Write("pinned", TextTokenKind.Keyword);
+						output.Write("pinned", BoxedTextTokenKind.Keyword);
 						output.WriteSpace();
 					}
 					v.Type.WriteTo(output, ILNameSyntax.ShortTypeName);
 				}
 				if (v.GeneratedByDecompiler) {
 					output.WriteSpace();
-					output.Write("[", TextTokenKind.Operator);
-					output.Write("generated", TextTokenKind.Keyword);
-					output.Write("]", TextTokenKind.Operator);
+					output.Write("[", BoxedTextTokenKind.Operator);
+					output.Write("generated", BoxedTextTokenKind.Keyword);
+					output.Write("]", BoxedTextTokenKind.Operator);
 				}
 				output.WriteLine();
 			}
@@ -173,7 +173,7 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 		}
 
 		void StartKeywordBlock(ITextOutput output, string keyword, IMemberDef member) {
-			output.Write(keyword, TextTokenKind.Keyword);
+			output.Write(keyword, BoxedTextTokenKind.Keyword);
 			output.WriteSpace();
 			output.WriteDefinition(IdentifierEscaper.Escape(member.Name), member, TextTokenKindUtils.GetTextTokenKind(member), false);
 			output.WriteSpace();
@@ -216,21 +216,21 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			var c = field.Constant;
 			if (c != null) {
 				output.WriteSpace();
-				output.Write("=", TextTokenKind.Operator);
+				output.Write("=", BoxedTextTokenKind.Operator);
 				output.WriteSpace();
 				if (c.Value == null)
-					output.Write("null", TextTokenKind.Keyword);
+					output.Write("null", BoxedTextTokenKind.Keyword);
 				else {
 					switch (c.Type) {
 					case ElementType.Boolean:
 						if (c.Value is bool)
-							output.Write((bool)c.Value ? "true" : "false", TextTokenKind.Keyword);
+							output.Write((bool)c.Value ? "true" : "false", BoxedTextTokenKind.Keyword);
 						else
 							goto default;
 						break;
 
 					case ElementType.Char:
-						output.Write(string.Format("'{0}'", c.Value), TextTokenKind.Char);
+						output.Write(string.Format("'{0}'", c.Value), BoxedTextTokenKind.Char);
 						break;
 
 					case ElementType.I1:
@@ -245,15 +245,15 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 					case ElementType.R8:
 					case ElementType.I:
 					case ElementType.U:
-						output.Write(string.Format("{0}", c.Value), TextTokenKind.Number);
+						output.Write(string.Format("{0}", c.Value), BoxedTextTokenKind.Number);
 						break;
 
 					case ElementType.String:
-						output.Write(string.Format("{0}", c.Value), TextTokenKind.String);
+						output.Write(string.Format("{0}", c.Value), BoxedTextTokenKind.String);
 						break;
 
 					default:
-						output.Write(string.Format("{0}", c.Value), TextTokenKind.Text);
+						output.Write(string.Format("{0}", c.Value), BoxedTextTokenKind.Text);
 						break;
 					}
 				}
@@ -285,8 +285,8 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			this.WriteCommentLine(output, string.Format("Type: {0}", type.FullName));
 			if (type.BaseType != null) {
 				WriteCommentBegin(output, true);
-				output.Write("Base type: ", TextTokenKind.Comment);
-				output.WriteReference(IdentifierEscaper.Escape(type.BaseType.FullName), type.BaseType, TextTokenKind.Comment);
+				output.Write("Base type: ", BoxedTextTokenKind.Comment);
+				output.WriteReference(IdentifierEscaper.Escape(type.BaseType.FullName), type.BaseType, BoxedTextTokenKind.Comment);
 				WriteCommentEnd(output, true);
 				output.WriteLine();
 			}

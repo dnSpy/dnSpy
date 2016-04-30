@@ -120,11 +120,11 @@ namespace dnSpy.Languages.ILSpy.VB {
 				if (def == null)
 					continue;
 				foreach (var method in def.Methods.Where(m => !m.Name.StartsWith("get_") && !m.Name.StartsWith("set_"))) {
-					yield return new ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), method.Name, TextTokenKindUtils.GetTextTokenKind(method));
+					yield return ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier.CreateWithColor((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), method.Name, TextTokenKindUtils.GetTextTokenKind(method));
 				}
 
 				foreach (var property in def.Properties) {
-					yield return new ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), property.Name, TextTokenKindUtils.GetTextTokenKind(property));
+					yield return ICSharpCode.NRefactory.VB.Ast.InterfaceMemberSpecifier.CreateWithColor((ICSharpCode.NRefactory.VB.Ast.AstType)type.Clone(), property.Name, TextTokenKindUtils.GetTextTokenKind(property));
 				}
 			}
 		}

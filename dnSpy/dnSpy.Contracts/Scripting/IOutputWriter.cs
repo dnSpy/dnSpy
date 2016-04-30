@@ -30,7 +30,14 @@ namespace dnSpy.Contracts.Scripting {
 		/// </summary>
 		/// <param name="text">Text to write</param>
 		/// <param name="color">Color</param>
-		void Write(string text, OutputColor color = OutputColor.ReplOutputText);
+		void Write(string text, object color = null);
+
+		/// <summary>
+		/// Writes text
+		/// </summary>
+		/// <param name="text">Text to write</param>
+		/// <param name="color">Color</param>
+		void Write(string text, OutputColor color = OutputColor.ReplScriptOutputText);
 	}
 
 	/// <summary>
@@ -43,9 +50,20 @@ namespace dnSpy.Contracts.Scripting {
 		/// <param name="writer">Writer</param>
 		/// <param name="text">Text to write</param>
 		/// <param name="color">Color</param>
-		public static void WriteLine(this IOutputWriter writer, string text, OutputColor color = OutputColor.ReplOutputText) {
+		public static void WriteLine(this IOutputWriter writer, string text, object color) {
+			writer.Write(text, color ?? BoxedOutputColor.ReplScriptOutputText);
+			writer.Write(Environment.NewLine, BoxedOutputColor.ReplScriptOutputText);
+		}
+
+		/// <summary>
+		/// Writes text followed by a newline
+		/// </summary>
+		/// <param name="writer">Writer</param>
+		/// <param name="text">Text to write</param>
+		/// <param name="color">Color</param>
+		public static void WriteLine(this IOutputWriter writer, string text, OutputColor color = OutputColor.ReplScriptOutputText) {
 			writer.Write(text, color);
-			writer.Write(Environment.NewLine, OutputColor.ReplOutputText);
+			writer.Write(Environment.NewLine, BoxedOutputColor.ReplScriptOutputText);
 		}
 	}
 }

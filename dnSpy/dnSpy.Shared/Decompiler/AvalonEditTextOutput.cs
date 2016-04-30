@@ -79,10 +79,10 @@ namespace dnSpy.Shared.Decompiler {
 		}
 		bool canBeCached = true;
 
-		public TextTokenInfo TextTokenInfo {
-			get { return textTokenInfo; }
+		public CachedTextTokenColors CachedColors {
+			get { return cachedTextTokenColors; }
 		}
-		readonly TextTokenInfo textTokenInfo = new TextTokenInfo();
+		readonly CachedTextTokenColors cachedTextTokenColors = new CachedTextTokenColors();
 
 		int lastLineStart = 0;
 		int lineNumber = 1;
@@ -183,26 +183,26 @@ namespace dnSpy.Shared.Decompiler {
 			if (needsIndent) {
 				needsIndent = false;
 				for (int i = 0; i < indent; i++) {
-					Append(TextTokenKind.Text, "\t");
+					Append(BoxedTextTokenKind.Text, "\t");
 				}
 			}
 		}
 
-		public void Write(string text, int index, int count, TextTokenKind tokenKind) {
+		public void Write(string text, int index, int count, object data) {
 			if (index == 0 && text.Length == count)
-				Write(text, tokenKind);
-			Write(text.Substring(index, count), tokenKind);
+				Write(text, data);
+			Write(text.Substring(index, count), data);
 		}
 
-		public void Write(StringBuilder sb, int index, int count, TextTokenKind tokenKind) {
+		public void Write(StringBuilder sb, int index, int count, object data) {
 			if (index == 0 && sb.Length == count)
-				Write(sb.ToString(), tokenKind);
-			Write(sb.ToString(index, count), tokenKind);
+				Write(sb.ToString(), data);
+			Write(sb.ToString(index, count), data);
 		}
 
-		public void Write(string text, TextTokenKind tokenKind) {
+		public void Write(string text, object data) {
 			WriteIndent();
-			Append(tokenKind, text);
+			Append(data, text);
 		}
 
 		public void WriteLine() {
@@ -216,19 +216,19 @@ namespace dnSpy.Shared.Decompiler {
 			}
 		}
 
-		public void WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal) {
+		public void WriteDefinition(string text, object definition, object data, bool isLocal) {
 			WriteIndent();
 			int start = this.TextLength;
-			Append(tokenKind, text);
+			Append(data, text);
 			int end = this.TextLength;
 			this.DefinitionLookup.AddDefinition(definition, this.TextLength);
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = definition, IsLocal = isLocal, IsLocalTarget = true });
 		}
 
-		public void WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal) {
+		public void WriteReference(string text, object reference, object data, bool isLocal) {
 			WriteIndent();
 			int start = this.TextLength;
-			Append(tokenKind, text);
+			Append(data, text);
 			int end = this.TextLength;
 			references.Add(new ReferenceSegment { StartOffset = start, EndOffset = end, Reference = reference, IsLocal = isLocal });
 		}
@@ -246,16 +246,27 @@ namespace dnSpy.Shared.Decompiler {
 			DebuggerMemberMappings.Add(methodDebugSymbols);
 		}
 
-		void Append(TextTokenKind tokenKind, string s) {
-			textTokenInfo.Append(tokenKind, s);
+		void Append(object data, string s) {
+			cachedTextTokenColors.Append(data, s);
 			b.Append(s);
-			Debug.Assert(b.Length == textTokenInfo.Length);
+			Debug.Assert(b.Length == cachedTextTokenColors.Length);
 		}
 
+		public void Write(string text, TextTokenKind tokenKind) =>
+			Write(text, tokenKind.Box());
+		public void Write(string text, int index, int count, TextTokenKind tokenKind) =>
+			Write(text, index, count, tokenKind.Box());
+		public void Write(StringBuilder sb, int index, int count, TextTokenKind tokenKind) =>
+			Write(sb, index, count, tokenKind.Box());
+		public void WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal = true) =>
+			WriteDefinition(text, definition, tokenKind.Box(), isLocal);
+		public void WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal = false) =>
+			WriteReference(text, reference, tokenKind.Box(), isLocal);
+
 		void AppendLine() {
-			textTokenInfo.AppendLine();
+			cachedTextTokenColors.AppendLine();
 			b.AppendLine();
-			Debug.Assert(b.Length == textTokenInfo.Length);
+			Debug.Assert(b.Length == cachedTextTokenColors.Length);
 		}
 
 		public void DontCacheOutput() {

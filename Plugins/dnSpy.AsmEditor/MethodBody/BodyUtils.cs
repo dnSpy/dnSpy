@@ -69,7 +69,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				}
 
 				void Write(ITextOutput output, object value) {
-					output.Write(string.Format("Missing ISimpleILPrinter: {0}", value), TextTokenKind.Text);
+					output.Write(string.Format("Missing ISimpleILPrinter: {0}", value), BoxedTextTokenKind.Text);
 				}
 			}
 		}
@@ -546,7 +546,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 		public static void WriteObject(ISyntaxHighlightOutput output, object obj, WriteObjectFlags flags = WriteObjectFlags.None) {
 			if (IsNull(obj)) {
-				output.Write("null", TextTokenKind.Keyword);
+				output.Write("null", BoxedTextTokenKind.Keyword);
 				return;
 			}
 
@@ -558,7 +558,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 
 			var local = obj as LocalVM;
 			if (local != null) {
-				output.Write(IdentifierEscaper.Escape(GetLocalName(local.Name, local.Index)), TextTokenKind.Local);
+				output.Write(IdentifierEscaper.Escape(GetLocalName(local.Name, local.Index)), BoxedTextTokenKind.Local);
 				output.WriteSpace();
 				output.WriteLocalParameterIndex(local.Index);
 				return;
@@ -567,9 +567,9 @@ namespace dnSpy.AsmEditor.MethodBody {
 			var parameter = obj as Parameter;
 			if (parameter != null) {
 				if (parameter.IsHiddenThisParameter)
-					output.Write("this", TextTokenKind.Keyword);
+					output.Write("this", BoxedTextTokenKind.Keyword);
 				else {
-					output.Write(IdentifierEscaper.Escape(GetParameterName(parameter.Name, parameter.Index)), TextTokenKind.Parameter);
+					output.Write(IdentifierEscaper.Escape(GetParameterName(parameter.Name, parameter.Index)), BoxedTextTokenKind.Parameter);
 					output.WriteSpace();
 					output.WriteLocalParameterIndex(parameter.Index);
 				}
@@ -603,14 +603,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 			}
 
 			if (obj is Code) {
-				output.Write(((Code)obj).ToOpCode().Name, TextTokenKind.OpCode);
+				output.Write(((Code)obj).ToOpCode().Name, BoxedTextTokenKind.OpCode);
 				return;
 			}
 
 			// This code gets called by the combobox and it sometimes passes in the empty string.
 			// It's never shown in the UI.
 			Debug.Assert(string.Empty.Equals(obj), "Shouldn't be here");
-			output.Write(obj.ToString(), TextTokenKind.Text);
+			output.Write(obj.ToString(), BoxedTextTokenKind.Text);
 		}
 
 		static string GetLocalName(string name, int index) {
@@ -626,15 +626,15 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		static void WriteLocalParameterIndex(this ISyntaxHighlightOutput output, int index) {
-			output.Write("(", TextTokenKind.Operator);
-			output.Write(index.ToString(), TextTokenKind.Number);
-			output.Write(")", TextTokenKind.Operator);
+			output.Write("(", BoxedTextTokenKind.Operator);
+			output.Write(index.ToString(), BoxedTextTokenKind.Number);
+			output.Write(")", BoxedTextTokenKind.Operator);
 		}
 
 		static void WriteLong(this ISyntaxHighlightOutput output, InstructionVM instr) {
 			output.WriteShort(instr);
 			output.WriteSpace();
-			output.Write(instr.Code.ToOpCode().Name, TextTokenKind.OpCode);
+			output.Write(instr.Code.ToOpCode().Name, BoxedTextTokenKind.OpCode);
 			output.WriteSpace();
 			Write(output, instr.InstructionOperandVM);
 		}
@@ -644,13 +644,13 @@ namespace dnSpy.AsmEditor.MethodBody {
 			case MethodBody.InstructionOperandType.None:
 				break;
 
-			case MethodBody.InstructionOperandType.SByte:	output.Write(opvm.SByte.StringValue, TextTokenKind.Number); break;
-			case MethodBody.InstructionOperandType.Byte:	output.Write(opvm.Byte.StringValue, TextTokenKind.Number); break;
-			case MethodBody.InstructionOperandType.Int32:	output.Write(opvm.Int32.StringValue, TextTokenKind.Number); break;;
-			case MethodBody.InstructionOperandType.Int64:	output.Write(opvm.Int64.StringValue, TextTokenKind.Number); break;;
-			case MethodBody.InstructionOperandType.Single:	output.Write(opvm.Single.StringValue, TextTokenKind.Number); break;;
-			case MethodBody.InstructionOperandType.Double:	output.Write(opvm.Double.StringValue, TextTokenKind.Number); break;;
-			case MethodBody.InstructionOperandType.String:	output.Write(opvm.String.StringValue, TextTokenKind.String); break;;
+			case MethodBody.InstructionOperandType.SByte:	output.Write(opvm.SByte.StringValue, BoxedTextTokenKind.Number); break;
+			case MethodBody.InstructionOperandType.Byte:	output.Write(opvm.Byte.StringValue, BoxedTextTokenKind.Number); break;
+			case MethodBody.InstructionOperandType.Int32:	output.Write(opvm.Int32.StringValue, BoxedTextTokenKind.Number); break;;
+			case MethodBody.InstructionOperandType.Int64:	output.Write(opvm.Int64.StringValue, BoxedTextTokenKind.Number); break;;
+			case MethodBody.InstructionOperandType.Single:	output.Write(opvm.Single.StringValue, BoxedTextTokenKind.Number); break;;
+			case MethodBody.InstructionOperandType.Double:	output.Write(opvm.Double.StringValue, BoxedTextTokenKind.Number); break;;
+			case MethodBody.InstructionOperandType.String:	output.Write(opvm.String.StringValue, BoxedTextTokenKind.String); break;;
 
 			case MethodBody.InstructionOperandType.Field:
 			case MethodBody.InstructionOperandType.Method:
@@ -669,23 +669,23 @@ namespace dnSpy.AsmEditor.MethodBody {
 		}
 
 		static void WriteShort(this ISyntaxHighlightOutput output, InstructionVM instr) {
-			output.Write(instr.Index.ToString(), TextTokenKind.Number);
+			output.Write(instr.Index.ToString(), BoxedTextTokenKind.Number);
 			output.WriteSpace();
-			output.Write("(", TextTokenKind.Operator);
-			output.Write(string.Format("{0:X4}", instr.Offset), TextTokenKind.Number);
-			output.Write(")", TextTokenKind.Operator);
+			output.Write("(", BoxedTextTokenKind.Operator);
+			output.Write(string.Format("{0:X4}", instr.Offset), BoxedTextTokenKind.Number);
+			output.Write(")", BoxedTextTokenKind.Operator);
 		}
 
 		static void Write(this ISyntaxHighlightOutput output, IList<InstructionVM> instrs) {
-			output.Write("[", TextTokenKind.Operator);
+			output.Write("[", BoxedTextTokenKind.Operator);
 			for (int i = 0; i < instrs.Count; i++) {
 				if (i > 0) {
-					output.Write(",", TextTokenKind.Operator);
+					output.Write(",", BoxedTextTokenKind.Operator);
 					output.WriteSpace();
 				}
 				output.WriteShort(instrs[i]);
 			}
-			output.Write("]", TextTokenKind.Operator);
+			output.Write("]", BoxedTextTokenKind.Operator);
 		}
 	}
 }

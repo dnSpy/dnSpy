@@ -74,7 +74,7 @@ namespace dnSpy.Files.TreeView {
 		DerivedTypesFinder derivedTypesFinder;
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(dnSpy_Resources.DerivedTypes, TextTokenKind.Text);
+			output.Write(dnSpy_Resources.DerivedTypes, BoxedTextTokenKind.Text);
 		}
 
 		public override FilterType GetFilterType(IFileTreeNodeFilter filter) {

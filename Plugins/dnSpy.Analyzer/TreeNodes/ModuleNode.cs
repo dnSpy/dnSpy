@@ -45,7 +45,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(NameUtils.CleanIdentifier(module.Name), TextTokenKind.Module);
+			output.Write(NameUtils.CleanIdentifier(module.Name), BoxedTextTokenKind.Module);
 		}
 	}
 }

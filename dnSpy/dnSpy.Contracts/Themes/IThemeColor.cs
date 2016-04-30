@@ -17,38 +17,17 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System.Windows;
 using System.Windows.Media;
 
 namespace dnSpy.Contracts.Themes {
 	/// <summary>
 	/// Theme color
 	/// </summary>
-	public interface IThemeColor {
+	public interface IThemeColor : ITextColor {
 		/// <summary>
 		/// Name of color
 		/// </summary>
 		string Name { get; }
-
-		/// <summary>
-		/// Font weight or null
-		/// </summary>
-		FontWeight? FontWeight { get; }
-
-		/// <summary>
-		/// Font style or null
-		/// </summary>
-		FontStyle? FontStyle { get; }
-
-		/// <summary>
-		/// Foreground (first) color or null
-		/// </summary>
-		Brush Foreground { get; }
-
-		/// <summary>
-		/// Background (second) color null
-		/// </summary>
-		Brush Background { get; }
 
 		/// <summary>
 		/// Third color or null

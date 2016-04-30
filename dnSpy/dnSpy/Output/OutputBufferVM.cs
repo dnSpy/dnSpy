@@ -85,11 +85,15 @@ namespace dnSpy.Output {
 
 		public string GetText() => logEditorUI.GetText();
 		public ICachedWriter CreateWriter() => new CachedWriter(this);
-		public void Write(OutputColor color, string s) => WriteInternal(color, s);
+		public void Write(object color, string s) => WriteInternal(color, s);
+		public void Write(OutputColor color, string s) => WriteInternal(color.Box(), s);
 
-		public void WriteLine(OutputColor color, string s) {
+		public void WriteLine(OutputColor color, string s) =>
+			WriteLine(color.Box(), s);
+
+		public void WriteLine(object color, string s) {
 			WriteInternal(color, s);
-			WriteInternal(OutputColor.Text, Environment.NewLine);
+			WriteInternal(BoxedOutputColor.Text, Environment.NewLine);
 		}
 
 		public void Write(IEnumerable<ColorAndText> text) {
@@ -97,14 +101,14 @@ namespace dnSpy.Output {
 				WriteInternal(t.Color, t.Text);
 		}
 
-		void WriteInternal(OutputColor color, string text) {
+		void WriteInternal(object color, string text) {
 			int so = 0;
 			while (so < text.Length) {
 				if (needTimestamp) {
 					needTimestamp = false;
 					if (ShowTimestamps) {
-						logEditorUI.Write(DateTime.Now.ToLongTimeString(), OutputColor.DebugLogTimestamp);
-						logEditorUI.Write(" ", OutputColor.Text);
+						logEditorUI.Write(DateTime.Now.ToLongTimeString(), BoxedOutputColor.DebugLogTimestamp);
+						logEditorUI.Write(" ", BoxedOutputColor.Text);
 					}
 				}
 

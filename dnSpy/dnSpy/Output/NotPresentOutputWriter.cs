@@ -44,10 +44,12 @@ namespace dnSpy.Output {
 		}
 
 		public ICachedWriter CreateWriter() => new CachedWriter(this);
+		public void WriteLine(object color, string s) => TextPane.WriteLine(color, s);
 		public void WriteLine(OutputColor color, string s) => TextPane.WriteLine(color, s);
 		public void Write(IEnumerable<ColorAndText> text) => TextPane.Write(text);
 		public void Clear() => TextPane.Clear();
 		public string GetText() => TextPane.GetText();
+		public void Write(object color, string s) => TextPane.Write(color, s);
 		public void Write(OutputColor color, string s) => TextPane.Write(color, s);
 	}
 }

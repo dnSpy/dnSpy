@@ -38,24 +38,33 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		}
 
 		public void Dispose() => Flush();
-		public void Print(string text) => Print(OutputColor.ReplOutputText, text);
+		public void Print(string text) => Print(BoxedOutputColor.ReplScriptOutputText, text);
 		public void Print(string fmt, params object[] args) => Print(string.Format(fmt, args));
+		public void Print(object color, string text) => cachedList.Add(new ColorAndText(color ?? BoxedOutputColor.ReplScriptOutputText, text));
+		public void Print(object color, string fmt, params object[] args) => Print(color ?? BoxedOutputColor.ReplScriptOutputText, string.Format(fmt, args));
+		public void Print(Exception ex, object color) => owner.Print(this, ex, color ?? BoxedOutputColor.Error);
+		public void Print(object value, object color) => owner.Print(this, value, color ?? BoxedOutputColor.ReplScriptOutputText);
+		public void PrintLine(Exception ex, object color) => owner.PrintLine(this, ex, color ?? BoxedOutputColor.Error);
+		public void PrintLine(object value, object color) => owner.PrintLine(this, value, color ?? BoxedOutputColor.ReplScriptOutputText);
 		public void Print(OutputColor color, string text) => cachedList.Add(new ColorAndText(color, text));
 		public void Print(OutputColor color, string fmt, params object[] args) => Print(color, string.Format(fmt, args));
 		public void Print(Exception ex, OutputColor color) => owner.Print(this, ex, color);
 		public void Print(object value, OutputColor color) => owner.Print(this, value, color);
 		public void PrintLine(Exception ex, OutputColor color) => owner.PrintLine(this, ex, color);
 		public void PrintLine(object value, OutputColor color) => owner.PrintLine(this, value, color);
-		public void PrintError(string text) => Print(OutputColor.Error, text);
+		public void PrintError(string text) => Print(BoxedOutputColor.Error, text);
 		public void PrintError(string fmt, params object[] args) => PrintError(string.Format(fmt, args));
-		public void PrintLine(string text) => PrintLine(OutputColor.ReplOutputText, text);
+		public void PrintLine(string text) => PrintLine(BoxedOutputColor.ReplScriptOutputText, text);
 		public void PrintLine(string fmt, params object[] args) => PrintLine(string.Format(fmt, args));
+		public void PrintLine(object color, string fmt, params object[] args) => PrintLine(color ?? BoxedOutputColor.ReplScriptOutputText, string.Format(fmt, args));
 		public void PrintLine(OutputColor color, string fmt, params object[] args) => PrintLine(color, string.Format(fmt, args));
-		public void PrintLineError(string text) => PrintLine(OutputColor.Error, text);
+		public void PrintLineError(string text) => PrintLine(BoxedOutputColor.Error, text);
 		public void PrintLineError(string fmt, params object[] args) => PrintLineError(string.Format(fmt, args));
+		public void Write(string text, object color) => Print(color ?? BoxedOutputColor.ReplScriptOutputText, text);
 		public void Write(string text, OutputColor color) => Print(color, text);
+		public void PrintLine(OutputColor color, string text) => PrintLine(color.Box(), text);
 
-		public void PrintLine(OutputColor color, string text) {
+		public void PrintLine(object color, string text) {
 			Print(color, text);
 			Print(Environment.NewLine);
 		}

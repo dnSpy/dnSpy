@@ -365,11 +365,11 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 		bool WriteRefIfByRef(ITextOutput output, TypeSig typeSig, ParamDef pd) {
 			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
 				if (pd != null && (!pd.IsIn && pd.IsOut)) {
-					output.Write("out", TextTokenKind.Keyword);
+					output.Write("out", BoxedTextTokenKind.Keyword);
 					output.WriteSpace();
 				}
 				else {
-					output.Write("ref", TextTokenKind.Keyword);
+					output.Write("ref", BoxedTextTokenKind.Keyword);
 					output.WriteSpace();
 				}
 				return true;
@@ -412,21 +412,21 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 					var methDecl = accessor.Overrides.First().MethodDeclaration;
 					var declaringType = methDecl == null ? null : methDecl.DeclaringType;
 					TypeToString(output, declaringType, includeNamespace: true);
-					output.Write(".", TextTokenKind.Operator);
+					output.Write(".", BoxedTextTokenKind.Operator);
 				}
-				output.Write("this", TextTokenKind.Keyword);
-				output.Write("[", TextTokenKind.Operator);
+				output.Write("this", BoxedTextTokenKind.Keyword);
+				output.Write("[", BoxedTextTokenKind.Operator);
 				bool addSeparator = false;
 				foreach (var p in property.PropertySig.GetParams()) {
 					if (addSeparator) {
-						output.Write(",", TextTokenKind.Operator);
+						output.Write(",", BoxedTextTokenKind.Operator);
 						output.WriteSpace();
 					}
 					else
 						addSeparator = true;
 					TypeToString(output, p.ToTypeDefOrRef(), includeNamespace: true);
 				}
-				output.Write("]", TextTokenKind.Operator);
+				output.Write("]", BoxedTextTokenKind.Operator);
 			}
 			else
 				WriteIdentifier(output, property.Name, TextTokenKindUtils.GetTextTokenKind(property));
@@ -445,9 +445,9 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			"using", "virtual", "void", "volatile", "while",
 		};
 
-		static void WriteIdentifier(ITextOutput output, string id, TextTokenKind tokenKind) {
+		static void WriteIdentifier(ITextOutput output, string id, object tokenKind) {
 			if (isKeyword.Contains(id))
-				output.Write("@", TextTokenKind.Operator);
+				output.Write("@", BoxedTextTokenKind.Operator);
 			output.Write(IdentifierEscaper.Escape(id), tokenKind);
 		}
 

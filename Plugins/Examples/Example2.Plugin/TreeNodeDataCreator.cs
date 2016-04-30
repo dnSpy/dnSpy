@@ -51,7 +51,7 @@ namespace Example2.Plugin {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write("Assembly Child", TextTokenKind.Text);
+			output.Write("Assembly Child", BoxedTextTokenKind.Text);
 		}
 
 		// If you don't want the node to be appended to the children, override this
@@ -124,7 +124,7 @@ namespace Example2.Plugin {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write("Module Child", TextTokenKind.Text);
+			output.Write("Module Child", BoxedTextTokenKind.Text);
 		}
 
 		// Gets called by dnSpy if there's only one node to decompile. This method gets called in a
@@ -145,14 +145,14 @@ namespace Example2.Plugin {
 			// to show a tooltip when hovering over the reference.
 			context.HighlightingExtension = ".cs";
 			context.Language.WriteCommentLine(context.Output, "Initialize it to the secret key");
-			context.Output.WriteReference("int", new StringInfoReference("This is a reference added by the code"), TextTokenKind.Keyword);
+			context.Output.WriteReference("int", new StringInfoReference("This is a reference added by the code"), BoxedTextTokenKind.Keyword);
 			context.Output.WriteSpace();
-			context.Output.WriteReference("secret", new StringInfoReference("The real secret is actually 42 not 1234"), TextTokenKind.Local);
+			context.Output.WriteReference("secret", new StringInfoReference("The real secret is actually 42 not 1234"), BoxedTextTokenKind.Local);
 			context.Output.WriteSpace();
-			context.Output.Write("=", TextTokenKind.Operator);
+			context.Output.Write("=", BoxedTextTokenKind.Operator);
 			context.Output.WriteSpace();
-			context.Output.Write("1234", TextTokenKind.Number);
-			context.Output.Write(";", TextTokenKind.Operator);
+			context.Output.Write("1234", BoxedTextTokenKind.Number);
+			context.Output.Write(";", BoxedTextTokenKind.Operator);
 			context.Output.WriteLine();
 
 			// We decompiled ourselves so return true
@@ -217,7 +217,7 @@ namespace Example2.Plugin {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(msg, TextTokenKind.Comment);
+			output.Write(msg, BoxedTextTokenKind.Comment);
 		}
 
 		public override ITreeNodeGroup TreeNodeGroup {

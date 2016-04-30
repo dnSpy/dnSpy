@@ -91,13 +91,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write(string.Format("{0:X2}", (byte)tablesStreamVM.Table), TextTokenKind.Number);
+			output.Write(string.Format("{0:X2}", (byte)tablesStreamVM.Table), BoxedTextTokenKind.Number);
 			output.WriteSpace();
-			output.Write(string.Format("{0}", tablesStreamVM.Table), TextTokenKind.Type);
+			output.Write(string.Format("{0}", tablesStreamVM.Table), BoxedTextTokenKind.Type);
 			output.WriteSpace();
-			output.Write("(", TextTokenKind.Operator);
-			output.Write(string.Format("{0}", tablesStreamVM.Rows), TextTokenKind.Number);
-			output.Write(")", TextTokenKind.Operator);
+			output.Write("(", BoxedTextTokenKind.Operator);
+			output.Write(string.Format("{0}", tablesStreamVM.Rows), BoxedTextTokenKind.Number);
+			output.Write(")", BoxedTextTokenKind.Operator);
 		}
 
 		protected override void DecompileFields(ILanguage language, ITextOutput output) {
@@ -119,14 +119,14 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public void WriteHeader(ITextOutput output) {
 			var cols = tablesStreamVM.TableInfo.Columns;
 
-			output.Write(string.Format("{0}\t{1}\t{2}", dnSpy_AsmEditor_Resources.RowIdentifier, dnSpy_AsmEditor_Resources.Token, dnSpy_AsmEditor_Resources.Offset), TextTokenKind.Comment);
+			output.Write(string.Format("{0}\t{1}\t{2}", dnSpy_AsmEditor_Resources.RowIdentifier, dnSpy_AsmEditor_Resources.Token, dnSpy_AsmEditor_Resources.Offset), BoxedTextTokenKind.Comment);
 			for (int i = 0; i < cols.Count; i++) {
-				output.Write("\t", TextTokenKind.Comment);
-				output.Write(tablesStreamVM.GetColumnName(i), TextTokenKind.Comment);
+				output.Write("\t", BoxedTextTokenKind.Comment);
+				output.Write(tablesStreamVM.GetColumnName(i), BoxedTextTokenKind.Comment);
 			}
 			if (tablesStreamVM.HasInfo) {
-				output.Write("\t", TextTokenKind.Comment);
-				output.Write(tablesStreamVM.InfoName, TextTokenKind.Comment);
+				output.Write("\t", BoxedTextTokenKind.Comment);
+				output.Write(tablesStreamVM.InfoName, BoxedTextTokenKind.Comment);
 			}
 			output.WriteLine();
 		}
@@ -134,18 +134,18 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		public void Write(ITextOutput output, MetaDataTableRecordVM mdVM) {
 			var cols = tablesStreamVM.TableInfo.Columns;
 
-			output.Write(mdVM.RidString, TextTokenKind.Comment);
-			output.Write("\t", TextTokenKind.Comment);
-			output.Write(mdVM.TokenString, TextTokenKind.Comment);
-			output.Write("\t", TextTokenKind.Comment);
-			output.Write(mdVM.OffsetString, TextTokenKind.Comment);
+			output.Write(mdVM.RidString, BoxedTextTokenKind.Comment);
+			output.Write("\t", BoxedTextTokenKind.Comment);
+			output.Write(mdVM.TokenString, BoxedTextTokenKind.Comment);
+			output.Write("\t", BoxedTextTokenKind.Comment);
+			output.Write(mdVM.OffsetString, BoxedTextTokenKind.Comment);
 			for (int j = 0; j < cols.Count; j++) {
-				output.Write("\t", TextTokenKind.Comment);
-				output.Write(mdVM.GetField(j).DataFieldVM.StringValue, TextTokenKind.Comment);
+				output.Write("\t", BoxedTextTokenKind.Comment);
+				output.Write(mdVM.GetField(j).DataFieldVM.StringValue, BoxedTextTokenKind.Comment);
 			}
 			if (tablesStreamVM.HasInfo) {
-				output.Write("\t", TextTokenKind.Comment);
-				output.Write(mdVM.Info, TextTokenKind.Comment);
+				output.Write("\t", BoxedTextTokenKind.Comment);
+				output.Write(mdVM.Info, BoxedTextTokenKind.Comment);
 			}
 			output.WriteLine();
 		}

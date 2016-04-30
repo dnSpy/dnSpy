@@ -31,7 +31,7 @@ namespace dnSpy.Debugger.Exceptions {
 
 		public void WriteName(ExceptionVM vm) {
 			if (vm.ExceptionInfo.IsOtherExceptions)
-				output.Write(vm.Name, TextTokenKind.Text);
+				output.Write(vm.Name, BoxedTextTokenKind.Text);
 			else
 				WriteFullTypeName(vm.Name);
 		}
@@ -41,9 +41,9 @@ namespace dnSpy.Debugger.Exceptions {
 			SplitTypeName(fullName, out ns, out name);
 			if (!string.IsNullOrEmpty(ns)) {
 				output.WriteNamespace(ns);
-				output.Write(".", TextTokenKind.Operator);
+				output.Write(".", BoxedTextTokenKind.Operator);
 			}
-			output.Write(IdentifierEscaper.Escape(name), TextTokenKind.Type);
+			output.Write(IdentifierEscaper.Escape(name), BoxedTextTokenKind.Type);
 		}
 
 		static void SplitTypeName(string fullName, out string ns, out string name) {

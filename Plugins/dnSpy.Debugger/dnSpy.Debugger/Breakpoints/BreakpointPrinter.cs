@@ -58,14 +58,14 @@ namespace dnSpy.Debugger.Breakpoints {
 		void WriteILOffset(ISyntaxHighlightOutput output, uint offset) {
 			// Offsets are always in hex
 			if (offset <= ushort.MaxValue)
-				output.Write(string.Format(GetHexFormatUInt16(), offset), TextTokenKind.Number);
+				output.Write(string.Format(GetHexFormatUInt16(), offset), BoxedTextTokenKind.Number);
 			else
-				output.Write(string.Format(GetHexFormatUInt32(), offset), TextTokenKind.Number);
+				output.Write(string.Format(GetHexFormatUInt32(), offset), BoxedTextTokenKind.Number);
 		}
 
 		void WriteToken(ISyntaxHighlightOutput output, uint token) {
 			// Tokens are always in hex
-			output.Write(string.Format(GetHexFormatUInt32(), token), TextTokenKind.Number);
+			output.Write(string.Format(GetHexFormatUInt32(), token), BoxedTextTokenKind.Number);
 		}
 
 		public void WriteName(BreakpointVM vm) {
@@ -87,14 +87,14 @@ namespace dnSpy.Debugger.Breakpoints {
 				if (method == null) {
 					vm.NameError = true;
 					if (printedToken)
-						output.Write("???", TextTokenKind.Error);
+						output.Write("???", BoxedTextTokenKind.Error);
 					else
-						output.Write(string.Format("0x{0:X8}", ilbp.SerializedDnToken.Token), TextTokenKind.Number);
+						output.Write(string.Format("0x{0:X8}", ilbp.SerializedDnToken.Token), BoxedTextTokenKind.Number);
 				}
 				else
 					MethodLanguage.Write(output, method, GetFlags(vm.Context));
 				output.WriteSpace();
-				output.Write("+", TextTokenKind.Operator);
+				output.Write("+", BoxedTextTokenKind.Operator);
 				output.WriteSpace();
 				WriteILOffset(output, ilbp.ILOffset);
 				return;

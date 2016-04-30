@@ -50,23 +50,32 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public CancellationToken Token => token;
 		public IPrintOptions PrintOptions => printOptionsImpl;
 		public PrintOptionsImpl PrintOptionsImpl => printOptionsImpl;
-		public void Write(string text, OutputColor color) => Print(color, text);
-		public void PrintError(string text) => Print(OutputColor.Error, text);
-		public void PrintError(string fmt, params object[] args) => Print(OutputColor.Error, fmt, args);
-		public void PrintLineError(string text) => PrintLine(OutputColor.Error, text);
-		public void PrintLineError(string fmt, params object[] args) => PrintLine(OutputColor.Error, fmt, args);
-		public void Print(OutputColor color, string text) => owner.Print(this, color, text);
-		public void Print(string text) => Print(OutputColor.ReplScriptOutputText, text);
+		public void Write(string text, object color) => Print(color ?? BoxedOutputColor.ReplScriptOutputText, text);
+		public void Write(string text, OutputColor color) => Write(text, color.Box());
+		public void PrintError(string text) => Print(BoxedOutputColor.Error, text);
+		public void PrintError(string fmt, params object[] args) => Print(BoxedOutputColor.Error, fmt, args);
+		public void PrintLineError(string text) => PrintLine(BoxedOutputColor.Error, text);
+		public void PrintLineError(string fmt, params object[] args) => PrintLine(BoxedOutputColor.Error, fmt, args);
+		public void Print(object color, string text) => owner.Print(this, color ?? BoxedOutputColor.ReplScriptOutputText, text);
+		public void Print(OutputColor color, string text) => owner.Print(this, color.Box(), text);
+		public void Print(string text) => Print(BoxedOutputColor.ReplScriptOutputText, text);
+		public void Print(object color, string fmt, params object[] args) => Print(color ?? BoxedOutputColor.ReplScriptOutputText, string.Format(fmt, args));
 		public void Print(OutputColor color, string fmt, params object[] args) => Print(color, string.Format(fmt, args));
-		public void Print(string fmt, params object[] args) => Print(OutputColor.ReplScriptOutputText, fmt, args);
-		public void PrintLine(OutputColor color, string text) => owner.PrintLine(this, color, text);
-		public void PrintLine(string text = null) => PrintLine(OutputColor.ReplScriptOutputText, text);
+		public void Print(string fmt, params object[] args) => Print(BoxedOutputColor.ReplScriptOutputText, fmt, args);
+		public void PrintLine(object color, string text) => owner.PrintLine(this, color ?? BoxedOutputColor.ReplScriptOutputText, text);
+		public void PrintLine(OutputColor color, string text) => owner.PrintLine(this, color.Box(), text);
+		public void PrintLine(string text = null) => PrintLine(BoxedOutputColor.ReplScriptOutputText, text);
+		public void PrintLine(object color, string fmt, params object[] args) => PrintLine(color ?? BoxedOutputColor.ReplScriptOutputText, string.Format(fmt, args));
 		public void PrintLine(OutputColor color, string fmt, params object[] args) => PrintLine(color, string.Format(fmt, args));
-		public void PrintLine(string fmt, params object[] args) => PrintLine(OutputColor.ReplScriptOutputText, fmt, args);
-		public void Print(object value, OutputColor color) => owner.Print(this, color, printOptionsImpl, value);
-		public void PrintLine(object value, OutputColor color) => owner.PrintLine(this, color, printOptionsImpl, value);
-		public void Print(Exception ex, OutputColor color) => owner.Print(this, color, ex);
-		public void PrintLine(Exception ex, OutputColor color) => owner.PrintLine(this, color, ex);
+		public void PrintLine(string fmt, params object[] args) => PrintLine(BoxedOutputColor.ReplScriptOutputText, fmt, args);
+		public void Print(object value, object color) => owner.Print(this, color ?? BoxedOutputColor.ReplScriptOutputText, printOptionsImpl, value);
+		public void PrintLine(object value, object color) => owner.PrintLine(this, color ?? BoxedOutputColor.ReplScriptOutputText, printOptionsImpl, value);
+		public void Print(Exception ex, object color) => owner.Print(this, color ?? BoxedOutputColor.Error, ex);
+		public void PrintLine(Exception ex, object color) => owner.PrintLine(this, color ?? BoxedOutputColor.Error, ex);
+		public void Print(object value, OutputColor color) => owner.Print(this, color.Box(), printOptionsImpl, value);
+		public void PrintLine(object value, OutputColor color) => owner.PrintLine(this, color.Box(), printOptionsImpl, value);
+		public void Print(Exception ex, OutputColor color) => owner.Print(this, color.Box(), ex);
+		public void PrintLine(Exception ex, OutputColor color) => owner.PrintLine(this, color.Box(), ex);
 		public ICachedWriter CreateWriter() => new CachedWriter(this);
 		public void Write(List<ColorAndText> list) => owner.Write(this, list);
 		public Dispatcher UIDispatcher => dispatcher;
@@ -76,15 +85,15 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		public T Resolve<T>() => owner.ServiceLocator.Resolve<T>();
 		public T TryResolve<T>() => owner.ServiceLocator.TryResolve<T>();
 
-		public void Print(CachedWriter cw, Exception ex, OutputColor color) => owner.Print(this, cw, color, ex);
-		public void Print(CachedWriter cw, object value, OutputColor color) => owner.Print(this, cw, color, cw.PrintOptions, value);
+		public void Print(CachedWriter cw, Exception ex, object color) => owner.Print(this, cw, color, ex);
+		public void Print(CachedWriter cw, object value, object color) => owner.Print(this, cw, color, cw.PrintOptions, value);
 
-		public void PrintLine(CachedWriter cw, Exception ex, OutputColor color) {
+		public void PrintLine(CachedWriter cw, Exception ex, object color) {
 			Print(cw, ex, color);
 			PrintLine();
 		}
 
-		public void PrintLine(CachedWriter cw, object value, OutputColor color) {
+		public void PrintLine(CachedWriter cw, object value, object color) {
 			Print(cw, value, color);
 			PrintLine();
 		}

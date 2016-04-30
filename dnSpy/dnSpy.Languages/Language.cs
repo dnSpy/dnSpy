@@ -86,7 +86,7 @@ namespace dnSpy.Languages {
 			this.WriteCommentLine(output, string.Empty);
 			foreach (var type in types) {
 				this.WriteCommentBegin(output, true);
-				output.WriteReference(IdentifierEscaper.Escape(type.Name), type, TextTokenKind.Comment);
+				output.WriteReference(IdentifierEscaper.Escape(type.Name), type, BoxedTextTokenKind.Comment);
 				this.WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
@@ -107,7 +107,7 @@ namespace dnSpy.Languages {
 				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
 				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
-				output.Write(string.Format(Languages_Resources.Decompile_Timestamp, ts, dateString), TextTokenKind.Comment);
+				output.Write(string.Format(Languages_Resources.Decompile_Timestamp, ts, dateString), BoxedTextTokenKind.Comment);
 				this.WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
@@ -119,8 +119,8 @@ namespace dnSpy.Languages {
 			output.WriteLine();
 			if (mod.Types.Count > 0) {
 				this.WriteCommentBegin(output, true);
-				output.Write(Languages_Resources.Decompile_GlobalType + " ", TextTokenKind.Comment);
-				output.WriteReference(IdentifierEscaper.Escape(mod.GlobalType.FullName), mod.GlobalType, TextTokenKind.Comment);
+				output.Write(Languages_Resources.Decompile_GlobalType + " ", BoxedTextTokenKind.Comment);
+				output.WriteReference(IdentifierEscaper.Escape(mod.GlobalType.FullName), mod.GlobalType, BoxedTextTokenKind.Comment);
 				output.WriteLine();
 			}
 			this.PrintEntryPoint(mod, output);
@@ -138,7 +138,7 @@ namespace dnSpy.Languages {
 				uint ts = peImage.ImageNTHeaders.FileHeader.TimeDateStamp;
 				var date = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc).AddSeconds(ts);
 				var dateString = date.ToString(CultureInfo.CurrentUICulture.DateTimeFormat);
-				output.Write(string.Format(Languages_Resources.Decompile_Timestamp, ts, dateString), TextTokenKind.Comment);
+				output.Write(string.Format(Languages_Resources.Decompile_Timestamp, ts, dateString), BoxedTextTokenKind.Comment);
 				this.WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
@@ -173,12 +173,12 @@ namespace dnSpy.Languages {
 			else if (ep is MethodDef) {
 				var epMethod = (MethodDef)ep;
 				WriteCommentBegin(output, true);
-				output.Write(Languages_Resources.Decompile_EntryPoint + " ", TextTokenKind.Comment);
+				output.Write(Languages_Resources.Decompile_EntryPoint + " ", BoxedTextTokenKind.Comment);
 				if (epMethod.DeclaringType != null) {
-					output.WriteReference(IdentifierEscaper.Escape(epMethod.DeclaringType.FullName), epMethod.DeclaringType, TextTokenKind.Comment);
-					output.Write(".", TextTokenKind.Comment);
+					output.WriteReference(IdentifierEscaper.Escape(epMethod.DeclaringType.FullName), epMethod.DeclaringType, BoxedTextTokenKind.Comment);
+					output.Write(".", BoxedTextTokenKind.Comment);
 				}
-				output.WriteReference(IdentifierEscaper.Escape(epMethod.Name), epMethod, TextTokenKind.Comment);
+				output.WriteReference(IdentifierEscaper.Escape(epMethod.Name), epMethod, BoxedTextTokenKind.Comment);
 				WriteCommentEnd(output, true);
 				output.WriteLine();
 			}
@@ -213,16 +213,16 @@ namespace dnSpy.Languages {
 
 		protected void WriteCommentLineDeclaringType(ITextOutput output, IMemberDef member) {
 			WriteCommentBegin(output, true);
-			output.WriteReference(TypeToString(member.DeclaringType, includeNamespace: true), member.DeclaringType, TextTokenKind.Comment);
+			output.WriteReference(TypeToString(member.DeclaringType, includeNamespace: true), member.DeclaringType, BoxedTextTokenKind.Comment);
 			WriteCommentEnd(output, true);
 			output.WriteLine();
 		}
 
 		public virtual void WriteCommentBegin(ITextOutput output, bool addSpace) {
 			if (addSpace)
-				output.Write("// ", TextTokenKind.Comment);
+				output.Write("// ", BoxedTextTokenKind.Comment);
 			else
-				output.Write("//", TextTokenKind.Comment);
+				output.Write("//", BoxedTextTokenKind.Comment);
 		}
 
 		public virtual void WriteCommentEnd(ITextOutput output, bool addSpace) {

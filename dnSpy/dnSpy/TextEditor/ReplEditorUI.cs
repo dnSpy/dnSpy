@@ -37,7 +37,6 @@ using dnSpy.Shared.Highlighting;
 using ICSharpCode.AvalonEdit;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
-using ICSharpCode.AvalonEdit.Highlighting;
 using ICSharpCode.AvalonEdit.Rendering;
 
 namespace dnSpy.TextEditor {
@@ -48,6 +47,7 @@ namespace dnSpy.TextEditor {
 		public object Tag { get; set; }
 
 		readonly DnSpyTextEditor textEditor;
+		readonly DnSpyTextEditorColorizerHelper colorizerHelper;
 		readonly ReplEditorOptions options;
 		readonly Dispatcher dispatcher;
 
@@ -70,12 +70,13 @@ namespace dnSpy.TextEditor {
 			}
 		}
 
-		public ReplEditorUI(ReplEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings) {
+		public ReplEditorUI(ReplEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextBufferColorizerCreator textBufferColorizerCreator) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.options = (options ?? new ReplEditorOptions()).Clone();
 			this.subBuffers = new List<SubBuffer>();
-			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings);
-			this.textEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(".il");
+			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator);
+			this.colorizerHelper = new DnSpyTextEditorColorizerHelper(this.textEditor);
+			textEditor.TextBuffer.SetDefaultColorizer(colorizerHelper.CreateTextBufferColorizer());
 			this.textEditor.TextArea.AllowDrop = false;
 			AddNewDocument();
 			this.textEditor.TextArea.Document.UndoStack.SizeLimit = 100;
@@ -110,21 +111,21 @@ namespace dnSpy.TextEditor {
 		void WriteOffsetOfPrompt(int? newValue, bool force = false) {
 			if (force || offsetOfPrompt.HasValue != newValue.HasValue) {
 				if (newValue == null) {
-					Debug.Assert(scriptOutputTextTokenInfo == null);
-					scriptOutputTextTokenInfo = new TextTokenInfo();
+					Debug.Assert(scriptOutputCachedTextTokenColors == null);
+					scriptOutputCachedTextTokenColors = new CachedTextTokenColors();
 					Debug.Assert(LastLine.Length == 0);
-					textEditor.AddOrUpdate(LastLine.EndOffset, scriptOutputTextTokenInfo);
+					colorizerHelper.AddOrUpdate(LastLine.EndOffset, scriptOutputCachedTextTokenColors);
 				}
 				else {
-					Debug.Assert(scriptOutputTextTokenInfo != null);
-					scriptOutputTextTokenInfo?.Flush();
-					scriptOutputTextTokenInfo = null;
+					Debug.Assert(scriptOutputCachedTextTokenColors != null);
+					scriptOutputCachedTextTokenColors?.Flush();
+					scriptOutputCachedTextTokenColors = null;
 				}
 			}
 			offsetOfPrompt = newValue;
 		}
 		int? offsetOfPrompt;
-		TextTokenInfo scriptOutputTextTokenInfo;
+		CachedTextTokenColors scriptOutputCachedTextTokenColors;
 
 		public void Reset() {
 			ClearPendingOutput();
@@ -132,7 +133,7 @@ namespace dnSpy.TextEditor {
 			CreateEmptyLastLineIfNeededAndMoveCaret();
 			if (offsetOfPrompt != null)
 				AddCodeSubBuffer();
-			scriptOutputTextTokenInfo = null;
+			scriptOutputCachedTextTokenColors = null;
 			WriteOffsetOfPrompt(null, true);
 		}
 
@@ -545,11 +546,12 @@ namespace dnSpy.TextEditor {
 			docVersion++;
 			prevCommandTextChangedState?.Cancel();
 			subBuffers.Clear();
-			scriptOutputTextTokenInfo = null;
-			textEditor.ClearTextTokenInfos();
+			scriptOutputCachedTextTokenColors = null;
+			colorizerHelper.ClearCachedColors();
 			var doc = new TextDocument();
 			doc.Changed += TextDocument_Changed;
 			this.textEditor.TextArea.Document = doc;
+			this.textEditor.TextBuffer.RecreateColorizers();
 		}
 		int docVersion;
 
@@ -569,22 +571,22 @@ namespace dnSpy.TextEditor {
 			prevCommandTextChangedState = changedState;
 
 			try {
-				textEditor.SetAsyncUpdatingAfterChanges(baseOffset);
+				colorizerHelper.SetAsyncUpdatingAfterChanges(baseOffset);
 				await this.CommandHandler.OnCommandUpdatedAsync(buf, changedState.CancellationToken);
 
 				if (changedState.CancellationToken.IsCancellationRequested)
 					return;
-				var info = new TextTokenInfoCreator(options, totalLength).Create(buf.Input, buf.ColorInfos);
-				Debug.Assert(info.Length == totalLength);
+				var cachedColors = new CachedTextTokenColorsCreator(options, totalLength).Create(buf.Input, buf.ColorInfos);
+				Debug.Assert(cachedColors.Length == totalLength);
 				if (currentDocVersion == docVersion)
-					textEditor.AddOrUpdate(baseOffset, info);
+					colorizerHelper.AddOrUpdate(baseOffset, cachedColors);
 			}
 			catch (OperationCanceledException ex) when (ex.CancellationToken.Equals(changedState.CancellationToken)) {
 			}
 			catch (Exception ex) {
 				Debug.Fail("Exception: " + ex.Message);
 				if (currentDocVersion == docVersion)
-					textEditor.AddOrUpdate(baseOffset, new TextTokenInfo());
+					colorizerHelper.AddOrUpdate(baseOffset, new CachedTextTokenColors());
 			}
 			finally {
 				if (prevCommandTextChangedState == changedState)
@@ -729,16 +731,16 @@ namespace dnSpy.TextEditor {
 			bool isCommandMode = IsCommandMode;
 			if (isCommandMode) {
 				currentCommand = CurrentInput;
-				textEditor.RemoveLastTextTokenInfo();
+				colorizerHelper.RemoveLastCachedTextTokenColors();
 				ClearCurrentInput(true);
 			}
 			if (newPendingOutput != null) {
-				Debug.Assert(scriptOutputTextTokenInfo != null);
+				Debug.Assert(scriptOutputCachedTextTokenColors != null);
 				foreach (var info in newPendingOutput) {
 					sb.Append(info.Text);
-					scriptOutputTextTokenInfo?.Append(info.Color.ToTextTokenKind(), info.Text);
+					scriptOutputCachedTextTokenColors?.Append(info.Color, info.Text);
 				}
-				scriptOutputTextTokenInfo?.Flush();
+				scriptOutputCachedTextTokenColors?.Flush();
 			}
 			RawAppend(sb.ToString());
 			this.textEditor.TextArea.Caret.Offset = LastLine.EndOffset;
@@ -780,7 +782,10 @@ namespace dnSpy.TextEditor {
 			}
 		}
 
-		void IReplEditor.OutputPrint(string text, OutputColor color, bool startOnNewLine) {
+		void IReplEditor.OutputPrint(string text, OutputColor color, bool startOnNewLine) =>
+			((IReplEditor)this).OutputPrint(text, color.Box(), startOnNewLine);
+
+		void IReplEditor.OutputPrint(string text, object color, bool startOnNewLine) {
 			if (string.IsNullOrEmpty(text))
 				return;
 
@@ -789,10 +794,10 @@ namespace dnSpy.TextEditor {
 					if (pendingScriptOutput.Count > 0) {
 						var last = pendingScriptOutput[pendingScriptOutput.Count - 1];
 						if (last.Text.Length > 0 && last.Text[last.Text.Length - 1] != '\n')
-							pendingScriptOutput.Add(new ColorAndText(OutputColor.Text, Environment.NewLine));
+							pendingScriptOutput.Add(new ColorAndText(BoxedOutputColor.Text, Environment.NewLine));
 					}
 					else if (LastLine.Length != 0)
-						pendingScriptOutput.Add(new ColorAndText(OutputColor.Text, Environment.NewLine));
+						pendingScriptOutput.Add(new ColorAndText(BoxedOutputColor.Text, Environment.NewLine));
 				}
 				pendingScriptOutput.Add(new ColorAndText(color, text));
 			}
@@ -801,6 +806,9 @@ namespace dnSpy.TextEditor {
 		}
 
 		void IReplEditor.OutputPrintLine(string text, OutputColor color, bool startOnNewLine) =>
+			((IReplEditor)this).OutputPrint(text + Environment.NewLine, color.Box(), startOnNewLine);
+
+		void IReplEditor.OutputPrintLine(string text, object color, bool startOnNewLine) =>
 			((IReplEditor)this).OutputPrint(text + Environment.NewLine, color, startOnNewLine);
 
 		void IReplEditor.OutputPrint(IEnumerable<ColorAndText> text) {
@@ -1029,49 +1037,49 @@ namespace dnSpy.TextEditor {
 		}
 	}
 
-	struct TextTokenInfoCreator {
+	struct CachedTextTokenColorsCreator {
 		static readonly char[] newLineChars = new char[] { '\r', '\n' };
 		readonly ReplEditorOptions options;
-		readonly TextTokenInfo info;
+		readonly CachedTextTokenColors cachedColors;
 		readonly int totalLength;
 
-		public TextTokenInfoCreator(ReplEditorOptions options, int totalLength) {
+		public CachedTextTokenColorsCreator(ReplEditorOptions options, int totalLength) {
 			this.options = options;
-			this.info = new TextTokenInfo();
+			this.cachedColors = new CachedTextTokenColors();
 			this.totalLength = totalLength;
 		}
 
-		public TextTokenInfo Create(string command, List<ColorOffsetInfo> colorInfos) {
-			info.Append(TextTokenKind.ReplPrompt1, options.PromptText);
+		public CachedTextTokenColors Create(string command, List<ColorOffsetInfo> colorInfos) {
+			cachedColors.Append(BoxedTextTokenKind.ReplPrompt1, options.PromptText);
 			int cmdOffs = 0;
 			foreach (var cinfo in colorInfos) {
 				Debug.Assert(cmdOffs <= cinfo.Offset);
 				if (cmdOffs < cinfo.Offset)
-					Append(OutputColor.Text, command, cmdOffs, cinfo.Offset - cmdOffs);
+					Append(BoxedOutputColor.Text, command, cmdOffs, cinfo.Offset - cmdOffs);
 				Append(cinfo.Color, command, cinfo.Offset, cinfo.Length);
 				cmdOffs = cinfo.Offset + cinfo.Length;
 			}
 			if (cmdOffs < command.Length)
-				Append(OutputColor.Text, command, cmdOffs, command.Length - cmdOffs);
+				Append(BoxedOutputColor.Text, command, cmdOffs, command.Length - cmdOffs);
 
-			info.Finish();
-			return info;
+			cachedColors.Finish();
+			return cachedColors;
 		}
 
-		void Append(OutputColor color, string s, int offset, int length) {
+		void Append(object color, string s, int offset, int length) {
 			int so = offset;
 			int end = offset + length;
 			while (so < end) {
 				int nlOffs = s.IndexOfAny(newLineChars, so, end - so);
 				if (nlOffs >= 0) {
 					int nlLen = s[nlOffs] == '\r' && nlOffs + 1 < end && s[nlOffs + 1] == '\n' ? 2 : 1;
-					info.Append(color.ToTextTokenKind(), s, so, nlOffs - so + nlLen);
+					cachedColors.Append(color, s, so, nlOffs - so + nlLen);
 					so = nlOffs + nlLen;
-					if (info.Length < totalLength)
-						info.Append(TextTokenKind.ReplPrompt2, options.ContinueText);
+					if (cachedColors.Length < totalLength)
+						cachedColors.Append(BoxedTextTokenKind.ReplPrompt2, options.ContinueText);
 				}
 				else {
-					info.Append(color.ToTextTokenKind(), s, so, end - so);
+					cachedColors.Append(color, s, so, end - so);
 					break;
 				}
 			}
@@ -1123,9 +1131,11 @@ namespace dnSpy.TextEditor {
 			this.colorInfos = new List<ColorOffsetInfo>();
 		}
 
-		public void AddColor(int offset, int length, OutputColor color) {
+		public void AddColor(int offset, int length, object color) =>
 			AddColor(new ColorOffsetInfo(offset, length, color));
-		}
+
+		public void AddColor(int offset, int length, OutputColor color) =>
+			AddColor(new ColorOffsetInfo(offset, length, color));
 
 		public void AddColor(ColorOffsetInfo info) {
 #if DEBUG

@@ -19,7 +19,6 @@
 
 using dndbg.Engine;
 using dnSpy.Contracts.Scripting;
-using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Debugger {
 	sealed class OutputWriterConverter : ITypeOutput {
@@ -29,12 +28,6 @@ namespace dnSpy.Debugger {
 			this.output = output;
 		}
 
-		public void Write(string s, TypeColor type) {
-			output.Write(s, Convert(type));
-		}
-
-		static OutputColor Convert(TypeColor color) {
-			return (OutputColor)OutputConverter.Convert(color);
-		}
+		public void Write(string s, TypeColor type) => output.Write(s, OutputConverter.Convert(type));
 	}
 }

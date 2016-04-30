@@ -197,9 +197,9 @@ namespace dnSpy.Files.TreeView.Resources {
 						Source = imageSource,
 					};
 				});
-				output.Write(" = ", TextTokenKind.Comment);
+				output.Write(" = ", BoxedTextTokenKind.Comment);
 				const string LTR = "\u200E";
-				output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, TextTokenKind.Comment);
+				output.WriteDefinition(NameUtils.CleanName(Name) + LTR, this, BoxedTextTokenKind.Comment);
 				language.WriteCommentEnd(output, true);
 				output.WriteLine();
 				return;

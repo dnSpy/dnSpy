@@ -35,9 +35,22 @@ namespace dnSpy.Contracts.TextEditor {
 		public int Length { get; }
 
 		/// <summary>
-		/// Kind
+		/// Color
 		/// </summary>
-		public OutputColor Color { get; }
+		public object Color { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="offset">Offset</param>
+		/// <param name="length">Length</param>
+		/// <param name="color">Color</param>
+		public ColorOffsetInfo(int offset, int length, object color) {
+			Debug.Assert(offset + length >= offset && length >= 0);
+			Offset = offset;
+			Length = length;
+			Color = color;
+		}
 
 		/// <summary>
 		/// Constructor
@@ -49,7 +62,7 @@ namespace dnSpy.Contracts.TextEditor {
 			Debug.Assert(offset + length >= offset && length >= 0);
 			Offset = offset;
 			Length = length;
-			Color = color;
+			Color = color.Box();
 		}
 	}
 }

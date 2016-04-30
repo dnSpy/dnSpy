@@ -162,10 +162,10 @@ namespace dnSpy.Languages.CSharp {
 			"using", "virtual", "void", "volatile", "while",
 		};
 
-		void WriteIdentifier(string id, TextTokenKind tokenKind) {
+		void WriteIdentifier(string id, object data) {
 			if (isKeyword.Contains(id))
-				OutputWrite("@", TextTokenKind.Operator);
-			OutputWrite(IdentifierEscaper.Escape(id), tokenKind);
+				OutputWrite("@", BoxedTextTokenKind.Operator);
+			OutputWrite(IdentifierEscaper.Escape(id), data);
 		}
 
 		static string RemoveGenericTick(string s) {
@@ -185,7 +185,7 @@ namespace dnSpy.Languages.CSharp {
 			return s.Substring(index + 1);
 		}
 
-		void OutputWrite(string s, TextTokenKind color) {
+		void OutputWrite(string s, object data) {
 			if (!forceWrite) {
 				if (outputLengthExceeded)
 					return;
@@ -195,44 +195,44 @@ namespace dnSpy.Languages.CSharp {
 					outputLengthExceeded = true;
 				}
 			}
-			output.Write(s, color);
+			output.Write(s, data);
 			lineLength += s.Length;
 		}
 
 		void WriteSpace() {
-			OutputWrite(" ", TextTokenKind.Text);
+			OutputWrite(" ", BoxedTextTokenKind.Text);
 		}
 
 		void WriteCommaSpace() {
-			OutputWrite(",", TextTokenKind.Operator);
+			OutputWrite(",", BoxedTextTokenKind.Operator);
 			WriteSpace();
 		}
 
 		void WritePeriod() {
-			OutputWrite(".", TextTokenKind.Operator);
+			OutputWrite(".", BoxedTextTokenKind.Operator);
 		}
 
 		void WriteError() {
-			OutputWrite("???", TextTokenKind.Error);
+			OutputWrite("???", BoxedTextTokenKind.Error);
 		}
 
 		void WriteNumber(object value) {
-			OutputWrite(ConvertNumberToString(value), TextTokenKind.Number);
+			OutputWrite(ConvertNumberToString(value), BoxedTextTokenKind.Number);
 		}
 
 		void WriteSystemTypeKeyword(string name, string keyword) {
 			if (ShowTypeKeywords)
-				OutputWrite(keyword, TextTokenKind.Keyword);
+				OutputWrite(keyword, BoxedTextTokenKind.Keyword);
 			else
 				WriteSystemType(name);
 		}
 
 		void WriteSystemType(string name) {
 			if (ShowNamespaces) {
-				OutputWrite("System", TextTokenKind.NamespacePart);
-				OutputWrite(".", TextTokenKind.Operator);
+				OutputWrite("System", BoxedTextTokenKind.Namespace);
+				OutputWrite(".", BoxedTextTokenKind.Operator);
 			}
-			OutputWrite(name, TextTokenKind.Type);
+			OutputWrite(name, BoxedTextTokenKind.Type);
 		}
 
 		string ConvertNumberToString(object value) {
@@ -263,7 +263,7 @@ namespace dnSpy.Languages.CSharp {
 			Debug.Assert(tok != null);
 			if (tok == null)
 				return;
-			OutputWrite(string.Format("/*0x{0:X8}*/", tok.MDToken.Raw), TextTokenKind.Comment);
+			OutputWrite(string.Format("/*0x{0:X8}*/", tok.MDToken.Raw), BoxedTextTokenKind.Comment);
 		}
 
 		public void WriteToolTip(IMemberRef member) {
@@ -368,9 +368,9 @@ namespace dnSpy.Languages.CSharp {
 			if (td != null) {
 				int overloads = GetNumberOfOverloads(td, method.Name);
 				if (overloads == 1)
-					OutputWrite(string.Format(" (+ {0})", Languages_Resources.ToolTip_OneMethodOverload), TextTokenKind.Text);
+					OutputWrite(string.Format(" (+ {0})", Languages_Resources.ToolTip_OneMethodOverload), BoxedTextTokenKind.Text);
 				else if (overloads > 1)
-					OutputWrite(string.Format(" (+ {0})", string.Format(Languages_Resources.ToolTip_NMethodOverloads, overloads)), TextTokenKind.Text);
+					OutputWrite(string.Format(" (+ {0})", string.Format(Languages_Resources.ToolTip_NMethodOverloads, overloads)), BoxedTextTokenKind.Text);
 			}
 		}
 
@@ -414,32 +414,32 @@ namespace dnSpy.Languages.CSharp {
 					this.flags |= SimplePrinterFlags.ShowNamespaces;
 				Write(type.DeclaringType);
 				this.flags = oldFlags;
-				OutputWrite(".", TextTokenKind.Operator);
+				OutputWrite(".", BoxedTextTokenKind.Operator);
 				numGenParams = numGenParams - td.DeclaringType.GenericParameters.Count;
 				if (numGenParams < 0)
 					numGenParams = 0;
 			}
 			else if (useNamespaces && !UTF8String.IsNullOrEmpty(td.Namespace)) {
 				foreach (var ns in td.Namespace.String.Split('.')) {
-					WriteIdentifier(ns, TextTokenKind.NamespacePart);
-					OutputWrite(".", TextTokenKind.Operator);
+					WriteIdentifier(ns, BoxedTextTokenKind.Namespace);
+					OutputWrite(".", BoxedTextTokenKind.Operator);
 				}
 			}
 
 			WriteIdentifier(RemoveGenericTick(td.Name), TextTokenKindUtils.GetTextTokenKind(td));
 			WriteToken(type);
 			var genParams = td.GenericParameters.Skip(td.GenericParameters.Count - numGenParams).ToArray();
-			WriteGenerics(genParams, TextTokenKind.TypeGenericParameter);
+			WriteGenerics(genParams, BoxedTextTokenKind.TypeGenericParameter);
 		}
 
 		bool WriteRefIfByRef(TypeSig typeSig, ParamDef pd) {
 			if (typeSig.RemovePinnedAndModifiers() is ByRefSig) {
 				if (pd != null && (!pd.IsIn && pd.IsOut)) {
-					OutputWrite("out", TextTokenKind.Keyword);
+					OutputWrite("out", BoxedTextTokenKind.Keyword);
 					WriteSpace();
 				}
 				else {
-					OutputWrite("ref", TextTokenKind.Keyword);
+					OutputWrite("ref", BoxedTextTokenKind.Keyword);
 					WriteSpace();
 				}
 				return true;
@@ -459,14 +459,14 @@ namespace dnSpy.Languages.CSharp {
 
 			if (ShowOwnerTypes) {
 				Write(method.DeclaringType);
-				OutputWrite(".", TextTokenKind.Operator);
+				OutputWrite(".", BoxedTextTokenKind.Operator);
 			}
 			if (info.MethodDef != null && info.MethodDef.IsConstructor && method.DeclaringType != null)
 				WriteIdentifier(RemoveGenericTick(method.DeclaringType.Name), TextTokenKindUtils.GetTextTokenKind(method));
 			else if (info.MethodDef != null && info.MethodDef.Overrides.Count > 0) {
 				var ovrMeth = (IMemberRef)info.MethodDef.Overrides[0].MethodDeclaration;
 				WriteType(ovrMeth.DeclaringType, false, ShowTypeKeywords);
-				OutputWrite(".", TextTokenKind.Operator);
+				OutputWrite(".", BoxedTextTokenKind.Operator);
 				WriteMethodName(method, ovrMeth.Name);
 			}
 			else
@@ -484,7 +484,7 @@ namespace dnSpy.Languages.CSharp {
 					if (i > 0)
 						WriteSpace();
 					var s = list[i];
-					OutputWrite(s, 'a' <= s[0] && s[0] <= 'z' ? TextTokenKind.Keyword : TextTokenKind.Operator);
+					OutputWrite(s, 'a' <= s[0] && s[0] <= 'z' ? BoxedTextTokenKind.Keyword : BoxedTextTokenKind.Operator);
 				}
 			}
 			else
@@ -512,20 +512,20 @@ namespace dnSpy.Languages.CSharp {
 			var fd = field.ResolveFieldDef();
 			if (!isEnumOwner || (fd != null && !fd.IsLiteral)) {
 				if (isToolTip)
-					OutputWrite(string.Format("({0})", fd != null && fd.IsLiteral ? Languages_Resources.ToolTip_Constant : Languages_Resources.ToolTip_Field), TextTokenKind.Text);
+					OutputWrite(string.Format("({0})", fd != null && fd.IsLiteral ? Languages_Resources.ToolTip_Constant : Languages_Resources.ToolTip_Field), BoxedTextTokenKind.Text);
 				WriteSpace();
 				Write(sig.Type, null, null, null);
 				WriteSpace();
 			}
 			if (ShowOwnerTypes) {
 				Write(field.DeclaringType);
-				OutputWrite(".", TextTokenKind.Operator);
+				OutputWrite(".", BoxedTextTokenKind.Operator);
 			}
 			WriteIdentifier(field.Name, TextTokenKindUtils.GetTextTokenKind(field));
 			WriteToken(field);
 			if (ShowFieldLiteralValues && fd != null && fd.IsLiteral && fd.Constant != null) {
 				WriteSpace();
-				OutputWrite("=", TextTokenKind.Operator);
+				OutputWrite("=", BoxedTextTokenKind.Operator);
 				WriteSpace();
 				WriteConstant(fd.Constant.Value);
 			}
@@ -533,66 +533,66 @@ namespace dnSpy.Languages.CSharp {
 
 		void WriteConstant(object obj) {
 			if (obj == null) {
-				OutputWrite("null", TextTokenKind.Keyword);
+				OutputWrite("null", BoxedTextTokenKind.Keyword);
 				return;
 			}
 
 			switch (Type.GetTypeCode(obj.GetType())) {
 			case TypeCode.Boolean:
-				OutputWrite((bool)obj ? "true" : "false", TextTokenKind.Keyword);
+				OutputWrite((bool)obj ? "true" : "false", BoxedTextTokenKind.Keyword);
 				break;
 
 			case TypeCode.Char:
-				OutputWrite(NumberVMUtils.ToString((char)obj), TextTokenKind.Char);
+				OutputWrite(NumberVMUtils.ToString((char)obj), BoxedTextTokenKind.Char);
 				break;
 
 			case TypeCode.SByte:
-				OutputWrite(NumberVMUtils.ToString((sbyte)obj, sbyte.MinValue, sbyte.MaxValue, UseDecimal), TextTokenKind.Number);
+				OutputWrite(NumberVMUtils.ToString((sbyte)obj, sbyte.MinValue, sbyte.MaxValue, UseDecimal), BoxedTextTokenKind.Number);
 				break;
 
 			case TypeCode.Byte:
-				OutputWrite(NumberVMUtils.ToString((byte)obj, byte.MinValue, byte.MaxValue, UseDecimal), TextTokenKind.Number);
+				OutputWrite(NumberVMUtils.ToString((byte)obj, byte.MinValue, byte.MaxValue, UseDecimal), BoxedTextTokenKind.Number);
 				break;
 
 			case TypeCode.Int16:
-				OutputWrite(NumberVMUtils.ToString((short)obj, short.MinValue, short.MaxValue, UseDecimal), TextTokenKind.Number);
+				OutputWrite(NumberVMUtils.ToString((short)obj, short.MinValue, short.MaxValue, UseDecimal), BoxedTextTokenKind.Number);
 				break;
 
 			case TypeCode.UInt16:
-				OutputWrite(NumberVMUtils.ToString((ushort)obj, ushort.MinValue, ushort.MaxValue, UseDecimal), TextTokenKind.Number);
+				OutputWrite(NumberVMUtils.ToString((ushort)obj, ushort.MinValue, ushort.MaxValue, UseDecimal), BoxedTextTokenKind.Number);
 				break;
 
 			case TypeCode.Int32:
-				OutputWrite(NumberVMUtils.ToString((int)obj, int.MinValue, int.MaxValue, UseDecimal), TextTokenKind.Number);
+				OutputWrite(NumberVMUtils.ToString((int)obj, int.MinValue, int.MaxValue, UseDecimal), BoxedTextTokenKind.Number);
 				break;
 
 			case TypeCode.UInt32:
-				OutputWrite(NumberVMUtils.ToString((uint)obj, uint.MinValue, uint.MaxValue, UseDecimal), TextTokenKind.Number);
+				OutputWrite(NumberVMUtils.ToString((uint)obj, uint.MinValue, uint.MaxValue, UseDecimal), BoxedTextTokenKind.Number);
 				break;
 
 			case TypeCode.Int64:
-				OutputWrite(NumberVMUtils.ToString((long)obj, long.MinValue, long.MaxValue, UseDecimal), TextTokenKind.Number);
+				OutputWrite(NumberVMUtils.ToString((long)obj, long.MinValue, long.MaxValue, UseDecimal), BoxedTextTokenKind.Number);
 				break;
 
 			case TypeCode.UInt64:
-				OutputWrite(NumberVMUtils.ToString((ulong)obj, ulong.MinValue, ulong.MaxValue, UseDecimal), TextTokenKind.Number);
+				OutputWrite(NumberVMUtils.ToString((ulong)obj, ulong.MinValue, ulong.MaxValue, UseDecimal), BoxedTextTokenKind.Number);
 				break;
 
 			case TypeCode.Single:
-				OutputWrite(NumberVMUtils.ToString((float)obj), TextTokenKind.Number);
+				OutputWrite(NumberVMUtils.ToString((float)obj), BoxedTextTokenKind.Number);
 				break;
 
 			case TypeCode.Double:
-				OutputWrite(NumberVMUtils.ToString((double)obj), TextTokenKind.Number);
+				OutputWrite(NumberVMUtils.ToString((double)obj), BoxedTextTokenKind.Number);
 				break;
 
 			case TypeCode.String:
-				OutputWrite(NumberVMUtils.ToString((string)obj, true), TextTokenKind.String);
+				OutputWrite(NumberVMUtils.ToString((string)obj, true), BoxedTextTokenKind.String);
 				break;
 
 			default:
 				Debug.Fail(string.Format("Unknown constant: '{0}'", obj));
-				OutputWrite(obj.ToString(), TextTokenKind.Text);
+				OutputWrite(obj.ToString(), BoxedTextTokenKind.Text);
 				break;
 			}
 		}
@@ -620,21 +620,21 @@ namespace dnSpy.Languages.CSharp {
 			WriteReturnType(info);
 			if (ShowOwnerTypes) {
 				Write(prop.DeclaringType);
-				OutputWrite(".", TextTokenKind.Operator);
+				OutputWrite(".", BoxedTextTokenKind.Operator);
 			}
 			var ovrMeth = md == null || md.Overrides.Count == 0 ? null : md.Overrides[0].MethodDeclaration;
 			if (prop.IsIndexer()) {
 				if (ovrMeth != null) {
 					WriteType(ovrMeth.DeclaringType, false, ShowTypeKeywords);
-					OutputWrite(".", TextTokenKind.Operator);
+					OutputWrite(".", BoxedTextTokenKind.Operator);
 				}
-				OutputWrite("this", TextTokenKind.Keyword);
+				OutputWrite("this", BoxedTextTokenKind.Keyword);
 				WriteGenericArguments(info);
 				WriteMethodParameterList(info, "[", "]");
 			}
 			else if (ovrMeth != null && GetPropName(ovrMeth) != null) {
 				WriteType(ovrMeth.DeclaringType, false, ShowTypeKeywords);
-				OutputWrite(".", TextTokenKind.Operator);
+				OutputWrite(".", BoxedTextTokenKind.Operator);
 				WriteIdentifier(GetPropName(ovrMeth), TextTokenKindUtils.GetTextTokenKind(prop));
 			}
 			else
@@ -642,19 +642,19 @@ namespace dnSpy.Languages.CSharp {
 			WriteToken(prop);
 
 			WriteSpace();
-			OutputWrite("{", TextTokenKind.Operator);
+			OutputWrite("{", BoxedTextTokenKind.Operator);
 			if (prop.GetMethods.Count > 0) {
 				WriteSpace();
-				OutputWrite("get", TextTokenKind.Keyword);
-				OutputWrite(";", TextTokenKind.Operator);
+				OutputWrite("get", BoxedTextTokenKind.Keyword);
+				OutputWrite(";", BoxedTextTokenKind.Operator);
 			}
 			if (prop.SetMethods.Count > 0) {
 				WriteSpace();
-				OutputWrite("set", TextTokenKind.Keyword);
-				OutputWrite(";", TextTokenKind.Operator);
+				OutputWrite("set", BoxedTextTokenKind.Keyword);
+				OutputWrite(";", BoxedTextTokenKind.Operator);
 			}
 			WriteSpace();
-			OutputWrite("}", TextTokenKind.Operator);
+			OutputWrite("}", BoxedTextTokenKind.Operator);
 		}
 
 		static string GetPropName(IMethod method) {
@@ -680,7 +680,7 @@ namespace dnSpy.Languages.CSharp {
 			WriteSpace();
 			if (ShowOwnerTypes) {
 				Write(evt.DeclaringType);
-				OutputWrite(".", TextTokenKind.Operator);
+				OutputWrite(".", BoxedTextTokenKind.Operator);
 			}
 			WriteIdentifier(evt.Name, TextTokenKindUtils.GetTextTokenKind(evt));
 			WriteToken(evt);
@@ -694,7 +694,7 @@ namespace dnSpy.Languages.CSharp {
 
 			Write(gp);
 			WriteSpace();
-			OutputWrite(Languages_Resources.ToolTip_GenericParameterInTypeOrMethod, TextTokenKind.Text);
+			OutputWrite(Languages_Resources.ToolTip_GenericParameterInTypeOrMethod, BoxedTextTokenKind.Text);
 			WriteSpace();
 
 			var td = gp.Owner as TypeDef;
@@ -719,7 +719,7 @@ namespace dnSpy.Languages.CSharp {
 
 			MethodDef invoke;
 			if (IsDelegate(td) && (invoke = td.FindMethod("Invoke")) != null && invoke.MethodSig != null) {
-				OutputWrite("delegate", TextTokenKind.Keyword);
+				OutputWrite("delegate", BoxedTextTokenKind.Keyword);
 				WriteSpace();
 
 				var info = new MethodInfo(invoke);
@@ -748,7 +748,7 @@ namespace dnSpy.Languages.CSharp {
 				keyword = "interface";
 			else
 				keyword = "class";
-			OutputWrite(keyword, TextTokenKind.Keyword);
+			OutputWrite(keyword, BoxedTextTokenKind.Keyword);
 			WriteSpace();
 
 			// Always print the namespace here because that's what VS does
@@ -778,7 +778,7 @@ namespace dnSpy.Languages.CSharp {
 
 				string keyword = GetTypeKeyword(type);
 				if (keyword != null)
-					OutputWrite(keyword, TextTokenKind.Keyword);
+					OutputWrite(keyword, BoxedTextTokenKind.Keyword);
 				else {
 					WriteNamespace(type.Namespace);
 					WriteIdentifier(RemoveGenericTick(type.Name), TextTokenKindUtils.GetTextTokenKind(type));
@@ -795,7 +795,7 @@ namespace dnSpy.Languages.CSharp {
 				return;
 			var namespaces = ns.Split(nsSep);
 			for (int i = 0; i < namespaces.Length; i++) {
-				OutputWrite(namespaces[i], TextTokenKind.NamespacePart);
+				OutputWrite(namespaces[i], BoxedTextTokenKind.Namespace);
 				WritePeriod();
 			}
 		}
@@ -862,13 +862,13 @@ namespace dnSpy.Languages.CSharp {
 					Write(list[list.Count - 1].Next, typeGenArgs, methGenArgs);
 					foreach (var aryType in list) {
 						if (aryType.ElementType == ElementType.Array) {
-							OutputWrite("[", TextTokenKind.Operator);
+							OutputWrite("[", BoxedTextTokenKind.Operator);
 							uint rank = aryType.Rank;
 							if (rank == 0)
-								OutputWrite("<RANK0>", TextTokenKind.Error);
+								OutputWrite("<RANK0>", BoxedTextTokenKind.Error);
 							else {
 								if (rank == 1)
-									OutputWrite("*", TextTokenKind.Operator);
+									OutputWrite("*", BoxedTextTokenKind.Operator);
 								var indexes = aryType.GetLowerBounds();
 								var dims = aryType.GetSizes();
 								if (ShowArrayValueSizes) {
@@ -880,23 +880,23 @@ namespace dnSpy.Languages.CSharp {
 										else if (i < indexes.Count && i < dims.Count) {
 											//TODO: How does VS print these arrays?
 											WriteNumber((int)indexes[i]);
-											OutputWrite("..", TextTokenKind.Operator);
+											OutputWrite("..", BoxedTextTokenKind.Operator);
 											WriteNumber((int)(indexes[i] + dims[i]));
 										}
 									}
 								}
 								else {
 									for (uint i = 1; i < rank; i++)
-										OutputWrite(",", TextTokenKind.Operator);
+										OutputWrite(",", BoxedTextTokenKind.Operator);
 								}
 								for (uint i = 1; i < rank; i++)
-									OutputWrite(",", TextTokenKind.Operator);
+									OutputWrite(",", BoxedTextTokenKind.Operator);
 							}
-							OutputWrite("]", TextTokenKind.Operator);
+							OutputWrite("]", BoxedTextTokenKind.Operator);
 						}
 						else {
 							Debug.Assert(aryType.ElementType == ElementType.SZArray);
-							OutputWrite("[]", TextTokenKind.Operator);
+							OutputWrite("[]", BoxedTextTokenKind.Operator);
 						}
 					}
 					return;
@@ -925,12 +925,12 @@ namespace dnSpy.Languages.CSharp {
 
 				case ElementType.Ptr:
 					Write(type.Next, typeGenArgs, methGenArgs);
-					OutputWrite("*", TextTokenKind.Operator);
+					OutputWrite("*", BoxedTextTokenKind.Operator);
 					break;
 
 				case ElementType.ByRef:
 					Write(type.Next, typeGenArgs, methGenArgs);
-					OutputWrite("&", TextTokenKind.Operator);
+					OutputWrite("&", BoxedTextTokenKind.Operator);
 					break;
 
 				case ElementType.ValueType:
@@ -954,22 +954,22 @@ namespace dnSpy.Languages.CSharp {
 					var gis = (GenericInstSig)type;
 					if (IsSystemNullable(gis)) {
 						Write(gis.GenericArguments[0], typeGenArgs, methGenArgs);
-						OutputWrite("?", TextTokenKind.Operator);
+						OutputWrite("?", BoxedTextTokenKind.Operator);
 					}
 					else {
 						Write(gis.GenericType, typeGenArgs, methGenArgs);
-						OutputWrite("<", TextTokenKind.Operator);
+						OutputWrite("<", BoxedTextTokenKind.Operator);
 						for (int i = 0; i < gis.GenericArguments.Count; i++) {
 							if (i > 0)
 								WriteCommaSpace();
 							Write(gis.GenericArguments[i], typeGenArgs, methGenArgs);
 						}
-						OutputWrite(">", TextTokenKind.Operator);
+						OutputWrite(">", BoxedTextTokenKind.Operator);
 					}
 					break;
 
 				case ElementType.FnPtr:
-					OutputWrite("fnptr", TextTokenKind.Keyword);
+					OutputWrite("fnptr", BoxedTextTokenKind.Keyword);
 					break;
 
 				case ElementType.CModReqd:
@@ -1008,10 +1008,10 @@ namespace dnSpy.Languages.CSharp {
 			}
 
 			var isLocal = variable is Local;
-			OutputWrite(string.Format("({0}) ", isLocal ? Languages_Resources.ToolTip_Local : Languages_Resources.ToolTip_Parameter), TextTokenKind.Text);
+			OutputWrite(string.Format("({0}) ", isLocal ? Languages_Resources.ToolTip_Local : Languages_Resources.ToolTip_Parameter), BoxedTextTokenKind.Text);
 			Write(variable.Type, !isLocal ? ((Parameter)variable).ParamDef : null, null, null);
 			WriteSpace();
-			WriteIdentifier(GetName(variable, name), isLocal ? TextTokenKind.Local : TextTokenKind.Parameter);
+			WriteIdentifier(GetName(variable, name), isLocal ? BoxedTextTokenKind.Local : BoxedTextTokenKind.Parameter);
 			var p = variable as Parameter;
 			var pd = p == null ? null : p.ParamDef;
 			if (pd != null)
@@ -1068,12 +1068,12 @@ namespace dnSpy.Languages.CSharp {
 				if (recursionCounter++ >= MAX_RECURSION)
 					return;
 				if (module == null) {
-					OutputWrite("null module", TextTokenKind.Error);
+					OutputWrite("null module", BoxedTextTokenKind.Error);
 					return;
 				}
 
 				var name = GetFileName(module.Location);
-				OutputWrite(FilterName(name), TextTokenKind.Module);
+				OutputWrite(FilterName(name), BoxedTextTokenKind.Module);
 			}
 			finally {
 				recursionCounter--;
@@ -1085,7 +1085,7 @@ namespace dnSpy.Languages.CSharp {
 				return;
 
 			Write(info.ModuleDef);
-			OutputWrite("!", TextTokenKind.Operator);
+			OutputWrite("!", BoxedTextTokenKind.Operator);
 			return;
 		}
 
@@ -1116,9 +1116,9 @@ namespace dnSpy.Languages.CSharp {
 		void WriteGenericArguments(MethodInfo info) {
 			if (info.MethodSig.GenParamCount > 0) {
 				if (info.MethodGenericParams != null)
-					WriteGenerics(info.MethodGenericParams, TextTokenKind.MethodGenericParameter, GenericParamContext.Create(info.MethodDef));
+					WriteGenerics(info.MethodGenericParams, BoxedTextTokenKind.MethodGenericParameter, GenericParamContext.Create(info.MethodDef));
 				else if (info.MethodDef != null)
-					WriteGenerics(info.MethodDef.GenericParameters, TextTokenKind.MethodGenericParameter);
+					WriteGenerics(info.MethodDef.GenericParameters, BoxedTextTokenKind.MethodGenericParameter);
 			}
 		}
 
@@ -1126,7 +1126,7 @@ namespace dnSpy.Languages.CSharp {
 			if (!ShowParameterTypes && !ShowParameterNames)
 				return;
 
-			OutputWrite(lparen, TextTokenKind.Operator);
+			OutputWrite(lparen, BoxedTextTokenKind.Operator);
 			int baseIndex = info.MethodSig.HasThis ? 1 : 0;
 			int count = info.MethodSig.Params.Count;
 			if (info.RetTypeIsLastArgType)
@@ -1144,7 +1144,7 @@ namespace dnSpy.Languages.CSharp {
 					needSpace = true;
 
 					if (pd != null && pd.CustomAttributes.IsDefined("System.ParamArrayAttribute")) {
-						OutputWrite("params", TextTokenKind.Keyword);
+						OutputWrite("params", BoxedTextTokenKind.Keyword);
 						WriteSpace();
 					}
 					var paramType = info.MethodSig.Params[i];
@@ -1156,11 +1156,11 @@ namespace dnSpy.Languages.CSharp {
 					needSpace = true;
 
 					if (pd != null) {
-						WriteIdentifier(pd.Name, TextTokenKind.Parameter);
+						WriteIdentifier(pd.Name, BoxedTextTokenKind.Parameter);
 						WriteToken(pd);
 					}
 					else
-						WriteIdentifier(string.Format("A_{0}", i), TextTokenKind.Parameter);
+						WriteIdentifier(string.Format("A_{0}", i), BoxedTextTokenKind.Parameter);
 				}
 				if (ShowParameterLiteralValues && pd != null && pd.Constant != null) {
 					if (needSpace)
@@ -1169,57 +1169,57 @@ namespace dnSpy.Languages.CSharp {
 
 					var c = pd.Constant.Value;
 					WriteSpace();
-					OutputWrite("=", TextTokenKind.Operator);
+					OutputWrite("=", BoxedTextTokenKind.Operator);
 					WriteSpace();
 
 					var t = info.MethodSig.Params[i].RemovePinnedAndModifiers();
 					if (t.GetElementType() == ElementType.ByRef)
 						t = t.Next;
 					if (c == null && t != null && t.IsValueType) {
-						OutputWrite("default", TextTokenKind.Keyword);
-						OutputWrite("(", TextTokenKind.Operator);
+						OutputWrite("default", BoxedTextTokenKind.Keyword);
+						OutputWrite("(", BoxedTextTokenKind.Operator);
 						Write(t, pd, info.TypeGenericParams, info.MethodGenericParams);
-						OutputWrite(")", TextTokenKind.Operator);
+						OutputWrite(")", BoxedTextTokenKind.Operator);
 					}
 					else
 						WriteConstant(c);
 				}
 			}
-			OutputWrite(rparen, TextTokenKind.Operator);
+			OutputWrite(rparen, BoxedTextTokenKind.Operator);
 		}
 
-		void WriteGenerics(IList<GenericParam> gps, TextTokenKind gpTokenType) {
+		void WriteGenerics(IList<GenericParam> gps, object gpTokenType) {
 			if (gps == null || gps.Count == 0)
 				return;
-			OutputWrite("<", TextTokenKind.Operator);
+			OutputWrite("<", BoxedTextTokenKind.Operator);
 			for (int i = 0; i < gps.Count; i++) {
 				if (i > 0)
 					WriteCommaSpace();
 				var gp = gps[i];
 				if (gp.IsCovariant) {
-					OutputWrite("out", TextTokenKind.Keyword);
+					OutputWrite("out", BoxedTextTokenKind.Keyword);
 					WriteSpace();
 				}
 				else if (gp.IsContravariant) {
-					OutputWrite(Languages_Resources.ToolTip_GenericParameterInTypeOrMethod, TextTokenKind.Keyword);
+					OutputWrite(Languages_Resources.ToolTip_GenericParameterInTypeOrMethod, BoxedTextTokenKind.Keyword);
 					WriteSpace();
 				}
 				WriteIdentifier(gp.Name, gpTokenType);
 				WriteToken(gp);
 			}
-			OutputWrite(">", TextTokenKind.Operator);
+			OutputWrite(">", BoxedTextTokenKind.Operator);
 		}
 
-		void WriteGenerics(IList<TypeSig> gps, TextTokenKind gpTokenType, GenericParamContext gpContext) {
+		void WriteGenerics(IList<TypeSig> gps, object gpTokenType, GenericParamContext gpContext) {
 			if (gps == null || gps.Count == 0)
 				return;
-			OutputWrite("<", TextTokenKind.Operator);
+			OutputWrite("<", BoxedTextTokenKind.Operator);
 			for (int i = 0; i < gps.Count; i++) {
 				if (i > 0)
 					WriteCommaSpace();
 				Write(gps[i], null, null, null);
 			}
-			OutputWrite(">", TextTokenKind.Operator);
+			OutputWrite(">", BoxedTextTokenKind.Operator);
 		}
 
 		static string GetName(IVariable variable, string name) {

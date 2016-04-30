@@ -157,7 +157,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_PE, TextTokenKind.Text);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_PE, BoxedTextTokenKind.Text);
 		}
 
 		public override Guid Guid {

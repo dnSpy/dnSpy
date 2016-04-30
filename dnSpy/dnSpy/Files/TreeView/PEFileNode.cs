@@ -65,7 +65,7 @@ namespace dnSpy.Files.TreeView {
 		}
 
 		protected override void WriteToolTip(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(TargetFrameworkUtils.GetArchString(DnSpyFile.PEImage.ImageNTHeaders.FileHeader.Machine), TextTokenKind.EnumField);
+			output.Write(TargetFrameworkUtils.GetArchString(DnSpyFile.PEImage.ImageNTHeaders.FileHeader.Machine), BoxedTextTokenKind.EnumField);
 
 			output.WriteLine();
 			output.WriteFilename(DnSpyFile.Filename);

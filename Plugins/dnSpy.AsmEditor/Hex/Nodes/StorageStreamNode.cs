@@ -120,13 +120,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_StorageStream, TextTokenKind.InstanceField);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_StorageStream, BoxedTextTokenKind.InstanceField);
 			output.WriteSpace();
-			output.Write("#", TextTokenKind.Operator);
-			output.Write(streamNumber.ToString(), TextTokenKind.Number);
-			output.Write(":", TextTokenKind.Operator);
+			output.Write("#", BoxedTextTokenKind.Operator);
+			output.Write(streamNumber.ToString(), BoxedTextTokenKind.Number);
+			output.Write(":", BoxedTextTokenKind.Operator);
 			output.WriteSpace();
-			output.Write(string.Format("{0}", storageStreamVM.RCNameVM.StringZ), storageStreamType == StorageStreamType.None ? TextTokenKind.Error : TextTokenKind.Type);
+			output.Write(string.Format("{0}", storageStreamVM.RCNameVM.StringZ), storageStreamType == StorageStreamType.None ? BoxedTextTokenKind.Error : BoxedTextTokenKind.Type);
 		}
 
 		public MetaDataTableRecordNode FindTokenNode(uint token) {

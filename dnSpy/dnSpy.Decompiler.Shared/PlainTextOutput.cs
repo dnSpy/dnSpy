@@ -69,13 +69,13 @@ namespace dnSpy.Decompiler.Shared {
 			}
 		}
 
-		public void Write(string text, TextTokenKind tokenKind) {
+		public void Write(string text, object data) {
 			WriteIndent();
 			writer.Write(text);
 			column += text.Length;
 		}
 
-		public void Write(string text, int index, int count, TextTokenKind tokenKind) {
+		public void Write(string text, int index, int count, object data) {
 			WriteIndent();
 			if (index == 0 && text.Length == count)
 				writer.Write(text);
@@ -94,7 +94,7 @@ namespace dnSpy.Decompiler.Shared {
 			column += count;
 		}
 
-		public void Write(StringBuilder sb, int index, int count, TextTokenKind tokenKind) {
+		public void Write(StringBuilder sb, int index, int count, object data) {
 			WriteIndent();
 			if (count == 1)
 				writer.Write(sb[index]);
@@ -118,13 +118,24 @@ namespace dnSpy.Decompiler.Shared {
 			column = 1;
 		}
 
-		public void WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal) {
-			Write(text, TextTokenKind.Text);
+		public void WriteDefinition(string text, object definition, object data, bool isLocal) {
+			Write(text, BoxedTextTokenKind.Text);
 		}
 
-		public void WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal) {
-			Write(text, TextTokenKind.Text);
+		public void WriteReference(string text, object reference, object data, bool isLocal) {
+			Write(text, BoxedTextTokenKind.Text);
 		}
+
+		public void Write(string text, TextTokenKind tokenKind) =>
+			Write(text, tokenKind.Box());
+		public void Write(string text, int index, int count, TextTokenKind tokenKind) =>
+			Write(text, index, count, tokenKind.Box());
+		public void Write(StringBuilder sb, int index, int count, TextTokenKind tokenKind) =>
+			Write(sb, index, count, tokenKind.Box());
+		public void WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal = true) =>
+			WriteDefinition(text, definition, tokenKind.Box(), isLocal);
+		public void WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal = false) =>
+			WriteReference(text, reference, tokenKind.Box(), isLocal);
 
 		void ITextOutput.AddDebugSymbols(MemberMapping methodDebugSymbols) {
 		}

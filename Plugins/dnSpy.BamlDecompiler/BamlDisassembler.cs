@@ -99,39 +99,39 @@ namespace dnSpy.BamlDecompiler {
 		}
 
 		void WriteText(string value) {
-			output.Write(value, TextTokenKind.Text);
+			output.Write(value, BoxedTextTokenKind.Text);
 		}
 
 		void WriteString(string value) {
 			string str = NumberVMUtils.ToString(value, true);
-			output.Write(str, TextTokenKind.String);
+			output.Write(str, BoxedTextTokenKind.String);
 		}
 
 		void WriteHexNumber(byte num) {
-			output.Write("0x", TextTokenKind.Number);
-			output.Write(num.ToString("x2", CultureInfo.InvariantCulture), TextTokenKind.Number);
+			output.Write("0x", BoxedTextTokenKind.Number);
+			output.Write(num.ToString("x2", CultureInfo.InvariantCulture), BoxedTextTokenKind.Number);
 		}
 
 		void WriteHexNumber(ushort num) {
-			output.Write("0x", TextTokenKind.Number);
-			output.Write(num.ToString("x4", CultureInfo.InvariantCulture), TextTokenKind.Number);
+			output.Write("0x", BoxedTextTokenKind.Number);
+			output.Write(num.ToString("x4", CultureInfo.InvariantCulture), BoxedTextTokenKind.Number);
 		}
 
 		void WriteHexNumber(uint num) {
-			output.Write("0x", TextTokenKind.Number);
-			output.Write(num.ToString("x8", CultureInfo.InvariantCulture), TextTokenKind.Number);
+			output.Write("0x", BoxedTextTokenKind.Number);
+			output.Write(num.ToString("x8", CultureInfo.InvariantCulture), BoxedTextTokenKind.Number);
 		}
 
 		void WriteBool(bool value) {
-			output.Write(value ? "true" : "false", TextTokenKind.Keyword);
+			output.Write(value ? "true" : "false", BoxedTextTokenKind.Keyword);
 		}
 
 		void WriteVersion(BamlDocument.BamlVersion value) {
-			output.Write("[", TextTokenKind.Text);
+			output.Write("[", BoxedTextTokenKind.Text);
 			WriteHexNumber(value.Major);
-			output.Write(", ", TextTokenKind.Text);
+			output.Write(", ", BoxedTextTokenKind.Text);
 			WriteHexNumber(value.Minor);
-			output.Write("]", TextTokenKind.Text);
+			output.Write("]", BoxedTextTokenKind.Text);
 		}
 
 		void WriteAssemblyId(BamlContext ctx, ushort id) {
@@ -142,7 +142,7 @@ namespace dnSpy.BamlDecompiler {
 				reference = ctx.AssemblyIdMap[id].AssemblyFullName;
 			else
 				reference = null;
-			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), TextTokenKind.Number, true);
+			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), BoxedTextTokenKind.Number, true);
 		}
 
 		void WriteTypeId(BamlContext ctx, ushort id) {
@@ -157,7 +157,7 @@ namespace dnSpy.BamlDecompiler {
 			if (reference != null)
 				reference = IdentifierEscaper.Escape(reference);
 
-			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), TextTokenKind.Number, true);
+			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), BoxedTextTokenKind.Number, true);
 		}
 
 		void WriteAttributeId(BamlContext ctx, ushort id) {
@@ -184,7 +184,7 @@ namespace dnSpy.BamlDecompiler {
 			string reference = null;
 			if (declType != null && name != null)
 				reference = string.Format("{0}::{1}", IdentifierEscaper.Escape(declType), IdentifierEscaper.Escape(name));
-			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), TextTokenKind.Number, true);
+			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), BoxedTextTokenKind.Number, true);
 		}
 
 		void WriteStringId(BamlContext ctx, ushort id) {
@@ -198,16 +198,16 @@ namespace dnSpy.BamlDecompiler {
 			string reference = null;
 			if (str != null)
 				reference = NumberVMUtils.ToString(str, true);
-			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), TextTokenKind.Number, true);
+			output.WriteReference(string.Format("0x{0:x4}", id), BamlToolTipReference.Create(reference), BoxedTextTokenKind.Number, true);
 		}
 
 		void WriteDefinition(string value, string def = null) {
 			string str = NumberVMUtils.ToString(value, true);
-			output.WriteDefinition(str, BamlToolTipReference.Create(def ?? IdentifierEscaper.Escape(value)), TextTokenKind.String, true);
+			output.WriteDefinition(str, BamlToolTipReference.Create(def ?? IdentifierEscaper.Escape(value)), BoxedTextTokenKind.String, true);
 		}
 
 		void WriteRecordRef(BamlRecord record) {
-			output.WriteReference(record.Type.ToString(), BamlToolTipReference.Create(GetRecordReference(record)), TextTokenKind.Keyword, true);
+			output.WriteReference(record.Type.ToString(), BamlToolTipReference.Create(GetRecordReference(record)), BoxedTextTokenKind.Keyword, true);
 		}
 
 		public void Disassemble(ModuleDef module, BamlDocument document) {
@@ -228,7 +228,7 @@ namespace dnSpy.BamlDecompiler {
 			output.WriteLine();
 
 			WriteText("Record #:       \t");
-			output.Write(document.Count.ToString(CultureInfo.InvariantCulture), TextTokenKind.Number);
+			output.Write(document.Count.ToString(CultureInfo.InvariantCulture), BoxedTextTokenKind.Number);
 			output.WriteLine();
 
 			output.WriteLine();
@@ -259,13 +259,13 @@ namespace dnSpy.BamlDecompiler {
 				}
 			}
 
-			output.WriteDefinition(record.Type.ToString(), BamlToolTipReference.Create(GetRecordReference(record)), TextTokenKind.Keyword, true);
+			output.WriteDefinition(record.Type.ToString(), BamlToolTipReference.Create(GetRecordReference(record)), BoxedTextTokenKind.Keyword, true);
 
 			Action<BamlContext, BamlRecord> handler;
 			if (handlerMap.TryGetValue(record.Type, out handler)) {
-				output.Write(" [", TextTokenKind.Text);
+				output.Write(" [", BoxedTextTokenKind.Text);
 				handler(ctx, record);
-				output.Write("]", TextTokenKind.Text);
+				output.Write("]", BoxedTextTokenKind.Text);
 			}
 
 			output.WriteLine();
@@ -345,7 +345,7 @@ namespace dnSpy.BamlDecompiler {
 
 			WriteText(", Data=");
 			for (int i = 0; i < record.Data.Length; i++)
-				output.Write(record.Data[i].ToString("x2"), TextTokenKind.String);
+				output.Write(record.Data[i].ToString("x2"), BoxedTextTokenKind.String);
 		}
 
 		void DisassembleRecord(BamlContext ctx, DefAttributeRecord record) {

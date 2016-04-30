@@ -32,7 +32,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			if (name != null)
-				output.Write(name, TextTokenKind.Keyword);
+				output.Write(name, BoxedTextTokenKind.Keyword);
 			else
 				base.Write(output, language);
 		}

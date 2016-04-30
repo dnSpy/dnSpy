@@ -23,191 +23,43 @@ using dnlib.DotNet;
 
 namespace dnSpy.Decompiler.Shared {
 	public enum TextTokenKind : byte {
-		/// <summary>
-		/// default text (in text editor)
-		/// </summary>
 		Text,
-
-		/// <summary>
-		/// {}
-		/// </summary>
 		Brace,
-
-		/// <summary>
-		/// +-/etc and other special chars like ,; etc
-		/// </summary>
 		Operator,
-
-		/// <summary>
-		/// numbers
-		/// </summary>
 		Number,
-
-		/// <summary>
-		/// code comments
-		/// </summary>
 		Comment,
-
-		/// <summary>
-		/// keywords
-		/// </summary>
 		Keyword,
-
-		/// <summary>
-		/// "strings"
-		/// </summary>
 		String,
-
-		/// <summary>
-		/// chars ('a', 'b')
-		/// </summary>
 		Char,
-
-		/// <summary>
-		/// Any part of a namespace
-		/// </summary>
-		NamespacePart,
-
-		/// <summary>
-		/// classes (not keyword-classes eg "int")
-		/// </summary>
+		Namespace,
 		Type,
-
-		/// <summary>
-		/// sealed classes
-		/// </summary>
 		SealedType,
-
-		/// <summary>
-		/// static types
-		/// </summary>
 		StaticType,
-
-		/// <summary>
-		/// delegates
-		/// </summary>
 		Delegate,
-
-		/// <summary>
-		/// enums
-		/// </summary>
 		Enum,
-
-		/// <summary>
-		/// interfaces
-		/// </summary>
 		Interface,
-
-		/// <summary>
-		/// value types
-		/// </summary>
 		ValueType,
-
-		/// <summary>
-		/// type generic parameters
-		/// </summary>
 		TypeGenericParameter,
-
-		/// <summary>
-		/// method generic parameters
-		/// </summary>
 		MethodGenericParameter,
-
-		/// <summary>
-		/// instance methods
-		/// </summary>
 		InstanceMethod,
-
-		/// <summary>
-		/// static methods
-		/// </summary>
 		StaticMethod,
-
-		/// <summary>
-		/// extension methods
-		/// </summary>
 		ExtensionMethod,
-
-		/// <summary>
-		/// instance fields
-		/// </summary>
 		InstanceField,
-
-		/// <summary>
-		/// enum fields
-		/// </summary>
 		EnumField,
-
-		/// <summary>
-		/// constant fields (not enum fields)
-		/// </summary>
 		LiteralField,
-
-		/// <summary>
-		/// static fields
-		/// </summary>
 		StaticField,
-
-		/// <summary>
-		/// instance events
-		/// </summary>
 		InstanceEvent,
-
-		/// <summary>
-		/// static events
-		/// </summary>
 		StaticEvent,
-
-		/// <summary>
-		/// instance properties
-		/// </summary>
 		InstanceProperty,
-
-		/// <summary>
-		/// static properties
-		/// </summary>
 		StaticProperty,
-
-		/// <summary>
-		/// method locals
-		/// </summary>
 		Local,
-
-		/// <summary>
-		/// method parameters
-		/// </summary>
 		Parameter,
-
-		/// <summary>
-		/// preprocessor keyword
-		/// </summary>
 		PreprocessorKeyword,
-
-		/// <summary>
-		/// preprocessor text
-		/// </summary>
 		PreprocessorText,
-
-		/// <summary>
-		/// labels
-		/// </summary>
 		Label,
-
-		/// <summary>
-		/// opcodes
-		/// </summary>
 		OpCode,
-
-		/// <summary>
-		/// IL directive (.sometext)
-		/// </summary>
 		ILDirective,
-
-		/// <summary>
-		/// IL module names, eg. [module]SomeClass
-		/// </summary>
 		ILModule,
-
 		XmlDocCommentAttributeName,
 		XmlDocCommentAttributeQuotes,
 		XmlDocCommentAttributeValue,
@@ -218,7 +70,6 @@ namespace dnSpy.Decompiler.Shared {
 		XmlDocCommentName,
 		XmlDocCommentProcessingInstruction,
 		XmlDocCommentText,
-
 		XmlLiteralAttributeName,
 		XmlLiteralAttributeQuotes,
 		XmlLiteralAttributeValue,
@@ -230,7 +81,6 @@ namespace dnSpy.Decompiler.Shared {
 		XmlLiteralName,
 		XmlLiteralProcessingInstruction,
 		XmlLiteralText,
-
 		XmlAttributeName,
 		XmlAttributeQuotes,
 		XmlAttributeValue,
@@ -241,137 +91,32 @@ namespace dnSpy.Decompiler.Shared {
 		XmlName,
 		XmlProcessingInstruction,
 		XmlText,
-
-		/// <summary>
-		/// ":" string
-		/// </summary>
 		XmlDocToolTipColon,
-
-		/// <summary>
-		/// "Example" string
-		/// </summary>
 		XmlDocToolTipExample,
-
-		/// <summary>
-		/// cref attribute in an exception tag
-		/// </summary>
 		XmlDocToolTipExceptionCref,
-
-		/// <summary>
-		/// "Returns" string
-		/// </summary>
 		XmlDocToolTipReturns,
-
-		/// <summary>
-		/// cref attribute in a see tag
-		/// </summary>
 		XmlDocToolTipSeeCref,
-
-		/// <summary>
-		/// langword attribute in a see tag
-		/// </summary>
 		XmlDocToolTipSeeLangword,
-
-		/// <summary>
-		/// "See also" string
-		/// </summary>
 		XmlDocToolTipSeeAlso,
-
-		/// <summary>
-		/// cref attribute in a seealso tag
-		/// </summary>
 		XmlDocToolTipSeeAlsoCref,
-
-		/// <summary>
-		/// name attribute in a paramref tag
-		/// </summary>
 		XmlDocToolTipParamRefName,
-
-		/// <summary>
-		/// name attribute in a param tag
-		/// </summary>
 		XmlDocToolTipParamName,
-
-		/// <summary>
-		/// name attribute in a typeparam tag
-		/// </summary>
 		XmlDocToolTipTypeParamName,
-
-		/// <summary>
-		/// "Value" string
-		/// </summary>
 		XmlDocToolTipValue,
-
-		/// <summary>
-		/// Summary text
-		/// </summary>
 		XmlDocToolTipSummary,
-
-		/// <summary>
-		/// Any other XML doc text
-		/// </summary>
 		XmlDocToolTipText,
-
-		/// <summary>
-		/// Assembly
-		/// </summary>
 		Assembly,
-
-		/// <summary>
-		/// Assembly (executable)
-		/// </summary>
 		AssemblyExe,
-
-		/// <summary>
-		/// Module
-		/// </summary>
 		Module,
-
-		/// <summary>
-		/// Part of a directory
-		/// </summary>
 		DirectoryPart,
-
-		/// <summary>
-		/// Filename without extension
-		/// </summary>
 		FileNameNoExtension,
-
-		/// <summary>
-		/// File extension
-		/// </summary>
 		FileExtension,
-
-		/// <summary>
-		/// Error text
-		/// </summary>
 		Error,
-
-		/// <summary>
-		/// ToString() eval text
-		/// </summary>
 		ToStringEval,
-
-		/// <summary>
-		/// REPL editor prompt #1, eg. "> "
-		/// </summary>
 		ReplPrompt1,
-
-		/// <summary>
-		/// REPL editor prompt #2, eg. ". "
-		/// </summary>
 		ReplPrompt2,
-
-		/// <summary>
-		/// REPL editor output
-		/// </summary>
 		ReplOutputText,
-
-		/// <summary>
-		/// REPL editor script output
-		/// </summary>
 		ReplScriptOutputText,
-
 		Black,
 		Blue,
 		Cyan,
@@ -404,7 +149,6 @@ namespace dnSpy.Decompiler.Shared {
 		InvRed,
 		InvWhite,
 		InvYellow,
-
 		DebugLogExceptionHandled,
 		DebugLogExceptionUnhandled,
 		DebugLogStepFiltering,
@@ -424,20 +168,306 @@ namespace dnSpy.Decompiler.Shared {
 		Last,
 	}
 
+	public static class BoxedTextTokenKind {
+		public static readonly object Text = TextTokenKind.Text;
+		public static readonly object Brace = TextTokenKind.Brace;
+		public static readonly object Operator = TextTokenKind.Operator;
+		public static readonly object Number = TextTokenKind.Number;
+		public static readonly object Comment = TextTokenKind.Comment;
+		public static readonly object Keyword = TextTokenKind.Keyword;
+		public static readonly object String = TextTokenKind.String;
+		public static readonly object Char = TextTokenKind.Char;
+		public static readonly object Namespace = TextTokenKind.Namespace;
+		public static readonly object Type = TextTokenKind.Type;
+		public static readonly object SealedType = TextTokenKind.SealedType;
+		public static readonly object StaticType = TextTokenKind.StaticType;
+		public static readonly object Delegate = TextTokenKind.Delegate;
+		public static readonly object Enum = TextTokenKind.Enum;
+		public static readonly object Interface = TextTokenKind.Interface;
+		public static readonly object ValueType = TextTokenKind.ValueType;
+		public static readonly object TypeGenericParameter = TextTokenKind.TypeGenericParameter;
+		public static readonly object MethodGenericParameter = TextTokenKind.MethodGenericParameter;
+		public static readonly object InstanceMethod = TextTokenKind.InstanceMethod;
+		public static readonly object StaticMethod = TextTokenKind.StaticMethod;
+		public static readonly object ExtensionMethod = TextTokenKind.ExtensionMethod;
+		public static readonly object InstanceField = TextTokenKind.InstanceField;
+		public static readonly object EnumField = TextTokenKind.EnumField;
+		public static readonly object LiteralField = TextTokenKind.LiteralField;
+		public static readonly object StaticField = TextTokenKind.StaticField;
+		public static readonly object InstanceEvent = TextTokenKind.InstanceEvent;
+		public static readonly object StaticEvent = TextTokenKind.StaticEvent;
+		public static readonly object InstanceProperty = TextTokenKind.InstanceProperty;
+		public static readonly object StaticProperty = TextTokenKind.StaticProperty;
+		public static readonly object Local = TextTokenKind.Local;
+		public static readonly object Parameter = TextTokenKind.Parameter;
+		public static readonly object PreprocessorKeyword = TextTokenKind.PreprocessorKeyword;
+		public static readonly object PreprocessorText = TextTokenKind.PreprocessorText;
+		public static readonly object Label = TextTokenKind.Label;
+		public static readonly object OpCode = TextTokenKind.OpCode;
+		public static readonly object ILDirective = TextTokenKind.ILDirective;
+		public static readonly object ILModule = TextTokenKind.ILModule;
+		public static readonly object XmlDocCommentAttributeName = TextTokenKind.XmlDocCommentAttributeName;
+		public static readonly object XmlDocCommentAttributeQuotes = TextTokenKind.XmlDocCommentAttributeQuotes;
+		public static readonly object XmlDocCommentAttributeValue = TextTokenKind.XmlDocCommentAttributeValue;
+		public static readonly object XmlDocCommentCDataSection = TextTokenKind.XmlDocCommentCDataSection;
+		public static readonly object XmlDocCommentComment = TextTokenKind.XmlDocCommentComment;
+		public static readonly object XmlDocCommentDelimiter = TextTokenKind.XmlDocCommentDelimiter;
+		public static readonly object XmlDocCommentEntityReference = TextTokenKind.XmlDocCommentEntityReference;
+		public static readonly object XmlDocCommentName = TextTokenKind.XmlDocCommentName;
+		public static readonly object XmlDocCommentProcessingInstruction = TextTokenKind.XmlDocCommentProcessingInstruction;
+		public static readonly object XmlDocCommentText = TextTokenKind.XmlDocCommentText;
+		public static readonly object XmlLiteralAttributeName = TextTokenKind.XmlLiteralAttributeName;
+		public static readonly object XmlLiteralAttributeQuotes = TextTokenKind.XmlLiteralAttributeQuotes;
+		public static readonly object XmlLiteralAttributeValue = TextTokenKind.XmlLiteralAttributeValue;
+		public static readonly object XmlLiteralCDataSection = TextTokenKind.XmlLiteralCDataSection;
+		public static readonly object XmlLiteralComment = TextTokenKind.XmlLiteralComment;
+		public static readonly object XmlLiteralDelimiter = TextTokenKind.XmlLiteralDelimiter;
+		public static readonly object XmlLiteralEmbeddedExpression = TextTokenKind.XmlLiteralEmbeddedExpression;
+		public static readonly object XmlLiteralEntityReference = TextTokenKind.XmlLiteralEntityReference;
+		public static readonly object XmlLiteralName = TextTokenKind.XmlLiteralName;
+		public static readonly object XmlLiteralProcessingInstruction = TextTokenKind.XmlLiteralProcessingInstruction;
+		public static readonly object XmlLiteralText = TextTokenKind.XmlLiteralText;
+		public static readonly object XmlAttributeName = TextTokenKind.XmlAttributeName;
+		public static readonly object XmlAttributeQuotes = TextTokenKind.XmlAttributeQuotes;
+		public static readonly object XmlAttributeValue = TextTokenKind.XmlAttributeValue;
+		public static readonly object XmlCDataSection = TextTokenKind.XmlCDataSection;
+		public static readonly object XmlComment = TextTokenKind.XmlComment;
+		public static readonly object XmlDelimiter = TextTokenKind.XmlDelimiter;
+		public static readonly object XmlKeyword = TextTokenKind.XmlKeyword;
+		public static readonly object XmlName = TextTokenKind.XmlName;
+		public static readonly object XmlProcessingInstruction = TextTokenKind.XmlProcessingInstruction;
+		public static readonly object XmlText = TextTokenKind.XmlText;
+		public static readonly object XmlDocToolTipColon = TextTokenKind.XmlDocToolTipColon;
+		public static readonly object XmlDocToolTipExample = TextTokenKind.XmlDocToolTipExample;
+		public static readonly object XmlDocToolTipExceptionCref = TextTokenKind.XmlDocToolTipExceptionCref;
+		public static readonly object XmlDocToolTipReturns = TextTokenKind.XmlDocToolTipReturns;
+		public static readonly object XmlDocToolTipSeeCref = TextTokenKind.XmlDocToolTipSeeCref;
+		public static readonly object XmlDocToolTipSeeLangword = TextTokenKind.XmlDocToolTipSeeLangword;
+		public static readonly object XmlDocToolTipSeeAlso = TextTokenKind.XmlDocToolTipSeeAlso;
+		public static readonly object XmlDocToolTipSeeAlsoCref = TextTokenKind.XmlDocToolTipSeeAlsoCref;
+		public static readonly object XmlDocToolTipParamRefName = TextTokenKind.XmlDocToolTipParamRefName;
+		public static readonly object XmlDocToolTipParamName = TextTokenKind.XmlDocToolTipParamName;
+		public static readonly object XmlDocToolTipTypeParamName = TextTokenKind.XmlDocToolTipTypeParamName;
+		public static readonly object XmlDocToolTipValue = TextTokenKind.XmlDocToolTipValue;
+		public static readonly object XmlDocToolTipSummary = TextTokenKind.XmlDocToolTipSummary;
+		public static readonly object XmlDocToolTipText = TextTokenKind.XmlDocToolTipText;
+		public static readonly object Assembly = TextTokenKind.Assembly;
+		public static readonly object AssemblyExe = TextTokenKind.AssemblyExe;
+		public static readonly object Module = TextTokenKind.Module;
+		public static readonly object DirectoryPart = TextTokenKind.DirectoryPart;
+		public static readonly object FileNameNoExtension = TextTokenKind.FileNameNoExtension;
+		public static readonly object FileExtension = TextTokenKind.FileExtension;
+		public static readonly object Error = TextTokenKind.Error;
+		public static readonly object ToStringEval = TextTokenKind.ToStringEval;
+		public static readonly object ReplPrompt1 = TextTokenKind.ReplPrompt1;
+		public static readonly object ReplPrompt2 = TextTokenKind.ReplPrompt2;
+		public static readonly object ReplOutputText = TextTokenKind.ReplOutputText;
+		public static readonly object ReplScriptOutputText = TextTokenKind.ReplScriptOutputText;
+		public static readonly object Black = TextTokenKind.Black;
+		public static readonly object Blue = TextTokenKind.Blue;
+		public static readonly object Cyan = TextTokenKind.Cyan;
+		public static readonly object DarkBlue = TextTokenKind.DarkBlue;
+		public static readonly object DarkCyan = TextTokenKind.DarkCyan;
+		public static readonly object DarkGray = TextTokenKind.DarkGray;
+		public static readonly object DarkGreen = TextTokenKind.DarkGreen;
+		public static readonly object DarkMagenta = TextTokenKind.DarkMagenta;
+		public static readonly object DarkRed = TextTokenKind.DarkRed;
+		public static readonly object DarkYellow = TextTokenKind.DarkYellow;
+		public static readonly object Gray = TextTokenKind.Gray;
+		public static readonly object Green = TextTokenKind.Green;
+		public static readonly object Magenta = TextTokenKind.Magenta;
+		public static readonly object Red = TextTokenKind.Red;
+		public static readonly object White = TextTokenKind.White;
+		public static readonly object Yellow = TextTokenKind.Yellow;
+		public static readonly object InvBlack = TextTokenKind.InvBlack;
+		public static readonly object InvBlue = TextTokenKind.InvBlue;
+		public static readonly object InvCyan = TextTokenKind.InvCyan;
+		public static readonly object InvDarkBlue = TextTokenKind.InvDarkBlue;
+		public static readonly object InvDarkCyan = TextTokenKind.InvDarkCyan;
+		public static readonly object InvDarkGray = TextTokenKind.InvDarkGray;
+		public static readonly object InvDarkGreen = TextTokenKind.InvDarkGreen;
+		public static readonly object InvDarkMagenta = TextTokenKind.InvDarkMagenta;
+		public static readonly object InvDarkRed = TextTokenKind.InvDarkRed;
+		public static readonly object InvDarkYellow = TextTokenKind.InvDarkYellow;
+		public static readonly object InvGray = TextTokenKind.InvGray;
+		public static readonly object InvGreen = TextTokenKind.InvGreen;
+		public static readonly object InvMagenta = TextTokenKind.InvMagenta;
+		public static readonly object InvRed = TextTokenKind.InvRed;
+		public static readonly object InvWhite = TextTokenKind.InvWhite;
+		public static readonly object InvYellow = TextTokenKind.InvYellow;
+		public static readonly object DebugLogExceptionHandled = TextTokenKind.DebugLogExceptionHandled;
+		public static readonly object DebugLogExceptionUnhandled = TextTokenKind.DebugLogExceptionUnhandled;
+		public static readonly object DebugLogStepFiltering = TextTokenKind.DebugLogStepFiltering;
+		public static readonly object DebugLogLoadModule = TextTokenKind.DebugLogLoadModule;
+		public static readonly object DebugLogUnloadModule = TextTokenKind.DebugLogUnloadModule;
+		public static readonly object DebugLogExitProcess = TextTokenKind.DebugLogExitProcess;
+		public static readonly object DebugLogExitThread = TextTokenKind.DebugLogExitThread;
+		public static readonly object DebugLogProgramOutput = TextTokenKind.DebugLogProgramOutput;
+		public static readonly object DebugLogMDA = TextTokenKind.DebugLogMDA;
+		public static readonly object DebugLogTimestamp = TextTokenKind.DebugLogTimestamp;
+
+		public static object Box(this TextTokenKind textTokenKind) {
+			Debug.Assert(0 <= textTokenKind && textTokenKind < TextTokenKind.Last);
+			int index = (int)textTokenKind;
+			if ((uint)index < (uint)boxedColors.Length)
+				return boxedColors[index];
+			return Text;
+		}
+
+		static readonly object[] boxedColors = new object[(int)TextTokenKind.Last] {
+			Text,
+			Brace,
+			Operator,
+			Number,
+			Comment,
+			Keyword,
+			String,
+			Char,
+			Namespace,
+			Type,
+			SealedType,
+			StaticType,
+			Delegate,
+			Enum,
+			Interface,
+			ValueType,
+			TypeGenericParameter,
+			MethodGenericParameter,
+			InstanceMethod,
+			StaticMethod,
+			ExtensionMethod,
+			InstanceField,
+			EnumField,
+			LiteralField,
+			StaticField,
+			InstanceEvent,
+			StaticEvent,
+			InstanceProperty,
+			StaticProperty,
+			Local,
+			Parameter,
+			PreprocessorKeyword,
+			PreprocessorText,
+			Label,
+			OpCode,
+			ILDirective,
+			ILModule,
+			XmlDocCommentAttributeName,
+			XmlDocCommentAttributeQuotes,
+			XmlDocCommentAttributeValue,
+			XmlDocCommentCDataSection,
+			XmlDocCommentComment,
+			XmlDocCommentDelimiter,
+			XmlDocCommentEntityReference,
+			XmlDocCommentName,
+			XmlDocCommentProcessingInstruction,
+			XmlDocCommentText,
+			XmlLiteralAttributeName,
+			XmlLiteralAttributeQuotes,
+			XmlLiteralAttributeValue,
+			XmlLiteralCDataSection,
+			XmlLiteralComment,
+			XmlLiteralDelimiter,
+			XmlLiteralEmbeddedExpression,
+			XmlLiteralEntityReference,
+			XmlLiteralName,
+			XmlLiteralProcessingInstruction,
+			XmlLiteralText,
+			XmlAttributeName,
+			XmlAttributeQuotes,
+			XmlAttributeValue,
+			XmlCDataSection,
+			XmlComment,
+			XmlDelimiter,
+			XmlKeyword,
+			XmlName,
+			XmlProcessingInstruction,
+			XmlText,
+			XmlDocToolTipColon,
+			XmlDocToolTipExample,
+			XmlDocToolTipExceptionCref,
+			XmlDocToolTipReturns,
+			XmlDocToolTipSeeCref,
+			XmlDocToolTipSeeLangword,
+			XmlDocToolTipSeeAlso,
+			XmlDocToolTipSeeAlsoCref,
+			XmlDocToolTipParamRefName,
+			XmlDocToolTipParamName,
+			XmlDocToolTipTypeParamName,
+			XmlDocToolTipValue,
+			XmlDocToolTipSummary,
+			XmlDocToolTipText,
+			Assembly,
+			AssemblyExe,
+			Module,
+			DirectoryPart,
+			FileNameNoExtension,
+			FileExtension,
+			Error,
+			ToStringEval,
+			ReplPrompt1,
+			ReplPrompt2,
+			ReplOutputText,
+			ReplScriptOutputText,
+			Black,
+			Blue,
+			Cyan,
+			DarkBlue,
+			DarkCyan,
+			DarkGray,
+			DarkGreen,
+			DarkMagenta,
+			DarkRed,
+			DarkYellow,
+			Gray,
+			Green,
+			Magenta,
+			Red,
+			White,
+			Yellow,
+			InvBlack,
+			InvBlue,
+			InvCyan,
+			InvDarkBlue,
+			InvDarkCyan,
+			InvDarkGray,
+			InvDarkGreen,
+			InvDarkMagenta,
+			InvDarkRed,
+			InvDarkYellow,
+			InvGray,
+			InvGreen,
+			InvMagenta,
+			InvRed,
+			InvWhite,
+			InvYellow,
+			DebugLogExceptionHandled,
+			DebugLogExceptionUnhandled,
+			DebugLogStepFiltering,
+			DebugLogLoadModule,
+			DebugLogUnloadModule,
+			DebugLogExitProcess,
+			DebugLogExitThread,
+			DebugLogProgramOutput,
+			DebugLogMDA,
+			DebugLogTimestamp,
+		};
+	}
+
 	public static class TextTokenKindUtils {
-		public static TextTokenKind GetTextTokenKind(TypeDef td) {
+		public static object GetTextTokenKind(TypeDef td) {
 			if (td == null)
-				return TextTokenKind.Text;
+				return BoxedTextTokenKind.Text;
 
 			if (td.IsInterface)
-				return TextTokenKind.Interface;
+				return BoxedTextTokenKind.Interface;
 			if (td.IsEnum)
-				return TextTokenKind.Enum;
+				return BoxedTextTokenKind.Enum;
 			if (td.IsValueType)
-				return TextTokenKind.ValueType;
+				return BoxedTextTokenKind.ValueType;
 
 			if (td.IsDelegate)
-				return TextTokenKind.Delegate;
+				return BoxedTextTokenKind.Delegate;
 
 			if (td.IsSealed && td.IsAbstract) {
 				var bt = td.BaseType;
@@ -445,73 +475,73 @@ namespace dnSpy.Decompiler.Shared {
 					var baseTr = bt as TypeRef;
 					if (baseTr != null) {
 						if (baseTr.Namespace == systemString && baseTr.Name == objectString)
-							return TextTokenKind.StaticType;
+							return BoxedTextTokenKind.StaticType;
 					}
 					else {
 						var baseTd = bt as TypeDef;
 						if (baseTd.Namespace == systemString && baseTd.Name == objectString)
-							return TextTokenKind.StaticType;
+							return BoxedTextTokenKind.StaticType;
 					}
 				}
 			}
 
 			if (td.IsSealed)
-				return TextTokenKind.SealedType;
-			return TextTokenKind.Type;
+				return BoxedTextTokenKind.SealedType;
+			return BoxedTextTokenKind.Type;
 		}
 		static readonly UTF8String systemString = new UTF8String("System");
 		static readonly UTF8String objectString = new UTF8String("Object");
 
-		public static TextTokenKind GetTextTokenKind(TypeRef tr) {
+		public static object GetTextTokenKind(TypeRef tr) {
 			if (tr == null)
-				return TextTokenKind.Text;
+				return BoxedTextTokenKind.Text;
 
 			var td = tr.Resolve();
 			if (td != null)
 				return GetTextTokenKind(td);
 
-			return TextTokenKind.Type;
+			return BoxedTextTokenKind.Type;
 		}
 
 		static readonly UTF8String systemRuntimeCompilerServicesString = new UTF8String("System.Runtime.CompilerServices");
 		static readonly UTF8String extensionAttributeString = new UTF8String("ExtensionAttribute");
-		public static TextTokenKind GetTextTokenKind(IMemberRef r) {
+		public static object GetTextTokenKind(IMemberRef r) {
 			if (r == null)
-				return TextTokenKind.Text;
+				return BoxedTextTokenKind.Text;
 
 			if (r.IsField) {
 				var fd = ((IField)r).ResolveFieldDef();
 				if (fd == null)
-					return TextTokenKind.InstanceField;
+					return BoxedTextTokenKind.InstanceField;
 				if (fd.DeclaringType.IsEnum)
-					return TextTokenKind.EnumField;
+					return BoxedTextTokenKind.EnumField;
 				if (fd.IsLiteral)
-					return TextTokenKind.LiteralField;
+					return BoxedTextTokenKind.LiteralField;
 				if (fd.IsStatic)
-					return TextTokenKind.StaticField;
-				return TextTokenKind.InstanceField;
+					return BoxedTextTokenKind.StaticField;
+				return BoxedTextTokenKind.InstanceField;
 			}
 			if (r.IsMethod) {
 				var mr = (IMethod)r;
 				if (mr.MethodSig == null)
-					return TextTokenKind.InstanceMethod;
+					return BoxedTextTokenKind.InstanceMethod;
 				var md = mr.ResolveMethodDef();
 				if (md != null && md.IsConstructor)
 					return GetTextTokenKind(md.DeclaringType);
 				if (!mr.MethodSig.HasThis) {
 					if (md != null && md.IsDefined(systemRuntimeCompilerServicesString, extensionAttributeString))
-						return TextTokenKind.ExtensionMethod;
-					return TextTokenKind.StaticMethod;
+						return BoxedTextTokenKind.ExtensionMethod;
+					return BoxedTextTokenKind.StaticMethod;
 				}
-				return TextTokenKind.InstanceMethod;
+				return BoxedTextTokenKind.InstanceMethod;
 			}
 			if (r.IsPropertyDef) {
 				var p = (PropertyDef)r;
-				return GetTextTokenKind(p.GetMethod ?? p.SetMethod, TextTokenKind.StaticProperty, TextTokenKind.InstanceProperty);
+				return GetTextTokenKind(p.GetMethod ?? p.SetMethod, BoxedTextTokenKind.StaticProperty, BoxedTextTokenKind.InstanceProperty);
 			}
 			if (r.IsEventDef) {
 				var e = (EventDef)r;
-				return GetTextTokenKind(e.AddMethod ?? e.RemoveMethod ?? e.InvokeMethod, TextTokenKind.StaticEvent, TextTokenKind.InstanceEvent);
+				return GetTextTokenKind(e.AddMethod ?? e.RemoveMethod ?? e.InvokeMethod, BoxedTextTokenKind.StaticEvent, BoxedTextTokenKind.InstanceEvent);
 			}
 
 			var td = r as TypeDef;
@@ -527,7 +557,7 @@ namespace dnSpy.Decompiler.Shared {
 				var gsig = ts.TypeSig as GenericSig;
 				if (gsig != null)
 					return GetTextTokenKind(gsig);
-				return TextTokenKind.Type;
+				return BoxedTextTokenKind.Type;
 			}
 
 			var gp = r as GenericParam;
@@ -536,32 +566,32 @@ namespace dnSpy.Decompiler.Shared {
 
 			// It can be a MemberRef if it doesn't have a field or method sig (invalid metadata)
 			if (r.IsMemberRef)
-				return TextTokenKind.Text;
+				return BoxedTextTokenKind.Text;
 
-			return TextTokenKind.Text;
+			return BoxedTextTokenKind.Text;
 		}
 
-		public static TextTokenKind GetTextTokenKind(GenericSig sig) {
+		public static object GetTextTokenKind(GenericSig sig) {
 			if (sig == null)
-				return TextTokenKind.Text;
+				return BoxedTextTokenKind.Text;
 
-			return sig.IsMethodVar ? TextTokenKind.MethodGenericParameter : TextTokenKind.TypeGenericParameter;
+			return sig.IsMethodVar ? BoxedTextTokenKind.MethodGenericParameter : BoxedTextTokenKind.TypeGenericParameter;
 		}
 
-		public static TextTokenKind GetTextTokenKind(GenericParam gp) {
+		public static object GetTextTokenKind(GenericParam gp) {
 			if (gp == null)
-				return TextTokenKind.Text;
+				return BoxedTextTokenKind.Text;
 
 			if (gp.DeclaringType != null)
-				return TextTokenKind.TypeGenericParameter;
+				return BoxedTextTokenKind.TypeGenericParameter;
 
 			if (gp.DeclaringMethod != null)
-				return TextTokenKind.MethodGenericParameter;
+				return BoxedTextTokenKind.MethodGenericParameter;
 
-			return TextTokenKind.TypeGenericParameter;
+			return BoxedTextTokenKind.TypeGenericParameter;
 		}
 
-		static TextTokenKind GetTextTokenKind(MethodDef method, TextTokenKind staticValue, TextTokenKind instanceValue) {
+		static object GetTextTokenKind(MethodDef method, object staticValue, object instanceValue) {
 			if (method == null)
 				return instanceValue;
 			if (method.IsStatic)
@@ -569,17 +599,17 @@ namespace dnSpy.Decompiler.Shared {
 			return instanceValue;
 		}
 
-		public static TextTokenKind GetTextTokenKind(ExportedType et) {
+		public static object GetTextTokenKind(ExportedType et) {
 			if (et == null)
-				return TextTokenKind.Text;
+				return BoxedTextTokenKind.Text;
 
 			return GetTextTokenKind(et.ToTypeRef());
 		}
 
-		public static TextTokenKind GetTextTokenKind(TypeSig ts) {
+		public static object GetTextTokenKind(TypeSig ts) {
 			ts = ts.RemovePinnedAndModifiers();
 			if (ts == null)
-				return TextTokenKind.Text;
+				return BoxedTextTokenKind.Text;
 
 			var tdr = ts as TypeDefOrRefSig;
 			if (tdr != null)
@@ -589,19 +619,19 @@ namespace dnSpy.Decompiler.Shared {
 			if (gsig != null)
 				return GetTextTokenKind(gsig);
 
-			return TextTokenKind.Text;
+			return BoxedTextTokenKind.Text;
 		}
 
-		public static TextTokenKind GetTextTokenKind(object op) {
+		public static object GetTextTokenKind(object op) {
 			if (op == null)
-				return TextTokenKind.Text;
+				return BoxedTextTokenKind.Text;
 
 			if (op is byte || op is sbyte ||
 				op is ushort || op is short ||
 				op is uint || op is int ||
 				op is ulong || op is long ||
 				op is UIntPtr || op is IntPtr)
-				return TextTokenKind.Number;
+				return BoxedTextTokenKind.Number;
 
 			var r = op as IMemberRef;
 			if (r != null)
@@ -620,54 +650,54 @@ namespace dnSpy.Decompiler.Shared {
 				return GetTextTokenKind(gp);
 
 			if (op is TextTokenKind)
-				return (TextTokenKind)op;
+				return op;
 
 			if (op is Parameter)
-				return TextTokenKind.Parameter;
+				return BoxedTextTokenKind.Parameter;
 
 			if (op is dnlib.DotNet.Emit.Local)
-				return TextTokenKind.Local;
+				return BoxedTextTokenKind.Local;
 
 			if (op is MethodSig)
-				return TextTokenKind.Text;//TODO:
+				return BoxedTextTokenKind.Text;//TODO:
 
 			if (op is string)
-				return TextTokenKind.String;
+				return BoxedTextTokenKind.String;
 
 			Debug.Assert(op.GetType().ToString() != "ICSharpCode.Decompiler.ILAst.ILVariable", "Fix caller, there should be no special type checks here");
 			if (op.GetType().ToString() == "ICSharpCode.Decompiler.ILAst.ILVariable")
-				return TextTokenKind.Local;
+				return BoxedTextTokenKind.Local;
 
-			return TextTokenKind.Text;
+			return BoxedTextTokenKind.Text;
 		}
 
-		public static TextTokenKind GetTextTokenKindFromLangToken(this string text) {
+		public static object GetTextTokenKindFromLangToken(this string text) {
 			if (string.IsNullOrEmpty(text))
-				return TextTokenKind.Text;
+				return BoxedTextTokenKind.Text;
 			if (char.IsLetter(text[0]))
-				return TextTokenKind.Keyword;
+				return BoxedTextTokenKind.Keyword;
 			if (text == "{" || text == "}")
-				return TextTokenKind.Brace;
-			return TextTokenKind.Operator;
+				return BoxedTextTokenKind.Brace;
+			return BoxedTextTokenKind.Operator;
 		}
 
-		public static TextTokenKind GetTextTokenKind(Type type) {
+		public static object GetTextTokenKind(Type type) {
 			if (type == null)
-				return TextTokenKind.Text;
+				return BoxedTextTokenKind.Text;
 
 			if (type.IsInterface)
-				return TextTokenKind.Interface;
+				return BoxedTextTokenKind.Interface;
 			if (type.IsEnum)
-				return TextTokenKind.Enum;
+				return BoxedTextTokenKind.Enum;
 			if (type.IsValueType)
-				return TextTokenKind.ValueType;
+				return BoxedTextTokenKind.ValueType;
 
 			if (type.BaseType == typeof(MulticastDelegate))
-				return TextTokenKind.Delegate;
+				return BoxedTextTokenKind.Delegate;
 
 			if (type.IsSealed)
-				return TextTokenKind.SealedType;
-			return TextTokenKind.Type;
+				return BoxedTextTokenKind.SealedType;
+			return BoxedTextTokenKind.Type;
 		}
 	}
 }

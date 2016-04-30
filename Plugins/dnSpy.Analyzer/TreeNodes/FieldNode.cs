@@ -46,7 +46,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			language.WriteType(output, analyzedField.DeclaringType, true);
-			output.Write(".", TextTokenKind.Operator);
+			output.Write(".", BoxedTextTokenKind.Operator);
 			new NodePrinter().Write(output, language, analyzedField, Context.ShowToken);
 		}
 

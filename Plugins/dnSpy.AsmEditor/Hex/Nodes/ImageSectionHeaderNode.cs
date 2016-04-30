@@ -69,13 +69,13 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_PE_Section, TextTokenKind.Keyword);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_PE_Section, BoxedTextTokenKind.Keyword);
 			output.WriteSpace();
-			output.Write("#", TextTokenKind.Operator);
-			output.Write(sectionNumber.ToString(), TextTokenKind.Number);
-			output.Write(":", TextTokenKind.Operator);
+			output.Write("#", BoxedTextTokenKind.Operator);
+			output.Write(sectionNumber.ToString(), BoxedTextTokenKind.Number);
+			output.Write(":", BoxedTextTokenKind.Operator);
 			output.WriteSpace();
-			output.Write(string.Format("{0}", imageSectionHeaderVM.NameVM.String), TextTokenKind.Type);
+			output.Write(string.Format("{0}", imageSectionHeaderVM.NameVM.String), BoxedTextTokenKind.Type);
 		}
 	}
 }

@@ -114,9 +114,9 @@ namespace dnSpy.Languages.ILSpy.VB {
 
 		public override void WriteCommentBegin(ITextOutput output, bool addSpace) {
 			if (addSpace)
-				output.Write("' ", TextTokenKind.Comment);
+				output.Write("' ", BoxedTextTokenKind.Comment);
 			else
-				output.Write("'", TextTokenKind.Comment);
+				output.Write("'", BoxedTextTokenKind.Comment);
 		}
 
 		public override void WriteCommentEnd(ITextOutput output, bool addSpace) {
@@ -270,7 +270,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 			var astType = AstBuilder.ConvertType(type, new StringBuilder(), typeAttributes, options);
 
 			if (type.TryGetByRefSig() != null) {
-				output.Write("ByRef", TextTokenKind.Keyword);
+				output.Write("ByRef", BoxedTextTokenKind.Keyword);
 				output.WriteSpace();
 				if (astType is ICSharpCode.NRefactory.CSharp.ComposedType && ((ICSharpCode.NRefactory.CSharp.ComposedType)astType).PointerRank > 0)
 					((ICSharpCode.NRefactory.CSharp.ComposedType)astType).PointerRank--;

@@ -50,13 +50,13 @@ namespace dnSpy.Analyzer.TreeNodes {
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
 			if (hidesParent) {
-				output.Write("(", TextTokenKind.Operator);
-				output.Write(dnSpy_Analyzer_Resources.HidesParent, TextTokenKind.Text);
-				output.Write(")", TextTokenKind.Operator);
+				output.Write("(", BoxedTextTokenKind.Operator);
+				output.Write(dnSpy_Analyzer_Resources.HidesParent, BoxedTextTokenKind.Text);
+				output.Write(")", BoxedTextTokenKind.Operator);
 				output.WriteSpace();
 			}
 			language.WriteType(output, analyzedMethod.DeclaringType, true);
-			output.Write(".", TextTokenKind.Operator);
+			output.Write(".", BoxedTextTokenKind.Operator);
 			new NodePrinter().Write(output, language, analyzedMethod, Context.ShowToken);
 		}
 

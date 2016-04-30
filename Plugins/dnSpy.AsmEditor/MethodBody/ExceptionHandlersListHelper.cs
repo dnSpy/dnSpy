@@ -139,20 +139,20 @@ namespace dnSpy.AsmEditor.MethodBody {
 					output.WriteLine();
 
 				var eh = ehs[i];
-				output.Write(eh.Index.ToString(), TextTokenKind.Number);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write(eh.Index.ToString(), BoxedTextTokenKind.Number);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				BodyUtils.WriteObject(output, eh.TryStartVM.SelectedItem);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				BodyUtils.WriteObject(output, eh.TryEndVM.SelectedItem);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				BodyUtils.WriteObject(output, eh.FilterStartVM.SelectedItem);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				BodyUtils.WriteObject(output, eh.HandlerStartVM.SelectedItem);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				BodyUtils.WriteObject(output, eh.HandlerEndVM.SelectedItem);
-				output.Write("\t", TextTokenKind.Text);
-				output.Write(((EnumVM)eh.HandlerTypeVM.Items[eh.HandlerTypeVM.SelectedIndex]).Name, TextTokenKind.Text);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(((EnumVM)eh.HandlerTypeVM.Items[eh.HandlerTypeVM.SelectedIndex]).Name, BoxedTextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				BodyUtils.WriteObject(output, eh.CatchType);
 			}
 			if (ehs.Length > 1)

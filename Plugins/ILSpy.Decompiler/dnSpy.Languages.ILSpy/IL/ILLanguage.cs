@@ -202,7 +202,7 @@ namespace dnSpy.Languages.ILSpy.IL {
 		}
 
 		public override void Decompile(AssemblyDef asm, ITextOutput output, DecompilationContext ctx) {
-			output.WriteLine("// " + asm.ManifestModule.Location, TextTokenKind.Comment);
+			output.WriteLine("// " + asm.ManifestModule.Location, BoxedTextTokenKind.Comment);
 			PrintEntryPoint(asm.ManifestModule, output);
 			output.WriteLine();
 
@@ -211,7 +211,7 @@ namespace dnSpy.Languages.ILSpy.IL {
 		}
 
 		public override void Decompile(ModuleDef mod, ITextOutput output, DecompilationContext ctx) {
-			output.WriteLine("// " + mod.Location, TextTokenKind.Comment);
+			output.WriteLine("// " + mod.Location, BoxedTextTokenKind.Comment);
 			PrintEntryPoint(mod, output);
 			output.WriteLine();
 

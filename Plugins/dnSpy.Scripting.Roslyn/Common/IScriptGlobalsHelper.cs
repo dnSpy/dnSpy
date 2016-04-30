@@ -24,14 +24,14 @@ using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Scripting.Roslyn.Common {
 	interface IScriptGlobalsHelper {
-		void Print(ScriptGlobals globals, OutputColor color, string text);
-		void PrintLine(ScriptGlobals globals, OutputColor color, string text);
-		void Print(ScriptGlobals globals, OutputColor color, PrintOptionsImpl printOptions, object value);
-		void PrintLine(ScriptGlobals globals, OutputColor color, PrintOptionsImpl printOptions, object value);
-		void Print(ScriptGlobals globals, OutputColor color, Exception ex);
-		void PrintLine(ScriptGlobals globals, OutputColor color, Exception ex);
-		void Print(ScriptGlobals globals, CachedWriter dest, OutputColor color, PrintOptionsImpl printOptions, object value);
-		void Print(ScriptGlobals globals, CachedWriter dest, OutputColor color, Exception ex);
+		void Print(ScriptGlobals globals, object color, string text);
+		void PrintLine(ScriptGlobals globals, object color, string text);
+		void Print(ScriptGlobals globals, object color, PrintOptionsImpl printOptions, object value);
+		void PrintLine(ScriptGlobals globals, object color, PrintOptionsImpl printOptions, object value);
+		void Print(ScriptGlobals globals, object color, Exception ex);
+		void PrintLine(ScriptGlobals globals, object color, Exception ex);
+		void Print(ScriptGlobals globals, CachedWriter dest, object color, PrintOptionsImpl printOptions, object value);
+		void Print(ScriptGlobals globals, CachedWriter dest, object color, Exception ex);
 		void Write(ScriptGlobals globals, List<ColorAndText> list);
 		IServiceLocator ServiceLocator { get; }
 	}

@@ -81,7 +81,7 @@
     <Compile Include="Decompiler\AvalonEditTextOutput.cs" />
     <Compile Include="Decompiler\ISmartTextOutput.cs" />
     <Compile Include="Decompiler\OutputLengthExceededException.cs" />
-    <Compile Include="Highlighting\TextTokenInfo.cs" />
+    <Compile Include="Highlighting\CachedTextTokenColors.cs" />
     <Compile Include="Languages\StringBuilderExtensions.cs" />
     <Compile Include="Languages\XmlDoc\XmlDocumentationProvider.cs" />
     <Compile Include="Properties\dnSpy.Shared.Resources.Designer.cs">
@@ -202,6 +202,7 @@
     <Compile Include="Search\VisibleMembersFlags.cs" />
     <Compile Include="Settings\Dialog\SimpleAppOption.cs" />
     <Compile Include="Themes\ExtensionMethods.cs" />
+    <Compile Include="Themes\ThemeUtils.cs" />
     <Compile Include="ToolBars\ToolBarButtonBase.cs" />
     <Compile Include="ToolBars\ToolBarButtonCommand.cs" />
     <Compile Include="ToolBars\ToolBarObjectBase.cs" />

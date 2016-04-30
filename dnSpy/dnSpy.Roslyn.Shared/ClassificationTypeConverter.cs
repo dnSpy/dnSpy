@@ -101,7 +101,7 @@ namespace dnSpy.Roslyn.Shared {
 
 				// Fix for: using DNS = System;
 				if (node.Parent?.Parent is Microsoft.CodeAnalysis.CSharp.Syntax.UsingDirectiveSyntax)
-					return new SymbolResult(OutputColor.NamespacePart);
+					return new SymbolResult(OutputColor.Namespace);
 			}
 
 			return new SymbolResult();
@@ -141,7 +141,7 @@ namespace dnSpy.Roslyn.Shared {
 the_switch:
 					switch (sym.Kind) {
 					case SymbolKind.Alias:
-						return OutputColor.NamespacePart;
+						return OutputColor.Namespace;
 
 					case SymbolKind.ArrayType:
 					case SymbolKind.Assembly:
@@ -247,7 +247,7 @@ the_switch:
 						}
 
 					case SymbolKind.Namespace:
-						return OutputColor.NamespacePart;
+						return OutputColor.Namespace;
 
 					case SymbolKind.Parameter:
 						return OutputColor.Parameter;

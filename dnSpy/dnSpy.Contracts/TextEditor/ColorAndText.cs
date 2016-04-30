@@ -25,7 +25,7 @@ namespace dnSpy.Contracts.TextEditor {
 		/// <summary>
 		/// Color
 		/// </summary>
-		public OutputColor Color { get; }
+		public object Color { get; }
 
 		/// <summary>
 		/// Text
@@ -37,8 +37,18 @@ namespace dnSpy.Contracts.TextEditor {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
-		public ColorAndText(OutputColor color, string text) {
+		public ColorAndText(object color, string text) {
 			Color = color;
+			Text = text;
+		}
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="color">Color</param>
+		/// <param name="text">Text</param>
+		public ColorAndText(OutputColor color, string text) {
+			Color = color.Box();
 			Text = text;
 		}
 	}

@@ -29,9 +29,9 @@ using dnSpy.Contracts.Controls;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.Themes;
+using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Highlighting;
 using ICSharpCode.AvalonEdit.Document;
-using ICSharpCode.AvalonEdit.Highlighting;
 
 namespace dnSpy.TextEditor {
 	sealed class LogEditorUI : ILogEditorUI {
@@ -68,9 +68,10 @@ namespace dnSpy.TextEditor {
 		readonly FrameworkElement paddingElement;
 
 		readonly DnSpyTextEditor textEditor;
+		readonly DnSpyTextEditorColorizerHelper colorizerHelper;
 		readonly LogEditorOptions options;
 		readonly Dispatcher dispatcher;
-		TextTokenInfo textTokenInfo;
+		CachedTextTokenColors cachedTextTokenColors;
 
 		const int LEFT_MARGIN = 15;
 
@@ -98,15 +99,17 @@ namespace dnSpy.TextEditor {
 			}
 		}
 
-		public LogEditorUI(LogEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings) {
+		public LogEditorUI(LogEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextBufferColorizerCreator textBufferColorizerCreator) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
 			this.options = (options ?? new LogEditorOptions()).Clone();
-			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings);
+			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator);
+			this.colorizerHelper = new DnSpyTextEditorColorizerHelper(this.textEditor);
+			textEditor.TextBuffer.SetDefaultColorizer(colorizerHelper.CreateTextBufferColorizer());
 			SetNewDocument();
-			this.textEditor.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(".il");
+			this.textEditor.TextBuffer.ContentType = options.ContentType;
 			this.textEditor.TextArea.AllowDrop = false;
-			UpdatePaddingElement(); ;
+			UpdatePaddingElement();
 			this.textEditor.IsReadOnly = true;
 			// Setting IsReadOnly to true doesn't mean it's readonly since undo/redo still works.
 			// Fix that by removing the commands.
@@ -130,9 +133,9 @@ namespace dnSpy.TextEditor {
 		}
 
 		void SetNewDocument() {
-			textTokenInfo = new TextTokenInfo();
+			cachedTextTokenColors = new CachedTextTokenColors();
 			textEditor.TextArea.Document = new TextDocument();
-			textEditor.SetDocumentColorInfo(textTokenInfo, false);
+			colorizerHelper.SetDocumentCachedColors(cachedTextTokenColors, false);
 		}
 
 		public void Clear() {
@@ -141,9 +144,13 @@ namespace dnSpy.TextEditor {
 		}
 
 		public string GetText() => textEditor.TextArea.Document.Text;
-		public void Write(string text, OutputColor color) => OutputPrint(text, color);
+		public void Write(string text, object color) => OutputPrint(text, color);
+		public void Write(string text, OutputColor color) => OutputPrint(text, color.Box());
 
-		public void WriteLine(string text, OutputColor color) {
+		public void WriteLine(string text, OutputColor color) =>
+			WriteLine(text, color.Box());
+
+		public void WriteLine(string text, object color) {
 			OutputPrint(text, color);
 			OutputPrint(Environment.NewLine, color);
 		}
@@ -161,7 +168,7 @@ namespace dnSpy.TextEditor {
 			FlushOutput();
 		}
 
-		void OutputPrint(string text, OutputColor color, bool startOnNewLine = false) {
+		void OutputPrint(string text, object color, bool startOnNewLine = false) {
 			if (string.IsNullOrEmpty(text))
 				return;
 
@@ -170,10 +177,10 @@ namespace dnSpy.TextEditor {
 					if (pendingOutput.Count > 0) {
 						var last = pendingOutput[pendingOutput.Count - 1];
 						if (last.Text.Length > 0 && last.Text[last.Text.Length - 1] != '\n')
-							pendingOutput.Add(new ColorAndText(OutputColor.Text, Environment.NewLine));
+							pendingOutput.Add(new ColorAndText(BoxedOutputColor.Text, Environment.NewLine));
 					}
 					else if (LastLine.Length != 0)
-						pendingOutput.Add(new ColorAndText(OutputColor.Text, Environment.NewLine));
+						pendingOutput.Add(new ColorAndText(BoxedOutputColor.Text, Environment.NewLine));
 				}
 				pendingOutput.Add(new ColorAndText(color, text));
 			}
@@ -206,12 +213,12 @@ namespace dnSpy.TextEditor {
 
 			foreach (var info in newPendingOutput) {
 				sb.Append(info.Text);
-				textTokenInfo.Append(info.Color.ToTextTokenKind(), info.Text);
+				cachedTextTokenColors.Append(info.Color, info.Text);
 			}
 			if (sb.Length == 0)
 				return;
 
-			textTokenInfo.Flush();
+			cachedTextTokenColors.Flush();
 			RawAppend(sb.ToString());
 
 			if (canMoveCaret) {

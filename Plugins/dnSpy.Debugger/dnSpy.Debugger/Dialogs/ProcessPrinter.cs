@@ -49,17 +49,17 @@ namespace dnSpy.Debugger.Dialogs {
 
 		public void WritePID(ProcessVM vm) {
 			if (useHex)
-				output.Write(string.Format("0x{0:X8}", vm.PID), TextTokenKind.Number);
+				output.Write(string.Format("0x{0:X8}", vm.PID), BoxedTextTokenKind.Number);
 			else
-				output.Write(string.Format("{0}", vm.PID), TextTokenKind.Number);
+				output.Write(string.Format("{0}", vm.PID), BoxedTextTokenKind.Number);
 		}
 
 		public void WriteCLRVersion(ProcessVM vm) {
-			output.Write(vm.CLRVersion, TextTokenKind.Number);
+			output.Write(vm.CLRVersion, BoxedTextTokenKind.Number);
 		}
 
 		public void WriteType(ProcessVM vm) {
-			output.Write(TypeToString(vm.CLRTypeInfo.CLRType), TextTokenKind.EnumField);
+			output.Write(TypeToString(vm.CLRTypeInfo.CLRType), BoxedTextTokenKind.EnumField);
 		}
 
 		static string TypeToString(CLRType type) {
@@ -73,7 +73,7 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 
 		public void WriteMachine(ProcessVM vm) {
-			output.Write(ToString(vm.Machine), TextTokenKind.InstanceMethod);
+			output.Write(ToString(vm.Machine), BoxedTextTokenKind.InstanceMethod);
 		}
 
 		static string ToString(Machine machine) {
@@ -85,7 +85,7 @@ namespace dnSpy.Debugger.Dialogs {
 		}
 
 		public void WriteTitle(ProcessVM vm) {
-			output.Write(vm.Title, TextTokenKind.String);
+			output.Write(vm.Title, BoxedTextTokenKind.String);
 		}
 	}
 }

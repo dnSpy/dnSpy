@@ -97,32 +97,32 @@ namespace dnSpy.Languages.ILSpy.VB {
 			}
 		}
 
-		public void WriteIdentifier(string identifier, TextTokenKind tokenKind) {
+		public void WriteIdentifier(string identifier, object data) {
 			var definition = GetCurrentDefinition();
 			if (definition != null) {
-				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, tokenKind);
+				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, data);
 				return;
 			}
 
 			object memberRef = GetCurrentMemberReference();
 			if (memberRef != null) {
-				output.WriteReference(IdentifierEscaper.Escape(identifier), memberRef, tokenKind);
+				output.WriteReference(IdentifierEscaper.Escape(identifier), memberRef, data);
 				return;
 			}
 
 			definition = GetCurrentLocalDefinition();
 			if (definition != null) {
-				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, tokenKind);
+				output.WriteDefinition(IdentifierEscaper.Escape(identifier), definition, data);
 				return;
 			}
 
 			memberRef = GetCurrentLocalReference();
 			if (memberRef != null) {
-				output.WriteReference(IdentifierEscaper.Escape(identifier), memberRef, tokenKind, true);
+				output.WriteReference(IdentifierEscaper.Escape(identifier), memberRef, data, true);
 				return;
 			}
 
-			output.Write(IdentifierEscaper.Escape(identifier), tokenKind);
+			output.Write(IdentifierEscaper.Escape(identifier), data);
 		}
 
 		IMemberRef GetCurrentMemberReference() {
@@ -189,18 +189,18 @@ namespace dnSpy.Languages.ILSpy.VB {
 			IMemberRef memberRef = GetCurrentMemberReference();
 			var node = nodeStack.Peek();
 			if (memberRef != null && node is PrimitiveType)
-				output.WriteReference(keyword, memberRef, TextTokenKind.Keyword);
+				output.WriteReference(keyword, memberRef, BoxedTextTokenKind.Keyword);
 			else
-				output.Write(keyword, TextTokenKind.Keyword);
+				output.Write(keyword, BoxedTextTokenKind.Keyword);
 		}
 
-		public void WriteToken(string token, TextTokenKind tokenKind) {
+		public void WriteToken(string token, object data) {
 			// Attach member reference to token only if there's no identifier in the current node.
 			IMemberRef memberRef = GetCurrentMemberReference();
 			if (memberRef != null && nodeStack.Peek().GetChildByRole(AstNode.Roles.Identifier).IsNull)
-				output.WriteReference(token, memberRef, tokenKind);
+				output.WriteReference(token, memberRef, data);
 			else
-				output.Write(token, tokenKind);
+				output.Write(token, data);
 		}
 
 		public void Space() {
@@ -221,12 +221,12 @@ namespace dnSpy.Languages.ILSpy.VB {
 
 		public void WriteComment(bool isDocumentation, string content) {
 			if (isDocumentation) {
-				output.Write("'''", TextTokenKind.XmlDocCommentDelimiter);
+				output.Write("'''", BoxedTextTokenKind.XmlDocCommentDelimiter);
 				output.WriteXmlDoc(content);
 				output.WriteLine();
 			}
 			else
-				output.WriteLine("'" + content, TextTokenKind.Comment);
+				output.WriteLine("'" + content, BoxedTextTokenKind.Comment);
 		}
 
 		static bool IsDefinition(AstNode node) {

@@ -280,49 +280,49 @@ namespace dnSpy.AsmEditor.MethodBody {
 					output.WriteLine();
 
 				var instr = instrs[i];
-				output.Write(instr.Index.ToString(), TextTokenKind.Number);
-				output.Write("\t", TextTokenKind.Text);
-				output.Write(string.Format("{0:X4}", instr.Offset), TextTokenKind.Label);
-				output.Write("\t", TextTokenKind.Text);
-				output.Write(instr.Code.ToOpCode().ToString(), TextTokenKind.OpCode);
+				output.Write(instr.Index.ToString(), BoxedTextTokenKind.Number);
+				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(string.Format("{0:X4}", instr.Offset), BoxedTextTokenKind.Label);
+				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(instr.Code.ToOpCode().ToString(), BoxedTextTokenKind.OpCode);
 
 				switch (instr.InstructionOperandVM.InstructionOperandType) {
 				case InstructionOperandType.None:
 					break;
 
 				case InstructionOperandType.SByte:
-					output.Write("\t", TextTokenKind.Text);
-					output.Write(instr.InstructionOperandVM.SByte.StringValue, TextTokenKind.Number);
+					output.Write("\t", BoxedTextTokenKind.Text);
+					output.Write(instr.InstructionOperandVM.SByte.StringValue, BoxedTextTokenKind.Number);
 					break;
 
 				case InstructionOperandType.Byte:
-					output.Write("\t", TextTokenKind.Text);
-					output.Write(instr.InstructionOperandVM.Byte.StringValue, TextTokenKind.Number);
+					output.Write("\t", BoxedTextTokenKind.Text);
+					output.Write(instr.InstructionOperandVM.Byte.StringValue, BoxedTextTokenKind.Number);
 					break;
 
 				case InstructionOperandType.Int32:
-					output.Write("\t", TextTokenKind.Text);
-					output.Write(instr.InstructionOperandVM.Int32.StringValue, TextTokenKind.Number);
+					output.Write("\t", BoxedTextTokenKind.Text);
+					output.Write(instr.InstructionOperandVM.Int32.StringValue, BoxedTextTokenKind.Number);
 					break;
 
 				case InstructionOperandType.Int64:
-					output.Write("\t", TextTokenKind.Text);
-					output.Write(instr.InstructionOperandVM.Int64.StringValue, TextTokenKind.Number);
+					output.Write("\t", BoxedTextTokenKind.Text);
+					output.Write(instr.InstructionOperandVM.Int64.StringValue, BoxedTextTokenKind.Number);
 					break;
 
 				case InstructionOperandType.Single:
-					output.Write("\t", TextTokenKind.Text);
-					output.Write(instr.InstructionOperandVM.Single.StringValue, TextTokenKind.Number);
+					output.Write("\t", BoxedTextTokenKind.Text);
+					output.Write(instr.InstructionOperandVM.Single.StringValue, BoxedTextTokenKind.Number);
 					break;
 
 				case InstructionOperandType.Double:
-					output.Write("\t", TextTokenKind.Text);
-					output.Write(instr.InstructionOperandVM.Double.StringValue, TextTokenKind.Number);
+					output.Write("\t", BoxedTextTokenKind.Text);
+					output.Write(instr.InstructionOperandVM.Double.StringValue, BoxedTextTokenKind.Number);
 					break;
 
 				case InstructionOperandType.String:
-					output.Write("\t", TextTokenKind.Text);
-					output.Write(instr.InstructionOperandVM.String.StringValue, TextTokenKind.String);
+					output.Write("\t", BoxedTextTokenKind.Text);
+					output.Write(instr.InstructionOperandVM.String.StringValue, BoxedTextTokenKind.String);
 					break;
 
 				case InstructionOperandType.Field:
@@ -334,7 +334,7 @@ namespace dnSpy.AsmEditor.MethodBody {
 				case InstructionOperandType.SwitchTargets:
 				case InstructionOperandType.Local:
 				case InstructionOperandType.Parameter:
-					output.Write("\t", TextTokenKind.Text);
+					output.Write("\t", BoxedTextTokenKind.Text);
 					BodyUtils.WriteObject(output, instr.InstructionOperandVM.Value);
 					break;
 

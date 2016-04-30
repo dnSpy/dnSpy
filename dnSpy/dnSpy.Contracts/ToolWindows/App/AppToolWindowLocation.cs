@@ -17,9 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using System;
-using System.ComponentModel;
-
 namespace dnSpy.Contracts.ToolWindows.App {
 	/// <summary>
 	/// Tool window location

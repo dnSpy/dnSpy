@@ -63,7 +63,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_Cor20_Header, TextTokenKind.InstanceField);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_Cor20_Header, BoxedTextTokenKind.InstanceField);
 		}
 	}
 }

@@ -32,14 +32,14 @@ namespace dnSpy.Debugger.Locals {
 
 		public void WriteExpander(ValueVM vm) {
 			if (vm.LazyLoading)
-				output.Write("+", TextTokenKind.Text);
+				output.Write("+", BoxedTextTokenKind.Text);
 			else if (vm.Children.Count == 0) {
 				// VS prints nothing
 			}
 			else if (vm.IsExpanded)
-				output.Write("-", TextTokenKind.Text);
+				output.Write("-", BoxedTextTokenKind.Text);
 			else
-				output.Write("+", TextTokenKind.Text);
+				output.Write("+", BoxedTextTokenKind.Text);
 		}
 
 		public void WriteName(ValueVM vm) {

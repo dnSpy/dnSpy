@@ -30,7 +30,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 
 		public void WriteName(TabVM vm) {
-			output.Write(vm.Name, TextTokenKind.Text);
+			output.Write(vm.Name, BoxedTextTokenKind.Text);
 		}
 
 		public void WriteModule(TabVM vm) {

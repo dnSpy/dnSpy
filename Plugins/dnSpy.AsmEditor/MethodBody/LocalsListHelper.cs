@@ -96,14 +96,14 @@ namespace dnSpy.AsmEditor.MethodBody {
 					output.WriteLine();
 
 				var local = locals[i];
-				output.Write(local.Index.ToString(), TextTokenKind.Number);
-				output.Write("\t", TextTokenKind.Text);
-				output.Write(local.IsPinned ? dnSpy_AsmEditor_Resources.Local_Pinned_Character : string.Empty, TextTokenKind.Text);
-				output.Write("\t", TextTokenKind.Text);
-				output.Write(local.IsCompilerGenerated ? dnSpy_AsmEditor_Resources.Local_CompilerGenerated_Character : string.Empty, TextTokenKind.Text);
-				output.Write("\t", TextTokenKind.Text);
-				output.Write(local.Name ?? string.Empty, TextTokenKind.Local);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write(local.Index.ToString(), BoxedTextTokenKind.Number);
+				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(local.IsPinned ? dnSpy_AsmEditor_Resources.Local_Pinned_Character : string.Empty, BoxedTextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(local.IsCompilerGenerated ? dnSpy_AsmEditor_Resources.Local_CompilerGenerated_Character : string.Empty, BoxedTextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
+				output.Write(local.Name ?? string.Empty, BoxedTextTokenKind.Local);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				BodyUtils.WriteObject(output, local.Type);
 			}
 			if (locals.Length > 1)

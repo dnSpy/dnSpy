@@ -22,7 +22,7 @@ namespace Example2.Plugin {
 			var sref = @ref as StringInfoReference;
 			if (sref != null) {
 				var creator = context.Create();
-				creator.Output.Write(sref.Message, TextTokenKind.String);
+				creator.Output.Write(sref.Message, BoxedTextTokenKind.String);
 				return creator.Create();
 			}
 

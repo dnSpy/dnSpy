@@ -42,7 +42,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(dnSpy_Analyzer_Resources.UsesTreeNode, TextTokenKind.Text);
+			output.Write(dnSpy_Analyzer_Resources.UsesTreeNode, BoxedTextTokenKind.Text);
 		}
 
 		struct DefRef<T> where T : IDnlibDef {

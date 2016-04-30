@@ -30,7 +30,7 @@ namespace dnSpy.Files.Tabs.Dialogs {
 		}
 
 		public void WriteName(GACFileVM vm) {
-			output.Write(vm.Name, vm.IsExe ? TextTokenKind.AssemblyExe : TextTokenKind.Assembly);
+			output.Write(vm.Name, vm.IsExe ? BoxedTextTokenKind.AssemblyExe : BoxedTextTokenKind.Assembly);
 		}
 
 		public void WriteVersion(GACFileVM vm) {

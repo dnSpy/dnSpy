@@ -87,10 +87,10 @@ namespace dnSpy.Files.TreeView {
 			output.WriteModule(DnSpyFile.ModuleDef.Name);
 
 			output.WriteLine();
-			output.Write(TargetFrameworkInfo.Create(DnSpyFile.ModuleDef).ToString(), TextTokenKind.EnumField);
+			output.Write(TargetFrameworkInfo.Create(DnSpyFile.ModuleDef).ToString(), BoxedTextTokenKind.EnumField);
 
 			output.WriteLine();
-			output.Write(TargetFrameworkUtils.GetArchString(DnSpyFile.ModuleDef), TextTokenKind.EnumField);
+			output.Write(TargetFrameworkUtils.GetArchString(DnSpyFile.ModuleDef), BoxedTextTokenKind.EnumField);
 
 			output.WriteLine();
 			output.WriteFilename(DnSpyFile.Filename);

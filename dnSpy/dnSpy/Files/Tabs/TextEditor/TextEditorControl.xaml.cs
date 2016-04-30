@@ -72,8 +72,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 		readonly DnSpyTextEditor textEditor;
 
+		readonly DnSpyTextEditorColorizerHelper colorizerHelper;
 		readonly IThemeManager themeManager;
-
 		readonly IconBarMargin iconBarMargin;
 
 		public IEnumerable<object> AllReferences {
@@ -92,7 +92,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ToolTipHelper toolTipHelper;
 		readonly ITextEditorSettings textEditorSettings;
 
-		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager) {
+		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferColorizerCreator textBufferColorizerCreator) {
 			this.references = new TextSegmentCollection<ReferenceSegment>();
 			this.themeManager = themeManager;
 			this.toolTipHelper = toolTipHelper;
@@ -103,7 +103,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			textEditor = new DnSpyTextEditor(themeManager, textEditorSettings);
+			textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator);
+			colorizerHelper = new DnSpyTextEditorColorizerHelper(textEditor);
+			textEditor.TextBuffer.SetDefaultColorizer(colorizerHelper.CreateTextBufferColorizer());
 			this.toolTipHelper.Initialize(TextEditor);
 			RemoveCommands(TextEditor);
 			dnSpyTextEditor.Content = TextEditor;
@@ -295,8 +297,6 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			var avOutput = output as AvalonEditTextOutput;
 			Debug.Assert(avOutput != null, "output should be an AvalonEditTextOutput instance");
 
-			TextEditor.SetDocumentColorInfo(avOutput?.TextTokenInfo);
-
 			ClearMarkedReferences();
 			TextEditor.ScrollToHome();
 			TextEditor.Document = null;
@@ -322,6 +322,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 				TextEditor.Document = avOutput.GetDocument();
 			}
+
+			colorizerHelper.SetDocumentCachedColors(avOutput?.CachedColors);
 		}
 
 		public void Clear() {

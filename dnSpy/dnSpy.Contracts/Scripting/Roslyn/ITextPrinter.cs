@@ -61,6 +61,13 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text</param>
+		void Print(object color, string text);
+
+		/// <summary>
+		/// Prints text to the screen
+		/// </summary>
+		/// <param name="color">Color</param>
+		/// <param name="text">Text</param>
 		void Print(OutputColor color, string text);
 
 		/// <summary>
@@ -68,6 +75,14 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// </summary>
 		/// <param name="text">Text</param>
 		void Print(string text);
+
+		/// <summary>
+		/// Prints text to the screen
+		/// </summary>
+		/// <param name="color">Color</param>
+		/// <param name="fmt">Format</param>
+		/// <param name="args">Args</param>
+		void Print(object color, string fmt, params object[] args);
 
 		/// <summary>
 		/// Prints text to the screen
@@ -89,6 +104,13 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// </summary>
 		/// <param name="color">Color</param>
 		/// <param name="text">Text or null</param>
+		void PrintLine(object color, string text);
+
+		/// <summary>
+		/// Prints text followed by a new line to the screen
+		/// </summary>
+		/// <param name="color">Color</param>
+		/// <param name="text">Text or null</param>
 		void PrintLine(OutputColor color, string text);
 
 		/// <summary>
@@ -96,6 +118,14 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// </summary>
 		/// <param name="text">Text or null</param>
 		void PrintLine(string text = null);
+
+		/// <summary>
+		/// Prints text followed by a new line to the screen
+		/// </summary>
+		/// <param name="color">Color</param>
+		/// <param name="fmt">Format</param>
+		/// <param name="args">Args</param>
+		void PrintLine(object color, string fmt, params object[] args);
 
 		/// <summary>
 		/// Prints text followed by a new line to the screen
@@ -117,7 +147,21 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// </summary>
 		/// <param name="value">Value, can be null</param>
 		/// <param name="color">Color</param>
+		void Print(object value, object color);
+
+		/// <summary>
+		/// Formats and prints a value to the screen
+		/// </summary>
+		/// <param name="value">Value, can be null</param>
+		/// <param name="color">Color</param>
 		void Print(object value, OutputColor color = OutputColor.ReplScriptOutputText);
+
+		/// <summary>
+		/// Formats and prints a value followed by a new line to the screen
+		/// </summary>
+		/// <param name="value">Value or null</param>
+		/// <param name="color">Color</param>
+		void PrintLine(object value, object color);
 
 		/// <summary>
 		/// Formats and prints a value followed by a new line to the screen
@@ -131,7 +175,21 @@ namespace dnSpy.Contracts.Scripting.Roslyn {
 		/// </summary>
 		/// <param name="ex">Exception</param>
 		/// <param name="color">Color</param>
+		void Print(Exception ex, object color);
+
+		/// <summary>
+		/// Formats and prints an exception to the screen
+		/// </summary>
+		/// <param name="ex">Exception</param>
+		/// <param name="color">Color</param>
 		void Print(Exception ex, OutputColor color = OutputColor.Error);
+
+		/// <summary>
+		/// Formats and prints an exception followed by a new line to the screen
+		/// </summary>
+		/// <param name="ex">Exception</param>
+		/// <param name="color">Color</param>
+		void PrintLine(Exception ex, object color);
 
 		/// <summary>
 		/// Formats and prints an exception followed by a new line to the screen

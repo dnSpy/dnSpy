@@ -141,7 +141,7 @@ namespace Example2.Plugin {
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
-			context.Output.Write(file.Text, TextTokenKind.Text);
+			context.Output.Write(file.Text, BoxedTextTokenKind.Text);
 			return true;
 		}
 	}

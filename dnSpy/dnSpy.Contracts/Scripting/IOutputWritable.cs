@@ -43,7 +43,7 @@ namespace dnSpy.Contracts.Scripting {
 		/// <param name="output">Output</param>
 		public static void WriteLineTo(this IOutputWritable obj, IOutputWriter output) {
 			obj.WriteTo(output);
-			output.Write(Environment.NewLine, OutputColor.ReplOutputText);
+			output.Write(Environment.NewLine, BoxedOutputColor.ReplScriptOutputText);
 		}
 	}
 }

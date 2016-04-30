@@ -42,6 +42,11 @@ namespace dnSpy.Contracts.TextEditor {
 		public Guid? MenuGuid { get; set; }
 
 		/// <summary>
+		/// Content type
+		/// </summary>
+		public Guid ContentType { get; set; }
+
+		/// <summary>
 		/// Creates <see cref="GuidObject"/>s, can be null
 		/// </summary>
 		public Func<GuidObject, bool, IEnumerable<GuidObject>> CreateGuidObjects { get; set; }
@@ -58,6 +63,7 @@ namespace dnSpy.Contracts.TextEditor {
 			other.TextEditorCommandGuid = TextEditorCommandGuid;
 			other.TextAreaCommandGuid = TextAreaCommandGuid;
 			other.MenuGuid = MenuGuid;
+			other.ContentType = ContentType;
 			other.CreateGuidObjects = CreateGuidObjects;
 			return other;
 		}

@@ -78,7 +78,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output) {
-			output.Write(dnSpy_AsmEditor_Resources.HexNode_TablesStream, TextTokenKind.InstanceField);
+			output.Write(dnSpy_AsmEditor_Resources.HexNode_TablesStream, BoxedTextTokenKind.InstanceField);
 		}
 
 		public MetaDataTableRecordNode FindTokenNode(uint token) {

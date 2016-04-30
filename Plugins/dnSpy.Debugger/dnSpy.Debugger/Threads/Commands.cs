@@ -130,27 +130,27 @@ namespace dnSpy.Debugger.Threads {
 			foreach (var vm in context.SelectedItems) {
 				var printer = new ThreadPrinter(output, debuggerSettings.UseHexadecimal, theDebugger.Value.Debugger);
 				printer.WriteCurrent(vm);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				printer.WriteId(vm);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				printer.WriteManagedId(vm);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				printer.WriteCategory(vm);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				printer.WriteName(vm);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				printer.WriteLocation(vm);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				printer.WritePriority(vm);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				printer.WriteAffinityMask(vm);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				printer.WriteSuspended(vm);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				printer.WriteProcess(vm);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				printer.WriteAppDomain(vm);
-				output.Write("\t", TextTokenKind.Text);
+				output.Write("\t", BoxedTextTokenKind.Text);
 				printer.WriteUserState(vm);
 				output.WriteLine();
 			}

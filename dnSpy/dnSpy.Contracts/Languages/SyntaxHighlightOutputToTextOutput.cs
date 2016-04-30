@@ -36,9 +36,8 @@ namespace dnSpy.Contracts.Languages {
 		/// </summary>
 		/// <param name="output">Output to use</param>
 		/// <returns></returns>
-		public static ITextOutput Create(ISyntaxHighlightOutput output) {
-			return new SyntaxHighlightOutputToTextOutput(output);
-		}
+		public static ITextOutput Create(ISyntaxHighlightOutput output) =>
+			new SyntaxHighlightOutputToTextOutput(output);
 
 		SyntaxHighlightOutputToTextOutput(ISyntaxHighlightOutput output) {
 			this.output = output;
@@ -47,37 +46,28 @@ namespace dnSpy.Contracts.Languages {
 			this.indent = 0;
 		}
 
-		TextPosition ITextOutput.Location {
-			get { return new TextPosition(line, col + indent); }
-		}
+		TextPosition ITextOutput.Location => new TextPosition(line, col + indent);
 
-		void ITextOutput.AddDebugSymbols(MemberMapping methodDebugSymbols) {
-		}
+		void ITextOutput.AddDebugSymbols(MemberMapping methodDebugSymbols) { }
+		void ITextOutput.Indent() => indent++;
+		void ITextOutput.Unindent() => indent--;
 
-		void ITextOutput.Indent() {
-			indent++;
-		}
-
-		void ITextOutput.Unindent() {
-			indent--;
-		}
-
-		void ITextOutput.Write(string text, int index, int count, TextTokenKind tokenKind) {
+		void ITextOutput.Write(string text, int index, int count, object data) {
 			if (index == 0 && text.Length == count)
-				((ITextOutput)this).Write(text, tokenKind);
-			((ITextOutput)this).Write(text.Substring(index, count), tokenKind);
+				((ITextOutput)this).Write(text, data);
+			((ITextOutput)this).Write(text.Substring(index, count), data);
 		}
 
-		void ITextOutput.Write(StringBuilder sb, int index, int count, TextTokenKind tokenKind) {
+		void ITextOutput.Write(StringBuilder sb, int index, int count, object data) {
 			if (index == 0 && sb.Length == count)
-				((ITextOutput)this).Write(sb.ToString(), tokenKind);
-			((ITextOutput)this).Write(sb.ToString(index, count), tokenKind);
+				((ITextOutput)this).Write(sb.ToString(), data);
+			((ITextOutput)this).Write(sb.ToString(index, count), data);
 		}
 
-		void ITextOutput.Write(string text, TextTokenKind tokenKind) {
+		void ITextOutput.Write(string text, object data) {
 			if (col == 1 && indent > 0)
-				output.Write(new string('\t', indent), TextTokenKind.Text);
-			output.Write(text, tokenKind);
+				output.Write(new string('\t', indent), BoxedTextTokenKind.Text);
+			output.Write(text, data);
 			int index = text.LastIndexOfAny(newLineChars);
 			if (index >= 0) {
 				line += text.Split(lineFeedChar).Length - 1;	// good enough for our purposes
@@ -90,16 +80,21 @@ namespace dnSpy.Contracts.Languages {
 		static readonly char[] lineFeedChar = new char[] { '\n' };
 		static readonly char[] newLineChars = new char[] { '\r', '\n' };
 
-		void ITextOutput.WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal) {
-			((ITextOutput)this).Write(text, tokenKind);
-		}
-
-		void ITextOutput.WriteLine() {
-			((ITextOutput)this).Write(Environment.NewLine, TextTokenKind.Text);
-		}
-
-		void ITextOutput.WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal) {
-			((ITextOutput)this).Write(text, tokenKind);
-		}
+		void ITextOutput.WriteDefinition(string text, object definition, object data, bool isLocal) =>
+			((ITextOutput)this).Write(text, data);
+		void ITextOutput.WriteLine() =>
+			((ITextOutput)this).Write(Environment.NewLine, BoxedTextTokenKind.Text);
+		void ITextOutput.WriteReference(string text, object reference, object data, bool isLocal) =>
+			((ITextOutput)this).Write(text, data);
+		void ITextOutput.Write(string text, TextTokenKind tokenKind) =>
+			((ITextOutput)this).Write(text, tokenKind.Box());
+		void ITextOutput.Write(string text, int index, int count, TextTokenKind tokenKind) =>
+			((ITextOutput)this).Write(text, index, count, tokenKind.Box());
+		void ITextOutput.Write(StringBuilder sb, int index, int count, TextTokenKind tokenKind) =>
+			((ITextOutput)this).Write(sb, index, count, tokenKind.Box());
+		void ITextOutput.WriteDefinition(string text, object definition, TextTokenKind tokenKind, bool isLocal) =>
+			((ITextOutput)this).WriteDefinition(text, definition, tokenKind.Box(), isLocal);
+		void ITextOutput.WriteReference(string text, object reference, TextTokenKind tokenKind, bool isLocal) =>
+			((ITextOutput)this).WriteReference(text, reference, tokenKind.Box(), isLocal);
 	}
 }

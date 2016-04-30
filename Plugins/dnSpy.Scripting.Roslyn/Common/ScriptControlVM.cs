@@ -77,7 +77,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 			execState = null;
 			replEditor.Reset();
 			isResetting = false;
-			replEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.ResettingExecutionEngine, OutputColor.ReplOutputText);
+			replEditor.OutputPrintLine(dnSpy_Scripting_Roslyn_Resources.ResettingExecutionEngine, BoxedOutputColor.ReplOutputText);
 			InitializeExecutionEngine(loadConfig, false);
 		}
 		bool isResetting;
@@ -118,7 +118,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				return;
 			hasInitialized = true;
 
-			this.replEditor.OutputPrintLine(Logo, OutputColor.ReplOutputText);
+			this.replEditor.OutputPrintLine(Logo, BoxedOutputColor.ReplOutputText);
 			InitializeExecutionEngine(true, true);
 		}
 		bool hasInitialized;
@@ -206,7 +206,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				execStateCache.CancellationTokenSource.Token.ThrowIfCancellationRequested();
 				execStateCache.ScriptState = script.RunAsync(execStateCache.Globals, execStateCache.CancellationTokenSource.Token).Result;
 				if (showHelp)
-					this.replEditor.OutputPrintLine(Help, OutputColor.ReplOutputText);
+					this.replEditor.OutputPrintLine(Help, BoxedOutputColor.ReplOutputText);
 			}, execStateCache.CancellationTokenSource.Token)
 			.ContinueWith(t => {
 				execStateCache.IsInitializing = false;
@@ -214,7 +214,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				if (!t.IsCanceled && !t.IsFaulted)
 					CommandExecuted();
 				else
-					replEditor.OutputPrintLine(string.Format("Could not create the script:\n\n{0}", ex), OutputColor.Error, true);
+					replEditor.OutputPrintLine(string.Format("Could not create the script:\n\n{0}", ex), BoxedOutputColor.Error, true);
 			}, CancellationToken.None, TaskContinuationOptions.None, TaskScheduler.FromCurrentSynchronizationContext());
 		}
 
@@ -226,7 +226,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					CommandExecuted();
 			}
 			catch (Exception ex) {
-				replEditor.OutputPrint(ex.ToString(), OutputColor.Error, true);
+				replEditor.OutputPrint(ex.ToString(), BoxedOutputColor.Error, true);
 				CommandExecuted();
 			}
 		}
@@ -323,13 +323,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 						if (isActive) {
 							try {
 								if (ex != null)
-									replEditor.OutputPrint(Format(ex.InnerException), OutputColor.Error, true);
+									replEditor.OutputPrint(Format(ex.InnerException), BoxedOutputColor.Error, true);
 
 								if (!t.IsCanceled && !t.IsFaulted) {
 									oldState.ScriptState = t.Result;
 									var val = t.Result.ReturnValue;
 									if (val != null)
-										ObjectOutputLine(OutputColor.ReplOutputText, oldState.Globals.PrintOptionsImpl, val, true);
+										ObjectOutputLine(BoxedOutputColor.ReplOutputText, oldState.Globals.PrintOptionsImpl, val, true);
 								}
 							}
 							finally {
@@ -354,7 +354,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					else {
 						var ex = t.Exception;
 						if (ex != null) {
-							replEditor.OutputPrint(ex.ToString(), OutputColor.Error, true);
+							replEditor.OutputPrint(ex.ToString(), BoxedOutputColor.Error, true);
 							CommandExecuted();
 						}
 					}
@@ -367,7 +367,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 					lock (lockObj)
 						execState.Executing = false;
 				}
-				replEditor.OutputPrintLine(string.Format("Error executing script:\n\n{0}", ex), OutputColor.Error, true);
+				replEditor.OutputPrintLine(string.Format("Error executing script:\n\n{0}", ex), BoxedOutputColor.Error, true);
 				return false;
 			}
 		}
@@ -413,13 +413,13 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		void PrintDiagnostics(ImmutableArray<Diagnostic> diagnostics) {
 			const int MAX_DIAGS = 5;
 			for (int i = 0; i < diagnostics.Length && i < MAX_DIAGS; i++)
-				replEditor.OutputPrintLine(DiagnosticFormatter.Format(diagnostics[i], Thread.CurrentThread.CurrentUICulture), OutputColor.Error, true);
+				replEditor.OutputPrintLine(DiagnosticFormatter.Format(diagnostics[i], Thread.CurrentThread.CurrentUICulture), BoxedOutputColor.Error, true);
 			int extraErrors = diagnostics.Length - MAX_DIAGS;
 			if (extraErrors > 0) {
 				if (extraErrors == 1)
-					replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.CompilationAdditionalError, extraErrors), OutputColor.Error, true);
+					replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.CompilationAdditionalError, extraErrors), BoxedOutputColor.Error, true);
 				else
-					replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.CompilationAdditionalErrors, extraErrors), OutputColor.Error, true);
+					replEditor.OutputPrintLine(string.Format(dnSpy_Scripting_Roslyn_Resources.CompilationAdditionalErrors, extraErrors), BoxedOutputColor.Error, true);
 			}
 		}
 
@@ -441,49 +441,49 @@ namespace dnSpy.Scripting.Roslyn.Common {
 		/// <returns></returns>
 		bool IsCurrentScript(ScriptGlobals globals) => execState?.Globals == globals;
 
-		void IScriptGlobalsHelper.Print(ScriptGlobals globals, OutputColor color, string text) {
+		void IScriptGlobalsHelper.Print(ScriptGlobals globals, object color, string text) {
 			if (!IsCurrentScript(globals))
 				return;
 			replEditor.OutputPrint(text, color);
 		}
 
-		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, OutputColor color, string text) {
+		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, object color, string text) {
 			if (!IsCurrentScript(globals))
 				return;
 			replEditor.OutputPrintLine(text, color);
 		}
 
-		void IScriptGlobalsHelper.Print(ScriptGlobals globals, OutputColor color, PrintOptionsImpl printOptions, object value) {
+		void IScriptGlobalsHelper.Print(ScriptGlobals globals, object color, PrintOptionsImpl printOptions, object value) {
 			if (!IsCurrentScript(globals))
 				return;
 			ObjectOutput(color, printOptions, value);
 		}
 
-		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, OutputColor color, PrintOptionsImpl printOptions, object value) {
+		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, object color, PrintOptionsImpl printOptions, object value) {
 			if (!IsCurrentScript(globals))
 				return;
 			ObjectOutputLine(color, printOptions, value);
 		}
 
-		void IScriptGlobalsHelper.Print(ScriptGlobals globals, OutputColor color, Exception ex) {
+		void IScriptGlobalsHelper.Print(ScriptGlobals globals, object color, Exception ex) {
 			if (!IsCurrentScript(globals))
 				return;
 			replEditor.OutputPrint(Format(ex), color);
 		}
 
-		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, OutputColor color, Exception ex) {
+		void IScriptGlobalsHelper.PrintLine(ScriptGlobals globals, object color, Exception ex) {
 			if (!IsCurrentScript(globals))
 				return;
 			replEditor.OutputPrintLine(Format(ex), color);
 		}
 
-		void IScriptGlobalsHelper.Print(ScriptGlobals globals, CachedWriter writer, OutputColor color, PrintOptionsImpl printOptions, object value) {
+		void IScriptGlobalsHelper.Print(ScriptGlobals globals, CachedWriter writer, object color, PrintOptionsImpl printOptions, object value) {
 			if (!IsCurrentScript(globals))
 				return;
 			ObjectOutput(writer, color, printOptions, value);
 		}
 
-		void IScriptGlobalsHelper.Print(ScriptGlobals globals, CachedWriter writer, OutputColor color, Exception ex) {
+		void IScriptGlobalsHelper.Print(ScriptGlobals globals, CachedWriter writer, object color, Exception ex) {
 			if (!IsCurrentScript(globals))
 				return;
 			writer.Write(Format(ex), color);
@@ -516,13 +516,15 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				this.owner = owner;
 			}
 
-			public void Write(string text, OutputColor color) {
-				owner.replEditor.OutputPrint(text, color, startOnNewLine);
+			public void Write(string text, object color) {
+				owner.replEditor.OutputPrint(text, color ?? BoxedOutputColor.ReplScriptOutputText, startOnNewLine);
 				startOnNewLine = false;
 			}
+
+			public void Write(string text, OutputColor color) => Write(text, color.Box());
 		}
 
-		void ObjectOutput(CachedWriter writer, OutputColor color, PrintOptionsImpl printOptions, object value) {
+		void ObjectOutput(CachedWriter writer, object color, PrintOptionsImpl printOptions, object value) {
 			var writable = GetOutputWritable(printOptions, value);
 			if (writable != null)
 				writable.WriteTo(writer);
@@ -530,7 +532,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				writer.Write(Format(value, printOptions.RoslynPrintOptions), color);
 		}
 
-		void ObjectOutput(OutputColor color, PrintOptionsImpl printOptions, object value, bool startOnNewLine = false) {
+		void ObjectOutput(object color, PrintOptionsImpl printOptions, object value, bool startOnNewLine = false) {
 			var writable = GetOutputWritable(printOptions, value);
 			if (writable != null)
 				writable.WriteTo(OutputWriter.Create(this, startOnNewLine));
@@ -538,7 +540,7 @@ namespace dnSpy.Scripting.Roslyn.Common {
 				replEditor.OutputPrint(Format(value, printOptions.RoslynPrintOptions), color, startOnNewLine);
 		}
  
-		void ObjectOutputLine(OutputColor color, PrintOptionsImpl printOptions, object value, bool startOnNewLine = false) {
+		void ObjectOutputLine(object color, PrintOptionsImpl printOptions, object value, bool startOnNewLine = false) {
 			ObjectOutput(color, printOptions, value, startOnNewLine);
 			replEditor.OutputPrintLine(string.Empty, color);
 		}

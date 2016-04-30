@@ -17,8 +17,6 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-using dnSpy.Decompiler.Shared;
-
 namespace dnSpy.Contracts.Highlighting {
 	/// <summary>
 	/// Syntax highlight output
@@ -28,7 +26,7 @@ namespace dnSpy.Contracts.Highlighting {
 		/// Writes a string
 		/// </summary>
 		/// <param name="s">String</param>
-		/// <param name="tokenKind">Color</param>
-		void Write(string s, TextTokenKind tokenKind);
+		/// <param name="data">Data</param>
+		void Write(string s, object data);
 	}
 }

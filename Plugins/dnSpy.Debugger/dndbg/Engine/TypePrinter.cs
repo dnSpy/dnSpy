@@ -40,7 +40,7 @@ namespace dndbg.Engine {
 		Error,
 		Module,
 		Token,
-		NamespacePart,
+		Namespace,
 		InstanceProperty,
 		StaticProperty,
 		InstanceEvent,
@@ -505,7 +505,7 @@ namespace dndbg.Engine {
 			var parts = name.Split(dot);
 			if (ShowNamespaces) {
 				for (int i = 1; i < parts.Length; i++) {
-					WriteIdentifier(parts[i - 1], TypeColor.NamespacePart);
+					WriteIdentifier(parts[i - 1], TypeColor.Namespace);
 					OutputWrite(".", TypeColor.Operator);
 				}
 			}
@@ -873,7 +873,7 @@ namespace dndbg.Engine {
 
 		void WriteSystemType(string name, TypeColor typeColor) {
 			if (ShowNamespaces) {
-				OutputWrite("System", TypeColor.NamespacePart);
+				OutputWrite("System", TypeColor.Namespace);
 				OutputWrite(".", TypeColor.Operator);
 			}
 			OutputWrite(name, typeColor);

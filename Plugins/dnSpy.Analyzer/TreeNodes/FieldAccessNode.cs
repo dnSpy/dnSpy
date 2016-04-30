@@ -43,7 +43,7 @@ namespace dnSpy.Analyzer.TreeNodes {
 		}
 
 		protected override void Write(ISyntaxHighlightOutput output, ILanguage language) {
-			output.Write(showWrites ? dnSpy_Analyzer_Resources.AssignedByTreeNode : dnSpy_Analyzer_Resources.ReadByTreeNode, TextTokenKind.Text);
+			output.Write(showWrites ? dnSpy_Analyzer_Resources.AssignedByTreeNode : dnSpy_Analyzer_Resources.ReadByTreeNode, BoxedTextTokenKind.Text);
 		}
 
 		protected override IEnumerable<IAnalyzerTreeNodeData> FetchChildren(CancellationToken ct) {

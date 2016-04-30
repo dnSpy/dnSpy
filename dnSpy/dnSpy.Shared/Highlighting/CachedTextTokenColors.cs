@@ -23,10 +23,10 @@ using System.Diagnostics;
 using dnSpy.Decompiler.Shared;
 
 namespace dnSpy.Shared.Highlighting {
-	public sealed class TextTokenInfo {
-		public int Length {
-			get { return currentOffset; }
-		}
+	public sealed class CachedTextTokenColors {
+		public int Length => currentOffset;
+
+		static object noColor = new object();
 
 		// current write offset
 		int currentOffset;
@@ -36,68 +36,53 @@ namespace dnSpy.Shared.Highlighting {
 		int currentDefaultTextLength;
 		// current length of token. Valid when isAppendingDefaultText == false
 		int currentTokenLength;
-		// current token kind. Valid when isAppendingDefaultText == false
-		TextTokenKind currentTokenKind;
+		// current token data (color). Valid when isAppendingDefaultText == false
+		object currentTokenData = noColor;
 		bool isAppendingDefaultText = true;
-
-		// Convert offset to an index into the token list
-		Dictionary<int, uint> offsetToTokenInfoIndex = new Dictionary<int, uint>();
+		Dictionary<int, TokenInfo> offsetToTokenInfo = new Dictionary<int, TokenInfo>();
 
 		static readonly char[] newLineChars = new char[] { '\r', '\n' };
 
-		// Each token is usually surrounded by tokens of default color, and the default color
-		// usually is the first token on each line. Merge this info into one struct. 32 bits is
-		// enough. If a token or a default text token exceeds these lengths, it will be split up
-		// into multiple of the following structs.
-		//	[31:22] = token kind
-		//	[21:16] = unused
-		//	[15:8]  = token length
-		//	[7:0]   = Text (default color) token length
-		const int TOKEN_KIND_BITS = 10;
-		const int TOKEN_KIND_BIT = 22;
-		const int TOKEN_KIND_MAX = (1 << TOKEN_KIND_BITS) - 1;
-		const int TOKEN_LENGTH_BITS = 8;
-		const int TOKEN_LENGTH_BIT = 8;
-		const int TOKEN_LENGTH_MAX = (1 << TOKEN_LENGTH_BITS) - 1;
-		const int TEXT_TOKEN_LENGTH_BITS = 8;
-		const int TEXT_TOKEN_LENGTH_BIT = 0;
-		const int TEXT_TOKEN_LENGTH_MAX = (1 << TEXT_TOKEN_LENGTH_BITS) - 1;
-
-		static TextTokenInfo() {
-			if ((int)TextTokenKind.Last > (1 << TOKEN_KIND_BITS))
-				throw new InvalidProgramException("TOKEN_KIND_BITS is too small");
+		const int TEXT_TOKEN_LENGTH_MAX = ushort.MaxValue;
+		const int TOKEN_LENGTH_MAX = ushort.MaxValue;
+		struct TokenInfo {
+			public readonly ushort TokenLength;
+			public readonly ushort TextLength;
+			public readonly object Data;
+			public TokenInfo(int tokenLength, int textLength, object data) {
+				Debug.Assert(tokenLength < TOKEN_LENGTH_MAX);
+				Debug.Assert(textLength < TEXT_TOKEN_LENGTH_MAX);
+				TokenLength = (ushort)tokenLength;
+				TextLength = (ushort)textLength;
+				Data = data;
+			}
 		}
 
-		public bool Find(int offset, out int defaultTextLength, out TextTokenKind tokenKind, out int tokenLength) {
-			uint val;
-			if (!offsetToTokenInfoIndex.TryGetValue(offset, out val)) {
+		public bool Find(int offset, out int defaultTextLength, out object data, out int tokenLength) {
+			TokenInfo info;
+			if (!offsetToTokenInfo.TryGetValue(offset, out info)) {
 				defaultTextLength = 0;
-				tokenKind = TextTokenKind.Last;
+				data = BoxedTextTokenKind.Text;
 				tokenLength = 0;
 				return false;
 			}
 
-			defaultTextLength = (int)(val >> TEXT_TOKEN_LENGTH_BIT) & TEXT_TOKEN_LENGTH_MAX;
-			tokenKind = (TextTokenKind)((val >> TOKEN_KIND_BIT) & TOKEN_KIND_MAX);
-			tokenLength = (int)(val >> TOKEN_LENGTH_BIT) & TOKEN_LENGTH_MAX;
+			defaultTextLength = info.TextLength;
+			data = info.Data;
+			tokenLength = info.TokenLength;
 			return true;
 		}
 
-		public void Flush() {
-			EndCurrentToken(0);
-		}
+		public void Flush() => EndCurrentToken(0);
+		public void Finish() => Flush();
 
-		public void Finish() {
-			Flush();
-		}
-
-		public void Append(TextTokenKind tokenKind, string s) {
+		public void Append(object data, string s) {
 			if (s == null)
 				return;
-			Append(tokenKind, s, 0, s.Length);
+			Append(data, s, 0, s.Length);
 		}
 
-		public void Append(TextTokenKind tokenKind, string s, int offset, int length) {
+		public void Append(object data, string s, int offset, int length) {
 			if (s == null)
 				return;
 
@@ -107,7 +92,7 @@ namespace dnSpy.Shared.Highlighting {
 			while (so < end) {
 				int nlOffs = s.IndexOfAny(newLineChars, so, end - so);
 				if (nlOffs >= 0) {
-					AppendInternal(tokenKind, nlOffs - so);
+					AppendInternal(data, nlOffs - so);
 					so = nlOffs;
 					int nlLen = s[so] == '\r' && so + 1 < end && s[so + 1] == '\n' ? 2 : 1;
 					currentOffset += nlLen;
@@ -115,7 +100,7 @@ namespace dnSpy.Shared.Highlighting {
 					so += nlLen;
 				}
 				else {
-					AppendInternal(tokenKind, end - so);
+					AppendInternal(data, end - so);
 					break;
 				}
 			}
@@ -123,18 +108,21 @@ namespace dnSpy.Shared.Highlighting {
 
 		public void AppendLine() {
 			// We must append the same type of new line string as StringBuilder
-			Append(TextTokenKind.Text, Environment.NewLine);
+			Append(BoxedTextTokenKind.Text, Environment.NewLine);
 		}
 
 		// Gets called to add one token. No newlines are allowed
-		void AppendInternal(TextTokenKind tokenKind, int length) {
+		void AppendInternal(object data, int length) {
 			Debug.Assert(length >= 0);
 			if (length == 0)
 				return;
+			Debug.Assert(data != null);
+			if (data == null)
+				data = noColor;
 
 redo:
 			if (isAppendingDefaultText) {
-				if (tokenKind == TextTokenKind.Text) {
+				if (data.Equals(BoxedTextTokenKind.Text)) {
 					int newLength = currentDefaultTextLength + length;
 					while (newLength > TEXT_TOKEN_LENGTH_MAX) {
 						currentDefaultTextLength = Math.Min(newLength, TEXT_TOKEN_LENGTH_MAX);
@@ -146,10 +134,10 @@ redo:
 					return;
 				}
 				isAppendingDefaultText = false;
-				currentTokenKind = tokenKind;
+				currentTokenData = data;
 			}
 
-			if (currentTokenKind != tokenKind) {
+			if (!currentTokenData.Equals(data)) {
 				EndCurrentToken(0);
 				goto redo;
 			}
@@ -161,7 +149,7 @@ redo:
 					EndCurrentToken(0);
 					newLength -= TOKEN_LENGTH_MAX;
 					isAppendingDefaultText = false;
-					currentTokenKind = tokenKind;
+					currentTokenData = data;
 				}
 				currentTokenLength = newLength;
 				if (currentTokenLength == 0)
@@ -174,20 +162,15 @@ redo:
 			Debug.Assert(currentTokenLength == 0 || !isAppendingDefaultText);
 			int totalLength = currentDefaultTextLength + currentTokenLength;
 			if (totalLength != 0) {
-				Debug.Assert((int)currentTokenKind <= TOKEN_KIND_MAX);
-				Debug.Assert((int)currentTokenLength <= TOKEN_LENGTH_MAX);
-				Debug.Assert((int)currentDefaultTextLength <= TEXT_TOKEN_LENGTH_MAX);
-				uint compressedValue = (uint)(
-							((int)currentTokenKind << TOKEN_KIND_BIT) |
-							(currentTokenLength << TOKEN_LENGTH_BIT) |
-							(currentDefaultTextLength << TEXT_TOKEN_LENGTH_BIT));
-				offsetToTokenInfoIndex.Add(currentTokenOffset, compressedValue);
+				Debug.Assert(currentTokenLength <= TOKEN_LENGTH_MAX);
+				Debug.Assert(currentDefaultTextLength <= TEXT_TOKEN_LENGTH_MAX);
+				offsetToTokenInfo.Add(currentTokenOffset, new TokenInfo(currentTokenLength, currentDefaultTextLength, currentTokenData));
 			}
 
 			currentTokenOffset += totalLength + lengthTillNextToken;
 			currentDefaultTextLength = 0;
 			currentTokenLength = 0;
-			currentTokenKind = TextTokenKind.Last;
+			currentTokenData = noColor;
 			isAppendingDefaultText = true;
 		}
 	}
