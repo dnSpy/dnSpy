@@ -108,7 +108,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService);
 			cachedColorsList = new CachedColorsList();
-			textEditor.TextBuffer.SetDefaultColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Normal));
+			textEditor.TextBuffer.SetDefaultColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
 			this.toolTipHelper.Initialize(TextEditor);
 			RemoveCommands(TextEditor);
 			dnSpyTextEditor.Content = TextEditor;

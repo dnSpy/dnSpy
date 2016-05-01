@@ -78,7 +78,7 @@ namespace dnSpy.TextEditor {
 			if (options.ContentType != null)
 				this.textEditor.TextBuffer.ContentType = options.ContentType;
 			this.cachedColorsList = new CachedColorsList();
-			textEditor.TextBuffer.SetDefaultColorizer(new CachedColorsListColorizer(this.cachedColorsList, ColorPriority.Normal));
+			textEditor.TextBuffer.SetDefaultColorizer(new CachedColorsListColorizer(this.cachedColorsList, ColorPriority.Default));
 			this.textEditor.TextArea.AllowDrop = false;
 			AddNewDocument();
 			this.textEditor.TextArea.TextView.Document.UndoStack.SizeLimit = 100;

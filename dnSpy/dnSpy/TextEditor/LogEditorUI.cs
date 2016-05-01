@@ -107,7 +107,7 @@ namespace dnSpy.TextEditor {
 			if (options.ContentType != null)
 				this.textEditor.TextBuffer.ContentType = options.ContentType;
 			this.cachedColorsList = new CachedColorsList();
-			this.textEditor.TextBuffer.SetDefaultColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Normal));
+			this.textEditor.TextBuffer.SetDefaultColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Default));
 			SetNewDocument();
 			this.textEditor.TextArea.AllowDrop = false;
 			UpdatePaddingElement();

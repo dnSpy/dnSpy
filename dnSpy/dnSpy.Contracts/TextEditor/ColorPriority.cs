@@ -28,9 +28,14 @@ namespace dnSpy.Contracts.TextEditor {
 		public const double Low = -1000000;
 
 		/// <summary>
+		/// Default priority
+		/// </summary>
+		public const double Default = 0;
+
+		/// <summary>
 		/// Normal priority
 		/// </summary>
-		public const double Normal = 0;
+		public const double Normal = 100;
 
 		/// <summary>
 		/// High priority
