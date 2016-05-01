@@ -47,6 +47,15 @@ namespace dnSpy.Contracts.TextEditor {
 		ITextBuffer TextBuffer { get; }
 
 		/// <summary>
+		/// Copies this to <paramref name="destination"/>
+		/// </summary>
+		/// <param name="sourceIndex">Source position</param>
+		/// <param name="destination">Destination</param>
+		/// <param name="destinationIndex">Destination index</param>
+		/// <param name="count">Number of characters to copy</param>
+		void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count);
+
+		/// <summary>
 		/// Gets all the text
 		/// </summary>
 		/// <returns></returns>
@@ -66,6 +75,14 @@ namespace dnSpy.Contracts.TextEditor {
 		/// <param name="length">Length</param>
 		/// <returns></returns>
 		string GetText(int startIndex, int length);
+
+		/// <summary>
+		/// Copy part of this to a character array
+		/// </summary>
+		/// <param name="startIndex">Start position</param>
+		/// <param name="length">Number of characters</param>
+		/// <returns></returns>
+		char[] ToCharArray(int startIndex, int length);
 
 		/// <summary>
 		/// Writes the snapshot to <paramref name="writer"/>

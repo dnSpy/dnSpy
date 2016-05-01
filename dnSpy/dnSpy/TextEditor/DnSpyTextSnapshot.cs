@@ -36,9 +36,11 @@ namespace dnSpy.TextEditor {
 			TextBuffer = textBuffer;
 		}
 
+		public void CopyTo(int sourceIndex, char[] destination, int destinationIndex, int count) => textSource.CopyTo(sourceIndex, destination, destinationIndex, count);
 		public string GetText() => textSource.Text;
 		public string GetText(Span span) => textSource.GetText(span.Start, span.Length);
 		public string GetText(int startIndex, int length) => textSource.GetText(startIndex, length);
+		public char[] ToCharArray(int startIndex, int length) => textSource.ToCharArray(startIndex, length);
 		public void Write(TextWriter writer) => textSource.WriteTextTo(writer);
 		public void Write(TextWriter writer, Span span) => textSource.WriteTextTo(writer, span.Start, span.Length);
 	}
