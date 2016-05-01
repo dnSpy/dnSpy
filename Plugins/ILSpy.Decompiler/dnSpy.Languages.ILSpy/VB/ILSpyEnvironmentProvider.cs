@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using dnlib.DotNet;
 using dnSpy.Decompiler.Shared;
 using ICSharpCode.Decompiler.Ast;
@@ -31,6 +32,12 @@ namespace dnSpy.Languages.ILSpy.VB {
 			get {
 				return "";
 			}
+		}
+
+		readonly StringBuilder sb;
+
+		public ILSpyEnvironmentProvider(StringBuilder sb = null) {
+			this.sb = sb ?? new StringBuilder();
 		}
 
 		public string GetTypeNameForAttribute(ICSharpCode.NRefactory.CSharp.Attribute attribute) {
@@ -97,7 +104,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 			return TypeCode.Object;
 		}
 
-		public Nullable<bool> IsReferenceType(ICSharpCode.NRefactory.CSharp.Expression expression) {
+		public bool? IsReferenceType(ICSharpCode.NRefactory.CSharp.Expression expression) {
 			if (expression is ICSharpCode.NRefactory.CSharp.NullReferenceExpression)
 				return true;
 
@@ -140,6 +147,35 @@ namespace dnSpy.Languages.ILSpy.VB {
 			}
 
 			return false;
+		}
+
+		public ICSharpCode.NRefactory.CSharp.ParameterDeclaration[] GetParametersForProperty(ICSharpCode.NRefactory.CSharp.PropertyDeclaration property) {
+			var propInfo = property.Annotation<PropertyDef>();
+
+			if (propInfo == null)
+				return new ICSharpCode.NRefactory.CSharp.ParameterDeclaration[0];
+
+			sb.Clear();
+			var getMethod = propInfo.GetMethod;
+			if (getMethod != null)
+				return getMethod.Parameters.Select(p => new ICSharpCode.NRefactory.CSharp.ParameterDeclaration(AstBuilder.ConvertType(p.Type, sb), p.Name, GetModifiers(p))).ToArray();
+			var setMethod = propInfo.SetMethod;
+			if (setMethod != null && setMethod.Parameters.Count > 0)
+				return getMethod.Parameters.Skip(1).Select(p => new ICSharpCode.NRefactory.CSharp.ParameterDeclaration(AstBuilder.ConvertType(p.Type, sb), p.Name, GetModifiers(p))).ToArray();
+
+			return new ICSharpCode.NRefactory.CSharp.ParameterDeclaration[0];
+		}
+
+		ICSharpCode.NRefactory.CSharp.ParameterModifier GetModifiers(Parameter p) {
+			var pd = p.ParamDef;
+			if (pd != null) {
+				if (pd.IsOut && pd.IsIn)
+					return ICSharpCode.NRefactory.CSharp.ParameterModifier.Ref;
+				if (pd.IsOut)
+					return ICSharpCode.NRefactory.CSharp.ParameterModifier.Out;
+			}
+
+			return ICSharpCode.NRefactory.CSharp.ParameterModifier.None;
 		}
 	}
 }

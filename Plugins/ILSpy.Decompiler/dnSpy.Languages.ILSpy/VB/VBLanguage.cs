@@ -227,7 +227,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 			CSharpLanguage.AddXmlDocumentation(ref state, langSettings.Settings, astBuilder);
 			var csharpUnit = astBuilder.SyntaxTree;
 			csharpUnit.AcceptVisitor(new ICSharpCode.NRefactory.CSharp.InsertParenthesesVisitor() { InsertParenthesesForReadability = true });
-			var unit = csharpUnit.AcceptVisitor(new CSharpToVBConverterVisitor(new ILSpyEnvironmentProvider()), null);
+			var unit = csharpUnit.AcceptVisitor(new CSharpToVBConverterVisitor(new ILSpyEnvironmentProvider(state.State.XmlDoc_StringBuilder)), null);
 			var outputFormatter = new VBTextOutputFormatter(output);
 			var formattingPolicy = new VBFormattingOptions();
 			unit.AcceptVisitor(new OutputVisitor(outputFormatter, formattingPolicy), null);
