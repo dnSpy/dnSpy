@@ -55,6 +55,7 @@ using dnSpy.Decompiler.Shared;
 using dnSpy.Files.Tabs.TextEditor.ToolTips;
 using dnSpy.Shared.AvalonEdit;
 using dnSpy.Shared.Decompiler;
+using dnSpy.Shared.Highlighting;
 using dnSpy.Shared.MVVM;
 using dnSpy.TextEditor;
 using ICSharpCode.AvalonEdit;
@@ -72,7 +73,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 		readonly DnSpyTextEditor textEditor;
 
-		readonly DnSpyTextEditorColorizerHelper colorizerHelper;
+		readonly CachedColorsList cachedColorsList;
 		readonly IThemeManager themeManager;
 		readonly IconBarMargin iconBarMargin;
 
@@ -106,8 +107,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
 			textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService);
-			colorizerHelper = new DnSpyTextEditorColorizerHelper(textEditor);
-			textEditor.TextBuffer.SetDefaultColorizer(colorizerHelper.CreateTextBufferColorizer());
+			cachedColorsList = new CachedColorsList();
+			textEditor.TextBuffer.SetDefaultColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Normal));
 			this.toolTipHelper.Initialize(TextEditor);
 			RemoveCommands(TextEditor);
 			dnSpyTextEditor.Content = TextEditor;
@@ -332,7 +333,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			}
 
 			TextEditor.TextBuffer.ContentType = contentType;
-			colorizerHelper.SetDocumentCachedColors(avOutput?.CachedColors);
+
+			var cachedColors = avOutput?.CachedColors ?? new CachedTextTokenColors();
+			cachedColors.Finish();
+			cachedColorsList.Clear();
+			cachedColorsList.Add(0, cachedColors);
+			textEditor.TextBuffer.RecreateColorizers();
 		}
 
 		public void Clear() {
@@ -367,7 +373,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			var pos = tv.GetPosition(e.GetPosition(tv) + tv.ScrollOffset);
 			if (pos == null)
 				return null;
-			int offset = te.Document.GetOffset(pos.Value.Location);
+			int offset = te.TextArea.TextView.Document.GetOffset(pos.Value.Location);
 			var seg = GetReferenceSegmentAt(offset);
 			return seg == null ? null : seg.Reference;
 		}
@@ -375,7 +381,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		public ReferenceSegment GetReferenceSegmentAt(TextViewPosition? position) {
 			if (position == null)
 				return null;
-			int offset = textEditor.Document.GetOffset(position.Value.Location);
+			int offset = textEditor.TextArea.TextView.Document.GetOffset(position.Value.Location);
 			return GetReferenceSegmentAt(offset);
 		}
 
@@ -403,7 +409,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		public IEnumerable<Tuple<CodeReference, TextEditorLocation>> GetCodeReferences(int line, int column) {
-			int offset = TextEditor.Document.GetOffset(line, column);
+			int offset = TextEditor.TextArea.TextView.Document.GetOffset(line, column);
 			var refSeg = references.FindFirstSegmentWithStartAfter(offset);
 
 			while (refSeg != null) {
@@ -413,7 +419,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		TextEditorLocation GetLocation(ReferenceSegment refSeg) {
-			var loc = TextEditor.Document.GetLocation(refSeg.StartOffset);
+			var loc = TextEditor.TextArea.TextView.Document.GetLocation(refSeg.StartOffset);
 			return new TextEditorLocation(loc.Line, loc.Column);
 		}
 
@@ -467,7 +473,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 						textEditorHelper.FollowReference(refSeg.ToCodeReference(), newTab);
 					}
 					else {
-						var line = TextEditor.Document.GetLineByOffset(refSeg.StartOffset);
+						var line = TextEditor.TextArea.TextView.Document.GetLineByOffset(refSeg.StartOffset);
 						int column = refSeg.StartOffset - line.Offset + 1;
 						ScrollAndMoveCaretTo(line.LineNumber, column);
 					}
@@ -526,7 +532,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			foreach (var newSeg in GetReferenceSegmentsFrom(refSeg, forward)) {
 				if (RefSegEquals(newSeg, refSeg)) {
-					var line = TextEditor.Document.GetLineByOffset(newSeg.StartOffset);
+					var line = TextEditor.TextArea.TextView.Document.GetLineByOffset(newSeg.StartOffset);
 					int column = newSeg.StartOffset - line.Offset + 1;
 					ScrollAndMoveCaretTo(line.LineNumber, column);
 					break;
@@ -542,7 +548,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			foreach (var newSeg in GetReferenceSegmentsFrom(refSeg, forward)) {
 				if (newSeg.IsLocalTarget && newSeg.Reference is IMemberDef) {
-					var line = TextEditor.Document.GetLineByOffset(newSeg.StartOffset);
+					var line = TextEditor.TextArea.TextView.Document.GetLineByOffset(newSeg.StartOffset);
 					int column = newSeg.StartOffset - line.Offset + 1;
 					ScrollAndMoveCaretTo(line.LineNumber, column);
 					break;
@@ -766,7 +772,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			mappings.Sort(Sort);
 			var mapping = mappings.Count == 0 ? null : mappings[0];
 
-			var doc = textEditor.TextArea.Document;
+			var doc = textEditor.TextArea.TextView.Document;
 			int offset = doc == null ? 0 : doc.GetOffset(textEditor.TextArea.Caret.Line, 0);
 			var refSeg = references.FindFirstSegmentWithStartAfter(offset);
 			while (refSeg != null) {

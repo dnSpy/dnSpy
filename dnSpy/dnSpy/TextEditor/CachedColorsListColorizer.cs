@@ -32,7 +32,7 @@ namespace dnSpy.TextEditor {
 			this.priority = priority;
 		}
 
-		public IEnumerable<ColorSpan> GetColorSpans(Span span) {
+		public IEnumerable<ColorSpan> GetColorSpans(ITextSnapshot snapshot, Span span) {
 			int offs = span.Start;
 
 			var infoPart = cachedColorsList.Find(offs);

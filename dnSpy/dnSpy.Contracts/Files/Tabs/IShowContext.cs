@@ -30,7 +30,7 @@ namespace dnSpy.Contracts.Files.Tabs {
 		IFileTabUIContext UIContext { get; }
 
 		/// <summary>
-		/// true if the view is refreshed
+		/// true if the view is being refreshed
 		/// </summary>
 		bool IsRefresh { get; }
 

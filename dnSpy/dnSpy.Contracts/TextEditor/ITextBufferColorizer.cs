@@ -27,8 +27,9 @@ namespace dnSpy.Contracts.TextEditor {
 		/// <summary>
 		/// Gets all colors
 		/// </summary>
+		/// <param name="snapshot">Snapshot</param>
 		/// <param name="span">Span</param>
 		/// <returns></returns>
-		IEnumerable<ColorSpan> GetColorSpans(Span span);
+		IEnumerable<ColorSpan> GetColorSpans(ITextSnapshot snapshot, Span span);
 	}
 }

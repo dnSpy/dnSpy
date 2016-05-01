@@ -21,22 +21,31 @@ using System;
 
 namespace dnSpy.Contracts.TextEditor {
 	/// <summary>
-	/// Text buffer
+	/// Content type changed event args
 	/// </summary>
-	public interface ITextBuffer {
+	public sealed class ContentTypeChangedEventArgs : EventArgs {
 		/// <summary>
-		/// Gets the content type
+		/// Original content type
 		/// </summary>
-		IContentType ContentType { get; }
+		public IContentType BeforeContentType { get; }
 
 		/// <summary>
-		/// Current content of this buffer
+		/// New content type
 		/// </summary>
-		ITextSnapshot CurrentSnapshot { get; }
+		public IContentType AfterContentType { get; }
 
 		/// <summary>
-		/// Raised when <see cref="ContentType"/> has been changed
+		/// Constructor
 		/// </summary>
-		event EventHandler<ContentTypeChangedEventArgs> ContentTypeChanged;
+		/// <param name="beforeContentType">Original content type</param>
+		/// <param name="afterContentType">New content type</param>
+		public ContentTypeChangedEventArgs(IContentType beforeContentType, IContentType afterContentType) {
+			if (beforeContentType == null)
+				throw new ArgumentNullException(nameof(beforeContentType));
+			if (afterContentType == null)
+				throw new ArgumentNullException(nameof(afterContentType));
+			BeforeContentType = beforeContentType;
+			AfterContentType = afterContentType;
+		}
 	}
 }

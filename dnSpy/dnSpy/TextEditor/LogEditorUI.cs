@@ -68,7 +68,7 @@ namespace dnSpy.TextEditor {
 		readonly FrameworkElement paddingElement;
 
 		readonly DnSpyTextEditor textEditor;
-		readonly DnSpyTextEditorColorizerHelper colorizerHelper;
+		readonly CachedColorsList cachedColorsList;
 		readonly LogEditorOptions options;
 		readonly Dispatcher dispatcher;
 		CachedTextTokenColors cachedTextTokenColors;
@@ -106,8 +106,8 @@ namespace dnSpy.TextEditor {
 			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService);
 			if (options.ContentType != null)
 				this.textEditor.TextBuffer.ContentType = options.ContentType;
-			this.colorizerHelper = new DnSpyTextEditorColorizerHelper(this.textEditor);
-			this.textEditor.TextBuffer.SetDefaultColorizer(colorizerHelper.CreateTextBufferColorizer());
+			this.cachedColorsList = new CachedColorsList();
+			this.textEditor.TextBuffer.SetDefaultColorizer(new CachedColorsListColorizer(cachedColorsList, ColorPriority.Normal));
 			SetNewDocument();
 			this.textEditor.TextArea.AllowDrop = false;
 			UpdatePaddingElement();
@@ -135,8 +135,10 @@ namespace dnSpy.TextEditor {
 
 		void SetNewDocument() {
 			cachedTextTokenColors = new CachedTextTokenColors();
-			textEditor.TextArea.Document = new TextDocument();
-			colorizerHelper.SetDocumentCachedColors(cachedTextTokenColors, false);
+			textEditor.Document = new TextDocument();
+			cachedColorsList.Clear();
+			cachedColorsList.Add(0, cachedTextTokenColors);
+			textEditor.TextBuffer.RecreateColorizers();
 		}
 
 		public void Clear() {
@@ -144,7 +146,7 @@ namespace dnSpy.TextEditor {
 			SetNewDocument();
 		}
 
-		public string GetText() => textEditor.TextArea.Document.Text;
+		public string GetText() => textEditor.TextArea.TextView.Document.Text;
 		public void Write(string text, object color) => OutputPrint(text, color);
 		public void Write(string text, OutputColor color) => OutputPrint(text, color.Box());
 
@@ -191,17 +193,17 @@ namespace dnSpy.TextEditor {
 
 		DocumentLine LastLine {
 			get {
-				var doc = textEditor.TextArea.Document;
+				var doc = textEditor.TextArea.TextView.Document;
 				return doc.GetLineByNumber(doc.LineCount);
 			}
 		}
 
-		void RawAppend(string text) => textEditor.TextArea.Document.Insert(LastLine.EndOffset, text);
+		void RawAppend(string text) => textEditor.TextArea.TextView.Document.Insert(LastLine.EndOffset, text);
 
 		void FlushOutputUIThread() {
 			dispatcher.VerifyAccess();
 
-			var currentLine = textEditor.TextArea.Document.GetLineByOffset(textEditor.TextArea.Caret.Offset);
+			var currentLine = textEditor.TextArea.TextView.Document.GetLineByOffset(textEditor.TextArea.Caret.Offset);
 			bool canMoveCaret = currentLine == LastLine;
 
 			ColorAndText[] newPendingOutput;

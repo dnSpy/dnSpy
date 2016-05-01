@@ -58,7 +58,7 @@ namespace dnSpy.Contracts.TextEditor {
 		/// <param name="span">Span</param>
 		/// <param name="color">Color</param>
 		/// <param name="priority">Priority</param>
-		public ColorSpan(Span span, IThemeColor color, double priority = ColorPriority.Normal) {
+		public ColorSpan(Span span, ITextColor color, double priority = ColorPriority.Normal) {
 			if (color == null)
 				throw new ArgumentNullException(nameof(color));
 			Span = span;

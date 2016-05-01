@@ -22,7 +22,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Documents;
@@ -159,64 +158,8 @@ namespace dnSpy.TextEditor {
 		}
 
 		public IInputElement FocusedElement => this.TextArea;
-		public MyTextBuffer TextBuffer { get; }
-
-		internal sealed class MyTextBuffer : ITextBuffer, IDisposable {
-			public IContentType ContentType {
-				get { return contentType; }
-				set {
-					if (value == null)
-						throw new ArgumentNullException(nameof(value));
-					if (contentType != value) {
-						contentType = value;
-						RecreateColorizers();
-					}
-				}
-			}
-			IContentType contentType;
-
-			public ITextBufferColorizer[] Colorizers { get; private set; }
-
-			readonly DnSpyTextEditor owner;
-			readonly ITextBufferColorizerCreator textBufferColorizerCreator;
-			ITextBufferColorizer defaultColorizer;
-
-			public MyTextBuffer(DnSpyTextEditor owner, ITextBufferColorizerCreator textBufferColorizerCreator, IContentType contentType) {
-				if (contentType == null)
-					throw new ArgumentNullException(nameof(contentType));
-				this.owner = owner;
-				this.textBufferColorizerCreator = textBufferColorizerCreator;
-				this.contentType = contentType;
-				this.defaultColorizer = null;
-				this.Colorizers = Array.Empty<ITextBufferColorizer>();
-				RecreateColorizers();
-			}
-
-			public void SetDefaultColorizer(ITextBufferColorizer defaultColorizer) {
-				Debug.Assert(this.defaultColorizer == null);
-				if (this.defaultColorizer != null)
-					throw new InvalidOperationException();
-				this.defaultColorizer = defaultColorizer;
-				RecreateColorizers();
-			}
-
-			public void RecreateColorizers() {
-				ClearColorizers();
-				var list = new List<ITextBufferColorizer>();
-				if (defaultColorizer != null)
-					list.Add(defaultColorizer);
-				list.AddRange(textBufferColorizerCreator.Create(this));
-				Colorizers = list.ToArray();
-			}
-
-			void ClearColorizers() {
-				foreach (var c in Colorizers)
-					(c as IDisposable)?.Dispose();
-				Colorizers= Array.Empty<ITextBufferColorizer>();
-			}
-
-			public void Dispose() => ClearColorizers();
-		}
+		public DnSpyTextBuffer TextBuffer { get; }
+		internal IThemeManager ThemeManager => themeManager;
 
 		readonly IThemeManager themeManager;
 		readonly ITextEditorSettings textEditorSettings;
@@ -230,7 +173,7 @@ namespace dnSpy.TextEditor {
 			this.themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			Options.AllowToggleOverstrikeMode = true;
 			Options.RequireControlModifierForHyperlinkClick = false;
-			this.TextBuffer = new MyTextBuffer(this, textBufferColorizerCreator, contentTypeRegistryService.UnknownContentType);
+			this.TextBuffer = new DnSpyTextBuffer(this, textBufferColorizerCreator, contentTypeRegistryService.UnknownContentType);
 			UpdateColors(false);
 
 			searchPanel = SearchPanel.Install(TextArea);
@@ -498,172 +441,7 @@ namespace dnSpy.TextEditor {
 			}
 
 			protected override IHighlighter CreateHighlighter(TextView textView, TextDocument document) =>
-				new NewHighlighter(textEditor, document);
-		}
-
-		sealed class NewHighlighter : IHighlighter {
-			readonly DnSpyTextEditor textEditor;
-			readonly TextDocument document;
-
-			public NewHighlighter(DnSpyTextEditor textEditor, TextDocument document) {
-				this.textEditor = textEditor;
-				this.document = document;
-			}
-
-			public IDocument Document => document;
-
-			struct ColorInfo {
-				public readonly Contracts.TextEditor.Span Span;
-				public readonly ITextColor Foreground;
-				public readonly ITextColor Background;
-				public readonly double Priority;
-				public ITextColor TextColor {
-					get {
-						if (Foreground == Background)
-							return Foreground ?? Contracts.Themes.TextColor.Null;
-						return new TextColor(Foreground?.Foreground, Background?.Background, Foreground?.FontWeight, Foreground?.FontStyle);
-					}
-				}
-				public ColorInfo(Contracts.TextEditor.Span span, ITextColor color, double priority) {
-					Span = span;
-					Foreground = color;
-					Background = color;
-					Priority = priority;
-				}
-				public ColorInfo(Contracts.TextEditor.Span span, ITextColor fg, ITextColor bg, double priority) {
-					Span = span;
-					Foreground = fg;
-					Background = bg;
-					Priority = priority;
-				}
-			}
-
-			public HighlightedLine HighlightLine(int lineNumber) {
-				var line = document.GetLineByNumber(lineNumber);
-				int lineStartOffs = line.Offset;
-				int lineEndOffs = line.EndOffset;
-				var hl = new HighlightedLine(document, line);
-				if (lineStartOffs >= lineEndOffs)
-					return hl;
-
-				var span = Contracts.TextEditor.Span.FromBounds(lineStartOffs, lineEndOffs);
-				var theme = textEditor.themeManager.Theme;
-				var allInfos = new List<ColorInfo>();
-				foreach (var colorizer in textEditor.TextBuffer.Colorizers) {
-					foreach (var cspan in colorizer.GetColorSpans(span)) {
-						var colorSpan = cspan.Span.Intersection(span);
-						if (colorSpan == null || colorSpan.Value.IsEmpty)
-							continue;
-						var color = cspan.Color.ToTextColor(theme);
-						if (color.Foreground == null && color.Background == null)
-							continue;
-						allInfos.Add(new ColorInfo(colorSpan.Value, color, cspan.Priority));
-					}
-				}
-
-				allInfos.Sort((a, b) => a.Span.Start - b.Span.Start);
-
-				List<ColorInfo> list;
-				// Check if it's the common case
-				if (!HasOverlaps(allInfos))
-					list = allInfos;
-				else {
-					Debug.Assert(allInfos.Count != 0);
-
-					list = new List<ColorInfo>(allInfos.Count);
-					var stack = new List<ColorInfo>();
-					int currOffs = 0;
-					for (int i = 0; i < allInfos.Count;) {
-						if (stack.Count == 0)
-							currOffs = allInfos[i].Span.Start;
-						for (; i < allInfos.Count; i++) {
-							var curr = allInfos[i];
-							if (curr.Span.Start != currOffs)
-								break;
-							stack.Add(curr);
-						}
-						Debug.Assert(stack.Count != 0);
-						Debug.Assert(stack.All(a => a.Span.Start == currOffs));
-						stack.Sort((a, b) => b.Priority.CompareTo(a.Priority));
-						int end = stack.Min(a => a.Span.End);
-						end = Math.Min(end, i < allInfos.Count ? allInfos[i].Span.Start : lineEndOffs);
-						var fgColor = stack.FirstOrDefault(a => a.Foreground?.Foreground != null);
-						var bgColor = stack.FirstOrDefault(a => a.Background?.Background != null);
-						var newInfo = new ColorInfo(Contracts.TextEditor.Span.FromBounds(currOffs, end), fgColor.Foreground, bgColor.Background, 0);
-						Debug.Assert(list.Count == 0 || list[list.Count - 1].Span.End <= newInfo.Span.Start);
-						list.Add(newInfo);
-						for (int j = stack.Count - 1; j >= 0; j--) {
-							var info = stack[j];
-							if (newInfo.Span.End >= info.Span.End)
-								stack.RemoveAt(j);
-							else
-								stack[j] = new ColorInfo(Contracts.TextEditor.Span.FromBounds(newInfo.Span.End, info.Span.End), info.Foreground, info.Background, info.Priority);
-						}
-						currOffs = newInfo.Span.End;
-					}
-				}
-				Debug.Assert(!HasOverlaps(list));
-
-				foreach (var info in list) {
-					hl.Sections.Add(new HighlightedSection {
-						Offset = info.Span.Start,
-						Length = info.Span.Length,
-						Color = info.TextColor.ToHighlightingColor(),
-					});
-				}
-
-				return hl;
-			}
-
-			bool HasOverlaps(List<ColorInfo> sortedList) {
-				for (int i = 1; i < sortedList.Count; i++) {
-					if (sortedList[i - 1].Span.End > sortedList[i].Span.Start)
-						return true;
-				}
-				return false;
-			}
-
-			public event HighlightingStateChangedEventHandler HighlightingStateChanged {
-				add { }
-				remove { }
-			}
-
-			public IEnumerable<HighlightingColor> GetColorStack(int lineNumber) => new HighlightingColor[0];
-			public void UpdateHighlightingState(int lineNumber) { }
-			public void BeginHighlighting() { }
-			public void EndHighlighting() { }
-			public HighlightingColor GetNamedColor(string name) => null;
-			public HighlightingColor DefaultTextColor => null;
-			public void Dispose() { }
-		}
-	}
-
-	sealed class DnSpyTextEditorColorizerHelper {
-		readonly DnSpyTextEditor dnSpyTextEditor;
-
-		public DnSpyTextEditorColorizerHelper(DnSpyTextEditor dnSpyTextEditor) {
-			this.dnSpyTextEditor = dnSpyTextEditor;
-			this.cachedColorsList = new CachedColorsList();
-		}
-
-		public void SetDocumentCachedColors(CachedTextTokenColors cachedColors, bool finish = true) {
-			if (cachedColors == null)
-				cachedColors = new CachedTextTokenColors();
-			if (finish)
-				cachedColors.Finish();
-			cachedColorsList.Clear();
-			cachedColorsList.Add(0, cachedColors);
-		}
-		readonly CachedColorsList cachedColorsList;
-
-		public ITextBufferColorizer CreateTextBufferColorizer() =>
-			new CachedColorsListColorizer(cachedColorsList, ColorPriority.Normal);
-		public void SetAsyncUpdatingAfterChanges(int docOffset) => cachedColorsList.SetAsyncUpdatingAfterChanges(docOffset);
-		public CachedTextTokenColors RemoveLastCachedTextTokenColors() => cachedColorsList.RemoveLastCachedTextTokenColors();
-		public void ClearCachedColors() => cachedColorsList.Clear();
-		public void AddOrUpdate(int docOffset, CachedTextTokenColors cachedColors) {
-			cachedColorsList.AddOrUpdate(docOffset, cachedColors);
-			dnSpyTextEditor.TextArea.TextView.Redraw(docOffset, cachedColors.Length);
+				new DnSpyTextEditorHighlighter(textEditor, document);
 		}
 	}
 }

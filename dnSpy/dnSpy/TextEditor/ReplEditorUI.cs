@@ -47,9 +47,9 @@ namespace dnSpy.TextEditor {
 		public object Tag { get; set; }
 
 		readonly DnSpyTextEditor textEditor;
-		readonly DnSpyTextEditorColorizerHelper colorizerHelper;
 		readonly ReplEditorOptions options;
 		readonly Dispatcher dispatcher;
+		readonly CachedColorsList cachedColorsList;
 
 		const int LEFT_MARGIN = 15;
 
@@ -77,11 +77,11 @@ namespace dnSpy.TextEditor {
 			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService);
 			if (options.ContentType != null)
 				this.textEditor.TextBuffer.ContentType = options.ContentType;
-			this.colorizerHelper = new DnSpyTextEditorColorizerHelper(this.textEditor);
-			textEditor.TextBuffer.SetDefaultColorizer(colorizerHelper.CreateTextBufferColorizer());
+			this.cachedColorsList = new CachedColorsList();
+			textEditor.TextBuffer.SetDefaultColorizer(new CachedColorsListColorizer(this.cachedColorsList, ColorPriority.Normal));
 			this.textEditor.TextArea.AllowDrop = false;
 			AddNewDocument();
-			this.textEditor.TextArea.Document.UndoStack.SizeLimit = 100;
+			this.textEditor.TextArea.TextView.Document.UndoStack.SizeLimit = 100;
 			this.textEditor.TextArea.LeftMargins.Insert(0, new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) });
 			this.textEditor.TextArea.TextEntering += TextArea_TextEntering;
 			this.textEditor.TextArea.PreviewKeyDown += TextArea_PreviewKeyDown;
@@ -116,7 +116,8 @@ namespace dnSpy.TextEditor {
 					Debug.Assert(scriptOutputCachedTextTokenColors == null);
 					scriptOutputCachedTextTokenColors = new CachedTextTokenColors();
 					Debug.Assert(LastLine.Length == 0);
-					colorizerHelper.AddOrUpdate(LastLine.EndOffset, scriptOutputCachedTextTokenColors);
+					cachedColorsList.AddOrUpdate(LastLine.EndOffset, scriptOutputCachedTextTokenColors);
+					textEditor.TextArea.TextView.Redraw(LastLine.EndOffset, scriptOutputCachedTextTokenColors.Length);
 				}
 				else {
 					Debug.Assert(scriptOutputCachedTextTokenColors != null);
@@ -204,7 +205,7 @@ namespace dnSpy.TextEditor {
 
 			var sel = this.textEditor.TextArea.Selection;
 			if (!sel.IsEmpty) {
-				var doc = this.textEditor.TextArea.Document;
+				var doc = this.textEditor.TextArea.TextView.Document;
 				int start = FilterOffset(doc.GetOffset(sel.StartPosition.Location));
 				int end = FilterOffset(doc.GetOffset(sel.EndPosition.Location));
 				this.textEditor.TextArea.Selection = Selection.Create(this.textEditor.TextArea, start, end);
@@ -217,7 +218,7 @@ namespace dnSpy.TextEditor {
 			Debug.Assert(offsetOfPrompt != null);
 			if (offset < offsetOfPrompt.Value)
 				offset = offsetOfPrompt.Value;
-			var line = this.textEditor.TextArea.Document.GetLineByOffset(offset);
+			var line = this.textEditor.TextArea.TextView.Document.GetLineByOffset(offset);
 			var prefixString = line.Offset == offsetOfPrompt.Value ? options.PromptText : options.ContinueText;
 			int col = offset - line.Offset;
 			if (col < prefixString.Length)
@@ -367,7 +368,7 @@ namespace dnSpy.TextEditor {
 				if (!IsCommandMode)
 					return string.Empty;
 
-				string s = this.textEditor.TextArea.Document.GetText(offsetOfPrompt.Value, LastLine.EndOffset - offsetOfPrompt.Value);
+				string s = this.textEditor.TextArea.TextView.Document.GetText(offsetOfPrompt.Value, LastLine.EndOffset - offsetOfPrompt.Value);
 				return ToInputString(s, options.PromptText);
 			}
 		}
@@ -441,10 +442,10 @@ namespace dnSpy.TextEditor {
 					return;
 				int start = FilterOffset(this.textEditor.TextArea.Caret.Offset);
 				int end = start + 1;
-				var startLine = this.textEditor.TextArea.Document.GetLineByOffset(start);
-				var endLine = this.textEditor.TextArea.Document.GetLineByOffset(end);
+				var startLine = this.textEditor.TextArea.TextView.Document.GetLineByOffset(start);
+				var endLine = this.textEditor.TextArea.TextView.Document.GetLineByOffset(end);
 				if (startLine != endLine || end > endLine.EndOffset) {
-					endLine = this.textEditor.TextArea.Document.GetLineByNumber(startLine.LineNumber + 1);
+					endLine = this.textEditor.TextArea.TextView.Document.GetLineByNumber(startLine.LineNumber + 1);
 					end = FilterOffset(endLine.Offset);
 				}
 				this.textEditor.TextArea.Selection = Selection.Create(this.textEditor.TextArea, start, end);
@@ -464,9 +465,9 @@ namespace dnSpy.TextEditor {
 					return;
 				int end = this.textEditor.TextArea.Caret.Offset;
 				start = end - 1;
-				var line = this.textEditor.TextArea.Document.GetLineByOffset(end);
+				var line = this.textEditor.TextArea.TextView.Document.GetLineByOffset(end);
 				if (line.Offset == end || FilterOffset(start) != start) {
-					var prevLine = this.textEditor.TextArea.Document.GetLineByNumber(line.LineNumber - 1);
+					var prevLine = this.textEditor.TextArea.TextView.Document.GetLineByNumber(line.LineNumber - 1);
 					start = prevLine.EndOffset;
 				}
 				this.textEditor.TextArea.Selection = Selection.Create(this.textEditor.TextArea, start, end);
@@ -493,7 +494,7 @@ namespace dnSpy.TextEditor {
 				return;
 
 			var ta = textEditor.TextArea;
-			if (ta.OverstrikeMode && ta.Selection.IsEmpty && ta.Document.GetLineByNumber(ta.Caret.Line).EndOffset > ta.Caret.Offset)
+			if (ta.OverstrikeMode && ta.Selection.IsEmpty && ta.TextView.Document.GetLineByNumber(ta.Caret.Line).EndOffset > ta.Caret.Offset)
 				EditingCommands.SelectRightByCharacter.Execute(null, ta);
 			AddUserInput(e.Text);
 		}
@@ -549,10 +550,10 @@ namespace dnSpy.TextEditor {
 			prevCommandTextChangedState?.Cancel();
 			subBuffers.Clear();
 			scriptOutputCachedTextTokenColors = null;
-			colorizerHelper.ClearCachedColors();
+			cachedColorsList.Clear();
 			var doc = new TextDocument();
 			doc.Changed += TextDocument_Changed;
-			this.textEditor.TextArea.Document = doc;
+			this.textEditor.Document = doc;
 			this.textEditor.TextBuffer.RecreateColorizers();
 		}
 		int docVersion;
@@ -573,7 +574,7 @@ namespace dnSpy.TextEditor {
 			prevCommandTextChangedState = changedState;
 
 			try {
-				colorizerHelper.SetAsyncUpdatingAfterChanges(baseOffset);
+				cachedColorsList.SetAsyncUpdatingAfterChanges(baseOffset);
 				await this.CommandHandler.OnCommandUpdatedAsync(buf, changedState.CancellationToken);
 
 				if (changedState.CancellationToken.IsCancellationRequested)
@@ -581,14 +582,14 @@ namespace dnSpy.TextEditor {
 				var cachedColors = new CachedTextTokenColorsCreator(options, totalLength).Create(buf.Input, buf.ColorInfos);
 				Debug.Assert(cachedColors.Length == totalLength);
 				if (currentDocVersion == docVersion)
-					colorizerHelper.AddOrUpdate(baseOffset, cachedColors);
+					cachedColorsList.AddOrUpdate(baseOffset, cachedColors);
 			}
 			catch (OperationCanceledException ex) when (ex.CancellationToken.Equals(changedState.CancellationToken)) {
 			}
 			catch (Exception ex) {
 				Debug.Fail("Exception: " + ex.Message);
 				if (currentDocVersion == docVersion)
-					colorizerHelper.AddOrUpdate(baseOffset, new CachedTextTokenColors());
+					cachedColorsList.AddOrUpdate(baseOffset, new CachedTextTokenColors());
 			}
 			finally {
 				if (prevCommandTextChangedState == changedState)
@@ -606,7 +607,7 @@ namespace dnSpy.TextEditor {
 
 			var input = CurrentInput;
 
-			var line = this.textEditor.TextArea.Document.GetLineByOffset(e.Offset);
+			var line = this.textEditor.TextArea.TextView.Document.GetLineByOffset(e.Offset);
 			var promptText = line.Offset == offsetOfPrompt.Value ? options.PromptText : options.ContinueText;
 			int offset = DocumentOffsetToInputOffset(e.Offset, line);
 
@@ -617,7 +618,7 @@ namespace dnSpy.TextEditor {
 		}
 
 		int DocumentOffsetToInputOffset(int docOffset, DocumentLine line) {
-			var promptLine = this.textEditor.TextArea.Document.GetLineByOffset(offsetOfPrompt.Value);
+			var promptLine = this.textEditor.TextArea.TextView.Document.GetLineByOffset(offsetOfPrompt.Value);
 
 			int offset = docOffset;
 			if (line.LineNumber == promptLine.LineNumber) {
@@ -715,7 +716,7 @@ namespace dnSpy.TextEditor {
 		}
 
 		void RawAppend(string text) {
-			this.textEditor.TextArea.Document.Insert(LastLine.EndOffset, text);
+			this.textEditor.TextArea.TextView.Document.Insert(LastLine.EndOffset, text);
 		}
 
 		void FlushScriptOutputUIThread() {
@@ -733,7 +734,7 @@ namespace dnSpy.TextEditor {
 			bool isCommandMode = IsCommandMode;
 			if (isCommandMode) {
 				currentCommand = CurrentInput;
-				colorizerHelper.RemoveLastCachedTextTokenColors();
+				cachedColorsList.RemoveLastCachedTextTokenColors();
 				ClearCurrentInput(true);
 			}
 			if (newPendingOutput != null) {
@@ -833,11 +834,11 @@ namespace dnSpy.TextEditor {
 		}
 		IReplCommandHandler replCommandHandler;
 
-		void ClearUndoRedoHistory() => this.textEditor.TextArea.Document.UndoStack.ClearAll();
+		void ClearUndoRedoHistory() => this.textEditor.TextArea.TextView.Document.UndoStack.ClearAll();
 
 		DocumentLine LastLine {
 			get {
-				var doc = this.textEditor.TextArea.Document;
+				var doc = this.textEditor.TextArea.TextView.Document;
 				return doc.GetLineByNumber(doc.LineCount);
 			}
 		}
@@ -891,8 +892,8 @@ namespace dnSpy.TextEditor {
 			if (!CanCopyCode)
 				return;
 
-			int startOffset = textEditor.TextArea.Document.GetOffset(textEditor.TextArea.Selection.StartPosition.Location);
-			int endOffset = textEditor.TextArea.Document.GetOffset(textEditor.TextArea.Selection.EndPosition.Location);
+			int startOffset = textEditor.TextArea.TextView.Document.GetOffset(textEditor.TextArea.Selection.StartPosition.Location);
+			int endOffset = textEditor.TextArea.TextView.Document.GetOffset(textEditor.TextArea.Selection.EndPosition.Location);
 			if (startOffset > endOffset) {
 				var tmp = startOffset;
 				startOffset = endOffset;
@@ -921,13 +922,13 @@ namespace dnSpy.TextEditor {
 			if (startOffset >= endOffset)
 				return;
 
-			var firstLine = textEditor.TextArea.Document.GetLineByOffset(buf.StartOffset);
-			var startLine = textEditor.TextArea.Document.GetLineByOffset(startOffset);
+			var firstLine = textEditor.TextArea.TextView.Document.GetLineByOffset(buf.StartOffset);
+			var startLine = textEditor.TextArea.TextView.Document.GetLineByOffset(startOffset);
 			var prompt = firstLine == startLine ? options.PromptText : options.ContinueText;
 
 			int offs = startOffset;
 			while (offs < endOffset) {
-				var line = textEditor.TextArea.Document.GetLineByOffset(offs);
+				var line = textEditor.TextArea.TextView.Document.GetLineByOffset(offs);
 				int skipChars = offs - line.Offset;
 				if (skipChars < prompt.Length)
 					offs += prompt.Length - skipChars;
@@ -937,7 +938,7 @@ namespace dnSpy.TextEditor {
 					end = endOffset;
 				if (offs >= end)
 					break;
-				var s = textEditor.TextArea.Document.GetText(offs, end - offs);
+				var s = textEditor.TextArea.TextView.Document.GetText(offs, end - offs);
 				sb.Append(s);
 
 				offs = eol;
@@ -993,8 +994,8 @@ namespace dnSpy.TextEditor {
 			Debug.Assert(subBuffers.Count == 0 || subBuffers[subBuffers.Count - 1].EndOffset == buffer.StartOffset);
 			// AddOrUpdateOutputSubBuffer() should be called to merge output sub buffers
 			Debug.Assert(buffer.Kind == BufferKind.Code || subBuffers.Count == 0 || subBuffers[subBuffers.Count - 1].Kind != BufferKind.Output);
-			Debug.Assert(textEditor.TextArea.Document.GetLineByOffset(buffer.StartOffset).Offset == buffer.StartOffset);
-			Debug.Assert(textEditor.TextArea.Document.GetLineByOffset(buffer.EndOffset).Offset == buffer.EndOffset);
+			Debug.Assert(textEditor.TextArea.TextView.Document.GetLineByOffset(buffer.StartOffset).Offset == buffer.StartOffset);
+			Debug.Assert(textEditor.TextArea.TextView.Document.GetLineByOffset(buffer.EndOffset).Offset == buffer.EndOffset);
 			if (buffer.Kind == BufferKind.Output && buffer.Length == 0)
 				return;
 			subBuffers.Add(buffer);

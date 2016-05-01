@@ -315,6 +315,7 @@
     <Compile Include="TextEditor\ColorOffsetInfo.cs" />
     <Compile Include="TextEditor\ColorPriority.cs" />
     <Compile Include="TextEditor\ColorSpan.cs" />
+    <Compile Include="TextEditor\ContentTypeChangedEventArgs.cs" />
     <Compile Include="TextEditor\ContentTypeDefinition.cs" />
     <Compile Include="TextEditor\ContentTypes.cs" />
     <Compile Include="TextEditor\DisplayNameAttribute.cs" />
@@ -334,6 +335,7 @@
     <Compile Include="TextEditor\ITextBufferColorizer.cs" />
     <Compile Include="TextEditor\ITextBufferColorizerProvider.cs" />
     <Compile Include="TextEditor\ITextEditorSettings.cs" />
+    <Compile Include="TextEditor\ITextSnapshot.cs" />
     <Compile Include="TextEditor\LogEditorOptions.cs" />
     <Compile Include="TextEditor\OutputColor.cs" />
     <Compile Include="TextEditor\ReplEditorOptions.cs" />
