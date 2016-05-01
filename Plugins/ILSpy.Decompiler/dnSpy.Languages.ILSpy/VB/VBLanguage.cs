@@ -96,7 +96,7 @@ namespace dnSpy.Languages.ILSpy.VB {
 		}
 
 		public override string UniqueNameUI {
-			get { return "VB"; }
+			get { return "Visual Basic"; }
 		}
 
 		public override Guid GenericGuid {
