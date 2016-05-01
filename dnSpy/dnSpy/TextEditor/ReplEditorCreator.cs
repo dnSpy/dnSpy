@@ -31,17 +31,19 @@ namespace dnSpy.TextEditor {
 		readonly IMenuManager menuManager;
 		readonly ITextEditorSettings textEditorSettings;
 		readonly ITextBufferColorizerCreator textBufferColorizerCreator;
+		readonly IContentTypeRegistryService contentTypeRegistryService;
 
 		[ImportingConstructor]
-		ReplEditorCreator(IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextBufferColorizerCreator textBufferColorizerCreator) {
+		ReplEditorCreator(IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextBufferColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
 			this.themeManager = themeManager;
 			this.wpfCommandManager = wpfCommandManager;
 			this.menuManager = menuManager;
 			this.textEditorSettings = textEditorSettings;
 			this.textBufferColorizerCreator = textBufferColorizerCreator;
+			this.contentTypeRegistryService = contentTypeRegistryService;
 		}
 
 		public IReplEditorUI Create(ReplEditorOptions options) =>
-			new ReplEditorUI(options, themeManager, wpfCommandManager, menuManager, textEditorSettings, textBufferColorizerCreator);
+			new ReplEditorUI(options, themeManager, wpfCommandManager, menuManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService);
 	}
 }

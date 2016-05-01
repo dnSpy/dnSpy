@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Languages {
 	sealed class DummyLanguage : Language {
@@ -30,6 +31,8 @@ namespace dnSpy.Languages {
 		public override Guid GenericGuid {
 			get { return new Guid("CAE0EC7B-4311-4C48-AF7C-36E5EA71249A"); }
 		}
+
+		public override Guid ContentTypeGuid => new Guid(ContentTypes.PLAIN_TEXT);
 
 		public override string GenericNameUI {
 			get { return "---"; }

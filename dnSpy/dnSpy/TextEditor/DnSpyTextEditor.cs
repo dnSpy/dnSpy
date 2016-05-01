@@ -162,16 +162,18 @@ namespace dnSpy.TextEditor {
 		public MyTextBuffer TextBuffer { get; }
 
 		internal sealed class MyTextBuffer : ITextBuffer, IDisposable {
-			public Guid ContentType {
+			public IContentType ContentType {
 				get { return contentType; }
 				set {
+					if (value == null)
+						throw new ArgumentNullException(nameof(value));
 					if (contentType != value) {
 						contentType = value;
 						RecreateColorizers();
 					}
 				}
 			}
-			Guid contentType;
+			IContentType contentType;
 
 			public ITextBufferColorizer[] Colorizers { get; private set; }
 
@@ -179,9 +181,12 @@ namespace dnSpy.TextEditor {
 			readonly ITextBufferColorizerCreator textBufferColorizerCreator;
 			ITextBufferColorizer defaultColorizer;
 
-			public MyTextBuffer(DnSpyTextEditor owner, ITextBufferColorizerCreator textBufferColorizerCreator) {
+			public MyTextBuffer(DnSpyTextEditor owner, ITextBufferColorizerCreator textBufferColorizerCreator, IContentType contentType) {
+				if (contentType == null)
+					throw new ArgumentNullException(nameof(contentType));
 				this.owner = owner;
 				this.textBufferColorizerCreator = textBufferColorizerCreator;
+				this.contentType = contentType;
 				this.defaultColorizer = null;
 				this.Colorizers = Array.Empty<ITextBufferColorizer>();
 				RecreateColorizers();
@@ -217,7 +222,7 @@ namespace dnSpy.TextEditor {
 		readonly ITextEditorSettings textEditorSettings;
 		readonly SearchPanel searchPanel;
 
-		public DnSpyTextEditor(IThemeManager themeManager, ITextEditorSettings textEditorSettings, ITextBufferColorizerCreator textBufferColorizerCreator) {
+		public DnSpyTextEditor(IThemeManager themeManager, ITextEditorSettings textEditorSettings, ITextBufferColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
 			this.themeManager = themeManager;
 			this.textEditorSettings = textEditorSettings;
 			this.SyntaxHighlighting = HighlightingManager.Instance.GetDefinitionByExtension(".il");
@@ -225,7 +230,7 @@ namespace dnSpy.TextEditor {
 			this.themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 			Options.AllowToggleOverstrikeMode = true;
 			Options.RequireControlModifierForHyperlinkClick = false;
-			this.TextBuffer = new MyTextBuffer(this, textBufferColorizerCreator);
+			this.TextBuffer = new MyTextBuffer(this, textBufferColorizerCreator, contentTypeRegistryService.UnknownContentType);
 			UpdateColors(false);
 
 			searchPanel = SearchPanel.Install(TextArea);

@@ -31,17 +31,19 @@ namespace dnSpy.TextEditor {
 		readonly IMenuManager menuManager;
 		readonly ITextEditorSettings textEditorSettings;
 		readonly ITextBufferColorizerCreator textBufferColorizerCreator;
+		readonly IContentTypeRegistryService contentTypeRegistryService;
 
 		[ImportingConstructor]
-		LogEditorCreator(IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextBufferColorizerCreator textBufferColorizerCreator) {
+		LogEditorCreator(IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextBufferColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
 			this.themeManager = themeManager;
 			this.wpfCommandManager = wpfCommandManager;
 			this.menuManager = menuManager;
 			this.textEditorSettings = textEditorSettings;
 			this.textBufferColorizerCreator = textBufferColorizerCreator;
+			this.contentTypeRegistryService = contentTypeRegistryService;
 		}
 
 		public ILogEditorUI Create(LogEditorOptions options) =>
-			new LogEditorUI(options, themeManager, wpfCommandManager, menuManager, textEditorSettings, textBufferColorizerCreator);
+			new LogEditorUI(options, themeManager, wpfCommandManager, menuManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService);
 	}
 }

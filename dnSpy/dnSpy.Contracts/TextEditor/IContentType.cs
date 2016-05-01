@@ -17,14 +17,41 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.Collections.Generic;
+
 namespace dnSpy.Contracts.TextEditor {
 	/// <summary>
-	/// Text buffer
+	/// Content type
 	/// </summary>
-	public interface ITextBuffer {
+	public interface IContentType {
 		/// <summary>
-		/// Gets the content type
+		/// Gets all base types
 		/// </summary>
-		IContentType ContentType { get; }
+		IEnumerable<IContentType> BaseTypes { get; }
+
+		/// <summary>
+		/// Gets the guid
+		/// </summary>
+		Guid Guid { get; }
+
+		/// <summary>
+		/// Gets the display name
+		/// </summary>
+		string DisplayName { get; }
+
+		/// <summary>
+		/// Returns true if derives from or is the specified content type
+		/// </summary>
+		/// <param name="guid">Content type guid</param>
+		/// <returns></returns>
+		bool IsOfType(Guid guid);
+
+		/// <summary>
+		/// Returns true if derives from or is the specified content type
+		/// </summary>
+		/// <param name="guid">Content type guid</param>
+		/// <returns></returns>
+		bool IsOfType(string guid);
 	}
 }

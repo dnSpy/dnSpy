@@ -118,14 +118,16 @@ namespace dnSpy.Output {
 		readonly ILogEditorCreator logEditorCreator;
 		readonly OutputManagerSettingsImpl outputManagerSettingsImpl;
 		readonly IPickSaveFilename pickSaveFilename;
+		readonly IContentTypeRegistryService contentTypeRegistryService;
 		Guid prevSelectedGuid;
 
 		[ImportingConstructor]
-		OutputManager(ILogEditorCreator logEditorCreator, OutputManagerSettingsImpl outputManagerSettingsImpl, IPickSaveFilename pickSaveFilename) {
+		OutputManager(ILogEditorCreator logEditorCreator, OutputManagerSettingsImpl outputManagerSettingsImpl, IPickSaveFilename pickSaveFilename, IContentTypeRegistryService contentTypeRegistryService) {
 			this.logEditorCreator = logEditorCreator;
 			this.outputManagerSettingsImpl = outputManagerSettingsImpl;
 			this.prevSelectedGuid = outputManagerSettingsImpl.SelectedGuid;
 			this.pickSaveFilename = pickSaveFilename;
+			this.contentTypeRegistryService = contentTypeRegistryService;
 			this.outputBuffers = new ObservableCollection<OutputBufferVM>();
 			this.outputBuffers.CollectionChanged += OutputBuffers_CollectionChanged;
 		}
@@ -147,7 +149,10 @@ namespace dnSpy.Output {
 			}
 		}
 
-		public IOutputTextPane Create(Guid guid, string name, Guid contentType, Guid? textEditorCommandGuid, Guid? textAreaCommandGuid) {
+		public IOutputTextPane Create(Guid guid, string name, Guid? contentType, Guid? textEditorCommandGuid, Guid? textAreaCommandGuid) =>
+			Create(guid, name, contentType == null ? null : contentTypeRegistryService.GetContentType(contentType.Value), textEditorCommandGuid, textAreaCommandGuid);
+
+		public IOutputTextPane Create(Guid guid, string name, IContentType contentType, Guid? textEditorCommandGuid, Guid? textAreaCommandGuid) {
 			if (name == null)
 				throw new ArgumentNullException(nameof(name));
 

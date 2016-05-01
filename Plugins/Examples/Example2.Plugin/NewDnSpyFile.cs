@@ -7,6 +7,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Highlighting;
 using dnSpy.Contracts.Images;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Files;
 using dnSpy.Shared.Files.TreeView;
@@ -141,6 +142,7 @@ namespace Example2.Plugin {
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
+			context.ContentTypeGuid = new Guid(ContentTypes.PLAIN_TEXT);
 			context.Output.Write(file.Text, BoxedTextTokenKind.Text);
 			return true;
 		}

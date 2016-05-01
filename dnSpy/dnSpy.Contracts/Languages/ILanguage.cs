@@ -35,6 +35,11 @@ namespace dnSpy.Contracts.Languages {
 		IDecompilerSettings Settings { get; }
 
 		/// <summary>
+		/// Gets the content type guid
+		/// </summary>
+		Guid ContentTypeGuid { get; }
+
+		/// <summary>
 		/// Real name of the language, eg. "C#" if it's C#. See also <see cref="UniqueNameUI"/>.
 		/// It's used when the real language name must be shown to the user.
 		/// </summary>

@@ -70,11 +70,13 @@ namespace dnSpy.TextEditor {
 			}
 		}
 
-		public ReplEditorUI(ReplEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextBufferColorizerCreator textBufferColorizerCreator) {
+		public ReplEditorUI(ReplEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextBufferColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.options = (options ?? new ReplEditorOptions()).Clone();
 			this.subBuffers = new List<SubBuffer>();
-			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator);
+			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService);
+			if (options.ContentType != null)
+				this.textEditor.TextBuffer.ContentType = options.ContentType;
 			this.colorizerHelper = new DnSpyTextEditorColorizerHelper(this.textEditor);
 			textEditor.TextBuffer.SetDefaultColorizer(colorizerHelper.CreateTextBufferColorizer());
 			this.textEditor.TextArea.AllowDrop = false;

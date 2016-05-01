@@ -32,6 +32,7 @@ using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.ILSpy.Settings;
 using System.Diagnostics;
 using System.Text;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Languages.ILSpy.VB {
 	sealed class LanguageProvider : ILanguageProvider {
@@ -87,6 +88,8 @@ namespace dnSpy.Languages.ILSpy.VB {
 		public VBLanguage(LanguageDecompilerSettings langSettings) {
 			this.langSettings = langSettings;
 		}
+
+		public override Guid ContentTypeGuid => new Guid(ContentTypes.VISUALBASIC_ILSPY);
 
 		public override string GenericNameUI {
 			get { return LanguageConstants.GENERIC_NAMEUI_VB; }

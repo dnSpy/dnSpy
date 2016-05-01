@@ -20,6 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Windows.Threading;
@@ -29,6 +30,7 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
 using dnSpy.Contracts.Settings;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Properties;
 using dnSpy.Shared.Decompiler;
@@ -62,13 +64,19 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 		readonly IMethodAnnotations methodAnnotations;
 
+		public IContentTypeRegistryService ContentTypeRegistryService {
+			get { return contentTypeRegistryService; }
+		}
+		readonly IContentTypeRegistryService contentTypeRegistryService;
+
 		[ImportingConstructor]
-		DecompileFileTabContentFactory(IFileManager fileManager, IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguageManager languageManager, IDecompilationCache decompilationCache, IMethodAnnotations methodAnnotations) {
+		DecompileFileTabContentFactory(IFileManager fileManager, IFileTreeNodeDecompiler fileTreeNodeDecompiler, ILanguageManager languageManager, IDecompilationCache decompilationCache, IMethodAnnotations methodAnnotations, IContentTypeRegistryService contentTypeRegistryService) {
 			this.fileManager = fileManager;
 			this.fileTreeNodeDecompiler = fileTreeNodeDecompiler;
 			this.languageManager = languageManager;
 			this.decompilationCache = decompilationCache;
 			this.methodAnnotations = methodAnnotations;
+			this.contentTypeRegistryService = contentTypeRegistryService;
 		}
 
 		public IFileTabContent Create(IFileTabContentFactoryContext context) {
@@ -217,8 +225,10 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			UpdateLanguage();
 			var decompileContext = CreateDecompileContext(ctx);
 			IHighlightingDefinition highlighting;
-			decompileContext.CachedOutput = decompileFileTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Language, nodes, out highlighting);
+			IContentType contentType;
+			decompileContext.CachedOutput = decompileFileTabContentFactory.DecompilationCache.Lookup(decompileContext.DecompileNodeContext.Language, nodes, out highlighting, out contentType);
 			decompileContext.DecompileNodeContext.HighlightingDefinition = highlighting;
+			decompileContext.DecompileNodeContext.ContentType = contentType;
 			ctx.UserData = decompileContext;
 		}
 
@@ -241,6 +251,15 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			else
 				highlighting = decompileContext.DecompileNodeContext.Language.GetHighlightingDefinition();
 
+			var contentType = decompileContext.DecompileNodeContext.ContentType;
+			if (contentType == null) {
+				var contentTypeGuid = decompileContext.DecompileNodeContext.ContentTypeGuid;
+				if (contentTypeGuid == Guid.Empty)
+					contentTypeGuid = ContentTypes.TryGetContentTypeGuidByExtension(decompileContext.DecompileNodeContext.Language.FileExtension) ?? new Guid(ContentTypes.PLAIN_TEXT);
+				contentType = decompileFileTabContentFactory.ContentTypeRegistryService.GetContentType(contentTypeGuid);
+				Debug.Assert(contentType != null);
+			}
+
 			AvalonEditTextOutput output;
 			if (result.IsCanceled) {
 				output = new AvalonEditTextOutput();
@@ -256,12 +275,12 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				output = decompileContext.CachedOutput;
 				if (output == null) {
 					output = (AvalonEditTextOutput)decompileContext.DecompileNodeContext.Output;
-					decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Language, nodes, output, highlighting);
+					decompileFileTabContentFactory.DecompilationCache.Cache(decompileContext.DecompileNodeContext.Language, nodes, output, highlighting, contentType);
 				}
 			}
 
 			if (result.CanShowOutput)
-				uiCtx.SetOutput(output, highlighting);
+				uiCtx.SetOutput(output, highlighting, contentType);
 		}
 
 		public bool CanStartAsyncWorker(IShowContext ctx) {

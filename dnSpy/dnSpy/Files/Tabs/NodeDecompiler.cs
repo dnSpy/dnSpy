@@ -68,6 +68,7 @@ namespace dnSpy.Files.Tabs {
 			this.language = language;
 			this.decompilationContext = decompilationContext;
 			this.decompileNodeContext = decompileNodeContext;
+			this.decompileNodeContext.ContentTypeGuid = language.ContentTypeGuid;
 		}
 
 		static readonly object lockObj = new object();

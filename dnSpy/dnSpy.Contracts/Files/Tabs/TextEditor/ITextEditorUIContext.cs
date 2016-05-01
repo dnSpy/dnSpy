@@ -35,10 +35,11 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// </summary>
 		/// <param name="output">New document</param>
 		/// <param name="highlighting">Highlighting to use or null</param>
-		void SetOutput(ITextOutput output, IHighlightingDefinition highlighting);
+		/// <param name="contentType">Content type or null</param>
+		void SetOutput(ITextOutput output, IHighlightingDefinition highlighting, IContentType contentType);
 
 		/// <summary>
-		/// Adds data that is cleared each time <see cref="SetOutput(ITextOutput, IHighlightingDefinition)"/>
+		/// Adds data that is cleared each time <see cref="SetOutput(ITextOutput, IHighlightingDefinition, IContentType)"/>
 		/// gets called.
 		/// </summary>
 		/// <param name="key">Key</param>

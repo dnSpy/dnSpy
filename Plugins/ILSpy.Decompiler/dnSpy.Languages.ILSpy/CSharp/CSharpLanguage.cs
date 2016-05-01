@@ -25,6 +25,7 @@ using System.Text;
 using System.Xml;
 using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.ILSpy.Settings;
 using dnSpy.Languages.ILSpy.XmlDoc;
@@ -117,6 +118,8 @@ namespace dnSpy.Languages.ILSpy.CSharp {
 			};
 		}
 #endif
+
+		public override Guid ContentTypeGuid => new Guid(ContentTypes.CSHARP_ILSPY);
 
 		public override string GenericNameUI {
 			get { return LanguageConstants.GENERIC_NAMEUI_CSHARP; }

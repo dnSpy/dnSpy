@@ -17,14 +17,26 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+using System;
+using System.ComponentModel.Composition;
+
 namespace dnSpy.Contracts.TextEditor {
 	/// <summary>
-	/// Text buffer
+	/// Defines a base content type
 	/// </summary>
-	public interface ITextBuffer {
+	[MetadataAttribute, AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
+	public sealed class DisplayNameAttribute : Attribute {
 		/// <summary>
-		/// Gets the content type
+		/// Gets the guid of the base content type
 		/// </summary>
-		IContentType ContentType { get; }
+		public string DisplayName { get; }
+
+		/// <summary>
+		/// Constructor
+		/// </summary>
+		/// <param name="displayName">Display name</param>
+		public DisplayNameAttribute(string displayName) {
+			DisplayName = displayName;
+		}
 	}
 }

@@ -68,6 +68,11 @@ namespace dnSpy.Contracts.TextEditor {
 		public Guid? MenuGuid { get; set; }
 
 		/// <summary>
+		/// Content type or null
+		/// </summary>
+		public IContentType ContentType { get; set; }
+
+		/// <summary>
 		/// Clones this
 		/// </summary>
 		/// <returns></returns>
@@ -81,6 +86,7 @@ namespace dnSpy.Contracts.TextEditor {
 			other.TextEditorCommandGuid = TextEditorCommandGuid;
 			other.TextAreaCommandGuid = TextAreaCommandGuid;
 			other.MenuGuid = MenuGuid;
+			other.ContentType = ContentType;
 			return other;
 		}
 	}

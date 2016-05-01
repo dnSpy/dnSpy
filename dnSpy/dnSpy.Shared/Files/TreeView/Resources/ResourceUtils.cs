@@ -26,6 +26,7 @@ using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Files.TreeView.Resources;
 using dnSpy.Contracts.Images;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Shared.Highlighting;
 using ICSharpCode.AvalonEdit.Utils;
@@ -130,6 +131,7 @@ namespace dnSpy.Shared.Files.TreeView.Resources {
 				}
 			}
 			context.HighlightingExtension = ext;
+			context.ContentTypeGuid = ContentTypes.TryGetContentTypeGuidByExtension(ext) ?? new Guid(ContentTypes.PLAIN_TEXT);
 			return true;
 		}
 	}

@@ -99,6 +99,7 @@
     <Compile Include="Dialogs\ProcessPrinter.cs" />
     <Compile Include="Dialogs\ProcessVM.cs" />
     <Compile Include="Logger\Commands.cs" />
+    <Compile Include="Logger\ContentTypeDefinitions.cs" />
     <Compile Include="Logger\OutputLogger.cs" />
     <Compile Include="Logger\OutputLoggerSettings.cs" />
     <Compile Include="NativeMethods.cs" />

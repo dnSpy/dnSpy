@@ -99,15 +99,16 @@ namespace dnSpy.TextEditor {
 			}
 		}
 
-		public LogEditorUI(LogEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextBufferColorizerCreator textBufferColorizerCreator) {
+		public LogEditorUI(LogEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextBufferColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.paddingElement = new FrameworkElement { Margin = new Thickness(LEFT_MARGIN, 0, 0, 0) };
 			this.options = (options ?? new LogEditorOptions()).Clone();
-			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator);
+			this.textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService);
+			if (options.ContentType != null)
+				this.textEditor.TextBuffer.ContentType = options.ContentType;
 			this.colorizerHelper = new DnSpyTextEditorColorizerHelper(this.textEditor);
-			textEditor.TextBuffer.SetDefaultColorizer(colorizerHelper.CreateTextBufferColorizer());
+			this.textEditor.TextBuffer.SetDefaultColorizer(colorizerHelper.CreateTextBufferColorizer());
 			SetNewDocument();
-			this.textEditor.TextBuffer.ContentType = options.ContentType;
 			this.textEditor.TextArea.AllowDrop = false;
 			UpdatePaddingElement();
 			this.textEditor.IsReadOnly = true;

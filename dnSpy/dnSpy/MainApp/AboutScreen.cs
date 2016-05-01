@@ -32,6 +32,7 @@ using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Menus;
 using dnSpy.Contracts.Plugin;
 using dnSpy.Contracts.Settings;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Plugin;
 using dnSpy.Properties;
@@ -43,11 +44,13 @@ namespace dnSpy.MainApp {
 	sealed class DecompileFileTabContentFactory : IFileTabContentFactory {
 		readonly IAppWindow appWindow;
 		readonly IPluginManager pluginManager;
+		readonly IContentType aboutContentType;
 
 		[ImportingConstructor]
-		DecompileFileTabContentFactory(IAppWindow appWindow, IPluginManager pluginManager) {
+		DecompileFileTabContentFactory(IAppWindow appWindow, IPluginManager pluginManager, IContentTypeRegistryService contentTypeRegistryService) {
 			this.appWindow = appWindow;
 			this.pluginManager = pluginManager;
+			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.ABOUT_DNSPY);
 		}
 
 		public IFileTabContent Create(IFileTabContentFactoryContext context) {
@@ -58,7 +61,7 @@ namespace dnSpy.MainApp {
 
 		public IFileTabContent Deserialize(Guid guid, ISettingsSection section, IFileTabContentFactoryContext context) {
 			if (guid == GUID_SerializedContent)
-				return new AboutScreenFileTabContent(appWindow, pluginManager);
+				return new AboutScreenFileTabContent(appWindow, pluginManager, aboutContentType);
 			return null;
 		}
 
@@ -74,17 +77,19 @@ namespace dnSpy.MainApp {
 		readonly IFileTabManager fileTabManager;
 		readonly IAppWindow appWindow;
 		readonly IPluginManager pluginManager;
+		readonly IContentType aboutContentType;
 
 		[ImportingConstructor]
-		AboutScreenMenuItem(IFileTabManager fileTabManager, IAppWindow appWindow, IPluginManager pluginManager) {
+		AboutScreenMenuItem(IFileTabManager fileTabManager, IAppWindow appWindow, IPluginManager pluginManager, IContentTypeRegistryService contentTypeRegistryService) {
 			this.fileTabManager = fileTabManager;
 			this.appWindow = appWindow;
 			this.pluginManager = pluginManager;
+			this.aboutContentType = contentTypeRegistryService.GetContentType(ContentTypes.ABOUT_DNSPY);
 		}
 
 		public override void Execute(IMenuItemContext context) {
 			var tab = fileTabManager.GetOrCreateActiveTab();
-			tab.Show(new AboutScreenFileTabContent(appWindow, pluginManager), null, null);
+			tab.Show(new AboutScreenFileTabContent(appWindow, pluginManager, aboutContentType), null, null);
 			fileTabManager.SetFocus(tab);
 		}
 	}
@@ -106,14 +111,16 @@ namespace dnSpy.MainApp {
 
 		readonly IAppWindow appWindow;
 		readonly IPluginManager pluginManager;
+		readonly IContentType aboutContentType;
 
-		public AboutScreenFileTabContent(IAppWindow appWindow, IPluginManager pluginManager) {
+		public AboutScreenFileTabContent(IAppWindow appWindow, IPluginManager pluginManager, IContentType aboutContentType) {
 			this.appWindow = appWindow;
 			this.pluginManager = pluginManager;
+			this.aboutContentType = aboutContentType;
 		}
 
 		public IFileTabContent Clone() {
-			return new AboutScreenFileTabContent(appWindow, pluginManager);
+			return new AboutScreenFileTabContent(appWindow, pluginManager, aboutContentType);
 		}
 
 		public IFileTabUIContext CreateUIContext(IFileTabUIContextLocator locator) {
@@ -133,7 +140,7 @@ namespace dnSpy.MainApp {
 			var uiCtx = (ITextEditorUIContext)ctx.UIContext;
 			var output = new AvalonEditTextOutput();
 			Write(output);
-			uiCtx.SetOutput(output, null);
+			uiCtx.SetOutput(output, null, aboutContentType);
 		}
 
 		sealed class Info {

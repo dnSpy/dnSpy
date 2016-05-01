@@ -135,6 +135,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
+			context.ContentTypeGuid = context.Language.ContentTypeGuid;
 			var children = context.ExecuteInUIThread(() => {
 				TreeNode.EnsureChildrenLoaded();
 				return TreeNode.DataChildren.OfType<HexNode>().ToArray();

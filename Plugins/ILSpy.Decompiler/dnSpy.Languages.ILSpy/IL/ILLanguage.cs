@@ -30,6 +30,7 @@ using dnSpy.Languages.ILSpy.XmlDoc;
 using dnSpy.Languages.ILSpy.Settings;
 using System.Diagnostics;
 using System.Text;
+using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.Languages.ILSpy.IL {
 	sealed class LanguageProvider : ILanguageProvider {
@@ -93,6 +94,8 @@ namespace dnSpy.Languages.ILSpy.IL {
 		public override double OrderUI {
 			get { return LanguageConstants.IL_ILSPY_ORDERUI; }
 		}
+
+		public override Guid ContentTypeGuid => new Guid(ContentTypes.IL_ILSPY);
 
 		public override string GenericNameUI {
 			get { return LanguageConstants.GENERIC_NAMEUI_IL; }

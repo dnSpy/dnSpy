@@ -19,12 +19,8 @@
 
 namespace dnSpy.Contracts.TextEditor {
 	/// <summary>
-	/// Text buffer
+	/// Defines a <see cref="IContentType"/>
 	/// </summary>
-	public interface ITextBuffer {
-		/// <summary>
-		/// Gets the content type
-		/// </summary>
-		IContentType ContentType { get; }
+	public sealed class ContentTypeDefinition {
 	}
 }

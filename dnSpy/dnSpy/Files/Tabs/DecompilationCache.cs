@@ -27,6 +27,7 @@ using dnSpy.Contracts.Files;
 using dnSpy.Contracts.Files.Tabs;
 using dnSpy.Contracts.Files.TreeView;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Shared.Decompiler;
 using ICSharpCode.AvalonEdit.Highlighting;
 
@@ -74,6 +75,7 @@ namespace dnSpy.Files.Tabs {
 		sealed class Item {
 			public AvalonEditTextOutput TextOutput;
 			public IHighlightingDefinition Highlighting;
+			public IContentType ContentType;
 			public WeakReference WeakTextOutput;
 			DateTime LastHitUTC;
 
@@ -84,9 +86,10 @@ namespace dnSpy.Files.Tabs {
 				get { return DateTime.UtcNow - LastHitUTC; }
 			}
 
-			public Item(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting) {
+			public Item(AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting, IContentType contentType) {
 				this.TextOutput = textOutput;
 				this.Highlighting = highlighting;
+				this.ContentType = contentType;
 				this.LastHitUTC = DateTime.UtcNow;
 			}
 
@@ -170,8 +173,7 @@ namespace dnSpy.Files.Tabs {
 			}, null, CLEAR_OLD_ITEMS_EVERY_MS, Timeout.Infinite);
 		}
 
-		public AvalonEditTextOutput Lookup(ILanguage language, IFileTreeNodeData[] nodes, out IHighlightingDefinition highlighting) {
-			highlighting = null;
+		public AvalonEditTextOutput Lookup(ILanguage language, IFileTreeNodeData[] nodes, out IHighlightingDefinition highlighting, out IContentType contentType) {
 			var settings = language.Settings;
 			lock (lockObj) {
 				var key = new Key(language, nodes, settings);
@@ -179,6 +181,7 @@ namespace dnSpy.Files.Tabs {
 				Item item;
 				if (cachedItems.TryGetValue(key, out item)) {
 					highlighting = item.Highlighting;
+					contentType = item.ContentType;
 					item.Hit();
 					var to = item.TextOutput;
 					if (to == null)
@@ -186,16 +189,18 @@ namespace dnSpy.Files.Tabs {
 					return to;
 				}
 			}
+			highlighting = null;
+			contentType = null;
 			return null;
 		}
 
-		public void Cache(ILanguage language, IFileTreeNodeData[] nodes, AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting) {
+		public void Cache(ILanguage language, IFileTreeNodeData[] nodes, AvalonEditTextOutput textOutput, IHighlightingDefinition highlighting, IContentType contentType) {
 			if (!textOutput.CanBeCached)
 				return;
 			var settings = language.Settings;
 			lock (lockObj) {
 				var key = new Key(language, nodes, settings);
-				cachedItems[key] = new Item(textOutput, highlighting);
+				cachedItems[key] = new Item(textOutput, highlighting, contentType);
 			}
 		}
 

@@ -17,14 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.TextEditor {
-	/// <summary>
-	/// Text buffer
-	/// </summary>
-	public interface ITextBuffer {
-		/// <summary>
-		/// Gets the content type
-		/// </summary>
-		IContentType ContentType { get; }
+using dnSpy.Contracts.TextEditor;
+
+namespace dnSpy.BamlDecompiler {
+	static class ContentTypeDefinitions {
+#pragma warning disable CS0169
+		[ExportContentTypeDefinition(ContentTypes.BAML_DNSPY)]
+		[DisplayName("BAML - dnSpy")]
+		[BaseContentType(ContentTypes.BAML)]
+		static readonly ContentTypeDefinition BAMLDnSpyContentTypeDefinition;
+#pragma warning restore CS0169
 	}
 }

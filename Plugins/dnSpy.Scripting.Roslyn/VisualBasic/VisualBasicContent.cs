@@ -33,18 +33,19 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 	[Export, Export(typeof(IVisualBasicContent)), PartCreationPolicy(CreationPolicy.Shared)]
 	sealed class VisualBasicContent : ScriptContent, IVisualBasicContent {
 		[ImportingConstructor]
-		VisualBasicContent(IThemeManager themeManager, IReplEditorCreator replEditorCreator, IServiceLocator serviceLocator)
-			: base(themeManager, replEditorCreator, CreateReplEditorOptions(), serviceLocator) {
+		VisualBasicContent(IThemeManager themeManager, IReplEditorCreator replEditorCreator, IServiceLocator serviceLocator, IContentTypeRegistryService contentTypeRegistryService)
+			: base(themeManager, replEditorCreator, CreateReplEditorOptions(contentTypeRegistryService), serviceLocator) {
 		}
 
 		protected override ScriptControlVM CreateScriptControlVM(IReplEditor replEditor, IServiceLocator serviceLocator) =>
 			new VisualBasicControlVM(replEditor, serviceLocator);
 
-		static ReplEditorOptions CreateReplEditorOptions() {
+		static ReplEditorOptions CreateReplEditorOptions(IContentTypeRegistryService contentTypeRegistryService) {
 			return new ReplEditorOptions {
-				TextEditorCommandGuid = CommandConstants.GUID_REPL_VISUAL_BASIC_TEXTEDITOR,
-				TextAreaCommandGuid = CommandConstants.GUID_REPL_VISUAL_BASIC_TEXTAREA,
+				TextEditorCommandGuid = CommandConstants.GUID_REPL_VISUALBASIC_TEXTEDITOR,
+				TextAreaCommandGuid = CommandConstants.GUID_REPL_VISUALBASIC_TEXTAREA,
 				MenuGuid = new Guid(MenuConstants.GUIDOBJ_REPL_TEXTEDITORCONTROL_GUID),
+				ContentType = contentTypeRegistryService.GetContentType(ContentTypes.REPL_VISUALBASIC_ROSLYN),
 			};
 		}
 	}

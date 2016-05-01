@@ -62,6 +62,7 @@ namespace dnSpy.AsmEditor.Hex.Nodes {
 		}
 
 		public bool Decompile(IDecompileNodeContext context) {
+			context.ContentTypeGuid = context.Language.ContentTypeGuid;
 			context.Language.WriteCommentLine(context.Output, string.Format("{0:X8} - {1:X8} {2}", StartOffset, EndOffset, this.ToString()));
 			DecompileFields(context.Language, context.Output);
 			var smartOutput = context.Output as ISmartTextOutput;

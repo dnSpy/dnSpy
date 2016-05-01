@@ -335,6 +335,9 @@
     <Compile Include="Tabs\TabUtils.cs" />
     <Compile Include="TextEditor\CachedColorsList.cs" />
     <Compile Include="TextEditor\CachedColorsListColorizer.cs" />
+    <Compile Include="TextEditor\ContentType.cs" />
+    <Compile Include="TextEditor\ContentTypeDefinitions.cs" />
+    <Compile Include="TextEditor\ContentTypeRegistryService.cs" />
     <Compile Include="TextEditor\ContextMenuInitializer.cs" />
     <Compile Include="TextEditor\DnSpyTextEditor.cs" />
     <Compile Include="TextEditor\EditorPositionState.cs" />

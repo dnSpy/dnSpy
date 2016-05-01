@@ -23,6 +23,7 @@ using System.Diagnostics;
 using System.Linq;
 using dnlib.DotNet;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 using dnSpy.Languages.ILSpy.Settings;
 using ICSharpCode.Decompiler;
@@ -94,6 +95,8 @@ namespace dnSpy.Languages.ILSpy.ILAst {
 			get { return orderUI; }
 		}
 		readonly double orderUI;
+
+		public override Guid ContentTypeGuid => new Guid(ContentTypes.ILAST_ILSPY);
 
 		public override string GenericNameUI {
 			get { return "ILAst"; }

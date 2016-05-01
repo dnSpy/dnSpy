@@ -19,6 +19,7 @@
 
 using System;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Contracts.TreeView;
 using dnSpy.Decompiler.Shared;
 using ICSharpCode.AvalonEdit.Highlighting;
@@ -64,5 +65,15 @@ namespace dnSpy.Contracts.Files.Tabs.TextEditor {
 		/// See also <see cref="HighlightingDefinition"/>
 		/// </summary>
 		string HighlightingExtension { get; set; }
+
+		/// <summary>
+		/// Sets the content type. See also <see cref="ContentTypeGuid"/>
+		/// </summary>
+		IContentType ContentType { get; set; }
+
+		/// <summary>
+		/// Sets the content type guid. See also <see cref="ContentType"/>
+		/// </summary>
+		Guid ContentTypeGuid { get; set; }
 	}
 }

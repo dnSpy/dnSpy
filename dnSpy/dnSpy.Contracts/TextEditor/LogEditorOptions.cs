@@ -42,9 +42,9 @@ namespace dnSpy.Contracts.TextEditor {
 		public Guid? MenuGuid { get; set; }
 
 		/// <summary>
-		/// Content type
+		/// Content type or null
 		/// </summary>
-		public Guid ContentType { get; set; }
+		public IContentType ContentType { get; set; }
 
 		/// <summary>
 		/// Creates <see cref="GuidObject"/>s, can be null

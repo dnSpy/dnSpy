@@ -21,6 +21,7 @@ using System;
 using System.Windows.Threading;
 using dnSpy.Contracts.Files.Tabs.TextEditor;
 using dnSpy.Contracts.Languages;
+using dnSpy.Contracts.TextEditor;
 using dnSpy.Decompiler.Shared;
 using ICSharpCode.AvalonEdit.Highlighting;
 
@@ -43,6 +44,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		public IHighlightingDefinition HighlightingDefinition { get; set; }
 		public string HighlightingExtension { get; set; }
+		public IContentType ContentType { get; set; }
+		public Guid ContentTypeGuid { get; set; }
 
 		readonly Dispatcher dispatcher;
 

@@ -91,19 +91,21 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 		readonly ToolTipHelper toolTipHelper;
 		readonly ITextEditorSettings textEditorSettings;
+		readonly IContentType unknownContentType;
 
-		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferColorizerCreator textBufferColorizerCreator) {
+		public TextEditorControl(IThemeManager themeManager, ToolTipHelper toolTipHelper, ITextEditorSettings textEditorSettings, ITextEditorUIContextImpl uiContext, ITextEditorHelper textEditorHelper, ITextLineObjectManager textLineObjectManager, IImageManager imageManager, IIconBarCommandManager iconBarCommandManager, ITextBufferColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
 			this.references = new TextSegmentCollection<ReferenceSegment>();
 			this.themeManager = themeManager;
 			this.toolTipHelper = toolTipHelper;
 			this.textEditorSettings = textEditorSettings;
 			this.textEditorHelper = textEditorHelper;
+			this.unknownContentType = contentTypeRegistryService.UnknownContentType;
 			InitializeComponent();
 			this.textEditorSettings.PropertyChanged += TextEditorSettings_PropertyChanged;
 
 			themeManager.ThemeChanged += ThemeManager_ThemeChanged;
 
-			textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator);
+			textEditor = new DnSpyTextEditor(themeManager, textEditorSettings, textBufferColorizerCreator, contentTypeRegistryService);
 			colorizerHelper = new DnSpyTextEditorColorizerHelper(textEditor);
 			textEditor.TextBuffer.SetDefaultColorizer(colorizerHelper.CreateTextBufferColorizer());
 			this.toolTipHelper.Initialize(TextEditor);
@@ -255,15 +257,18 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		struct LastOutput : IEquatable<LastOutput> {
 			readonly ITextOutput output;
 			readonly IHighlightingDefinition highlighting;
+			readonly IContentType contentType;
 
-			public LastOutput(ITextOutput output, IHighlightingDefinition highlighting) {
+			public LastOutput(ITextOutput output, IHighlightingDefinition highlighting, IContentType contentType) {
 				this.output = output;
 				this.highlighting = highlighting;
+				this.contentType = contentType;
 			}
 
 			public bool Equals(LastOutput other) {
 				return output == other.output &&
-					highlighting == other.highlighting;
+					highlighting == other.highlighting &&
+					contentType == other.contentType;
 			}
 
 			public override bool Equals(object obj) {
@@ -274,7 +279,8 @@ namespace dnSpy.Files.Tabs.TextEditor {
 
 			public override int GetHashCode() {
 				return (output == null ? 0 : output.GetHashCode()) ^
-					(highlighting == null ? 0 : highlighting.GetHashCode());
+					(highlighting == null ? 0 : highlighting.GetHashCode()) ^
+					(contentType == null ? 0 : contentType.GetHashCode());
 			}
 		}
 
@@ -283,13 +289,15 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		}
 
 		LastOutput lastOutput;
-		public void SetOutput(ITextOutput output, IHighlightingDefinition highlighting) {
+		public void SetOutput(ITextOutput output, IHighlightingDefinition highlighting, IContentType contentType) {
 			if (output == null)
 				throw new ArgumentNullException();
+			if (contentType == null)
+				contentType = unknownContentType;
 
 			HideCancelButton();
 
-			var newLastOutput = new LastOutput(output, highlighting);
+			var newLastOutput = new LastOutput(output, highlighting, contentType);
 			if (lastOutput.Equals(newLastOutput))
 				return;
 			lastOutput = newLastOutput;
@@ -323,6 +331,7 @@ namespace dnSpy.Files.Tabs.TextEditor {
 				TextEditor.Document = avOutput.GetDocument();
 			}
 
+			TextEditor.TextBuffer.ContentType = contentType;
 			colorizerHelper.SetDocumentCachedColors(avOutput?.CachedColors);
 		}
 

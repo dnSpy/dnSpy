@@ -52,6 +52,7 @@
     <Compile Include="Baml\KnownThings.cs" />
     <Compile Include="Baml\KnownMembers.cs" />
     <None Include="Baml\KnownThings.gen.cs" />
+    <Compile Include="ContentTypeDefinitions.cs" />
     <Compile Include="Properties\dnSpy.BamlDecompiler.Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

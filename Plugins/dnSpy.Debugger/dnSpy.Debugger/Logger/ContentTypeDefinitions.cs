@@ -17,14 +17,15 @@
     along with dnSpy.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-namespace dnSpy.Contracts.TextEditor {
-	/// <summary>
-	/// Text buffer
-	/// </summary>
-	public interface ITextBuffer {
-		/// <summary>
-		/// Gets the content type
-		/// </summary>
-		IContentType ContentType { get; }
+using dnSpy.Contracts.TextEditor;
+
+namespace dnSpy.Debugger.Logger {
+	static class ContentTypeDefinitions {
+#pragma warning disable CS0169
+		[ExportContentTypeDefinition(ContentTypes.OUTPUT_DEBUG)]
+		[DisplayName("DebugOutput")]
+		[BaseContentType(ContentTypes.OUTPUT)]
+		static readonly ContentTypeDefinition OutputDebugContentTypeDefinition;
+#pragma warning restore CS0169
 	}
 }

@@ -48,9 +48,9 @@ namespace dnSpy.Debugger.Logger {
 		readonly IOutputLoggerSettings outputLoggerSettings;
 
 		[ImportingConstructor]
-		OutputLogger(IOutputManager outputManager, ITheDebugger theDebugger, IOutputLoggerSettings outputLoggerSettings) {
+		OutputLogger(IOutputManager outputManager, ITheDebugger theDebugger, IOutputLoggerSettings outputLoggerSettings, IContentTypeRegistryService contentTypeRegistryService) {
 			this.outputManager = outputManager;
-			this.textPane = outputManager.Create(GUID_OUTPUT_LOGGER_DEBUG, dnSpy_Debugger_Resources.DebugLoggerName, ContentTypes.OUTPUT_DEBUG);
+			this.textPane = outputManager.Create(GUID_OUTPUT_LOGGER_DEBUG, dnSpy_Debugger_Resources.DebugLoggerName, contentTypeRegistryService.GetContentType(ContentTypes.OUTPUT_DEBUG));
 			this.outputLoggerSettings = outputLoggerSettings;
 			theDebugger.OnProcessStateChanged += TheDebugger_OnProcessStateChanged;
 		}

@@ -44,6 +44,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContentTypeDefinitions.cs" />
     <Compile Include="CSharp\AssemblyInfoTransform.cs" />
     <Compile Include="CSharp\BuilderCache.cs" />
     <Compile Include="CSharp\BuilderState.cs" />

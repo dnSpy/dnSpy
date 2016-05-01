@@ -217,9 +217,9 @@ namespace dnSpy.Files.Tabs.TextEditor {
 			section.Attribute("TextViewPosition.IsAtEndOfLine", state.TextViewPosition.IsAtEndOfLine);
 		}
 
-		public void SetOutput(ITextOutput output, IHighlightingDefinition highlighting) {
+		public void SetOutput(ITextOutput output, IHighlightingDefinition highlighting, IContentType contentType) {
 			outputData.Clear();
-			textEditorControl.SetOutput(output, highlighting);
+			textEditorControl.SetOutput(output, highlighting, contentType);
 			this.textEditorUIContextManagerImpl.RaiseNewContentEvent(this, output, (a, b, c) => newTextContentEvent.Raise(this, EventArgs.Empty), TextEditorUIContextManagerConstants.ORDER_TEXTMARKERSERVICE);
 		}
 

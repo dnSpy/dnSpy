@@ -100,10 +100,10 @@ namespace dnSpy.Contracts.Controls {
 		public static readonly Guid GUID_REPL_CSHARP_TEXTAREA = new Guid("C34EA6FC-E0AA-465F-A1C9-EA82DB3E9550");
 
 		/// <summary>Guid of Visual Basic Interactive's text editor</summary>
-		public static readonly Guid GUID_REPL_VISUAL_BASIC_TEXTEDITOR = new Guid("FA8135DF-F0FE-41CD-8C06-328D0FE3DAE9");
+		public static readonly Guid GUID_REPL_VISUALBASIC_TEXTEDITOR = new Guid("FA8135DF-F0FE-41CD-8C06-328D0FE3DAE9");
 
 		/// <summary>Guid of Visual Basic Interactive's text area</summary>
-		public static readonly Guid GUID_REPL_VISUAL_BASIC_TEXTAREA = new Guid("198589C0-D2F3-4672-A472-15DF63EFF47F");
+		public static readonly Guid GUID_REPL_VISUALBASIC_TEXTAREA = new Guid("198589C0-D2F3-4672-A472-15DF63EFF47F");
 
 		/// <summary>Guid of output control</summary>
 		public static readonly Guid GUID_OUTPUT_CONTROL = new Guid("0DD9693D-DA25-40A0-A9AC-4393D5819969");

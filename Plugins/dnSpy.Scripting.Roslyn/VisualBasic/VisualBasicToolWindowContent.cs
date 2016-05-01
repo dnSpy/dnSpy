@@ -41,7 +41,7 @@ namespace dnSpy.Scripting.Roslyn.VisualBasic {
 		}
 
 		public override IEnumerable<ToolWindowContentInfo> ContentInfos {
-			get { yield return new ToolWindowContentInfo(VisualBasicToolWindowContent.THE_GUID, VisualBasicToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_SCRIPTING_VISUAL_BASIC, false); }
+			get { yield return new ToolWindowContentInfo(VisualBasicToolWindowContent.THE_GUID, VisualBasicToolWindowContent.DEFAULT_LOCATION, AppToolWindowConstants.DEFAULT_CONTENT_ORDER_BOTTOM_SCRIPTING_VISUALBASIC, false); }
 		}
 
 		protected override ScriptToolWindowContent CreateContent() => new VisualBasicToolWindowContent(visualBasicContent);

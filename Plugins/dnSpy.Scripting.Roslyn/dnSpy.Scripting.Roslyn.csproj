@@ -61,6 +61,7 @@
     <Compile Include="Common\ScriptControlVM.cs" />
     <Compile Include="Common\ScriptGlobals.cs" />
     <Compile Include="Common\ScriptToolWindowContent.cs" />
+    <Compile Include="ContentTypeDefinitions.cs" />
     <Compile Include="Converters\ImageConverter.cs" />
     <Compile Include="CSharp\CSharpContent.cs" />
     <Compile Include="CSharp\CSharpControlVM.cs" />

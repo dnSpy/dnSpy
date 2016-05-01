@@ -34,6 +34,7 @@ namespace dnSpy.Languages {
 	/// Base class for language-specific decompiler implementations.
 	/// </summary>
 	public abstract class Language : ILanguage {
+		public abstract Guid ContentTypeGuid { get; }
 		public abstract string GenericNameUI { get; }
 		public abstract string UniqueNameUI { get; }
 		public abstract double OrderUI { get; }
