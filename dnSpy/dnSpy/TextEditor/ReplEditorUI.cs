@@ -70,7 +70,7 @@ namespace dnSpy.TextEditor {
 			}
 		}
 
-		public ReplEditorUI(ReplEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextBufferColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
+		public ReplEditorUI(ReplEditorOptions options, IThemeManager themeManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ITextEditorSettings textEditorSettings, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
 			this.dispatcher = Dispatcher.CurrentDispatcher;
 			this.options = (options ?? new ReplEditorOptions()).Clone();
 			this.subBuffers = new List<SubBuffer>();

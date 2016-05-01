@@ -53,14 +53,14 @@ namespace dnSpy.TextEditor {
 		}
 		ITextSnapshot currentSnapshot;
 
-		public ITextBufferColorizer[] Colorizers { get; private set; }
+		public ITextSnapshotColorizer[] Colorizers { get; private set; }
 		public event EventHandler<ContentTypeChangedEventArgs> ContentTypeChanged;
 
 		readonly DnSpyTextEditor owner;
-		readonly ITextBufferColorizerCreator textBufferColorizerCreator;
-		ITextBufferColorizer defaultColorizer;
+		readonly ITextSnapshotColorizerCreator textBufferColorizerCreator;
+		ITextSnapshotColorizer defaultColorizer;
 
-		public DnSpyTextBuffer(DnSpyTextEditor owner, ITextBufferColorizerCreator textBufferColorizerCreator, IContentType contentType) {
+		public DnSpyTextBuffer(DnSpyTextEditor owner, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentType contentType) {
 			if (contentType == null)
 				throw new ArgumentNullException(nameof(contentType));
 			this.owner = owner;
@@ -69,7 +69,7 @@ namespace dnSpy.TextEditor {
 			this.textBufferColorizerCreator = textBufferColorizerCreator;
 			this.contentType = contentType;
 			this.defaultColorizer = null;
-			this.Colorizers = Array.Empty<ITextBufferColorizer>();
+			this.Colorizers = Array.Empty<ITextSnapshotColorizer>();
 			RecreateColorizers();
 		}
 
@@ -85,7 +85,7 @@ namespace dnSpy.TextEditor {
 		}
 		TextDocument currentDocument;
 
-		public void SetDefaultColorizer(ITextBufferColorizer defaultColorizer) {
+		public void SetDefaultColorizer(ITextSnapshotColorizer defaultColorizer) {
 			Debug.Assert(this.defaultColorizer == null);
 			if (this.defaultColorizer != null)
 				throw new InvalidOperationException();
@@ -95,7 +95,7 @@ namespace dnSpy.TextEditor {
 
 		public void RecreateColorizers() {
 			ClearColorizers();
-			var list = new List<ITextBufferColorizer>();
+			var list = new List<ITextSnapshotColorizer>();
 			if (defaultColorizer != null)
 				list.Add(defaultColorizer);
 			list.AddRange(textBufferColorizerCreator.Create(this));
@@ -105,7 +105,7 @@ namespace dnSpy.TextEditor {
 		void ClearColorizers() {
 			foreach (var c in Colorizers)
 				(c as IDisposable)?.Dispose();
-			Colorizers = Array.Empty<ITextBufferColorizer>();
+			Colorizers = Array.Empty<ITextSnapshotColorizer>();
 		}
 
 		public void Dispose() => ClearColorizers();

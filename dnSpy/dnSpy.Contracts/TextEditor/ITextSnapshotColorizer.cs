@@ -23,7 +23,7 @@ namespace dnSpy.Contracts.TextEditor {
 	/// <summary>
 	/// Colorizes text
 	/// </summary>
-	public interface ITextBufferColorizer {
+	public interface ITextSnapshotColorizer {
 		/// <summary>
 		/// Gets all colors
 		/// </summary>

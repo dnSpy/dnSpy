@@ -21,14 +21,14 @@ using System.Collections.Generic;
 
 namespace dnSpy.Contracts.TextEditor {
 	/// <summary>
-	/// Creates <see cref="ITextBufferColorizer"/> instances
+	/// Creates <see cref="ITextSnapshotColorizer"/> instances
 	/// </summary>
-	public interface ITextBufferColorizerProvider {
+	public interface ITextSnapshotColorizerProvider {
 		/// <summary>
-		/// Creates new <see cref="ITextBufferColorizer"/> instances
+		/// Creates new <see cref="ITextSnapshotColorizer"/> instances
 		/// </summary>
 		/// <param name="textBuffer">Text buffer</param>
 		/// <returns></returns>
-		IEnumerable<ITextBufferColorizer> Create(ITextBuffer textBuffer);
+		IEnumerable<ITextSnapshotColorizer> Create(ITextBuffer textBuffer);
 	}
 }

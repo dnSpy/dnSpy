@@ -42,11 +42,11 @@ namespace dnSpy.Files.Tabs.TextEditor {
 		readonly ITextLineObjectManager textLineObjectManager;
 		readonly ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl;
 		readonly IIconBarCommandManager iconBarCommandManager;
-		readonly ITextBufferColorizerCreator textBufferColorizerCreator;
+		readonly ITextSnapshotColorizerCreator textBufferColorizerCreator;
 		readonly IContentTypeRegistryService contentTypeRegistryService;
 
 		[ImportingConstructor]
-		TextEditorUIContextCreator(IThemeManager themeManager, IImageManager imageManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager, ITextEditorSettings textEditorSettings, ITextLineObjectManager textLineObjectManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl, IIconBarCommandManager iconBarCommandManager, ITextBufferColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
+		TextEditorUIContextCreator(IThemeManager themeManager, IImageManager imageManager, IWpfCommandManager wpfCommandManager, IMenuManager menuManager, ICodeToolTipManager codeToolTipManager, ITextEditorSettings textEditorSettings, ITextLineObjectManager textLineObjectManager, ITextEditorUIContextManagerImpl textEditorUIContextManagerImpl, IIconBarCommandManager iconBarCommandManager, ITextSnapshotColorizerCreator textBufferColorizerCreator, IContentTypeRegistryService contentTypeRegistryService) {
 			this.themeManager = themeManager;
 			this.imageManager = imageManager;
 			this.wpfCommandManager = wpfCommandManager;

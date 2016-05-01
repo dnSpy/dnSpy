@@ -23,7 +23,7 @@ using dnSpy.Contracts.TextEditor;
 using dnSpy.Shared.Themes;
 
 namespace dnSpy.TextEditor {
-	sealed class CachedColorsListColorizer : ITextBufferColorizer {
+	sealed class CachedColorsListColorizer : ITextSnapshotColorizer {
 		readonly CachedColorsList cachedColorsList;
 		readonly double priority;
 

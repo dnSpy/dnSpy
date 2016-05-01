@@ -350,8 +350,8 @@
     <Compile Include="TextEditor\ReplCommands.cs" />
     <Compile Include="TextEditor\ReplEditorCreator.cs" />
     <Compile Include="TextEditor\ReplEditorUI.cs" />
-    <Compile Include="TextEditor\TextBufferColorizerCreator.cs" />
     <Compile Include="TextEditor\TextEditorSettings.cs" />
+    <Compile Include="TextEditor\TextSnapshotColorizerCreator.cs" />
     <Compile Include="Themes\AppCommandLineArgsHandler.cs" />
     <Compile Include="Themes\Color.cs" />
     <Compile Include="Themes\ColorInfo.cs" />

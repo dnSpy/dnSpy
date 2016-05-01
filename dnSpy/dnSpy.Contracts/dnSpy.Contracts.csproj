@@ -332,10 +332,10 @@
     <Compile Include="TextEditor\IReplEditorCreator.cs" />
     <Compile Include="TextEditor\IReplEditorUI.cs" />
     <Compile Include="TextEditor\ITextBuffer.cs" />
-    <Compile Include="TextEditor\ITextBufferColorizer.cs" />
-    <Compile Include="TextEditor\ITextBufferColorizerProvider.cs" />
     <Compile Include="TextEditor\ITextEditorSettings.cs" />
     <Compile Include="TextEditor\ITextSnapshot.cs" />
+    <Compile Include="TextEditor\ITextSnapshotColorizer.cs" />
+    <Compile Include="TextEditor\ITextSnapshotColorizerProvider.cs" />
     <Compile Include="TextEditor\LogEditorOptions.cs" />
     <Compile Include="TextEditor\OutputColor.cs" />
     <Compile Include="TextEditor\ReplEditorOptions.cs" />

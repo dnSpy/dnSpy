@@ -24,27 +24,27 @@ using dnSpy.Contracts.TextEditor;
 
 namespace dnSpy.TextEditor {
 	/// <summary>
-	/// Creates <see cref="ITextBufferColorizer"/> instances
+	/// Creates <see cref="ITextSnapshotColorizer"/> instances
 	/// </summary>
-	interface ITextBufferColorizerCreator {
+	interface ITextSnapshotColorizerCreator {
 		/// <summary>
-		/// Creates new <see cref="ITextBufferColorizer"/> instances
+		/// Creates new <see cref="ITextSnapshotColorizer"/> instances
 		/// </summary>
 		/// <param name="textBuffer">Text buffer</param>
 		/// <returns></returns>
-		IEnumerable<ITextBufferColorizer> Create(ITextBuffer textBuffer);
+		IEnumerable<ITextSnapshotColorizer> Create(ITextBuffer textBuffer);
 	}
 
-	[Export, Export(typeof(ITextBufferColorizerCreator)), PartCreationPolicy(CreationPolicy.Shared)]
-	sealed class TextBufferColorizerCreator : ITextBufferColorizerCreator {
-		readonly ITextBufferColorizerProvider[] providers;
+	[Export, Export(typeof(ITextSnapshotColorizerCreator)), PartCreationPolicy(CreationPolicy.Shared)]
+	sealed class TextSnapshotColorizerCreator : ITextSnapshotColorizerCreator {
+		readonly ITextSnapshotColorizerProvider[] providers;
 
 		[ImportingConstructor]
-		TextBufferColorizerCreator([ImportMany] IEnumerable<ITextBufferColorizerProvider> providers) {
+		TextSnapshotColorizerCreator([ImportMany] IEnumerable<ITextSnapshotColorizerProvider> providers) {
 			this.providers = providers.ToArray();
 		}
 
-		public IEnumerable<ITextBufferColorizer> Create(ITextBuffer textBuffer) =>
+		public IEnumerable<ITextSnapshotColorizer> Create(ITextBuffer textBuffer) =>
 			providers.SelectMany(a => a.Create(textBuffer));
 	}
 }
